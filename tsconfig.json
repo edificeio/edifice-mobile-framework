@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "jsx": "react",
+        "jsxFactory": "React.createElement",
+        "target": "es6",
+        "moduleResolution": "node",
+        "module": "es2015"
+    },
+    "exclude": [
+        "node_modules"
+    ],
+    "include": [
+        "./**/*.ts", "./**/*.tsx"
+    ]
+}
