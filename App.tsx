@@ -9,9 +9,6 @@ import { ReadMail } from './conversation/ReadMail';
 import { StyleConf } from './StyleConf';
 
 const mainStyle = StyleSheet.create({
-    nav: {
-        backgroundColor: StyleConf.primary
-    },
     spinner: {
       flex: 1,
       height: '100%',
@@ -26,8 +23,9 @@ const AppNavigator = StackNavigator({
 {
   cardStyle: {
     paddingTop: Platform.OS === 'ios' ? 0 : StatusBar.currentHeight
-  }
-});
+  },
+  headerMode: 'screen'
+} as any);
 
 export default class App extends React.Component<undefined, { ready: boolean, loggedIn: boolean }> {
   constructor(props){
@@ -52,7 +50,7 @@ export default class App extends React.Component<undefined, { ready: boolean, lo
       return <Login onLogin={ () => this.setState({ ready: true, loggedIn: true}) } />
     }
     return (
-      <AppNavigator style={ mainStyle.nav } />
+      <AppNavigator style={ { backgroundColor: StyleConf.primary} } />
     );
   }
 }

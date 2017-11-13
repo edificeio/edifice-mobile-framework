@@ -14,5 +14,17 @@ export const InboxStyle = StyleSheet.create({
     },
     excerpt: {
         flexDirection: 'row'
+    },
+    avatar: {
+        marginLeft: 15, 
+        borderRadius: 25, 
+        width: 30, 
+        height: 30,
+        borderWidth: 1,
+        borderColor: 'white'
+    },
+    newMail: {
+        color: 'white',
+        paddingRight: 15
     }
 })

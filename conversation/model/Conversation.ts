@@ -5,7 +5,7 @@ import { Thread } from './Thread';
 
 class Inbox{
     threads: Thread[];
-    page: number;
+    page: number = -1;
     lastPage: boolean;
 
     async sync(){
@@ -13,12 +13,15 @@ class Inbox{
         if(!this.threads){
             this.threads = [];
         }
+        this.page ++;
         const response = await fetch(`${ Conf.platform }/conversation/list/inbox?page=${this.page}`);
         const data = await response.json();
-        this.page ++;
+        console.log(data)
+        
         if(data.length === 0){
             this.lastPage = true;
         }
+        console.log(this.threads);
         this.threads = this.threads.concat(this.threads, Mix.castArrayAs(Thread, data.filter(thread => !thread.parent_id)));
         for(let i = 0; i < data.length; i++){
             if(data[i].parent_id){

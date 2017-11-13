@@ -19,10 +19,14 @@ export class Thread{
     get html(): string{
         const scrollJs = `
             <script>
+                var interval;
                 var scrollToBottom = function(){
                     window.scrollTo(0, document.body.scrollHeight);
                 };
-                setInterval(scrollToBottom, 50);
+                window.onscroll = function(){
+                    clearInterval(interval);
+                };
+                interval = setInterval(scrollToBottom, 50);
             </script>
         `;
         let html = `<!DOCTYPE html /><html><head><style>${WebViewCSS}</style></head><body>`;
@@ -61,7 +65,7 @@ export class Thread{
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-            }
+            } as any
         });
         const tempMail = this.mails.find(m => m.id === 'temp');
         const data = await response.json();

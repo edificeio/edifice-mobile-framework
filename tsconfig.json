@@ -4,7 +4,14 @@
         "jsxFactory": "React.createElement",
         "target": "es6",
         "moduleResolution": "node",
-        "module": "es2015"
+        "module": "es2015",
+        "typeRoots": [
+            "node_modules/@types"
+        ],
+        "types": [
+            "core-js", "react", "react-native",
+            "react-navigation"
+        ]
     },
     "exclude": [
         "node_modules"

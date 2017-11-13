@@ -31,9 +31,9 @@ export class DocFile{
             method: 'POST',
             body: formData,
             headers: {
-              Accept: 'application/json',
+              'Accept': 'application/json',
               'Content-Type': 'multipart/form-data',
-            },
+            } as any,
         });
         const file = await response.json();
         this.path = `${Conf.platform}/workspace/document/${file._id}`

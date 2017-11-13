@@ -51,6 +51,12 @@ export const WebViewCSS = `
         animation: fadeIn 1 320ms;
     }
 
+    .message *{
+        background-color: transparent !important;
+        font-family: Roboto !important;
+        text-decoration: none !important;
+    }
+
     img{
         max-width: 100%;
     }

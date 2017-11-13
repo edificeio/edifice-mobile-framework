@@ -3,7 +3,7 @@ import { View, ListView, WebView, ListViewDataSource, Text, ActivityIndicator, T
 import { Conversation } from './model/Conversation';
 import { Thread } from './model/Thread';
 import { ReadMailStyle } from './styles/ReadMail';
-import { StyleConf } from '../StyleConf';
+import { StyleConf, navOptions } from '../StyleConf';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { DocFile } from '../workspace/model/Document';
 
@@ -19,10 +19,7 @@ export class ReadMail extends React.Component<{ navigation: any }, ReadMailState
     thread: Thread;
     webView: any;
 
-    static navigationOptions = ({ navigation }) => ({
-        title: navigation.state.params.name,
-        headerTintColor: "white"
-    });
+    static navigationOptions = ({ navigation }) => navOptions(navigation.state.params.name);
 
     constructor(props){
         super(props);
