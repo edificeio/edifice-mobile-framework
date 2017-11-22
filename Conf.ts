@@ -1,3 +1,3 @@
 export const Conf = {
-    platform: 'https://preprod-paris.opendigitaleducation.com'
+    platform: 'https://recette-ent77.opendigitaleducation.com'
 }

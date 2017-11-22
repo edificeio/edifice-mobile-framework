@@ -1,13 +1,14 @@
 import { StyleSheet } from 'react-native';
 
 export const InboxStyle = StyleSheet.create({
-    listItem: {
+    mailRow: {
         padding: 10,
-        paddingLeft: 20,
+        paddingLeft: 0,
         paddingRight: 20,
         backgroundColor: '#ffffff',
         borderBottomWidth: 1,
-        borderBottomColor: '#ddd'
+        borderBottomColor: '#ddd',
+        flexDirection: 'row'
     },
     author: {
         fontWeight: 'bold'
@@ -15,16 +16,14 @@ export const InboxStyle = StyleSheet.create({
     excerpt: {
         flexDirection: 'row'
     },
-    avatar: {
-        marginLeft: 15, 
-        borderRadius: 25, 
-        width: 30, 
-        height: 30,
-        borderWidth: 1,
-        borderColor: 'white'
-    },
     newMail: {
         color: 'white',
         paddingRight: 15
+    },
+    hiddenButtons: {
+        flex: 1, 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        width: 75
     }
 })

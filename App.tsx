@@ -21,9 +21,6 @@ const AppNavigator = StackNavigator({
   ReadMail: { screen: ReadMail }
 },
 {
-  cardStyle: {
-    paddingTop: Platform.OS === 'ios' ? 0 : StatusBar.currentHeight
-  },
   headerMode: 'screen'
 } as any);
 

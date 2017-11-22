@@ -1,4 +1,4 @@
-import { ImagePicker } from 'expo';
+//import { ImagePicker } from 'expo';
 import { Conf } from '../../Conf';
 
 export class DocFile{
@@ -7,13 +7,13 @@ export class DocFile{
     path: string;
 
     async openCamera(){
-        const pickerResult = await ImagePicker.launchCameraAsync({
+        /*const pickerResult = await ImagePicker.launchCameraAsync({
             allowsEditing: false,
             quality: 0.7
         });
         
         this.uri = pickerResult.uri;
-        this.base64 = pickerResult.base64
+        this.base64 = pickerResult.base64*/
     }
 
     async uploadImage(){

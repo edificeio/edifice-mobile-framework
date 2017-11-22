@@ -41,7 +41,7 @@ export class ReadMail extends React.Component<{ navigation: any }, ReadMailState
 
     render(){
         return (
-            <KeyboardAvoidingView behavior={ 'padding' } style={ ReadMailStyle.view } keyboardVerticalOffset={ StyleConf.navbarheight }>
+            <KeyboardAvoidingView style={ ReadMailStyle.view } keyboardVerticalOffset={ StyleConf.navbarheight }>
                 <WebView style={ ReadMailStyle.webview } source={ { html: this.state.html, baseUrl: 'web/' } } ref={(webView) => this.webView = webView} />
                 <View style={ ReadMailStyle.inputView }>
                     <TouchableHighlight onPress={ () => this.openCamera() } style={ { backgroundColor: '#fff' } } underlayColor={ '#fff' }>

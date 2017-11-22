@@ -5,18 +5,27 @@ import { Thread } from './Thread';
 
 class Inbox{
     threads: Thread[];
-    page: number = -1;
+    page: number = 0;
     lastPage: boolean;
+    isSyncing;
 
     async sync(){
-        console.log('syncing')
+       
         if(!this.threads){
             this.threads = [];
         }
-        this.page ++;
+
+        if(this.isSyncing){
+            return;
+        }
+
+        this.isSyncing = true;
+        console.log('syncing')
+        
         const response = await fetch(`${ Conf.platform }/conversation/list/inbox?page=${this.page}`);
         const data = await response.json();
-        console.log(data)
+        console.log(this.page)
+        this.page ++;
         
         if(data.length === 0){
             this.lastPage = true;
@@ -35,6 +44,8 @@ class Inbox{
                 thread.addMail(data[i]);
             }
         }
+        
+        this.isSyncing = false;
         if(this.threads.length < 40){
             await this.sync();
         }

@@ -1,5 +1,6 @@
 export const StyleConf = {
     primary: '#414c94',
+    accent: '#ec5d61',
     navbarheight: 64
 };
 
