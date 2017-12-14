@@ -7,6 +7,7 @@ import { View } from 'react-native';
 import { StyleSheet, ActivityIndicator, Platform, StatusBar } from 'react-native';
 import { ReadMail } from './conversation/ReadMail';
 import { StyleConf } from './StyleConf';
+import { Timeline } from './timeline/Timeline';
 
 const mainStyle = StyleSheet.create({
     spinner: {
@@ -18,7 +19,8 @@ const mainStyle = StyleSheet.create({
 
 const AppNavigator = StackNavigator({
   Inbox: { screen: Inbox },
-  ReadMail: { screen: ReadMail }
+  ReadMail: { screen: ReadMail },
+  Timeline: { screen: Timeline }
 },
 {
   headerMode: 'screen'

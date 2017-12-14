@@ -28,7 +28,6 @@ export class Avatar extends React.Component<{ userId: string }, { loaded: boolea
         const response = await RNFetchBlob.fetch('GET', `${ Conf.platform }/userbook/avatar/${ this.props.userId }?thumbnail=48x48`);
         this.base64Str = response.base64();
         this.setState({ loaded: true });
-        console.log(this.base64Str)
     }
     
     render(){

@@ -6,6 +6,7 @@ import { ReadMailStyle } from './styles/ReadMail';
 import { StyleConf, navOptions } from '../StyleConf';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { DocFile } from '../workspace/model/Document';
+import { Portal } from "../components/Portal";
 
 interface ReadMailState{
     newMessage: string,
@@ -14,7 +15,6 @@ interface ReadMailState{
 }
 
 export class ReadMail extends React.Component<{ navigation: any }, ReadMailState> {
-    dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     document: DocFile;
     thread: Thread;
     webView: any;
@@ -41,15 +41,17 @@ export class ReadMail extends React.Component<{ navigation: any }, ReadMailState
 
     render(){
         return (
-            <KeyboardAvoidingView style={ ReadMailStyle.view } keyboardVerticalOffset={ StyleConf.navbarheight }>
-                <WebView style={ ReadMailStyle.webview } source={ { html: this.state.html, baseUrl: 'web/' } } ref={(webView) => this.webView = webView} />
-                <View style={ ReadMailStyle.inputView }>
-                    <TouchableHighlight onPress={ () => this.openCamera() } style={ { backgroundColor: '#fff' } } underlayColor={ '#fff' }>
-                        <Icon name="camera" size={ 30 } color={ StyleConf.primary } style={ ReadMailStyle.icon } />
-                    </TouchableHighlight>
-                    <TextInput underlineColorAndroid="transparent" placeholder="Ecrivez un message..." style={ ReadMailStyle.input } onChangeText={(value) => this.setState({ newMessage: value }) } />
-                </View>
-            </KeyboardAvoidingView>
+            <Portal navigation={ this.props.navigation }>
+                <KeyboardAvoidingView style={ ReadMailStyle.view } keyboardVerticalOffset={ StyleConf.navbarheight }>
+                    <WebView style={ ReadMailStyle.webview } source={ { html: this.state.html, baseUrl: 'web/' } } ref={(webView) => this.webView = webView} />
+                    <View style={ ReadMailStyle.inputView }>
+                        <TouchableHighlight onPress={ () => this.openCamera() } style={ { backgroundColor: '#fff' } } underlayColor={ '#fff' }>
+                            <Icon name="camera" size={ 30 } color={ StyleConf.primary } style={ ReadMailStyle.icon } />
+                        </TouchableHighlight>
+                        <TextInput underlineColorAndroid="transparent" placeholder="Ecrivez un message..." style={ ReadMailStyle.input } onChangeText={(value) => this.setState({ newMessage: value }) } />
+                    </View>
+                </KeyboardAvoidingView>
+            </Portal>
         )
     }
 }

@@ -30,6 +30,7 @@
     "react-native": "0.49.5",
     "react-native-fetch-blob": "git+https://github.com/wkh237/react-native-fetch-blob.git#master",
     "react-native-fs": "^2.8.1",
+    "react-native-swipeable": "^0.6.0",
     "react-native-swipeout": "^2.3.1",
     "react-native-vector-icons": "^4.4.2",
     "react-navigation": "^1.0.0-beta.15",

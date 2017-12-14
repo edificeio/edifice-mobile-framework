@@ -2,6 +2,7 @@ import { Mail } from './Mail';
 import HTMLParser from 'fast-html-parser';
 import { WebViewCSS } from '../styles/ReadMail';
 import { Conf } from '../../Conf';
+import { Mix } from 'entcore-toolkit';
 
 export class Thread{
     id: string;
@@ -41,14 +42,14 @@ export class Thread{
         if(this.mails.find(m => m.id === mail.id)){
             return;
         }
-        this.mails.push(mail);
+        this.mails.push(Mix.castAs(Mail, mail));
     }
 
     temporarySendImage(uri: string, webView: any){
-        this.addMail({
+        this.addMail(Mix.castAs(Mail, {
             body: `<div class="mobile-app-image"><img src="${uri}" /></div>`,
             id: 'temp'
-        });
+        }));
     }
 
     async sendImage(imagePath: string){
@@ -73,7 +74,7 @@ export class Thread{
     }
 
     fromJSON(data){
-        var root = HTMLParser.parse(data.body);
+        const root = HTMLParser.parse(data.body);
         this.excerpt = root.structuredText.replace(/\n/g, ' ').substring(0, 100);
         this.author = {
             userId: data.from,
