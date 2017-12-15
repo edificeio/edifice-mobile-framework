@@ -11,7 +11,8 @@
         "types": [
             "core-js", "react", "react-native",
             "react-navigation"
-        ]
+        ],
+        "outDir": "."
     },
     "exclude": [
         "node_modules"
