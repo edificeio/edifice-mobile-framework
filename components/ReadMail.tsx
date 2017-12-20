@@ -1,12 +1,12 @@
 import * as React from "react";
 import { View, ListView, WebView, ListViewDataSource, Text, ActivityIndicator, TextInput, KeyboardAvoidingView, TouchableHighlight, Image } from 'react-native';
-import { Conversation } from './model/Conversation';
-import { Thread } from './model/Thread';
-import { ReadMailStyle } from './styles/ReadMail';
-import { StyleConf, navOptions } from '../StyleConf';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { DocFile } from '../workspace/model/Document';
 import { Portal } from "../components/Portal";
+import { Thread } from "../model/Thread";
+import { Conversation } from "../model/Conversation";
+import { ReadMailStyle } from "../styles/ReadMail";
+import { StyleConf, navOptions } from "../styles/StyleConf";
+import { DocFile } from "../model/Document";
 
 interface ReadMailState{
     newMessage: string,

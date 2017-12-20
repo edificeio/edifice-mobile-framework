@@ -1,7 +1,7 @@
 import * as React from "react";
 import { View, TextInput, Button } from 'react-native';
-import { me } from './model/User';
-import { LoginFormStyle } from './styles/LoginForm';
+import { LoginFormStyle } from "../styles/LoginForm";
+import { me } from "../model/User";
 
 export class Login extends React.Component<{ onLogin: () => void }, undefined> {
     static navigationOptions = {

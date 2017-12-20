@@ -1,9 +1,9 @@
 import * as React from "react";
 import { ListView, View } from "react-native";
-import { navOptions } from "../StyleConf";
 import { Portal } from "../components/Portal";
 import { NavigationActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { navOptions } from "../styles/StyleConf";
 
 export class Timeline extends React.Component<{ navigation: any }, { dataSource: any }> {
     dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});

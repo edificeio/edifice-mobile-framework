@@ -1,5 +1,6 @@
-//import { ImagePicker } from 'expo';
-import { Conf } from '../../Conf';
+import { Conf } from "../Conf";
+
+
 
 export class DocFile{
     uri: string;
@@ -38,4 +39,10 @@ export class DocFile{
         const file = await response.json();
         this.path = `${Conf.platform}/workspace/document/${file._id}`
     }
+}
+
+export class Workspace {
+    static myDocuments;
+    static appDocuments;
+    static publicDocuments;
 }

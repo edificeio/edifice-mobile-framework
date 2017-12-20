@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { StyleConf } from '../../StyleConf';
+import { StyleConf } from './StyleConf';
 
 export const ReadMailStyle = StyleSheet.create({
     view: {

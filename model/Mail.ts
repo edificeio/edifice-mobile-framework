@@ -1,6 +1,5 @@
 import { Platform } from 'react-native';
-import { Conf } from '../../Conf';
-import { HTMLAdaptator, adaptator } from '../../infra/HTMLAdaptator';
+import { adaptator } from '../infra/HTMLAdaptator';
 
 export class Mail{
     id?: string;

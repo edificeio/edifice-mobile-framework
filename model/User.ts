@@ -1,5 +1,6 @@
-import { Conf } from '../../Conf';
+
 import { Image } from 'react-native';
+import { Conf } from '../Conf';
 
 class User {
     email: string;
@@ -15,8 +16,6 @@ class User {
         try{
             const data = await response.json();
             this.userinfo = data;
-            const res = await Image.prefetch('https://preprod-paris.opendigitaleducation.com/workspace/document/22f5b939-0d53-4e76-99fc-891b3d6abf34?thumbnail=381x381&');
-            console.log(res);
             console.log(this.userinfo);
             this.loggedIn = true;
         }

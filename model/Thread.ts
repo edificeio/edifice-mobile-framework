@@ -1,8 +1,8 @@
 import { Mail } from './Mail';
 import HTMLParser from 'fast-html-parser';
 import { WebViewCSS } from '../styles/ReadMail';
-import { Conf } from '../../Conf';
 import { Mix } from 'entcore-toolkit';
+import { Conf } from '../Conf';
 
 export class Thread{
     id: string;

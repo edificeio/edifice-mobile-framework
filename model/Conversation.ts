@@ -1,13 +1,22 @@
 import { Mail } from './Mail';
-import { Conf } from '../../Conf';
-import { Mix } from 'entcore-toolkit';
+import { Mix, Eventer } from 'entcore-toolkit';
 import { Thread } from './Thread';
+import { Conf } from '../Conf';
+import { ListViewDataSource, ListView } from 'react-native';
+import { appModel } from './AppModel';
 
 class Inbox{
     threads: Thread[];
     page: number = 0;
     lastPage: boolean;
     isSyncing;
+    dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+
+    async loadNext(){
+        if(!this.lastPage){
+            await this.sync();
+        }
+    }
 
     async sync(){
        
@@ -49,6 +58,8 @@ class Inbox{
         if(this.threads.length < 40){
             await this.sync();
         }
+        this.dataSource = this.dataSource.cloneWithRows(this.threads);
+        appModel.eventer.trigger('change');
     }
 }
 

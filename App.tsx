@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { StackNavigator, NavigationActions } from 'react-navigation';
-import { Login } from './auth/Login';
-import { Inbox } from './conversation/Inbox';
-import { me } from './auth/model/User';
 import { View } from 'react-native';
 import { StyleSheet, ActivityIndicator, Platform, StatusBar } from 'react-native';
-import { ReadMail } from './conversation/ReadMail';
-import { StyleConf } from './StyleConf';
-import { Timeline } from './timeline/Timeline';
+import { Inbox } from './components/Inbox';
+import { ReadMail } from './components/ReadMail';
+import { Timeline } from './components/Timeline';
+import { me } from './model/User';
+import { StyleConf } from './styles/StyleConf';
+import { Login } from './components/Login';
+
 
 const mainStyle = StyleSheet.create({
     spinner: {
