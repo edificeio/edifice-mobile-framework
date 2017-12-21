@@ -1,4 +1,4 @@
-import { Conf } from "../Conf";
+import { Conf } from "../../Conf";
 
 
 

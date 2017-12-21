@@ -1,3 +1,4 @@
 import { AppRegistry } from 'react-native';
-import App from './App';
-AppRegistry.registerComponent('mobileapp', () => App);
+import { AppStore } from './app/AppStore';
+
+AppRegistry.registerComponent('mobileapp', () => AppStore);

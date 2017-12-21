@@ -1,9 +1,8 @@
 import * as React from "react";
-import { View, ListView, WebView, ListViewDataSource, Text, ActivityIndicator, TextInput, KeyboardAvoidingView, TouchableHighlight, Image } from 'react-native';
+import { View, WebView, TextInput, KeyboardAvoidingView, TouchableHighlight } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Portal } from "../components/Portal";
+import { Portal } from "./Portal";
 import { Thread } from "../model/Thread";
-import { Conversation } from "../model/Conversation";
 import { ReadMailStyle } from "../styles/ReadMail";
 import { StyleConf, navOptions } from "../styles/StyleConf";
 import { DocFile } from "../model/Document";
@@ -14,7 +13,7 @@ interface ReadMailState{
     imagePath: string;
 }
 
-export class ReadMail extends React.Component<{ navigation: any }, ReadMailState> {
+export class ReadMail extends React.Component<{ navigation: any, inbox: any }, ReadMailState> {
     document: DocFile;
     thread: Thread;
     webView: any;
@@ -23,7 +22,7 @@ export class ReadMail extends React.Component<{ navigation: any }, ReadMailState
 
     constructor(props){
         super(props);
-        this.thread = Conversation.inbox.threads.find(t => t.id === props.navigation.state.params.id);
+        this.thread = props.inbox.threads.find(t => t.id === props.navigation.state.params.id);
         this.document = new DocFile();
         this.state = {
             newMessage: '',

@@ -1,6 +1,6 @@
 import RNFetchBlob from 'react-native-fetch-blob'
 import * as React from 'react';
-import { Conf } from '../Conf';
+import { Conf } from '../../Conf';
 import { StyleSheet, Image, View } from 'react-native';
 
 const style = StyleSheet.create({

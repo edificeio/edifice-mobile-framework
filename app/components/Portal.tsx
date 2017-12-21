@@ -1,6 +1,6 @@
 import RNFetchBlob from 'react-native-fetch-blob'
 import * as React from 'react';
-import { Conf } from '../Conf';
+import { Conf } from '../../Conf';
 import { StyleSheet, Image, View, TouchableHighlight, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 

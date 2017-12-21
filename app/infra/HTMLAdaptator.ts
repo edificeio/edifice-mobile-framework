@@ -1,5 +1,5 @@
 import HTMLParser from 'fast-html-parser';
-import { Conf } from '../Conf';
+import { Conf } from '../../Conf';
 
 export class HTMLAdaptator{
     html: string;

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { ListView, View } from "react-native";
-import { Portal } from "../components/Portal";
+import { Portal } from "./Portal";
 import { NavigationActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { navOptions } from "../styles/StyleConf";
