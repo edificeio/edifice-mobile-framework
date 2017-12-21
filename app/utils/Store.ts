@@ -19,7 +19,8 @@ export async function getLogin() {
 let seqNumber = 0;
 
 /** calculate seq number ***/
-export function getSeqNumber() {
-  return ++seqNumber;
+export function getSeqNumber() : string {
+  seqNumber++
+  return seqNumber.toString();
 }
 
