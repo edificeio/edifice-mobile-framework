@@ -35,9 +35,9 @@ function rawFetchFormDataPromise(url, method = 'post', payload = '') {
   const fullPath = ROOT_PATH + url
   const opts = {
     method,
-    headers: {
+    headers: new Headers({
       'Content-type': 'multipart/form-data'
-    },
+    }),
     body: getFormData(payload)
   }
 
@@ -48,10 +48,10 @@ function rawFetchPromise(url, method = 'GET', payload = undefined) {
   const fullPath = ROOT_PATH + url
   const opts = {
     method,
-    headers: {
+    headers: new Headers({
         Accept: 'application/json',
         'Content-Type': 'application/json',
-    },
+    }),
   }
 
   if (payload !== undefined)  opts['body'] = JSON.stringify(payload)
