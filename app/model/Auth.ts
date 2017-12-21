@@ -5,10 +5,10 @@ import {CREATE_SUCCESS} from "../constants/docs";
 
 
 const initialState = {
-    email: string = '',
-    password: string = '',
-    loggedIn: boolean = false,
-    synced: boolean = true,
+    email: '',
+    password: '',
+    loggedIn: false,
+    synced: true,
 }
 
 
