@@ -1,5 +1,7 @@
 export const PATH_CONVERSATION = 'conversation/list/inbox?page=$1'
 
+export const PATH_DOCUMENT = 'workspace/documents'
+
 export const PATH_SIGNUP = 'auth/signup'
 export const PATH_LOGIN = 'auth/login'
 export const PATH_LOGOUT = 'auth/logout'

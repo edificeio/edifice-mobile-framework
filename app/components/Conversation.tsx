@@ -6,6 +6,7 @@ import Swipeable from 'react-native-swipeable';
 import { Portal } from "./Portal";
 import { InboxStyle } from "../styles/Inbox";
 import {getSeqNumber} from "../utils/Store"
+import {navOptions} from "../styles/StyleConf";
 
 const swipeoutBtns = [
     <View style={ InboxStyle.hiddenButtons }><Icon name="notifications-off" size={ 30 } /></View>,
@@ -13,6 +14,11 @@ const swipeoutBtns = [
 ];
 
 export class Conversation extends React.Component<{ inbox: any, navigation: any, readConversation: Function }> {
+    static navigationOptions = () => {
+        return navOptions('Conversation', {
+            headerLeft: <Icon name="mail-outline" size={ 30 } />,
+            headerRight: <Icon name="mail-outline" size={ 30 } />
+        })};
 
     componentWillMount(){
         this.props.readConversation(0);

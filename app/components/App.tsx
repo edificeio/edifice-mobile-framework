@@ -4,7 +4,7 @@ import { StackNavigator } from 'react-navigation';
 import { StyleSheet, ActivityIndicator, } from 'react-native';
 import Conversation from '../connectors/Conversation';
 import ReadMail from '../connectors/ReadMail';
-import { Timeline } from './Timeline';
+import Timeline from '../connectors/Timeline';
 import { StyleConf } from '../styles/StyleConf';
 import { Login } from './Login';
 
@@ -18,7 +18,7 @@ const mainStyle = StyleSheet.create({
 })
 
 const AppNavigator = StackNavigator({
-        Inbox: { screen: Conversation },
+        Conversation: { screen: Conversation },
         ReadMail: { screen: ReadMail },
         Timeline: { screen: Timeline }
     },

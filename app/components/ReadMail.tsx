@@ -5,7 +5,7 @@ import { Portal } from "./Portal";
 import { Thread } from "../model/Thread";
 import { ReadMailStyle } from "../styles/ReadMail";
 import { StyleConf, navOptions } from "../styles/StyleConf";
-import { DocFile } from "../model/Document";
+import { DocFile } from "../model/Documents";
 
 interface ReadMailState{
     newMessage: string,

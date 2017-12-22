@@ -1,48 +1,46 @@
 import * as React from "react";
-import { ListView, View } from "react-native";
+import { View, Text, FlatList, TouchableNativeFeedback } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Portal } from "./Portal";
-import { NavigationActions } from 'react-navigation';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { navOptions } from "../styles/StyleConf";
-import { MediaLibrary } from "../../entcore/workspace";
+import { InboxStyle } from "../styles/Inbox";
+import {getSeqNumber} from "../utils/Store"
+import {navOptions} from "../styles/StyleConf";
+import {Filter} from "../actions/documents"
 
-export class Timeline extends React.Component<{ navigation: any }, { dataSource: any }> {
-    dataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-
+export class Timeline extends React.Component<{ documents: any, navigation: any, readDocumentsFilter: Function }> {
     static navigationOptions = () => {
-        return navOptions('Nouveautés', { 
-        headerLeft: <Icon name="mail-outline" size={ 30 } />,
-        headerRight: <Icon name="mail-outline" size={ 30 } />
-    })};
+        return navOptions('Conversation', {
+            headerLeft: <Icon name="mail-outline" size={ 30 } />,
+            headerRight: <Icon name="mail-outline" size={ 30 } />
+        })};
 
-    constructor(props){
-        super(props);
-        this.state = {
-            dataSource: this.dataSource.cloneWithRows([])
-        };
-        this.start();
+    componentWillMount(){
+        this.props.readDocumentsFilter(Filter.Shared);
     }
 
-    async start(){
-        await MediaLibrary.sharedDocuments.sync();
-        console.log(MediaLibrary.sharedDocuments.documents.all.map(d => d.myRights));
-    }
-
-    loadNext(){}
-
-    render(){
+    renderItem(item) {
         return (
-            <Portal navigation={ this.props.navigation }>
-                <ListView
-                    dataSource={ this.state.dataSource }
-                    renderRow={ (thread) => (
-                        <View>
-                        </View>
-                        
-                    )}
-                    onEndReached={ () => this.loadNext() }
+            <TouchableNativeFeedback>
+                <View style={InboxStyle.mailRow}>
+                    <View>
+                        <Text style={InboxStyle.author}>sss</Text>
+                    </View>
+                </View>
+            </TouchableNativeFeedback>
+        )
+    }
+
+    render() {
+        const {documents, navigation } = this.props;
+
+        return (
+            <Portal navigation={ navigation }>
+                <FlatList
+                    data={ documents }
+                    keyExtractor={document => getSeqNumber()}
+                    renderItem={({ item }) => this.renderItem(item)}
                 />
             </Portal>
-        )
+        );
     }
 }

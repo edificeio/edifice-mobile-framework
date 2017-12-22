@@ -5,8 +5,10 @@ import { model } from './modelDefinitions';
 import { Rights, Shareable } from './rights';
 import { Me } from './me';
 import moment from 'moment/src/moment.js';
+import {Conf} from "../Conf";
 
-const maxFileSize = Infinity;//parseInt(lang.translate('max.file.size'));
+const maxFileSize = Infinity;//
+
 
 class Quota {
     max: number;
@@ -40,7 +42,7 @@ class Quota {
     }
 
     async refresh (): Promise<void> {
-        const response = await http.get('/workspace/quota/user/' + model.me.userId);
+        const response = await http.get(`${Conf.platform}/workspace/quota/user/${model.me.userId}`);
         const data = response.data;
         //to mo
         data.quota = data.quota / (1024 * 1024);
@@ -126,7 +128,7 @@ export class Document implements Selectable, Shareable {
     }
 
     async delete(){
-        await http.delete('/workspace/document/' + this._id);
+        await http.delete(`${Conf.platform}/workspace/document/${this._id}`);
     }
 
     abort(){
@@ -144,7 +146,7 @@ export class Document implements Selectable, Shareable {
     }
 
     async loadProperties(){
-        const response = await http.get(`/workspace/document/properties/${ this._id }`);
+        const response = await http.get(`${Conf.platform}/workspace/document/properties/${ this._id }`);
         var dotSplit = response.data.name.split('.');
         this.metadata.extension = dotSplit[dotSplit.length - 1];
         if (dotSplit.length > 1) {
@@ -176,7 +178,7 @@ export class Document implements Selectable, Shareable {
             this.name = this.newProperties.name;
             this.alt = this.newProperties.alt;
             this.legend = this.newProperties.legend;
-            await http.put('/workspace/rename/document/' + this._id, this.newProperties);
+            await http.put(`${Conf.platform}/workspace/rename/document/${this._id}`, this.newProperties);
         }
         
         await this.applyBlob();
@@ -231,7 +233,7 @@ export class Document implements Selectable, Shareable {
 		this.owner = { userId: data.owner, displayName: data.ownerName };
 
 		this.version = parseInt(Math.random() * 100);
-		this.link = '/workspace/document/' + this._id;
+		this.link = `${Conf.platform}/workspace/document/` + this._id;
 		if(this.metadata && this.metadata.role === 'img'){
 			this.icon = this.link;
 		}
@@ -274,7 +276,7 @@ export class Document implements Selectable, Shareable {
         this.title = file.name;
         this.newProperties.name = this.title.replace('.' + this.metadata.extension, '');
         this.xhr = new XMLHttpRequest();
-        let path = '/workspace/document?' + visibilityPath;
+        let path = `${Conf.platform}/workspace/document?${visibilityPath}`;
         if(this.role() === 'img'){
             path += '&quality=1&' + MediaLibrary.thumbnails;
         }
@@ -338,7 +340,7 @@ export class Document implements Selectable, Shareable {
             newName += '.' + this.metadata.extension;
         }
         formData.append('file', blob, newName);
-        await http.put(`/workspace/document/${this._id}?${MediaLibrary.thumbnails}&quality=1`, formData);
+        await http.put(`${Conf.platform}/workspace/document/${this._id}?${MediaLibrary.thumbnails}&quality=1`, formData);
         this.currentQuality = 1;
         this.version = Math.floor(Math.random() * 100);
         this.eventer.trigger('save');
@@ -388,7 +390,7 @@ export class Document implements Selectable, Shareable {
     }
 
     async trash(): Promise<any> {
-        const response = await http.put('/workspace/document/trash/' + this._id);
+        const response = await http.put(`${Conf.platform}/workspace/document/trash/${this._id}`);
     }
 }
 
@@ -423,7 +425,7 @@ export class Folder implements Selectable{
         this.folders.all.splice(0, this.folders.all.length);
         this.addFolders();
         this.folders.all.forEach(f => f.addFolders());
-        const response = await http.get('/workspace/documents/' + this.folder + '?filter=owner&hierarchical=true');
+        const response = await http.get(`${Conf.platform}/workspace/documents/${this.folder}?filter=owner&hierarchical=true`);
         this.documents.all.splice(0, this.documents.all.length);
         this.documents.addRange(Mix.castArrayAs(Document, response.data.filter(doc => doc.folder !== 'Trash')));
 
@@ -432,13 +434,13 @@ export class Folder implements Selectable{
 
 export class MyDocuments extends Folder{
     async sync(){
-        const response = await http.get('/workspace/folders/list?filter=owner');
+        const response = await http.get(`${Conf.platform}/workspace/folders/list?filter=owner`);
         this.folders.all.splice(0, this.folders.all.length);
         MediaLibrary.foldersStore = response.data;
         this.folders.addRange(Mix.castArrayAs(Folder, response.data.filter((folder) => folder.folder.indexOf('_') === -1 )));
         this.folders.all.forEach(f => f.addFolders());
         this.documents.all.splice(0, this.documents.all.length);
-        const docResponse = await http.get('/workspace/documents?filter=owner&hierarchical=true');
+        const docResponse = await http.get(`${Conf.platform}/workspace/documents?filter=owner&hierarchical=true`);
         this.documents.addRange(Mix.castArrayAs(Document, docResponse.data.filter(doc => doc.folder !== 'Trash')));
         MediaLibrary.eventer.trigger('sync');
     }
@@ -446,7 +448,7 @@ export class MyDocuments extends Folder{
 
 class SharedDocuments extends Folder{
     async sync(){
-        const docResponse = await http.get('/workspace/documents?filter=shared');
+        const docResponse = await http.get( `${Conf.platform}/workspace/documents?filter=shared`);
         this.documents.all.splice(0, this.documents.all.length);
         this.documents.addRange(Mix.castArrayAs(Document, docResponse.data.filter(doc => doc.folder !== 'Trash')));
         MediaLibrary.eventer.trigger('sync');
@@ -455,7 +457,7 @@ class SharedDocuments extends Folder{
 
 class AppDocuments extends Folder{
     async sync(){
-        const docResponse = await http.get('/workspace/documents?filter=protected');
+        const docResponse = await http.get(`${Conf.platform}/workspace/documents?filter=protected`);
         this.documents.all.splice(0, this.documents.all.length);
         this.documents.addRange(Mix.castArrayAs(Document, docResponse.data.filter(doc => doc.folder !== 'Trash')));
         MediaLibrary.eventer.trigger('sync');
@@ -464,7 +466,7 @@ class AppDocuments extends Folder{
 
 class PublicDocuments extends Folder{
     async sync(){
-        const docResponse = await http.get('/workspace/documents?filter=public');
+        const docResponse = await http.get(`${Conf.platform}/workspace/documents?filter=public`);
         this.documents.all.splice(0, this.documents.all.length);
         this.documents.addRange(Mix.castArrayAs(Document, docResponse.data.filter(doc => doc.folder !== 'Trash')));
         MediaLibrary.eventer.trigger('sync');

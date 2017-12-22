@@ -1,6 +1,23 @@
 import { Conf } from "../../Conf";
 
 
+import { PATH_DOCUMENT, matchs } from '../constants/paths'
+import {READ_SUCCESS} from '../constants/docs'
+
+
+const initialState = {
+    payload: [],
+    synced: true,
+}
+
+
+export function Documents(state = initialState, action) {
+    if (matchs([PATH_DOCUMENT], action.path) && action.type === READ_SUCCESS ) {
+        return { synced: true, payload: action.payload.filter(doc => doc.folder !== 'Trash')}
+    }
+    return state;
+}
+
 
 export class DocFile{
     uri: string;
@@ -39,10 +56,4 @@ export class DocFile{
         const file = await response.json();
         this.path = `${Conf.platform}/workspace/document/${file._id}`
     }
-}
-
-export class Workspace {
-    static myDocuments;
-    static appDocuments;
-    static publicDocuments;
 }

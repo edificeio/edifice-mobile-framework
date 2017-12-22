@@ -49,7 +49,7 @@ export class Portal extends React.Component<{ children: any, navigation: any }, 
                             <Text>Nouveautés</Text>
                         </View>
                     </TouchableHighlight>
-                    <TouchableHighlight style={ portal.menuItem }  onPress={ () => this.redirectTo('Inbox') }>
+                    <TouchableHighlight style={ portal.menuItem }  onPress={ () => this.redirectTo('Conversation') }>
                         <View>
                             <Icon name="mail-outline" size={ 30 } style={ portal.menuIcon } />
                             <Text>Conversation</Text>
