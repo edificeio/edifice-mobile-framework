@@ -18,12 +18,12 @@ export class Timeline extends React.Component<{ documents: any, navigation: any,
         this.props.readDocumentsFilter(Filter.Shared);
     }
 
-    renderItem(item) {
+    renderItem({title}) {
         return (
             <TouchableNativeFeedback>
                 <View style={InboxStyle.mailRow}>
                     <View>
-                        <Text style={InboxStyle.author}>sss</Text>
+                        <Text style={InboxStyle.author}>{title}</Text>
                     </View>
                 </View>
             </TouchableNativeFeedback>

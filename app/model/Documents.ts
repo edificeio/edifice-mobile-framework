@@ -3,6 +3,9 @@ import { Conf } from "../../Conf";
 
 import { PATH_DOCUMENT, matchs } from '../constants/paths'
 import {READ_SUCCESS} from '../constants/docs'
+import {Thread} from "./Thread";
+import {Mix} from "entcore-toolkit";
+import {Document} from "../../entcore/workspace"
 
 
 const initialState = {
@@ -13,7 +16,7 @@ const initialState = {
 
 export function Documents(state = initialState, action) {
     if (matchs([PATH_DOCUMENT], action.path) && action.type === READ_SUCCESS ) {
-        return { synced: true, payload: action.payload.filter(doc => doc.folder !== 'Trash')}
+        return { synced: true, payload: Mix.castArrayAs(Document, action.payload.filter(doc => doc.folder !== 'Trash'))}
     }
     return state;
 }

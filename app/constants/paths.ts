@@ -1,6 +1,6 @@
 export const PATH_CONVERSATION = 'conversation/list/inbox?page=$1'
 
-export const PATH_DOCUMENT = 'workspace/documents'
+export const PATH_DOCUMENT = 'workspace/documents?filter=$1'
 
 export const PATH_SIGNUP = 'auth/signup'
 export const PATH_LOGIN = 'auth/login'
@@ -28,6 +28,15 @@ export function match( path1, path2) {
     const token2 = tokens2[i]
 
     if (token1 === token2) continue
+
+    const index = token1.indexOf( '$')
+
+    if (index > 0) {
+        const subStr1 = token1.substr( 0, index)
+        const subStr2 = token2.substr( 0, index)
+
+        if (subStr1 === subStr2) return true
+    }
 
     if (token1[0] === '$') continue
 
