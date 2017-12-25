@@ -18,14 +18,17 @@
   "devDependencies": {
     "babel-preset-react-native-stage-0": "^1.0.1",
     "isomorphic-fetch": "^2.2.1",
-    "jest": "^22.0.3",
-    "react-test-renderer": "^16.2.0"
+    "jest": "^22.0.4",
+    "react-test-renderer": "^16.2.0",
+    "typescript": "next"
   },
   "dependencies": {
     "@types/core-js": "^0.9.43",
     "@types/react": "^16.0.22",
-    "@types/react-native": "^0.51.4",
+    "@types/react-native": "^0.51.7",
     "@types/react-navigation": "^1.0.22",
+    "@types/react-redux": "^5.0.14",
+    "@types/redux": "^3.6.0",
     "axios": "^0.17.1",
     "entcore-toolkit": "^1.0.1",
     "fast-html-parser": "^1.0.1",
@@ -37,14 +40,13 @@
     "react": "^16.2.0",
     "react-native": "^0.51.0",
     "react-native-fetch-blob": "git+https://github.com/wkh237/react-native-fetch-blob.git#master",
-    "react-native-fs": "^2.8.1",
+    "react-native-fs": "^2.9.6",
     "react-native-swipeable": "^0.6.0",
     "react-native-swipeout": "^2.3.1",
     "react-native-vector-icons": "^4.4.2",
     "react-navigation": "^1.0.0-beta.15",
     "react-redux": "^5.0.6",
     "redux": "^3.7.2",
-    "typescript": "^2.6.1",
     "util": "^0.10.3"
   }
 }

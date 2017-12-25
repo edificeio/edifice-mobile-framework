@@ -1,0 +1,28 @@
+import * as React from 'react'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { layoutSize } from '../../constants/layoutSize'
+import FontAwesomeIcons from 'react-native-vector-icons/FontAwesome';
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+
+export const FontAwesomeIcon = ({ name, size = layoutSize.LAYOUT_8, color = 'black', ...props }) => (
+  <FontAwesomeIcons name={name} size={size} color={color} {...props} />
+);
+
+export const SimpleLineIcon = ({ name, size = layoutSize.LAYOUT_8, color = 'white', ...props }) => (
+  <SimpleLineIcons name={name} size={size} color={color} {...props} />
+);
+
+export interface NavIconProps {
+    tintColor?: string,
+    name: string,
+    fontSize?: number | string,
+}
+
+export const NavIcon = ({ tintColor = 'white', name, fontSize = layoutSize.LAYOUT_8, ...props } : NavIconProps) => (
+  <MaterialCommunityIcons style={{ color: tintColor, fontSize }} name={name} {...props} />
+)
+
+export const NavSmallIcon = ({ tintColor = 'black', name, ...props }: NavIconProps) => (
+  <NavIcon tintColor={tintColor} name={name} fontSize={layoutSize.LAYOUT_7} {...props} />
+)
+

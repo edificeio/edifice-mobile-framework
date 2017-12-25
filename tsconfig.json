@@ -1,23 +1,19 @@
 {
     "compilerOptions": {
+        "allowSyntheticDefaultImports":true,
         "jsx": "react",
-        "jsxFactory": "React.createElement",
-        "target": "es6",
         "moduleResolution": "node",
-        "module": "es2015",
+        "outDir": "./build",                      /* Redirect output structure to the directory. */
+        "removeComments": true,                    /* Do not emit comments to output. */
+        "rootDir": "./src",                       /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
+        "sourceMap": true,                        /* Generates corresponding '.map' file. */
+        "target": "es6",
         "typeRoots": [
             "node_modules/@types"
         ],
         "types": [
             "core-js", "react", "react-native",
             "react-navigation"
-        ],
-        "outDir": "."
-    },
-    "exclude": [
-        "node_modules"
-    ],
-    "include": [
-        "./**/*.ts", "./**/*.tsx"
-    ]
+        ]
+    }
 }
