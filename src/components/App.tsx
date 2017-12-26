@@ -1,7 +1,7 @@
-import  { Component } from 'react'
 import * as React from 'react';
 import {addNavigationHelpers, NavigationDispatch, NavigationStackAction, StackNavigator} from 'react-navigation';
 import { StatusBar } from 'react-native';
+import SplashScreen from 'react-native-smart-splash-screen'
 import Conversation from '../connectors/Conversation';
 import ReadMail from '../connectors/ReadMail';
 import Timeline from '../connectors/Timeline';
@@ -27,7 +27,16 @@ export interface AppProps {
     navigation?: NavigationDispatch<NavigationStackAction>
 }
 
-export class App extends Component< AppProps, any> {
+export class App extends React.Component< AppProps, any> {
+
+    componentDidMount () {
+        //SplashScreen.close(SplashScreen.animationType.scale, 850, 500)
+        SplashScreen.close({
+            animationType: SplashScreen.animationType.scale,
+            duration: 850,
+            delay: 500,
+        })
+    }
 
     renderBody() {
         const {auth} = this.props
