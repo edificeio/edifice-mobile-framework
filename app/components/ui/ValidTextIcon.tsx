@@ -30,15 +30,16 @@ export const ValidTextIcon = ({
   leftName = '',
   onPress,
   rightName = '',
-  style = disabled ? styles.validButtonStyleDisabled : styles.validButtonStyle,
+  style = styles.validButtonStyle,
   title = '',
   whiteSpace = ' ',
 } : ValidTextIconProps) => {
   const disable = isLoading(isLoadings) || disabled
-  return (
-    <View style={styles.validTextIcon}>
+    const buttonStyle = disable ? styles.validButtonStyleDisabled : style
+    return (
+    <View style={styles.validButtonStyleWrapper}>
       <TouchableOpacity onPress={onPress} disabled={disable}>
-        <Text style={style}>
+        <Text style={buttonStyle}>
           {leftName.length > 0 && <NavIcon name={leftName} fontSize={fontSize} />}
           {whiteSpace}
           {title}

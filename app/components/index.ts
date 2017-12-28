@@ -15,8 +15,11 @@ import ValidTextIcon  from '../connectors/components/ui/ValidTextIcon'
 import { Label } from './ui/Label'
 import TextInputError from '../connectors/components/ui/TextInputError';
 import {ProgressBar} from './ui/ProgressBar'
+import { Logo } from './ui/logo/Logo';
+import { ButtonTextIcon } from './ui/ButtonTextIcon';
 
 export {
+  ButtonTextIcon,
   Col,
   Description,
   Disable,
@@ -27,6 +30,7 @@ export {
   FormValid,
   FontAwesomeIcon,
   Label,
+  Logo,
   NavIcon,
   NavIconProps,
   NavSmallIcon,

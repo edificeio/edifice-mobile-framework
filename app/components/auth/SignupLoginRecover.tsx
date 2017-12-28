@@ -1,4 +1,5 @@
 import * as React from "react"
+import {View} from 'react-native'
 import {Login} from './Login'
 import {RecoverPassword} from './RecoverPassword'
 import { Row} from '..'
@@ -29,15 +30,11 @@ export class SignupLoginRecover extends React.Component<SignupLoginRecoverProps,
     const { route } = this.state
 
     if (email.length > 0 && password.length > 0) {
-      return <Row>{this.props.children}</Row>
+      return <View>{this.props.children}</View>
     }
 
-    return (
-      <Row>
-        {route === 'login' && <Login onRoute={r => this.onRoute(r)} {...this.props} />}
-        {route === 'pass' && <RecoverPassword onRoute={r => this.onRoute(r)} {...this.props} />}
-      </Row>
-    )
+    if (route === 'login') return <Login onRoute={r => this.onRoute(r)} {...this.props} />
+    if (route === 'pass') return <RecoverPassword onRoute={r => this.onRoute(r)} {...this.props} />
   }
 }
 

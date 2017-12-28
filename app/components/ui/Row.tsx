@@ -5,14 +5,13 @@ import {TouchableOpacity, View, ViewProperties} from 'react-native'
 
 import { computeProps } from './Utils/computeProps'
 
-type State = {
-};
 
 export interface RowProperties extends ViewProperties {
     children: any
     height?: number
     marginTop?: number
     marginBottom?: number
+    minHeight?: number
     onPress?: (any) => void
     size?: number
     style?: any
@@ -20,7 +19,7 @@ export interface RowProperties extends ViewProperties {
 };
 
 
-export class Row extends React.Component< RowProperties, State >  {
+export class Row extends React.Component< RowProperties, any >  {
 
   prepareRootProps() {
     const type = {

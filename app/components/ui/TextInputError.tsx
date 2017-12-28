@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Text, TextInput} from 'react-native'
+import {Text, ScrollView, TextInput} from 'react-native'
 import styles, { inputBackColor, placeholderColor } from '../styles/index'
 import { Col, Row } from '..'
 import { layoutSize } from '../../constants/layoutSize'
@@ -19,7 +19,13 @@ export interface TextInputErrorProps {
     value?: string
 }
 
-export class TextInputError extends React.Component<TextInputErrorProps, any> {
+export interface TextInputErrorState {
+    value: string,
+    showDescription: boolean,
+    focus: boolean
+}
+
+export class TextInputError extends React.Component<TextInputErrorProps, TextInputErrorState> {
 
   static defaultProps = {
     editable: true,
@@ -36,9 +42,10 @@ export class TextInputError extends React.Component<TextInputErrorProps, any> {
     value: '',
   }
 
-  state = {
+  state : TextInputErrorState = {
       value: this.props.value,
       showDescription: false,
+      focus: false,
   }
 
 
@@ -58,23 +65,28 @@ export class TextInputError extends React.Component<TextInputErrorProps, any> {
     return ''
   }
 
+  onFocus() {
+      this.setState( {focus: true})
+      this.props.onFocus()
+  }
+
+  onBlur() {
+      this.setState( {focus: false})
+  }
+
   render() {
     const errMessage = this.hasErrorsMessage()
-    const {
-      label,
-      multiline,
-      secureTextEntry,
-      editable,
-      onFocus,
-    } = this.props
+    const { label, multiline, secureTextEntry, editable } = this.props
+    const {focus} = this.state
     const styleWrapper = errMessage.length > 0 ? styles.textInputErrorWrapper : styles.textInputWrapper
     const { style = multiline ? styles.textInputMulti : styles.textInput } = this.props
-    const underlineColor = errMessage.length > 0 ? 'red' : inputBackColor
+    const underlineColor = inputBackColor
+    const borderBottomColor =  focus ? '#00bcda' : errMessage.length > 0 ? 'red' : '#cccccc'
+
 
     return (
       <Row marginTop={layoutSize.LAYOUT_2} marginBottom={layoutSize.LAYOUT_2}>
-        <Row>
-          <Col style={styleWrapper}>
+          <Col style={styleWrapper} borderBottomColor={borderBottomColor} borderBottomWidth={focus || errMessage.length > 0 ? 2 : 1}>
             <TextInput
               autoCapitalize="none"
               editable={editable}
@@ -85,12 +97,12 @@ export class TextInputError extends React.Component<TextInputErrorProps, any> {
               multiline={multiline}
               secureTextEntry={secureTextEntry}
               onChangeText={value => this.onChangeText(value)}
-              onFocus={() => onFocus()}
+              onBlur={() => this.onBlur()}
+              onFocus={() => this.onFocus()}
               value={this.state.value}
             />
           </Col>
-        </Row>
-        {errMessage.length > 0 && (
+         {errMessage.length > 0 && (
           <Row>
             <Text style={styles.inputError}>{errMessage}</Text>
           </Row>

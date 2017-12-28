@@ -7,9 +7,10 @@ export const styles = StyleSheet.create({
   grid: {
       backgroundColor: CommonStyles.backgroundColor,
       justifyContent: 'center',
+      flex: 1,
+      marginHorizontal: layoutSize.LAYOUT_20,
   },
   inputsPanel: {
-    paddingLeft: layoutSize.LAYOUT_10,
     paddingTop: layoutSize.LAYOUT_10,
   },
   buttonPanel: {
@@ -22,9 +23,20 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  logo: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
+    margin: layoutSize.LAYOUT_10,
+  },
   text: {
     color: CommonStyles.fontColor,
-    fontSize: layoutSize.LAYOUT_7,
+    fontSize: layoutSize.LAYOUT_8,
+  },
+  minitext: {
+    color: CommonStyles.fontColor,
+    fontSize: layoutSize.LAYOUT_8,
+    textDecorationLine: 'underline',
   },
   textBoldOverride:{
     fontWeight: 'bold',

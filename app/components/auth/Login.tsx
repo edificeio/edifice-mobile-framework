@@ -1,13 +1,13 @@
 import * as React from "react";
-import {Text} from 'react-native'
+import {Text, KeyboardAvoidingView, View} from 'react-native'
 
-import { Form, FormHeader, FormInput, FormFooter, FormValid, Row, TextInputError, ValidTextIcon} from '..'
+import { Col, Form, FormHeader, FormInput, FormFooter, FormValid, Logo, Row, TextInputError, ValidTextIcon} from '..'
 import {AuthProps} from '../../model/Auth'
 
 import {styles} from './AuthScreensStyles'
 
+
 export interface LoginState {
-    route: string
     disabled: boolean
     email: string
     password: string
@@ -26,7 +26,6 @@ export class Login extends React.Component< LoginProps, LoginState> {
         const {email = '', password = ''} = this.props.auth
 
         this.state = {
-            route: 'Login',
             disabled : email.length === 0 || password.length === 0,
             email : '',
             password : '',
@@ -44,31 +43,35 @@ export class Login extends React.Component< LoginProps, LoginState> {
 
         return (
             <Form>
-                <FormInput>
+                <KeyboardAvoidingView behavior="padding">
+
+                    <Logo />
+
                     <TextInputError
-                        label="Email"
+                        label="Identifiant..."
                         value={email}
-                        onChange={username => this.onChange({username})}
+                        onChange={email => this.onChange({email})}
                     />
+
                     <TextInputError
-                        label="Mot de passe"
+                        label="Mot de passe..."
                         secureTextEntry
                         value={password}
                         onChange={password => this.onChange({password})}
                     />
-                </FormInput>
-                <FormValid>
+
                     <ValidTextIcon
                         onPress={e => login(email, password)}
                         disabled={this.state.disabled}
-                        title="Connexion"
+                        title="Se connecter"
                     />
-                </FormValid>
-                <FormFooter>
-                    <Row style={styles.line} onPress={e => onRoute('pass')}>
-                        <Text style={styles.text}>Mot de passe oublié?</Text>
-                    </Row>
-                </FormFooter>
+
+
+                    <Col size={1} style={styles.line} onPress={e => onRoute('pass')}>
+                        <Text style={styles.minitext}>Mot de passe oublié?</Text>
+                    </Col>
+                </KeyboardAvoidingView>
+
             </Form>
         )
     }

@@ -8,7 +8,11 @@ type State = {
 };
 
 export interface ColProperties extends ViewProperties  {
+    borderBottomColor?: string
+    borderBottomWidth?: number
+    flex?: number,
     marginTop?: number
+    minHeight?: number
     onPress?: (any) => void
     size?: number
     style?: any

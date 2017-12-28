@@ -23,9 +23,10 @@ export const inverseColor = '#ffffff'
 export const inputBackColor = '#ffffff'
 export const navigationColor = '#2a97f5'
 export const separatorColor = '#a0a0ff'
-export const placeholderColor = '#33333399'
+export const placeholderColor = '#88888899'
 export const titleColor = '#1467ff'
-export const actionColor = '#33e059'
+export const actionColor = '#0096CA'
+export const actionColorDisabled = '#0096CA70'
 export const selectColor = '#ffff00'
 export const surName = '#225577'
 export const textColor = '#222222'
@@ -45,7 +46,7 @@ export const tabBackgroundColor = navigationColor
 export const textInputColor = textColor
 export const title = titleColor
 export const validActionColor = actionColor
-export const validActionColorDisabled = colorDisabled
+export const validActionColorDisabled = actionColorDisabled
 export const annulRedActionColor = errorColor
 
 const styles = StyleSheet.create({
@@ -55,7 +56,7 @@ const styles = StyleSheet.create({
     right: 0,
     top: 0,
     bottom: 0,
-    backgroundColor: '#bbbbbbbb',
+    backgroundColor: 'transparent',
   },
   annulerCardBank: {
     marginTop: layoutSize.LAYOUT_4,
@@ -423,11 +424,12 @@ const styles = StyleSheet.create({
   },
   textInput: {
     color: textInputColor,
-    fontSize: Platform.OS === 'ios' ? layoutSize.LAYOUT_7 : layoutSize.LAYOUT_8,
+    fontSize: layoutSize.LAYOUT_8,
+    marginBottom: layoutSize.LAYOUT_MOINS_2,
   },
   textInputMulti: {
     color: textInputColor,
-    fontSize: Platform.OS === 'ios' ? layoutSize.LAYOUT_7 : layoutSize.LAYOUT_8,
+    fontSize: layoutSize.LAYOUT_8,
     height: layoutSize.LAYOUT_50,
   },
   dropdownStyle: {
@@ -436,17 +438,14 @@ const styles = StyleSheet.create({
   },
   textInputWrapper: {
     backgroundColor: inputBackColor,
-    borderColor,
-    borderRadius: 3,
-    borderWidth: 1,
-    padding: Platform.OS === 'ios' ? layoutSize.LAYOUT_3 : layoutSize.LAYOUT_0,
+    borderBottomColor: borderColor,
+    borderBottomWidth: 1,
   },
   textInputErrorWrapper: {
     backgroundColor: inputBackColor,
     borderColor: errorColor,
     borderRadius: 3,
     borderWidth: 1,
-    padding: Platform.OS === 'ios' ? layoutSize.LAYOUT_3 : layoutSize.LAYOUT_0,
   },
   pickerWrapper: {
     backgroundColor: inputBackColor,
@@ -570,21 +569,34 @@ const styles = StyleSheet.create({
     backgroundColor: validActionColor,
     color: inverseColor,
     fontSize: layoutSize.LAYOUT_8,
-    padding: layoutSize.LAYOUT_6,
-    fontWeight: '600',
+    paddingLeft: layoutSize.LAYOUT_18,
+    paddingRight: layoutSize.LAYOUT_18,
+    paddingTop: layoutSize.LAYOUT_4,
+    paddingBottom: layoutSize.LAYOUT_4,
+    borderRadius : layoutSize.LAYOUT_10,
+    fontWeight: '500',
   },
   validButtonStyleDisabled: {
     alignSelf: 'center',
-    backgroundColor: validActionColorDisabled,
-    color: inverseColor,
+    backgroundColor: 'transparent',
+    color: validActionColor,
     fontSize: layoutSize.LAYOUT_8,
-    padding: layoutSize.LAYOUT_6,
-    fontWeight: '600',
+    paddingLeft: layoutSize.LAYOUT_18,
+    paddingRight: layoutSize.LAYOUT_18,
+    paddingTop: layoutSize.LAYOUT_4,
+    paddingBottom: layoutSize.LAYOUT_4,
+    borderRadius : layoutSize.LAYOUT_10,
+    borderColor: validActionColor,
+    borderWidth: 1,
+    fontWeight: '500',
   },
-  validTextIcon: {
+  validButtonStyleWrapper: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: layoutSize.LAYOUT_3,
+    backgroundColor: backgroundColor,
+    borderRadius : layoutSize.LAYOUT_10,
+    marginTop: layoutSize.LAYOUT_20,
+    marginBottom: layoutSize.LAYOUT_10,
   }
 })
 

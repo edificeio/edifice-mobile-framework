@@ -3,9 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "react-native start",
     "android": "react-native run-android",
+    "apk": "cd android && ./gradlew assembleRelease",
+    "start": "react-native start",
     "ios": "react-native run-ios",
+    "private-key": "cd android/app && rm -f my-release-key.keystore && keytool -genkey -v -keystore my-release-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000",
     "test": "jest --watch",
     "tsc": "tsc -p tsconfig.json --watch"
   },
@@ -15,8 +17,13 @@
       "node_modules/(?!react-native|native-base|react-navigation|react-native-fabric)"
     ]
   },
+  "rnpm": {
+    "assets": [
+      "./assets/fonts/"
+    ]
+  },
   "devDependencies": {
-    "babel-preset-react-native-stage-0": "^1.0.1",
+    "babel-preset-react-native": "4.0.0",
     "isomorphic-fetch": "^2.2.1",
     "jest": "^22.0.4",
     "react-test-renderer": "^16.2.0",
@@ -39,6 +46,7 @@
     "r": "0.0.5",
     "react": "^16.2.0",
     "react-native": "^0.51.0",
+    "react-native-extended-stylesheet": "^0.8.0",
     "react-native-fetch-blob": "git+https://github.com/wkh237/react-native-fetch-blob.git#master",
     "react-native-fs": "^2.9.6",
     "react-native-smart-splash-screen": "^2.3.5",
