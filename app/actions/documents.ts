@@ -1,12 +1,11 @@
-import {PATH_DOCUMENT} from '../constants/paths'
-import {read} from './docs'
-import { replace1 } from '../constants/paths'
-
+import { PATH_DOCUMENT } from "../constants/paths"
+import { replace1 } from "../constants/paths"
+import { read } from "./docs"
 
 export enum Filter {
-    Shared = "shared",
-    Protected = "protected",
-    Public = "public",
+	Shared = "shared",
+	Protected = "protected",
+	Public = "public",
 }
 
 /**
@@ -14,5 +13,4 @@ export enum Filter {
  *
  * @param filter   type of filter to query documnts
  */
-export const readDocumentsFilter = (filter: Filter)  => read(replace1(PATH_DOCUMENT, filter), true)
-
+export const readDocumentsFilter = (filter: Filter) => read(replace1(PATH_DOCUMENT, filter), true)

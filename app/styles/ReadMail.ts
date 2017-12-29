@@ -1,34 +1,34 @@
-import { StyleSheet } from 'react-native';
-import { StyleConf } from './StyleConf';
+import { StyleSheet } from "react-native"
+import { StyleConf } from "./StyleConf"
 
 export const ReadMailStyle = StyleSheet.create({
-    view: {
-        width: '100%',
-        height: '100%',
-        flex: 1
-    },
-    webview: {
-        width: '100%',
-        flex: 1,
-        backgroundColor: '#eee'
-    },
-    inputView: {
-        height: 50,
-        width: '100%',
-        backgroundColor: '#fff',
-        flexDirection: 'row'
-    },
-    input: {
-        backgroundColor: '#fff',
-        height: 50,
-        borderWidth: 0,
-        borderColor: 'transparent',
-        flex: 1,
-        margin: 2
-    },
-    icon: {
-        margin: 10
-    }
+	icon: {
+		margin: 10,
+	},
+	input: {
+		backgroundColor: "#fff",
+		height: 50,
+		borderWidth: 0,
+		borderColor: "transparent",
+		flex: 1,
+		margin: 2,
+	},
+	inputView: {
+		height: 50,
+		width: "100%",
+		backgroundColor: "#fff",
+		flexDirection: "row",
+	},
+	view: {
+		width: "100%",
+		height: "100%",
+		flex: 1,
+	},
+	webview: {
+		width: "100%",
+		flex: 1,
+		backgroundColor: "#eee",
+	},
 })
 
 export const WebViewCSS = `
@@ -60,4 +60,4 @@ export const WebViewCSS = `
     img{
         max-width: 100%;
     }
-`;
+`

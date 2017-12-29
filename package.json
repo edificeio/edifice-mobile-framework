@@ -7,6 +7,9 @@
     "apk": "cd android && ./gradlew assembleRelease",
     "start": "react-native start",
     "ios": "react-native run-ios",
+    "prettier": "npm run prettier1 && npm run prettier2",
+    "prettier1": "prettier-tslint fix 'app/**/*.ts'",
+    "prettier2": "prettier-tslint fix 'app/**/*.tsx'",
     "private-key": "cd android/app && rm -f my-release-key.keystore && keytool -genkey -v -keystore my-release-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000",
     "test": "jest --watch",
     "tsc": "tsc -p tsconfig.json --watch"
@@ -23,10 +26,14 @@
     ]
   },
   "devDependencies": {
-    "babel-preset-react-native": "4.0.0",
     "isomorphic-fetch": "^2.2.1",
     "jest": "^22.0.4",
+    "npm-check": "^5.5.2",
+    "prettier": "^1.9.2",
+    "prettier-tslint": "^0.3.0",
     "react-test-renderer": "^16.2.0",
+    "tslint-config-prettier": "^1.6.0",
+    "tslint-plugin-prettier": "^1.3.0",
     "typescript": "next"
   },
   "dependencies": {
@@ -42,7 +49,6 @@
     "form-data": "^2.3.1",
     "jsdom": "^11.3.0",
     "moment": "^2.20.1",
-    "npm-check": "^5.5.2",
     "r": "0.0.5",
     "react": "^16.2.0",
     "react-native": "^0.51.0",

@@ -1,9 +1,9 @@
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import {ReadMail} from '../components/ReadMail'
+import { connect } from "react-redux"
+import { bindActionCreators } from "redux"
+import { ReadMail } from "../components/ReadMail"
 
-const mapStateToProps = (state) => ({
-    inbox: state.inbox,
+const mapStateToProps = state => ({
+	inbox: state.inbox,
 })
 
 const dispatchAndMapActions = dispatch => bindActionCreators({}, dispatch)

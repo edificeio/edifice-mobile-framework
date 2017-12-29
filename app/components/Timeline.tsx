@@ -1,52 +1,39 @@
-import * as React from "react";
-import { View, Text, FlatList, TouchableNativeFeedback } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import { Portal } from "./Portal";
-import { InboxStyle } from "../styles/Inbox";
-import {getSeqNumber} from "../utils/Store"
-import {navOptions} from "../styles/StyleConf";
-import {Filter} from "../actions/documents"
+import * as React from "react"
+import { FlatList, Text, TouchableNativeFeedback, View } from "react-native"
+import { Col } from "."
+import { Filter } from "../actions/documents"
+import { InboxStyle } from "../styles/Inbox"
+import { getSeqNumber } from "../utils/Store"
+import styles from "./styles"
 
 export interface TimelineProps {
-    documents: any
-    navigation: any
-    readDocumentsFilter: (Filter) => void
+	documents: any
+	navigation?: any
+	readDocumentsFilter: (Filter) => void
 }
 
 export class Timeline extends React.Component<TimelineProps, any> {
-    static navigationOptions = () => {
-        return navOptions('Conversation', {
-            headerLeft: <Icon name="mail-outline" size={ 30 } />,
-            headerRight: <Icon name="mail-outline" size={ 30 } />
-        })};
+	public componentWillMount() {
+		this.props.readDocumentsFilter(Filter.Shared)
+	}
 
-    componentWillMount(){
-        this.props.readDocumentsFilter(Filter.Shared);
-    }
+	public renderItem({ title }) {
+		return (
+			<TouchableNativeFeedback>
+				<View style={styles.item}>
+					<View>
+						<Text style={InboxStyle.author}>{title}</Text>
+					</View>
+				</View>
+			</TouchableNativeFeedback>
+		)
+	}
 
-    renderItem({title}) {
-        return (
-            <TouchableNativeFeedback>
-                <View style={InboxStyle.mailRow}>
-                    <View>
-                        <Text style={InboxStyle.author}>{title}</Text>
-                    </View>
-                </View>
-            </TouchableNativeFeedback>
-        )
-    }
+	public render() {
+		const { documents, navigation } = this.props
 
-    render() {
-        const {documents, navigation } = this.props;
-
-        return (
-            <Portal navigation={ navigation }>
-                <FlatList
-                    data={ documents }
-                    keyExtractor={() => getSeqNumber()}
-                    renderItem={({ item }) => this.renderItem(item)}
-                />
-            </Portal>
-        );
-    }
+		return (
+		    <FlatList data={documents} keyExtractor={() => getSeqNumber()} renderItem={({ item }) => this.renderItem(item)} style={styles.grid} />
+		)
+	}
 }

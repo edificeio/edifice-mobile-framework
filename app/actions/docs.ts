@@ -1,11 +1,15 @@
-import * as TYPES from '../constants/docs'
+import * as TYPES from "../constants/docs"
 
 /**
  * Read a REST resource
  *
  * @param {string} path       l'URI de la ressource
  */
-export const read = (path, synced = true) => ({ path, type: TYPES.READ, synced })
+export const read = (path, synced = true) => ({
+	path,
+	type: TYPES.READ,
+	synced,
+})
 
 /**
  * Rest read success
@@ -15,10 +19,10 @@ export const read = (path, synced = true) => ({ path, type: TYPES.READ, synced }
  * @param {object} payload          les données lus
  */
 export const readSuccess = (path, payload) => ({
-  payload,
-  path,
-  type: TYPES.READ_SUCCESS,
-  synced: false,
+	payload,
+	path,
+	type: TYPES.READ_SUCCESS,
+	synced: false,
 })
 
 /**
@@ -28,10 +32,10 @@ export const readSuccess = (path, payload) => ({
  * @param {number} id      id de la ressource
  */
 export const readId = (path, id, synced = true) => ({
-  path,
-  id,
-  type: TYPES.READ,
-  synced,
+	path,
+	id,
+	type: TYPES.READ,
+	synced,
 })
 
 /**
@@ -42,11 +46,11 @@ export const readId = (path, id, synced = true) => ({
  * @param {object} payload          les données lus
  */
 export const readIdSuccess = (path, id, payload) => ({
-  payload,
-  path,
-  id,
-  type: TYPES.READ_SUCCESS,
-  synced: false,
+	payload,
+	path,
+	id,
+	type: TYPES.READ_SUCCESS,
+	synced: false,
 })
 
 /**
@@ -56,10 +60,10 @@ export const readIdSuccess = (path, id, payload) => ({
  * @param {object} payload    données de la ressource
  */
 export const create = (path, payload, synced = true) => ({
-  payload,
-  path,
-  type: TYPES.CREATE,
-  synced,
+	payload,
+	path,
+	type: TYPES.CREATE,
+	synced,
 })
 
 /**
@@ -70,10 +74,10 @@ export const create = (path, payload, synced = true) => ({
  * @param {object} payload          les données lus
  */
 export const createSuccess = (path, payload) => ({
-  path,
-  payload,
-  type: TYPES.CREATE_SUCCESS,
-  synced: false,
+	path,
+	payload,
+	type: TYPES.CREATE_SUCCESS,
+	synced: false,
 })
 
 /**
@@ -83,10 +87,10 @@ export const createSuccess = (path, payload) => ({
  * @param {object} payload    données de la ressource contenant l'id de la ressource
  */
 export const update = (path, payload) => ({
-  path,
-  payload,
-  type: TYPES.UPDATE,
-  synced: true,
+	path,
+	payload,
+	type: TYPES.UPDATE,
+	synced: true,
 })
 
 /**
@@ -97,10 +101,10 @@ export const update = (path, payload) => ({
  * @param {object} payload          les données lus
  */
 export const updateSuccess = (path, payload) => ({
-  path,
-  payload,
-  type: TYPES.UPDATE_SUCCESS,
-  synced: false,
+	path,
+	payload,
+	type: TYPES.UPDATE_SUCCESS,
+	synced: false,
 })
 
 /**
@@ -110,10 +114,10 @@ export const updateSuccess = (path, payload) => ({
  * @param {object} payload    données de la ressource contenant l'id de la ressource
  */
 export const del = (path, payload) => ({
-  path,
-  payload,
-  type: TYPES.DELETE,
-  synced: true,
+	path,
+	payload,
+	type: TYPES.DELETE,
+	synced: true,
 })
 
 /**
@@ -124,10 +128,10 @@ export const del = (path, payload) => ({
  * @param {object} payload          les données de la ressource
  */
 export const delSuccess = (path, payload) => ({
-  path,
-  payload,
-  type: TYPES.DELETE_SUCCESS,
-  synced: false,
+	path,
+	payload,
+	type: TYPES.DELETE_SUCCESS,
+	synced: false,
 })
 
 /**
@@ -138,10 +142,10 @@ export const delSuccess = (path, payload) => ({
  * @param payload
  */
 export const crudError = (type, path, payload) => ({
-  type,
-  path,
-  payload,
-  synced: false,
+	type,
+	path,
+	payload,
+	synced: false,
 })
 
 /**
@@ -151,15 +155,15 @@ export const crudError = (type, path, payload) => ({
  * @param message     message associated to this error code. If message is null, no error
  */
 export const error = (code, message) => ({
-  type: '_ERROR',
-  path: '/ERR',
-  payload: { code, message },
-  synced: false,
+	type: "_ERROR",
+	path: "/ERR",
+	payload: { code, message },
+	synced: false,
 })
 
 export const resetErrors = () => ({
-  type: '_ERROR',
-  path: '/ERR',
-  payload: { },
-  synced: false,
+	type: "_ERROR",
+	path: "/ERR",
+	payload: {},
+	synced: false,
 })

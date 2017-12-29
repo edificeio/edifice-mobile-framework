@@ -1,11 +1,10 @@
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import { readDocumentsFilter } from '../actions/documents'
-import {Timeline, TimelineProps} from '../components/Timeline'
+import { connect } from "react-redux"
+import { bindActionCreators } from "redux"
+import { readDocumentsFilter } from "../actions/documents"
+import { Timeline, TimelineProps } from "../components/Timeline"
 
-const mapStateToProps = (state, props) => ({
-    documents: state.documents.payload,
-    navigation: props.navigate.navigation,
+const mapStateToProps = state => ({
+	documents: state.documents.payload,
 })
 
 const dispatchAndMapActions = dispatch => bindActionCreators({ readDocumentsFilter }, dispatch)

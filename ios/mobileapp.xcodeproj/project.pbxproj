@@ -51,6 +51,11 @@
 		83B6B2307DE84DBF91305E27 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3C83551234274A08855F03C4 /* SimpleLineIcons.ttf */; };
 		91595CCB3C034BC3A84C019B /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B50499E492C5490985B0714A /* Zocial.ttf */; };
 		64DEE71D343148E19A17F784 /* libRNImageToBase64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8BFADCA6E97E4EAF9C0AF797 /* libRNImageToBase64.a */; };
+		AB3046AB05DE46CD96BF9073 /* libRCTSplashScreen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A9772CB7E9124C23A77F2DFD /* libRCTSplashScreen.a */; };
+		C84A00DAF05746E29FCC83F8 /* OpenSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2C0F708294434ABEB9AE79D0 /* OpenSans-Bold.ttf */; };
+		79CFF44D3806440EA9422BFA /* OpenSans-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4926A6880F534664810FF6CE /* OpenSans-Light.ttf */; };
+		F8DE9627B40740A49EE8BC22 /* OpenSans-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8147D0E4BE6D4DB5919CBAE5 /* OpenSans-Semibold.ttf */; };
+		07DE6DD8AD534EE296D31077 /* OpenSans.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F6CB18C6124D436E9354B605 /* OpenSans.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -297,6 +302,12 @@
 		B50499E492C5490985B0714A /* Zocial.ttf */ = {isa = PBXFileReference; name = "Zocial.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		1522916B2A5D4ABEA0AB0DE6 /* RNImageToBase64.xcodeproj */ = {isa = PBXFileReference; name = "RNImageToBase64.xcodeproj"; path = "../node_modules/react-native-image-to-base64/ios/RNImageToBase64.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		8BFADCA6E97E4EAF9C0AF797 /* libRNImageToBase64.a */ = {isa = PBXFileReference; name = "libRNImageToBase64.a"; path = "libRNImageToBase64.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		7F57AAD7472444E4B50BB51D /* RCTSplashScreen.xcodeproj */ = {isa = PBXFileReference; name = "RCTSplashScreen.xcodeproj"; path = "../node_modules/react-native-smart-splash-screen/ios/RCTSplashScreen/RCTSplashScreen.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		A9772CB7E9124C23A77F2DFD /* libRCTSplashScreen.a */ = {isa = PBXFileReference; name = "libRCTSplashScreen.a"; path = "libRCTSplashScreen.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		2C0F708294434ABEB9AE79D0 /* OpenSans-Bold.ttf */ = {isa = PBXFileReference; name = "OpenSans-Bold.ttf"; path = "../assets/fonts/OpenSans-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		4926A6880F534664810FF6CE /* OpenSans-Light.ttf */ = {isa = PBXFileReference; name = "OpenSans-Light.ttf"; path = "../assets/fonts/OpenSans-Light.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		8147D0E4BE6D4DB5919CBAE5 /* OpenSans-Semibold.ttf */ = {isa = PBXFileReference; name = "OpenSans-Semibold.ttf"; path = "../assets/fonts/OpenSans-Semibold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		F6CB18C6124D436E9354B605 /* OpenSans.ttf */ = {isa = PBXFileReference; name = "OpenSans.ttf"; path = "../assets/fonts/OpenSans.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -329,6 +340,7 @@
 				D170954471D1439D9F2BE5B7 /* libRNFS.a in Frameworks */,
 				8A516AF3B6ED429281BA360D /* libRNVectorIcons.a in Frameworks */,
 				64DEE71D343148E19A17F784 /* libRNImageToBase64.a in Frameworks */,
+				AB3046AB05DE46CD96BF9073 /* libRCTSplashScreen.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -501,6 +513,7 @@
 				1F7ED32F504640B7A611D755 /* RNFS.xcodeproj */,
 				246A9BD35DE148ACA6AD1A79 /* RNVectorIcons.xcodeproj */,
 				1522916B2A5D4ABEA0AB0DE6 /* RNImageToBase64.xcodeproj */,
+				7F57AAD7472444E4B50BB51D /* RCTSplashScreen.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -561,6 +574,10 @@
 				727416624F8F43BEB2C81AC6 /* Octicons.ttf */,
 				3C83551234274A08855F03C4 /* SimpleLineIcons.ttf */,
 				B50499E492C5490985B0714A /* Zocial.ttf */,
+				2C0F708294434ABEB9AE79D0 /* OpenSans-Bold.ttf */,
+				4926A6880F534664810FF6CE /* OpenSans-Light.ttf */,
+				8147D0E4BE6D4DB5919CBAE5 /* OpenSans-Semibold.ttf */,
+				F6CB18C6124D436E9354B605 /* OpenSans.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -946,6 +963,10 @@
 				67297D2717A44157A8824BAD /* Octicons.ttf in Resources */,
 				83B6B2307DE84DBF91305E27 /* SimpleLineIcons.ttf in Resources */,
 				91595CCB3C034BC3A84C019B /* Zocial.ttf in Resources */,
+				C84A00DAF05746E29FCC83F8 /* OpenSans-Bold.ttf in Resources */,
+				79CFF44D3806440EA9422BFA /* OpenSans-Light.ttf in Resources */,
+				F8DE9627B40740A49EE8BC22 /* OpenSans-Semibold.ttf in Resources */,
+				07DE6DD8AD534EE296D31077 /* OpenSans.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1080,6 +1101,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1087,6 +1109,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-fs/**",
 					"$(SRCROOT)\..\node_modules\react-native-vector-icons\RNVectorIconsManager",
 					"$(SRCROOT)\..\node_modules\react-native-image-to-base64\ios",
+					"$(SRCROOT)/../node_modules/react-native-smart-splash-screen/ios/RCTSplashScreen/RCTSplashScreen",
 				);
 			};
 			name = Debug;
@@ -1108,6 +1131,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1115,6 +1139,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-fs/**",
 					"$(SRCROOT)\..\node_modules\react-native-vector-icons\RNVectorIconsManager",
 					"$(SRCROOT)\..\node_modules\react-native-image-to-base64\ios",
+					"$(SRCROOT)/../node_modules/react-native-smart-splash-screen/ios/RCTSplashScreen/RCTSplashScreen",
 				);
 			};
 			name = Release;
@@ -1140,6 +1165,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-fs/**",
 					"$(SRCROOT)\..\node_modules\react-native-vector-icons\RNVectorIconsManager",
 					"$(SRCROOT)\..\node_modules\react-native-image-to-base64\ios",
+					"$(SRCROOT)/../node_modules/react-native-smart-splash-screen/ios/RCTSplashScreen/RCTSplashScreen",
 				);
 			};
 			name = Debug;
@@ -1164,6 +1190,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-fs/**",
 					"$(SRCROOT)\..\node_modules\react-native-vector-icons\RNVectorIconsManager",
 					"$(SRCROOT)\..\node_modules\react-native-image-to-base64\ios",
+					"$(SRCROOT)/../node_modules/react-native-smart-splash-screen/ios/RCTSplashScreen/RCTSplashScreen",
 				);
 			};
 			name = Release;
@@ -1194,6 +1221,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1201,6 +1229,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-fs/**",
 					"$(SRCROOT)\..\node_modules\react-native-vector-icons\RNVectorIconsManager",
 					"$(SRCROOT)\..\node_modules\react-native-image-to-base64\ios",
+					"$(SRCROOT)/../node_modules/react-native-smart-splash-screen/ios/RCTSplashScreen/RCTSplashScreen",
 				);
 			};
 			name = Debug;
@@ -1231,6 +1260,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1238,6 +1268,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-fs/**",
 					"$(SRCROOT)\..\node_modules\react-native-vector-icons\RNVectorIconsManager",
 					"$(SRCROOT)\..\node_modules\react-native-image-to-base64\ios",
+					"$(SRCROOT)/../node_modules/react-native-smart-splash-screen/ios/RCTSplashScreen/RCTSplashScreen",
 				);
 			};
 			name = Release;
@@ -1263,6 +1294,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 			};
 			name = Debug;
@@ -1287,6 +1319,7 @@
 				TVOS_DEPLOYMENT_TARGET = 10.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 			};

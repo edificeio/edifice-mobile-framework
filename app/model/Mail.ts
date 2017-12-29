@@ -1,19 +1,19 @@
-import { adaptator } from '../infra/HTMLAdaptator';
+import { adaptator } from "../infra/HTMLAdaptator"
 
-export class Mail{
-    id?: string;
-    parent_id?: string;
-    subject?: string;
-    body: string;
-    from?: string;
-    fromName?: string;
-    to?: string[];
-    displayNames?: string[][];
+export class Mail {
+	public id?: string
+	public parent_id?: string
+	public subject?: string
+	public body: string
+	public from?: string
+	public fromName?: string
+	public to?: string[]
+	public displayNames?: string[][]
 
-    fromJSON(data){
-        this.body = adaptator(data.body)
-            .removeAfter('hr')
-            .adapt()
-            .toHTML();
-    }
+	public fromJSON(data) {
+		this.body = adaptator(data.body)
+			.removeAfter("hr")
+			.adapt()
+			.toHTML()
+	}
 }

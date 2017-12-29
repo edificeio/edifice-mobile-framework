@@ -8,18 +8,10 @@
         "rootDir": "./app",                       /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
         "sourceMap": true,                        /* Generates corresponding '.map' file. */
         "target": "es6",
-        "typeRoots": [
-            "node_modules/@types"
-        ],
         "types": [
             "core-js", "react", "react-native",
             "react-navigation"
         ]
     },
-    "include": [
-        "app/**/*"
-    ],
-    "exclude": [
-        "node_modules"
-    ]
 }
+
