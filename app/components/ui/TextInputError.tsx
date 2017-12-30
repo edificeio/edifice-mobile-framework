@@ -1,5 +1,5 @@
 import * as React from "react"
-import { ScrollView, Text, TextInput } from "react-native"
+import { Text, TextInput } from "react-native"
 import { Col, Row } from ".."
 import { layoutSize } from "../../constants/layoutSize"
 import styles, { inputBackColor, placeholderColor } from "../styles/index"

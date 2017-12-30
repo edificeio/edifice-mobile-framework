@@ -1,10 +1,9 @@
-import { INIT_NAVIGATION } from "../constants/paths"
-import AppNavigator from "../navigation"
+import {AppNavigator} from "../navigation"
+import {INIT_NAVIGATION} from "../constants/paths";
 
-const initialState = AppNavigator.router.getStateForAction(
-	AppNavigator.router.getActionForPathAndParams("Nouveautes"),
-	null
-)
+const initialState = {
+    navigation: null
+}
 
 /**
  * Enregistrement dans le state Redux de l'objet navigation  de react-navigation
@@ -14,11 +13,7 @@ const initialState = AppNavigator.router.getStateForAction(
  * @returns {*}  retourne un nouveau state
  */
 export const Navigation = (state = initialState, action) => {
-	if (action.type === INIT_NAVIGATION) return { ...initialState, ...action.navigation }
-	const nextState = AppNavigator.router.getStateForAction(action, state)
-	const newState = nextState || state
+    if (action.type === INIT_NAVIGATION) return { ...initialState, ...action.navigation }
 
-	if (action.routeName) return { ...newState, routeName: action.routeName }
-
-	return newState
+    return state;
 }

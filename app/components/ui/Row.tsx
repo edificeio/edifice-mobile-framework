@@ -6,49 +6,56 @@ import { TouchableOpacity, View, ViewProperties } from "react-native"
 import { computeProps } from "./Utils/computeProps"
 
 export interface RowProperties extends ViewProperties {
-	children: any
-	height?: number
-	marginTop?: number
-	marginBottom?: number
-	minHeight?: number
+    alignItems?: string
+	children: any,
+    height?: number
+    justifyContent?: string
+    marginTop?: number
+    marginBottom?: number
 	onPress?: (any) => void
 	size?: number
 	style?: any
-	width?: number
 }
 
 export class Row extends React.Component<RowProperties, any> {
-	public prepareRootProps() {
+	public calculateStyle() : any {
+	    const { size, height, justifyContent, alignItems, marginTop, marginBottom} = this.props
 		const type = {
+            alignItems: alignItems ? alignItems : null,
+			flex: size ? size : height || (height) ? 0 : 1,
 			flexDirection: "row",
-			flex: this.props.size ? this.props.size : this.props.style && this.props.style.height ? 0 : 1,
 			flexWrap: "wrap",
+            height: height ? height : null,
+            justifyContent: justifyContent ? justifyContent : null,
+            marginTop: marginTop ? marginTop : null,
+            marginBottom: marginBottom ? marginBottom : null,
 		}
 
-		const defaultProps = {
-			style: type,
-		}
-		return computeProps(this.props, defaultProps)
+        const defaultProps = {
+            style: type,
+        }
+        return computeProps(this.props, defaultProps)
 	}
 
 	public render() {
-		const { style, onPress, ...nextProps } = this.props
-		if (onPress) {
-			return (
-				<View style={style}>
-					<TouchableOpacity onPress={onPress}>
-						<View {...nextProps} {...this.prepareRootProps()}>
-							{this.props.children}
-						</View>
-					</TouchableOpacity>
-				</View>
-			)
-		} else {
-			return (
-				<View {...this.props} {...this.prepareRootProps()}>
-					{this.props.children}
-				</View>
-			)
-		}
-	}
+	    const { alignItems, height, justifyContent, marginTop, marginBottom, size, style, ...nextProps} = this.props
+        if (this.props.onPress) {
+            return (
+                <TouchableOpacity onPress={this.props.onPress}>
+                    <View
+                        {...nextProps}
+                        {...this.calculateStyle()}
+                    >{this.props.children}</View>
+                </TouchableOpacity>
+            );
+        }
+        else {
+            return (
+                <View
+                    {...nextProps}
+                    {...this.calculateStyle()}
+                >{this.props.children}</View>
+            );
+        }
+    }
 }

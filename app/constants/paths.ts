@@ -4,6 +4,7 @@ export const PATH_DOCUMENT = "workspace/documents?filter=$1"
 
 export const PATH_SIGNUP = "auth/signup"
 export const PATH_LOGIN = "auth/login"
+export const PATH_AUTH= "auth/auth"
 export const PATH_LOGOUT = "auth/logout"
 export const PATH_RECOVER_PASSWORD = "auth/pass"
 

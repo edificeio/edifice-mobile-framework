@@ -11,7 +11,7 @@ export const computeProps = (aIncomingProps, aDefaultProps) => {
 	const incomingPropsStyle = incomingProps.style
 	delete incomingProps.style
 
-	// console.log(defaultProps, incomingProps);
+	//console.log(defaultProps, incomingProps);
 
 	if (incomingProps) computedProps = { ...aDefaultProps, ...incomingProps }
 	else computedProps = aDefaultProps
@@ -42,7 +42,7 @@ export const computeProps = (aIncomingProps, aDefaultProps) => {
 		computedProps.style = { ...aDefaultProps.style, ...computedPropsStyle }
 	}
 
-	// console.log("computedProps ", computedProps);
+	//console.log("computedProps ", computedProps);
 
 	return computedProps
 }

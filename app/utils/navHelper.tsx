@@ -19,7 +19,7 @@ export const navigator = routes =>
 			activeTintColor: CommonStyles.mainColorTheme,
 			inactiveTintColor: CommonStyles.mainColorTheme,
 			labelStyle: {
-				fontSize: layoutSize.LAYOUT_6,
+				fontSize: layoutSize.LAYOUT_8,
                 color: CommonStyles.textTabBottomColor,
 			},
 			style: {
@@ -61,7 +61,7 @@ export const NestedTabNavigator = routes =>
         tabBarPosition: "top",
         tabBarOptions: {
             labelStyle: {
-                fontSize: layoutSize.LAYOUT_10,
+                fontSize: layoutSize.LAYOUT_13,
             },
             style: {
                 backgroundColor: tabBackgroundColor,

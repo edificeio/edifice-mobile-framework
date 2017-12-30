@@ -15,28 +15,25 @@ const style = StyleSheet.create({
 	},
 })
 
-export class Avatar extends React.Component<{ userId: string }, { loaded: boolean }> {
-	public base64Str: string
+export class Avatar extends React.Component<{ userId: string }, { base64Str: string }> {
 
 	constructor(props) {
 		super(props)
-		this.state = { loaded: false }
-		this.load()
+		this.state = { base64Str: ""}
 	}
 
-	public async load() {
+	public async componentDidMount() {
 		const response = await RNFetchBlob.fetch(
 			"GET",
 			`${Conf.platform}/userbook/avatar/${this.props.userId}?thumbnail=48x48`
 		)
-		this.base64Str = response.base64()
-		this.setState({ loaded: true })
+		this.setState( {base64Str: response.base64()})
 	}
 
 	public render() {
-		if (!this.state.loaded) {
+		if (this.state.base64Str.length === 0) {
 			return <View />
 		}
-		return <Image source={{ uri: "data:image/jpeg;base64," + this.base64Str }} style={style.avatar} />
+		return <Image source={{ uri: "data:image/jpeg;base64," + this.state.base64Str }} style={style.avatar} />
 	}
 }

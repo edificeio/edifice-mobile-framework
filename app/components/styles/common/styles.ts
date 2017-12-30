@@ -1,3 +1,7 @@
+import {Text} from "react-native";
+
+Text.defaultProps.style = { fontFamily: 'OpenSans' }
+
 export const CommonStyles = {
 	mainColorTheme: "#0096ca",
     tabBottomColor: "#ffffff",

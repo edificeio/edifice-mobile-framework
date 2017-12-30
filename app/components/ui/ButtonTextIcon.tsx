@@ -5,7 +5,7 @@ import styles from "../styles/index"
 
 export interface ButtonTextIconProps {
 	onPress: () => any
-	disabled: boolean
+	disabled?: boolean
 	leftName?: string
 	rightName?: string
 	title: string

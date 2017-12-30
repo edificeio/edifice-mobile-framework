@@ -1,37 +1,38 @@
-import { checkLogin } from "../actions/auth"
-import { error } from "../actions/docs"
+import { checkLogin, login } from "../actions/auth"
+import {crudError, error} from "../actions/docs"
 import { CREATE_ERROR, CREATE_SUCCESS } from "../constants/docs"
-import { PATH_LOGIN, PATH_LOGOUT, PATH_RECOVER_PASSWORD, PATH_SIGNUP } from "../constants/paths"
+import {PATH_AUTH, PATH_LOGIN, PATH_LOGOUT, PATH_RECOVER_PASSWORD, PATH_SIGNUP} from "../constants/paths"
 import { getLogin, setLogin } from "../utils/Store"
 
 var initAuth = false
 
-function auth(dispatch) {
-	try {
-		getLogin().then(({ email, password }) => {
-			if (email && email.length > 0 && password.length > 0) {
-				dispatch(checkLogin(email, password))
-			}
-		})
-	} catch (ex) {}
+async function auth(dispatch) {
+	getLogin().then(({ email, password }) => {
+		if ( email && email.length > 0 && password.length > 0) {
+			dispatch(login(email, password))
+		}
+		dispatch(crudError( CREATE_ERROR, PATH_LOGIN, { synced: true, loggedIn: false} ))
+	})
+	.catch(ex => 	dispatch(crudError( CREATE_ERROR, PATH_LOGIN, { synced: true, loggedIn: false} )))
 }
 
 export default store => next => action => {
-	const returnValue = next(action)
 
 	try {
-		if (!initAuth) {
+		if (action.type === PATH_AUTH) {
 			auth(store.dispatch)
 			initAuth = true
 		}
 
+        const returnValue = next(action)
+
 		if (action.type === PATH_LOGOUT || action.type === PATH_RECOVER_PASSWORD) {
-			setLogin({ email: "", password: "" })
+			setLogin({ email: action.email, password: "" })
 		}
 
 		if ((action.path === PATH_LOGIN || action.path === PATH_SIGNUP) && action.type === CREATE_SUCCESS) {
 			setLogin({
-                email: action.payload.emaile,
+                email: action.payload.email,
 				password: action.payload.password,
 			})
 		}

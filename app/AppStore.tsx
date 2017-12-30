@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Provider } from "react-redux"
-import App from "./connectors/App"
+import AppScreen from "./connectors/AppScreen"
 import configureStore from "./store"
 
 export class AppStore extends React.Component {
@@ -9,7 +9,7 @@ export class AppStore extends React.Component {
 	public render() {
 		return (
 			<Provider store={this.store}>
-				<App />
+				<AppScreen/>
 			</Provider>
 		)
 	}

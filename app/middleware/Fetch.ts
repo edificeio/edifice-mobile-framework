@@ -27,9 +27,8 @@ function checkResponse(response) {
 		})
 	)
 }
-
-function isError({ Code = 0, code = 0, errors = [], status }) {
-	return Code < 0 || code < 0 || status >= 400 || errors.length > 0
+function isError({ ok = true, code = 0, status = 200 }) {
+	return (ok !== true && status !== 200) || code !== 0
 }
 
 const ROOT_PATH = `${Conf.platform}/`

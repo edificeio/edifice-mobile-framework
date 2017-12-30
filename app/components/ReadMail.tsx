@@ -39,7 +39,7 @@ export class ReadMail extends React.Component<{ navigation: any; inbox: any }, R
 
 	public render() {
 		return (
-			<Col flex={1}>
+			<Col size={1}>
 				<KeyboardAvoidingView style={ReadMailStyle.view} keyboardVerticalOffset={StyleConf.navbarheight}>
 					<WebView
 						style={ReadMailStyle.webview}

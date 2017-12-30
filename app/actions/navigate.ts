@@ -1,4 +1,4 @@
-import { INIT_NAVIGATION, NAVIGATE } from '../constants/paths'
+import {INIT_NAVIGATION, NAVIGATE} from '../constants/paths'
 
 /**
  * Pour avoir les informations de navigation dans le state Redux.
@@ -11,8 +11,8 @@ export const initNavigationState = navigation => ({
     navigation,
 })
 
-export const navigate = (screen, props) => ({
+
+export const navigate = (screen) => ({
     type: NAVIGATE,
-    screen,
-    props,
+    screen
 })

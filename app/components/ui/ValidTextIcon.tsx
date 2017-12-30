@@ -23,7 +23,7 @@ export interface ValidTextIconProps {
 
 export const ValidTextIcon = ({
 	disabled = false,
-	fontSize = layoutSize.LAYOUT_8,
+	fontSize = layoutSize.LAYOUT_10,
 	isLoadings = false,
 	leftName = "",
 	onPress,

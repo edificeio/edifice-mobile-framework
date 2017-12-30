@@ -10,9 +10,9 @@ const getPixelSize = size => {
 		return size * 1.4
 	}
 	if (pixelRatio <= 3) {
-		return size * 1.8
+		return size * 1.6
 	}
-	return size * 2
+	return size * 1.8
 }
 
 const guidelineBaseWidth = 350
@@ -20,7 +20,7 @@ const guidelineBaseWidth = 350
 export const scale = size => width / guidelineBaseWidth * getPixelSize(size)
 
 const getPixelSizeForLayoutSize = size => {
-	return scale(size)
+	return getPixelSize( size)
 }
 
 export const layoutSize = {
@@ -48,6 +48,7 @@ export const layoutSize = {
 	LAYOUT_23: getPixelSizeForLayoutSize(23),
 	LAYOUT_24: getPixelSizeForLayoutSize(24),
 	LAYOUT_25: getPixelSizeForLayoutSize(25),
+    LAYOUT_26: getPixelSizeForLayoutSize(26),
 	LAYOUT_28: getPixelSizeForLayoutSize(28),
 	LAYOUT_30: getPixelSizeForLayoutSize(30),
 	LAYOUT_31: getPixelSizeForLayoutSize(31),

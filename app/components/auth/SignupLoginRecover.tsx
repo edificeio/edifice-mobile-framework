@@ -1,13 +1,14 @@
 import * as React from "react"
-import { View } from "react-native"
+import {View} from "react-native";
 import { Row } from ".."
 import { AuthProps } from "../../model/Auth"
 import { Login } from "./Login"
 import { RecoverPassword } from "./RecoverPassword"
 
+
 export interface SignupLoginRecoverProps {
 	auth?: AuthProps
-	login?: (email: string, password: string) => void
+	login?: (email: string, password: string) => void,
 	recoverPassword?: (email) => void
 }
 
@@ -16,7 +17,7 @@ export interface SignupLoginRecoverState {
 }
 
 export class SignupLoginRecover extends React.Component<SignupLoginRecoverProps, SignupLoginRecoverState> {
-	public state = {
+	state = {
 		route: "login",
 	}
 
@@ -25,12 +26,11 @@ export class SignupLoginRecover extends React.Component<SignupLoginRecoverProps,
 	}
 
 	public render() {
-		const { email, password } = this.props.auth
-		const { route } = this.state
+		const { synced, loggedIn } = this.props.auth
+		const { route} = this.state
 
-		if (email.length > 0 && password.length > 0) {
-			return <View>{this.props.children}</View>
-		}
+		if (synced === false || loggedIn)
+			return <View />
 
 		if (route === "login") {
 			return <Login onRoute={r => this.onRoute(r)} {...this.props} />

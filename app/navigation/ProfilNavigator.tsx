@@ -9,7 +9,7 @@ export default stackNavigator({
         screen: ProfilUtilisateurScreen,
         navigationOptions: () =>
             navOptions({
-                title: "Conversation",
+                title: "Profil",
                 headerRight: <View />,
                 headerLeft: <View />,
             }),
