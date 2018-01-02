@@ -28,7 +28,7 @@ export function Auth(state: AuthProps = initialState, action): AuthProps {
 	}
 
     if (matchs([PATH_LOGOUT], action.path)) {
-        return {...initialState, email: action.email, synced: true}
+        return {...initialState, email: action.payload.email, synced: true, loggedIn: false}
     }
 
     if (matchs([PATH_LOGIN, PATH_SIGNUP], action.path) && action.type === CREATE_ERROR) {

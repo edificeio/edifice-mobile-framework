@@ -4,6 +4,7 @@ import { logout} from "../actions/auth"
 import { ProfilUtilisateur, ProfilUtilisateurProps } from "../components/ProfilUtilisateur"
 
 const mapStateToProps = (state, props) => ({
+    auth: state.auth,
 })
 
 const dispatchAndMapActions = dispatch => bindActionCreators({logout}, dispatch)

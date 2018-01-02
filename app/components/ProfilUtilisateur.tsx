@@ -26,7 +26,8 @@ const styles = StyleSheet.create({
 });
 
 export interface ProfilUtilisateurProps {
-    logout?: () => void
+    auth: any,
+    logout?: (string) => void
 }
 
 interface ProfilUtilisateurState {
@@ -40,7 +41,7 @@ export class ProfilUtilisateur extends React.Component<ProfilUtilisateurProps, P
 
     disconnect() {
         this.setState( {showDisconnect: false})
-        this.props.logout()
+        this.props.logout(this.props.auth.email)
     }
 
     disconnectBox = () => (

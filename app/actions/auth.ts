@@ -14,11 +14,12 @@ export const login = (email, password) => {
 
 /**
  * Logout du user
+ * @param {string} email     login du user
  *
  * @returns {{type}}
  */
-export const logout = () => {
-	return read(PATH_LOGOUT)
+export const logout = (email) => {
+	return create(PATH_LOGOUT, {email})
 }
 
 /**

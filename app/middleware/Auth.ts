@@ -11,7 +11,7 @@ async function auth(dispatch) {
 		if ( email && email.length > 0 && password.length > 0) {
 			dispatch(login(email, password))
 		}
-		dispatch(crudError( CREATE_ERROR, PATH_LOGIN, { synced: true, loggedIn: false} ))
+		dispatch(crudError( CREATE_ERROR, PATH_LOGIN, { synced: true, loggedIn: false, payload: {email, password}} ))
 	})
 	.catch(ex => 	dispatch(crudError( CREATE_ERROR, PATH_LOGIN, { synced: true, loggedIn: false} )))
 }
