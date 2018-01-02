@@ -235,13 +235,6 @@ const styles = StyleSheet.create({
 		marginTop: layoutSize.LAYOUT_26,
 		marginBottom: layoutSize.LAYOUT_13,
 	},
-	viewButtons: {
-        flexDirection: "row",
-		flex: 0,
-        marginTop: layoutSize.LAYOUT_26,
-		height: layoutSize.LAYOUT_26,
-		justifyContent: "center",
-	}
 })
 
 export default styles

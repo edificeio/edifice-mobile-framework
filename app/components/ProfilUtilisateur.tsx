@@ -4,16 +4,26 @@ import { StyleSheet, Text, View } from 'react-native';
 import {ViewButtons} from "./ui/ViewButtons";
 import {ButtonDeconnect} from "./ui/ButtonDeconnect";
 import {Col} from "./ui/Col";
+import {layoutSize} from "../constants/layoutSize";
 
 const styles = StyleSheet.create({
     modalContent: {
         backgroundColor: 'white',
-        padding: 22,
+        paddingHorizontal: 35,
+        paddingVertical: 25,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 4,
         borderColor: 'rgba(0, 0, 0, 0.1)',
     },
+    text: {
+        fontSize: layoutSize.LAYOUT_10,
+    },
+    modalDisconnect: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    }
 });
 
 export interface ProfilUtilisateurProps {
@@ -36,10 +46,8 @@ export class ProfilUtilisateur extends React.Component<ProfilUtilisateurProps, P
 
     disconnectBox = () => (
         <View style={styles.modalContent}>
-            <View>
-                <Text>Etes vous sur de vouloir</Text>
-                <Text>vous déconnecter?</Text>
-            </View>
+            <Text style={styles.text}>Etes vous sur de vouloir</Text>
+            <Text style={styles.text}>vous déconnecter?</Text>
             <ViewButtons onCancel={() => this.setState( {showDisconnect: false})} onValid={() => this.disconnect()} title={"Se déconnecter"}/>
         </View>
     );
@@ -47,7 +55,7 @@ export class ProfilUtilisateur extends React.Component<ProfilUtilisateurProps, P
 	public render() {
 		return (
 			<Col>
-                <Modal isVisible={this.state.showDisconnect}>{this.disconnectBox()}</Modal>
+                <Modal style={styles.modalDisconnect} isVisible={this.state.showDisconnect}>{this.disconnectBox()}</Modal>
 				<ButtonDeconnect onPress={() => this.setState( {showDisconnect: true})}/>
 			</Col>
     	)

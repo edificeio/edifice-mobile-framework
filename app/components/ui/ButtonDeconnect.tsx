@@ -10,13 +10,13 @@ const styles = StyleSheet.create({
 		flex: 0,
 		flexDirection: "row",
 		justifyContent: "flex-start",
-        height:layoutSize.LAYOUT_30,
-		marginTop:layoutSize.LAYOUT_20,
-        paddingBottom: layoutSize.LAYOUT_7,
+        height:layoutSize.LAYOUT_24,
+		marginTop:layoutSize.LAYOUT_10,
+        paddingBottom: layoutSize.LAYOUT_2,
 		paddingHorizontal: layoutSize.LAYOUT_13,
 	},
     text: {
-        color: "red",
+        color: "#F64D68",
         fontSize: layoutSize.LAYOUT_10,
     }
 })

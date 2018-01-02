@@ -4,6 +4,8 @@ const { width } = Dimensions.get("window")
 var pixelRatio = PixelRatio.get()
 
 const getPixelSize = size => {
+    if (pixelRatio <= 1.0) return size * 1
+
 	if (pixelRatio <= 1.5) return size * 1.2
 
 	if (pixelRatio <= 2) {
