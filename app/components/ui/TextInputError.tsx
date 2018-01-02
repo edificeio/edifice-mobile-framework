@@ -1,8 +1,44 @@
 import * as React from "react"
-import { Text, TextInput } from "react-native"
+import {StyleSheet, Text, TextInput} from "react-native"
 import { Col, Row } from ".."
 import { layoutSize } from "../../constants/layoutSize"
-import styles, { inputBackColor, placeholderColor } from "../styles/index"
+import {CommonStyles} from "../styles/common/styles";
+
+const styles = StyleSheet.create( {
+    inputError: {
+        color: "red",
+        fontSize: layoutSize.LAYOUT_10,
+        height: layoutSize.LAYOUT_32,
+        fontWeight: "800",
+        paddingBottom: 0,
+        marginBottom: 0,
+    },
+    textInput: {
+        color: CommonStyles.textInputColor,
+        fontSize: layoutSize.LAYOUT_10,
+        height: layoutSize.LAYOUT_32,
+        paddingBottom: 0,
+        marginBottom: 0,
+    },
+    textInputErrorWrapper: {
+        backgroundColor: CommonStyles.inputBackColor,
+        borderColor: CommonStyles.errorColor,
+        borderRadius: 3,
+        borderWidth: 1,
+        paddingBottom: 0,
+    },
+    textInputMulti: {
+        color: CommonStyles.textInputColor,
+        fontSize: layoutSize.LAYOUT_10,
+        height: layoutSize.LAYOUT_60,
+    },
+    textInputWrapper: {
+        backgroundColor: CommonStyles.inputBackColor,
+        borderBottomColor: CommonStyles.borderColor,
+        borderBottomWidth: 1,
+        paddingBottom: 0,
+    },
+})
 
 export interface TextInputErrorProps {
 	editable?: boolean
@@ -78,7 +114,7 @@ export class TextInputError extends React.Component<TextInputErrorProps, TextInp
 		const { focus } = this.state
 		const styleWrapper = errMessage.length > 0 ? styles.textInputErrorWrapper : styles.textInputWrapper
 		const { style = multiline ? styles.textInputMulti : styles.textInput } = this.props
-		const underlineColor = inputBackColor
+		const underlineColor = CommonStyles.inputBackColor
 		const borderBottomColor = focus ? "#00bcda" : errMessage.length > 0 ? "red" : "#cccccc"
 
 		return (
@@ -93,7 +129,7 @@ export class TextInputError extends React.Component<TextInputErrorProps, TextInp
 						editable={editable}
 						underlineColorAndroid={underlineColor}
 						style={style}
-						placeholderTextColor={placeholderColor}
+						placeholderTextColor={CommonStyles.placeholderColor}
 						placeholder={label}
 						multiline={multiline}
 						secureTextEntry={secureTextEntry}

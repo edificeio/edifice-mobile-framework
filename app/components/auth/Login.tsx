@@ -39,10 +39,10 @@ export class Login extends React.Component<LoginProps, LoginState> {
 				<KeyboardAvoidingView behavior="padding">
 					<Logo />
 
-					<TextInputError label="Identifiant..." value={email} onChange={email => this.setState({ email })} />
+					<TextInputError label="Identifiant" value={email} onChange={email => this.setState({ email })} />
 
 					<TextInputError
-						label="Mot de passe..."
+						label="Mot de passe"
 						secureTextEntry
 						value={password}
 						onChange={password => this.setState({ password })}

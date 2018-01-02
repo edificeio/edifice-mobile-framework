@@ -1,8 +1,44 @@
 import * as React from "react"
-import { StyleProp, Text, TouchableOpacity, View, ViewStyle } from "react-native"
+import { StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from "react-native"
 import { Disable, NavIcon } from ".."
 import { layoutSize } from "../../constants/layoutSize"
-import styles from "../styles/index"
+import {CommonStyles} from "../styles/common/styles"
+
+const styles = StyleSheet.create( {
+    validButtonStyle: {
+        alignSelf: "center",
+        backgroundColor: CommonStyles.actionColor,
+        color: CommonStyles.inverseColor,
+        fontSize: layoutSize.LAYOUT_10,
+        paddingLeft: layoutSize.LAYOUT_24,
+        paddingRight: layoutSize.LAYOUT_24,
+        paddingTop: layoutSize.LAYOUT_5,
+        paddingBottom: layoutSize.LAYOUT_5,
+        borderRadius: layoutSize.LAYOUT_20,
+        fontWeight: "500",
+    },
+    validButtonStyleDisabled: {
+        alignSelf: "center",
+        backgroundColor: "transparent",
+        color: CommonStyles.actionColor,
+        fontSize: layoutSize.LAYOUT_10,
+        paddingLeft: layoutSize.LAYOUT_24,
+        paddingRight: layoutSize.LAYOUT_24,
+        paddingTop: layoutSize.LAYOUT_5,
+        paddingBottom: layoutSize.LAYOUT_5,
+        borderRadius: layoutSize.LAYOUT_15,
+        borderColor: "#00B6EAB9",
+        borderWidth: 0.7,
+        fontWeight: "400",
+    },
+    validButtonStyleWrapper: {
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: CommonStyles.backgroundColor,
+        marginTop: layoutSize.LAYOUT_26,
+        marginBottom: layoutSize.LAYOUT_13,
+    },
+})
 
 function isLoading(isLoadings) {
 	if (isLoadings === undefined) return false

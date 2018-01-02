@@ -9,8 +9,7 @@ import {layoutSize} from "../constants/layoutSize";
 const styles = StyleSheet.create({
     modalContent: {
         backgroundColor: 'white',
-        paddingHorizontal: 35,
-        paddingVertical: 25,
+        padding: 25,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 4,

@@ -5,31 +5,7 @@ import {CommonStyles} from "./common/styles";
 export const deviceWidth = Dimensions.get("window").width
 
 const widthDuration = deviceWidth - layoutSize.LAYOUT_4 - layoutSize.LAYOUT_20
-const widthCalendar = Math.round((widthDuration - layoutSize.LAYOUT_4) * 2 / 3)
 
-export const actionColor = "#0096CA"
-export const actionColorDisabled = "#0096CA99"
-export const backgroundColor = "transparent"
-export const borderColor = "#cccccc"
-export const errorColor = "#ff0000"
-export const fadColor = "#444444"
-export const inputBackColor = "#ffffff"
-export const inverseColor = "#ffffff"
-export const navigationColor = "#2a97f5"
-export const placeholderColor = "#88888899"
-export const selectColor = "#ffff00"
-export const textColor = "#222222"
-export const titleColor = "#1467ff"
-
-export const buttonColor = inputBackColor
-export const cardTitle = titleColor
-export const color = textColor
-export const linkColor = navigationColor
-export const tabBackgroundColor = navigationColor
-export const textInputColor = textColor
-export const title = titleColor
-export const validActionColor = actionColor
-export const validActionColorDisabled = actionColorDisabled
 
 const styles = StyleSheet.create({
 	Disable: {
@@ -40,11 +16,6 @@ const styles = StyleSheet.create({
 		bottom: 0,
 		backgroundColor: "transparent",
 	},
-	authTitle: {
-		color: "#333333",
-		fontSize: layoutSize.LAYOUT_18,
-		paddingTop: layoutSize.LAYOUT_8,
-	},
 	avatar: {
 		justifyContent: "center",
 		alignItems: "flex-start",
@@ -54,23 +25,20 @@ const styles = StyleSheet.create({
     },
 	buttonStyle: {
 		alignSelf: "center",
-		color: actionColor,
+		color: CommonStyles.actionColor,
 		backgroundColor: "transparent",
 		fontSize: layoutSize.LAYOUT_10,
-		padding: layoutSize.LAYOUT_3,
+		paddingHorizontal: layoutSize.LAYOUT_15,
 		fontWeight: "400",
 	},
-	calendar: {
-		width: widthCalendar,
-	},
     cardDescription: {
-        color,
+        color: CommonStyles.cardTitle,
         marginTop: layoutSize.LAYOUT_4,
         fontSize: layoutSize.LAYOUT_8,
         marginBottom: layoutSize.LAYOUT_4,
     },
     cardTitle: {
-        color: cardTitle,
+        color: CommonStyles.cardTitle,
         fontSize: layoutSize.LAYOUT_9,
         fontWeight: "600",
         paddingTop: layoutSize.LAYOUT_3,
@@ -80,7 +48,7 @@ const styles = StyleSheet.create({
     containerErrorText: {
         alignSelf: "center",
         fontWeight: "400",
-        color: errorColor,
+        color: CommonStyles.errorColor,
     },
     containerInfo: {
         backgroundColor: saturate("#fcfcfc", 0.9),
@@ -105,12 +73,6 @@ const styles = StyleSheet.create({
 		alignItems: "flex-end",
 		justifyContent: "center",
 	},
-	inputError: {
-		color: "red",
-		fontSize: layoutSize.LAYOUT_8,
-		fontWeight: "800",
-		marginBottom: layoutSize.LAYOUT_5,
-	},
     line: {
         alignItems: "center",
         justifyContent: "center",
@@ -119,70 +81,24 @@ const styles = StyleSheet.create({
 		textDecorationLine: "underline",
 		marginTop: layoutSize.LAYOUT_10,
 	},
-	linkColor: {
-		color: linkColor,
-		fontWeight: "600",
-		marginTop: layoutSize.LAYOUT_10,
-		textDecorationLine: "underline",
-	},
-	linkMargin: {
-		marginTop: layoutSize.LAYOUT_10,
-	},
-	linkMarginLeft: {
-		textDecorationLine: "underline",
-		marginLeft: layoutSize.LAYOUT_10,
-		color: "#333333",
-	},
-    linksPanel: {
-        marginTop: layoutSize.LAYOUT_9,
-    },
 	loading: {
 		backgroundColor: "#ff5000",
 		height: layoutSize.LAYOUT_3,
-	},
-	marginCenterForm: {
-		marginTop: layoutSize.LAYOUT_5,
-		alignItems: "center",
-		justifyContent: "center",
-		backgroundColor: "transparent",
 	},
 	marginTop: {
 		marginTop: layoutSize.LAYOUT_8,
 	},
     item: {
         padding: 10,
-        backgroundColor,
+		backgroundColor: CommonStyles.backgroundColor,
         borderBottomWidth: 1,
         borderBottomColor: "#ddd",
         flexDirection: "row",
     },
 	statusText: {
-		color: fadColor,
+		color: CommonStyles.fadColor,
 		fontSize: layoutSize.LAYOUT_7,
 		fontWeight: "300",
-	},
-	textInput: {
-		color: textInputColor,
-		fontSize: layoutSize.LAYOUT_10,
-		height: layoutSize.LAYOUT_36,
-	},
-	textInputErrorWrapper: {
-		backgroundColor: inputBackColor,
-		borderColor: errorColor,
-		borderRadius: 3,
-		borderWidth: 1,
-        paddingBottom: 0,
-	},
-	textInputMulti: {
-		color: textInputColor,
-		fontSize: layoutSize.LAYOUT_10,
-		height: layoutSize.LAYOUT_60,
-	},
-	textInputWrapper: {
-		backgroundColor: inputBackColor,
-		borderBottomColor: borderColor,
-		borderBottomWidth: 1,
-		paddingBottom: 0,
 	},
     logo: {
         justifyContent: "center",
@@ -202,39 +118,6 @@ const styles = StyleSheet.create({
     textBoldOverride: {
         fontWeight: "bold",
     },
-	validButtonStyle: {
-		alignSelf: "center",
-		backgroundColor: validActionColor,
-		color: inverseColor,
-		fontSize: layoutSize.LAYOUT_10,
-		paddingLeft: layoutSize.LAYOUT_24,
-		paddingRight: layoutSize.LAYOUT_24,
-		paddingTop: layoutSize.LAYOUT_5,
-		paddingBottom: layoutSize.LAYOUT_5,
-		borderRadius: layoutSize.LAYOUT_20,
-		fontWeight: "500",
-	},
-	validButtonStyleDisabled: {
-		alignSelf: "center",
-		backgroundColor: "transparent",
-		color: validActionColor,
-		fontSize: layoutSize.LAYOUT_10,
-		paddingLeft: layoutSize.LAYOUT_24,
-		paddingRight: layoutSize.LAYOUT_24,
-		paddingTop: layoutSize.LAYOUT_5,
-		paddingBottom: layoutSize.LAYOUT_5,
-		borderRadius: layoutSize.LAYOUT_20,
-		borderColor: validActionColorDisabled,
-		borderWidth: 1,
-		fontWeight: "400",
-	},
-	validButtonStyleWrapper: {
-		alignItems: "center",
-		justifyContent: "center",
-		backgroundColor,
-		marginTop: layoutSize.LAYOUT_26,
-		marginBottom: layoutSize.LAYOUT_13,
-	},
 })
 
 export default styles

@@ -31,7 +31,7 @@ export default store => next => action => {
         navigatorRef.dispatch(NavigationActions.navigate({routeName: 'Login'}))
     }
 
-    if (action.type && action.type === PATH_LOGOUT) {
+    if (action.path && action.path === PATH_LOGOUT) {
         navigatorRef.dispatch(NavigationActions.navigate({routeName: 'Login'}))
     }
 

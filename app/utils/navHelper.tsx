@@ -1,11 +1,6 @@
 import * as React from "react"
 import {StackNavigator, TabNavigator} from "react-navigation"
 import { NavIcon } from "../components"
-import {
-	color,
-	selectColor,
-	tabBackgroundColor,
-} from "../components/styles"
 import { CommonStyles } from "../components/styles/common/styles"
 import { layoutSize } from "../constants/layoutSize"
 
@@ -64,10 +59,10 @@ export const NestedTabNavigator = routes =>
                 fontSize: layoutSize.LAYOUT_13,
             },
             style: {
-                backgroundColor: tabBackgroundColor,
+                backgroundColor: CommonStyles.tabBackgroundColor,
             },
             indicatorStyle: {
-                backgroundColor: selectColor,
+                backgroundColor: CommonStyles.selectColor,
             },
             showLabel: false,
             showIcon: true,
@@ -82,7 +77,7 @@ export const NestedTabNavigator = routes =>
  */
 export const navRootOptions = (title, iconName) => ({
 	tabBarLabel: title,
-	tabBarIcon: <NavIcon tintColor={color} name={iconName} />,
+	tabBarIcon: <NavIcon tintColor={CommonStyles.textColor} name={iconName} />,
 })
 
 export const navOptions = props => {
