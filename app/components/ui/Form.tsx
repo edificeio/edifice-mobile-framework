@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Col, ScrollView } from ".."
+import { Col, ScrollView } from "../index"
 
 import styles from "../styles"
 

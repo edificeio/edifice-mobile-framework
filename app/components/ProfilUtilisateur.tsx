@@ -45,15 +45,15 @@ export class ProfilUtilisateur extends React.Component<ProfilUtilisateurProps, P
 
     disconnectBox = () => (
         <View style={styles.modalContent}>
-            <Text style={styles.text}>Etes vous sur de vouloir</Text>
-            <Text style={styles.text}>vous déconnecter?</Text>
+            <Text style={styles.text}>Êtes-vous sûr de vouloir</Text>
+            <Text style={styles.text}>vous déconnecter ?</Text>
             <ViewButtons onCancel={() => this.setState( {showDisconnect: false})} onValid={() => this.disconnect()} title={"Se déconnecter"}/>
         </View>
     );
 
 	public render() {
 		return (
-			<Col>
+			<Col backgroundColor={"#F8F8FA"}>
                 <Modal style={styles.modalDisconnect} isVisible={this.state.showDisconnect}>{this.disconnectBox()}</Modal>
 				<ButtonDeconnect onPress={() => this.setState( {showDisconnect: true})}/>
 			</Col>

@@ -29,7 +29,7 @@ const styles = StyleSheet.create( {
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: CommonStyles.backgroundColor,
-        marginTop: layoutSize.LAYOUT_40,
+        marginTop: layoutSize.LAYOUT_50,
         marginBottom: layoutSize.LAYOUT_13,
     },
 })

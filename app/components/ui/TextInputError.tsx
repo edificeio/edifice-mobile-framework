@@ -8,7 +8,7 @@ const styles = StyleSheet.create( {
     inputError: {
         color: "red",
         height: layoutSize.LAYOUT_32,
-        fontWeight: "800",
+        fontWeight: "700",
         paddingBottom: 0,
         marginBottom: 0,
     },
@@ -23,7 +23,7 @@ const styles = StyleSheet.create( {
         borderColor: CommonStyles.errorColor,
         borderRadius: 3,
         borderWidth: 1,
-        paddingBottom: 0,
+        paddingBottom: layoutSize.LAYOUT_5,
     },
     textInputMulti: {
         color: CommonStyles.textInputColor,
@@ -33,7 +33,7 @@ const styles = StyleSheet.create( {
         backgroundColor: CommonStyles.inputBackColor,
         borderBottomColor: CommonStyles.borderColor,
         borderBottomWidth: 1,
-        paddingBottom: 0,
+        paddingBottom: layoutSize.LAYOUT_5,
     },
 })
 

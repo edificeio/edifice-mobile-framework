@@ -8,6 +8,7 @@ interface State {}
 
 export interface ColProperties extends ViewProperties {
     alignItems?: string
+    backgroundColor?: any
     borderBottomColor?: string
     borderBottomWidth?: number
     children: any,

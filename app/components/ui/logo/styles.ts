@@ -28,7 +28,7 @@ export default StyleSheet.create({
 	},
 	logo: {
 		width: largeImageSize,
-		tintColor: "#0096ca",
+		tintColor: "#2A9CC8",
 	},
 	text: {
 		color: "#ffffff",

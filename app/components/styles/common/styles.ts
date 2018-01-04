@@ -3,22 +3,22 @@ import {Text} from "react-native";
 Text.defaultProps.style = { fontFamily: 'OpenSans' }
 
 export const CommonStyles = {
-    actionColor: "#0096CA",
-    actionColorDisabled: "#0096CA99",
-	backgroundColor: "#ffffff",
+    actionColor: "#2A9CC8",
+    actionColorDisabled: "#2A9CC8",
+	backgroundColor: "#F8F8FA",
     buttonColor: "#ffffff",
 	borderColor: "#cccccc",
     cardTitle: "#1467ff",
 	elevation: 0.5,
-	errorColor: "red",
+	errorColor: "#858FA9",
     fadColor: "#444444",
-	fontColor: "#8f8f8f",
-	inputBackColor: "#ffffff",
-    inverseColor: "#ffffff",
+	miniTextColor: "#858FA9",
+	inputBackColor: "#F8F8FA",
+    inverseColor: "#F8F8FA",
     linkColor: "#2a97f5",
-	mainColorTheme: "#0096ca",
+	mainColorTheme: "#2A9CC8",
     navigationColor: "#2a97f5",
-    placeholderColor: "#88888899",
+    placeholderColor: "#DCDDE0",
 	primaryBorderColor: "#bcbbc1", // some grey-ish delight with a touch of lavender. Amazing.
 	primaryButtonColor: "#007396", //blue-ish theme
 	primaryFontFamily: "OpenSans",
@@ -35,8 +35,8 @@ export const CommonStyles = {
 	shadowOpacity: 0.25,
 	shadowRadius: 1.5,
     tabBottomColor: "#ffffff",
-    textColor: "#222222",
-	textInputColor: "#222222",
+    textColor: "#414355",
+	textInputColor: "#414355",
 	textTabBottomColor: "#000000",
     titleColor: "#1467ff",
     tabBackgroundColor: "#2a97f5"
