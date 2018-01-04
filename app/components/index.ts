@@ -9,12 +9,12 @@ import { Disable } from "./ui/Disable"
 import { Form } from "./ui/Form"
 import { Label } from "./ui/Label"
 import { Logo } from "./ui/logo/Logo"
-import { FontAwesomeIcon, NavIcon, NavIconProps, NavSmallIcon, SimpleLineIcon } from "./ui/NavIcon"
 import { ProgressBar } from "./ui/ProgressBar"
 import { Row } from "./ui/Row"
 import { ScrollView } from "./ui/ScrollView"
 import { Title } from "./ui/Title"
 import { layoutSize } from "../constants/layoutSize"
+import {Icon, IconSmall, IconBig, IconOnOff} from "./ui/Icon"
 
 export {
 	ButtonTextIcon,
@@ -22,16 +22,15 @@ export {
 	Description,
 	Disable,
 	Form,
-	FontAwesomeIcon,
 	Label,
 	layoutSize,
 	Logo,
-	NavIcon,
-	NavIconProps,
-	NavSmallIcon,
+	Icon,
+    IconBig,
+	IconOnOff,
+	IconSmall,
 	ProgressBar,
 	Row,
-	SimpleLineIcon,
 	ScrollView,
 	StatusAlert,
 	TextInputError,

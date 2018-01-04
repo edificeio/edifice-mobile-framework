@@ -27,7 +27,7 @@ export default store => next => action => {
         const returnValue = next(action)
 
 		if (action.path === PATH_LOGOUT || action.type === PATH_RECOVER_PASSWORD) {
-			setLogin({ email: action.email, password: "" })
+			setLogin({ email: action.payload.email, password: "" })
 		}
 
 		if ((action.path === PATH_LOGIN || action.path === PATH_SIGNUP) && action.type === CREATE_SUCCESS) {

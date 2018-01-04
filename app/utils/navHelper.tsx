@@ -1,9 +1,8 @@
 import * as React from "react"
 import {StackNavigator, TabNavigator} from "react-navigation"
-import { NavIcon } from "../components"
+import { IconOnOff } from "../components/ui/Icon"
 import { CommonStyles } from "../components/styles/common/styles"
 import { layoutSize } from "../constants/layoutSize"
-
 
 export const navigator = routes =>
 	TabNavigator(routes, {
@@ -14,7 +13,7 @@ export const navigator = routes =>
 			activeTintColor: CommonStyles.mainColorTheme,
 			inactiveTintColor: CommonStyles.mainColorTheme,
 			labelStyle: {
-				fontSize: layoutSize.LAYOUT_8,
+				fontSize: layoutSize.LAYOUT_12,
                 color: CommonStyles.textTabBottomColor,
 			},
 			style: {
@@ -77,7 +76,7 @@ export const NestedTabNavigator = routes =>
  */
 export const navRootOptions = (title, iconName) => ({
 	tabBarLabel: title,
-	tabBarIcon: <NavIcon tintColor={CommonStyles.textColor} name={iconName} />,
+	tabBarIcon: ({ focused }) => <IconOnOff focused={focused} name={iconName}/>,
 })
 
 export const navOptions = props => {

@@ -1,7 +1,7 @@
 import * as React from "react"
 import { KeyboardAvoidingView, Text } from "react-native"
 
-import { Col, Form, Logo, Row, TextInputError, ValidTextIcon } from ".."
+import { Col, Form, Logo, Row, TextInputError, ValidTextIcon } from "../index"
 import { AuthProps } from "../../model/Auth"
 
 import styles from "../styles"
@@ -19,7 +19,7 @@ export interface LoginProps {
 
 export class Login extends React.Component<LoginProps, LoginState> {
 	state = {
-		email: '',
+		email: this.props.auth.email ? this.props.auth.email : '',
 		password: ''
 	}
 

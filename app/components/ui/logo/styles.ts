@@ -7,7 +7,7 @@ export const marginTopSmallContainerSize = Math.round(imageWidth / 20)
 export const smallImageSize = Math.round(imageWidth / 5)
 export const largeContainerSize = Math.round(imageWidth)
 export const marginTopLargeContainerSize = Math.round(imageWidth / 3)
-export const largeImageSize = Math.round(imageWidth / 2)
+export const largeImageSize = Math.round(imageWidth / 3)
 
 export default StyleSheet.create({
 	container: {

@@ -4,9 +4,6 @@ import {CommonStyles} from "./common/styles";
 
 export const deviceWidth = Dimensions.get("window").width
 
-const widthDuration = deviceWidth - layoutSize.LAYOUT_4 - layoutSize.LAYOUT_20
-
-
 const styles = StyleSheet.create({
 	Disable: {
 		position: "absolute",
@@ -27,7 +24,6 @@ const styles = StyleSheet.create({
 		alignSelf: "center",
 		color: CommonStyles.actionColor,
 		backgroundColor: "transparent",
-		fontSize: layoutSize.LAYOUT_10,
 		paddingHorizontal: layoutSize.LAYOUT_15,
 		fontWeight: "400",
 	},
@@ -112,7 +108,6 @@ const styles = StyleSheet.create({
     },
     minitext: {
         color: CommonStyles.fontColor,
-        fontSize: layoutSize.LAYOUT_10,
         textDecorationLine: "underline",
     },
     textBoldOverride: {

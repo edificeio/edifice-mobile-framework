@@ -2,7 +2,7 @@ import FormData from "form-data"
 import * as docActions from "../actions/docs"
 import { Conf } from "../Conf"
 import * as TYPES from "../constants/docs"
-import { replace1 } from "../constants/paths"
+import {PATH_LOGOUT, replace1} from "../constants/paths"
 
 function checkSystemError(response) {
 	if (response.status >= 200 && response.status < 300) {
@@ -124,6 +124,13 @@ async function readIdStart(dispatch, path, id) {
 }
 
 async function createStart(dispatch, path, doc) {
+	// temp
+
+	if (path === PATH_LOGOUT)
+	{
+        dispatch(docActions.createSuccess(path, { ...doc, code: 200, err: 0, error: 0 }))
+		return
+	}
 	const response = await rawFetchFormDataPromise(path, "post", doc)
 
 	checkResponse(response)

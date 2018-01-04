@@ -9,14 +9,13 @@ import {layoutSize} from "../constants/layoutSize";
 const styles = StyleSheet.create({
     modalContent: {
         backgroundColor: 'white',
-        padding: 25,
+        padding: layoutSize.LAYOUT_20,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 4,
         borderColor: 'rgba(0, 0, 0, 0.1)',
     },
     text: {
-        fontSize: layoutSize.LAYOUT_10,
     },
     modalDisconnect: {
         flex: 1,

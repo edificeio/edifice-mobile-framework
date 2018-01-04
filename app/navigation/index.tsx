@@ -15,11 +15,11 @@ const MainNavigator = navigator({
     },
     Conversation: {
         screen: ConversationNavigator,
-        navigationOptions: () => navRootOptions("Conversation", "account-switch" ),
+        navigationOptions: () => navRootOptions("Conversation", "messages" ),
     },
     Profil: {
         screen: ProfilUtilisateurNavigator,
-        navigationOptions: () => navRootOptions("Profil", "account-outline" ),
+        navigationOptions: () => navRootOptions("Profil", "profile" ),
     },
 })
 

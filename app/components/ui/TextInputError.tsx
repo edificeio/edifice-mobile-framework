@@ -7,7 +7,6 @@ import {CommonStyles} from "../styles/common/styles";
 const styles = StyleSheet.create( {
     inputError: {
         color: "red",
-        fontSize: layoutSize.LAYOUT_10,
         height: layoutSize.LAYOUT_32,
         fontWeight: "800",
         paddingBottom: 0,
@@ -15,7 +14,6 @@ const styles = StyleSheet.create( {
     },
     textInput: {
         color: CommonStyles.textInputColor,
-        fontSize: layoutSize.LAYOUT_10,
         height: layoutSize.LAYOUT_32,
         paddingBottom: 0,
         marginBottom: 0,
@@ -29,7 +27,6 @@ const styles = StyleSheet.create( {
     },
     textInputMulti: {
         color: CommonStyles.textInputColor,
-        fontSize: layoutSize.LAYOUT_10,
         height: layoutSize.LAYOUT_60,
     },
     textInputWrapper: {

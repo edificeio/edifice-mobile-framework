@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Text, TouchableOpacity } from "react-native"
-import { NavIcon } from ".."
+import { Icon } from ".."
 import styles from "../styles/index"
 
 export interface ButtonTextIconProps {
@@ -24,11 +24,11 @@ export const ButtonTextIcon = ({
 	return (
 		<TouchableOpacity onPress={onPress} disabled={disabled}>
 			<Text style={styles.buttonStyle}>
-				{leftName.length > 0 && <NavIcon name={leftName} {...props} />}
+				{leftName.length > 0 && <Icon name={leftName}/>}
 				{whiteSpace}
 				{title}
 				{whiteSpace}
-				{rightName.length > 0 && <NavIcon name={rightName} {...props} />}
+				{rightName.length > 0 && <Icon name={rightName}/>}
 			</Text>
 		</TouchableOpacity>
 	)

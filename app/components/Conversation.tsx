@@ -9,10 +9,10 @@ import styles from "./styles";
 
 const swipeoutBtns = [
 	<View style={InboxStyle.hiddenButtons}>
-		<Icon name="notifications-off" size={30} />
+		<Icon name="notifications-off"/>
 	</View>,
 	<View style={InboxStyle.hiddenButtons}>
-		<Icon name="delete" size={30} />
+		<Icon name="delete"/>
 	</View>,
 ]
 

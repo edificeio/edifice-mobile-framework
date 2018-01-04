@@ -16,11 +16,7 @@ const style = StyleSheet.create({
 })
 
 export class Avatar extends React.Component<{ userId: string }, { base64Str: string }> {
-
-	constructor(props) {
-		super(props)
-		this.state = { base64Str: ""}
-	}
+	state = { base64Str: ""}
 
 	public async componentDidMount() {
 		const response = await RNFetchBlob.fetch(
