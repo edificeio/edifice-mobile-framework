@@ -1,4 +1,5 @@
 import * as React from "react"
+import {Text} from "react-native";
 import {StackNavigator, TabNavigator} from "react-navigation"
 import { IconOnOff } from "../components/ui/Icon"
 import { CommonStyles } from "../components/styles/common/styles"
@@ -22,7 +23,7 @@ export const navigator = routes =>
 				elevation: 0,
 			},
 			indicatorStyle: {
-				backgroundColor: CommonStyles.mainColorTheme, //hidden
+				backgroundColor: "#ffffff", //hidden
 			},
 			showLabel: true,
 			upperCaseLabel: false,
@@ -75,7 +76,7 @@ export const NestedTabNavigator = routes =>
  * @param iconName   the icon name
  */
 export const navRootOptions = (title, iconName) => ({
-	tabBarLabel: title,
+	tabBarLabel: ({ focused }) => <Text style={{color:focused ? CommonStyles.actionColor : CommonStyles.textTabBottomColor}}>{title}</Text>,
 	tabBarIcon: ({ focused }) => <IconOnOff focused={focused} name={iconName}/>,
 })
 

@@ -9,18 +9,20 @@ import {layoutSize} from "../constants/layoutSize";
 const styles = StyleSheet.create({
     modalContent: {
         backgroundColor: 'white',
-        padding: layoutSize.LAYOUT_20,
+        paddingHorizontal: layoutSize.LAYOUT_20,
+        paddingVertical: layoutSize.LAYOUT_32,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 4,
         borderColor: 'rgba(0, 0, 0, 0.1)',
     },
     text: {
+        color: "#414355",
     },
     modalDisconnect: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     }
 });
 
@@ -54,7 +56,7 @@ export class ProfilUtilisateur extends React.Component<ProfilUtilisateurProps, P
 	public render() {
 		return (
 			<Col backgroundColor={"#F8F8FA"}>
-                <Modal style={styles.modalDisconnect} isVisible={this.state.showDisconnect}>{this.disconnectBox()}</Modal>
+                <Modal style={styles.modalDisconnect} backdropOpacity={0.5} isVisible={this.state.showDisconnect}>{this.disconnectBox()}</Modal>
 				<ButtonDeconnect onPress={() => this.setState( {showDisconnect: true})}/>
 			</Col>
     	)

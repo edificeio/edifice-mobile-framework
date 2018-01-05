@@ -81,7 +81,7 @@ export class Logo extends React.Component<LogoProperties, any> {
 		]
 		const imageStyles = [
 			styles.logo,
-			{ width: this.state.imageWidth },
+			{ height: this.state.imageWidth, width: this.state.imageWidth },
 			this.props.tintColor ? { tintColor: this.props.tintColor } : null,
 		]
 		const marginStyles = [

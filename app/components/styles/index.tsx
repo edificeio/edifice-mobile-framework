@@ -58,9 +58,8 @@ const styles = StyleSheet.create({
     },
     formGrid: {
         backgroundColor: CommonStyles.backgroundColor,
-        justifyContent: "center",
         flex: 1,
-        paddingHorizontal: layoutSize.LAYOUT_28,
+        paddingHorizontal: layoutSize.LAYOUT_34,
     },
     grid: {
         backgroundColor: CommonStyles.backgroundColor,
@@ -103,11 +102,12 @@ const styles = StyleSheet.create({
         margin: layoutSize.LAYOUT_12,
     },
     text: {
-        color: CommonStyles.textColor,
-        fontSize: layoutSize.LAYOUT_10,
+        color: CommonStyles.textInputColor,
+        fontSize: layoutSize.LAYOUT_14,
     },
     minitext: {
         color: CommonStyles.miniTextColor,
+        fontSize: layoutSize.LAYOUT_14,
         textDecorationLine: "underline",
     },
     textBoldOverride: {

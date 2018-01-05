@@ -1,36 +1,44 @@
 import * as React from "react"
-import { StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from "react-native"
+import {StyleProp, StyleSheet, Text, TextStyle, TouchableOpacity, View, ViewStyle} from "react-native"
 import { Disable, IconSmall } from ".."
 import { layoutSize } from "../../constants/layoutSize"
 import {CommonStyles} from "../styles/common/styles"
 
-const styles = StyleSheet.create( {
+const validButtonStyleLayout = {
+    borderColor: CommonStyles.actionColor,
+    borderRadius: layoutSize.LAYOUT_34,
+    borderWidth: 0.9,
+    fontSize: layoutSize.LAYOUT_14,
+    paddingHorizontal: layoutSize.LAYOUT_36,
+    paddingVertical: layoutSize.LAYOUT_8,
+}
+
+interface Style {
+    validButtonStyle: TextStyle,
+    validButtonStyleDisabled: TextStyle,
+    validButtonStyleWrapper: ViewStyle
+}
+
+const styles = StyleSheet.create<Style>( {
     validButtonStyle: {
-        alignSelf: "center",
+        ...validButtonStyleLayout,
         backgroundColor: CommonStyles.actionColor,
         color: CommonStyles.inverseColor,
-        paddingHorizontal: layoutSize.LAYOUT_24,
-        paddingVertical: layoutSize.LAYOUT_5,
-        borderRadius: layoutSize.LAYOUT_20,
-        fontWeight: "500",
     },
     validButtonStyleDisabled: {
-        alignSelf: "center",
+        ...validButtonStyleLayout,
         backgroundColor: "transparent",
         color: CommonStyles.actionColor,
-        paddingHorizontal: layoutSize.LAYOUT_24,
-        paddingVertical: layoutSize.LAYOUT_5,
-        borderRadius: layoutSize.LAYOUT_20,
-        borderColor: "#00B6EAB9",
-        borderWidth: 0.7,
-        fontWeight: "400",
+        fontSize: layoutSize.LAYOUT_14,
     },
     validButtonStyleWrapper: {
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: CommonStyles.backgroundColor,
         marginTop: layoutSize.LAYOUT_50,
-        marginBottom: layoutSize.LAYOUT_13,
+        marginBottom: layoutSize.LAYOUT_16,
+        overflow: 'hidden',
+		height: layoutSize.LAYOUT_40,
     },
 })
 

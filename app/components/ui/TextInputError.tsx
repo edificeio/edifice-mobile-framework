@@ -8,6 +8,7 @@ const styles = StyleSheet.create( {
     inputError: {
         color: "red",
         height: layoutSize.LAYOUT_32,
+        fontSize: layoutSize.LAYOUT_14,
         fontWeight: "700",
         paddingBottom: 0,
         marginBottom: 0,
@@ -15,25 +16,18 @@ const styles = StyleSheet.create( {
     textInput: {
         color: CommonStyles.textInputColor,
         height: layoutSize.LAYOUT_32,
+        fontSize: layoutSize.LAYOUT_14,
         paddingBottom: 0,
         marginBottom: 0,
     },
-    textInputErrorWrapper: {
-        backgroundColor: CommonStyles.inputBackColor,
-        borderColor: CommonStyles.errorColor,
-        borderRadius: 3,
-        borderWidth: 1,
-        paddingBottom: layoutSize.LAYOUT_5,
-    },
     textInputMulti: {
         color: CommonStyles.textInputColor,
+        fontSize: layoutSize.LAYOUT_14,
         height: layoutSize.LAYOUT_60,
     },
     textInputWrapper: {
-        backgroundColor: CommonStyles.inputBackColor,
-        borderBottomColor: CommonStyles.borderColor,
-        borderBottomWidth: 1,
-        paddingBottom: layoutSize.LAYOUT_5,
+        backgroundColor: "transparent",
+        paddingBottom: layoutSize.LAYOUT_10,
     },
 })
 
@@ -109,15 +103,14 @@ export class TextInputError extends React.Component<TextInputErrorProps, TextInp
 		const errMessage = this.hasErrorsMessage()
 		const { label, multiline, secureTextEntry, editable } = this.props
 		const { focus } = this.state
-		const styleWrapper = errMessage.length > 0 ? styles.textInputErrorWrapper : styles.textInputWrapper
 		const { style = multiline ? styles.textInputMulti : styles.textInput } = this.props
 		const underlineColor = CommonStyles.inputBackColor
-		const borderBottomColor = focus ? "#00bcda" : errMessage.length > 0 ? "red" : "#cccccc"
+		const borderBottomColor = focus ? "#00bcda" : errMessage.length > 0 ? CommonStyles.errorColor : "#DCDDE0"
 
 		return (
 			<Row marginTop={layoutSize.LAYOUT_2} marginBottom={layoutSize.LAYOUT_2}>
 				<Col
-					style={styleWrapper}
+					style={styles.textInputWrapper}
 					borderBottomColor={borderBottomColor}
 					borderBottomWidth={focus || errMessage.length > 0 ? 2 : 1}
 				>

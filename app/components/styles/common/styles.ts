@@ -10,15 +10,15 @@ export const CommonStyles = {
 	borderColor: "#cccccc",
     cardTitle: "#1467ff",
 	elevation: 0.5,
-	errorColor: "#858FA9",
+	errorColor: "red",
     fadColor: "#444444",
-	miniTextColor: "#858FA9",
 	inputBackColor: "#F8F8FA",
     inverseColor: "#F8F8FA",
     linkColor: "#2a97f5",
 	mainColorTheme: "#2A9CC8",
     navigationColor: "#2a97f5",
-    placeholderColor: "#DCDDE0",
+    placeholderColor: "#B2BECDDD",
+	miniTextColor: "#858FA9",
 	primaryBorderColor: "#bcbbc1", // some grey-ish delight with a touch of lavender. Amazing.
 	primaryButtonColor: "#007396", //blue-ish theme
 	primaryFontFamily: "OpenSans",

@@ -1,10 +1,12 @@
 import { Dimensions, StyleSheet } from "react-native"
 
+const hires = Dimensions.get("window").width > 300
+
 const imageWidth = Math.round(Dimensions.get("window").width / 2)
 
 export const smallContainerSize = Math.round(imageWidth / 3)
 export const marginTopSmallContainerSize = Math.round(imageWidth / 20)
-export const smallImageSize = Math.round(imageWidth / 5)
+export const smallImageSize = hires ? Math.round(imageWidth / 3) : Math.round(imageWidth / 5)
 export const largeContainerSize = Math.round(imageWidth)
 export const marginTopLargeContainerSize = Math.round(imageWidth / 3)
 export const largeImageSize = Math.round(imageWidth / 3)
