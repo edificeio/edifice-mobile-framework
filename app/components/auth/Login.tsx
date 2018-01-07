@@ -3,6 +3,7 @@ import { KeyboardAvoidingView, Text } from "react-native"
 
 import { Col, Form, Logo, Row, TextInputError, ValidTextIcon } from "../index"
 import { AuthProps } from "../../model/Auth"
+import {navigate} from "../../utils/navHelper";
 
 import styles from "../styles"
 
@@ -31,7 +32,7 @@ export class Login extends React.Component<LoginProps, LoginState> {
 
 
 	public render() {
-		const { login, onRoute } = this.props
+		const { login } = this.props
 		const { email, password } = this.state
 
 		return (
@@ -50,7 +51,7 @@ export class Login extends React.Component<LoginProps, LoginState> {
 
 					<ValidTextIcon onPress={e => login(email, password)} disabled={this.isDisabled()} title="Se connecter" />
 
-					<Col size={1} style={styles.line} onPress={e => onRoute("pass")}>
+					<Col size={1} style={styles.line} onPress={e => navigate("RecoverPassword")}>
 						<Text style={styles.minitext}>Mot de passe oublié?</Text>
 					</Col>
 				</KeyboardAvoidingView>

@@ -1,9 +1,10 @@
 import * as React from "react"
 import {Text} from "react-native";
-import {StackNavigator, TabNavigator} from "react-navigation"
+import {NavigationActions, StackNavigator, TabNavigator} from "react-navigation"
 import { IconOnOff } from "../components"
 import { CommonStyles } from "../components/styles/common/styles"
 import { layoutSize } from "../constants/layoutSize"
+import {navigatorRef} from "../components/AppScreen";
 
 export const navigator = routes =>
 	TabNavigator(routes, {
@@ -95,3 +96,7 @@ export const navOptions = props => {
 	}
 }
 
+
+export const navigate = ( route, props = {}) => {
+    return navigatorRef.dispatch(NavigationActions.navigate({routeName: route, params: props}))
+}

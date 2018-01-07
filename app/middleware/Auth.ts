@@ -1,19 +1,26 @@
-import { checkLogin, login } from "../actions/auth"
-import {crudError, error} from "../actions/docs"
+import { login } from "../actions/auth"
+import { error } from "../actions/docs"
 import { CREATE_ERROR, CREATE_SUCCESS } from "../constants/docs"
 import {PATH_AUTH, PATH_LOGIN, PATH_LOGOUT, PATH_RECOVER_PASSWORD, PATH_SIGNUP} from "../constants/paths"
 import { getLogin, setLogin } from "../utils/Store"
+import {navigate} from "../utils/navHelper";
 
 var initAuth = false
 
 async function auth(dispatch) {
-	getLogin().then(({ email, password }) => {
+	try {
+		const { email = '', password = '' } = await getLogin()
+
 		if ( email && email.length > 0 && password.length > 0) {
 			dispatch(login(email, password))
+			return
 		}
-		dispatch(crudError( CREATE_ERROR, PATH_LOGIN, { synced: true, loggedIn: false, payload: {email, password}} ))
-	})
-	.catch(ex => 	dispatch(crudError( CREATE_ERROR, PATH_LOGIN, { synced: true, loggedIn: false} )))
+
+		navigate('Login', {email})
+	}
+	catch(e) {
+		navigate('Login', {email: ''})
+	}
 }
 
 export default store => next => action => {

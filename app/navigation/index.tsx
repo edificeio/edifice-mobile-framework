@@ -25,7 +25,9 @@ const MainNavigator = navigator({
 
 
 export const AppNavigator : NavigationContainer = StackNavigator({
+        Bootstrap: {screen: SignupLoginRecover},
         Login: {screen: SignupLoginRecover},
+        RecoverPassword: {screen: SignupLoginRecover},
         Main: {screen: MainNavigator},
     },
     {

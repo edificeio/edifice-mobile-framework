@@ -1,11 +1,11 @@
 import { CREATE_SUCCESS, CREATE_ERROR } from "../constants/docs"
 import {matchs, PATH_LOGIN, PATH_LOGOUT, PATH_SIGNUP} from "../constants/paths"
 
-const initialState: AuthProps = {
+export const initialState: AuthProps = {
 	email: "",
 	password: "",
 	loggedIn: false,
-	synced: false,
+	synced: true,
 }
 
 export interface AuthProps {

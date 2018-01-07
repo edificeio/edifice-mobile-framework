@@ -9,34 +9,27 @@ import { RecoverPassword } from "./RecoverPassword"
 export interface SignupLoginRecoverProps {
 	auth?: AuthProps
 	login?: (email: string, password: string) => void,
+	navigation?: any,
 	recoverPassword?: (email) => void
 }
 
-export interface SignupLoginRecoverState {
-	route: string
-}
 
-export class SignupLoginRecover extends React.Component<SignupLoginRecoverProps, SignupLoginRecoverState> {
-	state = {
-		route: "login",
-	}
-
-	public onRoute(newRoute) {
-		this.setState({ route: newRoute })
-	}
+export class SignupLoginRecover extends React.Component<SignupLoginRecoverProps, any> {
 
 	public render() {
 		const { synced, loggedIn } = this.props.auth
-		const { route} = this.state
+		const {routeName} = this.props.navigation.state
 
 		if (synced === false || loggedIn)
 			return <View />
 
-		if (route === "login") {
-			return <Login onRoute={r => this.onRoute(r)} {...this.props} />
+		if (routeName === "Login") {
+			return <Login {...this.props} />
 		}
-		if (route === "pass") {
-			return <RecoverPassword onRoute={r => this.onRoute(r)} {...this.props} />
+
+		if (routeName === "RecoverPassword") {
+			return <RecoverPassword {...this.props} />
 		}
+        return <View />
 	}
 }
