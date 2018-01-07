@@ -21,7 +21,7 @@ export const navigator = routes =>
 				backgroundColor: CommonStyles.tabBottomColor,
 				borderTopWidth: 1,
 				borderTopColor: CommonStyles.borderColorLighter,
-				elevation: 0,
+				elevation: 1,
 			},
 			indicatorStyle: {
 				backgroundColor: "#ffffff", //hidden

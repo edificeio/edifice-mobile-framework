@@ -5,6 +5,7 @@ import {ViewButtons} from "./ui/ViewButtons";
 import {ButtonDeconnect} from "./ui/ButtonDeconnect";
 import {Col} from "./ui/Col";
 import {layoutSize} from "../constants/layoutSize";
+import {CommonStyles} from "./styles/common/styles";
 
 const styles = StyleSheet.create({
     modalContent: {
@@ -15,10 +16,10 @@ const styles = StyleSheet.create({
         elevation: 8,
         justifyContent: 'center',
         padding: layoutSize.LAYOUT_20,
-        shadowColor: "#000",
-        shadowOffset: {height: 5, width: 5},
-        shadowOpacity: 0.4,
-        shadowRadius: 5,
+        shadowColor: CommonStyles.shadowColor,
+        shadowOffset: CommonStyles.shadowOffset,
+        shadowOpacity: CommonStyles.shadowOpacity,
+        shadowRadius: CommonStyles.shadowRadius,
     },
     text: {
     },
