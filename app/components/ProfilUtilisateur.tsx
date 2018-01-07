@@ -8,16 +8,19 @@ import {layoutSize} from "../constants/layoutSize";
 
 const styles = StyleSheet.create({
     modalContent: {
-        backgroundColor: 'white',
-        paddingHorizontal: layoutSize.LAYOUT_20,
-        paddingVertical: layoutSize.LAYOUT_32,
-        justifyContent: 'center',
         alignItems: 'center',
+        alignSelf: "center",
+        backgroundColor: 'white',
         borderRadius: 4,
-        borderColor: 'rgba(0, 0, 0, 0.1)',
+        elevation: 8,
+        justifyContent: 'center',
+        padding: layoutSize.LAYOUT_20,
+        shadowColor: "#000",
+        shadowOffset: {height: 5, width: 5},
+        shadowOpacity: 0.4,
+        shadowRadius: 5,
     },
     text: {
-        color: "#414355",
     },
     modalDisconnect: {
         flex: 1,

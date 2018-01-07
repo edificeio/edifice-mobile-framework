@@ -68,6 +68,9 @@
 		<string>OpenSans-Light.ttf</string>
 		<string>OpenSans-Semibold.ttf</string>
 		<string>OpenSans.ttf</string>
+		<string>icomoon.ttf</string>
+		<string>fontello.ttf</string>
+		<string>icomoon.woff</string>
 	</array>
 </dict>
 </plist>

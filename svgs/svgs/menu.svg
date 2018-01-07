@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="18px" viewBox="0 0 20 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>Menu</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Messagerie_1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(-20.000000, -45.000000)">
+        <g id="Navigation" fill="#FFFFFF">
+            <g id="Menu" transform="translate(20.000000, 45.000000)">
+                <polygon id="Fill-413" points="20 2.5 0 2.5 0 0 20 0"></polygon>
+                <polygon id="Fill-414" points="20 7.5 0 7.5 0 5 20 5"></polygon>
+                <polygon id="Fill-415" points="20 12.5 0 12.5 0 10 20 10"></polygon>
+                <polygon id="Fill-416" points="20 17.5 0 17.5 0 15 20 15"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>

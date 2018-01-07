@@ -58,6 +58,10 @@
 		07DE6DD8AD534EE296D31077 /* OpenSans.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F6CB18C6124D436E9354B605 /* OpenSans.ttf */; };
 		72C89DE0FACF436EB5CEE06A /* libRNSVG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E400FC5DEAD44FBF9005B11E /* libRNSVG.a */; };
 		A7B06FCBE7B04D56AB548E65 /* libRNSVG-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EC68CFA731547A399F4D5CD /* libRNSVG-tvOS.a */; };
+		BA175965A1E7438BBEA88991 /* icomoon.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DF3D8FB5BF62472C83FAD5D2 /* icomoon.ttf */; };
+		7565AC2A5C254A2F9252864B /* icomoon.svg in Resources */ = {isa = PBXBuildFile; fileRef = 95657A2928064644B130919A /* icomoon.svg */; };
+		F0093F37132E46A3AD665D60 /* fontello.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 49D3CEDD64BF4F71A8F78872 /* fontello.ttf */; };
+		F7F8B2B3BE8A4DF6B246B4A2 /* icomoon.woff in Resources */ = {isa = PBXBuildFile; fileRef = D07E9C2EF56A4E699B1FCC62 /* icomoon.woff */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -313,6 +317,10 @@
 		4608933076B34A939C604C6A /* RNSVG.xcodeproj */ = {isa = PBXFileReference; name = "RNSVG.xcodeproj"; path = "../node_modules/react-native-svg/ios/RNSVG.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		E400FC5DEAD44FBF9005B11E /* libRNSVG.a */ = {isa = PBXFileReference; name = "libRNSVG.a"; path = "libRNSVG.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		3EC68CFA731547A399F4D5CD /* libRNSVG-tvOS.a */ = {isa = PBXFileReference; name = "libRNSVG-tvOS.a"; path = "libRNSVG-tvOS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		DF3D8FB5BF62472C83FAD5D2 /* icomoon.ttf */ = {isa = PBXFileReference; name = "icomoon.ttf"; path = "../assets/fonts/icomoon.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		95657A2928064644B130919A /* icomoon.svg */ = {isa = PBXFileReference; name = "icomoon.svg"; path = "../assets/fonts/icomoon.svg"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		49D3CEDD64BF4F71A8F78872 /* fontello.ttf */ = {isa = PBXFileReference; name = "fontello.ttf"; path = "../assets/fonts/fontello.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		D07E9C2EF56A4E699B1FCC62 /* icomoon.woff */ = {isa = PBXFileReference; name = "icomoon.woff"; path = "../assets/fonts/icomoon.woff"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -586,6 +594,10 @@
 				4926A6880F534664810FF6CE /* OpenSans-Light.ttf */,
 				8147D0E4BE6D4DB5919CBAE5 /* OpenSans-Semibold.ttf */,
 				F6CB18C6124D436E9354B605 /* OpenSans.ttf */,
+				DF3D8FB5BF62472C83FAD5D2 /* icomoon.ttf */,
+				95657A2928064644B130919A /* icomoon.svg */,
+				49D3CEDD64BF4F71A8F78872 /* fontello.ttf */,
+				D07E9C2EF56A4E699B1FCC62 /* icomoon.woff */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -975,6 +987,10 @@
 				79CFF44D3806440EA9422BFA /* OpenSans-Light.ttf in Resources */,
 				F8DE9627B40740A49EE8BC22 /* OpenSans-Semibold.ttf in Resources */,
 				07DE6DD8AD534EE296D31077 /* OpenSans.ttf in Resources */,
+				BA175965A1E7438BBEA88991 /* icomoon.ttf in Resources */,
+				7565AC2A5C254A2F9252864B /* icomoon.svg in Resources */,
+				F0093F37132E46A3AD665D60 /* fontello.ttf in Resources */,
+				F7F8B2B3BE8A4DF6B246B4A2 /* icomoon.woff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

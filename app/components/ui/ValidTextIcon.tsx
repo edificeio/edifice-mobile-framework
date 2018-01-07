@@ -5,9 +5,7 @@ import { layoutSize } from "../../constants/layoutSize"
 import {CommonStyles} from "../styles/common/styles"
 
 const validButtonStyleLayout = {
-    borderColor: CommonStyles.actionColor,
     borderRadius: layoutSize.LAYOUT_34,
-    borderWidth: 0.9,
     fontSize: layoutSize.LAYOUT_14,
     paddingHorizontal: layoutSize.LAYOUT_36,
     paddingVertical: layoutSize.LAYOUT_8,
@@ -16,7 +14,8 @@ const validButtonStyleLayout = {
 interface Style {
     validButtonStyle: TextStyle,
     validButtonStyleDisabled: TextStyle,
-    validButtonStyleWrapper: ViewStyle
+    validButtonStyleWrapper: ViewStyle,
+	touchableStyle: ViewStyle,
 }
 
 const styles = StyleSheet.create<Style>( {
@@ -28,8 +27,9 @@ const styles = StyleSheet.create<Style>( {
     validButtonStyleDisabled: {
         ...validButtonStyleLayout,
         backgroundColor: "transparent",
+        borderColor: CommonStyles.actionColor,
+        borderWidth: 0.9,
         color: CommonStyles.actionColor,
-        fontSize: layoutSize.LAYOUT_14,
     },
     validButtonStyleWrapper: {
         alignItems: "center",
@@ -40,6 +40,12 @@ const styles = StyleSheet.create<Style>( {
         overflow: 'hidden',
 		height: layoutSize.LAYOUT_40,
     },
+	touchableStyle : {
+        borderColor: "#2A9CC8aa",
+        borderWidth: 0.9,
+        borderRadius: layoutSize.LAYOUT_34,
+		padding: 0,
+	}
 })
 
 function isLoading(isLoadings) {

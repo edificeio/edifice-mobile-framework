@@ -11,11 +11,11 @@ import SignupLoginRecover from "../connectors/auth/SignupLoginRecover"
 const MainNavigator = navigator({
     Nouveautes: {
         screen: NouveautesNavigator,
-        navigationOptions: () => navRootOptions( "Nouveautés", "home" ),
+        navigationOptions: () => navRootOptions( "Nouveautés", "nouveautes" ),
     },
     Conversation: {
         screen: ConversationNavigator,
-        navigationOptions: () => navRootOptions("Conversation", "messages" ),
+        navigationOptions: () => navRootOptions("Conversation", "conversation" ),
     },
     Profil: {
         screen: ProfilUtilisateurNavigator,

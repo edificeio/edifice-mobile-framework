@@ -14,7 +14,8 @@ import { Row } from "./ui/Row"
 import { ScrollView } from "./ui/ScrollView"
 import { Title } from "./ui/Title"
 import { layoutSize } from "../constants/layoutSize"
-import {Icon, IconSmall, IconBig, IconOnOff} from "./ui/Icon"
+import {Icon, IconSmall, IconBig} from "./ui/icons/IconPng"
+import {IconOnOff} from "./ui/icons/IconOnOff";
 
 export {
 	ButtonTextIcon,
@@ -25,7 +26,7 @@ export {
 	Label,
 	layoutSize,
 	Logo,
-	Icon,
+    Icon,
     IconBig,
 	IconOnOff,
 	IconSmall,

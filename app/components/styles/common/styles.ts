@@ -8,15 +8,17 @@ export const CommonStyles = {
 	backgroundColor: "#F8F8FA",
     buttonColor: "#ffffff",
 	borderColor: "#cccccc",
+    borderColorLighter: "#e2e2e2",
     cardTitle: "#1467ff",
 	elevation: 0.5,
 	errorColor: "red",
     fadColor: "#444444",
+	iconColorOff: "#858FA9",
+	iconColorOn: "#2A9CC8",
 	inputBackColor: "#F8F8FA",
     inverseColor: "#F8F8FA",
     linkColor: "#2a97f5",
 	mainColorTheme: "#2A9CC8",
-    navigationColor: "#2a97f5",
     placeholderColor: "#B2BECDDD",
 	miniTextColor: "#858FA9",
 	primaryBorderColor: "#bcbbc1", // some grey-ish delight with a touch of lavender. Amazing.
@@ -37,7 +39,7 @@ export const CommonStyles = {
     tabBottomColor: "#ffffff",
     textColor: "#414355",
 	textInputColor: "#414355",
-	textTabBottomColor: "#000000",
+	textTabBottomColor: "#858FA9",
     titleColor: "#1467ff",
     tabBackgroundColor: "#2a97f5"
 }

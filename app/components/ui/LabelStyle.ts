@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
 		fontSize: layoutSize.LAYOUT_6,
 		lineHeight: layoutSize.LAYOUT_9,
 		fontWeight: "300",
-		color: CommonStyles.fontColor,
+		color: CommonStyles.textTabBottomColor,
 		backgroundColor: CommonStyles.backgroundColor,
 		shadowColor: CommonStyles.shadowColor,
 		shadowOffset: CommonStyles.shadowOffset,

@@ -1,7 +1,7 @@
 import * as React from "react"
 import {Text} from "react-native";
 import {StackNavigator, TabNavigator} from "react-navigation"
-import { IconOnOff } from "../components/ui/Icon"
+import { IconOnOff } from "../components"
 import { CommonStyles } from "../components/styles/common/styles"
 import { layoutSize } from "../constants/layoutSize"
 
@@ -19,7 +19,8 @@ export const navigator = routes =>
 			},
 			style: {
 				backgroundColor: CommonStyles.tabBottomColor,
-				borderTopWidth: 0,
+				borderTopWidth: 1,
+				borderTopColor: CommonStyles.borderColorLighter,
 				elevation: 0,
 			},
 			indicatorStyle: {
@@ -33,7 +34,7 @@ export const navigator = routes =>
 
 export const stackNavigator = route =>
 	StackNavigator( route, {
-/*		navigationOptions: {
+		navigationOptions: {
             headerStyle: {
                 backgroundColor: CommonStyles.mainColorTheme,
                 borderBottomWidth: 0, //removes border on iOS
@@ -46,7 +47,7 @@ export const stackNavigator = route =>
             },
             headerTintColor: CommonStyles.mainColorTheme,
         }
-*/	})
+	})
 
 
 export const NestedTabNavigator = routes =>
@@ -77,7 +78,7 @@ export const NestedTabNavigator = routes =>
  */
 export const navRootOptions = (title, iconName) => ({
 	tabBarLabel: ({ focused }) => <Text style={{color:focused ? CommonStyles.actionColor : CommonStyles.textTabBottomColor}}>{title}</Text>,
-	tabBarIcon: ({ focused }) => <IconOnOff focused={focused} name={iconName}/>,
+	tabBarIcon: ({ focused }) => <IconOnOff name={iconName} focused={focused}/>,
 })
 
 export const navOptions = props => {
@@ -85,8 +86,6 @@ export const navOptions = props => {
 		...props,
         headerStyle: {
             backgroundColor: CommonStyles.mainColorTheme,
-            borderBottomWidth: 0, //removes border on iOS
-            elevation: 0, //removes shadow on android
         },
         headerTitleStyle: {
             color: "white",

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="21px" height="18px" viewBox="0 0 21 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>Outbox</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Messagerie_19" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(-27.000000, -255.000000)">
+        <g id="Slider">
+            <g id="List" transform="translate(25.000000, 208.000000)">
+                <g id="Outbox" transform="translate(0.000000, 44.000000)">
+                    <rect id="bounds" x="0" y="0" width="24" height="24"></rect>
+                    <polygon id="Shape" fill="#858FA9" points="2 10 17 11.999 2 14 2.011 21 22.999 11.999 2.011 3"></polygon>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
