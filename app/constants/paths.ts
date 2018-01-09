@@ -8,10 +8,6 @@ export const PATH_AUTH= "auth/auth"
 export const PATH_LOGOUT = "auth/logout"
 export const PATH_RECOVER_PASSWORD = "auth/pass"
 
-export const NAVIGATE = "navigate"
-export const INIT_NAVIGATION = "init_navigate"
-export const NAVIGATION_NAVIGATE = "Navigation/NAVIGATE"
-
 export const PATH_ERROR_RESET = "/RESET"
 
 export function match(path1, path2) {

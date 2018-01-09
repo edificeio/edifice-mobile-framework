@@ -1,10 +1,14 @@
 import * as React from "react"
-import { Col, ScrollView } from "../index"
+import {View} from "react-native";
+
 
 import styles from "../styles"
+import {ScrollView} from "./ScrollView";
+
+
 
 export const Form = props => (
-	<Col style={styles.formGrid}>
-		<ScrollView showsVerticalScrollIndicator={false}>{props.children}</ScrollView>
-	</Col>
+    <View style={styles.formGrid}>
+        <ScrollView showsVerticalScrollIndicator={false}>{props.children}</ScrollView>
+	</View>
 )

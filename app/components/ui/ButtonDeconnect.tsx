@@ -1,6 +1,7 @@
 import * as React from "react"
 import {StyleSheet, Text, TouchableOpacity, View} from "react-native"
 import {layoutSize} from "../../constants/layoutSize";
+import {Col} from "./Col";
 import {Row} from "./Row";
 
 
@@ -10,9 +11,6 @@ const styles = StyleSheet.create({
 		backgroundColor: "white",
 		borderBottomColor: "#dddddd",
 		borderBottomWidth: 1,
-		flex: 0,
-		flexDirection: "row",
-		height: layoutSize.LAYOUT_46,
 		justifyContent: "flex-start",
 		marginTop: layoutSize.LAYOUT_20,
 		paddingHorizontal: layoutSize.LAYOUT_13,
@@ -30,12 +28,10 @@ export const ButtonDeconnect = ({
 	onPress,
 }: ButtonTextProps) => {
 	return (
-        <View style={styles.container} >
-			<TouchableOpacity onPress={onPress}>
-				<Text style={styles.text}>
-					Se déconnecter
-				</Text>
-			</TouchableOpacity>
-		</View>
+		<Row height={layoutSize.LAYOUT_46} style={styles.container} onPress={onPress}>
+			<Text style={styles.text}>
+				Se déconnecter
+			</Text>
+		</Row>
 	)
 }

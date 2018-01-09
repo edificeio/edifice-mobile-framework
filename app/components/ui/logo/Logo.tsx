@@ -14,10 +14,15 @@ import styles, {
 const ANIMATION_DURATION = 250
 
 export interface LogoProperties {
-	tintColor?: string
 }
 
-export class Logo extends React.Component<LogoProperties, any> {
+export interface State {
+    containerImageWidth: any,
+    marginTopContainerImageWidth: any,
+    imageWidth: any,
+}
+
+export class Logo extends React.Component<LogoProperties, State> {
 	public keyboardDidShowListener: EmitterSubscription
 	public keyboardDidHideListener: EmitterSubscription
 	public state = {
@@ -82,7 +87,6 @@ export class Logo extends React.Component<LogoProperties, any> {
 		const imageStyles = [
 			styles.logo,
 			{ height: this.state.imageWidth, width: this.state.imageWidth },
-			this.props.tintColor ? { tintColor: this.props.tintColor } : null,
 		]
 		const marginStyles = [
 			styles.marginTopContainerImage,

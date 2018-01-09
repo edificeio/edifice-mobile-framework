@@ -1,7 +1,6 @@
 import * as React from "react"
-import { KeyboardAvoidingView, Text } from "react-native"
-
-import { Col, Form, Logo, Row, TextInputError, ValidTextIcon } from "../index"
+import {KeyboardAvoidingView, Text, View} from "react-native"
+import { Col, Form, Logo, TextInputError, ValidTextIcon } from "../index"
 import { AuthProps } from "../../model/Auth"
 import {navigate} from "../../utils/navHelper";
 
@@ -20,7 +19,7 @@ export interface LoginProps {
 
 export class Login extends React.Component<LoginProps, LoginState> {
 	state = {
-		email: this.props.auth.email ? this.props.auth.email : '',
+		email: this.props.auth.email || '',
 		password: ''
 	}
 
@@ -54,7 +53,7 @@ export class Login extends React.Component<LoginProps, LoginState> {
 					<Col size={1} style={styles.line} onPress={e => navigate("RecoverPassword")}>
 						<Text style={styles.minitext}>Mot de passe oublié?</Text>
 					</Col>
-				</KeyboardAvoidingView>
+                </KeyboardAvoidingView>
 			</Form>
 		)
 	}

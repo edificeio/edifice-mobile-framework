@@ -1,7 +1,7 @@
 import StatusAlert from "../connectors/ui/StatusAlert"
 import TextInputError from "../connectors/ui/TextInputError"
 import ValidTextIcon from "../connectors/ui/ValidTextIcon"
-import ViewButtons from "./ui/ViewButtons"
+import {ViewButtons} from "./ui/ViewButtons"
 import { ButtonTextIcon } from "./ui/ButtonTextIcon"
 import { Col } from "./ui/Col"
 import { Description } from "./ui/Description"

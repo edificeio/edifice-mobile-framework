@@ -1,6 +1,5 @@
 import * as React from "react"
 import {View} from "react-native";
-import { Row } from ".."
 import { AuthProps } from "../../model/Auth"
 import { Login } from "./Login"
 import { RecoverPassword } from "./RecoverPassword"

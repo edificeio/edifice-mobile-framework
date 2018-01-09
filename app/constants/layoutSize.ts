@@ -1,6 +1,6 @@
 import { PixelRatio, Platform, Dimensions } from "react-native"
 
-const DEVICE_SCALE = Dimensions.get("window").width / 375;
+export const DEVICE_SCALE = Dimensions.get("window").width / 375;
 
 const DEFAULT_FONT = "OpenSans";
 
@@ -57,6 +57,7 @@ export const layoutSize = {
 	LAYOUT_36: normalize(36),
     LAYOUT_38: normalize(38),
 	LAYOUT_40: normalize(40),
+    LAYOUT_41: normalize(41),
 	LAYOUT_42: normalize(42),
     LAYOUT_46: normalize(46),
 	LAYOUT_50: normalize(50),

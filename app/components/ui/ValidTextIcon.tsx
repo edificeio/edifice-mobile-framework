@@ -1,52 +1,48 @@
 import * as React from "react"
 import {StyleProp, StyleSheet, Text, TextStyle, TouchableOpacity, View, ViewStyle} from "react-native"
 import { Disable, IconSmall } from ".."
-import { layoutSize } from "../../constants/layoutSize"
+import {layoutSize} from "../../constants/layoutSize"
 import {CommonStyles} from "../styles/common/styles"
 
 const validButtonStyleLayout = {
-    borderRadius: layoutSize.LAYOUT_34,
+    borderRadius: layoutSize.LAYOUT_14 * 3.8,
+    fontFamily: CommonStyles.primaryFontFamilySemibold,
     fontSize: layoutSize.LAYOUT_14,
     paddingHorizontal: layoutSize.LAYOUT_36,
-    paddingVertical: layoutSize.LAYOUT_8,
+    paddingVertical: layoutSize.LAYOUT_10,
 }
 
-interface Style {
-    validButtonStyle: TextStyle,
-    validButtonStyleDisabled: TextStyle,
-    validButtonStyleWrapper: ViewStyle,
-	touchableStyle: ViewStyle,
-}
 
 const styles = StyleSheet.create<Style>( {
     validButtonStyle: {
         ...validButtonStyleLayout,
         backgroundColor: CommonStyles.actionColor,
         color: CommonStyles.inverseColor,
+        textAlignVertical: 'center',
     },
     validButtonStyleDisabled: {
         ...validButtonStyleLayout,
-        backgroundColor: "transparent",
+        backgroundColor: CommonStyles.backgroundColor,
         borderColor: CommonStyles.actionColor,
-        borderWidth: 0.9,
+        borderWidth: 1.2,
         color: CommonStyles.actionColor,
+        textAlignVertical: 'center',
     },
     validButtonStyleWrapper: {
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: CommonStyles.backgroundColor,
-        marginTop: layoutSize.LAYOUT_50,
-        marginBottom: layoutSize.LAYOUT_16,
-        overflow: 'hidden',
-		height: layoutSize.LAYOUT_40,
-    },
-	touchableStyle : {
-        borderColor: "#2A9CC8aa",
-        borderWidth: 0.9,
-        borderRadius: layoutSize.LAYOUT_34,
-		padding: 0,
-	}
+        height: layoutSize.LAYOUT_50,
+        marginTop: layoutSize.LAYOUT_60,
+        marginBottom: layoutSize.LAYOUT_20,
+    }
 })
+
+interface Style {
+    validButtonStyle: TextStyle,
+    validButtonStyleDisabled: TextStyle,
+    validButtonStyleWrapper: ViewStyle,
+}
 
 function isLoading(isLoadings) {
 	if (isLoadings === undefined) return false

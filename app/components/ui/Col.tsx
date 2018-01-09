@@ -1,18 +1,20 @@
 /* @flow */
 
 import * as React from "react"
-import { TouchableOpacity, View, ViewProperties } from "react-native"
-import { computeProps } from "./Utils/computeProps"
+import {FlexAlignType} from "react-native"
+import glamorous from "glamorous-native";
 
-interface State {}
+const View = glamorous.View
+const TouchableOpacity = glamorous.TouchableOpacity
 
-export interface ColProperties extends ViewProperties {
-    alignItems?: string
+
+export interface ColProperties {
+    alignItems?: FlexAlignType
     backgroundColor?: any
     borderBottomColor?: string
     borderBottomWidth?: number
-    children: any,
-    justifyContent?: string
+    children?: any,
+    justifyContent?: any
     marginTop?: number
     marginBottom?: number
     onPress?: (any) => void
@@ -21,43 +23,31 @@ export interface ColProperties extends ViewProperties {
     width?: number
 }
 
-export class Col extends React.Component<ColProperties, State> {
-	public prepareRootProps() {
-        const { size, borderBottomColor, borderBottomWidth, width, justifyContent, alignItems, marginTop, marginBottom} = this.props
-        const type = {
-            alignItems: alignItems ? alignItems : null,
-            borderBottomColor: borderBottomColor ? borderBottomColor: null,
-            borderBottomWidth: borderBottomWidth ? borderBottomWidth: null,
-            flex: size ? size : width ? 0 : 1,
-            flexDirection: "column",
-            flexWrap: "wrap",
-            width: width ? width : null,
-            justifyContent: justifyContent ? justifyContent : null,
-            marginTop: marginTop ? marginTop : null,
-            marginBottom: marginBottom ? marginBottom : null,
-        }
+export interface NewProps {
+    flex: any,
+    flexDirection?: "column" | "row" | "row-reverse" | "column-reverse",
+    flexWrap: "wrap" | "nowrap",
+}
 
-        const defaultProps = {
-            style: type,
-        }
-        return computeProps(this.props, defaultProps)
-	}
+export const Col = (props: ColProperties) => {
+    const { size = null, width = null} = props
+    const newProps : NewProps = {
+        flex: size ? size : width ? 0 : 1,
+        flexDirection: "column",
+        flexWrap: "wrap",
+    }
 
-	public render() {
-		if (this.props.onPress) {
-			return (
-				<TouchableOpacity onPress={this.props.onPress}>
-					<View {...this.props} {...this.prepareRootProps()}>
-						{this.props.children}
-					</View>
-				</TouchableOpacity>
-			)
-		} else {
-			return (
-				<View {...this.props} {...this.prepareRootProps()}>
-					{this.props.children}
-				</View>
-			)
-		}
-	}
+    if (props.onPress) {
+        return (
+            <TouchableOpacity onPress={props.onPress}>
+                <View {...props} {...newProps}>
+                    {props.children}
+                </View>
+            </TouchableOpacity>
+        )
+    } else {
+        return (
+            <View {...props} {...newProps} />
+        )
+    }
 }

@@ -71,6 +71,13 @@
 		<string>icomoon.ttf</string>
 		<string>fontello.ttf</string>
 		<string>icomoon.woff</string>
+		<string>OpenSans-bold.TTF</string>
+		<string>OpenSans-light.TTF</string>
+		<string>OpenSans-semibold.TTF</string>
+		<string>OpenSans.TTF</string>
+		<string>OpenSans-bold.ttf</string>
+		<string>OpenSans-light.ttf</string>
+		<string>OpenSans-semibold.ttf</string>
 	</array>
 </dict>
 </plist>

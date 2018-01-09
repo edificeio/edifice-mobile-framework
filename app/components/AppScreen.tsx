@@ -1,7 +1,6 @@
 import * as React from "react"
-import { StatusBar, Text } from "react-native"
+import { StatusBar, View } from "react-native"
 import SplashScreen from "react-native-smart-splash-screen"
-import { Col } from "."
 import ProgressBar from "../connectors/ui/ProgressBar"
 import StatusAlert from "../connectors/ui/StatusAlert"
 import {AppNavigator} from "../navigation"
@@ -31,12 +30,12 @@ export class AppScreen extends React.Component<AppScreenProps, AppScreenState> {
 
     render() {
         return (
-			<Col size={1}>
+			<View style={{flex:1}}>
 				<StatusBar backgroundColor={CommonStyles.mainColorTheme} barStyle="light-content" />
 				<ProgressBar />
 				<StatusAlert />
 				<AppNavigator ref={nav => { this.navigator = nav; }}/>
-			</Col>
+			</View>
 		)
 	}
 }

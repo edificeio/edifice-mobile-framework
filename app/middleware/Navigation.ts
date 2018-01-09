@@ -1,6 +1,5 @@
-import {NavigationActions} from 'react-navigation'
 import {CREATE_ERROR, CREATE_SUCCESS} from '../constants/docs'
-import {NAVIGATE, PATH_RECOVER_PASSWORD, PATH_SIGNUP, PATH_LOGOUT, PATH_LOGIN} from '../constants/paths'
+import {PATH_RECOVER_PASSWORD, PATH_SIGNUP, PATH_LOGOUT, PATH_LOGIN} from '../constants/paths'
 import {navigate} from "../utils/navHelper";
 
 export default store => next => action => {
@@ -32,10 +31,6 @@ export default store => next => action => {
 
     if (action.path && action.path === PATH_LOGOUT) {
         navigate('Login', {email: action.payload.email})
-    }
-
-    if (action.type && action.type === NAVIGATE) {
-        navigate(action.screen);
     }
 
     return returnValue

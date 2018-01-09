@@ -103,11 +103,13 @@ const styles = StyleSheet.create({
     },
     text: {
         color: CommonStyles.textInputColor,
+        fontFamily: CommonStyles.primaryFontFamily,
         fontSize: layoutSize.LAYOUT_14,
     },
     minitext: {
         color: CommonStyles.miniTextColor,
         fontSize: layoutSize.LAYOUT_14,
+        fontFamily: CommonStyles.primaryFontFamilyLight,
         textDecorationLine: "underline",
     },
     textBoldOverride: {

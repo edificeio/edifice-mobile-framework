@@ -1,10 +1,6 @@
-import {Text} from "react-native";
-
-Text.defaultProps.style = { fontFamily: 'OpenSans' }
-
 export const CommonStyles = {
     actionColor: "#2A9CC8",
-    actionColorDisabled: "#2A9CC8",
+    actionColorDisabled: "#2A9CC888",
 	backgroundColor: "#F8F8FA",
     buttonColor: "#ffffff",
 	borderColor: "#cccccc",
@@ -24,6 +20,9 @@ export const CommonStyles = {
 	primaryBorderColor: "#bcbbc1", // some grey-ish delight with a touch of lavender. Amazing.
 	primaryButtonColor: "#007396", //blue-ish theme
 	primaryFontFamily: "OpenSans",
+    primaryFontFamilyBold: "OpenSans-bold",
+    primaryFontFamilySemibold: "OpenSans-semibold",
+    primaryFontFamilyLight: "OpenSans-light",
 	primaryTitleColor: "#007396", //blue-ish theme
 	secondaryBackGroundColor: "#f9fafb",
 	secondaryButtonColor: "#fc624d", //red-ish theme
