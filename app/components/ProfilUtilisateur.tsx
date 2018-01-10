@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
         alignSelf: "center",
         backgroundColor: 'white',
         borderRadius: 4,
-        elevation: 8,
+        elevation: CommonStyles.elevation,
         justifyContent: 'center',
         padding: layoutSize.LAYOUT_20,
         shadowColor: CommonStyles.shadowColor,
