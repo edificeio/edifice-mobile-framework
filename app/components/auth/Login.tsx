@@ -1,5 +1,5 @@
 import * as React from "react"
-import {KeyboardAvoidingView, Text, View} from "react-native"
+import { Text } from "react-native"
 import { Col, Form, Logo, TextInputError, ValidTextIcon } from "../index"
 import { AuthProps } from "../../model/Auth"
 import {navigate} from "../../utils/navHelper";
@@ -36,24 +36,22 @@ export class Login extends React.Component<LoginProps, LoginState> {
 
 		return (
 			<Form>
-				<KeyboardAvoidingView behavior="padding">
-					<Logo />
+				<Logo />
 
-					<TextInputError label="Identifiant" value={email} onChange={email => this.setState({ email })} />
+				<TextInputError label="Identifiant" value={email} onChange={email => this.setState({ email })} />
 
-					<TextInputError
-						label="Mot de passe"
-						secureTextEntry
-						value={password}
-						onChange={password => this.setState({ password })}
-					/>
+				<TextInputError
+					label="Mot de passe"
+					secureTextEntry
+					value={password}
+					onChange={password => this.setState({ password })}
+				/>
 
-					<ValidTextIcon onPress={e => login(email, password)} disabled={this.isDisabled()} title="Se connecter" />
+				<ValidTextIcon onPress={e => login(email, password)} disabled={this.isDisabled()} title="Se connecter" />
 
-					<Col size={1} style={styles.line} onPress={e => navigate("RecoverPassword")}>
-						<Text style={styles.minitext}>Mot de passe oublié?</Text>
-					</Col>
-                </KeyboardAvoidingView>
+				<Col size={1} style={styles.line} onPress={e => navigate("RecoverPassword")}>
+					<Text style={styles.minitext}>Mot de passe oublié?</Text>
+				</Col>
 			</Form>
 		)
 	}
