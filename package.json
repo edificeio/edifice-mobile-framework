@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android",
-    "apk": "npm run tsc && cd android && ./gradlew assembleRelease",
+    "apk": "cd android && ./gradlew assembleRelease",
     "clean": "rm -r -f build && rm -r -f node_modules && npm install && cd android && ./gradlew clean && cd .. ",
     "ios": "react-native run-ios",
     "prettier": "npm run prettier1 && npm run prettier2",
