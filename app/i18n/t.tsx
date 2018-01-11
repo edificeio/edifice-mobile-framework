@@ -6,7 +6,7 @@ I18n.defaultLocale = "fr"
 I18n.translations = {
     'en-US': require("../../assets/i18n/en"),
 	'en': require("../../assets/i18n/en"),
-	'fr': require("../../assets/i18n/fr"),
+	'fr-FR': require("../../assets/i18n/fr"),
 	'es': require("../../assets/i18n/es"),
 }
 
