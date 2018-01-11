@@ -5,15 +5,16 @@ import Conversation from "../connectors/Conversation"
 import ReadMail from "../connectors/ReadMail"
 import Timeline from "../connectors/Timeline"
 import { navOptions } from "../utils/navHelper"
+import { tr } from "../i18n/t"
 
 export default stackNavigator({
 	Conversation: {
 		screen: Conversation,
 		navigationOptions: () =>
 			navOptions({
-				title: "Conversation",
+				title: tr.conversation,
 				headerRight: <View />,
-                headerLeft: <View />,
+				headerLeft: <View />,
 			}),
 	},
 	ReadMail: {
@@ -21,8 +22,8 @@ export default stackNavigator({
 		navigationOptions: () =>
 			navOptions({
 				title: `Mails`,
-                headerRight: <View />,
-                headerLeft: <View />,
+				headerRight: <View />,
+				headerLeft: <View />,
 			}),
 	},
 	Timeline: {
@@ -30,8 +31,8 @@ export default stackNavigator({
 		navigationOptions: () =>
 			navOptions({
 				title: "Calendrier",
-                headerRight: <View />,
-                headerLeft: <View />,
+				headerRight: <View />,
+				headerLeft: <View />,
 			}),
 	},
 })

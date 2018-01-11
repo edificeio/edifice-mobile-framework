@@ -5,14 +5,14 @@ import Icon from "react-native-vector-icons/MaterialIcons"
 import { InboxStyle } from "../styles/Inbox"
 import { getSeqNumber } from "../utils/Store"
 import { Avatar } from "./Avatar"
-import styles from "./styles";
+import styles from "./styles"
 
 const swipeoutBtns = [
 	<View style={InboxStyle.hiddenButtons}>
-		<Icon name="notifications-off"/>
+		<Icon name="notifications-off" />
 	</View>,
 	<View style={InboxStyle.hiddenButtons}>
-		<Icon name="delete"/>
+		<Icon name="delete" />
 	</View>,
 ]
 
@@ -65,7 +65,7 @@ export class Conversation extends React.Component<ConversationProps, any> {
 						readConversation(inbox.page++)
 					}
 				}}
-                style={styles.grid}
+				style={styles.grid}
 			/>
 		)
 	}

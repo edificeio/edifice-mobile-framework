@@ -33,7 +33,12 @@ export class Timeline extends React.Component<TimelineProps, any> {
 		const { documents, navigation } = this.props
 
 		return (
-		    <FlatList data={documents} keyExtractor={() => getSeqNumber()} renderItem={({ item }) => this.renderItem(item)} style={styles.grid} />
+			<FlatList
+				data={documents}
+				keyExtractor={() => getSeqNumber()}
+				renderItem={({ item }) => this.renderItem(item)}
+				style={styles.grid}
+			/>
 		)
 	}
 }

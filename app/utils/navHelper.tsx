@@ -1,10 +1,10 @@
 import * as React from "react"
-import {Text} from "react-native";
-import {NavigationActions, StackNavigator, TabNavigator} from "react-navigation"
+import { Text } from "react-native"
+import { NavigationActions, StackNavigator, TabNavigator } from "react-navigation"
 import { IconOnOff } from "../components"
 import { CommonStyles } from "../components/styles/common/styles"
 import { layoutSize } from "../constants/layoutSize"
-import {navigatorRef} from "../components/AppScreen";
+import { navigatorRef } from "../components/AppScreen"
 
 export const navigator = routes =>
 	TabNavigator(routes, {
@@ -16,7 +16,7 @@ export const navigator = routes =>
 			inactiveTintColor: CommonStyles.mainColorTheme,
 			labelStyle: {
 				fontSize: layoutSize.LAYOUT_12,
-                color: CommonStyles.textTabBottomColor,
+				color: CommonStyles.textTabBottomColor,
 			},
 			style: {
 				backgroundColor: CommonStyles.tabBottomColor,
@@ -34,43 +34,41 @@ export const navigator = routes =>
 	})
 
 export const stackNavigator = route =>
-	StackNavigator( route, {
+	StackNavigator(route, {
 		navigationOptions: {
-            headerStyle: {
-                backgroundColor: CommonStyles.mainColorTheme,
-                borderBottomWidth: 0, //removes border on iOS
-                elevation: 0, //removes shadow on android
-            },
-            headerTitleStyle: {
-                color: "white",
-                alignSelf: "center",
-                textAlign: "center",
-            },
-            headerTintColor: CommonStyles.mainColorTheme,
-        }
+			headerStyle: {
+				backgroundColor: CommonStyles.mainColorTheme,
+				borderBottomWidth: 0, //removes border on iOS
+				elevation: 0, //removes shadow on android
+			},
+			headerTitleStyle: {
+				color: "white",
+				alignSelf: "center",
+				textAlign: "center",
+			},
+			headerTintColor: CommonStyles.mainColorTheme,
+		},
 	})
 
-
 export const NestedTabNavigator = routes =>
-    TabNavigator(routes, {
-        backBehavior: "none",
-        swipeEnabled: true,
-        tabBarPosition: "top",
-        tabBarOptions: {
-            labelStyle: {
-                fontSize: layoutSize.LAYOUT_13,
-            },
-            style: {
-                backgroundColor: CommonStyles.tabBackgroundColor,
-            },
-            indicatorStyle: {
-                backgroundColor: CommonStyles.selectColor,
-            },
-            showLabel: false,
-            showIcon: true,
-        },
-    })
-
+	TabNavigator(routes, {
+		backBehavior: "none",
+		swipeEnabled: true,
+		tabBarPosition: "top",
+		tabBarOptions: {
+			labelStyle: {
+				fontSize: layoutSize.LAYOUT_13,
+			},
+			style: {
+				backgroundColor: CommonStyles.tabBackgroundColor,
+			},
+			indicatorStyle: {
+				backgroundColor: CommonStyles.selectColor,
+			},
+			showLabel: false,
+			showIcon: true,
+		},
+	})
 
 /**
  * return a navigationOptionsTitle object fill with its attributes
@@ -78,25 +76,26 @@ export const NestedTabNavigator = routes =>
  * @param iconName   the icon name
  */
 export const navRootOptions = (title, iconName) => ({
-	tabBarLabel: ({ focused }) => <Text style={{color:focused ? CommonStyles.actionColor : CommonStyles.textTabBottomColor}}>{title}</Text>,
-	tabBarIcon: ({ focused }) => <IconOnOff name={iconName} focused={focused}/>,
+	tabBarLabel: ({ focused }) => (
+		<Text style={{ color: focused ? CommonStyles.actionColor : CommonStyles.textTabBottomColor }}>{title}</Text>
+	),
+	tabBarIcon: ({ focused }) => <IconOnOff name={iconName} focused={focused} />,
 })
 
 export const navOptions = props => {
 	return {
 		...props,
-        headerStyle: {
-            backgroundColor: CommonStyles.mainColorTheme,
-        },
-        headerTitleStyle: {
-            color: "white",
-            alignSelf: "center",
-            textAlign: "center",
-        },
+		headerStyle: {
+			backgroundColor: CommonStyles.mainColorTheme,
+		},
+		headerTitleStyle: {
+			color: "white",
+			alignSelf: "center",
+			textAlign: "center",
+		},
 	}
 }
 
-
-export const navigate = ( route, props = {}) => {
-    return navigatorRef.dispatch(NavigationActions.navigate({routeName: route, params: props}))
+export const navigate = (route, props = {}) => {
+	return navigatorRef.dispatch(NavigationActions.navigate({ routeName: route, params: props }))
 }

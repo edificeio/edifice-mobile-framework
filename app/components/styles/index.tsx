@@ -1,6 +1,6 @@
 import { Dimensions, Platform, StyleSheet } from "react-native"
 import { layoutSize } from "../../constants/layoutSize"
-import {CommonStyles} from "./common/styles";
+import { CommonStyles } from "./common/styles"
 
 export const deviceWidth = Dimensions.get("window").width
 
@@ -17,9 +17,9 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "flex-start",
 	},
-    buttonPanel: {
-        marginTop: layoutSize.LAYOUT_7,
-    },
+	buttonPanel: {
+		marginTop: layoutSize.LAYOUT_7,
+	},
 	buttonStyle: {
 		alignSelf: "center",
 		color: CommonStyles.actionColor,
@@ -27,51 +27,51 @@ const styles = StyleSheet.create({
 		paddingHorizontal: layoutSize.LAYOUT_15,
 		fontWeight: "400",
 	},
-    cardDescription: {
-        color: CommonStyles.cardTitle,
-        marginTop: layoutSize.LAYOUT_4,
-        fontSize: layoutSize.LAYOUT_8,
-        marginBottom: layoutSize.LAYOUT_4,
-    },
-    cardTitle: {
-        color: CommonStyles.cardTitle,
-        fontSize: layoutSize.LAYOUT_9,
-        fontWeight: "600",
-        paddingTop: layoutSize.LAYOUT_3,
-        paddingBottom: layoutSize.LAYOUT_3,
-        textAlign: "left",
-    },
-    containerErrorText: {
-        alignSelf: "center",
-        fontWeight: "400",
-        color: CommonStyles.errorColor,
-    },
-    containerInfo: {
-        backgroundColor: saturate("#fcfcfc", 0.9),
-        minHeight: layoutSize.LAYOUT_15,
-        flexWrap: "wrap",
-        padding: layoutSize.LAYOUT_4,
-    },
-    containerInfoText: {
-        color: "green",
-        alignSelf: "center",
-    },
-    formGrid: {
-        backgroundColor: CommonStyles.backgroundColor,
-        flex: 1,
-        paddingHorizontal: layoutSize.LAYOUT_34,
-    },
-    grid: {
-        backgroundColor: CommonStyles.backgroundColor,
-    },
+	cardDescription: {
+		color: CommonStyles.cardTitle,
+		marginTop: layoutSize.LAYOUT_4,
+		fontSize: layoutSize.LAYOUT_8,
+		marginBottom: layoutSize.LAYOUT_4,
+	},
+	cardTitle: {
+		color: CommonStyles.cardTitle,
+		fontSize: layoutSize.LAYOUT_9,
+		fontWeight: "600",
+		paddingTop: layoutSize.LAYOUT_3,
+		paddingBottom: layoutSize.LAYOUT_3,
+		textAlign: "left",
+	},
+	containerErrorText: {
+		alignSelf: "center",
+		fontWeight: "400",
+		color: CommonStyles.errorColor,
+	},
+	containerInfo: {
+		backgroundColor: saturate("#fcfcfc", 0.9),
+		minHeight: layoutSize.LAYOUT_15,
+		flexWrap: "wrap",
+		padding: layoutSize.LAYOUT_4,
+	},
+	containerInfoText: {
+		color: "green",
+		alignSelf: "center",
+	},
+	formGrid: {
+		backgroundColor: CommonStyles.backgroundColor,
+		flex: 1,
+		paddingHorizontal: layoutSize.LAYOUT_34,
+	},
+	grid: {
+		backgroundColor: CommonStyles.backgroundColor,
+	},
 	identifier: {
 		alignItems: "flex-end",
 		justifyContent: "center",
 	},
-    line: {
-        alignItems: "center",
-        justifyContent: "center",
-    },
+	line: {
+		alignItems: "center",
+		justifyContent: "center",
+	},
 	link: {
 		textDecorationLine: "underline",
 		marginTop: layoutSize.LAYOUT_10,
@@ -83,38 +83,38 @@ const styles = StyleSheet.create({
 	marginTop: {
 		marginTop: layoutSize.LAYOUT_8,
 	},
-    item: {
-        padding: 10,
+	item: {
+		padding: 10,
 		backgroundColor: CommonStyles.backgroundColor,
-        borderBottomWidth: 1,
-        borderBottomColor: "#ddd",
-        flexDirection: "row",
-    },
+		borderBottomWidth: 1,
+		borderBottomColor: "#ddd",
+		flexDirection: "row",
+	},
 	statusText: {
 		color: CommonStyles.fadColor,
 		fontSize: layoutSize.LAYOUT_7,
 		fontWeight: "300",
 	},
-    logo: {
-        justifyContent: "center",
-        alignItems: "center",
-        flex: 1,
-        margin: layoutSize.LAYOUT_12,
-    },
-    text: {
-        color: CommonStyles.textInputColor,
-        fontFamily: CommonStyles.primaryFontFamily,
-        fontSize: layoutSize.LAYOUT_14,
-    },
-    minitext: {
-        color: CommonStyles.miniTextColor,
-        fontSize: layoutSize.LAYOUT_14,
-        fontFamily: CommonStyles.primaryFontFamilyLight,
-        textDecorationLine: "underline",
-    },
-    textBoldOverride: {
-        fontWeight: "bold",
-    },
+	logo: {
+		justifyContent: "center",
+		alignItems: "center",
+		flex: 1,
+		margin: layoutSize.LAYOUT_12,
+	},
+	text: {
+		color: CommonStyles.textInputColor,
+		fontFamily: CommonStyles.primaryFontFamily,
+		fontSize: layoutSize.LAYOUT_14,
+	},
+	minitext: {
+		color: CommonStyles.miniTextColor,
+		fontSize: layoutSize.LAYOUT_14,
+		fontFamily: CommonStyles.primaryFontFamilyLight,
+		textDecorationLine: "underline",
+	},
+	textBoldOverride: {
+		fontWeight: "bold",
+	},
 })
 
 export default styles

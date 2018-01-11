@@ -1,24 +1,24 @@
 import { PixelRatio, Platform, Dimensions } from "react-native"
 
-export const DEVICE_SCALE = Dimensions.get("window").width / 375;
+export const DEVICE_SCALE = Dimensions.get("window").width / 375
 
-const DEFAULT_FONT = "OpenSans";
+const DEFAULT_FONT = "OpenSans"
 
 /* utils ==================================================================== */
 
 // get font name and weight
-function fontWithWeight(family = DEFAULT_FONT) : string {
-    return family;
+function fontWithWeight(family = DEFAULT_FONT): string {
+	return family
 }
 
 function normalize(size: number): number {
-    return Math.round(DEVICE_SCALE * size);
+	return Math.round(DEVICE_SCALE * size)
 }
 
 // attempt to normalize x-platform line heights
 function lineHeight(val = 1, scale = 1, normalized = true) {
-    let adjusted = normalized ? normalize(val) : val;
-    return Math.round(Platform.OS === "android" ? adjusted * scale : adjusted);
+	let adjusted = normalized ? normalize(val) : val
+	return Math.round(Platform.OS === "android" ? adjusted * scale : adjusted)
 }
 
 /* export =================================================================== */
@@ -48,18 +48,18 @@ export const layoutSize = {
 	LAYOUT_23: normalize(23),
 	LAYOUT_24: normalize(24),
 	LAYOUT_25: normalize(25),
-    LAYOUT_26: normalize(26),
+	LAYOUT_26: normalize(26),
 	LAYOUT_28: normalize(28),
 	LAYOUT_30: normalize(30),
 	LAYOUT_31: normalize(31),
 	LAYOUT_32: normalize(32),
-    LAYOUT_34: normalize(34),
+	LAYOUT_34: normalize(34),
 	LAYOUT_36: normalize(36),
-    LAYOUT_38: normalize(38),
+	LAYOUT_38: normalize(38),
 	LAYOUT_40: normalize(40),
-    LAYOUT_41: normalize(41),
+	LAYOUT_41: normalize(41),
 	LAYOUT_42: normalize(42),
-    LAYOUT_46: normalize(46),
+	LAYOUT_46: normalize(46),
 	LAYOUT_50: normalize(50),
 	LAYOUT_60: normalize(60),
 	LAYOUT_62: normalize(62),

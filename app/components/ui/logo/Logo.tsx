@@ -1,108 +1,39 @@
 import * as React from "react"
 
-import { Animated, EmitterSubscription, Keyboard, Platform, View } from "react-native"
+import { Animated, View } from "react-native"
 
 import styles, {
 	largeContainerSize,
 	largeImageSize,
 	marginTopLargeContainerSize,
-	marginTopSmallContainerSize,
 	smallContainerSize,
 	smallImageSize,
+	marginTopSmallContainerSize
 } from "./styles"
 
-const ANIMATION_DURATION = 250
+import { kResponsive} from "../KResponsive";
 
 export interface LogoProperties {
+    keyboardShow?: boolean
 }
 
-export interface State {
-    containerImageWidth: any,
-    marginTopContainerImageWidth: any,
-    imageWidth: any,
+const _Logo = ({keyboardShow}: LogoProperties) => {
+	const contImg = keyboardShow ? smallContainerSize :  largeContainerSize
+    const img = keyboardShow ? smallImageSize : largeImageSize
+    const heightMargin = keyboardShow ? marginTopSmallContainerSize : marginTopLargeContainerSize
+
+	return (
+		<View style={styles.container}>
+			<Animated.View style={[styles.marginTopContainerImage, { height: heightMargin}]}/>
+			<Animated.View style={[styles.containerImage, { width: contImg, height: contImg}]}>
+				<Animated.Image resizeMode="contain"
+								style={[styles.logo, { width: img, height: img}]}
+								source={require("../../../../assets/icons/icon.png")} />
+			</Animated.View>
+		</View>
+	)
 }
 
-export class Logo extends React.Component<LogoProperties, State> {
-	public keyboardDidShowListener: EmitterSubscription
-	public keyboardDidHideListener: EmitterSubscription
-	public state = {
-		containerImageWidth: new Animated.Value(largeContainerSize),
-		marginTopContainerImageWidth: new Animated.Value(marginTopLargeContainerSize),
-		imageWidth: new Animated.Value(largeImageSize),
-	}
 
-	public componentDidMount() {
-		const name = Platform.OS === "ios" ? "Will" : "Did"
-		this.keyboardDidShowListener = Keyboard.addListener(`keyboard${name}Show`, () => this.keyboardWillShow())
-		this.keyboardDidHideListener = Keyboard.addListener(`keyboard${name}Hide`, () => this.keyboardWillHide())
-	}
+export const Logo = kResponsive(_Logo);
 
-	public componentWillUnmount() {
-		this.keyboardDidShowListener.remove()
-		this.keyboardDidHideListener.remove()
-	}
-
-	public keyboardWillShow = () => {
-		Animated.parallel([
-			Animated.timing(this.state.containerImageWidth, {
-				toValue: smallContainerSize,
-				duration: ANIMATION_DURATION,
-			}),
-			Animated.timing(this.state.marginTopContainerImageWidth, {
-				toValue: marginTopSmallContainerSize,
-				duration: ANIMATION_DURATION,
-			}),
-			Animated.timing(this.state.imageWidth, {
-				toValue: smallImageSize,
-				duration: ANIMATION_DURATION,
-			}),
-		]).start()
-	}
-
-	public keyboardWillHide = () => {
-		Animated.parallel([
-			Animated.timing(this.state.containerImageWidth, {
-				toValue: largeContainerSize,
-				duration: ANIMATION_DURATION,
-			}),
-			Animated.timing(this.state.marginTopContainerImageWidth, {
-				toValue: marginTopLargeContainerSize,
-				duration: ANIMATION_DURATION,
-			}),
-			Animated.timing(this.state.imageWidth, {
-				toValue: largeImageSize,
-				duration: ANIMATION_DURATION,
-			}),
-		]).start()
-	}
-
-	public render() {
-		const containerImageStyles = [
-			styles.containerImage,
-			{
-				width: this.state.containerImageWidth,
-				height: this.state.containerImageWidth,
-			},
-		]
-		const imageStyles = [
-			styles.logo,
-			{ height: this.state.imageWidth, width: this.state.imageWidth },
-		]
-		const marginStyles = [
-			styles.marginTopContainerImage,
-			{
-				height: this.state.marginTopContainerImageWidth,
-				width: this.state.containerImageWidth,
-			},
-		]
-
-		return (
-			<View style={styles.container}>
-				<Animated.View style={marginStyles} />
-				<Animated.View style={containerImageStyles}>
-					<Animated.Image resizeMode="contain" style={imageStyles} source={require("../../../../assets/icons/icon.png")} />
-				</Animated.View>
-			</View>
-		)
-	}
-}

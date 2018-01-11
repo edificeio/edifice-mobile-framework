@@ -3,14 +3,7 @@ import { AuthProps } from "../../model/Auth"
 
 import { ERR_INPUT } from "../../constants/errFormInput"
 
-import {
-	Col,
-	Form,
-	Row,
-	ScrollView,
-	TextInputError,
-	ValidTextIcon,
-} from ".."
+import { Col, Form, Row, ScrollView, TextInputError, ValidTextIcon } from ".."
 
 export interface RecoverPasswordState {
 	disabled: boolean

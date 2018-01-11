@@ -2,29 +2,27 @@ import * as React from "react"
 import { View } from "react-native"
 import styles, { deviceWidth } from "../styles/index"
 
-function isLoading(isLoadings) {
-	if (isLoadings === undefined) return false
-	return isLoadings.reduce((acc, elemIsLoading) => acc || elemIsLoading, false)
+function isSynced(synced) {
+	if (synced === undefined) return false
+	return synced.reduce((acc, elemIsSync) => acc || elemIsSync, false)
 }
 
 interface ProgressBarState {
 	width?: number
-	isLoading?: boolean
 }
 
 export interface ProgressBarProps {
-	isLoadings: boolean[]
+	synced: boolean[]
 }
 
 export class ProgressBar extends React.Component<ProgressBarProps, ProgressBarState> {
 	public state: ProgressBarState = {
 		width: 0,
-		isLoading: false,
 	}
 	public timerID = 0
 
 	public componentWillReceiveProps(newProps) {
-		if (isLoading(newProps.isLoadings)) {
+		if (!isSynced(newProps.synced)) {
 			this.timerID = setInterval(
 				() =>
 					this.setState({
@@ -34,14 +32,14 @@ export class ProgressBar extends React.Component<ProgressBarProps, ProgressBarSt
 			)
 		}
 
-		if (!isLoading(newProps.isLoadings)) {
+		if (isSynced(newProps.synced)) {
 			clearInterval(this.timerID)
 		}
 	}
 
 	public render() {
-		const { isLoadings } = this.props
+		const { synced } = this.props
 
-		return isLoading(isLoadings) ? <View style={[styles.loading, { width: this.state.width }]} /> : <View />
+		return isSynced(synced) ? <View /> : <View style={[styles.loading, { width: this.state.width }]} />
 	}
 }

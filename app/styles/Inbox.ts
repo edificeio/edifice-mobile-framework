@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native"
-import {layoutSize} from "../constants/layoutSize";
+import { layoutSize } from "../constants/layoutSize"
 
 export const InboxStyle = StyleSheet.create({
 	author: {

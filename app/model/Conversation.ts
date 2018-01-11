@@ -10,14 +10,14 @@ const initialState = {
 	synced: true,
 }
 
-export interface ConversationProps {
+export interface ConversationState {
 	threads: Array<any>
 	page: number
 	lastPage: boolean
 	synced: boolean
 }
 
-export function Conversation(state: ConversationProps = initialState, action): ConversationProps {
+export function Conversation(state: ConversationState = initialState, action): ConversationState {
 	if (matchs([PATH_CONVERSATION], action.path) && action.type === READ_SUCCESS) {
 		const data = action.payload
 		const newState = { ...state }

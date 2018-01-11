@@ -18,7 +18,7 @@ export function Messages(state = initialState, action) {
 
 	const { message = "" } = action.payload
 
-    if (message.length === 0) return state
+	if (message.length === 0) return state
 
 	const { code = 0, result = 0 } = action.payload
 

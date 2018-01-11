@@ -1,4 +1,4 @@
-import {PATH_AUTH, PATH_LOGIN, PATH_LOGOUT, PATH_RECOVER_PASSWORD, PATH_SIGNUP} from "../constants/paths"
+import { PATH_AUTH, PATH_LOGIN, PATH_LOGOUT, PATH_RECOVER_PASSWORD, PATH_SIGNUP } from "../constants/paths"
 import { create, read } from "./docs"
 
 /**
@@ -18,8 +18,8 @@ export const login = (email, password) => {
  *
  * @returns {{type}}
  */
-export const logout = (email) => {
-	return create(PATH_LOGOUT, {email})
+export const logout = email => {
+	return create(PATH_LOGOUT, { email })
 }
 
 /**
@@ -48,5 +48,5 @@ export const recoverPassword = email => {
  * @returns {PATH_LOGIN}
  */
 export const checkLogin = () => {
-	return {type: PATH_AUTH}
+	return { type: PATH_AUTH }
 }

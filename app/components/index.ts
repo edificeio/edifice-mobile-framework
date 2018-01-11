@@ -1,7 +1,7 @@
 import StatusAlert from "../connectors/ui/StatusAlert"
 import TextInputError from "../connectors/ui/TextInputError"
 import ValidTextIcon from "../connectors/ui/ValidTextIcon"
-import {ViewButtons} from "./ui/ViewButtons"
+import { ViewButtons } from "./ui/ViewButtons"
 import { ButtonTextIcon } from "./ui/ButtonTextIcon"
 import { Col } from "./ui/Col"
 import { Description } from "./ui/Description"
@@ -14,8 +14,8 @@ import { Row } from "./ui/Row"
 import { ScrollView } from "./ui/ScrollView"
 import { Title } from "./ui/Title"
 import { layoutSize } from "../constants/layoutSize"
-import {Icon, IconSmall, IconBig} from "./ui/icons/IconPng"
-import {IconOnOff} from "./ui/icons/IconOnOff";
+import { Icon, IconSmall, IconBig } from "./ui/icons/IconPng"
+import { IconOnOff } from "./ui/icons/IconOnOff"
 
 export {
 	ButtonTextIcon,
@@ -26,8 +26,8 @@ export {
 	Label,
 	layoutSize,
 	Logo,
-    Icon,
-    IconBig,
+	Icon,
+	IconBig,
 	IconOnOff,
 	IconSmall,
 	ProgressBar,
@@ -37,5 +37,5 @@ export {
 	TextInputError,
 	Title,
 	ValidTextIcon,
-	ViewButtons
+	ViewButtons,
 }

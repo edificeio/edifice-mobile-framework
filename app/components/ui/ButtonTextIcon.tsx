@@ -24,11 +24,11 @@ export const ButtonTextIcon = ({
 	return (
 		<TouchableOpacity onPress={onPress} disabled={disabled}>
 			<Text style={styles.buttonStyle}>
-				{leftName.length > 0 && <Icon name={leftName}/>}
+				{leftName.length > 0 && <Icon name={leftName} />}
 				{whiteSpace}
 				{title}
 				{whiteSpace}
-				{rightName.length > 0 && <Icon name={rightName}/>}
+				{rightName.length > 0 && <Icon name={rightName} />}
 			</Text>
 		</TouchableOpacity>
 	)

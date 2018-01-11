@@ -5,17 +5,17 @@ import { READ_SUCCESS } from "../constants/docs"
 import { matchs, PATH_DOCUMENT } from "../constants/paths"
 import { Document } from "../entcore/workspace"
 
-const initialState: ConversationProps = {
+const initialState: DocumentState = {
 	payload: [],
 	synced: true,
 }
 
-export interface ConversationProps {
+export interface DocumentState {
 	payload: Array<Document>
 	synced: boolean
 }
 
-export function Documents(state: ConversationProps = initialState, action): ConversationProps {
+export function Documents(state: DocumentState = initialState, action): DocumentState {
 	if (matchs([PATH_DOCUMENT], action.path) && action.type === READ_SUCCESS) {
 		return {
 			synced: true,

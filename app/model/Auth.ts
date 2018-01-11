@@ -1,5 +1,5 @@
 import { CREATE_SUCCESS, CREATE_ERROR } from "../constants/docs"
-import {matchs, PATH_LOGIN, PATH_LOGOUT, PATH_SIGNUP} from "../constants/paths"
+import { matchs, PATH_LOGIN, PATH_LOGOUT, PATH_SIGNUP } from "../constants/paths"
 
 export const initialState: AuthProps = {
 	email: "",
@@ -27,20 +27,20 @@ export function Auth(state: AuthProps = initialState, action): AuthProps {
 		return newState
 	}
 
-    if (matchs([PATH_LOGOUT], action.path)) {
-        return {...initialState, email: action.payload.email, synced: true, loggedIn: false}
-    }
+	if (matchs([PATH_LOGOUT], action.path)) {
+		return { ...initialState, email: action.payload.email, synced: true, loggedIn: false }
+	}
 
-    if (matchs([PATH_LOGIN, PATH_SIGNUP], action.path) && action.type === CREATE_ERROR) {
-        const newState = { ...state }
+	if (matchs([PATH_LOGIN, PATH_SIGNUP], action.path) && action.type === CREATE_ERROR) {
+		const newState = { ...state }
 
-        newState.email = action.payload.email
-        newState.password = action.payload.password
-        newState.loggedIn = false
-        newState.synced = true
+		newState.email = action.payload.email
+		newState.password = action.payload.password
+		newState.loggedIn = false
+		newState.synced = true
 
-        return newState
-    }
+		return newState
+	}
 
 	return state
 }

@@ -16,14 +16,14 @@ const style = StyleSheet.create({
 })
 
 export class Avatar extends React.Component<{ userId: string }, { base64Str: string }> {
-	state = { base64Str: ""}
+	state = { base64Str: "" }
 
 	async fetch() {
-        const response = await RNFetchBlob.fetch(
-            "GET",
-            `${Conf.platform}/userbook/avatar/${this.props.userId}?thumbnail=48x48`
-        )
-        this.setState( {base64Str: response.base64()})
+		const response = await RNFetchBlob.fetch(
+			"GET",
+			`${Conf.platform}/userbook/avatar/${this.props.userId}?thumbnail=48x48`
+		)
+		this.setState({ base64Str: response.base64() })
 	}
 
 	public async componentDidMount() {

@@ -1,49 +1,48 @@
 import * as React from "react"
-import glamorous from "glamorous-native";
-import {StyleSheet, Text, TextInput} from "react-native"
+import glamorous from "glamorous-native"
+import { StyleSheet, Text, TextInput } from "react-native"
 import { Col, Row } from ".."
 import { layoutSize } from "../../constants/layoutSize"
-import {CommonStyles} from "../styles/common/styles";
+import { CommonStyles } from "../styles/common/styles"
 
-
-const {View} = glamorous;
+const { View } = glamorous
 
 const commonInputStyle = {
-    color: CommonStyles.textInputColor,
-    fontSize: layoutSize.LAYOUT_14,
-    paddingBottom: 0,
-    marginBottom: 0,
+	color: CommonStyles.textInputColor,
+	fontSize: layoutSize.LAYOUT_14,
+	paddingBottom: 0,
+	marginBottom: 0,
 }
 
-const styles = StyleSheet.create( {
-    inputError: {
-        color: "red",
-        height: layoutSize.LAYOUT_32,
-        fontFamily: CommonStyles.primaryFontFamily,
-        fontSize: layoutSize.LAYOUT_14,
-        fontWeight: "700",
-        paddingBottom: 0,
-        marginBottom: 0,
-    },
-    textInput: {
+const styles = StyleSheet.create({
+	inputError: {
+		color: "red",
+		height: layoutSize.LAYOUT_32,
+		fontFamily: CommonStyles.primaryFontFamily,
+		fontSize: layoutSize.LAYOUT_14,
+		fontWeight: "700",
+		paddingBottom: 0,
+		marginBottom: 0,
+	},
+	textInput: {
 		...commonInputStyle,
-        height: layoutSize.LAYOUT_32,
-        fontFamily: CommonStyles.primaryFontFamily,
-    },
-    textInputEmpty: {
-        ...commonInputStyle,
-        height: layoutSize.LAYOUT_32,
-        fontFamily: CommonStyles.primaryFontFamilyLight,
-    },
-    textInputMulti: {
-        ...commonInputStyle,
-        fontFamily: CommonStyles.primaryFontFamily,
-        height: layoutSize.LAYOUT_60,
-    },
-    textInputWrapper: {
-        backgroundColor: "transparent",
-        paddingBottom: layoutSize.LAYOUT_10,
-    },
+		height: layoutSize.LAYOUT_32,
+		fontFamily: CommonStyles.primaryFontFamily,
+	},
+	textInputEmpty: {
+		...commonInputStyle,
+		height: layoutSize.LAYOUT_32,
+		fontFamily: CommonStyles.primaryFontFamilyLight,
+	},
+	textInputMulti: {
+		...commonInputStyle,
+		fontFamily: CommonStyles.primaryFontFamily,
+		height: layoutSize.LAYOUT_60,
+	},
+	textInputWrapper: {
+		backgroundColor: "transparent",
+		paddingVertical: layoutSize.LAYOUT_6,
+	},
 })
 
 export interface TextInputErrorProps {
@@ -118,12 +117,14 @@ export class TextInputError extends React.Component<TextInputErrorProps, TextInp
 		const errMessage = this.hasErrorsMessage()
 		const { label, multiline, secureTextEntry, editable } = this.props
 		const { focus } = this.state
-		const style = multiline ? styles.textInputMulti : this.state.value.length === 0 ? styles.textInputEmpty : styles.textInput
+		const style = multiline
+			? styles.textInputMulti
+			: this.state.value.length === 0 ? styles.textInputEmpty : styles.textInput
 		const underlineColor = CommonStyles.inputBackColor
 		const borderBottomColor = focus ? "#00bcda" : errMessage.length > 0 ? CommonStyles.errorColor : "#DCDDE0"
 
 		return (
-			<View >
+			<View>
 				<View
 					style={styles.textInputWrapper}
 					borderBottomColor={borderBottomColor}

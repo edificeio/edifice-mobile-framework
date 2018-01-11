@@ -2,7 +2,7 @@ import { connect } from "react-redux"
 import { ValidTextIcon, ValidTextIconProps } from "../../components/ui/ValidTextIcon"
 
 const mapStateToProps = state => ({
-	isLoadings: [state.auth.isLoading],
+	synced: [state.auth.synced],
 })
 
 export default connect<{}, {}, ValidTextIconProps>(mapStateToProps)(ValidTextIcon)

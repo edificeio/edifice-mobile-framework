@@ -2,7 +2,8 @@ import * as React from "react"
 import { Text } from "react-native"
 import { Col, Form, Logo, TextInputError, ValidTextIcon } from "../index"
 import { AuthProps } from "../../model/Auth"
-import {navigate} from "../../utils/navHelper";
+import { navigate } from "../../utils/navHelper"
+import { tr } from "../../i18n/t"
 
 import styles from "../styles"
 
@@ -19,16 +20,15 @@ export interface LoginProps {
 
 export class Login extends React.Component<LoginProps, LoginState> {
 	state = {
-		email: this.props.auth.email || '',
-		password: ''
+		email: this.props.auth.email || "",
+		password: "",
 	}
 
 	public isDisabled() {
-		const {email, password} = this.state
+		const { email, password } = this.state
 
 		return email.length === 0 || password.length === 0
-    }
-
+	}
 
 	public render() {
 		const { login } = this.props
@@ -38,19 +38,19 @@ export class Login extends React.Component<LoginProps, LoginState> {
 			<Form>
 				<Logo />
 
-				<TextInputError label="Identifiant" value={email} onChange={email => this.setState({ email })} />
+				<TextInputError label={tr.identifiant} value={email} onChange={email => this.setState({ email })} />
 
 				<TextInputError
-					label="Mot de passe"
+					label={tr.mot_de_passe}
 					secureTextEntry
 					value={password}
 					onChange={password => this.setState({ password })}
 				/>
 
-				<ValidTextIcon onPress={e => login(email, password)} disabled={this.isDisabled()} title="Se connecter" />
+				<ValidTextIcon onPress={e => login(email, password)} disabled={this.isDisabled()} title={tr.se_connecter} />
 
 				<Col size={1} style={styles.line} onPress={e => navigate("RecoverPassword")}>
-					<Text style={styles.minitext}>Mot de passe oublié?</Text>
+					<Text style={styles.minitext}>{tr.mot_de_passe_oublie}</Text>
 				</Col>
 			</Form>
 		)
