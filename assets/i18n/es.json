@@ -1,7 +1,7 @@
 {
   "Identifiant" : "Identifiant",
   "Se connecter" : "Se connecter",
-  "Mot de pass" : "Mot de pass",
+  "Mot de passe" : "Mot de passe",
   "Mot de passe oublié?" : "Mot de passe oublié?",
   "Se deconnecter" : "Se déconnecter",
   "Etes_vous_sur_de_vouloir" : "Êtes-vous sûr de vouloir",
@@ -9,7 +9,4 @@
   "Nouveautes" : "Nouveautés",
   "Conversation" : "Conversation",
   "Profil" : "Profil",
-  "nouveautes" : "nouveautés",
-  "conversation" : "conversation",
-  "profil" : "profil"
 }

@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
 	viewButtons: {
 		flexDirection: "row",
 		flex: 0,
-		marginTop: layoutSize.LAYOUT_20,
+		marginTop: layoutSize.LAYOUT_28,
 		height: layoutSize.LAYOUT_20,
 		justifyContent: "center",
 	},

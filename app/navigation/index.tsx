@@ -10,15 +10,15 @@ import { tr } from "../i18n/t"
 const MainNavigator = navigator({
 	Nouveautes: {
 		screen: NouveautesNavigator,
-		navigationOptions: () => navRootOptions(tr.nouveautes, "nouveautes"),
+		navigationOptions: () => navRootOptions(tr.Nouveautes, "nouveautes"),
 	},
 	Conversation: {
 		screen: ConversationNavigator,
-		navigationOptions: () => navRootOptions(tr.conversation, "conversation"),
+		navigationOptions: () => navRootOptions(tr.Conversation, "conversation"),
 	},
 	Profil: {
 		screen: ProfilUtilisateurNavigator,
-		navigationOptions: () => navRootOptions(tr.profil, "profile"),
+		navigationOptions: () => navRootOptions(tr.Profil, "profile"),
 	},
 })
 

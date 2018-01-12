@@ -27,7 +27,7 @@ const styles = StyleSheet.create<Style>({
 		...validButtonStyleLayout,
 		backgroundColor: CommonStyles.backgroundColor,
 		borderColor: CommonStyles.actionColor,
-		borderWidth: 1.2,
+		borderWidth: layoutSize.LAYOUT_1,
 		color: CommonStyles.actionColor,
 		textAlignVertical: "center",
 	},
@@ -35,7 +35,7 @@ const styles = StyleSheet.create<Style>({
 		alignItems: "center",
 		justifyContent: "center",
 		backgroundColor: CommonStyles.backgroundColor,
-		height: layoutSize.LAYOUT_60,
+		height: layoutSize.LAYOUT_40,
 		marginBottom: layoutSize.LAYOUT_20,
 	},
 })
