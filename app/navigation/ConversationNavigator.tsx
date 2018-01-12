@@ -12,7 +12,7 @@ export default stackNavigator({
 		screen: Conversation,
 		navigationOptions: () =>
 			navOptions({
-				title: tr.conversation,
+				title: tr.Conversation,
 				headerRight: <View />,
 				headerLeft: <View />,
 			}),

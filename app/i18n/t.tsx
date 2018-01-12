@@ -22,8 +22,8 @@ export const tr = {
     vous_deconnecter: I18n.t("vous_deconnecter"),
     nouveautes: I18n.t("nouveautes"),
     conversation: I18n.t("conversation"),
-    profile: I18n.t("profil"),
+    profil: I18n.t("profil"),
     Nouveautes: I18n.t("Nouveautes"),
     Conversation: I18n.t("Conversation"),
-    Profile: I18n.t("Profil"),
+    Profil: I18n.t("Profil"),
 }

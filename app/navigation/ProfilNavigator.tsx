@@ -10,7 +10,7 @@ export default stackNavigator({
 		screen: ProfilUtilisateurScreen,
 		navigationOptions: () =>
 			navOptions({
-				title: tr.profile,
+				title: tr.Profil,
 				headerRight: <View />,
 				headerLeft: <View />,
 			}),
