@@ -1,7 +1,7 @@
 import * as React from "react"
 import Modal from "react-native-modal"
 import { StyleSheet, Text, View } from "react-native"
-import { ViewButtons } from "./ui/ViewButtons"
+import { ButtonsOkCancel } from "./ui/ButtonsOkCancel"
 import { ButtonDeconnect } from "./ui/ButtonDeconnect"
 import { Col } from "./ui/Col"
 import { layoutSize } from "../constants/layoutSize"
@@ -23,7 +23,9 @@ const styles = StyleSheet.create({
 		shadowOpacity: CommonStyles.shadowOpacity,
 		shadowRadius: CommonStyles.shadowRadius,
 	},
-	text: {},
+	text: {
+		fontSize: layoutSize.LAYOUT_14
+	},
 	modalDisconnect: {
 		flex: 1,
 		justifyContent: "center",
@@ -54,7 +56,7 @@ export class ProfilUtilisateur extends React.Component<ProfilUtilisateurProps, P
 		<View style={styles.modalContent}>
 			<Text style={styles.text}>Êtes-vous sûr de vouloir</Text>
 			<Text style={styles.text}>vous déconnecter ?</Text>
-			<ViewButtons
+			<ButtonsOkCancel
 				onCancel={() => this.setState({ showDisconnect: false })}
 				onValid={() => this.disconnect()}
 				title={tr.se_deconnecter}

@@ -19,7 +19,7 @@ export function Documents(state: DocumentState = initialState, action): Document
 	if (matchs([PATH_DOCUMENT], action.path) && action.type === READ_SUCCESS) {
 		return {
 			synced: true,
-			payload: Mix.castArrayAs(Document, action.payload.filter(doc => doc.folder !== "Trash")),
+			payload: action.payload === 0 ? [] : Mix.castArrayAs(Document, action.payload.filter(doc => doc.folder !== "Trash")),
 		}
 	}
 	return state

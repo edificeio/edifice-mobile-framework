@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
 	minitext: {
 		color: CommonStyles.miniTextColor,
 		fontSize: layoutSize.LAYOUT_14,
-		fontFamily: CommonStyles.primaryFontFamilyLight,
+		fontFamily: CommonStyles.primaryFontFamily,
 		textDecorationLine: "underline",
 	},
 	textBoldOverride: {

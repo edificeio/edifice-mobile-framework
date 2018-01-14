@@ -1,55 +1,41 @@
 import * as React from "react"
-import { Animated, StyleSheet, Text, TextStyle, TouchableOpacity, ViewStyle } from "react-native"
-import glamorous from "glamorous-native"
-import { Disable, IconSmall } from ".."
+import g from "glamorous-native"
+import { Row, Disable, RowProperties } from "../index"
 import { layoutSize } from "../../constants/layoutSize"
 import { CommonStyles } from "../styles/common/styles"
 import { kResponsive } from "./KResponsive"
+import { IconSmall } from "./icons/IconPng"
 
-const View = glamorous.View
+const ValidStyle = (props: RowProperties) => (
+	<Row
+		alignItems="center"
+		justifyContent="center"
+		backgroundColor={CommonStyles.backgroundColor}
+		height={layoutSize.LAYOUT_38}
+		marginBottom={layoutSize.LAYOUT_20}
+		marginTop={layoutSize.LAYOUT_0}
+		{...props}
+	/>
+)
 
-const validButtonStyleLayout = {
-	borderRadius: layoutSize.LAYOUT_14 * 3.8,
-	fontFamily: CommonStyles.primaryFontFamilySemibold,
-	fontSize: layoutSize.LAYOUT_14,
-	paddingHorizontal: layoutSize.LAYOUT_36,
-	paddingVertical: layoutSize.LAYOUT_10,
-}
-
-const styles = StyleSheet.create<Style>({
-	validButtonStyle: {
-		...validButtonStyleLayout,
-		backgroundColor: CommonStyles.actionColor,
-		color: CommonStyles.inverseColor,
+const TextStyle = g.text(
+	{
+		borderRadius: layoutSize.LAYOUT_14 * 3.8,
+		fontFamily: CommonStyles.primaryFontFamilySemibold,
+		fontSize: layoutSize.LAYOUT_14,
+		paddingHorizontal: layoutSize.LAYOUT_36,
+		paddingVertical: layoutSize.LAYOUT_9,
 		textAlignVertical: "center",
 	},
-	validButtonStyleDisabled: {
-		...validButtonStyleLayout,
-		backgroundColor: CommonStyles.backgroundColor,
-		borderColor: CommonStyles.actionColor,
-		borderWidth: layoutSize.LAYOUT_1,
-		color: CommonStyles.actionColor,
-		textAlignVertical: "center",
-	},
-	validButtonStyleWrapper: {
-		alignItems: "center",
-		justifyContent: "center",
-		backgroundColor: CommonStyles.backgroundColor,
-		height: layoutSize.LAYOUT_40,
-		marginBottom: layoutSize.LAYOUT_20,
-	},
-})
+	({ disabled }) => ({
+		backgroundColor: disabled ? CommonStyles.backgroundColor : CommonStyles.actionColor,
+		borderColor: disabled ? CommonStyles.actionColor : CommonStyles.backgroundColor,
+		borderWidth: disabled ? layoutSize.LAYOUT_1 : 0,
+		color: disabled ? CommonStyles.actionColor : CommonStyles.inverseColor,
+	})
+)
 
-const marginTopLargeWrapper = layoutSize.LAYOUT_60
-const marginTopSmallWrapper = layoutSize.LAYOUT_40
-
-interface Style {
-	validButtonStyle: TextStyle
-	validButtonStyleDisabled: TextStyle
-	validButtonStyleWrapper: ViewStyle
-}
-
-function isSynced(synced) {
+const isSynced = (synced: Array<boolean>) => {
 	if (synced === undefined) return true
 	return synced.reduce((acc, elemIsSync) => acc || elemIsSync, false)
 }
@@ -63,8 +49,8 @@ export interface ValidTextIconProps {
 	style?: any
 	synced?: boolean[]
 	title?: string
-	whiteSpace?: string,
-    keyboardShow?: boolean
+	whiteSpace?: string
+	keyboardShow?: boolean
 }
 
 export interface State {
@@ -77,27 +63,27 @@ const _ValidTextIcon = ({
 	keyboardShow,
 	onPress,
 	rightName = "",
-	style = styles.validButtonStyle,
-	synced = true,
+	synced = [],
 	title = "",
 	whiteSpace = " ",
 }: ValidTextIconProps) => {
 	const disable = !isSynced(synced) || disabled
-	const buttonStyle = disable ? styles.validButtonStyleDisabled : style
 
 	return (
-		<View style={styles.validButtonStyleWrapper} marginTop={keyboardShow ?  layoutSize.LAYOUT_36 : layoutSize.LAYOUT_60}>
-			<TouchableOpacity onPress={onPress} disabled={disable}>
-				<Text style={buttonStyle}>
-					{leftName.length > 0 && <IconSmall name={leftName} />}
-					{whiteSpace}
-					{title}
-					{whiteSpace}
-					{rightName.length > 0 && <IconSmall name={rightName} />}
-				</Text>
-				{disable && <Disable />}
-			</TouchableOpacity>
-		</View>
+		<ValidStyle
+			marginTop={keyboardShow ? layoutSize.LAYOUT_36 : layoutSize.LAYOUT_60}
+			onPress={() => onPress()}
+			disabled={disabled}
+		>
+			<TextStyle disabled={disable}>
+				{leftName.length > 0 && <IconSmall name={leftName} />}
+				{whiteSpace}
+				{title}
+				{whiteSpace}
+				{rightName.length > 0 && <IconSmall name={rightName} />}
+			</TextStyle>
+			{disable && <Disable />}
+		</ValidStyle>
 	)
 }
 

@@ -1,39 +1,41 @@
 import * as React from "react"
-
-import { Animated, View } from "react-native"
-
-import styles, {
-	largeContainerSize,
-	largeImageSize,
-	marginTopLargeContainerSize,
-	smallContainerSize,
-	smallImageSize,
-	marginTopSmallContainerSize
-} from "./styles"
-
-import { kResponsive} from "../KResponsive";
+import { Animated } from "react-native"
+import g from "glamorous-native"
+import { size } from "../../../utils/Dim"
+import { kResponsive } from "../KResponsive"
 
 export interface LogoProperties {
-    keyboardShow?: boolean
+	keyboardShow?: boolean
 }
 
-const _Logo = ({keyboardShow}: LogoProperties) => {
-	const contImg = keyboardShow ? smallContainerSize :  largeContainerSize
-    const img = keyboardShow ? smallImageSize : largeImageSize
-    const heightMargin = keyboardShow ? marginTopSmallContainerSize : marginTopLargeContainerSize
+const Container = g.view({ alignItems: "center" })
+const AnimationWrapper = g<any>(Animated.View)(
+	{
+		alignItems: "center",
+		justifyContent: "center",
+	},
+	({ size }) => ({
+		width: size,
+		height: size,
+	})
+)
+
+const AnimationImage = g<any>(Animated.Image)({}, ({ size }) => ({
+	width: size,
+	height: size,
+}))
+
+const _Logo = ({ keyboardShow }: LogoProperties) => {
+	const s = keyboardShow ? size.small : size.large
 
 	return (
-		<View style={styles.container}>
-			<Animated.View style={[styles.marginTopContainerImage, { height: heightMargin}]}/>
-			<Animated.View style={[styles.containerImage, { width: contImg, height: contImg}]}>
-				<Animated.Image resizeMode="contain"
-								style={[styles.logo, { width: img, height: img}]}
-								source={require("../../../../assets/icons/icon.png")} />
-			</Animated.View>
-		</View>
+		<Container>
+			<AnimationWrapper size={s.margin} />
+			<AnimationWrapper size={s.container}>
+				<AnimationImage resizeMode="contain" size={s.image} source={require("../../../../assets/icons/icon.png")} />
+			</AnimationWrapper>
+		</Container>
 	)
 }
 
-
-export const Logo = kResponsive(_Logo);
-
+export const Logo = kResponsive(_Logo)

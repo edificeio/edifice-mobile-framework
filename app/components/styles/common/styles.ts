@@ -2,6 +2,7 @@ export const CommonStyles = {
 	actionColor: "#2A9CC8",
 	actionColorDisabled: "#2A9CC888",
 	backgroundColor: "#F8F8FA",
+	entryfieldBorder: "#DCDDE0",
 	buttonColor: "#ffffff",
 	borderColor: "#cccccc",
 	borderColorLighter: "#e2e2e2",

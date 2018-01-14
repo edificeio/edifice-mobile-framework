@@ -13,10 +13,13 @@ export interface RowProperties {
 	borderBottomColor?: string
 	borderBottomWidth?: number
 	children?: any
+	disabled?: boolean
 	height?: any
 	justifyContent?: any
 	marginTop?: number
 	marginBottom?: number
+	paddingHorizontal?: number,
+    paddingVertical?: number,
 	onPress?: (any) => void
 	size?: number
 	style?: any
@@ -29,7 +32,7 @@ export interface NewProps {
 }
 
 export const Row = (props: RowProperties) => {
-	const { size = null, height = null } = props
+	const { disabled = null, size = null, height = null } = props
 	const newProps: NewProps = {
 		flex: size ? size : height ? 0 : 1,
 		flexDirection: "row",
@@ -38,7 +41,7 @@ export const Row = (props: RowProperties) => {
 
 	if (props.onPress) {
 		return (
-			<TouchableOpacity onPress={props.onPress}>
+			<TouchableOpacity onPress={props.onPress} disabled={disabled}>
 				<View {...props} {...newProps}>
 					{props.children}
 				</View>

@@ -92,7 +92,7 @@ export const navOptions = props => {
 			color: "white",
 			alignSelf: "center",
 			textAlign: "center",
-			fontSize: layoutSize.LAYOUT_16
+			fontSize: layoutSize.LAYOUT_16,
 		},
 	}
 }

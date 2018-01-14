@@ -1,29 +1,26 @@
 import StatusAlert from "../connectors/ui/StatusAlert"
 import TextInputError from "../connectors/ui/TextInputError"
 import ValidTextIcon from "../connectors/ui/ValidTextIcon"
-import { ViewButtons } from "./ui/ViewButtons"
+import { ButtonsOkCancel } from "./ui/ButtonsOkCancel"
 import { ButtonTextIcon } from "./ui/ButtonTextIcon"
-import { Col } from "./ui/Col"
-import { Description } from "./ui/Description"
+import { Col, ColProperties } from "./ui/Col"
 import { Disable } from "./ui/Disable"
 import { Form } from "./ui/Form"
-import { Label } from "./ui/Label"
 import { Logo } from "./ui/logo/Logo"
 import { ProgressBar } from "./ui/ProgressBar"
-import { Row } from "./ui/Row"
+import { Row, RowProperties } from "./ui/Row"
 import { ScrollView } from "./ui/ScrollView"
-import { Title } from "./ui/Title"
 import { layoutSize } from "../constants/layoutSize"
 import { Icon, IconSmall, IconBig } from "./ui/icons/IconPng"
 import { IconOnOff } from "./ui/icons/IconOnOff"
 
 export {
 	ButtonTextIcon,
+	ButtonsOkCancel,
 	Col,
-	Description,
+	ColProperties,
 	Disable,
 	Form,
-	Label,
 	layoutSize,
 	Logo,
 	Icon,
@@ -32,10 +29,9 @@ export {
 	IconSmall,
 	ProgressBar,
 	Row,
+	RowProperties,
 	ScrollView,
 	StatusAlert,
 	TextInputError,
-	Title,
 	ValidTextIcon,
-	ViewButtons,
 }

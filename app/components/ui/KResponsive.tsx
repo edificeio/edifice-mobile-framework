@@ -1,24 +1,17 @@
 import * as React from "react"
 
-import { Animated, EmitterSubscription, Keyboard, Platform } from "react-native"
+import { EmitterSubscription, Keyboard, Platform } from "react-native"
 
 export interface KComponentState {
 	keyboardShow: boolean
-
 }
-
 
 export const kResponsive = WrappedComponent => {
 	return class KComponent extends React.Component<any, KComponentState> {
 		public keyboardDidShowListener: EmitterSubscription
 		public keyboardDidHideListener: EmitterSubscription
-
-		constructor(props) {
-			super(props)
-
-			this.state = {
-				keyboardShow: false
-			}
+		public state = {
+			keyboardShow: false,
 		}
 
 		public componentDidMount() {
@@ -33,11 +26,11 @@ export const kResponsive = WrappedComponent => {
 		}
 
 		public keyboardWillShow = () => {
-			this.setState( {keyboardShow: true})
+			if (!this.state.keyboardShow) this.setState({ keyboardShow: true })
 		}
 
 		public keyboardWillHide = () => {
-            this.setState( {keyboardShow: false})
+			if (this.state.keyboardShow) this.setState({ keyboardShow: false })
 		}
 
 		render() {
