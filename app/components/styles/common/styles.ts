@@ -16,6 +16,7 @@ export const CommonStyles = {
 	inverseColor: "#F8F8FA",
 	linkColor: "#2a97f5",
 	mainColorTheme: "#2A9CC8",
+	statusBarColor: "#0088B6",
 	placeholderColor: "#B2BECDDD",
 	miniTextColor: "#858FA9",
 	primaryBorderColor: "#bcbbc1", // some grey-ish delight with a touch of lavender. Amazing.

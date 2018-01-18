@@ -11,7 +11,7 @@ import { ProgressBar } from "./ui/ProgressBar"
 import { Row, RowProperties } from "./ui/Row"
 import { ScrollView } from "./ui/ScrollView"
 import { layoutSize } from "../constants/layoutSize"
-import { Icon, IconSmall, IconBig } from "./ui/icons/IconPng"
+import { Icon, IconProps } from "./ui/icons/Icon"
 import { IconOnOff } from "./ui/icons/IconOnOff"
 
 export {
@@ -24,9 +24,8 @@ export {
 	layoutSize,
 	Logo,
 	Icon,
-	IconBig,
+	IconProps,
 	IconOnOff,
-	IconSmall,
 	ProgressBar,
 	Row,
 	RowProperties,

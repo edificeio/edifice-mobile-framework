@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Animated } from "react-native"
-import g from "glamorous-native"
+import style from "glamorous-native"
 import { size } from "../../../utils/Dim"
 import { kResponsive } from "../KResponsive"
 
@@ -8,8 +8,8 @@ export interface LogoProperties {
 	keyboardShow?: boolean
 }
 
-const Container = g.view({ alignItems: "center" })
-const AnimationWrapper = g<any>(Animated.View)(
+const Container = style.view({ alignItems: "center" })
+const AnimationWrapper = style<any>(Animated.View)(
 	{
 		alignItems: "center",
 		justifyContent: "center",
@@ -20,7 +20,7 @@ const AnimationWrapper = g<any>(Animated.View)(
 	})
 )
 
-const AnimationImage = g<any>(Animated.Image)({}, ({ size }) => ({
+const AnimationImage = style<any>(Animated.Image)({}, ({ size }) => ({
 	width: size,
 	height: size,
 }))

@@ -1,11 +1,12 @@
+import RNFetchBlob from "react-native-fetch-blob"
 import FormData from "form-data"
 import * as docActions from "../actions/docs"
 import { Conf } from "../Conf"
 import * as TYPES from "../constants/docs"
-import { PATH_LOGOUT, replace1 } from "../constants/paths"
+import {matchs, PATH_AVATAR, PATH_LOGOUT, replace1} from "../constants/paths"
 
 function checkSystemError(response) {
-	if (response.status >= 200 && response.status < 300) {
+	if (response.status  === undefined || (response.status >= 200 && response.status < 300)) {
 		return response
 	} else {
 		throw response
@@ -14,6 +15,11 @@ function checkSystemError(response) {
 
 function checkResponse(response) {
 	checkSystemError(response)
+    if (response.headers === undefined) {
+        return new Promise((resolve, reject) =>
+            resolve(response.base64())
+        )
+    }
 	const contentType = response.headers.get("content-type")
 
 	if (contentType && contentType.indexOf("application/json") !== -1) {
@@ -61,12 +67,13 @@ function rawFetchPromise(url, method = "GET", payload = undefined) {
 	return fetch(fullPath, opts)
 }
 
+
 export default store => next => action => {
 	const returnValue = next(action)
 
 	switch (action.type) {
 		case TYPES.READ:
-			action.id >= 0 ? readIdStart(store.dispatch, action.path, action.id) : readStart(store.dispatch, action.path)
+			action.id !== undefined ? readIdStart(store.dispatch, action.path, action.id) : readStart(store.dispatch, action.path)
 			break
 		case TYPES.CREATE:
 			createStart(store.dispatch, action.path, action.payload)
@@ -110,13 +117,14 @@ async function readStart(dispatch, path) {
  */
 async function readIdStart(dispatch, path, id) {
 	const completePath = replace1(path, id)
-	const response = await rawFetchPromise(completePath)
+
+    const response = matchs([PATH_AVATAR], path) ? await RNFetchBlob.fetch( "GET", `${ROOT_PATH}${completePath}`) : await rawFetchPromise(completePath)
 
 	checkResponse(response)
 		.then(result => {
 			isError(result)
 				? dispatch(docActions.crudError(TYPES.READ_ERROR, path, result))
-				: dispatch(docActions.readIdSuccess(path, id, result))
+				: dispatch(docActions.readIdSuccess(completePath, id, result))
 		})
 		.catch(err => {
 			dispatch(docActions.crudError(TYPES.READ_ERROR, path, err))

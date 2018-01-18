@@ -1,37 +1,39 @@
 import * as React from "react"
-import {Text, TextInput, TextInputProperties, TextStyle, TextStyleAndroid, View} from "react-native"
+import {TextInputProperties } from "react-native"
 import { Col } from ".."
 import { layoutSize } from "../../constants/layoutSize"
 import { CommonStyles } from "../styles/common/styles"
-import g from "glamorous-native"
+import style from "glamorous-native"
 
 export interface ContainerProps {
     focus?: boolean
-    errMessage?: string
+    errMessage?: string,
+    marginHorizontal?: number,
 }
 
-const Container = g.view(
+const Container = style.view(
 	{
-		paddingTop: layoutSize.LAYOUT_4
+		paddingTop: layoutSize.LAYOUT_4,
+		flex: 1,
 	},
-	({focus, errMessage}: ContainerProps) => ({
+	({focus, errMessage, marginHorizontal}: ContainerProps) => ({
         borderBottomColor: focus ? CommonStyles.iconColorOn : errMessage.length > 0 ? CommonStyles.errorColor : CommonStyles.entryfieldBorder,
-        borderBottomWidth: focus || errMessage.length > 0 ? 2 : 1
+        borderBottomWidth: focus || errMessage.length > 0 ? 2 : 1,
+        marginHorizontal
 	}))
 
-const Input = g.textInput({
+const TextInput = style.textInput({
 		color: CommonStyles.textInputColor,
-		fontSize: layoutSize.LAYOUT_14,
 	},
-	({ multiline, value, ...props }) => ({
+	({ fontSize, multiline, value }) => ({
 		fontFamily: value.length === 0 ? CommonStyles.primaryFontFamilyLight : CommonStyles.primaryFontFamily,
-		height: multiline ? layoutSize.LAYOUT_60 : layoutSize.LAYOUT_40,
-		...props
+		fontSize,
+		height: multiline ? layoutSize.LAYOUT_60 : layoutSize.LAYOUT_40
 	})
 )
 
 
-const Error = g.text({
+const Error = style.text({
 	color: "red",
 	height: layoutSize.LAYOUT_32,
 	fontFamily: CommonStyles.primaryFontFamily,
@@ -39,11 +41,16 @@ const Error = g.text({
 	marginBottom: 0
 })
 
-export interface TextInputErrorProps extends TextInputProperties{
+export interface TextInputErrorProps extends TextInputProperties {
+    clearButtonMode?: any
+    enablesReturnKeyAutomatically?: boolean
+    error?: any,
 	errCodes?: number[],
-	error?: any,
-	label: string,
+    fontSize?: number,
+	label?: string,
+    marginHorizontal?: number,
 	onChange?: (any) => any
+    returnKeyType?: any
 }
 
 export interface TextInputErrorState {
@@ -60,7 +67,9 @@ export class TextInputError extends React.Component<TextInputErrorProps, TextInp
 			message: "",
 		},
 		errCodes: [],
+        fontSize: layoutSize.LAYOUT_14,
 		label: "",
+        marginHorizontal: 0,
 		multiline: false,
 		onChange: val => val,
 		secureTextEntry: false,
@@ -94,19 +103,20 @@ export class TextInputError extends React.Component<TextInputErrorProps, TextInp
 
 	public render() {
 		const errMessage = this.hasErrorsMessage()
-		const { label, multiline, secureTextEntry, editable } = this.props
+		const { fontSize, label, marginHorizontal, multiline, secureTextEntry, editable, placeholderTextColor = CommonStyles.placeholderColor } = this.props
 		const { focus } = this.state
 
 		return (
-			<Container errMessage={errMessage} focus={focus} >
-				<Input
-					editable={editable}
+			<Container errMessage={errMessage} focus={focus} marginHorizontal={marginHorizontal}>
+				<TextInput
+                    editable={editable}
+                    fontSize={fontSize}
 					multiline={multiline}
 					onChangeText={value => this.onChangeText(value)}
 					onBlur={() => this.setState({ focus: false })}
 					onFocus={() => this.setState({ focus: true })}
 					placeholder={label}
-                    placeholderTextColor={CommonStyles.placeholderColor}
+                    placeholderTextColor={placeholderTextColor}
 					secureTextEntry={secureTextEntry}
                     underlineColorAndroid={"transparent"}
 					value={this.state.value}

@@ -2,10 +2,10 @@
 
 import * as React from "react"
 import { FlexAlignType } from "react-native"
-import glamorous from "glamorous-native"
+import styled from "glamorous-native"
 
-const View = glamorous.View
-const TouchableOpacity = glamorous.TouchableOpacity
+const View = styled.View
+const TouchableOpacity = styled.TouchableOpacity
 
 export interface RowProperties {
 	alignItems?: FlexAlignType
@@ -16,13 +16,17 @@ export interface RowProperties {
 	disabled?: boolean
 	height?: any
 	justifyContent?: any
+	marginLeft?: number
 	marginTop?: number
 	marginBottom?: number
-	paddingHorizontal?: number,
-    paddingVertical?: number,
+	paddingBottom?: number,
+	paddingTop?: number
+	paddingHorizontal?: number
+    paddingVertical?: number
 	onPress?: (any) => void
 	size?: number
 	style?: any
+	width?: any
 }
 
 export interface NewProps {

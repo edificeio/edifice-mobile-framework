@@ -2,12 +2,11 @@
 
 import * as React from "react"
 import { FlexAlignType } from "react-native"
-import glamorous from "glamorous-native"
-import { CommonStyles } from "../styles/common/styles"
+import styled from "glamorous-native"
 import { layoutSize } from "../../constants/layoutSize"
 
-const View = glamorous.View
-const TouchableOpacity = glamorous.TouchableOpacity
+const View = styled.View
+const TouchableOpacity = styled.TouchableOpacity
 
 export interface ColProperties {
 	alignItems?: FlexAlignType
@@ -19,7 +18,9 @@ export interface ColProperties {
 	justifyContent?: any
 	marginTop?: number
 	marginBottom?: number
+    padding?: number
 	paddingVertical?: number
+	pv?:number
 	onPress?: (any) => void
 	size?: number
 	style?: any
@@ -27,17 +28,20 @@ export interface ColProperties {
 }
 
 export interface NewProps {
+	alignItems?: any
 	flex: number
 	flexDirection?: "column" | "row" | "row-reverse" | "column-reverse"
-	flexWrap: "wrap" | "nowrap"
+	flexWrap: "wrap" | "nowrap",
+	paddingVertical?: number,
 }
 
 export const Col = (props: ColProperties) => {
-	const { size = null, width = null, disabled = null } = props
+	const { size = null, width = null, disabled = null, paddingVertical= null, pv = null } = props
 	const newProps: NewProps = {
 		flex: size ? size : width ? 0 : 1,
 		flexDirection: "column",
 		flexWrap: "wrap",
+		paddingVertical: pv ? layoutSize.LAYOUT_2 : paddingVertical ? paddingVertical : 0
 	}
 
 	if (props.onPress) {

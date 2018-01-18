@@ -30,7 +30,7 @@ export class AppScreen extends React.Component<AppScreenProps, AppScreenState> {
 	render() {
 		return (
 			<View style={{ flex: 1 }}>
-				<StatusBar backgroundColor={CommonStyles.mainColorTheme} barStyle="light-content" />
+				<StatusBar backgroundColor={CommonStyles.statusBarColor} barStyle="light-content" />
 				<ProgressBar />
 				<StatusAlert />
 				<AppNavigator

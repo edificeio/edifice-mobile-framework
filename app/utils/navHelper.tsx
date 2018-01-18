@@ -84,19 +84,22 @@ export const navRootOptions = (title, iconName) => ({
 
 export const navOptions = props => {
 	return {
-		...props,
 		headerStyle: {
 			backgroundColor: CommonStyles.mainColorTheme,
-		},
-		headerTitleStyle: {
-			color: "white",
-			alignSelf: "center",
-			textAlign: "center",
-			fontSize: layoutSize.LAYOUT_16,
-		},
+            paddingHorizontal: layoutSize.LAYOUT_6
+        },
+        headerTitleStyle: {
+            color: "white",
+            alignSelf: "center",
+            textAlign: "center",
+            fontFamily: CommonStyles.primaryFontFamily,
+            fontSize: layoutSize.LAYOUT_18,
+        },
+        ...props,
 	}
 }
 
 export const navigate = (route, props = {}) => {
 	return navigatorRef.dispatch(NavigationActions.navigate({ routeName: route, params: props }))
 }
+

@@ -1,8 +1,7 @@
 import * as React from "react"
-import { View } from "react-native"
 import { ButtonTextIcon } from "./ButtonTextIcon"
 import { layoutSize } from "../../constants/layoutSize"
-import g from "glamorous-native"
+import styled from "glamorous-native"
 
 export interface ButtonsOkCancelProps {
 	onCancel: () => void
@@ -10,7 +9,7 @@ export interface ButtonsOkCancelProps {
 	title: string
 }
 
-const ButtonStyled = g.view({
+const ButtonStyled = styled.view({
 	flexDirection: "row",
 	flex: 0,
 	marginTop: layoutSize.LAYOUT_28,

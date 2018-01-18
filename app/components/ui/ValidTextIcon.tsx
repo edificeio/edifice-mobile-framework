@@ -1,10 +1,10 @@
 import * as React from "react"
-import g from "glamorous-native"
+import style from "glamorous-native"
 import { Row, Disable, RowProperties } from "../index"
 import { layoutSize } from "../../constants/layoutSize"
 import { CommonStyles } from "../styles/common/styles"
 import { kResponsive } from "./KResponsive"
-import { IconSmall } from "./icons/IconPng"
+import {Icon} from "./icons/Icon"
 
 const ValidStyle = (props: RowProperties) => (
 	<Row
@@ -18,7 +18,7 @@ const ValidStyle = (props: RowProperties) => (
 	/>
 )
 
-const TextStyle = g.text(
+const TextStyle = style.text(
 	{
 		borderRadius: layoutSize.LAYOUT_14 * 3.8,
 		fontFamily: CommonStyles.primaryFontFamilySemibold,
@@ -76,11 +76,11 @@ const _ValidTextIcon = ({
 			disabled={disabled}
 		>
 			<TextStyle disabled={disable}>
-				{leftName.length > 0 && <IconSmall name={leftName} />}
+				{leftName.length > 0 && <Icon name={leftName} />}
 				{whiteSpace}
 				{title}
 				{whiteSpace}
-				{rightName.length > 0 && <IconSmall name={rightName} />}
+				{rightName.length > 0 && <Icon name={rightName} />}
 			</TextStyle>
 			{disable && <Disable />}
 		</ValidStyle>

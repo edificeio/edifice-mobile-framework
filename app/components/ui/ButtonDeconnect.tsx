@@ -1,10 +1,8 @@
 import * as React from "react"
-import { Text } from "react-native"
 import { layoutSize } from "../../constants/layoutSize"
 import { Row } from "./Row"
-import g from "glamorous-native"
+import styled from "glamorous-native"
 import {RowProperties} from "../index";
-import {CommonStyles} from "../styles/common/styles";
 
 const Container = (props: RowProperties) => (
     <Row
@@ -20,7 +18,7 @@ const Container = (props: RowProperties) => (
     />
 )
 
-const Deconnect = g(Text)({
+const Deconnect = styled.text({
 	color: "#F64D68",
 	fontSize: layoutSize.LAYOUT_14
 })

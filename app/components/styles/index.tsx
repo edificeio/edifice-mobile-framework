@@ -27,20 +27,6 @@ const styles = StyleSheet.create({
 		paddingHorizontal: layoutSize.LAYOUT_15,
 		fontWeight: "400",
 	},
-	cardDescription: {
-		color: CommonStyles.cardTitle,
-		marginTop: layoutSize.LAYOUT_4,
-		fontSize: layoutSize.LAYOUT_8,
-		marginBottom: layoutSize.LAYOUT_4,
-	},
-	cardTitle: {
-		color: CommonStyles.cardTitle,
-		fontSize: layoutSize.LAYOUT_9,
-		fontWeight: "600",
-		paddingTop: layoutSize.LAYOUT_3,
-		paddingBottom: layoutSize.LAYOUT_3,
-		textAlign: "left",
-	},
 	containerErrorText: {
 		alignSelf: "center",
 		fontWeight: "400",
@@ -68,6 +54,14 @@ const styles = StyleSheet.create({
 		alignItems: "flex-end",
 		justifyContent: "center",
 	},
+	item: {
+		paddingHorizontal: layoutSize.LAYOUT_6,
+        paddingVertical: layoutSize.LAYOUT_12,
+		backgroundColor: CommonStyles.backgroundColor,
+		borderBottomWidth: 1,
+		borderBottomColor: "#ddd",
+		flexDirection: "row",
+	},
 	line: {
 		alignItems: "center",
 		justifyContent: "center",
@@ -83,38 +77,27 @@ const styles = StyleSheet.create({
 	marginTop: {
 		marginTop: layoutSize.LAYOUT_8,
 	},
-	item: {
-		padding: 10,
-		backgroundColor: CommonStyles.backgroundColor,
-		borderBottomWidth: 1,
-		borderBottomColor: "#ddd",
-		flexDirection: "row",
-	},
-	statusText: {
-		color: CommonStyles.fadColor,
-		fontSize: layoutSize.LAYOUT_7,
-		fontWeight: "300",
-	},
-	logo: {
-		justifyContent: "center",
-		alignItems: "center",
-		flex: 1,
-		margin: layoutSize.LAYOUT_12,
-	},
-	text: {
-		color: CommonStyles.textInputColor,
-		fontFamily: CommonStyles.primaryFontFamily,
-		fontSize: layoutSize.LAYOUT_14,
-	},
 	minitext: {
 		color: CommonStyles.miniTextColor,
 		fontSize: layoutSize.LAYOUT_14,
 		fontFamily: CommonStyles.primaryFontFamily,
 		textDecorationLine: "underline",
 	},
-	textBoldOverride: {
-		fontWeight: "bold",
+	statusText: {
+		color: CommonStyles.fadColor,
+		fontSize: layoutSize.LAYOUT_7,
+		fontWeight: "300",
 	},
+	text: {
+		color: CommonStyles.textInputColor,
+		fontFamily: CommonStyles.primaryFontFamily,
+		fontSize: layoutSize.LAYOUT_14,
+	},
+    webview: {
+        width: "100%",
+        flex: 1,
+        backgroundColor: "#eee",
+    },
 })
 
 export default styles

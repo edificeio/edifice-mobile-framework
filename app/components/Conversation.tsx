@@ -1,11 +1,21 @@
 import * as React from "react"
-import { FlatList, NativeScrollEvent, NativeSyntheticEvent, Text, TouchableNativeFeedback, View } from "react-native"
+import {FlatList, Text, View } from "react-native"
 import Swipeable from "react-native-swipeable"
 import Icon from "react-native-vector-icons/MaterialIcons"
 import { InboxStyle } from "../styles/Inbox"
 import { getSeqNumber } from "../utils/Store"
-import { Avatar } from "./Avatar"
+import {Avatars} from "./ui/Avatars/Avatars"
+import {ConversationModel} from "../model/Conversation";
 import styles from "./styles"
+import {Col, ColProperties} from "./ui/Col";
+import {Row} from "./ui/Row";
+import {DateView} from "./ui/DateView";
+import {NonLu} from "./ui/NonLu";
+import {clean, trunc} from "../utils/html"
+import {layoutSize} from "../constants/layoutSize";
+import style from "glamorous-native"
+import {CommonStyles} from "./styles/common/styles";
+
 
 const swipeoutBtns = [
 	<View style={InboxStyle.hiddenButtons}>
@@ -16,8 +26,47 @@ const swipeoutBtns = [
 	</View>,
 ]
 
+const ColImage = (props: ColProperties) => (
+    <Col
+        alignItems="center"
+        justifyContent="center"
+		width={layoutSize.LAYOUT_50}
+        {...props}
+    />
+)
+
+const ColBody= (props: ColProperties) => (
+    <Col
+        alignItems="flex-start"
+        justifyContent="center"
+        padding={layoutSize.LAYOUT_2}
+        size={1}
+        {...props}
+    />
+)
+
+const ColRight= (props: ColProperties) => (
+    <Col
+        alignItems="center"
+        justifyContent="space-around"
+        width={layoutSize.LAYOUT_50}
+        {...props}
+    />
+)
+
+const Author = style.text( {
+    fontFamily: CommonStyles.primaryFontFamilySemibold,
+	fontSize: layoutSize.LAYOUT_14
+})
+
+const Content = style.text( {
+    fontFamily: CommonStyles.primaryFontFamilyLight,
+    fontSize: layoutSize.LAYOUT_12,
+	marginTop: layoutSize.LAYOUT_10
+})
+
 export interface ConversationProps {
-	inbox: any
+	conversations: any
 	navigation?: any
 	readConversation: (number) => void
 }
@@ -27,44 +76,34 @@ export class Conversation extends React.Component<ConversationProps, any> {
 		this.props.readConversation(0)
 	}
 
-	public renderItem({ author, excerpt, id }) {
+	public renderItem({ subject, body, date, displayNames, nb } : ConversationModel ) {
 		return (
 			<Swipeable rightButtons={swipeoutBtns}>
-				<TouchableNativeFeedback
-					onPress={() =>
-						this.props.navigation.navigate("ReadMail", {
-							id,
-							name: author.name,
-						})
-					}
-				>
-					<View style={styles.item}>
-						<Avatar userId={author.userId} />
-						<View>
-							<Text style={InboxStyle.author}>{author.name}</Text>
-							<Text style={InboxStyle.excerpt} numberOfLines={1}>
-								{excerpt}
-							</Text>
-						</View>
-					</View>
-				</TouchableNativeFeedback>
+				<Row style={styles.item}>
+					<ColImage>
+						<Avatars displayNames={displayNames} />
+					</ColImage>
+					<ColBody>
+						<Author>{trunc(subject, 35)}</Author>
+						{body.length > 0 ? <Content>{clean(body, 40)}</Content> : <View/>}
+					</ColBody>
+					<ColRight>
+						<DateView date={date} />
+						<NonLu nb={nb}/>
+					</ColRight>
+				</Row>
 			</Swipeable>
 		)
 	}
 
 	public render() {
-		const { inbox, readConversation } = this.props
+		const { conversations } = this.props
 
 		return (
 			<FlatList
-				data={inbox.threads}
+				data={conversations}
 				keyExtractor={() => getSeqNumber()}
 				renderItem={({ item }) => this.renderItem(item)}
-				onScroll={(event: NativeSyntheticEvent<NativeScrollEvent>) => {
-					if (event.nativeEvent.contentOffset.y === 0) {
-						readConversation(inbox.page++)
-					}
-				}}
 				style={styles.grid}
 			/>
 		)

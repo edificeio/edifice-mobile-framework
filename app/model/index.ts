@@ -1,12 +1,14 @@
 import { combineReducers } from "redux"
 import { Auth } from "./Auth"
-import { Conversation } from "./Conversation"
+import { conversations } from "./Conversation"
 import { Documents } from "./Documents"
+import { Avatars } from "./Avatars"
 import { Messages } from "./messages"
 
 export default combineReducers({
 	auth: Auth,
-	inbox: Conversation,
+	avatars: Avatars,
+	conversations: conversations,
 	documents: Documents,
 	messages: Messages,
 })

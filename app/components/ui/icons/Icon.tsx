@@ -1,12 +1,6 @@
 import { createIconSetFromIcoMoon } from "react-native-vector-icons"
-const icoMoonConfig = require("../../../../assets/selection.json")
-const iconSet = createIconSetFromIcoMoon(icoMoonConfig)
-
-export default iconSet
-
-//import { createIconSetFromFontello } from 'react-native-vector-icons';
-//const fontelloConfig = require('../../../../assets/config.json');
-//export const Icon = createIconSetFromFontello(fontelloConfig);
+const icoMoonConfig = require("../../../../assets/fonts/selection.json")
+export const Icon = createIconSetFromIcoMoon(icoMoonConfig)
 
 export interface IconProps {
 	color?: any

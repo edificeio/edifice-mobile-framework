@@ -2,6 +2,8 @@ import { Dimensions } from "react-native"
 
 const hires = Dimensions.get("window").width > 340
 
+export const screenWidth = Dimensions.get("window").width
+
 const imageWidth = Math.round(Dimensions.get("window").width / 2)
 const imageHeight = Math.round(Dimensions.get("window").height / 2)
 
