@@ -2,18 +2,24 @@ import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
 import { readConversation } from "../actions/conversation"
 import { Conversation, ConversationProps } from "../components/Conversation"
+import {trunc} from "../utils/html";
+import {layoutSize} from "../constants/layoutSize";
 
-const filter = (state) => {
+function getTitle(displayNames) {
+    return displayNames.reduce((acc, elem) => `${acc}, ${elem[1]}`, '')
+}
+
+const filtering = (state) => {
 	const { filter, payload} = state
 
 	if (filter !== null)
-		return state.payload.filter( elem => elem.subject.match(filter))
+		return payload.filter( elem => getTitle(elem.displayNames).match(filter))
 	else
-		return state.payload
+		return payload
 }
 
 const mapStateToProps = (state, props) => ({
-	conversations: filter(state.conversations)
+	conversations: filtering(state.conversations)
 })
 
 const dispatchAndMapActions = dispatch => bindActionCreators({ readConversation }, dispatch)

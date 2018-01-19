@@ -29,7 +29,7 @@ const initialState = {
                     "Cindy ONG"
                 ],
             ],
-            "date": 1515496482666,
+            "date": 1516369948114,
             "unread": false,
             "conversation": null,
             "nb": 1
@@ -125,7 +125,7 @@ const initialState = {
                     "Chantal Masodi."
                 ],
             ],
-            "date": 1515496482666,
+            "date": 1514380370906,
             "unread": false,
             "conversation": null,
             "nb": 1

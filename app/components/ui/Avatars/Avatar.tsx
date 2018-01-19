@@ -17,8 +17,8 @@ const SmallImage = style.image( {
     },
     ({count, index}) => ({
         borderRadius: count === 2 ? layoutSize.LAYOUT_15 : layoutSize.LAYOUT_10,
-        top: count === 2 ? (index === 0 ? layoutSize.LAYOUT_0 : layoutSize.LAYOUT_14) : index < 2 ? layoutSize.LAYOUT_0: layoutSize.LAYOUT_25,
-        left: count === 2 ? (index === 0 ? layoutSize.LAYOUT_0 : layoutSize.LAYOUT_14) : index === 0 || (index === 2 && count === 4) ? layoutSize.LAYOUT_0 : index === 2 ? layoutSize.LAYOUT_14 : layoutSize.LAYOUT_25,
+        top: count === 2 ? (index === 0 ? layoutSize.LAYOUT_0 : layoutSize.LAYOUT_15) : index < 2 ? layoutSize.LAYOUT_0: layoutSize.LAYOUT_25,
+        left: count === 2 ? (index === 0 ? layoutSize.LAYOUT_0 : layoutSize.LAYOUT_15) : index === 0 || (index === 2 && count === 4) ? layoutSize.LAYOUT_0 : index === 2 ? layoutSize.LAYOUT_14 : layoutSize.LAYOUT_25,
         width: count === 2 ? layoutSize.LAYOUT_31 : layoutSize.LAYOUT_22,
         height: count === 2 ? layoutSize.LAYOUT_31 : layoutSize.LAYOUT_22,
     })

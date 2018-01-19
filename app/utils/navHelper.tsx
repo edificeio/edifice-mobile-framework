@@ -6,6 +6,7 @@ import { CommonStyles } from "../components/styles/common/styles"
 import { layoutSize } from "../constants/layoutSize"
 import { navigatorRef } from "../components/AppScreen"
 import {TabBarBottomKeyboardAward} from "../components/ui/TabBarComponent";
+import style from 'glamorous-native'
 
 export const navigator = routes =>
 	TabNavigator(routes, {
@@ -24,6 +25,7 @@ export const navigator = routes =>
 				backgroundColor: CommonStyles.tabBottomColor,
 				borderTopWidth: 1,
 				borderTopColor: CommonStyles.borderColorLighter,
+				height: layoutSize.LAYOUT_50,
 				elevation: 1,
 			},
 			indicatorStyle: {
@@ -69,6 +71,17 @@ export const NestedTabNavigator = routes =>
 		},
 	})
 
+const TabBarLbel = style.text({
+		alignSelf: "center",
+        fontSize: layoutSize.LAYOUT_12,
+        fontFamily: CommonStyles.primaryFontFamily,
+		marginBottom: layoutSize.LAYOUT_4,
+	},
+	({focused}) => ({
+    	color: focused ? CommonStyles.actionColor : CommonStyles.textTabBottomColor,
+	})
+)
+
 /**
  * return a navigationOptionsTitle object fill with its attributes
  * @param title      the title of the navigationOptionsTitle
@@ -76,9 +89,16 @@ export const NestedTabNavigator = routes =>
  */
 export const navRootOptions = (title, iconName) => ({
 	tabBarLabel: ({ focused }) => (
-		<Text style={{ alignSelf: "center", color: focused ? CommonStyles.actionColor : CommonStyles.textTabBottomColor }}>{title}</Text>
+		<TabBarLbel focused={focused}>{title}</TabBarLbel>
 	),
 	tabBarIcon: ({ focused }) => <IconOnOff name={iconName} focused={focused} />,
+    tabBarOptions: {
+        labelStyle: {
+            fontSize: layoutSize.LAYOUT_10,
+            fontFamily: CommonStyles.primaryFontFamily,
+            color: CommonStyles.textTabBottomColor,
+        },
+    },
 })
 
 export const navOptions = props => {
@@ -91,12 +111,14 @@ export const navOptions = props => {
             color: "white",
             alignSelf: "center",
             textAlign: "center",
+            fontWeight: "400",
             fontFamily: CommonStyles.primaryFontFamily,
             fontSize: layoutSize.LAYOUT_16,
         },
         ...props,
 	}
 }
+
 
 export const navigate = (route, props = {}) => {
 	return navigatorRef.dispatch(NavigationActions.navigate({ routeName: route, params: props }))

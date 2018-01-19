@@ -5,6 +5,12 @@ import {layoutSize} from "../../constants/layoutSize";
 import {CommonStyles} from "../styles/common/styles";
 
 
+const ViewDate = style.view( {
+    height: layoutSize.LAYOUT_16,
+    alignItems: "center",
+    marginBottom: layoutSize.LAYOUT_4,
+})
+
 const Text  = style.text({
     fontSize:layoutSize.LAYOUT_12},
     ({nb}) => ({
@@ -17,6 +23,8 @@ export const DateView = ({ date, nb }) => {
     const strDate = pastHours < 24 ? `${pastHours} h` : getDayMonthFromTime(date);
 
     return (
-        <Text nb={nb}>{strDate}</Text>
+        <ViewDate>
+            <Text nb={nb}>{strDate}</Text>
+        </ViewDate>
     )
 }

@@ -21,7 +21,7 @@ export default stackNavigator({
 			navigationOptions: () =>
 				navOptions({
 					title: tr.Conversation,
-					headerRight: <Icon size={layoutSize.LAYOUT_20} name={'new_message'} color={'white'}/>,
+					headerRight: <Icon size={layoutSize.LAYOUT_24} name={'new_message'} color={'white'}/>,
 					headerLeft: <SearchIcon screen={"ConversationSearch"}/>,
 				}),
 		},

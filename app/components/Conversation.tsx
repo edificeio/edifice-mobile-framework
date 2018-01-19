@@ -26,19 +26,16 @@ const swipeoutBtns = [
 	</View>,
 ]
 
-const Item = ({nb, ...props}) => {
-    const backgroundColor = nb > 0 ? "#2A9CC81A" : 'white'
+const Item = ({nb, ...props}) => (
+	<Row
+		style={styles.item}
+		backgroundColor={nb > 0 ? "#2A9CC81A" : 'white'}
+		{...props}
+	/>
+)
 
-    return (
-        <Row
-            style={styles.item}
-            backgroundColor={backgroundColor}
-			{...props}
-		/>
-    )
-}
 
-const ColImage = style.view({
+const Left = style.view({
     width: layoutSize.LAYOUT_50,
     height: layoutSize.LAYOUT_50
 })
@@ -53,11 +50,11 @@ const ColBody= (props: ColProperties) => (
     />
 )
 
-const ColRight = style.view({
+const Right = style.view({
     alignItems:"center",
-    justifyContent:"center",
+    justifyContent:"flex-end",
     width: layoutSize.LAYOUT_50,
-    height: layoutSize.LAYOUT_50
+    height: layoutSize.LAYOUT_50,
 })
 
 const Author = style.text( {
@@ -70,11 +67,16 @@ const Author = style.text( {
 )
 
 const Content = style.text( {
-    fontFamily: CommonStyles.primaryFontFamilyLight,
-    fontSize: layoutSize.LAYOUT_12,
-	color: CommonStyles.iconColorOff,
-	marginTop: layoutSize.LAYOUT_10
-})
+		fontFamily: CommonStyles.primaryFontFamilyLight,
+		fontSize: layoutSize.LAYOUT_12,
+		color: CommonStyles.iconColorOff,
+		marginTop: layoutSize.LAYOUT_10
+	},
+	({nb}) => ({
+    	fontFamily: nb > 0 ? CommonStyles.primaryFontFamily : CommonStyles.primaryFontFamilyLight,
+        color: nb > 0 ? CommonStyles.textColor : CommonStyles.iconColorOff
+    })
+)
 
 export interface ConversationProps {
 	conversations: any
@@ -83,8 +85,8 @@ export interface ConversationProps {
 }
 
 function getTitle(displayNames) {
-	const title = displayNames.reduce((acc, elem) => `${acc}, ${elem[1]}`, '')
-	return trunc( title, layoutSize.LAYOUT_30)
+	const title = displayNames.reduce((acc, elem) => acc.length === 0 ? elem[1] : `${acc}, ${elem[1]}`, '')
+	return trunc( title, layoutSize.LAYOUT_26)
 }
 
 export class Conversation extends React.Component<ConversationProps, any> {
@@ -96,17 +98,17 @@ export class Conversation extends React.Component<ConversationProps, any> {
 		return (
 			<Swipeable rightButtons={swipeoutBtns}>
 				<Item nb={nb}>
-					<ColImage>
+					<Left>
 						<Avatars displayNames={displayNames} />
-					</ColImage>
+					</Left>
 					<ColBody>
 						<Author nb={nb}>{getTitle(displayNames)}</Author>
-						{subject.length > 0 ? <Content>{trunc(subject, layoutSize.LAYOUT_36)}</Content> : <View/>}
+						{subject.length > 0 ? <Content nb={nb}>{trunc(subject, layoutSize.LAYOUT_32)}</Content> : <View/>}
 					</ColBody>
-					<ColRight>
+					<Right>
 						<DateView date={date} nb={nb}/>
 						<NonLu nb={nb}/>
-					</ColRight>
+					</Right>
 				</Item>
 			</Swipeable>
 		)

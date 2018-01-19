@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 	},
 	item: {
-		paddingHorizontal: layoutSize.LAYOUT_6,
+		paddingHorizontal: layoutSize.LAYOUT_16,
         paddingVertical: layoutSize.LAYOUT_12,
 		backgroundColor: 'white',
 		borderBottomWidth: 1,

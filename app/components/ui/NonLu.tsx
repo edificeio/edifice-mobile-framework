@@ -5,15 +5,23 @@ import {layoutSize} from "../../constants/layoutSize";
 const View = style.view()
 
 const ViewNB = style.view( {
-    alignSelf: 'center',
+    alignItems: "center",
+    alignSelf: "flex-end",
     backgroundColor: CommonStyles.mainColorTheme,
-    borderRadius: layoutSize.LAYOUT_8,
-    paddingVertical: layoutSize.LAYOUT_3,
-    paddingHorizontal: layoutSize.LAYOUT_6
+    borderRadius: layoutSize.LAYOUT_10,
+    height: layoutSize.LAYOUT_18,
+    justifyContent: "center",
+    marginBottom: layoutSize.LAYOUT_7,
+    marginRight: layoutSize.LAYOUT_4,
+    width: layoutSize.LAYOUT_18,
+})
+
+const ViewEmpty = style.view( {
+    height: layoutSize.LAYOUT_16,
+    marginBottom: layoutSize.LAYOUT_7,
 })
 
 const Text = style.text( {
-    alignSelf: 'center',
     color: 'white',
     fontSize: layoutSize.LAYOUT_10,
     fontFamily: CommonStyles.primaryFontFamilyLight
@@ -21,7 +29,7 @@ const Text = style.text( {
 
 export const NonLu = ({ nb }) => {
     if (nb === 0)
-        return (<View/>)
+        return (<ViewEmpty/>)
 
     return (
         <ViewNB>
