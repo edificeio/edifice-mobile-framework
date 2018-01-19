@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
 	item: {
 		paddingHorizontal: layoutSize.LAYOUT_6,
         paddingVertical: layoutSize.LAYOUT_12,
-		backgroundColor: CommonStyles.backgroundColor,
+		backgroundColor: 'white',
 		borderBottomWidth: 1,
 		borderBottomColor: "#ddd",
 		flexDirection: "row",

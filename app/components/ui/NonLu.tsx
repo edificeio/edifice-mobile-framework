@@ -2,8 +2,9 @@ import * as React from "react"
 import style from "glamorous-native"
 import {CommonStyles} from "../styles/common/styles";
 import {layoutSize} from "../../constants/layoutSize";
+const View = style.view()
 
-const View = style.view( {
+const ViewNB = style.view( {
     alignSelf: 'center',
     backgroundColor: CommonStyles.mainColorTheme,
     borderRadius: layoutSize.LAYOUT_8,
@@ -19,9 +20,12 @@ const Text = style.text( {
 })
 
 export const NonLu = ({ nb }) => {
+    if (nb === 0)
+        return (<View/>)
+
     return (
-        <View>
+        <ViewNB>
             <Text>{nb}</Text>
-        </View>
+        </ViewNB>
     )
 }

@@ -12,8 +12,8 @@ export function clean(html, truncLength) {
 
 export function trunc( res, truncLength) {
 
-    if (res.length > truncLength * DEVICE_SCALE)
-        res = `${res.substr( 0, truncLength * DEVICE_SCALE)} ...`
+    if (res.length > truncLength)
+        res = `${res.substr( 0, truncLength)} ...`
 
     return res
 }

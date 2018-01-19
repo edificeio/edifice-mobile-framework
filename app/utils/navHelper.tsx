@@ -16,6 +16,7 @@ export const navigator = routes =>
 			inactiveTintColor: CommonStyles.mainColorTheme,
 			labelStyle: {
 				fontSize: layoutSize.LAYOUT_12,
+				fontFamily: CommonStyles.primaryFontFamily,
 				color: CommonStyles.textTabBottomColor,
 			},
 			style: {
@@ -44,13 +45,14 @@ export const stackNavigator = route =>
 		navigationOptions: {
 			headerStyle: {
 				backgroundColor: CommonStyles.mainColorTheme,
-				borderBottomWidth: 0, //removes border on iOS
-				elevation: 0, //removes shadow on android
+				paddingHorizontal: layoutSize.LAYOUT_20,
 			},
 			headerTitleStyle: {
 				color: "white",
 				alignSelf: "center",
 				textAlign: "center",
+                fontSize: layoutSize.LAYOUT_16,
+                fontFamily: CommonStyles.primaryFontFamilySemibold,
 			},
 			headerTintColor: CommonStyles.mainColorTheme,
 		},

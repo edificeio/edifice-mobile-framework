@@ -54,13 +54,13 @@ const initialState = {
                 ],
                 [
                     "f825df70-3c85-4a95-8d3e-6b7035fec059",
-                    "Tous les Ã©lÃ¨ves du groupe CE2."
+                    "Alexandre Pardon"
                 ]
             ],
             "date": 1515496282666,
             "unread": false,
             "conversation": "63d9d9a3-de67-44c7-8f56-befecb9344da",
-            "nb": 2
+            "nb": 0
         },
         {
             "id": "63d9d9a3-de67-44c7-8f56-befecb9344da",
@@ -82,7 +82,7 @@ const initialState = {
                 ],
                 [
                     "cc8ba9e5-63e1-4e21-9a74-8cb914c1f737",
-                    "Tous les Ã©lÃ¨ves du groupe CM2."
+                    "Pierre Duval"
                 ],
                 [
                     "f825df70-3c85-4a95-8d3e-6b7035fec059",
@@ -92,7 +92,7 @@ const initialState = {
             "date": 1514380370906,
             "unread": false,
             "conversation": "63d9d9a3-de67-44c7-8f56-befecb9344da",
-            "nb": 2
+            "nb": 0
         },
         {
             "id": "46c7bc61-b9dd-4c25-b164-fd6252236603",
@@ -118,11 +118,11 @@ const initialState = {
                 ],
                 [
                     "f825df70-3c85-4a95-8d3e-6b7035fec059",
-                    "Tous les Ã©lÃ¨ves du groupe CE2."
+                    "Isabelle Polonio"
                 ],
                 [
                     "cc8ba9e5-63e1-4e21-9a74-8cb914c1f737",
-                    "Tous les Ã©lÃ¨ves du groupe CM2."
+                    "Chantal Masodi."
                 ],
             ],
             "date": 1515496482666,
