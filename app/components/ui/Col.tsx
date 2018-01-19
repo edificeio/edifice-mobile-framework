@@ -16,6 +16,7 @@ export interface ColProperties {
 	disabled?: boolean
 	children?: any
 	justifyContent?: any
+	marginHorizontal?: number
 	marginTop?: number
 	marginBottom?: number
     padding?: number

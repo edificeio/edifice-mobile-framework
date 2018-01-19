@@ -33,6 +33,12 @@ export const navigator = routes =>
 		},
 	})
 
+const customAnimationFunc = () => ({
+    screenInterpolator: () => {
+        return null;
+    },
+});
+
 export const stackNavigator = route =>
 	StackNavigator(route, {
 		navigationOptions: {
@@ -48,6 +54,7 @@ export const stackNavigator = route =>
 			},
 			headerTintColor: CommonStyles.mainColorTheme,
 		},
+        transitionConfig: customAnimationFunc,
 	})
 
 export const NestedTabNavigator = routes =>

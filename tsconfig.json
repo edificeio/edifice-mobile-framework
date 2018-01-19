@@ -13,7 +13,7 @@
         "target": "ESNEXT",
         "types": [
             "core-js", "react", "react-native",
-            "react-navigation"
+            "react-navigation", "redux", "react-redux"
         ]
     },
 }

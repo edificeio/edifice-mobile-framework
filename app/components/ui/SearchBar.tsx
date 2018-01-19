@@ -71,11 +71,12 @@ export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
             <Container>
                 <SearchIcon onPress={() => {}} screen={"ConversationSearch"}/>
                 <TextInput
-                    placeholderTextColor={'white'}
-                    returnKeyType={'search'}
-                    placeholder={'Rechercher...'}
+                    autoFocus={true}
                     enablesReturnKeyAutomatically={true}
                     onChangeText={value=> this.onChangeText(value)}
+                    placeholder={'Rechercher...'}
+                    placeholderTextColor={'white'}
+                    returnKeyType={'search'}
                     underlineColorAndroid={'transparent'}
                     value={this.state.value}
                 />

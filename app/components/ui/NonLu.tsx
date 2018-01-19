@@ -6,8 +6,8 @@ import {layoutSize} from "../../constants/layoutSize";
 const View = style.view( {
     alignSelf: 'center',
     backgroundColor: CommonStyles.mainColorTheme,
-    borderRadius: layoutSize.LAYOUT_10,
-    paddingVertical: layoutSize.LAYOUT_2,
+    borderRadius: layoutSize.LAYOUT_8,
+    paddingVertical: layoutSize.LAYOUT_3,
     paddingHorizontal: layoutSize.LAYOUT_6
 })
 

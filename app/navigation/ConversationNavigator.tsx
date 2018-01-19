@@ -7,23 +7,30 @@ import {SearchIcon} from "../components/ui/icons/SearchIcon"
 import {layoutSize} from "../constants/layoutSize";
 import {Icon} from "../components";
 
-
+const customAnimationFunc = () => ({
+    screenInterpolator: (sceneProps) => {
+        const { scene } = sceneProps;
+        const tabs = ['Home'];
+        if (tabs.indexOf(scene.route.routeName) !== -1) return null;
+    },
+});
 
 export default stackNavigator({
-	Conversation: {
-		screen: Conversation,
-		navigationOptions: () =>
-			navOptions({
-				title: tr.Conversation,
-				headerRight: <Icon size={layoutSize.LAYOUT_20} name={'new_message'} color={'white'}/>,
-				headerLeft: <SearchIcon screen={"ConversationSearch"}/>,
-			}),
-	},
-	ConversationSearch: {
-		screen: Conversation,
-		navigationOptions: ({navigation}) =>(
-			{
-                header: <SearchBar navigation={navigation} storeName={'conversations'}/>,
-			})
-	},
-})
+		Conversation: {
+			screen: Conversation,
+			navigationOptions: () =>
+				navOptions({
+					title: tr.Conversation,
+					headerRight: <Icon size={layoutSize.LAYOUT_20} name={'new_message'} color={'white'}/>,
+					headerLeft: <SearchIcon screen={"ConversationSearch"}/>,
+				}),
+		},
+		ConversationSearch: {
+			screen: Conversation,
+			navigationOptions: ({navigation}) =>(
+				{
+					header: <SearchBar navigation={navigation} storeName={'conversations'}/>,
+				})
+		},
+	}
+)

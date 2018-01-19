@@ -19,7 +19,7 @@ export class ProgressBar extends React.Component<ProgressBarProps, ProgressBarSt
 	public state: ProgressBarState = {
 		width: 0,
 	}
-	public timerID = 0
+	public timerID = null
 
 	public componentWillReceiveProps(newProps) {
 		if (!isSynced(newProps.synced)) {

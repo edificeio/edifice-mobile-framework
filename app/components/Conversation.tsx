@@ -1,5 +1,5 @@
 import * as React from "react"
-import {FlatList, Text, View } from "react-native"
+import {FlatList, View } from "react-native"
 import Swipeable from "react-native-swipeable"
 import Icon from "react-native-vector-icons/MaterialIcons"
 import { InboxStyle } from "../styles/Inbox"
@@ -26,36 +26,30 @@ const swipeoutBtns = [
 	</View>,
 ]
 
-const ColImage = (props: ColProperties) => (
-    <Col
-        alignItems="center"
-        justifyContent="center"
-		width={layoutSize.LAYOUT_50}
-        {...props}
-    />
-)
+const ColImage = style.view({
+    width: layoutSize.LAYOUT_50,
+    height: layoutSize.LAYOUT_50
+})
 
 const ColBody= (props: ColProperties) => (
     <Col
         alignItems="flex-start"
         justifyContent="center"
         padding={layoutSize.LAYOUT_2}
-        size={1}
+		marginHorizontal={layoutSize.LAYOUT_6}
         {...props}
     />
 )
 
-const ColRight= (props: ColProperties) => (
-    <Col
-        alignItems="center"
-        justifyContent="space-around"
-        width={layoutSize.LAYOUT_50}
-        {...props}
-    />
-)
+const ColRight = style.view({
+    alignItems:"center",
+    justifyContent:"center",
+    width: layoutSize.LAYOUT_50,
+    height: layoutSize.LAYOUT_50
+})
 
 const Author = style.text( {
-    fontFamily: CommonStyles.primaryFontFamilySemibold,
+    fontFamily: CommonStyles.primaryFontFamily,
 	fontSize: layoutSize.LAYOUT_14
 })
 
@@ -84,8 +78,8 @@ export class Conversation extends React.Component<ConversationProps, any> {
 						<Avatars displayNames={displayNames} />
 					</ColImage>
 					<ColBody>
-						<Author>{trunc(subject, 35)}</Author>
-						{body.length > 0 ? <Content>{clean(body, 40)}</Content> : <View/>}
+						<Author>{trunc(subject, 30)}</Author>
+						{body.length > 0 ? <Content>{clean(body, 35)}</Content> : <View/>}
 					</ColBody>
 					<ColRight>
 						<DateView date={date} />
