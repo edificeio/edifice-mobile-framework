@@ -31,5 +31,6 @@ export const AppNavigator: NavigationContainer = StackNavigator(
 	},
 	{
 		navigationOptions: { header: null },
+        headerMode: 'none',
 	}
 )

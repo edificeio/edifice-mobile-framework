@@ -5,10 +5,11 @@ import { IconOnOff } from "../components"
 import { CommonStyles } from "../components/styles/common/styles"
 import { layoutSize } from "../constants/layoutSize"
 import { navigatorRef } from "../components/AppScreen"
+import {TabBarBottomKeyboardAward} from "../components/ui/TabBarComponent";
 
 export const navigator = routes =>
 	TabNavigator(routes, {
-		backBehavior: "none",
+        tabBarComponent: TabBarBottomKeyboardAward,
 		swipeEnabled: true,
 		tabBarPosition: "bottom",
 		tabBarOptions: {
@@ -43,17 +44,6 @@ const customAnimationFunc = () => ({
 export const stackNavigator = route =>
 	StackNavigator(route, {
 		navigationOptions: {
-			headerStyle: {
-				backgroundColor: CommonStyles.mainColorTheme,
-				paddingHorizontal: layoutSize.LAYOUT_20,
-			},
-			headerTitleStyle: {
-				color: "white",
-				alignSelf: "center",
-				textAlign: "center",
-                fontSize: layoutSize.LAYOUT_16,
-                fontFamily: CommonStyles.primaryFontFamilySemibold,
-			},
 			headerTintColor: CommonStyles.mainColorTheme,
 		},
         transitionConfig: customAnimationFunc,
@@ -86,23 +76,23 @@ export const NestedTabNavigator = routes =>
  */
 export const navRootOptions = (title, iconName) => ({
 	tabBarLabel: ({ focused }) => (
-		<Text style={{ color: focused ? CommonStyles.actionColor : CommonStyles.textTabBottomColor }}>{title}</Text>
+		<Text style={{ alignSelf: "center", color: focused ? CommonStyles.actionColor : CommonStyles.textTabBottomColor }}>{title}</Text>
 	),
 	tabBarIcon: ({ focused }) => <IconOnOff name={iconName} focused={focused} />,
 })
 
 export const navOptions = props => {
 	return {
-		headerStyle: {
-			backgroundColor: CommonStyles.mainColorTheme,
-            paddingHorizontal: layoutSize.LAYOUT_6
+        headerStyle: {
+            backgroundColor: CommonStyles.mainColorTheme,
+            paddingHorizontal: layoutSize.LAYOUT_20
         },
         headerTitleStyle: {
             color: "white",
             alignSelf: "center",
             textAlign: "center",
             fontFamily: CommonStyles.primaryFontFamily,
-            fontSize: layoutSize.LAYOUT_18,
+            fontSize: layoutSize.LAYOUT_16,
         },
         ...props,
 	}
