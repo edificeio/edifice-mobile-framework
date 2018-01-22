@@ -1,64 +1,57 @@
 import * as React from "react"
 import { Text, View } from "react-native"
 import { errorAlreadyCatched } from "../../constants/errFormInput"
-import styles from "../styles/index"
 import { MessagesProps } from "../../model/messages"
+import styles from "../styles/index"
 
 interface State {
-	code: number
+	status: number
 	displayMsg: boolean
-	message: string
+	statusText: string
 }
 
+export interface StatusAlertProps {
+	messages?: MessagesProps[]
+}
 /**
  *
  * @param error
  * @constructor
  */
-export class StatusAlert extends React.Component<MessagesProps, State> {
-	public state = {
-		code: 0,
+export class StatusAlert extends React.Component<StatusAlertProps, State> {
+	state = {
+		status: 0,
 		displayMsg: false,
-		message: undefined,
+		statusText: "",
 	}
 
-	public componentWillReceiveProps(newProps) {
-		const { code, message } = this.getMessage(newProps)
-		if (message && !this.state.displayMsg) {
-			this.setState({ code, displayMsg: true, message })
+	componentWillReceiveProps(newProps) {
+		const { status, statusText } = this.getMessage(newProps.messages)
+		if (statusText.length > 0 && !this.state.displayMsg) {
+			this.setState({ status, displayMsg: true, statusText })
 			setTimeout(() => this.setState({ displayMsg: false }), 6000)
 		}
 	}
 
-	public getMessage(props) {
-		if (!props.messages || props.messages.length === 0) {
-			return { code: 0, message: false }
-		}
-		const { code = 0, message = "" } =
-			props.messages[0].errors && props.messages[0].errors.length > 0 ? props.messages[0].errors[0] : props.messages[0]
+	getMessage(messages: MessagesProps) {
+		const { status = 0, statusText = "" } = messages[0]
 
-		if (errorAlreadyCatched(code) || message.length === 0) {
-			return { code, message: false }
+		if (errorAlreadyCatched(status)) {
+			return { status: 0, statusText: "" }
 		}
 
-		return { code, message }
+		return { status, statusText }
 	}
 
-	public render() {
-		const { code, displayMsg, message } = this.state
-		if (
-			!displayMsg ||
-			message.indexOf("Bienvenue, vous avez accès à toutes") === 0 ||
-			message.indexOf("Cette application est réservée aux abonnés Premium") === 0
-		) {
-			return <View />
-		}
+	render() {
+		const { status, displayMsg, statusText } = this.state
+		if (!displayMsg) return <View />
 
-		const style = code >= 0 && code <= 400 ? styles.containerInfoText : styles.containerErrorText
+		const style = status >= 0 && status <= 400 ? styles.containerInfoText : styles.containerErrorText
 
 		return (
 			<View style={styles.containerInfo}>
-				<Text style={style}>{message}</Text>
+				<Text style={style}>{statusText}</Text>
 			</View>
 		)
 	}

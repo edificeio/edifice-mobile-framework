@@ -6,4 +6,4 @@ import { readId } from "./docs"
  *
  * @param page   page à lire de la conversation   id de l'expert
  */
-export const readConversation = (page: number) => readId(PATH_CONVERSATION, page, false)
+export const readConversation = (page: number) => readId(PATH_CONVERSATION, page)

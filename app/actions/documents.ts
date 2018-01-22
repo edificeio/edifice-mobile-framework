@@ -13,4 +13,4 @@ export enum Filter {
  *
  * @param filter   type of filter to query documnts
  */
-export const readDocumentsFilter = (filter: Filter) => read(replace1(PATH_DOCUMENT, filter), true)
+export const readDocumentsFilter = (filter: Filter) => read(replace1(PATH_DOCUMENT, filter))

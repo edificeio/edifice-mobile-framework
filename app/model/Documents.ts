@@ -26,11 +26,11 @@ export function Documents(state: DocumentState = initialState, action): Document
 }
 
 export class DocFile {
-	public uri: string
-	public base64: string
-	public path: string
+	uri: string
+	base64: string
+	path: string
 
-	public async openCamera() {
+	async openCamera() {
 		/*const pickerResult = await ImagePicker.launchCameraAsync({
             allowsEditing: false,
             quality: 0.7
@@ -40,7 +40,7 @@ export class DocFile {
         this.base64 = pickerResult.base64*/
 	}
 
-	public async uploadImage() {
+	async uploadImage() {
 		const uriParts = this.uri.split(".")
 		const fileType = this.uri[this.uri.length - 1]
 

@@ -1,25 +1,30 @@
-import RNFetchBlob from "react-native-fetch-blob"
 import FormData from "form-data"
+import RNFetchBlob from "react-native-fetch-blob"
 import * as docActions from "../actions/docs"
 import { Conf } from "../Conf"
 import * as TYPES from "../constants/docs"
-import {matchs, PATH_AVATAR, PATH_LOGOUT, replace1} from "../constants/paths"
+import {matchs, PATH_AVATAR, PATH_LOGIN, PATH_LOGOUT, replace1} from "../constants/paths"
+import { tr } from "../i18n/t"
 
-function checkSystemError(response) {
-	if (response.status  === undefined || (response.status >= 200 && response.status < 300)) {
-		return response
-	} else {
-		throw response
+function checkResponse(response, path = null) {
+	if (response.headers === undefined) {
+		return new Promise((resolve, reject) => resolve(response.base64()))
 	}
-}
 
-function checkResponse(response) {
-	checkSystemError(response)
-    if (response.headers === undefined) {
-        return new Promise((resolve, reject) =>
-            resolve(response.base64())
-        )
+	if (path === PATH_LOGIN) {
+        const cookie = response.headers.get("Set-Cookie")
+
+        if (cookie === null) {
+            return new Promise((resolve, reject) =>
+                reject({
+                    ok: false,
+                    status: tr.Identifiant_incorrect,
+                    statusText: tr.Identifiant_incorrect,
+                })
+            )
+        }
     }
+
 	const contentType = response.headers.get("content-type")
 
 	if (contentType && contentType.indexOf("application/json") !== -1) {
@@ -27,14 +32,14 @@ function checkResponse(response) {
 	}
 	return new Promise((resolve, reject) =>
 		resolve({
-			ok: response.ok,
+			ok: true,
 			status: response.status,
 			statusText: response.statusText,
 		})
 	)
 }
-function isError({ ok = true, code = 0, status = 200 }) {
-	return (ok !== true && status !== 200) || code !== 0
+function isError({ ok = true, status = 200 }) {
+	return ok !== true || status >= 400
 }
 
 const ROOT_PATH = `${Conf.platform}/`
@@ -52,7 +57,7 @@ function rawFetchFormDataPromise(url, method = "post", payload = "") {
 	return fetch(fullPath, opts)
 }
 
-function rawFetchPromise(url, method = "GET", payload = undefined) {
+function rawFetchPromise(url, method = "GET", payload = null) {
 	const fullPath = ROOT_PATH + url
 	const opts = {
 		method,
@@ -62,18 +67,19 @@ function rawFetchPromise(url, method = "GET", payload = undefined) {
 		}),
 	}
 
-	if (payload !== undefined) opts["body"] = JSON.stringify(payload)
+	if (payload) opts["body"] = JSON.stringify(payload)
 
 	return fetch(fullPath, opts)
 }
-
 
 export default store => next => action => {
 	const returnValue = next(action)
 
 	switch (action.type) {
 		case TYPES.READ:
-			action.id !== undefined ? readIdStart(store.dispatch, action.path, action.id) : readStart(store.dispatch, action.path)
+			action.id !== undefined
+				? readIdStart(store.dispatch, action.path, action.id)
+				: readStart(store.dispatch, action.path)
 			break
 		case TYPES.CREATE:
 			createStart(store.dispatch, action.path, action.payload)
@@ -118,7 +124,9 @@ async function readStart(dispatch, path) {
 async function readIdStart(dispatch, path, id) {
 	const completePath = replace1(path, id)
 
-    const response = matchs([PATH_AVATAR], path) ? await RNFetchBlob.fetch( "GET", `${ROOT_PATH}${completePath}`) : await rawFetchPromise(completePath)
+	const response = matchs([PATH_AVATAR], path)
+		? await RNFetchBlob.fetch("GET", `${ROOT_PATH}${completePath}`)
+		: await rawFetchPromise(completePath)
 
 	checkResponse(response)
 		.then(result => {
@@ -140,7 +148,7 @@ async function createStart(dispatch, path, doc) {
 	}
 	const response = await rawFetchFormDataPromise(path, "post", doc)
 
-	checkResponse(response)
+	checkResponse(response, path)
 		.then(result => {
 			isError(result)
 				? dispatch(docActions.crudError(TYPES.CREATE_ERROR, path, result))
@@ -180,7 +188,9 @@ async function delStart(dispatch, aDoc) {
 }
 
 const getFormData = data => {
-	if (typeof data === "string") return data
+	if (typeof data === "string") {
+		return data
+	}
 
 	const formData = new FormData()
 
@@ -191,7 +201,9 @@ const getFormData = data => {
 				value.map((val, i) => {
 					formData.append(`${name}[]`, val)
 				})
-			} else formData.append(name, value)
+			} else {
+				formData.append(name, value)
+			}
 		}
 	}
 	return formData

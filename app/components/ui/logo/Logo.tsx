@@ -1,6 +1,6 @@
+import style from "glamorous-native"
 import * as React from "react"
 import { Animated } from "react-native"
-import style from "glamorous-native"
 import { size } from "../../../utils/Dim"
 import { kResponsive } from "../KResponsive"
 

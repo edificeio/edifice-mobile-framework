@@ -2,21 +2,21 @@ import HTMLParser from "fast-html-parser"
 import { Conf } from "../Conf"
 
 export class HTMLAdaptator {
-	public html: string
-	public root: any
+	html: string
+	root: any
 
 	constructor(html: string) {
 		this.html = html
 		this.root = HTMLParser.parse(html)
 	}
 
-	public removeAfter(queryString: string) {
+	removeAfter(queryString: string) {
 		const node = this.root.querySelector(queryString)
 		for (let i = 0; i < this.root.childNodes.length; i++) {}
 		return this
 	}
 
-	public outerHTML(node: any) {
+	outerHTML(node: any) {
 		if (node.nodeType === 3) {
 			return node.text
 		}
@@ -27,11 +27,11 @@ export class HTMLAdaptator {
 		return `<${node.tagName || "div"} ${attributes}>${children.join("")}</${node.tagName || "div"}>`
 	}
 
-	public toHTML() {
+	toHTML() {
 		return this.outerHTML(this.root)
 	}
 
-	public adapt(): HTMLAdaptator {
+	adapt(): HTMLAdaptator {
 		const images = this.root.querySelectorAll("img")
 		for (let i = 0; i < images.length; i++) {
 			if (images[i].attributes.src && images[i].attributes.src.startsWith("/")) {

@@ -1,4 +1,4 @@
-import { Dimensions, Platform, StyleSheet } from "react-native"
+import { Dimensions, StyleSheet } from "react-native"
 import { layoutSize } from "../../constants/layoutSize"
 import { CommonStyles } from "./common/styles"
 
@@ -56,8 +56,8 @@ const styles = StyleSheet.create({
 	},
 	item: {
 		paddingHorizontal: layoutSize.LAYOUT_16,
-        paddingVertical: layoutSize.LAYOUT_12,
-		backgroundColor: 'white',
+		paddingVertical: layoutSize.LAYOUT_12,
+		backgroundColor: "white",
 		borderBottomWidth: 1,
 		borderBottomColor: "#ddd",
 		flexDirection: "row",
@@ -93,11 +93,11 @@ const styles = StyleSheet.create({
 		fontFamily: CommonStyles.primaryFontFamily,
 		fontSize: layoutSize.LAYOUT_14,
 	},
-    webview: {
-        width: "100%",
-        flex: 1,
-        backgroundColor: "#eee",
-    },
+	webview: {
+		width: "100%",
+		flex: 1,
+		backgroundColor: "#eee",
+	},
 })
 
 export default styles

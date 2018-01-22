@@ -1,6 +1,5 @@
 import * as React from "react"
 import { FlatList, Text, TouchableNativeFeedback, View } from "react-native"
-import { Col } from "."
 import { Filter } from "../actions/documents"
 import { InboxStyle } from "../styles/Inbox"
 import { getSeqNumber } from "../utils/Store"
@@ -13,11 +12,11 @@ export interface TimelineProps {
 }
 
 export class Timeline extends React.Component<TimelineProps, any> {
-	public componentWillMount() {
+	componentWillMount() {
 		this.props.readDocumentsFilter(Filter.Shared)
 	}
 
-	public renderItem({ title }) {
+	renderItem({ title }) {
 		return (
 			<TouchableNativeFeedback>
 				<View style={styles.item}>
@@ -29,8 +28,8 @@ export class Timeline extends React.Component<TimelineProps, any> {
 		)
 	}
 
-	public render() {
-		const { documents, navigation } = this.props
+	render() {
+		const { documents } = this.props
 
 		return (
 			<FlatList

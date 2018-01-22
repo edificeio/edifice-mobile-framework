@@ -3,7 +3,7 @@ import { bindActionCreators } from "redux"
 import { TextInputError, TextInputErrorProps } from "../../components/ui/TextInputError"
 
 const mapStateToProps = state => ({
-	error: state.messages,
+	messages: state.messages,
 })
 
 const dispatchAndMapActions = dispatch => bindActionCreators({}, dispatch)

@@ -13,13 +13,13 @@ export class Rights<T extends Shareable> {
 		this.myRights = {}
 	}
 
-	public myRights: any
+	myRights: any
 
-	public isOwner() {
+	isOwner() {
 		return this.resource.owner.userId === model.me.userId
 	}
 
-	public fromBehaviours(prefix?: string): Promise<any> {
+	fromBehaviours(prefix?: string): Promise<any> {
 		if (!prefix) {
 			prefix = appPrefix
 		}
@@ -46,7 +46,7 @@ export class Rights<T extends Shareable> {
 		})
 	}
 
-	public async fromObject(obj: any, prefix: string): Promise<any> {
+	async fromObject(obj: any, prefix: string): Promise<any> {
 		return new Promise((resolve, reject) => {
 			const resourceRights = obj.resource
 

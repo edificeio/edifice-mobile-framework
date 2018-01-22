@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native"
+import { layoutSize } from "../constants/layoutSize"
 
 export const InboxStyle = StyleSheet.create({
 	author: {
@@ -12,9 +13,10 @@ export const InboxStyle = StyleSheet.create({
 		paddingRight: 15,
 	},
 	hiddenButtons: {
-		flex: 1,
 		alignItems: "center",
+		flex: 1,
 		justifyContent: "center",
-		width: 75,
+		width: layoutSize.LAYOUT_70,
+		backgroundColor: "#EC5D61",
 	},
 })

@@ -1,5 +1,5 @@
 import { PATH_AUTH, PATH_LOGIN, PATH_LOGOUT, PATH_RECOVER_PASSWORD, PATH_SIGNUP } from "../constants/paths"
-import { create, read } from "./docs"
+import { create } from "./docs"
 
 /**
  *
@@ -19,7 +19,7 @@ export const login = (email, password) => {
  * @returns {{type}}
  */
 export const logout = email => {
-	return create(PATH_LOGOUT, { email })
+	return create(PATH_LOGOUT, { email }, false)
 }
 
 /**
@@ -30,7 +30,7 @@ export const logout = email => {
  * @returns {PATH_SIGNUP}
  */
 export const signup = (email, password) => {
-	return create(PATH_SIGNUP, { email, password })
+	return create(PATH_SIGNUP, { email, password }, true)
 }
 
 /**
@@ -40,7 +40,7 @@ export const signup = (email, password) => {
  * @returns {PATH_RECOVER_PASSWORD}
  */
 export const recoverPassword = email => {
-	return create(PATH_RECOVER_PASSWORD, { email })
+	return create(PATH_RECOVER_PASSWORD, { email }, true)
 }
 
 /**

@@ -3,7 +3,7 @@ import { bindActionCreators } from "redux"
 import { logout } from "../actions/auth"
 import { ProfilUtilisateur, ProfilUtilisateurProps } from "../components/ProfilUtilisateur"
 
-const mapStateToProps = (state, props) => ({
+const mapStateToProps = state => ({
 	auth: state.auth,
 })
 

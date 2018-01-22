@@ -1,12 +1,12 @@
 import * as React from "react"
-import Modal from "react-native-modal"
 import { StyleSheet, Text, View } from "react-native"
-import { ButtonsOkCancel } from "./ui/ButtonsOkCancel"
-import { ButtonDeconnect } from "./ui/ButtonDeconnect"
-import { Col } from "./ui/Col"
+import Modal from "react-native-modal"
 import { layoutSize } from "../constants/layoutSize"
-import { CommonStyles } from "./styles/common/styles"
 import { tr } from "../i18n/t"
+import { CommonStyles } from "./styles/common/styles"
+import { ButtonDeconnect } from "./ui/ButtonDeconnect"
+import { ButtonsOkCancel } from "./ui/ButtonsOkCancel"
+import { Col } from "./ui/Col"
 
 const styles = StyleSheet.create({
 	modalContent: {
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
 		shadowRadius: CommonStyles.shadowRadius,
 	},
 	text: {
-		fontSize: layoutSize.LAYOUT_14
+		fontSize: layoutSize.LAYOUT_14,
 	},
 	modalDisconnect: {
 		flex: 1,
@@ -59,12 +59,12 @@ export class ProfilUtilisateur extends React.Component<ProfilUtilisateurProps, P
 			<ButtonsOkCancel
 				onCancel={() => this.setState({ showDisconnect: false })}
 				onValid={() => this.disconnect()}
-				title={tr.se_deconnecter}
+				title={tr.Se_deconnecter}
 			/>
 		</View>
 	)
 
-	public render() {
+	render() {
 		return (
 			<Col backgroundColor={"#F8F8FA"}>
 				<Modal style={styles.modalDisconnect} backdropOpacity={0.5} isVisible={this.state.showDisconnect}>

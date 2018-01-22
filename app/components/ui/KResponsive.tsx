@@ -8,29 +8,33 @@ export interface KComponentState {
 
 export const kResponsive = WrappedComponent => {
 	return class KComponent extends React.Component<any, KComponentState> {
-		public keyboardDidShowListener: EmitterSubscription
-		public keyboardDidHideListener: EmitterSubscription
-		public state = {
+		keyboardDidShowListener: EmitterSubscription
+		keyboardDidHideListener: EmitterSubscription
+		state = {
 			keyboardShow: false,
 		}
 
-		public componentDidMount() {
+		componentDidMount() {
 			const name = Platform.OS === "ios" ? "Will" : "Did"
 			this.keyboardDidShowListener = Keyboard.addListener(`keyboard${name}Show`, () => this.keyboardWillShow())
 			this.keyboardDidHideListener = Keyboard.addListener(`keyboard${name}Hide`, () => this.keyboardWillHide())
 		}
 
-		public componentWillUnmount() {
+		componentWillUnmount() {
 			this.keyboardDidShowListener.remove()
 			this.keyboardDidHideListener.remove()
 		}
 
-		public keyboardWillShow = () => {
-			if (!this.state.keyboardShow) this.setState({ keyboardShow: true })
+		keyboardWillShow = () => {
+			if (!this.state.keyboardShow) {
+				this.setState({ keyboardShow: true })
+			}
 		}
 
-		public keyboardWillHide = () => {
-			if (this.state.keyboardShow) this.setState({ keyboardShow: false })
+		keyboardWillHide = () => {
+			if (this.state.keyboardShow) {
+				this.setState({ keyboardShow: false })
+			}
 		}
 
 		render() {

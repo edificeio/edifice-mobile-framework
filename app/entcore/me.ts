@@ -3,19 +3,19 @@ import { Eventer } from "entcore-toolkit"
 import { model } from "./modelDefinitions"
 
 export class Me {
-	public static preferences: any
-	public static loading: any[] = []
+	static preferences: any
+	static loading: any[] = []
 	private static eventer: Eventer = new Eventer()
 
 	static get session() {
 		return model.me
 	}
 
-	public static async savePreference(app: string): Promise<void> {
+	static async savePreference(app: string): Promise<void> {
 		await http.put("/userbook/preference/" + app, this.preferences[app])
 	}
 
-	public static async preference(app: string): Promise<any> {
+	static async preference(app: string): Promise<any> {
 		if (!this.preferences) {
 			this.preferences = {}
 		}

@@ -1,9 +1,9 @@
 import * as React from "react"
-import { AuthProps } from "../../model/Auth"
+import { AuthState } from "../../model/Auth"
 
 import { ERR_INPUT } from "../../constants/errFormInput"
 
-import { Col, Form, Row, ScrollView, TextInputError, ValidTextIcon } from ".."
+import { Form, TextInputError, ValidTextIcon } from ".."
 
 export interface RecoverPasswordState {
 	disabled: boolean
@@ -11,25 +11,25 @@ export interface RecoverPasswordState {
 }
 
 export interface RecoverPasswordProps {
-	auth?: AuthProps
+	auth?: AuthState
 	recoverPassword?: (email: string) => void
 	onRoute?: (string) => void
 }
 
 export class RecoverPassword extends React.Component<RecoverPasswordProps, RecoverPasswordState> {
-	public state = {
+	state = {
 		email: "",
 		disabled: true,
 	}
 
-	public onChange(prop) {
+	onChange(prop) {
 		const { email } = this.state
 		this.setState(prop)
 
 		this.setState({ disabled: email.length === 0 })
 	}
 
-	public render() {
+	render() {
 		const { recoverPassword } = this.props
 		const { email } = this.state
 
@@ -43,7 +43,7 @@ export class RecoverPassword extends React.Component<RecoverPasswordProps, Recov
 					onChange={text => this.onChange({ email: text })}
 				/>
 				<ValidTextIcon
-					onPress={e => recoverPassword(email)}
+					onPress={() => recoverPassword(email)}
 					disabled={this.state.disabled}
 					title="Récupérer mot de passe"
 				/>

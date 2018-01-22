@@ -12,7 +12,7 @@
         "sourceMap": true,                        /* Generates corresponding '.map' file. */
         "target": "ESNEXT",
         "types": [
-            "core-js", "react", "react-native",
+            "core-js", "react", "react-native", "glamorous-native",
             "react-navigation", "redux", "react-redux"
         ]
     },

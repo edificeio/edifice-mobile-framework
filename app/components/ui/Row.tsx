@@ -1,8 +1,8 @@
 /* @flow */
 
+import styled from "glamorous-native"
 import * as React from "react"
 import { FlexAlignType } from "react-native"
-import styled from "glamorous-native"
 
 const View = styled.View
 const TouchableOpacity = styled.TouchableOpacity
@@ -19,10 +19,10 @@ export interface RowProperties {
 	marginLeft?: number
 	marginTop?: number
 	marginBottom?: number
-	paddingBottom?: number,
+	paddingBottom?: number
 	paddingTop?: number
 	paddingHorizontal?: number
-    paddingVertical?: number
+	paddingVertical?: number
 	onPress?: (any) => void
 	size?: number
 	style?: any

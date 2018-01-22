@@ -1,9 +1,11 @@
 import * as React from "react"
 import { Text } from "react-native"
-import { Col, Form, Logo, TextInputError, ValidTextIcon } from "../index"
-import { AuthProps } from "../../model/Auth"
-import { navigate } from "../../utils/navHelper"
 import { tr } from "../../i18n/t"
+import { AuthModel } from "../../model/Auth"
+import { navigate } from "../../utils/navHelper"
+import { Col, Form, Logo, ValidTextIcon } from "../index"
+import TextInputError from "../../connectors/ui/TextInputError"
+import { ERR_INPUT } from "../../constants/errFormInput"
 
 import styles from "../styles"
 
@@ -13,7 +15,7 @@ export interface LoginState {
 }
 
 export interface LoginProps {
-	auth?: AuthProps
+	auth?: AuthModel
 	login?: (email: string, password: string) => void
 	onRoute?: (route: string) => void
 }
@@ -24,13 +26,13 @@ export class Login extends React.Component<LoginProps, LoginState> {
 		password: "",
 	}
 
-	public isDisabled() {
+	isDisabled() {
 		const { email, password } = this.state
 
 		return email.length === 0 || password.length === 0
 	}
 
-	public render() {
+	render() {
 		const { login } = this.props
 		const { email, password } = this.state
 
@@ -38,19 +40,28 @@ export class Login extends React.Component<LoginProps, LoginState> {
 			<Form>
 				<Logo />
 
-				<TextInputError label={tr.identifiant} value={email} onChange={email => this.setState({ email })} />
-
 				<TextInputError
-					label={tr.mot_de_passe}
-					secureTextEntry
-					value={password}
-					onChange={password => this.setState({ password })}
+					errCodes={ERR_INPUT.login}
+					globalErr={true}
+					label={tr.Identifiant}
+					onChange={email => this.setState({ email })}
+					value={email}
 				/>
 
-				<ValidTextIcon onPress={e => login(email, password)} disabled={this.isDisabled()} title={tr.se_connecter} />
+				<TextInputError
+					errCodes={ERR_INPUT.login}
+					globalErr={true}
+					label={tr.Mot_de_passe}
+					onChange={password => this.setState({ password })}
+					secureTextEntry
+					value={password}
+					showErr={true}
+				/>
 
-				<Col size={1} style={styles.line} onPress={e => navigate("RecoverPassword")}>
-					<Text style={styles.minitext}>{tr.mot_de_passe_oublie}</Text>
+				<ValidTextIcon onPress={() => login(email, password)} disabled={this.isDisabled()} title={tr.Se_connecter} />
+
+				<Col size={1} style={styles.line} onPress={() => navigate("RecoverPassword")}>
+					<Text style={styles.minitext}>{tr.Mot_de_passe_oublie}</Text>
 				</Col>
 			</Form>
 		)

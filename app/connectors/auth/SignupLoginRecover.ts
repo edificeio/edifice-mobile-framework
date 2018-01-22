@@ -2,12 +2,18 @@ import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
 import { login, recoverPassword } from "../../actions/auth"
 import { SignupLoginRecover, SignupLoginRecoverProps } from "../../components/auth/SignupLoginRecover"
-import { initialState } from "../../model/Auth"
+
+export const initialStateWithEmail = email => ({
+	email,
+	password: "",
+	loggedIn: false,
+	synced: true,
+})
 
 const mapStateToProps = (state, props) => ({
 	auth:
-		props.navigation.state.routeName === "Login"
-			? { ...initialState, email: props.navigation.state.params.email }
+		props.navigation.state.routeName === "Login" && props.navigation.state.params && props.navigation.state.params.email
+			? initialStateWithEmail(props.navigation.state.params.email)
 			: state.auth,
 })
 

@@ -8,7 +8,7 @@ export const CommonStyles = {
 	borderColorLighter: "#e2e2e2",
 	cardTitle: "#1467ff",
 	elevation: 20,
-	errorColor: "red",
+	errorColor: "#EC5D61",
 	fadColor: "#444444",
 	iconColorOff: "#858FA9",
 	iconColorOn: "#2A9CC8",

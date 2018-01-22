@@ -1,7 +1,7 @@
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
-import { AppScreen, AppScreenProps } from "../components/AppScreen"
 import { checkLogin } from "../actions/auth"
+import { AppScreen, AppScreenProps } from "../components/AppScreen"
 
 const mapStateToProps = () => ({})
 

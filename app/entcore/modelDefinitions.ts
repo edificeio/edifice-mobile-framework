@@ -37,21 +37,21 @@ export declare interface Model {
 Model.prototype.build = function() {}
 
 export class BaseModel extends Model {
-	public me: any
-	public calendar: any
-	public widgets: any
-	public mediaLibrary: any
-	public bootstrapped: boolean
+	me: any
+	calendar: any
+	widgets: any
+	mediaLibrary: any
+	bootstrapped: boolean
 
-	public build() {}
+	build() {}
 }
 
 export var model = new BaseModel()
 
 export class Collection<T> {
-	public all: T[]
-	public obj: any
-	public callbacks: {}
+	all: T[]
+	obj: any
+	callbacks: {}
 
 	constructor(obj: any) {
 		this.all = []

@@ -5,10 +5,10 @@ import * as TYPES from "../constants/docs"
  *
  * @param {string} path       l'URI de la ressource
  */
-export const read = (path, synced = true) => ({
+export const read = path => ({
 	path,
 	type: TYPES.READ,
-	synced,
+	synced: false,
 })
 
 /**
@@ -31,11 +31,11 @@ export const readSuccess = (path, payload) => ({
  * @param {string} path    uri de la ressource
  * @param {number} id      id de la ressource
  */
-export const readId = (path, id, synced = true) => ({
+export const readId = (path, id) => ({
 	path,
 	id,
 	type: TYPES.READ,
-	synced,
+	synced: false,
 })
 
 /**
@@ -59,7 +59,7 @@ export const readIdSuccess = (path, id, payload) => ({
  * @param {string} path       uri de la ressource
  * @param {object} payload    données de la ressource
  */
-export const create = (path, payload, synced = true) => ({
+export const create = (path, payload, synced) => ({
 	payload,
 	path,
 	type: TYPES.CREATE,
@@ -90,7 +90,7 @@ export const update = (path, payload) => ({
 	path,
 	payload,
 	type: TYPES.UPDATE,
-	synced: true,
+	synced: false,
 })
 
 /**
@@ -117,7 +117,7 @@ export const del = (path, payload) => ({
 	path,
 	payload,
 	type: TYPES.DELETE,
-	synced: true,
+	synced: false,
 })
 
 /**

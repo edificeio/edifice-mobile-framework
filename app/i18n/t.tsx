@@ -1,26 +1,16 @@
 import I18n, { getLanguages } from "react-native-i18n"
+import { keyTrans } from "./keyTrans"
 
-//I18n.fallbacks = true
 I18n.defaultLocale = "fr"
+
+const fr = require("../../assets/i18n/fr")
 
 I18n.translations = {
 	"en-US": require("../../assets/i18n/en"),
-	en: require("../../assets/i18n/en"),
-	"fr-FR": require("../../assets/i18n/fr"),
-	es: require("../../assets/i18n/es"),
+	"es-ES": require("../../assets/i18n/es"),
+	"fr-FR": fr,
 }
 
 getLanguages()
 
-export const tr = {
-	identifiant: I18n.t("Identifiant"),
-	se_connecter: I18n.t("Se connecter"),
-	mot_de_passe: I18n.t("Mot de passe"),
-	mot_de_passe_oublie: I18n.t("Mot de passe oublié?"),
-	se_deconnecter: I18n.t("Se deconnecter"),
-	etes_vous_sur_de_vouloir: I18n.t("etes_vous_sur_de_vouloir"),
-	vous_deconnecter: I18n.t("vous_deconnecter"),
-	Nouveautes: I18n.t("Nouveautes"),
-	Conversation: I18n.t("Conversation"),
-	Profil: I18n.t("Profil"),
-}
+export const tr = keyTrans(I18n)

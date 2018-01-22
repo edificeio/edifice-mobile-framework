@@ -1,10 +1,10 @@
-import * as React from "react"
 import style from "glamorous-native"
-import { Row, Disable, RowProperties } from "../index"
+import * as React from "react"
 import { layoutSize } from "../../constants/layoutSize"
+import { Disable, Row, RowProperties } from "../index"
 import { CommonStyles } from "../styles/common/styles"
+import { Icon } from "./icons/Icon"
 import { kResponsive } from "./KResponsive"
-import {Icon} from "./icons/Icon"
 
 const ValidStyle = (props: RowProperties) => (
 	<Row
@@ -36,7 +36,9 @@ const TextStyle = style.text(
 )
 
 const isSynced = (synced: Array<boolean>) => {
-	if (synced === undefined) return true
+	if (synced === undefined) {
+		return true
+	}
 	return synced.reduce((acc, elemIsSync) => acc || elemIsSync, false)
 }
 

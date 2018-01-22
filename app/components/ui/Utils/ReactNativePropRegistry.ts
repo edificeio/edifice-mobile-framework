@@ -3,13 +3,13 @@ var uniqueID = 1
 var emptyObject = {}
 
 export class ReactNativePropRegistry {
-	public static register(object) {
+	static register(object) {
 		var id = ++uniqueID
 		objects[id] = object
 		return id
 	}
 
-	public static getByID(id) {
+	static getByID(id) {
 		if (!id) {
 			// Used in the style={[condition && id]} pattern,
 			// we want it to be a no-op when the value is false or null

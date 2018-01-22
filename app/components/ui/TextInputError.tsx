@@ -1,14 +1,15 @@
+import style from "glamorous-native"
 import * as React from "react"
-import {TextInputProperties } from "react-native"
-import { Col } from ".."
+import { TextInputProperties, View } from "react-native"
 import { layoutSize } from "../../constants/layoutSize"
 import { CommonStyles } from "../styles/common/styles"
-import style from "glamorous-native"
+import { Error, hasErrorsMessage } from "./Error"
+import { MessagesProps } from "../../model/messages"
 
 export interface ContainerProps {
-    focus?: boolean
-    errMessage?: string,
-    marginHorizontal?: number,
+	focus?: boolean
+	errMessage?: string
+	marginHorizontal?: number
 }
 
 const Container = style.view(
@@ -16,113 +17,130 @@ const Container = style.view(
 		paddingTop: layoutSize.LAYOUT_4,
 		flex: 1,
 	},
-	({focus, errMessage, marginHorizontal}: ContainerProps) => ({
-        borderBottomColor: focus ? CommonStyles.iconColorOn : errMessage.length > 0 ? CommonStyles.errorColor : CommonStyles.entryfieldBorder,
-        borderBottomWidth: focus || errMessage.length > 0 ? 2 : 1,
-        marginHorizontal
-	}))
+	({ focus, errMessage, marginHorizontal }: ContainerProps) => ({
+		borderBottomColor:
+			errMessage.length > 0 ? CommonStyles.errorColor : focus ? CommonStyles.iconColorOn : CommonStyles.entryfieldBorder,
+		borderBottomWidth: focus || errMessage.length > 0 ? 2 : 1,
+		marginHorizontal,
+	})
+)
 
-const TextInput = style.textInput({
+const TextInput = style.textInput(
+	{
 		color: CommonStyles.textInputColor,
 	},
 	({ fontSize, multiline, value }) => ({
 		fontFamily: value.length === 0 ? CommonStyles.primaryFontFamilyLight : CommonStyles.primaryFontFamily,
 		fontSize,
-		height: multiline ? layoutSize.LAYOUT_60 : layoutSize.LAYOUT_40
+		height: multiline ? layoutSize.LAYOUT_60 : layoutSize.LAYOUT_40,
 	})
 )
 
-
-const Error = style.text({
-	color: "red",
-	height: layoutSize.LAYOUT_32,
-	fontFamily: CommonStyles.primaryFontFamily,
-	fontSize: layoutSize.LAYOUT_14,
-	marginBottom: 0
-})
-
 export interface TextInputErrorProps extends TextInputProperties {
-    clearButtonMode?: any
-    enablesReturnKeyAutomatically?: boolean
-    error?: any,
-	errCodes?: number[],
-    fontSize?: number,
-	label?: string,
-    marginHorizontal?: number,
+	errCodes?: string[]
+	fontSize?: number
+	globalErr?: boolean
+	label?: string
+	messages?: MessagesProps[]
+	marginHorizontal?: number
 	onChange?: (any) => any
-    returnKeyType?: any
+	showErr?: boolean
 }
 
 export interface TextInputErrorState {
-	value: string
-	showDescription: boolean
 	focus: boolean
+	value: string
 }
 
 export class TextInputError extends React.Component<TextInputErrorProps, TextInputErrorState> {
-	public static defaultProps = {
+	static newKey: boolean
+	newKey: boolean
+	static defaultProps = {
 		editable: true,
-		error: {
-			code: 0,
-			message: "",
-		},
 		errCodes: [],
-        fontSize: layoutSize.LAYOUT_14,
+		fontSize: layoutSize.LAYOUT_14,
+		globalErr: false,
 		label: "",
-        marginHorizontal: 0,
+		marginHorizontal: 0,
+		messages: [],
 		multiline: false,
 		onChange: val => val,
 		secureTextEntry: false,
+		showErr: false,
 		value: "",
 	}
 
 	constructor(props) {
 		super(props)
+		TextInputError.newKey = false
+		this.newKey = false
 		this.state = {
 			value: this.props.value,
-			showDescription: false,
 			focus: false,
 		}
 	}
 
-	public hasErrorsMessage(): string {
-		const { code, message = "" } = this.props.error
-		const { errCodes = [] } = this.props
+	onChangeText(value) {
+		if (value === undefined) {
+			return
+		}
 
-		if (code !== 0 && errCodes.indexOf(code) >= 0) return message
-
-		return ""
+		TextInputError.newKey = true
+		this.newKey = true
+		this.setState({ value })
+		this.props.onChange(value)
 	}
 
-    public onChangeText(value) {
-        if (value === undefined) return
+	componentWillReceiveProps(nextProps) {
+		if (this.props.messages !== nextProps.messages) {
+			TextInputError.newKey = false
+			this.newKey = false
+		}
+	}
 
-        this.setState({ value })
-        this.props.onChange(value)
-    }
+	isNewkey() {
+		if (this.props.globalErr) return TextInputError.newKey
+		else return this.newKey
+	}
 
-	public render() {
-		const errMessage = this.hasErrorsMessage()
-		const { fontSize, label, marginHorizontal, multiline, secureTextEntry, editable, placeholderTextColor = CommonStyles.placeholderColor } = this.props
+	render() {
+		const {
+			editable,
+			errCodes,
+			fontSize,
+			label,
+			marginHorizontal,
+			messages,
+			multiline,
+			placeholderTextColor = CommonStyles.placeholderColor,
+			secureTextEntry,
+			showErr,
+		} = this.props
 		const { focus } = this.state
 
 		return (
-			<Container errMessage={errMessage} focus={focus} marginHorizontal={marginHorizontal}>
-				<TextInput
-                    editable={editable}
-                    fontSize={fontSize}
-					multiline={multiline}
-					onChangeText={value => this.onChangeText(value)}
-					onBlur={() => this.setState({ focus: false })}
-					onFocus={() => this.setState({ focus: true })}
-					placeholder={label}
-                    placeholderTextColor={placeholderTextColor}
-					secureTextEntry={secureTextEntry}
-                    underlineColorAndroid={"transparent"}
-					value={this.state.value}
-				/>
-				{errMessage.length > 0 && <Error>{errMessage}</Error>}
-			</Container>
+			<View>
+				<Container
+					errMessage={TextInputError.newKey ? "" : hasErrorsMessage({ errCodes, messages })}
+					focus={focus}
+					marginHorizontal={marginHorizontal}
+				>
+					<TextInput
+						editable={editable}
+						fontSize={fontSize}
+						multiline={multiline}
+						onChangeText={value => this.onChangeText(value)}
+						onBlur={() => this.setState({ focus: false })}
+						onFocus={() => this.setState({ focus: true })}
+						placeholder={label}
+						placeholderTextColor={placeholderTextColor}
+						secureTextEntry={secureTextEntry}
+						underlineColorAndroid={"transparent"}
+						value={this.state.value}
+					/>
+				</Container>
+				{showErr && !TextInputError.newKey && <Error errCodes={errCodes} messages={messages} />}
+			</View>
 		)
 	}
 }

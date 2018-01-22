@@ -1,5 +1,5 @@
 import { CREATE_SUCCESS, DELETE_SUCCESS, READ_SUCCESS, UPDATE_SUCCESS } from "../constants/docs"
-import { match } from "../constants/paths"
+import { match, matchs, PATH_LOGIN, PATH_LOGOUT } from "../constants/paths"
 
 /**
  * The base reducer
@@ -10,13 +10,19 @@ import { match } from "../constants/paths"
  * @param {string} payloadName    the object identifier to read from the response
  * @returns {*}
  */
-export default function docs(state, paths: string[], action, payloadName: string = null) {
-	if (!matchPaths(paths, action)) return state
+export const crudReducer = (state, paths: string[], action, payloadName: string = null) => {
+	if (!matchPaths(paths, action)) {
+		return state
+	}
 
 	const { path } = action
 
-	if (action.type.indexOf("_REQUEST") > 0) return { ...state, synced: action.synced, id: action.id ? action.id : "" }
-	if (action.type.indexOf("_ERROR") > 0) return { ...state, synced: false }
+	if (action.type.indexOf("_REQUEST") > 0) {
+		return { ...state, synced: action.synced, id: action.id ? action.id : "" }
+	}
+	if (action.type.indexOf("_ERROR") > 0) {
+		return { ...state, synced: false }
+	}
 
 	switch (action.type) {
 		case READ_SUCCESS:
@@ -25,20 +31,24 @@ export default function docs(state, paths: string[], action, payloadName: string
 			const payload = payloadName ? action.payload[payloadName] || action.payload : action.payload
 
 			// la donnée n'est pas retourné par l'appel, on ne fait rien
-			if (payload === null) return state
+			if (payload === null) {
+				return state
+			}
 
 			if (payload instanceof Array) {
 				return {
 					type: action.type,
 					path,
-					synced: action.synced,
+					synced: true,
 					payload,
 				}
 			}
 
 			if (state.payload instanceof Array) {
 				// Pas d'id permettant d'identifier l'objet, on ne fait rien
-				if (payload.id === undefined) return state
+				if (payload.id === undefined) {
+					return state
+				}
 
 				let found = false
 				const res = state.payload.map(doc => {
@@ -52,20 +62,20 @@ export default function docs(state, paths: string[], action, payloadName: string
 					return {
 						type: action.type,
 						path,
-						synced: action.synced,
+						synced: true,
 						payload: res,
 					}
 				}
 				return {
 					type: action.type,
 					path,
-					synced: action.synced,
+					synced: true,
 					payload: [...state.payload, payload],
 				}
 			}
 			return {
 				type: action.type,
-				synced: action.synced,
+				synced: true,
 				path,
 				payload,
 			}
@@ -76,14 +86,14 @@ export default function docs(state, paths: string[], action, payloadName: string
 				const res = state.payload.filter(doc => doc.id !== payload.id)
 				return {
 					type: action.type,
-					synced: action.synced,
+					synced: true,
 					path,
 					payload: res,
 				}
 			}
 			return {
 				type: action.type,
-				synced: action.synced,
+				synced: true,
 				path,
 				payload: {},
 			}
@@ -108,7 +118,11 @@ function id() {
  * @returns {boolean}
  */
 function matchPaths(pathToMatch, { path, type }) {
-	for (let i = 0; i < pathToMatch.length; i++) if (matchElem(pathToMatch[i], { path, type })) return true
+	for (let i = 0; i < pathToMatch.length; i++) {
+		if (matchElem(pathToMatch[i], { path, type })) {
+			return true
+		}
+	}
 	return false
 }
 

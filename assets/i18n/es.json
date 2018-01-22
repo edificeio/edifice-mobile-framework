@@ -1,12 +1,13 @@
 {
-  "Identifiant" : "Identifiant",
-  "Se connecter" : "Se connecter",
-  "Mot de passe" : "Mot de passe",
-  "Mot de passe oublié?" : "Mot de passe oublié?",
-  "Se deconnecter" : "Se déconnecter",
-  "Etes_vous_sur_de_vouloir" : "Êtes-vous sûr de vouloir",
-  "vous_deconnecter" : "vous déconnecter ?",
-  "Nouveautes" : "Nouveautés",
   "Conversation" : "Conversation",
+  "Etes_vous_sur_de_vouloir" : "Êtes-vous sûr de vouloir",
+  "Identifiant" : "Identifiant",
+  "Identifiant_incorrect" : "L'identifiant ou le mot de passe est incorrect",
+  "Mot_de_passe_oublie" : "Mot de passe oublié?",
+  "Mot_de_passe" : "Mot de passe",
+  "Nouveautes" : "Nouveautés",
   "Profil" : "Profil",
+  "Se_connecter" : "Se connecter",
+  "Se_deconnecter" : "Se déconnecter",
+  "Vous_deconnecter" : "vous déconnecter ?"
 }

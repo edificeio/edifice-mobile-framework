@@ -1,5 +1,5 @@
 import http from "axios"
-import { appPrefix, infraPrefix } from "./globals"
+import { infraPrefix } from "./globals"
 import { model } from "./modelDefinitions"
 import { Shareable } from "./rights"
 
@@ -7,7 +7,7 @@ export var Behaviours = (function() {
 	return {
 		storedRights: {} as any,
 		sharingRights(): Promise<any> {
-			return new Promise((resolve, reject) => {
+			return new Promise(resolve => {
 				if (this.storedRights.json) {
 					resolve(this.storedRights.json)
 				}
@@ -18,7 +18,7 @@ export var Behaviours = (function() {
 			})
 		},
 		appSharingRights(prefix: string): Promise<any> {
-			return new Promise((resolve, reject) => {
+			return new Promise(resolve => {
 				if (this.storedRights[prefix]) {
 					resolve(this.storedRights[prefix])
 				}
@@ -69,7 +69,7 @@ export var Behaviours = (function() {
 					}
 				}
 
-				function addRights(targetResource) {
+				function addRights() {
 					data.actions = []
 					for (var bundle in bundles) {
 						if (!bundles[bundle]) {
@@ -92,7 +92,7 @@ export var Behaviours = (function() {
 				if (model.me.groupsIds.indexOf(share.groupId) === -1) {
 					params.target.resources.forEach(function(targetResource) {
 						http.put("/" + params.target.application + "/share/remove/" + targetResource, data).then(function() {
-							addRights(targetResource)
+							addRights()
 						})
 					})
 				} else {
@@ -135,7 +135,7 @@ export var Behaviours = (function() {
 				}
 			}
 
-			return new Promise((resolve, reject) => {
+			return new Promise(resolve => {
 				if (this.applicationsBehaviours[serviceName]) {
 					if (!resource.myRights) {
 						resource.myRights = {}
@@ -186,7 +186,7 @@ export var Behaviours = (function() {
 			const errors = Behaviours.applicationsBehaviours[serviceName].errors
 			http
 				.get("/" + serviceName + "/public/js/behaviours.js")
-				.then(content => {
+				.then(() => {
 					callbacks.forEach(cb => {
 						cb(Behaviours.applicationsBehaviours[serviceName])
 					})

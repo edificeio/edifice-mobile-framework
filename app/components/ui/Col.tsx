@@ -1,8 +1,8 @@
 /* @flow */
 
+import styled from "glamorous-native"
 import * as React from "react"
 import { FlexAlignType } from "react-native"
-import styled from "glamorous-native"
 import { layoutSize } from "../../constants/layoutSize"
 
 const View = styled.View
@@ -19,9 +19,9 @@ export interface ColProperties {
 	marginHorizontal?: number
 	marginTop?: number
 	marginBottom?: number
-    padding?: number
+	padding?: number
 	paddingVertical?: number
-	pv?:number
+	pv?: number
 	onPress?: (any) => void
 	size?: number
 	style?: any
@@ -32,17 +32,17 @@ export interface NewProps {
 	alignItems?: any
 	flex: number
 	flexDirection?: "column" | "row" | "row-reverse" | "column-reverse"
-	flexWrap: "wrap" | "nowrap",
-	paddingVertical?: number,
+	flexWrap: "wrap" | "nowrap"
+	paddingVertical?: number
 }
 
 export const Col = (props: ColProperties) => {
-	const { size = null, width = null, disabled = null, paddingVertical= null, pv = null } = props
+	const { size = null, width = null, disabled = null, paddingVertical = null, pv = null } = props
 	const newProps: NewProps = {
 		flex: size ? size : width ? 0 : 1,
 		flexDirection: "column",
 		flexWrap: "wrap",
-		paddingVertical: pv ? layoutSize.LAYOUT_2 : paddingVertical ? paddingVertical : 0
+		paddingVertical: pv ? layoutSize.LAYOUT_2 : paddingVertical ? paddingVertical : 0,
 	}
 
 	if (props.onPress) {

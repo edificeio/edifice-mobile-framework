@@ -13,18 +13,24 @@ export const PATH_RECOVER_PASSWORD = "auth/pass"
 export const PATH_ERROR_RESET = "/RESET"
 
 export function match(path1, path2) {
-	if (path2 === undefined) return false
+	if (path2 === undefined) {
+		return false
+	}
 
 	const tokens1 = path1.split("/")
 	const tokens2 = path2.split("/")
 
-	if (tokens1.length !== tokens2.length) return false
+	if (tokens1.length !== tokens2.length) {
+		return false
+	}
 
 	for (let i = 0; i < tokens1.length; i++) {
 		const token1 = tokens1[i]
 		const token2 = tokens2[i]
 
-		if (token1 === token2) continue
+		if (token1 === token2) {
+			continue
+		}
 
 		const index = token1.indexOf("$")
 
@@ -32,10 +38,14 @@ export function match(path1, path2) {
 			const subStr1 = token1.substr(0, index)
 			const subStr2 = token2.substr(0, index)
 
-			if (subStr1 === subStr2) return true
+			if (subStr1 === subStr2) {
+				return true
+			}
 		}
 
-		if (token1[0] === "$") continue
+		if (token1[0] === "$") {
+			continue
+		}
 
 		return false
 	}

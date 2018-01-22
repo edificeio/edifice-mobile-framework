@@ -2,8 +2,8 @@ import { login } from "../actions/auth"
 import { error } from "../actions/docs"
 import { CREATE_ERROR, CREATE_SUCCESS } from "../constants/docs"
 import { PATH_AUTH, PATH_LOGIN, PATH_LOGOUT, PATH_RECOVER_PASSWORD, PATH_SIGNUP } from "../constants/paths"
-import { getLogin, setLogin } from "../utils/Store"
 import { navigate } from "../utils/navHelper"
+import { getLogin, setLogin } from "../utils/Store"
 
 var initAuth = false
 

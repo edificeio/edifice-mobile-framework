@@ -10,9 +10,9 @@ import { Rights, Shareable } from "./rights"
 const maxFileSize = Infinity //
 
 class Quota {
-	public max: number
-	public used: number
-	public unit: string
+	max: number
+	used: number
+	unit: string
 
 	constructor() {
 		this.max = 1
@@ -20,7 +20,7 @@ class Quota {
 		this.unit = "Mo"
 	}
 
-	public appropriateDataUnit(bytes: number) {
+	appropriateDataUnit(bytes: number) {
 		var order = 0
 		var orders = {
 			0: "Octets",
@@ -40,7 +40,7 @@ class Quota {
 		}
 	}
 
-	public async refresh(): Promise<void> {
+	async refresh(): Promise<void> {
 		const response = await http.get(`${Conf.platform}/workspace/quota/user/${model.me.userId}`)
 		const data = response.data
 		//to mo
@@ -73,43 +73,43 @@ export enum DocumentStatus {
 }
 
 export class Document implements Selectable, Shareable {
-	public title: string
-	public _id: string
-	public created: any
-	public path: string
-	public metadata: {
+	title: string
+	_id: string
+	created: any
+	path: string
+	metadata: {
 		"content-type"?: string
 		role?: string
 		extension?: string
 		filename?: string
 		size?: number
 	} = {}
-	public newProperties: {
+	newProperties: {
 		name?: string
 		legend?: string
 		alt?: string
 	} = {}
-	public version: number
-	public link: string
-	public icon: string
-	public owner: {
+	version: number
+	link: string
+	icon: string
+	owner: {
 		userId: string
 		displayName: string
 	}
-	public eventer = new Eventer()
-	public revisions: Revision[]
-	public status: DocumentStatus
-	public selected: boolean
-	public currentQuality: number
-	public hiddenBlob: Blob
-	public rights: Rights<Document> = new Rights(this)
+	eventer = new Eventer()
+	revisions: Revision[]
+	status: DocumentStatus
+	selected: boolean
+	currentQuality: number
+	hiddenBlob: Blob
+	rights: Rights<Document> = new Rights(this)
 	private xhr: XMLHttpRequest
-	public shared: any
-	public alt: string
-	public legend: string
-	public name: string
+	shared: any
+	alt: string
+	legend: string
+	name: string
 
-	public toJSON() {
+	toJSON() {
 		return {
 			title: this.title,
 			_id: this._id,
@@ -127,11 +127,11 @@ export class Document implements Selectable, Shareable {
 		return this.rights.myRights
 	}
 
-	public async delete() {
+	async delete() {
 		await http.delete(`${Conf.platform}/workspace/document/${this._id}`)
 	}
 
-	public abort() {
+	abort() {
 		if (this.xhr) {
 			this.xhr.abort()
 		}
@@ -145,7 +145,7 @@ export class Document implements Selectable, Shareable {
 		return Math.ceil(koSize) + " Ko"
 	}
 
-	public async loadProperties() {
+	async loadProperties() {
 		const response = await http.get(`${Conf.platform}/workspace/document/properties/${this._id}`)
 		var dotSplit = response.data.name.split(".")
 		this.metadata.extension = dotSplit[dotSplit.length - 1]
@@ -173,7 +173,7 @@ export class Document implements Selectable, Shareable {
 		return diff
 	}
 
-	public async saveChanges() {
+	async saveChanges() {
 		if (this.differentProperties && this.myRights.renameDocument) {
 			this.name = this.newProperties.name
 			this.alt = this.newProperties.alt
@@ -184,14 +184,14 @@ export class Document implements Selectable, Shareable {
 		await this.applyBlob()
 	}
 
-	public async applyBlob() {
+	async applyBlob() {
 		if (this.hiddenBlob) {
 			await this.update(this.hiddenBlob)
 			this.hiddenBlob = undefined
 		}
 	}
 
-	public resetNewProperties() {
+	resetNewProperties() {
 		this.newProperties.alt = this.alt
 		this.newProperties.legend = this.legend
 		if (!this.name) {
@@ -200,7 +200,7 @@ export class Document implements Selectable, Shareable {
 		this.newProperties.name = this.name.replace("." + this.metadata.extension, "")
 	}
 
-	public fromJSON(data) {
+	fromJSON(data) {
 		if (!data) {
 			this.status = DocumentStatus.initial
 			return
@@ -238,7 +238,7 @@ export class Document implements Selectable, Shareable {
 		this.revisions = []
 	}
 
-	public async refreshHistory() {
+	async refreshHistory() {
 		const response = await http.get("document/" + this._id + "/revisions")
 		const revisions = response.data
 		this.revisions = Mix.castArrayAs(Revision, revisions)
@@ -252,7 +252,7 @@ export class Document implements Selectable, Shareable {
 		)
 	}
 
-	public upload(file: File | Blob, visibility?: "public" | "protected" | "owner"): Promise<any> {
+	upload(file: File | Blob, visibility?: "public" | "protected" | "owner"): Promise<any> {
 		var visibilityPath = ""
 		if (!visibility) {
 			visibility = "protected"
@@ -314,11 +314,11 @@ export class Document implements Selectable, Shareable {
 		})
 	}
 
-	public role() {
+	role() {
 		return Document.role(this.metadata["content-type"])
 	}
 
-	public protectedDuplicate(callback?: (document: Document) => void): Promise<Document> {
+	protectedDuplicate(callback?: (document: Document) => void): Promise<Document> {
 		return new Promise((resolve, reject) => {
 			Behaviours.applicationsBehaviours.workspace.protectedDuplicate(this, function(data) {
 				resolve(Mix.castAs(Document, data))
@@ -326,7 +326,7 @@ export class Document implements Selectable, Shareable {
 		})
 	}
 
-	public publicDuplicate(callback?: (document: Document) => void) {
+	publicDuplicate(callback?: (document: Document) => void) {
 		return new Promise((resolve, reject) => {
 			Behaviours.applicationsBehaviours.workspace.publicDuplicate(this, function(data) {
 				resolve(Mix.castAs(Document, data))
@@ -334,7 +334,7 @@ export class Document implements Selectable, Shareable {
 		})
 	}
 
-	public async update(blob: Blob) {
+	async update(blob: Blob) {
 		const formData = new FormData()
 		let newName = this.name || this.title
 		if (newName.indexOf(this.metadata.extension) === -1) {
@@ -347,8 +347,10 @@ export class Document implements Selectable, Shareable {
 		this.eventer.trigger("save")
 	}
 
-	public static role(fileType) {
-		if (!fileType) return "unknown"
+	static role(fileType) {
+		if (!fileType) {
+			return "unknown"
+		}
 
 		var types = {
 			doc(type) {
@@ -388,28 +390,28 @@ export class Document implements Selectable, Shareable {
 		return "unknown"
 	}
 
-	public async trash(): Promise<any> {
+	async trash(): Promise<any> {
 		const response = await http.put(`${Conf.platform}/workspace/document/trash/${this._id}`)
 	}
 }
 
 export class Folder implements Selectable {
-	public selected: boolean
-	public folders = new Selection<Folder>([])
-	public documents = new Selection<Document>([])
-	public folder: string
-	public owner: string
+	selected: boolean
+	folders = new Selection<Folder>([])
+	documents = new Selection<Document>([])
+	folder: string
+	owner: string
 
-	public deselectAll() {
+	deselectAll() {
 		this.documents.forEach(d => (d.selected = false))
 		this.folders.all.forEach(f => f.deselectAll())
 	}
 
-	public closeFolder() {
+	closeFolder() {
 		this.folders.all = []
 	}
 
-	public addFolders() {
+	addFolders() {
 		this.folders.addRange(
 			Mix.castArrayAs(
 				Folder,
@@ -418,7 +420,7 @@ export class Folder implements Selectable {
 		)
 	}
 
-	public isOpened(currentFolder: Folder) {
+	isOpened(currentFolder: Folder) {
 		return (
 			currentFolder &&
 			((currentFolder.folder && currentFolder.folder.indexOf(this.folder) !== -1) ||
@@ -427,7 +429,7 @@ export class Folder implements Selectable {
 		)
 	}
 
-	public async sync() {
+	async sync() {
 		this.folders.all.splice(0, this.folders.all.length)
 		this.addFolders()
 		this.folders.all.forEach(f => f.addFolders())
@@ -438,7 +440,7 @@ export class Folder implements Selectable {
 }
 
 export class MyDocuments extends Folder {
-	public async sync() {
+	async sync() {
 		const response = await http.get(`${Conf.platform}/workspace/folders/list?filter=owner`)
 		this.folders.all.splice(0, this.folders.all.length)
 		MediaLibrary.foldersStore = response.data
@@ -452,7 +454,7 @@ export class MyDocuments extends Folder {
 }
 
 class SharedDocuments extends Folder {
-	public async sync() {
+	async sync() {
 		const docResponse = await http.get(`${Conf.platform}/workspace/documents?filter=shared`)
 		this.documents.all.splice(0, this.documents.all.length)
 		this.documents.addRange(Mix.castArrayAs(Document, docResponse.data.filter(doc => doc.folder !== "Trash")))
@@ -461,7 +463,7 @@ class SharedDocuments extends Folder {
 }
 
 class AppDocuments extends Folder {
-	public async sync() {
+	async sync() {
 		const docResponse = await http.get(`${Conf.platform}/workspace/documents?filter=protected`)
 		this.documents.all.splice(0, this.documents.all.length)
 		this.documents.addRange(Mix.castArrayAs(Document, docResponse.data.filter(doc => doc.folder !== "Trash")))
@@ -470,7 +472,7 @@ class AppDocuments extends Folder {
 }
 
 class PublicDocuments extends Folder {
-	public async sync() {
+	async sync() {
 		const docResponse = await http.get(`${Conf.platform}/workspace/documents?filter=public`)
 		this.documents.all.splice(0, this.documents.all.length)
 		this.documents.addRange(Mix.castArrayAs(Document, docResponse.data.filter(doc => doc.folder !== "Trash")))
@@ -479,22 +481,22 @@ class PublicDocuments extends Folder {
 }
 
 export class MediaLibrary {
-	public static myDocuments = new MyDocuments()
-	public static sharedDocuments = new SharedDocuments()
-	public static appDocuments = new AppDocuments()
-	public static publicDocuments = new PublicDocuments()
-	public static eventer = new Eventer()
-	public static foldersStore = []
+	static myDocuments = new MyDocuments()
+	static sharedDocuments = new SharedDocuments()
+	static appDocuments = new AppDocuments()
+	static publicDocuments = new PublicDocuments()
+	static eventer = new Eventer()
+	static foldersStore = []
 
-	public static thumbnails = "thumbnail=120x120&thumbnail=100x100&thumbnail=290x290&thumbnail=381x381&thumbnail=1600x0"
+	static thumbnails = "thumbnail=120x120&thumbnail=100x100&thumbnail=290x290&thumbnail=381x381&thumbnail=1600x0"
 
-	public static deselectAll() {
+	static deselectAll() {
 		MediaLibrary.appDocuments.deselectAll()
 		MediaLibrary.sharedDocuments.deselectAll()
 		MediaLibrary.myDocuments.deselectAll()
 	}
 
-	public static async upload(file: File | Blob, visibility?: "public" | "protected"): Promise<Document> {
+	static async upload(file: File | Blob, visibility?: "public" | "protected"): Promise<Document> {
 		if (!visibility) {
 			visibility = "protected"
 		}

@@ -6,7 +6,7 @@ class User {
 	 *
      * @returns {Promise<void>}
      *
-	public async sync() {
+	async sync() {
 		const response = await fetch(`${Conf.platform}/auth/oauth2/userinfo`)
 		this.synced = true
 		try {

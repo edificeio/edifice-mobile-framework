@@ -19,7 +19,6 @@ export const ButtonTextIcon = ({
 	leftName = "",
 	rightName = "",
 	whiteSpace = " ",
-	...props
 }: ButtonTextIconProps) => {
 	return (
 		<TouchableOpacity onPress={onPress} disabled={disabled}>
