@@ -3,7 +3,7 @@ import RNFetchBlob from "react-native-fetch-blob"
 import * as docActions from "../actions/docs"
 import { Conf } from "../Conf"
 import * as TYPES from "../constants/docs"
-import {matchs, PATH_AVATAR, PATH_LOGIN, PATH_LOGOUT, replace1} from "../constants/paths"
+import { matchs, PATH_AVATAR, PATH_CONVERSATION, PATH_LOGIN, PATH_LOGOUT, replace1 } from "../constants/paths"
 import { tr } from "../i18n/t"
 
 function checkResponse(response, path = null) {
@@ -12,18 +12,18 @@ function checkResponse(response, path = null) {
 	}
 
 	if (path === PATH_LOGIN) {
-        const cookie = response.headers.get("Set-Cookie")
+		const cookie = response.headers.get("Set-Cookie")
 
-        if (cookie === null) {
-            return new Promise((resolve, reject) =>
-                reject({
-                    ok: false,
-                    status: tr.Identifiant_incorrect,
-                    statusText: tr.Identifiant_incorrect,
-                })
-            )
-        }
-    }
+		if (cookie === null) {
+			return new Promise((resolve, reject) =>
+				reject({
+					ok: false,
+					status: tr.Identifiant_incorrect,
+					statusText: tr.Identifiant_incorrect,
+				})
+			)
+		}
+	}
 
 	const contentType = response.headers.get("content-type")
 
@@ -43,6 +43,7 @@ function isError({ ok = true, status = 200 }) {
 }
 
 const ROOT_PATH = `${Conf.platform}/`
+const FAKE_ROOT_PATH = "http://192.168.0.24:3000/"
 
 function rawFetchFormDataPromise(url, method = "post", payload = "") {
 	const fullPath = ROOT_PATH + url
@@ -58,7 +59,7 @@ function rawFetchFormDataPromise(url, method = "post", payload = "") {
 }
 
 function rawFetchPromise(url, method = "GET", payload = null) {
-	const fullPath = ROOT_PATH + url
+	const fullPath = (url === PATH_CONVERSATION ? FAKE_ROOT_PATH : ROOT_PATH) + url
 	const opts = {
 		method,
 		headers: new Headers({
@@ -210,7 +211,7 @@ const getFormData = data => {
 }
 
 function FormDataToJSON(FormElement) {
-	var formData = new FormData(FormElement),
+	const formData = new FormData(FormElement),
 		ConvertedJSON = {}
 	for (const [key, value] of formData.entries()) {
 		ConvertedJSON[key] = value
