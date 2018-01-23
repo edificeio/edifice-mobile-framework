@@ -12,7 +12,7 @@ export interface SignupLoginRecoverProps {
 }
 
 export class SignupLoginRecover extends React.Component<SignupLoginRecoverProps, any> {
-	render() {
+	public render() {
 		const { synced, loggedIn } = this.props.auth
 		const { routeName } = this.props.navigation.state
 

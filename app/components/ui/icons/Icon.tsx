@@ -1,6 +1,6 @@
 import * as React from "react"
 import { createIconSetFromIcoMoon } from "react-native-vector-icons"
-const icoMoonConfig = require("../../../../assets/fonts/selection.json")
+const icoMoonConfig = require("../../../../assets/selection.json")
 
 export const Icon = createIconSetFromIcoMoon(icoMoonConfig)
 

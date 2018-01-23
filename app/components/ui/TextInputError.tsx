@@ -2,9 +2,9 @@ import style from "glamorous-native"
 import * as React from "react"
 import { TextInputProperties, View } from "react-native"
 import { layoutSize } from "../../constants/layoutSize"
+import { MessagesProps } from "../../model/messages"
 import { CommonStyles } from "../styles/common/styles"
 import { Error, hasErrorsMessage } from "./Error"
-import { MessagesProps } from "../../model/messages"
 
 export interface ContainerProps {
 	focus?: boolean
@@ -53,9 +53,9 @@ export interface TextInputErrorState {
 }
 
 export class TextInputError extends React.Component<TextInputErrorProps, TextInputErrorState> {
-	static newKey: boolean
-	newKey: boolean
-	static defaultProps = {
+	public static newKey: boolean
+	public newKey: boolean
+	public static defaultProps = {
 		editable: true,
 		errCodes: [],
 		fontSize: layoutSize.LAYOUT_14,
@@ -80,7 +80,7 @@ export class TextInputError extends React.Component<TextInputErrorProps, TextInp
 		}
 	}
 
-	onChangeText(value) {
+	public onChangeText(value) {
 		if (value === undefined) {
 			return
 		}
@@ -91,19 +91,22 @@ export class TextInputError extends React.Component<TextInputErrorProps, TextInp
 		this.props.onChange(value)
 	}
 
-	componentWillReceiveProps(nextProps) {
+	public componentWillReceiveProps(nextProps) {
 		if (this.props.messages !== nextProps.messages) {
 			TextInputError.newKey = false
 			this.newKey = false
 		}
 	}
 
-	isNewkey() {
-		if (this.props.globalErr) return TextInputError.newKey
-		else return this.newKey
+	public isNewkey() {
+		if (this.props.globalErr) {
+			return TextInputError.newKey
+		} else {
+			return this.newKey
+		}
 	}
 
-	render() {
+	public render() {
 		const {
 			editable,
 			errCodes,

@@ -4,13 +4,13 @@
         "allowSyntheticDefaultImports":true,
         "jsx": "react-native",
         "jsxFactory": "React.createElement",
-        "module": "ESNext",
+        "module": "esnext",
         "moduleResolution": "node",
         "outDir": "./build",                      /* Redirect output structure to the directory. */
         "removeComments": true,                    /* Do not emit comments to output. */
         "rootDir": "./app",                       /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
         "sourceMap": true,                        /* Generates corresponding '.map' file. */
-        "target": "ESNEXT",
+        "target": "esnext",
         "types": [
             "core-js", "react", "react-native", "glamorous-native",
             "react-navigation", "redux", "react-redux"

@@ -31,7 +31,7 @@
         }
       ],
       "properties": {
-        "order": 55,
+        "order": 65,
         "id": 9,
         "name": "close",
         "prevSize": 32,
@@ -71,7 +71,7 @@
         }
       ],
       "properties": {
-        "order": 56,
+        "order": 66,
         "id": 8,
         "name": "search",
         "prevSize": 32,
@@ -111,7 +111,7 @@
         }
       ],
       "properties": {
-        "order": 57,
+        "order": 67,
         "id": 7,
         "name": "profile-on",
         "prevSize": 32,
@@ -145,7 +145,7 @@
         {}
       ],
       "properties": {
-        "order": 58,
+        "order": 68,
         "id": 6,
         "name": "profile-off",
         "prevSize": 32,
@@ -195,7 +195,7 @@
         }
       ],
       "properties": {
-        "order": 59,
+        "order": 69,
         "id": 5,
         "name": "nouveautes-on",
         "prevSize": 32,
@@ -245,7 +245,7 @@
         }
       ],
       "properties": {
-        "order": 60,
+        "order": 70,
         "id": 4,
         "name": "nouveautes-off",
         "prevSize": 32,
@@ -279,7 +279,7 @@
         {}
       ],
       "properties": {
-        "order": 61,
+        "order": 71,
         "id": 3,
         "name": "conversation-on",
         "prevSize": 32,
@@ -313,7 +313,7 @@
         {}
       ],
       "properties": {
-        "order": 62,
+        "order": 72,
         "id": 2,
         "name": "conversation-off",
         "prevSize": 32,
@@ -353,7 +353,7 @@
         }
       ],
       "properties": {
-        "order": 63,
+        "order": 73,
         "id": 1,
         "name": "trash",
         "prevSize": 32,
@@ -403,7 +403,7 @@
         }
       ],
       "properties": {
-        "order": 64,
+        "order": 74,
         "id": 0,
         "name": "new_message",
         "prevSize": 32,

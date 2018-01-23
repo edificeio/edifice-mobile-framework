@@ -4,11 +4,13 @@ import * as TYPES from "../constants/docs"
  * Read a REST resource
  *
  * @param {string} path       l'URI de la ressource
+ * @param {boolean} synced    say if yourglass displayer
+ *
  */
-export const read = path => ({
+export const read = (path, synced = false) => ({
 	path,
 	type: TYPES.READ,
-	synced: false,
+	synced,
 })
 
 /**

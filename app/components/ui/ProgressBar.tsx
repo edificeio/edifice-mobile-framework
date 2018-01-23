@@ -18,12 +18,12 @@ export interface ProgressBarProps {
 }
 
 export class ProgressBar extends React.Component<ProgressBarProps, ProgressBarState> {
-	state: ProgressBarState = {
+	public state: ProgressBarState = {
 		width: 0,
 	}
-	timerID = null
+	public timerID = null
 
-	componentWillReceiveProps(newProps) {
+	public componentWillReceiveProps(newProps) {
 		if (!isSynced(newProps.synced)) {
 			this.timerID = setInterval(
 				() =>
@@ -39,7 +39,7 @@ export class ProgressBar extends React.Component<ProgressBarProps, ProgressBarSt
 		}
 	}
 
-	render() {
+	public render() {
 		const { synced } = this.props
 
 		return isSynced(synced) ? <View /> : <View style={[styles.loading, { width: this.state.width }]} />

@@ -3,7 +3,7 @@ import * as React from "react"
 import { FlatList, View } from "react-native"
 import Swipeable from "react-native-swipeable"
 import { layoutSize } from "../constants/layoutSize"
-import { ConversationModel } from "../model/Conversation"
+import { IThreadModel } from "../model/Thread"
 import { InboxStyle } from "../styles/Inbox"
 import { trunc } from "../utils/html"
 import { getSeqNumber } from "../utils/Store"
@@ -89,11 +89,11 @@ function getTitle(displayNames) {
 }
 
 export class Conversation extends React.Component<ConversationProps, any> {
-	componentWillMount() {
+	public componentWillMount() {
 		this.props.readConversation(0)
 	}
 
-	renderItem({ subject, date, displayNames, nb }: ConversationModel) {
+	public renderItem({ subject, date, displayNames, nb }: IThreadModel) {
 		return (
 			<Swipeable rightButtons={swipeoutBtns}>
 				<Item nb={nb}>
@@ -113,7 +113,7 @@ export class Conversation extends React.Component<ConversationProps, any> {
 		)
 	}
 
-	render() {
+	public render() {
 		const { conversations } = this.props
 
 		return (

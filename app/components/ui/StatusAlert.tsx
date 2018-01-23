@@ -19,13 +19,13 @@ export interface StatusAlertProps {
  * @constructor
  */
 export class StatusAlert extends React.Component<StatusAlertProps, State> {
-	state = {
+	public state = {
 		status: 0,
 		displayMsg: false,
 		statusText: "",
 	}
 
-	componentWillReceiveProps(newProps) {
+	public componentWillReceiveProps(newProps) {
 		const { status, statusText } = this.getMessage(newProps.messages)
 		if (statusText.length > 0 && !this.state.displayMsg) {
 			this.setState({ status, displayMsg: true, statusText })
@@ -33,7 +33,7 @@ export class StatusAlert extends React.Component<StatusAlertProps, State> {
 		}
 	}
 
-	getMessage(messages: MessagesProps) {
+	public getMessage(messages: MessagesProps) {
 		const { status = 0, statusText = "" } = messages[0]
 
 		if (errorAlreadyCatched(status)) {
@@ -43,9 +43,11 @@ export class StatusAlert extends React.Component<StatusAlertProps, State> {
 		return { status, statusText }
 	}
 
-	render() {
+	public render() {
 		const { status, displayMsg, statusText } = this.state
-		if (!displayMsg) return <View />
+		if (!displayMsg) {
+			return <View />
+		}
 
 		const style = status >= 0 && status <= 400 ? styles.containerInfoText : styles.containerErrorText
 

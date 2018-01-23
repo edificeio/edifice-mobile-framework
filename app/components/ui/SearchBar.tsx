@@ -38,11 +38,11 @@ const TextInput = style.textInput(
 )
 
 export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
-	state = {
+	public state = {
 		value: "",
 	}
 
-	onChangeText(value) {
+	public onChangeText(value) {
 		const { filter, storeName } = this.props
 
 		if (value === undefined) {
@@ -54,7 +54,7 @@ export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
 		this.setState({ value })
 	}
 
-	onClose() {
+	public onClose() {
 		const { filter, navigation } = this.props
 
 		filter("conversations", null)
@@ -62,7 +62,7 @@ export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
 		navigation.goBack()
 	}
 
-	render() {
+	public render() {
 		return (
 			<Container>
 				<SearchIcon onPress={() => {}} screen={"ConversationSearch"} />

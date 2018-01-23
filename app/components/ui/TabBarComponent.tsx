@@ -7,7 +7,7 @@ export interface TabBarBottomKeyboardAward {
 }
 
 class _TabBarBottomKeyboardAward extends React.PureComponent<TabBarBottomKeyboardAward, {}> {
-	render() {
+	public render() {
 		return !this.props.keyboardShow ? <TabBarBottom {...this.props} /> : null
 	}
 }

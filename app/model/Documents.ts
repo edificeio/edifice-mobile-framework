@@ -1,9 +1,8 @@
 import { Conf } from "../Conf"
 
-import { Mix } from "entcore-toolkit"
 import { READ_SUCCESS } from "../constants/docs"
-import { matchs, PATH_DOCUMENT } from "../constants/paths"
-import { Document } from "../entcore/workspace"
+import {matchs, PATH_DOCUMENT } from "../constants/paths"
+import {crudReducer} from "./docs";
 
 const initialState: DocumentState = {
 	payload: [],
@@ -17,30 +16,27 @@ export interface DocumentState {
 
 export function Documents(state: DocumentState = initialState, action): DocumentState {
 	if (matchs([PATH_DOCUMENT], action.path) && action.type === READ_SUCCESS) {
-		return {
-			synced: true,
-			payload: action.payload === 0 ? [] : Mix.castArrayAs(Document, action.payload.filter(doc => doc.folder !== "Trash")),
-		}
+        return crudReducer(state, [PATH_DOCUMENT], action)
 	}
 	return state
 }
 
 export class DocFile {
-	uri: string
-	base64: string
-	path: string
+	public uri: string
+	public base64: string
+	public path: string
 
-	async openCamera() {
+	public async openCamera() {
 		/*const pickerResult = await ImagePicker.launchCameraAsync({
             allowsEditing: false,
             quality: 0.7
         });
-        
+
         this.uri = pickerResult.uri;
         this.base64 = pickerResult.base64*/
 	}
 
-	async uploadImage() {
+	public async uploadImage() {
 		const uriParts = this.uri.split(".")
 		const fileType = this.uri[this.uri.length - 1]
 

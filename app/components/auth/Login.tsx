@@ -1,11 +1,11 @@
 import * as React from "react"
 import { Text } from "react-native"
+import TextInputError from "../../connectors/ui/TextInputError"
+import { ERR_INPUT } from "../../constants/errFormInput"
 import { tr } from "../../i18n/t"
 import { AuthModel } from "../../model/Auth"
 import { navigate } from "../../utils/navHelper"
 import { Col, Form, Logo, ValidTextIcon } from "../index"
-import TextInputError from "../../connectors/ui/TextInputError"
-import { ERR_INPUT } from "../../constants/errFormInput"
 
 import styles from "../styles"
 
@@ -21,18 +21,18 @@ export interface LoginProps {
 }
 
 export class Login extends React.Component<LoginProps, LoginState> {
-	state = {
+	public state = {
 		email: this.props.auth.email || "",
 		password: "",
 	}
 
-	isDisabled() {
+	public isDisabled() {
 		const { email, password } = this.state
 
 		return email.length === 0 || password.length === 0
 	}
 
-	render() {
+	public render() {
 		const { login } = this.props
 		const { email, password } = this.state
 

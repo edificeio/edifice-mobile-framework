@@ -1,6 +1,7 @@
 import style from "glamorous-native"
 import * as React from "react"
 import { layoutSize } from "../../../constants/layoutSize"
+import { Conf } from "../../../Conf"
 
 const LargeImage = style.image({
 	borderRadius: layoutSize.LAYOUT_24,
@@ -33,38 +34,16 @@ const SmallImage = style.image(
 )
 
 export interface AvatarProps {
-	avatar?: string
 	count?: number
 	id: string
 	index?: number
 	large?: boolean
-	readAvatar?: (a: string) => void
 }
 
-export class Avatar extends React.Component<AvatarProps, {}> {
-	componentDidMount() {
-		const { avatar, id, readAvatar } = this.props
+export const Avatar = ({ count, id, index, large }: AvatarProps) => {
+	const pathSmall = `${Conf.platform}/workspace/document/${id}?thumbnail=20*20`
+	const pathLarge = `${Conf.platform}/workspace/document/${id}?thumbnail=48*48`
 
-		if (avatar === undefined) {
-			readAvatar(id)
-		}
-	}
-
-	shouldComponentUpdate(nextProps) {
-		return this.props.avatar !== nextProps.avatar
-	}
-
-	render() {
-		const { avatar, count, index, large } = this.props
-
-		if (avatar === undefined) {
-			return <style.View />
-		}
-
-		if (large) {
-			return <LargeImage source={{ uri: "data:image/jpeg;base64," + avatar }} />
-		} else {
-			return <SmallImage count={count} index={index} source={{ uri: "data:image/jpeg;base64," + avatar }} />
-		}
-	}
+	if (large) return <LargeImage source={{ uri: pathLarge }} />
+	else return <SmallImage count={count} index={index} source={{ uri: pathSmall }} />
 }

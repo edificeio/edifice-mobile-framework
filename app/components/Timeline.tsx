@@ -12,23 +12,23 @@ export interface TimelineProps {
 }
 
 export class Timeline extends React.Component<TimelineProps, any> {
-	componentWillMount() {
+	public componentWillMount() {
 		this.props.readDocumentsFilter(Filter.Shared)
 	}
 
-	renderItem({ title }) {
+	public renderItem({ name}) {
 		return (
 			<TouchableNativeFeedback>
 				<View style={styles.item}>
 					<View>
-						<Text style={InboxStyle.author}>{title}</Text>
+						<Text style={InboxStyle.author}>{name}</Text>
 					</View>
 				</View>
 			</TouchableNativeFeedback>
 		)
 	}
 
-	render() {
+	public render() {
 		const { documents } = this.props
 
 		return (

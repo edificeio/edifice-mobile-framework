@@ -63,12 +63,13 @@ function rawFetchPromise(url, method = "GET", payload = null) {
 	const opts = {
 		method,
 		headers: new Headers({
-			Accept: "application/json",
 			"Content-Type": "application/json",
 		}),
 	}
 
-	if (payload) opts["body"] = JSON.stringify(payload)
+	if (payload) {
+		opts["body"] = JSON.stringify(payload)
+	}
 
 	return fetch(fullPath, opts)
 }

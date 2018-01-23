@@ -15,9 +15,9 @@ export interface AppScreenProps {
 interface AppScreenState {}
 
 export class AppScreen extends React.Component<AppScreenProps, AppScreenState> {
-	navigator: any
+	public navigator: any
 
-	componentDidMount() {
+	public componentDidMount() {
 		navigatorRef = this.navigator
 		this.props.checkLogin()
 		SplashScreen.close({
@@ -27,7 +27,7 @@ export class AppScreen extends React.Component<AppScreenProps, AppScreenState> {
 		})
 	}
 
-	render() {
+	public render() {
 		return (
 			<View style={{ flex: 1 }}>
 				<StatusBar backgroundColor={CommonStyles.statusBarColor} barStyle="light-content" />

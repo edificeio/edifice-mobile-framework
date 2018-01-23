@@ -43,16 +43,16 @@ interface ProfilUtilisateurState {
 }
 
 export class ProfilUtilisateur extends React.Component<ProfilUtilisateurProps, ProfilUtilisateurState> {
-	state = {
+	public state = {
 		showDisconnect: false,
 	}
 
-	disconnect() {
+	public disconnect() {
 		this.setState({ showDisconnect: false })
 		this.props.logout(this.props.auth.email)
 	}
 
-	disconnectBox = () => (
+	public disconnectBox = () => (
 		<View style={styles.modalContent}>
 			<Text style={styles.text}>Êtes-vous sûr de vouloir</Text>
 			<Text style={styles.text}>vous déconnecter ?</Text>
@@ -64,7 +64,7 @@ export class ProfilUtilisateur extends React.Component<ProfilUtilisateurProps, P
 		</View>
 	)
 
-	render() {
+	public render() {
 		return (
 			<Col backgroundColor={"#F8F8FA"}>
 				<Modal style={styles.modalDisconnect} backdropOpacity={0.5} isVisible={this.state.showDisconnect}>

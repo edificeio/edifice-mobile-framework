@@ -1,7 +1,9 @@
 import { tr } from "../i18n/t"
 
 export function errorAlreadyCatched(error) {
-	if (error === tr.Identifiant_incorrect) return true
+	if (error === tr.Identifiant_incorrect) {
+		return true
+	}
 
 	return false
 }

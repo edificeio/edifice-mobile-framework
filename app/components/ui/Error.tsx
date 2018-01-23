@@ -2,8 +2,8 @@ import style from "glamorous-native"
 import * as React from "react"
 import { View } from "react-native"
 import { layoutSize } from "../../constants/layoutSize"
-import { CommonStyles } from "../styles/common/styles"
 import { MessagesProps } from "../../model/messages"
+import { CommonStyles } from "../styles/common/styles"
 
 export interface ErrorProps {
 	errCodes: string[]
@@ -33,7 +33,9 @@ export const hasErrorsMessage = ({ errCodes, messages }: ErrorProps): string => 
 export const Error = (props: ErrorProps) => {
 	const errMessage = hasErrorsMessage(props)
 
-	if (errMessage.length > 0) return <Message>{errMessage}</Message>
+	if (errMessage.length > 0) {
+		return <Message>{errMessage}</Message>
+	}
 
 	return <View />
 }

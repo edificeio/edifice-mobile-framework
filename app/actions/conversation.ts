@@ -6,4 +6,4 @@ import { read } from "./docs"
  *
  * @param page   page à lire de la conversation   id de l'expert
  */
-export const readConversation = () => read(PATH_CONVERSATION)
+export const readConversation = () => read(PATH_CONVERSATION, true)

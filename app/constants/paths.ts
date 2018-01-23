@@ -1,6 +1,8 @@
 export const PATH_AVATAR = "workspace/document/$1?thumbnail=48x48"
 
 export const PATH_CONVERSATION = "threads/list"
+export const PATH_PREVIOUS_MESSAGES = "thread/previous-messages/$1"
+export const PATH_NEW_MESSAGES = "thread/new-messages/$1"
 
 export const PATH_DOCUMENT = "workspace/documents?filter=$1"
 

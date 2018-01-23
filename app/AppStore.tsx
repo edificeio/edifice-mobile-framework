@@ -6,14 +6,14 @@ import AppScreen from "./connectors/AppScreen"
 import configureStore from "./store"
 
 export class AppStore extends React.Component {
-	store = configureStore()
+	public store = configureStore()
 
 	constructor(props) {
 		super(props)
 		Text.defaultProps.style = { fontFamily: CommonStyles.primaryFontFamily }
 	}
 
-	render() {
+	public render() {
 		return (
 			<Provider store={this.store}>
 				<AppScreen />

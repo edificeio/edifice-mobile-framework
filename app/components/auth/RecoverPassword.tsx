@@ -17,19 +17,19 @@ export interface RecoverPasswordProps {
 }
 
 export class RecoverPassword extends React.Component<RecoverPasswordProps, RecoverPasswordState> {
-	state = {
+	public state = {
 		email: "",
 		disabled: true,
 	}
 
-	onChange(prop) {
+	public onChange(prop) {
 		const { email } = this.state
 		this.setState(prop)
 
 		this.setState({ disabled: email.length === 0 })
 	}
 
-	render() {
+	public render() {
 		const { recoverPassword } = this.props
 		const { email } = this.state
 
