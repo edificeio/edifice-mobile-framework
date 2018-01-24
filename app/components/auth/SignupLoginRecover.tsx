@@ -1,11 +1,11 @@
 import * as React from "react"
 import { View } from "react-native"
-import { AuthModel } from "../../model/Auth"
+import { IAuthModel } from "../../model/Auth"
 import { Login } from "./Login"
 import { RecoverPassword } from "./RecoverPassword"
 
 export interface SignupLoginRecoverProps {
-	auth?: AuthModel
+	auth?: IAuthModel
 	login?: (email: string, password: string) => void
 	navigation?: any
 	recoverPassword?: (email) => void

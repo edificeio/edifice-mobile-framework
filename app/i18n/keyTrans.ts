@@ -1,8 +1,6 @@
 /*** Fichier généré automatiquement par "npm run lang" ***/
 /*** Ne pas modifier ***/
 
-import I18n from "react-native-i18n"
-
 export const keyTrans = I18n => ({
 	Conversation: I18n.t("Conversation"),
 	Etes_vous_sur_de_vouloir: I18n.t("Etes_vous_sur_de_vouloir"),

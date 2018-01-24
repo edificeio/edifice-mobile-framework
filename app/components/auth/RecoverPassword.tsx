@@ -1,5 +1,5 @@
 import * as React from "react"
-import { AuthState } from "../../model/Auth"
+import { IAuthState } from "../../model/Auth"
 
 import { ERR_INPUT } from "../../constants/errFormInput"
 
@@ -11,7 +11,7 @@ export interface RecoverPasswordState {
 }
 
 export interface RecoverPasswordProps {
-	auth?: AuthState
+	auth?: IAuthState
 	recoverPassword?: (email: string) => void
 	onRoute?: (string) => void
 }

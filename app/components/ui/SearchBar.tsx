@@ -3,11 +3,12 @@ import * as React from "react"
 import { layoutSize } from "../../constants/layoutSize"
 import { CommonStyles } from "../styles/common/styles"
 import { CloseIcon, SearchIcon } from "./icons/SearchIcon"
+import {PATH_CONVERSATION} from "../../constants/paths";
 
 export interface SearchBarProps {
 	filter?: (store: string, value: string) => object
 	navigation?: any
-	storeName?: string
+	path?: string
 }
 
 const Container = style.view({
@@ -43,13 +44,13 @@ export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
 	}
 
 	public onChangeText(value) {
-		const { filter, storeName } = this.props
+		const { filter, path } = this.props
 
 		if (value === undefined) {
 			return
 		}
 
-		filter(storeName, value)
+		filter(path, value)
 
 		this.setState({ value })
 	}
@@ -57,7 +58,7 @@ export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
 	public onClose() {
 		const { filter, navigation } = this.props
 
-		filter("conversations", null)
+		filter(PATH_CONVERSATION, null)
 
 		navigation.goBack()
 	}

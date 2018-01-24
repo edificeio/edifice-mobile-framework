@@ -3,7 +3,7 @@ import { Text } from "react-native"
 import TextInputError from "../../connectors/ui/TextInputError"
 import { ERR_INPUT } from "../../constants/errFormInput"
 import { tr } from "../../i18n/t"
-import { AuthModel } from "../../model/Auth"
+import { IAuthModel } from "../../model/Auth"
 import { navigate } from "../../utils/navHelper"
 import { Col, Form, Logo, ValidTextIcon } from "../index"
 
@@ -15,7 +15,7 @@ export interface LoginState {
 }
 
 export interface LoginProps {
-	auth?: AuthModel
+	auth?: IAuthModel
 	login?: (email: string, password: string) => void
 	onRoute?: (route: string) => void
 }

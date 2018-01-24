@@ -1,4 +1,3 @@
-import { DEVICE_SCALE } from "../constants/layoutSize"
 
 export function clean(html, truncLength) {
 	const i = html.indexOf("<div")

@@ -1,5 +1,5 @@
-export const filter = (storeName, value) => ({
+export const filter = (path, value) => ({
 	type: "FILTER",
-	storeName,
+	path,
 	value,
 })

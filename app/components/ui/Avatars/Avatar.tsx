@@ -40,7 +40,7 @@ export interface AvatarProps {
 	large?: boolean
 }
 
-export const Avatar = ({ count, id, index, large }: AvatarProps) => {
+export const Avatar = ({ count = 1, id, index = 1, large = true }: AvatarProps) => {
 	const pathSmall = `${Conf.platform}/workspace/document/${id}?thumbnail=20*20`
 	const pathLarge = `${Conf.platform}/workspace/document/${id}?thumbnail=48*48`
 

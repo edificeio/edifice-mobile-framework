@@ -6,23 +6,52 @@ import * as TYPES from "../constants/docs"
 import { matchs, PATH_AVATAR, PATH_CONVERSATION, PATH_LOGIN, PATH_LOGOUT, replace1 } from "../constants/paths"
 import { tr } from "../i18n/t"
 
+function getXsrf(cookies) {
+	const cookiesSplit = cookies.split(";")
+	for (let i = 0; i < cookiesSplit.length; i++) {
+		const cookie = {
+			name: cookiesSplit[i].split("=")[0].trim(),
+			value: cookiesSplit[i].split("=")[1].trim(),
+		}
+		if (cookie.name === "XSRF-TOKEN") {
+			return cookie.value
+		}
+	}
+	return ""
+}
+
 function checkResponse(response, path = null) {
 	if (response.headers === undefined) {
 		return new Promise((resolve, reject) => resolve(response.base64()))
 	}
 
 	if (path === PATH_LOGIN) {
-		const cookie = response.headers.get("Set-Cookie")
+		const cookies = response.headers.get("Set-Cookie")
 
-		if (cookie === null) {
+		if (cookies === null) {
 			return new Promise((resolve, reject) =>
 				reject({
 					ok: false,
+					loggedIn: false,
 					status: tr.Identifiant_incorrect,
 					statusText: tr.Identifiant_incorrect,
 				})
 			)
 		}
+		return new Promise(resolve =>
+			resolve({
+				loggedIn: true,
+				userId: getXsrf(cookies),
+			})
+		)
+	}
+
+	if (path === PATH_LOGOUT) {
+		return new Promise(resolve =>
+			resolve({
+				loggedIn: false,
+			})
+		)
 	}
 
 	const contentType = response.headers.get("content-type")

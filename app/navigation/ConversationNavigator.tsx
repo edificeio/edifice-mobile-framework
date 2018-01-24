@@ -1,21 +1,12 @@
 import * as React from "react"
 import { Icon } from "../components"
 import { SearchIcon } from "../components/ui/icons/SearchIcon"
-import Conversation from "../connectors/Conversation"
+import Conversation from "../connectors/Conversations"
 import SearchBar from "../connectors/ui/SearchBar"
 import { layoutSize } from "../constants/layoutSize"
 import { tr } from "../i18n/t"
 import { navOptions, stackNavigator } from "../utils/navHelper"
-
-const customAnimationFunc = () => ({
-	screenInterpolator: sceneProps => {
-		const { scene } = sceneProps
-		const tabs = ["Home"]
-		if (tabs.indexOf(scene.route.routeName) !== -1) {
-			return null
-		}
-	},
-})
+import Threads from "../connectors/Threads"
 
 export default stackNavigator({
 	Conversation: {
@@ -25,13 +16,19 @@ export default stackNavigator({
 				title: tr.Conversation,
 				headerRight: <Icon size={layoutSize.LAYOUT_24} name={"new_message"} color={"white"} />,
 				headerLeft: <SearchIcon screen={"ConversationSearch"} />,
-				swipeEnabled: false,
+			}),
+	},
+	Threads: {
+		screen: Threads,
+		navigationOptions: () =>
+			navOptions({
+				title: tr.Conversation,
 			}),
 	},
 	ConversationSearch: {
 		screen: Conversation,
 		navigationOptions: ({ navigation }) => ({
-			header: <SearchBar navigation={navigation} storeName={"conversations"} />,
+			header: <SearchBar navigation={navigation} path={"conversations"} />,
 		}),
 	},
 })

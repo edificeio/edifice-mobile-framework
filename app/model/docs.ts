@@ -7,7 +7,7 @@ import { match, matchs, PATH_LOGIN, PATH_LOGOUT } from "../constants/paths"
  * @param {object} state          the reducer state
  * @param {string[]} paths           the rest resource(s) of the reducer.
  * @param {object} action         the redux action
- * @param {string} payloadName    the object identifier to read from the response
+ * @param {string} payloadName    the object identifier to read from the response, "-1" if return without payload (only for object)
  * @returns {*}
  */
 export const crudReducer = (state, paths: string[], action, payloadName: string = null) => {
@@ -73,12 +73,20 @@ export const crudReducer = (state, paths: string[], action, payloadName: string 
 					payload: [...state.payload, payload],
 				}
 			}
-			return {
-				type: action.type,
-				synced: true,
-				path,
-				payload,
-			}
+			if (payloadName !== "-1")
+				return {
+					type: action.type,
+					synced: true,
+					path,
+					payload,
+				}
+			else
+				return {
+					type: action.type,
+					synced: true,
+					path,
+					...payload,
+				}
 
 		case DELETE_SUCCESS:
 			if (state.payload instanceof Array) {
@@ -91,12 +99,19 @@ export const crudReducer = (state, paths: string[], action, payloadName: string 
 					payload: res,
 				}
 			}
-			return {
-				type: action.type,
-				synced: true,
-				path,
-				payload: {},
-			}
+			if (payloadName !== "-1")
+				return {
+					type: action.type,
+					synced: true,
+					path,
+					payload: {},
+				}
+			else
+				return {
+					type: action.type,
+					synced: true,
+					path,
+				}
 
 		default:
 			return state

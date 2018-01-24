@@ -1,7 +1,6 @@
 import * as React from "react"
 import { FlatList, Text, TouchableNativeFeedback, View } from "react-native"
 import { Filter } from "../actions/documents"
-import { InboxStyle } from "../styles/Inbox"
 import { getSeqNumber } from "../utils/Store"
 import styles from "./styles"
 
@@ -21,7 +20,7 @@ export class Timeline extends React.Component<TimelineProps, any> {
 			<TouchableNativeFeedback>
 				<View style={styles.item}>
 					<View>
-						<Text style={InboxStyle.author}>{name}</Text>
+						<Text>{name}</Text>
 					</View>
 				</View>
 			</TouchableNativeFeedback>

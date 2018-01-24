@@ -21,19 +21,19 @@ export interface IThreadModel {
 
 export interface IThreadState {
 	payload: IThreadModel[]
-	filter: null
+	filterCriteria: null
 	synced: boolean
 }
 
 const initialState: IThreadState = {
 	payload: [],
-	filter: null,
+	filterCriteria: null,
 	synced: true,
 }
 
 export default (state: IThreadState = initialState, action): IThreadState => {
-	if (action.type === "FILTER" && action.storeName === "conversations") {
-		return action.value === null ? { ...state, filter: undefined } : { ...state, filter: action.value }
+	if (action.type === "FILTER" && action.path === PATH_CONVERSATION) {
+		return action.value === null ? { ...state, filterCriteria: undefined } : { ...state, filterCriteria: action.value }
 	}
 	return crudReducer(state, [PATH_CONVERSATION, PATH_PREVIOUS_MESSAGES, PATH_NEW_MESSAGES], action)
 }

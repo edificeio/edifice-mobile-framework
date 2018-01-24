@@ -7,7 +7,6 @@ const fr = require("./assets/i18n/fr")
 
 process.stdout.write( '/*** Fichier généré automatiquement par "npm run lang" ***/\n')
 process.stdout.write( '/*** Ne pas modifier ***/\n\n')
-process.stdout.write( 'import I18n from "react-native-i18n"\n\n')
 
 process.stdout.write( `export const keyTrans = (I18n) => ({\n`)
 
