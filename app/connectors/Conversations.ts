@@ -28,7 +28,7 @@ const filterRootConversation = (elem: IThreadModel, filterCriteria): boolean => 
  * Select the set of conversations with the filtering criteria
  */
 const filtering = (threads: IThreadState): IThreadModel[] => {
-	const { filterCriteria, payload } = threads
+	const { filterCriteria = null, payload } = threads
 
 	return payload.filter(elem => filterRootConversation(elem, filterCriteria))
 }

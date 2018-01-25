@@ -33,14 +33,14 @@ export class Conversations extends React.Component<ConversationsProps, any> {
 		this.props.readConversation(0)
 	}
 
-	onPress(id: string) {
-		this.props.navigation.navigate("Threads", { conversationId: id })
+	onPress(id: string, displayNames: string[][], subject: string) {
+		this.props.navigation.navigate("Threads", { conversationId: id, displayNames, subject })
 	}
 
 	private renderItem(item: IThreadModel) {
 		return (
 			<Swipeable rightButtons={swipeoutBtns}>
-				<Conversation {...item} onPress={id => this.onPress(id)} />
+				<Conversation {...item} onPress={(id, displayNames, subject) => this.onPress(id, displayNames, subject)} />
 			</Swipeable>
 		)
 	}

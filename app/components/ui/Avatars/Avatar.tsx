@@ -2,13 +2,60 @@ import style from "glamorous-native"
 import * as React from "react"
 import { layoutSize } from "../../../constants/layoutSize"
 import { Conf } from "../../../Conf"
+import { ImageProperties } from "react-native"
+
+export enum Size {
+	aligned,
+	bigaligned,
+	large,
+	medium,
+	small,
+}
+const StyledImage = {
+	borderColor: "white",
+	borderWidth: layoutSize.LAYOUT_1,
+	margin: layoutSize.LAYOUT_2,
+}
 
 const LargeImage = style.image({
+	...StyledImage,
 	borderRadius: layoutSize.LAYOUT_24,
-	width: layoutSize.LAYOUT_45,
 	height: layoutSize.LAYOUT_45,
-	margin: layoutSize.LAYOUT_2,
+	width: layoutSize.LAYOUT_45,
 })
+
+const MediumImage = style.image({
+	...StyledImage,
+	borderRadius: layoutSize.LAYOUT_16,
+	height: layoutSize.LAYOUT_35,
+	width: layoutSize.LAYOUT_35,
+})
+
+const AlignedImage = style.image(
+	{
+		...StyledImage,
+		borderRadius: layoutSize.LAYOUT_16,
+		height: layoutSize.LAYOUT_29,
+		marginLeft: layoutSize.LAYOUT_MOINS_12,
+		width: layoutSize.LAYOUT_29,
+	},
+	({ index }) => ({
+		zIndex: 100 - index,
+	})
+)
+
+const AlignedLargeImage = style.image(
+	{
+		...StyledImage,
+		borderRadius: layoutSize.LAYOUT_35,
+		height: layoutSize.LAYOUT_70,
+		marginLeft: layoutSize.LAYOUT_MOINS_20,
+		width: layoutSize.LAYOUT_70,
+	},
+	({ index }) => ({
+		zIndex: 100 - index,
+	})
+)
 
 const SmallImage = style.image(
 	{
@@ -38,12 +85,17 @@ export interface AvatarProps {
 	id: string
 	index?: number
 	large?: boolean
+	size: Size
 }
 
-export const Avatar = ({ count = 1, id, index = 1, large = true }: AvatarProps) => {
-	const pathSmall = `${Conf.platform}/workspace/document/${id}?thumbnail=20*20`
-	const pathLarge = `${Conf.platform}/workspace/document/${id}?thumbnail=48*48`
+export const Avatar = ({ size, count = 1, id, index = 1 }: AvatarProps) => {
+	const pathSmall = `${Conf.platform}/userbook/avatar/${id}?thumbnail=20*20`
+	const pathMedium = `${Conf.platform}/userbook/avatar/${id}?thumbnail=35*35`
+	const pathLarge = `${Conf.platform}/userbook/avatar/${id}?thumbnail=48*48`
 
-	if (large) return <LargeImage source={{ uri: pathLarge }} />
+	if (size === Size.large) return <LargeImage source={{ uri: pathLarge }} />
+	else if (size === Size.medium) return <MediumImage source={{ uri: pathMedium }} />
+	else if (size === Size.aligned) return <AlignedImage index={index} source={{ uri: pathMedium }} />
+	else if (size === Size.bigaligned) return <AlignedLargeImage index={index} source={{ uri: pathLarge }} />
 	else return <SmallImage count={count} index={index} source={{ uri: pathSmall }} />
 }

@@ -3,7 +3,8 @@ import * as React from "react"
 import { layoutSize } from "../../constants/layoutSize"
 import { CommonStyles } from "../styles/common/styles"
 import { CloseIcon, SearchIcon } from "./icons/SearchIcon"
-import {PATH_CONVERSATION} from "../../constants/paths";
+import { PATH_CONVERSATION } from "../../constants/paths"
+import { ContainerBar } from "./ContainerBar"
 
 export interface SearchBarProps {
 	filter?: (store: string, value: string) => object
@@ -65,7 +66,7 @@ export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
 
 	public render() {
 		return (
-			<Container>
+			<ContainerBar collapse={true}>
 				<SearchIcon onPress={() => {}} screen={"ConversationSearch"} />
 				<TextInput
 					autoFocus={true}
@@ -78,7 +79,7 @@ export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
 					value={this.state.value}
 				/>
 				<CloseIcon onPress={() => this.onClose()} />
-			</Container>
+			</ContainerBar>
 		)
 	}
 }

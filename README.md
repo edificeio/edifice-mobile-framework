@@ -29,73 +29,21 @@ React Native follows a monthly release train. Every month, a new branch created 
 
 -------------------
 
-## Modification répertoire Android
-
-- Utilisation de Proguard pour la génération
-
-Fichier modifié:
-
-```bash
-./android/app/build.gradle
-```
-
-Contient aussi le paramètre de proguard (voir generation apk à la suite du document)
-
-
 ## Prerequisites
 
 ### Install react-native
 
 `npm install -g react-native-cli`
 
-### For upgrading react-native
-
-Install ```react-native-git-upgrade```
-
-Execute
-
-```react-native-git-upgrade 0.52```
-
-to update to 0.49.3
-
-
-## Build vector icon
-
-Les icones vectoriels (svg) seront mis dans une font au format truetype (ttf).
-
-Les icones doivent respecter certaines conditions pour etre transformé en police truetype par l'oitil icomoon: https://icomoon.io/app/#/select
-
-
-On utilisera l'outil Inkscape pour verifier la conformité de l'icone SVG:
-
-- Ouvrir l'icone
-- Selectioner l'ensemble de l'icone
-- File --> Document Propertie : select "resize page to drawing or selection"
-- monochrome
-- Object --> Group
-- Path --> Union
-- Path --> Combine
-- File --> Cleanup Document
-- File --> Save
-
-L'outil Gravit est bien aussi pour modifier l'icone SVG
-
-
-## Generate Font
-
-Ouvrir le site https://icomoon.io/app/#/select
-
-- Prendre l'ensemble des icones SVG de l'application et les droper ds Icomoon
-- Selectionner l'ensemble des icones dans Icomoon
-- Generer le fichier de font
-- Extraire du fichier le fichier json et ttf pour les mettre dans le repertoire assets/font
-
-
 ## Install
 
 ```bash
 npm install
 ```
+
+* Un bug dans react-native oblige à supprimer le fichier package.json situé sous 
+
+`node_modules/react-native/local-cli/core/__fixtures__/files`
 
 ### Link
 
@@ -157,3 +105,46 @@ npm run apk
 ```
 npm run miniclean
 ```
+
+### For upgrading react-native
+
+Install ```react-native-git-upgrade```
+
+Execute
+
+```react-native-git-upgrade 0.52```
+
+to update to 0.52
+
+
+## Build vector icon
+
+Les icones vectoriels (svg) seront mis dans une font au format truetype (ttf).
+
+Les icones doivent respecter certaines conditions pour etre transformé en police truetype par l'oitil icomoon: https://icomoon.io/app/#/select
+
+
+On utilisera l'outil Inkscape pour verifier la conformité de l'icone SVG:
+
+- Ouvrir l'icone
+- Selectioner l'ensemble de l'icone
+- File --> Document Propertie : select "resize page to drawing or selection"
+- monochrome
+- Object --> Group
+- Path --> Union
+- Path --> Combine
+- File --> Cleanup Document
+- File --> Save
+
+L'outil Gravit est bien aussi pour modifier l'icone SVG
+
+
+## Generate Font
+
+Ouvrir le site https://icomoon.io/app/#/select
+
+- Prendre l'ensemble des icones SVG de l'application et les droper ds Icomoon
+- Selectionner l'ensemble des icones dans Icomoon
+- Generer le fichier de font
+- Extraire du fichier le fichier json et ttf pour les mettre dans le repertoire assets/font
+
