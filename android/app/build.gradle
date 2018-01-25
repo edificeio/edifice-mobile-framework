@@ -148,6 +148,11 @@ android {
 }
 
 dependencies {
+    compile(project(':react-native-firebase')) {
+        transitive = false
+    }
+    compile "com.google.android.gms:play-services-base:11.6.0"
+    compile "com.google.firebase:firebase-core:11.6.0"
     compile project(':react-native-i18n')
     compile project(':react-native-vector-icons')
     compile project(':react-native-fs')
@@ -166,3 +171,4 @@ task copyDownloadableDepsToLibs(type: Copy) {
 }
 
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
+apply plugin: 'com.google.gms.google-services'
