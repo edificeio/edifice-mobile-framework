@@ -55,6 +55,8 @@ export const layoutSize = {
 	LAYOUT_46: normalize(46),
 	LAYOUT_48: normalize(48),
 	LAYOUT_50: normalize(50),
+    LAYOUT_51: normalize(51),
+    LAYOUT_52: normalize(52),
     LAYOUT_54: normalize(54),
 	LAYOUT_58: normalize(58),
 	LAYOUT_60: normalize(60),

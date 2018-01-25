@@ -4,7 +4,7 @@ import { layoutSize } from "../../constants/layoutSize"
 import { CommonStyles } from "../styles/common/styles"
 import { CloseIcon, SearchIcon } from "./icons/SearchIcon"
 import { PATH_CONVERSATION } from "../../constants/paths"
-import { ContainerBar } from "./ContainerBar"
+import { ContainerBar, LeftPanel, RightPanel } from "./ContainerBar"
 
 export interface SearchBarProps {
 	filter?: (store: string, value: string) => object
@@ -12,26 +12,13 @@ export interface SearchBarProps {
 	path?: string
 }
 
-const Container = style.view({
-	alignItems: "center",
-	backgroundColor: CommonStyles.mainColorTheme,
-	elevation: 5,
-	flexDirection: "row",
-	height: layoutSize.LAYOUT_58,
-	justifyContent: "space-around",
-	paddingHorizontal: layoutSize.LAYOUT_20,
-	shadowColor: CommonStyles.shadowColor,
-	shadowOffset: CommonStyles.shadowOffset,
-	shadowOpacity: CommonStyles.shadowOpacity,
-	shadowRadius: CommonStyles.shadowRadius,
-})
-
 const TextInput = style.textInput(
 	{
 		color: "white",
 		fontSize: layoutSize.LAYOUT_14,
 		flex: 1,
 		marginLeft: layoutSize.LAYOUT_8,
+		paddingTop: layoutSize.LAYOUT_14,
 	},
 	({ value }) => ({
 		fontFamily: value.length === 0 ? CommonStyles.primaryFontFamilyLight : CommonStyles.primaryFontFamily,
@@ -67,7 +54,9 @@ export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
 	public render() {
 		return (
 			<ContainerBar collapse={true}>
-				<SearchIcon onPress={() => {}} screen={"ConversationSearch"} />
+                <LeftPanel>
+					<SearchIcon onPress={() => {}} screen={"ConversationSearch"} />
+				</LeftPanel>
 				<TextInput
 					autoFocus={true}
 					enablesReturnKeyAutomatically={true}
@@ -78,7 +67,9 @@ export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
 					underlineColorAndroid={"transparent"}
 					value={this.state.value}
 				/>
-				<CloseIcon onPress={() => this.onClose()} />
+                <RightPanel>
+					<CloseIcon onPress={() => this.onClose()} />
+				</RightPanel>
 			</ContainerBar>
 		)
 	}

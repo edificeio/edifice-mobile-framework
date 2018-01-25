@@ -5,26 +5,12 @@ import { layoutSize } from "../../constants/layoutSize"
 import { CommonStyles } from "../styles/common/styles"
 import { Icon } from "./icons/Icon"
 import { Avatars } from "./Avatars/Avatars"
-import { ContainerBar } from "./ContainerBar"
+import { ContainerBar, LeftPanel, RightPanel } from "./ContainerBar"
 import { Size } from "./Avatars/Avatar"
 
 export interface ThreadsBarProps {
 	navigation?: any
 }
-
-const LeftPanel = style.view({
-	alignItems: "flex-start",
-	width: layoutSize.LAYOUT_40,
-	justifyContent: "flex-start",
-	paddingTop: layoutSize.LAYOUT_14,
-})
-
-const RightPanel = style.view({
-	alignItems: "flex-end",
-	width: layoutSize.LAYOUT_40,
-	justifyContent: "flex-start",
-	paddingTop: layoutSize.LAYOUT_14,
-})
 
 const CenterPanel = style.view(
 	{
