@@ -143,7 +143,7 @@ npm run apk
 npm run miniclean
 ```
 
-## Know issues
+# Know issues
 
 * react-native-vector-icons and react-native 0.52 on Android
 
@@ -153,3 +153,32 @@ Error: While trying to resolve module `react-native-vector-icons` from file `mob
 
 Quick fix:
 [react-native-vector-icons#626](https://github.com/oblador/react-native-vector-icons/issues/626)
+
+# Firebase configuration
+
+## Analytics
+
+* Analytics tag are sended by batch so you will not seem them instantly in the firebase console.
+  You need to activate the debug view:
+
+  [Enable debug View](https://support.google.com/firebase/answer/7201382?hl=en)
+
+Follow this steps:
+
+* Android
+  To enable Analytics Debug mode on an emulated Android device, execute the following command lines:
+
+`adb shell setprop debug.firebase.analytics.app com.mobileapp`
+
+This behavior persists until you explicitly disable Debug mode by executing the following command line :
+
+`adb shell setprop debug.firebase.analytics.app .none.`
+
+* iOS
+  To enable Analytics Debug mode on your development device, specify the following command line argument in Xcode :
+
+`-FIRDebugEnabled`
+
+This behavior persists until you explicitly disable Debug mode by specifying the following command line argument:
+
+`--FIRDebugDisabled`
