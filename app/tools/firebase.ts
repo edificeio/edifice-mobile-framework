@@ -8,3 +8,10 @@ analytics.logEvent('Analytics_configuration_done');
 // const crashlytics = firebase.fabric.crashlytics()
 const crashlytics = firebase.app().fabric.crashlytics()
 crashlytics.log("Crashlytics configuration done.")
+
+const perfMonitoring = firebase.app().perf();
+const trace = perfMonitoring.newTrace(`PerformanceMonitoring_configuration_done`);
+trace.start();
+trace.incrementCounter(`PerformanceMonitoring__increment`);
+trace.stop();
+
