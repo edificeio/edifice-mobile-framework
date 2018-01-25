@@ -1,4 +1,5 @@
-This project was bootstrapped with [Create React Native App](https://github.com/react-community/create-react-native-app).
+# Linux - Build
+## Dev Setup
 
 #Installation
 
@@ -89,32 +90,27 @@ Le resultat des procedures de link ont ete archivé, donc pas besoin de le refai
 npm test
 ```
 
-## Lancement debug
+- Clone the project
 
-Pour la reprise à chaud
-
-```bash
-npm start
 ```
+<<<<<<< HEAD
 
 Compilation typescrypt
 
 ```bash
 npm tsc
+=======
+git clone <repository>
+>>>>>>> c1d6958... Init dev branch
 ```
 
-Ouvrir une autre session pour lancement emulateur
+- In project folder, launch :
 
-```bash
-npm run android
+```
+npm install
 ```
 
-ou
-
-```bash
-npm run ios
-```
-
+<<<<<<< HEAD
 ## Generation clef Android
 
 ```bash
@@ -124,16 +120,39 @@ npm run private-key
 ### Generation APK (Android)
 
 la commande
+=======
+---
 
-```bash
-npm run apk
+## Development
+
+Launch these two commands in separate shels.
+
+   - Launch the development server
+   
+```
+npm start
+```
+>>>>>>> c1d6958... Init dev branch
+
+   - Launch ts compilation and watcher
+   
+```
+npm run tsc
 ```
 
+<<<<<<< HEAD
 ## Clean
+=======
+After these commands, you can modify the code.
+#### Testing
+
+- Android : Run the apk, on a connected Android (device or emulator), in debug mode.
+>>>>>>> c1d6958... Init dev branch
 
 To do if you have build or deployment problem
 
 ```
+<<<<<<< HEAD
 npm run clean
 ```
 
@@ -144,9 +163,19 @@ Install `react-native-git-upgrade`
 Execute
 
 `react-native-git-upgrade 0.52`
+=======
+npm run android
+```
 
-to update to 0.52
+-  iOS : 
 
+   *--TODO--*
+>>>>>>> c1d6958... Init dev branch
+
+---
+## Android : build APK
+
+<<<<<<< HEAD
 ## Generate Font
 
 Ouvrir le site https://icomoon.io/app/#/select
@@ -184,3 +213,48 @@ This behavior persists until you explicitly disable Debug mode by executing the 
 This behavior persists until you explicitly disable Debug mode by specifying the following command line argument:
 
 `--FIRDebugDisabled`
+=======
+The APK must be signed with a key, so that it can be run on an Android device. cf : https://developer.android.com/studio/publish/app-signing.html
+
+**Important : The application must use the same key.**
+
+####  With Android Studio (for debug apk)
+
+Android Studio signs the APK with debug. Don't use it for release versions.
+
+- Import the android folder as android project
+-  You can build and run it as normal android prject
+
+#### Command line (for release apk)
+
+##### Build a new APK
+
+In <repository> folder, launch :
+```
+npm run apk
+```
+the apk file will be generated in android/app/build/outputs/apk/
+
+##### Create a Keystore (if the Keystore file does not exist)
+```
+keytool -genkeypair -v -keystore <keystore-name>.keystore -alias <key-name> -keyalg RSA -keysize 2048 -validity 10000
+```
+doc : https://docs.oracle.com/javase/8/docs/technotes/tools/unix/keytool.html
+##### Zipalign the APK - archive alignment - (optional)
+```
+zipalign 4 <apk-file>
+```
+doc : https://developer.android.com/studio/command-line/zipalign.html
+
+##### Sign the APK
+
+apksigner is in $ANDROID_HOME/build-tools
+```
+apksigner sign --ks <keystore-name>.keystore --ks-key-alias <key-name> -ks-pass <keystore-password> <apk-file>
+```
+doc : https://developer.android.com/studio/command-line/apksigner.html
+
+## iOS : IPA
+
+*--TODO--*
+>>>>>>> c1d6958... Init dev branch
