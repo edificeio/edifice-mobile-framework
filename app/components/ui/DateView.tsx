@@ -19,7 +19,7 @@ const Text = style.text(
 	})
 )
 
-export const DateView = ({ date, nb }) => {
+export const DateView = ({ date, nb=0}) => {
 	const pastHours = Math.round((Date.now() - date) / (3600 * 1000))
 	const strDate = pastHours < 100 ? `${pastHours} h` : getDayMonthFromTime(date)
 

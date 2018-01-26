@@ -3,6 +3,7 @@ import { error } from "../actions/docs"
 import { CREATE_ERROR, CREATE_SUCCESS } from "../constants/docs"
 import { PATH_AUTH, PATH_LOGIN, PATH_LOGOUT, PATH_RECOVER_PASSWORD, PATH_SIGNUP } from "../constants/paths"
 import { navigate } from "../utils/navHelper"
+import { read } from "../actions/docs"
 import { getLogin, setLogin } from "../utils/Store"
 
 var initAuth = false
@@ -36,6 +37,7 @@ export default store => next => action => {
 		}
 
 		if ((action.path === PATH_LOGIN || action.path === PATH_SIGNUP) && action.type === CREATE_SUCCESS) {
+			store.dispatch(read(PATH_AUTH))
 			setLogin({
 				email: action.payload.email,
 				password: action.payload.password,

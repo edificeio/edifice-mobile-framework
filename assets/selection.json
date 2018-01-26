@@ -31,8 +31,8 @@
         }
       ],
       "properties": {
-        "order": 65,
-        "id": 9,
+        "order": 75,
+        "id": 11,
         "name": "close",
         "prevSize": 32,
         "code": 59648
@@ -71,8 +71,8 @@
         }
       ],
       "properties": {
-        "order": 66,
-        "id": 8,
+        "order": 76,
+        "id": 10,
         "name": "search",
         "prevSize": 32,
         "code": 59649
@@ -111,8 +111,8 @@
         }
       ],
       "properties": {
-        "order": 67,
-        "id": 7,
+        "order": 77,
+        "id": 9,
         "name": "profile-on",
         "prevSize": 32,
         "code": 59650
@@ -145,8 +145,8 @@
         {}
       ],
       "properties": {
-        "order": 68,
-        "id": 6,
+        "order": 78,
+        "id": 8,
         "name": "profile-off",
         "prevSize": 32,
         "code": 59651
@@ -195,8 +195,8 @@
         }
       ],
       "properties": {
-        "order": 69,
-        "id": 5,
+        "order": 79,
+        "id": 7,
         "name": "nouveautes-on",
         "prevSize": 32,
         "code": 59652
@@ -245,8 +245,8 @@
         }
       ],
       "properties": {
-        "order": 70,
-        "id": 4,
+        "order": 80,
+        "id": 6,
         "name": "nouveautes-off",
         "prevSize": 32,
         "code": 59653
@@ -279,8 +279,8 @@
         {}
       ],
       "properties": {
-        "order": 71,
-        "id": 3,
+        "order": 81,
+        "id": 5,
         "name": "conversation-on",
         "prevSize": 32,
         "code": 59654
@@ -313,8 +313,8 @@
         {}
       ],
       "properties": {
-        "order": 72,
-        "id": 2,
+        "order": 82,
+        "id": 4,
         "name": "conversation-off",
         "prevSize": 32,
         "code": 59655
@@ -353,8 +353,8 @@
         }
       ],
       "properties": {
-        "order": 73,
-        "id": 1,
+        "order": 83,
+        "id": 3,
         "name": "trash",
         "prevSize": 32,
         "code": 59656
@@ -362,6 +362,86 @@
       "setIdx": 0,
       "setId": 0,
       "iconIdx": 8
+    },
+    {
+      "icon": {
+        "paths": [
+          "M768 512c0 70.4 57.6 128 128 128s128-57.6 128-128c0-70.4-57.6-128-128-128s-128 57.6-128 128zM640 512c0-70.4-57.6-128-128-128s-128 57.6-128 128c0 70.4 57.6 128 128 128s128-57.6 128-128zM256 512c0-70.4-57.6-128-128-128s-128 57.6-128 128c0 70.4 57.6 128 128 128s128-57.6 128-128z"
+        ],
+        "attrs": [
+          {
+            "fill": "rgb(255, 255, 255)"
+          }
+        ],
+        "isMulticolor": false,
+        "isMulticolor2": false,
+        "grid": 0,
+        "tags": [
+          "more"
+        ],
+        "colorPermutations": {
+          "13314316912552552551421562001": [
+            {
+              "f": 2
+            }
+          ]
+        }
+      },
+      "attrs": [
+        {
+          "fill": "rgb(255, 255, 255)"
+        }
+      ],
+      "properties": {
+        "order": 84,
+        "id": 2,
+        "name": "more",
+        "prevSize": 32,
+        "code": 59657
+      },
+      "setIdx": 0,
+      "setId": 0,
+      "iconIdx": 9
+    },
+    {
+      "icon": {
+        "paths": [
+          "M1024 448h-778.88l357.76-357.76-90.88-90.24-512 512 512 512 90.24-90.24-357.12-357.76h778.88z"
+        ],
+        "attrs": [
+          {
+            "fill": "rgb(255, 255, 255)"
+          }
+        ],
+        "isMulticolor": false,
+        "isMulticolor2": false,
+        "grid": 0,
+        "tags": [
+          "back"
+        ],
+        "colorPermutations": {
+          "13314316912552552551421562001": [
+            {
+              "f": 2
+            }
+          ]
+        }
+      },
+      "attrs": [
+        {
+          "fill": "rgb(255, 255, 255)"
+        }
+      ],
+      "properties": {
+        "order": 85,
+        "id": 1,
+        "name": "back",
+        "prevSize": 32,
+        "code": 59658
+      },
+      "setIdx": 0,
+      "setId": 0,
+      "iconIdx": 10
     },
     {
       "icon": {
@@ -403,15 +483,15 @@
         }
       ],
       "properties": {
-        "order": 74,
+        "order": 86,
         "id": 0,
         "name": "new_message",
         "prevSize": 32,
-        "code": 59657
+        "code": 59659
       },
       "setIdx": 0,
       "setId": 0,
-      "iconIdx": 9
+      "iconIdx": 11
     }
   ],
   "height": 1024,
