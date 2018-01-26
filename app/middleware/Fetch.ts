@@ -41,7 +41,6 @@ function checkResponse(response, path = null) {
 		return new Promise(resolve =>
 			resolve({
 				loggedIn: true,
-				userId: getXsrf(cookies),
 			})
 		)
 	}

@@ -7,6 +7,7 @@ import { CommonStyles } from "../styles/common/styles"
 import { Avatars } from "../ui/Avatars/Avatars"
 import { DateView } from "../ui/DateView"
 import { NonLu } from "../ui/NonLu"
+import { Size } from "../ui/Avatars/Avatar"
 
 const Item = style.touchableOpacity(
 	{
@@ -78,14 +79,14 @@ function getContent(nb, subject) {
 }
 
 interface ConversationProps extends IThreadModel {
-	onPress: (id: string) => void
+	onPress: (id: string, displayNames: string[][], subject: string) => void
 }
 
 export const Conversation = ({ id, subject, date, displayNames, nb, onPress }: ConversationProps) => {
 	return (
-		<Item nb={nb} onPress={() => onPress(id)}>
+		<Item nb={nb} onPress={() => onPress(id, displayNames, subject)}>
 			<LeftPanel>
-				<Avatars displayNames={displayNames} />
+				<Avatars displayNames={displayNames} size={Size.small} />
 			</LeftPanel>
 			<CenterPanel>
 				{getTitle(displayNames, nb)}

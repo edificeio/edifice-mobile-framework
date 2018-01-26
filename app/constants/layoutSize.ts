@@ -11,6 +11,8 @@ function normalize(size: number): number {
 /* export =================================================================== */
 
 export const layoutSize = {
+    LAYOUT_MOINS_20: normalize(-20),
+    LAYOUT_MOINS_12: normalize(-12),
 	LAYOUT_MOINS_2: normalize(-2),
 	LAYOUT_0: normalize(0),
 	LAYOUT_1: normalize(1),
@@ -38,10 +40,12 @@ export const layoutSize = {
 	LAYOUT_26: normalize(26),
 	LAYOUT_27: normalize(27),
 	LAYOUT_28: normalize(28),
+    LAYOUT_29: normalize(29),
 	LAYOUT_30: normalize(30),
 	LAYOUT_31: normalize(31),
 	LAYOUT_32: normalize(32),
 	LAYOUT_34: normalize(34),
+    LAYOUT_35: normalize(35),
 	LAYOUT_36: normalize(36),
 	LAYOUT_38: normalize(38),
 	LAYOUT_40: normalize(40),
@@ -51,6 +55,9 @@ export const layoutSize = {
 	LAYOUT_46: normalize(46),
 	LAYOUT_48: normalize(48),
 	LAYOUT_50: normalize(50),
+    LAYOUT_51: normalize(51),
+    LAYOUT_52: normalize(52),
+    LAYOUT_54: normalize(54),
 	LAYOUT_58: normalize(58),
 	LAYOUT_60: normalize(60),
 	LAYOUT_62: normalize(62),
@@ -64,4 +71,5 @@ export const layoutSize = {
 	LAYOUT_140: normalize(140),
 	LAYOUT_160: normalize(160),
 	LAYOUT_200: normalize(200),
+    LAYOUT_250: normalize(250),
 }

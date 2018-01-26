@@ -4,18 +4,21 @@ import { readConversation } from "../actions/conversation"
 import { Threads, ThreadsProps } from "../components/conversation/Threads"
 import { IThreadModel, IThreadState } from "../model/Thread"
 
+const filterThreads = (elem: IThreadModel, conversationId): boolean => {
+	return elem.conversation === conversationId || elem.id === conversationId
+}
 
 /**
- * Select the thread of conversation === conversationId
+ * Select the thread of conversation with conversation === conversationId
  */
 const filtering = (threads: IThreadState, conversationId): IThreadModel[] => {
 	const { payload } = threads
 
-	return payload.filter(elem => elem.conversation !== conversationId || elem.id !== conversationId)
+	return payload.filter(elem => filterThreads(elem, conversationId))
 }
 
 const mapStateToProps = (state, props) => ({
-	threads: filtering(state.threads, props.navigation.state.params.conversationId),
+	threads: filtering(state.threads, props.navigation.state.params.conversationId).sort((a, b) => a.date - b.date),
 	userId: state.auth.userId,
 })
 

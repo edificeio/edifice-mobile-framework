@@ -42,16 +42,6 @@ Contient aussi le paramètre de proguard (voir generation apk à la suite du doc
 
 `npm install -g react-native-cli`
 
-### For upgrading react-native
-
-Install `react-native-git-upgrade`
-
-Execute
-
-`react-native-git-upgrade 0.52`
-
-to update to 0.49.3
-
 ## Build vector icon
 
 Les icones vectoriels (svg) seront mis dans une font au format truetype (ttf).
@@ -72,20 +62,22 @@ On utilisera l'outil Inkscape pour verifier la conformité de l'icone SVG:
 
 L'outil Gravit est bien aussi pour modifier l'icone SVG
 
-## Generate Font
-
-Ouvrir le site https://icomoon.io/app/#/select
-
-* Prendre l'ensemble des icones SVG de l'application et les droper ds Icomoon
-* Selectionner l'ensemble des icones dans Icomoon
-* Generer le fichier de font
-* Extraire du fichier le fichier json et ttf pour les mettre dans le repertoire assets/font
-
 ## Install
 
 ```bash
 npm install
 ```
+
+* Un bug dans react-native oblige à supprimer le fichier package.json situé sous
+  `node_modules/react-native/local-cli/core/__fixtures__/files`
+* react-native-vector-icons and react-native 0.52 on Android
+
+```
+Error: While trying to resolve module `react-native-vector-icons` from file `mobile-app/build/components/ui/icons/Icon.js`, the package `/mobile-app/node_modules/react-native/local-cli/core/__fixtures__/files/package.json` was successfully found.
+```
+
+Quick fix:
+[react-native-vector-icons#626](https://github.com/oblador/react-native-vector-icons/issues/626)
 
 ### Link
 
@@ -143,16 +135,24 @@ npm run apk
 npm run miniclean
 ```
 
-# Know issues
+### For upgrading react-native
 
-* react-native-vector-icons and react-native 0.52 on Android
+Install `react-native-git-upgrade`
 
-```
-Error: While trying to resolve module `react-native-vector-icons` from file `mobile-app/build/components/ui/icons/Icon.js`, the package `/mobile-app/node_modules/react-native/local-cli/core/__fixtures__/files/package.json` was successfully found.
-```
+Execute
 
-Quick fix:
-[react-native-vector-icons#626](https://github.com/oblador/react-native-vector-icons/issues/626)
+`react-native-git-upgrade 0.52`
+
+to update to 0.52
+
+## Generate Font
+
+Ouvrir le site https://icomoon.io/app/#/select
+
+* Prendre l'ensemble des icones SVG de l'application et les droper ds Icomoon
+* Selectionner l'ensemble des icones dans Icomoon
+* Generer le fichier de font
+* Extraire du fichier le fichier json et ttf pour les mettre dans le repertoire assets/font
 
 # Firebase configuration
 

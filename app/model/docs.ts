@@ -78,10 +78,11 @@ export const crudReducer = (state, paths: string[], action, payloadName: string 
 					type: action.type,
 					synced: true,
 					path,
-					payload,
+					payload: { ...state.payload, ...payload },
 				}
 			else
 				return {
+					...state,
 					type: action.type,
 					synced: true,
 					path,

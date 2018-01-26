@@ -7,6 +7,8 @@ import { layoutSize } from "../constants/layoutSize"
 import { tr } from "../i18n/t"
 import { navOptions, stackNavigator } from "../utils/navHelper"
 import Threads from "../connectors/Threads"
+import { PATH_CONVERSATION } from "../constants/paths"
+import { ThreadsBar } from "../components/ui/ThreadsBar"
 
 export default stackNavigator({
 	Conversation: {
@@ -20,15 +22,14 @@ export default stackNavigator({
 	},
 	Threads: {
 		screen: Threads,
-		navigationOptions: () =>
-			navOptions({
-				title: tr.Conversation,
-			}),
+		navigationOptions: ({ navigation }) => ({
+			header: <ThreadsBar navigation={navigation} />,
+		}),
 	},
 	ConversationSearch: {
 		screen: Conversation,
 		navigationOptions: ({ navigation }) => ({
-			header: <SearchBar navigation={navigation} path={"conversations"} />,
+			header: <SearchBar navigation={navigation} path={PATH_CONVERSATION} />,
 		}),
 	},
 })
