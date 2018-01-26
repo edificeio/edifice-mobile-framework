@@ -153,3 +153,32 @@ Ouvrir le site https://icomoon.io/app/#/select
 * Selectionner l'ensemble des icones dans Icomoon
 * Generer le fichier de font
 * Extraire du fichier le fichier json et ttf pour les mettre dans le repertoire assets/font
+
+# Firebase configuration
+
+## Analytics
+
+* Analytics tag are sended by batch so you will not seem them instantly in the firebase console.
+  You need to activate the debug view:
+
+  [Enable debug View](https://support.google.com/firebase/answer/7201382?hl=en)
+
+Follow this steps:
+
+* Android
+  To enable Analytics Debug mode on an emulated Android device, execute the following command lines:
+
+`adb shell setprop debug.firebase.analytics.app com.mobileapp`
+
+This behavior persists until you explicitly disable Debug mode by executing the following command line :
+
+`adb shell setprop debug.firebase.analytics.app .none.`
+
+* iOS
+  To enable Analytics Debug mode on your development device, specify the following command line argument in Xcode :
+
+`-FIRDebugEnabled`
+
+This behavior persists until you explicitly disable Debug mode by specifying the following command line argument:
+
+`--FIRDebugDisabled`

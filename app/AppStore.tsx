@@ -4,6 +4,7 @@ import { Provider } from "react-redux"
 import { CommonStyles } from "./components/styles/common/styles"
 import AppScreen from "./connectors/AppScreen"
 import configureStore from "./store"
+import "./tools/firebase"
 
 export class AppStore extends React.Component {
 	public store = configureStore()
