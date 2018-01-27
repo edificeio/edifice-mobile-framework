@@ -1,4 +1,3 @@
-
 export function clean(html, truncLength) {
 	const i = html.indexOf("<div")
 	const deb = html.indexOf(">", i)

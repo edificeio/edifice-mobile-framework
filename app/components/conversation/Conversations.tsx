@@ -22,27 +22,19 @@ const swipeoutBtns = [
 	</RightButton>,
 ]
 
-export interface ConversationsProps {
+export interface IConversationsProps {
 	conversations: IThreadModel[]
 	navigation?: any
 	readConversation: (idConverstion: number) => void
 }
 
-export class Conversations extends React.Component<ConversationsProps, any> {
+export class Conversations extends React.Component<IConversationsProps, any> {
 	public componentWillMount() {
 		this.props.readConversation(0)
 	}
 
-	onPress(id: string, displayNames: string[][], subject: string) {
+	public onPress(id: string, displayNames: string[][], subject: string) {
 		this.props.navigation.navigate("Threads", { conversationId: id, displayNames, subject })
-	}
-
-	private renderItem(item: IThreadModel) {
-		return (
-			<Swipeable rightButtons={swipeoutBtns}>
-				<Conversation {...item} onPress={(id, displayNames, subject) => this.onPress(id, displayNames, subject)} />
-			</Swipeable>
-		)
 	}
 
 	public render() {
@@ -55,6 +47,14 @@ export class Conversations extends React.Component<ConversationsProps, any> {
 				renderItem={({ item }) => this.renderItem(item)}
 				style={styles.grid}
 			/>
+		)
+	}
+
+	private renderItem(item: IThreadModel) {
+		return (
+			<Swipeable rightButtons={swipeoutBtns}>
+				<Conversation {...item} onPress={(id, displayNames, subject) => this.onPress(id, displayNames, subject)} />
+			</Swipeable>
 		)
 	}
 }

@@ -2,12 +2,12 @@ import style from "glamorous-native"
 import * as React from "react"
 import { View } from "react-native"
 import { layoutSize } from "../../constants/layoutSize"
-import { MessagesProps } from "../../model/messages"
+import { IMessagesProps } from "../../model/messages"
 import { CommonStyles } from "../styles/common/styles"
 
 export interface ErrorProps {
 	errCodes: string[]
-	messages?: MessagesProps[]
+	messages?: IMessagesProps[]
 }
 
 const Message = style.text({

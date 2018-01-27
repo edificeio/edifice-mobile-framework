@@ -9,18 +9,18 @@ import { Col, Form, Logo, ValidTextIcon } from "../index"
 
 import styles from "../styles"
 
-export interface LoginState {
+export interface ILoginState {
 	email: string
 	password: string
 }
 
-export interface LoginProps {
+export interface ILoginProps {
 	auth?: IAuthModel
 	login?: (email: string, password: string) => void
 	onRoute?: (route: string) => void
 }
 
-export class Login extends React.Component<LoginProps, LoginState> {
+export class Login extends React.Component<ILoginProps, ILoginState> {
 	public state = {
 		email: this.props.auth.email || "",
 		password: "",
@@ -44,7 +44,7 @@ export class Login extends React.Component<LoginProps, LoginState> {
 					errCodes={ERR_INPUT.login}
 					globalErr={true}
 					label={tr.Identifiant}
-					onChange={email => this.setState({ email })}
+					onChange={(email: string) => this.setState({ email })}
 					value={email}
 				/>
 
@@ -52,7 +52,7 @@ export class Login extends React.Component<LoginProps, LoginState> {
 					errCodes={ERR_INPUT.login}
 					globalErr={true}
 					label={tr.Mot_de_passe}
-					onChange={password => this.setState({ password })}
+					onChange={(password: string) => this.setState({ password })}
 					secureTextEntry
 					value={password}
 					showErr={true}

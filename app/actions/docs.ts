@@ -9,8 +9,8 @@ import * as TYPES from "../constants/docs"
  */
 export const read = (path, synced = false) => ({
 	path,
-	type: TYPES.READ,
 	synced,
+	type: TYPES.READ,
 })
 
 /**
@@ -21,10 +21,10 @@ export const read = (path, synced = false) => ({
  * @param {object} payload          les données lus
  */
 export const readSuccess = (path, payload) => ({
-	payload,
 	path,
-	type: TYPES.READ_SUCCESS,
+	payload,
 	synced: false,
+	type: TYPES.READ_SUCCESS,
 })
 
 /**
@@ -34,10 +34,10 @@ export const readSuccess = (path, payload) => ({
  * @param {number} id      id de la ressource
  */
 export const readId = (path, id) => ({
-	path,
 	id,
-	type: TYPES.READ,
+	path,
 	synced: false,
+	type: TYPES.READ,
 })
 
 /**
@@ -48,11 +48,11 @@ export const readId = (path, id) => ({
  * @param {object} payload          les données lus
  */
 export const readIdSuccess = (path, id, payload) => ({
-	payload,
-	path,
 	id,
-	type: TYPES.READ_SUCCESS,
+	path,
+	payload,
 	synced: false,
+	type: TYPES.READ_SUCCESS,
 })
 
 /**
@@ -62,10 +62,10 @@ export const readIdSuccess = (path, id, payload) => ({
  * @param {object} payload    données de la ressource
  */
 export const create = (path, payload, synced) => ({
-	payload,
 	path,
-	type: TYPES.CREATE,
+	payload,
 	synced,
+	type: TYPES.CREATE,
 })
 
 /**
@@ -78,8 +78,8 @@ export const create = (path, payload, synced) => ({
 export const createSuccess = (path, payload) => ({
 	path,
 	payload,
-	type: TYPES.CREATE_SUCCESS,
 	synced: false,
+	type: TYPES.CREATE_SUCCESS,
 })
 
 /**
@@ -91,8 +91,8 @@ export const createSuccess = (path, payload) => ({
 export const update = (path, payload) => ({
 	path,
 	payload,
-	type: TYPES.UPDATE,
 	synced: false,
+	type: TYPES.UPDATE,
 })
 
 /**
@@ -105,8 +105,8 @@ export const update = (path, payload) => ({
 export const updateSuccess = (path, payload) => ({
 	path,
 	payload,
-	type: TYPES.UPDATE_SUCCESS,
 	synced: false,
+	type: TYPES.UPDATE_SUCCESS,
 })
 
 /**
@@ -118,8 +118,8 @@ export const updateSuccess = (path, payload) => ({
 export const del = (path, payload) => ({
 	path,
 	payload,
-	type: TYPES.DELETE,
 	synced: false,
+	type: TYPES.DELETE,
 })
 
 /**
@@ -132,8 +132,8 @@ export const del = (path, payload) => ({
 export const delSuccess = (path, payload) => ({
 	path,
 	payload,
-	type: TYPES.DELETE_SUCCESS,
 	synced: false,
+	type: TYPES.DELETE_SUCCESS,
 })
 
 /**
@@ -144,10 +144,10 @@ export const delSuccess = (path, payload) => ({
  * @param payload
  */
 export const crudError = (type, path, payload) => ({
-	type,
 	path,
 	payload,
 	synced: false,
+	type,
 })
 
 /**
@@ -157,15 +157,15 @@ export const crudError = (type, path, payload) => ({
  * @param message     message associated to this error code. If message is null, no error
  */
 export const error = (code, message) => ({
-	type: "_ERROR",
 	path: "/ERR",
 	payload: { code, message },
 	synced: false,
+	type: "_ERROR",
 })
 
 export const resetErrors = () => ({
-	type: "_ERROR",
 	path: "/ERR",
 	payload: {},
 	synced: false,
+	type: "_ERROR",
 })

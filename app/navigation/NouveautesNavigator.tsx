@@ -5,7 +5,7 @@ import { navOptions } from "../utils/navHelper"
 
 export default StackNavigator({
 	Nouveautes: {
-		screen: Timeline,
 		navigationOptions: ({ navigation }) => navOptions({ title: tr.Nouveautes }),
+		screen: Timeline,
 	},
 })

@@ -14,33 +14,33 @@ const styles = StyleSheet.create({
 		backgroundColor: "transparent",
 	},
 	avatar: {
-		justifyContent: "center",
 		alignItems: "flex-start",
+		justifyContent: "center",
 	},
 	buttonPanel: {
 		marginTop: layoutSize.LAYOUT_7,
 	},
 	buttonStyle: {
 		alignSelf: "center",
-		color: CommonStyles.actionColor,
 		backgroundColor: "transparent",
-		paddingHorizontal: layoutSize.LAYOUT_15,
+		color: CommonStyles.actionColor,
 		fontWeight: "400",
+		paddingHorizontal: layoutSize.LAYOUT_15,
 	},
 	containerErrorText: {
 		alignSelf: "center",
-		fontWeight: "400",
 		color: CommonStyles.errorColor,
+		fontWeight: "400",
 	},
 	containerInfo: {
 		backgroundColor: "#fcfcfccc",
-		minHeight: layoutSize.LAYOUT_15,
 		flexWrap: "wrap",
+		minHeight: layoutSize.LAYOUT_15,
 		padding: layoutSize.LAYOUT_4,
 	},
 	containerInfoText: {
-		color: "green",
 		alignSelf: "center",
+		color: "green",
 	},
 	formGrid: {
 		backgroundColor: CommonStyles.backgroundColor,
@@ -55,20 +55,20 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 	},
 	item: {
+		backgroundColor: "white",
+		borderBottomColor: "#ddd",
+		borderBottomWidth: 1,
+		flexDirection: "row",
 		paddingHorizontal: layoutSize.LAYOUT_16,
 		paddingVertical: layoutSize.LAYOUT_12,
-		backgroundColor: "white",
-		borderBottomWidth: 1,
-		borderBottomColor: "#ddd",
-		flexDirection: "row",
 	},
 	line: {
 		alignItems: "center",
 		justifyContent: "center",
 	},
 	link: {
-		textDecorationLine: "underline",
 		marginTop: layoutSize.LAYOUT_10,
+		textDecorationLine: "underline",
 	},
 	loading: {
 		backgroundColor: "#ff5000",
@@ -79,8 +79,8 @@ const styles = StyleSheet.create({
 	},
 	minitext: {
 		color: CommonStyles.miniTextColor,
-		fontSize: layoutSize.LAYOUT_14,
 		fontFamily: CommonStyles.primaryFontFamily,
+		fontSize: layoutSize.LAYOUT_14,
 		textDecorationLine: "underline",
 	},
 	statusText: {
@@ -94,9 +94,9 @@ const styles = StyleSheet.create({
 		fontSize: layoutSize.LAYOUT_14,
 	},
 	webview: {
-		width: "100%",
-		flex: 1,
 		backgroundColor: "#eee",
+		flex: 1,
+		width: "100%",
 	},
 })
 

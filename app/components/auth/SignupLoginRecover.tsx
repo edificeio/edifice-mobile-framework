@@ -4,14 +4,14 @@ import { IAuthModel } from "../../model/Auth"
 import { Login } from "./Login"
 import { RecoverPassword } from "./RecoverPassword"
 
-export interface SignupLoginRecoverProps {
+export interface ISignupLoginRecoverProps {
 	auth?: IAuthModel
 	login?: (email: string, password: string) => void
 	navigation?: any
 	recoverPassword?: (email) => void
 }
 
-export class SignupLoginRecover extends React.Component<SignupLoginRecoverProps, any> {
+export class SignupLoginRecover extends React.Component<ISignupLoginRecoverProps, any> {
 	public render() {
 		const { synced, loggedIn } = this.props.auth
 		const { routeName } = this.props.navigation.state

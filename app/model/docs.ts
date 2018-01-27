@@ -37,10 +37,10 @@ export const crudReducer = (state, paths: string[], action, payloadName: string 
 
 			if (payload instanceof Array) {
 				return {
-					type: action.type,
 					path,
-					synced: true,
 					payload,
+					synced: true,
+					type: action.type,
 				}
 			}
 
@@ -60,59 +60,61 @@ export const crudReducer = (state, paths: string[], action, payloadName: string 
 				})
 				if (found) {
 					return {
-						type: action.type,
 						path,
-						synced: true,
 						payload: res,
+						synced: true,
+						type: action.type,
 					}
 				}
 				return {
-					type: action.type,
 					path,
-					synced: true,
 					payload: [...state.payload, payload],
+					synced: true,
+					type: action.type,
 				}
 			}
-			if (payloadName !== "-1")
+			if (payloadName !== "-1") {
 				return {
-					type: action.type,
-					synced: true,
 					path,
 					payload: { ...state.payload, ...payload },
+					synced: true,
+					type: action.type,
 				}
-			else
+			} else {
 				return {
 					...state,
-					type: action.type,
-					synced: true,
 					path,
+					synced: true,
+					type: action.type,
 					...payload,
 				}
+			}
 
 		case DELETE_SUCCESS:
 			if (state.payload instanceof Array) {
 				const payload = payloadName ? action.payload[payloadName] : action.payload
 				const res = state.payload.filter(doc => doc.id !== payload.id)
 				return {
-					type: action.type,
-					synced: true,
 					path,
 					payload: res,
+					synced: true,
+					type: action.type,
 				}
 			}
-			if (payloadName !== "-1")
+			if (payloadName !== "-1") {
 				return {
-					type: action.type,
-					synced: true,
 					path,
 					payload: {},
-				}
-			else
-				return {
-					type: action.type,
 					synced: true,
-					path,
+					type: action.type,
 				}
+			} else {
+				return {
+					path,
+					synced: true,
+					type: action.type,
+				}
+			}
 
 		default:
 			return state

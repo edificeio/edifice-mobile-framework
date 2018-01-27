@@ -1,10 +1,10 @@
-export interface MessagesProps {
+export interface IMessagesProps {
 	ok?: boolean
 	status?: number
 	statusText?: string
 }
 
-const initialState: Array<MessagesProps> = [
+const initialState: IMessagesProps[] = [
 	{
 		ok: true,
 		status: 0,

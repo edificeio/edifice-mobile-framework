@@ -1,7 +1,7 @@
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
 import { readConversation } from "../actions/conversation"
-import { Conversations, ConversationsProps } from "../components/conversation/Conversations"
+import { Conversations, IConversationsProps } from "../components/conversation/Conversations"
 import { IThreadModel, IThreadState } from "../model/Thread"
 
 function getTitle(displayNames) {
@@ -20,8 +20,11 @@ const filterRootConversation = (elem: IThreadModel, filterCriteria): boolean => 
 		return false
 	}
 
-	if (filterCriteria) return getTitle(elem.displayNames).match(filterCriteria)
-	else return true
+	if (filterCriteria) {
+		return getTitle(elem.displayNames).match(filterCriteria)
+	} else {
+		return true
+	}
 }
 
 /**
@@ -39,4 +42,4 @@ const mapStateToProps = state => ({
 
 const dispatchAndMapActions = dispatch => bindActionCreators({ readConversation }, dispatch)
 
-export default connect<{}, {}, ConversationsProps>(mapStateToProps, dispatchAndMapActions)(Conversations)
+export default connect<{}, {}, IConversationsProps>(mapStateToProps, dispatchAndMapActions)(Conversations)

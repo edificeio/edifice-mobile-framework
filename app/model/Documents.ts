@@ -1,8 +1,8 @@
 import { Conf } from "../Conf"
 
 import { READ_SUCCESS } from "../constants/docs"
-import {matchs, PATH_DOCUMENT } from "../constants/paths"
-import {crudReducer} from "./docs";
+import { matchs, PATH_DOCUMENT } from "../constants/paths"
+import { crudReducer } from "./docs"
 
 const initialState: DocumentState = {
 	payload: [],
@@ -10,13 +10,13 @@ const initialState: DocumentState = {
 }
 
 export interface DocumentState {
-	payload: Array<Document>
+	payload: Document[]
 	synced: boolean
 }
 
 export function Documents(state: DocumentState = initialState, action): DocumentState {
 	if (matchs([PATH_DOCUMENT], action.path) && action.type === READ_SUCCESS) {
-        return crudReducer(state, [PATH_DOCUMENT], action)
+		return crudReducer(state, [PATH_DOCUMENT], action)
 	}
 	return state
 }

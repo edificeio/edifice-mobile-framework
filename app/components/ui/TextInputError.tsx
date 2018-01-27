@@ -2,7 +2,7 @@ import style from "glamorous-native"
 import * as React from "react"
 import { TextInputProperties, View } from "react-native"
 import { layoutSize } from "../../constants/layoutSize"
-import { MessagesProps } from "../../model/messages"
+import { IMessagesProps } from "../../model/messages"
 import { CommonStyles } from "../styles/common/styles"
 import { Error, hasErrorsMessage } from "./Error"
 
@@ -41,7 +41,7 @@ export interface TextInputErrorProps extends TextInputProperties {
 	fontSize?: number
 	globalErr?: boolean
 	label?: string
-	messages?: MessagesProps[]
+	messages?: IMessagesProps[]
 	marginHorizontal?: number
 	onChange?: (any) => any
 	showErr?: boolean

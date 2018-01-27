@@ -1,7 +1,7 @@
 import * as React from "react"
 import { Text, View } from "react-native"
 import { errorAlreadyCatched } from "../../constants/errFormInput"
-import { MessagesProps } from "../../model/messages"
+import { IMessagesProps } from "../../model/messages"
 import styles from "../styles/index"
 
 interface State {
@@ -11,7 +11,7 @@ interface State {
 }
 
 export interface StatusAlertProps {
-	messages?: MessagesProps[]
+	messages?: IMessagesProps[]
 }
 /**
  *
@@ -33,7 +33,7 @@ export class StatusAlert extends React.Component<StatusAlertProps, State> {
 		}
 	}
 
-	public getMessage(messages: MessagesProps) {
+	public getMessage(messages: IMessagesProps) {
 		const { status = 0, statusText = "" } = messages[0]
 
 		if (errorAlreadyCatched(status)) {

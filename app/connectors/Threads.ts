@@ -1,7 +1,7 @@
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
 import { readConversation } from "../actions/conversation"
-import { Threads, ThreadsProps } from "../components/conversation/Threads"
+import { IThreadsProps, Threads } from "../components/conversation/Threads"
 import { IThreadModel, IThreadState } from "../model/Thread"
 
 const filterThreads = (elem: IThreadModel, conversationId): boolean => {
@@ -24,4 +24,4 @@ const mapStateToProps = (state, props) => ({
 
 const dispatchAndMapActions = dispatch => bindActionCreators({ readConversation }, dispatch)
 
-export default connect<{}, {}, ThreadsProps>(mapStateToProps, dispatchAndMapActions)(Threads)
+export default connect<{}, {}, IThreadsProps>(mapStateToProps, dispatchAndMapActions)(Threads)

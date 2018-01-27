@@ -1,4 +1,3 @@
-///<reference path="../../node_modules/@types/react-navigation/index.d.ts"/>
 import { NavigationContainer, StackNavigator } from "react-navigation"
 import SignupLoginRecover from "../connectors/auth/SignupLoginRecover"
 import { tr } from "../i18n/t"
@@ -9,16 +8,16 @@ import ProfilNavigator from "./ProfilNavigator"
 
 const MainNavigator = navigator({
 	Nouveautes: {
-		screen: NouveautesNavigator,
 		navigationOptions: () => navRootOptions(tr.Nouveautes, "nouveautes"),
+		screen: NouveautesNavigator,
 	},
 	Conversation: {
-		screen: ConversationNavigator,
 		navigationOptions: () => navRootOptions(tr.Conversation, "conversation"),
+		screen: ConversationNavigator,
 	},
 	Profil: {
-		screen: ProfilNavigator,
 		navigationOptions: () => navRootOptions(tr.Profil, "profile"),
+		screen: ProfilNavigator,
 	},
 })
 
@@ -26,11 +25,11 @@ export const AppNavigator: NavigationContainer = StackNavigator(
 	{
 		Bootstrap: { screen: SignupLoginRecover },
 		Login: { screen: SignupLoginRecover },
-		RecoverPassword: { screen: SignupLoginRecover },
 		Main: { screen: MainNavigator },
+		RecoverPassword: { screen: SignupLoginRecover },
 	},
 	{
-		navigationOptions: { header: null },
 		headerMode: "none",
+		navigationOptions: { header: null },
 	}
 )

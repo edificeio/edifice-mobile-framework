@@ -9,31 +9,31 @@ import { layoutSize } from "../constants/layoutSize"
 
 export const navigator = routes =>
 	TabNavigator(routes, {
-		tabBarComponent: TabBarBottomKeyboardAward,
 		swipeEnabled: true,
-		tabBarPosition: "bottom",
+		tabBarComponent: TabBarBottomKeyboardAward,
 		tabBarOptions: {
 			activeTintColor: CommonStyles.mainColorTheme,
 			inactiveTintColor: CommonStyles.mainColorTheme,
-			labelStyle: {
-				fontSize: layoutSize.LAYOUT_12,
-				fontFamily: CommonStyles.primaryFontFamily,
-				color: CommonStyles.textTabBottomColor,
+			indicatorStyle: {
+				backgroundColor: "#ffffff",
 			},
+			labelStyle: {
+				color: CommonStyles.textTabBottomColor,
+				fontFamily: CommonStyles.primaryFontFamily,
+				fontSize: layoutSize.LAYOUT_12,
+			},
+			showIcon: true,
+			showLabel: true,
 			style: {
 				backgroundColor: CommonStyles.tabBottomColor,
-				borderTopWidth: 1,
 				borderTopColor: CommonStyles.borderColorLighter,
-				height: layoutSize.LAYOUT_50,
+				borderTopWidth: 1,
 				elevation: 1,
+				height: layoutSize.LAYOUT_50,
 			},
-			indicatorStyle: {
-				backgroundColor: "#ffffff", //hidden
-			},
-			showLabel: true,
 			upperCaseLabel: false,
-			showIcon: true,
 		},
+		tabBarPosition: "bottom",
 	})
 
 const customAnimationFunc = () => ({
@@ -54,27 +54,27 @@ export const NestedTabNavigator = routes =>
 	TabNavigator(routes, {
 		backBehavior: "none",
 		swipeEnabled: true,
-		tabBarPosition: "top",
 		tabBarOptions: {
-			labelStyle: {
-				fontSize: layoutSize.LAYOUT_13,
-			},
-			style: {
-				backgroundColor: CommonStyles.tabBackgroundColor,
-			},
 			indicatorStyle: {
 				backgroundColor: CommonStyles.selectColor,
 			},
-			showLabel: false,
+			labelStyle: {
+				fontSize: layoutSize.LAYOUT_13,
+			},
 			showIcon: true,
+			showLabel: false,
+			style: {
+				backgroundColor: CommonStyles.tabBackgroundColor,
+			},
 		},
+		tabBarPosition: "top",
 	})
 
 const TabBarLbel = style.text(
 	{
 		alignSelf: "center",
-		fontSize: layoutSize.LAYOUT_12,
 		fontFamily: CommonStyles.primaryFontFamily,
+		fontSize: layoutSize.LAYOUT_12,
 		marginBottom: layoutSize.LAYOUT_4,
 	},
 	({ focused }) => ({
@@ -88,13 +88,13 @@ const TabBarLbel = style.text(
  * @param iconName   the icon name
  */
 export const navRootOptions = (title, iconName) => ({
-	tabBarLabel: ({ focused }) => <TabBarLbel focused={focused}>{title}</TabBarLbel>,
 	tabBarIcon: ({ focused }) => <IconOnOff name={iconName} focused={focused} />,
+	tabBarLabel: ({ focused }) => <TabBarLbel focused={focused}>{title}</TabBarLbel>,
 	tabBarOptions: {
 		labelStyle: {
-			fontSize: layoutSize.LAYOUT_10,
-			fontFamily: CommonStyles.primaryFontFamily,
 			color: CommonStyles.textTabBottomColor,
+			fontFamily: CommonStyles.primaryFontFamily,
+			fontSize: layoutSize.LAYOUT_10,
 		},
 	},
 })
@@ -106,12 +106,12 @@ export const navOptions = props => {
 			paddingHorizontal: layoutSize.LAYOUT_20,
 		},
 		headerTitleStyle: {
-			color: "white",
 			alignSelf: "center",
-			textAlign: "center",
-			fontWeight: "400",
+			color: "white",
 			fontFamily: CommonStyles.primaryFontFamily,
 			fontSize: layoutSize.LAYOUT_16,
+			fontWeight: "400",
+			textAlign: "center",
 		},
 		...props,
 	}

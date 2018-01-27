@@ -1,7 +1,7 @@
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
 import { login, recoverPassword } from "../../actions/auth"
-import { SignupLoginRecover, SignupLoginRecoverProps } from "../../components/auth/SignupLoginRecover"
+import { ISignupLoginRecoverProps, SignupLoginRecover } from "../../components/auth/SignupLoginRecover"
 
 export const initialStateWithEmail = email => ({
 	email,
@@ -19,4 +19,4 @@ const mapStateToProps = (state, props) => ({
 
 const dispatchAndMapActions = dispatch => bindActionCreators({ login, recoverPassword }, dispatch)
 
-export default connect<{}, {}, SignupLoginRecoverProps>(mapStateToProps, dispatchAndMapActions)(SignupLoginRecover)
+export default connect<{}, {}, ISignupLoginRecoverProps>(mapStateToProps, dispatchAndMapActions)(SignupLoginRecover)

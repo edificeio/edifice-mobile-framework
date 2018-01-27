@@ -4,7 +4,7 @@ import { Animated } from "react-native"
 import { size } from "../../../utils/Dim"
 import { kResponsive } from "../KResponsive"
 
-export interface LogoProperties {
+export interface ILogoProperties {
 	keyboardShow?: boolean
 }
 
@@ -15,17 +15,17 @@ const AnimationWrapper = style<any>(Animated.View)(
 		justifyContent: "center",
 	},
 	({ size }) => ({
-		width: size,
 		height: size,
+		width: size,
 	})
 )
 
 const AnimationImage = style<any>(Animated.Image)({}, ({ size }) => ({
-	width: size,
 	height: size,
+	width: size,
 }))
 
-const _Logo = ({ keyboardShow }: LogoProperties) => {
+const logo = ({ keyboardShow }: ILogoProperties) => {
 	const s = keyboardShow ? size.small : size.large
 
 	return (
@@ -38,4 +38,4 @@ const _Logo = ({ keyboardShow }: LogoProperties) => {
 	)
 }
 
-export const Logo = kResponsive(_Logo)
+export const Logo = kResponsive(logo)

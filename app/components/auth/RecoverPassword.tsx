@@ -5,21 +5,21 @@ import { ERR_INPUT } from "../../constants/errFormInput"
 
 import { Form, TextInputError, ValidTextIcon } from ".."
 
-export interface RecoverPasswordState {
+export interface IRecoverPasswordState {
 	disabled: boolean
 	email: string
 }
 
-export interface RecoverPasswordProps {
+export interface IRecoverPasswordProps {
 	auth?: IAuthState
 	recoverPassword?: (email: string) => void
-	onRoute?: (string) => void
+	onRoute?: (routeName: string) => void
 }
 
-export class RecoverPassword extends React.Component<RecoverPasswordProps, RecoverPasswordState> {
+export class RecoverPassword extends React.Component<IRecoverPasswordProps, IRecoverPasswordState> {
 	public state = {
-		email: "",
 		disabled: true,
+		email: "",
 	}
 
 	public onChange(prop) {

@@ -23,26 +23,26 @@ const styles = StyleSheet.create({
 		shadowOpacity: CommonStyles.shadowOpacity,
 		shadowRadius: CommonStyles.shadowRadius,
 	},
+	modalDisconnect: {
+		alignItems: "center",
+		flex: 1,
+		justifyContent: "center",
+	},
 	text: {
 		fontSize: layoutSize.LAYOUT_14,
 	},
-	modalDisconnect: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-	},
 })
 
-export interface ProfilUtilisateurProps {
+export interface IProfilUtilisateurProps {
 	auth: any
-	logout?: (string) => void
+	logout?: (email: string) => void
 }
 
-interface ProfilUtilisateurState {
+interface IProfilUtilisateurState {
 	showDisconnect: boolean
 }
 
-export class ProfilUtilisateur extends React.Component<ProfilUtilisateurProps, ProfilUtilisateurState> {
+export class ProfilUtilisateur extends React.Component<IProfilUtilisateurProps, IProfilUtilisateurState> {
 	public state = {
 		showDisconnect: false,
 	}

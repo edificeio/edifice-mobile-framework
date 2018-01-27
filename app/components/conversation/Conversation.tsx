@@ -4,10 +4,10 @@ import { layoutSize } from "../../constants/layoutSize"
 import { IThreadModel } from "../../model/Thread"
 import { trunc } from "../../utils/html"
 import { CommonStyles } from "../styles/common/styles"
-import { Avatars } from "../ui/Avatars/Avatars"
+import { Size } from "../ui/Avatars/Avatar"
+import { Avatars } from "./Avatars"
 import { DateView } from "../ui/DateView"
 import { NonLu } from "../ui/NonLu"
-import { Size } from "../ui/Avatars/Avatar"
 
 const Item = style.touchableOpacity(
 	{
@@ -24,16 +24,16 @@ const Item = style.touchableOpacity(
 )
 
 const LeftPanel = style.view({
-	width: layoutSize.LAYOUT_50,
 	height: layoutSize.LAYOUT_50,
+	width: layoutSize.LAYOUT_50,
 })
 
 const CenterPanel = style.view({
 	alignItems: "flex-start",
 	flex: 1,
 	justifyContent: "center",
-	padding: layoutSize.LAYOUT_2,
 	marginHorizontal: layoutSize.LAYOUT_6,
+	padding: layoutSize.LAYOUT_2,
 })
 
 const RightPanel = style.view({
@@ -73,16 +73,18 @@ function getTitle(displayNames, nb) {
 }
 
 function getContent(nb, subject) {
-	if (subject.length === 0) return <style.View />
+	if (subject.length === 0) {
+		return <style.View />
+	}
 
 	return <Content nb={nb}>{trunc(subject, layoutSize.LAYOUT_32)}</Content>
 }
 
-interface ConversationProps extends IThreadModel {
+interface IConversationProps extends IThreadModel {
 	onPress: (id: string, displayNames: string[][], subject: string) => void
 }
 
-export const Conversation = ({ id, subject, date, displayNames, nb, onPress }: ConversationProps) => {
+export const Conversation = ({ id, subject, date, displayNames, nb, onPress }: IConversationProps) => {
 	return (
 		<Item nb={nb} onPress={() => onPress(id, displayNames, subject)}>
 			<LeftPanel>

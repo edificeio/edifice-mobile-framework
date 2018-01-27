@@ -1,10 +1,10 @@
-let objects = {}
+const objects = {}
 let uniqueID = 1
-let emptyObject = {}
+const emptyObject = {}
 
 export class ReactNativePropRegistry {
 	public static register(object) {
-		let id = ++uniqueID
+		const id = ++uniqueID
 		objects[id] = object
 		return id
 	}
@@ -16,7 +16,7 @@ export class ReactNativePropRegistry {
 			return emptyObject
 		}
 
-		let object = objects[id]
+		const object = objects[id]
 		if (!object) {
 			console.warn("Invalid style with id `" + id + "`. Skipping ...")
 			return emptyObject

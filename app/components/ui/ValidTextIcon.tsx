@@ -35,7 +35,7 @@ const TextStyle = style.text(
 	})
 )
 
-const isSynced = (synced: Array<boolean>) => {
+const isSynced = (synced: boolean[]) => {
 	if (synced === undefined) {
 		return true
 	}

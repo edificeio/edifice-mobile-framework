@@ -1,7 +1,7 @@
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
 import { readDocumentsFilter } from "../actions/documents"
-import { Timeline, TimelineProps } from "../components/Timeline"
+import { ITimelineProps, Timeline } from "../components/Timeline"
 
 const mapStateToProps = state => ({
 	documents: state.documents.payload,
@@ -9,4 +9,4 @@ const mapStateToProps = state => ({
 
 const dispatchAndMapActions = dispatch => bindActionCreators({ readDocumentsFilter }, dispatch)
 
-export default connect<{}, {}, TimelineProps>(mapStateToProps, dispatchAndMapActions)(Timeline)
+export default connect<{}, {}, ITimelineProps>(mapStateToProps, dispatchAndMapActions)(Timeline)

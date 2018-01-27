@@ -1,29 +1,29 @@
 import style from "glamorous-native"
 import * as React from "react"
+import { ViewStyle } from "react-native"
 import { layoutSize } from "../../constants/layoutSize"
 import { IThreadModel } from "../../model/Thread"
 import { clean, trunc } from "../../utils/html"
 import { CommonStyles } from "../styles/common/styles"
 import { Avatar, Size } from "../ui/Avatars/Avatar"
-import { ViewStyle } from "react-native"
 import { DateView } from "../ui/DateView"
 
 const Item = style.view({
+	alignItems: "center",
 	backgroundColor: CommonStyles.backgroundColor,
 	flexDirection: "row",
+	justifyContent: "center",
 	paddingHorizontal: layoutSize.LAYOUT_16,
 	paddingVertical: layoutSize.LAYOUT_12,
-	alignItems: "center",
-	justifyContent: "center",
 })
 
 const LeftPanel = style.view({
 	alignItems: "center",
 	height: layoutSize.LAYOUT_45,
 	justifyContent: "center",
-	width: layoutSize.LAYOUT_45,
 	marginRight: layoutSize.LAYOUT_12,
 	paddingBottom: layoutSize.LAYOUT_20,
+	width: layoutSize.LAYOUT_45,
 })
 
 const CenterPanel = style.view(
@@ -45,8 +45,8 @@ const ContainerContent = style.view(
 		elevation: layoutSize.LAYOUT_4,
 		flex: 1,
 		justifyContent: "center",
-		padding: layoutSize.LAYOUT_20,
 		marginBottom: layoutSize.LAYOUT_10,
+		padding: layoutSize.LAYOUT_20,
 	},
 	({ my }): ViewStyle => ({
 		backgroundColor: my ? CommonStyles.iconColorOn : "white",
@@ -68,14 +68,16 @@ const Content = style.text(
 	})
 )
 
-interface ThreadProps extends IThreadModel {
+interface IThreadProps extends IThreadModel {
 	userId: string
 }
 
-export const Thread = ({ body, date, displayNames = [], from = "", userId }: ThreadProps) => {
+export const Thread = ({ body, date, displayNames = [], from = "", userId }: IThreadProps) => {
 	const my = from === userId
 
-	if (!body) return <style.View />
+	if (!body) {
+		return <style.View />
+	}
 
 	return (
 		<Item>

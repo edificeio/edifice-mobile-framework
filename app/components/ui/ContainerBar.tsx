@@ -17,22 +17,21 @@ export const ContainerBar = style.view(
 		shadowRadius: CommonStyles.shadowRadius,
 	},
 	({ collapse }) => ({
-		flex: collapse ? 0 : 1,
-		height: collapse ? layoutSize.LAYOUT_51 : null,
+		height: collapse ? layoutSize.LAYOUT_51 : layoutSize.LAYOUT_200,
+		paddingTop: collapse ? layoutSize.LAYOUT_0 : layoutSize.LAYOUT_20,
 	})
 )
 
 export const LeftPanel = style.view({
 	alignItems: "flex-start",
-	width: layoutSize.LAYOUT_40,
 	justifyContent: "flex-start",
 	paddingTop: layoutSize.LAYOUT_14,
+	width: layoutSize.LAYOUT_40,
 })
 
 export const RightPanel = style.view({
 	alignItems: "flex-end",
-	width: layoutSize.LAYOUT_40,
 	justifyContent: "flex-start",
 	paddingTop: layoutSize.LAYOUT_14,
+	width: layoutSize.LAYOUT_40,
 })
-

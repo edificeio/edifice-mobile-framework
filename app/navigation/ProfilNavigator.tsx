@@ -7,12 +7,12 @@ import { navOptions } from "../utils/navHelper"
 
 export default stackNavigator({
 	ProfilUtilisateurNavigator: {
-		screen: ProfilUtilisateur,
 		navigationOptions: () =>
 			navOptions({
-				title: tr.Profil,
-				headerRight: <View />,
 				headerLeft: <View />,
+				headerRight: <View />,
+				title: tr.Profil,
 			}),
+		screen: ProfilUtilisateur,
 	},
 })

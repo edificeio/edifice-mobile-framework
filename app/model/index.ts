@@ -8,7 +8,7 @@ import threads from "./Thread"
 export default combineReducers({
 	auth: Auth,
 	avatars: Avatars,
-	threads,
 	documents: Documents,
 	messages: Messages,
+	threads,
 })

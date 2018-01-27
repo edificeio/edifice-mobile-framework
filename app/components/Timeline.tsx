@@ -4,18 +4,18 @@ import { Filter } from "../actions/documents"
 import { getSeqNumber } from "../utils/Store"
 import styles from "./styles"
 
-export interface TimelineProps {
+export interface ITimelineProps {
 	documents: any
 	navigation?: any
 	readDocumentsFilter: (Filter) => void
 }
 
-export class Timeline extends React.Component<TimelineProps, any> {
+export class Timeline extends React.Component<ITimelineProps, any> {
 	public componentWillMount() {
 		this.props.readDocumentsFilter(Filter.Shared)
 	}
 
-	public renderItem({ name}) {
+	public renderItem({ name }) {
 		return (
 			<TouchableNativeFeedback>
 				<View style={styles.item}>

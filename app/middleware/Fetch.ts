@@ -31,8 +31,8 @@ function checkResponse(response, path = null) {
 		if (cookies === null) {
 			return new Promise((resolve, reject) =>
 				reject({
-					ok: false,
 					loggedIn: false,
+					ok: false,
 					status: tr.Identifiant_incorrect,
 					statusText: tr.Identifiant_incorrect,
 				})
@@ -76,11 +76,11 @@ const FAKE_ROOT_PATH = "http://192.168.0.24:3000/"
 function rawFetchFormDataPromise(url, method = "post", payload = "") {
 	const fullPath = ROOT_PATH + url
 	const opts = {
-		method,
+		body: getFormData(payload),
 		headers: new Headers({
 			"Content-type": "multipart/form-data",
 		}),
-		body: getFormData(payload),
+		method,
 	}
 
 	return fetch(fullPath, opts)
@@ -89,10 +89,10 @@ function rawFetchFormDataPromise(url, method = "post", payload = "") {
 function rawFetchPromise(url, method = "GET", payload = null) {
 	const fullPath = (url === PATH_CONVERSATION ? FAKE_ROOT_PATH : ROOT_PATH) + url
 	const opts = {
-		method,
 		headers: new Headers({
 			"Content-Type": "application/json",
 		}),
+		method,
 	}
 
 	if (payload) {

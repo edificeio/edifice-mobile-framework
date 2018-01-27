@@ -1,12 +1,12 @@
 import { login } from "../actions/auth"
 import { error } from "../actions/docs"
+import { read } from "../actions/docs"
 import { CREATE_ERROR, CREATE_SUCCESS } from "../constants/docs"
 import { PATH_AUTH, PATH_LOGIN, PATH_LOGOUT, PATH_RECOVER_PASSWORD, PATH_SIGNUP } from "../constants/paths"
 import { navigate } from "../utils/navHelper"
-import { read } from "../actions/docs"
 import { getLogin, setLogin } from "../utils/Store"
 
-var initAuth = false
+let initAuth = false
 
 async function auth(dispatch) {
 	try {

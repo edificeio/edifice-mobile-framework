@@ -8,13 +8,13 @@ import { CommonStyles } from "./styles/common/styles"
 
 export let navigatorRef
 
-export interface AppScreenProps {
+export interface IAppScreenProps {
 	checkLogin?: () => void
 }
 
-interface AppScreenState {}
+interface IAppScreenState {}
 
-export class AppScreen extends React.Component<AppScreenProps, AppScreenState> {
+export class AppScreen extends React.Component<IAppScreenProps, IAppScreenState> {
 	public navigator: any
 
 	public componentDidMount() {
@@ -22,8 +22,8 @@ export class AppScreen extends React.Component<AppScreenProps, AppScreenState> {
 		this.props.checkLogin()
 		SplashScreen.close({
 			animationType: SplashScreen.animationType.scale,
-			duration: 850,
 			delay: 500,
+			duration: 850,
 		})
 	}
 

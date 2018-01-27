@@ -1,7 +1,7 @@
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
 import { logout } from "../actions/auth"
-import { ProfilUtilisateur, ProfilUtilisateurProps } from "../components/ProfilUtilisateur"
+import { IProfilUtilisateurProps, ProfilUtilisateur } from "../components/ProfilUtilisateur"
 
 const mapStateToProps = state => ({
 	auth: state.auth,
@@ -9,4 +9,4 @@ const mapStateToProps = state => ({
 
 const dispatchAndMapActions = dispatch => bindActionCreators({ logout }, dispatch)
 
-export default connect<{}, {}, ProfilUtilisateurProps>(mapStateToProps, dispatchAndMapActions)(ProfilUtilisateur)
+export default connect<{}, {}, IProfilUtilisateurProps>(mapStateToProps, dispatchAndMapActions)(ProfilUtilisateur)

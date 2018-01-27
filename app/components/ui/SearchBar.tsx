@@ -1,10 +1,10 @@
 import style from "glamorous-native"
 import * as React from "react"
 import { layoutSize } from "../../constants/layoutSize"
-import { CommonStyles } from "../styles/common/styles"
-import { CloseIcon, SearchIcon } from "./icons/SearchIcon"
 import { PATH_CONVERSATION } from "../../constants/paths"
+import { CommonStyles } from "../styles/common/styles"
 import { ContainerBar, LeftPanel, RightPanel } from "./ContainerBar"
+import { CloseIcon, SearchIcon } from "./icons/SearchIcon"
 
 export interface SearchBarProps {
 	filter?: (store: string, value: string) => object
@@ -54,7 +54,7 @@ export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
 	public render() {
 		return (
 			<ContainerBar collapse={true}>
-                <LeftPanel>
+				<LeftPanel>
 					<SearchIcon onPress={() => {}} screen={"ConversationSearch"} />
 				</LeftPanel>
 				<TextInput
@@ -67,7 +67,7 @@ export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
 					underlineColorAndroid={"transparent"}
 					value={this.state.value}
 				/>
-                <RightPanel>
+				<RightPanel>
 					<CloseIcon onPress={() => this.onClose()} />
 				</RightPanel>
 			</ContainerBar>
