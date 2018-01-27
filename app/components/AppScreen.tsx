@@ -3,10 +3,8 @@ import { StatusBar, View } from "react-native"
 import SplashScreen from "react-native-smart-splash-screen"
 import ProgressBar from "../connectors/ui/ProgressBar"
 import StatusAlert from "../connectors/ui/StatusAlert"
-import { AppNavigator } from "../navigation"
+import AppNavigator from "../navigation"
 import { CommonStyles } from "./styles/common/styles"
-
-export let navigatorRef
 
 export interface IAppScreenProps {
 	checkLogin?: () => void
@@ -18,7 +16,6 @@ export class AppScreen extends React.Component<IAppScreenProps, IAppScreenState>
 	public navigator: any
 
 	public componentDidMount() {
-		navigatorRef = this.navigator
 		this.props.checkLogin()
 		SplashScreen.close({
 			animationType: SplashScreen.animationType.scale,
@@ -33,11 +30,7 @@ export class AppScreen extends React.Component<IAppScreenProps, IAppScreenState>
 				<StatusBar backgroundColor={CommonStyles.statusBarColor} barStyle="light-content" />
 				<ProgressBar />
 				<StatusAlert />
-				<AppNavigator
-					ref={nav => {
-						this.navigator = nav
-					}}
-				/>
+				<AppNavigator />
 			</View>
 		)
 	}

@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "339845688696",
+    "firebase_url": "https://ode-mobile-ce91a.firebaseio.com",
+    "project_id": "ode-mobile-ce91a",
+    "storage_bucket": "ode-mobile-ce91a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:339845688696:android:df4c6b4a1ddfad30",
+        "android_client_info": {
+          "package_name": "com.mobileapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "339845688696-innqamn1l5pfn9ga394a1lqavstkmsjb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVRJb57ruPEgQLRS_uwmpTUq6_CjKHpD0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

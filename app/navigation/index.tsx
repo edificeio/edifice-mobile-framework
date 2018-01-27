@@ -1,35 +1,39 @@
-import { NavigationContainer, StackNavigator } from "react-navigation"
-import SignupLoginRecover from "../connectors/auth/SignupLoginRecover"
-import { tr } from "../i18n/t"
-import { navigator, navRootOptions } from "../utils/navHelper"
-import ConversationNavigator from "./ConversationNavigator"
-import NouveautesNavigator from "./NouveautesNavigator"
-import ProfilNavigator from "./ProfilNavigator"
+import React from "react"
+import { addNavigationHelpers } from "react-navigation"
+import { connect } from "react-redux"
+import AppNavigator from "./AppNavigator"
 
-const MainNavigator = navigator({
-	Nouveautes: {
-		navigationOptions: () => navRootOptions(tr.Nouveautes, "nouveautes"),
-		screen: NouveautesNavigator,
-	},
-	Conversation: {
-		navigationOptions: () => navRootOptions(tr.Conversation, "conversation"),
-		screen: ConversationNavigator,
-	},
-	Profil: {
-		navigationOptions: () => navRootOptions(tr.Profil, "profile"),
-		screen: ProfilNavigator,
-	},
+export function getCurrentRouteName(navigationState) {
+	if (!navigationState) {
+		return null
+	}
+	const route = navigationState.routes[navigationState.index]
+	if (route.routes) {
+		return getCurrentRouteName(route)
+	}
+	return route.routeName
+}
+
+export let dispatchRef
+
+const Navigation = props => (
+	<AppNavigator
+		ref={nav => {
+			dispatchRef = props.dispatch
+		}}
+		navigation={addNavigationHelpers({
+			dispatch: props.dispatch,
+			state: props.navigation,
+		})}
+	/>
+)
+
+const mapStateToProps = state => ({
+	navigation: state.navigation,
 })
 
-export const AppNavigator: NavigationContainer = StackNavigator(
-	{
-		Bootstrap: { screen: SignupLoginRecover },
-		Login: { screen: SignupLoginRecover },
-		Main: { screen: MainNavigator },
-		RecoverPassword: { screen: SignupLoginRecover },
-	},
-	{
-		headerMode: "none",
-		navigationOptions: { header: null },
-	}
-)
+const mapDispatchToProps = dispatch => ({
+	dispatch,
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Navigation)

@@ -4,10 +4,13 @@ import { Provider } from "react-redux"
 import { CommonStyles } from "./components/styles/common/styles"
 import AppScreen from "./connectors/AppScreen"
 import configureStore from "./store"
+import TrackingManager from "./tracking"
+import "./tools/firebase"
+
+const store = configureStore()
+TrackingManager.init(store)
 
 export class AppStore extends React.Component {
-	public store = configureStore()
-
 	constructor(props) {
 		super(props)
 		Text.defaultProps.style = { fontFamily: CommonStyles.primaryFontFamily }
@@ -15,7 +18,7 @@ export class AppStore extends React.Component {
 
 	public render() {
 		return (
-			<Provider store={this.store}>
+			<Provider store={store}>
 				<AppScreen />
 			</Provider>
 		)

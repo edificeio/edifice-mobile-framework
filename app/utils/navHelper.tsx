@@ -2,7 +2,7 @@ import style from "glamorous-native"
 import * as React from "react"
 import { NavigationActions, StackNavigator, TabNavigator } from "react-navigation"
 import { IconOnOff } from "../components"
-import { navigatorRef } from "../components/AppScreen"
+import { dispatchRef } from "../navigation"
 import { CommonStyles } from "../components/styles/common/styles"
 import { TabBarBottomKeyboardAward } from "../components/ui/TabBarComponent"
 import { layoutSize } from "../constants/layoutSize"
@@ -116,7 +116,6 @@ export const navOptions = props => {
 		...props,
 	}
 }
-
 export const navigate = (route, props = {}) => {
-	return navigatorRef.dispatch(NavigationActions.navigate({ routeName: route, params: props }))
+	return dispatchRef(NavigationActions.navigate({ routeName: route, params: props }))
 }
