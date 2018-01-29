@@ -3,7 +3,6 @@ import * as React from "react"
 import Carousel from "react-native-snap-carousel"
 import { Avatar, Size } from "../ui/Avatars/Avatar"
 import { layoutSize } from "../../constants/layoutSize"
-import { CommonStyles } from "../styles/common/styles"
 
 const Container = style.view({
 	alignItems: "center",
@@ -13,31 +12,23 @@ const Container = style.view({
 	justifyContent: "center",
 })
 
-const Legend = style.text({
-	alignSelf: "center",
-	color: "white",
-	fontFamily: CommonStyles.primaryFontFamilyBold,
-	marginTop: layoutSize.LAYOUT_8,
-})
-
 const Slide = style.view({
 	alignItems: "center",
-	height: layoutSize.LAYOUT_120,
-	paddingTop: layoutSize.LAYOUT_20,
-	width: layoutSize.LAYOUT_120,
+	height: layoutSize.LAYOUT_80,
+	width: layoutSize.LAYOUT_110,
 })
 
 export interface IAvatarsProps {
-	size?: Size
 	displayNames: string[][]
+	onSlideIndex?: (index: number) => void
+	size?: Size
 }
 
 export interface IAvatarsState {
 	size?: {
 		height: number
 		width: number
-	},
-	slideIndex: number,
+	}
 }
 
 const DEFAULT_AVATAR = "46c7bc61-b9dd-4c25-b164-fd6252236603"
@@ -48,7 +39,6 @@ export class Avatars extends React.Component<IAvatarsProps, IAvatarsState> {
 			height: 0,
 			width: 0,
 		},
-		slideIndex: 0,
 	}
 
 	private onLayoutDidChange = e => {
@@ -60,9 +50,12 @@ export class Avatars extends React.Component<IAvatarsProps, IAvatarsState> {
 		return (
 			<Slide>
 				<Avatar size={Size.verylarge} index={index} id={item[0]} />
-				{this.state.slideIndex === index && <Legend>{item[1]}</Legend>}
 			</Slide>
 		)
+	}
+
+	private onSnapToItem(slideIndex) {
+		this.props.onSlideIndex && this.props.onSlideIndex(slideIndex)
 	}
 
 	public render() {
@@ -87,10 +80,12 @@ export class Avatars extends React.Component<IAvatarsProps, IAvatarsState> {
 							hasParallaxImages={true}
 							inactiveSlideOpacity={0.7}
 							inactiveSlideScale={1}
-							itemWidth={layoutSize.LAYOUT_120}
-							onSnapToItem={slideIndex => this.setState({ slideIndex })}
+							itemHeight={layoutSize.LAYOUT_80}
+							itemWidth={layoutSize.LAYOUT_110}
+							onSnapToItem={index => this.onSnapToItem(index)}
 							removeClippedSubviews={false}
 							renderItem={e => this.renderItem(e)}
+							sliderHeight={layoutSize.LAYOUT_80}
 							sliderWidth={layoutSize.LAYOUT_375}
 						/>
 					</Container>

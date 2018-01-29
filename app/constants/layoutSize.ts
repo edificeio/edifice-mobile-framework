@@ -71,6 +71,7 @@ export const layoutSize = {
 	LAYOUT_120: normalize(120),
 	LAYOUT_140: normalize(140),
 	LAYOUT_160: normalize(160),
+    LAYOUT_180: normalize(180),
 	LAYOUT_200: normalize(200),
 	LAYOUT_250: normalize(250),
 	LAYOUT_275: normalize(275),

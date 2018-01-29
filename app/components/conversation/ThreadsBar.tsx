@@ -2,7 +2,7 @@ import style from "glamorous-native"
 import * as React from "react"
 import { Avatars } from "./Avatars"
 import { CommonStyles } from "../styles/common/styles"
-import { CenterPanel, ContainerBar, LeftPanel, RightPanel } from "../ui/ContainerBar"
+import { CenterPanel, ContainerBar, ContainerEndBar, ContainerTopBar, LeftPanel, RightPanel } from "../ui/ContainerBar"
 import { Icon } from "../ui/icons/Icon"
 import { Size } from "../ui/Avatars/Avatar"
 import { layoutSize } from "../../constants/layoutSize"
@@ -11,6 +11,24 @@ import { View } from "react-native"
 export interface IThreadsBarProps {
 	navigation?: any
 }
+
+const Legend14 = style.text({
+	alignSelf: "center",
+	color: "white",
+	fontFamily: CommonStyles.primaryFontFamilyBold,
+	height: layoutSize.LAYOUT_20,
+	flexWrap: "nowrap",
+})
+
+const Legend12 = style.text({
+	alignSelf: "center",
+	color: "white",
+	fontFamily: CommonStyles.primaryFontFamilyLight,
+	height: layoutSize.LAYOUT_18,
+	flexWrap: "nowrap",
+	fontSize: layoutSize.LAYOUT_11,
+	marginBottom: layoutSize.LAYOUT_25,
+})
 
 const Text = style.text(
 	{
@@ -27,10 +45,15 @@ const Text = style.text(
 export class ThreadsBar extends React.PureComponent<IThreadsBarProps, {}> {
 	public state = {
 		collapse: true,
+		slideIndex: 0,
 	}
 
 	private onPress() {
 		this.setState({ collapse: !this.state.collapse })
+	}
+
+	private onSlideIndex(slideIndex) {
+		this.setState({ slideIndex })
 	}
 
 	public render() {
@@ -40,7 +63,7 @@ export class ThreadsBar extends React.PureComponent<IThreadsBarProps, {}> {
 
 		if (collapse)
 			return (
-				<ContainerBar collapse={true}>
+				<ContainerBar>
 					<LeftPanel>
 						<Icon size={layoutSize.LAYOUT_24} name={"back"} color={"white"} onPress={() => navigation.goBack()} />
 					</LeftPanel>
@@ -56,7 +79,7 @@ export class ThreadsBar extends React.PureComponent<IThreadsBarProps, {}> {
 		else
 			return (
 				<View>
-					<ContainerBar collapse={true}>
+					<ContainerTopBar>
 						<LeftPanel>
 							<Icon size={layoutSize.LAYOUT_24} name={"back"} color={"white"} onPress={() => navigation.goBack()} />
 						</LeftPanel>
@@ -66,10 +89,16 @@ export class ThreadsBar extends React.PureComponent<IThreadsBarProps, {}> {
 						<RightPanel>
 							<Icon size={layoutSize.LAYOUT_24} name={"more"} color={"white"} />
 						</RightPanel>
-					</ContainerBar>
-					<ContainerBar collapse={false}>
-						<Avatars displayNames={displayNames} size={Size.verylarge} />
-					</ContainerBar>
+					</ContainerTopBar>
+					<ContainerEndBar>
+						<Avatars
+							onSlideIndex={slideIndex => this.onSlideIndex(slideIndex)}
+							displayNames={displayNames}
+							size={Size.verylarge}
+						/>
+						<Legend14>{displayNames[this.state.slideIndex][1]}</Legend14>
+						<Legend12>{this.state.slideIndex === 0 ? "Enseignant CM1A" : "Parent d'élève"}</Legend12>
+					</ContainerEndBar>
 				</View>
 			)
 	}

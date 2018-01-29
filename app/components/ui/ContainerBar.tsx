@@ -3,23 +3,42 @@ import * as React from "react"
 import { layoutSize } from "../../constants/layoutSize"
 import { CommonStyles } from "../styles/common/styles"
 
-export const ContainerBar = style.view(
-	{
-		alignItems: "flex-start",
-		backgroundColor: CommonStyles.mainColorTheme,
-		elevation: 5,
-		flexDirection: "row",
-		justifyContent: "space-around",
-		paddingTop: layoutSize.LAYOUT_0,
-		shadowColor: CommonStyles.shadowColor,
-		shadowOffset: CommonStyles.shadowOffset,
-		shadowOpacity: CommonStyles.shadowOpacity,
-		shadowRadius: CommonStyles.shadowRadius,
-	},
-	({ collapse }) => ({
-		height: collapse ? layoutSize.LAYOUT_51 : layoutSize.LAYOUT_160,
-	})
-)
+export const ContainerBar = style.view({
+	alignItems: "flex-start",
+	backgroundColor: CommonStyles.mainColorTheme,
+	elevation: 5,
+	flexDirection: "row",
+	justifyContent: "space-around",
+	paddingTop: layoutSize.LAYOUT_0,
+	shadowColor: CommonStyles.shadowColor,
+	shadowOffset: CommonStyles.shadowOffset,
+	shadowOpacity: CommonStyles.shadowOpacity,
+	shadowRadius: CommonStyles.shadowRadius,
+	height: layoutSize.LAYOUT_51,
+})
+
+export const ContainerTopBar = style.view({
+	alignItems: "flex-start",
+	backgroundColor: CommonStyles.mainColorTheme,
+	elevation: 5,
+	flexDirection: "row",
+	height: layoutSize.LAYOUT_51,
+	justifyContent: "space-around",
+	paddingTop: layoutSize.LAYOUT_0,
+})
+
+export const ContainerEndBar = style.view({
+	alignItems: "center",
+	backgroundColor: CommonStyles.mainColorTheme,
+	elevation: 5,
+	height: layoutSize.LAYOUT_160,
+	justifyContent: "flex-start",
+	paddingTop: layoutSize.LAYOUT_20,
+	shadowColor: CommonStyles.shadowColor,
+	shadowOffset: CommonStyles.shadowOffset,
+	shadowOpacity: CommonStyles.shadowOpacity,
+	shadowRadius: CommonStyles.shadowRadius,
+})
 
 export const LeftPanel = style.touchableOpacity({
 	alignItems: "flex-start",
