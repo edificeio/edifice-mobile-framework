@@ -64,8 +64,8 @@ export class ThreadsBar extends React.PureComponent<IThreadsBarProps, {}> {
 		if (collapse)
 			return (
 				<ContainerBar>
-					<LeftPanel>
-						<Icon size={layoutSize.LAYOUT_24} name={"back"} color={"white"} onPress={() => navigation.goBack()} />
+					<LeftPanel onPress={() => navigation.goBack()}>
+						<Icon size={layoutSize.LAYOUT_24} name={"back"} color={"white"} />
 					</LeftPanel>
 					<CenterPanel onPress={() => this.onPress()}>
 						<Avatars displayNames={displayNames} size={Size.aligned} />

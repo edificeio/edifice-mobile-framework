@@ -5,9 +5,32 @@ import { ConversationBar } from "../components/conversation/ConversationBar"
 import Threads from "../connectors/Threads"
 import SearchBar from "../connectors/ui/SearchBar"
 import { PATH_CONVERSATION } from "../constants/paths"
-import { navOptions, stackNavigator } from "../utils/navHelper"
+import { StackNavigator } from "react-navigation"
+import { tabThreadsNavigator } from "../utils/navHelper"
+import { Icon, IconOnOff } from "../components"
 
-export default stackNavigator({
+const ThreadsNavigator = tabThreadsNavigator({
+	ThreadsKeyboard: {
+		screen: Threads,
+		navigationOptions: () => ({
+			tabBarIcon: ({ focused }) => <IconOnOff name={"keyboard"} focused={focused} />,
+		}),
+	},
+	ThreadsCamera: {
+		screen: Threads,
+		navigationOptions: () => ({
+			tabBarIcon: ({ focused }) => <IconOnOff name={"camera"} focused={focused} />,
+		}),
+	},
+	ThreadsValid: {
+		screen: Threads,
+		navigationOptions: () => ({
+			tabBarIcon: ({ focused }) => <Icon name={"send_icon"} focused={focused} />,
+		}),
+	},
+})
+
+export default StackNavigator({
 	Conversation: {
 		screen: Conversation,
 		navigationOptions: ({ navigation }) => ({
@@ -21,9 +44,10 @@ export default stackNavigator({
 		}),
 	},
 	Threads: {
-		screen: Threads,
+		screen: ThreadsNavigator,
 		navigationOptions: ({ navigation }) => ({
 			header: <ThreadsBar navigation={navigation} />,
+			tabBarVisible: false,
 		}),
 	},
 })

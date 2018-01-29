@@ -36,6 +36,30 @@ export const tabNavigator = routes =>
 		tabBarPosition: "bottom",
 	})
 
+export const tabThreadsNavigator = routes =>
+	TabNavigator(routes, {
+		swipeEnabled: true,
+		tabBarComponent: TabBarBottomKeyboardAward,
+		tabBarOptions: {
+			activeTintColor: CommonStyles.mainColorTheme,
+			inactiveTintColor: CommonStyles.mainColorTheme,
+			indicatorStyle: {
+				backgroundColor: "#ffffff",
+			},
+			showIcon: true,
+			showLabel: false,
+			style: {
+				backgroundColor: CommonStyles.tabBottomColor,
+				borderTopColor: CommonStyles.borderColorLighter,
+				borderTopWidth: 1,
+				elevation: 1,
+				height: layoutSize.LAYOUT_50,
+			},
+		},
+		tabBarPosition: "bottom",
+		initialRouteName: "ThreadsValid",
+	})
+
 const customAnimationFunc = () => ({
 	screenInterpolator: () => {
 		return null

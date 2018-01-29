@@ -29,7 +29,7 @@ export class ConversationBar extends React.PureComponent<ConversationBarProps, {
 
 	public render() {
 		return (
-			<ContainerBar collapse={true}>
+			<ContainerBar>
 				<LeftPanel onPress={() => navigate("ConversationSearch")}>
 					<SearchIcon />
 				</LeftPanel>

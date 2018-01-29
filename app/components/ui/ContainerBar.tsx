@@ -40,6 +40,14 @@ export const ContainerEndBar = style.view({
 	shadowRadius: CommonStyles.shadowRadius,
 })
 
+export const ContainerFooterBar = style.view({
+	alignItems: "center",
+	backgroundColor: "white",
+	flexDirection: "row",
+	justifyContent: "flex-start",
+	height: layoutSize.LAYOUT_41,
+})
+
 export const LeftPanel = style.touchableOpacity({
 	alignItems: "flex-start",
 	height: layoutSize.LAYOUT_48,

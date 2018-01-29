@@ -54,7 +54,7 @@ export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
 
 	public render() {
 		return (
-			<ContainerBar collapse={true}>
+			<ContainerBar>
 				<LeftPanel>
 					<SearchIcon />
 				</LeftPanel>
