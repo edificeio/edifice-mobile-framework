@@ -17,11 +17,13 @@ const Legend = style.text({
 	alignSelf: "center",
 	color: "white",
 	fontFamily: CommonStyles.primaryFontFamilyBold,
-	marginTop: layoutSize.LAYOUT_5,
+	marginTop: layoutSize.LAYOUT_8,
 })
 
 const Slide = style.view({
+	alignItems: "center",
 	height: layoutSize.LAYOUT_120,
+	paddingTop: layoutSize.LAYOUT_20,
 	width: layoutSize.LAYOUT_120,
 })
 
@@ -34,7 +36,8 @@ export interface IAvatarsState {
 	size?: {
 		height: number
 		width: number
-	}
+	},
+	slideIndex: number,
 }
 
 const DEFAULT_AVATAR = "46c7bc61-b9dd-4c25-b164-fd6252236603"
@@ -45,6 +48,7 @@ export class Avatars extends React.Component<IAvatarsProps, IAvatarsState> {
 			height: 0,
 			width: 0,
 		},
+		slideIndex: 0,
 	}
 
 	private onLayoutDidChange = e => {
@@ -56,7 +60,7 @@ export class Avatars extends React.Component<IAvatarsProps, IAvatarsState> {
 		return (
 			<Slide>
 				<Avatar size={Size.verylarge} index={index} id={item[0]} />
-				<Legend>{item[1]}</Legend>
+				{this.state.slideIndex === index && <Legend>{item[1]}</Legend>}
 			</Slide>
 		)
 	}
@@ -77,16 +81,17 @@ export class Avatars extends React.Component<IAvatarsProps, IAvatarsState> {
 				return (
 					<Container onLayout={e => this.onLayoutDidChange(e)}>
 						<Carousel
+							activeSlideAlignment={"center"}
 							data={users}
+							enableMomentum={true}
 							hasParallaxImages={true}
 							inactiveSlideOpacity={0.7}
 							inactiveSlideScale={1}
 							itemWidth={layoutSize.LAYOUT_120}
-							renderItem={this.renderItem}
-							sliderWidth={layoutSize.LAYOUT_375}
-							enableMomentum={true}
-							activeSlideAlignment={"center"}
+							onSnapToItem={slideIndex => this.setState({ slideIndex })}
 							removeClippedSubviews={false}
+							renderItem={e => this.renderItem(e)}
+							sliderWidth={layoutSize.LAYOUT_375}
 						/>
 					</Container>
 				)

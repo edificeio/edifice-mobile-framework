@@ -52,18 +52,13 @@ const AlignedImage = style.image(
 	})
 )
 
-const AlignedLargeImage = style.image(
-	{
-		...StyledImage,
-		borderRadius: layoutSize.LAYOUT_35,
-		height: layoutSize.LAYOUT_71,
-		marginLeft: layoutSize.LAYOUT_30,
-		width: layoutSize.LAYOUT_71,
-	},
-	({ index }) => ({
-		zIndex: 100 - index,
-	})
-)
+const VeryLargeImage = style.image({
+	...StyledImage,
+	alignSelf: "center",
+	borderRadius: layoutSize.LAYOUT_35,
+	height: layoutSize.LAYOUT_71,
+	width: layoutSize.LAYOUT_71,
+})
 
 const SmallImage = style.image(
 	{
@@ -108,7 +103,7 @@ export const Avatar = ({ size, count = 1, id, index = 1 }: IAvatarProps) => {
 	} else if (size === Size.aligned) {
 		return <AlignedImage index={index} source={{ uri: pathMedium }} />
 	} else if (size === Size.verylarge) {
-		return <AlignedLargeImage index={index} source={{ uri: pathLarge }} />
+		return <VeryLargeImage source={{ uri: pathLarge }} />
 	} else {
 		return <SmallImage count={count} index={index} source={{ uri: pathSmall }} />
 	}

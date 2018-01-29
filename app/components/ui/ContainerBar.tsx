@@ -10,14 +10,14 @@ export const ContainerBar = style.view(
 		elevation: 5,
 		flexDirection: "row",
 		justifyContent: "space-around",
+		paddingTop: layoutSize.LAYOUT_0,
 		shadowColor: CommonStyles.shadowColor,
 		shadowOffset: CommonStyles.shadowOffset,
 		shadowOpacity: CommonStyles.shadowOpacity,
 		shadowRadius: CommonStyles.shadowRadius,
 	},
 	({ collapse }) => ({
-		height: collapse ? layoutSize.LAYOUT_51 : layoutSize.LAYOUT_200,
-		paddingTop: collapse ? layoutSize.LAYOUT_0 : layoutSize.LAYOUT_20,
+		height: collapse ? layoutSize.LAYOUT_51 : layoutSize.LAYOUT_160,
 	})
 )
 
