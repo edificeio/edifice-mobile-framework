@@ -7,7 +7,7 @@ import { CommonStyles } from "../components/styles/common/styles"
 import { TabBarBottomKeyboardAward } from "../components/ui/TabBarComponent"
 import { layoutSize } from "../constants/layoutSize"
 
-export const navigator = routes =>
+export const tabNavigator = routes =>
 	TabNavigator(routes, {
 		swipeEnabled: true,
 		tabBarComponent: TabBarBottomKeyboardAward,
@@ -113,6 +113,7 @@ export const navOptions = props => {
 			fontWeight: "400",
 			textAlign: "center",
 		},
+		headerTintColor: "white",
 		...props,
 	}
 }

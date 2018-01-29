@@ -2,7 +2,7 @@ import style from "glamorous-native"
 import * as React from "react"
 import { Avatars } from "./Avatars"
 import { CommonStyles } from "../styles/common/styles"
-import { ContainerBar, LeftPanel, RightPanel } from "../ui/ContainerBar"
+import { CenterPanel, ContainerBar, LeftPanel, RightPanel } from "../ui/ContainerBar"
 import { Icon } from "../ui/icons/Icon"
 import { Size } from "../ui/Avatars/Avatar"
 import { layoutSize } from "../../constants/layoutSize"
@@ -11,13 +11,6 @@ import { View } from "react-native"
 export interface IThreadsBarProps {
 	navigation?: any
 }
-
-const CenterPanel = style.touchableOpacity({
-	alignItems: "center",
-	flex: 1,
-	justifyContent: "center",
-	paddingTop: layoutSize.LAYOUT_2,
-})
 
 const Text = style.text(
 	{

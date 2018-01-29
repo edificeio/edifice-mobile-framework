@@ -10,7 +10,6 @@ export const ContainerBar = style.view(
 		elevation: 5,
 		flexDirection: "row",
 		justifyContent: "space-around",
-		paddingHorizontal: layoutSize.LAYOUT_20,
 		shadowColor: CommonStyles.shadowColor,
 		shadowOffset: CommonStyles.shadowOffset,
 		shadowOpacity: CommonStyles.shadowOpacity,
@@ -22,16 +21,27 @@ export const ContainerBar = style.view(
 	})
 )
 
-export const LeftPanel = style.view({
+export const LeftPanel = style.touchableOpacity({
 	alignItems: "flex-start",
+	height: layoutSize.LAYOUT_48,
 	justifyContent: "flex-start",
-	paddingTop: layoutSize.LAYOUT_14,
-	width: layoutSize.LAYOUT_40,
+	paddingHorizontal: layoutSize.LAYOUT_20,
+	paddingVertical: layoutSize.LAYOUT_14,
+	width: layoutSize.LAYOUT_60,
 })
 
-export const RightPanel = style.view({
+export const RightPanel = style.touchableOpacity({
 	alignItems: "flex-end",
+	height: layoutSize.LAYOUT_48,
 	justifyContent: "flex-start",
-	paddingTop: layoutSize.LAYOUT_14,
-	width: layoutSize.LAYOUT_40,
+	paddingHorizontal: layoutSize.LAYOUT_20,
+	paddingVertical: layoutSize.LAYOUT_14,
+	width: layoutSize.LAYOUT_60,
+})
+
+export const CenterPanel = style.touchableOpacity({
+	alignItems: "center",
+	flex: 1,
+	justifyContent: "center",
+	paddingTop: layoutSize.LAYOUT_2,
 })

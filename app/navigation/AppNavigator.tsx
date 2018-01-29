@@ -2,12 +2,12 @@
 import { NavigationContainer, StackNavigator } from "react-navigation"
 import SignupLoginRecover from "../connectors/auth/SignupLoginRecover"
 import { tr } from "../i18n/t"
-import { navigator, navRootOptions } from "../utils/navHelper"
+import { tabNavigator, navRootOptions } from "../utils/navHelper"
 import ConversationNavigator from "./ConversationNavigator"
 import NouveautesNavigator from "./NouveautesNavigator"
 import ProfilNavigator from "./ProfilNavigator"
 
-const MainNavigator = navigator({
+const MainNavigator = tabNavigator({
 	Nouveautes: {
 		screen: NouveautesNavigator,
 		navigationOptions: () => navRootOptions(tr.Nouveautes, "nouveautes"),
@@ -31,7 +31,6 @@ export const AppNavigator: NavigationContainer = StackNavigator(
 	},
 	{
 		navigationOptions: { header: null },
-		headerMode: "none",
 	}
 )
 export default AppNavigator

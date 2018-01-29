@@ -30,9 +30,16 @@ export interface IAvatarsProps {
 	displayNames: string[][]
 }
 
+export interface IAvatarsState {
+	size?: {
+		height: number
+		width: number
+	}
+}
+
 const DEFAULT_AVATAR = "46c7bc61-b9dd-4c25-b164-fd6252236603"
 
-export class Avatars extends React.Component<IAvatarsProps> {
+export class Avatars extends React.Component<IAvatarsProps, IAvatarsState> {
 	public state = {
 		size: {
 			height: 0,

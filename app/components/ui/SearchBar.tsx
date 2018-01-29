@@ -1,5 +1,6 @@
 import style from "glamorous-native"
 import * as React from "react"
+import { TextInputProperties } from "react-native"
 import { layoutSize } from "../../constants/layoutSize"
 import { PATH_CONVERSATION } from "../../constants/paths"
 import { CommonStyles } from "../styles/common/styles"
@@ -14,15 +15,15 @@ export interface SearchBarProps {
 
 const TextInput = style.textInput(
 	{
+		alignSelf: "center",
 		color: "white",
-		fontSize: layoutSize.LAYOUT_14,
 		flex: 1,
+		fontSize: layoutSize.LAYOUT_18,
+		fontWeight: "400",
 		marginLeft: layoutSize.LAYOUT_8,
-		paddingTop: layoutSize.LAYOUT_14,
 	},
 	({ value }) => ({
 		fontFamily: value.length === 0 ? CommonStyles.primaryFontFamilyLight : CommonStyles.primaryFontFamily,
-		height: layoutSize.LAYOUT_40,
 	})
 )
 
@@ -55,7 +56,7 @@ export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
 		return (
 			<ContainerBar collapse={true}>
 				<LeftPanel>
-					<SearchIcon onPress={() => {}} screen={"ConversationSearch"} />
+					<SearchIcon />
 				</LeftPanel>
 				<TextInput
 					autoFocus={true}
@@ -67,8 +68,8 @@ export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
 					underlineColorAndroid={"transparent"}
 					value={this.state.value}
 				/>
-				<RightPanel>
-					<CloseIcon onPress={() => this.onClose()} />
+				<RightPanel onPress={() => this.onClose()}>
+					<CloseIcon />
 				</RightPanel>
 			</ContainerBar>
 		)
