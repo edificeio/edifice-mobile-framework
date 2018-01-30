@@ -36,6 +36,12 @@ export const tabNavigator = routes =>
 		tabBarPosition: "bottom",
 	})
 
+const customAnimationFunc = () => ({
+	screenInterpolator: () => {
+		return null
+	},
+})
+
 export const tabThreadsNavigator = routes =>
 	TabNavigator(routes, {
 		swipeEnabled: true,
@@ -58,13 +64,8 @@ export const tabThreadsNavigator = routes =>
 		},
 		tabBarPosition: "bottom",
 		initialRouteName: "ThreadsValid",
+		animationEnabled: false,
 	})
-
-const customAnimationFunc = () => ({
-	screenInterpolator: () => {
-		return null
-	},
-})
 
 export const stackNavigator = route =>
 	StackNavigator(route, {
