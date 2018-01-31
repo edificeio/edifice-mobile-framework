@@ -74,7 +74,7 @@ const ROOT_PATH = `${Conf.platform}/`
 const FAKE_ROOT_PATH = "http://192.168.0.24:3000/"
 
 function rawFetchFormDataPromise(url, method = "post", payload = "") {
-	const fullPath = ROOT_PATH + url
+	const fullPath = (url === PATH_CONVERSATION ? FAKE_ROOT_PATH : ROOT_PATH) + url
 	const opts = {
 		body: getFormData(payload),
 		headers: new Headers({
@@ -176,7 +176,10 @@ async function createStart(dispatch, path, doc) {
 		dispatch(docActions.createSuccess(path, { ...doc, code: 200, err: 0, error: 0 }))
 		return
 	}
-	const response = await rawFetchFormDataPromise(path, "post", doc)
+	const response =
+		path === PATH_CONVERSATION
+			? await rawFetchPromise(path, "post", doc)
+			: await rawFetchFormDataPromise(path, "post", doc)
 
 	checkResponse(response, path)
 		.then(result => {

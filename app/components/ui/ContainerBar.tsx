@@ -8,26 +8,13 @@ const containerBar: ViewStyle = {
 	alignItems: "flex-start",
 	elevation: 5,
 	flexDirection: "row",
+	flexWrap: "wrap",
 	justifyContent: "flex-start",
-	height: layoutSize.LAYOUT_56,
 }
 
 export const ContainerTopBar = style.view({
 	...containerBar,
 	backgroundColor: CommonStyles.mainColorTheme,
-})
-
-export const ContainerEndBar = style.view({
-	alignItems: "center",
-	backgroundColor: CommonStyles.mainColorTheme,
-	elevation: 5,
-	height: layoutSize.LAYOUT_160,
-	justifyContent: "flex-start",
-	paddingTop: layoutSize.LAYOUT_20,
-	shadowColor: CommonStyles.shadowColor,
-	shadowOffset: CommonStyles.shadowOffset,
-	shadowOpacity: CommonStyles.shadowOpacity,
-	shadowRadius: CommonStyles.shadowRadius,
 })
 
 export const ContainerFooterBar = style.view({
@@ -36,7 +23,6 @@ export const ContainerFooterBar = style.view({
 	borderTopColor: CommonStyles.borderColorLighter,
 	borderTopWidth: 1,
 	elevation: 1,
-	height: layoutSize.LAYOUT_56,
 })
 
 const sensitiveStylePanel: ViewStyle = {
@@ -49,6 +35,10 @@ const sensitiveStylePanel: ViewStyle = {
 }
 
 export const TouchableBarPanel = style.touchableOpacity(sensitiveStylePanel)
+export const TouchableEndBarPanel = style.touchableOpacity({
+	...sensitiveStylePanel,
+	alignSelf: "flex-end",
+})
 
 const centerPanel: ViewStyle = {
 	alignItems: "center",

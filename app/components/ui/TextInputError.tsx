@@ -1,40 +1,10 @@
 import style from "glamorous-native"
 import * as React from "react"
-import { TextInputProperties, View } from "react-native"
+import { TextInputProperties } from "react-native"
 import { layoutSize } from "../../constants/layoutSize"
 import { IMessagesProps } from "../../model/messages"
 import { CommonStyles } from "../styles/common/styles"
 import { Error, hasErrorsMessage } from "./Error"
-
-export interface ContainerProps {
-	focus?: boolean
-	errMessage?: string
-	marginHorizontal?: number
-}
-
-const Container = style.view(
-	{
-		paddingTop: layoutSize.LAYOUT_4,
-		flex: 1,
-	},
-	({ focus, errMessage, marginHorizontal }: ContainerProps) => ({
-		borderBottomColor:
-			errMessage.length > 0 ? CommonStyles.errorColor : focus ? CommonStyles.iconColorOn : CommonStyles.entryfieldBorder,
-		borderBottomWidth: focus || errMessage.length > 0 ? 2 : 1,
-		marginHorizontal,
-	})
-)
-
-const TextInput = style.textInput(
-	{
-		color: CommonStyles.textInputColor,
-	},
-	({ fontSize, multiline, value }) => ({
-		fontFamily: value.length === 0 ? CommonStyles.primaryFontFamilyLight : CommonStyles.primaryFontFamily,
-		fontSize,
-		height: multiline ? layoutSize.LAYOUT_60 : layoutSize.LAYOUT_40,
-	})
-)
 
 export interface TextInputErrorProps extends TextInputProperties {
 	errCodes?: string[]
@@ -122,7 +92,7 @@ export class TextInputError extends React.Component<TextInputErrorProps, TextInp
 		const { focus } = this.state
 
 		return (
-			<View>
+			<style.View flex={1}>
 				<Container
 					errMessage={TextInputError.newKey ? "" : hasErrorsMessage({ errCodes, messages })}
 					focus={focus}
@@ -143,7 +113,37 @@ export class TextInputError extends React.Component<TextInputErrorProps, TextInp
 					/>
 				</Container>
 				{showErr && !TextInputError.newKey && <Error errCodes={errCodes} messages={messages} />}
-			</View>
+			</style.View>
 		)
 	}
 }
+
+export interface ContainerProps {
+	focus?: boolean
+	errMessage?: string
+	marginHorizontal?: number
+}
+
+const Container = style.view(
+	{
+		paddingTop: layoutSize.LAYOUT_4,
+		flex: 1,
+	},
+	({ focus, errMessage, marginHorizontal }: ContainerProps) => ({
+		borderBottomColor:
+			errMessage.length > 0 ? CommonStyles.errorColor : focus ? CommonStyles.iconColorOn : CommonStyles.entryfieldBorder,
+		borderBottomWidth: focus || errMessage.length > 0 ? 2 : 1,
+		marginHorizontal,
+	})
+)
+
+const TextInput = style.textInput(
+	{
+		color: CommonStyles.textInputColor,
+	},
+	({ fontSize, multiline, value }) => ({
+		fontFamily: value.length === 0 ? CommonStyles.primaryFontFamilyLight : CommonStyles.primaryFontFamily,
+		fontSize,
+		height: multiline ? layoutSize.LAYOUT_60 : layoutSize.LAYOUT_40,
+	})
+)
