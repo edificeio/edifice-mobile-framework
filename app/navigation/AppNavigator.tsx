@@ -2,7 +2,7 @@
 import { NavigationContainer, StackNavigator } from "react-navigation"
 import SignupLoginRecover from "../connectors/auth/SignupLoginRecover"
 import { tr } from "../i18n/t"
-import { tabNavigator, navRootOptions } from "../utils/navHelper"
+import { tabNavigator, tabRootOptions } from "../utils/navHelper"
 import ConversationNavigator from "./ConversationNavigator"
 import NouveautesNavigator from "./NouveautesNavigator"
 import ProfilNavigator from "./ProfilNavigator"
@@ -10,15 +10,15 @@ import ProfilNavigator from "./ProfilNavigator"
 const MainNavigator = tabNavigator({
 	Nouveautes: {
 		screen: NouveautesNavigator,
-		navigationOptions: () => navRootOptions(tr.Nouveautes, "nouveautes"),
+		navigationOptions: () => tabRootOptions(tr.Nouveautes, "nouveautes"),
 	},
 	Conversation: {
 		screen: ConversationNavigator,
-		navigationOptions: () => navRootOptions(tr.Conversation, "conversation"),
+		navigationOptions: () => tabRootOptions(tr.Conversation, "conversation"),
 	},
 	Profil: {
 		screen: ProfilNavigator,
-		navigationOptions: () => navRootOptions(tr.Profil, "profile"),
+		navigationOptions: () => tabRootOptions(tr.Profil, "profile"),
 	},
 })
 

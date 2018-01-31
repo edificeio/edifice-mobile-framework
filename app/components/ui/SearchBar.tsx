@@ -1,10 +1,9 @@
 import style from "glamorous-native"
 import * as React from "react"
-import { TextInputProperties } from "react-native"
 import { layoutSize } from "../../constants/layoutSize"
 import { PATH_CONVERSATION } from "../../constants/paths"
 import { CommonStyles } from "../styles/common/styles"
-import { ContainerBar, LeftPanel, RightPanel } from "./ContainerBar"
+import { ContainerTopBar, TouchableBarPanel} from "./ContainerBar"
 import { CloseIcon, SearchIcon } from "./icons/SearchIcon"
 
 export interface SearchBarProps {
@@ -12,20 +11,6 @@ export interface SearchBarProps {
 	navigation?: any
 	path?: string
 }
-
-const TextInput = style.textInput(
-	{
-		alignSelf: "center",
-		color: "white",
-		flex: 1,
-		fontSize: layoutSize.LAYOUT_18,
-		fontWeight: "400",
-		marginLeft: layoutSize.LAYOUT_8,
-	},
-	({ value }) => ({
-		fontFamily: value.length === 0 ? CommonStyles.primaryFontFamilyLight : CommonStyles.primaryFontFamily,
-	})
-)
 
 export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
 	public state = {
@@ -54,10 +39,10 @@ export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
 
 	public render() {
 		return (
-			<ContainerBar>
-				<LeftPanel>
+			<ContainerTopBar>
+				<TouchableBarPanel>
 					<SearchIcon />
-				</LeftPanel>
+				</TouchableBarPanel>
 				<TextInput
 					autoFocus={true}
 					enablesReturnKeyAutomatically={true}
@@ -68,10 +53,24 @@ export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
 					underlineColorAndroid={"transparent"}
 					value={this.state.value}
 				/>
-				<RightPanel onPress={() => this.onClose()}>
+				<TouchableBarPanel onPress={() => this.onClose()}>
 					<CloseIcon />
-				</RightPanel>
-			</ContainerBar>
+				</TouchableBarPanel>
+			</ContainerTopBar>
 		)
 	}
 }
+
+const TextInput = style.textInput(
+	{
+		alignSelf: "center",
+		color: "white",
+		flex: 1,
+		fontSize: layoutSize.LAYOUT_18,
+		fontWeight: "400",
+		marginLeft: layoutSize.LAYOUT_8,
+	},
+	({ value }) => ({
+		fontFamily: value.length === 0 ? CommonStyles.primaryFontFamilyLight : CommonStyles.primaryFontFamily,
+	})
+)

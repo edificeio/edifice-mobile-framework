@@ -9,19 +9,6 @@ import styles from "../styles/index"
 import { Icon } from "../ui/icons/Icon"
 import { Conversation } from "./Conversation"
 
-const RightButton = style.touchableOpacity({
-	backgroundColor: "#EC5D61",
-	flex: 1,
-	justifyContent: "center",
-	paddingLeft: layoutSize.LAYOUT_34,
-})
-
-const swipeoutBtns = [
-	<RightButton>
-		<Icon size={layoutSize.LAYOUT_18} color="#ffffff" name="trash" />
-	</RightButton>,
-]
-
 export interface IConversationsProps {
 	conversations: IThreadModel[]
 	navigation?: any
@@ -58,3 +45,16 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 		)
 	}
 }
+
+const RightButton = style.touchableOpacity({
+	backgroundColor: "#EC5D61",
+	flex: 1,
+	justifyContent: "center",
+	paddingLeft: layoutSize.LAYOUT_34,
+})
+
+const swipeoutBtns = [
+	<RightButton>
+		<Icon size={layoutSize.LAYOUT_18} color="#ffffff" name="trash" />
+	</RightButton>,
+]

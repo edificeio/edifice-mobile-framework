@@ -1,53 +1,41 @@
 import * as React from "react"
-import { ThreadsBar } from "../components/conversation/ThreadsBar"
 import Conversation from "../connectors/Conversations"
-import { ConversationBar } from "../components/conversation/ConversationBar"
-import Threads from "../connectors/Threads"
+import { ConversationTopBar } from "../components/conversation/ConversationTopBar"
 import SearchBar from "../connectors/ui/SearchBar"
 import { PATH_CONVERSATION } from "../constants/paths"
 import { StackNavigator } from "react-navigation"
-import { tabThreadsNavigator } from "../utils/navHelper"
-import { Icon, IconOnOff } from "../components"
+import { ThreadsNavigator } from "./ThreadsNavigator"
+import { ThreadsTopBar } from "../components/conversation/ThreadsTopBar"
 
-const ThreadsNavigator = tabThreadsNavigator({
-	ThreadsKeyboard: {
-		screen: Threads,
-		navigationOptions: () => ({
-			tabBarIcon: ({ focused }) => <IconOnOff name={"keyboard"} focused={focused} />,
-		}),
-	},
-	ThreadsCamera: {
-		screen: Threads,
-		navigationOptions: () => ({
-			tabBarIcon: ({ focused }) => <IconOnOff name={"camera"} focused={focused} />,
-		}),
-	},
-	ThreadsValid: {
-		screen: Threads,
-		navigationOptions: () => ({
-			tabBarIcon: ({ focused }) => <Icon name={"send_icon"} focused={focused} />,
-		}),
+const customAnimationFunc = () => ({
+	screenInterpolator: () => {
+		return null
 	},
 })
 
-export default StackNavigator({
-	Conversation: {
-		screen: Conversation,
-		navigationOptions: ({ navigation }) => ({
-			header: <ConversationBar navigation={navigation} />,
-		}),
+export default StackNavigator(
+	{
+		Conversation: {
+			screen: Conversation,
+			navigationOptions: ({ navigation }) => ({
+				header: <ConversationTopBar navigation={navigation} />,
+			}),
+		},
+		ConversationSearch: {
+			screen: Conversation,
+			navigationOptions: ({ navigation }) => ({
+				header: <SearchBar navigation={navigation} path={PATH_CONVERSATION} />,
+			}),
+		},
+		Threads: {
+			screen: ThreadsNavigator,
+			navigationOptions: ({ navigation }) => ({
+				header: <ThreadsTopBar navigation={navigation} />,
+				tabBarVisible: false,
+			}),
+		},
 	},
-	ConversationSearch: {
-		screen: Conversation,
-		navigationOptions: ({ navigation }) => ({
-			header: <SearchBar navigation={navigation} path={PATH_CONVERSATION} />,
-		}),
-	},
-	Threads: {
-		screen: ThreadsNavigator,
-		navigationOptions: ({ navigation }) => ({
-			header: <ThreadsBar navigation={navigation} />,
-			tabBarVisible: false,
-		}),
-	},
-})
+	{
+		transitionConfig: customAnimationFunc,
+	}
+)

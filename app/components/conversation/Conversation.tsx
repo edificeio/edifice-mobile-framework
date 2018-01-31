@@ -9,6 +9,28 @@ import { Avatars } from "./Avatars"
 import { DateView } from "../ui/DateView"
 import { NonLu } from "../ui/NonLu"
 
+interface IConversationProps extends IThreadModel {
+	onPress: (id: string, displayNames: string[][], subject: string) => void
+}
+
+export const Conversation = ({ id, subject, date, displayNames, nb, onPress }: IConversationProps) => {
+	return (
+		<Item nb={nb} onPress={() => onPress(id, displayNames, subject)}>
+			<LeftPanel>
+				<Avatars displayNames={displayNames} size={Size.small} />
+			</LeftPanel>
+			<CenterPanel>
+				{getTitle(displayNames, nb)}
+				{subject.length ? <Content nb={nb}>{trunc(subject, layoutSize.LAYOUT_32)}</Content> : <style.View />}
+			</CenterPanel>
+			<RightPanel>
+				<DateView date={date} nb={nb} />
+				<NonLu nb={nb} />
+			</RightPanel>
+		</Item>
+	)
+}
+
 const Item = style.touchableOpacity(
 	{
 		backgroundColor: CommonStyles.itemBackgroundColor,
@@ -43,15 +65,11 @@ const RightPanel = style.view({
 	width: layoutSize.LAYOUT_50,
 })
 
-const Author = style.text(
-	{
-		color: CommonStyles.textColor,
-		fontSize: layoutSize.LAYOUT_14,
-	},
-	({ nb }) => ({
-		fontFamily: nb > 0 ? CommonStyles.primaryFontFamilySemibold : CommonStyles.primaryFontFamily,
-	})
-)
+function getTitle(displayNames, nb) {
+	const title = displayNames.reduce((acc, elem) => (acc.length === 0 ? elem[1] : `${acc}, ${elem[1]}`), "")
+
+	return <Author nb={nb}>{trunc(title, layoutSize.LAYOUT_26)}</Author>
+}
 
 const Content = style.text(
 	{
@@ -66,38 +84,12 @@ const Content = style.text(
 	})
 )
 
-function getTitle(displayNames, nb) {
-	const title = displayNames.reduce((acc, elem) => (acc.length === 0 ? elem[1] : `${acc}, ${elem[1]}`), "")
-
-	return <Author nb={nb}>{trunc(title, layoutSize.LAYOUT_26)}</Author>
-}
-
-function getContent(nb, subject) {
-	if (subject.length === 0) {
-		return <style.View />
-	}
-
-	return <Content nb={nb}>{trunc(subject, layoutSize.LAYOUT_32)}</Content>
-}
-
-interface IConversationProps extends IThreadModel {
-	onPress: (id: string, displayNames: string[][], subject: string) => void
-}
-
-export const Conversation = ({ id, subject, date, displayNames, nb, onPress }: IConversationProps) => {
-	return (
-		<Item nb={nb} onPress={() => onPress(id, displayNames, subject)}>
-			<LeftPanel>
-				<Avatars displayNames={displayNames} size={Size.small} />
-			</LeftPanel>
-			<CenterPanel>
-				{getTitle(displayNames, nb)}
-				{getContent(nb, subject)}
-			</CenterPanel>
-			<RightPanel>
-				<DateView date={date} nb={nb} />
-				<NonLu nb={nb} />
-			</RightPanel>
-		</Item>
-	)
-}
+const Author = style.text(
+	{
+		color: CommonStyles.textColor,
+		fontSize: layoutSize.LAYOUT_14,
+	},
+	({ nb }) => ({
+		fontFamily: nb > 0 ? CommonStyles.primaryFontFamilySemibold : CommonStyles.primaryFontFamily,
+	})
+)

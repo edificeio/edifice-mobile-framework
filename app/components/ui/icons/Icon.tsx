@@ -9,5 +9,6 @@ export interface IconProps extends TextProperties {
 	color?: any
 	focused?: boolean
 	name?: string
+	paddingHorizontal?: number
 	size?: number
 }

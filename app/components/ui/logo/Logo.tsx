@@ -2,7 +2,7 @@ import style from "glamorous-native"
 import * as React from "react"
 import { Animated } from "react-native"
 import { size } from "../../../utils/Dim"
-import { kResponsive } from "../KResponsive"
+import { KeyboardInjection } from "../KeyboardInjection"
 
 export interface ILogoProperties {
 	keyboardShow?: boolean
@@ -38,4 +38,4 @@ const logo = ({ keyboardShow }: ILogoProperties) => {
 	)
 }
 
-export const Logo = kResponsive(logo)
+export const Logo = KeyboardInjection(logo)

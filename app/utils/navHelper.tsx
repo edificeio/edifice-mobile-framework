@@ -1,10 +1,10 @@
 import style from "glamorous-native"
 import * as React from "react"
-import { NavigationActions, StackNavigator, TabNavigator } from "react-navigation"
+import { NavigationActions, TabNavigator } from "react-navigation"
 import { IconOnOff } from "../components"
 import { dispatchRef } from "../navigation"
 import { CommonStyles } from "../components/styles/common/styles"
-import { TabBarBottomKeyboardAward } from "../components/ui/TabBarComponent"
+import { TabBarBottomKeyboardAward } from "../components/ui/HideComponentWhenKeyboardShow"
 import { layoutSize } from "../constants/layoutSize"
 
 export const tabNavigator = routes =>
@@ -29,50 +29,11 @@ export const tabNavigator = routes =>
 				borderTopColor: CommonStyles.borderColorLighter,
 				borderTopWidth: 1,
 				elevation: 1,
-				height: layoutSize.LAYOUT_50,
+				height: layoutSize.LAYOUT_56,
 			},
 			upperCaseLabel: false,
 		},
 		tabBarPosition: "bottom",
-	})
-
-const customAnimationFunc = () => ({
-	screenInterpolator: () => {
-		return null
-	},
-})
-
-export const tabThreadsNavigator = routes =>
-	TabNavigator(routes, {
-		swipeEnabled: true,
-		tabBarComponent: TabBarBottomKeyboardAward,
-		tabBarOptions: {
-			activeTintColor: CommonStyles.mainColorTheme,
-			inactiveTintColor: CommonStyles.mainColorTheme,
-			indicatorStyle: {
-				backgroundColor: "#ffffff",
-			},
-			showIcon: true,
-			showLabel: false,
-			style: {
-				backgroundColor: CommonStyles.tabBottomColor,
-				borderTopColor: CommonStyles.borderColorLighter,
-				borderTopWidth: 1,
-				elevation: 1,
-				height: layoutSize.LAYOUT_50,
-			},
-		},
-		tabBarPosition: "bottom",
-		initialRouteName: "ThreadsValid",
-		animationEnabled: false,
-	})
-
-export const stackNavigator = route =>
-	StackNavigator(route, {
-		navigationOptions: {
-			headerTintColor: CommonStyles.mainColorTheme,
-		},
-		transitionConfig: customAnimationFunc,
 	})
 
 export const NestedTabNavigator = routes =>
@@ -95,7 +56,7 @@ export const NestedTabNavigator = routes =>
 		tabBarPosition: "top",
 	})
 
-const TabBarLbel = style.text(
+const TabBarLabel = style.text(
 	{
 		alignSelf: "center",
 		fontFamily: CommonStyles.primaryFontFamily,
@@ -112,9 +73,9 @@ const TabBarLbel = style.text(
  * @param title      the title of the navigationOptionsTitle
  * @param iconName   the icon name
  */
-export const navRootOptions = (title, iconName) => ({
+export const tabRootOptions = (title, iconName) => ({
 	tabBarIcon: ({ focused }) => <IconOnOff name={iconName} focused={focused} />,
-	tabBarLabel: ({ focused }) => <TabBarLbel focused={focused}>{title}</TabBarLbel>,
+	tabBarLabel: ({ focused }) => <TabBarLabel focused={focused}>{title}</TabBarLabel>,
 	tabBarOptions: {
 		labelStyle: {
 			color: CommonStyles.textTabBottomColor,
@@ -142,6 +103,7 @@ export const navOptions = props => {
 		...props,
 	}
 }
+
 export const navigate = (route, props = {}) => {
 	return dispatchRef(NavigationActions.navigate({ routeName: route, params: props }))
 }

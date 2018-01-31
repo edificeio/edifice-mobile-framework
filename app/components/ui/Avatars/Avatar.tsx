@@ -6,7 +6,6 @@ import { layoutSize } from "../../../constants/layoutSize"
 
 export enum Size {
 	aligned,
-	bigaligned,
 	large,
 	medium,
 	small,
@@ -23,13 +22,6 @@ const LargeImage = style.image({
 	borderRadius: layoutSize.LAYOUT_24,
 	height: layoutSize.LAYOUT_45,
 	width: layoutSize.LAYOUT_45,
-})
-
-const VeryImage = style.image({
-	...StyledImage,
-	borderRadius: layoutSize.LAYOUT_24,
-	height: layoutSize.LAYOUT_100,
-	width: layoutSize.LAYOUT_100,
 })
 
 const MediumImage = style.image({

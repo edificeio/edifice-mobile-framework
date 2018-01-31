@@ -2,17 +2,32 @@ import * as React from "react"
 import { View } from "react-native"
 import ProfilUtilisateur from "../connectors/ProfilUtilisateur"
 import { tr } from "../i18n/t"
-import { stackNavigator } from "../utils/navHelper"
 import { navOptions } from "../utils/navHelper"
+import { CommonStyles } from "../components/styles/common/styles"
+import { StackNavigator } from "react-navigation"
 
-export default stackNavigator({
-	ProfilUtilisateurNavigator: {
-		navigationOptions: () =>
-			navOptions({
-				headerLeft: <View />,
-				headerRight: <View />,
-				title: tr.Profil,
-			}),
-		screen: ProfilUtilisateur,
+const customAnimationFunc = () => ({
+	screenInterpolator: () => {
+		return null
 	},
 })
+
+export default StackNavigator(
+	{
+		ProfilUtilisateurNavigator: {
+			navigationOptions: () =>
+				navOptions({
+					headerLeft: <View />,
+					headerRight: <View />,
+					title: tr.Profil,
+				}),
+			screen: ProfilUtilisateur,
+		},
+	},
+	{
+		navigationOptions: {
+			headerTintColor: CommonStyles.mainColorTheme,
+		},
+		transitionConfig: customAnimationFunc,
+	}
+)

@@ -2,12 +2,12 @@ import * as React from "react"
 
 import { EmitterSubscription, Keyboard, Platform } from "react-native"
 
-export interface KComponentState {
+export interface KeyboardInjectionState {
 	keyboardShow: boolean
 }
 
-export const kResponsive = WrappedComponent => {
-	return class KComponent extends React.Component<any, KComponentState> {
+export const KeyboardInjection = WrappedComponent => {
+	return class KComponent extends React.Component<any, KeyboardInjectionState> {
 		public keyboardDidShowListener: EmitterSubscription
 		public keyboardDidHideListener: EmitterSubscription
 		public state = {

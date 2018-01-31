@@ -1,20 +1,24 @@
-import style from "glamorous-native"
 import * as React from "react"
-import { ContainerFooterBar } from "../ui/ContainerBar"
+import { CenterPanel, ContainerFooterBar, TouchableBarPanel } from "../ui/ContainerBar"
 import { layoutSize } from "../../constants/layoutSize"
-import { IconOnOff } from ".."
+import { Icon, IconOnOff } from ".."
 
-export interface IThreadsBarProps {
-	navigation?: any
-}
+export interface IThreadsBarProps {}
 
 export class ThreadsFooterBar extends React.PureComponent<IThreadsBarProps, {}> {
 	public render() {
 		return (
 			<ContainerFooterBar>
-				<IconOnOff size={layoutSize.LAYOUT_24} name={"keyboard"} />
-				<IconOnOff size={layoutSize.LAYOUT_24} name={"camera"} />
-				<IconOnOff size={layoutSize.LAYOUT_24} name={"more"} />
+				<TouchableBarPanel>
+					<IconOnOff name={"keyboard"} />
+				</TouchableBarPanel>
+				<TouchableBarPanel>
+					<IconOnOff name={"camera"} />
+				</TouchableBarPanel>
+				<TouchableBarPanel>
+					<Icon size={layoutSize.LAYOUT_22} name={"more"} />
+				</TouchableBarPanel>
+				<CenterPanel />
 			</ContainerFooterBar>
 		)
 	}
