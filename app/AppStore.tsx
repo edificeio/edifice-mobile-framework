@@ -1,7 +1,7 @@
 import * as React from "react"
 import { Text } from "react-native"
 import { Provider } from "react-redux"
-import { CommonStyles } from "./components/styles/common/styles"
+import { CommonStyles } from "./styles/common/styles"
 import AppScreen from "./connectors/AppScreen"
 import configureStore from "./store"
 import TrackingManager from "./tracking"

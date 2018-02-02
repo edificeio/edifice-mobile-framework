@@ -1,6 +1,6 @@
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
-import { TextInputError, TextInputErrorProps } from "../../components/ui/TextInputError"
+import { TextInputError, TextInputErrorProps } from "../../ui/TextInputError"
 
 const mapStateToProps = state => ({
 	messages: state.messages,

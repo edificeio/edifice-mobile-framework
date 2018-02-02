@@ -195,7 +195,7 @@ const initialState: IThreadState = {
 			id: "be885ce6-8b90-4692-82e6-1d2b55cf6b52",
 			parent_id: "50139a48-1e5b-4fe4-9875-d80a69937069",
 			subject: "Discussion à 4",
-			body: '<br><br><div class="signature new-signature">discussion a 4 : chantal masoli parle</div>',
+			body: '<br><br><div class="signature new-signature"><b>discussion a 4</b> : chantal masoli parle :)</div>',
 			from: "2bacdfd2-b59c-4b21-a23e-f6346e02fc4a",
 			fromName: null,
 			to: ["e4d5cd13-d44c-4bd8-8f8e-a3e8ad3d2ca5"],

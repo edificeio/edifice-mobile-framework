@@ -46,7 +46,7 @@ Contient aussi le paramètre de proguard (voir generation apk à la suite du doc
 
 Les icones vectoriels (svg) seront mis dans une font au format truetype (ttf).
 
-Les icones doivent respecter certaines conditions pour etre transformé en police truetype par l'oitil icomoon: https://icomoon.io/app/#/select
+Les icones doivent respecter certaines conditions pour etre transformé en police truetype par l'outil icomoon: https://icomoon.io/app/#/select
 
 On utilisera l'outil Inkscape pour verifier la conformité de l'icone SVG:
 
@@ -131,8 +131,10 @@ npm run apk
 
 ## Clean
 
+To do if you have build or deployment problem
+
 ```
-npm run miniclean
+npm run clean
 ```
 
 ### For upgrading react-native

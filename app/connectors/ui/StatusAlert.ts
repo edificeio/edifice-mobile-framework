@@ -1,6 +1,6 @@
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
-import { StatusAlert, StatusAlertProps } from "../../components/ui/StatusAlert"
+import { StatusAlert, StatusAlertProps } from "../../ui/StatusAlert"
 
 const mapStateToProps = state => ({
 	messages: state.messages,

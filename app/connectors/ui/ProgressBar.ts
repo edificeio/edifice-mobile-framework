@@ -1,6 +1,6 @@
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
-import { ProgressBar } from "../../components/ui/ProgressBar"
+import { ProgressBar } from "../../ui/ProgressBar"
 
 const mapStateToProps = state => ({
 	synced: [state.auth.synced],

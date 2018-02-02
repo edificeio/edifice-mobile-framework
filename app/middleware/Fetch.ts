@@ -1,24 +1,9 @@
 import FormData from "form-data"
-import RNFetchBlob from "react-native-fetch-blob"
 import * as docActions from "../actions/docs"
 import { Conf } from "../Conf"
 import * as TYPES from "../constants/docs"
-import { matchs, PATH_AVATAR, PATH_CONVERSATION, PATH_LOGIN, PATH_LOGOUT, replace1 } from "../constants/paths"
+import { PATH_CONVERSATION, PATH_CREATE_CONVERSATION, PATH_LOGIN, PATH_LOGOUT, replace1 } from "../constants/paths"
 import { tr } from "../i18n/t"
-
-function getXsrf(cookies) {
-	const cookiesSplit = cookies.split(";")
-	for (let i = 0; i < cookiesSplit.length; i++) {
-		const cookie = {
-			name: cookiesSplit[i].split("=")[0].trim(),
-			value: cookiesSplit[i].split("=")[1].trim(),
-		}
-		if (cookie.name === "XSRF-TOKEN") {
-			return cookie.value
-		}
-	}
-	return ""
-}
 
 function checkResponse(response, path = null) {
 	if (response.headers === undefined) {
@@ -33,8 +18,8 @@ function checkResponse(response, path = null) {
 				reject({
 					loggedIn: false,
 					ok: false,
-					status: tr.Identifiant_incorrect,
-					statusText: tr.Identifiant_incorrect,
+					status: tr.Incorrect_login_or_password,
+					statusText: tr.Incorrect_login_or_password,
 				})
 			)
 		}
@@ -71,10 +56,9 @@ function isError({ ok = true, status = 200 }) {
 }
 
 const ROOT_PATH = `${Conf.platform}/`
-const FAKE_ROOT_PATH = "http://192.168.0.24:3000/"
 
 function rawFetchFormDataPromise(url, method = "post", payload = "") {
-	const fullPath = (url === PATH_CONVERSATION ? FAKE_ROOT_PATH : ROOT_PATH) + url
+	const fullPath = ROOT_PATH + url
 	const opts = {
 		body: getFormData(payload),
 		headers: new Headers({
@@ -87,7 +71,7 @@ function rawFetchFormDataPromise(url, method = "post", payload = "") {
 }
 
 function rawFetchPromise(url, method = "GET", payload = null) {
-	const fullPath = (url === PATH_CONVERSATION ? FAKE_ROOT_PATH : ROOT_PATH) + url
+	const fullPath = ROOT_PATH + url
 	const opts = {
 		headers: new Headers({
 			"Content-Type": "application/json",
@@ -133,7 +117,7 @@ export default store => next => action => {
 async function readStart(dispatch, path) {
 	const response = await rawFetchPromise(path)
 
-	checkResponse(response)
+	checkResponse(response, path)
 		.then(result => {
 			isError(result)
 				? dispatch(docActions.crudError(TYPES.READ_ERROR, path, result))
@@ -154,48 +138,54 @@ async function readStart(dispatch, path) {
 async function readIdStart(dispatch, path, id) {
 	const completePath = replace1(path, id)
 
-	const response = matchs([PATH_AVATAR], path)
-		? await RNFetchBlob.fetch("GET", `${ROOT_PATH}${completePath}`)
-		: await rawFetchPromise(completePath)
+	try {
+		const response = await rawFetchPromise(completePath)
 
-	checkResponse(response)
-		.then(result => {
-			isError(result)
-				? dispatch(docActions.crudError(TYPES.READ_ERROR, path, result))
-				: dispatch(docActions.readIdSuccess(completePath, id, result))
-		})
-		.catch(err => {
-			dispatch(docActions.crudError(TYPES.READ_ERROR, path, err))
-		})
+		checkResponse(response, path)
+			.then(result => {
+				isError(result)
+					? dispatch(docActions.crudError(TYPES.READ_ERROR, path, result))
+					: dispatch(docActions.readIdSuccess(completePath, id, result))
+			})
+			.catch(err => {
+				dispatch(docActions.crudError(TYPES.READ_ERROR, path, err))
+			})
+	} catch (ex) {
+		console.log(`Exception readIdStart`)
+	}
 }
 
 async function createStart(dispatch, path, doc) {
 	// temp
 
-	if (path === PATH_LOGOUT) {
-		dispatch(docActions.createSuccess(path, { ...doc, code: 200, err: 0, error: 0 }))
-		return
-	}
-	const response =
-		path === PATH_CONVERSATION
-			? await rawFetchPromise(path, "post", doc)
-			: await rawFetchFormDataPromise(path, "post", doc)
+	try {
+		if (path === PATH_LOGOUT) {
+			dispatch(docActions.createSuccess(path, { ...doc, code: 200, err: 0, error: 0 }))
+			return
+		}
+		const response =
+			path === PATH_CREATE_CONVERSATION
+				? await rawFetchPromise(path, "post", doc)
+				: await rawFetchFormDataPromise(path, "post", doc)
 
-	checkResponse(response, path)
-		.then(result => {
-			isError(result)
-				? dispatch(docActions.crudError(TYPES.CREATE_ERROR, path, result))
-				: dispatch(docActions.createSuccess(path, { ...doc, ...result }))
-		})
-		.catch(err => {
-			dispatch(docActions.crudError(TYPES.CREATE_ERROR, path, err))
-		})
+		checkResponse(response, path)
+			.then(result => {
+				isError(result)
+					? dispatch(docActions.crudError(TYPES.CREATE_ERROR, path, result))
+					: dispatch(docActions.createSuccess(path, { ...doc, ...result }))
+			})
+			.catch(err => {
+				dispatch(docActions.crudError(TYPES.CREATE_ERROR, path, err))
+			})
+	} catch (ex) {
+		console.log(`Exception readIdStart`)
+	}
 }
 
 async function updateStart(dispatch, path, aDoc) {
 	const response = await rawFetchPromise(`${aDoc.path}/${aDoc.id}`, "put", aDoc)
 
-	checkResponse(response)
+	checkResponse(response, path)
 		.then(result => {
 			isError(result)
 				? dispatch(docActions.crudError(TYPES.UPDATE_ERROR, aDoc.path, result))
@@ -209,7 +199,7 @@ async function updateStart(dispatch, path, aDoc) {
 async function delStart(dispatch, aDoc) {
 	const response = await rawFetchPromise(`${aDoc.path}/${aDoc.id}`, "delete", aDoc)
 
-	checkResponse(response)
+	checkResponse(response, aDoc.path)
 		.then(result => {
 			isError(result)
 				? dispatch(docActions.crudError(TYPES.CREATE_ERROR, aDoc.path, result))

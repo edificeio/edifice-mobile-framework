@@ -1,7 +1,7 @@
 import { tr } from "../i18n/t"
 
 export function errorAlreadyCatched(error) {
-	if (error === tr.Identifiant_incorrect) {
+	if (error === tr.Incorrect_login_or_password) {
 		return true
 	}
 
@@ -14,6 +14,6 @@ export function errorAlreadyCatched(error) {
  * @type {{email: [null], password: [null], pseudo: [null], messageAppel: [null], first_name: [null], last_name: [null], phone: [null], cardBank: [null]}}
  */
 export const ERR_INPUT = {
-	login: [tr.Identifiant_incorrect],
+	login: [tr.Incorrect_login_or_password],
 	email: [],
 }

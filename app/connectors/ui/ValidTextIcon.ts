@@ -1,5 +1,5 @@
 import { connect } from "react-redux"
-import { ValidTextIcon, ValidTextIconProps } from "../../components/ui/ValidTextIcon"
+import { ValidTextIcon, ValidTextIconProps } from "../../ui/ValidTextIcon"
 
 const mapStateToProps = state => ({
 	synced: [state.auth.synced],

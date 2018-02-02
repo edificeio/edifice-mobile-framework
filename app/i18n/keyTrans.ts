@@ -1,17 +1,17 @@
 /*** Fichier généré automatiquement par "npm run lang" ***/
 /*** Ne pas modifier ***/
 
-export const keyTrans = (I18n) => ({
-   Conversation : I18n.t("Conversation"),
-   Ecrivez_un_message : I18n.t("Ecrivez_un_message"),
-   Etes_vous_sur_de_vouloir : I18n.t("Etes_vous_sur_de_vouloir"),
-   Identifiant : I18n.t("Identifiant"),
-   Identifiant_incorrect : I18n.t("Identifiant_incorrect"),
-   Mot_de_passe_oublie : I18n.t("Mot_de_passe_oublie"),
-   Mot_de_passe : I18n.t("Mot_de_passe"),
-   Nouveautes : I18n.t("Nouveautes"),
-   Profil : I18n.t("Profil"),
-   Se_connecter : I18n.t("Se_connecter"),
-   Se_deconnecter : I18n.t("Se_deconnecter"),
-   Vous_deconnecter : I18n.t("Vous_deconnecter"),
+export const keyTrans = I18n => ({
+	Conversation: I18n.t("Conversation"),
+	Write_a_message: I18n.t("Write_a_message"),
+	Are_you_sure: I18n.t("Are_you_sure"),
+	Login: I18n.t("Login"),
+	Incorrect_login_or_password: I18n.t("Incorrect_login_or_password"),
+	Password_forgotten: I18n.t("Password_forgotten"),
+	Password: I18n.t("Password"),
+	News: I18n.t("News"),
+	Profile: I18n.t("Profile"),
+	Connect: I18n.t("Connect"),
+	Disconnect: I18n.t("Disconnect"),
+	to_disconnect: I18n.t("to_disconnect"),
 })

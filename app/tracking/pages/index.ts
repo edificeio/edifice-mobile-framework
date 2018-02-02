@@ -1,5 +1,5 @@
-import nouveautes from './nouveautes';
+import nouveautes from "./nouveautes"
 
 export default {
-	'Nouveautes': nouveautes,
+	Nouveautes: nouveautes,
 }

@@ -1,7 +1,7 @@
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
 import { readConversation } from "../actions/conversation"
-import { Conversations, IConversationsProps } from "../components/conversation/Conversations"
+import { Conversations, IConversationsProps } from "../conversation/Conversations"
 import { IThreadModel, IThreadState } from "../model/Thread"
 
 function getTitle(displayNames) {

@@ -1,11 +1,11 @@
 import * as React from "react"
+import { StackNavigator } from "react-navigation"
 import Conversation from "../connectors/Conversations"
-import { ConversationTopBar } from "../components/conversation/ConversationTopBar"
+import { ConversationTopBar } from "../conversation/ConversationTopBar"
 import SearchBar from "../connectors/ui/SearchBar"
 import { PATH_CONVERSATION } from "../constants/paths"
-import { StackNavigator } from "react-navigation"
 import { ThreadsNavigator } from "./ThreadsNavigator"
-import { ThreadsTopBar } from "../components/conversation/ThreadsTopBar"
+import { ThreadsTopBar } from "../conversation/ThreadsTopBar"
 
 const customAnimationFunc = () => ({
 	screenInterpolator: () => {

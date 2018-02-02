@@ -1,7 +1,7 @@
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
 import { readConversation } from "../actions/conversation"
-import { IThreadsProps, Threads } from "../components/conversation/Threads"
+import { IThreadsProps, Threads } from "../conversation/Threads"
 import { IThreadModel, IThreadState } from "../model/Thread"
 
 const filterThreads = (elem: IThreadModel, conversationId): boolean => {

@@ -1,14 +1,14 @@
 {
     "Conversation" : "Conversation",
-    "Ecrivez_un_message" : "Ecrivez un message...",
-    "Etes_vous_sur_de_vouloir" : "Êtes-vous sûr de vouloir",
-    "Identifiant" : "Identifiant",
-    "Identifiant_incorrect" : "L'identifiant ou le mot de passe est incorrect",
-    "Mot_de_passe_oublie" : "Mot de passe oublié?",
-    "Mot_de_passe" : "Mot de passe",
-    "Nouveautes" : "Nouveautés",
-    "Profil" : "Profil",
-    "Se_connecter" : "Se connecter",
-    "Se_deconnecter" : "Se déconnecter",
-    "Vous_deconnecter" : "vous déconnecter ?"
+    "Write_a_message" : "Ecrivez un message...",
+    "Are_you_sure" : "Êtes-vous sûr de vouloir",
+    "Login" : "Identifiant",
+    "Incorrect_login_or_password" : "L'identifiant ou le mot de passe est incorrect",
+    "Password_forgotten" : "Mot de passe oublié?",
+    "Password" : "Mot de passe",
+    "News" : "Nouveautés",
+    "Profile" : "Profil",
+    "Connect" : "Se connecter",
+    "Disconnect" : "Se déconnecter",
+    "to_disconnect" : "vous déconnecter ?"
 }

@@ -1,11 +1,8 @@
-export function clean(html, truncLength) {
-	const i = html.indexOf("<div")
-	const deb = html.indexOf(">", i)
-	let res = html.substr(deb + 1)
-	const j = res.indexOf("</div>")
-	res = res.substr(0, j)
+const escape = "<br><br>"
 
-	return trunc(res.replace("<br>", ", "), truncLength)
+export function clean(html) {
+	if (html.startsWith(escape)) return html.substr(escape.length)
+	return html
 }
 
 export function trunc(res, truncLength) {

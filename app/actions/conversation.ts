@@ -1,4 +1,4 @@
-import { PATH_CONVERSATION } from "../constants/paths"
+import { PATH_CONVERSATION, PATH_CREATE_CONVERSATION } from "../constants/paths"
 import { create, read } from "./docs"
 
 /**
@@ -13,4 +13,4 @@ export const readConversation = () => read(PATH_CONVERSATION, true)
  *
  * @param page   page à lire de la conversation   id de l'expert
  */
-export const createConversation = payload => create(PATH_CONVERSATION, payload, false)
+export const createConversation = payload => create(PATH_CREATE_CONVERSATION, payload, false)

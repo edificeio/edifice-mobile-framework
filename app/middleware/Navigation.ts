@@ -1,21 +1,22 @@
-import { CREATE_ERROR, CREATE_SUCCESS } from "../constants/docs"
+import { CREATE_SUCCESS } from "../constants/docs"
 import { PATH_LOGIN, PATH_LOGOUT, PATH_RECOVER_PASSWORD, PATH_SIGNUP } from "../constants/paths"
 import { navigate } from "../utils/navHelper"
 
 export default store => next => action => {
 	const returnValue = next(action)
 
-	if (action.path && (action.path === PATH_LOGIN || action.path === PATH_SIGNUP) && action.type === CREATE_SUCCESS) {
-		navigate("Main")
-	}
+	if (!action.path) return returnValue
 
-	// The auth flow should be refactored...Going back to login is a nightmare...
-	if (action.path && action.path === PATH_RECOVER_PASSWORD && action.type === CREATE_SUCCESS) {
-		navigate("Login")
-	}
+	switch (action.path) {
+		case PATH_LOGIN:
+		case PATH_SIGNUP:
+			if (action.type === CREATE_SUCCESS) navigate("Main")
+			break
 
-	if (action.path && action.path === PATH_LOGOUT) {
-		navigate("Login", { email: action.payload.email })
+		case PATH_RECOVER_PASSWORD:
+		case PATH_LOGOUT:
+			navigate("Login", { email: action.payload.email })
+			break
 	}
 
 	return returnValue
