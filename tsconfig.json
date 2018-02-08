@@ -15,6 +15,6 @@
             "core-js", "react", "react-native", "glamorous-native",
             "react-navigation", "redux", "react-redux"
         ]
-    },
+    }
 }
 

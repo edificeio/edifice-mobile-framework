@@ -65,7 +65,7 @@ export const layoutSize = {
 	LAYOUT_68: normalize(68),
 	LAYOUT_70: normalize(70),
 	LAYOUT_71: normalize(71),
-    LAYOUT_73: normalize(73),
+	LAYOUT_73: normalize(73),
 	LAYOUT_75: normalize(75),
 	LAYOUT_80: normalize(80),
 	LAYOUT_90: normalize(90),
@@ -78,6 +78,6 @@ export const layoutSize = {
 	LAYOUT_200: normalize(200),
 	LAYOUT_250: normalize(250),
 	LAYOUT_275: normalize(275),
-    LAYOUT_300: normalize(300),
+	LAYOUT_300: normalize(300),
 	LAYOUT_375: normalize(375),
 }

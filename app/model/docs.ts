@@ -15,13 +15,13 @@ export const crudReducer = (state, paths: string[], action, payloadName: string 
 		return state
 	}
 
-	const { path } = action
+	const { path, merge = false } = action
 
 	if (action.type.indexOf("_REQUEST") > 0) {
 		return { ...state, synced: action.synced, id: action.id ? action.id : "" }
 	}
 	if (action.type.indexOf("_ERROR") > 0) {
-		return { ...state, synced: false }
+		return { ...state, synced: true }
 	}
 
 	switch (action.type) {
@@ -38,7 +38,7 @@ export const crudReducer = (state, paths: string[], action, payloadName: string 
 			if (payload instanceof Array) {
 				return {
 					path,
-					payload,
+					payload: [...state.payload, ...payload],
 					synced: true,
 					type: action.type,
 				}

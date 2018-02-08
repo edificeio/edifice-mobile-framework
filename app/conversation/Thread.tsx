@@ -5,7 +5,8 @@ import HTML from "react-native-render-html"
 import { layoutSize } from "../constants/layoutSize"
 import { IThreadModel } from "../model/Thread"
 import { CommonStyles } from "../styles/common/styles"
-import { Avatar, Size } from "../ui/Avatar"
+import { Size } from "../ui/Avatar"
+import { Avatar } from "../ui/Avatar"
 import { DateView } from "../ui/DateView"
 import { clean } from "../utils/html"
 
@@ -34,7 +35,12 @@ export const Thread = ({ body, date, displayNames = [], from = "", userId }: ITh
 				)}
 			<CenterPanel my={my}>
 				<ContainerContent my={my}>
-					<HTML html={clean(body)} containerStyle={containerStyle} imagesMaxWidth={layoutSize.LAYOUT_300} tagsStyles={tagsStyles} />
+					<HTML
+						html={clean(body)}
+						containerStyle={containerStyle}
+						imagesMaxWidth={layoutSize.LAYOUT_300}
+						tagsStyles={tagsStyles}
+					/>
 				</ContainerContent>
 				<DateView date={date} />
 			</CenterPanel>

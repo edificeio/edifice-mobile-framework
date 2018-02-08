@@ -1,39 +1,18 @@
 import React from "react"
-import { addNavigationHelpers } from "react-navigation"
-import { connect } from "react-redux"
-import AppNavigator from "./AppNavigator"
+import { AppNavigator } from "./AppNavigator"
 
-export function getCurrentRouteName(navigationState) {
+// import { Tracking } from "../tracking/TrackingManager"
+
+// Tracking.init()
+
+export function getCurrentRoute(navigationState) {
 	if (!navigationState) {
 		return null
 	}
 	const route = navigationState.routes[navigationState.index]
 	if (route.routes) {
-		return getCurrentRouteName(route)
+		return getCurrentRoute(route)
 	}
-	return route.routeName
+	return route
 }
 
-export let dispatchRef
-
-const Navigation = props => (
-	<AppNavigator
-		ref={nav => {
-			dispatchRef = props.dispatch
-		}}
-		navigation={addNavigationHelpers({
-			dispatch: props.dispatch,
-			state: props.navigation,
-		})}
-	/>
-)
-
-const mapStateToProps = state => ({
-	navigation: state.navigation,
-})
-
-const mapDispatchToProps = dispatch => ({
-	dispatch,
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(Navigation)

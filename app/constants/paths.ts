@@ -1,18 +1,18 @@
+export const PATH_AUTH = "auth/oauth2/userinfo"
 export const PATH_AVATAR = "workspace/document/$1?thumbnail=48x48"
 
-export const PATH_CONVERSATION = "threads/list"
-export const PATH_CREATE_CONVERSATION = "send"
-export const PATH_PREVIOUS_MESSAGES = "thread/previous-messages/$1"
-export const PATH_NEW_MESSAGES = "thread/new-messages/$1"
-
-export const PATH_DOCUMENT = "workspace/documents?filter=$1"
-
-export const PATH_SIGNUP = "auth/signup"
+export const PATH_CONVERSATION = "conversation/threads/list"
+export const PATH_CREATE_CONVERSATION = "conversation/send"
 export const PATH_LOGIN = "auth/login"
-export const PATH_AUTH = "auth/oauth2/userinfo"
 export const PATH_LOGOUT = "auth/logout"
-export const PATH_RECOVER_PASSWORD = "auth/pass"
+export const PATH_NEWS = "timeline/lastNotifications?page=$1&type=BLOG"
 
+export const PATH_NEW_MESSAGES = "conversation/thread/new-messages/$1"
+export const PATH_PREVIOUS_MESSAGES = "conversation/thread/previous-messages/$1"
+export const PATH_RECOVER_PASSWORD = "auth/pass"
+export const PATH_SIGNUP = "auth/signup"
+
+export const PATH_USER = "/userbook/api/person?id=$1"
 export const PATH_ERROR_RESET = "/RESET"
 
 export function match(path1, path2) {

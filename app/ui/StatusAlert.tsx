@@ -36,7 +36,7 @@ export class StatusAlert extends React.Component<StatusAlertProps, State> {
 	public getMessage(messages: IMessagesProps) {
 		const { status = 0, statusText = "" } = messages[0]
 
-		if (errorAlreadyCatched(status)) {
+		if (errorAlreadyCatched(statusText)) {
 			return { status: 0, statusText: "" }
 		}
 

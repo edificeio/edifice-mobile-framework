@@ -3,20 +3,23 @@ import { StatusBar, View } from "react-native"
 import SplashScreen from "react-native-smart-splash-screen"
 import ProgressBar from "./connectors/ui/ProgressBar"
 import StatusAlert from "./connectors/ui/StatusAlert"
-import AppNavigator from "./navigation/index"
 import { CommonStyles } from "./styles/common/styles"
+import { AppNavigator } from "./navigation/AppNavigator"
+import { getCurrentRoute } from "./navigation"
+import { Tracking } from "./tracking/TrackingManager"
 
-export interface IAppScreenProps {
-	checkLogin?: () => void
-}
+
+export interface IAppScreenProps {}
 
 interface IAppScreenState {}
 
+export let navigationRef = null
+
 export class AppScreen extends React.Component<IAppScreenProps, IAppScreenState> {
-	public navigator: any
+	navigator: any
 
 	public componentDidMount() {
-		this.props.checkLogin()
+		navigationRef = this.navigator
 		SplashScreen.close({
 			animationType: SplashScreen.animationType.scale,
 			delay: 500,
@@ -30,7 +33,17 @@ export class AppScreen extends React.Component<IAppScreenProps, IAppScreenState>
 				<StatusBar backgroundColor={CommonStyles.statusBarColor} barStyle="light-content" />
 				<ProgressBar />
 				<StatusAlert />
-				<AppNavigator />
+				<AppNavigator
+					onNavigationStateChange={(prevState, currentState) => {
+						const currentRoute = getCurrentRoute(currentState)
+						const prevRoute = getCurrentRoute(prevState)
+
+						if (prevRoute.routeName !== currentRoute.routeName) {
+							Tracking.trackScreenView(currentRoute.routeName, currentRoute.params)
+						}
+					}}
+					ref={nav => (this.navigator = nav)}
+				/>
 			</View>
 		)
 	}

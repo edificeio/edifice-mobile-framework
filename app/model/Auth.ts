@@ -1,5 +1,5 @@
 import { CREATE_SUCCESS, READ_SUCCESS } from "../constants/docs"
-import { matchs, PATH_AUTH, PATH_LOGIN, PATH_LOGOUT, PATH_SIGNUP } from "../constants/paths"
+import { matchs, PATH_LOGIN, PATH_LOGOUT, PATH_SIGNUP } from "../constants/paths"
 import { crudReducer } from "./docs"
 
 export interface IAuthModel {
@@ -29,10 +29,6 @@ export function Auth(state: IAuthState = initialState, action): IAuthState {
 			synced: true,
 			userId: null,
 		}
-	}
-
-	if (matchs([PATH_AUTH], action.path) && action.type === READ_SUCCESS) {
-		return crudReducer(state, [PATH_AUTH], action, "-1")
 	}
 
 	if (matchs([PATH_LOGIN, PATH_SIGNUP], action.path) && action.type === CREATE_SUCCESS) {

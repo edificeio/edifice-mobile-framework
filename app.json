@@ -1,17 +1,4 @@
 {
-  "expo": {
-    "name": "app.e",
-    "icon": "./icon.png",
-    "version": "1.0.0",
-    "slug": "ode-appe",
-    "sdkVersion": "22.0.0",
-    "ios": {
-      "bundleIdentifier": "com.opendigitaleducation.appe"
-    },
-    "android": {
-      "package": "com.opendigitaleducation.appe"
-    }
-  },
   "name": "mobileapp",
   "displayName": "app-e"
 }

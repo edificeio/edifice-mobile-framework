@@ -28,22 +28,14 @@ export class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, Th
 	}
 
 	private onValid() {
-		const { conversationId, displayNames, subject } = this.props.navigation.state.params
+		const { conversationId, displayNames, subject, userId } = this.props.navigation.state.params
 		const { textMessage } = this.state
 		this.setState({ selected: Selected.none })
 
 		this.props.createConversation({
-			parent_id: this.props.navigation.state.params.conversationId,
 			subject: subject,
 			body: `<br><br><div class="signature new-signature">${textMessage}</div>`,
-			from: "14a1cb35-e943-4f06-917a-f163461d5b14",
-			fromName: null,
 			to: ["e4d5cd13-d44c-4bd8-8f8e-a3e8ad3d2ca5"],
-			toName: null,
-			cc: [],
-			ccName: null,
-			displayNames: displayNames,
-			date: Date.now(),
 			conversation: conversationId,
 		})
 	}

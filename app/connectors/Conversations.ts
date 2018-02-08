@@ -1,6 +1,6 @@
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
-import { readConversation } from "../actions/conversation"
+import { readConversation, readNextThreads, readPrevThreads } from "../actions/conversation"
 import { Conversations, IConversationsProps } from "../conversation/Conversations"
 import { IThreadModel, IThreadState } from "../model/Thread"
 
@@ -33,13 +33,16 @@ const filterRootConversation = (elem: IThreadModel, filterCriteria): boolean => 
 const filtering = (threads: IThreadState): IThreadModel[] => {
 	const { filterCriteria = null, payload } = threads
 
-	return payload.filter(elem => filterRootConversation(elem, filterCriteria))
+	return payload
+		.filter(elem => filterRootConversation(elem, filterCriteria))
+		.sort((a: IThreadModel, b: IThreadModel) => b.date - a.date)
 }
 
 const mapStateToProps = state => ({
 	conversations: filtering(state.threads),
 })
 
-const dispatchAndMapActions = dispatch => bindActionCreators({ readConversation }, dispatch)
+const dispatchAndMapActions = dispatch =>
+	bindActionCreators({ readConversation, readNextThreads, readPrevThreads }, dispatch)
 
 export default connect<{}, {}, IConversationsProps>(mapStateToProps, dispatchAndMapActions)(Conversations)

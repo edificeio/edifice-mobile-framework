@@ -8,7 +8,9 @@
   "Password_forgotten" : "Password forgoten?",
   "News" : "News",
   "Profile" : "Profile",
+  "On" : "on",
   "Connect" : "Connect",
   "Disconnect" : "Disconnect",
-  "to_disconnect" : "to disconnect?"
+  "to_disconnect" : "to disconnect?",
+  "today" : " Today "
 }

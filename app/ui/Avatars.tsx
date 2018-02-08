@@ -15,7 +15,7 @@ export interface IAvatarsState {
 		height: number
 		width: number
 	}
-	slideIndex: number
+	slideIndex:number
 }
 
 const DEFAULT_AVATAR = "46c7bc61-b9dd-4c25-b164-fd6252236603"
@@ -50,48 +50,49 @@ export class Avatars extends React.Component<IAvatarsProps, IAvatarsState> {
 			images.length = 4
 		}
 
-		if (images.length === 1) {
-			return <Avatar size={Size.large} id={images[0]} />
-		} else {
-			if (size === Size.verylarge) {
-				return (
-					<Container>
-						<Carousel
-							activeSlideAlignment={"center"}
-							data={images}
-							enableMomentum={true}
-							inactiveSlideOpacity={0.7}
-							inactiveSlideScale={0.97}
-							itemHeight={layoutSize.LAYOUT_80}
-							itemWidth={layoutSize.LAYOUT_100}
-							onSnapToItem={index => this.onSnapToItem(index)}
-							removeClippedSubviews={false}
-							renderItem={e => this.renderItem(e)}
-							sliderHeight={layoutSize.LAYOUT_80}
-							sliderWidth={layoutSize.LAYOUT_375}
-						/>
-					</Container>
-				)
-			}
+		if (size === Size.verylarge) {
 			return (
 				<Container>
-					{images.map((image, idx) => <Avatar size={size} key={idx} index={idx} count={images.length} id={image} />)}
+					<Carousel
+						activeSlideAlignment={"center"}
+						data={images}
+						enableMomentum={true}
+						inactiveSlideOpacity={0.7}
+						inactiveSlideScale={0.97}
+						itemHeight={layoutSize.LAYOUT_80}
+						itemWidth={layoutSize.LAYOUT_100}
+						onSnapToItem={index => this.onSnapToItem(index)}
+						removeClippedSubviews={false}
+						renderItem={e => this.renderItem(e)}
+						sliderHeight={layoutSize.LAYOUT_80}
+						sliderWidth={layoutSize.LAYOUT_375}
+					/>
 				</Container>
 			)
 		}
+
+		if (images.length === 1) {
+			return <Avatar size={size} id={images[0]} />
+		}
+
+		return (
+			<Container>
+				{images.map((image, idx) => <Avatar size={size} key={idx} index={idx} count={images.length} id={image} />)}
+			</Container>
+		)
 	}
 }
 
 const Container = style.view({
-    alignItems: "center",
-    flex: 1,
-    flexDirection: "row",
-    flexWrap: "nowrap",
-    justifyContent: "center",
+	alignItems: "center",
+	flex: 1,
+	flexDirection: "row",
+	flexWrap: "nowrap",
+	justifyContent: "center",
 })
 
 const Slide = style.view({
-    alignItems: "center",
-    height: layoutSize.LAYOUT_80,
-    width: layoutSize.LAYOUT_100,
+	alignItems: "center",
+	height: layoutSize.LAYOUT_80,
+	width: layoutSize.LAYOUT_100,
 })

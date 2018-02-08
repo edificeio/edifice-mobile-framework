@@ -14,6 +14,20 @@ export const read = (path, synced = false) => ({
 })
 
 /**
+ * Read next REST resource (merge result with the state)
+ *
+ * @param {string} path       l'URI de la ressource
+ * @param {boolean} synced    say if yourglass displayer
+ *
+ */
+export const readNext = (path, synced = false) => ({
+	merge: true,
+	path,
+	synced,
+	type: TYPES.READ,
+})
+
+/**
  * Rest read success
  * This method is call by the system.
  *
@@ -59,7 +73,7 @@ export const readIdSuccess = (path, id, payload) => ({
  * Creation d'une ressource REST
  *
  * @param {string} path       uri de la ressource
- * @param {object} payload    données de la ressource
+ * @param {object} payload    données de la ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;××;;;;;;;;;;;;
  */
 export const create = (path, payload, synced) => ({
 	path,
@@ -143,9 +157,9 @@ export const delSuccess = (path, payload) => ({
  * @param path
  * @param payload
  */
-export const crudError = (type, path, payload) => ({
+export const crudError = (type, path, payload, response = { ok: true, status: 200, statusText: "" }) => ({
 	path,
-	payload,
+	payload: { ok: response.ok, status: response.status, statusText: response.statusText, ...payload },
 	synced: false,
 	type,
 })

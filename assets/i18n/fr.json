@@ -8,7 +8,9 @@
     "Password" : "Mot de passe",
     "News" : "Nouveautés",
     "Profile" : "Profil",
+    "On" : "dans",
     "Connect" : "Se connecter",
     "Disconnect" : "Se déconnecter",
-    "to_disconnect" : "vous déconnecter ?"
+    "to_disconnect" : "vous déconnecter ?",
+    "today" : " Aujourd'hui "
 }

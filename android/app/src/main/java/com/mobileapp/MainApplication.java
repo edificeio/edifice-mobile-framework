@@ -6,7 +6,7 @@ import com.facebook.react.ReactApplication;
 import io.invertase.firebase.RNFirebasePackage;
 import io.invertase.firebase.fabric.crashlytics.RNFirebaseCrashlyticsPackage;
 import io.invertase.firebase.analytics.RNFirebaseAnalyticsPackage;
-import io.invertase.firebase.perf.RNFirebasePerformancePackage; 
+import io.invertase.firebase.perf.RNFirebasePerformancePackage;
 import com.AlexanderZaytsev.RNI18n.RNI18nPackage;
 import com.reactnativecomponent.splashscreen.RCTSplashScreenPackage;
 import com.oblador.vectoricons.VectorIconsPackage;

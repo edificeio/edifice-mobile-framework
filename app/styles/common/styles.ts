@@ -1,3 +1,5 @@
+import { Text } from "react-native"
+
 export const CommonStyles = {
 	actionColor: "#2A9CC8",
 	actionColorDisabled: "#2A9CC888",
@@ -46,3 +48,5 @@ export const CommonStyles = {
 	textTabBottomColor: "#858FA9",
 	titleColor: "#1467ff",
 }
+
+Text.defaultProps.style = { fontFamily: CommonStyles.primaryFontFamily }

@@ -1,16 +1,13 @@
 import { combineReducers } from "redux"
 import { Auth } from "./Auth"
-import { Avatars } from "./Avatars"
-import { Documents } from "./Documents"
+import { News } from "./News"
 import { Messages } from "./messages"
-import navigation from "./navigation"
 import threads from "./Thread"
 
 export default combineReducers({
 	auth: Auth,
-	avatars: Avatars,
-	documents: Documents,
+	documents: News,
 	messages: Messages,
-	navigation,
+	news: News,
 	threads,
 })

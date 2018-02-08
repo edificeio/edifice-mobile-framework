@@ -4,24 +4,34 @@ import { FlatList } from "react-native"
 import Swipeable from "react-native-swipeable"
 import { layoutSize } from "../constants/layoutSize"
 import { IThreadModel } from "../model/Thread"
-import { getSeqNumber } from "../utils/Store"
 import styles from "../styles/index"
 import { Icon } from "../ui/icons/Icon"
 import { Conversation } from "./Conversation"
+import {getSeqNumber} from "../utils/Store";
 
 export interface IConversationsProps {
 	conversations: IThreadModel[]
 	navigation?: any
-	readConversation: (idConverstion: number) => void
+	readConversation?: () => void
+	readNextThreads?: () => void
+	readPrevThreads?: () => void
 }
 
 export class Conversations extends React.Component<IConversationsProps, any> {
 	public componentWillMount() {
-		this.props.readConversation(0)
+		this.props.readConversation()
 	}
 
 	public onPress(id: string, displayNames: string[][], subject: string) {
-		this.props.navigation.navigate("Threads", { conversationId: id, displayNames, subject })
+		const { readNextThreads, readPrevThreads } = this.props
+
+		this.props.navigation.navigate("Threads", {
+			conversationId: id,
+			displayNames,
+			readNextThreads,
+			readPrevThreads,
+			subject,
+		})
 	}
 
 	public render() {
