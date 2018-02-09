@@ -33,7 +33,6 @@ export class HTMLAdaptator {
         for(let i = 0; i < images.length; i++){
             paths.push(Conf.platform + images[i].attributes.src);
         }
-        console.log(paths);
         return paths;
     }
 

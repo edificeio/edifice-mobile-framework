@@ -8,7 +8,8 @@ import { listTimeline } from '../actions/timeline';
 export interface ITimelineProps {
 	sync: (page: number) => Promise<void>;
 	news: any,
-	pageNumber: number
+	pageNumber: number,
+	fetching: boolean
 }
 
 class Timeline extends React.Component<ITimelineProps, any> {
@@ -17,10 +18,20 @@ class Timeline extends React.Component<ITimelineProps, any> {
 
 	componentDidMount(){
 		this.pageNumber = 0;
-		this.props.sync(this.pageNumber).then(() => console.log(this.props));
+		if(!this.props.fetching){
+			this.props.sync(this.pageNumber);
+		}
 	}
 
-	public renderItem({ senderName, resourceName, message, images }) {
+	nextPage(){
+		console.log('nextPage')
+		if(!this.props.fetching){
+			this.pageNumber++;
+			this.props.sync(this.pageNumber);
+		}
+	}
+
+	public renderItem({ preview, senderName, resourceName, message, images }) {
 		return (
 			<TouchableNativeFeedback>
 				<View style={styles.item}>
@@ -28,7 +39,7 @@ class Timeline extends React.Component<ITimelineProps, any> {
 						<Text>{senderName} dans {resourceName}</Text>
 					</View>
 					<View>
-						<Text>{message}</Text>
+						<Text>{preview}</Text>
 					</View>
 					<View>
 						<Image style={{ width: 320, height: 165 }} source={{uri: images[0] }} />
@@ -36,11 +47,6 @@ class Timeline extends React.Component<ITimelineProps, any> {
 				</View>
 			</TouchableNativeFeedback>
 		)
-	}
-
-	nextPage(){
-		this.pageNumber++;
-		this.props.sync(this.pageNumber);
 	}
 
 	public render() {
@@ -53,6 +59,7 @@ class Timeline extends React.Component<ITimelineProps, any> {
 				renderItem={({ item }) => this.renderItem(item)}
 				style={styles.grid}
 				onEndReached={() => this.nextPage() }
+				legacyImplementation={ true}
 			/>
 		)
 	}
@@ -61,6 +68,7 @@ class Timeline extends React.Component<ITimelineProps, any> {
 export default connect(
 	(state:any) => ({
 		news: state.timeline.news,
+		fetching: state.timeline.isFetching,
 		pageNumber: 0
 	}),
 	dispatch => ({
