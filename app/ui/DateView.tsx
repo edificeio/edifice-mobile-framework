@@ -1,7 +1,7 @@
 import style from "glamorous-native"
 import * as React from "react"
 import { layoutSize } from "../constants/layoutSize"
-import { getMnHoursDayMonthFromTime, sameDay } from "../utils/date"
+import { getTimeToShortStr, getTimeToStr, sameDay } from "../utils/date"
 import { CommonStyles } from "../styles/common/styles"
 
 const ViewDate = style.view({
@@ -19,8 +19,8 @@ const Text = style.text(
 	})
 )
 
-export const DateView = ({ date, nb = 0 }) => {
-	let strDate = getMnHoursDayMonthFromTime(date)
+export const DateView = ({ date, nb = 0, short = true }) => {
+	let strDate = short ? getTimeToShortStr(date) : getTimeToStr(date)
 
 	return (
 		<ViewDate>

@@ -7,7 +7,7 @@ import { CommonStyles } from "../styles/common/styles"
 import { Avatar, Size } from "../ui/Avatar"
 import { DateView } from "../ui/DateView"
 import { tr } from "../i18n/t"
-import {CenterPanel, Content, Item, LeftPanel} from "../ui/ContainerContent"
+import { CenterPanel, Content, Item, LeftPanel } from "../ui/ContainerContent"
 import { Row } from "../ui"
 
 interface INewsProps extends INewsModel {
@@ -27,7 +27,7 @@ export const News = ({ date, preview = "", senderId, senderName, resourceName, m
 						<Light> {tr.On} </Light>
 						{resourceName}
 					</Bold>
-					<DateView date={date} />
+					<DateView date={date} short={false} />
 				</CenterPanel>
 			</Row>
 			{preview.length ? <Content nb={0}>{preview}</Content> : <View />}
@@ -60,6 +60,3 @@ const Image = style.image({
 	height: layoutSize.LAYOUT_160,
 	width: layoutSize.LAYOUT_350,
 })
-
-
-

@@ -1,6 +1,26 @@
-const monthsName = ["janv", "fév", "mars", "avr", "mai", "juin", "juil", "aout", "sept", "oct", "nov", "déc"]
+import { monthsName, tr } from "../i18n/t"
 
-export function getMnHoursDayMonthFromTime(timestamp) {
+export function getTimeToStr(timestamp) {
+	if (sameDay(timestamp)) {
+		const dateHours = new Date(timestamp).getHours()
+		const nowHours = new Date().getHours()
+		const dateMn = new Date(timestamp).getMinutes()
+		const nowMn = new Date().getMinutes()
+		const hours = nowHours - dateHours
+		const mn = nowMn - dateMn
+
+		if (hours === 0) return tr.agoMinutes(mn)
+		else if (hours === 1) return tr.agoHour(hours)
+		else return tr.agoHours(hours)
+	}
+	const date = new Date(timestamp)
+	const day = date.getDate()
+	const monthName = monthsName(date)
+
+	return `${day} ${monthName}`
+}
+
+export function getTimeToShortStr(timestamp) {
 	if (sameDay(timestamp)) {
 		const dateHours = new Date(timestamp).getHours()
 		const nowHours = new Date().getHours()
@@ -10,11 +30,11 @@ export function getMnHoursDayMonthFromTime(timestamp) {
 		const mn = nowMn - dateMn
 
 		if (hours === 0) return `${mn} mn`
-		else return `${hours} h`
+		else return `${dateHours}:${dateMn}`
 	}
 	const date = new Date(timestamp)
 	const day = date.getDate()
-	const monthName = monthsName[date.getMonth()]
+	const monthName = monthsName(date)
 
 	return `${day} ${monthName}`
 }
