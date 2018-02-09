@@ -59,6 +59,7 @@
     "typescript": "^2.7.0"
   },
   "dependencies": {
+    "fast-html-parser": "^1.0.1",
     "glamorous-native": "^1.3.0",
     "react": "^16.2.0",
     "react-native": "^0.53.0",

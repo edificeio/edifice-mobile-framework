@@ -45,7 +45,6 @@ export default store => next => action => {
 			})
 
 			// read the data
-			store.dispatch(readNews())
 			store.dispatch(readConversation())
 			store.dispatch(readCurrentUser())
 		}
