@@ -18,7 +18,7 @@
     "react-devtools": "react-devtools",
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest --watch",
-    "tsc": "rm -r -f build && ./node_modules/.bin/tsc -p tsconfig.json --watch",
+    "tsc": "./node_modules/.bin/tsc -p tsconfig.json --watch",
     "tslint": "tslint --project ./tsconfig.json 'app/**/*.{ts,tsx}'",
     "tslint-fix": "tslint --fix --project  ./tsconfig.json 'app/**/*.{ts,tsx}'",
     "upgrade": "react-native-git-upgrade"

@@ -1,6 +1,5 @@
 import * as React from "react"
 import { FlatList, Text, TouchableNativeFeedback, View, Image } from "react-native"
-import { Filter } from "../actions/documents"
 import { getSeqNumber } from "../utils/Store"
 import styles from "../styles/index"
 import { connect } from "react-redux";
