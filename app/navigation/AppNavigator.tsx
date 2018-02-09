@@ -4,12 +4,12 @@ import SignupLoginRecover from "../connectors/auth/SignupLoginRecover"
 import { tr } from "../i18n/t"
 import { tabNavigator, tabRootOptions } from "../utils/navHelper"
 import ConversationNavigator from "./ConversationNavigator"
-import NouveautesNavigator from "./NouveautesNavigator"
 import ProfileNavigator from "./ProfileNavigator"
+import Timeline from "../timeline/Timeline";
 
 const MainNavigator = tabNavigator({
 	Nouveautes: {
-		screen: NouveautesNavigator,
+		screen: Timeline,
 		navigationOptions: () => tabRootOptions(tr.News, "nouveautes"),
 	},
 	Conversation: {

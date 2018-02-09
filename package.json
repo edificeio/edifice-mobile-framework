@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "cleanGenerated": "rimraf -r -f ./android/app/build && rimraf node_modules/react-native/local-cli/core/__fixtures__/files/package.json && rimraf -r -f node_modules/react-native-firebase/android/build",
     "android": "react-native run-android",
     "apk": "cd android && ./gradlew assembleRelease",
     "clean": "rm -r -f build && rm -r -f node_modules && rm -f package-lock.json && rm -f yarn.lock && npm install && cd android && ./gradlew clean && cd .. ",
@@ -17,7 +18,7 @@
     "react-devtools": "react-devtools",
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest --watch",
-    "tsc": "rm -r -f build && ./node_modules/.bin/tsc -p tsconfig.json --watch",
+    "tsc": "./node_modules/.bin/tsc -p tsconfig.json --watch",
     "tslint": "tslint --project ./tsconfig.json 'app/**/*.{ts,tsx}'",
     "tslint-fix": "tslint --fix --project  ./tsconfig.json 'app/**/*.{ts,tsx}'",
     "upgrade": "react-native-git-upgrade"
@@ -74,8 +75,11 @@
     "react-native-swipeable": "^0.6.0",
     "react-native-touchable-scale": "^2.0.0",
     "react-native-vector-icons": "^4.5.0",
-    "react-navigation": "^1.0.0-beta.26",
+    "react-navigation": "1.0.0-beta.26",
     "react-redux": "^5.0.6",
-    "redux": "^3.7.2"
+    "redux": "^3.7.2",
+    "redux-devtools-extension": "^2.13.2",
+    "rimraf": "^2.6.2",
+    "util": "^0.10.3"
   }
 }

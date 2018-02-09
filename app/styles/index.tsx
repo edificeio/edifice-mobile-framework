@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
 		backgroundColor: "white",
 		borderBottomColor: "#ddd",
 		borderBottomWidth: 1,
-		flexDirection: "row",
+		flexDirection: "column",
 		paddingHorizontal: layoutSize.LAYOUT_16,
 		paddingVertical: layoutSize.LAYOUT_12,
 	},
