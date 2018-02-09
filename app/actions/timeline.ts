@@ -7,21 +7,30 @@ const availableApps = ['BLOG'];
 
 const dataTypes = {
     'BLOG': async (news) => {
+        console.log(news)
         if(!news['sub-resource']){
+
             return {
                 message: adaptator(news.message)
-                .toText(),
-                images: []
+                    .toText(),
+                images: [],
+                senderName: news.params.username,
+                senderId: news.sender,
+                resourceName: news.params.blogTitle
             }
         }
-        console.log(`${Conf.platform}/blog/post/${news.resource}/${news['sub-resource']}`)
+
         const response = await fetch(`${Conf.platform}/blog/post/${news.resource}/${news['sub-resource']}`);
         const data = await response.json();
+
         return {
             message: adaptator(data.content)
                 .toText(),
             images: adaptator(data.content)
-                .toImagesArray()
+                .toImagesArray(),
+            senderName: data.author.username,
+            senderId: data.author.userId,
+            resourceName: news.params.blogTitle
         };
     }
 }

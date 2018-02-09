@@ -7,20 +7,26 @@ import { listTimeline } from '../actions/timeline';
 
 export interface ITimelineProps {
 	sync: (page: number) => Promise<void>;
-	news: any
+	news: any,
+	pageNumber: number
 }
 
 class Timeline extends React.Component<ITimelineProps, any> {
+
+	pageNumber: number;
+
 	componentDidMount(){
-		console.log(this.props);
-		this.props.sync(0).then(() => console.log(this.props));
-		console.log(this.state)
+		this.pageNumber = 0;
+		this.props.sync(this.pageNumber).then(() => console.log(this.props));
 	}
 
-	public renderItem({ message, images }) {
+	public renderItem({ senderName, resourceName, message, images }) {
 		return (
 			<TouchableNativeFeedback>
 				<View style={styles.item}>
+					<View>
+						<Text>{senderName} dans {resourceName}</Text>
+					</View>
 					<View>
 						<Text>{message}</Text>
 					</View>
@@ -32,6 +38,11 @@ class Timeline extends React.Component<ITimelineProps, any> {
 		)
 	}
 
+	nextPage(){
+		this.pageNumber++;
+		this.props.sync(this.pageNumber);
+	}
+
 	public render() {
 		const { news } = this.props
 
@@ -41,6 +52,7 @@ class Timeline extends React.Component<ITimelineProps, any> {
 				keyExtractor={() => getSeqNumber()}
 				renderItem={({ item }) => this.renderItem(item)}
 				style={styles.grid}
+				onEndReached={() => this.nextPage() }
 			/>
 		)
 	}
@@ -48,7 +60,8 @@ class Timeline extends React.Component<ITimelineProps, any> {
 
 export default connect(
 	(state:any) => ({
-		news: state.timeline.news
+		news: state.timeline.news,
+		pageNumber: 0
 	}),
 	dispatch => ({
 		sync: (page: number) => listTimeline(dispatch)(page)
