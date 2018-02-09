@@ -36,11 +36,11 @@ class Timeline extends React.Component<ITimelineProps, any> {
 		return (
 			<FlatList
 				data={news}
-				keyExtractor={(item, index) => index.toString()}
+				keyExtractor={item => item.id}
+				legacyImplementation={true}
+				onEndReached={() => this.nextPage()}
 				renderItem={({ item }) => <News {...item} />}
 				style={styles.grid}
-				onEndReached={() => this.nextPage()}
-				legacyImplementation={true}
 			/>
 		)
 	}

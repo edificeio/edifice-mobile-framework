@@ -1,18 +1,16 @@
 import style from "glamorous-native"
 import { layoutSize } from "../constants/layoutSize"
 import { CommonStyles } from "../styles/common/styles"
-import { trunc } from "../utils/html"
 
 export const Item = style.touchableOpacity(
 	{
 		backgroundColor: CommonStyles.itemBackgroundColor,
-		borderBottomColor: CommonStyles.borderBottomItem,
-		borderBottomWidth: 1,
-		flexDirection: "row",
 		paddingHorizontal: layoutSize.LAYOUT_16,
 		paddingVertical: layoutSize.LAYOUT_12,
+		borderBottomColor: CommonStyles.borderBottomItem,
+		borderBottomWidth: 1,
 	},
-	({ nb }) => ({
+	({ nb = 0 }) => ({
 		backgroundColor: nb > 0 ? CommonStyles.nonLue : CommonStyles.itemBackgroundColor,
 	})
 )
@@ -44,7 +42,7 @@ export const Content = style.text(
 		fontSize: layoutSize.LAYOUT_12,
 		marginTop: layoutSize.LAYOUT_10,
 	},
-	({ nb }) => ({
+	({ nb = 0 }) => ({
 		color: nb > 0 ? CommonStyles.textColor : CommonStyles.iconColorOff,
 		fontFamily: nb > 0 ? CommonStyles.primaryFontFamily : CommonStyles.primaryFontFamilyLight,
 	})

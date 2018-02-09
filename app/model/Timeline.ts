@@ -4,12 +4,14 @@ interface IParams {
 }
 
 export interface INewsModel {
+	date: number,
+	id: string,
+	images: string[]
+	message: string
 	preview: string
+	resourceName: string
 	senderId: string
 	senderName: string
-	resourceName: string
-	message: string
-	images: string[]
 }
 
 export interface INewsState {

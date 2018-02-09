@@ -7,9 +7,7 @@ import { Thread } from "./Thread"
 import { sameDay } from "../utils/date"
 import { Row } from "../ui"
 import { tr } from "../i18n/t"
-import { getSeqNumber } from "../utils/Store"
-import { layoutSize } from "../constants/layoutSize"
-import {View} from "react-native";
+import { View } from "react-native"
 
 export interface IThreadsProps {
 	navigation?: any

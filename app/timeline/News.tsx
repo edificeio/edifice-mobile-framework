@@ -7,16 +7,16 @@ import { CommonStyles } from "../styles/common/styles"
 import { Avatar, Size } from "../ui/Avatar"
 import { DateView } from "../ui/DateView"
 import { tr } from "../i18n/t"
-import { CenterPanel, Content, LeftPanel } from "../ui/ContainerContent"
-import {Row} from "../ui";
+import {CenterPanel, Content, Item, LeftPanel} from "../ui/ContainerContent"
+import { Row } from "../ui"
 
 interface INewsProps extends INewsModel {
 	onPress?: (id: string) => void
 }
 
-export const News = ({ preview = "", senderId, senderName, resourceName, message, images = [] }: INewsProps) => {
+export const News = ({ date, preview = "", senderId, senderName, resourceName, message, images = [] }: INewsProps) => {
 	return (
-		<Container>
+		<Item>
 			<Row>
 				<LeftPanel>
 					<Avatar id={senderId} size={Size.large} />
@@ -27,13 +27,13 @@ export const News = ({ preview = "", senderId, senderName, resourceName, message
 						<Light> {tr.On} </Light>
 						{resourceName}
 					</Bold>
-					<DateView date={364647377383} />
+					<DateView date={date} />
 				</CenterPanel>
 			</Row>
 			{preview.length ? <Content nb={0}>{preview}</Content> : <View />}
 			{preview.length && images.length ? <Margin /> : <View />}
 			{images.length ? <Image source={{ uri: images[0] }} /> : <View />}
-		</Container>
+		</Item>
 	)
 }
 
@@ -61,10 +61,5 @@ const Image = style.image({
 	width: layoutSize.LAYOUT_350,
 })
 
-export const Container = style.touchableOpacity({
-	backgroundColor: CommonStyles.itemBackgroundColor,
-	borderBottomColor: CommonStyles.borderBottomItem,
-	borderBottomWidth: 1,
-	paddingHorizontal: layoutSize.LAYOUT_16,
-	paddingVertical: layoutSize.LAYOUT_12,
-})
+
+

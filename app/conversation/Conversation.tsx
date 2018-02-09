@@ -9,6 +9,7 @@ import { Avatars } from "../ui/Avatars"
 import { DateView } from "../ui/DateView"
 import { CircleNumber } from "../ui/CircleNumber"
 import { CenterPanel, Content, Item, LeftPanel, RightPanel } from "../ui/ContainerContent"
+import {Row} from "../ui";
 
 interface IConversationProps extends IThreadModel {
 	onPress: (id: string, displayNames: string[][], subject: string) => void
@@ -19,17 +20,19 @@ export const Conversation = ({ id, subject, date, displayNames, nb, onPress }: I
 
 	return (
 		<Item nb={nb} onPress={() => onPress(id, displayNames, subject)}>
-			<LeftPanel>
-				<Avatars images={images} size={Size.small} />
-			</LeftPanel>
-			<CenterPanel>
-				{getTitle(displayNames, nb)}
-				{subject.length ? <Content nb={nb}>{trunc(subject, layoutSize.LAYOUT_32)}</Content> : <style.View />}
-			</CenterPanel>
-			<RightPanel>
-				<DateView date={date} nb={nb} />
-				<CircleNumber nb={nb} />
-			</RightPanel>
+			<Row>
+				<LeftPanel>
+					<Avatars images={images} size={Size.small} />
+				</LeftPanel>
+				<CenterPanel>
+					{getTitle(displayNames, nb)}
+					{subject.length ? <Content nb={nb}>{trunc(subject, layoutSize.LAYOUT_32)}</Content> : <style.View />}
+				</CenterPanel>
+				<RightPanel>
+					<DateView date={date} nb={nb} />
+					<CircleNumber nb={nb} />
+				</RightPanel>
+			</Row>
 		</Item>
 	)
 }
