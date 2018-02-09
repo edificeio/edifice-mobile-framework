@@ -29,7 +29,7 @@ const dataTypes = {
             let previewText = adaptator(data.content)
                 .toText();
             if(previewText.length > 175){
-                previewText = previewText.substring(172) + '...';
+                previewText = previewText.substring(0, 172) + '...';
             }
 
             return {
