@@ -1,6 +1,5 @@
 import style from "glamorous-native"
 import * as React from "react"
-import { View } from "react-native"
 import { OptimizedFlatList } from "react-native-optimized-flatlist"
 import { IThreadModel } from "../model/Thread"
 import styles from "../styles/index"
@@ -8,7 +7,9 @@ import { Thread } from "./Thread"
 import { sameDay } from "../utils/date"
 import { Row } from "../ui"
 import { tr } from "../i18n/t"
-import {getSeqNumber} from "../utils/Store";
+import { getSeqNumber } from "../utils/Store"
+import { layoutSize } from "../constants/layoutSize"
+import {View} from "react-native";
 
 export interface IThreadsProps {
 	navigation?: any
@@ -17,7 +18,7 @@ export interface IThreadsProps {
 }
 
 export class Threads extends React.Component<IThreadsProps, any> {
-	public static tryUpScroll = 0
+	private scrollReady = false
 	public alreadyDisplayTodayDate: boolean = false
 
 	public render() {
@@ -27,16 +28,17 @@ export class Threads extends React.Component<IThreadsProps, any> {
 		return (
 			<OptimizedFlatList
 				data={threads}
-				keyExtractor={() => getSeqNumber()}
+				keyExtractor={item => item.id}
 				onEndReached={() => {
-					readNextThreads(conversationId)
+					if (this.scrollReady) readNextThreads(conversationId)
 				}}
 				onScroll={event => {
+					this.scrollReady = true
 					if (event.nativeEvent.contentOffset.y < -200) {
 						readPrevThreads(conversationId)
 					}
 				}}
-				onEndReachedThreshold={0.1}
+				onEndReachedThreshold={0.5}
 				renderItem={({ item }) => this.renderItem(item)}
 				style={styles.grid}
 			/>

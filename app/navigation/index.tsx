@@ -15,4 +15,3 @@ export function getCurrentRoute(navigationState) {
 	}
 	return route
 }
-

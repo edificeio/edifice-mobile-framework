@@ -95,32 +95,21 @@ export function rawFetchPromise(url, method = "GET", payload = null) {
 	return fetch(fullPath, opts)
 }
 
-function isInProgress(store, action) {
-	if (action.path === PATH_NEW_MESSAGES || (action.path === PATH_PREVIOUS_MESSAGES && !store.state.news.synced))
-		return true
-
-	return false
-}
-
 export default store => next => action => {
 	const returnValue = next(action)
 
-	// if (isInProgress(store, action)) return returnValue
-
 	switch (action.type) {
 		case TYPES.READ:
-			action.id !== undefined
-				? readIdStart(store.dispatch, action.path, action.id)
-				: readStart(store.dispatch, action.path)
+			action.id !== undefined ? readIdStart(store.dispatch, action) : readStart(store.dispatch, action)
 			break
 		case TYPES.CREATE:
-			createStart(store.dispatch, action.path, action.payload)
+			createStart(store.dispatch, action)
 			break
 		case TYPES.DELETE:
 			delStart(store.dispatch, action)
 			break
 		case TYPES.UPDATE:
-			updateStart(store.dispatch, action.path, action.payload)
+			updateStart(store.dispatch, action)
 			break
 		default:
 			break
@@ -132,17 +121,17 @@ export default store => next => action => {
  *
  * @param path   the path to read. path is the type of doc to read
  */
-async function readStart(dispatch, path) {
-	const response = await rawFetchPromise(path)
+async function readStart(dispatch, action) {
+	const response = await rawFetchPromise(action.path)
 
-	checkResponse(response, path)
+	checkResponse(response, action.path)
 		.then(result => {
 			isError(response, result)
-				? dispatch(docActions.crudError(TYPES.READ_ERROR, path, { ...result, ...response }))
-				: dispatch(docActions.readSuccess(path, result))
+				? dispatch(docActions.crudError(TYPES.READ_ERROR, action, { ...result, ...response }))
+				: dispatch(docActions.readSuccess(action, result))
 		})
 		.catch(err => {
-			dispatch(docActions.crudError(TYPES.READ_ERROR, path, err))
+			dispatch(docActions.crudError(TYPES.READ_ERROR, action, err))
 		})
 }
 
@@ -153,8 +142,8 @@ async function readStart(dispatch, path) {
  * @param id      The ressource id
  * @returns {Promise.<T>}
  */
-async function readIdStart(dispatch, path, id) {
-	const completePath = replace1(path, id)
+async function readIdStart(dispatch, action) {
+	const completePath = replace1(action.path, action.id)
 
 	/*	const response = matchs([PATH_AVATAR], path)
 		? await RNFetchBlob.fetch("GET", `${ROOT_PATH}${completePath}`)
@@ -163,65 +152,64 @@ async function readIdStart(dispatch, path, id) {
 
 	const response = await rawFetchPromise(completePath)
 
-	checkResponse(response, path)
+	checkResponse(response, action.path)
 		.then(result => {
 			isError(response, result)
-				? dispatch(docActions.crudError(TYPES.READ_ERROR, path, { ...result, ...response }))
-				: dispatch(docActions.readIdSuccess(completePath, id, result))
+				? dispatch(docActions.crudError(TYPES.READ_ERROR, action, { ...result, ...response }))
+				: dispatch(docActions.readIdSuccess(action, result))
 		})
 		.catch(err => {
-			dispatch(docActions.crudError(TYPES.READ_ERROR, path, err))
+			dispatch(docActions.crudError(TYPES.READ_ERROR, action, err))
 		})
 }
 
-async function createStart(dispatch, path, doc) {
+async function createStart(dispatch, action) {
 	// temp
 
-	if (path === PATH_LOGOUT) {
-		dispatch(docActions.createSuccess(path, { ...doc, code: 200, err: 0, error: 0 }))
+	if (action.path === PATH_LOGOUT) {
+		dispatch(docActions.createSuccess(action, { ...action.payload, code: 200, err: 0, error: 0 }))
 		return
 	}
-	const response =
-		path === PATH_CREATE_CONVERSATION
-			? await rawFetchPromise(path, "post", doc)
-			: await rawFetchFormDataPromise(path, "post", doc)
+	const response = action.form
+		? await rawFetchFormDataPromise(action.path, "post", action.payload)
+		: await rawFetchPromise(action.path, "post", action.payload)
 
-	checkResponse(response, path)
+	checkResponse(response, action.path)
 		.then(result => {
 			isError(response, result)
-				? dispatch(docActions.crudError(TYPES.CREATE_ERROR, path, result, response))
-				: dispatch(docActions.createSuccess(path, { ...doc, ...result }))
+				? dispatch(docActions.crudError(TYPES.CREATE_ERROR, action, result, response))
+				: dispatch(docActions.createSuccess(action, { ...action.payload, ...result }))
 		})
 		.catch(err => {
-			dispatch(docActions.crudError(TYPES.CREATE_ERROR, path, err))
+			dispatch(docActions.crudError(TYPES.CREATE_ERROR, action, err))
 		})
 }
 
-async function updateStart(dispatch, path, aDoc) {
-	const response = await rawFetchPromise(`${aDoc.path}/${aDoc.id}`, "put", aDoc)
+async function updateStart(dispatch, action) {
+	const response = await rawFetchPromise(`${action.path}/${action.id}`, "put", action.payload)
 
-	checkResponse(response, path)
+	checkResponse(response, action.path)
 		.then(result => {
 			isError(response, result)
-				? dispatch(docActions.crudError(TYPES.UPDATE_ERROR, aDoc.path, result, response))
-				: dispatch(docActions.updateSuccess(aDoc.path, { ...aDoc, ...result }))
+				? dispatch(docActions.crudError(TYPES.UPDATE_ERROR, action, result, response))
+				: dispatch(docActions.updateSuccess(action, { ...action.payload, ...result }))
 		})
 		.catch(err => {
-			dispatch(docActions.crudError(TYPES.UPDATE_ERROR, aDoc.path, err))
+			dispatch(docActions.crudError(TYPES.UPDATE_ERROR, action, err))
 		})
 }
 
-async function delStart(dispatch, aDoc) {
-	const response = await rawFetchPromise(`${aDoc.path}/${aDoc.id}`, "delete", aDoc)
+async function delStart(dispatch, action) {
+	const response = await rawFetchPromise(`${action.path}/${action.id}`, "delete", action.payload)
 
-	checkResponse(response, aDoc.path)
+	checkResponse(response, action.path)
 		.then(result => {
 			isError(response, result)
-				? dispatch(docActions.crudError(TYPES.CREATE_ERROR, aDoc.path, result, response))
-				: dispatch(docActions.delSuccess(aDoc.path, result))
+				? dispatch(docActions.crudError(TYPES.CREATE_ERROR, action, result, response))
+				: dispatch(docActions.delSuccess(action, result))
 		})
 		.catch(err => {
-			dispatch(docActions.crudError(TYPES.DELETE_ERROR, aDoc.path, err))
+			dispatch(docActions.crudError(TYPES.DELETE_ERROR, action, err))
 		})
 }
 

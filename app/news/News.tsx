@@ -3,6 +3,7 @@ import { OptimizedFlatList } from "react-native-optimized-flatlist"
 import styles from "../styles/index"
 import { ANews } from "./ANews"
 import { getSeqNumber } from "../utils/Store"
+import { layoutSize } from "../constants/layoutSize"
 
 export interface INewsProps {
 	news: any
@@ -11,10 +12,8 @@ export interface INewsProps {
 }
 
 export class News extends React.Component<INewsProps, any> {
+	private scrollReady = false
 	private page = 1
-	public componentWillMount() {
-		this.props.readNews()
-	}
 
 	public renderItem(props) {
 		return <ANews {...props} />
@@ -26,11 +25,14 @@ export class News extends React.Component<INewsProps, any> {
 		return (
 			<OptimizedFlatList
 				data={news}
-				keyExtractor={() => getSeqNumber()}
+				keyExtractor={item => item._id}
 				onEndReached={() => {
-					readNews(this.page++)
+					if (this.scrollReady) readNews(this.page++)
 				}}
-				onEndReachedThreshold={0.1}
+				onEndReachedThreshold={0.5}
+				onScroll={event => {
+					this.scrollReady = true
+				}}
 				renderItem={({ item }) => this.renderItem(item)}
 				style={styles.grid}
 			/>

@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "@types/core-js": "^0.9.45",
-    "@types/jest": "^19.2.4",
+    "@types/jest": "^22.1.1",
     "@types/node": "^9.4.2",
     "@types/react": "^16.0.34",
     "@types/react-native": "^0.52.1",

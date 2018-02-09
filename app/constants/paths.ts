@@ -12,8 +12,11 @@ export const PATH_PREVIOUS_MESSAGES = "conversation/thread/previous-messages/$1"
 export const PATH_RECOVER_PASSWORD = "auth/pass"
 export const PATH_SIGNUP = "auth/signup"
 
-export const PATH_USER = "/userbook/api/person?id=$1"
+export const PATH_USER = "userbook/api/person?id=$1"
+export const PATH_CURRENT_USER = "userbook/api/person"
+
 export const PATH_ERROR_RESET = "/RESET"
+
 
 export function match(path1, path2) {
 	if (path2 === undefined) {

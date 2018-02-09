@@ -1,4 +1,6 @@
-import { PATH_USER } from "../constants/paths"
-import { readId } from "./docs"
+import { PATH_CURRENT_USER, PATH_USER } from "../constants/paths"
+import {read, readId} from "./docs"
 
-export const readUser = (id: string) => readId(PATH_USER, id)
+export const readUserFromId = (id: string) => readId(PATH_USER, id)
+
+export const readCurrentUser = () => read(PATH_CURRENT_USER)

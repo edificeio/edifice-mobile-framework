@@ -38,7 +38,7 @@ export const crudReducer = (state, paths: string[], action, payloadName: string 
 			if (payload instanceof Array) {
 				return {
 					path,
-					payload: [...state.payload, ...payload],
+					payload: merge ? [...state.payload, ...payload] : payload,
 					synced: true,
 					type: action.type,
 				}

@@ -1,5 +1,5 @@
 import { PATH_AUTH, PATH_LOGIN, PATH_LOGOUT, PATH_RECOVER_PASSWORD, PATH_SIGNUP } from "../constants/paths"
-import { create } from "./docs"
+import {create, createWithFormData} from "./docs"
 
 /**
  *
@@ -9,7 +9,7 @@ import { create } from "./docs"
  * @returns {PATH_LOGIN}
  */
 export const login = (email, password) => {
-	return create(PATH_LOGIN, { email, password, rememberMe: true }, true) // create et non read pour recuperrer le password
+	return createWithFormData(PATH_LOGIN, { email, password, rememberMe: true }, true) // create et non read pour recuperrer le password
 }
 
 /**
@@ -30,7 +30,7 @@ export const logout = email => {
  * @returns {PATH_SIGNUP}
  */
 export const signup = (email, password) => {
-	return create(PATH_SIGNUP, { email, password }, true)
+	return createWithFormData(PATH_SIGNUP, { email, password }, true)
 }
 
 /**
@@ -40,7 +40,7 @@ export const signup = (email, password) => {
  * @returns {PATH_RECOVER_PASSWORD}
  */
 export const recoverPassword = email => {
-	return create(PATH_RECOVER_PASSWORD, { email }, true)
+	return createWithFormData(PATH_RECOVER_PASSWORD, { email }, true)
 }
 
 /**

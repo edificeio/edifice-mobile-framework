@@ -1,5 +1,15 @@
 import * as TYPES from "../constants/docs"
 
+export interface IAction {
+	type: string
+	path: string
+	synced?: boolean
+	merge?: boolean
+	form?: boolean,
+	payload?: object
+	id?: string
+}
+
 /**
  * Read a REST resource
  *
@@ -7,7 +17,7 @@ import * as TYPES from "../constants/docs"
  * @param {boolean} synced    say if yourglass displayer
  *
  */
-export const read = (path, synced = false) => ({
+export const read = (path, synced = false): IAction => ({
 	path,
 	synced,
 	type: TYPES.READ,
@@ -20,7 +30,7 @@ export const read = (path, synced = false) => ({
  * @param {boolean} synced    say if yourglass displayer
  *
  */
-export const readNext = (path, synced = false) => ({
+export const readNext = (path, synced = false): IAction => ({
 	merge: true,
 	path,
 	synced,
@@ -31,11 +41,11 @@ export const readNext = (path, synced = false) => ({
  * Rest read success
  * This method is call by the system.
  *
- * @param {string} path             l'URI de la ressource
- * @param {object} payload          les données lus
+ * @param action           the initial action
+ * @param payload          les données lus
  */
-export const readSuccess = (path, payload) => ({
-	path,
+export const readSuccess = (action: IAction, payload: object): IAction => ({
+	...action,
 	payload,
 	synced: false,
 	type: TYPES.READ_SUCCESS,
@@ -47,7 +57,7 @@ export const readSuccess = (path, payload) => ({
  * @param {string} path    uri de la ressource
  * @param {number} id      id de la ressource
  */
-export const readId = (path, id) => ({
+export const readId = (path, id): IAction => ({
 	id,
 	path,
 	synced: false,
@@ -58,12 +68,11 @@ export const readId = (path, id) => ({
  * Success de lecture de la ressource REST identifiée par l'uri <path>/<id>
  * Cette methode est appelé par le système. Elle n'a pas à etre appelée explicitement
  *
- * @param {string} path             l'URI de la ressource
+ * @param action           			the initial action
  * @param {object} payload          les données lus
  */
-export const readIdSuccess = (path, id, payload) => ({
-	id,
-	path,
+export const readIdSuccess = (action, payload): IAction => ({
+	...action,
 	payload,
 	synced: false,
 	type: TYPES.READ_SUCCESS,
@@ -73,9 +82,23 @@ export const readIdSuccess = (path, id, payload) => ({
  * Creation d'une ressource REST
  *
  * @param {string} path       uri de la ressource
- * @param {object} payload    données de la ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;××;;;;;;;;;;;;
+ * @param {object} payload    données de l'action
  */
-export const create = (path, payload, synced) => ({
+export const create = (path, payload, synced): IAction => ({
+	path,
+	payload,
+	synced,
+	type: TYPES.CREATE,
+})
+
+/**
+ * Creation d'une ressource REST
+ *
+ * @param {string} path       uri de la ressource
+ * @param {object} payload    données de l'action
+ */
+export const createWithFormData = (path, payload, synced): IAction => ({
+	form: true,
 	path,
 	payload,
 	synced,
@@ -86,11 +109,11 @@ export const create = (path, payload, synced) => ({
  * Success d'ecriture de la ressource REST
  * Cette methode est appelé par le système. Elle n'a pas à etre appelée explicitement
  *
- * @param {string} path             l'URI de la ressource
+ * @param action           			the initial action
  * @param {object} payload          les données lus
  */
-export const createSuccess = (path, payload) => ({
-	path,
+export const createSuccess = (action, payload): IAction => ({
+	...action,
 	payload,
 	synced: false,
 	type: TYPES.CREATE_SUCCESS,
@@ -102,7 +125,7 @@ export const createSuccess = (path, payload) => ({
  * @param {string} path       uri parent de la ressource
  * @param {object} payload    données de la ressource contenant l'id de la ressource
  */
-export const update = (path, payload) => ({
+export const update = (path, payload): IAction => ({
 	path,
 	payload,
 	synced: false,
@@ -113,11 +136,11 @@ export const update = (path, payload) => ({
  * Success de mise à jour de la ressource REST
  * Cette methode est appelé par le système. Elle n'a pas à etre appelée explicitement
  *
- * @param {string} path             l'URI de la ressource
+ * @param action           			the initial action
  * @param {object} payload          les données lus
  */
-export const updateSuccess = (path, payload) => ({
-	path,
+export const updateSuccess = (action, payload): IAction => ({
+	...action,
 	payload,
 	synced: false,
 	type: TYPES.UPDATE_SUCCESS,
@@ -129,7 +152,7 @@ export const updateSuccess = (path, payload) => ({
  * @param {string} path       uri parent de la ressource
  * @param {object} payload    données de la ressource contenant l'id de la ressource
  */
-export const del = (path, payload) => ({
+export const del = (path, payload): IAction => ({
 	path,
 	payload,
 	synced: false,
@@ -140,11 +163,11 @@ export const del = (path, payload) => ({
  * Success du delete de la ressource REST
  * Cette methode est appelé par le système. Elle n'a pas à etre appelée explicitement
  *
- * @param {string} path             l'URI parent de la ressource
+ * @param action           			the initial action
  * @param {object} payload          les données de la ressource
  */
-export const delSuccess = (path, payload) => ({
-	path,
+export const delSuccess = (action: IAction, payload): IAction => ({
+	...action,
 	payload,
 	synced: false,
 	type: TYPES.DELETE_SUCCESS,
@@ -157,8 +180,8 @@ export const delSuccess = (path, payload) => ({
  * @param path
  * @param payload
  */
-export const crudError = (type, path, payload, response = { ok: true, status: 200, statusText: "" }) => ({
-	path,
+export const crudError = (type, action, payload, response = { ok: true, status: 200, statusText: "" }): IAction => ({
+	...action,
 	payload: { ok: response.ok, status: response.status, statusText: response.statusText, ...payload },
 	synced: false,
 	type,
@@ -170,14 +193,14 @@ export const crudError = (type, path, payload, response = { ok: true, status: 20
  * @param code        error code
  * @param message     message associated to this error code. If message is null, no error
  */
-export const error = (code, message) => ({
+export const error = (code, message): IAction => ({
 	path: "/ERR",
 	payload: { code, message },
 	synced: false,
 	type: "_ERROR",
 })
 
-export const resetErrors = () => ({
+export const resetErrors = (): IAction  => ({
 	path: "/ERR",
 	payload: {},
 	synced: false,

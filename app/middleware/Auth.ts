@@ -4,6 +4,9 @@ import { CREATE_ERROR, CREATE_SUCCESS } from "../constants/docs"
 import { PATH_AUTH, PATH_LOGIN, PATH_LOGOUT, PATH_RECOVER_PASSWORD, PATH_SIGNUP } from "../constants/paths"
 import { navigate } from "../utils/navHelper"
 import { getLogin, setLogin } from "../utils/Store"
+import { readNews } from "../actions/news"
+import { readConversation } from "../actions/conversation"
+import { readCurrentUser } from "../actions/users"
 
 let initAuth = false
 
@@ -40,6 +43,11 @@ export default store => next => action => {
 				email: action.payload.email,
 				password: action.payload.password,
 			})
+
+			// read the data
+			store.dispatch(readNews())
+			store.dispatch(readConversation())
+			store.dispatch(readCurrentUser())
 		}
 
 		if ((action.path === PATH_LOGIN || action.path === PATH_SIGNUP) && action.type === CREATE_ERROR) {
