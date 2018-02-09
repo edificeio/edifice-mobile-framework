@@ -26,9 +26,14 @@ const dataTypes = {
             const response = await fetch(`${Conf.platform}/blog/post/${news.resource}/${news['sub-resource']}`);
             const data = await response.json();
 
+            let previewText = adaptator(data.content)
+                .toText();
+            if(previewText.length > 175){
+                previewText = previewText.substring(172) + '...';
+            }
+
             return {
-                preview: adaptator(data.content)
-                    .toText(),
+                preview: previewText,
                 message: adaptator(data.content)
                     .toHTML(),
                 images: adaptator(data.content)
