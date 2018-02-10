@@ -4,6 +4,7 @@ import styles from "../styles/index"
 import { connect } from "react-redux"
 import { listTimeline } from "../actions/timeline"
 import { News } from "./News"
+import {Conf} from "../Conf"
 
 export interface ITimelineProps {
 	sync: (page: number) => Promise<void>
@@ -13,20 +14,18 @@ export interface ITimelineProps {
 }
 
 class Timeline extends React.Component<ITimelineProps, any> {
-	pageNumber: number
 
 	componentDidMount() {
-		this.pageNumber = 0
 		if (!this.props.fetching) {
-			this.props.sync(this.pageNumber)
+			this.props.sync(0)
 		}
 	}
 
 	nextPage() {
 		console.log("nextPage")
 		if (!this.props.fetching) {
-			this.pageNumber++
-			this.props.sync(this.pageNumber)
+			const pageNumber = Math.floor( this.props.news.length / Conf.pageSize)
+			this.props.sync(pageNumber)
 		}
 	}
 
