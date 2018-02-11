@@ -4,33 +4,41 @@ import styles from "../styles/index"
 import { connect } from "react-redux"
 import { listTimeline } from "../actions/timeline"
 import { News } from "./News"
-import {Conf} from "../Conf"
+import { View } from "react-native"
 
 export interface ITimelineProps {
 	sync: (page: number) => Promise<void>
 	news: any
-	pageNumber: number
 	fetching: boolean
 }
 
 class Timeline extends React.Component<ITimelineProps, any> {
+	pageNumber: number
 
 	componentDidMount() {
+		this.pageNumber = 0
 		if (!this.props.fetching) {
-			this.props.sync(0)
+			this.props.sync(this.pageNumber)
 		}
 	}
 
 	nextPage() {
 		console.log("nextPage")
 		if (!this.props.fetching) {
-			const pageNumber = Math.floor( this.props.news.length / Conf.pageSize)
-			this.props.sync(pageNumber)
+			this.props.sync(++this.pageNumber)
 		}
+	}
+
+	shouldComponentUpdate(nextProps, nextState) {
+		if (nextProps.news !== this.props.news) return true
+
+		return false
 	}
 
 	public render() {
 		const { news } = this.props
+
+		if (!news || news.length === 0) return <View />
 
 		return (
 			<FlatList
@@ -38,6 +46,7 @@ class Timeline extends React.Component<ITimelineProps, any> {
 				keyExtractor={item => item.id}
 				legacyImplementation={true}
 				onEndReached={() => this.nextPage()}
+				onEndReachedThreshold={0.1}
 				renderItem={({ item }) => <News {...item} />}
 				style={styles.grid}
 			/>
@@ -49,7 +58,6 @@ export default connect(
 	(state: any) => ({
 		news: state.timeline.news,
 		fetching: state.timeline.isFetching,
-		pageNumber: 0,
 	}),
 	dispatch => ({
 		sync: (page: number) => listTimeline(dispatch)(page),

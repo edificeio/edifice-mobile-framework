@@ -21,10 +21,6 @@ export class SignupLoginRecover extends React.Component<ISignupLoginRecoverProps
 			return <View />
 		}
 
-		if (loggedIn) {
-			navigate("Main")
-		}
-
 		if (routeName === "Login") {
 			return <Login {...this.props} />
 		}
