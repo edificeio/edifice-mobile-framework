@@ -23,7 +23,7 @@ class Timeline extends React.Component<ITimelineProps, any> {
 	}
 
 	nextPage() {
-	//	console.log("nextPage")
+		//	console.log("nextPage")
 		if (!this.props.fetching) {
 			this.props.sync(++this.pageNumber)
 		}

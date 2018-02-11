@@ -54,7 +54,7 @@ export class ThreadsTopBar extends React.PureComponent<IThreadsBarProps, {}> {
 					<ContainerAvatars>
 						<Avatars onSlideIndex={slideIndex => this.onSlideIndex(slideIndex)} images={images} size={Size.verylarge} />
 						<Legend14>{displayNames[this.state.slideIndex][1]}</Legend14>
-						<Legend12>{this.state.slideIndex === 0 ? "Enseignant CM1A" : "Parent d'élève"}</Legend12>
+						<Legend12></Legend12>
 					</ContainerAvatars>
 				)}
 			</ContainerTopBar>
