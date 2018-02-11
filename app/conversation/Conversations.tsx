@@ -1,30 +1,23 @@
 import style from "glamorous-native"
 import * as React from "react"
-import { OptimizedFlatList } from "react-native-optimized-flatlist"
+import { FlatList } from "react-native"
 import Swipeable from "react-native-swipeable"
 import { layoutSize } from "../constants/layoutSize"
 import { IThreadModel } from "../model/Thread"
 import styles from "../styles/index"
 import { Icon } from "../ui/icons/Icon"
 import { Conversation } from "./Conversation"
-import { getSeqNumber } from "../utils/Store"
 
 export interface IConversationsProps {
 	conversations: IThreadModel[]
 	navigation?: any
-	readNextThreads?: () => void
-	readPrevThreads?: () => void
 }
 
 export class Conversations extends React.Component<IConversationsProps, any> {
 	public onPress(id: string, displayNames: string[][], subject: string) {
-		const { readNextThreads, readPrevThreads } = this.props
-
 		this.props.navigation.navigate("Threads", {
 			conversationId: id,
 			displayNames,
-			readNextThreads,
-			readPrevThreads,
 			subject,
 		})
 	}
@@ -33,9 +26,10 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 		const { conversations } = this.props
 
 		return (
-			<OptimizedFlatList
+			<FlatList
 				data={conversations}
-				keyExtractor={(item) => item.id}
+				keyExtractor={item => item.id}
+				legacyImplementation={true}
 				renderItem={({ item }) => this.renderItem(item)}
 				style={styles.grid}
 			/>

@@ -1,14 +1,14 @@
 import style from "glamorous-native"
 import * as React from "react"
 import { ViewStyle } from "react-native"
-import HTML from "react-native-render-html"
+import { adaptator } from "../infra/HTMLAdaptator"
 import { layoutSize } from "../constants/layoutSize"
 import { IThreadModel } from "../model/Thread"
 import { CommonStyles } from "../styles/common/styles"
 import { Size } from "../ui/Avatar"
 import { Avatar } from "../ui/Avatar"
 import { DateView } from "../ui/DateView"
-import { clean } from "../utils/html"
+import { Content } from "../ui/ContainerContent"
 
 interface IThreadProps extends IThreadModel {
 	userId: string
@@ -21,10 +21,6 @@ export const Thread = ({ body, date, displayNames = [], from = "", userId }: ITh
 		return <style.View />
 	}
 
-	const tagsStyles = { div: { color: my ? "white" : CommonStyles.textColor } }
-	// const classesStyles = { signature: { color: my ? "white" : CommonStyles.textColor } }
-	const containerStyle = { backgroundColor: "transparent" }
-
 	return (
 		<Item>
 			{displayNames.length > 2 &&
@@ -35,12 +31,7 @@ export const Thread = ({ body, date, displayNames = [], from = "", userId }: ITh
 				)}
 			<CenterPanel my={my}>
 				<ContainerContent my={my}>
-					<HTML
-						html={clean(body)}
-						containerStyle={containerStyle}
-						imagesMaxWidth={layoutSize.LAYOUT_300}
-						tagsStyles={tagsStyles}
-					/>
+					<Content>{adaptator(body).toText()}</Content>
 				</ContainerContent>
 				<DateView date={date} />
 			</CenterPanel>

@@ -1,6 +1,6 @@
 import style from "glamorous-native"
 import * as React from "react"
-import { OptimizedFlatList } from "react-native-optimized-flatlist"
+import { FlatList } from "react-native"
 import { IThreadModel } from "../model/Thread"
 import styles from "../styles/index"
 import { Thread } from "./Thread"
@@ -8,35 +8,34 @@ import { sameDay } from "../utils/date"
 import { Row } from "../ui"
 import { tr } from "../i18n/t"
 import { View } from "react-native"
+import {layoutSize} from "../constants/layoutSize";
 
 export interface IThreadsProps {
+	dispatch?: (any) => void
 	navigation?: any
+	readNextThreads?: (string) => any
+	readPrevThreads?: (string) => any
 	threads: IThreadModel[]
 	userId: string
 }
 
 export class Threads extends React.Component<IThreadsProps, any> {
-	private scrollReady = false
 	public alreadyDisplayTodayDate: boolean = false
+
+	componentWillMount() {
+		const { conversationId } = this.props.navigation.state.params
+		this.props.readNextThreads(conversationId)
+		this.props.readPrevThreads(conversationId)
+	}
 
 	public render() {
 		const { threads } = this.props
-		const { conversationId, readNextThreads, readPrevThreads } = this.props.navigation.state.params
 
 		return (
-			<OptimizedFlatList
+			<FlatList
 				data={threads}
 				keyExtractor={item => item.id}
-				onEndReached={() => {
-					if (this.scrollReady) readNextThreads(conversationId)
-				}}
-				onScroll={event => {
-					this.scrollReady = true
-					if (event.nativeEvent.contentOffset.y < -200) {
-						readPrevThreads(conversationId)
-					}
-				}}
-				onEndReachedThreshold={0.5}
+				legacyImplementation={true}
 				renderItem={({ item }) => this.renderItem(item)}
 				style={styles.grid}
 			/>
@@ -81,6 +80,7 @@ const Border = style.view({
 	backgroundColor: "#DCDDE0",
 	flex: 1,
 	height: 1,
+	marginHorizontal: layoutSize.LAYOUT_10
 })
 
 const Text = style.text({

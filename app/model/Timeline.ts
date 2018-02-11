@@ -30,7 +30,7 @@ export const Timeline = (
 	},
 	action
 ) => {
-	console.log(action)
+	//	console.log(action)
 	switch (action.type) {
 		case "APPEND":
 			return {

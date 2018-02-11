@@ -2,7 +2,7 @@ import style from "glamorous-native"
 import * as React from "react"
 import { layoutSize } from "../constants/layoutSize"
 import { IThreadModel } from "../model/Thread"
-import { trunc } from "../utils/html"
+import { adaptator } from "../infra/HTMLAdaptator"
 import { CommonStyles } from "../styles/common/styles"
 import { Size } from "../ui/Avatar"
 import { Avatars } from "../ui/Avatars"
@@ -10,6 +10,7 @@ import { DateView } from "../ui/DateView"
 import { CircleNumber } from "../ui/CircleNumber"
 import { CenterPanel, Content, Item, LeftPanel, RightPanel } from "../ui/ContainerContent"
 import {Row} from "../ui";
+import {trunc} from "../utils/html";
 
 interface IConversationProps extends IThreadModel {
 	onPress: (id: string, displayNames: string[][], subject: string) => void
@@ -26,7 +27,7 @@ export const Conversation = ({ id, subject, date, displayNames, nb, onPress }: I
 				</LeftPanel>
 				<CenterPanel>
 					{getTitle(displayNames, nb)}
-					{subject.length ? <Content nb={nb}>{trunc(subject, layoutSize.LAYOUT_32)}</Content> : <style.View />}
+					{subject.length ? <Content nb={nb}>{adaptator(subject).toOneLineText()}</Content> : <style.View />}
 				</CenterPanel>
 				<RightPanel>
 					<DateView date={date} nb={nb} />

@@ -43,6 +43,6 @@ const mapStateToProps = state => ({
 })
 
 const dispatchAndMapActions = dispatch =>
-	bindActionCreators({ readConversation, readNextThreads, readPrevThreads }, dispatch)
+	bindActionCreators({ readConversation }, dispatch)
 
 export default connect<{}, {}, IConversationsProps>(mapStateToProps, dispatchAndMapActions)(Conversations)

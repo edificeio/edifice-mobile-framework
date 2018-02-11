@@ -30,7 +30,7 @@ export const read = (path, synced = false): IAction => ({
  * @param {boolean} synced    say if yourglass displayer
  *
  */
-export const readNext = (path, synced = false): IAction => ({
+export const readMerge = (path, synced = false): IAction => ({
 	merge: true,
 	path,
 	synced,

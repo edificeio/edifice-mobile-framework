@@ -69,8 +69,6 @@
     "react-native-i18n": "^2.0.10",
     "react-native-image-to-base64": "^0.1.0",
     "react-native-modal": "^5.0.0",
-    "react-native-optimized-flatlist": "^1.0.4",
-    "react-native-render-html": "^3.7.0",
     "react-native-smart-splash-screen": "^2.3.5",
     "react-native-snap-carousel": "^3.5.0",
     "react-native-swipeable": "^0.6.0",

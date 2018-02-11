@@ -1,6 +1,6 @@
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
-import { readConversation } from "../actions/conversation"
+import {readConversation, readNextThreads, readPrevThreads} from "../actions/conversation"
 import { IThreadsProps, Threads } from "../conversation/Threads"
 import { IThreadModel, IThreadState } from "../model/Thread"
 
@@ -22,6 +22,6 @@ const mapStateToProps = (state, props) => ({
 	userId: state.auth.userId,
 })
 
-const dispatchAndMapActions = dispatch => bindActionCreators({ readConversation }, dispatch)
+const dispatchAndMapActions = dispatch => bindActionCreators({ readNextThreads, readPrevThreads }, dispatch)
 
 export default connect<{}, {}, IThreadsProps>(mapStateToProps, dispatchAndMapActions)(Threads)
