@@ -1,12 +1,13 @@
+import { Conf } from '../Conf';
 import {
 	PATH_CONVERSATION,
 	PATH_CREATE_CONVERSATION,
 	PATH_NEW_MESSAGES,
 	PATH_PREVIOUS_MESSAGES,
-} from "../constants/paths"
-import { create, read, readMerge } from "./docs"
-import { Conf } from "../Conf";
+} from "../constants/paths";
+import { create, read, readMerge } from "./docs";
 
+console.log(Conf);
 
 export const readConversation = () => read(PATH_CONVERSATION, true)
 
@@ -20,7 +21,7 @@ export const sendMessage = dispatch => async (data: { subject: string, to: any[]
 	});
 
 	try{
-		const response = await fetch(`https://recette-ent77.opendigitaleducation.com/conversation/send?In-Reply-To=${data.parentId}`, {
+		const response = await fetch(`${ Conf.platform }/conversation/send?In-Reply-To=${data.parentId}`, {
 			method: 'post',
 			headers: {
 				'Accept': 'application/json',
@@ -38,6 +39,7 @@ export const sendMessage = dispatch => async (data: { subject: string, to: any[]
 		dispatch({
 			type: 'SENT'
 		});
+		dispatch(read(PATH_CONVERSATION, true))
 	}
 	catch(e){
 		console.log(e);
