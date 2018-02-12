@@ -16,3 +16,4 @@ getLanguages()
 export const tr = keyTrans(I18n)
 
 export const monthsName = date => I18n.strftime(date, "%b")
+

@@ -35,7 +35,7 @@ const dataTypes = {
 				date: data.modified.$date,
 				id: data._id,
 				images: adaptator(data.content).toImagesArray(),
-				message: adaptator(data.content).toHTML(),
+				message: adaptator(data.content).toText(),
 				preview: previewText,
 				resourceName: news.params.blogTitle,
 				senderId: data.author.userId,

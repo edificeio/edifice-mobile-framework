@@ -7,15 +7,22 @@ import { News } from "./News"
 import { View } from "react-native"
 
 export interface ITimelineProps {
-	sync: (page: number) => Promise<void>
-	news: any
 	fetching: boolean
+	navigation: any
+	news: any
+	sync: (page: number) => Promise<void>
 }
 
-class Timeline extends React.Component<ITimelineProps, any> {
+export interface ITimelineState {
+	scrollTo: number
+}
+
+class Timeline extends React.Component<ITimelineProps, ITimelineState> {
+	flatList: any
 	pageNumber: number
 
 	componentDidMount() {
+		this.flatList = null
 		this.pageNumber = 0
 		if (!this.props.fetching) {
 			this.props.sync(this.pageNumber)
@@ -27,6 +34,12 @@ class Timeline extends React.Component<ITimelineProps, any> {
 		if (!this.props.fetching) {
 			this.props.sync(++this.pageNumber)
 		}
+	}
+
+	onPress(id: string, index: number, full: boolean) {
+		// show/hide header & footer
+		this.props.navigation.setParams({ header: full ? null : undefined, tabBar: full ? null : undefined })
+		this.flatList.scrollToIndex({ index })
 	}
 
 	shouldComponentUpdate(nextProps, nextState) {
@@ -44,10 +57,14 @@ class Timeline extends React.Component<ITimelineProps, any> {
 			<FlatList
 				data={news}
 				keyExtractor={item => item.id}
-				legacyImplementation={true}
 				onEndReached={() => this.nextPage()}
 				onEndReachedThreshold={0.1}
-				renderItem={({ item }) => <News {...item} />}
+				renderItem={({ item, index }) => (
+					<News {...item} index={index} onPress={(id, index, full) => this.onPress(id, index, full)} />
+				)}
+				ref={list => (this.flatList = list)}
+				removeClippedSubviews
+				disableVirtualization
 				style={styles.grid}
 			/>
 		)

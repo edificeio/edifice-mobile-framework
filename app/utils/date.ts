@@ -16,6 +16,10 @@ export function getTimeToStr(timestamp) {
 	const date = new Date(timestamp)
 	const day = date.getDate()
 	const monthName = monthsName(date)
+	const year = date.getFullYear()
+	const nowYear = new Date().getFullYear()
+
+	if (year !== nowYear) return `${day} ${monthName} ${year}`
 
 	return `${day} ${monthName}`
 }

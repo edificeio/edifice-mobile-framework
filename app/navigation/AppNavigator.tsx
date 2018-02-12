@@ -5,11 +5,11 @@ import { tr } from "../i18n/t"
 import { tabNavigator, tabRootOptions } from "../utils/navHelper"
 import ConversationNavigator from "./ConversationNavigator"
 import ProfileNavigator from "./ProfileNavigator"
-import Timeline from "../timeline/Timeline";
+import TimelineNavigator from "./TimelineNavigator"
 
 const MainNavigator = tabNavigator({
 	Nouveautes: {
-		screen: Timeline,
+		screen: TimelineNavigator,
 		navigationOptions: () => tabRootOptions(tr.News, "nouveautes"),
 	},
 	Conversation: {

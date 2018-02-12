@@ -85,7 +85,10 @@ export const tabRootOptions = (title, iconName) => ({
 	},
 })
 
-export const navOptions = props => {
+export const navOptions = (props, { state }) => {
+	const { params = {} } = state
+	const { header = undefined } = params
+
 	return {
 		headerStyle: {
 			backgroundColor: CommonStyles.mainColorTheme,
@@ -99,6 +102,8 @@ export const navOptions = props => {
 			fontWeight: "400",
 			textAlign: "center",
 		},
+		header,
+		tabBarVisible: header !== null,
 		headerTintColor: "white",
 		...props,
 	}

@@ -33,6 +33,7 @@ export const CommonStyles = {
 	secondaryButtonColor: "#fc624d",
 	secondaryFontColor: "#8e8e93",
 	selectColor: "#ffff00",
+    selectColor2: "#ffff00aa",
 	shadowColor: "rgba(0, 0, 0, 1.0)",
 	shadowOffset: {
 		height: 1,

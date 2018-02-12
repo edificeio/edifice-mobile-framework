@@ -15,12 +15,15 @@ const customAnimationFunc = () => ({
 export default StackNavigator(
 	{
 		UserProfileNavigator: {
-			navigationOptions: () =>
-				navOptions({
-					headerLeft: <View />,
-					headerRight: <View />,
-					title: tr.Profile,
-				}),
+			navigationOptions: ({ navigation }) =>
+				navOptions(
+					{
+						headerLeft: <View />,
+						headerRight: <View />,
+						title: tr.Profile,
+					},
+					navigation
+				),
 			screen: UserProfile,
 		},
 	},
