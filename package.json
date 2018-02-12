@@ -84,6 +84,7 @@
     "react-navigation": "1.0.3",
     "react-redux": "5.0.6",
     "redux": "3.7.2",
+    "react-native-image-picker": "^0.26.7",
     "redux-devtools-extension": "^2.13.2",
     "rimraf": "2.6.2",
     "typescript": "2.7.1",

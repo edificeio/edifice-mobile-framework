@@ -3,12 +3,13 @@ import * as React from "react"
 import { CenterPanel } from "../ui/headers/Header";
 import { Icon, IconOnOff } from "../ui/index"
 import { tr } from "../i18n/t"
-import { sendMessage } from "../actions/conversation"
+import { sendMessage, sendPhoto } from "../actions/conversation"
 import { connect } from "react-redux"
 import { View, Platform } from "react-native";
 import { ToggleIcon } from "../ui/ToggleIcon";
 import { Row, Line } from "../ui/Grid";
 import { CommonStyles } from "../styles/common/styles";
+import { Me } from "../infra/Me";
 import { ThreadsTopBar } from "./ThreadsTopBar";
 
 interface IThreadsFooterBarProps {
@@ -66,7 +67,15 @@ const ContainerInput = style.view({
 	flexDirection: 'row'
 })
 
-class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, ThreadsFooterBarState> {
+class ThreadsFooterBar extends React.Component<{
+	conversation: any
+	send: (data: any) => Promise<void>
+	sendPhoto: (data: any) => Promise<void>
+}, {
+	selected: Selected
+	textMessage: string
+}> {
+	
 	input: any;
 
 	public state = {
@@ -76,6 +85,7 @@ class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, ThreadsFo
 
 	private onPress(e: Selected) {
 		const { selected } = this.state
+
 		if(e === Selected.keyboard){
 			if(this.state.selected !== Selected.keyboard){
 				this.input.innerComponent.focus();
@@ -84,7 +94,36 @@ class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, ThreadsFo
 				this.input.innerComponent.blur();
 			}
 		}
-		this.setState({ selected: e === selected ? Selected.none : e })
+
+		this.setState({ selected: e === selected ? Selected.none : e });
+		
+		if(e === Selected.camera){
+			this.sendPhoto();
+		}
+	}
+
+	private sendPhoto(){
+		const { id, displayNames, subject, userId, thread_id } = this.props.conversation;
+		const { textMessage } = this.state;
+
+		let conversation = this.props.conversation;
+
+		this.setState({ selected: Selected.none });
+
+		let to = [];
+		if(conversation.from === Me.session.userId){
+			to = conversation.to;
+		}
+		else{
+			to = [conversation.from];
+		}
+
+		this.props.sendPhoto({
+			subject: subject,
+			to: to,
+			cc: conversation.cc,
+			parentId: id,
+		});
 	}
 
 	private onValid() {
@@ -169,5 +208,6 @@ export default connect(
 	(state: any) => ({}),
 	dispatch => ({
 		send: (data: any) => sendMessage(dispatch)(data),
+		sendPhoto: (data: any) => sendPhoto(dispatch)(data)
 	})
 )(ThreadsFooterBar)

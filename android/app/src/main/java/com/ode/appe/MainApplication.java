@@ -5,11 +5,9 @@ import android.app.Application;
 import com.facebook.react.ReactApplication;
 import com.psykar.cookiemanager.CookieManagerPackage;
 import com.reactnativecomponent.splashscreen.RCTSplashScreenPackage;
-import com.reactnativecomponent.splashscreen.RCTSplashScreenPackage;
-import com.reactnativecomponent.splashscreen.RCTSplashScreenPackage;
-import com.reactnativecomponent.splashscreen.RCTSplashScreenPackage;
 import com.github.xfumihiro.react_native_image_to_base64.ImageToBase64Package;
 import com.RNFetchBlob.RNFetchBlobPackage;
+import com.imagepicker.ImagePickerPackage;
 import io.invertase.firebase.RNFirebasePackage;
 import io.invertase.firebase.fabric.crashlytics.RNFirebaseCrashlyticsPackage;
 import io.invertase.firebase.analytics.RNFirebaseAnalyticsPackage;
@@ -44,12 +42,13 @@ public class MainApplication extends Application implements ReactApplication {
             new CookieManagerPackage(),
             new ImageToBase64Package(),
             new RNFetchBlobPackage(),
+            new RCTSplashScreenPackage(),
+            new ImagePickerPackage(),
             new RNFirebasePackage(),
             new RNFirebaseAnalyticsPackage(),
             new RNFirebaseCrashlyticsPackage(),
             new RNFirebasePerformancePackage(),
             new RNI18nPackage(),
-            new RCTSplashScreenPackage(),
             new VectorIconsPackage(),
             new RNFSPackage()
       );
