@@ -1,9 +1,9 @@
 import style from "glamorous-native"
 import * as React from "react"
-import { ViewStyle } from "react-native"
+import { ViewStyle, Text } from 'react-native';
 import { adaptator } from "../infra/HTMLAdaptator"
 import { layoutSize } from "../constants/layoutSize"
-import { IThreadModel } from "../model/Thread"
+import { IThreadModel, ThreadStatus } from "../model/Thread"
 import { CommonStyles } from "../styles/common/styles"
 import { Size } from "../ui/Avatar"
 import { Avatar } from "../ui/Avatar"
@@ -14,7 +14,7 @@ interface IThreadProps extends IThreadModel {
 	userId: string
 }
 
-export const Thread = ({ body, date, displayNames = [], from = "", userId }: IThreadProps) => {
+export const Thread = ({ body, date, displayNames = [], from = "", userId, status }: IThreadProps) => {
 	const my = from === userId
 
 	if (!body) {
@@ -33,7 +33,8 @@ export const Thread = ({ body, date, displayNames = [], from = "", userId }: ITh
 				<ContainerContent my={my}>
 					<Content>{adaptator(body).toText()}</Content>
 				</ContainerContent>
-				<DateView date={date} />
+				{ status === ThreadStatus.sent && <DateView date={date} /> }
+				{ status === ThreadStatus.sending && <Text>En cours d'envoi...</Text> }
 			</CenterPanel>
 		</Item>
 	)

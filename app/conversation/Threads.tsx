@@ -21,7 +21,8 @@ export interface IThreadsProps {
 }
 
 export class Threads extends React.Component<IThreadsProps, any> {
-	public alreadyDisplayTodayDate: boolean = false
+	public alreadyDisplayTodayDate: boolean = false;
+	list: any;
 
 	componentWillMount() {
 		const { conversationId } = this.props.navigation.state.params
@@ -39,9 +40,11 @@ export class Threads extends React.Component<IThreadsProps, any> {
 				data={threads}
 				inverted
 				keyExtractor={item => item.id}
-				legacyImplementation={true}
 				renderItem={({ item }) => this.renderItem(item)}
 				style={styles.grid}
+				ref={ref => this.list = ref}
+				onContentSizeChange={() => this.list.scrollToEnd({animated: true})}
+   				onLayout={() => this.list.scrollToEnd({animated: true})}
 			/>
 		)
 	}
