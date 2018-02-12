@@ -12,6 +12,7 @@ export const CommonStyles = {
 	entryfieldBorder: "#DCDDE0",
 	errorColor: "#EC5D61",
 	fadColor: "#444444",
+	hightlightColor: "#FFFF00",
 	iconColorOff: "#858FA9",
 	iconColorOn: "#2A9CC8",
 	inputBackColor: "#F8F8FA",

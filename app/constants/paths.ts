@@ -1,7 +1,7 @@
 export const PATH_AUTH = "auth/oauth2/userinfo"
 export const PATH_AVATAR = "workspace/document/$1?thumbnail=48x48"
 
-export const PATH_CONVERSATION = "conversation/threads/list"
+export const PATH_CONVERSATION = "conversation/threads/list?page=$1"
 export const PATH_CREATE_CONVERSATION = "conversation/send"
 export const PATH_LOGIN = "auth/login"
 export const PATH_LOGOUT = "auth/logout"

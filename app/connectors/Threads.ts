@@ -1,6 +1,6 @@
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
-import {readConversation, readNextThreads, readPrevThreads} from "../actions/conversation"
+import { readNextConversation, readNextThreads, readPrevThreads } from "../actions/conversation"
 import { IThreadsProps, Threads } from "../conversation/Threads"
 import { IThreadModel, IThreadState } from "../model/Thread"
 
@@ -18,10 +18,14 @@ const filtering = (threads: IThreadState, conversationId): IThreadModel[] => {
 }
 
 const mapStateToProps = (state, props) => ({
+	merge: state.threads.merge,
 	threads: filtering(state.threads, props.navigation.state.params.conversationId).sort((a, b) => a.date - b.date),
+	pageNumber: state.threads.pageNumber,
+	synced: state.threads.synced,
 	userId: state.auth.userId,
 })
 
-const dispatchAndMapActions = dispatch => bindActionCreators({ readNextThreads, readPrevThreads }, dispatch)
+const dispatchAndMapActions = dispatch =>
+	bindActionCreators({ readNextConversation, readNextThreads, readPrevThreads }, dispatch)
 
 export default connect<{}, {}, IThreadsProps>(mapStateToProps, dispatchAndMapActions)(Threads)

@@ -12,18 +12,20 @@ export const Item = style.touchableOpacity(
 	},
 	({ full = false, nb = 0 }) => ({
 		borderLeftWidth: full ? layoutSize.LAYOUT_4 : 0,
-		borderLeftColor: full ? CommonStyles.selectColor2 : "transparent",
+		borderLeftColor: full ? CommonStyles.hightlightColor : "transparent",
 		backgroundColor: nb > 0 ? CommonStyles.nonLue : CommonStyles.itemBackgroundColor,
 	})
 )
 
 export const Header = style.view({
+	alignItems: "flex-start",
+	flex: 1,
 	flexDirection: "row",
+	justifyContent: "flex-start",
 })
 
 export const LeftPanel = style.view({
-	alignItems: "center",
-	justifyContent: "flex-start",
+	height: layoutSize.LAYOUT_50,
 	width: layoutSize.LAYOUT_50,
 })
 
@@ -37,6 +39,7 @@ export const CenterPanel = style.view({
 
 export const RightPanel = style.view({
 	alignItems: "center",
+	height: layoutSize.LAYOUT_50,
 	justifyContent: "flex-end",
 	width: layoutSize.LAYOUT_50,
 })

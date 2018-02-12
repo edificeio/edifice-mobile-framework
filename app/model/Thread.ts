@@ -20,12 +20,16 @@ export interface IThreadModel {
 }
 
 export interface IThreadState {
+	merge: boolean
+	pageNumber: number
 	payload: IThreadModel[]
 	filterCriteria: null
 	synced: boolean
 }
 
 const initialState: IThreadState = {
+	merge: false,
+	pageNumber: 0,
 	payload: [],
 	filterCriteria: null,
 	synced: true,

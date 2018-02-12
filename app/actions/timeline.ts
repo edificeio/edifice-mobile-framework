@@ -70,15 +70,14 @@ export const listTimeline = dispatch => async page => {
 	dispatch({
 		type: "FETCH",
 	})
-	console.log(`${Conf.platform}/timeline/lastNotifications?page=${page}&${writeTypesParams()}`)
+	// console.log(`${Conf.platform}/timeline/lastNotifications?page=${page}&${writeTypesParams()}`)
 	const response = await fetch(`${Conf.platform}/timeline/lastNotifications?page=${page}&${writeTypesParams()}`)
 
 	try {
 		const news = await response.json()
 		let results = news.results.filter(n => excludeTypes.indexOf(n["event-type"]) === -1 && n.params)
-		console.log("has " + results.length + " results at page " + page)
+		// console.log("has " + results.length + " results at page " + page)
 		const newNews = await fillData(results)
-		console.log("made new news")
 
 		dispatch({
 			type: "APPEND",

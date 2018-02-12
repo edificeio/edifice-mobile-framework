@@ -5,7 +5,7 @@ import { PATH_AUTH, PATH_LOGIN, PATH_LOGOUT, PATH_RECOVER_PASSWORD, PATH_SIGNUP 
 import { navigate } from "../utils/navHelper"
 import { getLogin, setLogin } from "../utils/Store"
 import { readNews } from "../actions/news"
-import { readConversation } from "../actions/conversation"
+import { readConversation, readNextConversation } from "../actions/conversation"
 import { readCurrentUser } from "../actions/users"
 
 let initAuth = false
@@ -46,6 +46,13 @@ export default store => next => action => {
 
 			// read the data
 			store.dispatch(readConversation())
+			store.dispatch(readNextConversation(1))
+			store.dispatch(readNextConversation(2))
+            store.dispatch(readNextConversation(3))
+            store.dispatch(readNextConversation(4))
+            store.dispatch(readNextConversation(5))
+            store.dispatch(readNextConversation(6))
+
 			store.dispatch(readCurrentUser())
 		}
 

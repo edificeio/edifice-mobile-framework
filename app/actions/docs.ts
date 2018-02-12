@@ -1,13 +1,15 @@
 import * as TYPES from "../constants/docs"
+import { PATH_CONVERSATION, replace1 } from "../constants/paths"
 
 export interface IAction {
-	type: string
-	path: string
-	synced?: boolean
-	merge?: boolean
-	form?: boolean,
-	payload?: object
+	form?: boolean
 	id?: string
+	merge?: boolean
+	pageNumber?: number
+	path: string
+	payload?: object
+	synced?: boolean
+	type: string
 }
 
 /**
@@ -18,6 +20,7 @@ export interface IAction {
  *
  */
 export const read = (path, synced = false): IAction => ({
+	pageNumber: 0,
 	path,
 	synced,
 	type: TYPES.READ,
@@ -27,12 +30,14 @@ export const read = (path, synced = false): IAction => ({
  * Read next REST resource (merge result with the state)
  *
  * @param {string} path       l'URI de la ressource
+ * @param {string} pageNumber       page to read
  * @param {boolean} synced    say if yourglass displayer
  *
  */
-export const readMerge = (path, synced = false): IAction => ({
+export const readNext = (path, pageNumber, synced = false): IAction => ({
 	merge: true,
-	path,
+	path: replace1(path, pageNumber),
+	pageNumber,
 	synced,
 	type: TYPES.READ,
 })
@@ -200,7 +205,7 @@ export const error = (code, message): IAction => ({
 	type: "_ERROR",
 })
 
-export const resetErrors = (): IAction  => ({
+export const resetErrors = (): IAction => ({
 	path: "/ERR",
 	payload: {},
 	synced: false,

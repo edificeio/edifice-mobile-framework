@@ -1,0 +1,230 @@
+[
+    {
+        "id": "dc95f2a5-71ff-484b-8683-cd441348a58b",
+        "parent_id": "a97ff726-e60d-41de-879b-3fb48f10017d",
+        "subject": "test grp manuel",
+        "body": "<div>Tuv</div>",
+        "from": "ed5141de-1207-47b2-af54-660bae76b613",
+        "fromName": null,
+        "to": [
+            "2bacdfd2-b59c-4b21-a23e-f6346e02fc4a"
+        ],
+        "toName": null,
+        "cc": [
+            "86fe9f67-c3d7-4902-b93b-87f0cf58f425"
+        ],
+        "ccName": null,
+        "displayNames": [
+            [
+                "ed5141de-1207-47b2-af54-660bae76b613",
+                "ISABELLE GONNET"
+            ],
+            [
+                "2bacdfd2-b59c-4b21-a23e-f6346e02fc4a",
+                "Mme ALEXANDRE"
+            ],
+            [
+                "86fe9f67-c3d7-4902-b93b-87f0cf58f425",
+                "Groupe manuel ODE"
+            ]
+        ],
+        "date": 1518446735405,
+        "unread": false,
+        "conversation": "a97ff726-e60d-41de-879b-3fb48f10017d",
+        "nb": 1
+    },
+    {
+        "id": "6ae59d8f-7220-4617-9f3e-7e769dbb8103",
+        "parent_id": "a97ff726-e60d-41de-879b-3fb48f10017d",
+        "subject": "test grp manuel",
+        "body": "<div>Z</div>",
+        "from": "ed5141de-1207-47b2-af54-660bae76b613",
+        "fromName": null,
+        "to": [
+            "2bacdfd2-b59c-4b21-a23e-f6346e02fc4a"
+        ],
+        "toName": null,
+        "cc": [
+            "86fe9f67-c3d7-4902-b93b-87f0cf58f425"
+        ],
+        "ccName": null,
+        "displayNames": [
+            [
+                "ed5141de-1207-47b2-af54-660bae76b613",
+                "ISABELLE GONNET"
+            ],
+            [
+                "2bacdfd2-b59c-4b21-a23e-f6346e02fc4a",
+                "Mme ALEXANDRE"
+            ],
+            [
+                "86fe9f67-c3d7-4902-b93b-87f0cf58f425",
+                "Groupe manuel ODE"
+            ]
+        ],
+        "date": 1518449355802,
+        "unread": true,
+        "conversation": "a97ff726-e60d-41de-879b-3fb48f10017d",
+        "nb": 1
+    },
+    {
+        "id": "d05cb035-4791-40c6-9e08-04685a68d504",
+        "parent_id": "a97ff726-e60d-41de-879b-3fb48f10017d",
+        "subject": "test grp manuel",
+        "body": "<div>Wxy</div>",
+        "from": "ed5141de-1207-47b2-af54-660bae76b613",
+        "fromName": null,
+        "to": [
+            "2bacdfd2-b59c-4b21-a23e-f6346e02fc4a"
+        ],
+        "toName": null,
+        "cc": [
+            "86fe9f67-c3d7-4902-b93b-87f0cf58f425"
+        ],
+        "ccName": null,
+        "displayNames": [
+            [
+                "ed5141de-1207-47b2-af54-660bae76b613",
+                "ISABELLE GONNET"
+            ],
+            [
+                "2bacdfd2-b59c-4b21-a23e-f6346e02fc4a",
+                "Mme ALEXANDRE"
+            ],
+            [
+                "86fe9f67-c3d7-4902-b93b-87f0cf58f425",
+                "Groupe manuel ODE"
+            ]
+        ],
+        "date": 1518449261348,
+        "unread": true,
+        "conversation": "a97ff726-e60d-41de-879b-3fb48f10017d",
+        "nb": 1
+    },
+    {
+        "id": "72375855-b56a-4c47-b7b7-49327c6f37d9",
+        "parent_id": "a97ff726-e60d-41de-879b-3fb48f10017d",
+        "subject": "test grp manuel",
+        "body": "<div>A</div>",
+        "from": "ed5141de-1207-47b2-af54-660bae76b613",
+        "fromName": null,
+        "to": [
+            "2bacdfd2-b59c-4b21-a23e-f6346e02fc4a"
+        ],
+        "toName": null,
+        "cc": [
+            "86fe9f67-c3d7-4902-b93b-87f0cf58f425"
+        ],
+        "ccName": null,
+        "displayNames": [
+            [
+                "ed5141de-1207-47b2-af54-660bae76b613",
+                "ISABELLE GONNET"
+            ],
+            [
+                "2bacdfd2-b59c-4b21-a23e-f6346e02fc4a",
+                "Mme ALEXANDRE"
+            ],
+            [
+                "86fe9f67-c3d7-4902-b93b-87f0cf58f425",
+                "Groupe manuel ODE"
+            ]
+        ],
+        "date": 1518449370417,
+        "unread": true,
+        "conversation": "a97ff726-e60d-41de-879b-3fb48f10017d",
+        "nb": 1
+    },
+    {
+        "id": "13a7713d-a64e-4efa-aade-16e5e1442056",
+        "parent_id": "a97ff726-e60d-41de-879b-3fb48f10017d",
+        "subject": "test grp manuel",
+        "body": "<div>Qrs</div>",
+        "from": "ed5141de-1207-47b2-af54-660bae76b613",
+        "fromName": null,
+        "to": [
+            "2bacdfd2-b59c-4b21-a23e-f6346e02fc4a"
+        ],
+        "toName": null,
+        "cc": [
+            "86fe9f67-c3d7-4902-b93b-87f0cf58f425"
+        ],
+        "ccName": null,
+        "displayNames": [
+            [
+                "ed5141de-1207-47b2-af54-660bae76b613",
+                "ISABELLE GONNET"
+            ],
+            [
+                "2bacdfd2-b59c-4b21-a23e-f6346e02fc4a",
+                "Mme ALEXANDRE"
+            ],
+            [
+                "86fe9f67-c3d7-4902-b93b-87f0cf58f425",
+                "Groupe manuel ODE"
+            ]
+        ],
+        "date": 1518446018182,
+        "unread": false,
+        "conversation": "a97ff726-e60d-41de-879b-3fb48f10017d",
+        "nb": 1
+    },
+    {
+        "id": "a97ff726-e60d-41de-879b-3fb48f10017d",
+        "parent_id": null,
+        "subject": "test grp manuel",
+        "body": "<div><br></div><div class=\"signature new-signature\">abcd</div>",
+        "from": "2bacdfd2-b59c-4b21-a23e-f6346e02fc4a",
+        "fromName": null,
+        "to": [
+            "2bacdfd2-b59c-4b21-a23e-f6346e02fc4a"
+        ],
+        "toName": null,
+        "cc": [
+            "86fe9f67-c3d7-4902-b93b-87f0cf58f425"
+        ],
+        "ccName": null,
+        "displayNames": [
+            [
+                "2bacdfd2-b59c-4b21-a23e-f6346e02fc4a",
+                "Mme ALEXANDRE"
+            ],
+            [
+                "86fe9f67-c3d7-4902-b93b-87f0cf58f425",
+                "Groupe manuel ODE"
+            ]
+        ],
+        "date": 1518101390613,
+        "unread": false,
+        "conversation": "a97ff726-e60d-41de-879b-3fb48f10017d",
+        "nb": 2
+    },
+    {
+        "id": "4e3a8385-2444-4916-a3ef-4ad5446ee6b2",
+        "parent_id": null,
+        "subject": "test notif",
+        "body": "<div class=\"ng-scope\">test notif<br></div><div class=\"signature new-signature ng-scope\"></div>",
+        "from": "2bacdfd2-b59c-4b21-a23e-f6346e02fc4a",
+        "fromName": null,
+        "to": [
+            "70620-1437398257513"
+        ],
+        "toName": null,
+        "cc": [],
+        "ccName": null,
+        "displayNames": [
+            [
+                "2bacdfd2-b59c-4b21-a23e-f6346e02fc4a",
+                "Mme ALEXANDRE"
+            ],
+            [
+                "70620-1437398257513",
+                "Tous les enseignants du groupe 3ARMS."
+            ]
+        ],
+        "date": 1518446239055,
+        "unread": false,
+        "conversation": null,
+        "nb": 1
+    }
+]

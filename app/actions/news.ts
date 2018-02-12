@@ -1,6 +1,6 @@
 import { PATH_NEWS } from "../constants/paths"
 import { replace1 } from "../constants/paths"
-import {readMerge} from "./docs"
+import { readNext } from "./docs"
 
 export enum Filter {
 	Shared = "shared",
@@ -13,4 +13,4 @@ export enum Filter {
  *
  * @param filter   type of filter to query documnts
  */
-export const readNews = (page = 0) => readMerge(replace1(PATH_NEWS, page))
+export const readNews = (page = 0) => readNext(PATH_NEWS, page)

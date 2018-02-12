@@ -15,7 +15,7 @@ export const crudReducer = (state, paths: string[], action, payloadName: string 
 		return state
 	}
 
-	const { path, merge = false } = action
+	const { path } = action
 
 	if (action.type.indexOf("_REQUEST") > 0) {
 		return { ...state, synced: action.synced, id: action.id ? action.id : "" }
@@ -36,8 +36,16 @@ export const crudReducer = (state, paths: string[], action, payloadName: string 
 			}
 
 			if (payload instanceof Array) {
+				if (payload.length === 0)
+					return {
+						...state,
+						synced: true,
+					}
+
+				const { pageNumber = 0, merge = false } = action
 				return {
 					path,
+					pageNumber,
 					payload: merge ? [...state.payload, ...payload] : payload,
 					synced: true,
 					type: action.type,

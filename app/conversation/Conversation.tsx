@@ -8,9 +8,9 @@ import { Size } from "../ui/Avatar"
 import { Avatars } from "../ui/Avatars"
 import { DateView } from "../ui/DateView"
 import { CircleNumber } from "../ui/CircleNumber"
-import { CenterPanel, Content, Item, LeftPanel, RightPanel } from "../ui/ContainerContent"
-import {Row} from "../ui";
-import {trunc} from "../utils/html";
+import { CenterPanel, Content, Header, Item, LeftPanel, RightPanel } from "../ui/ContainerContent"
+import { Row } from "../ui"
+import { trunc } from "../utils/html"
 
 interface IConversationProps extends IThreadModel {
 	onPress: (id: string, displayNames: string[][], subject: string) => void

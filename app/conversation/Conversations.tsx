@@ -10,7 +10,10 @@ import { Conversation } from "./Conversation"
 
 export interface IConversationsProps {
 	conversations: IThreadModel[]
+	pageNumber: number
 	navigation?: any
+	readNextConversation
+	synced: boolean
 }
 
 export class Conversations extends React.Component<IConversationsProps, any> {
@@ -22,6 +25,14 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 		})
 	}
 
+	private nextPage() {
+		const { pageNumber } = this.props
+		//	console.log("nextPage")
+		if (this.props.synced) {
+			this.props.readNextConversation(pageNumber + 1)
+		}
+	}
+
 	public render() {
 		const { conversations } = this.props
 
@@ -29,7 +40,10 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 			<FlatList
 				data={conversations}
 				keyExtractor={item => item.id}
+				removeClippedSubviews
+				disableVirtualization
 				legacyImplementation={true}
+				onEndReached={() => this.nextPage()}
 				renderItem={({ item }) => this.renderItem(item)}
 				style={styles.grid}
 			/>
