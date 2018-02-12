@@ -15,9 +15,10 @@ export const readNextThreads = () => readMerge(PATH_NEW_MESSAGES, true)
 
 export const readPrevThreads = () => readMerge(PATH_PREVIOUS_MESSAGES, true)
 
-export const sendMessage = dispatch => async (data: { subject: string, to: any[], cc:any[], body: string, parentId?: string }) => {
+export const sendMessage = dispatch => async (data: { subject: string, to: any[], cc:any[], body: string, parentId?: string }, userId) => {
 	dispatch({
-		type: 'SEND'
+		type: 'CONVERSATION_SEND',
+		data: { ...data, conversation: data.parentId, from: userId }
 	});
 
 	try{
@@ -35,13 +36,19 @@ export const sendMessage = dispatch => async (data: { subject: string, to: any[]
 			})
 		});
 		let json = await response.json();
-		console.log(json);
+
 		dispatch({
-			type: 'SENT'
+			type: 'CONVERSATION_SENT',
+			data: data
 		});
-		dispatch(read(PATH_CONVERSATION, true))
+
+		dispatch(read(PATH_CONVERSATION, true));
 	}
 	catch(e){
 		console.log(e);
+		dispatch({
+			type: 'CONVERSATION_FAILED_SEND',
+			data: data
+		});
 	}
 }

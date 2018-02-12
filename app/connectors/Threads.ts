@@ -12,9 +12,7 @@ const filterThreads = (elem: IThreadModel, conversationId): boolean => {
  * Select the thread of conversation with conversation === conversationId
  */
 const filtering = (threads: IThreadState, conversationId): IThreadModel[] => {
-	const { payload } = threads
-
-	return payload.filter(elem => filterThreads(elem, conversationId))
+	return [...threads.payload, ...threads.processing].filter(elem => filterThreads(elem, conversationId))
 }
 
 const mapStateToProps = (state, props) => ({

@@ -9,7 +9,7 @@ import { connect } from "react-redux";
 
 interface IThreadsFooterBarProps {
 	navigation?: any;
-	send: (data: any) => Promise<void>
+	send: (data: any, userId: string) => Promise<void>
 }
 
 interface ThreadsFooterBarState {
@@ -52,7 +52,7 @@ class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, ThreadsFo
 			to: to,
 			cc: conversation.cc,
 			parentId: conversationId,
-		})
+		}, user.userId);
 	}
 
 	public render() {
@@ -109,6 +109,6 @@ const TextInput = style.textInput({})
 export default connect(
 	state => ({}),
 	dispatch => ({
-		send: (data: any) => sendMessage(dispatch)(data)
+		send: (data: any, userId: string) => sendMessage(dispatch)(data, userId)
 	})
 )(ThreadsFooterBar)

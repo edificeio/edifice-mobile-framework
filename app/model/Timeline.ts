@@ -36,7 +36,7 @@ export const Timeline = (
 			return {
 				...state,
 				didInvalidate: false,
-				news: state.news.concat(action.news),
+				news: [...state.news, ...action.news],
 				isFetching: false,
 			}
 		case "END_REACHED":
