@@ -4,10 +4,12 @@ import { CenterPanel, ContainerFooterBar, TouchableBarPanel, TouchableEndBarPane
 import { layoutSize } from "../constants/layoutSize"
 import { Icon, IconOnOff } from "../ui/index"
 import { tr } from "../i18n/t"
+import { sendMessage } from "../actions/conversation";
+import { connect } from "react-redux";
 
-export interface IThreadsFooterBarProps {
-	createConversation: (object) => void
-	navigation?: any
+interface IThreadsFooterBarProps {
+	navigation?: any;
+	send: (data: any) => Promise<void>
 }
 
 interface ThreadsFooterBarState {
@@ -15,7 +17,7 @@ interface ThreadsFooterBarState {
 	textMessage: string
 }
 
-export class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, ThreadsFooterBarState> {
+class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, ThreadsFooterBarState> {
 	public state = {
 		selected: Selected.none,
 		textMessage: "",
@@ -29,14 +31,27 @@ export class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, Th
 
 	private onValid() {
 		const { conversationId, displayNames, subject, userId } = this.props.navigation.state.params
-		const { textMessage } = this.state
-		this.setState({ selected: Selected.none })
+		const { textMessage } = this.state;
 
-		this.props.createConversation({
+		let user = this.props.navigation.state.params.currentUser;
+		let conversation = this.props.navigation.state.params;
+
+		this.setState({ selected: Selected.none });
+		console.log(this.props)
+		let to = [];
+		if(conversation.from === user.userId){
+			to = conversation.to;
+		}
+		else{
+			to = [conversation.from];
+		}
+
+		this.props.send({
 			subject: subject,
-			body: `<br><br><div class="signature new-signature">${textMessage}</div>`,
-			to: ["e4d5cd13-d44c-4bd8-8f8e-a3e8ad3d2ca5"],
-			conversation: conversationId,
+			body: `<div>${textMessage}</div>`,
+			to: to,
+			cc: conversation.cc,
+			parentId: conversationId,
 		})
 	}
 
@@ -64,9 +79,6 @@ export class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, Th
 				<TouchableBarPanel onPress={() => this.onPress(Selected.camera)}>
 					<IconOnOff focused={selected === Selected.camera} name={"camera"} />
 				</TouchableBarPanel>
-				<TouchableBarPanel onPress={() => this.onPress(Selected.other)}>
-					<Icon size={layoutSize.LAYOUT_22} name={"more"} />
-				</TouchableBarPanel>
 				<CenterPanel />
 				<TouchableEndBarPanel onPress={() => this.onValid()}>
 					<Icon size={layoutSize.LAYOUT_22} name={"send_icon"} />
@@ -76,14 +88,14 @@ export class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, Th
 	}
 }
 
-export enum Selected {
+enum Selected {
 	camera,
 	keyboard,
 	none,
 	other,
 }
 
-export const ContainerInput = style.view({
+const ContainerInput = style.view({
 	alignSelf: "flex-end",
 	height: layoutSize.LAYOUT_56,
 	justifyContent: "center",
@@ -93,3 +105,10 @@ export const ContainerInput = style.view({
 })
 
 const TextInput = style.textInput({})
+
+export default connect(
+	state => ({}),
+	dispatch => ({
+		send: (data: any) => sendMessage(dispatch)(data)
+	})
+)(ThreadsFooterBar)

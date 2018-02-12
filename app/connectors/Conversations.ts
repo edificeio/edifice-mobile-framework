@@ -40,6 +40,7 @@ const filtering = (threads: IThreadState): IThreadModel[] => {
 
 const mapStateToProps = state => ({
 	conversations: filtering(state.threads),
+	user: state.auth.userId
 })
 
 const dispatchAndMapActions = dispatch =>

@@ -10,20 +10,20 @@ import { Conversation } from "./Conversation"
 
 export interface IConversationsProps {
 	conversations: IThreadModel[]
-	navigation?: any
+	navigation?: any,
+	user: any
 }
 
 export class Conversations extends React.Component<IConversationsProps, any> {
-	public onPress(id: string, displayNames: string[][], subject: string) {
-		this.props.navigation.navigate("Threads", {
-			conversationId: id,
-			displayNames,
-			subject,
-		})
+	public onPress(item: IThreadModel) {
+		(item as any).conversationId = item.id;
+		(item as any).currentUser = this.props.user;
+
+		this.props.navigation.navigate("Threads", item)
 	}
 
 	public render() {
-		const { conversations } = this.props
+		const { conversations } = this.props;
 
 		return (
 			<FlatList
@@ -39,7 +39,7 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 	private renderItem(item: IThreadModel) {
 		return (
 			<Swipeable rightButtons={swipeoutBtns}>
-				<Conversation {...item} onPress={(id, displayNames, subject) => this.onPress(id, displayNames, subject)} />
+				<Conversation {...item} onPress={(e) => this.onPress(item)} />
 			</Swipeable>
 		)
 	}
