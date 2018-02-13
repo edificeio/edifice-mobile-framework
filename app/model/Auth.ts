@@ -33,7 +33,7 @@ export function Auth(state: IAuthState = initialState, action): IAuthState {
 	}
 
 	if (matchs([PATH_CURRENT_USER], action.path) && action.type === READ_SUCCESS) {
-		return { ...state, userId: action.payload.result["0"] }
+		return { ...state, userId: action.payload.result["0"].id }
 	}
 
 	return state

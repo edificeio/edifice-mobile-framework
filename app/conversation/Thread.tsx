@@ -1,6 +1,6 @@
 import style from "glamorous-native"
 import * as React from "react"
-import { ViewStyle, Text } from 'react-native';
+import { ViewStyle, Text } from "react-native"
 import { adaptator } from "../infra/HTMLAdaptator"
 import { layoutSize } from "../constants/layoutSize"
 import { IThreadModel, ThreadStatus } from "../model/Thread"
@@ -8,7 +8,6 @@ import { CommonStyles } from "../styles/common/styles"
 import { Size } from "../ui/Avatar"
 import { Avatar } from "../ui/Avatar"
 import { DateView } from "../ui/DateView"
-import { Content } from "../ui/ContainerContent"
 
 interface IThreadProps extends IThreadModel {
 	userId: string
@@ -31,10 +30,10 @@ export const Thread = ({ body, date, displayNames = [], from = "", userId, statu
 				)}
 			<CenterPanel my={my}>
 				<ContainerContent my={my}>
-					<Content>{adaptator(body).toText()}</Content>
+					<Content my={my}>{adaptator(body).toText()}</Content>
 				</ContainerContent>
-				{ status === ThreadStatus.sent && <DateView date={date} /> }
-				{ status === ThreadStatus.sending && <Text>En cours d'envoi...</Text> }
+				{status === ThreadStatus.sent && <DateView date={date} />}
+				{status === ThreadStatus.sending && <Text>En cours d'envoi...</Text>}
 			</CenterPanel>
 		</Item>
 	)
@@ -82,5 +81,16 @@ const ContainerContent = style.view(
 		backgroundColor: my ? CommonStyles.iconColorOn : "white",
 		borderBottomRightRadius: my ? 0 : layoutSize.LAYOUT_15,
 		elevation: my ? layoutSize.LAYOUT_0 : layoutSize.LAYOUT_3,
+	})
+)
+
+const Content = style.text(
+	{
+		color: CommonStyles.iconColorOff,
+		fontFamily: CommonStyles.primaryFontFamily,
+		fontSize: layoutSize.LAYOUT_14,
+	},
+	({ my }) => ({
+		color: my ? "white" : CommonStyles.textColor,
 	})
 )

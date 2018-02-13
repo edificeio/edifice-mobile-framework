@@ -1,6 +1,6 @@
 import { connect } from "react-redux"
 import { bindActionCreators } from "redux"
-import { readConversation, readNextThreads, readPrevThreads } from "../actions/conversation"
+import { readConversation, readNextConversation } from "../actions/conversation"
 import { Conversations, IConversationsProps } from "../conversation/Conversations"
 import { IThreadModel, IThreadState } from "../model/Thread"
 
@@ -44,6 +44,6 @@ const mapStateToProps = state => ({
 })
 
 const dispatchAndMapActions = dispatch =>
-	bindActionCreators({ readConversation }, dispatch)
+	bindActionCreators({ readConversation, readNextConversation }, dispatch)
 
 export default connect<{}, {}, IConversationsProps>(mapStateToProps, dispatchAndMapActions)(Conversations)

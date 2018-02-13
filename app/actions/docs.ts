@@ -1,10 +1,16 @@
 import * as TYPES from "../constants/docs"
 import { PATH_CONVERSATION, replace1 } from "../constants/paths"
 
+export enum ACTION_MODE {
+	merge = 1,
+	replace = 2,
+	check = 3,
+}
+
 export interface IAction {
 	form?: boolean
 	id?: string
-	merge?: boolean
+	mode?: ACTION_MODE
 	pageNumber?: number
 	path: string
 	payload?: object
@@ -20,6 +26,7 @@ export interface IAction {
  *
  */
 export const read = (path, synced = false): IAction => ({
+	mode: ACTION_MODE.replace,
 	pageNumber: 0,
 	path,
 	synced,
@@ -35,7 +42,23 @@ export const read = (path, synced = false): IAction => ({
  *
  */
 export const readNext = (path, pageNumber, synced = false): IAction => ({
-	merge: true,
+	mode: ACTION_MODE.merge,
+	path: replace1(path, pageNumber),
+	pageNumber,
+	synced,
+	type: TYPES.READ,
+})
+
+/**
+ * Read next REST resource (replace result with the state)
+ *
+ * @param {string} path       l'URI de la ressource
+ * @param {string} pageNumber       page to read
+ * @param {boolean} synced    say if yourglass displayer
+ *
+ */
+export const readCheck = (path, pageNumber, synced = false): IAction => ({
+	mode: ACTION_MODE.check,
 	path: replace1(path, pageNumber),
 	pageNumber,
 	synced,
@@ -64,6 +87,7 @@ export const readSuccess = (action: IAction, payload: object): IAction => ({
  */
 export const readId = (path, id): IAction => ({
 	id,
+	mode: ACTION_MODE.check,
 	path,
 	synced: false,
 	type: TYPES.READ,

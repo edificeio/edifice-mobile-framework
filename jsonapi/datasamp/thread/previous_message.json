@@ -1,0 +1,56 @@
+[
+  {
+    "id": "7a45d694-10b4-4606-a93b-8f23136b41eb",
+    "parent_id": null,
+    "subject": "Test Conversation Polonio",
+    "body": "<div style=\"\">Conversation initié par Isabelle Polonio</div>",
+    "from": "14a1cb35-e943-4f06-917a-f163461d5b14",
+    "fromName": null,
+    "to": [
+      "18ab07f1-a2c9-47c3-baed-05db50dc37cb"
+    ],
+    "toName": null,
+    "cc": [],
+    "ccName": null,
+    "displayNames": [
+      [
+        "18ab07f1-a2c9-47c3-baed-05db50dc37cb",
+        "FREDERIQUE BERLIRE"
+      ],
+      [
+        "14a1cb35-e943-4f06-917a-f163461d5b14",
+        "MME Polonio"
+      ]
+    ],
+    "date": 1518429346325,
+    "unread": false,
+    "nb": 2
+  },
+  {
+    "id": "8215316d-3ddd-40d7-a1d0-10762fe89e5d",
+    "parent_id": "7a45d694-10b4-4606-a93b-8f23136b41eb",
+    "subject": "Re :Test Conversation Polonio",
+    "body": "<div class=\"ng-scope\" style=\"\">Hello</div><p class=\"ng-scope\">&nbsp;</p><p class=\"row ng-scope\"></p><hr class=\"ng-scope\"><p class=\"ng-scope\"></p>\n<p class=\"medium-text ng-scope\">\n\t<span translate=\"\" key=\"transfer.from\"><span class=\"no-style ng-scope\">De :</span></span><em class=\"ng-binding\">MME Polonio</em>\n\t<br><span class=\"medium-importance\" translate=\"\" key=\"transfer.date\"><span class=\"no-style ng-scope\">Date:</span></span><em class=\"ng-binding\"></em>\n\t<br><span class=\"medium-importance\" translate=\"\" key=\"transfer.subject\"><span class=\"no-style ng-scope\">Objet :</span></span><em class=\"ng-binding\">Test Conversation Polonio</em>\n\t<br><span class=\"medium-importance\" translate=\"\" key=\"transfer.to\"><span class=\"no-style ng-scope\">A :</span></span>\n\t<!-- ngRepeat: receiver in mail.to --><em class=\"medium-importance ng-binding ng-scope\">\n\t\tFREDERIQUE BERLIRE<!-- ngIf: $index !== mail.to.length - 1 && receiver.displayName -->\n\t</em><!-- end ngRepeat: receiver in mail.to -->\n\t<br><span class=\"medium-importance\" translate=\"\" key=\"transfer.cc\"><span class=\"no-style ng-scope\">Copie à :</span></span>\n\t<!-- ngRepeat: receiver in mail.cc -->\n</p><blockquote class=\"ng-scope\"><div style=\"\">Conversation initié par Isabelle Polonio</div></blockquote>",
+    "from": "14a1cb35-e943-4f06-917a-f163461d5b14",
+    "fromName": null,
+    "to": [
+      "18ab07f1-a2c9-47c3-baed-05db50dc37cb"
+    ],
+    "toName": null,
+    "cc": [],
+    "ccName": null,
+    "displayNames": [
+      [
+        "18ab07f1-a2c9-47c3-baed-05db50dc37cb",
+        "FREDERIQUE BERLIRE"
+      ],
+      [
+        "14a1cb35-e943-4f06-917a-f163461d5b14",
+        "MME Polonio"
+      ]
+    ],
+    "date": 1518432384913,
+    "unread": false,
+    "nb": 1
+  }
+]

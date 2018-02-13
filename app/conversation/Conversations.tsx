@@ -7,24 +7,23 @@ import { IThreadModel } from "../model/Thread"
 import styles from "../styles/index"
 import { Icon } from "../ui/icons/Icon"
 import { Conversation } from "./Conversation"
+import { readConversation } from "../actions/conversation"
 
 export interface IConversationsProps {
 	conversations: IThreadModel[]
-<<<<<<< HEAD
 	pageNumber: number
 	navigation?: any
+	readConversation
 	readNextConversation
 	synced: boolean
-=======
-	navigation?: any,
 	user: any
->>>>>>> proposal
 }
 
 export class Conversations extends React.Component<IConversationsProps, any> {
+
 	public onPress(item: IThreadModel) {
-		(item as any).conversationId = item.id;
-		(item as any).currentUser = this.props.user;
+		;(item as any).conversationId = item.id
+		;(item as any).currentUser = this.props.user
 
 		this.props.navigation.navigate("Threads", item)
 	}
@@ -38,7 +37,7 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 	}
 
 	public render() {
-		const { conversations } = this.props;
+		const { conversations } = this.props
 
 		return (
 			<FlatList
@@ -57,7 +56,7 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 	private renderItem(item: IThreadModel) {
 		return (
 			<Swipeable rightButtons={swipeoutBtns}>
-				<Conversation {...item} onPress={(e) => this.onPress(item)} />
+				<Conversation {...item} onPress={e => this.onPress(item)} />
 			</Swipeable>
 		)
 	}

@@ -60,8 +60,8 @@ export class Login extends React.Component<ILoginProps, ILoginState> {
 
 				<ValidTextIcon onPress={() => login(email, password)} disabled={this.isDisabled()} title={tr.Connect} />
 
-				<Col size={1} style={styles.line} onPress={() => navigate("RecoverPassword")}>
-					<Text style={styles.minitext}>{tr.Password_forgotten}</Text>
+				<Col size={1} style={styles.line}>
+					<Text style={styles.minitext} />
 				</Col>
 			</Form>
 		)

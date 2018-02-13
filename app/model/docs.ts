@@ -1,5 +1,6 @@
 import { CREATE_SUCCESS, DELETE_SUCCESS, READ_SUCCESS, UPDATE_SUCCESS } from "../constants/docs"
 import { match, matchs, PATH_LOGIN, PATH_LOGOUT } from "../constants/paths"
+import { ACTION_MODE } from "../actions/docs"
 
 /**
  * The base reducer
@@ -42,11 +43,17 @@ export const crudReducer = (state, paths: string[], action, payloadName: string 
 						synced: true,
 					}
 
-				const { pageNumber = 0, merge = false } = action
+				const { pageNumber = 0, mode = ACTION_MODE.replace } = action
+				let newPayload = null
+
+				if (mode === ACTION_MODE.check) {
+					newPayload = state.payload.map(x => Object.assign(x, payload.find(y => y.id == x.id)))
+				} else newPayload = mode === ACTION_MODE.merge ? [...state.payload, ...payload] : payload
+
 				return {
 					path,
 					pageNumber,
-					payload: merge ? [...state.payload, ...payload] : payload,
+					payload: newPayload,
 					synced: true,
 					type: action.type,
 				}
@@ -89,12 +96,21 @@ export const crudReducer = (state, paths: string[], action, payloadName: string 
 					type: action.type,
 				}
 			} else {
-				return {
-					...state,
-					path,
-					synced: true,
-					type: action.type,
-					...payload,
+				if (state.payload != undefined) {
+					return {
+						...state,
+						path,
+						synced: true,
+						...action,
+					}
+				} else {
+					return {
+						...state,
+						path,
+						synced: true,
+						type: action.type,
+						...payload,
+					}
 				}
 			}
 
@@ -154,4 +170,8 @@ function matchPaths(pathToMatch, { path, type }) {
 
 function matchElem(pathToMatch, { path = "", type = "" }) {
 	return match(pathToMatch, path) && type.length > 0
+}
+
+interface IdentifiedObject {
+	id: string
 }

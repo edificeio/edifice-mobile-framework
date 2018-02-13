@@ -44,16 +44,19 @@ export default store => next => action => {
 				password: action.payload.password,
 			})
 
-			// read the data
+			store.dispatch(readCurrentUser())
+
 			store.dispatch(readConversation())
-			store.dispatch(readNextConversation(1))
-			store.dispatch(readNextConversation(2))
+            store.dispatch(readNextConversation(1))
+            store.dispatch(readNextConversation(2))
             store.dispatch(readNextConversation(3))
             store.dispatch(readNextConversation(4))
             store.dispatch(readNextConversation(5))
             store.dispatch(readNextConversation(6))
+            store.dispatch(readNextConversation(6))
 
-			store.dispatch(readCurrentUser())
+
+			// read the data
 		}
 
 		if ((action.path === PATH_LOGIN || action.path === PATH_SIGNUP) && action.type === CREATE_ERROR) {
