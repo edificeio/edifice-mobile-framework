@@ -8,6 +8,7 @@ import { CommonStyles } from "../styles/common/styles"
 import { Size } from "../ui/Avatar"
 import { Avatar } from "../ui/Avatar"
 import { DateView } from "../ui/DateView"
+import { tr } from "../i18n/t";
 
 interface IThreadProps extends IThreadModel {
 	userId: string
@@ -33,7 +34,7 @@ export const Thread = ({ body, date, displayNames = [], from = "", userId, statu
 					<Content my={my}>{adaptator(body).toText()}</Content>
 				</ContainerContent>
 				{status !== ThreadStatus.sending && <DateView date={date} />}
-				{status === ThreadStatus.sending && <Text>En cours d'envoi...</Text>}
+				{status === ThreadStatus.sending && <Text>{tr.sending}</Text>}
 			</CenterPanel>
 		</Item>
 	)

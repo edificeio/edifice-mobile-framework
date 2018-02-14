@@ -15,5 +15,6 @@
     "Profile" : "Profil",
     "Write_a_message" : "Ecrivez un message...",
     "to_disconnect" : "vous déconnecter ?",
-    "today" : " Aujourd'hui "
+    "today" : " Aujourd'hui ",
+    "sending": "En cours d'envoi..."
 }

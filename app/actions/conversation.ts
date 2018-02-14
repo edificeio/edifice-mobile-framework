@@ -9,20 +9,23 @@ import {
 } from "../constants/paths"
 import {create, read, readCheck, readNext} from "./docs"
 
-export const readConversation = (page = 0) => read(replace1(PATH_CONVERSATION, page), false)
+export const readConversation = (page = 0) => read(replace1(PATH_CONVERSATION, page), false);
 
-export const readNextConversation = page => readNext(PATH_CONVERSATION, page, false)
+export const readNextConversation = page => readNext(PATH_CONVERSATION, page, false);
 
-export const readNextThreads = id => readCheck(PATH_NEW_MESSAGES, id, false)
+export const readNextThreads = id => readCheck(PATH_NEW_MESSAGES, id, false);
 
-export const readPrevThreads = id => readCheck(PATH_PREVIOUS_MESSAGES, id, false)
+export const readPrevThreads = id => readCheck(PATH_PREVIOUS_MESSAGES, id, false);
 
-export const createConversation = payload => create(PATH_CREATE_CONVERSATION, payload, false)
+export const createConversation = payload => create(PATH_CREATE_CONVERSATION, payload, false);
+
+console.log(Conf);
 
 export const sendMessage = dispatch => async (
 	data: { subject: string; to: any[]; cc: any[]; body: string; parentId?: string },
 	userId
 ) => {
+	console.log(userId);
 	dispatch({
 		type: "CONVERSATION_SEND",
 		data: { ...data, conversation: data.parentId, from: userId },

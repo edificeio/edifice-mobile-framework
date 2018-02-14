@@ -19,4 +19,5 @@ export const keyTrans = (I18n) => ({
    Write_a_message : I18n.t("Write_a_message"),
    to_disconnect : I18n.t("to_disconnect"),
    today : I18n.t("today"),
+   sending: I18n.t("sending")
 })

@@ -33,8 +33,7 @@ export class Threads extends React.Component<IThreadsProps, any> {
 	}
 
 	public render() {
-		const { threads } = this.props
-
+		const { threads } = this.props;
 		return (
 			<FlatList
 				data={threads}
