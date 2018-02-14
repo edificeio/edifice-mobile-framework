@@ -94,7 +94,10 @@ export interface IAvatarProps {
 export class Avatar extends React.Component<IAvatarProps, { loaded: boolean }> {
 	base64Str: string;
 	decorate: boolean;
-	count: number
+	count: number;
+	noAvatar: boolean;
+	isGroup: boolean;
+	uri: string;
 
     constructor(props){
 		super(props);
@@ -115,7 +118,13 @@ export class Avatar extends React.Component<IAvatarProps, { loaded: boolean }> {
     async load(){
         const response = await RNFetchBlob.fetch('GET', `${ Conf.platform }/userbook/avatar/${ this.props.id }?thumbnail=48x48`);
 		this.base64Str = response.base64();
-		console.log(response)
+		
+		if(this.base64Str.length === 1008){
+			this.noAvatar = true;
+		}
+		else{
+			this.uri = 'data:image/jpeg;base64,' + this.base64Str;
+		}
         this.setState({ loaded: true });
     }
     
@@ -123,9 +132,24 @@ export class Avatar extends React.Component<IAvatarProps, { loaded: boolean }> {
         if(!this.state.loaded){
             return <View></View>
 		}
+
+		if(this.noAvatar){
+			console.log('has no avatar')
+			if (this.props.size === Size.large) {
+				return <LargeImage source={require('../../assets/images/no-avatar.png')} />
+			} else if (this.props.size === Size.medium) {
+				return <MediumImage source={require('../../assets/images/no-avatar.png')} />
+			} else if (this.props.size === Size.aligned) {
+				return <AlignedImage index={this.props.index} source={require('../../assets/images/no-avatar.png')} />
+			} else if (this.props.size === Size.verylarge) {
+				return <VeryLargeImage decorate={this.decorate} source={require('../../assets/images/no-avatar.png')} />
+			} else {
+				return <SmallImage count={this.count} index={this.props.index} source={require('../../assets/images/no-avatar.png')} />
+			}
+		}
 		
 		if (this.props.size === Size.large) {
-			return <LargeImage source={{ uri: 'data:image/jpeg;base64,' + this.base64Str }} />
+			return <LargeImage source={{ uri: this.uri }} />
 		} else if (this.props.size === Size.medium) {
 			return <MediumImage source={{ uri: 'data:image/jpeg;base64,' + this.base64Str }} />
 		} else if (this.props.size === Size.aligned) {
