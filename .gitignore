@@ -60,3 +60,4 @@ jest/*
 # Other
 #
 /.env
+android/app/src/main/assets/fonts/*.ttf

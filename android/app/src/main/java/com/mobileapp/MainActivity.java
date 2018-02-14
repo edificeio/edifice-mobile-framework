@@ -1,4 +1,4 @@
-package com.mobileapp;
+package com.ode.appe;
 
 import android.os.Bundle;
 import com.facebook.react.ReactActivity;

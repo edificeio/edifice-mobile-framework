@@ -170,7 +170,7 @@ Follow this steps:
 * Android
   To enable Analytics Debug mode on an emulated Android device, execute the following command lines:
 
-`adb shell setprop debug.firebase.analytics.app com.mobileapp`
+`adb shell setprop debug.firebase.analytics.app com.ode.appe`
 
 This behavior persists until you explicitly disable Debug mode by executing the following command line :
 

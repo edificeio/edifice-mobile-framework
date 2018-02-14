@@ -1721,7 +1721,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.mobileapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ode.appe;
 				PRODUCT_NAME = mobileapp;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1752,7 +1752,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.mobileapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ode.appe;
 				PRODUCT_NAME = mobileapp;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
