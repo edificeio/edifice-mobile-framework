@@ -3,6 +3,12 @@ include ':react-native-smart-splash-screen'
 project(':react-native-smart-splash-screen').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-smart-splash-screen/android')
 include ':react-native-smart-splash-screen'
 project(':react-native-smart-splash-screen').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-smart-splash-screen/android')
+include ':react-native-smart-splash-screen'
+project(':react-native-smart-splash-screen').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-smart-splash-screen/android')
+include ':react-native-smart-splash-screen'
+project(':react-native-smart-splash-screen').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-smart-splash-screen/android')
+include ':react-native-smart-splash-screen'
+project(':react-native-smart-splash-screen').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-smart-splash-screen/android')
 include ':react-native-image-to-base64'
 project(':react-native-image-to-base64').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-image-to-base64/android')
 include ':react-native-fetch-blob'

@@ -169,6 +169,7 @@ dependencies {
         transitive = true
     }
     compile "com.google.firebase:firebase-perf:11.6.0"
+    compile project(':react-native-svg')
 }
 
 // Run this once to be able to run the application with BUCK

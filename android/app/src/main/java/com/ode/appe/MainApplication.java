@@ -5,6 +5,7 @@ import android.app.Application;
 import com.facebook.react.ReactApplication;
 import com.reactnativecomponent.splashscreen.RCTSplashScreenPackage;
 import com.reactnativecomponent.splashscreen.RCTSplashScreenPackage;
+import com.reactnativecomponent.splashscreen.RCTSplashScreenPackage;
 import com.github.xfumihiro.react_native_image_to_base64.ImageToBase64Package;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import io.invertase.firebase.RNFirebasePackage;
@@ -38,6 +39,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
+            new RCTSplashScreenPackage(),
             new ImageToBase64Package(),
             new RNFetchBlobPackage(),
             new RNFirebasePackage(),
