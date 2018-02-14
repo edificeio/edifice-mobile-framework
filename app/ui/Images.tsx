@@ -38,9 +38,9 @@ export class Images extends React.Component<IAvatarsProps, any> {
 			return (
 				<View style={{ aspectRatio: 1 }}>
 					<Row>
-						<ImageTop source={images[0]} />
+						<ImageLeft source={images[0]} />
 						<View style={{ flex: 1 }}>
-							<ImageBottomLeft source={images[1]} />
+							<ImageTopRight source={images[1]} />
 							<ImageBottomRight source={images[2]} />
 						</View>
 					</Row>
@@ -101,16 +101,18 @@ const ImageTopLeft = style.image({
 
 const ImageTopRight = style.image({
 	flex: 1,
-	marginTop: layoutSize.LAYOUT_4,
+	marginBottom: layoutSize.LAYOUT_4,
 	marginLeft: layoutSize.LAYOUT_4,
 })
 
 const ImageBottomLeft = style.image({
 	flex: 1,
-	margin: layoutSize.LAYOUT_4,
+	marginTop: layoutSize.LAYOUT_4,
+	marginRight: layoutSize.LAYOUT_4,
 })
 
 const ImageBottomRight = style.image({
 	flex: 1,
-	margin: layoutSize.LAYOUT_4,
+	marginTop: layoutSize.LAYOUT_4,
+	marginLeft: layoutSize.LAYOUT_4,
 })

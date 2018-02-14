@@ -64,7 +64,7 @@ const SmallImage = style.image(
 		position: "absolute",
 	},
 	({ count, index }) => ({
-		borderRadius: count === 1 ? layoutSize.LAYOUT_45 : count === 2 ? layoutSize.LAYOUT_15 : layoutSize.LAYOUT_10,
+		borderRadius: count === 1 ? layoutSize.LAYOUT_22 : count === 2 ? layoutSize.LAYOUT_15 : layoutSize.LAYOUT_10,
 		height: count === 1 ? layoutSize.LAYOUT_45 : count === 2 ? layoutSize.LAYOUT_31 : layoutSize.LAYOUT_22,
 		left:
 			count === 2
@@ -76,7 +76,7 @@ const SmallImage = style.image(
 			count === 2
 				? index === 0 ? layoutSize.LAYOUT_0 : layoutSize.LAYOUT_15
 				: index < 2 ? layoutSize.LAYOUT_0 : layoutSize.LAYOUT_25,
-		width: count === 2 ? layoutSize.LAYOUT_31 : layoutSize.LAYOUT_22,
+		width: count === 1 ? layoutSize.LAYOUT_45 : count === 2 ? layoutSize.LAYOUT_31 : layoutSize.LAYOUT_22,
 	})
 )
 
