@@ -34,9 +34,16 @@ export class ThreadsTopBar extends React.PureComponent<IThreadsBarProps, {}> {
 
 	public render() {
 		const { navigation } = this.props
-		const { displayNames, subject } = navigation.state.params
+		const { userId, displayNames, subject } = navigation.state.params
 		const { expand } = this.state
-		const images = displayNames.reduce((acc, elem) => [...acc, elem[0]], [])
+		const images = displayNames.reduce(
+			(acc, elem) => (userId === elem[0] && displayNames.length !== 1 ? acc : [...acc, elem[0]]),
+			[]
+		)
+		const names = displayNames.reduce(
+			(acc, elem) => (userId === elem[0] && displayNames.length !== 1 ? acc : [...acc, elem[1]]),
+			[]
+		)
 
 		return (
 			<ContainerTopBar>
@@ -47,14 +54,12 @@ export class ThreadsTopBar extends React.PureComponent<IThreadsBarProps, {}> {
 					{!expand && <Avatars images={images} size={Size.aligned} />}
 					<CenterTextPanel smallSize={!expand}>{subject}</CenterTextPanel>
 				</CenterPanel>
-				<TouchableEndBarPanel>
-					<Icon size={layoutSize.LAYOUT_22} name={"more"} color={"white"} />
-				</TouchableEndBarPanel>
+				<TouchableEndBarPanel />
 				{expand && (
 					<ContainerAvatars>
 						<Avatars onSlideIndex={slideIndex => this.onSlideIndex(slideIndex)} images={images} size={Size.verylarge} />
-						<Legend14>{displayNames[this.state.slideIndex][1]}</Legend14>
-						<Legend12></Legend12>
+						<Legend14>{names[this.state.slideIndex]}</Legend14>
+						<Legend12 />
 					</ContainerAvatars>
 				)}
 			</ContainerTopBar>

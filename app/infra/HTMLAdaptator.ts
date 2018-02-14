@@ -31,7 +31,7 @@ export class HTMLAdaptator {
 		const paths = []
 		const images = this.root.querySelectorAll("img")
 		for (let i = 0; i < images.length; i++) {
-			paths.push(Conf.platform + images[i].attributes.src)
+			paths.push({ uri: Conf.platform + images[i].attributes.src })
 		}
 		return paths
 	}

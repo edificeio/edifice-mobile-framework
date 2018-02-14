@@ -32,7 +32,7 @@ export const Thread = ({ body, date, displayNames = [], from = "", userId, statu
 				<ContainerContent my={my}>
 					<Content my={my}>{adaptator(body).toText()}</Content>
 				</ContainerContent>
-				{status === ThreadStatus.sent && <DateView date={date} />}
+				{status !== ThreadStatus.sending && <DateView date={date} />}
 				{status === ThreadStatus.sending && <Text>En cours d'envoi...</Text>}
 			</CenterPanel>
 		</Item>

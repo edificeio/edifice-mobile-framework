@@ -64,8 +64,8 @@ const SmallImage = style.image(
 		position: "absolute",
 	},
 	({ count, index }) => ({
-		borderRadius: count === 2 ? layoutSize.LAYOUT_15 : layoutSize.LAYOUT_10,
-		height: count === 2 ? layoutSize.LAYOUT_31 : layoutSize.LAYOUT_22,
+		borderRadius: count === 1 ? layoutSize.LAYOUT_45 : count === 2 ? layoutSize.LAYOUT_15 : layoutSize.LAYOUT_10,
+		height: count === 1 ? layoutSize.LAYOUT_45 : count === 2 ? layoutSize.LAYOUT_31 : layoutSize.LAYOUT_22,
 		left:
 			count === 2
 				? index === 0 ? layoutSize.LAYOUT_0 : layoutSize.LAYOUT_15
@@ -89,7 +89,7 @@ export interface IAvatarProps {
 	size: Size
 }
 
-export const Avatar = ({ decorate = true, size, count = 1, id, index = 1 }: IAvatarProps) => {
+export const Avatar = ({ decorate = true, size, count = 1, id, index = 0 }: IAvatarProps) => {
 	const pathSmall = `${Conf.platform}/userbook/avatar/${id}?thumbnail=20*20`
 	const pathMedium = `${Conf.platform}/userbook/avatar/${id}?thumbnail=35*35`
 	const pathLarge = `${Conf.platform}/userbook/avatar/${id}?thumbnail=48*48`

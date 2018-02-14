@@ -4,7 +4,6 @@ import { CREATE_ERROR, CREATE_SUCCESS } from "../constants/docs"
 import { PATH_AUTH, PATH_LOGIN, PATH_LOGOUT, PATH_RECOVER_PASSWORD, PATH_SIGNUP } from "../constants/paths"
 import { navigate } from "../utils/navHelper"
 import { getLogin, setLogin } from "../utils/Store"
-import { readNews } from "../actions/news"
 import { readConversation, readNextConversation } from "../actions/conversation"
 import { readCurrentUser } from "../actions/users"
 

@@ -15,7 +15,7 @@ export interface IAvatarsState {
 		height: number
 		width: number
 	}
-	slideIndex:number
+	slideIndex: number
 }
 
 const DEFAULT_AVATAR = "46c7bc61-b9dd-4c25-b164-fd6252236603"

@@ -8,6 +8,7 @@ import styles from "../styles/index"
 import { Icon } from "../ui/icons/Icon"
 import { Conversation } from "./Conversation"
 import { readConversation } from "../actions/conversation"
+import { IAuthModel } from "../model/Auth"
 
 export interface IConversationsProps {
 	conversations: IThreadModel[]
@@ -16,14 +17,12 @@ export interface IConversationsProps {
 	readConversation
 	readNextConversation
 	synced: boolean
-	user: any
+	userId: string
 }
 
 export class Conversations extends React.Component<IConversationsProps, any> {
-
 	public onPress(item: IThreadModel) {
 		;(item as any).conversationId = item.id
-		;(item as any).currentUser = this.props.user
 
 		this.props.navigation.navigate("Threads", item)
 	}
@@ -37,7 +36,7 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 	}
 
 	public render() {
-		const { conversations } = this.props
+		const { conversations, userId } = this.props
 
 		return (
 			<FlatList
@@ -47,16 +46,16 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 				disableVirtualization
 				legacyImplementation={true}
 				onEndReached={() => this.nextPage()}
-				renderItem={({ item }) => this.renderItem(item)}
+				renderItem={({ item }) => this.renderItem(item, userId)}
 				style={styles.grid}
 			/>
 		)
 	}
 
-	private renderItem(item: IThreadModel) {
+	private renderItem(item: IThreadModel, userId) {
 		return (
 			<Swipeable rightButtons={swipeoutBtns}>
-				<Conversation {...item} onPress={e => this.onPress(item)} />
+				<Conversation {...item} onPress={e => this.onPress(item)} userId={userId} />
 			</Swipeable>
 		)
 	}

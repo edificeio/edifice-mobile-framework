@@ -7,8 +7,8 @@ import { CommonStyles } from "../styles/common/styles"
 import { Avatar, Size } from "../ui/Avatar"
 import { DateView } from "../ui/DateView"
 import { tr } from "../i18n/t"
-import {CenterPanel, Content, Header, Item, LeftPanel} from "../ui/ContainerContent"
-import { Row } from "../ui"
+import { CenterPanel, Content, Header, Item, LeftPanel } from "../ui/ContainerContent"
+import { Images } from "../ui/Images"
 
 interface INewsProps extends INewsModel {
 	onPress?: (id: string, index: number, full: boolean) => void
@@ -36,7 +36,7 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
 		const { full } = this.state
 		const { date, preview = "", senderId, senderName, resourceName, message, images = [] } = this.props
 		return (
-			<Item full={full} onPress={() => this.onPress()}>
+			<Item full={full} onPress={() => this.onPress()} smogSeparator={layoutSize.LAYOUT_20}>
 				<Header>
 					<LeftPanel>
 						<Avatar id={senderId} size={Size.large} />
@@ -50,17 +50,9 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
 						<DateView date={date} short={false} />
 					</CenterPanel>
 				</Header>
-				{preview.length ? <Content nb={0}>{this.state.full ? message : preview}</Content> : <View />}
+				{preview.length ? <Content nb={1}>{this.state.full ? message : preview}</Content> : <View />}
 				{preview.length && !full && images.length ? <Margin /> : <View />}
-				{images.length ? (
-					full ? (
-						images.map(item => <Image source={{ uri: item }} />)
-					) : (
-						<Image source={{ uri: images[0] }} />
-					)
-				) : (
-					<View />
-				)}
+				{images.length ? full ? <Images full={full} images={images} /> : <Image source={images[0]} /> : <View />}
 			</Item>
 		)
 	}

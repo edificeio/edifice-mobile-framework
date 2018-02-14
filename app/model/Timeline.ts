@@ -6,7 +6,7 @@ interface IParams {
 export interface INewsModel {
 	date: number
 	id: string
-	images: string[]
+	images: object[]
 	message: string
 	preview: string
 	resourceName: string

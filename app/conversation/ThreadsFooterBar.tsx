@@ -4,11 +4,11 @@ import { CenterPanel, ContainerFooterBar, TouchableBarPanel, TouchableEndBarPane
 import { layoutSize } from "../constants/layoutSize"
 import { Icon, IconOnOff } from "../ui/index"
 import { tr } from "../i18n/t"
-import { sendMessage } from "../actions/conversation";
-import { connect } from "react-redux";
+import { sendMessage } from "../actions/conversation"
+import { connect } from "react-redux"
 
 interface IThreadsFooterBarProps {
-	navigation?: any;
+	navigation?: any
 	send: (data: any, userId: string) => Promise<void>
 }
 
@@ -31,28 +31,29 @@ class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, ThreadsFo
 
 	private onValid() {
 		const { conversationId, displayNames, subject, userId } = this.props.navigation.state.params
-		const { textMessage } = this.state;
+		const { textMessage } = this.state
 
-		let user = this.props.navigation.state.params.currentUser;
-		let conversation = this.props.navigation.state.params;
+		let conversation = this.props.navigation.state.params
 
-		this.setState({ selected: Selected.none });
+		this.setState({ selected: Selected.none })
 		console.log(this.props)
-		let to = [];
-		if(conversation.from === user.userId){
-			to = conversation.to;
-		}
-		else{
-			to = [conversation.from];
+		let to = []
+		if (conversation.from === userId) {
+			to = conversation.to
+		} else {
+			to = [conversation.from]
 		}
 
-		this.props.send({
-			subject: subject,
-			body: `<div>${textMessage}</div>`,
-			to: to,
-			cc: conversation.cc,
-			parentId: conversationId,
-		}, user.userId);
+		this.props.send(
+			{
+				subject: subject,
+				body: `<div>${textMessage}</div>`,
+				to: to,
+				cc: conversation.cc,
+				parentId: conversationId,
+			},
+			userId
+		)
 	}
 
 	public render() {
@@ -109,6 +110,6 @@ const TextInput = style.textInput({})
 export default connect(
 	state => ({}),
 	dispatch => ({
-		send: (data: any, userId: string) => sendMessage(dispatch)(data, userId)
+		send: (data: any, userId: string) => sendMessage(dispatch)(data, userId),
 	})
 )(ThreadsFooterBar)

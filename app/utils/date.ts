@@ -1,4 +1,4 @@
-import { monthsName, tr } from "../i18n/t"
+import { monthsLongName, monthsName, tr } from "../i18n/t"
 
 export function getTimeToStr(timestamp) {
 	if (sameDay(timestamp)) {
@@ -15,7 +15,7 @@ export function getTimeToStr(timestamp) {
 	}
 	const date = new Date(timestamp)
 	const day = date.getDate()
-	const monthName = monthsName(date)
+	const monthName = monthsLongName(date)
 	const year = date.getFullYear()
 	const nowYear = new Date().getFullYear()
 

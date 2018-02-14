@@ -2,11 +2,11 @@ import * as React from "react"
 import { View } from "react-native"
 import styles, { deviceWidth } from "../styles/index"
 
-function isSynced(synced) {
+function isLoading(synced) {
 	if (synced === undefined) {
 		return false
 	}
-	return synced.reduce((acc, elemIsSync) => acc || elemIsSync, false)
+	return synced.reduce((acc, elemIsSync) => acc || !elemIsSync, false)
 }
 
 interface ProgressBarState {
@@ -24,7 +24,7 @@ export class ProgressBar extends React.Component<ProgressBarProps, ProgressBarSt
 	public timerID = null
 
 	public componentWillReceiveProps(newProps) {
-		if (!isSynced(newProps.synced)) {
+		if (isLoading(newProps.synced)) {
 			this.timerID = setInterval(
 				() =>
 					this.setState({
@@ -34,7 +34,7 @@ export class ProgressBar extends React.Component<ProgressBarProps, ProgressBarSt
 			)
 		}
 
-		if (isSynced(newProps.synced)) {
+		if (!isLoading(newProps.synced)) {
 			clearInterval(this.timerID)
 		}
 	}
@@ -42,6 +42,6 @@ export class ProgressBar extends React.Component<ProgressBarProps, ProgressBarSt
 	public render() {
 		const { synced } = this.props
 
-		return isSynced(synced) ? <View /> : <View style={[styles.loading, { width: this.state.width }]} />
+		return isLoading(synced) ? <View style={[styles.loading, { width: this.state.width }]} /> : <View />
 	}
 }
