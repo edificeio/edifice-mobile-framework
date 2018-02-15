@@ -37,11 +37,13 @@ const filtering = (threads: IThreadState): IThreadModel[] => {
 		.filter((item, index) => payload.indexOf(payload.find(i => i.id === item.id)) === index)
 		.filter(elem => filterRootConversation(elem, filterCriteria))
 		.map(c => {
+			const nbUnread = payload.filter(e => e.conversation === c.id && e.unread).length;
+			c.nb = nbUnread;
 			const lastOfConversation = payload.filter(e => e.conversation === c.id || c.id === e.id).sort((a, b) => b.date - a.date)[0];
 			c.lastOfConversation = lastOfConversation;
 			return c;
 		})
-		.sort((a: IThreadModel, b: IThreadModel) => b.date - a.date)
+		.sort((a: IThreadModel, b: IThreadModel) => b.lastOfConversation.date - a.lastOfConversation.date)
 }
 
 const mapStateToProps = state => ({
