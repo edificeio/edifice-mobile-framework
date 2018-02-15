@@ -25,7 +25,6 @@ export const sendMessage = dispatch => async (
 	data: { subject: string; to: any[]; cc: any[]; body: string; parentId?: string },
 	userId
 ) => {
-	console.log(userId);
 	dispatch({
 		type: "CONVERSATION_SEND",
 		data: { ...data, conversation: data.parentId, from: userId },

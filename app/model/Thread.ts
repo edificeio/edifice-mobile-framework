@@ -25,6 +25,7 @@ export interface IThreadModel {
 	toName: string
 	unread: boolean
 	status: ThreadStatus
+	lastOfConversation: IThreadModel
 }
 
 export interface IThreadState {

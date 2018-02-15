@@ -29,6 +29,7 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 	}
 
 	private nextPage() {
+		console.log('loading next page')
 		const { pageNumber } = this.props
 		//	console.log("nextPage")
 		if (this.props.synced) {
