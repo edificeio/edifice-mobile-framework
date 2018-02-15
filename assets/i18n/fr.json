@@ -11,11 +11,11 @@
   "Password": "Mot de passe",
   "Password_forgotten": "Mot de passe oublié?",
   "Profile": "Profil",
+  "Sending_msg": "En cours d'envoi...",
   "Write_a_message": "Ecrivez un message...",
   "agoHour": "il y a {{param1}} heure",
   "agoHours": "il y a {{param1}} heure(s)",
   "agoMinutes": "il y a {{param1}} mins",
-  "sending": "En cours d'envoi..."
   "to_disconnect": "vous déconnecter ?",
   "today": " Aujourd'hui "
 }
