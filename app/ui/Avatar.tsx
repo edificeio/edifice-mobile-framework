@@ -1,7 +1,7 @@
 import style from "glamorous-native"
 import * as React from "react"
 import { Conf } from "../Conf"
-//import RNFetchBlob from 'react-native-fetch-blob';
+import RNFetchBlob from "react-native-fetch-blob"
 import { layoutSize } from "../constants/layoutSize"
 import { View } from "react-native"
 
@@ -112,21 +112,20 @@ export class Avatar extends React.Component<IAvatarProps, { loaded: boolean }> {
 		}
 
 		this.state = { loaded: false }
-		//this.load()
+		this.load()
 	}
 
-	/*async load() {
-		const response = await RNFetchBlob.fetch('GET', `${ Conf.platform }/userbook/avatar/${ this.props.id }?thumbnail=48x48`);
-		this.base64Str = response.base64();
-		
-		if(this.base64Str.length === 1008){
-			this.noAvatar = true;
-		}
-		else{
-			this.uri = 'data:image/jpeg;base64,' + this.base64Str;
+	async load() {
+		const response = await RNFetchBlob.fetch("GET", `${Conf.platform}/userbook/avatar/${this.props.id}?thumbnail=48x48`)
+		this.base64Str = response.base64()
+
+		if (this.base64Str.length === 1008) {
+			this.noAvatar = true
+		} else {
+			this.uri = "data:image/jpeg;base64," + this.base64Str
 		}
 		this.setState({ loaded: true })
-	}*/
+	}
 
 	render() {
 		if (!this.state.loaded) {
