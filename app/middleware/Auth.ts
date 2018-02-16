@@ -46,16 +46,9 @@ export default store => next => action => {
 			store.dispatch(readCurrentUser())
 
 			store.dispatch(readConversation())
-            store.dispatch(readNextConversation(1))
-            store.dispatch(readNextConversation(2))
-            store.dispatch(readNextConversation(3))
-            store.dispatch(readNextConversation(4))
-            store.dispatch(readNextConversation(5))
-            store.dispatch(readNextConversation(6))
-            store.dispatch(readNextConversation(6))
-
-
-			// read the data
+			for(let i = 1; i < 10; i++){
+				store.dispatch(readNextConversation(i))
+			}
 		}
 
 		if ((action.path === PATH_LOGIN || action.path === PATH_SIGNUP) && action.type === CREATE_ERROR) {

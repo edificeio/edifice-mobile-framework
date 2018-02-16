@@ -16,7 +16,7 @@ interface IConversationProps extends IThreadModel {
 	userId: string
 }
 
-export const Conversation = ({ id, subject, date, displayNames, nb, onPress, userId }: IConversationProps) => {
+export const Conversation = ({ id, subject, date, displayNames, nb, onPress, userId, lastOfConversation }: IConversationProps) => {
 	const images = displayNames.reduce(
 		(acc, elem) => (elem[0] === userId && displayNames.length !== 1 ? acc : [...acc, elem[0]]),
 		[]
@@ -33,7 +33,7 @@ export const Conversation = ({ id, subject, date, displayNames, nb, onPress, use
 					{subject.length ? <Content nb={nb}>{trunc(subject, layoutSize.LAYOUT_32)}</Content> : <style.View />}
 				</CenterPanel>
 				<RightPanel>
-					<DateView date={date} nb={nb} />
+					<DateView date={ lastOfConversation.date } nb={nb} />
 					<CircleNumber nb={nb} />
 				</RightPanel>
 			</Row>

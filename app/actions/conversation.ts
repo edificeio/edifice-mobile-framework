@@ -21,11 +21,18 @@ export const createConversation = payload => create(PATH_CREATE_CONVERSATION, pa
 
 console.log(Conf);
 
+export const markAsRead = (thread) => {
+	if(!thread.unread){
+		return;
+	}
+	thread.unread = false;
+	fetch(`${Conf.platform}/conversation/message/${thread.id}`)
+}
+
 export const sendMessage = dispatch => async (
 	data: { subject: string; to: any[]; cc: any[]; body: string; parentId?: string },
 	userId
 ) => {
-	console.log(userId);
 	dispatch({
 		type: "CONVERSATION_SEND",
 		data: { ...data, conversation: data.parentId, from: userId },
