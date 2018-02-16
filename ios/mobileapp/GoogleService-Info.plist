@@ -7,21 +7,21 @@
 	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
 	<string>ca-app-pub-3940256099942544/4411468910</string>
 	<key>CLIENT_ID</key>
-	<string>339845688696-ghbjvkht481sl4td9qajrj8qupknaaji.apps.googleusercontent.com</string>
+	<string>850458695644-tlepupdi6pchrg3jeviqll63b1i2bgvs.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.339845688696-ghbjvkht481sl4td9qajrj8qupknaaji</string>
+	<string>com.googleusercontent.apps.850458695644-tlepupdi6pchrg3jeviqll63b1i2bgvs</string>
 	<key>API_KEY</key>
-	<string>AIzaSyC5HCwWsr6k96v2mHIWSir2O6kS4TvaI1o</string>
+	<string>AIzaSyDs6um_TsTBpgmLySxvqLRFJWYQRACqMM0</string>
 	<key>GCM_SENDER_ID</key>
-	<string>339845688696</string>
+	<string>850458695644</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.ode.appe</string>
 	<key>PROJECT_ID</key>
-	<string>ode-mobile-ce91a</string>
+	<string>ode-app-e-dev</string>
 	<key>STORAGE_BUCKET</key>
-	<string>ode-mobile-ce91a.appspot.com</string>
+	<string>ode-app-e-dev.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<true></true>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -33,8 +33,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:339845688696:ios:df4c6b4a1ddfad30</string>
+	<string>1:850458695644:ios:2d919fb214e143fb</string>
 	<key>DATABASE_URL</key>
-	<string>https://ode-mobile-ce91a.firebaseio.com</string>
+	<string>https://ode-app-e-dev.firebaseio.com</string>
 </dict>
 </plist>
