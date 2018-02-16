@@ -13,6 +13,13 @@ import {
 	replace1,
 } from "../constants/paths"
 import { tr } from "../i18n/t"
+import { AsyncStorage, Platform } from "react-native"
+
+async function getCookies(response) {
+	const cookie = response.headers.get("Set-Cookie")
+	if (cookie) return new Promise(resolve => resolve(cookie))
+	return await AsyncStorage.getItem("Set-Cookie")
+}
 
 function checkResponse(response, path = null) {
 	if (response.headers === undefined) {
@@ -20,8 +27,7 @@ function checkResponse(response, path = null) {
 	}
 
 	if (path === PATH_LOGIN) {
-		const cookies = response.headers.get("Set-Cookie")
-
+		const cookies = getCookies(response)
 		if (cookies === null) {
 			return new Promise((resolve, reject) =>
 				reject({
@@ -31,6 +37,10 @@ function checkResponse(response, path = null) {
 					statusText: tr.Incorrect_login_or_password,
 				})
 			)
+		}
+		// Cookie are not persist on IOS so we use AsyncStorage here
+		if (Platform.OS === "ios") {
+			AsyncStorage.setItem("Set-Cookie", JSON.stringify(cookies))
 		}
 		return new Promise(resolve =>
 			resolve({
