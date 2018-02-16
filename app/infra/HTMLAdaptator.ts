@@ -1,13 +1,12 @@
 import HTMLParser from "fast-html-parser"
 import { Conf } from "../Conf"
+import {clean} from "../utils/html";
 
 export class HTMLAdaptator {
-	html: string
 	root: any
 
 	constructor(html) {
-		this.html = html
-		this.root = HTMLParser.parse(html)
+		this.root = HTMLParser.parse(clean(html))
 	}
 
 	removeAfter(queryString) {

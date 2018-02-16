@@ -28,7 +28,7 @@ export class UserProfile extends React.Component<IUserProfileProps, IUserProfile
 	public disconnectBox = () => (
 		<ModalContent>
 			<Text>{tr.Are_you_sure}</Text>
-			<Text>{tr.Disconnect}</Text>
+			<Text>{tr.to_disconnect}</Text>
 			<ButtonsOkCancel
 				onCancel={() => this.setState({ showDisconnect: false })}
 				onValid={() => this.disconnect()}

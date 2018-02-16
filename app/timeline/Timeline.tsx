@@ -6,7 +6,6 @@ import { View } from "react-native"
 import styles from "../styles"
 import { connect } from "react-redux"
 import { listTimeline } from "../actions/timeline"
-import { layoutSize } from "../constants/layoutSize"
 
 
 export interface ITimelineProps {

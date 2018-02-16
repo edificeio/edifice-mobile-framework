@@ -26,17 +26,14 @@ const dataTypes = {
 			const response = await fetch(`${Conf.platform}/blog/post/${news.resource}/${news["sub-resource"]}`)
 			const data = await response.json()
 
-			let previewText = adaptator(data.content).toText()
-			if (previewText.length > 175) {
-				previewText = previewText.substring(0, 172) + "..."
-			}
+			let message = adaptator(data.content).toText()
 
 			return {
 				date: data.modified.$date,
 				id: data._id,
 				images: adaptator(data.content).toImagesArray(),
-				message: adaptator(data.content).toText(),
-				preview: previewText,
+				message,
+				preview: message.length > 175 ? message.substring(0, 172) + "..." : message,
 				resourceName: news.params.blogTitle,
 				senderId: data.author.userId,
 				senderName: data.author.username,

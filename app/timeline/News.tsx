@@ -76,7 +76,6 @@ const Margin = style.view({
 })
 
 const Image = style.image({
-	marginTop: layoutSize.LAYOUT_10,
 	height: layoutSize.LAYOUT_160,
 	width: layoutSize.LAYOUT_350,
 })

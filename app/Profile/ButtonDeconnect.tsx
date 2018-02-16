@@ -3,6 +3,7 @@ import * as React from "react"
 import { layoutSize } from "../constants/layoutSize"
 import { RowProperties } from "../ui/index"
 import { Row } from "../ui/Row"
+import {tr} from "../i18n/t";
 
 const Container = (props: RowProperties) => (
 	<Row
@@ -29,6 +30,6 @@ export interface ButtonTextProps {
 
 export const ButtonDeconnect = ({ onPress }: ButtonTextProps) => (
 	<Container onPress={() => onPress()}>
-		<Deconnect></Deconnect>
+		<Deconnect>{tr.Disconnect}</Deconnect>
 	</Container>
 )
