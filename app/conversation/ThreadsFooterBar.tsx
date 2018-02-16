@@ -61,19 +61,17 @@ class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, ThreadsFo
 
 		return (
 			<ContainerFooterBar>
-				{selected === Selected.keyboard && (
-					<ContainerInput>
-						<TextInput
-							autoFocus={true}
-							enablesReturnKeyAutomatically={true}
-							multiline
-							onChangeText={(textMessage: string) => this.setState({ textMessage })}
-							placeholder={tr.Write_a_message}
-							underlineColorAndroid={"transparent"}
-							value={textMessage}
-						/>
-					</ContainerInput>
-				)}
+				<ContainerInput>
+					<TextInput
+						autoFocus={true}
+						enablesReturnKeyAutomatically={true}
+						multiline
+						onChangeText={(textMessage: string) => this.setState({ textMessage })}
+						placeholder={tr.Write_a_message}
+						underlineColorAndroid={"transparent"}
+						value={textMessage}
+					/>
+				</ContainerInput>
 				<TouchableBarPanel onPress={() => this.onPress(Selected.keyboard)}>
 					<IconOnOff focused={selected === Selected.keyboard} name={"keyboard"} />
 				</TouchableBarPanel>
