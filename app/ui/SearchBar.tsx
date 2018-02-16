@@ -5,6 +5,7 @@ import { PATH_CONVERSATION } from "../constants/paths"
 import { CommonStyles } from "../styles/common/styles"
 import { ContainerTopBar, TouchableBarPanel } from "./ContainerBar"
 import { CloseIcon, SearchIcon } from "./icons/SearchIcon"
+import {tr} from "../i18n/t";
 
 export interface SearchBarProps {
 	filter?: (store: string, value: string) => object
@@ -47,7 +48,7 @@ export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
 					autoFocus={true}
 					enablesReturnKeyAutomatically={true}
 					onChangeText={value => this.onChangeText(value)}
-					placeholder={"Rechercher..."}
+					placeholder={tr.Search}
 					placeholderTextColor={"white"}
 					returnKeyType={"search"}
 					underlineColorAndroid={"transparent"}
