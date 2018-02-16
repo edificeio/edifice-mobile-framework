@@ -38,8 +38,7 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 	}
 
 	public render() {
-		const { conversations, userId } = this.props
-
+		const { conversations, userId } = this.props;
 		return (
 			<FlatList
 				data={conversations}

@@ -30,9 +30,10 @@ export const markAsRead = (thread) => {
 }
 
 export const sendMessage = dispatch => async (
-	data: { subject: string; to: any[]; cc: any[]; body: string; parentId?: string },
+	data: { subject: string; to: any[]; cc: any[]; body: string; parentId?: string, id?: string, date?: number, newId?: string },
 	userId
 ) => {
+	data.id = Math.random().toString();
 	dispatch({
 		type: "CONVERSATION_SEND",
 		data: { ...data, conversation: data.parentId, from: userId },
@@ -52,14 +53,14 @@ export const sendMessage = dispatch => async (
 				subject: data.subject,
 			}),
 		})
-		let json = await response.json()
+		let json = await response.json();
+		data.newId = json.id;
+		data.date = Date.now();
 
 		dispatch({
 			type: "CONVERSATION_SENT",
-			data: data,
-		})
-
-		dispatch(read(PATH_CONVERSATION, true))
+			data: { ...data, conversation: data.parentId, from: userId },
+		});
 	} catch (e) {
 		console.log(e)
 		dispatch({

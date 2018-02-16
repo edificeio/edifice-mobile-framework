@@ -48,23 +48,26 @@ const initialState: IThreadState = {
 
 export default (state: IThreadState = initialState, action): IThreadState => {
 	if (action.type === "CONVERSATION_SEND") {
-		action.data.status = ThreadStatus.sending
-		action.data.id = `p${state.processing.length}`
+		action.data.status = ThreadStatus.sending;
 		return {
 			...state,
 			processing: [...state.processing, ...[action.data]],
 		}
 	}
 	if (action.type === "CONVERSATION_SENT") {
-		const index = state.processing.indexOf(state.processing.find(p => p.id === action.data.id))
+		const index = state.processing.indexOf(state.processing.find(p => p.id === action.data.id));
 		return {
 			...state,
 			processing: state.processing.filter((e, i) => i !== index),
+			payload: [...state.payload, ...[{
+				 ...action.data,
+				 id: action.data.newId
+			}]]
 		}
 	}
 	if (action.type === "CONVERSATION_FAILED_SEND") {
-		const data = state.processing.find(p => p.id === action.data.id)
-		data.status = ThreadStatus.failed
+		const data = state.processing.find(p => p.id === action.data.id);
+		data.status = ThreadStatus.failed;
 		return {
 			...state,
 		}
