@@ -8,13 +8,12 @@ export const Item = style.touchableOpacity(
 		paddingHorizontal: layoutSize.LAYOUT_16,
 		paddingVertical: layoutSize.LAYOUT_12,
 		borderBottomColor: CommonStyles.borderBottomItem,
-		borderBottomWidth: 1,
 	},
-	({ full = false, nb = 0, smogSeparator = 0}) => ({
+	({ borderBottomWidth = 1, full = false, nb = 0 }) => ({
 		borderLeftWidth: full ? layoutSize.LAYOUT_4 : 0,
 		borderLeftColor: full ? CommonStyles.hightlightColor : "transparent",
 		backgroundColor: nb > 0 ? CommonStyles.nonLue : CommonStyles.itemBackgroundColor,
-		elevation: smogSeparator,
+		borderBottomWidth,
 	})
 )
 

@@ -5,6 +5,7 @@ export const CommonStyles = {
 	actionColorDisabled: "#2A9CC888",
 	backgroundColor: "#F8F8FA",
 	borderBottomItem: "#dddddd",
+    borderBottomNewsItem: "#e7e7e7",
 	borderColorLighter: "#e2e2e2",
 	buttonColor: "#ffffff",
 	cardTitle: "#1467ff",

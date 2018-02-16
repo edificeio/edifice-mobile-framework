@@ -36,7 +36,7 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
 		const { full } = this.state
 		const { date, preview = "", senderId, senderName, resourceName, message, images = [] } = this.props
 		return (
-			<Item full={full} onPress={() => this.onPress()} smogSeparator={layoutSize.LAYOUT_20}>
+			<Item borderBottomWidth={0} full={full} onPress={() => this.onPress()}>
 				<Header>
 					<LeftPanel>
 						<Avatar id={senderId} size={Size.large} />
@@ -51,7 +51,6 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
 					</CenterPanel>
 				</Header>
 				{preview.length ? <Content nb={1}>{this.state.full ? message : preview}</Content> : <View />}
-				{preview.length && !full && images.length ? <Margin /> : <View />}
 				{images.length ? full ? <Images full={full} images={images} /> : <Image source={images[0]} /> : <View />}
 			</Item>
 		)
