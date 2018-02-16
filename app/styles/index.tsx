@@ -50,6 +50,9 @@ const styles = StyleSheet.create({
 	grid: {
 		backgroundColor: CommonStyles.backgroundColor,
 	},
+	gridWhite: {
+		backgroundColor: "white",
+	},
 	identifier: {
 		alignItems: "flex-end",
 		justifyContent: "center",

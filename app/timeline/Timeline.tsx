@@ -1,10 +1,13 @@
+import style from "glamorous-native"
 import * as React from "react"
-import { FlatList } from "react-native"
-import styles from "../styles/index"
-import { connect } from "react-redux"
-import { listTimeline } from "../actions/timeline"
+import { FlatList, Image } from "react-native"
 import { News } from "./News"
 import { View } from "react-native"
+import styles from "../styles"
+import { connect } from "react-redux"
+import { listTimeline } from "../actions/timeline"
+import { layoutSize } from "../constants/layoutSize"
+
 
 export interface ITimelineProps {
 	fetching: boolean
@@ -56,16 +59,17 @@ class Timeline extends React.Component<ITimelineProps, ITimelineState> {
 		return (
 			<FlatList
 				data={news}
+				disableVirtualization
+				ItemSeparatorComponent={() => <Separator />}
 				keyExtractor={item => item.id}
 				onEndReached={() => this.nextPage()}
 				onEndReachedThreshold={0.1}
+				ref={list => (this.flatList = list)}
+				removeClippedSubviews
 				renderItem={({ item, index }) => (
 					<News {...item} index={index} onPress={(id, index, full) => this.onPress(id, index, full)} />
 				)}
-				ref={list => (this.flatList = list)}
-				removeClippedSubviews
-				disableVirtualization
-				style={styles.grid}
+				style={styles.gridWhite}
 			/>
 		)
 	}
@@ -80,3 +84,10 @@ export default connect(
 		sync: (page: number) => listTimeline(dispatch)(page),
 	})
 )(Timeline)
+
+
+const Separator = () => (
+	<style.View>
+		<Image source={require("../../assets/images/separator.png")} />
+	</style.View>
+)
