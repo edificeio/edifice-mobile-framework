@@ -18,6 +18,8 @@ interface ThreadsFooterBarState {
 }
 
 class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, ThreadsFooterBarState> {
+	input: any;
+
 	public state = {
 		selected: Selected.none,
 		textMessage: "",
@@ -25,7 +27,14 @@ class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, ThreadsFo
 
 	private onPress(e: Selected) {
 		const { selected } = this.state
-
+		if(e === Selected.keyboard){
+			if(this.state.selected !== Selected.keyboard){
+				this.input.innerComponent.focus();
+			}
+			else{
+				this.input.innerComponent.blur();
+			}
+		}
 		this.setState({ selected: e === selected ? Selected.none : e })
 	}
 
@@ -36,7 +45,6 @@ class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, ThreadsFo
 		let conversation = this.props.navigation.state.params
 
 		this.setState({ selected: Selected.none })
-		console.log(this.props)
 		let to = []
 		if (conversation.from === userId) {
 			to = conversation.to
@@ -44,6 +52,7 @@ class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, ThreadsFo
 			to = [conversation.from]
 		}
 
+		this.input.innerComponent.clear();
 		this.props.send(
 			{
 				subject: subject,
@@ -53,7 +62,7 @@ class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, ThreadsFo
 				parentId: conversationId,
 			},
 			userId
-		)
+		);
 	}
 
 	public render() {
@@ -63,10 +72,11 @@ class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, ThreadsFo
 			<ContainerFooterBar>
 				<ContainerInput>
 					<TextInput
-						autoFocus={true}
+						ref={ el => this.input = el }
 						enablesReturnKeyAutomatically={true}
 						multiline
 						onChangeText={(textMessage: string) => this.setState({ textMessage })}
+						onFocus={ () => this.setState({ selected: Selected.keyboard })}
 						placeholder={tr.Write_a_message}
 						underlineColorAndroid={"transparent"}
 						value={textMessage}
