@@ -1,27 +1,35 @@
 {
   "project_info": {
-    "project_number": "339845688696",
-    "firebase_url": "https://ode-mobile-ce91a.firebaseio.com",
-    "project_id": "ode-mobile-ce91a",
-    "storage_bucket": "ode-mobile-ce91a.appspot.com"
+    "project_number": "850458695644",
+    "firebase_url": "https://ode-app-e-dev.firebaseio.com",
+    "project_id": "ode-app-e-dev",
+    "storage_bucket": "ode-app-e-dev.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:339845688696:android:df4c6b4a1ddfad30",
+        "mobilesdk_app_id": "1:850458695644:android:2d919fb214e143fb",
         "android_client_info": {
           "package_name": "com.ode.appe"
         }
       },
       "oauth_client": [
         {
-          "client_id": "339845688696-innqamn1l5pfn9ga394a1lqavstkmsjb.apps.googleusercontent.com",
+          "client_id": "850458695644-fe0gudeeek1dtgi54tu3t74mlv42aach.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ode.appe",
+            "certificate_hash": "7bad13c80b202702aa4dad7cbb0216a6de8513e9"
+          }
+        },
+        {
+          "client_id": "850458695644-r0okv835kn04et2qpn0dtvlaa2bfamhi.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBVRJb57ruPEgQLRS_uwmpTUq6_CjKHpD0"
+          "current_key": "AIzaSyBhhdPBk_ZbSwFtWuK9gPHEGlv2M23MlYI"
         }
       ],
       "services": {
@@ -29,8 +37,20 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "850458695644-r0okv835kn04et2qpn0dtvlaa2bfamhi.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "850458695644-tlepupdi6pchrg3jeviqll63b1i2bgvs.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ode.appe"
+              }
+            }
+          ]
         },
         "ads_service": {
           "status": 2
