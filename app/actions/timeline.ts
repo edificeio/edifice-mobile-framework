@@ -36,12 +36,12 @@ const dataTypes = {
 			}
 
 			return {
-				date: data.publication_date,
+				date: news.date.$date,
 				id: data._id,
 				images: adaptator(data.content).toImagesArray(),
 				message: adaptator(data.content).toText(),
 				preview: previewText,
-				resourceName: news.params.resourceName,
+				resourceName: data.thread_title,
 				senderId: data.userId,
 				senderName: news.params.username,
 			}
