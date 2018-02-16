@@ -29,6 +29,6 @@ export interface ButtonTextProps {
 
 export const ButtonDeconnect = ({ onPress }: ButtonTextProps) => (
 	<Container onPress={() => onPress()}>
-		<Deconnect>Se déconnecter</Deconnect>
+		<Deconnect></Deconnect>
 	</Container>
 )

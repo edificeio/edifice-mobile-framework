@@ -1,5 +1,6 @@
 {
   "Are_you_sure": "Êtes-vous sûr de vouloir",
+  "Cancel": "Annuler",
   "Connect": "Se connecter",
   "Conversation": "Conversation",
   "Disconnect": "Se déconnecter",
@@ -12,6 +13,7 @@
   "Password_forgotten": "Mot de passe oublié?",
   "Profile": "Profil",
   "Sending_msg": "En cours d'envoi...",
+  "Search": "Search ...",
   "Write_a_message": "Ecrivez un message...",
   "agoHour": "il y a {{param1}} heure",
   "agoHours": "il y a {{param1}} heure(s)",
