@@ -9,6 +9,7 @@ import { Row } from "../ui"
 import { tr } from "../i18n/t"
 import { View } from "react-native"
 import { layoutSize } from "../constants/layoutSize"
+import { markAsRead } from "../actions/conversation";
 
 export interface IThreadsProps {
 	dispatch?: (any) => void
@@ -26,6 +27,7 @@ export class Threads extends React.Component<IThreadsProps, any> {
 
 	componentWillMount() {
 		const { conversationId } = this.props.navigation.state.params
+		this.props.threads.forEach(t => markAsRead(t));
 		if (this.props.synced) {
 			this.props.readNextThreads(conversationId)
 			this.props.readPrevThreads(conversationId)

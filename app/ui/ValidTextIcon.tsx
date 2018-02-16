@@ -41,13 +41,15 @@ const _ValidTextIcon = ({
 			onPress={() => onPress()}
 			disabled={disabled}
 		>
-			<TextStyle disabled={disable}>
-				{leftName.length > 0 && <Icon name={leftName} />}
-				{whiteSpace}
-				{title}
-				{whiteSpace}
-				{rightName.length > 0 && <Icon name={rightName} />}
-			</TextStyle>
+			<ButtonStyle disabled={disable}>
+				<TextStyle disabled={disable}>
+					{leftName.length > 0 && <Icon name={leftName} />}
+					{whiteSpace}
+					{title}
+					{whiteSpace}
+					{rightName.length > 0 && <Icon name={rightName} />}
+				</TextStyle>
+			</ButtonStyle>
 			{disable && <Disable />}
 		</ValidStyle>
 	)
@@ -67,19 +69,26 @@ const ValidStyle = (props: RowProperties) => (
 	/>
 )
 
-const TextStyle = style.text(
+const ButtonStyle = style.view(
 	{
-		borderRadius: layoutSize.LAYOUT_14 * 3.8,
-		fontFamily: CommonStyles.primaryFontFamilySemibold,
-		fontSize: layoutSize.LAYOUT_14,
+		borderRadius: layoutSize.LAYOUT_38 * 0.5,
 		paddingHorizontal: layoutSize.LAYOUT_36,
 		paddingVertical: layoutSize.LAYOUT_9,
-		textAlignVertical: "center",
 	},
 	({ disabled }) => ({
 		backgroundColor: disabled ? CommonStyles.backgroundColor : CommonStyles.actionColor,
 		borderColor: disabled ? CommonStyles.actionColor : CommonStyles.backgroundColor,
 		borderWidth: disabled ? layoutSize.LAYOUT_1 : 0,
+	})
+)
+
+const TextStyle = style.text(
+	{
+		fontFamily: CommonStyles.primaryFontFamilySemibold,
+		fontSize: layoutSize.LAYOUT_14,
+		textAlignVertical: "center",
+	},
+	({ disabled }) => ({
 		color: disabled ? CommonStyles.actionColor : CommonStyles.inverseColor,
 	})
 )

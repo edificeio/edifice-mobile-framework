@@ -51,7 +51,7 @@ export function sameDay(timestamp) {
 	const date = new Date(timestamp)
 	const todayDate = new Date()
 
-	if (date.getDate() !== todayDate.getDate()) return false
+	if (date.getDate() !== todayDate.getDate() || date.getMonth() !== todayDate.getMonth()) return false
 
 	return true
 }

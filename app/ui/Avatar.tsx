@@ -135,7 +135,7 @@ export class Avatar extends React.Component<IAvatarProps, { loaded: boolean }> {
 
 		if(this.noAvatar){
 			console.log('has no avatar')
-			if (this.props.size === Size.large) {
+			if (this.props.size === Size.large || this.count === 1) {
 				return <LargeImage source={require('../../assets/images/no-avatar.png')} />
 			} else if (this.props.size === Size.medium) {
 				return <MediumImage source={require('../../assets/images/no-avatar.png')} />
@@ -148,7 +148,7 @@ export class Avatar extends React.Component<IAvatarProps, { loaded: boolean }> {
 			}
 		}
 		
-		if (this.props.size === Size.large) {
+		if (this.props.size === Size.large || this.count === 1) {
 			return <LargeImage source={{ uri: this.uri }} />
 		} else if (this.props.size === Size.medium) {
 			return <MediumImage source={{ uri: 'data:image/jpeg;base64,' + this.base64Str }} />

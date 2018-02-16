@@ -22,13 +22,14 @@ export interface IConversationsProps {
 
 export class Conversations extends React.Component<IConversationsProps, any> {
 	public onPress(item: IThreadModel) {
-		;(item as any).conversationId = item.id
-		;(item as any).userId = this.props.userId
+		(item as any).conversationId = item.id;
+		(item as any).userId = this.props.userId;
 
 		this.props.navigation.navigate("Threads", item)
 	}
 
 	private nextPage() {
+		console.log('loading next page')
 		const { pageNumber } = this.props
 		//	console.log("nextPage")
 		if (this.props.synced) {
