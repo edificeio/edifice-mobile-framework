@@ -109,6 +109,7 @@ export class TextInputError extends React.Component<TextInputErrorProps, TextInp
 						placeholderTextColor={placeholderTextColor}
 						secureTextEntry={secureTextEntry}
 						underlineColorAndroid={"transparent"}
+						autoCapitalize="none"
 						value={this.state.value}
 					/>
 				</Container>
