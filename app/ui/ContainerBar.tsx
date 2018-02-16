@@ -2,7 +2,10 @@ import style from "glamorous-native"
 import * as React from "react"
 import { layoutSize } from "../constants/layoutSize"
 import { CommonStyles } from "../styles/common/styles"
-import { ViewStyle } from "react-native"
+import { ViewStyle, Platform } from "react-native"
+import { isIphoneX } from "react-native-iphone-x-helper"
+
+const iosStatusBarHeight = isIphoneX() ? 40 : 20
 
 const containerBar: ViewStyle = {
 	alignItems: "flex-start",
@@ -10,6 +13,7 @@ const containerBar: ViewStyle = {
 	flexDirection: "row",
 	flexWrap: "wrap",
 	justifyContent: "flex-start",
+	paddingTop: Platform.OS === "ios" ? iosStatusBarHeight : 0,
 }
 
 export const ContainerTopBar = style.view({
