@@ -27,20 +27,26 @@ export class HTMLAdaptator {
 	}
 
 	toImagesArray() {
-		const paths = []
-		const images = this.root.querySelectorAll("img")
+		const paths = [];
+		const images = this.root.querySelectorAll("img");
 		for (let i = 0; i < images.length; i++) {
-			paths.push({ uri: Conf.platform + images[i].attributes.src })
+			let src = Conf.platform + images[i].attributes.src;
+			let split = src.split('?');
+			src = split[0] + '?thumbnail=1600x0';
+			paths.push({ uri: src });
 		}
-		return paths
+		return paths;
 	}
 
 	toHTML() {
-		return this.outerHTML(this.root)
+		return this.outerHTML(this.root);
 	}
 
 	toText() {
-		return this.root.structuredText
+		console.log(this.root.structuredText);
+		console.log(JSON.stringify(this.root.structuredText.replace(/\u200b/g, '').replace(/[\s\r\n]+$/, '')))
+		//remove trailing new lines
+		return this.root.structuredText.replace(/\u200b/g, '').replace(/[\s\r\n]+$/, '');
 	}
 
 	toOneLineText() {

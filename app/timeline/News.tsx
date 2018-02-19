@@ -7,8 +7,9 @@ import { CommonStyles } from "../styles/common/styles"
 import { Avatar, Size } from "../ui/Avatar"
 import { DateView } from "../ui/DateView"
 import { tr } from "../i18n/t"
-import { CenterPanel, Content, Header, Item, LeftPanel } from "../ui/ContainerContent"
+import { CenterPanel, Content, Header, LeftPanel, ArticleContainer } from "../ui/ContainerContent"
 import { Images } from "../ui/Images"
+import { Card } from '../ui/Card';
 
 interface INewsProps extends INewsModel {
 	onPress?: (id: string, index: number, full: boolean) => void
@@ -36,23 +37,25 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
 		const { full } = this.state
 		const { date, preview = "", senderId, senderName, resourceName, message, images = [] } = this.props
 		return (
-			<Item borderBottomWidth={0} full={full} onPress={() => this.onPress()}>
-				<Header>
-					<LeftPanel>
-						<Avatar id={senderId} size={Size.large} />
-					</LeftPanel>
-					<CenterPanel>
-						<Bold>
-							{senderName}
-							<Light> {tr.On} </Light>
-							{resourceName}
-						</Bold>
-						<DateView date={date} short={false} />
-					</CenterPanel>
-				</Header>
-				{preview.length ? <Content nb={1}>{this.state.full ? message : preview}</Content> : <View />}
-				{images.length ? full ? <Images full={full} images={images} /> : <Image source={images[0]} /> : <View />}
-			</Item>
+			<ArticleContainer>
+				<Card onPress={() => this.onPress()}>
+					<Header>
+						<LeftPanel>
+							<Avatar id={senderId} size={Size.large} />
+						</LeftPanel>
+						<CenterPanel>
+							<Bold>
+								{senderName}
+								<Light> {tr.On} </Light>
+								{resourceName}
+							</Bold>
+							<DateView date={date} short={false} />
+						</CenterPanel>
+					</Header>
+					{preview.length ? <Content nb={1}>{this.state.full ? message : preview}</Content> : <View />}
+					{images.length ? <Images images={images} /> : <View />}
+				</Card>
+			</ArticleContainer>
 		)
 	}
 }

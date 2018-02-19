@@ -59,7 +59,6 @@ class Timeline extends React.Component<ITimelineProps, ITimelineState> {
 			<FlatList
 				data={news}
 				disableVirtualization
-				ItemSeparatorComponent={() => <Separator />}
 				keyExtractor={item => item.id}
 				onEndReached={() => this.nextPage()}
 				onEndReachedThreshold={0.1}

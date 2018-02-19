@@ -2,6 +2,11 @@ import style from "glamorous-native"
 import { layoutSize } from "../constants/layoutSize"
 import { CommonStyles } from "../styles/common/styles"
 
+export const ArticleContainer = style.view({
+	paddingTop: 5,
+	paddingBottom: 5
+})
+
 export const Item = style.touchableOpacity(
 	{
 		backgroundColor: CommonStyles.itemBackgroundColor,

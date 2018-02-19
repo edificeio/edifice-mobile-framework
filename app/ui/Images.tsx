@@ -5,8 +5,7 @@ import { layoutSize } from "../constants/layoutSize"
 import { Row } from "."
 
 export interface IAvatarsProps {
-	images: object[]
-	full: boolean
+	images: object[];
 }
 
 export class Images extends React.Component<IAvatarsProps, any> {
@@ -17,102 +16,83 @@ export class Images extends React.Component<IAvatarsProps, any> {
 
 		if (images.length === 1) {
 			return (
-				<View style={{ aspectRatio: 1 }}>
-					<Image source={images[0]} />
-				</View>
+				<ContainerImage>
+					<SoloImage source={images[0]} />
+				</ContainerImage>
 			)
 		}
 
 		if (images.length === 2) {
 			return (
-				<View style={{ aspectRatio: 1 }}>
-					<Row>
-						<ImageLeft source={images[0]} />
-						<ImageRight source={images[1]} />
+				<ContainerImage>
+					<Row style={{ 'justifyContent': 'space-between'}}>
+						<Column style={{ paddingRight: 5 }}>
+							<SoloImage source={images[0]} />
+						</Column>
+						<Column style={{ paddingLeft: 5 }}>
+							<SoloImage source={images[1]} />
+						</Column>
 					</Row>
-				</View>
+				</ContainerImage>
 			)
 		}
 
 		if (images.length === 3) {
 			return (
-				<View style={{ aspectRatio: 1 }}>
-					<Row>
-						<ImageLeft source={images[0]} />
-						<View style={{ flex: 1 }}>
-							<ImageTopRight source={images[1]} />
-							<ImageBottomRight source={images[2]} />
-						</View>
+				<ContainerImage>
+					<Row style={{ 'justifyContent': 'space-between'}}>
+						<Column style={{ paddingRight: 5 }}>
+							<SoloImage source={images[0]} />
+						</Column>
+						<Column style={{ paddingLeft: 5 }}>
+							<QuarterImage source={images[1]} />
+							<QuarterImage source={images[2]} />
+						</Column>
 					</Row>
-				</View>
+				</ContainerImage>
 			)
 		}
 
 		if (images.length === 4) {
 			return (
-				<View style={{ aspectRatio: 1 }}>
-					<Row>
-						<View style={{ flex: 1 }}>
-							<ImageTopLeft source={images[0]} />
-							<ImageTopRight source={images[2]} />
-						</View>
-						<View style={{ flex: 1 }}>
-							<ImageBottomLeft source={images[1]} />
-							<ImageBottomRight source={images[3]} />
-						</View>
+				<ContainerImage>
+					<Row style={{ 'justifyContent': 'space-between'}}>
+						<Column style={{ paddingRight: 5 }}>
+							<QuarterImage source={images[0]} />
+							<QuarterImage source={images[2]} />
+						</Column>
+						<Column style={{ paddingLeft: 5 }}>
+							<QuarterImage source={images[1]} />
+							<QuarterImage source={images[3]} />
+						</Column>
 					</Row>
-				</View>
+				</ContainerImage>
 			)
 		}
 	}
 }
 
-const Image = style.image({
-	flex: 1,
-	marginTop: 0,
-	marginBottom: 0,
-})
+const ContainerImage = style.view({
+	marginTop: 15
+});
 
-const ImageTop = style.image({
-	flex: 1,
-	marginBottom: layoutSize.LAYOUT_4,
-})
+const SoloImage = style.image({
+	height: 165,
+	width: '100%'
+});
 
-const ImageBottom = style.image({
-	flex: 1,
-	marginTop: layoutSize.LAYOUT_4,
-})
+const HalfImage = style.image({
+	height: 165,
+	width: '49%'
+});
 
-const ImageLeft = style.image({
-	flex: 1,
-	marginRight: layoutSize.LAYOUT_4,
-})
+const QuarterImage = style.image({
+	height: 78,
+	width: '100%'
+});
 
-const ImageRight = style.image({
-	flex: 1,
-	marginLeft: layoutSize.LAYOUT_4,
-})
-
-const ImageTopLeft = style.image({
-	flex: 1,
-	marginBottom: layoutSize.LAYOUT_4,
-	marginRight: layoutSize.LAYOUT_4,
-})
-
-const ImageTopRight = style.image({
-	flex: 1,
-	marginBottom: layoutSize.LAYOUT_4,
-	marginLeft: layoutSize.LAYOUT_4,
-})
-
-const ImageBottomLeft = style.image({
-	flex: 1,
-	marginTop: layoutSize.LAYOUT_4,
-	marginRight: layoutSize.LAYOUT_4,
-})
-
-const ImageBottomRight = style.image({
-	flex: 1,
-	marginTop: layoutSize.LAYOUT_4,
-	marginLeft: layoutSize.LAYOUT_4,
-})
+const Column = style.view({
+	width: '50%',
+	height: 165,
+	justifyContent: 'space-between'
+});

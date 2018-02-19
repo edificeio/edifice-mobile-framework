@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
 		backgroundColor: CommonStyles.backgroundColor,
 	},
 	gridWhite: {
-		backgroundColor: "white",
+		backgroundColor: "rgb(248,248,250)",
 	},
 	identifier: {
 		alignItems: "flex-end",
