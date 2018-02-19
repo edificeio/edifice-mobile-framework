@@ -4,10 +4,13 @@ import { AppScreen } from "./AppScreen"
 import configureStore from "./store"
 import { checkLogin } from "./actions/auth"
 
-const store = configureStore()
-store.dispatch(checkLogin())
+const store = configureStore();
 
 export class AppStore extends React.Component {
+	componentDidMount(){
+		store.dispatch(checkLogin())
+	}
+	
 	public render() {
 		return (
 			<Provider store={store}>

@@ -19,12 +19,16 @@ export class AppScreen extends React.Component<IAppScreenProps, IAppScreenState>
 	navigator: any
 
 	public componentDidMount() {
-		navigationRef = this.navigator
+		navigationRef = this.navigator;
 		SplashScreen.close({
 			animationType: SplashScreen.animationType.scale,
 			delay: 500,
 			duration: 850,
-		})
+		});
+	}
+
+	setNavigator(nav){
+		this.navigator = nav;
 	}
 
 	public render() {
@@ -42,7 +46,7 @@ export class AppScreen extends React.Component<IAppScreenProps, IAppScreenState>
 							Tracking.trackScreenView(currentRoute.routeName, currentRoute.params)
 						}
 					}}
-					ref={nav => (this.navigator = nav)}
+					ref={nav => this.setNavigator(nav)}
 				/>
 			</View>
 		)
