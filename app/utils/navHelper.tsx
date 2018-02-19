@@ -110,5 +110,12 @@ export const navOptions = (props, { state }) => {
 }
 
 export const navigate = (route, props = {}) => {
+	if(route === 'Main'){
+		const resetAction = NavigationActions.reset({
+			index: 0,
+			actions: [NavigationActions.navigate({ routeName: route, params: props })],
+		});
+		return navigationRef.dispatch(resetAction);
+	}
 	return navigationRef.dispatch(NavigationActions.navigate({ routeName: route, params: props }))
 }
