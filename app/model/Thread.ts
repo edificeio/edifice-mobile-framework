@@ -92,6 +92,9 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 					const thread = { ...c[0] };
 					thread.nb = c.filter(e => e.unread).length;
 					thread.messages = c;
+					if(thread.subject){
+						thread.subject = thread.subject.replace(/Tr :|Re :/g, '');
+					}
 					return thread;
 			})].sort((a, b) => b.date - a.date)
 		}
