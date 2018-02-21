@@ -10,7 +10,7 @@ export interface ConversationTopBarProps {
 	navigation?: any
 }
 
-export class ConversationTopBar extends React.PureComponent<ConversationTopBarProps, {}> {
+export class ConversationTopBar extends React.Component<ConversationTopBarProps, {}> {
 	private onClose() {
 		const { navigation } = this.props
 

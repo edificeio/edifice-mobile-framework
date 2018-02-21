@@ -39,7 +39,7 @@ class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, ThreadsFo
 	}
 
 	private onValid() {
-		const { conversationId, displayNames, subject, userId } = this.props.navigation.state.params
+		const { conversationId, displayNames, subject, userId, thread_id } = this.props.navigation.state.params
 		const { textMessage } = this.state
 
 		let conversation = this.props.navigation.state.params
@@ -60,6 +60,7 @@ class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, ThreadsFo
 				to: to,
 				cc: conversation.cc,
 				parentId: conversationId,
+				thread_id: thread_id
 			},
 			userId
 		);

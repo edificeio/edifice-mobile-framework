@@ -1,7 +1,7 @@
 import style from "glamorous-native"
 import * as React from "react"
 import { FlatList } from "react-native"
-import { IThreadModel } from "../model/Thread"
+import { IThreadModel, IThreadState, Message } from "../model/Thread"
 import styles from "../styles/index"
 import { Thread } from "./Thread"
 import { sameDay } from "../utils/date"
@@ -9,16 +9,20 @@ import { Row } from "../ui"
 import { tr } from "../i18n/t"
 import { View } from "react-native"
 import { layoutSize } from "../constants/layoutSize"
-import { markAsRead } from "../actions/conversation";
+import { markAsRead, readNextConversation, readNextThreads, readPrevThreads } from "../actions/conversation";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { IAction } from '../actions/docs';
 
 export interface IThreadsProps {
 	dispatch?: (any) => void
 	navigation?: any
-	readNextThreads?: (string) => any
-	readPrevThreads?: (string) => any
-	synced: boolean
-	threads: IThreadModel[]
-	userId: string
+	readNextThreads: (any) => IAction;
+	readPrevThreads: (any) => IAction;
+	synced: any
+	threads: Message[]
+	userId: any
+	pageNumber: any;
 }
 
 export class Threads extends React.Component<IThreadsProps, any> {
@@ -69,7 +73,7 @@ export class Threads extends React.Component<IThreadsProps, any> {
 		)
 	}
 
-	private renderItem(item: IThreadModel) {
+	private renderItem(item: Message) {
 		if (!this.props.userId) {
 			return <View />
 		}
@@ -94,3 +98,23 @@ const Text = style.text({
 	alignSelf: "center",
 	color: "#FF858FA9",
 })
+
+
+/**
+ * Select the thread of conversation with conversation === conversationId
+ */
+const filtering = (threads: IThreadState, conversationId): Message[] => {
+	return [...threads.payload.find(t => t.id === conversationId).messages, ...threads.processing]
+}
+
+const mapStateToProps = (state, props) => ({
+	threads: filtering(state.threads, props.navigation.state.params.conversationId).sort((a, b) => a.date - b.date),
+	pageNumber: state.threads.pageNumber,
+	synced: state.threads.synced,
+	userId: state.auth.userId,
+})
+
+const dispatchAndMapActions = dispatch =>
+	bindActionCreators({ readNextThreads, readPrevThreads }, dispatch)
+
+export default connect(mapStateToProps, dispatchAndMapActions)(Threads)

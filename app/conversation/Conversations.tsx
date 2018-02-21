@@ -3,12 +3,14 @@ import * as React from "react"
 import { FlatList } from "react-native"
 import Swipeable from "react-native-swipeable"
 import { layoutSize } from "../constants/layoutSize"
-import { IThreadModel } from "../model/Thread"
+import { IThreadModel, IThreadState } from '../model/Thread';
 import styles from "../styles/index"
 import { Icon } from "../ui/icons/Icon"
 import { Conversation } from "./Conversation"
-import { readConversation } from "../actions/conversation"
+import { readConversation, readNextConversation } from "../actions/conversation"
 import { IAuthModel } from "../model/Auth"
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
 
 export interface IConversationsProps {
 	conversations: IThreadModel[]
@@ -21,9 +23,9 @@ export interface IConversationsProps {
 }
 
 export class Conversations extends React.Component<IConversationsProps, any> {
-	public onPress(item: IThreadModel) {
-		(item as any).conversationId = item.id;
-		(item as any).userId = this.props.userId;
+	public onPress(item) {
+		item.conversationId = item.id;
+		item.userId = this.props.userId;
 
 		this.props.navigation.navigate("Threads", item)
 	}
@@ -73,3 +75,21 @@ const swipeoutBtns = [
 		<Icon size={layoutSize.LAYOUT_18} color="#ffffff" name="trash" />
 	</RightButton>,
 ]
+
+function getTitle(displayNames) {
+	return displayNames.reduce((acc, elem) => `${acc}, ${elem[1]}`, "")
+}
+
+/**
+ * Select the set of conversations with the filtering criteria
+ */
+
+const mapStateToProps = state => ({
+	conversations: state.threads.payload,
+	userId: state.auth.userId,
+})
+
+const dispatchAndMapActions = dispatch =>
+	bindActionCreators({ readConversation, readNextConversation }, dispatch)
+
+export default connect(mapStateToProps, dispatchAndMapActions)(Conversations)

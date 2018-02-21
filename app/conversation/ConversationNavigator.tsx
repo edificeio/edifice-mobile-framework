@@ -1,6 +1,6 @@
 import * as React from "react"
 import { StackNavigator } from "react-navigation"
-import Conversation from "../connectors/Conversations"
+import Conversation from "./Conversations"
 import { ConversationTopBar } from "../conversation/ConversationTopBar"
 import SearchBar from "../connectors/ui/SearchBar"
 import { PATH_CONVERSATION } from "../constants/paths"

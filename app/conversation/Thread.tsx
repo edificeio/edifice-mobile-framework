@@ -3,7 +3,7 @@ import * as React from "react"
 import { ViewStyle, Text } from "react-native"
 import { adaptator } from "../infra/HTMLAdaptator"
 import { layoutSize } from "../constants/layoutSize"
-import { IThreadModel, ThreadStatus } from "../model/Thread"
+import { IThreadModel, ThreadStatus, Message } from '../model/Thread';
 import { CommonStyles } from "../styles/common/styles"
 import { Size } from "../ui/Avatar"
 import { Avatar } from "../ui/Avatar"
@@ -14,7 +14,7 @@ interface IThreadProps extends IThreadModel {
 	userId: string
 }
 
-export const Thread = ({ body, date, displayNames = [], from = "", userId, status }: IThreadProps) => {
+export const Thread = ({ body, date, displayNames = [], from = "", userId, status }: Message) => {
 	const my = from === userId
 
 	if (!body) {

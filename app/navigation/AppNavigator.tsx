@@ -2,10 +2,10 @@
 import { NavigationContainer, StackNavigator } from "react-navigation"
 import SignupLoginRecover from "../connectors/auth/SignupLoginRecover"
 import { tr } from "../i18n/t"
-import { tabNavigator, tabRootOptions } from "../utils/navHelper"
-import ConversationNavigator from "./ConversationNavigator"
+import { tabNavigator, tabRootOptions } from "../utils/navHelper";
 import ProfileNavigator from "./ProfileNavigator";
 import TimelineNavigator from "../timeline/TimelineNavigator";
+import ConversationNavigator from "../conversation/ConversationNavigator";
 
 const MainNavigator = tabNavigator({
 	Nouveautes: {

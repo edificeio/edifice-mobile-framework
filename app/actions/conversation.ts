@@ -8,15 +8,12 @@ import {
 	replace1,
 } from "../constants/paths"
 import {create, read, readCheck, readNext} from "./docs"
+import { Message } from '../model/Thread';
 
 export const readConversation = (page = 0) => read(replace1(PATH_CONVERSATION, page), false);
-
 export const readNextConversation = page => readNext(PATH_CONVERSATION, page, false);
-
 export const readNextThreads = id => readCheck(PATH_NEW_MESSAGES, id, false);
-
 export const readPrevThreads = id => readCheck(PATH_PREVIOUS_MESSAGES, id, false);
-
 export const createConversation = payload => create(PATH_CREATE_CONVERSATION, payload, false);
 
 console.log(Conf);
@@ -30,7 +27,7 @@ export const markAsRead = (thread) => {
 }
 
 export const sendMessage = dispatch => async (
-	data: { subject: string; to: any[]; cc: any[]; body: string; parentId?: string, id?: string, date?: number, newId?: string },
+	data: Message,
 	userId
 ) => {
 	data.id = Math.random().toString();
@@ -59,7 +56,7 @@ export const sendMessage = dispatch => async (
 
 		dispatch({
 			type: "CONVERSATION_SENT",
-			data: { ...data, conversation: data.parentId, from: userId },
+			data: { ...data, conversation: data.parentId, from: userId, thread_id: data.thread_id },
 		});
 	} catch (e) {
 		console.log(e)

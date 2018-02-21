@@ -8,6 +8,29 @@ export enum ThreadStatus {
 	failed,
 }
 
+export interface Message{
+	body: string
+	cc: string[]
+	ccName: string
+	conversation: string
+	date: number
+	displayNames: string[][]
+	from: string
+	fromName: string
+	id: string
+	nb: number
+	parent_id: string
+	subject: string
+	to: string[]
+	toName: string
+	unread: boolean
+	status: ThreadStatus;
+	userId: string;
+	parentId: string;
+	thread_id: string;
+	newId: string;
+}
+
 export interface IThreadModel {
 	body: string
 	cc: string[]
@@ -24,16 +47,17 @@ export interface IThreadModel {
 	to: string[]
 	toName: string
 	unread: boolean
-	status: ThreadStatus
+	messages: Message[];
+	thread_id: string;
 }
 
 export interface IThreadState {
 	mode: ACTION_MODE
 	pageNumber: number
-	payload: IThreadModel[][]
+	payload: IThreadModel[]
 	filterCriteria: null
 	synced: boolean
-	processing: IThreadModel[]
+	processing: Message[]
 }
 
 const initialState: IThreadState = {
@@ -46,6 +70,19 @@ const initialState: IThreadState = {
 }
 
 export default (state: IThreadState = initialState, action): IThreadState => {
+	if (action.type.indexOf("_SUCCESS") > 0 && action.path.indexOf('conversation/threads/list') !== -1) {
+		return {
+			...state,
+			payload: [...state.payload, ...action.payload
+				.filter(c => state.payload.find(t => t.id === c[0].id || t.thread_id === c[0].thread_id) === undefined)
+				.map(c => {
+					const thread = { ...c[0] };
+					thread.nb = c.filter(e => e.unread).length;
+					thread.messages = c;
+					return thread;
+			})].sort((a, b) => b.date - a.date)
+		}
+	}
 	if (action.type === "CONVERSATION_SEND") {
 		action.data.status = ThreadStatus.sending;
 		return {
@@ -55,13 +92,12 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 	}
 	if (action.type === "CONVERSATION_SENT") {
 		const index = state.processing.indexOf(state.processing.find(p => p.id === action.data.id));
+		const parentThread = state.payload.find(t => t.thread_id === action.data.thread_id);
+		parentThread.messages = [action.data, ...parentThread.messages];
 		return {
 			...state,
 			processing: state.processing.filter((e, i) => i !== index),
-			payload: [...state.payload, ...[{
-				 ...action.data,
-				 id: action.data.newId
-			}]]
+			payload: [...state.payload]
 		}
 	}
 	if (action.type === "CONVERSATION_FAILED_SEND") {
