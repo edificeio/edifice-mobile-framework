@@ -50,6 +50,7 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 				onEndReached={() => this.nextPage()}
 				renderItem={({ item }) => this.renderItem(item, userId)}
 				style={styles.grid}
+				keyboardShouldPersistTaps={ 'always' }
 			/>
 		)
 	}
