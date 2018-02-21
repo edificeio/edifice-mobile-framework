@@ -30,12 +30,9 @@ export class Threads extends React.Component<IThreadsProps, any> {
 	list: any
 
 	componentWillMount() {
-		const { conversationId } = this.props.navigation.state.params
-		this.props.threads.forEach(t => markAsRead(t));
-		if (this.props.synced) {
-			this.props.readNextThreads(conversationId)
-			this.props.readPrevThreads(conversationId)
-		}
+		const { conversationId } = this.props.navigation.state.params;
+		this.props.readNextThreads(conversationId);
+		this.props.readPrevThreads(conversationId);
 	}
 
 	public render() {

@@ -1,6 +1,7 @@
 import { PATH_CONVERSATION, PATH_NEW_MESSAGES, PATH_PREVIOUS_MESSAGES } from "../constants/paths"
 import { crudReducer } from "./docs"
 import {ACTION_MODE} from "../actions/docs";
+import { markAsRead } from '../actions/conversation';
 
 export enum ThreadStatus {
 	sent,
@@ -70,6 +71,18 @@ const initialState: IThreadState = {
 }
 
 export default (state: IThreadState = initialState, action): IThreadState => {
+	if (action.type.indexOf("_SUCCESS") > 0 && action.path.indexOf('conversation/thread/previous-messages') !== -1) {
+		const parentThread = state.payload.find(t => t.id === action.pageNumber);
+		parentThread.messages.forEach(m => markAsRead(m));
+		parentThread.messages = [...action.payload, ...parentThread.messages.map(m => ({ ...m, unread: false }))];
+		
+		parentThread.nb = 0;
+		return {
+			...state,
+			processing: [],
+			payload: [...state.payload]
+		}
+	}
 	if (action.type.indexOf("_SUCCESS") > 0 && action.path.indexOf('conversation/threads/list') !== -1) {
 		return {
 			...state,

@@ -22,7 +22,6 @@ export const markAsRead = (thread) => {
 	if(!thread.unread){
 		return;
 	}
-	thread.unread = false;
 	fetch(`${Conf.platform}/conversation/message/${thread.id}`)
 }
 
