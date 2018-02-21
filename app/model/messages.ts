@@ -31,9 +31,6 @@ export function Messages(state = initialState, action) {
 	const { status = error.length > 0 ? 500 : 200, statusText = error } = action.payload
 
 	if (action.type.indexOf("_SUCCESS") > 0) {
-		if (statusText.length === 0) {
-			return initialState
-		}
 		return [action.payload]
 	}
 

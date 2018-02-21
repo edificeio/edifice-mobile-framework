@@ -9,41 +9,19 @@ function getTitle(displayNames) {
 }
 
 /**
- * Say if elem is a root conversationItem
- */
-const filterRootConversation = (elem: IThreadModel, filterCriteria): boolean => {
-	if (elem.conversation && elem.conversation !== elem.id) {
-		return false
-	}
-
-	if (elem.parent_id !== null) {
-		return false
-	}
-
-	if (filterCriteria) {
-		return getTitle(elem.displayNames).match(filterCriteria)
-	} else {
-		return true
-	}
-}
-
-/**
  * Select the set of conversations with the filtering criteria
  */
 const filtering = (threads: IThreadState): IThreadModel[] => {
+	console.log(threads)
 	const { filterCriteria = null, payload } = threads
 
 	return payload
-		.filter((item, index) => payload.indexOf(payload.find(i => i.id === item.id)) === index)
-		.filter(elem => filterRootConversation(elem, filterCriteria))
 		.map(c => {
-			const nbUnread = payload.filter(e => e.conversation === c.id && e.unread).length;
-			c.nb = nbUnread;
-			const lastOfConversation = payload.filter(e => e.conversation === c.id || c.id === e.id).sort((a, b) => b.date - a.date)[0];
-			c.lastOfConversation = lastOfConversation;
-			return c;
+			const thread = c[0];
+			thread.nb = c.filter(e => e.unread).length;
+			return thread;
 		})
-		.sort((a: IThreadModel, b: IThreadModel) => b.lastOfConversation.date - a.lastOfConversation.date)
+		.sort((a: IThreadModel, b: IThreadModel) => b.date - a.date);
 }
 
 const mapStateToProps = state => ({
@@ -54,4 +32,4 @@ const mapStateToProps = state => ({
 const dispatchAndMapActions = dispatch =>
 	bindActionCreators({ readConversation, readNextConversation }, dispatch)
 
-export default connect<{}, {}, IConversationsProps>(mapStateToProps, dispatchAndMapActions)(Conversations)
+export default connect(mapStateToProps, dispatchAndMapActions)(Conversations)

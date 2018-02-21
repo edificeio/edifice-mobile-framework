@@ -30,10 +30,9 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 
 	private nextPage() {
 		console.log('loading next page')
-		const { pageNumber } = this.props
-		//	console.log("nextPage")
+		const { pageNumber } = this.props;
 		if (this.props.synced) {
-			this.props.readNextConversation(pageNumber + 1)
+			this.props.readNextConversation(pageNumber + 1);
 		}
 	}
 

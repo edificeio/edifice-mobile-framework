@@ -25,13 +25,12 @@ export interface IThreadModel {
 	toName: string
 	unread: boolean
 	status: ThreadStatus
-	lastOfConversation: IThreadModel
 }
 
 export interface IThreadState {
 	mode: ACTION_MODE
 	pageNumber: number
-	payload: IThreadModel[]
+	payload: IThreadModel[][]
 	filterCriteria: null
 	synced: boolean
 	processing: IThreadModel[]

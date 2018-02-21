@@ -43,9 +43,6 @@ export class HTMLAdaptator {
 	}
 
 	toText() {
-		console.log(this.root.structuredText);
-		console.log(JSON.stringify(this.root.structuredText.replace(/\u200b/g, '').replace(/[\s\r\n]+$/, '')))
-		//remove trailing new lines
 		return this.root.structuredText.replace(/\u200b/g, '').replace(/[\s\r\n]+$/, '');
 	}
 
@@ -70,6 +67,6 @@ export class HTMLAdaptator {
 	}
 }
 export const adaptator = html => {
-	const newAdaptator = new HTMLAdaptator(html)
-	return newAdaptator
+	const newAdaptator = new HTMLAdaptator(html);
+	return newAdaptator;
 }

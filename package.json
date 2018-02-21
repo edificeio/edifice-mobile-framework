@@ -6,7 +6,7 @@
     "android": "react-native run-android",
     "apk": "cd android && ./gradlew assembleRelease",
     "clean": "rm -r -f ./android/app/build && rm -r -f node_modules && rm -f package-lock.json && rm -f yarn.lock && npm install && cd android && ./gradlew clean && cd .. ",
-    "cleanGenerated": "rimraf -r -f ./android/app/build && rimraf node_modules/react-native/local-cli/core/__fixtures__/files/package.json && rimraf -r -f node_modules/react-native-firebase/android/build",
+    "cleanGenerated": "rimraf -r -f ./android/app/build && rimraf -f package-lock.json && rimraf node_modules/react-native/local-cli/core/__fixtures__/files/package.json && rimraf -r -f node_modules/react-native-firebase/android/build",
     "fake-server": "./node_modules/.bin/json-server --watch jsonapi/db.json --routes jsonapi/route.json",
     "icons": "react-native link react-native-vector-icons",
     "ios": "react-native run-ios",

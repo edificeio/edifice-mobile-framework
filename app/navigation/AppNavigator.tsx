@@ -4,8 +4,8 @@ import SignupLoginRecover from "../connectors/auth/SignupLoginRecover"
 import { tr } from "../i18n/t"
 import { tabNavigator, tabRootOptions } from "../utils/navHelper"
 import ConversationNavigator from "./ConversationNavigator"
-import ProfileNavigator from "./ProfileNavigator"
-import TimelineNavigator from "./TimelineNavigator"
+import ProfileNavigator from "./ProfileNavigator";
+import TimelineNavigator from "../timeline/TimelineNavigator";
 
 const MainNavigator = tabNavigator({
 	Nouveautes: {
