@@ -11,9 +11,9 @@ import { bindActionCreators } from "redux";
 import { filter } from "../actions/filter";
 
 export interface SearchBarProps {
-	filter?: (store: string, value: string) => object
-	navigation?: any
-	path?: string
+	filter?: (store: string, value: string) => object;
+	path?: string;
+	onClose: () => void
 }
 
 export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
@@ -34,11 +34,9 @@ export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
 	}
 
 	public onClose() {
-		const { filter, navigation } = this.props
-
-		filter(PATH_CONVERSATION, null)
-
-		navigation.goBack()
+		const { filter } = this.props;
+		filter(PATH_CONVERSATION, null);
+		this.props.onClose();
 	}
 
 	public render() {
@@ -48,6 +46,7 @@ export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
 					<SearchIcon />
 				</TouchableBarPanel>
 				<TextInput
+					onBlur={ () => this.onClose() }
 					autoFocus={true}
 					enablesReturnKeyAutomatically={true}
 					onChangeText={value => this.onChangeText(value)}

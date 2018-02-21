@@ -21,12 +21,6 @@ export default StackNavigator(
 				header: <ConversationTopBar navigation={navigation} />,
 			}),
 		},
-		ConversationSearch: {
-			screen: Conversation,
-			navigationOptions: ({ navigation }) => ({
-				header: <SearchBar navigation={navigation} path={PATH_CONVERSATION} />,
-			}),
-		},
 		Threads: {
 			screen: ThreadsNavigator,
 			navigationOptions: ({ navigation }) => ({
