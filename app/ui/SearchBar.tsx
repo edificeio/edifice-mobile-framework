@@ -6,6 +6,9 @@ import { CommonStyles } from "../styles/common/styles"
 import { ContainerTopBar, TouchableBarPanel } from "./ContainerBar"
 import { CloseIcon, SearchIcon } from "./icons/SearchIcon"
 import {tr} from "../i18n/t";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { filter } from "../actions/filter";
 
 export interface SearchBarProps {
 	filter?: (store: string, value: string) => object
@@ -75,3 +78,9 @@ const TextInput = style.textInput(
 		fontFamily: value.length === 0 ? CommonStyles.primaryFontFamilyLight : CommonStyles.primaryFontFamily,
 	})
 )
+
+const mapStateToProps = () => ({})
+
+const dispatchAndMapActions = dispatch => bindActionCreators({ filter }, dispatch)
+
+export default connect<{}, {}, SearchBarProps>(mapStateToProps, dispatchAndMapActions)(SearchBar)

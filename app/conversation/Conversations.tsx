@@ -85,7 +85,7 @@ function getTitle(displayNames) {
  */
 
 const mapStateToProps = state => ({
-	conversations: state.threads.payload,
+	conversations: state.threads.payload.filter(t => !state.threads.filterCriteria || (t.subject && t.subject.indexOf(state.threads.filterCriteria) !== -1)),
 	userId: state.auth.userId,
 })
 

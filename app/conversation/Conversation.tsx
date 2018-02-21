@@ -30,7 +30,7 @@ export const Conversation = ({ id, subject, date, displayNames, nb, onPress, use
 				</LeftPanel>
 				<CenterPanel>
 					{getTitle(displayNames, nb, userId)}
-					{subject.length ? <Content nb={nb}>{trunc(subject, layoutSize.LAYOUT_32)}</Content> : <style.View />}
+					{subject && subject.length ? <Content nb={nb}>{trunc(subject, layoutSize.LAYOUT_32)}</Content> : <style.View />}
 				</CenterPanel>
 				<RightPanel>
 					<DateView date={ date } nb={nb} />
