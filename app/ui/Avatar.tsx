@@ -92,15 +92,14 @@ export interface IAvatarProps {
 }
 
 export class Avatar extends React.Component<IAvatarProps, { loaded: boolean }> {
-	base64Str: string
-	decorate: boolean
-	count: number
-	noAvatar: boolean
-	isGroup: boolean
-	uri: string
+	base64Str: string;
+	decorate: boolean;
+	count: number;
+	noAvatar: boolean;
+	uri: string;
 
 	constructor(props) {
-		super(props)
+		super(props);
 
 		this.decorate = true
 		if (this.props.decorate !== undefined) {
@@ -112,19 +111,68 @@ export class Avatar extends React.Component<IAvatarProps, { loaded: boolean }> {
 		}
 
 		this.state = { loaded: false }
-		this.load()
+	}
+
+	componentDidMount(){
+		//render avatars after content
+		setTimeout(() => this.load(), 200);
+	}
+
+	get isGroup(){
+		return this.props.id.length < 36;
 	}
 
 	async load() {
+		if(!this.props.id){
+			this.noAvatar = true;
+			this.setState({ loaded: true });
+			return;
+		}
+		if(this.isGroup){
+			this.setState({ loaded: true });
+			return;
+		}
 		const response = await RNFetchBlob.fetch("GET", `${Conf.platform}/userbook/avatar/${this.props.id}?thumbnail=48x48`)
-		this.base64Str = response.base64()
+		this.base64Str = await response.base64()
 
 		if (this.base64Str.length === 1008) {
 			this.noAvatar = true
 		} else {
 			this.uri = "data:image/jpeg;base64," + this.base64Str
 		}
-		this.setState({ loaded: true })
+		this.setState({ loaded: true });
+	}
+
+	renderNoAvatar(){
+		if (this.props.size === Size.large || this.count === 1) {
+			return <LargeImage source={require("../../assets/images/no-avatar.png")} />
+		} else if (this.props.size === Size.medium) {
+			return <MediumImage source={require("../../assets/images/no-avatar.png")} />
+		} else if (this.props.size === Size.aligned) {
+			return <AlignedImage index={this.props.index} source={require("../../assets/images/no-avatar.png")} />
+		} else if (this.props.size === Size.verylarge) {
+			return <VeryLargeImage decorate={this.decorate} source={require("../../assets/images/no-avatar.png")} />
+		} else {
+			return (
+				<SmallImage count={ this.props.count || 1 } index={this.props.index} source={require("../../assets/images/no-avatar.png")} />
+			)
+		}
+	}
+
+	renderIsGroup(){
+		if (this.props.size === Size.large || this.count === 1) {
+			return <LargeImage source={require("../../assets/images/group-avatar.png")} />
+		} else if (this.props.size === Size.medium) {
+			return <MediumImage source={require("../../assets/images/group-avatar.png")} />
+		} else if (this.props.size === Size.aligned) {
+			return <AlignedImage index={this.props.index} source={require("../../assets/images/group-avatar.png")} />
+		} else if (this.props.size === Size.verylarge) {
+			return <VeryLargeImage decorate={this.decorate} source={require("../../assets/images/group-avatar.png")} />
+		} else {
+			return (
+				<SmallImage count={ this.props.count || 1 } index={this.props.index} source={require("../../assets/images/group-avatar.png")} />
+			)
+		}
 	}
 
 	render() {
@@ -132,21 +180,11 @@ export class Avatar extends React.Component<IAvatarProps, { loaded: boolean }> {
 			return <View />
 		}
 
+		if(this.isGroup){
+			return this.renderIsGroup();
+		}
 		if (this.noAvatar) {
-			console.log("has no avatar")
-			if (this.props.size === Size.large || this.count === 1) {
-				return <LargeImage source={require("../../assets/images/no-avatar.png")} />
-			} else if (this.props.size === Size.medium) {
-				return <MediumImage source={require("../../assets/images/no-avatar.png")} />
-			} else if (this.props.size === Size.aligned) {
-				return <AlignedImage index={this.props.index} source={require("../../assets/images/no-avatar.png")} />
-			} else if (this.props.size === Size.verylarge) {
-				return <VeryLargeImage decorate={this.decorate} source={require("../../assets/images/no-avatar.png")} />
-			} else {
-				return (
-					<SmallImage count={this.count} index={this.props.index} source={require("../../assets/images/no-avatar.png")} />
-				)
-			}
+			return this.renderNoAvatar();
 		}
 		if (this.props.size === Size.large || this.count === 1) {
 			return <LargeImage source={{ uri: this.uri }} />
@@ -159,7 +197,7 @@ export class Avatar extends React.Component<IAvatarProps, { loaded: boolean }> {
 		} else {
 			return (
 				<SmallImage
-					count={this.count}
+					count={ this.props.count || 1 }
 					index={this.props.index}
 					source={{ uri: "data:image/jpeg;base64," + this.base64Str }}
 				/>

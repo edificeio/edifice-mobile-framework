@@ -27,7 +27,6 @@ export class ConversationTopBar extends React.Component<ConversationTopBarProps,
 	}
 
 	public render() {
-		console.log(this.props.navigation)
 		return (
 			<ContainerTopBar>
 				{ this.state.searching && <SearchBar onClose={ () => this.setState({ searching: false })} path={PATH_CONVERSATION} /> }

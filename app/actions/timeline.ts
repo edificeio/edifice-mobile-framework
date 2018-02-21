@@ -42,7 +42,7 @@ const dataTypes = {
 				message: adaptator(data.content).toText(),
 				preview: previewText,
 				resourceName: data.thread_title,
-				senderId: data.userId,
+				senderId: news.sender,
 				senderName: news.params.username,
 			}
 		} catch (e) {

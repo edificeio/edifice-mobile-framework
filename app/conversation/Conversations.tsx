@@ -43,7 +43,6 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 		return (
 			<FlatList
 				data={conversations}
-				keyExtractor={item => item.id}
 				removeClippedSubviews
 				disableVirtualization
 				legacyImplementation={true}

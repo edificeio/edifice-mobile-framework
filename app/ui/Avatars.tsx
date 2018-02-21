@@ -7,7 +7,7 @@ import { layoutSize } from "../constants/layoutSize"
 export interface IAvatarsProps {
 	images: string[]
 	onSlideIndex?: (index: number) => void
-	size?: Size
+	size?: Size;
 }
 
 export interface IAvatarsState {
@@ -17,8 +17,6 @@ export interface IAvatarsState {
 	}
 	slideIndex: number
 }
-
-const DEFAULT_AVATAR = "46c7bc61-b9dd-4c25-b164-fd6252236603"
 
 export class Avatars extends React.Component<IAvatarsProps, IAvatarsState> {
 	public state = {
@@ -46,7 +44,6 @@ export class Avatars extends React.Component<IAvatarsProps, IAvatarsState> {
 		const { size = Size.large, images } = this.props
 
 		if (images.length > 4) {
-			images[3] = DEFAULT_AVATAR
 			images.length = 4
 		}
 
@@ -74,7 +71,7 @@ export class Avatars extends React.Component<IAvatarsProps, IAvatarsState> {
 		if (images.length === 1) {
 			return <Avatar size={size} id={images[0]} />
 		}
-
+		
 		return (
 			<Container>
 				{images.map((image, idx) => <Avatar size={size} key={idx} index={idx} count={images.length} id={image} />)}
