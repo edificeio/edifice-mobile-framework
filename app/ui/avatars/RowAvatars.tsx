@@ -1,8 +1,8 @@
 import style from "glamorous-native"
 import * as React from "react"
 import Carousel from "react-native-snap-carousel"
-import { Avatar, Size } from "./Avatar"
-import { layoutSize } from "../constants/layoutSize"
+import { Avatar, Size } from "./Avatar";
+import { layoutSize } from "..";
 
 export interface IAvatarsProps {
 	images: string[]
@@ -18,7 +18,7 @@ export interface IAvatarsState {
 	slideIndex: number
 }
 
-export class Avatars extends React.Component<IAvatarsProps, IAvatarsState> {
+export class RowAvatars extends React.Component<IAvatarsProps, IAvatarsState> {
 	public state = {
 		size: {
 			height: 0,
@@ -45,8 +45,8 @@ export class Avatars extends React.Component<IAvatarsProps, IAvatarsState> {
 
 		if (images.length > 4) {
 			images.length = 4
-		}
-
+        }
+        
 		if (size === Size.verylarge) {
 			return (
 				<Container>
@@ -67,10 +67,6 @@ export class Avatars extends React.Component<IAvatarsProps, IAvatarsState> {
 				</Container>
 			)
 		}
-
-		if (images.length === 1) {
-			return <Avatar size={size} id={images[0]} />
-		}
 		
 		return (
 			<Container>
@@ -85,7 +81,7 @@ const Container = style.view({
 	flex: 1,
 	flexDirection: "row",
 	flexWrap: "nowrap",
-	justifyContent: "center",
+    justifyContent: "center"
 })
 
 const Slide = style.view({

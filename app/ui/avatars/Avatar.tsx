@@ -1,9 +1,9 @@
 import style from "glamorous-native"
-import * as React from "react"
-import { Conf } from "../Conf"
-import RNFetchBlob from "react-native-fetch-blob"
-import { layoutSize } from "../constants/layoutSize"
+import * as React from "react";
+import RNFetchBlob from "react-native-fetch-blob";
 import { View } from "react-native"
+import { layoutSize } from "..";
+import { Conf } from "../../Conf";
 
 export enum Size {
 	aligned,
@@ -35,10 +35,11 @@ const MediumImage = style.image({
 const AlignedImage = style.image(
 	{
 		...StyledImage,
-		borderRadius: layoutSize.LAYOUT_16,
-		height: layoutSize.LAYOUT_29,
-		marginLeft: layoutSize.LAYOUT_MOINS_12,
-		width: layoutSize.LAYOUT_29,
+		borderRadius: 16,
+		height: 29,
+		marginRight: -6,
+		marginLeft: -6,
+		width: 29,
 	},
 	({ index }) => ({
 		zIndex: 100 - index,
@@ -92,11 +93,9 @@ export interface IAvatarProps {
 }
 
 export class Avatar extends React.Component<IAvatarProps, { loaded: boolean }> {
-	base64Str: string;
 	decorate: boolean;
 	count: number;
 	noAvatar: boolean;
-	uri: string;
 
 	constructor(props) {
 		super(props);
@@ -105,17 +104,13 @@ export class Avatar extends React.Component<IAvatarProps, { loaded: boolean }> {
 		if (this.props.decorate !== undefined) {
 			this.decorate = this.props.decorate
 		}
-		this.count = 1
-		if (this.props.count !== undefined) {
-			this.count = this.props.count
-		}
 
 		this.state = { loaded: false }
 	}
 
 	componentDidMount(){
 		//render avatars after content
-		setTimeout(() => this.load(), 200);
+		setTimeout(() => this.load(), 100);
 	}
 
 	get isGroup(){
@@ -132,45 +127,41 @@ export class Avatar extends React.Component<IAvatarProps, { loaded: boolean }> {
 			this.setState({ loaded: true });
 			return;
 		}
-		const response = await RNFetchBlob.fetch("GET", `${Conf.platform}/userbook/avatar/${this.props.id}?thumbnail=48x48`)
-		this.base64Str = await response.base64()
-
-		if (this.base64Str.length === 1008) {
-			this.noAvatar = true
-		} else {
-			this.uri = "data:image/jpeg;base64," + this.base64Str
+		const response = await fetch(`${Conf.platform}/userbook/avatar/${this.props.id}?thumbnail=48x48`);
+		if((response as any)._bodyInit[0] === '<'){
+			this.noAvatar = true;
 		}
 		this.setState({ loaded: true });
 	}
 
 	renderNoAvatar(){
 		if (this.props.size === Size.large || this.count === 1) {
-			return <LargeImage source={require("../../assets/images/no-avatar.png")} />
+			return <LargeImage source={require("../../../assets/images/no-avatar.png")} />
 		} else if (this.props.size === Size.medium) {
-			return <MediumImage source={require("../../assets/images/no-avatar.png")} />
+			return <MediumImage source={require("../../../assets/images/no-avatar.png")} />
 		} else if (this.props.size === Size.aligned) {
-			return <AlignedImage index={this.props.index} source={require("../../assets/images/no-avatar.png")} />
+			return <AlignedImage index={this.props.index} source={require("../../../assets/images/no-avatar.png")} />
 		} else if (this.props.size === Size.verylarge) {
-			return <VeryLargeImage decorate={this.decorate} source={require("../../assets/images/no-avatar.png")} />
+			return <VeryLargeImage decorate={this.decorate} source={require("../../../assets/images/no-avatar.png")} />
 		} else {
 			return (
-				<SmallImage count={ this.props.count || 1 } index={this.props.index} source={require("../../assets/images/no-avatar.png")} />
+				<SmallImage count={ this.props.count || 1 } index={this.props.index} source={require("../../../assets/images/no-avatar.png")} />
 			)
 		}
 	}
 
 	renderIsGroup(){
 		if (this.props.size === Size.large || this.count === 1) {
-			return <LargeImage source={require("../../assets/images/group-avatar.png")} />
+			return <LargeImage source={require("../../../assets/images/group-avatar.png")} />
 		} else if (this.props.size === Size.medium) {
-			return <MediumImage source={require("../../assets/images/group-avatar.png")} />
+			return <MediumImage source={require("../../../assets/images/group-avatar.png")} />
 		} else if (this.props.size === Size.aligned) {
-			return <AlignedImage index={this.props.index} source={require("../../assets/images/group-avatar.png")} />
+			return <AlignedImage index={this.props.index} source={require("../../../assets/images/group-avatar.png")} />
 		} else if (this.props.size === Size.verylarge) {
-			return <VeryLargeImage decorate={this.decorate} source={require("../../assets/images/group-avatar.png")} />
+			return <VeryLargeImage decorate={this.decorate} source={require("../../../assets/images/group-avatar.png")} />
 		} else {
 			return (
-				<SmallImage count={ this.props.count || 1 } index={this.props.index} source={require("../../assets/images/group-avatar.png")} />
+				<SmallImage count={ this.props.count || 1 } index={this.props.index} source={require("../../../assets/images/group-avatar.png")} />
 			)
 		}
 	}
@@ -187,19 +178,19 @@ export class Avatar extends React.Component<IAvatarProps, { loaded: boolean }> {
 			return this.renderNoAvatar();
 		}
 		if (this.props.size === Size.large || this.count === 1) {
-			return <LargeImage source={{ uri: this.uri }} />
+			return <LargeImage source={{ uri: `${Conf.platform}/userbook/avatar/${this.props.id}?thumbnail=100x100` }} />
 		} else if (this.props.size === Size.medium) {
-			return <MediumImage source={{ uri: "data:image/jpeg;base64," + this.base64Str }} />
+			return <MediumImage source={{ uri:`${Conf.platform}/userbook/avatar/${this.props.id}?thumbnail=100x100` }} />
 		} else if (this.props.size === Size.aligned) {
-			return <AlignedImage index={this.props.index} source={{ uri: "data:image/jpeg;base64," + this.base64Str }} />
+			return <AlignedImage index={this.props.index} source={{ uri: `${Conf.platform}/userbook/avatar/${this.props.id}?thumbnail=100x100` }} />
 		} else if (this.props.size === Size.verylarge) {
-			return <VeryLargeImage decorate={this.decorate} source={{ uri: "data:image/jpeg;base64," + this.base64Str }} />
+			return <VeryLargeImage decorate={this.decorate} source={{ uri: `${Conf.platform}/userbook/avatar/${this.props.id}?thumbnail=150x150` }} />
 		} else {
 			return (
 				<SmallImage
 					count={ this.props.count || 1 }
 					index={this.props.index}
-					source={{ uri: "data:image/jpeg;base64," + this.base64Str }}
+					source={{ uri: `${Conf.platform}/userbook/avatar/${this.props.id}?thumbnail=100x100` }}
 				/>
 			)
 		}

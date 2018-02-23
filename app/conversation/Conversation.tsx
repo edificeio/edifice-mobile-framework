@@ -3,13 +3,12 @@ import * as React from "react"
 import { layoutSize } from "../constants/layoutSize"
 import { IThreadModel } from "../model/Thread"
 import { CommonStyles } from "../styles/common/styles"
-import { Size } from "../ui/Avatar"
-import { Avatars } from "../ui/Avatars"
 import { DateView } from "../ui/DateView"
 import { CircleNumber } from "../ui/CircleNumber"
 import { CenterPanel, Content, Item, LeftPanel, RightPanel } from "../ui/ContainerContent"
 import { Row } from "../ui"
 import { trunc } from "../utils/html"
+import { GridAvatars } from "../ui/avatars/GridAvatars";
 
 interface IConversationProps extends IThreadModel {
 	onPress: (id: string, displayNames: string[][], subject: string) => void
@@ -26,7 +25,7 @@ export const Conversation = ({ id, subject, date, displayNames, nb, onPress, use
 		<Item nb={nb} onPress={() => onPress(id, displayNames, subject)}>
 			<Row>
 				<LeftPanel>
-					<Avatars images={images} size={Size.small} />
+					<GridAvatars users={images} />
 				</LeftPanel>
 				<CenterPanel>
 					{getTitle(displayNames, nb, userId)}

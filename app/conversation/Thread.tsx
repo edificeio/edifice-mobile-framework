@@ -5,10 +5,9 @@ import { adaptator } from "../infra/HTMLAdaptator"
 import { layoutSize } from "../constants/layoutSize"
 import { IThreadModel, ThreadStatus, Message } from '../model/Thread';
 import { CommonStyles } from "../styles/common/styles"
-import { Size } from "../ui/Avatar"
-import { Avatar } from "../ui/Avatar"
 import { DateView } from "../ui/DateView"
 import { tr } from "../i18n/t"
+import { SingleAvatar } from "../ui/avatars/SingleAvatar";
 
 interface IThreadProps extends IThreadModel {
 	userId: string
@@ -26,7 +25,7 @@ export const Thread = ({ body, date, displayNames = [], from = "", userId, statu
 			{displayNames.length > 2 &&
 				!my && (
 					<LeftPanel>
-						<Avatar id={from} size={Size.large} />
+						<SingleAvatar userId={from} />
 					</LeftPanel>
 				)}
 			<CenterPanel my={my}>

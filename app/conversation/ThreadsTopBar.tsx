@@ -1,6 +1,5 @@
 import style from "glamorous-native"
-import * as React from "react"
-import { Avatars } from "../ui/Avatars"
+import * as React from "react";
 import { CommonStyles } from "../styles/common/styles"
 import {
 	TouchableBarPanel,
@@ -9,10 +8,11 @@ import {
 	ContainerTopBar,
 	CenterTextPanel,
 } from "../ui/ContainerBar"
-import { Icon } from "../ui/icons/Icon"
-import { Size } from "../ui/Avatar"
+import { Icon } from "../ui/icons/Icon";
 import { layoutSize } from "../constants/layoutSize"
 import { TextStyle } from "react-native"
+import { RowAvatars } from "../ui/avatars/RowAvatars";
+import { Size } from "../ui/avatars/Avatar";
 
 export interface IThreadsBarProps {
 	navigation?: any
@@ -51,13 +51,13 @@ export class ThreadsTopBar extends React.PureComponent<IThreadsBarProps, {}> {
 					<Icon size={layoutSize.LAYOUT_22} name={"back"} color={"white"} />
 				</TouchableBarPanel>
 				<CenterPanel onPress={() => this.onPress()}>
-					{!expand && <Avatars images={images} size={Size.aligned} />}
+					{!expand && <RowAvatars images={images} size={Size.aligned} />}
 					<CenterTextPanel smallSize={!expand}>{subject}</CenterTextPanel>
 				</CenterPanel>
 				<TouchableEndBarPanel />
 				{expand && (
 					<ContainerAvatars>
-						<Avatars onSlideIndex={slideIndex => this.onSlideIndex(slideIndex)} images={images} size={Size.verylarge} />
+						<RowAvatars onSlideIndex={slideIndex => this.onSlideIndex(slideIndex)} images={images} size={Size.verylarge} />
 						<Legend14>{names[this.state.slideIndex]}</Legend14>
 						<Legend12 />
 					</ContainerAvatars>

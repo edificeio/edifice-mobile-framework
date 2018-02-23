@@ -44,14 +44,12 @@ export const TouchableEndBarPanel = style.touchableOpacity({
 	alignSelf: "flex-end",
 })
 
-const centerPanel: ViewStyle = {
+export const CenterPanel = style.touchableOpacity({
 	alignItems: "center",
 	flex: 1,
 	height: layoutSize.LAYOUT_56,
 	justifyContent: "center",
-}
-
-export const CenterPanel = style.touchableOpacity(centerPanel)
+})
 
 export const CenterTextPanel = style.text(
 	{

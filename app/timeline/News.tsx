@@ -3,13 +3,13 @@ import * as React from "react"
 import { View } from "react-native"
 import { layoutSize } from "../constants/layoutSize"
 import { INewsModel } from "../model/Timeline"
-import { CommonStyles } from "../styles/common/styles"
-import { Avatar, Size } from "../ui/Avatar"
+import { CommonStyles } from "../styles/common/styles";
 import { DateView } from "../ui/DateView"
 import { tr } from "../i18n/t"
 import { CenterPanel, Content, Header, LeftPanel, ArticleContainer } from "../ui/ContainerContent"
 import { Images } from "../ui/Images"
 import { Card } from '../ui/Card';
+import { SingleAvatar } from "../ui/avatars/SingleAvatar";
 
 interface INewsProps extends INewsModel {
 	onPress?: (id: string, index: number, full: boolean) => void
@@ -41,7 +41,7 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
 				<Card onPress={() => this.onPress()}>
 					<Header>
 						<LeftPanel>
-							<Avatar id={senderId} size={Size.large} />
+							<SingleAvatar userId={senderId} />
 						</LeftPanel>
 						<CenterPanel>
 							<Bold>
