@@ -13,16 +13,15 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 
 export interface IConversationsProps {
-	conversations: IThreadModel[]
-	pageNumber: number
+	conversations: IThreadModel[];
 	navigation?: any
-	readConversation
-	readNextConversation
-	synced: boolean
+	sync: (page: number) => Promise<void>;
 	userId: string
 }
 
 export class Conversations extends React.Component<IConversationsProps, any> {
+	pageNumber: number = 0;
+
 	public onPress(item) {
 		item.conversationId = item.id;
 		item.userId = this.props.userId;
@@ -31,10 +30,9 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 	}
 
 	private nextPage() {
-		console.log('loading next page')
-		const { pageNumber } = this.props;
-		if (this.props.synced) {
-			this.props.readNextConversation(pageNumber + 1);
+		for(let i = 0; i < 5; i++){
+			this.pageNumber ++;
+			this.props.sync(this.pageNumber);
 		}
 	}
 
@@ -84,12 +82,10 @@ function getTitle(displayNames) {
  * Select the set of conversations with the filtering criteria
  */
 
-const mapStateToProps = state => ({
+export default connect((state: any) => ({
 	conversations: state.threads.payload.filter(t => !state.threads.filterCriteria || (t.subject && t.subject.indexOf(state.threads.filterCriteria) !== -1)),
-	userId: state.auth.userId,
-})
-
-const dispatchAndMapActions = dispatch =>
-	bindActionCreators({ readConversation, readNextConversation }, dispatch)
-
-export default connect(mapStateToProps, dispatchAndMapActions)(Conversations)
+	userId: state.auth.userId
+}), 
+dispatch => ({
+	sync: (page: number) => readNextConversation(dispatch)(page),
+}))(Conversations)

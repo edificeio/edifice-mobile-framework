@@ -84,6 +84,23 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 			payload: [...state.payload]
 		}
 	}
+	if(action.type === 'APPEND_NEXT_CONVERSATION'){
+		console.log(action)
+		return {
+			...state,
+			payload: [...state.payload, ...action.threads
+				.filter(c => state.payload.find(t => t.id === c[0].id || t.thread_id === c[0].thread_id) === undefined)
+				.map(c => {
+					const thread = { ...c[0] };
+					thread.nb = c.filter(e => e.unread && e.from !== Me.session.userId).length;
+					thread.messages = c;
+					if(thread.subject){
+						thread.subject = thread.subject.replace(/Tr :|Re :/g, '');
+					}
+					return thread;
+			})].sort((a, b) => b.date - a.date)
+		}
+	}
 	if (action.type.indexOf("_SUCCESS") > 0 && action.path.indexOf('conversation/threads/list') !== -1) {
 		return {
 			...state,

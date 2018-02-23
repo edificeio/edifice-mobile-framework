@@ -11,12 +11,34 @@ import {create, read, readCheck, readNext} from "./docs"
 import { Message } from '../model/Thread';
 
 export const readConversation = (page = 0) => read(replace1(PATH_CONVERSATION, page), false);
-export const readNextConversation = page => readNext(PATH_CONVERSATION, page, false);
 export const readNextThreads = id => readCheck(PATH_NEW_MESSAGES, id, false);
 export const readPrevThreads = id => readCheck(PATH_PREVIOUS_MESSAGES, id, false);
 export const createConversation = payload => create(PATH_CREATE_CONVERSATION, payload, false);
 
 console.log(Conf);
+
+export const readNextConversation = dispatch => async page => {
+	dispatch({
+		type: "READ_NEXT_CONVERSATION"
+	});
+
+	console.log(`${Conf.platform}/conversation/threads/list?page=${page}`);
+	const response = await fetch(`${Conf.platform}/conversation/threads/list?page=${page}`)
+
+	try {
+		const threads = await response.json();
+
+		dispatch({
+			type: "APPEND_NEXT_CONVERSATION",
+			threads: threads,
+		})
+	} catch (e) {
+		console.log(e)
+		dispatch({
+			type: "END_REACHED_CONVERSATION",
+		})
+	}
+}
 
 export const markAsRead = (thread) => {
 	if(!thread.unread){
