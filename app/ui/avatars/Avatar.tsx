@@ -120,7 +120,7 @@ export class Avatar extends React.Component<IAvatarProps, { loaded: boolean }> {
 
 	componentDidMount(){
 		//render avatars after content
-		setTimeout(() => this.load(), 10);
+		setTimeout(() => this.load(), 100);
 	}
 
 	get isGroup(){
@@ -155,8 +155,8 @@ export class Avatar extends React.Component<IAvatarProps, { loaded: boolean }> {
 		}
 
 		avatarsMap[this.props.id] = { loading: true };
-		const response = await fetch(`${Conf.platform}/userbook/avatar/${this.props.id}?thumbnail=48x48`);
-		if((response as any)._bodyInit[0] === '<'){
+		const response = await RNFetchBlob.fetch("GET", `${Conf.platform}/userbook/avatar/${this.props.id}?thumbnail=48x48`);
+		if(response.type === 'utf8'){
 			this.noAvatar = true;
 		}
 		avatarsMap[this.props.id] = { noAvatar: this.noAvatar };

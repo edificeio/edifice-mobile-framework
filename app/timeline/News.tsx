@@ -33,7 +33,6 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
 	}
 
 	render() {
-		console.log("Render News")
 		const { full } = this.state
 		const { date, preview = "", senderId, senderName, resourceName, message, images = [] } = this.props
 		return (

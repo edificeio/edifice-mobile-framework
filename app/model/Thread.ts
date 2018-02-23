@@ -85,7 +85,6 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 		}
 	}
 	if(action.type === 'APPEND_NEXT_CONVERSATION'){
-		console.log(action)
 		return {
 			...state,
 			payload: [...state.payload, ...action.threads

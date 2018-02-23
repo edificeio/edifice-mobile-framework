@@ -46,7 +46,7 @@ const dataTypes = {
 				senderName: news.params.username,
 			}
 		} catch (e) {
-			console.log(e);
+			//resource has been deleted
 			return newsData
 		}
 	},
@@ -116,8 +116,7 @@ export const listTimeline = dispatch => async page => {
 
 	try {
 		const news = await response.json()
-		let results = news.results.filter(n => excludeTypes.indexOf(n["event-type"]) === -1 && n.params)
-		// console.log("has " + results.length + " results at page " + page)
+		let results = news.results.filter(n => excludeTypes.indexOf(n["event-type"]) === -1 && n.params);
 		const newNews = await fillData(results)
 
 		dispatch({
