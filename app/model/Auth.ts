@@ -1,6 +1,7 @@
 import { CREATE_SUCCESS, READ_SUCCESS } from "../constants/docs"
 import { matchs, PATH_CURRENT_USER, PATH_LOGIN, PATH_LOGOUT, PATH_SIGNUP } from "../constants/paths"
 import { crudReducer } from "./docs"
+import { Me } from '../infra/Me';
 
 export interface IAuthModel {
 	email: string
@@ -33,6 +34,7 @@ export function Auth(state: IAuthState = initialState, action): IAuthState {
 	}
 
 	if (matchs([PATH_CURRENT_USER], action.path) && action.type === READ_SUCCESS) {
+		Me.session = action.payload.result['0'];
 		return { ...state, userId: action.payload.result["0"].id }
 	}
 

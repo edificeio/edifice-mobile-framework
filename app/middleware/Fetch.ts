@@ -42,6 +42,7 @@ function checkResponse(response, path = null) {
 		if (Platform.OS === "ios") {
 			AsyncStorage.setItem("Set-Cookie", JSON.stringify(cookies))
 		}
+		
 		return new Promise(resolve =>
 			resolve({
 				loggedIn: true,

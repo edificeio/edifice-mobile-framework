@@ -26,6 +26,7 @@ async function auth(dispatch) {
 
 export default store => next => action => {
 	try {
+		
 		if (action.type === PATH_AUTH) {
 			auth(store.dispatch)
 			initAuth = true

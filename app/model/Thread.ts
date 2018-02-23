@@ -2,6 +2,7 @@ import { PATH_CONVERSATION, PATH_NEW_MESSAGES, PATH_PREVIOUS_MESSAGES } from "..
 import { crudReducer } from "./docs"
 import {ACTION_MODE} from "../actions/docs";
 import { markAsRead } from '../actions/conversation';
+import { Me } from '../infra/Me';
 
 export enum ThreadStatus {
 	sent,
@@ -90,7 +91,7 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 				.filter(c => state.payload.find(t => t.id === c[0].id || t.thread_id === c[0].thread_id) === undefined)
 				.map(c => {
 					const thread = { ...c[0] };
-					thread.nb = c.filter(e => e.unread).length;
+					thread.nb = c.filter(e => e.unread && e.from !== Me.session.userId).length;
 					thread.messages = c;
 					if(thread.subject){
 						thread.subject = thread.subject.replace(/Tr :|Re :/g, '');
