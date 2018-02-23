@@ -1,5 +1,6 @@
 import style from "glamorous-native"
 import * as React from "react"
+import { SwipeListView } from 'react-native-swipe-list-view';
 import { FlatList } from "react-native"
 import Swipeable from "react-native-swipeable"
 import { layoutSize } from "../constants/layoutSize"
@@ -7,7 +8,7 @@ import { IThreadModel, IThreadState } from '../model/Thread';
 import styles from "../styles/index"
 import { Icon } from "../ui/icons/Icon"
 import { Conversation } from "./Conversation"
-import { readConversation, readNextConversation } from "../actions/conversation"
+import { readConversation, readNextConversation, deleteThread } from '../actions/conversation';
 import { IAuthModel } from "../model/Auth"
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -16,11 +17,13 @@ export interface IConversationsProps {
 	conversations: IThreadModel[];
 	navigation?: any
 	sync: (page: number) => Promise<void>;
+	deleteThread: (conversation: IThreadModel) => Promise<void>;
 	userId: string
 }
 
 export class Conversations extends React.Component<IConversationsProps, any> {
 	pageNumber: number = 0;
+	swipeRef = undefined;
 
 	public onPress(item) {
 		item.conversationId = item.id;
@@ -39,7 +42,8 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 	public render() {
 		const { conversations, userId } = this.props;
 		return (
-			<FlatList
+			<SwipeListView
+            	useFlatList
 				data={conversations}
 				removeClippedSubviews
 				disableVirtualization
@@ -52,9 +56,23 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 		)
 	}
 
+	deleteThread(conversation){
+		this.swipeRef.recenter();
+		this.props.deleteThread(conversation);
+		
+	}
+
+	swipeoutButton(conversation: IThreadModel){
+		return [
+			<RightButton onPress={ () => this.deleteThread(conversation) }>
+				<Icon size={layoutSize.LAYOUT_18} color="#ffffff" name="trash" />
+			</RightButton>,
+		]
+	}
+
 	private renderItem(item: IThreadModel, userId) {
 		return (
-			<Swipeable rightButtons={swipeoutBtns}>
+			<Swipeable rightButtons={ this.swipeoutButton(item) } onRightButtonsOpenRelease={ (e, g, r) => this.swipeRef = r }>
 				<Conversation {...item} onPress={e => this.onPress(item)} userId={userId} />
 			</Swipeable>
 		)
@@ -66,13 +84,7 @@ const RightButton = style.touchableOpacity({
 	flex: 1,
 	justifyContent: "center",
 	paddingLeft: layoutSize.LAYOUT_34,
-})
-
-const swipeoutBtns = [
-	<RightButton>
-		<Icon size={layoutSize.LAYOUT_18} color="#ffffff" name="trash" />
-	</RightButton>,
-]
+});
 
 function getTitle(displayNames) {
 	return displayNames.reduce((acc, elem) => `${acc}, ${elem[1]}`, "")
@@ -88,4 +100,5 @@ export default connect((state: any) => ({
 }), 
 dispatch => ({
 	sync: (page: number) => readNextConversation(dispatch)(page),
+	deleteThread: (conversation: IThreadModel) => deleteThread(dispatch)(conversation)
 }))(Conversations)

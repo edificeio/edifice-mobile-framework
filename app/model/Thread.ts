@@ -116,6 +116,12 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 			})].sort((a, b) => b.date - a.date)
 		}
 	}
+	if (action.type === 'DELETE_THREAD_CONVERSATION'){
+		return {
+			...state,
+			payload: [...state.payload.filter(t => t.id !== action.data.conversationId)]
+		}
+	}
 	if (action.type === "CONVERSATION_SEND") {
 		action.data.status = ThreadStatus.sending;
 		return {

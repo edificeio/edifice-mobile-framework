@@ -8,7 +8,7 @@ import {
 	replace1,
 } from "../constants/paths"
 import {create, read, readCheck, readNext} from "./docs"
-import { Message } from '../model/Thread';
+import { Message, IThreadModel } from '../model/Thread';
 
 export const readConversation = (page = 0) => read(replace1(PATH_CONVERSATION, page), false);
 export const readNextThreads = id => readCheck(PATH_NEW_MESSAGES, id, false);
@@ -45,6 +45,30 @@ export const markAsRead = (thread) => {
 		return;
 	}
 	fetch(`${Conf.platform}/conversation/message/${thread.id}`)
+}
+
+export const deleteThread = dispatch => async (
+	conversation: IThreadModel
+) => {
+	dispatch({
+		type: "DELETE_THREAD_CONVERSATION",
+		data: { conversationId: conversation.id },
+	})
+
+	try {
+		const response = await fetch(`${Conf.platform}/conversation/thread/previous-messages/${conversation.id}`);
+		let json = await response.json();
+
+		for(let i = 0; i < conversation.messages.length; i++){
+			fetch(`${Conf.platform}/conversation/trash?id=${conversation.messages[i].id}`, { method: 'put' }).then(r => console.log(r)).catch(e => console.log(e));
+		}
+
+		for(let i = 0; i < json.length; i++){
+			fetch(`${Conf.platform}/conversation/trash?id=${json[i].id}`, { method: 'put' }).then(r => console.log(r)).catch(e => console.log(e));
+		}
+	} catch (e) {
+		console.log(e);
+	}
 }
 
 export const sendMessage = dispatch => async (
