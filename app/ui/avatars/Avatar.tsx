@@ -5,6 +5,16 @@ import { View } from "react-native"
 import { layoutSize } from "..";
 import { Conf } from "../../Conf";
 
+const avatarsMap = {
+	awaiters: [],
+	onload: function (cb: (userId: string) => void) {
+		this.awaiters.push(cb);
+	},
+	trigger: function (userId: string) {
+		this.awaiters.forEach(a => a(userId));
+	}
+} as any;
+
 export enum Size {
 	aligned,
 	large,
@@ -50,9 +60,9 @@ const VeryLargeImage = style.image(
 	{
 		...StyledImage,
 		alignSelf: "center",
-		borderRadius: layoutSize.LAYOUT_35,
-		height: layoutSize.LAYOUT_71,
-		width: layoutSize.LAYOUT_71,
+		borderRadius: 35,
+		height: 71,
+		width: 71,
 		margin: 0,
 	},
 	({ decorate }) => ({
@@ -110,7 +120,7 @@ export class Avatar extends React.Component<IAvatarProps, { loaded: boolean }> {
 
 	componentDidMount(){
 		//render avatars after content
-		setTimeout(() => this.load(), 100);
+		setTimeout(() => this.load(), 10);
 	}
 
 	get isGroup(){
@@ -123,14 +133,34 @@ export class Avatar extends React.Component<IAvatarProps, { loaded: boolean }> {
 			this.setState({ loaded: true });
 			return;
 		}
+		
 		if(this.isGroup){
 			this.setState({ loaded: true });
 			return;
 		}
+
+		if(avatarsMap[this.props.id]){
+			if(avatarsMap[this.props.id].loading){
+				avatarsMap.onload((userId) => {
+					if(userId === this.props.id){
+						this.noAvatar = avatarsMap[this.props.id].noAvatar;
+						this.setState({ loaded: true });
+						return;
+					}
+				})
+			}
+			this.noAvatar = avatarsMap[this.props.id].noAvatar;
+			this.setState({ loaded: true });
+			return;
+		}
+
+		avatarsMap[this.props.id] = { loading: true };
 		const response = await fetch(`${Conf.platform}/userbook/avatar/${this.props.id}?thumbnail=48x48`);
 		if((response as any)._bodyInit[0] === '<'){
 			this.noAvatar = true;
 		}
+		avatarsMap[this.props.id] = { noAvatar: this.noAvatar };
+		avatarsMap.trigger(this.props.id);
 		this.setState({ loaded: true });
 	}
 
