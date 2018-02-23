@@ -127,10 +127,11 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 		const index = state.processing.indexOf(state.processing.find(p => p.id === action.data.id));
 		const parentThread = state.payload.find(t => t.thread_id === action.data.thread_id);
 		parentThread.messages = [action.data, ...parentThread.messages];
+		parentThread.date = action.data.date;
 		return {
 			...state,
 			processing: state.processing.filter((e, i) => i !== index),
-			payload: [...state.payload]
+			payload: [...state.payload].sort((a, b) => b.date - a.date)
 		}
 	}
 	if (action.type === "CONVERSATION_FAILED_SEND") {
