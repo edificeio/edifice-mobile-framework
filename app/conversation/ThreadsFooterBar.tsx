@@ -6,6 +6,8 @@ import { Icon, IconOnOff } from "../ui/index"
 import { tr } from "../i18n/t"
 import { sendMessage } from "../actions/conversation"
 import { connect } from "react-redux"
+import { View } from "react-native";
+import { ToggleIcon } from "../ui/ToggleIcon";
 
 interface IThreadsFooterBarProps {
 	navigation?: any
@@ -91,7 +93,7 @@ class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, ThreadsFo
 				</TouchableBarPanel>
 				<CenterPanel />
 				<TouchableEndBarPanel onPress={() => this.onValid()}>
-					<Icon size={layoutSize.LAYOUT_22} name={"send_icon"} />
+					<ToggleIcon show={ !!this.state.textMessage } icon={ "send_icon" } />
 				</TouchableEndBarPanel>
 			</ContainerFooterBar>
 		)
