@@ -84,7 +84,7 @@ class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, ThreadsFo
 					/>
 				</ContainerInput>
 				<TouchableBarPanel onPress={() => this.onPress(Selected.keyboard)}>
-					<IconOnOff focused={selected === Selected.keyboard} name={"keyboard"} />
+					<IconOnOff focused={ true } name={"keyboard"} />
 				</TouchableBarPanel>
 				<TouchableBarPanel onPress={() => this.onPress(Selected.camera)}>
 					<IconOnOff focused={selected === Selected.camera} name={"camera"} />
