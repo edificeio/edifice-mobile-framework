@@ -1,7 +1,8 @@
 import style from "glamorous-native"
-import * as React from "react"
+import * as React from "react";
+import { Text } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
-import { FlatList } from "react-native"
+import { FlatList, View } from 'react-native';
 import Swipeable from "react-native-swipeable"
 import { layoutSize } from "../constants/layoutSize"
 import { IThreadModel, IThreadState } from '../model/Thread';
@@ -13,18 +14,25 @@ import { IAuthModel } from "../model/Auth"
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { ModalBox, ModalContent } from "../ui/Modal"
+import { ButtonsOkCancel } from "../ui";
+import { tr } from "../i18n/t";
+import I18n from "react-native-i18n"
 
 export interface IConversationsProps {
 	conversations: IThreadModel[];
 	navigation?: any
 	sync: (page: number) => Promise<void>;
-	deleteThread: (conversation: IThreadModel) => Promise<void>;
-	userId: string
+	deleteThread: (conversation: IThreadModel) => Promise<void>
 }
 
 export class Conversations extends React.Component<IConversationsProps, any> {
 	pageNumber: number = 0;
 	swipeRef = undefined;
+
+	constructor(props){
+		super(props);
+		this.state = {};
+	}
 
 	public onPress(item) {
 		this.props.navigation.navigate("Threads", item)
@@ -38,39 +46,52 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 	}
 
 	public render() {
-		const { conversations, userId } = this.props;
+		const { conversations } = this.props;
 		return (
-			<FlatList
-				data={conversations}
-				removeClippedSubviews
-				disableVirtualization
-				legacyImplementation={true}
-				onEndReached={() => this.nextPage()}
-				renderItem={({ item }) => this.renderItem(item, userId)}
-				style={styles.grid}
-				keyboardShouldPersistTaps={ 'always' }
-			/>
+			<View>
+				<ModalBox backdropOpacity={0.5} isVisible={this.state.deleteThread !== undefined}>
+					<ModalContent>
+						<Text>{tr.Are_you_sure}</Text>
+						<Text>{ I18n.t("conversation-deleteThread") }</Text>
+						<ButtonsOkCancel
+							onCancel={() => this.setState({ deleteThread: undefined })}
+							onValid={() => this.deleteThread(this.state.deleteThread)}
+							title={I18n.t("delete")}
+						/>
+					</ModalContent>
+				</ModalBox>
+				<FlatList
+					data={conversations}
+					removeClippedSubviews
+					disableVirtualization
+					legacyImplementation={true}
+					onEndReached={() => this.nextPage()}
+					renderItem={({ item }) => this.renderItem(item)}
+					style={styles.grid}
+					keyboardShouldPersistTaps={ 'always' }
+				/>
+			</View>
 		)
 	}
 
 	deleteThread(conversation){
 		this.swipeRef.recenter();
 		this.props.deleteThread(conversation);
-		
+		this.setState({ deleteThread: undefined });
 	}
 
 	swipeoutButton(conversation: IThreadModel){
 		return [
-			<RightButton onPress={ () => this.deleteThread(conversation) }>
+			<RightButton onPress={ () => this.setState({ deleteThread: conversation }) }>
 				<Icon size={layoutSize.LAYOUT_18} color="#ffffff" name="trash" />
 			</RightButton>,
 		]
 	}
 
-	private renderItem(item: IThreadModel, userId) {
+	private renderItem(item: IThreadModel) {
 		return (
 			<Swipeable rightButtons={ this.swipeoutButton(item) } onRightButtonsOpenRelease={ (e, g, r) => this.swipeRef = r }>
-				<Conversation {...item} onPress={e => this.onPress(item)} userId={userId} />
+				<Conversation {...item} onPress={e => this.onPress(item)} />
 			</Swipeable>
 		)
 	}
@@ -95,8 +116,7 @@ export default connect(
 	(state: any) => ({
 		conversations: state.threads.payload.filter(
 			t => !state.threads.filterCriteria || (t.subject && t.subject.toLowerCase().indexOf(state.threads.filterCriteria.toLowerCase()) !== -1)
-		),
-		userId: state.auth.userId
+		)
 	}), 
 	dispatch => ({
 		sync: (page: number) => readNextConversation(dispatch)(page),

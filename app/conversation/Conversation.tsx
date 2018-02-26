@@ -1,23 +1,23 @@
 import style from "glamorous-native"
-import * as React from "react"
+import * as React from "react";
 import { layoutSize } from "../constants/layoutSize"
 import { IThreadModel } from "../model/Thread"
 import { CommonStyles } from "../styles/common/styles"
 import { DateView } from "../ui/DateView"
 import { CircleNumber } from "../ui/CircleNumber"
 import { CenterPanel, Content, Item, LeftPanel, RightPanel } from "../ui/ContainerContent"
-import { Row } from "../ui"
+import { Row, ButtonsOkCancel } from "../ui"
 import { trunc } from "../utils/html"
 import { GridAvatars } from "../ui/avatars/GridAvatars";
+import { Me } from "../infra/Me";
 
 interface IConversationProps extends IThreadModel {
 	onPress: (id: string, displayNames: string[][], subject: string) => void
-	userId: string
 }
 
-export const Conversation = ({ id, subject, date, displayNames, nb, onPress, userId }: IConversationProps) => {
+export const Conversation = ({ id, subject, date, displayNames, nb, onPress }: IConversationProps) => {
 	const images = displayNames.reduce(
-		(acc, elem) => (elem[0] === userId && displayNames.length !== 1 ? acc : [...acc, elem[0]]),
+		(acc, elem) => (elem[0] === Me.session.userId && displayNames.length !== 1 ? acc : [...acc, elem[0]]),
 		[]
 	)
 
@@ -28,7 +28,7 @@ export const Conversation = ({ id, subject, date, displayNames, nb, onPress, use
 					<GridAvatars users={images} />
 				</LeftPanel>
 				<CenterPanel>
-					{getTitle(displayNames, nb, userId)}
+					{getTitle(displayNames, nb)}
 					{subject && subject.length ? <Content nb={nb}>{trunc(subject, layoutSize.LAYOUT_32)}</Content> : <style.View />}
 				</CenterPanel>
 				<RightPanel>
@@ -40,10 +40,10 @@ export const Conversation = ({ id, subject, date, displayNames, nb, onPress, use
 	)
 }
 
-function getTitle(displayNames, nb, userId) {
+function getTitle(displayNames, nb) {
 	const title = displayNames.reduce(
 		(acc, elem) =>
-			elem[0] === userId && displayNames.length !== 1 ? acc : acc.length === 0 ? elem[1] : `${acc}, ${elem[1]}`,
+			elem[0] === Me.session.userId && displayNames.length !== 1 ? acc : acc.length === 0 ? elem[1] : `${acc}, ${elem[1]}`,
 		""
 	)
 
