@@ -12,6 +12,7 @@ import { readNextConversation, deleteThread } from '../actions/conversation';
 import { IAuthModel } from "../model/Auth"
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+import { ModalBox, ModalContent } from "../ui/Modal"
 
 export interface IConversationsProps {
 	conversations: IThreadModel[];
@@ -39,8 +40,7 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 	public render() {
 		const { conversations, userId } = this.props;
 		return (
-			<SwipeListView
-            	useFlatList
+			<FlatList
 				data={conversations}
 				removeClippedSubviews
 				disableVirtualization
