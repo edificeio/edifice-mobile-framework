@@ -72,6 +72,13 @@ const initialState: IThreadState = {
 }
 
 export default (state: IThreadState = initialState, action): IThreadState => {
+	if(action.type === 'CLEAR_CONVERSATION'){
+		return {
+			...state,
+			processing: [],
+			payload: []
+		}
+	}
 	if (action.type.indexOf("_SUCCESS") > 0 && action.path.indexOf('conversation/thread/previous-messages') !== -1) {
 		const parentThread = state.payload.find(t => t.id === action.pageNumber);
 		parentThread.messages.forEach(m => markAsRead(m));

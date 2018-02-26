@@ -20,8 +20,7 @@ export interface IThreadsProps {
 	readNextThreads: (any) => IAction;
 	readPrevThreads: (any) => IAction;
 	synced: any
-	threads: Message[]
-	userId: any
+	threads: Message[];
 	pageNumber: any;
 }
 
@@ -71,14 +70,10 @@ export class Threads extends React.Component<IThreadsProps, any> {
 	}
 
 	private renderItem(item: Message) {
-		if (!this.props.userId) {
-			return <View />
-		}
-
 		return (
 			<View>
 				{this.showTodayDate(item) && this.displayTodayDate()}
-				<Thread {...item} userId={this.props.userId} />
+				<Thread {...item} />
 			</View>
 		)
 	}
@@ -107,8 +102,7 @@ const filtering = (threads: IThreadState, conversationId): Message[] => {
 const mapStateToProps = (state, props) => ({
 	threads: filtering(state.threads, props.navigation.state.params.conversationId).sort((a, b) => a.date - b.date),
 	pageNumber: state.threads.pageNumber,
-	synced: state.threads.synced,
-	userId: state.auth.userId,
+	synced: state.threads.synced
 })
 
 const dispatchAndMapActions = dispatch =>

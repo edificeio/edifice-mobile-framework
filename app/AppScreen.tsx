@@ -1,13 +1,22 @@
 import * as React from "react"
 import { StatusBar, View } from "react-native"
-import SplashScreen from "react-native-smart-splash-screen"
-import ProgressBar from "./connectors/ui/ProgressBar"
+import SplashScreen from "react-native-smart-splash-screen";
 import StatusAlert from "./connectors/ui/StatusAlert"
 import { CommonStyles } from "./styles/common/styles"
 import { AppNavigator } from "./navigation/AppNavigator"
-import { getCurrentRoute } from "./navigation"
 import { Tracking } from "./tracking/TrackingManager"
+import ProgressBar from "./ui/ProgressBar";
 
+function getCurrentRoute(navigationState) {
+	if (!navigationState) {
+		return null
+	}
+	const route = navigationState.routes[navigationState.index]
+	if (route.routes) {
+		return getCurrentRoute(route)
+	}
+	return route
+}
 
 export interface IAppScreenProps {}
 

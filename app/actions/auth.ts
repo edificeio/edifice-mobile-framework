@@ -1,5 +1,12 @@
+import CookieManager from 'react-native-cookies';
 import { PATH_AUTH, PATH_LOGIN, PATH_LOGOUT, PATH_RECOVER_PASSWORD, PATH_SIGNUP } from "../constants/paths"
 import {create, createWithFormData} from "./docs"
+import { setLogin } from "../utils/Store";
+import { Conf } from "../Conf";
+import { clearTimeline } from './timeline';
+import { clearConversation } from './conversation';
+
+console.log(Conf);
 
 /**
  *
@@ -12,14 +19,13 @@ export const login = (email, password) => {
 	return createWithFormData(PATH_LOGIN, { email, password, rememberMe: true }, true) // create et non read pour recuperrer le password
 }
 
-/**
- * Logout du user
- * @param {string} email     login du user
- *
- * @returns {{type}}
- */
-export const logout = email => {
-	return create(PATH_LOGOUT, { email }, false)
+export const logout = dispatch => async email => {
+	setLogin({ email: email, password: "" });
+	await fetch(`${Conf.platform}/auth/logout`);
+	dispatch({ type: 'LOGOUT_AUTH', email: email });
+	clearTimeline(dispatch)();
+	clearConversation(dispatch)();
+	CookieManager.clearAll();
 }
 
 /**

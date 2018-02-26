@@ -1,4 +1,4 @@
-import * as React from "react"
+import * as React from "react";
 import style from "glamorous-native";
 import { Icon } from ".";
 

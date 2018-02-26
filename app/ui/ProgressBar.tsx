@@ -1,6 +1,8 @@
 import * as React from "react"
 import { View } from "react-native"
 import styles, { deviceWidth } from "../styles/index"
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
 function isLoading(synced) {
 	if (synced === undefined) {
@@ -45,3 +47,11 @@ export class ProgressBar extends React.Component<ProgressBarProps, ProgressBarSt
 		return isLoading(synced) ? <View style={[styles.loading, { width: this.state.width }]} /> : <View />
 	}
 }
+
+const mapStateToProps = state => ({
+	synced: [state.auth.synced]
+})
+
+const dispatchAndMapActions = dispatch => bindActionCreators({}, dispatch)
+
+export default connect(mapStateToProps, dispatchAndMapActions)(ProgressBar)

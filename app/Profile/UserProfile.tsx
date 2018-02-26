@@ -5,10 +5,13 @@ import { ButtonDeconnect } from "./ButtonDeconnect"
 import { ButtonsOkCancel } from "../ui/ButtonsOkCancel"
 import { Col } from "../ui/Col"
 import { ModalBox, ModalContent } from "../ui/Modal"
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { logout } from '../actions/auth';
 
 export interface IUserProfileProps {
 	auth: any
-	logout?: (email: string) => void
+	logout: (email: string) => void
 }
 
 interface IUserProfileState {
@@ -48,3 +51,13 @@ export class UserProfile extends React.Component<IUserProfileProps, IUserProfile
 		)
 	}
 }
+
+const mapStateToProps = state => ({
+	auth: state.auth,
+})
+
+const dispatchAndMapActions = dispatch => bindActionCreators({ logout }, dispatch)
+
+export default connect<{}, {}, IUserProfileProps>(mapStateToProps, dispatch => ({
+	logout: (email: string) => logout(dispatch)(email),
+}))(UserProfile)

@@ -107,9 +107,15 @@ const fillData = async (results: any[]) => {
 	return newResults
 }
 
+export const clearTimeline = dispatch => () => {
+	dispatch({
+		type: "CLEAR_TIMELINE"
+	});
+}
+
 export const listTimeline = dispatch => async page => {
 	dispatch({
-		type: "FETCH",
+		type: "FETCH_TIMELINE",
 	})
 	console.log(`${Conf.platform}/timeline/lastNotifications?page=${page}&${writeTypesParams()}`)
 	const response = await fetch(`${Conf.platform}/timeline/lastNotifications?page=${page}&${writeTypesParams()}`)
@@ -120,13 +126,13 @@ export const listTimeline = dispatch => async page => {
 		const newNews = await fillData(results)
 
 		dispatch({
-			type: "APPEND",
+			type: "APPEND_TIMELINE",
 			news: newNews,
 		})
 	} catch (e) {
 		console.log(e)
 		dispatch({
-			type: "END_REACHED",
+			type: "END_REACHED_TIMELINE",
 		})
 	}
 }

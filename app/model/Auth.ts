@@ -22,10 +22,10 @@ export const initialState: IAuthState = {
 }
 
 export function Auth(state: IAuthState = initialState, action): IAuthState {
-	if (matchs([PATH_LOGOUT], action.path)) {
+	if (action.type === 'LOGOUT_AUTH') {
 		return {
 			...initialState,
-			email: action.payload.email,
+			email: action.email
 		}
 	}
 
@@ -33,7 +33,7 @@ export function Auth(state: IAuthState = initialState, action): IAuthState {
 		return crudReducer(state, [PATH_LOGIN, PATH_SIGNUP], action, "-1")
 	}
 
-	if (matchs([PATH_CURRENT_USER], action.path) && action.type === READ_SUCCESS) {
+	if (PATH_CURRENT_USER === action.path && action.type === READ_SUCCESS) {
 		Me.session = action.payload.result['0'];
 		return { ...state, userId: action.payload.result["0"].id }
 	}

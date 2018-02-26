@@ -8,13 +8,10 @@ import { CommonStyles } from "../styles/common/styles"
 import { DateView } from "../ui/DateView"
 import { tr } from "../i18n/t"
 import { SingleAvatar } from "../ui/avatars/SingleAvatar";
+import { Me } from "../infra/Me";
 
-interface IThreadProps extends IThreadModel {
-	userId: string
-}
-
-export const Thread = ({ body, date, displayNames = [], from = "", userId, status }: Message) => {
-	const my = from === userId
+export const Thread = ({ body, date, displayNames = [], from = "", status }: Message) => {
+	const my = from === Me.session.userId
 
 	if (!body) {
 		return <style.View />

@@ -6,7 +6,8 @@
 		"member-ordering": false,
 		"no-shadowed-variable": false,
 		"no-string-literal": false,
-		"prettier": true
+		"prettier": true,
+		"semicolon": [true, "always"]
 	},
 	"rulesDirectory": ["tslint-plugin-prettier"]
 }

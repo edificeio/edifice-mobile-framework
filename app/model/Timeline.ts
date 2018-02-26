@@ -32,26 +32,26 @@ export const Timeline = (
 ) => {
 	//	console.log(action)
 	switch (action.type) {
-		case "APPEND":
+		case "APPEND_TIMELINE":
 			return {
 				...state,
 				didInvalidate: false,
 				news: [...state.news, ...action.news],
 				isFetching: false,
 			}
-		case "END_REACHED":
+		case "END_REACHED_TIMELINE":
 			return {
 				...state,
 				didInvalidate: false,
 				endReached: true,
 				isFetching: false,
 			}
-		case "FETCH":
+		case "FETCH_TIMELINE":
 			return {
 				...state,
 				isFetching: true,
 			}
-		case "RESET":
+		case "CLEAR_TIMELINE":
 			return {
 				...state,
 				endReached: false,

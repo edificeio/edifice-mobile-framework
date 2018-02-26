@@ -8,7 +8,7 @@ import { IThreadModel, IThreadState } from '../model/Thread';
 import styles from "../styles/index"
 import { Icon } from "../ui/icons/Icon"
 import { Conversation } from "./Conversation"
-import { readConversation, readNextConversation, deleteThread } from '../actions/conversation';
+import { readNextConversation, deleteThread } from '../actions/conversation';
 import { IAuthModel } from "../model/Auth"
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -33,7 +33,7 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 	}
 
 	private nextPage() {
-		for(let i = 0; i < 5; i++){
+		for(let i = 0; i < 1; i++){
 			this.pageNumber ++;
 			this.props.sync(this.pageNumber);
 		}

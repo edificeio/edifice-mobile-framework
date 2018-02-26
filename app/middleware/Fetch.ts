@@ -7,7 +7,6 @@ import {
 	PATH_AVATAR,
 	PATH_CREATE_CONVERSATION,
 	PATH_LOGIN,
-	PATH_LOGOUT,
 	PATH_NEW_MESSAGES,
 	PATH_PREVIOUS_MESSAGES,
 	replace1,
@@ -21,55 +20,54 @@ async function getCookies(response) {
 	return await AsyncStorage.getItem("Set-Cookie")
 }
 
-function checkResponse(response, path = null) {
+function checkResponse(response: Response, path = null) {
 	if (response.headers === undefined) {
-		return new Promise((resolve, reject) => resolve(response.base64()))
+		return new Promise((resolve, reject) => resolve(response.text()))
 	}
 
-	if (path === PATH_LOGIN) {
-		const cookies = getCookies(response)
-		if (cookies === null) {
-			return new Promise((resolve, reject) =>
-				reject({
-					loggedIn: false,
-					ok: false,
-					status: 511,
-					statusText: tr.Incorrect_login_or_password,
-				})
-			)
+	return new Promise((resolve, reject) => {
+		if (path === PATH_LOGIN) {
+			response.text().then(data => {
+				if (data.indexOf('/auth') !== -1 && data.indexOf('error') !== -1) {
+					reject({
+						loggedIn: false,
+						ok: false,
+						status: 511,
+						statusText: tr.Incorrect_login_or_password,
+					});
+					return;
+				}
+				else{
+					const cookies = getCookies(response);
+					// Cookie are not persist on IOS so we use AsyncStorage here
+					if (Platform.OS === "ios") {
+						AsyncStorage.setItem("Set-Cookie", JSON.stringify(cookies))
+					}
+	
+					resolve({
+						loggedIn: true,
+					});
+					return;
+				}
+			});
+			return;
 		}
-		// Cookie are not persist on IOS so we use AsyncStorage here
-		if (Platform.OS === "ios") {
-			AsyncStorage.setItem("Set-Cookie", JSON.stringify(cookies))
+	
+		const contentType = response.headers.get("content-type")
+	
+		if (contentType && contentType.indexOf("application/json") !== -1) {
+			response.json()
+				.then(data => resolve(data))
+				.catch(err => reject(err));
+			return;
 		}
-		
-		return new Promise(resolve =>
-			resolve({
-				loggedIn: true,
-			})
-		)
-	}
 
-	if (path === PATH_LOGOUT) {
-		return new Promise(resolve =>
-			resolve({
-				loggedIn: false,
-			})
-		)
-	}
-
-	const contentType = response.headers.get("content-type")
-
-	if (contentType && contentType.indexOf("application/json") !== -1) {
-		return response.json()
-	}
-	return new Promise((resolve, reject) =>
 		resolve({
 			ok: true,
 			status: response.status,
 			statusText: response.statusText || "",
-		})
-	)
+		});
+	});
 }
 function isError({ status = 200 }, { ok = true, error = "", stack = "" }) {
 	return ok !== true || error.length > 0 || status >= 400 || stack.length > 0
@@ -177,10 +175,6 @@ async function readIdStart(dispatch, action) {
 async function createStart(dispatch, action) {
 	// temp
 
-	if (action.path === PATH_LOGOUT) {
-		dispatch(docActions.createSuccess(action, { ...action.payload, code: 200, err: 0, error: 0 }))
-		return
-	}
 	const response = action.form
 		? await rawFetchFormDataPromise(action.path, "post", action.payload)
 		: await rawFetchPromise(action.path, "post", action.payload)

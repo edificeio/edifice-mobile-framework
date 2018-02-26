@@ -10,12 +10,17 @@ import {
 import {create, read, readCheck, readNext} from "./docs"
 import { Message, IThreadModel } from '../model/Thread';
 
-export const readConversation = (page = 0) => read(replace1(PATH_CONVERSATION, page), false);
 export const readNextThreads = id => readCheck(PATH_NEW_MESSAGES, id, false);
 export const readPrevThreads = id => readCheck(PATH_PREVIOUS_MESSAGES, id, false);
 export const createConversation = payload => create(PATH_CREATE_CONVERSATION, payload, false);
 
 console.log(Conf);
+
+export const clearConversation = dispatch => () => {
+	dispatch({
+		type: "CLEAR_CONVERSATION"
+	});
+}
 
 export const readNextConversation = dispatch => async page => {
 	dispatch({
@@ -47,9 +52,7 @@ export const markAsRead = (thread) => {
 	fetch(`${Conf.platform}/conversation/message/${thread.id}`)
 }
 
-export const deleteThread = dispatch => async (
-	conversation: IThreadModel
-) => {
+export const deleteThread = dispatch => async (conversation: IThreadModel) => {
 	dispatch({
 		type: "DELETE_THREAD_CONVERSATION",
 		data: { conversationId: conversation.id },
