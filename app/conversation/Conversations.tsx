@@ -95,7 +95,9 @@ function getTitle(displayNames) {
  */
 
 export default connect((state: any) => ({
-	conversations: state.threads.payload.filter(t => !state.threads.filterCriteria || (t.subject && t.subject.indexOf(state.threads.filterCriteria) !== -1)),
+	conversations: state.threads.payload.filter(
+		t => !state.threads.filterCriteria || (t.subject && t.subject.toLowerCase().indexOf(state.threads.filterCriteria.toLowerCase()) !== -1)
+	),
 	userId: state.auth.userId
 }), 
 dispatch => ({
