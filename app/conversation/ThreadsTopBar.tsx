@@ -5,14 +5,15 @@ import {
 	TouchableBarPanel,
 	TouchableEndBarPanel,
 	CenterPanel,
-	ContainerTopBar,
-	CenterTextPanel,
+	ContainerTopBar
 } from "../ui/ContainerBar"
 import { Icon } from "../ui/icons/Icon";
 import { layoutSize } from "../constants/layoutSize"
 import { TextStyle } from "react-native"
 import { RowAvatars } from "../ui/avatars/RowAvatars";
 import { Size } from "../ui/avatars/Avatar";
+import { Title } from '../ui/ContainerBar';
+import { Back } from "../ui/headers/Back";
 
 export interface IThreadsBarProps {
 	navigation?: any
@@ -47,12 +48,10 @@ export class ThreadsTopBar extends React.PureComponent<IThreadsBarProps, {}> {
 
 		return (
 			<ContainerTopBar>
-				<TouchableBarPanel onPress={() => navigation.goBack()}>
-					<Icon size={layoutSize.LAYOUT_22} name={"back"} color={"white"} />
-				</TouchableBarPanel>
+				<Back navigation={ navigation } />
 				<CenterPanel onPress={() => this.onPress()}>
 					{!expand && <RowAvatars images={images} size={Size.aligned} />}
-					<CenterTextPanel smallSize={!expand}>{subject}</CenterTextPanel>
+					<Title smallSize={!expand}>{subject}</Title>
 				</CenterPanel>
 				<TouchableEndBarPanel />
 				{expand && (

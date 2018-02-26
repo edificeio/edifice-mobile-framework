@@ -4,8 +4,19 @@ import { CommonStyles } from "../styles/common/styles"
 
 export const ArticleContainer = style.view({
 	paddingTop: 5,
-	paddingBottom: 5
-})
+	paddingBottom: 5,
+	flex: 1,
+	flexDirection: 'column',
+	flexWrap: 'wrap'
+});
+
+export const ArticlePage = style.scrollView({
+	paddingTop: 5,
+	paddingBottom: 5,
+	flex: 1,
+	flexDirection: 'column',
+	flexWrap: 'wrap'
+});
 
 export const Item = style.touchableOpacity(
 	{
@@ -24,9 +35,10 @@ export const Item = style.touchableOpacity(
 
 export const Header = style.view({
 	alignItems: "flex-start",
-	flex: 1,
 	flexDirection: "row",
 	justifyContent: "flex-start",
+	height: 62,
+	width: '100%'
 })
 
 export const LeftPanel = style.view({

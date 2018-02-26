@@ -38,10 +38,8 @@ class Timeline extends React.Component<ITimelineProps, ITimelineState> {
 		}
 	}
 
-	onPress(id: string, index: number, full: boolean) {
-		// show/hide header & footer
-		this.props.navigation.setParams({ header: full ? null : undefined, tabBar: full ? null : undefined })
-		this.flatList.scrollToIndex({ index })
+	openNews(item) {
+		this.props.navigation.navigate('NewsContent', item);
 	}
 
 	shouldComponentUpdate(nextProps, nextState) {
@@ -65,7 +63,7 @@ class Timeline extends React.Component<ITimelineProps, ITimelineState> {
 				ref={list => (this.flatList = list)}
 				removeClippedSubviews
 				renderItem={({ item, index }) => (
-					<News {...item} index={index} onPress={(id, index, full) => this.onPress(id, index, full)} />
+					<News {...item} index={index} onPress={() => this.openNews(item)} />
 				)}
 				style={styles.gridWhite}
 			/>

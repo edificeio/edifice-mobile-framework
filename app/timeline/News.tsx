@@ -8,8 +8,10 @@ import { DateView } from "../ui/DateView"
 import { tr } from "../i18n/t"
 import { CenterPanel, Content, Header, LeftPanel, ArticleContainer } from "../ui/ContainerContent"
 import { Images } from "../ui/Images"
-import { Card } from '../ui/Card';
+import { TouchCard } from '../ui/Card';
 import { SingleAvatar } from "../ui/avatars/SingleAvatar";
+import { Light, Bold } from "../ui/Typography";
+import { Preview } from "../ui/Preview";
 
 interface INewsProps extends INewsModel {
 	onPress?: (id: string, index: number, full: boolean) => void
@@ -33,11 +35,10 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
 	}
 
 	render() {
-		const { full } = this.state
-		const { date, preview = "", senderId, senderName, resourceName, message, images = [] } = this.props
+		const { date, senderId, senderName, resourceName, message, images = [] } = this.props
 		return (
 			<ArticleContainer>
-				<Card onPress={() => this.onPress()}>
+				<TouchCard onPress={() => this.onPress()}>
 					<Header>
 						<LeftPanel>
 							<SingleAvatar userId={senderId} />
@@ -51,27 +52,13 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
 							<DateView date={date} short={false} />
 						</CenterPanel>
 					</Header>
-					{preview.length ? <Content nb={1}>{this.state.full ? message : preview}</Content> : <View />}
+					<Preview textContent={ message } />
 					{images.length ? <Images images={images} /> : <View />}
-				</Card>
+				</TouchCard>
 			</ArticleContainer>
 		)
 	}
 }
-
-const Bold = style.text({
-	color: CommonStyles.textColor,
-	fontSize: layoutSize.LAYOUT_14,
-	fontFamily: CommonStyles.primaryFontFamily,
-	fontWeight: "600",
-})
-
-const Light = style.text({
-	color: CommonStyles.textColor,
-	fontSize: layoutSize.LAYOUT_12,
-	fontFamily: CommonStyles.primaryFontFamilyLight,
-	fontWeight: "400",
-})
 
 const Margin = style.view({
 	height: layoutSize.LAYOUT_10,

@@ -1,6 +1,6 @@
 import * as React from "react"
 import { layoutSize } from "../constants/layoutSize"
-import { TouchableBarPanel, ContainerTopBar, CenterPanel, CenterTextPanel } from "../ui/ContainerBar"
+import { TouchableBarPanel, ContainerTopBar, CenterPanel, Title } from "../ui/ContainerBar"
 import { SearchIcon } from "../ui/icons/SearchIcon"
 import { navigate } from "../utils/navHelper"
 import { tr } from "../i18n/t"
@@ -35,7 +35,7 @@ export class ConversationTopBar extends React.Component<ConversationTopBarProps,
 						<SearchIcon />
 					</TouchableBarPanel>
 					<CenterPanel>
-						<CenterTextPanel>{tr.Conversation}</CenterTextPanel>
+						<Title>{tr.Conversation}</Title>
 					</CenterPanel>
 					<TouchableBarPanel onPress={() => this.onClose()}>
 						<Icon size={layoutSize.LAYOUT_22} name={"new_message"} color={"white"} />

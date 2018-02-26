@@ -3,21 +3,20 @@ import { StackNavigator } from "react-navigation"
 import Timeline from "../timeline/Timeline"
 import { navOptions } from "../utils/navHelper"
 import { tr } from "../i18n/t"
-
-const customAnimationFunc = () => ({
-	screenInterpolator: () => {
-		return null
-	},
-})
+import { NewsContent } from "./NewsContent";
+import { ResourceTitle } from "../ui/headers/ResourceTitle";
 
 export default StackNavigator(
 	{
 		Timeline: {
 			navigationOptions: ({ navigation }) => navOptions({ title: tr.News }, navigation),
-			screen: Timeline,
+			screen: Timeline
 		},
-	},
-	{
-		transitionConfig: customAnimationFunc,
+		NewsContent: {
+			navigationOptions: ({ navigation }) => navOptions({ 
+				header: <ResourceTitle title={ navigation.state.params.title } subTitle={ navigation.state.params.resourceName} navigation={ navigation } /> 
+			}, navigation),
+			screen: NewsContent
+		}
 	}
-)
+);

@@ -12,10 +12,11 @@ const dataTypes = {
 			id: news._id,
 			images: [],
 			message: adaptator(news.message).toText(),
-			preview: adaptator(news.message).toOneLineText(),
 			resourceName: news.params.resourceName,
+			htmlContent: adaptator(news.message).adapt().toHTML(),
 			senderId: news.sender,
 			senderName: news.params.username,
+			title: news.params.resourceName
 		}
 		if (news.params.resourceUri.indexOf('/info') === -1) {
 			return newsData
@@ -30,20 +31,15 @@ const dataTypes = {
 			const response = await fetch(`${Conf.platform}/actualites/thread/${threadId}/info/${infoId}`)
 			const data = await response.json()
 
-			let previewText = adaptator(data.content).toText()
-			if (previewText.length > 175) {
-				previewText = previewText.substring(0, 172) + "..."
-			}
-
 			return {
 				date: news.date.$date,
 				id: data._id,
 				images: adaptator(data.content).toImagesArray(),
 				message: adaptator(data.content).toText(),
-				preview: previewText,
 				resourceName: data.thread_title,
 				senderId: news.sender,
 				senderName: news.params.username,
+				title: data.title
 			}
 		} catch (e) {
 			//resource has been deleted
@@ -56,10 +52,10 @@ const dataTypes = {
 			id: news._id,
 			images: [],
 			message: adaptator(news.message).toText(),
-			preview: adaptator(news.message).toOneLineText(),
 			resourceName: news.params.blogTitle,
 			senderId: news.sender,
 			senderName: news.params.username,
+			title: news.params.blogTitle
 		}
 
 		if (!news["sub-resource"]) {
@@ -77,10 +73,10 @@ const dataTypes = {
 				id: data._id,
 				images: adaptator(data.content).toImagesArray(),
 				message,
-				preview: message.length > 175 ? message.substring(0, 172) + "..." : message,
 				resourceName: news.params.blogTitle,
 				senderId: data.author.userId,
 				senderName: data.author.username,
+				title: data.title
 			}
 		} catch (e) {
 			//fetching blog failed

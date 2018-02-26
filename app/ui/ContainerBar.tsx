@@ -18,7 +18,7 @@ const containerBar: ViewStyle = {
 
 export const ContainerTopBar = style.view({
 	...containerBar,
-	backgroundColor: CommonStyles.mainColorTheme,
+	backgroundColor: CommonStyles.mainColorTheme
 })
 
 export const ContainerFooterBar = style.view({
@@ -51,7 +51,7 @@ export const CenterPanel = style.touchableOpacity({
 	justifyContent: "center",
 })
 
-export const CenterTextPanel = style.text(
+export const Title = style.text(
 	{
 		color: "white",
 		fontFamily: CommonStyles.primaryFontFamily,
@@ -60,4 +60,14 @@ export const CenterTextPanel = style.text(
 	({ smallSize = false }) => ({
 		fontSize: smallSize ? layoutSize.LAYOUT_12 : layoutSize.LAYOUT_16,
 	})
+)
+
+export const SubTitle = style.text(
+	{
+		color: "white",
+		fontFamily: CommonStyles.primaryFontFamily,
+		fontWeight: "400",
+		fontSize: 12,
+		opacity: 0.5
+	}
 )

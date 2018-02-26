@@ -73,7 +73,8 @@ export class Images extends React.Component<IAvatarsProps, any> {
 }
 
 const ContainerImage = style.view({
-	marginTop: 15
+	marginTop: 15,
+	height: 165
 });
 
 const SoloImage = style.image({
