@@ -79,16 +79,18 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 			payload: []
 		}
 	}
-	if (action.type.indexOf("_SUCCESS") > 0 && action.path.indexOf('conversation/thread/previous-messages') !== -1) {
-		const parentThread = state.payload.find(t => t.id === action.pageNumber);
-		parentThread.messages.forEach(m => markAsRead(m));
-		parentThread.messages = [...action.payload, ...parentThread.messages.map(m => ({ ...m, unread: false }))];
-		
-		parentThread.nb = 0;
+	if(action.type === 'READ_THREAD_CONVERSATION'){
+		const parentThread = state.payload.find(t => t.thread_id === action.threadId);
+		const newParentThread = {
+			...parentThread,
+			messages: action.messages
+		};
 		return {
 			...state,
 			processing: [],
-			payload: [...state.payload]
+			payload: [
+				...state.payload.filter(t => t.thread_id !== action.threadId), parentThread
+			].sort((a, b) => b.date - a.date)
 		}
 	}
 	if(action.type === 'APPEND_NEXT_CONVERSATION'){

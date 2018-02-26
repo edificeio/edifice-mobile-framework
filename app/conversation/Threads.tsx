@@ -9,19 +9,15 @@ import { Row } from "../ui"
 import { tr } from "../i18n/t"
 import { View } from "react-native"
 import { layoutSize } from "../constants/layoutSize"
-import { markAsRead, readNextConversation, readNextThreads, readPrevThreads } from "../actions/conversation";
+import { markAsRead, readNextConversation, readThread } from "../actions/conversation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { IAction } from '../actions/docs';
 
 export interface IThreadsProps {
-	dispatch?: (any) => void
 	navigation?: any
-	readNextThreads: (any) => IAction;
-	readPrevThreads: (any) => IAction;
-	synced: any
+	readThread: (threadId: string) => Promise<void>;
 	threads: Message[];
-	pageNumber: any;
 }
 
 export class Threads extends React.Component<IThreadsProps, any> {
@@ -29,9 +25,8 @@ export class Threads extends React.Component<IThreadsProps, any> {
 	list: any
 
 	componentWillMount() {
-		const { conversationId } = this.props.navigation.state.params;
-		this.props.readNextThreads(conversationId);
-		this.props.readPrevThreads(conversationId);
+		const { thread_id } = this.props.navigation.state.params;
+		this.props.readThread(thread_id);
 	}
 
 	public render() {
@@ -91,21 +86,15 @@ const Text = style.text({
 	color: "#FF858FA9",
 })
 
-
-/**
- * Select the thread of conversation with conversation === conversationId
- */
-const filtering = (threads: IThreadState, conversationId): Message[] => {
-	return [...threads.payload.find(t => t.id === conversationId).messages, ...threads.processing]
+const filtering = (threads: IThreadState, thread_id): Message[] => {
+	return [...threads.payload.find(t => t.thread_id === thread_id).messages, ...threads.processing]
 }
 
-const mapStateToProps = (state, props) => ({
-	threads: filtering(state.threads, props.navigation.state.params.conversationId).sort((a, b) => a.date - b.date),
-	pageNumber: state.threads.pageNumber,
-	synced: state.threads.synced
-})
-
-const dispatchAndMapActions = dispatch =>
-	bindActionCreators({ readNextThreads, readPrevThreads }, dispatch)
-
-export default connect(mapStateToProps, dispatchAndMapActions)(Threads)
+export default connect(
+	(state: any, props: any) => ({
+		threads: filtering(state.threads, props.navigation.state.params.thread_id).sort((a, b) => a.date - b.date)
+	}), 
+	dispatch => ({
+		readThread: (threadId: string) => readThread(dispatch)(threadId)
+	})
+)(Threads)

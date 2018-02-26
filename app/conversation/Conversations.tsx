@@ -26,9 +26,6 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 	swipeRef = undefined;
 
 	public onPress(item) {
-		item.conversationId = item.id;
-		item.userId = this.props.userId;
-
 		this.props.navigation.navigate("Threads", item)
 	}
 
@@ -94,13 +91,15 @@ function getTitle(displayNames) {
  * Select the set of conversations with the filtering criteria
  */
 
-export default connect((state: any) => ({
-	conversations: state.threads.payload.filter(
-		t => !state.threads.filterCriteria || (t.subject && t.subject.toLowerCase().indexOf(state.threads.filterCriteria.toLowerCase()) !== -1)
-	),
-	userId: state.auth.userId
-}), 
-dispatch => ({
-	sync: (page: number) => readNextConversation(dispatch)(page),
-	deleteThread: (conversation: IThreadModel) => deleteThread(dispatch)(conversation)
-}))(Conversations)
+export default connect(
+	(state: any) => ({
+		conversations: state.threads.payload.filter(
+			t => !state.threads.filterCriteria || (t.subject && t.subject.toLowerCase().indexOf(state.threads.filterCriteria.toLowerCase()) !== -1)
+		),
+		userId: state.auth.userId
+	}), 
+	dispatch => ({
+		sync: (page: number) => readNextConversation(dispatch)(page),
+		deleteThread: (conversation: IThreadModel) => deleteThread(dispatch)(conversation)
+	})
+)(Conversations)

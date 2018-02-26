@@ -16,6 +16,21 @@ export const createConversation = payload => create(PATH_CREATE_CONVERSATION, pa
 
 console.log(Conf);
 
+export const readThread = dispatch => async (threadId: string) => {
+	try{
+		const response = await fetch(`${ Conf.platform }/conversation/thread/messages/${threadId}`);
+		const messages = await response.json();
+		dispatch({
+			type: 'READ_THREAD_CONVERSATION',
+			messages: messages,
+			threadId: threadId
+		});
+	}
+	catch(e){
+		console.log(e);
+	}
+}
+
 export const clearConversation = dispatch => () => {
 	dispatch({
 		type: "CLEAR_CONVERSATION"
