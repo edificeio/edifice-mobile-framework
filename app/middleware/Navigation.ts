@@ -1,5 +1,5 @@
-import { CREATE_SUCCESS } from "../constants/docs"
-import { PATH_LOGIN, PATH_LOGOUT, PATH_RECOVER_PASSWORD, PATH_SIGNUP } from "../constants/paths"
+import { CREATE_SUCCESS, READ_SUCCESS } from '../constants/docs';
+import { PATH_LOGIN, PATH_LOGOUT, PATH_RECOVER_PASSWORD, PATH_SIGNUP, PATH_CURRENT_USER } from "../constants/paths"
 import { navigate } from "../utils/navHelper"
 
 export default store => next => action => {
@@ -16,9 +16,8 @@ export default store => next => action => {
 	
 
 	switch (action.path) {
-		case PATH_LOGIN:
-		case PATH_SIGNUP:
-			if (action.type === CREATE_SUCCESS) navigate("Main")
+		case PATH_CURRENT_USER:
+			if (action.type === READ_SUCCESS) navigate("Main")
 			break
 	}
 

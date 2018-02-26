@@ -1,17 +1,9 @@
-import { Conf } from "../Conf"
-import {
-	PATH_CONVERSATION,
-	PATH_CREATE_CONVERSATION,
-	PATH_NEW_MESSAGES,
-	PATH_NEWS,
-	PATH_PREVIOUS_MESSAGES,
-	replace1,
-} from "../constants/paths"
+import { Conf } from "../Conf";
+import { Me } from "../infra/Me";
+import { PATH_CREATE_CONVERSATION, PATH_NEW_MESSAGES, replace1 } from "../constants/paths"
 import {create, read, readCheck, readNext} from "./docs"
 import { Message, IThreadModel } from '../model/Thread';
 
-export const readNextThreads = id => readCheck(PATH_NEW_MESSAGES, id, false);
-export const readPrevThreads = id => readCheck(PATH_PREVIOUS_MESSAGES, id, false);
 export const createConversation = payload => create(PATH_CREATE_CONVERSATION, payload, false);
 
 console.log(Conf);
@@ -89,14 +81,11 @@ export const deleteThread = dispatch => async (conversation: IThreadModel) => {
 	}
 }
 
-export const sendMessage = dispatch => async (
-	data: Message,
-	userId
-) => {
+export const sendMessage = dispatch => async (data: Message) => {
 	data.id = Math.random().toString();
 	dispatch({
 		type: "CONVERSATION_SEND",
-		data: { ...data, conversation: data.parentId, from: userId },
+		data: { ...data, conversation: data.parentId, from: Me.session.userId },
 	})
 
 	try {
@@ -119,7 +108,7 @@ export const sendMessage = dispatch => async (
 
 		dispatch({
 			type: "CONVERSATION_SENT",
-			data: { ...data, conversation: data.parentId, from: userId, thread_id: data.thread_id },
+			data: { ...data, conversation: data.parentId, from: Me.session.userId, thread_id: data.thread_id },
 		});
 	} catch (e) {
 		console.log(e)
