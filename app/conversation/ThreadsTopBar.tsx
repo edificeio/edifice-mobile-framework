@@ -53,7 +53,7 @@ export class ThreadsTopBar extends React.PureComponent<IThreadsBarProps, {}> {
 				<Back navigation={ navigation } />
 				<CenterPanel onPress={() => this.onPress()}>
 					{!expand && <RowAvatars images={images} size={Size.aligned} />}
-					<Title smallSize={!expand}>{subject}</Title>
+					<Title numberOfLines={ 1 } smallSize={!expand}>{subject}</Title>
 				</CenterPanel>
 				<TouchableEndBarPanel />
 				{expand && (
