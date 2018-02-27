@@ -1,7 +1,6 @@
 import style from "glamorous-native"
 import * as React from "react";
 import { Text } from 'react-native';
-import { SwipeListView } from 'react-native-swipe-list-view';
 import { FlatList, View } from 'react-native';
 import Swipeable from "react-native-swipeable"
 import { layoutSize } from "../constants/layoutSize"
