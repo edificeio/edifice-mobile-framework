@@ -38,7 +38,7 @@ export class ConversationTopBar extends React.Component<ConversationTopBarProps,
 						<Title>{tr.Conversation}</Title>
 					</CenterPanel>
 					<TouchableBarPanel onPress={() => this.onClose()}>
-						<Icon size={layoutSize.LAYOUT_22} name={"new_message"} color={"white"} />
+						<Icon size={layoutSize.LAYOUT_22} name={"new_message"} color={"transparent"} />
 					</TouchableBarPanel>
 				</Row>) }
 			</ContainerTopBar>
