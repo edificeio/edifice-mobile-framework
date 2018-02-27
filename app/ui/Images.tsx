@@ -22,7 +22,7 @@ export class Images extends React.Component<IAvatarsProps, any> {
 					<ScrollView horizontal={ true } style={{ flex: 1, flexDirection: 'row', height: '100%' }} contentContainerStyle={{ justifyContent: 'center' }}>
 						{ this.props.images.map((image, index) => (
 						<View style={{ flex: 1, justifyContent: 'center'}} key={ index }>
-							<FitImage style={{ width: Dimensions.get('window').width, height: 250 }} source={ image } />
+							<FitImage resizeMode="contain" style={{ width: Dimensions.get('window').width, height: 250 }} source={ image } />
 						</View>
 					)) }
 					</ScrollView>
