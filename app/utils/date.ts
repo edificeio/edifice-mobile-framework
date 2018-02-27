@@ -4,10 +4,13 @@ export function getTimeToStr(timestamp) {
 	if (sameDay(timestamp)) {
 		const dateHours = new Date(timestamp).getHours()
 		const nowHours = new Date().getHours()
-		const dateMn = new Date(timestamp).getMinutes()
+		let dateMn = new Date(timestamp).getMinutes()
 		const nowMn = new Date().getMinutes()
 		const hours = nowHours - dateHours
-		const mn = nowMn - dateMn
+		let mn = nowMn - dateMn;
+		if(dateMn < 10){
+			(dateMn as any) = '0' + dateMn;
+		}
 
 		if (hours === 0) return tr.agoMinutes(mn)
 		else if (hours === 1) return tr.agoHour(hours)
@@ -28,10 +31,13 @@ export function getTimeToShortStr(timestamp) {
 	if (sameDay(timestamp)) {
 		const dateHours = new Date(timestamp).getHours()
 		const nowHours = new Date().getHours()
-		const dateMn = new Date(timestamp).getMinutes()
+		let dateMn = new Date(timestamp).getMinutes()
 		const nowMn = new Date().getMinutes()
 		const hours = nowHours - dateHours
-		const mn = nowMn - dateMn
+		let mn = nowMn - dateMn;
+		if(dateMn < 10){
+			(dateMn as any) = '0' + dateMn;
+		}
 
 		if (hours === 0) return `${mn} mn`
 		else return `${dateHours}:${dateMn}`
