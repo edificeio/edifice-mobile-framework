@@ -1,6 +1,6 @@
 import style from "glamorous-native"
 import * as React from "react"
-import { FlatList, Image } from "react-native"
+import { FlatList, Image, ScrollView, Modal } from 'react-native';
 import { News } from "./News"
 import { View } from "react-native"
 import styles from "../styles"

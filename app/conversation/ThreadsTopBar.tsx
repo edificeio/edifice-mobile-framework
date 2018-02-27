@@ -1,5 +1,6 @@
 import style from "glamorous-native"
 import * as React from "react";
+import { Me } from "../infra/Me";
 import { CommonStyles } from "../styles/common/styles"
 import {
 	TouchableBarPanel,
@@ -14,6 +15,7 @@ import { RowAvatars } from "../ui/avatars/RowAvatars";
 import { Size } from "../ui/avatars/Avatar";
 import { Title } from '../ui/ContainerBar';
 import { Back } from "../ui/headers/Back";
+
 
 export interface IThreadsBarProps {
 	navigation?: any
@@ -38,11 +40,11 @@ export class ThreadsTopBar extends React.PureComponent<IThreadsBarProps, {}> {
 		const { userId, displayNames, subject } = navigation.state.params
 		const { expand } = this.state
 		const images = displayNames.reduce(
-			(acc, elem) => (userId === elem[0] && displayNames.length !== 1 ? acc : [...acc, elem[0]]),
+			(acc, elem) => (Me.session.userId === elem[0] && displayNames.length !== 1 ? acc : [...acc, elem[0]]),
 			[]
 		)
 		const names = displayNames.reduce(
-			(acc, elem) => (userId === elem[0] && displayNames.length !== 1 ? acc : [...acc, elem[1]]),
+			(acc, elem) => (Me.session.userId === elem[0] && displayNames.length !== 1 ? acc : [...acc, elem[1]]),
 			[]
 		)
 

@@ -19,5 +19,7 @@ export default StackNavigator(
 			}, navigation),
 			screen: NewsContent
 		}
+	}, {
+		headerMode: 'screen'
 	}
 );
