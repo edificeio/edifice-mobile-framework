@@ -12,6 +12,15 @@ export const readThread = dispatch => async (threadId: string) => {
 	try{
 		const response = await fetch(`${ Conf.platform }/conversation/thread/messages/${threadId}`);
 		const messages = await response.json();
+
+		for(let message of messages){
+			if(!message.unread){
+				continue;
+			}
+			message.unread = false;
+			fetch(`${Conf.platform}/conversation/message/${message.id}`);
+		}
+
 		dispatch({
 			type: 'READ_THREAD_CONVERSATION',
 			messages: messages,
@@ -50,13 +59,6 @@ export const readNextConversation = dispatch => async page => {
 			type: "END_REACHED_CONVERSATION",
 		})
 	}
-}
-
-export const markAsRead = (thread) => {
-	if(!thread.unread){
-		return;
-	}
-	fetch(`${Conf.platform}/conversation/message/${thread.id}`)
 }
 
 export const deleteThread = dispatch => async (conversation: IThreadModel) => {

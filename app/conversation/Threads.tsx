@@ -9,7 +9,7 @@ import { Row } from "../ui"
 import { tr } from "../i18n/t"
 import { View } from "react-native"
 import { layoutSize } from "../constants/layoutSize"
-import { markAsRead, readNextConversation, readThread } from "../actions/conversation";
+import { readNextConversation, readThread } from "../actions/conversation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { IAction } from '../actions/docs';

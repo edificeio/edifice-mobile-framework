@@ -1,7 +1,6 @@
 import { PATH_CONVERSATION, PATH_NEW_MESSAGES, PATH_PREVIOUS_MESSAGES } from "../constants/paths"
 import { crudReducer } from "./docs"
 import {ACTION_MODE} from "../actions/docs";
-import { markAsRead } from '../actions/conversation';
 import { Me } from '../infra/Me';
 
 export enum ThreadStatus {
@@ -81,6 +80,7 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 	}
 	if(action.type === 'READ_THREAD_CONVERSATION'){
 		const parentThread = state.payload.find(t => t.thread_id === action.threadId);
+		parentThread.nb = 0;
 		const newParentThread = {
 			...parentThread,
 			messages: action.messages

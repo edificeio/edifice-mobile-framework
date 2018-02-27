@@ -1,6 +1,6 @@
 import style from "glamorous-native"
 import * as React from "react"
-import { View } from "react-native"
+import { View, Text } from "react-native"
 import { layoutSize } from "../constants/layoutSize"
 import { Row } from "."
 
@@ -64,6 +64,9 @@ export class Images extends React.Component<IAvatarsProps, any> {
 						<Column style={{ paddingLeft: 5 }}>
 							<QuarterImage source={images[1]} />
 							<QuarterImage source={images[3]} />
+							{ images.length > 4 && <View style={{ position: 'absolute', bottom: 24, backgroundColor: 'rgba(0,0,0,0.5)', width: 30, height: 30,padding: 5, borderRadius:15, left: '50%', marginLeft: -10 }}>
+								<Text style={{ color: '#FFFFFF', textAlign: 'center' }}>+{ images.length - 4}</Text>
+							</View> }
 						</Column>
 					</Row>
 				</ContainerImage>
