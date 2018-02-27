@@ -1,9 +1,10 @@
 import style from "glamorous-native"
 import * as React from "react"
-import { View, Text, Image, ScrollView, Modal } from "react-native"
+import { View, Text, Image, ScrollView, Modal, Dimensions } from "react-native"
 import { layoutSize } from "../constants/layoutSize"
 import { Row } from ".";
 import { StackNavigator } from "react-navigation";
+import FitImage from 'react-native-fit-image';
 
 export interface IAvatarsProps {
 	images: object[];
@@ -19,9 +20,11 @@ export class Images extends React.Component<IAvatarsProps, any> {
 			<Modal visible={ this.state.fullscreen } onRequestClose={ () => this.setState({ fullscreen: false })} transparent={ true }>
 				<View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)'}}>
 					<ScrollView horizontal={ true } style={{ flex: 1, flexDirection: 'row', height: '100%' }} contentContainerStyle={{ justifyContent: 'center' }}>
-						{ this.props.images.map(image => (<View style={{ flex: 1, justifyContent: 'center'}}>
-							<Image style={{ width: 500, height: 250 }} source={ image } />
-						</View>)) }
+						{ this.props.images.map((image, index) => (
+						<View style={{ flex: 1, justifyContent: 'center'}} key={ index }>
+							<FitImage style={{ width: Dimensions.get('window').width, height: 250 }} source={ image } />
+						</View>
+					)) }
 					</ScrollView>
 				</View>
 			</Modal>

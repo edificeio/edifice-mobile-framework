@@ -89,7 +89,7 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 			...state,
 			processing: [],
 			payload: [
-				...state.payload.filter(t => t.thread_id !== action.threadId), parentThread
+				...state.payload.filter(t => t.thread_id !== action.threadId), newParentThread
 			].sort((a, b) => b.date - a.date)
 		}
 	}

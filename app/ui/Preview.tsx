@@ -10,11 +10,16 @@ export const Preview = ({ textContent }) => {
         previewText = previewText.substring(0, 172) + "... ";
         crop = true;
     }
+    const spliced = previewText.split('\n');
+    if(spliced.length >= 4){
+        previewText = spliced.splice(0,4).join('\n') + '... ';
+        crop = true;
+    }
 
     return (
         <View>
             <Paragraph>
-                <Text>{ previewText }</Text>
+                <Text onLayout={ e => console.log(e) }>{ previewText }</Text>
                 { crop && <A>{ I18n.t("seeMore") }</A> }
             </Paragraph>
         </View>
