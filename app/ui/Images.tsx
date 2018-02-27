@@ -53,7 +53,7 @@ export class Images extends React.Component<IAvatarsProps, any> {
 			)
 		}
 
-		if (images.length === 4) {
+		if (images.length >= 4) {
 			return (
 				<ContainerImage>
 					<Row style={{ 'justifyContent': 'space-between'}}>
