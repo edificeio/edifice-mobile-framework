@@ -39,8 +39,8 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 
 	private nextPage() {
 		for(let i = 0; i < 2; i++){
-			this.pageNumber ++;
 			this.props.sync(this.pageNumber);
+			this.pageNumber ++;
 		}
 	}
 
