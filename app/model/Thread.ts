@@ -103,7 +103,7 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 					thread.nb = c.filter(e => e.unread && e.from !== Me.session.userId).length;
 					thread.messages = c;
 					if(thread.subject){
-						thread.subject = thread.subject.replace(/Tr :|Re :/g, '');
+						thread.subject = thread.subject.replace(/Tr :|Re :|Re:|Tr:/g, '');
 					}
 					return thread;
 			})].sort((a, b) => b.date - a.date)

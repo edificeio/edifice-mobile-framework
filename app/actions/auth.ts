@@ -5,6 +5,7 @@ import { setLogin } from "../utils/Store";
 import { Conf } from "../Conf";
 import { clearTimeline } from './timeline';
 import { clearConversation } from './conversation';
+import { Me } from '../infra/Me';
 
 console.log(Conf);
 
@@ -17,6 +18,19 @@ console.log(Conf);
  */
 export const login = (email, password) => {
 	return createWithFormData(PATH_LOGIN, { email, password, rememberMe: true }, true) // create et non read pour recuperrer le password
+}
+
+let dataFilled = false;
+export const fillUserData = async () => {
+	if(dataFilled){
+		return;
+	}
+	const response = await fetch(`${ Conf.platform }/directory/user/${ Me.session.userId }`);
+	const data = await response.json();
+	for(let prop in data){
+		Me.session[prop] = data[prop];
+	}
+	dataFilled = true;
 }
 
 export const logout = dispatch => async email => {

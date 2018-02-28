@@ -1,13 +1,74 @@
-import { Conf } from "../Conf"
-import { adaptator } from "../infra/HTMLAdaptator"
+import I18n from "react-native-i18n";
+import { fillUserData } from './auth';
+import { Conf } from "../Conf";
+import { adaptator } from "../infra/HTMLAdaptator";
+import { Me } from "../infra/Me";
 
 console.log(Conf)
 
-const availableApps = ["BLOG", "NEWS"]
+const availableApps = ["BLOG", "NEWS", "SCHOOLBOOK"];
+
+let loadingState = 'idle';
+let awaiters = [];
+let schoolbooks = [];
+const loadSchoolbooks = (): Promise<Array<any>> => {
+	return new Promise(async (resolve, reject) => {
+		if(loadingState === 'over'){
+			resolve(schoolbooks);
+			return;
+		}
+		if(loadingState === 'loading'){
+			awaiters.push(() => resolve(schoolbooks));
+			return;
+		}
+		loadingState = 'loading';
+		awaiters.push(() => resolve(schoolbooks));
+		for(let child of Me.session.children){
+			const response = await fetch(`${ Conf.platform }/schoolbook/list/0/${child.id}`);
+			const messages = await response.json();
+			schoolbooks = [...schoolbooks, ...messages];
+		}
+		awaiters.forEach(a => a());
+		loadingState = 'over';
+	});
+}
 
 const dataTypes = {
+	SCHOOLBOOK: async news => {
+		let defaultContent = {
+			date: news.date.$date,
+			id: news._id,
+			images: [],
+			message: adaptator(news.message).toText(),
+			resourceName: I18n.t("schoolbook-appTitle"),
+			htmlContent: adaptator(news.message).adapt().toHTML(),
+			senderId: news.sender,
+			senderName: news.params.username,
+			title: news.params.wordTitle
+		};
+		if(!news.params.resourceUri || news.params.resourceUri.indexOf('word') === -1){
+			return defaultContent;
+		}
+		const schoolbooks = await loadSchoolbooks();
+		const schoolbookId = news.params.resourceUri.split('word/')[1];
+		const schoolbook = schoolbooks.find(s => s.id === parseInt(schoolbookId));
+		if(schoolbook){
+			return {
+				date: news.date.$date,
+				id: news._id,
+				images: adaptator(schoolbook.text).toImagesArray(),
+				message: adaptator(schoolbook.text).toText(),
+				resourceName: I18n.t("schoolbook-appTitle"),
+				htmlContent: adaptator(schoolbook.text).adapt().toHTML(),
+				senderId: news.sender,
+				senderName: news.params.username,
+				title: schoolbook.title
+			}
+		}
+		return defaultContent;
+	},
 	NEWS: async news => {
-		let newsData = {
+		const newsData = {
 			date: news.date.$date,
 			id: news._id,
 			images: [],
@@ -27,7 +88,7 @@ const dataTypes = {
 		const threadSplit = news.params.resourceUri.split('thread/');
 		const threadId = parseInt(threadSplit[threadSplit.length - 1]);
 		try {
-			console.log(`${Conf.platform}/actualites/thread/${threadId}/info/${infoId}`)
+
 			const response = await fetch(`${Conf.platform}/actualites/thread/${threadId}/info/${infoId}`)
 			const data = await response.json()
 
@@ -47,7 +108,7 @@ const dataTypes = {
 		}
 	},
 	BLOG: async news => {
-		let newsData = {
+		const newsData = {
 			date: news.date.$date,
 			id: news._id,
 			images: [],
@@ -113,7 +174,7 @@ export const listTimeline = dispatch => async page => {
 	dispatch({
 		type: "FETCH_TIMELINE",
 	})
-	console.log(`${Conf.platform}/timeline/lastNotifications?page=${page}&${writeTypesParams()}`)
+	await fillUserData();
 	const response = await fetch(`${Conf.platform}/timeline/lastNotifications?page=${page}&${writeTypesParams()}`)
 
 	try {
