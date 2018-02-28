@@ -101,6 +101,9 @@ export class Images extends React.Component<{ images: object[] }, any> {
 	}
 
 	public render() {
+		const { images } = this.props;
+		if (images.length === 0) return <View />;
+		
 		return (
 			<View>
 				<ContainerImage onPress={ () => this.setState({ fullscreen: true })}>
