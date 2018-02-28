@@ -14,7 +14,7 @@ export default StackNavigator(
 		},
 		NewsContent: {
 			navigationOptions: ({ navigation }) => navOptions({ 
-				header: <ResourceTitle title={ navigation.state.params.title } subTitle={ navigation.state.params.resourceName} navigation={ navigation } />,
+				header: <ResourceTitle title={ navigation.state.params.news.title } subTitle={ navigation.state.params.news.resourceName} navigation={ navigation } />,
 				tabBarVisible: false
 			}, navigation),
 			screen: NewsContent
