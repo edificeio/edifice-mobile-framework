@@ -55,7 +55,7 @@ export const Title = style.text(
 	{
 		color: "white",
 		fontFamily: CommonStyles.primaryFontFamily,
-		fontWeight: "400",
+		fontWeight: "400"
 	},
 	({ smallSize = false }) => ({
 		fontSize: smallSize ? layoutSize.LAYOUT_12 : layoutSize.LAYOUT_16,
