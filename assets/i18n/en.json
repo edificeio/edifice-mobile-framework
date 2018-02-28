@@ -19,5 +19,8 @@
   "agoHours": "{{param1}} hours ago",
   "agoMinutes": "{{param1}} mins ago",
   "to_disconnect": "want to logout?",
-  "today": " Today "
+  "today": " Today ",
+  "conversation-deleteThread": "delete this conversation ?",
+  "delete": "Delete",
+  "seeMore": "See more"
 }
