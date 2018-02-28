@@ -38,8 +38,8 @@ class Timeline extends React.Component<ITimelineProps, ITimelineState> {
 		}
 	}
 
-	openNews(item) {
-		this.props.navigation.navigate('NewsContent', item);
+	openNews(item, expend) {
+		this.props.navigation.navigate('NewsContent', { news: item, expend: expend });
 	}
 
 	shouldComponentUpdate(nextProps, nextState) {
@@ -63,7 +63,7 @@ class Timeline extends React.Component<ITimelineProps, ITimelineState> {
 				ref={list => (this.flatList = list)}
 				removeClippedSubviews
 				renderItem={({ item, index }) => (
-					<News {...item} index={index} onPress={() => this.openNews(item)} />
+					<News {...item} index={index} onPress={(expend) => this.openNews(item, expend)} />
 				)}
 				style={styles.gridWhite}
 			/>

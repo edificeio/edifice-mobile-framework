@@ -13,11 +13,18 @@ import { SingleAvatar } from "../ui/avatars/SingleAvatar";
 import { Bold, Light, Paragraph, A } from "../ui/Typography";
 import { Preview } from "../ui/Preview";
 
-export class NewsContent extends React.Component<{ navigation?: any }, { expend: boolean }> {
+export class NewsContent extends React.Component<{ navigation?: any, expend?: boolean }, { expend: boolean }> {
     state = { expend: false }
 
+    constructor(props){
+        super(props);
+        if(this.props.navigation.state.params.expend){
+            this.state.expend = true;
+        }
+    }
+
     newsContent(){
-        const { date, senderId, senderName, resourceName, message, images } = this.props.navigation.state.params;
+        const { date, senderId, senderName, resourceName, message, images } = this.props.navigation.state.params.news;
         return (
             <View>
                 <Header>
@@ -33,7 +40,7 @@ export class NewsContent extends React.Component<{ navigation?: any }, { expend:
                         <DateView date={date} short={false} />
                     </CenterPanel>
                 </Header>
-                { this.state.expend ? <Paragraph>{ message }</Paragraph> : <Preview textContent={ message } /> }
+                { this.state.expend ? <Paragraph>{ message }</Paragraph> : <Preview textContent={ message } onExpend={ () => this.setState({ expend: true }) } /> }
                 <Images images={images} />
             </View>
         )

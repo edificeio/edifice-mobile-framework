@@ -14,7 +14,7 @@ import { Light, Bold } from "../ui/Typography";
 import { Preview } from "../ui/Preview";
 
 interface INewsProps extends INewsModel {
-	onPress?: (id: string, index: number, full: boolean) => void
+	onPress?: (expend?: boolean) => void
 	index: number
 }
 
@@ -27,18 +27,15 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
 		full: false,
 	}
 
-	onPress() {
-		const { full } = this.state
-		this.setState({ full: !full })
-
-		this.props.onPress(this.props.id, this.props.index, !full)
+	open(expend: boolean) {
+		this.props.onPress(expend);
 	}
 
 	render() {
 		const { date, senderId, senderName, resourceName, message, images = [] } = this.props
 		return (
 			<ArticleContainer>
-				<TouchCard onPress={() => this.onPress()}>
+				<TouchCard onPress={() => this.open(false)}>
 					<Header>
 						<LeftPanel>
 							<SingleAvatar userId={senderId} />
@@ -52,7 +49,7 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
 							<DateView date={date} short={false} />
 						</CenterPanel>
 					</Header>
-					<Preview textContent={ message } />
+					<Preview textContent={ message } onExpend={ () => this.open(true) } />
 					{images.length ? <Images images={images} /> : <View />}
 				</TouchCard>
 			</ArticleContainer>

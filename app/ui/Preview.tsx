@@ -3,7 +3,7 @@ import { View, Text } from "react-native";
 import { Paragraph, A } from "./Typography";
 import I18n from "react-native-i18n"
 
-export const Preview = ({ textContent }) => {
+export const Preview = ({ textContent, onExpend }) => {
     let crop = false;
     let previewText = textContent;
     if (previewText.length > 175) {
@@ -20,7 +20,7 @@ export const Preview = ({ textContent }) => {
         <View>
             <Paragraph>
                 <Text onLayout={ e => console.log(e) }>{ previewText }</Text>
-                { crop && <A>{ I18n.t("seeMore") }</A> }
+                { crop && <A onPress={ () => onExpend() }>{ I18n.t("seeMore") }</A> }
             </Paragraph>
         </View>
     )
