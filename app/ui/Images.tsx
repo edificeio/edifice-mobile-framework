@@ -6,6 +6,17 @@ import { Row, Icon } from ".";
 import { StackNavigator } from "react-navigation";
 import FitImage from 'react-native-fit-image';
 
+const Close = style.touchableOpacity({
+	height: 40,
+	width: 40,
+	borderRadius: 20,
+	alignItems: 'center',
+	justifyContent: 'center',
+	position: 'absolute',
+	top: 0,
+	right: 0
+});
+
 export class Images extends React.Component<{ images: object[] }, any> {
 	state = {
 		fullscreen: false
@@ -44,7 +55,9 @@ export class Images extends React.Component<{ images: object[] }, any> {
 						</View>
 					)) }
 					</ScrollView>
-					<Icon size={ 16 } color="#ffffff" name="close" onPress={ () => this.setState({ fullscreen: false })} style={{ position: 'absolute', top: 10, right: 10 }} />
+					<Close onPress={ () => this.setState({ fullscreen: false })}>
+						<Icon size={ 16 } color="#ffffff" name="close" />
+					</Close>
 				</View>
 			</Modal>
 		)
@@ -103,7 +116,7 @@ export class Images extends React.Component<{ images: object[] }, any> {
 	public render() {
 		const { images } = this.props;
 		if (images.length === 0) return <View />;
-		
+
 		return (
 			<View>
 				<ContainerImage onPress={ () => this.setState({ fullscreen: true })}>

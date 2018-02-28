@@ -6,7 +6,7 @@ import { INewsModel } from "../model/Timeline"
 import { CommonStyles } from "../styles/common/styles";
 import { DateView } from "../ui/DateView"
 import { tr } from "../i18n/t"
-import { CenterPanel, Content, Header, LeftPanel, ArticleContainer, ArticlePage } from "../ui/ContainerContent"
+import { CenterPanel, Content, Header, LeftPanel, ArticleContainer, ArticlePage } from '../ui/ContainerContent';
 import { Images } from "../ui/Images"
 import { Card, TouchCard } from '../ui/Card';
 import { SingleAvatar } from "../ui/avatars/SingleAvatar";
@@ -21,7 +21,7 @@ export class NewsContent extends React.Component<{ navigation?: any }, { expend:
         return (
             <View>
                 <Header>
-                            <LeftPanel>
+                    <LeftPanel>
                         <SingleAvatar userId={senderId} />
                     </LeftPanel>
                     <CenterPanel>
@@ -40,20 +40,13 @@ export class NewsContent extends React.Component<{ navigation?: any }, { expend:
     }
 
 	render() {
-        if(!this.state.expend){
-            return (
+		return (
+			<ArticlePage>
                 <ArticleContainer>
-                    <TouchCard onPress={ () => this.setState({ expend: true })}>
+                    <TouchCard onPress={ () => this.setState({ expend: true }) }>
                         { this.newsContent() }
                     </TouchCard>
                 </ArticleContainer>
-            )
-        }
-		return (
-			<ArticlePage>
-				<Card>
-                    { this.newsContent() }
-				</Card>
 			</ArticlePage>
 		)
 	}

@@ -15,7 +15,8 @@ export const ArticlePage = style.scrollView({
 	paddingBottom: 5,
 	flex: 1,
 	flexDirection: 'column',
-	flexWrap: 'wrap'
+	flexWrap: 'wrap',
+	backgroundColor: "rgb(248,248,250)"
 });
 
 export const Item = style.touchableOpacity(
