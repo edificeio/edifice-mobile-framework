@@ -55,13 +55,7 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
 	}
 
 	openNews(item, expend) {
-		Tracking.logEvent('readNews', {
-			'Application': item.application,
-			'Article name': item.title,
-			'Author name': item.senderName,
-			'Published': item.date,
-			'Article id': item.id
-		});
+		Tracking.logEvent('readNews');
 		
 		this.props.navigation.navigate('NewsContent', { news: item, expend: expend });
 	}
