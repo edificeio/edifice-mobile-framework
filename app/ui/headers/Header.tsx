@@ -74,7 +74,6 @@ export const Title = style.text(
 		color: "white",
 		fontFamily: CommonStyles.primaryFontFamily,
 		fontWeight: "400",
-		flex: 1,
 		textAlign: 'left'
 	},
 	({ smallSize = false }) => ({
