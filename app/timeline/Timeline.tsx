@@ -16,7 +16,7 @@ export class TimelineHeader extends React.Component<{ navigation?: any }, undefi
 		return (
             <Header>
 				<HeaderIcon>
-					<Icon size={ 22 } name={ "filter" } color={"#FFFFFF"} />
+					<Icon size={ 22 } name={ "filter" } color={"#FFFFFF"} onPress={ () => this.props.navigation.navigate('FilterTimeline') } />
 				</HeaderIcon>
 			    <AppTitle>{ I18n.t('News') }</AppTitle>
 				<HeaderIcon>
@@ -31,7 +31,8 @@ export interface ITimelineProps {
 	fetching: boolean
 	navigation: any
 	news: any
-	sync: (page: number) => Promise<void>
+	sync: (page: number, availableApps: any) => Promise<void>;
+	availableApps: any;
 }
 
 class Timeline extends React.Component<ITimelineProps, undefined> {
@@ -42,14 +43,14 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
 		this.flatList = null
 		this.pageNumber = 0
 		if (!this.props.fetching) {
-			this.props.sync(this.pageNumber)
+			this.props.sync(this.pageNumber, this.props.availableApps)
 		}
 	}
 
 	nextPage() {
 		//	console.log("nextPage")
 		if (!this.props.fetching) {
-			this.props.sync(++this.pageNumber)
+			this.props.sync(++this.pageNumber, this.props.availableApps)
 		}
 	}
 
@@ -98,9 +99,10 @@ export default connect(
 	(state: any) => ({
 		news: state.timeline.news,
 		fetching: state.timeline.isFetching,
+		availableApps: state.timeline.availableApps
 	}),
 	dispatch => ({
-		sync: (page: number) => listTimeline(dispatch)(page),
+		sync: (page: number, availableApps) => listTimeline(dispatch)(page, availableApps),
 	})
 )(Timeline)
 

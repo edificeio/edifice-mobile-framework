@@ -3,7 +3,7 @@ import { CommonStyles } from "../styles/common/styles";
 
 export const TouchCard = style.touchableOpacity(
 	{
-		backgroundColor: CommonStyles.itemBackgroundColor,
+		backgroundColor: '#FFFFFF',
 		paddingHorizontal: 16,
 		paddingVertical: 12,
         borderBottomColor: CommonStyles.borderBottomItem,
@@ -18,7 +18,7 @@ export const TouchCard = style.touchableOpacity(
 
 export const Card = style.view(
 	{
-		backgroundColor: CommonStyles.itemBackgroundColor,
+		backgroundColor: '#FFFFFF',
 		paddingHorizontal: 16,
 		paddingVertical: 12,
         borderBottomColor: CommonStyles.borderBottomItem,

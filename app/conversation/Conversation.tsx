@@ -5,7 +5,7 @@ import { IThreadModel } from "../model/Thread"
 import { CommonStyles } from "../styles/common/styles"
 import { DateView } from "../ui/DateView"
 import { CircleNumber } from "../ui/CircleNumber"
-import { CenterPanel, Content, Item, LeftPanel, RightPanel } from "../ui/ContainerContent"
+import { CenterPanel, Content, ListItem, LeftPanel, RightPanel } from "../ui/ContainerContent"
 import { Row, ButtonsOkCancel } from "../ui"
 import { trunc } from "../utils/html"
 import { GridAvatars } from "../ui/avatars/GridAvatars";
@@ -22,21 +22,19 @@ export const Conversation = ({ id, subject, date, displayNames, nb, onPress }: I
 	)
 
 	return (
-		<Item nb={nb} onPress={() => onPress(id, displayNames, subject)}>
-			<Row>
-				<LeftPanel>
-					<GridAvatars users={images} />
-				</LeftPanel>
-				<CenterPanel>
-					{getTitle(displayNames, nb)}
-					{subject && subject.length ? <Content nb={nb}>{trunc(subject, layoutSize.LAYOUT_32)}</Content> : <style.View />}
-				</CenterPanel>
-				<RightPanel>
-					<DateView date={ date } nb={nb} />
-					<CircleNumber nb={nb} />
-				</RightPanel>
-			</Row>
-		</Item>
+		<ListItem nb={nb} onPress={() => onPress(id, displayNames, subject)}>
+			<LeftPanel>
+				<GridAvatars users={images} />
+			</LeftPanel>
+			<CenterPanel>
+				{getTitle(displayNames, nb)}
+				{subject && subject.length ? <Content nb={nb}>{trunc(subject, layoutSize.LAYOUT_32)}</Content> : <style.View />}
+			</CenterPanel>
+			<RightPanel>
+				<DateView date={ date } nb={nb} />
+				<CircleNumber nb={nb} />
+			</RightPanel>
+		</ListItem>
 	)
 }
 

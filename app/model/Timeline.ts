@@ -15,10 +15,12 @@ export interface INewsModel {
 }
 
 export interface INewsState {
-	didInvalidate: boolean
-	endReached: boolean
-	isFetching: boolean
-	news: INewsModel[]
+	didInvalidate: boolean;
+	endReached: boolean;
+	isFetching: boolean;
+	news: INewsModel[];
+	availableApps: any;
+	selectedApps: any;
 }
 
 export const Timeline = (
@@ -27,22 +29,33 @@ export const Timeline = (
 		endReached: false,
 		isFetching: false,
 		news: [],
+		availableApps: { "BLOG": true, "NEWS": true, "SCHOOLBOOK": true },
+		selectedApps: { "BLOG": true, "NEWS": true, "SCHOOLBOOK": true }
 	},
 	action
 ) => {
 	//	console.log(action)
 	switch (action.type) {
+		case 'PICK_FILTER_TIMELINE':
+			return {
+				...state,
+				selectedApps: action.selectedApps
+			}
+		case 'FILTER_TIMELINE':
+			return {
+				...state,
+				news: [],
+				availableApps: action.availableApps
+			}
 		case "APPEND_TIMELINE":
 			return {
 				...state,
-				didInvalidate: false,
 				news: [...state.news, ...action.news],
-				isFetching: false,
+				isFetching: false
 			}
 		case "END_REACHED_TIMELINE":
 			return {
 				...state,
-				didInvalidate: false,
 				endReached: true,
 				isFetching: false,
 			}

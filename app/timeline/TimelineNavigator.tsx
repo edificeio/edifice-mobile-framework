@@ -5,7 +5,7 @@ import { navOptions } from "../utils/navHelper"
 import { tr } from "../i18n/t"
 import { NewsContent, NewsContentHeader } from "./NewsContent";
 import { ResourceTitle } from "../ui/headers/ResourceTitle";
-import { Filter, FilterHeader } from "./Filter";
+import { FilterHeader, FilterHeaderConnect, FilterTimelineConnect } from './FilterTimeline';
 
 export default StackNavigator(
 	{
@@ -17,9 +17,10 @@ export default StackNavigator(
 		},
 		FilterTimeline: {
 			navigationOptions: ({ navigation }) => navOptions({ 
-				header: <FilterHeader navigation={ navigation } />,
+				header: <FilterHeaderConnect navigation={ navigation } />,
+				tabBarVisible: false
 			}, navigation),
-			screen: Filter
+			screen: FilterTimelineConnect
 		},
 		NewsContent: {
 			navigationOptions: ({ navigation }) => navOptions({ 

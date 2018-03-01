@@ -19,17 +19,18 @@ export const ArticlePage = style.scrollView({
 	backgroundColor: "rgb(248,248,250)"
 });
 
-export const Item = style.touchableOpacity(
+export const ListItem = style.touchableOpacity(
 	{
-		backgroundColor: CommonStyles.itemBackgroundColor,
+		backgroundColor: '#FFFFFF',
 		paddingHorizontal: layoutSize.LAYOUT_16,
 		paddingVertical: layoutSize.LAYOUT_12,
 		borderBottomColor: CommonStyles.borderBottomItem,
+		flexDirection: 'row'
 	},
 	({ borderBottomWidth = 1, full = false, nb = 0 }) => ({
 		borderLeftWidth: full ? layoutSize.LAYOUT_4 : 0,
 		borderLeftColor: full ? CommonStyles.hightlightColor : "transparent",
-		backgroundColor: nb > 0 ? CommonStyles.nonLue : CommonStyles.itemBackgroundColor,
+		backgroundColor: nb > 0 ? CommonStyles.nonLue : '#FFFFFF',
 		borderBottomWidth,
 	})
 )

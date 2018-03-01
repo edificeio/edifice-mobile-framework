@@ -1,6 +1,7 @@
 import { Text } from "react-native"
 
 export const CommonStyles = {
+	primary: "#2A9CC8",
 	actionColor: "#2A9CC8",
 	actionColorDisabled: "#2A9CC888",
 	backgroundColor: "#F8F8FA",
@@ -18,7 +19,6 @@ export const CommonStyles = {
 	iconColorOn: "#2A9CC8",
 	inputBackColor: "#F8F8FA",
 	inverseColor: "#F8F8FA",
-	itemBackgroundColor: "#FFFFFF",
 	linkColor: "#2a97f5",
 	mainColorTheme: "#2A9CC8",
 	miniTextColor: "#858FA9",

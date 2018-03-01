@@ -60,16 +60,27 @@ export const AppTitle = style.text({
 	textAlign: 'center'
 });
 
+export const HeaderAction = style.text({
+	color: "white",
+	fontFamily: CommonStyles.primaryFontFamily,
+	fontWeight: "400",
+	flex: 1,
+	textAlign: 'right',
+	paddingRight: 20
+});
+
 export const Title = style.text(
 	{
 		color: "white",
 		fontFamily: CommonStyles.primaryFontFamily,
-		fontWeight: "400"
+		fontWeight: "400",
+		flex: 1,
+		textAlign: 'left'
 	},
 	({ smallSize = false }) => ({
 		fontSize: smallSize ? layoutSize.LAYOUT_12 : layoutSize.LAYOUT_16,
 	})
-)
+);
 
 export const SubTitle = style.text(
 	{

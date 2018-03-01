@@ -6,8 +6,6 @@ import { Me } from "../infra/Me";
 
 console.log(Conf)
 
-const availableApps = ["BLOG", "NEWS", "SCHOOLBOOK"];
-
 let loadingState = 'idle';
 let awaiters = [];
 let schoolbooks = [];
@@ -148,10 +146,14 @@ const dataTypes = {
 
 const excludeTypes = ["BLOG_COMMENT", "BLOG_POST_SUBMIT", "BLOG_POST_PUBLISH", "NEWS-COMMENT"]
 
-const writeTypesParams = () => {
-	let params = ""
-	availableApps.forEach(aa => (params += "&type=" + aa))
-	return params
+const writeTypesParams = (availableApps) => {
+	let params = "";
+	for(let app in availableApps){
+		if(availableApps[app]){
+			params += "&type=" + app;
+		}
+	}
+	return params;
 }
 
 const fillData = async (results: any[]) => {
@@ -165,18 +167,34 @@ const fillData = async (results: any[]) => {
 	return newResults
 }
 
+export const pickFilters = dispatch => (selectedApps) => {
+	dispatch({
+		type: "PICK_FILTER_TIMELINE",
+		selectedApps: selectedApps
+	});
+}
+
+export const setFilters = dispatch => (availableApps) => {
+	dispatch({
+		type: "FILTER_TIMELINE",
+		availableApps: availableApps
+	});
+
+	listTimeline(dispatch)(0, availableApps);
+}
+
 export const clearTimeline = dispatch => () => {
 	dispatch({
 		type: "CLEAR_TIMELINE"
 	});
 }
 
-export const listTimeline = dispatch => async page => {
+export const listTimeline = dispatch => async (page, availableApps) => {
 	dispatch({
 		type: "FETCH_TIMELINE",
 	})
 	await fillUserData();
-	const response = await fetch(`${Conf.platform}/timeline/lastNotifications?page=${page}&${writeTypesParams()}`)
+	const response = await fetch(`${Conf.platform}/timeline/lastNotifications?page=${page}&${writeTypesParams(availableApps)}`)
 
 	try {
 		const news = await response.json()

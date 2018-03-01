@@ -10,7 +10,6 @@ import { Icon, IconProps } from "./icons/Icon"
 import { IconOnOff } from "./icons/IconOnOff"
 import { Logo } from "./logo/Logo"
 import { ProgressBar } from "./ProgressBar"
-import { ScrollView } from "./ScrollView"
 
 export {
 	ButtonTextIcon,
@@ -23,7 +22,6 @@ export {
 	IconProps,
 	IconOnOff,
 	ProgressBar,
-	ScrollView,
 	StatusAlert,
 	TextInputError,
 	ValidTextIcon,

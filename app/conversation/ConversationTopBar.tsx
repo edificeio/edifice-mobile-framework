@@ -1,6 +1,6 @@
 import * as React from "react";
 import { layoutSize } from "../constants/layoutSize";
-import { HeaderIcon, Header, CenterPanel, Title } from "../ui/headers/Header";
+import { HeaderIcon, Header, CenterPanel, Title, AppTitle } from "../ui/headers/Header";
 import { SearchIcon } from "../ui/icons/SearchIcon";
 import { navigate } from "../utils/navHelper";
 import { tr } from "../i18n/t";
@@ -25,22 +25,29 @@ export class ConversationTopBar extends React.Component<ConversationTopBarProps,
 		navigation.goBack();
 	}
 
-	public render() {
+	search(){
+		return <Header><SearchBar onClose={ () => this.setState({ searching: false })} path={PATH_CONVERSATION} /></Header>;
+	}
+
+	defaultView(){
 		return (
 			<Header>
-				{ this.state.searching && <SearchBar onClose={ () => this.setState({ searching: false })} path={PATH_CONVERSATION} /> }
-				{ !this.state.searching && (<Row>
-					<HeaderIcon onPress={() => this.setState({ searching: true })}>
-						<SearchIcon />
-					</HeaderIcon>
-					<CenterPanel>
-						<Title>{tr.Conversation}</Title>
-					</CenterPanel>
-					<HeaderIcon onPress={() => this.onClose()}>
-						<Icon size={ 22 } name={"new_message"} color={"transparent"} />
-					</HeaderIcon>
-				</Row>) }
+				<HeaderIcon onPress={() => this.setState({ searching: true })}>
+					<SearchIcon />
+				</HeaderIcon>
+				<AppTitle>{tr.Conversation}</AppTitle>
+				<HeaderIcon onPress={() => this.onClose()}>
+					<Icon size={ 22 } name={"new_message"} color={"transparent"} />
+				</HeaderIcon>
 			</Header>
-		)
+		);
+	}
+
+	public render() {
+		if(this.state.searching){
+			return this.search();
+		}
+		
+		return this.defaultView();
 	}
 }
