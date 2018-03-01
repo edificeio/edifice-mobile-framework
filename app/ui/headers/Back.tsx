@@ -1,12 +1,9 @@
-
-
-import * as React from "react"
-import { View, Text } from "react-native";
-import { ContainerTopBar, Title, SubTitle, TouchableBarPanel } from '../ContainerBar';
+import * as React from "react";
+import { HeaderIcon } from './Header';
 import { Icon } from "..";
 
 export const Back = ({ navigation }) => (
-	<TouchableBarPanel onPress={() => navigation.goBack()}>
+	<HeaderIcon onPress={() => navigation.goBack()}>
         <Icon size={ 22 } name={"back"} color={"white"} />
-    </TouchableBarPanel>
+    </HeaderIcon>
 )

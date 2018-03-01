@@ -1,6 +1,6 @@
 import style from "glamorous-native"
 import * as React from "react"
-import { CenterPanel, ContainerFooterBar, TouchableBarPanel, TouchableEndBarPanel } from "../ui/ContainerBar"
+import { CenterPanel, ContainerFooterBar, HeaderIcon, TouchableEndBarPanel } from "../ui/headers/Header"
 import { layoutSize } from "../constants/layoutSize"
 import { Icon, IconOnOff } from "../ui/index"
 import { tr } from "../i18n/t"
@@ -88,12 +88,12 @@ class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, ThreadsFo
 						value={textMessage}
 					/>
 				</ContainerInput>
-				<TouchableBarPanel onPress={() => this.onPress(Selected.keyboard)}>
+				<HeaderIcon onPress={() => this.onPress(Selected.keyboard)}>
 					<IconOnOff focused={ true } name={"keyboard"} />
-				</TouchableBarPanel>
-				<TouchableBarPanel onPress={() => this.onPress(Selected.camera)}>
+				</HeaderIcon>
+				<HeaderIcon onPress={() => this.onPress(Selected.camera)}>
 					<IconOnOff focused={selected === Selected.camera} name={"camera"} />
-				</TouchableBarPanel>
+				</HeaderIcon>
 				<CenterPanel />
 				<TouchableEndBarPanel onPress={() => this.onValid()}>
 					<ToggleIcon show={ !!this.state.textMessage } icon={ "send_icon" } />

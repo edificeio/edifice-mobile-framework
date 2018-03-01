@@ -3,17 +3,16 @@ import * as React from "react";
 import { Me } from "../infra/Me";
 import { CommonStyles } from "../styles/common/styles"
 import {
-	TouchableBarPanel,
+	HeaderIcon,
 	TouchableEndBarPanel,
 	CenterPanel,
-	ContainerTopBar
-} from "../ui/ContainerBar"
+	Header, Title
+} from "../ui/headers/Header"
 import { Icon } from "../ui/icons/Icon";
 import { layoutSize } from "../constants/layoutSize"
 import { TextStyle } from "react-native"
 import { RowAvatars } from "../ui/avatars/RowAvatars";
 import { Size } from "../ui/avatars/Avatar";
-import { Title } from '../ui/ContainerBar';
 import { Back } from "../ui/headers/Back";
 
 
@@ -49,7 +48,7 @@ export class ThreadsTopBar extends React.PureComponent<IThreadsBarProps, {}> {
 		)
 
 		return (
-			<ContainerTopBar>
+			<Header>
 				<Back navigation={ navigation } />
 				<CenterPanel onPress={() => this.onPress()}>
 					{!expand && <RowAvatars images={images} size={Size.aligned} />}
@@ -63,7 +62,7 @@ export class ThreadsTopBar extends React.PureComponent<IThreadsBarProps, {}> {
 						<Legend12 />
 					</ContainerAvatars>
 				)}
-			</ContainerTopBar>
+			</Header>
 		)
 	}
 }

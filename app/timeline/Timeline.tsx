@@ -7,7 +7,25 @@ import styles from "../styles"
 import { connect } from "react-redux"
 import { listTimeline } from "../actions/timeline"
 import { Tracking } from "../tracking/TrackingManager";
+import { Header, HeaderIcon, Title, AppTitle } from '../ui/headers/Header';
+import { Icon } from "../ui";
+import I18n from 'react-native-i18n';
 
+export class TimelineHeader extends React.Component<{ navigation?: any }, undefined> {
+	render() {
+		return (
+            <Header>
+				<HeaderIcon>
+					<Icon size={ 22 } name={ "filter" } color={"#FFFFFF"} />
+				</HeaderIcon>
+			    <AppTitle>{ I18n.t('News') }</AppTitle>
+				<HeaderIcon>
+					<Icon size={ 22 } name={ "filter" } color={"transparent"} />
+				</HeaderIcon>
+            </Header>
+		)
+	}
+}
 
 export interface ITimelineProps {
 	fetching: boolean
@@ -16,11 +34,7 @@ export interface ITimelineProps {
 	sync: (page: number) => Promise<void>
 }
 
-export interface ITimelineState {
-	scrollTo: number
-}
-
-class Timeline extends React.Component<ITimelineProps, ITimelineState> {
+class Timeline extends React.Component<ITimelineProps, undefined> {
 	flatList: any
 	pageNumber: number
 
@@ -40,7 +54,7 @@ class Timeline extends React.Component<ITimelineProps, ITimelineState> {
 	}
 
 	openNews(item, expend) {
-		Tracking.logEvent('Read a news', {
+		Tracking.logEvent('readNews', {
 			'Application': item.application,
 			'Article name': item.title,
 			'Author name': item.senderName,

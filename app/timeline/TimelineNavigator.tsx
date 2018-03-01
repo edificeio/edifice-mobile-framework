@@ -1,20 +1,29 @@
 import * as React from "react"
 import { StackNavigator } from "react-navigation"
-import Timeline from "../timeline/Timeline"
+import Timeline, { TimelineHeader } from "../timeline/Timeline"
 import { navOptions } from "../utils/navHelper"
 import { tr } from "../i18n/t"
-import { NewsContent } from "./NewsContent";
+import { NewsContent, NewsContentHeader } from "./NewsContent";
 import { ResourceTitle } from "../ui/headers/ResourceTitle";
+import { Filter, FilterHeader } from "./Filter";
 
 export default StackNavigator(
 	{
 		Timeline: {
-			navigationOptions: ({ navigation }) => navOptions({ title: tr.News }, navigation),
+			navigationOptions: ({ navigation }) => navOptions({ 
+				header: <TimelineHeader navigation={ navigation } />
+			}, navigation),
 			screen: Timeline
+		},
+		FilterTimeline: {
+			navigationOptions: ({ navigation }) => navOptions({ 
+				header: <FilterHeader navigation={ navigation } />,
+			}, navigation),
+			screen: Filter
 		},
 		NewsContent: {
 			navigationOptions: ({ navigation }) => navOptions({ 
-				header: <ResourceTitle title={ navigation.state.params.news.title } subTitle={ navigation.state.params.news.resourceName} navigation={ navigation } />,
+				header: <NewsContentHeader navigation={ navigation } />,
 				tabBarVisible: false
 			}, navigation),
 			screen: NewsContent

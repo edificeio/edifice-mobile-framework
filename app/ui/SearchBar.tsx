@@ -3,7 +3,7 @@ import * as React from "react"
 import { layoutSize } from "../constants/layoutSize"
 import { PATH_CONVERSATION } from "../constants/paths"
 import { CommonStyles } from "../styles/common/styles"
-import { ContainerTopBar, TouchableBarPanel } from "./ContainerBar"
+import { Header, HeaderIcon } from "./headers/Header"
 import { CloseIcon, SearchIcon } from "./icons/SearchIcon"
 import {tr} from "../i18n/t";
 import { connect } from "react-redux";
@@ -41,10 +41,10 @@ export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
 
 	public render() {
 		return (
-			<ContainerTopBar>
-				<TouchableBarPanel>
+			<Header>
+				<HeaderIcon>
 					<SearchIcon />
-				</TouchableBarPanel>
+				</HeaderIcon>
 				<TextInput
 					onBlur={ () => this.onClose() }
 					autoFocus={true}
@@ -56,10 +56,10 @@ export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
 					underlineColorAndroid={"transparent"}
 					value={this.state.value}
 				/>
-				<TouchableBarPanel onPress={() => this.onClose()}>
+				<HeaderIcon onPress={() => this.onClose()}>
 					<CloseIcon />
-				</TouchableBarPanel>
-			</ContainerTopBar>
+				</HeaderIcon>
+			</Header>
 		)
 	}
 }

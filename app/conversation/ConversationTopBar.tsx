@@ -1,10 +1,10 @@
-import * as React from "react"
-import { layoutSize } from "../constants/layoutSize"
-import { TouchableBarPanel, ContainerTopBar, CenterPanel, Title } from "../ui/ContainerBar"
-import { SearchIcon } from "../ui/icons/SearchIcon"
-import { navigate } from "../utils/navHelper"
-import { tr } from "../i18n/t"
-import { Icon } from "../ui/index"
+import * as React from "react";
+import { layoutSize } from "../constants/layoutSize";
+import { HeaderIcon, Header, CenterPanel, Title } from "../ui/headers/Header";
+import { SearchIcon } from "../ui/icons/SearchIcon";
+import { navigate } from "../utils/navHelper";
+import { tr } from "../i18n/t";
+import { Icon } from "../ui/index";
 import SearchBar from "../ui/SearchBar";
 import { View } from "react-native";
 import { PATH_CONVERSATION } from "../constants/paths";
@@ -21,27 +21,26 @@ export class ConversationTopBar extends React.Component<ConversationTopBarProps,
 	}
 
 	private onClose() {
-		const { navigation } = this.props
-
-		navigation.goBack()
+		const { navigation } = this.props;
+		navigation.goBack();
 	}
 
 	public render() {
 		return (
-			<ContainerTopBar>
+			<Header>
 				{ this.state.searching && <SearchBar onClose={ () => this.setState({ searching: false })} path={PATH_CONVERSATION} /> }
 				{ !this.state.searching && (<Row>
-					<TouchableBarPanel onPress={() => this.setState({ searching: true })}>
+					<HeaderIcon onPress={() => this.setState({ searching: true })}>
 						<SearchIcon />
-					</TouchableBarPanel>
+					</HeaderIcon>
 					<CenterPanel>
 						<Title>{tr.Conversation}</Title>
 					</CenterPanel>
-					<TouchableBarPanel onPress={() => this.onClose()}>
-						<Icon size={layoutSize.LAYOUT_22} name={"new_message"} color={"transparent"} />
-					</TouchableBarPanel>
+					<HeaderIcon onPress={() => this.onClose()}>
+						<Icon size={ 22 } name={"new_message"} color={"transparent"} />
+					</HeaderIcon>
 				</Row>) }
-			</ContainerTopBar>
+			</Header>
 		)
 	}
 }

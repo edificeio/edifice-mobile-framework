@@ -1,14 +1,14 @@
 import style from "glamorous-native"
 import * as React from "react"
-import { layoutSize } from "../constants/layoutSize"
-import { CommonStyles } from "../styles/common/styles"
+import { layoutSize } from "../../constants/layoutSize"
+import { CommonStyles } from "../../styles/common/styles"
 import { ViewStyle, Platform } from "react-native"
 import { isIphoneX } from "react-native-iphone-x-helper"
 
 const iosStatusBarHeight = isIphoneX() ? 40 : 20
 
 const containerBar: ViewStyle = {
-	alignItems: "flex-start",
+	alignItems: "center",
 	elevation: 5,
 	flexDirection: "row",
 	flexWrap: "wrap",
@@ -16,7 +16,7 @@ const containerBar: ViewStyle = {
 	paddingTop: Platform.OS === "ios" ? iosStatusBarHeight : 0,
 }
 
-export const ContainerTopBar = style.view({
+export const Header = style.view({
 	...containerBar,
 	backgroundColor: CommonStyles.mainColorTheme
 })
@@ -38,7 +38,7 @@ const sensitiveStylePanel: ViewStyle = {
 	width: layoutSize.LAYOUT_58,
 }
 
-export const TouchableBarPanel = style.touchableOpacity(sensitiveStylePanel)
+export const HeaderIcon = style.touchableOpacity(sensitiveStylePanel)
 export const TouchableEndBarPanel = style.touchableOpacity({
 	...sensitiveStylePanel,
 	alignSelf: "flex-end",
@@ -50,6 +50,15 @@ export const CenterPanel = style.touchableOpacity({
 	height: layoutSize.LAYOUT_56,
 	justifyContent: "center",
 })
+
+export const AppTitle = style.text({
+	color: "white",
+	fontFamily: CommonStyles.primaryFontFamily,
+	fontWeight: "400",
+	fontSize: 16,
+	flex: 1,
+	textAlign: 'center'
+});
 
 export const Title = style.text(
 	{
