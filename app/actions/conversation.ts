@@ -3,6 +3,7 @@ import { Me } from "../infra/Me";
 import { PATH_CREATE_CONVERSATION, PATH_NEW_MESSAGES, replace1 } from "../constants/paths"
 import {create, read, readCheck, readNext} from "./docs"
 import { Message, IThreadModel } from '../model/Thread';
+import { Tracking } from '../tracking/TrackingManager';
 
 export const createConversation = payload => create(PATH_CREATE_CONVERSATION, payload, false);
 
@@ -20,6 +21,10 @@ export const readThread = dispatch => async (threadId: string) => {
 			message.unread = false;
 			fetch(`${Conf.platform}/conversation/message/${message.id}`);
 		}
+
+		Tracking.logEvent('Read a conversation', {
+			Application: 'conversation'
+		});
 
 		dispatch({
 			type: 'READ_THREAD_CONVERSATION',
@@ -107,6 +112,11 @@ export const sendMessage = dispatch => async (data: Message) => {
 		let json = await response.json();
 		data.newId = json.id;
 		data.date = Date.now();
+
+		Tracking.logEvent('Sent a message', {
+			Application: 'Conversation',
+			Length: data.body.length - 9
+		});
 
 		dispatch({
 			type: "CONVERSATION_SENT",

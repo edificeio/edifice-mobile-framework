@@ -8,7 +8,7 @@ import { Icon } from "../ui/index"
 import SearchBar from "../ui/SearchBar";
 import { View } from "react-native";
 import { PATH_CONVERSATION } from "../constants/paths";
-import { Row } from "../ui/Row";
+import { Row } from "../ui/Grid";
 
 export interface ConversationTopBarProps {
 	navigation?: any

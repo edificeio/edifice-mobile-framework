@@ -1,9 +1,9 @@
 import styled from "glamorous-native"
 import * as React from "react"
 import { layoutSize } from "../constants/layoutSize"
-import { RowProperties } from "../ui/index"
-import { Row } from "../ui/Row"
+import { RowProperties } from "../ui/index";
 import {tr} from "../i18n/t";
+import { Row } from "../ui/Grid";
 
 const Container = (props: RowProperties) => (
 	<Row

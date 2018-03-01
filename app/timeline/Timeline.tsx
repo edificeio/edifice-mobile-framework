@@ -6,6 +6,7 @@ import { View } from "react-native"
 import styles from "../styles"
 import { connect } from "react-redux"
 import { listTimeline } from "../actions/timeline"
+import { Tracking } from "../tracking/TrackingManager";
 
 
 export interface ITimelineProps {
@@ -39,6 +40,14 @@ class Timeline extends React.Component<ITimelineProps, ITimelineState> {
 	}
 
 	openNews(item, expend) {
+		Tracking.logEvent('Read a news', {
+			'Application': item.application,
+			'Article name': item.title,
+			'Author name': item.senderName,
+			'Published': item.date,
+			'Article id': item.id
+		});
+		
 		this.props.navigation.navigate('NewsContent', { news: item, expend: expend });
 	}
 

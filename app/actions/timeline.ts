@@ -157,8 +157,9 @@ const writeTypesParams = () => {
 const fillData = async (results: any[]) => {
 	const newResults = []
 	for (let result of results) {
-		let newResult = await dataTypes[result.type](result)
-		newResults.push(newResult)
+		let newResult = await dataTypes[result.type](result);
+		newResult.application = result.type.toLowerCase();
+		newResults.push(newResult);
 	}
 
 	return newResults

@@ -3,7 +3,7 @@ import { Text } from "react-native"
 import { tr } from "../i18n/t"
 import { ButtonDeconnect } from "./ButtonDeconnect"
 import { ButtonsOkCancel } from "../ui/ButtonsOkCancel"
-import { Col } from "../ui/Col"
+import { Col } from "../ui/Grid"
 import { ModalBox, ModalContent } from "../ui/Modal"
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
