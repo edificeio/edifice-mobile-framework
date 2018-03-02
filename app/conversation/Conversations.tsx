@@ -16,6 +16,7 @@ import { ModalBox, ModalContent } from "../ui/Modal"
 import { ButtonsOkCancel } from "../ui";
 import { tr } from "../i18n/t";
 import I18n from "react-native-i18n"
+import { EmptyScreen } from "../ui/EmptyScreen";
 
 export interface IConversationsProps {
 	conversations: IThreadModel[];
@@ -46,6 +47,13 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 
 	public render() {
 		const { conversations } = this.props;
+		if (!conversations || conversations.length === 0){
+			return <EmptyScreen 
+				image={ require('../../assets/images/empty-screen/espacedoc.png') } 
+				text={ I18n.t('conversation-emptyScreenText') } 
+				title={ I18n.t('conversation-emptyScreenTitle') } />
+		}
+
 		return (
 			<View>
 				<ModalBox backdropOpacity={0.5} isVisible={this.state.deleteThread !== undefined}>
