@@ -56,23 +56,28 @@ const dataTypes = {
 		if(!news.params.resourceUri || news.params.resourceUri.indexOf('word') === -1){
 			return defaultContent;
 		}
-		const schoolbooks = await loadSchoolbooks();
-		const schoolbookId = news.params.resourceUri.split('word/')[1];
-		const schoolbook = schoolbooks.find(s => s.id === parseInt(schoolbookId));
-		if(schoolbook){
-			return {
-				date: news.date.$date,
-				id: news._id,
-				images: adaptator(schoolbook.text).toImagesArray(),
-				message: adaptator(schoolbook.text).toText(),
-				resourceName: I18n.t("schoolbook-appTitle"),
-				htmlContent: adaptator(schoolbook.text).adapt().toHTML(),
-				senderId: news.sender,
-				senderName: news.params.username,
-				title: schoolbook.title
+		try{
+			const schoolbooks = await loadSchoolbooks();
+			const schoolbookId = news.params.resourceUri.split('word/')[1];
+			const schoolbook = schoolbooks.find(s => s.id === parseInt(schoolbookId));
+			if(schoolbook){
+				return {
+					date: news.date.$date,
+					id: news._id,
+					images: adaptator(schoolbook.text).toImagesArray(),
+					message: adaptator(schoolbook.text).toText(),
+					resourceName: I18n.t("schoolbook-appTitle"),
+					htmlContent: adaptator(schoolbook.text).adapt().toHTML(),
+					senderId: news.sender,
+					senderName: news.params.username,
+					title: schoolbook.title
+				}
 			}
+			return defaultContent;
 		}
-		return defaultContent;
+		catch(e){
+			return defaultContent;
+		}
 	},
 	NEWS: async news => {
 		const newsData = {
