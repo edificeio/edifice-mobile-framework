@@ -22,7 +22,9 @@ export const readThread = dispatch => async (threadId: string) => {
 			fetch(`${Conf.platform}/conversation/message/${message.id}`);
 		}
 
-		Tracking.logEvent('readConversation');
+		Tracking.logEvent('readConversation', {
+			application: 'conversation'
+		});
 
 		dispatch({
 			type: 'READ_THREAD_CONVERSATION',
@@ -111,7 +113,10 @@ export const sendMessage = dispatch => async (data: Message) => {
 		data.newId = json.id;
 		data.date = Date.now();
 
-		Tracking.logEvent('sentMessage');
+		Tracking.logEvent('sentMessage', {
+			application: 'conversation',
+			length: data.body.length - 9
+		});
 
 		dispatch({
 			type: "CONVERSATION_SENT",
