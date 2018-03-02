@@ -1,3 +1,5 @@
+import { AsyncStorage } from "react-native";
+
 interface IParams {
 	blogTitle: string
 	username: string
@@ -29,8 +31,8 @@ export const Timeline = (
 		endReached: false,
 		isFetching: false,
 		news: [],
-		availableApps: { "BLOG": true, "NEWS": true, "SCHOOLBOOK": true },
-		selectedApps: { "BLOG": true, "NEWS": true, "SCHOOLBOOK": true }
+		availableApps: undefined,
+		selectedApps: undefined
 	},
 	action
 ) => {

@@ -3,6 +3,7 @@ import { fillUserData } from './auth';
 import { Conf } from "../Conf";
 import { adaptator } from "../infra/HTMLAdaptator";
 import { Me } from "../infra/Me";
+import { AsyncStorage } from "react-native";
 
 console.log(Conf)
 
@@ -167,6 +168,15 @@ const fillData = async (results: any[]) => {
 	return newResults
 }
 
+const storedFilters = async () => {
+	const apps = await AsyncStorage.getItem('timeline-filters');
+	if(!apps){
+		return { "BLOG": true, "NEWS": true, "SCHOOLBOOK": true };
+	}
+	return JSON.parse(apps);
+}
+const storeFilters = async (availableApps) => await AsyncStorage.setItem('timeline-filters', JSON.stringify(availableApps));
+
 export const pickFilters = dispatch => (selectedApps) => {
 	dispatch({
 		type: "PICK_FILTER_TIMELINE",
@@ -180,6 +190,7 @@ export const setFilters = dispatch => (availableApps) => {
 		availableApps: availableApps
 	});
 
+	storeFilters(availableApps);
 	listTimeline(dispatch)(0, availableApps);
 }
 
@@ -194,6 +205,19 @@ export const listTimeline = dispatch => async (page, availableApps) => {
 		type: "FETCH_TIMELINE",
 	})
 	await fillUserData();
+	
+	if(!availableApps){
+		availableApps = await storedFilters();
+		dispatch({
+			type: "FILTER_TIMELINE",
+			availableApps: availableApps
+		});
+
+		dispatch({
+			type: "PICK_FILTER_TIMELINE",
+			selectedApps: availableApps
+		});
+	}
 	const response = await fetch(`${Conf.platform}/timeline/lastNotifications?page=${page}&${writeTypesParams(availableApps)}`)
 
 	try {
