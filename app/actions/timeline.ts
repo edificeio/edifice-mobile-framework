@@ -22,11 +22,19 @@ const loadSchoolbooks = (): Promise<Array<any>> => {
 		}
 		loadingState = 'loading';
 		awaiters.push(() => resolve(schoolbooks));
-		for(let child of Me.session.children){
-			const response = await fetch(`${ Conf.platform }/schoolbook/list/0/${child.id}`);
-			const messages = await response.json();
-			schoolbooks = [...schoolbooks, ...messages];
+		if(Me.session.type.indexOf('Student') !== -1){
+			const response = await fetch(`${ Conf.platform }/schoolbook/list/0/${Me.session.userId}`);
+				const messages = await response.json();
+				schoolbooks = [...schoolbooks, ...messages];
 		}
+		else{
+			for(let child of Me.session.children){
+				const response = await fetch(`${ Conf.platform }/schoolbook/list/0/${child.id}`);
+				const messages = await response.json();
+				schoolbooks = [...schoolbooks, ...messages];
+			}
+		}
+		
 		awaiters.forEach(a => a());
 		loadingState = 'over';
 	});

@@ -10,6 +10,7 @@ import { Tracking } from "../tracking/TrackingManager";
 import { Header, HeaderIcon, Title, AppTitle } from '../ui/headers/Header';
 import { Icon } from "../ui";
 import I18n from 'react-native-i18n';
+import { EmptyScreen } from "../ui/EmptyScreen";
 
 export class TimelineHeader extends React.Component<{ navigation?: any }, undefined> {
 	render() {
@@ -75,7 +76,10 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
 	public render() {
 		const { news } = this.props
 
-		if (!news || news.length === 0) return <View />
+		if (!news || news.length === 0) return <EmptyScreen 
+			image={ require('../../assets/images/empty-screen/espacedoc.png') } 
+			text={ I18n.t('timeline-emptyScreenText') } 
+			title={ I18n.t('timeline-emptyScreenTitle') } />
 
 		return (
 			<FlatList

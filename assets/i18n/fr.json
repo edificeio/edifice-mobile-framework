@@ -25,6 +25,8 @@
   "timeline-blogFilter": "Blog",
   "timeline-schoolbookFilter": "Carnet de liaison",
   "timeline-newsFilter": "Actualités",
+  "timeline-emptyScreenTitle": "C’est désert... Il y a quelqu’un ?",
+  "timeline-emptyScreenText": "C’est calme ici... Vous connaissez l’expression \"le calme avant la tempête\" ?",
   "conversation-deleteThread": "supprimer cette conversation ?",
   "schoolbook-appTitle": "Carnet de liaison",
   "delete": "Supprimer",

@@ -6,7 +6,7 @@ interface Session{
     userId: string;
     type: string[];
     displayName: string;
-    children: User[]
+    children: User[];
 }
 
 export const Me = {

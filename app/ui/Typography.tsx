@@ -22,9 +22,28 @@ export const Paragraph = style.text({
     color: CommonStyles.textColor
 });
 
+export const Quote = style.text({
+	color: 'rgba(133,143,169,1)',
+    fontFamily: CommonStyles.primaryFontFamily,
+	fontSize: 14,
+	fontWeight: "400",
+	textAlign: 'center',
+	marginTop: 20,
+	marginBottom: 20
+});
+
 export const A = style.text({
     fontFamily: CommonStyles.primaryFontFamily,
     fontSize: 12,
     marginTop: 10,
     color: CommonStyles.actionColor
+});
+
+export const H1 = style.text({
+	color: CommonStyles.primary,
+	fontSize: 18,
+	fontFamily: CommonStyles.primaryFontFamily,
+	fontWeight: "600",
+	marginTop: 20,
+	marginBottom: 20
 });
