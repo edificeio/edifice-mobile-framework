@@ -34,7 +34,6 @@ export class Threads extends React.Component<IThreadsProps, any> {
 		return (
 			<FlatList
 				data={threads}
-				keyExtractor={item => item.id}
 				renderItem={({ item }) => this.renderItem(item)}
 				style={styles.grid}
 				ref={ref => (this.list = ref)}
@@ -66,7 +65,7 @@ export class Threads extends React.Component<IThreadsProps, any> {
 
 	private renderItem(item: Message) {
 		return (
-			<View>
+			<View key={ item.id }>
 				{this.showTodayDate(item) && this.displayTodayDate()}
 				<Thread {...item} />
 			</View>
