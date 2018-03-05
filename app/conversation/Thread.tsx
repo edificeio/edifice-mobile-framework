@@ -1,13 +1,13 @@
 import style from "glamorous-native"
 import * as React from "react"
-import { ViewStyle, Text } from "react-native"
-import { adaptator } from "../infra/HTMLAdaptator";
-import { IThreadModel, ThreadStatus, Message } from '../model/Thread';
+import { ViewStyle, Text } from "react-native";
 import { CommonStyles } from "../styles/common/styles"
 import { DateView } from "../ui/DateView"
 import { tr } from "../i18n/t"
 import { SingleAvatar } from "../ui/avatars/SingleAvatar";
 import { Me } from "../infra/Me";
+import { Message, ThreadStatus } from "../model/conversation";
+import { adaptator } from "../infra/HTMLAdaptator";
 
 export const Thread = ({ body, date, displayNames = [], from = "", status }: Message) => {
 	const my = from === Me.session.userId

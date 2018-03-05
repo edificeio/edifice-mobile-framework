@@ -1,69 +1,79 @@
 import * as React from "react"
-import { Text } from "react-native"
-import TextInputError from "../connectors/ui/TextInputError"
-import { ERR_INPUT } from "../constants/errFormInput"
-import { tr } from "../i18n/t"
-import { IAuthModel } from "../model/Auth"
+import { View, TextInput } from "react-native"
+import { IAuthModel } from "../model/Auth";
 import { navigate } from "../utils/navHelper"
-import { Col, Form, Logo, ValidTextIcon } from "../ui/index"
+import { connect } from "react-redux";
+import { login } from '../actions/auth';
+import { Form, Logo, ValidTextIcon } from "../ui";
+import { tr } from "../i18n/t";
+import { ErrorMessage } from '../ui/Typography';
+import { TextInputLine } from "../ui/forms/TextInputLine";
 
-import styles from "../styles/index"
+export class Login extends React.Component<{
+	auth: IAuthModel
+	login: (email: string, password: string) => Promise<void>;
+	navigation?: any
+}, { email: string, password: string, typing: boolean }> {
 
-export interface ILoginState {
-	email: string
-	password: string
-}
+	state = {
+		email: '',
+		password: '',
+		typing: false
+	};
 
-export interface ILoginProps {
-	auth?: IAuthModel
-	login?: (email: string, password: string) => void
-	onRoute?: (route: string) => void
-}
-
-export class Login extends React.Component<ILoginProps, ILoginState> {
-	public state = {
-		email: this.props.auth.email || "",
-		password: "",
+	get isDisabled(){
+		return !this.state.email || !this.state.password;
 	}
 
-	public isDisabled() {
-		const { email, password } = this.state
-
-		return email.length === 0 || password.length === 0
+	async login(){
+		await this.props.login(this.state.email, this.state.password);
+		this.setState({ ...this.state, password: '', typing: false });
 	}
 
 	public render() {
-		const { login } = this.props
-		const { email, password } = this.state
+		console.log(this.props.auth)
+		const { loggedIn, email, password, error } = this.props.auth;
 
 		return (
 			<Form>
 				<Logo />
 
-				<TextInputError
-					errCodes={ERR_INPUT.login}
-					globalErr={true}
-					label={tr.Login}
-					onChange={(email: string) => this.setState({ email })}
-					value={email}
-				/>
+				<TextInputLine 
+					placeholder={tr.Login} 
+					onChangeText={(email) => this.setState({ email: email, typing: true })}
+					value={ this.state.email || email }
+					hasError={ error && !this.state.typing } />
+				<TextInputLine 
+					placeholder={tr.Password} 
+					onChangeText={(password: string) => this.setState({ password: password, typing: true })} 
+					secureTextEntry={ true } 
+					value={ this.state.password || password }
+					hasError={ error && !this.state.typing } />
 
-				<TextInputError
-					errCodes={ERR_INPUT.login}
-					globalErr={true}
-					label={tr.Password}
-					onChange={(password: string) => this.setState({ password })}
-					secureTextEntry
-					value={password}
-					showErr={true}
-				/>
+				<ValidTextIcon 
+					onPress={ () => this.login() } 
+					disabled={ this.isDisabled } 
+					title={tr.Connect} />
 
-				<ValidTextIcon onPress={() => login(email, password)} disabled={this.isDisabled()} title={tr.Connect} />
-
-				<Col size={1} style={styles.line}>
-					<Text style={styles.minitext} />
-				</Col>
+				{ (error && !this.state.typing) ? <ErrorMessage>{ error }</ErrorMessage> : <View /> }
 			</Form>
 		)
 	}
 }
+
+export const initialStateWithEmail = email => ({
+	email,
+	password: "",
+	loggedIn: false,
+	synced: true,
+	error: ''
+})
+
+export default connect(
+	(state: any, props: any) => ({
+		auth: state.auth
+	}),
+	dispatch => ({
+		login: (email, password) => login(dispatch)(email, password)
+	})
+)(Login)

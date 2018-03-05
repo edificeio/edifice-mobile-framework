@@ -4,6 +4,7 @@ import { Disable, Row, RowProperties } from "./index"
 import { CommonStyles } from "../styles/common/styles"
 import { Icon } from "./icons/Icon"
 import { KeyboardInjection } from "./KeyboardInjection"
+import { connect } from "react-redux";
 
 export interface ValidTextIconProps {
 	disabled?: boolean
@@ -98,3 +99,9 @@ const isSynced = (synced: boolean[]) => {
 	}
 	return synced.reduce((acc, elemIsSync) => acc || elemIsSync, false)
 }
+
+const mapStateToProps = state => ({
+	synced: [state.auth.synced],
+})
+
+export default connect<{}, {}, ValidTextIconProps>(mapStateToProps)(ValidTextIcon)

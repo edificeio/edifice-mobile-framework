@@ -1,18 +1,15 @@
 import { Conf } from "../Conf";
 import { Me } from "../infra/Me";
-import { PATH_CREATE_CONVERSATION, PATH_NEW_MESSAGES, replace1 } from "../constants/paths"
-import {create, read, readCheck, readNext} from "./docs"
-import { Message, IThreadModel } from '../model/Thread';
+import { PATH_CREATE_CONVERSATION, PATH_NEW_MESSAGES, replace1 } from "../constants/paths";
+import { Message, IThreadModel } from '../model/conversation';
 import { Tracking } from '../tracking/TrackingManager';
-
-export const createConversation = payload => create(PATH_CREATE_CONVERSATION, payload, false);
+import { read } from "../infra/Cache";
 
 console.log(Conf);
 
 export const readThread = dispatch => async (threadId: string) => {
 	try{
-		const response = await fetch(`${ Conf.platform }/conversation/thread/messages/${threadId}`);
-		const messages = await response.json();
+		const messages = await read(`/conversation/thread/messages/${threadId}`);
 
 		for(let message of messages){
 			if(!message.unread){
@@ -49,14 +46,12 @@ export const readNextConversation = dispatch => async page => {
 	});
 
 	console.log(`${Conf.platform}/conversation/threads/list?page=${page}`);
-	const response = await fetch(`${Conf.platform}/conversation/threads/list?page=${page}`)
-
 	try {
-		const threads = await response.json();
-
+		const threads = await read(`/conversation/threads/list?page=${page}`);
 		dispatch({
 			type: "APPEND_NEXT_CONVERSATION",
 			threads: threads,
+			page: page + 1
 		})
 	} catch (e) {
 		console.log(e)

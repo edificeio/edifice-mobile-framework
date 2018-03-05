@@ -2,8 +2,8 @@ import style from "glamorous-native"
 import * as React from "react";
 import { Text } from 'react-native';
 import { FlatList, View } from 'react-native';
-import Swipeable from "react-native-swipeable";
-import { IThreadModel, IThreadState } from '../model/Thread';
+import Swipeable from "react-native-swipeable"
+import { IThreadModel, IThreadState } from '../model/conversation';
 import styles from "../styles/index"
 import { Icon } from "../ui/icons/Icon"
 import { Conversation } from "./Conversation"
@@ -19,7 +19,7 @@ import { EmptyScreen } from "../ui/EmptyScreen";
 import { PageContainer } from "../ui/ContainerContent";
 
 export interface IConversationsProps {
-	conversations: IThreadModel[];
+	conversation: { threads: IThreadModel[], page: number };
 	navigation?: any
 	sync: (page: number) => Promise<void>;
 	deleteThread: (conversation: IThreadModel) => Promise<void>;
@@ -44,15 +44,12 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 	}
 
 	private nextPage() {
-		for(let i = 0; i < 2; i++){
-			this.props.sync(this.pageNumber);
-			this.pageNumber ++;
-		}
+		this.props.sync(this.props.conversation.page);
 	}
 
 	public render() {
-		const { conversations, nbConversations } = this.props;
-		if (nbConversations === 0){
+		const { conversation } = this.props;
+		if (!conversation.threads || conversation.threads.length === 0){
 			return <EmptyScreen 
 				image={ require('../../assets/images/empty-screen/espacedoc.png') } 
 				text={ I18n.t('conversation-emptyScreenText') } 
@@ -73,7 +70,7 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 					</ModalContent>
 				</ModalBox>
 				<FlatList
-					data={conversations}
+					data={conversation.threads }
 					removeClippedSubviews
 					disableVirtualization
 					legacyImplementation={true}
@@ -116,16 +113,8 @@ const RightButton = style.touchableOpacity({
 	paddingLeft: 34,
 });
 
-function getTitle(displayNames) {
-	return displayNames.reduce((acc, elem) => `${acc}, ${elem[1]}`, "")
-}
-
-/**
- * Select the set of conversations with the filtering criteria
- */
-
- const searchText = (thread) => ((thread.subject || '') + ' ' + thread.displayNames.reduce((acc, elem) => `${acc}, ${elem[1]}`, "")).toLowerCase().replace(/[\é\è]/g, 'e');
- const searchFilter = (filter) => filter.toLowerCase().replace(/[\é\è]/g, 'e');
+const searchText = (thread) => ((thread.subject || '') + ' ' + thread.displayNames.reduce((acc, elem) => `${acc}, ${elem[1]}`, "")).toLowerCase().replace(/[\é\è]/g, 'e');
+const searchFilter = (filter) => filter.toLowerCase().replace(/[\é\è]/g, 'e');
 
 export default connect(
 	(state: any) => ({

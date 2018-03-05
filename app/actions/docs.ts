@@ -19,37 +19,6 @@ export interface IAction {
 }
 
 /**
- * Read a REST resource
- *
- * @param {string} path       l'URI de la ressource
- * @param {boolean} synced    say if yourglass displayer
- *
- */
-export const read = (path, synced = false): IAction => ({
-	mode: ACTION_MODE.replace,
-	pageNumber: 0,
-	path,
-	synced,
-	type: TYPES.READ,
-})
-
-/**
- * Read next REST resource (merge result with the state)
- *
- * @param {string} path       l'URI de la ressource
- * @param {string} pageNumber       page to read
- * @param {boolean} synced    say if yourglass displayer
- *
- */
-export const readNext = (path, pageNumber, synced = false): IAction => ({
-	mode: ACTION_MODE.merge,
-	path: replace1(path, pageNumber),
-	pageNumber,
-	synced,
-	type: TYPES.READ,
-})
-
-/**
  * Read next REST resource (replace result with the state)
  *
  * @param {string} path       l'URI de la ressource
@@ -107,32 +76,6 @@ export const readIdSuccess = (action, payload): IAction => ({
 	type: TYPES.READ_SUCCESS,
 })
 
-/**
- * Creation d'une ressource REST
- *
- * @param {string} path       uri de la ressource
- * @param {object} payload    données de l'action
- */
-export const create = (path, payload, synced): IAction => ({
-	path,
-	payload,
-	synced,
-	type: TYPES.CREATE,
-})
-
-/**
- * Creation d'une ressource REST
- *
- * @param {string} path       uri de la ressource
- * @param {object} payload    données de l'action
- */
-export const createWithFormData = (path, payload, synced): IAction => ({
-	form: true,
-	path,
-	payload,
-	synced,
-	type: TYPES.CREATE,
-})
 
 /**
  * Success d'ecriture de la ressource REST
@@ -148,18 +91,6 @@ export const createSuccess = (action, payload): IAction => ({
 	type: TYPES.CREATE_SUCCESS,
 })
 
-/**
- * Update d'une ressource REST
- *
- * @param {string} path       uri parent de la ressource
- * @param {object} payload    données de la ressource contenant l'id de la ressource
- */
-export const update = (path, payload): IAction => ({
-	path,
-	payload,
-	synced: false,
-	type: TYPES.UPDATE,
-})
 
 /**
  * Success de mise à jour de la ressource REST
@@ -173,19 +104,6 @@ export const updateSuccess = (action, payload): IAction => ({
 	payload,
 	synced: false,
 	type: TYPES.UPDATE_SUCCESS,
-})
-
-/**
- * Delete d'une ressource REST
- *
- * @param {string} path       uri parent de la ressource
- * @param {object} payload    données de la ressource contenant l'id de la ressource
- */
-export const del = (path, payload): IAction => ({
-	path,
-	payload,
-	synced: false,
-	type: TYPES.DELETE,
 })
 
 /**

@@ -1,6 +1,5 @@
-import StatusAlert from "../connectors/ui/StatusAlert"
-import TextInputError from "../connectors/ui/TextInputError"
-import ValidTextIcon from "../connectors/ui/ValidTextIcon"
+
+import ValidTextIcon from "./ValidTextIcon";
 import { ButtonsOkCancel } from "./ButtonsOkCancel"
 import { ButtonTextIcon } from "./ButtonTextIcon"
 import { Disable } from "./Disable"
@@ -20,8 +19,6 @@ export {
 	IconProps,
 	IconOnOff,
 	ProgressBar,
-	StatusAlert,
-	TextInputError,
 	ValidTextIcon,
 }
 

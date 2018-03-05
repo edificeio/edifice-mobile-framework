@@ -1,23 +1,82 @@
 import CookieManager from 'react-native-cookies';
-import { PATH_AUTH, PATH_LOGIN, PATH_LOGOUT, PATH_RECOVER_PASSWORD, PATH_SIGNUP } from "../constants/paths"
-import {create, createWithFormData} from "./docs"
+import { PATH_AUTH, PATH_LOGIN, PATH_LOGOUT, PATH_RECOVER_PASSWORD, PATH_SIGNUP } from "../constants/paths";
 import { setLogin } from "../utils/Store";
 import { Conf } from "../Conf";
 import { clearTimeline } from './timeline';
 import { clearConversation } from './conversation';
 import { Me } from '../infra/Me';
+import { read } from '../infra/Cache';
+import { AsyncStorage, Platform } from 'react-native';
+import { tr } from '../i18n/t';
+import { readCurrentUser } from './users';
 
 console.log(Conf);
 
-/**
- *
- * @param {string} email     login du user
- * @param {string} password     password du user
- * @param {boolean} synced    say if we put yourglass
- * @returns {PATH_LOGIN}
- */
-export const login = (email, password) => {
-	return createWithFormData(PATH_LOGIN, { email, password, rememberMe: true }, true) // create et non read pour recuperrer le password
+const getFormData = data => {
+	if (typeof data === "string") {
+		return data
+	}
+
+	const formData = new FormData()
+
+	for (const name in data) {
+		if (name !== "formData") {
+			const value = data[name]
+			if (value instanceof Array) {
+				value.map((val, i) => {
+					formData.append(`${name}[]`, val)
+				})
+			} else {
+				formData.append(name, value)
+			}
+		}
+	}
+	return formData
+}
+
+async function getCookies(response) {
+	const cookie = response.headers.get("Set-Cookie")
+	if (cookie) return new Promise(resolve => resolve(cookie))
+	return await AsyncStorage.getItem("Set-Cookie")
+}
+
+export const login = dispatch => async (email, password) => {
+	const formData = new FormData();
+	formData.append('email', email);
+	formData.append('password', password);
+	formData.append('rememberMe', 'true');
+
+	const opts = {
+		body: formData,
+		headers: new Headers({
+			"Content-type": "multipart/form-data",
+		}),
+		method: 'post'
+	}
+
+	const response = await fetch(`${ Conf.platform }/auth/login`, opts);
+	const data = await response.text();
+
+	if (data.indexOf('/auth') !== -1 && data.indexOf('error') !== -1) {
+		dispatch({
+			type: 'LOGIN_ERROR_AUTH',
+			error: tr.Incorrect_login_or_password,
+		});
+	}
+	else{
+		const cookies = getCookies(response);
+		// Cookie are not persist on IOS so we use AsyncStorage here
+		if (Platform.OS === "ios") {
+			AsyncStorage.setItem("Set-Cookie", JSON.stringify(cookies))
+		}
+
+		setLogin({
+			email: email,
+			password: password
+		});
+
+		readCurrentUser(dispatch)();
+	}
 }
 
 let dataFilled = false;
@@ -25,8 +84,7 @@ export const fillUserData = async () => {
 	if(dataFilled){
 		return;
 	}
-	const response = await fetch(`${ Conf.platform }/directory/user/${ Me.session.userId }`);
-	const data = await response.json();
+	const data = await read(`/directory/user/${ Me.session.userId }`);
 	for(let prop in data){
 		Me.session[prop] = data[prop];
 	}
@@ -42,25 +100,8 @@ export const logout = dispatch => async email => {
 	CookieManager.clearAll();
 }
 
-/**
- * Enregistrement d'un user
- *
- * @param {string} email   login du user
- * @param {string} password   password du user
- * @returns {PATH_SIGNUP}
- */
-export const signup = (email, password) => {
-	return createWithFormData(PATH_SIGNUP, { email, password }, true)
-}
-
-/**
- * Recuperation du password du user
- *
- * @param {string } email     email du user
- * @returns {PATH_RECOVER_PASSWORD}
- */
-export const recoverPassword = email => {
-	return createWithFormData(PATH_RECOVER_PASSWORD, { email }, true)
+export const clearForm = dispatch => () => {
+	dispatch({ type: 'CLEAR_FORM_AUTH' });
 }
 
 /**

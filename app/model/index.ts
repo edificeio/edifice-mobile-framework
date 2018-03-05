@@ -1,15 +1,10 @@
 import { combineReducers } from "redux"
-import { Auth } from "./Auth"
-import { Messages } from "./messages"
+import { Auth } from "./Auth";
 import { Timeline } from './Timeline';
-
-import threads from "./Thread"
-import ui from "./ui";
+import conversation from "./conversation";
 
 export default combineReducers({
 	auth: Auth,
-	messages: Messages,
-	threads,
-	timeline: Timeline,
-	ui: ui
+	conversation: conversation,
+	timeline: Timeline
 });

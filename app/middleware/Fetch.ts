@@ -14,45 +14,12 @@ import {
 import { tr } from "../i18n/t"
 import { AsyncStorage, Platform } from "react-native"
 
-async function getCookies(response) {
-	const cookie = response.headers.get("Set-Cookie")
-	if (cookie) return new Promise(resolve => resolve(cookie))
-	return await AsyncStorage.getItem("Set-Cookie")
-}
-
 function checkResponse(response: Response, path = null) {
 	if (response.headers === undefined) {
 		return new Promise((resolve, reject) => resolve(response.text()))
 	}
 
 	return new Promise((resolve, reject) => {
-		if (path === PATH_LOGIN) {
-			response.text().then(data => {
-				if (data.indexOf('/auth') !== -1 && data.indexOf('error') !== -1) {
-					reject({
-						loggedIn: false,
-						ok: false,
-						status: 511,
-						statusText: tr.Incorrect_login_or_password,
-					});
-					return;
-				}
-				else{
-					const cookies = getCookies(response);
-					// Cookie are not persist on IOS so we use AsyncStorage here
-					if (Platform.OS === "ios") {
-						AsyncStorage.setItem("Set-Cookie", JSON.stringify(cookies))
-					}
-	
-					resolve({
-						loggedIn: true,
-					});
-					return;
-				}
-			});
-			return;
-		}
-	
 		const contentType = response.headers.get("content-type")
 	
 		if (contentType && contentType.indexOf("application/json") !== -1) {
@@ -74,19 +41,6 @@ function isError({ status = 200 }, { ok = true, error = "", stack = "" }) {
 }
 
 const ROOT_PATH = `${Conf.platform}/`
-
-export function rawFetchFormDataPromise(url, method = "post", payload) {
-	const fullPath = ROOT_PATH + url
-	const opts = {
-		body: getFormData(payload),
-		headers: new Headers({
-			"Content-type": "multipart/form-data",
-		}),
-		method,
-	}
-
-	return fetch(fullPath, opts)
-}
 
 export function rawFetchPromise(url, method = "GET", payload = null) {
 	const fullPath = ROOT_PATH + url
@@ -175,9 +129,7 @@ async function readIdStart(dispatch, action) {
 async function createStart(dispatch, action) {
 	// temp
 
-	const response = action.form
-		? await rawFetchFormDataPromise(action.path, "post", action.payload)
-		: await rawFetchPromise(action.path, "post", action.payload)
+	const response = await rawFetchPromise(action.path, "post", action.payload)
 
 	checkResponse(response, action.path)
 		.then(result => {
@@ -216,28 +168,6 @@ async function delStart(dispatch, action) {
 		.catch(err => {
 			dispatch(docActions.crudError(TYPES.DELETE_ERROR, action, err))
 		})
-}
-
-const getFormData = data => {
-	if (typeof data === "string") {
-		return data
-	}
-
-	const formData = new FormData()
-
-	for (const name in data) {
-		if (name !== "formData") {
-			const value = data[name]
-			if (value instanceof Array) {
-				value.map((val, i) => {
-					formData.append(`${name}[]`, val)
-				})
-			} else {
-				formData.append(name, value)
-			}
-		}
-	}
-	return formData
 }
 
 function FormDataToJSON(FormElement) {

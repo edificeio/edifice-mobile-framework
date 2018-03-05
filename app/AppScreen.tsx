@@ -1,7 +1,6 @@
 import * as React from "react"
 import { StatusBar, View } from "react-native"
 import SplashScreen from "react-native-smart-splash-screen";
-import StatusAlert from "./connectors/ui/StatusAlert"
 import { CommonStyles } from "./styles/common/styles"
 import { AppNavigator } from "./navigation/AppNavigator"
 import { Tracking } from "./tracking/TrackingManager"
@@ -45,7 +44,6 @@ export class AppScreen extends React.Component<IAppScreenProps, IAppScreenState>
 			<View style={{ flex: 1 }}>
 				<StatusBar backgroundColor={CommonStyles.statusBarColor} barStyle="light-content" />
 				<ProgressBar />
-				<StatusAlert />
 				<AppNavigator
 					onNavigationStateChange={(prevState, currentState) => {
 						const currentRoute = getCurrentRoute(currentState)

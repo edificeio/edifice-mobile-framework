@@ -54,8 +54,8 @@ export interface IThreadModel {
 
 export interface IThreadState {
 	mode: ACTION_MODE
-	pageNumber: number
-	payload: IThreadModel[]
+	page: number
+	threads: IThreadModel[]
 	filterCriteria: null
 	synced: boolean
 	processing: Message[]
@@ -63,8 +63,8 @@ export interface IThreadState {
 
 const initialState: IThreadState = {
 	mode: ACTION_MODE.replace,
-	pageNumber: 0,
-	payload: [],
+	page: 0,
+	threads: [],
 	filterCriteria: null,
 	synced: true,
 	processing: [],
@@ -75,11 +75,11 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 		return {
 			...state,
 			processing: [],
-			payload: []
+			threads: []
 		}
 	}
 	if(action.type === 'READ_THREAD_CONVERSATION'){
-		const parentThread = state.payload.find(t => t.thread_id === action.threadId);
+		const parentThread = state.threads.find(t => t.thread_id === action.threadId);
 		const newParentThread = {
 			...parentThread,
 			nb: 0,
@@ -88,16 +88,17 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 		return {
 			...state,
 			processing: [],
-			payload: [
-				...state.payload.filter(t => t.thread_id !== action.threadId), newParentThread
+			threads: [
+				...state.threads.filter(t => t.thread_id !== action.threadId), newParentThread
 			].sort((a, b) => b.date - a.date)
 		}
 	}
 	if(action.type === 'APPEND_NEXT_CONVERSATION'){
 		return {
 			...state,
-			payload: [...state.payload, ...action.threads
-				.filter(c => state.payload.find(t => t.id === c[0].id || t.thread_id === c[0].thread_id) === undefined)
+			page: action.page,
+			threads: [...state.threads, ...action.threads
+				.filter(c => state.threads.find(t => t.id === c[0].id || t.thread_id === c[0].thread_id) === undefined)
 				.map(c => {
 					const thread = { ...c[0] };
 					thread.nb = c.filter(e => e.unread && e.from !== Me.session.userId).length;
@@ -109,26 +110,10 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 			})].sort((a, b) => b.date - a.date)
 		}
 	}
-	if (action.type.indexOf("_SUCCESS") > 0 && action.path.indexOf('conversation/threads/list') !== -1) {
-		return {
-			...state,
-			payload: [...state.payload, ...action.payload
-				.filter(c => state.payload.find(t => t.id === c[0].id || t.thread_id === c[0].thread_id) === undefined)
-				.map(c => {
-					const thread = { ...c[0] };
-					thread.nb = c.filter(e => e.unread && e.from !== Me.session.userId).length;
-					thread.messages = c;
-					if(thread.subject){
-						thread.subject = thread.subject.replace(/Tr :|Re :/g, '');
-					}
-					return thread;
-			})].sort((a, b) => b.date - a.date)
-		}
-	}
 	if (action.type === 'DELETE_THREAD_CONVERSATION'){
 		return {
 			...state,
-			payload: [...state.payload.filter(t => t.id !== action.data.conversationId)]
+			threads: [...state.threads.filter(t => t.id !== action.data.conversationId)]
 		}
 	}
 	if (action.type === "CONVERSATION_SEND") {
@@ -140,7 +125,7 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 	}
 	if (action.type === "CONVERSATION_SENT") {
 		const index = state.processing.indexOf(state.processing.find(p => p.id === action.data.id));
-		const parentThread = state.payload.find(t => t.thread_id === action.data.thread_id);
+		const parentThread = state.threads.find(t => t.thread_id === action.data.thread_id);
 		const newParentThread = {
 			...parentThread,
 			messages: [action.data, ...parentThread.messages],
@@ -150,7 +135,7 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 		return {
 			...state,
 			processing: state.processing.filter((e, i) => i !== index),
-			payload: [...state.payload.filter(p => p !== parentThread), newParentThread].sort((a, b) => b.date - a.date)
+			threads: [...state.threads.filter(p => p !== parentThread), newParentThread].sort((a, b) => b.date - a.date)
 		}
 	}
 	if (action.type === "CONVERSATION_FAILED_SEND") {

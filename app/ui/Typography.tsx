@@ -46,3 +46,13 @@ export const H1 = style.text({
 	marginTop: 20,
 	marginBottom: 20
 });
+
+export const ErrorMessage = style.text({
+	alignSelf: "center",
+	color: CommonStyles.errorColor,
+	height: layoutSize.LAYOUT_32,
+	fontFamily: CommonStyles.primaryFontFamily,
+	fontSize: layoutSize.LAYOUT_14,
+	paddingTop: layoutSize.LAYOUT_4,
+	flex: 1,
+})

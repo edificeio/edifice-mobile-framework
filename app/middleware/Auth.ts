@@ -2,11 +2,12 @@ import { login } from "../actions/auth"
 import { error } from "../actions/docs"
 import { CREATE_ERROR, CREATE_SUCCESS } from "../constants/docs"
 import { PATH_AUTH, PATH_LOGIN, PATH_LOGOUT, PATH_RECOVER_PASSWORD, PATH_SIGNUP } from "../constants/paths"
-import { navigate } from "../utils/navHelper"
-import { getLogin, setLogin } from "../utils/Store"
-import { readCurrentUser } from "../actions/users"
+import { navigate } from "../utils/navHelper";
 import { clearConversation } from '../actions/conversation';
 import { clearTimeline } from '../actions/timeline';
+import { Connection } from "../infra/Connection";
+import { getLogin } from "../utils/Store";
+import { readCurrentUser } from '../actions/users';
 
 let initAuth = false
 
@@ -14,12 +15,18 @@ async function auth(dispatch) {
 	try {
 		const { email = "", password = "" } = await getLogin()
 
-		if (email && email.length > 0 && password.length > 0) {
-			dispatch(login(email, password))
-			return
+		if (email && password) {
+			if(Connection.isOnline){
+				login(dispatch)(email, password);
+			}
+			else{
+				readCurrentUser(dispatch)();
+			}
 		}
-
-		navigate("Login", { email })
+		else{
+			navigate("Login", { email: "" });
+		}
+		
 	} catch (e) {
 		navigate("Login", { email: "" })
 	}
@@ -35,18 +42,6 @@ export default store => next => action => {
 
 		const returnValue = next(action)
 
-		if ((action.path === PATH_LOGIN || action.path === PATH_SIGNUP) && action.type === CREATE_SUCCESS) {
-			setLogin({
-				email: action.payload.email,
-				password: action.payload.password,
-			})
-
-			store.dispatch(readCurrentUser());
-		}
-
-		if ((action.path === PATH_LOGIN || action.path === PATH_SIGNUP) && action.type === CREATE_ERROR) {
-			setLogin({ email: "", password: "" })
-		}
 		return returnValue
 	} catch (ex) {
 		store.dispatch(error(-1, ex.message))

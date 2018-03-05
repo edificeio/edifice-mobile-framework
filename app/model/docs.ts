@@ -1,5 +1,5 @@
 import { CREATE_SUCCESS, DELETE_SUCCESS, READ_SUCCESS, UPDATE_SUCCESS } from "../constants/docs"
-import { match, matchs, PATH_LOGIN, PATH_LOGOUT } from "../constants/paths"
+import { match, matchs, PATH_LOGOUT } from "../constants/paths"
 import { ACTION_MODE } from "../actions/docs"
 
 /**

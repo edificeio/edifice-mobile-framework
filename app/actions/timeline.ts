@@ -4,6 +4,7 @@ import { Conf } from "../Conf";
 import { adaptator } from "../infra/HTMLAdaptator";
 import { Me } from "../infra/Me";
 import { AsyncStorage } from "react-native";
+import { read } from "../infra/Cache";
 
 console.log(Conf)
 
@@ -23,13 +24,13 @@ const loadSchoolbooks = (): Promise<Array<any>> => {
 		loadingState = 'loading';
 		awaiters.push(() => resolve(schoolbooks));
 		if(Me.session.type.indexOf('Student') !== -1){
-			const response = await fetch(`${ Conf.platform }/schoolbook/list/0/${Me.session.userId}`);
+			const response = await read(`/schoolbook/list/0/${Me.session.userId}`);
 				const messages = await response.json();
 				schoolbooks = [...schoolbooks, ...messages];
 		}
 		else{
 			for(let child of Me.session.children){
-				const response = await fetch(`${ Conf.platform }/schoolbook/list/0/${child.id}`);
+				const response = await read(`/schoolbook/list/0/${child.id}`);
 				const messages = await response.json();
 				schoolbooks = [...schoolbooks, ...messages];
 			}
@@ -101,8 +102,7 @@ const dataTypes = {
 		const threadId = parseInt(threadSplit[threadSplit.length - 1]);
 		try {
 
-			const response = await fetch(`${Conf.platform}/actualites/thread/${threadId}/info/${infoId}`)
-			const data = await response.json()
+			const data = await read(`/actualites/thread/${threadId}/info/${infoId}`);
 
 			return {
 				date: news.date.$date,
@@ -136,8 +136,7 @@ const dataTypes = {
 		}
 
 		try {
-			const response = await fetch(`${Conf.platform}/blog/post/${news.resource}/${news["sub-resource"]}`)
-			const data = await response.json()
+			const data = await read(`/blog/post/${news.resource}/${news["sub-resource"]}`);
 
 			let message = adaptator(data.content).toText()
 
@@ -233,10 +232,9 @@ export const listTimeline = dispatch => async (page, availableApps) => {
 			selectedApps: availableApps
 		});
 	}
-	const response = await fetch(`${Conf.platform}/timeline/lastNotifications?page=${page}&${writeTypesParams(availableApps)}`)
+	const news = await read(`/timeline/lastNotifications?page=${page}&${writeTypesParams(availableApps)}`)
 
 	try {
-		const news = await response.json()
 		let results = news.results.filter(n => excludeTypes.indexOf(n["event-type"]) === -1 && n.params);
 		const newNews = await fillData(availableApps, results)
 

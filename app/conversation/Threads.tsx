@@ -1,7 +1,7 @@
 import style from "glamorous-native"
 import * as React from "react"
 import { FlatList, KeyboardAvoidingView, Platform } from "react-native"
-import { IThreadModel, IThreadState, Message } from "../model/Thread"
+import { IThreadModel, IThreadState, Message } from "../model/conversation"
 import styles from "../styles/index"
 import { Thread } from "./Thread"
 import { sameDay } from "../utils/date"
@@ -90,13 +90,13 @@ const Text = style.text({
 	color: "#FF858FA9",
 })
 
-const filtering = (threads: IThreadState, thread_id): Message[] => {
-	return [...threads.payload.find(t => t.thread_id === thread_id).messages, ...threads.processing]
+const filtering = (conversation: IThreadState, thread_id): Message[] => {
+	return [...conversation.threads.find(t => t.thread_id === thread_id).messages, ...conversation.processing]
 }
 
 export default connect(
 	(state: any, props: any) => ({
-		threads: filtering(state.threads, props.navigation.state.params.thread_id).sort((a, b) => a.date - b.date),
+		threads: filtering(state.conversation, props.navigation.state.params.thread_id).sort((a, b) => a.date - b.date),
 		headerHeight: state.ui.headerHeight
 	}), 
 	dispatch => ({

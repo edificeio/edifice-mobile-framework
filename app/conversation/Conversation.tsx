@@ -1,6 +1,6 @@
 import style from "glamorous-native"
 import * as React from "react";
-import { IThreadModel } from "../model/Thread"
+import { IThreadModel } from "../model/conversation"
 import { CommonStyles } from "../styles/common/styles"
 import { DateView } from "../ui/DateView"
 import { CircleNumber } from "../ui/CircleNumber"
