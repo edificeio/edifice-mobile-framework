@@ -21,6 +21,15 @@
   "to_disconnect": "want to logout?",
   "today": " Today ",
   "conversation-deleteThread": "delete this conversation ?",
+  "schoolbook-appTitle": "Schoolbook",
   "delete": "Delete",
-  "seeMore": "See more"
+  "seeMore": "See more",
+  "apply": "Apply",
+  "timeline-filterBy": "Filter by",
+  "timeline-allFilter": "All",
+  "timeline-blogFilter": "Blog",
+  "timeline-schoolbookFilter": "Schoolbook",
+  "timeline-newsFilter": "News",
+  "timeline-emptyScreenTitle": "It's deserted... Anybody there?",
+  "timeline-emptyScreenText": "It's quiet around here.... You know the expression \"the calm before the storm\" ?"
 }
