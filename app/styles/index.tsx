@@ -1,6 +1,6 @@
 import { Dimensions, StyleSheet } from "react-native"
 import { layoutSize } from "../constants/layoutSize"
-import { CommonStyles } from "./common/styles"
+import { CommonStyles } from './common/styles';
 
 export const deviceWidth = Dimensions.get("window").width
 
@@ -43,15 +43,15 @@ const styles = StyleSheet.create({
 		color: "green",
 	},
 	formGrid: {
-		backgroundColor: CommonStyles.backgroundColor,
+		backgroundColor: CommonStyles.lightGrey,
 		flex: 1,
 		paddingHorizontal: layoutSize.LAYOUT_34,
 	},
 	grid: {
-		backgroundColor: CommonStyles.backgroundColor,
+		backgroundColor: CommonStyles.lightGrey,
 	},
 	gridWhite: {
-		backgroundColor: "rgb(248,248,250)",
+		backgroundColor: CommonStyles.lightGrey,
 	},
 	identifier: {
 		alignItems: "flex-end",

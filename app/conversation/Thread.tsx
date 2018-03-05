@@ -38,7 +38,7 @@ export const Thread = ({ body, date, displayNames = [], from = "", status }: Mes
 
 const Item = style.view({
 	alignItems: "center",
-	backgroundColor: CommonStyles.backgroundColor,
+	backgroundColor: CommonStyles.lightGrey,
 	flexDirection: "row",
 	justifyContent: "center",
 	paddingHorizontal: layoutSize.LAYOUT_16,

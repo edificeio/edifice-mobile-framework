@@ -61,7 +61,7 @@ const ValidStyle = (props: RowProperties) => (
 	<Row
 		alignItems="center"
 		justifyContent="center"
-		backgroundColor={CommonStyles.backgroundColor}
+		backgroundColor={CommonStyles.lightGrey}
 		height={layoutSize.LAYOUT_38}
 		marginBottom={layoutSize.LAYOUT_20}
 		marginTop={layoutSize.LAYOUT_0}
@@ -76,8 +76,8 @@ const ButtonStyle = style.view(
 		paddingVertical: layoutSize.LAYOUT_9,
 	},
 	({ disabled }) => ({
-		backgroundColor: disabled ? CommonStyles.backgroundColor : CommonStyles.actionColor,
-		borderColor: disabled ? CommonStyles.actionColor : CommonStyles.backgroundColor,
+		backgroundColor: disabled ? CommonStyles.lightGrey : CommonStyles.actionColor,
+		borderColor: disabled ? CommonStyles.actionColor : CommonStyles.lightGrey,
 		borderWidth: disabled ? layoutSize.LAYOUT_1 : 0,
 	})
 )
