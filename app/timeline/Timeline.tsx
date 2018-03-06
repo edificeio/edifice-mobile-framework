@@ -8,7 +8,7 @@ import { connect } from "react-redux"
 import { listTimeline } from "../actions/timeline"
 import { Tracking } from "../tracking/TrackingManager";
 import { Header, HeaderIcon, Title, AppTitle } from '../ui/headers/Header';
-import { Icon } from "../ui";
+import { Icon, Loading } from "../ui";
 import I18n from 'react-native-i18n';
 import { EmptyScreen } from "../ui/EmptyScreen";
 
@@ -29,7 +29,8 @@ export class TimelineHeader extends React.Component<{ navigation?: any }, undefi
 }
 
 export interface ITimelineProps {
-	fetching: boolean
+	isFetching: boolean;
+	endReached: boolean;
 	navigation: any
 	news: any
 	sync: (page: number, availableApps: any) => Promise<void>;
@@ -37,20 +38,19 @@ export interface ITimelineProps {
 }
 
 class Timeline extends React.Component<ITimelineProps, undefined> {
-	flatList: any
-	pageNumber: number
+	flatList: any;
+	pageNumber: number;
 
 	componentDidMount() {
 		this.flatList = null
 		this.pageNumber = 0
-		if (!this.props.fetching) {
+		if (!this.props.isFetching) {
 			this.props.sync(this.pageNumber, this.props.availableApps)
 		}
 	}
 
 	nextPage() {
-		//	console.log("nextPage")
-		if (!this.props.fetching) {
+		if (!this.props.isFetching) {
 			this.props.sync(++this.pageNumber, this.props.availableApps)
 		}
 	}
@@ -74,9 +74,11 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
 	}
 
 	public render() {
-		const { news } = this.props
+		const { news, isFetching } = this.props;
 
-		if (!news || news.length === 0) return <EmptyScreen 
+		if(isFetching) return <Loading />
+
+		if ((!news || news.length === 0) && this.props.endReached) return <EmptyScreen 
 			image={ require('../../assets/images/empty-screen/espacedoc.png') } 
 			text={ I18n.t('timeline-emptyScreenText') } 
 			title={ I18n.t('timeline-emptyScreenTitle') } />
@@ -100,11 +102,11 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
 }
 
 export default connect(
-	(state: any) => ({
-		news: state.timeline.news,
-		fetching: state.timeline.isFetching,
-		availableApps: state.timeline.availableApps
-	}),
+	(state: any) => {
+		console.log(state.timeline)
+		return ({
+		...state.timeline
+	}) },
 	dispatch => ({
 		sync: (page: number, availableApps) => listTimeline(dispatch)(page, availableApps),
 	})

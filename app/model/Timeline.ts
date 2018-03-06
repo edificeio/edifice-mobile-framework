@@ -17,7 +17,6 @@ export interface INewsModel {
 }
 
 export interface INewsState {
-	didInvalidate: boolean;
 	endReached: boolean;
 	isFetching: boolean;
 	news: INewsModel[];
@@ -27,7 +26,6 @@ export interface INewsState {
 
 export const Timeline = (
 	state: INewsState = {
-		didInvalidate: false,
 		endReached: false,
 		isFetching: false,
 		news: [],
@@ -58,13 +56,14 @@ export const Timeline = (
 		case "END_REACHED_TIMELINE":
 			return {
 				...state,
+				news: [...state.news],
 				endReached: true,
-				isFetching: false,
+				isFetching: false
 			}
 		case "FETCH_TIMELINE":
 			return {
 				...state,
-				isFetching: true,
+				isFetching: true
 			}
 		case "CLEAR_TIMELINE":
 			return {

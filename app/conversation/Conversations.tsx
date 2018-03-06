@@ -22,7 +22,8 @@ export interface IConversationsProps {
 	conversations: IThreadModel[];
 	navigation?: any
 	sync: (page: number) => Promise<void>;
-	deleteThread: (conversation: IThreadModel) => Promise<void>
+	deleteThread: (conversation: IThreadModel) => Promise<void>;
+	nbConversations: number;
 }
 
 export class Conversations extends React.Component<IConversationsProps, any> {
@@ -50,8 +51,8 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 	}
 
 	public render() {
-		const { conversations } = this.props;
-		if (!conversations || conversations.length === 0){
+		const { conversations, nbConversations } = this.props;
+		if (nbConversations === 0){
 			return <EmptyScreen 
 				image={ require('../../assets/images/empty-screen/espacedoc.png') } 
 				text={ I18n.t('conversation-emptyScreenText') } 
@@ -127,7 +128,8 @@ export default connect(
 	(state: any) => ({
 		conversations: state.threads.payload.filter(
 			t => !state.threads.filterCriteria || (t.subject && t.subject.toLowerCase().indexOf(state.threads.filterCriteria.toLowerCase()) !== -1)
-		)
+		),
+		nbConversations: state.threads.payload.length
 	}), 
 	dispatch => ({
 		sync: (page: number) => readNextConversation(dispatch)(page),

@@ -240,10 +240,17 @@ export const listTimeline = dispatch => async (page, availableApps) => {
 		let results = news.results.filter(n => excludeTypes.indexOf(n["event-type"]) === -1 && n.params);
 		const newNews = await fillData(availableApps, results)
 
-		dispatch({
-			type: "APPEND_TIMELINE",
-			news: newNews,
-		})
+		if(newNews.length > 0){
+			dispatch({
+				type: "APPEND_TIMELINE",
+				news: newNews
+			});
+		}
+		else{
+			dispatch({
+				type: "END_REACHED_TIMELINE",
+			});
+		}
 	} catch (e) {
 		console.log(e)
 		dispatch({
