@@ -16,8 +16,8 @@ export class TimelineHeader extends React.Component<{ navigation?: any }, undefi
 	render() {
 		return (
             <Header>
-				<HeaderIcon>
-					<Icon size={ 22 } name={ "filter" } color={"#FFFFFF"} onPress={ () => this.props.navigation.navigate('FilterTimeline') } />
+				<HeaderIcon onPress={ () => this.props.navigation.navigate('FilterTimeline') }>
+					<Icon size={ 22 } name={ "filter" } color={"#FFFFFF"} />
 				</HeaderIcon>
 			    <AppTitle>{ I18n.t('News') }</AppTitle>
 				<HeaderIcon>
