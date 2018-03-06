@@ -9,12 +9,9 @@ import SearchBar from "../ui/SearchBar";
 import { View } from "react-native";
 import { PATH_CONVERSATION } from "../constants/paths";
 import { Row } from "../ui/Grid";
+import { connect } from "react-redux";
 
-export interface ConversationTopBarProps {
-	navigation?: any
-}
-
-export class ConversationTopBar extends React.Component<ConversationTopBarProps, { searching: boolean }> {
+export class ConversationTopBar extends React.Component<{ navigation?: any, conversationsIsEmpty: boolean }, { searching: boolean }> {
 	constructor(props){
 		super(props);
 		this.state = { searching: false };
@@ -33,7 +30,7 @@ export class ConversationTopBar extends React.Component<ConversationTopBarProps,
 		return (
 			<Header>
 				<HeaderIcon onPress={() => this.setState({ searching: true })}>
-					<SearchIcon />
+					{ !this.props.conversationsIsEmpty && <SearchIcon /> }
 				</HeaderIcon>
 				<AppTitle>{tr.Conversation}</AppTitle>
 				<HeaderIcon onPress={() => this.onClose()}>
@@ -51,3 +48,9 @@ export class ConversationTopBar extends React.Component<ConversationTopBarProps,
 		return this.defaultView();
 	}
 }
+
+export default connect(
+	(state: any) => ({
+		conversationsIsEmpty: state.threads.payload.length === 0
+	})
+)(ConversationTopBar) as any;

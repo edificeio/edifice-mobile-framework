@@ -1,7 +1,7 @@
 import * as React from "react"
 import { StackNavigator } from "react-navigation"
 import Conversation from "./Conversations"
-import { ConversationTopBar } from "../conversation/ConversationTopBar"
+import ConversationTopBar from "../conversation/ConversationTopBar"
 import SearchBar from "../ui/SearchBar"
 import { PATH_CONVERSATION } from "../constants/paths"
 import { ThreadsNavigator } from "./ThreadsNavigator"
