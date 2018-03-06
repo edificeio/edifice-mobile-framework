@@ -66,7 +66,9 @@ export const HeaderAction = style.text({
 	fontWeight: "400",
 	flex: 1,
 	textAlign: 'right',
-	paddingRight: 20
+	paddingRight: 20,
+	height: 56,
+	lineHeight: 56
 });
 
 export const Title = style.text(

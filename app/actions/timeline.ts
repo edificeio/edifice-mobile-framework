@@ -170,12 +170,14 @@ const writeTypesParams = (availableApps) => {
 	return params;
 }
 
-const fillData = async (results: any[]) => {
+const fillData = async (availableApps, results: any[]) => {
 	const newResults = []
 	for (let result of results) {
-		let newResult = await dataTypes[result.type](result);
-		newResult.application = result.type.toLowerCase();
-		newResults.push(newResult);
+		if(dataTypes[result.type] && availableApps[result.type]){
+			let newResult = await dataTypes[result.type](result);
+			newResult.application = result.type.toLowerCase();
+			newResults.push(newResult);
+		}
 	}
 
 	return newResults
@@ -236,7 +238,7 @@ export const listTimeline = dispatch => async (page, availableApps) => {
 	try {
 		const news = await response.json()
 		let results = news.results.filter(n => excludeTypes.indexOf(n["event-type"]) === -1 && n.params);
-		const newNews = await fillData(results)
+		const newNews = await fillData(availableApps, results)
 
 		dispatch({
 			type: "APPEND_TIMELINE",
