@@ -34,6 +34,10 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 		this.state = {};
 	}
 
+	componentDidMount(){
+		this.nextPage();
+	}
+
 	public onPress(item) {
 		this.props.navigation.navigate("Threads", item)
 	}
