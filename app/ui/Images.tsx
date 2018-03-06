@@ -22,8 +22,13 @@ export class Images extends React.Component<{ images: object[] }, any> {
 		fullscreen: false
 	};
 
+	root: any;
 	carouselRef: any;
 	currentScroll = 0;
+
+	setNativeProps (nativeProps) {
+		this.root.setNativeProps(nativeProps);
+	}
 
 	slideToImage(e){
 		const { width, height } = Dimensions.get('window');
@@ -39,7 +44,7 @@ export class Images extends React.Component<{ images: object[] }, any> {
 		const { width, height } = Dimensions.get('window');
 		return (
 			<Modal visible={ this.state.fullscreen } onRequestClose={ () => this.setState({ fullscreen: false })} transparent={ true }>
-				<View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.90)'}}>
+				<View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.90)'}} ref={ component => this.root = component }>
 					<ScrollView 
 						ref={ e => this.carouselRef = e }
 						horizontal={ true } 

@@ -24,7 +24,6 @@ export const EmptyScreen = ({ image, title, text }) => {
             <View style={{ 
                 height: imageSize, 
                 width: imageSize, 
-                backgroundColor: '#FFFFFF', 
                 borderRadius: imageSize / 2, 
                 justifyContent: 'center', 
                 alignItems: 'center' 
