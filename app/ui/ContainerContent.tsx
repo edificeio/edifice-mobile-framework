@@ -75,3 +75,8 @@ export const Content = style.text(
 		fontFamily: nb > 0 ? CommonStyles.primaryFontFamily : CommonStyles.primaryFontFamilyLight,
 	})
 )
+
+export const PageContainer = style.view({
+	backgroundColor: CommonStyles.lightGrey,
+	flex: 1
+});

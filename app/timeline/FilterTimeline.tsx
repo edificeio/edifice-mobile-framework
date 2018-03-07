@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { Header, Title, HeaderAction } from '../ui/headers/Header';
 import { Close } from "../ui/headers/Close";
 import I18n from 'react-native-i18n';
-import { ListItem } from '../ui/ContainerContent';
+import { ListItem, PageContainer } from '../ui/ContainerContent';
 import { setFilters, pickFilters } from '../actions/timeline';
 import { Bold } from "../ui/Typography";
 import { Checkbox } from "../ui/forms/Checkbox";
@@ -76,7 +76,7 @@ export class FilterTimeline extends React.Component<{ selectedApps: any, pickFil
 		}
 
 		return (
-			<View>
+			<PageContainer>
 				<ListItem style={{ justifyContent: 'space-between'}}>
 					<Bold>{ I18n.t(`timeline-allFilter`) }</Bold>
 					<Checkbox onCheck={ () => this.checkAllApps(true) } onUncheck={ () => this.checkAllApps(false) } checked={ this.allAppsChecked() } />
@@ -87,7 +87,7 @@ export class FilterTimeline extends React.Component<{ selectedApps: any, pickFil
 						<Checkbox onCheck={ () => this.checkApp(app, true) } onUncheck={ () => this.checkApp(app, false) } checked={ app.checked } />
 					</ListItem>
 				))}
-			</View>
+			</PageContainer>
 		)
 	}
 }

@@ -17,6 +17,7 @@ import { ButtonsOkCancel } from "../ui";
 import { tr } from "../i18n/t";
 import I18n from "react-native-i18n"
 import { EmptyScreen } from "../ui/EmptyScreen";
+import { PageContainer } from "../ui/ContainerContent";
 
 export interface IConversationsProps {
 	conversations: IThreadModel[];
@@ -60,7 +61,7 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 		}
 
 		return (
-			<View>
+			<PageContainer>
 				<ModalBox backdropOpacity={0.5} isVisible={this.state.deleteThread !== undefined}>
 					<ModalContent>
 						<Text>{tr.Are_you_sure}</Text>
@@ -82,7 +83,7 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 					style={styles.grid}
 					keyboardShouldPersistTaps={ 'always' }
 				/>
-			</View>
+			</PageContainer>
 		)
 	}
 
