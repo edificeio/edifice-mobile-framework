@@ -3,9 +3,9 @@ import { StackNavigator } from "react-navigation"
 import Conversation from "./Conversations"
 import ConversationTopBar from "../conversation/ConversationTopBar"
 import SearchBar from "../ui/SearchBar"
-import { PATH_CONVERSATION } from "../constants/paths"
-import { ThreadsNavigator } from "./ThreadsNavigator"
+import { PATH_CONVERSATION } from "../constants/paths";
 import { ThreadsTopBar } from "../conversation/ThreadsTopBar"
+import Threads from "./Threads";
 
 const customAnimationFunc = () => ({
 	screenInterpolator: () => {
@@ -22,7 +22,7 @@ export default StackNavigator(
 			}),
 		},
 		Threads: {
-			screen: ThreadsNavigator,
+			screen: Threads,
 			navigationOptions: ({ navigation }) => ({
 				header: <ThreadsTopBar navigation={navigation} />,
 				tabBarVisible: false,

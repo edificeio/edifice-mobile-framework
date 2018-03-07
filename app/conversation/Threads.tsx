@@ -1,6 +1,6 @@
 import style from "glamorous-native"
 import * as React from "react"
-import { FlatList } from "react-native"
+import { FlatList, KeyboardAvoidingView, Platform } from "react-native"
 import { IThreadModel, IThreadState, Message } from "../model/Thread"
 import styles from "../styles/index"
 import { Thread } from "./Thread"
@@ -13,6 +13,7 @@ import { readNextConversation, readThread } from "../actions/conversation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { IAction } from '../actions/docs';
+import ThreadsFooterBar from "./ThreadsFooterBar";
 
 export interface IThreadsProps {
 	navigation?: any
@@ -32,14 +33,17 @@ export class Threads extends React.Component<IThreadsProps, any> {
 	public render() {
 		const { threads } = this.props;
 		return (
-			<FlatList
-				data={threads}
-				renderItem={({ item }) => this.renderItem(item)}
-				style={styles.grid}
-				ref={ref => (this.list = ref)}
-				onContentSizeChange={() => this.list.scrollToEnd({ animated: true })}
-				onLayout={() => this.list.scrollToEnd({ animated: true })}
-			/>
+			<KeyboardAvoidingView style={{ flex: 1 }} behavior={ Platform.OS === "ios" ? 'padding' : undefined } keyboardVerticalOffset={ 64 }>
+				<FlatList
+					data={threads}
+					renderItem={({ item }) => this.renderItem(item)}
+					style={styles.grid}
+					ref={ref => (this.list = ref)}
+					onContentSizeChange={() => this.list.scrollToEnd({ animated: true })}
+					onLayout={() => this.list.scrollToEnd({ animated: true })}
+				/>
+				<ThreadsFooterBar />
+			</KeyboardAvoidingView>
 		)
 	}
 

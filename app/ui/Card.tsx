@@ -8,9 +8,9 @@ export const TouchCard = style.touchableOpacity(
 		paddingVertical: 12,
         borderBottomColor: CommonStyles.borderBottomItem,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.8,
-        shadowRadius: 2,
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.3,
+        shadowRadius: 1,
         elevation: 1,
         flexDirection: 'column'
 	}
@@ -24,7 +24,7 @@ export const Card = style.view(
         borderBottomColor: CommonStyles.borderBottomItem,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.8,
+        shadowOpacity: 0.4,
         shadowRadius: 2,
         elevation: 1,
         flexDirection: 'column'

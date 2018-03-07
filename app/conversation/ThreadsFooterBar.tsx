@@ -116,6 +116,7 @@ const ContainerInput = style.view({
 	justifyContent: "center",
 	paddingLeft: layoutSize.LAYOUT_20,
 	paddingRight: layoutSize.LAYOUT_10,
+	paddingTop: 0,
 	width: layoutSize.LAYOUT_375,
 })
 
