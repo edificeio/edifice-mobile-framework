@@ -7,8 +7,7 @@ import { Thread } from "./Thread"
 import { sameDay } from "../utils/date"
 import { Row } from "../ui"
 import { tr } from "../i18n/t"
-import { View } from "react-native"
-import { layoutSize } from "../constants/layoutSize"
+import { View } from "react-native";
 import { readNextConversation, readThread } from "../actions/conversation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -81,7 +80,7 @@ const Border = style.view({
 	backgroundColor: "#DCDDE0",
 	flex: 1,
 	height: 1,
-	marginHorizontal: layoutSize.LAYOUT_10,
+	marginHorizontal: 10,
 })
 
 const Text = style.text({

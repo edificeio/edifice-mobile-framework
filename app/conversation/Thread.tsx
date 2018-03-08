@@ -1,8 +1,7 @@
 import style from "glamorous-native"
 import * as React from "react"
 import { ViewStyle, Text } from "react-native"
-import { adaptator } from "../infra/HTMLAdaptator"
-import { layoutSize } from "../constants/layoutSize"
+import { adaptator } from "../infra/HTMLAdaptator";
 import { IThreadModel, ThreadStatus, Message } from '../model/Thread';
 import { CommonStyles } from "../styles/common/styles"
 import { DateView } from "../ui/DateView"
@@ -41,13 +40,13 @@ const Item = style.view({
 	backgroundColor: CommonStyles.lightGrey,
 	flexDirection: "row",
 	justifyContent: "center",
-	paddingHorizontal: layoutSize.LAYOUT_16,
-	paddingVertical: layoutSize.LAYOUT_12,
+	paddingHorizontal: 16,
+	paddingVertical: 12,
 })
 
 const LeftPanel = style.view({
-	height: layoutSize.LAYOUT_50,
-	width: layoutSize.LAYOUT_50,
+	height: 50,
+	width: 50,
 })
 
 const CenterPanel = style.view(
@@ -56,19 +55,19 @@ const CenterPanel = style.view(
 	},
 	({ my }): ViewStyle => ({
 		alignItems: my ? "flex-end" : "flex-start",
-		marginLeft: my ? layoutSize.LAYOUT_54 : 5,
-		marginRight: my ? 0 : layoutSize.LAYOUT_54,
+		marginLeft: my ? 54 : 5,
+		marginRight: my ? 0 : 54,
 	})
 )
 
 const ContainerContent = style.view(
 	{
-		borderBottomLeftRadius: layoutSize.LAYOUT_15,
-		borderTopLeftRadius: layoutSize.LAYOUT_15,
-		borderTopRightRadius: layoutSize.LAYOUT_15,
+		borderBottomLeftRadius: 15,
+		borderTopLeftRadius: 15,
+		borderTopRightRadius: 15,
 		justifyContent: "center",
-		marginBottom: layoutSize.LAYOUT_10,
-		padding: layoutSize.LAYOUT_20,
+		marginBottom: 10,
+		padding: 20,
 		shadowColor: CommonStyles.shadowColor,
 		shadowOpacity: CommonStyles.shadowOpacity,
 		shadowOffset: CommonStyles.shadowOffset,
@@ -76,8 +75,8 @@ const ContainerContent = style.view(
 	},
 	({ my }): ViewStyle => ({
 		backgroundColor: my ? CommonStyles.iconColorOn : "white",
-		borderBottomRightRadius: my ? 0 : layoutSize.LAYOUT_15,
-		elevation: my ? layoutSize.LAYOUT_0 : layoutSize.LAYOUT_3,
+		borderBottomRightRadius: my ? 0 : 15,
+		elevation: my ? 0 : 3,
 	})
 )
 
@@ -85,7 +84,7 @@ const Content = style.text(
 	{
 		color: CommonStyles.iconColorOff,
 		fontFamily: CommonStyles.primaryFontFamily,
-		fontSize: layoutSize.LAYOUT_14,
+		fontSize: 14,
 	},
 	({ my }) => ({
 		color: my ? "white" : CommonStyles.textColor,

@@ -1,5 +1,4 @@
-import style from "glamorous-native"
-import { layoutSize } from "../constants/layoutSize"
+import style from "glamorous-native";
 import { CommonStyles } from "../styles/common/styles"
 
 export const ArticleContainer = style.view({
@@ -22,13 +21,13 @@ export const ArticlePage = style.scrollView({
 export const ListItem = style.touchableOpacity(
 	{
 		backgroundColor: '#FFFFFF',
-		paddingHorizontal: layoutSize.LAYOUT_16,
-		paddingVertical: layoutSize.LAYOUT_12,
+		paddingHorizontal: 16,
+		paddingVertical: 12,
 		borderBottomColor: CommonStyles.borderBottomItem,
 		flexDirection: 'row'
 	},
 	({ borderBottomWidth = 1, full = false, nb = 0 }) => ({
-		borderLeftWidth: full ? layoutSize.LAYOUT_4 : 0,
+		borderLeftWidth: full ? 4 : 0,
 		borderLeftColor: full ? CommonStyles.hightlightColor : "transparent",
 		backgroundColor: nb > 0 ? CommonStyles.nonLue : '#FFFFFF',
 		borderBottomWidth,
@@ -44,31 +43,31 @@ export const Header = style.view({
 })
 
 export const LeftPanel = style.view({
-	height: layoutSize.LAYOUT_50,
-	width: layoutSize.LAYOUT_50,
+	height: 50,
+	width: 50,
 })
 
 export const CenterPanel = style.view({
 	alignItems: "flex-start",
 	flex: 1,
 	justifyContent: "center",
-	marginHorizontal: layoutSize.LAYOUT_6,
-	padding: layoutSize.LAYOUT_2,
+	marginHorizontal: 6,
+	padding: 2,
 })
 
 export const RightPanel = style.view({
 	alignItems: "center",
-	height: layoutSize.LAYOUT_50,
+	height: 50,
 	justifyContent: "flex-end",
-	width: layoutSize.LAYOUT_50,
+	width: 50,
 })
 
 export const Content = style.text(
 	{
 		color: CommonStyles.iconColorOff,
 		fontFamily: CommonStyles.primaryFontFamilyLight,
-		fontSize: layoutSize.LAYOUT_12,
-		marginTop: layoutSize.LAYOUT_10,
+		fontSize: 12,
+		marginTop: 10,
 	},
 	({ nb = 0 }) => ({
 		color: nb > 0 ? CommonStyles.textColor : CommonStyles.iconColorOff,

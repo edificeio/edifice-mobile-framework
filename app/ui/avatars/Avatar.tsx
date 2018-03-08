@@ -1,8 +1,7 @@
 import style from "glamorous-native"
 import * as React from "react";
 import RNFetchBlob from "react-native-fetch-blob";
-import { View } from "react-native"
-import { layoutSize } from "..";
+import { View } from "react-native";
 import { Conf } from "../../Conf";
 
 const avatarsMap = {
@@ -24,22 +23,22 @@ export enum Size {
 }
 const StyledImage = {
 	borderColor: "white",
-	borderWidth: layoutSize.LAYOUT_1,
-	margin: layoutSize.LAYOUT_2,
+	borderWidth: 1,
+	margin: 2,
 }
 
 const LargeImage = style.image({
 	...StyledImage,
-	borderRadius: layoutSize.LAYOUT_24,
-	height: layoutSize.LAYOUT_45,
-	width: layoutSize.LAYOUT_45,
+	borderRadius: 24,
+	height: 45,
+	width: 45,
 })
 
 const MediumImage = style.image({
 	...StyledImage,
-	borderRadius: layoutSize.LAYOUT_16,
-	height: layoutSize.LAYOUT_35,
-	width: layoutSize.LAYOUT_35,
+	borderRadius: 16,
+	height: 35,
+	width: 35,
 })
 
 const AlignedImage = style.image(
@@ -66,30 +65,30 @@ const VeryLargeImage = style.image(
 		margin: 0,
 	},
 	({ decorate }) => ({
-		borderWidth: decorate ? layoutSize.LAYOUT_1 : layoutSize.LAYOUT_0,
+		borderWidth: decorate ? 1 : 0,
 	})
 )
 
 const SmallImage = style.image(
 	{
 		borderColor: "white",
-		borderWidth: layoutSize.LAYOUT_1,
+		borderWidth: 1,
 		position: "absolute",
 	},
 	({ count, index }) => ({
-		borderRadius: count === 1 ? layoutSize.LAYOUT_22 : count === 2 ? layoutSize.LAYOUT_15 : layoutSize.LAYOUT_10,
-		height: count === 1 ? layoutSize.LAYOUT_45 : count === 2 ? layoutSize.LAYOUT_31 : layoutSize.LAYOUT_22,
+		borderRadius: count === 1 ? 22 : count === 2 ? 15 : 10,
+		height: count === 1 ? 45 : count === 2 ? 31 : 22,
 		left:
 			count === 2
-				? index === 0 ? layoutSize.LAYOUT_0 : layoutSize.LAYOUT_15
+				? index === 0 ? 0 : 15
 				: index === 0 || (index === 2 && count === 4)
-					? layoutSize.LAYOUT_0
-					: index === 2 ? layoutSize.LAYOUT_14 : layoutSize.LAYOUT_25,
+					? 0
+					: index === 2 ? 14 : 25,
 		top:
 			count === 2
-				? index === 0 ? layoutSize.LAYOUT_0 : layoutSize.LAYOUT_15
-				: index < 2 ? layoutSize.LAYOUT_0 : layoutSize.LAYOUT_25,
-		width: count === 1 ? layoutSize.LAYOUT_45 : count === 2 ? layoutSize.LAYOUT_31 : layoutSize.LAYOUT_22,
+				? index === 0 ? 0 : 15
+				: index < 2 ? 0 : 25,
+		width: count === 1 ? 45 : count === 2 ? 31 : 22,
 	})
 )
 

@@ -1,5 +1,4 @@
-import { Dimensions, StyleSheet } from "react-native"
-import { layoutSize } from "../constants/layoutSize"
+import { Dimensions, StyleSheet } from "react-native";
 import { CommonStyles } from './common/styles';
 
 export const deviceWidth = Dimensions.get("window").width
@@ -18,14 +17,14 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 	},
 	buttonPanel: {
-		marginTop: layoutSize.LAYOUT_7,
+		marginTop: 7,
 	},
 	buttonStyle: {
 		alignSelf: "center",
 		backgroundColor: "transparent",
 		color: CommonStyles.actionColor,
 		fontWeight: "400",
-		paddingHorizontal: layoutSize.LAYOUT_15,
+		paddingHorizontal: 15,
 	},
 	containerErrorText: {
 		alignSelf: "center",
@@ -35,8 +34,8 @@ const styles = StyleSheet.create({
 	containerInfo: {
 		backgroundColor: "#fcfcfccc",
 		flexWrap: "wrap",
-		minHeight: layoutSize.LAYOUT_15,
-		padding: layoutSize.LAYOUT_4,
+		minHeight: 15,
+		padding: 4,
 	},
 	containerInfoText: {
 		alignSelf: "center",
@@ -45,7 +44,7 @@ const styles = StyleSheet.create({
 	formGrid: {
 		backgroundColor: CommonStyles.lightGrey,
 		flex: 1,
-		paddingHorizontal: layoutSize.LAYOUT_34,
+		paddingHorizontal: 34,
 	},
 	grid: {
 		backgroundColor: CommonStyles.lightGrey,
@@ -62,39 +61,39 @@ const styles = StyleSheet.create({
 		borderBottomColor: "#ddd",
 		borderBottomWidth: 1,
 		flexDirection: "column",
-		paddingHorizontal: layoutSize.LAYOUT_16,
-		paddingVertical: layoutSize.LAYOUT_12,
+		paddingHorizontal: 16,
+		paddingVertical: 12,
 	},
 	line: {
 		alignItems: "center",
 		justifyContent: "center",
 	},
 	link: {
-		marginTop: layoutSize.LAYOUT_10,
+		marginTop: 10,
 		textDecorationLine: "underline",
 	},
 	loading: {
 		backgroundColor: "#ff5000",
-		height: layoutSize.LAYOUT_3,
+		height: 3,
 	},
 	marginTop: {
-		marginTop: layoutSize.LAYOUT_8,
+		marginTop: 8,
 	},
 	minitext: {
 		color: CommonStyles.miniTextColor,
 		fontFamily: CommonStyles.primaryFontFamily,
-		fontSize: layoutSize.LAYOUT_14,
+		fontSize: 14,
 		textDecorationLine: "underline",
 	},
 	statusText: {
 		color: CommonStyles.fadColor,
-		fontSize: layoutSize.LAYOUT_7,
+		fontSize: 7,
 		fontWeight: "300",
 	},
 	text: {
 		color: CommonStyles.textInputColor,
 		fontFamily: CommonStyles.primaryFontFamily,
-		fontSize: layoutSize.LAYOUT_14,
+		fontSize: 14,
 	},
 	webview: {
 		backgroundColor: "#eee",

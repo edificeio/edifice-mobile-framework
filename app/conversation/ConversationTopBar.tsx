@@ -1,5 +1,4 @@
 import * as React from "react";
-import { layoutSize } from "../constants/layoutSize";
 import { HeaderIcon, Header, CenterPanel, Title, AppTitle } from "../ui/headers/Header";
 import { SearchIcon } from "../ui/icons/SearchIcon";
 import { navigate } from "../utils/navHelper";

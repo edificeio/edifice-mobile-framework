@@ -2,8 +2,7 @@
 
 import styled from "glamorous-native"
 import * as React from "react"
-import { FlexAlignType } from "react-native"
-import { layoutSize } from ".";
+import { FlexAlignType } from "react-native";
 
 const View = styled.View;
 const TouchableOpacity = styled.TouchableOpacity;
@@ -42,7 +41,7 @@ export const Col = (props: ColProperties) => {
 		flex: size ? size : width ? 0 : 1,
 		flexDirection: "column",
 		flexWrap: "wrap",
-		paddingVertical: pv ? layoutSize.LAYOUT_2 : paddingVertical ? paddingVertical : 0,
+		paddingVertical: pv ? 2 : paddingVertical ? paddingVertical : 0,
 	}
 
 	if (props.onPress) {

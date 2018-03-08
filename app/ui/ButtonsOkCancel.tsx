@@ -1,6 +1,5 @@
 import styled from "glamorous-native"
-import * as React from "react"
-import { layoutSize } from "../constants/layoutSize"
+import * as React from "react";
 import { ButtonTextIcon } from "./ButtonTextIcon"
 import {tr} from "../i18n/t";
 
@@ -13,8 +12,8 @@ export interface ButtonsOkCancelProps {
 const ButtonStyled = styled.view({
 	flexDirection: "row",
 	flex: 0,
-	marginTop: layoutSize.LAYOUT_28,
-	height: layoutSize.LAYOUT_20,
+	marginTop: 28,
+	height: 20,
 	justifyContent: "center",
 })
 

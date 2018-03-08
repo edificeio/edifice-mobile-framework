@@ -1,6 +1,5 @@
 import style from "glamorous-native"
-import * as React from "react"
-import { layoutSize } from "../../constants/layoutSize"
+import * as React from "react";
 import { CommonStyles } from "../../styles/common/styles"
 import { ViewStyle, Platform } from "react-native"
 import { isIphoneX } from "react-native-iphone-x-helper"
@@ -31,11 +30,11 @@ export const ContainerFooterBar = style.view({
 
 const sensitiveStylePanel: ViewStyle = {
 	alignItems: "center",
-	height: layoutSize.LAYOUT_56,
+	height: 56,
 	justifyContent: "center",
-	paddingLeft: layoutSize.LAYOUT_20,
-	paddingRight: layoutSize.LAYOUT_10,
-	width: layoutSize.LAYOUT_58,
+	paddingLeft: 20,
+	paddingRight: 10,
+	width: 58,
 }
 
 export const HeaderIcon = style.touchableOpacity(sensitiveStylePanel)
@@ -47,7 +46,7 @@ export const TouchableEndBarPanel = style.touchableOpacity({
 export const CenterPanel = style.touchableOpacity({
 	alignItems: "center",
 	flex: 1,
-	height: layoutSize.LAYOUT_56,
+	height: 56,
 	justifyContent: "center",
 })
 
@@ -79,7 +78,7 @@ export const Title = style.text(
 		textAlign: 'left'
 	},
 	({ smallSize = false }) => ({
-		fontSize: smallSize ? layoutSize.LAYOUT_12 : layoutSize.LAYOUT_16,
+		fontSize: smallSize ? 12 : 16,
 	})
 );
 

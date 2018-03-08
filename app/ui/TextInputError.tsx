@@ -1,7 +1,6 @@
 import style from "glamorous-native"
 import * as React from "react"
-import { TextInputProperties } from "react-native"
-import { layoutSize } from "../constants/layoutSize"
+import { TextInputProperties } from "react-native";
 import { IMessagesProps } from "../model/messages"
 import { CommonStyles } from "../styles/common/styles"
 import { Error, hasErrorsMessage } from "./Error"
@@ -28,7 +27,7 @@ export class TextInputError extends React.Component<TextInputErrorProps, TextInp
 	public static defaultProps = {
 		editable: true,
 		errCodes: [],
-		fontSize: layoutSize.LAYOUT_14,
+		fontSize: 14,
 		globalErr: false,
 		label: "",
 		marginHorizontal: 0,
@@ -128,7 +127,7 @@ export interface ContainerProps {
 
 const Container = style.view(
 	{
-		paddingTop: layoutSize.LAYOUT_4,
+		paddingTop: 4,
 		flex: 1,
 	},
 	({ focus, errMessage, marginHorizontal }: ContainerProps) => ({
@@ -146,6 +145,6 @@ const TextInput = style.textInput(
 	({ fontSize, multiline, value }) => ({
 		fontFamily: value.length === 0 ? CommonStyles.primaryFontFamilyLight : CommonStyles.primaryFontFamily,
 		fontSize,
-		height: multiline ? layoutSize.LAYOUT_60 : layoutSize.LAYOUT_40,
+		height: multiline ? 60 : 40,
 	})
 )

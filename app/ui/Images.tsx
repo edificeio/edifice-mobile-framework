@@ -1,7 +1,6 @@
 import style from "glamorous-native"
 import * as React from "react"
-import { View, Text, Image, ScrollView, Modal, Dimensions, Animated } from "react-native"
-import { layoutSize } from "../constants/layoutSize"
+import { View, Text, Image, ScrollView, Modal, Dimensions, Animated } from "react-native";
 import { Row, Icon } from ".";
 import { StackNavigator } from "react-navigation";
 import FitImage from 'react-native-fit-image';
@@ -69,19 +68,23 @@ export class Images extends React.Component<{ images: object[] }, any> {
 	}
 
 	images(){
+		const { width, height } = Dimensions.get('window');
 		const { images } = this.props;
+
+		const heightRatio = (width * 0.6) - 10;
+
 		if (images.length === 0) return <View />;
 		if(images.length === 1){
-			return <SoloImage source={images[0]} />;
+			return <SoloImage source={images[0]} style={{ height: heightRatio }} />;
 		}
 		if(images.length === 2){
 			return (
 				<Row style={{ 'justifyContent': 'space-between'}}>
 					<Column style={{ paddingRight: 5 }}>
-						<SoloImage source={images[0]} />
+						<SoloImage source={images[0]} style={{ height: heightRatio }} />
 					</Column>
 					<Column style={{ paddingLeft: 5 }}>
-						<SoloImage source={images[1]} />
+						<SoloImage source={images[1]} style={{ height: heightRatio }} />
 					</Column>
 				</Row>
 			);
@@ -90,11 +93,11 @@ export class Images extends React.Component<{ images: object[] }, any> {
 			return (
 				<Row style={{ 'justifyContent': 'space-between'}}>
 					<Column style={{ paddingRight: 5 }}>
-						<SoloImage source={images[0]} />
+						<SoloImage source={images[0]} style={{ height: heightRatio }} />
 					</Column>
 					<Column style={{ paddingLeft: 5 }}>
-						<QuarterImage source={images[1]} />
-						<QuarterImage source={images[2]} />
+						<QuarterImage source={images[1]} style={{ height: heightRatio / 2 }} />
+						<QuarterImage source={images[2]} style={{ height: heightRatio / 2 }} />
 					</Column>
 				</Row>
 			);
@@ -103,13 +106,13 @@ export class Images extends React.Component<{ images: object[] }, any> {
 			return (
 				<Row style={{ 'justifyContent': 'space-between'}}>
 					<Column style={{ paddingRight: 5 }}>
-						<QuarterImage source={images[0]} />
-						<QuarterImage source={images[2]} />
+						<QuarterImage source={images[0]} style={{ height: heightRatio / 2 }} />
+						<QuarterImage source={images[2]} style={{ height: heightRatio / 2 }} />
 					</Column>
 					<Column style={{ paddingLeft: 5 }}>
-						<QuarterImage source={images[1]} />
-						<QuarterImage source={images[3]} />
-						{ images.length > 4 && <BubbleView>
+						<QuarterImage source={images[1]} style={{ height: heightRatio / 2 }} />
+						<QuarterImage source={images[3]} style={{ height: heightRatio / 2 }} />
+						{ images.length > 4 && <BubbleView style={{ bottom: (heightRatio / 4) - 10}}>
 							<BubbleText>+{ images.length - 4 }</BubbleText>
 						</BubbleView> }
 					</Column>
@@ -119,12 +122,15 @@ export class Images extends React.Component<{ images: object[] }, any> {
 	}
 
 	public render() {
+		const { width, height } = Dimensions.get('window');
+		const heightRatio = width * 0.6;
+
 		const { images } = this.props;
 		if (images.length === 0) return <View />;
 
 		return (
 			<View>
-				<ContainerImage onPress={ () => this.setState({ fullscreen: true })}>
+				<ContainerImage onPress={ () => this.setState({ fullscreen: true })} style={{ height: heightRatio }}>
 					{ this.images() }
 				</ContainerImage>
 				{ this.carousel() }
@@ -135,7 +141,6 @@ export class Images extends React.Component<{ images: object[] }, any> {
 
 const BubbleView = style.view({
 	position: 'absolute',
-	bottom: 24,
 	backgroundColor: 'rgba(0,0,0,0.5)',
 	width: 30,
 	height: 30,
@@ -151,27 +156,22 @@ const BubbleText = style.text({
 })
 
 const ContainerImage = style.touchableHighlight({
-	marginTop: 15,
-	height: 165
+	marginTop: 15
 });
 
 const SoloImage = style.image({
-	height: 165,
 	width: '100%'
 });
 
 const HalfImage = style.image({
-	height: 165,
 	width: '49%'
 });
 
 const QuarterImage = style.image({
-	height: 78,
 	width: '100%'
 });
 
 const Column = style.view({
 	width: '50%',
-	height: 165,
 	justifyContent: 'space-between'
 });

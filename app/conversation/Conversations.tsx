@@ -2,8 +2,7 @@ import style from "glamorous-native"
 import * as React from "react";
 import { Text } from 'react-native';
 import { FlatList, View } from 'react-native';
-import Swipeable from "react-native-swipeable"
-import { layoutSize } from "../constants/layoutSize"
+import Swipeable from "react-native-swipeable";
 import { IThreadModel, IThreadState } from '../model/Thread';
 import styles from "../styles/index"
 import { Icon } from "../ui/icons/Icon"
@@ -96,7 +95,7 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 	swipeoutButton(conversation: IThreadModel){
 		return [
 			<RightButton onPress={ () => this.setState({ deleteThread: conversation }) }>
-				<Icon size={layoutSize.LAYOUT_18} color="#ffffff" name="trash" />
+				<Icon size={ 18 } color="#ffffff" name="trash" />
 			</RightButton>,
 		]
 	}
@@ -114,7 +113,7 @@ const RightButton = style.touchableOpacity({
 	backgroundColor: "#EC5D61",
 	flex: 1,
 	justifyContent: "center",
-	paddingLeft: layoutSize.LAYOUT_34,
+	paddingLeft: 34,
 });
 
 function getTitle(displayNames) {

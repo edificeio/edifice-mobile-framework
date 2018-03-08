@@ -1,6 +1,5 @@
 import style from "glamorous-native"
 import * as React from "react";
-import { layoutSize } from "../constants/layoutSize"
 import { IThreadModel } from "../model/Thread"
 import { CommonStyles } from "../styles/common/styles"
 import { DateView } from "../ui/DateView"
@@ -28,7 +27,7 @@ export const Conversation = ({ id, subject, date, displayNames, nb, onPress }: I
 			</LeftPanel>
 			<CenterPanel>
 				{getTitle(displayNames, nb)}
-				{subject && subject.length ? <Content nb={nb}>{trunc(subject, layoutSize.LAYOUT_32)}</Content> : <style.View />}
+				{subject && subject.length ? <Content nb={nb}>{trunc(subject, 32)}</Content> : <style.View />}
 			</CenterPanel>
 			<RightPanel>
 				<DateView date={ date } nb={nb} />
@@ -45,13 +44,13 @@ function getTitle(displayNames, nb) {
 		""
 	)
 
-	return <Author nb={nb}>{trunc(title, layoutSize.LAYOUT_26)}</Author>
+	return <Author nb={nb}>{trunc(title, 26)}</Author>
 }
 
 const Author = style.text(
 	{
 		color: CommonStyles.textColor,
-		fontSize: layoutSize.LAYOUT_14,
+		fontSize: 14,
 	},
 	({ nb }) => ({
 		fontFamily: nb > 0 ? CommonStyles.primaryFontFamilySemibold : CommonStyles.primaryFontFamily,

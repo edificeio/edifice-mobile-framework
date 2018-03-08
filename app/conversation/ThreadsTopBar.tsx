@@ -9,7 +9,6 @@ import {
 	Header, Title
 } from "../ui/headers/Header"
 import { Icon } from "../ui/icons/Icon";
-import { layoutSize } from "../constants/layoutSize"
 import { TextStyle } from "react-native"
 import { RowAvatars } from "../ui/avatars/RowAvatars";
 import { Size } from "../ui/avatars/Avatar";
@@ -76,19 +75,19 @@ const legendStyle: TextStyle = {
 const Legend14 = style.text({
 	...legendStyle,
 	fontFamily: CommonStyles.primaryFontFamilyBold,
-	height: layoutSize.LAYOUT_20,
+	height: 20,
 })
 
 const Legend12 = style.text({
 	...legendStyle,
 	fontFamily: CommonStyles.primaryFontFamilyLight,
-	height: layoutSize.LAYOUT_18,
-	fontSize: layoutSize.LAYOUT_11,
-	marginBottom: layoutSize.LAYOUT_25,
+	height: 18,
+	fontSize: 11,
+	marginBottom: 25,
 })
 
 export const ContainerAvatars = style.view({
 	alignItems: "center",
-	height: layoutSize.LAYOUT_160,
+	height:160,
 	justifyContent: "flex-start",
 })

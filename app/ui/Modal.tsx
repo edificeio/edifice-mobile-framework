@@ -1,7 +1,6 @@
 import styled from "glamorous-native"
 import NativeModal from "react-native-modal"
-import { CommonStyles } from "../styles/common/styles"
-import { layoutSize } from "../constants/layoutSize"
+import { CommonStyles } from "../styles/common/styles";
 
 export const ModalBox = styled(NativeModal)({
 	alignItems: "center",
@@ -15,8 +14,8 @@ export const ModalContent = styled.view({
 	borderRadius: 4,
 	elevation: CommonStyles.elevation,
 	justifyContent: "center",
-	paddingHorizontal: layoutSize.LAYOUT_20,
-	paddingVertical: layoutSize.LAYOUT_32,
+	paddingHorizontal: 20,
+	paddingVertical: 32,
 	shadowColor: CommonStyles.shadowColor,
 	shadowOffset: CommonStyles.shadowOffset,
 	shadowOpacity: CommonStyles.shadowOpacity,

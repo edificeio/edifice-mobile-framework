@@ -2,7 +2,6 @@ import style from "glamorous-native"
 import * as React from "react"
 import Carousel from "react-native-snap-carousel"
 import { Avatar, Size } from "./Avatar";
-import { layoutSize } from "..";
 
 export interface IAvatarsState {
 	size?: {

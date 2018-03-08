@@ -1,7 +1,6 @@
 import style from "glamorous-native"
 import * as React from "react"
-import { View } from "react-native"
-import { layoutSize } from "../constants/layoutSize"
+import { View } from "react-native";
 import { INewsModel } from "../model/Timeline"
 import { CommonStyles } from "../styles/common/styles";
 import { DateView } from "../ui/DateView"
@@ -58,10 +57,10 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
 }
 
 const Margin = style.view({
-	height: layoutSize.LAYOUT_10,
+	height: 10,
 })
 
 const Image = style.image({
-	height: layoutSize.LAYOUT_160,
-	width: layoutSize.LAYOUT_350,
+	height: 160,
+	width: 350,
 })

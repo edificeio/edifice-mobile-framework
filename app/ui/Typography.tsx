@@ -1,17 +1,16 @@
 import style from "glamorous-native"
 import { CommonStyles } from "../styles/common/styles";
-import { layoutSize } from ".";
 
 export const Bold = style.text({
 	color: CommonStyles.textColor,
-	fontSize: layoutSize.LAYOUT_14,
+	fontSize: 14,
 	fontFamily: CommonStyles.primaryFontFamily,
 	fontWeight: "600",
 });
 
 export const Light = style.text({
 	color: CommonStyles.textColor,
-	fontSize: layoutSize.LAYOUT_12,
+	fontSize: 12,
 	fontFamily: CommonStyles.primaryFontFamilyLight,
 	fontWeight: "400",
 });

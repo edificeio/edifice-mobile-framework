@@ -2,7 +2,6 @@ import style from "glamorous-native"
 import * as React from "react"
 import Carousel from "react-native-snap-carousel"
 import { Avatar, Size } from "./Avatar";
-import { layoutSize } from "..";
 
 export interface IAvatarsProps {
 	images: string[]
@@ -56,13 +55,13 @@ export class RowAvatars extends React.Component<IAvatarsProps, IAvatarsState> {
 						enableMomentum={true}
 						inactiveSlideOpacity={0.7}
 						inactiveSlideScale={0.97}
-						itemHeight={layoutSize.LAYOUT_80}
-						itemWidth={layoutSize.LAYOUT_100}
+						itemHeight={80}
+						itemWidth={100}
 						onSnapToItem={index => this.onSnapToItem(index)}
 						removeClippedSubviews={false}
 						renderItem={e => this.renderItem(e)}
-						sliderHeight={layoutSize.LAYOUT_80}
-						sliderWidth={layoutSize.LAYOUT_375}
+						sliderHeight={80}
+						sliderWidth={375}
 					/>
 				</Container>
 			)
@@ -86,6 +85,6 @@ const Container = style.view({
 
 const Slide = style.view({
 	alignItems: "center",
-	height: layoutSize.LAYOUT_80,
-	width: layoutSize.LAYOUT_100,
+	height: 80,
+	width: 100,
 })

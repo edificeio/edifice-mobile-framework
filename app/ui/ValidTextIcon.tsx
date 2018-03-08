@@ -1,6 +1,5 @@
 import style from "glamorous-native"
 import * as React from "react"
-import { layoutSize } from "../constants/layoutSize"
 import { Disable, Row, RowProperties } from "./index"
 import { CommonStyles } from "../styles/common/styles"
 import { Icon } from "./icons/Icon"
@@ -37,7 +36,7 @@ const _ValidTextIcon = ({
 
 	return (
 		<ValidStyle
-			marginTop={keyboardShow ? layoutSize.LAYOUT_36 : layoutSize.LAYOUT_60}
+			marginTop={keyboardShow ? 36 : 60}
 			onPress={() => onPress()}
 			disabled={disabled}
 		>
@@ -62,30 +61,30 @@ const ValidStyle = (props: RowProperties) => (
 		alignItems="center"
 		justifyContent="center"
 		backgroundColor={CommonStyles.lightGrey}
-		height={layoutSize.LAYOUT_38}
-		marginBottom={layoutSize.LAYOUT_20}
-		marginTop={layoutSize.LAYOUT_0}
+		height={38}
+		marginBottom={20}
+		marginTop={0}
 		{...props}
 	/>
 )
 
 const ButtonStyle = style.view(
 	{
-		borderRadius: layoutSize.LAYOUT_38 * 0.5,
-		paddingHorizontal: layoutSize.LAYOUT_36,
-		paddingVertical: layoutSize.LAYOUT_9,
+		borderRadius: 38 * 0.5,
+		paddingHorizontal: 36,
+		paddingVertical: 9,
 	},
 	({ disabled }) => ({
 		backgroundColor: disabled ? CommonStyles.lightGrey : CommonStyles.actionColor,
 		borderColor: disabled ? CommonStyles.actionColor : CommonStyles.lightGrey,
-		borderWidth: disabled ? layoutSize.LAYOUT_1 : 0,
+		borderWidth: disabled ? 1 : 0,
 	})
 )
 
 const TextStyle = style.text(
 	{
 		fontFamily: CommonStyles.primaryFontFamilySemibold,
-		fontSize: layoutSize.LAYOUT_14,
+		fontSize: 14,
 		textAlignVertical: "center",
 	},
 	({ disabled }) => ({

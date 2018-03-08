@@ -3,8 +3,7 @@ import * as React from "react"
 import { NavigationActions, TabNavigator } from "react-navigation"
 import { IconOnOff } from "../ui/index"
 import { CommonStyles } from "../styles/common/styles"
-import { TabBarBottomKeyboardAward } from "../ui/HideComponentWhenKeyboardShow"
-import { layoutSize } from "../constants/layoutSize"
+import { TabBarBottomKeyboardAward } from "../ui/HideComponentWhenKeyboardShow";
 import { navigationRef } from "../AppScreen"
 
 export const tabNavigator = routes =>
@@ -20,7 +19,7 @@ export const tabNavigator = routes =>
 			labelStyle: {
 				color: CommonStyles.textTabBottomColor,
 				fontFamily: CommonStyles.primaryFontFamily,
-				fontSize: layoutSize.LAYOUT_12,
+				fontSize: 12,
 			},
 			showIcon: true,
 			showLabel: true,
@@ -29,7 +28,7 @@ export const tabNavigator = routes =>
 				borderTopColor: CommonStyles.borderColorLighter,
 				borderTopWidth: 1,
 				elevation: 1,
-				height: layoutSize.LAYOUT_56,
+				height: 56,
 			},
 			upperCaseLabel: false,
 		},
@@ -45,7 +44,7 @@ export const NestedTabNavigator = routes =>
 				backgroundColor: CommonStyles.selectColor,
 			},
 			labelStyle: {
-				fontSize: layoutSize.LAYOUT_13,
+				fontSize: 13,
 			},
 			showIcon: true,
 			showLabel: false,
@@ -60,8 +59,8 @@ const TabBarLabel = style.text(
 	{
 		alignSelf: "center",
 		fontFamily: CommonStyles.primaryFontFamily,
-		fontSize: layoutSize.LAYOUT_12,
-		marginBottom: layoutSize.LAYOUT_4,
+		fontSize: 12,
+		marginBottom: 4,
 	},
 	({ focused }) => ({
 		color: focused ? CommonStyles.actionColor : CommonStyles.textTabBottomColor,
@@ -80,7 +79,7 @@ export const tabRootOptions = (title, iconName) => ({
 		labelStyle: {
 			color: CommonStyles.textTabBottomColor,
 			fontFamily: CommonStyles.primaryFontFamily,
-			fontSize: layoutSize.LAYOUT_10,
+			fontSize: 10,
 		},
 	},
 })
@@ -92,13 +91,13 @@ export const navOptions = (props, { state }) => {
 	return {
 		headerStyle: {
 			backgroundColor: CommonStyles.mainColorTheme,
-			paddingHorizontal: layoutSize.LAYOUT_20,
+			paddingHorizontal: 20,
 		},
 		headerTitleStyle: {
 			alignSelf: "center",
 			color: "white",
 			fontFamily: CommonStyles.primaryFontFamily,
-			fontSize: layoutSize.LAYOUT_16,
+			fontSize: 16,
 			fontWeight: "400",
 			textAlign: "center",
 		},

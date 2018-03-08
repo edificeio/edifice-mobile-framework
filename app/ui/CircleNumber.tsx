@@ -1,28 +1,27 @@
 import style from "glamorous-native"
-import * as React from "react"
-import { layoutSize } from "../constants/layoutSize"
+import * as React from "react";
 import { CommonStyles } from "../styles/common/styles"
 
 const ViewNB = style.view({
 	alignItems: "center",
 	alignSelf: "flex-end",
 	backgroundColor: CommonStyles.mainColorTheme,
-	borderRadius: layoutSize.LAYOUT_10,
-	height: layoutSize.LAYOUT_18,
+	borderRadius: 10,
+	height: 18,
 	justifyContent: "center",
-	marginBottom: layoutSize.LAYOUT_7,
-	marginRight: layoutSize.LAYOUT_4,
-	width: layoutSize.LAYOUT_18,
+	marginBottom: 7,
+	marginRight: 4,
+	width: 18
 })
 
 const ViewEmpty = style.view({
-	height: layoutSize.LAYOUT_16,
-	marginBottom: layoutSize.LAYOUT_7,
+	height: 16,
+	marginBottom: 7,
 })
 
 const Text = style.text({
 	color: "white",
-	fontSize: layoutSize.LAYOUT_10,
+	fontSize: 10,
 	fontFamily: CommonStyles.primaryFontFamilyLight,
 })
 

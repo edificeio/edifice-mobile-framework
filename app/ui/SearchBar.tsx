@@ -1,6 +1,5 @@
 import style from "glamorous-native"
-import * as React from "react"
-import { layoutSize } from "../constants/layoutSize"
+import * as React from "react";
 import { PATH_CONVERSATION } from "../constants/paths"
 import { CommonStyles } from "../styles/common/styles"
 import { Header, HeaderIcon } from "./headers/Header"
@@ -69,9 +68,9 @@ const TextInput = style.textInput(
 		alignSelf: "center",
 		color: "white",
 		flex: 1,
-		fontSize: layoutSize.LAYOUT_18,
+		fontSize: 18,
 		fontWeight: "400",
-		marginLeft: layoutSize.LAYOUT_8,
+		marginLeft: 8,
 	},
 	({ value }) => ({
 		fontFamily: value.length === 0 ? CommonStyles.primaryFontFamilyLight : CommonStyles.primaryFontFamily,

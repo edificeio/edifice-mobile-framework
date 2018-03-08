@@ -1,7 +1,6 @@
 import style from "glamorous-native"
 import * as React from "react"
-import { CenterPanel, ContainerFooterBar, HeaderIcon, TouchableEndBarPanel } from "../ui/headers/Header"
-import { layoutSize } from "../constants/layoutSize"
+import { CenterPanel, ContainerFooterBar, HeaderIcon, TouchableEndBarPanel } from "../ui/headers/Header";
 import { Icon, IconOnOff } from "../ui/index"
 import { tr } from "../i18n/t"
 import { sendMessage } from "../actions/conversation"
@@ -109,12 +108,12 @@ enum Selected {
 
 const ContainerInput = style.view({
 	alignSelf: "flex-end",
-	height: layoutSize.LAYOUT_56,
+	height: 56,
 	justifyContent: "center",
-	paddingLeft: layoutSize.LAYOUT_20,
-	paddingRight: layoutSize.LAYOUT_10,
+	paddingLeft: 20,
+	paddingRight: 10,
 	paddingTop: 0,
-	width: layoutSize.LAYOUT_375,
+	width: 375,
 })
 
 const TextInput = style.textInput({})

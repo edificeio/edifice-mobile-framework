@@ -1,7 +1,6 @@
 import style from "glamorous-native"
 import * as React from "react"
-import { View } from "react-native"
-import { layoutSize } from "../constants/layoutSize"
+import { View } from "react-native";
 import { IMessagesProps } from "../model/messages"
 import { CommonStyles } from "../styles/common/styles"
 
@@ -13,10 +12,10 @@ export interface ErrorProps {
 const Message = style.text({
 	alignSelf: "center",
 	color: CommonStyles.errorColor,
-	height: layoutSize.LAYOUT_32,
+	height: 32,
 	fontFamily: CommonStyles.primaryFontFamily,
-	fontSize: layoutSize.LAYOUT_14,
-	paddingTop: layoutSize.LAYOUT_4,
+	fontSize: 14,
+	paddingTop: 4,
 	flex: 1,
 })
 

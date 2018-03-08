@@ -1,7 +1,6 @@
 import StatusAlert from "../connectors/ui/StatusAlert"
 import TextInputError from "../connectors/ui/TextInputError"
 import ValidTextIcon from "../connectors/ui/ValidTextIcon"
-import { layoutSize } from "../constants/layoutSize"
 import { ButtonsOkCancel } from "./ButtonsOkCancel"
 import { ButtonTextIcon } from "./ButtonTextIcon"
 import { Disable } from "./Disable"
@@ -16,7 +15,6 @@ export {
 	ButtonsOkCancel,
 	Disable,
 	Form,
-	layoutSize,
 	Logo,
 	Icon,
 	IconProps,

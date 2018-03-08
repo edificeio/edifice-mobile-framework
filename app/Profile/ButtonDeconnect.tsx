@@ -1,6 +1,5 @@
 import styled from "glamorous-native"
-import * as React from "react"
-import { layoutSize } from "../constants/layoutSize"
+import * as React from "react";
 import { RowProperties } from "../ui/index";
 import {tr} from "../i18n/t";
 import { Row } from "../ui/Grid";
@@ -11,17 +10,17 @@ const Container = (props: RowProperties) => (
 		backgroundColor="white"
 		borderBottomColor="#dddddd"
 		borderBottomWidth={1}
-		height={layoutSize.LAYOUT_46}
+		height={46}
 		justifyContent="flex-start"
-		marginTop={layoutSize.LAYOUT_20}
-		paddingHorizontal={layoutSize.LAYOUT_13}
+		marginTop={20}
+		paddingHorizontal={13}
 		{...props}
 	/>
 )
 
 const Deconnect = styled.text({
 	color: "#F64D68",
-	fontSize: layoutSize.LAYOUT_14,
+	fontSize: 14,
 })
 
 export interface ButtonTextProps {
