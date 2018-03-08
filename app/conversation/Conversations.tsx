@@ -19,15 +19,17 @@ import { EmptyScreen } from "../ui/EmptyScreen";
 import { PageContainer } from "../ui/ContainerContent";
 
 export interface IConversationsProps {
-	conversation: { threads: IThreadModel[], page: number };
+	threads: IThreadModel[];
 	navigation?: any
 	sync: (page: number) => Promise<void>;
 	deleteThread: (conversation: IThreadModel) => Promise<void>;
-	nbConversations: number;
+	nbThreads: number;
+	page: number;
 }
 
 export class Conversations extends React.Component<IConversationsProps, any> {
-	pageNumber: number = 0;
+
+	
 	swipeRef = undefined;
 
 	constructor(props){
@@ -44,12 +46,11 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 	}
 
 	private nextPage() {
-		this.props.sync(this.props.conversation.page);
+		this.props.sync(this.props.page);
 	}
 
 	public render() {
-		const { conversation } = this.props;
-		if (!conversation.threads || conversation.threads.length === 0){
+		if (!this.props.threads || this.props.threads.length === 0){
 			return <EmptyScreen 
 				image={ require('../../assets/images/empty-screen/espacedoc.png') } 
 				text={ I18n.t('conversation-emptyScreenText') } 
@@ -70,7 +71,7 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 					</ModalContent>
 				</ModalBox>
 				<FlatList
-					data={conversation.threads }
+					data={ this.props.threads }
 					removeClippedSubviews
 					disableVirtualization
 					legacyImplementation={true}
@@ -118,10 +119,11 @@ const searchFilter = (filter) => filter.toLowerCase().replace(/[\é\è]/g, 'e');
 
 export default connect(
 	(state: any) => ({
-		conversations: state.threads.payload.filter(
+		page: state.conversation.page,
+		threads: state.threads.payload.filter(
 			t => !state.threads.filterCriteria || searchText(t).indexOf(searchFilter(state.threads.filterCriteria)) !== -1
 		),
-		nbConversations: state.threads.payload.length
+		nbThreads: state.conversation.threads.length
 	}), 
 	dispatch => ({
 		sync: (page: number) => readNextConversation(dispatch)(page),

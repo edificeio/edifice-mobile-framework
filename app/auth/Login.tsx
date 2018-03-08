@@ -1,18 +1,26 @@
 import * as React from "react"
-import { View, TextInput } from "react-native"
+import { View, TextInput, ScrollView } from "react-native"
 import { IAuthModel } from "../model/Auth";
 import { navigate } from "../utils/navHelper"
 import { connect } from "react-redux";
 import { login } from '../actions/auth';
-import { Form, Logo, ValidTextIcon } from "../ui";
+import { Logo, ValidTextIcon } from "../ui";
 import { tr } from "../i18n/t";
 import { ErrorMessage } from '../ui/Typography';
 import { TextInputLine } from "../ui/forms/TextInputLine";
+import styles from "../styles";
+import ConnectionTrackingBar from "../ui/ConnectionTrackingBar";
+
+const Form = props => (
+	<View style={styles.formGrid}>
+		<ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>{props.children}</ScrollView>
+	</View>
+)
 
 export class Login extends React.Component<{
-	auth: IAuthModel
+	auth: IAuthModel;
 	login: (email: string, password: string) => Promise<void>;
-	navigation?: any
+	navigation?: any;
 }, { email: string, password: string, typing: boolean }> {
 
 	state = {
@@ -36,6 +44,8 @@ export class Login extends React.Component<{
 
 		return (
 			<Form>
+				<ConnectionTrackingBar />
+				
 				<Logo />
 
 				<TextInputLine 

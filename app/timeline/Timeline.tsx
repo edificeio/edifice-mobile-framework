@@ -8,9 +8,10 @@ import { connect } from "react-redux"
 import { listTimeline } from "../actions/timeline"
 import { Tracking } from "../tracking/TrackingManager";
 import { Header, HeaderIcon, Title, AppTitle } from '../ui/headers/Header';
-import { Icon, Loading } from "../ui";
+import { Icon, Loading, Row } from "../ui";
 import I18n from 'react-native-i18n';
 import { EmptyScreen } from "../ui/EmptyScreen";
+import ConnectionTrackingBar from "../ui/ConnectionTrackingBar";
 
 export class TimelineHeader extends React.Component<{ navigation?: any }, undefined> {
 	render() {
@@ -19,6 +20,9 @@ export class TimelineHeader extends React.Component<{ navigation?: any }, undefi
 				<HeaderIcon onPress={ () => this.props.navigation.navigate('FilterTimeline') } name={ "filter" } />
 			    <AppTitle>{ I18n.t('News') }</AppTitle>
 				<HeaderIcon name={ "filter" } hidden={ true } />
+				<Row>
+					<ConnectionTrackingBar />
+				</Row>
             </Header>
 		)
 	}

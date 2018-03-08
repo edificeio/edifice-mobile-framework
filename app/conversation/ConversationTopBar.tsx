@@ -9,6 +9,7 @@ import { View } from "react-native";
 import { PATH_CONVERSATION } from "../constants/paths";
 import { Row } from "../ui/Grid";
 import { connect } from "react-redux";
+import ConnectionTrackingBar from '../ui/ConnectionTrackingBar';
 
 export class ConversationTopBar extends React.Component<{ navigation?: any, conversationsIsEmpty: boolean }, { searching: boolean }> {
 	constructor(props){
@@ -28,9 +29,12 @@ export class ConversationTopBar extends React.Component<{ navigation?: any, conv
 	defaultView(){
 		return (
 			<Header>
-				<HeaderIcon onPress={ () => this.setState({ searching: true }) } hidden={ this.props.conversationsIsEmpty } name={ "search" } />
-				<AppTitle>{tr.Conversation}</AppTitle>
-				<HeaderIcon onPress={ () => this.onClose() } name={ "new_message" } hidden={ true } />
+				<Row>
+					<HeaderIcon onPress={ () => this.setState({ searching: true }) } hidden={ this.props.conversationsIsEmpty } name={ "search" } />
+					<AppTitle>{tr.Conversation}</AppTitle>
+					<HeaderIcon onPress={ () => this.onClose() } name={ "new_message" } hidden={ true } />
+				</Row>
+				<ConnectionTrackingBar />
 			</Header>
 		);
 	}
@@ -46,6 +50,6 @@ export class ConversationTopBar extends React.Component<{ navigation?: any, conv
 
 export default connect(
 	(state: any) => ({
-		conversationsIsEmpty: state.threads.payload.length === 0
+		conversationsIsEmpty: state.conversation.threads.length === 0
 	})
 )(ConversationTopBar) as any;

@@ -1,10 +1,12 @@
 import style from "glamorous-native"
 import * as React from "react"
-import { Disable, Row, RowProperties } from "./index"
+import { Row, RowProperties } from "./index"
 import { CommonStyles } from "../styles/common/styles"
 import { Icon } from "./icons/Icon"
 import { KeyboardInjection } from "./KeyboardInjection"
 import { connect } from "react-redux";
+import { View } from "react-native";
+import styles from "../styles";
 
 export interface ValidTextIconProps {
 	disabled?: boolean
@@ -22,6 +24,8 @@ export interface ValidTextIconProps {
 export interface State {
 	marginTop: any
 }
+
+const Disable = () => <View style={styles.Disable} />
 
 const _ValidTextIcon = ({
 	disabled = false,

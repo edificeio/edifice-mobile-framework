@@ -56,7 +56,7 @@ export interface IThreadState {
 	mode: ACTION_MODE
 	page: number
 	threads: IThreadModel[]
-	filterCriteria: null
+	filterCriteria: string
 	synced: boolean
 	processing: Message[]
 }
@@ -65,7 +65,7 @@ const initialState: IThreadState = {
 	mode: ACTION_MODE.replace,
 	page: 0,
 	threads: [],
-	filterCriteria: null,
+	filterCriteria: '',
 	synced: true,
 	processing: [],
 }

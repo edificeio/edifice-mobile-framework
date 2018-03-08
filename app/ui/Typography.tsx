@@ -55,4 +55,4 @@ export const ErrorMessage = style.text({
 	fontSize: 14,
 	paddingTop: 4,
 	flex: 1,
-})
+});

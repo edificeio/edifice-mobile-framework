@@ -1,6 +1,6 @@
 import * as React from "react"
 import { StackNavigator } from "react-navigation"
-import Conversation from "./Conversations"
+import Conversations from "./Conversations"
 import ConversationTopBar from "../conversation/ConversationTopBar"
 import SearchBar from "../ui/SearchBar"
 import { PATH_CONVERSATION } from "../constants/paths";
@@ -16,7 +16,7 @@ const customAnimationFunc = () => ({
 export default StackNavigator(
 	{
 		Conversation: {
-			screen: Conversation,
+			screen: Conversations,
 			navigationOptions: ({ navigation }) => ({
 				header: <ConversationTopBar navigation={navigation} />,
 			}),
