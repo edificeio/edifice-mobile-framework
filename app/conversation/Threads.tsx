@@ -13,6 +13,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { IAction } from '../actions/docs';
 import ThreadsFooterBar from "./ThreadsFooterBar";
+import { CommonStyles } from "../styles/common/styles";
 
 export interface IThreadsProps {
 	navigation?: any

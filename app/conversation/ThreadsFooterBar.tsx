@@ -1,12 +1,14 @@
 import style from "glamorous-native"
 import * as React from "react"
-import { CenterPanel, ContainerFooterBar, HeaderIcon, TouchableEndBarPanel } from "../ui/headers/Header";
+import { CenterPanel, HeaderIcon } from "../ui/headers/Header";
 import { Icon, IconOnOff } from "../ui/index"
 import { tr } from "../i18n/t"
 import { sendMessage } from "../actions/conversation"
 import { connect } from "react-redux"
 import { View } from "react-native";
 import { ToggleIcon } from "../ui/ToggleIcon";
+import { Row } from "../ui/Grid";
+import { CommonStyles } from "../styles/common/styles";
 
 interface IThreadsFooterBarProps {
 	conversation: any
@@ -17,6 +19,37 @@ interface ThreadsFooterBarState {
 	selected: Selected
 	textMessage: string
 }
+
+const ContainerFooterBar = style.view({
+	backgroundColor: CommonStyles.tabBottomColor,
+	borderTopColor: CommonStyles.borderColorLighter,
+	borderTopWidth: 1,
+	elevation: 1,
+	flexDirection: 'column',
+	height: 90,
+	justifyContent: 'flex-start'
+})
+
+const ChatIcon = style.touchableOpacity({
+	alignItems: "center",
+	height: 40,
+	justifyContent: "center",
+	paddingLeft: 20,
+	paddingRight: 10,
+	width: 58,
+});
+
+const SendContainer = style.touchableOpacity({
+	alignItems: "center",
+	height: 40,
+	justifyContent: "center",
+	paddingLeft: 20,
+	paddingRight: 10,
+	paddingBottom: 10,
+	width: 58,
+	alignSelf: "flex-end",
+})
+
 
 class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, ThreadsFooterBarState> {
 	input: any;
@@ -87,13 +120,15 @@ class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, ThreadsFo
 						value={textMessage}
 					/>
 				</ContainerInput>
-				<HeaderIcon onPress={() => this.onPress(Selected.keyboard)}>
-					<IconOnOff focused={ true } name={"keyboard"} />
-				</HeaderIcon>
-				<CenterPanel />
-				<TouchableEndBarPanel onPress={() => this.onValid()}>
-					<ToggleIcon show={ !!this.state.textMessage } icon={ "send_icon" } />
-				</TouchableEndBarPanel>
+				<Row>
+					<ChatIcon onPress={() => this.onPress(Selected.keyboard)}>
+						<IconOnOff focused={ true } name={"keyboard"} />
+					</ChatIcon>
+					<CenterPanel />
+					<SendContainer onPress={() => this.onValid()}>
+						<ToggleIcon show={ !!this.state.textMessage } icon={ "send_icon" } />
+					</SendContainer>
+				</Row>
 			</ContainerFooterBar>
 		)
 	}
@@ -107,16 +142,18 @@ enum Selected {
 }
 
 const ContainerInput = style.view({
-	alignSelf: "flex-end",
-	height: 56,
+	height: 40,
 	justifyContent: "center",
 	paddingLeft: 20,
 	paddingRight: 10,
 	paddingTop: 0,
-	width: 375,
+	width: '100%',
+	flexDirection: 'row'
 })
 
-const TextInput = style.textInput({})
+const TextInput = style.textInput({
+	width: '100%'
+})
 
 export default connect(
 	state => ({}),

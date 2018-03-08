@@ -20,14 +20,6 @@ export const Header = style.view({
 	backgroundColor: CommonStyles.mainColorTheme
 })
 
-export const ContainerFooterBar = style.view({
-	...containerBar,
-	backgroundColor: CommonStyles.tabBottomColor,
-	borderTopColor: CommonStyles.borderColorLighter,
-	borderTopWidth: 1,
-	elevation: 1,
-})
-
 const sensitiveStylePanel: ViewStyle = {
 	alignItems: "center",
 	height: 56,
