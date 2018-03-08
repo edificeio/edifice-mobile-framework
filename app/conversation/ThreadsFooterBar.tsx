@@ -10,7 +10,7 @@ import { View } from "react-native";
 import { ToggleIcon } from "../ui/ToggleIcon";
 
 interface IThreadsFooterBarProps {
-	navigation?: any
+	conversation: any
 	send: (data: any) => Promise<void>
 }
 
@@ -41,10 +41,10 @@ class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, ThreadsFo
 	}
 
 	private onValid() {
-		const { id, displayNames, subject, userId, thread_id } = this.props.navigation.state.params
+		const { id, displayNames, subject, userId, thread_id } = this.props.conversation
 		const { textMessage } = this.state
 
-		let conversation = this.props.navigation.state.params
+		let conversation = this.props.conversation
 
 		this.setState({ selected: Selected.none })
 		let to = []
@@ -90,9 +90,6 @@ class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, ThreadsFo
 				</ContainerInput>
 				<HeaderIcon onPress={() => this.onPress(Selected.keyboard)}>
 					<IconOnOff focused={ true } name={"keyboard"} />
-				</HeaderIcon>
-				<HeaderIcon onPress={() => this.onPress(Selected.camera)}>
-					<IconOnOff focused={selected === Selected.camera} name={"camera"} />
 				</HeaderIcon>
 				<CenterPanel />
 				<TouchableEndBarPanel onPress={() => this.onValid()}>

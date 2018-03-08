@@ -42,7 +42,7 @@ export class Threads extends React.Component<IThreadsProps, any> {
 					onContentSizeChange={() => this.list.scrollToEnd({ animated: true })}
 					onLayout={() => this.list.scrollToEnd({ animated: true })}
 				/>
-				<ThreadsFooterBar />
+				<ThreadsFooterBar conversation={  this.props.navigation.state.params } />
 			</KeyboardAvoidingView>
 		)
 	}

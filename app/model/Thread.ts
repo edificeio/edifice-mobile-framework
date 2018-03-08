@@ -80,9 +80,9 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 	}
 	if(action.type === 'READ_THREAD_CONVERSATION'){
 		const parentThread = state.payload.find(t => t.thread_id === action.threadId);
-		parentThread.nb = 0;
 		const newParentThread = {
 			...parentThread,
+			nb: 0,
 			messages: action.messages
 		};
 		return {
@@ -141,12 +141,16 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 	if (action.type === "CONVERSATION_SENT") {
 		const index = state.processing.indexOf(state.processing.find(p => p.id === action.data.id));
 		const parentThread = state.payload.find(t => t.thread_id === action.data.thread_id);
-		parentThread.messages = [action.data, ...parentThread.messages];
-		parentThread.date = action.data.date;
+		const newParentThread = {
+			...parentThread,
+			messages: [action.data, ...parentThread.messages],
+			date: action.data.date
+		};
+
 		return {
 			...state,
 			processing: state.processing.filter((e, i) => i !== index),
-			payload: [...state.payload].sort((a, b) => b.date - a.date)
+			payload: [...state.payload.filter(p => p !== parentThread), newParentThread].sort((a, b) => b.date - a.date)
 		}
 	}
 	if (action.type === "CONVERSATION_FAILED_SEND") {
