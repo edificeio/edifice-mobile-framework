@@ -2,6 +2,21 @@ import style from "glamorous-native"
 import * as React from "react"
 import Carousel from "react-native-snap-carousel"
 import { Avatar, Size } from "./Avatar";
+import { Text, View } from "react-native";
+import { CommonStyles } from '../../styles/common/styles';
+
+const Skipped = style.text({
+	color: CommonStyles.warning,
+	backgroundColor: '#FFFFFF',
+	height: 29,
+	width: 29,
+	borderRadius: 15,
+	textAlign: 'center',
+	lineHeight: 30,
+	fontFamily: CommonStyles.primaryFontFamily,
+	marginLeft: -4,
+	fontSize: 12
+})
 
 export interface IAvatarsProps {
 	images: string[]
@@ -40,10 +55,12 @@ export class RowAvatars extends React.Component<IAvatarsProps, IAvatarsState> {
 	}
 
 	public render() {
-		const { size = Size.large, images } = this.props
+		const { size = Size.verylarge, images } = this.props
 
-		if (images.length > 4) {
-			images.length = 4
+		let skipped = 0;
+		if (images.length > 4 && size !== Size.verylarge) {
+			skipped = images.length - 3;
+			images.length = 3;
         }
         
 		if (size === Size.verylarge) {
@@ -69,7 +86,8 @@ export class RowAvatars extends React.Component<IAvatarsProps, IAvatarsState> {
 		
 		return (
 			<Container>
-				{images.map((image, idx) => <Avatar size={size} key={idx} index={idx} count={images.length} id={image} />)}
+				{ images.map((image, idx) => <Avatar size={ Size.aligned } key={idx} index={idx} count={images.length} id={image} />) }
+				{ skipped ? <Skipped>+{ skipped }</Skipped> : <View /> }
 			</Container>
 		)
 	}

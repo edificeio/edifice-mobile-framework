@@ -46,8 +46,8 @@ const AlignedImage = style.image(
 		...StyledImage,
 		borderRadius: 16,
 		height: 29,
-		marginRight: -6,
-		marginLeft: -6,
+		marginRight: -4,
+		marginLeft: -4,
 		width: 29,
 	},
 	({ index }) => ({

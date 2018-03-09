@@ -49,13 +49,13 @@ export class ThreadsTopBar extends React.PureComponent<IThreadsBarProps, {}> {
 			<Header>
 				<Back navigation={ navigation } />
 				<CenterPanel onPress={() => this.onPress()}>
-					{!expand && <RowAvatars images={images} size={Size.aligned} />}
+					{!expand && <RowAvatars images={images} size={Size.small } />}
 					<Title numberOfLines={ 1 } smallSize={!expand}>{subject}</Title>
 				</CenterPanel>
 				<TouchableEndBarPanel />
 				{expand && (
 					<ContainerAvatars>
-						<RowAvatars onSlideIndex={slideIndex => this.onSlideIndex(slideIndex)} images={images} size={Size.verylarge} />
+						<RowAvatars onSlideIndex={slideIndex => this.onSlideIndex(slideIndex)} images={images} />
 						<Legend14>{names[this.state.slideIndex]}</Legend14>
 						<Legend12 />
 					</ContainerAvatars>
