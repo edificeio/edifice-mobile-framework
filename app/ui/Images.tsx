@@ -25,6 +25,7 @@ export class Images extends React.Component<{ images: object[] }, any> {
 	carouselRef: any;
 	currentScroll = 0;
 	previousScroll = 0;
+	currentImage = 0;
 
 	setNativeProps (nativeProps) {
 		this.root.setNativeProps(nativeProps);
@@ -49,6 +50,17 @@ export class Images extends React.Component<{ images: object[] }, any> {
 		this.previousScroll = newPosition;
 	}
 
+	openImage(index){
+		this.setState({ fullscreen: true });
+		this.currentImage = index;
+	}
+
+	scrollToCurrentImage(){
+		const { width, height } = Dimensions.get('window');
+		let newPosition = this.currentImage * width;
+		this.carouselRef.scrollTo({ x: newPosition, animated: true });
+	}
+
 	carousel(){
 		const { width, height } = Dimensions.get('window');
 		return (
@@ -62,6 +74,7 @@ export class Images extends React.Component<{ images: object[] }, any> {
 						onScroll={ (e) => this.currentScroll = e.nativeEvent.contentOffset.x  }
 						scrollEventThrottle={16}
 						onTouchEnd={ (e) => this.slideToImage(e) }
+						onContentSizeChange={ () => this.scrollToCurrentImage() }
 					>
 						{ this.props.images.map((image, index) => (
 						<View style={{ flex: 1, justifyContent: 'center'}} key={ index }>
@@ -81,20 +94,27 @@ export class Images extends React.Component<{ images: object[] }, any> {
 		const { width, height } = Dimensions.get('window');
 		const { images } = this.props;
 
-		const heightRatio = (width * 0.6) - 10;
+		const heightRatio = width * 0.6;
 
 		if (images.length === 0) return <View />;
 		if(images.length === 1){
-			return <SoloImage source={images[0]} style={{ height: heightRatio }} />;
+		return (
+			<SoloImage style={{ height: heightRatio }} onPress={ () => this.openImage(0) }>
+				<StretchImage source={images[0]} />
+			</SoloImage>);
 		}
 		if(images.length === 2){
 			return (
 				<Row style={{ 'justifyContent': 'space-between'}}>
 					<Column style={{ paddingRight: 5 }}>
-						<SoloImage source={images[0]} style={{ height: heightRatio }} />
+						<SoloImage style={{ height: heightRatio }} onPress={ () => this.openImage(0) }>
+							<StretchImage source={images[0]} />
+						</SoloImage>
 					</Column>
 					<Column style={{ paddingLeft: 5 }}>
-						<SoloImage source={images[1]} style={{ height: heightRatio }} />
+						<SoloImage style={{ height: heightRatio }} onPress={ () => this.openImage(1) }>
+							<StretchImage source={images[1]} />
+						</SoloImage>
 					</Column>
 				</Row>
 			);
@@ -103,11 +123,17 @@ export class Images extends React.Component<{ images: object[] }, any> {
 			return (
 				<Row style={{ 'justifyContent': 'space-between'}}>
 					<Column style={{ paddingRight: 5 }}>
-						<SoloImage source={images[0]} style={{ height: heightRatio }} />
+						<SoloImage style={{ height: heightRatio }} onPress={ () => this.openImage(0) }>
+							<StretchImage source={images[0]} />
+						</SoloImage>
 					</Column>
 					<Column style={{ paddingLeft: 5 }}>
-						<QuarterImage source={images[1]} style={{ height: heightRatio / 2 }} />
-						<QuarterImage source={images[2]} style={{ height: heightRatio / 2 }} />
+						<QuarterImage style={{ height: heightRatio / 2 - 5 }} onPress={ () => this.openImage(1) }>
+							<StretchImage source={images[1]} />
+						</QuarterImage>
+						<QuarterImage style={{ height: heightRatio / 2 - 5 }} onPress={ () => this.openImage(2) }>
+							<StretchImage source={images[2]} />
+						</QuarterImage>
 					</Column>
 				</Row>
 			);
@@ -116,12 +142,20 @@ export class Images extends React.Component<{ images: object[] }, any> {
 			return (
 				<Row style={{ 'justifyContent': 'space-between'}}>
 					<Column style={{ paddingRight: 5 }}>
-						<QuarterImage source={images[0]} style={{ height: heightRatio / 2 }} />
-						<QuarterImage source={images[2]} style={{ height: heightRatio / 2 }} />
+						<QuarterImage style={{ height: heightRatio / 2 - 5 }} onPress={ () => this.openImage(0) }>
+							<StretchImage source={images[0]} />
+						</QuarterImage>
+						<QuarterImage style={{ height: heightRatio / 2 - 5 }} onPress={ () => this.openImage(2) }>
+							<StretchImage source={images[2]} />
+						</QuarterImage>
 					</Column>
 					<Column style={{ paddingLeft: 5 }}>
-						<QuarterImage source={images[1]} style={{ height: heightRatio / 2 }} />
-						<QuarterImage source={images[3]} style={{ height: heightRatio / 2 }} />
+						<QuarterImage style={{ height: heightRatio / 2 - 5 }} onPress={ () => this.openImage(1) }>
+							<StretchImage source={images[1]} />
+						</QuarterImage>
+						<QuarterImage style={{ height: heightRatio / 2 - 5 }} onPress={ () => this.openImage(3) }>
+							<StretchImage source={images[3]} />
+						</QuarterImage>
 						{ images.length > 4 && <BubbleView style={{ bottom: (heightRatio / 4) - 10}}>
 							<BubbleText>+{ images.length - 4 }</BubbleText>
 						</BubbleView> }
@@ -140,7 +174,7 @@ export class Images extends React.Component<{ images: object[] }, any> {
 
 		return (
 			<View>
-				<ContainerImage onPress={ () => this.setState({ fullscreen: true })} style={{ height: heightRatio }}>
+				<ContainerImage style={{ height: heightRatio }}>
 					{ this.images() }
 				</ContainerImage>
 				{ this.carousel() }
@@ -165,23 +199,24 @@ const BubbleText = style.text({
 	textAlign: 'center'
 })
 
-const ContainerImage = style.touchableHighlight({
+const ContainerImage = style.view({
 	marginTop: 15
 });
 
-const SoloImage = style.image({
+const SoloImage = style.touchableOpacity({
 	width: '100%'
 });
 
-const HalfImage = style.image({
-	width: '49%'
-});
-
-const QuarterImage = style.image({
+const QuarterImage = style.touchableOpacity({
 	width: '100%'
 });
 
 const Column = style.view({
 	width: '50%',
 	justifyContent: 'space-between'
+});
+
+const StretchImage = style.image({
+	width: '100%',
+	height: '100%'
 });
