@@ -124,10 +124,15 @@ function getTitle(displayNames) {
  * Select the set of conversations with the filtering criteria
  */
 
+ const searchText = (thread) => ((thread.subject || '') + ' ' + thread.displayNames.reduce((acc, elem) => `${acc}, ${elem[1]}`, "")).toLowerCase().replace(/[\é\è]/g, 'e');
+ const searchFilter = (filter) => filter.toLowerCase().replace(/[\é\è]/g, 'e');
+
 export default connect(
 	(state: any) => ({
 		conversations: state.threads.payload.filter(
-			t => !state.threads.filterCriteria || (t.subject && t.subject.toLowerCase().indexOf(state.threads.filterCriteria.toLowerCase()) !== -1)
+			t => { 
+				console.log(searchText(t)); 
+				return !state.threads.filterCriteria || searchText(t).indexOf(searchFilter(state.threads.filterCriteria)) !== -1 }
 		),
 		nbConversations: state.threads.payload.length
 	}), 
