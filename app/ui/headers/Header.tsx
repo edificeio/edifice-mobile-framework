@@ -17,7 +17,10 @@ const containerBar: ViewStyle = {
 }
 
 export const Header = style.view({
-	...containerBar,
+	elevation: 5,
+	justifyContent: "flex-start",
+	paddingTop: Platform.OS === "ios" ? iosStatusBarHeight : 0,
+	flexDirection: 'column',
 	backgroundColor: CommonStyles.mainColorTheme
 })
 
