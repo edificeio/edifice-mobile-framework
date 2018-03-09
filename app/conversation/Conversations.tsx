@@ -120,8 +120,8 @@ const searchFilter = (filter) => filter.toLowerCase().replace(/[\é\è]/g, 'e');
 export default connect(
 	(state: any) => ({
 		page: state.conversation.page,
-		threads: state.threads.payload.filter(
-			t => !state.threads.filterCriteria || searchText(t).indexOf(searchFilter(state.threads.filterCriteria)) !== -1
+		threads: state.conversation.threads.filter(
+			t => !state.conversation.filterCriteria || searchText(t).indexOf(searchFilter(state.conversation.filterCriteria)) !== -1
 		),
 		nbThreads: state.conversation.threads.length
 	}), 

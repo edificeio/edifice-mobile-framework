@@ -20,7 +20,7 @@ export const Header = style.view({
 	elevation: 5,
 	justifyContent: "flex-start",
 	paddingTop: Platform.OS === "ios" ? iosStatusBarHeight : 0,
-	flexDirection: 'column',
+	flexDirection: 'row',
 	backgroundColor: CommonStyles.mainColorTheme
 })
 
@@ -61,7 +61,9 @@ export const AppTitle = style.text({
 	fontWeight: "400",
 	fontSize: 16,
 	flex: 1,
-	textAlign: 'center'
+	textAlign: 'center',
+	height: 56,
+	lineHeight: 56
 });
 
 export const HeaderAction = style.text({
@@ -75,8 +77,7 @@ export const HeaderAction = style.text({
 	lineHeight: 56
 });
 
-export const Title = style.text(
-	{
+export const Title = style.text({
 		color: "white",
 		fontFamily: CommonStyles.primaryFontFamily,
 		fontWeight: "400",

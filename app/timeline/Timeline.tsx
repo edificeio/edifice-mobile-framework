@@ -12,19 +12,15 @@ import { Icon, Loading, Row } from "../ui";
 import I18n from 'react-native-i18n';
 import { EmptyScreen } from "../ui/EmptyScreen";
 import ConnectionTrackingBar from "../ui/ConnectionTrackingBar";
+import { PageContainer } from '../ui/ContainerContent';
 
 export class TimelineHeader extends React.Component<{ navigation?: any }, undefined> {
 	render() {
 		return (
             <Header>
-				<Row>
-					<HeaderIcon onPress={ () => this.props.navigation.navigate('FilterTimeline') } name={ "filter" } />
-					<AppTitle>{ I18n.t('News') }</AppTitle>
-					<HeaderIcon name={ "filter" } hidden={ true } />
-				</Row>
-				<Row>
-					<ConnectionTrackingBar />
-				</Row>
+				<HeaderIcon onPress={ () => this.props.navigation.navigate('FilterTimeline') } name={ "filter" } />
+				<AppTitle>{ I18n.t('News') }</AppTitle>
+				<HeaderIcon name={ "filter" } hidden={ true } />
             </Header>
 		)
 	}
@@ -75,30 +71,48 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
 		return false
 	}
 
-	public render() {
-		const { news, isFetching } = this.props;
+	list(){
+		const { news } = this.props;
 
-		if(isFetching) return <Loading />
+		return <FlatList
+			data={news}
+			disableVirtualization
+			keyExtractor={item => item.id}
+			onEndReached={() => this.nextPage()}
+			onEndReachedThreshold={0.1}
+			ref={list => (this.flatList = list)}
+			removeClippedSubviews
+			renderItem={({ item, index }) => (
+				<News {...item} index={index} onPress={(expend) => this.openNews(item, expend)} />
+			)}
+			style={styles.gridWhite}
+		/>
+	}
 
-		if ((!news || news.length === 0) && this.props.endReached) return <EmptyScreen 
+	emptyScreen(){
+		return <EmptyScreen 
 			image={ require('../../assets/images/empty-screen/espacedoc.png') } 
 			text={ I18n.t('timeline-emptyScreenText') } 
 			title={ I18n.t('timeline-emptyScreenTitle') } />
+	}
+
+	content(){
+		const { news } = this.props;
+		return (!news || news.length === 0) && this.props.endReached ? this.emptyScreen() : this.list()
+	}
+
+	loading(){
+		return <Loading />
+	}
+
+	public render() {
+		const { isFetching } = this.props;
 
 		return (
-			<FlatList
-				data={news}
-				disableVirtualization
-				keyExtractor={item => item.id}
-				onEndReached={() => this.nextPage()}
-				onEndReachedThreshold={0.1}
-				ref={list => (this.flatList = list)}
-				removeClippedSubviews
-				renderItem={({ item, index }) => (
-					<News {...item} index={index} onPress={(expend) => this.openNews(item, expend)} />
-				)}
-				style={styles.gridWhite}
-			/>
+			<PageContainer>
+				<ConnectionTrackingBar />
+				{ isFetching ? this.loading() : this.content() }
+			</PageContainer>
 		)
 	}
 }
@@ -112,11 +126,4 @@ export default connect(
 	dispatch => ({
 		sync: (page: number, availableApps) => listTimeline(dispatch)(page, availableApps),
 	})
-)(Timeline)
-
-
-const Separator = () => (
-	<style.View>
-		<Image source={require("../../assets/images/separator.png")} />
-	</style.View>
-)
+)(Timeline);

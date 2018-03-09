@@ -1,12 +1,21 @@
 export interface ConnectionTrackerState {
-    connected: boolean
+    connected: boolean,
+    loading: boolean
 }
 
 const initialState = {
-    connected: false
+    connected: false,
+    loading: false
 }
 
 export default (state: ConnectionTrackerState = initialState, action): ConnectionTrackerState => {
+    if(action.type === 'LOADING_CONNECTION_TRACKER'){
+		return {
+            ...state,
+            loading: true
+		}
+    }
+
 	if(action.type === 'CONNECTED_CONNECTION_TRACKER'){
         console.log('connected')
 		return {

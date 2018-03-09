@@ -50,7 +50,9 @@ export const CommonStyles = {
 	textInputColor: "#414355",
 	textTabBottomColor: "#858FA9",
 	titleColor: "#1467ff",
-	warning: '#FFB000'
+	warning: '#FFB000',
+	success: '#19CA72',
+	error: '#E04B35'
 }
 
 Text.defaultProps.style = { fontFamily: CommonStyles.primaryFontFamily }
