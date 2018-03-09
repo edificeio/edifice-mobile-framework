@@ -24,6 +24,7 @@ export class Images extends React.Component<{ images: object[] }, any> {
 	root: any;
 	carouselRef: any;
 	currentScroll = 0;
+	previousScroll = 0;
 
 	setNativeProps (nativeProps) {
 		this.root.setNativeProps(nativeProps);
@@ -31,12 +32,21 @@ export class Images extends React.Component<{ images: object[] }, any> {
 
 	slideToImage(e){
 		const { width, height } = Dimensions.get('window');
-		const direction = this.currentScroll % width > width / 2;
+		const left = this.previousScroll - this.currentScroll > width / 5;
+		const right = this.previousScroll - this.currentScroll < -width / 5;
+
+		if(right){
+			console.log('right')
+		}
+		if(left){
+			console.log('left')
+		}
 		let newPosition = Math.floor((this.currentScroll / width)) * width;
-		if(direction){
+		if(right){
 			newPosition += width;
 		}
 		this.carouselRef.scrollTo({ x: newPosition, animated: true });
+		this.previousScroll = newPosition;
 	}
 
 	carousel(){

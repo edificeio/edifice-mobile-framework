@@ -130,9 +130,7 @@ function getTitle(displayNames) {
 export default connect(
 	(state: any) => ({
 		conversations: state.threads.payload.filter(
-			t => { 
-				console.log(searchText(t)); 
-				return !state.threads.filterCriteria || searchText(t).indexOf(searchFilter(state.threads.filterCriteria)) !== -1 }
+			t => !state.threads.filterCriteria || searchText(t).indexOf(searchFilter(state.threads.filterCriteria)) !== -1
 		),
 		nbConversations: state.threads.payload.length
 	}), 
