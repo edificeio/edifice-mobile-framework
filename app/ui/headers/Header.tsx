@@ -1,8 +1,9 @@
 import style from "glamorous-native"
 import * as React from "react";
 import { CommonStyles } from "../../styles/common/styles"
-import { ViewStyle, Platform } from "react-native"
+import { ViewStyle, Platform, TouchableOpacity } from 'react-native';
 import { isIphoneX } from "react-native-iphone-x-helper"
+import { Icon } from "..";
 
 const iosStatusBarHeight = isIphoneX() ? 40 : 20
 
@@ -29,7 +30,16 @@ const sensitiveStylePanel: ViewStyle = {
 	width: 58,
 }
 
-export const HeaderIcon = style.touchableOpacity(sensitiveStylePanel)
+const iconsDeltaSizes = {
+	close: 16
+}
+
+export const HeaderIcon = ({ name, hidden, onPress }: { name: string, hidden?: boolean, onPress?: () => void }) => (
+	<TouchableOpacity style={ sensitiveStylePanel } onPress={ () => onPress() }>
+		<Icon size={ iconsDeltaSizes[name] ? iconsDeltaSizes[name] : 20 } name={ name } color={ hidden ? "transparent" : "#FFFFFF" } />
+	</TouchableOpacity>
+);
+
 export const TouchableEndBarPanel = style.touchableOpacity({
 	...sensitiveStylePanel,
 	alignSelf: "flex-end",

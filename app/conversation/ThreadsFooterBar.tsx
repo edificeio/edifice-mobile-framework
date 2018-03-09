@@ -1,6 +1,6 @@
 import style from "glamorous-native"
 import * as React from "react"
-import { CenterPanel, HeaderIcon } from "../ui/headers/Header";
+import { CenterPanel } from "../ui/headers/Header";
 import { Icon, IconOnOff } from "../ui/index"
 import { tr } from "../i18n/t"
 import { sendMessage } from "../actions/conversation"

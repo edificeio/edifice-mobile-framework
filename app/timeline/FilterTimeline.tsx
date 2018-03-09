@@ -1,7 +1,6 @@
 import * as React from "react"
 import { View } from "react-native";
-import { Header, Title, HeaderAction } from '../ui/headers/Header';
-import { Close } from "../ui/headers/Close";
+import { Header, Title, HeaderAction, HeaderIcon } from '../ui/headers/Header';
 import I18n from 'react-native-i18n';
 import { ListItem, PageContainer } from '../ui/ContainerContent';
 import { setFilters, pickFilters } from '../actions/timeline';
@@ -23,7 +22,7 @@ export class FilterHeader extends React.Component<{ navigation: any, pickFilters
 	render() {
 		return (
             <Header>
-                <Close onClose={ () => this.cancel() } />
+                <HeaderIcon name={ "close" } onPress={ () => this.cancel() } />
 				<Title>{ I18n.t('timeline-filterBy') }</Title>
 				<HeaderAction onPress={ () => this.apply() }>{ I18n.t('apply') }</HeaderAction>
             </Header>

@@ -3,7 +3,6 @@ import * as React from "react";
 import { Me } from "../infra/Me";
 import { CommonStyles } from "../styles/common/styles"
 import {
-	HeaderIcon,
 	TouchableEndBarPanel,
 	CenterPanel,
 	Header, Title

@@ -41,9 +41,7 @@ export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
 	public render() {
 		return (
 			<Header>
-				<HeaderIcon>
-					<SearchIcon />
-				</HeaderIcon>
+				<HeaderIcon name={ "search" } />
 				<TextInput
 					onBlur={ () => this.onClose() }
 					autoFocus={true}
@@ -55,9 +53,7 @@ export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
 					underlineColorAndroid={"transparent"}
 					value={this.state.value}
 				/>
-				<HeaderIcon onPress={() => this.onClose()}>
-					<CloseIcon />
-				</HeaderIcon>
+				<HeaderIcon onPress={ () => this.onClose() } name={ "close" } />
 			</Header>
 		)
 	}

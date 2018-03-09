@@ -28,13 +28,9 @@ export class ConversationTopBar extends React.Component<{ navigation?: any, conv
 	defaultView(){
 		return (
 			<Header>
-				<HeaderIcon onPress={() => this.setState({ searching: true })}>
-					{ !this.props.conversationsIsEmpty && <SearchIcon /> }
-				</HeaderIcon>
+				<HeaderIcon onPress={ () => this.setState({ searching: true }) } hidden={ this.props.conversationsIsEmpty } name={ "search" } />
 				<AppTitle>{tr.Conversation}</AppTitle>
-				<HeaderIcon onPress={() => this.onClose()}>
-					<Icon size={ 22 } name={"new_message"} color={"transparent"} />
-				</HeaderIcon>
+				<HeaderIcon onPress={ () => this.onClose() } name={ "new_message" } hidden={ true } />
 			</Header>
 		);
 	}
