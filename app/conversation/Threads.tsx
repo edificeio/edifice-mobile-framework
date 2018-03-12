@@ -13,7 +13,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { IAction } from '../actions/docs';
 import ThreadsFooterBar from "./ThreadsFooterBar";
-import { CommonStyles } from "../styles/common/styles";
+import { CommonStyles, headerBarHeight } from "../styles/common/styles";
 
 export interface IThreadsProps {
 	navigation?: any
@@ -33,7 +33,7 @@ export class Threads extends React.Component<IThreadsProps, any> {
 	public render() {
 		const { threads } = this.props;
 		return (
-			<KeyboardAvoidingView style={{ flex: 1 }} behavior={ Platform.OS === "ios" ? 'padding' : undefined } keyboardVerticalOffset={ 70 }>
+			<KeyboardAvoidingView style={{ flex: 1 }} behavior={ Platform.OS === "ios" ? 'padding' : undefined } keyboardVerticalOffset={ headerBarHeight() }>
 				<FlatList
 					data={threads}
 					renderItem={({ item }) => this.renderItem(item)}

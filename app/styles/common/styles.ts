@@ -1,4 +1,9 @@
-import { Text } from "react-native"
+import { Text } from "react-native";
+import { getStatusBarHeight } from 'react-native-status-bar-height';
+
+export const headerBarHeight = () => {
+	return getStatusBarHeight() + 56;
+}
 
 export const CommonStyles = {
 	primary: "#2A9CC8",
