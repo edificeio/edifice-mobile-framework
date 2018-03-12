@@ -14,7 +14,6 @@ import { bindActionCreators } from "redux";
 import { IAction } from '../actions/docs';
 import ThreadsFooterBar from "./ThreadsFooterBar";
 import { CommonStyles } from "../styles/common/styles";
-import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 export interface IThreadsProps {
 	navigation?: any
@@ -34,7 +33,7 @@ export class Threads extends React.Component<IThreadsProps, any> {
 	public render() {
 		const { threads } = this.props;
 		return (
-			<KeyboardAvoidingView style={{ flex: 1 }} behavior={ Platform.OS === "ios" ? 'padding' : undefined } keyboardVerticalOffset={ getStatusBarHeight() + 56 }>
+			<KeyboardAvoidingView style={{ flex: 1 }} behavior={ Platform.OS === "ios" ? 'padding' : undefined } keyboardVerticalOffset={ 70 }>
 				<FlatList
 					data={threads}
 					renderItem={({ item }) => this.renderItem(item)}

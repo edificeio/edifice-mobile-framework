@@ -5,7 +5,7 @@ import { Icon, IconOnOff } from "../ui/index"
 import { tr } from "../i18n/t"
 import { sendMessage } from "../actions/conversation"
 import { connect } from "react-redux"
-import { View } from "react-native";
+import { View, Platform } from "react-native";
 import { ToggleIcon } from "../ui/ToggleIcon";
 import { Row } from "../ui/Grid";
 import { CommonStyles } from "../styles/common/styles";
@@ -52,8 +52,18 @@ const SendContainer = style.touchableOpacity({
 
 const TextInput = style.textInput({
 	width: '100%',
-	lineHeight: 40
+	lineHeight: Platform.OS === 'ios' ? 40 : 20
 });
+
+const ContainerInput = style.view({
+	height: 40,
+	justifyContent: "center",
+	paddingLeft: 20,
+	paddingRight: 10,
+	paddingTop: Platform.OS === 'ios' ? 10 : 0,
+	width: '100%',
+	flexDirection: 'row'
+})
 
 class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, ThreadsFooterBarState> {
 	input: any;
@@ -89,7 +99,7 @@ class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, ThreadsFo
 		} else {
 			to = [conversation.from]
 		}
-
+		this.input.innerComponent.setNativeProps({keyboardType:"email-address"});
 		this.input.innerComponent.clear();
 		this.props.send(
 			{
@@ -104,7 +114,9 @@ class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, ThreadsFo
 		this.setState({
 			...this.state,
 			textMessage: ''
-		})
+		});
+		
+this.input.innerComponent.setNativeProps({keyboardType:"default"});
 	}
 
 	public render() {
@@ -122,6 +134,7 @@ class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, ThreadsFo
 						placeholder={tr.Write_a_message}
 						underlineColorAndroid={"transparent"}
 						value={textMessage}
+						autoCorrect={ false }
 					/>
 				</ContainerInput>
 				<Row>
@@ -144,16 +157,6 @@ enum Selected {
 	none,
 	other,
 }
-
-const ContainerInput = style.view({
-	height: 40,
-	justifyContent: "center",
-	paddingLeft: 20,
-	paddingRight: 10,
-	paddingTop: 10,
-	width: '100%',
-	flexDirection: 'row'
-})
 
 export default connect(
 	state => ({}),
