@@ -18,8 +18,8 @@ const TapCircle = style.touchableOpacity(
     })
 )
 
-export const Checkbox = ({ checked, onUncheck, onCheck }) => (
-	<TapCircle onPress={ () => checked ? onUncheck() : onCheck()} checked={ checked }>
+export const Checkbox = ({ checked, onUncheck, onCheck }: { checked: boolean, onUncheck?: () => void, onCheck?: () => void}) => (
+	<TapCircle onPress={ () => checked ? (onUncheck && onUncheck()) : (onCheck && onCheck()) } checked={ checked }>
         <Icon size={ 17 } name={ "checked" } color={ "white" } />
     </TapCircle>
 )

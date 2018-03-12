@@ -1,6 +1,6 @@
 import style from "glamorous-native"
 import * as React from "react"
-import { View, Text, Image, ScrollView, Modal, Dimensions, Animated } from "react-native";
+import { View, Text, Image, ScrollView, Modal, Dimensions, Animated, Platform } from "react-native";
 import { Row, Icon } from ".";
 import { StackNavigator } from "react-navigation";
 import FitImage from 'react-native-fit-image';
@@ -12,7 +12,7 @@ const Close = style.touchableOpacity({
 	alignItems: 'center',
 	justifyContent: 'center',
 	position: 'absolute',
-	top: 0,
+	top: Platform.OS === "ios" ? 20 : 0,
 	right: 0
 });
 
@@ -45,6 +45,9 @@ export class Images extends React.Component<{ images: object[] }, any> {
 		let newPosition = Math.floor((this.currentScroll / width)) * width;
 		if(right){
 			newPosition += width;
+		}
+		if(newPosition < 0){
+			newPosition = 0;
 		}
 		this.carouselRef.scrollTo({ x: newPosition, animated: true });
 		this.previousScroll = newPosition;

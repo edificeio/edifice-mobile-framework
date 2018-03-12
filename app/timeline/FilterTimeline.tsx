@@ -57,7 +57,7 @@ export class FilterTimeline extends React.Component<{ selectedApps: any, pickFil
 		this.props.pickFilters(newApps);
 	}
 
-	allAppsChecked(){
+	get allAppsChecked(): boolean{
 		let allChecked = true;
 		for(let app in this.props.selectedApps){
 			allChecked = allChecked && this.props.selectedApps[app];
@@ -76,14 +76,14 @@ export class FilterTimeline extends React.Component<{ selectedApps: any, pickFil
 
 		return (
 			<PageContainer>
-				<ListItem style={{ justifyContent: 'space-between'}}>
+				<ListItem style={{ justifyContent: 'space-between'}} onPress={ () => this.checkAllApps(!this.allAppsChecked) }>
 					<Bold>{ I18n.t(`timeline-allFilter`) }</Bold>
-					<Checkbox onCheck={ () => this.checkAllApps(true) } onUncheck={ () => this.checkAllApps(false) } checked={ this.allAppsChecked() } />
+					<Checkbox checked={ this.allAppsChecked } />
 				</ListItem>
 				{ apps.map(app => (
-					<ListItem key={ app.name } style={{ justifyContent: 'space-between'}}>
+					<ListItem key={ app.name } style={{ justifyContent: 'space-between'}} onPress={ () => this.checkApp(app, !app.checked) }>
 						<Bold>{ I18n.t(`timeline-${ app.name.toLowerCase() }Filter`) }</Bold>
-						<Checkbox onCheck={ () => this.checkApp(app, true) } onUncheck={ () => this.checkApp(app, false) } checked={ app.checked } />
+						<Checkbox checked={ app.checked } />
 					</ListItem>
 				))}
 			</PageContainer>

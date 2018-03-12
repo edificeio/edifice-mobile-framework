@@ -48,8 +48,12 @@ const SendContainer = style.touchableOpacity({
 	paddingBottom: 10,
 	width: 58,
 	alignSelf: "flex-end",
-})
+});
 
+const TextInput = style.textInput({
+	width: '100%',
+	lineHeight: 40
+});
 
 class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, ThreadsFooterBarState> {
 	input: any;
@@ -146,13 +150,9 @@ const ContainerInput = style.view({
 	justifyContent: "center",
 	paddingLeft: 20,
 	paddingRight: 10,
-	paddingTop: 0,
+	paddingTop: 10,
 	width: '100%',
 	flexDirection: 'row'
-})
-
-const TextInput = style.textInput({
-	width: '100%'
 })
 
 export default connect(

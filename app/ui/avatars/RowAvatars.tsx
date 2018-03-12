@@ -5,16 +5,20 @@ import { Avatar, Size } from "./Avatar";
 import { Text, View } from "react-native";
 import { CommonStyles } from '../../styles/common/styles';
 
-const Skipped = style.text({
-	color: CommonStyles.warning,
-	backgroundColor: '#FFFFFF',
+const SkippedContainer = style.view({
+	borderRadius: 15,
 	height: 29,
 	width: 29,
-	borderRadius: 15,
-	textAlign: 'center',
-	lineHeight: 30,
-	fontFamily: CommonStyles.primaryFontFamily,
+	alignItems: 'center',
+	justifyContent: 'center',
 	marginLeft: -4,
+	backgroundColor: '#FFFFFF'
+})
+
+const Skipped = style.text({
+	color: CommonStyles.warning,
+	textAlign: 'center',
+	fontFamily: CommonStyles.primaryFontFamily,
 	fontSize: 12
 })
 
@@ -87,7 +91,7 @@ export class RowAvatars extends React.Component<IAvatarsProps, IAvatarsState> {
 		return (
 			<Container>
 				{ images.map((image, idx) => <Avatar size={ Size.aligned } key={idx} index={idx} count={images.length} id={image} />) }
-				{ skipped ? <Skipped>+{ skipped }</Skipped> : <View /> }
+				{ skipped ? <SkippedContainer><Skipped>+{ skipped }</Skipped></SkippedContainer> : <View /> }
 			</Container>
 		)
 	}
