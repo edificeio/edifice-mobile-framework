@@ -16,6 +16,41 @@ const Close = style.touchableOpacity({
 	right: 0
 });
 
+const BubbleText = style.text({
+	color: '#FFFFFF',
+	textAlign: 'center'
+})
+
+const ContainerImage = style.view({
+	marginTop: 15
+});
+
+const SoloImage = style.touchableOpacity({
+	width: '100%'
+});
+
+const QuarterImage = style.touchableOpacity({
+	width: '100%'
+});
+
+const Overlay = style.touchableOpacity({
+	width: '100%',
+	position: 'absolute',
+	bottom: 0,
+	right: 0,
+	backgroundColor: 'rgba(0,0,0,0.5)'
+});
+
+const Column = style.view({
+	width: '50%',
+	justifyContent: 'space-between'
+});
+
+const StretchImage = style.image({
+	width: '100%',
+	height: '100%'
+});
+
 export class Images extends React.Component<{ images: object[] }, any> {
 	state = {
 		fullscreen: false
@@ -156,10 +191,11 @@ export class Images extends React.Component<{ images: object[] }, any> {
 						<QuarterImage style={{ height: heightRatio / 2 - 5 }} onPress={ () => this.openImage(1) }>
 							<StretchImage source={images[1]} />
 						</QuarterImage>
-						<QuarterImage style={{ height: heightRatio / 2 - 5 }} onPress={ () => this.openImage(3) }>
+						<QuarterImage style={{ height: heightRatio / 2 - 5 }}>
 							<StretchImage source={images[3]} />
 						</QuarterImage>
-						{ images.length > 4 && <BubbleView style={{ bottom: (heightRatio / 4) - 10}}>
+						{ images.length > 4 && <Overlay style={{ height: heightRatio / 2 - 5 }} onPress={ () => this.openImage(3) }></Overlay> }
+						{ images.length > 4 && <BubbleView style={{ bottom: (heightRatio / 4) - 15 }}>
 							<BubbleText>+{ images.length - 4 }</BubbleText>
 						</BubbleView> }
 					</Column>
@@ -195,31 +231,4 @@ const BubbleView = style.view({
 	borderRadius:15,
 	left: '50%',
 	marginLeft: -10
-});
-
-const BubbleText = style.text({
-	color: '#FFFFFF',
-	textAlign: 'center'
-})
-
-const ContainerImage = style.view({
-	marginTop: 15
-});
-
-const SoloImage = style.touchableOpacity({
-	width: '100%'
-});
-
-const QuarterImage = style.touchableOpacity({
-	width: '100%'
-});
-
-const Column = style.view({
-	width: '50%',
-	justifyContent: 'space-between'
-});
-
-const StretchImage = style.image({
-	width: '100%',
-	height: '100%'
 });
