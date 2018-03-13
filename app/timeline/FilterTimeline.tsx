@@ -78,12 +78,12 @@ export class FilterTimeline extends React.Component<{ selectedApps: any, pickFil
 			<PageContainer>
 				<ListItem style={{ justifyContent: 'space-between'}} onPress={ () => this.checkAllApps(!this.allAppsChecked) }>
 					<Bold>{ I18n.t(`timeline-allFilter`) }</Bold>
-					<Checkbox checked={ this.allAppsChecked } />
+					<Checkbox checked={ this.allAppsChecked } onCheck={ () => this.checkAllApps(true) } onUncheck={ () => this.checkAllApps(false) } />
 				</ListItem>
 				{ apps.map(app => (
 					<ListItem key={ app.name } style={{ justifyContent: 'space-between'}} onPress={ () => this.checkApp(app, !app.checked) }>
 						<Bold>{ I18n.t(`timeline-${ app.name.toLowerCase() }Filter`) }</Bold>
-						<Checkbox checked={ app.checked } />
+						<Checkbox checked={ app.checked } onCheck={ () => this.checkApp(app, true) } onUncheck={ () => this.checkApp(app, false) } />
 					</ListItem>
 				))}
 			</PageContainer>
