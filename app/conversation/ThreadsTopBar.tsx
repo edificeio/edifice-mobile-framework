@@ -56,8 +56,7 @@ export class ThreadsTopBar extends React.PureComponent<IThreadsBarProps, {}> {
 				{expand && (
 					<ContainerAvatars>
 						<RowAvatars onSlideIndex={slideIndex => this.onSlideIndex(slideIndex)} images={images} />
-						<Legend14>{names[this.state.slideIndex]}</Legend14>
-						<Legend12 />
+						<Legend14 numberOfLines={2}>{names[this.state.slideIndex]}</Legend14>
 					</ContainerAvatars>
 				)}
 			</Header>
@@ -74,7 +73,12 @@ const legendStyle: TextStyle = {
 const Legend14 = style.text({
 	...legendStyle,
 	fontFamily: CommonStyles.primaryFontFamilyBold,
-	height: 20,
+	height: 50,
+	textAlign: 'center',
+	textAlignVertical: 'center',
+	flex: 1,
+	paddingLeft: 50,
+	paddingRight: 50
 })
 
 const Legend12 = style.text({
