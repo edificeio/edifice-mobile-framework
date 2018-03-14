@@ -191,7 +191,7 @@ export class Images extends React.Component<{ images: object[] }, any> {
 						<QuarterImage style={{ height: heightRatio / 2 - 5 }} onPress={ () => this.openImage(1) }>
 							<StretchImage source={images[1]} />
 						</QuarterImage>
-						<QuarterImage style={{ height: heightRatio / 2 - 5 }}>
+						<QuarterImage style={{ height: heightRatio / 2 - 5 }} onPress={ () => this.openImage(3) }>
 							<StretchImage source={images[3]} />
 						</QuarterImage>
 						{ images.length > 4 && <Overlay style={{ height: heightRatio / 2 - 5 }} onPress={ () => this.openImage(3) }></Overlay> }
