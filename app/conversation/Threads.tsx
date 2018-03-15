@@ -14,6 +14,7 @@ import { bindActionCreators } from "redux";
 import { IAction } from '../actions/docs';
 import ThreadsFooterBar from "./ThreadsFooterBar";
 import { CommonStyles } from "../styles/common/styles";
+import ConnectionTrackingBar from "../ui/ConnectionTrackingBar";
 
 export interface IThreadsProps {
 	navigation?: any
@@ -44,6 +45,7 @@ export class Threads extends React.Component<IThreadsProps, any> {
 					onLayout={() => this.list.scrollToEnd({ animated: true })}
 				/>
 				<ThreadsFooterBar conversation={  this.props.navigation.state.params } />
+				<ConnectionTrackingBar />
 			</KeyboardAvoidingView>
 		)
 	}

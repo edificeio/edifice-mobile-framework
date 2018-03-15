@@ -7,6 +7,7 @@ import { setFilters, pickFilters } from '../actions/timeline';
 import { Bold } from "../ui/Typography";
 import { Checkbox } from "../ui/forms/Checkbox";
 import { connect } from "react-redux";
+import ConnectionTrackingBar from "../ui/ConnectionTrackingBar";
 
 export class FilterHeader extends React.Component<{ navigation: any, pickFilters: (apps) => void, setFilters: (apps) => void, availableApps, selectedApps }, undefined> {
 	apply(){
@@ -86,6 +87,7 @@ export class FilterTimeline extends React.Component<{ selectedApps: any, pickFil
 						<Checkbox checked={ app.checked } onCheck={ () => this.checkApp(app, true) } onUncheck={ () => this.checkApp(app, false) } />
 					</ListItem>
 				))}
+				<ConnectionTrackingBar />
 			</PageContainer>
 		)
 	}

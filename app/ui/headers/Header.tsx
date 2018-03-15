@@ -4,6 +4,7 @@ import { CommonStyles } from "../../styles/common/styles"
 import { ViewStyle, Platform, TouchableOpacity } from 'react-native';
 import { isIphoneX } from "react-native-iphone-x-helper"
 import { Icon } from "..";
+import { connect } from "react-redux";
 
 const iosStatusBarHeight = isIphoneX() ? 40 : 20
 
@@ -16,13 +17,20 @@ const containerBar: ViewStyle = {
 	paddingTop: Platform.OS === "ios" ? iosStatusBarHeight : 0,
 }
 
-export const Header = style.view({
-	elevation: 5,
+const HeaderStyle = style.view({
 	justifyContent: "flex-start",
 	paddingTop: Platform.OS === "ios" ? iosStatusBarHeight : 0,
 	flexDirection: 'row',
 	backgroundColor: CommonStyles.mainColorTheme
-})
+});
+
+export const HeaderComponent = ({ connectionTracker, children, onLayout }) => <HeaderStyle onLayout={ () => onLayout() } style={{ elevation: connectionTracker.visible ? 0 : 5 }}>{ children }</HeaderStyle>;
+
+export const Header = connect(
+	(state: any) => ({
+		connectionTracker: state.connectionTracker
+	})
+)(HeaderComponent);
 
 const sensitiveStylePanel: ViewStyle = {
 	alignItems: "center",

@@ -43,30 +43,30 @@ export class Login extends React.Component<{
 		const { loggedIn, email, password, error } = this.props.auth;
 
 		return (
-			<Form>
+			<View style={{ flex: 1 }}>
+				<Form>
+					<Logo />
+					<TextInputLine 
+						placeholder={tr.Login} 
+						onChangeText={(email) => this.setState({ email: email, typing: true })}
+						value={ this.state.email || email }
+						hasError={ error && !this.state.typing } />
+					<TextInputLine 
+						placeholder={tr.Password} 
+						onChangeText={(password: string) => this.setState({ password: password, typing: true })} 
+						secureTextEntry={ true } 
+						value={ this.state.password || password }
+						hasError={ error && !this.state.typing } />
+
+					<ValidTextIcon 
+						onPress={ () => this.login() } 
+						disabled={ this.isDisabled } 
+						title={tr.Connect} />
+
+					{ (error && !this.state.typing) ? <ErrorMessage>{ error }</ErrorMessage> : <View /> }
+				</Form>
 				<ConnectionTrackingBar />
-				
-				<Logo />
-
-				<TextInputLine 
-					placeholder={tr.Login} 
-					onChangeText={(email) => this.setState({ email: email, typing: true })}
-					value={ this.state.email || email }
-					hasError={ error && !this.state.typing } />
-				<TextInputLine 
-					placeholder={tr.Password} 
-					onChangeText={(password: string) => this.setState({ password: password, typing: true })} 
-					secureTextEntry={ true } 
-					value={ this.state.password || password }
-					hasError={ error && !this.state.typing } />
-
-				<ValidTextIcon 
-					onPress={ () => this.login() } 
-					disabled={ this.isDisabled } 
-					title={tr.Connect} />
-
-				{ (error && !this.state.typing) ? <ErrorMessage>{ error }</ErrorMessage> : <View /> }
-			</Form>
+			</View>
 		)
 	}
 }

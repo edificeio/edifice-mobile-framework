@@ -1,14 +1,30 @@
 export interface ConnectionTrackerState {
     connected: boolean,
-    loading: boolean
+    loading: boolean,
+    visible: boolean
 }
 
 const initialState = {
     connected: false,
-    loading: false
+    loading: false,
+    visible: false
 }
 
 export default (state: ConnectionTrackerState = initialState, action): ConnectionTrackerState => {
+    if(action.type === 'SHOW_CONNECTION_TRACKER'){
+		return {
+            ...state,
+            visible: true
+		}
+    }
+
+    if(action.type === 'HIDE_CONNECTION_TRACKER'){
+		return {
+            ...state,
+            visible: false
+		}
+    }
+
     if(action.type === 'LOADING_CONNECTION_TRACKER'){
 		return {
             ...state,
@@ -20,7 +36,8 @@ export default (state: ConnectionTrackerState = initialState, action): Connectio
         console.log('connected')
 		return {
             ...state,
-            connected: true
+            connected: true,
+            loading: false
 		}
     }
     
@@ -28,7 +45,8 @@ export default (state: ConnectionTrackerState = initialState, action): Connectio
         console.log('disconnected')
 		return {
             ...state,
-            connected: false
+            connected: false,
+            loading: false
 		}
     }
     

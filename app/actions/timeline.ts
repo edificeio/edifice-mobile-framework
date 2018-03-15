@@ -5,6 +5,7 @@ import { adaptator } from "../infra/HTMLAdaptator";
 import { Me } from "../infra/Me";
 import { AsyncStorage } from "react-native";
 import { read } from "../infra/Cache";
+import { Connection } from "../infra/Connection";
 
 console.log(Conf)
 
@@ -37,7 +38,12 @@ const loadSchoolbooks = (): Promise<Array<any>> => {
 		}
 		
 		awaiters.forEach(a => a());
-		loadingState = 'over';
+		if(Connection.isOnline){
+			loadingState = 'over';
+		}
+		else{
+			loadingState = 'idle';
+		}
 	});
 }
 

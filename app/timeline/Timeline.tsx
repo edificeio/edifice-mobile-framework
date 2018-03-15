@@ -110,8 +110,8 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
 
 		return (
 			<PageContainer>
-				<ConnectionTrackingBar />
 				{ isFetching ? this.loading() : this.content() }
+				<ConnectionTrackingBar />
 			</PageContainer>
 		)
 	}

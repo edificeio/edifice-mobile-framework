@@ -5,7 +5,8 @@ import { connect } from "react-redux";
 import { watchConnection, checkConnection } from '../actions/connectionTracker';
 import { CommonStyles } from '../styles/common/styles';
 import { Icon } from './icons/Icon';
-import { Animated } from 'react-native';
+import { Animated, ActivityIndicator } from 'react-native';
+import I18n from 'react-native-i18n';
 
 const TrackerText = style.text({
     color: '#FFFFFF',
@@ -14,7 +15,7 @@ const TrackerText = style.text({
     lineHeight: 40
 });
 
-const TrackingContainer = style.view({
+const TrackingContainer = style.touchableOpacity({
     flexDirection: 'row',
     flex: 1
 });
@@ -24,22 +25,24 @@ const container = {
     position: 'absolute',
     top: 0,
     left: 0,
-    elevation: 5
+    elevation: 6,
+    backgroundColor: '#FFFFFF'
 }
 
 export class ConnectionTrackingBar extends React.Component<{ 
     connected: boolean, 
     watch: () => void,
     check: () => Promise<void>,
-    loading: boolean
+    loading: boolean,
+    visible: boolean
 }, { fadeAnim, slideAnim }> {
+
+    previousVisible: boolean;
 
     state = {
         fadeAnim: new Animated.Value(0),
         slideAnim: new Animated.Value(0)
     };
-
-    visible = false;
 
     componentDidMount(){
         this.props.watch();
@@ -47,23 +50,22 @@ export class ConnectionTrackingBar extends React.Component<{
     }
 
     animate(){
-        if(!this.props.connected){
-            Animated.timing(this.state.fadeAnim, {
-                toValue: 1,
-                duration: 500
-            }).start();  
-
-            Animated.timing(this.state.slideAnim, {
-                toValue: 40,
-                duration: 500
-            }).start();
-
-            this.visible = true;
-        }
-
-        if(this.props.connected && this.visible){
-            this.visible = false;
-            setTimeout(() => {
+        setTimeout(() => {
+            if(this.props.visible && !this.previousVisible){
+                this.previousVisible = true;
+                Animated.timing(this.state.fadeAnim, {
+                    toValue: 1,
+                    duration: 500
+                }).start();  
+    
+                Animated.timing(this.state.slideAnim, {
+                    toValue: 40,
+                    duration: 500
+                }).start();
+            }
+    
+            if(!this.props.visible && this.previousVisible){
+                this.previousVisible = false;
                 Animated.timing(this.state.fadeAnim, {
                     toValue: 0,
                     duration: 500
@@ -73,12 +75,32 @@ export class ConnectionTrackingBar extends React.Component<{
                     toValue: 0,
                     duration: 500
                 }).start();
-            }, 1000);
-        }
+            }
+        }, 200);
     }
 
     componentDidUpdate(){
         this.animate();
+    }
+
+    get iconName(): string{
+        if(this.props.loading){
+            return 'loading';
+        }
+        if(this.props.connected){
+            return 'checked';
+        }
+        return 'retry';
+    }
+
+    get text(): string{
+        if(this.props.loading){
+            return 'common-connecting';
+        }
+        if(this.props.connected){
+            return 'common-connected';
+        }
+        return 'common-disconnected';
     }
 
     get barColor(): string{
@@ -94,10 +116,13 @@ export class ConnectionTrackingBar extends React.Component<{
 	public render() {
         const { fadeAnim, slideAnim } = this.state;
 		return (
-            <Animated.View style={{ ...container, opacity: fadeAnim, height: slideAnim}}>
-                <TrackingContainer style={{ backgroundColor: this.barColor }}>
-                    <TrackerText>Connection tracking bar</TrackerText>
-                    <Icon name={ "checked" } size={ 18 } style={{ marginRight: 10, marginTop: 10}} color={ "#FFFFFF" }/>
+            <Animated.View style={{ ...container, opacity: fadeAnim, height: slideAnim }}>
+                <TrackingContainer style={{ backgroundColor: this.barColor }} onPress={ () => this.props.check() }>
+                    <TrackerText>{ I18n.t(this.text) }</TrackerText>
+                    { this.props.loading ? 
+                        <ActivityIndicator size="small" color={ '#FFFFFF' }  style={{ marginRight: 10 }} /> :
+                        <Icon name={ this.iconName } size={ 18 } style={{ marginRight: 10, marginTop: 10}} color={ "#FFFFFF" } />
+                    }
                 </TrackingContainer>
             </Animated.View>
 		)
@@ -107,7 +132,8 @@ export class ConnectionTrackingBar extends React.Component<{
 export default connect(
 	(state: any) => ({
         connected: !!state.connectionTracker.connected,
-        loading: !!state.connectionTracker.loading
+        loading: !!state.connectionTracker.loading,
+        visible: !!state.connectionTracker.visible
     }),
     (dispatch) => ({
         watch: () => watchConnection(dispatch)(),

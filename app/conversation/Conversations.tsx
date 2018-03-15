@@ -17,6 +17,7 @@ import { tr } from "../i18n/t";
 import I18n from "react-native-i18n"
 import { EmptyScreen } from "../ui/EmptyScreen";
 import { PageContainer } from "../ui/ContainerContent";
+import ConnectionTrackingBar from "../ui/ConnectionTrackingBar";
 
 export interface IConversationsProps {
 	threads: IThreadModel[];
@@ -80,6 +81,7 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 					style={styles.grid}
 					keyboardShouldPersistTaps={ 'always' }
 				/>
+				<ConnectionTrackingBar />
 			</PageContainer>
 		)
 	}

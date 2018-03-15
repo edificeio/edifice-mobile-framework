@@ -12,6 +12,7 @@ import { Bold, Light, Paragraph, A } from "../ui/Typography";
 import { Preview } from "../ui/Preview";
 import { Row, Icon } from "../ui";
 import { ResourceTitle } from "../ui/headers/ResourceTitle";
+import ConnectionTrackingBar from "../ui/ConnectionTrackingBar";
 
 export class NewsContentHeader extends React.Component<{ navigation?: any }, undefined> {
 	render() {
