@@ -8,6 +8,7 @@ const handleConnection = (isConnected, dispatch) => {
         setTimeout(() => {
             dispatch({ type: 'HIDE_CONNECTION_TRACKER'});
         }, 1000);
+        dispatch({ type: "INVALIDATE_TIMELINE" });
     }
     else{
         dispatch({ type: 'DISCONNECTED_CONNECTION_TRACKER'});

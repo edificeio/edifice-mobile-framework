@@ -7,6 +7,33 @@ import { read } from "../infra/Cache";
 
 console.log(Conf);
 
+export const fetchThread = dispatch => async (threadId: string) => {
+	try{
+		const messages = await read(`/conversation/thread/messages/${threadId}`);
+
+		for(let message of messages){
+			if(!message.unread){
+				continue;
+			}
+			message.unread = false;
+			fetch(`${Conf.platform}/conversation/message/${message.id}`);
+		}
+
+		Tracking.logEvent('refreshConversation', {
+			application: 'conversation'
+		});
+
+		dispatch({
+			type: 'FETCH_THREAD_CONVERSATION',
+			messages: messages,
+			threadId: threadId
+		});
+	}
+	catch(e){
+		console.log(e);
+	}
+}
+
 export const readThread = dispatch => async (threadId: string) => {
 	try{
 		const messages = await read(`/conversation/thread/messages/${threadId}`);
@@ -38,6 +65,23 @@ export const clearConversation = dispatch => () => {
 	dispatch({
 		type: "CLEAR_CONVERSATION"
 	});
+}
+
+export const fetchConversation = dispatch => async () => {
+	dispatch({
+		type: "FETCH_CONVERSATION"
+	});
+
+	console.log(`${Conf.platform}/conversation/threads/list?page=0`);
+	try {
+		const threads = await read(`/conversation/threads/list?page=0`);
+		dispatch({
+			type: "FETCH_NEW_CONVERSATION",
+			threads: threads
+		})
+	} catch (e) {
+		console.log(e);
+	}
 }
 
 export const readNextConversation = dispatch => async page => {

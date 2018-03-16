@@ -9,15 +9,6 @@ export const ArticleContainer = style.view({
 	flexWrap: 'wrap'
 });
 
-export const ArticlePage = style.scrollView({
-	paddingTop: 5,
-	paddingBottom: 5,
-	flex: 1,
-	flexDirection: 'column',
-	flexWrap: 'wrap',
-	backgroundColor: "rgb(248,248,250)"
-});
-
 export const ListItem = style.touchableOpacity(
 	{
 		backgroundColor: '#FFFFFF',

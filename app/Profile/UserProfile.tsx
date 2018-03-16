@@ -8,6 +8,9 @@ import { ModalBox, ModalContent } from "../ui/Modal"
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { logout } from '../actions/auth';
+import { CommonStyles } from '../styles/common/styles';
+import ConnectionTrackingBar from "../ui/ConnectionTrackingBar";
+import { PageContainer } from '../ui/ContainerContent';
 
 export interface IUserProfileProps {
 	auth: any
@@ -42,12 +45,13 @@ export class UserProfile extends React.Component<IUserProfileProps, IUserProfile
 
 	public render() {
 		return (
-			<Col backgroundColor={"#F8F8FA"}>
+			<PageContainer>
+				<ConnectionTrackingBar />
 				<ModalBox backdropOpacity={0.5} isVisible={this.state.showDisconnect}>
 					{this.disconnectBox()}
 				</ModalBox>
 				<ButtonDeconnect onPress={() => this.setState({ showDisconnect: true })} />
-			</Col>
+			</PageContainer>
 		)
 	}
 }

@@ -22,6 +22,7 @@ export interface INewsState {
 	news: INewsModel[];
 	availableApps: any;
 	selectedApps: any;
+	refresh: boolean;
 }
 
 export const Timeline = (
@@ -30,12 +31,21 @@ export const Timeline = (
 		isFetching: false,
 		news: [],
 		availableApps: undefined,
-		selectedApps: undefined
+		selectedApps: undefined,
+		refresh: true
 	},
 	action
 ) => {
 	//	console.log(action)
 	switch (action.type) {
+		case 'INVALIDATE_TIMELINE':
+			return {
+				...state,
+				refresh: true,
+				endReached: false,
+				isFetching: false,
+				news: []
+			}
 		case 'PICK_FILTER_TIMELINE':
 			return {
 				...state,
@@ -53,6 +63,12 @@ export const Timeline = (
 				news: [...state.news, ...action.news],
 				isFetching: false
 			}
+		case "FETCH_NEW_TIMELINE":
+			return {
+				...state,
+				news: [...action.news.filter(e => state.news.find(n => n.id === e.id) === undefined), ...state.news],
+				isFetching: false
+			}
 		case "END_REACHED_TIMELINE":
 			return {
 				...state,
@@ -63,7 +79,8 @@ export const Timeline = (
 		case "FETCH_TIMELINE":
 			return {
 				...state,
-				isFetching: true
+				isFetching: true,
+				refresh: false
 			}
 		case "CLEAR_TIMELINE":
 			return {

@@ -22,9 +22,6 @@ const TrackingContainer = style.touchableOpacity({
 
 const container = {
     width: '100%',
-    position: 'absolute',
-    top: 0,
-    left: 0,
     elevation: 6,
     backgroundColor: '#FFFFFF'
 }

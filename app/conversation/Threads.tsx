@@ -1,6 +1,6 @@
 import style from "glamorous-native"
 import * as React from "react"
-import { FlatList, KeyboardAvoidingView, Platform } from "react-native"
+import { FlatList, KeyboardAvoidingView, Platform, RefreshControl } from "react-native"
 import { IThreadModel, IThreadState, Message } from "../model/conversation"
 import styles from "../styles/index"
 import { Thread } from "./Thread"
@@ -8,7 +8,7 @@ import { sameDay } from "../utils/date"
 import { Row } from "../ui"
 import { tr } from "../i18n/t"
 import { View } from "react-native";
-import { readNextConversation, readThread } from "../actions/conversation";
+import { readNextConversation, readThread, fetchThread } from '../actions/conversation';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { IAction } from '../actions/docs';
@@ -19,13 +19,25 @@ import ConnectionTrackingBar from "../ui/ConnectionTrackingBar";
 export interface IThreadsProps {
 	navigation?: any
 	readThread: (threadId: string) => Promise<void>;
+	fetch: (threadId: string) => Promise<void>;
 	threads: Message[];
 	headerHeight: number;
 }
 
 export class Threads extends React.Component<IThreadsProps, any> {
 	public alreadyDisplayTodayDate: boolean = false
-	list: any
+	list: any;
+
+	state = {
+		isFetching: false
+	};
+
+	async fetchLatest(){
+		const { thread_id } = this.props.navigation.state.params;
+		this.setState({ isFetching: true });
+		await this.props.fetch(thread_id);
+		this.setState({ isFetching: false });
+	}
 
 	componentWillMount() {
 		const { thread_id } = this.props.navigation.state.params;
@@ -36,16 +48,21 @@ export class Threads extends React.Component<IThreadsProps, any> {
 		const { threads } = this.props;
 		return (
 			<KeyboardAvoidingView style={{ flex: 1 }} behavior={ Platform.OS === "ios" ? 'padding' : undefined } keyboardVerticalOffset={ this.props.headerHeight }>
+				<ConnectionTrackingBar />
 				<FlatList
-					data={threads}
+					refreshControl={ 
+						<RefreshControl
+							refreshing={ this.state.isFetching }
+							onRefresh={ () => this.fetchLatest() }
+						/> 
+					}
+					data={ threads }
 					renderItem={({ item }) => this.renderItem(item)}
 					style={styles.grid}
 					ref={ref => (this.list = ref)}
-					onContentSizeChange={() => this.list.scrollToEnd({ animated: true })}
-					onLayout={() => this.list.scrollToEnd({ animated: true })}
+					inverted={ true }
 				/>
 				<ThreadsFooterBar conversation={  this.props.navigation.state.params } />
-				<ConnectionTrackingBar />
 			</KeyboardAvoidingView>
 		)
 	}
@@ -102,6 +119,7 @@ export default connect(
 		headerHeight: state.ui.headerHeight
 	}), 
 	dispatch => ({
-		readThread: (threadId: string) => readThread(dispatch)(threadId)
+		readThread: (threadId: string) => readThread(dispatch)(threadId),
+		fetch: (threadId: string) => fetchThread(dispatch)(threadId)
 	})
 )(Threads)

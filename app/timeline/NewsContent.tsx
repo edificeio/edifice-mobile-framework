@@ -4,7 +4,7 @@ import { View, Text } from "react-native"
 import { CommonStyles } from "../styles/common/styles";
 import { DateView } from "../ui/DateView"
 import { tr } from "../i18n/t"
-import { CenterPanel, Content, Header, LeftPanel, ArticleContainer, ArticlePage } from '../ui/ContainerContent';
+import { CenterPanel, Content, Header, LeftPanel, ArticleContainer, PageContainer } from '../ui/ContainerContent';
 import { Images } from "../ui/Images"
 import { Card, TouchCard } from '../ui/Card';
 import { SingleAvatar } from "../ui/avatars/SingleAvatar";
@@ -56,13 +56,14 @@ export class NewsContent extends React.Component<{ navigation?: any, expend?: bo
 
 	render() {
 		return (
-			<ArticlePage>
+            <PageContainer>
+                <ConnectionTrackingBar />
                 <ArticleContainer>
                     <TouchCard onPress={ () => this.setState({ expend: true }) }>
                         { this.newsContent() }
                     </TouchCard>
                 </ArticleContainer>
-			</ArticlePage>
+            </PageContainer>
 		)
 	}
 }

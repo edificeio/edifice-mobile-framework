@@ -1,11 +1,11 @@
 import style from "glamorous-native"
 import * as React from "react"
-import { FlatList, Image, ScrollView, Modal } from 'react-native';
+import { FlatList, Image, ScrollView, Modal, RefreshControl } from 'react-native';
 import { News } from "./News"
 import { View } from "react-native"
 import styles from "../styles"
 import { connect } from "react-redux"
-import { listTimeline } from "../actions/timeline"
+import { listTimeline, fetchTimeline } from "../actions/timeline"
 import { Tracking } from "../tracking/TrackingManager";
 import { Header, HeaderIcon, Title, AppTitle } from '../ui/headers/Header';
 import { Icon, Loading, Row } from "../ui";
@@ -32,6 +32,7 @@ export interface ITimelineProps {
 	navigation: any
 	news: any
 	sync: (page: number, availableApps: any) => Promise<void>;
+	fetch: (availableApps: any) => Promise<void>;
 	availableApps: any;
 }
 
@@ -65,6 +66,18 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
 		this.props.navigation.navigate('NewsContent', { news: item, expend: expend });
 	}
 
+	componentWillReceiveProps(nextProps){
+		if(nextProps.refresh){
+			this.pageNumber = 0;
+			this.props.sync(this.pageNumber, this.props.availableApps);
+			this.pageNumber ++;
+		}
+	}
+
+	fetchLatest(){
+		this.props.fetch(this.props.availableApps);
+	}
+
 	shouldComponentUpdate(nextProps, nextState) {
 		if (nextProps.news !== this.props.news) return true
 
@@ -75,6 +88,12 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
 		const { news } = this.props;
 
 		return <FlatList
+			refreshControl={ 
+				<RefreshControl
+					refreshing={ this.props.isFetching }
+					onRefresh={ () => this.fetchLatest() }
+				/> 
+			}
 			data={news}
 			disableVirtualization
 			keyExtractor={item => item.id}
@@ -96,22 +115,22 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
 			title={ I18n.t('timeline-emptyScreenTitle') } />
 	}
 
-	content(){
-		const { news } = this.props;
-		return (!news || news.length === 0) && this.props.endReached ? this.emptyScreen() : this.list()
-	}
-
 	loading(){
 		return <Loading />
 	}
 
 	public render() {
-		const { isFetching } = this.props;
+		const { isFetching, news } = this.props;
+
+		if(!isFetching && (!news || news.length === 0) && this.props.endReached){
+			return this.emptyScreen();
+		}
 
 		return (
 			<PageContainer>
-				{ isFetching ? this.loading() : this.content() }
 				<ConnectionTrackingBar />
+				{ isFetching ? this.loading() : this.list() }
+				
 			</PageContainer>
 		)
 	}
@@ -125,5 +144,6 @@ export default connect(
 	}) },
 	dispatch => ({
 		sync: (page: number, availableApps) => listTimeline(dispatch)(page, availableApps),
+		fetch: (availableApps) => fetchTimeline(dispatch)(availableApps)
 	})
 )(Timeline);

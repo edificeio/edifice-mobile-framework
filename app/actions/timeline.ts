@@ -108,7 +108,7 @@ const dataTypes = {
 		const threadId = parseInt(threadSplit[threadSplit.length - 1]);
 		try {
 
-			const data = await read(`/actualites/thread/${threadId}/info/${infoId}`);
+			const data = await read(`/actualites/thread/${threadId}/info/${infoId}`, false);
 
 			return {
 				date: news.date.$date,
@@ -125,7 +125,7 @@ const dataTypes = {
 			return newsData
 		}
 	},
-	BLOG: async news => {
+	BLOG: async (news, timeline) => {
 		const newsData = {
 			date: news.date.$date,
 			id: news._id,
@@ -138,11 +138,15 @@ const dataTypes = {
 		}
 
 		if (!news["sub-resource"]) {
-			return newsData
+			return newsData;
+		}
+
+		if(timeline.find(e => e.resourceId === news['sub-resource'])){
+			return null;
 		}
 
 		try {
-			const data = await read(`/blog/post/${news.resource}/${news["sub-resource"]}`);
+			const data = await read(`/blog/post/${news.resource}/${news["sub-resource"]}`, false);
 
 			let message = adaptator(data.content).toText()
 
@@ -152,6 +156,7 @@ const dataTypes = {
 				images: adaptator(data.content).toImagesArray(),
 				message,
 				resourceName: news.params.blogTitle,
+				resourceId: news['sub-resource'],
 				senderId: data.author.userId,
 				senderName: data.author.username,
 				title: data.title
@@ -179,9 +184,11 @@ const fillData = async (availableApps, results: any[]) => {
 	const newResults = []
 	for (let result of results) {
 		if(dataTypes[result.type] && availableApps[result.type]){
-			let newResult = await dataTypes[result.type](result);
-			newResult.application = result.type.toLowerCase();
-			newResults.push(newResult);
+			let newResult = await dataTypes[result.type](result, newResults);
+			if(newResult){
+				newResult.application = result.type.toLowerCase();
+				newResults.push(newResult);
+			}
 		}
 	}
 
@@ -218,6 +225,28 @@ export const clearTimeline = dispatch => () => {
 	dispatch({
 		type: "CLEAR_TIMELINE"
 	});
+}
+
+export const fetchTimeline = dispatch => async (availableApps) => {
+	dispatch({
+		type: "FETCH_TIMELINE",
+	});
+
+	const news = await read(`/timeline/lastNotifications?page=0&${writeTypesParams(availableApps)}`)
+
+	try {
+		let results = news.results.filter(n => excludeTypes.indexOf(n["event-type"]) === -1 && n.params);
+		const newNews = await fillData(availableApps, results)
+
+		if(newNews.length > 0){
+			dispatch({
+				type: "FETCH_NEW_TIMELINE",
+				news: newNews
+			});
+		}
+	} catch (e) {
+		console.log(e);
+	}
 }
 
 export const listTimeline = dispatch => async (page, availableApps) => {

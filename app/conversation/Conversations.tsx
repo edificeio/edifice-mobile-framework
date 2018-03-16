@@ -1,13 +1,13 @@
 import style from "glamorous-native"
 import * as React from "react";
-import { Text } from 'react-native';
+import { Text, RefreshControl } from 'react-native';
 import { FlatList, View } from 'react-native';
 import Swipeable from "react-native-swipeable"
 import { IThreadModel, IThreadState } from '../model/conversation';
 import styles from "../styles/index"
 import { Icon } from "../ui/icons/Icon"
 import { Conversation } from "./Conversation"
-import { readNextConversation, deleteThread } from '../actions/conversation';
+import { readNextConversation, deleteThread, fetchConversation } from '../actions/conversation';
 import { IAuthModel } from "../model/Auth"
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -23,6 +23,7 @@ export interface IConversationsProps {
 	threads: IThreadModel[];
 	navigation?: any
 	sync: (page: number) => Promise<void>;
+	fetch: () => Promise<void>;
 	deleteThread: (conversation: IThreadModel) => Promise<void>;
 	nbThreads: number;
 	page: number;
@@ -30,13 +31,12 @@ export interface IConversationsProps {
 
 export class Conversations extends React.Component<IConversationsProps, any> {
 
+	state = {
+		isFetching: false,
+		deleteThread: undefined as any
+	}
 	
 	swipeRef = undefined;
-
-	constructor(props){
-		super(props);
-		this.state = {};
-	}
 
 	componentDidMount(){
 		this.nextPage();
@@ -50,6 +50,12 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 		this.props.sync(this.props.page);
 	}
 
+	async fetchLatest(){
+		this.setState({ ...this.state, isFetching: true });
+		await this.props.fetch();
+		this.setState({ ...this.state, isFetching: false });
+	}
+
 	public render() {
 		if (!this.props.threads || this.props.threads.length === 0){
 			return <EmptyScreen 
@@ -60,6 +66,7 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 
 		return (
 			<PageContainer>
+				<ConnectionTrackingBar />
 				<ModalBox backdropOpacity={0.5} isVisible={this.state.deleteThread !== undefined}>
 					<ModalContent>
 						<Text>{tr.Are_you_sure}</Text>
@@ -72,6 +79,12 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 					</ModalContent>
 				</ModalBox>
 				<FlatList
+					refreshControl={ 
+						<RefreshControl
+							refreshing={ this.state.isFetching }
+							onRefresh={ () => this.fetchLatest() }
+						/> 
+					}
 					data={ this.props.threads }
 					removeClippedSubviews
 					disableVirtualization
@@ -81,7 +94,7 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 					style={styles.grid}
 					keyboardShouldPersistTaps={ 'always' }
 				/>
-				<ConnectionTrackingBar />
+				
 			</PageContainer>
 		)
 	}
@@ -129,6 +142,7 @@ export default connect(
 	}), 
 	dispatch => ({
 		sync: (page: number) => readNextConversation(dispatch)(page),
+		fetch: () => fetchConversation(dispatch)(),
 		deleteThread: (conversation: IThreadModel) => deleteThread(dispatch)(conversation)
 	})
 )(Conversations)

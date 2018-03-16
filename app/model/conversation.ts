@@ -93,6 +93,21 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 			].sort((a, b) => b.date - a.date)
 		}
 	}
+	if(action.type === 'FETCH_THREAD_CONVERSATION'){
+		const parentThread = state.threads.find(t => t.thread_id === action.threadId);
+		const newParentThread = {
+			...parentThread,
+			nb: 0,
+			messages: action.messages
+		};
+		return {
+			...state,
+			processing: [],
+			threads: [
+				...state.threads.filter(t => t.thread_id !== action.threadId), newParentThread
+			].sort((a, b) => b.date - a.date)
+		}
+	}
 	if(action.type === 'APPEND_NEXT_CONVERSATION'){
 		return {
 			...state,
@@ -100,14 +115,30 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 			threads: [...state.threads, ...action.threads
 				.filter(c => state.threads.find(t => t.id === c[0].id || t.thread_id === c[0].thread_id) === undefined)
 				.map(c => {
-					const thread = { ...c[0] };
-					thread.nb = c.filter(e => e.unread && e.from !== Me.session.userId).length;
-					thread.messages = c;
-					if(thread.subject){
-						thread.subject = thread.subject.replace(/Tr :|Re :|Re:|Tr:/g, '');
-					}
+					const thread = { 
+						...c[0],
+						nb: c.filter(e => e.unread && e.from !== Me.session.userId).length,
+						messages: [...c],
+						subject: c[0].subject ? c[0].subject.replace(/Tr :|Re :|Re:|Tr:/g, '') : ''
+					};
 					return thread;
 			})].sort((a, b) => b.date - a.date)
+		}
+	}
+	if(action.type === 'FETCH_NEW_CONVERSATION'){
+		return {
+			...state,
+			threads: [...action.threads
+				.filter(c => state.threads.find(t => t.id === c[0].id || t.thread_id === c[0].thread_id) === undefined)
+				.map(c => {
+					const thread = { 
+						...c[0],
+						nb: c.filter(e => e.unread && e.from !== Me.session.userId).length,
+						messages: [...c],
+						subject: c[0].subject ? c[0].subject.replace(/Tr :|Re :|Re:|Tr:/g, '') : ''
+					};
+					return thread;
+			}), ...state.threads].sort((a, b) => b.date - a.date)
 		}
 	}
 	if (action.type === 'DELETE_THREAD_CONVERSATION'){

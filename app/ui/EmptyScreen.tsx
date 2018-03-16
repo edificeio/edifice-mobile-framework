@@ -3,6 +3,7 @@ import { View, Dimensions } from "react-native";
 import FitImage from "react-native-fit-image";
 import { H1, Paragraph, Quote } from './Typography';
 import { CommonStyles } from '../styles/common/styles';
+import ConnectionTrackingBar from "./ConnectionTrackingBar";
 
 export const EmptyScreen = ({ image, title, text }) => {
     const { width, height } = Dimensions.get('window');
@@ -32,6 +33,7 @@ export const EmptyScreen = ({ image, title, text }) => {
             </View>
             
             <Quote style={{ width: textSize, flex: 1, alignItems: 'flex-start' }}>{ text }</Quote>
+            <ConnectionTrackingBar />
         </View>
     );
 }
