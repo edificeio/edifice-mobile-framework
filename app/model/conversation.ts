@@ -58,7 +58,9 @@ export interface IThreadState {
 	threads: IThreadModel[]
 	filterCriteria: string
 	synced: boolean
-	processing: Message[]
+	processing: Message[];
+	refresh: boolean;
+	refreshThreads: boolean;
 }
 
 const initialState: IThreadState = {
@@ -68,6 +70,8 @@ const initialState: IThreadState = {
 	filterCriteria: '',
 	synced: true,
 	processing: [],
+	refresh: true,
+	refreshThreads: false
 }
 
 export default (state: IThreadState = initialState, action): IThreadState => {
@@ -76,6 +80,20 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 			...state,
 			processing: [],
 			threads: []
+		}
+	}
+	if(action.type === 'READ_NEXT_CONVERSATION'){
+		return {
+			...state,
+			refresh: false
+		}
+	}
+	if(action.type === 'INVALIDATE_CONVERSATION'){
+		return {
+			...state,
+			processing: [],
+			refresh: true,
+			refreshThreads: true
 		}
 	}
 	if(action.type === 'READ_THREAD_CONVERSATION'){
@@ -90,7 +108,8 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 			processing: [],
 			threads: [
 				...state.threads.filter(t => t.thread_id !== action.threadId), newParentThread
-			].sort((a, b) => b.date - a.date)
+			].sort((a, b) => b.date - a.date),
+			refreshThreads: false
 		}
 	}
 	if(action.type === 'FETCH_THREAD_CONVERSATION'){
@@ -105,7 +124,8 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 			processing: [],
 			threads: [
 				...state.threads.filter(t => t.thread_id !== action.threadId), newParentThread
-			].sort((a, b) => b.date - a.date)
+			].sort((a, b) => b.date - a.date),
+			refreshThreads: false
 		}
 	}
 	if(action.type === 'APPEND_NEXT_CONVERSATION'){
@@ -170,10 +190,21 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 		}
 	}
 	if (action.type === "CONVERSATION_FAILED_SEND") {
-		const data = state.processing.find(p => p.id === action.data.id);
-		data.status = ThreadStatus.failed;
+		const data = {
+			...state.processing.find(p => p.id === action.data.id),
+			status: ThreadStatus.failed
+		}
+		const index = state.processing.indexOf(state.processing.find(p => p.id === action.data.id));
+		const parentThread = state.threads.find(t => t.thread_id === action.data.thread_id);
+		const newParentThread = {
+			...parentThread,
+			messages: [data, ...parentThread.messages]
+		};
+
 		return {
 			...state,
+			processing: state.processing.filter((e, i) => i !== index),
+			threads: [...state.threads.filter(p => p !== parentThread), newParentThread].sort((a, b) => b.date - a.date)
 		}
 	}
 

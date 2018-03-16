@@ -8,6 +8,7 @@ import { SingleAvatar } from "../ui/avatars/SingleAvatar";
 import { Me } from "../infra/Me";
 import { Message, ThreadStatus } from "../model/conversation";
 import { adaptator } from "../infra/HTMLAdaptator";
+import I18n from "react-native-i18n";
 
 export const Thread = ({ body, date, displayNames = [], from = "", status }: Message) => {
 	const my = from === Me.session.userId
@@ -28,8 +29,9 @@ export const Thread = ({ body, date, displayNames = [], from = "", status }: Mes
 				<ContainerContent my={my}>
 					<Content my={my}>{adaptator(body).toText()}</Content>
 				</ContainerContent>
-				{status !== ThreadStatus.sending && <DateView date={date} />}
-				{status === ThreadStatus.sending && <Text>{tr.Sending_msg}</Text>}
+				{ (status === undefined || status === ThreadStatus.sent) && <DateView date={date} /> }
+				{ status === ThreadStatus.sending && <Text>{tr.Sending_msg}</Text> }
+				{ status === ThreadStatus.failed && <Text style={{ color: CommonStyles.error, fontSize: 12 }}>{ I18n.t('conversation-failedSent') }</Text> }
 			</CenterPanel>
 		</Item>
 	)

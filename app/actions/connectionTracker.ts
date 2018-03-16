@@ -9,6 +9,7 @@ const handleConnection = (isConnected, dispatch) => {
             dispatch({ type: 'HIDE_CONNECTION_TRACKER'});
         }, 1000);
         dispatch({ type: "INVALIDATE_TIMELINE" });
+        dispatch({ type: "INVALIDATE_CONVERSATION" });
     }
     else{
         dispatch({ type: 'DISCONNECTED_CONNECTION_TRACKER'});

@@ -131,7 +131,12 @@ export const sendMessage = dispatch => async (data: Message) => {
 	data.id = Math.random().toString();
 	dispatch({
 		type: "CONVERSATION_SEND",
-		data: { ...data, conversation: data.parentId, from: Me.session.userId },
+		data: { 
+			...data, 
+			conversation: data.parentId, 
+			from: Me.session.userId,
+			date: Date.now()
+		},
 	})
 
 	try {
@@ -149,8 +154,6 @@ export const sendMessage = dispatch => async (data: Message) => {
 			}),
 		})
 		let json = await response.json();
-		data.newId = json.id;
-		data.date = Date.now();
 
 		Tracking.logEvent('sentMessage', {
 			application: 'conversation',
@@ -159,13 +162,26 @@ export const sendMessage = dispatch => async (data: Message) => {
 
 		dispatch({
 			type: "CONVERSATION_SENT",
-			data: { ...data, conversation: data.parentId, from: Me.session.userId, thread_id: data.thread_id },
+			data: { 
+				...data, 
+				conversation: data.parentId, 
+				from: Me.session.userId, 
+				thread_id: data.thread_id,
+				date: Date.now(),
+				newId: json.id
+			},
 		});
 	} catch (e) {
 		console.log(e)
 		dispatch({
 			type: "CONVERSATION_FAILED_SEND",
-			data: data,
+			data: { 
+				...data, 
+				conversation: data.parentId, 
+				from: Me.session.userId, 
+				thread_id: data.thread_id ,
+				date: Date.now()
+			},
 		})
 	}
 }

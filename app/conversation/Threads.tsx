@@ -15,13 +15,16 @@ import { IAction } from '../actions/docs';
 import ThreadsFooterBar from "./ThreadsFooterBar";
 import { CommonStyles } from "../styles/common/styles";
 import ConnectionTrackingBar from "../ui/ConnectionTrackingBar";
+import I18n from "react-native-i18n";
 
 export interface IThreadsProps {
-	navigation?: any
+	navigation?: any;
+	syncConversation: (page: number) => Promise<void>;
 	readThread: (threadId: string) => Promise<void>;
 	fetch: (threadId: string) => Promise<void>;
 	threads: Message[];
 	headerHeight: number;
+	refresh: boolean;
 }
 
 export class Threads extends React.Component<IThreadsProps, any> {
@@ -39,9 +42,16 @@ export class Threads extends React.Component<IThreadsProps, any> {
 		this.setState({ isFetching: false });
 	}
 
+	async componentWillReceiveProps(nextProps){
+		const { thread_id } = this.props.navigation.state.params;
+		if(nextProps.refresh){
+			this.props.readThread(thread_id);
+		}
+	}
+
 	componentWillMount() {
 		const { thread_id } = this.props.navigation.state.params;
-		this.props.readThread(thread_id);
+		this.props.fetch(thread_id);
 	}
 
 	public render() {
@@ -116,10 +126,12 @@ const filtering = (conversation: IThreadState, thread_id): Message[] => {
 export default connect(
 	(state: any, props: any) => ({
 		threads: filtering(state.conversation, props.navigation.state.params.thread_id).sort((a, b) => a.date - b.date),
-		headerHeight: state.ui.headerHeight
+		headerHeight: state.ui.headerHeight,
+		refresh: state.conversation.refreshThreads
 	}), 
 	dispatch => ({
 		readThread: (threadId: string) => readThread(dispatch)(threadId),
-		fetch: (threadId: string) => fetchThread(dispatch)(threadId)
+		fetch: (threadId: string) => fetchThread(dispatch)(threadId),
+		syncConversation: (page: number) => readNextConversation(dispatch)(page),
 	})
 )(Threads)

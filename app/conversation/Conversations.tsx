@@ -6,7 +6,7 @@ import Swipeable from "react-native-swipeable"
 import { IThreadModel, IThreadState } from '../model/conversation';
 import styles from "../styles/index"
 import { Icon } from "../ui/icons/Icon"
-import { Conversation } from "./Conversation"
+import { Conversation } from './Conversation';
 import { readNextConversation, deleteThread, fetchConversation } from '../actions/conversation';
 import { IAuthModel } from "../model/Auth"
 import { bindActionCreators } from "redux";
@@ -27,6 +27,7 @@ export interface IConversationsProps {
 	deleteThread: (conversation: IThreadModel) => Promise<void>;
 	nbThreads: number;
 	page: number;
+	refresh: boolean;
 }
 
 export class Conversations extends React.Component<IConversationsProps, any> {
@@ -37,6 +38,12 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 	}
 	
 	swipeRef = undefined;
+
+	componentWillReceiveProps(nextProps){
+		if(nextProps.refresh){
+			this.props.sync(0);
+		}
+	}
 
 	componentDidMount(){
 		this.nextPage();
@@ -138,7 +145,8 @@ export default connect(
 		threads: state.conversation.threads.filter(
 			t => !state.conversation.filterCriteria || searchText(t).indexOf(searchFilter(state.conversation.filterCriteria)) !== -1
 		),
-		nbThreads: state.conversation.threads.length
+		nbThreads: state.conversation.threads.length,
+		refresh: state.conversation.refresh
 	}), 
 	dispatch => ({
 		sync: (page: number) => readNextConversation(dispatch)(page),
