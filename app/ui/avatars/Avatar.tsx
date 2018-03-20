@@ -3,14 +3,29 @@ import * as React from "react";
 import RNFetchBlob from "react-native-fetch-blob";
 import { View } from "react-native";
 import { Conf } from "../../Conf";
+import { usersAvatars, setUsersAvatars } from '../../infra/Cache';
 
 const avatarsMap = {
+	loaded: false,
 	awaiters: [],
 	onload: function (cb: (userId: string) => void) {
 		this.awaiters.push(cb);
 	},
 	trigger: function (userId: string) {
 		this.awaiters.forEach(a => a(userId));
+	},
+	load: async () => {
+		if(this.loaded){
+			return;
+		}
+		const avatars = await usersAvatars();
+		for(let user in avatars){
+			avatarsMap[user] = avatars[user];
+		}
+		this.loaded = true;
+	},
+	save: () => {
+		setUsersAvatars(avatarsMap);
 	}
 } as any;
 
@@ -127,6 +142,8 @@ export class Avatar extends React.Component<IAvatarProps, { loaded: boolean }> {
 	}
 
 	async load() {
+		await avatarsMap.load();
+
 		if(!this.props.id){
 			this.noAvatar = true;
 			this.setState({ loaded: true });
@@ -144,9 +161,9 @@ export class Avatar extends React.Component<IAvatarProps, { loaded: boolean }> {
 					if(userId === this.props.id){
 						this.noAvatar = avatarsMap[this.props.id].noAvatar;
 						this.setState({ loaded: true });
-						return;
 					}
-				})
+				});
+				return;
 			}
 			this.noAvatar = avatarsMap[this.props.id].noAvatar;
 			this.setState({ loaded: true });
@@ -160,6 +177,7 @@ export class Avatar extends React.Component<IAvatarProps, { loaded: boolean }> {
 		}
 		avatarsMap[this.props.id] = { noAvatar: this.noAvatar };
 		avatarsMap.trigger(this.props.id);
+		avatarsMap.save();
 		this.setState({ loaded: true });
 	}
 
