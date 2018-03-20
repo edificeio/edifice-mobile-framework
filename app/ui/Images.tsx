@@ -199,7 +199,7 @@ export class Images extends React.Component<{ images: object[] }, any> {
 						</QuarterImage>
 						{ images.length > 4 && <Overlay style={{ height: heightRatio / 2 - 5 }} onPress={ () => this.openImage(3) }></Overlay> }
 						{ images.length > 4 && <BubbleView style={{ bottom: (heightRatio / 4) - 15 }}>
-							<BubbleText>+{ images.length - 4 }</BubbleText>
+							<BubbleText onPress={ () => this.openImage(3) }>+{ images.length - 4 }</BubbleText>
 						</BubbleView> }
 					</Column>
 				</Row>
