@@ -68,14 +68,20 @@ export const readThread = dispatch => async (threadId: string) => {
 	}
 }
 
-export const sendPhoto = dispatch => async (data: { subject: string, to: any[], cc:any[], parentId?: string, body?: string }, userId) => {
+export const sendPhoto = dispatch => async (data: { subject: string, to: any[], cc:any[], parentId?: string, body?: string }) => {
 	const uri = await takePhoto();
 	
 	dispatch({
 		type: 'CONVERSATION_SEND',
-		data: { ...data, conversation: data.parentId, from: userId, body: `<div><img src="${uri}" /></div>` }
+		data: { 
+			...data, 
+			conversation: data.parentId, 
+			from: Me.session.userId, 
+			body: `<div><img src="${uri}" /></div>`,
+			date: Date.now() 
+		}
 	});
-
+	
 	try{
 		const documentPath = await uploadImage(uri);
 		const response = await fetch(`${ Conf.platform }/conversation/send?In-Reply-To=${data.parentId}`, {

@@ -3,7 +3,7 @@ import { crudReducer } from "./docs"
 import {ACTION_MODE} from "../actions/docs";
 import { Me } from '../infra/Me';
 
-export enum ThreadStatus {
+export enum MessageStatus {
 	sent,
 	sending,
 	failed,
@@ -25,7 +25,7 @@ export interface Message{
 	to: string[]
 	toName: string
 	unread: boolean
-	status: ThreadStatus;
+	status: MessageStatus;
 	userId: string;
 	parentId: string;
 	thread_id: string;
@@ -184,7 +184,7 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 		}
 	}
 	if (action.type === "CONVERSATION_SEND") {
-		action.data.status = ThreadStatus.sending;
+		action.data.status = MessageStatus.sending;
 		return {
 			...state,
 			processing: [...state.processing, ...[action.data]],
@@ -211,7 +211,7 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 	if (action.type === "CONVERSATION_FAILED_SEND") {
 		const data = {
 			...state.processing.find(p => p.id === action.data.id),
-			status: ThreadStatus.failed
+			status: MessageStatus.failed
 		}
 		const index = state.processing.indexOf(state.processing.find(p => p.id === action.data.id));
 		const parentThread = state.threads.find(t => t.thread_id === action.data.thread_id);

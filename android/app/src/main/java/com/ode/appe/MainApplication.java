@@ -3,6 +3,8 @@ package com.ode.appe;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.horcrux.svg.SvgPackage;
+import com.reactnativecomponent.splashscreen.RCTSplashScreenPackage;
 import com.psykar.cookiemanager.CookieManagerPackage;
 import com.reactnativecomponent.splashscreen.RCTSplashScreenPackage;
 import com.github.xfumihiro.react_native_image_to_base64.ImageToBase64Package;
@@ -39,6 +41,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
+            new SvgPackage(),
             new CookieManagerPackage(),
             new ImageToBase64Package(),
             new RNFetchBlobPackage(),

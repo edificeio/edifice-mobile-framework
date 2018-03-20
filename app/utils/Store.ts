@@ -1,12 +1,12 @@
 import { AsyncStorage } from "react-native"
-import { AUTH_LOGIN_STORE } from "../constants/Auth"
+import { Conf } from "../Conf";
 
 export async function setLogin(value) {
-	await AsyncStorage.setItem(AUTH_LOGIN_STORE, JSON.stringify(value))
+	await AsyncStorage.setItem(Conf.authLoginStore, JSON.stringify(value))
 }
 
 export async function getLogin() {
-	const authString = await AsyncStorage.getItem(AUTH_LOGIN_STORE)
+	const authString = await AsyncStorage.getItem(Conf.authLoginStore)
 
 	if (authString === null) {
 		return {

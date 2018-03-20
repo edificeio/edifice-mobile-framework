@@ -10,17 +10,9 @@ import { ToggleIcon } from "../ui/ToggleIcon";
 import { Row, Line } from "../ui/Grid";
 import { CommonStyles } from "../styles/common/styles";
 import { Me } from "../infra/Me";
+import { takePhoto } from '../actions/workspace';
 import { ThreadsTopBar } from "./ThreadsTopBar";
 
-interface IThreadsFooterBarProps {
-	conversation: any;
-	send: (data: any) => Promise<void>;
-}
-
-interface ThreadsFooterBarState {
-	selected: Selected
-	textMessage: string
-}
 
 const ContainerFooterBar = style.view({
 	backgroundColor: CommonStyles.tabBottomColor,
@@ -67,7 +59,7 @@ const ContainerInput = style.view({
 	flexDirection: 'row'
 })
 
-class ThreadsFooterBar extends React.Component<{
+class MediaInput extends React.Component<{
 	conversation: any
 	send: (data: any) => Promise<void>
 	sendPhoto: (data: any) => Promise<void>
@@ -83,7 +75,7 @@ class ThreadsFooterBar extends React.Component<{
 		textMessage: "",
 	}
 
-	private onPress(e: Selected) {
+	private switchKeyboard(e: Selected) {
 		const { selected } = this.state
 
 		if(e === Selected.keyboard){
@@ -182,8 +174,11 @@ class ThreadsFooterBar extends React.Component<{
 					/>
 				</ContainerInput>
 				<Row>
-					<ChatIcon onPress={() => this.onPress(Selected.keyboard)}>
-						<IconOnOff focused={ true } name={"keyboard"} />
+					<ChatIcon onPress={() => this.switchKeyboard(Selected.keyboard)}>
+						<IconOnOff focused={ true } name={ "keyboard" } />
+					</ChatIcon>
+					<ChatIcon onPress={() => this.sendPhoto()}>
+						<IconOnOff name={ "camera" } />
 					</ChatIcon>
 					<View style={{ flex: 1, alignItems: 'flex-end' }}>
 						<SendContainer onPress={() => this.onValid()}>
@@ -210,4 +205,4 @@ export default connect(
 		send: (data: any) => sendMessage(dispatch)(data),
 		sendPhoto: (data: any) => sendPhoto(dispatch)(data)
 	})
-)(ThreadsFooterBar)
+)(MediaInput)

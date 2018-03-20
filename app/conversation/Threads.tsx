@@ -3,7 +3,7 @@ import * as React from "react"
 import { FlatList, KeyboardAvoidingView, Platform, RefreshControl } from "react-native"
 import { IThreadModel, IThreadState, Message } from "../model/conversation"
 import styles from "../styles/index"
-import { Thread } from "./Thread"
+import { ChatMessage } from "./ChatMessage"
 import { sameDay } from "../utils/date"
 import { Row } from "../ui"
 import { tr } from "../i18n/t"
@@ -12,7 +12,7 @@ import { readNextConversation, readThread, fetchThread } from '../actions/conver
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { IAction } from '../actions/docs';
-import ThreadsFooterBar from "./ThreadsFooterBar";
+import MediaInput from "./MediaInput";
 import { CommonStyles } from "../styles/common/styles";
 import ConnectionTrackingBar from "../ui/ConnectionTrackingBar";
 import I18n from "react-native-i18n";
@@ -72,7 +72,7 @@ export class Threads extends React.Component<IThreadsProps, any> {
 					ref={ref => (this.list = ref)}
 					inverted={ true }
 				/>
-				<ThreadsFooterBar conversation={  this.props.navigation.state.params } />
+				<MediaInput conversation={  this.props.navigation.state.params } />
 			</KeyboardAvoidingView>
 		)
 	}
@@ -101,7 +101,7 @@ export class Threads extends React.Component<IThreadsProps, any> {
 		return (
 			<View key={ item.id }>
 				{this.showTodayDate(item) && this.displayTodayDate()}
-				<Thread {...item} />
+				<ChatMessage {...item} />
 			</View>
 		)
 	}

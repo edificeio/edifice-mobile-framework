@@ -30,9 +30,13 @@ export class HTMLAdaptator {
 		const paths = [];
 		const images = this.root.querySelectorAll("img");
 		for (let i = 0; i < images.length; i++) {
-			let src = Conf.platform + images[i].attributes.src;
-			let split = src.split('?');
-			src = split[0] + '?thumbnail=1600x0';
+			let src = images[i].attributes.src;
+			if(src.indexOf('file://') === -1){
+				src = Conf.platform + src;
+				let split = src.split('?');
+				src = split[0] + '?thumbnail=1600x0';
+			}
+			
 			paths.push({ uri: src });
 		}
 		return paths;

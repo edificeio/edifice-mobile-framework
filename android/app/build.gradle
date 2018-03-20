@@ -154,6 +154,7 @@ dependencies {
     compile "com.facebook.react:react-native:+"  // From
     compile project(':react-native-smart-splashscreen')
     compile project(':react-native-cookies')
+    compile project(':react-native-svg')
     compile "com.google.firebase:firebase-analytics:11.6.0"
     compile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
         transitive = true

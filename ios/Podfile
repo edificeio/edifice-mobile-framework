@@ -14,4 +14,6 @@ target 'mobileapp' do
   # Pod is not used for react-native-fetch-blob. COnfiguration done in Xcode directly.
   # pod 'react-native-fetch-blob', :path => '../node_modules/react-native-fetch-blob'
 
+  pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
+
 end
