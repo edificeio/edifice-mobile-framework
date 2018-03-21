@@ -7,7 +7,7 @@ import { sendMessage } from "../actions/conversation"
 import { connect } from "react-redux"
 import { View, Platform } from "react-native";
 import { ToggleIcon } from "../ui/ToggleIcon";
-import { Row } from "../ui/Grid";
+import { Row, Line } from "../ui/Grid";
 import { CommonStyles } from "../styles/common/styles";
 import { ThreadsTopBar } from "./ThreadsTopBar";
 
@@ -48,7 +48,7 @@ const SendContainer = style.touchableOpacity({
 	paddingRight: 10,
 	paddingBottom: 10,
 	width: 58,
-	alignSelf: "flex-end",
+	alignSelf: "flex-end"
 });
 
 const TextInput = style.textInput({
@@ -146,9 +146,12 @@ class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, ThreadsFo
 					<ChatIcon onPress={() => this.onPress(Selected.keyboard)}>
 						<IconOnOff focused={ true } name={"keyboard"} />
 					</ChatIcon>
-					<SendContainer onPress={() => this.onValid()}>
-						<ToggleIcon show={ !!this.state.textMessage } icon={ "send_icon" } />
-					</SendContainer>
+					<View style={{ flex: 1, alignItems: 'flex-end' }}>
+						<SendContainer onPress={() => this.onValid()}>
+							<ToggleIcon show={ !!this.state.textMessage } icon={ "send_icon" } />
+						</SendContainer>
+					</View>
+					
 				</Row>
 			</ContainerFooterBar>
 		)
