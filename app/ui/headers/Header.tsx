@@ -24,7 +24,9 @@ const HeaderStyle = style.view({
 	backgroundColor: CommonStyles.mainColorTheme
 });
 
-export const HeaderComponent = ({ connectionTracker, children, onLayout }) => <HeaderStyle onLayout={ () => onLayout() } style={{ elevation: connectionTracker.visible ? 0 : 5 }}>{ children }</HeaderStyle>;
+export const HeaderComponent = (
+	{ connectionTracker, children, onLayout }: { connectionTracker: any, children: any, onLayout?: () => void }
+) => <HeaderStyle onLayout={ () => onLayout && onLayout() } style={{ elevation: connectionTracker.visible ? 0 : 5 }}>{ children }</HeaderStyle>;
 
 export const Header = connect(
 	(state: any) => ({

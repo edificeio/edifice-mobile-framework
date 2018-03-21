@@ -1,5 +1,5 @@
 import * as React from "react";
-import { HeaderIcon, Header, CenterPanel, Title, AppTitle } from "../ui/headers/Header";
+import { HeaderIcon, Header, Title, AppTitle } from "../ui/headers/Header";
 import { SearchIcon } from "../ui/icons/SearchIcon";
 import { navigate } from "../utils/navHelper";
 import { tr } from "../i18n/t";

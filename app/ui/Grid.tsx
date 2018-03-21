@@ -1,11 +1,8 @@
 /* @flow */
 
-import styled from "glamorous-native"
+import style from "glamorous-native"
 import * as React from "react"
-import { FlexAlignType } from "react-native";
-
-const View = styled.View;
-const TouchableOpacity = styled.TouchableOpacity;
+import { FlexAlignType, TouchableOpacity, View } from "react-native";
 
 export interface ColProperties {
 	alignItems?: FlexAlignType
@@ -85,6 +82,11 @@ export interface NewProps {
 	flexDirection?: "column" | "row" | "row-reverse" | "column-reverse"
 	flexWrap: "wrap" | "nowrap"
 }
+
+export const Line = style.view({
+	flexDirection: 'row',
+	width: '100%'
+})
 
 export const Row = (props: RowProperties) => {
 	const { disabled = null, size = null, height = null } = props

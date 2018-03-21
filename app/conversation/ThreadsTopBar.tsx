@@ -8,12 +8,13 @@ import {
 	Header, Title
 } from "../ui/headers/Header"
 import { Icon } from "../ui/icons/Icon";
-import { TextStyle } from "react-native"
+import { TextStyle, View } from "react-native"
 import { RowAvatars } from "../ui/avatars/RowAvatars";
 import { Size } from "../ui/avatars/Avatar";
 import { Back } from "../ui/headers/Back";
 import { connect } from "react-redux";
 import { setHeader } from "../actions/ui";
+import { Row, Col, Line } from "../ui";
 
 const legendStyle: TextStyle = {
 	alignSelf: "center",
@@ -24,7 +25,10 @@ const legendStyle: TextStyle = {
 const Legend14 = style.text({
 	...legendStyle,
 	fontFamily: CommonStyles.primaryFontFamilyBold,
-	height: 20,
+	height: 45,
+	width: '66%',
+	textAlign: 'center',
+	textAlignVertical: 'center'
 })
 
 const Legend12 = style.text({
@@ -32,13 +36,14 @@ const Legend12 = style.text({
 	fontFamily: CommonStyles.primaryFontFamilyLight,
 	height: 18,
 	fontSize: 11,
-	marginBottom: 25,
+	marginBottom: 25
 })
 
 export const ContainerAvatars = style.view({
 	alignItems: "center",
 	height:160,
 	justifyContent: "flex-start",
+	flex: 1
 })
 
 export interface IThreadsBarProps {
@@ -87,18 +92,24 @@ export class ThreadsTopBar extends React.PureComponent<IThreadsBarProps, {}> {
 
 		return (
 			<Header onLayout={ () => this.setHeaderHeight() }>
-				<Back navigation={ navigation } />
-				<CenterPanel onPress={() => this.onPress()}>
-					{!expand && <RowAvatars images={images} size={Size.small } />}
-					<Title numberOfLines={ 1 } smallSize={!expand}>{subject}</Title>
-				</CenterPanel>
-				<TouchableEndBarPanel />
-				{expand && (
-					<ContainerAvatars>
-						<RowAvatars onSlideIndex={slideIndex => this.onSlideIndex(slideIndex)} images={images} />
-						<Legend14 numberOfLines={2}>{names[this.state.slideIndex]}</Legend14>
-					</ContainerAvatars>
-				)}
+				<View style={{ flexDirection: 'column', alignItems: 'center', flex: 1, justifyContent: 'center' }}>
+					<Line>
+						<Back navigation={ navigation } />
+						<CenterPanel onPress={() => this.onPress()}>
+							{!expand && <RowAvatars images={images} size={Size.small } />}
+							<Title numberOfLines={ 1 } smallSize={!expand}>{subject}</Title>
+						</CenterPanel>
+						<TouchableEndBarPanel />
+					</Line>
+					<Line>
+						{expand ? (
+							<ContainerAvatars>
+								<RowAvatars onSlideIndex={slideIndex => this.onSlideIndex(slideIndex)} images={images} />
+								<Legend14 numberOfLines={2}>{names[this.state.slideIndex]}</Legend14>
+							</ContainerAvatars>
+						) : <View />}
+					</Line>
+				</View>
 			</Header>
 		)
 	}

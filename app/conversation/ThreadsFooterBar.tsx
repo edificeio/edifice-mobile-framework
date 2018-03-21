@@ -146,7 +146,6 @@ class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, ThreadsFo
 					<ChatIcon onPress={() => this.onPress(Selected.keyboard)}>
 						<IconOnOff focused={ true } name={"keyboard"} />
 					</ChatIcon>
-					<CenterPanel />
 					<SendContainer onPress={() => this.onValid()}>
 						<ToggleIcon show={ !!this.state.textMessage } icon={ "send_icon" } />
 					</SendContainer>
