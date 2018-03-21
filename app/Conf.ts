@@ -1,3 +1,3 @@
 export const Conf = {
-	platform: "https://demoneo.opendigitaleducation.com"
+	platform: "https://recette-ent77.opendigitaleducation.com"
 };
