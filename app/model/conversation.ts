@@ -61,6 +61,7 @@ export interface IThreadState {
 	processing: Message[];
 	refresh: boolean;
 	refreshThreads: boolean;
+	filterCleared: boolean;
 }
 
 const initialState: IThreadState = {
@@ -71,7 +72,8 @@ const initialState: IThreadState = {
 	synced: true,
 	processing: [],
 	refresh: true,
-	refreshThreads: false
+	refreshThreads: false,
+	filterCleared: false
 }
 
 export default (state: IThreadState = initialState, action): IThreadState => {
@@ -82,16 +84,17 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 			threads: []
 		}
 	}
-	if(action.type === 'FILTER_CONVERSATION'){
+	if(action.type === 'CLEAR_FILTER_CONVERSATION'){
 		return {
 			...state,
-			filterCriteria: action.filter
+			filterCleared: true
 		}
 	}
 	if(action.type === 'READ_NEXT_CONVERSATION'){
 		return {
 			...state,
-			refresh: false
+			refresh: false,
+			filterCleared: false
 		}
 	}
 	if(action.type === 'INVALIDATE_CONVERSATION'){
@@ -99,7 +102,8 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 			...state,
 			processing: [],
 			refresh: true,
-			refreshThreads: true
+			refreshThreads: true,
+			filterCleared: false
 		}
 	}
 	if(action.type === 'READ_THREAD_CONVERSATION'){
@@ -115,7 +119,8 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 			threads: [
 				...state.threads.filter(t => t.thread_id !== action.threadId), newParentThread
 			].sort((a, b) => b.date - a.date),
-			refreshThreads: false
+			refreshThreads: false,
+			filterCleared: false
 		}
 	}
 	if(action.type === 'FETCH_THREAD_CONVERSATION'){
@@ -131,7 +136,8 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 			threads: [
 				...state.threads.filter(t => t.thread_id !== action.threadId), newParentThread
 			],
-			refreshThreads: false
+			refreshThreads: false,
+			filterCleared: false
 		}
 	}
 	if(action.type === 'APPEND_NEXT_CONVERSATION'){
@@ -148,7 +154,8 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 						subject: c[0].subject ? c[0].subject.replace(/Tr :|Re :|Re:|Tr:/g, '') : ''
 					};
 					return thread;
-			})].sort((a, b) => b.date - a.date)
+			})].sort((a, b) => b.date - a.date),
+			filterCleared: false
 		}
 	}
 	if(action.type === 'FETCH_NEW_CONVERSATION'){
@@ -164,13 +171,15 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 						subject: c[0].subject ? c[0].subject.replace(/Tr :|Re :|Re:|Tr:/g, '') : ''
 					};
 					return thread;
-			}), ...state.threads].sort((a, b) => b.date - a.date)
+			}), ...state.threads].sort((a, b) => b.date - a.date),
+			filterCleared: false
 		}
 	}
 	if (action.type === 'DELETE_THREAD_CONVERSATION'){
 		return {
 			...state,
-			threads: [...state.threads.filter(t => t.id !== action.data.conversationId)]
+			threads: [...state.threads.filter(t => t.id !== action.data.conversationId)],
+			filterCleared: false
 		}
 	}
 	if (action.type === "CONVERSATION_SEND") {
@@ -178,6 +187,7 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 		return {
 			...state,
 			processing: [...state.processing, ...[action.data]],
+			filterCleared: false
 		}
 	}
 	if (action.type === "CONVERSATION_SENT") {
@@ -186,13 +196,15 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 		const newParentThread = {
 			...parentThread,
 			messages: [action.data, ...parentThread.messages],
-			date: action.data.date
+			date: action.data.date,
+			filterCleared: false
 		};
 
 		return {
 			...state,
 			processing: state.processing.filter((e, i) => i !== index),
-			threads: [...state.threads.filter(p => p !== parentThread), newParentThread].sort((a, b) => b.date - a.date)
+			threads: [...state.threads.filter(p => p !== parentThread), newParentThread].sort((a, b) => b.date - a.date),
+			filterCleared: false
 		}
 	}
 	if (action.type === "CONVERSATION_FAILED_SEND") {
@@ -210,7 +222,8 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 		return {
 			...state,
 			processing: state.processing.filter((e, i) => i !== index),
-			threads: [...state.threads.filter(p => p !== parentThread), newParentThread].sort((a, b) => b.date - a.date)
+			threads: [...state.threads.filter(p => p !== parentThread), newParentThread].sort((a, b) => b.date - a.date),
+			filterCleared: false
 		}
 	}
 

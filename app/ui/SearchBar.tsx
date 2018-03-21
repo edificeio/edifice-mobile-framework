@@ -16,6 +16,7 @@ export interface SearchBarProps {
 }
 
 export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
+	textInput: any;
 	public state = {
 		value: "",
 	}
@@ -73,7 +74,7 @@ const TextInput = style.textInput(
 	})
 )
 
-const mapStateToProps = () => ({})
+const mapStateToProps = (state) => ({})
 
 const dispatchAndMapActions = dispatch => bindActionCreators({ filter }, dispatch)
 

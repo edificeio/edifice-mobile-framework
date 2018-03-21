@@ -34,9 +34,9 @@ export const fetchThread = dispatch => async (threadId: string) => {
 	}
 }
 
-export const filterConversation = dispatch => (filter: string) => {
+export const clearFilterConversation = dispatch => () => {
 	dispatch({
-		type: 'FILTER_CONVERSATION'
+		type: 'CLEAR_FILTER_CONVERSATION'
 	})
 };
 

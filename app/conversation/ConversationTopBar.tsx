@@ -22,6 +22,12 @@ export class ConversationTopBar extends React.Component<{ navigation?: any, conv
 		navigation.goBack();
 	}
 
+	componentWillReceiveProps(nextProps){
+		if(nextProps.searchCleared){
+			this.setState({ searching: false });
+		}
+	}
+
 	search(){
 		return <SearchBar onClose={ () => this.setState({ searching: false })} path={PATH_CONVERSATION} />;
 	}
@@ -47,6 +53,7 @@ export class ConversationTopBar extends React.Component<{ navigation?: any, conv
 
 export default connect(
 	(state: any) => ({
-		conversationsIsEmpty: state.conversation.threads.length === 0
+		conversationsIsEmpty: state.conversation.threads.length === 0,
+		searchCleared: !state.conversation.filterCleared
 	})
 )(ConversationTopBar) as any;

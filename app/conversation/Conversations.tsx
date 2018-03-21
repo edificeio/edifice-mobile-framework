@@ -7,7 +7,7 @@ import { IThreadModel, IThreadState } from '../model/conversation';
 import styles from "../styles/index"
 import { Icon } from "../ui/icons/Icon"
 import { Conversation } from './Conversation';
-import { readNextConversation, deleteThread, fetchConversation, filterConversation } from '../actions/conversation';
+import { readNextConversation, deleteThread, fetchConversation, clearFilterConversation } from '../actions/conversation';
 import { IAuthModel } from "../model/Auth"
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -154,6 +154,6 @@ export default connect(
 		sync: (page: number) => readNextConversation(dispatch)(page),
 		fetch: () => fetchConversation(dispatch)(),
 		deleteThread: (conversation: IThreadModel) => deleteThread(dispatch)(conversation),
-		filter: (filter) => filterConversation(dispatch)(filter)
+		filter: (filter) => clearFilterConversation(dispatch)()
 	})
 )(Conversations)
