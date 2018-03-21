@@ -48,7 +48,7 @@ const loadSchoolbooks = (): Promise<Array<any>> => {
 }
 
 const dataTypes = {
-	SCHOOLBOOK: async news => {
+	SCHOOLBOOK: async (news, timeline) => {
 		let defaultContent = {
 			date: news.date.$date,
 			id: news._id,
@@ -67,6 +67,11 @@ const dataTypes = {
 			const schoolbooks = await loadSchoolbooks();
 			const schoolbookId = news.params.resourceUri.split('word/')[1];
 			const schoolbook = schoolbooks.find(s => s.id === parseInt(schoolbookId));
+
+			if(timeline.find(e => e.resourceId === schoolbookId)){
+				return null;
+			}
+
 			if(schoolbook){
 				return {
 					date: news.date.$date,
@@ -77,7 +82,8 @@ const dataTypes = {
 					htmlContent: adaptator(schoolbook.text).adapt().toHTML(),
 					senderId: news.sender,
 					senderName: news.params.username,
-					title: schoolbook.title
+					title: schoolbook.title,
+					resourceId: schoolbookId
 				}
 			}
 			return defaultContent;
@@ -86,7 +92,7 @@ const dataTypes = {
 			return defaultContent;
 		}
 	},
-	NEWS: async news => {
+	NEWS: async (news, timeline) => {
 		const newsData = {
 			date: news.date.$date,
 			id: news._id,
@@ -106,6 +112,11 @@ const dataTypes = {
 		const infoId = split[split.length -1];
 		const threadSplit = news.params.resourceUri.split('thread/');
 		const threadId = parseInt(threadSplit[threadSplit.length - 1]);
+
+		if(timeline.find(e => e.resourceId === infoId)){
+			return null;
+		}
+
 		try {
 
 			const data = await read(`/actualites/thread/${threadId}/info/${infoId}`, false);
@@ -118,7 +129,8 @@ const dataTypes = {
 				resourceName: data.thread_title,
 				senderId: news.sender,
 				senderName: news.params.username,
-				title: data.title
+				title: data.title,
+				resourceId: infoId
 			}
 		} catch (e) {
 			//resource has been deleted
