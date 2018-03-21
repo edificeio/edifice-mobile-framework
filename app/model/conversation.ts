@@ -87,7 +87,8 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 	if(action.type === 'CLEAR_FILTER_CONVERSATION'){
 		return {
 			...state,
-			filterCleared: true
+			filterCleared: true,
+			filterCriteria: ''
 		}
 	}
 	if(action.type === 'READ_NEXT_CONVERSATION'){
