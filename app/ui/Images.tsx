@@ -26,11 +26,13 @@ const ContainerImage = style.view({
 });
 
 const SoloImage = style.touchableOpacity({
-	width: '100%'
+	width: '100%',
+	backgroundColor: '#eeeeee'
 });
 
 const QuarterImage = style.touchableOpacity({
-	width: '100%'
+	width: '100%',
+	backgroundColor: '#eeeeee'
 });
 
 const Overlay = style.touchableOpacity({

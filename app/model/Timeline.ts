@@ -60,7 +60,7 @@ export const Timeline = (
 		case "APPEND_TIMELINE":
 			return {
 				...state,
-				news: [...state.news, ...action.news],
+				news: [...state.news, ...action.news.filter(n => state.news.find(n2 => n2.id === n.id) === undefined)],
 				isFetching: false
 			}
 		case "FETCH_NEW_TIMELINE":
