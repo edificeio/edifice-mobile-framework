@@ -7,7 +7,7 @@ import { IThreadModel, IThreadState } from '../model/conversation';
 import styles from "../styles/index"
 import { Icon } from "../ui/icons/Icon"
 import { Conversation } from './Conversation';
-import { readNextConversation, deleteThread, fetchConversation } from '../actions/conversation';
+import { readNextConversation, deleteThread, fetchConversation, filterConversation } from '../actions/conversation';
 import { IAuthModel } from "../model/Auth"
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -28,6 +28,7 @@ export interface IConversationsProps {
 	nbThreads: number;
 	page: number;
 	refresh: boolean;
+	filter: (filter: string) => void
 }
 
 export class Conversations extends React.Component<IConversationsProps, any> {
@@ -50,7 +51,8 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 	}
 
 	public onPress(item) {
-		this.props.navigation.navigate("Threads", item)
+		this.props.filter('');
+		this.props.navigation.navigate("Threads", item);
 	}
 
 	private nextPage() {
@@ -151,6 +153,7 @@ export default connect(
 	dispatch => ({
 		sync: (page: number) => readNextConversation(dispatch)(page),
 		fetch: () => fetchConversation(dispatch)(),
-		deleteThread: (conversation: IThreadModel) => deleteThread(dispatch)(conversation)
+		deleteThread: (conversation: IThreadModel) => deleteThread(dispatch)(conversation),
+		filter: (filter) => filterConversation(dispatch)(filter)
 	})
 )(Conversations)

@@ -34,6 +34,12 @@ export const fetchThread = dispatch => async (threadId: string) => {
 	}
 }
 
+export const filterConversation = dispatch => (filter: string) => {
+	dispatch({
+		type: 'FILTER_CONVERSATION'
+	})
+};
+
 export const readThread = dispatch => async (threadId: string) => {
 	try{
 		const messages = await read(`/conversation/thread/messages/${threadId}`);

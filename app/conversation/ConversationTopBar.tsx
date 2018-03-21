@@ -23,7 +23,7 @@ export class ConversationTopBar extends React.Component<{ navigation?: any, conv
 	}
 
 	search(){
-		return <Header><SearchBar onClose={ () => this.setState({ searching: false })} path={PATH_CONVERSATION} /></Header>;
+		return <SearchBar onClose={ () => this.setState({ searching: false })} path={PATH_CONVERSATION} />;
 	}
 
 	defaultView(){

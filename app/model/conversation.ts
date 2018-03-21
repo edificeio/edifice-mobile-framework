@@ -82,6 +82,12 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 			threads: []
 		}
 	}
+	if(action.type === 'FILTER_CONVERSATION'){
+		return {
+			...state,
+			filterCriteria: action.filter
+		}
+	}
 	if(action.type === 'READ_NEXT_CONVERSATION'){
 		return {
 			...state,

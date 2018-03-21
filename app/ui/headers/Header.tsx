@@ -91,7 +91,8 @@ export const Title = style.text({
 		color: "white",
 		fontFamily: CommonStyles.primaryFontFamily,
 		fontWeight: "400",
-		textAlign: 'left'
+		textAlign: 'left',
+		textAlignVertical: 'center'
 	},
 	({ smallSize = false }) => ({
 		fontSize: smallSize ? 12 : 16,
