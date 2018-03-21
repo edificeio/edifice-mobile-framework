@@ -28,7 +28,8 @@ const Legend14 = style.text({
 	height: 45,
 	width: '66%',
 	textAlign: 'center',
-	textAlignVertical: 'center'
+	textAlignVertical: 'center',
+	marginBottom: 30
 })
 
 const Legend12 = style.text({
