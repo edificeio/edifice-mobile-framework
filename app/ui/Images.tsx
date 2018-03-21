@@ -84,6 +84,9 @@ export class Images extends React.Component<{ images: object[] }, any> {
 		if(newPosition < 0){
 			newPosition = 0;
 		}
+		if(newPosition > (this.props.images.length - 1) * width){
+			newPosition = (this.props.images.length - 1) * width;
+		}
 		this.carouselRef.scrollTo({ x: newPosition, animated: true });
 		this.previousScroll = newPosition;
 	}

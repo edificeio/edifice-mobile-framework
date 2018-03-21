@@ -3,7 +3,7 @@ import * as React from "react"
 import { ViewStyle, Text } from "react-native"
 import { adaptator } from "../infra/HTMLAdaptator";
 import { IThreadModel, ThreadStatus, Message } from '../model/Thread';
-import { CommonStyles, headerBarHeight } from "../styles/common/styles"
+import { CommonStyles } from "../styles/common/styles"
 import { DateView } from "../ui/DateView"
 import { tr } from "../i18n/t"
 import { SingleAvatar } from "../ui/avatars/SingleAvatar";

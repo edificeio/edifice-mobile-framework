@@ -13,12 +13,13 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { IAction } from '../actions/docs';
 import ThreadsFooterBar from "./ThreadsFooterBar";
-import { CommonStyles, headerBarHeight } from "../styles/common/styles";
+import { CommonStyles } from "../styles/common/styles";
 
 export interface IThreadsProps {
 	navigation?: any
 	readThread: (threadId: string) => Promise<void>;
 	threads: Message[];
+	headerHeight: number;
 }
 
 export class Threads extends React.Component<IThreadsProps, any> {
@@ -33,7 +34,7 @@ export class Threads extends React.Component<IThreadsProps, any> {
 	public render() {
 		const { threads } = this.props;
 		return (
-			<KeyboardAvoidingView style={{ flex: 1 }} behavior={ Platform.OS === "ios" ? 'padding' : undefined } keyboardVerticalOffset={ headerBarHeight() }>
+			<KeyboardAvoidingView style={{ flex: 1 }} behavior={ Platform.OS === "ios" ? 'padding' : undefined } keyboardVerticalOffset={ this.props.headerHeight }>
 				<FlatList
 					data={threads}
 					renderItem={({ item }) => this.renderItem(item)}
@@ -95,7 +96,8 @@ const filtering = (threads: IThreadState, thread_id): Message[] => {
 
 export default connect(
 	(state: any, props: any) => ({
-		threads: filtering(state.threads, props.navigation.state.params.thread_id).sort((a, b) => a.date - b.date)
+		threads: filtering(state.threads, props.navigation.state.params.thread_id).sort((a, b) => a.date - b.date),
+		headerHeight: state.ui.headerHeight
 	}), 
 	dispatch => ({
 		readThread: (threadId: string) => readThread(dispatch)(threadId)

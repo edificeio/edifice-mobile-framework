@@ -4,10 +4,12 @@ import { Messages } from "./messages"
 import { Timeline } from './Timeline';
 
 import threads from "./Thread"
+import ui from "./ui";
 
 export default combineReducers({
 	auth: Auth,
 	messages: Messages,
 	threads,
-	timeline: Timeline
+	timeline: Timeline,
+	ui: ui
 });

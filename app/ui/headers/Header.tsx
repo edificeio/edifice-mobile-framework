@@ -90,6 +90,6 @@ export const SubTitle = style.text(
 		fontFamily: CommonStyles.primaryFontFamily,
 		fontWeight: "400",
 		fontSize: 12,
-		opacity: 0.5
+		opacity: 0.7
 	}
 )

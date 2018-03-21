@@ -12,10 +12,38 @@ import { TextStyle } from "react-native"
 import { RowAvatars } from "../ui/avatars/RowAvatars";
 import { Size } from "../ui/avatars/Avatar";
 import { Back } from "../ui/headers/Back";
+import { connect } from "react-redux";
+import { setHeader } from "../actions/ui";
 
+const legendStyle: TextStyle = {
+	alignSelf: "center",
+	color: "white",
+	flexWrap: "nowrap",
+}
+
+const Legend14 = style.text({
+	...legendStyle,
+	fontFamily: CommonStyles.primaryFontFamilyBold,
+	height: 20,
+})
+
+const Legend12 = style.text({
+	...legendStyle,
+	fontFamily: CommonStyles.primaryFontFamilyLight,
+	height: 18,
+	fontSize: 11,
+	marginBottom: 25,
+})
+
+export const ContainerAvatars = style.view({
+	alignItems: "center",
+	height:160,
+	justifyContent: "flex-start",
+})
 
 export interface IThreadsBarProps {
-	navigation?: any
+	navigation?: any;
+	setHeader: (number) => void
 }
 
 export class ThreadsTopBar extends React.PureComponent<IThreadsBarProps, {}> {
@@ -24,7 +52,19 @@ export class ThreadsTopBar extends React.PureComponent<IThreadsBarProps, {}> {
 		slideIndex: 0,
 	}
 
+	static expanded;
+
+	public setHeaderHeight(){
+		if(this.state.expand){
+			this.props.setHeader(220);
+		}
+		else{
+			this.props.setHeader(56);
+		}
+	}
+
 	private onPress() {
+		ThreadsTopBar.expanded = !this.state.expand;
 		this.setState({ expand: !this.state.expand })
 	}
 
@@ -46,7 +86,7 @@ export class ThreadsTopBar extends React.PureComponent<IThreadsBarProps, {}> {
 		)
 
 		return (
-			<Header>
+			<Header onLayout={ () => this.setHeaderHeight() }>
 				<Back navigation={ navigation } />
 				<CenterPanel onPress={() => this.onPress()}>
 					{!expand && <RowAvatars images={images} size={Size.small } />}
@@ -64,33 +104,9 @@ export class ThreadsTopBar extends React.PureComponent<IThreadsBarProps, {}> {
 	}
 }
 
-const legendStyle: TextStyle = {
-	alignSelf: "center",
-	color: "white",
-	flexWrap: "nowrap",
-}
-
-const Legend14 = style.text({
-	...legendStyle,
-	fontFamily: CommonStyles.primaryFontFamilyBold,
-	height: 50,
-	textAlign: 'center',
-	textAlignVertical: 'center',
-	flex: 1,
-	paddingLeft: 50,
-	paddingRight: 50
-})
-
-const Legend12 = style.text({
-	...legendStyle,
-	fontFamily: CommonStyles.primaryFontFamilyLight,
-	height: 18,
-	fontSize: 11,
-	marginBottom: 25,
-})
-
-export const ContainerAvatars = style.view({
-	alignItems: "center",
-	height:160,
-	justifyContent: "flex-start",
-})
+export default connect(
+	(state: any, props: any) => ({}), 
+	dispatch => ({
+		setHeader: (height: number) => setHeader(dispatch)(height)
+	})
+)(ThreadsTopBar)

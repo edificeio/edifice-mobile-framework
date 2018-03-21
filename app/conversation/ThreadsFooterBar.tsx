@@ -9,10 +9,11 @@ import { View, Platform } from "react-native";
 import { ToggleIcon } from "../ui/ToggleIcon";
 import { Row } from "../ui/Grid";
 import { CommonStyles } from "../styles/common/styles";
+import { ThreadsTopBar } from "./ThreadsTopBar";
 
 interface IThreadsFooterBarProps {
-	conversation: any
-	send: (data: any) => Promise<void>
+	conversation: any;
+	send: (data: any) => Promise<void>;
 }
 
 interface ThreadsFooterBarState {
@@ -116,7 +117,11 @@ class ThreadsFooterBar extends React.Component<IThreadsFooterBarProps, ThreadsFo
 			textMessage: ''
 		});
 		
-this.input.innerComponent.setNativeProps({keyboardType:"default"});
+		this.input.innerComponent.setNativeProps({keyboardType:"default"});
+	}
+
+	focus(){
+		this.setState({ selected: Selected.keyboard })
 	}
 
 	public render() {
@@ -130,7 +135,7 @@ this.input.innerComponent.setNativeProps({keyboardType:"default"});
 						enablesReturnKeyAutomatically={true}
 						multiline
 						onChangeText={(textMessage: string) => this.setState({ textMessage })}
-						onFocus={ () => this.setState({ selected: Selected.keyboard })}
+						onFocus={ () => this.focus() }
 						placeholder={tr.Write_a_message}
 						underlineColorAndroid={"transparent"}
 						value={textMessage}
@@ -159,7 +164,7 @@ enum Selected {
 }
 
 export default connect(
-	state => ({}),
+	(state: any) => ({}),
 	dispatch => ({
 		send: (data: any) => sendMessage(dispatch)(data),
 	})
