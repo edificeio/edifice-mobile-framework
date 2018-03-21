@@ -120,12 +120,12 @@ const Text = style.text({
 })
 
 const filtering = (conversation: IThreadState, thread_id): Message[] => {
-	return [...conversation.threads.find(t => t.thread_id === thread_id).messages, ...conversation.processing]
+	return [...conversation.processing, ...conversation.threads.find(t => t.thread_id === thread_id).messages.sort((a, b) => b.date - a.date)]
 }
 
 export default connect(
 	(state: any, props: any) => ({
-		threads: filtering(state.conversation, props.navigation.state.params.thread_id).sort((a, b) => a.date - b.date),
+		threads: filtering(state.conversation, props.navigation.state.params.thread_id),
 		headerHeight: state.ui.headerHeight,
 		refresh: state.conversation.refreshThreads
 	}), 
