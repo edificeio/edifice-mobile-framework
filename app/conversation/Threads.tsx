@@ -38,8 +38,13 @@ export class Threads extends React.Component<IThreadsProps, any> {
 	async fetchLatest(){
 		const { thread_id } = this.props.navigation.state.params;
 		this.setState({ isFetching: true });
-		await this.props.fetch(thread_id);
-		this.setState({ isFetching: false });
+		try{
+			await this.props.fetch(thread_id);
+			this.setState({ isFetching: false });
+		}
+		catch(e){
+			this.setState({ isFetching: false });
+		}
 	}
 
 	async componentWillReceiveProps(nextProps){

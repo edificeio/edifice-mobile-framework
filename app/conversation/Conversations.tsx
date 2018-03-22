@@ -61,8 +61,13 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 
 	async fetchLatest(){
 		this.setState({ ...this.state, isFetching: true });
-		await this.props.fetch();
-		this.setState({ ...this.state, isFetching: false });
+		try{
+			await this.props.fetch();
+			this.setState({ ...this.state, isFetching: false });
+		}
+		catch(e){
+			this.setState({ ...this.state, isFetching: false });
+		}
 	}
 
 	public render() {
