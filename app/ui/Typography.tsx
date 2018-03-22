@@ -50,9 +50,11 @@ export const H1 = style.text({
 export const ErrorMessage = style.text({
 	alignSelf: "center",
 	color: CommonStyles.errorColor,
-	height: 32,
 	fontFamily: CommonStyles.primaryFontFamily,
 	fontSize: 14,
-	paddingTop: 4,
+	padding: 10,
+	marginTop: 15,
 	flex: 1,
+	textAlign: 'center',
+	minHeight: 55
 });

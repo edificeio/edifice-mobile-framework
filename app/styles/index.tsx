@@ -9,8 +9,7 @@ const styles = StyleSheet.create({
 		left: 0,
 		right: 0,
 		top: 0,
-		bottom: 0,
-		backgroundColor: "transparent",
+		bottom: 0
 	},
 	avatar: {
 		alignItems: "flex-start",

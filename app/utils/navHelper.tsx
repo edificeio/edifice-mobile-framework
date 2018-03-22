@@ -1,15 +1,14 @@
 import style from "glamorous-native"
 import * as React from "react"
-import { NavigationActions, TabNavigator } from "react-navigation"
+import { NavigationActions, TabNavigator, TabBarBottom } from "react-navigation"
 import { IconOnOff } from "../ui/index"
-import { CommonStyles } from "../styles/common/styles"
-import { TabBarBottomKeyboardAward } from "../ui/HideComponentWhenKeyboardShow";
+import { CommonStyles } from "../styles/common/styles";
 import { navigationRef } from "../AppScreen"
 
 export const tabNavigator = routes =>
 	TabNavigator(routes, {
 		swipeEnabled: false,
-		tabBarComponent: TabBarBottomKeyboardAward,
+		tabBarComponent: TabBarBottom,
 		tabBarOptions: {
 			activeTintColor: CommonStyles.mainColorTheme,
 			inactiveTintColor: CommonStyles.mainColorTheme,

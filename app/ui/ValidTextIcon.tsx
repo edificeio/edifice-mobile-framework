@@ -2,8 +2,7 @@ import style from "glamorous-native"
 import * as React from "react"
 import { Row, RowProperties } from "./index"
 import { CommonStyles } from "../styles/common/styles"
-import { Icon } from "./icons/Icon"
-import { KeyboardInjection } from "./KeyboardInjection"
+import { Icon } from "./icons/Icon";
 import { connect } from "react-redux";
 import { View } from "react-native";
 import styles from "../styles";
@@ -27,7 +26,7 @@ export interface State {
 
 const Disable = () => <View style={styles.Disable} />
 
-const _ValidTextIcon = ({
+const ValidTextIcon = ({
 	disabled = false,
 	leftName = "",
 	keyboardShow,
@@ -41,7 +40,6 @@ const _ValidTextIcon = ({
 
 	return (
 		<ValidStyle
-			marginTop={keyboardShow ? 36 : 60}
 			onPress={() => onPress()}
 			disabled={disabled}
 		>
@@ -59,15 +57,11 @@ const _ValidTextIcon = ({
 	)
 }
 
-export const ValidTextIcon = KeyboardInjection(_ValidTextIcon)
-
 const ValidStyle = (props: RowProperties) => (
 	<Row
 		alignItems="center"
 		justifyContent="center"
-		backgroundColor={CommonStyles.lightGrey}
 		height={38}
-		marginBottom={20}
 		marginTop={0}
 		{...props}
 	/>
@@ -80,7 +74,7 @@ const ButtonStyle = style.view(
 		paddingVertical: 9,
 	},
 	({ disabled }) => ({
-		backgroundColor: disabled ? CommonStyles.lightGrey : CommonStyles.actionColor,
+		backgroundColor: disabled ? 'transparent' : CommonStyles.actionColor,
 		borderColor: disabled ? CommonStyles.actionColor : CommonStyles.lightGrey,
 		borderWidth: disabled ? 1 : 0,
 	})

@@ -1,10 +1,10 @@
 import * as React from "react"
-import { View, TextInput, ScrollView } from "react-native"
+import { View, TextInput, ScrollView, KeyboardAvoidingView, Image } from "react-native"
 import { IAuthModel } from "../model/Auth";
 import { navigate } from "../utils/navHelper"
 import { connect } from "react-redux";
 import { login } from '../actions/auth';
-import { Logo, ValidTextIcon } from "../ui";
+import { ValidTextIcon } from "../ui";
 import { tr } from "../i18n/t";
 import { ErrorMessage } from '../ui/Typography';
 import { TextInputLine } from "../ui/forms/TextInputLine";
@@ -13,9 +13,13 @@ import ConnectionTrackingBar from "../ui/ConnectionTrackingBar";
 
 const Form = props => (
 	<View style={styles.formGrid}>
-		<ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>{props.children}</ScrollView>
+		<ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>{props.children}</ScrollView>
 	</View>
 )
+
+const Logo = () => <View style={{ flexGrow: 2, alignItems: 'center', justifyContent: 'center' }}>
+	<Image resizeMode="contain" style={{ height: 50, width: 50 }} source={require("../../assets/icons/icon.png")} />
+</View>;
 
 export class Login extends React.Component<{
 	auth: IAuthModel;
@@ -43,9 +47,9 @@ export class Login extends React.Component<{
 		const { loggedIn, email, password, error } = this.props.auth;
 
 		return (
-			<View style={{ flex: 1 }}>
+			<KeyboardAvoidingView style={{ flex: 1 }}>
 				<ConnectionTrackingBar />
-				<Form>
+				<View style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'column', padding: 40 }}>
 					<Logo />
 					<TextInputLine 
 						placeholder={tr.Login} 
@@ -59,15 +63,18 @@ export class Login extends React.Component<{
 						value={ this.state.password || password }
 						hasError={ error && !this.state.typing } />
 
-					<ValidTextIcon 
-						onPress={ () => this.login() } 
-						disabled={ this.isDisabled } 
-						title={tr.Connect} />
-
 					{ (error && !this.state.typing) ? <ErrorMessage>{ error }</ErrorMessage> : <View /> }
-				</Form>
+
+					<View style={{ flexGrow: 2, alignItems: 'center', justifyContent: 'center' }}>
+						<ValidTextIcon 
+							onPress={ () => this.login() } 
+							disabled={ this.isDisabled } 
+							title={tr.Connect} />
+					</View>
+					
+				</View>
 				
-			</View>
+			</KeyboardAvoidingView>
 		)
 	}
 }

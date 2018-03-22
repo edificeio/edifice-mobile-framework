@@ -5,7 +5,8 @@ import { CommonStyles } from '../../styles/common/styles';
 const TextInputContainer = style.view(
 	{
 		paddingTop: 4,
-		flex: 1,
+        width: '100%',
+        height: 40
 	},
 	({ hasError, focus }) => ({
 		borderBottomColor: hasError ? CommonStyles.errorColor : focus ? CommonStyles.iconColorOn : CommonStyles.entryfieldBorder,
