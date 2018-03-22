@@ -4,6 +4,7 @@ import RNFetchBlob from "react-native-fetch-blob";
 import { View } from "react-native";
 import { Conf } from "../../Conf";
 import { usersAvatars, setUsersAvatars } from '../../infra/Cache';
+import { Connection } from '../../infra/Connection';
 
 const avatarsMap = {
 	loaded: false,
@@ -38,8 +39,7 @@ export enum Size {
 }
 const StyledImage = {
 	borderColor: "white",
-	borderWidth: 1,
-	margin: 2,
+	borderWidth: 1
 }
 
 const LargeImage = style.image({
@@ -56,18 +56,50 @@ const MediumImage = style.image({
 	width: 35,
 })
 
-const AlignedImage = style.image(
-	{
-		...StyledImage,
+const AlignedContainer = style.view({
 		borderRadius: 16,
 		height: 29,
 		marginRight: -4,
 		marginLeft: -4,
 		width: 29,
+		backgroundColor: '#EEEEEE'
 	},
 	({ index }) => ({
 		zIndex: 100 - index,
 	})
+)
+
+const VLContainer = style.view(
+	{
+		alignSelf: "center",
+		borderRadius: 35,
+		height: 71,
+		width: 71,
+		margin: 0,
+		backgroundColor: '#EEEEEE'
+	}
+)
+
+const LargeContainer = style.view({
+	borderRadius: 24,
+	height: 45,
+	width: 45,
+	backgroundColor: '#EEEEEE'
+})
+
+const MediumContainer = style.view({
+	borderRadius: 16,
+	height: 35,
+	width: 35,
+	backgroundColor: '#EEEEEE'
+})
+
+const AlignedImage = style.image({
+		...StyledImage,
+		borderRadius: 16,
+		height: 29,
+		width: 29
+	}
 )
 
 const VeryLargeImage = style.image(
@@ -84,27 +116,36 @@ const VeryLargeImage = style.image(
 	})
 )
 
-const SmallImage = style.image(
-	{
+const SmallImage = style.image({
 		borderColor: "white",
-		borderWidth: 1,
-		position: "absolute",
+		borderWidth: 1
 	},
-	({ count, index }) => ({
+	({ count }) => ({
 		borderRadius: count === 1 ? 22 : count === 2 ? 15 : 10,
 		height: count === 1 ? 45 : count === 2 ? 31 : 22,
-		left:
-			count === 2
-				? index === 0 ? 0 : 15
-				: index === 0 || (index === 2 && count === 4)
-					? 0
-					: index === 2 ? 14 : 25,
-		top:
-			count === 2
-				? index === 0 ? 0 : 15
-				: index < 2 ? 0 : 25,
 		width: count === 1 ? 45 : count === 2 ? 31 : 22,
 	})
+)
+
+const SmallContainer = style.view({
+	position: "absolute",
+	backgroundColor: '#EEEEEE'
+},
+({ count, index }) => ({
+	borderRadius: count === 1 ? 22 : count === 2 ? 15 : 10,
+	height: count === 1 ? 45 : count === 2 ? 31 : 22,
+	left:
+		count === 2
+			? index === 0 ? 0 : 15
+			: index === 0 || (index === 2 && count === 4)
+				? 0
+				: index === 2 ? 14 : 25,
+	top:
+		count === 2
+			? index === 0 ? 0 : 15
+			: index < 2 ? 0 : 25,
+	width: count === 1 ? 45 : count === 2 ? 31 : 22,
+})
 )
 
 export interface IAvatarProps {
@@ -183,38 +224,38 @@ export class Avatar extends React.Component<IAvatarProps, { loaded: boolean }> {
 
 	renderNoAvatar(){
 		if (this.props.size === Size.large || this.count === 1) {
-			return <LargeImage source={require("../../../assets/images/no-avatar.png")} />
+			return <LargeContainer><LargeImage source={require("../../../assets/images/no-avatar.png")} /></LargeContainer>
 		} else if (this.props.size === Size.medium) {
-			return <MediumImage source={require("../../../assets/images/no-avatar.png")} />
+			return <MediumContainer><MediumImage source={require("../../../assets/images/no-avatar.png")} /></MediumContainer>
 		} else if (this.props.size === Size.aligned) {
-			return <AlignedImage index={this.props.index} source={require("../../../assets/images/no-avatar.png")} />
+			return <AlignedContainer index={this.props.index}><AlignedImage source={require("../../../assets/images/no-avatar.png")} /></AlignedContainer>
 		} else if (this.props.size === Size.verylarge) {
-			return <VeryLargeImage decorate={this.decorate} source={require("../../../assets/images/no-avatar.png")} />
+			return <VLContainer><VeryLargeImage decorate={this.decorate} source={require("../../../assets/images/no-avatar.png")} /></VLContainer>
 		} else {
 			return (
-				<SmallImage count={ this.props.count || 1 } index={this.props.index} source={require("../../../assets/images/no-avatar.png")} />
+				<SmallContainer count={ this.props.count || 1 } index={this.props.index}><SmallImage count={ this.props.count || 1 } source={require("../../../assets/images/no-avatar.png")} /></SmallContainer>
 			)
 		}
 	}
 
 	renderIsGroup(){
 		if (this.props.size === Size.large || this.count === 1) {
-			return <LargeImage source={require("../../../assets/images/group-avatar.png")} />
+			return <LargeContainer><LargeImage source={require("../../../assets/images/group-avatar.png")} /></LargeContainer>
 		} else if (this.props.size === Size.medium) {
-			return <MediumImage source={require("../../../assets/images/group-avatar.png")} />
+			return <MediumContainer><MediumImage source={require("../../../assets/images/group-avatar.png")} /></MediumContainer>
 		} else if (this.props.size === Size.aligned) {
-			return <AlignedImage index={this.props.index} source={require("../../../assets/images/group-avatar.png")} />
+			return <AlignedContainer index={this.props.index}><AlignedImage source={require("../../../assets/images/group-avatar.png")} /></AlignedContainer>
 		} else if (this.props.size === Size.verylarge) {
-			return <VeryLargeImage decorate={this.decorate} source={require("../../../assets/images/group-avatar.png")} />
+			return <VLContainer><VeryLargeImage decorate={this.decorate} source={require("../../../assets/images/group-avatar.png")} /></VLContainer>
 		} else {
 			return (
-				<SmallImage count={ this.props.count || 1 } index={this.props.index} source={require("../../../assets/images/group-avatar.png")} />
+				<SmallContainer count={ this.props.count || 1 } index={this.props.index}><SmallImage count={ this.props.count || 1 } source={require("../../../assets/images/group-avatar.png")} /></SmallContainer>
 			)
 		}
 	}
 
 	render() {
-		if (!this.state.loaded) {
+		if (!this.state.loaded || !Connection.isOnline) {
 			return this.renderNoAvatar();
 		}
 
@@ -225,20 +266,18 @@ export class Avatar extends React.Component<IAvatarProps, { loaded: boolean }> {
 			return this.renderNoAvatar();
 		}
 		if (this.props.size === Size.large || this.count === 1) {
-			return <LargeImage source={{ uri: `${Conf.platform}/userbook/avatar/${this.props.id}?thumbnail=100x100` }} />
+			return <LargeContainer><LargeImage source={{ uri: `${Conf.platform}/userbook/avatar/${this.props.id}?thumbnail=100x100` }} /></LargeContainer>
 		} else if (this.props.size === Size.medium) {
-			return <MediumImage source={{ uri:`${Conf.platform}/userbook/avatar/${this.props.id}?thumbnail=100x100` }} />
+			return <MediumContainer><MediumImage source={{ uri:`${Conf.platform}/userbook/avatar/${this.props.id}?thumbnail=100x100` }} /></MediumContainer>
 		} else if (this.props.size === Size.aligned) {
-			return <AlignedImage index={this.props.index} source={{ uri: `${Conf.platform}/userbook/avatar/${this.props.id}?thumbnail=100x100` }} />
+			return <AlignedContainer index={this.props.index}><AlignedImage source={{ uri: `${Conf.platform}/userbook/avatar/${this.props.id}?thumbnail=100x100` }} /></AlignedContainer>
 		} else if (this.props.size === Size.verylarge) {
-			return <VeryLargeImage decorate={this.decorate} source={{ uri: `${Conf.platform}/userbook/avatar/${this.props.id}?thumbnail=150x150` }} />
+			return <VLContainer><VeryLargeImage decorate={this.decorate} source={{ uri: `${Conf.platform}/userbook/avatar/${this.props.id}?thumbnail=150x150` }} /></VLContainer>
 		} else {
 			return (
-				<SmallImage
-					count={ this.props.count || 1 }
-					index={this.props.index}
+				<SmallContainer count={ this.props.count || 1 } index={this.props.index}><SmallImage count={ this.props.count || 1 }
 					source={{ uri: `${Conf.platform}/userbook/avatar/${this.props.id}?thumbnail=100x100` }}
-				/>
+				/></SmallContainer>
 			)
 		}
 	}
