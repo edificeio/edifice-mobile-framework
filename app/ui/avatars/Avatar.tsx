@@ -215,7 +215,7 @@ export class Avatar extends React.Component<IAvatarProps, { loaded: boolean }> {
 
 	render() {
 		if (!this.state.loaded) {
-			return <View />
+			return this.renderNoAvatar();
 		}
 
 		if(this.isGroup){

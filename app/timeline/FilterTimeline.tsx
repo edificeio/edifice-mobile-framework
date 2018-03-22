@@ -77,6 +77,7 @@ export class FilterTimeline extends React.Component<{ selectedApps: any, pickFil
 
 		return (
 			<PageContainer>
+				<ConnectionTrackingBar />
 				<ListItem style={{ justifyContent: 'space-between'}} onPress={ () => this.checkAllApps(!this.allAppsChecked) }>
 					<Bold>{ I18n.t(`timeline-allFilter`) }</Bold>
 					<Checkbox checked={ this.allAppsChecked } onCheck={ () => this.checkAllApps(true) } onUncheck={ () => this.checkAllApps(false) } />
@@ -87,7 +88,6 @@ export class FilterTimeline extends React.Component<{ selectedApps: any, pickFil
 						<Checkbox checked={ app.checked } onCheck={ () => this.checkApp(app, true) } onUncheck={ () => this.checkApp(app, false) } />
 					</ListItem>
 				))}
-				<ConnectionTrackingBar />
 			</PageContainer>
 		)
 	}

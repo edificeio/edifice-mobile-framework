@@ -13,6 +13,7 @@ export const EmptyScreen = ({ image, title, text }) => {
 
     return (
         <View style={{ justifyContent: 'space-around', alignItems: 'center', flex: 1, backgroundColor: CommonStyles.lightGrey }}>
+            <ConnectionTrackingBar />
             <View style={{ 
                 flex: 1, 
                 alignItems: 'flex-end', 
@@ -33,7 +34,7 @@ export const EmptyScreen = ({ image, title, text }) => {
             </View>
             
             <Quote style={{ width: textSize, flex: 1, alignItems: 'flex-start' }}>{ text }</Quote>
-            <ConnectionTrackingBar />
+            
         </View>
     );
 }

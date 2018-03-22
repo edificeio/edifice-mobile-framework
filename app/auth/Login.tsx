@@ -44,6 +44,7 @@ export class Login extends React.Component<{
 
 		return (
 			<View style={{ flex: 1 }}>
+				<ConnectionTrackingBar />
 				<Form>
 					<Logo />
 					<TextInputLine 
@@ -65,7 +66,7 @@ export class Login extends React.Component<{
 
 					{ (error && !this.state.typing) ? <ErrorMessage>{ error }</ErrorMessage> : <View /> }
 				</Form>
-				<ConnectionTrackingBar />
+				
 			</View>
 		)
 	}
