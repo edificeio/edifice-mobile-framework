@@ -11,24 +11,16 @@ import { logout } from '../actions/auth';
 import { CommonStyles } from '../styles/common/styles';
 import ConnectionTrackingBar from "../ui/ConnectionTrackingBar";
 import { PageContainer } from '../ui/ContainerContent';
+import { Me } from "../infra/Me";
 
-export interface IUserProfileProps {
-	auth: any
-	logout: (email: string) => void
-}
-
-interface IUserProfileState {
-	showDisconnect: boolean
-}
-
-export class UserProfile extends React.Component<IUserProfileProps, IUserProfileState> {
+export class UserProfile extends React.Component<{ logout: (login: string) => Promise<void> }, { showDisconnect: boolean }> {
 	public state = {
 		showDisconnect: false,
 	}
 
 	public disconnect() {
 		this.setState({ showDisconnect: false })
-		this.props.logout(this.props.auth.email)
+		this.props.logout(Me.session.login)
 	}
 
 	public disconnectBox = () => (
@@ -56,12 +48,6 @@ export class UserProfile extends React.Component<IUserProfileProps, IUserProfile
 	}
 }
 
-const mapStateToProps = state => ({
-	auth: state.auth,
-})
-
-const dispatchAndMapActions = dispatch => bindActionCreators({ logout }, dispatch)
-
-export default connect<{}, {}, IUserProfileProps>(mapStateToProps, dispatch => ({
+export default connect(state => ({}), dispatch => ({
 	logout: (email: string) => logout(dispatch)(email),
 }))(UserProfile)
