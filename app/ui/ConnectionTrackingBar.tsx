@@ -12,7 +12,8 @@ const TrackerText = style.text({
     color: '#FFFFFF',
     flex: 1,
     textAlign: 'center',
-    lineHeight: 40
+    lineHeight: 40,
+    marginLeft: 40
 });
 
 const TrackingContainer = style.touchableOpacity({
@@ -117,8 +118,8 @@ export class ConnectionTrackingBar extends React.Component<{
                 <TrackingContainer style={{ backgroundColor: this.barColor }} onPress={ () => this.props.check() }>
                     <TrackerText>{ I18n.t(this.text) }</TrackerText>
                     { this.props.loading ? 
-                        <ActivityIndicator size="small" color={ '#FFFFFF' }  style={{ marginRight: 10 }} /> :
-                        <Icon name={ this.iconName } size={ 18 } style={{ marginRight: 10, marginTop: 10}} color={ "#FFFFFF" } />
+                        <ActivityIndicator size="small" color={ '#FFFFFF' }  style={{ marginRight: 20 }} /> :
+                        <Icon name={ this.iconName } size={ 18 } style={{ marginRight: 20, marginTop: 10 }} color={ "#FFFFFF" } />
                     }
                 </TrackingContainer>
             </Animated.View>
