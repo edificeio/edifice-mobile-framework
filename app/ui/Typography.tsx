@@ -54,7 +54,7 @@ export const ErrorMessage = style.text({
 	fontSize: 14,
 	padding: 10,
 	marginTop: 15,
-	flex: 1,
+	flexGrow: 0,
 	textAlign: 'center',
 	minHeight: 55
 });

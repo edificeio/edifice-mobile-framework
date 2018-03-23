@@ -10,6 +10,7 @@ import { ErrorMessage } from '../ui/Typography';
 import { TextInputLine } from "../ui/forms/TextInputLine";
 import styles from "../styles";
 import ConnectionTrackingBar from "../ui/ConnectionTrackingBar";
+import style from 'glamorous-native';
 
 const Form = props => (
 	<View style={styles.formGrid}>
@@ -63,9 +64,9 @@ export class Login extends React.Component<{
 						value={ this.state.password || password }
 						hasError={ error && !this.state.typing } />
 
-					{ (error && !this.state.typing) ? <ErrorMessage>{ error }</ErrorMessage> : <View /> }
+					<ErrorMessage>{ error }</ErrorMessage>
 
-					<View style={{ flexGrow: 2, alignItems: 'center', justifyContent: 'center' }}>
+					<View style={{ flexGrow: 2, alignItems: 'center', justifyContent: 'flex-start', marginTop: '5%' }}>
 						<ValidTextIcon 
 							onPress={ () => this.login() } 
 							disabled={ this.isDisabled } 
