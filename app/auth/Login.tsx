@@ -28,7 +28,7 @@ export class Login extends React.Component<{
 }, { email: string, password: string, typing: boolean }> {
 
 	state = {
-		email: '',
+		email: undefined,
 		password: '',
 		typing: false
 	};
@@ -54,7 +54,7 @@ export class Login extends React.Component<{
 					<TextInputLine 
 						placeholder={tr.Login} 
 						onChangeText={(email) => this.setState({ email: email, typing: true })}
-						value={ this.state.email || email }
+						value={ this.state.email !== undefined ? this.state.email : email }
 						hasError={ error && !this.state.typing } />
 					<TextInputLine 
 						placeholder={tr.Password} 
