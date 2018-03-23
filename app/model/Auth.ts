@@ -40,21 +40,18 @@ export function Auth(state: IAuthState = initialState, action): IAuthState {
 	}
 
 	if(action.type === 'LOGIN_AUTH'){
+		Me.session = action.userbook;
 		return {
 			...state,
 			loggedIn: true,
 			password: action.password,
-			email: action.email
+			email: action.email,
+			userId: action.userbook.id
 		}
 	}
 
 	if (matchs([PATH_LOGIN, PATH_SIGNUP], action.path) && action.type === CREATE_SUCCESS) {
 		return crudReducer(state, [PATH_LOGIN, PATH_SIGNUP], action, "-1")
-	}
-
-	if (action.type === 'USERBOOK_AUTH') {
-		Me.session = action.userbook;
-		return { ...state, userId: action.userbook.id };
 	}
 
 	return state

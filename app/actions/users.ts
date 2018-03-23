@@ -7,14 +7,11 @@ export const readUserFromId = (id: string) => readId(PATH_USER, id)
 
 export const readCurrentUser = dispatch => async () => {
     const userinfo = await read('/userbook/api/person');
-	dispatch({
-		type: "USERBOOK_AUTH",
-		userbook: userinfo.result["0"]
-    });
     
     dispatch({
         type: "LOGIN_AUTH",
-        loggedIn: true
+        loggedIn: true,
+		userbook: userinfo.result["0"]
     })
 
     console.log('Navigating to main');

@@ -16,6 +16,7 @@ export const fetchThread = dispatch => async (threadId: string) => {
 			if(!message.unread){
 				continue;
 			}
+			
 			message.unread = false;
 			fetch(`${Conf.platform}/conversation/message/${message.id}`);
 		}
