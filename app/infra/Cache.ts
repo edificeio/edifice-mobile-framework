@@ -30,7 +30,9 @@ export const usersAvatars = async () => {
         return {};
     }
     const avatars = await AsyncStorage.getItem('usersAvatars');
-    console.log(avatars)
+    if(!avatars){
+        return {};
+    }
     return JSON.parse(avatars);
 };
 

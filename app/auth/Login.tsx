@@ -4,7 +4,7 @@ import { IAuthModel } from "../model/Auth";
 import { navigate } from "../utils/navHelper"
 import { connect } from "react-redux";
 import { login } from '../actions/auth';
-import { ValidTextIcon } from "../ui";
+import { FlatButton } from "../ui";
 import { tr } from "../i18n/t";
 import { ErrorMessage } from '../ui/Typography';
 import { TextInputLine } from "../ui/forms/TextInputLine";
@@ -26,12 +26,13 @@ export class Login extends React.Component<{
 	auth: IAuthModel;
 	login: (email: string, password: string) => Promise<void>;
 	navigation?: any;
-}, { email: string, password: string, typing: boolean }> {
+}, { email: string, password: string, typing: boolean, loading: boolean }> {
 
 	state = {
 		email: undefined,
 		password: '',
-		typing: false
+		typing: false,
+		loading: false
 	};
 
 	get isDisabled(){
@@ -39,8 +40,9 @@ export class Login extends React.Component<{
 	}
 
 	async login(){
+		this.setState({ ...this.state, loading: true });
 		await this.props.login(this.state.email, this.state.password);
-		this.setState({ ...this.state, password: '', typing: false });
+		this.setState({ ...this.state, password: '', typing: false, loading: false });
 	}
 
 	public render() {
@@ -67,10 +69,10 @@ export class Login extends React.Component<{
 					<ErrorMessage>{ error }</ErrorMessage>
 
 					<View style={{ flexGrow: 2, alignItems: 'center', justifyContent: 'flex-start', marginTop: '5%' }}>
-						<ValidTextIcon 
+						<FlatButton 
 							onPress={ () => this.login() } 
 							disabled={ this.isDisabled } 
-							title={tr.Connect} />
+							title={tr.Connect} loading={ this.state.loading } />
 					</View>
 					
 				</View>

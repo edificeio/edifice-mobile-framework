@@ -1,5 +1,4 @@
 
-import ValidTextIcon from "./ValidTextIcon";
 import { ButtonsOkCancel } from "./ButtonsOkCancel"
 import { ButtonTextIcon } from "./ButtonTextIcon";
 import { Icon, IconProps } from "./icons/Icon"
@@ -12,9 +11,9 @@ export {
 	Icon,
 	IconProps,
 	IconOnOff,
-	ProgressBar,
-	ValidTextIcon,
+	ProgressBar
 }
 
 export * from './Grid';
 export * from './Loading';
+export * from './FlatButton';

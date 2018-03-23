@@ -4,7 +4,7 @@ import { Row, RowProperties } from "./index"
 import { CommonStyles } from "../styles/common/styles"
 import { Icon } from "./icons/Icon";
 import { connect } from "react-redux";
-import { View } from "react-native";
+import { View, ActivityIndicator } from "react-native";
 import styles from "../styles";
 
 export interface ValidTextIconProps {
@@ -13,11 +13,11 @@ export interface ValidTextIconProps {
 	leftName?: string
 	onPress?: any
 	rightName?: string
-	style?: any
-	synced?: boolean[]
+	style?: any;
 	title?: string
 	whiteSpace?: string
-	keyboardShow?: boolean
+	keyboardShow?: boolean;
+	loading: boolean;
 }
 
 export interface State {
@@ -26,25 +26,27 @@ export interface State {
 
 const Disable = () => <View style={styles.Disable} />
 
-const ValidTextIcon = ({
+export const FlatButton = ({
 	disabled = false,
 	leftName = "",
 	keyboardShow,
 	onPress,
 	rightName = "",
-	synced = [],
 	title = "",
 	whiteSpace = " ",
+	loading = false
 }: ValidTextIconProps) => {
-	const disable = !isSynced(synced) || disabled
+	if(loading){
+		return <ActivityIndicator size="large" color={ CommonStyles.primary } />;
+	}
 
 	return (
 		<ValidStyle
 			onPress={() => onPress()}
 			disabled={disabled}
 		>
-			<ButtonStyle disabled={disable}>
-				<TextStyle disabled={disable}>
+			<ButtonStyle disabled={disabled}>
+				<TextStyle disabled={disabled}>
 					{leftName.length > 0 && <Icon name={leftName} />}
 					{whiteSpace}
 					{title}
@@ -52,7 +54,7 @@ const ValidTextIcon = ({
 					{rightName.length > 0 && <Icon name={rightName} />}
 				</TextStyle>
 			</ButtonStyle>
-			{disable && <Disable />}
+			{disabled && <Disable />}
 		</ValidStyle>
 	)
 }
@@ -97,9 +99,3 @@ const isSynced = (synced: boolean[]) => {
 	}
 	return synced.reduce((acc, elemIsSync) => acc || elemIsSync, false)
 }
-
-const mapStateToProps = state => ({
-	synced: [state.auth.synced],
-})
-
-export default connect<{}, {}, ValidTextIconProps>(mapStateToProps)(ValidTextIcon)

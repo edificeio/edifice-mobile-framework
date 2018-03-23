@@ -8,9 +8,23 @@ import { Me } from '../infra/Me';
 import { read } from '../infra/Cache';
 import { AsyncStorage, Platform } from 'react-native';
 import { tr } from '../i18n/t';
-import { readCurrentUser } from './users';
+import { navigate } from '../utils/navHelper';
+import I18n from 'react-native-i18n';
 
 console.log(Conf);
+
+export const readCurrentUser = dispatch => async () => {
+    const userinfo = await read('/userbook/api/person');
+    
+    dispatch({
+        type: "LOGIN_AUTH",
+        loggedIn: true,
+		userbook: userinfo.result["0"]
+    })
+
+    console.log('Navigating to main');
+	navigate("Main");
+}
 
 const getFormData = data => {
 	if (typeof data === "string") {
@@ -54,29 +68,38 @@ export const login = dispatch => async (email, password) => {
 		method: 'post'
 	}
 
-	const response = await fetch(`${ Conf.platform }/auth/login`, opts);
-	const data = await response.text();
+	try{
+		const response = await fetch(`${ Conf.platform }/auth/login`, opts);
+		const data = await response.text();
 
-	if (data.indexOf('/auth') !== -1 && data.indexOf('error') !== -1) {
+		if (data.indexOf('/auth') !== -1 && data.indexOf('error') !== -1) {
+			dispatch({
+				type: 'LOGIN_ERROR_AUTH',
+				error: tr.Incorrect_login_or_password,
+			});
+		}
+		else{
+			const cookies = getCookies(response);
+			// Cookie are not persist on IOS so we use AsyncStorage here
+			if (Platform.OS === "ios") {
+				AsyncStorage.setItem("Set-Cookie", JSON.stringify(cookies))
+			}
+
+			setLogin({
+				email: email,
+				password: password
+			});
+
+			readCurrentUser(dispatch)();
+		}
+	}
+	catch(e){
 		dispatch({
 			type: 'LOGIN_ERROR_AUTH',
-			error: tr.Incorrect_login_or_password,
+			error: I18n.t('auth-networkError')
 		});
 	}
-	else{
-		const cookies = getCookies(response);
-		// Cookie are not persist on IOS so we use AsyncStorage here
-		if (Platform.OS === "ios") {
-			AsyncStorage.setItem("Set-Cookie", JSON.stringify(cookies))
-		}
-
-		setLogin({
-			email: email,
-			password: password
-		});
-
-		readCurrentUser(dispatch)();
-	}
+	
 }
 
 let dataFilled = false;
@@ -92,6 +115,7 @@ export const fillUserData = async () => {
 }
 
 export const logout = dispatch => async email => {
+	await AsyncStorage.setItem('/userbook/api/person', '');
 	setLogin({ email: email, password: "" });
 	await fetch(`${Conf.platform}/auth/logout`);
 	dispatch({ type: 'LOGOUT_AUTH', email: email });

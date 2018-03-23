@@ -34,6 +34,7 @@
   "conversation-emptyScreenTitle": "Pas l’ombre d’un message...",
   "conversation-emptyScreenText": "Commencez dès maintenant à communiquer en quelques clics avec votre réseau !",
   "conversation-failedSent": "Message non reçu",
+  "auth-networkError": "La connexion a échoué. Vérifiez que votre téléphone soit bien connecté à internet.",
   "schoolbook-appTitle": "Carnet de liaison",
   "delete": "Supprimer",
   "apply": "Appliquer",
