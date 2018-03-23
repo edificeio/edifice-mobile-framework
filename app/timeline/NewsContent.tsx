@@ -1,6 +1,6 @@
 import style from "glamorous-native"
 import * as React from "react"
-import { View, Text } from "react-native"
+import { View, Text, ScrollView } from "react-native"
 import { CommonStyles } from "../styles/common/styles";
 import { DateView } from "../ui/DateView"
 import { tr } from "../i18n/t"
@@ -58,11 +58,13 @@ export class NewsContent extends React.Component<{ navigation?: any, expend?: bo
 		return (
             <PageContainer>
                 <ConnectionTrackingBar />
-                <ArticleContainer>
-                    <TouchCard onPress={ () => this.setState({ expend: true }) }>
-                        { this.newsContent() }
-                    </TouchCard>
-                </ArticleContainer>
+                <ScrollView>
+                    <ArticleContainer>
+                        <TouchCard onPress={ () => this.setState({ expend: true }) }>
+                            { this.newsContent() }
+                        </TouchCard>
+                    </ArticleContainer>
+                </ScrollView>
             </PageContainer>
 		)
 	}

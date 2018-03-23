@@ -31,8 +31,7 @@ const loadSchoolbooks = (): Promise<Array<any>> => {
 		}
 		else{
 			for(let child of Me.session.children){
-				const response = await read(`/schoolbook/list/0/${child.id}`);
-				const messages = await response.json();
+				const messages = await read(`/schoolbook/list/0/${child.id}`);
 				schoolbooks = [...schoolbooks, ...messages];
 			}
 		}
