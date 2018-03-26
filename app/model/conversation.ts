@@ -136,7 +136,7 @@ export default (state: IThreadState = initialState, action): IThreadState => {
 			processing: [],
 			threads: [
 				...state.threads.filter(t => t.thread_id !== action.threadId), newParentThread
-			],
+			].sort((a, b) => b.date - a.date),
 			refreshThreads: false,
 			filterCleared: false
 		}
