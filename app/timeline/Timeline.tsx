@@ -137,11 +137,9 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
 }
 
 export default connect(
-	(state: any) => {
-		console.log(state.timeline)
-		return ({
+	(state: any) => ({
 		...state.timeline
-	}) },
+	}),
 	dispatch => ({
 		sync: (page: number, availableApps) => listTimeline(dispatch)(page, availableApps),
 		fetch: (availableApps) => fetchTimeline(dispatch)(availableApps)

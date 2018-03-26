@@ -11,16 +11,4 @@ export interface IAvatarsState {
 	slideIndex: number
 }
 
-export class SingleAvatar extends React.Component<{ userId: string }, IAvatarsState> {
-	public state = {
-		size: {
-			height: 0,
-			width: 0,
-		},
-		slideIndex: 0,
-	}
-
-	public render() {
-        return <Avatar size={ Size.large } id={ this.props.userId } />
-	}
-}
+export const SingleAvatar = ({ userId, size = 45 }) => <Avatar size={ Size.large } id={ userId } width={ size } />;

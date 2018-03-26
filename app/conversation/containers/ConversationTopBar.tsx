@@ -1,17 +1,16 @@
 import * as React from "react";
-import { HeaderIcon, Header, Title, AppTitle } from "../ui/headers/Header";
-import { SearchIcon } from "../ui/icons/SearchIcon";
-import { navigate } from "../utils/navHelper";
-import { tr } from "../i18n/t";
-import { Icon } from "../ui/index";
-import SearchBar from "../ui/SearchBar";
-import { View } from "react-native";
-import { PATH_CONVERSATION } from "../constants/paths";
-import { Row } from "../ui/Grid";
+import { Header, HeaderIcon, AppTitle } from "../../ui/headers/Header";
+import { tr } from "../../i18n/t";
+import { filterConversation } from '../actions/filter';
 import { connect } from "react-redux";
-import ConnectionTrackingBar from '../ui/ConnectionTrackingBar';
+import { SearchBar } from "../../ui/SearchBar";
 
-export class ConversationTopBar extends React.Component<{ navigation?: any, conversationsIsEmpty: boolean }, { searching: boolean }> {
+export class ConversationTopBar extends React.Component<{ 
+	navigation?: any, 
+	conversationsIsEmpty: boolean, 
+	filter: (searchText) => void 
+}, { searching: boolean }> {
+
 	constructor(props){
 		super(props);
 		this.state = { searching: false };
@@ -29,7 +28,7 @@ export class ConversationTopBar extends React.Component<{ navigation?: any, conv
 	}
 
 	search(){
-		return <SearchBar onClose={ () => this.setState({ searching: false })} path={PATH_CONVERSATION} />;
+		return <SearchBar onClose={ () => this.setState({ searching: false })} onChange={ (search) => this.props.filter(search) } />;
 	}
 
 	defaultView(){
@@ -37,7 +36,7 @@ export class ConversationTopBar extends React.Component<{ navigation?: any, conv
 			<Header>
 				<HeaderIcon onPress={ () => this.setState({ searching: true }) } hidden={ this.props.conversationsIsEmpty } name={ "search" } />
 				<AppTitle>{tr.Conversation}</AppTitle>
-				<HeaderIcon onPress={ () => this.onClose() } name={ "new_message" } hidden={ true } />
+				<HeaderIcon name={ "new_message" } onPress={ () => this.props.navigation.navigate('newConversation') } />
 			</Header>
 		);
 	}
@@ -55,5 +54,8 @@ export default connect(
 	(state: any) => ({
 		conversationsIsEmpty: state.conversation.threads.length === 0,
 		searchCleared: !state.conversation.filterCleared
+	}),
+	(dispatch) => ({
+		filter: (searchText) => filterConversation(dispatch)(searchText)
 	})
 )(ConversationTopBar) as any;

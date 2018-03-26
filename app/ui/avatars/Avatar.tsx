@@ -33,7 +33,6 @@ const avatarsMap = {
 export enum Size {
 	aligned,
 	large,
-	medium,
 	small,
 	verylarge,
 }
@@ -154,13 +153,13 @@ export interface IAvatarProps {
 	id: string
 	index?: number
 	large?: boolean
-	size: Size
+	size: Size;
+	width?: number;
 }
 
-export class Avatar extends React.Component<IAvatarProps, { loaded: boolean }> {
+export class Avatar extends React.Component<IAvatarProps, { loaded: boolean, noAvatar: boolean }> {
 	decorate: boolean;
 	count: number;
-	noAvatar: boolean;
 
 	constructor(props) {
 		super(props);
@@ -170,7 +169,7 @@ export class Avatar extends React.Component<IAvatarProps, { loaded: boolean }> {
 			this.decorate = this.props.decorate
 		}
 
-		this.state = { loaded: false }
+		this.state = { loaded: false, noAvatar: true }
 	}
 
 	componentDidMount(){
@@ -186,8 +185,7 @@ export class Avatar extends React.Component<IAvatarProps, { loaded: boolean }> {
 		await avatarsMap.load();
 
 		if(!this.props.id){
-			this.noAvatar = true;
-			this.setState({ loaded: true });
+			this.setState({ loaded: true, noAvatar: true });
 			return;
 		}
 		
@@ -200,34 +198,39 @@ export class Avatar extends React.Component<IAvatarProps, { loaded: boolean }> {
 			if(avatarsMap[this.props.id].loading){
 				avatarsMap.onload((userId) => {
 					if(userId === this.props.id){
-						this.noAvatar = avatarsMap[this.props.id].noAvatar;
-						this.setState({ loaded: true });
+						this.setState({ 
+							loaded: true,
+							noAvatar: avatarsMap[this.props.id].noAvatar
+						});
 					}
 				});
 				return;
 			}
-			this.noAvatar = avatarsMap[this.props.id].noAvatar;
-			this.setState({ loaded: true });
+
+			this.setState({ 
+				loaded: true,
+				noAvatar: avatarsMap[this.props.id].noAvatar
+			});
 			return;
 		}
 
 		avatarsMap[this.props.id] = { loading: true };
 		const response = await RNFetchBlob.fetch("GET", `${Conf.platform}/userbook/avatar/${this.props.id}?thumbnail=48x48`);
 		if(response.type === 'utf8'){
-			this.noAvatar = true;
+			this.setState({ loaded: true, noAvatar: true });
 		}
-		avatarsMap[this.props.id] = { noAvatar: this.noAvatar };
+		avatarsMap[this.props.id] = { noAvatar: this.state.noAvatar };
 		avatarsMap.trigger(this.props.id);
 		avatarsMap.save();
 		this.setState({ loaded: true });
 	}
 
-	renderNoAvatar(){
+	renderNoAvatar(width){
 		if (this.props.size === Size.large || this.count === 1) {
-			return <LargeContainer><LargeImage source={require("../../../assets/images/no-avatar.png")} /></LargeContainer>
-		} else if (this.props.size === Size.medium) {
-			return <MediumContainer><MediumImage source={require("../../../assets/images/no-avatar.png")} /></MediumContainer>
-		} else if (this.props.size === Size.aligned) {
+			return <LargeContainer style={{ width: width, height: width }}>
+				<LargeImage style={{ width: width, height: width }} source={require("../../../assets/images/no-avatar.png")} />
+			</LargeContainer>
+		}  else if (this.props.size === Size.aligned) {
 			return <AlignedContainer index={this.props.index}><AlignedImage source={require("../../../assets/images/no-avatar.png")} /></AlignedContainer>
 		} else if (this.props.size === Size.verylarge) {
 			return <VLContainer><VeryLargeImage decorate={this.decorate} source={require("../../../assets/images/no-avatar.png")} /></VLContainer>
@@ -238,11 +241,11 @@ export class Avatar extends React.Component<IAvatarProps, { loaded: boolean }> {
 		}
 	}
 
-	renderIsGroup(){
+	renderIsGroup(width){
 		if (this.props.size === Size.large || this.count === 1) {
-			return <LargeContainer><LargeImage source={require("../../../assets/images/group-avatar.png")} /></LargeContainer>
-		} else if (this.props.size === Size.medium) {
-			return <MediumContainer><MediumImage source={require("../../../assets/images/group-avatar.png")} /></MediumContainer>
+			return <LargeContainer style={{ width: width, height: width }}>
+				<LargeImage style={{ width: width, height: width }} source={require("../../../assets/images/group-avatar.png")} />
+			</LargeContainer>
 		} else if (this.props.size === Size.aligned) {
 			return <AlignedContainer index={this.props.index}><AlignedImage source={require("../../../assets/images/group-avatar.png")} /></AlignedContainer>
 		} else if (this.props.size === Size.verylarge) {
@@ -255,20 +258,25 @@ export class Avatar extends React.Component<IAvatarProps, { loaded: boolean }> {
 	}
 
 	render() {
+		let width = 45;
+		if(this.props.width){
+			width = this.props.width;
+		}
+
 		if (!this.state.loaded || !Connection.isOnline) {
-			return this.renderNoAvatar();
+			return this.renderNoAvatar(width);
 		}
 
 		if(this.isGroup){
-			return this.renderIsGroup();
+			return this.renderIsGroup(width);
 		}
-		if (this.noAvatar) {
-			return this.renderNoAvatar();
+		if (this.state.noAvatar) {
+			return this.renderNoAvatar(width);
 		}
 		if (this.props.size === Size.large || this.count === 1) {
-			return <LargeContainer><LargeImage source={{ uri: `${Conf.platform}/userbook/avatar/${this.props.id}?thumbnail=100x100` }} /></LargeContainer>
-		} else if (this.props.size === Size.medium) {
-			return <MediumContainer><MediumImage source={{ uri:`${Conf.platform}/userbook/avatar/${this.props.id}?thumbnail=100x100` }} /></MediumContainer>
+			return <LargeContainer style={{ width: width, height: width }}>
+				<LargeImage source={{ uri: `${Conf.platform}/userbook/avatar/${this.props.id}?thumbnail=100x100` }} style={{ width: width, height: width }} />
+			</LargeContainer>
 		} else if (this.props.size === Size.aligned) {
 			return <AlignedContainer index={this.props.index}><AlignedImage source={{ uri: `${Conf.platform}/userbook/avatar/${this.props.id}?thumbnail=100x100` }} /></AlignedContainer>
 		} else if (this.props.size === Size.verylarge) {

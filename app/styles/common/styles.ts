@@ -1,14 +1,14 @@
 import { Text } from "react-native";
 
 export const CommonStyles = {
-	primary: "#2A9CC8",
+	primary: "#299cc8",
+	primaryLight: '#EAF5F9',
 	lightGrey: "rgb(248,248,250)",
 	actionColor: "#2A9CC8",
 	actionColorDisabled: "#2A9CC888",
 	borderBottomItem: "#dddddd",
     borderBottomNewsItem: "#e7e7e7",
 	borderColorLighter: "#e2e2e2",
-	buttonColor: "#ffffff",
 	cardTitle: "#1467ff",
 	elevation: 20,
 	entryfieldBorder: "#DCDDE0",

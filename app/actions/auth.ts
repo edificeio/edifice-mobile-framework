@@ -3,13 +3,13 @@ import { PATH_AUTH, PATH_LOGIN, PATH_LOGOUT, PATH_RECOVER_PASSWORD, PATH_SIGNUP 
 import { setLogin } from "../utils/Store";
 import { Conf } from "../Conf";
 import { clearTimeline } from './timeline';
-import { clearConversation } from './conversation';
 import { Me } from '../infra/Me';
 import { read } from '../infra/Cache';
 import { AsyncStorage, Platform } from 'react-native';
 import { tr } from '../i18n/t';
 import { navigate } from '../utils/navHelper';
 import I18n from 'react-native-i18n';
+import { clearConversation } from '../conversation/actions';
 
 console.log(Conf);
 

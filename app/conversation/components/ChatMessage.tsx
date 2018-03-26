@@ -1,18 +1,16 @@
 import style from "glamorous-native"
 import * as React from "react"
 import { ViewStyle, Text, View, TouchableOpacity } from 'react-native';
-import { adaptator } from "../infra/HTMLAdaptator"
-import { IThreadModel, MessageStatus, Message } from '../model/conversation';
-import { CommonStyles } from "../styles/common/styles"
-import { DateView } from "../ui/DateView"
-import { tr } from "../i18n/t"
-import { SingleAvatar } from "../ui/avatars/SingleAvatar";
-import { Me } from "../infra/Me";
-import { ErrorMessage } from '../ui/Typography';
 import I18n from "react-native-i18n"
 import FitImage from "react-native-fit-image";
-import { Col } from "../ui";
-import { Carousel } from "../ui/Carousel";
+import { CommonStyles } from "../../styles/common/styles";
+import { MessageStatus } from "../interfaces";
+import { adaptator } from "../../infra/HTMLAdaptator";
+import { Me } from "../../infra/Me";
+import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
+import { Carousel } from "../../ui/Carousel";
+import { DateView } from "../../ui/DateView";
+import { tr } from "../../i18n/t";
 
 const Item = style.view({
 	alignItems: "center",

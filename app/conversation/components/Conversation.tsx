@@ -1,16 +1,14 @@
 import style from "glamorous-native"
 import * as React from "react";
-import { IThreadModel } from "../model/conversation"
-import { CommonStyles } from "../styles/common/styles"
-import { DateView } from "../ui/DateView"
-import { CircleNumber } from "../ui/CircleNumber"
-import { CenterPanel, Content, ListItem, LeftPanel, RightPanel } from "../ui/ContainerContent"
-import { Row, ButtonsOkCancel } from "../ui"
-import { trunc } from "../utils/html"
-import { GridAvatars } from "../ui/avatars/GridAvatars";
-import { Me } from "../infra/Me";
+import { Thread } from "../interfaces";
+import { Me } from "../../infra/Me";
+import { ListItem, LeftPanel, RightPanel, Content, CenterPanel } from "../../ui/ContainerContent";
+import { GridAvatars } from "../../ui/avatars/GridAvatars";
+import { DateView } from "../../ui/DateView";
+import { CircleNumber } from "../../ui/CircleNumber";
+import { CommonStyles } from "../../styles/common/styles";
 
-interface IConversationProps extends IThreadModel {
+interface IConversationProps extends Thread {
 	onPress: (id: string, displayNames: string[][], subject: string) => void
 }
 
@@ -27,7 +25,7 @@ export const Conversation = ({ id, subject, date, displayNames, nb, onPress }: I
 			</LeftPanel>
 			<CenterPanel>
 				{getTitle(displayNames, nb)}
-				{subject && subject.length ? <Content nb={nb}>{trunc(subject, 32)}</Content> : <style.View />}
+				{subject && subject.length ? <Content nb={nb} numberOfLines={ 1 }>{subject}</Content> : <style.View />}
 			</CenterPanel>
 			<RightPanel>
 				<DateView date={ date } nb={nb} />
@@ -44,7 +42,7 @@ function getTitle(displayNames, nb) {
 		""
 	)
 
-	return <Author nb={nb}>{trunc(title, 26)}</Author>
+	return <Author nb={nb} numberOfLines={ 1 }>{title}</Author>
 }
 
 const Author = style.text(

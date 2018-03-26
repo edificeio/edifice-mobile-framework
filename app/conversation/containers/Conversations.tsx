@@ -3,28 +3,26 @@ import * as React from "react";
 import { Text, RefreshControl } from 'react-native';
 import { FlatList, View } from 'react-native';
 import Swipeable from "react-native-swipeable"
-import { IThreadModel, IThreadState } from '../model/conversation';
-import styles from "../styles/index"
-import { Icon } from "../ui/icons/Icon"
-import { Conversation } from './Conversation';
-import { readNextConversation, deleteThread, fetchConversation, clearFilterConversation } from '../actions/conversation';
-import { IAuthModel } from "../model/Auth"
-import { bindActionCreators } from "redux";
+import { Thread } from "../interfaces";
+import { EmptyScreen } from "../../ui/EmptyScreen";
+import { PageContainer } from "../../ui/ContainerContent";
+import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
+import { ModalBox, ModalContent } from "../../ui/Modal";
+import { ButtonsOkCancel, Icon } from "../../ui";
+import { Conversation } from "../components/Conversation";
 import { connect } from "react-redux";
-import { ModalBox, ModalContent } from "../ui/Modal"
-import { ButtonsOkCancel } from "../ui";
-import { tr } from "../i18n/t";
-import I18n from "react-native-i18n"
-import { EmptyScreen } from "../ui/EmptyScreen";
-import { PageContainer } from "../ui/ContainerContent";
-import ConnectionTrackingBar from "../ui/ConnectionTrackingBar";
+import { readNextConversation, fetchConversation, clearFilterConversation } from "../actions";
+import { deleteThread } from "../actions/deleteThread";
+import styles from "../../styles";
+import I18n from 'react-native-i18n';
+import { tr } from "../../i18n/t";
 
 export interface IConversationsProps {
-	threads: IThreadModel[];
+	threads: Thread[];
 	navigation?: any
 	sync: (page: number) => Promise<void>;
 	fetch: () => Promise<void>;
-	deleteThread: (conversation: IThreadModel) => Promise<void>;
+	deleteThread: (conversation: Thread) => Promise<void>;
 	nbThreads: number;
 	page: number;
 	refresh: boolean;
@@ -52,7 +50,7 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 
 	public onPress(item) {
 		this.props.filter('');
-		this.props.navigation.navigate("Threads", item);
+		this.props.navigation.navigate("thread", item);
 	}
 
 	private nextPage() {
@@ -73,7 +71,7 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 	public render() {
 		if (!this.props.threads || this.props.threads.length === 0){
 			return <EmptyScreen 
-				image={ require('../../assets/images/empty-screen/espacedoc.png') } 
+				image={ require('../../../assets/images/empty-screen/espacedoc.png') } 
 				text={ I18n.t('conversation-emptyScreenText') } 
 				title={ I18n.t('conversation-emptyScreenTitle') } />
 		}
@@ -119,7 +117,7 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 		this.setState({ deleteThread: undefined });
 	}
 
-	swipeoutButton(conversation: IThreadModel){
+	swipeoutButton(conversation: Thread){
 		return [
 			<RightButton onPress={ () => this.setState({ deleteThread: conversation }) }>
 				<Icon size={ 18 } color="#ffffff" name="trash" />
@@ -127,7 +125,7 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 		]
 	}
 
-	private renderItem(item: IThreadModel) {
+	private renderItem(item: Thread) {
 		return (
 			<Swipeable rightButtons={ this.swipeoutButton(item) } onRightButtonsOpenRelease={ (e, g, r) => this.swipeRef = r }>
 				<Conversation {...item} onPress={e => this.onPress(item)} />
@@ -158,7 +156,7 @@ export default connect(
 	dispatch => ({
 		sync: (page: number) => readNextConversation(dispatch)(page),
 		fetch: () => fetchConversation(dispatch)(),
-		deleteThread: (conversation: IThreadModel) => deleteThread(dispatch)(conversation),
+		deleteThread: (conversation: Thread) => deleteThread(dispatch)(conversation),
 		filter: (filter) => clearFilterConversation(dispatch)()
 	})
 )(Conversations)

@@ -1,17 +1,14 @@
-import style from "glamorous-native"
-import * as React from "react"
-import { CenterPanel } from "../ui/headers/Header";
-import { Icon, IconOnOff } from "../ui/index"
-import { tr } from "../i18n/t"
-import { sendMessage, sendPhoto } from "../actions/conversation"
-import { connect } from "react-redux"
-import { View, Platform } from "react-native";
-import { ToggleIcon } from "../ui/ToggleIcon";
-import { Row, Line } from "../ui/Grid";
-import { CommonStyles } from "../styles/common/styles";
-import { Me } from "../infra/Me";
-import { takePhoto } from '../actions/workspace';
-import { ThreadsTopBar } from "./ThreadsTopBar";
+import style from "glamorous-native";
+import * as React from "react";
+import { CommonStyles } from "../../styles/common/styles";
+import { Platform, View } from "react-native";
+import { tr } from "../../i18n/t";
+import { Row, IconOnOff } from "../../ui";
+import { ToggleIcon } from "../../ui/ToggleIcon";
+import { connect } from "react-redux";
+import { Me } from "../../infra/Me";
+import { sendMessage } from "../actions/sendMessage";
+import { sendPhoto } from "../actions";
 
 
 const ContainerFooterBar = style.view({

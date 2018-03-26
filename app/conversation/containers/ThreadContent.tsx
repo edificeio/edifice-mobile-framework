@@ -1,21 +1,20 @@
 import style from "glamorous-native"
 import * as React from "react"
 import { FlatList, KeyboardAvoidingView, Platform, RefreshControl } from "react-native"
-import { IThreadModel, IThreadState, Message } from "../model/conversation"
-import styles from "../styles/index"
-import { ChatMessage } from "./ChatMessage"
-import { sameDay } from "../utils/date"
-import { Row } from "../ui"
-import { tr } from "../i18n/t"
+import { Thread, ConversationState, Message } from "../interfaces";
+import styles from "../../styles/index"
+import { ChatMessage } from "../components/ChatMessage"
+import { sameDay } from "../../utils/date"
+import { Row } from "../../ui"
+import { tr } from "../../i18n/t"
 import { View } from "react-native";
-import { readNextConversation, readThread, fetchThread } from '../actions/conversation';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { IAction } from '../actions/docs';
-import MediaInput from "./MediaInput";
-import { CommonStyles } from "../styles/common/styles";
-import ConnectionTrackingBar from "../ui/ConnectionTrackingBar";
+import MediaInput from "./../containers/MediaInput";
+import { CommonStyles } from "../../styles/common/styles";
+import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import I18n from "react-native-i18n";
+import { readThread, fetchThread, readNextConversation } from "../actions";
 
 export interface IThreadsProps {
 	navigation?: any;
@@ -27,7 +26,7 @@ export interface IThreadsProps {
 	refresh: boolean;
 }
 
-export class Threads extends React.Component<IThreadsProps, any> {
+export class ThreadContent extends React.Component<IThreadsProps, any> {
 	public alreadyDisplayTodayDate: boolean = false
 	list: any;
 
@@ -119,7 +118,7 @@ const Text = style.text({
 	color: "#FF858FA9",
 })
 
-const filtering = (conversation: IThreadState, thread_id): Message[] => {
+const filtering = (conversation: ConversationState, thread_id): Message[] => {
 	return [...conversation.processing, ...conversation.threads.find(t => t.thread_id === thread_id).messages.sort((a, b) => b.date - a.date)]
 }
 
@@ -134,4 +133,4 @@ export default connect(
 		fetch: (threadId: string) => fetchThread(dispatch)(threadId),
 		syncConversation: (page: number) => readNextConversation(dispatch)(page),
 	})
-)(Threads)
+)(ThreadContent)

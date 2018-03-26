@@ -1,35 +1,32 @@
 import * as React from "react"
-import { StackNavigator } from "react-navigation"
-import Conversations from "./Conversations"
-import ConversationTopBar from "../conversation/ConversationTopBar"
-import SearchBar from "../ui/SearchBar"
-import { PATH_CONVERSATION } from "../constants/paths";
-import ThreadsTopBar from "../conversation/ThreadsTopBar"
-import Threads from "./Threads";
-
-const customAnimationFunc = () => ({
-	screenInterpolator: () => {
-		return null
-	},
-})
+import { StackNavigator } from "react-navigation";
+import ThreadsTopBar from "../conversation/ThreadsTopBar";
+import Conversations from "./containers/Conversations";
+import ConversationTopBar from "./containers/ConversationTopBar";
+import NewConversation, { NewConversationHeader } from "./containers/NewConversation";
+import ThreadContent from "./containers/ThreadContent";
 
 export default StackNavigator(
 	{
-		Conversation: {
+		conversation: {
 			screen: Conversations,
 			navigationOptions: ({ navigation }) => ({
 				header: <ConversationTopBar navigation={navigation} />,
 			}),
 		},
-		Threads: {
-			screen: Threads,
+		thread: {
+			screen: ThreadContent,
 			navigationOptions: ({ navigation }) => ({
 				header: <ThreadsTopBar navigation={navigation} />,
-				tabBarVisible: false,
+				tabBarVisible: false
 			}),
 		},
-	},
-	{
-		transitionConfig: customAnimationFunc,
+		newConversation: {
+			screen: NewConversation,
+			navigationOptions: ({ navigation }) => ({
+				header: <NewConversationHeader navigation={ navigation } />,
+				tabBarVisible: false
+			})
+		}
 	}
 )

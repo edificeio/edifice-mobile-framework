@@ -3,6 +3,16 @@ import { matchs, PATH_LOGIN, PATH_LOGOUT, PATH_SIGNUP } from "../constants/paths
 import { crudReducer } from "./docs"
 import { Me } from '../infra/Me';
 
+export interface User {
+	displayName: string;
+	userId: string;
+}
+
+export interface Group {
+	name: string;
+	id: string;
+}
+
 export interface IAuthModel {
 	email: string
 	password: string

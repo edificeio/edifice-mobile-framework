@@ -10,8 +10,7 @@ import { bindActionCreators } from "redux";
 import { filter } from "../actions/filter";
 
 export interface SearchBarProps {
-	filter?: (store: string, value: string) => object;
-	path?: string;
+	onChange: (searchText) => void
 	onClose: () => void
 }
 
@@ -22,20 +21,11 @@ export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
 	}
 
 	public onChangeText(value) {
-		const { filter, path } = this.props
-
-		if (value === undefined) {
-			return
-		}
-
-		filter(path, value)
-
+		this.props.onChange(value);
 		this.setState({ value })
 	}
 
 	public onClose() {
-		const { filter } = this.props;
-		filter(PATH_CONVERSATION, null);
 		this.props.onClose();
 	}
 
@@ -73,9 +63,3 @@ const TextInput = style.textInput(
 		fontFamily: value.length === 0 ? CommonStyles.primaryFontFamilyLight : CommonStyles.primaryFontFamily,
 	})
 )
-
-const mapStateToProps = (state) => ({})
-
-const dispatchAndMapActions = dispatch => bindActionCreators({ filter }, dispatch)
-
-export default connect<{}, {}, SearchBarProps>(mapStateToProps, dispatchAndMapActions)(SearchBar)
