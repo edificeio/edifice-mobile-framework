@@ -50,7 +50,7 @@ export class Login extends React.Component<{
 		const { loggedIn, email, password, error } = this.props.auth;
 
 		return (
-			<KeyboardAvoidingView style={{ flex: 1 }}>
+			<KeyboardAvoidingView style={{ flex: 1, backgroundColor: '#ffffff', paddingTop: 30 }}>
 				<ConnectionTrackingBar />
 				<View style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'column', padding: 40 }}>
 					<Logo />
