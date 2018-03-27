@@ -1,7 +1,9 @@
+import style from "glamorous-native"
 import * as React from "react"
 import { Text, TouchableOpacity } from "react-native"
 import styles from "../styles/index"
 import { Icon } from "./icons/Icon"
+import { CommonStyles } from "../styles/common/styles";
 
 export interface ButtonTextIconProps {
 	onPress: () => any
@@ -12,6 +14,21 @@ export interface ButtonTextIconProps {
 	whiteSpace?: string
 }
 
+const ButtonText = style.text({
+	backgroundColor: "transparent",
+	color: CommonStyles.actionColor,
+	fontWeight: "400",
+	paddingHorizontal: 15,
+	textAlign: 'center',
+	textAlignVertical: 'center'
+});
+
+const ButtonContainer = style.touchableOpacity({
+	flex: 1,
+	justifyContent: 'center',
+	alignItems: 'center'
+});
+
 export const ButtonTextIcon = ({
 	onPress,
 	disabled = false,
@@ -21,14 +38,14 @@ export const ButtonTextIcon = ({
 	whiteSpace = " ",
 }: ButtonTextIconProps) => {
 	return (
-		<TouchableOpacity onPress={onPress} disabled={disabled}>
-			<Text style={styles.buttonStyle}>
+		<ButtonContainer onPress={onPress} disabled={disabled}>
+			<ButtonText>
 				{leftName.length > 0 && <Icon name={leftName} />}
 				{whiteSpace}
 				{title}
 				{whiteSpace}
 				{rightName.length > 0 && <Icon name={rightName} />}
-			</Text>
-		</TouchableOpacity>
+			</ButtonText>
+		</ButtonContainer>
 	)
 }

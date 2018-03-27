@@ -4,7 +4,7 @@ import { CommonStyles } from "../styles/common/styles";
 
 export const ModalBox = styled(NativeModal)({
 	alignItems: "center",
-	justifyContent: "center",
+	justifyContent: "center"
 })
 
 export const ModalContent = styled.view({
@@ -14,10 +14,10 @@ export const ModalContent = styled.view({
 	borderRadius: 4,
 	elevation: CommonStyles.elevation,
 	justifyContent: "center",
-	paddingHorizontal: 20,
-	paddingVertical: 32,
 	shadowColor: CommonStyles.shadowColor,
 	shadowOffset: CommonStyles.shadowOffset,
 	shadowOpacity: CommonStyles.shadowOpacity,
 	shadowRadius: CommonStyles.shadowRadius,
+	width: 270,
+	paddingTop: 20
 })
