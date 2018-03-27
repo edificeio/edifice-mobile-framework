@@ -56,7 +56,7 @@ export class Login extends React.Component<{
 					<Logo />
 					<TextInputLine 
 						placeholder={tr.Login} 
-						onChangeText={(email) => this.setState({ email: email, typing: true })}
+						onChangeText={(email) => this.setState({ email: email.trim(), typing: true })}
 						value={ this.state.email !== undefined ? this.state.email : email }
 						hasError={ error && !this.state.typing } />
 					<TextInputLine 
