@@ -26,7 +26,10 @@ export class HTMLAdaptator {
 		return `<${node.tagName || "div"} ${attributes}>${children.join("")}</${node.tagName || "div"}>`
 	}
 
-	toImagesArray() {
+	toImagesArray(size?) {
+		if(!size){
+			size = '1600x0'
+		}
 		const paths = [];
 		const images = this.root.querySelectorAll("img");
 		for (let i = 0; i < images.length; i++) {
@@ -34,7 +37,7 @@ export class HTMLAdaptator {
 			if(src.indexOf('file://') === -1){
 				src = Conf.platform + src;
 				let split = src.split('?');
-				src = split[0] + '?thumbnail=1600x0';
+				src = split[0] + '?thumbnail=' + size;
 			}
 			
 			paths.push({ uri: src });

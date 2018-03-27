@@ -15,6 +15,7 @@ import { CommonStyles } from "../../styles/common/styles";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import I18n from "react-native-i18n";
 import { readThread, fetchThread, readNextConversation } from "../actions";
+import { Carousel } from "../../ui/Carousel";
 
 export interface IThreadsProps {
 	navigation?: any;
@@ -31,7 +32,10 @@ export class ThreadContent extends React.Component<IThreadsProps, any> {
 	list: any;
 
 	state = {
-		isFetching: false
+		isFetching: false,
+		carousel: false,
+		images: [],
+		currentImage: 0
 	};
 
 	async fetchLatest(){
@@ -58,6 +62,11 @@ export class ThreadContent extends React.Component<IThreadsProps, any> {
 		return (
 			<KeyboardAvoidingView style={{ flex: 1 }} behavior={ Platform.OS === "ios" ? 'padding' : undefined } keyboardVerticalOffset={ this.props.headerHeight }>
 				<ConnectionTrackingBar />
+				<Carousel 
+					startIndex={ this.state.currentImage }
+					visible={ this.state.carousel } 
+					onClose={ () => this.setState({ carousel: false }) } 
+					images={ this.state.images } />
 				<FlatList
 					refreshControl={ 
 						<RefreshControl
@@ -96,11 +105,19 @@ export class ThreadContent extends React.Component<IThreadsProps, any> {
 		)
 	}
 
+	private showCarousel(imageIndex, images){
+		this.setState({
+			carousel: true,
+			images: images,
+			currentImage: imageIndex
+		});
+	}
+
 	private renderItem(item: Message) {
 		return (
 			<View key={ item.id }>
 				{this.showTodayDate(item) && this.displayTodayDate()}
-				<ChatMessage {...item} />
+				<ChatMessage {...item} onOpenImage={ (imageIndex, images) => this.showCarousel(imageIndex, images) } />
 			</View>
 		)
 	}

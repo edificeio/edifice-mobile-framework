@@ -47,20 +47,16 @@ export class ChatMessage extends React.Component<{
 	date: any, 
 	displayNames: any[], 
 	from: string, 
-	status: MessageStatus 
-}, { fullscreen: boolean, currentImage: number }> {
-
-	state = {
-		fullscreen: false,
-		currentImage: 0
-	}
+	status: MessageStatus,
+	onOpenImage: (imageIndex, images) => void
+}, undefined> {
 
 	render(){
 		const { body, date, displayNames = [], from = "", status } = this.props;
 
 		const my = from === Me.session.userId;
 		const messageText = adaptator(body).toText();
-		const images = adaptator(body).toImagesArray();
+		const images = adaptator(body).toImagesArray('381x381');
 
 		if (!body) {
 			return <style.View />
@@ -75,13 +71,8 @@ export class ChatMessage extends React.Component<{
 					</AvatarContainer>
 				)}
 				<MessageContainer my={ my }>
-					<Carousel 
-						startIndex={ this.state.currentImage }
-						visible={ this.state.fullscreen } 
-						onClose={ () => this.setState({ fullscreen: false }) } 
-						images={ images } />
 					{ messageText ? <TextBubble content={ messageText } isMine={ my } /> : <View /> }
-					{ images.map((el, i) => <TouchableOpacity key={ i } onPress={ () => this.setState({ fullscreen: true, currentImage: i })}>
+					{ images.map((el, i) => <TouchableOpacity key={ i } onPress={ () => this.props.onOpenImage(i, images) }>
 							<ImageMessage source={ el } isMine={ my } />
 						</TouchableOpacity>
 					)}
