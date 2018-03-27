@@ -11,6 +11,7 @@ import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
 import { Carousel } from "../../ui/Carousel";
 import { DateView } from "../../ui/DateView";
 import { tr } from "../../i18n/t";
+import { Line, Col } from "../../ui";
 
 const Item = style.view({
 	alignItems: "center",
@@ -67,42 +68,54 @@ export class ChatMessage extends React.Component<{
 
 		return (
 			<MessageBlock my={ my }>
-				{displayNames.length > 2 &&
+				{ displayNames.length > 2 &&
 					!my && (
-					<LeftPanel>
-						<SingleAvatar userId={from} />
-					</LeftPanel>
+					<AvatarContainer>
+						<SingleAvatar size={ 35 } userId={from} />
+					</AvatarContainer>
 				)}
-				<Carousel 
-					startIndex={ this.state.currentImage }
-					visible={ this.state.fullscreen } 
-					onClose={ () => this.setState({ fullscreen: false }) } 
-					images={ images } />
-				{ messageText ? <TextBubble content={ messageText } isMine={ my } /> : <View /> }
-				{ images.map((el, i) => <TouchableOpacity key={ i } onPress={ () => this.setState({ fullscreen: true, currentImage: i })}>
-						<ImageMessage source={ el } isMine={ my } />
-					</TouchableOpacity>
-				)}
-				{ (status === undefined || status === MessageStatus.sent) && <DateView date={date} /> }
-				{ status === MessageStatus.sending && <Text>{tr.Sending_msg}</Text> }
-				{ status === MessageStatus.failed && <Text style={{ color: CommonStyles.error, fontSize: 12 }}>{ I18n.t('conversation-failedSent') }</Text> }
+				<MessageContainer my={ my }>
+					<Carousel 
+						startIndex={ this.state.currentImage }
+						visible={ this.state.fullscreen } 
+						onClose={ () => this.setState({ fullscreen: false }) } 
+						images={ images } />
+					{ messageText ? <TextBubble content={ messageText } isMine={ my } /> : <View /> }
+					{ images.map((el, i) => <TouchableOpacity key={ i } onPress={ () => this.setState({ fullscreen: true, currentImage: i })}>
+							<ImageMessage source={ el } isMine={ my } />
+						</TouchableOpacity>
+					)}
+					{ (status === undefined || status === MessageStatus.sent) && <DateView date={date} /> }
+					{ status === MessageStatus.sending && <Text>{tr.Sending_msg}</Text> }
+					{ status === MessageStatus.failed && <Text style={{ color: CommonStyles.error, fontSize: 12 }}>{ I18n.t('conversation-failedSent') }</Text> }
+				</MessageContainer>
 			</MessageBlock>
 		)
 	}
 }
 
-const LeftPanel = style.view({
+const AvatarContainer = style.view({
 	height: 50,
 	width: 50,
-})
+	marginBottom: 15
+});
+
+const MessageContainer = style.view({
+}, 
+	({ my }): ViewStyle => ({
+		alignItems: my ? "flex-end" : "flex-start"
+	})
+);
 
 const MessageBlock = style.view(
 	{
 		flex: 1,
-		padding: 15
+		padding: 15,
+		flexDirection: 'row'
 	},
 	({ my }): ViewStyle => ({
-		alignItems: my ? "flex-end" : "flex-start",
+		justifyContent: my ? "flex-end" : "flex-start",
+		alignItems: 'flex-end',
 		marginLeft: my ? 54 : 5,
 		marginRight: my ? 0 : 54,
 	})
