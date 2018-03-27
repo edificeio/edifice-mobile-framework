@@ -10,5 +10,7 @@ export interface ConversationState {
 	refresh: boolean;
 	refreshThreads: boolean;
     filterCleared: boolean;
-    visibles: (User | Group)[]
+	visibles: (User | Group)[];
+	pickedUsers: (User | Group)[];
+	remainingUsers: (User | Group)[];
 }

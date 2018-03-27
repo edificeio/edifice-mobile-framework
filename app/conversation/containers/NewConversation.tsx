@@ -8,6 +8,7 @@ import { PageContainer } from "../../ui/ContainerContent";
 import SearchUser from "../../ui/SearchUser";
 import { loadVisibles } from "../actions/loadVisibles";
 import I18n from 'react-native-i18n';
+import { unpickUser, pickUser } from "../actions/pickUser";
 
 class NewThreadHeader extends React.Component<{ navigation: any }, undefined> {
     createConversation(){
@@ -30,7 +31,15 @@ export const NewConversationHeader = connect(
 	})
 )(NewThreadHeader)
 
-class NewConversation extends React.Component<{ visibles: User[], loadVisibles: () => Promise<void> }, undefined> {
+interface NewConversationProps{
+    remainingUsers: User[];
+    loadVisibles: () => Promise<void>;
+    pickedUsers: User[];
+    pickUser: (user: User) => void;
+    unpickUser: (user: User) => void;
+}
+
+class NewConversation extends React.Component<NewConversationProps, undefined> {
     
     componentDidMount(){
         this.props.loadVisibles();
@@ -38,16 +47,23 @@ class NewConversation extends React.Component<{ visibles: User[], loadVisibles: 
 
     render(){
         return <PageContainer>
-            <SearchUser visibles={ this.props.visibles } picked={ [] } onPickUser={ () => null }></SearchUser>
+            <SearchUser 
+                remaining={ this.props.remainingUsers } 
+                picked={ this.props.pickedUsers } 
+                onPickUser={ (user) => this.props.pickUser(user) } 
+                onUnpickUser={ (user) => this.props.unpickUser(user) }></SearchUser>
         </PageContainer>
     }
 }
 
 export default connect(
 	(state: any) => { console.log(state); return ({
-        visibles: state.conversation.visibles
+        pickedUsers: state.conversation.pickedUsers,
+        remainingUsers: state.conversation.remainingUsers
 	}) }, 
 	dispatch => ({
-        loadVisibles: () => loadVisibles(dispatch)()
+        loadVisibles: () => loadVisibles(dispatch)(),
+        pickUser: (user) => pickUser(dispatch)(user),
+        unpickUser: (user) => unpickUser(dispatch)(user)
 	})
 )(NewConversation)

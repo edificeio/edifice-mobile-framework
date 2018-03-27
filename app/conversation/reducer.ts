@@ -15,7 +15,9 @@ const initialState: ConversationState = {
 	refresh: true,
 	refreshThreads: false,
     filterCleared: false,
-    visibles: []
+    visibles: [],
+    pickedUsers: [],
+    remainingUsers: []
 }
 
 export default (state: ConversationState = initialState, action): ConversationState => {

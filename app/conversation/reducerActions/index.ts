@@ -1,5 +1,5 @@
 export * from './filter';
 export * from './list';
-export * from './loadVisibles';
+export * from './pickUsers';
 export * from './send';
 export * from './thread';
