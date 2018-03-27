@@ -219,10 +219,12 @@ export class Avatar extends React.Component<IAvatarProps, { loaded: boolean, noA
 		if(response.type === 'utf8'){
 			this.setState({ loaded: true, noAvatar: true });
 		}
+		else{
+			this.setState({ loaded: true, noAvatar: false });
+		}
 		avatarsMap[this.props.id] = { noAvatar: this.state.noAvatar };
 		avatarsMap.trigger(this.props.id);
 		avatarsMap.save();
-		this.setState({ loaded: true });
 	}
 
 	renderNoAvatar(width){
