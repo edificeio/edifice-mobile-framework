@@ -42,7 +42,7 @@ export class Login extends React.Component<{
 	async login(){
 		this.setState({ ...this.state, loading: true });
 		await this.props.login(this.state.email, this.state.password);
-		this.setState({ ...this.state, password: '', typing: false, loading: false });
+		setTimeout(() => this.setState({ ...this.state, password: '', typing: false, loading: false }), 200);
 	}
 
 	public render() {
@@ -66,9 +66,9 @@ export class Login extends React.Component<{
 						value={ this.state.password || password }
 						hasError={ error && !this.state.typing } />
 
-					<ErrorMessage>{ error }</ErrorMessage>
+					<ErrorMessage>{ this.state.typing ? '' : error }</ErrorMessage>
 
-					<View style={{ flexGrow: 2, alignItems: 'center', justifyContent: 'flex-start', marginTop: '5%' }}>
+					<View style={{ flexGrow: 2, alignItems: 'center', justifyContent: 'flex-start', marginTop: 10 }}>
 						<FlatButton 
 							onPress={ () => this.login() } 
 							disabled={ this.isDisabled } 

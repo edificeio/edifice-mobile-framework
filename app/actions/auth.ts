@@ -90,7 +90,7 @@ export const login = dispatch => async (email, password) => {
 				password: password
 			});
 
-			readCurrentUser(dispatch)();
+			await readCurrentUser(dispatch)();
 		}
 	}
 	catch(e){

@@ -52,9 +52,8 @@ export const ErrorMessage = style.text({
 	color: CommonStyles.errorColor,
 	fontFamily: CommonStyles.primaryFontFamily,
 	fontSize: 14,
-	padding: 10,
+	padding: 5,
 	marginTop: 15,
 	flexGrow: 0,
-	textAlign: 'center',
-	minHeight: 55
+	textAlign: 'center'
 });

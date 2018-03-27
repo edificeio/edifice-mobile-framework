@@ -56,7 +56,8 @@ export function Auth(state: IAuthState = initialState, action): IAuthState {
 			loggedIn: true,
 			password: action.password,
 			email: action.email,
-			userId: action.userbook.id
+			userId: action.userbook.id,
+			error: ''
 		}
 	}
 
