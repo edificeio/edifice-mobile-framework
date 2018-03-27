@@ -91,9 +91,9 @@ export class ThreadsTopBar extends React.PureComponent<IThreadsBarProps, {}> {
 				<View style={{ flexDirection: 'column', alignItems: 'center', flex: 1, justifyContent: 'center' }}>
 					<Line>
 						<Back navigation={ navigation } />
-						<CenterPanel onPress={() => this.onPress()} style={{ paddingTop: 5 }}>
+						<CenterPanel onPress={() => this.onPress()} style={{ paddingTop: 5, paddingBottom: 5 }}>
 							{!expand && <RowAvatars images={images} size={Size.small } />}
-							<Title numberOfLines={ 1 } smallSize={!expand} style={{marginBottom: 5}}>{subject}</Title>
+							<Title numberOfLines={ 1 } smallSize={!expand}>{subject}</Title>
 						</CenterPanel>
 						<TouchableEndBarPanel />
 					</Line>

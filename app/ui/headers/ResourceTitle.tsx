@@ -7,8 +7,8 @@ export const ResourceTitle = ({ title, subTitle, navigation }) => (
 	<Header>
 		<Back navigation={ navigation } />
 		<View style={{ justifyContent: 'center', flex: 1, height: 60 }}>
-			<Title numberOfLines={ 2 }>{ title }</Title>
-			<SubTitle numberOfLines={ 1 }>{ subTitle }</SubTitle>
+			<Title numberOfLines={ 2 } style={{ lineHeight: 18 }}>{ title }</Title>
+			<SubTitle numberOfLines={ 1 } style={{ lineHeight: 14 }}>{ subTitle }</SubTitle>
 		</View>
 	</Header>
 )
