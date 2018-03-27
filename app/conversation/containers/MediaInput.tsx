@@ -112,6 +112,7 @@ class MediaInput extends React.Component<{
 			to: to,
 			cc: conversation.cc,
 			parentId: id,
+			thread_id: thread_id
 		});
 	}
 

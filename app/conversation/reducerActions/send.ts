@@ -10,6 +10,8 @@ export const CONVERSATION_SEND = (state, action) => ({
 });
 
 export const CONVERSATION_SENT = (state, action) => {
+    console.log(state);
+    console.log(action)
     const index = state.processing.indexOf(state.processing.find(p => p.id === action.data.id));
     const parentThread = state.threads.find(t => t.thread_id === action.data.thread_id);
     const newParentThread = {

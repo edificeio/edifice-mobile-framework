@@ -1,8 +1,9 @@
 import { uploadImage, takePhoto } from "../../actions/workspace";
 import { Me } from "../../infra/Me";
 import { Conf } from "../../Conf";
+import { Message } from "../interfaces";
 
-export const sendPhoto = dispatch => async (data: { subject: string, to: any[], cc:any[], parentId?: string, body?: string }) => {
+export const sendPhoto = dispatch => async (data: Message) => {
 	const uri = await takePhoto();
 	
 	dispatch({
@@ -18,6 +19,7 @@ export const sendPhoto = dispatch => async (data: { subject: string, to: any[], 
 	
 	try{
 		const documentPath = await uploadImage(uri);
+		const body = `<div><img src="${documentPath}" /></div>`;
 		const response = await fetch(`${ Conf.platform }/conversation/send?In-Reply-To=${data.parentId}`, {
 			method: 'post',
 			headers: {
@@ -25,7 +27,7 @@ export const sendPhoto = dispatch => async (data: { subject: string, to: any[], 
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				body: `<div><img src="${documentPath}" /></div>`,
+				body: body,
 				to: data.to,
 				cc: data.cc,
 				subject: data.subject
@@ -35,14 +37,25 @@ export const sendPhoto = dispatch => async (data: { subject: string, to: any[], 
 
 		dispatch({
 			type: 'CONVERSATION_SENT',
-			data: data
+			data: {
+				...data,
+				body: body,
+				newId: json.id,
+				conversation: data.parentId,
+				date: Date.now(), 
+				from: Me.session.userId
+			}
 		});
 	}
 	catch(e){
 		console.log(e);
 		dispatch({
 			type: 'CONVERSATION_FAILED_SEND',
-			data: data
+			data: data,
+			body: '<div></div>',
+			conversation: data.parentId,
+			date: Date.now(), 
+			from: Me.session.userId
 		});
 	}
 }
