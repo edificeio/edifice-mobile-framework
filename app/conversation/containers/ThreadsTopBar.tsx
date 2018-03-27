@@ -1,20 +1,15 @@
 import style from "glamorous-native"
 import * as React from "react";
-import { Me } from "../infra/Me";
-import { CommonStyles } from "../styles/common/styles"
-import {
-	TouchableEndBarPanel,
-	CenterPanel,
-	Header, Title
-} from "../ui/headers/Header"
-import { Icon } from "../ui/icons/Icon";
-import { TextStyle, View } from "react-native"
-import { RowAvatars } from "../ui/avatars/RowAvatars";
-import { Size } from "../ui/avatars/Avatar";
-import { Back } from "../ui/headers/Back";
+import { TextStyle, View } from "react-native";
+import { CommonStyles } from "../../styles/common/styles";
+import { Me } from "../../infra/Me";
+import { Header, CenterPanel, Title, TouchableEndBarPanel } from "../../ui/headers/Header";
+import { Line } from "../../ui";
+import { Back } from "../../ui/headers/Back";
+import { RowAvatars } from "../../ui/avatars/RowAvatars";
+import { Size } from "../../ui/avatars/Avatar";
 import { connect } from "react-redux";
-import { setHeader } from "../actions/ui";
-import { Row, Col, Line } from "../ui";
+import { setHeader } from "../../actions/ui";
 
 const legendStyle: TextStyle = {
 	alignSelf: "center",
@@ -96,9 +91,9 @@ export class ThreadsTopBar extends React.PureComponent<IThreadsBarProps, {}> {
 				<View style={{ flexDirection: 'column', alignItems: 'center', flex: 1, justifyContent: 'center' }}>
 					<Line>
 						<Back navigation={ navigation } />
-						<CenterPanel onPress={() => this.onPress()}>
+						<CenterPanel onPress={() => this.onPress()} style={{ paddingTop: 5 }}>
 							{!expand && <RowAvatars images={images} size={Size.small } />}
-							<Title numberOfLines={ 1 } smallSize={!expand}>{subject}</Title>
+							<Title numberOfLines={ 1 } smallSize={!expand} style={{marginBottom: 5}}>{subject}</Title>
 						</CenterPanel>
 						<TouchableEndBarPanel />
 					</Line>

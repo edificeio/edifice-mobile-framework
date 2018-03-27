@@ -1,6 +1,6 @@
 import * as React from "react"
 import { StackNavigator } from "react-navigation";
-import ThreadsTopBar from "../conversation/ThreadsTopBar";
+import ThreadsTopBar from "./containers/ThreadsTopBar";
 import Conversations from "./containers/Conversations";
 import ConversationTopBar from "./containers/ConversationTopBar";
 import NewConversation, { NewConversationHeader } from "./containers/NewConversation";
