@@ -24,7 +24,6 @@ const ButtonText = style.text({
 });
 
 const ButtonContainer = style.touchableOpacity({
-	flex: 1,
 	justifyContent: 'center',
 	alignItems: 'center'
 });

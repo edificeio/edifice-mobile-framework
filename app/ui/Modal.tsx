@@ -19,5 +19,7 @@ export const ModalContent = styled.view({
 	shadowOpacity: CommonStyles.shadowOpacity,
 	shadowRadius: CommonStyles.shadowRadius,
 	width: 270,
-	paddingTop: 20
+	paddingTop: 35,
+	paddingLeft: 13,
+	paddingRight: 13
 })

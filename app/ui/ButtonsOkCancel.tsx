@@ -12,8 +12,9 @@ export interface ButtonsOkCancelProps {
 const ButtonStyled = styled.view({
 	flexDirection: "row",
 	width: '100%',
-	height: 70,
+	height: 80,
 	justifyContent: "center",
+	paddingBottom: 10
 })
 
 export const ButtonsOkCancel = ({ onCancel, onValid, title }: ButtonsOkCancelProps) => (
