@@ -15,7 +15,6 @@ export const readNextConversation = dispatch => async page => {
 			page: page + 1
 		})
 	} catch (e) {
-		console.log(e)
 		dispatch({
 			type: "END_REACHED_CONVERSATION",
 		})

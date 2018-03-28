@@ -21,7 +21,9 @@ const avatarsMap = {
 		}
 		const avatars = await usersAvatars();
 		for(let user in avatars){
-			avatarsMap[user] = avatars[user];
+			if(user !== 'awaiters'){
+				avatarsMap[user] = avatars[user];
+			}
 		}
 		this.loaded = true;
 	},

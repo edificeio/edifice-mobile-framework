@@ -8,15 +8,8 @@ export const deleteThread = dispatch => async (conversation: Thread) => {
 	})
 
 	try {
-		const response = await fetch(`${Conf.platform}/conversation/thread/previous-messages/${conversation.id}`);
-		let json = await response.json();
-
 		for(let i = 0; i < conversation.messages.length; i++){
 			fetch(`${Conf.platform}/conversation/trash?id=${conversation.messages[i].id}`, { method: 'put' }).then(r => console.log(r)).catch(e => console.log(e));
-		}
-
-		for(let i = 0; i < json.length; i++){
-			fetch(`${Conf.platform}/conversation/trash?id=${json[i].id}`, { method: 'put' }).then(r => console.log(r)).catch(e => console.log(e));
 		}
 	} catch (e) {
 		console.log(e);

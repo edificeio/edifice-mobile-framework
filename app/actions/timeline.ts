@@ -25,9 +25,8 @@ const loadSchoolbooks = (): Promise<Array<any>> => {
 		loadingState = 'loading';
 		awaiters.push(() => resolve(schoolbooks));
 		if(Me.session.type.indexOf('Student') !== -1){
-			const response = await read(`/schoolbook/list/0/${Me.session.userId}`);
-				const messages = await response.json();
-				schoolbooks = [...schoolbooks, ...messages];
+			const messages = await read(`/schoolbook/list/0/${Me.session.userId}`);
+			schoolbooks = [...schoolbooks, ...messages];
 		}
 		else{
 			for(let child of Me.session.children){
