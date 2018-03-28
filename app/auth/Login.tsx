@@ -41,7 +41,7 @@ export class Login extends React.Component<{
 
 	async login(){
 		this.setState({ ...this.state, loading: true });
-		const result = await this.props.login(this.state.email, this.state.password);
+		const result = await this.props.login(this.state.email || this.props.auth.email || this.props.navigation.state.params.email, this.state.password);
 		if(result !== LoginResult.success){
 			this.setState({ ...this.state, password: '', typing: false, loading: false });
 		}
