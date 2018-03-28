@@ -36,7 +36,7 @@ export class Login extends React.Component<{
 	};
 
 	get isDisabled(){
-		return !(this.state.email || this.props.auth.email) || !this.state.password;
+		return !(this.state.email || this.props.auth.email || this.props.navigation.state.params.email) || !this.state.password;
 	}
 
 	async login(){
