@@ -49,7 +49,10 @@ export class Login extends React.Component<{
 
 	public render() {
 		console.log(this.props.auth)
-		const { loggedIn, email, password, error } = this.props.auth;
+		let { loggedIn, email, password, error } = this.props.auth;
+		if(!email){
+			email = this.props.navigation.state.params.email;
+		}
 
 		return (
 			<KeyboardAvoidingView style={{ flex: 1, backgroundColor: '#ffffff', paddingTop: 30 }}>

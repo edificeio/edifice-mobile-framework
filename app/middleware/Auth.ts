@@ -21,7 +21,7 @@ async function auth(dispatch) {
 			}
 		}
 		else{
-			navigate("Login", { email: "" });
+			navigate("Login", { email: email });
 		}
 		
 	} catch (e) {
