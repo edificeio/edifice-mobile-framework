@@ -55,9 +55,9 @@ export class Login extends React.Component<{
 		}
 
 		return (
-			<KeyboardAvoidingView style={{ flex: 1, backgroundColor: '#ffffff', paddingTop: 30 }}>
+			<KeyboardAvoidingView style={{ flex: 1, backgroundColor: '#ffffff' }}>
 				<ConnectionTrackingBar />
-				<View style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'column', padding: 40 }}>
+				<View style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'column', padding: 40, paddingTop: 100 }}>
 					<Logo />
 					<TextInputLine 
 						placeholder={tr.Login} 
