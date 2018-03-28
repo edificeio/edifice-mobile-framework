@@ -15,9 +15,7 @@ export const fetchThread = dispatch => async (threadId: string) => {
 			fetch(`${Conf.platform}/conversation/message/${message.id}`);
 		}
 
-		Tracking.logEvent('refreshConversation', {
-			application: 'conversation'
-		});
+		Tracking.logEvent('refreshConversation');
 
 		dispatch({
 			type: 'FETCH_THREAD_CONVERSATION',
