@@ -36,6 +36,7 @@ interface TimelineProps {
 	fetch: (availableApps: any) => Promise<void>;
 	availableApps: any;
 	fetchFailed: boolean;
+	isAuthenticated: boolean;
 }
 
 class Timeline extends React.Component<TimelineProps, undefined> {
@@ -51,7 +52,7 @@ class Timeline extends React.Component<TimelineProps, undefined> {
 	}
 
 	nextPage() {
-		if (!this.props.isFetching) {
+		if (!this.props.isFetching && this.props.isAuthenticated) {
 			this.props.sync(++this.pageNumber, this.props.availableApps)
 		}
 	}
@@ -152,7 +153,8 @@ class Timeline extends React.Component<TimelineProps, undefined> {
 
 export default connect(
 	(state: any) => ({
-		...state.timeline
+		...state.timeline,
+		isAuthenticated: state.auth.loggedIn
 	}),
 	dispatch => ({
 		sync: (page: number, availableApps) => listTimeline(dispatch)(page, availableApps),

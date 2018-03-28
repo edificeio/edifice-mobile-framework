@@ -1,4 +1,8 @@
 import { MessageStatus } from "../interfaces";
+import { PATH_AVATAR } from '../../constants/paths';
+import { ConversationState } from '../interfaces/ConversationState';
+import { User, Group } from "../../model/Auth";
+import { Me } from "../../infra/Me";
 
 export const CONVERSATION_SEND = (state, action) => ({
     ...state,
@@ -9,9 +13,14 @@ export const CONVERSATION_SEND = (state, action) => ({
     filterCleared: false
 });
 
+export const CREATE_THREAD_CONVERSATION = (state: ConversationState, action) => {
+    return {
+        ...state,
+        threads: [action.newConversation, ...state.threads.filter(t => t.thread_id !== 'temp')]
+    }
+}
+
 export const CONVERSATION_SENT = (state, action) => {
-    console.log(state);
-    console.log(action)
     const index = state.processing.indexOf(state.processing.find(p => p.id === action.data.id));
     const parentThread = state.threads.find(t => t.thread_id === action.data.thread_id);
     const newParentThread = {
