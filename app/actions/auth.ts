@@ -54,6 +54,8 @@ async function getCookies(response) {
 	return await AsyncStorage.getItem("Set-Cookie")
 }
 
+export enum LoginResult{ success, passwordError, connectionError }
+
 export const login = dispatch => async (email, password) => {
 	const formData = new FormData();
 	formData.append('email', email);
@@ -77,6 +79,8 @@ export const login = dispatch => async (email, password) => {
 				type: 'LOGIN_ERROR_AUTH',
 				error: tr.Incorrect_login_or_password,
 			});
+
+			return LoginResult.passwordError;
 		}
 		else{
 			const cookies = getCookies(response);
@@ -91,6 +95,8 @@ export const login = dispatch => async (email, password) => {
 			});
 
 			await readCurrentUser(dispatch)();
+
+			return LoginResult.success;
 		}
 	}
 	catch(e){
@@ -98,6 +104,8 @@ export const login = dispatch => async (email, password) => {
 			type: 'LOGIN_ERROR_AUTH',
 			error: I18n.t('auth-networkError')
 		});
+
+		return LoginResult.connectionError;
 	}
 	
 }

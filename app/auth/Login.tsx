@@ -3,7 +3,7 @@ import { View, TextInput, ScrollView, KeyboardAvoidingView, Image } from "react-
 import { IAuthModel } from "../model/Auth";
 import { navigate } from "../utils/navHelper"
 import { connect } from "react-redux";
-import { login } from '../actions/auth';
+import { login, LoginResult } from '../actions/auth';
 import { FlatButton } from "../ui";
 import { tr } from "../i18n/t";
 import { ErrorMessage } from '../ui/Typography';
@@ -24,7 +24,7 @@ const Logo = () => <View style={{ flexGrow: 2, alignItems: 'center', justifyCont
 
 export class Login extends React.Component<{
 	auth: IAuthModel;
-	login: (email: string, password: string) => Promise<void>;
+	login: (email: string, password: string) => Promise<LoginResult>;
 	navigation?: any;
 }, { email: string, password: string, typing: boolean, loading: boolean }> {
 
@@ -41,8 +41,10 @@ export class Login extends React.Component<{
 
 	async login(){
 		this.setState({ ...this.state, loading: true });
-		await this.props.login(this.state.email, this.state.password);
-		setTimeout(() => this.setState({ ...this.state, password: '', typing: false, loading: false }), 200);
+		const result = await this.props.login(this.state.email, this.state.password);
+		if(result !== LoginResult.success){
+			this.setState({ ...this.state, password: '', typing: false, loading: false });
+		}
 	}
 
 	public render() {
