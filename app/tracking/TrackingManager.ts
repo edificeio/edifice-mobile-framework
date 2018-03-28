@@ -3,7 +3,7 @@ import trackedActions from "./actions";
 
 let analytics;
 try{
-	const analytics = firebase.app().analytics();
+	analytics = firebase.app().analytics();
 }
 catch(e){
 	console.log(e);
