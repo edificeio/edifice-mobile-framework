@@ -5,7 +5,6 @@ export const PATH_CONVERSATION = "conversation/threads/list?page=$1"
 export const PATH_CREATE_CONVERSATION = "conversation/send?id=$1"
 export const PATH_LOGIN = "auth/login"
 export const PATH_LOGOUT = "auth/logout"
-export const PATH_NEWS = "timeline/lastNotifications?page=$1&type=BLOG"
 
 export const PATH_NEW_MESSAGES = "conversation/thread/new-messages/$1"
 export const PATH_PREVIOUS_MESSAGES = "conversation/thread/previous-messages/$1"

@@ -129,6 +129,7 @@ export const logout = dispatch => async email => {
 	dispatch({ type: 'LOGOUT_AUTH', email: email });
 	clearTimeline(dispatch)();
 	clearConversation(dispatch)();
+	
 	CookieManager.clearAll();
 }
 

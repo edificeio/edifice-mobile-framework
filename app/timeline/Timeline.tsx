@@ -1,6 +1,6 @@
 import style from "glamorous-native"
 import * as React from "react"
-import { FlatList, Image, ScrollView, Modal, RefreshControl } from 'react-native';
+import { FlatList, Image, ScrollView, Modal, RefreshControl, Button } from 'react-native';
 import { News } from "./News"
 import { View } from "react-native"
 import styles from "../styles"
@@ -8,11 +8,12 @@ import { connect } from "react-redux"
 import { listTimeline, fetchTimeline } from "../actions/timeline"
 import { Tracking } from "../tracking/TrackingManager";
 import { Header, HeaderIcon, Title, AppTitle } from '../ui/headers/Header';
-import { Icon, Loading, Row } from "../ui";
+import { Icon, Loading, Row, FlatButton } from "../ui";
 import I18n from 'react-native-i18n';
 import { EmptyScreen } from "../ui/EmptyScreen";
 import ConnectionTrackingBar from "../ui/ConnectionTrackingBar";
 import { PageContainer } from '../ui/ContainerContent';
+import { ErrorMessage } from '../ui/Typography';
 
 export class TimelineHeader extends React.Component<{ navigation?: any }, undefined> {
 	render() {
@@ -26,7 +27,7 @@ export class TimelineHeader extends React.Component<{ navigation?: any }, undefi
 	}
 }
 
-export interface ITimelineProps {
+interface TimelineProps {
 	isFetching: boolean;
 	endReached: boolean;
 	navigation: any
@@ -34,9 +35,10 @@ export interface ITimelineProps {
 	sync: (page: number, availableApps: any) => Promise<void>;
 	fetch: (availableApps: any) => Promise<void>;
 	availableApps: any;
+	fetchFailed: boolean;
 }
 
-class Timeline extends React.Component<ITimelineProps, undefined> {
+class Timeline extends React.Component<TimelineProps, undefined> {
 	flatList: any;
 	pageNumber: number;
 
@@ -107,6 +109,15 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
 		/>
 	}
 
+	fetchFailed(){
+		return <PageContainer>
+			<View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+				<ErrorMessage style={{ marginBottom: 20, width: '70%' }}>{ I18n.t("loadingFailedMessage") }</ErrorMessage>
+				<FlatButton onPress={ () => this.props.sync(0, this.props.availableApps) } title={ I18n.t("tryagain") } loading={ this.props.isFetching } />
+			</View>
+		</PageContainer>
+	}
+
 	emptyScreen(){
 		return <EmptyScreen 
 			image={ require('../../assets/images/empty-screen/espacedoc.png') } 
@@ -119,7 +130,11 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
 	}
 
 	public render() {
-		const { isFetching, news } = this.props;
+		const { isFetching, fetchFailed, news } = this.props;
+
+		if(fetchFailed){
+			return this.fetchFailed();
+		}
 
 		if(!isFetching && (!news || news.length === 0) && this.props.endReached){
 			return this.emptyScreen();

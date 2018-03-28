@@ -242,9 +242,8 @@ export const fetchTimeline = dispatch => async (availableApps) => {
 		type: "FETCH_TIMELINE",
 	});
 
-	const news = await read(`/timeline/lastNotifications?page=0&${writeTypesParams(availableApps)}`)
-
 	try {
+		const news = await read(`/timeline/lastNotifications?page=0&${writeTypesParams(availableApps)}`)
 		let results = news.results.filter(n => excludeTypes.indexOf(n["event-type"]) === -1 && n.params);
 		const newNews = await fillData(availableApps, results)
 
@@ -263,23 +262,34 @@ export const listTimeline = dispatch => async (page, availableApps) => {
 	dispatch({
 		type: "FETCH_TIMELINE",
 	})
-	await fillUserData();
 	
-	if(!availableApps){
-		availableApps = await storedFilters();
-		dispatch({
-			type: "FILTER_TIMELINE",
-			availableApps: availableApps
-		});
+	let loading = true;
 
-		dispatch({
-			type: "PICK_FILTER_TIMELINE",
-			selectedApps: availableApps
-		});
-	}
-	const news = await read(`/timeline/lastNotifications?page=${page}&${writeTypesParams(availableApps)}`)
-
+	setTimeout(() => {
+		if(loading){
+			dispatch({
+				type: "FAILED_LOAD_TIMELINE",
+			})
+		}
+	}, 5000);
+	
 	try {
+		await fillUserData();
+	
+		if(!availableApps){
+			availableApps = await storedFilters();
+			dispatch({
+				type: "FILTER_TIMELINE",
+				availableApps: availableApps
+			});
+
+			dispatch({
+				type: "PICK_FILTER_TIMELINE",
+				selectedApps: availableApps
+			});
+		}
+
+		const news = await read(`/timeline/lastNotifications?page=${page}&${writeTypesParams(availableApps)}`);
 		let results = news.results.filter(n => excludeTypes.indexOf(n["event-type"]) === -1 && n.params);
 		const newNews = await fillData(availableApps, results)
 
@@ -294,10 +304,14 @@ export const listTimeline = dispatch => async (page, availableApps) => {
 				type: "END_REACHED_TIMELINE",
 			});
 		}
+
+		loading = false;
 	} catch (e) {
-		console.log(e)
+		console.log(e);
 		dispatch({
-			type: "END_REACHED_TIMELINE",
-		})
+			type: "FAILED_LOAD_TIMELINE",
+		});
+
+		loading = false;
 	}
 }

@@ -23,6 +23,7 @@ export interface INewsState {
 	availableApps: any;
 	selectedApps: any;
 	refresh: boolean;
+	fetchFailed: boolean;
 }
 
 export const Timeline = (
@@ -32,7 +33,8 @@ export const Timeline = (
 		news: [],
 		availableApps: undefined,
 		selectedApps: undefined,
-		refresh: true
+		refresh: true,
+		fetchFailed: false
 	},
 	action
 ) => {
@@ -80,7 +82,16 @@ export const Timeline = (
 			return {
 				...state,
 				isFetching: true,
-				refresh: false
+				refresh: false,
+				endReached: false,
+				fetchFailed: false
+			}
+		case "FAILED_LOAD_TIMELINE":
+			return {
+				...state,
+				isFetching: false,
+				endReached: true,
+				fetchFailed: true
 			}
 		case "CLEAR_TIMELINE":
 			return {
