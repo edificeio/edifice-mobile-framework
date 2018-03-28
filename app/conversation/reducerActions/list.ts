@@ -45,7 +45,7 @@ export const FETCH_NEW_CONVERSATION = (state, action) => ({
             const thread = { 
                 ...c[0],
                 nb: c.filter(e => e.unread && e.from !== Me.session.userId).length,
-                messages: [...c],
+                messages: [c[0]],
                 subject: c[0].subject ? c[0].subject.replace(/Tr :|Re :|Re:|Tr:/g, '') : ''
             };
             return thread;

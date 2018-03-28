@@ -11,7 +11,6 @@ export const fetchThread = dispatch => async (threadId: string) => {
 				continue;
 			}
 			
-			message.unread = false;
 			fetch(`${Conf.platform}/conversation/message/${message.id}`);
 		}
 
@@ -19,7 +18,7 @@ export const fetchThread = dispatch => async (threadId: string) => {
 
 		dispatch({
 			type: 'FETCH_THREAD_CONVERSATION',
-			messages: messages,
+			messages: messages.map(m => ({ ...m, unread: false })),
 			threadId: threadId
 		});
 	}
@@ -36,7 +35,6 @@ export const readThread = dispatch => async (threadId: string) => {
 			if(!message.unread){
 				continue;
 			}
-			message.unread = false;
 			fetch(`${Conf.platform}/conversation/message/${message.id}`);
 		}
 
@@ -46,7 +44,7 @@ export const readThread = dispatch => async (threadId: string) => {
 
 		dispatch({
 			type: 'READ_THREAD_CONVERSATION',
-			messages: messages,
+			messages: messages.map(m => ({ ...m, unread: false })),
 			threadId: threadId
 		});
 	}

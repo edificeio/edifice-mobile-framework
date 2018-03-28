@@ -13,7 +13,7 @@ export const sendPhoto = dispatch => async (data: Message) => {
 			conversation: data.parentId, 
 			from: Me.session.userId, 
 			body: `<div><img src="${uri}" /></div>`,
-			date: Date.now() 
+			date: Date.now()
 		}
 	});
 	

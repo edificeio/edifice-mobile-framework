@@ -135,9 +135,10 @@ const Text = style.text({
 	color: "#FF858FA9",
 })
 
-const filtering = (conversation: ConversationState, thread_id): Message[] => {
-	return [...conversation.processing, ...conversation.threads.find(t => t.thread_id === thread_id).messages.sort((a, b) => b.date - a.date)]
-}
+const filtering = (conversation: ConversationState, thread_id): Message[] => ([
+	...conversation.processing.filter(p => p.thread_id === thread_id), 
+	...[...conversation.threads.find(t => t.thread_id === thread_id).messages].sort((a, b) => b.date - a.date)
+]);
 
 export default connect(
 	(state: any, props: any) => ({

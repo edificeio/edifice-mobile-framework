@@ -7,7 +7,6 @@ export const READ_THREAD_CONVERSATION = (state, action) => {
     };
     return {
         ...state,
-        processing: [],
         threads: [
             ...state.threads.filter(t => t.thread_id !== action.threadId), newParentThread
         ].sort((a, b) => b.date - a.date),
@@ -25,7 +24,6 @@ export const FETCH_THREAD_CONVERSATION = (state, action) => {
     };
     return {
         ...state,
-        processing: [],
         threads: [
             ...state.threads.filter(t => t.thread_id !== action.threadId), newParentThread
         ].sort((a, b) => b.date - a.date),

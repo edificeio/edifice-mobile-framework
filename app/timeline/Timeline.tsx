@@ -96,13 +96,12 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
 			}
 			data={news}
 			disableVirtualization
-			keyExtractor={item => item.id}
 			onEndReached={() => this.nextPage()}
 			onEndReachedThreshold={0.1}
 			ref={list => (this.flatList = list)}
 			removeClippedSubviews
 			renderItem={({ item, index }) => (
-				<News {...item} index={index} onPress={(expend) => this.openNews(item, expend)} />
+				<News {...item} key={ item.id } index={index} onPress={(expend) => this.openNews(item, expend)} />
 			)}
 			style={styles.gridWhite}
 		/>
