@@ -37,3 +37,8 @@ export const DELETE_THREAD_CONVERSATION = (state, action) => ({
     threads: [...state.threads.filter(t => t.id !== action.data.conversationId)],
     filterCleared: false
 });
+
+export const OPEN_THREAD_CONVERSATION = (state, action) => ({
+    ...state,
+    currentThread: action.threadId
+});

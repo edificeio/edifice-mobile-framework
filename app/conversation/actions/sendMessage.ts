@@ -16,7 +16,11 @@ export const sendMessage = dispatch => async (data: Message) => {
 	})
 
 	try {
-		const response = await fetch(`${Conf.platform}/conversation/send?In-Reply-To=${data.parentId}`, {
+		let replyTo = '';
+		if(data.parentId){
+			replyTo = 'In-Reply-To=' + data.parentId;
+		}
+		const response = await fetch(`${Conf.platform}/conversation/send?${ replyTo }`, {
 			method: "post",
 			headers: {
 				Accept: "application/json",
@@ -35,7 +39,7 @@ export const sendMessage = dispatch => async (data: Message) => {
 			application: 'conversation',
 			length: data.body.length - 9
 		});
-
+		
 		dispatch({
 			type: "CONVERSATION_SENT",
 			data: { 

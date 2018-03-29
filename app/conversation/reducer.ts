@@ -1,5 +1,4 @@
 import { PATH_CONVERSATION, PATH_NEW_MESSAGES, PATH_PREVIOUS_MESSAGES } from "../constants/paths";
-import {ACTION_MODE} from "../actions/docs";
 import { Me } from '../infra/Me';
 import { Thread } from './interfaces';
 import { Message } from "./interfaces";
@@ -17,7 +16,8 @@ const initialState: ConversationState = {
     filterCleared: false,
     visibles: [],
     pickedUsers: [],
-    remainingUsers: []
+    remainingUsers: [],
+    currentThread: undefined
 }
 
 export default (state: ConversationState = initialState, action): ConversationState => {

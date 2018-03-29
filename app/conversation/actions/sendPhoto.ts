@@ -20,7 +20,13 @@ export const sendPhoto = dispatch => async (data: Message) => {
 	try{
 		const documentPath = await uploadImage(uri);
 		const body = `<div><img src="${documentPath}" /></div>`;
-		const response = await fetch(`${ Conf.platform }/conversation/send?In-Reply-To=${data.parentId}`, {
+
+		let replyTo = '';
+		if(data.parentId){
+			replyTo = 'In-Reply-To=' + data.parentId;
+		}
+		
+		const response = await fetch(`${Conf.platform}/conversation/send?${ replyTo }`, {
 			method: 'post',
 			headers: {
 				'Accept': 'application/json',

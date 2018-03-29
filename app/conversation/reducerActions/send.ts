@@ -13,28 +13,38 @@ export const CONVERSATION_SEND = (state, action) => ({
     filterCleared: false
 });
 
-export const CREATE_THREAD_CONVERSATION = (state: ConversationState, action) => {
+export const CREATE_THREAD_CONVERSATION = (state: ConversationState, action): ConversationState => {
     return {
         ...state,
-        threads: [action.newConversation, ...state.threads.filter(t => t.thread_id !== 'temp')]
+        threads: [action.newConversation, ...state.threads.filter(t => t.thread_id !== 'temp')],
+        pickedUsers: [],
+        remainingUsers: state.visibles
     }
 }
 
 export const CONVERSATION_SENT = (state, action) => {
     const index = state.processing.indexOf(state.processing.find(p => p.id === action.data.id));
     const parentThread = state.threads.find(t => t.thread_id === action.data.thread_id);
+    let threadId = parentThread.thread_id;
+    if(threadId === 'temp'){
+        threadId = action.data.newId;
+    }
+
     const newParentThread = {
         ...parentThread,
-        messages: [action.data, ...parentThread.messages],
+        messages: [{ ...action.data, thread_id: threadId }, ...parentThread.messages],
         date: action.data.date,
-        filterCleared: false
+        filterCleared: false,
+        thread_id: threadId,
+        id: parentThread.id || threadId
     };
 
     return {
         ...state,
         processing: state.processing.filter((e, i) => i !== index),
         threads: [...state.threads.filter(p => p !== parentThread), newParentThread].sort((a, b) => b.date - a.date),
-        filterCleared: false
+        filterCleared: false,
+        currentThread: threadId
     }
 };
 

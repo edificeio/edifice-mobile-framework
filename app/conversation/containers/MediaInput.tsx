@@ -57,12 +57,13 @@ const ContainerInput = style.view({
 })
 
 class MediaInput extends React.Component<{
-	conversation: any
-	send: (data: any) => Promise<void>
-	sendPhoto: (data: any) => Promise<void>
+	conversation: any;
+	send: (data: any) => Promise<void>;
+	sendPhoto: (data: any) => Promise<void>;
 }, {
-	selected: Selected
-	textMessage: string
+	selected: Selected;
+	textMessage: string;
+	newThreadId: string;
 }> {
 	
 	input: any;
@@ -70,6 +71,7 @@ class MediaInput extends React.Component<{
 	public state = {
 		selected: Selected.none,
 		textMessage: "",
+		newThreadId: undefined
 	}
 
 	private switchKeyboard(e: Selected) {
@@ -93,7 +95,7 @@ class MediaInput extends React.Component<{
 
 	private sendPhoto(){
 		const { id, displayNames, subject, userId, thread_id } = this.props.conversation;
-		const { textMessage } = this.state;
+		const { textMessage, newThreadId } = this.state;
 
 		let conversation = this.props.conversation;
 
@@ -112,26 +114,34 @@ class MediaInput extends React.Component<{
 			to: to,
 			cc: conversation.cc,
 			parentId: id,
-			thread_id: thread_id
+			thread_id: newThreadId || thread_id
 		});
 	}
 
-	private onValid() {
-		const { id, displayNames, subject, userId, thread_id } = this.props.conversation
+	private async onValid() {
+		const { id, displayNames, subject, thread_id } = this.props.conversation
 		const { textMessage } = this.state
 
 		let conversation = this.props.conversation
 
 		this.setState({ selected: Selected.none })
 		let to = []
-		if (conversation.from === userId) {
+		if (conversation.from === Me.session.userId) {
 			to = conversation.to
 		} else {
 			to = [conversation.from]
 		}
 		this.input.innerComponent.setNativeProps({keyboardType:"email-address"});
 		this.input.innerComponent.clear();
-		this.props.send(
+		
+		this.setState({
+			...this.state,
+			textMessage: ''
+		});
+		
+		this.input.innerComponent.setNativeProps({keyboardType:"default"});
+
+		const newMessage = await this.props.send(
 			{
 				subject: subject,
 				body: `<div>${textMessage}</div>`,
@@ -141,12 +151,6 @@ class MediaInput extends React.Component<{
 				thread_id: thread_id
 			}
 		);
-		this.setState({
-			...this.state,
-			textMessage: ''
-		});
-		
-		this.input.innerComponent.setNativeProps({keyboardType:"default"});
 	}
 
 	focus(){
@@ -198,7 +202,9 @@ enum Selected {
 }
 
 export default connect(
-	(state: any) => ({}),
+	(state: any) => ({
+		conversation: state.conversation.threads.find(t => t.thread_id === state.conversation.currentThread)
+	}),
 	dispatch => ({
 		send: (data: any) => sendMessage(dispatch)(data),
 		sendPhoto: (data: any) => sendPhoto(dispatch)(data)

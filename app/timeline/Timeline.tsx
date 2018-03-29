@@ -98,7 +98,6 @@ class Timeline extends React.Component<TimelineProps, undefined> {
 				/> 
 			}
 			data={news}
-			disableVirtualization
 			onEndReached={() => this.nextPage()}
 			onEndReachedThreshold={0.1}
 			ref={list => (this.flatList = list)}

@@ -10,6 +10,7 @@ import { RowAvatars } from "../../ui/avatars/RowAvatars";
 import { Size } from "../../ui/avatars/Avatar";
 import { connect } from "react-redux";
 import { setHeader } from "../../actions/ui";
+import { Thread } from "../interfaces";
 
 const legendStyle: TextStyle = {
 	alignSelf: "center",
@@ -44,6 +45,7 @@ export const ContainerAvatars = style.view({
 
 export interface IThreadsBarProps {
 	navigation?: any;
+	conversation: Thread;
 	setHeader: (number) => void
 }
 
@@ -75,12 +77,12 @@ export class ThreadsTopBar extends React.PureComponent<IThreadsBarProps, {}> {
 
 	public render() {
 		const { navigation } = this.props
-		const { userId, displayNames, subject } = navigation.state.params
+		const { displayNames, subject, to } = this.props.conversation;
 		const { expand } = this.state
-		const images = displayNames.reduce(
-			(acc, elem) => (Me.session.userId === elem[0] && displayNames.length !== 1 ? acc : [...acc, elem[0]]),
+		const images = to.reduce(
+			(acc, elem) => (Me.session.userId === to[0] && to.length !== 1 ? acc : [...acc, elem]),
 			[]
-		)
+		);
 		const names = displayNames.reduce(
 			(acc, elem) => (Me.session.userId === elem[0] && displayNames.length !== 1 ? acc : [...acc, elem[1]]),
 			[]
@@ -112,7 +114,9 @@ export class ThreadsTopBar extends React.PureComponent<IThreadsBarProps, {}> {
 }
 
 export default connect(
-	(state: any, props: any) => ({}), 
+	(state: any, props: any) => ({
+		conversation: state.conversation.threads.find(t => t.thread_id === state.conversation.currentThread)
+	}), 
 	dispatch => ({
 		setHeader: (height: number) => setHeader(dispatch)(height)
 	})

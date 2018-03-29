@@ -1,5 +1,4 @@
 import { login, readCurrentUser } from "../actions/auth"
-import { error } from "../actions/docs"
 import { CREATE_ERROR, CREATE_SUCCESS } from "../constants/docs"
 import { PATH_AUTH, PATH_LOGIN, PATH_LOGOUT, PATH_RECOVER_PASSWORD, PATH_SIGNUP } from "../constants/paths"
 import { navigate } from "../utils/navHelper";
@@ -41,6 +40,6 @@ export default store => next => action => {
 
 		return returnValue
 	} catch (ex) {
-		store.dispatch(error(-1, ex.message))
+		console.log(ex)
 	}
 }

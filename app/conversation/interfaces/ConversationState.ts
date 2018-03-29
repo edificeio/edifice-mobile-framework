@@ -13,4 +13,5 @@ export interface ConversationState {
 	visibles: (User | Group)[];
 	pickedUsers: (User | Group)[];
 	remainingUsers: (User | Group)[];
+	currentThread: string;
 }

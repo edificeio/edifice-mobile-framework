@@ -50,5 +50,6 @@ export const FETCH_NEW_CONVERSATION = (state, action) => ({
             };
             return thread;
     }), ...state.threads].sort((a, b) => b.date - a.date),
-    filterCleared: false
+    filterCleared: false,
+    refrsh: false
 });

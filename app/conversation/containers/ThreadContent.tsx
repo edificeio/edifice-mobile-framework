@@ -22,9 +22,10 @@ export interface IThreadsProps {
 	syncConversation: (page: number) => Promise<void>;
 	readThread: (threadId: string) => Promise<void>;
 	fetch: (threadId: string) => Promise<void>;
-	threads: Message[];
+	messages: Message[];
 	headerHeight: number;
 	refresh: boolean;
+	currentThread: string
 }
 
 export class ThreadContent extends React.Component<IThreadsProps, any> {
@@ -39,26 +40,17 @@ export class ThreadContent extends React.Component<IThreadsProps, any> {
 	};
 
 	async fetchLatest(){
-		const { thread_id } = this.props.navigation.state.params;
 		this.setState({ isFetching: true });
-		await this.props.fetch(thread_id);
+		await this.props.fetch(this.props.currentThread);
 		this.setState({ isFetching: false });
 	}
 
-	async componentWillReceiveProps(nextProps){
-		const { thread_id } = this.props.navigation.state.params;
-		if(nextProps.refresh){
-			this.props.readThread(thread_id);
-		}
-	}
-
 	componentWillMount() {
-		const { thread_id } = this.props.navigation.state.params;
-		this.props.fetch(thread_id);
+		this.props.fetch(this.props.currentThread);
 	}
 
 	public render() {
-		const { threads } = this.props;
+		const { messages } = this.props;
 		return (
 			<KeyboardAvoidingView style={{ flex: 1 }} behavior={ Platform.OS === "ios" ? 'padding' : undefined } keyboardVerticalOffset={ this.props.headerHeight }>
 				<ConnectionTrackingBar />
@@ -74,13 +66,13 @@ export class ThreadContent extends React.Component<IThreadsProps, any> {
 							onRefresh={ () => this.fetchLatest() }
 						/> 
 					}
-					data={ threads }
+					data={ messages }
 					renderItem={({ item }) => this.renderItem(item)}
 					style={styles.grid}
 					ref={ref => (this.list = ref)}
 					inverted={ true }
 				/>
-				<MediaInput conversation={  this.props.navigation.state.params } />
+				<MediaInput />
 			</KeyboardAvoidingView>
 		)
 	}
@@ -142,9 +134,10 @@ const filtering = (conversation: ConversationState, thread_id): Message[] => ([
 
 export default connect(
 	(state: any, props: any) => ({
-		threads: filtering(state.conversation, props.navigation.state.params.thread_id),
+		messages: filtering(state.conversation, state.conversation.currentThread),
 		headerHeight: state.ui.headerHeight,
-		refresh: state.conversation.refreshThreads
+		refresh: state.conversation.refreshThreads,
+		currentThread: state.conversation.currentThread
 	}), 
 	dispatch => ({
 		readThread: (threadId: string) => readThread(dispatch)(threadId),

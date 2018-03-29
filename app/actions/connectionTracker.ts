@@ -1,6 +1,7 @@
 import { NetInfo } from "react-native";
 
 let isWatching = false;
+let wasDisconnected = false;
 
 const handleConnection = (isConnected, dispatch) => {
     if(isConnected){
@@ -8,12 +9,17 @@ const handleConnection = (isConnected, dispatch) => {
         setTimeout(() => {
             dispatch({ type: 'HIDE_CONNECTION_TRACKER'});
         }, 1000);
-        dispatch({ type: "INVALIDATE_TIMELINE" });
-        dispatch({ type: "INVALIDATE_CONVERSATION" });
+        if(wasDisconnected){
+            dispatch({ type: "INVALIDATE_TIMELINE" });
+            dispatch({ type: "INVALIDATE_CONVERSATION" });
+            wasDisconnected = false;
+        }
+        
     }
     else{
         dispatch({ type: 'DISCONNECTED_CONNECTION_TRACKER'});
         dispatch({ type: 'SHOW_CONNECTION_TRACKER'});
+        wasDisconnected = true;
     }
     
 }

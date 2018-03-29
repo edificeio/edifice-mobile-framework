@@ -16,20 +16,26 @@ const UserLabel = style.text({
     padding: 5,
     textAlignVertical: 'center',
     height: 30,
-    margin: 2
+    marginHorizontal: 3,
+    marginVertical: 5
 });
 
- const Container = style.view({
+ const FieldContainer = style.view({
      flexDirection: 'row',
      flexWrap: 'wrap',
      backgroundColor: '#FFFFFF',
      borderBottomColor: '#EEEEEE',
-     borderBottomWidth: 1
+     borderBottomWidth: 1,
+     alignItems: 'center',
+     paddingVertical: 10,
+     paddingHorizontal: 17
  })
 
  const To = style.text({
      textAlignVertical: 'center',
-     paddingLeft: 20
+     marginRight: 5,
+     marginVertical: 5,
+     marginHorizontal: 3
  });
 
 const UserName = style.text({
@@ -54,6 +60,7 @@ const UserLine = ({ id, displayName, name, checked, onPick, onUnpick }) => (
 
 export default class SearchUser extends React.Component<{ remaining, picked, onPickUser, onUnpickUser }, { searchText: string, max: number }>{
     state = { searchText: '', max: 20 };
+    input: any;
 
     isMatch = visible => (
         visible.name && visible.name.toLowerCase().indexOf(this.state.searchText.toLowerCase()) !== -1
@@ -69,33 +76,44 @@ export default class SearchUser extends React.Component<{ remaining, picked, onP
     get usersArray(){
         return [
             ...this.props.picked.filter(v => this.isMatch(v)),
-            ...this.props.remaining.filter(v => this.isMatch(v)).slice(0, this.state.max)
+            ...this.props.remaining.filter(v => this.state.searchText && this.isMatch(v)).slice(0, this.state.max)
         ];
+    }
+
+    pickUser(user){
+        this.props.onPickUser(user);
+        this.setState({...this.state, searchText: '' });
+        this.input.clear();
     }
 
     render (){
         console.log(this.state)
         return (
             <PageContainer>
-                <Container>
+                <FieldContainer>
                     <To>{ I18n.t('to') }</To>
-                    { this.props.picked.map(p => <UserLabel>{ p.name || p.displayName }</UserLabel>) }
+                    { this.props.picked.map(p => <TouchableOpacity onPress={ () => this.props.onUnpickUser(p) }>
+                        <UserLabel>{ p.name || p.displayName }</UserLabel>
+                    </TouchableOpacity>) }
                     <TextInput 
-                        style={{ flex : 1 }} 
+                        ref={ r => this.input = r }
+                        style={{ flex : 1, minWidth: 100, height: 40 }} 
                         underlineColorAndroid={ "transparent" } 
+                        value={ this.state.searchText }
                         onChangeText={ text => this.setState({ ...this.state, searchText: text }) } />
-                </Container>
-                { 
-                    this.state.searchText ? 
-                    <FlatList 
-                        style={{ flex: 1 }} 
-                        data={ this.usersArray } 
-                        renderItem={ (el) => <UserLine onPick={ () => this.props.onPickUser(el.item) } onUnpick={ () => this.props.onUnpickUser(el.item) } { ...el.item } /> }
-                        onEndReached={ () => this.expend() }
-                        refreshing={ true }
-                    /> :
-                    <View />
-                }
+                </FieldContainer>
+                <FlatList 
+                    keyboardShouldPersistTaps={ 'always' }
+                    style={{ flex: 1 }} 
+                    data={ this.usersArray } 
+                    keyExtractor={ u => u.id }
+                    renderItem={ (el) => <UserLine
+                        key={ el.item.id }
+                        onPick={ () => this.pickUser(el.item) } 
+                        onUnpick={ () => this.props.onUnpickUser(el.item) } { ...el.item } /> }
+                    onEndReached={ () => this.expend() }
+                    refreshing={ true }
+                />
             </PageContainer>
         );
     }

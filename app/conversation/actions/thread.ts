@@ -1,6 +1,7 @@
 import { Conf } from "../../Conf";
 import { Tracking } from "../../tracking/TrackingManager";
 import { read } from "../../infra/Cache";
+import { Thread } from "../interfaces";
 
 export const fetchThread = dispatch => async (threadId: string) => {
 	try{
@@ -51,4 +52,11 @@ export const readThread = dispatch => async (threadId: string) => {
 	catch(e){
 		console.log(e);
 	}
+}
+
+export const openThread = dispatch => (thread: string) => {
+	dispatch({
+		type: 'OPEN_THREAD_CONVERSATION',
+		threadId: thread
+	});
 }

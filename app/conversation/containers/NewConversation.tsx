@@ -10,11 +10,19 @@ import { loadVisibles } from "../actions/loadVisibles";
 import I18n from 'react-native-i18n';
 import { unpickUser, pickUser } from "../actions/pickUser";
 import { createConversation } from "../actions/createConversation";
+import { openThread } from '../actions/thread';
+import { Thread } from "../interfaces";
 
-class NewThreadHeader extends React.Component<{ navigation: any, createConversation: (pickedUsers: any) => void, pickedUsers: any[] }, undefined> {
+class NewThreadHeader extends React.Component<{ 
+    navigation: any, 
+    createConversation: (pickedUsers: any) => any, 
+    pickedUsers: any[],
+    openThread: (thread: string) => void
+}, undefined> {
+
     createConversation(){
         const newConversation = this.props.createConversation(this.props.pickedUsers);
-        this.props.navigation.navigate("thread", newConversation);
+        this.props.navigation.replace("thread", newConversation.id);
     }
 
     render(){
@@ -31,7 +39,8 @@ export const NewConversationHeader = connect(
         pickedUsers: state.conversation.pickedUsers
 	}), 
 	dispatch => ({
-        createConversation: (pickedUsers) => createConversation(dispatch)(pickedUsers)
+        createConversation: (pickedUsers) => createConversation(dispatch)(pickedUsers),
+        openThread: (thread: string) => openThread(dispatch)(thread)
 	})
 )(NewThreadHeader)
 

@@ -18,4 +18,5 @@ export interface Thread {
 	unread: boolean
 	messages: Message[];
 	thread_id: string;
+	wasTemp: boolean;
 }

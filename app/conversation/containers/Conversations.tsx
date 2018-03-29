@@ -16,6 +16,7 @@ import { deleteThread } from "../actions/deleteThread";
 import styles from "../../styles";
 import I18n from 'react-native-i18n';
 import { tr } from "../../i18n/t";
+import { openThread } from '../actions/thread';
 
 export interface IConversationsProps {
 	threads: Thread[];
@@ -26,7 +27,8 @@ export interface IConversationsProps {
 	nbThreads: number;
 	page: number;
 	refresh: boolean;
-	filter: (filter: string) => void
+	filter: (filter: string) => void;
+	openThread: (thread: string) => void
 }
 
 export class Conversations extends React.Component<IConversationsProps, any> {
@@ -48,9 +50,10 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 		this.nextPage();
 	}
 
-	public onPress(item) {
+	public openConversation(item) {
 		this.props.filter('');
-		this.props.navigation.navigate("thread", item);
+		this.props.openThread(item.thread_id);
+		this.props.navigation.navigate("thread");
 	}
 
 	private nextPage() {
@@ -128,7 +131,7 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 	private renderItem(item: Thread) {
 		return (
 			<Swipeable rightButtons={ this.swipeoutButton(item) } onRightButtonsOpenRelease={ (e, g, r) => this.swipeRef = r }>
-				<Conversation {...item} onPress={e => this.onPress(item)} />
+				<Conversation {...item} onPress={e => this.openConversation(item)} />
 			</Swipeable>
 		)
 	}
@@ -157,6 +160,7 @@ export default connect(
 		sync: (page: number) => readNextConversation(dispatch)(page),
 		fetch: () => fetchConversation(dispatch)(),
 		deleteThread: (conversation: Thread) => deleteThread(dispatch)(conversation),
-		filter: (filter) => clearFilterConversation(dispatch)()
+		filter: (filter) => clearFilterConversation(dispatch)(),
+		openThread: (conversation: string) => openThread(dispatch)(conversation)
 	})
 )(Conversations)

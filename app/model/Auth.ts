@@ -1,6 +1,5 @@
 import { CREATE_SUCCESS, READ_SUCCESS } from "../constants/docs"
-import { matchs, PATH_LOGIN, PATH_LOGOUT, PATH_SIGNUP } from "../constants/paths"
-import { crudReducer } from "./docs"
+import { matchs, PATH_LOGIN, PATH_LOGOUT, PATH_SIGNUP } from "../constants/paths";
 import { Me } from '../infra/Me';
 
 export interface User {
@@ -59,10 +58,6 @@ export function Auth(state: IAuthState = initialState, action): IAuthState {
 			userId: action.userbook.id,
 			error: ''
 		}
-	}
-
-	if (matchs([PATH_LOGIN, PATH_SIGNUP], action.path) && action.type === CREATE_SUCCESS) {
-		return crudReducer(state, [PATH_LOGIN, PATH_SIGNUP], action, "-1")
 	}
 
 	return state
