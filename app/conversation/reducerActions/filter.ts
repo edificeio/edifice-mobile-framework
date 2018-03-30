@@ -6,6 +6,6 @@ export const CLEAR_FILTER_CONVERSATION = (state) => ({
 
 export const FILTER_CONVERSATION = (state, action) => ({
     ...state,
-    filterCleared: true,
+    filterCleared: false,
     filterCriteria: action.filter
 });

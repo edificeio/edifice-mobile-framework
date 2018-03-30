@@ -4,11 +4,13 @@ import { tr } from "../../i18n/t";
 import { filterConversation } from '../actions/filter';
 import { connect } from "react-redux";
 import { SearchBar } from "../../ui/SearchBar";
+import { clearFilterConversation } from "../actions";
 
 export class ConversationTopBar extends React.Component<{ 
 	navigation?: any, 
 	conversationsIsEmpty: boolean, 
-	filter: (searchText) => void 
+	filter: (searchText) => void,
+	clearFilter: () => void
 }, { searching: boolean }> {
 
 	constructor(props){
@@ -21,20 +23,30 @@ export class ConversationTopBar extends React.Component<{
 		navigation.goBack();
 	}
 
+	close(){
+		this.setState({ searching: false });
+		this.props.clearFilter();
+	}
+
 	componentWillReceiveProps(nextProps){
 		if(nextProps.searchCleared){
 			this.setState({ searching: false });
 		}
 	}
 
+	openSearch(){
+		this.props.filter('')
+		this.setState({ searching: true });
+	}
+
 	search(){
-		return <SearchBar onClose={ () => this.setState({ searching: false })} onChange={ (search) => this.props.filter(search) } />;
+		return <SearchBar onClose={ () => this.close() } onChange={ (search) => this.props.filter(search) } />;
 	}
 
 	defaultView(){
 		return (
 			<Header>
-				<HeaderIcon onPress={ () => this.setState({ searching: true }) } hidden={ this.props.conversationsIsEmpty } name={ "search" } />
+				<HeaderIcon onPress={ () => this.openSearch() } hidden={ this.props.conversationsIsEmpty } name={ "search" } />
 				<AppTitle>{tr.Conversation}</AppTitle>
 				<HeaderIcon name={ "new_message" } onPress={ () => this.props.navigation.navigate('newConversation') } />
 			</Header>
@@ -56,6 +68,7 @@ export default connect(
 		searchCleared: !state.conversation.filterCleared
 	}),
 	(dispatch) => ({
-		filter: (searchText) => filterConversation(dispatch)(searchText)
+		filter: (searchText) => filterConversation(dispatch)(searchText),
+		clearFilter: () => clearFilterConversation(dispatch)()
 	})
 )(ConversationTopBar) as any;
