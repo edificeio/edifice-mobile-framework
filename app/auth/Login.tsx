@@ -54,34 +54,36 @@ export class Login extends React.Component<{
 			email = this.props.navigation.state.params.email;
 		}
 
+		// using scrollview to allow clicking outside textinput to blur
 		return (
 			<KeyboardAvoidingView style={{ flex: 1, backgroundColor: '#ffffff' }}>
-				<ConnectionTrackingBar />
-				<View style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'column', padding: 40, paddingTop: 100 }}>
-					<Logo />
-					<TextInputLine 
-						placeholder={tr.Login} 
-						onChangeText={(email) => this.setState({ email: email.trim(), typing: true })}
-						value={ this.state.email !== undefined ? this.state.email : email }
-						hasError={ error && !this.state.typing } />
-					<TextInputLine 
-						placeholder={tr.Password} 
-						onChangeText={(password: string) => this.setState({ password: password, typing: true })} 
-						secureTextEntry={ true } 
-						value={ this.state.password || password }
-						hasError={ error && !this.state.typing } />
+				<ScrollView scrollEnabled={ false } keyboardShouldPersistTaps="handled" style={{ flex: 1}}>
+					<ConnectionTrackingBar />
+					<View style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'column', padding: 40, paddingTop: 100 }}>
+						<Logo />
+						<TextInputLine 
+							placeholder={tr.Login} 
+							onChangeText={(email) => this.setState({ email: email.trim(), typing: true })}
+							value={ this.state.email !== undefined ? this.state.email : email }
+							hasError={ error && !this.state.typing } />
+						<TextInputLine 
+							placeholder={tr.Password} 
+							onChangeText={(password: string) => this.setState({ password: password, typing: true })} 
+							secureTextEntry={ true } 
+							value={ this.state.password || password }
+							hasError={ error && !this.state.typing } />
 
-					<ErrorMessage>{ this.state.typing ? '' : error }</ErrorMessage>
+						<ErrorMessage>{ this.state.typing ? '' : error }</ErrorMessage>
 
-					<View style={{ flexGrow: 2, alignItems: 'center', justifyContent: 'flex-start', marginTop: 10 }}>
-						<FlatButton 
-							onPress={ () => this.login() } 
-							disabled={ this.isDisabled } 
-							title={tr.Connect} loading={ this.state.loading } />
+						<View style={{ flexGrow: 2, alignItems: 'center', justifyContent: 'flex-start', marginTop: 10 }}>
+							<FlatButton 
+								onPress={ () => this.login() } 
+								disabled={ this.isDisabled } 
+								title={tr.Connect} loading={ this.state.loading } />
+						</View>
+						
 					</View>
-					
-				</View>
-				
+				</ScrollView>
 			</KeyboardAvoidingView>
 		)
 	}
