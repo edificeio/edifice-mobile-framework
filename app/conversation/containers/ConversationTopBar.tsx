@@ -48,7 +48,7 @@ export class ConversationTopBar extends React.Component<{
 			<Header>
 				<HeaderIcon onPress={ () => this.openSearch() } hidden={ this.props.conversationsIsEmpty } name={ "search" } />
 				<AppTitle>{tr.Conversation}</AppTitle>
-				<HeaderIcon name={ "new_message" } onPress={ () => this.props.navigation.navigate('newConversation') } />
+				<HeaderIcon name={ "new_message" } iconSize={ 24 } onPress={ () => this.props.navigation.navigate('newConversation') } />
 			</Header>
 		);
 	}

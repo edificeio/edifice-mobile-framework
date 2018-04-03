@@ -38,18 +38,18 @@ const sensitiveStylePanel: ViewStyle = {
 	alignItems: "center",
 	height: 56,
 	justifyContent: "center",
-	paddingLeft: 20,
-	paddingRight: 10,
-	width: 58,
+	paddingLeft: 18,
+	paddingRight: 18,
+	width: 60,
 }
 
 const iconsDeltaSizes = {
 	close: 16
 }
 
-export const HeaderIcon = ({ name, hidden, onPress }: { name: string, hidden?: boolean, onPress?: () => void }) => (
+export const HeaderIcon = ({ name, hidden, onPress, iconSize }: { name: string, hidden?: boolean, onPress?: () => void, iconSize?: number }) => (
 	<TouchableOpacity style={ sensitiveStylePanel } onPress={ () => onPress && onPress() }>
-		<Icon size={ iconsDeltaSizes[name] ? iconsDeltaSizes[name] : 20 } name={ name } color={ hidden ? "transparent" : "#FFFFFF" } />
+		<Icon size={ iconSize || iconsDeltaSizes[name] || 20 } name={ name } color={ hidden ? "transparent" : "#FFFFFF" } />
 	</TouchableOpacity>
 );
 
