@@ -52,7 +52,7 @@ const UserLine = ({ id, displayName, name, checked, onPick, onUnpick }) => (
     <TouchableOpacity onPress={ () => !checked ? onPick() : onUnpick() }>
         <Line style={{ padding: 20, paddingBottom: 0, alignItems: 'center' }}>
             <SingleAvatar size={ 51 } userId={ id } />
-            <UserName numberOfLines={ 1 }>{ name || displayName }</UserName>
+            <UserName numberOfLines={ 2 }>{ name || displayName }</UserName>
             <Checkbox checked={ checked } onCheck={ () => onPick() } onUncheck={ () => onUnpick() } />
         </Line>
     </TouchableOpacity>
