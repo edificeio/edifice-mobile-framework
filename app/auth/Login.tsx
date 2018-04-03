@@ -28,7 +28,7 @@ const FormContainer = style.view({
 	justifyContent: 'center',
 	flexDirection: 'column',
 	padding: 40,
-	paddingTop: 100
+	paddingTop: 80
 })
 
 export class Login extends React.Component<{
@@ -93,7 +93,7 @@ export class Login extends React.Component<{
 
 						<ErrorMessage>{ this.state.typing ? '' : error }</ErrorMessage>
 
-						<View style={{ flexGrow: 2, alignItems: 'center', justifyContent: 'flex-start', marginTop: 10 }}>
+						<View style={{ flexGrow: 2, alignItems: 'center', justifyContent: 'flex-start', marginTop: error && !this.state.typing ? 10 : 30 }}>
 							<FlatButton 
 								onPress={ () => this.login() } 
 								disabled={ this.isDisabled } 
