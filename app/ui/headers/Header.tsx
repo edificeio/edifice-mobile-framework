@@ -48,7 +48,7 @@ const iconsDeltaSizes = {
 }
 
 export const HeaderIcon = ({ name, hidden, onPress }: { name: string, hidden?: boolean, onPress?: () => void }) => (
-	<TouchableOpacity style={ sensitiveStylePanel } onPress={ () => onPress() }>
+	<TouchableOpacity style={ sensitiveStylePanel } onPress={ () => onPress && onPress() }>
 		<Icon size={ iconsDeltaSizes[name] ? iconsDeltaSizes[name] : 20 } name={ name } color={ hidden ? "transparent" : "#FFFFFF" } />
 	</TouchableOpacity>
 );
