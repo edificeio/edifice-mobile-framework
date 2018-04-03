@@ -29,7 +29,7 @@ class NewThreadHeader extends React.Component<{
         return <Header>
         <Back navigation={ this.props.navigation } />
         <Title>{ I18n.t('conversation-newMessage') }</Title>
-        <HeaderAction onPress={ () => this.createConversation() }>{ I18n.t('next') }</HeaderAction>
+        <HeaderAction onPress={ () => this.props.pickedUsers.length > 0 && this.createConversation() } disabled={ this.props.pickedUsers.length === 0 }>{ I18n.t('next') }</HeaderAction>
     </Header>
     }
 }

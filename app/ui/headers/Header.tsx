@@ -85,7 +85,9 @@ export const HeaderAction = style.text({
 	paddingRight: 20,
 	height: 56,
 	lineHeight: 56
-});
+}, ({ disabled }: { disabled?: boolean}) => ({
+	color: disabled ? '#666666' : '#FFFFFF'
+}));
 
 export const Title = style.text({
 		color: "white",
