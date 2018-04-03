@@ -86,7 +86,7 @@ export const HeaderAction = style.text({
 	height: 56,
 	lineHeight: 56
 }, ({ disabled }: { disabled?: boolean}) => ({
-	color: disabled ? '#666666' : '#FFFFFF'
+	opacity: disabled ? 0.7 : 1
 }));
 
 export const Title = style.text({
