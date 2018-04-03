@@ -25,7 +25,7 @@ export class ConversationTopBar extends React.Component<{
 
 	close(){
 		this.setState({ searching: false });
-		this.props.clearFilter();
+		this.props.filter('');
 	}
 
 	componentWillReceiveProps(nextProps){
@@ -35,8 +35,8 @@ export class ConversationTopBar extends React.Component<{
 	}
 
 	openSearch(){
-		this.props.filter('')
 		this.setState({ searching: true });
+		this.props.filter('');
 	}
 
 	search(){
