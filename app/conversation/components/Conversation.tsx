@@ -12,7 +12,15 @@ interface IConversationProps extends Thread {
 	onPress: (id: string, displayNames: string[][], subject: string) => void
 }
 
-export const Conversation = ({ id, subject, date, displayNames, nb, onPress }: IConversationProps) => {
+const findReceivers = (to, from, cc = []) => {
+	let newTo = [...to, ...cc, from].filter(el => el !== Me.session.userId);
+	if(newTo.length === 0){
+		return [Me.session.userId];
+	}
+	return newTo;
+};
+
+export const Conversation = ({ id, subject, date, displayNames, nb, onPress, to, from, cc }: IConversationProps) => {
 	const images = displayNames.reduce(
 		(acc, elem) => (elem[0] === Me.session.userId && displayNames.length !== 1 ? acc : [...acc, elem[0]]),
 		[]
@@ -21,7 +29,7 @@ export const Conversation = ({ id, subject, date, displayNames, nb, onPress }: I
 	return (
 		<ListItem nb={nb} onPress={() => onPress(id, displayNames, subject)}>
 			<LeftPanel>
-				<GridAvatars users={images} />
+				<GridAvatars users={findReceivers(to, from, cc)} />
 			</LeftPanel>
 			<CenterPanel>
 				{getTitle(displayNames, nb)}

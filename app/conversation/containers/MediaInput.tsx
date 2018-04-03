@@ -93,6 +93,14 @@ class MediaInput extends React.Component<{
 		}
 	}
 
+	findReceivers(conversation){
+		let to = [...conversation.to, ...(conversation.cc || []), conversation.from].filter(el => el !== Me.session.userId);
+		if(to.length === 0){
+			return [Me.session.userId];
+		}
+		return to;
+	}
+
 	private sendPhoto(){
 		const { id, displayNames, subject, userId, thread_id } = this.props.conversation;
 		const { textMessage, newThreadId } = this.state;
@@ -101,17 +109,9 @@ class MediaInput extends React.Component<{
 
 		this.setState({ selected: Selected.none });
 
-		let to = [];
-		if(conversation.from === Me.session.userId){
-			to = conversation.to;
-		}
-		else{
-			to = [conversation.from];
-		}
-
 		this.props.sendPhoto({
 			subject: subject,
-			to: to,
+			to: this.findReceivers(conversation),
 			cc: conversation.cc,
 			parentId: id,
 			thread_id: newThreadId || thread_id
@@ -125,12 +125,7 @@ class MediaInput extends React.Component<{
 		let conversation = this.props.conversation
 
 		this.setState({ selected: Selected.none })
-		let to = []
-		if (conversation.from === Me.session.userId) {
-			to = conversation.to
-		} else {
-			to = [conversation.from]
-		}
+
 		this.input.innerComponent.setNativeProps({keyboardType:"email-address"});
 		this.input.innerComponent.clear();
 		
@@ -145,7 +140,7 @@ class MediaInput extends React.Component<{
 			{
 				subject: subject,
 				body: `<div>${textMessage}</div>`,
-				to: to,
+				to: this.findReceivers(conversation),
 				cc: conversation.cc,
 				parentId: id,
 				thread_id: thread_id

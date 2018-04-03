@@ -77,16 +77,15 @@ export class ThreadsTopBar extends React.PureComponent<IThreadsBarProps, {}> {
 
 	public render() {
 		const { navigation } = this.props
-		const { displayNames, subject, to } = this.props.conversation;
-		const { expand } = this.state
-		const images = to.reduce(
-			(acc, elem) => (Me.session.userId === to[0] && to.length !== 1 ? acc : [...acc, elem]),
-			[]
+		const { displayNames, subject, to, cc = [], from } = this.props.conversation;
+		const { expand } = this.state;
+		let images = [...to, ...cc, from].filter(el => el !== Me.session.userId);
+		if(images.length === 0){
+			images = [Me.session.userId];
+		}
+		const names = images.map(
+			el => displayNames.find(dn => dn[0] === el)[1]
 		);
-		const names = displayNames.reduce(
-			(acc, elem) => (Me.session.userId === elem[0] && displayNames.length !== 1 ? acc : [...acc, elem[1]]),
-			[]
-		)
 
 		return (
 			<Header onLayout={ () => this.setHeaderHeight() }>
