@@ -1,6 +1,7 @@
 import * as React from "react";
 import style from "glamorous-native";
 import { CommonStyles } from '../../styles/common/styles';
+import { TextInput } from 'react-native';
 
 const TextInputContainer = style.view(
 	{
@@ -30,6 +31,7 @@ export class TextInputLine extends React.Component<{
     onFocus?: () => void, 
     onBlur?: () => void, 
     placeholder: string, 
+    inputRef: (ref: TextInput) => void,
     secureTextEntry?: boolean
 }, { isFocused: boolean }> {
 
@@ -57,6 +59,7 @@ export class TextInputLine extends React.Component<{
 		return (
             <TextInputContainer hasError={ hasError } focus={ this.state.isFocused }>
                 <Input
+                    innerRef={ (r) => this.props.inputRef(r) }
                     onChangeText={ value => onChangeText(value) }
                     onBlur={ () => this.onBlur() }
                     onFocus={ () => this.onFocus() }

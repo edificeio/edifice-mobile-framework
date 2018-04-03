@@ -32,7 +32,8 @@ export class ConnectionTrackingBar extends React.Component<{
     watch: () => void,
     check: () => Promise<void>,
     loading: boolean,
-    visible: boolean
+    visible: boolean,
+    style?: any
 }, { fadeAnim, slideAnim }> {
 
     previousVisible: boolean;
@@ -114,7 +115,7 @@ export class ConnectionTrackingBar extends React.Component<{
 	public render() {
         const { fadeAnim, slideAnim } = this.state;
 		return (
-            <Animated.View style={{ ...container, opacity: fadeAnim, height: slideAnim }}>
+            <Animated.View style={{ ...container, ...this.props.style, opacity: fadeAnim, height: slideAnim }}>
                 <TrackingContainer style={{ backgroundColor: this.barColor }} onPress={ () => this.props.check() }>
                     <TrackerText>{ I18n.t(this.text) }</TrackerText>
                     { this.props.loading ? 

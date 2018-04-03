@@ -1,5 +1,5 @@
 import * as React from "react"
-import { View, TextInput, ScrollView, KeyboardAvoidingView, Image } from "react-native"
+import { View, TextInput, ScrollView, KeyboardAvoidingView, Image, TouchableWithoutFeedback } from "react-native"
 import { IAuthModel } from "../model/Auth";
 import { navigate } from "../utils/navHelper"
 import { connect } from "react-redux";
@@ -22,11 +22,23 @@ const Logo = () => <View style={{ flexGrow: 2, alignItems: 'center', justifyCont
 	<Image resizeMode="contain" style={{ height: 50, width: 50 }} source={require("../../assets/icons/icon.png")} />
 </View>;
 
+const FormContainer = style.view({
+	flex: 1,
+	alignItems: 'center',
+	justifyContent: 'center',
+	flexDirection: 'column',
+	padding: 40,
+	paddingTop: 100
+})
+
 export class Login extends React.Component<{
 	auth: IAuthModel;
 	login: (email: string, password: string) => Promise<LoginResult>;
 	navigation?: any;
 }, { email: string, password: string, typing: boolean, loading: boolean }> {
+
+	loginRef: TextInput;
+	passwordRef: TextInput;
 
 	state = {
 		email: undefined,
@@ -47,6 +59,11 @@ export class Login extends React.Component<{
 		}
 	}
 
+	unfocus(){
+		this.loginRef.blur();
+		this.passwordRef.blur();
+	}
+
 	public render() {
 		console.log(this.props.auth)
 		let { loggedIn, email, password, error } = this.props.auth;
@@ -54,19 +71,20 @@ export class Login extends React.Component<{
 			email = this.props.navigation.state.params.email;
 		}
 
-		// using scrollview to allow clicking outside textinput to blur
 		return (
 			<KeyboardAvoidingView style={{ flex: 1, backgroundColor: '#ffffff' }}>
-				<ScrollView scrollEnabled={ false } keyboardShouldPersistTaps="handled" style={{ flex: 1}}>
-					<ConnectionTrackingBar />
-					<View style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'column', padding: 40, paddingTop: 100 }}>
+			<ConnectionTrackingBar style={{ position: 'absolute' }} />
+				<TouchableWithoutFeedback style={{ flex: 1 }} onPress={ () => this.unfocus() }>
+					<FormContainer>
 						<Logo />
 						<TextInputLine 
+							inputRef={ (ref) => this.loginRef = ref }
 							placeholder={tr.Login} 
 							onChangeText={(email) => this.setState({ email: email.trim(), typing: true })}
 							value={ this.state.email !== undefined ? this.state.email : email }
 							hasError={ error && !this.state.typing } />
 						<TextInputLine 
+							inputRef={ (ref) => this.passwordRef = ref }
 							placeholder={tr.Password} 
 							onChangeText={(password: string) => this.setState({ password: password, typing: true })} 
 							secureTextEntry={ true } 
@@ -81,9 +99,8 @@ export class Login extends React.Component<{
 								disabled={ this.isDisabled } 
 								title={tr.Connect} loading={ this.state.loading } />
 						</View>
-						
-					</View>
-				</ScrollView>
+					</FormContainer>
+				</TouchableWithoutFeedback>
 			</KeyboardAvoidingView>
 		)
 	}
