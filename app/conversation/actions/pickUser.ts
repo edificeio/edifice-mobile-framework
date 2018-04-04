@@ -14,9 +14,8 @@ export const unpickUser = dispatch => (user: User | Group) => {
     })
 }
 
-export const clearPickedUsers = dispatch => (user: User | Group) => {
+export const clearPickedUsers = dispatch => () => {
     dispatch({
-        type: 'CLEAR_PICKED_USER_CONVERSATION',
-        user: user
+        type: 'CLEAR_PICKED_USER_CONVERSATION'
     })
 }

@@ -5,12 +5,14 @@ import { filterConversation } from '../actions/filter';
 import { connect } from "react-redux";
 import { SearchBar } from "../../ui/SearchBar";
 import { clearFilterConversation } from "../actions";
+import { clearPickedUsers } from '../actions/pickUser';
 
 export class ConversationTopBar extends React.Component<{ 
 	navigation?: any, 
 	conversationsIsEmpty: boolean, 
 	filter: (searchText) => void,
-	clearFilter: () => void
+	clearFilter: () => void,
+	clearPickedUsers: () => void
 }, { searching: boolean }> {
 
 	constructor(props){
@@ -41,6 +43,7 @@ export class ConversationTopBar extends React.Component<{
 
 	openNewConversation(){
 		this.props.navigation.navigate('newConversation');
+		this.props.clearPickedUsers();
 	}
 
 	search(){
@@ -73,6 +76,7 @@ export default connect(
 	}),
 	(dispatch) => ({
 		filter: (searchText) => filterConversation(dispatch)(searchText),
-		clearFilter: () => clearFilterConversation(dispatch)()
+		clearFilter: () => clearFilterConversation(dispatch)(),
+		clearPickedUsers: () => clearPickedUsers(dispatch)()
 	})
 )(ConversationTopBar) as any;
