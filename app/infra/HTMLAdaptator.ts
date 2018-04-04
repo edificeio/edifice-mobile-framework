@@ -3,16 +3,37 @@ import { Conf } from "../Conf"
 import {clean} from "../utils/html";
 
 export class HTMLAdaptator {
-	root: any
+	root: any;
+	originalHTML: string;
 
 	constructor(html) {
-		this.root = HTMLParser.parse(clean(html))
+		this.root = HTMLParser.parse(clean(html));
+		this.originalHTML = html;
+	}
+
+	removeAfterFlat(node){
+		const newNode = HTMLParser.parse('<div></div>');
+		for(let i = 0; i < node.childNodes.length; i++){
+			if(node.childNodes[i].tagName === 'hr'){
+				break;
+			}
+			if(node.childNodes[i].childNodes && node.childNodes[i].childNodes.length){
+				newNode.appendChild(this.removeAfterFlat(node.childNodes[i]));
+			}
+			else{
+				newNode.appendChild(node.childNodes[i]);
+			}
+		}
+		return newNode;
 	}
 
 	removeAfter(queryString) {
-		const node = this.root.querySelector(queryString)
-		for (let i = 0; i < this.root.childNodes.length; i++) {}
-		return this
+		if(this.originalHTML.indexOf('<hr') === -1){
+			return this;
+		}
+		
+		this.root = this.removeAfterFlat(this.root);
+		return this;
 	}
 
 	outerHTML(node) {

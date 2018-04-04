@@ -77,8 +77,11 @@ export class ThreadsTopBar extends React.PureComponent<IThreadsBarProps, {}> {
 
 	public render() {
 		const { navigation } = this.props
-		const { displayNames, subject, to, cc = [], from } = this.props.conversation;
+		let { displayNames, subject, to, cc, from } = this.props.conversation;
 		const { expand } = this.state;
+		if(!cc){
+			cc = [];
+		}
 		let images = [...to, ...cc, from].filter(el => el !== Me.session.userId);
 		if(images.length === 0){
 			images = [Me.session.userId];
