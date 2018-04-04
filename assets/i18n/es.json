@@ -1,11 +1,11 @@
 {
-  "Are_you_sure": "Seguro que quieres ",
+  "Are_you_sure": "¿Está seguro de que desea ",
   "Cancel": "Cancelar",
   "Connect": "Conectarse",
   "Conversation": "Conversación",
   "Disconnect": "Desconectarse",
   "Erreur_envoi": "Error al enviar...",
-  "Incorrect_login_or_password": "Usuario o contraseña incorrecta ?",
+  "Incorrect_login_or_password": "Usuario o contraseña incorrecta",
   "Login": "Login",
   "News": "Noticias",
   "On": "en",
@@ -18,14 +18,14 @@
   "agoHour": "Hace {{param1}} hora",
   "agoHours": "Hace {{param1}} hora(s)",
   "agoMinutes": "Hace {{param1}} mins",
-  "to_disconnect": "desconectarte?",
+  "to_disconnect": "desconectarse?",
   "today": " Hoy ",
   "conversation-deleteThread": "eliminar esta conversación ?",
   "schoolbook-appTitle": "Cuaderno de correspondencia",
   "delete": "Eliminar",
   "seeMore": "Ver más",
   "apply": "Aplicar",
-  "timeline-filterBy": "Filtrar por",
+  "timeline-filterBy": "Filtrar en",
   "timeline-allFilter": "Todo",
   "timeline-blogFilter": "Blog",
   "timeline-schoolbookFilter": "Cuaderno de correspondencia",
@@ -35,7 +35,7 @@
   "date":{
     "day_names": ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
     "abbr_day_names": ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
-    "month_names": [null, "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
-    "abbr_month_names": [null, "Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
+    "month_names": [null, "de enero", "de febrero", "de marzo", "de abril", "de mayo", "de junio", "de julio", "de agosto", "de septiembre", "de octubre", "de noviembre", "de diciembre"],
+    "abbr_month_names":  [null, "Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
   }
 }
