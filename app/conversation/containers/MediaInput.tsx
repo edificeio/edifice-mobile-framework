@@ -173,7 +173,7 @@ class MediaInput extends React.Component<{
 				</ContainerInput>
 				<Line>
 					<ChatIcon onPress={() => this.switchKeyboard(Selected.keyboard)}>
-						<IconOnOff focused={ true } name={ "keyboard" } />
+						<IconOnOff focused={ true } name={ "keyboard" } style={{ marginLeft: 4 }} />
 					</ChatIcon>
 					<ChatIcon onPress={() => this.sendPhoto()} style={{ marginBottom: 5 }}>
 						<IconOnOff name={ "camera" } />
