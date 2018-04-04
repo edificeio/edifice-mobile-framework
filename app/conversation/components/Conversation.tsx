@@ -12,7 +12,8 @@ interface IConversationProps extends Thread {
 	onPress: (id: string, displayNames: string[][], subject: string) => void
 }
 
-const findReceivers = (to, from, cc = []) => {
+const findReceivers = (to, from, cc) => {
+	cc = cc || [];
 	let newTo = [...to, ...cc, from].filter(el => el !== Me.session.userId);
 	if(newTo.length === 0){
 		return [Me.session.userId];
@@ -21,11 +22,6 @@ const findReceivers = (to, from, cc = []) => {
 };
 
 export const Conversation = ({ id, subject, date, displayNames, nb, onPress, to, from, cc }: IConversationProps) => {
-	const images = displayNames.reduce(
-		(acc, elem) => (elem[0] === Me.session.userId && displayNames.length !== 1 ? acc : [...acc, elem[0]]),
-		[]
-	)
-
 	return (
 		<ListItem nb={nb} onPress={() => onPress(id, displayNames, subject)}>
 			<LeftPanel>

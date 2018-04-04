@@ -39,6 +39,10 @@ export class ConversationTopBar extends React.Component<{
 		this.props.filter('');
 	}
 
+	openNewConversation(){
+		this.props.navigation.navigate('newConversation');
+	}
+
 	search(){
 		return <SearchBar onClose={ () => this.close() } onChange={ (search) => this.props.filter(search) } />;
 	}
@@ -48,7 +52,7 @@ export class ConversationTopBar extends React.Component<{
 			<Header>
 				<HeaderIcon onPress={ () => this.openSearch() } hidden={ this.props.conversationsIsEmpty } name={ "search" } />
 				<AppTitle>{tr.Conversation}</AppTitle>
-				<HeaderIcon name={ "new_message" } iconSize={ 24 } onPress={ () => this.props.navigation.navigate('newConversation') } />
+				<HeaderIcon name={ "new_message" } iconSize={ 24 } onPress={ () => this.openNewConversation() } />
 			</Header>
 		);
 	}

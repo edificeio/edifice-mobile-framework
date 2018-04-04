@@ -15,3 +15,9 @@ export const UNPICK_USER_CONVERSATION = (state, action) => ({
     pickedUsers: state.pickedUsers.filter(u => u.id !== action.user.id),
     remainingUsers: [{ ...action.user, checked: false }, ...state.remainingUsers]
 });
+
+export const CLEAR_PICKED_USER_CONVERSATION = (state, action) => ({
+    ...state,
+    pickedUsers: [],
+    remainingUsers: state.visibles
+});
