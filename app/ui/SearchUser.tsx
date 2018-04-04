@@ -1,6 +1,6 @@
 import style from "glamorous-native"
 import * as React from "react";
-import { View, Text, TextInput, FlatList, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, FlatList, TouchableOpacity, ScrollView } from 'react-native';
 import { CommonStyles } from '../styles/common/styles';
 import I18n from 'react-native-i18n';
 import { PageContainer } from './ContainerContent';
@@ -20,12 +20,15 @@ const UserLabel = style.text({
     marginVertical: 5
 });
 
+const ScrollField = style.scrollView({
+    maxHeight: 181,
+    flexGrow: 0
+});
+
  const FieldContainer = style.view({
      flexDirection: 'row',
      flexWrap: 'wrap',
      backgroundColor: '#FFFFFF',
-     borderBottomColor: '#EEEEEE',
-     borderBottomWidth: 1,
      alignItems: 'center',
      paddingVertical: 10,
      paddingHorizontal: 17
@@ -46,7 +49,7 @@ const UserName = style.text({
     paddingLeft: 15,
     paddingRight: 15,
     color: CommonStyles.textColor,
-})
+});
 
 const UserLine = ({ id, displayName, name, checked, onPick, onUnpick }) => (
     <TouchableOpacity onPress={ () => !checked ? onPick() : onUnpick() }>
@@ -90,21 +93,23 @@ export default class SearchUser extends React.Component<{ remaining, picked, onP
         console.log(this.state)
         return (
             <PageContainer>
-                <FieldContainer>
-                    <To>{ I18n.t('to') }</To>
-                    { this.props.picked.map(p => <TouchableOpacity onPress={ () => this.props.onUnpickUser(p) }>
-                        <UserLabel>{ p.name || p.displayName }</UserLabel>
-                    </TouchableOpacity>) }
-                    <TextInput 
-                        ref={ r => this.input = r }
-                        style={{ flex : 1, minWidth: 100, height: 40 }} 
-                        underlineColorAndroid={ "transparent" } 
-                        value={ this.state.searchText }
-                        onChangeText={ text => this.setState({ ...this.state, searchText: text }) } />
-                </FieldContainer>
+                <ScrollField>
+                    <FieldContainer>
+                        <To>{ I18n.t('to') }</To>
+                        { this.props.picked.map(p => <TouchableOpacity onPress={ () => this.props.onUnpickUser(p) }>
+                            <UserLabel>{ p.name || p.displayName }</UserLabel>
+                        </TouchableOpacity>) }
+                        <TextInput 
+                            ref={ r => this.input = r }
+                            style={{ flex : 1, minWidth: 100, height: 40 }} 
+                            underlineColorAndroid={ "transparent" } 
+                            value={ this.state.searchText }
+                            onChangeText={ text => this.setState({ ...this.state, searchText: text }) } />
+                    </FieldContainer>
+                </ScrollField>
                 <FlatList 
                     keyboardShouldPersistTaps={ 'always' }
-                    style={{ flex: 1 }} 
+                    style={{ flex: 1, borderTopColor: '#EEEEEE', borderTopWidth: 1 }} 
                     data={ this.usersArray } 
                     keyExtractor={ u => u.id }
                     renderItem={ (el) => <UserLine

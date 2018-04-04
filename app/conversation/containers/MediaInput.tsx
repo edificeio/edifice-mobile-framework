@@ -9,6 +9,7 @@ import { connect } from "react-redux";
 import { Me } from "../../infra/Me";
 import { sendMessage } from "../actions/sendMessage";
 import { sendPhoto } from "../actions";
+import { Line } from '../../ui/Grid';
 
 
 const ContainerFooterBar = style.view({
@@ -17,13 +18,11 @@ const ContainerFooterBar = style.view({
 	borderTopWidth: 1,
 	elevation: 1,
 	flexDirection: 'column',
-	height: 90,
 	justifyContent: 'flex-start'
 })
 
 const ChatIcon = style.touchableOpacity({
-	alignItems: "center",
-	height: 40,
+	alignItems: "flex-start",
 	justifyContent: "center",
 	paddingLeft: 20,
 	paddingRight: 10,
@@ -43,11 +42,13 @@ const SendContainer = style.touchableOpacity({
 
 const TextInput = style.textInput({
 	width: '100%',
-	lineHeight: Platform.OS === 'ios' ? 40 : 20
+	lineHeight: Platform.OS === 'ios' ? 40 : 20,
+	maxHeight: 81,
+	margin: 0,
+	paddingVertical: 5
 });
 
 const ContainerInput = style.view({
-	height: 40,
 	justifyContent: "center",
 	paddingLeft: 20,
 	paddingRight: 10,
@@ -170,11 +171,11 @@ class MediaInput extends React.Component<{
 						autoCorrect={ false }
 					/>
 				</ContainerInput>
-				<Row>
+				<Line>
 					<ChatIcon onPress={() => this.switchKeyboard(Selected.keyboard)}>
 						<IconOnOff focused={ true } name={ "keyboard" } />
 					</ChatIcon>
-					<ChatIcon onPress={() => this.sendPhoto()}>
+					<ChatIcon onPress={() => this.sendPhoto()} style={{ marginBottom: 5 }}>
 						<IconOnOff name={ "camera" } />
 					</ChatIcon>
 					<View style={{ flex: 1, alignItems: 'flex-end' }}>
@@ -183,7 +184,7 @@ class MediaInput extends React.Component<{
 						</SendContainer>
 					</View>
 					
-				</Row>
+				</Line>
 			</ContainerFooterBar>
 		)
 	}
