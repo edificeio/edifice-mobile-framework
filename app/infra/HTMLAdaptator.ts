@@ -11,14 +11,14 @@ export class HTMLAdaptator {
 		this.originalHTML = html;
 	}
 
-	removeAfterFlat(node){
-		const newNode = HTMLParser.parse('<div></div>');
+	removeAfterFlat(queryString, node){
+		const newNode = HTMLParser.parse('<' + node.tagName + ' class="' + (node.classNames || []).join(' ') + '"></' + node.tagName + '>').firstChild;
 		for(let i = 0; i < node.childNodes.length; i++){
-			if(node.childNodes[i].tagName === 'hr'){
+			if(node.childNodes[i].tagName === queryString){
 				break;
 			}
 			if(node.childNodes[i].childNodes && node.childNodes[i].childNodes.length){
-				newNode.appendChild(this.removeAfterFlat(node.childNodes[i]));
+				newNode.appendChild(this.removeAfterFlat(queryString, node.childNodes[i]));
 			}
 			else{
 				newNode.appendChild(node.childNodes[i]);
@@ -28,11 +28,41 @@ export class HTMLAdaptator {
 	}
 
 	removeAfter(queryString) {
-		if(this.originalHTML.indexOf('<hr') === -1){
+		if(this.originalHTML.indexOf('<' + queryString) === -1){
 			return this;
 		}
 		
-		this.root = this.removeAfterFlat(this.root);
+		this.root = this.removeAfterFlat(queryString, this.root);
+		return this;
+	}
+
+	removeNodeFlat(queryString, node){
+		const newNode = HTMLParser.parse('<' + node.tagName + ' class="' + (node.classNames || []).join(' ') + '"></' + node.tagName + '>').firstChild;
+		for(let i = 0; i < node.childNodes.length; i++){
+			let currentNode = node.childNodes[i];
+			if(currentNode.nodeType !== 1){
+				newNode.appendChild(currentNode);
+				continue;
+			}
+			if(currentNode.tagName === queryString || (queryString[0] === '.' && currentNode.classNames.indexOf(queryString.replace('.', '')) !== -1)){
+				continue;
+			}
+			if(currentNode.childNodes && currentNode.childNodes.length){
+				newNode.appendChild(this.removeNodeFlat(queryString, currentNode));
+			}
+			else{
+				newNode.appendChild(currentNode);
+			}
+		}
+		return newNode;
+	}
+
+	removeNode(queryString){
+		if(this.originalHTML.indexOf(queryString.replace('.', '')) === -1){
+			return this;
+		}
+		
+		this.root = this.removeNodeFlat(queryString, this.root);
 		return this;
 	}
 

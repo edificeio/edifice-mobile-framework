@@ -55,7 +55,10 @@ export class ChatMessage extends React.Component<{
 		const { body, date, displayNames = [], from = "", status } = this.props;
 
 		const my = from === Me.session.userId;
-		const messageText = adaptator(body).removeAfter('hr').toText();
+		const messageText = adaptator(body)
+			.removeAfter('hr')
+			.removeNode('.signature')
+			.toText();
 		const images = adaptator(body).toImagesArray('381x381');
 
 		if (!body) {
