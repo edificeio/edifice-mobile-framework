@@ -28,7 +28,9 @@ export const Conversation = ({ id, subject, date, displayNames, nb, onPress, to,
 				<GridAvatars users={findReceivers(to, from, cc)} />
 			</LeftPanel>
 			<CenterPanel>
-				{getTitle(displayNames, nb)}
+				<Author nb={nb} numberOfLines={ 1 }>{ 
+					findReceivers(to, from, cc).map(r => displayNames.find(dn => dn[0] === r)[1]).join(', ') 
+				}</Author>
 				{subject && subject.length ? <Content nb={nb} numberOfLines={ 1 }>{subject}</Content> : <style.View />}
 			</CenterPanel>
 			<RightPanel>
@@ -37,16 +39,6 @@ export const Conversation = ({ id, subject, date, displayNames, nb, onPress, to,
 			</RightPanel>
 		</ListItem>
 	)
-}
-
-function getTitle(displayNames, nb) {
-	const title = displayNames.reduce(
-		(acc, elem) =>
-			elem[0] === Me.session.userId && displayNames.length !== 1 ? acc : acc.length === 0 ? elem[1] : `${acc}, ${elem[1]}`,
-		""
-	)
-
-	return <Author nb={nb} numberOfLines={ 1 }>{title}</Author>
 }
 
 const Author = style.text(
