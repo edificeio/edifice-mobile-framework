@@ -2,6 +2,7 @@ import { Conf } from "../../Conf";
 import { Tracking } from "../../tracking/TrackingManager";
 import { read } from "../../infra/Cache";
 import { Thread } from "../interfaces";
+import { Me } from "../../infra/Me";
 
 export const fetchThread = dispatch => async (threadId: string) => {
 	try{
@@ -60,3 +61,12 @@ export const openThread = dispatch => (thread: string) => {
 		threadId: thread
 	});
 }
+
+export const findReceivers = (to, from, cc) => {
+	cc = cc || [];
+	let newTo = [...to, ...cc, from].filter(el => el !== Me.session.userId);
+	if(newTo.length === 0){
+		return [Me.session.userId];
+	}
+	return newTo;
+};

@@ -11,7 +11,7 @@ import { ModalBox, ModalContent } from "../../ui/Modal";
 import { ButtonsOkCancel, Icon } from "../../ui";
 import { Conversation } from "../components/Conversation";
 import { connect } from "react-redux";
-import { readNextConversation, fetchConversation, clearFilterConversation } from "../actions";
+import { readNextConversation, fetchConversation, clearFilterConversation, findReceivers } from "../actions";
 import { deleteThread } from "../actions/deleteThread";
 import styles from "../../styles";
 import I18n from 'react-native-i18n';
@@ -144,7 +144,7 @@ const RightButton = style.touchableOpacity({
 	paddingLeft: 34,
 });
 
-const searchText = (thread) => ((thread.subject || '') + ' ' + thread.displayNames.reduce((acc, elem) => `${acc}, ${elem[1]}`, "")).toLowerCase().replace(/[\é\è]/g, 'e');
+const searchText = (thread) => (thread.subject || '') + ' ' + findReceivers(thread.to, thread.from, thread.cc).map(r => thread.displayNames.find(dn => dn[0] === r)[1]).join(', ') .toLowerCase().replace(/[\é\è]/g, 'e');
 const searchFilter = (filter) => filter.toLowerCase().replace(/[\é\è]/g, 'e');
 
 export default connect(

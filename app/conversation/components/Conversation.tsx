@@ -7,19 +7,11 @@ import { GridAvatars } from "../../ui/avatars/GridAvatars";
 import { DateView } from "../../ui/DateView";
 import { CircleNumber } from "../../ui/CircleNumber";
 import { CommonStyles } from "../../styles/common/styles";
+import { findReceivers } from "../actions";
 
 interface IConversationProps extends Thread {
 	onPress: (id: string, displayNames: string[][], subject: string) => void
 }
-
-const findReceivers = (to, from, cc) => {
-	cc = cc || [];
-	let newTo = [...to, ...cc, from].filter(el => el !== Me.session.userId);
-	if(newTo.length === 0){
-		return [Me.session.userId];
-	}
-	return newTo;
-};
 
 export const Conversation = ({ id, subject, date, displayNames, nb, onPress, to, from, cc }: IConversationProps) => {
 	return (
