@@ -4,17 +4,25 @@ import {clean} from "../utils/html";
 
 export class HTMLAdaptator {
 	root: any;
-	originalHTML: string;
+	html: string;
 
 	constructor(html) {
 		this.root = HTMLParser.parse(clean(html));
-		this.originalHTML = html;
+		this.html = html;
+	}
+
+	cloneNode(node){
+		return HTMLParser.parse('<' + node.tagName + ' class="' + (node.classNames || []).join(' ') + '"></' + node.tagName + '>').firstChild;
+	}
+
+	matchQuery(node, queryString){
+		return node.tagName && (node.tagName === queryString || (queryString[0] === '.' && node.classNames.indexOf(queryString.replace('.', '')) !== -1));
 	}
 
 	removeAfterFlat(queryString, node){
-		const newNode = HTMLParser.parse('<' + node.tagName + ' class="' + (node.classNames || []).join(' ') + '"></' + node.tagName + '>').firstChild;
+		const newNode = this.cloneNode(node);
 		for(let i = 0; i < node.childNodes.length; i++){
-			if(node.childNodes[i].tagName === queryString){
+			if(this.matchQuery(node.childNodes[i], queryString)){
 				break;
 			}
 			if(node.childNodes[i].childNodes && node.childNodes[i].childNodes.length){
@@ -28,7 +36,7 @@ export class HTMLAdaptator {
 	}
 
 	removeAfter(queryString) {
-		if(this.originalHTML.indexOf('<' + queryString) === -1){
+		if(this.html.indexOf(queryString.replace('.', '')) === -1){
 			return this;
 		}
 		
@@ -37,14 +45,14 @@ export class HTMLAdaptator {
 	}
 
 	removeNodeFlat(queryString, node){
-		const newNode = HTMLParser.parse('<' + node.tagName + ' class="' + (node.classNames || []).join(' ') + '"></' + node.tagName + '>').firstChild;
+		const newNode = this.cloneNode(node);
 		for(let i = 0; i < node.childNodes.length; i++){
 			let currentNode = node.childNodes[i];
 			if(currentNode.nodeType !== 1){
 				newNode.appendChild(currentNode);
 				continue;
 			}
-			if(currentNode.tagName === queryString || (queryString[0] === '.' && currentNode.classNames.indexOf(queryString.replace('.', '')) !== -1)){
+			if(this.matchQuery(currentNode, queryString)){
 				continue;
 			}
 			if(currentNode.childNodes && currentNode.childNodes.length){
@@ -58,7 +66,7 @@ export class HTMLAdaptator {
 	}
 
 	removeNode(queryString){
-		if(this.originalHTML.indexOf(queryString.replace('.', '')) === -1){
+		if(this.html.indexOf(queryString.replace('.', '')) === -1){
 			return this;
 		}
 		

@@ -5,7 +5,7 @@ import I18n from "react-native-i18n"
 import FitImage from "react-native-fit-image";
 import { CommonStyles } from "../../styles/common/styles";
 import { MessageStatus } from "../interfaces";
-import { adaptator } from "../../infra/HTMLAdaptator";
+import { adaptator } from '../../infra/HTMLAdaptator';
 import { Me } from "../../infra/Me";
 import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
 import { Carousel } from "../../ui/Carousel";
@@ -55,11 +55,14 @@ export class ChatMessage extends React.Component<{
 		const { body, date, displayNames = [], from = "", status } = this.props;
 
 		const my = from === Me.session.userId;
-		const messageText = adaptator(body)
-			.removeAfter('hr')
-			.removeNode('.signature')
-			.toText();
-		const images = adaptator(body).toImagesArray('381x381');
+		//medium-text is used to write previous sender
+		//should be replaced with better selector for stability
+		const newHtml = adaptator(body)
+		.removeAfter('.medium-text')
+		.removeNode('.signature')
+		.toHTML();
+		const messageText = adaptator(newHtml).toText();
+		const images = adaptator(newHtml).toImagesArray('381x381');
 
 		if (!body) {
 			return <style.View />
