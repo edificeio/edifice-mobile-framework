@@ -1,5 +1,5 @@
 import * as React from "react"
-import { View, TextInput, ScrollView, KeyboardAvoidingView, Image, TouchableWithoutFeedback } from "react-native"
+import { View, TextInput, ScrollView, KeyboardAvoidingView, Image, TouchableWithoutFeedback, Platform } from "react-native"
 import { IAuthModel } from "../model/Auth";
 import { navigate } from "../utils/navHelper"
 import { connect } from "react-redux";
@@ -11,12 +11,6 @@ import { TextInputLine } from "../ui/forms/TextInputLine";
 import styles from "../styles";
 import ConnectionTrackingBar from "../ui/ConnectionTrackingBar";
 import style from 'glamorous-native';
-
-const Form = props => (
-	<View style={styles.formGrid}>
-		<ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>{props.children}</ScrollView>
-	</View>
-)
 
 const Logo = () => <View style={{ flexGrow: 2, alignItems: 'center', justifyContent: 'center' }}>
 	<Image resizeMode="contain" style={{ height: 50, width: 50 }} source={require("../../assets/icons/icon.png")} />
@@ -35,6 +29,7 @@ export class Login extends React.Component<{
 	auth: IAuthModel;
 	login: (email: string, password: string) => Promise<LoginResult>;
 	navigation?: any;
+	headerHeight: number;
 }, { email: string, password: string, typing: boolean, loading: boolean }> {
 
 	loginRef: TextInput;
@@ -72,36 +67,39 @@ export class Login extends React.Component<{
 		}
 
 		return (
-			<KeyboardAvoidingView style={{ flex: 1, backgroundColor: '#ffffff' }}>
-			<ConnectionTrackingBar style={{ position: 'absolute' }} />
-				<TouchableWithoutFeedback style={{ flex: 1 }} onPress={ () => this.unfocus() }>
-					<FormContainer>
-						<Logo />
-						<TextInputLine 
-							inputRef={ (ref) => this.loginRef = ref }
-							placeholder={tr.Login} 
-							onChangeText={(email) => this.setState({ email: email.trim(), typing: true })}
-							value={ this.state.email !== undefined ? this.state.email : email }
-							hasError={ error && !this.state.typing } />
-						<TextInputLine 
-							inputRef={ (ref) => this.passwordRef = ref }
-							placeholder={tr.Password} 
-							onChangeText={(password: string) => this.setState({ password: password, typing: true })} 
-							secureTextEntry={ true } 
-							value={ this.state.password || password }
-							hasError={ error && !this.state.typing } />
+			<View style={{ flex: 1, backgroundColor: '#ffffff' }}>
+				<ConnectionTrackingBar style={{ position: 'absolute' }} />
+				<KeyboardAvoidingView style={{ flex: 1 }} behavior={ Platform.OS === "ios" ? 'padding' : undefined }>
+					
+					<TouchableWithoutFeedback style={{ flex: 1 }} onPress={ () => this.unfocus() }>
+						<FormContainer>
+							<Logo />
+							<TextInputLine 
+								inputRef={ (ref) => this.loginRef = ref }
+								placeholder={tr.Login} 
+								onChangeText={(email) => this.setState({ email: email.trim(), typing: true })}
+								value={ this.state.email !== undefined ? this.state.email : email }
+								hasError={ error && !this.state.typing } />
+							<TextInputLine 
+								inputRef={ (ref) => this.passwordRef = ref }
+								placeholder={tr.Password} 
+								onChangeText={(password: string) => this.setState({ password: password, typing: true })} 
+								secureTextEntry={ true } 
+								value={ this.state.password || password }
+								hasError={ error && !this.state.typing } />
 
-						<ErrorMessage>{ this.state.typing ? '' : error }</ErrorMessage>
+							<ErrorMessage>{ this.state.typing ? '' : error }</ErrorMessage>
 
-						<View style={{ flexGrow: 2, alignItems: 'center', justifyContent: 'flex-start', marginTop: error && !this.state.typing ? 10 : 30 }}>
-							<FlatButton 
-								onPress={ () => this.login() } 
-								disabled={ this.isDisabled } 
-								title={tr.Connect} loading={ this.state.loading } />
-						</View>
-					</FormContainer>
-				</TouchableWithoutFeedback>
-			</KeyboardAvoidingView>
+							<View style={{ flexGrow: 2, alignItems: 'center', justifyContent: 'flex-start', marginTop: error && !this.state.typing ? 10 : 30 }}>
+								<FlatButton 
+									onPress={ () => this.login() } 
+									disabled={ this.isDisabled } 
+									title={tr.Connect} loading={ this.state.loading } />
+							</View>
+						</FormContainer>
+					</TouchableWithoutFeedback>
+				</KeyboardAvoidingView>
+			</View>
 		)
 	}
 }
@@ -116,7 +114,8 @@ export const initialStateWithEmail = email => ({
 
 export default connect(
 	(state: any, props: any) => ({
-		auth: state.auth
+		auth: state.auth,
+		headerHeight: state.ui.headerHeight
 	}),
 	dispatch => ({
 		login: (email, password) => login(dispatch)(email, password)

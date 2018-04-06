@@ -26,7 +26,7 @@ export const Conversation = ({ id, subject, date, displayNames, nb, onPress, to,
 				{subject && subject.length ? <Content nb={nb} numberOfLines={ 1 }>{subject}</Content> : <style.View />}
 			</CenterPanel>
 			<RightPanel>
-				<DateView date={ date } nb={nb} />
+				<DateView date={ date } strong={ nb > 0 } />
 				<CircleNumber nb={nb} />
 			</RightPanel>
 		</ListItem>

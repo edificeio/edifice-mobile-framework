@@ -15,10 +15,21 @@ export const Light = style.text({
 	fontWeight: "400",
 });
 
-export const Paragraph = style.text({
-    fontFamily: CommonStyles.primaryFontFamily,
-    fontSize: 12,
-    color: CommonStyles.textColor
+export const Paragraph = style.text(
+	{
+		fontFamily: CommonStyles.primaryFontFamily,
+		fontSize: 12,
+		color: CommonStyles.textColor
+	},
+	({ strong }: { strong?: boolean }) => ({
+		fontFamily: strong ? CommonStyles.primaryFontFamilySemibold : CommonStyles.primaryFontFamily,
+	})
+);
+
+export const LightP = style.text({
+	fontFamily: CommonStyles.primaryFontFamily,
+	fontSize: 12,
+	color: CommonStyles.lightTextColor
 });
 
 export const Quote = style.text({

@@ -4,6 +4,7 @@ export const CommonStyles = {
 	primary: "#299cc8",
 	primaryLight: '#EAF5F9',
 	lightGrey: "rgb(248,248,250)",
+	lightTextColor: '#858FA9',
 	actionColor: "#2A9CC8",
 	actionColorDisabled: "#2A9CC888",
 	borderBottomItem: "#dddddd",

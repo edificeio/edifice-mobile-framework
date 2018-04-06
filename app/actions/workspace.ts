@@ -16,8 +16,6 @@ export const takePhoto = (): Promise<string> => {
 };
 
 export const uploadImage = async (uri: string) => {
-    const uriParts = uri.split('.');
-    const fileType = uri[uri.length - 1];
     let formData = new FormData();
     console.log(uri)
     formData.append('photo', {
@@ -32,7 +30,7 @@ export const uploadImage = async (uri: string) => {
         body: formData,
         headers: {
             'Accept': 'application/json',
-            'Content-Type': 'multipart/form-data',
+            'Content-Type': 'multipart/form-data; boundary=ZQLJFPUPZJ67',
         },
     });
     const file = await response.json();

@@ -12,6 +12,7 @@ import { CommonStyles } from '../styles/common/styles';
 import ConnectionTrackingBar from "../ui/ConnectionTrackingBar";
 import { PageContainer } from '../ui/ContainerContent';
 import { Me } from "../infra/Me";
+import { LightP } from "../ui/Typography";
 
 export class UserProfile extends React.Component<{ logout: (login: string) => Promise<void> }, { showDisconnect: boolean }> {
 	public state = {
@@ -25,8 +26,8 @@ export class UserProfile extends React.Component<{ logout: (login: string) => Pr
 
 	public disconnectBox = () => (
 		<ModalContent>
-			<Text>{tr.Are_you_sure}</Text>
-			<Text>{tr.to_disconnect}</Text>
+			<LightP>{tr.Are_you_sure}</LightP>
+			<LightP>{tr.to_disconnect}</LightP>
 			<ButtonsOkCancel
 				onCancel={() => this.setState({ showDisconnect: false })}
 				onValid={() => this.disconnect()}

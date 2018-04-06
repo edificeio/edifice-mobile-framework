@@ -21,7 +21,8 @@ const HeaderStyle = style.view({
 	justifyContent: "flex-start",
 	paddingTop: Platform.OS === "ios" ? iosStatusBarHeight : 0,
 	flexDirection: 'row',
-	backgroundColor: CommonStyles.mainColorTheme
+	backgroundColor: CommonStyles.mainColorTheme,
+	alignItems: 'center'
 });
 
 export const HeaderComponent = (

@@ -22,7 +22,7 @@ const Item = style.view({
 	paddingVertical: 12,
 });
 
-const ImageMessage = style.image({
+const ImageContainer = style.view({
 	width: 200, 
 	height: 130,
 	borderBottomLeftRadius: 15,
@@ -32,11 +32,17 @@ const ImageMessage = style.image({
 	shadowColor: CommonStyles.shadowColor,
 	shadowOpacity: CommonStyles.shadowOpacity,
 	shadowOffset: CommonStyles.shadowOffset,
-	shadowRadius: CommonStyles.shadowRadius
+	shadowRadius: CommonStyles.shadowRadius,
+	overflow: 'hidden'
 }, ({ isMine }): ViewStyle => ({
 	borderBottomRightRadius: isMine ? 0 : 15,
 	elevation: isMine ? 0 : 3,
 }));
+
+const ImageMessage = style.image({
+	width: 200, 
+	height: 130
+});
 
 const TextBubble = ({ content, isMine }) => <BubbleStyle my={ isMine }>
 		<Content my={ isMine }>{ content }</Content>
@@ -79,7 +85,7 @@ export class ChatMessage extends React.Component<{
 				<MessageContainer my={ my }>
 					{ messageText ? <TextBubble content={ messageText } isMine={ my } /> : <View /> }
 					{ images.map((el, i) => <TouchableOpacity key={ i } onPress={ () => this.props.onOpenImage(i, images) }>
-							<ImageMessage source={ el } isMine={ my } />
+							<ImageContainer isMine={ my }><ImageMessage source={ el } /></ImageContainer>
 						</TouchableOpacity>
 					)}
 					{ (status === undefined || status === MessageStatus.sent) && <DateView date={date} /> }
