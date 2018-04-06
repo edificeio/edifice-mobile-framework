@@ -30,7 +30,7 @@ export const uploadImage = async (uri: string) => {
         body: formData,
         headers: {
             'Accept': 'application/json',
-            'Content-Type': 'multipart/form-data; boundary=ZQLJFPUPZJ67',
+            'Content-Type': 'multipart/form-data',
         },
     });
     const file = await response.json();

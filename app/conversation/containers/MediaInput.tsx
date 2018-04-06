@@ -175,7 +175,7 @@ class MediaInput extends React.Component<{
 					<ChatIcon onPress={() => this.switchKeyboard(Selected.keyboard)}>
 						<IconOnOff focused={ true } name={ "keyboard" } style={{ marginLeft: 4 }} />
 					</ChatIcon>
-					<ChatIcon onPress={() => this.sendPhoto()} style={{ marginBottom: 5 }}>
+					<ChatIcon onPress={() => this.sendPhoto()} style={{ marginBottom: 5, opacity: Platform.OS === 'ios' ? 0 : 1 }}>
 						<IconOnOff name={ "camera" } />
 					</ChatIcon>
 					<View style={{ flex: 1, alignItems: 'flex-end' }}>
