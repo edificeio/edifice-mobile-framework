@@ -28,7 +28,7 @@ export const Paragraph = style.text(
 
 export const LightP = style.text({
 	fontFamily: CommonStyles.primaryFontFamily,
-	fontSize: 12,
+	fontSize: 14,
 	color: CommonStyles.lightTextColor
 });
 
