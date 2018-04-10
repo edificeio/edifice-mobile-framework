@@ -1,17 +1,10 @@
-import CookieManager from 'react-native-cookies';
-import { PATH_AUTH, PATH_LOGIN, PATH_LOGOUT, PATH_RECOVER_PASSWORD, PATH_SIGNUP } from "../constants/paths";
-import { setLogin } from "../utils/Store";
-import { Conf } from "../Conf";
-import { clearTimeline } from './timeline';
-import { Me } from '../infra/Me';
-import { read } from '../infra/Cache';
-import { AsyncStorage, Platform } from 'react-native';
-import { tr } from '../i18n/t';
-import { navigate } from '../utils/navHelper';
+import { read } from "../../infra/Cache";
+import { navigate } from "../../utils/navHelper";
+import { AsyncStorage, Platform } from "react-native";
+import { Conf } from "../../Conf";
+import { setLogin } from "../../utils/Store";
 import I18n from 'react-native-i18n';
-import { clearConversation } from '../conversation/actions';
-
-console.log(Conf);
+import { Tracking } from '../../tracking/TrackingManager';
 
 export const readCurrentUser = dispatch => async () => {
     const userinfo = await read('/userbook/api/person');
@@ -77,9 +70,10 @@ export const login = dispatch => async (email, password) => {
 		if (data.indexOf('/auth') !== -1 && data.indexOf('error') !== -1) {
 			dispatch({
 				type: 'LOGIN_ERROR_AUTH',
-				error: tr.Incorrect_login_or_password,
+				error: I18n.t('Incorrect_login_or_password'),
 			});
 
+            Tracking.logEvent('failedLogin', { email: email });
 			return LoginResult.passwordError;
 		}
 		else{
@@ -95,7 +89,7 @@ export const login = dispatch => async (email, password) => {
 			});
 
 			await readCurrentUser(dispatch)();
-
+            Tracking.logEvent('login', { email: email });
 			return LoginResult.success;
 		}
 	}
@@ -110,37 +104,6 @@ export const login = dispatch => async (email, password) => {
 	
 }
 
-let dataFilled = false;
-export const fillUserData = async () => {
-	if(dataFilled){
-		return;
-	}
-	const data = await read(`/directory/user/${ Me.session.userId }`);
-	for(let prop in data){
-		Me.session[prop] = data[prop];
-	}
-	dataFilled = true;
-}
-
-export const logout = dispatch => async email => {
-	await AsyncStorage.setItem('/userbook/api/person', '');
-	setLogin({ email: email, password: "" });
-	await fetch(`${Conf.platform}/auth/logout`);
-	dispatch({ type: 'LOGOUT_AUTH', email: email });
-	clearTimeline(dispatch)();
-	clearConversation(dispatch)();
-	
-	CookieManager.clearAll();
-}
-
 export const clearForm = dispatch => () => {
 	dispatch({ type: 'CLEAR_FORM_AUTH' });
-}
-
-/**
- * try to login
- * @returns {PATH_LOGIN}
- */
-export const checkLogin = () => {
-	return { type: PATH_AUTH }
 }

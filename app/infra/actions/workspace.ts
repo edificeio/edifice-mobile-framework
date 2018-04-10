@@ -1,5 +1,5 @@
 import ImagePicker from 'react-native-image-picker';
-import { Conf } from "../Conf";
+import { Conf } from '../../Conf';
 
 console.log(ImagePicker);
 

@@ -7,7 +7,6 @@ import { CloseIcon, SearchIcon } from "./icons/SearchIcon"
 import {tr} from "../i18n/t";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { filter } from "../actions/filter";
 
 export interface SearchBarProps {
 	onChange: (searchText) => void

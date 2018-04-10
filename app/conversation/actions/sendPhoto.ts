@@ -1,7 +1,8 @@
-import { uploadImage, takePhoto } from "../../actions/workspace";
+
 import { Me } from "../../infra/Me";
 import { Conf } from "../../Conf";
 import { Message } from "../interfaces";
+import { takePhoto, uploadImage } from "../../infra/actions/workspace";
 
 export const sendPhoto = dispatch => async (data: Message) => {
 	const uri = await takePhoto();

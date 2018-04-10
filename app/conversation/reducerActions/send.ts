@@ -1,7 +1,6 @@
 import { MessageStatus } from "../interfaces";
 import { PATH_AVATAR } from '../../constants/paths';
 import { ConversationState } from '../interfaces/ConversationState';
-import { User, Group } from "../../model/Auth";
 import { Me } from "../../infra/Me";
 
 export const CONVERSATION_SEND = (state, action) => ({

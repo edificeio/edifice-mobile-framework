@@ -1,9 +1,9 @@
-import { login, readCurrentUser } from "../actions/auth"
-import { CREATE_ERROR, CREATE_SUCCESS } from "../constants/docs"
 import { PATH_AUTH, PATH_LOGIN, PATH_LOGOUT, PATH_RECOVER_PASSWORD, PATH_SIGNUP } from "../constants/paths"
 import { navigate } from "../utils/navHelper";
 import { Connection } from "../infra/Connection";
 import { getLogin } from "../utils/Store";
+import { readCurrentUser } from "../auth/actions/readCurrentUser";
+import { login } from "../auth/actions/login";
 
 let initAuth = false
 
@@ -28,12 +28,15 @@ async function auth(dispatch) {
 	}
 }
 
-export default store => next => action => {
+export const middleware = store => next => action => {
 	try {
 		
-		if (action.type === PATH_AUTH) {
+		if (action.type === 'CHECK_LOGIN_AUTH') {
 			auth(store.dispatch)
 			initAuth = true
+		}
+		if(action.type === 'LOGOUT_AUTH'){
+			navigate("Login", { email: action.email });
 		}
 
 		const returnValue = next(action)

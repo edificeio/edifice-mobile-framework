@@ -1,12 +1,11 @@
-//<reference path="../../node_modules/@types/react-navigation/index.d.ts"/>
 import { NavigationContainer, StackNavigator } from "react-navigation";
 import { tr } from "../i18n/t"
 import { tabNavigator, tabRootOptions } from "../utils/navHelper";
-import ProfileNavigator from "./ProfileNavigator";
 import TimelineNavigator from "../timeline/TimelineNavigator";
 import ConversationNavigator from "../conversation/ConversationNavigator";
 import Login from "../auth/Login";
 import { View } from 'react-native';
+import AccountNavigation from "../auth/AccountNavigation";
 
 const MainNavigator = tabNavigator({
 	Nouveautes: {
@@ -18,7 +17,7 @@ const MainNavigator = tabNavigator({
 		navigationOptions: () => tabRootOptions(tr.Conversation, "conversation"),
 	},
 	Profile: {
-		screen: ProfileNavigator,
+		screen: AccountNavigation,
 		navigationOptions: () => tabRootOptions(tr.Profile, "profile"),
 	},
 })

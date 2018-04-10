@@ -1,5 +1,4 @@
 import firebase from "react-native-firebase";
-import trackedActions from "./actions";
 
 let analytics;
 try{
@@ -34,13 +33,6 @@ export class Tracking {
 			return;
 		}
 		analytics.logEvent(name, params);
-	}
-
-	public static trackAction(action) {
-		const trackedAction = trackedActions[`${action.type}${action.path}`]
-		if (trackedAction) {
-			this.logEvent(trackedAction.name, trackedAction.format(action))
-		}
 	}
 
 	public static trackScreenView(currentScreen, navParams) {

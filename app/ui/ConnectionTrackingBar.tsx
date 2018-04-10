@@ -2,11 +2,11 @@ import style from "glamorous-native"
 import * as React from "react"
 import { Row } from ".";
 import { connect } from "react-redux";
-import { watchConnection, checkConnection } from '../actions/connectionTracker';
 import { CommonStyles } from '../styles/common/styles';
 import { Icon } from './icons/Icon';
 import { Animated, ActivityIndicator } from 'react-native';
 import I18n from 'react-native-i18n';
+import { watchConnection, checkConnection } from "../infra/actions/connectionTracker";
 
 const TrackerText = style.text({
     color: '#FFFFFF',

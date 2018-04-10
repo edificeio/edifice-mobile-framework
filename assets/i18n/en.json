@@ -3,7 +3,7 @@
   "Cancel": "Cancel",
   "Connect": "Log in",
   "Conversation": "Conversation",
-  "Disconnect": "Log out",
+  "directory-disconnectButton": "Log out",
   "Erreur_envoi": "Error sending...",
   "Incorrect_login_or_password": "Incorrect login or password ?",
   "Login": "Username",

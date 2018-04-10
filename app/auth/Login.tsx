@@ -1,9 +1,7 @@
 import * as React from "react"
 import { View, TextInput, ScrollView, KeyboardAvoidingView, Image, TouchableWithoutFeedback, Platform } from "react-native"
-import { IAuthModel } from "../model/Auth";
 import { navigate } from "../utils/navHelper"
 import { connect } from "react-redux";
-import { login, LoginResult } from '../actions/auth';
 import { FlatButton } from "../ui";
 import { tr } from "../i18n/t";
 import { ErrorMessage } from '../ui/Typography';
@@ -11,6 +9,8 @@ import { TextInputLine } from "../ui/forms/TextInputLine";
 import styles from "../styles";
 import ConnectionTrackingBar from "../ui/ConnectionTrackingBar";
 import style from 'glamorous-native';
+import { LoginResult, login } from "./actions/login";
+import { AuthState } from './reducer';
 
 const Logo = () => <View style={{ flexGrow: 2, alignItems: 'center', justifyContent: 'center' }}>
 	<Image resizeMode="contain" style={{ height: 50, width: 50 }} source={require("../../assets/icons/icon.png")} />
@@ -26,7 +26,7 @@ const FormContainer = style.view({
 })
 
 export class Login extends React.Component<{
-	auth: IAuthModel;
+	auth: AuthState;
 	login: (email: string, password: string) => Promise<LoginResult>;
 	navigation?: any;
 	headerHeight: number;

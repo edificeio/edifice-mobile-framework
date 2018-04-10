@@ -1,5 +1,5 @@
 import { Me } from "../../infra/Me";
-import { User, Group } from "../../model/Auth";
+import { User, Group } from "../../auth/reducer";
 
 export const createConversation = dispatch => (pickedUsers) => {
     const newConversation = {

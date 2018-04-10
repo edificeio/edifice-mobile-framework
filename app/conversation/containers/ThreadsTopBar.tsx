@@ -9,8 +9,8 @@ import { Back } from "../../ui/headers/Back";
 import { RowAvatars } from "../../ui/avatars/RowAvatars";
 import { Size } from "../../ui/avatars/Avatar";
 import { connect } from "react-redux";
-import { setHeader } from "../../actions/ui";
 import { Thread } from "../interfaces";
+import { setHeader } from "../../infra/actions/ui";
 
 const legendStyle: TextStyle = {
 	alignSelf: "center",

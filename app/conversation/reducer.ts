@@ -1,4 +1,3 @@
-import { PATH_CONVERSATION, PATH_NEW_MESSAGES, PATH_PREVIOUS_MESSAGES } from "../constants/paths";
 import { Me } from '../infra/Me';
 import { Thread } from './interfaces';
 import { Message } from "./interfaces";

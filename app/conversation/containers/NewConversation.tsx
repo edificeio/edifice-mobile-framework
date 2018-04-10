@@ -3,7 +3,6 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { Header, Title, HeaderAction } from "../../ui/headers/Header";
 import { Back } from "../../ui/headers/Back";
-import { User } from "../../model/Auth";
 import { PageContainer } from "../../ui/ContainerContent";
 import SearchUser from "../../ui/SearchUser";
 import { loadVisibles } from "../actions/loadVisibles";
@@ -12,6 +11,7 @@ import { unpickUser, pickUser } from "../actions/pickUser";
 import { createConversation } from "../actions/createConversation";
 import { openThread } from '../actions/thread';
 import { Thread } from "../interfaces";
+import { User } from "../../auth/reducer";
 
 class NewThreadHeader extends React.Component<{ 
     navigation: any, 

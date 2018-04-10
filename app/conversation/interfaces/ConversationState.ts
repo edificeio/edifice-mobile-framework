@@ -1,5 +1,5 @@
 import { Thread, Message } from ".";
-import { User, Group } from "../../model/Auth";
+import { User, Group } from "../../auth/reducer";
 
 export interface ConversationState {
 	page: number;

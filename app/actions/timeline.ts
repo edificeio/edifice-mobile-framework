@@ -1,11 +1,11 @@
 import I18n from "react-native-i18n";
-import { fillUserData } from './auth';
 import { Conf } from "../Conf";
 import { adaptator } from "../infra/HTMLAdaptator";
 import { Me } from "../infra/Me";
 import { AsyncStorage } from "react-native";
 import { read } from "../infra/Cache";
 import { Connection } from "../infra/Connection";
+import { fillUserData } from "../auth/actions/fillUserData";
 
 console.log(Conf)
 

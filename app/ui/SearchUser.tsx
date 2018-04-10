@@ -7,7 +7,6 @@ import { PageContainer } from './ContainerContent';
 import { SingleAvatar } from "./avatars/SingleAvatar";
 import { Line } from './Grid';
 import { Checkbox } from './forms/Checkbox';
-import { User, Group } from "../model/Auth";
 
 const UserLabel = style.text({
     backgroundColor: CommonStyles.primaryLight,

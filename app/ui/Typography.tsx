@@ -49,6 +49,15 @@ export const A = style.text({
     color: CommonStyles.actionColor
 });
 
+export const H4 = style.text({
+	color: '#000',
+	fontSize: 18,
+	fontFamily: CommonStyles.primaryFontFamily,
+	fontWeight: "400",
+	marginTop: 20,
+	marginBottom: 20
+});
+
 export const H1 = style.text({
 	color: CommonStyles.primary,
 	fontSize: 18,

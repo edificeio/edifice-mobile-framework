@@ -1,12 +1,12 @@
 import { combineReducers } from "redux"
-import { Auth } from "./Auth";
 import { Timeline } from './Timeline';
+import auth from "../auth/reducer"
 import conversation from "../conversation/reducer"
 import connectionTracker from "./connectionTracker";
 import ui from './ui';
 
 export default combineReducers({
-	auth: Auth,
+	auth: auth,
 	conversation: conversation,
 	timeline: Timeline,
 	connectionTracker: connectionTracker,

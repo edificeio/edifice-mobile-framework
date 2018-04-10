@@ -1,4 +1,4 @@
-import { Group, User } from "../../model/Auth";
+import { Group, User } from "../../auth/reducer";
 
 export const pickUser = dispatch => (user: User | Group) => {
     dispatch({

@@ -1,13 +1,12 @@
-import HTMLParser from "fast-html-parser"
-import { Conf } from "../Conf"
-import {clean} from "../utils/html";
+import HTMLParser from "fast-html-parser";
+import { Conf } from "../Conf";
 
 export class HTMLAdaptator {
 	root: any;
 	html: string;
 
 	constructor(html) {
-		this.root = HTMLParser.parse(clean(html));
+		this.root = HTMLParser.parse(html.replace(/\r\n/g, "").replace(/<div>\u200B<\/div><div>\u200B<\/div>/g, ""));
 		this.html = html;
 	}
 
