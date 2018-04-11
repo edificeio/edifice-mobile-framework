@@ -32,6 +32,14 @@ export const LightP = style.text({
 	color: CommonStyles.lightTextColor
 });
 
+export const Label = style.text({
+	color: '#858FA9',
+	fontSize: 14,
+	fontFamily: CommonStyles.primaryFontFamilyLight,
+	fontWeight: "400",
+	textAlignVertical: 'center'
+});
+
 export const Quote = style.text({
 	color: 'rgba(133,143,169,1)',
     fontFamily: CommonStyles.primaryFontFamily,
@@ -51,11 +59,11 @@ export const A = style.text({
 
 export const H4 = style.text({
 	color: '#000',
-	fontSize: 18,
+	fontSize: 14,
 	fontFamily: CommonStyles.primaryFontFamily,
 	fontWeight: "400",
 	marginTop: 20,
-	marginBottom: 20
+	paddingHorizontal: 16
 });
 
 export const H1 = style.text({

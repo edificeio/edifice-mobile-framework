@@ -5,12 +5,13 @@ import { Conf } from '../../Conf';
 export const loadNotificationsPrefs = (dispatch) => async () => {
     const defaultNotifs = await read(`/timeline/notifications-defaults`);
     const timelinePrefs = await preference('timeline');
-    const notifsPrefs = Object.keys(timelinePrefs.config).map(key => ({ ...timelinePrefs.config[key], key: key }));
+    const newNotifs = defaultNotifs.map(notif => ({
+            ...notif,
+            'push-notif': timelinePrefs.config[notif.key] ? timelinePrefs.config[notif.key]['push-notif'] : false
+    }));
+
     dispatch({
         type: 'SET_NOTIFICATIONS_PREFS_AUTH',
-        notificationsPrefs: [
-            ...defaultNotifs.filter(dn => notifsPrefs.find(np => np.key === dn.key) === undefined),
-            ...notifsPrefs
-        ]
+        notificationsPrefs: newNotifs
     });
 }
