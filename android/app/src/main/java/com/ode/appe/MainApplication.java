@@ -14,6 +14,8 @@ import io.invertase.firebase.RNFirebasePackage;
 import io.invertase.firebase.fabric.crashlytics.RNFirebaseCrashlyticsPackage;
 import io.invertase.firebase.analytics.RNFirebaseAnalyticsPackage;
 import io.invertase.firebase.perf.RNFirebasePerformancePackage;
+import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
+import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 import com.AlexanderZaytsev.RNI18n.RNI18nPackage;
 import com.reactnativecomponent.splashscreen.RCTSplashScreenPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
@@ -51,6 +53,8 @@ public class MainApplication extends Application implements ReactApplication {
             new RNFirebaseAnalyticsPackage(),
             new RNFirebaseCrashlyticsPackage(),
             new RNFirebasePerformancePackage(),
+            new RNFirebaseNotificationsPackage(),
+            new RNFirebaseMessagingPackage(),
             new RNI18nPackage(),
             new VectorIconsPackage(),
             new RNFSPackage()

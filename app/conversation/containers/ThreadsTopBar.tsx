@@ -76,7 +76,7 @@ export class ThreadsTopBar extends React.PureComponent<IThreadsBarProps, {}> {
 	}
 
 	public render() {
-		const { navigation } = this.props
+		const { navigation } = this.props;
 		let { displayNames, subject, to, cc, from } = this.props.conversation;
 		const { expand } = this.state;
 		if(!cc){

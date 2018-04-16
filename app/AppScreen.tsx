@@ -5,6 +5,10 @@ import { CommonStyles } from "./styles/common/styles"
 import { AppNavigator } from "./navigation/AppNavigator"
 import { Tracking } from "./tracking/TrackingManager"
 import ProgressBar from "./ui/ProgressBar";
+import firebase from "react-native-firebase";
+import conversationHandle from './conversation/NotifHandler';
+import { connect } from "react-redux";
+import { readCurrentUser } from './auth/actions/login';
 
 function getCurrentRoute(navigationState) {
 	if (!navigationState) {
@@ -17,28 +21,32 @@ function getCurrentRoute(navigationState) {
 	return route
 }
 
-export interface IAppScreenProps {}
-
-interface IAppScreenState {}
-
 export let navigationRef = null
 
-export class AppScreen extends React.Component<IAppScreenProps, IAppScreenState> {
-	navigator: any
+export class AppScreen extends React.Component<any, undefined> {
+	navigator: any;
+	notificationDisplayedListener;
 
-	public componentDidMount() {
+	async componentDidMount() {
 		navigationRef = this.navigator;
 		SplashScreen.close({
 			animationType: SplashScreen.animationType.scale,
 			delay: 500,
 			duration: 850,
 		});
+
+		const notificationOpen = await firebase.notifications().getInitialNotification();
+		if (notificationOpen) {
+			await this.props.readCurrentUser();
+			const action = notificationOpen.action;
+			const notification = notificationOpen.notification;
+			this.props.conversationHandle(notification.data);
+		}
 	}
 
 	setNavigator(nav){
 		this.navigator = nav;
 	}
-
 	public render() {
 		return (
 			<View style={{ flex: 1 }}>
@@ -59,3 +67,11 @@ export class AppScreen extends React.Component<IAppScreenProps, IAppScreenState>
 		)
 	}
 }
+
+export default connect(
+	state => ({}),
+	dispatch => ({
+		conversationHandle: notifData => conversationHandle(dispatch)(notifData),
+		readCurrentUser: notifData => readCurrentUser(dispatch)()
+	})
+)(AppScreen);

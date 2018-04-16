@@ -16,11 +16,3 @@ export async function getLogin() {
 	}
 	return JSON.parse(authString)
 }
-
-let seqNumber = 0
-
-/** calculate seq number ***/
-export function getSeqNumber(): string {
-	seqNumber++
-	return seqNumber.toString()
-}

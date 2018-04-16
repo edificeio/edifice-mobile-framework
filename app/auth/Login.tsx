@@ -3,7 +3,6 @@ import { View, TextInput, ScrollView, KeyboardAvoidingView, Image, TouchableWith
 import { navigate } from "../utils/navHelper"
 import { connect } from "react-redux";
 import { FlatButton } from "../ui";
-import { tr } from "../i18n/t";
 import { ErrorMessage } from '../ui/Typography';
 import { TextInputLine } from "../ui/forms/TextInputLine";
 import styles from "../styles";
@@ -11,6 +10,7 @@ import ConnectionTrackingBar from "../ui/ConnectionTrackingBar";
 import style from 'glamorous-native';
 import { LoginResult, login } from "./actions/login";
 import { AuthState } from './reducer';
+import I18n from 'react-native-i18n';
 
 const Logo = () => <View style={{ flexGrow: 2, alignItems: 'center', justifyContent: 'center' }}>
 	<Image resizeMode="contain" style={{ height: 50, width: 50 }} source={require("../../assets/icons/icon.png")} />
@@ -68,33 +68,32 @@ export class Login extends React.Component<{
 
 		return (
 			<View style={{ flex: 1, backgroundColor: '#ffffff' }}>
+				<KeyboardAvoidingView style={{ flex: 1, backgroundColor: '#ffffff' }} behavior={ Platform.OS === "ios" ? 'padding' : undefined }>
 				<ConnectionTrackingBar style={{ position: 'absolute' }} />
-				<KeyboardAvoidingView style={{ flex: 1 }} behavior={ Platform.OS === "ios" ? 'padding' : undefined }>
-					
 					<TouchableWithoutFeedback style={{ flex: 1 }} onPress={ () => this.unfocus() }>
 						<FormContainer>
 							<Logo />
 							<TextInputLine 
 								inputRef={ (ref) => this.loginRef = ref }
-								placeholder={tr.Login} 
+								placeholder={ I18n.t('Login') } 
 								onChangeText={(email) => this.setState({ email: email.trim(), typing: true })}
 								value={ this.state.email !== undefined ? this.state.email : email }
 								hasError={ error && !this.state.typing } />
 							<TextInputLine 
 								inputRef={ (ref) => this.passwordRef = ref }
-								placeholder={tr.Password} 
+								placeholder={ I18n.t('Password') } 
 								onChangeText={(password: string) => this.setState({ password: password, typing: true })} 
 								secureTextEntry={ true } 
 								value={ this.state.password || password }
 								hasError={ error && !this.state.typing } />
-
 							<ErrorMessage>{ this.state.typing ? '' : error }</ErrorMessage>
+
 
 							<View style={{ flexGrow: 2, alignItems: 'center', justifyContent: 'flex-start', marginTop: error && !this.state.typing ? 10 : 30 }}>
 								<FlatButton 
 									onPress={ () => this.login() } 
 									disabled={ this.isDisabled } 
-									title={tr.Connect} loading={ this.state.loading } />
+									title={ I18n.t("Connect") } loading={ this.state.loading } />
 							</View>
 						</FormContainer>
 					</TouchableWithoutFeedback>

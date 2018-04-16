@@ -1,12 +1,10 @@
 import style from "glamorous-native"
 import * as React from "react";
-import { PATH_CONVERSATION } from "../constants/paths"
 import { CommonStyles } from "../styles/common/styles"
 import { Header, HeaderIcon } from "./headers/Header"
 import { CloseIcon, SearchIcon } from "./icons/SearchIcon"
-import {tr} from "../i18n/t";
 import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+import I18n from 'react-native-i18n';
 
 export interface SearchBarProps {
 	onChange: (searchText) => void
@@ -37,7 +35,7 @@ export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
 					autoFocus={true}
 					enablesReturnKeyAutomatically={true}
 					onChangeText={value => this.onChangeText(value)}
-					placeholder={tr.Search}
+					placeholder={ I18n.t('Search') }
 					placeholderTextColor={"white"}
 					returnKeyType={"search"}
 					underlineColorAndroid={"transparent"}

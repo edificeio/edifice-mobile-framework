@@ -1,11 +1,10 @@
-import * as React from "react"
-import { StackNavigator } from "react-navigation"
-import Timeline, { TimelineHeader } from "../timeline/Timeline"
-import { navOptions } from "../utils/navHelper"
-import { tr } from "../i18n/t"
-import { NewsContent, NewsContentHeader } from "./NewsContent";
+import * as React from "react";
+import { StackNavigator } from "react-navigation";
+import { navOptions } from "../utils/navHelper";
 import { ResourceTitle } from "../ui/headers/ResourceTitle";
-import { FilterHeader, FilterHeaderConnect, FilterTimelineConnect } from './FilterTimeline';
+import Timeline, { TimelineHeader } from "./containers/Timeline";
+import { FilterHeaderConnect, FilterTimelineConnect } from "./containers/FilterTimeline";
+import { NewsContentHeader, NewsContent } from "./containers/NewsContent";
 
 export default StackNavigator(
 	{

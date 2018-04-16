@@ -1,13 +1,8 @@
-import I18n from "react-native-i18n";
-import { Conf } from "../Conf";
-import { adaptator } from "../infra/HTMLAdaptator";
-import { Me } from "../infra/Me";
-import { AsyncStorage } from "react-native";
-import { read } from "../infra/Cache";
-import { Connection } from "../infra/Connection";
-import { fillUserData } from "../auth/actions/fillUserData";
-
-console.log(Conf)
+import { adaptator } from "../../infra/HTMLAdaptator";
+import { read } from "../../infra/Cache";
+import { Connection } from "../../infra/Connection";
+import { Me } from "../../infra/Me";
+import I18n from 'react-native-i18n';
 
 let loadingState = 'idle';
 let awaiters = [];
@@ -178,19 +173,9 @@ const dataTypes = {
 	},
 }
 
-const excludeTypes = ["BLOG_COMMENT", "BLOG_POST_SUBMIT", "BLOG_POST_PUBLISH", "NEWS-COMMENT"]
+export const excludeTypes = ["BLOG_COMMENT", "BLOG_POST_SUBMIT", "BLOG_POST_PUBLISH", "NEWS-COMMENT"]
 
-const writeTypesParams = (availableApps) => {
-	let params = "";
-	for(let app in availableApps){
-		if(availableApps[app]){
-			params += "&type=" + app;
-		}
-	}
-	return params;
-}
-
-const fillData = async (availableApps, results: any[]) => {
+export const fillData = async (availableApps, results: any[]) => {
 	const newResults = []
 	for (let result of results) {
 		if(dataTypes[result.type] && availableApps[result.type]){
@@ -203,115 +188,4 @@ const fillData = async (availableApps, results: any[]) => {
 	}
 
 	return newResults
-}
-
-const storedFilters = async () => {
-	const apps = await AsyncStorage.getItem('timeline-filters');
-	if(!apps){
-		return { "BLOG": true, "NEWS": true, "SCHOOLBOOK": true };
-	}
-	return JSON.parse(apps);
-}
-const storeFilters = async (availableApps) => await AsyncStorage.setItem('timeline-filters', JSON.stringify(availableApps));
-
-export const pickFilters = dispatch => (selectedApps) => {
-	dispatch({
-		type: "PICK_FILTER_TIMELINE",
-		selectedApps: selectedApps
-	});
-}
-
-export const setFilters = dispatch => (availableApps) => {
-	dispatch({
-		type: "FILTER_TIMELINE",
-		availableApps: availableApps
-	});
-
-	storeFilters(availableApps);
-	listTimeline(dispatch)(0, availableApps);
-}
-
-export const clearTimeline = dispatch => () => {
-	dispatch({
-		type: "CLEAR_TIMELINE"
-	});
-}
-
-export const fetchTimeline = dispatch => async (availableApps) => {
-	dispatch({
-		type: "FETCH_TIMELINE",
-	});
-
-	try {
-		const news = await read(`/timeline/lastNotifications?page=0&${writeTypesParams(availableApps)}`)
-		let results = news.results.filter(n => excludeTypes.indexOf(n["event-type"]) === -1 && n.params);
-		const newNews = await fillData(availableApps, results)
-
-		if(newNews.length > 0){
-			dispatch({
-				type: "FETCH_NEW_TIMELINE",
-				news: newNews
-			});
-		}
-	} catch (e) {
-		console.log(e);
-	}
-}
-
-export const listTimeline = dispatch => async (page, availableApps) => {
-	dispatch({
-		type: "FETCH_TIMELINE",
-	})
-	
-	let loading = true;
-
-	setTimeout(() => {
-		if(loading){
-			dispatch({
-				type: "FAILED_LOAD_TIMELINE",
-			})
-		}
-	}, 5000);
-	
-	try {
-		await fillUserData();
-	
-		if(!availableApps){
-			availableApps = await storedFilters();
-			dispatch({
-				type: "FILTER_TIMELINE",
-				availableApps: availableApps
-			});
-
-			dispatch({
-				type: "PICK_FILTER_TIMELINE",
-				selectedApps: availableApps
-			});
-		}
-
-		const news = await read(`/timeline/lastNotifications?page=${page}&${writeTypesParams(availableApps)}`);
-		let results = news.results.filter(n => excludeTypes.indexOf(n["event-type"]) === -1 && n.params);
-		const newNews = await fillData(availableApps, results)
-
-		if(newNews.length > 0){
-			dispatch({
-				type: "APPEND_TIMELINE",
-				news: newNews
-			});
-		}
-		else{
-			dispatch({
-				type: "END_REACHED_TIMELINE",
-			});
-		}
-
-		loading = false;
-	} catch (e) {
-		console.log(e);
-		dispatch({
-			type: "FAILED_LOAD_TIMELINE",
-		});
-
-		loading = false;
-	}
 }

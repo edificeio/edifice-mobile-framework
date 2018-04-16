@@ -7,7 +7,10 @@ export const loadNotificationsPrefs = (dispatch) => async () => {
     const timelinePrefs = await preference('timeline');
     const newNotifs = defaultNotifs.map(notif => ({
             ...notif,
-            'push-notif': timelinePrefs.config[notif.key] ? timelinePrefs.config[notif.key]['push-notif'] : false
+            defaultFrequency: (timelinePrefs.config && timelinePrefs.config[notif.key]) ? timelinePrefs.config[notif.key].defaultFrequency : notif.defaultFrequency,
+            'push-notif': (
+                timelinePrefs.config && timelinePrefs.config[notif.key] && timelinePrefs.config[notif.key].defaultFrequency === 'IMMEDIATE'
+            ) ? timelinePrefs.config[notif.key]['push-notif'] : false
     }));
 
     dispatch({

@@ -1,5 +1,4 @@
 import { MessageStatus } from "../interfaces";
-import { PATH_AVATAR } from '../../constants/paths';
 import { ConversationState } from '../interfaces/ConversationState';
 import { Me } from "../../infra/Me";
 

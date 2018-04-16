@@ -6,7 +6,6 @@ import styles from "../../styles/index"
 import { ChatMessage } from "../components/ChatMessage"
 import { sameDay } from "../../utils/date"
 import { Row } from "../../ui"
-import { tr } from "../../i18n/t"
 import { View } from "react-native";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -91,7 +90,7 @@ export class ThreadContent extends React.Component<IThreadsProps, any> {
 		return (
 			<Row>
 				<Border />
-				<Text>{tr.today}</Text>
+				<Text>{ I18n.t('today') }</Text>
 				<Border />
 			</Row>
 		)
@@ -134,7 +133,9 @@ const filtering = (conversation: ConversationState, thread_id): Message[] => ([
 
 export default connect(
 	(state: any, props: any) => ({
-		messages: filtering(state.conversation, state.conversation.currentThread),
+		messages: state.conversation.threads.find(
+			t => t.thread_id === state.conversation.currentThread
+		) ? filtering(state.conversation, state.conversation.currentThread) : [],
 		headerHeight: state.ui.headerHeight,
 		refresh: state.conversation.refreshThreads,
 		currentThread: state.conversation.currentThread

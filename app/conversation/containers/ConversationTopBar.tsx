@@ -1,11 +1,11 @@
 import * as React from "react";
 import { Header, HeaderIcon, AppTitle } from "../../ui/headers/Header";
-import { tr } from "../../i18n/t";
 import { filterConversation } from '../actions/filter';
 import { connect } from "react-redux";
 import { SearchBar } from "../../ui/SearchBar";
 import { clearFilterConversation } from "../actions";
 import { clearPickedUsers } from '../actions/pickUser';
+import I18n from 'react-native-i18n';
 
 export class ConversationTopBar extends React.Component<{ 
 	navigation?: any, 
@@ -54,7 +54,7 @@ export class ConversationTopBar extends React.Component<{
 		return (
 			<Header>
 				<HeaderIcon onPress={ () => this.openSearch() } hidden={ this.props.conversationsIsEmpty } name={ "search" } />
-				<AppTitle>{tr.Conversation}</AppTitle>
+				<AppTitle>{ I18n.t("Conversation") }</AppTitle>
 				<HeaderIcon name={ "new_message" } iconSize={ 24 } onPress={ () => this.openNewConversation() } />
 			</Header>
 		);

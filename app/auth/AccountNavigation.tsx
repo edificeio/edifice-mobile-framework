@@ -1,7 +1,7 @@
 import * as React from "react"
 import { StackNavigator } from "react-navigation";
 import NotificationsSettings, { NotificationsSettingsHeader } from "./containers/NotificationsSettings";
-import { UserProfile } from "./containers/UserProfile";
+import UserProfile from "./containers/UserProfile";
 import I18n from 'react-native-i18n';
 import { navOptions } from "../utils/navHelper";
 

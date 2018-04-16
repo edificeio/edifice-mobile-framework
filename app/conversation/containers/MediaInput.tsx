@@ -2,7 +2,6 @@ import style from "glamorous-native";
 import * as React from "react";
 import { CommonStyles } from "../../styles/common/styles";
 import { Platform, View } from "react-native";
-import { tr } from "../../i18n/t";
 import { Row, IconOnOff } from "../../ui";
 import { ToggleIcon } from "../../ui/ToggleIcon";
 import { connect } from "react-redux";
@@ -10,6 +9,7 @@ import { Me } from "../../infra/Me";
 import { sendMessage } from "../actions/sendMessage";
 import { sendPhoto } from "../actions";
 import { Line } from '../../ui/Grid';
+import I18n from 'react-native-i18n';
 
 
 const ContainerFooterBar = style.view({
@@ -165,7 +165,7 @@ class MediaInput extends React.Component<{
 						multiline
 						onChangeText={(textMessage: string) => this.setState({ textMessage })}
 						onFocus={ () => this.focus() }
-						placeholder={tr.Write_a_message}
+						placeholder={ I18n.t('conversation-chatPlaceholder') }
 						underlineColorAndroid={"transparent"}
 						value={textMessage}
 						autoCorrect={ false }

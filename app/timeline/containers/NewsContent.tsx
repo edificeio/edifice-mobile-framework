@@ -1,18 +1,16 @@
-import style from "glamorous-native"
-import * as React from "react"
-import { View, Text, ScrollView } from "react-native"
-import { CommonStyles } from "../styles/common/styles";
-import { DateView } from "../ui/DateView"
-import { tr } from "../i18n/t"
-import { CenterPanel, Content, Header, LeftPanel, ArticleContainer, PageContainer } from '../ui/ContainerContent';
-import { Images } from "../ui/Images"
-import { Card, TouchCard } from '../ui/Card';
-import { SingleAvatar } from "../ui/avatars/SingleAvatar";
-import { Bold, Light, Paragraph, A } from "../ui/Typography";
-import { Preview } from "../ui/Preview";
-import { Row, Icon } from "../ui";
-import { ResourceTitle } from "../ui/headers/ResourceTitle";
-import ConnectionTrackingBar from "../ui/ConnectionTrackingBar";
+import style from "glamorous-native";
+import * as React from "react";
+import { View, Text, ScrollView } from "react-native";
+import I18n from 'react-native-i18n';
+import { ResourceTitle } from "../../ui/headers/ResourceTitle";
+import { LeftPanel, PageContainer, ArticleContainer, Header, CenterPanel } from "../../ui/ContainerContent";
+import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
+import { Bold, Light, Paragraph } from "../../ui/Typography";
+import { DateView } from "../../ui/DateView";
+import { Preview } from "../../ui/Preview";
+import { Images } from "../../ui/Images";
+import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
+import { TouchCard } from "../../ui/Card";
 
 export class NewsContentHeader extends React.Component<{ navigation?: any }, undefined> {
 	render() {
@@ -42,7 +40,7 @@ export class NewsContent extends React.Component<{ navigation?: any, expend?: bo
                     <CenterPanel>
                         <Bold>
                             {senderName}
-                            <Light> {tr.On} </Light>
+                            <Light> { I18n.t('On') } </Light>
                             {resourceName}
                         </Bold>
                         <DateView date={date} short={false} />

@@ -15,7 +15,6 @@ import { readNextConversation, fetchConversation, clearFilterConversation, findR
 import { deleteThread } from "../actions/deleteThread";
 import styles from "../../styles";
 import I18n from 'react-native-i18n';
-import { tr } from "../../i18n/t";
 import { openThread } from '../actions/thread';
 
 export interface IConversationsProps {
@@ -84,7 +83,7 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 				<ConnectionTrackingBar />
 				<ModalBox backdropOpacity={0.5} isVisible={this.state.deleteThread !== undefined}>
 					<ModalContent>
-						<Text>{tr.Are_you_sure}</Text>
+						<Text>{ I18n.t("common-confirm") }</Text>
 						<Text>{ I18n.t("conversation-deleteThread") }</Text>
 						<ButtonsOkCancel
 							onCancel={() => this.setState({ deleteThread: undefined })}

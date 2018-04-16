@@ -1,4 +1,3 @@
-import { PATH_AUTH, PATH_LOGIN, PATH_LOGOUT, PATH_RECOVER_PASSWORD, PATH_SIGNUP } from "../constants/paths"
 import { navigate } from "../utils/navHelper";
 import { Connection } from "../infra/Connection";
 import { getLogin } from "../utils/Store";

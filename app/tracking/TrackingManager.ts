@@ -11,10 +11,7 @@ catch(e){
 export class Tracking {
 	public static init() {
 		try{
-			// Issue with Typescript and react-native-firebase
-			// https://github.com/invertase/react-native-firebase/issues/774
-			//const crashlytics = firebase.fabric.crashlytics()
-			const crashlytics = firebase.app().fabric.crashlytics();
+			const crashlytics = firebase.crashlytics();
 			crashlytics.log("Crashlytics configuration done.");
 
 			const perfMonitoring = (firebase.app() as any).perf();
@@ -28,11 +25,16 @@ export class Tracking {
 		}
 	}
 
-	public static logEvent(name: string, params = null) {
+	public static logEvent(name: string, params?) {
 		if(!analytics){
 			return;
 		}
-		analytics.logEvent(name, params);
+		if(params){
+			analytics.logEvent(name, params);
+		}
+		else{
+			analytics.logEvent(name);
+		}
 	}
 
 	public static trackScreenView(currentScreen, navParams) {

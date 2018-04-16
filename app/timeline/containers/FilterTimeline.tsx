@@ -1,13 +1,13 @@
 import * as React from "react"
 import { View } from "react-native";
-import { Header, Title, HeaderAction, HeaderIcon } from '../ui/headers/Header';
 import I18n from 'react-native-i18n';
-import { ListItem, PageContainer } from '../ui/ContainerContent';
-import { setFilters, pickFilters } from '../actions/timeline';
-import { Bold } from "../ui/Typography";
-import { Checkbox } from "../ui/forms/Checkbox";
 import { connect } from "react-redux";
-import ConnectionTrackingBar from "../ui/ConnectionTrackingBar";
+import { pickFilters, setFilters } from "../actions/pickFilter";
+import { Header, HeaderIcon, Title, HeaderAction } from "../../ui/headers/Header";
+import { PageContainer, ListItem } from "../../ui/ContainerContent";
+import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
+import { Bold } from "../../ui/Typography";
+import { Checkbox } from "../../ui/forms/Checkbox";
 
 export class FilterHeader extends React.Component<{ navigation: any, pickFilters: (apps) => void, setFilters: (apps) => void, availableApps, selectedApps }, undefined> {
 	apply(){

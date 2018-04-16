@@ -26,7 +26,7 @@ export interface INewsState {
 	fetchFailed: boolean;
 }
 
-export const Timeline = (
+export default (
 	state: INewsState = {
 		endReached: false,
 		isFetching: false,

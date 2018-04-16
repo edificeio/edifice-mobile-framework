@@ -1,4 +1,4 @@
-import { monthsLongName, monthsName, tr } from "../i18n/t"
+import I18n from 'react-native-i18n';
 
 export function getTimeToStr(timestamp) {
 	if (sameDay(timestamp)) {
@@ -12,13 +12,13 @@ export function getTimeToStr(timestamp) {
 			(dateMn as any) = '0' + dateMn;
 		}
 
-		if (hours === 0) return tr.agoMinutes(mn)
-		else if (hours === 1) return tr.agoHour(hours)
-		else return tr.agoHours(hours)
+		if (hours === 0) return I18n.t("agoMinutes", { minute: mn })
+		else if (hours === 1) return I18n.t("agoHour", { hour : hours })
+		else return I18n.t("agoHours", { hours })
 	}
 	const date = new Date(timestamp)
 	const day = date.getDate()
-	const monthName = monthsLongName(date)
+	const monthName = I18n.strftime(date, "%b");
 	const year = date.getFullYear()
 	const nowYear = new Date().getFullYear()
 
@@ -44,7 +44,7 @@ export function getTimeToShortStr(timestamp) {
 	}
 	const date = new Date(timestamp)
 	const day = date.getDate()
-	const monthName = monthsName(date)
+	const monthName = I18n.strftime(date, "%b");
 
 	return `${day} ${monthName}`
 }

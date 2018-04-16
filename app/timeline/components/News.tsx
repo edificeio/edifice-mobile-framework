@@ -1,16 +1,15 @@
-import style from "glamorous-native"
-import * as React from "react"
+import style from "glamorous-native";
+import * as React from "react";
 import { View } from "react-native";
-import { INewsModel } from "../model/Timeline"
-import { CommonStyles } from "../styles/common/styles";
-import { DateView } from "../ui/DateView"
-import { tr } from "../i18n/t"
-import { CenterPanel, Content, Header, LeftPanel, ArticleContainer } from "../ui/ContainerContent"
-import { Images } from "../ui/Images"
-import { TouchCard } from '../ui/Card';
-import { SingleAvatar } from "../ui/avatars/SingleAvatar";
-import { Light, Bold } from "../ui/Typography";
-import { Preview } from "../ui/Preview";
+import { INewsModel } from "../reducer";
+import { ArticleContainer, LeftPanel, Header, CenterPanel } from "../../ui/ContainerContent";
+import { TouchCard } from "../../ui/Card";
+import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
+import { Bold, Light } from "../../ui/Typography";
+import { DateView } from "../../ui/DateView";
+import { Preview } from "../../ui/Preview";
+import { Images } from "../../ui/Images";
+import I18n from 'react-native-i18n';
 
 interface INewsProps extends INewsModel {
 	onPress?: (expend?: boolean) => void
@@ -42,7 +41,7 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
 						<CenterPanel>
 							<Bold>
 								{senderName}
-								<Light> {tr.On} </Light>
+								<Light> { I18n.t('On') } </Light>
 								{resourceName}
 							</Bold>
 							<DateView date={date} short={false} />

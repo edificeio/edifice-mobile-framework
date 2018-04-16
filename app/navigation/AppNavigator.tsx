@@ -1,24 +1,24 @@
 import { NavigationContainer, StackNavigator } from "react-navigation";
-import { tr } from "../i18n/t"
 import { tabNavigator, tabRootOptions } from "../utils/navHelper";
 import TimelineNavigator from "../timeline/TimelineNavigator";
 import ConversationNavigator from "../conversation/ConversationNavigator";
 import Login from "../auth/Login";
 import { View } from 'react-native';
 import AccountNavigation from "../auth/AccountNavigation";
+import I18n from 'react-native-i18n';
 
 const MainNavigator = tabNavigator({
 	Nouveautes: {
 		screen: TimelineNavigator,
-		navigationOptions: () => tabRootOptions(tr.News, "nouveautes"),
+		navigationOptions: () => tabRootOptions(I18n.t('News'), "nouveautes"),
 	},
 	Conversation: {
 		screen: ConversationNavigator,
-		navigationOptions: () => tabRootOptions(tr.Conversation, "conversation"),
+		navigationOptions: () => tabRootOptions(I18n.t("Conversation"), "conversation"),
 	},
 	Profile: {
 		screen: AccountNavigation,
-		navigationOptions: () => tabRootOptions(tr.Profile, "profile"),
+		navigationOptions: () => tabRootOptions(I18n.t('Profile'), "profile"),
 	},
 })
 

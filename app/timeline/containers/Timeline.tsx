@@ -1,19 +1,19 @@
 import style from "glamorous-native"
 import * as React from "react"
 import { FlatList, Image, ScrollView, Modal, RefreshControl, Button } from 'react-native';
-import { News } from "./News"
-import { View } from "react-native"
-import styles from "../styles"
+import { View } from "react-native";
 import { connect } from "react-redux"
-import { listTimeline, fetchTimeline } from "../actions/timeline"
-import { Tracking } from "../tracking/TrackingManager";
-import { Header, HeaderIcon, Title, AppTitle } from '../ui/headers/Header';
-import { Icon, Loading, Row, FlatButton } from "../ui";
 import I18n from 'react-native-i18n';
-import { EmptyScreen } from "../ui/EmptyScreen";
-import ConnectionTrackingBar from "../ui/ConnectionTrackingBar";
-import { PageContainer } from '../ui/ContainerContent';
-import { ErrorMessage } from '../ui/Typography';
+import { Header, HeaderIcon, AppTitle } from "../../ui/headers/Header";
+import { News } from "../components/News";
+import styles from "../../styles";
+import { PageContainer } from "../../ui/ContainerContent";
+import { ErrorMessage } from "../../ui/Typography";
+import { FlatButton, Loading } from "../../ui";
+import { EmptyScreen } from "../../ui/EmptyScreen";
+import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
+import { listTimeline, fetchTimeline } from "../actions/list";
+import { Tracking } from "../../tracking/TrackingManager";
 
 export class TimelineHeader extends React.Component<{ navigation?: any }, undefined> {
 	render() {
@@ -120,7 +120,7 @@ class Timeline extends React.Component<TimelineProps, undefined> {
 
 	emptyScreen(){
 		return <EmptyScreen 
-			image={ require('../../assets/images/empty-screen/espacedoc.png') } 
+			image={ require('../../../assets/images/empty-screen/espacedoc.png') } 
 			text={ I18n.t('timeline-emptyScreenText') } 
 			title={ I18n.t('timeline-emptyScreenTitle') } />
 	}

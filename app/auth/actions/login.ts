@@ -5,9 +5,10 @@ import { Conf } from "../../Conf";
 import { setLogin } from "../../utils/Store";
 import I18n from 'react-native-i18n';
 import { Tracking } from '../../tracking/TrackingManager';
+import firebase from "react-native-firebase";
 
 export const readCurrentUser = dispatch => async () => {
-    const userinfo = await read('/userbook/api/person');
+    const userinfo = await read('/userbook/api/person', false);
     
     dispatch({
         type: "LOGIN_AUTH",
@@ -15,8 +16,11 @@ export const readCurrentUser = dispatch => async () => {
 		userbook: userinfo.result["0"]
     })
 
-    console.log('Navigating to main');
-	navigate("Main");
+	const notificationOpen = await firebase.notifications().getInitialNotification();
+	if (!notificationOpen) {
+		console.log('Navigating to main');
+		navigate("Main");
+	}
 }
 
 const getFormData = data => {
@@ -70,7 +74,7 @@ export const login = dispatch => async (email, password) => {
 		if (data.indexOf('/auth') !== -1 && data.indexOf('error') !== -1) {
 			dispatch({
 				type: 'LOGIN_ERROR_AUTH',
-				error: I18n.t('Incorrect_login_or_password'),
+				error: I18n.t('auth-loginFailed'),
 			});
 
             Tracking.logEvent('failedLogin', { email: email });
@@ -87,6 +91,9 @@ export const login = dispatch => async (email, password) => {
 				email: email,
 				password: password
 			});
+
+			const token = await firebase.messaging().getToken();
+			fetch(`${ Conf.platform }/timeline/pushNotif/fcmToken?fcmToken=${ token }`, { method: 'put' });
 
 			await readCurrentUser(dispatch)();
             Tracking.logEvent('login', { email: email });

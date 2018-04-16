@@ -23,8 +23,9 @@ export class UserProfile extends React.Component<{ logout: (login: string) => Pr
 
 	public disconnectBox = () => (
 		<ModalContent>
-			<LightP>{ I18n.t('Are_you_sure') }</LightP>
-			<LightP>{ I18n.t('to_disconnect') }</LightP>
+
+			<LightP>{ I18n.t('common-confirm') }</LightP>
+			<LightP>{ I18n.t('auth-disconnectConfirm') }</LightP>
 			<ButtonsOkCancel
 				onCancel={() => this.setState({ showDisconnect: false })}
 				onValid={() => this.disconnect()}

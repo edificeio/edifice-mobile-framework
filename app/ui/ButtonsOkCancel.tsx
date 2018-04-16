@@ -1,7 +1,7 @@
 import styled from "glamorous-native"
 import * as React from "react";
 import { ButtonTextIcon } from "./ButtonTextIcon"
-import {tr} from "../i18n/t";
+import I18n from 'react-native-i18n';
 
 export interface ButtonsOkCancelProps {
 	onCancel: () => void
@@ -20,6 +20,6 @@ const ButtonStyled = styled.view({
 export const ButtonsOkCancel = ({ onCancel, onValid, title }: ButtonsOkCancelProps) => (
 	<ButtonStyled>
 		<ButtonTextIcon onPress={() => onValid()} title={title} />
-		<ButtonTextIcon onPress={() => onCancel()} title={tr.Cancel} />
+		<ButtonTextIcon onPress={() => onCancel()} title={ I18n.t("Cancel") } />
 	</ButtonStyled>
 )

@@ -88,6 +88,8 @@ export const Line = style.view({
 	width: '100%'
 })
 
+
+// deprecated, too many props. Use Line and add new components for specific cases (touchable, grid, ...)
 export const Row = (props: RowProperties) => {
 	const { disabled = null, size = null, height = null } = props
 	const newProps: NewProps = {

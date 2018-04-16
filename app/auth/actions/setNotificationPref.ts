@@ -6,7 +6,8 @@ export const setNotificationPref = (dispatch) => async (notif, value, notificati
     const newPrefs = notificationsPrefs.reduce((acc, cur, i) => { 
         acc[cur.key] = { 
             ...cur,
-            'push-notif': notif.key === cur.key ? value : cur['push-notif'] === true 
+            'push-notif': notif.key === cur.key ? value : cur['push-notif'] === true,
+            defaultFrequency: (notif.key === cur.key && value) ? 'IMMEDIATE' : cur.defaultFrequency
         };
         return acc;
     }, {});

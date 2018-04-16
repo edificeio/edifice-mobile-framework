@@ -10,7 +10,6 @@ import { Me } from "../../infra/Me";
 import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
 import { Carousel } from "../../ui/Carousel";
 import { DateView } from "../../ui/DateView";
-import { tr } from "../../i18n/t";
 import { Line, Col } from "../../ui";
 
 const Item = style.view({
@@ -89,7 +88,7 @@ export class ChatMessage extends React.Component<{
 						</TouchableOpacity>
 					)}
 					{ (status === undefined || status === MessageStatus.sent) && <DateView date={date} /> }
-					{ status === MessageStatus.sending && <Text>{tr.Sending_msg}</Text> }
+					{ status === MessageStatus.sending && <Text>{ I18n.t('conversation-sendingMessage') }</Text> }
 					{ status === MessageStatus.failed && <Text style={{ color: CommonStyles.error, fontSize: 12 }}>{ I18n.t('conversation-failedSent') }</Text> }
 				</MessageContainer>
 			</MessageBlock>

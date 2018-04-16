@@ -40,6 +40,10 @@ export class NotificationsSettings extends React.Component<{
         this.props.setNotificationPref(pref, value, this.props.notificationsPrefs);
     }
 
+    isAllowed(notifPref){
+        return this.props.availableApps.hasOwnProperty(notifPref.type) || notifPref.type === 'MESSAGERIE';
+    }
+
 	public render() {
         if(this.props.notificationsPrefs.length === 0){
             return <Loading />;
@@ -49,7 +53,7 @@ export class NotificationsSettings extends React.Component<{
 				<ConnectionTrackingBar />
                 <ScrollView>
                     <H4>{ I18n.t('directory-notificationsTitle') }</H4>
-                    { this.props.notificationsPrefs.filter(nn => this.props.availableApps.hasOwnProperty(nn.type)).map(pref => <NotifPrefLine 
+                    { this.props.notificationsPrefs.filter(nn => this.isAllowed(nn)).map(pref => <NotifPrefLine 
                         key={ pref.key }
                         i18nKey={ pref.key } 
                         value={ pref['push-notif'] } 
