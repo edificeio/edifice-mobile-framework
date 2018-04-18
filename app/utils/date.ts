@@ -12,7 +12,7 @@ export function getTimeToStr(timestamp) {
 			(dateMn as any) = '0' + dateMn;
 		}
 
-		if (hours === 0) return I18n.t("agoMinutes", { minute: mn })
+		if (hours === 0) return I18n.t("agoMinutes", { minutes: mn })
 		else if (hours === 1) return I18n.t("agoHour", { hour : hours })
 		else return I18n.t("agoHours", { hours })
 	}
