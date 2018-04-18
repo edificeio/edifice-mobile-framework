@@ -45,7 +45,7 @@ const Container = style.touchableOpacity(
 
 export const Toggle = ({ checked, onUncheck, onCheck }: { checked: boolean, onUncheck?: () => void, onCheck?: () => void}) => (
     <View style={{ width: 40, height: 22 }}>
-        <Container checked={ checked } />
+        <Container onPress={ () => checked ? (onUncheck && onUncheck()) : (onCheck && onCheck()) } checked={ checked } />
         <TapCircle onPress={ () => checked ? (onUncheck && onUncheck()) : (onCheck && onCheck()) } checked={ checked } />
     </View>
 )
