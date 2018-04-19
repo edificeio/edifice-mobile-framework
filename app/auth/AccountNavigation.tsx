@@ -14,7 +14,8 @@ export default StackNavigator(
 		notificationsSettings: {
 			screen: NotificationsSettings,
 			navigationOptions: ({ navigation }) => ({
-				header: <NotificationsSettingsHeader navigation={ navigation }/>
+				header: <NotificationsSettingsHeader navigation={ navigation }/>,
+				tabBarVisible: false
 			})
 		}
 	}
