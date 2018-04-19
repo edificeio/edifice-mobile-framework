@@ -2,6 +2,7 @@ import style from "glamorous-native"
 import * as React from "react";
 import { RowProperties } from "../ui/index";
 import I18n from 'react-native-i18n';
+import { Icon } from "./icons/Icon";
 
 const Container = style.touchableOpacity({
 	alignItems: 'center',
@@ -12,17 +13,19 @@ const Container = style.touchableOpacity({
 	height: 46,
 	justifyContent: 'flex-start',
 	marginTop: 20,
-	paddingHorizontal: 13
+	paddingHorizontal: 15
 });
 
 const LinkStyle = style.text({
 	fontSize: 14,
+	flex: 1
 }, ({ color }) => ({
-	color: color || '#000'
+	color: color || '#414355'
 }));
 
-export const ButtonLine = ({ onPress, title, color }: { onPress: () => any, title: string, color?: string }) => (
+export const ButtonLine = ({ onPress, title, color, hideIcon }: { onPress: () => any, title: string, color?: string, hideIcon?: boolean }) => (
 	<Container onPress={() => onPress()}>
 		<LinkStyle color={ color }>{ I18n.t(title) }</LinkStyle>
+		{ !hideIcon && <Icon name="arrow_down" color={ "#868CA0" } style={{ transform: [{ rotate: '270deg'}]}} />}
 	</Container>
 )

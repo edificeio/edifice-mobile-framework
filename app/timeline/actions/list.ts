@@ -82,6 +82,7 @@ export const listTimeline = dispatch => async (page, availableApps) => {
 		}
 
 		loading = false;
+		return newNews;
 	} catch (e) {
 		console.log(e);
 		dispatch({
@@ -89,5 +90,6 @@ export const listTimeline = dispatch => async (page, availableApps) => {
 		});
 
 		loading = false;
+		return [];
 	}
 }

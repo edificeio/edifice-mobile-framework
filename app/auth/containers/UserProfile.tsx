@@ -42,7 +42,7 @@ export class UserProfile extends React.Component<{ logout: (login: string) => Pr
 					{this.disconnectBox()}
 				</ModalBox>
 				<ButtonLine title={ 'directory-notificationsTitle' } onPress={ () => this.props.navigation.navigate('notificationsSettings') } />
-				<ButtonLine title={ 'directory-disconnectButton' } color={ "#F64D68" } onPress={() => this.setState({ showDisconnect: true })} />
+				<ButtonLine title={ 'directory-disconnectButton' } hideIcon={ true } color={ "#F64D68" } onPress={() => this.setState({ showDisconnect: true })} />
 			</PageContainer>
 		)
 	}
