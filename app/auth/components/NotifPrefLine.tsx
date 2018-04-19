@@ -9,7 +9,7 @@ import { Toggle } from "../../ui/forms/Toggle";
 
 export const NotifPrefLine = ({ i18nKey, value, onCheck, onUncheck }) => {
 	return (
-        <TouchCard style={{ marginBottom: 10, marginTop: 10 }} onPress={ () => value ? onUncheck() : onCheck() }>
+        <TouchCard style={{ marginBottom: 10, marginTop: 10, paddingHorizontal: 20 }} onPress={ () => value ? onUncheck() : onCheck() }>
             <Line style={{ justifyContent: 'space-between', alignItems: 'center' }}>
                 <Label style={{ flex: 1 }}>{ I18n.t(i18nKey.replace('.', '-')) }</Label>
                 <Toggle checked={ value } onCheck={ () => onCheck() } onUncheck={ () => onUncheck() } />

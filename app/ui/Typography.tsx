@@ -63,7 +63,7 @@ export const H4 = style.text({
 	fontFamily: CommonStyles.primaryFontFamily,
 	fontWeight: "400",
 	marginTop: 40,
-	paddingHorizontal: 16
+	paddingHorizontal: 20
 });
 
 export const H1 = style.text({
