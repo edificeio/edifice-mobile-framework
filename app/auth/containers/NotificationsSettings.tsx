@@ -9,7 +9,7 @@ import I18n from 'react-native-i18n';
 import { H4 } from "../../ui/Typography";
 import { loadNotificationsPrefs } from '../actions/loadNotificationsPrefs';
 import { NotifPrefLine } from "../components/NotifPrefLine";
-import { setNotificationPref } from "../actions/setNotificationPref";
+import { setNotificationPref, excludeNotifTypes } from '../actions/setNotificationPref';
 import { CommonStyles } from "../../styles/common/styles";
 import { Loading } from "../../ui";
 
@@ -41,7 +41,7 @@ export class NotificationsSettings extends React.Component<{
     }
 
     isAllowed(notifPref){
-        return this.props.availableApps.hasOwnProperty(notifPref.type) || notifPref.type === 'MESSAGERIE';
+        return (this.props.availableApps.hasOwnProperty(notifPref.type) || notifPref.type === 'MESSAGERIE') && excludeNotifTypes.indexOf(notifPref.key) === -1;
     }
 
 	public render() {
