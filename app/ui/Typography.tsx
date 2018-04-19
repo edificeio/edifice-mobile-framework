@@ -58,11 +58,11 @@ export const A = style.text({
 });
 
 export const H4 = style.text({
-	color: '#000',
+	color: '#414355',
 	fontSize: 14,
 	fontFamily: CommonStyles.primaryFontFamily,
 	fontWeight: "400",
-	marginTop: 20,
+	marginTop: 40,
 	paddingHorizontal: 16
 });
 

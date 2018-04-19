@@ -1,4 +1,5 @@
 import { AsyncStorage } from "react-native";
+import * as reducerActions from './reducerActions';
 
 interface IParams {
 	blogTitle: string
@@ -38,69 +39,13 @@ export default (
 	},
 	action
 ) => {
-	//	console.log(action)
-	switch (action.type) {
-		case 'INVALIDATE_TIMELINE':
-			return {
-				...state,
-				refresh: true,
-				endReached: false,
-				isFetching: false,
-				news: []
-			}
-		case 'PICK_FILTER_TIMELINE':
-			return {
-				...state,
-				selectedApps: action.selectedApps
-			}
-		case 'FILTER_TIMELINE':
-			return {
-				...state,
-				news: [],
-				availableApps: action.availableApps
-			}
-		case "APPEND_TIMELINE":
-			return {
-				...state,
-				news: [...state.news, ...action.news.filter(n => state.news.find(n2 => n2.id === n.id) === undefined)],
-				isFetching: false
-			}
-		case "FETCH_NEW_TIMELINE":
-			return {
-				...state,
-				news: [...action.news.filter(e => state.news.find(n => n.id === e.id) === undefined), ...state.news],
-				isFetching: false
-			}
-		case "END_REACHED_TIMELINE":
-			return {
-				...state,
-				news: [...state.news],
-				endReached: true,
-				isFetching: false
-			}
-		case "FETCH_TIMELINE":
-			return {
-				...state,
-				isFetching: true,
-				refresh: false,
-				endReached: false,
-				fetchFailed: false
-			}
-		case "FAILED_LOAD_TIMELINE":
-			return {
-				...state,
-				isFetching: false,
-				endReached: true,
-				fetchFailed: true
-			}
-		case "CLEAR_TIMELINE":
-			return {
-				...state,
-				endReached: false,
-				isFetching: false,
-				news: [],
-			}
-		default:
-			return state
+	for(let actionType in reducerActions){
+        if(action.type === actionType){
+            return reducerActions[actionType](state, action);
+        }
+    }
+
+	return {
+        ...state
 	}
 }

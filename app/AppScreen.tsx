@@ -6,9 +6,10 @@ import { AppNavigator } from "./navigation/AppNavigator"
 import { Tracking } from "./tracking/TrackingManager"
 import ProgressBar from "./ui/ProgressBar";
 import firebase from "react-native-firebase";
-import conversationHandle from './conversation/NotifHandler';
 import { connect } from "react-redux";
 import { readCurrentUser } from './auth/actions/login';
+import { Conf } from "./Conf";
+import pushNotifications from "./pushNotifications";
 
 function getCurrentRoute(navigationState) {
 	if (!navigationState) {
@@ -40,7 +41,7 @@ export class AppScreen extends React.Component<any, undefined> {
 			await this.props.readCurrentUser();
 			const action = notificationOpen.action;
 			const notification = notificationOpen.notification;
-			this.props.conversationHandle(notification.data);
+			this.props.handleNotifications(notification.data)
 		}
 	}
 
@@ -71,7 +72,7 @@ export class AppScreen extends React.Component<any, undefined> {
 export default connect(
 	state => ({}),
 	dispatch => ({
-		conversationHandle: notifData => conversationHandle(dispatch)(notifData),
-		readCurrentUser: notifData => readCurrentUser(dispatch)()
+		readCurrentUser: notifData => readCurrentUser(dispatch)(),
+		handleNotifications: data => pushNotifications(dispatch)(data)
 	})
 )(AppScreen);
