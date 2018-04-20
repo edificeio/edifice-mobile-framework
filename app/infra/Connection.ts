@@ -1,8 +1,29 @@
 import { NetInfo } from "react-native";
+import { Tracking } from "../tracking/TrackingManager";
 
 export const Connection = {
     isOnline: false
 };
 
-NetInfo.isConnected.fetch().then(isConnected => Connection.isOnline = isConnected);
-NetInfo.isConnected.addEventListener('connectionChange', (isConnected) => Connection.isOnline = isConnected);
+let notifyTimer;
+
+const notifyConnectionError = () => {
+    if(!notifyTimer || notifyTimer.getHours() != (new Date()).getHours()){
+        notifyTimer = new Date();
+        Tracking.logEvent('connectionProblem');
+    }
+}
+
+
+NetInfo.isConnected.fetch().then(isConnected => {
+    Connection.isOnline = isConnected;
+    if(!isConnected){
+        notifyConnectionError();
+    }
+});
+NetInfo.isConnected.addEventListener('connectionChange', (isConnected) => {
+    Connection.isOnline = isConnected;
+    if(!isConnected){
+        notifyConnectionError();
+    }
+});
