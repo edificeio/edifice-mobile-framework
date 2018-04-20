@@ -37,7 +37,8 @@ export const sendMessage = dispatch => async (data: Message) => {
 
 		Tracking.logEvent('sentMessage', {
 			application: 'conversation',
-			length: data.body.length - 9
+			length: data.body.length - 9,
+			nbRecipients: data.to.length + (data.cc || []).length
 		});
 		
 		dispatch({
