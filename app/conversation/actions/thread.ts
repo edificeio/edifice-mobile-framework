@@ -32,16 +32,18 @@ export const fetchThread = dispatch => async (threadId: string) => {
 export const readThread = dispatch => async (threadId: string) => {
 	try{
 		const messages = await read(`/conversation/thread/messages/${threadId}`);
-
+		let unread = 0;
 		for(let message of messages){
 			if(!message.unread){
 				continue;
 			}
+			unread ++;
 			fetch(`${Conf.platform}/conversation/message/${message.id}`);
 		}
 
 		Tracking.logEvent('readConversation', {
-			application: 'conversation'
+			application: 'conversation',
+			unread: unread
 		});
 
 		dispatch({
