@@ -7,7 +7,7 @@ import { storedFilters } from './actions/storedFilters';
 const openNotif = {
     '/schoolbook': async (data, latestNews) => {
         if(!data.resourceUri || data.resourceUri.indexOf('word') === -1){
-            navigate('Timeline');
+            navigate('notifications');
             return;
         }
         const wordId = data.resourceUri.split('word/')[1];
@@ -20,7 +20,7 @@ const openNotif = {
 			'articleId': item.id
 		});
 		
-		navigate('NewsContent', { news: item, expend: true });
+		navigate('newsContent', { news: item, expend: true });
     },
     '/actualites': data => {
 

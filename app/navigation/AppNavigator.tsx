@@ -8,15 +8,15 @@ import AccountNavigation from "../auth/AccountNavigation";
 import I18n from 'react-native-i18n';
 
 const MainNavigator = tabNavigator({
-	Nouveautes: {
+	timeline: {
 		screen: TimelineNavigator,
 		navigationOptions: () => tabRootOptions(I18n.t('News'), "nouveautes"),
 	},
-	Conversation: {
+	conversation: {
 		screen: ConversationNavigator,
 		navigationOptions: () => tabRootOptions(I18n.t("Conversation"), "conversation"),
 	},
-	Profile: {
+	profile: {
 		screen: AccountNavigation,
 		navigationOptions: () => tabRootOptions(I18n.t('Profile'), "profile"),
 	},

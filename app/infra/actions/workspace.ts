@@ -1,5 +1,6 @@
 import ImagePicker from 'react-native-image-picker';
 import { Conf } from '../../Conf';
+import { Tracking } from '../../tracking/TrackingManager';
 
 console.log(ImagePicker);
 
@@ -34,5 +35,8 @@ export const uploadImage = async (uri: string) => {
         },
     });
     const file = await response.json();
+    Tracking.logEvent('sentFile', {
+        type: 'image/jpeg'
+    });
     return `/workspace/document/${file._id}`;
 }

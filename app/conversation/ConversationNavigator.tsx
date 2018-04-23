@@ -8,7 +8,7 @@ import ThreadContent from "./containers/ThreadContent";
 
 export default StackNavigator(
 	{
-		conversation: {
+		listThreads: {
 			screen: Conversations,
 			navigationOptions: ({ navigation }) => ({
 				header: <ConversationTopBar navigation={navigation} />,

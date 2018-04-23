@@ -32,7 +32,8 @@ export const sendMessage = dispatch => async (data: Message) => {
 				cc: data.cc,
 				subject: data.subject,
 			}),
-		})
+		});
+		console.log(response);
 		let json = await response.json();
 
 		Tracking.logEvent('sentMessage', {

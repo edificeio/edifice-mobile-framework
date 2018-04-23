@@ -6,6 +6,7 @@ import { SearchBar } from "../../ui/SearchBar";
 import { clearFilterConversation } from "../actions";
 import { clearPickedUsers } from '../actions/pickUser';
 import I18n from 'react-native-i18n';
+import { Tracking } from "../../tracking/TrackingManager";
 
 export class ConversationTopBar extends React.Component<{ 
 	navigation?: any, 
@@ -39,6 +40,7 @@ export class ConversationTopBar extends React.Component<{
 	openSearch(){
 		this.setState({ searching: true });
 		this.props.filter('');
+		Tracking.logEvent('searchConversation');
 	}
 
 	openNewConversation(){

@@ -8,20 +8,20 @@ import { NewsContentHeader, NewsContent } from "./containers/NewsContent";
 
 export default StackNavigator(
 	{
-		Timeline: {
+		notifications: {
 			navigationOptions: ({ navigation }) => navOptions({ 
 				header: <TimelineHeader navigation={ navigation } />
 			}, navigation),
 			screen: Timeline
 		},
-		FilterTimeline: {
+		filterTimeline: {
 			navigationOptions: ({ navigation }) => navOptions({ 
 				header: <FilterHeaderConnect navigation={ navigation } />,
 				tabBarVisible: false
 			}, navigation),
 			screen: FilterTimelineConnect
 		},
-		NewsContent: {
+		newsContent: {
 			navigationOptions: ({ navigation }) => navOptions({ 
 				header: <NewsContentHeader navigation={ navigation } />,
 				tabBarVisible: false

@@ -8,10 +8,14 @@ import { PageContainer, ListItem } from "../../ui/ContainerContent";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { Bold } from "../../ui/Typography";
 import { Checkbox } from "../../ui/forms/Checkbox";
+import { Tracking } from "../../tracking/TrackingManager";
 
 export class FilterHeader extends React.Component<{ navigation: any, pickFilters: (apps) => void, setFilters: (apps) => void, availableApps, selectedApps }, undefined> {
 	apply(){
 		this.props.setFilters(this.props.selectedApps);
+		Tracking.logEvent('filterTimeline', {
+			filterBy: JSON.stringify(this.props.selectedApps)
+		});
 		this.props.navigation.goBack();
 	}
 

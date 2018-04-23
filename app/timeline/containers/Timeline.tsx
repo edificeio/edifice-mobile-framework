@@ -19,7 +19,7 @@ export class TimelineHeader extends React.Component<{ navigation?: any }, undefi
 	render() {
 		return (
             <Header>
-				<HeaderIcon onPress={ () => this.props.navigation.navigate('FilterTimeline') } name={ "filter" } />
+				<HeaderIcon onPress={ () => this.props.navigation.navigate('filterTimeline') } name={ "filter" } />
 				<AppTitle>{ I18n.t('News') }</AppTitle>
 				<HeaderIcon name={ "filter" } hidden={ true } />
             </Header>
@@ -66,7 +66,7 @@ class Timeline extends React.Component<TimelineProps, undefined> {
 			'articleId': item.id
 		});
 		
-		this.props.navigation.navigate('NewsContent', { news: item, expend: expend });
+		this.props.navigation.navigate('newsContent', { news: item, expend: expend });
 	}
 
 	componentWillReceiveProps(nextProps){

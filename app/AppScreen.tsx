@@ -11,17 +11,6 @@ import { readCurrentUser } from './auth/actions/login';
 import { Conf } from "./Conf";
 import pushNotifications from "./pushNotifications";
 
-function getCurrentRoute(navigationState) {
-	if (!navigationState) {
-		return null
-	}
-	const route = navigationState.routes[navigationState.index]
-	if (route.routes) {
-		return getCurrentRoute(route)
-	}
-	return route
-}
-
 export let navigationRef = null
 
 export class AppScreen extends React.Component<any, undefined> {
@@ -41,7 +30,8 @@ export class AppScreen extends React.Component<any, undefined> {
 			await this.props.readCurrentUser();
 			const action = notificationOpen.action;
 			const notification = notificationOpen.notification;
-			this.props.handleNotifications(notification.data)
+			this.props.handleNotifications(notification.data);
+			Tracking.logEvent('openNotificationPush');
 		}
 	}
 
@@ -55,11 +45,8 @@ export class AppScreen extends React.Component<any, undefined> {
 				<ProgressBar />
 				<AppNavigator
 					onNavigationStateChange={(prevState, currentState) => {
-						const currentRoute = getCurrentRoute(currentState)
-						const prevRoute = getCurrentRoute(prevState)
-
-						if (prevRoute.routeName !== currentRoute.routeName) {
-							Tracking.trackScreenView(currentRoute.routeName, currentRoute.params)
+						if(currentState.routes[0].routes[currentState.routes[0].index].index > 0){
+							Tracking.logEvent('menuTab', { tab: currentState.routes[0].routes[currentState.routes[0].index].routeName })
 						}
 					}}
 					ref={nav => this.setNavigator(nav)}
