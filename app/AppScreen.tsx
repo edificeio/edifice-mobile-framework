@@ -45,7 +45,7 @@ export class AppScreen extends React.Component<any, undefined> {
 				<ProgressBar />
 				<AppNavigator
 					onNavigationStateChange={(prevState, currentState) => {
-						if(currentState.routes[0].routes[currentState.routes[0].index].index > 0){
+						if(currentState.routes && currentState.routes[0].routes && currentState.routes[0].routes[currentState.routes[0].index].index > 0){
 							Tracking.logEvent('menuTab', { tab: currentState.routes[0].routes[currentState.routes[0].index].routeName })
 						}
 					}}
