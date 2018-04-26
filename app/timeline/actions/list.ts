@@ -47,7 +47,7 @@ export const listTimeline = dispatch => async (page, availableApps) => {
 				type: "FAILED_LOAD_TIMELINE",
 			})
 		}
-	}, 5000);
+	}, 8000);
 	
 	try {
 		await fillUserData();

@@ -5,28 +5,30 @@ import { listTimeline } from './actions/list';
 import { storedFilters } from './actions/storedFilters';
 
 const openNotif = {
-    '/schoolbook': async (data, latestNews) => {
+    '/schoolbook': (data, latestNews) => {
         if(!data.resourceUri || data.resourceUri.indexOf('word') === -1){
             navigate('notifications');
             return;
         }
         const wordId = data.resourceUri.split('word/')[1];
-        const item = latestNews.find(n => n.articleId === wordId && n.application === 'schoolbook');
-        Tracking.logEvent('readNews', {
-			'application': item.application,
-			'articleName': item.title,
-			'authorName': item.senderName,
-			'published': item.date,
-			'articleId': item.id
-		});
-		
-		navigate('newsContent', { news: item, expend: true });
+        return latestNews.find(n => n.resourceId === wordId && n.application === 'schoolbook');
     },
-    '/actualites': data => {
-
+    '/actualites': (data, latestNews) => {
+        if (data.resourceUri.indexOf('/info') === -1) {
+			navigate('notifications');
+            return;
+        }
+        
+        const split = data.resourceUri.split('/');
+		const infoId = split[split.length -1];
+        return latestNews.find(n => n.resourceId === infoId && n.application === 'blog');
     },
-    '/blog': data => {
+    '/blog': (data, latestNews) => {
+        if (!data["sub-resource"]) {
+			return;
+		}
 
+        return latestNews.find(n => n.resourceId === data["sub-resource"] && n.application === 'blog');
     }
 }
 
@@ -35,7 +37,20 @@ export default dispatch => async notificationData => {
         if(notificationData.resourceUri.startsWith(path)){
             const availableApps = await storedFilters();
             const latestNews = await listTimeline(dispatch)(0, availableApps);
-            openNotif[path](notificationData, latestNews);
+            const item = openNotif[path](notificationData, latestNews);
+            if(item){
+                Tracking.logEvent('readNews', {
+                    'application': item.application,
+                    'articleName': item.title,
+                    'authorName': item.senderName,
+                    'published': item.date,
+                    'articleId': item.id
+                });
+                navigate('newsContent', { news: item, expend: true });
+            }
+            else{
+                navigate('notifications');
+            }
         }
     }
 }

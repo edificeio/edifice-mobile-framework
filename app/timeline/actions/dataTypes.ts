@@ -3,6 +3,7 @@ import { read } from "../../infra/Cache";
 import { Connection } from "../../infra/Connection";
 import { Me } from "../../infra/Me";
 import I18n from 'react-native-i18n';
+import { Conf } from "../../Conf";
 
 let loadingState = 'idle';
 let awaiters = [];
@@ -20,8 +21,13 @@ const loadSchoolbooks = (): Promise<Array<any>> => {
 		loadingState = 'loading';
 		awaiters.push(() => resolve(schoolbooks));
 		if(Me.session.type.indexOf('Student') !== -1){
-			const messages = await read(`/schoolbook/list/0/${Me.session.userId}`);
-			schoolbooks = [...schoolbooks, ...messages];
+			try{
+				const messages = await read(`/schoolbook/list/0/${Me.session.userId}`);
+				schoolbooks = [...schoolbooks, ...messages];
+			}
+			catch(e){
+				console.log(e);
+			}
 		}
 		else{
 			for(let child of Me.session.children){

@@ -30,7 +30,7 @@ export class AppScreen extends React.Component<any, undefined> {
 			await this.props.readCurrentUser();
 			const action = notificationOpen.action;
 			const notification = notificationOpen.notification;
-			this.props.handleNotifications(notification.data);
+			this.props.handleNotifications(JSON.parse(notification.data.params));
 			Tracking.logEvent('openNotificationPush');
 		}
 	}
