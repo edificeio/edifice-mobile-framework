@@ -21,14 +21,16 @@ const openNotif = {
         
         const split = data.resourceUri.split('/');
 		const infoId = split[split.length -1];
-        return latestNews.find(n => n.resourceId === infoId && n.application === 'blog');
+        return latestNews.find(n => n.resourceId == infoId && n.application === 'news');
     },
     '/blog': (data, latestNews) => {
-        if (!data["sub-resource"]) {
+        if (!data.postUri) {
 			return;
 		}
 
-        return latestNews.find(n => n.resourceId === data["sub-resource"] && n.application === 'blog');
+        const split = data.postUri.split('/');
+        const postId = split[split.length -1];
+        return latestNews.find(n => n.resourceId === postId && n.application === 'blog');
     }
 }
 
