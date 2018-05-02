@@ -3,6 +3,7 @@
   "version": "0.0.6",
   "private": true,
   "scripts": {
+    "build:ios": "react-native bundle --entry-file='index.ios.js' --bundle-output='./ios/YourAppName/main.jsbundle' --dev=false --platform='ios' --assets-dest='./ios'",
     "android": "react-native run-android",
     "apk": "cd android && ./gradlew assembleRelease",
     "clean": "rm -r -f ./android/app/build && rm -r -f node_modules && rm -f package-lock.json && rm -f yarn.lock && npm install && cd android && ./gradlew clean && cd .. ",
