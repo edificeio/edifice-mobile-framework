@@ -1,4 +1,4 @@
 export const Conf = {
-	platform: "https://preprod-icdd.one1d.fr",
+	platform: "https://recette-ent77.opendigitaleducation.com",
 	authLoginStore: 'AUTH_LOGIN_STORE1'
 };
