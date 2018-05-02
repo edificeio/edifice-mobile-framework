@@ -39,7 +39,6 @@
 		2D02E4C81E0B4AEC006451C7 /* libRCTWebSocket-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3E991DF850E9000B6D8A /* libRCTWebSocket-tvOS.a */; };
 		2D02E4C91E0B4AEC006451C7 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3EA31DF850E9000B6D8A /* libReact.a */; };
 		2DCD954D1E0B4F2C00145EB5 /* mobileappTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* mobileappTests.m */; };
-		44875D8E2077B9CC006DDDF5 /* libRNImagePicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 44875D892077B956006DDDF5 /* libRNImagePicker.a */; };
 		4FBE91127234473E87E44B09 /* OpenSans-bold.TTF in Resources */ = {isa = PBXBuildFile; fileRef = D2C8DBCED1AD481C906529A1 /* OpenSans-bold.TTF */; };
 		556C00BEBC2A4F7FB784318B /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 48AC3892D57F493AB7EB510F /* Foundation.ttf */; };
 		5AE4148729924871B86D0AC5 /* libRNFirebase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0493658E4B3D436F82E4B277 /* libRNFirebase.a */; };
@@ -243,6 +242,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = 014A3B5C1C6CF33500B6D375;
 			remoteInfo = RNImagePicker;
+		};
+		449EC20820923FD300860852 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 146833FF1AC3E56700842450 /* React.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 83CBBA2D1A601D0E00E9B192;
+			remoteInfo = React;
 		};
 		5E9157321DD0AC6500FF2AA8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -528,7 +534,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				44875D8E2077B9CC006DDDF5 /* libRNImagePicker.a in Frameworks */,
 				9BF8BB582036DE2200D183D8 /* libRNFetchBlob.a in Frameworks */,
 				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,
 				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
@@ -775,7 +780,6 @@
 				44875D572077B956006DDDF5 /* RNImagePicker.xcodeproj */,
 				9BF8BB232036DE0700D183D8 /* RNFetchBlob.xcodeproj */,
 				5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */,
-				146833FF1AC3E56700842450 /* React.xcodeproj */,
 				00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */,
 				ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */,
 				00C302B51ABCB90400DB3ED1 /* RCTGeolocation.xcodeproj */,
@@ -810,6 +814,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				146833FF1AC3E56700842450 /* React.xcodeproj */,
 				13B07FAE1A68108700A75B9A /* mobileapp */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* mobileappTests */,
@@ -965,13 +970,12 @@
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				21E3AAA68DC9357FAB13A16B /* [CP] Embed Pods Frameworks */,
-				5362625E44CA65C85E9BEC06 /* [CP] Copy Pods Resources */,
 				9BB6E13B201A293000199581 /* ShellScript */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				449EC20920923FD300860852 /* PBXTargetDependency */,
 			);
 			name = mobileapp;
 			productName = "Hello World";
@@ -1580,21 +1584,6 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
 		};
-		21E3AAA68DC9357FAB13A16B /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-mobileapp/Pods-mobileapp-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1608,21 +1597,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
-		};
-		5362625E44CA65C85E9BEC06 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-mobileapp/Pods-mobileapp-resources.sh\"\n";
-			showEnvVarsInLog = 0;
 		};
 		9BB6E13B201A293000199581 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1643,13 +1617,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-mobileapp-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -1701,6 +1678,11 @@
 			isa = PBXTargetDependency;
 			target = 2D02E47A1E0B4A5D006451C7 /* mobileapp-tvOS */;
 			targetProxy = 2D02E4911E0B4A5D006451C7 /* PBXContainerItemProxy */;
+		};
+		449EC20920923FD300860852 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = React;
+			targetProxy = 449EC20820923FD300860852 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1799,17 +1781,40 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = RQ92WW6N7R;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)/**",
+					"\"${PODS_ROOT}/Crashlytics/iOS\"",
+					"\"${PODS_ROOT}/Fabric/iOS\"",
+					"\"${PODS_ROOT}/FirebaseAnalytics/Frameworks\"",
+					"\"${PODS_ROOT}/FirebaseCore/Frameworks\"",
+					"\"${PODS_ROOT}/FirebaseInstanceID/Frameworks\"",
+					"\"${PODS_ROOT}/FirebaseMessaging/Frameworks\"",
+					"\"${PODS_ROOT}/FirebasePerformance/Frameworks\"",
+					"\"${PODS_ROOT}/FirebaseSwizzlingUtilities/ISASwizzling/Frameworks\"",
+					"\"${PODS_ROOT}/FirebaseSwizzlingUtilities/MethodSwizzling/Frameworks\"",
+				);
 				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)..\node_modules\neact-native-fetch-blobios/**",
-					"$(SRCROOT)..\node_modules\neact-native-fs/**",
-					"$(SRCROOT)..\node_modules\neact-native-vector-iconsRNVectorIconsManager",
-					"$(SRCROOT)..\node_modules\neact-native-image-to-base64ios",
+					"$(inherited)/**",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-fetch-blobios",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-fs",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-vector-iconsRNVectorIconsManager",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-image-to-base64ios",
 					"$(SRCROOT)/../node_modules/react-native-smart-splash-screen/ios/RCTSplashScreen/RCTSplashScreen",
-					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-svg/ios",
 					"$(SRCROOT)/../node_modules/react-native-i18n/ios",
+					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/notifications/**",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
-					"$(SRCROOT)..\node_modules\neact-native-cookiesiosRNCookieManagerIOS",
+					"$(SRCROOT)../**",
+					"ode_modules/**",
+					"eact-native-cookiesiosRNCookieManagerIOS",
 				);
 				INFOPLIST_FILE = mobileapp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1831,18 +1836,42 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = RQ92WW6N7R;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)/**",
+					"\"${PODS_ROOT}/Crashlytics/iOS\"",
+					"\"${PODS_ROOT}/Fabric/iOS\"",
+					"\"${PODS_ROOT}/FirebaseAnalytics/Frameworks\"",
+					"\"${PODS_ROOT}/FirebaseCore/Frameworks\"",
+					"\"${PODS_ROOT}/FirebaseInstanceID/Frameworks\"",
+					"\"${PODS_ROOT}/FirebaseMessaging/Frameworks\"",
+					"\"${PODS_ROOT}/FirebasePerformance/Frameworks\"",
+					"\"${PODS_ROOT}/FirebaseSwizzlingUtilities/ISASwizzling/Frameworks\"",
+					"\"${PODS_ROOT}/FirebaseSwizzlingUtilities/MethodSwizzling/Frameworks\"",
+				);
 				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)..\node_modules\neact-native-fetch-blobios/**",
-					"$(SRCROOT)..\node_modules\neact-native-fs/**",
-					"$(SRCROOT)..\node_modules\neact-native-vector-iconsRNVectorIconsManager",
-					"$(SRCROOT)..\node_modules\neact-native-image-to-base64ios",
+					"$(inherited)/**",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-fetch-blobios",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-fs",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-vector-iconsRNVectorIconsManager",
+					"$(SRCROOT)..",
+					ode_modules,
+					"eact-native-image-to-base64ios",
 					"$(SRCROOT)/../node_modules/react-native-smart-splash-screen/ios/RCTSplashScreen/RCTSplashScreen",
-					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-svg/ios",
 					"$(SRCROOT)/../node_modules/react-native-i18n/ios",
+					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/notifications/**",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
-					"$(SRCROOT)..\node_modules\neact-native-cookiesiosRNCookieManagerIOS",
+					"$(SRCROOT)../**",
+					"ode_modules/**",
+					"eact-native-cookiesiosRNCookieManagerIOS",
 				);
 				INFOPLIST_FILE = mobileapp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1868,7 +1897,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_TESTABILITY = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_NO_COMMON_BLOCKS = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)..\node_modules\neact-native-fetch-blobios/**",
@@ -1911,7 +1940,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_NO_COMMON_BLOCKS = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)..\node_modules\neact-native-fetch-blobios/**",
@@ -1953,7 +1982,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_TESTABILITY = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_NO_COMMON_BLOCKS = NO;
 				INFOPLIST_FILE = "mobileapp-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -1979,7 +2008,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_NO_COMMON_BLOCKS = NO;
 				INFOPLIST_FILE = "mobileapp-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (

@@ -1,15 +1,24 @@
 # Uncomment the next line to define a global platform for your project
 # platform :ios, '9.0'
+project 'mobileapp.xcodeproj'
 
 target 'mobileapp' do
   # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
   # use_frameworks!
+  pod "yoga", :path => "../node_modules/react-native/ReactCommon/yoga"
+  pod 'React', :path => '../node_modules/react-native', :subspecs => [
+    'BatchedBridge', # Required For React Native 0.45.0+
+    'Core',
+    'DevSupport',
+    # Add any other subspecs you want to use in your project
+  ]
 
   # Pods for mobileapp
   pod 'Firebase/Core'
   pod 'Fabric', '~> 1.7.2'
   pod 'Crashlytics', '~> 3.9.3'
   pod 'Firebase/Performance'
+  pod 'Firebase/Messaging'
 
   # Pod is not used for react-native-fetch-blob. COnfiguration done in Xcode directly.
   # pod 'react-native-fetch-blob', :path => '../node_modules/react-native-fetch-blob'

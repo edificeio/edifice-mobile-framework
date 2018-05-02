@@ -14,6 +14,8 @@
 
 #import <Firebase.h>
 
+#import "RNFirebaseNotifications.h"
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -43,8 +45,13 @@
   [self.window makeKeyAndVisible];
 
   [FIRApp configure];
+  [RNFirebaseNotifications configure];
   
   return YES;
+}
+
+- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
+  [[RNFirebaseNotifications instance] didReceiveLocalNotification:notification];
 }
 
 @end

@@ -1,26 +1,3 @@
-rootProject.name = 'mobileapp'
-include ':react-native-svg'
-project(':react-native-svg').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-svg/android')
-include ':react-native-smart-splash-screen'
-project(':react-native-smart-splash-screen').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-smart-splash-screen/android')
-include ':react-native-cookies'
-project(':react-native-cookies').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-cookies/android')
-include ':react-native-smart-splash-screen'
-project(':react-native-smart-splash-screen').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-smart-splash-screen/android')
-include ':react-native-image-picker'
-project(':react-native-image-picker').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-image-picker/android')
-include ':react-native-image-to-base64'
-project(':react-native-image-to-base64').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-image-to-base64/android')
-include ':react-native-fetch-blob'
-project(':react-native-fetch-blob').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-fetch-blob/android')
-include ':react-native-firebase'
-project(':react-native-firebase').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-firebase/android')
-include ':react-native-i18n'
-project(':react-native-i18n').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-i18n/android')
-include ':react-native-vector-icons'
-project(':react-native-vector-icons').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-vector-icons/android')
-include ':react-native-fs'
-project(':react-native-fs').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-fs/android')
-include ':react-native-smart-splashscreen'
-project(':react-native-smart-splashscreen').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-smart-splash-screen/android')
+rootProject.name = 'mobile-app'
+
 include ':app'

@@ -139,6 +139,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-smart-splash-screen')
     compile(project(':react-native-firebase')) {
         transitive = false
     }
