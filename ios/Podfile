@@ -12,6 +12,7 @@ target 'mobileapp' do
     'DevSupport',
     # Add any other subspecs you want to use in your project
   ]
+  pod 'RNFirebase', path: '../node_modules/react-native-firebase/ios' 
 
   # Pods for mobileapp
   pod 'Firebase/Core'

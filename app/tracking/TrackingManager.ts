@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import firebase from "react-native-firebase";
 
 let analytics;
@@ -10,6 +11,9 @@ catch(e){
 
 export class Tracking {
 	public static init() {
+		if(Platform.OS === 'ios'){
+			return;
+		}
 		try{
 			const crashlytics = firebase.crashlytics();
 			crashlytics.log("Crashlytics configuration done.");

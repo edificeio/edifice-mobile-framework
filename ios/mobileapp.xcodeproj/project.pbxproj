@@ -18,13 +18,11 @@
 		08D7131B00A4417D9891063F /* OpenSans-semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E4EE6D109C64422FAD4F5440 /* OpenSans-semibold.ttf */; };
 		133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C398B91ACF4ADC00677621 /* libRCTLinking.a */; };
 		139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139105C11AF99BAD00B5F7CC /* libRCTSettings.a */; };
-		139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139FDEF41B06529B00C62182 /* libRCTWebSocket.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
-		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		1A3A0EBB99EC4392B0BD5A81 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 946C59C3EBA847CA8D587553 /* Entypo.ttf */; };
 		292DC8168F53B8716282E26C /* libPods-mobileapp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B22EE0F25D93EA0C740AA5EA /* libPods-mobileapp.a */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
@@ -63,7 +61,6 @@
 		9BF8BB582036DE2200D183D8 /* libRNFetchBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BF8BB4E2036DE0800D183D8 /* libRNFetchBlob.a */; };
 		A0F9BE9AE8BD418297E263D7 /* OpenSans-semibold.TTF in Resources */ = {isa = PBXBuildFile; fileRef = AC954A2BC99D4BFDB8E0621B /* OpenSans-semibold.TTF */; };
 		AB3046AB05DE46CD96BF9073 /* libRCTSplashScreen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A9772CB7E9124C23A77F2DFD /* libRCTSplashScreen.a */; };
-		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
 		BA175965A1E7438BBEA88991 /* icomoon.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DF3D8FB5BF62472C83FAD5D2 /* icomoon.ttf */; };
 		C84A00DAF05746E29FCC83F8 /* OpenSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2C0F708294434ABEB9AE79D0 /* OpenSans-Bold.ttf */; };
 		D170954471D1439D9F2BE5B7 /* libRNFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D8373735F354010A875826F /* libRNFS.a */; };
@@ -481,6 +478,7 @@
 		3383B34D509449D7A998BE5C /* libRNVectorIcons.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNVectorIcons.a; sourceTree = "<group>"; };
 		3654119268C84998A3D8751D /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		3C83551234274A08855F03C4 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
+		442D7A2E209B50D40025CC20 /* mobileapp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = mobileapp.entitlements; path = mobileapp/mobileapp.entitlements; sourceTree = "<group>"; };
 		44875D572077B956006DDDF5 /* RNImagePicker.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNImagePicker.xcodeproj; path = "../node_modules/react-native-image-picker/ios/RNImagePicker.xcodeproj"; sourceTree = "<group>"; };
 		4608933076B34A939C604C6A /* RNSVG.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNSVG.xcodeproj; path = "../node_modules/react-native-svg/ios/RNSVG.xcodeproj"; sourceTree = "<group>"; };
 		48678144C54F406CA1CF57EB /* OpenSans-light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-light.ttf"; path = "../assets/fonts/OpenSans-light.ttf"; sourceTree = "<group>"; };
@@ -535,9 +533,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9BF8BB582036DE2200D183D8 /* libRNFetchBlob.a in Frameworks */,
-				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,
 				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
-				146834051AC3E58100842450 /* libReact.a in Frameworks */,
 				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
 				00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */,
 				00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */,
@@ -547,7 +543,6 @@
 				139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */,
 				832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */,
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
-				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
 				D170954471D1439D9F2BE5B7 /* libRNFS.a in Frameworks */,
 				8A516AF3B6ED429281BA360D /* libRNVectorIcons.a in Frameworks */,
 				64DEE71D343148E19A17F784 /* libRNImageToBase64.a in Frameworks */,
@@ -667,6 +662,7 @@
 		13B07FAE1A68108700A75B9A /* mobileapp */ = {
 			isa = PBXGroup;
 			children = (
+				442D7A2E209B50D40025CC20 /* mobileapp.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				9BB6E06C201A272200199581 /* GoogleService-Info.plist */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -1034,6 +1030,15 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = RQ92WW6N7R;
+						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -1778,6 +1783,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_ENTITLEMENTS = mobileapp/mobileapp.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = RQ92WW6N7R;
@@ -1825,6 +1833,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ode.appe;
 				PRODUCT_NAME = mobileapp;
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1835,6 +1845,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_ENTITLEMENTS = mobileapp/mobileapp.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = RQ92WW6N7R;
@@ -1875,6 +1888,26 @@
 				);
 				INFOPLIST_FILE = mobileapp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/GTMSessionFetcher\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/GoogleToolboxForMac\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Protobuf\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/nanopb\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-image-picker\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/yoga\"",
+				);
+				"LIBRARY_SEARCH_PATHS[arch=*]" = (
+					"$(inherited)",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/GTMSessionFetcher\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/GoogleToolboxForMac\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Protobuf\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React\"/**",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/nanopb\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-image-picker\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/yoga\"",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1882,6 +1915,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ode.appe;
 				PRODUCT_NAME = mobileapp;
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;

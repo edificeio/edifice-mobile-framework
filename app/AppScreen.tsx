@@ -25,6 +25,8 @@ export class AppScreen extends React.Component<any, undefined> {
 			duration: 850,
 		});
 
+		(firebase.messaging() as any).requestPermission()
+
 		const notificationOpen = await firebase.notifications().getInitialNotification();
 		if (notificationOpen) {
 			await this.props.readCurrentUser();
