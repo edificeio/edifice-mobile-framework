@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.facebook.react.ReactApplication;
 import com.reactnativecomponent.splashscreen.RCTSplashScreenPackage;
+import com.reactnativecomponent.splashscreen.RCTSplashScreenPackage;
 import com.horcrux.svg.SvgPackage;
 import com.reactnativecomponent.splashscreen.RCTSplashScreenPackage;
 import com.psykar.cookiemanager.CookieManagerPackage;
@@ -49,7 +50,6 @@ public class MainApplication extends Application implements ReactApplication {
             new CookieManagerPackage(),
             new ImageToBase64Package(),
             new RNFetchBlobPackage(),
-            new RCTSplashScreenPackage(),
             new ImagePickerPackage(),
             new RNFirebasePackage(),
             new RNFirebaseAnalyticsPackage(),
