@@ -1,31 +1,113 @@
-# Linux - Build
-## Dev Setup
+# App.e :  ODE Mobile Plateform : Developer guide
 
-#Installation
+//TODO **upgrade to react-native 0.55**
 
-## react-native
+## Install environment 
 
-* Suivre le guide https://facebook.github.io/react-native/docs/getting-started.html
+This section sums up [React Native Get Started documentation](https://facebook.github.io/react-native/docs/getting-started.html) to **Building Projects with native code** on **Linux**. It gives additionnal troubleshooting's notes 
 
-* Selectionner l'onglet "Building Projects with native code"
+> **CAUTION** This installation process is tested for **React Native 0.55**. Retrieve other versions [here](https://facebook.github.io/react-native/versions.html) 
 
-\*\* Attention : Pour l'installation d'Android Studio, ne pas installer de machine virtuelle, cela ne sert à rien (en tous cas sous Linux)
+### Node 10
 
-# Releases Guide
+[Follow your Linux's distribution instruction](https://nodejs.org/en/download/package-manager/)
 
-This document serves as guide for release building
+### React Native CLI
 
-## Release configuration
+`npm` CLI comes with `node`. Run the following command to install `react-native-cli`
+```bash
+npm install -g react-native-cli
+```
+### JDK 8+ 
 
-React Native follows a monthly release train. Every month, a new branch created off master enters the Release Candidate phase, and the previous Release Candidate branch is released and considered stable.
+http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 
-| Version | RC release | Stable release | Node version | Yarn version | React native |
-| ------- | ---------- | -------------- | ------------ | ------------ | ------------ |
-|         |            |                | / / /        |
+//TODO : document installation with package
 
----
+### Android development environment
+
+1. [Install Android Studio](https://facebook.github.io/react-native/docs/getting-started.html#1-install-android-studio)
+    - `unzip -d . ~/Download/android-studio-ide-173.4720617-linux.zip`
+    - `./android-studio/bin/studio.sh` 
+    - > **CAUTION** `/tmp` folder's size must > 5Go. Follow the next instruction to increase `/tmp` size  
+
+      ```bash
+      # As root 
+      vi /etc/fstab 
+      # add or edit the line
+      none /tmp tmpfs size=8G 0 0 
+      # As root
+      mount -a
+      ```
+
+2. [Install Android SDK](https://facebook.github.io/react-native/docs/getting-started.html#2-install-the-android-sdk)
+    - **Android 6.0 (Marshmallow) SDK is required** for React Native
+
+3. [Configure the ANDROID_HOME environement variable](https://facebook.github.io/react-native/docs/getting-started.html#android-development-environment)
+
+## Prepare Android Device 
+
+1. Sart a new Android Studio project
+
+2. [Configure an Android Virtual Devices (AVD)](https://facebook.github.io/react-native/docs/getting-started.html#preparing-the-android-device)
+
+3. [Test installation with a fresh React Native project](https://facebook.github.io/react-native/docs/getting-started.html#running-your-react-native-application-2
+)
+    ```bash
+    react-native init AwesomeProject # create a new project
+    cd AwesomeProject
+    react-native run-android # launch your project into your AVD
+    ```
+    > **NOTE** : if you encounter an error like `Cannot run program "/Android/Sdk/build-tools/23.0.1/aapt: error=2` you need to install some package. See [#react-native/issues/17753](https://github.com/facebook/react-native/issues/17753)
+
+## Develop with App.e code
+
+### Default development workflow
+
+```bash
+# Clone this repository
+git clone http://code.web-education.net/ODE/mobile-app.git
+# Install it
+npm install
+# Create a keystore for APK
+npm run private-key
+# Launch dev server
+npm start
+# Watch and build
+npm run tsc
+# View in Android
+npm run android
+```
+
+### NPM specific's App.e command reference
+
+You can run the following commanf from App.e root directory to manage your project
+
+```bash
+    npm run build:ios       # build an IOS's application
+    npm run android         # run the APK, on a connected Android (USB device or AVD), in debug mode.
+    npm run apk             # build an APK
+    npm run clean           # Remove generated files
+    npm run cleanGenerated  # Remove generated files with rimraf //TODO difference with clean ?
+    npm run fake-server     # Run a mocked API server //TODO how to configure ?
+    npm run icons           # //TODO usefull .?         
+    npm run ios             # run application on Iphone (from XCode) in debug mode
+    npm run prettier        # preatty format ts and tsx files
+    npm run prettier1       # preatty format ts files 
+    npm run prettier2       # preatty format tsx files
+    npm run private-key     # create a keystore (//TODO rename)
+    npm run react-devtools  # run react-devtools (to inspect react component whith broser extension)  
+    npm start               # launch development's server
+    npm run test            # run test with Jest (//TODO describe...)
+    npm run tsc:build       # compile ts files 
+    npm run tsc             # watch and compile ts files. Your code modification are "just in time" compiled.  
+    npm run tslint          #
+    npm run upgrade         # upgrade react-native version ()
+```
 
 ## Modification répertoire Android
+
+//TODO must be keep ?
 
 * Utilisation de Proguard pour la génération
 
@@ -36,12 +118,6 @@ Fichier modifié:
 ```
 
 Contient aussi le paramètre de proguard (voir generation apk à la suite du document)
-
-## Prerequisites
-
-### Install react-native
-
-`npm install -g react-native-cli`
 
 ## Build vector icon
 
@@ -63,6 +139,15 @@ On utilisera l'outil Inkscape pour verifier la conformité de l'icone SVG:
 
 L'outil Gravit est bien aussi pour modifier l'icone SVG
 
+## Generate Font
+
+Ouvrir le site https://icomoon.io/app/#/select
+
+* Prendre l'ensemble des icones SVG de l'application et les droper ds Icomoon
+* Selectionner l'ensemble des icones dans Icomoon
+* Generer le fichier de font
+* Extraire du fichier le fichier json et ttf pour les mettre dans le repertoire assets/font
+
 ## Install
 
 ```bash
@@ -80,181 +165,55 @@ Error: While trying to resolve module `react-native-vector-icons` from file `mob
 Quick fix:
 [react-native-vector-icons#626](https://github.com/oblador/react-native-vector-icons/issues/626)
 
-### Link
+## Link
 
 Le resultat des procedures de link ont ete archivé, donc pas besoin de le refaire
 
-## Tests
+## Firebase configuration
 
-```bash
-npm test
-```
+### Analytics
 
-- Clone the project
-
-```
-<<<<<<< HEAD
-
-Compilation typescrypt
-
-```bash
-npm tsc
-=======
-git clone <repository>
->>>>>>> c1d6958... Init dev branch
-```
-
-- In project folder, launch :
-
-```
-npm install
-```
-
-<<<<<<< HEAD
-## Generation clef Android
-
-```bash
-npm run private-key
-```
-
-### Generation APK (Android)
-
-la commande
-=======
----
-
-## Development
-
-Launch these two commands in separate shels.
-
-   - Launch the development server
-   
-```
-npm start
-```
->>>>>>> c1d6958... Init dev branch
-
-   - Launch ts compilation and watcher
-   
-```
-npm run tsc
-```
-
-<<<<<<< HEAD
-## Clean
-=======
-After these commands, you can modify the code.
-#### Testing
-
-- Android : Run the apk, on a connected Android (device or emulator), in debug mode.
->>>>>>> c1d6958... Init dev branch
-
-To do if you have build or deployment problem
-
-```
-<<<<<<< HEAD
-npm run clean
-```
-
-### For upgrading react-native
-
-Install `react-native-git-upgrade`
-
-Execute
-
-`react-native-git-upgrade 0.52`
-=======
-npm run android
-```
-
--  iOS : 
-
-   *--TODO--*
->>>>>>> c1d6958... Init dev branch
-
----
-## Android : build APK
-
-<<<<<<< HEAD
-## Generate Font
-
-Ouvrir le site https://icomoon.io/app/#/select
-
-* Prendre l'ensemble des icones SVG de l'application et les droper ds Icomoon
-* Selectionner l'ensemble des icones dans Icomoon
-* Generer le fichier de font
-* Extraire du fichier le fichier json et ttf pour les mettre dans le repertoire assets/font
-
-# Firebase configuration
-
-## Analytics
-
-* Analytics tag are sended by batch so you will not seem them instantly in the firebase console.
-  You need to activate the debug view:
-
-  [Enable debug View](https://support.google.com/firebase/answer/7201382?hl=en)
+Analytics tags are sended by batch. So you will not see them instantly in firebase console. [Enable debug View](https://support.google.com/firebase/answer/7201382?hl=en) to consult them gradualy.
 
 Follow this steps:
 
 * Android
   To enable Analytics Debug mode on an emulated Android device, execute the following command lines:
 
-`adb shell setprop debug.firebase.analytics.app com.ode.appe`
-
-This behavior persists until you explicitly disable Debug mode by executing the following command line :
-
-`adb shell setprop debug.firebase.analytics.app .none.`
+  ```bash
+  adb shell setprop debug.firebase.analytics.app com.ode.appe
+  ```
+  This behavior persists until you explicitly disable Debug mode by executing the following command line :
+  ```bash
+  adb shell setprop debug.firebase.analytics.app .none.
+  ```
 
 * iOS
-  To enable Analytics Debug mode on your development device, specify the following command line argument in Xcode :
+  To enable Analytics Debug mode on your development device, append the following command line argument in Xcode : `-FIRDebugEnabled`
 
-`-FIRDebugEnabled`
+  This behavior persists until you explicitly disable Debug mode by appending the following command line argument: `--FIRDebugDisabled`
 
-This behavior persists until you explicitly disable Debug mode by specifying the following command line argument:
+## Release instrcutions
 
-`--FIRDebugDisabled`
-=======
+### Sign your APK
+
 The APK must be signed with a key, so that it can be run on an Android device. cf : https://developer.android.com/studio/publish/app-signing.html
 
 **Important : The application must use the same key.**
-
-####  With Android Studio (for debug apk)
 
 Android Studio signs the APK with debug. Don't use it for release versions.
 
 - Import the android folder as android project
 -  You can build and run it as normal android prject
 
-#### Command line (for release apk)
-
-##### Build a new APK
-
-In <repository> folder, launch :
-```
+```bash
+# build a new APK (it will be generated in android/app/build/outputs/apk/)
 npm run apk
-```
-the apk file will be generated in android/app/build/outputs/apk/
-
-##### Create a Keystore (if the Keystore file does not exist)
-```
-keytool -genkeypair -v -keystore <keystore-name>.keystore -alias <key-name> -keyalg RSA -keysize 2048 -validity 10000
-```
-doc : https://docs.oracle.com/javase/8/docs/technotes/tools/unix/keytool.html
-##### Zipalign the APK - archive alignment - (optional)
-```
+# create a Keystore (if the Keystore file does not exist)
+nmp run privete-key
+# zipalign the APK  (optional)
 zipalign 4 <apk-file>
-```
-doc : https://developer.android.com/studio/command-line/zipalign.html
-
-##### Sign the APK
-
-apksigner is in $ANDROID_HOME/build-tools
-```
+# Sign the APK  (apksigner is in $ANDROID_HOME/build-tools)
 apksigner sign --ks <keystore-name>.keystore --ks-key-alias <key-name> -ks-pass <keystore-password> <apk-file>
 ```
 doc : https://developer.android.com/studio/command-line/apksigner.html
-
-## iOS : IPA
-
-*--TODO--*
->>>>>>> c1d6958... Init dev branch
