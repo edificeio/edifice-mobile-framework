@@ -1,6 +1,8 @@
-# Mobile-app : ODE Mobile Plateform - Setup for macOS → iOS
+# App.e : ODE Mobile Plateform - Setup for macOS → iOS
 
 ## Setup environment
+
+Build an iOS application requires a Mac computer.
 
 ### Xcode
 
@@ -35,19 +37,18 @@ Get it by running `brew install watchman`.
 
 ### Git clone
 ```
-git clone http://<VOTRE QUADRIGRAMME>@code.web-education.net/ODE/mobile-app.git
+git clone http://<YOUR TETRAGRAPH>@code.web-education.net/ODE/mobile-app.git
 
 cd mobile-app
 ```
+Note : `YOUR TETRAGRAPH` is your 4-letter identifier within Open Digital Education.
 
 ### Node modules installation
 Node modules are javascript dependencies used in the javascript part of the project (which uses React Native). They are configured in `package.json` and `package-lock.json`. To install them, just run :
 ```
-npm install -g react-native-cli react-native-git-upgrade
+npm install -g react-native-cli
 
 npm install
-
-react-native-git-update
 ```
 
 ### Cocoa Pods
@@ -76,7 +77,27 @@ react-native link react-native-firebase
 # Build javascript part
 npm run tsc:build
 
-# Build native part
+# Build & run native part
 react-native run-ios
 ```
 You can also build from Xcode, but beware of open the `ios/mobileapp.xcworkspace` workspace file, NOT a `*.xcodeproj` file.
+
+## Troubleshooting
+
+The macOS - iOS environment can be vrey tricky sometimes. Report to this Q&A chapter to try to fix your problems.
+If you can't find a solution, please contact [Rafik Djedjig](mailto:rafik.djedjig@opendigitaleducation.com) or [Valentin Mourot](mailto:valentin.mourot@opendigitaleducation.com).
+
+### App updates aren't visible on the built app on the emulator
+
+Try to reset your emulator cache in the menu **Hardware → Erase All Content and Settings**. This will reboot your emulator and reinstall your app from scratch next time you will run the app with `react-native run-ios`.
+
+### Config.h not found
+It seems to be an error from the node module `glog`.
+In a terminal, go to the folder `node_modules/react-native/third-party/glog-0.3.4/` (or same with a different version number), and run `./configure`.
+
+### How to upgrade React Native safely ?
+```
+npm install -g react-native-git-upgrade
+
+react-native-git-update
+```

@@ -1,8 +1,12 @@
 # App.e :  ODE Mobile Plateform : Developer guide
 
-//TODO **upgrade to react-native 0.55**
+## Setup environment
 
-## Install environment 
+Follow the guide [for Mac/iOS](./install-apple.md) or [for Android (soon)](http://www.theuselessweb.com/).
+
+## Install environment (legacy version)
+
+// TODO : Remove this part in favour of `install-android.md` guide.
 
 This section sums up [React Native Get Started documentation](https://facebook.github.io/react-native/docs/getting-started.html) to **Building Projects with native code** on **Linux**. It gives additionnal troubleshooting's notes 
 
