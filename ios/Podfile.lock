@@ -58,40 +58,40 @@ PODS:
   - nanopb/decode (0.3.8)
   - nanopb/encode (0.3.8)
   - Protobuf (3.5.0)
-  - React (0.55.0):
-    - React/Core (= 0.55.0)
+  - React (0.55.4):
+    - React/Core (= 0.55.4)
   - react-native-image-picker (0.14.3):
     - React
-  - React/Core (0.55.0):
-    - yoga (= 0.55.0.React)
-  - React/CxxBridge (0.55.0):
+  - React/Core (0.55.4):
+    - yoga (= 0.55.4.React)
+  - React/CxxBridge (0.55.4):
     - Folly (= 2016.09.26.00)
     - React/Core
     - React/cxxreact
-  - React/cxxreact (0.55.0):
+  - React/cxxreact (0.55.4):
     - boost-for-react-native (= 1.63.0)
     - Folly (= 2016.09.26.00)
     - React/jschelpers
     - React/jsinspector
-  - React/DevSupport (0.55.0):
+  - React/DevSupport (0.55.4):
     - React/Core
     - React/RCTWebSocket
-  - React/fishhook (0.55.0)
-  - React/jschelpers (0.55.0):
+  - React/fishhook (0.55.4)
+  - React/jschelpers (0.55.4):
     - Folly (= 2016.09.26.00)
     - React/PrivateDatabase
-  - React/jsinspector (0.55.0)
-  - React/PrivateDatabase (0.55.0)
-  - React/RCTBlob (0.55.0):
+  - React/jsinspector (0.55.4)
+  - React/PrivateDatabase (0.55.4)
+  - React/RCTBlob (0.55.4):
     - React/Core
-  - React/RCTWebSocket (0.55.0):
+  - React/RCTWebSocket (0.55.4):
     - React/Core
     - React/fishhook
     - React/RCTBlob
   - RNFirebase (4.2.0):
     - Firebase/Core
     - React
-  - yoga (0.55.0.React)
+  - yoga (0.55.4.React)
 
 DEPENDENCIES:
   - Crashlytics (~> 3.9.3)
@@ -154,11 +154,11 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 5fa5b80fd20e439ef5f545fb2cb3ca6c6714caa2
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
   Protobuf: 8a9838fba8dae3389230e1b7f8c104aa32389c03
-  React: 35618ff86985ccc5a8a17d3ca0dd76fd47e0c690
+  React: aa2040dbb6f317b95314968021bd2888816e03d5
   react-native-image-picker: b303e31c3c4ada1d7cb1342423d328d2efb07fb3
   RNFirebase: 2b25fd2e60269f26bb0a76c71dcc942b35a77df0
   yoga: a23273df0088bf7f2bb7e5d7b00044ea57a2a54a
 
-PODFILE CHECKSUM: cb1de417808a3e2ddec55472f164d399729f1343
+PODFILE CHECKSUM: bda5c95b1f055e9b346b123ba356b26826436363
 
 COCOAPODS: 1.5.3
