@@ -62,7 +62,7 @@ http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.h
     cd AwesomeProject
     react-native run-android # launch your project into your AVD
     ```
-    > **NOTE** : if you encounter an error like `Cannot run program "/Android/Sdk/build-tools/23.0.1/aapt: error=2` you need to install some package. See [#react-native/issues/17753](https://github.com/facebook/react-native/issues/17753)
+    > **TROUBLESHOOTING** : if you encounter an error like `Cannot run program "/Android/Sdk/build-tools/23.0.1/aapt: error=2` you need to install some package. See [#react-native/issues/17753](https://github.com/facebook/react-native/issues/17753)
 
 ## Develop with App.e code
 
@@ -73,7 +73,9 @@ http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.h
 git clone http://code.web-education.net/ODE/mobile-app.git
 # Install it
 npm install
-# Create a keystore for APK
+# link all natives dependencies // // TODO check precisely when it is requiered 
+react-native link 
+# Create a keystore for APK // TODO check if required for dev install 
 npm run private-key
 # Launch dev server
 npm start
@@ -82,6 +84,10 @@ npm run tsc
 # View in Android
 npm run android
 ```
+
+> **TROUBLESHOOTING** : if output of command `npm run android` display a message like `Project with path ':react-native-<SOME_MODULE>' could not be found in project ':app'` you propably need to link the specified module by executing  `react-native link react-native-<SOME_MODULE>`
+
+COMMIT CHANGE OF CONF https://rnfirebase.io/docs/v4.2.x/installation/android
 
 ### NPM specific's App.e command reference
 
@@ -94,7 +100,6 @@ You can run the following commanf from App.e root directory to manage your proje
     npm run clean           # Remove generated files
     npm run cleanGenerated  # Remove generated files with rimraf //TODO difference with clean ?
     npm run fake-server     # Run a mocked API server //TODO how to configure ?
-    npm run icons           # //TODO usefull .?         
     npm run ios             # run application on Iphone (from XCode) in debug mode
     npm run prettier        # preatty format ts and tsx files
     npm run prettier1       # preatty format ts files 
@@ -157,7 +162,7 @@ Ouvrir le site https://icomoon.io/app/#/select
 ```bash
 npm install
 ```
-
+ => RDJE : not met this bug => remove this section ?
 * Un bug dans react-native oblige à supprimer le fichier package.json situé sous
   `node_modules/react-native/local-cli/core/__fixtures__/files`
 * react-native-vector-icons and react-native 0.52 on Android
@@ -169,9 +174,6 @@ Error: While trying to resolve module `react-native-vector-icons` from file `mob
 Quick fix:
 [react-native-vector-icons#626](https://github.com/oblador/react-native-vector-icons/issues/626)
 
-## Link
-
-Le resultat des procedures de link ont ete archivé, donc pas besoin de le refaire
 
 ## Firebase configuration
 
