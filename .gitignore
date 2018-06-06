@@ -31,11 +31,12 @@ build/
 local.properties
 *.iml
 
-# node.js
+# node.js / npm
 #
 node_modules/
 npm-debug.log
 yarn-error.log
+package-lock.json
 
 # BUCK
 buck-out/
