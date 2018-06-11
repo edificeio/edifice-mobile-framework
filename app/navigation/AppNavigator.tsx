@@ -7,6 +7,7 @@ import { View } from 'react-native';
 import AccountNavigation from "../auth/AccountNavigation";
 import I18n from 'react-native-i18n';
 import UiNavigator from "../ui/showcase/UiNavigator";
+import HomeworkNavigator from "../homework/HomeworkNavigator";
 
 const MainNavigator = tabNavigator({
 	timeline: {
@@ -20,6 +21,10 @@ const MainNavigator = tabNavigator({
 	profile: {
 		screen: AccountNavigation,
 		navigationOptions: () => tabRootOptions(I18n.t('Profile'), "profile"),
+	},
+	homework: {
+		screen: HomeworkNavigator,
+		navigationOptions: () => tabRootOptions(I18n.t('Homework'), "devoirs"),
 	},
 	ui: {
 		screen: UiNavigator,
