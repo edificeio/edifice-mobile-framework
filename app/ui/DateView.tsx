@@ -20,6 +20,7 @@ const Text = style.text(
 	})
 )
 
+// FIXME: DateView doesn't display a date/time, but the elapsed time from the `date` prop. Should be renamed.
 export const DateView = ({ date, strong = false, short = true }) => {
 	let strDate = short ? getTimeToShortStr(date) : getTimeToStr(date)
 

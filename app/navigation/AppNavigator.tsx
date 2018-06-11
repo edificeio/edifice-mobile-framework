@@ -6,6 +6,7 @@ import Login from "../auth/Login";
 import { View } from 'react-native';
 import AccountNavigation from "../auth/AccountNavigation";
 import I18n from 'react-native-i18n';
+import UiNavigator from "../ui/showcase/UiNavigator";
 
 const MainNavigator = tabNavigator({
 	timeline: {
@@ -20,6 +21,10 @@ const MainNavigator = tabNavigator({
 		screen: AccountNavigation,
 		navigationOptions: () => tabRootOptions(I18n.t('Profile'), "profile"),
 	},
+	ui: {
+		screen: UiNavigator,
+		navigationOptions: () => tabRootOptions('UI'),
+	}
 })
 
 export const AppNavigator: NavigationContainer = StackNavigator(

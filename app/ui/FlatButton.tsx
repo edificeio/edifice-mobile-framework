@@ -17,7 +17,7 @@ export interface ValidTextIconProps {
 	title?: string
 	whiteSpace?: string
 	keyboardShow?: boolean;
-	loading: boolean;
+	loading: boolean; // FIXME? Loading shouldn't be in state as it can change over time ?
 }
 
 export interface State {
