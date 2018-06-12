@@ -36,20 +36,32 @@ const HomeworkTimeLine = style.view({
 });
 
 /**
- * Just a wrapper for the heading of a day tasks. // TODO: wrap the content in a brand new component for this usage.
+ * Just a wrapper for the heading of a day tasks.
  */
-const HomeworkDayCheckpoint = style.view({
-	flexDirection: "row",
-});
-/*
-const HomeworkDayCheckpoint_Unstyled = ({ style, nb, text }) => (
+
+const HomeworkDayCheckpoint_Unstyled = ({
+	style,
+	nb,
+	text = "",
+	active = false,
+}: {
+	style?: any;
+	nb?: number;
+	text?: string;
+	active?: boolean
+}) => (
 	<View style={[style]}>
-		<HomeworkDayCircleNumber nb={nb} />
+		{active ? <HomeworkDayCircleNumberActive nb={nb} /> : <HomeworkDayCircleNumber nb={nb} />}
 		<Text>{text.toUpperCase()}</Text>
 	</View>
-);*/
+);
+const HomeworkDayCheckpoint = style(HomeworkDayCheckpoint_Unstyled)({
+	flexDirection: "row",
+	alignItems: "center",
+});
 
-const HomeworkDayCircleNumber_Unstyled = ({ style, nb }) => (
+// TODO: Use just one class with an `active` prop, and manage text color
+const HomeworkDayCircleNumber_Unstyled = ({ style, nb }: { style?: any; nb?: number }) => (
 	<View style={[style]}>
 		<Text>{nb}</Text>
 	</View>
@@ -70,6 +82,10 @@ const HomeworkDayCircleNumber = style(HomeworkDayCircleNumber_Unstyled)({
 	borderRadius: 15,
 	marginHorizontal: 14,
 });
+const HomeworkDayCircleNumberActive = style(HomeworkDayCircleNumber)({
+	backgroundColor: CommonStyles.actionColor,
+	color: CommonStyles.tabBottomColor,
+});
 
 
 /**
@@ -79,10 +95,7 @@ class HomeworkDayTasks extends React.Component {
 	public render() {
 		return (
 			<View>
-				<HomeworkDayCheckpoint>
-					<HomeworkDayCircleNumber nb={19} />
-					<Text>JEUDI</Text>
-				</HomeworkDayCheckpoint>
+				<HomeworkDayCheckpoint nb={19} text="jeudi" active/>
 				<Card>
 					<Text>Réviser le Traitement Automatique du Langage Naturel</Text>
 					<Text>Intelligence Artificielle</Text>
