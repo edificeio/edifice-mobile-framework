@@ -1,20 +1,20 @@
 import * as React from "react";
 import { PageContainer, Content } from "../../ui/ContainerContent";
-import { View } from "react-native";
+import { ActivityIndicator } from "react-native";
 import style from "glamorous-native";
 import { CommonStyles } from "../../styles/common/styles";
 
-const { Text, FlatList } = style;
+const { View, Text, FlatList } = style;
 
 interface HomeworkTask {
 	title: string;
 	description: string;
-};
-interface HomeworkDayTaskArray {
+}
+interface HomeworkDay {
 	daynb: number;
 	dayname: string;
 	tasks: HomeworkTask[];
-};
+}
 
 const TESTDATA = [
 	{
@@ -69,21 +69,105 @@ const TESTDATA = [
 	},
 ];
 
+interface HomeworkState {
+	data: HomeworkDay[];
+	isFetchingNewer: boolean;
+	isFetchingOlder: boolean;
+	startId: number;
+	count: number;
+}
+
 /**
  * Homework
  *
  * Display page for all homework in a calendar-like way.
- *
- * FIXME: On FlatList, paddingBottom and marginBottom doesn't seem to work, even the bottom margins and padding of the children.
  */
-export class Homework extends React.Component {
+
+export class Homework extends React.Component<{}, HomeworkState> {
+	constructor(props) {
+		super(props);
+		this.state = {
+			data: [],
+			isFetchingNewer: false,
+			isFetchingOlder: false,
+			startId: 0,
+			count: 0,
+		};
+	}
+
+	static get NB_DAYS_PER_FETCH() { return 5; }
+
 	public render() {
 		return (
 			<PageContainer>
 				<HomeworkTimeLine />
-				<FlatList paddingVertical={15} data={TESTDATA} renderItem={({ item }) => <HomeworkDayTasks data={item} />} />
+				<FlatList
+					data={this.state.data}
+					renderItem={({ item }) => <HomeworkDayTasks data={item} />}
+					ListHeaderComponent={() => <View height={15} />}
+					onEndReached={() => this._onEndReached()}
+					onEndReachedThreshold={0.5}
+					ListFooterComponent={() => (this.state.isFetchingNewer ? <ActivityIndicator animating={true} /> : null)}
+				/>
 			</PageContainer>
 		);
+	}
+
+	private _renderItem(item) {
+		// TODO: switch display or loading
+	}
+
+	private async _onEndReached() {
+		this.fetchNewer();
+	}
+
+	private _onFetchError(info: string) {
+		console.warn("Can't show tasks : " + info);
+	}
+
+	componentDidMount() {
+		console.warn("first fetch...");
+		this.fetchNewer();
+	}
+
+	private async _fetchTasks(start: number, count: number) {
+		function timeout(ms) {
+			return new Promise(resolve => setTimeout(resolve, ms));
+		}
+		try {
+			await timeout(2000); // sleep for 2 seconds.
+			return TESTDATA;
+		} catch (err) {
+			throw true;
+		}
+	}
+
+	public async fetchNewer() {
+		this.setState({ isFetchingNewer: true });
+		try {
+			let tasks = await this._fetchTasks(this.state.startId + this.state.count, Homework.NB_DAYS_PER_FETCH);
+			console.warn("OK NEWER");
+			this.setState((prevState, props) => ({
+				data: prevState.data.concat(tasks),
+				// TODO: set the startID and the count from API result
+			}));
+		} catch (err) {
+			this._onFetchError("error loading newer tasks");
+		}
+	}
+
+	public async fetchOlder() {
+		this.setState({ isFetchingOlder: true });
+		try {
+			let tasks = await this._fetchTasks(this.state.startId - Homework.NB_DAYS_PER_FETCH, Homework.NB_DAYS_PER_FETCH);
+			console.warn("OK OLDER");
+			this.setState((prevState, props) => ({
+				data: tasks.concat(prevState.data),
+				// TODO: set the startID and the count from API result
+			}));
+		} catch (err) {
+			this._onFetchError("error loading newer tasks");
+		}
 	}
 };
 
@@ -144,7 +228,7 @@ const HomeworkDayCheckpoint = style(HomeworkDayCheckpoint_Unstyled)({
  *     `style`: `any` - Glamorous style to add.
  * 	   `nb`: `number` - Just as simple as the number to be displayed.
  *     `active`: `boolean` - An active `HomeworkDayCircleNumber` will be highlighted.
- * TODO: style.Text component gives Invariant Violation, must use `const {Text} = style`. Why ?
+ * FIXME: style.Text component gives Invariant Violation, must use `const {Text} = style`. Why ?
  * TODO: When active, the blue background should be a gradient, according to the mockup.
  *
  * An unstyled version on this component is available as `HomeworkDayCircleNumber_Unstyled`.
@@ -231,11 +315,11 @@ const HomeworkCard = style(HomeworkCard_Unstyled)({
  *
  * Display the task list of a day (with day number and name).
  * Props:
- *     data: HomeworkDayTaskArray - information of the day (number and name) and list of the tasks.
+ *     data: HomeworkDay - information of the day (number and name) and list of the tasks.
  * TODO: Detect if the day is today, and set the HomeworkDayCheckpoint active in this case.
  */
 interface HomeworkDayTasksProps {
-	data: HomeworkDayTaskArray;
+	data: HomeworkDay;
 }
 class HomeworkDayTasks extends React.Component<HomeworkDayTasksProps, any> {
 	constructor(props: HomeworkDayTasksProps) {
