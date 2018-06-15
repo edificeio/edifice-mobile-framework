@@ -3,65 +3,73 @@ import { PageContainer, Content } from "../../ui/ContainerContent";
 import { ActivityIndicator } from "react-native";
 import style from "glamorous-native";
 import { CommonStyles } from "../../styles/common/styles";
+import moment from "moment";
+import "moment/locale/fr";
+moment.locale("fr");
 
 const { View, Text, FlatList } = style;
 
 interface HomeworkTask {
+	id: number;
 	title: string;
 	description: string;
 }
 interface HomeworkDay {
-	daynb: number;
-	dayname: string;
+	moment: moment.Moment;
 	tasks: HomeworkTask[];
 }
 
 const TESTDATA = [
 	{
-		daynb: 22,
-		dayname: "jeudi",
+		moment: moment(),
 		tasks: [
 			{
+				id: 1,
 				title: "Intelligence Artificielle",
 				description: "Réviser le Traitement Automatique du Langage Naturel",
 			},
 			{
+				id: 2,
 				title: "Tristitude",
 				description: "Conjuguer Bouillir au subjonctif pluriel",
 			},
 			{
+				id: 3,
 				title: "Philosophie",
 				description: "Dissertation : Quel avenir pour les pingouins d'Afrique ?",
 			},
 		],
 	},
 	{
-		daynb: 23,
-		dayname: "vendredi",
+		moment: moment().add({ days: 1 }),
 		tasks: [
 			{
+				id: 4,
 				title: "Scuplture sur marbre",
 				description: "Sculpter la Venus de Milo avec des bras",
 			},
 			{
+				id: 5,
 				title: "Kamoulox",
 				description: "Photocopier du sable et éventer la famille pirate",
 			},
 		],
 	},
 	{
-		daynb: 26,
-		dayname: "lundi",
+		moment: moment().add({ days: 2 }),
 		tasks: [
 			{
+				id: 6,
 				title: "Russe",
 				description: "Réciter l'alphabet cyrillique à l'envers",
 			},
 			{
+				id: 7,
 				title: "Physique - Chimie",
 				description: "Exo 15 → 88 p. 249 et plus ou moins",
 			},
 			{
+				id: 8,
 				title: "Philosophie",
 				description: "Dissertation : Quel avenir pour les dissertations sur les pingouins d'Afrique ?",
 			},
@@ -98,6 +106,8 @@ export class Homework extends React.Component<{}, HomeworkState> {
 	static get NB_DAYS_PER_FETCH() { return 5; }
 
 	public render() {
+		let ActivityIndicatorWithMargin = style(ActivityIndicator)({ marginBottom: 15 });
+
 		return (
 			<PageContainer>
 				<HomeworkTimeLine />
@@ -107,7 +117,7 @@ export class Homework extends React.Component<{}, HomeworkState> {
 					ListHeaderComponent={() => <View height={15} />}
 					onEndReached={() => this._onEndReached()}
 					onEndReachedThreshold={0.5}
-					ListFooterComponent={() => (this.state.isFetchingNewer ? <ActivityIndicator animating={true} /> : null)}
+					ListFooterComponent={() => (this.state.isFetchingNewer ? <ActivityIndicatorWithMargin animating={true} /> : null)}
 				/>
 			</PageContainer>
 		);
@@ -126,7 +136,7 @@ export class Homework extends React.Component<{}, HomeworkState> {
 	}
 
 	componentDidMount() {
-		console.warn("first fetch...");
+		// console.warn("first fetch...");
 		this.fetchNewer();
 	}
 
@@ -146,7 +156,8 @@ export class Homework extends React.Component<{}, HomeworkState> {
 		this.setState({ isFetchingNewer: true });
 		try {
 			let tasks = await this._fetchTasks(this.state.startId + this.state.count, Homework.NB_DAYS_PER_FETCH);
-			console.warn("OK NEWER");
+			// console.warn("OK NEWER");
+			// TODO: manage the case when there are tasks more
 			this.setState((prevState, props) => ({
 				data: prevState.data.concat(tasks),
 				// TODO: set the startID and the count from API result
@@ -160,7 +171,8 @@ export class Homework extends React.Component<{}, HomeworkState> {
 		this.setState({ isFetchingOlder: true });
 		try {
 			let tasks = await this._fetchTasks(this.state.startId - Homework.NB_DAYS_PER_FETCH, Homework.NB_DAYS_PER_FETCH);
-			console.warn("OK OLDER");
+			// console.warn("OK OLDER");
+			// TODO: manage the case when there are tasks more
 			this.setState((prevState, props) => ({
 				data: tasks.concat(prevState.data),
 				// TODO: set the startID and the count from API result
@@ -329,7 +341,7 @@ class HomeworkDayTasks extends React.Component<HomeworkDayTasksProps, any> {
 	public render() {
 		return (
 			<View>
-				<HomeworkDayCheckpoint nb={this.props.data.daynb} text={this.props.data.dayname} />
+				<HomeworkDayCheckpoint nb={this.props.data.moment.date()} text={this.props.data.moment.format("dddd")} />
 				{this.props.data.tasks.map(item => <HomeworkCard title={item.title} description={item.description} />)}
 			</View>
 		);
