@@ -341,7 +341,11 @@ class HomeworkDayTasks extends React.Component<HomeworkDayTasksProps, any> {
 	public render() {
 		return (
 			<View>
-				<HomeworkDayCheckpoint nb={this.props.data.moment.date()} text={this.props.data.moment.format("dddd")} />
+				<HomeworkDayCheckpoint
+					nb={this.props.data.moment.date()}
+					text={this.props.data.moment.format("dddd")}
+					active={this.props.data.moment.isSame(moment(), "day")}
+				/>
 				{this.props.data.tasks.map(item => <HomeworkCard title={item.title} description={item.description} />)}
 			</View>
 		);
