@@ -86,8 +86,8 @@ function fetchDiaryTasks(diaryId) {
       */
 
       const json = await fetchDummyData(0, 1); // HA HA yeah that's some dummy data ! Well replace this by the commented lines in the real version.
-
-      dispatch(diaryTasksReceived(diaryId, json));
+      const jsonTasks = json["ceci-est-un-id"].tasksByDay;
+      dispatch(diaryTasksReceived(diaryId, jsonTasks));
     } catch (errmsg) {
       dispatch(diaryTasksFetchError(diaryId, errmsg));
     }

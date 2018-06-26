@@ -34,10 +34,11 @@ export function availableDiariesRequested() {
 export const AVAILABLE_DIARIES_RECEIVED = "AVAILABLE_DIARIES_RECEIVED";
 
 export function availableDiariesReceived(diaryIds) {
-  console.warn("available diaries requested.");
+  console.warn("available diaries received.");
   return {
     type: AVAILABLE_DIARIES_REQUESTED,
 
-    diaryIds
+    diaryIds,
+    receivedAt: Date.now()
   };
 }
