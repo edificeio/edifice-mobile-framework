@@ -31,6 +31,9 @@
       "./assets/fonts/"
     ]
   },
+  "prettier": {
+    "semi": true
+  },
   "devDependencies": {
     "@types/core-js": "^0.9.45",
     "@types/jest": "^22.1.1",
@@ -86,6 +89,7 @@
     "react-redux": "5.0.6",
     "redux": "3.7.2",
     "redux-devtools-extension": "^2.13.2",
+    "redux-thunk": "^2.3.0",
     "rimraf": "2.6.2",
     "typescript": "2.7.1",
     "util": "0.10.3"

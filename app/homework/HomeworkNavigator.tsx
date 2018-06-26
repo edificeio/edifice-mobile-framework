@@ -1,26 +1,34 @@
 import * as React from "react";
 import { StackNavigator } from "react-navigation";
-import { Header, HeaderIcon, AppTitle } from "../ui/headers/Header";
+import { AppTitle, Header } from "../ui/headers/Header";
 import { navOptions } from "../utils/navHelper";
-import { Homework } from "./components/Homework";
 
-export default StackNavigator(
-	{
-		Homework: {
-			screen: Homework,
-			navigationOptions: ({ navigation }) => navOptions({
-				header: <HomeworkHeader navigation={ navigation } />
-			}, navigation)
-		}
-	}
-)
+import { HomeworkPage, HomeworkPageHeader } from "./components/HomeworkPage";
+import {
+  HomeworkTaskPage,
+  HomeworkTaskPageHeader
+} from "./components/HomeworkTaskPage";
 
-export class HomeworkHeader extends React.Component<{ navigation?: any }, undefined> {
-	render() {
-		return (
-            <Header>
-				<AppTitle>Homework</AppTitle>
-            </Header>
-		)
-	}
-}
+export default StackNavigator({
+  Homework: {
+    navigationOptions: ({ navigation }) =>
+      navOptions(
+        {
+          header: <HomeworkPageHeader navigation={navigation} />
+        },
+        navigation
+      ),
+    screen: HomeworkPage
+  },
+
+  HomeworkTask: {
+    navigationOptions: ({ navigation }) =>
+      navOptions(
+        {
+          header: <HomeworkTaskPageHeader navigation={navigation} />
+        },
+        navigation
+      ),
+    screen: HomeworkTaskPage
+  }
+});
