@@ -18,6 +18,7 @@ import moment, { Moment } from "moment";
 // tslint:disable-next-line:no-submodule-imports
 import "moment/locale/fr";
 import { connect } from "react-redux";
+import { CommonStyles } from "../../styles/common/styles";
 moment.locale("fr");
 
 // helpers ----------------------------------------------------------------------------------------
@@ -44,15 +45,18 @@ export class HomeworkTaskPageHeader extends React.Component<
 interface IHomeworkTaskPageProps {
   navigation?: any;
   dispatch?: any; // given by connect(),
-  diaryId: string;
-  moment: Moment;
-  taskId: string;
-  taskTitle: string;
-  taskDescription: string;
+  diaryId?: string;
+  moment?: Moment;
+  taskId?: string;
+  taskTitle?: string;
+  taskDescription?: string;
 }
 
 // tslint:disable-next-line:max-classes-per-file
-class HomeworkTaskPage_Unconnected extends React.Component<{}, {}> {
+class HomeworkTaskPage_Unconnected extends React.Component<
+  IHomeworkTaskPageProps,
+  {}
+> {
   constructor(props) {
     super(props);
   }
@@ -60,9 +64,27 @@ class HomeworkTaskPage_Unconnected extends React.Component<{}, {}> {
   // render & lifecycle
 
   public render() {
+    let formattedDate = this.props.moment.format("dddd LL");
+    formattedDate =
+      formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
     return (
-      <PageContainer>
-        <Text>Salut c'est ouam</Text>
+      <PageContainer
+        style={{
+          paddingHorizontal: 20,
+          paddingVertical: 30
+        }}
+      >
+        <Text fontSize={14} color={CommonStyles.textColor} lineHeight={20}>
+          {formattedDate}
+        </Text>
+        <Text
+          fontSize={14}
+          color={CommonStyles.textColor}
+          lineHeight={20}
+          paddingTop={20}
+        >
+          {this.props.taskDescription}
+        </Text>
       </PageContainer>
     );
   }
@@ -70,15 +92,21 @@ class HomeworkTaskPage_Unconnected extends React.Component<{}, {}> {
 
 export const HomeworkTaskPage = connect((state: any) => {
   const { diaryId, moment, taskId } = state.diary.selectedDiaryTask;
-  //console.warn("diaryID : " + diaryId);
-  //console.warn(state.diary.diaries);
-  // const diary = state.diary.diaries.items[diaryId];
-  // console.warn(diary);
-  /*
-  const dayTasks = diary.items.find(element => element.moment.isSame(moment));
-  const taskTitle = dayTasks[taskId].title;
-  const taskDescription = dayTasks[taskId].description;
-  return { diaryId, moment, taskId, taskTitle, taskDescription };
-  */
-  return {};
+  const diaries = state.diary.availableDiaries.items;
+  const diary = diaries[diaryId];
+  if (!diary) return {}; // this case shouldn't occur.
+  const diaryTasksByDay = diary.tasksByDay;
+  const dayTasks = diaryTasksByDay.find(element =>
+    element.moment.isSame(moment)
+  );
+  if (!dayTasks) return {}; // this case shouldn't occur.
+  const taskInfos = dayTasks.tasks[taskId];
+  if (!taskInfos) return {}; // this case shouldn't occur.
+  return {
+    diaryId,
+    moment,
+    taskDescription: taskInfos.description,
+    taskId,
+    taskTitle: taskInfos.title
+  };
 })(HomeworkTaskPage_Unconnected);
