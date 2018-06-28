@@ -5,8 +5,7 @@
 
 import moment from "moment";
 import "moment/locale/fr";
-import { IDiaryArray } from "./reducers/diaries";
-import { IDiaryDayTasks } from "./reducers/diaryTasks";
+import { IDiaryArray, IDiaryDayTasks } from "./reducers/diaries";
 moment.locale("fr");
 
 export const thisWeek: IDiaryDayTasks[] = [

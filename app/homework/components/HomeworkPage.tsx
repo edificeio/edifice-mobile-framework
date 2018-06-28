@@ -13,7 +13,7 @@ const { View, Text, FlatList, TouchableOpacity } = style;
 import { connect } from "react-redux";
 
 import { CommonStyles } from "../../styles/common/styles";
-import { Content, PageContainer } from "../../ui/ContainerContent";
+import { PageContainer } from "../../ui/ContainerContent";
 import { AppTitle, Header } from "../../ui/headers/Header";
 
 import moment from "moment";
@@ -21,22 +21,10 @@ import moment from "moment";
 import "moment/locale/fr";
 moment.locale("fr");
 
-import I18n from "react-native-i18n";
-
 import { fetchDiariesIfNeeded } from "../actions/diaries";
 import { diaryTaskSelected } from "../actions/selectedDiaryTask";
 
-import diaries, { IDiaryArray } from "../reducers/diaries";
-import { extractShortTask, IDiaryDayTasks } from "../reducers/diaryTasks"; // Type definitions
-import selectedDiaryTask from "../reducers/selectedDiaryTask";
-
-// helpers ----------------------------------------------------------------------------------------
-
-const runNextFrame = fn => {
-  requestAnimationFrame(() => {
-    requestAnimationFrame(fn);
-  });
-};
+import { extractShortTask, IDiaryDayTasks } from "../reducers/diaries";
 
 // Header component -------------------------------------------------------------------------------
 
@@ -98,7 +86,7 @@ class HomeworkPage_Unconnected extends React.Component<IHomeworkPageProps, {}> {
           renderItem={({ item }) => (
             <HomeworkDayTasks data={item} navigation={this.props.navigation} />
           )}
-          keyExtractor={(item, index) => item.moment.format("YYYY-MM-DD")}
+          keyExtractor={item => item.moment.format("YYYY-MM-DD")}
           ListHeaderComponent={() => <View height={15} />}
           refreshControl={
             <RefreshControl
@@ -127,32 +115,16 @@ export const HomeworkPage = connect((state: any) => {
     lastUpdated
   } = state.diary.availableDiaries;
   const diaries = state.diary.availableDiaries.items;
-  console.warn(diaries);
   const selectedDiaryId = state.diary.selectedDiary;
   const currentDiary = diaries[selectedDiaryId];
-  if (!currentDiary) return { items: [] as IDiaryDayTasks[] }; // If no diary corresponds, returns a empty new one.
+  let diaryId = null;
+  let diaryTasksByDay = [] as IDiaryDayTasks[];
 
-  const diaryId = currentDiary.id;
-  const diaryTasksByDay = currentDiary.tasksByDay;
+  if (!!currentDiary) {
+    diaryId = currentDiary.id;
+    diaryTasksByDay = currentDiary.tasksByDay;
+  }
 
-  /*
-  const {
-    didInvalidate,
-    isFetching,
-    lastUpdated,
-    items
-  } = state.diary.availableDiaries;
-  const selectedDiaryId = state.diary.selectedDiary;
-  return {
-    didInvalidate,
-    isFetching,
-    items: items.hasOwnProperty(selectedDiaryId)
-      ? diaries[selectedDiaryId].items
-      : [],
-    lastUpdated,
-    selectedDiaryId
-  };
-  */
   return { diaryId, diaryTasksByDay, didInvalidate, isFetching, lastUpdated };
 })(HomeworkPage_Unconnected);
 

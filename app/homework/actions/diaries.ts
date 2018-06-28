@@ -28,7 +28,7 @@ export function availableDiariesInvalidated() {
 export const AVAILABLE_DIARIES_REQUESTED = "AVAILABLE_DIARIES_REQUESTED";
 
 export function availableDiariesRequested() {
-  console.warn("available diaries requested.");
+  // console.warn("available diaries requested.");
   return {
     type: AVAILABLE_DIARIES_REQUESTED
   };
@@ -37,7 +37,7 @@ export function availableDiariesRequested() {
 export const AVAILABLE_DIARIES_RECEIVED = "AVAILABLE_DIARIES_RECEIVED";
 
 export function availableDiariesReceived(diaries) {
-  console.warn("available diaries received.");
+  // console.warn("available diaries received.");
   return {
     type: AVAILABLE_DIARIES_RECEIVED,
 
@@ -60,26 +60,26 @@ function availableDiariesFetchError(errmsg) {
 }
 
 function shouldFetchDiaries(state) {
-  console.warn("shoud fetch diaires ?");
+  // console.warn("shoud fetch diaires ?");
   const diaries = state.diary.availableDiaries;
   if (!diaries) {
-    console.warn("Yes. There are no tasks.");
+    // console.warn("Yes. There are no tasks.");
     return true;
   } else if (diaries.isFetching) {
-    console.warn("No. Already fetching tasks.");
+    // console.warn("No. Already fetching tasks.");
     return false;
   } else {
-    console.warn(
+    /* console.warn(
       diaries.didInvalidate
         ? "Yes. Tasks invalidated."
         : "No. Tasks are already valid."
-    );
+    ); */
     return diaries.didInvalidate;
   }
 }
 
 function fetchDiaries() {
-  console.warn("fetching diaries...");
+  // console.warn("fetching diaries...");
   return async dispatch => {
     dispatch(availableDiariesRequested());
 
@@ -99,7 +99,7 @@ function fetchDiaries() {
 }
 
 export function fetchDiariesIfNeeded() {
-  console.warn("fetching if needed...");
+  // console.warn("fetching if needed...");
   return (dispatch, getState) => {
     if (shouldFetchDiaries(getState())) {
       return dispatch(fetchDiaries());

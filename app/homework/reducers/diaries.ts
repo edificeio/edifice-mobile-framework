@@ -4,7 +4,7 @@
 
 import { combineReducers } from "redux";
 
-import { IDiaryDayTasks } from "./diaryTasks";
+import moment from "moment";
 
 export interface IDiary {
   id: string;
@@ -20,6 +20,17 @@ export interface IDiariesState {
   isFetching: boolean;
   items: IDiaryArray;
   lastUpdated: Date;
+}
+
+export interface IDiaryTask {
+  id: number;
+  title: string;
+  description: string;
+}
+
+export interface IDiaryDayTasks {
+  moment: moment.Moment;
+  tasks: { [id: string]: IDiaryTask };
 }
 
 import {
@@ -62,7 +73,6 @@ function availableDiaries(
         isFetching: true
       };
     case AVAILABLE_DIARIES_RECEIVED:
-      console.warn("YEAH !");
       return {
         ...state,
         didInvalidate: false,
@@ -87,3 +97,27 @@ export default combineReducers({
   availableDiaries,
   selectedDiary
 });
+
+/**
+ * Extract a short version of the task's description, to be shown on the landing homework page.
+ * The short version stops at the first new line, or before SHORT_TASK_MAX_SIZE characters (without cutting words).
+ * The short version DOES include the ending "..." if necessary.
+ * @param description description to be shortened.
+ */
+export function extractShortTask(
+  description,
+  maxSize = SHORT_TASK_MAX_SIZE,
+  newLineChar = NEW_LINE_CHARACTER
+) {
+  const firstLine = description.split(newLineChar, 1)[0];
+  let trimmedFirstLine = (firstLine + " ").substr(0, maxSize);
+  trimmedFirstLine = trimmedFirstLine.substr(
+    0,
+    Math.min(trimmedFirstLine.length, trimmedFirstLine.lastIndexOf(" "))
+  );
+  trimmedFirstLine = trimmedFirstLine.trim();
+  if (trimmedFirstLine.length !== description.length) trimmedFirstLine += "...";
+  return trimmedFirstLine;
+}
+const SHORT_TASK_MAX_SIZE: number = 70;
+const NEW_LINE_CHARACTER: string = "\n";
