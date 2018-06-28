@@ -14,9 +14,10 @@ import { PageContainer } from "../../ui/ContainerContent";
 import { Back } from "../../ui/headers/Back";
 import { AppTitle, Header } from "../../ui/headers/Header";
 
-import moment from "moment";
+import moment, { Moment } from "moment";
 // tslint:disable-next-line:no-submodule-imports
 import "moment/locale/fr";
+import { connect } from "react-redux";
 moment.locale("fr");
 
 // helpers ----------------------------------------------------------------------------------------
@@ -40,8 +41,18 @@ export class HomeworkTaskPageHeader extends React.Component<
 
 // Main component ---------------------------------------------------------------------------------
 
+interface IHomeworkTaskPageProps {
+  navigation?: any;
+  dispatch?: any; // given by connect(),
+  diaryId: string;
+  moment: Moment;
+  taskId: string;
+  taskTitle: string;
+  taskDescription: string;
+}
+
 // tslint:disable-next-line:max-classes-per-file
-export class HomeworkTaskPage extends React.Component<{}, {}> {
+class HomeworkTaskPage_Unconnected extends React.Component<{}, {}> {
   constructor(props) {
     super(props);
   }
@@ -56,3 +67,18 @@ export class HomeworkTaskPage extends React.Component<{}, {}> {
     );
   }
 }
+
+export const HomeworkTaskPage = connect((state: any) => {
+  const { diaryId, moment, taskId } = state.diary.selectedDiaryTask;
+  //console.warn("diaryID : " + diaryId);
+  //console.warn(state.diary.diaries);
+  // const diary = state.diary.diaries.items[diaryId];
+  // console.warn(diary);
+  /*
+  const dayTasks = diary.items.find(element => element.moment.isSame(moment));
+  const taskTitle = dayTasks[taskId].title;
+  const taskDescription = dayTasks[taskId].description;
+  return { diaryId, moment, taskId, taskTitle, taskDescription };
+  */
+  return {};
+})(HomeworkTaskPage_Unconnected);

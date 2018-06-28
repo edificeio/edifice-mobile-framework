@@ -4,10 +4,13 @@
 
 import { combineReducers } from "redux";
 
-import diaryTasks from "./diaryTasks";
+import { availableDiaries, selectedDiary } from "./diaries";
+import selectedDiaryTask from "./selectedDiaryTask";
 
 const rootReducer = combineReducers({
-  diaryTasks
+  availableDiaries,
+  selectedDiary,
+  selectedDiaryTask
 });
 
 export default rootReducer;

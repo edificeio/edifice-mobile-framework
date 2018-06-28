@@ -23,6 +23,7 @@ export interface IDiariesState {
 }
 
 import {
+  AVAILABLE_DIARIES_FETCH_ERROR,
   AVAILABLE_DIARIES_INVALIDATED,
   AVAILABLE_DIARIES_RECEIVED,
   AVAILABLE_DIARIES_REQUESTED,
@@ -30,7 +31,7 @@ import {
 } from "../actions/diaries";
 
 // TODO : by default, state is `undefined`. That's cool, the app will force the user to select a diary to display. Therefore, we must keep the info in a local storage or something like this.
-function selectedDiary(state: string, action) {
+function selectedDiary(state: string = /* null */ "ceci-est-un-id", action) {
   switch (action.type) {
     case DIARY_SELECTED:
       return action.diaryId;
@@ -39,7 +40,7 @@ function selectedDiary(state: string, action) {
   }
 }
 
-function diaries(
+function availableDiaries(
   state: IDiariesState = {
     didInvalidate: true,
     isFetching: false,
@@ -61,19 +62,28 @@ function diaries(
         isFetching: true
       };
     case AVAILABLE_DIARIES_RECEIVED:
+      console.warn("YEAH !");
       return {
         ...state,
         didInvalidate: false,
         isFetching: false,
-        items: action.diaryIds,
+        items: action.diaries,
         lastUpdated: action.receivedAt
+      };
+    case AVAILABLE_DIARIES_FETCH_ERROR:
+      return {
+        ...state,
+        didInvalidate: true,
+        isFetching: false
       };
     default:
       return state;
   }
 }
 
+export { availableDiaries, selectedDiary };
+
 export default combineReducers({
-  diaries,
+  availableDiaries,
   selectedDiary
 });

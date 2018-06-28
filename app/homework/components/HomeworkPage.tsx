@@ -8,7 +8,7 @@
 
 import style from "glamorous-native";
 import * as React from "react";
-import { ActivityIndicator, RefreshControl } from "react-native";
+import { RefreshControl } from "react-native";
 const { View, Text, FlatList, TouchableOpacity } = style;
 import { connect } from "react-redux";
 
@@ -23,9 +23,12 @@ moment.locale("fr");
 
 import I18n from "react-native-i18n";
 
-import { fetchDiaryTasksIfNeeded } from "../actions/diaryTasks";
+import { fetchDiariesIfNeeded } from "../actions/diaries";
+import { diaryTaskSelected } from "../actions/selectedDiaryTask";
 
-import { IDiaryTasksState, IDiaryDayTasks } from "../reducers/diaryTasks"; // Type definitions
+import diaries, { IDiaryArray } from "../reducers/diaries";
+import { extractShortTask, IDiaryDayTasks } from "../reducers/diaryTasks"; // Type definitions
+import selectedDiaryTask from "../reducers/selectedDiaryTask";
 
 // helpers ----------------------------------------------------------------------------------------
 
@@ -34,26 +37,6 @@ const runNextFrame = fn => {
     requestAnimationFrame(fn);
   });
 };
-
-/**
- * Extract a short version of the task's description, to be shown on the landing homework page.
- * The short version stops at the first new line, or before SHORT_TASK_MAX_SIZE characters (without cutting words).
- * The short version DOES include the ending "..." if necessary.
- * @param description description to be shortened.
- */
-function extractShortTask(description) {
-  const firstLine = description.split(NEW_LINE_CHARACTER, 1)[0];
-  let trimmedFirstLine = (firstLine + " ").substr(0, SHORT_TASK_MAX_SIZE);
-  trimmedFirstLine = trimmedFirstLine.substr(
-    0,
-    Math.min(trimmedFirstLine.length, trimmedFirstLine.lastIndexOf(" "))
-  );
-  trimmedFirstLine = trimmedFirstLine.trim();
-  if (trimmedFirstLine.length !== description.length) trimmedFirstLine += "...";
-  return trimmedFirstLine;
-}
-const SHORT_TASK_MAX_SIZE: number = 70;
-const NEW_LINE_CHARACTER: string = "\n";
 
 // Header component -------------------------------------------------------------------------------
 
@@ -78,8 +61,9 @@ interface IHomeworkPageProps {
   didInvalidate?: boolean;
   dispatch?: any; // given by connect()
   isFetching?: boolean;
-  items?: IDiaryDayTasks[];
   lastUpdated?: Date;
+  diaryId?: string;
+  diaryTasksByDay?: IDiaryDayTasks[];
 }
 
 /**
@@ -89,7 +73,7 @@ interface IHomeworkPageProps {
  */
 // tslint:disable-next-line:max-classes-per-file
 class HomeworkPage_Unconnected extends React.Component<IHomeworkPageProps, {}> {
-  private flatList: FlatList<IDiaryDayTasks>; // react-native FlatList component ref
+  private flatList: FlatList<IDiaryDayTasks>; // react-native FlatList component ref // typescript error. Why ?
   private setFlatListRef: any; // FlatList setter, executed when this component is mounted.
 
   constructor(props) {
@@ -110,7 +94,7 @@ class HomeworkPage_Unconnected extends React.Component<IHomeworkPageProps, {}> {
         <HomeworkTimeLine />
         <FlatList
           innerRef={this.setFlatListRef}
-          data={this.props.items}
+          data={this.props.diaryTasksByDay}
           renderItem={({ item }) => (
             <HomeworkDayTasks data={item} navigation={this.props.navigation} />
           )}
@@ -131,8 +115,8 @@ class HomeworkPage_Unconnected extends React.Component<IHomeworkPageProps, {}> {
     this.fetchTasks();
   }
 
-  public async fetchTasks() {
-    this.props.dispatch(fetchDiaryTasksIfNeeded("ceci-est-un-id"));
+  public fetchTasks() {
+    this.props.dispatch(fetchDiariesIfNeeded());
   }
 }
 
@@ -140,10 +124,36 @@ export const HomeworkPage = connect((state: any) => {
   const {
     didInvalidate,
     isFetching,
-    items,
     lastUpdated
-  }: IHomeworkPageProps = state.diary.diaryTasks;
-  return { didInvalidate, isFetching, items, lastUpdated };
+  } = state.diary.availableDiaries;
+  const diaries = state.diary.availableDiaries.items;
+  console.warn(diaries);
+  const selectedDiaryId = state.diary.selectedDiary;
+  const currentDiary = diaries[selectedDiaryId];
+  if (!currentDiary) return { items: [] as IDiaryDayTasks[] }; // If no diary corresponds, returns a empty new one.
+
+  const diaryId = currentDiary.id;
+  const diaryTasksByDay = currentDiary.tasksByDay;
+
+  /*
+  const {
+    didInvalidate,
+    isFetching,
+    lastUpdated,
+    items
+  } = state.diary.availableDiaries;
+  const selectedDiaryId = state.diary.selectedDiary;
+  return {
+    didInvalidate,
+    isFetching,
+    items: items.hasOwnProperty(selectedDiaryId)
+      ? diaries[selectedDiaryId].items
+      : [],
+    lastUpdated,
+    selectedDiaryId
+  };
+  */
+  return { diaryId, diaryTasksByDay, didInvalidate, isFetching, lastUpdated };
 })(HomeworkPage_Unconnected);
 
 // Functional components --------------------------------------------------------------------------
@@ -158,14 +168,20 @@ export const HomeworkPage = connect((state: any) => {
 interface IHomeworkDayTasksProps {
   data: IDiaryDayTasks;
   navigation?: any;
+  dispatch?: any;
+  selectedDiary?: string;
 }
 // tslint:disable-next-line:max-classes-per-file
-class HomeworkDayTasks extends React.Component<IHomeworkDayTasksProps, any> {
+class HomeworkDayTasks_Unconnected extends React.Component<
+  IHomeworkDayTasksProps,
+  any
+> {
   constructor(props: IHomeworkDayTasksProps) {
     super(props);
   }
 
   public render() {
+    const tasksAsArray = Object.values(this.props.data.tasks);
     return (
       <View>
         <HomeworkDayCheckpoint
@@ -173,18 +189,37 @@ class HomeworkDayTasks extends React.Component<IHomeworkDayTasksProps, any> {
           text={this.props.data.moment.format("dddd")}
           active={this.props.data.moment.isSame(moment(), "day")}
         />
-        {this.props.data.tasks.map(item => (
+        {tasksAsArray.map(item => (
           <HomeworkCard
             title={item.title}
             description={item.description}
             key={item.id}
-            navigation={this.props.navigation}
+            onPress={() => {
+              this.props.dispatch(
+                diaryTaskSelected(
+                  this.props.selectedDiary,
+                  this.props.data.moment,
+                  item.id
+                )
+              );
+              const navigation = this.props.navigation;
+              navigation.navigate("HomeworkTask");
+            }}
           />
         ))}
       </View>
     );
   }
 }
+
+export const HomeworkDayTasks = connect((state: any) => {
+  const ret: {
+    selectedDiary: string;
+  } = {
+    selectedDiary: state.diary.selectedDiary
+  };
+  return ret;
+})(HomeworkDayTasks_Unconnected); // FIXME : it works but what the fuck with typescript ???
 
 // Pure display components ------------------------------------------------------------------------
 
@@ -307,17 +342,17 @@ const HomeworkCard_Unstyled = ({
   style,
   title,
   description,
-  navigation
+  onPress
 }: {
   style?: any;
   title?: string;
   description?: string;
-  navigation?: any;
+  onPress?: any; // custom event
 }) => (
   <TouchableOpacity
     style={[style]}
     onPress={() => {
-      navigation.navigate("HomeworkTask");
+      onPress();
     }}
   >
     <Text fontSize={14} color={CommonStyles.textColor} lineHeight={20}>

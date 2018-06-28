@@ -10,11 +10,25 @@ import { FlatButton } from "../FlatButton";
  * Ui showcase set showing all buttons possibles.
  */
 export default () => (
-    <View>
-        <Text>Ui Buttons</Text>
-        <ButtonLine>ButtonLine</ButtonLine>
-        <ButtonsOkCancel title="ButtonsOkCancel"/>
-        <ButtonTextIcon leftName="search" rightName="send_icon" title="ButtonTextIcon"/>
-        <FlatButton leftName="search" rightName="send_icon" title="FlatButton"/>
-    </View>
+  <View>
+    <Text>Ui Buttons</Text>
+    <ButtonLine title="ButtonLine" onPress={() => true} />
+    <ButtonsOkCancel
+      title="ButtonsOkCancel"
+      onValid={() => true}
+      onCancel={() => true}
+    />
+    <ButtonTextIcon
+      leftName="search"
+      rightName="send_icon"
+      title="ButtonTextIcon"
+      onPress={() => true}
+    />
+    <FlatButton
+      leftName="search"
+      rightName="send_icon"
+      title="FlatButton"
+      loading={false}
+    />
+  </View>
 );
