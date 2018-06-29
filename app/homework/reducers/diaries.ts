@@ -34,10 +34,10 @@ export interface IDiaryDayTasks {
 }
 
 import {
-  AVAILABLE_DIARIES_FETCH_ERROR,
-  AVAILABLE_DIARIES_INVALIDATED,
-  AVAILABLE_DIARIES_RECEIVED,
-  AVAILABLE_DIARIES_REQUESTED,
+  DIARY_LIST_FETCH_ERROR,
+  DIARY_LIST_INVALIDATED,
+  DIARY_LIST_RECEIVED,
+  DIARY_LIST_REQUESTED,
   DIARY_SELECTED
 } from "../actions/diaries";
 
@@ -61,18 +61,18 @@ function availableDiaries(
   action
 ) {
   switch (action.type) {
-    case AVAILABLE_DIARIES_INVALIDATED:
+    case DIARY_LIST_INVALIDATED:
       return {
         ...state,
         didInvalidate: true
       };
-    case AVAILABLE_DIARIES_REQUESTED:
+    case DIARY_LIST_REQUESTED:
       return {
         ...state,
         didInvalidate: false,
         isFetching: true
       };
-    case AVAILABLE_DIARIES_RECEIVED:
+    case DIARY_LIST_RECEIVED:
       return {
         ...state,
         didInvalidate: false,
@@ -80,7 +80,7 @@ function availableDiaries(
         items: action.diaries,
         lastUpdated: action.receivedAt
       };
-    case AVAILABLE_DIARIES_FETCH_ERROR:
+    case DIARY_LIST_FETCH_ERROR:
       return {
         ...state,
         didInvalidate: true,

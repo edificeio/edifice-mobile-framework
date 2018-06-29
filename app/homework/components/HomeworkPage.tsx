@@ -21,7 +21,7 @@ import moment from "moment";
 import "moment/locale/fr";
 moment.locale("fr");
 
-import { fetchDiariesIfNeeded } from "../actions/diaries";
+import { fetchDiaryListIfNeeded } from "../actions/diaries";
 import { diaryTaskSelected } from "../actions/selectedDiaryTask";
 
 import { extractShortTask, IDiaryDayTasks } from "../reducers/diaries";
@@ -104,7 +104,7 @@ class HomeworkPage_Unconnected extends React.Component<IHomeworkPageProps, {}> {
   }
 
   public fetchTasks() {
-    this.props.dispatch(fetchDiariesIfNeeded());
+    this.props.dispatch(fetchDiaryListIfNeeded());
   }
 }
 
