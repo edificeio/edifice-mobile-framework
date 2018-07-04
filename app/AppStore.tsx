@@ -8,7 +8,7 @@ import { middleware } from "./navigation/middleware";
 
 import auth from "./auth/reducer";
 import conversation from "./conversation/reducer";
-import diary from "./homework/reducers";
+import diary from "./diary/reducers";
 import connectionTracker from "./infra/reducers/connectionTracker";
 import ui from "./infra/reducers/ui";
 import timeline from "./timeline/reducer";

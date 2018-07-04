@@ -1,14 +1,14 @@
 /**
- * Homework Dummy Data
+ * Diary Dummy Data
  * Just data. Use this whenever you want.
  */
 
 import moment from "moment";
+// tslint:disable-next-line:no-submodule-imports
 import "moment/locale/fr";
-import { IDiaryArray, IDiaryDayTasks } from "./reducers/diaries";
 moment.locale("fr");
 
-export const thisWeek: IDiaryDayTasks[] = [
+export const thisWeek: any[] = [
   {
     moment: moment(),
     tasks: {
@@ -69,9 +69,12 @@ export const thisWeek: IDiaryDayTasks[] = [
   }
 ];
 
-export const allDiaries: IDiaryArray = {
+export const allDiaries: any = {
   "ceci-est-un-id": {
+    didInvalidate: true,
     id: "ceci-est-un-id",
+    isFetching: false,
+    lastUpdated: null,
     tasksByDay: thisWeek
   }
 };

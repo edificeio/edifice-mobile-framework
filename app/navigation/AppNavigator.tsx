@@ -7,7 +7,7 @@ import Login from "../auth/Login";
 
 import AccountNavigation from "../auth/AccountNavigation";
 import ConversationNavigator from "../conversation/ConversationNavigator";
-import HomeworkNavigator from "../homework/HomeworkNavigator";
+import DiaryNavigator from "../diary/DiaryNavigator";
 import TimelineNavigator from "../timeline/TimelineNavigator";
 import UiNavigator from "../ui/showcase/UiNavigator";
 
@@ -31,10 +31,10 @@ const MainNavigator = tabNavigator({
     navigationOptions: () => tabRootOptions(I18n.t("Profile"), "profile")
   },
 
-  homework: {
-    screen: HomeworkNavigator,
+  diary: {
+    screen: DiaryNavigator,
 
-    navigationOptions: () => tabRootOptions(I18n.t("Homework"), "profile")
+    navigationOptions: () => tabRootOptions(I18n.t("Diary"), "profile")
   },
 
   ui: {

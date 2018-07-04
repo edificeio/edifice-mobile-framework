@@ -1,5 +1,5 @@
 /**
- * Homework
+ * DiaryPage
  *
  * Display page for all homework in a calendar-like way.
  */
@@ -21,15 +21,19 @@ import moment from "moment";
 import "moment/locale/fr";
 moment.locale("fr");
 
-import { fetchDiaryListIfNeeded } from "../actions/diaries";
+import { fetchDiaryListIfNeeded } from "../actions/list";
 import { diaryTaskSelected } from "../actions/selectedDiaryTask";
 
-import { extractShortTask, IDiaryDayTasks } from "../reducers/diaries";
+import { IDiaryDayTasks } from "../reducers/list";
+
+import { extractShortFromRawText } from "../adapters/extractShort";
 
 // Header component -------------------------------------------------------------------------------
 
+// TODO : the header must show the month and the year instead of "Homework".
+
 // tslint:disable-next-line:max-classes-per-file
-export class HomeworkPageHeader extends React.Component<
+export class DiaryPageHeader extends React.Component<
   { navigation?: any },
   undefined
 > {
@@ -44,7 +48,7 @@ export class HomeworkPageHeader extends React.Component<
 
 // Main component ---------------------------------------------------------------------------------
 
-interface IHomeworkPageProps {
+interface IDiaryPageProps {
   navigation?: any;
   didInvalidate?: boolean;
   dispatch?: any; // given by connect()
@@ -55,13 +59,13 @@ interface IHomeworkPageProps {
 }
 
 /**
- * HomeworkPage
+ * DiaryPage
  *
  * The main component.
  */
 // tslint:disable-next-line:max-classes-per-file
-class HomeworkPage_Unconnected extends React.Component<IHomeworkPageProps, {}> {
-  private flatList: FlatList<IDiaryDayTasks>; // react-native FlatList component ref // typescript error. Why ?
+class DiaryPage_Unconnected extends React.Component<IDiaryPageProps, {}> {
+  private flatList: FlatList<IDiaryDayTasks>; // react-native FlatList component ref // FIXME typescript error (but js works fine). Why ?
   private setFlatListRef: any; // FlatList setter, executed when this component is mounted.
 
   constructor(props) {
@@ -77,14 +81,15 @@ class HomeworkPage_Unconnected extends React.Component<IHomeworkPageProps, {}> {
   // render & lifecycle
 
   public render() {
+    // console.warn(this.props);
     return (
       <PageContainer>
-        <HomeworkTimeLine />
+        <DiaryTimeLine />
         <FlatList
           innerRef={this.setFlatListRef}
           data={this.props.diaryTasksByDay}
           renderItem={({ item }) => (
-            <HomeworkDayTasks data={item} navigation={this.props.navigation} />
+            <DiaryDayTasks data={item} navigation={this.props.navigation} />
           )}
           keyExtractor={item => item.moment.format("YYYY-MM-DD")}
           ListHeaderComponent={() => <View height={15} />}
@@ -108,47 +113,46 @@ class HomeworkPage_Unconnected extends React.Component<IHomeworkPageProps, {}> {
   }
 }
 
-export const HomeworkPage = connect((state: any) => {
-  const {
-    didInvalidate,
-    isFetching,
-    lastUpdated
-  } = state.diary.availableDiaries;
-  const diaries = state.diary.availableDiaries.items;
-  const selectedDiaryId = state.diary.selectedDiary;
-  const currentDiary = diaries[selectedDiaryId];
+export const DiaryPage = connect((state: any) => {
+  // Map State To Props
+  const localState = state.diary;
+  // console.warn(localState);
+  const { didInvalidate, isFetching, lastUpdated } = localState.list;
+  const diaryList = localState.list.data ? localState.list.data : {}; // list.data may be undefined when no reducer has been run yet.
+  const selectedDiaryId = localState.selected;
+  const currentDiary = diaryList[selectedDiaryId];
   let diaryId = null;
-  let diaryTasksByDay = [] as IDiaryDayTasks[];
+  const diaryTasksByDay = [] as IDiaryDayTasks[];
 
-  if (!!currentDiary) {
+  if (currentDiary) {
     diaryId = currentDiary.id;
-    diaryTasksByDay = currentDiary.tasksByDay;
+    // diaryTasksByDay = currentDiary.tasksByDay; // TODO get tasks from state -> diary -> tasks to display them.
   }
 
   return { diaryId, diaryTasksByDay, didInvalidate, isFetching, lastUpdated };
-})(HomeworkPage_Unconnected);
+})(DiaryPage_Unconnected);
 
 // Functional components --------------------------------------------------------------------------
 
 /**
- * HomeworkDayTasks
+ * DiaryDayTasks
  *
  * Display the task list of a day (with day number and name).
  * Props:
- *     data: HomeworkDay - information of the day (number and name) and list of the tasks.
+ *     data: DiaryDay - information of the day (number and name) and list of the tasks.
  */
-interface IHomeworkDayTasksProps {
+interface IDiaryDayTasksProps {
   data: IDiaryDayTasks;
   navigation?: any;
   dispatch?: any;
   selectedDiary?: string;
 }
 // tslint:disable-next-line:max-classes-per-file
-class HomeworkDayTasks_Unconnected extends React.Component<
-  IHomeworkDayTasksProps,
+class DiaryDayTasks_Unconnected extends React.Component<
+  IDiaryDayTasksProps,
   any
 > {
-  constructor(props: IHomeworkDayTasksProps) {
+  constructor(props: IDiaryDayTasksProps) {
     super(props);
   }
 
@@ -156,13 +160,13 @@ class HomeworkDayTasks_Unconnected extends React.Component<
     const tasksAsArray = Object.values(this.props.data.tasks);
     return (
       <View>
-        <HomeworkDayCheckpoint
+        <DiaryDayCheckpoint
           nb={this.props.data.moment.date()}
           text={this.props.data.moment.format("dddd")}
           active={this.props.data.moment.isSame(moment(), "day")}
         />
         {tasksAsArray.map(item => (
-          <HomeworkCard
+          <DiaryCard
             title={item.title}
             description={item.description}
             key={item.id}
@@ -175,7 +179,7 @@ class HomeworkDayTasks_Unconnected extends React.Component<
                 )
               );
               const navigation = this.props.navigation;
-              navigation.navigate("HomeworkTask");
+              navigation.navigate("DiaryTask");
             }}
           />
         ))}
@@ -184,21 +188,21 @@ class HomeworkDayTasks_Unconnected extends React.Component<
   }
 }
 
-export const HomeworkDayTasks = connect((state: any) => {
+export const DiaryDayTasks = connect((state: any) => {
   const ret: {
     selectedDiary: string;
   } = {
     selectedDiary: state.diary.selectedDiary
   };
   return ret;
-})(HomeworkDayTasks_Unconnected); // FIXME : it works but what the fuck with typescript ???
+})(DiaryDayTasks_Unconnected); // FIXME : it works but what the fuck with typescript ???
 
 // Pure display components ------------------------------------------------------------------------
 
 /**
  * Just display a grey vertical line at the left tall as the screen is.
  */
-const HomeworkTimeLine = style.view({
+const DiaryTimeLine = style.view({
   backgroundColor: CommonStyles.entryfieldBorder, // TODO: Use the linear gradient instead of a plain grey
   height: "100%",
   left: 29,
@@ -207,21 +211,21 @@ const HomeworkTimeLine = style.view({
 });
 
 /**
- * HomeworkDayCheckpoint
+ * DiaryDayCheckpoint
  *
  * Just a wrapper for the heading of a day tasks. Displays a day number in a circle and a day name
  * TODO?: May took a Date object as a parameter instead of a number and a string ?
  * Props:
  *     `style`: `any` - Glamorous style to add.
- * 	   `nb`: `number`- Day number to be displayed in a `HomeworkDayCircleNumber`.
+ * 	   `nb`: `number`- Day number to be displayed in a `DiaryDayCircleNumber`.
  *     `text`: `string` - Day name to be displayed.
- *     `active`: `boolean` - An active `HomeworkDayCheckpoint` will be highlighted. Default `false`.
+ *     `active`: `boolean` - An active `DiaryDayCheckpoint` will be highlighted. Default `false`.
  *
- * An unstyled version on this component is available as `HomeworkDayCheckpoint_Unstyled`.
+ * An unstyled version on this component is available as `DiaryDayCheckpoint_Unstyled`.
  */
 
 // tslint:disable-next-line:variable-name
-const HomeworkDayCheckpoint_Unstyled = ({
+const DiaryDayCheckpoint_Unstyled = ({
   style,
   nb,
   text = "",
@@ -233,33 +237,32 @@ const HomeworkDayCheckpoint_Unstyled = ({
   active?: boolean;
 }) => (
   <View style={[style]}>
-    <HomeworkDayCircleNumber nb={nb} active={active} />
+    <DiaryDayCircleNumber nb={nb} active={active} />
     <Text color={CommonStyles.lightTextColor} fontSize={12}>
       {text.toUpperCase()}
     </Text>
   </View>
 );
 
-const HomeworkDayCheckpoint = style(HomeworkDayCheckpoint_Unstyled)({
+const DiaryDayCheckpoint = style(DiaryDayCheckpoint_Unstyled)({
   alignItems: "center",
   flexDirection: "row"
 });
 
 /**
- * HomeworkDayCircleNumber
+ * DiaryDayCircleNumber
  *
  * Display a number in a circle elegantly. Mostly used to show a day number.
  * Props:
  *     `style`: `any` - Glamorous style to add.
  * 	   `nb`: `number` - Just as simple as the number to be displayed.
- *     `active`: `boolean` - An active `HomeworkDayCircleNumber` will be highlighted.
- * FIXME: style.Text component gives Invariant Violation, must use `const {Text} = style`. Why ?
+ *     `active`: `boolean` - An active `DiaryDayCircleNumber` will be highlighted.
  * TODO: When active, the blue background should be a gradient, according to the mockup.
  *
- * An unstyled version on this component is available as `HomeworkDayCircleNumber_Unstyled`.
+ * An unstyled version on this component is available as `DiaryDayCircleNumber_Unstyled`.
  */
 // tslint:disable-next-line:variable-name
-const HomeworkDayCircleNumber_Unstyled = ({
+const DiaryDayCircleNumber_Unstyled = ({
   style,
   nb,
   active = false
@@ -278,7 +281,7 @@ const HomeworkDayCircleNumber_Unstyled = ({
   </View>
 );
 
-const HomeworkDayCircleNumber = style(HomeworkDayCircleNumber_Unstyled)(
+const DiaryDayCircleNumber = style(DiaryDayCircleNumber_Unstyled)(
   {
     alignItems: "center",
     borderColor: CommonStyles.tabBottomColor,
@@ -302,15 +305,15 @@ const HomeworkDayCircleNumber = style(HomeworkDayCircleNumber_Unstyled)(
 );
 
 /**
- * HomeworkCard
+ * DiaryCard
  *
  * Like `Card`, but some margin and padding, custom shadow and rounded.
  *
- * An unstyled version on this component is available as `HomeworkCard_Unstyled`.
+ * An unstyled version on this component is available as `DiaryCard_Unstyled`.
  */
 
 // tslint:disable-next-line:variable-name
-const HomeworkCard_Unstyled = ({
+const DiaryCard_Unstyled = ({
   style,
   title,
   description,
@@ -328,7 +331,7 @@ const HomeworkCard_Unstyled = ({
     }}
   >
     <Text fontSize={14} color={CommonStyles.textColor} lineHeight={20}>
-      {extractShortTask(description)}
+      {extractShortFromRawText(description)}
     </Text>
     <Text fontSize={12} color={CommonStyles.lightTextColor} marginTop={5}>
       {title}
@@ -336,7 +339,7 @@ const HomeworkCard_Unstyled = ({
   </TouchableOpacity>
 );
 
-const HomeworkCard = style(HomeworkCard_Unstyled)({
+const DiaryCard = style(DiaryCard_Unstyled)({
   backgroundColor: "#FFF",
   borderRadius: 5,
   marginBottom: 15,

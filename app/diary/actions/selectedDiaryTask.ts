@@ -1,6 +1,8 @@
 /**
- * List of actions & action creators & thucs for tasks of Homework/Diary app.
+ * List of actions & action creators & thucs for tasks of Diary app (homework).
  */
+
+// TODO, refactor action & reducer for selectedTask
 
 export const DIARY_TASK_SELECTED = "DIARY_TASK_SELECTED";
 

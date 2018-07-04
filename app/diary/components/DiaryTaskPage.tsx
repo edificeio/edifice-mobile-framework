@@ -1,5 +1,5 @@
 /**
- * HomeworkTaskPage
+ * DiaryTaskPage
  *
  * Display page for just one task just one day.
  */
@@ -26,7 +26,7 @@ moment.locale("fr");
 // Header component -------------------------------------------------------------------------------
 
 // tslint:disable-next-line:max-classes-per-file
-export class HomeworkTaskPageHeader extends React.Component<
+export class DiaryTaskPageHeader extends React.Component<
   { navigation?: any },
   undefined
 > {
@@ -42,7 +42,7 @@ export class HomeworkTaskPageHeader extends React.Component<
 
 // Main component ---------------------------------------------------------------------------------
 
-interface IHomeworkTaskPageProps {
+interface IDiaryTaskPageProps {
   navigation?: any;
   dispatch?: any; // given by connect(),
   diaryId?: string;
@@ -53,8 +53,8 @@ interface IHomeworkTaskPageProps {
 }
 
 // tslint:disable-next-line:max-classes-per-file
-class HomeworkTaskPage_Unconnected extends React.Component<
-  IHomeworkTaskPageProps,
+class DiaryTaskPage_Unconnected extends React.Component<
+  IDiaryTaskPageProps,
   {}
 > {
   constructor(props) {
@@ -90,9 +90,9 @@ class HomeworkTaskPage_Unconnected extends React.Component<
   }
 }
 
-export const HomeworkTaskPage = connect((state: any) => {
+export const DiaryTaskPage = connect((state: any) => {
   const { diaryId, moment, taskId } = state.diary.selectedDiaryTask;
-  const diaries = state.diary.availableDiaries.items;
+  const diaries = state.diary.list.diaries;
   const diary = diaries[diaryId];
   if (!diary) return {}; // this case shouldn't occur.
   const diaryTasksByDay = diary.tasksByDay;
@@ -109,4 +109,4 @@ export const HomeworkTaskPage = connect((state: any) => {
     taskId,
     taskTitle: taskInfos.title
   };
-})(HomeworkTaskPage_Unconnected);
+})(DiaryTaskPage_Unconnected);
