@@ -24,8 +24,9 @@ moment.locale("fr");
 import { fetchDiaryListIfNeeded } from "../actions/list";
 import { diaryTaskSelected } from "../actions/selectedDiaryTask";
 
-import { IDiaryDayTasks } from "../reducers/list";
+import { IDiaryDay, IDiaryTask, IDiaryTasks } from "../reducers/tasks";
 
+import today from "../../utils/today";
 import { extractShortFromRawText } from "../adapters/extractShort";
 
 // Header component -------------------------------------------------------------------------------
@@ -54,8 +55,12 @@ interface IDiaryPageProps {
   dispatch?: any; // given by connect()
   isFetching?: boolean;
   lastUpdated?: Date;
-  diaryId?: string;
-  diaryTasksByDay?: IDiaryDayTasks[];
+  diaryId?: string; // selected diaryId
+  diaryTasksByDay?: Array<{
+    id: string;
+    date: moment.Moment;
+    tasks: IDiaryTask[];
+  }>; // for this diaryId, all the tasks by day
 }
 
 /**
@@ -65,7 +70,7 @@ interface IDiaryPageProps {
  */
 // tslint:disable-next-line:max-classes-per-file
 class DiaryPage_Unconnected extends React.Component<IDiaryPageProps, {}> {
-  private flatList: FlatList<IDiaryDayTasks>; // react-native FlatList component ref // FIXME typescript error (but js works fine). Why ?
+  private flatList: FlatList<IDiaryTasks>; // react-native FlatList component ref // FIXME typescript error (but js works fine). Why ?
   private setFlatListRef: any; // FlatList setter, executed when this component is mounted.
 
   constructor(props) {
@@ -91,7 +96,7 @@ class DiaryPage_Unconnected extends React.Component<IDiaryPageProps, {}> {
           renderItem={({ item }) => (
             <DiaryDayTasks data={item} navigation={this.props.navigation} />
           )}
-          keyExtractor={item => item.moment.format("YYYY-MM-DD")}
+          keyExtractor={item => item.date.format("YYYY-MM-DD")}
           ListHeaderComponent={() => <View height={15} />}
           refreshControl={
             <RefreshControl
@@ -117,19 +122,50 @@ export const DiaryPage = connect((state: any) => {
   // Map State To Props
   const localState = state.diary;
   // console.warn(localState);
+  const selectedDiaryId = localState.selected;
+  const currentDiaryTasks = localState.tasks[selectedDiaryId];
+  if (!currentDiaryTasks)
+    return {
+      diaryId: null,
+      diaryTasksByDay: null,
+      didInvalidate: true,
+      isFetching: false,
+      lastUpdated: null
+    };
+  const { didInvalidate, isFetching, lastUpdated } = currentDiaryTasks;
+  // console.warn(currentDiaryTasks.data);
+
+  // Flatten two-dimensional IOrderedArrayById
+  const diaryTasksByDay = currentDiaryTasks.data.ids.map(diaryId => ({
+    date: currentDiaryTasks.data.byId[diaryId].date,
+    id: diaryId,
+    tasks: currentDiaryTasks.data.byId[diaryId].tasks.ids.map(
+      taskId => currentDiaryTasks.data.byId[diaryId].tasks.byId[taskId]
+    )
+  }));
+
+  // console.warn(diaryTasksByDay);
+  /*
   const { didInvalidate, isFetching, lastUpdated } = localState.list;
   const diaryList = localState.list.data ? localState.list.data : {}; // list.data may be undefined when no reducer has been run yet.
   const selectedDiaryId = localState.selected;
   const currentDiary = diaryList[selectedDiaryId];
   let diaryId = null;
-  const diaryTasksByDay = [] as IDiaryDayTasks[];
+  let diaryTasksByDay: IDiaryTasks = { byId: {}, ids: [] }; // start with an empty one.
 
   if (currentDiary) {
     diaryId = currentDiary.id;
-    // diaryTasksByDay = currentDiary.tasksByDay; // TODO get tasks from state -> diary -> tasks to display them.
-  }
+    diaryTasksByDay = currentDiary.tasksByDay; // TODO get tasks from state -> diary -> tasks to display them.
+  }*/
 
-  return { diaryId, diaryTasksByDay, didInvalidate, isFetching, lastUpdated };
+  return {
+    diaryId: selectedDiaryId,
+    diaryTasksByDay,
+    didInvalidate,
+    isFetching,
+    lastUpdated
+  };
+
 })(DiaryPage_Unconnected);
 
 // Functional components --------------------------------------------------------------------------
@@ -142,7 +178,7 @@ export const DiaryPage = connect((state: any) => {
  *     data: DiaryDay - information of the day (number and name) and list of the tasks.
  */
 interface IDiaryDayTasksProps {
-  data: IDiaryDayTasks;
+  data: IDiaryDay;
   navigation?: any;
   dispatch?: any;
   selectedDiary?: string;
@@ -161,20 +197,20 @@ class DiaryDayTasks_Unconnected extends React.Component<
     return (
       <View>
         <DiaryDayCheckpoint
-          nb={this.props.data.moment.date()}
-          text={this.props.data.moment.format("dddd")}
-          active={this.props.data.moment.isSame(moment(), "day")}
+          nb={this.props.data.date.date()}
+          text={this.props.data.date.format("dddd")}
+          active={this.props.data.date.isSame(today(), "day")}
         />
         {tasksAsArray.map(item => (
           <DiaryCard
             title={item.title}
-            description={item.description}
+            content={item.content}
             key={item.id}
             onPress={() => {
               this.props.dispatch(
                 diaryTaskSelected(
                   this.props.selectedDiary,
-                  this.props.data.moment,
+                  this.props.data.date,
                   item.id
                 )
               );
@@ -316,12 +352,12 @@ const DiaryDayCircleNumber = style(DiaryDayCircleNumber_Unstyled)(
 const DiaryCard_Unstyled = ({
   style,
   title,
-  description,
+  content,
   onPress
 }: {
   style?: any;
   title?: string;
-  description?: string;
+  content?: string;
   onPress?: any; // custom event
 }) => (
   <TouchableOpacity
@@ -331,7 +367,7 @@ const DiaryCard_Unstyled = ({
     }}
   >
     <Text fontSize={14} color={CommonStyles.textColor} lineHeight={20}>
-      {extractShortFromRawText(description)}
+      {extractShortFromRawText(content)}
     </Text>
     <Text fontSize={12} color={CommonStyles.lightTextColor} marginTop={5}>
       {title}

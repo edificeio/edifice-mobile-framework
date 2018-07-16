@@ -6,10 +6,12 @@ import { combineReducers } from "redux";
 
 import list from "./list";
 import selected from "./selected";
+import tasks from "./tasks";
 
 const rootReducer = combineReducers({
   list,
-  selected
+  selected,
+  tasks
   // selectedTask
 });
 

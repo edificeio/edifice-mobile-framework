@@ -32,6 +32,13 @@ export const actionTypeReceived = (actionPrefix: string) =>
 export const actionTypeFetchError = (actionPrefix: string) =>
   actionPrefix + "_FETCH_ERROR";
 
+export interface IAsyncReducer<T> {
+  data: T;
+  didInvalidate: boolean;
+  isFetching: boolean;
+  lastUpdated: Date;
+}
+
 export default function asyncReducer<T>(
   dataReducer: (state?: T, action?: any) => T,
   actionPrefix: string
@@ -88,7 +95,7 @@ export default function asyncReducer<T>(
           isFetching: false
         };
       default:
-        return state;
+        return state; // TODO call dataReducer here too ?
     }
   };
 }

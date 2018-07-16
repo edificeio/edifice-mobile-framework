@@ -53,7 +53,7 @@ const diaryListAdapter = (data: IDiaryListBackend) => {
     };
   }
   return result;
-};
+}; // TODO : add return type
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

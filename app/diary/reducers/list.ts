@@ -24,20 +24,6 @@ export interface IDiary {
 
 export type IDiaryList = IArrayById<IDiary>;
 
-// A single day with all its tasks in a diary.
-// TODO REMOVE THIS, and place it at the right place.
-export interface IDiaryDayTasks {
-  moment: moment.Moment;
-  tasks: { [id: string]: IDiaryTask };
-}
-
-// A single diary task.
-export interface IDiaryTask {
-  id: number;
-  title: string;
-  description: string;
-}
-
 // THE REDUCER ------------------------------------------------------------------------------------
 
 const stateDefault: IDiaryList = {};
