@@ -106,7 +106,7 @@ function shouldFetchDiaryList(state) {
  * Calls a fetch operation to get diary list from the backend.
  * Dispatches DIARY_LIST_REQUESTED, DIARY_LIST_RECEIVED, and DIARY_LIST_FETCH_ERROR if an error occurs.
  */
-function fetchDiaryList() {
+export function fetchDiaryList() {
   return async (dispatch, getState) => {
     // console.warn("Fetching diary list...");
     dispatch(diaryListRequested());

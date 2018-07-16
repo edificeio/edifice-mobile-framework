@@ -21,8 +21,9 @@ import moment from "moment";
 import "moment/locale/fr";
 moment.locale("fr");
 
-import { fetchDiaryListIfNeeded } from "../actions/list";
+import { fetchDiaryList, fetchDiaryListIfNeeded } from "../actions/list";
 import { diaryTaskSelected } from "../actions/selectedTask";
+import { fetchDiaryTasks, fetchDiaryTasksIfNeeded } from "../actions/tasks";
 
 import { IDiaryDay, IDiaryTask, IDiaryTasks } from "../reducers/tasks";
 
@@ -101,7 +102,7 @@ class DiaryPage_Unconnected extends React.Component<IDiaryPageProps, {}> {
           refreshControl={
             <RefreshControl
               refreshing={this.props.isFetching}
-              onRefresh={() => this.fetchTasks()}
+              onRefresh={() => this.forceFetchDiaryTasks()}
             />
           }
         />
@@ -110,11 +111,19 @@ class DiaryPage_Unconnected extends React.Component<IDiaryPageProps, {}> {
   }
 
   public componentDidMount() {
-    this.fetchTasks();
+    this.fetchDiaryList();
   }
 
-  public fetchTasks() {
+  public fetchDiaryList() {
     this.props.dispatch(fetchDiaryListIfNeeded());
+  }
+
+  public fetchDiaryTasks() {
+    this.props.dispatch(fetchDiaryTasksIfNeeded(this.props.diaryId));
+  }
+
+  public forceFetchDiaryTasks() {
+    this.props.dispatch(fetchDiaryTasks(this.props.diaryId));
   }
 }
 

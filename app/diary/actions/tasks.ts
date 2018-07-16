@@ -124,7 +124,7 @@ function shouldFetchDiaryTasks(state, diaryId: string) {
  * Calls a fetch operation to get diary tasks from the backend for the given diaryId.
  * Dispatches DIARY_TASKS_REQUESTED, DIARY_TASKS_RECEIVED, and DIARY_TASKS_FETCH_ERROR if an error occurs.
  */
-function fetchDiaryTasks(diaryId: string) {
+export function fetchDiaryTasks(diaryId: string) {
   return async (dispatch, getState) => {
     // console.warn("Fetching diary tasks for diary " + diaryId);
     dispatch(diaryTasksRequested(diaryId));
