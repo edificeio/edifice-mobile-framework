@@ -63,7 +63,8 @@ const diaryTasksAdapter: (
     ret.ids.push(dateId);
     ret.byId[dateId] = diaryDay;
   }
-  // TODO : Backend does not send data that is ordered. Is it a bug, or shall we sort data here ?
+  // Sorting days of tasks by ascending date
+  ret.ids.sort(); // As the used ID from date is YYYY-MM-DD, we can sort it lexically.
   return ret;
 };
 

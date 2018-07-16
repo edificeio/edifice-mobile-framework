@@ -34,7 +34,7 @@ export class DiaryTaskPageHeader extends React.Component<
     return (
       <Header>
         <Back navigation={this.props.navigation} />
-        <AppTitle>Pour le JJ/MM</AppTitle>
+        <AppTitle>Matière (à gauche)</AppTitle>
       </Header>
     );
   }
@@ -46,10 +46,10 @@ interface IDiaryTaskPageProps {
   navigation?: any;
   dispatch?: any; // given by connect(),
   diaryId?: string;
-  moment?: Moment;
+  date?: Moment;
   taskId?: string;
   taskTitle?: string;
-  taskDescription?: string;
+  taskContent?: string;
 }
 
 // tslint:disable-next-line:max-classes-per-file
@@ -64,7 +64,7 @@ class DiaryTaskPage_Unconnected extends React.Component<
   // render & lifecycle
 
   public render() {
-    let formattedDate = this.props.moment.format("dddd LL");
+    let formattedDate = this.props.date.format("dddd LL");
     formattedDate =
       formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
     return (
@@ -83,7 +83,7 @@ class DiaryTaskPage_Unconnected extends React.Component<
           lineHeight={20}
           paddingTop={20}
         >
-          {this.props.taskDescription}
+          {this.props.taskContent}
         </Text>
       </PageContainer>
     );
@@ -91,21 +91,22 @@ class DiaryTaskPage_Unconnected extends React.Component<
 }
 
 export const DiaryTaskPage = connect((state: any) => {
-  const { diaryId, moment, taskId } = state.diary.selectedDiaryTask;
-  const diaries = state.diary.list.diaries;
-  const diary = diaries[diaryId];
-  if (!diary) return {}; // this case shouldn't occur.
-  const diaryTasksByDay = diary.tasksByDay;
-  const dayTasks = diaryTasksByDay.find(element =>
-    element.moment.isSame(moment)
-  );
-  if (!dayTasks) return {}; // this case shouldn't occur.
-  const taskInfos = dayTasks.tasks[taskId];
+  // Map state to props
+  const localState = state.diary.selectedTask;
+  const { diaryId, date, taskId } = localState;
+  // Get diary, then day, then task content
+  const diaryDays = state.diary.tasks[diaryId];
+  if (!diaryDays) return {}; // this case shouldn't occur.
+  const dateId = date.format("YYYY-MM-DD");
+  const diaryTasksThisDay = diaryDays.data.byId[dateId];
+  if (!diaryTasksThisDay) return {}; // this case shouldn't occur.
+  const taskInfos = diaryTasksThisDay.tasks.byId[taskId];
   if (!taskInfos) return {}; // this case shouldn't occur.
+  // Format props
   return {
+    date,
     diaryId,
-    moment,
-    taskDescription: taskInfos.description,
+    taskContent: taskInfos.content,
     taskId,
     taskTitle: taskInfos.title
   };

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { StackNavigator } from "react-navigation";
 import { UiShowCase } from './UiShowcase';
-import { Header, HeaderIcon, AppTitle } from "../../ui/headers/Header";
+import { Header, HeaderIcon, AppTitle } from "../headers/Header";
 import { navOptions } from "../../utils/navHelper";
 
 export default StackNavigator(

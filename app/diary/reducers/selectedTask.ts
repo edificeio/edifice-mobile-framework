@@ -6,19 +6,19 @@ import { Moment } from "moment";
 
 export interface ISelectedDiaryTaskState {
   diaryId: string;
-  moment: Moment;
+  date: Moment;
   taskId: number;
 }
 
-import { DIARY_TASK_SELECTED } from "../actions/selectedDiaryTask";
+import { DIARY_TASK_SELECTED } from "../actions/selectedTask";
 
-function selectedDiaryTask(state: ISelectedDiaryTaskState = null, action) {
+function selectedTask(state: ISelectedDiaryTaskState = null, action) {
   switch (action.type) {
     case DIARY_TASK_SELECTED:
       return {
         ...state,
+        date: action.date,
         diaryId: action.diaryId,
-        moment: action.moment,
         taskId: action.taskId
       };
     default:
@@ -26,4 +26,4 @@ function selectedDiaryTask(state: ISelectedDiaryTaskState = null, action) {
   }
 }
 
-export default selectedDiaryTask;
+export default selectedTask;

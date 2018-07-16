@@ -1,7 +1,7 @@
 import style from "glamorous-native"
 import * as React from "react"
 import { NavigationActions, TabNavigator, TabBarBottom } from "react-navigation"
-import { IconOnOff } from "../ui/index"
+import { IconOnOff } from "../ui"
 import { CommonStyles } from "../styles/common/styles";
 import { navigationRef } from "../AppScreen"
 

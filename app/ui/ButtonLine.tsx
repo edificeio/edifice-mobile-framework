@@ -1,6 +1,6 @@
 import style from "glamorous-native"
 import * as React from "react";
-import { RowProperties } from "../ui/index";
+import { RowProperties } from ".";
 import I18n from 'react-native-i18n';
 import { Icon } from "./icons/Icon";
 

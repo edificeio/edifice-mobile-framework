@@ -1,6 +1,6 @@
 import style from "glamorous-native"
 import * as React from "react"
-import { Row, RowProperties } from "./index"
+import { Row, RowProperties } from "."
 import { CommonStyles } from "../styles/common/styles"
 import { Icon } from "./icons/Icon";
 import { connect } from "react-redux";

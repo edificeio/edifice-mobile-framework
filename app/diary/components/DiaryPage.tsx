@@ -22,7 +22,7 @@ import "moment/locale/fr";
 moment.locale("fr");
 
 import { fetchDiaryListIfNeeded } from "../actions/list";
-import { diaryTaskSelected } from "../actions/selectedDiaryTask";
+import { diaryTaskSelected } from "../actions/selectedTask";
 
 import { IDiaryDay, IDiaryTask, IDiaryTasks } from "../reducers/tasks";
 
@@ -165,7 +165,6 @@ export const DiaryPage = connect((state: any) => {
     isFetching,
     lastUpdated
   };
-
 })(DiaryPage_Unconnected);
 
 // Functional components --------------------------------------------------------------------------
@@ -228,7 +227,7 @@ export const DiaryDayTasks = connect((state: any) => {
   const ret: {
     selectedDiary: string;
   } = {
-    selectedDiary: state.diary.selectedDiary
+    selectedDiary: state.diary.selected
   };
   return ret;
 })(DiaryDayTasks_Unconnected); // FIXME : it works but what the fuck with typescript ???

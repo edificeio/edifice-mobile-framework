@@ -1,7 +1,7 @@
 import style from "glamorous-native"
 import * as React from "react"
 import { Text, TouchableOpacity } from "react-native"
-import styles from "../styles/index"
+import styles from "../styles"
 import { Icon } from "./icons/Icon"
 import { CommonStyles } from "../styles/common/styles";
 
