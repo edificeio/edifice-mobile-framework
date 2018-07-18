@@ -29,6 +29,7 @@ import { IDiaryDay, IDiaryTask, IDiaryTasks } from "../reducers/tasks";
 
 import today from "../../utils/today";
 import { extractShortFromRawText } from "../adapters/extractShort";
+import HTMLAdaptor from "../../infra/HTMLAdaptor";
 
 // Header component -------------------------------------------------------------------------------
 
@@ -375,7 +376,7 @@ const DiaryCard_Unstyled = ({
     }}
   >
     <Text fontSize={14} color={CommonStyles.textColor} lineHeight={20}>
-      {extractShortFromRawText(content)}
+      {HTMLAdaptor(content).extractTextBeginning()}
     </Text>
     <Text fontSize={12} color={CommonStyles.lightTextColor} marginTop={5}>
       {title}
