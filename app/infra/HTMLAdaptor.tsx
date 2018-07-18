@@ -7,6 +7,7 @@
  */
 
 import HTMLParser from "fast-html-parser";
+import { Text as RNText, View as RNView } from "react-native";
 import { Conf } from "../Conf";
 
 export class HTMLAdaptor {
@@ -30,6 +31,18 @@ export class HTMLAdaptor {
    */
   public toHTML(): string {
     return this.outerHTML(this.root);
+  }
+
+  /**
+   * Convert the HTML representation to a JSX one that works with React Native app.e
+   * Also, this conversion make some adaptations of the content :
+   * - Groups of <img> are converted to a image mozaic
+   * - Almost all text formatting is removed.
+   */
+  public toReactNative(): JSX.Element {
+    const ret = <RNView />;
+    // TODO put something here...
+    return ret;
   }
 
   // EXTARCT METHODS
@@ -114,6 +127,23 @@ export class HTMLAdaptor {
       return `<${element.tagName || "div"} ${attributes}>${children.join(
         ""
       )}</${element.tagName || "div"}>`;
+    }
+  }
+
+  /**
+   * Export a node to its React Native JSX representation. This function is recursive, the node children are also exported to JSX children.
+   * The conversion take some freedom with certain type of content :
+   * - Siblings <img> tags are rendered as a <Images> element with all the images within
+   * - Almost all text formatting is removed and replaced by a <Text> element.
+   */
+  private outerJSX(node: Node): JSX.Element {
+    if (node.nodeType === Node.TEXT_NODE)
+      return <RNText>{(node as Text).wholeText}</RNText>;
+    else if (node.nodeType === Node.ELEMENT_NODE) {
+      const element = node as Element;
+      switch (element.tagName) {
+        
+      }
     }
   }
 }
