@@ -27,9 +27,8 @@ import { fetchDiaryTasks, fetchDiaryTasksIfNeeded } from "../actions/tasks";
 
 import { IDiaryDay, IDiaryTask, IDiaryTasks } from "../reducers/tasks";
 
-import today from "../../utils/today";
-import { extractShortFromRawText } from "../adapters/extractShort";
 import HTMLAdaptor from "../../infra/HTMLAdaptor";
+import today from "../../utils/today";
 
 // Header component -------------------------------------------------------------------------------
 

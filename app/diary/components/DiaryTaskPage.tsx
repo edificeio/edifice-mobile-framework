@@ -21,6 +21,8 @@ import { connect } from "react-redux";
 import { CommonStyles } from "../../styles/common/styles";
 moment.locale("fr");
 
+import HTMLAdaptor from "../../infra/HTMLAdaptor";
+
 // helpers ----------------------------------------------------------------------------------------
 
 // Header component -------------------------------------------------------------------------------
@@ -83,7 +85,7 @@ class DiaryTaskPage_Unconnected extends React.Component<
           lineHeight={20}
           paddingTop={20}
         >
-          {this.props.taskContent}
+          {HTMLAdaptor(this.props.taskContent).extractText()}
         </Text>
       </PageContainer>
     );
