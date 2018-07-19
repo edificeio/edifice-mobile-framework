@@ -9,25 +9,26 @@
 import style from "glamorous-native";
 import * as React from "react";
 import { RefreshControl } from "react-native";
-const { View, Text, FlatList, TouchableOpacity } = style;
+const { View, Text, FlatList } = style;
 import { connect } from "react-redux";
 
 import { CommonStyles } from "../../styles/common/styles";
 import { PageContainer } from "../../ui/ContainerContent";
 import { AppTitle, Header } from "../../ui/headers/Header";
+import DiaryCard from "./DiaryCard";
+import DiaryCircleNumber from "./DiaryCircleNumber";
 
 import moment from "moment";
 // tslint:disable-next-line:no-submodule-imports
 import "moment/locale/fr";
 moment.locale("fr");
 
-import { fetchDiaryList, fetchDiaryListIfNeeded } from "../actions/list";
+import { fetchDiaryListIfNeeded } from "../actions/list";
 import { diaryTaskSelected } from "../actions/selectedTask";
 import { fetchDiaryTasks, fetchDiaryTasksIfNeeded } from "../actions/tasks";
 
 import { IDiaryDay, IDiaryTask, IDiaryTasks } from "../reducers/tasks";
 
-import HTMLAdaptor from "../../infra/HTMLAdaptor";
 import today from "../../utils/today";
 
 import I18n from "react-native-i18n";
@@ -72,7 +73,7 @@ interface IDiaryPageProps {
  * The main component.
  */
 // tslint:disable-next-line:max-classes-per-file
-class DiaryPage_Unconnected extends React.Component<IDiaryPageProps, {}> {
+class DiaryPage extends React.Component<IDiaryPageProps, {}> {
   private flatList: FlatList<IDiaryTasks>; // react-native FlatList component ref // FIXME typescript error (but js works fine). Why ?
   private setFlatListRef: any; // FlatList setter, executed when this component is mounted.
 
@@ -129,10 +130,9 @@ class DiaryPage_Unconnected extends React.Component<IDiaryPageProps, {}> {
   }
 }
 
-export const DiaryPage = connect((state: any) => {
+export default connect((state: any) => {
   // Map State To Props
   const localState = state.diary;
-  // console.warn(localState);
   const selectedDiaryId = localState.selected;
   const currentDiaryTasks = localState.tasks[selectedDiaryId];
   if (!currentDiaryTasks)
@@ -144,7 +144,6 @@ export const DiaryPage = connect((state: any) => {
       lastUpdated: null
     };
   const { didInvalidate, isFetching, lastUpdated } = currentDiaryTasks;
-  // console.warn(currentDiaryTasks.data);
 
   // Flatten two-dimensional IOrderedArrayById
   const diaryTasksByDay = currentDiaryTasks.data.ids.map(diaryId => ({
@@ -155,20 +154,6 @@ export const DiaryPage = connect((state: any) => {
     )
   }));
 
-  // console.warn(diaryTasksByDay);
-  /*
-  const { didInvalidate, isFetching, lastUpdated } = localState.list;
-  const diaryList = localState.list.data ? localState.list.data : {}; // list.data may be undefined when no reducer has been run yet.
-  const selectedDiaryId = localState.selected;
-  const currentDiary = diaryList[selectedDiaryId];
-  let diaryId = null;
-  let diaryTasksByDay: IDiaryTasks = { byId: {}, ids: [] }; // start with an empty one.
-
-  if (currentDiary) {
-    diaryId = currentDiary.id;
-    diaryTasksByDay = currentDiary.tasksByDay; // TODO get tasks from state -> diary -> tasks to display them.
-  }*/
-
   return {
     diaryId: selectedDiaryId,
     diaryTasksByDay,
@@ -176,9 +161,9 @@ export const DiaryPage = connect((state: any) => {
     isFetching,
     lastUpdated
   };
-})(DiaryPage_Unconnected);
+})(DiaryPage);
 
-// Functional components --------------------------------------------------------------------------
+// Other container components --------------------------------------------------------------------------
 
 /**
  * DiaryDayTasks
@@ -234,7 +219,7 @@ class DiaryDayTasks_Unconnected extends React.Component<
   }
 }
 
-export const DiaryDayTasks = connect((state: any) => {
+const DiaryDayTasks = connect((state: any) => {
   const ret: {
     selectedDiary: string;
   } = {
@@ -283,7 +268,7 @@ const DiaryDayCheckpoint_Unstyled = ({
   active?: boolean;
 }) => (
   <View style={[style]}>
-    <DiaryDayCircleNumber nb={nb} active={active} />
+    <DiaryCircleNumber nb={nb} active={active} />
     <Text color={CommonStyles.lightTextColor} fontSize={12}>
       {text.toUpperCase()}
     </Text>
@@ -293,109 +278,4 @@ const DiaryDayCheckpoint_Unstyled = ({
 const DiaryDayCheckpoint = style(DiaryDayCheckpoint_Unstyled)({
   alignItems: "center",
   flexDirection: "row"
-});
-
-/**
- * DiaryDayCircleNumber
- *
- * Display a number in a circle elegantly. Mostly used to show a day number.
- * Props:
- *     `style`: `any` - Glamorous style to add.
- * 	   `nb`: `number` - Just as simple as the number to be displayed.
- *     `active`: `boolean` - An active `DiaryDayCircleNumber` will be highlighted.
- * TODO: When active, the blue background should be a gradient, according to the mockup.
- *
- * An unstyled version on this component is available as `DiaryDayCircleNumber_Unstyled`.
- */
-// tslint:disable-next-line:variable-name
-const DiaryDayCircleNumber_Unstyled = ({
-  style,
-  nb,
-  active = false
-}: {
-  style?: any;
-  nb?: number;
-  active?: boolean;
-}) => (
-  <View style={[style]}>
-    <Text
-      color={active ? CommonStyles.tabBottomColor : CommonStyles.lightTextColor}
-      fontSize={12}
-    >
-      {nb}
-    </Text>
-  </View>
-);
-
-const DiaryDayCircleNumber = style(DiaryDayCircleNumber_Unstyled)(
-  {
-    alignItems: "center",
-    borderColor: CommonStyles.tabBottomColor,
-    borderRadius: 15,
-    borderStyle: "solid",
-    borderWidth: 1,
-    elevation: 3,
-    height: 30,
-    justifyContent: "center",
-    marginHorizontal: 14,
-    shadowColor: "#6B7C93",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    width: 30
-  },
-  ({ active }) => ({
-    backgroundColor: active
-      ? CommonStyles.actionColor
-      : CommonStyles.tabBottomColor
-  })
-);
-
-/**
- * DiaryCard
- *
- * Like `Card`, but some margin and padding, custom shadow and rounded.
- *
- * An unstyled version on this component is available as `DiaryCard_Unstyled`.
- */
-
-// tslint:disable-next-line:variable-name
-const DiaryCard_Unstyled = ({
-  style,
-  title,
-  content,
-  onPress
-}: {
-  style?: any;
-  title?: string;
-  content?: string;
-  onPress?: any; // custom event
-}) => (
-  <TouchableOpacity
-    style={[style]}
-    onPress={() => {
-      onPress();
-    }}
-  >
-    <Text fontSize={14} color={CommonStyles.textColor} lineHeight={20}>
-      {HTMLAdaptor(content).extractTextBeginning()}
-    </Text>
-    <Text fontSize={12} color={CommonStyles.lightTextColor} marginTop={5}>
-      {title}
-    </Text>
-  </TouchableOpacity>
-);
-
-const DiaryCard = style(DiaryCard_Unstyled)({
-  backgroundColor: "#FFF",
-  borderRadius: 5,
-  elevation: 1,
-  marginBottom: 15,
-  marginLeft: 60,
-  marginRight: 20,
-  paddingHorizontal: 15,
-  paddingVertical: 20,
-  shadowColor: "#6B7C93",
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.2
 });
