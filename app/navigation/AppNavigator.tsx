@@ -25,23 +25,23 @@ const MainNavigator = tabNavigator({
       tabRootOptions(I18n.t("Conversation"), "conversation")
   },
 
+  diary: {
+    screen: DiaryNavigator,
+
+    navigationOptions: () => tabRootOptions(I18n.t("Diary"), "devoirs")
+  },
+
   profile: {
     screen: AccountNavigation,
 
     navigationOptions: () => tabRootOptions(I18n.t("Profile"), "profile")
-  },
-
-  diary: {
-    screen: DiaryNavigator,
-
-    navigationOptions: () => tabRootOptions(I18n.t("Diary"), "profile")
-  },
+  } /*,
 
   ui: {
     screen: UiNavigator,
 
     navigationOptions: () => tabRootOptions("UI", "profile")
-  }
+  }*/
 });
 
 export const AppNavigator: NavigationContainer = StackNavigator(
