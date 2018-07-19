@@ -30,6 +30,8 @@ import { IDiaryDay, IDiaryTask, IDiaryTasks } from "../reducers/tasks";
 import HTMLAdaptor from "../../infra/HTMLAdaptor";
 import today from "../../utils/today";
 
+import I18n from "react-native-i18n";
+
 // Header component -------------------------------------------------------------------------------
 
 // TODO : the header must show the month and the year instead of "Homework".
@@ -42,7 +44,7 @@ export class DiaryPageHeader extends React.Component<
   public render() {
     return (
       <Header>
-        <AppTitle>Homework</AppTitle>
+        <AppTitle>{I18n.t("Diary")}</AppTitle>
       </Header>
     );
   }

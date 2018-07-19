@@ -28,19 +28,39 @@ import HTMLAdaptor from "../../infra/HTMLAdaptor";
 // Header component -------------------------------------------------------------------------------
 
 // tslint:disable-next-line:max-classes-per-file
-export class DiaryTaskPageHeader extends React.Component<
-  { navigation?: any },
+class DiaryTaskPageHeader_Unconnected extends React.Component<
+  { navigation?: any; title: string },
   undefined
 > {
   public render() {
+    const AppTitleStyled = style(AppTitle)({ textAlign: "left" });
     return (
       <Header>
         <Back navigation={this.props.navigation} />
-        <AppTitle>Matière (à gauche)</AppTitle>
+        <AppTitleStyled>{this.props.title}</AppTitleStyled>
       </Header>
     );
   }
 }
+
+export const DiaryTaskPageHeader = connect((state: any) => {
+  // Map state to props
+  // Map state to props
+  const localState = state.diary.selectedTask;
+  const { diaryId, date, taskId } = localState;
+  // Get diary, then day, then task content
+  const diaryDays = state.diary.tasks[diaryId];
+  if (!diaryDays) return {}; // this case shouldn't occur.
+  const dateId = date.format("YYYY-MM-DD");
+  const diaryTasksThisDay = diaryDays.data.byId[dateId];
+  if (!diaryTasksThisDay) return {}; // this case shouldn't occur.
+  const taskInfos = diaryTasksThisDay.tasks.byId[taskId];
+  if (!taskInfos) return {}; // this case shouldn't occur.
+  // Format props
+  return {
+    title: taskInfos.title
+  };
+})(DiaryTaskPageHeader_Unconnected);
 
 // Main component ---------------------------------------------------------------------------------
 
