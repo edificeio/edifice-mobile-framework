@@ -45,7 +45,7 @@ export class HTMLAdaptor {
     return ret;
   }
 
-  // EXTARCT METHODS
+  // EXTRACT METHODS
 
   /**
    * Extract all <img> tags of the node tree, and returns an Array of the src attributes
@@ -142,7 +142,7 @@ export class HTMLAdaptor {
     else if (node.nodeType === Node.ELEMENT_NODE) {
       const element = node as Element;
       switch (element.tagName) {
-        
+
       }
     }
   }

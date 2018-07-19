@@ -332,6 +332,7 @@ const DiaryDayCircleNumber = style(DiaryDayCircleNumber_Unstyled)(
     borderRadius: 15,
     borderStyle: "solid",
     borderWidth: 1,
+    elevation: 3,
     height: 30,
     justifyContent: "center",
     marginHorizontal: 14,
@@ -386,6 +387,7 @@ const DiaryCard_Unstyled = ({
 const DiaryCard = style(DiaryCard_Unstyled)({
   backgroundColor: "#FFF",
   borderRadius: 5,
+  elevation: 1,
   marginBottom: 15,
   marginLeft: 60,
   marginRight: 20,
