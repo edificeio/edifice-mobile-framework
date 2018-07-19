@@ -37,6 +37,7 @@ const diaryTasksAdapter: (
   };
   // Now it's time to iterate over the days.
   for (const itemday of dataDays) {
+    if (itemday.entries.length === 0) continue; // If no tasks this day we skip it.
     const date = moment(itemday.date);
     if (date.isBefore(today(), "day")) continue; // ignore all days before today
     // each diaryDay must have an id based on the date.
