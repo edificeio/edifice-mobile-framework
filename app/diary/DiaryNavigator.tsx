@@ -22,7 +22,8 @@ export default StackNavigator({
     navigationOptions: ({ navigation }) =>
       navOptions(
         {
-          header: <DiaryTaskPageHeader navigation={navigation} />
+          header: <DiaryTaskPageHeader navigation={navigation} />,
+          tabBarVisible: false
         },
         navigation
       ),
