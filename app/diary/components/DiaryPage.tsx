@@ -33,6 +33,9 @@ import today from "../../utils/today";
 
 import I18n from "react-native-i18n";
 
+import { Loading } from "../../ui";
+import { EmptyScreen } from "../../ui/EmptyScreen";
+
 // Header component -------------------------------------------------------------------------------
 
 // TODO : the header must show the month and the year instead of "Homework".
@@ -87,12 +90,23 @@ class DiaryPage extends React.Component<IDiaryPageProps, {}> {
     };
   }
 
-  // render & lifecycle
+  // Render
 
   public render() {
-    // console.warn(this.props);
+    const pageContent = this.props.diaryTasksByDay
+      ? this.props.diaryTasksByDay.length === 0
+        ? this.props.isFetching
+          ? this.renderLoading()
+          : this.renderEmptyScreen()
+        : this.renderList()
+      : this.renderLoading();
+
+    return <PageContainer>{pageContent}</PageContainer>;
+  }
+
+  private renderList() {
     return (
-      <PageContainer>
+      <View>
         <DiaryTimeLine />
         <FlatList
           innerRef={this.setFlatListRef}
@@ -109,13 +123,33 @@ class DiaryPage extends React.Component<IDiaryPageProps, {}> {
             />
           }
         />
-      </PageContainer>
+      </View>
     );
   }
+
+  private renderEmptyScreen() {
+    return (
+      <EmptyScreen
+        imageSrc={require("../../../assets/images/empty-screen/diary.png")} // TODO : put here the right picture !
+        imgWidth={265.98}
+        imgHeight={279.97}
+        text={I18n.t("diary-emptyScreenText")}
+        title={I18n.t("diary-emptyScreenTitle")}
+      />
+    );
+  }
+
+  private renderLoading() {
+    return <Loading />;
+  }
+
+  // Lifecycle
 
   public componentDidMount() {
     this.fetchDiaryList();
   }
+
+  // Fetch methods
 
   public fetchDiaryList() {
     this.props.dispatch(fetchDiaryListIfNeeded());

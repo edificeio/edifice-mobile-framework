@@ -7,5 +7,5 @@
 import moment from "moment";
 
 export default function() {
-  return moment();
+  return moment().add(20, "days");
 }

@@ -54,6 +54,8 @@
   "conversation-emptyScreenTitle": "Pas l’ombre d’un message...",
   "conversation-emptyScreenText": "Commencez dès maintenant à communiquer en quelques clics avec votre réseau !",
   "conversation-failedSent": "Message non reçu",
+  "diary-emptyScreenTitle": "Pas encore de devoirs à l'horizon",
+  "diary-emptyScreenText": "Bientôt, vous pourrez consulter tous les devoirs à faire sur ce cahier de textes numérique. Génial, non ?",
   "auth-networkError": "L'authentification a échoué. Vérifiez votre connexion à internet.",
   "conversation-newMessage": "Nouveau message",
   "to": "À :",

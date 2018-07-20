@@ -1,40 +1,67 @@
-import * as React from "react"
-import { View, Dimensions } from "react-native";
-import FitImage from "react-native-fit-image";
-import { H1, Paragraph, Quote } from './Typography';
-import { CommonStyles } from '../styles/common/styles';
-import ConnectionTrackingBar from "./ConnectionTrackingBar";
+/**
+ * EmptyScreen
+ *
+ * Show a large component with an image (bitmap), a title at the top and a little paragraph at the bottom.
+ * Used to display a friendly empty screen when there is no data to show.
+ *
+ * Props:
+ * imageSrc : source to the image (for bitmaps)
+ * title: big blue text at the top
+ * text: small grey text at the bottom
+ * imgWidth: original image width in pixels
+ * imgHeight: original imageHeight in pixels
+ */
 
-export const EmptyScreen = ({ image, title, text }) => {
-    const { width, height } = Dimensions.get('window');
-    const imageSize = width * 60 / 100;
-    const side = Math.sqrt((imageSize * imageSize) / 2);
-    const textSize = imageSize * 1.2;
+import * as React from "react";
+import { Dimensions, Image, ImageSourcePropType, View } from "react-native";
+import { PageContainer } from "./ContainerContent";
+import { H1, Quote } from "./Typography";
 
-    return (
-        <View style={{ justifyContent: 'space-around', alignItems: 'center', flex: 1, backgroundColor: CommonStyles.lightGrey }}>
-            <ConnectionTrackingBar />
-            <View style={{ 
-                flex: 1, 
-                alignItems: 'flex-end', 
-                width: textSize, 
-                flexDirection: 'row', 
-                justifyContent: 'center' 
-            }}>
-                <H1>{ title }</H1>
-            </View>
-            <View style={{ 
-                height: imageSize, 
-                width: imageSize, 
-                borderRadius: imageSize / 2, 
-                justifyContent: 'center', 
-                alignItems: 'center' 
-            }}>
-                <FitImage resizeMode="contain" style={{ width: side, height: side, marginTop: 20 }} source={ image } />
-            </View>
-            
-            <Quote style={{ width: textSize, flex: 1, alignItems: 'flex-start' }}>{ text }</Quote>
-            
-        </View>
-    );
-}
+export const EmptyScreen = ({
+  imageSrc,
+  svgXmlData,
+  title,
+  text,
+  imgWidth,
+  imgHeight
+}: {
+  imageSrc?: ImageSourcePropType;
+  svgXmlData?: string;
+  title?: string;
+  text?: string;
+  imgWidth: number;
+  imgHeight: number;
+}) => {
+  const { width, height } = Dimensions.get("window");
+  const ratio = imgWidth / imgHeight;
+  const scale = 0.6;
+
+  return (
+    <PageContainer
+      style={{
+        alignItems: "center",
+        flex: 1,
+        justifyContent: "center"
+      }}
+    >
+      <H1 style={{ textAlign: "center", width: "80%" }}>{title}</H1>
+
+      <Image
+        source={imageSrc}
+        style={{
+          height: scale * (width / ratio),
+          width: scale * width
+        }}
+        resizeMode="contain"
+      />
+
+      <Quote
+        style={{
+          width: "80%"
+        }}
+      >
+        {text}
+      </Quote>
+    </PageContainer>
+  );
+};
