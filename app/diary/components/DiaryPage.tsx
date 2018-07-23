@@ -38,8 +38,6 @@ import { EmptyScreen } from "../../ui/EmptyScreen";
 
 // Header component -------------------------------------------------------------------------------
 
-// TODO : the header must show the month and the year instead of "Homework".
-
 // tslint:disable-next-line:max-classes-per-file
 export class DiaryPageHeader extends React.Component<
   { navigation?: any; date?: moment.Moment; foozy: string },
@@ -177,7 +175,7 @@ class DiaryPage extends React.Component<IDiaryPageProps, {}> {
     if (!firstItem) return;
     const firstItemDate = firstItem.item.date;
     this.props.navigation.setParams({ "diary-date": firstItemDate });
-  }
+  } // FIXME: Syntax error on this line because of a collision between TSlint and Prettier.
 }
 
 export default connect((state: any) => {
@@ -231,7 +229,7 @@ interface IDiaryDayTasksProps {
 // tslint:disable-next-line:max-classes-per-file
 class DiaryDayTasks_Unconnected extends React.Component<
   IDiaryDayTasksProps,
-  any
+  {}
 > {
   constructor(props: IDiaryDayTasksProps) {
     super(props);
@@ -273,10 +271,10 @@ const DiaryDayTasks = connect((state: any) => {
   const ret: {
     selectedDiary: string;
   } = {
-    selectedDiary: state.diary.selected
+    selectedDiary: state.diary.selected as string
   };
   return ret;
-})(DiaryDayTasks_Unconnected); // FIXME : it works but what the fuck with typescript ???
+})(DiaryDayTasks_Unconnected);
 
 // Pure display components ------------------------------------------------------------------------
 
@@ -295,7 +293,6 @@ const DiaryTimeLine = style.view({
  * DiaryDayCheckpoint
  *
  * Just a wrapper for the heading of a day tasks. Displays a day number in a circle and a day name
- * TODO?: May took a Date object as a parameter instead of a number and a string ?
  * Props:
  *     `style`: `any` - Glamorous style to add.
  * 	   `nb`: `number`- Day number to be displayed in a `DiaryDayCircleNumber`.

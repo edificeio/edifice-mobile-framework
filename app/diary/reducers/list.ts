@@ -11,7 +11,7 @@ import { actionPrefix, DIARY_LIST_RECEIVED } from "../actions/list";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
-// TODO put it in a generic helper file. It is useful.
+// TODO put this interface in a generic helper file. It is useful.
 export interface IArrayById<T extends { id: any }> {
   [id: string]: T;
 }

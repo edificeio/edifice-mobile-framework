@@ -17,7 +17,7 @@
  * When the type is actionTypeReceived(), it must have also a `receivedAt` with a Date as its value.
  * Use the `dataReducer` argument to update your state when actionTypeReceived() is dispatched.
  *
- * TODO : Move this. It's not only for diary app.
+ * TODO : Move this file. It's not only for diary app.
  */
 
 export const actionTypeInvalidated = (actionPrefix: string) =>
