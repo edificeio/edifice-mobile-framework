@@ -121,7 +121,7 @@ class DiaryPage extends React.Component<IDiaryPageProps, {}> {
             <DiaryDayTasks data={item} navigation={this.props.navigation} />
           )}
           keyExtractor={item => item.date.format("YYYY-MM-DD")}
-          ListHeaderComponent={() => <View height={15} />}
+          ListFooterComponent={() => <View height={15} />}
           refreshControl={
             <RefreshControl
               refreshing={this.props.isFetching}
@@ -327,5 +327,6 @@ const DiaryDayCheckpoint_Unstyled = ({
 
 const DiaryDayCheckpoint = style(DiaryDayCheckpoint_Unstyled)({
   alignItems: "center",
-  flexDirection: "row"
+  flexDirection: "row",
+  marginTop: 15
 });
