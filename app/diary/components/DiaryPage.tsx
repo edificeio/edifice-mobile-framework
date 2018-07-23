@@ -42,13 +42,19 @@ import { EmptyScreen } from "../../ui/EmptyScreen";
 
 // tslint:disable-next-line:max-classes-per-file
 export class DiaryPageHeader extends React.Component<
-  { navigation?: any },
+  { navigation?: any; date?: moment.Moment; foozy: string },
   undefined
 > {
   public render() {
+    let headerText = this.props.date
+      ? this.props.date.format("MMMM YYYY")
+      : null;
+    headerText = headerText
+      ? headerText.charAt(0).toUpperCase() + headerText.slice(1)
+      : I18n.t("Diary");
     return (
       <Header>
-        <AppTitle>{I18n.t("Diary")}</AppTitle>
+        <AppTitle>{headerText}</AppTitle>
       </Header>
     );
   }
@@ -122,6 +128,7 @@ class DiaryPage extends React.Component<IDiaryPageProps, {}> {
               onRefresh={() => this.forceFetchDiaryTasks()}
             />
           }
+          onViewableItemsChanged={this.handleViewableItemsChanged}
         />
       </View>
     );
@@ -130,7 +137,7 @@ class DiaryPage extends React.Component<IDiaryPageProps, {}> {
   private renderEmptyScreen() {
     return (
       <EmptyScreen
-        imageSrc={require("../../../assets/images/empty-screen/diary.png")} // TODO : put here the right picture !
+        imageSrc={require("../../../assets/images/empty-screen/diary.png")}
         imgWidth={265.98}
         imgHeight={279.97}
         text={I18n.t("diary-emptyScreenText")}
@@ -161,6 +168,15 @@ class DiaryPage extends React.Component<IDiaryPageProps, {}> {
 
   public forceFetchDiaryTasks() {
     this.props.dispatch(fetchDiaryTasks(this.props.diaryId));
+  }
+
+  // Event Handlers
+
+  public handleViewableItemsChanged = info => {
+    const firstItem = info.viewableItems[0];
+    if (!firstItem) return;
+    const firstItemDate = firstItem.item.date;
+    this.props.navigation.setParams({ "diary-date": firstItemDate });
   }
 }
 

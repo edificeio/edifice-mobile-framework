@@ -11,7 +11,13 @@ export default StackNavigator({
     navigationOptions: ({ navigation }) =>
       navOptions(
         {
-          header: <DiaryPageHeader navigation={navigation} />
+          header: (
+            <DiaryPageHeader
+              navigation={navigation}
+              date={navigation.getParam("diary-date", null)}
+              foozy="fooza"
+            />
+          )
         },
         navigation
       ),
