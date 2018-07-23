@@ -2,8 +2,6 @@
  * List of actions & action creators & thucs for tasks of Diary app (homework).
  */
 
-// TODO, refactor action & reducer for selectedTask
-
 export const DIARY_TASK_SELECTED = "DIARY_TASK_SELECTED";
 
 // NOTE : Yes, tasks only exists within a diary, so we need both ids.

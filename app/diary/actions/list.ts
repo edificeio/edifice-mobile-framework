@@ -43,7 +43,7 @@ export type IDiaryListBackend = Array<{
 }>;
 
 /** The adapter MUST returns a brand-new object */
-const diaryListAdapter = (data: IDiaryListBackend) => {
+const diaryListAdapter: (data: IDiaryListBackend) => IDiaryList = data => {
   const result = {} as any;
   for (const item of data) {
     result[item._id] = {
@@ -53,7 +53,7 @@ const diaryListAdapter = (data: IDiaryListBackend) => {
     };
   }
   return result;
-}; // TODO : add return type
+};
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

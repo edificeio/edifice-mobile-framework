@@ -22,13 +22,35 @@ const localState = globalState => globalState.diary.tasks;
 // ADAPTER ----------------------------------------------------------------------------------------
 
 // Data type of what is given by the backend.
-export type IDiaryTasksBackend = any; // TODO;
+export interface IDiaryTasksBackend {
+  _id: string;
+  title: string;
+  thumbnail: any; // unknown but unused here (I guess it's a string that represent the URL)
+  trashed: number;
+  owner: {
+    userId: string;
+    displayName: string;
+  };
+  created: {
+    $date: number;
+  };
+  modified: {
+    $date: number;
+  };
+  entriesModified: {
+    $date: number;
+  };
+  data: Array<{
+    date: string;
+    entries: Array<{
+      title: string;
+      value: string;
+    }>;
+  }>;
+}
 
 /** The adapter MUST returns a brand-new object */
-const diaryTasksAdapter: (
-  diaryId: string,
-  data: IDiaryTasksBackend
-) => IDiaryTasks = (diaryId, data) => {
+const diaryTasksAdapter: (data: IDiaryTasksBackend) => IDiaryTasks = data => {
   // Get all the backend diaryDays.
   const dataDays = data.data;
   const ret = {
@@ -137,7 +159,7 @@ export function fetchDiaryTasks(diaryId: string) {
       });
       const json = (await response.json()) as any;
       // console.warn(json);
-      const data: IDiaryTasks = diaryTasksAdapter(diaryId, json);
+      const data: IDiaryTasks = diaryTasksAdapter(json);
       // console.warn(data);
 
       dispatch(diaryTasksReceived(diaryId, data));
