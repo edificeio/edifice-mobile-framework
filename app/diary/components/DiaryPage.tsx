@@ -175,9 +175,10 @@ class DiaryPage extends React.Component<IDiaryPageProps, {}> {
       this.props.diaryTasksByDay &&
       this.props.diaryTasksByDay.length === 0 &&
       !this.props.isFetching &&
+      moment.isMoment(this.props.navigation.getParam("diary-date")) &&
       !this.props.navigation.getParam("diary-date").isSame(today(), "month") // Prevent infinite update
     ) {
-      this.props.navigation.setParams({ "diary-date": today() });
+      this.props.navigation.setParams({ "diary-date": false }, "Diary");
     }
   }
 
@@ -201,7 +202,7 @@ class DiaryPage extends React.Component<IDiaryPageProps, {}> {
     const firstItem = info.viewableItems[0];
     if (!firstItem) return;
     const firstItemDate = firstItem.item.date;
-    this.props.navigation.setParams({ "diary-date": firstItemDate });
+    this.props.navigation.setParams({ "diary-date": firstItemDate }, "Diary");
   } // FIXME: Syntax error on this line because of a collision between TSlint and Prettier.
 }
 
