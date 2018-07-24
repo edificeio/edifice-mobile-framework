@@ -10,6 +10,7 @@ import style from "glamorous-native";
 import * as React from "react";
 import { RefreshControl } from "react-native";
 const { View, Text, FlatList } = style;
+import ViewOverflow from 'react-native-view-overflow';
 import { connect } from "react-redux";
 
 import { CommonStyles } from "../../styles/common/styles";
@@ -126,8 +127,11 @@ class DiaryPage extends React.Component<IDiaryPageProps, {}> {
         <FlatList
           innerRef={this.setFlatListRef}
           data={this.props.diaryTasksByDay}
+          CellRendererComponent={ViewOverflow}
           renderItem={({ item }) => (
-            <DiaryDayTasks data={item} navigation={this.props.navigation} />
+            <ViewOverflow>
+              <DiaryDayTasks data={item} navigation={this.props.navigation} />
+            </ViewOverflow>
           )}
           keyExtractor={item => item.date.format("YYYY-MM-DD")}
           ListFooterComponent={() => <View height={15} />}

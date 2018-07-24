@@ -85,6 +85,7 @@
     "react-native-swipeable": "0.6.0",
     "react-native-touchable-scale": "2.0.0",
     "react-native-vector-icons": "4.6.0",
+    "react-native-view-overflow": "0.0.3",
     "react-navigation": "1.5.8",
     "react-redux": "5.0.7",
     "redux": "4.0.0",
