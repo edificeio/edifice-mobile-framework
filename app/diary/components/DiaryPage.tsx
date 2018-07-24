@@ -14,7 +14,7 @@ import { connect } from "react-redux";
 
 import { CommonStyles } from "../../styles/common/styles";
 import { PageContainer } from "../../ui/ContainerContent";
-import { AppTitle, Header } from "../../ui/headers/Header";
+import { AppTitle, Header, HeaderIcon } from "../../ui/headers/Header";
 import DiaryCard from "./DiaryCard";
 import DiaryCircleNumber from "./DiaryCircleNumber";
 
@@ -34,13 +34,14 @@ import today from "../../utils/today";
 import I18n from "react-native-i18n";
 
 import { Loading } from "../../ui";
+import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { EmptyScreen } from "../../ui/EmptyScreen";
 
 // Header component -------------------------------------------------------------------------------
 
 // tslint:disable-next-line:max-classes-per-file
 export class DiaryPageHeader extends React.Component<
-  { navigation?: any; date?: moment.Moment; foozy: string },
+  { navigation?: any; date?: moment.Moment },
   undefined
 > {
   public render() {
@@ -52,7 +53,12 @@ export class DiaryPageHeader extends React.Component<
       : I18n.t("Diary");
     return (
       <Header>
+        <HeaderIcon
+          onPress={() => this.props.navigation.navigate("DiaryFilter")}
+          name="filter"
+        />
         <AppTitle>{headerText}</AppTitle>
+        <HeaderIcon name={null} hidden={true} />
       </Header>
     );
   }
@@ -105,12 +111,17 @@ class DiaryPage extends React.Component<IDiaryPageProps, {}> {
         : this.renderList()
       : this.renderLoading();
 
-    return <PageContainer>{pageContent}</PageContainer>;
+    return (
+      <PageContainer>
+        <ConnectionTrackingBar />
+        {pageContent}
+      </PageContainer>
+    );
   }
 
   private renderList() {
     return (
-      <View>
+      <View style={{ flex: 1 }}>
         <DiaryTimeLine />
         <FlatList
           innerRef={this.setFlatListRef}
