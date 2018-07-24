@@ -165,6 +165,18 @@ class DiaryPage extends React.Component<IDiaryPageProps, {}> {
     this.fetchDiaryList();
   }
 
+  public componentDidUpdate() {
+    if (
+      // If it's an empty screen, we put today's month in the header
+      this.props.diaryTasksByDay &&
+      this.props.diaryTasksByDay.length === 0 &&
+      !this.props.isFetching &&
+      !this.props.navigation.getParam("diary-date").isSame(today(), "month") // Prevent infinite update
+    ) {
+      this.props.navigation.setParams({ "diary-date": today() });
+    }
+  }
+
   // Fetch methods
 
   public fetchDiaryList() {
