@@ -22,6 +22,8 @@ import { Bold } from "../../ui/Typography";
 import { fetchDiaryList, fetchDiaryListIfNeeded } from "../actions/list";
 import { diarySelected } from "../actions/selected";
 
+import I18n from "react-native-i18n";
+
 // helpers ----------------------------------------------------------------------------------------
 
 // Header component -------------------------------------------------------------------------------
@@ -42,7 +44,7 @@ class DiaryFilterPageHeader_Unconnected extends React.Component<
           name="close"
           onPress={() => this.props.navigation.goBack()}
         />
-        <AppTitleStyled>Sélectionner un cahier de textes</AppTitleStyled>
+        <AppTitleStyled>{I18n.t("diary-select")}</AppTitleStyled>
         <HeaderIcon name={null} hidden={true} />
       </Header>
     );
