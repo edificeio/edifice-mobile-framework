@@ -8,7 +8,7 @@
 
 import style from "glamorous-native";
 import * as React from "react";
-const { Text } = style;
+const { Text, ScrollView, View } = style;
 
 import { PageContainer } from "../../ui/ContainerContent";
 import { Back } from "../../ui/headers/Back";
@@ -90,23 +90,26 @@ class DiaryTaskPage_Unconnected extends React.Component<
     formattedDate =
       formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
     return (
-      <PageContainer
-        style={{
-          paddingHorizontal: 20,
-          paddingVertical: 30
-        }}
-      >
-        <Text fontSize={14} color={CommonStyles.textColor} lineHeight={20}>
-          {formattedDate}
-        </Text>
-        <Text
-          fontSize={14}
-          color={CommonStyles.textColor}
-          lineHeight={20}
-          paddingTop={20}
+      <PageContainer>
+        <ScrollView
+          alwaysBounceVertical={false}
+          style={{
+            paddingHorizontal: 20,
+            paddingVertical: 30
+          }}
         >
-          {HTMLAdaptor(this.props.taskContent).extractText()}
-        </Text>
+          <Text fontSize={14} color={CommonStyles.textColor} lineHeight={20}>
+            {formattedDate}
+          </Text>
+          <View
+            // fontSize={14}
+            // color={CommonStyles.textColor}
+            // lineHeight={20}
+            paddingTop={20}
+          >
+            {HTMLAdaptor(this.props.taskContent).toReactNative()}
+          </View>
+        </ScrollView>
       </PageContainer>
     );
   }

@@ -10,7 +10,7 @@ import style from "glamorous-native";
 import * as React from "react";
 import { RefreshControl } from "react-native";
 const { View, Text, FlatList } = style;
-import ViewOverflow from 'react-native-view-overflow';
+import ViewOverflow from "react-native-view-overflow";
 import { connect } from "react-redux";
 
 import { CommonStyles } from "../../styles/common/styles";
@@ -127,7 +127,7 @@ class DiaryPage extends React.Component<IDiaryPageProps, {}> {
         <FlatList
           innerRef={this.setFlatListRef}
           data={this.props.diaryTasksByDay}
-          CellRendererComponent={ViewOverflow}
+          CellRendererComponent={ViewOverflow} // FIXME : it DOES exist in RN...
           renderItem={({ item }) => (
             <ViewOverflow>
               <DiaryDayTasks data={item} navigation={this.props.navigation} />
@@ -203,6 +203,7 @@ class DiaryPage extends React.Component<IDiaryPageProps, {}> {
     if (!firstItem) return;
     const firstItemDate = firstItem.item.date;
     this.props.navigation.setParams({ "diary-date": firstItemDate }, "Diary");
+    // TODO : this line causes a re-render, AND a re-parse of all the html contents... Needs to be cached.
   } // FIXME: Syntax error on this line because of a collision between TSlint and Prettier.
 }
 
