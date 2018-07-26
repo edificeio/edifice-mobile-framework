@@ -22,6 +22,9 @@ import { CommonStyles } from "../../styles/common/styles";
 moment.locale("fr");
 
 import HTMLAdaptor from "../../infra/HTMLAdaptor";
+import HtmlToText from "../../infra/htmlConverter/text";
+
+import memoize from "memoize-one";
 
 // helpers ----------------------------------------------------------------------------------------
 
@@ -83,6 +86,8 @@ class DiaryTaskPage_Unconnected extends React.Component<
     super(props);
   }
 
+  public convert = memoize(html => HtmlToText(html, false).render);
+
   // render & lifecycle
 
   public render() {
@@ -107,7 +112,7 @@ class DiaryTaskPage_Unconnected extends React.Component<
             // lineHeight={20}
             paddingTop={20}
           >
-            {HTMLAdaptor(this.props.taskContent).toReactNative()}
+            <Text>{this.convert(this.props.taskContent)}</Text>
           </View>
         </ScrollView>
       </PageContainer>

@@ -64,6 +64,7 @@
   "dependencies": {
     "fast-html-parser": "1.0.1",
     "glamorous-native": "1.4.0",
+    "memoize-one": "^4.0.0",
     "moment": "^2.22.2",
     "react": "16.2.0",
     "react-native": "0.55.4",
