@@ -52,7 +52,6 @@ export class HtmlConverter {
       },
       ontext: (text: string) => {
         // console.warn("TEXT : " + text + " !!! " + Math.random());
-        console.warn("ontext super");
         return text.replace(/\u200B/g, ""); // remowe ZWSP (Zero-Width SPace) fucking character !
       }
     };

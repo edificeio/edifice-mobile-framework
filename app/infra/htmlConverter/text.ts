@@ -47,7 +47,7 @@ export class HtmlConverterText extends HtmlConverter {
       ontext: (text: string) => {
         text = commonParsingEventHandlers.ontext(text);
         if (this.newLine) {
-          console.warn("this is a new line");
+          // console.warn("this is a new line");
           this._render += this.ignoreLineBreaks ? " " : "\n";
           this.newLine = false;
         }
@@ -66,7 +66,7 @@ export class HtmlConverterText extends HtmlConverter {
   protected processHtml() {
     this._render = "";
     this.parse();
-    console.warn(this._render);
+    // console.warn(this._render);
   }
 
   public static SHORT_TEXT_MAX_SIZE: number = 70;
