@@ -7,7 +7,8 @@
 import style from "glamorous-native";
 import * as React from "react";
 const { Text, TouchableOpacity } = style;
-import HTMLAdaptor from "../../infra/HTMLAdaptor";
+import memoize from "memoize-one";
+import HtmlToText from "../../infra/htmlConverter/text";
 import { CommonStyles } from "../../styles/common/styles";
 
 const DiaryCard = ({
@@ -20,21 +21,25 @@ const DiaryCard = ({
   title?: string;
   content?: string;
   onPress?: any; // custom event
-}) => (
-  <TouchableOpacity
-    style={[style]}
-    onPress={() => {
-      onPress();
-    }}
-  >
-    <Text fontSize={14} color={CommonStyles.textColor} lineHeight={20}>
-      {HTMLAdaptor(content).extractTextBeginning()}
-    </Text>
-    <Text fontSize={12} color={CommonStyles.lightTextColor} marginTop={5}>
-      {title}
-    </Text>
-  </TouchableOpacity>
-);
+}) => {
+  const convert = memoize(html => HtmlToText(html, true).excerpt);
+
+  return (
+    <TouchableOpacity
+      style={[style]}
+      onPress={() => {
+        onPress();
+      }}
+    >
+      <Text fontSize={14} color={CommonStyles.textColor} lineHeight={20}>
+        {convert(content)}
+      </Text>
+      <Text fontSize={12} color={CommonStyles.lightTextColor} marginTop={5}>
+        {title}
+      </Text>
+    </TouchableOpacity>
+  );
+};
 
 export default style(DiaryCard)({
   backgroundColor: "#FFF",

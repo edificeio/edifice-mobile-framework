@@ -21,7 +21,6 @@ import { connect } from "react-redux";
 import { CommonStyles } from "../../styles/common/styles";
 moment.locale("fr");
 
-import HTMLAdaptor from "../../infra/HTMLAdaptor";
 import HtmlToText from "../../infra/htmlConverter/text";
 
 import memoize from "memoize-one";

@@ -86,6 +86,9 @@ export class HtmlConverterText extends HtmlConverter {
     if (trimmedFirstLine.length !== text.length) trimmedFirstLine += "...";
     return trimmedFirstLine;
   }
+  public get excerpt() {
+    return this.getExcerpt();
+  }
 }
 
 export default (html: string, ignoreLineBreaks: boolean = false) =>
