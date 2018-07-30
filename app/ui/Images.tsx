@@ -52,7 +52,7 @@ const StretchImage = style.image({
 });
 
 export class Images extends React.Component<
-  { images: object[]; style: ViewStyle },
+  { images: object[]; style?: ViewStyle },
   any
 > {
   state = {

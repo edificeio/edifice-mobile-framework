@@ -7,7 +7,7 @@ import Login from "../auth/Login";
 
 import AccountNavigation from "../auth/AccountNavigation";
 import ConversationNavigator from "../conversation/ConversationNavigator";
-import DiaryNavigator from "../diary/DiaryNavigator";
+import DiaryNavigator from "../diary/navigator";
 import TimelineNavigator from "../timeline/TimelineNavigator";
 import UiNavigator from "../ui/showcase/UiNavigator";
 
