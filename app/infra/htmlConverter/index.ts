@@ -50,8 +50,9 @@ export class HtmlConverter {
         return tag;
       },
       ontext: (text: string) => {
-        // console.warn("TEXT : " + text + " !!! " + Math.random());
-        return text.replace(/\u200B/g, ""); // remowe ZWSP (Zero-Width SPace) fucking character !
+        text = text.replace(/\u200B/g, ""); // remowe ZWSP (Zero-Width SPace) fucking character !
+        if (text.match(/\S/)) return text; // Filter whitespace-only strings.
+        return null;
       }
     };
   }
@@ -82,7 +83,7 @@ export class HtmlConverter {
       normalize: true,
       position: false,
       strictEntities: false, // TS-ISSUE : Definitly Typed issue, it does exists in sax
-      trim: true
+      trim: false
     });
     Object.assign(this.parser, this.getParsingEventHandlers());
   }

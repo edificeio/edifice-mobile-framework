@@ -14,7 +14,7 @@
 
 import * as React from "react";
 
-import { Text, View, WebView } from "react-native";
+import { Linking, Text, View, WebView } from "react-native";
 import { Loading } from "../../ui";
 import { Images } from "../../ui/Images";
 
@@ -23,6 +23,7 @@ import { HtmlConverter } from ".";
 import sax from "sax";
 
 import { Conf } from "../../Conf";
+import { A, Bold, Italic } from "../../ui/Typography";
 
 export interface IHtmlConverterJsxOptions {
   images?: boolean;
@@ -44,6 +45,7 @@ export type IHtmlConverterTextNugget = string | IHtmlConverterStyledTextNugget;
 export interface IHtmlConverterStyledTextNugget {
   style: HtmlConverterJsxTextStyles;
   children: IHtmlConverterTextNugget[];
+  parent?: IHtmlConverterStyledTextNugget;
 }
 
 export interface IHtmlConverterTextLinkNugget
@@ -96,6 +98,11 @@ export class HtmlConverterJsx extends HtmlConverter {
    */
   protected lastLevelTextNugget: IHtmlConverterStyledTextNugget = null;
 
+  /**
+   * Number of non-ignored <span> tag nested at the current parsing advancement.
+   */
+  protected numberSpanNested: number = 0;
+
   public constructor(html: string, opts: IHtmlConverterJsxOptions = {}) {
     super(html);
     this.opts = { ...HtmlConverterJsx.defaultOpts, ...opts };
@@ -120,9 +127,9 @@ export class HtmlConverterJsx extends HtmlConverter {
   }
 
   /**
-   * Returns the last top-level element in the render array.
+   * Returns the last top-level element in the render array. Plain string doesn't count.
    */
-  protected getLastRenderItem() {
+  protected getLastRenderItem(): { type: string } {
     return this._render.length ? this._render[this._render.length - 1] : null;
   }
 
@@ -130,7 +137,7 @@ export class HtmlConverterJsx extends HtmlConverter {
    * Returns true or false depending on the type of the last top-level element in render array.
    * @param type string
    */
-  protected isLastRenderItemOfType(type: string) {
+  protected isLastRenderItemOfType(type: string): boolean {
     return this.getLastRenderItem()
       ? this.getLastRenderItem().type === type
       : false;
@@ -149,6 +156,21 @@ export class HtmlConverterJsx extends HtmlConverter {
           case "br":
           case "p":
             this.newLine = true;
+            break;
+          case "a":
+            this.parseCloseLinkTag();
+            break;
+          case "b":
+          case "strong":
+            this.parseCloseBoldTag();
+            break;
+          case "i":
+          case "em":
+            this.parseCloseItalicTag();
+            break;
+          case "span":
+            this.parseCloseSpanTag();
+            break;
         }
         return tagName;
       },
@@ -166,6 +188,18 @@ export class HtmlConverterJsx extends HtmlConverter {
             break;
           case "a":
             this.parseOpenLinkTag(tag);
+            break;
+          case "b":
+          case "strong":
+            this.parseOpenBoldTag(tag);
+            break;
+          case "i":
+          case "em":
+            this.parseOpenItalicTag(tag);
+            break;
+          case "span":
+            this.parseOpenSpanTag(tag);
+            break;
         }
 
         return tag;
@@ -184,7 +218,7 @@ export class HtmlConverterJsx extends HtmlConverter {
    * An image group is an object like { type: "img", images: [...] }
    * @param tag sax.Tag <img> tag with its src and alt attributes
    */
-  protected parseImgTag(tag: sax.Tag) {
+  protected parseImgTag(tag: sax.Tag): void {
     if (this.isLastRenderItemOfType("img")) {
       // If we're already inside an image group, we have to add this image into the group.
       this._render[this.render.length - 1].images.push(
@@ -202,16 +236,16 @@ export class HtmlConverterJsx extends HtmlConverter {
 
   /**
    * Returns an object describing image attributes, like the <Images> component uses it.
-   * @param src string
-   * @param alt string
-   * @param thumbnailSize string
+   * @param src
+   * @param alt
+   * @param thumbnailSize
    * @return {alt: string, uri: string}
    */
   protected parseImgSrcAlt(
     src: string,
     alt: string = "",
     thumbnailSize: string = this.opts.thumbnailSize
-  ) {
+  ): { alt: string; uri: string } {
     if (src.indexOf("file://") === -1) {
       src = Conf.platform + src;
       const split = src.split("?");
@@ -225,7 +259,7 @@ export class HtmlConverterJsx extends HtmlConverter {
    * An iframe representation is an object like { type: "iframe", src: string }
    * @param tag sax.Tag <iframe> tag with its src attribute
    */
-  protected parseIframeTag(tag: sax.Tag) {
+  protected parseIframeTag(tag: sax.Tag): void {
     this._render.push({
       src: this.parseIframeSrc(tag.attributes.src),
       type: "iframe"
@@ -238,27 +272,95 @@ export class HtmlConverterJsx extends HtmlConverter {
    * @param src string
    * @return string
    */
-  protected parseIframeSrc(src: string) {
+  protected parseIframeSrc(src: string): string {
     return src.startsWith("//") ? "https:" + src : src;
   }
 
   /**
    * Parse a text string. This will place the text in the right TextNugget (and create one if necessary)
    */
-  protected parseText(text: string) {
+  protected parseText(text: string): void {
     // this.placeTextNugget(this.buildTextNugget(text));
     if (!text) return; // Don't deal with empty texts (often caused by strange ZWSP chars)
     this.placeTextNugget(text);
   }
 
   /**
-   * Parse a opening <a> tag. This will place a nex text nugget at the right place, and create one if necessary.
+   * Parse an opening <a> tag.
    * @param tag sax.Tag
    */
-  protected parseOpenLinkTag(tag: sax.Tag) {
+  protected parseOpenLinkTag(tag: sax.Tag): void {
     /*this.placeTextNugget(
       this.buildLinkNugget(this.parseIframeSrc(tag.attributes.href))
     );*/
+    const nugget = this.buildLinkNugget(tag.attributes.href);
+    this.digTextNugget(nugget);
+  }
+
+  /**
+   * Parse a closing <a> tag.
+   */
+  protected parseCloseLinkTag(): void {
+    this.undigTextNugget();
+  }
+
+  /**
+   * Parse a opening <b> or <strong> tag.
+   * @param tag sax.Tag
+   */
+  protected parseOpenBoldTag(tag: sax.Tag): void {
+    const nugget = this.buildBoldNugget();
+    this.digTextNugget(nugget);
+  }
+
+  /**
+   * Parse a closing <b> or <strong> tag.
+   */
+  protected parseCloseBoldTag(): void {
+    this.undigTextNugget();
+  }
+
+  /**
+   * Parse a opening <i> or <em> tag.
+   * @param tag sax.Tag
+   */
+  protected parseOpenItalicTag(tag: sax.Tag): void {
+    const nugget = this.buildItalicNugget();
+    this.digTextNugget(nugget);
+  }
+
+  /**
+   * Parse a closing <i> or <em> tag.
+   */
+  protected parseCloseItalicTag(): void {
+    this.undigTextNugget();
+  }
+
+  /**
+   * Parse a opening <span> tag.
+   * @param tag sax.Tag
+   */
+  protected parseOpenSpanTag(tag: sax.Tag): void {
+    const tagStyle = tag.attributes.style;
+    if (tagStyle) {
+      if (tagStyle.match(/font-style ?: ?italic/)) {
+        this.parseOpenItalicTag(tag);
+        ++this.numberSpanNested;
+      }
+      if (tagStyle.match(/font-weight ?: ?bold/)) {
+        this.parseOpenBoldTag(tag);
+        ++this.numberSpanNested;
+      }
+    }
+  }
+
+  /**
+   * Parse a closing <i> or <em> tag.
+   */
+  protected parseCloseSpanTag(): void {
+    if (this.numberSpanNested === 0) return;
+    this.undigTextNugget();
+    --this.numberSpanNested;
   }
 
   /**
@@ -267,7 +369,7 @@ export class HtmlConverterJsx extends HtmlConverter {
    * Only a top-level text group has the `type` property.
    * @param tag IHtmlConverterTextNugget
    */
-  protected placeTextNugget(nugget: IHtmlConverterTextNugget) {
+  protected placeTextNugget(nugget: IHtmlConverterTextNugget): void {
     if (!this.lastLevelTextNugget) {
       this.addTopLevelTextNugget(nugget);
     } else {
@@ -279,7 +381,7 @@ export class HtmlConverterJsx extends HtmlConverter {
    * Adds the given TextNugget to the render array, at the top-level.
    * @param nugget IHtmlConverterTextNugget
    */
-  protected addTopLevelTextNugget(nugget: IHtmlConverterTextNugget) {
+  protected addTopLevelTextNugget(nugget: IHtmlConverterTextNugget): void {
     // if the nugget is just a string, we need to build a Top-Level text nugget
     if (typeof nugget === "string")
       nugget = this.buildStyledTextNugget(nugget, false);
@@ -293,30 +395,44 @@ export class HtmlConverterJsx extends HtmlConverter {
    * Adds the given TextNugget to the render array, at the last-level.
    * @param nugget IHtmlConverterTextNugget
    */
-  protected addLastLevelTextNugget(nugget: IHtmlConverterTextNugget) {
+  protected addLastLevelTextNugget(nugget: IHtmlConverterTextNugget): void {
     if (typeof nugget === "string") nugget = this.buildStringTextNugget(nugget);
     console.warn("add last level :" + Math.random());
     console.warn(nugget);
     this.lastLevelTextNugget.children.push(nugget);
-
-    /*if (this.exitCurrentTextNugget) {
-      // if we have to exit the current text nugget, we add it to a upper level
-      if (!this.beforeLastLevelTextNugget) {
-        // This case shouldn't occur.
-        console.error("no before last level text nugget to append : " + nugget);
-        throw new Error(
-          "no before last level text nugget to append : " + nugget
-        );
-      }
-      // this.beforeLastLevelTextNugget.children.push(nugget);
-      this.lastLevelTextNugget = this.beforeLastLevelTextNugget;
-    } else {
-      // else, we have to the last level
-      // this.lastLevelTextNugget.children.push(nugget);
-    }*/
   }
 
-  protected buildStringTextNugget(text: string, addLineBreak: boolean = true) {
+  /**
+   * Add a new level of nugget at the last-level.
+   * @param nugget IHtmlConverterStyledTextNugget
+   */
+  protected digTextNugget(nugget: IHtmlConverterStyledTextNugget): void {
+    nugget.parent = this.lastLevelTextNugget;
+    this.lastLevelTextNugget.children.push(nugget);
+    this.lastLevelTextNugget = nugget;
+    console.warn("dig nugget : " + Math.random());
+    console.warn(this.lastLevelTextNugget.style);
+  }
+
+  /**
+   * Go up to the before-last-level of deepness.
+   */
+  protected undigTextNugget(): void {
+    this.lastLevelTextNugget = this.lastLevelTextNugget.parent;
+    console.warn("undig " + Math.random());
+  }
+
+  /**
+   * Computes a string from input data, adding sometimes a line-break at the start.
+   * If no line-break added, the out string is same as the in string.
+   * Caution : returns `null` if the input string is empty.
+   * @param text string
+   * @param addLineBreak boolean should put line-break or ignore it.
+   */
+  protected buildStringTextNugget(
+    text: string,
+    addLineBreak: boolean = true
+  ): string {
     if (!text) return null; // in some cases `text` is empty.
     if (this.newLine) {
       console.warn("new line : " + text + " !!!" + Math.random());
@@ -327,10 +443,14 @@ export class HtmlConverterJsx extends HtmlConverter {
   }
 
   /**
-   * Build a TextNugget from a string
-   * @param text string
+   * Build a StyledTextNugget from a string
+   * @param text string input string
+   * @param addLineBreak boolean should put line-break or ignore it.
    */
-  protected buildStyledTextNugget(text: string, addLineBreak: boolean = true) {
+  protected buildStyledTextNugget(
+    text: string,
+    addLineBreak: boolean = true
+  ): IHtmlConverterStyledTextNugget {
     text = this.buildStringTextNugget(text, addLineBreak);
     return text
       ? {
@@ -344,12 +464,32 @@ export class HtmlConverterJsx extends HtmlConverter {
    * Build an empty TextNugget with url style and data
    * @param url string
    */
-  protected buildLinkNugget(url: string) {
-    /*return {
+  protected buildLinkNugget(url: string): IHtmlConverterTextLinkNugget {
+    return {
       children: [],
       style: HtmlConverterJsxTextStyles.Url,
       url
-    };*/
+    };
+  }
+
+  /**
+   * Build an empty TextNugget with url style and data
+   */
+  protected buildBoldNugget(): IHtmlConverterStyledTextNugget {
+    return {
+      children: [],
+      style: HtmlConverterJsxTextStyles.Bold
+    };
+  }
+
+  /**
+   * Build an empty TextNugget with url style and data
+   */
+  protected buildItalicNugget(): IHtmlConverterStyledTextNugget {
+    return {
+      children: [],
+      style: HtmlConverterJsxTextStyles.Italic
+    };
   }
 
   // SECOND CONVERSION STEP -----------------------------------------------------------------------
@@ -390,21 +530,41 @@ export class HtmlConverterJsx extends HtmlConverter {
     );
   }
 
+  /**
+   * Build JSX <Text> Elements hierarchy from a top-level TextNugget.
+   * @param textNugget IHtmlConverterStyledTextNugget A Top-level TextNugget.
+   */
   protected renderParseText(
     textNugget: IHtmlConverterStyledTextNugget
   ): JSX.Element {
-    const style = {}; // TODO detect style and build style object
-    return (
-      <Text style={style}>
-        {textNugget.children.map(child => {
-          if (typeof child === "string") {
-            return child;
-          } else {
-            return this.renderParseText(child);
-          }
-        })}
-      </Text>
-    );
+    const children = textNugget.children.map(child => {
+      if (typeof child === "string") {
+        return child;
+      } else {
+        return this.renderParseText(child);
+      }
+    });
+
+    switch (textNugget.style) {
+      case HtmlConverterJsxTextStyles.None:
+        return <Text>{children}</Text>;
+      case HtmlConverterJsxTextStyles.Bold:
+        return <Bold>{children}</Bold>;
+      case HtmlConverterJsxTextStyles.Italic:
+        return <Italic>{children}</Italic>;
+      case HtmlConverterJsxTextStyles.Url:
+        return (
+          <A
+            onPress={() =>
+              Linking.openURL((textNugget as IHtmlConverterTextLinkNugget).url)
+            }
+          >
+            {children}
+          </A>
+        );
+      default:
+        return <Text>{children}</Text>;
+    }
   }
 }
 
