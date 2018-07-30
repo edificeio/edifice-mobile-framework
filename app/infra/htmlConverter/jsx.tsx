@@ -6,9 +6,11 @@
  *
  * @param html string Input data
  * @param opts object conversion options : {
+ *    formatting: boolean (default true) bold and italic
+ *    hyperlinks: boolean (default true)
  *    images: boolean (default true)
  *    iframes: boolean (default true) videos and other web content
- *    thumbnailSize: string (default "1600x0") thumbnail size for images
+ *    thumbnailSize: string (default "1600x0") thumbnail size for images (useless if images = false)
  * }
  */
 
@@ -26,6 +28,8 @@ import { Conf } from "../../Conf";
 import { A, Bold, Italic } from "../../ui/Typography";
 
 export interface IHtmlConverterJsxOptions {
+  formatting?: boolean;
+  hyperlinks?: boolean;
   images?: boolean;
   iframes?: boolean;
   thumbnailSize?: string;
@@ -72,6 +76,8 @@ export class HtmlConverterJsx extends HtmlConverter {
    * Converter options
    */
   public static defaultOpts: IHtmlConverterJsxOptions = {
+    formatting: true,
+    hyperlinks: true,
     iframes: true,
     images: true,
     thumbnailSize: "1600x0"
@@ -119,10 +125,10 @@ export class HtmlConverterJsx extends HtmlConverter {
       The parse() method here construct the array, and the renderParse() method convert it to JSX.
       Both of these two methods stores the result in `this.render`, so after conversion, the array representation isn't available anymore.
     */
-    console.warn(this._html);
+    // console.warn(this._html);
     this._render = [];
     this.parse();
-    console.warn(this._render);
+    // console.warn(this._render);
     this._render = this.renderParse();
   }
 
@@ -219,6 +225,7 @@ export class HtmlConverterJsx extends HtmlConverter {
    * @param tag sax.Tag <img> tag with its src and alt attributes
    */
   protected parseImgTag(tag: sax.Tag): void {
+    if (!this.opts.images) return;
     if (this.isLastRenderItemOfType("img")) {
       // If we're already inside an image group, we have to add this image into the group.
       this._render[this.render.length - 1].images.push(
@@ -260,6 +267,7 @@ export class HtmlConverterJsx extends HtmlConverter {
    * @param tag sax.Tag <iframe> tag with its src attribute
    */
   protected parseIframeTag(tag: sax.Tag): void {
+    if (!this.opts.iframes) return;
     this._render.push({
       src: this.parseIframeSrc(tag.attributes.src),
       type: "iframe"
@@ -290,9 +298,7 @@ export class HtmlConverterJsx extends HtmlConverter {
    * @param tag sax.Tag
    */
   protected parseOpenLinkTag(tag: sax.Tag): void {
-    /*this.placeTextNugget(
-      this.buildLinkNugget(this.parseIframeSrc(tag.attributes.href))
-    );*/
+    if (!this.opts.hyperlinks) return;
     const nugget = this.buildLinkNugget(tag.attributes.href);
     this.digTextNugget(nugget);
   }
@@ -301,6 +307,7 @@ export class HtmlConverterJsx extends HtmlConverter {
    * Parse a closing <a> tag.
    */
   protected parseCloseLinkTag(): void {
+    if (!this.opts.hyperlinks) return;
     this.undigTextNugget();
   }
 
@@ -309,6 +316,7 @@ export class HtmlConverterJsx extends HtmlConverter {
    * @param tag sax.Tag
    */
   protected parseOpenBoldTag(tag: sax.Tag): void {
+    if (!this.opts.formatting) return;
     const nugget = this.buildBoldNugget();
     this.digTextNugget(nugget);
   }
@@ -317,6 +325,7 @@ export class HtmlConverterJsx extends HtmlConverter {
    * Parse a closing <b> or <strong> tag.
    */
   protected parseCloseBoldTag(): void {
+    if (!this.opts.formatting) return;
     this.undigTextNugget();
   }
 
@@ -325,6 +334,7 @@ export class HtmlConverterJsx extends HtmlConverter {
    * @param tag sax.Tag
    */
   protected parseOpenItalicTag(tag: sax.Tag): void {
+    if (!this.opts.formatting) return;
     const nugget = this.buildItalicNugget();
     this.digTextNugget(nugget);
   }
@@ -333,6 +343,7 @@ export class HtmlConverterJsx extends HtmlConverter {
    * Parse a closing <i> or <em> tag.
    */
   protected parseCloseItalicTag(): void {
+    if (!this.opts.formatting) return;
     this.undigTextNugget();
   }
 
@@ -344,22 +355,22 @@ export class HtmlConverterJsx extends HtmlConverter {
     const tagStyle = tag.attributes.style;
     if (tagStyle) {
       if (tagStyle.match(/font-style ?: ?italic/)) {
-        this.parseOpenItalicTag(tag);
         ++this.numberSpanNested;
+        if (this.opts.formatting) this.parseOpenItalicTag(tag);
       }
       if (tagStyle.match(/font-weight ?: ?bold/)) {
-        this.parseOpenBoldTag(tag);
         ++this.numberSpanNested;
+        if (this.opts.formatting) this.parseOpenBoldTag(tag);
       }
     }
   }
 
   /**
-   * Parse a closing <i> or <em> tag.
+   * Parse a closing <span> tag.
    */
   protected parseCloseSpanTag(): void {
     if (this.numberSpanNested === 0) return;
-    this.undigTextNugget();
+    if (this.opts.formatting) this.undigTextNugget();
     --this.numberSpanNested;
   }
 
@@ -387,8 +398,8 @@ export class HtmlConverterJsx extends HtmlConverter {
       nugget = this.buildStyledTextNugget(nugget, false);
     this._render.push({ ...nugget, type: "text" });
     this.lastLevelTextNugget = nugget;
-    console.warn("add top level : " + Math.random());
-    console.warn(nugget);
+    // console.warn("add top level : " + Math.random());
+    // console.warn(nugget);
   }
 
   /**
@@ -397,8 +408,8 @@ export class HtmlConverterJsx extends HtmlConverter {
    */
   protected addLastLevelTextNugget(nugget: IHtmlConverterTextNugget): void {
     if (typeof nugget === "string") nugget = this.buildStringTextNugget(nugget);
-    console.warn("add last level :" + Math.random());
-    console.warn(nugget);
+    // console.warn("add last level :" + Math.random());
+    // console.warn(nugget);
     this.lastLevelTextNugget.children.push(nugget);
   }
 
@@ -410,8 +421,8 @@ export class HtmlConverterJsx extends HtmlConverter {
     nugget.parent = this.lastLevelTextNugget;
     this.lastLevelTextNugget.children.push(nugget);
     this.lastLevelTextNugget = nugget;
-    console.warn("dig nugget : " + Math.random());
-    console.warn(this.lastLevelTextNugget.style);
+    // console.warn("dig nugget : " + Math.random());
+    // console.warn(this.lastLevelTextNugget.style);
   }
 
   /**
@@ -419,7 +430,7 @@ export class HtmlConverterJsx extends HtmlConverter {
    */
   protected undigTextNugget(): void {
     this.lastLevelTextNugget = this.lastLevelTextNugget.parent;
-    console.warn("undig " + Math.random());
+    // console.warn("undig " + Math.random());
   }
 
   /**
@@ -435,7 +446,7 @@ export class HtmlConverterJsx extends HtmlConverter {
   ): string {
     if (!text) return null; // in some cases `text` is empty.
     if (this.newLine) {
-      console.warn("new line : " + text + " !!!" + Math.random());
+      // console.warn("new line : " + text + " !!!" + Math.random());
       if (addLineBreak) text = "\n" + text;
       this.newLine = false;
     }
@@ -501,28 +512,14 @@ export class HtmlConverterJsx extends HtmlConverter {
   protected renderParse(): JSX.Element {
     return (
       <View>
-        {this.render.map(elem => {
+        {this.render.map((elem, index) => {
           if (elem.type === "text") {
-            return this.renderParseText(elem);
+            return this.renderParseText(elem, index);
+          } else if (elem.type === "img") {
+            return this.renderParseImages(elem, index);
+          } else if (elem.type === "iframe") {
+            return this.renderParseIframe(elem, index);
           } else {
-            // At this point it's obviously en object with a `type` property.
-            if (elem.type === "img") {
-              return <Images images={elem.images} />;
-            } else if (elem.type === "iframe") {
-              return (
-                <View style={{ height: 200 }}>
-                  <WebView
-                    style={{ alignSelf: "stretch" }}
-                    javaScriptEnabled={true}
-                    domStorageEnabled={true}
-                    source={{ uri: elem.src }}
-                    renderLoading={() => <Loading />}
-                    startInLoadingState={true}
-                    scrollEnabled={false}
-                  />
-                </View>
-              );
-            }
             return null;
           }
         })}
@@ -535,26 +532,28 @@ export class HtmlConverterJsx extends HtmlConverter {
    * @param textNugget IHtmlConverterStyledTextNugget A Top-level TextNugget.
    */
   protected renderParseText(
-    textNugget: IHtmlConverterStyledTextNugget
+    textNugget: IHtmlConverterStyledTextNugget,
+    key: string
   ): JSX.Element {
-    const children = textNugget.children.map(child => {
+    const children = textNugget.children.map((child, index) => {
       if (typeof child === "string") {
         return child;
       } else {
-        return this.renderParseText(child);
+        return this.renderParseText(child, key + "-" + index);
       }
     });
 
     switch (textNugget.style) {
       case HtmlConverterJsxTextStyles.None:
-        return <Text>{children}</Text>;
+        return <Text key={key}>{children}</Text>;
       case HtmlConverterJsxTextStyles.Bold:
-        return <Bold>{children}</Bold>;
+        return <Bold key={key}>{children}</Bold>;
       case HtmlConverterJsxTextStyles.Italic:
-        return <Italic>{children}</Italic>;
+        return <Italic key={key}>{children}</Italic>;
       case HtmlConverterJsxTextStyles.Url:
         return (
           <A
+            key={key}
             onPress={() =>
               Linking.openURL((textNugget as IHtmlConverterTextLinkNugget).url)
             }
@@ -563,8 +562,42 @@ export class HtmlConverterJsx extends HtmlConverter {
           </A>
         );
       default:
-        return <Text>{children}</Text>;
+        return <Text key={key}>{children}</Text>;
     }
+  }
+
+  /**
+   * Build JSX <Images> Element from an ImageNugget
+   * @param imageNugget IHtmlConverterImageNugget A Top-level ImageNugget.
+   */
+  protected renderParseImages(
+    imageNugget: IHtmlConverterImageNugget,
+    key: string
+  ): JSX.Element {
+    return <Images images={imageNugget.images} key={key} />;
+  }
+
+  /**
+   * Build JSX <WebView> Element from an IframeNugget
+   * @param iframeNugget IHtmlConverterIframeNugget A Top-level IframeNugget.
+   */
+  protected renderParseIframe(
+    iframeNugget: IHtmlConverterIframeNugget,
+    key: string
+  ): JSX.Element {
+    return (
+      <View key={key} style={{ height: 200 }}>
+        <WebView
+          style={{ alignSelf: "stretch" }}
+          javaScriptEnabled={true}
+          domStorageEnabled={true}
+          source={{ uri: iframeNugget.src }}
+          renderLoading={() => <Loading />}
+          startInLoadingState={true}
+          scrollEnabled={false}
+        />
+      </View>
+    );
   }
 }
 

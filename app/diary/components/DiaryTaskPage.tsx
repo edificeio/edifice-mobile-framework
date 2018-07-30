@@ -76,7 +76,15 @@ interface IDiaryTaskPageProps {
   taskContent?: string;
 }
 
-const convert = memoize(html => HtmlToJsx(html).render);
+const convert = memoize(
+  html =>
+    HtmlToJsx(html, {
+      formatting: true,
+      hyperlinks: true,
+      iframes: true,
+      images: true
+    }).render
+);
 
 // tslint:disable-next-line:max-classes-per-file
 class DiaryTaskPage_Unconnected extends React.Component<
