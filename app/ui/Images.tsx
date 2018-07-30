@@ -8,7 +8,8 @@ import {
   Modal,
   Dimensions,
   Animated,
-  Platform
+  Platform,
+  ViewStyle
 } from "react-native";
 import { Row, Icon } from ".";
 import { StackNavigator } from "react-navigation";
@@ -20,9 +21,7 @@ const BubbleText = style.text({
   textAlign: "center"
 });
 
-const ContainerImage = style.view({
-  marginTop: 15
-});
+const ContainerImage = style.view({});
 
 const SoloImage = style.touchableOpacity({
   width: "100%",
@@ -52,7 +51,10 @@ const StretchImage = style.image({
   height: "100%"
 });
 
-export class Images extends React.Component<{ images: object[] }, any> {
+export class Images extends React.Component<
+  { images: object[]; style: ViewStyle },
+  any
+> {
   state = {
     fullscreen: false,
     currentImage: 0
@@ -182,11 +184,11 @@ export class Images extends React.Component<{ images: object[] }, any> {
     const { width, height } = Dimensions.get("window");
     const heightRatio = width * 0.6;
 
-    const { images } = this.props;
+    const { images, style } = this.props;
     if (images.length === 0) return <View />;
 
     return (
-      <View>
+      <View style={style}>
         <ContainerImage style={{ height: heightRatio }}>
           {this.images()}
         </ContainerImage>

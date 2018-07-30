@@ -16,7 +16,7 @@
 
 import * as React from "react";
 
-import { Linking, Text, View, WebView } from "react-native";
+import { Linking, Text, View, WebView, ViewStyle } from "react-native";
 import { Loading } from "../../ui";
 import { Images } from "../../ui/Images";
 
@@ -513,12 +513,16 @@ export class HtmlConverterJsx extends HtmlConverter {
     return (
       <View>
         {this.render.map((elem, index) => {
+          // let's put a margin to each element except the last one
+          const style =
+            this.getLastRenderItem() === elem ? {} : { marginBottom: 15 };
+
           if (elem.type === "text") {
-            return this.renderParseText(elem, index);
+            return this.renderParseText(elem, index, style);
           } else if (elem.type === "img") {
-            return this.renderParseImages(elem, index);
+            return this.renderParseImages(elem, index, style);
           } else if (elem.type === "iframe") {
-            return this.renderParseIframe(elem, index);
+            return this.renderParseIframe(elem, index, style);
           } else {
             return null;
           }
@@ -530,10 +534,13 @@ export class HtmlConverterJsx extends HtmlConverter {
   /**
    * Build JSX <Text> Elements hierarchy from a top-level TextNugget.
    * @param textNugget IHtmlConverterStyledTextNugget A Top-level TextNugget.
+   * @param key string the traditional React key prop
+   * @param style ViewStyle
    */
   protected renderParseText(
     textNugget: IHtmlConverterStyledTextNugget,
-    key: string
+    key: string,
+    style: ViewStyle = {}
   ): JSX.Element {
     const children = textNugget.children.map((child, index) => {
       if (typeof child === "string") {
@@ -545,11 +552,23 @@ export class HtmlConverterJsx extends HtmlConverter {
 
     switch (textNugget.style) {
       case HtmlConverterJsxTextStyles.None:
-        return <Text key={key}>{children}</Text>;
+        return (
+          <Text key={key} style={style}>
+            {children}
+          </Text>
+        );
       case HtmlConverterJsxTextStyles.Bold:
-        return <Bold key={key}>{children}</Bold>;
+        return (
+          <Bold key={key} style={style}>
+            {children}
+          </Bold>
+        );
       case HtmlConverterJsxTextStyles.Italic:
-        return <Italic key={key}>{children}</Italic>;
+        return (
+          <Italic key={key} style={style}>
+            {children}
+          </Italic>
+        );
       case HtmlConverterJsxTextStyles.Url:
         return (
           <A
@@ -569,24 +588,30 @@ export class HtmlConverterJsx extends HtmlConverter {
   /**
    * Build JSX <Images> Element from an ImageNugget
    * @param imageNugget IHtmlConverterImageNugget A Top-level ImageNugget.
+   * @param key string the traditional React key prop
+   * @param style ViewStyle
    */
   protected renderParseImages(
     imageNugget: IHtmlConverterImageNugget,
-    key: string
+    key: string,
+    style: ViewStyle = {}
   ): JSX.Element {
-    return <Images images={imageNugget.images} key={key} />;
+    return <Images images={imageNugget.images} key={key} style={style} />;
   }
 
   /**
    * Build JSX <WebView> Element from an IframeNugget
    * @param iframeNugget IHtmlConverterIframeNugget A Top-level IframeNugget.
+   * @param key string the traditional React key prop
+   * @param style ViewStyle
    */
   protected renderParseIframe(
     iframeNugget: IHtmlConverterIframeNugget,
-    key: string
+    key: string,
+    style: ViewStyle = {}
   ): JSX.Element {
     return (
-      <View key={key} style={{ height: 200 }}>
+      <View key={key} style={{ height: 200, ...style }}>
         <WebView
           style={{ alignSelf: "stretch" }}
           javaScriptEnabled={true}
