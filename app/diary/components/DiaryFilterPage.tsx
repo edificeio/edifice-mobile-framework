@@ -75,7 +75,7 @@ class DiaryFilterPage_Unconnected extends React.Component<
   IDiaryFilterPageProps,
   {}
 > {
-  private flatList: FlatList<string>; // react-native FlatList component ref // FIXME typescript error (but js works fine). Why ?
+  private flatList: FlatList<string>; // react-native FlatList component ref // TS-ISSUE FlatList exists.
   private setFlatListRef: any; // FlatList setter, executed when this component is mounted.
 
   constructor(props) {

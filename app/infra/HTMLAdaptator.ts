@@ -1,3 +1,9 @@
+/**
+ * Old HTML converter.
+ *
+ * [OBSOLETE] Use htmlConverter modules instead.
+ */
+
 import HTMLParser from "fast-html-parser";
 import { Conf } from "../Conf";
 

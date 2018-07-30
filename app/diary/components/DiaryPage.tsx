@@ -34,6 +34,8 @@ import today from "../../utils/today";
 
 import I18n from "react-native-i18n";
 
+import moize from "moize";
+
 import { Loading } from "../../ui";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { EmptyScreen } from "../../ui/EmptyScreen";
@@ -88,7 +90,7 @@ interface IDiaryPageProps {
  */
 // tslint:disable-next-line:max-classes-per-file
 class DiaryPage extends React.Component<IDiaryPageProps, {}> {
-  private flatList: FlatList<IDiaryTasks>; // react-native FlatList component ref // FIXME typescript error (but js works fine). Why ?
+  private flatList: FlatList<IDiaryTasks>; // react-native FlatList component ref // TS-ISSUE FlatList does exists.
   private setFlatListRef: any; // FlatList setter, executed when this component is mounted.
 
   constructor(props) {
@@ -127,7 +129,7 @@ class DiaryPage extends React.Component<IDiaryPageProps, {}> {
         <FlatList
           innerRef={this.setFlatListRef}
           data={this.props.diaryTasksByDay}
-          CellRendererComponent={ViewOverflow} // FIXME : it DOES exist in RN...
+          CellRendererComponent={ViewOverflow} // TS-ISSUE : it DOES exist in React Native...
           renderItem={({ item }) => (
             <ViewOverflow>
               <DiaryDayTasks data={item} navigation={this.props.navigation} />
@@ -255,6 +257,9 @@ interface IDiaryDayTasksProps {
   dispatch?: any;
   selectedDiary?: string;
 }
+
+const MoizedDiaryCard = moize.react(DiaryCard); // TODO : moize doesn't seem to work in this case...
+
 // tslint:disable-next-line:max-classes-per-file
 class DiaryDayTasks_Unconnected extends React.Component<
   IDiaryDayTasksProps,
@@ -274,7 +279,7 @@ class DiaryDayTasks_Unconnected extends React.Component<
           active={this.props.data.date.isSame(today(), "day")}
         />
         {tasksAsArray.map(item => (
-          <DiaryCard
+          <MoizedDiaryCard
             title={item.title}
             content={item.content}
             key={item.id}

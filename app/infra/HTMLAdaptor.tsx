@@ -1,6 +1,8 @@
 /**
  * HTMLAdaptor
  *
+ * [OBSOLETE] Use htmlConverter modules instead.
+ *
  * This is a new version of HTMLAdaptator.ts.
  * Takes a HTML string as a parameter and provides many tools to convert it to be used on the React Native application.
  * Parsing is done using [fast-html-parser](https://www.npmjs.com/package/fast-html-parser).
@@ -33,7 +35,7 @@ export class HTMLAdaptor {
       lowercase: true,
       normalize: true,
       position: false,
-      strictEntities: false,
+      strictEntities: false, // TS-ISSUE: Definitly typed issue, it does exists in sax
       trim: true
     });
     // console.warn(this.html);

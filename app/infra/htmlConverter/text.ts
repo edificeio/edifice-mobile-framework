@@ -10,6 +10,8 @@
 
 import { HtmlConverter } from ".";
 
+import sax from "sax";
+
 export class HtmlConverterText extends HtmlConverter {
   /**
    * should the converted ignore encountered line breaks (by a <br>, other block tags, or \n - \r\n characters)
@@ -39,8 +41,7 @@ export class HtmlConverterText extends HtmlConverter {
       },
       onend: () => commonParsingEventHandlers.onend(),
       onerror: (err: Error) => commonParsingEventHandlers.onerror(err),
-      onopentag: (tag: { name: string; attributes: any }) => {
-        // TODO : put the attributes type
+      onopentag: (tag: sax.Tag) => {
         tag = commonParsingEventHandlers.onopentag(tag);
         return tag;
       },
@@ -60,7 +61,7 @@ export class HtmlConverterText extends HtmlConverter {
   public constructor(html: string, ignoreLineBreaks: boolean = false) {
     super(html);
     this.ignoreLineBreaks = ignoreLineBreaks;
-    this.processHtml();
+    this.postConstruct();
   }
 
   protected processHtml() {
@@ -71,6 +72,13 @@ export class HtmlConverterText extends HtmlConverter {
 
   public static SHORT_TEXT_MAX_SIZE: number = 70;
   public static NEW_LINE_CHARACTER: string = "\n";
+  /**
+   * Returns the beginning of text. Text is cut at the first line break and at the `maxSize` character position.
+   * This does not cut the text within a word.
+   * Add "..." at the end unless text is too short to be cut.
+   * @param maxSize max number of characters to keep (default 70)
+   * @param newLineChar force cut after this new line character. (but it can be any character or string you want) (default "\n")
+   */
   public getExcerpt(
     maxSize = HtmlConverterText.SHORT_TEXT_MAX_SIZE,
     newLineChar = HtmlConverterText.NEW_LINE_CHARACTER
@@ -91,5 +99,5 @@ export class HtmlConverterText extends HtmlConverter {
   }
 }
 
-export default (html: string, ignoreLineBreaks: boolean = false) =>
+export default (html: string, ignoreLineBreaks?: boolean) =>
   new HtmlConverterText(html, ignoreLineBreaks);

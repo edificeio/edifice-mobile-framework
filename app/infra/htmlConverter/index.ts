@@ -45,8 +45,7 @@ export class HtmlConverter {
         this.parser.error = null;
         this.parser.resume();
       },
-      onopentag: (tag: { name: string; attributes: any }) => {
-        // TODO : put the attributes type
+      onopentag: (tag: sax.Tag) => {
         // console.warn("TAG OPEN : " + tag.name + " !!! " + Math.random());
         return tag;
       },
@@ -63,6 +62,11 @@ export class HtmlConverter {
     // In child class, don't forget to call processHtml() !
   }
 
+  protected postConstruct() {
+    // console.warn(this._html);
+    this.processHtml();
+  }
+
   protected processHtml() {
     // Implement it in child classed
     throw new Error("HtmlConverter.processHtml() is an abstract method.");
@@ -77,7 +81,7 @@ export class HtmlConverter {
       lowercase: true,
       normalize: true,
       position: false,
-      strictEntities: false,
+      strictEntities: false, // TS-ISSUE : Definitly Typed issue, it does exists in sax
       trim: true
     });
     Object.assign(this.parser, this.getParsingEventHandlers());

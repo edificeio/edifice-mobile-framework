@@ -21,7 +21,7 @@ import { connect } from "react-redux";
 import { CommonStyles } from "../../styles/common/styles";
 moment.locale("fr");
 
-import HtmlToText from "../../infra/htmlConverter/text";
+import HtmlToJsx from "../../infra/htmlConverter/jsx";
 
 import memoize from "memoize-one";
 
@@ -76,6 +76,8 @@ interface IDiaryTaskPageProps {
   taskContent?: string;
 }
 
+const convert = memoize(html => HtmlToJsx(html).render);
+
 // tslint:disable-next-line:max-classes-per-file
 class DiaryTaskPage_Unconnected extends React.Component<
   IDiaryTaskPageProps,
@@ -84,8 +86,6 @@ class DiaryTaskPage_Unconnected extends React.Component<
   constructor(props) {
     super(props);
   }
-
-  public convert = memoize(html => HtmlToText(html, false).render);
 
   // render & lifecycle
 
@@ -97,9 +97,9 @@ class DiaryTaskPage_Unconnected extends React.Component<
       <PageContainer>
         <ScrollView
           alwaysBounceVertical={false}
-          style={{
+          contentContainerStyle={{
             paddingHorizontal: 20,
-            paddingVertical: 30
+            paddingVertical: 20
           }}
         >
           <Text fontSize={14} color={CommonStyles.textColor} lineHeight={20}>
@@ -111,7 +111,7 @@ class DiaryTaskPage_Unconnected extends React.Component<
             // lineHeight={20}
             paddingTop={20}
           >
-            <Text>{this.convert(this.props.taskContent)}</Text>
+            {convert(this.props.taskContent)}
           </View>
         </ScrollView>
       </PageContainer>
