@@ -1,4 +1,4 @@
 export const Conf = {
-	platform: "https://recette.opendigitaleducation.com",
-	authLoginStore: 'AUTH_LOGIN_STORE1'
+  authLoginStore: "AUTH_LOGIN_STORE1",
+  platform: "https://recette.opendigitaleducation.com"
 };

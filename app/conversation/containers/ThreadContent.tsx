@@ -2,14 +2,14 @@ import style from "glamorous-native"
 import * as React from "react"
 import { FlatList, KeyboardAvoidingView, Platform, RefreshControl } from "react-native"
 import { Thread, ConversationState, Message } from "../interfaces";
-import styles from "../../styles/index"
+import styles from "../../styles"
 import { ChatMessage } from "../components/ChatMessage"
 import { sameDay } from "../../utils/date"
 import { Row } from "../../ui"
 import { View } from "react-native";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import MediaInput from "./../containers/MediaInput";
+import MediaInput from "./MediaInput";
 import { CommonStyles } from "../../styles/common/styles";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import I18n from "react-native-i18n";

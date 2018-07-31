@@ -19,6 +19,7 @@ const ButtonStyled = styled.view({
 
 export const ButtonsOkCancel = ({ onCancel, onValid, title }: ButtonsOkCancelProps) => (
 	<ButtonStyled>
+		{/* FIXME: Should fire events instead of translating them down or use onPress={onValid} and onPress={onCancel}. */}
 		<ButtonTextIcon onPress={() => onValid()} title={title} />
 		<ButtonTextIcon onPress={() => onCancel()} title={ I18n.t("Cancel") } />
 	</ButtonStyled>

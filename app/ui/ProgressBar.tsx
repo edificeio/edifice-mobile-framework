@@ -1,6 +1,6 @@
 import * as React from "react"
 import { View } from "react-native"
-import styles, { deviceWidth } from "../styles/index"
+import styles, { deviceWidth } from "../styles"
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
