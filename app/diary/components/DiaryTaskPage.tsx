@@ -79,7 +79,7 @@ interface IDiaryTaskPageProps {
 const convert = memoize(
   html =>
     HtmlToJsx(html, {
-      formatting: true,
+      formatting: false,
       hyperlinks: true,
       iframes: true,
       images: true
