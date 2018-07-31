@@ -6,39 +6,45 @@
 
 // imports ----------------------------------------------------------------------------------------
 
+// Libraries
 import style from "glamorous-native";
+import moize from "moize";
 import * as React from "react";
-import { RefreshControl } from "react-native";
-const { View, Text, FlatList } = style;
+import I18n from "react-native-i18n";
 import ViewOverflow from "react-native-view-overflow";
 import { connect } from "react-redux";
-
-import { CommonStyles } from "../../styles/common/styles";
-import { PageContainer } from "../../ui/ContainerContent";
-import { AppTitle, Header, HeaderIcon } from "../../ui/headers/Header";
-import DiaryCard from "./DiaryCard";
-import DiaryCircleNumber from "./DiaryCircleNumber";
 
 import moment from "moment";
 // tslint:disable-next-line:no-submodule-imports
 import "moment/locale/fr";
 moment.locale("fr");
 
+// Components
+import { RefreshControl } from "react-native";
+const { View, Text, FlatList } = style;
+
+import { Loading } from "../../ui";
+import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
+import { PageContainer } from "../../ui/ContainerContent";
+import { EmptyScreen } from "../../ui/EmptyScreen";
+import { AppTitle, Header, HeaderIcon } from "../../ui/headers/Header";
+
+import DiaryCard from "./DiaryCard";
+import DiaryCircleNumber from "./DiaryCircleNumber";
+
+// Style
+import { CommonStyles } from "../../styles/common/styles";
+
+// Actions
 import { fetchDiaryListIfNeeded } from "../actions/list";
 import { diaryTaskSelected } from "../actions/selectedTask";
 import { fetchDiaryTasks, fetchDiaryTasksIfNeeded } from "../actions/tasks";
 
+// Type definitions
 import { IDiaryDay, IDiaryTask, IDiaryTasks } from "../reducers/tasks";
 
+// Misc
 import today from "../../utils/today";
-
-import I18n from "react-native-i18n";
-
-import moize from "moize";
-
-import { Loading } from "../../ui";
-import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
-import { EmptyScreen } from "../../ui/EmptyScreen";
 
 // Header component -------------------------------------------------------------------------------
 
@@ -54,6 +60,7 @@ export class DiaryPageHeader extends React.Component<
     headerText = headerText
       ? headerText.charAt(0).toUpperCase() + headerText.slice(1)
       : I18n.t("Diary");
+
     return (
       <Header>
         <HeaderIcon
@@ -69,12 +76,14 @@ export class DiaryPageHeader extends React.Component<
 
 // Main component ---------------------------------------------------------------------------------
 
-interface IDiaryPageProps {
-  navigation?: any;
+export interface IDiaryPageProps {
+  navigation?: any; // React Navigation
+  dispatch?: any; // given by connect() // TODO : use mapDispatchToProps in container component
+  // Async
   didInvalidate?: boolean;
-  dispatch?: any; // given by connect()
   isFetching?: boolean;
   lastUpdated?: Date;
+  // Data
   diaryId?: string; // selected diaryId
   diaryTasksByDay?: Array<{
     id: string;
@@ -89,14 +98,14 @@ interface IDiaryPageProps {
  * The main component.
  */
 // tslint:disable-next-line:max-classes-per-file
-class DiaryPage extends React.Component<IDiaryPageProps, {}> {
+export class DiaryPage extends React.PureComponent<IDiaryPageProps, {}> {
   private flatList: FlatList<IDiaryTasks>; // react-native FlatList component ref // TS-ISSUE FlatList does exists.
   private setFlatListRef: any; // FlatList setter, executed when this component is mounted.
 
   constructor(props) {
     super(props);
 
-    // Refs
+    // Refs init
     this.flatList = null;
     this.setFlatListRef = element => {
       this.flatList = element;
@@ -132,7 +141,17 @@ class DiaryPage extends React.Component<IDiaryPageProps, {}> {
           CellRendererComponent={ViewOverflow} // TS-ISSUE : it DOES exist in React Native...
           renderItem={({ item }) => (
             <ViewOverflow>
-              <DiaryDayTasks data={item} navigation={this.props.navigation} />
+              <DiaryDayTasks
+                data={item}
+                navigation={this.props.navigation}
+                onSelect={(itemId, date) => {
+                  this.props.dispatch(
+                    diaryTaskSelected(this.props.diaryId, date, itemId)
+                  );
+                  const navigation = this.props.navigation;
+                  navigation.navigate("DiaryTask");
+                }}
+              />
             </ViewOverflow>
           )}
           keyExtractor={item => item.date.format("YYYY-MM-DD")}
@@ -209,39 +228,6 @@ class DiaryPage extends React.Component<IDiaryPageProps, {}> {
   } // FIXME: Syntax error on this line because of a collision between TSlint and Prettier.
 }
 
-export default connect((state: any) => {
-  // Map State To Props
-  const localState = state.diary;
-  const selectedDiaryId = localState.selected;
-  const currentDiaryTasks = localState.tasks[selectedDiaryId];
-  if (!currentDiaryTasks)
-    return {
-      diaryId: null,
-      diaryTasksByDay: null,
-      didInvalidate: true,
-      isFetching: false,
-      lastUpdated: null
-    };
-  const { didInvalidate, isFetching, lastUpdated } = currentDiaryTasks;
-
-  // Flatten two-dimensional IOrderedArrayById
-  const diaryTasksByDay = currentDiaryTasks.data.ids.map(diaryId => ({
-    date: currentDiaryTasks.data.byId[diaryId].date,
-    id: diaryId,
-    tasks: currentDiaryTasks.data.byId[diaryId].tasks.ids.map(
-      taskId => currentDiaryTasks.data.byId[diaryId].tasks.byId[taskId]
-    )
-  }));
-
-  return {
-    diaryId: selectedDiaryId,
-    diaryTasksByDay,
-    didInvalidate,
-    isFetching,
-    lastUpdated
-  };
-})(DiaryPage);
-
 // Other container components --------------------------------------------------------------------------
 
 /**
@@ -256,6 +242,7 @@ interface IDiaryDayTasksProps {
   navigation?: any;
   dispatch?: any;
   selectedDiary?: string;
+  onSelect?: (itemId: string, date: moment.Moment) => void;
 }
 
 const MoizedDiaryCard = moize.react(DiaryCard); // TODO : moize doesn't seem to work in this case...
@@ -283,17 +270,7 @@ class DiaryDayTasks_Unconnected extends React.Component<
             title={item.title}
             content={item.content}
             key={item.id}
-            onPress={() => {
-              this.props.dispatch(
-                diaryTaskSelected(
-                  this.props.selectedDiary,
-                  this.props.data.date,
-                  item.id
-                )
-              );
-              const navigation = this.props.navigation;
-              navigation.navigate("DiaryTask");
-            }}
+            onPress={() => this.props.onSelect(item.id, this.props.data.date)}
           />
         ))}
       </View>

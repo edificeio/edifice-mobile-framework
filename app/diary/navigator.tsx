@@ -5,8 +5,9 @@ import { navOptions } from "../utils/navHelper";
 import DiaryFilterPage, {
   DiaryFilterPageHeader
 } from "./components/DiaryFilterPage";
-import DiaryPage, { DiaryPageHeader } from "./components/DiaryPage";
+import { DiaryPageHeader } from "./components/DiaryPage";
 import { DiaryTaskPage, DiaryTaskPageHeader } from "./components/DiaryTaskPage";
+import DiaryPage from "./containers/DiaryPage";
 
 export default StackNavigator({
   Diary: {
