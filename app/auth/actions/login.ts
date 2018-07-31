@@ -96,7 +96,8 @@ export const login = dispatch => async (email, password) => {
 			fetch(`${ Conf.platform }/timeline/pushNotif/fcmToken?fcmToken=${ token }`, { method: 'put' });
 
 			await readCurrentUser(dispatch)();
-            Tracking.logEvent('login', { email: email });
+			Tracking.logEvent('login', { email: email });
+			
 			return LoginResult.success;
 		}
 	}

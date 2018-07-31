@@ -52,6 +52,7 @@ PODS:
   - "GoogleToolboxForMac/NSData+zlib (2.1.4)":
     - GoogleToolboxForMac/Defines (= 2.1.4)
   - GTMSessionFetcher/Core (1.1.15)
+  - Mixpanel (3.3.3)
   - nanopb (0.3.8):
     - nanopb/decode (= 0.3.8)
     - nanopb/encode (= 0.3.8)
@@ -88,7 +89,7 @@ PODS:
     - React/Core
     - React/fishhook
     - React/RCTBlob
-  - RNFirebase (4.2.0):
+  - RNFirebase (4.3.7):
     - Firebase/Core
     - React
   - yoga (0.55.4.React)
@@ -99,6 +100,7 @@ DEPENDENCIES:
   - Firebase/Core
   - Firebase/Messaging
   - Firebase/Performance
+  - Mixpanel
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - React/Core (from `../node_modules/react-native`)
   - React/CxxBridge (from `../node_modules/react-native`)
@@ -123,6 +125,7 @@ SPEC REPOS:
     - glog
     - GoogleToolboxForMac
     - GTMSessionFetcher
+    - Mixpanel
     - nanopb
     - Protobuf
 
@@ -152,6 +155,7 @@ SPEC CHECKSUMS:
   glog: 1de0bb937dccdc981596d3b5825ebfb765017ded
   GoogleToolboxForMac: 91c824d21e85b31c2aae9bb011c5027c9b4e738f
   GTMSessionFetcher: 5fa5b80fd20e439ef5f545fb2cb3ca6c6714caa2
+  Mixpanel: 3c3925c27f7a321d5978319a72f53f8f0885afc5
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
   Protobuf: 8a9838fba8dae3389230e1b7f8c104aa32389c03
   React: aa2040dbb6f317b95314968021bd2888816e03d5
@@ -159,6 +163,6 @@ SPEC CHECKSUMS:
   RNFirebase: 2b25fd2e60269f26bb0a76c71dcc942b35a77df0
   yoga: a23273df0088bf7f2bb7e5d7b00044ea57a2a54a
 
-PODFILE CHECKSUM: bda5c95b1f055e9b346b123ba356b26826436363
+PODFILE CHECKSUM: fb0ee80b30bd705bcab3f38b9cd1ba598cb168e3
 
 COCOAPODS: 1.5.3

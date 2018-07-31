@@ -1,6 +1,8 @@
 import { Platform } from 'react-native';
 import firebase from "react-native-firebase";
 import { MixpanelInstance } from "react-native-mixpanel";
+import { Me } from "../infra/Me";
+import { initialStateWithEmail } from '../auth/Login';
 
 
 // Firebase Init
@@ -16,21 +18,27 @@ export class Tracking {
 
 	// Mixpanel Init
 	private static mixpanel;
+	private static mixpanelToken: string;
+
 	// TODO : Externalize mixpanel token configuration
 	static async initMixpanel() {
-		Tracking.mixpanel = new MixpanelInstance('9cc560e73f2e7b38c0b247fcd8c84e5a')
-		await Tracking.mixpanel.initialize()
+		if(Platform.OS === 'ios'){ // FIXME : Mixpanel doesn't startup on iOS.
+			Tracking.mixpanelToken = 'c82f3785bad1015243c64ad254086189';
+		} else if (Platform.OS === 'android'){
+			Tracking.mixpanelToken = 'c82f3785bad1015243c64ad254086189';
+		}
+		Tracking.mixpanel = new MixpanelInstance(Tracking.mixpanelToken);
+		await Tracking.mixpanel.initialize();
+		console.warn("1" + Me.session.userId);
 		console.warn('Mixpanel init done ' + Tracking.mixpanel);
+		console.warn(Tracking.mixpanel);
 	}
 
 	public static init() {
-		if(Platform.OS === 'ios'){
-			return;
-		}
 		try{
 			const crashlytics = firebase.crashlytics();
 			crashlytics.log("Crashlytics configuration done.");
-
+			console.warn("2" + Me.session.userId);
 			const perfMonitoring = (firebase.app() as any).perf();
 			const trace = perfMonitoring.newTrace(`PerformanceMonitoring_configuration_done`);
 			trace.start();
@@ -43,17 +51,18 @@ export class Tracking {
 	}
 
 	public static logEvent(name: string, params?) {
-		if(!analytics){
-			return;
+		if(analytics){
+			if (params) analytics.logEvent(name, params);
+			else analytics.logEvent(name);
 		}
-		if(params){
-			analytics.logEvent(name, params);
-			Tracking.mixpanel.track(name, params);
+		if(Tracking.mixpanel){
+			if (params) Tracking.mixpanel.track(name, params);
+			else Tracking.mixpanel.track(name);
 		}
-		else{
-			analytics.logEvent(name);
-			Tracking.mixpanel.track(name);
-		}
+		console.warn("Identifant:" + Me.session.userId);
+		Tracking.mixpanel.identify(Me.session.userId);
+		Tracking.mixpanel.set({"$Login": Me.session.login});
+		Tracking.mixpanel.set({"$UserId": Me.session.userId});
 	}
 
 	public static trackScreenView(currentScreen, navParams) {
@@ -61,3 +70,8 @@ export class Tracking {
 	}
 }
 Tracking.initMixpanel();
+console.warn("4" + Me.session.userId);
+/*console.warn(Me);
+Tracking.mixpanel.identify(Me.session.userId);
+Tracking.mixpanel.set({"$email": initialStateWithEmail});
+*/
