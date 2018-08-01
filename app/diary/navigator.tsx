@@ -2,12 +2,12 @@ import * as React from "react";
 import { StackNavigator } from "react-navigation";
 import { navOptions } from "../utils/navHelper";
 
-import DiaryFilterPage, {
-  DiaryFilterPageHeader
-} from "./components/DiaryFilterPage";
-import { DiaryPageHeader } from "./components/DiaryPage";
-import { DiaryTaskPage, DiaryTaskPageHeader } from "./components/DiaryTaskPage";
+import DiaryFilterPageHeader from "./components/DiaryFilterPageHeader";
+import DiaryPageHeader from "./components/DiaryPageHeader";
+import DiaryFilterPage from "./containers/DiaryFilterPage";
 import DiaryPage from "./containers/DiaryPage";
+import DiaryTaskPage from "./containers/DiaryTaskPage";
+import DiaryTaskPageHeader from "./containers/DiaryTaskPageHeader";
 
 export default StackNavigator({
   Diary: {
@@ -30,7 +30,7 @@ export default StackNavigator({
     navigationOptions: ({ navigation }) =>
       navOptions(
         {
-          header: <DiaryTaskPageHeader navigation={navigation} />,
+          header: <DiaryTaskPageHeader navigation={navigation} />, // TS-ISSUE : navigation doest exist in DiaryTaskPageHeaderProps.
           tabBarVisible: false
         },
         navigation

@@ -24,41 +24,9 @@ import { diarySelected } from "../actions/selected";
 
 import I18n from "react-native-i18n";
 
-// helpers ----------------------------------------------------------------------------------------
-
-// Header component -------------------------------------------------------------------------------
-
-// tslint:disable-next-line:max-classes-per-file
-class DiaryFilterPageHeader_Unconnected extends React.Component<
-  {
-    navigation?: any;
-    dispatch?: any; // given by connect()
-  },
-  undefined
-> {
-  public render() {
-    const AppTitleStyled = style(AppTitle)({ textAlign: "left" });
-    return (
-      <Header>
-        <HeaderIcon
-          name="close"
-          onPress={() => this.props.navigation.goBack()}
-        />
-        <AppTitleStyled>{I18n.t("diary-select")}</AppTitleStyled>
-        <HeaderIcon name={null} hidden={true} />
-      </Header>
-    );
-  }
-}
-
-export const DiaryFilterPageHeader = connect((state: any) => {
-  // Map state to props
-  return {};
-})(DiaryFilterPageHeader_Unconnected);
-
 // Main component ---------------------------------------------------------------------------------
 
-interface IDiaryFilterPageProps {
+export interface IDiaryFilterPageProps {
   navigation?: any;
   dispatch?: any; // given by connect()
   diaryList?: Array<{
@@ -71,7 +39,7 @@ interface IDiaryFilterPageProps {
 }
 
 // tslint:disable-next-line:max-classes-per-file
-class DiaryFilterPage_Unconnected extends React.Component<
+export class DiaryFilterPage extends React.Component<
   IDiaryFilterPageProps,
   {}
 > {
@@ -142,33 +110,7 @@ class DiaryFilterPage_Unconnected extends React.Component<
   public handleSelectedDiaryChanged = diaryId => {
     this.props.dispatch(diarySelected(diaryId));
     this.props.navigation.goBack();
-  } // FIXME: Syntax error on this line because of a collision between TSlint and Prettier.
+  } // TS-ISSUE: Syntax error on this line because of a collision between TSlint and Prettier.
 }
-
-export const DiaryFilterPage = connect((state: any) => {
-  // Map state to props
-  const localState = state.diary;
-  const diaryList = localState.list;
-  if (!diaryList.data)
-    return {
-      diaryList: [],
-      isFetching: diaryList.isFetching,
-      selectedDiaryId: localState.selected
-    };
-  // console.warn(diaryList.data);
-  const flatDiaryList = Object.getOwnPropertyNames(diaryList.data).map(
-    diaryId => ({
-      id: diaryId,
-      name: diaryList.data[diaryId].name,
-      title: diaryList.data[diaryId].title
-    })
-  );
-  // console.warn(flatDiaryList);
-  return {
-    diaryList: flatDiaryList,
-    isFetching: diaryList.isFetching,
-    selectedDiaryId: localState.selected
-  };
-})(DiaryFilterPage_Unconnected);
 
 export default DiaryFilterPage;

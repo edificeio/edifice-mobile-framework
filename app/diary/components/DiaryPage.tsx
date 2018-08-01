@@ -2,9 +2,16 @@
  * DiaryPage
  *
  * Display page for all homework in a calendar-like way.
+ *
+ * Props :
+ *    navigation : React Navigation instance.
+ *    dispatch : React-Redux dispatch function.
+ *    isFetching : is data currently fetching from the server.
+ *    diaryId : displayed diaryId.
+ *    diaryTasksByDay: list of data.
  */
 
-// imports ----------------------------------------------------------------------------------------
+// Imports ----------------------------------------------------------------------------------------
 
 // Libraries
 import style from "glamorous-native";
@@ -25,7 +32,6 @@ import { Loading } from "../../ui";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
 import { EmptyScreen } from "../../ui/EmptyScreen";
-import { AppTitle, Header, HeaderIcon } from "../../ui/headers/Header";
 
 import DiaryDayTasks from "./DiaryDayTasks";
 import DiaryTimeline from "./DiaryTimeline";
@@ -41,44 +47,12 @@ import { IDiaryTask, IDiaryTasks } from "../reducers/tasks";
 // Misc
 import today from "../../utils/today";
 
-// Header component -------------------------------------------------------------------------------
-
-// tslint:disable-next-line:max-classes-per-file
-export class DiaryPageHeader extends React.Component<
-  { navigation?: any; date?: moment.Moment },
-  undefined
-> {
-  public render() {
-    let headerText = this.props.date
-      ? this.props.date.format("MMMM YYYY")
-      : null;
-    headerText = headerText
-      ? headerText.charAt(0).toUpperCase() + headerText.slice(1)
-      : I18n.t("Diary");
-
-    return (
-      <Header>
-        <HeaderIcon
-          onPress={() => this.props.navigation.navigate("DiaryFilter")}
-          name="filter"
-        />
-        <AppTitle>{headerText}</AppTitle>
-        <HeaderIcon name={null} hidden={true} />
-      </Header>
-    );
-  }
-}
-
 // Main component ---------------------------------------------------------------------------------
-
 export interface IDiaryPageProps {
   navigation?: any; // React Navigation
   dispatch?: any; // given by connect() // TODO : use mapDispatchToProps in container component
-  // Async
-  didInvalidate?: boolean;
-  isFetching?: boolean;
-  lastUpdated?: Date;
   // Data
+  isFetching?: boolean;
   diaryId?: string; // selected diaryId
   diaryTasksByDay?: Array<{
     id: string;
@@ -87,12 +61,6 @@ export interface IDiaryPageProps {
   }>; // for this diaryId, all the tasks by day
 }
 
-/**
- * DiaryPage
- *
- * The main component.
- */
-// tslint:disable-next-line:max-classes-per-file
 export class DiaryPage extends React.PureComponent<IDiaryPageProps, {}> {
   private flatList: FlatList<IDiaryTasks>; // react-native FlatList component ref // TS-ISSUE FlatList does exists.
   private setFlatListRef: any; // FlatList setter, executed when this component is mounted.
@@ -127,22 +95,21 @@ export class DiaryPage extends React.PureComponent<IDiaryPageProps, {}> {
   }
 
   private renderList() {
+    const { diaryId, diaryTasksByDay, isFetching, navigation } = this.props;
+
     return (
       <View style={{ flex: 1 }}>
         <DiaryTimeline />
         <FlatList
           innerRef={this.setFlatListRef}
-          data={this.props.diaryTasksByDay}
+          data={diaryTasksByDay}
           CellRendererComponent={ViewOverflow} // TS-ISSUE : it DOES exist in React Native...
           renderItem={({ item }) => (
             <ViewOverflow>
               <DiaryDayTasks
                 data={item}
                 onSelect={(itemId, date) => {
-                  this.props.dispatch(
-                    diaryTaskSelected(this.props.diaryId, date, itemId)
-                  );
-                  const navigation = this.props.navigation;
+                  this.props.dispatch(diaryTaskSelected(diaryId, date, itemId));
                   navigation.navigate("DiaryTask");
                 }}
               />
@@ -152,7 +119,7 @@ export class DiaryPage extends React.PureComponent<IDiaryPageProps, {}> {
           ListFooterComponent={() => <View height={15} />}
           refreshControl={
             <RefreshControl
-              refreshing={this.props.isFetching}
+              refreshing={isFetching}
               onRefresh={() => this.forceFetchDiaryTasks()}
             />
           }
@@ -185,15 +152,16 @@ export class DiaryPage extends React.PureComponent<IDiaryPageProps, {}> {
   }
 
   public componentDidUpdate() {
+    const { diaryTasksByDay, isFetching, navigation } = this.props;
     if (
       // If it's an empty screen, we put today's month in the header
-      this.props.diaryTasksByDay &&
-      this.props.diaryTasksByDay.length === 0 &&
-      !this.props.isFetching &&
-      moment.isMoment(this.props.navigation.getParam("diary-date")) &&
-      !this.props.navigation.getParam("diary-date").isSame(today(), "month") // Prevent infinite update
+      diaryTasksByDay &&
+      diaryTasksByDay.length === 0 &&
+      !isFetching &&
+      moment.isMoment(navigation.getParam("diary-date")) &&
+      !navigation.getParam("diary-date").isSame(today(), "month") // Prevent infinite update
     ) {
-      this.props.navigation.setParams({ "diary-date": false }, "Diary");
+      navigation.setParams({ "diary-date": false }, "Diary");
     }
   }
 
