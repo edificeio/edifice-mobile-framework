@@ -8,11 +8,9 @@
 
 // Libraries
 import style from "glamorous-native";
-import moize from "moize";
 import * as React from "react";
 import I18n from "react-native-i18n";
 import ViewOverflow from "react-native-view-overflow";
-import { connect } from "react-redux";
 
 import moment from "moment";
 // tslint:disable-next-line:no-submodule-imports
@@ -21,7 +19,7 @@ moment.locale("fr");
 
 // Components
 import { RefreshControl } from "react-native";
-const { View, Text, FlatList } = style;
+const { View, FlatList } = style;
 
 import { Loading } from "../../ui";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
@@ -29,11 +27,8 @@ import { PageContainer } from "../../ui/ContainerContent";
 import { EmptyScreen } from "../../ui/EmptyScreen";
 import { AppTitle, Header, HeaderIcon } from "../../ui/headers/Header";
 
-import DiaryCard from "./DiaryCard";
-import DiaryCircleNumber from "./DiaryCircleNumber";
-
-// Style
-import { CommonStyles } from "../../styles/common/styles";
+import DiaryDayTasks from "./DiaryDayTasks";
+import DiaryTimeline from "./DiaryTimeline";
 
 // Actions
 import { fetchDiaryListIfNeeded } from "../actions/list";
@@ -41,7 +36,7 @@ import { diaryTaskSelected } from "../actions/selectedTask";
 import { fetchDiaryTasks, fetchDiaryTasksIfNeeded } from "../actions/tasks";
 
 // Type definitions
-import { IDiaryDay, IDiaryTask, IDiaryTasks } from "../reducers/tasks";
+import { IDiaryTask, IDiaryTasks } from "../reducers/tasks";
 
 // Misc
 import today from "../../utils/today";
@@ -134,7 +129,7 @@ export class DiaryPage extends React.PureComponent<IDiaryPageProps, {}> {
   private renderList() {
     return (
       <View style={{ flex: 1 }}>
-        <DiaryTimeLine />
+        <DiaryTimeline />
         <FlatList
           innerRef={this.setFlatListRef}
           data={this.props.diaryTasksByDay}
@@ -143,7 +138,6 @@ export class DiaryPage extends React.PureComponent<IDiaryPageProps, {}> {
             <ViewOverflow>
               <DiaryDayTasks
                 data={item}
-                navigation={this.props.navigation}
                 onSelect={(itemId, date) => {
                   this.props.dispatch(
                     diaryTaskSelected(this.props.diaryId, date, itemId)
@@ -227,114 +221,3 @@ export class DiaryPage extends React.PureComponent<IDiaryPageProps, {}> {
     // TODO : this line causes a re-render, AND a re-parse of all the html contents... Needs to be cached.
   } // FIXME: Syntax error on this line because of a collision between TSlint and Prettier.
 }
-
-// Other container components --------------------------------------------------------------------------
-
-/**
- * DiaryDayTasks
- *
- * Display the task list of a day (with day number and name).
- * Props:
- *     data: DiaryDay - information of the day (number and name) and list of the tasks.
- */
-interface IDiaryDayTasksProps {
-  data: IDiaryDay;
-  navigation?: any;
-  dispatch?: any;
-  selectedDiary?: string;
-  onSelect?: (itemId: string, date: moment.Moment) => void;
-}
-
-const MoizedDiaryCard = moize.react(DiaryCard); // TODO : moize doesn't seem to work in this case...
-
-// tslint:disable-next-line:max-classes-per-file
-class DiaryDayTasks_Unconnected extends React.Component<
-  IDiaryDayTasksProps,
-  {}
-> {
-  constructor(props: IDiaryDayTasksProps) {
-    super(props);
-  }
-
-  public render() {
-    const tasksAsArray = Object.values(this.props.data.tasks);
-    return (
-      <View>
-        <DiaryDayCheckpoint
-          nb={this.props.data.date.date()}
-          text={this.props.data.date.format("dddd")}
-          active={this.props.data.date.isSame(today(), "day")}
-        />
-        {tasksAsArray.map(item => (
-          <MoizedDiaryCard
-            title={item.title}
-            content={item.content}
-            key={item.id}
-            onPress={() => this.props.onSelect(item.id, this.props.data.date)}
-          />
-        ))}
-      </View>
-    );
-  }
-}
-
-const DiaryDayTasks = connect((state: any) => {
-  const ret: {
-    selectedDiary: string;
-  } = {
-    selectedDiary: state.diary.selected as string
-  };
-  return ret;
-})(DiaryDayTasks_Unconnected);
-
-// Pure display components ------------------------------------------------------------------------
-
-/**
- * Just display a grey vertical line at the left tall as the screen is.
- */
-const DiaryTimeLine = style.view({
-  backgroundColor: CommonStyles.entryfieldBorder, // TODO: Use the linear gradient instead of a plain grey
-  height: "100%",
-  left: 29,
-  position: "absolute",
-  width: 1
-});
-
-/**
- * DiaryDayCheckpoint
- *
- * Just a wrapper for the heading of a day tasks. Displays a day number in a circle and a day name
- * Props:
- *     `style`: `any` - Glamorous style to add.
- * 	   `nb`: `number`- Day number to be displayed in a `DiaryDayCircleNumber`.
- *     `text`: `string` - Day name to be displayed.
- *     `active`: `boolean` - An active `DiaryDayCheckpoint` will be highlighted. Default `false`.
- *
- * An unstyled version on this component is available as `DiaryDayCheckpoint_Unstyled`.
- */
-
-// tslint:disable-next-line:variable-name
-const DiaryDayCheckpoint_Unstyled = ({
-  style,
-  nb,
-  text = "",
-  active = false
-}: {
-  style?: any;
-  nb?: number;
-  text?: string;
-  active?: boolean;
-}) => (
-  <View style={[style]}>
-    <DiaryCircleNumber nb={nb} active={active} />
-    <Text color={CommonStyles.lightTextColor} fontSize={12}>
-      {text.toUpperCase()}
-    </Text>
-  </View>
-);
-
-const DiaryDayCheckpoint = style(DiaryDayCheckpoint_Unstyled)({
-  alignItems: "center",
-  flexDirection: "row",
-  marginTop: 15
-});
