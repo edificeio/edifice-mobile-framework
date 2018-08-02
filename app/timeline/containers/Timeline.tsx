@@ -54,6 +54,7 @@ class Timeline extends React.Component<TimelineProps, undefined> {
 	nextPage() {
 		if (!this.props.isFetching && this.props.isAuthenticated) {
 			this.props.sync(++this.pageNumber, this.props.availableApps)
+			Tracking.logEvent('refreshTimeline', { direction : "ScrollDown"})	
 		}
 	}
 
@@ -79,7 +80,7 @@ class Timeline extends React.Component<TimelineProps, undefined> {
 
 	fetchLatest(){
 		this.props.fetch(this.props.availableApps);
-	}
+		Tracking.logEvent('refreshTimeline', { direction : "ScrollUp"})	}
 
 	shouldComponentUpdate(nextProps, nextState) {
 		if (nextProps.news !== this.props.news) return true
