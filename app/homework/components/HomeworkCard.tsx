@@ -1,5 +1,5 @@
 /**
- * DiaryCard
+ * HomeworkCard
  *
  * Like `Card`, but some margin and padding, custom shadow and rounded.
  *
@@ -16,14 +16,14 @@ const { Text, TouchableOpacity } = style;
 import HtmlToText from "../../infra/htmlConverter/text";
 import { CommonStyles } from "../../styles/common/styles";
 
-export interface IDiaryCardProps {
+export interface IHomeworkCardProps {
   style?: any;
   title?: string;
   content?: string;
   onPress?: () => void;
 }
 
-const diaryCardStyle = {
+const homeworkCardStyle = {
   backgroundColor: "#FFF",
   borderRadius: 5,
   elevation: 1,
@@ -37,14 +37,14 @@ const diaryCardStyle = {
   shadowOpacity: 0.2
 };
 
-export const DiaryCard = ({
+export const HomeworkCard = ({
   style,
   title,
   content,
   onPress
-}: IDiaryCardProps) => {
+}: IHomeworkCardProps) => {
   return (
-    <TouchableOpacity style={[diaryCardStyle, style]} onPress={onPress}>
+    <TouchableOpacity style={[homeworkCardStyle, style]} onPress={onPress}>
       <Text fontSize={14} color={CommonStyles.textColor} lineHeight={20}>
         {/* TODO typo */}
         {HtmlToText(content, true).excerpt}
@@ -57,4 +57,4 @@ export const DiaryCard = ({
   );
 };
 
-export default DiaryCard;
+export default HomeworkCard;

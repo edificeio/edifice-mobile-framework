@@ -1,5 +1,5 @@
 /**
- * DiaryDayTasks
+ * HomeworkDayTasks
  *
  * Display the task list of a day (with day number and name).
  * Props:
@@ -20,29 +20,29 @@ moment.locale("fr");
 
 // Components
 const { View } = style;
-import DiaryCard from "./DiaryCard";
-import DiaryDayCheckpoint from "./DiaryDayCheckpoint";
+import HomeworkCard from "./HomeworkCard";
+import HomeworkDayCheckpoint from "./HomeworkDayCheckpoint";
 
 // Type definitions
-import { IDiaryDay } from "../reducers/tasks";
+import { IHomeworkDay } from "../reducers/tasks";
 
 // Misc
 import today from "../../utils/today";
 
-interface IDiaryDayTasksProps {
+interface IHomeworkDayTasksProps {
   style?: any;
-  data: IDiaryDay;
+  data: IHomeworkDay;
   onSelect?: (itemId: string, date: moment.Moment) => void;
 }
 
-const MoizedDiaryCard = moize.react(DiaryCard); // TODO : moize doesn't seem to work in this case...
+const MoizedHomeworkCard = moize.react(HomeworkCard); // TODO : moize doesn't seem to work in this case...
 
 // tslint:disable-next-line:max-classes-per-file
-export class DiaryDayTasks extends React.PureComponent<
-  IDiaryDayTasksProps,
+export class HomeworkDayTasks extends React.PureComponent<
+  IHomeworkDayTasksProps,
   {}
 > {
-  constructor(props: IDiaryDayTasksProps) {
+  constructor(props: IHomeworkDayTasksProps) {
     super(props);
   }
 
@@ -52,13 +52,13 @@ export class DiaryDayTasks extends React.PureComponent<
 
     return (
       <View style={[style]}>
-        <DiaryDayCheckpoint
+        <HomeworkDayCheckpoint
           nb={data.date.date()}
           text={data.date.format("dddd")}
           active={data.date.isSame(today(), "day")}
         />
         {tasksAsArray.map(item => (
-          <MoizedDiaryCard
+          <MoizedHomeworkCard
             title={item.title}
             content={item.content}
             key={item.id}
@@ -70,4 +70,4 @@ export class DiaryDayTasks extends React.PureComponent<
   }
 }
 
-export default DiaryDayTasks;
+export default HomeworkDayTasks;

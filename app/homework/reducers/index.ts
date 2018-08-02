@@ -1,5 +1,5 @@
 /*
-  Reducers for Diary (aka homework) app.
+  Reducers for Homework (aka homework) app.
 */
 
 import { combineReducers } from "redux";

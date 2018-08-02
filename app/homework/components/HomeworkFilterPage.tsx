@@ -1,13 +1,13 @@
 /**
- * DiaryFilterPage
+ * HomeworkFilterPage
  *
  * Display page for just one task just one day.
  *
  * Props:
  *    `navigation` - React Navigation
  *    `dispatch` - React-Redux dispatcher
- *    `diaryList` - Data list
- *    `selectedDiaryId`
+ *    `homeworkList` - Data list
+ *    `selectedHomeworkId`
  *    `isFetching` - is data currently fetching from backend
  */
 
@@ -23,26 +23,26 @@ import { ListItem, PageContainer } from "../../ui/ContainerContent";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { Checkbox } from "../../ui/forms/Checkbox";
 import { Bold } from "../../ui/Typography";
-import { fetchDiaryList, fetchDiaryListIfNeeded } from "../actions/list";
-import { diarySelected } from "../actions/selected";
+import { fetchHomeworkList, fetchHomeworkListIfNeeded } from "../actions/list";
+import { homeworkSelected } from "../actions/selected";
 
 // Main component ---------------------------------------------------------------------------------
 
-export interface IDiaryFilterPageProps {
+export interface IHomeworkFilterPageProps {
   navigation?: any;
   dispatch?: any; // given by connect()
-  diaryList?: Array<{
+  homeworkList?: Array<{
     id: string;
     title: string;
     name: string;
   }>;
-  selectedDiaryId?: string;
+  selectedHomeworkId?: string;
   isFetching?: boolean;
 }
 
 // tslint:disable-next-line:max-classes-per-file
-export class DiaryFilterPage extends React.PureComponent<
-  IDiaryFilterPageProps,
+export class HomeworkFilterPage extends React.PureComponent<
+  IHomeworkFilterPageProps,
   {}
 > {
   private flatList: FlatList<string>; // react-native FlatList component ref // TS-ISSUE FlatList exists.
@@ -66,16 +66,16 @@ export class DiaryFilterPage extends React.PureComponent<
         <ConnectionTrackingBar />
         <FlatList
           innerRef={this.setFlatListRef}
-          data={this.props.diaryList}
+          data={this.props.homeworkList}
           renderItem={({ item }) => (
             <ListItem
               style={{ justifyContent: "space-between" }}
-              onPress={() => this.handleSelectedDiaryChanged(item.id)}
+              onPress={() => this.handleSelectedHomeworkChanged(item.id)}
             >
               <Bold>{item.title}</Bold>
               <Checkbox
-                checked={this.props.selectedDiaryId === item.id}
-                onCheck={() => this.handleSelectedDiaryChanged(item.id)}
+                checked={this.props.selectedHomeworkId === item.id}
+                onCheck={() => this.handleSelectedHomeworkChanged(item.id)}
               />
             </ListItem>
           )}
@@ -83,7 +83,7 @@ export class DiaryFilterPage extends React.PureComponent<
           refreshControl={
             <RefreshControl
               refreshing={this.props.isFetching}
-              onRefresh={() => this.forceFetchDiaryList()}
+              onRefresh={() => this.forceFetchHomeworkList()}
             />
           }
         />
@@ -94,25 +94,25 @@ export class DiaryFilterPage extends React.PureComponent<
   // Lifecycle
 
   public componentDidMount() {
-    this.fetchDiaryList();
+    this.fetchHomeworkList();
   }
 
   // Fetch methods
 
-  public fetchDiaryList() {
-    this.props.dispatch(fetchDiaryListIfNeeded());
+  public fetchHomeworkList() {
+    this.props.dispatch(fetchHomeworkListIfNeeded());
   }
 
-  public forceFetchDiaryList() {
-    this.props.dispatch(fetchDiaryList());
+  public forceFetchHomeworkList() {
+    this.props.dispatch(fetchHomeworkList());
   }
 
   // Event Handlers
 
-  public handleSelectedDiaryChanged = diaryId => {
-    this.props.dispatch(diarySelected(diaryId));
+  public handleSelectedHomeworkChanged = homeworkId => {
+    this.props.dispatch(homeworkSelected(homeworkId));
     this.props.navigation.goBack();
   } // TS-ISSUE: Syntax error on this line because of a collision between TSlint and Prettier.
 }
 
-export default DiaryFilterPage;
+export default HomeworkFilterPage;

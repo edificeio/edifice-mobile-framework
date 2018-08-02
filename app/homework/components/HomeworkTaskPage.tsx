@@ -1,5 +1,5 @@
 /**
- * DiaryTaskPage
+ * HomeworkTaskPage
  *
  * Display page for just one task just one day.
  */
@@ -24,10 +24,10 @@ import memoize from "memoize-one";
 
 // Main component ---------------------------------------------------------------------------------
 
-export interface IDiaryTaskPageProps {
+export interface IHomeworkTaskPageProps {
   navigation?: any;
   dispatch?: any; // given by connect(),
-  diaryId?: string;
+  homeworkId?: string;
   date?: Moment;
   taskId?: string;
   taskTitle?: string;
@@ -44,7 +44,7 @@ const convert = memoize(
     }).render
 );
 
-export class DiaryTaskPage extends React.Component<IDiaryTaskPageProps, {}> {
+export class HomeworkTaskPage extends React.Component<IHomeworkTaskPageProps, {}> {
   constructor(props) {
     super(props);
   }
@@ -75,4 +75,4 @@ export class DiaryTaskPage extends React.Component<IDiaryTaskPageProps, {}> {
   }
 }
 
-export default DiaryTaskPage;
+export default HomeworkTaskPage;

@@ -17,7 +17,7 @@
  * When the type is actionTypeReceived(), it must have also a `receivedAt` with a Date as its value.
  * Use the `dataReducer` argument to update your state when actionTypeReceived() is dispatched.
  *
- * TODO : Move this file. It's not only for diary app.
+ * TODO : Move this file. It's not only for homework app.
  */
 
 export const actionTypeInvalidated = (actionPrefix: string) =>
@@ -57,7 +57,7 @@ export default function asyncReducer<T>(
       isFetching: boolean;
       lastUpdated: Date;
     } = {
-      data: undefined, // Set by diary.list reducer.
+      data: undefined, // Set by homework.list reducer.
       didInvalidate: true,
       isFetching: false,
       lastUpdated: null

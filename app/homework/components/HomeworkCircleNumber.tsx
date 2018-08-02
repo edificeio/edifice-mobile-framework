@@ -1,11 +1,11 @@
 /**
- * DiaryDayCircleNumber
+ * HomeworkDayCircleNumber
  *
  * Display a number in a circle elegantly. Mostly used to show a day number.
  * Props:
  *     `style` - Glamorous style to add.
  * 	   `nb` - Just as simple as the number to be displayed.
- *     `active` - An active `DiaryDayCircleNumber` will be highlighted. Default false.
+ *     `active` - An active `HomeworkDayCircleNumber` will be highlighted. Default false.
  * TODO: When active, the blue background should be a gradient, according to the mockup.
  */
 
@@ -14,13 +14,13 @@ import * as React from "react";
 const { Text, View } = style;
 import { CommonStyles } from "../../styles/common/styles";
 
-export interface IDiaryCircleNumberProps {
+export interface IHomeworkCircleNumberProps {
   style?: any;
   nb?: number;
   active?: boolean;
 }
 
-const diaryCircleNumberStyle = {
+const homeworkCircleNumberStyle = {
   alignItems: "center",
   borderColor: CommonStyles.tabBottomColor,
   borderRadius: 15,
@@ -37,11 +37,11 @@ const diaryCircleNumberStyle = {
   width: 30
 };
 
-export const DiaryCircleNumber = ({
+export const HomeworkCircleNumber = ({
   style,
   nb,
   active = false
-}: IDiaryCircleNumberProps) => {
+}: IHomeworkCircleNumberProps) => {
   const backgroundStyle = {
     backgroundColor: active
       ? CommonStyles.actionColor
@@ -49,7 +49,7 @@ export const DiaryCircleNumber = ({
   };
 
   return (
-    <View style={[diaryCircleNumberStyle, backgroundStyle, style]}>
+    <View style={[homeworkCircleNumberStyle, backgroundStyle, style]}>
       <Text
         color={
           active ? CommonStyles.tabBottomColor : CommonStyles.lightTextColor
@@ -63,4 +63,4 @@ export const DiaryCircleNumber = ({
   );
 };
 
-export default DiaryCircleNumber;
+export default HomeworkCircleNumber;

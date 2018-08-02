@@ -11,24 +11,24 @@ import moment from "moment";
 import "moment/locale/fr";
 moment.locale("fr");
 
-export interface IDiaryPageHeaderProps {
+export interface IHomeworkPageHeaderProps {
   navigation?: any;
   date?: moment.Moment;
 }
 
-export const DiaryPageHeader = ({
+export const HomeworkPageHeader = ({
   navigation,
   date
-}: IDiaryPageHeaderProps) => {
-  let headerText = this.props.date ? this.props.date.format("MMMM YYYY") : null;
+}: IHomeworkPageHeaderProps) => {
+  let headerText = date ? date.format("MMMM YYYY") : null;
   headerText = headerText
     ? headerText.charAt(0).toUpperCase() + headerText.slice(1)
-    : I18n.t("Diary");
+    : I18n.t("Homework");
 
   return (
     <Header>
       <HeaderIcon
-        onPress={() => this.props.navigation.navigate("DiaryFilter")}
+        onPress={() => navigation.navigate("HomeworkFilter")}
         name="filter"
       />
       <AppTitle>{headerText}</AppTitle>
@@ -37,4 +37,4 @@ export const DiaryPageHeader = ({
   );
 };
 
-export default DiaryPageHeader;
+export default HomeworkPageHeader;

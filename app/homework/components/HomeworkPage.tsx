@@ -1,5 +1,5 @@
 /**
- * DiaryPage
+ * HomeworkPage
  *
  * Display page for all homework in a calendar-like way.
  *
@@ -7,8 +7,8 @@
  *    `navigation` - React Navigation instance.
  *    `dispatch` - React-Redux dispatch function.
  *    `isFetching` - is data currently fetching from the server.
- *    `diaryId` - displayed diaryId.
- *    `diaryTasksByDay` - list of data.
+ *    `homeworkId` - displayed homeworkId.
+ *    `homeworkTasksByDay` - list of data.
  */
 
 // Imports ----------------------------------------------------------------------------------------
@@ -33,36 +33,36 @@ import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
 import { EmptyScreen } from "../../ui/EmptyScreen";
 
-import DiaryDayTasks from "./DiaryDayTasks";
-import DiaryTimeline from "./DiaryTimeline";
+import HomeworkDayTasks from "./HomeworkDayTasks";
+import HomeworkTimeline from "./HomeworkTimeline";
 
 // Actions
-import { fetchDiaryListIfNeeded } from "../actions/list";
-import { diaryTaskSelected } from "../actions/selectedTask";
-import { fetchDiaryTasks, fetchDiaryTasksIfNeeded } from "../actions/tasks";
+import { fetchHomeworkListIfNeeded } from "../actions/list";
+import { homeworkTaskSelected } from "../actions/selectedTask";
+import { fetchHomeworkTasks, fetchHomeworkTasksIfNeeded } from "../actions/tasks";
 
 // Type definitions
-import { IDiaryTask, IDiaryTasks } from "../reducers/tasks";
+import { IHomeworkTask, IHomeworkTasks } from "../reducers/tasks";
 
 // Misc
 import today from "../../utils/today";
 
 // Main component ---------------------------------------------------------------------------------
-export interface IDiaryPageProps {
+export interface IHomeworkPageProps {
   navigation?: any;
   dispatch?: any;
   // Data
   isFetching?: boolean;
-  diaryId?: string;
-  diaryTasksByDay?: Array<{
+  homeworkId?: string;
+  homeworkTasksByDay?: Array<{
     id: string;
     date: moment.Moment;
-    tasks: IDiaryTask[];
+    tasks: IHomeworkTask[];
   }>;
 }
 
-export class DiaryPage extends React.PureComponent<IDiaryPageProps, {}> {
-  private flatList: FlatList<IDiaryTasks>; // react-native FlatList component ref // TS-ISSUE FlatList does exists.
+export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
+  private flatList: FlatList<IHomeworkTasks>; // react-native FlatList component ref // TS-ISSUE FlatList does exists.
   private setFlatListRef: any; // FlatList setter, executed when this component is mounted.
 
   constructor(props) {
@@ -78,8 +78,8 @@ export class DiaryPage extends React.PureComponent<IDiaryPageProps, {}> {
   // Render
 
   public render() {
-    const pageContent = this.props.diaryTasksByDay
-      ? this.props.diaryTasksByDay.length === 0
+    const pageContent = this.props.homeworkTasksByDay
+      ? this.props.homeworkTasksByDay.length === 0
         ? this.props.isFetching
           ? this.renderLoading()
           : this.renderEmptyScreen()
@@ -95,22 +95,22 @@ export class DiaryPage extends React.PureComponent<IDiaryPageProps, {}> {
   }
 
   private renderList() {
-    const { diaryId, diaryTasksByDay, isFetching, navigation } = this.props;
+    const { homeworkId, homeworkTasksByDay, isFetching, navigation } = this.props;
 
     return (
       <View style={{ flex: 1 }}>
-        <DiaryTimeline />
+        <HomeworkTimeline />
         <FlatList
           innerRef={this.setFlatListRef}
-          data={diaryTasksByDay}
+          data={homeworkTasksByDay}
           CellRendererComponent={ViewOverflow} // TS-ISSUE : it DOES exist in React Native...
           renderItem={({ item }) => (
             <ViewOverflow>
-              <DiaryDayTasks
+              <HomeworkDayTasks
                 data={item}
                 onSelect={(itemId, date) => {
-                  this.props.dispatch(diaryTaskSelected(diaryId, date, itemId));
-                  navigation.navigate("DiaryTask");
+                  this.props.dispatch(homeworkTaskSelected(homeworkId, date, itemId));
+                  navigation.navigate("HomeworkTask");
                 }}
               />
             </ViewOverflow>
@@ -120,7 +120,7 @@ export class DiaryPage extends React.PureComponent<IDiaryPageProps, {}> {
           refreshControl={
             <RefreshControl
               refreshing={isFetching}
-              onRefresh={() => this.forceFetchDiaryTasks()}
+              onRefresh={() => this.forceFetchHomeworkTasks()}
             />
           }
           onViewableItemsChanged={this.handleViewableItemsChanged}
@@ -132,11 +132,11 @@ export class DiaryPage extends React.PureComponent<IDiaryPageProps, {}> {
   private renderEmptyScreen() {
     return (
       <EmptyScreen
-        imageSrc={require("../../../assets/images/empty-screen/diary.png")}
+        imageSrc={require("../../../assets/images/empty-screen/homework.png")}
         imgWidth={265.98}
         imgHeight={279.97}
-        text={I18n.t("diary-emptyScreenText")}
-        title={I18n.t("diary-emptyScreenTitle")}
+        text={I18n.t("homework-emptyScreenText")}
+        title={I18n.t("homework-emptyScreenTitle")}
       />
     );
   }
@@ -148,35 +148,35 @@ export class DiaryPage extends React.PureComponent<IDiaryPageProps, {}> {
   // Lifecycle
 
   public componentDidMount() {
-    this.fetchDiaryList();
+    this.fetchHomeworkList();
   }
 
   public componentDidUpdate() {
-    const { diaryTasksByDay, isFetching, navigation } = this.props;
+    const { homeworkTasksByDay, isFetching, navigation } = this.props;
     if (
       // If it's an empty screen, we put today's month in the header
-      diaryTasksByDay &&
-      diaryTasksByDay.length === 0 &&
+      homeworkTasksByDay &&
+      homeworkTasksByDay.length === 0 &&
       !isFetching &&
-      moment.isMoment(navigation.getParam("diary-date")) &&
-      !navigation.getParam("diary-date").isSame(today(), "month") // Prevent infinite update
+      moment.isMoment(navigation.getParam("homework-date")) &&
+      !navigation.getParam("homework-date").isSame(today(), "month") // Prevent infinite update
     ) {
-      navigation.setParams({ "diary-date": false }, "Diary");
+      navigation.setParams({ "homework-date": false }, "Homework");
     }
   }
 
   // Fetch methods
 
-  public fetchDiaryList() {
-    this.props.dispatch(fetchDiaryListIfNeeded());
+  public fetchHomeworkList() {
+    this.props.dispatch(fetchHomeworkListIfNeeded());
   }
 
-  public fetchDiaryTasks() {
-    this.props.dispatch(fetchDiaryTasksIfNeeded(this.props.diaryId));
+  public fetchHomeworkTasks() {
+    this.props.dispatch(fetchHomeworkTasksIfNeeded(this.props.homeworkId));
   }
 
-  public forceFetchDiaryTasks() {
-    this.props.dispatch(fetchDiaryTasks(this.props.diaryId));
+  public forceFetchHomeworkTasks() {
+    this.props.dispatch(fetchHomeworkTasks(this.props.homeworkId));
   }
 
   // Event Handlers
@@ -185,9 +185,9 @@ export class DiaryPage extends React.PureComponent<IDiaryPageProps, {}> {
     const firstItem = info.viewableItems[0];
     if (!firstItem) return;
     const firstItemDate = firstItem.item.date;
-    this.props.navigation.setParams({ "diary-date": firstItemDate }, "Diary");
+    this.props.navigation.setParams({ "homework-date": firstItemDate }, "Homework");
     // TODO : this line causes a re-render, AND a re-parse of all the html contents... Needs to be cached.
   } // FIXME: Syntax error on this line because of a collision between TSlint and Prettier.
 }
 
-export default DiaryPage;
+export default HomeworkPage;

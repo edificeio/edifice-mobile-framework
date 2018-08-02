@@ -4,22 +4,22 @@ import * as React from "react";
 import { Back } from "../../ui/headers/Back";
 import { AppTitle, Header } from "../../ui/headers/Header";
 
-export interface IDiaryTaskPageHeaderProps {
+export interface IHomeworkTaskPageHeaderProps {
   navigation?: any;
   title?: string;
 }
 
-export const DiaryTaskPageHeader = ({
+export const HomeworkTaskPageHeader = ({
   navigation,
   title
-}: IDiaryTaskPageHeaderProps) => {
+}: IHomeworkTaskPageHeaderProps) => {
   const AppTitleStyled = style(AppTitle)({ textAlign: "left" });
   return (
     <Header>
-      <Back navigation={this.props.navigation} />
-      <AppTitleStyled>{this.props.title}</AppTitleStyled>
+      <Back navigation={navigation} />
+      <AppTitleStyled>{title}</AppTitleStyled>
     </Header>
   );
 };
 
-export default DiaryTaskPageHeader;
+export default HomeworkTaskPageHeader;

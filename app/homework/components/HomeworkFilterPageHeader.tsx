@@ -4,21 +4,21 @@ import I18n from "react-native-i18n";
 
 import { AppTitle, Header, HeaderIcon } from "../../ui/headers/Header";
 
-export interface IDiaryFilterPageHeaderProps {
+export interface IHomeworkFilterPageHeaderProps {
   navigation?: any;
 }
 
-export const DiaryFilterPageHeader = ({
+export const HomeworkFilterPageHeader = ({
   navigation
-}: IDiaryFilterPageHeaderProps) => {
+}: IHomeworkFilterPageHeaderProps) => {
   const AppTitleStyled = style(AppTitle)({ textAlign: "left" });
   return (
     <Header>
-      <HeaderIcon name="close" onPress={() => this.props.navigation.goBack()} />
-      <AppTitleStyled>{I18n.t("diary-select")}</AppTitleStyled>
+      <HeaderIcon name="close" onPress={() => navigation.goBack()} />
+      <AppTitleStyled>{I18n.t("homework-select")}</AppTitleStyled>
       <HeaderIcon name={null} hidden={true} />
     </Header>
   );
 };
 
-export default DiaryFilterPageHeader;
+export default HomeworkFilterPageHeader;

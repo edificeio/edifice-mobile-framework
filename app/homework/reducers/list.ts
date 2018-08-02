@@ -1,13 +1,13 @@
 /**
- * Diary list state reducer
- * Holds a list of available diary Ids in a simple Array
+ * Homework list state reducer
+ * Holds a list of available homework Ids in a simple Array
  */
 
 import moment from "moment";
 
 import asyncReducer, { actionTypeReceived } from "./async";
 
-import { actionPrefix, DIARY_LIST_RECEIVED } from "../actions/list";
+import { actionPrefix, HOMEWORK_LIST_RECEIVED } from "../actions/list";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -16,21 +16,21 @@ export interface IArrayById<T extends { id: any }> {
   [id: string]: T;
 }
 
-export interface IDiary {
+export interface IHomework {
   id: string;
   title: string;
   name: string;
 }
 
-export type IDiaryList = IArrayById<IDiary>;
+export type IHomeworkList = IArrayById<IHomework>;
 
 // THE REDUCER ------------------------------------------------------------------------------------
 
-const stateDefault: IDiaryList = {};
+const stateDefault: IHomeworkList = {};
 
-const diaryListReducer = (state: IDiaryList = stateDefault, action) => {
+const homeworkListReducer = (state: IHomeworkList = stateDefault, action) => {
   switch (action.type) {
-    case DIARY_LIST_RECEIVED:
+    case HOMEWORK_LIST_RECEIVED:
       return action.data;
     default:
       return state;
@@ -38,4 +38,4 @@ const diaryListReducer = (state: IDiaryList = stateDefault, action) => {
   return state;
 };
 
-export default asyncReducer<IDiaryList>(diaryListReducer, actionPrefix);
+export default asyncReducer<IHomeworkList>(homeworkListReducer, actionPrefix);
