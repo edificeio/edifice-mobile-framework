@@ -3,8 +3,9 @@
  *
  * Display the task list of a day (with day number and name).
  * Props:
+ *     style
  *     data - information of the day (number and name) and list of the tasks.
- *     onSelect - Function that will be called on touch on a card.
+ *     onSelect - Fires when he user touch a task.
  */
 
 // Libraries
@@ -29,6 +30,7 @@ import { IDiaryDay } from "../reducers/tasks";
 import today from "../../utils/today";
 
 interface IDiaryDayTasksProps {
+  style?: any;
   data: IDiaryDay;
   onSelect?: (itemId: string, date: moment.Moment) => void;
 }
@@ -36,7 +38,7 @@ interface IDiaryDayTasksProps {
 const MoizedDiaryCard = moize.react(DiaryCard); // TODO : moize doesn't seem to work in this case...
 
 // tslint:disable-next-line:max-classes-per-file
-export default class DiaryDayTasks extends React.Component<
+export class DiaryDayTasks extends React.PureComponent<
   IDiaryDayTasksProps,
   {}
 > {
@@ -45,10 +47,11 @@ export default class DiaryDayTasks extends React.Component<
   }
 
   public render() {
-    const { data, onSelect } = this.props;
+    const { data, onSelect, style } = this.props;
     const tasksAsArray = Object.values(data.tasks);
+
     return (
-      <View>
+      <View style={[style]}>
         <DiaryDayCheckpoint
           nb={data.date.date()}
           text={data.date.format("dddd")}
@@ -66,3 +69,5 @@ export default class DiaryDayTasks extends React.Component<
     );
   }
 }
+
+export default DiaryDayTasks;

@@ -4,11 +4,11 @@
  * Display page for all homework in a calendar-like way.
  *
  * Props :
- *    navigation : React Navigation instance.
- *    dispatch : React-Redux dispatch function.
- *    isFetching : is data currently fetching from the server.
- *    diaryId : displayed diaryId.
- *    diaryTasksByDay: list of data.
+ *    `navigation` - React Navigation instance.
+ *    `dispatch` - React-Redux dispatch function.
+ *    `isFetching` - is data currently fetching from the server.
+ *    `diaryId` - displayed diaryId.
+ *    `diaryTasksByDay` - list of data.
  */
 
 // Imports ----------------------------------------------------------------------------------------
@@ -49,16 +49,16 @@ import today from "../../utils/today";
 
 // Main component ---------------------------------------------------------------------------------
 export interface IDiaryPageProps {
-  navigation?: any; // React Navigation
-  dispatch?: any; // given by connect() // TODO : use mapDispatchToProps in container component
+  navigation?: any;
+  dispatch?: any;
   // Data
   isFetching?: boolean;
-  diaryId?: string; // selected diaryId
+  diaryId?: string;
   diaryTasksByDay?: Array<{
     id: string;
     date: moment.Moment;
     tasks: IDiaryTask[];
-  }>; // for this diaryId, all the tasks by day
+  }>;
 }
 
 export class DiaryPage extends React.PureComponent<IDiaryPageProps, {}> {
@@ -189,3 +189,5 @@ export class DiaryPage extends React.PureComponent<IDiaryPageProps, {}> {
     // TODO : this line causes a re-render, AND a re-parse of all the html contents... Needs to be cached.
   } // FIXME: Syntax error on this line because of a collision between TSlint and Prettier.
 }
+
+export default DiaryPage;

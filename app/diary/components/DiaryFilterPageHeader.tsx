@@ -8,23 +8,17 @@ export interface IDiaryFilterPageHeaderProps {
   navigation?: any;
 }
 
-export class DiaryFilterPageHeader extends React.Component<
-  IDiaryFilterPageHeaderProps,
-  undefined
-> {
-  public render() {
-    const AppTitleStyled = style(AppTitle)({ textAlign: "left" });
-    return (
-      <Header>
-        <HeaderIcon
-          name="close"
-          onPress={() => this.props.navigation.goBack()}
-        />
-        <AppTitleStyled>{I18n.t("diary-select")}</AppTitleStyled>
-        <HeaderIcon name={null} hidden={true} />
-      </Header>
-    );
-  }
-}
+export const DiaryFilterPageHeader = ({
+  navigation
+}: IDiaryFilterPageHeaderProps) => {
+  const AppTitleStyled = style(AppTitle)({ textAlign: "left" });
+  return (
+    <Header>
+      <HeaderIcon name="close" onPress={() => this.props.navigation.goBack()} />
+      <AppTitleStyled>{I18n.t("diary-select")}</AppTitleStyled>
+      <HeaderIcon name={null} hidden={true} />
+    </Header>
+  );
+};
 
 export default DiaryFilterPageHeader;

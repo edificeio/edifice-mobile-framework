@@ -4,10 +4,12 @@
 import style from "glamorous-native";
 import { CommonStyles } from "../../styles/common/styles";
 
-export default style.view({
+export const DiaryTimeline = style.view({
   backgroundColor: CommonStyles.entryfieldBorder, // TODO: Use the linear gradient instead of a plain grey
   height: "100%",
   left: 29,
   position: "absolute",
   width: 1
 });
+
+export default DiaryTimeline;

@@ -11,27 +11,30 @@ import moment from "moment";
 import "moment/locale/fr";
 moment.locale("fr");
 
-export default class DiaryPageHeader extends React.Component<
-  { navigation?: any; date?: moment.Moment },
-  undefined
-> {
-  public render() {
-    let headerText = this.props.date
-      ? this.props.date.format("MMMM YYYY")
-      : null;
-    headerText = headerText
-      ? headerText.charAt(0).toUpperCase() + headerText.slice(1)
-      : I18n.t("Diary");
-
-    return (
-      <Header>
-        <HeaderIcon
-          onPress={() => this.props.navigation.navigate("DiaryFilter")}
-          name="filter"
-        />
-        <AppTitle>{headerText}</AppTitle>
-        <HeaderIcon name={null} hidden={true} />
-      </Header>
-    );
-  }
+export interface IDiaryPageHeaderProps {
+  navigation?: any;
+  date?: moment.Moment;
 }
+
+export const DiaryPageHeader = ({
+  navigation,
+  date
+}: IDiaryPageHeaderProps) => {
+  let headerText = this.props.date ? this.props.date.format("MMMM YYYY") : null;
+  headerText = headerText
+    ? headerText.charAt(0).toUpperCase() + headerText.slice(1)
+    : I18n.t("Diary");
+
+  return (
+    <Header>
+      <HeaderIcon
+        onPress={() => this.props.navigation.navigate("DiaryFilter")}
+        name="filter"
+      />
+      <AppTitle>{headerText}</AppTitle>
+      <HeaderIcon name={null} hidden={true} />
+    </Header>
+  );
+};
+
+export default DiaryPageHeader;

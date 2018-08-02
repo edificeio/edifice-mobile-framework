@@ -2,27 +2,29 @@
  * DiaryFilterPage
  *
  * Display page for just one task just one day.
+ *
+ * Props:
+ *    `navigation` - React Navigation
+ *    `dispatch` - React-Redux dispatcher
+ *    `diaryList` - Data list
+ *    `selectedDiaryId`
+ *    `isFetching` - is data currently fetching from backend
  */
 
 // imports ----------------------------------------------------------------------------------------
 
 import style from "glamorous-native";
 import * as React from "react";
-const { Text, FlatList } = style;
+const { FlatList } = style;
 import { RefreshControl } from "react-native";
 
 import { ListItem, PageContainer } from "../../ui/ContainerContent";
-import { AppTitle, Header, HeaderIcon } from "../../ui/headers/Header";
-
-import { connect } from "react-redux";
 
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { Checkbox } from "../../ui/forms/Checkbox";
 import { Bold } from "../../ui/Typography";
 import { fetchDiaryList, fetchDiaryListIfNeeded } from "../actions/list";
 import { diarySelected } from "../actions/selected";
-
-import I18n from "react-native-i18n";
 
 // Main component ---------------------------------------------------------------------------------
 
@@ -39,7 +41,7 @@ export interface IDiaryFilterPageProps {
 }
 
 // tslint:disable-next-line:max-classes-per-file
-export class DiaryFilterPage extends React.Component<
+export class DiaryFilterPage extends React.PureComponent<
   IDiaryFilterPageProps,
   {}
 > {

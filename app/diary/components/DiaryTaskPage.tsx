@@ -44,7 +44,6 @@ const convert = memoize(
     }).render
 );
 
-// tslint:disable-next-line:max-classes-per-file
 export class DiaryTaskPage extends React.Component<IDiaryTaskPageProps, {}> {
   constructor(props) {
     super(props);
@@ -66,16 +65,10 @@ export class DiaryTaskPage extends React.Component<IDiaryTaskPageProps, {}> {
           }}
         >
           <Text fontSize={14} color={CommonStyles.textColor} lineHeight={20}>
+            {/* TODO typo */}
             {formattedDate}
           </Text>
-          <View
-            // fontSize={14}
-            // color={CommonStyles.textColor}
-            // lineHeight={20}
-            paddingTop={20}
-          >
-            {convert(this.props.taskContent)}
-          </View>
+          <View paddingTop={20}>{convert(this.props.taskContent)}</View>
         </ScrollView>
       </PageContainer>
     );

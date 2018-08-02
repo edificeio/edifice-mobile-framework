@@ -16,28 +16,32 @@ import { CommonStyles } from "../../styles/common/styles";
 
 import DiaryCircleNumber from "./DiaryCircleNumber";
 
-// tslint:disable-next-line:variable-name
-const DiaryDayCheckpoint = ({
-  style,
-  nb,
-  text = "",
-  active = false
-}: {
+export interface IDiaryDayCheckpointProps {
   style?: any;
   nb?: number;
   text?: string;
   active?: boolean;
-}) => (
-  <View style={[style]}>
+}
+
+const diaryDayCheckpointStyle = {
+  alignItems: "center",
+  flexDirection: "row",
+  marginTop: 15
+};
+
+export const DiaryDayCheckpoint = ({
+  style,
+  nb,
+  text = "",
+  active = false
+}: IDiaryDayCheckpointProps) => (
+  <View style={[diaryDayCheckpointStyle, style]}>
     <DiaryCircleNumber nb={nb} active={active} />
     <Text color={CommonStyles.lightTextColor} fontSize={12}>
+      {/* TODO typo */}
       {text.toUpperCase()}
     </Text>
   </View>
 );
 
-export default style(DiaryDayCheckpoint)({
-  alignItems: "center",
-  flexDirection: "row",
-  marginTop: 15
-});
+export default DiaryDayCheckpoint;

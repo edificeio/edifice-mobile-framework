@@ -9,19 +9,17 @@ export interface IDiaryTaskPageHeaderProps {
   title?: string;
 }
 
-export class DiaryTaskPageHeader extends React.Component<
-  IDiaryTaskPageHeaderProps,
-  undefined
-> {
-  public render() {
-    const AppTitleStyled = style(AppTitle)({ textAlign: "left" });
-    return (
-      <Header>
-        <Back navigation={this.props.navigation} />
-        <AppTitleStyled>{this.props.title}</AppTitleStyled>
-      </Header>
-    );
-  }
-}
+export const DiaryTaskPageHeader = ({
+  navigation,
+  title
+}: IDiaryTaskPageHeaderProps) => {
+  const AppTitleStyled = style(AppTitle)({ textAlign: "left" });
+  return (
+    <Header>
+      <Back navigation={this.props.navigation} />
+      <AppTitleStyled>{this.props.title}</AppTitleStyled>
+    </Header>
+  );
+};
 
 export default DiaryTaskPageHeader;
