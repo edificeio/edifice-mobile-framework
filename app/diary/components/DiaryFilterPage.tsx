@@ -21,6 +21,7 @@ import { Checkbox } from "../../ui/forms/Checkbox";
 import { Bold } from "../../ui/Typography";
 import { fetchDiaryList, fetchDiaryListIfNeeded } from "../actions/list";
 import { diarySelected } from "../actions/selected";
+import { Tracking } from "../../tracking/TrackingManager";
 
 import I18n from "react-native-i18n";
 
@@ -100,12 +101,12 @@ class DiaryFilterPage_Unconnected extends React.Component<
           renderItem={({ item }) => (
             <ListItem
               style={{ justifyContent: "space-between" }}
-              onPress={() => this.handleSelectedDiaryChanged(item.id)}
+              onPress={() => this.handleSelectedDiaryChanged(item.id,item.title)}
             >
               <Bold>{item.title}</Bold>
               <Checkbox
                 checked={this.props.selectedDiaryId === item.id}
-                onCheck={() => this.handleSelectedDiaryChanged(item.id)}
+                onCheck={() => this.handleSelectedDiaryChanged(item.id,item.title)}
               />
             </ListItem>
           )}
@@ -139,8 +140,9 @@ class DiaryFilterPage_Unconnected extends React.Component<
 
   // Event Handlers
 
-  public handleSelectedDiaryChanged = diaryId => {
+  public handleSelectedDiaryChanged = (diaryId, diaryTitle) => {
     this.props.dispatch(diarySelected(diaryId));
+    Tracking.logEvent('selectNotebook', { tab: diaryTitle });
     this.props.navigation.goBack();
   } // FIXME: Syntax error on this line because of a collision between TSlint and Prettier.
 }

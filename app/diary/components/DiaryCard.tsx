@@ -9,6 +9,7 @@ import * as React from "react";
 const { Text, TouchableOpacity } = style;
 import HtmlToText from "../../infra/htmlConverter/text";
 import { CommonStyles } from "../../styles/common/styles";
+import { Tracking } from "../../tracking/TrackingManager"
 
 const DiaryCard = ({
   style,
@@ -39,6 +40,7 @@ const DiaryCard = ({
       }}
       onPress={() => {
         onPress();
+        Tracking.logEvent('ReadHomework');
       }}
     >
       <Text fontSize={14} color={CommonStyles.textColor} lineHeight={20}>

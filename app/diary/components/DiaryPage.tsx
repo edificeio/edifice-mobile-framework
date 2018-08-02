@@ -19,6 +19,8 @@ import { AppTitle, Header, HeaderIcon } from "../../ui/headers/Header";
 import DiaryCard from "./DiaryCard";
 import DiaryCircleNumber from "./DiaryCircleNumber";
 
+import { Tracking } from "../../tracking/TrackingManager"
+
 import moment from "moment";
 // tslint:disable-next-line:no-submodule-imports
 import "moment/locale/fr";
@@ -144,6 +146,7 @@ class DiaryPage extends React.Component<IDiaryPageProps, {}> {
             />
           }
           onViewableItemsChanged={this.handleViewableItemsChanged}
+          onScrollBeginDrag={this.onScrollBeginDrag}
         />
       </View>
     );
@@ -196,6 +199,7 @@ class DiaryPage extends React.Component<IDiaryPageProps, {}> {
 
   public forceFetchDiaryTasks() {
     this.props.dispatch(fetchDiaryTasks(this.props.diaryId));
+    Tracking.logEvent('refreshNotebook');
   }
 
   // Event Handlers
@@ -207,7 +211,12 @@ class DiaryPage extends React.Component<IDiaryPageProps, {}> {
     this.props.navigation.setParams({ "diary-date": firstItemDate }, "Diary");
     // TODO : this line causes a re-render, AND a re-parse of all the html contents... Needs to be cached.
   } // FIXME: Syntax error on this line because of a collision between TSlint and Prettier.
+
+  public onScrollBeginDrag = () => {
+    Tracking.logEvent('scrollNotebook');
+  }
 }
+
 
 export default connect((state: any) => {
   // Map State To Props
