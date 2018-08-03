@@ -44,7 +44,10 @@ const convert = memoize(
     }).render
 );
 
-export class HomeworkTaskPage extends React.Component<IHomeworkTaskPageProps, {}> {
+export class HomeworkTaskPage extends React.Component<
+  IHomeworkTaskPageProps,
+  {}
+> {
   constructor(props) {
     super(props);
   }

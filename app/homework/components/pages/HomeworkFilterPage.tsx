@@ -23,7 +23,10 @@ import { ListItem, PageContainer } from "../../../ui/ContainerContent";
 import ConnectionTrackingBar from "../../../ui/ConnectionTrackingBar";
 import { Checkbox } from "../../../ui/forms/Checkbox";
 import { Bold } from "../../../ui/Typography";
-import { fetchHomeworkList, fetchHomeworkListIfNeeded } from "../../actions/list";
+import {
+  fetchHomeworkList,
+  fetchHomeworkListIfNeeded
+} from "../../actions/list";
 import { homeworkSelected } from "../../actions/selected";
 
 // Main component ---------------------------------------------------------------------------------
@@ -45,7 +48,7 @@ export class HomeworkFilterPage extends React.PureComponent<
   IHomeworkFilterPageProps,
   {}
 > {
-  private flatList: FlatList<string>; // react-native FlatList component ref // TS-ISSUE FlatList exists.
+  private flatList: FlatList<string>; /* TS-ISSUE : FlatList is declared in glamorous */ // react-native FlatList component ref
   private setFlatListRef: any; // FlatList setter, executed when this component is mounted.
 
   constructor(props) {
@@ -112,7 +115,7 @@ export class HomeworkFilterPage extends React.PureComponent<
   public handleSelectedHomeworkChanged = homeworkId => {
     this.props.dispatch(homeworkSelected(homeworkId));
     this.props.navigation.goBack();
-  } // TS-ISSUE: Syntax error on this line because of a collision between TSlint and Prettier.
+  } /* TS-ISSUE: Syntax error on this line because of a collision between TSlint and Prettier. */
 }
 
 export default HomeworkFilterPage;

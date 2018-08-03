@@ -4,11 +4,15 @@
  * Display page for all homework in a calendar-like way.
  *
  * Props :
- *    `navigation` - React Navigation instance.
- *    `dispatch` - React-Redux dispatch function.
  *    `isFetching` - is data currently fetching from the server.
  *    `homeworkId` - displayed homeworkId.
  *    `homeworkTasksByDay` - list of data.
+ *
+ *    `onMount` - fired when component did mount.
+ *    `onRefresh` - fired when the user ask to refresh the list.
+ *    `onSelect` - fired when the user touches a displayed task.
+ *
+ *    `navigation` - React Navigation instance.
  */
 
 // Imports ----------------------------------------------------------------------------------------
@@ -36,22 +40,15 @@ import { EmptyScreen } from "../../../ui/EmptyScreen";
 import HomeworkDayTasks from "../HomeworkDayTasks";
 import HomeworkTimeline from "../HomeworkTimeline";
 
-// Actions
-import { fetchHomeworkListIfNeeded } from "../../actions/list";
-import { homeworkTaskSelected } from "../../actions/selectedTask";
-import { fetchHomeworkTasks, fetchHomeworkTasksIfNeeded } from "../../actions/tasks";
-
 // Type definitions
 import { IHomeworkTask, IHomeworkTasks } from "../../reducers/tasks";
 
 // Misc
 import today from "../../../utils/today";
 
-// Main component ---------------------------------------------------------------------------------
-export interface IHomeworkPageProps {
-  navigation?: any;
-  dispatch?: any;
-  // Data
+// Props definition -------------------------------------------------------------------------------
+
+export interface IHomeworkPageDataProps {
   isFetching?: boolean;
   homeworkId?: string;
   homeworkTasksByDay?: Array<{
@@ -61,8 +58,24 @@ export interface IHomeworkPageProps {
   }>;
 }
 
+export interface IHomeworkPageEventProps {
+  onMount?: () => void;
+  onRefresh?: (diaryId: string) => void;
+  onSelect?: (diaryId: string, date: moment.Moment, itemId: string) => void;
+}
+
+export interface IHomeworkPageOtherProps {
+  navigation?: any;
+}
+
+export type IHomeworkPageProps = IHomeworkPageDataProps &
+  IHomeworkPageEventProps &
+  IHomeworkPageOtherProps;
+
+// Main component ---------------------------------------------------------------------------------
+
 export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
-  private flatList: FlatList<IHomeworkTasks>; // react-native FlatList component ref // TS-ISSUE FlatList does exists.
+  private flatList: FlatList<IHomeworkTasks>; /* TS-ISSUE : FlatList is declared in glamorous */ // react-native FlatList component ref
   private setFlatListRef: any; // FlatList setter, executed when this component is mounted.
 
   constructor(props) {
@@ -95,7 +108,14 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
   }
 
   private renderList() {
-    const { homeworkId, homeworkTasksByDay, isFetching, navigation } = this.props;
+    const {
+      homeworkId,
+      homeworkTasksByDay,
+      isFetching,
+      navigation,
+      onRefresh,
+      onSelect
+    } = this.props;
 
     return (
       <View style={{ flex: 1 }}>
@@ -103,14 +123,14 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
         <FlatList
           innerRef={this.setFlatListRef}
           data={homeworkTasksByDay}
-          CellRendererComponent={ViewOverflow} // TS-ISSUE : it DOES exist in React Native...
+          CellRendererComponent={ViewOverflow} /* TS-ISSUE : CellRendererComponent is an official FlatList prop */
           renderItem={({ item }) => (
             <ViewOverflow>
               <HomeworkDayTasks
                 data={item}
                 onSelect={(itemId, date) => {
-                  this.props.dispatch(homeworkTaskSelected(homeworkId, date, itemId));
-                  navigation.navigate("HomeworkTask");
+                  onSelect(homeworkId, date, itemId);
+                  navigation.navigate("HomeworkTask"); // TODO : Should the navigation be in mapDispatchToProps or not ?
                 }}
               />
             </ViewOverflow>
@@ -120,7 +140,7 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
           refreshControl={
             <RefreshControl
               refreshing={isFetching}
-              onRefresh={() => this.forceFetchHomeworkTasks()}
+              onRefresh={() => onRefresh(homeworkId)}
             />
           }
           onViewableItemsChanged={this.handleViewableItemsChanged}
@@ -132,7 +152,7 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
   private renderEmptyScreen() {
     return (
       <EmptyScreen
-        imageSrc={require("../../../assets/images/empty-screen/homework.png")}
+        imageSrc={require("../../../../assets/images/empty-screen/homework.png")}
         imgWidth={265.98}
         imgHeight={279.97}
         text={I18n.t("homework-emptyScreenText")}
@@ -146,10 +166,6 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
   }
 
   // Lifecycle
-
-  public componentDidMount() {
-    this.fetchHomeworkList();
-  }
 
   public componentDidUpdate() {
     const { homeworkTasksByDay, isFetching, navigation } = this.props;
@@ -165,29 +181,18 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
     }
   }
 
-  // Fetch methods
-
-  public fetchHomeworkList() {
-    this.props.dispatch(fetchHomeworkListIfNeeded());
-  }
-
-  public fetchHomeworkTasks() {
-    this.props.dispatch(fetchHomeworkTasksIfNeeded(this.props.homeworkId));
-  }
-
-  public forceFetchHomeworkTasks() {
-    this.props.dispatch(fetchHomeworkTasks(this.props.homeworkId));
-  }
-
   // Event Handlers
 
   public handleViewableItemsChanged = info => {
     const firstItem = info.viewableItems[0];
     if (!firstItem) return;
     const firstItemDate = firstItem.item.date;
-    this.props.navigation.setParams({ "homework-date": firstItemDate }, "Homework");
+    this.props.navigation.setParams(
+      { "homework-date": firstItemDate },
+      "Homework"
+    );
     // TODO : this line causes a re-render, AND a re-parse of all the html contents... Needs to be cached.
-  } // FIXME: Syntax error on this line because of a collision between TSlint and Prettier.
+  } /* TS-ISSUE: Syntax error on this line because of a collision between TSlint and Prettier. */
 }
 
 export default HomeworkPage;
