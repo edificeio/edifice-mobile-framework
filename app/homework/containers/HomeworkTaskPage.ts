@@ -1,15 +1,15 @@
 import { connect } from "react-redux";
 import {
   HomeworkTaskPage,
-  IHomeworkTaskPageProps
+  IHomeworkTaskPageDataProps
 } from "../components/pages/HomeworkTaskPage";
 
-const mapStateToProps: (state: any) => IHomeworkTaskPageProps = state => {
+const mapStateToProps: (state: any) => IHomeworkTaskPageDataProps = state => {
   // Extract data from state
   const localState = state.homework.selectedTask;
-  const { homeworkId, date, taskId } = localState;
+  const { diaryId, date, taskId } = localState;
   // Get homework, then day, then task content
-  const homeworkDays = state.homework.tasks[homeworkId];
+  const homeworkDays = state.homework.tasks[diaryId];
   if (!homeworkDays) return {}; // this case shouldn't occur.
   const dateId = date.format("YYYY-MM-DD");
   const homeworkTasksThisDay = homeworkDays.data.byId[dateId];
@@ -20,7 +20,7 @@ const mapStateToProps: (state: any) => IHomeworkTaskPageProps = state => {
   // Format props
   return {
     date,
-    homeworkId,
+    diaryId,
     taskContent: taskInfos.content,
     taskId,
     taskTitle: taskInfos.title

@@ -24,15 +24,20 @@ import memoize from "memoize-one";
 
 // Main component ---------------------------------------------------------------------------------
 
-export interface IHomeworkTaskPageProps {
-  navigation?: any;
-  dispatch?: any; // given by connect(),
-  homeworkId?: string;
+export interface IHomeworkTaskPageDataProps {
+  diaryId?: string;
   date?: Moment;
   taskId?: string;
   taskTitle?: string;
   taskContent?: string;
 }
+
+export interface IHomeworkTaskPageOtherProps {
+  navigation?: any;
+}
+
+export type IHomeworkTaskPageProps = IHomeworkTaskPageDataProps &
+  IHomeworkTaskPageOtherProps;
 
 const convert = memoize(
   html =>
@@ -55,9 +60,11 @@ export class HomeworkTaskPage extends React.Component<
   // render & lifecycle
 
   public render() {
-    let formattedDate = this.props.date.format("dddd LL");
+    const { date, taskContent } = this.props;
+    let formattedDate = date.format("dddd LL");
     formattedDate =
       formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+
     return (
       <PageContainer>
         <ScrollView
@@ -71,7 +78,7 @@ export class HomeworkTaskPage extends React.Component<
             {/* TODO typo */}
             {formattedDate}
           </Text>
-          <View paddingTop={20}>{convert(this.props.taskContent)}</View>
+          <View paddingTop={20}>{convert(taskContent)}</View>
         </ScrollView>
       </PageContainer>
     );

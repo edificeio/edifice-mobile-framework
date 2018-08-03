@@ -5,7 +5,7 @@
 import { Moment } from "moment";
 
 export interface ISelectedHomeworkTaskState {
-  homeworkId: string;
+  diaryId: string;
   date: Moment;
   taskId: number;
 }
@@ -18,7 +18,7 @@ function selectedTask(state: ISelectedHomeworkTaskState = null, action) {
       return {
         ...state,
         date: action.date,
-        homeworkId: action.homeworkId,
+        diaryId: action.diaryId,
         taskId: action.taskId
       };
     default:

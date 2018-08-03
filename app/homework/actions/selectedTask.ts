@@ -6,12 +6,12 @@ export const HOMEWORK_TASK_SELECTED = "HOMEWORK_TASK_SELECTED";
 
 // NOTE : Yes, tasks only exists within a homework, so we need both ids.
 // We need to pass the date (Moment object) as it's not stored in each task data. (same in the backend data.)
-export function homeworkTaskSelected(homeworkId, date, taskId) {
+export function homeworkTaskSelected(diaryId, date, taskId) {
   return {
     type: HOMEWORK_TASK_SELECTED,
 
     date,
-    homeworkId,
+    diaryId,
     taskId
   };
 }
