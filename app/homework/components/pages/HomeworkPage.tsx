@@ -59,7 +59,6 @@ export interface IHomeworkPageDataProps {
 }
 
 export interface IHomeworkPageEventProps {
-  onMount?: () => void;
   onRefresh?: (diaryId: string) => void;
   onSelect?: (diaryId: string, date: moment.Moment, itemId: string) => void;
 }
