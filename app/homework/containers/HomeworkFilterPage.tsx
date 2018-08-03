@@ -7,31 +7,35 @@ import {
   IHomeworkFilterPageProps
 } from "../components/pages/HomeworkFilterPage";
 
-import { fetchHomeworkList, fetchHomeworkListIfNeeded } from "../actions/list";
-import { homeworkSelected } from "../actions/selected";
+import {
+  fetchHomeworkDiaryList,
+  fetchHomeworkDiaryListIfNeeded
+} from "../actions/list";
+import { homeworkDiarySelected } from "../actions/selectedDiary";
 
 const mapStateToProps: (state: any) => IHomeworkFilterPageDataProps = state => {
   // Extract data from state
   const localState = state.homework;
-  const homeworkList = localState.list;
-  if (!homeworkList.data)
+  const homeworkDiaryList = localState.diaryList;
+  if (!homeworkDiaryList.data)
     return {
       diaryList: [],
-      isFetching: homeworkList.isFetching,
+      isFetching: homeworkDiaryList.isFetching,
       selectedDiaryId: localState.selected
     };
-  const flatHomeworkList = Object.getOwnPropertyNames(homeworkList.data).map(
-    homeworkId => ({
-      id: homeworkId,
-      name: homeworkList.data[homeworkId].name,
-      title: homeworkList.data[homeworkId].title
-    })
-  );
+  const flatHomeworkDiaryList = Object.getOwnPropertyNames(
+    homeworkDiaryList.data
+  ).map(diaryId => ({
+    id: diaryId,
+    name: homeworkDiaryList.data[diaryId].name,
+    title: homeworkDiaryList.data[diaryId].title
+  }));
+
   // Format props
   return {
-    diaryList: flatHomeworkList,
-    isFetching: homeworkList.isFetching,
-    selectedDiaryId: localState.selected
+    diaryList: flatHomeworkDiaryList,
+    isFetching: homeworkDiaryList.isFetching,
+    selectedDiaryId: localState.selectedDiary
   };
 };
 
@@ -40,8 +44,8 @@ const mapDispatchToProps: (
 ) => IHomeworkFilterPageEventProps = dispatch => {
   return {
     dispatch,
-    onRefresh: () => dispatch(fetchHomeworkList()),
-    onSelect: diaryId => dispatch(homeworkSelected(diaryId))
+    onRefresh: () => dispatch(fetchHomeworkDiaryList()),
+    onSelect: diaryId => dispatch(homeworkDiarySelected(diaryId))
   };
 };
 
@@ -58,7 +62,7 @@ class HomeworkFilterPageContainer extends React.Component<
   }
 
   public componentDidMount() {
-    this.props.dispatch(fetchHomeworkListIfNeeded());
+    this.props.dispatch(fetchHomeworkDiaryListIfNeeded());
   }
 }
 

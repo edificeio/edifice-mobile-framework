@@ -5,8 +5,8 @@
  *
  * Props :
  *    `isFetching` - is data currently fetching from the server.
- *    `homeworkId` - displayed homeworkId.
- *    `homeworkTasksByDay` - list of data.
+ *    `diaryId` - displayed diaryId.
+ *    `tasksByDay` - list of data.
  *
  *    `onMount` - fired when component did mount.
  *    `onRefresh` - fired when the user ask to refresh the list.
@@ -50,8 +50,8 @@ import today from "../../../utils/today";
 
 export interface IHomeworkPageDataProps {
   isFetching?: boolean;
-  homeworkId?: string;
-  homeworkTasksByDay?: Array<{
+  diaryId?: string;
+  tasksByDay?: Array<{
     id: string;
     date: moment.Moment;
     tasks: IHomeworkTask[];
@@ -90,8 +90,8 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
   // Render
 
   public render() {
-    const pageContent = this.props.homeworkTasksByDay
-      ? this.props.homeworkTasksByDay.length === 0
+    const pageContent = this.props.tasksByDay
+      ? this.props.tasksByDay.length === 0
         ? this.props.isFetching
           ? this.renderLoading()
           : this.renderEmptyScreen()
@@ -108,8 +108,8 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
 
   private renderList() {
     const {
-      homeworkId,
-      homeworkTasksByDay,
+      diaryId,
+      tasksByDay,
       isFetching,
       navigation,
       onRefresh,
@@ -121,14 +121,14 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
         <HomeworkTimeline />
         <FlatList
           innerRef={this.setFlatListRef}
-          data={homeworkTasksByDay}
+          data={tasksByDay}
           CellRendererComponent={ViewOverflow} /* TS-ISSUE : CellRendererComponent is an official FlatList prop */
           renderItem={({ item }) => (
             <ViewOverflow>
               <HomeworkDayTasks
                 data={item}
                 onSelect={(itemId, date) => {
-                  onSelect(homeworkId, date, itemId);
+                  onSelect(diaryId, date, itemId);
                   navigation.navigate("HomeworkTask"); // TODO : Should the navigation be in mapDispatchToProps or not ?
                 }}
               />
@@ -139,7 +139,7 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
           refreshControl={
             <RefreshControl
               refreshing={isFetching}
-              onRefresh={() => onRefresh(homeworkId)}
+              onRefresh={() => onRefresh(diaryId)}
             />
           }
           onViewableItemsChanged={this.handleViewableItemsChanged}
@@ -167,11 +167,11 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
   // Lifecycle
 
   public componentDidUpdate() {
-    const { homeworkTasksByDay, isFetching, navigation } = this.props;
+    const { tasksByDay, isFetching, navigation } = this.props;
     if (
       // If it's an empty screen, we put today's month in the header
-      homeworkTasksByDay &&
-      homeworkTasksByDay.length === 0 &&
+      tasksByDay &&
+      tasksByDay.length === 0 &&
       !isFetching &&
       moment.isMoment(navigation.getParam("homework-date")) &&
       !navigation.getParam("homework-date").isSame(today(), "month") // Prevent infinite update

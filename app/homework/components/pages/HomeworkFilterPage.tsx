@@ -27,11 +27,6 @@ import { ListItem, PageContainer } from "../../../ui/ContainerContent";
 import ConnectionTrackingBar from "../../../ui/ConnectionTrackingBar";
 import { Checkbox } from "../../../ui/forms/Checkbox";
 import { Bold } from "../../../ui/Typography";
-import {
-  fetchHomeworkList,
-  fetchHomeworkListIfNeeded
-} from "../../actions/list";
-import { homeworkSelected } from "../../actions/selected";
 
 // Main component ---------------------------------------------------------------------------------
 
@@ -79,13 +74,7 @@ export class HomeworkFilterPage extends React.PureComponent<
   // render & lifecycle
 
   public render() {
-    const {
-      diaryList,
-      selectedDiaryId,
-      isFetching,
-      onRefresh,
-      onSelect
-    } = this.props;
+    const { diaryList, selectedDiaryId, isFetching, onRefresh } = this.props;
 
     return (
       <PageContainer>

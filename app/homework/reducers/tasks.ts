@@ -1,6 +1,6 @@
 /**
- * Homework tasks (by homeworkId) state reducer
- * Holds a list of task by day, by homeworkId in a double-array.
+ * Homework tasks (by diaryId) state reducer
+ * Holds a list of task by day, by diaryId in a double-array.
  */
 
 import moment from "moment";
@@ -16,8 +16,6 @@ import {
 } from "../actions/tasks";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
-
-import { IArrayById, IHomeworkList } from "./list";
 
 // TODO : move this. This is useful elsewhere.
 export interface IOrderedArrayById<T extends { id: any }> {
@@ -53,8 +51,8 @@ export interface IAllHomeworkTasksByHomeworkIds {
 // THE REDUCER ------------------------------------------------------------------------------------
 
 /**
- * Homework SingleTasks Reducer : A reducer that manage state for the task list of a single homework.
- * Does not store the homeworkId. Made to be incorporated in the homeworkAllTasksReducer as a dynamic reducer function.
+ * Homework SingleTasks Reducer : A reducer that manage state for the task list of a single homework diary.
+ * Does not store the diaryId. Made to be incorporated in the homeworkAllTasksReducer as a dynamic reducer function.
  * This IS an async reducer.
  */
 
@@ -75,7 +73,7 @@ const homeworkSingleTasksReducer = asyncReducer<IHomeworkTasks>(
 /**
  * Homework AllTasks Reducer : Manages the state of all the diaries' tasks.
  * Calls a homeworkSingleTasksReducer depends of given homeworkId in actions.
- * This is NOT converted as an AsyncReducer, because the async data is stored for each homework.
+ * This is NOT converted as an AsyncReducer, because the async data is stored for each homework diary.
  */
 const homeworkAllTasksReducerStateDefault: IAllHomeworkTasksByHomeworkIds = {};
 
@@ -90,7 +88,10 @@ const homeworkAllTasksReducer = (
     case HOMEWORK_TASKS_FETCH_ERROR:
       return {
         ...state,
-        [action.homeworkId]: homeworkSingleTasksReducer(state[action.homeworkId], action)
+        [action.diaryId]: homeworkSingleTasksReducer(
+          state[action.diaryId],
+          action
+        )
       };
     default:
       return state;

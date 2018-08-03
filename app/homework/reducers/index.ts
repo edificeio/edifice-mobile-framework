@@ -1,17 +1,17 @@
 /*
-  Reducers for Homework (aka homework) app.
+  Reducers for Homework app.
 */
 
 import { combineReducers } from "redux";
 
-import list from "./list";
-import selected from "./selected";
+import diaryList from "./diaryList";
+import selectedDiary from "./selectedDiary";
 import selectedTask from "./selectedTask";
 import tasks from "./tasks";
 
 const rootReducer = combineReducers({
-  list,
-  selected,
+  diaryList,
+  selectedDiary,
   selectedTask,
   tasks
 });

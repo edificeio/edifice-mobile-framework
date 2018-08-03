@@ -57,7 +57,7 @@ export default function asyncReducer<T>(
       isFetching: boolean;
       lastUpdated: Date;
     } = {
-      data: undefined, // Set by homework.list reducer.
+      data: undefined, // Set by homework.diaryList reducer.
       didInvalidate: true,
       isFetching: false,
       lastUpdated: null

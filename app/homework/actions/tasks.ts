@@ -50,7 +50,9 @@ export interface IHomeworkTasksBackend {
 }
 
 /** The adapter MUST returns a brand-new object */
-const homeworkTasksAdapter: (data: IHomeworkTasksBackend) => IHomeworkTasks = data => {
+const homeworkTasksAdapter: (
+  data: IHomeworkTasksBackend
+) => IHomeworkTasks = data => {
   // Get all the backend homeworkDays.
   const dataDays = data.data;
   const ret = {
@@ -96,64 +98,69 @@ const homeworkTasksAdapter: (data: IHomeworkTasksBackend) => IHomeworkTasks = da
 export const actionPrefix = "HOMEWORK_TASKS";
 
 export const HOMEWORK_TASKS_INVALIDATED = actionTypeInvalidated(actionPrefix);
-export function homeworkTasksInvalidated(homeworkId: string) {
-  return { type: HOMEWORK_TASKS_INVALIDATED, homeworkId };
+export function homeworkTasksInvalidated(diaryId: string) {
+  return { type: HOMEWORK_TASKS_INVALIDATED, diaryId };
 }
 
 export const HOMEWORK_TASKS_REQUESTED = actionTypeRequested(actionPrefix);
-export function homeworkTasksRequested(homeworkId: string) {
-  return { type: HOMEWORK_TASKS_REQUESTED, homeworkId };
+export function homeworkTasksRequested(diaryId: string) {
+  return { type: HOMEWORK_TASKS_REQUESTED, diaryId };
 }
 
 export const HOMEWORK_TASKS_RECEIVED = actionTypeReceived(actionPrefix);
-export function homeworkTasksReceived(homeworkId: string, data: IHomeworkTasks) {
-  // console.warn("homework tasks received for " + homeworkId);
-  return { type: HOMEWORK_TASKS_RECEIVED, homeworkId, data, receivedAt: Date.now() };
+export function homeworkTasksReceived(diaryId: string, data: IHomeworkTasks) {
+  return {
+    type: HOMEWORK_TASKS_RECEIVED,
+
+    data,
+    diaryId,
+    receivedAt: Date.now()
+  };
 }
 
 export const HOMEWORK_TASKS_FETCH_ERROR = actionTypeFetchError(actionPrefix);
-export function homeworkTasksFetchError(homeworkId: string, errmsg: string) {
-  return { type: HOMEWORK_TASKS_FETCH_ERROR, error: true, errmsg, homeworkId };
+export function homeworkTasksFetchError(diaryId: string, errmsg: string) {
+  return { type: HOMEWORK_TASKS_FETCH_ERROR, error: true, errmsg, diaryId };
 }
 
 // THUNKS -----------------------------------------------------------------------------------------
 
 /**
- * Returns a boolean to tell if we need to fetch data from the backend for the given homeworkId.
+ * Returns a boolean to tell if we need to fetch data from the backend for the given diaryId.
  * @param state current local state (global state -> homework -> tasks)
- * @param homeworkId homeworkId to fetch tasks.
+ * @param diaryId diaryId to fetch tasks.
  */
-function shouldFetchHomeworkTasks(state, homeworkId: string) {
-  // console.warn("Should fetch tasks for " + homeworkId + " ?");
-  const thisHomeworkTasks = state[homeworkId];
-  // console.warn(thisHomeworkTasks);
-  if (!thisHomeworkTasks) {
-    // console.warn("Yes. There are no homework tasks for this homework.");
+function shouldFetchHomeworkTasks(state, diaryId: string) {
+  // console.warn("Should fetch tasks for " + diaryId + " ?");
+  const thisDiaryTasks = state[diaryId];
+  // console.warn(thisDiaryTasks);
+  if (!thisDiaryTasks) {
+    // console.warn("Yes. There are no homework tasks for this diary.");
     return true;
-  } else if (thisHomeworkTasks.isFetching) {
-    // console.warn("No. Already fetching homework tasks for this homework.");
+  } else if (thisDiaryTasks.isFetching) {
+    // console.warn("No. Already fetching homework tasks for this diary.");
     return false;
   } else {
     /* console.warn(
-      thisHomeworkTasks.didInvalidate
-        ? "Yes. Homework tasks invalidated for this homework."
-        : "No. Homework tasks is already valid for this homework."
+      thisDiaryTasks.didInvalidate
+        ? "Yes. Homework tasks invalidated for this diary."
+        : "No. Homework tasks is already valid for this diary."
     ); */
-    return thisHomeworkTasks.didInvalidate;
+    return thisDiaryTasks.didInvalidate;
   }
 }
 
 /**
- * Calls a fetch operation to get homework tasks from the backend for the given homeworkId.
+ * Calls a fetch operation to get homework tasks from the backend for the given diaryId.
  * Dispatches HOMEWORK_TASKS_REQUESTED, HOMEWORK_TASKS_RECEIVED, and HOMEWORK_TASKS_FETCH_ERROR if an error occurs.
  */
-export function fetchHomeworkTasks(homeworkId: string) {
+export function fetchHomeworkTasks(diaryId: string) {
   return async (dispatch, getState) => {
-    // console.warn("Fetching homework tasks for homework " + homeworkId);
-    dispatch(homeworkTasksRequested(homeworkId));
+    // console.warn("Fetching homework tasks for diary " + diaryId);
+    dispatch(homeworkTasksRequested(diaryId));
 
     try {
-      const uri = `${Conf.platform}/homeworks/get/${homeworkId}`;
+      const uri = `${Conf.platform}/homeworks/get/${diaryId}`;
       const response = await fetch(uri, {
         method: "get"
       });
@@ -162,22 +169,22 @@ export function fetchHomeworkTasks(homeworkId: string) {
       const data: IHomeworkTasks = homeworkTasksAdapter(json);
       // console.warn(data);
 
-      dispatch(homeworkTasksReceived(homeworkId, data));
+      dispatch(homeworkTasksReceived(diaryId, data));
     } catch (errmsg) {
-      dispatch(homeworkTasksFetchError(homeworkId, errmsg));
+      dispatch(homeworkTasksFetchError(diaryId, errmsg));
     }
   };
 }
 
 /**
- * Calls a fetch operation to get the homework tasks from the backend for the given homeworkId, only if needed data is not present or invalidated.
+ * Calls a fetch operation to get the homework tasks from the backend for the given diaryId, only if needed data is not present or invalidated.
  */
-export function fetchHomeworkTasksIfNeeded(homeworkId: string) {
+export function fetchHomeworkTasksIfNeeded(diaryId: string) {
   // console.warn("fetch tasks if neeeeeeeeded.");
   return (dispatch, getState) => {
     // console.warn(getState());
-    if (shouldFetchHomeworkTasks(localState(getState()), homeworkId)) {
-      return dispatch(fetchHomeworkTasks(homeworkId));
+    if (shouldFetchHomeworkTasks(localState(getState()), diaryId)) {
+      return dispatch(fetchHomeworkTasks(diaryId));
     }
   };
 }
