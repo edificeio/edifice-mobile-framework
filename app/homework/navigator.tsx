@@ -2,8 +2,8 @@ import * as React from "react";
 import { StackNavigator } from "react-navigation";
 import { navOptions } from "../utils/navHelper";
 
-import HomeworkFilterPageHeader from "./components/HomeworkFilterPageHeader";
-import HomeworkPageHeader from "./components/HomeworkPageHeader";
+import HomeworkFilterPageHeader from "./components/pages/HomeworkFilterPageHeader";
+import HomeworkPageHeader from "./components/pages/HomeworkPageHeader";
 import HomeworkFilterPage from "./containers/HomeworkFilterPage";
 import HomeworkPage from "./containers/HomeworkPage";
 import HomeworkTaskPage from "./containers/HomeworkTaskPage";

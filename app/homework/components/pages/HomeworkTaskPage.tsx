@@ -10,15 +10,15 @@ import style from "glamorous-native";
 import * as React from "react";
 const { Text, ScrollView, View } = style;
 
-import { PageContainer } from "../../ui/ContainerContent";
+import { PageContainer } from "../../../ui/ContainerContent";
 
 import moment, { Moment } from "moment";
 // tslint:disable-next-line:no-submodule-imports
 import "moment/locale/fr";
-import { CommonStyles } from "../../styles/common/styles";
+import { CommonStyles } from "../../../styles/common/styles";
 moment.locale("fr");
 
-import HtmlToJsx from "../../infra/htmlConverter/jsx";
+import HtmlToJsx from "../../../infra/htmlConverter/jsx";
 
 import memoize from "memoize-one";
 

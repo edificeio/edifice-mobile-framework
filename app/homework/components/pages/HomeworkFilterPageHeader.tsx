@@ -2,7 +2,7 @@ import style from "glamorous-native";
 import * as React from "react";
 import I18n from "react-native-i18n";
 
-import { AppTitle, Header, HeaderIcon } from "../../ui/headers/Header";
+import { AppTitle, Header, HeaderIcon } from "../../../ui/headers/Header";
 
 export interface IHomeworkFilterPageHeaderProps {
   navigation?: any;

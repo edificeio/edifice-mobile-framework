@@ -4,7 +4,7 @@ import * as React from "react";
 import I18n from "react-native-i18n";
 
 // Components
-import { AppTitle, Header, HeaderIcon } from "../../ui/headers/Header";
+import { AppTitle, Header, HeaderIcon } from "../../../ui/headers/Header";
 
 import moment from "moment";
 // tslint:disable-next-line:no-submodule-imports

@@ -2,7 +2,7 @@ import { connect } from "react-redux";
 import {
   HomeworkFilterPage,
   IHomeworkFilterPageProps
-} from "../components/HomeworkFilterPage";
+} from "../components/pages/HomeworkFilterPage";
 
 const mapStateToProps: (state: any) => IHomeworkFilterPageProps = state => {
   // Extract data from state

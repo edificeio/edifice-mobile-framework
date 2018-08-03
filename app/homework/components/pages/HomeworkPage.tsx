@@ -28,24 +28,24 @@ moment.locale("fr");
 import { RefreshControl } from "react-native";
 const { View, FlatList } = style;
 
-import { Loading } from "../../ui";
-import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
-import { PageContainer } from "../../ui/ContainerContent";
-import { EmptyScreen } from "../../ui/EmptyScreen";
+import { Loading } from "../../../ui";
+import ConnectionTrackingBar from "../../../ui/ConnectionTrackingBar";
+import { PageContainer } from "../../../ui/ContainerContent";
+import { EmptyScreen } from "../../../ui/EmptyScreen";
 
-import HomeworkDayTasks from "./HomeworkDayTasks";
-import HomeworkTimeline from "./HomeworkTimeline";
+import HomeworkDayTasks from "../HomeworkDayTasks";
+import HomeworkTimeline from "../HomeworkTimeline";
 
 // Actions
-import { fetchHomeworkListIfNeeded } from "../actions/list";
-import { homeworkTaskSelected } from "../actions/selectedTask";
-import { fetchHomeworkTasks, fetchHomeworkTasksIfNeeded } from "../actions/tasks";
+import { fetchHomeworkListIfNeeded } from "../../actions/list";
+import { homeworkTaskSelected } from "../../actions/selectedTask";
+import { fetchHomeworkTasks, fetchHomeworkTasksIfNeeded } from "../../actions/tasks";
 
 // Type definitions
-import { IHomeworkTask, IHomeworkTasks } from "../reducers/tasks";
+import { IHomeworkTask, IHomeworkTasks } from "../../reducers/tasks";
 
 // Misc
-import today from "../../utils/today";
+import today from "../../../utils/today";
 
 // Main component ---------------------------------------------------------------------------------
 export interface IHomeworkPageProps {

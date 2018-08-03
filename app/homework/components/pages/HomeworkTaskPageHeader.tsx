@@ -1,8 +1,8 @@
 import style from "glamorous-native";
 import * as React from "react";
 
-import { Back } from "../../ui/headers/Back";
-import { AppTitle, Header } from "../../ui/headers/Header";
+import { Back } from "../../../ui/headers/Back";
+import { AppTitle, Header } from "../../../ui/headers/Header";
 
 export interface IHomeworkTaskPageHeaderProps {
   navigation?: any;

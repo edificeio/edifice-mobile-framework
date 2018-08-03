@@ -18,13 +18,13 @@ import * as React from "react";
 const { FlatList } = style;
 import { RefreshControl } from "react-native";
 
-import { ListItem, PageContainer } from "../../ui/ContainerContent";
+import { ListItem, PageContainer } from "../../../ui/ContainerContent";
 
-import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
-import { Checkbox } from "../../ui/forms/Checkbox";
-import { Bold } from "../../ui/Typography";
-import { fetchHomeworkList, fetchHomeworkListIfNeeded } from "../actions/list";
-import { homeworkSelected } from "../actions/selected";
+import ConnectionTrackingBar from "../../../ui/ConnectionTrackingBar";
+import { Checkbox } from "../../../ui/forms/Checkbox";
+import { Bold } from "../../../ui/Typography";
+import { fetchHomeworkList, fetchHomeworkListIfNeeded } from "../../actions/list";
+import { homeworkSelected } from "../../actions/selected";
 
 // Main component ---------------------------------------------------------------------------------
 

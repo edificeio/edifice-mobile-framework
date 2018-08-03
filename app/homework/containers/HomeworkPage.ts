@@ -1,5 +1,5 @@
 import { connect } from "react-redux";
-import { HomeworkPage, IHomeworkPageProps } from "../components/HomeworkPage";
+import { HomeworkPage, IHomeworkPageProps } from "../components/pages/HomeworkPage";
 
 const mapStateToProps: (state: any) => IHomeworkPageProps = state => {
   // Extract data from state

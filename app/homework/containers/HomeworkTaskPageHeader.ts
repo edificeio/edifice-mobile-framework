@@ -2,7 +2,7 @@ import { connect } from "react-redux";
 import {
   HomeworkTaskPageHeader,
   IHomeworkTaskPageHeaderProps
-} from "../components/HomeworkTaskPageHeader";
+} from "../components/pages/HomeworkTaskPageHeader";
 
 const mapStateToProps: (state: any) => IHomeworkTaskPageHeaderProps = state => {
   // Extract data from state
