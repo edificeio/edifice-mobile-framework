@@ -9,7 +9,7 @@ import {
   actionTypeInvalidated,
   actionTypeReceived,
   actionTypeRequested
-} from "../reducers/async";
+} from "../../infra/redux/async";
 
 import { homeworkDiarySelected } from "./selectedDiary";
 

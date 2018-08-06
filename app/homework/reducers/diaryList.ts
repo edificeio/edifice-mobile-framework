@@ -2,7 +2,7 @@
  * Homework diary list state reducer
  * Holds a list of available homework diary Ids in a simple Array
  */
-import asyncReducer from "./async";
+import asyncReducer from "../../infra/redux/async";
 
 import { actionPrefix, HOMEWORK_DIARY_LIST_RECEIVED } from "../actions/list";
 

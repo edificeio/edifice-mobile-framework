@@ -5,7 +5,7 @@
 
 import moment from "moment";
 
-import asyncReducer, { actionTypeReceived, IAsyncReducer } from "./async";
+import asyncReducer, { IAsyncReducer } from "../../infra/redux/async";
 
 import {
   actionPrefix,
