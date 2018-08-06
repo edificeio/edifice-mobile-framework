@@ -59,10 +59,12 @@ export class Tracking {
 			if (params) Tracking.mixpanel.track(name, params);
 			else Tracking.mixpanel.track(name);
 		}
-		console.warn("Identifant:" + Me.session.userId);
+		//console.warn("Identifant:" + Me.session.userId);
+		//console.warn("TYPE :" + Me.session.type);
 		Tracking.mixpanel.identify(Me.session.userId);
 		Tracking.mixpanel.set({"$Login": Me.session.login});
 		Tracking.mixpanel.set({"$UserId": Me.session.userId});
+		Tracking.mixpanel.set({"$userType": Me.session.type});
 	}
 
 	public static trackScreenView(currentScreen, navParams) {
