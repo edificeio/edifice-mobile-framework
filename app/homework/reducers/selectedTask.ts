@@ -10,11 +10,11 @@ export interface ISelectedHomeworkTaskState {
   taskId: number;
 }
 
-import { HOMEWORK_TASK_SELECTED } from "../actions/selectedTask";
+import { actionTypeTaskSelected } from "../actions/selectedTask";
 
 function selectedTask(state: ISelectedHomeworkTaskState = null, action) {
   switch (action.type) {
-    case HOMEWORK_TASK_SELECTED:
+    case actionTypeTaskSelected:
       return {
         ...state,
         date: action.date,
