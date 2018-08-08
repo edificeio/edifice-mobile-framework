@@ -2,9 +2,6 @@
  * All specs to define functional module
  */
 
-import I18n from "react-native-i18n";
-import { tabRootOptions } from "../utils/navHelper";
-
 export function toSnakeCase(camelCase: string) {
   const upperChars = camelCase.match(/([A-Z])/g);
   if (!upperChars) {
@@ -26,31 +23,28 @@ export function toSnakeCase(camelCase: string) {
   return str;
 }
 
-export default class FunctionalModule {
+export interface IFunctionalConfig {
+  name: string;
+  actionPrefix?: string;
+  reducerName?: string;
+  displayName?: string;
+  iconName?: string;
+}
+
+export default class FunctionalModuleConfig implements IFunctionalConfig {
   public name: string;
   public actionPrefix: string;
   public reducerName: string;
-  public mainComp: React.ComponentType;
   public displayName: string;
   public iconName: string;
 
-  public get route() {
-    return {
-      [this.name]: {
-        screen: this.mainComp,
-
-        navigationOptions: () => tabRootOptions(this.displayName, this.iconName)
-      }
-    };
-  }
-
-  public constructor(name: string, mainComp: React.ComponentType) {
-    this.name = name;
-    this.actionPrefix = toSnakeCase(name).toUpperCase();
-    this.reducerName = name;
-    this.mainComp = mainComp;
-    this.displayName = I18n.t(name);
-    this.iconName = name;
+  public constructor(opts: IFunctionalConfig) {
+    this.name = opts.name;
+    this.actionPrefix =
+      opts.actionPrefix || toSnakeCase(this.name).toUpperCase() + "_";
+    this.reducerName = opts.reducerName || this.name;
+    this.displayName = opts.displayName || this.name;
+    this.iconName = opts.iconName || this.name;
   }
 
   public getLocalState(globalState) {
@@ -58,6 +52,6 @@ export default class FunctionalModule {
   }
 
   public createActionType(type: string) {
-    return this.actionPrefix + "_" + type;
+    return this.actionPrefix + type;
   }
 }

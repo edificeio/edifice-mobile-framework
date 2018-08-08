@@ -7,11 +7,9 @@ import Login from "../auth/Login";
 
 import AccountNavigation from "../auth/AccountNavigation";
 import ConversationNavigator from "../conversation/ConversationNavigator";
-import HomeworkNavigator from "../homework/navigator";
 import TimelineNavigator from "../timeline/TimelineNavigator";
-import UiNavigator from "../ui/showcase/UiNavigator";
 
-import homeworkModule from "../homework";
+import { route as homeworkRoute } from "../homework";
 
 const MainNavigator = tabNavigator({
   timeline: {
@@ -27,7 +25,7 @@ const MainNavigator = tabNavigator({
       tabRootOptions(I18n.t("Conversation"), "conversation")
   },
 
-  ...homeworkModule.route,
+  ...homeworkRoute,
 
   profile: {
     screen: AccountNavigation,
