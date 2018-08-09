@@ -7,13 +7,7 @@ import moment from "moment";
 
 import asyncReducer, { IAsyncReducer } from "../../infra/redux/async";
 
-import {
-  actionPrefix,
-  HOMEWORK_TASKS_FETCH_ERROR,
-  HOMEWORK_TASKS_INVALIDATED,
-  HOMEWORK_TASKS_RECEIVED,
-  HOMEWORK_TASKS_REQUESTED
-} from "../actions/tasks";
+import { actionTypes } from "../actions/tasks";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -61,13 +55,13 @@ const stateSingleTasksDefault: IHomeworkTasks = { byId: {}, ids: [] };
 const homeworkSingleTasksReducer = asyncReducer<IHomeworkTasks>(
   (state: IHomeworkTasks = stateSingleTasksDefault, action) => {
     switch (action.type) {
-      case HOMEWORK_TASKS_RECEIVED: // params : data:IHomeworkTasks
+      case actionTypes.received: // params : data:IHomeworkTasks
         return action.data;
       default:
         return state;
     }
   },
-  actionPrefix
+  actionTypes
 );
 
 /**
@@ -82,10 +76,10 @@ const homeworkAllTasksReducer = (
   action
 ) => {
   switch (action.type) {
-    case HOMEWORK_TASKS_INVALIDATED: // params: homeworkId:string
-    case HOMEWORK_TASKS_REQUESTED:
-    case HOMEWORK_TASKS_RECEIVED:
-    case HOMEWORK_TASKS_FETCH_ERROR:
+    case actionTypes.invalidated: // params: homeworkId:string
+    case actionTypes.requested:
+    case actionTypes.received:
+    case actionTypes.fetchError:
       return {
         ...state,
         [action.diaryId]: homeworkSingleTasksReducer(

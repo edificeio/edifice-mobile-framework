@@ -20,17 +20,53 @@
  * TODO : Move this file. It's not only for homework app.
  */
 
-export const actionTypeInvalidated = (actionPrefix: string) =>
+// ACTIONS ----------------------------------------------------------------------------------------
+
+const actionTypeInvalidated = (actionPrefix: string) =>
   actionPrefix + "_INVALIDATED";
 
-export const actionTypeRequested = (actionPrefix: string) =>
+const actionTypeRequested = (actionPrefix: string) =>
   actionPrefix + "_REQUESTED";
 
-export const actionTypeReceived = (actionPrefix: string) =>
-  actionPrefix + "_RECEIVED";
+const actionTypeReceived = (actionPrefix: string) => actionPrefix + "_RECEIVED";
 
-export const actionTypeFetchError = (actionPrefix: string) =>
+const actionTypeFetchError = (actionPrefix: string) =>
   actionPrefix + "_FETCH_ERROR";
+
+export interface IAsyncActionTypes {
+  invalidated: string;
+  requested: string;
+  received: string;
+  fetchError: string;
+}
+
+export const asyncActionTypes: (
+  actionPrefix: string
+) => IAsyncActionTypes = actionPrefix => ({
+  fetchError: actionTypeFetchError(actionPrefix),
+  invalidated: actionTypeInvalidated(actionPrefix),
+  received: actionTypeReceived(actionPrefix),
+  requested: actionTypeRequested(actionPrefix)
+});
+
+export const shouldFetch: (state: IAsyncReducer<any>) => boolean = state => {
+  if (!state) return true;
+  if (state.isFetching) {
+    return false;
+  } else return state.didInvalidate;
+
+  /*
+  if (!(state && state.data)) {
+    return true;
+  } else if (state.isFetching) {
+    return false;
+  } else {
+    return state.didInvalidate;
+  }
+  */
+};
+
+// REDUCER ----------------------------------------------------------------------------------------
 
 export interface IAsyncReducer<T> {
   data: T;
@@ -41,22 +77,10 @@ export interface IAsyncReducer<T> {
 
 export default function asyncReducer<T>(
   dataReducer: (state?: T, action?: any) => T,
-  actionPrefix: string
+  actionTypes: IAsyncActionTypes
 ) {
-  // Computed action names
-  const actionInvalidated = actionTypeInvalidated(actionPrefix);
-  const actionRequested = actionTypeRequested(actionPrefix);
-  const actionReceived = actionTypeReceived(actionPrefix);
-  const actionFetchError = actionTypeFetchError(actionPrefix);
-
-  // Reducer
   return (
-    state: {
-      data: T;
-      didInvalidate: boolean;
-      isFetching: boolean;
-      lastUpdated: Date;
-    } = {
+    state: IAsyncReducer<T> = {
       data: undefined, // Set by homework.diaryList reducer.
       didInvalidate: true,
       isFetching: false,
@@ -66,20 +90,20 @@ export default function asyncReducer<T>(
   ) => {
     // Reducing
     switch (action.type) {
-      case actionInvalidated:
+      case actionTypes.invalidated:
         return {
           ...state,
           data: dataReducer(state.data, action),
           didInvalidate: true
         };
-      case actionRequested:
+      case actionTypes.requested:
         return {
           ...state,
           data: dataReducer(state.data, action),
           didInvalidate: false,
           isFetching: true
         };
-      case actionReceived:
+      case actionTypes.received:
         return {
           ...state,
           data: dataReducer(state.data, action),
@@ -87,7 +111,7 @@ export default function asyncReducer<T>(
           isFetching: false,
           lastUpdated: action.receivedAt
         };
-      case actionFetchError:
+      case actionTypes.fetchError:
         return {
           ...state,
           data: dataReducer(state.data, action),

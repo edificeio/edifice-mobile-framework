@@ -4,7 +4,7 @@
  */
 import asyncReducer from "../../infra/redux/async";
 
-import { actionPrefix, HOMEWORK_DIARY_LIST_RECEIVED } from "../actions/list";
+import { actionTypes } from "../actions/diaryList";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -30,7 +30,7 @@ const homeworkDiaryListReducer = (
   action
 ) => {
   switch (action.type) {
-    case HOMEWORK_DIARY_LIST_RECEIVED:
+    case actionTypes.received:
       return action.data;
     default:
       return state;
@@ -39,5 +39,5 @@ const homeworkDiaryListReducer = (
 
 export default asyncReducer<IHomeworkDiaryList>(
   homeworkDiaryListReducer,
-  actionPrefix
+  actionTypes
 );

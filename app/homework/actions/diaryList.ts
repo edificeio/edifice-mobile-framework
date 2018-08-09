@@ -4,19 +4,16 @@
  */
 
 import { Conf } from "../../Conf";
-import {
-  actionTypeFetchError,
-  actionTypeInvalidated,
-  actionTypeReceived,
-  actionTypeRequested
-} from "../../infra/redux/async";
+import { asyncActionTypes, shouldFetch } from "../../infra/redux/async";
+import homeworkConfig from "../config";
 
 import { homeworkDiarySelected } from "./selectedDiary";
 
 import { IHomeworkDiaryList } from "../reducers/diaryList";
 
 /** Retuns the local state (global state -> homework -> diaryList). Give the global state as parameter. */
-const localState = globalState => globalState.homework.diaryList;
+const localState = globalState =>
+  homeworkConfig.getLocalState(globalState).diaryList;
 
 // ADAPTER ----------------------------------------------------------------------------------------
 
@@ -58,54 +55,26 @@ const homeworkDiaryListAdapter: (
 
 // ACTION LIST ------------------------------------------------------------------------------------
 
-export const actionPrefix = "HOMEWORK_DIARY_LIST";
+export const actionPrefix = homeworkConfig.createActionType("DIARY_LIST");
+export const actionTypes = asyncActionTypes(actionPrefix);
 
-export const HOMEWORK_DIARY_LIST_INVALIDATED = actionTypeInvalidated(
-  actionPrefix
-);
 export function homeworkDiaryListInvalidated() {
-  return { type: HOMEWORK_DIARY_LIST_INVALIDATED };
+  return { type: actionTypes.invalidated };
 }
 
-export const HOMEWORK_DIARY_LIST_REQUESTED = actionTypeRequested(actionPrefix);
 export function homeworkDiaryListRequested() {
-  return { type: HOMEWORK_DIARY_LIST_REQUESTED };
+  return { type: actionTypes.requested };
 }
 
-export const HOMEWORK_DIARY_LIST_RECEIVED = actionTypeReceived(actionPrefix);
 export function homeworkDiaryListReceived(data: IHomeworkDiaryList) {
-  return { type: HOMEWORK_DIARY_LIST_RECEIVED, data, receivedAt: Date.now() };
+  return { type: actionTypes.received, data, receivedAt: Date.now() };
 }
 
-export const HOMEWORK_DIARY_LIST_FETCH_ERROR = actionTypeFetchError(
-  actionPrefix
-);
 export function homeworkDiaryListFetchError(errmsg: string) {
-  return { type: HOMEWORK_DIARY_LIST_FETCH_ERROR, error: true, errmsg };
+  return { type: actionTypes.fetchError, error: true, errmsg };
 }
 
 // THUNKS -----------------------------------------------------------------------------------------
-
-/**
- * Returns a boolean to tell if we need to fetch data from the backend.
- * @param state current local state (global state -> homework -> diaryList)
- */
-function shouldFetchHomeworkDiaryList(state) {
-  if (!state) {
-    // console.warn("Yes. There are no homework diary list.");
-    return true;
-  } else if (state.isFetching) {
-    // console.warn("No. Already fetching homework diary list.");
-    return false;
-  } else {
-    /* console.warn(
-      diaries.didInvalidate
-        ? "Yes. Homework diary list invalidated."
-        : "No. Homework diary list is already valid."
-    ); */
-    return state.didInvalidate;
-  }
-}
 
 /**
  * Calls a fetch operation to get homework diary list from the backend.
@@ -141,7 +110,7 @@ export function fetchHomeworkDiaryList() {
  */
 export function fetchHomeworkDiaryListIfNeeded() {
   return (dispatch, getState) => {
-    if (shouldFetchHomeworkDiaryList(localState(getState()))) {
+    if (shouldFetch(localState(getState()))) {
       return dispatch(fetchHomeworkDiaryList());
     }
   };

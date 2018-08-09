@@ -7,7 +7,7 @@ import {
   IHomeworkPageProps
 } from "../components/pages/HomeworkPage";
 
-import { fetchHomeworkDiaryListIfNeeded } from "../actions/list";
+import { fetchHomeworkDiaryListIfNeeded } from "../actions/diaryList";
 import { homeworkTaskSelected } from "../actions/selectedTask";
 import { fetchHomeworkTasks } from "../actions/tasks";
 

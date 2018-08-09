@@ -10,7 +10,7 @@ import {
 import {
   fetchHomeworkDiaryList,
   fetchHomeworkDiaryListIfNeeded
-} from "../actions/list";
+} from "../actions/diaryList";
 import { homeworkDiarySelected } from "../actions/selectedDiary";
 
 const mapStateToProps: (state: any) => IHomeworkFilterPageDataProps = state => {
