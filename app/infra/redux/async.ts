@@ -143,24 +143,25 @@ export default function asyncReducer<T>(
     action: { type: string; receivedAt?: Date; data?: T }
   ) => {
     // Reducing
+    const data = dataReducer(state.data, action);
     switch (action.type) {
       case actionTypes.invalidated:
         return {
           ...state,
-          data: dataReducer(state.data, action),
+          data,
           didInvalidate: true
         };
       case actionTypes.requested:
         return {
           ...state,
-          data: dataReducer(state.data, action),
+          data,
           didInvalidate: false,
           isFetching: true
         };
       case actionTypes.received:
         return {
           ...state,
-          data: dataReducer(state.data, action),
+          data,
           didInvalidate: false,
           isFetching: false,
           lastUpdated: action.receivedAt
@@ -168,12 +169,12 @@ export default function asyncReducer<T>(
       case actionTypes.fetchError:
         return {
           ...state,
-          data: dataReducer(state.data, action),
+          data,
           didInvalidate: true,
           isFetching: false
         };
       default:
-        return state; // TODO call dataReducer here too ?
+        return { ...state, data };
     }
   };
 }
