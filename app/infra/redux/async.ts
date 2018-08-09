@@ -19,9 +19,9 @@ import { ThunkAction, ThunkDispatch } from "../../../node_modules/redux-thunk";
  * /!\ Action MUST have a `type` attribute.
  * When the type is actionTypeReceived(), it must have also a `receivedAt` with a Date as its value.
  * Use the `dataReducer` argument to update your state when actionTypeReceived() is dispatched.
- *
- * TODO : Move this file. It's not only for homework app.
  */
+
+// TYPE DEFINITIONS ----------------------------------------------------------------------------------------
 
 export interface IAsyncReducer<T> {
   data: T;
@@ -30,7 +30,14 @@ export interface IAsyncReducer<T> {
   lastUpdated: Date;
 }
 
-// ACTIONS ----------------------------------------------------------------------------------------
+export interface IAsyncActionTypes {
+  invalidated: string;
+  requested: string;
+  received: string;
+  fetchError: string;
+}
+
+// ACTIONS, ACTION GENERATOR & THUNKS -------------------------------------------------------------
 
 /**
  * Generates a action type string by adding a suffix.
@@ -46,13 +53,6 @@ const actionTypeReceived = (actionPrefix: string) => actionPrefix + "_RECEIVED";
 
 const actionTypeFetchError = (actionPrefix: string) =>
   actionPrefix + "_FETCH_ERROR";
-
-export interface IAsyncActionTypes {
-  invalidated: string;
-  requested: string;
-  received: string;
-  fetchError: string;
-}
 
 /**
  * Generates four action types to manage async data flow.
@@ -79,6 +79,12 @@ export const shouldFetch: (state: IAsyncReducer<any>) => boolean = state => {
   } else return state.didInvalidate;
 };
 
+/**
+ * Perform a fetch operation that recieve a JSON object as response.
+ * @param uri
+ * @param adapter function to transform the JSON receivec from the backend to the shape used in reducer.
+ * @param opts fetch options used by the Fetch API.
+ */
 export const asyncFetchJson: <DataTypeBackend, DataType>(
   uri: string,
   adapter: (data: DataTypeBackend) => DataType,
@@ -89,15 +95,16 @@ export const asyncFetchJson: <DataTypeBackend, DataType>(
   return adapter(json);
 };
 
+/**
+ * Performs a fetch operation to GET a JSON object from the server.
+ * @param uri
+ * @param adapter function to transform the received JSON object into a shape used in the the reducer.
+ */
 export const asyncGetJson: <DataTypeBackend, DataType>(
   uri: string,
   adapter: (data: DataTypeBackend) => DataType
 ) => Promise<DataType> = async (uri, adapter) => {
-  const response = await fetch(uri, {
-    method: "get"
-  });
-  const json = (await response.json()) as any;
-  return adapter(json);
+  return asyncFetchJson(uri, adapter, { method: "get" });
 };
 
 /**
