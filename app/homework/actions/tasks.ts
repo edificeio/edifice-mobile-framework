@@ -96,8 +96,9 @@ const homeworkTasksAdapter: (
 
 // ACTION LIST ------------------------------------------------------------------------------------
 
-export const actionPrefix = homeworkConfig.createActionType("TASKS");
-export const actionTypes = asyncActionTypes(actionPrefix);
+export const actionTypes = asyncActionTypes(
+  homeworkConfig.createActionType("TASKS")
+);
 
 export function homeworkTasksInvalidated(diaryId: string) {
   return { type: actionTypes.invalidated, diaryId };

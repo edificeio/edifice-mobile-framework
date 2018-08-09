@@ -59,8 +59,9 @@ const homeworkDiaryListAdapter: (
 
 // ACTION LIST ------------------------------------------------------------------------------------
 
-export const actionPrefix = homeworkConfig.createActionType("DIARY_LIST");
-export const actionTypes = asyncActionTypes(actionPrefix);
+export const actionTypes = asyncActionTypes(
+  homeworkConfig.createActionType("DIARY_LIST")
+);
 
 export function homeworkDiaryListInvalidated() {
   return { type: actionTypes.invalidated };
