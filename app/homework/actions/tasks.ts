@@ -4,7 +4,11 @@
  */
 
 import { Conf } from "../../Conf";
-import { asyncActionTypes, shouldFetch } from "../../infra/redux/async";
+import {
+  asyncActionTypes,
+  asyncFetchIfNeeded,
+  asyncGetJson
+} from "../../infra/redux/async";
 import homeworkConfig from "../config";
 
 import { IHomeworkTasks } from "../reducers/tasks";
@@ -124,19 +128,15 @@ export function homeworkTasksFetchError(diaryId: string, errmsg: string) {
  * Dispatches HOMEWORK_TASKS_REQUESTED, HOMEWORK_TASKS_RECEIVED, and HOMEWORK_TASKS_FETCH_ERROR if an error occurs.
  */
 export function fetchHomeworkTasks(diaryId: string) {
-  return async (dispatch, getState) => {
+  return async dispatch => {
     // console.warn("Fetching homework tasks for diary " + diaryId);
     dispatch(homeworkTasksRequested(diaryId));
 
     try {
-      const uri = `${Conf.platform}/homeworks/get/${diaryId}`;
-      const response = await fetch(uri, {
-        method: "get"
-      });
-      const json = (await response.json()) as any;
-      // console.warn(json);
-      const data: IHomeworkTasks = homeworkTasksAdapter(json);
-      // console.warn(data);
+      const data = await asyncGetJson(
+        `${Conf.platform}/homeworks/get/${diaryId}`,
+        homeworkTasksAdapter
+      );
 
       dispatch(homeworkTasksReceived(diaryId, data));
     } catch (errmsg) {
@@ -149,11 +149,9 @@ export function fetchHomeworkTasks(diaryId: string) {
  * Calls a fetch operation to get the homework tasks from the backend for the given diaryId, only if needed data is not present or invalidated.
  */
 export function fetchHomeworkTasksIfNeeded(diaryId: string) {
-  // console.warn("fetch tasks if neeeeeeeeded.");
-  return (dispatch, getState) => {
-    // console.warn(getState());
-    if (shouldFetch(localState(getState())[diaryId])) {
-      return dispatch(fetchHomeworkTasks(diaryId));
-    }
-  };
+  return asyncFetchIfNeeded(
+    gs => localState(gs)[diaryId],
+    fetchHomeworkTasks,
+    diaryId
+  );
 }

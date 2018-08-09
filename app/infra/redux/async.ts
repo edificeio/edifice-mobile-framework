@@ -1,3 +1,6 @@
+import { Dispatch } from "redux";
+import { ThunkAction, ThunkDispatch } from "../../../node_modules/redux-thunk";
+
 /**
  * Async iterable reducer constructor.
  *
@@ -20,8 +23,19 @@
  * TODO : Move this file. It's not only for homework app.
  */
 
+export interface IAsyncReducer<T> {
+  data: T;
+  didInvalidate: boolean;
+  isFetching: boolean;
+  lastUpdated: Date;
+}
+
 // ACTIONS ----------------------------------------------------------------------------------------
 
+/**
+ * Generates a action type string by adding a suffix.
+ * The suffix can be "_INVALIDATED", "_REQUESTED", "_RECEIVED", "_FETCH_ERROR".
+ */
 const actionTypeInvalidated = (actionPrefix: string) =>
   actionPrefix + "_INVALIDATED";
 
@@ -40,6 +54,10 @@ export interface IAsyncActionTypes {
   fetchError: string;
 }
 
+/**
+ * Generates four action types to manage async data flow.
+ * @param actionPrefix base type for all generated action types.
+ */
 export const asyncActionTypes: (
   actionPrefix: string
 ) => IAsyncActionTypes = actionPrefix => ({
@@ -49,32 +67,68 @@ export const asyncActionTypes: (
   requested: actionTypeRequested(actionPrefix)
 });
 
+/**
+ * Returns if data should be fetched again from the server.
+ * @param state the asyncReducer state.
+ */
 export const shouldFetch: (state: IAsyncReducer<any>) => boolean = state => {
-  if (!state) return true;
+  // console.log("should fetch ?", state);
+  if (state === undefined) return true;
   if (state.isFetching) {
     return false;
   } else return state.didInvalidate;
+};
 
-  /*
-  if (!(state && state.data)) {
-    return true;
-  } else if (state.isFetching) {
-    return false;
-  } else {
-    return state.didInvalidate;
-  }
-  */
+export const asyncFetchJson: <DataTypeBackend, DataType>(
+  uri: string,
+  adapter: (data: DataTypeBackend) => DataType,
+  opts: object
+) => Promise<DataType> = async (uri, adapter, opts) => {
+  const response = await fetch(uri, opts);
+  const json = (await response.json()) as any;
+  return adapter(json);
+};
+
+export const asyncGetJson: <DataTypeBackend, DataType>(
+  uri: string,
+  adapter: (data: DataTypeBackend) => DataType
+) => Promise<DataType> = async (uri, adapter) => {
+  const response = await fetch(uri, {
+    method: "get"
+  });
+  const json = (await response.json()) as any;
+  return adapter(json);
+};
+
+/**
+ * Returns a thunk that fetch async data if needed. Condition to fetch or not is determined by the shouldFetch() function, which uses the asyn values (didInvalidate).
+ * @param localState function to get the localState fro mthe globalState.
+ * @param fetchFunc function to fetch data. Must return a value that could be directely put into the reducer data.
+ * @param args optional - additional arguments to be passed to the fetchFunc.
+ */
+export const asyncFetchIfNeeded: <
+  DataType = any,
+  StateType extends IAsyncReducer<DataType> = IAsyncReducer<DataType>
+>(
+  localState: (globalState: any) => StateType,
+  fetchFunc: (...args: any[]) => DataType,
+  ...args: any[]
+) => any = (localState, fetchFunc, ...args) => {
+  return (dispatch, getState) => {
+    if (shouldFetch(localState(getState()))) {
+      return dispatch(fetchFunc(...args));
+    }
+  };
 };
 
 // REDUCER ----------------------------------------------------------------------------------------
 
-export interface IAsyncReducer<T> {
-  data: T;
-  didInvalidate: boolean;
-  isFetching: boolean;
-  lastUpdated: Date;
-}
-
+/**
+ * Wraps a custom reducer in one that manage async data state.
+ * In your custom reducer you have to write the `<action>_RECEIVED` case to put the received data in the state.
+ * @param dataReducer Your custom reducer
+ * @param actionTypes You have to give the action types you use for this reducer. Pass the result of asyncActionTypes().
+ */
 export default function asyncReducer<T>(
   dataReducer: (state?: T, action?: any) => T,
   actionTypes: IAsyncActionTypes

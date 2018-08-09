@@ -4,7 +4,11 @@
  */
 
 import { Conf } from "../../Conf";
-import { asyncActionTypes, shouldFetch } from "../../infra/redux/async";
+import {
+  asyncActionTypes,
+  asyncFetchIfNeeded,
+  asyncGetJson
+} from "../../infra/redux/async";
 import homeworkConfig from "../config";
 
 import { homeworkDiarySelected } from "./selectedDiary";
@@ -82,20 +86,18 @@ export function homeworkDiaryListFetchError(errmsg: string) {
  */
 export function fetchHomeworkDiaryList() {
   return async (dispatch, getState) => {
-    // console.warn("Fetching homework diary list...");
+    // console.log("Fetching homework diary list...");
     dispatch(homeworkDiaryListRequested());
 
     try {
-      const uri = `${Conf.platform}/homeworks/list`;
-      const response = await fetch(uri, {
-        method: "get"
-      });
-      const json = (await response.json()) as any;
-      const data: IHomeworkDiaryList = homeworkDiaryListAdapter(json);
+      const data = await asyncGetJson(
+        `${Conf.platform}/homeworks/list`,
+        homeworkDiaryListAdapter
+      );
 
       dispatch(homeworkDiaryListReceived(data));
 
-      // This block access to another chunk of state and fire action outside his scope. (homework -> selectedDiary)
+      // This block accesses to another chunk of state and fire action outside his scope. (homework -> selectedDiary)
       if (!getState().homework.selectedDiary) {
         dispatch(homeworkDiarySelected(Object.keys(data)[0]));
       }
@@ -109,9 +111,5 @@ export function fetchHomeworkDiaryList() {
  * Calls a fetch operation to get the homework diary list from the backend, only if needed data is not present or invalidated.
  */
 export function fetchHomeworkDiaryListIfNeeded() {
-  return (dispatch, getState) => {
-    if (shouldFetch(localState(getState()))) {
-      return dispatch(fetchHomeworkDiaryList());
-    }
-  };
+  return asyncFetchIfNeeded(localState, fetchHomeworkDiaryList);
 }
