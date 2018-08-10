@@ -1,4 +1,4 @@
-import { fetchWithCache } from "../fetchWithCache";
+import { fetchJSONWithCache } from "../fetchWithCache";
 
 /**
  * Async iterable reducer constructor.
@@ -89,8 +89,7 @@ export const asyncFetchJson: <DataTypeBackend, DataType>(
   adapter: (data: DataTypeBackend) => DataType,
   opts: object
 ) => Promise<DataType> = async (uri, adapter, opts) => {
-  const response = await fetchWithCache(uri, opts);
-  const json = (await response.json()) as any;
+  const json = (await fetchJSONWithCache(uri, opts)) as any;
   return adapter(json);
 };
 
@@ -173,6 +172,7 @@ export default function asyncReducer<T>(
           lastUpdated: action.receivedAt
         };
       case actionTypes.fetchError:
+        console.warn(action);
         return {
           ...state,
           data,
