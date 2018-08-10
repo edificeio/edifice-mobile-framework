@@ -1,3 +1,6 @@
+import I18n from "react-native-i18n";
+import { tabRootOptions } from "../utils/navHelper";
+
 /**
  * All specs to define functional module
  */
@@ -54,4 +57,36 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
   public createActionType(type: string) {
     return this.actionPrefix + type;
   }
+
+  public createRoute(comp: any) {
+    return {
+      screen: comp,
+
+      navigationOptions: () =>
+        tabRootOptions(I18n.t(this.displayName), this.iconName)
+    };
+  }
+}
+
+export interface IFunctionalModuleDefinition {
+  config: FunctionalModuleConfig;
+  module: any;
+}
+
+export function getReducersFromModuleDefinitions(
+  defs: IFunctionalModuleDefinition[]
+) {
+  return defs.reduce(
+    (acc, mod) => ({ ...acc, [mod.config.reducerName]: mod.module.reducer }),
+    {}
+  );
+}
+
+export function getRoutesFromModuleDefinitions(
+  defs: IFunctionalModuleDefinition[]
+) {
+  return defs.reduce(
+    (acc, mod) => ({ ...acc, [mod.config.name]: mod.module.route }),
+    {}
+  );
 }

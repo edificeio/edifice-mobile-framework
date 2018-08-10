@@ -1,21 +1,19 @@
-import I18n from "react-native-i18n";
-import { tabRootOptions } from "../utils/navHelper";
 import homeworkConfig from "./config";
 
 import mainComp from "./navigator";
+import mainReducer from "./reducers";
 
 // Main component
-export default mainComp;
+export const root = mainComp;
+
+// Reducer
+export const reducer = mainReducer;
 
 // Route
-export const route = {
-  [homeworkConfig.name]: {
-    screen: mainComp,
+export const route = homeworkConfig.createRoute(root);
 
-    navigationOptions: () =>
-      tabRootOptions(
-        I18n.t(homeworkConfig.displayName),
-        homeworkConfig.iconName
-      )
-  }
+export default {
+  reducer,
+  root,
+  route
 };

@@ -95,7 +95,6 @@ export class HTMLAdaptor {
     this.render = [];
     this.parse();
     return this.render.join("");
-    return "TODO: parse the HTML";
   }
 
   // EXTRACT METHODS

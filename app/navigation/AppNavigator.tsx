@@ -9,9 +9,13 @@ import AccountNavigation from "../auth/AccountNavigation";
 import ConversationNavigator from "../conversation/ConversationNavigator";
 import TimelineNavigator from "../timeline/TimelineNavigator";
 
-import { route as homeworkRoute } from "../homework";
+import moduleDefinitions from "../AppModules";
+import { getRoutesFromModuleDefinitions } from "../infra/moduleTool";
+
+const baab = getRoutesFromModuleDefinitions(moduleDefinitions);
 
 const MainNavigator = tabNavigator({
+  // TODO put the routes on moduleDefinitions
   timeline: {
     screen: TimelineNavigator,
 
@@ -25,7 +29,7 @@ const MainNavigator = tabNavigator({
       tabRootOptions(I18n.t("Conversation"), "conversation")
   },
 
-  ...homeworkRoute,
+  ...getRoutesFromModuleDefinitions(moduleDefinitions),
 
   profile: {
     screen: AccountNavigation,

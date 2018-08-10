@@ -8,22 +8,26 @@ import { middleware } from "./navigation/middleware";
 
 import auth from "./auth/reducer";
 import conversation from "./conversation/reducer";
-import homework from "./homework/reducers";
 import connectionTracker from "./infra/reducers/connectionTracker";
-import ui from "./infra/reducers/ui";
 import timeline from "./timeline/reducer";
 
-const reducers = combineReducers({
+import moduleDefinitions from "./AppModules";
+import { getReducersFromModuleDefinitions } from "./infra/moduleTool";
+
+const reducers = {
   auth,
   connectionTracker,
-  conversation,
-  homework,
-  timeline,
-  ui
+  ...getReducersFromModuleDefinitions(moduleDefinitions)
+};
+
+const rootReducer = combineReducers({
+  ...reducers,
+  conversation, // TODO put this un module definitions
+  timeline
 });
 
 const enhancer = applyMiddleware(middleware, thunkMiddleware);
-const store = createStore(reducers, enhancer);
+const store = createStore(rootReducer, enhancer);
 
 I18n.fallbacks = true;
 I18n.translations = {
