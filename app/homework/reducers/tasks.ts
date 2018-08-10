@@ -5,17 +5,12 @@
 
 import moment from "moment";
 
+import { IOrderedArrayById } from "../../infra/collections";
 import asyncReducer, { IAsyncReducer } from "../../infra/redux/async";
 
 import { actionTypes } from "../actions/tasks";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
-
-// TODO : move this. This is useful elsewhere.
-export interface IOrderedArrayById<T extends { id: any }> {
-  byId: { [id: string]: T };
-  ids: string[];
-}
 
 // A single task.
 export interface IHomeworkTask {

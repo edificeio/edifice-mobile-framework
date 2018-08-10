@@ -2,16 +2,12 @@
  * Homework diary list state reducer
  * Holds a list of available homework diary Ids in a simple Array
  */
+import { IArrayById } from "../../infra/collections";
 import asyncReducer from "../../infra/redux/async";
 
 import { actionTypes } from "../actions/diaryList";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
-
-// TODO put this interface in a generic helper file. It is useful.
-export interface IArrayById<T extends { id: any }> {
-  [id: string]: T;
-}
 
 export interface IHomeworkDiary {
   id: string;
