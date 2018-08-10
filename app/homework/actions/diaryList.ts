@@ -92,7 +92,7 @@ export function fetchHomeworkDiaryList() {
 
     try {
       const data = await asyncGetJson(
-        `${Conf.platform}/homeworks/list`,
+        "/homeworks/list",
         homeworkDiaryListAdapter
       );
 

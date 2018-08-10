@@ -135,7 +135,7 @@ export function fetchHomeworkTasks(diaryId: string) {
 
     try {
       const data = await asyncGetJson(
-        `${Conf.platform}/homeworks/get/${diaryId}`,
+        `/homeworks/get/${diaryId}`,
         homeworkTasksAdapter
       );
 

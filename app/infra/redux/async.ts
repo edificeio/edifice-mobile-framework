@@ -1,5 +1,4 @@
-import { Dispatch } from "redux";
-import { ThunkAction, ThunkDispatch } from "../../../node_modules/redux-thunk";
+import { fetchWithCache } from "../fetchWithCache";
 
 /**
  * Async iterable reducer constructor.
@@ -90,7 +89,7 @@ export const asyncFetchJson: <DataTypeBackend, DataType>(
   adapter: (data: DataTypeBackend) => DataType,
   opts: object
 ) => Promise<DataType> = async (uri, adapter, opts) => {
-  const response = await fetch(uri, opts);
+  const response = await fetchWithCache(uri, opts);
   const json = (await response.json()) as any;
   return adapter(json);
 };
