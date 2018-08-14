@@ -5,7 +5,7 @@
  * Props:
  *     style
  *     data - information of the day (number and name) and list of the tasks.
- *     onSelect - Fires when he user touch a task.
+ *     onSelect - Fires when the user touches a task.
  */
 
 // Libraries

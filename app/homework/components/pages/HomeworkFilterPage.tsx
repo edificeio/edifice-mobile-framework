@@ -1,7 +1,7 @@
 /**
  * HomeworkFilterPage
  *
- * Display page for just one task just one day.
+ * Display page of a single task with all its content.
  *
  * Props:
  *    `diaryList` - Data list

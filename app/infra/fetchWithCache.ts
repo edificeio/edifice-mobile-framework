@@ -25,7 +25,7 @@ export async function fetchWithCache(
   const dataFromCache = await AsyncStorage.getItem(path);
 
   if (Connection.isOnline && (forceSync || !dataFromCache)) {
-    console.log("fetch from web");
+    // console.log("fetch from web");
     const response = await fetch(`${platform}${path}`, init);
     const cacheResponse = {
       body: await getBody(response.clone()),
@@ -41,7 +41,7 @@ export async function fetchWithCache(
   }
 
   if (dataFromCache) {
-    console.log("fetch from cache");
+    // console.log("fetch from cache");
     const cacheResponse = JSON.parse(dataFromCache);
     return getCacheResult(cacheResponse);
   }

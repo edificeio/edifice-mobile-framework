@@ -1,6 +1,6 @@
 /**
- * Write here tha app-e functional modules imports.
- * Order has importance, apps will be shown in the same order in the bottom bar.
+ * Write here the app-e functional modules imports.
+ * Order has importance, functional modules will be shown in the same order in the bottom bar.
  */
 
 export default [

@@ -1,5 +1,5 @@
 /**
- * Just display a grey vertical line at the left tall as the screen is.
+ * Display a grey vertical line at the left tall as the screen is.
  */
 import style from "glamorous-native";
 import { CommonStyles } from "../../styles/common/styles";

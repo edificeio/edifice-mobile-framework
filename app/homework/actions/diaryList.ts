@@ -15,7 +15,7 @@ import { homeworkDiarySelected } from "./selectedDiary";
 
 import { IHomeworkDiaryList } from "../reducers/diaryList";
 
-/** Retuns the local state (global state -> homework -> diaryList). Give the global state as parameter. */
+/** Returns the local state (global state -> homework -> diaryList). Give the global state as parameter. */
 const localState = globalState =>
   homeworkConfig.getLocalState(globalState).diaryList;
 
