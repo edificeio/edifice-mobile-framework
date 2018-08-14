@@ -59,7 +59,7 @@
     "tslint-config-prettier": "^1.6.0",
     "tslint-plugin-prettier": "^1.3.0",
     "tslint-react": "^3.5.0",
-    "typescript": "2.9.2"
+    "typescript": "^3.0.1"
   },
   "dependencies": {
     "@types/sax": "^1.0.1",
