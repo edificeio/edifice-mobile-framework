@@ -1,12 +1,12 @@
 import { Me } from "../../infra/Me";
-import { User, Group } from "../../auth/reducer";
+import { IUser, IGroup } from "../../auth/reducer";
 
 export const createConversation = dispatch => (pickedUsers) => {
     const newConversation = {
         thread_id: 'temp',
         to: pickedUsers.map((u: any) => u.id),
         displayNames: pickedUsers.map((u: any) => ([u.id, u.displayName || u.name])),
-        subject: 'Discussion avec ' + pickedUsers.map(u => (u as User).displayName || (u as Group).name).join(', '),
+        subject: 'Discussion avec ' + pickedUsers.map(u => (u as IUser).displayName || (u as IGroup).name).join(', '),
         messages: [],
         from: Me.session.userId,
         nb: 0,

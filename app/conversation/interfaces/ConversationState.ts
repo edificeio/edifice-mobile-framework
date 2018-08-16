@@ -1,5 +1,5 @@
 import { Thread, Message } from ".";
-import { User, Group } from "../../auth/reducer";
+import { IUser, IGroup } from "../../auth/reducer";
 
 export interface ConversationState {
 	page: number;
@@ -10,8 +10,8 @@ export interface ConversationState {
 	refresh: boolean;
 	refreshThreads: boolean;
     filterCleared: boolean;
-	visibles: (User | Group)[];
-	pickedUsers: (User | Group)[];
-	remainingUsers: (User | Group)[];
+	visibles: (IUser | IGroup)[];
+	pickedUsers: (IUser | IGroup)[];
+	remainingUsers: (IUser | IGroup)[];
 	currentThread: string;
 }

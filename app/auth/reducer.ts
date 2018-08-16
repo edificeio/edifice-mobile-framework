@@ -1,42 +1,42 @@
-import * as reducerActions from './reducerActions';
+import * as reducerActions from "./reducerActions";
 
-export interface User { 
-    userId: string,
-    displayName: string
+export interface IUser {
+  userId: string;
+  displayName: string;
 }
-export interface Group { 
-    id: string,
-    name: string
-}
-
-export interface AuthState {
-	email: string
-	password: string
-	loggedIn: boolean
-	synced: boolean
-	userId: string
-    error: string
-    notificationsPrefs: any
+export interface IGroup {
+  id: string;
+  name: string;
 }
 
-export const initialState: AuthState = {
-	email: "",
-	loggedIn: false,
-	password: "",
-	synced: true,
-	userId: null,
-    error: '',
-    notificationsPrefs: []
+export interface IAuthState {
+  email: string;
+  password: string;
+  loggedIn: boolean;
+  synced: boolean;
+  userId: string;
+  error: string;
+  notificationsPrefs: any;
 }
 
-export default (state: AuthState = initialState, action): AuthState => {
-    for(let actionType in reducerActions){
-        if(action.type === actionType){
-            return reducerActions[actionType](state, action);
-        }
+export const initialState: IAuthState = {
+  email: undefined,
+  error: undefined,
+  loggedIn: false,
+  notificationsPrefs: [],
+  password: undefined,
+  synced: true,
+  userId: undefined
+};
+
+export default (state: IAuthState = initialState, action): IAuthState => {
+  for (const actionType in reducerActions) {
+    if (action.type === actionType) {
+      return reducerActions[actionType](state, action);
     }
+  }
 
-	return {
-        ...state
-    }
-}
+  return {
+    ...state
+  };
+};

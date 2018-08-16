@@ -11,7 +11,7 @@ import { unpickUser, pickUser } from "../actions/pickUser";
 import { createConversation } from "../actions/createConversation";
 import { openThread } from '../actions/thread';
 import { Thread } from "../interfaces";
-import { User } from "../../auth/reducer";
+import { IUser } from "../../auth/reducer";
 
 class NewThreadHeader extends React.Component<{ 
     navigation: any, 
@@ -45,11 +45,11 @@ export const NewConversationHeader = connect(
 )(NewThreadHeader)
 
 interface NewConversationProps{
-    remainingUsers: User[];
+    remainingUsers: IUser[];
     loadVisibles: () => Promise<void>;
-    pickedUsers: User[];
-    pickUser: (user: User) => void;
-    unpickUser: (user: User) => void;
+    pickedUsers: IUser[];
+    pickUser: (user: IUser) => void;
+    unpickUser: (user: IUser) => void;
 }
 
 class NewConversation extends React.Component<NewConversationProps, undefined> {

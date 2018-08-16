@@ -9,7 +9,7 @@ import styles from "../styles";
 import ConnectionTrackingBar from "../ui/ConnectionTrackingBar";
 import style from 'glamorous-native';
 import { LoginResult, login } from "./actions/login";
-import { AuthState } from './reducer';
+import { IAuthState } from './reducer';
 import I18n from 'react-native-i18n';
 
 const Logo = () => <View style={{ flexGrow: 2, alignItems: 'center', justifyContent: 'center' }}>
@@ -26,7 +26,7 @@ const FormContainer = style.view({
 })
 
 export class Login extends React.Component<{
-	auth: AuthState;
+	auth: IAuthState;
 	login: (email: string, password: string) => Promise<LoginResult>;
 	navigation?: any;
 	headerHeight: number;

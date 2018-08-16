@@ -1,13 +1,13 @@
-import { Group, User } from "../../auth/reducer";
+import { IGroup, IUser } from "../../auth/reducer";
 
-export const pickUser = dispatch => (user: User | Group) => {
+export const pickUser = dispatch => (user: IUser | IGroup) => {
     dispatch({
         type: 'PICK_USER_CONVERSATION',
         user: user
     })
 }
 
-export const unpickUser = dispatch => (user: User | Group) => {
+export const unpickUser = dispatch => (user: IUser | IGroup) => {
     dispatch({
         type: 'UNPICK_USER_CONVERSATION',
         user: user
