@@ -21,6 +21,7 @@ import { deleteThread } from "../actions/deleteThread";
 import styles from "../../styles";
 import I18n from "react-native-i18n";
 import { openThread } from "../actions/thread";
+import { Tracking } from "../../tracking/TrackingManager"
 
 export interface IConversationsProps {
   threads: Thread[];
@@ -61,6 +62,7 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 
   private nextPage() {
     this.props.sync(this.props.page);
+    Tracking.logEvent('refreshConversation', { direction : "ScrollDown" })
   }
 
   async fetchLatest() {
@@ -71,6 +73,7 @@ export class Conversations extends React.Component<IConversationsProps, any> {
     } catch (e) {
       this.setState({ ...this.state, isFetching: false });
     }
+    Tracking.logEvent('refreshConversation', { direction : "ScrollUp" })
   }
 
   public render() {

@@ -13,6 +13,8 @@ import {
 } from "../actions/diaryList";
 import { homeworkDiarySelected } from "../actions/selectedDiary";
 
+import { Tracking } from "../../tracking/TrackingManager";
+
 const mapStateToProps: (state: any) => IHomeworkFilterPageDataProps = state => {
   // Extract data from state
   const localState = state.homework;
@@ -45,7 +47,12 @@ const mapDispatchToProps: (
   return {
     dispatch,
     onRefresh: () => dispatch(fetchHomeworkDiaryList()),
-    onSelect: diaryId => dispatch(homeworkDiarySelected(diaryId))
+    onSelect: (diaryId, trackingKeyword) => {
+      Tracking.logEvent("selectNotebook", {
+        tab: trackingKeyword || "undefined"
+      });
+      dispatch(homeworkDiarySelected(diaryId));
+    }
   };
 };
 

@@ -42,7 +42,7 @@ export interface IHomeworkFilterPageDataProps {
 
 export interface IHomeworkFilterPageEventProps {
   onRefresh: () => void;
-  onSelect: (diaryId: string) => void;
+  onSelect: (diaryId: string, trackingKeyword?: string) => void;
 }
 
 export interface IHomeworkFilterPageOtherProps {
@@ -85,12 +85,16 @@ export class HomeworkFilterPage extends React.PureComponent<
           renderItem={({ item }) => (
             <ListItem
               style={{ justifyContent: "space-between" }}
-              onPress={() => this.handleSelectedHomeworkChanged(item.id)}
+              onPress={() =>
+                this.handleSelectedHomeworkChanged(item.id, item.title)
+              }
             >
               <Bold>{item.title}</Bold>
               <Checkbox
                 checked={selectedDiaryId === item.id}
-                onCheck={() => this.handleSelectedHomeworkChanged(item.id)}
+                onCheck={() =>
+                  this.handleSelectedHomeworkChanged(item.id, item.title)
+                }
               />
             </ListItem>
           )}
@@ -108,8 +112,8 @@ export class HomeworkFilterPage extends React.PureComponent<
 
   // Event Handlers
 
-  public handleSelectedHomeworkChanged = diaryId => {
-    this.props.onSelect(diaryId);
+  public handleSelectedHomeworkChanged = (diaryId, diaryTitle) => {
+    this.props.onSelect(diaryId, diaryTitle);
     this.props.navigation.goBack(); // TODO : Should the navigation be in mapDispatchToProps or not ?
   } /* TS-ISSUE: Syntax error on this line because of a collision between TSlint and Prettier. */
 }

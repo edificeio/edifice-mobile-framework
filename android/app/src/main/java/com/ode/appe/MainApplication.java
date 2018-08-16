@@ -28,6 +28,7 @@ import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 import io.invertase.firebase.perf.RNFirebasePerformancePackage;
 
+import com.kevinejohn.RNMixpanel.*;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -56,7 +57,8 @@ public class MainApplication extends Application implements ReactApplication {
             new RNFirebaseCrashlyticsPackage(),
             new RNFirebasePerformancePackage(),
             new RNFirebaseNotificationsPackage(),
-            new RNFirebaseMessagingPackage()
+            new RNFirebaseMessagingPackage(),
+              new RNMixpanel()
       );
     }
 

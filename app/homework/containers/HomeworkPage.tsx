@@ -11,6 +11,8 @@ import { fetchHomeworkDiaryListIfNeeded } from "../actions/diaryList";
 import { homeworkTaskSelected } from "../actions/selectedTask";
 import { fetchHomeworkTasks } from "../actions/tasks";
 
+import { Tracking } from "../../tracking/TrackingManager";
+
 const mapStateToProps: (state: any) => IHomeworkPageDataProps = state => {
   // Extract data from state
   const localState = state.homework;
@@ -50,9 +52,17 @@ const mapDispatchToProps: (
 ) => IHomeworkPageEventProps = dispatch => {
   return {
     dispatch,
-    onRefresh: diaryId => dispatch(fetchHomeworkTasks(diaryId)),
-    onSelect: (diaryId, date, itemId) =>
-      dispatch(homeworkTaskSelected(diaryId, date, itemId))
+    onRefresh: diaryId => {
+      Tracking.logEvent("refreshNotebook");
+      dispatch(fetchHomeworkTasks(diaryId));
+    },
+    onScrollBeginDrag: () => {
+      Tracking.logEvent("scrollNotebook");
+    },
+    onSelect: (diaryId, date, itemId) => {
+      Tracking.logEvent("ReadHomework");
+      dispatch(homeworkTaskSelected(diaryId, date, itemId));
+    }
   };
 };
 

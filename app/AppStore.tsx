@@ -9,6 +9,7 @@ import { middleware } from "./navigation/middleware";
 import auth from "./auth/reducer";
 import conversation from "./conversation/reducer";
 import connectionTracker from "./infra/reducers/connectionTracker";
+import ui from "./infra/reducers/ui";
 import timeline from "./timeline/reducer";
 
 import moduleDefinitions from "./AppModules";
@@ -17,6 +18,7 @@ import { getReducersFromModuleDefinitions } from "./infra/moduleTool";
 const reducers = {
   auth,
   connectionTracker,
+  ui,
   ...getReducersFromModuleDefinitions(moduleDefinitions)
 };
 

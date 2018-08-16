@@ -21,6 +21,7 @@ target 'mobileapp' do
   pod 'Crashlytics', '~> 3.9.3'
   pod 'Firebase/Performance'
   pod 'Firebase/Messaging'
+  pod 'Mixpanel'
 
   # Pod is not used for react-native-fetch-blob. COnfiguration done in Xcode directly.
   # pod 'react-native-fetch-blob', :path => '../node_modules/react-native-fetch-blob'

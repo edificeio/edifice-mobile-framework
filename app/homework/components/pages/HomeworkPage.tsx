@@ -61,6 +61,7 @@ export interface IHomeworkPageDataProps {
 export interface IHomeworkPageEventProps {
   onRefresh?: (diaryId: string) => void;
   onSelect?: (diaryId: string, date: moment.Moment, itemId: string) => void;
+  onScrollBeginDrag?: () => void;
 }
 
 export interface IHomeworkPageOtherProps {
@@ -113,7 +114,8 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
       isFetching,
       navigation,
       onRefresh,
-      onSelect
+      onSelect,
+      onScrollBeginDrag
     } = this.props;
 
     return (
@@ -143,6 +145,7 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
             />
           }
           onViewableItemsChanged={this.handleViewableItemsChanged}
+          onScrollBeginDrag={() => onScrollBeginDrag()}
         />
       </View>
     );

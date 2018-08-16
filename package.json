@@ -43,6 +43,7 @@
     "@types/react-navigation": "^1.0.31",
     "@types/react-redux": "6.0.4",
     "@types/redux": "3.6.0",
+    "@types/sax": "^1.0.1",
     "@types/webpack-env": "^1.13.2",
     "babel-jest": "^22.2.0",
     "babel-preset-react-native": "4.0.0",
@@ -62,7 +63,6 @@
     "typescript": "^3.0.1"
   },
   "dependencies": {
-    "@types/sax": "^1.0.1",
     "fast-html-parser": "1.0.1",
     "glamorous-native": "1.4.0",
     "memoize-one": "^4.0.0",
@@ -80,6 +80,7 @@
     "react-native-image-picker": "^0.26.7",
     "react-native-image-to-base64": "git://github.com/SanderVerkuil/react-native-image-to-base64#patch-1",
     "react-native-iphone-x-helper": "1.0.2",
+    "react-native-mixpanel": "^1.0.2",
     "react-native-modal": "5.0.0",
     "react-native-smart-splash-screen": "2.3.5",
     "react-native-snap-carousel": "3.5.0",
