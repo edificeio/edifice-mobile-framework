@@ -80,7 +80,7 @@ export class Conversations extends React.Component<IConversationsProps, any> {
     if (!this.props.threads || this.props.threads.length === 0) {
       return (
         <EmptyScreen
-          imageSrc={require("../../../assets/images/empty-screen/espacedoc.png")}
+          imageSrc={require("../../../assets/images/empty-screen/conversations.png")}
           imgWidth={800}
           imgHeight={672}
           text={I18n.t("conversation-emptyScreenText")}
