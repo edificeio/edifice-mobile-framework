@@ -21,10 +21,13 @@ import style from "glamorous-native";
 import * as React from "react";
 const { FlatList } = style;
 import { RefreshControl } from "react-native";
+import I18n from "react-native-i18n";
 
 import { ListItem, PageContainer } from "../../../ui/ContainerContent";
 
+import { Loading } from "../../../ui";
 import ConnectionTrackingBar from "../../../ui/ConnectionTrackingBar";
+import { EmptyScreen } from "../../../ui/EmptyScreen";
 import { Checkbox } from "../../../ui/forms/Checkbox";
 import { Bold } from "../../../ui/Typography";
 
@@ -74,40 +77,69 @@ export class HomeworkFilterPage extends React.PureComponent<
   // render & lifecycle
 
   public render() {
-    const { diaryList, selectedDiaryId, isFetching, onRefresh } = this.props;
+    const pageContent = this.props.diaryList
+      ? this.props.diaryList.length === 0
+        ? this.props.isFetching
+          ? this.renderLoading()
+          : this.renderEmptyScreen()
+        : this.renderList()
+      : this.renderLoading();
 
     return (
       <PageContainer>
         <ConnectionTrackingBar />
-        <FlatList
-          innerRef={this.setFlatListRef}
-          data={diaryList}
-          renderItem={({ item }) => (
-            <ListItem
-              style={{ justifyContent: "space-between" }}
-              onPress={() =>
-                this.handleSelectedHomeworkChanged(item.id, item.title)
-              }
-            >
-              <Bold>{item.title}</Bold>
-              <Checkbox
-                checked={selectedDiaryId === item.id}
-                onCheck={() =>
-                  this.handleSelectedHomeworkChanged(item.id, item.title)
-                }
-              />
-            </ListItem>
-          )}
-          keyExtractor={item => item.id}
-          refreshControl={
-            <RefreshControl
-              refreshing={isFetching}
-              onRefresh={() => onRefresh()}
-            />
-          }
-        />
+        {pageContent}
       </PageContainer>
     );
+  }
+
+  private renderList() {
+    const { diaryList, selectedDiaryId, isFetching, onRefresh } = this.props;
+    return (
+      <FlatList
+        innerRef={this.setFlatListRef}
+        data={diaryList}
+        renderItem={({ item }) => (
+          <ListItem
+            style={{ justifyContent: "space-between" }}
+            onPress={() =>
+              this.handleSelectedHomeworkChanged(item.id, item.title)
+            }
+          >
+            <Bold>{item.title}</Bold>
+            <Checkbox
+              checked={selectedDiaryId === item.id}
+              onCheck={() =>
+                this.handleSelectedHomeworkChanged(item.id, item.title)
+              }
+            />
+          </ListItem>
+        )}
+        keyExtractor={item => item.id}
+        refreshControl={
+          <RefreshControl
+            refreshing={isFetching}
+            onRefresh={() => onRefresh()}
+          />
+        }
+      />
+    );
+  }
+
+  private renderEmptyScreen() {
+    return (
+      <EmptyScreen
+        imageSrc={require("../../../../assets/images/empty-screen/homework.png")}
+        imgWidth={265.98}
+        imgHeight={279.97}
+        text={I18n.t("homework-emptyScreenText")}
+        title={I18n.t("homework-emptyScreenTitle")}
+      />
+    );
+  }
+
+  private renderLoading() {
+    return <Loading />;
   }
 
   // Event Handlers
