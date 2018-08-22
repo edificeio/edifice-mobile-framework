@@ -16,7 +16,8 @@ const initialState: ConversationState = {
     visibles: [],
     pickedUsers: [],
     remainingUsers: [],
-    currentThread: undefined
+    currentThread: undefined,
+    fetching: false
 }
 
 export default (state: ConversationState = initialState, action): ConversationState => {
