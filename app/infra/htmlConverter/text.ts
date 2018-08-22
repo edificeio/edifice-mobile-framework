@@ -47,6 +47,7 @@ export class HtmlConverterText extends HtmlConverter {
       },
       ontext: (text: string) => {
         text = commonParsingEventHandlers.ontext(text);
+        if (!text) return "";
         if (this.newLine) {
           // console.warn("this is a new line");
           this._render += this.ignoreLineBreaks ? " " : "\n";
