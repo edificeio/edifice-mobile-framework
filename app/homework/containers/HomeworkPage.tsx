@@ -60,7 +60,7 @@ const mapDispatchToProps: (
       Tracking.logEvent("scrollNotebook");
     },
     onSelect: (diaryId, date, itemId) => {
-      Tracking.logEvent("ReadHomework");
+      Tracking.logEvent("readHomework");
       dispatch(homeworkTaskSelected(diaryId, date, itemId));
     }
   };
