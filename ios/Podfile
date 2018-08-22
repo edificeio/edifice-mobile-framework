@@ -1,5 +1,5 @@
 # Uncomment the next line to define a global platform for your project
-# platform :ios, '9.0'
+platform :ios, '9.0'
 project 'mobileapp.xcodeproj'
 
 target 'mobileapp' do
@@ -7,12 +7,13 @@ target 'mobileapp' do
   # use_frameworks!
   pod "yoga", :path => "../node_modules/react-native/ReactCommon/yoga"
   pod 'React', :path => '../node_modules/react-native', :subspecs => [
-    'BatchedBridge', # Required For React Native 0.45.0+
+    # 'BatchedBridge', # Required For React Native 0.45.0+
+    'CxxBridge',
     'Core',
     'DevSupport',
     # Add any other subspecs you want to use in your project
   ]
-  pod 'RNFirebase', path: '../node_modules/react-native-firebase/ios' 
+  pod 'RNFirebase', path: '../node_modules/react-native-firebase/ios'
 
   # Pods for mobileapp
   pod 'Firebase/Core'
@@ -20,10 +21,19 @@ target 'mobileapp' do
   pod 'Crashlytics', '~> 3.9.3'
   pod 'Firebase/Performance'
   pod 'Firebase/Messaging'
+  pod 'Mixpanel'
 
   # Pod is not used for react-native-fetch-blob. COnfiguration done in Xcode directly.
   # pod 'react-native-fetch-blob', :path => '../node_modules/react-native-fetch-blob'
 
   pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
 
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    if target.name == "React"
+      target.remove_from_project
+    end
+  end
 end

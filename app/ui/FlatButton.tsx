@@ -1,6 +1,6 @@
 import style from "glamorous-native"
 import * as React from "react"
-import { Row, RowProperties } from "./index"
+import { Row, RowProperties } from "."
 import { CommonStyles } from "../styles/common/styles"
 import { Icon } from "./icons/Icon";
 import { connect } from "react-redux";
@@ -17,7 +17,7 @@ export interface ValidTextIconProps {
 	title?: string
 	whiteSpace?: string
 	keyboardShow?: boolean;
-	loading: boolean;
+	loading: boolean; // FIXME? Loading shouldn't be in state as it can change over time ?
 }
 
 export interface State {

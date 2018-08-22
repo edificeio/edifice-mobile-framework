@@ -1,6 +1,6 @@
 import style from "glamorous-native"
 import * as React from "react";
-import { RowProperties } from "../ui/index";
+import { RowProperties } from ".";
 import I18n from 'react-native-i18n';
 import { Icon } from "./icons/Icon";
 
@@ -24,8 +24,8 @@ const LinkStyle = style.text({
 }));
 
 export const ButtonLine = ({ onPress, title, color, hideIcon }: { onPress: () => any, title: string, color?: string, hideIcon?: boolean }) => (
-	<Container onPress={() => onPress()}>
-		<LinkStyle color={ color }>{ I18n.t(title) }</LinkStyle>
+	<Container onPress={() => onPress()}> {/* FIXME: a ButtonLine without onClick prop will raise an error. Fire an event up or use onPress={onPress}. */}
+		<LinkStyle color={ color }>{ I18n.t(title) }</LinkStyle> {/* FIXME: This UI button force to use translation. It shouldn't. */}
 		{ !hideIcon && <Icon name="arrow_down" color={ "#868CA0" } style={{ transform: [{ rotate: '270deg'}]}} />}
 	</Container>
 )

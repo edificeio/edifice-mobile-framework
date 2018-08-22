@@ -31,7 +31,11 @@
     RELEASE mode
     https://facebook.github.io/react-native/docs/running-on-device.html#building-your-app-for-production
   */
-  jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+  //jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+  jsCodeLocation = [NSURL URLWithString:@"http://localhost:8081/index.bundle?platform=ios"];
+
+  [FIRApp configure];
+  [RNFirebaseNotifications configure];
 
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"mobileapp"
@@ -44,9 +48,6 @@
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
-
-  [FIRApp configure];
-  [RNFirebaseNotifications configure];
   
   return YES;
 }

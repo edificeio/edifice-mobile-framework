@@ -5,6 +5,8 @@
 # Xcode
 #
 build/
+ios/Pods/
+ios/Podfile.lock
 *.pbxuser
 !default.pbxuser
 *.mode1v3
@@ -22,6 +24,9 @@ DerivedData
 *.xcuserstate
 project.xcworkspace
 
+# VS Code
+.vscode/
+
 # Android/IntelliJ
 #
 build/
@@ -30,11 +35,12 @@ build/
 local.properties
 *.iml
 
-# node.js
+# node.js / npm
 #
 node_modules/
 npm-debug.log
 yarn-error.log
+package-lock.json
 
 # BUCK
 buck-out/
