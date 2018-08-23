@@ -88,10 +88,11 @@ export class Conversations extends React.Component<IConversationsProps, any> {
         return (
           <EmptyScreen
             imageSrc={require("../../../assets/images/empty-screen/conversations.png")}
-            imgWidth={800}
-            imgHeight={672}
+            imgWidth={571}
+            imgHeight={261}
             text={I18n.t("conversation-emptyScreenText")}
             title={I18n.t("conversation-emptyScreenTitle")}
+            scale={0.76}
           />
         );
     }

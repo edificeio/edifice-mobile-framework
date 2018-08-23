@@ -152,8 +152,8 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
     return (
       <EmptyScreen
         imageSrc={require("../../../assets/images/empty-screen/timeline.png")}
-        imgWidth={800}
-        imgHeight={672}
+        imgWidth={407}
+        imgHeight={319}
         text={I18n.t("timeline-emptyScreenText")}
         title={I18n.t("timeline-emptyScreenTitle")}
       />

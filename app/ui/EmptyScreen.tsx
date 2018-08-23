@@ -10,6 +10,7 @@
  * text: small grey text at the bottom
  * imgWidth: original image width in pixels
  * imgHeight: original imageHeight in pixels
+ * scale: size of the image relative to screen width (defaut 0.6)
  */
 
 import * as React from "react";
@@ -23,7 +24,8 @@ export const EmptyScreen = ({
   title,
   text,
   imgWidth,
-  imgHeight
+  imgHeight,
+  scale
 }: {
   imageSrc?: ImageSourcePropType;
   svgXmlData?: string;
@@ -31,10 +33,11 @@ export const EmptyScreen = ({
   text?: string;
   imgWidth: number;
   imgHeight: number;
+  scale?: number;
 }) => {
   const { width, height } = Dimensions.get("window");
   const ratio = imgWidth / imgHeight;
-  const scale = 0.6;
+  scale = scale || 0.6;
 
   return (
     <PageContainer
