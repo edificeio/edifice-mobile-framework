@@ -4,7 +4,7 @@ import { CommonStyles } from "../styles/common/styles";
 export const Bold = style.text({
   color: CommonStyles.textColor,
   fontFamily: CommonStyles.primaryFontFamily,
-  fontSize: 12,
+  fontSize: 14,
   fontWeight: "600"
 });
 
