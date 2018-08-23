@@ -71,29 +71,46 @@ export class HtmlConverterText extends HtmlConverter {
     // console.warn(this._render);
   }
 
-  public static SHORT_TEXT_MAX_SIZE: number = 70;
+  public static SHORT_TEXT_MAX_SIZE: number = 64;
+  public static SHORT_TEXT_MAX_LINES: number = 2;
   public static NEW_LINE_CHARACTER: string = "\n";
   /**
-   * Returns the beginning of text. Text is cut at the first line break and at the `maxSize` character position.
+   * Returns the beginning of text. Text is cut at the `maxLines`th line break and at the `maxSize` character position.
    * This does not cut the text within a word.
    * Add "..." at the end unless text is too short to be cut.
-   * @param maxSize max number of characters to keep (default 70)
+   * Caution: this function is not aware of word-wrapping as it depends on the render procedure, so the text is not guaranted to be displayed under `maxLines` lines.
+   * Therefore, it is guaranted to be under `maxSize` chars.
+   * @param maxSize max number of characters to keep (default 64)
+   * @param maxLines max number of lines ot keep (only if htmlToText has been created with ignoreLineBreaks = false)
    * @param newLineChar force cut after this new line character. (but it can be any character or string you want) (default "\n")
    */
   public getExcerpt(
     maxSize = HtmlConverterText.SHORT_TEXT_MAX_SIZE,
+    maxLines = HtmlConverterText.SHORT_TEXT_MAX_LINES,
     newLineChar = HtmlConverterText.NEW_LINE_CHARACTER
   ): string {
     const text = this._render;
-    const firstLine = text.split(newLineChar, 1)[0];
-    let trimmedFirstLine = (firstLine + " ").substr(0, maxSize);
-    trimmedFirstLine = trimmedFirstLine.substr(
+    const firstLines = text.split(newLineChar, maxLines);
+    let mx = maxSize;
+    const nbCharsByLine = maxSize / firstLines.length;
+    for (let i = 1; i < firstLines.length; ++i) {
+      mx -= nbCharsByLine - (firstLines[i - 1].length % nbCharsByLine) - 1;
+    }
+    maxSize = mx;
+    let trimmedFirstLines = (firstLines.join("\n") + " ").substr(0, maxSize);
+    trimmedFirstLines = trimmedFirstLines.substr(
       0,
-      Math.min(trimmedFirstLine.length, trimmedFirstLine.lastIndexOf(" "))
+      Math.min(
+        trimmedFirstLines.length,
+        Math.max(
+          trimmedFirstLines.lastIndexOf(" "),
+          trimmedFirstLines.lastIndexOf(newLineChar)
+        )
+      )
     );
-    trimmedFirstLine = trimmedFirstLine.trim();
-    if (trimmedFirstLine.length !== text.length) trimmedFirstLine += "...";
-    return trimmedFirstLine;
+    trimmedFirstLines = trimmedFirstLines.trim();
+    if (trimmedFirstLines.length !== text.length) trimmedFirstLines += "...";
+    return trimmedFirstLines;
   }
   public get excerpt() {
     return this.getExcerpt();

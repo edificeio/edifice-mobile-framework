@@ -43,16 +43,25 @@ export const HomeworkCard = ({
   content,
   onPress
 }: IHomeworkCardProps) => {
+  const formattedContent = HtmlToText(content, false).excerpt;
   return (
     <TouchableOpacity style={[homeworkCardStyle, style]} onPress={onPress}>
-      <Text fontSize={14} color={CommonStyles.textColor} lineHeight={20}>
-        {/* TODO typo */}
-        {HtmlToText(content, true).excerpt}
-      </Text>
-      <Text fontSize={12} color={CommonStyles.lightTextColor} marginTop={5}>
-        {/* TODO typo */}
-        {title}
-      </Text>
+      {formattedContent && (
+        <Text fontSize={14} color={CommonStyles.textColor} lineHeight={20}>
+          {/* TODO typo */}
+          {formattedContent}
+        </Text>
+      )}
+      {title && (
+        <Text
+          fontSize={12}
+          color={CommonStyles.lightTextColor}
+          marginTop={formattedContent ? 5 : 0}
+        >
+          {/* TODO typo */}
+          {title}
+        </Text>
+      )}
     </TouchableOpacity>
   );
 };
