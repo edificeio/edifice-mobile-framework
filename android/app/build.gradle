@@ -102,7 +102,7 @@ android {
         applicationId "com.ode.appe"
         minSdkVersion 19
         targetSdkVersion 22
-        versionCode 6
+        versionCode 7
         versionName "0.0.7"
         ndk {
             abiFilters "armeabi-v7a", "x86"
