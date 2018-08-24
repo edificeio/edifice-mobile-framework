@@ -19,7 +19,7 @@
 
 import style from "glamorous-native";
 import * as React from "react";
-const { FlatList } = style;
+const { FlatList, View } = style;
 import { RefreshControl } from "react-native";
 import I18n from "react-native-i18n";
 
@@ -101,18 +101,31 @@ export class HomeworkFilterPage extends React.PureComponent<
         data={diaryList}
         renderItem={({ item }) => (
           <ListItem
-            style={{ justifyContent: "space-between" }}
+            style={{
+              alignItems: "stretch",
+              justifyContent: "space-between",
+              width: "100%"
+            }}
             onPress={() =>
               this.handleSelectedHomeworkChanged(item.id, item.title)
             }
           >
-            <Bold>{item.title}</Bold>
-            <Checkbox
-              checked={selectedDiaryId === item.id}
-              onCheck={() =>
-                this.handleSelectedHomeworkChanged(item.id, item.title)
-              }
-            />
+            <View
+              style={{
+                flex: 1,
+                paddingRight: 4
+              }}
+            >
+              <Bold>{item.title}</Bold>
+            </View>
+            <View style={{ justifyContent: "center" }}>
+              <Checkbox
+                checked={selectedDiaryId === item.id}
+                onCheck={() =>
+                  this.handleSelectedHomeworkChanged(item.id, item.title)
+                }
+              />
+            </View>
           </ListItem>
         )}
         keyExtractor={item => item.id}
