@@ -57,6 +57,7 @@
   "homework-emptyScreenTitle": "Aucun devoir à l'horizon",
   "homework-emptyScreenText": "Bientôt, vous pourrez consulter tous les devoirs à faire sur ce cahier de textes numérique. Génial, non ?",
   "homework-select": "Vos cahiers de textes",
+  "homework-task-empty-title": "Devoirs",
   "auth-networkError": "L'authentification a échoué. Vérifiez votre connexion à internet.",
   "conversation-newMessage": "Nouveau message",
   "to": "À :",
