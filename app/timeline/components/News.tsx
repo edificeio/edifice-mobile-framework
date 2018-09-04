@@ -34,7 +34,7 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
     this.props.onPress(expend);
   }
 
-  render() {
+  public render() {
     const {
       date,
       senderId,
@@ -60,7 +60,11 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
             </CenterPanel>
           </Header>
           <Preview textContent={message} onExpend={() => this.open(true)} />
-          {images.length ? <Images images={images} /> : <View />}
+          {images.length ? (
+            <Images images={images} style={message ? { marginTop: 15 } : {}} />
+          ) : (
+            <View />
+          )}
         </TouchCard>
       </ArticleContainer>
     );

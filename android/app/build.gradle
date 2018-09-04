@@ -97,14 +97,13 @@ def enableProguardInReleaseBuilds = false
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.1"
-
+    
     defaultConfig {
         applicationId "com.ode.appe"
         minSdkVersion 19
         targetSdkVersion 22
-        versionCode 6
-        versionName "0.0.6"
+        versionCode 8
+        versionName "0.0.8"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }

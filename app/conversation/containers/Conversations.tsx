@@ -1,27 +1,30 @@
 import style from "glamorous-native";
 import * as React from "react";
-import { Text, RefreshControl } from "react-native";
-import { FlatList, View } from "react-native";
+import { FlatList, RefreshControl, Text } from "react-native";
+import I18n from "react-native-i18n";
 import Swipeable from "react-native-swipeable";
-import { Thread } from "../interfaces";
-import { EmptyScreen } from "../../ui/EmptyScreen";
-import { PageContainer } from "../../ui/ContainerContent";
-import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
-import { ModalBox, ModalContent } from "../../ui/Modal";
-import { ButtonsOkCancel, Icon } from "../../ui";
-import { Conversation } from "../components/Conversation";
 import { connect } from "react-redux";
+
+import { Thread } from "../interfaces";
+
+import { ButtonsOkCancel, Icon, Loading } from "../../ui";
+import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
+import { PageContainer } from "../../ui/ContainerContent";
+import { EmptyScreen } from "../../ui/EmptyScreen";
+import { ModalBox, ModalContent } from "../../ui/Modal";
+import { Conversation } from "../components/Conversation";
+
 import {
-  readNextConversation,
-  fetchConversation,
   clearFilterConversation,
-  findReceivers
+  fetchConversation,
+  findReceivers,
+  readNextConversation
 } from "../actions";
 import { deleteThread } from "../actions/deleteThread";
-import styles from "../../styles";
-import I18n from "react-native-i18n";
 import { openThread } from "../actions/thread";
-import { Tracking } from "../../tracking/TrackingManager"
+
+import styles from "../../styles";
+import { Tracking } from "../../tracking/TrackingManager";
 
 export interface IConversationsProps {
   threads: Thread[];
@@ -34,23 +37,21 @@ export interface IConversationsProps {
   refresh: boolean;
   filter: (filter: string) => void;
   openThread: (thread: string) => void;
+  isFetching: boolean;
 }
 
 export class Conversations extends React.Component<IConversationsProps, any> {
-  state = {
-    isFetching: false,
-    deleteThread: undefined as any
-  };
+  public state = { isFetching: false, deleteThread: undefined as any };
 
-  swipeRef = undefined;
+  private swipeRef = undefined;
 
-  componentWillReceiveProps(nextProps) {
+  public componentWillReceiveProps(nextProps) {
     if (nextProps.refresh) {
       this.props.sync(0);
     }
   }
 
-  componentDidMount() {
+  public componentDidMount() {
     this.nextPage();
   }
 
@@ -62,10 +63,12 @@ export class Conversations extends React.Component<IConversationsProps, any> {
 
   private nextPage() {
     this.props.sync(this.props.page);
-    Tracking.logEvent('refreshConversation', { direction : "ScrollDown" })
+    Tracking.logEvent("refreshConversation", {
+      direction: "ScrollDown"
+    });
   }
 
-  async fetchLatest() {
+  public async fetchLatest() {
     this.setState({ ...this.state, isFetching: true });
     try {
       await this.props.fetch();
@@ -73,20 +76,25 @@ export class Conversations extends React.Component<IConversationsProps, any> {
     } catch (e) {
       this.setState({ ...this.state, isFetching: false });
     }
-    Tracking.logEvent('refreshConversation', { direction : "ScrollUp" })
+    Tracking.logEvent("refreshConversation", {
+      direction: "ScrollUp"
+    });
   }
 
   public render() {
     if (!this.props.threads || this.props.threads.length === 0) {
-      return (
-        <EmptyScreen
-          imageSrc={require("../../../assets/images/empty-screen/conversations.png")}
-          imgWidth={800}
-          imgHeight={672}
-          text={I18n.t("conversation-emptyScreenText")}
-          title={I18n.t("conversation-emptyScreenTitle")}
-        />
-      );
+      if (this.props.isFetching) return <Loading />;
+      else
+        return (
+          <EmptyScreen
+            imageSrc={require("../../../assets/images/empty-screen/conversations.png")}
+            imgWidth={571}
+            imgHeight={261}
+            text={I18n.t("conversation-emptyScreenText")}
+            title={I18n.t("conversation-emptyScreenTitle")}
+            scale={0.76}
+          />
+        );
     }
 
     return (
@@ -100,7 +108,11 @@ export class Conversations extends React.Component<IConversationsProps, any> {
             <Text>{I18n.t("common-confirm")}</Text>
             <Text>{I18n.t("conversation-deleteThread")}</Text>
             <ButtonsOkCancel
-              onCancel={() => this.setState({ deleteThread: undefined })}
+              onCancel={() =>
+                this.setState({
+                  deleteThread: undefined
+                })
+              }
               onValid={() => this.deleteThread(this.state.deleteThread)}
               title={I18n.t("delete")}
             />
@@ -126,16 +138,20 @@ export class Conversations extends React.Component<IConversationsProps, any> {
     );
   }
 
-  deleteThread(conversation) {
+  public deleteThread(conversation) {
     this.swipeRef.recenter();
     this.props.deleteThread(conversation);
     this.setState({ deleteThread: undefined });
   }
 
-  swipeoutButton(conversation: Thread) {
+  public swipeoutButton(conversation: Thread) {
     return [
       <RightButton
-        onPress={() => this.setState({ deleteThread: conversation })}
+        onPress={() =>
+          this.setState({
+            deleteThread: conversation
+          })
+        }
       >
         <Icon size={18} color="#ffffff" name="trash" />
       </RightButton>
@@ -182,7 +198,8 @@ export default connect(
         ) !== -1
     ),
     nbThreads: state.conversation.threads.length,
-    refresh: state.conversation.refresh
+    refresh: state.conversation.refresh,
+    isFetching: state.conversation.fetching
   }),
   dispatch => ({
     sync: (page: number) => readNextConversation(dispatch)(page),

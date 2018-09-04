@@ -47,7 +47,9 @@ const homeworkDiaryListAdapter: (
   data: IHomeworkDiaryListBackend
 ) => IHomeworkDiaryList = data => {
   const result = {} as any;
+  if (!data) return result;
   for (const item of data) {
+    if (item.trashed) continue;
     result[item._id] = {
       id: item._id,
       name: item.name,

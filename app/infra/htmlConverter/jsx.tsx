@@ -617,7 +617,17 @@ export class HtmlConverterJsx extends HtmlConverter {
           javaScriptEnabled={true}
           domStorageEnabled={true}
           source={{ uri: iframeNugget.src }}
-          renderLoading={() => <Loading />}
+          renderLoading={() => (
+            <View
+              style={{
+                backgroundColor: "#eeeeee",
+                height: "100%",
+                width: "100%"
+              }}
+            >
+              <Loading />
+            </View>
+          )}
           startInLoadingState={true}
           scrollEnabled={false}
         />

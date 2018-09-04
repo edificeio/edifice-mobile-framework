@@ -47,7 +47,7 @@ export class NewsContent extends React.Component<{ navigation?: any, expend?: bo
                     </CenterPanel>
                 </Header>
                 { this.state.expend ? <Paragraph>{ message }</Paragraph> : <Preview textContent={ message } onExpend={ () => this.setState({ expend: true }) } /> }
-                <Images images={images} />
+                <Images images={images} style={message ? { marginTop: 15 } : {}}/>
             </View>
         )
     }

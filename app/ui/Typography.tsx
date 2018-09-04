@@ -11,7 +11,7 @@ export const Bold = style.text({
 export const Italic = style.text({
   color: CommonStyles.textColor,
   fontFamily: CommonStyles.primaryFontFamily,
-  fontSize: 14,
+  fontSize: 12,
   fontStyle: "italic"
 });
 
@@ -38,13 +38,13 @@ export const Paragraph = style.text(
 export const LightP = style.text({
   color: CommonStyles.lightTextColor,
   fontFamily: CommonStyles.primaryFontFamily,
-  fontSize: 14
+  fontSize: 12
 });
 
 export const Label = style.text({
   color: "#858FA9",
   fontFamily: CommonStyles.primaryFontFamilyLight,
-  fontSize: 14,
+  fontSize: 12,
   fontWeight: "400",
   textAlignVertical: "center"
 });
@@ -52,7 +52,7 @@ export const Label = style.text({
 export const Quote = style.text({
   color: "rgba(133,143,169,1)",
   fontFamily: CommonStyles.primaryFontFamily,
-  fontSize: 14,
+  fontSize: 12,
   fontWeight: "400",
   marginBottom: 20,
   marginTop: 20,
@@ -62,7 +62,7 @@ export const Quote = style.text({
 export const A = style.text({
   color: CommonStyles.actionColor,
   fontFamily: CommonStyles.primaryFontFamily,
-  fontSize: 14,
+  fontSize: 12,
   marginTop: 10
 });
 

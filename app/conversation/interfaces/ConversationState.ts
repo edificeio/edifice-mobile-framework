@@ -14,4 +14,5 @@ export interface ConversationState {
 	pickedUsers: (IUser | IGroup)[];
 	remainingUsers: (IUser | IGroup)[];
 	currentThread: string;
+	fetching: boolean;
 }

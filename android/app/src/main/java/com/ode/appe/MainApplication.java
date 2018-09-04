@@ -2,19 +2,19 @@ package com.ode.appe;
 
 import android.app.Application;
 
-import com.AlexanderZaytsev.RNI18n.RNI18nPackage;
-import com.RNFetchBlob.RNFetchBlobPackage;
 import com.facebook.react.ReactApplication;
+import com.horcrux.svg.SvgPackage;
+import com.psykar.cookiemanager.CookieManagerPackage;
+import com.github.xfumihiro.react_native_image_to_base64.ImageToBase64Package;
+import com.RNFetchBlob.RNFetchBlobPackage;
+import com.imagepicker.ImagePickerPackage;
+import com.AlexanderZaytsev.RNI18n.RNI18nPackage;
 import com.entria.views.RNViewOverflowPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
-import com.github.xfumihiro.react_native_image_to_base64.ImageToBase64Package;
-import com.horcrux.svg.SvgPackage;
-import com.imagepicker.ImagePickerPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
-import com.psykar.cookiemanager.CookieManagerPackage;
 import com.reactnativecomponent.splashscreen.RCTSplashScreenPackage;
 import com.rnfs.RNFSPackage;
 
@@ -58,7 +58,7 @@ public class MainApplication extends Application implements ReactApplication {
             new RNFirebasePerformancePackage(),
             new RNFirebaseNotificationsPackage(),
             new RNFirebaseMessagingPackage(),
-              new RNMixpanel()
+            new RNMixpanel()
       );
     }
 

@@ -1,5 +1,6 @@
 import style from "glamorous-native";
 import * as React from "react";
+import I18n from "react-native-i18n";
 
 import { Back } from "../../../ui/headers/Back";
 import { AppTitle, Header } from "../../../ui/headers/Header";
@@ -17,7 +18,9 @@ export const HomeworkTaskPageHeader = ({
   return (
     <Header>
       <Back navigation={navigation} />
-      <AppTitleStyled>{title}</AppTitleStyled>
+      <AppTitleStyled>
+        {title || I18n.t("homework-task-empty-title")}
+      </AppTitleStyled>
     </Header>
   );
 };

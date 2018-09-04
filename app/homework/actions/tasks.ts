@@ -55,11 +55,13 @@ const homeworkTasksAdapter: (
   data: IHomeworkTasksBackend
 ) => IHomeworkTasks = data => {
   // Get all the backend homeworkDays.
+  if (!data) return { byId: {}, ids: [] };
   const dataDays = data.data;
   const ret = {
     byId: {},
     ids: []
   };
+  if (!data.data) return { byId: {}, ids: [] };
   // Now it's time to iterate over the days.
   for (const itemday of dataDays) {
     if (itemday.entries.length === 0) continue; // If no tasks this day we skip it.
