@@ -12,8 +12,6 @@ import TimelineNavigator from "../timeline/TimelineNavigator";
 import moduleDefinitions from "../AppModules";
 import { getRoutesFromModuleDefinitions } from "../infra/moduleTool";
 
-const baab = getRoutesFromModuleDefinitions(moduleDefinitions);
-
 const MainNavigator = tabNavigator({
   // TODO put the routes on moduleDefinitions
   timeline: {

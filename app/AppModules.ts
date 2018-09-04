@@ -7,5 +7,9 @@ export default [
   {
     config: require("./homework/config").default,
     module: require("./homework").default
+  },
+  {
+    config: require("./user/config").default,
+    module: require("./user").default
   }
 ];
