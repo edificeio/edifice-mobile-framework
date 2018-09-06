@@ -33,7 +33,7 @@ export default (state: ConnectionTrackerState = initialState, action): Connectio
     }
 
 	if(action.type === 'CONNECTED_CONNECTION_TRACKER'){
-        console.log('connected')
+        console.log('netinfo connected')
 		return {
             ...state,
             connected: true,
@@ -42,7 +42,7 @@ export default (state: ConnectionTrackerState = initialState, action): Connectio
     }
     
     if(action.type === 'DISCONNECTED_CONNECTION_TRACKER'){
-        console.log('disconnected')
+        console.log('netinfo disconnected')
 		return {
             ...state,
             connected: false,

@@ -2,6 +2,8 @@ import { AsyncStorage } from "react-native";
 import { Conf } from "../Conf";
 import { Connection } from "./Connection";
 
+console.log("Distant platform:", Conf.platform);
+
 /**
  * Perform a fetch operation usign the standard fetch api, with cache management.
  * It will saves the result of the fetch in the cache storage, and get from it if internet connexion isn't available.

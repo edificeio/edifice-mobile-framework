@@ -4,19 +4,21 @@ import { ThunkAction } from "redux-thunk";
 import { Conf } from "../../Conf";
 import { navigate } from "../../utils/navHelper";
 
-export function login(credentials?: {
-  username: string;
-  password: string;
-}): ThunkAction<void, any, null, AnyAction> {
+export enum LoginResult {
+  success,
+  passwordError,
+  connectionError
+}
+
+export function login(credentials?: { username: string; password: string }) {
   return async (dispatch, getState) => {
     try {
       // tslint:disable-next-line:no-console
-      console.log("start login");
       const token = credentials
         ? await getToken(credentials)
         : await loadToken();
       // tslint:disable-next-line:no-console
-      console.log(token);
+      console.log("auth token: ", token);
       dispatch({ type: "LOGGED" });
     } catch (errmsg) {
       // dispatch(homeworkDiaryListFetchError(errmsg));
@@ -37,7 +39,7 @@ export async function getToken(credentials: {
 }) {
   try {
     // tslint:disable-next-line:no-console
-    console.log("get new token");
+    console.log("get new token with: ", credentials);
     throw new Error("not implemented");
   } catch (errmsg) {
     // dispatch(homeworkDiaryListFetchError(errmsg));
@@ -53,7 +55,7 @@ export async function getToken(credentials: {
 export async function loadToken() {
   try {
     // tslint:disable-next-line:no-console
-    console.log("get new token");
+    console.log("load saved token");
     throw new Error("not implemented");
   } catch (errmsg) {
     // dispatch(homeworkDiaryListFetchError(errmsg));

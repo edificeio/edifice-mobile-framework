@@ -3,7 +3,7 @@ import { NavigationContainer, StackNavigator } from "react-navigation";
 import { tabNavigator, tabRootOptions } from "../utils/navHelper";
 
 import I18n from "react-native-i18n";
-import Login from "../auth/Login";
+import LoginPage from "../user/containers/LoginPage";
 
 import AccountNavigation from "../auth/AccountNavigation";
 import ConversationNavigator from "../conversation/ConversationNavigator";
@@ -45,7 +45,7 @@ const MainNavigator = tabNavigator({
 export const AppNavigator: NavigationContainer = StackNavigator(
   {
     Bootstrap: { screen: View },
-    Login: { screen: Login },
+    Login: { screen: LoginPage },
     Main: { screen: MainNavigator }
   },
   {

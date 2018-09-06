@@ -2,7 +2,7 @@ import ImagePicker from 'react-native-image-picker';
 import { Conf } from '../../Conf';
 import { Tracking } from '../../tracking/TrackingManager';
 
-console.log(ImagePicker);
+// console.log(ImagePicker);
 
 export const takePhoto = (): Promise<string> => {
     return new Promise((resolve, reject) => {
