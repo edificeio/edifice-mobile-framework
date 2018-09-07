@@ -11,11 +11,9 @@ export function login(credentials?: { username: string; password: string }) {
   return async (dispatch, getState) => {
     try {
       // tslint:disable-next-line:no-console
-      const token = credentials
-        ? await getToken(credentials)
-        : await loadToken();
+      credentials ? await getToken(credentials) : await loadToken();
+      console.log(oauth.isExpired());
       // tslint:disable-next-line:no-console
-      console.log("auth token: ", token);
       dispatch({ type: "LOGGED" });
     } catch (errmsg) {
       // dispatch(homeworkDiaryListFetchError(errmsg));
@@ -37,11 +35,13 @@ export async function getToken(credentials: {
   try {
     // tslint:disable-next-line:no-console
     console.log("get new token with: ", credentials);
-    // TODO work with oauth2
+    await oauth.getToken(credentials.username, credentials.password);
+    // tslint:disable-next-line:no-console
+    console.log(oauth);
   } catch (errmsg) {
     // dispatch(homeworkDiaryListFetchError(errmsg));
     // tslint:disable-next-line:no-console
-    console.warn("get tokens failed.");
+    console.warn("get tokens failed.", errmsg);
     throw errmsg;
   }
 }

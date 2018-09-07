@@ -2,8 +2,8 @@
  * OAuth2 client for Ressource OWner Credentials Grant type flow.
  */
 
-import { decode as atob, encode as btoa } from "base-64";
-import Querystring from "querystring";
+import { encode as btoa } from "base-64";
+import querystring from "querystring";
 import { Conf } from "../Conf";
 
 export enum ERROR_TYPES {
@@ -82,7 +82,7 @@ class OAuth2RessourceOwnerClient {
     try {
       return await response.json();
     } catch (e) {
-      return Querystring.parse(await response.text());
+      throw new Error("invalid Json oauth response");
     }
   }
 
@@ -96,8 +96,8 @@ class OAuth2RessourceOwnerClient {
   /**
    * Create basic auth header.
    */
-  private getAuthHeader(username: string, password: string): string {
-    return "Basic " + btoa(username || "" + ":" + password || "");
+  private getAuthHeader(clientId: string, clientSecret: string): string {
+    return "Basic " + btoa(clientId || "" + ":" + clientSecret || "");
   }
 
   /**
@@ -125,10 +125,10 @@ class OAuth2RessourceOwnerClient {
 
     try {
       const response = await fetch(`${this.accessTokenUri}`, {
-        body: {
+        body: querystring.stringify({
           grant_type: "refresh_token",
           refresh_token: this.token.refresh_token
-        } as any,
+        }),
         headers: {
           ...OAuth2RessourceOwnerClient.DEFAULT_HEADERS,
           Authorization: this.getAuthHeader(this.clientId, this.clientSecret)
@@ -153,6 +153,7 @@ class OAuth2RessourceOwnerClient {
       };
     } catch (e) {
       // Check error type
+      console.warn(e);
     }
   }
 
@@ -173,38 +174,62 @@ class OAuth2RessourceOwnerClient {
    * Get a fresh new access token with owner credentials
    */
   public async getToken(username: string, password: string) {
+    console.log("try get token request");
+    const body = {
+      client_id: this.clientId,
+      client_secret: this.clientSecret,
+      grant_type: "password",
+      password,
+      scope: this.sanitizeScope(this.scope),
+      username
+    };
+    const headers = {
+      ...OAuth2RessourceOwnerClient.DEFAULT_HEADERS
+    };
+    console.log(headers, body);
+
     try {
-      const response = await fetch(`${this.accessTokenUri}`, {
-        body: {
-          grant_type: "password",
-          password,
-          scope: this.sanitizeScope(this.scope),
-          username
-        } as any,
-        headers: {
-          ...OAuth2RessourceOwnerClient.DEFAULT_HEADERS,
-          Authorization: this.getAuthHeader(this.clientId, this.clientSecret)
-        },
+      const data = await this.request(this.accessTokenUri, {
+        body,
+        headers,
         method: "POST"
       });
-      const data = await this.parseResponseBody(response);
-      const authErr = this.getAuthError(data);
-      if (authErr) throw new Error(authErr.code);
-      if (response.status < 200 || response.status >= 399) {
-        const statusErr = new Error("HTTP status " + response.status) as any;
-        statusErr.status = response.status;
-        statusErr.body = response.body;
-        statusErr.code = "ESTATUS";
-        throw new Error(statusErr.status + " " + statusErr.body);
-      }
-
+      console.log(data);
       this.token = {
         ...data,
         expires_at: this.getExpirationDate(data.expires_in)
       };
+      console.log(this.token);
     } catch (e) {
       // Check error type
+      console.warn(e);
     }
+  }
+
+  private async request(url: string, options: any) {
+    const body = querystring.stringify(options.body);
+    const query = querystring.stringify(options.query);
+    if (query) {
+      // append url query with the given one
+      url += (url.indexOf("?") === -1 ? "?" : "&") + query;
+    }
+    const response = await fetch(url, {
+      body,
+      headers: options.headers,
+      method: options.method
+    });
+    console.log(response);
+    const data = await this.parseResponseBody(response);
+    const authErr = this.getAuthError(data);
+    if (authErr) throw new Error(authErr.code);
+    if (response.status < 200 || response.status >= 399) {
+      const statusErr = new Error("HTTP status " + response.status) as any;
+      statusErr.status = response.status;
+      statusErr.body = response.body;
+      statusErr.code = "ESTATUS";
+      throw new Error(statusErr.status + " " + statusErr.body);
+    }
+    return data;
   }
 }
 
