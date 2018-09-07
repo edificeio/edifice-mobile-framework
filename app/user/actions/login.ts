@@ -1,7 +1,4 @@
-import { AnyAction } from "redux";
-import { ThunkAction } from "redux-thunk";
-
-import { Conf } from "../../Conf";
+import oauth from "../../infra/oauth";
 import { navigate } from "../../utils/navHelper";
 
 export enum LoginResult {
@@ -40,7 +37,7 @@ export async function getToken(credentials: {
   try {
     // tslint:disable-next-line:no-console
     console.log("get new token with: ", credentials);
-    throw new Error("not implemented");
+    // TODO work with oauth2
   } catch (errmsg) {
     // dispatch(homeworkDiaryListFetchError(errmsg));
     // tslint:disable-next-line:no-console
@@ -60,7 +57,7 @@ export async function loadToken() {
   } catch (errmsg) {
     // dispatch(homeworkDiaryListFetchError(errmsg));
     // tslint:disable-next-line:no-console
-    console.warn("get tokens failed.");
+    console.warn("load token failed.");
     throw errmsg;
   }
 }
