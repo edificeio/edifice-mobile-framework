@@ -18,7 +18,8 @@ export function login(credentials?: { username: string; password: string }) {
       } else {
         await loadToken();
       }
-      dispatch({ type: "LOGGED" });
+      dispatch({ type: "USER_LOGGED_IN" });
+      navigate("Main");
     } catch (errmsg) {
       // dispatch(homeworkDiaryListFetchError(errmsg));
       // tslint:disable-next-line:no-console
@@ -92,4 +93,20 @@ export async function eraseToken() {
     console.warn("erasing token failed.");
     throw err;
   }
+}
+
+export function logout() {
+  return async (dispatch, getState) => {
+    try {
+      oauth.unsetToken();
+      await eraseToken();
+      dispatch({ type: "USER_LOGGED_OUT" });
+      navigate("Login"); // TODO : place the user e-mail here
+    } catch (errmsg) {
+      // dispatch(homeworkDiaryListFetchError(errmsg));
+      // tslint:disable-next-line:no-console
+      console.warn("login failed.");
+      navigate("Login", { email: "" });
+    }
+  };
 }

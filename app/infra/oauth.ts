@@ -113,7 +113,8 @@ class OAuth2RessourceOwnerClient {
 
     requestObject.headers = requestObject.headers || {};
     if (this._token.token_type.toLowerCase() === "bearer") {
-      requestObject.headers.Authorization = "Bearer " + this._token.access_token;
+      requestObject.headers.Authorization =
+        "Bearer " + this._token.access_token;
     } else {
       throw new Error("Only Bearer token type supported.");
     }
@@ -229,6 +230,10 @@ class OAuth2RessourceOwnerClient {
       throw new Error(statusErr.status + " " + statusErr.body);
     }
     return data;
+  }
+
+  public unsetToken() {
+    this._token = null;
   }
 }
 

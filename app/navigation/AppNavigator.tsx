@@ -5,7 +5,6 @@ import { tabNavigator, tabRootOptions } from "../utils/navHelper";
 import I18n from "react-native-i18n";
 import LoginPage from "../user/containers/LoginPage";
 
-import AccountNavigation from "../auth/AccountNavigation";
 import ConversationNavigator from "../conversation/ConversationNavigator";
 import TimelineNavigator from "../timeline/TimelineNavigator";
 
@@ -27,8 +26,9 @@ const MainNavigator = tabNavigator({
       tabRootOptions(I18n.t("Conversation"), "conversation")
   },
 
-  ...getRoutesFromModuleDefinitions(moduleDefinitions),
+  ...getRoutesFromModuleDefinitions(moduleDefinitions)
 
+  /*
   profile: {
     screen: AccountNavigation,
 

@@ -2,17 +2,17 @@ import * as React from "react";
 import { StackNavigator } from "react-navigation";
 import { navOptions } from "../utils/navHelper";
 
-import { View } from "react-native";
+import ProfilePage, { ProfilePageHeader } from "./containers/ProfilePage";
 
 export default StackNavigator({
   Profile: {
     navigationOptions: ({ navigation }) =>
       navOptions(
         {
-          header: <View />
+          header: <ProfilePageHeader navigation={navigation} />
         },
         navigation
       ),
-    screen: View
+    screen: ProfilePage
   }
 });
