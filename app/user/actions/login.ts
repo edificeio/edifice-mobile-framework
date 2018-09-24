@@ -1,4 +1,6 @@
-import oauth from "../../infra/oauth";
+import { AsyncStorage } from "react-native";
+
+import oauth, { IOAuthToken } from "../../infra/oauth";
 import { navigate } from "../../utils/navHelper";
 
 export enum LoginResult {
@@ -10,10 +12,12 @@ export enum LoginResult {
 export function login(credentials?: { username: string; password: string }) {
   return async (dispatch, getState) => {
     try {
-      // tslint:disable-next-line:no-console
-      credentials ? await getToken(credentials) : await loadToken();
-      console.log(oauth.isExpired());
-      // tslint:disable-next-line:no-console
+      if (credentials) {
+        await getToken(credentials);
+        await saveToken(oauth.token);
+      } else {
+        await loadToken();
+      }
       dispatch({ type: "LOGGED" });
     } catch (errmsg) {
       // dispatch(homeworkDiaryListFetchError(errmsg));
@@ -33,8 +37,6 @@ export async function getToken(credentials: {
   password: string;
 }) {
   try {
-    // tslint:disable-next-line:no-console
-    console.log("get new token with: ", credentials);
     await oauth.getToken(credentials.username, credentials.password);
     // tslint:disable-next-line:no-console
     console.log(oauth);
@@ -49,15 +51,45 @@ export async function getToken(credentials: {
 /**
  * Read stored token in local storage.
  */
-export async function loadToken() {
+export async function loadToken(): Promise<IOAuthToken> {
   try {
     // tslint:disable-next-line:no-console
     console.log("load saved token");
-    throw new Error("not implemented");
+    const token = JSON.parse(await AsyncStorage.getItem("token"));
+    if (!token) throw new Error("No token stored");
+    // tslint:disable-next-line:no-console
+    console.log(token);
+    return token;
   } catch (errmsg) {
     // dispatch(homeworkDiaryListFetchError(errmsg));
     // tslint:disable-next-line:no-console
     console.warn("load token failed.");
     throw errmsg;
+  }
+}
+
+/**
+ * Saves given token information in local storage.
+ */
+export async function saveToken(token: IOAuthToken) {
+  try {
+    await AsyncStorage.setItem("token", JSON.stringify(token));
+  } catch (err) {
+    // tslint:disable-next-line:no-console
+    console.warn("saving token failed.");
+    throw err;
+  }
+}
+
+/**
+ * Earse stored token information in local storage.
+ */
+export async function eraseToken() {
+  try {
+    await AsyncStorage.removeItem("token");
+  } catch (err) {
+    // tslint:disable-next-line:no-console
+    console.warn("erasing token failed.");
+    throw err;
   }
 }

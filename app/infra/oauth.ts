@@ -38,7 +38,11 @@ class OAuth2RessourceOwnerClient {
     "Content-Type": "application/x-www-form-urlencoded"
   };
 
-  private token: IOAuthToken = null;
+  // tslint:disable-next-line:variable-name
+  private _token: IOAuthToken = null;
+  public get token() {
+    return this._token;
+  }
   private accessTokenUri: string = "";
   private clientId: string = "";
   private clientSecret: string = "";
@@ -104,12 +108,12 @@ class OAuth2RessourceOwnerClient {
    * Sign a standardised request object with user authentication information.
    */
   public sign(requestObject) {
-    if (!this.token || !this.token.access_token)
+    if (!this._token || !this._token.access_token)
       throw new Error("Unable to sign without access token.");
 
     requestObject.headers = requestObject.headers || {};
-    if (this.token.token_type.toLowerCase() === "bearer") {
-      requestObject.headers.Authorization = "Bearer " + this.token.access_token;
+    if (this._token.token_type.toLowerCase() === "bearer") {
+      requestObject.headers.Authorization = "Bearer " + this._token.access_token;
     } else {
       throw new Error("Only Bearer token type supported.");
     }
@@ -120,14 +124,14 @@ class OAuth2RessourceOwnerClient {
    * Refresh a user access token with the supplied token.
    */
   public async refreshToken() {
-    if (!this.token || !this.token.refresh_token)
+    if (!this._token || !this._token.refresh_token)
       throw new Error("No refresh token provided.");
 
     try {
       const response = await fetch(`${this.accessTokenUri}`, {
         body: querystring.stringify({
           grant_type: "refresh_token",
-          refresh_token: this.token.refresh_token
+          refresh_token: this._token.refresh_token
         }),
         headers: {
           ...OAuth2RessourceOwnerClient.DEFAULT_HEADERS,
@@ -146,8 +150,8 @@ class OAuth2RessourceOwnerClient {
         throw new Error(statusErr.status + " " + statusErr.body);
       }
 
-      this.token = {
-        ...this.token,
+      this._token = {
+        ...this._token,
         ...data,
         expires_at: this.getExpirationDate(data.expires_in)
       };
@@ -161,7 +165,7 @@ class OAuth2RessourceOwnerClient {
    * Is stored token actually expired ?
    */
   public isExpired() {
-    return this.token && Date.now() > this.token.expires_at.getTime();
+    return this._token && Date.now() > this._token.expires_at.getTime();
   }
 
   private getExpirationDate(seconds: number) {
@@ -174,7 +178,6 @@ class OAuth2RessourceOwnerClient {
    * Get a fresh new access token with owner credentials
    */
   public async getToken(username: string, password: string) {
-    console.log("try get token request");
     const body = {
       client_id: this.clientId,
       client_secret: this.clientSecret,
@@ -186,7 +189,6 @@ class OAuth2RessourceOwnerClient {
     const headers = {
       ...OAuth2RessourceOwnerClient.DEFAULT_HEADERS
     };
-    console.log(headers, body);
 
     try {
       const data = await this.request(this.accessTokenUri, {
@@ -194,12 +196,10 @@ class OAuth2RessourceOwnerClient {
         headers,
         method: "POST"
       });
-      console.log(data);
-      this.token = {
+      this._token = {
         ...data,
         expires_at: this.getExpirationDate(data.expires_in)
       };
-      console.log(this.token);
     } catch (e) {
       // Check error type
       console.warn(e);
@@ -218,7 +218,6 @@ class OAuth2RessourceOwnerClient {
       headers: options.headers,
       method: options.method
     });
-    console.log(response);
     const data = await this.parseResponseBody(response);
     const authErr = this.getAuthError(data);
     if (authErr) throw new Error(authErr.code);
