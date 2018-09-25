@@ -4,6 +4,7 @@
 
 import { encode as btoa } from "base-64";
 import querystring from "querystring";
+import { AsyncStorage } from "react-native";
 import { Conf } from "../Conf";
 
 export enum ERROR_TYPES {
@@ -41,7 +42,12 @@ class OAuth2RessourceOwnerClient {
   // tslint:disable-next-line:variable-name
   private _token: IOAuthToken = null;
   public get token() {
+    // TODO: refrsh if necesary ?
     return this._token;
+  }
+  public set token(t: IOAuthToken) {
+    // TODO: refrsh if necesary ?
+    this._token = t;
   }
   private accessTokenUri: string = "";
   private clientId: string = "";
@@ -71,6 +77,7 @@ class OAuth2RessourceOwnerClient {
       const err: Error & { body?: any; code?: string } = new Error(body.error);
       err.body = body;
       err.code = "EAUTH";
+      console.warn(err);
       return err;
     }
     return null;
@@ -129,10 +136,14 @@ class OAuth2RessourceOwnerClient {
       throw new Error("No refresh token provided.");
 
     try {
+      console.log("refreshing token...");
       const response = await fetch(`${this.accessTokenUri}`, {
         body: querystring.stringify({
+          client_id: this.clientId,
+          client_secret: this.clientSecret,
           grant_type: "refresh_token",
-          refresh_token: this._token.refresh_token
+          refresh_token: this._token.refresh_token,
+          scope: this.sanitizeScope(this.scope)
         }),
         headers: {
           ...OAuth2RessourceOwnerClient.DEFAULT_HEADERS,
@@ -140,6 +151,7 @@ class OAuth2RessourceOwnerClient {
         },
         method: "POST"
       });
+      console.log(response);
       const data = await this.parseResponseBody(response);
       const authErr = this.getAuthError(data);
       if (authErr) throw new Error(authErr.code);
@@ -166,7 +178,8 @@ class OAuth2RessourceOwnerClient {
    * Is stored token actually expired ?
    */
   public isExpired() {
-    return this._token && Date.now() > this._token.expires_at.getTime();
+    console.log(new Date(), this._token.expires_at);
+    return this._token && new Date() > this._token.expires_at;
   }
 
   private getExpirationDate(seconds: number) {
@@ -192,6 +205,7 @@ class OAuth2RessourceOwnerClient {
     };
 
     try {
+      console.log("requesting fresh tokens");
       const data = await this.request(this.accessTokenUri, {
         body,
         headers,
@@ -201,9 +215,12 @@ class OAuth2RessourceOwnerClient {
         ...data,
         expires_at: this.getExpirationDate(data.expires_in)
       };
+      console.log("received new token : ", this._token);
+      return this._token;
     } catch (e) {
       // Check error type
       console.warn(e);
+      throw e;
     }
   }
 
@@ -237,9 +254,77 @@ class OAuth2RessourceOwnerClient {
   }
 }
 
-export default new OAuth2RessourceOwnerClient(
+const oauth = new OAuth2RessourceOwnerClient(
   `${Conf.platform}/auth/oauth2/token`,
   "app-e",
   "ODE",
-  ["userinfo"]
+  ["userinfo", "homeworks"]
 );
+
+export default oauth;
+
+/**
+ * Force get a fresh new token with given credentials.
+ * @param credentials
+ */
+export async function getToken(credentials: {
+  username: string;
+  password: string;
+}) {
+  try {
+    await oauth.getToken(credentials.username, credentials.password);
+    // tslint:disable-next-line:no-console
+  } catch (errmsg) {
+    // dispatch(homeworkDiaryListFetchError(errmsg));
+    // tslint:disable-next-line:no-console
+    console.warn("get token failed.", errmsg);
+    throw errmsg;
+  }
+}
+
+/**
+ * Read stored token in local storage.
+ */
+export async function loadToken(): Promise<IOAuthToken> {
+  try {
+    // tslint:disable-next-line:no-console
+    const token = JSON.parse(await AsyncStorage.getItem("token"));
+    if (!token) throw new Error("No token stored");
+    console.log("load saved token");
+    // tslint:disable-next-line:no-console
+    console.log(token);
+    oauth.token = token;
+    return token;
+  } catch (errmsg) {
+    // dispatch(homeworkDiaryListFetchError(errmsg));
+    // tslint:disable-next-line:no-console
+    console.warn("load token failed.", errmsg);
+    throw errmsg;
+  }
+}
+
+/**
+ * Saves given token information in local storage.
+ */
+export async function saveToken(token: IOAuthToken) {
+  try {
+    await AsyncStorage.setItem("token", JSON.stringify(token));
+  } catch (err) {
+    // tslint:disable-next-line:no-console
+    console.warn("saving token failed.");
+    throw err;
+  }
+}
+
+/**
+ * Earse stored token information in local storage.
+ */
+export async function eraseToken() {
+  try {
+    await AsyncStorage.removeItem("token");
+  } catch (err) {
+    // tslint:disable-next-line:no-console
+    console.warn("erasing token failed.");
+    throw err;
+  }
+}
