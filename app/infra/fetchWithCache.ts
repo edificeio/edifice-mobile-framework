@@ -1,20 +1,20 @@
 import { AsyncStorage } from "react-native";
 import { Conf } from "../Conf";
 import { Connection } from "./Connection";
-import oauth, { saveToken } from "./oauth";
+import oauth from "./oauth";
 
+// tslint:disable-next-line:no-console
 console.log("Distant platform:", Conf.platform);
 
 export async function signedFetch(url: string, init: any): Promise<Response> {
   try {
     if (oauth.isExpired()) {
       await oauth.refreshToken();
-      await saveToken(oauth.token);
     }
     const params = oauth.sign(init);
-    console.log(params);
     return fetch(url, params);
   } catch (err) {
+    // tslint:disable-next-line:no-console
     console.warn("failed fetch with token: ", err);
     throw err;
   }
@@ -45,7 +45,6 @@ export async function fetchWithCache(
   if (Connection.isOnline && (forceSync || !dataFromCache)) {
     // console.log("fetch from web");
     const response = await signedFetch(`${platform}${path}`, init);
-    console.log(response);
     const cacheResponse = {
       body: await getBody(response.clone()),
       init: {

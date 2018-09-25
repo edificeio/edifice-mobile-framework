@@ -1,9 +1,4 @@
-import oauth, {
-  eraseToken,
-  getToken,
-  loadToken,
-  saveToken
-} from "../../infra/oauth";
+import oauth from "../../infra/oauth";
 import { navigate } from "../../utils/navHelper";
 
 export enum LoginResult {
@@ -16,15 +11,13 @@ export function login(credentials?: { username: string; password: string }) {
   return async (dispatch, getState) => {
     try {
       if (credentials) {
-        await getToken(credentials);
-        await saveToken(oauth.token);
+        await oauth.getToken(credentials.username, credentials.password);
       } else {
-        await loadToken();
+        await oauth.loadToken();
       }
       dispatch({ type: "USER_LOGGED_IN" });
       navigate("Main");
     } catch (errmsg) {
-      // dispatch(homeworkDiaryListFetchError(errmsg));
       // tslint:disable-next-line:no-console
       console.warn("login failed.");
       navigate("Login", { email: "" });
@@ -35,12 +28,10 @@ export function login(credentials?: { username: string; password: string }) {
 export function logout() {
   return async (dispatch, getState) => {
     try {
-      oauth.unsetToken();
-      await eraseToken();
+      await oauth.eraseToken();
       dispatch({ type: "USER_LOGGED_OUT" });
       navigate("Login"); // TODO : place the user e-mail here
     } catch (errmsg) {
-      // dispatch(homeworkDiaryListFetchError(errmsg));
       // tslint:disable-next-line:no-console
       console.warn("login failed.");
       navigate("Login", { email: "" });
