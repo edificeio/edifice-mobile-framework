@@ -20,12 +20,12 @@ import { ErrorMessage } from "../../ui/Typography";
 
 // Type definitions
 import { login, LoginResult } from "../actions/login";
-import { IAuthState } from "../reducers/auth";
+import { IUserAuthState } from "../reducers/auth";
 
 // Props definition -------------------------------------------------------------------------------
 
 export interface ILoginPageDataProps {
-  auth: IAuthState;
+  auth: IUserAuthState;
   headerHeight: number;
 }
 
@@ -44,7 +44,7 @@ export type ILoginPageProps = ILoginPageDataProps &
 // State definition -------------------------------------------------------------------------------
 
 export interface ILoginPageState {
-  username: string;
+  login: string;
   password: string;
   typing: boolean;
   loading: boolean;
@@ -52,17 +52,17 @@ export interface ILoginPageState {
 
 const initialState: ILoginPageState = {
   loading: false,
+  login: undefined,
   password: "",
-  typing: false,
-  username: undefined
+  typing: false
 };
 
-export const getInitialStateWithUsername = username => ({
+export const getInitialStateWithUsername = login => ({
   error: "",
   loggedIn: false,
+  login,
   password: "",
-  synced: true,
-  username
+  synced: true
 });
 
 // Main component ---------------------------------------------------------------------------------
@@ -97,8 +97,8 @@ export class LoginPage extends React.Component<
   get isDisabled() {
     return (
       !(
-        this.state.username ||
-        this.props.auth.username ||
+        this.state.login ||
+        this.props.auth.login ||
         this.props.navigation.state.params.email
       ) || !this.state.password
     );
@@ -139,9 +139,9 @@ export class LoginPage extends React.Component<
 
   protected renderForm() {
     const { loggedIn, error } = this.props.auth;
-    let { username } = this.props.auth;
-    if (!username) {
-      username = this.props.navigation.state.params.email;
+    let { login } = this.props.auth;
+    if (!login) {
+      login = this.props.navigation.state.params.email;
     }
 
     return (
@@ -150,12 +150,10 @@ export class LoginPage extends React.Component<
         <TextInputLine
           inputRef={this.setInputLoginRef}
           placeholder={I18n.t("Login")}
-          onChangeText={username =>
-            this.setState({ username: username.trim(), typing: true })
+          onChangeText={login =>
+            this.setState({ login: login.trim(), typing: true })
           }
-          value={
-            this.state.username !== undefined ? this.state.username : username
-          }
+          value={this.state.login !== undefined ? this.state.login : login}
           hasError={error && !this.state.typing}
         />
         <TextInputLine
@@ -194,8 +192,8 @@ export class LoginPage extends React.Component<
   protected async handleLogin() {
     this.setState({ ...this.state, loading: true });
     const result = await this.props.onLogin(
-      this.state.username ||
-        this.props.auth.username ||
+      this.state.login ||
+        this.props.auth.login ||
         this.props.navigation.state.params.email,
       this.state.password
     );
@@ -219,7 +217,7 @@ export class LoginPage extends React.Component<
 
 export default connect(
   (state: any, props: any) => ({
-    auth: state.auth,
+    auth: state.user.auth,
     headerHeight: state.ui.headerHeight
   }),
   dispatch => ({

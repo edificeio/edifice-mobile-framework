@@ -17,7 +17,7 @@ import moduleDefinitions from "./AppModules";
 import { getReducersFromModuleDefinitions } from "./infra/moduleTool";
 
 const reducers = {
-  auth,
+  auth, // TODO remove auth in favor of user (dynamic module)
   connectionTracker,
   ui,
   ...getReducersFromModuleDefinitions(moduleDefinitions)

@@ -6,6 +6,11 @@ import oauth from "./oauth";
 // tslint:disable-next-line:no-console
 console.log("Distant platform:", Conf.platform);
 
+/**
+ * Perform a fetch operation with a oAuth Token. Use it like fetch().
+ * @param url url including platform
+ * @param init request options
+ */
 export async function signedFetch(url: string, init: any): Promise<Response> {
   try {
     if (oauth.isExpired()) {
@@ -16,6 +21,23 @@ export async function signedFetch(url: string, init: any): Promise<Response> {
   } catch (err) {
     // tslint:disable-next-line:no-console
     console.warn("failed fetch with token: ", err);
+    throw err;
+  }
+}
+
+/**
+ * Perform a fetch operation with a oAuth Token. Use it like fetch().
+ * Use it when the intended response is JSON to get directly the resulting object.
+ * @param url url including platform
+ * @param init request options
+ */
+export async function signedFetchJson(url: string, init: any): Promise<object> {
+  try {
+    const response = await signedFetch(url, init);
+    return response.json();
+  } catch (err) {
+    // tslint:disable-next-line:no-console
+    console.warn("failed fetch json with token: ", err);
     throw err;
   }
 }
@@ -45,6 +67,7 @@ export async function fetchWithCache(
   if (Connection.isOnline && (forceSync || !dataFromCache)) {
     // console.log("fetch from web");
     const response = await signedFetch(`${platform}${path}`, init);
+    console.log("response:", response);
     const cacheResponse = {
       body: await getBody(response.clone()),
       init: {
