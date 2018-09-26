@@ -13,6 +13,8 @@ export function login(credentials?: { username: string; password: string }) {
       if (credentials) {
         await oauth.getToken(credentials.username, credentials.password);
       } else {
+        // Here, an offline user will try to load a token.
+        // If a token is stored, it allows the user to be offline.
         await oauth.loadToken();
       }
       dispatch({ type: "USER_LOGGED_IN" });
