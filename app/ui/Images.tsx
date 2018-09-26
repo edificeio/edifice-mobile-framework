@@ -1,19 +1,7 @@
 import style from "glamorous-native";
 import * as React from "react";
-import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-  Modal,
-  Dimensions,
-  Animated,
-  Platform,
-  ViewStyle
-} from "react-native";
-import { Row, Icon } from ".";
-import { StackNavigator } from "react-navigation";
-import FitImage from "react-native-fit-image";
+import { Dimensions, View, ViewStyle } from "react-native";
+import { Row } from ".";
 import { Carousel } from "./Carousel";
 
 const BubbleText = style.text({
@@ -24,49 +12,50 @@ const BubbleText = style.text({
 const ContainerImage = style.view({});
 
 const SoloImage = style.touchableOpacity({
-  width: "100%",
-  backgroundColor: "#eeeeee"
+  backgroundColor: "#eeeeee",
+  width: "100%"
 });
 
 const QuarterImage = style.touchableOpacity({
-  width: "100%",
-  backgroundColor: "#eeeeee"
+  backgroundColor: "#eeeeee",
+  width: "100%"
 });
 
 const Overlay = style.touchableOpacity({
-  width: "100%",
-  position: "absolute",
+  backgroundColor: "rgba(0,0,0,0.5)",
   bottom: 0,
+  position: "absolute",
   right: 0,
-  backgroundColor: "rgba(0,0,0,0.5)"
+  width: "100%"
 });
 
 const Column = style.view({
-  width: "50%",
-  justifyContent: "space-between"
+  justifyContent: "space-between",
+  width: "50%"
 });
 
 const StretchImage = style.image({
-  width: "100%",
-  height: "100%"
+  height: "100%",
+  width: "100%"
 });
 
 export class Images extends React.Component<
-  { images: object[]; style?: ViewStyle },
+  { images: Array<{ src: object; alt: string }>; style?: ViewStyle },
   any
 > {
-  state = {
-    fullscreen: false,
-    currentImage: 0
+  public state = {
+    currentImage: 0,
+    fullscreen: false
   };
 
-  openImage(index) {
+  public openImage(index) {
     this.setState({ fullscreen: true, currentImage: index });
   }
 
-  images() {
+  public images() {
     const { width, height } = Dimensions.get("window");
     const { images } = this.props;
+    console.log("print images", images);
 
     const heightRatio = width * 0.6;
 
@@ -77,7 +66,7 @@ export class Images extends React.Component<
           style={{ height: heightRatio }}
           onPress={() => this.openImage(0)}
         >
-          <StretchImage source={images[0]} />
+          <StretchImage source={images[0].src} />
         </SoloImage>
       );
     }
@@ -89,7 +78,7 @@ export class Images extends React.Component<
               style={{ height: heightRatio }}
               onPress={() => this.openImage(0)}
             >
-              <StretchImage source={images[0]} />
+              <StretchImage source={images[0].src} />
             </SoloImage>
           </Column>
           <Column style={{ paddingLeft: 5 }}>
@@ -97,7 +86,7 @@ export class Images extends React.Component<
               style={{ height: heightRatio }}
               onPress={() => this.openImage(1)}
             >
-              <StretchImage source={images[1]} />
+              <StretchImage source={images[1].src} />
             </SoloImage>
           </Column>
         </Row>
@@ -111,7 +100,7 @@ export class Images extends React.Component<
               style={{ height: heightRatio }}
               onPress={() => this.openImage(0)}
             >
-              <StretchImage source={images[0]} />
+              <StretchImage source={images[0].src} />
             </SoloImage>
           </Column>
           <Column style={{ paddingLeft: 5 }}>
@@ -119,13 +108,13 @@ export class Images extends React.Component<
               style={{ height: heightRatio / 2 - 5 }}
               onPress={() => this.openImage(1)}
             >
-              <StretchImage source={images[1]} />
+              <StretchImage source={images[1].src} />
             </QuarterImage>
             <QuarterImage
               style={{ height: heightRatio / 2 - 5 }}
               onPress={() => this.openImage(2)}
             >
-              <StretchImage source={images[2]} />
+              <StretchImage source={images[2].src} />
             </QuarterImage>
           </Column>
         </Row>
@@ -139,13 +128,13 @@ export class Images extends React.Component<
               style={{ height: heightRatio / 2 - 5 }}
               onPress={() => this.openImage(0)}
             >
-              <StretchImage source={images[0]} />
+              <StretchImage source={images[0].src} />
             </QuarterImage>
             <QuarterImage
               style={{ height: heightRatio / 2 - 5 }}
               onPress={() => this.openImage(2)}
             >
-              <StretchImage source={images[2]} />
+              <StretchImage source={images[2].src} />
             </QuarterImage>
           </Column>
           <Column style={{ paddingLeft: 5 }}>
@@ -153,13 +142,13 @@ export class Images extends React.Component<
               style={{ height: heightRatio / 2 - 5 }}
               onPress={() => this.openImage(1)}
             >
-              <StretchImage source={images[1]} />
+              <StretchImage source={images[1].src} />
             </QuarterImage>
             <QuarterImage
               style={{ height: heightRatio / 2 - 5 }}
               onPress={() => this.openImage(3)}
             >
-              <StretchImage source={images[3]} />
+              <StretchImage source={images[3].src} />
             </QuarterImage>
             {images.length > 4 && (
               <Overlay
@@ -204,12 +193,12 @@ export class Images extends React.Component<
 }
 
 const BubbleView = style.view({
-  position: "absolute",
   backgroundColor: "rgba(0,0,0,0.5)",
-  width: 30,
-  height: 30,
-  padding: 5,
   borderRadius: 15,
+  height: 30,
   left: "50%",
-  marginLeft: -10
+  marginLeft: -10,
+  padding: 5,
+  position: "absolute",
+  width: 30
 });

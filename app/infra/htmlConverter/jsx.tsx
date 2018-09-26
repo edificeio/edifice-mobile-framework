@@ -26,6 +26,7 @@ import sax from "sax";
 
 import { Conf } from "../../Conf";
 import { A, Bold, Italic } from "../../ui/Typography";
+import oauth from "../oauth";
 
 export interface IHtmlConverterJsxOptions {
   formatting?: boolean;
@@ -246,19 +247,19 @@ export class HtmlConverterJsx extends HtmlConverter {
    * @param src
    * @param alt
    * @param thumbnailSize
-   * @return {alt: string, uri: string}
+   * @return {alt: string, src: string}
    */
   protected parseImgSrcAlt(
     src: string,
     alt: string = "",
     thumbnailSize: string = this.opts.thumbnailSize
-  ): { alt: string; uri: string } {
+  ): { alt: string; src: string } {
     if (src.indexOf("file://") === -1) {
       src = Conf.platform + src;
       const split = src.split("?");
       src = split[0] + "?thumbnail=" + thumbnailSize;
     }
-    return { alt, uri: src };
+    return { alt, src };
   }
 
   /**
@@ -596,7 +597,28 @@ export class HtmlConverterJsx extends HtmlConverter {
     key: string,
     style: ViewStyle = {}
   ): JSX.Element {
-    return <Images images={imageNugget.images} key={key} style={style} />;
+    return (
+      <Images
+        images={this.signImagesUrls(imageNugget.images)}
+        key={key}
+        style={style}
+      />
+    );
+  }
+
+  /**
+   * Returns a image array with signed url requests.
+   */
+  protected signImagesUrls(
+    images: Array<{ src: string; alt: string }>
+  ): Array<{ src: object; alt: string }> {
+    return images.map(v => ({
+      alt: v.alt,
+      src: oauth.sign({
+        method: "GET",
+        uri: v.src
+      })
+    }));
   }
 
   /**

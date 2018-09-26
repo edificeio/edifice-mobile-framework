@@ -300,7 +300,7 @@ const oauth = new OAuth2RessourceOwnerClient(
   `${Conf.platform}/auth/oauth2/token`,
   "app-e",
   "ODE",
-  ["userinfo", "homeworks"]
+  ["userinfo", "homeworks", "workspace", "directory"]
 );
 
 export default oauth;

@@ -61,7 +61,10 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
           </Header>
           <Preview textContent={message} onExpend={() => this.open(true)} />
           {images.length ? (
-            <Images images={images} style={message ? { marginTop: 15 } : {}} />
+            <Images
+              images={images as any} // TODO: `images` has not the right array object format
+              style={message ? { marginTop: 15 } : {}}
+            />
           ) : (
             <View />
           )}
