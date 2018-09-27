@@ -1,6 +1,6 @@
 import moment from "moment";
 
-import { actionTypeLogin } from "../actions/login";
+import { actionTypeLogin, actionTypeLogout } from "../actions/login";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -64,7 +64,8 @@ const infoReducer = (state: IUserInfoState = stateDefault, action) => {
         lastLogin: moment(action.userdata.lastLogin),
         modified: moment(action.userdata.modified)
       };
-    // TODO action Logout
+    case actionTypeLogout:
+      return stateDefault;
     default:
       return state;
   }

@@ -1,4 +1,4 @@
-import { actionTypeLogin } from "../actions/login";
+import { actionTypeLogin, actionTypeLogout } from "../actions/login";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -30,7 +30,9 @@ const authReducer = (state: IUserAuthState = stateDefault, action) => {
         synced: true,
         userId: action.userbook.id
       };
-    // TODO action Logout
+    case actionTypeLogout:
+      console.log("dispatching logout: ", action);
+      return stateDefault;
     default:
       return state;
   }

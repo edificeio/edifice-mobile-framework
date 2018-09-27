@@ -4,6 +4,7 @@ import { navigate } from "../../utils/navHelper";
 import userConfig from "../config";
 
 export const actionTypeLogin = userConfig.createActionType("LOGGED_IN");
+export const actionTypeLogout = userConfig.createActionType("LOGGED_OUT");
 
 export enum LoginResult {
   success,
@@ -53,7 +54,8 @@ export function logout() {
   return async (dispatch, getState) => {
     try {
       await oauth.eraseToken();
-      dispatch({ type: "USER_LOGGED_OUT" });
+      dispatch({ type: actionTypeLogout });
+      console.log(getState());
       navigate("Login"); // TODO : place the user e-mail here
     } catch (errmsg) {
       // tslint:disable-next-line:no-console
