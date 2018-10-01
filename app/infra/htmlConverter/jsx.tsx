@@ -16,7 +16,7 @@
 
 import * as React from "react";
 
-import { Linking, Text, View, WebView, ViewStyle } from "react-native";
+import { Linking, Text, View, ViewStyle, WebView } from "react-native";
 import { Loading } from "../../ui";
 import { Images } from "../../ui/Images";
 
@@ -26,7 +26,7 @@ import sax from "sax";
 
 import { Conf } from "../../Conf";
 import { A, Bold, Italic } from "../../ui/Typography";
-import oauth from "../oauth";
+import oauth, { signImagesUrls } from "../oauth";
 
 export interface IHtmlConverterJsxOptions {
   formatting?: boolean;
@@ -599,26 +599,11 @@ export class HtmlConverterJsx extends HtmlConverter {
   ): JSX.Element {
     return (
       <Images
-        images={this.signImagesUrls(imageNugget.images)}
+        images={signImagesUrls(imageNugget.images)}
         key={key}
         style={style}
       />
     );
-  }
-
-  /**
-   * Returns a image array with signed url requests.
-   */
-  protected signImagesUrls(
-    images: Array<{ src: string; alt: string }>
-  ): Array<{ src: object; alt: string }> {
-    return images.map(v => ({
-      alt: v.alt,
-      src: oauth.sign({
-        method: "GET",
-        uri: v.src
-      })
-    }));
   }
 
   /**

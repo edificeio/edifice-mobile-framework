@@ -330,3 +330,25 @@ const oauth = new OAuth2RessourceOwnerClient(
 );
 
 export default oauth;
+
+/**
+ * Returns a image array with signed url requests.
+ */
+export function signImagesUrls(
+  images: Array<{ src: string; alt: string }>
+): Array<{ src: object; alt: string }> {
+  return images.map(v => ({
+    alt: v.alt,
+    src: signUrl(v.src)
+  }));
+}
+
+/**
+ * Build a signed request from an url.
+ */
+export function signUrl(url: string) {
+  return oauth.sign({
+    method: "GET",
+    uri: url
+  });
+}
