@@ -1,4 +1,9 @@
-import { actionTypeLogin, actionTypeLogout } from "../actions/login";
+import {
+  actionTypeLogin,
+  actionTypeLoginError,
+  actionTypeLogout,
+  actionTypeRequestLogin
+} from "../actions/login";
 import { actionTypeSetNotifPrefs } from "../actions/notifPrefs";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
@@ -22,8 +27,14 @@ const stateDefault: IUserAuthState = {
 
 const authReducer = (state: IUserAuthState = stateDefault, action) => {
   switch (action.type) {
+    case actionTypeRequestLogin:
+      console.log("dispatching resuqets login:", action);
+      return {
+        ...state,
+        error: ""
+      };
     case actionTypeLogin:
-      console.log("dispatching :", action);
+      console.log("dispatching login :", action);
       return {
         error: "",
         loggedIn: true,
@@ -35,6 +46,11 @@ const authReducer = (state: IUserAuthState = stateDefault, action) => {
     case actionTypeLogout:
       console.log("dispatching logout: ", action);
       return stateDefault;
+    case actionTypeLoginError:
+      return {
+        ...stateDefault,
+        error: action.errmsg
+      };
     case actionTypeSetNotifPrefs:
       console.log("dispatching set notif prefs: ", action);
       return {

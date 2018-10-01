@@ -11,5 +11,5 @@ export const readCurrentUser = dispatch => async () => {
     })
 
     console.log('Navigating to main');
-	navigate("Main");
+	// navigate("Main");
 }

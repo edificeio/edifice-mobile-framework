@@ -1,5 +1,7 @@
 import { AsyncStorage } from "react-native";
+
 import { Conf } from "../Conf";
+import { navigate } from "../utils/navHelper";
 import { Connection } from "./Connection";
 import oauth from "./oauth";
 
@@ -16,7 +18,11 @@ export async function signedFetch(url: string, init: any): Promise<Response> {
     if (oauth.isExpired()) {
       // tslint:disable-next-line:no-console
       console.log("token expired. Refreshing...");
-      await oauth.refreshToken();
+      try {
+        await oauth.refreshToken();
+      } catch (err) {
+        navigate("Login"); // TODO put e-mail here
+      }
     }
     // tslint:disable-next-line:no-console
     console.log("Token expires in ", oauth.expiresIn() / 1000, "seconds");

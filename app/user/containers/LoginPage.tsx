@@ -166,7 +166,9 @@ export class LoginPage extends React.Component<
           value={this.state.password}
           hasError={error && !this.state.typing}
         />
-        <ErrorMessage>{this.state.typing ? "" : error}</ErrorMessage>
+        <ErrorMessage>
+          {this.state.typing ? "" : error && I18n.t(error)}
+        </ErrorMessage>
 
         <View
           style={{
@@ -221,7 +223,13 @@ export default connect(
     headerHeight: state.ui.headerHeight
   }),
   dispatch => ({
-    onLogin: (email, password) =>
-      dispatch<any>(login({ username: email, password }))
+    onLogin: (email, password) => {
+      try {
+        dispatch<any>(login(false, { username: email, password }));
+      } catch (err) {
+        // tslint:disable-next-line:no-console
+        console.warn(err);
+      }
+    }
   })
 )(LoginPage);

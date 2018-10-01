@@ -44,8 +44,7 @@ getLanguages();
 
 export class AppStore extends React.Component {
   public componentDidMount() {
-    // store.dispatch({ type: "CHECK_LOGIN_AUTH" });
-    store.dispatch(login() as any);
+    store.dispatch(login(true) as any);
   }
 
   public render() {

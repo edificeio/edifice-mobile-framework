@@ -16,6 +16,12 @@ export interface IOAuthToken {
   scope: string;
 }
 
+export enum OAuthError {
+  NO_TOKEN,
+  BAD_CREDENTIALS,
+  NETWORK_ERROR
+}
+
 class OAuth2RessourceOwnerClient {
   /**
    * Common headers to all oauth2 flow requets
@@ -122,7 +128,6 @@ class OAuth2RessourceOwnerClient {
     username: string,
     password: string
   ): Promise<IOAuthToken> {
-    console.log("get new token...");
     // 1: Build request
     const body = {
       client_id: this.clientId,
@@ -152,9 +157,11 @@ class OAuth2RessourceOwnerClient {
       await this.saveToken();
       return this.token;
     } catch (err) {
-      // Check error type
       // tslint:disable-next-line:no-console
-      console.warn(err);
+      console.warn("get token failed: ", err);
+      if (err.body && err.body.error && err.body.error === "invalid_grant") {
+        err.authErr = OAuthError.BAD_CREDENTIALS;
+      }
       throw err;
     }
   }
@@ -164,9 +171,12 @@ class OAuth2RessourceOwnerClient {
    */
   public async loadToken() {
     try {
-      console.log("load token...");
       const storedToken = JSON.parse(await AsyncStorage.getItem("token"));
-      if (!storedToken) throw new Error("EAUTH: No token stored");
+      if (!storedToken) {
+        const err = new Error("EAUTH: No token stored");
+        (err as any).authErr = OAuthError.NO_TOKEN;
+        throw err;
+      }
       this.token = {
         ...storedToken,
         expires_at: new Date(storedToken.expires_at)
@@ -195,8 +205,6 @@ class OAuth2RessourceOwnerClient {
    * Refresh the user access token.
    */
   public async refreshToken(): Promise<IOAuthToken> {
-    console.log("refreshing token...");
-
     if (!this.token || !this.token.refresh_token)
       throw new Error("EAUTH: No refresh token provided.");
 
@@ -229,9 +237,9 @@ class OAuth2RessourceOwnerClient {
       await this.saveToken();
       return this.token;
     } catch (err) {
-      // TODO: Check error type
       // tslint:disable-next-line:no-console
-      console.warn("EAUTH: refreshing token failed: ", err);
+      console.warn("refreshing token failed: ", err);
+      throw err;
     }
   }
 
@@ -261,7 +269,7 @@ class OAuth2RessourceOwnerClient {
 
   /**
    * Perform a fetch request specially for auth requests.
-   * This checks EAUTH and HTTP erros and parses the response as a JSON object.
+   * This checks EAUTH and HTTP errors and parses the response as a JSON object.
    * @param url
    * @param options
    */
@@ -272,26 +280,27 @@ class OAuth2RessourceOwnerClient {
       // append url query with the given one
       url += (url.indexOf("?") === -1 ? "?" : "&") + query;
     }
-    console.log("request ", {
-      url,
-      body,
-      headers: options.headers,
-      method: options.method
-    });
-    const response = await fetch(url, {
-      body,
-      headers: options.headers,
-      method: options.method
-    });
+    let response;
+    try {
+      response = await fetch(url, {
+        body,
+        headers: options.headers,
+        method: options.method
+      });
+    } catch (err) {
+      err.authErr = OAuthError.NETWORK_ERROR;
+      throw err;
+    }
     const data = await this.parseResponseBody(response);
     const authErr = this.getAuthError(data);
-    if (authErr) throw new Error(authErr.code);
+    if (authErr) throw authErr;
     if (response.status < 200 || response.status >= 399) {
       const statusErr = new Error("HTTP status " + response.status) as any;
       statusErr.status = response.status;
       statusErr.body = response.body;
       statusErr.code = "ESTATUS";
-      throw new Error(statusErr.status + " " + statusErr.body);
+      statusErr.authErr = OAuthError.NETWORK_ERROR;
+      throw statusErr;
     }
     return data;
   }

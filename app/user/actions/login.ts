@@ -1,10 +1,12 @@
 import { fetchJSONWithCache } from "../../infra/fetchWithCache";
-import oauth from "../../infra/oauth";
+import oauth, { OAuthError } from "../../infra/oauth";
 import { navigate } from "../../utils/navHelper";
 import userConfig from "../config";
 
+export const actionTypeRequestLogin = userConfig.createActionType("REQUEST_LOGIN");
 export const actionTypeLogin = userConfig.createActionType("LOGGED_IN");
 export const actionTypeLogout = userConfig.createActionType("LOGGED_OUT");
+export const actionTypeLoginError = userConfig.createActionType("LOGIN_ERROR");
 
 export enum LoginResult {
   success,
@@ -12,9 +14,13 @@ export enum LoginResult {
   connectionError
 }
 
-export function login(credentials?: { username: string; password: string }) {
+export function login(
+  redirectOnError: boolean = false,
+  credentials?: { username: string; password: string }
+) {
   return async (dispatch, getState) => {
     try {
+      dispatch({ type: actionTypeRequestLogin });
       // 1: Get oAuth token from somewhere (server or local storage)
       if (credentials) {
         await oauth.getToken(credentials.username, credentials.password);
@@ -39,13 +45,32 @@ export function login(credentials?: { username: string; password: string }) {
         userbook: userinfo.result["0"],
         userdata
       });
-      console.log("dispatché");
       navigate("Main");
-      console.log(getState());
     } catch (err) {
       // tslint:disable-next-line:no-console
-      console.warn("login failed.", err);
-      navigate("Login", { email: "" });
+      console.warn("login failed.", err.authErr, err);
+      switch (err.authErr) {
+        case OAuthError.NO_TOKEN:
+          break;
+        case OAuthError.BAD_CREDENTIALS:
+          dispatch({
+            errmsg: "auth-loginFailed",
+            type: actionTypeLoginError
+          });
+          break;
+        case OAuthError.NETWORK_ERROR:
+          dispatch({
+            errmsg: "auth-networkError",
+            type: actionTypeLoginError
+          });
+          break;
+        default:
+          dispatch({
+            errmsg: "auth-unknownError",
+            type: actionTypeLoginError
+          });
+      }
+      if (redirectOnError) navigate("Login", { email: "" });
     }
   };
 }
@@ -55,11 +80,10 @@ export function logout() {
     try {
       await oauth.eraseToken();
       dispatch({ type: actionTypeLogout });
-      console.log(getState());
-      navigate("Login"); // TODO : place the user e-mail here
-    } catch (errmsg) {
+      navigate("Login"); // TODO : place the user login here
+    } catch (err) {
       // tslint:disable-next-line:no-console
-      console.warn("login failed.");
+      console.warn("logout failed.");
       navigate("Login", { email: "" });
     }
   };

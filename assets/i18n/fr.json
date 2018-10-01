@@ -59,6 +59,7 @@
   "homework-select": "Vos cahiers de textes",
   "homework-task-empty-title": "Devoirs",
   "auth-networkError": "L'authentification a échoué. Vérifiez votre connexion à internet.",
+  "auth-unknownError": "Erreur lors de l'authentitifation. Veuillez réessayer.",
   "conversation-newMessage": "Nouveau message",
   "to": "À :",
   "schoolbook-appTitle": "Carnet de liaison",
