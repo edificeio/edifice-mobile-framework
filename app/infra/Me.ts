@@ -1,36 +1,34 @@
-import { read } from "./Cache";
+// TODO : THIS FILE IS FUCKED UP, IT HAS NO REASON TO BE HERE
+
 import { Conf } from "../Conf";
+import { IUserAuthState } from "../user/reducers/auth";
+import { IUserInfoState } from "../user/reducers/info";
+import { signedFetch, signedFetchJson } from "./fetchWithCache";
 
-interface User {
-  id: string;
-}
-
-interface Session {
-  userId: string;
-  type: string[];
-  displayName: string;
-  children: User[];
-  login: string;
-}
-
-export const Me = {
-  session: {} as Session
+export const Me: {
+  session: IUserAuthState & IUserInfoState;
+} = {
+  session: {
+    loggedIn: false,
+    synced: false
+  }
 };
 
-let preferences = {} as any;
+const preferences = {} as any;
 
 export const savePreference = async (appName: string, newData) => {
-  console.log(newData);
-  const response = await fetch(
-    `${Conf.platform}/userbook/preference/${appName}`,
-    {
-      method: "PUT",
-      body: JSON.stringify({ ...preferences[appName], ...newData })
-    }
-  );
+  // tslint:disable-next-line:no-console
+  // console.log("save preference: ", appName, newData);
+  await signedFetch(`${Conf.platform}/userbook/preference/${appName}`, {
+    body: JSON.stringify({ ...preferences[appName], ...newData }),
+    method: "PUT"
+  });
 };
 export const preference = async (appName: string) => {
-  const appPrefs = await read(`/userbook/preference/${appName}`);
+  const appPrefs = (await signedFetchJson(
+    `${Conf.platform}/userbook/preference/${appName}`,
+    {}
+  )) as { preference: any };
   preferences[appName] = JSON.parse(appPrefs.preference);
   return JSON.parse(appPrefs.preference);
 };

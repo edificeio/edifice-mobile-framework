@@ -14,13 +14,19 @@ console.log("Distant platform:", Conf.platform);
 export async function signedFetch(url: string, init: any): Promise<Response> {
   try {
     if (oauth.isExpired()) {
+      // tslint:disable-next-line:no-console
+      console.log("token expired. Refreshing...");
       await oauth.refreshToken();
     }
+    // tslint:disable-next-line:no-console
+    console.log("Token expires in ", oauth.expiresIn() / 1000, "seconds");
+
     const params = oauth.sign(init);
+    // console.log(url, params);
     return fetch(url, params);
   } catch (err) {
     // tslint:disable-next-line:no-console
-    console.warn("failed fetch with token: ", err);
+    // console.warn("failed fetch with token: ", err);
     throw err;
   }
 }
@@ -34,10 +40,12 @@ export async function signedFetch(url: string, init: any): Promise<Response> {
 export async function signedFetchJson(url: string, init: any): Promise<object> {
   try {
     const response = await signedFetch(url, init);
+    // console.log(response);
+    // TODO check if response is OK
     return response.json();
   } catch (err) {
     // tslint:disable-next-line:no-console
-    console.warn("failed fetch json with token: ", err);
+    // console.warn("failed fetch json with token: ", err);
     throw err;
   }
 }
@@ -65,9 +73,10 @@ export async function fetchWithCache(
   const dataFromCache = await AsyncStorage.getItem(path); // TODO : optimization  - get dataFrmCache only when needed.
 
   if (Connection.isOnline && (forceSync || !dataFromCache)) {
-    // console.log("fetch from web");
+    console.log("fetchWithCache :", `${platform}${path}`, init);
     const response = await signedFetch(`${platform}${path}`, init);
-    console.log("response:", response);
+    // TODO: check if response is OK
+    console.log(`response of ${path}:`, response);
     const cacheResponse = {
       body: await getBody(response.clone()),
       init: {
@@ -82,7 +91,7 @@ export async function fetchWithCache(
   }
 
   if (dataFromCache) {
-    // console.log("fetch from cache");
+    console.log("fetch from cache");
     const cacheResponse = JSON.parse(dataFromCache);
     return getCacheResult(cacheResponse);
   }

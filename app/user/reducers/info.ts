@@ -1,5 +1,7 @@
 import moment from "moment";
 
+import { Me } from "../../infra/Me";
+
 import { actionTypeLogin, actionTypeLogout } from "../actions/login";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
@@ -57,13 +59,15 @@ const stateDefault: IUserInfoState = {};
 const infoReducer = (state: IUserInfoState = stateDefault, action) => {
   switch (action.type) {
     case actionTypeLogin:
-      return {
+      const session = {
         ...action.userdata,
         ...action.userbook,
         birthdate: moment(action.userbook.birthdate),
         lastLogin: moment(action.userdata.lastLogin),
         modified: moment(action.userdata.modified)
       };
+      Me.session = session;
+      return session;
     case actionTypeLogout:
       return stateDefault;
     default:

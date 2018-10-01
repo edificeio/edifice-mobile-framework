@@ -65,9 +65,7 @@ export class ProfilePage extends React.Component<
         </ModalBox>
         <ButtonLine
           title={"directory-notificationsTitle"}
-          onPress={() =>
-            this.props.navigation.navigate("notificationsSettings")
-          }
+          onPress={() => this.props.navigation.navigate("NotifPrefs")}
         />
         <ButtonLine
           title={"directory-disconnectButton"}

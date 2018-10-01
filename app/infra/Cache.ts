@@ -12,7 +12,7 @@ export const read = async (
   platform: string = Conf.platform
 ) => {
   if (!Connection.isOnline) {
-    console.log("User offline, reading from cache");
+    console.log("OLD 'read' function: User offline, reading from cache");
   }
   const fromCache = await AsyncStorage.getItem(path);
 

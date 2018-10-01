@@ -23,8 +23,8 @@ export function login(credentials?: { username: string; password: string }) {
         // If a token is stored, it allows the user to be offline.
         await oauth.loadToken();
       }
-
       // 2: Gather logged user information
+      console.log("gather user info...");
       const userinfo = await fetchJSONWithCache("/userbook/api/person");
       // tslint:disable-next-line:no-console
       console.log("userinfo", userinfo);

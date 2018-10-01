@@ -122,6 +122,7 @@ class OAuth2RessourceOwnerClient {
     username: string,
     password: string
   ): Promise<IOAuthToken> {
+    console.log("get new token...");
     // 1: Build request
     const body = {
       client_id: this.clientId,
@@ -163,9 +164,13 @@ class OAuth2RessourceOwnerClient {
    */
   public async loadToken() {
     try {
+      console.log("load token...");
       const storedToken = JSON.parse(await AsyncStorage.getItem("token"));
       if (!storedToken) throw new Error("EAUTH: No token stored");
-      this.token = storedToken;
+      this.token = {
+        ...storedToken,
+        expires_at: new Date(storedToken.expires_at)
+      };
     } catch (err) {
       // tslint:disable-next-line:no-console
       console.warn("load token failed: ", err);
@@ -190,7 +195,8 @@ class OAuth2RessourceOwnerClient {
    * Refresh the user access token.
    */
   public async refreshToken(): Promise<IOAuthToken> {
-    // TODO: use this.request()
+    console.log("refreshing token...");
+
     if (!this.token || !this.token.refresh_token)
       throw new Error("EAUTH: No refresh token provided.");
 
@@ -237,6 +243,13 @@ class OAuth2RessourceOwnerClient {
   }
 
   /**
+   * Returns time before expiring in milliseconds (date.getTime())
+   */
+  public expiresIn() {
+    return this.token.expires_at.getTime() - Date.now();
+  }
+
+  /**
    * Generates a new expiration date from a number of seconds added to the now Date.
    * @param seconds
    */
@@ -259,6 +272,12 @@ class OAuth2RessourceOwnerClient {
       // append url query with the given one
       url += (url.indexOf("?") === -1 ? "?" : "&") + query;
     }
+    console.log("request ", {
+      url,
+      body,
+      headers: options.headers,
+      method: options.method
+    });
     const response = await fetch(url, {
       body,
       headers: options.headers,
@@ -300,7 +319,14 @@ const oauth = new OAuth2RessourceOwnerClient(
   `${Conf.platform}/auth/oauth2/token`,
   "app-e",
   "ODE",
-  ["userinfo", "homeworks", "workspace", "directory"]
+  [
+    "userinfo",
+    "timeline",
+    "homeworks",
+    "workspace",
+    "directory",
+    "conversation"
+  ]
 );
 
 export default oauth;

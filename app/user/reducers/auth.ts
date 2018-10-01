@@ -1,4 +1,5 @@
 import { actionTypeLogin, actionTypeLogout } from "../actions/login";
+import { actionTypeSetNotifPrefs } from "../actions/notifPrefs";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -8,13 +9,14 @@ export interface IUserAuthState {
   loggedIn: boolean;
   synced: boolean;
   error?: string;
-  notificationPrefs?: any;
+  notificationPrefs?: any[];
 }
 
 // THE REDUCER ------------------------------------------------------------------------------------
 
 const stateDefault: IUserAuthState = {
   loggedIn: false,
+  notificationPrefs: [],
   synced: false
 };
 
@@ -33,6 +35,12 @@ const authReducer = (state: IUserAuthState = stateDefault, action) => {
     case actionTypeLogout:
       console.log("dispatching logout: ", action);
       return stateDefault;
+    case actionTypeSetNotifPrefs:
+      console.log("dispatching set notif prefs: ", action);
+      return {
+        ...state,
+        notificationPrefs: action.notificationPrefs
+      };
     default:
       return state;
   }

@@ -1,10 +1,9 @@
-import { Conf } from "../../Conf";
-import { read } from "../../infra/Cache";
+import { fetchJSONWithCache } from "../../infra/fetchWithCache";
 
 export const loadVisibles = dispatch => async () => {
-    const visibles = await read(`/conversation/visible`);
-    dispatch({
-        type: 'LOAD_VISIBLES_CONVERSATION',
-        visibles: [ ...visibles.groups, ...visibles.users]
-    })
-}
+  const visibles = await fetchJSONWithCache(`/conversation/visible`);
+  dispatch({
+    type: "LOAD_VISIBLES_CONVERSATION",
+    visibles: [...visibles.groups, ...visibles.users]
+  });
+};
