@@ -130,3 +130,7 @@ export async function fetchJSONWithCache(
     cr => cr.body
   );
 }
+
+export async function clearCache() {
+  await AsyncStorage.multiRemove(await AsyncStorage.getAllKeys());
+}

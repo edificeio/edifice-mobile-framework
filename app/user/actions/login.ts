@@ -1,4 +1,4 @@
-import { fetchJSONWithCache } from "../../infra/fetchWithCache";
+import { clearCache, fetchJSONWithCache } from "../../infra/fetchWithCache";
 import oauth, { OAuthError } from "../../infra/oauth";
 import { navigate } from "../../utils/navHelper";
 import userConfig from "../config";
@@ -85,6 +85,7 @@ export function logout() {
       const login = getState().user.auth.login;
       await oauth.eraseToken();
       dispatch({ type: actionTypeLoggedOut });
+      await clearCache();
       console.log("logged out : ", login);
       navigate("Login", { login }); // TODO : place the user login here
     } catch (err) {
