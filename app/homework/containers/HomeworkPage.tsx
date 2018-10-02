@@ -1,4 +1,5 @@
 import * as React from "react";
+import { AsyncStorage } from "react-native";
 import { connect } from "react-redux";
 import {
   HomeworkPage,
@@ -12,6 +13,7 @@ import { homeworkTaskSelected } from "../actions/selectedTask";
 import { fetchHomeworkTasks } from "../actions/tasks";
 
 import { Tracking } from "../../tracking/TrackingManager";
+import homeworkDiarySelected from "../actions/selectedDiary";
 
 const mapStateToProps: (state: any) => IHomeworkPageDataProps = state => {
   // Extract data from state
@@ -78,8 +80,14 @@ class HomeworkPageContainer extends React.Component<
     return <HomeworkPage {...this.props} />;
   }
 
-  public componentDidMount() {
+  public async componentDidMount() {
+    await this.loadSelectedDiary();
     this.props.dispatch(fetchHomeworkDiaryListIfNeeded());
+  }
+
+  private async loadSelectedDiary() {
+    const selectedId = await AsyncStorage.getItem("diary-selected");
+    if (selectedId) this.props.dispatch(homeworkDiarySelected(selectedId));
   }
 }
 

@@ -4,6 +4,7 @@
  */
 import homeworkConfig from "../config";
 
+import { AsyncStorage } from "react-native";
 import { Action } from "redux";
 import { fetchHomeworkTasksIfNeeded } from "./tasks";
 
@@ -24,7 +25,8 @@ export const createActionDiarySelected: (
 
 export function homeworkDiarySelected(diaryId: string) {
   // console.warn("Homework diary selected : " + diaryId);
-  return dispatch => {
+  return async dispatch => {
+    await AsyncStorage.setItem("diary-selected", diaryId);
     dispatch(createActionDiarySelected(diaryId));
     dispatch(fetchHomeworkTasksIfNeeded(diaryId));
   };
