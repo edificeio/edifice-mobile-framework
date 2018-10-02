@@ -3,6 +3,7 @@ import { AsyncStorage } from "react-native";
 import { Conf } from "../Conf";
 import { navigate } from "../utils/navHelper";
 import { Connection } from "./Connection";
+import { Me } from "./Me";
 import oauth from "./oauth";
 
 // tslint:disable-next-line:no-console
@@ -21,7 +22,7 @@ export async function signedFetch(url: string, init: any): Promise<Response> {
       try {
         await oauth.refreshToken();
       } catch (err) {
-        navigate("Login"); // TODO put e-mail here
+        navigate("Login", { login: Me.session.login });
       }
     }
     // tslint:disable-next-line:no-console

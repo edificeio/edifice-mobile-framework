@@ -30,7 +30,7 @@ export interface ILoginPageDataProps {
 }
 
 export interface ILoginPageEventProps {
-  onLogin: (email: string, password: string) => Promise<LoginResult>;
+  onLogin: (userlogin: string, password: string) => Promise<LoginResult>;
 }
 
 export interface ILoginPageOtherProps {
@@ -47,22 +47,18 @@ export interface ILoginPageState {
   login: string;
   password: string;
   typing: boolean;
-  loading: boolean;
 }
 
 const initialState: ILoginPageState = {
-  loading: false,
   login: undefined,
-  password: "",
+  password: undefined,
   typing: false
 };
 
 export const getInitialStateWithUsername = login => ({
-  error: "",
-  loggedIn: false,
   login,
-  password: "",
-  synced: true
+  password: undefined,
+  typing: false
 });
 
 // Main component ---------------------------------------------------------------------------------
@@ -87,21 +83,18 @@ export class LoginPage extends React.Component<
   private inputPassword: TextInput = null;
   private setInputPasswordRef = el => (this.inputPassword = el);
 
-  // Default state
+  // Set default state
   constructor(props) {
     super(props);
-    this.state = initialState;
+    this.state = {
+      ...initialState,
+      login: this.props.navigation.state.params.login || this.props.auth.login
+    };
   }
 
   // Computed properties
-  get isDisabled() {
-    return (
-      !(
-        this.state.login ||
-        this.props.auth.login ||
-        this.props.navigation.state.params.email
-      ) || !this.state.password
-    );
+  get isSubmitDisabled() {
+    return !(this.state.login && this.state.password);
   }
 
   // Render
@@ -138,11 +131,8 @@ export class LoginPage extends React.Component<
   ); // TS-ISSUE
 
   protected renderForm() {
-    const { loggedIn, error } = this.props.auth;
-    let { login } = this.props.auth;
-    if (!login) {
-      login = this.props.navigation.state.params.email;
-    }
+    const { loggingIn, loggedIn, error } = this.props.auth;
+    console.log("render from: (error :)", error);
 
     return (
       <FormContainer>
@@ -150,10 +140,10 @@ export class LoginPage extends React.Component<
         <TextInputLine
           inputRef={this.setInputLoginRef}
           placeholder={I18n.t("Login")}
-          onChangeText={login =>
+          onChangeText={(login: string) =>
             this.setState({ login: login.trim(), typing: true })
           }
-          value={this.state.login !== undefined ? this.state.login : login}
+          value={this.state.login}
           hasError={error && !this.state.typing}
         />
         <TextInputLine
@@ -180,9 +170,9 @@ export class LoginPage extends React.Component<
         >
           <FlatButton
             onPress={() => this.handleLogin()}
-            disabled={this.isDisabled}
+            disabled={this.isSubmitDisabled}
             title={I18n.t("Connect")}
-            loading={this.state.loading}
+            loading={loggingIn || loggedIn}
           />
         </View>
       </FormContainer>
@@ -192,21 +182,13 @@ export class LoginPage extends React.Component<
   // Event handlers
 
   protected async handleLogin() {
-    this.setState({ ...this.state, loading: true });
-    const result = await this.props.onLogin(
+    await this.props.onLogin(
       this.state.login ||
         this.props.auth.login ||
-        this.props.navigation.state.params.email,
+        this.props.navigation.state.params.login,
       this.state.password
     );
-    if (result !== LoginResult.success) {
-      this.setState({
-        ...this.state,
-        loading: false,
-        password: "",
-        typing: false
-      });
-    }
+    this.setState({ typing: false });
   }
 
   // Other public methods
@@ -223,9 +205,9 @@ export default connect(
     headerHeight: state.ui.headerHeight
   }),
   dispatch => ({
-    onLogin: (email, password) => {
+    onLogin: (userlogin, password) => {
       try {
-        dispatch<any>(login(false, { username: email, password }));
+        dispatch<any>(login(false, { username: userlogin, password }));
       } catch (err) {
         // tslint:disable-next-line:no-console
         console.warn(err);

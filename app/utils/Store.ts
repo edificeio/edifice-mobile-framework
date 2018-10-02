@@ -10,7 +10,7 @@ export async function getLogin() {
 
   if (authString === null) {
     return {
-      email: "",
+      login: "",
       password: ""
     };
   }

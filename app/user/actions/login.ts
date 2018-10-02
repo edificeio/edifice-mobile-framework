@@ -4,9 +4,9 @@ import { navigate } from "../../utils/navHelper";
 import userConfig from "../config";
 
 export const actionTypeRequestLogin = userConfig.createActionType("REQUEST_LOGIN");
-export const actionTypeLogin = userConfig.createActionType("LOGGED_IN");
-export const actionTypeLogout = userConfig.createActionType("LOGGED_OUT");
+export const actionTypeLoggedIn = userConfig.createActionType("LOGGED_IN");
 export const actionTypeLoginError = userConfig.createActionType("LOGIN_ERROR");
+export const actionTypeLoggedOut = userConfig.createActionType("LOGGED_OUT");
 
 export enum LoginResult {
   success,
@@ -41,7 +41,7 @@ export function login(
 
       // 3: validate login
       dispatch({
-        type: actionTypeLogin,
+        type: actionTypeLoggedIn,
         userbook: userinfo.result["0"],
         userdata
       });
@@ -51,6 +51,10 @@ export function login(
       console.warn("login failed.", err.authErr, err);
       switch (err.authErr) {
         case OAuthError.NO_TOKEN:
+          dispatch({
+            errmsg: undefined,
+            type: actionTypeLoginError
+          });
           break;
         case OAuthError.BAD_CREDENTIALS:
           dispatch({
@@ -70,7 +74,7 @@ export function login(
             type: actionTypeLoginError
           });
       }
-      if (redirectOnError) navigate("Login", { email: "" });
+      if (redirectOnError) navigate("Login", { login: "" });
     }
   };
 }
@@ -78,13 +82,15 @@ export function login(
 export function logout() {
   return async (dispatch, getState) => {
     try {
+      const login = getState().user.auth.login;
       await oauth.eraseToken();
-      dispatch({ type: actionTypeLogout });
-      navigate("Login"); // TODO : place the user login here
+      dispatch({ type: actionTypeLoggedOut });
+      console.log("logged out : ", login);
+      navigate("Login", { login }); // TODO : place the user login here
     } catch (err) {
       // tslint:disable-next-line:no-console
       console.warn("logout failed.");
-      navigate("Login", { email: "" });
+      navigate("Login", { login: "" });
     }
   };
 }

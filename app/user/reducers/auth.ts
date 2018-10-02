@@ -1,7 +1,7 @@
 import {
-  actionTypeLogin,
+  actionTypeLoggedIn,
   actionTypeLoginError,
-  actionTypeLogout,
+  actionTypeLoggedOut,
   actionTypeRequestLogin
 } from "../actions/login";
 import { actionTypeSetNotifPrefs } from "../actions/notifPrefs";
@@ -9,50 +9,54 @@ import { actionTypeSetNotifPrefs } from "../actions/notifPrefs";
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
 export interface IUserAuthState {
+  // user account information
   login?: string;
   userId?: string;
-  loggedIn: boolean;
-  synced: boolean;
   error?: string;
   notificationPrefs?: any[];
+  // user auth state
+  loggedIn: boolean;
+  synced: boolean;
+  loggingIn: boolean;
 }
 
 // THE REDUCER ------------------------------------------------------------------------------------
 
 const stateDefault: IUserAuthState = {
   loggedIn: false,
+  loggingIn: false,
   notificationPrefs: [],
   synced: false
 };
 
 const authReducer = (state: IUserAuthState = stateDefault, action) => {
+  console.log("dispatching", action);
   switch (action.type) {
     case actionTypeRequestLogin:
-      console.log("dispatching resuqets login:", action);
       return {
         ...state,
-        error: ""
+        error: "",
+        loggingIn: true
       };
-    case actionTypeLogin:
-      console.log("dispatching login :", action);
+    case actionTypeLoggedIn:
       return {
         error: "",
         loggedIn: true,
+        loggingIn: false,
         login: action.userbook.login,
         notificationPrefs: state.notificationPrefs,
         synced: true,
         userId: action.userbook.id
       };
-    case actionTypeLogout:
-      console.log("dispatching logout: ", action);
-      return stateDefault;
     case actionTypeLoginError:
       return {
         ...stateDefault,
-        error: action.errmsg
+        error: action.errmsg,
+        loggingIn: false
       };
+    case actionTypeLoggedOut:
+      return stateDefault;
     case actionTypeSetNotifPrefs:
-      console.log("dispatching set notif prefs: ", action);
       return {
         ...state,
         notificationPrefs: action.notificationPrefs

@@ -10,6 +10,7 @@ export const Me: {
 } = {
   session: {
     loggedIn: false,
+    loggingIn: false,
     synced: false
   }
 };

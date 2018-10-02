@@ -81,6 +81,6 @@ export class ProfilePage extends React.Component<
 export default connect(
   state => ({}),
   dispatch => ({
-    onLogout: (email: string) => dispatch<any>(logout())
+    onLogout: () => dispatch<any>(logout())
   })
 )(ProfilePage);
