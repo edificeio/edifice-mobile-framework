@@ -126,7 +126,7 @@ export class HTMLAdaptator {
         src = split[0] + "?thumbnail=" + size;
       }
 
-      paths.push({ uri: src });
+      paths.push({ src });
     }
     return paths;
   }

@@ -71,7 +71,6 @@ export const asyncActionTypes: (
  * @param state the asyncReducer state.
  */
 export const shouldFetch: (state: IAsyncReducer<any>) => boolean = state => {
-  // console.log("should fetch ?", state);
   if (state === undefined) return true;
   if (state.isFetching) {
     return false;
@@ -172,7 +171,6 @@ export default function asyncReducer<T>(
           lastUpdated: action.receivedAt
         };
       case actionTypes.fetchError:
-        console.warn(action);
         return {
           ...state,
           data,

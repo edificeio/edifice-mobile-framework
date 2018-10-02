@@ -4,8 +4,6 @@ import { Connection } from "./Connection";
 
 // DEPRECATED. Use fetchWithCache instead.
 
-// console.log(Conf.platform);
-
 export const read = async (
   path,
   forceSync: boolean = true,

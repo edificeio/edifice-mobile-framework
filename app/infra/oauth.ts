@@ -158,7 +158,7 @@ class OAuth2RessourceOwnerClient {
       return this.token;
     } catch (err) {
       // tslint:disable-next-line:no-console
-      console.warn("get token failed: ", err);
+      console.warn("Get token failed: ", err);
       if (err.body && err.body.error && err.body.error === "invalid_grant") {
         err.authErr = OAuthError.BAD_CREDENTIALS;
       }
@@ -183,7 +183,7 @@ class OAuth2RessourceOwnerClient {
       };
     } catch (err) {
       // tslint:disable-next-line:no-console
-      console.warn("load token failed: ", err);
+      console.warn("Load token failed: ", err);
       throw err;
     }
   }
@@ -196,7 +196,7 @@ class OAuth2RessourceOwnerClient {
       await AsyncStorage.setItem("token", JSON.stringify(this.token));
     } catch (err) {
       // tslint:disable-next-line:no-console
-      console.warn("saving token failed: ", err);
+      console.warn("Saving token failed: ", err);
       throw err;
     }
   }
@@ -238,7 +238,7 @@ class OAuth2RessourceOwnerClient {
       return this.token;
     } catch (err) {
       // tslint:disable-next-line:no-console
-      console.warn("refreshing token failed: ", err);
+      console.warn("Refreshing token failed: ", err);
       throw err;
     }
   }
@@ -315,7 +315,7 @@ class OAuth2RessourceOwnerClient {
       this.token = null;
     } catch (err) {
       // tslint:disable-next-line:no-console
-      console.warn("failed erasing token: ", err);
+      console.warn("Failed erasing token: ", err);
       throw err;
     }
   }

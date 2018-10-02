@@ -30,7 +30,6 @@ const stateDefault: IUserAuthState = {
 };
 
 const authReducer = (state: IUserAuthState = stateDefault, action) => {
-  console.log("dispatching", action);
   switch (action.type) {
     case actionTypeRequestLogin:
       return {

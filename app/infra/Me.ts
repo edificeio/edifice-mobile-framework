@@ -18,8 +18,6 @@ export const Me: {
 const preferences = {} as any;
 
 export const savePreference = async (appName: string, newData) => {
-  // tslint:disable-next-line:no-console
-  // console.log("save preference: ", appName, newData);
   await signedFetch(`${Conf.platform}/userbook/preference/${appName}`, {
     body: JSON.stringify({ ...preferences[appName], ...newData }),
     method: "PUT"

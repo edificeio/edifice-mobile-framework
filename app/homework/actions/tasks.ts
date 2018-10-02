@@ -132,7 +132,6 @@ export function homeworkTasksFetchError(diaryId: string, errmsg: string) {
  */
 export function fetchHomeworkTasks(diaryId: string) {
   return async dispatch => {
-    // console.warn("Fetching homework tasks for diary " + diaryId);
     dispatch(homeworkTasksRequested(diaryId));
 
     try {

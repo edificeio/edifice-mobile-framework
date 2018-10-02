@@ -89,7 +89,6 @@ export function homeworkDiaryListFetchError(errmsg: string) {
  */
 export function fetchHomeworkDiaryList() {
   return async (dispatch, getState) => {
-    // console.log("Fetching homework diary list...");
     dispatch(homeworkDiaryListRequested());
 
     try {

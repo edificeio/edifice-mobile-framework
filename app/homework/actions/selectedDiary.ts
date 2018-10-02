@@ -24,7 +24,6 @@ export const createActionDiarySelected: (
 });
 
 export function homeworkDiarySelected(diaryId: string) {
-  // console.warn("Homework diary selected : " + diaryId);
   return async dispatch => {
     await AsyncStorage.setItem("diary-selected", diaryId);
     dispatch(createActionDiarySelected(diaryId));

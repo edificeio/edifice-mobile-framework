@@ -3,6 +3,7 @@ import { Connection } from "../../infra/Connection";
 import { Me } from "../../infra/Me";
 import I18n from "react-native-i18n";
 import { fetchJSONWithCache } from "../../infra/fetchWithCache";
+import { signImagesUrls } from "../../infra/oauth";
 
 let loadingState = "idle";
 let awaiters = [];
@@ -80,7 +81,7 @@ const dataTypes = {
         return {
           date: news.date.$date,
           id: news._id,
-          images: adaptator(schoolbook.text).toImagesArray(),
+          images: signImagesUrls(adaptator(schoolbook.text).toImagesArray()),
           message: adaptator(schoolbook.text).toText(),
           resourceName: I18n.t("schoolbook-appTitle"),
           htmlContent: adaptator(schoolbook.text)
@@ -126,14 +127,13 @@ const dataTypes = {
 
     try {
       const data = await fetchJSONWithCache(
-        `/actualites/thread/${threadId}/info/${infoId}`,
-        false
+        `/actualites/thread/${threadId}/info/${infoId}`
       );
 
       return {
         date: news.date.$date,
         id: data._id,
-        images: adaptator(data.content).toImagesArray(),
+        images: signImagesUrls(adaptator(data.content).toImagesArray()),
         message: adaptator(data.content).toText(),
         resourceName: data.thread_title,
         senderId: news.sender,
@@ -168,8 +168,7 @@ const dataTypes = {
 
     try {
       const data = await fetchJSONWithCache(
-        `/blog/post/${news.resource}/${news["sub-resource"]}`,
-        false
+        `/blog/post/${news.resource}/${news["sub-resource"]}`
       );
 
       let message = adaptator(data.content).toText();
@@ -177,7 +176,7 @@ const dataTypes = {
       return {
         date: data.modified.$date,
         id: data._id,
-        images: adaptator(data.content).toImagesArray(),
+        images: signImagesUrls(adaptator(data.content).toImagesArray()),
         message,
         resourceName: news.params.blogTitle,
         resourceId: news["sub-resource"],

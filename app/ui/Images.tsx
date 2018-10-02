@@ -55,7 +55,6 @@ export class Images extends React.Component<
   public images() {
     const { width, height } = Dimensions.get("window");
     const { images } = this.props;
-    console.log("print images", images);
 
     const heightRatio = width * 0.6;
 

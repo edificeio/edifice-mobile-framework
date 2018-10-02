@@ -132,7 +132,6 @@ export class LoginPage extends React.Component<
 
   protected renderForm() {
     const { loggingIn, loggedIn, error } = this.props.auth;
-    console.log("render from: (error :)", error);
 
     return (
       <FormContainer>
@@ -206,12 +205,7 @@ export default connect(
   }),
   dispatch => ({
     onLogin: (userlogin, password) => {
-      try {
-        dispatch<any>(login(false, { username: userlogin, password }));
-      } catch (err) {
-        // tslint:disable-next-line:no-console
-        console.warn(err);
-      }
+      dispatch<any>(login(false, { username: userlogin, password }));
     }
   })
 )(LoginPage);

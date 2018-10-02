@@ -30,14 +30,10 @@ export function login(
         await oauth.loadToken();
       }
       // 2: Gather logged user information
-      console.log("gather user info...");
       const userinfo = await fetchJSONWithCache("/userbook/api/person");
-      // tslint:disable-next-line:no-console
-      console.log("userinfo", userinfo);
       const userdata = await fetchJSONWithCache(
         `/directory/user/${userinfo.result["0"].userId}`
       );
-      console.log("userdata", userdata);
 
       // 3: validate login
       dispatch({
@@ -47,8 +43,6 @@ export function login(
       });
       navigate("Main");
     } catch (err) {
-      // tslint:disable-next-line:no-console
-      console.warn("login failed.", err.authErr, err);
       switch (err.authErr) {
         case OAuthError.NO_TOKEN:
           dispatch({
@@ -86,11 +80,8 @@ export function logout() {
       await oauth.eraseToken();
       dispatch({ type: actionTypeLoggedOut });
       await clearCache();
-      console.log("logged out : ", login);
       navigate("Login", { login }); // TODO : place the user login here
     } catch (err) {
-      // tslint:disable-next-line:no-console
-      console.warn("logout failed.");
       navigate("Login", { login: "" });
     }
   };

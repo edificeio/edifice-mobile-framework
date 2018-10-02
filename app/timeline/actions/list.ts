@@ -22,7 +22,6 @@ export const fetchTimeline = dispatch => async availableApps => {
     const news = await fetchJSONWithCache(
       `/timeline/lastNotifications?page=0&${writeTypesParams(availableApps)}`
     );
-    console.log("news:", news);
     let results = news.results.filter(
       n => excludeTypes.indexOf(n["event-type"]) === -1 && n.params
     );
