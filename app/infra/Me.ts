@@ -3,7 +3,11 @@
 import { Conf } from "../Conf";
 import { IUserAuthState, stateDefault } from "../user/reducers/auth";
 import { IUserInfoState } from "../user/reducers/info";
-import { signedFetch, signedFetchJson } from "./fetchWithCache";
+import {
+  fetchJSONWithCache,
+  signedFetch,
+  signedFetchJson
+} from "./fetchWithCache";
 
 export const Me: {
   session: IUserAuthState & IUserInfoState;
@@ -28,4 +32,18 @@ export const preference = async (appName: string) => {
   )) as { preference: any };
   preferences[appName] = JSON.parse(appPrefs.preference);
   return JSON.parse(appPrefs.preference);
+};
+
+// LEGACY Code, before was in `auth` functional module
+let dataFilled = false;
+export const fillUserData = async () => {
+  if (dataFilled) {
+    return;
+  }
+  const data = await fetchJSONWithCache(`/directory/user/${Me.session.userId}`);
+  // tslint:disable-next-line:forin
+  for (let prop in data) {
+    Me.session[prop] = data[prop];
+  }
+  dataFilled = true;
 };

@@ -5,7 +5,6 @@ import { applyMiddleware, combineReducers, createStore } from "redux";
 import thunkMiddleware from "redux-thunk";
 import AppScreen from "./AppScreen";
 
-import auth from "./auth/reducer";
 import conversation from "./conversation/reducer";
 import connectionTracker from "./infra/reducers/connectionTracker";
 import ui from "./infra/reducers/ui";
@@ -17,7 +16,6 @@ import moduleDefinitions from "./AppModules";
 import { getReducersFromModuleDefinitions } from "./infra/moduleTool";
 
 const reducers = {
-  // auth, // TODO remove auth in favor of user (dynamic module)
   connectionTracker,
   ui,
   ...getReducersFromModuleDefinitions(moduleDefinitions)
@@ -26,7 +24,7 @@ const reducers = {
 const rootReducer = combineReducers({
   ...reducers,
   conversation, // TODO put this un module definitions
-  timeline
+  timeline // TODO put this un module definitions
 });
 
 const enhancer = applyMiddleware(thunkMiddleware);

@@ -2,7 +2,6 @@ import { Platform } from "react-native";
 import firebase from "react-native-firebase";
 import { MixpanelInstance } from "react-native-mixpanel";
 
-import { initialStateWithEmail } from "../auth/Login";
 import { Conf } from "../Conf";
 import { Me } from "../infra/Me";
 
@@ -64,10 +63,10 @@ export class Tracking {
       else Tracking.mixpanel.track(name);
       // TODO: Must we put here here, or juste one time after the login ?
       Tracking.mixpanel.identify(Me.session.userId);
-      Tracking.mixpanel.set({ $Login: Me.session.login });
-      Tracking.mixpanel.set({ $UserId: Me.session.userId });
+      Tracking.mixpanel.set({ $login: Me.session.login });
+      Tracking.mixpanel.set({ $userId: Me.session.userId });
       Tracking.mixpanel.set({ $userType: Me.session.type });
-      Tracking.mixpanel.set({ $email: initialStateWithEmail });
+      Tracking.mixpanel.set({ $email: Me.session.email });
     }
   }
 

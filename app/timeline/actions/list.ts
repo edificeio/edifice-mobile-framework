@@ -1,7 +1,7 @@
-import { fillData, excludeTypes } from "./dataTypes";
-import { fillUserData } from "../../auth/actions/fillUserData";
-import { storedFilters } from "./storedFilters";
 import { fetchJSONWithCache } from "../../infra/fetchWithCache";
+import { fillUserData } from "../../infra/Me";
+import { excludeTypes, fillData } from "./dataTypes";
+import { storedFilters } from "./storedFilters";
 
 const writeTypesParams = availableApps => {
   let params = "";
