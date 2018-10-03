@@ -1,3 +1,4 @@
+import * as React from "react";
 import { View } from "react-native";
 import { NavigationContainer, StackNavigator } from "react-navigation";
 import { tabNavigator, tabRootOptions } from "../utils/navHelper";
@@ -44,7 +45,7 @@ const MainNavigator = tabNavigator({
 
 export const AppNavigator: NavigationContainer = StackNavigator(
   {
-    Bootstrap: { screen: View },
+    Bootstrap: () => <View />,
     Login: { screen: LoginPage },
     Main: { screen: MainNavigator }
   },

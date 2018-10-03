@@ -1,6 +1,6 @@
 import style from "glamorous-native";
 import * as React from "react";
-import RNFetchBlob from "react-native-fetch-blob";
+import RNFetchBlob from "rn-fetch-blob";
 import { View } from "react-native";
 import { Conf } from "../../Conf";
 import { usersAvatars, setUsersAvatars } from "../../infra/Cache";
