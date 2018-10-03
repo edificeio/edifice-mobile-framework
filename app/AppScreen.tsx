@@ -4,12 +4,10 @@ import firebase from "react-native-firebase";
 import SplashScreen from "react-native-smart-splash-screen";
 import { connect } from "react-redux";
 
-import { readCurrentUser } from "./auth/actions/login";
 import { AppNavigator } from "./navigation/AppNavigator";
 import pushNotifications from "./pushNotifications";
 import { CommonStyles } from "./styles/common/styles";
 import { Tracking } from "./tracking/TrackingManager";
-import ProgressBar from "./ui/ProgressBar";
 
 export let navigationRef = null;
 
@@ -31,7 +29,7 @@ export class AppScreen extends React.Component<any, undefined> {
       .notifications()
       .getInitialNotification();
     if (notificationOpen) {
-      await this.props.readCurrentUser();
+      // await this.props.readCurrentUser(); // TODO : check this : No more needed ?
       const action = notificationOpen.action;
       const notification = notificationOpen.notification;
       this.props.handleNotifications(JSON.parse(notification.data.params));
@@ -49,7 +47,7 @@ export class AppScreen extends React.Component<any, undefined> {
           backgroundColor={CommonStyles.statusBarColor}
           barStyle="light-content"
         />
-        <ProgressBar />
+        {/*<ProgressBar /> TODO : What's this ? */}
         <AppNavigator
           onNavigationStateChange={(prevState, currentState, action) => {
             // Track if tab has changed
@@ -87,7 +85,7 @@ export class AppScreen extends React.Component<any, undefined> {
 export default connect(
   state => ({}),
   dispatch => ({
-    handleNotifications: data => pushNotifications(dispatch)(data),
-    readCurrentUser: notifData => readCurrentUser(dispatch)()
+    handleNotifications: data => pushNotifications(dispatch)(data)
+    // readCurrentUser: notifData => readCurrentUser(dispatch)()
   })
 )(AppScreen);

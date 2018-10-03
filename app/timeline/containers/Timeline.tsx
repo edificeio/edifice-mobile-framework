@@ -187,7 +187,7 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
 export default connect(
   (state: any) => ({
     ...state.timeline,
-    isAuthenticated: state.auth.loggedIn
+    isAuthenticated: state.user.auth.loggedIn
   }),
   dispatch => ({
     sync: (page: number, availableApps) =>

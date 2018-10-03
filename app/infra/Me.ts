@@ -1,7 +1,7 @@
 // TODO : THIS FILE IS FUCKED UP, IT HAS NO REASON TO BE HERE
 
 import { Conf } from "../Conf";
-import { IUserAuthState } from "../user/reducers/auth";
+import { IUserAuthState, stateDefault } from "../user/reducers/auth";
 import { IUserInfoState } from "../user/reducers/info";
 import { signedFetch, signedFetchJson } from "./fetchWithCache";
 
@@ -9,9 +9,7 @@ export const Me: {
   session: IUserAuthState & IUserInfoState;
 } = {
   session: {
-    loggedIn: false,
-    loggingIn: false,
-    synced: false
+    ...stateDefault
   }
 };
 

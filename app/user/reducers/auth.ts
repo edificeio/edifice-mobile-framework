@@ -22,7 +22,7 @@ export interface IUserAuthState {
 
 // THE REDUCER ------------------------------------------------------------------------------------
 
-const stateDefault: IUserAuthState = {
+export const stateDefault: IUserAuthState = {
   loggedIn: false,
   loggingIn: false,
   notificationPrefs: [],
