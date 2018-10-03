@@ -117,8 +117,8 @@ export class NotifPrefsPage extends React.Component<
 export default connect(
   (state: any) => {
     return {
-      // availableApps: state.timeline.selectedApps, // TODO: WTF ?! Profile app has to not depends on another ! Get the app list separately.
-      availableApps: { "BLOG": true, "NEWS": true, "SCHOOLBOOK": true }, // TODO it's dummy data. It has to be loaded from the timeline app.
+      availableApps: state.timeline.selectedApps, // TODO: WTF ?! Profile app has to not depends on another ! Get the app list separately.
+      // availableApps: { "BLOG": true, "NEWS": true, "SCHOOLBOOK": true }, // TODO it's dummy data. It has to be loaded from the timeline app.
       notificationPrefs: state.user.auth.notificationPrefs
     };
   },
