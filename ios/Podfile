@@ -20,6 +20,7 @@ target 'mobileapp' do
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
   pod 'RNFirebase', path: '../node_modules/react-native-firebase/ios'
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
   # Pods for mobileapp
   pod 'Firebase/Core'
   pod 'Fabric', '~> 1.7.2'
