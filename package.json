@@ -83,7 +83,7 @@
     "react-native-image-picker": "^0.26.10",
     "react-native-image-to-base64": "git://github.com/SanderVerkuil/react-native-image-to-base64#patch-1",
     "react-native-iphone-x-helper": "^1.2.0",
-    "react-native-mixpanel": "^1.0.2",
+    "react-native-mixpanel": "^1.1.1",
     "react-native-modal": "5.0.0",
     "react-native-smart-splash-screen": "2.3.5",
     "react-native-snap-carousel": "3.5.0",
