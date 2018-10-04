@@ -75,7 +75,7 @@
     "react-native": "0.57.1",
     "react-native-cookies": "^3.2.0",
     "react-native-fence-html": "1.0.6",
-    "react-native-firebase": "^4.2.0",
+    "react-native-firebase": "^5.0.0",
     "react-native-fit-image": "1.5.4",
     "react-native-fs": "2.9.7",
     "react-native-global-props": "https://github.com/maieonbrix/react-native-global-props/",
