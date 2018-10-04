@@ -1,16 +1,6 @@
 import style from "glamorous-native";
 import * as React from "react";
-import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-  Modal,
-  Dimensions,
-  Animated,
-  Platform
-} from "react-native";
-import { StackNavigator } from "react-navigation";
+import { Dimensions, Modal, Platform, ScrollView, View } from "react-native";
 import FitImage from "react-native-fit-image";
 import { Icon } from ".";
 

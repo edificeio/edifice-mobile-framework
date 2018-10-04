@@ -68,7 +68,7 @@ export class AppScreen extends React.Component<any, undefined> {
             // continue to tracking only if current tab has changed.
             if (prevTabRouteIndex === currentTabRouteIndex) return;
             const currentTabRouteName = mainRouteNavState
-              ? mainRouteNavState.routes[mainRouteNavState.index].routeName
+              ? mainRouteNavState.routeName
               : undefined;
             if (currentTabRouteName)
               Tracking.logEvent("menuTab", {

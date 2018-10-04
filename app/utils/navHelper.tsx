@@ -1,17 +1,17 @@
 import style from "glamorous-native";
 import * as React from "react";
 import {
+  createTabNavigator,
   NavigationActions,
-  TabBarBottom,
-  TabNavigator
+  TabBarBottom
 } from "react-navigation";
 
 import { navigationRef } from "../AppScreen";
 import { CommonStyles } from "../styles/common/styles";
 import { IconOnOff } from "../ui";
 
-export const tabNavigator = routes =>
-  TabNavigator(routes, {
+export const createCustomTabNavigator = routes =>
+  createTabNavigator(routes, {
     swipeEnabled: false,
     tabBarComponent: TabBarBottom,
     tabBarOptions: {
@@ -40,7 +40,7 @@ export const tabNavigator = routes =>
   });
 
 export const NestedTabNavigator = routes =>
-  TabNavigator(routes, {
+  createTabNavigator(routes, {
     backBehavior: "none",
     swipeEnabled: true,
     tabBarOptions: {
@@ -115,15 +115,6 @@ export const navOptions = (props, { state }) => {
 };
 
 export const navigate = (route, props = {}) => {
-  if (route === "Main") {
-    const resetAction = NavigationActions.reset({
-      actions: [
-        NavigationActions.navigate({ routeName: route, params: props })
-      ],
-      index: 0
-    });
-    return navigationRef.dispatch(resetAction);
-  }
   return navigationRef.dispatch(
     NavigationActions.navigate({ routeName: route, params: props })
   );

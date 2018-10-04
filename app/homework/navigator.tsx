@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StackNavigator } from "react-navigation";
+import { createStackNavigator } from "react-navigation";
 import { navOptions } from "../utils/navHelper";
 
 import HomeworkFilterPageHeader from "./components/pages/HomeworkFilterPageHeader";
@@ -9,7 +9,7 @@ import HomeworkPage from "./containers/HomeworkPage";
 import HomeworkTaskPage from "./containers/HomeworkTaskPage";
 import HomeworkTaskPageHeader from "./containers/HomeworkTaskPageHeader";
 
-export default StackNavigator({
+export default createStackNavigator({
   Homework: {
     navigationOptions: ({ navigation }) =>
       navOptions(

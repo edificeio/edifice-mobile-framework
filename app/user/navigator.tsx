@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StackNavigator } from "react-navigation";
+import { createStackNavigator } from "react-navigation";
 import { navOptions } from "../utils/navHelper";
 
 import NotifPrefsPage, {
@@ -7,7 +7,7 @@ import NotifPrefsPage, {
 } from "./containers/NotifPrefsPage";
 import ProfilePage, { ProfilePageHeader } from "./containers/ProfilePage";
 
-export default StackNavigator({
+export default createStackNavigator({
   Profile: {
     navigationOptions: ({ navigation }) =>
       navOptions(

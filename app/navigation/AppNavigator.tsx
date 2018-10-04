@@ -1,7 +1,7 @@
 import * as React from "react";
 import { View } from "react-native";
-import { NavigationContainer, StackNavigator } from "react-navigation";
-import { tabNavigator, tabRootOptions } from "../utils/navHelper";
+import { createStackNavigator, NavigationContainer } from "react-navigation";
+import { createCustomTabNavigator, tabRootOptions } from "../utils/navHelper";
 
 import I18n from "react-native-i18n";
 import LoginPage from "../user/containers/LoginPage";
@@ -12,7 +12,7 @@ import TimelineNavigator from "../timeline/TimelineNavigator";
 import moduleDefinitions from "../AppModules";
 import { getRoutesFromModuleDefinitions } from "../infra/moduleTool";
 
-const MainNavigator = tabNavigator({
+const MainNavigator = createCustomTabNavigator({
   // TODO put the routes on moduleDefinitions
   timeline: {
     screen: TimelineNavigator,
@@ -43,7 +43,7 @@ const MainNavigator = tabNavigator({
   }*/
 });
 
-export const AppNavigator: NavigationContainer = StackNavigator(
+export const AppNavigator: NavigationContainer = createStackNavigator(
   {
     Bootstrap: () => <View />,
     Login: { screen: LoginPage },
