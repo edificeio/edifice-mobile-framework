@@ -1,94 +1,9 @@
 import style from "glamorous-native";
 import * as React from "react";
-import {
-  createTabNavigator,
-  NavigationActions,
-  TabBarBottom
-} from "react-navigation";
+import { NavigationActions } from "react-navigation";
 
 import { navigationRef } from "../AppScreen";
 import { CommonStyles } from "../styles/common/styles";
-import { IconOnOff } from "../ui";
-
-export const createCustomTabNavigator = routes =>
-  createTabNavigator(routes, {
-    swipeEnabled: false,
-    tabBarComponent: TabBarBottom,
-    tabBarOptions: {
-      activeTintColor: CommonStyles.mainColorTheme,
-      inactiveTintColor: CommonStyles.mainColorTheme,
-      indicatorStyle: {
-        backgroundColor: "#ffffff"
-      },
-      labelStyle: {
-        color: CommonStyles.textTabBottomColor,
-        fontFamily: CommonStyles.primaryFontFamily,
-        fontSize: 12
-      },
-      showIcon: true,
-      showLabel: true,
-      style: {
-        backgroundColor: CommonStyles.tabBottomColor,
-        borderTopColor: CommonStyles.borderColorLighter,
-        borderTopWidth: 1,
-        elevation: 1,
-        height: 56
-      },
-      upperCaseLabel: false
-    },
-    tabBarPosition: "bottom"
-  });
-
-export const NestedTabNavigator = routes =>
-  createTabNavigator(routes, {
-    backBehavior: "none",
-    swipeEnabled: true,
-    tabBarOptions: {
-      indicatorStyle: {
-        backgroundColor: CommonStyles.selectColor
-      },
-      labelStyle: {
-        fontSize: 13
-      },
-      showIcon: true,
-      showLabel: false,
-      style: {
-        backgroundColor: CommonStyles.tabBackgroundColor
-      }
-    },
-    tabBarPosition: "top"
-  });
-
-const TabBarLabel = style.text(
-  {
-    alignSelf: "center",
-    fontFamily: CommonStyles.primaryFontFamily,
-    fontSize: 12,
-    marginBottom: 4
-  },
-  ({ focused }) => ({
-    color: focused ? CommonStyles.actionColor : CommonStyles.textTabBottomColor
-  })
-);
-
-/**
- * return a navigationOptionsTitle object fill with its attributes
- * @param title      the title of the navigationOptionsTitle
- * @param iconName   the icon name
- */
-export const tabRootOptions = (title, iconName) => ({
-  tabBarIcon: ({ focused }) => <IconOnOff name={iconName} focused={focused} />,
-  tabBarLabel: ({ focused }) => (
-    <TabBarLabel focused={focused}>{title}</TabBarLabel>
-  ),
-  tabBarOptions: {
-    labelStyle: {
-      color: CommonStyles.textTabBottomColor,
-      fontFamily: CommonStyles.primaryFontFamily,
-      fontSize: 10
-    }
-  }
-});
 
 export const navOptions = (props, { state }) => {
   const { params = {} } = state;

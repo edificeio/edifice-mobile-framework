@@ -1,5 +1,5 @@
 import I18n from "react-native-i18n";
-import { tabRootOptions } from "../utils/navHelper";
+import { createMainTabNavOption } from "../navigation/helpers/mainTabNavigator";
 
 /**
  * All specs to define functional module
@@ -63,7 +63,7 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
       screen: comp,
 
       navigationOptions: () =>
-        tabRootOptions(I18n.t(this.displayName), this.iconName)
+        createMainTabNavOption(I18n.t(this.displayName), this.iconName)
     };
   }
 }
