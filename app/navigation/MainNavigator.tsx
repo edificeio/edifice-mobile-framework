@@ -11,7 +11,7 @@ import {
 } from "./helpers/mainTabNavigator";
 
 export const MainNavigator = createMainTabNavigator({
-  // TODO put the routes on moduleDefinitions
+  // TODO put the routes of timeline & conversation in moduleDefinitions
   timeline: {
     screen: TimelineNavigator,
 

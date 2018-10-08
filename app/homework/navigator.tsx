@@ -30,8 +30,7 @@ export default createStackNavigator({
     navigationOptions: ({ navigation }) =>
       navOptions(
         {
-          header: <HomeworkTaskPageHeader navigation={navigation} />, // TS-ISSUE : navigation doest exist in HomeworkTaskPageHeaderProps.
-          tabBarVisible: false
+          header: <HomeworkTaskPageHeader navigation={navigation} /> // TS-ISSUE : navigation doest exist in HomeworkTaskPageHeaderProps.
         },
         navigation
       ),

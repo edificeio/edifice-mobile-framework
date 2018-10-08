@@ -11,6 +11,7 @@ export const createMainTabNavigator = (
 ) =>
   createBottomTabNavigator(routeConfigs, {
     initialRouteName,
+    navigationOptions: shouldTabBarBeVisible,
     swipeEnabled: false,
     tabBarOptions: {
       // Colors
@@ -51,3 +52,14 @@ const MainTabNavigationLabel = style.text(
     color: focused ? CommonStyles.actionColor : CommonStyles.textTabBottomColor
   })
 );
+
+export const shouldTabBarBeVisible = ({ navigation }) => {
+  let tabBarVisible = true;
+  if (navigation.state.index > 0) {
+    tabBarVisible = false;
+  }
+
+  return {
+    tabBarVisible
+  };
+};
