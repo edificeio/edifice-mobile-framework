@@ -126,8 +126,6 @@ export class Conversations extends React.Component<IConversationsProps, any> {
             />
           }
           data={this.props.threads}
-          disableVirtualization
-          legacyImplementation={true}
           onEndReached={() => this.nextPage()}
           renderItem={({ item }) => this.renderItem(item)}
           style={styles.grid}
