@@ -126,7 +126,6 @@ export class Conversations extends React.Component<IConversationsProps, any> {
             />
           }
           data={this.props.threads}
-          removeClippedSubviews
           disableVirtualization
           legacyImplementation={true}
           onEndReached={() => this.nextPage()}
