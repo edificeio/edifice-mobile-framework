@@ -1,4 +1,4 @@
-import { navigate } from "../utils/navHelper";
+import { navigate } from "../navigation/helpers/navHelper";
 import { openThread } from "./actions";
 import { Conf } from "../Conf";
 import { readNextConversation } from "./actions/readNextConversation";

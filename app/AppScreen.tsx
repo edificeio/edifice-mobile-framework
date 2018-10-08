@@ -6,10 +6,9 @@ import { connect } from "react-redux";
 
 import { RootNavigator } from "./navigation/RootNavigator";
 import pushNotifications from "./pushNotifications";
-import { CommonStyles } from "./styles/common/styles";
 import { Tracking } from "./tracking/TrackingManager";
 
-export let navigationRef = null;
+export let rootNavigatorRef = null;
 
 export class AppScreen extends React.Component<any, undefined> {
   public navigator: any;
@@ -17,7 +16,7 @@ export class AppScreen extends React.Component<any, undefined> {
   public static router = RootNavigator.router;
 
   public async componentDidMount() {
-    navigationRef = this.navigator;
+    rootNavigatorRef = this.navigator;
     SplashScreen.close({
       animationType: SplashScreen.animationType.scale,
       delay: 500,

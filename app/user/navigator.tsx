@@ -1,6 +1,6 @@
 import * as React from "react";
 import { createStackNavigator } from "react-navigation";
-import { navOptions } from "../utils/navHelper";
+import { navScreenOptions } from "../navigation/helpers/navHelper";
 
 import NotifPrefsPage, {
   NotifPrefsPageHeader
@@ -10,7 +10,7 @@ import ProfilePage, { ProfilePageHeader } from "./containers/ProfilePage";
 export default createStackNavigator({
   Profile: {
     navigationOptions: ({ navigation }) =>
-      navOptions(
+      navScreenOptions(
         {
           header: <ProfilePageHeader navigation={navigation} />
         },
@@ -21,7 +21,7 @@ export default createStackNavigator({
 
   NotifPrefs: {
     navigationOptions: ({ navigation }) =>
-      navOptions(
+      navScreenOptions(
         {
           header: <NotifPrefsPageHeader navigation={navigation} />
         },

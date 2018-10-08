@@ -1,6 +1,6 @@
 import * as React from "react";
 import { createStackNavigator } from "react-navigation";
-import { navOptions } from "../utils/navHelper";
+import { navScreenOptions } from "../navigation/helpers/navHelper";
 
 import HomeworkFilterPageHeader from "./components/pages/HomeworkFilterPageHeader";
 import HomeworkPageHeader from "./components/pages/HomeworkPageHeader";
@@ -12,7 +12,7 @@ import HomeworkTaskPageHeader from "./containers/HomeworkTaskPageHeader";
 export default createStackNavigator({
   Homework: {
     navigationOptions: ({ navigation }) =>
-      navOptions(
+      navScreenOptions(
         {
           header: (
             <HomeworkPageHeader
@@ -28,7 +28,7 @@ export default createStackNavigator({
 
   HomeworkTask: {
     navigationOptions: ({ navigation }) =>
-      navOptions(
+      navScreenOptions(
         {
           header: <HomeworkTaskPageHeader navigation={navigation} /> // TS-ISSUE : navigation doest exist in HomeworkTaskPageHeaderProps.
         },
@@ -39,7 +39,7 @@ export default createStackNavigator({
 
   HomeworkFilter: {
     navigationOptions: ({ navigation }) =>
-      navOptions(
+      navScreenOptions(
         {
           header: <HomeworkFilterPageHeader navigation={navigation} />,
           tabBarVisible: false

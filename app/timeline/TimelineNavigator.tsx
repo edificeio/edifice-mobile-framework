@@ -1,6 +1,6 @@
 import * as React from "react";
 import { createStackNavigator } from "react-navigation";
-import { navOptions } from "../utils/navHelper";
+import { navScreenOptions } from "../navigation/helpers/navHelper";
 import {
   FilterHeaderConnect,
   FilterTimelineConnect
@@ -12,7 +12,7 @@ export default createStackNavigator(
   {
     notifications: {
       navigationOptions: ({ navigation }) =>
-        navOptions(
+        navScreenOptions(
           {
             header: <TimelineHeader navigation={navigation} />
           },
@@ -23,7 +23,7 @@ export default createStackNavigator(
 
     filterTimeline: {
       navigationOptions: ({ navigation }) =>
-        navOptions(
+        navScreenOptions(
           {
             header: <FilterHeaderConnect navigation={navigation} />,
             tabBarVisible: false
@@ -35,7 +35,7 @@ export default createStackNavigator(
 
     newsContent: {
       navigationOptions: ({ navigation }) =>
-        navOptions(
+        navScreenOptions(
           {
             header: <NewsContentHeader navigation={navigation} />,
             tabBarVisible: false

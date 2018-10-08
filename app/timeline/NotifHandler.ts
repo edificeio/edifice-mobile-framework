@@ -1,4 +1,4 @@
-import { navigate } from "../utils/navHelper";
+import { navigate } from "../navigation/helpers/navHelper";
 import { Conf } from "../Conf";
 import { Tracking } from "../tracking/TrackingManager";
 import { listTimeline } from './actions/list';

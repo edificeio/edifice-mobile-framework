@@ -1,11 +1,9 @@
-import style from "glamorous-native";
-import * as React from "react";
 import { NavigationActions } from "react-navigation";
 
-import { navigationRef } from "../AppScreen";
-import { CommonStyles } from "../styles/common/styles";
+import { rootNavigatorRef } from "../../AppScreen";
+import { CommonStyles } from "../../styles/common/styles";
 
-export const navOptions = (props, { state }) => {
+export const navScreenOptions = (props, { state }) => {
   const { params = {} } = state;
   const { header } = params;
 
@@ -30,7 +28,7 @@ export const navOptions = (props, { state }) => {
 };
 
 export const navigate = (route, props = {}) => {
-  return navigationRef.dispatch(
+  return rootNavigatorRef.dispatch(
     NavigationActions.navigate({ routeName: route, params: props })
   );
 };
