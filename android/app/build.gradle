@@ -97,11 +97,11 @@ def enableProguardInReleaseBuilds = false
 
 android {
     compileSdkVersion 23
-    
+
     defaultConfig {
         applicationId "com.ode.appe"
         minSdkVersion 19
-        targetSdkVersion 22
+        targetSdkVersion 23
         versionCode 8
         versionName "0.0.8"
         ndk {
@@ -150,11 +150,10 @@ dependencies {
     compile project(':react-native-image-to-base64')
     compile project(':rn-fetch-blob')
     compile fileTree(dir: "libs", include: ["*.jar"])
-    compile "com.android.support:appcompat-v7:23.0.1"
+    compile "com.android.support:appcompat-v7:23.0.3"
     compile "com.facebook.react:react-native:+"  // From
     compile project(':react-native-smart-splash-screen')
     compile project(':react-native-cookies')
-    compile project(':react-native-svg')
     compile "com.google.firebase:firebase-analytics:15.0.2"
     compile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
         transitive = true
