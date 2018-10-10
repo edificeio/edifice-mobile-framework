@@ -17,7 +17,7 @@
     "react-devtools": "react-devtools",
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest --watch",
-    "tsc:build": "./node_modules/.bin/tsc -p tsconfig.json",
+    "tsc:build": "./node_modules/.bin/tsc -p tsconfig.json || true",
     "tsc": "./node_modules/.bin/tsc -p tsconfig.json --watch",
     "tslint": "tslint --project ./tsconfig.json 'app/**/*.{ts,tsx}'",
     "tslint-fix": "tslint --fix --project  ./tsconfig.json 'app/**/*.{ts,tsx}'",
