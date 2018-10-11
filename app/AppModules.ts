@@ -5,6 +5,10 @@
 
 export default [
   {
+    config: require("./conversation2/config").default,
+    module: require("./conversation2").default
+  },
+  {
     config: require("./homework/config").default,
     module: require("./homework").default
   },

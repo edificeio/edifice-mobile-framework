@@ -8,201 +8,224 @@ import { connect } from "react-redux";
 import { Me } from "../../infra/Me";
 import { sendMessage } from "../actions/sendMessage";
 import { sendPhoto } from "../actions";
-import { Line } from '../../ui/Grid';
-import I18n from 'react-native-i18n';
-
+import { Line } from "../../ui/Grid";
+import I18n from "react-native-i18n";
 
 const ContainerFooterBar = style.view({
-	backgroundColor: CommonStyles.tabBottomColor,
-	borderTopColor: CommonStyles.borderColorLighter,
-	borderTopWidth: 1,
-	elevation: 1,
-	flexDirection: 'column',
-	justifyContent: 'flex-start'
-})
+  backgroundColor: CommonStyles.tabBottomColor,
+  borderTopColor: CommonStyles.borderColorLighter,
+  borderTopWidth: 1,
+  elevation: 1,
+  flexDirection: "column",
+  justifyContent: "flex-start"
+});
 
 const ChatIcon = style.touchableOpacity({
-	alignItems: "flex-start",
-	justifyContent: "center",
-	paddingLeft: 20,
-	paddingRight: 10,
-	width: 58,
+  alignItems: "flex-start",
+  justifyContent: "center",
+  paddingLeft: 20,
+  paddingRight: 10,
+  width: 58
 });
 
 const SendContainer = style.touchableOpacity({
-	alignItems: "center",
-	height: 40,
-	justifyContent: "center",
-	paddingLeft: 20,
-	paddingRight: 10,
-	paddingBottom: 10,
-	width: 58,
-	alignSelf: "flex-end"
+  alignItems: "center",
+  height: 40,
+  justifyContent: "center",
+  paddingLeft: 20,
+  paddingRight: 10,
+  paddingBottom: 10,
+  width: 58,
+  alignSelf: "flex-end"
 });
 
 const TextInput = style.textInput({
-	width: '100%',
-	lineHeight: Platform.OS === 'ios' ? 40 : 20,
-	maxHeight: 81,
-	margin: 0,
-	paddingVertical: 5
+  width: "100%",
+  lineHeight: Platform.OS === "ios" ? 40 : 20,
+  maxHeight: 81,
+  margin: 0,
+  paddingVertical: 5
 });
 
 const ContainerInput = style.view({
-	justifyContent: "center",
-	paddingLeft: 20,
-	paddingRight: 10,
-	paddingTop: Platform.OS === 'ios' ? 10 : 0,
-	width: '100%',
-	flexDirection: 'row'
-})
+  justifyContent: "center",
+  paddingLeft: 20,
+  paddingRight: 10,
+  paddingTop: Platform.OS === "ios" ? 10 : 0,
+  width: "100%",
+  flexDirection: "row"
+});
 
-class MediaInput extends React.Component<{
-	conversation: any;
-	send: (data: any) => Promise<void>;
-	sendPhoto: (data: any) => Promise<void>;
-}, {
-	selected: Selected;
-	textMessage: string;
-	newThreadId: string;
-}> {
-	
-	input: any;
+class MediaInput extends React.Component<
+  {
+    conversation: any;
+    send: (data: any) => Promise<void>;
+    sendPhoto: (data: any) => Promise<void>;
+  },
+  {
+    selected: Selected;
+    textMessage: string;
+    newThreadId: string;
+  }
+> {
+  input: any;
 
-	public state = {
-		selected: Selected.none,
-		textMessage: "",
-		newThreadId: undefined
-	}
+  public state = {
+    selected: Selected.none,
+    textMessage: "",
+    newThreadId: undefined
+  };
 
-	private switchKeyboard(e: Selected) {
-		const { selected } = this.state
+  private switchKeyboard(e: Selected) {
+    const { selected } = this.state;
 
-		if(e === Selected.keyboard){
-			if(this.state.selected !== Selected.keyboard){
-				this.input.innerComponent.focus();
-			}
-			else{
-				this.input.innerComponent.blur();
-			}
-		}
+    if (e === Selected.keyboard) {
+      if (this.state.selected !== Selected.keyboard) {
+        this.input.innerComponent.focus();
+      } else {
+        this.input.innerComponent.blur();
+      }
+    }
 
-		this.setState({ selected: e === selected ? Selected.none : e });
-		
-		if(e === Selected.camera){
-			this.sendPhoto();
-		}
-	}
+    this.setState({ selected: e === selected ? Selected.none : e });
 
-	findReceivers(conversation){
-		let to = [...conversation.to, ...(conversation.cc || []), conversation.from].filter(el => el !== Me.session.userId);
-		if(to.length === 0){
-			return [Me.session.userId];
-		}
-		return to;
-	}
+    if (e === Selected.camera) {
+      this.sendPhoto();
+    }
+  }
 
-	private sendPhoto(){
-		const { id, displayNames, subject, userId, thread_id } = this.props.conversation;
-		const { textMessage, newThreadId } = this.state;
+  findReceivers(conversation) {
+    let to = [
+      ...conversation.to,
+      ...(conversation.cc || []),
+      conversation.from
+    ].filter(el => el !== Me.session.userId);
+    if (to.length === 0) {
+      return [Me.session.userId];
+    }
+    return to;
+  }
 
-		let conversation = this.props.conversation;
+  private sendPhoto() {
+    const {
+      id,
+      displayNames,
+      subject,
+      userId,
+      thread_id
+    } = this.props.conversation;
+    const { textMessage, newThreadId } = this.state;
 
-		this.setState({ selected: Selected.none });
+    let conversation = this.props.conversation;
 
-		this.props.sendPhoto({
-			subject: subject,
-			to: this.findReceivers(conversation),
-			cc: conversation.cc,
-			parentId: id,
-			thread_id: newThreadId || thread_id
-		});
-	}
+    this.setState({ selected: Selected.none });
 
-	private async onValid() {
-		const { id, displayNames, subject, thread_id } = this.props.conversation
-		const { textMessage } = this.state
+    this.props.sendPhoto({
+      subject: subject,
+      to: this.findReceivers(conversation),
+      cc: conversation.cc,
+      parentId: id,
+      thread_id: newThreadId || thread_id
+    });
+  }
 
-		let conversation = this.props.conversation
+  private async onValid() {
+    const { id, displayNames, subject, thread_id } = this.props.conversation;
+    const { textMessage } = this.state;
 
-		this.setState({ selected: Selected.none })
+    console.log("global state: ", this.props.state);
 
-		this.input.innerComponent.setNativeProps({keyboardType:"email-address"});
-		this.input.innerComponent.clear();
-		
-		this.setState({
-			...this.state,
-			textMessage: ''
-		});
-		
-		this.input.innerComponent.setNativeProps({keyboardType:"default"});
+    let conversation = this.props.conversation;
 
-		const newMessage = await this.props.send(
-			{
-				subject: subject,
-				body: `<div>${textMessage}</div>`,
-				to: this.findReceivers(conversation),
-				cc: conversation.cc,
-				parentId: id,
-				thread_id: thread_id
-			}
-		);
-	}
+    this.setState({ selected: Selected.none });
 
-	focus(){
-		this.setState({ selected: Selected.keyboard })
-	}
+    this.input.innerComponent.setNativeProps({ keyboardType: "email-address" });
+    this.input.innerComponent.clear();
 
-	public render() {
-		const { selected, textMessage } = this.state
+    this.setState({
+      ...this.state,
+      textMessage: ""
+    });
 
-		return (
-			<ContainerFooterBar>
-				<ContainerInput>
-					<TextInput
-						ref={ el => this.input = el }
-						enablesReturnKeyAutomatically={true}
-						multiline
-						onChangeText={(textMessage: string) => this.setState({ textMessage })}
-						onFocus={ () => this.focus() }
-						placeholder={ I18n.t('conversation-chatPlaceholder') }
-						underlineColorAndroid={"transparent"}
-						value={textMessage}
-						autoCorrect={ false }
-					/>
-				</ContainerInput>
-				<Line>
-					<ChatIcon onPress={() => this.switchKeyboard(Selected.keyboard)}>
-						<IconOnOff focused={ true } name={ "keyboard" } style={{ marginLeft: 4 }} />
-					</ChatIcon>
-					<ChatIcon onPress={ () => Platform.OS === 'ios' ? undefined : this.sendPhoto() } style={{ marginBottom: 5, opacity: Platform.OS === 'ios' ? 0 : 1 }}>
-						<IconOnOff name={ "camera" } />
-					</ChatIcon>
-					<View style={{ flex: 1, alignItems: 'flex-end' }}>
-						<SendContainer onPress={() => this.onValid()}>
-							<ToggleIcon show={ !!this.state.textMessage } icon={ "send_icon" } />
-						</SendContainer>
-					</View>
-					
-				</Line>
-			</ContainerFooterBar>
-		)
-	}
+    this.input.innerComponent.setNativeProps({ keyboardType: "default" });
+
+    const newMessage = await this.props.send({
+      subject: subject,
+      body: `<div>${textMessage}</div>`,
+      to: this.findReceivers(conversation),
+      cc: conversation.cc,
+      parentId: id,
+      thread_id: thread_id
+    });
+  }
+
+  focus() {
+    this.setState({ selected: Selected.keyboard });
+  }
+
+  public render() {
+    const { selected, textMessage } = this.state;
+
+    return (
+      <ContainerFooterBar>
+        <ContainerInput>
+          <TextInput
+            ref={el => (this.input = el)}
+            enablesReturnKeyAutomatically={true}
+            multiline
+            onChangeText={(textMessage: string) =>
+              this.setState({ textMessage })
+            }
+            onFocus={() => this.focus()}
+            placeholder={I18n.t("conversation-chatPlaceholder")}
+            underlineColorAndroid={"transparent"}
+            value={textMessage}
+            autoCorrect={false}
+          />
+        </ContainerInput>
+        <Line>
+          <ChatIcon onPress={() => this.switchKeyboard(Selected.keyboard)}>
+            <IconOnOff
+              focused={true}
+              name={"keyboard"}
+              style={{ marginLeft: 4 }}
+            />
+          </ChatIcon>
+          <ChatIcon
+            onPress={() =>
+              Platform.OS === "ios" ? undefined : this.sendPhoto()
+            }
+            style={{ marginBottom: 5, opacity: Platform.OS === "ios" ? 0 : 1 }}
+          >
+            <IconOnOff name={"camera"} />
+          </ChatIcon>
+          <View style={{ flex: 1, alignItems: "flex-end" }}>
+            <SendContainer onPress={() => this.onValid()}>
+              <ToggleIcon show={!!this.state.textMessage} icon={"send_icon"} />
+            </SendContainer>
+          </View>
+        </Line>
+      </ContainerFooterBar>
+    );
+  }
 }
 
 enum Selected {
-	camera,
-	keyboard,
-	none,
-	other,
+  camera,
+  keyboard,
+  none,
+  other
 }
 
 export default connect(
-	(state: any) => ({
-		conversation: state.conversation.threads.find(t => t.thread_id === state.conversation.currentThread)
-	}),
-	dispatch => ({
-		send: (data: any) => sendMessage(dispatch)(data),
-		sendPhoto: (data: any) => sendPhoto(dispatch)(data)
-	})
-)(MediaInput)
+  (state: any) => ({
+    conversation: state.conversation.threads.find(
+      t => t.thread_id === state.conversation.currentThread
+    ),
+    state
+  }),
+  dispatch => ({
+    send: (data: any) => sendMessage(dispatch)(data),
+    sendPhoto: (data: any) => sendPhoto(dispatch)(data)
+  })
+)(MediaInput);
