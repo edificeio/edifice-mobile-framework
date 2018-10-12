@@ -8,13 +8,17 @@ import {
 } from "../components/ThreadListPage";
 import conversationConfig from "../config";
 
+import { fetchConversationThreadListIfNeeded } from "../actions/threadList";
+
 const mapStateToProps: (state: any) => IThreadListPageDataProps = state => {
   // Extract data from state
-  const localState = state[conversationConfig.reducerName];
+  const localState = state[conversationConfig.reducerName].threadList;
+  console.log("mapstate2props", localState);
 
   // Format props
   return {
-    isFetching: false
+    isFetching: localState.isFetching,
+    threads: localState.data.ids.map(threadId => localState.data.byId[threadId])
   };
 };
 
@@ -36,6 +40,10 @@ class ThreadListPageContainer extends React.Component<
 
   public render() {
     return <ThreadListPage {...this.props} />;
+  }
+
+  public async componentDidMount() {
+    this.props.dispatch(fetchConversationThreadListIfNeeded());
   }
 }
 

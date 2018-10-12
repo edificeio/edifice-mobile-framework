@@ -14,7 +14,7 @@ export const ThreadListPageHeader = ({
   return (
     <Header>
       <HeaderIcon name={null} hidden={true} />
-      <AppTitle>Machin</AppTitle>
+      <AppTitle>Conversation2</AppTitle>
       <HeaderIcon name={null} hidden={true} />
     </Header>
   );

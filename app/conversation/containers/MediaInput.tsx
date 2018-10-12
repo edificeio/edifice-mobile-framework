@@ -133,8 +133,6 @@ class MediaInput extends React.Component<
     const { id, displayNames, subject, thread_id } = this.props.conversation;
     const { textMessage } = this.state;
 
-    console.log("global state: ", this.props.state);
-
     let conversation = this.props.conversation;
 
     this.setState({ selected: Selected.none });
