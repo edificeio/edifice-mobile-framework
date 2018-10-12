@@ -18,6 +18,7 @@ const mapStateToProps: (state: any) => IThreadListPageDataProps = state => {
   // Format props
   return {
     isFetching: localState.isFetching,
+    page: localState.data.page,
     threads: localState.data.ids.map(threadId => localState.data.byId[threadId])
   };
 };
@@ -39,11 +40,24 @@ class ThreadListPageContainer extends React.Component<
   }
 
   public render() {
-    return <ThreadListPage {...this.props} />;
+    return (
+      <ThreadListPage
+        {...this.props}
+        onNextPage={this.fetchNextPage.bind(this)}
+      />
+    );
   }
 
   public async componentDidMount() {
-    this.props.dispatch(fetchConversationThreadListIfNeeded());
+    this.fetchNextPage();
+  }
+
+  public fetchNextPage() {
+    if (this.props.isFetching) return;
+    console.log("next page :", this.props.page + 1);
+    this.props.dispatch(
+      fetchConversationThreadListIfNeeded(this.props.page + 1)
+    );
   }
 }
 

@@ -135,7 +135,11 @@ export function fetchConversationThreadList(page: number = 0) {
       `fetchConversationThreadList (page=${page})`,
       localState(getState())
     );
-    if (page * NB_THREADS_PER_PAGE < localState(getState()).data.ids.length) {
+    if (localState(getState()).isFetching) {
+      // Don't fetch new page if already fetching
+      throw new Error("Conversation: Won't fetch, already fetching.");
+    }
+    if (page <= localState(getState()).data.page) {
       throw new Error(
         "Conversation: Won't fetch a page that has already been recevied."
       );

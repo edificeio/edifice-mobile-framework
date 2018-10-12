@@ -45,12 +45,14 @@ import { IConversationThread } from "../reducers/threadList";
 export interface IThreadListPageDataProps {
   isFetching?: boolean;
   threads?: IConversationThread[];
+  page?: number;
 }
 
 export interface IThreadListPageEventProps {}
 
 export interface IThreadListPageOtherProps {
   navigation?: any;
+  onNextPage?: () => void;
 }
 
 export type IThreadListPageProps = IThreadListPageDataProps &
@@ -105,17 +107,19 @@ export class ThreadListPage extends React.PureComponent<
   }
 
   public renderThreadList() {
-    const { isFetching } = this.props;
+    const { isFetching, onNextPage } = this.props;
+    const isReloading = false; // TODO : this may be a prop.
     return (
       <FlatList
         refreshControl={
           <RefreshControl
-            refreshing={isFetching}
+            refreshing={isReloading}
             // onRefresh={() => this.fetchLatest()}
           />
         }
         data={this.props.threads}
-        // onEndReached={() => this.nextPage()}
+        onEndReached={() => onNextPage()}
+        onEndReachedThreshold={0}
         renderItem={({ item }: { item: IConversationThread }) =>
           this.renderThreadItem(item)
         }

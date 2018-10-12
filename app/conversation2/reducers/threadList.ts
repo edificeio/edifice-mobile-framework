@@ -22,7 +22,9 @@ export interface IConversationThread {
   from: string; // User Id of the sender (newest message)
 }
 
-export type IConversationThreadList = IOrderedArrayById<IConversationThread>;
+export type IConversationThreadList = IOrderedArrayById<IConversationThread> & {
+  page?: number;
+};
 
 export interface IConversationMessage {
   // It's like an IMessage ! LOL !
@@ -45,7 +47,7 @@ export interface IConversationMessage {
 
 // THE REDUCER ------------------------------------------------------------------------------------
 
-const stateDefault: IConversationThreadList = { byId: {}, ids: [] };
+const stateDefault: IConversationThreadList = { byId: {}, ids: [], page: -1 };
 
 const conversationThreadListReducer = (
   state: IConversationThreadList = stateDefault,
@@ -54,10 +56,11 @@ const conversationThreadListReducer = (
   switch (action.type) {
     case actionTypes.received:
       // action contains `page`, `data`, `receivedAt`
-      // CAUTION : In this case, received threads are pushed at th end of the array. NEVER use this action to reload a page.
+      // CAUTION : In this case, received threads are pushed at the end of the array. NEVER use this action to reload a page.
       return {
         byId: { ...state.byId, ...action.data.byId },
-        ids: [...state.ids, ...action.data.ids]
+        ids: [...state.ids, ...action.data.ids],
+        page: action.page
       };
     default:
       return state;
