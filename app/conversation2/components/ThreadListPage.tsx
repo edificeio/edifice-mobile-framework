@@ -5,6 +5,8 @@
  *
  * Props :
  *    `isFetching` - is data currently fetching from the server.
+ *    `isRefreshing` - is data currenty fetching in order to reset displayed list.
+ *    `threads` - list of threads to display
  *
  *    `navigation` - React Navigation instance.
  */
@@ -142,7 +144,7 @@ export class ThreadListPage extends React.PureComponent<
       >
         <ThreadItem
           {...thread}
-          onPress={e => /*this.openConversation(item)*/ true}
+          onPress={e => this.handleOpenThread(thread.id)}
         />
       </Swipeable>
     );
@@ -151,6 +153,10 @@ export class ThreadListPage extends React.PureComponent<
   // Lifecycle
 
   // Event Handlers
+
+  public handleOpenThread(threadId) {
+    this.props.navigation.navigate("thread", { threadId });
+  }
 }
 
 export default ThreadListPage;

@@ -4,19 +4,13 @@
  */
 import moment from "moment";
 
-import {
-  asyncActionTypes,
-  asyncFetchIfNeeded,
-  asyncGetJson
-} from "../../infra/redux/async";
+import { asyncActionTypes, asyncGetJson } from "../../infra/redux/async";
 import conversationConfig from "../config";
 
 import { IArrayById } from "../../infra/collections";
-import threadList, {
-  IConversationMessage,
-  IConversationThread,
-  IConversationThreadList
-} from "../reducers/threadList";
+import { IConversationMessage } from "../reducers/messages";
+import { IConversationThreadList } from "../reducers/threadList";
+import { conversationMessagesReceived } from "./messages";
 
 export const NB_THREADS_PER_PAGE = 10; // Needs to be the same value as the backend's one
 
@@ -167,19 +161,13 @@ export function fetchConversationThreadList(page: number = 0) {
       const { messages, threads } = data;
       console.log("thread list fetched: ", data);
 
-      dispatch(conversationThreadListReceived(page, threads));
-      console.log("thread list received finish.", localState(getState()));
+      dispatch(conversationThreadListReceived(page, threads)); // threads with message ids
+      dispatch(conversationMessagesReceived(messages)); // message contents
+      console.log("global state", getState());
     } catch (errmsg) {
       dispatch(conversationThreadListFetchError(errmsg));
     }
   };
-}
-
-/**
- * Calls a fetch operation to get the conversation thread list from the backend, only if needed data is not present or invalidated.
- */
-export function fetchConversationThreadListIfNeeded(page: number = 0) {
-  return fetchConversationThreadList(page);
 }
 
 export function resetConversationThreadList() {
@@ -192,7 +180,8 @@ export function resetConversationThreadList() {
       );
       const { messages, threads } = data;
       console.log("thread list fetched for reset: ", data);
-      dispatch(conversationThreadListResetReceived(threads));
+      dispatch(conversationThreadListResetReceived(threads)); // threads with message ids
+      dispatch(conversationMessagesReceived(messages)); // message contents
     } catch (errmsg) {
       dispatch(conversationThreadListFetchError(errmsg));
     }

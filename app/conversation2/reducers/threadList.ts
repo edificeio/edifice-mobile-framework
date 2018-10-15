@@ -1,6 +1,5 @@
 /**
- * Homework diary list state reducer
- * Holds a list of available homework diary Ids in a simple Array
+ * Conversation thread list state reducer
  */
 import moment from "moment";
 
@@ -31,25 +30,6 @@ export type IConversationThreadList = IOrderedArrayById<IConversationThread> & {
   page?: number;
   isRefreshing?: boolean; // isRefreshing is not as the same level of isFetching, but it's more practical this way.
 };
-
-export interface IConversationMessage {
-  // It's like an IMessage ! LOL !
-  id: string; // Message's own id
-  parentId: string; // Id of the message that it reply to
-  subject: string; // Subject of the message
-  body: string; // Content of the message. It's HTML.
-  from: string; // User id of the sender
-  fromName: string; // Name of the sender
-  to: string[]; // User Ids of the receivers
-  toName: string[]; // Name of the receivers
-  cc: string[]; // User Ids of the copy receivers
-  ccName: string[]; // Name of the copy receivers
-  displayNames: string[][]; // [0: id, 1: displayName] for each person concerned by this message.
-  date: moment.Moment; // DateTime of the message
-  threadId: string; // Id of the thread (Id of the first message in this thread).
-  unread: boolean; // Self-explaining
-  rownum: number; // number of the message in the thread (starting from 1 from the newest to the latest).
-}
 
 // THE REDUCER ------------------------------------------------------------------------------------
 

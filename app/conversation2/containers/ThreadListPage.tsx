@@ -9,7 +9,7 @@ import {
 import conversationConfig from "../config";
 
 import {
-  fetchConversationThreadListIfNeeded,
+  fetchConversationThreadList,
   resetConversationThreadList
 } from "../actions/threadList";
 
@@ -60,9 +60,7 @@ class ThreadListPageContainer extends React.Component<
   public fetchNextPage() {
     if (this.props.isFetching) return;
     console.log("next page :", this.props.page + 1);
-    this.props.dispatch(
-      fetchConversationThreadListIfNeeded(this.props.page + 1)
-    );
+    this.props.dispatch(fetchConversationThreadList(this.props.page + 1));
   }
 
   public reloadList() {

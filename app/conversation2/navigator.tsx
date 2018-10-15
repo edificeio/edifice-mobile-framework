@@ -3,6 +3,8 @@ import { createStackNavigator } from "react-navigation";
 import { navScreenOptions } from "../navigation/helpers/navHelper";
 import ThreadListPage from "./containers/ThreadListPage";
 import ThreadListPageHeader from "./containers/ThreadListPageHeader";
+import ThreadPage from "./containers/ThreadPage";
+import ThreadPageHeader from "./containers/ThreadPageHeader";
 
 export default createStackNavigator({
   listThreads: {
@@ -12,12 +14,26 @@ export default createStackNavigator({
           header: (
             <ThreadListPageHeader
               navigation={navigation} // TS-ISSUE
-              date={navigation.getParam("homework-date", null)}
             />
           )
         },
         navigation
       ),
     screen: ThreadListPage
+  },
+
+  thread: {
+    navigationOptions: ({ navigation }) =>
+      navScreenOptions(
+        {
+          header: (
+            <ThreadPageHeader
+              navigation={navigation} // TS-ISSUE
+            />
+          )
+        },
+        navigation
+      ),
+    screen: ThreadPage
   }
 });
