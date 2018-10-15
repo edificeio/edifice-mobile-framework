@@ -44,15 +44,20 @@ import { IConversationThread } from "../reducers/threadList";
 
 export interface IThreadListPageDataProps {
   isFetching?: boolean;
+  isRefreshing?: boolean;
   threads?: IConversationThread[];
   page?: number;
 }
 
-export interface IThreadListPageEventProps {}
+export interface IThreadListPageEventProps {
+  // Because of presence of a state in the container, eventProps are not passed using mapDispatchToProps.
+  // So, eventProps that are using the state are passed in *OtherProps.
+}
 
 export interface IThreadListPageOtherProps {
   navigation?: any;
   onNextPage?: () => void;
+  onRefresh?: () => void;
 }
 
 export type IThreadListPageProps = IThreadListPageDataProps &
@@ -107,14 +112,13 @@ export class ThreadListPage extends React.PureComponent<
   }
 
   public renderThreadList() {
-    const { isFetching, onNextPage } = this.props;
-    const isReloading = false; // TODO : this may be a prop.
+    const { isFetching, isRefreshing, onNextPage, onRefresh } = this.props;
     return (
       <FlatList
         refreshControl={
           <RefreshControl
-            refreshing={isReloading}
-            // onRefresh={() => this.fetchLatest()}
+            refreshing={isRefreshing}
+            onRefresh={() => onRefresh()}
           />
         }
         data={this.props.threads}

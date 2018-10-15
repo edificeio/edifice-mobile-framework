@@ -7,7 +7,11 @@ import moment from "moment";
 import { IOrderedArrayById } from "../../infra/collections";
 import asyncReducer from "../../infra/redux/async";
 
-import { actionTypes } from "../actions/threadList";
+import {
+  actionTypeResetReceived,
+  actionTypeResetRequested,
+  actionTypes
+} from "../actions/threadList";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -24,6 +28,7 @@ export interface IConversationThread {
 
 export type IConversationThreadList = IOrderedArrayById<IConversationThread> & {
   page?: number;
+  isRefreshing?: boolean; // isRefreshing is not as the same level of isFetching, but it's more practical this way.
 };
 
 export interface IConversationMessage {
@@ -47,7 +52,12 @@ export interface IConversationMessage {
 
 // THE REDUCER ------------------------------------------------------------------------------------
 
-const stateDefault: IConversationThreadList = { byId: {}, ids: [], page: -1 };
+const stateDefault: IConversationThreadList = {
+  byId: {},
+  ids: [],
+  isRefreshing: false,
+  page: -1
+};
 
 const conversationThreadListReducer = (
   state: IConversationThreadList = stateDefault,
@@ -58,9 +68,23 @@ const conversationThreadListReducer = (
       // action contains `page`, `data`, `receivedAt`
       // CAUTION : In this case, received threads are pushed at the end of the array. NEVER use this action to reload a page.
       return {
+        ...state,
         byId: { ...state.byId, ...action.data.byId },
         ids: [...state.ids, ...action.data.ids],
         page: action.page
+      };
+    case actionTypeResetRequested:
+      return {
+        ...state,
+        isRefreshing: true
+      };
+    case actionTypeResetReceived:
+      console.log("reset received");
+      return {
+        byId: { ...action.data.byId },
+        ids: [...action.data.ids],
+        isRefreshing: false,
+        page: 0
       };
     default:
       return state;

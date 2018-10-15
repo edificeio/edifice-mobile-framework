@@ -8,7 +8,10 @@ import {
 } from "../components/ThreadListPage";
 import conversationConfig from "../config";
 
-import { fetchConversationThreadListIfNeeded } from "../actions/threadList";
+import {
+  fetchConversationThreadListIfNeeded,
+  resetConversationThreadList
+} from "../actions/threadList";
 
 const mapStateToProps: (state: any) => IThreadListPageDataProps = state => {
   // Extract data from state
@@ -18,6 +21,7 @@ const mapStateToProps: (state: any) => IThreadListPageDataProps = state => {
   // Format props
   return {
     isFetching: localState.isFetching,
+    isRefreshing: localState.data.isRefreshing,
     page: localState.data.page,
     threads: localState.data.ids.map(threadId => localState.data.byId[threadId])
   };
@@ -44,6 +48,7 @@ class ThreadListPageContainer extends React.Component<
       <ThreadListPage
         {...this.props}
         onNextPage={this.fetchNextPage.bind(this)}
+        onRefresh={this.reloadList.bind(this)}
       />
     );
   }
@@ -58,6 +63,12 @@ class ThreadListPageContainer extends React.Component<
     this.props.dispatch(
       fetchConversationThreadListIfNeeded(this.props.page + 1)
     );
+  }
+
+  public reloadList() {
+    if (this.props.isFetching) return;
+    console.log("reload all");
+    this.props.dispatch(resetConversationThreadList());
   }
 }
 

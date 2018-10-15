@@ -122,6 +122,20 @@ export function conversationThreadListFetchError(errmsg: string) {
   return { type: actionTypes.fetchError, error: true, errmsg };
 }
 
+export const actionTypeResetRequested =
+  conversationConfig.createActionType("THREAD_LIST") + "_RESET_REQUESTED";
+export const actionTypeResetReceived =
+  conversationConfig.createActionType("THREAD_LIST") + "_RESET_RECEIVED";
+
+export function conversationThreadListResetRequested() {
+  return { type: actionTypeResetRequested };
+}
+export function conversationThreadListResetReceived(
+  data: IConversationThreadList
+) {
+  return { type: actionTypeResetReceived, data };
+}
+
 // THUNKS -----------------------------------------------------------------------------------------
 
 /**
@@ -168,4 +182,21 @@ export function fetchConversationThreadList(page: number = 0) {
  */
 export function fetchConversationThreadListIfNeeded(page: number = 0) {
   return fetchConversationThreadList(page);
+}
+
+export function resetConversationThreadList() {
+  return async (dispatch, getState) => {
+    dispatch(conversationThreadListResetRequested());
+    try {
+      const data = await asyncGetJson(
+        `/conversation/threads/list?page=0`,
+        conversationThreadListAdapter
+      );
+      const { messages, threads } = data;
+      console.log("thread list fetched for reset: ", data);
+      dispatch(conversationThreadListResetReceived(threads));
+    } catch (errmsg) {
+      dispatch(conversationThreadListFetchError(errmsg));
+    }
+  };
 }
