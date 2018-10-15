@@ -106,7 +106,6 @@ export function conversationThreadListInvalidated() {
 }
 
 export function conversationThreadListRequested() {
-  // CAUTION : In this case, received threads are pushed at th end of the array. NEVER use this action to reload a page.
   return { type: actionTypes.requested };
 }
 
@@ -114,7 +113,6 @@ export function conversationThreadListReceived(
   page: number,
   data: IConversationThreadList
 ) {
-  // CAUTION : In this case, received threads are pushed at th end of the array. NEVER use this action to reload a page.
   return { type: actionTypes.received, page, data, receivedAt: Date.now() };
 }
 

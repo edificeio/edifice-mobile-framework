@@ -10,7 +10,8 @@ import asyncReducer from "../../infra/redux/async";
 import {
   actionTypeResetReceived,
   actionTypeResetRequested,
-  actionTypes
+  actionTypes,
+  NB_THREADS_PER_PAGE
 } from "../actions/threadList";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
@@ -65,12 +66,16 @@ const conversationThreadListReducer = (
 ) => {
   switch (action.type) {
     case actionTypes.received:
-      // action contains `page`, `data`, `receivedAt`
-      // CAUTION : In this case, received threads are pushed at the end of the array. NEVER use this action to reload a page.
+      // action contains `page`, `data`, `receivedAt` (not used)
       return {
         ...state,
         byId: { ...state.byId, ...action.data.byId },
-        ids: [...state.ids, ...action.data.ids],
+        // ids: [...state.ids, ...action.data.ids],
+        ids: [
+          ...state.ids.slice(0, NB_THREADS_PER_PAGE * action.page),
+          ...action.data.ids,
+          ...state.ids.slice(NB_THREADS_PER_PAGE * (action.page + 1))
+        ],
         page: action.page
       };
     case actionTypeResetRequested:
