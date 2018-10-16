@@ -12,6 +12,9 @@ import {
   fetchConversationThreadList,
   resetConversationThreadList
 } from "../actions/threadList";
+import { conversationThreadSelected } from "../actions/threadSelected";
+
+import { navigate } from "../../navigation/helpers/navHelper";
 
 const mapStateToProps: (state: any) => IThreadListPageDataProps = state => {
   // Extract data from state
@@ -31,7 +34,11 @@ const mapDispatchToProps: (
   dispatch: any
 ) => IThreadListPageEventProps = dispatch => {
   return {
-    dispatch
+    dispatch,
+    onOpenThread: (threadId: string) => {
+      dispatch(conversationThreadSelected(threadId));
+      navigate("thread");
+    }
   };
 };
 

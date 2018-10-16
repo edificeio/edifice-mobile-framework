@@ -54,6 +54,7 @@ export interface IThreadListPageDataProps {
 export interface IThreadListPageEventProps {
   // Because of presence of a state in the container, eventProps are not passed using mapDispatchToProps.
   // So, eventProps that are using the state are passed in *OtherProps.
+  onOpenThread?: (threadId: string) => void;
 }
 
 export interface IThreadListPageOtherProps {
@@ -139,6 +140,7 @@ export class ThreadListPage extends React.PureComponent<
   public renderThreadItem(thread: IConversationThread) {
     return (
       <Swipeable
+        // TODO suppression de message
         // rightButtons={this.swipeoutButton(item)}
         // onRightButtonsOpenRelease={(e, g, r) => (this.swipeRef = r)}
       >
@@ -155,7 +157,7 @@ export class ThreadListPage extends React.PureComponent<
   // Event Handlers
 
   public handleOpenThread(threadId) {
-    this.props.navigation.navigate("thread", { threadId });
+    this.props.onOpenThread(threadId);
   }
 }
 
