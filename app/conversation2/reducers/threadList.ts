@@ -12,6 +12,7 @@ import {
   actionTypes,
   NB_THREADS_PER_PAGE
 } from "../actions/threadList";
+import { IConversationMessage, IConversationMessageList } from "./messages";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -24,6 +25,7 @@ export interface IConversationThread {
   to: string[]; // User Ids of the receivers (newest message)
   cc: string[]; // User Ids of the copy receivers (newest message)
   from: string; // User Id of the sender (newest message)
+  messages: IConversationMessage[]; // Messages id in this thread (recent first). They have to be manually ordered.
 }
 
 export type IConversationThreadList = IOrderedArrayById<IConversationThread> & {

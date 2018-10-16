@@ -59,12 +59,14 @@ const conversationThreadListAdapter: (
   for (const thread of data) {
     // 1, For each thread, extract thread info in `result.threads`
     const newestMessage = thread[0];
-    result.threads.byId[newestMessage.thread_id] = {
+    const threadId = newestMessage.thread_id;
+    result.threads.byId[threadId] = {
       cc: newestMessage.cc,
       date: moment(newestMessage.date),
       displayNames: newestMessage.displayNames,
       from: newestMessage.from,
-      id: newestMessage.thread_id,
+      id: threadId,
+      messages: [],
       subject: newestMessage.subject,
       to: newestMessage.to,
       unread: 0
@@ -76,9 +78,10 @@ const conversationThreadListAdapter: (
         ...message,
         date: moment(message.date),
         parentId: message.parent_id,
-        threadId: message.thread_id
+        threadId
       };
-      if (message.unread) ++result.threads.byId[message.thread_id].unread;
+      if (message.unread) ++result.threads.byId[threadId].unread;
+      result.threads.byId[threadId].messages.push(message.id);
     }
     // 3, Sort each thread by last message date, backend result is f*cked-up
     result.threads.ids.sort((a: string, b: string) =>

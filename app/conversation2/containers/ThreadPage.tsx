@@ -11,7 +11,14 @@ import conversationConfig from "../config";
 const mapStateToProps: (state: any) => IThreadPageDataProps = state => {
   // Extract data from state
   const localState = state[conversationConfig.reducerName].messages;
-  console.log("mapstate2props", localState);
+  const selectedThreadId = state[conversationConfig.reducerName].threadSelected;
+  const selectedThread =
+    state[conversationConfig.reducerName].threadList.data.byId[
+      selectedThreadId
+    ];
+  console.log("local ThreadPage state", localState);
+  console.log("selected threadId", selectedThreadId);
+  console.log("selected thread info", selectedThread);
 
   // Format props
   return {
