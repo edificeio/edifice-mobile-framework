@@ -28,9 +28,16 @@ export interface IConversationMessage {
   threadId: string; // Id of the thread (Id of the first message in this thread).
   unread: boolean; // Self-explaining
   rownum: number; // number of the message in the thread (starting from 1 from the newest to the latest).
+  status: ConversationMessageStatus; // sending status of the message
 }
 
 export type IConversationMessageList = IArrayById<IConversationMessage>;
+
+export enum ConversationMessageStatus {
+  sent,
+  sending,
+  failed
+}
 
 // THE REDUCER ------------------------------------------------------------------------------------
 

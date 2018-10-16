@@ -16,14 +16,21 @@ const mapStateToProps: (state: any) => IThreadPageDataProps = state => {
     state[conversationConfig.reducerName].threadList.data.byId[
       selectedThreadId
     ];
+  const messages = selectedThread.messages.map(
+    messageId => localState.data[messageId]
+  );
+  const headerHeight = state.ui.headerHeight; // TODO: Ugly.
+
   console.log("local ThreadPage state", localState);
   console.log("selected threadId", selectedThreadId);
   console.log("selected thread info", selectedThread);
 
   // Format props
   return {
+    headerHeight,
     isFetching: localState.isFetching,
     isRefreshing: localState.data.isRefreshing,
+    messages,
     threadInfo: selectedThread
   };
 };
