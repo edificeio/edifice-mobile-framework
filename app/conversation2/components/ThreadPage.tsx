@@ -37,6 +37,7 @@ import ThreadItem from "../components/ThreadItem";
 // Type definitions
 
 import { IConversationMessage } from "../reducers/messages";
+import { IConversationThread } from "../reducers/threadList";
 
 // Misc
 
@@ -45,7 +46,7 @@ import { IConversationMessage } from "../reducers/messages";
 export interface IThreadPageDataProps {
   isFetching?: boolean;
   isRefreshing?: boolean;
-  messages?: IConversationMessage[];
+  threadInfo?: IConversationThread;
   page?: number;
 }
 
@@ -72,7 +73,8 @@ export class ThreadPage extends React.PureComponent<IThreadPageProps, {}> {
   // Render
 
   public render() {
-    const { isFetching, messages } = this.props;
+    const { isFetching, threadInfo } = this.props;
+    const messages = threadInfo.messages;
     const isEmpty = messages.length === 0;
     const threadId = this.props.navigation.getParam("threadId");
     console.log("nav threadId:", threadId);
@@ -110,6 +112,7 @@ export class ThreadPage extends React.PureComponent<IThreadPageProps, {}> {
 
   public renderMessageList() {
     const { isFetching, isRefreshing, onGetNewer, onGetOlder } = this.props;
+    return <Text>La liiiiiste !</Text>;
   }
 
   public renderMessageItem(thread: IConversationMessage) {

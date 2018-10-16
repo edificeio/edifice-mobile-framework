@@ -24,7 +24,7 @@ const mapStateToProps: (state: any) => IThreadPageDataProps = state => {
   return {
     isFetching: localState.isFetching,
     isRefreshing: localState.data.isRefreshing,
-    messages: [] // TODO get from state
+    threadInfo: selectedThread
   };
 };
 
