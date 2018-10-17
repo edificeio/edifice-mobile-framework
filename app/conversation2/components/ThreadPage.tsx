@@ -59,7 +59,7 @@ export interface IThreadPageDataProps {
 }
 
 export interface IThreadPageEventProps {
-  onGetNewer?: () => void;
+  onGetNewer?: (threadId: string) => void;
   onGetOlder?: (threadId: string) => void;
 }
 
@@ -164,7 +164,7 @@ export class ThreadPage extends React.PureComponent<
           refreshControl={
             <RefreshControl
               refreshing={isRefreshing}
-              onRefresh={() => onGetNewer()}
+              onRefresh={() => onGetNewer(threadInfo.id)}
               style={{ transform: [{ scaleY: -1 }] }}
             />
           }
@@ -174,6 +174,7 @@ export class ThreadPage extends React.PureComponent<
           inverted={true}
           keyExtractor={(item: IConversationMessage) => item.id}
           onEndReached={() => onGetOlder(threadInfo.id)}
+          onEndReachedThreshold={0}
         />
         {/*<MediaInput />*/}
       </KeyboardAvoidingView>

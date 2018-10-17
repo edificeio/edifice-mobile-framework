@@ -220,14 +220,14 @@ export function fetchConversationThreadOlderMessages(threadId: string) {
 
       dispatch(conversationThreadAppendRequested(threadId, false));
       // Get the oldest known messageId
-      const oldestMessagesId =
+      const oldestMessageId =
         threadInfo.messages[threadInfo.messages.length - 1];
       console.log(
-        `fetching older messages of ${threadId}, last message : ${oldestMessagesId}`
+        `fetching older messages of ${threadId}, last message : ${oldestMessageId}`
       );
       // Fetch data
       const data = await asyncGetJson(
-        `/conversation/thread/previous-messages/${oldestMessagesId}`,
+        `/conversation/thread/previous-messages/${oldestMessageId}`,
         conversationOrderedMessagesAdapter
       );
       // Extract messageIds list and contents
@@ -240,6 +240,39 @@ export function fetchConversationThreadOlderMessages(threadId: string) {
       // dispatch
       dispatch(conversationMessagesReceived(messages)); // message contents
       dispatch(conversationThreadAppendReceived(messageIds, threadId, false)); // messages ids ordered
+    } catch (errmsg) {
+      dispatch(conversationThreadListFetchError(errmsg));
+    }
+  };
+}
+
+export function fetchConversationThreadNewerMessages(threadId: string) {
+  return async (dispatch, getState) => {
+    try {
+      const threadInfo = localState(getState()).data.byId[threadId];
+      if (threadInfo.isFetchingNewer) return; // No fetch is already fetching, it's important, otherwise, there will maybe have doublons
+
+      dispatch(conversationThreadAppendRequested(threadId, true));
+      // Get the newest known messageId
+      const newestMessageId = threadInfo.messages[0];
+      console.log(
+        `fetching newer messages of ${threadId}, last message : ${newestMessageId}`
+      );
+      // Fetch data
+      const data = await asyncGetJson(
+        `/conversation/thread/new-messages/${newestMessageId}`,
+        conversationOrderedMessagesAdapter
+      );
+      // Extract messageIds list and contents
+      const messages: IConversationMessageList = {};
+      for (const message of data) {
+        messages[message.id] = message;
+      }
+      const messageIds = data.map(message => message.id);
+      console.log("thread newer messages received: ", messages, messageIds);
+      // dispatch
+      dispatch(conversationMessagesReceived(messages)); // message contents
+      dispatch(conversationThreadAppendReceived(messageIds, threadId, true)); // messages ids ordered
     } catch (errmsg) {
       dispatch(conversationThreadListFetchError(errmsg));
     }

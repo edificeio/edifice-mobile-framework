@@ -8,7 +8,10 @@ import {
 } from "../components/ThreadPage";
 import conversationConfig from "../config";
 
-import { fetchConversationThreadOlderMessages } from "../actions/threadList";
+import {
+  fetchConversationThreadNewerMessages,
+  fetchConversationThreadOlderMessages
+} from "../actions/threadList";
 
 const mapStateToProps: (state: any) => IThreadPageDataProps = state => {
   // Extract data from state
@@ -31,8 +34,8 @@ const mapStateToProps: (state: any) => IThreadPageDataProps = state => {
   // Format props
   return {
     headerHeight,
-    isFetching: localState.isFetching,
-    isRefreshing: localState.data.isRefreshing,
+    isFetching: selectedThread.isFetchingOlder,
+    isRefreshing: selectedThread.isFetchingNewer,
     messages,
     threadInfo: selectedThread
   };
@@ -43,8 +46,9 @@ const mapDispatchToProps: (
 ) => IThreadPageEventProps = dispatch => {
   return {
     dispatch,
-    onGetNewer: () => {
+    onGetNewer: (threadId: string) => {
       console.log("get newer posts");
+      dispatch(fetchConversationThreadNewerMessages(threadId));
       return;
     },
     onGetOlder: (threadId: string) => {
