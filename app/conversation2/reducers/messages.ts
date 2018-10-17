@@ -8,6 +8,7 @@ import { IArrayById } from "../../infra/collections";
 import asyncReducer from "../../infra/redux/async";
 
 import { actionTypes } from "../actions/messages";
+import { actionTypeAppendRequested } from "../actions/threadList";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -32,6 +33,7 @@ export interface IConversationMessage {
 }
 
 export type IConversationMessageList = IArrayById<IConversationMessage>;
+export type IConversationMessageNativeArray = IConversationMessage[]; // Used when th order of received data needs to be kept.
 
 export enum ConversationMessageStatus {
   sent,
@@ -50,6 +52,7 @@ const conversationThreadListReducer = (
   switch (action.type) {
     case actionTypes.received:
       // action contains, `data`, `receivedAt` (not used)
+      console.log("reducer : messages data merged.");
       return {
         ...state,
         ...action.data // if a message already exists with its Id, it is replaced.

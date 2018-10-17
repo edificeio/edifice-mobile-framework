@@ -8,9 +8,16 @@ import { asyncActionTypes, asyncGetJson } from "../../infra/redux/async";
 import conversationConfig from "../config";
 
 import { IArrayById } from "../../infra/collections";
-import { IConversationMessage } from "../reducers/messages";
+import {
+  IConversationMessage,
+  IConversationMessageNativeArray,
+  IConversationMessageList
+} from "../reducers/messages";
 import { IConversationThreadList } from "../reducers/threadList";
-import { conversationMessagesReceived } from "./messages";
+import {
+  conversationMessagesReceived,
+  conversationOrderedMessagesAdapter
+} from "./messages";
 
 export const NB_THREADS_PER_PAGE = 10; // Needs to be the same value as the backend's one
 
@@ -66,6 +73,8 @@ const conversationThreadListAdapter: (
       displayNames: newestMessage.displayNames,
       from: newestMessage.from,
       id: threadId,
+      isFetchingNewer: false,
+      isFetchingOlder: false,
       messages: [],
       subject: newestMessage.subject,
       to: newestMessage.to,
@@ -131,6 +140,25 @@ export function conversationThreadListResetReceived(
   return { type: actionTypeResetReceived, data };
 }
 
+export const actionTypeAppendRequested =
+  conversationConfig.createActionType("THREAD") + "_APPEND_REQUESTED";
+export const actionTypeAppendReceived =
+  conversationConfig.createActionType("THREAD") + "_APPEND_RECEIVED";
+
+export function conversationThreadAppendRequested(
+  threadId: string,
+  isNew: boolean
+) {
+  return { type: actionTypeAppendRequested, threadId, isNew };
+}
+export function conversationThreadAppendReceived(
+  data: string[],
+  threadId: string,
+  isNew: boolean
+) {
+  return { type: actionTypeAppendReceived, data, threadId, isNew };
+}
+
 // THUNKS -----------------------------------------------------------------------------------------
 
 /**
@@ -140,10 +168,6 @@ export function conversationThreadListResetReceived(
 export function fetchConversationThreadList(page: number = 0) {
   return async (dispatch, getState) => {
     // Check if we try to reload a page
-    console.log(
-      `fetchConversationThreadList (page=${page})`,
-      localState(getState())
-    );
     if (localState(getState()).isFetching) {
       // Don't fetch new page if already fetching
       throw new Error("Conversation: Won't fetch, already fetching.");
@@ -162,11 +186,9 @@ export function fetchConversationThreadList(page: number = 0) {
         conversationThreadListAdapter
       );
       const { messages, threads } = data;
-      console.log("thread list fetched: ", data);
 
       dispatch(conversationThreadListReceived(page, threads)); // threads with message ids
       dispatch(conversationMessagesReceived(messages)); // message contents
-      console.log("global state", getState());
     } catch (errmsg) {
       dispatch(conversationThreadListFetchError(errmsg));
     }
@@ -182,9 +204,42 @@ export function resetConversationThreadList() {
         conversationThreadListAdapter
       );
       const { messages, threads } = data;
-      console.log("thread list fetched for reset: ", data);
       dispatch(conversationThreadListResetReceived(threads)); // threads with message ids
       dispatch(conversationMessagesReceived(messages)); // message contents
+    } catch (errmsg) {
+      dispatch(conversationThreadListFetchError(errmsg));
+    }
+  };
+}
+
+export function fetchConversationThreadOlderMessages(threadId: string) {
+  return async (dispatch, getState) => {
+    try {
+      const threadInfo = localState(getState()).data.byId[threadId];
+      if (threadInfo.isFetchingOlder) return; // No fetch is already fetching, it's important, otherwise, there will maybe have doublons
+
+      dispatch(conversationThreadAppendRequested(threadId, false));
+      // Get the oldest known messageId
+      const oldestMessagesId =
+        threadInfo.messages[threadInfo.messages.length - 1];
+      console.log(
+        `fetching older messages of ${threadId}, last message : ${oldestMessagesId}`
+      );
+      // Fetch data
+      const data = await asyncGetJson(
+        `/conversation/thread/previous-messages/${oldestMessagesId}`,
+        conversationOrderedMessagesAdapter
+      );
+      // Extract messageIds list and contents
+      const messages: IConversationMessageList = {};
+      for (const message of data) {
+        messages[message.id] = message;
+      }
+      const messageIds = data.map(message => message.id);
+      console.log("thread older messages received: ", messages, messageIds);
+      // dispatch
+      dispatch(conversationMessagesReceived(messages)); // message contents
+      dispatch(conversationThreadAppendReceived(messageIds, threadId, false)); // messages ids ordered
     } catch (errmsg) {
       dispatch(conversationThreadListFetchError(errmsg));
     }

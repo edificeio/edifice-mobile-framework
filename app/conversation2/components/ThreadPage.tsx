@@ -60,7 +60,7 @@ export interface IThreadPageDataProps {
 
 export interface IThreadPageEventProps {
   onGetNewer?: () => void;
-  onGetOlder?: () => void;
+  onGetOlder?: (threadId: string) => void;
 }
 
 export interface IThreadPageOtherProps {
@@ -141,15 +141,15 @@ export class ThreadPage extends React.PureComponent<
       onGetNewer,
       onGetOlder,
       threadInfo,
-      messages
+      messages,
+      headerHeight
     } = this.props;
-    console.log("messages to list:", messages);
 
     return (
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
-        keyboardVerticalOffset={this.props.headerHeight}
+        keyboardVerticalOffset={headerHeight}
       >
         <ConnectionTrackingBar />
 
@@ -163,8 +163,8 @@ export class ThreadPage extends React.PureComponent<
         <FlatList
           refreshControl={
             <RefreshControl
-              refreshing={this.props.isRefreshing}
-              onRefresh={() => this.props.onGetNewer()}
+              refreshing={isRefreshing}
+              onRefresh={() => onGetNewer()}
               style={{ transform: [{ scaleY: -1 }] }}
             />
           }
@@ -173,6 +173,7 @@ export class ThreadPage extends React.PureComponent<
           style={styles.grid}
           inverted={true}
           keyExtractor={(item: IConversationMessage) => item.id}
+          onEndReached={() => onGetOlder(threadInfo.id)}
         />
         {/*<MediaInput />*/}
       </KeyboardAvoidingView>

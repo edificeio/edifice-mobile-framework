@@ -8,6 +8,8 @@ import {
 } from "../components/ThreadPage";
 import conversationConfig from "../config";
 
+import { fetchConversationThreadOlderMessages } from "../actions/threadList";
+
 const mapStateToProps: (state: any) => IThreadPageDataProps = state => {
   // Extract data from state
   const localState = state[conversationConfig.reducerName].messages;
@@ -21,6 +23,7 @@ const mapStateToProps: (state: any) => IThreadPageDataProps = state => {
   );
   const headerHeight = state.ui.headerHeight; // TODO: Ugly.
 
+  console.log("ThreadPage MapState2Props :");
   console.log("local ThreadPage state", localState);
   console.log("selected threadId", selectedThreadId);
   console.log("selected thread info", selectedThread);
@@ -41,9 +44,12 @@ const mapDispatchToProps: (
   return {
     dispatch,
     onGetNewer: () => {
+      console.log("get newer posts");
       return;
     },
-    onGetOlder: () => {
+    onGetOlder: (threadId: string) => {
+      console.log("get older posts");
+      dispatch(fetchConversationThreadOlderMessages(threadId));
       return;
     }
   };

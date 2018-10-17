@@ -19,7 +19,6 @@ import { navigate } from "../../navigation/helpers/navHelper";
 const mapStateToProps: (state: any) => IThreadListPageDataProps = state => {
   // Extract data from state
   const localState = state[conversationConfig.reducerName].threadList;
-  console.log("mapstate2props", localState);
 
   // Format props
   return {
@@ -66,13 +65,11 @@ class ThreadListPageContainer extends React.Component<
 
   public fetchNextPage() {
     if (this.props.isFetching) return;
-    console.log("next page :", this.props.page + 1);
     this.props.dispatch(fetchConversationThreadList(this.props.page + 1));
   }
 
   public reloadList() {
     if (this.props.isFetching) return;
-    console.log("reload all");
     this.props.dispatch(resetConversationThreadList());
   }
 }

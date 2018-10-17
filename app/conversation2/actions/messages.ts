@@ -7,7 +7,10 @@ import moment from "moment";
 import { asyncActionTypes, asyncGetJson } from "../../infra/redux/async";
 import conversationConfig from "../config";
 
-import { IConversationMessageList } from "../reducers/messages";
+import {
+  IConversationMessageList,
+  IConversationMessageNativeArray
+} from "../reducers/messages";
 
 /** Returns the local state (global state -> conversation2 -> messages). Give the global state as parameter. */
 const localState = globalState =>
@@ -33,7 +36,10 @@ export type IConversationMessageListBackend = Array<{
   unread: boolean;
 }>;
 
-const conversationMessagesAdapter: (
+/**
+ * Used when the data doesn't need to be ordered, but you want to merge a array in messages in another.
+ */
+export const conversationMessagesAdapter: (
   data: IConversationMessageListBackend
 ) => IConversationMessageList = data => {
   const result = {};
@@ -46,6 +52,22 @@ const conversationMessagesAdapter: (
     };
   }
   return result;
+};
+
+/**
+ * Used when you want to keep the returned data order.
+ */
+export const conversationOrderedMessagesAdapter: (
+  data: IConversationMessageListBackend
+) => IConversationMessageNativeArray = data => {
+  return data.map(message => ({
+    ...message,
+    date: moment(message.date),
+    parentId: message.parent_id,
+    rownum: undefined,
+    status: undefined,
+    threadId: message.thread_id
+  }));
 };
 
 // ACTION LIST ------------------------------------------------------------------------------------
@@ -72,32 +94,4 @@ export function conversationMessagesFetchError(errmsg: string) {
 
 // THUNKS -----------------------------------------------------------------------------------------
 
-/**
- * Calls a fetch operation to get older conversation messages from the backend for a given thread.
- * Dispatches CONVERSATION_MESSAGES_REQUESTED, CONVERSATION_MESSAGES_RECEIVED, and CONVERSATION_MESSAGES_FETCH_ERROR if an error occurs.
- */
-export function fetchPreviousConversationMessages(threadId: string) {
-  return async (dispatch, getState) => {
-    // Check if we try to reload a page
-    console.log(
-      `fetchConversationThreadMessages (messageId=${threadId})`,
-      localState(getState())
-    );
-
-    dispatch(conversationMessagesRequested());
-
-    const oldestMessageId = false;
-
-    try {
-      const data = await asyncGetJson(
-        `/conversation/thread/previous-messages/${oldestMessageId}`,
-        conversationMessagesAdapter
-      );
-      console.log("older messages fetched: ", data);
-
-      dispatch(conversationMessagesReceived(data));
-    } catch (errmsg) {
-      dispatch(conversationMessagesFetchError(errmsg));
-    }
-  };
-}
+// No thunk.

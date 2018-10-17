@@ -7,12 +7,14 @@ import { IOrderedArrayById } from "../../infra/collections";
 import asyncReducer from "../../infra/redux/async";
 
 import {
+  actionTypeAppendReceived,
+  actionTypeAppendRequested,
   actionTypeResetReceived,
   actionTypeResetRequested,
   actionTypes,
   NB_THREADS_PER_PAGE
 } from "../actions/threadList";
-import { IConversationMessage, IConversationMessageList } from "./messages";
+import { IConversationMessage } from "./messages";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -26,6 +28,8 @@ export interface IConversationThread {
   cc: string[]; // User Ids of the copy receivers (newest message)
   from: string; // User Id of the sender (newest message)
   messages: IConversationMessage[]; // Messages id in this thread (recent first). They have to be manually ordered.
+  isFetchingOlder: boolean;
+  isFetchingNewer: boolean;
 }
 
 export type IConversationThreadList = IOrderedArrayById<IConversationThread> & {
@@ -66,13 +70,44 @@ const conversationThreadListReducer = (
         isRefreshing: true
       };
     case actionTypeResetReceived:
-      console.log("reset received");
       return {
         byId: { ...action.data.byId },
         ids: [...action.data.ids],
         isRefreshing: false,
         page: 0
       };
+    case actionTypeAppendRequested:
+      // action contains `threadId`, `isNew`
+      console.log("reducer: append requested", action);
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          [action.threadId]: {
+            ...state.byId[action.threadId],
+            [action.isNew ? "isFetchingNewer" : "isFetchingOlder"]: true
+          }
+        }
+      };
+    case actionTypeAppendReceived:
+      // action contains `data`, `threadId`, `isNew`
+      console.log("reducer: append received", action);
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          [action.threadId]: {
+            ...state.byId[action.threadId],
+            messages: action.isNew
+              ? [...action.data, ...state.byId[action.threadId].messages]
+              : [...state.byId[action.threadId].messages, ...action.data],
+            [action.isNew ? "isFetchingNewer" : "isFetchingOlder"]: false
+          }
+        }
+      };
+    case actionTypes.fetchError:
+      console.warn("reducer: fetch error", action.errmsg);
+      return state;
     default:
       return state;
   }
