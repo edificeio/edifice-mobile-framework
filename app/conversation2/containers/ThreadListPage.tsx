@@ -9,6 +9,7 @@ import {
 import conversationConfig from "../config";
 
 import {
+  conversationSetThreadRead,
   fetchConversationThreadList,
   resetConversationThreadList
 } from "../actions/threadList";
@@ -36,6 +37,7 @@ const mapDispatchToProps: (
     dispatch,
     onOpenThread: (threadId: string) => {
       dispatch(conversationThreadSelected(threadId));
+      dispatch(conversationSetThreadRead(threadId));
       navigate("thread");
     }
   };

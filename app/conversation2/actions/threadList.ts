@@ -10,14 +10,18 @@ import conversationConfig from "../config";
 import { IArrayById } from "../../infra/collections";
 import {
   IConversationMessage,
-  IConversationMessageNativeArray,
   IConversationMessageList
 } from "../reducers/messages";
 import { IConversationThreadList } from "../reducers/threadList";
 import {
   conversationMessagesReceived,
-  conversationOrderedMessagesAdapter
+  conversationMessagesSetRead,
+  conversationOrderedMessagesAdapter,
+  conversationSetMessagesRead
 } from "./messages";
+
+import { Conf } from "../../Conf";
+import { signedFetch } from "../../infra/fetchWithCache";
 
 export const NB_THREADS_PER_PAGE = 10; // Needs to be the same value as the backend's one
 
@@ -76,7 +80,7 @@ const conversationThreadListAdapter: (
       isFetchingNewer: false,
       isFetchingOlder: false,
       messages: [],
-      subject: newestMessage.subject,
+      subject: newestMessage.subject.replace(/Tr :|Re :|Re:|Tr:/g, "").trim(),
       to: newestMessage.to,
       unread: 0
     };
@@ -157,6 +161,12 @@ export function conversationThreadAppendReceived(
   isNew: boolean
 ) {
   return { type: actionTypeAppendReceived, data, threadId, isNew };
+}
+
+export const actionTypeSetRead =
+  conversationConfig.createActionType("THREAD") + "_SET_READ";
+export function conversationThreadSetRead(threadId: string) {
+  return { type: actionTypeSetRead, threadId };
 }
 
 // THUNKS -----------------------------------------------------------------------------------------
@@ -240,6 +250,7 @@ export function fetchConversationThreadOlderMessages(threadId: string) {
       // dispatch
       dispatch(conversationMessagesReceived(messages)); // message contents
       dispatch(conversationThreadAppendReceived(messageIds, threadId, false)); // messages ids ordered
+      dispatch(conversationSetMessagesRead(messageIds));
     } catch (errmsg) {
       dispatch(conversationThreadListFetchError(errmsg));
     }
@@ -273,8 +284,30 @@ export function fetchConversationThreadNewerMessages(threadId: string) {
       // dispatch
       dispatch(conversationMessagesReceived(messages)); // message contents
       dispatch(conversationThreadAppendReceived(messageIds, threadId, true)); // messages ids ordered
+      dispatch(conversationSetMessagesRead(messageIds));
     } catch (errmsg) {
       dispatch(conversationThreadListFetchError(errmsg));
+    }
+  };
+}
+
+export function conversationSetThreadRead(threadId: string) {
+  return async (dispatch, getState) => {
+    try {
+      const threadInfo = localState(getState()).data.byId[threadId];
+      console.log("SET UNREAD", threadInfo);
+      await signedFetch(`${Conf.platform}/conversation/toggleUnread`, {
+        body: JSON.stringify({
+          id: threadInfo.messages,
+          unread: false
+        }),
+        method: "POST"
+      });
+      dispatch(conversationThreadSetRead(threadId));
+      dispatch(conversationMessagesSetRead(threadInfo.messages));
+    } catch (errmsg) {
+      // tslint:disable-next-line:no-console
+      console.warn("failed to mark thread read : ", threadId);
     }
   };
 }

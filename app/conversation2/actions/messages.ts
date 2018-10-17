@@ -11,6 +11,8 @@ import {
   IConversationMessageList,
   IConversationMessageNativeArray
 } from "../reducers/messages";
+import { Conf } from "../../Conf";
+import { signedFetch } from "../../infra/fetchWithCache";
 
 /** Returns the local state (global state -> conversation2 -> messages). Give the global state as parameter. */
 const localState = globalState =>
@@ -70,6 +72,12 @@ export const conversationOrderedMessagesAdapter: (
   }));
 };
 
+export const actionTypeSetRead =
+  conversationConfig.createActionType("MESSAGES") + "_SET_READ";
+export function conversationMessagesSetRead(messageIds: string[]) {
+  return { type: actionTypeSetRead, messageIds };
+}
+
 // ACTION LIST ------------------------------------------------------------------------------------
 
 export const actionTypes = asyncActionTypes(
@@ -94,4 +102,20 @@ export function conversationMessagesFetchError(errmsg: string) {
 
 // THUNKS -----------------------------------------------------------------------------------------
 
-// No thunk.
+export function conversationSetMessagesRead(messageIds: string[]) {
+  return async (dispatch, getState) => {
+    try {
+      await signedFetch(`${Conf.platform}/conversation/toggleUnread`, {
+        body: JSON.stringify({
+          id: messageIds,
+          unread: false
+        }),
+        method: "POST"
+      });
+      dispatch(conversationMessagesSetRead(messageIds));
+    } catch (errmsg) {
+      // tslint:disable-next-line:no-console
+      console.warn("failed to mark messages read : ", messageIds);
+    }
+  };
+}

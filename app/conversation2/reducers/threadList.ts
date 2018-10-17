@@ -12,6 +12,7 @@ import {
   actionTypeResetReceived,
   actionTypeResetRequested,
   actionTypes,
+  actionTypeSetRead,
   NB_THREADS_PER_PAGE
 } from "../actions/threadList";
 import { IConversationMessage } from "./messages";
@@ -108,6 +109,18 @@ const conversationThreadListReducer = (
     case actionTypes.fetchError:
       console.warn("reducer: fetch error", action.errmsg);
       return state;
+    case actionTypeSetRead:
+      console.log("reducer: set thread read", action);
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          [action.threadId]: {
+            ...state.byId[action.threadId],
+            unread: 0
+          }
+        }
+      };
     default:
       return state;
   }

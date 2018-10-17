@@ -7,8 +7,7 @@ import moment from "moment";
 import { IArrayById } from "../../infra/collections";
 import asyncReducer from "../../infra/redux/async";
 
-import { actionTypes } from "../actions/messages";
-import { actionTypeAppendRequested } from "../actions/threadList";
+import { actionTypes, actionTypeSetRead } from "../actions/messages";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -57,6 +56,14 @@ const conversationThreadListReducer = (
         ...state,
         ...action.data // if a message already exists with its Id, it is replaced.
       };
+    case actionTypeSetRead:
+      // action contains, `messageIds`
+      console.log("reducer : messages data marked as read.");
+      const result = { ...state };
+      for (const messageId of action.messageIds) {
+        result[messageId].unread = false;
+      }
+      return result;
     default:
       return state;
   }
