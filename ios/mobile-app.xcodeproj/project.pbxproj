@@ -44,7 +44,6 @@
 		08316F5C8F8B4C349DDFE20D /* OpenSans.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 98E4B64D8854404FA4B09003 /* OpenSans.ttf */; };
 		3F607C52B44A4E9E847D9793 /* libRNCookieManagerIOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 819434DFD00C4EAD8FDFD6A1 /* libRNCookieManagerIOS.a */; };
 		0D35CA71D0284E6EB982E5E0 /* libRNViewOverflow.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E812CF0F89F347BA8936578C /* libRNViewOverflow.a */; };
-		052E856EB0954978AAB6EC06 /* libRNFetchBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF59D2C09EF44CD3A65E46BE /* libRNFetchBlob.a */; };
 		D6DCF46153CC42F4809B99C4 /* libRNFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BEA9DF200574451BA34B2D77 /* libRNFS.a */; };
 		E8B3A59970FD468089DB9F31 /* libRNI18n.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 49B1478AB10B4615A33FC6DD /* libRNI18n.a */; };
 		B1A54ED45F454F168D36D55F /* libRNImagePicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 90EC3220CACE4DFB93398481 /* libRNImagePicker.a */; };
@@ -66,6 +65,12 @@
 		9E38651652774AB5AAE652C8 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C792262A5D4344B5ABCA4E07 /* Zocial.ttf */; };
 		20F467F6195049C29CADA446 /* libRNMixpanel.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 628930AE6AF34818880B9820 /* libRNMixpanel.a */; };
 		32C1BF6109394709A63C3E41 /* libRNMixpanel-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8180C4BD09D4451B8067FADF /* libRNMixpanel-tvOS.a */; };
+		27FEB3BB79EC4266BED2C004 /* libRNFetchBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B40E037D81741CBBAF3E837 /* libRNFetchBlob.a */; };
+		BBBB4FC37A2643589DD81EB7 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C4B371174B646B693B86C34 /* libRCTActionSheet.a */; };
+		CC9665646A4C4A6F817BD333 /* AntDesign.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 10B7D1F8C09646BDBA58E0F5 /* AntDesign.ttf */; };
+		D31D2FDB05D74DACB3279A2D /* FontAwesome5_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 32D10B15E944436AA94F9027 /* FontAwesome5_Brands.ttf */; };
+		36C98DFC94FA46C1B9F26EEB /* FontAwesome5_Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FB0625EDBBF54731B1115467 /* FontAwesome5_Regular.ttf */; };
+		0DFDA73272764FDA8D319E6A /* FontAwesome5_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9CDBE0B312EF49DDAFDFFAC9 /* FontAwesome5_Solid.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -326,8 +331,6 @@
 		819434DFD00C4EAD8FDFD6A1 /* libRNCookieManagerIOS.a */ = {isa = PBXFileReference; name = "libRNCookieManagerIOS.a"; path = "libRNCookieManagerIOS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		1FCC13F98D2346AD9FCCC8AF /* RNViewOverflow.xcodeproj */ = {isa = PBXFileReference; name = "RNViewOverflow.xcodeproj"; path = "../node_modules/react-native-view-overflow/ios/RNViewOverflow.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		E812CF0F89F347BA8936578C /* libRNViewOverflow.a */ = {isa = PBXFileReference; name = "libRNViewOverflow.a"; path = "libRNViewOverflow.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
-		37B89937A75E4E65B7C7A24D /* RNFetchBlob.xcodeproj */ = {isa = PBXFileReference; name = "RNFetchBlob.xcodeproj"; path = "../node_modules/react-native-fetch-blob/ios/RNFetchBlob.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		BF59D2C09EF44CD3A65E46BE /* libRNFetchBlob.a */ = {isa = PBXFileReference; name = "libRNFetchBlob.a"; path = "libRNFetchBlob.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		A09736086AEC499DAABA9A7B /* RNFS.xcodeproj */ = {isa = PBXFileReference; name = "RNFS.xcodeproj"; path = "../node_modules/react-native-fs/RNFS.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		BEA9DF200574451BA34B2D77 /* libRNFS.a */ = {isa = PBXFileReference; name = "libRNFS.a"; path = "libRNFS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		AF6F6223A08640F18223E63D /* RNI18n.xcodeproj */ = {isa = PBXFileReference; name = "RNI18n.xcodeproj"; path = "../node_modules/react-native-i18n/ios/RNI18n.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
@@ -357,6 +360,14 @@
 		13669BAE252A47408E404E8B /* RNMixpanel.xcodeproj */ = {isa = PBXFileReference; name = "RNMixpanel.xcodeproj"; path = "../node_modules/react-native-mixpanel/RNMixpanel.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		628930AE6AF34818880B9820 /* libRNMixpanel.a */ = {isa = PBXFileReference; name = "libRNMixpanel.a"; path = "libRNMixpanel.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		8180C4BD09D4451B8067FADF /* libRNMixpanel-tvOS.a */ = {isa = PBXFileReference; name = "libRNMixpanel-tvOS.a"; path = "libRNMixpanel-tvOS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		EE7B0F5665824BE294BE8296 /* RNFetchBlob.xcodeproj */ = {isa = PBXFileReference; name = "RNFetchBlob.xcodeproj"; path = "../node_modules/react-native-fetch-blob/ios/RNFetchBlob.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		3B40E037D81741CBBAF3E837 /* libRNFetchBlob.a */ = {isa = PBXFileReference; name = "libRNFetchBlob.a"; path = "libRNFetchBlob.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		F796868E5EB84DFD84132E13 /* ReactNativeGlobalProps.xcodeproj */ = {isa = PBXFileReference; name = "ReactNativeGlobalProps.xcodeproj"; path = "../node_modules/react-native-global-props/ios/ReactNativeGlobalProps.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		3C4B371174B646B693B86C34 /* libRCTActionSheet.a */ = {isa = PBXFileReference; name = "libRCTActionSheet.a"; path = "libRCTActionSheet.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		10B7D1F8C09646BDBA58E0F5 /* AntDesign.ttf */ = {isa = PBXFileReference; name = "AntDesign.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		32D10B15E944436AA94F9027 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; name = "FontAwesome5_Brands.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		FB0625EDBBF54731B1115467 /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; name = "FontAwesome5_Regular.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		9CDBE0B312EF49DDAFDFFAC9 /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; name = "FontAwesome5_Solid.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -388,7 +399,6 @@
 				843A78ACFB0C49F18A8B4D2E /* libRNFirebase.a in Frameworks */,
 				3F607C52B44A4E9E847D9793 /* libRNCookieManagerIOS.a in Frameworks */,
 				0D35CA71D0284E6EB982E5E0 /* libRNViewOverflow.a in Frameworks */,
-				052E856EB0954978AAB6EC06 /* libRNFetchBlob.a in Frameworks */,
 				D6DCF46153CC42F4809B99C4 /* libRNFS.a in Frameworks */,
 				E8B3A59970FD468089DB9F31 /* libRNI18n.a in Frameworks */,
 				B1A54ED45F454F168D36D55F /* libRNImagePicker.a in Frameworks */,
@@ -399,6 +409,8 @@
 				A77508B2AEE94CA8ACF8BF3D /* libRNVectorIcons.a in Frameworks */,
 				20F467F6195049C29CADA446 /* libRNMixpanel.a in Frameworks */,
 				32C1BF6109394709A63C3E41 /* libRNMixpanel-tvOS.a in Frameworks */,
+				27FEB3BB79EC4266BED2C004 /* libRNFetchBlob.a in Frameworks */,
+				BBBB4FC37A2643589DD81EB7 /* libRCTActionSheet.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -579,7 +591,6 @@
 				0227B41589C14A50AC67C533 /* RNFirebase.xcodeproj */,
 				4C590668BCE8404A8F8D53D5 /* RNCookieManagerIOS.xcodeproj */,
 				1FCC13F98D2346AD9FCCC8AF /* RNViewOverflow.xcodeproj */,
-				37B89937A75E4E65B7C7A24D /* RNFetchBlob.xcodeproj */,
 				A09736086AEC499DAABA9A7B /* RNFS.xcodeproj */,
 				AF6F6223A08640F18223E63D /* RNI18n.xcodeproj */,
 				BADDCB4FE14543808F7AE64B /* RNImagePicker.xcodeproj */,
@@ -588,6 +599,8 @@
 				B2D356ACD5064EC5BCD41A13 /* RNSVG.xcodeproj */,
 				6D00AC0A797544E5935E25A6 /* RNVectorIcons.xcodeproj */,
 				13669BAE252A47408E404E8B /* RNMixpanel.xcodeproj */,
+				EE7B0F5665824BE294BE8296 /* RNFetchBlob.xcodeproj */,
+				F796868E5EB84DFD84132E13 /* ReactNativeGlobalProps.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -655,6 +668,14 @@
 				5F7C6D58BB17455B82D73590 /* Octicons.ttf */,
 				ED22E782CE5343538927FCD0 /* SimpleLineIcons.ttf */,
 				C792262A5D4344B5ABCA4E07 /* Zocial.ttf */,
+				DAAA1BAF8D1B4B22819AB6C1 /* AntDesign.ttf */,
+				2048EECA056E40A2BFFB0F8B /* FontAwesome5_Brands.ttf */,
+				379CC541555647D5A35068C3 /* FontAwesome5_Regular.ttf */,
+				EFBFDE6025AD4B1981E4B15E /* FontAwesome5_Solid.ttf */,
+				10B7D1F8C09646BDBA58E0F5 /* AntDesign.ttf */,
+				32D10B15E944436AA94F9027 /* FontAwesome5_Brands.ttf */,
+				FB0625EDBBF54731B1115467 /* FontAwesome5_Regular.ttf */,
+				9CDBE0B312EF49DDAFDFFAC9 /* FontAwesome5_Solid.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1066,6 +1087,14 @@
 				1D92FA37C70740C7AD7C8B63 /* Octicons.ttf in Resources */,
 				5A0DE56D801349B38CE5E588 /* SimpleLineIcons.ttf in Resources */,
 				9E38651652774AB5AAE652C8 /* Zocial.ttf in Resources */,
+				DA94F1667CD643B8AC71B677 /* AntDesign.ttf in Resources */,
+				3D5B9EA7F4354E9880DDEA3C /* FontAwesome5_Brands.ttf in Resources */,
+				C2A4CA530E824BDD88985EEC /* FontAwesome5_Regular.ttf in Resources */,
+				768979688C524560BA0DE3A2 /* FontAwesome5_Solid.ttf in Resources */,
+				CC9665646A4C4A6F817BD333 /* AntDesign.ttf in Resources */,
+				D31D2FDB05D74DACB3279A2D /* FontAwesome5_Brands.ttf in Resources */,
+				36C98DFC94FA46C1B9F26EEB /* FontAwesome5_Regular.ttf in Resources */,
+				0DFDA73272764FDA8D319E6A /* FontAwesome5_Solid.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1213,13 +1242,15 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
 					"$(SRCROOT)/../node_modules/react-native-cookies/ios/RNCookieManagerIOS",
 					"$(SRCROOT)/../node_modules/react-native-view-overflow/ios",
-					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
+					"$(SRCROOT)/../node_modules/rn-fetch-blob/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
 					"$(SRCROOT)/../node_modules/react-native-i18n/ios",
 					"$(SRCROOT)/../node_modules/react-native-image-picker/ios",
@@ -1228,6 +1259,8 @@
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-mixpanel/RNMixpanel",
+					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-global-props/ios/ReactNativeGlobalProps",
 				);
 			};
 			name = Debug;
@@ -1262,13 +1295,15 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
 					"$(SRCROOT)/../node_modules/react-native-cookies/ios/RNCookieManagerIOS",
 					"$(SRCROOT)/../node_modules/react-native-view-overflow/ios",
-					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
+					"$(SRCROOT)/../node_modules/rn-fetch-blob/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
 					"$(SRCROOT)/../node_modules/react-native-i18n/ios",
 					"$(SRCROOT)/../node_modules/react-native-image-picker/ios",
@@ -1277,6 +1312,8 @@
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-mixpanel/RNMixpanel",
+					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-global-props/ios/ReactNativeGlobalProps",
 				);
 			};
 			name = Release;
@@ -1301,7 +1338,7 @@
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
 					"$(SRCROOT)/../node_modules/react-native-cookies/ios/RNCookieManagerIOS",
 					"$(SRCROOT)/../node_modules/react-native-view-overflow/ios",
-					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
+					"$(SRCROOT)/../node_modules/rn-fetch-blob/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
 					"$(SRCROOT)/../node_modules/react-native-i18n/ios",
 					"$(SRCROOT)/../node_modules/react-native-image-picker/ios",
@@ -1310,6 +1347,8 @@
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-mixpanel/RNMixpanel",
+					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-global-props/ios/ReactNativeGlobalProps",
 				);
 			};
 			name = Debug;
@@ -1333,7 +1372,7 @@
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
 					"$(SRCROOT)/../node_modules/react-native-cookies/ios/RNCookieManagerIOS",
 					"$(SRCROOT)/../node_modules/react-native-view-overflow/ios",
-					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
+					"$(SRCROOT)/../node_modules/rn-fetch-blob/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
 					"$(SRCROOT)/../node_modules/react-native-i18n/ios",
 					"$(SRCROOT)/../node_modules/react-native-image-picker/ios",
@@ -1342,6 +1381,8 @@
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-mixpanel/RNMixpanel",
+					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-global-props/ios/ReactNativeGlobalProps",
 				);
 			};
 			name = Release;
@@ -1385,13 +1426,15 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
 					"$(SRCROOT)/../node_modules/react-native-cookies/ios/RNCookieManagerIOS",
 					"$(SRCROOT)/../node_modules/react-native-view-overflow/ios",
-					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
+					"$(SRCROOT)/../node_modules/rn-fetch-blob/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
 					"$(SRCROOT)/../node_modules/react-native-i18n/ios",
 					"$(SRCROOT)/../node_modules/react-native-image-picker/ios",
@@ -1400,6 +1443,8 @@
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-mixpanel/RNMixpanel",
+					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-global-props/ios/ReactNativeGlobalProps",
 				);
 			};
 			name = Debug;
@@ -1443,13 +1488,15 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
 					"$(SRCROOT)/../node_modules/react-native-cookies/ios/RNCookieManagerIOS",
 					"$(SRCROOT)/../node_modules/react-native-view-overflow/ios",
-					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
+					"$(SRCROOT)/../node_modules/rn-fetch-blob/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
 					"$(SRCROOT)/../node_modules/react-native-i18n/ios",
 					"$(SRCROOT)/../node_modules/react-native-image-picker/ios",
@@ -1458,6 +1505,8 @@
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-mixpanel/RNMixpanel",
+					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-global-props/ios/ReactNativeGlobalProps",
 				);
 			};
 			name = Release;
@@ -1496,6 +1545,8 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 			};
 			name = Debug;
@@ -1520,6 +1571,8 @@
 				TVOS_DEPLOYMENT_TARGET = 10.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",

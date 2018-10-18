@@ -96,12 +96,13 @@ def enableSeparateBuildPerCPUArchitecture = false
 def enableProguardInReleaseBuilds = false
 
 android {
-    compileSdkVersion 23
-    
+    compileSdkVersion 26
+    buildToolsVersion "26.0.1"
+
     defaultConfig {
         applicationId "com.ode.appe"
         minSdkVersion 19
-        targetSdkVersion 22
+        targetSdkVersion 26
         versionCode 8
         versionName "0.0.8"
         ndk {
@@ -138,6 +139,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-fetch-blob')
     compile project(':react-native-view-overflow')
     compile(project(':react-native-firebase')) {
         transitive = false
@@ -148,13 +150,12 @@ dependencies {
     compile project(':react-native-vector-icons')
     compile project(':react-native-fs')
     compile project(':react-native-image-to-base64')
-    compile project(':react-native-fetch-blob')
+    compile project(':rn-fetch-blob')
     compile fileTree(dir: "libs", include: ["*.jar"])
-    compile "com.android.support:appcompat-v7:23.0.1"
+    api "com.android.support:appcompat-v7:26.0.1"
     compile "com.facebook.react:react-native:+"  // From
     compile project(':react-native-smart-splash-screen')
     compile project(':react-native-cookies')
-    compile project(':react-native-svg')
     compile "com.google.firebase:firebase-analytics:15.0.2"
     compile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
         transitive = true

@@ -115,7 +115,6 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
         onEndReached={() => this.nextPage()}
         onEndReachedThreshold={0.1}
         ref={list => (this.flatList = list)}
-        removeClippedSubviews
         renderItem={({ item, index }) => (
           <News
             {...item}

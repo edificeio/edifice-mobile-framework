@@ -3,6 +3,7 @@ package com.ode.appe;
 import android.os.Bundle;
 import com.facebook.react.ReactActivity;
 import io.invertase.firebase.RNFirebasePackage;
+import com.RNFetchBlob.RNFetchBlobPackage;
 import com.reactnativecomponent.splashscreen.RCTSplashScreen;
 
 public class MainActivity extends ReactActivity {

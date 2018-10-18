@@ -1,7 +1,7 @@
 import { AsyncStorage } from "react-native";
 
 import { Conf } from "../Conf";
-import { navigate } from "../utils/navHelper";
+import { navigate } from "../navigation/helpers/navHelper";
 import { Connection } from "./Connection";
 import { Me } from "./Me";
 import oauth from "./oauth";

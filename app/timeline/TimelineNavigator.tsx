@@ -1,34 +1,51 @@
 import * as React from "react";
-import { StackNavigator } from "react-navigation";
-import { navOptions } from "../utils/navHelper";
-import { ResourceTitle } from "../ui/headers/ResourceTitle";
+import { createStackNavigator } from "react-navigation";
+import { navScreenOptions } from "../navigation/helpers/navHelper";
+import {
+  FilterHeaderConnect,
+  FilterTimelineConnect
+} from "./containers/FilterTimeline";
+import { NewsContent, NewsContentHeader } from "./containers/NewsContent";
 import Timeline, { TimelineHeader } from "./containers/Timeline";
-import { FilterHeaderConnect, FilterTimelineConnect } from "./containers/FilterTimeline";
-import { NewsContentHeader, NewsContent } from "./containers/NewsContent";
 
-export default StackNavigator(
-	{
-		notifications: {
-			navigationOptions: ({ navigation }) => navOptions({ 
-				header: <TimelineHeader navigation={ navigation } />
-			}, navigation),
-			screen: Timeline
-		},
-		filterTimeline: {
-			navigationOptions: ({ navigation }) => navOptions({ 
-				header: <FilterHeaderConnect navigation={ navigation } />,
-				tabBarVisible: false
-			}, navigation),
-			screen: FilterTimelineConnect
-		},
-		newsContent: {
-			navigationOptions: ({ navigation }) => navOptions({ 
-				header: <NewsContentHeader navigation={ navigation } />,
-				tabBarVisible: false
-			}, navigation),
-			screen: NewsContent
-		}
-	}, {
-		headerMode: 'screen'
-	}
+export default createStackNavigator(
+  {
+    notifications: {
+      navigationOptions: ({ navigation }) =>
+        navScreenOptions(
+          {
+            header: <TimelineHeader navigation={navigation} />
+          },
+          navigation
+        ),
+      screen: Timeline
+    },
+
+    filterTimeline: {
+      navigationOptions: ({ navigation }) =>
+        navScreenOptions(
+          {
+            header: <FilterHeaderConnect navigation={navigation} />,
+            tabBarVisible: false
+          },
+          navigation
+        ),
+      screen: FilterTimelineConnect
+    },
+
+    newsContent: {
+      navigationOptions: ({ navigation }) =>
+        navScreenOptions(
+          {
+            header: <NewsContentHeader navigation={navigation} />,
+            tabBarVisible: false
+          },
+          navigation
+        ),
+      screen: NewsContent
+    }
+  },
+  {
+    headerMode: "screen"
+  }
 );

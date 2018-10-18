@@ -8,13 +8,19 @@ target 'mobileapp' do
   pod "yoga", :path => "../node_modules/react-native/ReactCommon/yoga"
   pod 'React', :path => '../node_modules/react-native', :subspecs => [
     # 'BatchedBridge', # Required For React Native 0.45.0+
-    'CxxBridge',
     'Core',
-    'DevSupport',
+    'CxxBridge',
+    'DevSupport'
     # Add any other subspecs you want to use in your project
   ]
-  pod 'RNFirebase', path: '../node_modules/react-native-firebase/ios'
 
+  # Third party deps podspec link
+  pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
+  pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
+  pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
+
+  pod 'RNFirebase', path: '../node_modules/react-native-firebase/ios'
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
   # Pods for mobileapp
   pod 'Firebase/Core'
   pod 'Fabric', '~> 1.7.2'
@@ -22,10 +28,7 @@ target 'mobileapp' do
   pod 'Firebase/Performance'
   pod 'Firebase/Messaging'
   pod 'Mixpanel'
-
-  # Pod is not used for react-native-fetch-blob. COnfiguration done in Xcode directly.
-  # pod 'react-native-fetch-blob', :path => '../node_modules/react-native-fetch-blob'
-
+  pod 'rn-fetch-blob', :path => '../node_modules/rn-fetch-blob'
   pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
 
 end

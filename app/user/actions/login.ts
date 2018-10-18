@@ -1,6 +1,6 @@
 import { clearCache, fetchJSONWithCache } from "../../infra/fetchWithCache";
 import oauth, { OAuthError } from "../../infra/oauth";
-import { navigate } from "../../utils/navHelper";
+import { navigate } from "../../navigation/helpers/navHelper";
 import userConfig from "../config";
 
 export const actionTypeRequestLogin = userConfig.createActionType("REQUEST_LOGIN");

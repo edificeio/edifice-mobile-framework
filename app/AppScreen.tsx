@@ -4,19 +4,19 @@ import firebase from "react-native-firebase";
 import SplashScreen from "react-native-smart-splash-screen";
 import { connect } from "react-redux";
 
-import { AppNavigator } from "./navigation/AppNavigator";
+import { RootNavigator } from "./navigation/RootNavigator";
 import pushNotifications from "./pushNotifications";
-import { CommonStyles } from "./styles/common/styles";
 import { Tracking } from "./tracking/TrackingManager";
 
-export let navigationRef = null;
+export let rootNavigatorRef = null;
 
 export class AppScreen extends React.Component<any, undefined> {
   public navigator: any;
   public notificationDisplayedListener;
+  public static router = RootNavigator.router;
 
   public async componentDidMount() {
-    navigationRef = this.navigator;
+    rootNavigatorRef = this.navigator;
     SplashScreen.close({
       animationType: SplashScreen.animationType.scale,
       delay: 500,
@@ -42,42 +42,35 @@ export class AppScreen extends React.Component<any, undefined> {
   }
   public render() {
     return (
-      <View style={{ flex: 1 }}>
-        <StatusBar
-          backgroundColor={CommonStyles.statusBarColor}
-          barStyle="light-content"
-        />
-        {/*<ProgressBar /> TODO : What's this ? */}
-        <AppNavigator
-          onNavigationStateChange={(prevState, currentState, action) => {
-            // Track if tab has changed
-            if (action.type !== "Navigation/NAVIGATE") return;
-            const mainRouteNavPrevState = prevState.routes
-              ? prevState.routes[0]
-              : undefined;
-            const prevTabRouteIndex = mainRouteNavPrevState
-              ? mainRouteNavPrevState.index
-              : undefined;
+      <RootNavigator
+        onNavigationStateChange={(prevState, currentState, action) => {
+          // Track if tab has changed
+          if (action.type !== "Navigation/NAVIGATE") return;
+          const mainRouteNavPrevState = prevState.routes
+            ? prevState.routes[0]
+            : undefined;
+          const prevTabRouteIndex = mainRouteNavPrevState
+            ? mainRouteNavPrevState.index
+            : undefined;
 
-            const mainRouteNavState = currentState.routes
-              ? currentState.routes[0]
-              : undefined;
-            const currentTabRouteIndex = mainRouteNavState
-              ? mainRouteNavState.index
-              : undefined;
-            // continue to tracking only if current tab has changed.
-            if (prevTabRouteIndex === currentTabRouteIndex) return;
-            const currentTabRouteName = mainRouteNavState
-              ? mainRouteNavState.routes[mainRouteNavState.index].routeName
-              : undefined;
-            if (currentTabRouteName)
-              Tracking.logEvent("menuTab", {
-                tab: currentTabRouteName
-              });
-          }}
-          ref={nav => this.setNavigator(nav)}
-        />
-      </View>
+          const mainRouteNavState = currentState.routes
+            ? currentState.routes[0]
+            : undefined;
+          const currentTabRouteIndex = mainRouteNavState
+            ? mainRouteNavState.index
+            : undefined;
+          // continue to tracking only if current tab has changed.
+          if (prevTabRouteIndex === currentTabRouteIndex) return;
+          const currentTabRouteName = mainRouteNavState
+            ? mainRouteNavState.routeName
+            : undefined;
+          if (currentTabRouteName)
+            Tracking.logEvent("menuTab", {
+              tab: currentTabRouteName
+            });
+        }}
+        ref={nav => this.setNavigator(nav)}
+      />
     );
   }
 }

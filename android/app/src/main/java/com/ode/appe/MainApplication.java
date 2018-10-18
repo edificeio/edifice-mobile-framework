@@ -3,7 +3,6 @@ package com.ode.appe;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.horcrux.svg.SvgPackage;
 import com.psykar.cookiemanager.CookieManagerPackage;
 import com.github.xfumihiro.react_native_image_to_base64.ImageToBase64Package;
 import com.RNFetchBlob.RNFetchBlobPackage;
@@ -44,7 +43,6 @@ public class MainApplication extends Application implements ReactApplication {
             new MainReactPackage(),
             new RNViewOverflowPackage(),
             new ImagePickerPackage(),
-            new SvgPackage(),
             new CookieManagerPackage(),
             new RCTSplashScreenPackage(),
             new RNFetchBlobPackage(),
