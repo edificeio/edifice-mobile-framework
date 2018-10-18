@@ -16,6 +16,7 @@ import {
   NB_THREADS_PER_PAGE
 } from "../actions/threadList";
 import { IConversationMessage } from "./messages";
+import { actionTypeMessageSendRequested, actionTypeMessageSent } from "../actions/sendMessage";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -57,7 +58,6 @@ const conversationThreadListReducer = (
       return {
         ...state,
         byId: { ...state.byId, ...action.data.byId },
-        // ids: [...state.ids, ...action.data.ids],
         ids: [
           ...state.ids.slice(0, NB_THREADS_PER_PAGE * action.page),
           ...action.data.ids,
@@ -118,6 +118,40 @@ const conversationThreadListReducer = (
           [action.threadId]: {
             ...state.byId[action.threadId],
             unread: 0
+          }
+        }
+      };
+    case actionTypeMessageSendRequested:
+      // action contains `data: IConversationMessage`
+      console.log("reducer: (threadList) send message request", action);
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          [action.threadId]: {
+            ...state.byId[action.threadId],
+            messages: [
+              action.data.id,
+              ...state.byId[action.data.threadId].messages
+            ]
+          }
+        }
+      };
+    case actionTypeMessageSent:
+      // action contains `data: IConversationMessage with oldId and newId instead of id`
+      console.log("reducer: (threadList) send message request", action);
+      const msglist = state.byId[action.threadId].messages;
+      const index = msglist.indexOf(action.data.oldId);
+      if (index !== -1) {
+        msglist[index] = action.data.newId;
+      }
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          [action.threadId]: {
+            ...state.byId[action.threadId],
+            messages: msglist
           }
         }
       };

@@ -47,6 +47,7 @@ import { IConversationThread } from "../reducers/threadList";
 
 import { signImagesUrls } from "../../infra/oauth";
 import today from "../../utils/today";
+import ThreadInput from "./ThreadInput";
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -176,7 +177,7 @@ export class ThreadPage extends React.PureComponent<
           onEndReached={() => onGetOlder(threadInfo.id)}
           onEndReachedThreshold={0}
         />
-        {/*<MediaInput />*/}
+        <ThreadInput />
       </KeyboardAvoidingView>
     );
   }

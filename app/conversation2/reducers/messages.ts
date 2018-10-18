@@ -8,6 +8,11 @@ import { IArrayById } from "../../infra/collections";
 import asyncReducer from "../../infra/redux/async";
 
 import { actionTypes, actionTypeSetRead } from "../actions/messages";
+import {
+  actionTypeMessageSendRequested,
+  actionTypeMessageSent,
+  actionTypeMessageSendError
+} from "../actions/sendMessage";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -64,6 +69,28 @@ const conversationThreadListReducer = (
         result[messageId].unread = false;
       }
       return result;
+    case actionTypeMessageSendRequested:
+      // action contains `data: IConversationMessage`
+      console.log("reducer: (messages) send message request", action);
+      return {
+        ...state,
+        [action.data.id]: action.data
+      };
+    case actionTypeMessageSent:
+      // action contains, `data: IConversationMessage (with newId and oldId instead of id)`
+      console.log("reducer: (messages) send message ok", action);
+      const result2 = { ...state };
+      result2[action.data.newId] = result2[action.data.oldId];
+      result2[action.data.newId].status = ConversationMessageStatus.sent;
+      result2[action.data.newId].id = action.data.newId;
+      delete result2[action.data.oldId];
+      return result2;
+    case actionTypeMessageSendError:
+      // action contains, `data: IConversationMessage`
+      console.log("reducer: (messages) send message error", action);
+      const result3 = { ...state };
+      result3[action.data.id].status = ConversationMessageStatus.failed;
+      return result3;
     default:
       return state;
   }
