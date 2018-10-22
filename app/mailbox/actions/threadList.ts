@@ -232,9 +232,9 @@ export function fetchConversationThreadOlderMessages(threadId: string) {
       // Get the oldest known messageId
       const oldestMessageId =
         threadInfo.messages[threadInfo.messages.length - 1];
-      console.log(
+      /*console.log(
         `fetching older messages of ${threadId}, last message : ${oldestMessageId}`
-      );
+      );*/
       // Fetch data
       const data = await asyncGetJson(
         `/conversation/thread/previous-messages/${oldestMessageId}`,
@@ -246,7 +246,7 @@ export function fetchConversationThreadOlderMessages(threadId: string) {
         messages[message.id] = message;
       }
       const messageIds = data.map(message => message.id);
-      console.log("thread older messages received: ", messages, messageIds);
+      // console.log("thread older messages received: ", messages, messageIds);
       // dispatch
       dispatch(conversationMessagesReceived(messages)); // message contents
       dispatch(conversationThreadAppendReceived(messageIds, threadId, false)); // messages ids ordered
@@ -266,9 +266,9 @@ export function fetchConversationThreadNewerMessages(threadId: string) {
       dispatch(conversationThreadAppendRequested(threadId, true));
       // Get the newest known messageId
       const newestMessageId = threadInfo.messages[0];
-      console.log(
+      /*console.log(
         `fetching newer messages of ${threadId}, last message : ${newestMessageId}`
-      );
+      );*/
       // Fetch data
       const data = await asyncGetJson(
         `/conversation/thread/new-messages/${newestMessageId}`,
@@ -280,7 +280,7 @@ export function fetchConversationThreadNewerMessages(threadId: string) {
         messages[message.id] = message;
       }
       const messageIds = data.map(message => message.id);
-      console.log("thread newer messages received: ", messages, messageIds);
+      // console.log("thread newer messages received: ", messages, messageIds);
       // dispatch
       dispatch(conversationMessagesReceived(messages)); // message contents
       dispatch(conversationThreadAppendReceived(messageIds, threadId, true)); // messages ids ordered
@@ -295,7 +295,6 @@ export function conversationSetThreadRead(threadId: string) {
   return async (dispatch, getState) => {
     try {
       const threadInfo = localState(getState()).data.byId[threadId];
-      console.log("SET UNREAD", threadInfo);
       await signedFetch(`${Conf.platform}/conversation/toggleUnread`, {
         body: JSON.stringify({
           id: threadInfo.messages,

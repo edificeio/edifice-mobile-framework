@@ -23,8 +23,6 @@ const mapStateToProps: (state: any) => IThreadListPageDataProps = state => {
   const localState = state[mailboxConfig.reducerName].threadList;
   const filterState = state[mailboxConfig.reducerName].filter;
 
-  console.log("mapState2Props of threadList", mailboxConfig, localState, filterState);
-
   // Format props
   return {
     isFetching: localState.isFetching,
@@ -33,12 +31,10 @@ const mapStateToProps: (state: any) => IThreadListPageDataProps = state => {
     threads: filterState.criteria
       ? localState.data.ids
           .map(threadId => localState.data.byId[threadId])
-          .filter(t => {
-            console.log(searchText(t));
-            return (
+          .filter(
+            t =>
               searchText(t).indexOf(searchFilter(filterState.criteria)) !== -1
-            );
-          })
+          )
       : localState.data.ids.map(threadId => localState.data.byId[threadId])
   };
 };

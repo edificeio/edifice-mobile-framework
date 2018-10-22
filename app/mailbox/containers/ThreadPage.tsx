@@ -26,11 +26,6 @@ const mapStateToProps: (state: any) => IThreadPageDataProps = state => {
   );
   const headerHeight = state.ui.headerHeight; // TODO: Ugly.
 
-  console.log("ThreadPage MapState2Props :");
-  console.log("local ThreadPage state", localState);
-  console.log("selected threadId", selectedThreadId);
-  console.log("selected thread info", selectedThread);
-
   // Format props
   return {
     headerHeight,
@@ -47,12 +42,12 @@ const mapDispatchToProps: (
   return {
     dispatch,
     onGetNewer: (threadId: string) => {
-      console.log("get newer posts");
+      // console.log("get newer posts");
       dispatch(fetchConversationThreadNewerMessages(threadId));
       return;
     },
     onGetOlder: (threadId: string) => {
-      console.log("get older posts");
+      // console.log("get older posts");
       dispatch(fetchConversationThreadOlderMessages(threadId));
       return;
     }

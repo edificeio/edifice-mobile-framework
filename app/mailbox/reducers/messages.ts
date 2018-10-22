@@ -56,14 +56,14 @@ const conversationThreadListReducer = (
   switch (action.type) {
     case actionTypes.received:
       // action contains, `data`, `receivedAt` (not used)
-      console.log("reducer : messages data merged.");
+      // console.log("reducer : messages data merged.");
       return {
         ...state,
         ...action.data // if a message already exists with its Id, it is replaced.
       };
     case actionTypeSetRead:
       // action contains, `messageIds`
-      console.log("reducer : messages data marked as read.");
+      // console.log("reducer : messages data marked as read.");
       const result = { ...state };
       for (const messageId of action.messageIds) {
         result[messageId].unread = false;
@@ -71,14 +71,14 @@ const conversationThreadListReducer = (
       return result;
     case actionTypeMessageSendRequested:
       // action contains `data: IConversationMessage`
-      console.log("reducer: (messages) send message request", action);
+      // console.log("reducer: (messages) send message request", action);
       return {
         ...state,
         [action.data.id]: action.data
       };
     case actionTypeMessageSent:
       // action contains, `data: IConversationMessage (with newId and oldId instead of id)`
-      console.log("reducer: (messages) send message ok", action);
+      // console.log("reducer: (messages) send message ok", action);
       const result2 = { ...state };
       result2[action.data.newId] = result2[action.data.oldId];
       result2[action.data.newId].status = ConversationMessageStatus.sent;
@@ -87,7 +87,7 @@ const conversationThreadListReducer = (
       return result2;
     case actionTypeMessageSendError:
       // action contains, `data: IConversationMessage`
-      console.log("reducer: (messages) send message error", action);
+      // console.log("reducer: (messages) send message error", action);
       const result3 = { ...state };
       result3[action.data.id].status = ConversationMessageStatus.failed;
       return result3;

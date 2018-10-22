@@ -16,13 +16,13 @@ const defaultState = {
 export default function threadFilter(state = defaultState, action) {
   switch (action.type) {
     case actionTypeFilterThreads:
-      console.log("reducer", actionTypeFilterThreads, action);
+      // console.log("reducer", actionTypeFilterThreads, action);
       return {
         cleared: false,
         criteria: action.filter
       };
     case actionTypeClearFilter:
-      console.log("reducer", actionTypeClearFilter, action);
+      // console.log("reducer", actionTypeClearFilter, action);
       return {
         cleared: true,
         criteria: ""
