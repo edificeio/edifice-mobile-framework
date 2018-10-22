@@ -15,9 +15,6 @@ import { ConversationMessageStatus } from "../reducers/messages";
 
 const ImageContainer = style.view(
   {
-    borderBottomLeftRadius: 15,
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
     height: 130,
     marginBottom: 10,
     overflow: "hidden",
@@ -146,13 +143,10 @@ const MessageBlock = style.view(
 
 const BubbleStyle = style.view(
   {
-    borderBottomLeftRadius: 15,
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
     justifyContent: "center",
     marginBottom: 10,
-    maxWidth: 200,
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 15,
     shadowColor: CommonStyles.shadowColor,
     shadowOffset: CommonStyles.shadowOffset,
     shadowOpacity: CommonStyles.shadowOpacity,
@@ -160,7 +154,6 @@ const BubbleStyle = style.view(
   },
   ({ my }): ViewStyle => ({
     backgroundColor: my ? CommonStyles.iconColorOn : "white",
-    borderBottomRightRadius: my ? 0 : 15,
     elevation: my ? 0 : 3
   })
 );

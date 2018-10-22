@@ -40,11 +40,11 @@ export const CommonStyles = {
   selectColor2: "#ffff00aa",
   shadowColor: "rgba(0, 0, 0, 1.0)",
   shadowOffset: {
-    height: 1,
+    height: 2,
     width: 0
   },
   shadowOpacity: 0.25,
-  shadowRadius: 4,
+  shadowRadius: 2,
   statusBarColor: "#0088B6",
   tabBackgroundColor: "#2a97f5",
   tabBottomColor: "#ffffff",
