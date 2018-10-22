@@ -5,8 +5,8 @@
 
 export default [
   {
-    config: require("./conversation2/config").default,
-    module: require("./conversation2").default
+    config: require("./mailbox/config").default,
+    module: require("./mailbox").default
   },
   {
     config: require("./homework/config").default,
