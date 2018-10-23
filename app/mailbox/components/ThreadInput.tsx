@@ -86,6 +86,7 @@ class ThreadInput extends React.Component<
 
   private switchKeyboard(e: Selected) {
     const { selected } = this.state;
+    console.log("SWITCH KEYBOARD: ", e, this.state, this.input);
 
     if (e === Selected.keyboard) {
       if (this.state.selected !== Selected.keyboard) {
@@ -173,7 +174,8 @@ class ThreadInput extends React.Component<
             onChangeText={(textMessage: string) =>
               this.setState({ textMessage })
             }
-            onFocus={() => this.focus()}
+            onFocus={() => this.switchKeyboard(Selected.keyboard)}
+            onBlur={() => this.switchKeyboard(Selected.none)}
             placeholder={I18n.t("conversation-chatPlaceholder")}
             underlineColorAndroid={"transparent"}
             value={textMessage}
