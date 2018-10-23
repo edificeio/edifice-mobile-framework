@@ -121,9 +121,13 @@ const AvatarContainer = style.view({
 });
 
 const MessageContainer = style.view(
-  {},
+  {
+    flex: 1
+  },
   ({ my }): ViewStyle => ({
-    alignItems: my ? "flex-end" : "flex-start"
+    alignItems: my ? "flex-end" : "flex-start",
+    paddingLeft: my ? 54 : 5,
+    paddingRight: my ? 0 : 54
   })
 );
 
@@ -131,13 +135,12 @@ const MessageBlock = style.view(
   {
     flex: 1,
     flexDirection: "row",
+    marginRight: 0,
     padding: 15
   },
   ({ my }): ViewStyle => ({
     alignItems: "flex-end",
-    justifyContent: my ? "flex-end" : "flex-start",
-    marginLeft: my ? 54 : 5,
-    marginRight: my ? 0 : 54
+    justifyContent: my ? "flex-end" : "flex-start"
   })
 );
 
@@ -145,8 +148,8 @@ const BubbleStyle = style.view(
   {
     justifyContent: "center",
     marginBottom: 10,
-    paddingHorizontal: 20,
-    paddingVertical: 15,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     shadowColor: CommonStyles.shadowColor,
     shadowOffset: CommonStyles.shadowOffset,
     shadowOpacity: CommonStyles.shadowOpacity,
