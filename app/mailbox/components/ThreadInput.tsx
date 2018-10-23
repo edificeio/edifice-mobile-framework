@@ -229,7 +229,7 @@ export default connect(
     };
   },
   dispatch => ({
-    send: (data: any) => sendMessage(dispatch)(data),
+    send: (data: any) => dispatch<any>(sendMessage(data)),
     sendPhoto: (data: any) => sendPhoto(dispatch)(data)
   })
 )(ThreadInput);

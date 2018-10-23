@@ -9,9 +9,9 @@ import asyncReducer from "../../infra/redux/async";
 
 import { actionTypes, actionTypeSetRead } from "../actions/messages";
 import {
+  actionTypeMessageSendError,
   actionTypeMessageSendRequested,
-  actionTypeMessageSent,
-  actionTypeMessageSendError
+  actionTypeMessageSent
 } from "../actions/sendMessage";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
@@ -71,14 +71,14 @@ const conversationThreadListReducer = (
       return result;
     case actionTypeMessageSendRequested:
       // action contains `data: IConversationMessage`
-      // console.log("reducer: (messages) send message request", action);
+      console.log("reducer: (messages) send message request", action);
       return {
         ...state,
         [action.data.id]: action.data
       };
     case actionTypeMessageSent:
       // action contains, `data: IConversationMessage (with newId and oldId instead of id)`
-      // console.log("reducer: (messages) send message ok", action);
+      console.log("reducer: (messages) send message ok", action);
       const result2 = { ...state };
       result2[action.data.newId] = result2[action.data.oldId];
       result2[action.data.newId].status = ConversationMessageStatus.sent;
