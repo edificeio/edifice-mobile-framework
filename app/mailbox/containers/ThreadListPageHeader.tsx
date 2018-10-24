@@ -12,7 +12,7 @@ import { Tracking } from "../../tracking/TrackingManager";
 
 import conversationConfig from "../config";
 
-export class ConversationTopBar extends React.Component<
+export class ConversationTopBar extends React.PureComponent<
   {
     navigation?: any;
     conversationsIsEmpty: boolean;

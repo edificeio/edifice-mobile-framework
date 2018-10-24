@@ -19,7 +19,10 @@ interface INewThreadPageProps {
   unpickUser: (user: IUser) => void;
 }
 
-class NewThreadPage extends React.Component<INewThreadPageProps, undefined> {
+class NewThreadPage extends React.PureComponent<
+  INewThreadPageProps,
+  undefined
+> {
   public componentDidMount() {
     this.props.loadVisibles();
   }

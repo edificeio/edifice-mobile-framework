@@ -29,7 +29,7 @@ import { NotifPrefLine } from "../components/NotifPrefLine";
 // Header -----------------------------------------------------------------------------------------
 
 // tslint:disable-next-line:max-classes-per-file
-export class NotifPrefsPageHeader extends React.Component<
+export class NotifPrefsPageHeader extends React.PureComponent<
   {
     navigation: any;
   },
@@ -68,7 +68,7 @@ export type INotifPrefsPageProps = INotifPrefsPageDataProps &
   INotifPrefsPageOtherProps;
 
 // tslint:disable-next-line:max-classes-per-file
-export class NotifPrefsPage extends React.Component<
+export class NotifPrefsPage extends React.PureComponent<
   INotifPrefsPageProps,
   undefined
 > {

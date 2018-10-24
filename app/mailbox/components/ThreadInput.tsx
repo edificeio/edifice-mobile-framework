@@ -63,7 +63,7 @@ const ContainerInput = style.view({
   width: "100%"
 });
 
-class ThreadInput extends React.Component<
+class ThreadInput extends React.PureComponent<
   {
     thread: IConversationThread;
     lastMessageId: string;
@@ -141,7 +141,6 @@ class ThreadInput extends React.Component<
     this.input.innerComponent.clear();
 
     this.setState({
-      ...this.state,
       textMessage: ""
     });
 

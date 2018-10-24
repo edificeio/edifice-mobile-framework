@@ -96,6 +96,7 @@ export class ThreadPage extends React.PureComponent<
   }
 
   public todaySeparatorAlreadyDisplayed: boolean = false;
+  public onEndReachedCalledDuringMomentum = true;
 
   // Render
 
@@ -156,8 +157,16 @@ export class ThreadPage extends React.PureComponent<
           style={styles.grid}
           inverted={true}
           keyExtractor={(item: IConversationMessage) => item.id}
-          onEndReached={() => onGetOlder(threadInfo.id)}
+          onEndReached={() => {
+            if (!this.onEndReachedCalledDuringMomentum) {
+              onGetOlder(threadInfo.id);
+              this.onEndReachedCalledDuringMomentum = true;
+            }
+          }}
           onEndReachedThreshold={0}
+          onMomentumScrollBegin={() => {
+            this.onEndReachedCalledDuringMomentum = false;
+          }}
         />
         <ThreadInput />
       </KeyboardAvoidingView>

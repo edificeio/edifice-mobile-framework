@@ -55,7 +55,7 @@ const mapDispatchToProps: (
   };
 };
 
-class ThreadPageContainer extends React.Component<
+class ThreadPageContainer extends React.PureComponent<
   IThreadPageProps & { dispatch: any },
   {}
 > {

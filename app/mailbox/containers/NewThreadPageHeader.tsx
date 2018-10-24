@@ -8,7 +8,7 @@ import { createThread } from "../actions/createThread";
 
 import mailboxConfig from "../config";
 
-export class NewThreadPageHeader extends React.Component<
+export class NewThreadPageHeader extends React.PureComponent<
   {
     navigation: any;
     createThread: (pickedUsers: any) => any;

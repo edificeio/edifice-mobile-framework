@@ -41,7 +41,7 @@ const TextBubble = ({ content, isMine }) => (
   </BubbleStyle>
 );
 
-export default class ThreadMessage extends React.Component<
+export default class ThreadMessage extends React.PureComponent<
   {
     body: string;
     date: any;

@@ -13,7 +13,7 @@ import { AppTitle, Header, HeaderIcon } from "../../ui/headers/Header";
 import { ModalBox, ModalContent } from "../../ui/Modal";
 import { LightP } from "../../ui/Typography";
 
-export class ProfilePageHeader extends React.Component<
+export class ProfilePageHeader extends React.PureComponent<
   {
     navigation: any;
   },
@@ -31,7 +31,7 @@ export class ProfilePageHeader extends React.Component<
 }
 
 // tslint:disable-next-line:max-classes-per-file
-export class ProfilePage extends React.Component<
+export class ProfilePage extends React.PureComponent<
   { onLogout: () => Promise<void>; navigation: any },
   { showDisconnect: boolean }
 > {

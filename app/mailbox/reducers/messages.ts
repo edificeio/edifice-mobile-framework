@@ -53,6 +53,7 @@ const conversationThreadListReducer = (
   state: IConversationMessageList = stateDefault,
   action
 ) => {
+  console.log("REDUCER TEST", action.type);
   switch (action.type) {
     case actionTypes.received:
       // action contains, `data`, `receivedAt` (not used)
