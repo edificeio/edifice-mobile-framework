@@ -174,8 +174,14 @@ class ThreadInput extends React.Component<
             onChangeText={(textMessage: string) =>
               this.setState({ textMessage })
             }
-            onFocus={() => this.switchKeyboard(Selected.keyboard)}
-            onBlur={() => this.switchKeyboard(Selected.none)}
+            onFocus={() => {
+              this.switchKeyboard(Selected.keyboard);
+              return true;
+            }}
+            onBlur={() => {
+              this.switchKeyboard(Selected.none);
+              return true;
+            }}
             placeholder={I18n.t("conversation-chatPlaceholder")}
             underlineColorAndroid={"transparent"}
             value={textMessage}

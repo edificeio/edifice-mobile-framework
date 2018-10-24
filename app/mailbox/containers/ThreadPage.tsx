@@ -21,6 +21,7 @@ const mapStateToProps: (state: any) => IThreadPageDataProps = state => {
     state[conversationConfig.reducerName].threadList.data.byId[
       selectedThreadId
     ];
+  console.log("display thread", localState, selectedThreadId, selectedThread);
   const messages = selectedThread.messages.map(
     messageId => localState.data[messageId]
   );

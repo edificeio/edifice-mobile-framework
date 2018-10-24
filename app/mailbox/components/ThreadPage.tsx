@@ -104,11 +104,8 @@ export class ThreadPage extends React.PureComponent<
     const messages = threadInfo.messages;
     const isEmpty = messages.length === 0;
 
-    const pageContent = isEmpty
-      ? isFetching
-        ? this.renderLoading()
-        : this.renderEmptyScreen()
-      : this.renderMessageList();
+    const pageContent =
+      isEmpty && isFetching ? this.renderLoading() : this.renderMessageList();
 
     return (
       <PageContainer>
@@ -120,19 +117,6 @@ export class ThreadPage extends React.PureComponent<
 
   public renderLoading() {
     return <Loading />;
-  }
-
-  public renderEmptyScreen() {
-    return (
-      <EmptyScreen
-        imageSrc={require("../../../assets/images/empty-screen/conversations.png")}
-        imgWidth={571}
-        imgHeight={261}
-        text={I18n.t("conversation-emptyScreenText")}
-        title={I18n.t("conversation-emptyScreenTitle")}
-        scale={0.76}
-      />
-    );
   }
 
   public renderMessageList() {

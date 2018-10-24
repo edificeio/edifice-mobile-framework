@@ -17,6 +17,7 @@ import {
 } from "../actions/threadList";
 import { IConversationMessage } from "./messages";
 import { actionTypeMessageSendRequested, actionTypeMessageSent } from "../actions/sendMessage";
+import { actionTypeThreadCreated } from "../actions/createThread";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -154,6 +155,16 @@ const conversationThreadListReducer = (
             messages: msglist
           }
         }
+      };
+    case actionTypeThreadCreated:
+      console.log("reducer (threadList): create thread");
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          [action.newThread.id]: action.newThread
+        },
+        ids: [action.newThread.id, ...state.ids]
       };
     default:
       return state;

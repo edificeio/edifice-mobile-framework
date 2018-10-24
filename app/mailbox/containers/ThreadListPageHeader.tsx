@@ -50,7 +50,7 @@ export class ConversationTopBar extends React.Component<
   }
 
   public openNewConversation() {
-    this.props.navigation.navigate("newConversation"); // TODO: make the new thread page
+    this.props.navigation.navigate("newThread");
     this.props.clearPickedUsers();
   }
 
