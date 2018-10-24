@@ -136,8 +136,6 @@ export class ThreadPage extends React.PureComponent<
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         keyboardVerticalOffset={headerHeight}
       >
-        <ConnectionTrackingBar />
-
         <Carousel
           startIndex={this.state.imageCurrent}
           visible={this.state.showCarousel}
