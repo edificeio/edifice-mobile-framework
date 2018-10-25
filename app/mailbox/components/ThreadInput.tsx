@@ -89,17 +89,14 @@ class ThreadInput extends React.PureComponent<
     console.log("SWITCH KEYBOARD: ", e, this.state, this.input);
 
     if (e === Selected.keyboard) {
-      if (this.state.selected !== Selected.keyboard) {
-        this.input.innerComponent.focus();
-      } else {
-        this.input.innerComponent.blur();
-      }
-    }
-
-    this.setState({ selected: e === selected ? Selected.none : e });
-
-    if (e === Selected.camera) {
+      this.input.innerComponent.focus();
+      this.setState({ selected: e });
+    } else if (e === Selected.none) {
+      this.input.innerComponent.blur();
+      this.setState({ selected: e });
+    } else if (e === Selected.camera) {
       this.sendPhoto();
+      this.setState({ selected: e });
     }
   }
 
@@ -135,16 +132,8 @@ class ThreadInput extends React.PureComponent<
     const { thread, lastMessageId } = this.props;
     const { textMessage } = this.state;
 
-    this.setState({ selected: Selected.none });
-
-    this.input.innerComponent.setNativeProps({ keyboardType: "email-address" });
-    this.input.innerComponent.clear();
-
-    this.setState({
-      textMessage: ""
-    });
-
     this.input.innerComponent.setNativeProps({ keyboardType: "default" });
+    this.switchKeyboard(Selected.none);
 
     const newMessage = await this.props.send({
       body: `<div>${textMessage}</div>`,
@@ -153,6 +142,10 @@ class ThreadInput extends React.PureComponent<
       subject: "Re: " + thread.subject,
       threadId: thread.id,
       to: this.findReceivers(thread)
+    });
+
+    this.setState({
+      textMessage: ""
     });
   }
 
@@ -167,17 +160,21 @@ class ThreadInput extends React.PureComponent<
       <ContainerFooterBar>
         <ContainerInput>
           <TextInput
-            ref={el => (this.input = el)}
+            ref={el => {
+              this.input = el;
+            }}
             enablesReturnKeyAutomatically={true}
             multiline
             onChangeText={(textMessage: string) =>
               this.setState({ textMessage })
             }
             onFocus={() => {
+              console.log("on Focus");
               this.switchKeyboard(Selected.keyboard);
               return true;
             }}
             onBlur={() => {
+              console.log("on Blur");
               this.switchKeyboard(Selected.none);
               return true;
             }}
@@ -188,7 +185,15 @@ class ThreadInput extends React.PureComponent<
           />
         </ContainerInput>
         <Line>
-          <ChatIcon onPress={() => this.switchKeyboard(Selected.keyboard)}>
+          <ChatIcon
+            onPress={() => {
+              this.switchKeyboard(
+                this.state.selected === Selected.keyboard
+                  ? Selected.none
+                  : Selected.keyboard
+              );
+            }}
+          >
             <IconOnOff
               focused={true}
               name={"keyboard"}
