@@ -9,9 +9,9 @@ import asyncReducer from "../../infra/redux/async";
 
 import { actionTypes, actionTypeSetRead } from "../actions/messages";
 import {
+  actionTypeMessageSendError,
   actionTypeMessageSendRequested,
-  actionTypeMessageSent,
-  actionTypeMessageSendError
+  actionTypeMessageSent
 } from "../actions/sendMessage";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
@@ -53,17 +53,18 @@ const conversationThreadListReducer = (
   state: IConversationMessageList = stateDefault,
   action
 ) => {
+  console.log("REDUCER TEST", action.type);
   switch (action.type) {
     case actionTypes.received:
       // action contains, `data`, `receivedAt` (not used)
-      console.log("reducer : messages data merged.");
+      // console.log("reducer : messages data merged.");
       return {
         ...state,
         ...action.data // if a message already exists with its Id, it is replaced.
       };
     case actionTypeSetRead:
       // action contains, `messageIds`
-      console.log("reducer : messages data marked as read.");
+      // console.log("reducer : messages data marked as read.");
       const result = { ...state };
       for (const messageId of action.messageIds) {
         result[messageId].unread = false;
@@ -87,7 +88,7 @@ const conversationThreadListReducer = (
       return result2;
     case actionTypeMessageSendError:
       // action contains, `data: IConversationMessage`
-      console.log("reducer: (messages) send message error", action);
+      // console.log("reducer: (messages) send message error", action);
       const result3 = { ...state };
       result3[action.data.id].status = ConversationMessageStatus.failed;
       return result3;

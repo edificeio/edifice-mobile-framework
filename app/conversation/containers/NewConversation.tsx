@@ -23,14 +23,14 @@ class NewThreadHeader extends React.Component<
   },
   undefined
 > {
-  createConversation() {
+  public createConversation() {
     const newConversation = this.props.createConversation(
       this.props.pickedUsers
     );
     this.props.navigation.replace("thread", newConversation.id);
   }
 
-  render() {
+  public render() {
     return (
       <Header>
         <Back navigation={this.props.navigation} />

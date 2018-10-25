@@ -15,9 +15,6 @@ import { ConversationMessageStatus } from "../reducers/messages";
 
 const ImageContainer = style.view(
   {
-    borderBottomLeftRadius: 15,
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
     height: 130,
     marginBottom: 10,
     overflow: "hidden",
@@ -44,7 +41,7 @@ const TextBubble = ({ content, isMine }) => (
   </BubbleStyle>
 );
 
-export default class ThreadMessage extends React.Component<
+export default class ThreadMessage extends React.PureComponent<
   {
     body: string;
     date: any;
@@ -124,9 +121,13 @@ const AvatarContainer = style.view({
 });
 
 const MessageContainer = style.view(
-  {},
+  {
+    flex: 1
+  },
   ({ my }): ViewStyle => ({
-    alignItems: my ? "flex-end" : "flex-start"
+    alignItems: my ? "flex-end" : "flex-start",
+    paddingLeft: my ? 54 : 5,
+    paddingRight: my ? 0 : 54
   })
 );
 
@@ -134,25 +135,21 @@ const MessageBlock = style.view(
   {
     flex: 1,
     flexDirection: "row",
+    marginRight: 0,
     padding: 15
   },
   ({ my }): ViewStyle => ({
     alignItems: "flex-end",
-    justifyContent: my ? "flex-end" : "flex-start",
-    marginLeft: my ? 54 : 5,
-    marginRight: my ? 0 : 54
+    justifyContent: my ? "flex-end" : "flex-start"
   })
 );
 
 const BubbleStyle = style.view(
   {
-    borderBottomLeftRadius: 15,
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
     justifyContent: "center",
     marginBottom: 10,
-    maxWidth: 200,
-    padding: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     shadowColor: CommonStyles.shadowColor,
     shadowOffset: CommonStyles.shadowOffset,
     shadowOpacity: CommonStyles.shadowOpacity,
@@ -160,7 +157,6 @@ const BubbleStyle = style.view(
   },
   ({ my }): ViewStyle => ({
     backgroundColor: my ? CommonStyles.iconColorOn : "white",
-    borderBottomRightRadius: my ? 0 : 15,
     elevation: my ? 0 : 3
   })
 );

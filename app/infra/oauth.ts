@@ -22,7 +22,7 @@ export enum OAuthError {
   NETWORK_ERROR
 }
 
-class OAuth2RessourceOwnerClient {
+class OAuth2RessourceOwnerClient { // TODO: Renommer avec "password"
   /**
    * Common headers to all oauth2 flow requets
    */
@@ -355,7 +355,7 @@ export function signImagesUrls(
 /**
  * Build a signed request from an url.
  */
-export function signUrl(url: string) {
+export function signUrl(url: string): object {
   return oauth.sign({
     method: "GET",
     uri: url

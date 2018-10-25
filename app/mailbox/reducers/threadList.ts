@@ -17,6 +17,7 @@ import {
 } from "../actions/threadList";
 import { IConversationMessage } from "./messages";
 import { actionTypeMessageSendRequested, actionTypeMessageSent } from "../actions/sendMessage";
+import { actionTypeThreadCreated } from "../actions/createThread";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -79,7 +80,7 @@ const conversationThreadListReducer = (
       };
     case actionTypeAppendRequested:
       // action contains `threadId`, `isNew`
-      console.log("reducer: append requested", action);
+      // console.log("reducer: append requested", action);
       return {
         ...state,
         byId: {
@@ -92,7 +93,7 @@ const conversationThreadListReducer = (
       };
     case actionTypeAppendReceived:
       // action contains `data`, `threadId`, `isNew`
-      console.log("reducer: append received", action);
+      // console.log("reducer: append received", action);
       return {
         ...state,
         byId: {
@@ -107,10 +108,10 @@ const conversationThreadListReducer = (
         }
       };
     case actionTypes.fetchError:
-      console.warn("reducer: fetch error", action.errmsg);
+      // console.warn("reducer: fetch error", action.errmsg);
       return state;
     case actionTypeSetRead:
-      console.log("reducer: set thread read", action);
+      // console.log("reducer: set thread read", action);
       return {
         ...state,
         byId: {
@@ -128,8 +129,8 @@ const conversationThreadListReducer = (
         ...state,
         byId: {
           ...state.byId,
-          [action.threadId]: {
-            ...state.byId[action.threadId],
+          [action.data.threadId]: {
+            ...state.byId[action.data.threadId],
             messages: [
               action.data.id,
               ...state.byId[action.data.threadId].messages
@@ -140,7 +141,7 @@ const conversationThreadListReducer = (
     case actionTypeMessageSent:
       // action contains `data: IConversationMessage with oldId and newId instead of id`
       console.log("reducer: (threadList) send message request", action);
-      const msglist = state.byId[action.threadId].messages;
+      const msglist = state.byId[action.data.threadId].messages;
       const index = msglist.indexOf(action.data.oldId);
       if (index !== -1) {
         msglist[index] = action.data.newId;
@@ -149,11 +150,21 @@ const conversationThreadListReducer = (
         ...state,
         byId: {
           ...state.byId,
-          [action.threadId]: {
-            ...state.byId[action.threadId],
+          [action.data.threadId]: {
+            ...state.byId[action.data.threadId],
             messages: msglist
           }
         }
+      };
+    case actionTypeThreadCreated:
+      console.log("reducer (threadList): create thread");
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          [action.newThread.id]: action.newThread
+        },
+        ids: [action.newThread.id, ...state.ids]
       };
     default:
       return state;

@@ -63,7 +63,7 @@ const ContainerInput = style.view({
   width: "100%"
 });
 
-class ThreadInput extends React.Component<
+class ThreadInput extends React.PureComponent<
   {
     thread: IConversationThread;
     lastMessageId: string;
@@ -84,24 +84,6 @@ class ThreadInput extends React.Component<
     textMessage: ""
   };
 
-  private switchKeyboard(e: Selected) {
-    const { selected } = this.state;
-
-    if (e === Selected.keyboard) {
-      if (this.state.selected !== Selected.keyboard) {
-        this.input.innerComponent.focus();
-      } else {
-        this.input.innerComponent.blur();
-      }
-    }
-
-    this.setState({ selected: e === selected ? Selected.none : e });
-
-    if (e === Selected.camera) {
-      this.sendPhoto();
-    }
-  }
-
   public findReceivers(conversation) {
     // TODO : Duplicate of ThreadItem.findReceivers() ?
     const to = [
@@ -119,7 +101,7 @@ class ThreadInput extends React.Component<
     const { textMessage, newThreadId } = this.state;
     const { thread, lastMessageId } = this.props;
 
-    this.setState({ selected: Selected.none });
+    this.input.innerComponent.blur();
 
     this.props.sendPhoto({
       cc: thread.cc,
@@ -134,17 +116,8 @@ class ThreadInput extends React.Component<
     const { thread, lastMessageId } = this.props;
     const { textMessage } = this.state;
 
-    this.setState({ selected: Selected.none });
-
-    this.input.innerComponent.setNativeProps({ keyboardType: "email-address" });
-    this.input.innerComponent.clear();
-
-    this.setState({
-      ...this.state,
-      textMessage: ""
-    });
-
     this.input.innerComponent.setNativeProps({ keyboardType: "default" });
+    this.input.innerComponent.blur();
 
     const newMessage = await this.props.send({
       body: `<div>${textMessage}</div>`,
@@ -154,10 +127,18 @@ class ThreadInput extends React.Component<
       threadId: thread.id,
       to: this.findReceivers(thread)
     });
+
+    this.setState({
+      textMessage: ""
+    });
   }
 
   public focus() {
     this.setState({ selected: Selected.keyboard });
+  }
+
+  public blur() {
+    this.setState({ selected: Selected.none });
   }
 
   public render() {
@@ -167,21 +148,37 @@ class ThreadInput extends React.Component<
       <ContainerFooterBar>
         <ContainerInput>
           <TextInput
-            ref={el => (this.input = el)}
+            ref={el => {
+              this.input = el;
+            }}
             enablesReturnKeyAutomatically={true}
             multiline
             onChangeText={(textMessage: string) =>
               this.setState({ textMessage })
             }
-            onFocus={() => this.focus()}
+            onFocus={() => {
+              this.focus();
+              return true;
+            }}
+            onBlur={() => {
+              this.blur();
+              return true;
+            }}
             placeholder={I18n.t("conversation-chatPlaceholder")}
             underlineColorAndroid={"transparent"}
             value={textMessage}
             autoCorrect={false}
+            autoFocus={true}
           />
         </ContainerInput>
         <Line>
-          <ChatIcon onPress={() => this.switchKeyboard(Selected.keyboard)}>
+          <ChatIcon
+            onPress={() => {
+              if (this.state.selected === Selected.keyboard)
+                this.input.innerComponent.blur();
+              else this.input.innerComponent.focus();
+            }}
+          >
             <IconOnOff
               focused={true}
               name={"keyboard"}
@@ -229,7 +226,7 @@ export default connect(
     };
   },
   dispatch => ({
-    send: (data: any) => sendMessage(dispatch)(data),
+    send: (data: any) => dispatch<any>(sendMessage(data)),
     sendPhoto: (data: any) => sendPhoto(dispatch)(data)
   })
 )(ThreadInput);

@@ -21,7 +21,7 @@ export async function signedFetch(
   try {
     if (oauth.isExpired()) {
       // tslint:disable-next-line:no-console
-      console.log("Token expired. Refreshing...");
+      // console.log("Token expired. Refreshing...");
       try {
         await oauth.refreshToken();
       } catch (err) {
@@ -29,7 +29,7 @@ export async function signedFetch(
       }
     }
     // tslint:disable-next-line:no-console
-    console.log("Token expires in ", oauth.expiresIn() / 1000, "seconds");
+    // console.log("Token expires in ", oauth.expiresIn() / 1000, "seconds");
 
     const params = oauth.sign(init);
     return fetch(url, params);

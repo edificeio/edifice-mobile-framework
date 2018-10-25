@@ -68,7 +68,7 @@ const mapDispatchToProps: (
   };
 };
 
-class HomeworkPageContainer extends React.Component<
+class HomeworkPageContainer extends React.PureComponent<
   IHomeworkPageProps & { dispatch: any },
   {}
 > {
