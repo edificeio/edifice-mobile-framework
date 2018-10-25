@@ -2,11 +2,11 @@
 
 buildscript {
     repositories {
-        jcenter()
         maven {
             url 'https://maven.fabric.io/public'
         }
         google()
+        jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.0'
@@ -21,7 +21,6 @@ buildscript {
 allprojects {
     repositories {
         mavenLocal()
-        jcenter()
         maven {
             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
             url "$rootDir/../node_modules/react-native/android"
@@ -30,5 +29,18 @@ allprojects {
             url 'https://maven.google.com'
         }
         google()
+        jcenter()
+    }
+}
+
+// from https://github.com/react-community/react-native-image-picker/issues/882#issuecomment-405255785
+subprojects {
+    afterEvaluate {project ->
+        if (project.hasProperty("android")) {
+            android {
+                compileSdkVersion 26
+                buildToolsVersion "26.0.1"
+            }
+        }
     }
 }
