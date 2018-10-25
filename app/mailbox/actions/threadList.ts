@@ -22,6 +22,7 @@ import {
 
 import { Conf } from "../../Conf";
 import { signedFetch } from "../../infra/fetchWithCache";
+import { Me } from "../../infra/Me";
 
 export const NB_THREADS_PER_PAGE = 10; // Needs to be the same value as the backend's one
 
@@ -93,7 +94,8 @@ const conversationThreadListAdapter: (
         parentId: message.parent_id,
         threadId
       };
-      if (message.unread) ++result.threads.byId[threadId].unread;
+      if (message.unread && message.from !== Me.session.userId)
+        ++result.threads.byId[threadId].unread;
       result.threads.byId[threadId].messages.push(message.id);
     }
     // 3, Sort each thread by last message date, backend result is f*cked-up
