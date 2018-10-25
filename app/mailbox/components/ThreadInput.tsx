@@ -84,22 +84,6 @@ class ThreadInput extends React.PureComponent<
     textMessage: ""
   };
 
-  private switchKeyboard(e: Selected) {
-    const { selected } = this.state;
-    console.log("SWITCH KEYBOARD: ", e, this.state, this.input);
-
-    if (e === Selected.keyboard) {
-      this.input.innerComponent.focus();
-      this.setState({ selected: e });
-    } else if (e === Selected.none) {
-      this.input.innerComponent.blur();
-      this.setState({ selected: e });
-    } else if (e === Selected.camera) {
-      this.sendPhoto();
-      this.setState({ selected: e });
-    }
-  }
-
   public findReceivers(conversation) {
     // TODO : Duplicate of ThreadItem.findReceivers() ?
     const to = [
@@ -117,7 +101,7 @@ class ThreadInput extends React.PureComponent<
     const { textMessage, newThreadId } = this.state;
     const { thread, lastMessageId } = this.props;
 
-    this.setState({ selected: Selected.none });
+    this.input.innerComponent.blur();
 
     this.props.sendPhoto({
       cc: thread.cc,
@@ -133,7 +117,7 @@ class ThreadInput extends React.PureComponent<
     const { textMessage } = this.state;
 
     this.input.innerComponent.setNativeProps({ keyboardType: "default" });
-    this.switchKeyboard(Selected.none);
+    this.input.innerComponent.blur();
 
     const newMessage = await this.props.send({
       body: `<div>${textMessage}</div>`,
@@ -153,6 +137,10 @@ class ThreadInput extends React.PureComponent<
     this.setState({ selected: Selected.keyboard });
   }
 
+  public blur() {
+    this.setState({ selected: Selected.none });
+  }
+
   public render() {
     const { selected, textMessage } = this.state;
 
@@ -169,29 +157,26 @@ class ThreadInput extends React.PureComponent<
               this.setState({ textMessage })
             }
             onFocus={() => {
-              console.log("on Focus");
-              this.switchKeyboard(Selected.keyboard);
+              this.focus();
               return true;
             }}
             onBlur={() => {
-              console.log("on Blur");
-              this.switchKeyboard(Selected.none);
+              this.blur();
               return true;
             }}
             placeholder={I18n.t("conversation-chatPlaceholder")}
             underlineColorAndroid={"transparent"}
             value={textMessage}
             autoCorrect={false}
+            autoFocus={true}
           />
         </ContainerInput>
         <Line>
           <ChatIcon
             onPress={() => {
-              this.switchKeyboard(
-                this.state.selected === Selected.keyboard
-                  ? Selected.none
-                  : Selected.keyboard
-              );
+              if (this.state.selected === Selected.keyboard)
+                this.input.innerComponent.blur();
+              else this.input.innerComponent.focus();
             }}
           >
             <IconOnOff
