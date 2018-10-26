@@ -43,7 +43,7 @@ class NewThreadPage extends React.PureComponent<
 
 export default connect(
   (state: any) => {
-    console.log(state);
+    // console.log(state);
     const usersState = state[mailboxConfig.reducerName].users;
     return {
       pickedUsers: usersState.picked,

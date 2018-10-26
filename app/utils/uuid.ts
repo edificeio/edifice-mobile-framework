@@ -1,5 +1,5 @@
 export default function() {
-  console.log("generating UUID...");
+  // console.log("generating UUID...");
   let d = new Date().getTime();
   if (
     typeof performance !== "undefined" &&

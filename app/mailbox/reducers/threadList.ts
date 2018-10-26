@@ -124,7 +124,7 @@ const conversationThreadListReducer = (
       };
     case actionTypeMessageSendRequested:
       // action contains `data: IConversationMessage`
-      console.log("reducer: (threadList) send message request", action);
+      // console.log("reducer: (threadList) send message request", action);
       return {
         ...state,
         byId: {
@@ -140,7 +140,7 @@ const conversationThreadListReducer = (
       };
     case actionTypeMessageSent:
       // action contains `data: IConversationMessage with oldId and newId instead of id`
-      console.log("reducer: (threadList) send message request", action);
+      // console.log("reducer: (threadList) send message request", action);
       const msglist = state.byId[action.data.threadId].messages;
       const index = msglist.indexOf(action.data.oldId);
       if (index !== -1) {
@@ -157,7 +157,7 @@ const conversationThreadListReducer = (
         }
       };
     case actionTypeThreadCreated:
-      console.log("reducer (threadList): create thread");
+      // console.log("reducer (threadList): create thread");
       return {
         ...state,
         byId: {

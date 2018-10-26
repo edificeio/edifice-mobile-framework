@@ -17,10 +17,10 @@ export const actionTypeMessageSendError = mailboxConfig.createActionType("SEND_F
 
 export function sendMessage(data: IConversationMessage) {
   return async (dispatch, getState) => {
-    console.log(getState().mailbox);
-    console.log("1/ trigger send message", data);
+    // console.log(getState().mailbox);
+    // console.log("1/ trigger send message", data);
     const newuuid = "tmp-" + generateUuid();
-    console.log("uuid:", newuuid);
+    // console.log("uuid:", newuuid);
     const fulldata = {
       ...data,
       date: moment(),
@@ -28,13 +28,13 @@ export function sendMessage(data: IConversationMessage) {
       id: newuuid,
       status: ConversationMessageStatus.sending
     };
-    console.log("uuid 2e démarque:", newuuid);
-    console.log("2/ dispatch sent message requested", fulldata);
+    // console.log("uuid 2e démarque:", newuuid);
+    // console.log("2/ dispatch sent message requested", fulldata);
     dispatch({
       data: fulldata,
       type: actionTypeMessageSendRequested
     });
-    console.log(getState().mailbox);
+    // console.log(getState().mailbox);
 
     try {
       let replyTo = "";
@@ -47,7 +47,7 @@ export function sendMessage(data: IConversationMessage) {
         subject: fulldata.subject,
         to: fulldata.to
       };
-      console.log("3/ sent request to the server", requestbody, replyTo);
+      // console.log("3/ sent request to the server", requestbody, replyTo);
       const response = await signedFetch(
         `${Conf.platform}/conversation/send?${replyTo}`,
         {
@@ -60,7 +60,7 @@ export function sendMessage(data: IConversationMessage) {
         }
       );
       const json = await response.json();
-      console.log("4/ server response :", json);
+      // console.log("4/ server response :", json);
 
       Tracking.logEvent("sentMessage", {
         application: "conversation",
@@ -76,12 +76,12 @@ export function sendMessage(data: IConversationMessage) {
         parentId: fulldata.parentId,
         threadId: fulldata.threadId
       };
-      console.log("6/ dispatch sent message :", fulldata2);
+      // console.log("6/ dispatch sent message :", fulldata2);
       dispatch({
         data: fulldata2,
         type: actionTypeMessageSent
       });
-      console.log("7/ Ok :", getState().mailbox);
+      // console.log("7/ Ok :", getState().mailbox);
     } catch (e) {
       // tslint:disable-next-line:no-console
       console.warn(e);

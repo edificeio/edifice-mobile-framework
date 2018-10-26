@@ -119,6 +119,10 @@ class ThreadInput extends React.PureComponent<
     this.input.innerComponent.setNativeProps({ keyboardType: "default" });
     this.input.innerComponent.blur();
 
+    this.setState({
+      textMessage: ""
+    });
+
     const newMessage = await this.props.send({
       body: `<div>${textMessage}</div>`,
       cc: thread.cc,
@@ -126,10 +130,6 @@ class ThreadInput extends React.PureComponent<
       subject: "Re: " + thread.subject,
       threadId: thread.id,
       to: this.findReceivers(thread)
-    });
-
-    this.setState({
-      textMessage: ""
     });
   }
 
@@ -168,7 +168,6 @@ class ThreadInput extends React.PureComponent<
             underlineColorAndroid={"transparent"}
             value={textMessage}
             autoCorrect={false}
-            autoFocus={true}
           />
         </ContainerInput>
         <Line>
