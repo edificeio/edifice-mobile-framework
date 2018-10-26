@@ -18,8 +18,8 @@ android-sdk:
              ./gradlew clean &&
              cd .. &&
              ./node_modules/.bin/react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/build/generated/res/react/release &&
-             cd android &&
-             ./gradlew assembleRelease &&
+             npm run apk &&
              zipalign 4 android/app/build/outputs/apk/release/app-release-unsigned.apk android/app/build/outputs/apk/release/app-release-signed.apk &&
              echo android | apksigner sign --ks /root/android.keystore --ks-key-alias android android/app/build/outputs/apk/release/app-release-signed.apk &&
+             rm -f android/app/build/outputs/apk/release/app-release-unsigned.apk
              chown -R $HOST_UID:$HOST_GID -R ."
