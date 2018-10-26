@@ -34,6 +34,9 @@ build/
 .gradle
 local.properties
 *.iml
+android/app/release
+# Seems to be a bug with react-native. If bundle is in `generated` folder, it's not included in the apk.
+android/app/src/main/assets/index.android.bundle
 
 # node.js / npm
 #
