@@ -96,9 +96,15 @@ export default class ThreadMessage extends React.PureComponent<
                 source={signUrl(el.src)}
                 imageComponent={ImageMessage}
                 errorComponent={
-                  <Italic style={{ color: CommonStyles.lightTextColor }}>
-                    Image non disponible
-                  </Italic>
+                  <View
+                    style={{
+                      backgroundColor: CommonStyles.entryfieldBorder,
+                      paddingHorizontal: 16,
+                      paddingVertical: 12
+                    }}
+                  >
+                    <Italic>Image non disponible</Italic>
+                  </View>
                 }
               />
               /*<TouchableOpacity
