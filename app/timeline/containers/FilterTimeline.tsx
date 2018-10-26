@@ -68,10 +68,9 @@ export class FilterTimeline extends React.Component<
   any
 > {
   checkApp(app, val) {
-    this.props.pickFilters({
-      ...this.props.selectedApps,
-      [app.name]: val
-    });
+    const newSelectedApps = { ...this.props.selectedApps };
+    newSelectedApps[app.name] = val;
+    this.props.pickFilters(newSelectedApps);
   }
 
   checkAllApps(val: boolean) {
