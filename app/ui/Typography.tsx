@@ -35,16 +35,18 @@ export const Paragraph = style.text(
   })
 );
 
+// Note : currently LightP and Label are only used in `user` module.
+
 export const LightP = style.text({
   color: CommonStyles.lightTextColor,
   fontFamily: CommonStyles.primaryFontFamily,
-  fontSize: 12
+  fontSize: 14
 });
 
 export const Label = style.text({
   color: "#858FA9",
   fontFamily: CommonStyles.primaryFontFamilyLight,
-  fontSize: 12,
+  fontSize: 14,
   fontWeight: "400",
   textAlignVertical: "center"
 });
