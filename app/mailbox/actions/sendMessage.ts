@@ -9,6 +9,7 @@ import {
   ConversationMessageStatus,
   IConversationMessage
 } from "../reducers/messages";
+
 import mailboxConfig from "../config";
 
 export const actionTypeMessageSendRequested = mailboxConfig.createActionType("SEND_REQUESTED");

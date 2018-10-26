@@ -1,22 +1,41 @@
+import moment from "moment";
 import { Conf } from "../../Conf";
 import { Me } from "../../infra/Me";
+import { Tracking } from "../../tracking/TrackingManager";
+import generateUuid from "../../utils/uuid";
 
 import { takePhoto, uploadImage } from "../../infra/actions/workspace";
 import { signedFetch } from "../../infra/fetchWithCache";
-import { IConversationMessage } from "../reducers/messages";
+import {
+  ConversationMessageStatus,
+  IConversationMessage
+} from "../reducers/messages";
+
+import {
+  actionTypeMessageSendError,
+  actionTypeMessageSendRequested,
+  actionTypeMessageSent
+} from "./sendMessage";
 
 export const sendPhoto = dispatch => async (data: IConversationMessage) => {
   const uri = await takePhoto();
 
+  const newuuid = "tmp-" + generateUuid();
+
+  const fulldata = {
+    ...data,
+    body: `<div><img src="${uri}" /></div>`,
+    date: moment(),
+    from: Me.session.userId,
+    id: newuuid,
+    parentId: data.parentId,
+    status: ConversationMessageStatus.sending,
+    threadId: data.threadId
+  };
+
   dispatch({
-    data: {
-      ...data,
-      body: `<div><img src="${uri}" /></div>`,
-      conversation: data.parentId,
-      date: Date.now(),
-      from: Me.session.userId
-    },
-    type: "CONVERSATION_SEND"
+    data: fulldata,
+    type: actionTypeMessageSendRequested
   });
 
   try {
@@ -24,19 +43,21 @@ export const sendPhoto = dispatch => async (data: IConversationMessage) => {
     const body = `<div><img src="${documentPath}" /></div>`;
 
     let replyTo = "";
-    if (data.parentId) {
-      replyTo = "In-Reply-To=" + data.parentId;
+    if (fulldata.parentId) {
+      replyTo = "In-Reply-To=" + fulldata.parentId;
     }
+
+    const requestBody = {
+      body,
+      cc: fulldata.cc,
+      subject: fulldata.subject,
+      to: fulldata.to
+    };
 
     const response = await signedFetch(
       `${Conf.platform}/conversation/send?${replyTo}`,
       {
-        body: JSON.stringify({
-          body,
-          cc: data.cc,
-          subject: data.subject,
-          to: data.to
-        }),
+        body: JSON.stringify(requestBody),
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json"
@@ -46,27 +67,39 @@ export const sendPhoto = dispatch => async (data: IConversationMessage) => {
     );
     const json = await response.json();
 
+    Tracking.logEvent("sentMessage", {
+      application: "conversation",
+      length: fulldata.body.length - 9,
+      nbRecipients: fulldata.to.length + (fulldata.cc || []).length
+    });
+
+    const fulldata2 = {
+      ...fulldata,
+      body,
+      date: moment(),
+      from: Me.session.userId,
+      newId: json.id,
+      oldId: newuuid,
+      parentId: fulldata.parentId,
+      threadId: fulldata.threadId
+    };
+
     dispatch({
-      data: {
-        ...data,
-        body,
-        conversation: data.parentId,
-        date: Date.now(),
-        from: Me.session.userId,
-        newId: json.id
-      },
-      type: "CONVERSATION_SENT"
+      data: fulldata2,
+      type: actionTypeMessageSent
     });
   } catch (e) {
     // tslint:disable-next-line:no-console
     console.warn(e);
     dispatch({
-      body: "<div></div>",
-      conversation: data.parentId,
-      data,
-      date: Date.now(),
-      from: Me.session.userId,
-      type: "CONVERSATION_FAILED_SEND"
+      data: {
+        ...data,
+        conversation: data.parentId,
+        date: Date.now(),
+        from: Me.session.userId,
+        threadId: data.threadId
+      },
+      type: actionTypeMessageSendError
     });
   }
 };
