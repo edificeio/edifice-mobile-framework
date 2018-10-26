@@ -126,7 +126,7 @@ export class ThreadListPage extends React.PureComponent<
         }
         data={this.props.threads}
         onEndReached={() => onNextPage()}
-        onEndReachedThreshold={0}
+        onEndReachedThreshold={0.1}
         renderItem={({ item }: { item: IConversationThread }) =>
           this.renderThreadItem(item)
         }

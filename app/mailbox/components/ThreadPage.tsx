@@ -163,7 +163,7 @@ export class ThreadPage extends React.PureComponent<
               this.onEndReachedCalledDuringMomentum = true;
             }
           }}
-          onEndReachedThreshold={0}
+          onEndReachedThreshold={0.1}
           onMomentumScrollBegin={() => {
             this.onEndReachedCalledDuringMomentum = false;
           }}
