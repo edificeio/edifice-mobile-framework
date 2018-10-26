@@ -11,22 +11,22 @@ import { signUrl } from "../../infra/oauth";
 
 import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
 import { DateView } from "../../ui/DateView";
+import ImageOptional, { TouchableImageOptional } from "../../ui/ImageOptional";
+import { Italic } from "../../ui/Typography";
 import { ConversationMessageStatus } from "../reducers/messages";
 
 const ImageContainer = style.view(
   {
-    height: 130,
     marginBottom: 10,
-    overflow: "hidden",
-    shadowColor: CommonStyles.shadowColor,
+    overflow: "hidden" // ,
+    /*shadowColor: CommonStyles.shadowColor,
     shadowOffset: CommonStyles.shadowOffset,
     shadowOpacity: CommonStyles.shadowOpacity,
-    shadowRadius: CommonStyles.shadowRadius,
-    width: 200
+    shadowRadius: CommonStyles.shadowRadius*/
   },
   ({ isMine }): ViewStyle => ({
-    borderBottomRightRadius: isMine ? 0 : 15,
-    elevation: isMine ? 0 : 3
+    borderBottomRightRadius: isMine ? 0 : 15 // ,
+    // elevation: isMine ? 0 : 3
   })
 );
 
@@ -86,16 +86,31 @@ export default class ThreadMessage extends React.PureComponent<
           ) : (
             <View />
           )}
-          {images.map((el, index) => (
-            <TouchableOpacity
-              key={index}
-              onPress={() => this.props.onOpenImage(index, images)}
-            >
-              <ImageContainer isMine={isMine}>
-                <ImageMessage source={signUrl(el.src)} />
-              </ImageContainer>
-            </TouchableOpacity>
-          ))}
+          {images.map((el, index) => {
+            return (
+              <TouchableImageOptional
+                key={index}
+                onPress={() => {
+                  this.props.onOpenImage(index, images);
+                }}
+                source={signUrl(el.src)}
+                imageComponent={ImageMessage}
+                errorComponent={
+                  <Italic style={{ color: CommonStyles.lightTextColor }}>
+                    Image non disponible
+                  </Italic>
+                }
+              />
+              /*<TouchableOpacity
+                key={index}
+                onPress={() => {
+                  if (!imageComp.isError) this.props.onOpenImage(index, images);
+                }}
+              >
+                <ImageContainer isMine={isMine}>{imageComp}</ImageContainer>
+              </TouchableOpacity>*/
+            );
+          })}
           {(status === undefined ||
             status === ConversationMessageStatus.sent) && (
             <DateView date={date} />
