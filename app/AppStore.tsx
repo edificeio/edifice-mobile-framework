@@ -23,7 +23,7 @@ const reducers = {
 
 const rootReducer = combineReducers({
   ...reducers,
-  // conversation, // TODO put this un module definitions
+  // conversation, // TODO definitely remove this module
   timeline // TODO put this un module definitions
 });
 

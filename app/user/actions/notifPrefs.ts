@@ -49,7 +49,9 @@ export const excludeNotifTypes = [
   "news.thread-shared",
   "schoolbook.acknowledge",
   "schoolbook.modifyresponse",
-  "schoolbook.response"
+  "schoolbook.response",
+  "schoolbook.word-resend",
+  "schoolbook.word-shared"
 ];
 
 export function setNotificationPref(notif, value, notificationPrefs) {

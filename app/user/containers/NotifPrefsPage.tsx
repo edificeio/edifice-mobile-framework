@@ -82,7 +82,7 @@ export class NotifPrefsPage extends React.PureComponent<
 
   public isAllowed(notifPref) {
     return (
-      (this.props.availableApps.hasOwnProperty(notifPref.type) || // TODO: Get the available apps
+      (this.props.availableApps.hasOwnProperty(notifPref.type) || // TODO: Get the available apps NOT from timeline
         notifPref.type === "MESSAGERIE") &&
       excludeNotifTypes.indexOf(notifPref.key) === -1
     );
