@@ -1,6 +1,6 @@
 import I18n from "react-native-i18n";
 
-import ConversationNavigator from "../conversation/ConversationNavigator";
+// import ConversationNavigator from "../conversation/ConversationNavigator";
 import TimelineNavigator from "../timeline/TimelineNavigator";
 
 import moduleDefinitions from "../AppModules";
@@ -19,12 +19,12 @@ export const MainNavigator = createMainTabNavigator({
       createMainTabNavOption(I18n.t("News"), "nouveautes")
   },
 
-  conversation: {
+  /* conversation: {
     screen: ConversationNavigator,
 
     navigationOptions: () =>
       createMainTabNavOption(I18n.t("Conversation"), "conversation")
-  },
+  }, */
 
   ...getRoutesFromModuleDefinitions(moduleDefinitions)
 });

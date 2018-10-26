@@ -5,7 +5,7 @@ import { applyMiddleware, combineReducers, createStore } from "redux";
 import thunkMiddleware from "redux-thunk";
 import AppScreen from "./AppScreen";
 
-import conversation from "./conversation/reducer"; // old conversation module
+// import conversation from "./conversation/reducer"; // old conversation module
 import connectionTracker from "./infra/reducers/connectionTracker";
 import ui from "./infra/reducers/ui";
 import timeline from "./timeline/reducer";
@@ -23,7 +23,7 @@ const reducers = {
 
 const rootReducer = combineReducers({
   ...reducers,
-  conversation, // TODO put this un module definitions
+  // conversation, // TODO put this un module definitions
   timeline // TODO put this un module definitions
 });
 
