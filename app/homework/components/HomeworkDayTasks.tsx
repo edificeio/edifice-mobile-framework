@@ -54,7 +54,7 @@ export class HomeworkDayTasks extends React.PureComponent<
       <View style={[style]}>
         <HomeworkDayCheckpoint
           nb={data.date.date()}
-          text={data.date.format("dddd")}
+          text={data.date.format("dddd D MMMM")}
           active={data.date.isSame(today(), "day")}
         />
         {tasksAsArray.map(item => (
