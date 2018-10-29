@@ -1,4 +1,4 @@
-import style from "glamorous-native";
+import style, { withTheme } from "glamorous-native";
 import * as React from "react";
 import { Text, TouchableOpacity, View, ViewStyle } from "react-native";
 import I18n from "react-native-i18n";
@@ -11,29 +11,27 @@ import { signUrl } from "../../infra/oauth";
 
 import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
 import { DateView } from "../../ui/DateView";
-import ImageOptional, { TouchableImageOptional } from "../../ui/ImageOptional";
+import { TouchableImageOptional } from "../../ui/ImageOptional";
 import { Italic } from "../../ui/Typography";
 import { ConversationMessageStatus } from "../reducers/messages";
-
-const ImageContainer = style.view(
-  {
-    marginBottom: 10,
-    overflow: "hidden" // ,
-    /*shadowColor: CommonStyles.shadowColor,
-    shadowOffset: CommonStyles.shadowOffset,
-    shadowOpacity: CommonStyles.shadowOpacity,
-    shadowRadius: CommonStyles.shadowRadius*/
-  },
-  ({ isMine }): ViewStyle => ({
-    borderBottomRightRadius: isMine ? 0 : 15 // ,
-    // elevation: isMine ? 0 : 3
-  })
-);
 
 const ImageMessage = style.image({
   height: 130,
   width: 200
 });
+const ImageContainer = props => (
+  <View
+    style={{
+      elevation: 3,
+      shadowColor: CommonStyles.shadowColor,
+      shadowOffset: CommonStyles.shadowOffset,
+      shadowOpacity: CommonStyles.shadowOpacity,
+      shadowRadius: CommonStyles.shadowRadius
+    }}
+  >
+    <ImageMessage {...props} />
+  </View>
+);
 
 const TextBubble = ({ content, isMine }) => (
   <BubbleStyle my={isMine}>
@@ -94,7 +92,7 @@ export default class ThreadMessage extends React.PureComponent<
                   this.props.onOpenImage(index, images);
                 }}
                 source={signUrl(el.src)}
-                imageComponent={ImageMessage}
+                imageComponent={ImageContainer}
                 errorComponent={
                   <View
                     style={{
@@ -107,14 +105,6 @@ export default class ThreadMessage extends React.PureComponent<
                   </View>
                 }
               />
-              /*<TouchableOpacity
-                key={index}
-                onPress={() => {
-                  if (!imageComp.isError) this.props.onOpenImage(index, images);
-                }}
-              >
-                <ImageContainer isMine={isMine}>{imageComp}</ImageContainer>
-              </TouchableOpacity>*/
             );
           })}
           {(status === undefined ||
@@ -178,7 +168,7 @@ const BubbleStyle = style.view(
   },
   ({ my }): ViewStyle => ({
     backgroundColor: my ? CommonStyles.iconColorOn : "white",
-    elevation: my ? 0 : 3
+    elevation: 3
   })
 );
 
