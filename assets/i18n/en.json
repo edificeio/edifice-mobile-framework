@@ -32,5 +32,6 @@
   "timeline-schoolbookFilter": "Schoolbook",
   "timeline-newsFilter": "News",
   "timeline-emptyScreenTitle": "It's deserted... Anybody there?",
-  "timeline-emptyScreenText": "It's quiet around here.... You know the expression \"the calm before the storm\" ?"
+  "timeline-emptyScreenText": "It's quiet around here.... You know the expression \"the calm before the storm\" ?",
+  "imageNotAvailable": "Image not available"
 }

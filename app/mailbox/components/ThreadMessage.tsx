@@ -103,7 +103,7 @@ export default class ThreadMessage extends React.PureComponent<
                       paddingVertical: 12
                     }}
                   >
-                    <Italic>Image non disponible</Italic>
+                    <Italic>{I18n.t("imageNotAvailable")}</Italic>
                   </View>
                 }
               />

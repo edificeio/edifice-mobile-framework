@@ -69,6 +69,7 @@
   "next": "Suivant",
   "tryagain": "Réessayer",
   "loadingFailedMessage": "Le chargement a échoué. Veuillez vérifier votre connexion internet.",
+  "imageNotAvailable": "Image non disponible",
   "date":{
     "day_names": ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
     "abbr_day_names": ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"],
