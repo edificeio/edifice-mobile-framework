@@ -10,6 +10,7 @@ import ImageOptional from "./ImageOptional";
 
 const BubbleText = style.text({
   color: "#FFFFFF",
+  marginHorizontal: -10,
   textAlign: "center"
 });
 
