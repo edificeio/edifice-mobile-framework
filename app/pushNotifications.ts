@@ -1,4 +1,4 @@
-import conversationHandle from "./conversation/NotifHandler";
+// import conversationHandle from "./conversation/NotifHandler";
 // TODO: integrate notification handler in module config
 import mailboxHandle from "./mailbox/notifHandler";
 import timelineHandle from "./timeline/NotifHandler";
