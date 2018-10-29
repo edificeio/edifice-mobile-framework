@@ -334,7 +334,10 @@ const oauth = new OAuth2RessourceOwnerClient(
     "homeworks",
     "workspace",
     "directory",
-    "conversation"
+    "conversation",
+    "blog",
+    "actualites",
+    "schoolbook"
   ]
 );
 

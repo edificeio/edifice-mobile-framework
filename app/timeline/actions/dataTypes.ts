@@ -27,7 +27,7 @@ const loadSchoolbooks = (): Promise<Array<any>> => {
         );
         schoolbooks = [...schoolbooks, ...messages];
       } catch (e) {
-        console.log(e);
+        console.warn(e);
       }
     } else {
       for (let child of Me.session.children) {
