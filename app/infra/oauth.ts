@@ -329,15 +329,15 @@ const oauth = new OAuth2RessourceOwnerClient(
   "app-e",
   "ODE",
   [
-    "userinfo",
-    "timeline",
-    "homeworks",
-    "workspace",
-    "directory",
-    "conversation",
-    "blog",
     "actualites",
-    "schoolbook"
+    "blog",
+    "conversation",
+    "directory",
+    "homeworks",
+    "schoolbook",
+    "timeline",
+    "userinfo",
+    "workspace"
   ]
 );
 
