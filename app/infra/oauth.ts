@@ -1,5 +1,5 @@
 /**
- * OAuth2 client for Ressource OWner Credentials Grant type flow.
+ * OAuth2 client for Ressource Owner Password Grant type flow.
  */
 
 import { encode as btoa } from "base-64";
@@ -22,7 +22,7 @@ export enum OAuthError {
   NETWORK_ERROR
 }
 
-class OAuth2RessourceOwnerClient { // TODO: Renommer avec "password"
+class OAuth2RessourceOwnerPasswordClient {
   /**
    * Common headers to all oauth2 flow requets
    */
@@ -138,7 +138,7 @@ class OAuth2RessourceOwnerClient { // TODO: Renommer avec "password"
       username
     };
     const headers = {
-      ...OAuth2RessourceOwnerClient.DEFAULT_HEADERS,
+      ...OAuth2RessourceOwnerPasswordClient.DEFAULT_HEADERS,
       Authorization: this.getAuthHeader(this.clientId, this.clientSecret)
     };
 
@@ -217,7 +217,7 @@ class OAuth2RessourceOwnerClient { // TODO: Renommer avec "password"
       scope: this.sanitizeScope(this.scope)
     };
     const headers = {
-      ...OAuth2RessourceOwnerClient.DEFAULT_HEADERS,
+      ...OAuth2RessourceOwnerPasswordClient.DEFAULT_HEADERS,
       Authorization: this.getAuthHeader(this.clientId, this.clientSecret)
     };
 
@@ -324,7 +324,7 @@ class OAuth2RessourceOwnerClient { // TODO: Renommer avec "password"
 /**
  * A oAuth connexion configured for Open Digital Education API
  */
-const oauth = new OAuth2RessourceOwnerClient(
+const oauth = new OAuth2RessourceOwnerPasswordClient(
   `${Conf.platform}/auth/oauth2/token`,
   "app-e",
   "ODE",
