@@ -56,6 +56,8 @@ class ThreadListPageContainer extends React.PureComponent<
   IThreadListPageProps & { dispatch: any },
   {}
 > {
+  private didFocusSubscription;
+
   constructor(props) {
     super(props);
   }
@@ -70,8 +72,19 @@ class ThreadListPageContainer extends React.PureComponent<
     );
   }
 
-  public async componentDidMount() {
-    this.fetchNextPage();
+  public componentDidMount() {
+    this.didFocusSubscription = this.props.navigation.addListener(
+      "didFocus",
+      payload => {
+        console.log("list focused");
+        this.reloadList();
+      }
+    );
+    // this.fetchNextPage();
+  }
+
+  public componentWillUnmount() {
+    this.didFocusSubscription.remove();
   }
 
   public fetchNextPage() {

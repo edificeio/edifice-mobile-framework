@@ -81,7 +81,7 @@ const conversationThreadListAdapter: (
       isFetchingNewer: false,
       isFetchingOlder: false,
       messages: [],
-      subject: newestMessage.subject.replace(/Tr :|Re :|Re:|Tr:/g, "").trim(),
+      subject: newestMessage.subject.replace(/Tr :|Re :|Re:|Tr:/g, "").trim(), // TODO : do this at display time, not load time.
       to: newestMessage.to,
       unread: 0
     };
@@ -209,6 +209,7 @@ export function fetchConversationThreadList(page: number = 0) {
 
 export function resetConversationThreadList() {
   return async (dispatch, getState) => {
+    console.log("resetConvThreadList");
     dispatch(conversationThreadListResetRequested());
     try {
       const data = await asyncGetJson(

@@ -80,11 +80,11 @@ export class ThreadListPage extends React.PureComponent<
   // Render
 
   public render() {
-    const { isFetching, threads } = this.props;
+    const { isFetching, isRefreshing, threads } = this.props;
     const isEmpty = threads.length === 0;
 
     const pageContent = isEmpty
-      ? isFetching
+      ? isFetching || isRefreshing
         ? this.renderLoading()
         : this.renderEmptyScreen()
       : this.renderThreadList();
