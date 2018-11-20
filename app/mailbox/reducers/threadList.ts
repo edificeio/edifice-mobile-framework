@@ -72,6 +72,7 @@ const conversationThreadListReducer = (
         isRefreshing: true
       };
     case actionTypeResetReceived:
+      console.log(action);
       return {
         byId: { ...action.data.byId },
         ids: [...action.data.ids],

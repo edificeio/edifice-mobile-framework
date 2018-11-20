@@ -82,6 +82,7 @@ export async function fetchWithCache(
   const dataFromCache = await AsyncStorage.getItem(path); // TODO : optimization  - get dataFrmCache only when needed.
   if (Connection.isOnline && (forceSync || !dataFromCache)) {
     const response = await signedFetch(`${platform}${path}`, init);
+    console.log("get", response);
     // TODO: check if response is OK
     const cacheResponse = {
       body: await getBody(response.clone()),
