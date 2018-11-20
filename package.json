@@ -1,6 +1,6 @@
 {
   "name": "app-e",
-  "version": "0.0.8",
+  "version": "9",
   "private": true,
   "scripts": {
     "build:ios": "react-native bundle --entry-file='index.ios.js' --bundle-output='./ios/YourAppName/main.jsbundle' --dev=false --platform='ios' --assets-dest='./ios'",
