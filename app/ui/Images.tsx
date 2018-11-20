@@ -54,7 +54,7 @@ const UnavailableImage = (
       width: "100%"
     }}
   >
-    <Italic>{I18n.t("imageNotAvailable")}</Italic>
+    {/*<Italic>{I18n.t("imageNotAvailable")}</Italic>*/}
   </View>
 );
 

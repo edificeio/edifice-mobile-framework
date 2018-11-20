@@ -45,7 +45,7 @@ export type IConversationThreadList = IOrderedArrayById<IConversationThread> & {
 const stateDefault: IConversationThreadList = {
   byId: {},
   ids: [],
-  isRefreshing: false,
+  isRefreshing: true,
   page: -1
 };
 
@@ -68,8 +68,8 @@ const conversationThreadListReducer = (
       };
     case actionTypeResetRequested:
       return {
-        ...state,
-        isRefreshing: true
+        ...state // ,
+        // isRefreshing: true
       };
     case actionTypeResetReceived:
       return {
