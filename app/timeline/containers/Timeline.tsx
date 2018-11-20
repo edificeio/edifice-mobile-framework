@@ -1,6 +1,7 @@
+import I18n from "i18n-js";;
+
 import * as React from "react";
 import { FlatList, RefreshControl, View } from "react-native";
-import I18n from "react-native-i18n";
 import { connect } from "react-redux";
 
 import { FlatButton, Loading } from "../../ui";

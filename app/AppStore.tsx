@@ -1,5 +1,6 @@
+import I18n from "i18n-js";
 import * as React from "react";
-import I18n, { getLanguages } from "react-native-i18n";
+import RNLanguages from "react-native-languages";
 import { Provider } from "react-redux";
 import { applyMiddleware, combineReducers, createStore } from "redux";
 import thunkMiddleware from "redux-thunk";
@@ -28,15 +29,18 @@ const rootReducer = combineReducers({
 const enhancer = applyMiddleware(thunkMiddleware);
 const store = createStore(rootReducer, enhancer);
 
+// Translation setup
 I18n.fallbacks = true;
+I18n.defaultLocale = "en";
 I18n.translations = {
   en: require("../assets/i18n/en"),
   es: require("../assets/i18n/es"),
   fr: require("../assets/i18n/fr")
 };
-I18n.defaultLocale = "en";
-
-getLanguages();
+// Print current device language
+console.log("language", RNLanguages.language);
+// Print user preferred languages (in order)
+console.log("languages", RNLanguages.languages);
 
 export class AppStore extends React.Component {
   public componentDidMount() {
@@ -50,4 +54,17 @@ export class AppStore extends React.Component {
       </Provider>
     );
   }
+
+  // Translation locale change setup
+  public componentWillMount() {
+    RNLanguages.addEventListener("change", this.onLanguagesChange);
+  }
+
+  public componentWillUnmount() {
+    RNLanguages.removeEventListener("change", this.onLanguagesChange);
+  }
+
+  private onLanguagesChange = ({ language }) => {
+    I18n.locale = language;
+  };
 }

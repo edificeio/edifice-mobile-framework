@@ -1,6 +1,6 @@
 import style from "glamorous-native";
 import * as React from "react";
-import I18n from "react-native-i18n";
+import I18n from "i18n-js";;
 
 import { Line } from "../../ui";
 import { Toggle } from "../../ui/forms/Toggle";

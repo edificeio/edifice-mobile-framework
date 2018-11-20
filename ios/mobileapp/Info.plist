@@ -78,6 +78,10 @@
 		<string>OpenSans-bold.ttf</string>
 		<string>OpenSans-light.ttf</string>
 		<string>OpenSans-semibold.ttf</string>
+		<string>AntDesign.ttf</string>
+		<string>FontAwesome5_Brands.ttf</string>
+		<string>FontAwesome5_Regular.ttf</string>
+		<string>FontAwesome5_Solid.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

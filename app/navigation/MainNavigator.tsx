@@ -1,4 +1,4 @@
-import I18n from "react-native-i18n";
+import I18n from "i18n-js";;
 
 // import ConversationNavigator from "../conversation/ConversationNavigator";
 import TimelineNavigator from "../timeline/TimelineNavigator";
