@@ -41,12 +41,14 @@ export interface IConversationThread {
 export type IConversationThreadList = IOrderedArrayById<IConversationThread> & {
   page?: number;
   isRefreshing?: boolean; // isRefreshing is not as the same level of isFetching, but it's more practical this way.
+  end?: boolean;
 };
 
 // THE REDUCER ------------------------------------------------------------------------------------
 
 const stateDefault: IConversationThreadList = {
   byId: {},
+  end: false,
   ids: [],
   isRefreshing: true,
   page: -1
@@ -62,6 +64,7 @@ const conversationThreadListReducer = (
       return {
         ...state,
         byId: { ...state.byId, ...action.data.byId },
+        end: action.data.ids.length === 0,
         ids: [
           ...state.ids.slice(0, NB_THREADS_PER_PAGE * action.page),
           ...action.data.ids,
@@ -75,9 +78,9 @@ const conversationThreadListReducer = (
         // isRefreshing: true
       };
     case actionTypeResetReceived:
-      console.log(action);
       return {
         byId: { ...action.data.byId },
+        end: false,
         ids: [...action.data.ids],
         isRefreshing: false,
         page: 0

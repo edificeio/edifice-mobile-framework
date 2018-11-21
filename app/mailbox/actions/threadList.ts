@@ -171,10 +171,13 @@ export function conversationThreadDeleted(threadId: string) {
 export function fetchConversationThreadList(page: number = 0) {
   return async (dispatch, getState) => {
     // Check if we try to reload a page
-    if (localState(getState()).isFetching) {
+    const threadListinfo = localState(getState());
+    if (threadListinfo.isFetching) {
       // Don't fetch new page if already fetching
-      throw new Error("Conversation: Won't fetch, already fetching.");
+      // throw new Error("Conversation: Won't fetch, already fetching.");
+      return;
     }
+    if (threadListinfo.data.end) return;
     if (page <= localState(getState()).data.page) {
       throw new Error(
         "Conversation: Won't fetch a page that has already been recevied."
@@ -182,13 +185,11 @@ export function fetchConversationThreadList(page: number = 0) {
     }
 
     dispatch(conversationThreadListRequested());
-
     try {
       const data = await asyncGetJson(
         `/conversation/threads/list?page=${page}`,
         conversationThreadListAdapter
       );
-
       dispatch(conversationThreadListReceived(page, data)); // threads with message ids
     } catch (errmsg) {
       dispatch(conversationThreadListFetchError(errmsg));
