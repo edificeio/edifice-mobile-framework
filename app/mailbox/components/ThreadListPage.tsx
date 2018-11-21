@@ -30,7 +30,7 @@ import { RefreshControl } from "react-native";
 const { View, FlatList, Text } = style;
 import styles from "../../styles";
 
-import { Loading } from "../../ui";
+import { Icon, Loading } from "../../ui";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
 import { EmptyScreen } from "../../ui/EmptyScreen";
@@ -55,6 +55,7 @@ export interface IThreadListPageEventProps {
   // Because of presence of a state in the container, eventProps are not passed using mapDispatchToProps.
   // So, eventProps that are using the state are passed in *OtherProps.
   onOpenThread?: (threadId: string) => void;
+  onDeleteThread?: (threadId: string) => void;
 }
 
 export interface IThreadListPageOtherProps {
@@ -67,12 +68,21 @@ export type IThreadListPageProps = IThreadListPageDataProps &
   IThreadListPageEventProps &
   IThreadListPageOtherProps;
 
+const RightButton = style.touchableOpacity({
+  backgroundColor: "#EC5D61",
+  flex: 1,
+  justifyContent: "center",
+  paddingLeft: 34
+});
+
 // Main component ---------------------------------------------------------------------------------
 
 export class ThreadListPage extends React.PureComponent<
   IThreadListPageProps,
   {}
 > {
+  private swipeRef = undefined;
+
   constructor(props) {
     super(props);
   }
@@ -137,12 +147,19 @@ export class ThreadListPage extends React.PureComponent<
     );
   }
 
+  public renderSwipeDelete(threadId: string) {
+    return [
+      <RightButton onPress={() => this.handleDeleteThread(threadId)}>
+        <Icon size={18} color="#ffffff" name="trash" />
+      </RightButton>
+    ];
+  }
+
   public renderThreadItem(thread: IConversationThread) {
     return (
       <Swipeable
-        // TODO suppression de message
-        // rightButtons={this.swipeoutButton(item)}
-        // onRightButtonsOpenRelease={(e, g, r) => (this.swipeRef = r)}
+        rightButtons={this.renderSwipeDelete(thread.id)}
+        onRightButtonsOpenRelease={(e, g, r) => (this.swipeRef = r)}
       >
         <ThreadItem
           {...thread}
@@ -158,6 +175,11 @@ export class ThreadListPage extends React.PureComponent<
 
   public handleOpenThread(threadId) {
     this.props.onOpenThread(threadId);
+  }
+
+  public handleDeleteThread(threadId) {
+    this.swipeRef.recenter();
+    this.props.onDeleteThread(threadId);
   }
 }
 

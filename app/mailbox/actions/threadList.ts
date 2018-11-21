@@ -73,7 +73,6 @@ const conversationThreadListAdapter: (
       result.byId[b].date.diff(result.byId[a].date)
     );
   }
-  console.log("adapated:", result);
   return result;
 };
 
@@ -157,6 +156,12 @@ export function conversationThreadSetRead(threadId: string) {
   return { type: actionTypeSetRead, threadId };
 }
 
+export const actionTypeThreadDeleted =
+  conversationConfig.createActionType("THREAD") + "_DELETED";
+export function conversationThreadDeleted(threadId: string) {
+  return { type: actionTypeThreadDeleted, threadId };
+}
+
 // THUNKS -----------------------------------------------------------------------------------------
 
 /**
@@ -193,15 +198,12 @@ export function fetchConversationThreadList(page: number = 0) {
 
 export function resetConversationThreadList() {
   return async (dispatch, getState) => {
-    console.log("resetConvThreadList");
     dispatch(conversationThreadListResetRequested());
-    console.log("ok");
     try {
       const data = await asyncGetJson(
         `/conversation/threads/list?page=0`,
         conversationThreadListAdapter
       );
-      console.log(data);
       dispatch(conversationThreadListResetReceived(data)); // thread infos
     } catch (errmsg) {
       console.warn(errmsg);
@@ -305,18 +307,43 @@ export function fetchConversationThreadResetMessages(threadId: string) {
 
 export function conversationSetThreadRead(threadId: string) {
   return async (dispatch, getState) => {
+    const threadInfo = localState(getState()).data.byId[threadId];
+    if (!threadInfo.unread) return;
     try {
-      await signedFetch(`${Conf.platform}/conversation/thread/toggleUnread`, {
-        body: JSON.stringify({
-          id: [threadId],
-          unread: false
-        }),
-        method: "POST"
-      });
+      const response = await signedFetch(
+        `${Conf.platform}/conversation/thread/toggleUnread`,
+        {
+          body: JSON.stringify({
+            id: [threadId],
+            unread: false
+          }),
+          method: "POST"
+        }
+      );
       dispatch(conversationThreadSetRead(threadId));
     } catch (errmsg) {
       // tslint:disable-next-line:no-console
       console.warn("failed to mark thread read : ", threadId);
+    }
+  };
+}
+
+export function conversationDeleteThread(threadId: string) {
+  return async (dispatch, getState) => {
+    try {
+      const response = await signedFetch(
+        `${Conf.platform}/conversation/thread/trash`,
+        {
+          body: JSON.stringify({
+            id: [threadId]
+          }),
+          method: "PUT"
+        }
+      );
+      dispatch(conversationThreadDeleted(threadId));
+    } catch (errmsg) {
+      // tslint:disable-next-line:no-console
+      console.warn("failed to mark thread deleted : ", threadId);
     }
   };
 }

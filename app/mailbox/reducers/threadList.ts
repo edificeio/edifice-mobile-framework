@@ -15,7 +15,8 @@ import {
   actionTypeSetRead,
   NB_THREADS_PER_PAGE,
   actionTypeThreadResetRequested,
-  actionTypeThreadResetReceived
+  actionTypeThreadResetReceived,
+  actionTypeThreadDeleted
 } from "../actions/threadList";
 import { IConversationMessage } from "./messages";
 import { actionTypeMessageSendRequested, actionTypeMessageSent } from "../actions/sendMessage";
@@ -196,6 +197,14 @@ const conversationThreadListReducer = (
           [action.newThread.id]: action.newThread
         },
         ids: [action.newThread.id, ...state.ids]
+      };
+    case actionTypeThreadDeleted:
+      // console.log("reducer (threadList): delete thread");
+      const { [action.threadId]: value, ...byId } = state.byId;
+      return {
+        ...state,
+        byId,
+        ids: state.ids.filter(v => v !== action.threadId)
       };
     default:
       return state;

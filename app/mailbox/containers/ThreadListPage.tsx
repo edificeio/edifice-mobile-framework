@@ -9,6 +9,7 @@ import {
 import mailboxConfig from "../config";
 
 import {
+  conversationDeleteThread,
   conversationSetThreadRead,
   fetchConversationThreadList,
   fetchConversationThreadResetMessages,
@@ -45,6 +46,9 @@ const mapDispatchToProps: (
 ) => IThreadListPageEventProps = dispatch => {
   return {
     dispatch,
+    onDeleteThread: (threadId: string) => {
+      dispatch(conversationDeleteThread(threadId));
+    },
     onOpenThread: (threadId: string) => {
       dispatch(conversationThreadSelected(threadId));
       dispatch(fetchConversationThreadResetMessages(threadId));
@@ -78,7 +82,6 @@ class ThreadListPageContainer extends React.PureComponent<
     this.didFocusSubscription = this.props.navigation.addListener(
       "didFocus",
       payload => {
-        console.log("list focused");
         this.reloadList();
       }
     );
