@@ -11,6 +11,7 @@ import mailboxConfig from "../config";
 import {
   conversationSetThreadRead,
   fetchConversationThreadList,
+  fetchConversationThreadResetMessages,
   resetConversationThreadList
 } from "../actions/threadList";
 import { conversationThreadSelected } from "../actions/threadSelected";
@@ -46,6 +47,7 @@ const mapDispatchToProps: (
     dispatch,
     onOpenThread: (threadId: string) => {
       dispatch(conversationThreadSelected(threadId));
+      dispatch(fetchConversationThreadResetMessages(threadId));
       dispatch(conversationSetThreadRead(threadId));
       navigate("thread");
     }

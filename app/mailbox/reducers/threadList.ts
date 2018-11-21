@@ -13,7 +13,9 @@ import {
   actionTypeResetRequested,
   actionTypes,
   actionTypeSetRead,
-  NB_THREADS_PER_PAGE
+  NB_THREADS_PER_PAGE,
+  actionTypeThreadResetRequested,
+  actionTypeThreadResetReceived
 } from "../actions/threadList";
 import { IConversationMessage } from "./messages";
 import { actionTypeMessageSendRequested, actionTypeMessageSent } from "../actions/sendMessage";
@@ -92,6 +94,20 @@ const conversationThreadListReducer = (
           }
         }
       };
+    case actionTypeThreadResetRequested:
+      // action contains `threadId`
+      // console.log("reducer: append requested", action);
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          [action.threadId]: {
+            ...state.byId[action.threadId],
+            isFetchingNewer: true,
+            messages: []
+          }
+        }
+      };
     case actionTypeAppendReceived:
       // action contains `data`, `threadId`, `isNew`
       // console.log("reducer: append received", action);
@@ -105,6 +121,20 @@ const conversationThreadListReducer = (
               ? [...action.data, ...state.byId[action.threadId].messages]
               : [...state.byId[action.threadId].messages, ...action.data],
             [action.isNew ? "isFetchingNewer" : "isFetchingOlder"]: false
+          }
+        }
+      };
+    case actionTypeThreadResetReceived:
+      // action contains `data`, `threadId`
+      // console.log("reducer: append received", action);
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          [action.threadId]: {
+            ...state.byId[action.threadId],
+            isFetchingNewer: false,
+            messages: action.data
           }
         }
       };

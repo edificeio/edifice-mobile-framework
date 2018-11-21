@@ -135,6 +135,22 @@ export function conversationThreadAppendReceived(
   return { type: actionTypeAppendReceived, data, threadId, isNew };
 }
 
+export const actionTypeThreadResetRequested =
+  conversationConfig.createActionType("THREAD_LIST") +
+  "_THREAD_RESET_REQUESTED";
+export const actionTypeThreadResetReceived =
+  conversationConfig.createActionType("THREAD_LIST") + "_THREAD_RESET_RECEIVED";
+
+export function conversationThreadResetRequested(threadId: string) {
+  return { type: actionTypeThreadResetRequested, threadId };
+}
+export function conversationThreadResetReceived(
+  data: string[],
+  threadId: string
+) {
+  return { type: actionTypeThreadResetReceived, data, threadId };
+}
+
 export const actionTypeSetRead =
   conversationConfig.createActionType("THREAD") + "_SET_READ";
 export function conversationThreadSetRead(threadId: string) {
@@ -222,7 +238,6 @@ export function fetchConversationThreadOlderMessages(threadId: string) {
       // dispatch
       dispatch(conversationMessagesReceived(messages)); // message contents
       dispatch(conversationThreadAppendReceived(messageIds, threadId, false)); // messages ids ordered
-      dispatch(conversationSetMessagesRead(messageIds));
     } catch (errmsg) {
       dispatch(conversationThreadListFetchError(errmsg));
     }
@@ -256,7 +271,32 @@ export function fetchConversationThreadNewerMessages(threadId: string) {
       // dispatch
       dispatch(conversationMessagesReceived(messages)); // message contents
       dispatch(conversationThreadAppendReceived(messageIds, threadId, true)); // messages ids ordered
-      dispatch(conversationSetMessagesRead(messageIds));
+    } catch (errmsg) {
+      dispatch(conversationThreadListFetchError(errmsg));
+    }
+  };
+}
+
+export function fetchConversationThreadResetMessages(threadId: string) {
+  return async (dispatch, getState) => {
+    try {
+      const threadInfo = localState(getState()).data.byId[threadId];
+      dispatch(conversationThreadResetRequested(threadId));
+      // Fetch data
+      const data = await asyncGetJson(
+        `/conversation/thread/messages/${threadId}`,
+        conversationOrderedMessagesAdapter
+      );
+      // Extract messageIds list and contents
+      const messages: IConversationMessageList = {};
+      for (const message of data) {
+        messages[message.id] = message;
+      }
+      const messageIds = data.map(message => message.id);
+      // console.log("thread newer messages received: ", messages, messageIds);
+      // dispatch
+      dispatch(conversationMessagesReceived(messages)); // message contents
+      dispatch(conversationThreadResetReceived(messageIds, threadId)); // messages ids ordered
     } catch (errmsg) {
       dispatch(conversationThreadListFetchError(errmsg));
     }
@@ -266,16 +306,14 @@ export function fetchConversationThreadNewerMessages(threadId: string) {
 export function conversationSetThreadRead(threadId: string) {
   return async (dispatch, getState) => {
     try {
-      const threadInfo = localState(getState()).data.byId[threadId];
-      await signedFetch(`${Conf.platform}/conversation/toggleUnread`, {
+      await signedFetch(`${Conf.platform}/conversation/thread/toggleUnread`, {
         body: JSON.stringify({
-          id: threadInfo.messages,
+          id: [threadId],
           unread: false
         }),
         method: "POST"
       });
       dispatch(conversationThreadSetRead(threadId));
-      dispatch(conversationMessagesSetRead(threadInfo.messages));
     } catch (errmsg) {
       // tslint:disable-next-line:no-console
       console.warn("failed to mark thread read : ", threadId);
