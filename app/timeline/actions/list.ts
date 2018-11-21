@@ -34,7 +34,7 @@ export const fetchTimeline = dispatch => async availableApps => {
       });
     }
   } catch (e) {
-    console.log(e);
+    console.warn(e);
   }
 };
 
@@ -93,7 +93,7 @@ export const listTimeline = dispatch => async (page, availableApps) => {
     loading = false;
     return newNews;
   } catch (e) {
-    console.log(e);
+    console.warn(e);
     dispatch({
       type: "FAILED_LOAD_TIMELINE"
     });

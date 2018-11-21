@@ -9,8 +9,10 @@ import {
 import mailboxConfig from "../config";
 
 import {
+  conversationDeleteThread,
   conversationSetThreadRead,
   fetchConversationThreadList,
+  fetchConversationThreadResetMessages,
   resetConversationThreadList
 } from "../actions/threadList";
 import { conversationThreadSelected } from "../actions/threadSelected";
@@ -44,8 +46,12 @@ const mapDispatchToProps: (
 ) => IThreadListPageEventProps = dispatch => {
   return {
     dispatch,
+    onDeleteThread: (threadId: string) => {
+      dispatch(conversationDeleteThread(threadId));
+    },
     onOpenThread: (threadId: string) => {
       dispatch(conversationThreadSelected(threadId));
+      dispatch(fetchConversationThreadResetMessages(threadId));
       dispatch(conversationSetThreadRead(threadId));
       navigate("thread");
     }
@@ -76,7 +82,6 @@ class ThreadListPageContainer extends React.PureComponent<
     this.didFocusSubscription = this.props.navigation.addListener(
       "didFocus",
       payload => {
-        console.log("list focused");
         this.reloadList();
       }
     );
