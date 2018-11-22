@@ -166,6 +166,7 @@ export class Avatar extends React.Component<
 > {
   decorate: boolean;
   count: number;
+  private _isMounted: boolean;
 
   constructor(props) {
     super(props);
@@ -178,9 +179,14 @@ export class Avatar extends React.Component<
     this.state = { loaded: false, noAvatar: true };
   }
 
-  componentDidMount() {
+  public componentDidMount() {
     //render avatars after content
     setTimeout(() => this.load(), 100);
+    this._isMounted = true;
+  }
+
+  public componentWillUnmount() {
+    this._isMounted = false;
   }
 
   get isGroup() {
@@ -188,15 +194,16 @@ export class Avatar extends React.Component<
   }
 
   async load() {
+    if (!this._isMounted) return;
     await avatarsMap.load();
 
     if (!this.props.id) {
-      this.setState({ loaded: true, noAvatar: true });
+      this._isMounted && this.setState({ loaded: true, noAvatar: true });
       return;
     }
 
     if (this.isGroup) {
-      this.setState({ loaded: true });
+      this._isMounted && this.setState({ loaded: true });
       return;
     }
 
@@ -204,7 +211,7 @@ export class Avatar extends React.Component<
       if (avatarsMap[this.props.id].loading) {
         avatarsMap.onload(userId => {
           if (userId === this.props.id) {
-            this.setState({
+            this._isMounted && this.setState({
               loaded: true,
               noAvatar: avatarsMap[this.props.id].noAvatar
             });
@@ -213,7 +220,7 @@ export class Avatar extends React.Component<
         return;
       }
 
-      this.setState({
+      this._isMounted && this.setState({
         loaded: true,
         noAvatar: avatarsMap[this.props.id].noAvatar
       });
@@ -226,9 +233,9 @@ export class Avatar extends React.Component<
       `${Conf.platform}/userbook/avatar/${this.props.id}?thumbnail=48x48`
     );
     if (response.type === "utf8") {
-      this.setState({ loaded: true, noAvatar: true });
+      this._isMounted && this.setState({ loaded: true, noAvatar: true });
     } else {
-      this.setState({ loaded: true, noAvatar: false });
+      this._isMounted && this.setState({ loaded: true, noAvatar: false });
     }
     avatarsMap[this.props.id] = { noAvatar: this.state.noAvatar };
     avatarsMap.trigger(this.props.id);
