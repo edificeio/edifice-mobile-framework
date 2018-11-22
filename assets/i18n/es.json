@@ -1,41 +1,88 @@
 {
-  "common-confirm": "¿Está seguro de que desea ",
-  "Cancel": "Cancelar",
-  "Connect": "Conectarse",
-  "Conversation": "Conversación",
-  "directory-disconnectButton": "Desconectarse",
-  "Erreur_envoi": "Error al enviar...",
-  "auth-loginFailed": "Usuario o contraseña incorrecta",
-  "Login": "Login",
-  "News": "Noticias",
-  "On": "en",
-  "Password": "Contraseña",
-  "Password_forgotten": "¿Contraseña olvidada?",
-  "Profile": "Perfil",
-  "conversation-sendingMessage": "Enviando...",
-  "Search": "Buscar ...",
-  "conversation-chatPlaceholder": "Escribe un mensaje...",
   "agoHour": "Hace {{hour}} hora",
   "agoHours": "Hace {{hours}} hora(s)",
   "agoMinutes": "Hace {{minutes}} mins",
-  "auth-disconnectConfirm": "desconectarse?",
-  "today": " Hoy ",
-  "conversation-deleteThread": "eliminar esta conversación ?",
-  "schoolbook-appTitle": "Cuaderno de correspondencia",
-  "delete": "Eliminar",
-  "seeMore": "Ver más",
   "apply": "Aplicar",
-  "timeline-filterBy": "Filtrar en",
+  "auth-disconnectConfirm": "desconectarse?",
+  "auth-loginFailed": "Usuario o contraseña incorrecta",
+
+
+  "Cancel": "Cancelar",
+  "common-confirm": "¿Está seguro de que desea ",
+
+
+
+  "Connect": "Conectarse",
+  "conversation-chatPlaceholder": "Escribe un mensaje...",
+  "conversation-deleteThread": "eliminar esta conversación ?",
+
+
+
+
+  "conversation-sendingMessage": "Enviando...",
+  "Conversation": "Conversación",
+  "directory-disconnectButton": "Desconectarse",
+
+
+
+
+
+
+
+
+  "Login": "Login",
+
+
+
+
+
+
+
+  "News": "Noticias",
+
+  "On": "en",
+  "Password": "Contraseña",
+  "Profile": "Perfil",
+  "schoolbook-appTitle": "Cuaderno de correspondencia",
+  "Search": "Buscar ...",
+  "seeMore": "Ver más",
   "timeline-allFilter": "Todo",
   "timeline-blogFilter": "Blog",
-  "timeline-schoolbookFilter": "Cuaderno de correspondencia",
-  "timeline-newsFilter": "Noticias",
-  "timeline-emptyScreenTitle": "Está desierto... ¿Hay alguien ahí?",
   "timeline-emptyScreenText": "Aquí está tranquilo ... ¿Has oído la expresión \"la calma antes de la tormenta\" ?",
+  "timeline-emptyScreenTitle": "Está desierto... ¿Hay alguien ahí?",
+  "timeline-filterBy": "Filtrar en",
+  "timeline-newsFilter": "Noticias",
+  "timeline-schoolbookFilter": "Cuaderno de correspondencia",
+
+  "today": " Hoy ",
+
+
   "date":{
     "day_names": ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
     "abbr_day_names": ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
     "month_names": [null, "de enero", "de febrero", "de marzo", "de abril", "de mayo", "de junio", "de julio", "de agosto", "de septiembre", "de octubre", "de noviembre", "de diciembre"],
     "abbr_month_names":  [null, "Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
-  }
+  },
+
+
+
+
+
+
+
+  "delete": "Eliminar",
+
+
+
+
+
+
+
+
+
+
+
+
+  "Erreur_envoi": "Error al enviar...",
+  "Password_forgotten": "¿Contraseña olvidada?"
 }

@@ -7,10 +7,6 @@
   "auth-loginFailed": "L'identifiant ou le mot de passe est incorrect",
   "auth-networkError": "L'authentification a échoué. Vérifiez votre connexion à internet.",
   "auth-unknownError": "Erreur lors de l'authentitifation. Veuillez réessayer.",
-  "blog-publish-comment": "Commentaire d'un billet de blog",
-  "blog-publish-post": "Nouveau billet de blog",
-  "blog-share": "Partage d'un blog",
-  "blog-submit-post": "Soumission d'un billet de blog",
   "Cancel": "Annuler",
   "common-confirm": "Êtes-vous sûr de vouloir",
   "common-connected": "Connecté",
@@ -25,7 +21,6 @@
   "conversation-newMessage": "Nouveau message",
   "conversation-sendingMessage": "En cours d'envoi...",
   "Conversation": "Messagerie",
-  "delete": "Supprimer",
   "directory-disconnectButton": "Se déconnecter",
   "directory-notificationsTitle": "Notifications",
   "homework-emptyScreenText": "Bientôt, vous pourrez consulter tous les devoirs à faire sur ce cahier de textes numérique. Génial, non ?",
@@ -36,8 +31,6 @@
   "imageNotAvailable": "Image non disponible",
   "loadingFailedMessage": "Le chargement a échoué. Veuillez vérifier votre connexion internet.",
   "Login": "Identifiant",
-  "messagerie-send-message": "Nouveau message",
-  "messagerie-storage": "Espace de stockage bientôt plein",
   "news-info-shared": "Nouvelle actualité",
   "news-news-comment": "Commentaire d'une actualité",
   "news-news-published": "Publication d'une actualité",
@@ -45,19 +38,12 @@
   "news-news-unpublished": "Dépublication d'une actualité",
   "news-news-unsubmitted": "Annulation d'une demande de validation d'une actualité",
   "news-news-update": "Mise à jour d'une actualité",
-  "news-thread-shared": "Partage d'un fil d'actualité",
   "News": "Nouveautés",
   "next": "Suivant",
   "On": "dans",
   "Password": "Mot de passe",
   "Profile": "Profil",
-  "schoolbook-acknowledge": "Confirmer de lecture d'un mot",
   "schoolbook-appTitle": "Carnet de liaison",
-  "schoolbook-modifyresponse": "Modification d'une réponse à un mot",
-  "schoolbook-publish": "Nouveau mot",
-  "schoolbook-response": "Suivi d'un mot",
-  "scrapbook-modified": "Modification d'un cahier multimédia",
-  "scrapbook-shared": "Partage d'un cahier multimédia",
   "Search": "Rechercher ...",
   "seeMore": "Voir plus",
   "timeline-allFilter": "Tous",
@@ -76,5 +62,27 @@
     "abbr_day_names": ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"],
     "month_names": [null, "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
     "abbr_month_names": [null, "Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"]
-  }
+  },
+
+
+
+  "blog-publish-comment": "Commentaire d'un billet de blog",
+  "blog-publish-post": "Nouveau billet de blog",
+  "blog-share": "Partage d'un blog",
+  "blog-submit-post": "Soumission d'un billet de blog",
+  "delete": "Supprimer",
+  "messagerie-send-message": "Nouveau message",
+  "messagerie-storage": "Espace de stockage bientôt plein",
+  "news-thread-shared": "Partage d'un fil d'actualité",
+  "schoolbook-acknowledge": "Confirmer de lecture d'un mot",
+  "schoolbook-modifyresponse": "Modification d'une réponse à un mot",
+  "schoolbook-publish": "Nouveau mot",
+  "schoolbook-response": "Suivi d'un mot",
+  "scrapbook-modified": "Modification d'un cahier multimédia",
+  "scrapbook-shared": "Partage d'un cahier multimédia"
+
+
+
+
+
 }
