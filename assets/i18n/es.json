@@ -4,34 +4,34 @@
   "agoMinutes": "Hace {{minutes}} mins",
   "apply": "Aplicar",
   "auth-disconnectConfirm": "desconectarse?",
-  "auth-loginFailed": "Usuario o contraseña incorrecta",
+  "auth-loginFailed": "El nombre de usuario o la contraseña son incorrectos",
 
 
   "Cancel": "Cancelar",
   "common-confirm": "¿Está seguro de que desea ",
+  "common-connected": "Conectado",
 
-
-
-  "Connect": "Conectarse",
+  "common-disconnected": "No está conectado a Internet",
+  "Connect": "Iniciar sesión",
   "conversation-chatPlaceholder": "Escribe un mensaje...",
   "conversation-deleteThread": "eliminar esta conversación ?",
 
 
 
-
+  "conversation-newMessage": "Nuevo mensaje",
   "conversation-sendingMessage": "Enviando...",
-  "Conversation": "Conversación",
+  "Conversation": "Correo",
   "directory-disconnectButton": "Desconectarse",
+  "directory-notificationsTitle": "Notificaciones",
+
+
+  "homework-select": "Mis cuadernos de ejercicios",
 
 
 
 
-
-
-
-
-  "Login": "Login",
-
+  "Login": "Usuario",
+  "news-info-shared": "PNoticia compartida",
 
 
 
@@ -53,7 +53,7 @@
   "timeline-filterBy": "Filtrar en",
   "timeline-newsFilter": "Noticias",
   "timeline-schoolbookFilter": "Cuaderno de correspondencia",
-
+  "to": "Para :",
   "today": " Hoy ",
 
 
@@ -67,11 +67,11 @@
 
 
 
-
+  "blog-publish-post": "Publicación de una entrada de blog",
 
 
   "delete": "Eliminar",
-
+  "messagerie-send-message": "Nuevo mensaje",
 
 
 
