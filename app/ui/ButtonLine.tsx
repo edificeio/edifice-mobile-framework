@@ -1,7 +1,7 @@
 import style from "glamorous-native"
 import * as React from "react";
 import { RowProperties } from ".";
-import I18n from 'react-native-i18n';
+import I18n from "i18n-js";
 import { Icon } from "./icons/Icon";
 
 const Container = style.touchableOpacity({

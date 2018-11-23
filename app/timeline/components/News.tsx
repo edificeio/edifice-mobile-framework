@@ -1,3 +1,5 @@
+import I18n from "i18n-js";;
+
 import style from "glamorous-native";
 import * as React from "react";
 import { View } from "react-native";
@@ -14,7 +16,6 @@ import { Bold, Light } from "../../ui/Typography";
 import { DateView } from "../../ui/DateView";
 import { Preview } from "../../ui/Preview";
 import { Images } from "../../ui/Images";
-import I18n from "react-native-i18n";
 
 interface INewsProps extends INewsModel {
   onPress?: (expend?: boolean) => void;

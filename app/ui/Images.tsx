@@ -1,7 +1,8 @@
+import I18n from "i18n-js";
+
 import style from "glamorous-native";
 import * as React from "react";
 import { Dimensions, Text, View, ViewStyle, ImageProps } from "react-native";
-import I18n from "react-native-i18n";
 import { Row } from ".";
 import { Carousel } from "./Carousel";
 import { CommonStyles } from "../styles/common/styles";
@@ -44,7 +45,7 @@ const Column = style.view({
   width: "100%"
 });*/
 
-const UnavailableImage = (
+const UnavailableImage = () => (
   <View
     style={{
       backgroundColor: CommonStyles.entryfieldBorder,
@@ -65,7 +66,7 @@ const StretchImage = (props: ImageProps) => (
       height: "100%",
       width: "100%"
     })}
-    errorComponent={UnavailableImage}
+    errorComponent={<UnavailableImage />}
   />
 );
 

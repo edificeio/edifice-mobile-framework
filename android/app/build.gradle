@@ -138,13 +138,14 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-mixpanel')
+    compile project(':react-native-languages')
     compile project(':react-native-view-overflow')
     compile(project(':react-native-firebase')) {
         transitive = false
     }
     compile "com.google.android.gms:play-services-base:15.0.0"
     compile "com.google.firebase:firebase-core:15.0.2"
-    compile project(':react-native-i18n')
     compile project(':react-native-vector-icons')
     compile project(':react-native-fs')
     compile project(':react-native-image-to-base64')
@@ -160,7 +161,6 @@ dependencies {
     compile "com.google.firebase:firebase-perf:15.1.0"
     compile "com.google.firebase:firebase-messaging:15.0.2"
     compile project(':react-native-image-picker')
-    compile project(':react-native-mixpanel')
 }
 
 // Run this once to be able to run the application with BUCK

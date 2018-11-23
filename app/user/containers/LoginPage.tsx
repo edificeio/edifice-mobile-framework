@@ -9,7 +9,7 @@ import {
   TouchableWithoutFeedback,
   View
 } from "react-native";
-import I18n from "react-native-i18n";
+import I18n from "i18n-js";;
 import { connect } from "react-redux";
 
 // Components

@@ -1,7 +1,7 @@
 import * as React from "react"
 import { View, Text } from "react-native";
 import { Paragraph, A } from "./Typography";
-import I18n from "react-native-i18n"
+import I18n from "i18n-js";
 
 export const Preview = ({ textContent, onExpend }) => {
     let crop = false;
