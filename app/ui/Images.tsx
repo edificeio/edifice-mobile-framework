@@ -45,7 +45,7 @@ const Column = style.view({
   width: "100%"
 });*/
 
-const UnavailableImage = (
+const UnavailableImage = () => (
   <View
     style={{
       backgroundColor: CommonStyles.entryfieldBorder,
@@ -66,7 +66,7 @@ const StretchImage = (props: ImageProps) => (
       height: "100%",
       width: "100%"
     })}
-    errorComponent={UnavailableImage}
+    errorComponent={<UnavailableImage />}
   />
 );
 
