@@ -1,7 +1,7 @@
 import styled from "glamorous-native"
 import * as React from "react";
 import { ButtonTextIcon } from "./ButtonTextIcon"
-import I18n from 'react-native-i18n';
+import I18n from "i18n-js";
 
 export interface ButtonsOkCancelProps {
 	onCancel: () => void

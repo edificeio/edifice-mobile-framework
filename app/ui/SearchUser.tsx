@@ -2,7 +2,7 @@ import style from "glamorous-native"
 import * as React from "react";
 import { View, Text, TextInput, FlatList, TouchableOpacity, ScrollView } from 'react-native';
 import { CommonStyles } from '../styles/common/styles';
-import I18n from 'react-native-i18n';
+import I18n from "i18n-js";
 import { PageContainer } from './ContainerContent';
 import { SingleAvatar } from "./avatars/SingleAvatar";
 import { Line } from './Grid';

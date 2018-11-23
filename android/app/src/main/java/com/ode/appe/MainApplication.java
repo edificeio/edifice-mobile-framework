@@ -3,6 +3,7 @@ package com.ode.appe;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.kevinejohn.RNMixpanel.RNMixpanel;
 import com.reactcommunity.rnlanguages.RNLanguagesPackage;
 import com.github.xfumihiro.react_native_image_to_base64.ImageToBase64Package;
 import com.RNFetchBlob.RNFetchBlobPackage;
@@ -40,6 +41,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
+            new RNMixpanel(),
             new RNLanguagesPackage(),
             new RNViewOverflowPackage(),
             new ImagePickerPackage(),
@@ -53,8 +55,7 @@ public class MainApplication extends Application implements ReactApplication {
             new RNFirebaseCrashlyticsPackage(),
             new RNFirebasePerformancePackage(),
             new RNFirebaseNotificationsPackage(),
-            new RNFirebaseMessagingPackage(),
-            new RNMixpanel()
+            new RNFirebaseMessagingPackage()
       );
     }
 

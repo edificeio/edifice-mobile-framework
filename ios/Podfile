@@ -33,6 +33,7 @@ target 'mobileapp' do
 
   pod 'RNLanguages', :path => '../node_modules/react-native-languages'
 
+
   pod 'react-native-mixpanel', :path => '../node_modules/react-native-mixpanel'
 
 end

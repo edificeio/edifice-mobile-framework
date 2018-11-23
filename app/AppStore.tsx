@@ -41,6 +41,7 @@ I18n.translations = {
 console.log("language", RNLanguages.language);
 // Print user preferred languages (in order)
 console.log("languages", RNLanguages.languages);
+I18n.locale = RNLanguages.language;
 
 export class AppStore extends React.Component {
   public componentDidMount() {
