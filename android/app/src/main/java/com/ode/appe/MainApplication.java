@@ -3,6 +3,7 @@ package com.ode.appe;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.dylanvann.fastimage.FastImageViewPackage;
 import com.kevinejohn.RNMixpanel.RNMixpanel;
 import com.reactcommunity.rnlanguages.RNLanguagesPackage;
 import com.github.xfumihiro.react_native_image_to_base64.ImageToBase64Package;
@@ -41,6 +42,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
+            new FastImageViewPackage(),
             new RNMixpanel(),
             new RNLanguagesPackage(),
             new RNViewOverflowPackage(),

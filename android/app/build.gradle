@@ -138,6 +138,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-fast-image')
     compile project(':react-native-mixpanel')
     compile project(':react-native-languages')
     compile project(':react-native-view-overflow')

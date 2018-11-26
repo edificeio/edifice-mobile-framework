@@ -8,6 +8,7 @@ import { Carousel } from "./Carousel";
 import { CommonStyles } from "../styles/common/styles";
 import { Italic } from "./Typography";
 import ImageOptional from "./ImageOptional";
+import FastImage from "react-native-fast-image";
 
 const BubbleText = style.text({
   color: "#FFFFFF",
@@ -62,11 +63,13 @@ const UnavailableImage = () => (
 const StretchImage = (props: ImageProps) => (
   <ImageOptional
     {...props}
-    imageComponent={style.image({
+    imageComponent={FastImage}
+    errorComponent={<UnavailableImage />}
+    style={{
       height: "100%",
       width: "100%"
-    })}
-    errorComponent={<UnavailableImage />}
+    }}
+    resizeMode={FastImage.resizeMode.cover}
   />
 );
 

@@ -1,4 +1,4 @@
-import I18n from "i18n-js";;
+import I18n from "i18n-js";
 
 import * as React from "react";
 import { FlatList, RefreshControl, View } from "react-native";
@@ -16,6 +16,7 @@ import styles from "../../styles";
 import { Tracking } from "../../tracking/TrackingManager";
 
 import { fetchTimeline, listTimeline } from "../actions/list";
+import { INewsModel } from "../reducer";
 
 export class TimelineHeader extends React.Component<
   { navigation?: any },
@@ -118,12 +119,12 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
         ref={list => (this.flatList = list)}
         renderItem={({ item, index }) => (
           <News
-            {...item}
-            key={item.id}
+            {...item as INewsModel}
             index={index}
             onPress={expend => this.openNews(item, expend)}
           />
         )}
+        keyExtractor={(item: INewsModel) => item.id.toString()}
         style={styles.gridWhite}
       />
     );
