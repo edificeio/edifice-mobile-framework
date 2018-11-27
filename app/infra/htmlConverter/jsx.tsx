@@ -255,9 +255,10 @@ export class HtmlConverterJsx extends HtmlConverter {
     thumbnailSize: string = this.opts.thumbnailSize
   ): { alt: string; src: string } {
     if (src.indexOf("file://") === -1) {
-      src = Conf.platform + src;
+      // TODO : Better parse image url and detect cases
+      if (src.indexOf("://") === -1) src = Conf.platform + src;
       const split = src.split("?");
-      src = split[0] + "?thumbnail=" + thumbnailSize;
+      src = split[0] + "?thumbnail=" + thumbnailSize; // TODO : Optional use of thumbnail
     }
     return { alt, src };
   }
