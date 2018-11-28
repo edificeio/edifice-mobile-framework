@@ -1,21 +1,13 @@
 {
-    "compilerOptions": {
-        "noErrorTruncation": true,
-        "allowJs": false,
-        "allowSyntheticDefaultImports":true,
-        "jsx": "react-native",
-        "jsxFactory": "React.createElement",
-        "module": "esnext",
-        "moduleResolution": "node",
-        "outDir": "./build",                      /* Redirect output structure to the directory. */
-        "removeComments": true,                    /* Do not emit comments to output. */
-        "rootDir": "./app",                       /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
-        "sourceMap": true,                        /* Generates corresponding '.map' file. */
-        "target": "esnext",
-        "types": [
-            "core-js", "react", "react-native", "glamorous-native",
-            "react-navigation", "redux", "react-redux"
-        ]
-    }
+  "compilerOptions": {
+    "allowJs": false,
+    "allowSyntheticDefaultImports": true,
+    "jsx": "react-native",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noEmit": true,
+    "noErrorTruncation": true,
+    "target": "esnext"
+  },
+  "exclude": ["node_modules"]
 }
-
