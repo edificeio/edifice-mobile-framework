@@ -13,7 +13,7 @@ import { PageContainer, ListItem } from "../../ui/ContainerContent";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { Bold } from "../../ui/Typography";
 import { Checkbox } from "../../ui/forms/Checkbox";
-import { Tracking } from "../../tracking/TrackingManager";
+import Tracking from "../../tracking/TrackingManager";
 
 export class FilterHeader extends React.Component<
   {

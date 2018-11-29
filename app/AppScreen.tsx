@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 
 import { RootNavigator } from "./navigation/RootNavigator";
 import pushNotifications from "./pushNotifications";
-import { Tracking } from "./tracking/TrackingManager";
+import Tracking from "./tracking/TrackingManager";
 
 export let rootNavigatorRef = null;
 

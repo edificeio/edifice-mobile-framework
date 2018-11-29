@@ -13,7 +13,7 @@ import { ErrorMessage } from "../../ui/Typography";
 import { News } from "../components/News";
 
 import styles from "../../styles";
-import { Tracking } from "../../tracking/TrackingManager";
+import Tracking from "../../tracking/TrackingManager";
 
 import { fetchTimeline, listTimeline } from "../actions/list";
 import { INewsModel } from "../reducer";

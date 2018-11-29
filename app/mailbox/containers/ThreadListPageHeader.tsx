@@ -8,7 +8,7 @@ import { SearchBar } from "../../ui/SearchBar";
 import { clearFilterConversation, filterConversation } from "../actions/filter";
 import { clearPickedUsers } from "../actions/pickUser";
 
-import { Tracking } from "../../tracking/TrackingManager";
+import Tracking from "../../tracking/TrackingManager";
 
 import conversationConfig from "../config";
 

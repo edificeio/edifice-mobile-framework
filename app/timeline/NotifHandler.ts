@@ -1,6 +1,6 @@
 import { navigate } from "../navigation/helpers/navHelper";
 import { Conf } from "../Conf";
-import { Tracking } from "../tracking/TrackingManager";
+import Tracking from "../tracking/TrackingManager";
 import { listTimeline } from './actions/list';
 import { storedFilters } from './actions/storedFilters';
 

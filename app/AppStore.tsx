@@ -5,6 +5,7 @@ import { Provider } from "react-redux";
 import { applyMiddleware, combineReducers, createStore } from "redux";
 import thunkMiddleware from "redux-thunk";
 import AppScreen from "./AppScreen";
+import Tracking from "./tracking/TrackingManager";
 
 import connectionTracker from "./infra/reducers/connectionTracker";
 import ui from "./infra/reducers/ui";
@@ -57,7 +58,8 @@ export class AppStore extends React.Component {
   }
 
   // Translation locale change setup
-  public componentWillMount() {
+  public async componentWillMount() {
+    await Tracking.init();
     RNLanguages.addEventListener("change", this.onLanguagesChange);
   }
 

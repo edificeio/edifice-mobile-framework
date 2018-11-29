@@ -4,7 +4,7 @@ import generateUuid from "../../utils/uuid";
 import { Conf } from "../../Conf";
 import { signedFetch } from "../../infra/fetchWithCache";
 import { Me } from "../../infra/Me";
-import { Tracking } from "../../tracking/TrackingManager";
+import Tracking from "../../tracking/TrackingManager";
 import {
   ConversationMessageStatus,
   IConversationMessage

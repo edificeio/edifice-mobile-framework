@@ -1,7 +1,7 @@
 import moment from "moment";
 import { Conf } from "../../Conf";
 import { Me } from "../../infra/Me";
-import { Tracking } from "../../tracking/TrackingManager";
+import Tracking from "../../tracking/TrackingManager";
 import generateUuid from "../../utils/uuid";
 
 import { takePhoto, uploadImage } from "../../infra/actions/workspace";
