@@ -360,13 +360,13 @@ export function signImagesUrls(
  * This function skip the signing if url points to an another web domain.
  */
 export function signUrl(url: string): ImageURISource {
-  console.log(url);
+  // console.log(url);
   // If there is a protocol AND url doen't contain plateform url, doesn't sign it.
   if (url.indexOf("://") !== -1 && url.indexOf(Conf.platform) === -1) {
-    console.log("external image, not sign");
+    // console.log("external image, not sign");
     return { uri: url };
   }
-  console.log("internal, signed");
+  // console.log("internal, signed");
   return oauth.sign({
     method: "GET",
     uri: url
