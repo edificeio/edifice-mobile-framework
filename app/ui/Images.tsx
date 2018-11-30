@@ -2,7 +2,7 @@ import I18n from "i18n-js";
 
 import style from "glamorous-native";
 import * as React from "react";
-import { Dimensions, Text, View, ViewStyle, ImageProps } from "react-native";
+import { Dimensions, Text, View, ViewStyle, ImageProps, ImageURISource } from "react-native";
 import { Row } from ".";
 import { Carousel } from "./Carousel";
 import { CommonStyles } from "../styles/common/styles";
@@ -74,7 +74,7 @@ const StretchImage = (props: ImageProps) => (
 );
 
 export class Images extends React.Component<
-  { images: Array<{ src: object; alt: string }>; style?: ViewStyle },
+  { images: Array<{ src: ImageURISource; alt: string }>; style?: ViewStyle },
   any
 > {
   public state = {

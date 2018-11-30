@@ -4,7 +4,7 @@
 
 import { encode as btoa } from "base-64";
 import querystring from "querystring";
-import { AsyncStorage } from "react-native";
+import { AsyncStorage, ImageURISource } from "react-native";
 import { Conf } from "../Conf";
 
 export interface IOAuthToken {
@@ -348,7 +348,7 @@ export default oauth;
  */
 export function signImagesUrls(
   images: Array<{ src: string; alt: string }>
-): Array<{ src: object; alt: string }> {
+): Array<{ src: ImageURISource; alt: string }> {
   return images.map(v => ({
     alt: v.alt,
     src: signUrl(v.src)
@@ -357,8 +357,16 @@ export function signImagesUrls(
 
 /**
  * Build a signed request from an url.
+ * This function skip the signing if url points to an another web domain.
  */
-export function signUrl(url: string): object {
+export function signUrl(url: string): ImageURISource {
+  console.log(url);
+  // If there is a protocol AND url doen't contain plateform url, doesn't sign it.
+  if (url.indexOf("://") !== -1 && url.indexOf(Conf.platform) === -1) {
+    console.log("external image, not sign");
+    return { uri: url };
+  }
+  console.log("internal, signed");
   return oauth.sign({
     method: "GET",
     uri: url

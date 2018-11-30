@@ -1,6 +1,6 @@
 import style from "glamorous-native";
 import * as React from "react";
-import { Dimensions, Modal, Platform, ScrollView, View } from "react-native";
+import { Dimensions, Modal, Platform, ScrollView, View, ImageURISource } from "react-native";
 import FitImage from "react-native-fit-image";
 import { Icon } from ".";
 
@@ -17,7 +17,7 @@ const Close = style.touchableOpacity({
 
 export class Carousel extends React.Component<
   {
-    images: Array<{ src: object; alt: string }>;
+    images: Array<{ src: ImageURISource; alt: string }>;
     visible: boolean;
     startIndex?: number;
     onClose: () => void;
