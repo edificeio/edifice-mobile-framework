@@ -19,6 +19,7 @@ export interface IOAuthToken {
 export enum OAuthError {
   NO_TOKEN,
   BAD_CREDENTIALS,
+  NOT_PREMIUM,
   NETWORK_ERROR
 }
 

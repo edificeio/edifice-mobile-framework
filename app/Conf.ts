@@ -32,4 +32,4 @@ const configurations = {
   }
 };
 
-export const Conf = configurations["oneconnect"];
+export const Conf = configurations["recette-leo"];

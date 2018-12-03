@@ -30,19 +30,38 @@ export function login(
         await oauth.loadToken();
       }
       // 2: Gather logged user information
+      const userinfo2 = await fetchJSONWithCache("/auth/oauth2/userinfo", {
+        headers: {
+          Accept: "application/json;version=2.0"
+        }
+      });
+      console.log("oauth2 userinfo", userinfo2);
+      if (!userinfo2.hasApp) {
+        const err = new Error("EAUTH: You are not a premium user.");
+        (err as any).authErr = OAuthError.NOT_PREMIUM;
+        throw err;
+      }
+
+      /*
+      // Old UserInfo is not required here.
       const userinfo = await fetchJSONWithCache("/userbook/api/person");
+      console.log("classic userinfo", userinfo);
+      */
+
       const userdata = await fetchJSONWithCache(
-        `/directory/user/${userinfo.result["0"].userId}`
+        `/directory/user/${userinfo2.userId}`
       );
+      // console.log("userdata", userdata);
 
       // 3: validate login
       dispatch({
         type: actionTypeLoggedIn,
-        userbook: userinfo.result["0"],
+        userbook: userinfo2,
         userdata
       });
       navigate("Main");
     } catch (err) {
+      console.warn(err);
       switch (err.authErr) {
         case OAuthError.NO_TOKEN:
           dispatch({
@@ -53,6 +72,12 @@ export function login(
         case OAuthError.BAD_CREDENTIALS:
           dispatch({
             errmsg: "auth-loginFailed",
+            type: actionTypeLoginError
+          });
+          break;
+        case OAuthError.NOT_PREMIUM:
+          dispatch({
+            errmsg: "auth-notPremium",
             type: actionTypeLoginError
           });
           break;

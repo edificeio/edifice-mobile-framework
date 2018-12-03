@@ -111,7 +111,6 @@ export class Carousel extends React.Component<
             firstItem={this.props.startIndex || 0}
             ref={r => (this.carouselRef = r)}
             scrollEventThrottle={16}
-            onContentSizeChange={() => console.log("content changed")}
             keyExtractor={(item, index) => index.toString()}
             decelerationRate="fast"
           />

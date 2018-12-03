@@ -5,6 +5,7 @@
   "apply": "Appliquer",
   "auth-disconnectConfirm": "vous déconnecter ?",
   "auth-loginFailed": "L'identifiant ou le mot de passe est incorrect",
+  "auth-notPremium": "L'application n'est pas disponible pour votre établissement.",
   "auth-networkError": "L'authentification a échoué. Vérifiez votre connexion à internet.",
   "auth-unknownError": "Erreur lors de l'authentitifation. Veuillez réessayer.",
   "Cancel": "Annuler",
