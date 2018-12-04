@@ -22,6 +22,7 @@
   "conversation-newMessage": "New message",
   "conversation-sendingMessage": "Sending...",
   "Conversation": "Mailbox",
+  "delete": "Delete",
   "directory-disconnectButton": "Log out",
   "directory-notificationsTitle": "Notifications",
 
@@ -71,7 +72,6 @@
   "blog-publish-post": "Blog post published",
 
 
-  "delete": "Delete",
   "messagerie-send-message": "Message received",
 
 

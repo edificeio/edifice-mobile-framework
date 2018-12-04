@@ -22,6 +22,7 @@
   "conversation-newMessage": "Nuevo mensaje",
   "conversation-sendingMessage": "Enviando...",
   "Conversation": "Correo",
+  "delete": "Eliminar",
   "directory-disconnectButton": "Desconectarse",
   "directory-notificationsTitle": "Notificaciones",
 
@@ -71,7 +72,6 @@
   "blog-publish-post": "Publicación de una entrada de blog",
 
 
-  "delete": "Eliminar",
   "messagerie-send-message": "Nuevo mensaje",
 
 
