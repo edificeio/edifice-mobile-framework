@@ -41,11 +41,12 @@ interface ITimelineProps {
   endReached: boolean;
   navigation: any;
   news: any;
-  sync: (page: number, availableApps: any) => Promise<void>;
+  sync: (page: number, availableApps: any, legalapps: any) => Promise<void>;
   fetch: (availableApps: any) => Promise<void>;
   availableApps: any;
   fetchFailed: boolean;
   isAuthenticated: boolean;
+  legalapps: any;
 }
 
 // tslint:disable-next-line:max-classes-per-file
@@ -57,13 +58,21 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
     this.flatList = null;
     this.pageNumber = 0;
     if (!this.props.isFetching) {
-      this.props.sync(this.pageNumber, this.props.availableApps);
+      this.props.sync(
+        this.pageNumber,
+        this.props.availableApps,
+        this.props.legalapps
+      );
     }
   }
 
   public nextPage() {
     if (!this.props.isFetching && this.props.isAuthenticated) {
-      this.props.sync(++this.pageNumber, this.props.availableApps);
+      this.props.sync(
+        ++this.pageNumber,
+        this.props.availableApps,
+        this.props.legalapps
+      );
       Tracking.logEvent("refreshTimeline", { direction: "ScrollDown" });
     }
   }
@@ -86,7 +95,11 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
   public componentWillReceiveProps(nextProps) {
     if (nextProps.refresh) {
       this.pageNumber = 0;
-      this.props.sync(this.pageNumber, this.props.availableApps);
+      this.props.sync(
+        this.pageNumber,
+        this.props.availableApps,
+        this.props.legalapps
+      );
       this.pageNumber++;
     }
   }
@@ -140,7 +153,9 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
             {I18n.t("loadingFailedMessage")}
           </ErrorMessage>
           <FlatButton
-            onPress={() => this.props.sync(0, this.props.availableApps)}
+            onPress={() =>
+              this.props.sync(0, this.props.availableApps, this.props.legalapps)
+            }
             title={I18n.t("tryagain")}
             loading={this.props.isFetching}
           />
@@ -188,11 +203,12 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
 export default connect(
   (state: any) => ({
     ...state.timeline,
-    isAuthenticated: state.user.auth.loggedIn
+    isAuthenticated: state.user.auth.loggedIn,
+    legalapps: state.user.auth.apps
   }),
   dispatch => ({
-    sync: (page: number, availableApps) =>
-      listTimeline(dispatch)(page, availableApps),
+    sync: (page: number, availableApps, legalapps) =>
+      listTimeline(dispatch)(page, availableApps, legalapps),
     fetch: availableApps => fetchTimeline(dispatch)(availableApps)
   })
 )(Timeline);

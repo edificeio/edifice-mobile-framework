@@ -19,14 +19,15 @@ export class FilterHeader extends React.Component<
   {
     navigation: any;
     pickFilters: (apps) => void;
-    setFilters: (apps) => void;
+    setFilters: (apps, legalApps) => void;
     availableApps;
     selectedApps;
+    legalApps;
   },
   undefined
 > {
   apply() {
-    this.props.setFilters(this.props.selectedApps);
+    this.props.setFilters(this.props.selectedApps, this.props.legalApps);
     Tracking.logEvent("filterTimeline", {
       filterBy: JSON.stringify(this.props.selectedApps)
     });
@@ -54,11 +55,12 @@ export class FilterHeader extends React.Component<
 export const FilterHeaderConnect = connect(
   (state: any) => ({
     selectedApps: state.timeline.selectedApps,
-    availableApps: state.timeline.availableApps
+    availableApps: state.timeline.availableApps,
+    legalApps: state.user.auth.apps
   }),
   dispatch => ({
     pickFilters: apps => pickFilters(dispatch)(apps),
-    setFilters: apps => setFilters(dispatch)(apps)
+    setFilters: (apps, legalapps) => setFilters(dispatch)(apps, legalapps)
   })
 )(FilterHeader);
 
