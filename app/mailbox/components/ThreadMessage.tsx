@@ -1,7 +1,7 @@
 import style, { withTheme } from "glamorous-native";
 import * as React from "react";
 import { Text, TouchableOpacity, View, ViewStyle } from "react-native";
-import I18n from "i18n-js";;
+import I18n from "i18n-js";
 
 import { CommonStyles } from "../../styles/common/styles";
 

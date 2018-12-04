@@ -21,7 +21,7 @@ import style from "glamorous-native";
 import * as React from "react";
 const { FlatList, View } = style;
 import { RefreshControl } from "react-native";
-import I18n from "i18n-js";;
+import I18n from "i18n-js";
 
 import { ListItem, PageContainer } from "../../../ui/ContainerContent";
 
