@@ -4,6 +4,7 @@ import FunctionalModuleConfig from "../infra/moduleTool";
 
 export default new FunctionalModuleConfig({
   name: "homework",
+  apiName: "homeworks",
   displayName: "Homework",
   iconName: "devoirs"
 });

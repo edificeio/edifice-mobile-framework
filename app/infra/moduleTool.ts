@@ -28,6 +28,7 @@ export function toSnakeCase(camelCase: string) {
 
 export interface IFunctionalConfig {
   name: string;
+  apiName?: string; // name in list of avaible apps received from the backend
   actionPrefix?: string;
   reducerName?: string;
   displayName?: string;
@@ -36,6 +37,7 @@ export interface IFunctionalConfig {
 
 export default class FunctionalModuleConfig implements IFunctionalConfig {
   public name: string;
+  public apiName: string;
   public actionPrefix: string;
   public reducerName: string;
   public displayName: string;
@@ -43,6 +45,7 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
 
   public constructor(opts: IFunctionalConfig) {
     this.name = opts.name;
+    this.apiName = opts.apiName || this.name;
     this.actionPrefix =
       opts.actionPrefix || toSnakeCase(this.name).toUpperCase() + "_";
     this.reducerName = opts.reducerName || this.name;

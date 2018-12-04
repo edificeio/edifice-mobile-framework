@@ -1,7 +1,7 @@
 import {
   actionTypeLoggedIn,
-  actionTypeLoginError,
   actionTypeLoggedOut,
+  actionTypeLoginError,
   actionTypeRequestLogin
 } from "../actions/login";
 import { actionTypeSetNotifPrefs } from "../actions/notifPrefs";
@@ -18,11 +18,14 @@ export interface IUserAuthState {
   loggedIn: boolean;
   synced: boolean;
   loggingIn: boolean;
+  // available applications
+  apps: string[];
 }
 
 // THE REDUCER ------------------------------------------------------------------------------------
 
 export const stateDefault: IUserAuthState = {
+  apps: [],
   loggedIn: false,
   loggingIn: false,
   notificationPrefs: [],
@@ -39,6 +42,7 @@ const authReducer = (state: IUserAuthState = stateDefault, action) => {
       };
     case actionTypeLoggedIn:
       return {
+        apps: action.userbook.apps,
         error: "",
         loggedIn: true,
         loggingIn: false,

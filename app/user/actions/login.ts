@@ -35,12 +35,13 @@ export function login(
           Accept: "application/json;version=2.0"
         }
       });
-      console.log("oauth2 userinfo", userinfo2);
+      // console.log("oauth2 userinfo", userinfo2);
       if (!userinfo2.hasApp) {
         const err = new Error("EAUTH: You are not a premium user.");
         (err as any).authErr = OAuthError.NOT_PREMIUM;
         throw err;
       }
+      userinfo2.apps = userinfo2.apps.map(e => e.displayName);
 
       /*
       // Old UserInfo is not required here.
@@ -59,6 +60,8 @@ export function login(
         userbook: userinfo2,
         userdata
       });
+
+      // 4: Go !
       navigate("Main");
     } catch (err) {
       console.warn(err);
