@@ -1,7 +1,7 @@
 // Libraries
+import I18n from "i18n-js";
 import * as React from "react";
 import { ScrollView } from "react-native";
-import I18n from "i18n-js";
 import { connect } from "react-redux";
 
 // Actions
@@ -51,6 +51,7 @@ export class NotifPrefsPageHeader extends React.PureComponent<
 export interface INotifPrefsPageDataProps {
   notificationPrefs: any;
   availableApps: any;
+  legalapps: any;
 }
 
 export interface INotifPrefsPageEventProps {
@@ -81,11 +82,15 @@ export class NotifPrefsPage extends React.PureComponent<
   }
 
   public isAllowed(notifPref) {
-    return (
-      (this.props.availableApps.hasOwnProperty(notifPref.type) || // TODO: Get the available apps NOT from timeline
-        notifPref.type === "MESSAGERIE") &&
-      excludeNotifTypes.indexOf(notifPref.key) === -1
-    );
+    // console.log(notifPref);
+    if (
+      !this.props.availableApps.hasOwnProperty(notifPref.type) && // TODO: Get the available apps NOT from timeline
+      notifPref.type !== "MESSAGERIE"
+    )
+      return false;
+    if (!this.props.legalapps.includes(notifPref.type.toLowerCase()))
+      return false;
+    return excludeNotifTypes.indexOf(notifPref.key) === -1;
   }
 
   public render() {
@@ -118,7 +123,7 @@ export default connect(
   (state: any) => {
     return {
       availableApps: state.timeline.selectedApps, // TODO: WTF ?! Profile app has to not depends on another ! Get the app list separately.
-      // availableApps: { "BLOG": true, "NEWS": true, "SCHOOLBOOK": true }, // TODO it's dummy data. It has to be loaded from the timeline app.
+      legalapps: state.user.auth.apps,
       notificationPrefs: state.user.auth.notificationPrefs
     };
   },

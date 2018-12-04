@@ -22,7 +22,6 @@ export const storedFilters = async legalapps => {
       }
     }
   }
-  console.log(objectapps);
   return objectapps;
 };
 
