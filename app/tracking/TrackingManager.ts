@@ -74,7 +74,7 @@ export default class Tracking {
       else Tracking.mixpanel.track(name);
       // TODO: Must we put here here, or juste one time after the login ?
       Tracking.mixpanel.identify(Me.session.userId);
-      Tracking.mixpanel.set({ $login: Me.session.login });
+      // Tracking.mixpanel.set({ $login: Me.session.login }); // Tracking must be anonymous !
       Tracking.mixpanel.set({ $userId: Me.session.userId });
       Tracking.mixpanel.set({ $userType: Me.session.type });
       Tracking.mixpanel.set({ $email: Me.session.email });
