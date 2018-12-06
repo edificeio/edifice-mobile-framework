@@ -1,9 +1,13 @@
+import firebase from "react-native-firebase";
+import { Conf } from "../../Conf";
 import { clearCache, fetchJSONWithCache } from "../../infra/fetchWithCache";
 import oauth, { OAuthError } from "../../infra/oauth";
 import { navigate } from "../../navigation/helpers/navHelper";
 import userConfig from "../config";
 
-export const actionTypeRequestLogin = userConfig.createActionType("REQUEST_LOGIN");
+export const actionTypeRequestLogin = userConfig.createActionType(
+  "REQUEST_LOGIN"
+);
 export const actionTypeLoggedIn = userConfig.createActionType("LOGGED_IN");
 export const actionTypeLoginError = userConfig.createActionType("LOGIN_ERROR");
 export const actionTypeLoggedOut = userConfig.createActionType("LOGGED_OUT");
@@ -54,6 +58,16 @@ export function login(
       );
       // console.log("userdata", userdata);
 
+      // Get Firebase notifications token
+      const notifsToken = await firebase.messaging().getToken();
+      fetch(
+        `${Conf.platform}/timeline/pushNotif/fcmToken?fcmToken=${notifsToken}`,
+        {
+          method: "put"
+        }
+      );
+      console.log("Firebase token (put) :", notifsToken);
+
       // 3: validate login
       dispatch({
         type: actionTypeLoggedIn,
@@ -64,7 +78,7 @@ export function login(
       // 4: Go !
       navigate("Main");
     } catch (err) {
-      console.warn(err);
+      if (err.authErr !== OAuthError.NO_TOKEN) console.warn(err);
       switch (err.authErr) {
         case OAuthError.NO_TOKEN:
           dispatch({
@@ -104,6 +118,12 @@ export function login(
 export function logout() {
   return async (dispatch, getState) => {
     try {
+      const notifsToken = await firebase.messaging().getToken();
+      await fetch(
+        `${Conf.platform}/timeline/pushNotif/fcmToken?fcmToken=${notifsToken}`,
+        { method: "delete" }
+      );
+      console.log("Firebase token (delete) :", notifsToken);
       const login = getState().user.auth.login;
       await oauth.eraseToken();
       dispatch({ type: actionTypeLoggedOut });
