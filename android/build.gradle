@@ -31,6 +31,7 @@ allprojects {
         maven {
             url 'https://maven.google.com'
         }
+        maven { url "https://dl.bintray.com/android/android-tools/" }
         google()
         jcenter()
     }
@@ -42,20 +43,6 @@ subprojects {
         if (project.hasProperty("android")) {
             android {
                 compileSdkVersion 26
-            }
-        }
-    }
-}
-
-// from https://github.com/DylanVann/react-native-fast-image/issues/366#issuecomment-445506982
-subprojects {project ->
-    if (project.name.contains('react-native-fast-image')) {
-        buildscript {
-            repositories {
-                maven { url = "https://dl.bintray.com/android/android-tools/" }
-            }
-            dependencies {
-                classpath "com.android.tools.build:gradle:2.2.3"
             }
         }
     }
