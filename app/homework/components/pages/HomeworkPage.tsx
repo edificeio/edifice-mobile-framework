@@ -19,8 +19,8 @@
 
 // Libraries
 import style from "glamorous-native";
-import * as React from "react";
 import I18n from "i18n-js";
+import * as React from "react";
 import ViewOverflow from "react-native-view-overflow";
 
 import moment from "moment";
@@ -51,6 +51,7 @@ import today from "../../../utils/today";
 export interface IHomeworkPageDataProps {
   isFetching?: boolean;
   diaryId?: string;
+  didInvalidate?: boolean;
   tasksByDay?: Array<{
     id: string;
     date: moment.Moment;
@@ -75,7 +76,10 @@ export type IHomeworkPageProps = IHomeworkPageDataProps &
 // Main component ---------------------------------------------------------------------------------
 
 export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
-  private flatList: FlatList<IHomeworkTasks>; /* TS-ISSUE : FlatList is declared in glamorous */ // react-native FlatList component ref
+  private flatList: FlatList<
+    IHomeworkTasks
+  >; /* TS-ISSUE : FlatList is declared in glamorous */ // react-native FlatList component ref
+
   private setFlatListRef: any; // FlatList setter, executed when this component is mounted.
 
   constructor(props) {
@@ -97,7 +101,9 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
           ? this.renderLoading()
           : this.renderEmptyScreen()
         : this.renderList()
-      : this.renderLoading();
+      : this.props.isFetching || this.props.didInvalidate
+      ? this.renderLoading()
+      : this.renderEmptyScreen();
 
     return (
       <PageContainer>
@@ -124,7 +130,9 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
         <FlatList
           innerRef={this.setFlatListRef}
           data={tasksByDay}
-          CellRendererComponent={ViewOverflow} /* TS-ISSUE : CellRendererComponent is an official FlatList prop */
+          CellRendererComponent={
+            ViewOverflow
+          } /* TS-ISSUE : CellRendererComponent is an official FlatList prop */
           renderItem={({ item }) => (
             <ViewOverflow>
               <HomeworkDayTasks
@@ -194,7 +202,7 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
       "Homework"
     );
     // TODO : this line causes a re-render, AND a re-parse of all the html contents... Needs to be cached.
-  } /* TS-ISSUE: Syntax error on this line because of a collision between TSlint and Prettier. */
+  }; /* TS-ISSUE: Syntax error on this line because of a collision between TSlint and Prettier. */
 }
 
 export default HomeworkPage;
