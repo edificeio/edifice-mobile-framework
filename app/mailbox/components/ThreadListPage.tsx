@@ -209,6 +209,7 @@ export class ThreadListPage extends React.PureComponent<
 
   public handleOpenThread(threadId) {
     this.props.onOpenThread(threadId);
+    this.props.navigation.navigate("thread");
   }
 
   public handleDeleteThread(threadId) {

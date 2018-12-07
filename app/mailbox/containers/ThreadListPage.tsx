@@ -17,7 +17,6 @@ import {
 } from "../actions/threadList";
 import { conversationThreadSelected } from "../actions/threadSelected";
 
-import { navigate } from "../../navigation/helpers/navHelper";
 import { findReceivers } from "../components/ThreadItem";
 
 const mapStateToProps: (state: any) => IThreadListPageDataProps = state => {
@@ -53,7 +52,6 @@ const mapDispatchToProps: (
       dispatch(conversationThreadSelected(threadId));
       dispatch(fetchConversationThreadResetMessages(threadId));
       dispatch(conversationSetThreadRead(threadId));
-      navigate("thread");
     }
   };
 };
