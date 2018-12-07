@@ -183,8 +183,9 @@ class OAuth2RessourceOwnerPasswordClient {
         expires_at: new Date(storedToken.expires_at)
       };
     } catch (err) {
-      // tslint:disable-next-line:no-console
-      console.warn("Load token failed: ", err);
+      if (err.authErr !== OAuthError.NO_TOKEN)
+        // tslint:disable-next-line:no-console
+        console.warn("Load token failed: ", err);
       throw err;
     }
   }

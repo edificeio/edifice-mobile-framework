@@ -1,9 +1,12 @@
-import firebase from "react-native-firebase";
-import { Conf } from "../../Conf";
-import { clearCache, fetchJSONWithCache } from "../../infra/fetchWithCache";
+import { clearCache, fetchJSONWithCache, signedFetch } from "../../infra/fetchWithCache";
 import oauth, { OAuthError } from "../../infra/oauth";
 import { navigate } from "../../navigation/helpers/navHelper";
 import userConfig from "../config";
+
+// Legacy imports
+import firebase from "react-native-firebase";
+import { Conf } from "../../Conf";
+import Tracking from "../../tracking/TrackingManager"; // TODO make tracking back !
 
 export const actionTypeRequestLogin = userConfig.createActionType(
   "REQUEST_LOGIN"
@@ -25,7 +28,8 @@ export function login(
   return async (dispatch, getState) => {
     try {
       dispatch({ type: actionTypeRequestLogin });
-      // 1: Get oAuth token from somewhere (server or local storage)
+
+      // === 1: Get oAuth token from somewhere (server or local storage)
       if (credentials) {
         await oauth.getToken(credentials.username, credentials.password);
       } else {
@@ -33,49 +37,47 @@ export function login(
         // If a token is stored, it allows the user to be offline.
         await oauth.loadToken();
       }
-      // 2: Gather logged user information
+
+      // === 2: Get firebase device token and store it in the backend
+      const token = await firebase.messaging().getToken();
+      // console.log(token);
+      const putTokenResponse = await signedFetch(
+        `${Conf.platform}/timeline/pushNotif/fcmToken?fcmToken=${token}`,
+        {
+          method: "put"
+        }
+      );
+      // console.log("put token response: ", putTokenResponse);
+
+      // === 3: Gather logged user information
       const userinfo2 = await fetchJSONWithCache("/auth/oauth2/userinfo", {
         headers: {
           Accept: "application/json;version=2.0"
         }
       });
       // console.log("oauth2 userinfo", userinfo2);
+      userinfo2.apps = userinfo2.apps.map(e => e.displayName);
+      // console.log("apps: ", userinfo2.apps);
+      const userdata = await fetchJSONWithCache(
+        `/directory/user/${userinfo2.userId}`
+      );
+
+      // === 4: check user validity
+
       if (!userinfo2.hasApp) {
         const err = new Error("EAUTH: You are not a premium user.");
         (err as any).authErr = OAuthError.NOT_PREMIUM;
         throw err;
       }
-      userinfo2.apps = userinfo2.apps.map(e => e.displayName);
 
-      /*
-      // Old UserInfo is not required here.
-      const userinfo = await fetchJSONWithCache("/userbook/api/person");
-      console.log("classic userinfo", userinfo);
-      */
-
-      const userdata = await fetchJSONWithCache(
-        `/directory/user/${userinfo2.userId}`
-      );
-      // console.log("userdata", userdata);
-
-      // Get Firebase notifications token
-      const notifsToken = await firebase.messaging().getToken();
-      fetch(
-        `${Conf.platform}/timeline/pushNotif/fcmToken?fcmToken=${notifsToken}`,
-        {
-          method: "put"
-        }
-      );
-      console.log("Firebase token (put) :", notifsToken);
-
-      // 3: validate login
+      // === 5: validate login
       dispatch({
         type: actionTypeLoggedIn,
         userbook: userinfo2,
         userdata
       });
 
-      // 4: Go !
+      // === 6: navigate back to the main screen
       navigate("Main");
     } catch (err) {
       if (err.authErr !== OAuthError.NO_TOKEN) console.warn(err);
@@ -118,17 +120,25 @@ export function login(
 export function logout() {
   return async (dispatch, getState) => {
     try {
-      const notifsToken = await firebase.messaging().getToken();
-      await fetch(
-        `${Conf.platform}/timeline/pushNotif/fcmToken?fcmToken=${notifsToken}`,
+      const login = getState().user.auth.login;
+
+      // === 1: Unregister the device token from the backend
+      const token = await firebase.messaging().getToken();
+      // console.log(token);
+      const deleteTokenResponse = await signedFetch(
+        `${Conf.platform}/timeline/pushNotif/fcmToken?fcmToken=${token}`,
         { method: "delete" }
       );
-      console.log("Firebase token (delete) :", notifsToken);
-      const login = getState().user.auth.login;
+      // console.log("delete token response: ", deleteTokenResponse);
+      // === 2: Erase stored oauth2 token and cache information
       await oauth.eraseToken();
-      dispatch({ type: actionTypeLoggedOut });
       await clearCache();
-      navigate("Login", { login }); // TODO : place the user login here
+
+      // === 3: Validate log out
+      dispatch({ type: actionTypeLoggedOut });
+
+      // === 4: Nav back on the login screen
+      navigate("Login", { login });
     } catch (err) {
       navigate("Login", { login: "" });
     }
