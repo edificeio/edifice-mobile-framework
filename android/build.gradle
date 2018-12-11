@@ -23,7 +23,6 @@ buildscript {
 
 allprojects {
     repositories {
-        maven { url "https://dl.bintray.com/android/android-tools/" }
         // mavenLocal()
         maven {
             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
@@ -39,6 +38,16 @@ allprojects {
 
 // from https://github.com/react-community/react-native-image-picker/issues/882#issuecomment-405255785
 subprojects {
+    if (project.name.contains('react-native-fast-image')
+    || project.name.contains('react-native-image-picker')
+    || project.name.contains('rn-fetch-blob') ) {
+        buildscript {
+            repositories {
+                maven { url = 'https://dl.bintray.com/android/android-tools/'  }
+            }
+        }
+    }
+
     afterEvaluate {project ->
         if (project.hasProperty("android")) {
             android {
