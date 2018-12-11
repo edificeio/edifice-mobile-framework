@@ -7,6 +7,9 @@ buildscript {
         }
         google()
         jcenter()
+        // The next repo is needed to find com.google.firebase:firebase-plugins:1.1.5
+        // see https://issuetracker.google.com/issues/120759347#comment24
+        maven { url 'https://dl.bintray.com/firebase/gradle/' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.1'
@@ -14,7 +17,7 @@ buildscript {
         // in the individual module build.gradle files
         classpath 'com.google.gms:google-services:3.2.1'
         classpath 'io.fabric.tools:gradle:1.25.4'
-        classpath 'com.google.firebase:firebase-plugins:1.1.1'
+        classpath 'com.google.firebase:firebase-plugins:1.1.5'
     }
 }
 
