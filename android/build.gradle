@@ -54,6 +54,9 @@ subprojects {project ->
             repositories {
                 maven { url = "https://dl.bintray.com/android/android-tools/" }
             }
+            dependencies {
+                classpath "com.android.tools.build:gradle:2.2.3"
+            }
         }
     }
 }
