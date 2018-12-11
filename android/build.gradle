@@ -47,12 +47,12 @@ subprojects {
     }
 }
 
-// from https://github.com/DylanVann/react-native-fast-image/issues/366#issuecomment-445492731
+// from https://github.com/DylanVann/react-native-fast-image/issues/366#issuecomment-445506982
 subprojects {project ->
     if (project.name.contains('react-native-fast-image')) {
-            buildscript {
-                repositories {
-                maven { url 'https://dl.bintray.com/android/android-tools/'  }
+        buildscript {
+            repositories {
+                maven { url = "https://dl.bintray.com/android/android-tools/" }
             }
         }
     }
