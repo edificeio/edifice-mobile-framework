@@ -23,6 +23,7 @@ buildscript {
 
 allprojects {
     repositories {
+        maven { url "https://dl.bintray.com/android/android-tools/" }
         mavenLocal()
         maven {
             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
@@ -31,7 +32,6 @@ allprojects {
         maven {
             url 'https://maven.google.com'
         }
-        maven { url "https://dl.bintray.com/android/android-tools/" }
         google()
         jcenter()
     }
