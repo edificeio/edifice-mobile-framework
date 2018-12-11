@@ -6,10 +6,10 @@ buildscript {
             url 'https://maven.fabric.io/public'
         }
         google()
-        jcenter()
         // The next repo is needed to find com.google.firebase:firebase-plugins:1.1.5
         // see https://issuetracker.google.com/issues/120759347#comment24
         maven { url 'https://dl.bintray.com/firebase/gradle/' }
+        jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.1'
