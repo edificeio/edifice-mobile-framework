@@ -13,7 +13,6 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.1'
-        classpath 'com.android.tools.build:gradle:2.3.3'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
         classpath 'com.google.gms:google-services:3.2.1'
@@ -43,6 +42,17 @@ subprojects {
         if (project.hasProperty("android")) {
             android {
                 compileSdkVersion 26
+            }
+        }
+    }
+}
+
+// from https://github.com/DylanVann/react-native-fast-image/issues/366#issuecomment-445492731
+subprojects {project ->
+    if (project.name.contains('react-native-fast-image')) {
+            buildscript {
+                repositories {
+                maven { url : 'https://dl.bintray.com/android/android-tools/'  }
             }
         }
     }
