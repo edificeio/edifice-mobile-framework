@@ -23,7 +23,7 @@ const mapStateToProps: (state: any) => IHomeworkPageDataProps = state => {
   if (!currentDiaryTasks)
     return {
       diaryId: null,
-      didInvalidate: true,
+      didInvalidate: false,
       isFetching: false,
       lastUpdated: null,
       tasksByDay: null
