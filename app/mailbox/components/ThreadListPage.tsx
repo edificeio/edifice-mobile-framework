@@ -41,6 +41,7 @@ import ThreadItem from "../components/ThreadItem";
 import { IConversationThread } from "../reducers/threadList";
 import { ModalContent, ModalBox } from "../../ui/Modal";
 import { LightP } from "../../ui/Typography";
+import Tracking from "../../tracking/TrackingManager";
 
 // Misc
 
@@ -143,11 +144,21 @@ export class ThreadListPage extends React.PureComponent<
         refreshControl={
           <RefreshControl
             refreshing={isRefreshing}
-            onRefresh={() => onRefresh()}
+            onRefresh={() => {
+              onRefresh();
+              Tracking.logEvent("refreshConversation", {
+                direction: "up"
+              });
+            }}
           />
         }
         data={this.props.threads}
-        onEndReached={() => onNextPage()}
+        onEndReached={() => {
+          onNextPage();
+          Tracking.logEvent("refreshConversation", {
+            direction: "down"
+          });
+        }}
         onEndReachedThreshold={0.1}
         renderItem={({ item }: { item: IConversationThread }) =>
           this.renderThreadItem(item)
@@ -210,6 +221,11 @@ export class ThreadListPage extends React.PureComponent<
   public handleOpenThread(threadId) {
     this.props.onOpenThread(threadId);
     this.props.navigation.navigate("thread");
+    const isUnread = this.props.threads[threadId].unread;
+    Tracking.logEvent("readConversation", {
+      unread: isUnread
+      // TODO : track waitingTime & total messages read for this user
+    });
   }
 
   public handleDeleteThread(threadId) {

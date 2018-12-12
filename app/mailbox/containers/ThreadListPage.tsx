@@ -18,6 +18,7 @@ import {
 import { conversationThreadSelected } from "../actions/threadSelected";
 
 import { findReceivers } from "../components/ThreadItem";
+import Tracking from "../../tracking/TrackingManager";
 
 const mapStateToProps: (state: any) => IThreadListPageDataProps = state => {
   // Extract data from state

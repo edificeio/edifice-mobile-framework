@@ -41,37 +41,7 @@ export class AppScreen extends React.Component<any, undefined> {
     this.navigator = nav;
   }
   public render() {
-    return (
-      <RootNavigator
-        onNavigationStateChange={(prevState, currentState, action) => {
-          // Track if tab has changed
-          if (action.type !== "Navigation/NAVIGATE") return;
-          const mainRouteNavPrevState = prevState.routes
-            ? prevState.routes[0]
-            : undefined;
-          const prevTabRouteIndex = mainRouteNavPrevState
-            ? mainRouteNavPrevState.index
-            : undefined;
-
-          const mainRouteNavState = currentState.routes
-            ? currentState.routes[0]
-            : undefined;
-          const currentTabRouteIndex = mainRouteNavState
-            ? mainRouteNavState.index
-            : undefined;
-          // continue to tracking only if current tab has changed.
-          if (prevTabRouteIndex === currentTabRouteIndex) return;
-          const currentTabRouteName = mainRouteNavState
-            ? mainRouteNavState.routeName
-            : undefined;
-          if (currentTabRouteName)
-            Tracking.logEvent("menuTab", {
-              tab: currentTabRouteName
-            });
-        }}
-        ref={nav => this.setNavigator(nav)}
-      />
-    );
+    return <RootNavigator ref={nav => this.setNavigator(nav)} />;
   }
 }
 

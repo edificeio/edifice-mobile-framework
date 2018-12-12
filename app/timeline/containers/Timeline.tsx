@@ -73,7 +73,7 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
         this.props.availableApps,
         this.props.legalapps
       );
-      Tracking.logEvent("refreshTimeline", { direction: "ScrollDown" });
+      Tracking.logEvent("refreshTimeline", { direction: "down" });
     }
   }
 
@@ -106,7 +106,7 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
 
   public fetchLatest() {
     this.props.fetch(this.props.availableApps);
-    Tracking.logEvent("refreshTimeline", { direction: "ScrollUp" });
+    Tracking.logEvent("refreshTimeline", { direction: "up" });
   }
 
   public shouldComponentUpdate(nextProps, nextState) {

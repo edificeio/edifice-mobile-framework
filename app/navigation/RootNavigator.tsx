@@ -14,6 +14,7 @@ import {
 import LoginPage from "../user/containers/LoginPage";
 
 import TimelineNavigator from "../timeline/TimelineNavigator";
+import Tracking from "../tracking/TrackingManager";
 
 // MAIN NAVIGATOR -------------------------------------------------------------------------
 
@@ -48,7 +49,25 @@ class MainNavigatorHOC extends React.Component<{ apps: object }, {}> {
     // console.log("render new navigator", Math.random());
     const { apps, ...forwardProps } = this.props;
     const Navigator = getMainNavigator(apps);
-    return <Navigator {...forwardProps} />;
+    return (
+      <Navigator
+        {...forwardProps}
+        onNavigationStateChange={(prevState, currentState, action) => {
+          // console.log("main nav state change :", prevState, currentState, action);
+          // Track if tab has changed
+          if (action.type !== "Navigation/NAVIGATE") return;
+          const prevIndex = prevState.index;
+          const currentIndex = currentState.index;
+          if (prevIndex === currentIndex) return;
+          const currentTabRouteName =
+            currentState.routes[currentIndex].routeName;
+          if (currentTabRouteName)
+            Tracking.logEvent("menuTab", {
+              tab: currentTabRouteName
+            });
+        }}
+      />
+    );
     /* CAUTION :
        React Navigation doen't support dynamic routes.
        Here we emulate this by regenerate a runtime a new router and NavigationContainer each time `apps` props is modified.

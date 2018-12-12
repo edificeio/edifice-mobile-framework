@@ -65,6 +65,7 @@ export default class Tracking {
   }
 
   public static logEvent(name: string, params?) {
+    console.log("TRACK", name, params);
     if (Tracking.analytics) {
       if (params) Tracking.analytics.logEvent(name, params);
       else Tracking.analytics.logEvent(name);
@@ -79,9 +80,5 @@ export default class Tracking {
       Tracking.mixpanel.set({ $userType: Me.session.type });
       Tracking.mixpanel.set({ $email: Me.session.email });
     }
-  }
-
-  public static trackScreenView(currentScreen, navParams) {
-    Tracking.logEvent(currentScreen, navParams);
   }
 }

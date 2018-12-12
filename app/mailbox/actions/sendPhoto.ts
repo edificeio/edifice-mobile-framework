@@ -68,7 +68,6 @@ export const sendPhoto = dispatch => async (data: IConversationMessage) => {
     const json = await response.json();
 
     Tracking.logEvent("sentMessage", {
-      application: "conversation",
       length: fulldata.body.length - 9,
       nbRecipients: fulldata.to.length + (fulldata.cc || []).length
     });

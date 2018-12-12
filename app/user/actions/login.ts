@@ -1,4 +1,8 @@
-import { clearCache, fetchJSONWithCache, signedFetch } from "../../infra/fetchWithCache";
+import {
+  clearCache,
+  fetchJSONWithCache,
+  signedFetch
+} from "../../infra/fetchWithCache";
 import oauth, { OAuthError } from "../../infra/oauth";
 import { navigate } from "../../navigation/helpers/navHelper";
 import userConfig from "../config";
@@ -77,10 +81,32 @@ export function login(
         userdata
       });
 
-      // === 6: navigate back to the main screen
+      // === 6: Tracking reporting (only on success)
+
+      Tracking.logEvent("login", {
+        isManual: credentials ? "true" : "false",
+        platform: Conf.platform
+      });
+
+      // === 7: navigate back to the main screen
       navigate("Main");
     } catch (err) {
-      if (err.authErr !== OAuthError.NO_TOKEN) console.warn(err);
+      if (err.authErr !== OAuthError.NO_TOKEN) {
+        // Absence of token in the store is not considered as an error. It's a regular case.
+        console.warn(err);
+        Tracking.logEvent("failedLogin", {
+          cause:
+            err.authErr === OAuthError.BAD_CREDENTIALS
+              ? "bad credentials"
+              : err.authErr === OAuthError.NOT_PREMIUM
+              ? "not premium"
+              : err.authErr === OAuthError.NETWORK_ERROR
+              ? "network error"
+              : "unkown",
+          isManual: credentials ? "true" : "false",
+          platform: Conf.platform
+        });
+      }
       switch (err.authErr) {
         case OAuthError.NO_TOKEN:
           dispatch({
@@ -121,6 +147,12 @@ export function logout() {
   return async (dispatch, getState) => {
     try {
       const login = getState().user.auth.login;
+
+      // === 0: Tracking reporting, only on manual logout
+
+      Tracking.logEvent("logout", {
+        platform: Conf.platform
+      });
 
       // === 1: Unregister the device token from the backend
       const token = await firebase.messaging().getToken();
