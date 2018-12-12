@@ -144,6 +144,7 @@ export class LoginPage extends React.Component<
           }
           value={this.state.login}
           hasError={error && !this.state.typing}
+          keyboardType="visible-password"
         />
         <TextInputLine
           inputRef={this.setInputPasswordRef}
