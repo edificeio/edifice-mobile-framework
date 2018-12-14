@@ -17,3 +17,4 @@ fi
 if [ ! -z "${APPCENTER_XCODE_SCHEME}" ];
 then
     echo "=== It is an iOS Project ==="
+fi
