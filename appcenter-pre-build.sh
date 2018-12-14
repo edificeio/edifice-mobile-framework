@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [[ ! -z "${APPCENTER_ANDROID_MODULE}" ]];
+if [ ! -z "${APPCENTER_ANDROID_MODULE}" ];
 then
     echo "=== Generate Android JS bundle ==="
 
@@ -14,6 +14,6 @@ then
     fi
 fi
 
-if [[ ! -z "${APPCENTER_XCODE_SCHEME}" ]];
+if [ ! -z "${APPCENTER_XCODE_SCHEME}" ];
 then
     echo "=== It is an iOS Project ==="
