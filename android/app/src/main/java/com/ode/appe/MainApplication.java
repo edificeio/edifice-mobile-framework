@@ -3,10 +3,12 @@ package com.ode.appe;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.dylanvann.fastimage.FastImageViewPackage;
+import com.kevinejohn.RNMixpanel.RNMixpanel;
+import com.reactcommunity.rnlanguages.RNLanguagesPackage;
 import com.github.xfumihiro.react_native_image_to_base64.ImageToBase64Package;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.imagepicker.ImagePickerPackage;
-import com.AlexanderZaytsev.RNI18n.RNI18nPackage;
 import com.entria.views.RNViewOverflowPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -40,6 +42,9 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
+            new FastImageViewPackage(),
+            new RNMixpanel(),
+            new RNLanguagesPackage(),
             new RNViewOverflowPackage(),
             new ImagePickerPackage(),
             new RCTSplashScreenPackage(),
@@ -47,14 +52,12 @@ public class MainApplication extends Application implements ReactApplication {
             new ImageToBase64Package(),
             new RNFSPackage(),
             new VectorIconsPackage(),
-            new RNI18nPackage(),
             new RNFirebasePackage(),
             new RNFirebaseAnalyticsPackage(),
             new RNFirebaseCrashlyticsPackage(),
             new RNFirebasePerformancePackage(),
             new RNFirebaseNotificationsPackage(),
-            new RNFirebaseMessagingPackage(),
-            new RNMixpanel()
+            new RNFirebaseMessagingPackage()
       );
     }
 

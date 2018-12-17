@@ -34,11 +34,15 @@ export const fetchTimeline = dispatch => async availableApps => {
       });
     }
   } catch (e) {
-    console.log(e);
+    console.warn(e);
   }
 };
 
-export const listTimeline = dispatch => async (page, availableApps) => {
+export const listTimeline = dispatch => async (
+  page,
+  availableApps,
+  legalapps
+) => {
   dispatch({
     type: "FETCH_TIMELINE"
   });
@@ -57,7 +61,7 @@ export const listTimeline = dispatch => async (page, availableApps) => {
     await fillUserData();
 
     if (!availableApps) {
-      availableApps = await storedFilters();
+      availableApps = await storedFilters(legalapps);
       dispatch({
         type: "FILTER_TIMELINE",
         availableApps: availableApps
@@ -93,7 +97,7 @@ export const listTimeline = dispatch => async (page, availableApps) => {
     loading = false;
     return newNews;
   } catch (e) {
-    console.log(e);
+    console.warn(e);
     dispatch({
       type: "FAILED_LOAD_TIMELINE"
     });

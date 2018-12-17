@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { CommonStyles } from '../styles/common/styles';
 import { Icon } from './icons/Icon';
 import { Animated, ActivityIndicator } from 'react-native';
-import I18n from 'react-native-i18n';
+import I18n from "i18n-js";
 import { watchConnection, checkConnection } from "../infra/actions/connectionTracker";
 
 const TrackerText = style.text({

@@ -1,7 +1,7 @@
 import style from "glamorous-native";
 import * as React from "react";
 import { View, Text, ScrollView } from "react-native";
-import I18n from 'react-native-i18n';
+import I18n from "i18n-js";
 import { ResourceTitle } from "../../ui/headers/ResourceTitle";
 import { LeftPanel, PageContainer, ArticleContainer, Header, CenterPanel } from "../../ui/ContainerContent";
 import { SingleAvatar } from "../../ui/avatars/SingleAvatar";

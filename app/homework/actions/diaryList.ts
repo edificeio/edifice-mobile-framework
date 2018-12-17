@@ -3,7 +3,6 @@
  * Build actions to be dispatched to the homework diary list reducer.
  */
 
-import { Conf } from "../../Conf";
 import {
   asyncActionTypes,
   asyncFetchIfNeeded,
@@ -96,12 +95,14 @@ export function fetchHomeworkDiaryList() {
         "/homeworks/list",
         homeworkDiaryListAdapter
       );
-
       dispatch(homeworkDiaryListReceived(data));
 
       // This block accesses to another chunk of state and fire action outside his scope. (homework -> selectedDiary)
       if (!getState().homework.selectedDiary) {
-        dispatch(homeworkDiarySelected(Object.keys(data)[0]));
+        const dataIds = Object.keys(data);
+        if (dataIds.length !== 0) {
+          dispatch(homeworkDiarySelected(dataIds[0]));
+        }
       }
     } catch (errmsg) {
       dispatch(homeworkDiaryListFetchError(errmsg));

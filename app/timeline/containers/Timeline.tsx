@@ -1,6 +1,7 @@
+import I18n from "i18n-js";
+
 import * as React from "react";
 import { FlatList, RefreshControl, View } from "react-native";
-import I18n from "react-native-i18n";
 import { connect } from "react-redux";
 
 import { FlatButton, Loading } from "../../ui";
@@ -12,9 +13,10 @@ import { ErrorMessage } from "../../ui/Typography";
 import { News } from "../components/News";
 
 import styles from "../../styles";
-import { Tracking } from "../../tracking/TrackingManager";
+import Tracking from "../../tracking/TrackingManager";
 
 import { fetchTimeline, listTimeline } from "../actions/list";
+import { INewsModel } from "../reducer";
 
 export class TimelineHeader extends React.Component<
   { navigation?: any },
@@ -39,11 +41,12 @@ interface ITimelineProps {
   endReached: boolean;
   navigation: any;
   news: any;
-  sync: (page: number, availableApps: any) => Promise<void>;
+  sync: (page: number, availableApps: any, legalapps: any) => Promise<void>;
   fetch: (availableApps: any) => Promise<void>;
   availableApps: any;
   fetchFailed: boolean;
   isAuthenticated: boolean;
+  legalapps: any;
 }
 
 // tslint:disable-next-line:max-classes-per-file
@@ -55,14 +58,22 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
     this.flatList = null;
     this.pageNumber = 0;
     if (!this.props.isFetching) {
-      this.props.sync(this.pageNumber, this.props.availableApps);
+      this.props.sync(
+        this.pageNumber,
+        this.props.availableApps,
+        this.props.legalapps
+      );
     }
   }
 
   public nextPage() {
     if (!this.props.isFetching && this.props.isAuthenticated) {
-      this.props.sync(++this.pageNumber, this.props.availableApps);
-      Tracking.logEvent("refreshTimeline", { direction: "ScrollDown" });
+      this.props.sync(
+        ++this.pageNumber,
+        this.props.availableApps,
+        this.props.legalapps
+      );
+      Tracking.logEvent("refreshTimeline", { direction: "down" });
     }
   }
 
@@ -84,14 +95,18 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
   public componentWillReceiveProps(nextProps) {
     if (nextProps.refresh) {
       this.pageNumber = 0;
-      this.props.sync(this.pageNumber, this.props.availableApps);
+      this.props.sync(
+        this.pageNumber,
+        this.props.availableApps,
+        this.props.legalapps
+      );
       this.pageNumber++;
     }
   }
 
   public fetchLatest() {
     this.props.fetch(this.props.availableApps);
-    Tracking.logEvent("refreshTimeline", { direction: "ScrollUp" });
+    Tracking.logEvent("refreshTimeline", { direction: "up" });
   }
 
   public shouldComponentUpdate(nextProps, nextState) {
@@ -117,12 +132,12 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
         ref={list => (this.flatList = list)}
         renderItem={({ item, index }) => (
           <News
-            {...item}
-            key={item.id}
+            {...item as INewsModel}
             index={index}
             onPress={expend => this.openNews(item, expend)}
           />
         )}
+        keyExtractor={(item: INewsModel) => item.id.toString()}
         style={styles.gridWhite}
       />
     );
@@ -138,7 +153,9 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
             {I18n.t("loadingFailedMessage")}
           </ErrorMessage>
           <FlatButton
-            onPress={() => this.props.sync(0, this.props.availableApps)}
+            onPress={() =>
+              this.props.sync(0, this.props.availableApps, this.props.legalapps)
+            }
             title={I18n.t("tryagain")}
             loading={this.props.isFetching}
           />
@@ -186,11 +203,12 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
 export default connect(
   (state: any) => ({
     ...state.timeline,
-    isAuthenticated: state.user.auth.loggedIn
+    isAuthenticated: state.user.auth.loggedIn,
+    legalapps: state.user.auth.apps
   }),
   dispatch => ({
-    sync: (page: number, availableApps) =>
-      listTimeline(dispatch)(page, availableApps),
+    sync: (page: number, availableApps, legalapps) =>
+      listTimeline(dispatch)(page, availableApps, legalapps),
     fetch: availableApps => fetchTimeline(dispatch)(availableApps)
   })
 )(Timeline);

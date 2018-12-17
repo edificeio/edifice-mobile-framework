@@ -1,5 +1,5 @@
 import * as React from "react";
-import I18n from "react-native-i18n";
+import I18n from "i18n-js";
 import { connect } from "react-redux";
 
 import { AppTitle, Header, HeaderIcon } from "../../ui/headers/Header";
@@ -8,7 +8,7 @@ import { SearchBar } from "../../ui/SearchBar";
 import { clearFilterConversation, filterConversation } from "../actions/filter";
 import { clearPickedUsers } from "../actions/pickUser";
 
-import { Tracking } from "../../tracking/TrackingManager";
+import Tracking from "../../tracking/TrackingManager";
 
 import conversationConfig from "../config";
 
@@ -40,7 +40,6 @@ export class ConversationTopBar extends React.PureComponent<
   /* Note : dunno what is this for, but it creates a bug when opening search for the first time
   public componentWillReceiveProps(nextProps) {
     if (nextProps.searchCleared) {
-      console.log("searchCleared");
       this.setState({ searching: false });
     }
   }*/

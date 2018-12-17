@@ -1,6 +1,7 @@
 import { Conf } from "../Conf";
 import { signedFetch } from "../infra/fetchWithCache";
-import { navigate } from "../navigation/helpers/navHelper";
+import { nainNavNavigate } from "../navigation/helpers/navHelper";
+import { fetchConversationThreadList, fetchConversationThreadResetMessages } from "./actions/threadList";
 import conversationThreadSelected from "./actions/threadSelected";
 
 export default dispatch => async notificationData => {
@@ -14,6 +15,9 @@ export default dispatch => async notificationData => {
     {}
   );
   const message = await response.json();
-  dispatch(conversationThreadSelected(message.thread_id));
-  navigate("thread");
+
+  await dispatch(await fetchConversationThreadList());
+  await dispatch(await conversationThreadSelected(message.thread_id));
+  await dispatch(await fetchConversationThreadResetMessages(message.thread_id));
+  nainNavNavigate("thread");
 };

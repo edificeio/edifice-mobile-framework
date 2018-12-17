@@ -6,6 +6,9 @@ buildscript {
             url 'https://maven.fabric.io/public'
         }
         google()
+        // The next repo is needed to find com.google.firebase:firebase-plugins:1.1.5
+        // see https://issuetracker.google.com/issues/120759347#comment24
+        maven { url 'https://dl.bintray.com/firebase/gradle/' }
         jcenter()
     }
     dependencies {
@@ -14,13 +17,13 @@ buildscript {
         // in the individual module build.gradle files
         classpath 'com.google.gms:google-services:3.2.1'
         classpath 'io.fabric.tools:gradle:1.25.4'
-        classpath 'com.google.firebase:firebase-plugins:1.1.1'
+        classpath 'com.google.firebase:firebase-plugins:1.1.5'
     }
 }
 
 allprojects {
     repositories {
-        mavenLocal()
+        // mavenLocal()
         maven {
             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
             url "$rootDir/../node_modules/react-native/android"
@@ -35,6 +38,16 @@ allprojects {
 
 // from https://github.com/react-community/react-native-image-picker/issues/882#issuecomment-405255785
 subprojects {
+    if (project.name.contains('react-native-fast-image')
+    || project.name.contains('react-native-image-picker')
+    || project.name.contains('rn-fetch-blob') ) {
+        buildscript {
+            repositories {
+                maven { url = 'https://dl.bintray.com/android/android-tools/'  }
+            }
+        }
+    }
+
     afterEvaluate {project ->
         if (project.hasProperty("android")) {
             android {

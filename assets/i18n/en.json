@@ -1,37 +1,90 @@
 {
-  "common-confirm": "Are you sure you",
-  "Cancel": "Cancel",
-  "Connect": "Log in",
-  "Conversation": "Conversation",
-  "Homework": "Homework",
-  "directory-disconnectButton": "Log out",
-  "Erreur_envoi": "Error sending...",
-  "auth-loginFailed": "Incorrect login or password ?",
-  "Login": "Username",
-  "News": "News",
-  "On": "in",
-  "Password": "Password",
-  "Password_forgotten": "Forgot password?",
-  "Profile": "Profile",
-  "conversation-sendingMessage": "Sending...",
-  "Search": "Search ...",
-  "conversation-chatPlaceholder": "Write a message...",
   "agoHour": "{{hour}} hour ago",
   "agoHours": "{{hours}} hours ago",
   "agoMinutes": "{{minutes}} mins ago",
-  "auth-disconnectConfirm": "want to logout?",
-  "today": " Today ",
-  "conversation-deleteThread": "delete this conversation ?",
-  "schoolbook-appTitle": "Schoolbook",
-  "delete": "Delete",
-  "seeMore": "See more",
   "apply": "Apply",
-  "timeline-filterBy": "Filter by",
+  "auth-disconnectConfirm": "want to logout?",
+  "auth-loginFailed": "Incorrect login or password ?",
+
+
+
+  "Cancel": "Cancel",
+  "common-confirm": "Are you sure you",
+  "common-connected": "Connected",
+
+  "common-disconnected": "Not connected to the Internet",
+  "Connect": "Log in",
+  "conversation-chatPlaceholder": "Write a message...",
+  "conversation-deleteThread": "delete this conversation ?",
+
+
+
+  "conversation-newMessage": "New message",
+  "conversation-sendingMessage": "Sending...",
+  "Conversation": "Mailbox",
+  "delete": "Delete",
+  "directory-disconnectButton": "Log out",
+  "directory-notificationsTitle": "Notifications",
+
+
+  "homework-select": "My homework notebooks",
+
+  "Homework": "Homework",
+  "imageNotAvailable": "Image not available",
+
+  "Login": "Username",
+  "news-info-shared": "Newsfeed shared",
+
+
+
+
+
+
+  "News": "News",
+
+  "On": "in",
+  "Password": "Password",
+  "Profile": "Profile",
+  "schoolbook-appTitle": "Schoolbook",
+  "Search": "Search ...",
+  "seeMore": "See more",
   "timeline-allFilter": "All",
   "timeline-blogFilter": "Blog",
-  "timeline-schoolbookFilter": "Schoolbook",
-  "timeline-newsFilter": "News",
-  "timeline-emptyScreenTitle": "It's deserted... Anybody there?",
   "timeline-emptyScreenText": "It's quiet around here.... You know the expression \"the calm before the storm\" ?",
-  "imageNotAvailable": "Image not available"
+  "timeline-emptyScreenTitle": "It's deserted... Anybody there?",
+  "timeline-filterBy": "Filter by",
+  "timeline-newsFilter": "News",
+  "timeline-schoolbookFilter": "Schoolbook",
+  "to": "To :",
+  "today": " Today ",
+
+
+
+
+
+
+
+
+
+
+
+
+  "blog-publish-post": "Blog post published",
+
+
+  "messagerie-send-message": "Message received",
+
+
+
+
+
+
+
+
+
+
+
+
+  "Erreur_envoi": "Error sending...",
+  "Password_forgotten": "Forgot password?"
 }

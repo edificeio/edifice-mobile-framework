@@ -4,7 +4,7 @@ import { CommonStyles } from "../styles/common/styles"
 import { Header, HeaderIcon } from "./headers/Header"
 import { CloseIcon, SearchIcon } from "./icons/SearchIcon"
 import { connect } from "react-redux";
-import I18n from 'react-native-i18n';
+import I18n from "i18n-js";
 
 export interface SearchBarProps {
 	onChange: (searchText) => void

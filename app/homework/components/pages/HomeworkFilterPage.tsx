@@ -21,7 +21,7 @@ import style from "glamorous-native";
 import * as React from "react";
 const { FlatList, View } = style;
 import { RefreshControl } from "react-native";
-import I18n from "react-native-i18n";
+import I18n from "i18n-js";
 
 import { ListItem, PageContainer } from "../../../ui/ContainerContent";
 
@@ -122,6 +122,9 @@ export class HomeworkFilterPage extends React.PureComponent<
               <Checkbox
                 checked={selectedDiaryId === item.id}
                 onCheck={() =>
+                  this.handleSelectedHomeworkChanged(item.id, item.title)
+                }
+                onUncheck={() =>
                   this.handleSelectedHomeworkChanged(item.id, item.title)
                 }
               />

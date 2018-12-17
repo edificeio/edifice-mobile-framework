@@ -4,7 +4,7 @@ import generateUuid from "../../utils/uuid";
 import { Conf } from "../../Conf";
 import { signedFetch } from "../../infra/fetchWithCache";
 import { Me } from "../../infra/Me";
-import { Tracking } from "../../tracking/TrackingManager";
+import Tracking from "../../tracking/TrackingManager";
 import {
   ConversationMessageStatus,
   IConversationMessage
@@ -64,7 +64,6 @@ export function sendMessage(data: IConversationMessage) {
       // console.log("4/ server response :", json);
 
       Tracking.logEvent("sentMessage", {
-        application: "conversation",
         length: fulldata.body.length - 9,
         nbRecipients: fulldata.to.length + (fulldata.cc || []).length
       });

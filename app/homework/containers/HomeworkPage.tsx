@@ -12,7 +12,7 @@ import { fetchHomeworkDiaryListIfNeeded } from "../actions/diaryList";
 import { homeworkTaskSelected } from "../actions/selectedTask";
 import { fetchHomeworkTasks } from "../actions/tasks";
 
-import { Tracking } from "../../tracking/TrackingManager";
+import Tracking from "../../tracking/TrackingManager";
 import homeworkDiarySelected from "../actions/selectedDiary";
 
 const mapStateToProps: (state: any) => IHomeworkPageDataProps = state => {
@@ -23,7 +23,7 @@ const mapStateToProps: (state: any) => IHomeworkPageDataProps = state => {
   if (!currentDiaryTasks)
     return {
       diaryId: null,
-      didInvalidate: true,
+      didInvalidate: false,
       isFetching: false,
       lastUpdated: null,
       tasksByDay: null

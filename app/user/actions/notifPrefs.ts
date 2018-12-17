@@ -8,11 +8,11 @@ export const actionTypeSetNotifPrefs = userConfig.createActionType(
 
 export function loadNotificationPrefs() {
   return async (dispatch, getState) => {
-    console.log("load timeline default notif prefs");
+    // console.log("load timeline default notif prefs");
     const defaultNotifs = await fetchJSONWithCache(
       "/timeline/notifications-defaults"
     );
-    console.log("load preference timeline prefs");
+    // console.log("load preference timeline prefs");
     const timelinePrefs = await preference("timeline");
     const newNotifs = defaultNotifs.map(notif => ({
       ...notif,

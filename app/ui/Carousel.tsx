@@ -1,8 +1,23 @@
+import I18n from "i18n-js";
+
 import style from "glamorous-native";
 import * as React from "react";
-import { Dimensions, Modal, Platform, ScrollView, View } from "react-native";
-import FitImage from "react-native-fit-image";
+import {
+  Dimensions,
+  FlatList,
+  ImageURISource,
+  Modal,
+  Platform,
+  ScrollView,
+  Text,
+  View
+} from "react-native";
+import FastImage from "react-native-fast-image";
+import RNCarousel from "react-native-snap-carousel";
 import { Icon } from ".";
+import { CommonStyles } from "../styles/common/styles";
+import ImageOptional from "./ImageOptional";
+import { Italic } from "./Typography";
 
 const Close = style.touchableOpacity({
   height: 40,
@@ -15,84 +30,90 @@ const Close = style.touchableOpacity({
   right: 0
 });
 
+const UnavailableImage = () => (
+  <View
+    style={{
+      alignItems: "center",
+      height: "100%",
+      justifyContent: "center",
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      width: "100%"
+    }}
+  >
+    <Italic>{I18n.t("imageNotAvailable")}</Italic>
+  </View>
+);
+
 export class Carousel extends React.Component<
   {
-    images: Array<{ src: object; alt: string }>;
+    images: Array<{ src: ImageURISource; alt: string }>;
     visible: boolean;
     startIndex?: number;
     onClose: () => void;
   },
   undefined
 > {
-  carouselRef: any;
-  currentScroll = 0;
-  previousScroll = 0;
-  currentImage = 0;
-  root: any;
+  public carouselRef: any;
+  public currentScroll = 0;
+  public previousScroll = 0;
+  public currentImage: number = 0;
 
-  scrollToCurrentImage() {
-    const { width, height } = Dimensions.get("window");
-    let newPosition = this.currentImage * width;
-    this.carouselRef.scrollTo({ x: newPosition, animated: true });
+  public scrollToCurrentImage() {
+    // console.log("scroll to current", this.currentImage);
+    this.carouselRef.scrollToIndex({
+      index: this.currentImage,
+      viewOffset: 0,
+      viewPosition: 0.5
+    });
   }
 
-  slideToImage(e) {
-    const { width, height } = Dimensions.get("window");
-    const left = this.previousScroll - this.currentScroll > width / 5;
-    const right = this.previousScroll - this.currentScroll < -width / 5;
-
-    let newPosition = Math.floor(this.currentScroll / width) * width;
-    if (right) {
-      newPosition += width;
-    }
-    if (newPosition < 0) {
-      newPosition = 0;
-    }
-    if (newPosition > (this.props.images.length - 1) * width) {
-      newPosition = (this.props.images.length - 1) * width;
-    }
-    this.carouselRef.scrollTo({ x: newPosition, animated: true });
-    this.previousScroll = newPosition;
+  public slideToImage(e: number) {
+    // console.log("scroll to", e);
+    this.carouselRef.scrollToIndex({
+      index: e,
+      viewOffset: 0,
+      viewPosition: 0.5
+    });
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.startIndex !== this.currentImage) {
-      this.currentImage = nextProps.startIndex || 0;
-    }
-  }
-
-  render() {
-    const { width, height } = Dimensions.get("window");
+  public render() {
     return (
       <Modal
         visible={this.props.visible}
         onRequestClose={() => this.setState({ fullscreen: false })}
         transparent={true}
       >
-        <View
-          style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.90)" }}
-          ref={component => (this.root = component)}
-        >
-          <ScrollView
-            ref={e => (this.carouselRef = e)}
-            horizontal={true}
-            style={{ flex: 1, flexDirection: "row", height: "100%" }}
-            contentContainerStyle={{ justifyContent: "center" }}
-            onScroll={e => (this.currentScroll = e.nativeEvent.contentOffset.x)}
+        <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.90)" }}>
+          <RNCarousel
+            data={this.props.images}
+            renderItem={({
+              item,
+              index
+            }: {
+              item: { src: ImageURISource; alt: string };
+              index: number;
+            }) => (
+              <ImageOptional
+                imageComponent={FastImage}
+                errorComponent={<UnavailableImage />}
+                style={{
+                  height: "100%",
+                  width: Dimensions.get("window").width
+                }}
+                resizeMode={FastImage.resizeMode.contain}
+                source={item.src}
+                key={index}
+              />
+            )}
+            itemWidth={Dimensions.get("window").width}
+            sliderWidth={Dimensions.get("window").width}
+            firstItem={this.props.startIndex || 0}
+            ref={r => (this.carouselRef = r)}
             scrollEventThrottle={16}
-            onTouchEnd={e => this.slideToImage(e)}
-            onContentSizeChange={() => this.scrollToCurrentImage()}
-          >
-            {this.props.images.map((image, index) => (
-              <View style={{ flex: 1, justifyContent: "center" }} key={index}>
-                <FitImage
-                  resizeMode="contain"
-                  style={{ width: width, height: height }}
-                  source={image.src}
-                />
-              </View>
-            ))}
-          </ScrollView>
+            keyExtractor={(item, index) => index.toString()}
+            decelerationRate="fast"
+          />
           <Close onPress={() => this.props.onClose()}>
             <Icon size={16} color="#ffffff" name="close" />
           </Close>

@@ -121,7 +121,7 @@ export class HTMLAdaptator {
     for (let i = 0; i < images.length; i++) {
       let src = images[i].attributes.src;
       if (src.indexOf("file://") === -1) {
-        src = Conf.platform + src;
+        if (src.indexOf("://") === -1) src = Conf.platform + src;
         let split = src.split("?");
         src = split[0] + "?thumbnail=" + size;
       }

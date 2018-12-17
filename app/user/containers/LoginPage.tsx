@@ -9,7 +9,7 @@ import {
   TouchableWithoutFeedback,
   View
 } from "react-native";
-import I18n from "react-native-i18n";
+import I18n from "i18n-js";
 import { connect } from "react-redux";
 
 // Components
@@ -144,6 +144,7 @@ export class LoginPage extends React.Component<
           }
           value={this.state.login}
           hasError={error && !this.state.typing}
+          keyboardType="email-address"
         />
         <TextInputLine
           inputRef={this.setInputPasswordRef}

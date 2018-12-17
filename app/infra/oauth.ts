@@ -1,10 +1,10 @@
 /**
- * OAuth2 client for Ressource OWner Credentials Grant type flow.
+ * OAuth2 client for Ressource Owner Password Grant type flow.
  */
 
 import { encode as btoa } from "base-64";
 import querystring from "querystring";
-import { AsyncStorage } from "react-native";
+import { AsyncStorage, ImageURISource } from "react-native";
 import { Conf } from "../Conf";
 
 export interface IOAuthToken {
@@ -19,10 +19,11 @@ export interface IOAuthToken {
 export enum OAuthError {
   NO_TOKEN,
   BAD_CREDENTIALS,
+  NOT_PREMIUM,
   NETWORK_ERROR
 }
 
-class OAuth2RessourceOwnerClient { // TODO: Renommer avec "password"
+class OAuth2RessourceOwnerPasswordClient {
   /**
    * Common headers to all oauth2 flow requets
    */
@@ -138,7 +139,7 @@ class OAuth2RessourceOwnerClient { // TODO: Renommer avec "password"
       username
     };
     const headers = {
-      ...OAuth2RessourceOwnerClient.DEFAULT_HEADERS,
+      ...OAuth2RessourceOwnerPasswordClient.DEFAULT_HEADERS,
       Authorization: this.getAuthHeader(this.clientId, this.clientSecret)
     };
 
@@ -182,8 +183,9 @@ class OAuth2RessourceOwnerClient { // TODO: Renommer avec "password"
         expires_at: new Date(storedToken.expires_at)
       };
     } catch (err) {
-      // tslint:disable-next-line:no-console
-      console.warn("Load token failed: ", err);
+      if (err.authErr !== OAuthError.NO_TOKEN)
+        // tslint:disable-next-line:no-console
+        console.warn("Load token failed: ", err);
       throw err;
     }
   }
@@ -217,7 +219,7 @@ class OAuth2RessourceOwnerClient { // TODO: Renommer avec "password"
       scope: this.sanitizeScope(this.scope)
     };
     const headers = {
-      ...OAuth2RessourceOwnerClient.DEFAULT_HEADERS,
+      ...OAuth2RessourceOwnerPasswordClient.DEFAULT_HEADERS,
       Authorization: this.getAuthHeader(this.clientId, this.clientSecret)
     };
 
@@ -324,7 +326,7 @@ class OAuth2RessourceOwnerClient { // TODO: Renommer avec "password"
 /**
  * A oAuth connexion configured for Open Digital Education API
  */
-const oauth = new OAuth2RessourceOwnerClient(
+const oauth = new OAuth2RessourceOwnerPasswordClient(
   `${Conf.platform}/auth/oauth2/token`,
   "app-e",
   "ODE",
@@ -348,7 +350,7 @@ export default oauth;
  */
 export function signImagesUrls(
   images: Array<{ src: string; alt: string }>
-): Array<{ src: object; alt: string }> {
+): Array<{ src: ImageURISource; alt: string }> {
   return images.map(v => ({
     alt: v.alt,
     src: signUrl(v.src)
@@ -357,8 +359,16 @@ export function signImagesUrls(
 
 /**
  * Build a signed request from an url.
+ * This function skip the signing if url points to an another web domain.
  */
-export function signUrl(url: string): object {
+export function signUrl(url: string): ImageURISource {
+  // console.log(url);
+  // If there is a protocol AND url doen't contain plateform url, doesn't sign it.
+  if (url.indexOf("://") !== -1 && url.indexOf(Conf.platform) === -1) {
+    // console.log("external image, not sign");
+    return { uri: url };
+  }
+  // console.log("internal, signed");
   return oauth.sign({
     method: "GET",
     uri: url

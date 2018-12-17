@@ -13,7 +13,7 @@ import {
 } from "../actions/diaryList";
 import { homeworkDiarySelected } from "../actions/selectedDiary";
 
-import { Tracking } from "../../tracking/TrackingManager";
+import Tracking from "../../tracking/TrackingManager";
 
 const mapStateToProps: (state: any) => IHomeworkFilterPageDataProps = state => {
   // Extract data from state

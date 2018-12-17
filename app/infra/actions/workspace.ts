@@ -1,6 +1,6 @@
 import ImagePicker from "react-native-image-picker";
 import { Conf } from "../../Conf";
-import { Tracking } from "../../tracking/TrackingManager";
+import Tracking from "../../tracking/TrackingManager";
 import { signedFetch } from "../fetchWithCache";
 
 // console.log(ImagePicker);

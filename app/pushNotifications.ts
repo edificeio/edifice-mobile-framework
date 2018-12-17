@@ -3,8 +3,7 @@
 import mailboxHandle from "./mailbox/notifHandler";
 import timelineHandle from "./timeline/NotifHandler";
 
-export default dispatch => data => {
-  // conversationHandle(dispatch)(data);
+export default dispatch => (data, apps) => {
   mailboxHandle(dispatch)(data);
-  timelineHandle(dispatch)(data);
+  timelineHandle(dispatch)(data, apps);
 };

@@ -1,6 +1,6 @@
 export const CLEAR_TIMELINE = (state, action) => ({
-    ...state,
-    endReached: false,
-    isFetching: false,
-    news: [],
+  ...state,
+  endReached: false,
+  isFetching: false,
+  news: []
 });

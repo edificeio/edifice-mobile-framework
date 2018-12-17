@@ -13,7 +13,10 @@ import {
   actionTypeResetRequested,
   actionTypes,
   actionTypeSetRead,
-  NB_THREADS_PER_PAGE
+  NB_THREADS_PER_PAGE,
+  actionTypeThreadResetRequested,
+  actionTypeThreadResetReceived,
+  actionTypeThreadDeleted
 } from "../actions/threadList";
 import { IConversationMessage } from "./messages";
 import { actionTypeMessageSendRequested, actionTypeMessageSent } from "../actions/sendMessage";
@@ -38,12 +41,14 @@ export interface IConversationThread {
 export type IConversationThreadList = IOrderedArrayById<IConversationThread> & {
   page?: number;
   isRefreshing?: boolean; // isRefreshing is not as the same level of isFetching, but it's more practical this way.
+  end?: boolean;
 };
 
 // THE REDUCER ------------------------------------------------------------------------------------
 
 const stateDefault: IConversationThreadList = {
   byId: {},
+  end: false,
   ids: [],
   isRefreshing: true,
   page: -1
@@ -59,6 +64,7 @@ const conversationThreadListReducer = (
       return {
         ...state,
         byId: { ...state.byId, ...action.data.byId },
+        end: action.data.ids.length === 0,
         ids: [
           ...state.ids.slice(0, NB_THREADS_PER_PAGE * action.page),
           ...action.data.ids,
@@ -74,6 +80,7 @@ const conversationThreadListReducer = (
     case actionTypeResetReceived:
       return {
         byId: { ...action.data.byId },
+        end: false,
         ids: [...action.data.ids],
         isRefreshing: false,
         page: 0
@@ -91,6 +98,20 @@ const conversationThreadListReducer = (
           }
         }
       };
+    case actionTypeThreadResetRequested:
+      // action contains `threadId`
+      // console.log("reducer: append requested", action);
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          [action.threadId]: {
+            ...state.byId[action.threadId],
+            isFetchingNewer: true,
+            messages: []
+          }
+        }
+      };
     case actionTypeAppendReceived:
       // action contains `data`, `threadId`, `isNew`
       // console.log("reducer: append received", action);
@@ -104,6 +125,20 @@ const conversationThreadListReducer = (
               ? [...action.data, ...state.byId[action.threadId].messages]
               : [...state.byId[action.threadId].messages, ...action.data],
             [action.isNew ? "isFetchingNewer" : "isFetchingOlder"]: false
+          }
+        }
+      };
+    case actionTypeThreadResetReceived:
+      // action contains `data`, `threadId`
+      // console.log("reducer: append received", action);
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          [action.threadId]: {
+            ...state.byId[action.threadId],
+            isFetchingNewer: false,
+            messages: action.data
           }
         }
       };
@@ -165,6 +200,14 @@ const conversationThreadListReducer = (
           [action.newThread.id]: action.newThread
         },
         ids: [action.newThread.id, ...state.ids]
+      };
+    case actionTypeThreadDeleted:
+      // console.log("reducer (threadList): delete thread");
+      const { [action.threadId]: value, ...byId } = state.byId;
+      return {
+        ...state,
+        byId,
+        ids: state.ids.filter(v => v !== action.threadId)
       };
     default:
       return state;

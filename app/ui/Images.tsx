@@ -1,12 +1,14 @@
+import I18n from "i18n-js";
+
 import style from "glamorous-native";
 import * as React from "react";
-import { Dimensions, Text, View, ViewStyle, ImageProps } from "react-native";
-import I18n from "react-native-i18n";
+import { Dimensions, Text, View, ViewStyle, ImageProps, ImageURISource } from "react-native";
 import { Row } from ".";
 import { Carousel } from "./Carousel";
 import { CommonStyles } from "../styles/common/styles";
 import { Italic } from "./Typography";
 import ImageOptional from "./ImageOptional";
+import FastImage from "react-native-fast-image";
 
 const BubbleText = style.text({
   color: "#FFFFFF",
@@ -44,7 +46,7 @@ const Column = style.view({
   width: "100%"
 });*/
 
-const UnavailableImage = (
+const UnavailableImage = () => (
   <View
     style={{
       backgroundColor: CommonStyles.entryfieldBorder,
@@ -54,23 +56,25 @@ const UnavailableImage = (
       width: "100%"
     }}
   >
-    {/*<Italic>{I18n.t("imageNotAvailable")}</Italic>*/}
+    <Italic>{I18n.t("imageNotAvailable")}</Italic>
   </View>
 );
 
 const StretchImage = (props: ImageProps) => (
   <ImageOptional
     {...props}
-    imageComponent={style.image({
+    imageComponent={FastImage}
+    errorComponent={<UnavailableImage />}
+    style={{
       height: "100%",
       width: "100%"
-    })}
-    errorComponent={UnavailableImage}
+    }}
+    resizeMode={FastImage.resizeMode.cover}
   />
 );
 
 export class Images extends React.Component<
-  { images: Array<{ src: object; alt: string }>; style?: ViewStyle },
+  { images: Array<{ src: ImageURISource; alt: string }>; style?: ViewStyle },
   any
 > {
   public state = {

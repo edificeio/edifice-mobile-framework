@@ -1,6 +1,6 @@
 import * as React from "react";
 import { View } from "react-native";
-import I18n from "react-native-i18n";
+import I18n from "i18n-js";
 import { connect } from "react-redux";
 import { pickFilters, setFilters } from "../actions/pickFilter";
 import {
@@ -13,20 +13,21 @@ import { PageContainer, ListItem } from "../../ui/ContainerContent";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { Bold } from "../../ui/Typography";
 import { Checkbox } from "../../ui/forms/Checkbox";
-import { Tracking } from "../../tracking/TrackingManager";
+import Tracking from "../../tracking/TrackingManager";
 
 export class FilterHeader extends React.Component<
   {
     navigation: any;
     pickFilters: (apps) => void;
-    setFilters: (apps) => void;
+    setFilters: (apps, legalApps) => void;
     availableApps;
     selectedApps;
+    legalApps;
   },
   undefined
 > {
   apply() {
-    this.props.setFilters(this.props.selectedApps);
+    this.props.setFilters(this.props.selectedApps, this.props.legalApps);
     Tracking.logEvent("filterTimeline", {
       filterBy: JSON.stringify(this.props.selectedApps)
     });
@@ -54,11 +55,12 @@ export class FilterHeader extends React.Component<
 export const FilterHeaderConnect = connect(
   (state: any) => ({
     selectedApps: state.timeline.selectedApps,
-    availableApps: state.timeline.availableApps
+    availableApps: state.timeline.availableApps,
+    legalApps: state.user.auth.apps
   }),
   dispatch => ({
     pickFilters: apps => pickFilters(dispatch)(apps),
-    setFilters: apps => setFilters(dispatch)(apps)
+    setFilters: (apps, legalapps) => setFilters(dispatch)(apps, legalapps)
   })
 )(FilterHeader);
 

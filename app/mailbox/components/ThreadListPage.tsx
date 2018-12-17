@@ -16,7 +16,7 @@
 // Libraries
 import style from "glamorous-native";
 import * as React from "react";
-import I18n from "react-native-i18n";
+import I18n from "i18n-js";
 import Swipeable from "react-native-swipeable";
 import ViewOverflow from "react-native-view-overflow";
 
@@ -30,7 +30,7 @@ import { RefreshControl } from "react-native";
 const { View, FlatList, Text } = style;
 import styles from "../../styles";
 
-import { Loading } from "../../ui";
+import { Icon, Loading, ButtonsOkCancel } from "../../ui";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
 import { EmptyScreen } from "../../ui/EmptyScreen";
@@ -39,6 +39,9 @@ import ThreadItem from "../components/ThreadItem";
 // Type definitions
 
 import { IConversationThread } from "../reducers/threadList";
+import { ModalContent, ModalBox } from "../../ui/Modal";
+import { LightP } from "../../ui/Typography";
+import Tracking from "../../tracking/TrackingManager";
 
 // Misc
 
@@ -55,6 +58,7 @@ export interface IThreadListPageEventProps {
   // Because of presence of a state in the container, eventProps are not passed using mapDispatchToProps.
   // So, eventProps that are using the state are passed in *OtherProps.
   onOpenThread?: (threadId: string) => void;
+  onDeleteThread?: (threadId: string) => void;
 }
 
 export interface IThreadListPageOtherProps {
@@ -67,14 +71,30 @@ export type IThreadListPageProps = IThreadListPageDataProps &
   IThreadListPageEventProps &
   IThreadListPageOtherProps;
 
+const RightButton = style.touchableOpacity({
+  backgroundColor: "#EC5D61",
+  flex: 1,
+  justifyContent: "center",
+  paddingLeft: 34
+});
+
 // Main component ---------------------------------------------------------------------------------
 
 export class ThreadListPage extends React.PureComponent<
   IThreadListPageProps,
-  {}
+  {
+    showDeleteModal: boolean;
+    swipedThreadId: string;
+  }
 > {
+  private swipeRef = undefined;
+
   constructor(props) {
     super(props);
+    this.state = {
+      showDeleteModal: false,
+      swipedThreadId: null
+    };
   }
 
   // Render
@@ -92,6 +112,9 @@ export class ThreadListPage extends React.PureComponent<
     return (
       <PageContainer>
         <ConnectionTrackingBar />
+        <ModalBox backdropOpacity={0.5} isVisible={this.state.showDeleteModal}>
+          {this.renderDeleteModal(this.state.swipedThreadId)}
+        </ModalBox>
         {pageContent}
       </PageContainer>
     );
@@ -121,11 +144,21 @@ export class ThreadListPage extends React.PureComponent<
         refreshControl={
           <RefreshControl
             refreshing={isRefreshing}
-            onRefresh={() => onRefresh()}
+            onRefresh={() => {
+              onRefresh();
+              Tracking.logEvent("refreshConversation", {
+                direction: "up"
+              });
+            }}
           />
         }
         data={this.props.threads}
-        onEndReached={() => onNextPage()}
+        onEndReached={() => {
+          onNextPage();
+          Tracking.logEvent("refreshConversation", {
+            direction: "down"
+          });
+        }}
         onEndReachedThreshold={0.1}
         renderItem={({ item }: { item: IConversationThread }) =>
           this.renderThreadItem(item)
@@ -137,12 +170,41 @@ export class ThreadListPage extends React.PureComponent<
     );
   }
 
+  public renderSwipeDelete(threadId: string) {
+    return [
+      <RightButton
+        onPress={() =>
+          this.setState({
+            showDeleteModal: true,
+            swipedThreadId: threadId
+          })
+        }
+      >
+        <Icon size={18} color="#ffffff" name="trash" />
+      </RightButton>
+    ];
+  }
+
+  public renderDeleteModal = (threadId: string) => (
+    <ModalContent>
+      <LightP>{I18n.t("common-confirm")}</LightP>
+      <LightP>{I18n.t("conversation-deleteThread")}</LightP>
+      <ButtonsOkCancel
+        onCancel={() => {
+          this.setState({ showDeleteModal: false });
+          this.swipeRef.recenter();
+        }}
+        onValid={() => this.handleDeleteThread(threadId)}
+        title={I18n.t("delete")}
+      />
+    </ModalContent>
+  ); // TS-ISSUE
+
   public renderThreadItem(thread: IConversationThread) {
     return (
       <Swipeable
-        // TODO suppression de message
-        // rightButtons={this.swipeoutButton(item)}
-        // onRightButtonsOpenRelease={(e, g, r) => (this.swipeRef = r)}
+        rightButtons={this.renderSwipeDelete(thread.id)}
+        onRightButtonsOpenRelease={(e, g, r) => (this.swipeRef = r)}
       >
         <ThreadItem
           {...thread}
@@ -158,6 +220,21 @@ export class ThreadListPage extends React.PureComponent<
 
   public handleOpenThread(threadId) {
     this.props.onOpenThread(threadId);
+    this.props.navigation.navigate("thread");
+    const isUnread = this.props.threads.find(el => el.id === threadId).unread;
+    Tracking.logEvent("readConversation", {
+      unread: isUnread
+      // TODO : track waitingTime & total messages read for this user
+    });
+  }
+
+  public handleDeleteThread(threadId) {
+    this.swipeRef.recenter();
+    this.props.onDeleteThread(threadId);
+    this.setState({
+      showDeleteModal: false,
+      swipedThreadId: null
+    });
   }
 }
 

@@ -1,7 +1,7 @@
 import { adaptator } from "../../infra/HTMLAdaptator";
 import { Connection } from "../../infra/Connection";
 import { Me } from "../../infra/Me";
-import I18n from "react-native-i18n";
+import I18n from "i18n-js";
 import { fetchJSONWithCache } from "../../infra/fetchWithCache";
 import { signImagesUrls } from "../../infra/oauth";
 

@@ -33,77 +33,46 @@ const localState = globalState =>
 // ADAPTER ----------------------------------------------------------------------------------------
 
 // Data type of what is given by the backend.
-export type IConversationThreadListBackend = Array<
-  // Double-array: A thread is an array of messages. Backend serves an array of threads.
-  Array<{
-    id: string; // Message's own id
-    parent_id: string; // Id of the message that it reply to
-    subject: string; // Subject of the message
-    body: string; // Content of the message. It's HTML.
-    from: string; // User id of the sender
-    fromName: string; // Name of the sender
-    to: string[]; // User Ids of the receivers
-    toName: string[]; // Name of the receivers
-    cc: string[]; // User Ids of the copy receivers
-    ccName: string[]; // Name of the copy receivers
-    displayNames: string[][]; // [0: id, 1: displayName] for each person concerned by this message.
-    date: number; // DateTime of the message
-    thread_id: string; // Id of the thread (Id of the first message in this thread).
-    unread: boolean; // Self-explaining
-    rownum: number; // number of the message in the thread (starting from 1 from the newest to the latest).
-  }>
->;
+export type IConversationThreadListBackend = Array<{
+  cc: string[]; // User Ids of the copy receivers
+  date: number; // DateTime of the message
+  displayNames: string[][]; // [0: id, 1: displayName] for each person concerned by this message.
+  from: string; // User id of the sender
+  id: string; // Message's own id
+  subject: string; // Subject of the message
+  to: string[]; // User Ids of the receivers
+  unread: number; // Nbr of unread messages in this thread
+}>;
 
 const conversationThreadListAdapter: (
   data: IConversationThreadListBackend
-) => {
-  messages: IArrayById<IConversationMessage>;
-  threads: IConversationThreadList;
-} = data => {
+) => IConversationThreadList = data => {
   const result = {
-    messages: {},
-    threads: {
-      byId: {},
-      ids: []
-    }
+    byId: {},
+    ids: []
   };
 
   for (const thread of data) {
     // 1, For each thread, extract thread info in `result.threads`
-    const newestMessage = thread[0];
-    const threadId = newestMessage.thread_id;
-    result.threads.byId[threadId] = {
-      cc: newestMessage.cc,
-      date: moment(newestMessage.date),
-      displayNames: newestMessage.displayNames,
-      from: newestMessage.from,
-      id: threadId,
+    result.byId[thread.id] = {
+      cc: thread.cc,
+      date: moment(thread.date),
+      displayNames: thread.displayNames,
+      from: thread.from,
+      id: thread.id,
       isFetchingNewer: false,
       isFetchingOlder: false,
       messages: [],
-      subject: newestMessage.subject.replace(/Tr :|Re :|Re:|Tr:/g, "").trim(), // TODO : do this at display time, not load time.
-      to: newestMessage.to,
-      unread: 0
+      subject: thread.subject.replace(/Tr :|Re :|Re:|Tr:/g, "").trim(), // TODO : do this at display time, not load time.
+      to: thread.to,
+      unread: thread.unread
     };
-    result.threads.ids.push(newestMessage.thread_id);
-    // 2, Then extract all messages and put them flattened in `result.messages`
-    for (const message of thread) {
-      result.messages[message.id] = {
-        ...message,
-        date: moment(message.date),
-        parentId: message.parent_id,
-        threadId
-      };
-      if (message.unread && message.from !== Me.session.userId)
-        ++result.threads.byId[threadId].unread;
-      result.threads.byId[threadId].messages.push(message.id);
-    }
-    // 3, Sort each thread by last message date, backend result is f*cked-up
-    result.threads.ids.sort((a: string, b: string) =>
-      result.threads.byId[b].date.diff(result.threads.byId[a].date)
+    result.ids.push(thread.id);
+    // 2, Sort each thread by last message date, backend result is f*cked-up
+    result.ids.sort((a: string, b: string) =>
+      result.byId[b].date.diff(result.byId[a].date)
     );
   }
-
   return result;
 };
 
@@ -165,10 +134,32 @@ export function conversationThreadAppendReceived(
   return { type: actionTypeAppendReceived, data, threadId, isNew };
 }
 
+export const actionTypeThreadResetRequested =
+  conversationConfig.createActionType("THREAD_LIST") +
+  "_THREAD_RESET_REQUESTED";
+export const actionTypeThreadResetReceived =
+  conversationConfig.createActionType("THREAD_LIST") + "_THREAD_RESET_RECEIVED";
+
+export function conversationThreadResetRequested(threadId: string) {
+  return { type: actionTypeThreadResetRequested, threadId };
+}
+export function conversationThreadResetReceived(
+  data: string[],
+  threadId: string
+) {
+  return { type: actionTypeThreadResetReceived, data, threadId };
+}
+
 export const actionTypeSetRead =
   conversationConfig.createActionType("THREAD") + "_SET_READ";
 export function conversationThreadSetRead(threadId: string) {
   return { type: actionTypeSetRead, threadId };
+}
+
+export const actionTypeThreadDeleted =
+  conversationConfig.createActionType("THREAD") + "_DELETED";
+export function conversationThreadDeleted(threadId: string) {
+  return { type: actionTypeThreadDeleted, threadId };
 }
 
 // THUNKS -----------------------------------------------------------------------------------------
@@ -180,10 +171,13 @@ export function conversationThreadSetRead(threadId: string) {
 export function fetchConversationThreadList(page: number = 0) {
   return async (dispatch, getState) => {
     // Check if we try to reload a page
-    if (localState(getState()).isFetching) {
+    const threadListinfo = localState(getState());
+    if (threadListinfo.isFetching) {
       // Don't fetch new page if already fetching
-      throw new Error("Conversation: Won't fetch, already fetching.");
+      // throw new Error("Conversation: Won't fetch, already fetching.");
+      return;
     }
+    if (threadListinfo.data.end) return;
     if (page <= localState(getState()).data.page) {
       throw new Error(
         "Conversation: Won't fetch a page that has already been recevied."
@@ -191,16 +185,12 @@ export function fetchConversationThreadList(page: number = 0) {
     }
 
     dispatch(conversationThreadListRequested());
-
     try {
       const data = await asyncGetJson(
         `/conversation/threads/list?page=${page}`,
         conversationThreadListAdapter
       );
-      const { messages, threads } = data;
-
-      dispatch(conversationThreadListReceived(page, threads)); // threads with message ids
-      dispatch(conversationMessagesReceived(messages)); // message contents
+      dispatch(conversationThreadListReceived(page, data)); // threads with message ids
     } catch (errmsg) {
       dispatch(conversationThreadListFetchError(errmsg));
     }
@@ -209,17 +199,15 @@ export function fetchConversationThreadList(page: number = 0) {
 
 export function resetConversationThreadList() {
   return async (dispatch, getState) => {
-    console.log("resetConvThreadList");
     dispatch(conversationThreadListResetRequested());
     try {
       const data = await asyncGetJson(
         `/conversation/threads/list?page=0`,
         conversationThreadListAdapter
       );
-      const { messages, threads } = data;
-      dispatch(conversationThreadListResetReceived(threads)); // threads with message ids
-      dispatch(conversationMessagesReceived(messages)); // message contents
+      dispatch(conversationThreadListResetReceived(data)); // thread infos
     } catch (errmsg) {
+      console.warn(errmsg);
       dispatch(conversationThreadListFetchError(errmsg));
     }
   };
@@ -253,7 +241,6 @@ export function fetchConversationThreadOlderMessages(threadId: string) {
       // dispatch
       dispatch(conversationMessagesReceived(messages)); // message contents
       dispatch(conversationThreadAppendReceived(messageIds, threadId, false)); // messages ids ordered
-      dispatch(conversationSetMessagesRead(messageIds));
     } catch (errmsg) {
       dispatch(conversationThreadListFetchError(errmsg));
     }
@@ -287,7 +274,32 @@ export function fetchConversationThreadNewerMessages(threadId: string) {
       // dispatch
       dispatch(conversationMessagesReceived(messages)); // message contents
       dispatch(conversationThreadAppendReceived(messageIds, threadId, true)); // messages ids ordered
-      dispatch(conversationSetMessagesRead(messageIds));
+    } catch (errmsg) {
+      dispatch(conversationThreadListFetchError(errmsg));
+    }
+  };
+}
+
+export function fetchConversationThreadResetMessages(threadId: string) {
+  return async (dispatch, getState) => {
+    try {
+      const threadInfo = localState(getState()).data.byId[threadId];
+      dispatch(conversationThreadResetRequested(threadId));
+      // Fetch data
+      const data = await asyncGetJson(
+        `/conversation/thread/messages/${threadId}`,
+        conversationOrderedMessagesAdapter
+      );
+      // Extract messageIds list and contents
+      const messages: IConversationMessageList = {};
+      for (const message of data) {
+        messages[message.id] = message;
+      }
+      const messageIds = data.map(message => message.id);
+      // console.log("thread newer messages received: ", messages, messageIds);
+      // dispatch
+      dispatch(conversationMessagesReceived(messages)); // message contents
+      dispatch(conversationThreadResetReceived(messageIds, threadId)); // messages ids ordered
     } catch (errmsg) {
       dispatch(conversationThreadListFetchError(errmsg));
     }
@@ -296,20 +308,43 @@ export function fetchConversationThreadNewerMessages(threadId: string) {
 
 export function conversationSetThreadRead(threadId: string) {
   return async (dispatch, getState) => {
+    const threadInfo = localState(getState()).data.byId[threadId];
+    if (!threadInfo.unread) return;
     try {
-      const threadInfo = localState(getState()).data.byId[threadId];
-      await signedFetch(`${Conf.platform}/conversation/toggleUnread`, {
-        body: JSON.stringify({
-          id: threadInfo.messages,
-          unread: false
-        }),
-        method: "POST"
-      });
+      const response = await signedFetch(
+        `${Conf.platform}/conversation/thread/toggleUnread`,
+        {
+          body: JSON.stringify({
+            id: [threadId],
+            unread: false
+          }),
+          method: "POST"
+        }
+      );
       dispatch(conversationThreadSetRead(threadId));
-      dispatch(conversationMessagesSetRead(threadInfo.messages));
     } catch (errmsg) {
       // tslint:disable-next-line:no-console
       console.warn("failed to mark thread read : ", threadId);
+    }
+  };
+}
+
+export function conversationDeleteThread(threadId: string) {
+  return async (dispatch, getState) => {
+    try {
+      const response = await signedFetch(
+        `${Conf.platform}/conversation/thread/trash`,
+        {
+          body: JSON.stringify({
+            id: [threadId]
+          }),
+          method: "PUT"
+        }
+      );
+      dispatch(conversationThreadDeleted(threadId));
+    } catch (errmsg) {
+      // tslint:disable-next-line:no-console
+      console.warn("failed to mark thread deleted : ", threadId);
     }
   };
 }

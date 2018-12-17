@@ -10,7 +10,11 @@ target 'mobileapp' do
     # 'BatchedBridge', # Required For React Native 0.45.0+
     'Core',
     'CxxBridge',
-    'DevSupport'
+    'DevSupport',
+    'RCTText',
+    'RCTNetwork',
+    'RCTWebSocket',
+    'RCTImage'
     # Add any other subspecs you want to use in your project
   ]
 
@@ -30,6 +34,13 @@ target 'mobileapp' do
   pod 'Mixpanel'
   pod 'rn-fetch-blob', :path => '../node_modules/rn-fetch-blob'
   pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
+
+  pod 'RNLanguages', :path => '../node_modules/react-native-languages'
+
+
+  pod 'react-native-mixpanel', :path => '../node_modules/react-native-mixpanel'
+
+  pod 'react-native-fast-image', :path => '../node_modules/react-native-fast-image'
 
 end
 

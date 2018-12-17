@@ -1,7 +1,7 @@
 // Libraries
 import style from "glamorous-native";
 import * as React from "react";
-import I18n from "react-native-i18n";
+import I18n from "i18n-js";
 
 // Components
 import { AppTitle, Header, HeaderIcon } from "../../../ui/headers/Header";

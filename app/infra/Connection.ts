@@ -1,5 +1,5 @@
 import { NetInfo } from "react-native";
-import { Tracking } from "../tracking/TrackingManager";
+import Tracking from "../tracking/TrackingManager";
 
 export const Connection = {
   isOnline: false
