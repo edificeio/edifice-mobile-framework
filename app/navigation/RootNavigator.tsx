@@ -1,6 +1,6 @@
 import I18n from "i18n-js";
 import * as React from "react";
-import { View } from "react-native";
+import { AppState, View } from "react-native";
 import firebase from "react-native-firebase";
 import { createSwitchNavigator, NavigationContainer } from "react-navigation";
 import { connect } from "react-redux";
@@ -14,6 +14,7 @@ import {
   createMainTabNavigator,
   createMainTabNavOption
 } from "./helpers/mainTabNavigator";
+import { AppStore } from "../AppStore";
 
 // MAIN NAVIGATOR -------------------------------------------------------------------------
 
@@ -42,7 +43,7 @@ function getMainNavigator(apps) {
 export let currentNavigatorRef = null;
 
 class MainNavigatorHOC extends React.Component<
-  { apps: object; dispatch: any},
+  { apps: object; dispatch: any },
   {}
 > {
   public shouldComponentUpdate(nextProps) {
@@ -50,14 +51,13 @@ class MainNavigatorHOC extends React.Component<
   }
 
   public static CurrentNavigator = null;
-  public static notifAlreadyRouted = false;
 
   public async componentDidUpdate() {
     await this.componentDidMount();
   }
 
   public async componentDidMount() {
-    if (!MainNavigatorHOC.notifAlreadyRouted) {
+    if (!AppStore.notifAlreadyRouted) {
       (firebase.messaging() as any).requestPermission();
 
       const notificationOpen = await firebase
@@ -68,7 +68,7 @@ class MainNavigatorHOC extends React.Component<
         const data = JSON.parse(notification.data.params);
         Tracking.logEvent("openNotificationPush");
         pushNotifications(this.props.dispatch)(data, this.props.apps);
-        MainNavigatorHOC.notifAlreadyRouted = true;
+        AppStore.notifAlreadyRouted = true;
       }
     }
   }

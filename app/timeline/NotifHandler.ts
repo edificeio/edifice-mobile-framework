@@ -40,7 +40,7 @@ const openNotif = {
 };
 
 export default dispatch => async (notificationData, legalapps) => {
-  for (let path in openNotif) {
+  for (const path in openNotif) {
     if (notificationData.resourceUri.startsWith(path)) {
       const availableApps = await storedFilters(legalapps);
       const latestNews = await listTimeline(dispatch)(
@@ -49,7 +49,6 @@ export default dispatch => async (notificationData, legalapps) => {
         legalapps
       );
       const item = openNotif[path](notificationData, latestNews);
-      console.log('----------------------------', item);
       if (item) {
         Tracking.logEvent("readNews", {
           application: item.application,

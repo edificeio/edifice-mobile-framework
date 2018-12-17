@@ -161,7 +161,6 @@ export class HomeworkFilterPage extends React.PureComponent<
   // Event Handlers
 
   public handleSelectedHomeworkChanged = (diaryId, diaryTitle) => {
-    console.log("handle change diary");
     this.props.onSelect(diaryId, diaryTitle);
     this.props.navigation.goBack(); // TODO : Should the navigation be in mapDispatchToProps or not ?
   } /* TS-ISSUE: Syntax error on this line because of a collision between TSlint and Prettier. */

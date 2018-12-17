@@ -53,11 +53,11 @@ export default class Tracking {
 
   public static async init() {
     try {
-      console.log("Setting up Tracking manager...");
+      // console.log("Setting up Tracking manager...");
       Tracking.initAnalytics();
       Tracking.initCrashlytics();
       await Tracking.initMixpanel();
-      console.log("Tracking manager is set up");
+      // console.log("Tracking manager is set up");
     } catch (e) {
       // tslint:disable-next-line:no-console
       console.warn(e);
@@ -65,7 +65,7 @@ export default class Tracking {
   }
 
   public static logEvent(name: string, params?) {
-    console.log("TRACK", name, params);
+    // console.log("TRACK", name, params);
     if (Tracking.analytics) {
       if (params) Tracking.analytics.logEvent(name, params);
       else Tracking.analytics.logEvent(name);

@@ -60,7 +60,7 @@ export class Carousel extends React.Component<
   public currentImage: number = 0;
 
   public scrollToCurrentImage() {
-    console.log("scroll to current", this.currentImage);
+    // console.log("scroll to current", this.currentImage);
     this.carouselRef.scrollToIndex({
       index: this.currentImage,
       viewOffset: 0,
@@ -69,7 +69,7 @@ export class Carousel extends React.Component<
   }
 
   public slideToImage(e: number) {
-    console.log("scroll to", e);
+    // console.log("scroll to", e);
     this.carouselRef.scrollToIndex({
       index: e,
       viewOffset: 0,

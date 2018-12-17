@@ -16,6 +16,7 @@ import { login } from "./user/actions/login";
 
 import moduleDefinitions from "./AppModules";
 import { getReducersFromModuleDefinitions } from "./infra/moduleTool";
+import { AppState } from "react-native";
 
 const reducers = {
   connectionTracker,
@@ -47,8 +48,11 @@ I18n.locale = RNLanguages.language;
 
 export class AppStore extends React.Component {
   public async componentDidMount() {
+    AppStore.notifAlreadyRouted = false;
     store.dispatch(login(true) as any);
   }
+
+  public static notifAlreadyRouted = false;
 
   public render() {
     return (
@@ -62,13 +66,22 @@ export class AppStore extends React.Component {
   public async componentWillMount() {
     await Tracking.init();
     RNLanguages.addEventListener("change", this.onLanguagesChange);
+    AppState.addEventListener("change", this._handleAppStateChange);
   }
 
   public componentWillUnmount() {
     RNLanguages.removeEventListener("change", this.onLanguagesChange);
+    AppState.removeEventListener("change", this._handleAppStateChange);
   }
 
   private onLanguagesChange = ({ language }) => {
     I18n.locale = language;
+  };
+
+  private _handleAppStateChange = nextAppState => {
+    if (nextAppState === "active") {
+      AppStore.notifAlreadyRouted = false;
+    }
+    this.setState({ appState: nextAppState });
   };
 }

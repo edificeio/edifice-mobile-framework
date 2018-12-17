@@ -40,7 +40,6 @@ export class ConversationTopBar extends React.PureComponent<
   /* Note : dunno what is this for, but it creates a bug when opening search for the first time
   public componentWillReceiveProps(nextProps) {
     if (nextProps.searchCleared) {
-      console.log("searchCleared");
       this.setState({ searching: false });
     }
   }*/
