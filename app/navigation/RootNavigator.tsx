@@ -57,10 +57,8 @@ class MainNavigatorHOC extends React.Component<
   }
 
   public async componentDidMount() {
-    console.log("comp did update");
     if (!MainNavigatorHOC.notifAlreadyRouted) {
       (firebase.messaging() as any).requestPermission();
-      console.log("start routing notif");
 
       const notificationOpen = await firebase
         .notifications()
@@ -68,9 +66,8 @@ class MainNavigatorHOC extends React.Component<
       if (notificationOpen) {
         const notification = notificationOpen.notification;
         const data = JSON.parse(notification.data.params);
-        console.log("notif data", data);
         Tracking.logEvent("openNotificationPush");
-        pushNotifications(this.props.dispatch)(data);
+        pushNotifications(this.props.dispatch)(data, this.props.apps);
         MainNavigatorHOC.notifAlreadyRouted = true;
       }
     }

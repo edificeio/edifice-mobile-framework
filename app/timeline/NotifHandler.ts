@@ -1,4 +1,4 @@
-import { navigate } from "../navigation/helpers/navHelper";
+import { nainNavNavigate } from "../navigation/helpers/navHelper";
 import Tracking from "../tracking/TrackingManager";
 import { listTimeline } from "./actions/list";
 import { storedFilters, timelineApps } from "./actions/storedFilters";
@@ -6,7 +6,7 @@ import { storedFilters, timelineApps } from "./actions/storedFilters";
 const openNotif = {
   "/schoolbook": (data, latestNews) => {
     if (!data.resourceUri || data.resourceUri.indexOf("word") === -1) {
-      navigate("notifications");
+      nainNavNavigate("notifications");
       return;
     }
     const wordId = data.resourceUri.split("word/")[1];
@@ -16,7 +16,7 @@ const openNotif = {
   },
   "/actualites": (data, latestNews) => {
     if (data.resourceUri.indexOf("/info") === -1) {
-      navigate("notifications");
+      nainNavNavigate("notifications");
       return;
     }
 
@@ -39,10 +39,9 @@ const openNotif = {
   }
 };
 
-export default dispatch => async notificationData => {
+export default dispatch => async (notificationData, legalapps) => {
   for (let path in openNotif) {
     if (notificationData.resourceUri.startsWith(path)) {
-      const legalapps = timelineApps;
       const availableApps = await storedFilters(legalapps);
       const latestNews = await listTimeline(dispatch)(
         0,
@@ -50,6 +49,7 @@ export default dispatch => async notificationData => {
         legalapps
       );
       const item = openNotif[path](notificationData, latestNews);
+      console.log('----------------------------', item);
       if (item) {
         Tracking.logEvent("readNews", {
           application: item.application,
@@ -58,9 +58,9 @@ export default dispatch => async notificationData => {
           published: item.date,
           articleId: item.id
         });
-        navigate("newsContent", { news: item, expend: true });
+        nainNavNavigate("newsContent", { news: item, expend: true });
       } else {
-        navigate("notifications");
+        nainNavNavigate("notifications");
       }
     }
   }
