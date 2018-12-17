@@ -5,6 +5,7 @@ import { Provider } from "react-redux";
 import { applyMiddleware, combineReducers, createStore } from "redux";
 import thunkMiddleware from "redux-thunk";
 import AppScreen from "./AppScreen";
+
 import Tracking from "./tracking/TrackingManager";
 
 import connectionTracker from "./infra/reducers/connectionTracker";
@@ -45,7 +46,7 @@ console.log("languages", RNLanguages.languages);
 I18n.locale = RNLanguages.language;
 
 export class AppStore extends React.Component {
-  public componentDidMount() {
+  public async componentDidMount() {
     store.dispatch(login(true) as any);
   }
 

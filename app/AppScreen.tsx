@@ -1,6 +1,5 @@
 import * as React from "react";
 import { StatusBar, View } from "react-native";
-import firebase from "react-native-firebase";
 import SplashScreen from "react-native-smart-splash-screen";
 import { connect } from "react-redux";
 
@@ -22,19 +21,6 @@ export class AppScreen extends React.Component<any, undefined> {
       delay: 500,
       duration: 850
     });
-
-    (firebase.messaging() as any).requestPermission();
-
-    const notificationOpen = await firebase
-      .notifications()
-      .getInitialNotification();
-    if (notificationOpen) {
-      // await this.props.readCurrentUser(); // TODO : check this : No more needed ?
-      const action = notificationOpen.action;
-      const notification = notificationOpen.notification;
-      this.props.handleNotifications(JSON.parse(notification.data.params));
-      Tracking.logEvent("openNotificationPush");
-    }
   }
 
   public setNavigator(nav) {
@@ -47,8 +33,5 @@ export class AppScreen extends React.Component<any, undefined> {
 
 export default connect(
   state => ({}),
-  dispatch => ({
-    handleNotifications: data => pushNotifications(dispatch)(data)
-    // readCurrentUser: notifData => readCurrentUser(dispatch)()
-  })
+  dispatch => ({})
 )(AppScreen);

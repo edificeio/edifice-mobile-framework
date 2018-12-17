@@ -1,20 +1,19 @@
 import I18n from "i18n-js";
 import * as React from "react";
 import { View } from "react-native";
+import firebase from "react-native-firebase";
 import { createSwitchNavigator, NavigationContainer } from "react-navigation";
 import { connect } from "react-redux";
-
 import moduleDefinitions from "../AppModules";
 import { getRoutesFromModuleDefinitions } from "../infra/moduleTool";
+import pushNotifications from "../pushNotifications";
+import TimelineNavigator from "../timeline/TimelineNavigator";
+import Tracking from "../tracking/TrackingManager";
+import LoginPage from "../user/containers/LoginPage";
 import {
   createMainTabNavigator,
   createMainTabNavOption
 } from "./helpers/mainTabNavigator";
-
-import LoginPage from "../user/containers/LoginPage";
-
-import TimelineNavigator from "../timeline/TimelineNavigator";
-import Tracking from "../tracking/TrackingManager";
 
 // MAIN NAVIGATOR -------------------------------------------------------------------------
 
@@ -40,18 +39,54 @@ function getMainNavigator(apps) {
   return createMainTabNavigator(getMainRoutes(apps));
 }
 
-class MainNavigatorHOC extends React.Component<{ apps: object }, {}> {
+export let currentNavigatorRef = null;
+
+class MainNavigatorHOC extends React.Component<
+  { apps: object; dispatch: any},
+  {}
+> {
   public shouldComponentUpdate(nextProps) {
     return !compareArrays(this.props.apps, nextProps.apps);
+  }
+
+  public static CurrentNavigator = null;
+  public static notifAlreadyRouted = false;
+
+  public async componentDidUpdate() {
+    await this.componentDidMount();
+  }
+
+  public async componentDidMount() {
+    console.log("comp did update");
+    if (!MainNavigatorHOC.notifAlreadyRouted) {
+      (firebase.messaging() as any).requestPermission();
+      console.log("start routing notif");
+
+      const notificationOpen = await firebase
+        .notifications()
+        .getInitialNotification();
+      if (notificationOpen) {
+        const notification = notificationOpen.notification;
+        const data = JSON.parse(notification.data.params);
+        console.log("notif data", data);
+        Tracking.logEvent("openNotificationPush");
+        pushNotifications(this.props.dispatch)(data);
+        MainNavigatorHOC.notifAlreadyRouted = true;
+      }
+    }
   }
 
   public render() {
     // console.log("render new navigator", Math.random());
     const { apps, ...forwardProps } = this.props;
-    const Navigator = getMainNavigator(apps);
+    MainNavigatorHOC.CurrentNavigator = getMainNavigator(apps);
+
     return (
-      <Navigator
+      <MainNavigatorHOC.CurrentNavigator
         {...forwardProps}
+        ref={nav => {
+          currentNavigatorRef = nav;
+        }}
         onNavigationStateChange={(prevState, currentState, action) => {
           // console.log("main nav state change :", prevState, currentState, action);
           // Track if tab has changed
@@ -87,10 +122,7 @@ const mapStateToProps = ({ user }) => ({
   apps: ["user", ...user.auth.apps]
 });
 
-export const MainNavigator = connect(
-  mapStateToProps,
-  () => ({})
-)(MainNavigatorHOC);
+export const MainNavigator = connect(mapStateToProps)(MainNavigatorHOC);
 
 // ROOT NAVIGATOR -------------------------------------------------------------------------
 

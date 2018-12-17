@@ -4,7 +4,7 @@ import mailboxHandle from "./mailbox/notifHandler";
 import timelineHandle from "./timeline/NotifHandler";
 
 export default dispatch => data => {
-  // conversationHandle(dispatch)(data);
+  console.log("HANDLE ALL");
   mailboxHandle(dispatch)(data);
   timelineHandle(dispatch)(data);
 };

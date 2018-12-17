@@ -2,6 +2,7 @@ import { NavigationActions } from "react-navigation";
 
 import { rootNavigatorRef } from "../../AppScreen";
 import { CommonStyles } from "../../styles/common/styles";
+import { currentNavigatorRef } from "../RootNavigator";
 
 export const navScreenOptions = (props, { state }) => {
   const { params = {} } = state;
@@ -35,6 +36,18 @@ export const navScreenOptions = (props, { state }) => {
  */
 export const navigate = (route, params = {}) => {
   return rootNavigatorRef.dispatch(
+    NavigationActions.navigate({ routeName: route, params })
+  );
+};
+
+/**
+ * Use the Root Navigator to go on another page.
+ * CAUTION : Do NOT use this if you want navigate inside a module, instead, use the navigation prop.
+ * @param route route to go
+ * @param params additional parameters ot pass to navigation state
+ */
+export const nainNavNavigate = (route, params = {}) => {
+  return currentNavigatorRef.dispatch(
     NavigationActions.navigate({ routeName: route, params })
   );
 };
