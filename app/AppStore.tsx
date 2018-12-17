@@ -54,6 +54,10 @@ export class AppStore extends React.Component {
 
   public static notifAlreadyRouted = false;
 
+  public state = {
+    appState: AppState.currentState
+  };
+
   public render() {
     return (
       <Provider store={store}>
@@ -79,9 +83,7 @@ export class AppStore extends React.Component {
   };
 
   private _handleAppStateChange = nextAppState => {
-    if (nextAppState === "active") {
-      AppStore.notifAlreadyRouted = false;
-    }
+    AppStore.notifAlreadyRouted = false;
     this.setState({ appState: nextAppState });
   };
 }
