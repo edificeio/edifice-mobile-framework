@@ -48,7 +48,8 @@ I18n.locale = RNLanguages.language;
 
 export class AppStore extends React.Component {
   public async componentDidMount() {
-    AppStore.notifAlreadyRouted = false;
+    this._resetNotificationState();
+    console.log
     store.dispatch(login(true) as any);
   }
 
@@ -83,7 +84,13 @@ export class AppStore extends React.Component {
   };
 
   private _handleAppStateChange = nextAppState => {
-    AppStore.notifAlreadyRouted = false;
+    this._resetNotificationState();
     this.setState({ appState: nextAppState });
   };
+
+  private _resetNotificationState() {
+    console.log("reset notif state & force update by dispatch notifkey");
+    AppStore.notifAlreadyRouted = false;
+    store.dispatch({ type: "FORCE_UPDATE_MAIN_NAVIGATOR" });
+  }
 }

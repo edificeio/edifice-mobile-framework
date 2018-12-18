@@ -43,11 +43,14 @@ function getMainNavigator(apps) {
 export let currentNavigatorRef = null;
 
 class MainNavigatorHOC extends React.Component<
-  { apps: object; dispatch: any },
+  { apps: object; notifKey: number; dispatch: any },
   {}
 > {
   public shouldComponentUpdate(nextProps) {
-    return !compareArrays(this.props.apps, nextProps.apps);
+    return (
+      this.props.notifKey !== nextProps.notifKey ||
+      !compareArrays(this.props.apps, nextProps.apps)
+    );
   }
 
   public static CurrentNavigator = null;
@@ -58,11 +61,17 @@ class MainNavigatorHOC extends React.Component<
 
   public async componentDidMount() {
     if (!AppStore.notifAlreadyRouted) {
-      (firebase.messaging() as any).requestPermission();
+      console.log("notif routing");
+      try {
+        await (firebase.messaging() as any).requestPermission();
+      } catch (e) {
+        console.warn("Error enabling permission", e);
+      }
 
       const notificationOpen = await firebase
         .notifications()
         .getInitialNotification();
+      console.log(notificationOpen);
       if (notificationOpen) {
         const notification = notificationOpen.notification;
         const data = JSON.parse(notification.data.params);
@@ -116,7 +125,8 @@ class MainNavigatorHOC extends React.Component<
 }
 
 const mapStateToProps = ({ user }) => ({
-  apps: ["user", ...user.auth.apps]
+  apps: ["user", ...user.auth.apps],
+  notifKey: user.auth.notifRoutingKey
 });
 
 export const MainNavigator = connect(mapStateToProps)(MainNavigatorHOC);

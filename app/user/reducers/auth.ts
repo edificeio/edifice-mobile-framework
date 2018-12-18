@@ -20,6 +20,8 @@ export interface IUserAuthState {
   loggingIn: boolean;
   // available applications
   apps: string[];
+  // technical
+  notifRoutingKey: number;
 }
 
 // THE REDUCER ------------------------------------------------------------------------------------
@@ -28,6 +30,7 @@ export const stateDefault: IUserAuthState = {
   apps: [],
   loggedIn: false,
   loggingIn: false,
+  notifRoutingKey: 0,
   notificationPrefs: [],
   synced: false
 };
@@ -47,6 +50,7 @@ const authReducer = (state: IUserAuthState = stateDefault, action) => {
         loggedIn: true,
         loggingIn: false,
         login: action.userbook.login,
+        notifRoutingKey: state.notifRoutingKey,
         notificationPrefs: state.notificationPrefs,
         synced: true,
         userId: action.userbook.id
@@ -63,6 +67,11 @@ const authReducer = (state: IUserAuthState = stateDefault, action) => {
       return {
         ...state,
         notificationPrefs: action.notificationPrefs
+      };
+    case "FORCE_UPDATE_MAIN_NAVIGATOR":
+      return {
+        ...state,
+        notifRoutingKey: state.notifRoutingKey + 1
       };
     default:
       return state;
