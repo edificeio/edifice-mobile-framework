@@ -1,7 +1,6 @@
 import I18n from "i18n-js";
 import * as React from "react";
-import { AppState, View } from "react-native";
-import firebase from "react-native-firebase";
+import { View } from "react-native";
 import { createSwitchNavigator, NavigationContainer } from "react-navigation";
 import { connect } from "react-redux";
 import moduleDefinitions from "../AppModules";
@@ -14,7 +13,6 @@ import {
   createMainTabNavigator,
   createMainTabNavOption
 } from "./helpers/mainTabNavigator";
-import { AppStore } from "../AppStore";
 
 // MAIN NAVIGATOR -------------------------------------------------------------------------
 
@@ -43,42 +41,27 @@ function getMainNavigator(apps) {
 export let currentNavigatorRef = null;
 
 class MainNavigatorHOC extends React.Component<
-  { apps: object; notifKey: number; dispatch: any },
+  { apps: object; notification: Notification; dispatch: any },
   {}
 > {
   public shouldComponentUpdate(nextProps) {
     return (
-      this.props.notifKey !== nextProps.notifKey ||
+      this.props.notification !== nextProps.notification ||
       !compareArrays(this.props.apps, nextProps.apps)
     );
   }
 
   public static CurrentNavigator = null;
 
-  public async componentDidUpdate() {
-    await this.componentDidMount();
+  public async componentDidMount() {
+    await this.componentDidUpdate();
   }
 
-  public async componentDidMount() {
-    if (!AppStore.notifAlreadyRouted) {
-      console.log("notif routing");
-      try {
-        await (firebase.messaging() as any).requestPermission();
-      } catch (e) {
-        console.warn("Error enabling permission", e);
-      }
-
-      const notificationOpen = await firebase
-        .notifications()
-        .getInitialNotification();
-      console.log(notificationOpen);
-      if (notificationOpen) {
-        const notification = notificationOpen.notification;
-        const data = JSON.parse(notification.data.params);
-        Tracking.logEvent("openNotificationPush");
-        pushNotifications(this.props.dispatch)(data, this.props.apps);
-        AppStore.notifAlreadyRouted = true;
-      }
+  public async componentDidUpdate() {
+    if (this.props.notification) {
+      const data = JSON.parse(this.props.notification.data.params);
+      console.log("routing from notif data", data);
+      pushNotifications(this.props.dispatch)(data, this.props.apps);
     }
   }
 
@@ -126,7 +109,7 @@ class MainNavigatorHOC extends React.Component<
 
 const mapStateToProps = ({ user }) => ({
   apps: ["user", ...user.auth.apps],
-  notifKey: user.auth.notifRoutingKey
+  notification: user.auth.notification
 });
 
 export const MainNavigator = connect(mapStateToProps)(MainNavigatorHOC);
