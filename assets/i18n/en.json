@@ -5,13 +5,13 @@
   "apply": "Apply",
   "auth-disconnectConfirm": "want to logout?",
   "auth-loginFailed": "Incorrect login or password ?",
-
-
+  "auth-notPremium": "The application is not available for your establishment .",
+  "auth-networkError": "Authentication failed. Please verify your internet connection.",
 
   "Cancel": "Cancel",
   "common-confirm": "Are you sure you",
   "common-connected": "Connected",
-
+  "common-connecting": "Connecting",
   "common-disconnected": "Not connected to the Internet",
   "Connect": "Log in",
   "conversation-chatPlaceholder": "Write a message...",
@@ -28,7 +28,7 @@
 
 
   "homework-select": "My homework notebooks",
-
+  "homework-task-empty-title": "Homework",
   "Homework": "Homework",
   "imageNotAvailable": "Image not available",
 
@@ -41,7 +41,7 @@
 
 
   "News": "News",
-
+  "next": "Next",
   "On": "in",
   "Password": "Password",
   "Profile": "Profile",
@@ -69,22 +69,21 @@
 
 
 
-  "blog-publish-post": "Blog post published",
+  "blog-publish-post": "New blog post",
 
 
-  "messagerie-send-message": "Message received",
-
-
-
+  "messagerie-send-message": "New message",
 
 
 
 
+  "schoolbook-publish": "New message in your schoolbook"
 
 
 
 
 
-  "Erreur_envoi": "Error sending...",
-  "Password_forgotten": "Forgot password?"
+
+
+
 }

@@ -5,13 +5,13 @@
   "apply": "Aplicar",
   "auth-disconnectConfirm": "desconectarse?",
   "auth-loginFailed": "El nombre de usuario o la contraseña son incorrectos",
-
-
+  "auth-notPremium": "La aplicación no esté disponible en su establecimiento.",
+  "auth-networkError": "Error de autenticación. Compruebe su conexión a Internet.",
 
   "Cancel": "Cancelar",
   "common-confirm": "¿Está seguro de que desea ",
   "common-connected": "Conectado",
-
+  "common-connecting": "Conexión a Internet",
   "common-disconnected": "No está conectado a Internet",
   "Connect": "Iniciar sesión",
   "conversation-chatPlaceholder": "Escribe un mensaje...",
@@ -28,12 +28,12 @@
 
 
   "homework-select": "Mis cuadernos de ejercicios",
-
-
-
+  "homework-task-empty-title": "Cuaderno",
+  "Homework": "Cuaderno",
+  "imageNotAvailable": "Imagen no disponible",
 
   "Login": "Usuario",
-  "news-info-shared": "PNoticia compartida",
+  "news-info-shared": "Noticia compartida",
 
 
 
@@ -41,7 +41,7 @@
 
 
   "News": "Noticias",
-
+  "next": "Siguiente",
   "On": "en",
   "Password": "Contraseña",
   "Profile": "Perfil",
@@ -69,7 +69,7 @@
 
 
 
-  "blog-publish-post": "Publicación de una entrada de blog",
+  "blog-publish-post": "Nueva entrada de blog",
 
 
   "messagerie-send-message": "Nuevo mensaje",
@@ -77,13 +77,13 @@
 
 
 
+  "schoolbook-publish": "Nuevo mensaje en tu cuaderno de correspondencia"
 
 
 
 
 
 
+  
 
-  "Erreur_envoi": "Error al enviar...",
-  "Password_forgotten": "¿Contraseña olvidada?"
 }
