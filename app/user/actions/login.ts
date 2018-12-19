@@ -176,3 +176,26 @@ export function logout() {
     }
   };
 }
+
+export function refreshToken(newToken) {
+  return async (dispatch, getState) => {
+    try {
+      const authState = getState().user.auth;
+      if (!authState.loggingIn) return false;
+
+      const oldToken = await firebase.messaging().getToken();
+      const deleteTokenResponse = await signedFetch(
+        `${Conf.platform}/timeline/pushNotif/fcmToken?fcmToken=${oldToken}`,
+        { method: "delete" }
+      );
+      const putTokenResponse = await signedFetch(
+        `${Conf.platform}/timeline/pushNotif/fcmToken?fcmToken=${newToken}`,
+        {
+          method: "put"
+        }
+      );
+    } catch (e) {
+      console.warn(e);
+    }
+  };
+}

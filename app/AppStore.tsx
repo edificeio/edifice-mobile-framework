@@ -12,7 +12,7 @@ import connectionTracker from "./infra/reducers/connectionTracker";
 import ui from "./infra/reducers/ui";
 import timeline from "./timeline/reducer";
 
-import { login } from "./user/actions/login";
+import { login, refreshToken } from "./user/actions/login";
 
 import moduleDefinitions from "./AppModules";
 import { getReducersFromModuleDefinitions } from "./infra/moduleTool";
@@ -54,6 +54,7 @@ I18n.locale = RNLanguages.language;
 
 export class AppStore extends React.Component {
   private notificationOpenedListener;
+  private onTokenRefreshListener:
 
   public state = {
     appState: null
@@ -80,6 +81,9 @@ export class AppStore extends React.Component {
       .onNotificationOpened((notificationOpen: NotificationOpen) =>
         this.handleNotification(notificationOpen)
       );
+    this.onTokenRefreshListener = firebase.messaging().onTokenRefresh(fcmToken => {
+        this.handleFCMTokenModified(fcmToken);
+    });
 
     const notificationOpen: NotificationOpen = await firebase
       .notifications()
@@ -93,6 +97,7 @@ export class AppStore extends React.Component {
     RNLanguages.removeEventListener("change", this.onLanguagesChange);
     AppState.removeEventListener("change", this.handleAppStateChange);
     this.notificationOpenedListener();
+    this.onTokenRefreshListener();
   }
 
   private onLanguagesChange = ({ language }) => {
@@ -118,5 +123,9 @@ export class AppStore extends React.Component {
       notification,
       type: "NOTIFICATION_OPEN"
     });
+  };
+
+  private handleFCMTokenModified = fcmToken => {
+    store.dispatch<any>(refreshToken(fcmToken));
   };
 }
