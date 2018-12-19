@@ -171,7 +171,7 @@ class ThreadInput extends React.PureComponent<
             style={Platform.OS === "android" ? { paddingTop: 8 } : {}}
           />
         </ContainerInput>
-        <Line>
+        <Line style={{ height: 40 }}>
           <ChatIcon
             onPress={() => {
               if (this.state.selected === Selected.keyboard)
@@ -193,11 +193,13 @@ class ThreadInput extends React.PureComponent<
           >
             <IconOnOff name={"camera"} />
           </ChatIcon>
-          <View style={{ flex: 1, alignItems: "flex-end" }}>
-            <SendContainer onPress={() => this.onValid()}>
-              <ToggleIcon show={!!this.state.textMessage} icon={"send_icon"} />
-            </SendContainer>
-          </View>
+          {!!this.state.textMessage ? (
+            <View style={{ flex: 1, alignItems: "flex-end" }}>
+              <SendContainer onPress={() => this.onValid()}>
+                <ToggleIcon show={true} icon={"send_icon"} />
+              </SendContainer>
+            </View>
+          ) : null}
         </Line>
       </ContainerFooterBar>
     );
