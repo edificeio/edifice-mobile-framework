@@ -54,7 +54,7 @@ I18n.locale = RNLanguages.language;
 
 export class AppStore extends React.Component {
   private notificationOpenedListener;
-  private onTokenRefreshListener:
+  private onTokenRefreshListener;
 
   public state = {
     appState: null
