@@ -185,14 +185,14 @@ class ThreadInput extends React.PureComponent<
               style={{ marginLeft: 4 }}
             />
           </ChatIcon>
-          <ChatIcon
-            onPress={() =>
-              Platform.OS === "ios" ? undefined : this.sendPhoto()
-            }
-            style={{ marginBottom: 5, opacity: Platform.OS === "ios" ? 0 : 1 }}
-          >
-            <IconOnOff name={"camera"} />
-          </ChatIcon>
+          {Platform.OS !== "ios" ? (
+            <ChatIcon
+              onPress={() => this.sendPhoto()}
+              style={{ marginBottom: 5 }}
+            >
+              <IconOnOff name={"camera"} />
+            </ChatIcon>
+          ) : null}
           {!!this.state.textMessage ? (
             <View style={{ flex: 1, alignItems: "flex-end" }}>
               <SendContainer onPress={() => this.onValid()}>
