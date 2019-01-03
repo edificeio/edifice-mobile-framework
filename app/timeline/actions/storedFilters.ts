@@ -1,9 +1,13 @@
 import { AsyncStorage } from "react-native";
 
-export const timelineApps = ["BLOG", "NEWS", "SCHOOLBOOK"];
+export const timelineApps = ["BLOG", "ACTUALITES", "SCHOOLBOOK"];
 
 function getLegalTimelineApps(apps: string[]) {
-  return timelineApps.filter(app => apps.includes(app.toLowerCase()));
+  const stringCapitalize = (str: string) =>
+    str.charAt(0).toUpperCase() + str.slice(1);
+  return timelineApps.filter(app =>
+    apps.includes(stringCapitalize(app.toLowerCase()))
+  );
 }
 
 export const storedFilters = async legalapps => {

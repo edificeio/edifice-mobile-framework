@@ -53,7 +53,7 @@
   "timeline-emptyScreenText": "All quiet on the Western front. Are you familiar with the saying \"the calm before the storm?\" ?",
   "timeline-emptyScreenTitle": "No sightings yet. Is there anybody out there?",
   "timeline-filterBy": "Filter by",
-  "timeline-newsFilter": "News",
+  "timeline-actualitesFilter": "News",
   "timeline-schoolbookFilter": "Schoolbook",
   "to": "To :",
   "today": " Today ",
@@ -67,7 +67,7 @@
   },
 
 
-  
+
 
   "blog-publish-post": "New blog post",
 

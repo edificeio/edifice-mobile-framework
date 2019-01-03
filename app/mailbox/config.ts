@@ -4,7 +4,7 @@ import FunctionalModuleConfig from "../infra/moduleTool";
 
 export default new FunctionalModuleConfig({
   name: "mailbox",
-  apiName: "messagerie",
+  apiName: "Messagerie",
   displayName: "Conversation",
   iconName: "conversation"
 });

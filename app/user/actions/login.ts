@@ -51,7 +51,7 @@ export function login(
           method: "put"
         }
       );
-      console.log("Fcm Token (put) :", token, putTokenResponse);
+      // console.log("Fcm Token (put) :", token, putTokenResponse);
 
       // === 3: Gather logged user information
       const userinfo2 = await fetchJSONWithCache("/auth/oauth2/userinfo", {
@@ -60,7 +60,8 @@ export function login(
         }
       });
       // console.log("oauth2 userinfo", userinfo2);
-      userinfo2.apps = userinfo2.apps.map(e => e.displayName);
+      // console.log(userinfo2.apps);
+      userinfo2.apps = userinfo2.apps.map(e => e.name);
       // console.log("apps: ", userinfo2.apps);
       const userdata = await fetchJSONWithCache(
         `/directory/user/${userinfo2.userId}`
@@ -161,7 +162,7 @@ export function logout() {
         `${Conf.platform}/timeline/pushNotif/fcmToken?fcmToken=${token}`,
         { method: "delete" }
       );
-      console.log("Fcm Token (delete) :", token, deleteTokenResponse);
+      // console.log("Fcm Token (delete) :", token, deleteTokenResponse);
       // === 2: Erase stored oauth2 token and cache information
       await oauth.eraseToken();
       await clearCache();
@@ -188,14 +189,14 @@ export function refreshToken(newToken) {
         `${Conf.platform}/timeline/pushNotif/fcmToken?fcmToken=${oldToken}`,
         { method: "delete" }
       );
-      console.log("Fcm Token (refresh delete) :", oldToken, deleteTokenResponse);
+      // console.log("Fcm Token (refresh delete) :", oldToken, deleteTokenResponse);
       const putTokenResponse = await signedFetch(
         `${Conf.platform}/timeline/pushNotif/fcmToken?fcmToken=${newToken}`,
         {
           method: "put"
         }
       );
-      console.log("Fcm Token (refresh put) :", newToken, putTokenResponse);
+      // console.log("Fcm Token (refresh put) :", newToken, putTokenResponse);
     } catch (e) {
       console.warn(e);
     }

@@ -98,7 +98,7 @@ const dataTypes = {
       return defaultContent;
     }
   },
-  NEWS: async (news, timeline) => {
+  ACTUALITES: async (news, timeline) => {
     const newsData = {
       date: news.date.$date,
       id: news._id,

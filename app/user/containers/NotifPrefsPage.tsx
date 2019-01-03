@@ -82,13 +82,21 @@ export class NotifPrefsPage extends React.PureComponent<
   }
 
   public isAllowed(notifPref) {
-    // console.log(notifPref);
+    const stringCapitalize = (str: string) =>
+      str.charAt(0).toUpperCase() + str.slice(1);
     if (
-      !this.props.availableApps.hasOwnProperty(notifPref.type) && // TODO: Get the available apps NOT from timeline
-      notifPref.type !== "MESSAGERIE"
+      !notifPref["app-name"] ||
+      (!this.props.availableApps.hasOwnProperty(
+        notifPref["app-name"].toUpperCase()
+      ) && // TODO: Get the available apps NOT from timeline
+        notifPref.type !== "MESSAGERIE")
     )
       return false;
-    if (!this.props.legalapps.includes(notifPref.type.toLowerCase()))
+    if (
+      !this.props.legalapps.includes(
+        stringCapitalize(notifPref["app-name"].toLowerCase())
+      )
+    )
       return false;
     return excludeNotifTypes.indexOf(notifPref.key) === -1;
   }

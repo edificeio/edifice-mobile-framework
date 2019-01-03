@@ -53,7 +53,7 @@
   "timeline-emptyScreenText": "Está todo muy tranquilo. ¿Conoce la expresión \"la calma antes de la tormenta\"?",
   "timeline-emptyScreenTitle": "No se ve ni un alma. ¿Hay alguien?",
   "timeline-filterBy": "Filtrar en",
-  "timeline-newsFilter": "Noticias",
+  "timeline-actualitesFilter": "Noticias",
   "timeline-schoolbookFilter": "Cuaderno de correspondencia",
   "to": "Para :",
   "today": " Hoy ",
@@ -84,6 +84,6 @@
 
 
 
-  
+
 
 }
