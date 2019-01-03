@@ -43,4 +43,4 @@ const configurations = {
   }
 };
 
-export const Conf = configurations["preprod-oneconnect"];
+export const Conf = configurations["recette-leo"];
