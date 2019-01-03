@@ -25,10 +25,8 @@ import {
 } from "react-native-firebase/notifications";
 
 // Disable Yellow Box on release builds.
-if (!__DEV__) {
-  // tslint:disable-next-line:no-console
-  console.disableYellowBox = true;
-}
+// tslint:disable-next-line:no-console
+console.disableYellowBox = true;
 
 const reducers = {
   connectionTracker,
