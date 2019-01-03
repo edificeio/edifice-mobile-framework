@@ -7,7 +7,7 @@
   "auth-loginFailed": "Incorrect login or password ?",
   "auth-notPremium": "The application is not available for your establishment .",
   "auth-networkError": "Authentication failed. Please verify your internet connection.",
-
+  "auth-unknownError": "Authentication failed. Please try again.",
   "Cancel": "Cancel",
   "common-confirm": "Are you sure you",
   "common-connected": "Connected",
@@ -16,8 +16,8 @@
   "Connect": "Log in",
   "conversation-chatPlaceholder": "Write a message...",
   "conversation-deleteThread": "delete this conversation ?",
-
-
+  "conversation-emptyScreenText": "With Mailbox, start communicating with the other members of your network.",
+  "conversation-emptyScreenTitle": "No message in sight...",
 
   "conversation-newMessage": "New message",
   "conversation-sendingMessage": "Sending...",
@@ -25,13 +25,13 @@
   "delete": "Delete",
   "directory-disconnectButton": "Log out",
   "directory-notificationsTitle": "Notifications",
-
-
+  "homework-emptyScreenText": "Soon, you'll be able to see all the activities you need to do in this digital notebook. Cool, huh?",
+  "homework-emptyScreenTitle": "No activities yet...",
   "homework-select": "My homework notebooks",
   "homework-task-empty-title": "Homework",
   "Homework": "Homework",
   "imageNotAvailable": "Image not available",
-
+  "loadingFailedMessage": "Loading failed. Please check your Internet connection.",
   "Login": "Username",
   "news-info-shared": "Newsfeed shared",
 
@@ -50,24 +50,24 @@
   "seeMore": "See more",
   "timeline-allFilter": "All",
   "timeline-blogFilter": "Blog",
-  "timeline-emptyScreenText": "It's quiet around here.... You know the expression \"the calm before the storm\" ?",
-  "timeline-emptyScreenTitle": "It's deserted... Anybody there?",
+  "timeline-emptyScreenText": "All quiet on the Western front. Are you familiar with the saying \"the calm before the storm?\" ?",
+  "timeline-emptyScreenTitle": "No sightings yet. Is there anybody out there?",
   "timeline-filterBy": "Filter by",
   "timeline-newsFilter": "News",
   "timeline-schoolbookFilter": "Schoolbook",
   "to": "To :",
   "today": " Today ",
+  "tryagain": "Try again",
+
+  "date":{
+    "day_names": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+    "abbr_day_names": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+    "month_names": [null, "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+    "abbr_month_names":  [null, "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+  },
 
 
-
-
-
-
-
-
-
-
-
+  
 
   "blog-publish-post": "New blog post",
 

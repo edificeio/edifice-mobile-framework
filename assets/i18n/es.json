@@ -7,7 +7,7 @@
   "auth-loginFailed": "El nombre de usuario o la contraseña son incorrectos",
   "auth-notPremium": "La aplicación no esté disponible en su establecimiento.",
   "auth-networkError": "Error de autenticación. Compruebe su conexión a Internet.",
-
+  "auth-unknownError": "Error de autenticación. Vuelva a intentarlo.",
   "Cancel": "Cancelar",
   "common-confirm": "¿Está seguro de que desea ",
   "common-connected": "Conectado",
@@ -16,8 +16,8 @@
   "Connect": "Iniciar sesión",
   "conversation-chatPlaceholder": "Escribe un mensaje...",
   "conversation-deleteThread": "eliminar esta conversación ?",
-
-
+  "conversation-emptyScreenText": "Gracias al correo electrónico ya puede empezar a comunicarse con los miembros de su red.",
+  "conversation-emptyScreenTitle": "No hay ningún mensaje...",
 
   "conversation-newMessage": "Nuevo mensaje",
   "conversation-sendingMessage": "Enviando...",
@@ -25,13 +25,13 @@
   "delete": "Eliminar",
   "directory-disconnectButton": "Desconectarse",
   "directory-notificationsTitle": "Notificaciones",
-
-
+  "homework-emptyScreenText": "Pronto podrá consultar todas las actividades por hacer en el cuaderno de ejercicios digital. ¿Está genial, verdad?",
+  "homework-emptyScreenTitle": "No hay actividades todavía...",
   "homework-select": "Mis cuadernos de ejercicios",
   "homework-task-empty-title": "Cuaderno",
   "Homework": "Cuaderno",
   "imageNotAvailable": "Imagen no disponible",
-
+  "loadingFailedMessage": "Error de carga. Compruebe la conexión a Internet.",
   "Login": "Usuario",
   "news-info-shared": "Noticia compartida",
 
@@ -50,14 +50,14 @@
   "seeMore": "Ver más",
   "timeline-allFilter": "Todo",
   "timeline-blogFilter": "Blog",
-  "timeline-emptyScreenText": "Aquí está tranquilo ... ¿Has oído la expresión \"la calma antes de la tormenta\" ?",
-  "timeline-emptyScreenTitle": "Está desierto... ¿Hay alguien ahí?",
+  "timeline-emptyScreenText": "Está todo muy tranquilo. ¿Conoce la expresión \"la calma antes de la tormenta\"?",
+  "timeline-emptyScreenTitle": "No se ve ni un alma. ¿Hay alguien?",
   "timeline-filterBy": "Filtrar en",
   "timeline-newsFilter": "Noticias",
   "timeline-schoolbookFilter": "Cuaderno de correspondencia",
   "to": "Para :",
   "today": " Hoy ",
-
+  "tryagain": "Vuelva a intentarlo.",
 
   "date":{
     "day_names": ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
