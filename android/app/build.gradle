@@ -101,10 +101,10 @@ android {
 
     defaultConfig {
         applicationId "com.ode.appe"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 26
-        versionCode 9
-        versionName "0.0.9"
+        versionCode 10
+        versionName "0.1.0"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
