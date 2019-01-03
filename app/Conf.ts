@@ -6,10 +6,21 @@ const emptyConfiguration = {
   mixpanelTokenIOS: "---"
 };
 
+// All configurations here are to test in debug mode.
+// Mixpanel and Goodle Firebase are connected to the "*-dev" projects.
+
 const configurations = {
   oneconnect: {
     authLoginStore: "AUTH_LOGIN_ONECONNECT",
     platform: "https://oneconnect.opendigitaleducation.com",
+
+    mixpanelTokenAndroid: "c82f3785bad1015243c64ad254086189",
+    mixpanelTokenIOS: "c82f3785bad1015243c64ad254086189"
+  },
+
+  "preprod-oneconnect": {
+    authLoginStore: "AUTH_LOGIN_PREPROD_ONECONNECT",
+    platform: "https://preprod-oneconnect.opendigitaleducation.com",
 
     mixpanelTokenAndroid: "c82f3785bad1015243c64ad254086189",
     mixpanelTokenIOS: "c82f3785bad1015243c64ad254086189"
@@ -32,4 +43,4 @@ const configurations = {
   }
 };
 
-export const Conf = configurations["recette-leo"];
+export const Conf = configurations["preprod-oneconnect"];
