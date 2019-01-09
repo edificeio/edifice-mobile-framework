@@ -26,12 +26,15 @@
   /*
     DEBUG mode
   */
+  #ifdef DEBUG
   jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
   /* 
     RELEASE mode
     https://facebook.github.io/react-native/docs/running-on-device.html#building-your-app-for-production
   */
-  //jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+  #else
+  jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+  #endif
   //jsCodeLocation = [NSURL URLWithString:@"http://localhost:8081/index.bundle?platform=ios"];
 
   [FIRApp configure];

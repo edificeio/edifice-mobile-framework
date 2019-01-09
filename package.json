@@ -2,8 +2,30 @@
   "name": "app-e",
   "version": "0.0.9",
   "private": true,
+  "ode": {
+    "appid": "com.ode.appe",
+    "appname": "app-e-dev",
+    "properties": {
+      "ios": "ios/mobileapp/Info.plist",
+      "android": "android/gradle.properties"
+    },
+    "overrides": [
+      "assets/*",
+      "android/app/src/main/res/*",
+      "ios/mobile-app/Images.xcassets/*"
+    ],
+    "config": {
+      "id": "neo-recette",
+      "url": "http://code.web-education.net/nman/mobileapp-config.git",
+      "google-services.android.json": "android/app/google-services.json",
+      "google-services.ios.plist": "ios/mobileapp/GoogleService-Info.plist",
+      "Conf.ts": "app/Conf.ts"
+    }
+  },
   "scripts": {
-    "build:ios": "react-native bundle --entry-file='index.ios.js' --bundle-output='./ios/YourAppName/main.jsbundle' --dev=false --platform='ios' --assets-dest='./ios'",
+    "appcenter:config": "node ode-plugin.js override switch --to=$APPCENTER_TO --dontrestore --acceptall --uri=$APPCENTER_URI --username=$APPCENTER_USERNAME --password=$APPCENTER_PWD",
+    "appcenter:build:android": "react-native bundle --platform android --dev false --entry-file 'index.js' --bundle-output 'android/app/src/main/assets/index.android.bundle' --assets-dest 'android/app/build/generated/res/react/release'",
+    "appcenter:build:ios": "react-native bundle --platform ios --dev false --entry-file 'index.js' --bundle-output 'ios/mobileapp/main.jsbundle' --assets-dest './ios'",
     "android": "react-native run-android",
     "apk": "cd android && ./gradlew assembleRelease",
     "clean": "rm -r -f ./android/app/build && rm -r -f node_modules && rm -f package-lock.json && rm -f yarn.lock && npm install && cd android && ./gradlew clean && cd .. ",
@@ -45,6 +67,7 @@
     "@types/sax": "^1.0.1",
     "@types/webpack-env": "^1.13.6",
     "babel-jest": "^23.6.0",
+    "crypto2": "^2.0.0",
     "eslint-plugin-prettier": "^3.0.0",
     "isomorphic-fetch": "^2.2.1",
     "jest": "^23.6.0",
@@ -53,17 +76,20 @@
     "npm-check": "^5.9.0",
     "prettier": "^1.15.3",
     "prettier-tslint": "^0.4.0",
+    "prompts": "^2.0.1",
     "react-devtools": "^3.4.3",
     "react-native-cli": "^2.0.1",
     "react-native-typescript-transformer": "^1.2.10",
     "react-test-renderer": "^16.6.3",
+    "rimraf": "^2.6.2",
     "schedule": "^0.4.0",
     "tslint": "^5.11.0",
     "tslint-config-prettier": "^1.17.0",
     "tslint-no-circular-imports": "^0.6.1",
     "tslint-plugin-prettier": "^2.0.1",
     "tslint-react": "^3.6.0",
-    "typescript": "^3.2.1"
+    "typescript": "^3.2.1",
+    "yargs": "^12.0.5"
   },
   "dependencies": {
     "@babel/runtime": "^7.1.2",
@@ -101,7 +127,6 @@
     "redux": "4.0.0",
     "redux-devtools-extension": "^2.13.2",
     "redux-thunk": "^2.3.0",
-    "rimraf": "2.6.2",
     "rn-fetch-blob": "^0.10.13",
     "sax": "^1.2.4",
     "util": "0.10.3"
