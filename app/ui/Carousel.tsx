@@ -137,7 +137,7 @@ export class Carousel extends React.Component<
                           width: "100%"
                         }}
                       >
-                        Suivre le lien vers{" "}
+                        {I18n.t("linkTo")}{" "}
                         <A>
                           {(() => {
                             const matches = item.linkTo.match(

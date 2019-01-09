@@ -463,15 +463,21 @@ export class HtmlConverterJsx extends HtmlConverter {
   protected parseOpenLinkTag(tag: sax.Tag): void {
     if (!this.opts.hyperlinks) return;
     // console.log("encourtered OPEN link");
+    let cleanUrl = tag.attributes.href;
+    if (cleanUrl.startsWith("/")) {
+      // Absolute url. We must add the platform domain name manually.
+      cleanUrl = Conf.platform + cleanUrl;
+    }
+
     const nugget: ILinkTextNugget = {
       children: [],
       parent: null,
       type: HtmlConverterNuggetTypes.Text,
-      url: tag.attributes.href,
+      url: cleanUrl,
       variant: HtmlConverterJsxTextVariant.Link
     };
     this.insertNewTextNugget(nugget);
-    this.currentLink = tag.attributes.href;
+    this.currentLink = cleanUrl;
   }
 
   /**
