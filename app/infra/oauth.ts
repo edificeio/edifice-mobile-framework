@@ -352,7 +352,7 @@ export function signImagesUrls(
   images: Array<{ src: string; alt: string }>
 ): Array<{ src: ImageURISource; alt: string }> {
   return images.map(v => ({
-    alt: v.alt,
+    ...v,
     src: signUrl(v.src)
   }));
 }

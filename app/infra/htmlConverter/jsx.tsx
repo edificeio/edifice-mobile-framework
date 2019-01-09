@@ -38,7 +38,7 @@ export interface IHtmlConverterJsxOptions {
 
 export interface IHtmlConverterImageNugget {
   type: string; // "img"
-  images: Array<{ src: string; alt: string }>;
+  images: Array<{ src: string; alt: string; linkTo?: string }>;
 }
 
 export interface IHtmlConverterIframeNugget {

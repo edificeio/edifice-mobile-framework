@@ -52,7 +52,7 @@ export class HtmlConverter {
       ontext: (text: string) => {
         text = text.replace(/\u200B/g, ""); // remowe ZWSP (Zero-Width SPace) fucking character !
         if (text.match(/\S/)) return text; // Filter whitespace-only strings.
-        return null;
+        return " ";
       }
     };
   }

@@ -14,8 +14,8 @@ const configurations = {
     authLoginStore: "AUTH_LOGIN_ONECONNECT",
     platform: "https://oneconnect.opendigitaleducation.com",
 
-    mixpanelTokenAndroid: "c82f3785bad1015243c64ad254086189",
-    mixpanelTokenIOS: "c82f3785bad1015243c64ad254086189"
+    mixpanelTokenAndroid: "4e35670e26e7dd3c46a77d387b330c58",
+    mixpanelTokenIOS: "4e35670e26e7dd3c46a77d387b330c58"
   },
 
   "preprod-oneconnect": {

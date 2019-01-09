@@ -10,14 +10,16 @@ import {
   Platform,
   ScrollView,
   Text,
-  View
+  View,
+  Linking,
+  TouchableOpacity
 } from "react-native";
 import FastImage from "react-native-fast-image";
 import RNCarousel from "react-native-snap-carousel";
 import { Icon } from ".";
 import { CommonStyles } from "../styles/common/styles";
 import ImageOptional from "./ImageOptional";
-import { Italic } from "./Typography";
+import { Italic, A } from "./Typography";
 
 const Close = style.touchableOpacity({
   height: 40,
@@ -47,7 +49,7 @@ const UnavailableImage = () => (
 
 export class Carousel extends React.Component<
   {
-    images: Array<{ src: ImageURISource; alt: string }>;
+    images: Array<{ src: ImageURISource; alt: string; linkTo?: string }>;
     visible: boolean;
     startIndex?: number;
     onClose: () => void;
@@ -91,20 +93,65 @@ export class Carousel extends React.Component<
               item,
               index
             }: {
-              item: { src: ImageURISource; alt: string };
+              item: { src: ImageURISource; alt: string; linkTo?: string };
               index: number;
             }) => (
-              <ImageOptional
-                imageComponent={FastImage}
-                errorComponent={<UnavailableImage />}
+              <View
+                key={index}
                 style={{
                   height: "100%",
                   width: Dimensions.get("window").width
                 }}
-                resizeMode={FastImage.resizeMode.contain}
-                source={item.src}
-                key={index}
-              />
+              >
+                <ImageOptional
+                  imageComponent={FastImage}
+                  errorComponent={<UnavailableImage />}
+                  style={{
+                    height: "100%",
+                    width: Dimensions.get("window").width
+                  }}
+                  resizeMode={FastImage.resizeMode.contain}
+                  source={item.src}
+                />
+                {item.linkTo ? (
+                  <View
+                    style={{
+                      bottom: 15,
+                      padding: 20,
+                      position: "absolute",
+                      width: "100%"
+                    }}
+                  >
+                    <TouchableOpacity
+                      onPress={() => Linking.openURL(item.linkTo)}
+                      style={{
+                        backgroundColor: "rgba(0, 0, 0, 0.6)",
+                        padding: 10,
+                        width: "100%"
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: CommonStyles.lightGrey,
+                          textAlign: "center",
+                          width: "100%"
+                        }}
+                      >
+                        Suivre le lien vers{" "}
+                        <A>
+                          {(() => {
+                            const matches = item.linkTo.match(
+                              // from https://stackoverflow.com/a/8498629/6111343
+                              /^https?\:\/\/([^\/:?#]+)(?:[\/:?#]|$)/i
+                            );
+                            return matches && matches[1];
+                          })()}
+                        </A>
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : null}
+              </View>
             )}
             itemWidth={Dimensions.get("window").width}
             sliderWidth={Dimensions.get("window").width}

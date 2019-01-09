@@ -11,7 +11,7 @@ export const Bold = style.text({
 export const Italic = style.text({
   color: CommonStyles.textColor,
   fontFamily: CommonStyles.primaryFontFamily,
-  fontSize: 12,
+  fontSize: 14,
   fontStyle: "italic"
 });
 
@@ -64,8 +64,7 @@ export const Quote = style.text({
 export const A = style.text({
   color: CommonStyles.actionColor,
   fontFamily: CommonStyles.primaryFontFamily,
-  fontSize: 12,
-  marginTop: 10
+  fontSize: 14
 });
 
 export const H4 = style.text({

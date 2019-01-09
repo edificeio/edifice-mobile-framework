@@ -18,7 +18,7 @@ import "moment/locale/fr";
 import { CommonStyles } from "../../../styles/common/styles";
 moment.locale("fr");
 
-import HtmlToJsx from "../../../infra/htmlConverter/jsx";
+import HtmlToJsx from "../../../infra/htmlConverter/jsx2";
 
 import memoize from "memoize-one";
 
@@ -42,7 +42,7 @@ export type IHomeworkTaskPageProps = IHomeworkTaskPageDataProps &
 const convert = memoize(
   html =>
     HtmlToJsx(html, {
-      formatting: false,
+      formatting: true,
       hyperlinks: true,
       iframes: true,
       images: true
