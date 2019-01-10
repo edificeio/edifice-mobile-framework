@@ -763,11 +763,10 @@ export class HtmlConverterJsx extends HtmlConverter {
     style: ViewStyle = {}
   ): JSX.Element {
     return (
-      <View key={key} style={{ height: 200, ...style }}>
+      // `overflow: hidden` prevent a display bug on Android
+      <View key={key} style={{ height: 200, ...style, overflow: "hidden" }}>
         <WebView
           style={{ alignSelf: "stretch" }}
-          javaScriptEnabled={true}
-          domStorageEnabled={true}
           source={{ uri: nugget.src }}
           renderLoading={() => (
             <View
