@@ -223,3 +223,248 @@ zipalign 4 <apk-file>
 apksigner sign --ks <keystore-name>.keystore --ks-key-alias <key-name> -ks-pass <keystore-password> <apk-file>
 ```
 doc : https://developer.android.com/studio/command-line/apksigner.html
+
+# Building customized environnement
+
+A cli tool "ode-plugin" is available to help you customized your application by overriding assets or choose the right config files according to the context.
+
+## Override
+
+This application could be customize during the build process. The following elements could be overriden:
+- BundleID and App Name
+  - Android: android/gradle.properties [APPID,APPNAME]
+  - iOS: Info.plist [APPID,APPNAME]
+- Launcher Icon
+  - Android: override the following files android/src/main/res/*/ic_launcher
+  - iOS: override the following files ios/mobileapp/Images.xcassets/AppIcon.appiconset/*
+- Launcher Image
+  - Android: override the following files android/src/main/res/drawable/*
+  - iOS: override the following files ios/mobileapp/Images.xcassets/LaunchImage.launchimage/*
+- Assets:
+  - override image at assets/images/*
+  - override icons at assets/icons/*
+  - any other assets at assets/*
+
+### Create a new override
+
+**ode-plugin** make it easy to create a new override. Just type the command below and answer the questions:
+
+```
+$ node ode-plugin.js override create
+✔ What is the name of this override? … my_override_name
+✔ What is the application's ID for this override? … com.my.application
+✔ What is the application's name for this override? … My App
+✔ What is the ID of the config? … my dev config
+✔ Switch to the new override my_override_name Y/n? … n
+```
+Just tell the plugin:
+- the name of the override (to identify it)
+- the application's Id (or bundle id use to identify the app in stores). Genrally a fully qualified name.
+- the application's name: the display name of the app in stores
+- the config's ID: we will see below how to define config
+
+And finally the plugin suggest to switch the current project to the new override.
+When you switch to an override, all assets updates should not be tracked by git. 
+We will see later how to save override changes.
+
+### Switch to an override
+
+When you switch to a new override, you apply all changes defined in the override:
+- override assets (react, android, ios)
+- override app id and app name (android, ios, package.json)
+- optionnally you can load the config associated to the override (maybe your overriden app have a different firebase config file?)
+
+To switch to an override just type:
+
+```
+$ node ode-plugin.js override switch --to=test
+Restoring files before switching...
+There are no files to restore
+Restoring package.json and native appids...
+Files are going to be replaced from overrides:
+   overrides/test/assets/images/no-avatar.png
+✔ Do you confirm the replacement of theses files Y/n? … y
+✔ Do you want to restore the config Y/n? … y
+✔ What is the repo's URL? … http://test.git  
+✔ What is the repo's username? … XXXXX
+✔ What is the repo's password? … ***
+Config files restored successfully
+```
+When you switch to an override, you just have to specify the id of this override (test in this example).
+
+The plugin first restore your project before applying override changes.
+Before making any changes, the plugin all files that are going to be replaced and aks whether it should make replacement.
+
+When it has finished to apply override, it asks if it should also fetch the config associated to the override.
+
+> You can skip restore using --dontrestore
+
+> You can skip confirmation using --acceptall
+
+>  You can set git credentials (to avoid prompts) using parameters: --uri --username --password
+
+### Backup changes
+
+If you have overriden some assets, you can save save changes for this override using the following command:
+
+```
+$ node ode-plugin.js override backup
+You are going to backup uncommited/unstaged files below:
+M assets/images/no-avatar.png
+U overrides/test/assets/images/no-avatar.1.png
+✔ Do you confirm to backup theses files in the override test Y/n? … y
+Files backed up successfully
+The files below seems to not exists anymore:
+   overrides/test/assets/images/no-avatar.1.png
+✔ Do you want to remove them from override test Y/n? … y
+Files removed from ovveride successfully
+✔ Do you want to unapplied the current oveeride Y/n? … n
+```
+The plugin will check (using git) all changed files and will ask if it should backup them.
+
+It will also detect any overriden files that has been reverted and suggest to remove it from backup.
+
+And finally the plugin ask whether you would like to unapply override.
+
+All overriden assets will be backed up the **override** folder at the root of the project.
+
+### Unapply override
+
+To unapply an override use the command below:
+
+```
+$ node ode-plugin.js override restore
+You are going to reset uncommited/unstaged files below:
+M assets/images/no-avatar.png
+✔ Do you confirm to reset theses files Y/n? … y
+Restoring package.json and native appids...
+✔ Do you want to restore the config Y/n? … y
+✔ What is the repo's URL? … http://test.git  
+✔ What is the repo's username? … XXX
+✔ What is the repo's password? … ***
+Config files restored successfully
+```
+
+The plugin will list all overriden assets that need to be restored and will ask whether it should reset files.
+
+Then it will reset app ids and bundle name (ios,android, package.json).
+
+And finally it will ask whether he should restore the default config (defined in package.json).
+
+
+### See current override
+
+To see which override is currently apply, use the command below:
+
+```
+$ node ode-plugin.js override
+There are no overrides applied!
+```
+
+### Configure the plugin
+
+To configure the plugin just add an "ode" bloc in *package.json* as follow:
+
+```
+"ode": {
+    "appid": "com.ode.appe",//default bundle id
+    "appname": "app-e-dev",//default bundle name
+    "properties": {//which file need to be update when bundle id/name is overriden
+      "ios": "ios/mobileapp/Info.plist",
+      "android": "android/gradle.properties"
+    },
+    "overrides": [//list of folders that could be overriden
+      "assets/*",
+      "android/app/src/main/res/*",
+      "mobileapp/Images.xcassets/*"
+    ],
+    "config": {
+      ...//see belows how it works
+    }
+  }
+```
+
+## Configuration
+
+Config files are not tracked by GIT (they are ignored). They also could change according to the environnement. Below some examples of confidential config files:
+- Platform Config File: override app/Conf.ts
+- Firebase config files:
+  - Android: android/app/config.json
+  - iOS: ios/mobileapp/config.plist
+
+Config files are defined in package.json as follow:
+
+```
+"ode": {
+   ...
+    "config": {
+      "id": "neo-recette",//default config applied
+      "url": "http://test.git  ",//(optionnal) default git repository where the plugin will fetch configs
+      //mappings between config files in repository and the current project
+      "config.android.json": "android/app/config.json",
+      "config.ios.plist": "ios/mobileapp/config.plist",
+      "Conf.ts": "app/Conf.ts"
+    }
+  }
+```
+
+> Config files MUST be ignored by git
+
+### Where are configs
+
+Config are stored in secured git repository.
+The folder structure should be as follow:
+```
+my_env1
+  config_file1
+  config_file2
+  config_file3
+my_env2
+  config_file1
+  config_file2
+  config_file3
+...
+```
+The folder is used by the plugin as *config ID*.
+
+So in your *package.json* when you have
+```
+"ode": {
+   ...
+    "config": {
+      "id": "my_env1",//default config applied
+    }
+  }
+```
+It will load config in "my_env1" folder.
+
+Then you define in your *package.json* a mapping between config files and project files as follow:
+
+```
+"ode": {
+   ...
+    "config": {
+      ...
+      //mappings between config files in repository and the current project
+      "config_file1": "android/myfile",
+      "config_file2": "ios/myfile",
+      "config_file3": "app/myfile"
+    }
+  }
+```
+
+
+### Fetch config
+
+You can load the project from the repository using the command below;
+```
+$ node ode-plugin.js fetch-config
+✔ What is the repo's URL? … http://test.git
+✔ What is the repo's username? … nman
+✔ What is the repo's password? … ***
+Config files restored successfully
+```
+
+The plugin will automatically load the config attach to your current override (or your default config if no override is applied).
+
+> you can specify options to avoid prompts: --uri --username --password

@@ -100,11 +100,13 @@ android {
     compileSdkVersion 26
 
     defaultConfig {
-        applicationId "com.ode.appe"
+        applicationId APPID
         minSdkVersion 21
         targetSdkVersion 26
         versionCode 10
         versionName "0.1.0"
+        resValue "string", "app_name", "${APPNAME}"
+        manifestPlaceholders = [ applicationName: APPNAME ]
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
