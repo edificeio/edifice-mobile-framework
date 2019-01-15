@@ -116,9 +116,8 @@ export class AppStore extends React.Component {
     const action = notificationOpen.action;
     // Get information about the notification that was opened
     const notification: Notification = notificationOpen.notification;
-    console.log("got notification !", notification);
-    Tracking.logEvent("openNotificationPush");
-    const data = JSON.parse(notification.data.params);
+    console.log("got notification !!", notification);
+    Tracking.logEvent("openNotificationPush")
     store.dispatch({
       notification,
       type: "NOTIFICATION_OPEN"
