@@ -141,6 +141,9 @@ android {
 }
 
 dependencies {
+    compile project(':appcenter-crashes')
+    compile project(':appcenter-analytics')
+    compile project(':appcenter')
 
     // Android support classes
     implementation("com.android.support:support-v4:27.1.1")
