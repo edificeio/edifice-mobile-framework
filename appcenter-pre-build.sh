@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
 
+echo "Prepare project..."
+[ -z "$APPCENTER_TO" ] && echo "Need to set APPCENTER_TO" && exit 1;
+[ -z "$APPCENTER_URI" ] && echo "Need to set APPCENTER_URI" && exit 1;
+[ -z "$APPCENTER_USERNAME" ] && echo "Need to set APPCENTER_USERNAME" && exit 1;
+[ -z "$APPCENTER_PWD" ] && echo "Need to set APPCENTER_PWD" && exit 1;
+npm run appcenter:config
+echo "Ready for build!"
 if [ ! -z "${APPCENTER_ANDROID_MODULE}" ];
 then
     echo "=== Generate Android JS bundle ==="
-
-    if [ "$APPCENTER_BRANCH" == "master" ] || [ "$APPCENTER_BRANCH" == "prod" ] || [ "$APPCENTER_BRANCH" == "preprod" ];
-    then
-        echo "Generate JS bundle and assets for Release environment"
-        ./node_modules/.bin/react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/build/generated/res/react/release
-    else
-        echo "Generate JS bundle and assets for Debug environment"
-        ./node_modules/.bin/react-native bundle --platform android --dev true --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/build/generated/res/react/debug
-    fi
+    npm run appcenter:build:android
 fi
 
 if [ ! -z "${APPCENTER_XCODE_SCHEME}" ];
 then
     echo "=== It is an iOS Project ==="
+    npm run appcenter:build:ios
 fi

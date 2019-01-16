@@ -43,15 +43,29 @@ export function login(
       }
 
       // === 2: Get firebase device token and store it in the backend
-      const token = await firebase.messaging().getToken();
-      // console.log(token);
-      const putTokenResponse = await signedFetch(
-        `${Conf.platform}/timeline/pushNotif/fcmToken?fcmToken=${token}`,
-        {
-          method: "put"
+      const registerFCMToken = async () => {
+        const token = await firebase.messaging().getToken();
+        // console.log(token);
+        const putTokenResponse = await signedFetch(
+          `${Conf.platform}/timeline/pushNotif/fcmToken?fcmToken=${token}`,
+          {
+            method: "put"
+          }
+        );
+        console.log("Fcm Token (put) :", token, putTokenResponse);
+      };
+      const hasPermission = await firebase.messaging().hasPermission();
+      if (hasPermission) {
+        await registerFCMToken();
+      } else {
+        try {
+          console.log("asking for perms...");
+          await firebase.messaging().requestPermission();
+          await registerFCMToken();
+        } catch (e) {
+          console.log("Hasnt got permission to register the device token");
         }
-      );
-      // console.log("Fcm Token (put) :", token, putTokenResponse);
+      }
 
       // === 3: Gather logged user information
       const userinfo2 = await fetchJSONWithCache("/auth/oauth2/userinfo", {
@@ -100,10 +114,10 @@ export function login(
             err.authErr === OAuthError.BAD_CREDENTIALS
               ? "bad credentials"
               : err.authErr === OAuthError.NOT_PREMIUM
-              ? "not premium"
-              : err.authErr === OAuthError.NETWORK_ERROR
-              ? "network error"
-              : "unkown",
+                ? "not premium"
+                : err.authErr === OAuthError.NETWORK_ERROR
+                  ? "network error"
+                  : "unkown",
           isManual: credentials ? "true" : "false",
           platform: Conf.platform
         });
