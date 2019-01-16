@@ -3,6 +3,6 @@
     "current": "one-prod",
     "appname": "One Pocket",
     "appid": "com.ode.one",
-    "configid": "neo-prod"
+    "configid": "one-prod"
   }
 }
