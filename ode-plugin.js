@@ -272,7 +272,7 @@ async function _gitListUncommitted() {
         const status = lineParts[0].trim();
         const filePath = lineParts[1].trim();
         const matchedPatterns = overridePatterns.findIndex(function (pattern) {
-            return filePath.indexOf(pattern) > -1;
+            return filePath.indexOf(pattern) > -1 && filePath.indexOf("overrides/")==-1;
         });
         //keep only files that could be overrided
         if (matchedPatterns > -1) {
