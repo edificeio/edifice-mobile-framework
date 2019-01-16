@@ -5,7 +5,7 @@
 import { encode as btoa } from "base-64";
 import querystring from "querystring";
 import { AsyncStorage, ImageURISource } from "react-native";
-import { Conf } from "../Conf";
+import Conf from "../Conf";
 
 export interface IOAuthToken {
   access_token: string;
@@ -23,7 +23,7 @@ export enum OAuthError {
   NETWORK_ERROR
 }
 
-class OAuth2RessourceOwnerPasswordClient {
+export class OAuth2RessourceOwnerPasswordClient {
   /**
    * Common headers to all oauth2 flow requets
    */
@@ -32,6 +32,11 @@ class OAuth2RessourceOwnerPasswordClient {
     "Accept": "application/json, application/x-www-form-urlencoded",
     "Content-Type": "application/x-www-form-urlencoded"
   };
+
+  /**
+   * Current active oauth connection.
+   */
+  public static connection: OAuth2RessourceOwnerPasswordClient = null;
 
   // tslint:disable-next-line:variable-name
   private token: IOAuthToken = null;
@@ -324,13 +329,9 @@ class OAuth2RessourceOwnerPasswordClient {
 }
 
 /**
- * A oAuth connexion configured for Open Digital Education API
+ * Scopes needed for the application.
  */
-const oauth = new OAuth2RessourceOwnerPasswordClient(
-  `${Conf.platform}/auth/oauth2/token`,
-  "app-e",
-  "ODE",
-  `
+export const scopes = `
  actualites
  blog
  conversation
@@ -340,10 +341,8 @@ const oauth = new OAuth2RessourceOwnerPasswordClient(
  timeline
  userinfo
  workspace
- `.split("\n ") // Here the space after "\n" is important, they represent the indentation & the space between the words when "\n" is removed.
-); // You can copy the string directly in the "scope" field in a browser. Keep this indentation intact.
-
-export default oauth;
+`.split("\n "); // Here the space after "\n" is important, they represent the indentation & the space between the words when "\n" is removed.
+// You can copy the string directly in the "scope" field in a browser. Keep this indentation intact.
 
 /**
  * Returns a image array with signed url requests.
@@ -364,12 +363,15 @@ export function signImagesUrls(
 export function signUrl(url: string): ImageURISource {
   // console.log(url);
   // If there is a protocol AND url doen't contain plateform url, doesn't sign it.
-  if (url.indexOf("://") !== -1 && url.indexOf(Conf.platform) === -1) {
+  if (
+    url.indexOf("://") !== -1 &&
+    url.indexOf(Conf.currentPlatform.url) === -1
+  ) {
     // console.log("external image, not sign");
     return { uri: url };
   }
   // console.log("internal, signed");
-  return oauth.sign({
+  return OAuth2RessourceOwnerPasswordClient.connection.sign({
     method: "GET",
     uri: url
   });

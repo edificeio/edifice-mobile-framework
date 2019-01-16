@@ -1,5 +1,5 @@
 import moment from "moment";
-import { Conf } from "../../Conf";
+import Conf from "../../Conf";
 import { Me } from "../../infra/Me";
 import Tracking from "../../tracking/TrackingManager";
 import generateUuid from "../../utils/uuid";
@@ -54,8 +54,9 @@ export const sendPhoto = dispatch => async (data: IConversationMessage) => {
       to: fulldata.to
     };
 
+    if (!Conf.currentPlatform) throw new Error("must specify a platform");
     const response = await signedFetch(
-      `${Conf.platform}/conversation/send?${replyTo}`,
+      `${Conf.currentPlatform.url}/conversation/send?${replyTo}`,
       {
         body: JSON.stringify(requestBody),
         headers: {

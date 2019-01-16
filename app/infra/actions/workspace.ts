@@ -1,5 +1,5 @@
 import ImagePicker from "react-native-image-picker";
-import { Conf } from "../../Conf";
+import Conf from "../../Conf";
 import Tracking from "../../tracking/TrackingManager";
 import { signedFetch } from "../fetchWithCache";
 
@@ -28,10 +28,11 @@ export const uploadImage = async (uri: string) => {
     type: "image/jpeg", // or photo.type
     name: "mobile-photo"
   } as any);
+  if (!Conf.currentPlatform) throw new Error("must specify a platform");
   const response = await signedFetch(
     `
         ${
-          Conf.platform
+          Conf.currentPlatform.url
         }/workspace/document?protected=true&application=media-library?thumbnail=120x120&thumbnail=100x100&thumbnail=290x290&thumbnail=381x381&thumbnail=1600x0
     `,
     {

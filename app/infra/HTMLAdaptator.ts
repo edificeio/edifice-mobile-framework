@@ -5,7 +5,7 @@
  */
 
 import HTMLParser from "fast-html-parser";
-import { Conf } from "../Conf";
+import Conf from "../Conf";
 
 export class HTMLAdaptator {
   root: any;
@@ -113,6 +113,7 @@ export class HTMLAdaptator {
   }
 
   toImagesArray(size?) {
+    if (!Conf.currentPlatform) throw new Error("must specify a platform");
     if (!size) {
       size = "1600x0";
     }
@@ -121,7 +122,7 @@ export class HTMLAdaptator {
     for (let i = 0; i < images.length; i++) {
       let src = images[i].attributes.src;
       if (src.indexOf("file://") === -1) {
-        if (src.indexOf("://") === -1) src = Conf.platform + src;
+        if (src.indexOf("://") === -1) src = Conf.currentPlatform.url + src;
         let split = src.split("?");
         src = split[0] + "?thumbnail=" + size;
       }
@@ -146,13 +147,15 @@ export class HTMLAdaptator {
   }
 
   adapt() {
+    if (!Conf.currentPlatform) throw new Error("must specify a platform");
     const images = this.root.querySelectorAll("img");
     for (let i = 0; i < images.length; i++) {
       if (
         images[i].attributes.src &&
         images[i].attributes.src.startsWith("/")
       ) {
-        images[i].attributes.src = Conf.platform + images[i].attributes.src;
+        images[i].attributes.src =
+          Conf.currentPlatform.url + images[i].attributes.src;
       }
     }
     const links = this.root.querySelectorAll("a");
@@ -161,7 +164,8 @@ export class HTMLAdaptator {
         links[i].attributes.href &&
         links[i].attributes.href.startsWith("/")
       ) {
-        links[i].attributes.href = Conf.platform + links[i].attributes.href;
+        links[i].attributes.href =
+          Conf.currentPlatform.url + links[i].attributes.href;
       }
     }
     return this;

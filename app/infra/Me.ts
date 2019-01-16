@@ -1,6 +1,6 @@
 // TODO : THIS FILE IS FUCKED UP, IT HAS NO REASON TO BE HERE
 
-import { Conf } from "../Conf";
+import Conf from "../Conf";
 import { IUserAuthState, stateDefault } from "../user/reducers/auth";
 import { IUserInfoState } from "../user/reducers/info";
 import {
@@ -20,14 +20,16 @@ export const Me: {
 const preferences = {} as any;
 
 export const savePreference = async (appName: string, newData) => {
-  await signedFetch(`${Conf.platform}/userbook/preference/${appName}`, {
+  if (!Conf.currentPlatform) throw new Error("must specify a platform");
+  await signedFetch(`${Conf.currentPlatform.url}/userbook/preference/${appName}`, {
     body: JSON.stringify({ ...preferences[appName], ...newData }),
     method: "PUT"
   });
 };
 export const preference = async (appName: string) => {
+  if (!Conf.currentPlatform) throw new Error("must specify a platform");
   const appPrefs = (await signedFetchJson(
-    `${Conf.platform}/userbook/preference/${appName}`,
+    `${Conf.currentPlatform.url}/userbook/preference/${appName}`,
     {}
   )) as { preference: any };
   preferences[appName] = JSON.parse(appPrefs.preference);

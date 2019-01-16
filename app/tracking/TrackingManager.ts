@@ -2,7 +2,7 @@ import { Platform } from "react-native";
 import firebase from "react-native-firebase";
 import { MixpanelInstance } from "react-native-mixpanel";
 
-import { Conf } from "../Conf";
+import Conf from "../Conf";
 import { Me } from "../infra/Me";
 
 export default class Tracking {
@@ -14,9 +14,9 @@ export default class Tracking {
 
   public static async initMixpanel() {
     if (Platform.OS === "ios") {
-      Tracking.mixpanelToken = Conf.mixpanelTokenIOS;
+      Tracking.mixpanelToken = Conf.mixPanel.token;
     } else if (Platform.OS === "android") {
-      Tracking.mixpanelToken = Conf.mixpanelTokenAndroid;
+      Tracking.mixpanelToken = Conf.mixPanel.token;
     }
     Tracking.mixpanel = new MixpanelInstance(Tracking.mixpanelToken);
     await Tracking.mixpanel.initialize();

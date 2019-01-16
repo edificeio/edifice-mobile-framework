@@ -26,7 +26,7 @@ import {
 } from "react-native";
 import sax from "sax";
 import { HtmlConverter } from ".";
-import { Conf } from "../../Conf";
+import Conf from "../../Conf";
 import { Loading } from "../../ui";
 import { Images } from "../../ui/Images";
 import { A, Bold, Italic } from "../../ui/Typography";
@@ -466,7 +466,8 @@ export class HtmlConverterJsx extends HtmlConverter {
     let cleanUrl = tag.attributes.href;
     if (cleanUrl.startsWith("/")) {
       // Absolute url. We must add the platform domain name manually.
-      cleanUrl = Conf.platform + cleanUrl;
+      if (!Conf.currentPlatform) throw new Error("must specify a platform");
+      cleanUrl = Conf.currentPlatform.url + cleanUrl;
     }
 
     const nugget: ILinkTextNugget = {
@@ -517,7 +518,10 @@ export class HtmlConverterJsx extends HtmlConverter {
       let src = tag.attributes.src;
       if (src.indexOf("file://") === -1) {
         // TODO : Better parse image url and detect cases
-        if (src.indexOf("://") === -1) src = Conf.platform + src;
+        if (src.indexOf("://") === -1) {
+          if (!Conf.currentPlatform) throw new Error("must specify a platform");
+          src = Conf.currentPlatform.url + src;
+        }
         const split = src.split("?");
         src = split[0] + "?thumbnail=" + this.opts.thumbnailSize;
       }

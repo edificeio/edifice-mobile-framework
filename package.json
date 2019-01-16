@@ -4,7 +4,7 @@
   "private": true,
   "ode": {
     "appid": "com.ode.appe",
-    "appname": "app-e-recette",
+    "appname": "app-e-dev-platform-selector-lite",
     "properties": {
       "ios": "ios/mobileapp/Info.plist",
       "android": "android/gradle.properties"
@@ -15,13 +15,13 @@
       "ios/mobile-app/Images.xcassets/*"
     ],
     "config": {
-      "id": "neo-recette",
+      "id": "dev-platform-selector-lite",
       "url": "http://code.web-education.net/nman/mobileapp-config.git",
       "google-services.android.json": "android/app/google-services.json",
       "google-services.ios.plist": "ios/mobileapp/GoogleService-Info.plist",
       "Conf.ts": "app/Conf.ts"
     },
-    "current": "neo-recette"
+    "current": "dev-platform-selector-lite"
   },
   "scripts": {
     "appcenter:config": "node ode-plugin.js override switch --to=$APPCENTER_TO --dontrestore --acceptall --uri=$APPCENTER_URI --username=$APPCENTER_USERNAME --password=$APPCENTER_PWD",

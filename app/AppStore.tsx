@@ -24,6 +24,8 @@ import {
   NotificationOpen
 } from "react-native-firebase/notifications";
 
+import { loadCurrentPlatform, selectPlatform } from "./user/actions/platform";
+
 // Disable Yellow Box on release builds.
 if (!__DEV__) {
   // tslint:disable-next-line:no-console
@@ -53,9 +55,9 @@ I18n.translations = {
   fr: require("../assets/i18n/fr")
 };
 // Print current device language
-console.log("language", RNLanguages.language);
+// console.log("language", RNLanguages.language);
 // Print user preferred languages (in order)
-console.log("languages", RNLanguages.languages);
+// console.log("languages", RNLanguages.languages);
 I18n.locale = RNLanguages.language;
 
 export class AppStore extends React.Component {
@@ -75,6 +77,10 @@ export class AppStore extends React.Component {
   }
 
   public async componentWillMount() {
+    // store.dispatch<any>(loadCurrentPlatform());
+    // FORCE SELECT A PLATFORM TO TEST IF IT WURKS
+    store.dispatch<any>(selectPlatform("recette-leo"));
+
     await Tracking.init();
     RNLanguages.addEventListener("change", this.onLanguagesChange);
     AppState.addEventListener("change", this.handleAppStateChange);
@@ -87,9 +93,11 @@ export class AppStore extends React.Component {
       .onNotificationOpened((notificationOpen: NotificationOpen) =>
         this.handleNotification(notificationOpen)
       );
-    this.onTokenRefreshListener = firebase.messaging().onTokenRefresh(fcmToken => {
+    this.onTokenRefreshListener = firebase
+      .messaging()
+      .onTokenRefresh(fcmToken => {
         this.handleFCMTokenModified(fcmToken);
-    });
+      });
 
     const notificationOpen: NotificationOpen = await firebase
       .notifications()
@@ -112,9 +120,9 @@ export class AppStore extends React.Component {
 
   private handleAppStateChange = (nextAppState: string) => {
     this.setState({ appState: nextAppState });
-    if (nextAppState === "active") {
-      console.log("app is now active again !");
-    }
+    // if (nextAppState === "active") {
+    //   console.log("app is now active again !");
+    // }
   };
 
   private handleNotification = (notificationOpen: NotificationOpen) => {
@@ -122,8 +130,8 @@ export class AppStore extends React.Component {
     const action = notificationOpen.action;
     // Get information about the notification that was opened
     const notification: Notification = notificationOpen.notification;
-    console.log("got notification !!", notification);
-    Tracking.logEvent("openNotificationPush")
+    // console.log("got notification !!", notification);
+    Tracking.logEvent("openNotificationPush");
     store.dispatch({
       notification,
       type: "NOTIFICATION_OPEN"

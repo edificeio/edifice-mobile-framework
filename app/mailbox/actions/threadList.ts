@@ -20,7 +20,7 @@ import {
   conversationSetMessagesRead
 } from "./messages";
 
-import { Conf } from "../../Conf";
+import Conf from "../../Conf";
 import { signedFetch } from "../../infra/fetchWithCache";
 import { Me } from "../../infra/Me";
 
@@ -311,8 +311,9 @@ export function conversationSetThreadRead(threadId: string) {
     const threadInfo = localState(getState()).data.byId[threadId];
     if (!threadInfo.unread) return;
     try {
+      if (!Conf.currentPlatform) throw new Error("must specify a platform");
       const response = await signedFetch(
-        `${Conf.platform}/conversation/thread/toggleUnread`,
+        `${Conf.currentPlatform.url}/conversation/thread/toggleUnread`,
         {
           body: JSON.stringify({
             id: [threadId],
@@ -332,8 +333,9 @@ export function conversationSetThreadRead(threadId: string) {
 export function conversationDeleteThread(threadId: string) {
   return async (dispatch, getState) => {
     try {
+      if (!Conf.currentPlatform) throw new Error("must specify a platform");
       const response = await signedFetch(
-        `${Conf.platform}/conversation/thread/trash`,
+        `${Conf.currentPlatform.url}/conversation/thread/trash`,
         {
           body: JSON.stringify({
             id: [threadId]
