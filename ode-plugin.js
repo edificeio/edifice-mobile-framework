@@ -182,7 +182,7 @@ function _overrideFileListAbsolute(name) {
 async function overrideSwitchTo(name, skipRestore, acceptAll, gitUri, gitUser, gitPwd) {
     if (name == "default") {
         //n ooverride to apply => only fetch config
-        let confirm = acceptAll || await _askConfirm('Do you want to restore the config');
+        let confirm = acceptAll || await _askConfirm('Do you want to fetch the default config');
         if (confirm) {
             await fetchConfig(gitUri, gitUser, gitPwd);
             return;
@@ -239,7 +239,7 @@ async function overrideSwitchTo(name, skipRestore, acceptAll, gitUri, gitUser, g
     await _updateAppIds(odeOrigin);
     console.log("AppIds replaced successfully!")
     //
-    let confirm = acceptAll || await _askConfirm('Do you want to restore the config');
+    let confirm = acceptAll || await _askConfirm('Do you want to set the config ' + odeOverride["configid"]);
     if (confirm) {
         await fetchConfig(gitUri, gitUser, gitPwd);
     }
@@ -341,7 +341,7 @@ async function overrideRestore(skipResetConfig) {
     await _updateAppIds(ode);
     //restore default config (prompt)
     if (!skipResetConfig) {
-        confirm = await _askConfirm('Do you want to restore the config');
+        confirm = await _askConfirm('Do you want to restore the default config');
         if (confirm) {
             await fetchConfig();
         }
