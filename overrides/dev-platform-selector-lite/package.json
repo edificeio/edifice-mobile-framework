@@ -1,8 +1,8 @@
 {
   "ode": {
     "current": "dev-platform-selector-lite",
-    "appname": "platform-selector-lite",
-    "appid": "platform-selector-lite",
-    "configid": "platform-selector-lite"
+    "appname": "app-e-dev-platform-selector-lite",
+    "appid": "com.ode.appe",
+    "configid": "dev-platform-selector-lite"
   }
 }
