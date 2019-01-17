@@ -109,9 +109,6 @@ class AppStoreUnconnected extends React.Component<
       }
     } else {
       // Load platform
-      const keys = await AsyncStorage.getAllKeys();
-      const data = await AsyncStorage.multiGet(keys);
-      console.log("ASYNC data: ", data);
       this.props.store.dispatch(loadCurrentPlatform());
     }
   }

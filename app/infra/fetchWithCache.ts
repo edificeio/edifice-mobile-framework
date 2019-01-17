@@ -34,7 +34,7 @@ export async function signedFetch(
     // tslint:disable-next-line:no-console
     // console.log("Token expires in ", oauth.expiresIn() / 1000, "seconds");
 
-    console.log("signing", url);
+    // console.log("signing", url);
     const params = OAuth2RessourceOwnerPasswordClient.connection.sign(init);
     return fetch(url, params);
   } catch (err) {

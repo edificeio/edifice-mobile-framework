@@ -57,10 +57,7 @@ export class PlatformSelectPage extends React.PureComponent<
   IPlatformSelectPageProps,
   {}
 > {
-  // Reunix
-
   public render() {
-    console.log("platforms:", Object.entries(Conf.platforms));
     return (
       <View style={{ flex: 1, backgroundColor: "#ffffff" }}>
         <ScrollView alwaysBounceVertical={false}>

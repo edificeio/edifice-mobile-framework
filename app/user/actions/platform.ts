@@ -37,7 +37,6 @@ export function selectPlatform(platformId: string, redirect: boolean = false) {
     );
 
     // === 4 - Saves the selected platform in Async Storage
-    console.log("====== save platform :", platformId);
     await AsyncStorage.setItem(PLATFORM_STORAGE_KEY, platformId);
 
     // === 5 - Dispatch the new selected platform in Redux Store
@@ -46,7 +45,6 @@ export function selectPlatform(platformId: string, redirect: boolean = false) {
       type: actionTypePlatformSelect
     });
 
-    console.log(`Switched to platform "${platformId}"`);
     if (redirect) navigate("Login");
   };
 }
@@ -57,7 +55,6 @@ export function selectPlatform(platformId: string, redirect: boolean = false) {
 export function loadCurrentPlatform() {
   return async (dispatch, getState) => {
     const platformId = await AsyncStorage.getItem(PLATFORM_STORAGE_KEY);
-    console.log("loaded platform ID;", platformId);
     if (platformId) {
       if (!Conf.platforms.hasOwnProperty(platformId)) {
         throw new Error(
@@ -66,7 +63,6 @@ export function loadCurrentPlatform() {
       }
       dispatch(selectPlatform(platformId));
     } else {
-      console.log("No platform saved. Please select one");
       navigate("PlatformSelect");
     }
   };

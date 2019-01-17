@@ -71,7 +71,7 @@ export default class SearchUser extends React.Component<{ remaining, picked, onP
     );
 
     expend(){
-        console.log(this.state.max)
+        // console.log(this.state.max)
         this.setState({ ...this.state, max: this.state.max + 20 })
     }
 
@@ -89,7 +89,7 @@ export default class SearchUser extends React.Component<{ remaining, picked, onP
     }
 
     render (){
-        console.log(this.state)
+        // console.log(this.state)
         return (
             <PageContainer>
                 <ScrollField>
