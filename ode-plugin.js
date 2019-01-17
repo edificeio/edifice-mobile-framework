@@ -164,7 +164,8 @@ async function _updateAppIds(ode) {
     //update info.plist
     const infoPlistPath = path.resolve(__dirname, ode["properties"]["ios"]);
     let infoPlist = await readFile(infoPlistPath, { encoding: "utf-8" });
-    infoPlist = infoPlist.replace(/(<key>CFBundleIdentifier<\/key>\s*<string>)(.*)(<\/string>)/, "$1" + appid + "$3").replace(/(<key>CFBundleDisplayName<\/key>\s*<string>)(.*)(<\/string>)/, "$1" + appname + "$3")
+    const appnameIOS = appname.replace(" ","&#x2007;");//https://stackoverflow.com/questions/46337691/bundle-display-name-missing-space-characters
+    infoPlist = infoPlist.replace(/(<key>CFBundleIdentifier<\/key>\s*<string>)(.*)(<\/string>)/, "$1" + appid + "$3").replace(/(<key>CFBundleDisplayName<\/key>\s*<string>)(.*)(<\/string>)/, "$1" + appnameIOS + "$3")
     await writeFile(infoPlistPath, infoPlist);
 }
 function _overrideFileListAbsolute(name) {
