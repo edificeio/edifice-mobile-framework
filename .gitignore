@@ -65,3 +65,5 @@ buck-out/
 **/Conf.ts
 **/google-services.json
 **/GoogleService-Info.plist
+**/appcenter-config.json
+**/AppCenter-Config.plist

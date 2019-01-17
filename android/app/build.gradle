@@ -103,8 +103,8 @@ android {
         applicationId APPID
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 10
-        versionName "0.1.0"
+        versionCode 11
+        versionName "0.1.1"
         resValue "string", "app_name", "${APPNAME}"
         manifestPlaceholders = [ applicationName: APPNAME ]
         ndk {
@@ -141,6 +141,9 @@ android {
 }
 
 dependencies {
+    compile project(':appcenter-crashes')
+    compile project(':appcenter-analytics')
+    compile project(':appcenter')
 
     // Android support classes
     implementation("com.android.support:support-v4:27.1.1")

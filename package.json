@@ -1,6 +1,6 @@
 {
   "name": "app-e",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "ode": {
     "appid": "com.ode.appe",
@@ -19,9 +19,10 @@
       "url": "http://code.web-education.net/nman/mobileapp-config.git",
       "google-services.android.json": "android/app/google-services.json",
       "google-services.ios.plist": "ios/mobileapp/GoogleService-Info.plist",
-      "Conf.ts": "app/Conf.ts"
-    },
-    "current": "dev-platform-selector-lite"
+      "Conf.ts": "app/Conf.ts",
+      "AppCenter-Config.plist": "ios/mobileapp/AppCenter-Config.plist",
+      "appcenter-config.json": "android/app/src/main/assets/appcenter-config.json"
+    }
   },
   "scripts": {
     "appcenter:config": "node ode-plugin.js override switch --to=$APPCENTER_TO --dontrestore --acceptall --uri=$APPCENTER_URI --username=$APPCENTER_USERNAME --password=$APPCENTER_PWD",
@@ -94,6 +95,9 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.1.2",
+    "appcenter": "1.11.0",
+    "appcenter-analytics": "1.11.0",
+    "appcenter-crashes": "1.11.0",
     "base-64": "^0.1.0",
     "fast-html-parser": "1.0.1",
     "glamorous-native": "1.4.0",
