@@ -2,25 +2,16 @@
 import style from "glamorous-native";
 import I18n from "i18n-js";
 import * as React from "react";
-import {
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-  Text,
-  TextInput,
-  TouchableWithoutFeedback,
-  View
-} from "react-native";
+import { Image, ScrollView, Text, View } from "react-native";
 import { connect } from "react-redux";
 
 // Components
-import { FlatButton } from "../../ui";
-import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
-import { TextInputLine } from "../../ui/forms/TextInputLine";
-import { ErrorMessage } from "../../ui/Typography";
+import { H1, Light, LightP } from "../../ui/Typography";
 
 // Type definitions
-import { login, LoginResult } from "../actions/login";
+import Conf from "../../Conf";
+import { CommonStyles } from "../../styles/common/styles";
+import { selectPlatform } from "../actions/platform";
 import { IUserAuthState } from "../reducers/auth";
 
 // Props definition -------------------------------------------------------------------------------
@@ -31,7 +22,7 @@ export interface IPlatformSelectPageDataProps {
 }
 
 export interface IPlatformSelectPageEventProps {
-  onLogin: (userlogin: string, password: string) => Promise<LoginResult>;
+  onPlatformSelected: (platformId: string) => Promise<void>;
 }
 
 export interface IPlatformSelectPageOtherProps {
@@ -48,37 +39,89 @@ export type IPlatformSelectPageProps = IPlatformSelectPageDataProps &
 
 // Main component ---------------------------------------------------------------------------------
 
-const FormContainer = style.view({
-  alignItems: "center",
-  flex: 1,
+const PlatformButton = style.touchableOpacity({
+  elevation: 3,
+  shadowColor: "#6B7C93",
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.3,
+  shadowRadius: 2,
+
   flexDirection: "column",
-  justifyContent: "center",
-  padding: 40,
-  paddingTop: 80
+  paddingHorizontal: 16,
+  paddingVertical: 32,
+
+  backgroundColor: "#FFFFFF"
 });
 
 export class PlatformSelectPage extends React.PureComponent<
   IPlatformSelectPageProps,
   {}
 > {
-  // Render
+  // Reunix
 
   public render() {
+    console.log("platforms:", Object.entries(Conf.platforms));
     return (
-      <View style={{ flex: 1 }}>
-        <Text>[[Sélectionner plateforme...]]</Text>
+      <View style={{ flex: 1, backgroundColor: "#ffffff" }}>
+        <ScrollView alwaysBounceVertical={false}>
+          <H1
+            style={{
+              color: CommonStyles.textColor,
+              fontSize: 20,
+              fontWeight: "normal",
+              marginTop: 55,
+              textAlign: "center"
+            }}
+          >
+            {I18n.t("welcome")}
+          </H1>
+          <LightP style={{ textAlign: "center", marginBottom: 12 }}>
+            {I18n.t("select-platform")}
+          </LightP>
+          <View style={{ flexDirection: "row", flexWrap: "wrap", padding: 12 }}>
+            {Object.entries(Conf.platforms).map(
+              ([platformId, platformConf]) => (
+                <View
+                  key={platformId}
+                  style={{
+                    flexBasis: "50%",
+                    padding: 12
+                  }}
+                >
+                  <PlatformButton
+                    onPress={e => this.handleSelectPlatform(platformId)}
+                    style={{
+                      alignItems: "center"
+                    }}
+                  >
+                    <Image
+                      resizeMode="contain"
+                      style={{ height: 40, width: "100%", marginBottom: 20 }}
+                      source={platformConf.logo}
+                    />
+                    <Light>{platformConf.displayName}</Light>
+                  </PlatformButton>
+                </View>
+              )
+            )}
+          </View>
+        </ScrollView>
       </View>
     );
   }
 
   // Event handlers
 
-  protected async handleSelectPlatform(plateformConfig) {
-    console.log("selected platform :", plateformConfig);
+  protected handleSelectPlatform(platformId: string) {
+    this.props.onPlatformSelected(platformId);
   }
 }
 
 export default connect(
   (state: any, props: any) => ({}),
-  dispatch => ({})
+  dispatch => ({
+    onPlatformSelected: (platformId: string) => {
+      dispatch<any>(selectPlatform(platformId, true));
+    }
+  })
 )(PlatformSelectPage);

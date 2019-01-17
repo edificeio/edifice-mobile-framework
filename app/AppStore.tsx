@@ -1,7 +1,7 @@
 import I18n from "i18n-js";
 import * as React from "react";
 import RNLanguages from "react-native-languages";
-import { Provider } from "react-redux";
+import { Provider, connect } from "react-redux";
 import { applyMiddleware, combineReducers, createStore } from "redux";
 import thunkMiddleware from "redux-thunk";
 import AppScreen from "./AppScreen";
@@ -17,14 +17,14 @@ import { login, refreshToken } from "./user/actions/login";
 import moduleDefinitions from "./AppModules";
 import { getReducersFromModuleDefinitions } from "./infra/moduleTool";
 
-import { AppState } from "react-native";
+import { AppState, AsyncStorage } from "react-native";
 import firebase from "react-native-firebase";
 import {
   Notification,
   NotificationOpen
 } from "react-native-firebase/notifications";
 
-import { loadCurrentPlatform, selectPlatform } from "./user/actions/platform";
+import { loadCurrentPlatform, unSelectPlatform } from "./user/actions/platform";
 
 // Disable Yellow Box on release builds.
 if (!__DEV__) {
@@ -60,7 +60,10 @@ I18n.translations = {
 // console.log("languages", RNLanguages.languages);
 I18n.locale = RNLanguages.language;
 
-export class AppStore extends React.Component {
+class AppStoreUnconnected extends React.Component<
+  { currentPlatformId: string; store: any },
+  {}
+> {
   private notificationOpenedListener;
   private onTokenRefreshListener;
 
@@ -70,41 +73,51 @@ export class AppStore extends React.Component {
 
   public render() {
     return (
-      <Provider store={store}>
+      <Provider store={this.props.store}>
         <AppScreen />
       </Provider>
     );
   }
 
   public async componentWillMount() {
-    // store.dispatch<any>(loadCurrentPlatform());
-    // FORCE SELECT A PLATFORM TO TEST IF IT WURKS
-    store.dispatch<any>(selectPlatform("recette-leo"));
-
     await Tracking.init();
     RNLanguages.addEventListener("change", this.onLanguagesChange);
     AppState.addEventListener("change", this.handleAppStateChange);
   }
 
   public async componentDidMount() {
-    store.dispatch(login(true) as any);
-    this.notificationOpenedListener = firebase
-      .notifications()
-      .onNotificationOpened((notificationOpen: NotificationOpen) =>
-        this.handleNotification(notificationOpen)
-      );
-    this.onTokenRefreshListener = firebase
-      .messaging()
-      .onTokenRefresh(fcmToken => {
-        this.handleFCMTokenModified(fcmToken);
-      });
+    if (this.props.currentPlatformId) {
+      // Auto Login if possible
+      this.props.store.dispatch(login(true));
 
-    const notificationOpen: NotificationOpen = await firebase
-      .notifications()
-      .getInitialNotification();
-    if (notificationOpen) {
-      this.handleNotification(notificationOpen);
+      this.notificationOpenedListener = firebase
+        .notifications()
+        .onNotificationOpened((notificationOpen: NotificationOpen) =>
+          this.handleNotification(notificationOpen)
+        );
+      this.onTokenRefreshListener = firebase
+        .messaging()
+        .onTokenRefresh(fcmToken => {
+          this.handleFCMTokenModified(fcmToken);
+        });
+
+      const notificationOpen: NotificationOpen = await firebase
+        .notifications()
+        .getInitialNotification();
+      if (notificationOpen) {
+        this.handleNotification(notificationOpen);
+      }
+    } else {
+      // Load platform
+      const keys = await AsyncStorage.getAllKeys();
+      const data = await AsyncStorage.multiGet(keys);
+      console.log("ASYNC data: ", data);
+      this.props.store.dispatch(loadCurrentPlatform());
     }
+  }
+
+  public async componentDidUpdate() {
+    this.componentDidMount();
   }
 
   public componentWillUnmount() {
@@ -132,13 +145,33 @@ export class AppStore extends React.Component {
     const notification: Notification = notificationOpen.notification;
     // console.log("got notification !!", notification);
     Tracking.logEvent("openNotificationPush");
-    store.dispatch({
+    this.props.store.dispatch({
       notification,
       type: "NOTIFICATION_OPEN"
     });
   };
 
   private handleFCMTokenModified = fcmToken => {
-    store.dispatch<any>(refreshToken(fcmToken));
+    this.props.store.dispatch(refreshToken(fcmToken));
   };
 }
+
+function connectWithStore(store, WrappedComponent, ...args) {
+  const ConnectedWrappedComponent = connect(...args)(WrappedComponent);
+  return props => {
+    return <ConnectedWrappedComponent {...props} store={store} />;
+  };
+}
+
+const mapStateToProps = (state: any, props: any) => ({
+  currentPlatformId: state.user.auth.platformId,
+  store
+});
+
+export const AppStore = connectWithStore(
+  store,
+  AppStoreUnconnected,
+  mapStateToProps
+);
+
+export default AppStore;

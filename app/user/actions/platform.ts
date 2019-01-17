@@ -4,6 +4,7 @@ import userConfig from "../config";
 import { OAuth2RessourceOwnerPasswordClient, scopes } from "../../infra/oauth";
 
 import { AsyncStorage } from "react-native";
+import { navigate } from "../../navigation/helpers/navHelper";
 
 export const PLATFORM_STORAGE_KEY = "currentPlatform";
 
@@ -16,7 +17,7 @@ export const actionTypePlatformSelect = userConfig.createActionType(
  * Stores the new select platform Id in AsyncReducer.
  * @param platformId
  */
-export function selectPlatform(platformId: string) {
+export function selectPlatform(platformId: string, redirect: boolean = false) {
   return async (dispatch, getState) => {
     // === 1 - Verify that platformId exists
     if (!Conf.platforms.hasOwnProperty(platformId)) {
@@ -36,6 +37,7 @@ export function selectPlatform(platformId: string) {
     );
 
     // === 4 - Saves the selected platform in Async Storage
+    console.log("====== save platform :", platformId);
     await AsyncStorage.setItem(PLATFORM_STORAGE_KEY, platformId);
 
     // === 5 - Dispatch the new selected platform in Redux Store
@@ -45,6 +47,7 @@ export function selectPlatform(platformId: string) {
     });
 
     console.log(`Switched to platform "${platformId}"`);
+    if (redirect) navigate("Login", { login: "" });
   };
 }
 
@@ -54,9 +57,26 @@ export function selectPlatform(platformId: string) {
 export function loadCurrentPlatform() {
   return async (dispatch, getState) => {
     const platformId = await AsyncStorage.getItem(PLATFORM_STORAGE_KEY);
-    if (!Conf.platforms.hasOwnProperty(platformId)) {
-      throw new Error(`Error: LOADED platform "${platformId}" doesn't exists.`);
+    console.log("loaded platform ID;", platformId);
+    if (platformId) {
+      if (!Conf.platforms.hasOwnProperty(platformId)) {
+        throw new Error(
+          `Error: LOADED platform "${platformId}" doesn't exists.`
+        );
+      }
+      dispatch(selectPlatform(platformId));
+    } else {
+      console.log("No platform saved. Please select one");
+      navigate("PlatformSelect");
     }
-    dispatch(selectPlatform(platformId));
+  };
+}
+
+/**
+ * Goes to the platform selector page
+ */
+export function unSelectPlatform() {
+  return async (dispatch, getState) => {
+    navigate("PlatformSelect");
   };
 }

@@ -9,6 +9,7 @@ import pushNotifications from "../pushNotifications";
 import TimelineNavigator from "../timeline/TimelineNavigator";
 import Tracking from "../tracking/TrackingManager";
 import LoginPage from "../user/containers/LoginPage";
+import PlatformSelectPage from "../user/containers/PlatformSelectPage";
 import {
   createMainTabNavigator,
   createMainTabNavOption
@@ -119,7 +120,8 @@ export const MainNavigator = connect(mapStateToProps)(MainNavigatorHOC);
 export const RootNavigator: NavigationContainer = createSwitchNavigator({
   Bootstrap: () => <View />,
   Login: { screen: LoginPage },
-  Main: { screen: () => <MainNavigator /> }
+  Main: { screen: () => <MainNavigator /> },
+  PlatformSelect: { screen: PlatformSelectPage }
 });
 
 // NAV TOOLS -------------------------------------------------------------------------
