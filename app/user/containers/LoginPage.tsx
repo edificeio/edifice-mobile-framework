@@ -25,8 +25,8 @@ import { IUserAuthState } from "../reducers/auth";
 
 import Conf from "../../Conf";
 import { navigate } from "../../navigation/helpers/navHelper";
-import { Icon } from "../../ui/";
 import { CommonStyles } from "../../styles/common/styles";
+import { Icon } from "../../ui/";
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -61,12 +61,6 @@ const initialState: ILoginPageState = {
   typing: false
 };
 
-export const getInitialStateWithUsername = login => ({
-  login,
-  password: undefined,
-  typing: false
-});
-
 // Main component ---------------------------------------------------------------------------------
 
 const FormContainer = style.view({
@@ -92,10 +86,7 @@ export class LoginPage extends React.Component<
   // Set default state
   constructor(props) {
     super(props);
-    this.state = {
-      ...initialState,
-      login: this.props.navigation.state.params.login || this.props.auth.login
-    };
+    this.state = initialState;
   }
 
   // Computed properties
@@ -212,9 +203,7 @@ export class LoginPage extends React.Component<
 
   protected async handleLogin() {
     await this.props.onLogin(
-      this.state.login ||
-        this.props.auth.login ||
-        this.props.navigation.state.params.login,
+      this.state.login || this.props.auth.login,
       this.state.password
     );
     this.setState({ typing: false });

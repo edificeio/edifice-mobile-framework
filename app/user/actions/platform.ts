@@ -47,7 +47,7 @@ export function selectPlatform(platformId: string, redirect: boolean = false) {
     });
 
     console.log(`Switched to platform "${platformId}"`);
-    if (redirect) navigate("Login", { login: "" });
+    if (redirect) navigate("Login");
   };
 }
 
