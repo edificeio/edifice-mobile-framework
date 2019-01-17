@@ -49,6 +49,7 @@
   "schoolbook-appTitle": "Carnet de liaison",
   "Search": "Rechercher ...",
   "seeMore": "Voir plus",
+  "select-platform": "Sélectionnez votre réseau social éducatif !",
   "timeline-allFilter": "Tous",
   "timeline-blogFilter": "Blog",
   "timeline-emptyScreenText": "C’est calme ici... Vous connaissez l’expression \"le calme avant la tempête\" ?",
@@ -59,6 +60,7 @@
   "to": "À :",
   "today": " Aujourd'hui ",
   "tryagain": "Réessayer",
+  "welcome": "Bienvenue",
 
   "date":{
     "day_names": ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],

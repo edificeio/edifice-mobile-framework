@@ -49,6 +49,7 @@
   "schoolbook-appTitle": "Schoolbook",
   "Search": "Search ...",
   "seeMore": "See more",
+
   "timeline-allFilter": "All",
   "timeline-blogFilter": "Blog",
   "timeline-emptyScreenText": "All quiet on the Western front. Are you familiar with the saying \"the calm before the storm\"?",
@@ -59,6 +60,7 @@
   "to": "To :",
   "today": " Today ",
   "tryagain": "Try again",
+
 
   "date":{
     "day_names": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
