@@ -146,6 +146,6 @@ export async function clearRequestsCache() {
   const keys = (await AsyncStorage.getAllKeys()).filter(str =>
     str.startsWith(CACHE_KEY_PREFIX)
   );
-  console.log("keys to clear:", keys);
+  // console.log("keys to clear:", keys);
   await AsyncStorage.multiRemove(keys);
 }
