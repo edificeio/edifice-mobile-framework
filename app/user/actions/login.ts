@@ -1,5 +1,5 @@
 import {
-  clearCache,
+  clearRequestsCache,
   fetchJSONWithCache,
   signedFetch
 } from "../../infra/fetchWithCache";
@@ -195,7 +195,7 @@ export function logout() {
       // console.log("Fcm Token (delete) :", token, deleteTokenResponse);
       // === 2: Erase stored oauth2 token and cache information
       await OAuth2RessourceOwnerPasswordClient.connection.eraseToken();
-      // await clearCache(); // NO. JUST NO.
+      await clearRequestsCache();
 
       // === 3: Validate log out
       dispatch({ type: actionTypeLoggedOut });
