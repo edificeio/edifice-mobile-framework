@@ -12,7 +12,7 @@
     "overrides": [
       "assets/*",
       "android/app/src/main/res/*",
-      "ios/mobile-app/Images.xcassets/*"
+      "ios/mobileapp/Images.xcassets/*"
     ],
     "config": {
       "id": "dev-platform-selector-lite",
