@@ -16,7 +16,7 @@
     ],
     "config": {
       "id": "dev-platform-selector-lite",
-      "url": "http://code.web-education.net/nman/mobileapp-config.git",
+      "url": "http://code.web-education.net/ODE/mobileapp-config.git",
       "google-services.android.json": "android/app/google-services.json",
       "google-services.ios.plist": "ios/mobileapp/GoogleService-Info.plist",
       "Conf.ts": "app/Conf.ts",
