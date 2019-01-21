@@ -19,13 +19,21 @@ export const fetchTimeline = dispatch => async availableApps => {
   });
 
   try {
+    console.log("FETCH timeline");
     const news = await fetchJSONWithCache(
-      `/timeline/lastNotifications?page=0&${writeTypesParams(availableApps)}`
+      `/timeline/lastNotifications?page=0&${writeTypesParams(availableApps)}`,
+      {
+        headers: {
+          Accept: "application/json;version=2.0"
+        }
+      }
     );
-    let results = news.results.filter(
+    const results = news.results.filter(
       n => excludeTypes.indexOf(n["event-type"]) === -1 && n.params
     );
+    console.log("results :", results);
     const newNews = await fillData(availableApps, results);
+    console.log("newNews :", newNews);
 
     if (newNews.length > 0) {
       dispatch({
@@ -46,6 +54,8 @@ export const listTimeline = dispatch => async (
   dispatch({
     type: "FETCH_TIMELINE"
   });
+
+  console.log("LIST timeline");
 
   let loading = true;
 
@@ -76,12 +86,19 @@ export const listTimeline = dispatch => async (
     const news = await fetchJSONWithCache(
       `/timeline/lastNotifications?page=${page}&${writeTypesParams(
         availableApps
-      )}`
+      )}`,
+      {
+        headers: {
+          Accept: "application/json;version=2.0"
+        }
+      }
     );
-    let results = news.results.filter(
+    const results = news.results.filter(
       n => excludeTypes.indexOf(n["event-type"]) === -1 && n.params
     );
+    console.log("results :", results);
     const newNews = await fillData(availableApps, results);
+    console.log("newNews :", newNews);
 
     if (newNews.length > 0) {
       dispatch({

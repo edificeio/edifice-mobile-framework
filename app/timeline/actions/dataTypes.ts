@@ -4,6 +4,7 @@ import { Me } from "../../infra/Me";
 import I18n from "i18n-js";
 import { fetchJSONWithCache } from "../../infra/fetchWithCache";
 import { signImagesUrls } from "../../infra/oauth";
+import Conf from "../../Conf";
 
 let loadingState = "idle";
 let awaiters = [];
@@ -147,46 +148,32 @@ const dataTypes = {
     }
   },
   BLOG: async (news, timeline) => {
-    const newsData = {
-      date: news.date.$date,
-      id: news._id,
-      images: [],
-      message: adaptator(news.message).toText(),
-      resourceName: news.params.blogTitle,
-      senderId: news.sender,
-      senderName: news.params.username,
-      title: news.params.blogTitle
-    };
-
-    if (!news["sub-resource"]) {
-      return newsData;
-    }
-
-    if (timeline.find(e => e.resourceId === news["sub-resource"])) {
-      return null;
-    }
-
     try {
-      const data = await fetchJSONWithCache(
-        `/blog/post/${news.resource}/${news["sub-resource"]}`
-      );
-
-      let message = adaptator(data.content).toText();
-
       return {
-        date: data.modified.$date,
-        id: data._id,
-        images: signImagesUrls(adaptator(data.content).toImagesArray()),
-        message,
-        resourceName: news.params.blogTitle,
+        date: news.date.$date,
+        id: news._id,
+        images: signImagesUrls(
+          news.preview.images.map(url => ({
+            alt: "",
+            src: (url as string).startsWith("/")
+              ? Conf.currentPlatform.url + url
+              : url
+          }))
+        ),
+        message: news.preview.text,
+        resource: news.resource,
         resourceId: news["sub-resource"],
-        senderId: data.author.userId,
-        senderName: data.author.username,
-        title: data.title
+        resourceName: news.params.blogTitle,
+        senderId: news.sender,
+        senderName: news.params.username,
+        title: news.params.postTitle,
+        url: `/blog/post/${news.resource}/${
+          news["sub-resource"]
+        }`
       };
     } catch (e) {
-      //fetching blog failed
-      return newsData;
+      // fetching blog failed
+      return news;
     }
   }
 };

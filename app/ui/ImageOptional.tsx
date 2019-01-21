@@ -23,6 +23,7 @@ export default class ImageOptional extends React.PureComponent<
   public constructor(props) {
     super(props);
     this.state = { isError: false };
+    console.log("image props", props);
   }
 
   public render() {

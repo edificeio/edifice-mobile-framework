@@ -1,69 +1,110 @@
-import style from "glamorous-native";
-import * as React from "react";
-import { View, Text, ScrollView } from "react-native";
 import I18n from "i18n-js";
-import { ResourceTitle } from "../../ui/headers/ResourceTitle";
-import { LeftPanel, PageContainer, ArticleContainer, Header, CenterPanel } from "../../ui/ContainerContent";
-import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
-import { Bold, Light, Paragraph } from "../../ui/Typography";
-import { DateView } from "../../ui/DateView";
-import { Preview } from "../../ui/Preview";
-import { Images } from "../../ui/Images";
-import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
-import { TouchCard } from "../../ui/Card";
+import * as React from "react";
+import { ScrollView, View } from "react-native";
 
-export class NewsContentHeader extends React.Component<{ navigation?: any }, undefined> {
-	render() {
-        const { news } = this.props.navigation.state.params;
-		return <ResourceTitle title={ news.title } subTitle={ news.resourceName} navigation={ this.props.navigation } />;
-	}
+import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
+import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
+import {
+  ArticleContainer,
+  CenterPanel,
+  Header,
+  LeftPanel,
+  PageContainer
+} from "../../ui/ContainerContent";
+import { DateView } from "../../ui/DateView";
+import { ResourceTitle } from "../../ui/headers/ResourceTitle";
+import { HtmlContentView } from "../../ui/HtmlContentView";
+import { Bold, Light } from "../../ui/Typography";
+
+export class NewsContentHeader extends React.Component<
+  { navigation?: any },
+  undefined
+> {
+  render() {
+    const { news } = this.props.navigation.state.params;
+    return (
+      <ResourceTitle
+        title={news.title}
+        subTitle={news.resourceName}
+        navigation={this.props.navigation}
+      />
+    );
+  }
 }
 
-export class NewsContent extends React.Component<{ navigation?: any, expend?: boolean }, { expend: boolean }> {
-    state = { expend: false }
+// tslint:disable-next-line:max-classes-per-file
+export class NewsContent extends React.Component<{ navigation?: any }, {}> {
+  constructor(props) {
+    super(props);
+  }
 
-    constructor(props){
-        super(props);
-        if(this.props.navigation.state.params.expend){
-            this.state.expend = true;
-        }
-    }
+  public newsContent() {
+    const {
+      date,
+      id,
+      images,
+      message,
+      resource,
+      resourceId,
+      resourceName,
+      senderId,
+      senderName,
+      title,
+      url
+    } = this.props.navigation.state.params.news;
+    return (
+      <View>
+        <Header>
+          <LeftPanel>
+            <SingleAvatar userId={senderId} />
+          </LeftPanel>
+          <CenterPanel>
+            <Bold>
+              {senderName}
+              <Light> {I18n.t("On")} </Light>
+              {resourceName}
+            </Bold>
+            <DateView date={date} short={false} />
+          </CenterPanel>
+        </Header>
+        {/*
+        {this.state.expend ? (
+          <Paragraph>{message}</Paragraph>
+        ) : (
+          <Preview
+            textContent={message}
+            onExpend={() => this.setState({ expend: true })}
+          />
+        )}
+        <Images images={images} style={message ? { marginTop: 15 } : {}} />
+        */}
+        <HtmlContentView
+          source={url}
+          getContentFromResource={responseJSON => responseJSON.content}
+          opts={{
+            formatting: true,
+            hyperlinks: true,
+            iframes: true,
+            images: true
+          }}
+        />
+      </View>
+    );
+  }
 
-    newsContent(){
-        const { date, senderId, senderName, resourceName, message, images } = this.props.navigation.state.params.news;
-        return (
-            <View>
-                <Header>
-                    <LeftPanel>
-                        <SingleAvatar userId={senderId} />
-                    </LeftPanel>
-                    <CenterPanel>
-                        <Bold>
-                            {senderName}
-                            <Light> { I18n.t('On') } </Light>
-                            {resourceName}
-                        </Bold>
-                        <DateView date={date} short={false} />
-                    </CenterPanel>
-                </Header>
-                { this.state.expend ? <Paragraph>{ message }</Paragraph> : <Preview textContent={ message } onExpend={ () => this.setState({ expend: true }) } /> }
-                <Images images={images} style={message ? { marginTop: 15 } : {}}/>
-            </View>
-        )
-    }
-
-	render() {
-		return (
-            <PageContainer>
-                <ConnectionTrackingBar />
-                <ScrollView>
-                    <ArticleContainer>
-                        <TouchCard onPress={ () => this.setState({ expend: true }) }>
-                            { this.newsContent() }
-                        </TouchCard>
-                    </ArticleContainer>
-                </ScrollView>
-            </PageContainer>
-		)
-	}
+  public render() {
+    return (
+      <PageContainer>
+        <ConnectionTrackingBar />
+        <ScrollView
+          contentContainerStyle={{
+            paddingHorizontal: 20,
+            paddingVertical: 20
+          }}
+        >
+          <ArticleContainer>{this.newsContent()}</ArticleContainer>
+        </ScrollView>
+      </PageContainer>
+    );
+  }
 }

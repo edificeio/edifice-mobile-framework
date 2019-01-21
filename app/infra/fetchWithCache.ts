@@ -36,6 +36,7 @@ export async function signedFetch(
 
     // console.log("signing", url);
     const params = OAuth2RessourceOwnerPasswordClient.connection.sign(init);
+    console.log("signed fetch:", url, params);
     return fetch(url, params);
   } catch (err) {
     // tslint:disable-next-line:no-console
