@@ -25,7 +25,7 @@ export class NewsContentHeader extends React.Component<
     return (
       <ResourceTitle
         title={news.title}
-        subTitle={news.resourceName}
+        subTitle={news.subtitle}
         navigation={this.props.navigation}
       />
     );
@@ -43,12 +43,14 @@ export class NewsContent extends React.Component<{ navigation?: any }, {}> {
       date,
       id,
       images,
+      htmlContent,
       message,
       resource,
       resourceId,
       resourceName,
       senderId,
       senderName,
+      subtitle,
       title,
       url
     } = this.props.navigation.state.params.news;
@@ -62,7 +64,7 @@ export class NewsContent extends React.Component<{ navigation?: any }, {}> {
             <Bold>
               {senderName}
               <Light> {I18n.t("On")} </Light>
-              {resourceName}
+              {subtitle}
             </Bold>
             <DateView date={date} short={false} />
           </CenterPanel>
@@ -87,6 +89,7 @@ export class NewsContent extends React.Component<{ navigation?: any }, {}> {
             iframes: true,
             images: true
           }}
+          html={htmlContent}
         />
       </View>
     );

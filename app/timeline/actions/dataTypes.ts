@@ -12,32 +12,47 @@ const awaiters = [];
 let schoolbooks = [];
 const loadSchoolbooks = (): Promise<any[]> => {
   return new Promise(async (resolve, reject) => {
+    console.log("triggered loadSchoolbooks");
     if (loadingState === "over") {
+      console.log("already done.");
       resolve(schoolbooks);
       return;
     }
     if (loadingState === "loading") {
+      console.log("pending...");
       awaiters.push(() => resolve(schoolbooks));
       return;
     }
     loadingState = "loading";
     awaiters.push(() => resolve(schoolbooks));
     if (Me.session.type.indexOf("Student") !== -1) {
+      console.log("im a child");
       try {
+        console.log("session :", Me.session);
         const messages = await fetchJSONWithCache(
           `/schoolbook/list/0/${Me.session.userId}`
         );
         schoolbooks = [...schoolbooks, ...messages];
+        console.log("loaded schoolbooks list", schoolbooks);
       } catch (e) {
         console.warn(e);
       }
     } else {
+      console.log("im NOT a child");
+      console.log("session :", Me.session);
       for (const child of Me.session.children) {
+        if (!child.id) continue;
         const messages = await fetchJSONWithCache(
           `/schoolbook/list/0/${child.id}`
         );
         schoolbooks = [...schoolbooks, ...messages];
       }
+      const messages = await fetchJSONWithCache(`/schoolbook/list`, {
+        body: JSON.stringify({ filter: "Any", page: 0 }),
+        method: "POST"
+      });
+      schoolbooks = [...schoolbooks, ...messages];
+      console.log("loaded schoolbooks list", schoolbooks);
     }
 
     awaiters.forEach(a => a());
@@ -49,26 +64,30 @@ const dataTypes = {
   SCHOOLBOOK: async (news, timeline) => {
     const defaultContent = {
       date: news.date.$date,
+      htmlContent: undefined,
       id: news._id,
-      images: [],
-      message: adaptator(news.message).toText(),
+      images: signImagesUrls(
+        news.preview.images.map(url => ({
+          alt: "",
+          src: (url as string).startsWith("/")
+            ? Conf.currentPlatform.url + url
+            : url
+        }))
+      ),
+      message: news.preview.text,
       resourceName: I18n.t("schoolbook-appTitle"),
-      htmlContent: adaptator(news.message)
-        .adapt()
-        .toHTML(),
       senderId: news.sender,
       senderName: news.params.username,
-      title: news.params.wordTitle
+      subtitle: I18n.t("schoolbook-appTitle"), // Subitle is displayed in little in NewsContent
+      title: news.params.wordTitle // Title is displayed in big in NewsContent
     };
-    if (
-      !news.params.resourceUri ||
-      news.params.resourceUri.indexOf("word") === -1
-    ) {
+    if (!news.params.wordUri || news.params.wordUri.indexOf("word") === -1) {
+      console.log("unable to find the distant url resource.");
       return defaultContent;
     }
     try {
       const schoolbooks = await loadSchoolbooks();
-      const schoolbookId = news.params.resourceUri.split("word/")[1];
+      const schoolbookId = news.params.wordUri.split("word/")[1];
       const schoolbook = schoolbooks.find(
         s => s.id === parseInt(schoolbookId, 10)
       );
@@ -78,21 +97,15 @@ const dataTypes = {
       }
 
       if (schoolbook) {
+        console.log("HAHAH voici ud html", schoolbook.text);
         return {
-          date: news.date.$date,
-          id: news._id,
-          images: signImagesUrls(adaptator(schoolbook.text).toImagesArray()),
-          message: adaptator(schoolbook.text).toText(),
-          resourceName: I18n.t("schoolbook-appTitle"),
-          htmlContent: adaptator(schoolbook.text)
-            .adapt()
-            .toHTML(),
-          senderId: news.sender,
-          senderName: news.params.username,
-          title: schoolbook.title,
-          resourceId: schoolbookId
+          ...defaultContent,
+          htmlContent: schoolbook.text,
+          resourceId: schoolbookId,
+          title: schoolbook.title
         };
       }
+      console.log("OOOOohhh pas de html...");
       return defaultContent;
     } catch (e) {
       return defaultContent;
@@ -171,7 +184,8 @@ const dataTypes = {
         resourceName: news.params.resourceName,
         senderId: news.sender,
         senderName: news.params.username,
-        title: news.params.resourceName,
+        subtitle: I18n.t("News"), // Subitle is displayed in little in NewsContent
+        title: news.params.resourceName, // Title is displayed in big in NewsContent
         url: `/actualites/thread/${threadId}/info/${infoId}`
       };
     } catch (e) {
@@ -199,7 +213,8 @@ const dataTypes = {
         resourceName: news.params.blogTitle,
         senderId: news.sender,
         senderName: news.params.username,
-        title: news.params.postTitle,
+        subtitle: news.params.blogTitle, // Subtitle is displayed in little in NewsContent
+        title: news.params.postTitle, // Title is displayed in big in NewsContent
         url: `/blog/post/${news.resource}/${news["sub-resource"]}`
       };
     } catch (e) {
