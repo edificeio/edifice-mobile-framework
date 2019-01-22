@@ -233,11 +233,13 @@ export const excludeTypes = [
 
 export const fillData = async (availableApps: object, results: any[]) => {
   const newResults = [];
-  Object.keys(availableApps).forEach(
-    app => (availableApps[app.toUpperCase()] = availableApps[app])
-  );
+  const availableAppsWithUppercase = {};
+  Object.keys(availableApps).forEach(app => {
+    availableAppsWithUppercase[app] = availableApps[app];
+    availableAppsWithUppercase[app.toUpperCase()] = availableApps[app];
+  });
   for (const result of results) {
-    if (dataTypes[result.type] && availableApps[result.type]) {
+    if (dataTypes[result.type] && availableAppsWithUppercase[result.type]) {
       const newResult = await dataTypes[result.type](result, newResults);
       if (newResult) {
         newResult.application = result.type.toLowerCase();
