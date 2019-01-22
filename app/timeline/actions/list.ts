@@ -5,9 +5,10 @@ import { storedFilters } from "./storedFilters";
 
 const writeTypesParams = availableApps => {
   let params = "";
-  for (let app in availableApps) {
+  console.log("available apps:", availableApps);
+  for (const app in availableApps) {
     if (availableApps[app]) {
-      params += "&type=" + app;
+      params += "&type=" + app.toUpperCase();
     }
   }
   return params;
@@ -31,7 +32,7 @@ export const fetchTimeline = dispatch => async availableApps => {
     const results = news.results.filter(
       n => excludeTypes.indexOf(n["event-type"]) === -1 && n.params
     );
-    console.log("results :", results);
+    console.log("results (fetch) :", results);
     const newNews = await fillData(availableApps, results);
     console.log("newNews :", newNews);
 
@@ -96,7 +97,7 @@ export const listTimeline = dispatch => async (
     const results = news.results.filter(
       n => excludeTypes.indexOf(n["event-type"]) === -1 && n.params
     );
-    console.log("results :", results);
+    console.log("results (list) :", results);
     const newNews = await fillData(availableApps, results);
     console.log("newNews :", newNews);
 

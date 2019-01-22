@@ -1,15 +1,16 @@
-import { adaptator } from "../../infra/HTMLAdaptator";
-import { Connection } from "../../infra/Connection";
-import { Me } from "../../infra/Me";
 import I18n from "i18n-js";
-import { fetchJSONWithCache } from "../../infra/fetchWithCache";
-import { signImagesUrls } from "../../infra/oauth";
+
 import Conf from "../../Conf";
+import { Connection } from "../../infra/Connection";
+import { fetchJSONWithCache } from "../../infra/fetchWithCache";
+import { adaptator } from "../../infra/HTMLAdaptator";
+import { Me } from "../../infra/Me";
+import { signImagesUrls } from "../../infra/oauth";
 
 let loadingState = "idle";
-let awaiters = [];
+const awaiters = [];
 let schoolbooks = [];
-const loadSchoolbooks = (): Promise<Array<any>> => {
+const loadSchoolbooks = (): Promise<any[]> => {
   return new Promise(async (resolve, reject) => {
     if (loadingState === "over") {
       resolve(schoolbooks);
@@ -31,7 +32,7 @@ const loadSchoolbooks = (): Promise<Array<any>> => {
         console.warn(e);
       }
     } else {
-      for (let child of Me.session.children) {
+      for (const child of Me.session.children) {
         const messages = await fetchJSONWithCache(
           `/schoolbook/list/0/${child.id}`
         );
@@ -40,17 +41,13 @@ const loadSchoolbooks = (): Promise<Array<any>> => {
     }
 
     awaiters.forEach(a => a());
-    if (Connection.isOnline) {
-      loadingState = "over";
-    } else {
-      loadingState = "idle";
-    }
+    loadingState = Connection.isOnline ? "over" : "idle";
   });
 };
 
 const dataTypes = {
   SCHOOLBOOK: async (news, timeline) => {
-    let defaultContent = {
+    const defaultContent = {
       date: news.date.$date,
       id: news._id,
       images: [],
@@ -72,7 +69,9 @@ const dataTypes = {
     try {
       const schoolbooks = await loadSchoolbooks();
       const schoolbookId = news.params.resourceUri.split("word/")[1];
-      const schoolbook = schoolbooks.find(s => s.id === parseInt(schoolbookId));
+      const schoolbook = schoolbooks.find(
+        s => s.id === parseInt(schoolbookId, 10)
+      );
 
       if (timeline.find(e => e.resourceId === schoolbookId)) {
         return null;
@@ -99,7 +98,9 @@ const dataTypes = {
       return defaultContent;
     }
   },
-  ACTUALITES: async (news, timeline) => {
+
+  NEWS: async (news, timeline) => {
+    /*
     const newsData = {
       date: news.date.$date,
       id: news._id,
@@ -146,7 +147,39 @@ const dataTypes = {
       //resource has been deleted
       return newsData;
     }
+    */
+
+    try {
+      const split = news.params.resourceUri.split("/");
+      const infoId = split[split.length - 1];
+      const threadSplit = news.params.resourceUri.split("thread/");
+      const threadId = parseInt(threadSplit[threadSplit.length - 1], 10);
+
+      return {
+        date: news.date.$date,
+        id: news._id,
+        images: signImagesUrls(
+          news.preview.images.map(url => ({
+            alt: "",
+            src: (url as string).startsWith("/")
+              ? Conf.currentPlatform.url + url
+              : url
+          }))
+        ),
+        message: news.preview.text,
+        resourceId: infoId,
+        resourceName: news.params.resourceName,
+        senderId: news.sender,
+        senderName: news.params.username,
+        title: news.params.resourceName,
+        url: `/actualites/thread/${threadId}/info/${infoId}`
+      };
+    } catch (e) {
+      // fetching blog failed
+      return news;
+    }
   },
+
   BLOG: async (news, timeline) => {
     try {
       return {
@@ -167,9 +200,7 @@ const dataTypes = {
         senderId: news.sender,
         senderName: news.params.username,
         title: news.params.postTitle,
-        url: `/blog/post/${news.resource}/${
-          news["sub-resource"]
-        }`
+        url: `/blog/post/${news.resource}/${news["sub-resource"]}`
       };
     } catch (e) {
       // fetching blog failed
@@ -185,11 +216,14 @@ export const excludeTypes = [
   "NEWS-COMMENT"
 ];
 
-export const fillData = async (availableApps, results: any[]) => {
+export const fillData = async (availableApps: object, results: any[]) => {
   const newResults = [];
-  for (let result of results) {
+  Object.keys(availableApps).forEach(
+    app => (availableApps[app.toUpperCase()] = availableApps[app])
+  );
+  for (const result of results) {
     if (dataTypes[result.type] && availableApps[result.type]) {
-      let newResult = await dataTypes[result.type](result, newResults);
+      const newResult = await dataTypes[result.type](result, newResults);
       if (newResult) {
         newResult.application = result.type.toLowerCase();
         newResults.push(newResult);
