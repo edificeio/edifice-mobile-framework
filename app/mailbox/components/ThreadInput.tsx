@@ -68,6 +68,7 @@ class ThreadInput extends React.PureComponent<
     thread: IConversationThread;
     lastMessageId: string;
     emptyThread: boolean;
+    displayPlaceholder: boolean,
     send: (data: any) => Promise<void>;
     sendPhoto: (data: any) => Promise<void>;
   },
@@ -124,7 +125,7 @@ class ThreadInput extends React.PureComponent<
       textMessage: ""
     });
     // console.log("thread object ", thread)
-    const newMessage = await this.props.send({
+    await this.props.send({
       body: `<div>${textMessage}</div>`,
       cc: thread.cc,
       parentId: lastMessageId,
@@ -145,7 +146,11 @@ class ThreadInput extends React.PureComponent<
 
   public render() {
     const { selected, textMessage } = this.state;
-
+    const { displayPlaceholder } = this.props;
+    let placeholder = "";
+    if (displayPlaceholder) {
+      placeholder = this.props.emptyThread ? I18n.t("conversation-chatPlaceholder") : I18n.t("conversation-responsePlaceholder");
+    }
     return (
       <ContainerFooterBar>
         <ContainerInput>
@@ -166,7 +171,7 @@ class ThreadInput extends React.PureComponent<
               this.blur();
               return true;
             }}
-            placeholder={this.props.emptyThread ? I18n.t("conversation-chatPlaceholder") : I18n.t("conversation-responsePlaceholder")}
+            placeholder={placeholder}
             underlineColorAndroid={"transparent"}
             value={textMessage}
             autoCorrect={false}

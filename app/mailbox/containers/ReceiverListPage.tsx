@@ -8,23 +8,15 @@ import {
     IReceiverListPageProps
 } from "../components/ReceiverListPage";
 import conversationConfig from "../config";
-import { IConversationMessageList } from "../reducers";
+import { IConversationReceiverList } from "../reducers";
 
 const mapStateToProps: (state: any) => IReceiverListPageDataProps = state => {
-    // Extract data from state
-    const localState: IConversationMessageList = state[conversationConfig.reducerName].messages.data;
-    const messageId: string = state[conversationConfig.reducerName].receiversDisplay;
-    const message = localState[messageId];
+    const receiverState: IConversationReceiverList = state[conversationConfig.reducerName].receiversDisplay;
     // prepare receivers array
-    const receivers: Array<{ id: string, name: string, displayName: string, checked: boolean }> = [];
-    message.to.forEach((value, index) => receivers.push({
-        id: value,
-        displayName: message.toName[index],
-        name: message.toName[index],
-        checked: false
-    }));
+    const toReceivers = receiverState.to.map((value) => ({ ...value, checked: false, displayName: value.name }))
+    const ccReceivers = receiverState.cc.map((value) => ({ ...value, checked: false, displayName: value.name }))
     return {
-        receivers
+        toReceivers, ccReceivers, sender: { ...receiverState.from, checked: false, displayName: receiverState.from.name }
     };
 };
 

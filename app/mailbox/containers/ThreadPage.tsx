@@ -13,17 +13,18 @@ import {
   fetchConversationThreadOlderMessages
 } from "../actions/threadList";
 import { createActionReceiversDisplay } from "../actions/displayReceivers";
+import { IConversationMessage, IConversationThread, IConversationMessageList } from "../reducers";
 
 const mapStateToProps: (state: any) => IThreadPageDataProps = state => {
   // Extract data from state
-  const localState = state[conversationConfig.reducerName].messages;
-  const selectedThreadId = state[conversationConfig.reducerName].threadSelected;
-  const selectedThread =
+  const localState: IConversationMessageList = state[conversationConfig.reducerName].messages;
+  const selectedThreadId: string = state[conversationConfig.reducerName].threadSelected;
+  const selectedThread: IConversationThread =
     state[conversationConfig.reducerName].threadList.data.byId[
     selectedThreadId
     ];
   // console.log("display thread", localState, selectedThreadId, selectedThread);
-  const messages = selectedThread.messages.map(
+  const messages: IConversationMessage[] = selectedThread.messages.map(
     messageId => localState.data[messageId]
   );
   const headerHeight = state.ui.headerHeight; // TODO: Ugly.
@@ -33,6 +34,7 @@ const mapStateToProps: (state: any) => IThreadPageDataProps = state => {
     headerHeight,
     isFetching: selectedThread.isFetchingOlder,
     isRefreshing: selectedThread.isFetchingNewer,
+    isFetchingFirst: selectedThread.isFetchingFirst,
     messages,
     threadInfo: selectedThread
   };
@@ -53,8 +55,8 @@ const mapDispatchToProps: (
       dispatch(fetchConversationThreadOlderMessages(threadId));
       return;
     },
-    onTapReceivers: (messageId: string) => {
-      dispatch(createActionReceiversDisplay(messageId))
+    onTapReceivers: (message: IConversationMessage) => {
+      dispatch(createActionReceiversDisplay(message))
       return;
     }
   };

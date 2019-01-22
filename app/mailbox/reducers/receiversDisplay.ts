@@ -4,11 +4,20 @@
 
 import { actionTypeReceiversDisplay, IActionReceiversDisplay } from "../actions/displayReceivers";
 
-
-export default function receiversDisplay(state: string = null, action) {
+export interface IConversationReceiverList {
+  from: { id: string, name: string }
+  to: Array<{ id: string, name: string }>
+  cc: Array<{ id: string, name: string }>
+}
+const defaultState: IConversationReceiverList = {
+  from: { id: "", name: "" },
+  cc: [],
+  to: []
+}
+export default function receiversDisplay(state: IConversationReceiverList = defaultState, action): IConversationReceiverList {
   switch (action.type) {
     case actionTypeReceiversDisplay:
-      return (action as IActionReceiversDisplay).messageId;
+      return { ...(action as IActionReceiversDisplay) };
     default:
       return state;
   }

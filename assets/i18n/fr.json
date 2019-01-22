@@ -21,8 +21,12 @@
   "conversation-failedSent": "Message non reçu",
   "conversation-newMessage": "Nouveau message",
   "conversation-sendingMessage": "En cours d'envoi...",
-  "conversation-receiver": "à 1 destinataire",
-  "conversation-receivers": "à {{count}} destinataires",
+  "conversation-receiversTo": "Destinataires",
+  "conversation-receiversCC": "En copie",
+  "conversation-receiversSender": "Expéditeur",
+  "conversation-receiverPrefix": "à",
+  "conversation-receiver": "1 destinataire",
+  "conversation-receivers": "{{count}} destinataires",
   "conversation-receiverList": "Destinataires",
   "conversation-responsePlaceholder": "Répondre à tous...",
   "Conversation": "Messagerie",
@@ -65,12 +69,55 @@
   "today": " Aujourd'hui ",
   "tryagain": "Réessayer",
   "welcome": "Bienvenue",
-
-  "date":{
-    "day_names": ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
-    "abbr_day_names": ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"],
-    "month_names": [null, "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
-    "abbr_month_names": [null, "Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"]
+  "date": {
+    "day_names": [
+      "Dimanche",
+      "Lundi",
+      "Mardi",
+      "Mercredi",
+      "Jeudi",
+      "Vendredi",
+      "Samedi"
+    ],
+    "abbr_day_names": [
+      "Dim",
+      "Lun",
+      "Mar",
+      "Mer",
+      "Jeu",
+      "Ven",
+      "Sam"
+    ],
+    "month_names": [
+      null,
+      "Janvier",
+      "Février",
+      "Mars",
+      "Avril",
+      "Mai",
+      "Juin",
+      "Juillet",
+      "Août",
+      "Septembre",
+      "Octobre",
+      "Novembre",
+      "Décembre"
+    ],
+    "abbr_month_names": [
+      null,
+      "Jan",
+      "Fév",
+      "Mar",
+      "Avr",
+      "Mai",
+      "Juin",
+      "Juil",
+      "Août",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Déc"
+    ]
   },
   "blog-publish-comment": "Commentaire d'un billet de blog",
   "blog-publish-post": "Nouveau billet de blog",

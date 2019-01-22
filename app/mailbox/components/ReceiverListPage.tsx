@@ -1,16 +1,3 @@
-/**
- * ThreadListPage
- *
- * Display page for all threads.
- *
- * Props :
- *    `isFetching` - is data currently fetching from the server.
- *    `isRefreshing` - is data currenty fetching in order to reset displayed list.
- *    `threads` - list of threads to display
- *
- *    `navigation` - React Navigation instance.
- */
-
 // Imports ----------------------------------------------------------------------------------------
 
 // Libraries
@@ -27,12 +14,14 @@ const { View } = style;
 import { PageContainer } from "../../ui/ContainerContent";
 
 // Type definitions
-import UserList, { IUser } from "../../ui/UserList";
+import { IUser, UserListGroupped } from "../../ui/UserList";
 
 // Props definition -------------------------------------------------------------------------------
 
 export interface IReceiverListPageDataProps {
-    receivers: IUser[]
+    sender: IUser
+    toReceivers: IUser[]
+    ccReceivers: IUser[]
 }
 
 export interface IReceiverListPageEventProps {
@@ -56,15 +45,17 @@ export class ReceiverListPage extends React.PureComponent<
     public renderEmptyList() {
         return <View />
     }
-    public renderList(receivers: Array<IUser>) {
-        return <UserList selectable={false} users={receivers}
+    public renderList(receivers: { [id: string]: Array<IUser> }) {
+        return <UserListGroupped selectable={false} users={receivers}
         />
     }
     public render() {
-        const { receivers } = this.props;
+        const { ccReceivers = [], toReceivers = [], sender } = this.props;
+        const total = ccReceivers.length + toReceivers.length;
+        const usersGroupped = { "conversation-receiversSender": [sender], "conversation-receiversTo": toReceivers, "conversation-receiversCC": ccReceivers }
         return (
             <PageContainer>
-                {receivers.length == 0 ? this.renderEmptyList() : this.renderList(receivers)}
+                {total == 0 ? this.renderEmptyList() : this.renderList(usersGroupped)}
             </PageContainer>
         );
     }

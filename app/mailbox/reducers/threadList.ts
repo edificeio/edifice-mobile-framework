@@ -33,9 +33,10 @@ export interface IConversationThread {
   to: string[]; // User Ids of the receivers (newest message)
   cc: string[]; // User Ids of the copy receivers (newest message)
   from: string; // User Id of the sender (newest message)
-  messages: IConversationMessage[]; // Messages id in this thread (recent first). They have to be manually ordered.
+  messages: string[]; // Messages id in this thread (recent first). They have to be manually ordered.
   isFetchingOlder: boolean;
   isFetchingNewer: boolean;
+  isFetchingFirst: boolean;
 }
 
 export type IConversationThreadList = IOrderedArrayById<IConversationThread> & {
@@ -108,6 +109,7 @@ const conversationThreadListReducer = (
           [action.threadId]: {
             ...state.byId[action.threadId],
             isFetchingNewer: true,
+            isFetchingFirst: true,
             messages: []
           }
         }
@@ -138,6 +140,7 @@ const conversationThreadListReducer = (
           [action.threadId]: {
             ...state.byId[action.threadId],
             isFetchingNewer: false,
+            isFetchingFirst: false,
             messages: action.data
           }
         }

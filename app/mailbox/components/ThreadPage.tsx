@@ -29,6 +29,7 @@ import { Loading } from "../../ui";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
 import ThreadMessage from "../components/ThreadMessage";
+import Tracking from "../../tracking/TrackingManager";
 
 // Type definitions
 
@@ -46,6 +47,7 @@ import ThreadInput from "./ThreadInput";
 // Props definition -------------------------------------------------------------------------------
 
 export interface IThreadPageDataProps {
+  isFetchingFirst?: boolean; // is fetching messages for the first time
   isFetching?: boolean; // is fetching older messages
   isRefreshing?: boolean; // is fetching newer messages
   threadInfo?: IConversationThread; // global thread information
@@ -56,7 +58,7 @@ export interface IThreadPageDataProps {
 export interface IThreadPageEventProps {
   onGetNewer?: (threadId: string) => void;
   onGetOlder?: (threadId: string) => void;
-  onTapReceivers?(messageId: string)
+  onTapReceivers?(message: IConversationMessage)
 }
 
 export interface IThreadPageOtherProps {
@@ -118,6 +120,7 @@ export class ThreadPage extends React.PureComponent<
   public renderMessageList() {
     const {
       isFetching,
+      isFetchingFirst,
       isRefreshing,
       onGetNewer,
       onGetOlder,
@@ -163,7 +166,7 @@ export class ThreadPage extends React.PureComponent<
             this.onEndReachedCalledDuringMomentum = false;
           }}
         />
-        <ThreadInput emptyThread={messages.length == 0} />
+        <ThreadInput emptyThread={messages.length == 0} displayPlaceholder={!isFetchingFirst} />
       </KeyboardAvoidingView>
     );
   }
@@ -183,13 +186,14 @@ export class ThreadPage extends React.PureComponent<
             imageIndex: number,
             images: Array<{ alt: string; src: string }>
           ) => this.handleOpenImage(imageIndex, images)}
-          onTapReceivers={(_) => this.handleTapReceivers(message.id)}
+          onTapReceivers={() => this.handleTapReceivers(message)}
         />
       </View>
     );
   }
-  public handleTapReceivers = (messageId: string) => {
-    this.props.onTapReceivers && this.props.onTapReceivers(messageId);
+  public handleTapReceivers = (message: IConversationMessage) => {
+    Tracking.logEvent("seeRecipient");
+    this.props.onTapReceivers && this.props.onTapReceivers(message);
     this.props.navigation.navigate("listReceivers");
   }
   /*
@@ -221,12 +225,5 @@ export class ThreadPage extends React.PureComponent<
 
   // Event Handlers
 }
-
-const Border = style.view({
-  backgroundColor: "#DCDDE0",
-  flex: 1,
-  height: 1,
-  marginHorizontal: 10
-});
 
 export default ThreadPage;
