@@ -1,15 +1,18 @@
 import {
-  clearCache,
+  clearRequestsCache,
   fetchJSONWithCache,
   signedFetch
 } from "../../infra/fetchWithCache";
-import oauth, { OAuthError } from "../../infra/oauth";
+import {
+  OAuth2RessourceOwnerPasswordClient,
+  OAuthError
+} from "../../infra/oauth";
 import { navigate } from "../../navigation/helpers/navHelper";
 import userConfig from "../config";
 
 // Legacy imports
 import firebase from "react-native-firebase";
-import { Conf } from "../../Conf";
+import Conf from "../../Conf";
 import Tracking from "../../tracking/TrackingManager"; // TODO make tracking back !
 
 export const actionTypeRequestLogin = userConfig.createActionType(
@@ -31,15 +34,22 @@ export function login(
 ) {
   return async (dispatch, getState) => {
     try {
+      if (!Conf.currentPlatform) throw new Error("must specify a platform");
+      if (!OAuth2RessourceOwnerPasswordClient.connection)
+        throw new Error("no active oauth connection");
+
       dispatch({ type: actionTypeRequestLogin });
 
       // === 1: Get oAuth token from somewhere (server or local storage)
       if (credentials) {
-        await oauth.getToken(credentials.username, credentials.password);
+        await OAuth2RessourceOwnerPasswordClient.connection.getToken(
+          credentials.username,
+          credentials.password
+        );
       } else {
         // Here, an offline user will try to load a token.
         // If a token is stored, it allows the user to be offline.
-        await oauth.loadToken();
+        await OAuth2RessourceOwnerPasswordClient.connection.loadToken();
       }
 
       // === 2: Get firebase device token and store it in the backend
@@ -47,23 +57,25 @@ export function login(
         const token = await firebase.messaging().getToken();
         // console.log(token);
         const putTokenResponse = await signedFetch(
-          `${Conf.platform}/timeline/pushNotif/fcmToken?fcmToken=${token}`,
+          `${
+            Conf.currentPlatform.url
+          }/timeline/pushNotif/fcmToken?fcmToken=${token}`,
           {
             method: "put"
           }
         );
-        console.log("Fcm Token (put) :", token, putTokenResponse);
+        // console.log("Fcm Token (put) :", token, putTokenResponse);
       };
       const hasPermission = await firebase.messaging().hasPermission();
       if (hasPermission) {
         await registerFCMToken();
       } else {
         try {
-          console.log("asking for perms...");
+          // console.log("asking for perms...");
           await firebase.messaging().requestPermission();
           await registerFCMToken();
         } catch (e) {
-          console.log("Hasnt got permission to register the device token");
+          // console.log("Hasnt got permission to register the device token");
         }
       }
 
@@ -100,7 +112,7 @@ export function login(
 
       Tracking.logEvent("login", {
         isManual: credentials ? "true" : "false",
-        platform: Conf.platform
+        platform: Conf.currentPlatform.url
       });
 
       // === 7: navigate back to the main screen
@@ -108,18 +120,19 @@ export function login(
     } catch (err) {
       if (err.authErr !== OAuthError.NO_TOKEN) {
         // Absence of token in the store is not considered as an error. It's a regular case.
+        // tslint:disable-next-line:no-console
         console.warn(err);
         Tracking.logEvent("failedLogin", {
           cause:
             err.authErr === OAuthError.BAD_CREDENTIALS
               ? "bad credentials"
               : err.authErr === OAuthError.NOT_PREMIUM
-                ? "not premium"
-                : err.authErr === OAuthError.NETWORK_ERROR
-                  ? "network error"
-                  : "unkown",
+              ? "not premium"
+              : err.authErr === OAuthError.NETWORK_ERROR
+              ? "network error"
+              : "unkown",
           isManual: credentials ? "true" : "false",
-          platform: Conf.platform
+          platform: Conf.currentPlatform.url
         });
       }
       switch (err.authErr) {
@@ -153,7 +166,7 @@ export function login(
             type: actionTypeLoginError
           });
       }
-      if (redirectOnError) navigate("Login", { login: "" });
+      if (redirectOnError) navigate("Login");
     }
   };
 }
@@ -161,33 +174,36 @@ export function login(
 export function logout() {
   return async (dispatch, getState) => {
     try {
+      if (!Conf.currentPlatform) throw new Error("must specify a platform");
       const login = getState().user.auth.login;
 
       // === 0: Tracking reporting, only on manual logout
 
       Tracking.logEvent("logout", {
-        platform: Conf.platform
+        platform: Conf.currentPlatform.url
       });
 
       // === 1: Unregister the device token from the backend
       const token = await firebase.messaging().getToken();
       // console.log(token);
       const deleteTokenResponse = await signedFetch(
-        `${Conf.platform}/timeline/pushNotif/fcmToken?fcmToken=${token}`,
+        `${
+          Conf.currentPlatform.url
+        }/timeline/pushNotif/fcmToken?fcmToken=${token}`,
         { method: "delete" }
       );
       // console.log("Fcm Token (delete) :", token, deleteTokenResponse);
       // === 2: Erase stored oauth2 token and cache information
-      await oauth.eraseToken();
-      await clearCache();
+      await OAuth2RessourceOwnerPasswordClient.connection.eraseToken();
+      await clearRequestsCache();
 
       // === 3: Validate log out
       dispatch({ type: actionTypeLoggedOut });
 
       // === 4: Nav back on the login screen
-      navigate("Login", { login });
+      navigate("Login");
     } catch (err) {
-      navigate("Login", { login: "" });
+      navigate("Login");
     }
   };
 }
@@ -195,17 +211,22 @@ export function logout() {
 export function refreshToken(newToken) {
   return async (dispatch, getState) => {
     try {
+      if (!Conf.currentPlatform) throw new Error("must specify a platform");
       const authState = getState().user.auth;
       if (!authState.loggingIn) return false;
 
       const oldToken = await firebase.messaging().getToken();
       const deleteTokenResponse = await signedFetch(
-        `${Conf.platform}/timeline/pushNotif/fcmToken?fcmToken=${oldToken}`,
+        `${
+          Conf.currentPlatform.url
+        }/timeline/pushNotif/fcmToken?fcmToken=${oldToken}`,
         { method: "delete" }
       );
       // console.log("Fcm Token (refresh delete) :", oldToken, deleteTokenResponse);
       const putTokenResponse = await signedFetch(
-        `${Conf.platform}/timeline/pushNotif/fcmToken?fcmToken=${newToken}`,
+        `${
+          Conf.currentPlatform.url
+        }/timeline/pushNotif/fcmToken?fcmToken=${newToken}`,
         {
           method: "put"
         }

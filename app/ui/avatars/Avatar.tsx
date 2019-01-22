@@ -2,7 +2,7 @@ import style from "glamorous-native";
 import * as React from "react";
 import RNFetchBlob from "rn-fetch-blob";
 import { View } from "react-native";
-import { Conf } from "../../Conf";
+import Conf from "../../Conf";
 import { usersAvatars, setUsersAvatars } from "../../infra/Cache";
 import { Connection } from "../../infra/Connection";
 
@@ -228,9 +228,10 @@ export class Avatar extends React.Component<
     }
 
     avatarsMap[this.props.id] = { loading: true };
+    if (!Conf.currentPlatform) throw new Error("must specify a platform");
     const response = await RNFetchBlob.fetch(
       "GET",
-      `${Conf.platform}/userbook/avatar/${this.props.id}?thumbnail=48x48`
+      `${Conf.currentPlatform.url}/userbook/avatar/${this.props.id}?thumbnail=48x48`
     );
     if (response.type === "utf8") {
       this._isMounted && this.setState({ loaded: true, noAvatar: true });
@@ -337,24 +338,26 @@ export class Avatar extends React.Component<
       return this.renderNoAvatar(width);
     }
     if (this.props.size === Size.large || this.count === 1) {
+      if (!Conf.currentPlatform) throw new Error("must specify a platform");
       return (
-        <LargeContainer style={{ width: width, height: width }}>
+        <LargeContainer style={{ width, height: width }}>
           <LargeImage
             source={{
-              uri: `${Conf.platform}/userbook/avatar/${
+              uri: `${Conf.currentPlatform.url}/userbook/avatar/${
                 this.props.id
               }?thumbnail=100x100`
             }}
-            style={{ width: width, height: width }}
+            style={{ width, height: width }}
           />
         </LargeContainer>
       );
     } else if (this.props.size === Size.aligned) {
+      if (!Conf.currentPlatform) throw new Error("must specify a platform");
       return (
         <AlignedContainer index={this.props.index}>
           <AlignedImage
             source={{
-              uri: `${Conf.platform}/userbook/avatar/${
+              uri: `${Conf.currentPlatform.url}/userbook/avatar/${
                 this.props.id
               }?thumbnail=100x100`
             }}
@@ -362,12 +365,13 @@ export class Avatar extends React.Component<
         </AlignedContainer>
       );
     } else if (this.props.size === Size.verylarge) {
+      if (!Conf.currentPlatform) throw new Error("must specify a platform");
       return (
         <VLContainer>
           <VeryLargeImage
             decorate={this.decorate}
             source={{
-              uri: `${Conf.platform}/userbook/avatar/${
+              uri: `${Conf.currentPlatform.url}/userbook/avatar/${
                 this.props.id
               }?thumbnail=150x150`
             }}
@@ -375,12 +379,13 @@ export class Avatar extends React.Component<
         </VLContainer>
       );
     } else {
+      if (!Conf.currentPlatform) throw new Error("must specify a platform");
       return (
         <SmallContainer count={this.props.count || 1} index={this.props.index}>
           <SmallImage
             count={this.props.count || 1}
             source={{
-              uri: `${Conf.platform}/userbook/avatar/${
+              uri: `${Conf.currentPlatform.url}/userbook/avatar/${
                 this.props.id
               }?thumbnail=100x100`
             }}

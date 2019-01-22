@@ -1,12 +1,19 @@
 import { AsyncStorage } from "react-native";
-import { Conf } from "../Conf";
+import Conf from "../Conf";
 
 export async function setLogin(value) {
-  await AsyncStorage.setItem(Conf.authLoginStore, JSON.stringify(value));
+  if (!Conf.currentPlatform) throw new Error("must specify a platform");
+  await AsyncStorage.setItem(
+    Conf.currentPlatform.url.authLoginStore,
+    JSON.stringify(value)
+  );
 }
 
 export async function getLogin() {
-  const authString = await AsyncStorage.getItem(Conf.authLoginStore);
+  if (!Conf.currentPlatform) throw new Error("must specify a platform");
+  const authString = await AsyncStorage.getItem(
+    Conf.currentPlatform.url.authLoginStore
+  );
 
   if (authString === null) {
     return {

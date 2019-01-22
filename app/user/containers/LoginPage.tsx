@@ -1,26 +1,32 @@
 // Libraries
 import style from "glamorous-native";
+import I18n from "i18n-js";
 import * as React from "react";
 import {
   Image,
   KeyboardAvoidingView,
   Platform,
   TextInput,
+  TouchableOpacity,
   TouchableWithoutFeedback,
   View
 } from "react-native";
-import I18n from "i18n-js";
 import { connect } from "react-redux";
 
 // Components
 import { FlatButton } from "../../ui";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { TextInputLine } from "../../ui/forms/TextInputLine";
-import { ErrorMessage } from "../../ui/Typography";
+import { ErrorMessage, Label } from "../../ui/Typography";
 
 // Type definitions
 import { login, LoginResult } from "../actions/login";
 import { IUserAuthState } from "../reducers/auth";
+
+import Conf from "../../Conf";
+import { navigate } from "../../navigation/helpers/navHelper";
+import { CommonStyles } from "../../styles/common/styles";
+import { Icon } from "../../ui/";
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -55,12 +61,6 @@ const initialState: ILoginPageState = {
   typing: false
 };
 
-export const getInitialStateWithUsername = login => ({
-  login,
-  password: undefined,
-  typing: false
-});
-
 // Main component ---------------------------------------------------------------------------------
 
 const FormContainer = style.view({
@@ -86,10 +86,7 @@ export class LoginPage extends React.Component<
   // Set default state
   constructor(props) {
     super(props);
-    this.state = {
-      ...initialState,
-      login: this.props.navigation.state.params.login || this.props.auth.login
-    };
+    this.state = initialState;
   }
 
   // Computed properties
@@ -124,8 +121,8 @@ export class LoginPage extends React.Component<
     >
       <Image
         resizeMode="contain"
-        style={{ height: 50, width: 50 }}
-        source={require("../../../assets/icons/icon.png")}
+        style={{ height: 50, width: 200 }}
+        source={Conf.currentPlatform.logo}
       />
     </View>
   ); // TS-ISSUE
@@ -134,48 +131,71 @@ export class LoginPage extends React.Component<
     const { loggingIn, loggedIn, error } = this.props.auth;
 
     return (
-      <FormContainer>
-        {this.renderLogo()}
-        <TextInputLine
-          inputRef={this.setInputLoginRef}
-          placeholder={I18n.t("Login")}
-          onChangeText={(login: string) =>
-            this.setState({ login: login.trim(), typing: true })
-          }
-          value={this.state.login}
-          hasError={error && !this.state.typing}
-          keyboardType="email-address"
-        />
-        <TextInputLine
-          inputRef={this.setInputPasswordRef}
-          placeholder={I18n.t("Password")}
-          onChangeText={(password: string) =>
-            this.setState({ password, typing: true })
-          }
-          secureTextEntry={true}
-          value={this.state.password}
-          hasError={error && !this.state.typing}
-        />
-        <ErrorMessage>
-          {this.state.typing ? "" : error && I18n.t(error)}
-        </ErrorMessage>
+      <View style={{ flex: 1 }}>
+        <FormContainer>
+          {this.renderLogo()}
+          <TextInputLine
+            inputRef={this.setInputLoginRef}
+            placeholder={I18n.t("Login")}
+            onChangeText={(login: string) =>
+              this.setState({ login: login.trim(), typing: true })
+            }
+            value={this.state.login}
+            hasError={error && !this.state.typing}
+            keyboardType="email-address"
+          />
+          <TextInputLine
+            inputRef={this.setInputPasswordRef}
+            placeholder={I18n.t("Password")}
+            onChangeText={(password: string) =>
+              this.setState({ password, typing: true })
+            }
+            secureTextEntry={true}
+            value={this.state.password}
+            hasError={error && !this.state.typing}
+          />
+          <ErrorMessage>
+            {this.state.typing ? "" : error && I18n.t(error)}
+          </ErrorMessage>
 
-        <View
+          <View
+            style={{
+              alignItems: "center",
+              flexGrow: 2,
+              justifyContent: "flex-start",
+              marginTop: error && !this.state.typing ? 10 : 30
+            }}
+          >
+            <FlatButton
+              onPress={() => this.handleLogin()}
+              disabled={this.isSubmitDisabled}
+              title={I18n.t("Connect")}
+              loading={loggingIn || loggedIn}
+            />
+          </View>
+        </FormContainer>
+        <TouchableOpacity
+          onPress={() => this.handleBackToPlatformSelector()}
           style={{
             alignItems: "center",
-            flexGrow: 2,
-            justifyContent: "flex-start",
-            marginTop: error && !this.state.typing ? 10 : 30
+            backgroundColor: "#F8F8FA",
+            borderTopColor: "#DCDDE0",
+            borderTopWidth: 1,
+            height: 56,
+            justifyContent: "center",
+            width: "100%"
           }}
         >
-          <FlatButton
-            onPress={() => this.handleLogin()}
-            disabled={this.isSubmitDisabled}
-            title={I18n.t("Connect")}
-            loading={loggingIn || loggedIn}
-          />
-        </View>
-      </FormContainer>
+          <Label>
+            {Conf.currentPlatform.displayName}{" "}
+            <Icon
+              size={9}
+              color={CommonStyles.lightTextColor}
+              name="arrow_down"
+            />
+          </Label>
+        </TouchableOpacity>
+      </View>
     );
   }
 
@@ -183,12 +203,14 @@ export class LoginPage extends React.Component<
 
   protected async handleLogin() {
     await this.props.onLogin(
-      this.state.login ||
-        this.props.auth.login ||
-        this.props.navigation.state.params.login,
+      this.state.login || this.props.auth.login,
       this.state.password
     );
     this.setState({ typing: false });
+  }
+
+  protected handleBackToPlatformSelector() {
+    navigate("PlatformSelect");
   }
 
   // Other public methods

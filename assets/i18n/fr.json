@@ -35,6 +35,7 @@
   "homework-task-empty-title": "Activités",
   "Homework": "Activités",
   "imageNotAvailable": "Image non disponible",
+  "linkTo": "Lien vers",
   "loadingFailedMessage": "Le chargement a échoué. Veuillez vérifier votre connexion internet.",
   "Login": "Identifiant",
   "news-info-shared": "Nouvelle actualité",
@@ -52,6 +53,7 @@
   "schoolbook-appTitle": "Carnet de liaison",
   "Search": "Rechercher ...",
   "seeMore": "Voir plus",
+  "select-platform": "Sélectionnez votre réseau social éducatif !",
   "timeline-allFilter": "Tous",
   "timeline-blogFilter": "Blog",
   "timeline-emptyScreenText": "C’est calme ici... Vous connaissez l’expression \"le calme avant la tempête\" ?",
@@ -62,55 +64,13 @@
   "to": "À :",
   "today": " Aujourd'hui ",
   "tryagain": "Réessayer",
-  "date": {
-    "day_names": [
-      "Dimanche",
-      "Lundi",
-      "Mardi",
-      "Mercredi",
-      "Jeudi",
-      "Vendredi",
-      "Samedi"
-    ],
-    "abbr_day_names": [
-      "Dim",
-      "Lun",
-      "Mar",
-      "Mer",
-      "Jeu",
-      "Ven",
-      "Sam"
-    ],
-    "month_names": [
-      null,
-      "Janvier",
-      "Février",
-      "Mars",
-      "Avril",
-      "Mai",
-      "Juin",
-      "Juillet",
-      "Août",
-      "Septembre",
-      "Octobre",
-      "Novembre",
-      "Décembre"
-    ],
-    "abbr_month_names": [
-      null,
-      "Jan",
-      "Fév",
-      "Mar",
-      "Avr",
-      "Mai",
-      "Juin",
-      "Juil",
-      "Août",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Déc"
-    ]
+  "welcome": "Bienvenue",
+
+  "date":{
+    "day_names": ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
+    "abbr_day_names": ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"],
+    "month_names": [null, "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
+    "abbr_month_names": [null, "Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"]
   },
   "blog-publish-comment": "Commentaire d'un billet de blog",
   "blog-publish-post": "Nouveau billet de blog",

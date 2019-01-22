@@ -1,7 +1,10 @@
-import { Conf } from "../Conf";
+import Conf from "../Conf";
 import { signedFetch } from "../infra/fetchWithCache";
 import { nainNavNavigate } from "../navigation/helpers/navHelper";
-import { fetchConversationThreadList, fetchConversationThreadResetMessages } from "./actions/threadList";
+import {
+  fetchConversationThreadList,
+  fetchConversationThreadResetMessages
+} from "./actions/threadList";
 import conversationThreadSelected from "./actions/threadSelected";
 
 export default dispatch => async notificationData => {
@@ -10,8 +13,9 @@ export default dispatch => async notificationData => {
   }
   const split = notificationData.resourceUri.split("/");
   const messageId = split[split.length - 1];
+  if (!Conf.currentPlatform) throw new Error("must specify a platform");
   const response = await signedFetch(
-    `${Conf.platform}/conversation/message/${messageId}`,
+    `${Conf.currentPlatform.url}/conversation/message/${messageId}`,
     {}
   );
   const message = await response.json();

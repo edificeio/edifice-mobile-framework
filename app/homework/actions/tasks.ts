@@ -3,7 +3,6 @@
  * Build actions to be dispatched to the homework tasks reducer.
  */
 
-import { Conf } from "../../Conf";
 import {
   asyncActionTypes,
   asyncFetchIfNeeded,

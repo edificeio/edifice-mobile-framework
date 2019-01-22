@@ -9,6 +9,7 @@ import pushNotifications from "../pushNotifications";
 import TimelineNavigator from "../timeline/TimelineNavigator";
 import Tracking from "../tracking/TrackingManager";
 import LoginPage from "../user/containers/LoginPage";
+import PlatformSelectPage from "../user/containers/PlatformSelectPage";
 import {
   createMainTabNavigator,
   createMainTabNavOption
@@ -60,7 +61,7 @@ class MainNavigatorHOC extends React.Component<
   public async componentDidUpdate() {
     if (this.props.notification) {
       const data = JSON.parse(this.props.notification.data.params);
-      console.log("routing from notif data", data);
+      // console.log("routing from notif data", data);
       pushNotifications(this.props.dispatch)(data, this.props.apps);
     }
   }
@@ -119,7 +120,8 @@ export const MainNavigator = connect(mapStateToProps)(MainNavigatorHOC);
 export const RootNavigator: NavigationContainer = createSwitchNavigator({
   Bootstrap: () => <View />,
   Login: { screen: LoginPage },
-  Main: { screen: () => <MainNavigator /> }
+  Main: { screen: () => <MainNavigator /> },
+  PlatformSelect: { screen: PlatformSelectPage }
 });
 
 // NAV TOOLS -------------------------------------------------------------------------

@@ -16,7 +16,7 @@ import {
   WebView as RNWebView
 } from "react-native";
 import sax from "sax";
-import { Conf } from "../Conf";
+import Conf from "../Conf";
 import { Loading } from "../ui";
 import { Images } from "../ui/Images";
 const { View } = style;
@@ -193,12 +193,13 @@ export class HTMLAdaptor {
       // TODO : put the attributes type
       this.commonParsingMethods.onopentag(tag);
       if (tag.name === "img") {
+        if (!Conf.currentPlatform) throw new Error("must specify a platform");
         if (this.imageGroup) {
           // in this case we have an image in the current group
           // console.warn("add image to group : " + tag.attributes.src);
           let src = tag.attributes.src;
           if (src.indexOf("file://") === -1) {
-            src = Conf.platform + src;
+            src = Conf.currentPlatform.url + src;
             const split = src.split("?");
             src = split[0] + "?thumbnail=" + this.thumbnailSize;
           }
@@ -212,7 +213,7 @@ export class HTMLAdaptor {
           this.imageGroup = true;
           let src = tag.attributes.src;
           if (src.indexOf("file://") === -1) {
-            src = Conf.platform + src;
+            src = Conf.currentPlatform.url + src;
             const split = src.split("?");
             src = split[0] + "?thumbnail=" + this.thumbnailSize;
           }

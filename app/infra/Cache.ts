@@ -1,5 +1,5 @@
 import { AsyncStorage } from "react-native";
-import { Conf } from "../Conf";
+import Conf from "../Conf";
 import { Connection } from "./Connection";
 
 // DEPRECATED. Use fetchWithCache instead.
@@ -7,10 +7,14 @@ import { Connection } from "./Connection";
 export const read = async (
   path,
   forceSync: boolean = true,
-  platform: string = Conf.platform
+  platform: string = Conf.currentPlatform.url
 ) => {
+  if (!Conf.currentPlatform) throw new Error("must specify a platform");
   if (!Connection.isOnline) {
-    console.log("OLD 'read' function: User offline, reading from cache");
+    // tslint:disable-next-line:no-console
+    console.warn(
+      "OLD DEPRECATED 'read' function: User offline, reading from cache"
+    );
   }
   const fromCache = await AsyncStorage.getItem(path);
 

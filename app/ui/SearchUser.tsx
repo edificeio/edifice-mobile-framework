@@ -48,8 +48,8 @@ export default class SearchUser extends React.Component<{ remaining, picked, onP
             visible.displayName && visible.displayName.toLowerCase().indexOf(this.state.searchText.toLowerCase()) !== -1
         );
 
-    expend = () => {
-        console.log(this.state.max)
+    expend(){
+        // console.log(this.state.max)
         this.setState({ ...this.state, max: this.state.max + 20 })
     }
 
@@ -66,8 +66,8 @@ export default class SearchUser extends React.Component<{ remaining, picked, onP
         this.input.clear();
     }
 
-    render() {
-        console.log(this.state)
+    render (){
+        // console.log(this.state)
         return (
             <PageContainer>
                 <ScrollField>

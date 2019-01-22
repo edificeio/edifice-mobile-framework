@@ -5,6 +5,7 @@ import {
   actionTypeRequestLogin
 } from "../actions/login";
 import { actionTypeSetNotifPrefs } from "../actions/notifPrefs";
+import { actionTypePlatformSelect } from "../actions/platform";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -22,6 +23,8 @@ export interface IUserAuthState {
   apps: string[];
   // technical
   notification: Notification;
+  // platform
+  platformId?: string;
 }
 
 // THE REDUCER ------------------------------------------------------------------------------------
@@ -32,6 +35,7 @@ export const stateDefault: IUserAuthState = {
   loggingIn: false,
   notification: null,
   notificationPrefs: [],
+  platformId: null,
   synced: false
 };
 
@@ -58,10 +62,14 @@ const authReducer = (state: IUserAuthState = stateDefault, action) => {
       return {
         ...stateDefault,
         error: action.errmsg,
-        loggingIn: false
+        loggingIn: false,
+        platformId: state.platformId
       };
     case actionTypeLoggedOut:
-      return stateDefault;
+      return {
+        ...stateDefault,
+        platformId: state.platformId
+      };
     case actionTypeSetNotifPrefs:
       return {
         ...state,
@@ -71,6 +79,11 @@ const authReducer = (state: IUserAuthState = stateDefault, action) => {
       return {
         ...state,
         notification: action.notification
+      };
+    case actionTypePlatformSelect:
+      return {
+        ...state,
+        platformId: action.platformId
       };
     default:
       return state;

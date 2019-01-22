@@ -1,7 +1,7 @@
 import I18n from "i18n-js";
 import * as React from "react";
 import RNLanguages from "react-native-languages";
-import { Provider } from "react-redux";
+import { Provider, connect } from "react-redux";
 import { applyMiddleware, combineReducers, createStore } from "redux";
 import thunkMiddleware from "redux-thunk";
 import AppScreen from "./AppScreen";
@@ -17,12 +17,14 @@ import { login, refreshToken } from "./user/actions/login";
 import moduleDefinitions from "./AppModules";
 import { getReducersFromModuleDefinitions } from "./infra/moduleTool";
 
-import { AppState } from "react-native";
+import { AppState, AsyncStorage } from "react-native";
 import firebase from "react-native-firebase";
 import {
   Notification,
   NotificationOpen
 } from "react-native-firebase/notifications";
+
+import { loadCurrentPlatform, unSelectPlatform } from "./user/actions/platform";
 
 // Disable Yellow Box on release builds.
 if (!__DEV__) {
@@ -53,12 +55,15 @@ I18n.translations = {
   fr: require("../assets/i18n/fr")
 };
 // Print current device language
-console.log("language", RNLanguages.language);
+// console.log("language", RNLanguages.language);
 // Print user preferred languages (in order)
-console.log("languages", RNLanguages.languages);
+// console.log("languages", RNLanguages.languages);
 I18n.locale = RNLanguages.language;
 
-export class AppStore extends React.Component {
+class AppStoreUnconnected extends React.Component<
+  { currentPlatformId: string; store: any },
+  {}
+> {
   private notificationOpenedListener;
   private onTokenRefreshListener;
 
@@ -68,7 +73,7 @@ export class AppStore extends React.Component {
 
   public render() {
     return (
-      <Provider store={store}>
+      <Provider store={this.props.store}>
         <AppScreen />
       </Provider>
     );
@@ -81,22 +86,35 @@ export class AppStore extends React.Component {
   }
 
   public async componentDidMount() {
-    store.dispatch(login(true) as any);
-    this.notificationOpenedListener = firebase
-      .notifications()
-      .onNotificationOpened((notificationOpen: NotificationOpen) =>
-        this.handleNotification(notificationOpen)
-      );
-    this.onTokenRefreshListener = firebase.messaging().onTokenRefresh(fcmToken => {
-        this.handleFCMTokenModified(fcmToken);
-    });
+    if (this.props.currentPlatformId) {
+      // Auto Login if possible
+      this.props.store.dispatch(login(true));
 
-    const notificationOpen: NotificationOpen = await firebase
-      .notifications()
-      .getInitialNotification();
-    if (notificationOpen) {
-      this.handleNotification(notificationOpen);
+      this.notificationOpenedListener = firebase
+        .notifications()
+        .onNotificationOpened((notificationOpen: NotificationOpen) =>
+          this.handleNotification(notificationOpen)
+        );
+      this.onTokenRefreshListener = firebase
+        .messaging()
+        .onTokenRefresh(fcmToken => {
+          this.handleFCMTokenModified(fcmToken);
+        });
+
+      const notificationOpen: NotificationOpen = await firebase
+        .notifications()
+        .getInitialNotification();
+      if (notificationOpen) {
+        this.handleNotification(notificationOpen);
+      }
+    } else {
+      // Load platform
+      this.props.store.dispatch(loadCurrentPlatform());
     }
+  }
+
+  public async componentDidUpdate() {
+    this.componentDidMount();
   }
 
   public componentWillUnmount() {
@@ -112,9 +130,9 @@ export class AppStore extends React.Component {
 
   private handleAppStateChange = (nextAppState: string) => {
     this.setState({ appState: nextAppState });
-    if (nextAppState === "active") {
-      console.log("app is now active again !");
-    }
+    // if (nextAppState === "active") {
+    //   console.log("app is now active again !");
+    // }
   };
 
   private handleNotification = (notificationOpen: NotificationOpen) => {
@@ -122,15 +140,35 @@ export class AppStore extends React.Component {
     const action = notificationOpen.action;
     // Get information about the notification that was opened
     const notification: Notification = notificationOpen.notification;
-    console.log("got notification !!", notification);
-    Tracking.logEvent("openNotificationPush")
-    store.dispatch({
+    // console.log("got notification !!", notification);
+    Tracking.logEvent("openNotificationPush");
+    this.props.store.dispatch({
       notification,
       type: "NOTIFICATION_OPEN"
     });
   };
 
   private handleFCMTokenModified = fcmToken => {
-    store.dispatch<any>(refreshToken(fcmToken));
+    this.props.store.dispatch(refreshToken(fcmToken));
   };
 }
+
+function connectWithStore(store, WrappedComponent, ...args) {
+  const ConnectedWrappedComponent = connect(...args)(WrappedComponent);
+  return props => {
+    return <ConnectedWrappedComponent {...props} store={store} />;
+  };
+}
+
+const mapStateToProps = (state: any, props: any) => ({
+  currentPlatformId: state.user.auth.platformId,
+  store
+});
+
+export const AppStore = connectWithStore(
+  store,
+  AppStoreUnconnected,
+  mapStateToProps
+);
+
+export default AppStore;

@@ -24,9 +24,9 @@ import { HtmlConverter } from ".";
 
 import sax from "sax";
 
-import { Conf } from "../../Conf";
+import Conf from "../../Conf";
 import { A, Bold, Italic } from "../../ui/Typography";
-import oauth, { signImagesUrls } from "../oauth";
+import { signImagesUrls } from "../oauth";
 
 export interface IHtmlConverterJsxOptions {
   formatting?: boolean;
@@ -38,7 +38,7 @@ export interface IHtmlConverterJsxOptions {
 
 export interface IHtmlConverterImageNugget {
   type: string; // "img"
-  images: Array<{ src: string; alt: string }>;
+  images: Array<{ src: string; alt: string; linkTo?: string }>;
 }
 
 export interface IHtmlConverterIframeNugget {
@@ -256,7 +256,10 @@ export class HtmlConverterJsx extends HtmlConverter {
   ): { alt: string; src: string } {
     if (src.indexOf("file://") === -1) {
       // TODO : Better parse image url and detect cases
-      if (src.indexOf("://") === -1) src = Conf.platform + src;
+      if (src.indexOf("://") === -1) {
+        if (!Conf.currentPlatform) throw new Error("must specify a platform");
+        src = Conf.currentPlatform.url + src;
+      }
       const split = src.split("?");
       src = split[0] + "?thumbnail=" + thumbnailSize; // TODO : Optional use of thumbnail
     }

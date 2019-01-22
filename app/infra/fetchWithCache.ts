@@ -1,13 +1,14 @@
 import { AsyncStorage } from "react-native";
 
-import { Conf } from "../Conf";
+import Conf from "../Conf";
 import { navigate } from "../navigation/helpers/navHelper";
 import { Connection } from "./Connection";
 import { Me } from "./Me";
-import oauth from "./oauth";
+import { OAuth2RessourceOwnerPasswordClient } from "./oauth";
 
+// This log doesn't mean anything since Conf is dynamic
 // tslint:disable-next-line:no-console
-console.log("Distant platform:", Conf.platform);
+// console.log("Distant platform:", Conf.currentPlatform.url);
 
 /**
  * Perform a fetch operation with a oAuth Token. Use it like fetch().
@@ -19,19 +20,22 @@ export async function signedFetch(
   init: any = {}
 ): Promise<Response> {
   try {
-    if (oauth.isExpired()) {
+    if (!OAuth2RessourceOwnerPasswordClient.connection)
+      throw new Error("no active oauth connection");
+    if (OAuth2RessourceOwnerPasswordClient.connection.isExpired()) {
       // tslint:disable-next-line:no-console
       // console.log("Token expired. Refreshing...");
       try {
-        await oauth.refreshToken();
+        await OAuth2RessourceOwnerPasswordClient.connection.refreshToken();
       } catch (err) {
-        navigate("Login", { login: Me.session.login });
+        navigate("Login");
       }
     }
     // tslint:disable-next-line:no-console
     // console.log("Token expires in ", oauth.expiresIn() / 1000, "seconds");
 
-    const params = oauth.sign(init);
+    // console.log("signing", url);
+    const params = OAuth2RessourceOwnerPasswordClient.connection.sign(init);
     return fetch(url, params);
   } catch (err) {
     // tslint:disable-next-line:no-console
@@ -59,6 +63,8 @@ export async function signedFetchJson(url: string, init: any): Promise<object> {
   }
 }
 
+const CACHE_KEY_PREFIX = "request-";
+
 /**
  * Perform a fetch operation usign the standard fetch api, with cache management.
  * It will saves the result of the fetch in the cache storage, and get from it if internet connexion isn't available.
@@ -75,11 +81,14 @@ export async function fetchWithCache(
   path: string,
   init: any = {},
   forceSync: boolean = true,
-  platform: string = Conf.platform,
+  platform: string = Conf.currentPlatform.url,
   getBody = r => r.text(),
   getCacheResult = cr => new Response(...cr)
 ) {
-  const dataFromCache = await AsyncStorage.getItem(path); // TODO : optimization  - get dataFrmCache only when needed.
+  if (!platform) throw new Error("must specify a platform");
+  // TODO bugfix : cache key must depends on userID and platformID.
+  const cacheKey = CACHE_KEY_PREFIX + path;
+  const dataFromCache = await AsyncStorage.getItem(cacheKey); // TODO : optimization  - get dataFrmCache only when needed.
   if (Connection.isOnline && (forceSync || !dataFromCache)) {
     const response = await signedFetch(`${platform}${path}`, init);
     // console.log("fetchWithCache", response);
@@ -92,7 +101,7 @@ export async function fetchWithCache(
         statusText: response.statusText
       }
     };
-    await AsyncStorage.setItem(path, JSON.stringify(cacheResponse));
+    await AsyncStorage.setItem(cacheKey, JSON.stringify(cacheResponse));
     const ret = await getBody(response);
     return ret;
   }
@@ -118,7 +127,7 @@ export async function fetchJSONWithCache(
   path: string,
   init: any = {},
   forceSync: boolean = true,
-  platform: string = Conf.platform
+  platform: string = Conf.currentPlatform.url
 ) {
   return fetchWithCache(
     path,
@@ -130,6 +139,13 @@ export async function fetchJSONWithCache(
   );
 }
 
-export async function clearCache() {
-  await AsyncStorage.multiRemove(await AsyncStorage.getAllKeys());
+/**
+ * Erase from AsyncStorage all data that keeps requests cache.
+ */
+export async function clearRequestsCache() {
+  const keys = (await AsyncStorage.getAllKeys()).filter(str =>
+    str.startsWith(CACHE_KEY_PREFIX)
+  );
+  // console.log("keys to clear:", keys);
+  await AsyncStorage.multiRemove(keys);
 }

@@ -1,7 +1,7 @@
 import moment from "moment";
 import generateUuid from "../../utils/uuid";
 
-import { Conf } from "../../Conf";
+import Conf from "../../Conf";
 import { signedFetch } from "../../infra/fetchWithCache";
 import { Me } from "../../infra/Me";
 import Tracking from "../../tracking/TrackingManager";
@@ -49,8 +49,9 @@ export function sendMessage(data: IConversationMessage) {
         to: fulldata.to
       };
       // console.log("3/ sent request to the server", requestbody, replyTo);
+      if (!Conf.currentPlatform) throw new Error("must specify a platform");
       const response = await signedFetch(
-        `${Conf.platform}/conversation/send?${replyTo}`,
+        `${Conf.currentPlatform.url}/conversation/send?${replyTo}`,
         {
           body: JSON.stringify(requestbody),
           headers: {

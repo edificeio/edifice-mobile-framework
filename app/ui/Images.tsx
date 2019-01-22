@@ -74,7 +74,10 @@ const StretchImage = (props: ImageProps) => (
 );
 
 export class Images extends React.Component<
-  { images: Array<{ src: ImageURISource; alt: string }>; style?: ViewStyle },
+  {
+    images: Array<{ src: ImageURISource; alt: string; linkTo?: string }>;
+    style?: ViewStyle;
+  },
   any
 > {
   public state = {

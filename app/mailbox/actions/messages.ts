@@ -7,12 +7,12 @@ import moment from "moment";
 import { asyncActionTypes, asyncGetJson } from "../../infra/redux/async";
 import conversationConfig from "../config";
 
+import Conf from "../../Conf";
+import { signedFetch } from "../../infra/fetchWithCache";
 import {
   IConversationMessageList,
   IConversationMessageNativeArray
 } from "../reducers/messages";
-import { Conf } from "../../Conf";
-import { signedFetch } from "../../infra/fetchWithCache";
 
 /** Returns the local state (global state -> conversation2 -> messages). Give the global state as parameter. */
 const localState = globalState =>
@@ -105,7 +105,8 @@ export function conversationMessagesFetchError(errmsg: string) {
 export function conversationSetMessagesRead(messageIds: string[]) {
   return async (dispatch, getState) => {
     try {
-      await signedFetch(`${Conf.platform}/conversation/toggleUnread`, {
+      if (!Conf.currentPlatform) throw new Error("must specify a platform");
+      await signedFetch(`${Conf.currentPlatform.url}/conversation/toggleUnread`, {
         body: JSON.stringify({
           id: messageIds,
           unread: false

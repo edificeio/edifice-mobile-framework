@@ -31,6 +31,7 @@
   "homework-task-empty-title": "Cuaderno",
   "Homework": "Cuaderno",
   "imageNotAvailable": "Imagen no disponible",
+
   "loadingFailedMessage": "Error de carga. Compruebe la conexión a Internet.",
   "Login": "Usuario",
   "news-info-shared": "Noticia compartida",
@@ -48,6 +49,7 @@
   "schoolbook-appTitle": "Cuaderno de correspondencia",
   "Search": "Buscar ...",
   "seeMore": "Ver más",
+
   "timeline-allFilter": "Todo",
   "timeline-blogFilter": "Blog",
   "timeline-emptyScreenText": "Está todo muy tranquilo. ¿Conoce la expresión \"la calma antes de la tormenta\"?",
@@ -58,6 +60,7 @@
   "to": "Para :",
   "today": " Hoy ",
   "tryagain": "Vuelva a intentarlo.",
+
 
   "date":{
     "day_names": ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
