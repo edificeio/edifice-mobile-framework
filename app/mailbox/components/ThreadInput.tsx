@@ -67,6 +67,7 @@ class ThreadInput extends React.PureComponent<
   {
     thread: IConversationThread;
     lastMessageId: string;
+    emptyThread: boolean;
     send: (data: any) => Promise<void>;
     sendPhoto: (data: any) => Promise<void>;
   },
@@ -75,7 +76,7 @@ class ThreadInput extends React.PureComponent<
     textMessage: string;
     newThreadId: string;
   }
-> {
+  > {
   private input: any;
 
   public state = {
@@ -122,14 +123,15 @@ class ThreadInput extends React.PureComponent<
     this.setState({
       textMessage: ""
     });
-
+    // console.log("thread object ", thread)
     const newMessage = await this.props.send({
       body: `<div>${textMessage}</div>`,
       cc: thread.cc,
       parentId: lastMessageId,
       subject: "Re: " + thread.subject,
       threadId: thread.id,
-      to: this.findReceivers(thread)
+      to: this.findReceivers(thread),
+      displayNames: thread.displayNames
     });
   }
 
@@ -164,7 +166,7 @@ class ThreadInput extends React.PureComponent<
               this.blur();
               return true;
             }}
-            placeholder={I18n.t("conversation-chatPlaceholder")}
+            placeholder={this.props.emptyThread ? I18n.t("conversation-chatPlaceholder") : I18n.t("conversation-responsePlaceholder")}
             underlineColorAndroid={"transparent"}
             value={textMessage}
             autoCorrect={false}
@@ -219,7 +221,7 @@ export default connect(
       state[conversationConfig.reducerName].threadSelected;
     const selectedThread =
       state[conversationConfig.reducerName].threadList.data.byId[
-        selectedThreadId
+      selectedThreadId
       ];
 
     return {

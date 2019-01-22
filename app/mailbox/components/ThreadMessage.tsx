@@ -14,6 +14,7 @@ import { DateView } from "../../ui/DateView";
 import { TouchableImageOptional } from "../../ui/ImageOptional";
 import { Italic } from "../../ui/Typography";
 import { ConversationMessageStatus } from "../reducers/messages";
+import { isObject } from "util";
 
 const ImageMessage = style.image({
   height: 130,
@@ -39,22 +40,37 @@ const TextBubble = ({ content, isMine }) => (
   </BubbleStyle>
 );
 
+const MessageStatus = ({ status, date }) => {
+  if (status === undefined ||
+    status === ConversationMessageStatus.sent)
+    return <DateView date={date} />
+  else if (status === ConversationMessageStatus.sending)
+    return <Text>{I18n.t("conversation-sendingMessage")}</Text>
+  else if (
+    status === ConversationMessageStatus.failed)
+    <Text style={{ color: CommonStyles.error, fontSize: 12 }} >
+      {I18n.t("conversation-failedSent")}
+    </Text>
+};
 export default class ThreadMessage extends React.PureComponent<
   {
     body: string;
     date: any;
     displayNames: any[];
     from: string;
+    to: string[]; // User Ids of the receivers
+    toName: string[]; // User names of the receivers
     status: ConversationMessageStatus;
     onOpenImage: (
       imageIndex: number,
       images: Array<{ src: string; alt: string }>
     ) => void;
+    onTapReceivers: (receivers: Array<{ id: string, name: string }>) => void
   },
   undefined
-> {
+  > {
   public render() {
-    const { body, date, displayNames = [], from = "", status } = this.props;
+    const { body, date, to = [], toName = [], from = "", status } = this.props;
 
     const isMine = from === Me.session.userId;
     // medium-text is used to write previous sender
@@ -65,25 +81,36 @@ export default class ThreadMessage extends React.PureComponent<
       .toHTML();
     const messageText = adaptator(newHtml).toText();
     const images = adaptator(newHtml).toImagesArray("381x381");
-
+    const receiverText = to.length > 1 ? I18n.t("conversation-receivers", { count: to.length }) : I18n.t("conversation-receiver");
+    const receivers: Array<{ id: string, name: string }> = [];
+    to.forEach((id, index) => {
+      receivers.push({ id, name: toName[index] });
+    })
     if (!body) {
       return <style.View />;
     }
 
     return (
       <MessageBlock my={isMine}>
-        {displayNames.length > 2 &&
-          !isMine && (
-            <AvatarContainer>
-              <SingleAvatar size={35} userId={from} />
-            </AvatarContainer>
-          )}
         <MessageContainer my={isMine}>
+          <MessageInfos my={isMine}>
+            <MessageInfosDetails my={isMine}>
+              <AvatarContainer my={isMine}>
+                <SingleAvatar size={30} userId={from} />
+              </AvatarContainer>
+              <TouchableReceiverText onPress={() => this.props.onTapReceivers(receivers)}>
+                <ReceiverText>{receiverText}</ReceiverText>
+              </TouchableReceiverText>
+            </MessageInfosDetails>
+            <MessageInfosStatus>
+              <MessageStatus status={status} date={date} />
+            </MessageInfosStatus>
+          </MessageInfos>
           {messageText ? (
             <TextBubble content={messageText} isMine={isMine} />
           ) : (
-            <View />
-          )}
+              <View />
+            )}
           {images.map((el, index) => {
             return (
               <TouchableImageOptional
@@ -107,18 +134,6 @@ export default class ThreadMessage extends React.PureComponent<
               />
             );
           })}
-          {(status === undefined ||
-            status === ConversationMessageStatus.sent) && (
-            <DateView date={date} />
-          )}
-          {status === ConversationMessageStatus.sending && (
-            <Text>{I18n.t("conversation-sendingMessage")}</Text>
-          )}
-          {status === ConversationMessageStatus.failed && (
-            <Text style={{ color: CommonStyles.error, fontSize: 12 }}>
-              {I18n.t("conversation-failedSent")}
-            </Text>
-          )}
         </MessageContainer>
       </MessageBlock>
     );
@@ -126,22 +141,53 @@ export default class ThreadMessage extends React.PureComponent<
 }
 
 const AvatarContainer = style.view({
-  height: 50,
-  marginBottom: 15,
-  width: 50
-});
+  height: 35,
+  width: 35,
+  justifyContent: "center"
+},
+  ({ my }): ViewStyle => ({
+    alignItems: my ? "flex-end" : "flex-start"
+  }));
+const MessageInfos = style.view(
+  {
+    flex: 1,
+    justifyContent: "space-between",
+    alignItems: "center",
+    alignSelf: "stretch",
+    padding: 0,
 
+  },
+  ({ my }): ViewStyle => ({
+    flexDirection: my ? "row-reverse" : "row"
+  })
+)
+const MessageInfosDetails = style.view(
+  {
+    alignItems: "center"
+  }
+  ,
+  ({ my }): ViewStyle => ({
+    flexDirection: my ? "row-reverse" : "row"
+  }));
+const MessageInfosStatus = style.view(
+  {
+    paddingTop: 5
+  });
 const MessageContainer = style.view(
   {
-    flex: 1
+    flex: 1,
   },
   ({ my }): ViewStyle => ({
     alignItems: my ? "flex-end" : "flex-start",
-    paddingLeft: my ? 54 : 5,
-    paddingRight: my ? 0 : 54
+    flexDirection: "column",
   })
 );
+const TouchableReceiverText = style.touchableOpacity({
 
+})
+const ReceiverText = style.text({
+  fontSize: 11
+})
 const MessageBlock = style.view(
   {
     flex: 1,
@@ -157,6 +203,7 @@ const MessageBlock = style.view(
 
 const BubbleStyle = style.view(
   {
+    alignSelf: "stretch",
     justifyContent: "center",
     marginBottom: 10,
     paddingHorizontal: 16,
@@ -168,7 +215,7 @@ const BubbleStyle = style.view(
   },
   ({ my }): ViewStyle => ({
     backgroundColor: my ? CommonStyles.iconColorOn : "white",
-    elevation: 3
+    elevation: 2
   })
 );
 

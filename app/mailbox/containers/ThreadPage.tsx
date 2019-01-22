@@ -12,6 +12,7 @@ import {
   fetchConversationThreadNewerMessages,
   fetchConversationThreadOlderMessages
 } from "../actions/threadList";
+import { createActionReceiversDisplay } from "../actions/displayReceivers";
 
 const mapStateToProps: (state: any) => IThreadPageDataProps = state => {
   // Extract data from state
@@ -19,7 +20,7 @@ const mapStateToProps: (state: any) => IThreadPageDataProps = state => {
   const selectedThreadId = state[conversationConfig.reducerName].threadSelected;
   const selectedThread =
     state[conversationConfig.reducerName].threadList.data.byId[
-      selectedThreadId
+    selectedThreadId
     ];
   // console.log("display thread", localState, selectedThreadId, selectedThread);
   const messages = selectedThread.messages.map(
@@ -51,6 +52,10 @@ const mapDispatchToProps: (
       // console.log("get older posts");
       dispatch(fetchConversationThreadOlderMessages(threadId));
       return;
+    },
+    onTapReceivers: (messageId: string) => {
+      dispatch(createActionReceiversDisplay(messageId))
+      return;
     }
   };
 };
@@ -58,7 +63,7 @@ const mapDispatchToProps: (
 class ThreadPageContainer extends React.PureComponent<
   IThreadPageProps & { dispatch: any },
   {}
-> {
+  > {
   constructor(props) {
     super(props);
   }

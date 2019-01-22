@@ -14,9 +14,6 @@
 // Libraries
 import style from "glamorous-native";
 import * as React from "react";
-import I18n from "i18n-js";
-import Swipeable from "react-native-swipeable";
-import ViewOverflow from "react-native-view-overflow";
 
 import moment from "moment";
 // tslint:disable-next-line:no-submodule-imports
@@ -28,25 +25,22 @@ import { KeyboardAvoidingView, Platform, RefreshControl } from "react-native";
 const { View, FlatList, Text } = style;
 import styles from "../../styles";
 
-import { Loading, Row } from "../../ui";
+import { Loading } from "../../ui";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
-import { EmptyScreen } from "../../ui/EmptyScreen";
 import ThreadMessage from "../components/ThreadMessage";
 
 // Type definitions
 
 import { Carousel } from "../../ui/Carousel";
-import {
-  IConversationMessage,
-  IConversationMessageList
+import messages, {
+  IConversationMessage
 } from "../reducers/messages";
 import { IConversationThread } from "../reducers/threadList";
 
 // Misc
 
 import { signImagesUrls } from "../../infra/oauth";
-import today from "../../utils/today";
 import ThreadInput from "./ThreadInput";
 
 // Props definition -------------------------------------------------------------------------------
@@ -62,6 +56,7 @@ export interface IThreadPageDataProps {
 export interface IThreadPageEventProps {
   onGetNewer?: (threadId: string) => void;
   onGetOlder?: (threadId: string) => void;
+  onTapReceivers?(messageId: string)
 }
 
 export interface IThreadPageOtherProps {
@@ -89,7 +84,7 @@ export const defaultState: IThreadPageState = {
 export class ThreadPage extends React.PureComponent<
   IThreadPageProps,
   IThreadPageState
-> {
+  > {
   constructor(props) {
     super(props);
     this.state = defaultState;
@@ -168,7 +163,7 @@ export class ThreadPage extends React.PureComponent<
             this.onEndReachedCalledDuringMomentum = false;
           }}
         />
-        <ThreadInput />
+        <ThreadInput emptyThread={messages.length == 0} />
       </KeyboardAvoidingView>
     );
   }
@@ -188,9 +183,14 @@ export class ThreadPage extends React.PureComponent<
             imageIndex: number,
             images: Array<{ alt: string; src: string }>
           ) => this.handleOpenImage(imageIndex, images)}
+          onTapReceivers={(_) => this.handleTapReceivers(message.id)}
         />
       </View>
     );
+  }
+  public handleTapReceivers = (messageId: string) => {
+    this.props.onTapReceivers && this.props.onTapReceivers(messageId);
+    this.props.navigation.navigate("listReceivers");
   }
   /*
   TODO : Dead code in old `conversation` module. So what to do this time ?

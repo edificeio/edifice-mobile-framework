@@ -1,9 +1,10 @@
 import { combineReducers } from "redux";
 
 import filter from "./filter";
-import messages from "./messages";
+import messages, { IConversationMessageList, IConversationMessage } from "./messages";
 import threadList from "./threadList";
 import threadSelected from "./threadSelected";
+import receiversDisplay from "./receiversDisplay";
 import users from "./users";
 
 const rootReducer = combineReducers({
@@ -11,7 +12,8 @@ const rootReducer = combineReducers({
   messages,
   threadList,
   threadSelected,
+  receiversDisplay,
   users
 });
-
+export { IConversationMessageList, IConversationMessage }
 export default rootReducer;
