@@ -52,7 +52,8 @@ export class ReceiverListPage extends React.PureComponent<
     public render() {
         const { ccReceivers = [], toReceivers = [], sender } = this.props;
         const total = ccReceivers.length + toReceivers.length;
-        const usersGroupped = { "conversation-receiversSender": [sender], "conversation-receiversTo": toReceivers }
+        const receiverKey = toReceivers.length==1?  "conversation-receiverTo":  "conversation-receiversTo";
+        const usersGroupped = { "conversation-receiversSender": [sender], [receiverKey]: toReceivers }
         if (ccReceivers.length > 0) {
             usersGroupped["conversation-receiversCC"] = ccReceivers;
         }

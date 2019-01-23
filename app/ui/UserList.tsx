@@ -93,6 +93,7 @@ export function UserListGroupped(props: {
 
 const GroupText = style.text({
     paddingHorizontal: 24,
-    fontSize: 18,
+    fontFamily: CommonStyles.primaryFontFamily,
+    fontSize: 14,
     paddingTop: 18
 });

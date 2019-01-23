@@ -173,19 +173,17 @@ class ThreadInput extends React.PureComponent<
   public render() {
     const { selected, textMessage } = this.state;
     const { displayPlaceholder, thread } = this.props;
-    let placeholder = "";
-    if (displayPlaceholder) {
-      placeholder = this.props.emptyThread ? I18n.t("conversation-chatPlaceholder") : I18n.t("conversation-responsePlaceholder");
-    }
     const receiversIds = this.findReceivers(thread);
     const receiverNames = thread.displayNames.filter(dN => receiversIds.indexOf(dN[0]) > -1).map(dN => dN[1]);
     const showReceivers = (selected == Selected.keyboard || (textMessage && textMessage.length > 0)) && receiverNames.length >= 2;
+    //iOS hack => does not display placeholder on update
     return (
       <View>
         <ThreadInputReceivers names={receiverNames} show={showReceivers} onPress={() => this.props.onReceiversTap(thread)} />
         <ContainerFooterBar>
           <ContainerInput>
-            {this.renderInput(textMessage, placeholder)}
+            {displayPlaceholder &&  this.props.emptyThread  && this.renderInput(textMessage, I18n.t("conversation-chatPlaceholder"))}
+            {displayPlaceholder && !this.props.emptyThread  && this.renderInput(textMessage, I18n.t("conversation-responsePlaceholder"))}
           </ContainerInput>
           <Line style={{ height: 40 }}>
             <ChatIcon
