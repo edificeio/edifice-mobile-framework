@@ -48,28 +48,30 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
     return (
       <ArticleContainer>
         <TouchCard onPress={() => this.open(false)}>
-          <Header>
-            <LeftPanel>
-              <SingleAvatar userId={senderId} />
-            </LeftPanel>
-            <CenterPanel>
-              <Bold>
-                {senderName}
-                <Light> {I18n.t(`timeline-eventType-${eventType}`)} </Light>
-                {resourceName}
-              </Bold>
-              <DateView date={date} short={false} />
-            </CenterPanel>
-          </Header>
-          <Preview textContent={message} onExpend={() => this.open(true)} />
-          {images.length ? (
-            <Images
-              images={images as any} // TODO: `images` has not the right array object format
-              style={message ? { marginTop: 15 } : {}}
-            />
-          ) : (
-            <View />
-          )}
+          <View>
+            <Header>
+              <LeftPanel>
+                <SingleAvatar userId={senderId} />
+              </LeftPanel>
+              <CenterPanel>
+                <Bold>
+                  {senderName}
+                  <Light> {I18n.t(`timeline-eventType-${eventType}`)} </Light>
+                  {resourceName}
+                </Bold>
+                <DateView date={date} short={false} />
+              </CenterPanel>
+            </Header>
+            <Preview textContent={message} onExpend={() => this.open(true)} />
+            {images.length ? (
+              <Images
+                images={images as any} // TODO: `images` has not the right array object format
+                style={message ? { marginTop: 15 } : {}}
+              />
+            ) : (
+              <View />
+            )}
+          </View>
         </TouchCard>
       </ArticleContainer>
     );

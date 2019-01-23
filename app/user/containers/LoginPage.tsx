@@ -7,11 +7,11 @@ import {
   KeyboardAvoidingView,
   Platform,
   TextInput,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   View
 } from "react-native";
 import { connect } from "react-redux";
+import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 
 // Components
 import { FlatButton } from "../../ui";

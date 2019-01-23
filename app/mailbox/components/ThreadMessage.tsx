@@ -1,7 +1,7 @@
 import style, { withTheme } from "glamorous-native";
 import I18n from "i18n-js";
 import * as React from "react";
-import { Text, TouchableOpacity, View, ViewStyle } from "react-native";
+import { Text, View, ViewStyle } from "react-native";
 
 import { CommonStyles } from "../../styles/common/styles";
 
@@ -72,12 +72,11 @@ export default class ThreadMessage extends React.PureComponent<
 
     return (
       <MessageBlock my={isMine}>
-        {displayNames.length > 2 &&
-          !isMine && (
-            <AvatarContainer>
-              <SingleAvatar size={35} userId={from} />
-            </AvatarContainer>
-          )}
+        {displayNames.length > 2 && !isMine && (
+          <AvatarContainer>
+            <SingleAvatar size={35} userId={from} />
+          </AvatarContainer>
+        )}
         <MessageContainer my={isMine}>
           {messageText ? (
             <TextBubble content={messageText} isMine={isMine} />

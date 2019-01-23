@@ -12,13 +12,14 @@ import { sendMessage } from "../actions/sendMessage";
 import { sendPhoto } from "../actions/sendPhoto";
 
 import { IconOnOff } from "../../ui";
+import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { Line } from "../../ui/Grid";
 import { ToggleIcon } from "../../ui/ToggleIcon";
 import { IConversationThread } from "../reducers/threadList";
 
 // TODO : Debt : Needs to be refactored.
 
-const ContainerFooterBar = style.view({
+const ContainerFooterBar = style(TouchableOpacity)({
   backgroundColor: CommonStyles.tabBottomColor,
   borderTopColor: CommonStyles.borderColorLighter,
   borderTopWidth: 1,
@@ -27,7 +28,7 @@ const ContainerFooterBar = style.view({
   justifyContent: "flex-start"
 });
 
-const ChatIcon = style.touchableOpacity({
+const ChatIcon = style(TouchableOpacity)({
   alignItems: "flex-start",
   justifyContent: "center",
   paddingLeft: 20,
@@ -35,7 +36,7 @@ const ChatIcon = style.touchableOpacity({
   width: 58
 });
 
-const SendContainer = style.touchableOpacity({
+const SendContainer = style(TouchableOpacity)({
   alignItems: "center",
   alignSelf: "flex-end",
   height: 40,
