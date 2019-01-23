@@ -1,10 +1,11 @@
 import style from "glamorous-native"
 import * as React from "react";
-import { TextInput, TouchableOpacity } from 'react-native';
+import { TextInput } from 'react-native';
 import { CommonStyles } from '../styles/common/styles';
 import I18n from "i18n-js";
 import { PageContainer } from './ContainerContent';
 import UserList, { IUser } from "./UserList";
+import TouchableOpacity from "../ui/CustomTouchableOpacity";
 
 export const UserLabel = style.text({
     backgroundColor: CommonStyles.primaryLight,
@@ -18,8 +19,8 @@ export const UserLabel = style.text({
 });
 
 const ScrollField = style.scrollView({
-    maxHeight: 181,
-    flexGrow: 0
+  maxHeight: 181,
+  flexGrow: 0
 });
 
 const FieldContainer = style.view({

@@ -1,7 +1,7 @@
-import style, { withTheme } from "glamorous-native";
+import style, { } from "glamorous-native";
 import I18n from "i18n-js";
 import * as React from "react";
-import { Text, View, ViewStyle } from "react-native";
+import { View, ViewStyle } from "react-native";
 
 import { CommonStyles } from "../../styles/common/styles";
 
@@ -13,7 +13,8 @@ import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
 import { DateView } from "../../ui/DateView";
 import { TouchableImageOptional } from "../../ui/ImageOptional";
 import { Italic } from "../../ui/Typography";
-import messages, { ConversationMessageStatus, IConversationMessage } from "../reducers/messages";
+import { ConversationMessageStatus } from "../reducers/messages";
+import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 
 const ImageMessage = style.image({
   height: 130,
@@ -94,11 +95,11 @@ export default class ThreadMessage extends React.PureComponent<
                 <SingleAvatar size={30} userId={from} />
               </AvatarContainer>
               <ReceiverTextPrefix>{I18n.t("conversation-receiverPrefix")} </ReceiverTextPrefix>
-              <TouchableReceiverText onPress={() => this.props.onTapReceivers()}>
+              <TouchableOpacity onPress={() => this.props.onTapReceivers()}>
                 <ReceiverLink>
                   <ReceiverText>{receiverText}</ReceiverText>
                 </ReceiverLink>
-              </TouchableReceiverText>
+              </TouchableOpacity>
             </MessageInfosDetails>
             <MessageInfosStatus>
               <MessageStatus status={status} date={date} />
@@ -171,9 +172,6 @@ const MessageContainer = style.view(
     flexDirection: "column",
   }
 );
-const TouchableReceiverText = style.touchableOpacity({
-
-})
 const MessageStatusText = style.text({
   fontSize: 12,
   paddingBottom: 5

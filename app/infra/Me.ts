@@ -21,10 +21,13 @@ const preferences = {} as any;
 
 export const savePreference = async (appName: string, newData) => {
   if (!Conf.currentPlatform) throw new Error("must specify a platform");
-  await signedFetch(`${Conf.currentPlatform.url}/userbook/preference/${appName}`, {
-    body: JSON.stringify({ ...preferences[appName], ...newData }),
-    method: "PUT"
-  });
+  await signedFetch(
+    `${Conf.currentPlatform.url}/userbook/preference/${appName}`,
+    {
+      body: JSON.stringify({ ...preferences[appName], ...newData }),
+      method: "PUT"
+    }
+  );
 };
 export const preference = async (appName: string) => {
   if (!Conf.currentPlatform) throw new Error("must specify a platform");
@@ -44,7 +47,7 @@ export const fillUserData = async () => {
   }
   const data = await fetchJSONWithCache(`/directory/user/${Me.session.userId}`);
   // tslint:disable-next-line:forin
-  for (let prop in data) {
+  for (const prop in data) {
     Me.session[prop] = data[prop];
   }
   dataFilled = true;

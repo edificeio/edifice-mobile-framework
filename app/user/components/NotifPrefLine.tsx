@@ -3,10 +3,11 @@ import * as React from "react";
 import I18n from "i18n-js";
 
 import { Line } from "../../ui";
+import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { Toggle } from "../../ui/forms/Toggle";
 import { Label } from "../../ui/Typography";
 
-const Container = style.touchableOpacity({
+const Container = style(TouchableOpacity)({
   alignItems: "center",
   backgroundColor: "white",
   borderBottomWidth: 1,

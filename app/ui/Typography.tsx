@@ -26,7 +26,7 @@ export const Paragraph = style.text(
   {
     color: CommonStyles.textColor,
     fontFamily: CommonStyles.primaryFontFamily,
-    fontSize: 12
+    fontSize: 14
   },
   ({ strong }: { strong?: boolean }) => ({
     fontFamily: strong

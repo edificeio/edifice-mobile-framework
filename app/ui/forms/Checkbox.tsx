@@ -2,8 +2,9 @@ import style from "glamorous-native";
 import * as React from "react";
 import { Icon } from "..";
 import { CommonStyles } from "../../styles/common/styles";
+import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 
-const TapCircle = style.touchableOpacity(
+const TapCircle = style(TouchableOpacity)(
   {
     alignItems: "center",
     borderRadius: 14,

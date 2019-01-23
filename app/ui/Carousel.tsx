@@ -1,27 +1,25 @@
-import I18n from "i18n-js";
-
 import style from "glamorous-native";
+import I18n from "i18n-js";
 import * as React from "react";
 import {
   Dimensions,
-  FlatList,
   ImageURISource,
+  Linking,
   Modal,
   Platform,
-  ScrollView,
   Text,
-  View,
-  Linking,
-  TouchableOpacity
+  View
 } from "react-native";
 import FastImage from "react-native-fast-image";
 import RNCarousel from "react-native-snap-carousel";
+
 import { Icon } from ".";
 import { CommonStyles } from "../styles/common/styles";
+import TouchableOpacity from "./CustomTouchableOpacity";
 import ImageOptional from "./ImageOptional";
-import { Italic, A } from "./Typography";
+import { A, Italic } from "./Typography";
 
-const Close = style.touchableOpacity({
+const Close = style(TouchableOpacity)({
   height: 40,
   width: 40,
   borderRadius: 20,

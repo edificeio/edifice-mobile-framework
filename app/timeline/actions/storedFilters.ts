@@ -1,13 +1,13 @@
 import { AsyncStorage } from "react-native";
 
-export const timelineApps = ["BLOG", "ACTUALITES", "SCHOOLBOOK"];
+export const timelineApps = ["Blog", "News", "Schoolbook"];
 
 function getLegalTimelineApps(apps: string[]) {
-  const stringCapitalize = (str: string) =>
-    str.charAt(0).toUpperCase() + str.slice(1);
-  return timelineApps.filter(app =>
-    apps.includes(stringCapitalize(app.toLowerCase()))
-  );
+  // HACK ! Beaceause sometimes "News" is "Actualités" and "Actualités" is "News".
+  if (apps.includes("Actualites")) apps.push("News");
+  else if (apps.includes("News")) apps.push("Actualites");
+
+  return timelineApps.filter(app => apps.includes(app));
 }
 
 export const storedFilters = async legalapps => {

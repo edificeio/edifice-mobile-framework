@@ -12,9 +12,10 @@
 
 import style from "glamorous-native";
 import * as React from "react";
-const { Text, TouchableOpacity } = style;
+const { Text } = style;
 import HtmlToText from "../../infra/htmlConverter/text";
 import { CommonStyles } from "../../styles/common/styles";
+import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 
 export interface IHomeworkCardProps {
   style?: any;

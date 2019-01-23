@@ -6,6 +6,7 @@ import { Image, ScrollView, Text, View } from "react-native";
 import { connect } from "react-redux";
 
 // Components
+import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { H1, Light, LightP } from "../../ui/Typography";
 
 // Type definitions
@@ -39,7 +40,7 @@ export type IPlatformSelectPageProps = IPlatformSelectPageDataProps &
 
 // Main component ---------------------------------------------------------------------------------
 
-const PlatformButton = style.touchableOpacity({
+const PlatformButton = style(TouchableOpacity)({
   elevation: 3,
   shadowColor: "#6B7C93",
   shadowOffset: { width: 0, height: 2 },

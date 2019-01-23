@@ -33,6 +33,7 @@ import styles from "../../styles";
 import { Icon, Loading, ButtonsOkCancel } from "../../ui";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
+import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { EmptyScreen } from "../../ui/EmptyScreen";
 import ThreadItem from "../components/ThreadItem";
 
@@ -71,7 +72,7 @@ export type IThreadListPageProps = IThreadListPageDataProps &
   IThreadListPageEventProps &
   IThreadListPageOtherProps;
 
-const RightButton = style.touchableOpacity({
+const RightButton = style(TouchableOpacity)({
   backgroundColor: "#EC5D61",
   flex: 1,
   justifyContent: "center",
