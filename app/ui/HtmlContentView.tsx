@@ -56,7 +56,7 @@ export class HtmlContentView extends React.Component<
           "HtmlContentView: You must provide `getContentFromResource` along with the `source` props."
         );
       // If there is no Html, try to load it.
-      console.log("load", this.props.source);
+      // console.log("load", this.props.source);
       const responseJson = await fetchJSONWithCache(this.props.source);
       this.setState({
         html: this.props.getContentFromResource(responseJson)

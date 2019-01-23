@@ -82,14 +82,19 @@ export class NotifPrefsPage extends React.PureComponent<
   }
 
   public isAllowed(notifPref) {
+    // Compute a good version of uppercased allowed apps.
+    const { availableApps } = this.props;
+    const availableAppsWithUppercase = {};
+    Object.keys(availableApps).forEach(app => {
+      availableAppsWithUppercase[app] = availableApps[app];
+      availableAppsWithUppercase[app.toUpperCase()] = availableApps[app];
+    });
+    // Do verification
     const stringCapitalize = (str: string) =>
       str.charAt(0).toUpperCase() + str.slice(1);
     if (
-      !notifPref["app-name"] ||
-      (!this.props.availableApps.hasOwnProperty(
-        notifPref["app-name"].toUpperCase()
-      ) && // TODO: Get the available apps NOT from timeline
-        notifPref.type !== "MESSAGERIE")
+      !availableAppsWithUppercase.hasOwnProperty(notifPref.type) && // TODO: Get the available apps NOT from timeline
+      notifPref.type !== "MESSAGERIE"
     )
       return false;
     if (

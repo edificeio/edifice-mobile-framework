@@ -12,34 +12,30 @@ const awaiters = [];
 let schoolbooks = [];
 const loadSchoolbooks = (): Promise<any[]> => {
   return new Promise(async (resolve, reject) => {
-    console.log("triggered loadSchoolbooks");
     if (loadingState === "over") {
-      console.log("already done.");
       resolve(schoolbooks);
       return;
     }
     if (loadingState === "loading") {
-      console.log("pending...");
       awaiters.push(() => resolve(schoolbooks));
       return;
     }
     loadingState = "loading";
     awaiters.push(() => resolve(schoolbooks));
     if (Me.session.type.indexOf("Student") !== -1) {
-      console.log("im a child");
+      // console.log("im a child");
       try {
-        console.log("session :", Me.session);
+        // console.log("session :", Me.session);
         const messages = await fetchJSONWithCache(
           `/schoolbook/list/0/${Me.session.userId}`
         );
         schoolbooks = [...schoolbooks, ...messages];
-        console.log("loaded schoolbooks list", schoolbooks);
+        // console.log("loaded schoolbooks list", schoolbooks);
       } catch (e) {
         console.warn(e);
       }
     } else {
-      console.log("im NOT a child");
-      console.log("session :", Me.session);
+      // console.log("im NOT a child");
       for (const child of Me.session.children) {
         if (!child.id) continue;
         const messages = await fetchJSONWithCache(
@@ -52,7 +48,6 @@ const loadSchoolbooks = (): Promise<any[]> => {
         method: "POST"
       });
       schoolbooks = [...schoolbooks, ...messages];
-      console.log("loaded schoolbooks list", schoolbooks);
     }
 
     awaiters.forEach(a => a());
@@ -83,7 +78,6 @@ const dataTypes = {
       title: news.params.wordTitle // Title is displayed in big in NewsContent
     };
     if (!news.params.wordUri || news.params.wordUri.indexOf("word") === -1) {
-      console.log("unable to find the distant url resource.");
       return defaultContent;
     }
     try {
@@ -98,7 +92,6 @@ const dataTypes = {
       }
 
       if (schoolbook) {
-        console.log("HAHAH voici ud html", schoolbook.text);
         return {
           ...defaultContent,
           htmlContent: schoolbook.text,
@@ -106,7 +99,6 @@ const dataTypes = {
           title: schoolbook.title
         };
       }
-      console.log("OOOOohhh pas de html...");
       return defaultContent;
     } catch (e) {
       return defaultContent;
@@ -114,55 +106,6 @@ const dataTypes = {
   },
 
   NEWS: async (news, timeline) => {
-    /*
-    const newsData = {
-      date: news.date.$date,
-      id: news._id,
-      images: [],
-      message: adaptator(news.message).toText(),
-      resourceName: news.params.resourceName,
-      htmlContent: adaptator(news.message)
-        .adapt()
-        .toHTML(),
-      senderId: news.sender,
-      senderName: news.params.username,
-      title: news.params.resourceName
-    };
-    if (news.params.resourceUri.indexOf("/info") === -1) {
-      return newsData;
-    }
-
-    const split = news.params.resourceUri.split("/");
-    const infoId = split[split.length - 1];
-    const threadSplit = news.params.resourceUri.split("thread/");
-    const threadId = parseInt(threadSplit[threadSplit.length - 1]);
-
-    if (timeline.find(e => e.resourceId === infoId)) {
-      return null;
-    }
-
-    try {
-      const data = await fetchJSONWithCache(
-        `/actualites/thread/${threadId}/info/${infoId}`
-      );
-
-      return {
-        date: news.date.$date,
-        id: data._id,
-        images: signImagesUrls(adaptator(data.content).toImagesArray()),
-        message: adaptator(data.content).toText(),
-        resourceName: data.thread_title,
-        senderId: news.sender,
-        senderName: news.params.username,
-        title: data.title,
-        resourceId: infoId
-      };
-    } catch (e) {
-      //resource has been deleted
-      return newsData;
-    }
-    */
-
     try {
       const split = news.params.resourceUri.split("/");
       const infoId = split[split.length - 1];
