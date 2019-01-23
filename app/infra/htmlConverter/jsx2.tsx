@@ -509,7 +509,7 @@ export class HtmlConverterJsx extends HtmlConverter {
       // A - 1 - Build image object representation
       const emoji: IInlineImageNugget = {
         alt: tag.attributes.alt,
-        src: Conf.platform + tag.attributes.src,
+        src: Conf.currentPlatform.url + tag.attributes.src,
         type: HtmlConverterNuggetTypes.InlineImage
       };
       this.insertInlineImageNugget(emoji);
@@ -742,7 +742,7 @@ export class HtmlConverterJsx extends HtmlConverter {
     key: string,
     style: ViewStyle = {}
   ): JSX.Element {
-    // console.log("this is a rendered inline image", nugget);
+    console.log("this is a rendered inline image", nugget);
     return (
       <Image
         source={signUrl(nugget.src)}
