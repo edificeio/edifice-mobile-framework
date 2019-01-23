@@ -27,7 +27,7 @@ export const ListItem = style(TouchableOpacity)(
 );
 
 export const Header = style.view({
-  alignItems: "flex-start",
+  alignItems: "stretch",
   flexDirection: "row",
   justifyContent: "flex-start",
   height: 62,
@@ -35,7 +35,8 @@ export const Header = style.view({
 });
 
 export const LeftPanel = style.view({
-  height: 50,
+  justifyContent: "center",
+  minHeight: 50,
   width: 50
 });
 
