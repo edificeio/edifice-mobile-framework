@@ -20,7 +20,7 @@ export function createThread(pickedUsers) {
       displayNames: pickedUsers.map((u: any) => [
         u.id,
         u.displayName || u.name
-      ]),
+      ]).concat([[Me.session.userId, Me.session.displayName]]),
       from: Me.session.userId,
       id: "temp",
       messages: [],
@@ -32,6 +32,7 @@ export function createThread(pickedUsers) {
       to: pickedUsers.map((u: any) => u.id),
       unread: 0
     };
+    console.log("from name: ", Me, newThread)
 
     dispatch({
       newThread,

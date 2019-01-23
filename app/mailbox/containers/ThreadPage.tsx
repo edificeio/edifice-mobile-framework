@@ -12,7 +12,7 @@ import {
   fetchConversationThreadNewerMessages,
   fetchConversationThreadOlderMessages
 } from "../actions/threadList";
-import { createActionReceiversDisplay } from "../actions/displayReceivers";
+import { createActionReceiversDisplay, createActionThreadReceiversDisplay } from "../actions/displayReceivers";
 import { IConversationMessage, IConversationThread, IConversationMessageList } from "../reducers";
 
 const mapStateToProps: (state: any) => IThreadPageDataProps = state => {
@@ -57,6 +57,10 @@ const mapDispatchToProps: (
     },
     onTapReceivers: (message: IConversationMessage) => {
       dispatch(createActionReceiversDisplay(message))
+      return;
+    },
+    onTapReceiversFromThread: (thread: IConversationThread) => {
+      dispatch(createActionThreadReceiversDisplay(thread))
       return;
     }
   };

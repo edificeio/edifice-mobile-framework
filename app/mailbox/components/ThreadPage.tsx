@@ -34,7 +34,7 @@ import Tracking from "../../tracking/TrackingManager";
 // Type definitions
 
 import { Carousel } from "../../ui/Carousel";
-import messages, {
+import {
   IConversationMessage
 } from "../reducers/messages";
 import { IConversationThread } from "../reducers/threadList";
@@ -43,6 +43,8 @@ import { IConversationThread } from "../reducers/threadList";
 
 import { signImagesUrls } from "../../infra/oauth";
 import ThreadInput from "./ThreadInput";
+import ThreadInputReceivers from "./ThreadInputReceiver";
+import { Me } from "../../infra/Me";
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -59,6 +61,7 @@ export interface IThreadPageEventProps {
   onGetNewer?: (threadId: string) => void;
   onGetOlder?: (threadId: string) => void;
   onTapReceivers?(message: IConversationMessage)
+  onTapReceiversFromThread?(thread: IConversationThread)
 }
 
 export interface IThreadPageOtherProps {
@@ -128,7 +131,7 @@ export class ThreadPage extends React.PureComponent<
       messages,
       headerHeight
     } = this.props;
-
+    //TODO get focus from thread input + send action when press (should threadinputreceiver in threadinput?)
     return (
       <KeyboardAvoidingView
         style={{ flex: 1 }}
@@ -166,7 +169,7 @@ export class ThreadPage extends React.PureComponent<
             this.onEndReachedCalledDuringMomentum = false;
           }}
         />
-        <ThreadInput emptyThread={messages.length == 0} displayPlaceholder={!isFetchingFirst} />
+        <ThreadInput emptyThread={messages.length == 0} displayPlaceholder={!isFetchingFirst} onReceiversTap={this.handleTapReceiversFromThread} />
       </KeyboardAvoidingView>
     );
   }
@@ -192,8 +195,15 @@ export class ThreadPage extends React.PureComponent<
     );
   }
   public handleTapReceivers = (message: IConversationMessage) => {
+    //TODO move orchestration to thunk
     Tracking.logEvent("seeRecipient");
     this.props.onTapReceivers && this.props.onTapReceivers(message);
+    this.props.navigation.navigate("listReceivers");
+  }
+  public handleTapReceiversFromThread = (thread: IConversationThread) => {
+    //TODO move orchestration to thunk
+    Tracking.logEvent("seeRecipient");
+    this.props.onTapReceiversFromThread && this.props.onTapReceiversFromThread(thread);
     this.props.navigation.navigate("listReceivers");
   }
   /*
@@ -225,5 +235,4 @@ export class ThreadPage extends React.PureComponent<
 
   // Event Handlers
 }
-
 export default ThreadPage;

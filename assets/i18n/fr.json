@@ -25,6 +25,7 @@
   "conversation-receiversCC": "En copie",
   "conversation-receiversSender": "Expéditeur",
   "conversation-receiverPrefix": "à",
+  "conversation-receiverPrefixInput":"À :",
   "conversation-receiver": "1 destinataire",
   "conversation-receivers": "{{count}} destinataires",
   "conversation-receiverList": "Destinataires",

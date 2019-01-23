@@ -6,7 +6,7 @@ import I18n from "i18n-js";
 import { PageContainer } from './ContainerContent';
 import UserList, { IUser } from "./UserList";
 
-const UserLabel = style.text({
+export const UserLabel = style.text({
     backgroundColor: CommonStyles.primaryLight,
     color: CommonStyles.primary,
     borderRadius: 3,
@@ -48,7 +48,7 @@ export default class SearchUser extends React.Component<{ remaining, picked, onP
             visible.displayName && visible.displayName.toLowerCase().indexOf(this.state.searchText.toLowerCase()) !== -1
         );
 
-    expend(){
+    expend() {
         // console.log(this.state.max)
         this.setState({ ...this.state, max: this.state.max + 20 })
     }
@@ -66,14 +66,15 @@ export default class SearchUser extends React.Component<{ remaining, picked, onP
         this.input.clear();
     }
 
-    render (){
+    render() {
         // console.log(this.state)
+        let index = 0;
         return (
             <PageContainer>
                 <ScrollField>
                     <FieldContainer>
                         <To>{I18n.t('to')}</To>
-                        {this.props.picked.map(p => <TouchableOpacity onPress={() => this.props.onUnpickUser(p)}>
+                        {this.props.picked.map(p => <TouchableOpacity key={"Touchable_" + (index++)} onPress={() => this.props.onUnpickUser(p)}>
                             <UserLabel>{p.name || p.displayName}</UserLabel>
                         </TouchableOpacity>)}
                         <TextInput
