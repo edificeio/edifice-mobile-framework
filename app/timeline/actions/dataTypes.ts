@@ -75,7 +75,8 @@ const dataTypes = {
       senderId: news.sender,
       senderName: news.params.username,
       subtitle: I18n.t("schoolbook-appTitle"), // Subitle is displayed in little in NewsContent
-      title: news.params.wordTitle // Title is displayed in big in NewsContent
+      title: news.params.wordTitle, // Title is displayed in big in NewsContent
+      type: news.type
     };
     if (!news.params.wordUri || news.params.wordUri.indexOf("word") === -1) {
       return defaultContent;
@@ -129,8 +130,9 @@ const dataTypes = {
         resourceName: news.params.resourceName,
         senderId: news.sender,
         senderName: news.params.username,
-        subtitle: I18n.t("News"), // Subitle is displayed in little in NewsContent
+        subtitle: I18n.t("Actualites"), // Subitle is displayed in little in NewsContent
         title: news.params.resourceName, // Title is displayed in big in NewsContent
+        type: news.type,
         url: `/actualites/thread/${threadId}/info/${infoId}`
       };
     } catch (e) {
@@ -161,6 +163,7 @@ const dataTypes = {
         senderName: news.params.username,
         subtitle: news.params.blogTitle, // Subtitle is displayed in little in NewsContent
         title: news.params.postTitle, // Title is displayed in big in NewsContent
+        type: news.type,
         url: `/blog/post/${news.resource}/${news["sub-resource"]}`
       };
     } catch (e) {

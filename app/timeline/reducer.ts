@@ -16,6 +16,7 @@ export interface INewsModel {
   resourceName: string;
   senderId: string;
   senderName: string;
+  type: string;
 }
 
 export interface INewsState {
