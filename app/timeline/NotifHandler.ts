@@ -2,19 +2,23 @@ import { nainNavNavigate } from "../navigation/helpers/navHelper";
 import Tracking from "../tracking/TrackingManager";
 import { listTimeline } from "./actions/list";
 import { storedFilters, timelineApps } from "./actions/storedFilters";
+import { loadSchoolbooks } from "./actions/dataTypes";
 
 const openNotif = {
-  "/schoolbook": (data, latestNews) => {
+  "/schoolbook": async (data, latestNews) => {
+    // console.log("notif schoolbook", data, latestNews);
     if (!data.resourceUri || data.resourceUri.indexOf("word") === -1) {
       nainNavNavigate("notifications");
       return;
     }
     const wordId = data.resourceUri.split("word/")[1];
+    // console.log("GOT WORD", wordId);
     return latestNews.find(
-      n => n.resourceId === wordId && n.application === "schoolbook"
+      n => n.resourceUri === data.resourceUri && n.application === "schoolbook"
     );
   },
-  "/actualites": (data, latestNews) => {
+
+  "/actualites": async (data, latestNews) => {
     if (data.resourceUri.indexOf("/info") === -1) {
       nainNavNavigate("notifications");
       return;
@@ -23,10 +27,11 @@ const openNotif = {
     const split = data.resourceUri.split("/");
     const infoId = split[split.length - 1];
     return latestNews.find(
-      n => n.resourceId == infoId && n.application === "news"
+      n => n.resourceUri === data.resourceUri && n.application === "news"
     );
   },
-  "/blog": (data, latestNews) => {
+
+  "/blog": async (data, latestNews) => {
     if (!data.postUri) {
       return;
     }
@@ -40,6 +45,7 @@ const openNotif = {
 };
 
 export default dispatch => async (notificationData, legalapps) => {
+  // console.log("paths are", openNotif);
   for (const path in openNotif) {
     if (notificationData.resourceUri.startsWith(path)) {
       const availableApps = await storedFilters(legalapps);
@@ -48,7 +54,9 @@ export default dispatch => async (notificationData, legalapps) => {
         availableApps,
         legalapps
       );
-      const item = openNotif[path](notificationData, latestNews);
+      await loadSchoolbooks();
+      const item = await openNotif[path](notificationData, latestNews);
+      // console.log("NOTIF OPEN item:", item);
       if (item) {
         Tracking.logEvent("readNews", {
           application: item.application,

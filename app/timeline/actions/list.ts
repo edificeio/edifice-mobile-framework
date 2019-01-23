@@ -32,7 +32,9 @@ export const fetchTimeline = dispatch => async availableApps => {
     const results = news.results.filter(
       n => excludeTypes.indexOf(n["event-type"]) === -1 && n.params
     );
+    // console.log("resultsts fetch", results);
     const newNews = await fillData(availableApps, results);
+    // console.log("newNews fetch", newNews);
 
     if (newNews.length > 0) {
       dispatch({
@@ -96,7 +98,9 @@ export const listTimeline = dispatch => async (
     const results = news.results.filter(
       n => excludeTypes.indexOf(n["event-type"]) === -1 && n.params
     );
+    // console.log("resultsts fill", results);
     const newNews = await fillData(availableApps, results);
+    // console.log("newNews fill", newNews);
 
     if (newNews.length > 0) {
       dispatch({

@@ -9,8 +9,8 @@ import { signImagesUrls } from "../../infra/oauth";
 
 let loadingState = "idle";
 const awaiters = [];
-let schoolbooks = [];
-const loadSchoolbooks = (): Promise<any[]> => {
+export let schoolbooks = [];
+export const loadSchoolbooks = (): Promise<any[]> => {
   return new Promise(async (resolve, reject) => {
     if (loadingState === "over") {
       resolve(schoolbooks);
@@ -72,23 +72,30 @@ const dataTypes = {
       ),
       message: news.preview.text,
       resourceName: news.params.wordTitle,
+      resourceUri: news.params.resourceUri,
       senderId: news.sender,
       senderName: news.params.username,
       subtitle: I18n.t("schoolbook-appTitle"), // Subitle is displayed in little in NewsContent
       title: news.params.wordTitle, // Title is displayed in big in NewsContent
       type: news.type
     };
-    if (!news.params.wordUri || news.params.wordUri.indexOf("word") === -1) {
+    const split = news.params.resourceUri
+      ? news.params.resourceUri.split("/")
+      : news.params.wordUri
+      ? news.params.wordUri.split("/")
+      : null;
+    const wordId = split && split[split.length - 1];
+    const wordUri = news.params.wordUri || news.params.resourceUri;
+
+    if (!wordId || wordUri.indexOf("word") === -1) {
       return defaultContent;
     }
     try {
-      const schoolbooks = await loadSchoolbooks();
-      const schoolbookId = news.params.wordUri.split("word/")[1];
-      const schoolbook = schoolbooks.find(
-        s => s.id === parseInt(schoolbookId, 10)
-      );
+      await loadSchoolbooks();
+      // tslint:disable-next-line:triple-equals
+      const schoolbook = schoolbooks.find(s => s.id == wordId); // This is a dirty comparison between a string and a number. Keep "==" please.
 
-      if (timeline.find(e => e.resourceId === schoolbookId)) {
+      if (timeline.find(e => e.resourceId === wordId)) {
         return null;
       }
 
@@ -96,7 +103,7 @@ const dataTypes = {
         return {
           ...defaultContent,
           htmlContent: schoolbook.text,
-          resourceId: schoolbookId,
+          resourceId: wordId,
           title: schoolbook.title
         };
       }
