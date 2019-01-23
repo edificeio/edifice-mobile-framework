@@ -4,7 +4,7 @@ import { Text, View } from "react-native";
 import { A, Paragraph } from "./Typography";
 
 export const Preview = ({ textContent, onExpend }) => {
-  const crop = true; // NOW, there is no way to know if content is cropped.
+  const crop = (textContent as string).endsWith("...");
   /*
 
     let previewText = textContent;
