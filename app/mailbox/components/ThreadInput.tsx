@@ -145,7 +145,31 @@ class ThreadInput extends React.PureComponent<
   public blur() {
     this.setState({ selected: Selected.none });
   }
-
+  public renderInput(textMessage: string, placeholder: string) {
+    return <TextInput
+      ref={el => {
+        this.input = el;
+      }}
+      enablesReturnKeyAutomatically={true}
+      multiline
+      onChangeText={(textMessage: string) =>
+        this.setState({ textMessage })
+      }
+      onFocus={() => {
+        this.focus();
+        return true;
+      }}
+      onBlur={() => {
+        this.blur();
+        return true;
+      }}
+      placeholder={placeholder}
+      underlineColorAndroid={"transparent"}
+      value={textMessage}
+      autoCorrect={false}
+      style={Platform.OS === "android" ? { paddingTop: 8 } : {}}
+    />;
+  }
   public render() {
     const { selected, textMessage } = this.state;
     const { displayPlaceholder, thread } = this.props;
@@ -161,29 +185,7 @@ class ThreadInput extends React.PureComponent<
         <ThreadInputReceivers names={receiverNames} show={showReceivers} onPress={() => this.props.onReceiversTap(thread)} />
         <ContainerFooterBar>
           <ContainerInput>
-            <TextInput
-              ref={el => {
-                this.input = el;
-              }}
-              enablesReturnKeyAutomatically={true}
-              multiline
-              onChangeText={(textMessage: string) =>
-                this.setState({ textMessage })
-              }
-              onFocus={() => {
-                this.focus();
-                return true;
-              }}
-              onBlur={() => {
-                this.blur();
-                return true;
-              }}
-              placeholder={placeholder}
-              underlineColorAndroid={"transparent"}
-              value={textMessage}
-              autoCorrect={false}
-              style={Platform.OS === "android" ? { paddingTop: 8 } : {}}
-            />
+            {this.renderInput(textMessage, placeholder)}
           </ContainerInput>
           <Line style={{ height: 40 }}>
             <ChatIcon
