@@ -21,6 +21,7 @@
   "conversation-failedSent": "Message not sent",
   "conversation-newMessage": "New message",
   "conversation-sendingMessage": "Sending...",
+  "conversation-receiverTo": "Receiver",
   "conversation-receiversTo": "Receivers",
   "conversation-receiversCC": "Copy receivers",
   "conversation-receiversSender": "Sender",

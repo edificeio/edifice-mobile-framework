@@ -21,6 +21,7 @@
   "conversation-failedSent": "Message non reçu",
   "conversation-newMessage": "Nouveau message",
   "conversation-sendingMessage": "En cours d'envoi...",
+  "conversation-receiverTo": "Destinataire",
   "conversation-receiversTo": "Destinataires",
   "conversation-receiversCC": "En copie",
   "conversation-receiversSender": "Expéditeur",
