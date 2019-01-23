@@ -24,7 +24,7 @@ export const Preview = ({ textContent, onExpend }) => {
     <View>
       <Paragraph>
         <Text>{textContent}</Text>
-        {crop && <A onPress={() => onExpend()}>{I18n.t("seeMore")}</A>}
+        {crop && <A onPress={() => onExpend()}> {I18n.t("seeMore")}</A>}
       </Paragraph>
     </View>
   );
