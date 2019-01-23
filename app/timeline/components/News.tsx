@@ -38,6 +38,7 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
   public render() {
     const {
       date,
+      eventType,
       senderId,
       senderName,
       resourceName,
@@ -54,7 +55,7 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
             <CenterPanel>
               <Bold>
                 {senderName}
-                <Light> {I18n.t("On")} </Light>
+                <Light> {I18n.t(`timeline-eventType-${eventType}`)} </Light>
                 {resourceName}
               </Bold>
               <DateView date={date} short={false} />

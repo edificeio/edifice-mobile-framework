@@ -8,6 +8,7 @@ interface IParams {
 
 export interface INewsModel {
   date: number;
+  eventType: string;
   id: string;
   images: object[];
   message: string;

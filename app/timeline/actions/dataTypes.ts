@@ -64,6 +64,7 @@ const dataTypes = {
   SCHOOLBOOK: async (news, timeline) => {
     const defaultContent = {
       date: news.date.$date,
+      eventType: news["event-type"],
       htmlContent: undefined,
       id: news._id,
       images: signImagesUrls(
@@ -75,7 +76,7 @@ const dataTypes = {
         }))
       ),
       message: news.preview.text,
-      resourceName: I18n.t("schoolbook-appTitle"),
+      resourceName: news.params.wordTitle,
       senderId: news.sender,
       senderName: news.params.username,
       subtitle: I18n.t("schoolbook-appTitle"), // Subitle is displayed in little in NewsContent
@@ -170,6 +171,7 @@ const dataTypes = {
 
       return {
         date: news.date.$date,
+        eventType: news["event-type"],
         id: news._id,
         images: signImagesUrls(
           news.preview.images.map(url => ({
@@ -198,6 +200,7 @@ const dataTypes = {
     try {
       return {
         date: news.date.$date,
+        eventType: news["event-type"],
         id: news._id,
         images: signImagesUrls(
           news.preview.images.map(url => ({
@@ -210,7 +213,7 @@ const dataTypes = {
         message: news.preview.text,
         resource: news.resource,
         resourceId: news["sub-resource"],
-        resourceName: news.params.blogTitle,
+        resourceName: news.params.postTitle, // Resource name used in preview header
         senderId: news.sender,
         senderName: news.params.username,
         subtitle: news.params.blogTitle, // Subtitle is displayed in little in NewsContent
