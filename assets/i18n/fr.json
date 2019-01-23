@@ -55,6 +55,7 @@
   "timeline-emptyScreenText": "C’est calme ici... Vous connaissez l’expression \"le calme avant la tempête\" ?",
   "timeline-emptyScreenTitle": "C’est désert... Il y a quelqu’un ?",
   "timeline-eventType-INFO-SHARED": "a partagé l'actualité",
+  "timeline-eventType-PUBLISH": "a publié le mot",
   "timeline-eventType-PUBLISH-POST": "a publié le billet de blog",
   "timeline-eventType-WORD-SHARED": "a partagé le mot",
   "timeline-filterBy": "Filtrer par",
