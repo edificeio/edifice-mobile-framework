@@ -193,7 +193,7 @@ export class HtmlConverterJsx extends HtmlConverter {
           // after these html tags we have to jump to a new line
           case "div":
           case "p":
-            // this.hasToInsertLineBreak = 1;
+            this.hasToInsertLineBreak = this.hasToInsertLineBreak || 1;
             break;
           case "a":
             this.parseCloseLinkTag();
@@ -279,7 +279,10 @@ export class HtmlConverterJsx extends HtmlConverter {
 
     if (this.hasToInsertLineBreak) {
       // console.log(`encourtered line break`);
-      text = "\n".repeat(this.hasToInsertLineBreak) + text;
+      if (!this.firstWord) {
+        // Insert the new line only if we have some text nuggets before the current text nugget.
+        text = "\n".repeat(this.hasToInsertLineBreak) + text;
+      }
       this.hasToInsertLineBreak = 0;
     } else if (this.hasToInsertSpace) {
       text = " " + text;
