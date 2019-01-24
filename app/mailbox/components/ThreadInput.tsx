@@ -200,7 +200,7 @@ class ThreadInput extends React.PureComponent<
                 style={{ marginLeft: 4 }}
               />
             </ChatIcon>
-            {Platform.OS !== "ios" ? (
+            {/*Platform.OS !== "ios"*/ false ? ( // TODO : we hide this for both ios & android for the moment.
               <ChatIcon
                 onPress={() => this.sendPhoto()}
                 style={{ marginBottom: 5 }}
