@@ -57,6 +57,14 @@ export const loadSchoolbooks = (): Promise<any[]> => {
 
 const dataTypes = {
   SCHOOLBOOK: async (news, timeline) => {
+    const split = news.params.resourceUri
+      ? news.params.resourceUri.split("/")
+      : news.params.wordUri
+      ? news.params.wordUri.split("/")
+      : null;
+    const wordId = split && split[split.length - 1];
+    const wordUri = news.params.wordUri || news.params.resourceUri;
+
     const defaultContent = {
       date: news.date.$date,
       eventType: news["event-type"],
@@ -77,15 +85,9 @@ const dataTypes = {
       senderName: news.params.username,
       subtitle: I18n.t("schoolbook-appTitle"), // Subitle is displayed in little in NewsContent
       title: news.params.wordTitle, // Title is displayed in big in NewsContent
-      type: news.type
+      type: news.type,
+      url: wordUri
     };
-    const split = news.params.resourceUri
-      ? news.params.resourceUri.split("/")
-      : news.params.wordUri
-      ? news.params.wordUri.split("/")
-      : null;
-    const wordId = split && split[split.length - 1];
-    const wordUri = news.params.wordUri || news.params.resourceUri;
 
     if (!wordId || wordUri.indexOf("word") === -1) {
       return defaultContent;
@@ -190,6 +192,7 @@ export const excludeTypes = [
 export const fillData = async (availableApps: object, results: any[]) => {
   const newResults = [];
   const availableAppsWithUppercase = {};
+  const urls: string[] = [];
   Object.keys(availableApps).forEach(app => {
     availableAppsWithUppercase[app] = availableApps[app];
     availableAppsWithUppercase[app.toUpperCase()] = availableApps[app];
@@ -197,9 +200,10 @@ export const fillData = async (availableApps: object, results: any[]) => {
   for (const result of results) {
     if (dataTypes[result.type] && availableAppsWithUppercase[result.type]) {
       const newResult = await dataTypes[result.type](result, newResults);
-      if (newResult) {
+      if (newResult && !urls.includes(newResult.url)) {
         newResult.application = result.type.toLowerCase();
         newResults.push(newResult);
+        urls.push(newResult.url);
       }
     }
   }

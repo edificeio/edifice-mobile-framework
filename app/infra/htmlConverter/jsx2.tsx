@@ -225,11 +225,9 @@ export class HtmlConverterJsx extends HtmlConverter {
         switch (tag.name) {
           case "div":
           case "p":
-          console.log("encountered <DIV>");
             this.hasToInsertLineBreak = this.hasToInsertLineBreak || 1;
             break;
           case "br":
-            console.log("encountered <BR>");
             this.hasToInsertLineBreak += 1;
             break;
           case "li": {
@@ -274,7 +272,6 @@ export class HtmlConverterJsx extends HtmlConverter {
    */
   protected parseText(text: string): void {
     if (!text) return; // Don't deal with empty texts (often caused by strange ZWSP chars)
-    console.log(`encountered text "${text}" (newLine : ${this.hasToInsertLineBreak})`);
 
     text = text.replace(/[\r\n\x0B\x0C\u0085\u2028\u2029]+/g, " "); // replace new lines by spaces (like in html)
 
