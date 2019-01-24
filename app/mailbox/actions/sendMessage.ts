@@ -89,6 +89,7 @@ export function sendMessage(data: IConversationMessage) {
       dispatch({
         data: {
           ...data,
+          oldId: newuuid,
           conversation: data.parentId,
           date: Date.now(),
           from: Me.session.userId,

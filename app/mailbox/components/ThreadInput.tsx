@@ -16,6 +16,7 @@ import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { Line } from "../../ui/Grid";
 import { ToggleIcon } from "../../ui/ToggleIcon";
 import { IConversationThread } from "../reducers/threadList";
+import ThreadInputReceivers from "./ThreadInputReceiver";
 
 // TODO : Debt : Needs to be refactored.
 
@@ -68,15 +69,18 @@ class ThreadInput extends React.PureComponent<
   {
     thread: IConversationThread;
     lastMessageId: string;
+    emptyThread: boolean;
+    displayPlaceholder: boolean,
     send: (data: any) => Promise<void>;
     sendPhoto: (data: any) => Promise<void>;
+    onReceiversTap: (conversation: IConversationThread) => void;
   },
   {
     selected: Selected;
     textMessage: string;
     newThreadId: string;
   }
-> {
+  > {
   private input: any;
 
   public state = {
@@ -85,7 +89,7 @@ class ThreadInput extends React.PureComponent<
     textMessage: ""
   };
 
-  public findReceivers(conversation) {
+  public findReceivers(conversation: IConversationThread) {
     // TODO : Duplicate of ThreadItem.findReceivers() ?
     const to = [
       ...conversation.to,
@@ -123,14 +127,15 @@ class ThreadInput extends React.PureComponent<
     this.setState({
       textMessage: ""
     });
-
-    const newMessage = await this.props.send({
+    // console.log("thread object ", thread)
+    await this.props.send({
       body: `<div>${textMessage}</div>`,
       cc: thread.cc,
       parentId: lastMessageId,
       subject: "Re: " + thread.subject,
       threadId: thread.id,
-      to: this.findReceivers(thread)
+      to: this.findReceivers(thread),
+      displayNames: thread.displayNames
     });
   }
 
@@ -141,68 +146,78 @@ class ThreadInput extends React.PureComponent<
   public blur() {
     this.setState({ selected: Selected.none });
   }
-
+  public renderInput(textMessage: string, placeholder: string) {
+    return <TextInput
+      ref={el => {
+        this.input = el;
+      }}
+      enablesReturnKeyAutomatically={true}
+      multiline
+      onChangeText={(textMessage: string) =>
+        this.setState({ textMessage })
+      }
+      onFocus={() => {
+        this.focus();
+        return true;
+      }}
+      onBlur={() => {
+        this.blur();
+        return true;
+      }}
+      placeholder={placeholder}
+      underlineColorAndroid={"transparent"}
+      value={textMessage}
+      autoCorrect={false}
+      style={Platform.OS === "android" ? { paddingTop: 8 } : {}}
+    />;
+  }
   public render() {
     const { selected, textMessage } = this.state;
-
+    const { displayPlaceholder, thread } = this.props;
+    const receiversIds = this.findReceivers(thread);
+    const receiverNames = thread.displayNames.filter(dN => receiversIds.indexOf(dN[0]) > -1).map(dN => dN[1]);
+    const showReceivers = (selected == Selected.keyboard || (textMessage && textMessage.length > 0)) && receiverNames.length >= 2;
+    //iOS hack => does not display placeholder on update
     return (
-      <ContainerFooterBar>
-        <ContainerInput>
-          <TextInput
-            ref={el => {
-              this.input = el;
-            }}
-            enablesReturnKeyAutomatically={true}
-            multiline
-            onChangeText={(textMessage: string) =>
-              this.setState({ textMessage })
-            }
-            onFocus={() => {
-              this.focus();
-              return true;
-            }}
-            onBlur={() => {
-              this.blur();
-              return true;
-            }}
-            placeholder={I18n.t("conversation-chatPlaceholder")}
-            underlineColorAndroid={"transparent"}
-            value={textMessage}
-            autoCorrect={false}
-            style={Platform.OS === "android" ? { paddingTop: 8 } : {}}
-          />
-        </ContainerInput>
-        <Line style={{ height: 40 }}>
-          <ChatIcon
-            onPress={() => {
-              if (this.state.selected === Selected.keyboard)
-                this.input.innerComponent.blur();
-              else this.input.innerComponent.focus();
-            }}
-          >
-            <IconOnOff
-              focused={true}
-              name={"keyboard"}
-              style={{ marginLeft: 4 }}
-            />
-          </ChatIcon>
-          {Platform.OS !== "ios" ? (
+      <View>
+        <ThreadInputReceivers names={receiverNames} show={showReceivers} onPress={() => this.props.onReceiversTap(thread)} />
+        <ContainerFooterBar>
+          <ContainerInput>
+            {displayPlaceholder &&  this.props.emptyThread  && this.renderInput(textMessage, I18n.t("conversation-chatPlaceholder"))}
+            {displayPlaceholder && !this.props.emptyThread  && this.renderInput(textMessage, I18n.t("conversation-responsePlaceholder"))}
+          </ContainerInput>
+          <Line style={{ height: 40 }}>
             <ChatIcon
-              onPress={() => this.sendPhoto()}
-              style={{ marginBottom: 5 }}
+              onPress={() => {
+                if (this.state.selected === Selected.keyboard)
+                  this.input.innerComponent.blur();
+                else this.input.innerComponent.focus();
+              }}
             >
-              <IconOnOff name={"camera"} />
+              <IconOnOff
+                focused={true}
+                name={"keyboard"}
+                style={{ marginLeft: 4 }}
+              />
             </ChatIcon>
-          ) : null}
-          {!!this.state.textMessage ? (
-            <View style={{ flex: 1, alignItems: "flex-end" }}>
-              <SendContainer onPress={() => this.onValid()}>
-                <ToggleIcon show={true} icon={"send_icon"} />
-              </SendContainer>
-            </View>
-          ) : null}
-        </Line>
-      </ContainerFooterBar>
+            {Platform.OS !== "ios" ? (
+              <ChatIcon
+                onPress={() => this.sendPhoto()}
+                style={{ marginBottom: 5 }}
+              >
+                <IconOnOff name={"camera"} />
+              </ChatIcon>
+            ) : null}
+            {!!this.state.textMessage ? (
+              <View style={{ flex: 1, alignItems: "flex-end" }}>
+                <SendContainer onPress={() => this.onValid()}>
+                  <ToggleIcon show={true} icon={"send_icon"} />
+                </SendContainer>
+              </View>
+            ) : null}
+          </Line>
+        </ContainerFooterBar>
+      </View>
     );
   }
 }
@@ -220,7 +235,7 @@ export default connect(
       state[conversationConfig.reducerName].threadSelected;
     const selectedThread =
       state[conversationConfig.reducerName].threadList.data.byId[
-        selectedThreadId
+      selectedThreadId
       ];
 
     return {

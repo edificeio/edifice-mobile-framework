@@ -22,6 +22,16 @@
   "conversation-failedSent": "Message non reçu",
   "conversation-newMessage": "Nouveau message",
   "conversation-sendingMessage": "En cours d'envoi...",
+  "conversation-receiverTo": "Destinataire",
+  "conversation-receiversTo": "Destinataires",
+  "conversation-receiversCC": "En copie",
+  "conversation-receiversSender": "Expéditeur",
+  "conversation-receiverPrefix": "à",
+  "conversation-receiverPrefixInput":"À :",
+  "conversation-receiver": "1 destinataire",
+  "conversation-receivers": "{{count}} destinataires",
+  "conversation-receiverList": "Destinataires",
+  "conversation-responsePlaceholder": "Répondre à tous...",
   "Conversation": "Messagerie",
   "delete": "Supprimer",
   "directory-disconnectButton": "Se déconnecter",
@@ -69,16 +79,56 @@
   "today": " Aujourd'hui ",
   "tryagain": "Réessayer",
   "welcome": "Bienvenue",
-
-  "date":{
-    "day_names": ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
-    "abbr_day_names": ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"],
-    "month_names": [null, "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
-    "abbr_month_names": [null, "Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"]
+  "date": {
+    "day_names": [
+      "Dimanche",
+      "Lundi",
+      "Mardi",
+      "Mercredi",
+      "Jeudi",
+      "Vendredi",
+      "Samedi"
+    ],
+    "abbr_day_names": [
+      "Dim",
+      "Lun",
+      "Mar",
+      "Mer",
+      "Jeu",
+      "Ven",
+      "Sam"
+    ],
+    "month_names": [
+      null,
+      "Janvier",
+      "Février",
+      "Mars",
+      "Avril",
+      "Mai",
+      "Juin",
+      "Juillet",
+      "Août",
+      "Septembre",
+      "Octobre",
+      "Novembre",
+      "Décembre"
+    ],
+    "abbr_month_names": [
+      null,
+      "Jan",
+      "Fév",
+      "Mar",
+      "Avr",
+      "Mai",
+      "Juin",
+      "Juil",
+      "Août",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Déc"
+    ]
   },
-
-
-
   "blog-publish-comment": "Commentaire d'un billet de blog",
   "blog-publish-post": "Nouveau billet de blog",
   "blog-share": "Partage d'un blog",
@@ -92,9 +142,4 @@
   "schoolbook-response": "Suivi d'un mot",
   "scrapbook-modified": "Modification d'un cahier multimédia",
   "scrapbook-shared": "Partage d'un cahier multimédia"
-
-
-
-
-
 }

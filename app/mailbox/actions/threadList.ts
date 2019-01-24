@@ -61,6 +61,7 @@ const conversationThreadListAdapter: (
       from: thread.from,
       id: thread.id,
       isFetchingNewer: false,
+      isFetchingFirst: false,
       isFetchingOlder: false,
       messages: [],
       subject: thread.subject.replace(/Tr :|Re :|Re:|Tr:/g, "").trim(), // TODO : do this at display time, not load time.

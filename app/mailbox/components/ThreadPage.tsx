@@ -14,9 +14,6 @@
 // Libraries
 import style from "glamorous-native";
 import * as React from "react";
-import I18n from "i18n-js";
-import Swipeable from "react-native-swipeable";
-import ViewOverflow from "react-native-view-overflow";
 
 import moment from "moment";
 // tslint:disable-next-line:no-submodule-imports
@@ -28,30 +25,31 @@ import { KeyboardAvoidingView, Platform, RefreshControl } from "react-native";
 const { View, FlatList, Text } = style;
 import styles from "../../styles";
 
-import { Loading, Row } from "../../ui";
+import { Loading } from "../../ui";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
-import { EmptyScreen } from "../../ui/EmptyScreen";
 import ThreadMessage from "../components/ThreadMessage";
+import Tracking from "../../tracking/TrackingManager";
 
 // Type definitions
 
 import { Carousel } from "../../ui/Carousel";
 import {
-  IConversationMessage,
-  IConversationMessageList
+  IConversationMessage
 } from "../reducers/messages";
 import { IConversationThread } from "../reducers/threadList";
 
 // Misc
 
 import { signImagesUrls } from "../../infra/oauth";
-import today from "../../utils/today";
 import ThreadInput from "./ThreadInput";
+import ThreadInputReceivers from "./ThreadInputReceiver";
+import { Me } from "../../infra/Me";
 
 // Props definition -------------------------------------------------------------------------------
 
 export interface IThreadPageDataProps {
+  isFetchingFirst?: boolean; // is fetching messages for the first time
   isFetching?: boolean; // is fetching older messages
   isRefreshing?: boolean; // is fetching newer messages
   threadInfo?: IConversationThread; // global thread information
@@ -62,6 +60,8 @@ export interface IThreadPageDataProps {
 export interface IThreadPageEventProps {
   onGetNewer?: (threadId: string) => void;
   onGetOlder?: (threadId: string) => void;
+  onTapReceivers?(message: IConversationMessage)
+  onTapReceiversFromThread?(thread: IConversationThread)
 }
 
 export interface IThreadPageOtherProps {
@@ -89,7 +89,7 @@ export const defaultState: IThreadPageState = {
 export class ThreadPage extends React.PureComponent<
   IThreadPageProps,
   IThreadPageState
-> {
+  > {
   constructor(props) {
     super(props);
     this.state = defaultState;
@@ -123,6 +123,7 @@ export class ThreadPage extends React.PureComponent<
   public renderMessageList() {
     const {
       isFetching,
+      isFetchingFirst,
       isRefreshing,
       onGetNewer,
       onGetOlder,
@@ -130,7 +131,7 @@ export class ThreadPage extends React.PureComponent<
       messages,
       headerHeight
     } = this.props;
-
+    //TODO get focus from thread input + send action when press (should threadinputreceiver in threadinput?)
     return (
       <KeyboardAvoidingView
         style={{ flex: 1 }}
@@ -168,7 +169,7 @@ export class ThreadPage extends React.PureComponent<
             this.onEndReachedCalledDuringMomentum = false;
           }}
         />
-        <ThreadInput />
+        <ThreadInput emptyThread={messages.length == 0} displayPlaceholder={!isFetchingFirst} onReceiversTap={this.handleTapReceiversFromThread} />
       </KeyboardAvoidingView>
     );
   }
@@ -188,9 +189,22 @@ export class ThreadPage extends React.PureComponent<
             imageIndex: number,
             images: Array<{ alt: string; src: string }>
           ) => this.handleOpenImage(imageIndex, images)}
+          onTapReceivers={() => this.handleTapReceivers(message)}
         />
       </View>
     );
+  }
+  public handleTapReceivers = (message: IConversationMessage) => {
+    //TODO move orchestration to thunk
+    Tracking.logEvent("seeRecipient");
+    this.props.onTapReceivers && this.props.onTapReceivers(message);
+    this.props.navigation.navigate("listReceivers");
+  }
+  public handleTapReceiversFromThread = (thread: IConversationThread) => {
+    //TODO move orchestration to thunk
+    Tracking.logEvent("seeRecipient");
+    this.props.onTapReceiversFromThread && this.props.onTapReceiversFromThread(thread);
+    this.props.navigation.navigate("listReceivers");
   }
   /*
   TODO : Dead code in old `conversation` module. So what to do this time ?
@@ -221,12 +235,4 @@ export class ThreadPage extends React.PureComponent<
 
   // Event Handlers
 }
-
-const Border = style.view({
-  backgroundColor: "#DCDDE0",
-  flex: 1,
-  height: 1,
-  marginHorizontal: 10
-});
-
 export default ThreadPage;

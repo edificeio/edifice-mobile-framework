@@ -7,6 +7,8 @@ import ThreadListPage from "./containers/ThreadListPage";
 import ThreadListPageHeader from "./containers/ThreadListPageHeader";
 import ThreadPage from "./containers/ThreadPage";
 import ThreadPageHeader from "./containers/ThreadPageHeader";
+import ReceiverListPage from "./containers/ReceiverListPage";
+import ReceiverListPageHeader from "./components/ReceiverListPageHeader";
 
 export default createStackNavigator({
   listThreads: {
@@ -44,5 +46,15 @@ export default createStackNavigator({
         navigation
       ),
     screen: NewThreadPage
+  },
+  listReceivers: {
+    navigationOptions: ({ navigation }) =>
+      navScreenOptions(
+        {
+          header: <ReceiverListPageHeader navigation={navigation} />
+        },
+        navigation
+      ),
+    screen: ReceiverListPage
   }
 });
