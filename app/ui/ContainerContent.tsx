@@ -30,7 +30,8 @@ export const Header = style.view({
   alignItems: "stretch",
   flexDirection: "row",
   justifyContent: "flex-start",
-  height: 62,
+  marginBottom: 2,
+  minHeight: 50,
   width: "100%"
 });
 
