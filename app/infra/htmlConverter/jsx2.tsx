@@ -115,6 +115,11 @@ export class HtmlConverterJsx extends HtmlConverter {
   protected hasToInsertSpace: boolean = false;
 
   /**
+   * If next encountered text nugget should be starting with a list bullet
+   */
+  protected hasToInsertBullet: boolean = false;
+
+  /**
    * If next encountered text nugget should be on a upper level of styling (when a text tag has been closed).
    */
   protected hasToExitCurrentTextNugget: boolean = false;
@@ -227,6 +232,11 @@ export class HtmlConverterJsx extends HtmlConverter {
             console.log("encountered <BR>");
             this.hasToInsertLineBreak += 1;
             break;
+          case "li": {
+            this.hasToInsertBullet = true;
+            this.hasToInsertLineBreak = this.hasToInsertLineBreak || 1;
+            break;
+          }
           case "img":
             this.parseImgTag(tag);
             break;
@@ -275,6 +285,11 @@ export class HtmlConverterJsx extends HtmlConverter {
       if (!this.firstWord) {
         this.hasToInsertSpace = true;
       }
+    }
+
+    if (this.hasToInsertBullet) {
+      text = " - " + text;
+      this.hasToInsertBullet = false;
     }
 
     if (this.hasToInsertLineBreak) {
