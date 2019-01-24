@@ -2,21 +2,20 @@ import style from "glamorous-native";
 import { CommonStyles } from "../styles/common/styles";
 
 export const Bold = style.text({
-  color: CommonStyles.textColor,
+  color: CommonStyles.textColor, // Bold text is always black
   fontFamily: CommonStyles.primaryFontFamily,
   fontSize: 14,
   fontWeight: "600"
 });
 
 export const Italic = style.text({
-  color: CommonStyles.textColor,
   fontFamily: CommonStyles.primaryFontFamily,
   fontSize: 14,
   fontStyle: "italic"
 });
 
 export const Light = style.text({
-  color: CommonStyles.textColor,
+  color: CommonStyles.textColor, // Light text is always black
   fontFamily: CommonStyles.primaryFontFamilyLight,
   fontSize: 12,
   fontWeight: "400"
@@ -34,8 +33,6 @@ export const Paragraph = style.text(
       : CommonStyles.primaryFontFamily
   })
 );
-
-// Note : currently LightP and Label are only used in `user` module.
 
 export const LightP = style.text({
   color: CommonStyles.lightTextColor,
