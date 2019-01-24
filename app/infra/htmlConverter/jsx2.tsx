@@ -107,7 +107,7 @@ export class HtmlConverterJsx extends HtmlConverter {
   /**
    * If next encountered text nugget should be on a new line (insert line-break if necessary)
    */
-  protected hasToInsertLineBreak: boolean = false;
+  protected hasToInsertLineBreak: number = 0;
 
   /**
    * If next encountered text nugget should be starting with a space
@@ -160,10 +160,25 @@ export class HtmlConverterJsx extends HtmlConverter {
       The parse() method here construct the array, and the renderParse() method convert it to JSX.
       Both of these two methods stores the result in `this.render`, so after conversion, the array representation isn't available anymore.
     */
-    // console.warn("input HTML", this._html);
+    console.warn("input HTML", this._html);
     this._render = [];
+
+    // Now we put all content in a top-level TextNugget, to be sure that we are not going to have sucessing top-level text nuggets.
+    // The main top-level will be recreated by restoring textNugget hierarchy when an image or a video is encourntered.
+    // Do not you think that's ingenious ? :p
+    const allTextWrapper = {
+      children: [],
+      parent: null,
+      type: HtmlConverterNuggetTypes.Text,
+      variant: HtmlConverterJsxTextVariant.None
+    };
+    this.insertNewTextNugget(allTextWrapper);
+
+    // Then, launch parse pass.
     this.parse();
-    // console.warn("output JSON", this._render);
+    console.warn("output JSON", this._render);
+
+    // Finally, we build components based on what nuggets we have got.
     this._render = this.renderParse();
   }
 
@@ -177,9 +192,8 @@ export class HtmlConverterJsx extends HtmlConverter {
         switch (tagName) {
           // after these html tags we have to jump to a new line
           case "div":
-          case "br":
           case "p":
-            this.hasToInsertLineBreak = true;
+            // this.hasToInsertLineBreak = 1;
             break;
           case "a":
             this.parseCloseLinkTag();
@@ -204,6 +218,15 @@ export class HtmlConverterJsx extends HtmlConverter {
         tag = commonParsingEventHandlers.onopentag(tag);
 
         switch (tag.name) {
+          case "div":
+          case "p":
+          console.log("encountered <DIV>");
+            this.hasToInsertLineBreak = this.hasToInsertLineBreak || 1;
+            break;
+          case "br":
+            console.log("encountered <BR>");
+            this.hasToInsertLineBreak += 1;
+            break;
           case "img":
             this.parseImgTag(tag);
             break;
@@ -241,6 +264,7 @@ export class HtmlConverterJsx extends HtmlConverter {
    */
   protected parseText(text: string): void {
     if (!text) return; // Don't deal with empty texts (often caused by strange ZWSP chars)
+    console.log(`encountered text "${text}" (newLine : ${this.hasToInsertLineBreak})`);
 
     text = text.replace(/[\r\n\x0B\x0C\u0085\u2028\u2029]+/g, " "); // replace new lines by spaces (like in html)
 
@@ -255,8 +279,8 @@ export class HtmlConverterJsx extends HtmlConverter {
 
     if (this.hasToInsertLineBreak) {
       // console.log(`encourtered line break`);
-      text = "\n" + text;
-      this.hasToInsertLineBreak = false;
+      text = "\n".repeat(this.hasToInsertLineBreak) + text;
+      this.hasToInsertLineBreak = 0;
     } else if (this.hasToInsertSpace) {
       text = " " + text;
       this.hasToInsertSpace = false;
@@ -309,7 +333,7 @@ export class HtmlConverterJsx extends HtmlConverter {
    * @param nugget
    */
   protected insertNewTextNugget(nugget: ITextNugget | string) {
-    // console.log("insert nugget :", nugget, "into", this.currentTextNugget);
+    console.log("insert text nugget :", nugget, "into", this.currentTextNugget);
 
     if (this.currentTextNugget) {
       // If we're already in a text nugget, append the given one as a child.
@@ -405,12 +429,15 @@ export class HtmlConverterJsx extends HtmlConverter {
    * Closes the current TextNugget (at the deepest level). If it has no content, it will be removed.
    */
   protected closeCurrentTextNugget() {
+    console.log("closing text nugget", this.currentTextNugget);
     if (this.currentTextNugget) {
-      if (
-        this.currentTextNugget.children.length === 0 &&
-        this.currentTextNugget.parent
-      ) {
-        this.currentTextNugget.parent.children.pop(); // Remove the last TextNugget from the parent
+      if (this.currentTextNugget.children.length === 0) {
+        // If we have no children, remove it.
+        if (this.currentTextNugget.parent) {
+          this.currentTextNugget.parent.children.pop(); // Remove the last TextNugget from the parent
+        } else {
+          this._render.pop(); // It has no parent, remove it from the main render array;
+        }
       }
       this.currentTextNugget = this.currentTextNugget.parent; // Close the TextNugget. New children will be put in his parent from now.
     }
@@ -554,7 +581,7 @@ export class HtmlConverterJsx extends HtmlConverter {
     let deepestTextNugget: ITextNugget = null;
     // Clear space and line breaks flags
     this.hasToInsertSpace = false;
-    this.hasToInsertLineBreak = false;
+    this.hasToInsertLineBreak = 0;
     this.firstWord = true;
     // console.log("first work TRUE");
 
@@ -742,7 +769,6 @@ export class HtmlConverterJsx extends HtmlConverter {
     key: string,
     style: ViewStyle = {}
   ): JSX.Element {
-    console.log("this is a rendered inline image", nugget);
     return (
       <Image
         source={signUrl(nugget.src)}
