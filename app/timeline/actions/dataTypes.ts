@@ -137,6 +137,7 @@ const dataTypes = {
         message: news.preview.text,
         resourceId: infoId,
         resourceName: news.params.resourceName,
+        resourceUri: news.params.resourceUri,
         senderId: news.sender,
         senderName: news.params.username,
         subtitle: I18n.t("Actualites"), // Subitle is displayed in little in NewsContent
@@ -168,6 +169,7 @@ const dataTypes = {
         resource: news.resource,
         resourceId: news["sub-resource"],
         resourceName: news.params.postTitle, // Resource name used in preview header
+        resourceUri: news.params.resourceUri,
         senderId: news.sender,
         senderName: news.params.username,
         subtitle: news.params.blogTitle, // Subtitle is displayed in little in NewsContent

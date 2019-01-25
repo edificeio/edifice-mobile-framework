@@ -45,7 +45,6 @@ const openNotif = {
 };
 
 export default dispatch => async (notificationData, legalapps) => {
-  // console.log("paths are", openNotif);
   for (const path in openNotif) {
     if (notificationData.resourceUri.startsWith(path)) {
       const availableApps = await storedFilters(legalapps);
@@ -56,7 +55,6 @@ export default dispatch => async (notificationData, legalapps) => {
       );
       await loadSchoolbooks();
       const item = await openNotif[path](notificationData, latestNews);
-      // console.log("NOTIF OPEN item:", item);
       if (item) {
         Tracking.logEvent("readNews", {
           application: item.application,
