@@ -14,6 +14,7 @@ import userConfig from "../config";
 import firebase from "react-native-firebase";
 import Conf from "../../Conf";
 import Tracking from "../../tracking/TrackingManager"; // TODO make tracking back !
+import { initActivationAccount } from "./activation";
 
 export const actionTypeRequestLogin = userConfig.createActionType(
   "REQUEST_LOGIN"
@@ -58,7 +59,7 @@ export function login(
         // console.log(token);
         const putTokenResponse = await signedFetch(
           `${
-            Conf.currentPlatform.url
+          Conf.currentPlatform.url
           }/timeline/pushNotif/fcmToken?fcmToken=${token}`,
           {
             method: "put"
@@ -127,10 +128,10 @@ export function login(
             err.authErr === OAuthError.BAD_CREDENTIALS
               ? "bad credentials"
               : err.authErr === OAuthError.NOT_PREMIUM
-              ? "not premium"
-              : err.authErr === OAuthError.NETWORK_ERROR
-              ? "network error"
-              : "unkown",
+                ? "not premium"
+                : err.authErr === OAuthError.NETWORK_ERROR
+                  ? "network error"
+                  : "unkown",
           isManual: credentials ? "true" : "false",
           platform: Conf.currentPlatform.url
         });
@@ -143,6 +144,31 @@ export function login(
           });
           break;
         case OAuthError.BAD_CREDENTIALS:
+          // === try to see whether the user has used his activationCode as password
+          const res = await fetch(`${Conf.currentPlatform.url}/auth/activation/match`, {
+            body: JSON.stringify({
+              login: credentials.username,
+              password: credentials.password
+            }),
+            headers: {
+              "Accept": "application/json",
+              "Content-Type": "application/json"
+            },
+            method: "post"
+          });
+          // if server return 200 and match is true => password is activationcode
+          if (res.ok) {
+            const body = await res.json();
+            if (body.match) {
+              dispatch(initActivationAccount({
+                login: credentials.username,
+                activationCode: credentials.password
+              }, true))
+              return;
+            }
+          } else {
+            console.warn("[User][login] match fail with error code: ", res.status, res.statusText)
+          }
           dispatch({
             errmsg: "auth-loginFailed",
             type: actionTypeLoginError
@@ -188,7 +214,7 @@ export function logout() {
       // console.log(token);
       const deleteTokenResponse = await signedFetch(
         `${
-          Conf.currentPlatform.url
+        Conf.currentPlatform.url
         }/timeline/pushNotif/fcmToken?fcmToken=${token}`,
         { method: "delete" }
       );
@@ -218,14 +244,14 @@ export function refreshToken(newToken) {
       const oldToken = await firebase.messaging().getToken();
       const deleteTokenResponse = await signedFetch(
         `${
-          Conf.currentPlatform.url
+        Conf.currentPlatform.url
         }/timeline/pushNotif/fcmToken?fcmToken=${oldToken}`,
         { method: "delete" }
       );
       // console.log("Fcm Token (refresh delete) :", oldToken, deleteTokenResponse);
       const putTokenResponse = await signedFetch(
         `${
-          Conf.currentPlatform.url
+        Conf.currentPlatform.url
         }/timeline/pushNotif/fcmToken?fcmToken=${newToken}`,
         {
           method: "put"

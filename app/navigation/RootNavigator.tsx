@@ -14,6 +14,7 @@ import {
   createMainTabNavigator,
   createMainTabNavOption
 } from "./helpers/mainTabNavigator";
+import ActivationPage from "../user/containers/ActivationPage";
 
 // MAIN NAVIGATOR -------------------------------------------------------------------------
 
@@ -44,7 +45,7 @@ export let currentNavigatorRef = null;
 class MainNavigatorHOC extends React.Component<
   { apps: object; notification: Notification; dispatch: any },
   {}
-> {
+  > {
   public shouldComponentUpdate(nextProps) {
     return (
       this.props.notification !== nextProps.notification ||
@@ -80,6 +81,7 @@ class MainNavigatorHOC extends React.Component<
         onNavigationStateChange={(prevState, currentState, action) => {
           // console.log("main nav state change :", prevState, currentState, action);
           // Track if tab has changed
+          console.log("On nav state changed : ", prevState, currentState, action)
           if (action.type !== "Navigation/NAVIGATE") return;
           const prevIndex = prevState.index;
           const currentIndex = currentState.index;
@@ -120,6 +122,7 @@ export const MainNavigator = connect(mapStateToProps)(MainNavigatorHOC);
 export const RootNavigator: NavigationContainer = createSwitchNavigator({
   Bootstrap: () => <View />,
   Login: { screen: LoginPage },
+  Activation: { screen: ActivationPage },
   Main: { screen: () => <MainNavigator /> },
   PlatformSelect: { screen: PlatformSelectPage }
 });
