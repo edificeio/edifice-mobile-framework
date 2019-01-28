@@ -84,6 +84,7 @@ const RightButton = style(TouchableOpacity)({
 export class ThreadListPage extends React.PureComponent<
   IThreadListPageProps,
   {
+    isSwiping: boolean;
     showDeleteModal: boolean;
     swipedThreadId: string;
   }
@@ -93,6 +94,7 @@ export class ThreadListPage extends React.PureComponent<
   constructor(props) {
     super(props);
     this.state = {
+      isSwiping: false,
       showDeleteModal: false,
       swipedThreadId: null
     };
@@ -167,6 +169,7 @@ export class ThreadListPage extends React.PureComponent<
         keyExtractor={(item: IConversationThread) => item.id}
         style={styles.grid}
         keyboardShouldPersistTaps={"always"}
+        scrollEnabled={!this.state.isSwiping}
       />
     );
   }
@@ -205,7 +208,14 @@ export class ThreadListPage extends React.PureComponent<
     return (
       <Swipeable
         rightButtons={this.renderSwipeDelete(thread.id)}
-        onRightButtonsOpenRelease={(e, g, r) => (this.swipeRef = r)}
+        onRightButtonsOpenRelease={(e, g, r) => {
+          this.swipeRef = r;
+        }}
+        onSwipeStart={(e, g, r) => {
+          if (this.swipeRef) this.swipeRef.recenter();
+          this.setState({ isSwiping: true });
+        }}
+        onSwipeRelease={() => this.setState({ isSwiping: false })}
       >
         <ThreadItem
           {...thread}
