@@ -15,15 +15,8 @@
  */
 
 import * as React from "react";
-import {
-  Image,
-  Linking,
-  Text,
-  TextStyle,
-  View,
-  ViewStyle,
-  WebView
-} from "react-native";
+import { Image, Linking, Text, TextStyle, View, ViewStyle } from "react-native";
+import WebView from "react-native-android-fullscreen-webview-video";
 import sax from "sax";
 import { HtmlConverter } from ".";
 import Conf from "../../Conf";
