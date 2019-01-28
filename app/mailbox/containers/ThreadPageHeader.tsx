@@ -89,13 +89,14 @@ export class ThreadsTopBar extends React.PureComponent<IThreadsBarProps, {}> {
     let { cc } = this.props.thread;
     const { expand } = this.state;
 
-    if (!cc) {
-      cc = [];
+    cc = cc || [];
+    const imageSet = new Set(
+      [...to, ...cc, from].filter(el => el !== Me.session.userId)
+    );
+    if (imageSet.size === 0) {
+      imageSet.add(Me.session.userId);
     }
-    let images = [...to, ...cc, from].filter(el => el !== Me.session.userId);
-    if (images.length === 0) {
-      images = [Me.session.userId];
-    }
+    const images = [...imageSet];
     const names = images.map(el => displayNames.find(dn => dn[0] === el)[1]);
 
     return (

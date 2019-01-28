@@ -70,7 +70,7 @@ class ThreadInput extends React.PureComponent<
     thread: IConversationThread;
     lastMessageId: string;
     emptyThread: boolean;
-    displayPlaceholder: boolean,
+    displayPlaceholder: boolean;
     send: (data: any) => Promise<void>;
     sendPhoto: (data: any) => Promise<void>;
     onReceiversTap: (conversation: IConversationThread) => void;
@@ -80,7 +80,7 @@ class ThreadInput extends React.PureComponent<
     textMessage: string;
     newThreadId: string;
   }
-  > {
+> {
   private input: any;
 
   public state = {
@@ -89,17 +89,19 @@ class ThreadInput extends React.PureComponent<
     textMessage: ""
   };
 
-  public findReceivers(conversation: IConversationThread) {
+  public findReceivers2(conversation: IConversationThread) {
     // TODO : Duplicate of ThreadItem.findReceivers() ?
-    const to = [
-      ...conversation.to,
-      ...(conversation.cc || []),
-      conversation.from
-    ].filter(el => el !== Me.session.userId);
-    if (to.length === 0) {
+    const to = new Set(
+      [
+        ...conversation.to,
+        ...(conversation.cc || []),
+        conversation.from
+      ].filter(el => el !== Me.session.userId)
+    );
+    if (to.size === 0) {
       return [Me.session.userId];
     }
-    return to;
+    return [...to];
   }
 
   private sendPhoto() {
@@ -113,7 +115,7 @@ class ThreadInput extends React.PureComponent<
       parentId: lastMessageId,
       subject: "Re: " + thread.subject,
       threadId: newThreadId || thread.id,
-      to: this.findReceivers(thread)
+      to: this.findReceivers2(thread)
     });
   }
 
@@ -134,7 +136,7 @@ class ThreadInput extends React.PureComponent<
       parentId: lastMessageId,
       subject: "Re: " + thread.subject,
       threadId: thread.id,
-      to: this.findReceivers(thread),
+      to: this.findReceivers2(thread),
       displayNames: thread.displayNames
     });
   }
@@ -147,44 +149,63 @@ class ThreadInput extends React.PureComponent<
     this.setState({ selected: Selected.none });
   }
   public renderInput(textMessage: string, placeholder: string) {
-    return <TextInput
-      ref={el => {
-        this.input = el;
-      }}
-      enablesReturnKeyAutomatically={true}
-      multiline
-      onChangeText={(textMessage: string) =>
-        this.setState({ textMessage })
-      }
-      onFocus={() => {
-        this.focus();
-        return true;
-      }}
-      onBlur={() => {
-        this.blur();
-        return true;
-      }}
-      placeholder={placeholder}
-      underlineColorAndroid={"transparent"}
-      value={textMessage}
-      autoCorrect={false}
-      style={Platform.OS === "android" ? { paddingTop: 8 } : {}}
-    />;
+    return (
+      <TextInput
+        ref={el => {
+          this.input = el;
+        }}
+        enablesReturnKeyAutomatically={true}
+        multiline
+        onChangeText={(textMessage: string) => this.setState({ textMessage })}
+        onFocus={() => {
+          this.focus();
+          return true;
+        }}
+        onBlur={() => {
+          this.blur();
+          return true;
+        }}
+        placeholder={placeholder}
+        underlineColorAndroid={"transparent"}
+        value={textMessage}
+        autoCorrect={false}
+        style={Platform.OS === "android" ? { paddingTop: 8 } : {}}
+      />
+    );
   }
   public render() {
     const { selected, textMessage } = this.state;
     const { displayPlaceholder, thread } = this.props;
-    const receiversIds = this.findReceivers(thread);
-    const receiverNames = thread.displayNames.filter(dN => receiversIds.indexOf(dN[0]) > -1).map(dN => dN[1]);
-    const showReceivers = (selected == Selected.keyboard || (textMessage && textMessage.length > 0)) && receiverNames.length >= 2;
+    const receiversIds = this.findReceivers2(thread);
+    const receiverNames = thread.displayNames
+      .filter(dN => receiversIds.indexOf(dN[0]) > -1)
+      .map(dN => dN[1]);
+    const showReceivers =
+      (selected == Selected.keyboard ||
+        (textMessage && textMessage.length > 0)) &&
+      receiverNames.length >= 2;
     //iOS hack => does not display placeholder on update
     return (
       <View>
-        <ThreadInputReceivers names={receiverNames} show={showReceivers} onPress={() => this.props.onReceiversTap(thread)} />
+        <ThreadInputReceivers
+          names={receiverNames}
+          show={showReceivers}
+          onPress={() => this.props.onReceiversTap(thread)}
+        />
         <ContainerFooterBar>
           <ContainerInput>
-            {displayPlaceholder &&  this.props.emptyThread  && this.renderInput(textMessage, I18n.t("conversation-chatPlaceholder"))}
-            {displayPlaceholder && !this.props.emptyThread  && this.renderInput(textMessage, I18n.t("conversation-responsePlaceholder"))}
+            {displayPlaceholder &&
+              this.props.emptyThread &&
+              this.renderInput(
+                textMessage,
+                I18n.t("conversation-chatPlaceholder")
+              )}
+            {displayPlaceholder &&
+              !this.props.emptyThread &&
+              this.renderInput(
+                textMessage,
+                I18n.t("conversation-responsePlaceholder")
+              )}
           </ContainerInput>
           <Line style={{ height: 40 }}>
             <ChatIcon
@@ -235,7 +256,7 @@ export default connect(
       state[conversationConfig.reducerName].threadSelected;
     const selectedThread =
       state[conversationConfig.reducerName].threadList.data.byId[
-      selectedThreadId
+        selectedThreadId
       ];
 
     return {
