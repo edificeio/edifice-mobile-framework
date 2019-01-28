@@ -158,7 +158,7 @@ export class HtmlConverterJsx extends HtmlConverter {
       The parse() method here construct the array, and the renderParse() method convert it to JSX.
       Both of these two methods stores the result in `this.render`, so after conversion, the array representation isn't available anymore.
     */
-    console.warn("input HTML", this._html);
+    // console.log("input HTML", this._html);
     this._render = [];
 
     // Now we put all content in a top-level TextNugget, to be sure that we are not going to have sucessing top-level text nuggets.
@@ -174,7 +174,7 @@ export class HtmlConverterJsx extends HtmlConverter {
 
     // Then, launch parse pass.
     this.parse();
-    console.warn("output JSON", this._render);
+    // console.log("output JSON", this._render);
 
     // Finally, we build components based on what nuggets we have got.
     this._render = this.renderParse();
@@ -341,7 +341,7 @@ export class HtmlConverterJsx extends HtmlConverter {
    * @param nugget
    */
   protected insertNewTextNugget(nugget: ITextNugget | string) {
-    console.log("insert text nugget :", nugget, "into", this.currentTextNugget);
+    // console.log("insert text nugget :", nugget, "into", this.currentTextNugget);
 
     if (this.currentTextNugget) {
       // If we're already in a text nugget, append the given one as a child.
@@ -437,7 +437,7 @@ export class HtmlConverterJsx extends HtmlConverter {
    * Closes the current TextNugget (at the deepest level). If it has no content, it will be removed.
    */
   protected closeCurrentTextNugget() {
-    console.log("closing text nugget", this.currentTextNugget);
+    // console.log("closing text nugget", this.currentTextNugget);
     if (this.currentTextNugget) {
       if (this.currentTextNugget.children.length === 0) {
         // If we have no children, remove it.
