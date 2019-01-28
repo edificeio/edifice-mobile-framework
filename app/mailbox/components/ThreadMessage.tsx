@@ -1,4 +1,4 @@
-import style, { } from "glamorous-native";
+import style from "glamorous-native";
 import I18n from "i18n-js";
 import * as React from "react";
 import { View, ViewStyle } from "react-native";
@@ -41,16 +41,20 @@ const TextBubble = ({ content, isMine }) => (
 );
 
 const MessageStatus = ({ status, date }) => {
-  if (status === undefined ||
-    status === ConversationMessageStatus.sent)
-    return <DateView date={date} />
+  if (status === undefined || status === ConversationMessageStatus.sent)
+    return <DateView date={date} />;
   else if (status === ConversationMessageStatus.sending)
-    return <MessageStatusText>{I18n.t("conversation-sendingMessage")}</MessageStatusText>
-  else if (
-    status === ConversationMessageStatus.failed)
-    <MessageStatusText style={{ color: CommonStyles.error, fontSize: 12 }} >
-      {I18n.t("conversation-failedSent")}
-    </MessageStatusText>
+    return (
+      <MessageStatusText>
+        {I18n.t("conversation-sendingMessage")}
+      </MessageStatusText>
+    );
+  else if (status === ConversationMessageStatus.failed)
+    return (
+      <MessageStatusText style={{ color: CommonStyles.error, fontSize: 12 }}>
+        {I18n.t("conversation-failedSent")}
+      </MessageStatusText>
+    );
 };
 export default class ThreadMessage extends React.PureComponent<
   {
@@ -65,10 +69,10 @@ export default class ThreadMessage extends React.PureComponent<
       imageIndex: number,
       images: Array<{ src: string; alt: string }>
     ) => void;
-    onTapReceivers: () => void
+    onTapReceivers: () => void;
   },
   undefined
-  > {
+> {
   public render() {
     const { body, date, to = [], toName = [], from = "", status } = this.props;
 
@@ -81,20 +85,25 @@ export default class ThreadMessage extends React.PureComponent<
       .toHTML();
     const messageText = adaptator(newHtml).toText();
     const images = adaptator(newHtml).toImagesArray("381x381");
-    const receiverText = to.length > 1 ? I18n.t("conversation-receivers", { count: to.length }) : I18n.t("conversation-receiver");
+    const receiverText =
+      to.length > 1
+        ? I18n.t("conversation-receivers", { count: to.length })
+        : I18n.t("conversation-receiver");
     if (!body) {
       return <style.View />;
     }
 
     return (
       <MessageBlock>
-        <MessageContainer >
+        <MessageContainer>
           <MessageInfos>
             <MessageInfosDetails>
               <AvatarContainer>
                 <SingleAvatar size={30} userId={from} />
               </AvatarContainer>
-              <ReceiverTextPrefix>{I18n.t("conversation-receiverPrefix")} </ReceiverTextPrefix>
+              <ReceiverTextPrefix>
+                {I18n.t("conversation-receiverPrefix")}{" "}
+              </ReceiverTextPrefix>
               <TouchableOpacity onPress={() => this.props.onTapReceivers()}>
                 <ReceiverLink>
                   <ReceiverText>{receiverText}</ReceiverText>
@@ -108,8 +117,8 @@ export default class ThreadMessage extends React.PureComponent<
           {messageText ? (
             <TextBubble content={messageText} isMine={isMine} />
           ) : (
-              <View />
-            )}
+            <View />
+          )}
           {images.map((el, index) => {
             return (
               <TouchableImageOptional
@@ -145,58 +154,49 @@ const AvatarContainer = style.view({
   justifyContent: "center",
   alignItems: "flex-start"
 });
-const MessageInfos = style.view(
-  {
-    flex: 1,
-    justifyContent: "space-between",
-    alignItems: "center",
-    alignSelf: "stretch",
-    flexDirection: "row",
-    padding: 0,
-
-  }
-)
-const MessageInfosDetails = style.view(
-  {
-    alignItems: "center",
-    flexDirection: "row"
-  });
-const MessageInfosStatus = style.view(
-  {
-    paddingTop: 5
-  });
-const MessageContainer = style.view(
-  {
-    flex: 1,
-    alignItems: "flex-start",
-    flexDirection: "column",
-  }
-);
+const MessageInfos = style.view({
+  flex: 1,
+  justifyContent: "space-between",
+  alignItems: "center",
+  alignSelf: "stretch",
+  flexDirection: "row",
+  padding: 0
+});
+const MessageInfosDetails = style.view({
+  alignItems: "center",
+  flexDirection: "row"
+});
+const MessageInfosStatus = style.view({
+  paddingTop: 5
+});
+const MessageContainer = style.view({
+  flex: 1,
+  alignItems: "flex-start",
+  flexDirection: "column"
+});
 const MessageStatusText = style.text({
   fontSize: 12,
   paddingBottom: 5
-})
+});
 const ReceiverTextPrefix = style.text({
   fontSize: 11,
   paddingBottom: 2
-})
+});
 const ReceiverText = style.text({
   fontSize: 11
-})
+});
 const ReceiverLink = style.view({
-  borderBottomColor: 'rgba(0,0,0,0.37)',
+  borderBottomColor: "rgba(0,0,0,0.37)",
   borderBottomWidth: 1
 });
-const MessageBlock = style.view(
-  {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "flex-end",
-    justifyContent: "flex-start",
-    marginRight: 0,
-    padding: 15
-  }
-);
+const MessageBlock = style.view({
+  flex: 1,
+  flexDirection: "row",
+  alignItems: "flex-end",
+  justifyContent: "flex-start",
+  marginRight: 0,
+  padding: 15
+});
 
 const BubbleStyle = style.view(
   {
