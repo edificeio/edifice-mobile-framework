@@ -1,63 +1,70 @@
 import I18n from "i18n-js";
 
 export function getTimeToStr(timestamp) {
-	if (sameDay(timestamp)) {
-		const dateHours = new Date(timestamp).getHours()
-		const nowHours = new Date().getHours()
-		let dateMn = new Date(timestamp).getMinutes()
-		const nowMn = new Date().getMinutes()
-		const hours = nowHours - dateHours
-		let mn = nowMn - dateMn;
-		if(dateMn < 10){
-			(dateMn as any) = '0' + dateMn;
-		}
+  if (sameDay(timestamp)) {
+    const dateHours = new Date(timestamp).getHours();
+    const nowHours = new Date().getHours();
+    let dateMn = new Date(timestamp).getMinutes();
+    const nowMn = new Date().getMinutes();
+    const hours = nowHours - dateHours;
+    let mn = nowMn - dateMn;
+    if (dateMn < 10) {
+      (dateMn as any) = "0" + dateMn;
+    }
 
-		if (hours === 0) return I18n.t("agoMinutes", { minutes: mn })
-		else if (hours === 1) return I18n.t("agoHour", { hour : hours })
-		else return I18n.t("agoHours", { hours })
-	}
-	const date = new Date(timestamp)
-	const day = date.getDate()
-	const monthName = I18n.strftime(date, "%b");
-	const year = date.getFullYear()
-	const nowYear = new Date().getFullYear()
+    if (hours === 0)
+      return mn <= 1
+        ? I18n.t("agoMinute", { minute: mn })
+        : I18n.t("agoMinutes", { minutes: mn });
+    else if (hours === 1) return I18n.t("agoHour", { hour: hours });
+    else return I18n.t("agoHours", { hours });
+  }
+  const date = new Date(timestamp);
+  const day = date.getDate();
+  const monthName = I18n.strftime(date, "%b");
+  const year = date.getFullYear();
+  const nowYear = new Date().getFullYear();
 
-	if (year !== nowYear) return `${day} ${monthName} ${year}`
+  if (year !== nowYear) return `${day} ${monthName} ${year}`;
 
-	return `${day} ${monthName}`
+  return `${day} ${monthName}`;
 }
 
 export function getTimeToShortStr(timestamp) {
-	if (sameDay(timestamp)) {
-		const dateHours = new Date(timestamp).getHours()
-		const nowHours = new Date().getHours()
-		let dateMn = new Date(timestamp).getMinutes()
-		const nowMn = new Date().getMinutes()
-		const hours = nowHours - dateHours
-		let mn = nowMn - dateMn;
-		if(dateMn < 10){
-			(dateMn as any) = '0' + dateMn;
-		}
+  if (sameDay(timestamp)) {
+    const dateHours = new Date(timestamp).getHours();
+    const nowHours = new Date().getHours();
+    let dateMn = new Date(timestamp).getMinutes();
+    const nowMn = new Date().getMinutes();
+    const hours = nowHours - dateHours;
+    let mn = nowMn - dateMn;
+    if (dateMn < 10) {
+      (dateMn as any) = "0" + dateMn;
+    }
 
-		if (hours === 0) return `${mn} mn`
-		else return `${dateHours}:${dateMn}`
-	}
-	const date = new Date(timestamp)
-	const day = date.getDate()
-	const monthName = I18n.strftime(date, "%b");
+    if (hours === 0) return `${mn} mn`;
+    else return `${dateHours}:${dateMn}`;
+  }
+  const date = new Date(timestamp);
+  const day = date.getDate();
+  const monthName = I18n.strftime(date, "%b");
 
-	return `${day} ${monthName}`
+  return `${day} ${monthName}`;
 }
 
 export function sameDay(timestamp) {
-	const now = Date.now()
+  const now = Date.now();
 
-	if (now - timestamp > 1000 * 3600 * 24) return false
+  if (now - timestamp > 1000 * 3600 * 24) return false;
 
-	const date = new Date(timestamp)
-	const todayDate = new Date()
+  const date = new Date(timestamp);
+  const todayDate = new Date();
 
-	if (date.getDate() !== todayDate.getDate() || date.getMonth() !== todayDate.getMonth()) return false
+  if (
+    date.getDate() !== todayDate.getDate() ||
+    date.getMonth() !== todayDate.getMonth()
+  )
+    return false;
 
-	return true
+  return true;
 }
