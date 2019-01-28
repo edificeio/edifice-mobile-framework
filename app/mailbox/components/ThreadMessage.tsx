@@ -84,7 +84,7 @@ export default class ThreadMessage extends React.PureComponent<
       .removeNode(".signature")
       .toHTML();
     const messageText = adaptator(newHtml).toText();
-    const images = adaptator(newHtml).toImagesArray("381x381");
+    const images = adaptator(newHtml).toImagesArray();
     const receiverText =
       to.length > 1
         ? I18n.t("conversation-receivers", { count: to.length })
