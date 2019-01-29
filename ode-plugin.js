@@ -222,6 +222,8 @@ async function overrideSwitchTo(name, skipRestore, acceptAll, gitUri, gitUser, g
         const overrideFilePath = fileListAbsolute[i];
         const overrideFilePathRelative = path.relative(overridePath, overrideFilePath)
         const destFilePath = path.resolve(__dirname, overrideFilePathRelative);
+        const destDirPath = path.dirname(destFilePath)
+        _mkdirsSync(destDirPath)
         copyPromises.push(copyFile(overrideFilePath, destFilePath))
     }
     await Promise.all(copyPromises);
