@@ -12,10 +12,7 @@ export function getTimeToStr(timestamp) {
       (dateMn as any) = "0" + dateMn;
     }
 
-    if (hours === 0)
-      return mn <= 1
-        ? I18n.t("agoMinute", { minute: mn })
-        : I18n.t("agoMinutes", { minutes: mn });
+    if (hours === 0) return I18n.t("agoMinutes", { minutes: mn });
     else if (hours === 1) return I18n.t("agoHour", { hour: hours });
     else return I18n.t("agoHours", { hours });
   }
@@ -42,7 +39,7 @@ export function getTimeToShortStr(timestamp) {
       (dateMn as any) = "0" + dateMn;
     }
 
-    if (hours === 0) return `${mn} mn`;
+    if (hours === 0) return `${mn} min`;
     else return `${dateHours}:${dateMn}`;
   }
   const date = new Date(timestamp);
