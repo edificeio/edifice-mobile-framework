@@ -1,5 +1,6 @@
 import I18n from "i18n-js";
 import * as React from "react";
+import { StatusBar, View } from "react-native";
 import RNLanguages from "react-native-languages";
 import { Provider, connect } from "react-redux";
 import { applyMiddleware, combineReducers, createStore } from "redux";
@@ -24,6 +25,7 @@ import {
   NotificationOpen
 } from "react-native-firebase/notifications";
 
+import { CommonStyles } from './styles/common/styles';
 import { loadCurrentPlatform, unSelectPlatform } from "./user/actions/platform";
 
 // Disable Yellow Box on release builds.
@@ -74,7 +76,13 @@ class AppStoreUnconnected extends React.Component<
   public render() {
     return (
       <Provider store={this.props.store}>
-        <AppScreen />
+        <View style={{ flex: 1 }}>
+          <StatusBar
+            backgroundColor={CommonStyles.statusBarColor}
+            barStyle="light-content"
+          />
+          <AppScreen />
+        </View>
       </Provider>
     );
   }

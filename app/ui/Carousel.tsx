@@ -8,7 +8,8 @@ import {
   Modal,
   Platform,
   Text,
-  View
+  View,
+  StatusBar
 } from "react-native";
 import FastImage from "react-native-fast-image";
 import RNCarousel from "react-native-snap-carousel";
@@ -109,6 +110,7 @@ export class Carousel extends React.Component<
             });
           }}
         >
+          <StatusBar backgroundColor="black" barStyle="light-content" />
           <RNCarousel
             data={this.props.images}
             renderItem={({
