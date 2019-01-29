@@ -13,7 +13,6 @@ export function getTimeToStr(timestamp) {
     }
 
     if (hours === 0) return I18n.t("agoMinutes", { minutes: mn });
-    else if (hours === 1) return I18n.t("agoHour", { hour: hours });
     else return I18n.t("agoHours", { hours });
   }
   const date = new Date(timestamp);

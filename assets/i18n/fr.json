@@ -1,7 +1,6 @@
 {
   "Actualites": "Actualités",
-  "agoHour": "il y a {{hour}} heure",
-  "agoHours": "il y a {{hours}} heure(s)",
+  "agoHours": "il y a {{hours}} h",
   "agoMinutes": "il y a {{minutes}} min",
   "apply": "Appliquer",
   "auth-disconnectConfirm": "vous déconnecter ?",

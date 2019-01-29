@@ -1,6 +1,5 @@
 {
-  "agoHour": "Hace {{hour}} hora",
-  "agoHours": "Hace {{hours}} hora(s)",
+  "agoHours": "Hace {{hours}} h",
   "agoMinutes": "Hace {{minutes}} min",
   "apply": "Aplicar",
   "auth-disconnectConfirm": "desconectarse?",

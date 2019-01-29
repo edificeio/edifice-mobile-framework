@@ -1,6 +1,5 @@
 {
-  "agoHour": "{{hour}} hour ago",
-  "agoHours": "{{hours}} hours ago",
+  "agoHours": "{{hours}} h ago",
   "agoMinutes": "{{minutes}} min ago",
   "apply": "Apply",
   "auth-disconnectConfirm": "want to logout?",
