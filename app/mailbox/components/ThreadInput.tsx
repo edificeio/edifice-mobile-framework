@@ -20,7 +20,7 @@ import ThreadInputReceivers from "./ThreadInputReceiver";
 
 // TODO : Debt : Needs to be refactored.
 
-const ContainerFooterBar = style(TouchableOpacity)({
+const ContainerFooterBar = style(View)({
   backgroundColor: CommonStyles.tabBottomColor,
   borderTopColor: CommonStyles.borderColorLighter,
   borderTopWidth: 1,
