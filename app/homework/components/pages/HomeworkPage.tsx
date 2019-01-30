@@ -95,15 +95,14 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
   // Render
 
   public render() {
-    const pageContent = this.props.tasksByDay
-      ? this.props.tasksByDay.length === 0
+    const pageContent =
+      this.props.tasksByDay && this.props.tasksByDay.length
+        ? this.renderList()
+        : this.props.didInvalidate
         ? this.props.isFetching
           ? this.renderLoading()
           : this.renderEmptyScreen()
-        : this.renderList()
-      : this.props.isFetching || this.props.didInvalidate
-      ? this.renderLoading()
-      : this.renderEmptyScreen();
+        : this.renderEmptyScreen();
 
     return (
       <PageContainer>

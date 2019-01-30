@@ -2,7 +2,7 @@
 import style from "glamorous-native";
 import I18n from "i18n-js";
 import * as React from "react";
-import { Image, ScrollView, Text, View } from "react-native";
+import { Image, SafeAreaView, ScrollView, View } from "react-native";
 import { connect } from "react-redux";
 
 // Components
@@ -60,7 +60,7 @@ export class PlatformSelectPage extends React.PureComponent<
 > {
   public render() {
     return (
-      <View style={{ flex: 1, backgroundColor: "#ffffff" }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
         <ScrollView alwaysBounceVertical={false}>
           <H1
             style={{
@@ -104,7 +104,7 @@ export class PlatformSelectPage extends React.PureComponent<
             )}
           </View>
         </ScrollView>
-      </View>
+      </SafeAreaView>
     );
   }
 

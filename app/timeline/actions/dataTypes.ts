@@ -9,8 +9,8 @@ import { signImagesUrls } from "../../infra/oauth";
 
 let loadingState = "idle";
 const awaiters = [];
-let schoolbooks = [];
-const loadSchoolbooks = (): Promise<any[]> => {
+export let schoolbooks = [];
+export const loadSchoolbooks = (): Promise<any[]> => {
   return new Promise(async (resolve, reject) => {
     if (loadingState === "over") {
       resolve(schoolbooks);
@@ -57,6 +57,14 @@ const loadSchoolbooks = (): Promise<any[]> => {
 
 const dataTypes = {
   SCHOOLBOOK: async (news, timeline) => {
+    const split = news.params.resourceUri
+      ? news.params.resourceUri.split("/")
+      : news.params.wordUri
+      ? news.params.wordUri.split("/")
+      : null;
+    const wordId = split && split[split.length - 1];
+    const wordUri = news.params.wordUri || news.params.resourceUri;
+
     const defaultContent = {
       date: news.date.$date,
       eventType: news["event-type"],
@@ -72,22 +80,24 @@ const dataTypes = {
       ),
       message: news.preview.text,
       resourceName: news.params.wordTitle,
+      resourceUri: news.params.resourceUri,
       senderId: news.sender,
       senderName: news.params.username,
       subtitle: I18n.t("schoolbook-appTitle"), // Subitle is displayed in little in NewsContent
-      title: news.params.wordTitle // Title is displayed in big in NewsContent
+      title: news.params.wordTitle, // Title is displayed in big in NewsContent
+      type: news.type,
+      url: wordUri
     };
-    if (!news.params.wordUri || news.params.wordUri.indexOf("word") === -1) {
+
+    if (!wordId || wordUri.indexOf("word") === -1) {
       return defaultContent;
     }
     try {
-      const schoolbooks = await loadSchoolbooks();
-      const schoolbookId = news.params.wordUri.split("word/")[1];
-      const schoolbook = schoolbooks.find(
-        s => s.id === parseInt(schoolbookId, 10)
-      );
+      await loadSchoolbooks();
+      // tslint:disable-next-line:triple-equals
+      const schoolbook = schoolbooks.find(s => s.id == wordId); // This is a dirty comparison between a string and a number. Keep "==" please.
 
-      if (timeline.find(e => e.resourceId === schoolbookId)) {
+      if (timeline.find(e => e.resourceId === wordId)) {
         return null;
       }
 
@@ -95,7 +105,7 @@ const dataTypes = {
         return {
           ...defaultContent,
           htmlContent: schoolbook.text,
-          resourceId: schoolbookId,
+          resourceId: wordId,
           title: schoolbook.title
         };
       }
@@ -127,10 +137,12 @@ const dataTypes = {
         message: news.preview.text,
         resourceId: infoId,
         resourceName: news.params.resourceName,
+        resourceUri: news.params.resourceUri,
         senderId: news.sender,
         senderName: news.params.username,
-        subtitle: I18n.t("News"), // Subitle is displayed in little in NewsContent
+        subtitle: I18n.t("Actualites"), // Subitle is displayed in little in NewsContent
         title: news.params.resourceName, // Title is displayed in big in NewsContent
+        type: news.type,
         url: `/actualites/thread/${threadId}/info/${infoId}`
       };
     } catch (e) {
@@ -157,10 +169,12 @@ const dataTypes = {
         resource: news.resource,
         resourceId: news["sub-resource"],
         resourceName: news.params.postTitle, // Resource name used in preview header
+        resourceUri: news.params.resourceUri,
         senderId: news.sender,
         senderName: news.params.username,
         subtitle: news.params.blogTitle, // Subtitle is displayed in little in NewsContent
         title: news.params.postTitle, // Title is displayed in big in NewsContent
+        type: news.type,
         url: `/blog/post/${news.resource}/${news["sub-resource"]}`
       };
     } catch (e) {
@@ -180,6 +194,7 @@ export const excludeTypes = [
 export const fillData = async (availableApps: object, results: any[]) => {
   const newResults = [];
   const availableAppsWithUppercase = {};
+  const urls: string[] = [];
   Object.keys(availableApps).forEach(app => {
     availableAppsWithUppercase[app] = availableApps[app];
     availableAppsWithUppercase[app.toUpperCase()] = availableApps[app];
@@ -187,9 +202,10 @@ export const fillData = async (availableApps: object, results: any[]) => {
   for (const result of results) {
     if (dataTypes[result.type] && availableAppsWithUppercase[result.type]) {
       const newResult = await dataTypes[result.type](result, newResults);
-      if (newResult) {
+      if (newResult && !urls.includes(newResult.url)) {
         newResult.application = result.type.toLowerCase();
         newResults.push(newResult);
+        urls.push(newResult.url);
       }
     }
   }

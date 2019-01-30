@@ -59,8 +59,14 @@ class MainNavigatorHOC extends React.Component<
     await this.componentDidUpdate();
   }
 
+  private static lastOpenNotifData: string;
+
   public async componentDidUpdate() {
-    if (this.props.notification) {
+    if (
+      this.props.notification &&
+      this.props.notification.data.params !== MainNavigatorHOC.lastOpenNotifData
+    ) {
+      MainNavigatorHOC.lastOpenNotifData = this.props.notification.data.params;
       const data = JSON.parse(this.props.notification.data.params);
       // console.log("routing from notif data", data);
       pushNotifications(this.props.dispatch)(data, this.props.apps);

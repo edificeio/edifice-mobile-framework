@@ -15,12 +15,13 @@ import { DateView } from "../../ui/DateView";
 import { ResourceTitle } from "../../ui/headers/ResourceTitle";
 import { HtmlContentView } from "../../ui/HtmlContentView";
 import { Bold, Light } from "../../ui/Typography";
+import NewsTopInfo from "../components/NewsTopInfo";
 
 export class NewsContentHeader extends React.Component<
   { navigation?: any },
   undefined
 > {
-  render() {
+  public render() {
     const { news } = this.props.navigation.state.params;
     return (
       <ResourceTitle
@@ -56,30 +57,7 @@ export class NewsContent extends React.Component<{ navigation?: any }, {}> {
     } = this.props.navigation.state.params.news;
     return (
       <View>
-        <Header>
-          <LeftPanel>
-            <SingleAvatar userId={senderId} />
-          </LeftPanel>
-          <CenterPanel>
-            <Bold>
-              {senderName}
-              <Light> {I18n.t("On")} </Light>
-              {subtitle}
-            </Bold>
-            <DateView date={date} short={false} />
-          </CenterPanel>
-        </Header>
-        {/*
-        {this.state.expend ? (
-          <Paragraph>{message}</Paragraph>
-        ) : (
-          <Preview
-            textContent={message}
-            onExpend={() => this.setState({ expend: true })}
-          />
-        )}
-        <Images images={images} style={message ? { marginTop: 15 } : {}} />
-        */}
+        <NewsTopInfo {...this.props.navigation.state.params.news} />
         <HtmlContentView
           source={url}
           getContentFromResource={responseJSON => responseJSON.content}

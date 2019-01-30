@@ -45,7 +45,7 @@ export const CommonStyles = {
   },
   shadowOpacity: 0.25,
   shadowRadius: 2,
-  // statusBarColor: "#0088B6",
+  statusBarColor: "#0088B6",
   // tabBackgroundColor: "#2a97f5",
   tabBottomColor: "#ffffff",
   textColor: "#414355",

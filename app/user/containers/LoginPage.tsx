@@ -6,6 +6,7 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
+  SafeAreaView,
   TextInput,
   TouchableWithoutFeedback,
   View
@@ -98,7 +99,7 @@ export class LoginPage extends React.Component<
 
   public render() {
     return (
-      <View style={{ flex: 1, backgroundColor: "#ffffff" }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
         <KeyboardAvoidingView
           style={{ flex: 1, backgroundColor: "#ffffff" }}
           behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -111,7 +112,7 @@ export class LoginPage extends React.Component<
             {this.renderForm()}
           </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
-      </View>
+      </SafeAreaView>
     );
   }
 

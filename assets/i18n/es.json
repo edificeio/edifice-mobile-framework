@@ -1,7 +1,6 @@
 {
-  "agoHour": "Hace {{hour}} hora",
-  "agoHours": "Hace {{hours}} hora(s)",
-  "agoMinutes": "Hace {{minutes}} mins",
+  "agoHours": "Hace {{hours}} h",
+  "agoMinutes": "Hace {{minutes}} min",
   "apply": "Aplicar",
   "auth-disconnectConfirm": "desconectarse?",
   "auth-loginFailed": "El nombre de usuario o la contraseña son incorrectos",

@@ -4,18 +4,12 @@ import style from "glamorous-native";
 import * as React from "react";
 import { View } from "react-native";
 import { INewsModel } from "../reducer";
-import {
-  ArticleContainer,
-  LeftPanel,
-  Header,
-  CenterPanel
-} from "../../ui/ContainerContent";
+
 import { TouchCard } from "../../ui/Card";
-import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
-import { Bold, Light } from "../../ui/Typography";
-import { DateView } from "../../ui/DateView";
-import { Preview } from "../../ui/Preview";
+import { ArticleContainer } from "../../ui/ContainerContent";
 import { Images } from "../../ui/Images";
+import { Preview } from "../../ui/Preview";
+import NewsTopInfo from "./NewsTopInfo";
 
 interface INewsProps extends INewsModel {
   onPress?: (expend?: boolean) => void;
@@ -43,25 +37,14 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
       senderName,
       resourceName,
       message,
+      type,
       images = []
     } = this.props;
     return (
       <ArticleContainer>
         <TouchCard onPress={() => this.open(false)}>
           <View>
-            <Header>
-              <LeftPanel>
-                <SingleAvatar userId={senderId} />
-              </LeftPanel>
-              <CenterPanel>
-                <Bold>
-                  {senderName}
-                  <Light> {I18n.t(`timeline-eventType-${eventType}`)} </Light>
-                  {resourceName}
-                </Bold>
-                <DateView date={date} short={false} />
-              </CenterPanel>
-            </Header>
+            <NewsTopInfo {...this.props} />
             <Preview textContent={message} onExpend={() => this.open(true)} />
             {images.length ? (
               <Images

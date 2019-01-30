@@ -17,7 +17,7 @@ import {
 } from "../actions/threadList";
 import { conversationThreadSelected } from "../actions/threadSelected";
 
-import { findReceivers } from "../components/ThreadItem";
+import { findReceivers2 } from "../components/ThreadItem";
 import Tracking from "../../tracking/TrackingManager";
 
 const mapStateToProps: (state: any) => IThreadListPageDataProps = state => {
@@ -111,7 +111,7 @@ const searchText = thread =>
   removeAccents(
     (thread.subject || "") +
       " " +
-      findReceivers(thread.to, thread.from, thread.cc)
+      findReceivers2(thread.to, thread.from, thread.cc)
         .map(r => thread.displayNames.find(dn => dn[0] === r)[1])
         .join(", ")
         .toLowerCase()
