@@ -34,19 +34,20 @@ export default class Tracking {
   // Firebase Crashlytics
 
   private static crashlytics;
-  private static perfMonitoring;
-  private static trace;
+  //disbale perf monitoring because of android crash
+  //private static perfMonitoring;
+  //private static trace;
 
   public static initCrashlytics() {
     Tracking.crashlytics = firebase.crashlytics();
     Tracking.crashlytics.log("Crashlytics configuration done.");
-    Tracking.perfMonitoring = (firebase.app() as any).perf();
-    Tracking.trace = Tracking.perfMonitoring.newTrace(
-      `PerformanceMonitoring_configuration_done`
-    );
-    Tracking.trace.start();
-    Tracking.trace.incrementMetric(`PerformanceMonitoring__increment`, 1);
-    Tracking.trace.stop();
+    //Tracking.perfMonitoring = (firebase.app() as any).perf();
+    //Tracking.trace = Tracking.perfMonitoring.newTrace(
+    //  `PerformanceMonitoring_configuration_done`
+    //);
+    //Tracking.trace.start();
+    //Tracking.trace.incrementMetric(`PerformanceMonitoring__increment`, 1);
+    //Tracking.trace.stop();
   }
 
   // Common methods
