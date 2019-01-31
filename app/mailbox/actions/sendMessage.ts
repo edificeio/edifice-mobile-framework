@@ -5,13 +5,43 @@ import Conf from "../../Conf";
 import { signedFetch } from "../../infra/fetchWithCache";
 import { Me } from "../../infra/Me";
 import Tracking from "../../tracking/TrackingManager";
-import {
-  ConversationMessageStatus,
-  IConversationMessage
-} from "../reducers/messages";
 
 import mailboxConfig from "../config";
+import { IArrayById } from "../../infra/collections";
 
+// TYPE DEFINITIONS -------------------------------------------------------------------------------
+
+export interface IConversationMessage {
+  // It's like an IMessage ! LOL !
+  id: string; // Message's own id
+  parentId: string; // Id of the message that it reply to
+  subject: string; // Subject of the message
+  body: string; // Content of the message. It's HTML.
+  from: string; // User id of the sender
+  fromName: string; // Name of the sender
+  to: string[]; // User Ids of the receivers
+  toName: string[]; // Name of the receivers
+  cc: string[]; // User Ids of the copy receivers
+  ccName: string[]; // Name of the copy receivers
+  displayNames: string[][]; // [0: id, 1: displayName] for each person concerned by this message.
+  date: moment.Moment; // DateTime of the message
+  threadId: string; // Id of the thread (Id of the first message in this thread).
+  unread: boolean; // Self-explaining
+  rownum: number; // number of the message in the thread (starting from 1 from the newest to the latest).
+  status: ConversationMessageStatus; // sending status of the message
+}
+
+export type IConversationMessageList = IArrayById<IConversationMessage>;
+export type IConversationMessageNativeArray = IConversationMessage[]; // Used when th order of received data needs to be kept.
+
+export enum ConversationMessageStatus {
+  sent,
+  sending,
+  failed
+}
+
+
+//--------------------------------------------------------------
 export const actionTypeMessageSendRequested = mailboxConfig.createActionType("SEND_REQUESTED");
 export const actionTypeMessageSent = mailboxConfig.createActionType("SEND_OK");
 export const actionTypeMessageSendError = mailboxConfig.createActionType("SEND_FAILURE");
