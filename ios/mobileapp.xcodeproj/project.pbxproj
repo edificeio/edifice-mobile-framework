@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -52,7 +53,7 @@
 		745126CD20BF033E0004FF6D /* libRCTWebSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139FDEF41B06529B00C62182 /* libRCTWebSocket.a */; };
 		747A500E2105DF5D00ACC9C9 /* icomoon.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 747A500D2105DF5D00ACC9C9 /* icomoon.ttf */; };
 		74BEF9C5216F77CE00BD14D9 /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 74BEF9C4216F77CE00BD14D9 /* libRNVectorIcons.a */; };
-		7565AC2A5C254A2F9252864B /* BuildFile in Resources */ = {isa = PBXBuildFile; };
+		7565AC2A5C254A2F9252864B /* (null) in Resources */ = {isa = PBXBuildFile; };
 		799F632C71EE482489FCEBAB /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9DE58805862943DFA64DB520 /* Ionicons.ttf */; };
 		79CFF44D3806440EA9422BFA /* OpenSans-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4926A6880F534664810FF6CE /* OpenSans-Light.ttf */; };
 		8072F39D1B8B4B53AA3EFC9E /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1A2AD52291704DD6ADE256FA /* FontAwesome.ttf */; };
@@ -1568,7 +1569,7 @@
 				79CFF44D3806440EA9422BFA /* OpenSans-Light.ttf in Resources */,
 				F8DE9627B40740A49EE8BC22 /* OpenSans-Semibold.ttf in Resources */,
 				07DE6DD8AD534EE296D31077 /* OpenSans.ttf in Resources */,
-				7565AC2A5C254A2F9252864B /* BuildFile in Resources */,
+				7565AC2A5C254A2F9252864B /* (null) in Resources */,
 				4FBE91127234473E87E44B09 /* OpenSans-bold.TTF in Resources */,
 				817AB00AB0AF4EF5B709FAFF /* OpenSans-light.TTF in Resources */,
 				A0F9BE9AE8BD418297E263D7 /* OpenSans-semibold.TTF in Resources */,
@@ -1947,6 +1948,7 @@
 					"$(SRCROOT)/../node_modules/appcenter-crashes/ios/AppCenterReactNativeCrashes",
 				);
 				INFOPLIST_FILE = mobileapp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2019,6 +2021,7 @@
 					"$(SRCROOT)/../node_modules/appcenter-crashes/ios/AppCenterReactNativeCrashes",
 				);
 				INFOPLIST_FILE = mobileapp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2031,7 +2034,16 @@
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/yoga\"",
 					"$(PROJECT_DIR)",
 				);
-				"LIBRARY_SEARCH_PATHS[arch=*]" = "$(inherited) \"${PODS_CONFIGURATION_BUILD_DIR}/GTMSessionFetcher\" \"${PODS_CONFIGURATION_BUILD_DIR}/GoogleToolboxForMac\" \"${PODS_CONFIGURATION_BUILD_DIR}/Protobuf\" \"${PODS_CONFIGURATION_BUILD_DIR}/React\"/** \"${PODS_CONFIGURATION_BUILD_DIR}/nanopb\" \"${PODS_CONFIGURATION_BUILD_DIR}/react-native-image-picker\" \"${PODS_CONFIGURATION_BUILD_DIR}/yoga\"";
+				"LIBRARY_SEARCH_PATHS[arch=*]" = (
+					"$(inherited)",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/GTMSessionFetcher\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/GoogleToolboxForMac\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Protobuf\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/React\"/**",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/nanopb\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-image-picker\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/yoga\"",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

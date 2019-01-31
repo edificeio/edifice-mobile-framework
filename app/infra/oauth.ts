@@ -151,6 +151,7 @@ export class OAuth2RessourceOwnerPasswordClient {
     };
 
     try {
+      console.log("get token oauth ", this.accessTokenUri)
       // 2: Call oAuth API
       const data = await this.request(this.accessTokenUri, {
         body,

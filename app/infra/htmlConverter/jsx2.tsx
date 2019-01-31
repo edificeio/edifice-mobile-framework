@@ -15,7 +15,16 @@
  */
 
 import * as React from "react";
-import { Image, Linking, Text, TextStyle, View, ViewStyle } from "react-native";
+import {
+  Image,
+  Linking,
+  Platform,
+  StatusBar,
+  Text,
+  TextStyle,
+  View,
+  ViewStyle
+} from "react-native";
 import WebView from "react-native-android-fullscreen-webview-video";
 import sax from "sax";
 import { HtmlConverter } from ".";
@@ -819,6 +828,39 @@ export class HtmlConverterJsx extends HtmlConverter {
           )}
           startInLoadingState={true}
           scrollEnabled={false}
+          useWebKit={true}
+          /* On Android, the status bar is by default visible, even when a video is playing fullscreen */
+          /* Thanks for the tip, Nabil ! :) */
+          {...(Platform.OS === "android"
+            ? {
+                injectedJavaScript: `
+                  let isFullscreen = false;
+                  function check() {
+                    if (isFullscreen) {
+                      window.postMessage("-fullscreen-off");
+                    } else {
+                      window.postMessage("-fullscreen-on");
+                    }
+                    isFullscreen = !isFullscreen;
+                  }
+                  document.addEventListener('webkitfullscreenchange', function(e) {
+                      check();
+                  }, false);
+                  document.addEventListener('mozfullscreenchange', function(e) {
+                      check();
+                  }, false);
+                  document.addEventListener('fullscreenchange', function(e) {
+                      check();
+                  }, false);
+                `,
+                onMessage: (data: any) => {
+                  if (data.nativeEvent.data === "-fullscreen-off")
+                    StatusBar.setHidden(false);
+                  else if (data.nativeEvent.data === "-fullscreen-on")
+                    StatusBar.setHidden(true);
+                }
+              }
+            : {})}
         />
       </View>
     );

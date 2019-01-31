@@ -27,6 +27,7 @@ import {
 
 import { CommonStyles } from './styles/common/styles';
 import { loadCurrentPlatform, unSelectPlatform } from "./user/actions/platform";
+import { isInActivatingMode } from "./user/selectors";
 
 // Disable Yellow Box on release builds.
 if (!__DEV__) {
@@ -65,7 +66,7 @@ I18n.locale = RNLanguages.language;
 class AppStoreUnconnected extends React.Component<
   { currentPlatformId: string; store: any },
   {}
-> {
+  > {
   private notificationOpenedListener;
   private onTokenRefreshListener;
 
@@ -95,9 +96,12 @@ class AppStoreUnconnected extends React.Component<
 
   public async componentDidMount() {
     if (this.props.currentPlatformId) {
-      // Auto Login if possible
-      this.props.store.dispatch(login(true));
-
+      //IF WE ARE NOT IN ACTIVATION MODE => TRY TO LOGIN => ELSE STAY ON ACTIVATION PAGE
+      if (!isInActivatingMode(this.props.store.getState())) {
+        // Auto Login if possible
+        this.props.store.dispatch(login(true));
+      }
+      //TODO unsubscribe on unmount=>leak
       this.notificationOpenedListener = firebase
         .notifications()
         .onNotificationOpened((notificationOpen: NotificationOpen) =>
