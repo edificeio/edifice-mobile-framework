@@ -87,7 +87,7 @@ class MainNavigatorHOC extends React.Component<
         onNavigationStateChange={(prevState, currentState, action) => {
           // console.log("main nav state change :", prevState, currentState, action);
           // Track if tab has changed
-          console.log("On nav state changed : ", prevState, currentState, action)
+          // console.log("On nav state changed : ", prevState, currentState, action)
           if (action.type !== "Navigation/NAVIGATE") return;
           const prevIndex = prevState.index;
           const currentIndex = currentState.index;
