@@ -15,6 +15,7 @@ import firebase from "react-native-firebase";
 import Conf from "../../Conf";
 import Tracking from "../../tracking/TrackingManager"; // TODO make tracking back !
 import { initActivationAccount } from "./activation";
+import { Connection } from "../../infra/Connection";
 
 export const actionTypeRequestLogin = userConfig.createActionType(
   "REQUEST_LOGIN"
@@ -55,16 +56,29 @@ export function login(
 
       // === 2: Get firebase device token and store it in the backend
       const registerFCMToken = async () => {
-        const token = await firebase.messaging().getToken();
         // console.log(token);
-        const putTokenResponse = await signedFetch(
-          `${
-          Conf.currentPlatform.url
-          }/timeline/pushNotif/fcmToken?fcmToken=${token}`,
-          {
-            method: "put"
+        try {
+          const token = await firebase.messaging().getToken();
+          const putTokenResponse = await signedFetch(
+            `${
+            Conf.currentPlatform.url
+            }/timeline/pushNotif/fcmToken?fcmToken=${token}`,
+            {
+              method: "put"
+            }
+          );
+        } catch (err) {
+          //registering fcm token should not crash the login process
+          if (Connection.isOnline) {
+            console.warn(err);
+          } else {
+            //console.log("there is not network => wait until network back to register token")
+            Connection.onNextNetworkBack(async () => {
+              //console.log("network is back! registering fcm token")
+              await registerFCMToken();
+            });
           }
-        );
+        }
         // console.log("Fcm Token (put) :", token, putTokenResponse);
       };
       const hasPermission = await firebase.messaging().hasPermission();
