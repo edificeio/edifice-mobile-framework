@@ -1,7 +1,7 @@
 {
-  "agoHour": "il y a {{hour}} heure",
-  "agoHours": "il y a {{hours}} heure(s)",
-  "agoMinutes": "il y a {{minutes}} mins",
+  "Actualites": "Actualités",
+  "agoHours": "il y a {{hours}} h",
+  "agoMinutes": "il y a {{minutes}} min",
   "apply": "Appliquer",
   "auth-disconnectConfirm": "vous déconnecter ?",
   "auth-loginFailed": "L'identifiant ou le mot de passe est incorrect",
@@ -13,7 +13,14 @@
   "common-connected": "Connecté",
   "common-connecting": "Reconnexion en cours",
   "common-disconnected": "Aucune connexion internet",
+  "common-ErrorNetwork": "Erreur de réseau",
   "Connect": "Se connecter",
+  "Activate": "Activer votre compte",
+  "activation-errorLoading": "Nous n'avons pas pu charger les données nécessaires pour activer votre compte. Veuillez réessayer ultérieurement.",
+  "activation-errorSubmit": "Nous n'avons pas pu activer votre compte. Veuillez réessayer ultérieurement.",
+  "activation-retryLoad": "Réessayer",
+  "activation-cancelLoad": "Annuler",
+  "activation-cgu": "En activant votre compte, vous acceptez les conditions générales d'utilisation",
   "conversation-chatPlaceholder": "Ecrivez un message...",
   "conversation-deleteThread": "supprimer cette conversation ?",
   "conversation-emptyScreenText": "Avec la Messagerie, commencez dès maintenant à communiquer avec les membres de votre réseau.",
@@ -21,6 +28,16 @@
   "conversation-failedSent": "Message non reçu",
   "conversation-newMessage": "Nouveau message",
   "conversation-sendingMessage": "En cours d'envoi...",
+  "conversation-receiverTo": "Destinataire",
+  "conversation-receiversTo": "Destinataires",
+  "conversation-receiversCC": "En copie",
+  "conversation-receiversSender": "Expéditeur",
+  "conversation-receiverPrefix": "à",
+  "conversation-receiverPrefixInput": "À :",
+  "conversation-receiver": "1 destinataire",
+  "conversation-receivers": "{{count}} destinataires",
+  "conversation-receiverList": "Destinataires",
+  "conversation-responsePlaceholder": "Répondre à tous...",
   "Conversation": "Messagerie",
   "delete": "Supprimer",
   "directory-disconnectButton": "Se déconnecter",
@@ -44,7 +61,10 @@
   "News": "Nouveautés",
   "next": "Suivant",
   "On": "dans",
+  "Phone": "Téléphone",
+  "Email": "Email",
   "Password": "Mot de passe",
+  "PasswordConfirm": "Confirmation du mot de passe",
   "Profile": "Profil",
   "schoolbook-appTitle": "Carnet de liaison",
   "Search": "Rechercher ...",
@@ -53,24 +73,71 @@
   "timeline-allFilter": "Tous",
   "timeline-blogFilter": "Blog",
   "timeline-emptyScreenText": "C’est calme ici... Vous connaissez l’expression \"le calme avant la tempête\" ?",
-  "timeline-emptyScreenTitle": "C’est désert... Il y a quelqu’un ?",
+  "timeline-emptyScreenTitle": "C’est désert... Il y a quelqu’un ?",
+  "timeline-eventType-INFO-SHARED": "a partagé",
+  "timeline-eventType-PUBLISH-POST": "a publié le billet de",
+  "timeline-eventType-PUBLISH": "a publié",
+  "timeline-eventType-WORD-SHARED": "a partagé",
   "timeline-filterBy": "Filtrer par",
-  "timeline-actualitesFilter": "Actualités",
+  "timeline-newsFilter": "Actualités",
+  "timeline-postType-BLOG": "blog",
+  "timeline-postType-NEWS": "l'actualité",
+  "timeline-postType-SCHOOLBOOK": "le mot",
   "timeline-schoolbookFilter": "Carnet de liaison",
   "to": "À :",
   "today": " Aujourd'hui ",
   "tryagain": "Réessayer",
   "welcome": "Bienvenue",
-
-  "date":{
-    "day_names": ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
-    "abbr_day_names": ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"],
-    "month_names": [null, "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
-    "abbr_month_names": [null, "Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"]
+  "date": {
+    "day_names": [
+      "Dimanche",
+      "Lundi",
+      "Mardi",
+      "Mercredi",
+      "Jeudi",
+      "Vendredi",
+      "Samedi"
+    ],
+    "abbr_day_names": [
+      "Dim",
+      "Lun",
+      "Mar",
+      "Mer",
+      "Jeu",
+      "Ven",
+      "Sam"
+    ],
+    "month_names": [
+      null,
+      "Janvier",
+      "Février",
+      "Mars",
+      "Avril",
+      "Mai",
+      "Juin",
+      "Juillet",
+      "Août",
+      "Septembre",
+      "Octobre",
+      "Novembre",
+      "Décembre"
+    ],
+    "abbr_month_names": [
+      null,
+      "Jan",
+      "Fév",
+      "Mar",
+      "Avr",
+      "Mai",
+      "Juin",
+      "Juil",
+      "Août",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Déc"
+    ]
   },
-
-
-
   "blog-publish-comment": "Commentaire d'un billet de blog",
   "blog-publish-post": "Nouveau billet de blog",
   "blog-share": "Partage d'un blog",
@@ -84,9 +151,4 @@
   "schoolbook-response": "Suivi d'un mot",
   "scrapbook-modified": "Modification d'un cahier multimédia",
   "scrapbook-shared": "Partage d'un cahier multimédia"
-
-
-
-
-
 }

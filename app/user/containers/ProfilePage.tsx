@@ -18,7 +18,7 @@ export class ProfilePageHeader extends React.PureComponent<
     navigation: any;
   },
   undefined
-> {
+  > {
   public render() {
     return (
       <Header>
@@ -34,7 +34,7 @@ export class ProfilePageHeader extends React.PureComponent<
 export class ProfilePage extends React.PureComponent<
   { onLogout: () => Promise<void>; navigation: any },
   { showDisconnect: boolean }
-> {
+  > {
   public state = {
     showDisconnect: false
   };
@@ -57,12 +57,14 @@ export class ProfilePage extends React.PureComponent<
   ); // TS-ISSUE
 
   public render() {
+    //avoid setstate on modalbox when unmounted
+    const { showDisconnect } = this.state;
     return (
       <PageContainer>
         <ConnectionTrackingBar />
-        <ModalBox backdropOpacity={0.5} isVisible={this.state.showDisconnect}>
+        {showDisconnect && <ModalBox backdropOpacity={0.5} isVisible={showDisconnect}>
           {this.disconnectBox()}
-        </ModalBox>
+        </ModalBox>}
         <ButtonLine
           title={"directory-notificationsTitle"}
           onPress={() => this.props.navigation.navigate("NotifPrefs")}

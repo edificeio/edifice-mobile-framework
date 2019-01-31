@@ -8,6 +8,7 @@ interface IParams {
 
 export interface INewsModel {
   date: number;
+  eventType: string;
   id: string;
   images: object[];
   message: string;
@@ -15,6 +16,7 @@ export interface INewsModel {
   resourceName: string;
   senderId: string;
   senderName: string;
+  type: string;
 }
 
 export interface INewsState {

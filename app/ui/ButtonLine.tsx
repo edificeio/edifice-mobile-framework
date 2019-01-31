@@ -2,9 +2,10 @@ import style from "glamorous-native";
 import * as React from "react";
 import { RowProperties } from ".";
 import I18n from "i18n-js";
+import TouchableOpacity from "../ui/CustomTouchableOpacity";
 import { Icon } from "./icons/Icon";
 
-const Container = style.touchableOpacity({
+const Container = style(TouchableOpacity)({
   alignItems: "center",
   flexDirection: "row",
   backgroundColor: "white",

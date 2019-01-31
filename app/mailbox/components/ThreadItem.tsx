@@ -35,11 +35,11 @@ export default ({
   return (
     <ListItem nb={unread} onPress={() => onPress(id, displayNames, subject)}>
       <LeftPanel>
-        <GridAvatars users={findReceivers(to, from, cc)} />
+        <GridAvatars users={findReceivers2(to, from, cc)} />
       </LeftPanel>
       <CenterPanel>
         <Author nb={unread} numberOfLines={1}>
-          {findReceivers(to, from, cc)
+          {findReceivers2(to, from, cc)
             .map(r => displayNames.find(dn => dn[0] === r)[1])
             .join(", ")}
         </Author>
@@ -87,4 +87,16 @@ export const findReceivers = (to, from, cc) => {
     return [Me.session.userId];
   }
   return newTo;
+};
+
+export const findReceivers2 = (to, from, cc) => {
+  cc = cc || [];
+  const receiversSet = new Set(
+    // By using a Set we guarantee that we'll not have duplicates
+    [...to, ...cc, from].filter(el => el !== Me.session.userId)
+  );
+  if (receiversSet.size === 0) {
+    receiversSet.add(Me.session.userId);
+  }
+  return [...receiversSet];
 };

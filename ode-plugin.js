@@ -2,6 +2,7 @@ const util = require('util');
 const fs = require('fs');
 const path = require("path");
 const os = require("os");
+const fsExtra = require("fs-extra")
 //external deps
 const yargs = require('yargs');
 const prompts = require('prompts');
@@ -10,7 +11,6 @@ const exec = util.promisify(require('child_process').exec);
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
 const copyFile = util.promisify(fs.copyFile);
-const unlinkFile = util.promisify(fs.unlink);
 
 /**
  * Create target dir with its parents (if they not exists)
@@ -222,6 +222,8 @@ async function overrideSwitchTo(name, skipRestore, acceptAll, gitUri, gitUser, g
         const overrideFilePath = fileListAbsolute[i];
         const overrideFilePathRelative = path.relative(overridePath, overrideFilePath)
         const destFilePath = path.resolve(__dirname, overrideFilePathRelative);
+        const destDirPath = path.dirname(destFilePath)
+        _mkdirsSync(destDirPath)
         copyPromises.push(copyFile(overrideFilePath, destFilePath))
     }
     await Promise.all(copyPromises);
@@ -325,7 +327,7 @@ async function overrideRestore(skipResetConfig) {
             const filePath = filePaths[i];
             const status = filePathStatus[i];
             if (status == "??") {
-                await (unlinkFile(filePath));
+                await (fsExtra.remove(filePath));
             } else if (status == "A") {
                 await (exec("git reset HEAD " + filePath).then(function () { return exec("rm -rf " + filePath); }));
             } else {
@@ -385,7 +387,7 @@ async function overrideBackup() {
                 copyPromises.push(copyFile(backupFilePath, overrideFilePath))
             } else {//file should be removed
                 if (fs.existsSync(overrideFilePath)) {
-                    copyPromises.push(unlinkFile(overrideFilePath))
+                    copyPromises.push(fsExtra.remove(overrideFilePath))
                 }
             }
         }
@@ -403,7 +405,7 @@ async function overrideBackup() {
                 const unlinkPromise = [];
                 for (let i = 0; i < fileListAbsolute.length; i++) {
                     const overrideFilePath = path.resolve(_overridePathFor(current), fileListAbsolute[i]);
-                    unlinkPromise.push(unlinkFile(overrideFilePath))
+                    unlinkPromise.push(fsExtra.remove(overrideFilePath))
                 }
                 await Promise.all(unlinkPromise);
                 console.log("Files removed from ovveride successfully")

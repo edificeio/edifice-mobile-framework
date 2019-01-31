@@ -159,7 +159,6 @@ export default function asyncReducer<T>(
         return {
           ...state,
           data,
-          didInvalidate: false,
           isFetching: true
         };
       case actionTypes.received:

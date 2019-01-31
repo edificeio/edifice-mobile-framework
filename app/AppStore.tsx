@@ -1,5 +1,6 @@
 import I18n from "i18n-js";
 import * as React from "react";
+import { StatusBar, View } from "react-native";
 import RNLanguages from "react-native-languages";
 import { Provider, connect } from "react-redux";
 import { applyMiddleware, combineReducers, createStore } from "redux";
@@ -24,7 +25,9 @@ import {
   NotificationOpen
 } from "react-native-firebase/notifications";
 
+import { CommonStyles } from './styles/common/styles';
 import { loadCurrentPlatform, unSelectPlatform } from "./user/actions/platform";
+import { isInActivatingMode } from "./user/selectors";
 
 // Disable Yellow Box on release builds.
 if (!__DEV__) {
@@ -63,7 +66,7 @@ I18n.locale = RNLanguages.language;
 class AppStoreUnconnected extends React.Component<
   { currentPlatformId: string; store: any },
   {}
-> {
+  > {
   private notificationOpenedListener;
   private onTokenRefreshListener;
 
@@ -74,7 +77,13 @@ class AppStoreUnconnected extends React.Component<
   public render() {
     return (
       <Provider store={this.props.store}>
-        <AppScreen />
+        <View style={{ flex: 1 }}>
+          <StatusBar
+            backgroundColor={CommonStyles.statusBarColor}
+            barStyle="light-content"
+          />
+          <AppScreen />
+        </View>
       </Provider>
     );
   }
@@ -87,9 +96,12 @@ class AppStoreUnconnected extends React.Component<
 
   public async componentDidMount() {
     if (this.props.currentPlatformId) {
-      // Auto Login if possible
-      this.props.store.dispatch(login(true));
-
+      //IF WE ARE NOT IN ACTIVATION MODE => TRY TO LOGIN => ELSE STAY ON ACTIVATION PAGE
+      if (!isInActivatingMode(this.props.store.getState())) {
+        // Auto Login if possible
+        this.props.store.dispatch(login(true));
+      }
+      //TODO unsubscribe on unmount=>leak
       this.notificationOpenedListener = firebase
         .notifications()
         .onNotificationOpened((notificationOpen: NotificationOpen) =>

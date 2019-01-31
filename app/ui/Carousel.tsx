@@ -1,35 +1,34 @@
-import I18n from "i18n-js";
-
 import style from "glamorous-native";
+import I18n from "i18n-js";
 import * as React from "react";
 import {
   Dimensions,
-  FlatList,
   ImageURISource,
+  Linking,
   Modal,
   Platform,
-  ScrollView,
   Text,
   View,
-  Linking,
-  TouchableOpacity
+  StatusBar
 } from "react-native";
 import FastImage from "react-native-fast-image";
 import RNCarousel from "react-native-snap-carousel";
+
 import { Icon } from ".";
 import { CommonStyles } from "../styles/common/styles";
+import TouchableOpacity from "./CustomTouchableOpacity";
 import ImageOptional from "./ImageOptional";
-import { Italic, A } from "./Typography";
+import { A, Italic } from "./Typography";
 
-const Close = style.touchableOpacity({
-  height: 40,
-  width: 40,
-  borderRadius: 20,
+const Close = style(TouchableOpacity)({
   alignItems: "center",
+  borderRadius: 20,
+  height: 40,
   justifyContent: "center",
   position: "absolute",
+  right: 0,
   top: Platform.OS === "ios" ? 20 : 0,
-  right: 0
+  width: 40
 });
 
 const UnavailableImage = () => (
@@ -54,7 +53,13 @@ export class Carousel extends React.Component<
     startIndex?: number;
     onClose: () => void;
   },
-  undefined
+  {
+    fullscreen: boolean;
+    viewport: {
+      width: number;
+      height: number;
+    };
+  }
 > {
   public carouselRef: any;
   public currentScroll = 0;
@@ -79,6 +84,14 @@ export class Carousel extends React.Component<
     });
   }
 
+  public state = {
+    fullscreen: false,
+    viewport: {
+      height: Dimensions.get("window").height,
+      width: Dimensions.get("window").width
+    }
+  };
+
   public render() {
     return (
       <Modal
@@ -86,7 +99,18 @@ export class Carousel extends React.Component<
         onRequestClose={() => this.setState({ fullscreen: false })}
         transparent={true}
       >
-        <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.90)" }}>
+        <View
+          style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.90)" }}
+          onLayout={() => {
+            this.setState({
+              viewport: {
+                height: Dimensions.get("window").height,
+                width: Dimensions.get("window").width
+              }
+            });
+          }}
+        >
+          <StatusBar backgroundColor="black" barStyle="light-content" />
           <RNCarousel
             data={this.props.images}
             renderItem={({
@@ -153,8 +177,8 @@ export class Carousel extends React.Component<
                 ) : null}
               </View>
             )}
-            itemWidth={Dimensions.get("window").width}
-            sliderWidth={Dimensions.get("window").width}
+            sliderWidth={this.state.viewport.width}
+            itemWidth={this.state.viewport.width}
             firstItem={this.props.startIndex || 0}
             ref={r => (this.carouselRef = r)}
             scrollEventThrottle={16}

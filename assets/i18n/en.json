@@ -1,7 +1,6 @@
 {
-  "agoHour": "{{hour}} hour ago",
-  "agoHours": "{{hours}} hours ago",
-  "agoMinutes": "{{minutes}} mins ago",
+  "agoHours": "{{hours}} h ago",
+  "agoMinutes": "{{minutes}} min ago",
   "apply": "Apply",
   "auth-disconnectConfirm": "want to logout?",
   "auth-loginFailed": "Incorrect login or password ?",
@@ -18,9 +17,19 @@
   "conversation-deleteThread": "delete this conversation ?",
   "conversation-emptyScreenText": "With Mailbox, start communicating with the other members of your network.",
   "conversation-emptyScreenTitle": "No message in sight...",
-
+  "conversation-failedSent": "Message not sent",
   "conversation-newMessage": "New message",
   "conversation-sendingMessage": "Sending...",
+  "conversation-receiverTo": "Receiver",
+  "conversation-receiversTo": "Receivers",
+  "conversation-receiversCC": "Copy receivers",
+  "conversation-receiversSender": "Sender",
+  "conversation-receiverPrefix": "to",
+  "conversation-receiverPrefixInput":"To :",
+  "conversation-receiver": "1 receiver",
+  "conversation-receivers": "{{count}} receivers",
+  "conversation-receiverList": "Receivers",
+  "conversation-responsePlaceholder": "Send to all...",
   "Conversation": "Mailbox",
   "delete": "Delete",
   "directory-disconnectButton": "Log out",
@@ -54,8 +63,11 @@
   "timeline-blogFilter": "Blog",
   "timeline-emptyScreenText": "All quiet on the Western front. Are you familiar with the saying \"the calm before the storm\"?",
   "timeline-emptyScreenTitle": "No sightings yet. Is there anybody out there?",
+
+
+
   "timeline-filterBy": "Filter by",
-  "timeline-actualitesFilter": "News",
+  "timeline-newsFilter": "News",
   "timeline-schoolbookFilter": "Schoolbook",
   "to": "To :",
   "today": " Today ",

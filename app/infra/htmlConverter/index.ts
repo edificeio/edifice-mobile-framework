@@ -50,7 +50,8 @@ export class HtmlConverter {
         return tag;
       },
       ontext: (text: string) => {
-        text = text.replace(/\u200B/g, ""); // remowe ZWSP (Zero-Width SPace) fucking character !
+        // text = text.replace(/\u200B/g, ""); // remowe ZWSP (Zero-Width SPace) fucking character !
+        if (!text) return "";
         if (text.match(/\S/)) return text; // Filter whitespace-only strings.
         return " ";
       }
@@ -58,6 +59,7 @@ export class HtmlConverter {
   }
 
   public constructor(html: string) {
+    html = html.replace(/\u200B/g, "").replace("<div></div>", "<br/>"); // remowe ZWSP (Zero-Width SPace) fucking character AND replace empty <div>s by <br>
     this._html = "<body>" + html + "</body>"; // html code MUST have a root element. // TODO : use a boolean to know of the <body> tag is already present.
     this.initSaxParser();
     // In child class, don't forget to call processHtml() !

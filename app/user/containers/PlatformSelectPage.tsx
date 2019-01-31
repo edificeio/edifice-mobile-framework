@@ -2,10 +2,11 @@
 import style from "glamorous-native";
 import I18n from "i18n-js";
 import * as React from "react";
-import { Image, ScrollView, Text, View } from "react-native";
+import { Image, SafeAreaView, ScrollView, View } from "react-native";
 import { connect } from "react-redux";
 
 // Components
+import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { H1, Light, LightP } from "../../ui/Typography";
 
 // Type definitions
@@ -39,7 +40,7 @@ export type IPlatformSelectPageProps = IPlatformSelectPageDataProps &
 
 // Main component ---------------------------------------------------------------------------------
 
-const PlatformButton = style.touchableOpacity({
+const PlatformButton = style(TouchableOpacity)({
   elevation: 3,
   shadowColor: "#6B7C93",
   shadowOffset: { width: 0, height: 2 },
@@ -59,7 +60,7 @@ export class PlatformSelectPage extends React.PureComponent<
 > {
   public render() {
     return (
-      <View style={{ flex: 1, backgroundColor: "#ffffff" }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
         <ScrollView alwaysBounceVertical={false}>
           <H1
             style={{
@@ -103,7 +104,7 @@ export class PlatformSelectPage extends React.PureComponent<
             )}
           </View>
         </ScrollView>
-      </View>
+      </SafeAreaView>
     );
   }
 

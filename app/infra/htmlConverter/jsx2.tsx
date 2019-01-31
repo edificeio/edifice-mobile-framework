@@ -18,12 +18,14 @@ import * as React from "react";
 import {
   Image,
   Linking,
+  Platform,
+  StatusBar,
   Text,
   TextStyle,
   View,
-  ViewStyle,
-  WebView
+  ViewStyle
 } from "react-native";
+import WebView from "react-native-android-fullscreen-webview-video";
 import sax from "sax";
 import { HtmlConverter } from ".";
 import Conf from "../../Conf";
@@ -107,12 +109,17 @@ export class HtmlConverterJsx extends HtmlConverter {
   /**
    * If next encountered text nugget should be on a new line (insert line-break if necessary)
    */
-  protected hasToInsertLineBreak: boolean = false;
+  protected hasToInsertLineBreak: number = 0;
 
   /**
    * If next encountered text nugget should be starting with a space
    */
   protected hasToInsertSpace: boolean = false;
+
+  /**
+   * If next encountered text nugget should be starting with a list bullet
+   */
+  protected hasToInsertBullet: boolean = false;
 
   /**
    * If next encountered text nugget should be on a upper level of styling (when a text tag has been closed).
@@ -160,10 +167,25 @@ export class HtmlConverterJsx extends HtmlConverter {
       The parse() method here construct the array, and the renderParse() method convert it to JSX.
       Both of these two methods stores the result in `this.render`, so after conversion, the array representation isn't available anymore.
     */
-    // console.warn("input HTML", this._html);
+    // console.log("input HTML", this._html);
     this._render = [];
+
+    // Now we put all content in a top-level TextNugget, to be sure that we are not going to have sucessing top-level text nuggets.
+    // The main top-level will be recreated by restoring textNugget hierarchy when an image or a video is encourntered.
+    // Do not you think that's ingenious ? :p
+    const allTextWrapper = {
+      children: [],
+      parent: null,
+      type: HtmlConverterNuggetTypes.Text,
+      variant: HtmlConverterJsxTextVariant.None
+    };
+    this.insertNewTextNugget(allTextWrapper);
+
+    // Then, launch parse pass.
     this.parse();
-    // console.warn("output JSON", this._render);
+    // console.log("output JSON", this._render);
+
+    // Finally, we build components based on what nuggets we have got.
     this._render = this.renderParse();
   }
 
@@ -177,9 +199,8 @@ export class HtmlConverterJsx extends HtmlConverter {
         switch (tagName) {
           // after these html tags we have to jump to a new line
           case "div":
-          case "br":
           case "p":
-            this.hasToInsertLineBreak = true;
+            this.hasToInsertLineBreak = this.hasToInsertLineBreak || 1;
             break;
           case "a":
             this.parseCloseLinkTag();
@@ -204,6 +225,18 @@ export class HtmlConverterJsx extends HtmlConverter {
         tag = commonParsingEventHandlers.onopentag(tag);
 
         switch (tag.name) {
+          case "div":
+          case "p":
+            this.hasToInsertLineBreak = this.hasToInsertLineBreak || 1;
+            break;
+          case "br":
+            this.hasToInsertLineBreak += 1;
+            break;
+          case "li": {
+            this.hasToInsertBullet = true;
+            this.hasToInsertLineBreak = this.hasToInsertLineBreak || 1;
+            break;
+          }
           case "img":
             this.parseImgTag(tag);
             break;
@@ -253,10 +286,18 @@ export class HtmlConverterJsx extends HtmlConverter {
       }
     }
 
+    if (this.hasToInsertBullet) {
+      text = " - " + text;
+      this.hasToInsertBullet = false;
+    }
+
     if (this.hasToInsertLineBreak) {
       // console.log(`encourtered line break`);
-      text = "\n" + text;
-      this.hasToInsertLineBreak = false;
+      if (!this.firstWord) {
+        // Insert the new line only if we have some text nuggets before the current text nugget.
+        text = "\n".repeat(this.hasToInsertLineBreak) + text;
+      }
+      this.hasToInsertLineBreak = 0;
     } else if (this.hasToInsertSpace) {
       text = " " + text;
       this.hasToInsertSpace = false;
@@ -309,7 +350,7 @@ export class HtmlConverterJsx extends HtmlConverter {
    * @param nugget
    */
   protected insertNewTextNugget(nugget: ITextNugget | string) {
-    // console.log("insert nugget :", nugget, "into", this.currentTextNugget);
+    // console.log("insert text nugget :", nugget, "into", this.currentTextNugget);
 
     if (this.currentTextNugget) {
       // If we're already in a text nugget, append the given one as a child.
@@ -405,12 +446,15 @@ export class HtmlConverterJsx extends HtmlConverter {
    * Closes the current TextNugget (at the deepest level). If it has no content, it will be removed.
    */
   protected closeCurrentTextNugget() {
+    // console.log("closing text nugget", this.currentTextNugget);
     if (this.currentTextNugget) {
-      if (
-        this.currentTextNugget.children.length === 0 &&
-        this.currentTextNugget.parent
-      ) {
-        this.currentTextNugget.parent.children.pop(); // Remove the last TextNugget from the parent
+      if (this.currentTextNugget.children.length === 0) {
+        // If we have no children, remove it.
+        if (this.currentTextNugget.parent) {
+          this.currentTextNugget.parent.children.pop(); // Remove the last TextNugget from the parent
+        } else {
+          this._render.pop(); // It has no parent, remove it from the main render array;
+        }
       }
       this.currentTextNugget = this.currentTextNugget.parent; // Close the TextNugget. New children will be put in his parent from now.
     }
@@ -509,7 +553,7 @@ export class HtmlConverterJsx extends HtmlConverter {
       // A - 1 - Build image object representation
       const emoji: IInlineImageNugget = {
         alt: tag.attributes.alt,
-        src: Conf.platform + tag.attributes.src,
+        src: Conf.currentPlatform.url + tag.attributes.src,
         type: HtmlConverterNuggetTypes.InlineImage
       };
       this.insertInlineImageNugget(emoji);
@@ -554,7 +598,7 @@ export class HtmlConverterJsx extends HtmlConverter {
     let deepestTextNugget: ITextNugget = null;
     // Clear space and line breaks flags
     this.hasToInsertSpace = false;
-    this.hasToInsertLineBreak = false;
+    this.hasToInsertLineBreak = 0;
     this.firstWord = true;
     // console.log("first work TRUE");
 
@@ -742,7 +786,6 @@ export class HtmlConverterJsx extends HtmlConverter {
     key: string,
     style: ViewStyle = {}
   ): JSX.Element {
-    // console.log("this is a rendered inline image", nugget);
     return (
       <Image
         source={signUrl(nugget.src)}
@@ -785,6 +828,39 @@ export class HtmlConverterJsx extends HtmlConverter {
           )}
           startInLoadingState={true}
           scrollEnabled={false}
+          useWebKit={true}
+          /* On Android, the status bar is by default visible, even when a video is playing fullscreen */
+          /* Thanks for the tip, Nabil ! :) */
+          {...(Platform.OS === "android"
+            ? {
+                injectedJavaScript: `
+                  let isFullscreen = false;
+                  function check() {
+                    if (isFullscreen) {
+                      window.postMessage("-fullscreen-off");
+                    } else {
+                      window.postMessage("-fullscreen-on");
+                    }
+                    isFullscreen = !isFullscreen;
+                  }
+                  document.addEventListener('webkitfullscreenchange', function(e) {
+                      check();
+                  }, false);
+                  document.addEventListener('mozfullscreenchange', function(e) {
+                      check();
+                  }, false);
+                  document.addEventListener('fullscreenchange', function(e) {
+                      check();
+                  }, false);
+                `,
+                onMessage: (data: any) => {
+                  if (data.nativeEvent.data === "-fullscreen-off")
+                    StatusBar.setHidden(false);
+                  else if (data.nativeEvent.data === "-fullscreen-on")
+                    StatusBar.setHidden(true);
+                }
+              }
+            : {})}
         />
       </View>
     );

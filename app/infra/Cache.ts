@@ -30,22 +30,3 @@ export const read = async (
   }
   return [];
 };
-
-export const usersAvatars = async () => {
-  const latestAvatars = await AsyncStorage.getItem("latestUsersAvatars");
-  const d = new Date();
-  if (Connection.isOnline && latestAvatars != d.getDate().toString()) {
-    return {};
-  }
-  const avatars = await AsyncStorage.getItem("usersAvatars");
-  if (!avatars) {
-    return {};
-  }
-  return JSON.parse(avatars);
-};
-
-export const setUsersAvatars = async avatars => {
-  const d = new Date();
-  await AsyncStorage.setItem("latestUsersAvatars", d.getDate().toString());
-  await AsyncStorage.setItem("usersAvatars", JSON.stringify(avatars));
-};

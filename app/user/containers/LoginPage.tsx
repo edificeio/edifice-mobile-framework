@@ -6,12 +6,13 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
+  SafeAreaView,
   TextInput,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   View
 } from "react-native";
 import { connect } from "react-redux";
+import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 
 // Components
 import { FlatButton } from "../../ui";
@@ -98,7 +99,7 @@ export class LoginPage extends React.Component<
 
   public render() {
     return (
-      <View style={{ flex: 1, backgroundColor: "#ffffff" }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
         <KeyboardAvoidingView
           style={{ flex: 1, backgroundColor: "#ffffff" }}
           behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -111,7 +112,7 @@ export class LoginPage extends React.Component<
             {this.renderForm()}
           </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
-      </View>
+      </SafeAreaView>
     );
   }
 

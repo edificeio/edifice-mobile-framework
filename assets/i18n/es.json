@@ -1,7 +1,6 @@
 {
-  "agoHour": "Hace {{hour}} hora",
-  "agoHours": "Hace {{hours}} hora(s)",
-  "agoMinutes": "Hace {{minutes}} mins",
+  "agoHours": "Hace {{hours}} h",
+  "agoMinutes": "Hace {{minutes}} min",
   "apply": "Aplicar",
   "auth-disconnectConfirm": "desconectarse?",
   "auth-loginFailed": "El nombre de usuario o la contraseña son incorrectos",
@@ -21,6 +20,16 @@
 
   "conversation-newMessage": "Nuevo mensaje",
   "conversation-sendingMessage": "Enviando...",
+
+
+
+
+  
+
+
+
+
+
   "Conversation": "Correo",
   "delete": "Eliminar",
   "directory-disconnectButton": "Desconectarse",
@@ -54,6 +63,9 @@
   "timeline-blogFilter": "Blog",
   "timeline-emptyScreenText": "Está todo muy tranquilo. ¿Conoce la expresión \"la calma antes de la tormenta\"?",
   "timeline-emptyScreenTitle": "No se ve ni un alma. ¿Hay alguien?",
+
+
+
   "timeline-filterBy": "Filtrar en",
   "timeline-actualitesFilter": "Noticias",
   "timeline-schoolbookFilter": "Cuaderno de correspondencia",

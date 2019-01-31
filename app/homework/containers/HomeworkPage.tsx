@@ -22,9 +22,11 @@ const mapStateToProps: (state: any) => IHomeworkPageDataProps = state => {
   const currentDiaryTasks = localState.tasks[selectedDiaryId];
   if (!currentDiaryTasks)
     return {
+      /* Initial props if there is not initialisation yet.
+      For the hack, we consider app is already fetching to avoid a screen blinking. */
       diaryId: null,
-      didInvalidate: false,
-      isFetching: false,
+      didInvalidate: true,
+      isFetching: true,
       lastUpdated: null,
       tasksByDay: null
     };

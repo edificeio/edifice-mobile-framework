@@ -1,36 +1,8 @@
 import style from "glamorous-native";
 import * as React from "react";
-import RNFetchBlob from "rn-fetch-blob";
-import { View } from "react-native";
+import { ImageProps } from "react-native";
 import Conf from "../../Conf";
-import { usersAvatars, setUsersAvatars } from "../../infra/Cache";
 import { Connection } from "../../infra/Connection";
-
-const avatarsMap = {
-  loaded: false,
-  awaiters: [],
-  onload: function(cb: (userId: string) => void) {
-    this.awaiters.push(cb);
-  },
-  trigger: function(userId: string) {
-    this.awaiters.forEach(a => a(userId));
-  },
-  load: async () => {
-    if (this.loaded) {
-      return;
-    }
-    const avatars = await usersAvatars();
-    for (let user in avatars) {
-      if (user !== "awaiters") {
-        avatarsMap[user] = avatars[user];
-      }
-    }
-    this.loaded = true;
-  },
-  save: () => {
-    setUsersAvatars(avatarsMap);
-  }
-} as any;
 
 export enum Size {
   aligned,
@@ -162,11 +134,10 @@ export interface IAvatarProps {
 
 export class Avatar extends React.Component<
   IAvatarProps,
-  { loaded: boolean; noAvatar: boolean }
-> {
+  { status: "initial" | "loading" | "success" | "failed" }
+  > {
   decorate: boolean;
   count: number;
-  private _isMounted: boolean;
 
   constructor(props) {
     super(props);
@@ -176,71 +147,17 @@ export class Avatar extends React.Component<
       this.decorate = this.props.decorate;
     }
 
-    this.state = { loaded: false, noAvatar: true };
+    this.state = { status: "initial" };
   }
 
   public componentDidMount() {
-    //render avatars after content
-    setTimeout(() => this.load(), 100);
-    this._isMounted = true;
   }
 
   public componentWillUnmount() {
-    this._isMounted = false;
   }
 
   get isGroup() {
     return this.props.id.length < 36;
-  }
-
-  async load() {
-    if (!this._isMounted) return;
-    await avatarsMap.load();
-
-    if (!this.props.id) {
-      this._isMounted && this.setState({ loaded: true, noAvatar: true });
-      return;
-    }
-
-    if (this.isGroup) {
-      this._isMounted && this.setState({ loaded: true });
-      return;
-    }
-
-    if (avatarsMap[this.props.id]) {
-      if (avatarsMap[this.props.id].loading) {
-        avatarsMap.onload(userId => {
-          if (userId === this.props.id) {
-            this._isMounted && this.setState({
-              loaded: true,
-              noAvatar: avatarsMap[this.props.id].noAvatar
-            });
-          }
-        });
-        return;
-      }
-
-      this._isMounted && this.setState({
-        loaded: true,
-        noAvatar: avatarsMap[this.props.id].noAvatar
-      });
-      return;
-    }
-
-    avatarsMap[this.props.id] = { loading: true };
-    if (!Conf.currentPlatform) throw new Error("must specify a platform");
-    const response = await RNFetchBlob.fetch(
-      "GET",
-      `${Conf.currentPlatform.url}/userbook/avatar/${this.props.id}?thumbnail=48x48`
-    );
-    if (response.type === "utf8") {
-      this._isMounted && this.setState({ loaded: true, noAvatar: true });
-    } else {
-      this._isMounted && this.setState({ loaded: true, noAvatar: false });
-    }
-    avatarsMap[this.props.id] = { noAvatar: this.state.noAvatar };
-    avatarsMap.trigger(this.props.id);
-    avatarsMap.save();
   }
 
   renderNoAvatar(width) {
@@ -327,25 +244,40 @@ export class Avatar extends React.Component<
       width = this.props.width;
     }
 
-    if (!this.state.loaded || !Connection.isOnline) {
-      return this.renderNoAvatar(width);
-    }
-
     if (this.isGroup) {
       return this.renderIsGroup(width);
     }
-    if (this.state.noAvatar) {
+
+    if (this.state.status == "failed" || !Connection.isOnline) {
       return this.renderNoAvatar(width);
     }
+    // TODO we could use react native fast image if we need to make some cache: https://www.npmjs.com/package/react-native-fast-image
+    // but react native image should use header cache control like most of browsers so we may not need it
+    // see more at: https://blog.rangle.io/image-caching-in-react-native/
+    const sharedProps: Partial<ImageProps> = {
+      defaultSource: require("../../../assets/images/no-avatar.png"),
+
+      onError: () => {
+        this.setState({ status: "failed" });
+      },
+      onLoadStart: () => {
+        this.setState({ status: "loading" });
+      },
+      onLoad: () => {
+        this.setState({ status: "success" })
+      }
+    };
+    //in case of success,initial,loading status...
     if (this.props.size === Size.large || this.count === 1) {
       if (!Conf.currentPlatform) throw new Error("must specify a platform");
       return (
         <LargeContainer style={{ width, height: width }}>
           <LargeImage
+            {...sharedProps}
             source={{
               uri: `${Conf.currentPlatform.url}/userbook/avatar/${
                 this.props.id
-              }?thumbnail=100x100`
+                }?thumbnail=100x100`
             }}
             style={{ width, height: width }}
           />
@@ -356,10 +288,11 @@ export class Avatar extends React.Component<
       return (
         <AlignedContainer index={this.props.index}>
           <AlignedImage
+            {...sharedProps}
             source={{
               uri: `${Conf.currentPlatform.url}/userbook/avatar/${
                 this.props.id
-              }?thumbnail=100x100`
+                }?thumbnail=100x100`
             }}
           />
         </AlignedContainer>
@@ -369,11 +302,12 @@ export class Avatar extends React.Component<
       return (
         <VLContainer>
           <VeryLargeImage
+            {...sharedProps}
             decorate={this.decorate}
             source={{
               uri: `${Conf.currentPlatform.url}/userbook/avatar/${
                 this.props.id
-              }?thumbnail=150x150`
+                }?thumbnail=150x150`
             }}
           />
         </VLContainer>
@@ -383,11 +317,12 @@ export class Avatar extends React.Component<
       return (
         <SmallContainer count={this.props.count || 1} index={this.props.index}>
           <SmallImage
+            {...sharedProps}
             count={this.props.count || 1}
             source={{
               uri: `${Conf.currentPlatform.url}/userbook/avatar/${
                 this.props.id
-              }?thumbnail=100x100`
+                }?thumbnail=100x100`
             }}
           />
         </SmallContainer>

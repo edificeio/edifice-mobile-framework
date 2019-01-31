@@ -5,9 +5,10 @@ import { storedFilters } from "./storedFilters";
 
 const writeTypesParams = availableApps => {
   let params = "";
-  for (let app in availableApps) {
+  // console.log("available apps:", availableApps);
+  for (const app in availableApps) {
     if (availableApps[app]) {
-      params += "&type=" + app;
+      params += "&type=" + app.toUpperCase();
     }
   }
   return params;
@@ -19,21 +20,30 @@ export const fetchTimeline = dispatch => async availableApps => {
   });
 
   try {
+    // console.log("FETCH timeline");
     const news = await fetchJSONWithCache(
-      `/timeline/lastNotifications?page=0&${writeTypesParams(availableApps)}`
+      `/timeline/lastNotifications?page=0&${writeTypesParams(availableApps)}`,
+      {
+        headers: {
+          Accept: "application/json;version=2.0"
+        }
+      }
     );
-    let results = news.results.filter(
+    const results = news.results.filter(
       n => excludeTypes.indexOf(n["event-type"]) === -1 && n.params
     );
+    // console.log("resultsts fetch", results);
     const newNews = await fillData(availableApps, results);
+    // console.log("newNews fetch", newNews);
 
     if (newNews.length > 0) {
       dispatch({
-        type: "FETCH_NEW_TIMELINE",
-        news: newNews
+        news: newNews,
+        type: "FETCH_NEW_TIMELINE"
       });
     }
   } catch (e) {
+    // tslint:disable-next-line:no-console
     console.warn(e);
   }
 };
@@ -46,6 +56,8 @@ export const listTimeline = dispatch => async (
   dispatch({
     type: "FETCH_TIMELINE"
   });
+
+  // console.log("LIST timeline");
 
   let loading = true;
 
@@ -63,30 +75,37 @@ export const listTimeline = dispatch => async (
     if (!availableApps) {
       availableApps = await storedFilters(legalapps);
       dispatch({
-        type: "FILTER_TIMELINE",
-        availableApps: availableApps
+        availableApps,
+        type: "FILTER_TIMELINE"
       });
 
       dispatch({
-        type: "PICK_FILTER_TIMELINE",
-        selectedApps: availableApps
+        selectedApps: availableApps,
+        type: "PICK_FILTER_TIMELINE"
       });
     }
 
     const news = await fetchJSONWithCache(
       `/timeline/lastNotifications?page=${page}&${writeTypesParams(
         availableApps
-      )}`
+      )}`,
+      {
+        headers: {
+          Accept: "application/json;version=2.0"
+        }
+      }
     );
-    let results = news.results.filter(
+    const results = news.results.filter(
       n => excludeTypes.indexOf(n["event-type"]) === -1 && n.params
     );
+    // console.log("resultsts fill", results);
     const newNews = await fillData(availableApps, results);
+    // console.log("newNews fill", newNews);
 
     if (newNews.length > 0) {
       dispatch({
-        type: "APPEND_TIMELINE",
-        news: newNews
+        news: newNews,
+        type: "APPEND_TIMELINE"
       });
     } else {
       dispatch({
@@ -97,6 +116,7 @@ export const listTimeline = dispatch => async (
     loading = false;
     return newNews;
   } catch (e) {
+    // tslint:disable-next-line:no-console
     console.warn(e);
     dispatch({
       type: "FAILED_LOAD_TIMELINE"

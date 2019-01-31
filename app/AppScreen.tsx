@@ -1,5 +1,4 @@
 import * as React from "react";
-import { StatusBar, View } from "react-native";
 import SplashScreen from "react-native-smart-splash-screen";
 import { connect } from "react-redux";
 

@@ -12,13 +12,15 @@ import { sendMessage } from "../actions/sendMessage";
 import { sendPhoto } from "../actions/sendPhoto";
 
 import { IconOnOff } from "../../ui";
+import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { Line } from "../../ui/Grid";
 import { ToggleIcon } from "../../ui/ToggleIcon";
 import { IConversationThread } from "../reducers/threadList";
+import ThreadInputReceivers from "./ThreadInputReceiver";
 
 // TODO : Debt : Needs to be refactored.
 
-const ContainerFooterBar = style.view({
+const ContainerFooterBar = style(View)({
   backgroundColor: CommonStyles.tabBottomColor,
   borderTopColor: CommonStyles.borderColorLighter,
   borderTopWidth: 1,
@@ -27,7 +29,7 @@ const ContainerFooterBar = style.view({
   justifyContent: "flex-start"
 });
 
-const ChatIcon = style.touchableOpacity({
+const ChatIcon = style(TouchableOpacity)({
   alignItems: "flex-start",
   justifyContent: "center",
   paddingLeft: 20,
@@ -35,7 +37,7 @@ const ChatIcon = style.touchableOpacity({
   width: 58
 });
 
-const SendContainer = style.touchableOpacity({
+const SendContainer = style(TouchableOpacity)({
   alignItems: "center",
   alignSelf: "flex-end",
   height: 40,
@@ -67,8 +69,11 @@ class ThreadInput extends React.PureComponent<
   {
     thread: IConversationThread;
     lastMessageId: string;
+    emptyThread: boolean;
+    displayPlaceholder: boolean;
     send: (data: any) => Promise<void>;
     sendPhoto: (data: any) => Promise<void>;
+    onReceiversTap: (conversation: IConversationThread) => void;
   },
   {
     selected: Selected;
@@ -84,17 +89,19 @@ class ThreadInput extends React.PureComponent<
     textMessage: ""
   };
 
-  public findReceivers(conversation) {
+  public findReceivers2(conversation: IConversationThread) {
     // TODO : Duplicate of ThreadItem.findReceivers() ?
-    const to = [
-      ...conversation.to,
-      ...(conversation.cc || []),
-      conversation.from
-    ].filter(el => el !== Me.session.userId);
-    if (to.length === 0) {
+    const to = new Set(
+      [
+        ...conversation.to,
+        ...(conversation.cc || []),
+        conversation.from
+      ].filter(el => el !== Me.session.userId)
+    );
+    if (to.size === 0) {
       return [Me.session.userId];
     }
-    return to;
+    return [...to];
   }
 
   private sendPhoto() {
@@ -108,7 +115,7 @@ class ThreadInput extends React.PureComponent<
       parentId: lastMessageId,
       subject: "Re: " + thread.subject,
       threadId: newThreadId || thread.id,
-      to: this.findReceivers(thread)
+      to: this.findReceivers2(thread)
     });
   }
 
@@ -122,14 +129,15 @@ class ThreadInput extends React.PureComponent<
     this.setState({
       textMessage: ""
     });
-
-    const newMessage = await this.props.send({
+    // console.log("thread object ", thread)
+    await this.props.send({
       body: `<div>${textMessage}</div>`,
       cc: thread.cc,
       parentId: lastMessageId,
       subject: "Re: " + thread.subject,
       threadId: thread.id,
-      to: this.findReceivers(thread)
+      to: this.findReceivers2(thread),
+      displayNames: thread.displayNames
     });
   }
 
@@ -140,68 +148,97 @@ class ThreadInput extends React.PureComponent<
   public blur() {
     this.setState({ selected: Selected.none });
   }
-
+  public renderInput(textMessage: string, placeholder: string) {
+    return (
+      <TextInput
+        ref={el => {
+          this.input = el;
+        }}
+        enablesReturnKeyAutomatically={true}
+        multiline
+        onChangeText={(textMessage: string) => this.setState({ textMessage })}
+        onFocus={() => {
+          this.focus();
+          return true;
+        }}
+        onBlur={() => {
+          this.blur();
+          return true;
+        }}
+        placeholder={placeholder}
+        underlineColorAndroid={"transparent"}
+        value={textMessage}
+        autoCorrect={false}
+        style={Platform.OS === "android" ? { paddingTop: 8 } : {}}
+      />
+    );
+  }
   public render() {
     const { selected, textMessage } = this.state;
-
+    const { displayPlaceholder, thread } = this.props;
+    const receiversIds = this.findReceivers2(thread);
+    const receiverNames = thread.displayNames
+      .filter(dN => receiversIds.indexOf(dN[0]) > -1)
+      .map(dN => dN[1]);
+    const showReceivers =
+      (selected == Selected.keyboard ||
+        (textMessage && textMessage.length > 0)) &&
+      receiverNames.length >= 2;
+    //iOS hack => does not display placeholder on update
     return (
-      <ContainerFooterBar>
-        <ContainerInput>
-          <TextInput
-            ref={el => {
-              this.input = el;
-            }}
-            enablesReturnKeyAutomatically={true}
-            multiline
-            onChangeText={(textMessage: string) =>
-              this.setState({ textMessage })
-            }
-            onFocus={() => {
-              this.focus();
-              return true;
-            }}
-            onBlur={() => {
-              this.blur();
-              return true;
-            }}
-            placeholder={I18n.t("conversation-chatPlaceholder")}
-            underlineColorAndroid={"transparent"}
-            value={textMessage}
-            autoCorrect={false}
-            style={Platform.OS === "android" ? { paddingTop: 8 } : {}}
-          />
-        </ContainerInput>
-        <Line style={{ height: 40 }}>
-          <ChatIcon
-            onPress={() => {
-              if (this.state.selected === Selected.keyboard)
-                this.input.innerComponent.blur();
-              else this.input.innerComponent.focus();
-            }}
-          >
-            <IconOnOff
-              focused={true}
-              name={"keyboard"}
-              style={{ marginLeft: 4 }}
-            />
-          </ChatIcon>
-          {Platform.OS !== "ios" ? (
+      <View>
+        <ThreadInputReceivers
+          names={receiverNames}
+          show={showReceivers}
+          onPress={() => this.props.onReceiversTap(thread)}
+        />
+        <ContainerFooterBar>
+          <ContainerInput>
+            {displayPlaceholder &&
+              this.props.emptyThread &&
+              this.renderInput(
+                textMessage,
+                I18n.t("conversation-chatPlaceholder")
+              )}
+            {displayPlaceholder &&
+              !this.props.emptyThread &&
+              this.renderInput(
+                textMessage,
+                I18n.t("conversation-responsePlaceholder")
+              )}
+          </ContainerInput>
+          <Line style={{ height: 40 }}>
             <ChatIcon
-              onPress={() => this.sendPhoto()}
-              style={{ marginBottom: 5 }}
+              onPress={() => {
+                if (this.state.selected === Selected.keyboard)
+                  this.input.innerComponent.blur();
+                else this.input.innerComponent.focus();
+              }}
             >
-              <IconOnOff name={"camera"} />
+              <IconOnOff
+                focused={true}
+                name={"keyboard"}
+                style={{ marginLeft: 4 }}
+              />
             </ChatIcon>
-          ) : null}
-          {!!this.state.textMessage ? (
-            <View style={{ flex: 1, alignItems: "flex-end" }}>
-              <SendContainer onPress={() => this.onValid()}>
-                <ToggleIcon show={true} icon={"send_icon"} />
-              </SendContainer>
-            </View>
-          ) : null}
-        </Line>
-      </ContainerFooterBar>
+            {/*Platform.OS !== "ios"*/ false ? ( // TODO : we hide this for both ios & android for the moment.
+              <ChatIcon
+                onPress={() => this.sendPhoto()}
+                style={{ marginBottom: 5 }}
+              >
+                <IconOnOff name={"camera"} />
+              </ChatIcon>
+            ) : null}
+            {!!this.state.textMessage ? (
+              <View style={{ flex: 1, alignItems: "flex-end" }}>
+                <SendContainer onPress={() => this.onValid()}>
+                  <ToggleIcon show={true} icon={"send_icon"} />
+                </SendContainer>
+              </View>
+            ) : null}
+          </Line>
+        </ContainerFooterBar>
+      </View>
     );
   }
 }

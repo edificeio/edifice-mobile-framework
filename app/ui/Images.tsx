@@ -9,6 +9,7 @@ import { CommonStyles } from "../styles/common/styles";
 import { Italic } from "./Typography";
 import ImageOptional from "./ImageOptional";
 import FastImage from "react-native-fast-image";
+import TouchableOpacity from "./CustomTouchableOpacity";
 
 const BubbleText = style.text({
   color: "#FFFFFF",
@@ -18,17 +19,17 @@ const BubbleText = style.text({
 
 const ContainerImage = style.view({});
 
-const SoloImage = style.touchableOpacity({
+const SoloImage = style(TouchableOpacity)({
   backgroundColor: "#eeeeee",
   width: "100%"
 });
 
-const QuarterImage = style.touchableOpacity({
+const QuarterImage = style(TouchableOpacity)({
   backgroundColor: "#eeeeee",
   width: "100%"
 });
 
-const Overlay = style.touchableOpacity({
+const Overlay = style(TouchableOpacity)({
   backgroundColor: "rgba(0,0,0,0.5)",
   bottom: 0,
   position: "absolute",

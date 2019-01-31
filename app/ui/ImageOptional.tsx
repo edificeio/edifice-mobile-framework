@@ -4,12 +4,9 @@
  */
 
 import * as React from "react";
-import {
-  Image,
-  ImageProps,
-  TouchableOpacity,
-  TouchableOpacityProps
-} from "react-native";
+import { Image, ImageProps, TouchableOpacityProps } from "react-native";
+
+import TouchableOpacity from "../ui/CustomTouchableOpacity";
 
 export type ImageOptionalProps = ImageProps & {
   errorComponent: any;
