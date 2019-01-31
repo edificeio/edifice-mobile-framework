@@ -18,7 +18,7 @@ import {
   actionTypeThreadResetReceived,
   actionTypeThreadDeleted
 } from "../actions/threadList";
-import { IConversationMessage } from "./messages";
+import { IConversationMessage } from "../actions/sendMessage";
 import { actionTypeMessageSendRequested, actionTypeMessageSent } from "../actions/sendMessage";
 import { actionTypeThreadCreated } from "../actions/createThread";
 
