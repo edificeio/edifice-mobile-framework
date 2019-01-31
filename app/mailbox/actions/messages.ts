@@ -12,7 +12,7 @@ import { signedFetch } from "../../infra/fetchWithCache";
 import {
   IConversationMessageList,
   IConversationMessageNativeArray
-} from "../reducers/messages";
+} from "../actions/sendMessage";
 
 /** Returns the local state (global state -> conversation2 -> messages). Give the global state as parameter. */
 const localState = globalState =>

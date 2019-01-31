@@ -1,7 +1,8 @@
 import { combineReducers } from "redux";
 
 import filter from "./filter";
-import messages, { IConversationMessageList, IConversationMessage } from "./messages";
+import { IConversationMessageList, IConversationMessage } from "../actions/sendMessage";
+import messages from "./messages";
 import threadList, { IConversationThread, IConversationThreadList } from "./threadList";
 import threadSelected from "./threadSelected";
 import receiversDisplay, { IConversationReceiverList } from "./receiversDisplay";

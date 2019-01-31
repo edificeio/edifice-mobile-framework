@@ -36,7 +36,7 @@ import Tracking from "../../tracking/TrackingManager";
 import { Carousel } from "../../ui/Carousel";
 import {
   IConversationMessage
-} from "../reducers/messages";
+} from "../actions/sendMessage";
 import { IConversationThread } from "../reducers/threadList";
 
 // Misc

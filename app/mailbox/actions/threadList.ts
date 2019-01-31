@@ -6,23 +6,17 @@ import moment from "moment";
 
 import { asyncActionTypes, asyncGetJson } from "../../infra/redux/async";
 import conversationConfig from "../config";
-
-import { IArrayById } from "../../infra/collections";
 import {
-  IConversationMessage,
   IConversationMessageList
-} from "../reducers/messages";
+} from "./sendMessage";
 import { IConversationThreadList } from "../reducers/threadList";
 import {
   conversationMessagesReceived,
-  conversationMessagesSetRead,
   conversationOrderedMessagesAdapter,
-  conversationSetMessagesRead
 } from "./messages";
 
 import Conf from "../../Conf";
 import { signedFetch } from "../../infra/fetchWithCache";
-import { Me } from "../../infra/Me";
 
 export const NB_THREADS_PER_PAGE = 10; // Needs to be the same value as the backend's one
 
