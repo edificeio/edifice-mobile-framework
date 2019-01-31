@@ -174,9 +174,11 @@ export function fetchConversationThreadList(page: number = 0) {
     }
     if (threadListinfo.data.end) return;
     if (page <= localState(getState()).data.page) {
-      throw new Error(
+      const error = new Error(
         "Conversation: Won't fetch a page that has already been recevied."
       );
+      (error as any).type = "ALREADY_FETCHED";
+      throw error;
     }
 
     dispatch(conversationThreadListRequested());

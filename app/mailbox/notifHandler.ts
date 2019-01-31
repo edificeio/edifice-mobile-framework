@@ -20,7 +20,15 @@ export default dispatch => async notificationData => {
   );
   const message = await response.json();
 
-  await dispatch(await fetchConversationThreadList());
+  try {
+    await dispatch(await fetchConversationThreadList());
+  } catch (e) {
+    if (!(e.type && e.type === "ALREADY_FETCHED")) {
+      throw e;
+    } else {
+      console.log("threads page already fetched, pass");
+    }
+  }
   await dispatch(await conversationThreadSelected(message.thread_id));
   await dispatch(await fetchConversationThreadResetMessages(message.thread_id));
   nainNavNavigate("thread");
