@@ -9,7 +9,7 @@ import { signedFetch } from "../../infra/fetchWithCache";
 import {
   ConversationMessageStatus,
   IConversationMessage
-} from "../reducers/messages";
+} from "../actions/sendMessage";
 
 import {
   actionTypeMessageSendError,

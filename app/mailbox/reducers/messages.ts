@@ -2,9 +2,6 @@
  * Conversation messages state reducer
  * Flattened list of all loaded messages.
  */
-import moment from "moment";
-
-import { IArrayById } from "../../infra/collections";
 import asyncReducer from "../../infra/redux/async";
 
 import { actionTypes, actionTypeSetRead } from "../actions/messages";

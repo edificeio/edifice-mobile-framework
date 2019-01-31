@@ -13,7 +13,7 @@ import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
 import { DateView } from "../../ui/DateView";
 import { TouchableImageOptional } from "../../ui/ImageOptional";
 import { Italic } from "../../ui/Typography";
-import { ConversationMessageStatus } from "../reducers/messages";
+import { ConversationMessageStatus } from "../actions/sendMessage";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 
 const ImageMessage = style.image({
