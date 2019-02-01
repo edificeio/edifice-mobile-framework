@@ -5,7 +5,7 @@ import userConfig from "../config";
 import { IActivationState } from "../reducers/activation";
 import { activationAccount, initActivationAccount, cancelActivationAccount } from "../actions/activation";
 
-const mapStateToProps: (state: any) => IActivationPageDataProps = state => {
+const mapStateToProps: (state: any) => IActivationPageDataProps & { version: number } = state => {
     const activationState: IActivationState = state[userConfig.reducerName].activation;
     return {
         confirm: activationState.submitted.confirm,
@@ -19,7 +19,8 @@ const mapStateToProps: (state: any) => IActivationPageDataProps = state => {
         phoneRequired: activationState.context.mandatory.phone,
         externalError: activationState.submitError || "",
         contextState: activationState.contextState,
-        submitState: activationState.submitState
+        submitState: activationState.submitState,
+        version:new Date().getTime()
     };
 };
 

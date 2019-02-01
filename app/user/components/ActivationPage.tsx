@@ -84,7 +84,7 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
         if (contextState == ContextState.Loading || contextState == ContextState.Failed) {
             return <Loading />
         }
-        const formModel = new ActivationFormModel({ ...this.props, password })
+        const formModel = new ActivationFormModel({ ...this.props, password: () => password })
         const isNotValid = !formModel.validate({ ...this.state });
         const errorKey = formModel.firstErrorKey({ ...this.state });
         const errorText = errorKey ? I18n.t(errorKey) : externalError;
@@ -136,7 +136,7 @@ const FormContainer = style.view({
     flexDirection: "column",
     justifyContent: "center",
     padding: 40,
-    paddingTop: 80
+    paddingTop: 60
 });
 const LogoWrapper = style.view({ flexGrow: 2, alignItems: "center", justifyContent: "center" })
 const Logo = style.image({ height: 50, width: 200, resizeMode: "contain" })
@@ -145,7 +145,7 @@ const ButtonWrapper = style.view({
     flexGrow: 2,
     justifyContent: "flex-start"
 }, ({ error, typing }) => ({
-    marginTop: error && !typing ? 10 : 30
+    marginTop: error && !typing ? 10 : 10
 }));
 
 const CGULink = style.touchableOpacity({
@@ -155,6 +155,8 @@ const CGUText = style.text({
     color: CommonStyles.lightTextColor,
     fontFamily: CommonStyles.primaryFontFamily,
     fontSize: 14,
+    marginTop: 18,
+    marginBottom:8,
     textAlign: "center",
     textDecorationLine: "underline"
 })

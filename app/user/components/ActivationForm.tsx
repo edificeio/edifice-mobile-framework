@@ -3,92 +3,13 @@ import I18n from "i18n-js";
 import { TextInputLine } from "../../ui/forms/TextInputLine";
 import { TextInput } from "react-native";
 import { IActivationModel } from "../actions/activation";
-
-//TODO move validators and builder to utils
-///
-/// types
-///
-type IValidator = (value: any) => boolean
-type ValueChangeOriginal<T> = (value: T) => void;
-export type ValueChangeArgs<T> = { value: T, valid: boolean };
-export type ValueChange<T> = (value: ValueChangeArgs<T>) => void;
-interface IValidatorContext<T> {
-    isValid: IValidator
-    isNotValid: IValidator
-    changeCallback: (onChange: ValueChange<T>) => ValueChangeOriginal<T>
-}
-///
-/// validators: take as parameter a string and return true if valid
-///
-function notEmpty(text: string) {
-    return text && text.trim().length > 0;
-}
-function matchRegex(text: string, regex: RegExp | string) {
-    if (!text || !regex) {
-        return true;//skip validation
-    }
-    const regexObject = typeof regex == "string" ? new RegExp(regex) : regex;
-    return regexObject.test(text)
-}
-function matchString(text1: string, text2: string) {
-    return text1 == text2
-}
-
-///
-/// validator builder: lets compose multiple validator as one big validator
-///
-class ValidatorBuilder {
-    static MAIL_REGEX = /^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
-    static PHONE_REGEX = /^(00|\+)?(?:[0-9] ?-?\.?){6,14}[0-9]$/;
-    validators: IValidator[] = []
-    withRequired(required: boolean) {
-        if (required) {
-            this.validators.push(notEmpty);
-        }
-        return this;
-    }
-    withRegex(regex: RegExp | string) {
-        this.validators.push((value) => {
-            return matchRegex(value, regex)
-        })
-        return this;
-    }
-    withPhone() {
-        return this.withRegex(ValidatorBuilder.PHONE_REGEX);
-    }
-    withEmail() {
-        return this.withRegex(ValidatorBuilder.MAIL_REGEX);
-    }
-    withMatchString(other: string) {
-        this.validators.push((value) => {
-            return matchString(value, other);
-        })
-        return this;
-    }
-    build<T>(): IValidatorContext<T> {
-        const isValid = (value) => {
-            let valid = true;
-            for (let va of this.validators) {
-                if (!va(value)) {
-                    valid = false;
-                }
-            }
-            return valid;
-        }
-        return {
-            isValid,
-            isNotValid: (value) => !isValid(value),
-            changeCallback(onChange: ValueChange<T>) {
-                return (value) => onChange({ value, valid: isValid(value) });
-            }
-        }
-    }
-}
+import { ValueChangeArgs, ValidatorBuilder, ValueChange, ValueGetter } from "../../utils/form";
+export { ValueChangeArgs }
 //
 // Form model: describe fields and validations for each field
 //
 export class ActivationFormModel {
-    constructor(private args: { passwordRegex: string, password: string, emailRequired: boolean, phoneRequired: boolean }) {
+    constructor(private args: { passwordRegex: string, password: ValueGetter<string>, emailRequired: boolean, phoneRequired: boolean }) {
 
     }
     login = new ValidatorBuilder().withRequired(true).build<string>();
@@ -132,6 +53,21 @@ export class ActivationFormModel {
         this.inputEmail && this.inputEmail.blur();
         this.inputPhone && this.inputPhone.blur();
     }
+    showLoginError(login: string) {
+        return this.login.isNotValid(login) && !!login;
+    }
+    showPasswordError(password: string) {
+        return this.password.isNotValid(password) && !!password;
+    }
+    showConfirmError(confirm: string) {
+        return this.confirm.isNotValid(confirm) && !!confirm;
+    }
+    showEmailError(email: string) {
+        return this.email.isNotValid(email) && !!email;
+    }
+    showPhoneError(phone: string) {
+        return this.phone.isNotValid(phone) && !!phone;
+    }
 }
 ///
 /// Input components
@@ -143,7 +79,7 @@ export function InputLogin(props: { login: string, form: ActivationFormModel, on
         placeholder={I18n.t("Login")}
         onChangeText={validator.changeCallback(props.onChange)}
         value={props.login}
-        hasError={validator.isNotValid(props.login)}
+        hasError={props.form.showLoginError(props.login)}
     />
 }
 export function InputPassword(props: { password: string, form: ActivationFormModel, onChange: ValueChange<string> }) {
@@ -153,7 +89,7 @@ export function InputPassword(props: { password: string, form: ActivationFormMod
         placeholder={I18n.t("Password")}
         onChangeText={validator.changeCallback(props.onChange)}
         value={props.password}
-        hasError={validator.isNotValid(props.password)}
+        hasError={props.form.showPasswordError(props.password)}
         secureTextEntry={true}
     />
 }
@@ -164,7 +100,7 @@ export function InputPasswordConfirm(props: { confirm: string, form: ActivationF
         placeholder={I18n.t("PasswordConfirm")}
         onChangeText={validator.changeCallback(props.onChange)}
         value={props.confirm}
-        hasError={validator.isNotValid(props.confirm)}
+        hasError={props.form.showConfirmError(props.confirm)}
         secureTextEntry={true}
     />
 }
@@ -175,7 +111,7 @@ export function InputEmail(props: { email: string, form: ActivationFormModel, on
         placeholder={I18n.t("Email")}
         onChangeText={validator.changeCallback(props.onChange)}
         value={props.email}
-        hasError={validator.isNotValid(props.email)}
+        hasError={props.form.showEmailError(props.email)}
         keyboardType="email-address"
     />
 }
@@ -187,7 +123,7 @@ export function InputPhone(props: { phone: string, form: ActivationFormModel, on
         placeholder={I18n.t("Phone")}
         onChangeText={validator.changeCallback(props.onChange)}
         value={props.phone}
-        hasError={validator.isNotValid(props.phone)}
+        hasError={props.form.showPhoneError(props.phone)}
         keyboardType="phone-pad"
     />
 }
