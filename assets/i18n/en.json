@@ -1,4 +1,5 @@
 {
+  "Actualites": "News",
   "agoHours": "{{hours}} h ago",
   "agoMinutes": "{{minutes}} min ago",
   "apply": "Apply",
@@ -12,7 +13,14 @@
   "common-connected": "Connected",
   "common-connecting": "Connecting",
   "common-disconnected": "Not connected to the Internet",
+  "common-ErrorNetwork": "Network errors",
   "Connect": "Log in",
+  "Activate": "Activate account",
+  "activation-errorLoading": "Network errors.",
+  "activation-errorSubmit": "Network errors.",
+  "activation-retryLoad": "Try again",
+  "activation-cancelLoad": "Cancel",
+  "activation-cgu": "By activating your account, you accept the terms and conditions of use",
   "conversation-chatPlaceholder": "Write a message...",
   "conversation-deleteThread": "delete this conversation ?",
   "conversation-emptyScreenText": "With Mailbox, start communicating with the other members of your network.",
@@ -20,16 +28,16 @@
   "conversation-failedSent": "Message not sent",
   "conversation-newMessage": "New message",
   "conversation-sendingMessage": "Sending...",
-  "conversation-receiverTo": "Receiver",
-  "conversation-receiversTo": "Receivers",
-  "conversation-receiversCC": "Copy receivers",
+  "conversation-receiverTo": "Recipient",
+  "conversation-receiversTo": "Recipients",
+  "conversation-receiversCC": "Copy",
   "conversation-receiversSender": "Sender",
   "conversation-receiverPrefix": "to",
   "conversation-receiverPrefixInput":"To :",
-  "conversation-receiver": "1 receiver",
-  "conversation-receivers": "{{count}} receivers",
-  "conversation-receiverList": "Receivers",
-  "conversation-responsePlaceholder": "Send to all...",
+  "conversation-receiver": "1 recipient",
+  "conversation-receivers": "{{count}} recipients",
+  "conversation-receiverList": "Recipients",
+  "conversation-responsePlaceholder": "Reply to all...",
   "Conversation": "Mailbox",
   "delete": "Delete",
   "directory-disconnectButton": "Log out",
@@ -40,7 +48,7 @@
   "homework-task-empty-title": "Homework",
   "Homework": "Homework",
   "imageNotAvailable": "Image not available",
-
+  "linkTo": "Link",
   "loadingFailedMessage": "Loading failed. Please check your Internet connection.",
   "Login": "Username",
   "news-info-shared": "Newsfeed shared",
@@ -53,36 +61,83 @@
   "News": "News",
   "next": "Next",
   "On": "in",
+  "Phone": "Mobile phone",
+  "Email": "Email",
   "Password": "Password",
+  "PasswordConfirm": "Password confirmed",
   "Profile": "Profile",
   "schoolbook-appTitle": "Schoolbook",
   "Search": "Search ...",
   "seeMore": "See more",
-
+  "select-platform": "Select your educational social network!",
   "timeline-allFilter": "All",
   "timeline-blogFilter": "Blog",
   "timeline-emptyScreenText": "All quiet on the Western front. Are you familiar with the saying \"the calm before the storm\"?",
   "timeline-emptyScreenTitle": "No sightings yet. Is there anybody out there?",
-
-
-
+  "timeline-eventType-INFO-SHARED": "shared",
+  "timeline-eventType-PUBLISH-POST": "published a post",
+  "timeline-eventType-PUBLISH": "published",
+  "timeline-eventType-WORD-SHARED": "shared",
   "timeline-filterBy": "Filter by",
   "timeline-newsFilter": "News",
+  "timeline-postType-BLOG": "blog",
+  "timeline-postType-NEWS": "the news",
+  "timeline-postType-SCHOOLBOOK": "the schoolbook message",
   "timeline-schoolbookFilter": "Schoolbook",
   "to": "To :",
   "today": " Today ",
   "tryagain": "Try again",
-
-
+  "welcome": "Welcome",
   "date":{
-    "day_names": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-    "abbr_day_names": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-    "month_names": [null, "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-    "abbr_month_names":  [null, "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    "day_names": [
+      "Sunday", 
+      "Monday", 
+      "Tuesday", 
+      "Wednesday", 
+      "Thursday", 
+      "Friday", 
+      "Saturday"
+    ],
+    "abbr_day_names": [
+      "Sun", 
+      "Mon", 
+      "Tue", 
+      "Wed", 
+      "Thu", 
+      "Fri", 
+      "Sat"
+    ],
+    "month_names": [
+      null, 
+      "January", 
+      "February", 
+      "March", 
+      "April", 
+      "May", 
+      "June", 
+      "July", 
+      "August", 
+      "September", 
+      "October", 
+      "November", 
+      "December"
+    ],
+    "abbr_month_names": [
+      null, 
+      "Jan", 
+      "Feb", 
+      "Mar", 
+      "Apr", 
+      "May", 
+      "Jun", 
+      "Jul", 
+      "Aug", 
+      "Sep", 
+      "Oct", 
+      "Nov", 
+      "Dec"
+    ]
   },
-
-
-
 
   "blog-publish-post": "New blog post",
 
@@ -93,11 +148,6 @@
 
 
   "schoolbook-publish": "New message in your schoolbook"
-
-
-
-
-
 
 
 

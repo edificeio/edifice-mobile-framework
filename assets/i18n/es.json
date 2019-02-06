@@ -1,4 +1,5 @@
 {
+  "Actualites": "Noticias",
   "agoHours": "Hace {{hours}} h",
   "agoMinutes": "Hace {{minutes}} min",
   "apply": "Aplicar",
@@ -12,24 +13,31 @@
   "common-connected": "Conectado",
   "common-connecting": "Conexión a Internet",
   "common-disconnected": "No está conectado a Internet",
+  "common-ErrorNetwork": "Error de red",
   "Connect": "Iniciar sesión",
+  "Activate": "Activar mi cuenta",
+  "activation-errorLoading": "Error de red.",
+  "activation-errorSubmit": "Error de red.",
+  "activation-retryLoad": "Vuelva a intentarlo",
+  "activation-cancelLoad": "Cancelar",
+  "activation-cgu": "Al activar su cuenta, usted acepta los términos y condiciones de uso",
   "conversation-chatPlaceholder": "Escribe un mensaje...",
   "conversation-deleteThread": "eliminar esta conversación ?",
   "conversation-emptyScreenText": "Gracias al correo electrónico ya puede empezar a comunicarse con los miembros de su red.",
   "conversation-emptyScreenTitle": "No hay ningún mensaje...",
-
+  "conversation-failedSent": "Mensaje no enviado ",
   "conversation-newMessage": "Nuevo mensaje",
   "conversation-sendingMessage": "Enviando...",
-
-
-
-
-  
-
-
-
-
-
+  "conversation-receiverTo": "Destinatario",
+  "conversation-receiversTo": "Destinatarios",
+  "conversation-receiversCC": "Con Copia",
+  "conversation-receiversSender": "Remitente",
+  "conversation-receiverPrefix": "para",
+  "conversation-receiverPrefixInput": "Para :",
+  "conversation-receiver": "1 destinatario",
+  "conversation-receivers": "{{count}} destinatarios",
+  "conversation-receiverList": "Destinatarios",
+  "conversation-responsePlaceholder": "Responder a todos...",
   "Conversation": "Correo",
   "delete": "Eliminar",
   "directory-disconnectButton": "Desconectarse",
@@ -40,7 +48,7 @@
   "homework-task-empty-title": "Cuaderno",
   "Homework": "Cuaderno",
   "imageNotAvailable": "Imagen no disponible",
-
+  "linkTo": "Enlace",
   "loadingFailedMessage": "Error de carga. Compruebe la conexión a Internet.",
   "Login": "Usuario",
   "news-info-shared": "Noticia compartida",
@@ -53,36 +61,83 @@
   "News": "Noticias",
   "next": "Siguiente",
   "On": "en",
+  "Phone": "Teléfono móvil",
+  "Email": "Correo electrónico",
   "Password": "Contraseña",
+  "PasswordConfirm": "Confirmación de la nueva contraseña",
   "Profile": "Perfil",
   "schoolbook-appTitle": "Cuaderno de correspondencia",
   "Search": "Buscar ...",
   "seeMore": "Ver más",
-
+  "select-platform": "¡Seleccione su red social educativa!",
   "timeline-allFilter": "Todo",
   "timeline-blogFilter": "Blog",
   "timeline-emptyScreenText": "Está todo muy tranquilo. ¿Conoce la expresión \"la calma antes de la tormenta\"?",
   "timeline-emptyScreenTitle": "No se ve ni un alma. ¿Hay alguien?",
-
-
-
+  "timeline-eventType-INFO-SHARED": "ha compartido",
+  "timeline-eventType-PUBLISH-POST": "ha publicado una entrada de",
+  "timeline-eventType-PUBLISH": "ha publicado",
+  "timeline-eventType-WORD-SHARED": "ha compartido",
   "timeline-filterBy": "Filtrar en",
   "timeline-actualitesFilter": "Noticias",
+  "timeline-postType-BLOG": "blog",
+  "timeline-postType-NEWS": "la noticia",
+  "timeline-postType-SCHOOLBOOK": "el mensaje",
   "timeline-schoolbookFilter": "Cuaderno de correspondencia",
   "to": "Para :",
   "today": " Hoy ",
-  "tryagain": "Vuelva a intentarlo.",
-
-
+  "tryagain": "Vuelva a intentarlo",
+  "welcome": "Bienvenido",
   "date":{
-    "day_names": ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
-    "abbr_day_names": ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
-    "month_names": [null, "de enero", "de febrero", "de marzo", "de abril", "de mayo", "de junio", "de julio", "de agosto", "de septiembre", "de octubre", "de noviembre", "de diciembre"],
-    "abbr_month_names":  [null, "Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
+    "day_names": [
+      "Domingo", 
+      "Lunes", 
+      "Martes", 
+      "Miércoles", 
+      "Jueves", 
+      "Viernes", 
+      "Sábado"
+    ],
+    "abbr_day_names": [
+      "Dom", 
+      "Lun", 
+      "Mar", 
+      "Mié", 
+      "Jue", 
+      "Vie", 
+      "Sáb"
+    ],
+    "month_names": [
+      null, 
+      "de enero", 
+      "de febrero", 
+      "de marzo", 
+      "de abril", 
+      "de mayo", 
+      "de junio", 
+      "de julio", 
+      "de agosto", 
+      "de septiembre", 
+      "de octubre", 
+      "de noviembre", 
+      "de diciembre"
+    ],
+    "abbr_month_names":  [
+      null, 
+      "Ene", 
+      "Feb", 
+      "Mar", 
+      "Abr", 
+      "May", 
+      "Jun", 
+      "Jul", 
+      "Ago", 
+      "Sep", 
+      "Oct", 
+      "Nov", 
+      "Dic"
+    ]
   },
-
-
-
 
   "blog-publish-post": "Nueva entrada de blog",
 
@@ -93,11 +148,6 @@
 
 
   "schoolbook-publish": "Nuevo mensaje en tu cuaderno de correspondencia"
-
-
-
-
-
 
 
 
