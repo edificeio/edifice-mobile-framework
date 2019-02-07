@@ -20,7 +20,7 @@ export const fetchTimeline = dispatch => async availableApps => {
   });
 
   try {
-    // console.log("FETCH timeline");
+    console.log("FETCH timeline");
     const news = await fetchJSONWithCache(
       `/timeline/lastNotifications?page=0&${writeTypesParams(availableApps)}`,
       {
@@ -57,7 +57,7 @@ export const listTimeline = dispatch => async (
     type: "FETCH_TIMELINE"
   });
 
-  // console.log("LIST timeline");
+  console.log("LIST timeline");
 
   let loading = true;
 

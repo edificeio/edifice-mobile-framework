@@ -12,6 +12,7 @@ const awaiters = [];
 export let schoolbooks = [];
 export const loadSchoolbooks = (): Promise<any[]> => {
   return new Promise(async (resolve, reject) => {
+    // console.log("LOADing schoolbooks...");
     if (loadingState === "over") {
       resolve(schoolbooks);
       return;
@@ -23,31 +24,38 @@ export const loadSchoolbooks = (): Promise<any[]> => {
     loadingState = "loading";
     awaiters.push(() => resolve(schoolbooks));
     if (Me.session.type.indexOf("Student") !== -1) {
-      // console.log("im a child");
       try {
         // console.log("session :", Me.session);
-        const messages = await fetchJSONWithCache(
+        let messages: any[] = await fetchJSONWithCache(
           `/schoolbook/list/0/${Me.session.userId}`
         );
+        messages = messages || [];
         schoolbooks = [...schoolbooks, ...messages];
         // console.log("loaded schoolbooks list", schoolbooks);
       } catch (e) {
         console.warn(e);
       }
     } else {
-      // console.log("im NOT a child");
-      for (const child of Me.session.children) {
-        if (!child.id) continue;
-        const messages = await fetchJSONWithCache(
-          `/schoolbook/list/0/${child.id}`
-        );
+      try {
+        // console.log("im NOT a child");
+        for (const child of Me.session.children) {
+          if (!child.id) continue;
+          let messages = await fetchJSONWithCache(
+            `/schoolbook/list/0/${child.id}`
+          );
+          messages = messages || [];
+          schoolbooks = [...schoolbooks, ...messages];
+        }
+        let messages = await fetchJSONWithCache(`/schoolbook/list`, {
+          body: JSON.stringify({ filter: "Any", page: 0 }),
+          method: "POST"
+        });
+        messages = messages || [];
         schoolbooks = [...schoolbooks, ...messages];
+        // console.log("schooloobks:", schoolbooks);
+      } catch (e) {
+        console.warn(e);
       }
-      const messages = await fetchJSONWithCache(`/schoolbook/list`, {
-        body: JSON.stringify({ filter: "Any", page: 0 }),
-        method: "POST"
-      });
-      schoolbooks = [...schoolbooks, ...messages];
     }
 
     awaiters.forEach(a => a());
@@ -63,7 +71,7 @@ const dataTypes = {
       ? news.params.wordUri.split("/")
       : null;
     const wordId = split && split[split.length - 1];
-    const wordUri = news.params.wordUri || news.params.resourceUri;
+    const wordUri = `/schoolbook/word/${wordId}`; // news.params.wordUri || news.params.resourceUri;
 
     const defaultContent = {
       date: news.date.$date,
@@ -211,4 +219,8 @@ export const fillData = async (availableApps: object, results: any[]) => {
   }
 
   return newResults;
+};
+
+export const resetLoadingState = () => {
+  loadingState = "idle";
 };

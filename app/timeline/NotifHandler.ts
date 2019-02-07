@@ -2,7 +2,7 @@ import { nainNavNavigate } from "../navigation/helpers/navHelper";
 import Tracking from "../tracking/TrackingManager";
 import { listTimeline } from "./actions/list";
 import { storedFilters, timelineApps } from "./actions/storedFilters";
-import { loadSchoolbooks } from "./actions/dataTypes";
+import { loadSchoolbooks, resetLoadingState } from "./actions/dataTypes";
 
 const openNotif = {
   "/schoolbook": async (data, latestNews) => {
@@ -47,14 +47,18 @@ const openNotif = {
 export default dispatch => async (notificationData, legalapps) => {
   for (const path in openNotif) {
     if (notificationData.resourceUri.startsWith(path)) {
+      // console.log("before await schoolbooks");
+      resetLoadingState();
+      await loadSchoolbooks();
       const availableApps = await storedFilters(legalapps);
       const latestNews = await listTimeline(dispatch)(
         0,
         availableApps,
         legalapps
       );
-      await loadSchoolbooks();
+      // console.log("before await open timeline notif");
       const item = await openNotif[path](notificationData, latestNews);
+      // console.log("got item :", item);
       if (item) {
         Tracking.logEvent("readNews", {
           application: item.application,

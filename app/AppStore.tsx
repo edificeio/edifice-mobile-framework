@@ -25,7 +25,7 @@ import {
   NotificationOpen
 } from "react-native-firebase/notifications";
 
-import { CommonStyles } from './styles/common/styles';
+import { CommonStyles } from "./styles/common/styles";
 import { loadCurrentPlatform, unSelectPlatform } from "./user/actions/platform";
 import { isInActivatingMode } from "./user/selectors";
 
@@ -66,7 +66,7 @@ I18n.locale = RNLanguages.language;
 class AppStoreUnconnected extends React.Component<
   { currentPlatformId: string; store: any },
   {}
-  > {
+> {
   private notificationOpenedListener;
   private onTokenRefreshListener;
 
@@ -101,24 +101,35 @@ class AppStoreUnconnected extends React.Component<
         // Auto Login if possible
         this.props.store.dispatch(login(true));
       }
-      //TODO unsubscribe on unmount=>leak
-      this.notificationOpenedListener = firebase
-        .notifications()
-        .onNotificationOpened((notificationOpen: NotificationOpen) =>
-          this.handleNotification(notificationOpen)
-        );
-      this.onTokenRefreshListener = firebase
-        .messaging()
-        .onTokenRefresh(fcmToken => {
-          this.handleFCMTokenModified(fcmToken);
-        });
 
-      const notificationOpen: NotificationOpen = await firebase
-        .notifications()
-        .getInitialNotification();
-      if (notificationOpen) {
-        this.handleNotification(notificationOpen);
+      if (!AppStoreUnconnected.initialNotifRouted) {
+        const notificationOpen: NotificationOpen = await firebase
+          .notifications()
+          .getInitialNotification();
+        if (notificationOpen) {
+          // console.log("on notif (LAUNCH):", notificationOpen);
+          this.handleNotification(notificationOpen);
+        }
       }
+
+      //TODO unsubscribe on unmount=>leak
+      if (!this.notificationOpenedListener)
+        this.notificationOpenedListener = firebase
+          .notifications()
+          .onNotificationOpened((notificationOpen: NotificationOpen) => {
+            // console.log("on notif (REBACK):", notificationOpen);
+            AppStoreUnconnected.initialNotifRouted = true;
+            return this.handleNotification(notificationOpen);
+          });
+
+      AppStoreUnconnected.initialNotifRouted = false;
+
+      if (!this.onTokenRefreshListener)
+        this.onTokenRefreshListener = firebase
+          .messaging()
+          .onTokenRefresh(fcmToken => {
+            this.handleFCMTokenModified(fcmToken);
+          });
     } else {
       // Load platform
       this.props.store.dispatch(loadCurrentPlatform());
@@ -147,7 +158,11 @@ class AppStoreUnconnected extends React.Component<
     // }
   };
 
+  private static initialNotifRouted: boolean = false;
+
   private handleNotification = (notificationOpen: NotificationOpen) => {
+    // AppStoreUnconnected.initialNotifRouted = true;
+    // console.log("got notification !");
     // Get the action triggered by the notification being opened
     const action = notificationOpen.action;
     // Get information about the notification that was opened

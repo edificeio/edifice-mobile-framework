@@ -122,6 +122,7 @@ export class OAuth2RessourceOwnerPasswordClient {
 
     requestObject.headers = requestObject.headers || {};
     if (this.token.token_type.toLowerCase() === "bearer") {
+      // console.log("token:", this.token.access_token);
       requestObject.headers.Authorization = "Bearer " + this.token.access_token;
     } else {
       throw new Error("EAUTH: Only Bearer token type supported.");
@@ -151,7 +152,7 @@ export class OAuth2RessourceOwnerPasswordClient {
     };
 
     try {
-      console.log("get token oauth ", this.accessTokenUri)
+      // ("get token oauth ", this.accessTokenUri)
       // 2: Call oAuth API
       const data = await this.request(this.accessTokenUri, {
         body,
