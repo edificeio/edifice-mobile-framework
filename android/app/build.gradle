@@ -104,7 +104,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 26
         versionCode 11
-        versionName "0.1.3"
+        versionName "0.1.5"
         resValue "string", "app_name", "${APPNAME}"
         manifestPlaceholders = [ applicationName: APPNAME ]
         ndk {
