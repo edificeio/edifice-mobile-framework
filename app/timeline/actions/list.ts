@@ -1,6 +1,6 @@
 import { fetchJSONWithCache } from "../../infra/fetchWithCache";
 import { fillUserData } from "../../infra/Me";
-import { excludeTypes, fillData } from "./dataTypes";
+import { excludeTypes, fillData, resetLoadingState } from "./dataTypes";
 import { storedFilters } from "./storedFilters";
 
 const writeTypesParams = availableApps => {
@@ -21,6 +21,7 @@ export const fetchTimeline = dispatch => async availableApps => {
 
   try {
     console.log("FETCH timeline");
+    resetLoadingState();
     const news = await fetchJSONWithCache(
       `/timeline/lastNotifications?page=0&${writeTypesParams(availableApps)}`,
       {
