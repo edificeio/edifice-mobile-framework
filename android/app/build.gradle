@@ -103,7 +103,7 @@ android {
         applicationId APPID
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 11
+        versionCode 20
         versionName "0.2.0"
         resValue "string", "app_name", "${APPNAME}"
         manifestPlaceholders = [ applicationName: APPNAME ]
