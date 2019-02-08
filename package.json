@@ -110,6 +110,8 @@
     "react": "16.5.0",
     "react-native": "0.57.1",
     "react-native-android-fullscreen-webview-video": "^1.0.3",
+    "react-native-app-link": "^1.0.0",
+    "react-native-device-info": "^0.26.2",
     "react-native-fast-image": "^5.1.1",
     "react-native-fence-html": "1.0.6",
     "react-native-firebase": "^5.2.1",

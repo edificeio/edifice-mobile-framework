@@ -2,10 +2,11 @@ import {
   actionTypeLoggedIn,
   actionTypeLoggedOut,
   actionTypeLoginError,
-  actionTypeRequestLogin
+  actionTypeRequestLogin,
 } from "../actions/login";
 import { actionTypeSetNotifPrefs } from "../actions/notifPrefs";
 import { actionTypePlatformSelect } from "../actions/platform";
+import { IVersionContext, actionTypeRequestVersion, actionTypeNewVersion, INewVersionAction, actionTypeSkipVersion } from "../actions/version";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -25,6 +26,9 @@ export interface IUserAuthState {
   notification: Notification;
   // platform
   platformId?: string;
+  //version
+  skipVersion: boolean
+  versionContext: IVersionContext
 }
 
 // THE REDUCER ------------------------------------------------------------------------------------
@@ -36,12 +40,29 @@ export const stateDefault: IUserAuthState = {
   notification: null,
   notificationPrefs: [],
   platformId: null,
-  synced: false
+  synced: false,
+  skipVersion: false,
+  versionContext: null
 };
 
-const authReducer = (state: IUserAuthState = stateDefault, action) => {
+const authReducer = (state: IUserAuthState = stateDefault, action): IUserAuthState => {
   switch (action.type) {
+    case actionTypeSkipVersion: {
+      return {
+        ...state,
+        skipVersion: true
+      };
+    }
+    case actionTypeNewVersion: {
+      const aVersion: INewVersionAction = action;
+      return {
+        ...state,
+        loggingIn: false,
+        versionContext: { ...aVersion }
+      };
+    }
     case actionTypeRequestLogin:
+    case actionTypeRequestVersion:
       return {
         ...state,
         error: "",

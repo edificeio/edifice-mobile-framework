@@ -13,21 +13,22 @@ import connectionTracker from "./infra/reducers/connectionTracker";
 import ui from "./infra/reducers/ui";
 import timeline from "./timeline/reducer";
 
-import { login, refreshToken } from "./user/actions/login";
+import { refreshToken } from "./user/actions/login";
 
 import moduleDefinitions from "./AppModules";
 import { getReducersFromModuleDefinitions } from "./infra/moduleTool";
 
-import { AppState, AsyncStorage } from "react-native";
+import { AppState } from "react-native";
 import firebase from "react-native-firebase";
 import {
   Notification,
   NotificationOpen
 } from "react-native-firebase/notifications";
 
-import { CommonStyles } from "./styles/common/styles";
-import { loadCurrentPlatform, unSelectPlatform } from "./user/actions/platform";
+import { CommonStyles } from './styles/common/styles';
+import { loadCurrentPlatform } from "./user/actions/platform";
 import { isInActivatingMode } from "./user/selectors";
+import { checkVersionThenLogin } from "./user/actions/version";
 
 // Disable Yellow Box on release builds.
 if (!__DEV__) {
@@ -99,7 +100,7 @@ class AppStoreUnconnected extends React.Component<
       //IF WE ARE NOT IN ACTIVATION MODE => TRY TO LOGIN => ELSE STAY ON ACTIVATION PAGE
       if (!isInActivatingMode(this.props.store.getState())) {
         // Auto Login if possible
-        this.props.store.dispatch(login(true));
+        this.props.store.dispatch(checkVersionThenLogin(true));
       }
 
       if (!AppStoreUnconnected.initialNotifRouted) {

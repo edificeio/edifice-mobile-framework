@@ -15,8 +15,19 @@ import firebase from "react-native-firebase";
 import Conf from "../../Conf";
 import Tracking from "../../tracking/TrackingManager"; // TODO make tracking back !
 import { initActivationAccount } from "./activation";
-import { Connection } from "../../infra/Connection";
 import { userService } from "../service";
+
+
+// TYPES ------------------------------------------------------------------------------------------------
+
+export enum LoginResult {
+  success,
+  passwordError,
+  connectionError
+}
+
+
+// ACTION TYPES --------------------------------------------------------------------------------------
 
 export const actionTypeRequestLogin = userConfig.createActionType(
   "REQUEST_LOGIN"
@@ -25,11 +36,8 @@ export const actionTypeLoggedIn = userConfig.createActionType("LOGGED_IN");
 export const actionTypeLoginError = userConfig.createActionType("LOGIN_ERROR");
 export const actionTypeLoggedOut = userConfig.createActionType("LOGGED_OUT");
 
-export enum LoginResult {
-  success,
-  passwordError,
-  connectionError
-}
+// THUNKS -----------------------------------------------------------------------------------------
+
 
 export function login(
   redirectOnError: boolean = false,

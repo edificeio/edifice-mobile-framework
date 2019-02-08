@@ -21,23 +21,33 @@ import { TextInputLine } from "../../ui/forms/TextInputLine";
 import { ErrorMessage, Label } from "../../ui/Typography";
 
 // Type definitions
-import { login, LoginResult } from "../actions/login";
+import { LoginResult } from "../actions/login";
 import { IUserAuthState } from "../reducers/auth";
 
 import Conf from "../../Conf";
 import { navigate } from "../../navigation/helpers/navHelper";
 import { CommonStyles } from "../../styles/common/styles";
 import { Icon } from "../../ui/";
+import { checkVersionThenLogin, updateVersionIfWanted, IVersionContext } from "../actions/version";
+import VersionModal from "../components/VersionModal";
+import { getAuthState } from "../selectors";
 
 // Props definition -------------------------------------------------------------------------------
 
 export interface ILoginPageDataProps {
   auth: IUserAuthState;
   headerHeight: number;
+  //version
+  versionContext: IVersionContext
+  versionModal: boolean;
+  version: string;
+  versionMandatory: boolean;
 }
 
 export interface ILoginPageEventProps {
-  onLogin: (userlogin: string, password: string) => Promise<LoginResult>;
+  onSkipVersion(versionContext: IVersionContext);
+  onUpdateVersion(versionContext: IVersionContext);
+  onLogin(userlogin: string, password: string);
 }
 
 export interface ILoginPageOtherProps {
@@ -76,7 +86,7 @@ const FormContainer = style.view({
 export class LoginPage extends React.Component<
   ILoginPageProps,
   ILoginPageState
-> {
+  > {
   // Refs
   private inputLogin: TextInput = null;
   private setInputLoginRef = el => (this.inputLogin = el);
@@ -98,6 +108,7 @@ export class LoginPage extends React.Component<
   // Render
 
   public render() {
+    const { versionContext, versionMandatory, versionModal, version, onSkipVersion, onUpdateVersion } = this.props;
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
         <KeyboardAvoidingView
@@ -105,6 +116,10 @@ export class LoginPage extends React.Component<
           behavior={Platform.OS === "ios" ? "padding" : undefined}
         >
           <ConnectionTrackingBar style={{ position: "absolute" }} />
+          <VersionModal mandatory={versionMandatory} version={version}
+            visibility={versionModal}
+            onCancel={() => onSkipVersion(versionContext)}
+            onSubmit={() => onUpdateVersion(versionContext)} />
           <TouchableWithoutFeedback
             style={{ flex: 1 }}
             onPress={() => this.unfocus()}
@@ -223,13 +238,33 @@ export class LoginPage extends React.Component<
 }
 
 export default connect(
-  (state: any, props: any) => ({
-    auth: state.user.auth,
-    headerHeight: state.ui.headerHeight
-  }),
-  dispatch => ({
+  (state: any, props: any): ILoginPageDataProps => {
+    const auth: IUserAuthState = getAuthState(state)
+    let version = "", versionModal = false, versionMandatory = false, versionContext: IVersionContext = null;
+    if (auth.versionContext && auth.versionContext.version) {
+      versionContext = auth.versionContext;
+      version = versionContext.version.newVersion;
+      versionModal = true;
+      versionMandatory = !versionContext.version.canContinue;
+    }
+    return {
+      auth,
+      headerHeight: state.ui.headerHeight,
+      versionMandatory,
+      version,
+      versionModal,
+      versionContext
+    };
+  },
+  (dispatch): ILoginPageEventProps => ({
+    onSkipVersion: (version) => {
+      dispatch<any>(updateVersionIfWanted(version, false))
+    },
+    onUpdateVersion: (version) => {
+      dispatch<any>(updateVersionIfWanted(version, true))
+    },
     onLogin: (userlogin, password) => {
-      dispatch<any>(login(false, { username: userlogin, password }));
+      dispatch<any>(checkVersionThenLogin(false, { username: userlogin, password }));
     }
   })
 )(LoginPage);
