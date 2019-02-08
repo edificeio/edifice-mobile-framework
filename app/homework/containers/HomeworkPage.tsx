@@ -20,16 +20,27 @@ const mapStateToProps: (state: any) => IHomeworkPageDataProps = state => {
   const localState = state.homework;
   const selectedDiaryId = localState.selectedDiary;
   const currentDiaryTasks = localState.tasks[selectedDiaryId];
-  if (!currentDiaryTasks)
-    return {
-      /* Initial props if there is not initialisation yet.
-      For the hack, we consider app is already fetching to avoid a screen blinking. */
-      diaryId: null,
-      didInvalidate: true,
-      isFetching: true,
-      lastUpdated: null,
-      tasksByDay: null
-    };
+  if (!selectedDiaryId || !currentDiaryTasks)
+    if (localState.diaryList.didInvalidate)
+      return {
+        /* Initial props if there is not initialisation yet.
+        For the hack, we consider app is already fetching to avoid a screen blinking. */
+        diaryId: null,
+        didInvalidate: true,
+        isFetching: true,
+        lastUpdated: null,
+        tasksByDay: null
+      };
+    else {
+      return {
+        /* Here is an mepty screen displayer */
+        diaryId: null,
+        didInvalidate: true,
+        isFetching: false,
+        lastUpdated: null,
+        tasksByDay: null
+      };
+    }
   const { didInvalidate, isFetching, lastUpdated } = currentDiaryTasks;
 
   // Flatten two-dimensional IOrderedArrayById
