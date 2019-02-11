@@ -4,7 +4,7 @@ export const actionTypeFilterThreads = conversationConfig.createActionType(
   "FILTER_THREAD"
 );
 export const filterConversation = dispatch => filter => {
-  // console.log("dispatch", actionTypeFilterThreads);
+  // console.log("filter", filter);
   dispatch({
     filter,
     type: actionTypeFilterThreads

@@ -46,7 +46,7 @@ const conversationThreadListReducer = (
       };
     case actionTypeMessageSent:
       // action contains, `data: IConversationMessage (with newId and oldId instead of id)`
-      //console.log("reducer: (messages) send message ok", action);
+      // ("reducer: (messages) send message ok", action);
       const result2 = { ...state };
       result2[action.data.newId] = result2[action.data.oldId];
       result2[action.data.newId].status = ConversationMessageStatus.sent;

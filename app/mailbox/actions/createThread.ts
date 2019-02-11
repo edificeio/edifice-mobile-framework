@@ -32,7 +32,7 @@ export function createThread(pickedUsers) {
       to: pickedUsers.map((u: any) => u.id),
       unread: 0
     };
-    console.log("from name: ", Me, newThread)
+    // console.log("from name: ", Me, newThread)
 
     dispatch({
       newThread,

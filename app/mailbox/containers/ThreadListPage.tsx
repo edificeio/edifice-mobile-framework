@@ -1,5 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import unorm from "unorm";
 import {
   IThreadListPageDataProps,
   IThreadListPageEventProps,
@@ -18,27 +19,37 @@ import {
 import { conversationThreadSelected } from "../actions/threadSelected";
 
 import { findReceivers2 } from "../components/ThreadItem";
-import Tracking from "../../tracking/TrackingManager";
 
 const mapStateToProps: (state: any) => IThreadListPageDataProps = state => {
   // Extract data from state
   const localState = state[mailboxConfig.reducerName].threadList;
   const filterState = state[mailboxConfig.reducerName].filter;
 
-  // Format props
-  return {
-    isFetching: localState.isFetching,
-    isRefreshing: localState.data.isRefreshing,
-    page: localState.data.page,
-    threads: filterState.criteria
+  try {
+    const displayedThreads = filterState.criteria
       ? localState.data.ids
           .map(threadId => localState.data.byId[threadId])
           .filter(
             t =>
               searchText(t).indexOf(searchFilter(filterState.criteria)) !== -1
           )
-      : localState.data.ids.map(threadId => localState.data.byId[threadId])
-  };
+      : localState.data.ids.map(threadId => localState.data.byId[threadId]);
+
+    // Format props
+    return {
+      isFetching: localState.isFetching,
+      isRefreshing: localState.data.isRefreshing,
+      page: localState.data.page,
+      threads: displayedThreads
+    };
+  } catch (e) {
+    return {
+      isFetching: localState.isFetching,
+      isRefreshing: localState.data.isRefreshing,
+      page: localState.data.page,
+      threads: []
+    };
+  }
 };
 
 const mapDispatchToProps: (
@@ -107,17 +118,20 @@ export default connect(
   mapDispatchToProps
 )(ThreadListPageContainer);
 
-const searchText = thread =>
-  removeAccents(
+const searchText = thread => {
+  const searchtext =
     (thread.subject || "") +
-      " " +
-      findReceivers2(thread.to, thread.from, thread.cc)
-        .map(r => thread.displayNames.find(dn => dn[0] === r)[1])
-        .join(", ")
-        .toLowerCase()
-  );
-const searchFilter = filter => removeAccents(filter.toLowerCase());
+    " " +
+    findReceivers2(thread.to, thread.from, thread.cc)
+      .map(r => thread.displayNames.find(dn => dn[0] === r)[1])
+      .join(", ")
+      .toLowerCase();
+  return removeAccents(searchtext);
+};
+const searchFilter = (filter: string) => removeAccents(filter.toLowerCase());
 
-// from https://stackoverflow.com/a/37511463/6111343
-const removeAccents = str =>
-  str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+// from https://stackoverflow.com/a/37511463/6111343 but using unorm package instead of String.normalize (not available on Android Release mode)
+const removeAccents = (str: string) => {
+  const combiningChars = /[\u0300-\u036F]/g;
+  return unorm.nfd(str).replace(combiningChars, "");
+};
