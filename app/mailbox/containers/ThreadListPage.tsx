@@ -119,14 +119,14 @@ export default connect(
 )(ThreadListPageContainer);
 
 const searchText = thread => {
-  const searchtext =
+  const searchtext = removeAccents(
     (thread.subject || "") +
-    " " +
-    findReceivers2(thread.to, thread.from, thread.cc)
-      .map(r => thread.displayNames.find(dn => dn[0] === r)[1])
-      .join(", ")
-      .toLowerCase();
-  return removeAccents(searchtext);
+      " " +
+      findReceivers2(thread.to, thread.from, thread.cc)
+        .map(r => thread.displayNames.find(dn => dn[0] === r)[1])
+        .join(", ")
+  ).toLowerCase();
+  return searchtext;
 };
 const searchFilter = (filter: string) => removeAccents(filter.toLowerCase());
 
