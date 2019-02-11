@@ -25,6 +25,7 @@ export const loadSchoolbooks = (): Promise<any[]> => {
     awaiters.push(() => resolve(schoolbooks));
     if (Me.session.type.indexOf("Student") !== -1) {
       try {
+        // console.log("im a child");
         // console.log("session :", Me.session);
         let messages: any[] = await fetchJSONWithCache(
           `/schoolbook/list/0/${Me.session.userId}`
@@ -37,11 +38,12 @@ export const loadSchoolbooks = (): Promise<any[]> => {
       }
     } else {
       try {
-        // console.log("im NOT a child");
-        for (const child of Me.session.children) {
-          if (!child.id) continue;
+        // console.log("im NOT a child", Me.session.children);
+        for (const child of Object.keys(Me.session.children)) {
+          // console.log("loading messages for child", child);
+          if (!child) continue;
           let messages = await fetchJSONWithCache(
-            `/schoolbook/list/0/${child.id}`
+            `/schoolbook/list/0/${child}`
           );
           messages = messages || [];
           schoolbooks = [...schoolbooks, ...messages];
@@ -55,6 +57,7 @@ export const loadSchoolbooks = (): Promise<any[]> => {
         // console.log("schooloobks:", schoolbooks);
       } catch (e) {
         console.warn(e);
+        throw e;
       }
     }
 

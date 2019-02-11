@@ -52,13 +52,16 @@ export const fetchTimeline = dispatch => async availableApps => {
 export const listTimeline = dispatch => async (
   page,
   availableApps,
-  legalapps
+  legalapps,
+  recent?: boolean
 ) => {
+  if (recent === undefined) recent = false;
+
   dispatch({
     type: "FETCH_TIMELINE"
   });
 
-  // console.log("LIST timeline");
+  // console.log("LIST timeline", page, recent);
 
   let loading = true;
 
@@ -106,6 +109,7 @@ export const listTimeline = dispatch => async (
     if (newNews.length > 0) {
       dispatch({
         news: newNews,
+        recent,
         type: "APPEND_TIMELINE"
       });
     } else {

@@ -50,11 +50,16 @@ export default dispatch => async (notificationData, legalapps) => {
       // console.log("before await schoolbooks");
       resetLoadingState();
       await loadSchoolbooks();
+      dispatch({
+        news: [],
+        type: "FETCH_NEW_TIMELINE"
+      });
       const availableApps = await storedFilters(legalapps);
       const latestNews = await listTimeline(dispatch)(
         0,
         availableApps,
-        legalapps
+        legalapps,
+        true
       );
       // console.log("before await open timeline notif");
       const item = await openNotif[path](notificationData, latestNews);
