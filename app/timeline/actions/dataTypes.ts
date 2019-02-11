@@ -39,11 +39,11 @@ export const loadSchoolbooks = (): Promise<any[]> => {
     } else {
       try {
         // console.log("im NOT a child", Me.session.children);
-        for (const child of Object.keys(Me.session.children)) {
+        for (const child of Object.values(Me.session.children)) {
           // console.log("loading messages for child", child);
-          if (!child) continue;
+          if (!child.id) continue;
           let messages = await fetchJSONWithCache(
-            `/schoolbook/list/0/${child}`
+            `/schoolbook/list/0/${child.id}`
           );
           messages = messages || [];
           schoolbooks = [...schoolbooks, ...messages];
