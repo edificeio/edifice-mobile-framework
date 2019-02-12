@@ -211,7 +211,11 @@ export const fillData = async (availableApps: object, results: any[]) => {
     availableAppsWithUppercase[app.toUpperCase()] = availableApps[app];
   });
   for (const result of results) {
-    if (dataTypes[result.type] && availableAppsWithUppercase[result.type]) {
+    // Hack : If we want to open a push-notif that concerns a timeline notif of an unfiltered type, we have to load all types.
+    // So, we will load everything and filter at render time, instead of filter at load time.
+    if (
+      dataTypes[result.type] /* && availableAppsWithUppercase[result.type]*/
+    ) {
       const newResult = await dataTypes[result.type](result, newResults);
       if (newResult && !urls.includes(newResult.url)) {
         newResult.application = result.type.toLowerCase();

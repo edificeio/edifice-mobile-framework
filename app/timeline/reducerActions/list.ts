@@ -15,7 +15,8 @@ export const APPEND_TIMELINE = (state, action) => ({
           n => state.news.find(n2 => n2.id === n.id) === undefined
         )
       ],
-  isFetching: false
+  isFetching: false,
+  endReached: true
 });
 
 export const FETCH_NEW_TIMELINE = (state, action) => ({
@@ -25,7 +26,8 @@ export const FETCH_NEW_TIMELINE = (state, action) => ({
     ...action.news // ,
     // ...state.news
   ],
-  isFetching: false
+  isFetching: false,
+  endReached: true
 });
 
 export const END_REACHED_TIMELINE = (state, action) => ({

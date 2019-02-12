@@ -9,6 +9,11 @@ const writeTypesParams = availableApps => {
   for (const app in availableApps) {
     if (availableApps[app]) {
       params += "&type=" + app.toUpperCase();
+    } else {
+      // Hack : If we want to open a push-notif that concerns a timeline notif of an unfiltered type, we have to load all types.
+      // So, we will load everything and filter at render time, instead of filter at load time.
+      params += "&type=" + app.toUpperCase();
+      // console.log("Hack : write type params true instead of false:", app);
     }
   }
   return params;

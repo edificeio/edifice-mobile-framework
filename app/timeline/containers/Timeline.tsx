@@ -115,9 +115,7 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
     return false;
   }
 
-  public renderList() {
-    const { news } = this.props;
-
+  public renderList(news) {
     return (
       <FlatList
         refreshControl={
@@ -181,7 +179,19 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
   }
 
   public render() {
-    const { isFetching, fetchFailed, news } = this.props;
+    const { isFetching, fetchFailed } = this.props;
+    const { availableApps } = this.props;
+    const availableAppsWithUppercase = {};
+    if (availableApps) {
+      Object.keys(availableApps).forEach(app => {
+        availableAppsWithUppercase[app] = availableApps[app];
+        availableAppsWithUppercase[app.toUpperCase()] = availableApps[app];
+      });
+    }
+    let { news } = this.props;
+    if (availableApps) {
+      news = news.filter(n => availableAppsWithUppercase[n.type]);
+    }
 
     if (fetchFailed) {
       return this.renderFetchFailed();
@@ -194,7 +204,7 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
     return (
       <PageContainer>
         <ConnectionTrackingBar />
-        {isFetching ? this.renderLoading() : this.renderList()}
+        {isFetching ? this.renderLoading() : this.renderList(news)}
       </PageContainer>
     );
   }
