@@ -13,7 +13,22 @@ export function loadNotificationPrefs() {
       "/timeline/notifications-defaults"
     );
     // console.log("load preference timeline prefs");
-    const timelinePrefs = await preference("timeline");
+    // console.log("default notif prefs", defaultNotifs);
+    const defaultNotifsPrefsConfig = defaultNotifs.reduce((acc, el) => {
+      // console.log("el:", el);
+      acc[el.key] = el;
+      // By default, all notif types seem to be activated, even if the backend say that only mailbow is activated.
+      acc[el.key].defaultFrequency = "IMMEDIATE";
+      acc[el.key]["push-notif"] = true;
+      return acc;
+    }, {});
+    // console.log("defaultNotifsPrefsConfig", defaultNotifsPrefsConfig);
+    const timelinePrefs = (await preference("timeline")) || {
+      config: defaultNotifsPrefsConfig,
+      page: 0,
+      type: []
+    };
+    // console.log("timeline prefs:", timelinePrefs);
     const newNotifs = defaultNotifs.map(notif => ({
       ...notif,
       defaultFrequency:

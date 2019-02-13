@@ -35,6 +35,7 @@ export const preference = async (appName: string) => {
     `${Conf.currentPlatform.url}/userbook/preference/${appName}`,
     {}
   )) as { preference: any };
+  // console.log("returned pref:", appName, appPrefs);
   preferences[appName] = JSON.parse(appPrefs.preference);
   return JSON.parse(appPrefs.preference);
 };
