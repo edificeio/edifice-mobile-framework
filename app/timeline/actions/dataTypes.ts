@@ -38,15 +38,17 @@ export const loadSchoolbooks = (): Promise<any[]> => {
       }
     } else {
       try {
-        // console.log("im NOT a child", Me.session.children);
-        for (const child of Object.values(Me.session.children)) {
-          // console.log("loading messages for child", child);
-          if (!child.id) continue;
+        // console.log("im NOT a child", Me.session);
+        for (const childId of Object.values((Me.session as any).childrenIds)) {
+          // console.log("loading messages for child", childId);
+          if (!childId) continue;
+          // console.log("OK", childId);
           let messages = await fetchJSONWithCache(
-            `/schoolbook/list/0/${child.id}`
+            `/schoolbook/list/0/${childId}`
           );
           messages = messages || [];
           schoolbooks = [...schoolbooks, ...messages];
+          // console.log("schooloobks of child:", messages);
         }
         let messages = await fetchJSONWithCache(`/schoolbook/list`, {
           body: JSON.stringify({ filter: "Any", page: 0 }),
