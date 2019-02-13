@@ -16,6 +16,7 @@ export class ConversationTopBar extends React.PureComponent<
   {
     navigation?: any;
     conversationsIsEmpty: boolean;
+    searchFilter?: string;
     filter: (searchText) => void;
     clearFilter: () => void;
     clearPickedUsers: () => void;
@@ -60,6 +61,7 @@ export class ConversationTopBar extends React.PureComponent<
       <SearchBar
         onClose={() => this.close()}
         onChange={search => this.props.filter(search)}
+        text={this.props.searchFilter}
       />
     );
   }
@@ -89,6 +91,21 @@ export class ConversationTopBar extends React.PureComponent<
 
     return this.defaultView();
   }
+  /*
+  private didBlurSubscription;
+
+  public componentDidMount() {
+    this.didBlurSubscription = this.props.navigation.addListener(
+      "didBlur",
+      payload => {
+        this.close();
+      }
+    );
+  }
+
+  public componentWillUnmount() {
+    this.didBlurSubscription.remove();
+  }*/
 }
 
 export default connect(
@@ -97,7 +114,8 @@ export default connect(
     const filterState = state[conversationConfig.reducerName].filter;
     return {
       conversationsIsEmpty: threadListState.data.length === 0,
-      searchCleared: !filterState.cleared
+      searchCleared: !filterState.cleared,
+      searchFilter: filterState.criteria
     };
   },
   dispatch => ({

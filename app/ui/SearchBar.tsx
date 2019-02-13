@@ -1,5 +1,6 @@
 import style from "glamorous-native";
 import * as React from "react";
+import { Keyboard } from 'react-native'
 import { CommonStyles } from "../styles/common/styles";
 import { Header, HeaderIcon } from "./headers/Header";
 import { CloseIcon, SearchIcon } from "./icons/SearchIcon";
@@ -9,12 +10,13 @@ import I18n from "i18n-js";
 export interface SearchBarProps {
   onChange: (searchText) => void;
   onClose: () => void;
+  text?: string;
 }
 
 export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
-  textInput: any;
+  private textInput: any;
   public state = {
-    value: ""
+    value: this.props.text || ""
   };
 
   public onChangeText(value) {
@@ -26,12 +28,16 @@ export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
     this.props.onClose();
   }
 
+  public onBlur() {
+    // this.props.onClose();
+  }
+
   public render() {
     return (
       <Header>
         <HeaderIcon name={"search"} />
         <TextInput
-          onBlur={() => this.onClose()}
+          onBlur={() => this.onBlur()}
           autoFocus={true}
           enablesReturnKeyAutomatically={true}
           onChangeText={value => this.onChangeText(value)}
@@ -40,11 +46,16 @@ export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
           returnKeyType={"search"}
           underlineColorAndroid={"transparent"}
           value={this.state.value}
-          blurOnSubmit={false}
+          blurOnSubmit={true}
+          onSubmitEditing={() => Keyboard.dismiss()}
         />
         <HeaderIcon onPress={() => this.onClose()} name={"close"} />
       </Header>
     );
+  }
+
+  public componentDidUpdate() {
+    if (!this.props.text) this.props.onClose();
   }
 }
 

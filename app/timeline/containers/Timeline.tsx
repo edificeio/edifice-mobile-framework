@@ -17,6 +17,7 @@ import Tracking from "../../tracking/TrackingManager";
 
 import { fetchTimeline, listTimeline } from "../actions/list";
 import { INewsModel } from "../reducer";
+import { clearFilterConversation } from "../../mailbox/actions/filter";
 
 export class TimelineHeader extends React.Component<
   { navigation?: any },
@@ -47,6 +48,7 @@ interface ITimelineProps {
   fetchFailed: boolean;
   isAuthenticated: boolean;
   legalapps: any;
+  onFocus: () => void;
 }
 
 // tslint:disable-next-line:max-classes-per-file
@@ -64,6 +66,18 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
         this.props.legalapps
       );
     }
+    this.props.onFocus();
+    this.didFocusSubscription = this.props.navigation.addListener(
+      "didFocus",
+      payload => {
+        this.props.onFocus();
+      }
+    );
+  }
+
+  private didFocusSubscription;
+  public componentWillUnmount() {
+    this.didFocusSubscription.remove();
   }
 
   public nextPage() {
@@ -217,8 +231,9 @@ export default connect(
     legalapps: state.user.auth.apps
   }),
   dispatch => ({
+    fetch: availableApps => fetchTimeline(dispatch)(availableApps),
+    onFocus: () => clearFilterConversation(dispatch)(),
     sync: (page: number, availableApps, legalapps) =>
-      listTimeline(dispatch)(page, availableApps, legalapps),
-    fetch: availableApps => fetchTimeline(dispatch)(availableApps)
+      listTimeline(dispatch)(page, availableApps, legalapps)
   })
 )(Timeline);

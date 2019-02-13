@@ -60,6 +60,7 @@ export interface IHomeworkPageDataProps {
 }
 
 export interface IHomeworkPageEventProps {
+  onFocus?: () => void;
   onRefresh?: (diaryId: string) => void;
   onSelect?: (diaryId: string, date: moment.Moment, itemId: string) => void;
   onScrollBeginDrag?: () => void;

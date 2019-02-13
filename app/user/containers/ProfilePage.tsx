@@ -12,6 +12,7 @@ import { PageContainer } from "../../ui/ContainerContent";
 import { AppTitle, Header, HeaderIcon } from "../../ui/headers/Header";
 import { ModalBox, ModalContent } from "../../ui/Modal";
 import { LightP } from "../../ui/Typography";
+import { clearFilterConversation } from "../../mailbox/actions/filter";
 
 export class ProfilePageHeader extends React.PureComponent<
   {
@@ -32,12 +33,30 @@ export class ProfilePageHeader extends React.PureComponent<
 
 // tslint:disable-next-line:max-classes-per-file
 export class ProfilePage extends React.PureComponent<
-  { onLogout: () => Promise<void>; navigation: any },
+  {
+    onFocus: () => Promise<void>;
+    onLogout: () => Promise<void>;
+    navigation: any;
+  },
   { showDisconnect: boolean }
-  > {
+> {
   public state = {
     showDisconnect: false
   };
+
+  private didFocusSubscription;
+  public componentDidMount() {
+    this.props.onFocus();
+    this.didFocusSubscription = this.props.navigation.addListener(
+      "didFocus",
+      payload => {
+        this.props.onFocus();
+      }
+    );
+  }
+  public componentWillUnmount() {
+    this.didFocusSubscription.remove();
+  }
 
   public disconnect() {
     this.setState({ showDisconnect: false });
@@ -83,6 +102,7 @@ export class ProfilePage extends React.PureComponent<
 export default connect(
   state => ({}),
   dispatch => ({
+    onFocus: () => clearFilterConversation(dispatch)(),
     onLogout: () => dispatch<any>(logout())
   })
 )(ProfilePage);

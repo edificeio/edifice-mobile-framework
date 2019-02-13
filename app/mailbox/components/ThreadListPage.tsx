@@ -59,6 +59,7 @@ export interface IThreadListPageEventProps {
   // Because of presence of a state in the container, eventProps are not passed using mapDispatchToProps.
   // So, eventProps that are using the state are passed in *OtherProps.
   onOpenThread?: (threadId: string) => void;
+  onFocus?: () => void;
   onDeleteThread?: (threadId: string) => void;
 }
 

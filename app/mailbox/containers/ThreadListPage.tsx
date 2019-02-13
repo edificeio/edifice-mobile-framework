@@ -9,6 +9,7 @@ import {
 } from "../components/ThreadListPage";
 import mailboxConfig from "../config";
 
+import { clearFilterConversation } from "../actions/filter";
 import {
   conversationDeleteThread,
   conversationSetThreadRead,
@@ -60,6 +61,9 @@ const mapDispatchToProps: (
     onDeleteThread: (threadId: string) => {
       dispatch(conversationDeleteThread(threadId));
     },
+    onFocus: () => {
+      // clearFilterConversation(dispatch)();
+    },
     onOpenThread: (threadId: string) => {
       dispatch(conversationThreadSelected(threadId));
       dispatch(fetchConversationThreadResetMessages(threadId));
@@ -72,8 +76,6 @@ class ThreadListPageContainer extends React.PureComponent<
   IThreadListPageProps & { dispatch: any },
   {}
 > {
-  private didFocusSubscription;
-
   constructor(props) {
     super(props);
   }
@@ -88,16 +90,17 @@ class ThreadListPageContainer extends React.PureComponent<
     );
   }
 
+  private didFocusSubscription;
   public componentDidMount() {
     this.didFocusSubscription = this.props.navigation.addListener(
       "didFocus",
       payload => {
         this.reloadList();
+        this.props.onFocus();
       }
     );
     // this.fetchNextPage();
   }
-
   public componentWillUnmount() {
     this.didFocusSubscription.remove();
   }
