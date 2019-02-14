@@ -18,8 +18,9 @@ export function loadNotificationPrefs() {
       // console.log("el:", el);
       acc[el.key] = el;
       // By default, all notif types seem to be activated, even if the backend say that only mailbow is activated.
-      acc[el.key].defaultFrequency = "IMMEDIATE";
-      acc[el.key]["push-notif"] = true;
+      // Uncomment the two lines below to force to show all notif prefs ON.
+      // acc[el.key].defaultFrequency = "IMMEDIATE";
+      // acc[el.key]["push-notif"] = true;
       return acc;
     }, {});
     // console.log("defaultNotifsPrefsConfig", defaultNotifsPrefsConfig);
