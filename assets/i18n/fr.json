@@ -13,6 +13,7 @@
   "common-connected": "Connecté",
   "common-connecting": "Reconnexion en cours",
   "common-disconnected": "Aucune connexion internet",
+  "common-ErrorLoadingResource": "Cette ressource est inaccessible.",
   "common-ErrorNetwork": "Erreur de réseau",
   "common-VersionTitle":"Nouvelle version sur le Store",
   "common-VersionContentMandatory":"Une nouvelle version ({{version}}) est disponible sur le store. Veuillez mettre à jour votre application.",

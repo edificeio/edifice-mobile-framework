@@ -13,6 +13,7 @@
   "common-connected": "Connected",
   "common-connecting": "Connecting",
   "common-disconnected": "Not connected to the Internet",
+  "common-ErrorLoadingResource": "This content is inaccessible.",
   "common-ErrorNetwork": "Network errors",
   "Connect": "Log in",
   "Activate": "Activate account",

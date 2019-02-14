@@ -6,6 +6,7 @@
  * Has a `opts` prop that are the HtmlConverter's options.
  */
 
+import I18n from "i18n-js";
 import * as React from "react";
 import { View } from "react-native";
 
@@ -14,6 +15,7 @@ import { fetchJSONWithCache } from "../infra/fetchWithCache";
 import HtmlConverterJsx, {
   IHtmlConverterJsxOptions
 } from "../infra/htmlConverter/jsx2";
+import { Italic } from "./Typography";
 
 export interface IHtmlContentViewProps {
   navigation?: any;
@@ -27,17 +29,21 @@ export interface IHtmlContentViewProps {
 interface IHtmlContentViewState {
   html?: string; // Loaded Html
   jsx?: JSX.Element; // Computed Jsx
+  error?: boolean; // Has loading cressource failed ?
+  loading?: boolean; // Is resource loading ?
 }
 
-export class HtmlContentView extends React.Component<
+export class HtmlContentView extends React.PureComponent<
   IHtmlContentViewProps,
   IHtmlContentViewState
 > {
   public constructor(props) {
     super(props);
     this.state = {
+      error: false,
       html: this.props.html || undefined,
-      jsx: undefined
+      jsx: undefined,
+      loading: false
     };
   }
 
@@ -46,10 +52,18 @@ export class HtmlContentView extends React.Component<
   }
 
   public async componentDidUpdate() {
-    await this.compute();
+    if (this.state.jsx) return;
+    try {
+      await this.compute();
+    } catch (e) {
+      this.setState({ error: true });
+      throw e;
+    }
   }
 
   public async compute() {
+    if (this.state.loading) return;
+    this.setState({ loading: true });
     if (!this.state.html) {
       if (!this.props.getContentFromResource)
         throw new Error(
@@ -58,9 +72,10 @@ export class HtmlContentView extends React.Component<
       // If there is no Html, try to load it.
       // console.log("load", this.props.source);
       const responseJson = await fetchJSONWithCache(this.props.source);
-      this.setState({
-        html: this.props.getContentFromResource(responseJson)
-      });
+      // console.log("repsonse", responseJson);
+      const html = this.props.getContentFromResource(responseJson);
+      if (!html) this.setState({ error: true });
+      else this.setState({ html });
     } else if (!this.state.jsx) {
       // Else, if there is not JSX, try to compute it.
       this.setState({
@@ -70,6 +85,13 @@ export class HtmlContentView extends React.Component<
   }
 
   public render() {
+    if (this.state.error)
+      return (
+        <View>
+          <Italic>{I18n.t("common-ErrorLoadingResource")}</Italic>
+        </View>
+      );
+
     const loadingComp = this.props.loadingComp || <Loading />;
 
     return <View>{this.state.jsx || loadingComp}</View>;
