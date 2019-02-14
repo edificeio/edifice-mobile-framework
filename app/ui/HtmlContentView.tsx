@@ -31,6 +31,7 @@ interface IHtmlContentViewState {
   jsx?: JSX.Element; // Computed Jsx
   error?: boolean; // Has loading cressource failed ?
   loading?: boolean; // Is resource loading ?
+  done?: boolean; // Is content fully loaded ?
 }
 
 export class HtmlContentView extends React.PureComponent<
@@ -40,6 +41,7 @@ export class HtmlContentView extends React.PureComponent<
   public constructor(props) {
     super(props);
     this.state = {
+      done: false,
       error: false,
       html: this.props.html || undefined,
       jsx: undefined,
@@ -52,6 +54,7 @@ export class HtmlContentView extends React.PureComponent<
   }
 
   public async componentDidUpdate() {
+    // console.log("state", this.state);
     if (this.state.jsx) return;
     try {
       await this.compute();
@@ -62,7 +65,7 @@ export class HtmlContentView extends React.PureComponent<
   }
 
   public async compute() {
-    if (this.state.loading) return;
+    if (this.state.done) return;
     this.setState({ loading: true });
     if (!this.state.html) {
       if (!this.props.getContentFromResource)
@@ -71,6 +74,7 @@ export class HtmlContentView extends React.PureComponent<
         );
       // If there is no Html, try to load it.
       // console.log("load", this.props.source);
+      if (this.state.loading) return;
       const responseJson = await fetchJSONWithCache(this.props.source);
       // console.log("repsonse", responseJson);
       const html = this.props.getContentFromResource(responseJson);
@@ -79,6 +83,7 @@ export class HtmlContentView extends React.PureComponent<
     } else if (!this.state.jsx) {
       // Else, if there is not JSX, try to compute it.
       this.setState({
+        done: true,
         jsx: HtmlConverterJsx(this.state.html, this.props.opts).render
       });
     }
