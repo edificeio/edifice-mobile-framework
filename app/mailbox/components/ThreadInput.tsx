@@ -1,14 +1,14 @@
 import style from "glamorous-native";
+import I18n from "i18n-js";
 import * as React from "react";
 import { Platform, View } from "react-native";
-import I18n from "i18n-js";
 import { connect } from "react-redux";
 
 import { Me } from "../../infra/Me";
 import { CommonStyles } from "../../styles/common/styles";
 import conversationConfig from "../config";
 
-import { sendMessage } from "../actions/sendMessage";
+import { IConversationMessage, sendMessage } from "../actions/sendMessage";
 import { sendPhoto } from "../actions/sendPhoto";
 
 import { IconOnOff } from "../../ui";
@@ -68,12 +68,14 @@ const ContainerInput = style.view({
 class ThreadInput extends React.PureComponent<
   {
     thread: IConversationThread;
-    lastMessageId: string;
+    lastMessage: IConversationMessage;
     emptyThread: boolean;
     displayPlaceholder: boolean;
     send: (data: any) => Promise<void>;
     sendPhoto: (data: any) => Promise<void>;
-    onReceiversTap: (conversation: IConversationThread) => void;
+    onReceiversTap: (
+      conversation: IConversationThread | IConversationMessage
+    ) => void;
   },
   {
     selected: Selected;
@@ -89,7 +91,9 @@ class ThreadInput extends React.PureComponent<
     textMessage: ""
   };
 
-  public findReceivers2(conversation: IConversationThread) {
+  public static findReceivers2(
+    conversation: IConversationThread | IConversationMessage
+  ) {
     // TODO : Duplicate of ThreadItem.findReceivers() ?
     const to = new Set(
       [
@@ -106,21 +110,21 @@ class ThreadInput extends React.PureComponent<
 
   private sendPhoto() {
     const { textMessage, newThreadId } = this.state;
-    const { thread, lastMessageId } = this.props;
+    const { thread, lastMessage } = this.props;
 
     this.input.innerComponent.blur();
 
     this.props.sendPhoto({
       cc: thread.cc,
-      parentId: lastMessageId,
+      parentId: lastMessage.id,
       subject: "Re: " + thread.subject,
       threadId: newThreadId || thread.id,
-      to: this.findReceivers2(thread)
+      to: ThreadInput.findReceivers2(thread)
     });
   }
 
   private async onValid() {
-    const { thread, lastMessageId } = this.props;
+    const { thread, lastMessage } = this.props;
     const { textMessage } = this.state;
 
     this.input.innerComponent.setNativeProps({ keyboardType: "default" });
@@ -133,11 +137,11 @@ class ThreadInput extends React.PureComponent<
     await this.props.send({
       body: `<div>${textMessage}</div>`,
       cc: thread.cc,
-      parentId: lastMessageId,
+      displayNames: thread.displayNames,
+      parentId: lastMessage.id,
       subject: "Re: " + thread.subject,
       threadId: thread.id,
-      to: this.findReceivers2(thread),
-      displayNames: thread.displayNames
+      to: ThreadInput.findReceivers2(thread)
     });
   }
 
@@ -175,22 +179,29 @@ class ThreadInput extends React.PureComponent<
   }
   public render() {
     const { selected, textMessage } = this.state;
-    const { displayPlaceholder, thread } = this.props;
-    const receiversIds = this.findReceivers2(thread);
-    const receiverNames = thread.displayNames
-      .filter(dN => receiversIds.indexOf(dN[0]) > -1)
-      .map(dN => dN[1]);
+    const { displayPlaceholder, thread, lastMessage } = this.props;
+    const receiversIds = lastMessage
+      ? ThreadInput.findReceivers2(lastMessage)
+      : [];
+    const receiverNames = lastMessage
+      ? lastMessage.displayNames
+          .filter(dN => receiversIds.indexOf(dN[0]) > -1)
+          .map(dN => dN[1])
+      : thread.displayNames
+          .filter(dN => receiversIds.indexOf(dN[0]) > -1)
+          .map(dN => dN[1]);
+    // console.log("rerender thread input", receiverNames);
     const showReceivers =
       (selected == Selected.keyboard ||
         (textMessage && textMessage.length > 0)) &&
       receiverNames.length >= 2;
-    //iOS hack => does not display placeholder on update
+    // iOS hack => does not display placeholder on update
     return (
       <View>
         <ThreadInputReceivers
           names={receiverNames}
           show={showReceivers}
-          onPress={() => this.props.onReceiversTap(thread)}
+          onPress={() => this.props.onReceiversTap(lastMessage || thread)}
         />
         <ContainerFooterBar>
           <ContainerInput>
@@ -258,9 +269,25 @@ export default connect(
       state[conversationConfig.reducerName].threadList.data.byId[
         selectedThreadId
       ];
+    /*console.log(
+      "messages",
+      selectedThread,
+      state[conversationConfig.reducerName].messages,
+      selectedThread.messages[0]
+    );*/
+    const lastMessage =
+      state[conversationConfig.reducerName].messages.data[
+        selectedThread.messages[0]
+      ];
+
+    // console.log("selected thread last message:", lastMessage);
+    /*const receiversIds = lastMessage
+      ? ThreadInput.findReceivers2(lastMessage)
+      : [];
+    console.log("receiversIds", receiversIds);*/
 
     return {
-      lastMessageId: selectedThread.messages[0],
+      lastMessage,
       thread: selectedThread
     };
   },

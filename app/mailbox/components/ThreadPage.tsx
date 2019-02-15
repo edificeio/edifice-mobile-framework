@@ -169,7 +169,11 @@ export class ThreadPage extends React.PureComponent<
             this.onEndReachedCalledDuringMomentum = false;
           }}
         />
-        <ThreadInput emptyThread={messages.length == 0} displayPlaceholder={!isFetchingFirst} onReceiversTap={this.handleTapReceiversFromThread} />
+        <ThreadInput
+          emptyThread={!messages.length}
+          displayPlaceholder={!isFetchingFirst}
+          onReceiversTap={this.handleTapReceivers}
+        />
       </KeyboardAvoidingView>
     );
   }
