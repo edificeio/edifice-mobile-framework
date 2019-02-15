@@ -271,6 +271,7 @@ export function fetchConversationThreadNewerMessages(threadId: string) {
       // dispatch
       dispatch(conversationMessagesReceived(messages)); // message contents
       dispatch(conversationThreadAppendReceived(messageIds, threadId, true)); // messages ids ordered
+      dispatch(conversationSetThreadRead(threadId, true));
     } catch (errmsg) {
       dispatch(conversationThreadListFetchError(errmsg));
     }
@@ -297,18 +298,22 @@ export function fetchConversationThreadResetMessages(threadId: string) {
       // dispatch
       dispatch(conversationMessagesReceived(messages)); // message contents
       dispatch(conversationThreadResetReceived(messageIds, threadId)); // messages ids ordered
+      dispatch(conversationSetThreadRead(threadId, true));
     } catch (errmsg) {
       dispatch(conversationThreadListFetchError(errmsg));
     }
   };
 }
 
-export function conversationSetThreadRead(threadId: string) {
+export function conversationSetThreadRead(threadId: string, force?: boolean) {
+  force = force || false; // Note : when this method is called on thread refresh, thread information about unread messages is 0. So we have to force marking as read.
   return async (dispatch, getState) => {
     const threadInfo = localState(getState()).data.byId[threadId];
-    if (!threadInfo.unread) return;
+    // console.log("toggle unread ?", threadId, threadInfo);
+    if (!force && !threadInfo.unread) return;
     try {
       if (!Conf.currentPlatform) throw new Error("must specify a platform");
+      // console.log("YES TOGGLE UNRAD");
       const response = await signedFetch(
         `${Conf.currentPlatform.url}/conversation/thread/toggleUnread`,
         {
