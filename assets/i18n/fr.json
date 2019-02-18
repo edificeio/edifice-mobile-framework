@@ -7,7 +7,7 @@
   "auth-loginFailed": "L'identifiant ou le mot de passe est incorrect",
   "auth-notPremium": "L'application n'est pas disponible pour votre établissement.",
   "auth-networkError": "L'authentification a échoué. Vérifiez votre connexion à internet.",
-  "auth-unknownError": "Erreur lors de l'authentitifation. Veuillez réessayer.",
+  "auth-unknownError": "Erreur lors de l'authentification. Veuillez réessayer.",
   "Cancel": "Annuler",
   "common-confirm": "Êtes-vous sûr de vouloir",
   "common-connected": "Connecté",
