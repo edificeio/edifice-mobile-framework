@@ -558,7 +558,8 @@ export class HtmlConverterJsx extends HtmlConverter {
     // console.log(`encourtered image : "${tag.attributes}"`);
 
     // 0 - Check if it's a smiley
-    const isEmoji = tag.attributes.class.match(/smiley/);
+    const isEmoji =
+      tag.attributes.class && tag.attributes.class.match(/smiley/);
 
     if (isEmoji) {
       // console.log("it's a smiley !!");
