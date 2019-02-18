@@ -14,6 +14,7 @@
  * }
  */
 
+import I18n from "i18n-js";
 import * as React from "react";
 import {
   Image,
@@ -29,6 +30,7 @@ import WebView from "react-native-android-fullscreen-webview-video";
 import sax from "sax";
 import { HtmlConverter } from ".";
 import Conf from "../../Conf";
+import { CommonStyles } from "../../styles/common/styles";
 import { Loading } from "../../ui";
 import { Images } from "../../ui/Images";
 import { A, Bold, Italic } from "../../ui/Typography";
@@ -39,6 +41,7 @@ export interface IHtmlConverterJsxOptions {
   hyperlinks?: boolean;
   images?: boolean;
   iframes?: boolean;
+  audio?: boolean;
   thumbnailSize?: string;
 }
 
@@ -55,7 +58,8 @@ export enum HtmlConverterNuggetTypes {
   Text = 0,
   Images,
   Iframe,
-  InlineImage
+  InlineImage,
+  Audio
 }
 
 export interface INugget {
@@ -91,6 +95,10 @@ export interface IIframeNugget extends INugget {
   src: string;
 }
 
+export interface IAudioNugget extends INugget {
+  src: string;
+}
+
 export class HtmlConverterJsx extends HtmlConverter {
   // CONVERSION OPTIONS & CONSTRUCTION ------------------------------------------------------------
 
@@ -98,6 +106,7 @@ export class HtmlConverterJsx extends HtmlConverter {
    * Converter options
    */
   public static defaultOpts: IHtmlConverterJsxOptions = {
+    audio: true,
     formatting: true,
     hyperlinks: true,
     iframes: true,
@@ -256,6 +265,9 @@ export class HtmlConverterJsx extends HtmlConverter {
             break;
           case "span":
             this.parseOpenSpanTag(tag);
+            break;
+          case "audio":
+            this.parseAudioTag(tag);
             break;
         }
 
@@ -662,6 +674,29 @@ export class HtmlConverterJsx extends HtmlConverter {
     this.currentImageNugget = null; // Iframes breaks image groups
   }
 
+  /**
+   * Append the array-object representation of the render with a new audio media.
+   * An audio media representation is an object like { type: "audio", src: string }
+   * @param tag sax.Tag <audio> tag with its src attribute
+   */
+  protected parseAudioTag(tag: sax.Tag): void {
+    if (!this.opts.audio) return;
+    let src = tag.attributes.src;
+    if (src.indexOf("file://") === -1) {
+      // TODO : Better parse audio url and detect cases
+      if (src.indexOf("://") === -1) {
+        if (!Conf.currentPlatform) throw new Error("must specify a platform");
+        src = Conf.currentPlatform.url + src;
+      }
+    }
+    const audioNugget: IAudioNugget = {
+      src,
+      type: HtmlConverterNuggetTypes.Audio
+    };
+    this.insertTopLevelNugget(audioNugget);
+    this.currentImageNugget = null; // Audio breaks image groups
+  }
+
   // SECOND CONVERSION STEP -----------------------------------------------------------------------
 
   /**
@@ -681,6 +716,8 @@ export class HtmlConverterJsx extends HtmlConverter {
             return this.renderParseImages(nugget, index, style);
           } else if (nugget.type === HtmlConverterNuggetTypes.Iframe) {
             return this.renderParseIframe(nugget, index, style);
+          } else if (nugget.type === HtmlConverterNuggetTypes.Audio) {
+            return this.renderParseAudio(nugget, index, style);
           } else {
             return null;
           }
@@ -862,6 +899,33 @@ export class HtmlConverterJsx extends HtmlConverter {
               }
             : {})}
         />
+      </View>
+    );
+  }
+
+  /**
+   * Build JSX <Audio> Element from an AudioNugget
+   * @param nugget A Top-level AudioNugget.
+   * @param key the traditional React key prop
+   * @param style
+   */
+  protected renderParseAudio(
+    nugget: IAudioNugget,
+    key: string,
+    style: ViewStyle = {}
+  ): JSX.Element {
+    return (
+      <View
+        key={key}
+        style={{
+          backgroundColor: CommonStyles.entryfieldBorder,
+          paddingHorizontal: 16,
+          paddingVertical: 12,
+          width: "100%",
+          ...style
+        }}
+      >
+        <Italic>{I18n.t("soundNotAvailable")}</Italic>
       </View>
     );
   }
