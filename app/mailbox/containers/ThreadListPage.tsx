@@ -19,6 +19,7 @@ import {
 } from "../actions/threadList";
 import { conversationThreadSelected } from "../actions/threadSelected";
 
+import { removeAccents } from "../../utils/string";
 import { findReceivers2 } from "../components/ThreadItem";
 
 const mapStateToProps: (state: any) => IThreadListPageDataProps = state => {
@@ -132,9 +133,3 @@ const searchText = thread => {
   return searchtext;
 };
 const searchFilter = (filter: string) => removeAccents(filter.toLowerCase());
-
-// from https://stackoverflow.com/a/37511463/6111343 but using unorm package instead of String.normalize (not available on Android Release mode)
-const removeAccents = (str: string) => {
-  const combiningChars = /[\u0300-\u036F]/g;
-  return unorm.nfd(str).replace(combiningChars, "");
-};
