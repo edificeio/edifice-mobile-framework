@@ -11,11 +11,13 @@
  */
 
 import style from "glamorous-native";
+import I18n from "i18n-js";
 import * as React from "react";
 const { Text } = style;
 import HtmlToText from "../../infra/htmlConverter/text";
 import { CommonStyles } from "../../styles/common/styles";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
+import { A } from "../../ui/Typography";
 
 export interface IHomeworkCardProps {
   style?: any;
@@ -50,7 +52,8 @@ export const HomeworkCard = ({
       {formattedContent ? (
         <Text fontSize={14} color={CommonStyles.textColor} lineHeight={20}>
           {/* TODO typo */}
-          {formattedContent}
+          {formattedContent.content}
+          {formattedContent.cropped ? <A> {I18n.t("seeMore")}</A> : null}
         </Text>
       ) : null}
       {title ? (

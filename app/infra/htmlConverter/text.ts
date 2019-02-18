@@ -88,7 +88,7 @@ export class HtmlConverterText extends HtmlConverter {
     maxSize = HtmlConverterText.SHORT_TEXT_MAX_SIZE,
     maxLines = HtmlConverterText.SHORT_TEXT_MAX_LINES,
     newLineChar = HtmlConverterText.NEW_LINE_CHARACTER
-  ): string {
+  ): { content: string; cropped: boolean } {
     const text = this._render;
     const firstLines = text.split(newLineChar, maxLines);
     let mx = maxSize;
@@ -109,8 +109,12 @@ export class HtmlConverterText extends HtmlConverter {
       )
     );
     trimmedFirstLines = trimmedFirstLines.trim();
-    if (trimmedFirstLines.length !== text.length) trimmedFirstLines += "...";
-    return trimmedFirstLines;
+    const cropped = trimmedFirstLines.length !== text.length;
+    if (cropped) trimmedFirstLines += "...";
+    return {
+      content: trimmedFirstLines,
+      cropped
+    };
   }
   public get excerpt() {
     return this.getExcerpt();
