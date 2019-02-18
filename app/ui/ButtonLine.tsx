@@ -13,7 +13,31 @@ const Container = style(TouchableOpacity)({
   borderColor: "#ddd",
   height: 46,
   justifyContent: "flex-start",
-  marginTop: 20,
+  // marginTop: 20,
+  paddingHorizontal: 15
+});
+
+export const ContainerSpacer = style.view({
+  marginTop: 20
+});
+
+export const NoTouchableContainer = style.view({
+  alignItems: "center",
+  flexDirection: "row",
+  height: 46,
+  justifyContent: "flex-start",
+  paddingHorizontal: 15
+});
+
+export const ContainerView = style.view({
+  alignItems: "center",
+  flexDirection: "row",
+  backgroundColor: "white",
+  borderBottomWidth: 1,
+  borderColor: "#ddd",
+  height: 46,
+  justifyContent: "flex-start",
+  // marginTop: 20,
   paddingHorizontal: 15
 });
 

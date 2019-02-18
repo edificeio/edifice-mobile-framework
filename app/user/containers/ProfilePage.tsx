@@ -3,23 +3,29 @@ import I18n from "i18n-js";
 import { connect } from "react-redux";
 
 import { logout } from "../actions/login";
-
 import { Me } from "../../infra/Me";
 import { ButtonsOkCancel } from "../../ui";
-import { ButtonLine } from "../../ui/ButtonLine";
+import {
+  ButtonLine,
+  NoTouchableContainer,
+  ContainerSpacer,
+  ContainerView
+} from "../../ui/ButtonLine";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
 import { AppTitle, Header, HeaderIcon } from "../../ui/headers/Header";
 import { ModalBox, ModalContent } from "../../ui/Modal";
-import { LightP } from "../../ui/Typography";
+import { Label, LightP } from "../../ui/Typography";
 import { clearFilterConversation } from "../../mailbox/actions/filter";
+
+import packageJson from "../../../package.json";
 
 export class ProfilePageHeader extends React.PureComponent<
   {
     navigation: any;
   },
   undefined
-  > {
+> {
   public render() {
     return (
       <Header>
@@ -81,13 +87,23 @@ export class ProfilePage extends React.PureComponent<
     return (
       <PageContainer>
         <ConnectionTrackingBar />
-        {showDisconnect && <ModalBox backdropOpacity={0.5} isVisible={showDisconnect}>
-          {this.disconnectBox()}
-        </ModalBox>}
+        {showDisconnect && (
+          <ModalBox backdropOpacity={0.5} isVisible={showDisconnect}>
+            {this.disconnectBox()}
+          </ModalBox>
+        )}
+        <ContainerSpacer />
         <ButtonLine
           title={"directory-notificationsTitle"}
           onPress={() => this.props.navigation.navigate("NotifPrefs")}
         />
+        <ContainerSpacer />
+        <ContainerView>
+          <Label>
+            {I18n.t("version-number")} {packageJson.version}
+          </Label>
+        </ContainerView>
+        <ContainerSpacer />
         <ButtonLine
           title={"directory-disconnectButton"}
           hideIcon={true}
