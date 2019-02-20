@@ -1,12 +1,19 @@
 import {
   actionTypeLoggedIn,
   actionTypeLoggedOut,
+  actionTypeLoginCancel,
   actionTypeLoginError,
-  actionTypeRequestLogin,
+  actionTypeRequestLogin
 } from "../actions/login";
 import { actionTypeSetNotifPrefs } from "../actions/notifPrefs";
 import { actionTypePlatformSelect } from "../actions/platform";
-import { IVersionContext, actionTypeRequestVersion, actionTypeNewVersion, INewVersionAction, actionTypeSkipVersion } from "../actions/version";
+import {
+  actionTypeNewVersion,
+  actionTypeRequestVersion,
+  actionTypeSkipVersion,
+  INewVersionAction,
+  IVersionContext
+} from "../actions/version";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -27,8 +34,8 @@ export interface IUserAuthState {
   // platform
   platformId?: string;
   //version
-  skipVersion: boolean
-  versionContext: IVersionContext
+  skipVersion: boolean;
+  versionContext: IVersionContext;
 }
 
 // THE REDUCER ------------------------------------------------------------------------------------
@@ -45,7 +52,10 @@ export const stateDefault: IUserAuthState = {
   versionContext: null
 };
 
-const authReducer = (state: IUserAuthState = stateDefault, action): IUserAuthState => {
+const authReducer = (
+  state: IUserAuthState = stateDefault,
+  action
+): IUserAuthState => {
   switch (action.type) {
     case actionTypeSkipVersion: {
       return {
@@ -85,6 +95,11 @@ const authReducer = (state: IUserAuthState = stateDefault, action): IUserAuthSta
         error: action.errmsg,
         loggingIn: false,
         platformId: state.platformId
+      };
+    case actionTypeLoginCancel:
+      return {
+        ...state,
+        loggingIn: false
       };
     case actionTypeLoggedOut:
       return {

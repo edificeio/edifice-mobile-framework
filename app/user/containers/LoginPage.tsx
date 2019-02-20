@@ -31,6 +31,7 @@ import { Icon } from "../../ui/";
 import { checkVersionThenLogin, updateVersionIfWanted, IVersionContext } from "../actions/version";
 import VersionModal from "../components/VersionModal";
 import { getAuthState } from "../selectors";
+import BottomSwitcher from "../../ui/BottomSwitcher";
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -190,27 +191,9 @@ export class LoginPage extends React.Component<
             />
           </View>
         </FormContainer>
-        <TouchableOpacity
-          onPress={() => this.handleBackToPlatformSelector()}
-          style={{
-            alignItems: "center",
-            backgroundColor: "#F8F8FA",
-            borderTopColor: "#DCDDE0",
-            borderTopWidth: 1,
-            height: 56,
-            justifyContent: "center",
-            width: "100%"
-          }}
-        >
-          <Label>
-            {Conf.currentPlatform.displayName}{" "}
-            <Icon
-              size={9}
-              color={CommonStyles.lightTextColor}
-              name="arrow_down"
-            />
-          </Label>
-        </TouchableOpacity>
+        <BottomSwitcher onPress={() => this.handleBackToPlatformSelector()}>
+          {Conf.currentPlatform.displayName}{" "}
+        </BottomSwitcher>
       </View>
     );
   }
