@@ -25,7 +25,7 @@ export class ConversationTopBar extends React.PureComponent<
 > {
   constructor(props) {
     super(props);
-    this.state = { searching: false };
+    this.state = { searching: props.searchFilter ? true : false };
   }
 
   private onClose() {
