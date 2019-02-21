@@ -133,12 +133,13 @@ class ThreadInput extends React.PureComponent<
     this.setState({
       textMessage: ""
     });
-    // console.log("thread object ", thread)
+    // console.log("thread object ", thread);
+    // console.log("last message", lastMessage);
     await this.props.send({
       body: `<div>${textMessage}</div>`,
       cc: thread.cc,
       displayNames: thread.displayNames,
-      parentId: lastMessage.id,
+      parentId: lastMessage ? lastMessage.id : undefined,
       subject: "Re: " + thread.subject,
       threadId: thread.id,
       to: ThreadInput.findReceivers2(thread)
