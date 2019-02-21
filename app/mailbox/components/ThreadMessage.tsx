@@ -92,27 +92,36 @@ export default class ThreadMessage extends React.PureComponent<
     if (!body) {
       return <style.View />;
     }
+    const senderText = this.props.displayNames.find(el => el[0] === from)[1];
 
     return (
-      <MessageBlock>
-        <MessageContainer>
-          <MessageInfos>
-            <MessageInfosDetails>
-              <AvatarContainer>
+      <MessageBlock style={{ flex: 0 }}>
+        <MessageContainer style={{ flex: 0 }}>
+          <MessageInfos style={{ flex: 0 }}>
+            <MessageInfosDetails style={{ flex: 0 }}>
+              <AvatarContainer style={{ flex: 0 }}>
                 <SingleAvatar size={30} userId={from} />
               </AvatarContainer>
-              <ReceiverTextPrefix>
-                {I18n.t("conversation-receiverPrefix")}{" "}
-              </ReceiverTextPrefix>
-              <TouchableOpacity onPress={() => this.props.onTapReceivers()}>
-                <ReceiverLink>
-                  <ReceiverText>{receiverText}</ReceiverText>
-                </ReceiverLink>
-              </TouchableOpacity>
+              <View style={{ flex: 1 }}>
+                <ReceiverText numberOfLines={1} ellipsizeMode="tail">
+                  {senderText}
+                </ReceiverText>
+                <TouchableOpacity
+                  onPress={() => this.props.onTapReceivers()}
+                  style={{ flexDirection: "row" }}
+                >
+                  <ReceiverTextPrefix>
+                    {I18n.t("conversation-receiverPrefix")}{" "}
+                  </ReceiverTextPrefix>
+                  <ReceiverLink>
+                    <ReceiverText>{receiverText}</ReceiverText>
+                  </ReceiverLink>
+                </TouchableOpacity>
+              </View>
+              <MessageInfosStatus style={{ flex: 0 }}>
+                <MessageStatus status={status} date={date} />
+              </MessageInfosStatus>
             </MessageInfosDetails>
-            <MessageInfosStatus>
-              <MessageStatus status={status} date={date} />
-            </MessageInfosStatus>
           </MessageInfos>
           {messageText ? (
             <TextBubble content={messageText} isMine={isMine} />
