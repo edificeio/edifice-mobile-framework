@@ -176,7 +176,7 @@ export class HtmlConverterJsx extends HtmlConverter {
       The parse() method here construct the array, and the renderParse() method convert it to JSX.
       Both of these two methods stores the result in `this.render`, so after conversion, the array representation isn't available anymore.
     */
-    // console.log("input HTML", this._html);
+    console.log("input HTML", this._html);
     this._render = [];
 
     // Now we put all content in a top-level TextNugget, to be sure that we are not going to have sucessing top-level text nuggets.

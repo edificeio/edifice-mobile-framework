@@ -212,6 +212,7 @@ const BubbleStyle = style.view(
     alignSelf: "stretch",
     justifyContent: "center",
     marginBottom: 10,
+    marginTop: 6,
     paddingHorizontal: 16,
     paddingVertical: 12,
     shadowColor: CommonStyles.shadowColor,
