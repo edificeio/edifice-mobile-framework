@@ -172,7 +172,6 @@ class ThreadInput extends React.PureComponent<
         placeholder={placeholder}
         underlineColorAndroid={"transparent"}
         value={textMessage}
-        autoCorrect={false}
         style={Platform.OS === "android" ? { paddingTop: 8 } : {}}
       />
     );
