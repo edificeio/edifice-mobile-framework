@@ -21,11 +21,14 @@ export class ConversationTopBar extends React.PureComponent<
     clearFilter: () => void;
     clearPickedUsers: () => void;
   },
-  { searching: boolean }
+  { searching: boolean; autoFocus: boolean }
 > {
   constructor(props) {
     super(props);
-    this.state = { searching: props.searchFilter ? true : false };
+    this.state = {
+      autoFocus: false,
+      searching: props.searchFilter ? true : false
+    };
   }
 
   private onClose() {
@@ -46,7 +49,7 @@ export class ConversationTopBar extends React.PureComponent<
   }*/
 
   public openSearch() {
-    this.setState({ searching: true });
+    this.setState({ searching: true, autoFocus: true });
     this.props.filter("");
     Tracking.logEvent("searchConversation");
   }
@@ -62,6 +65,7 @@ export class ConversationTopBar extends React.PureComponent<
         onClose={() => this.close()}
         onChange={search => this.props.filter(search)}
         text={this.props.searchFilter}
+        autoFocus={this.state.autoFocus}
       />
     );
   }

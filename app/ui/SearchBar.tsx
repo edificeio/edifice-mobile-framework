@@ -11,6 +11,7 @@ export interface SearchBarProps {
   onChange: (searchText) => void;
   onClose: () => void;
   text?: string;
+  autoFocus?: boolean;
 }
 
 export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
@@ -38,7 +39,7 @@ export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
         <HeaderIcon name={"search"} />
         <TextInput
           onBlur={() => this.onBlur()}
-          autoFocus={true}
+          autoFocus={!!this.props.autoFocus}
           enablesReturnKeyAutomatically={true}
           onChangeText={value => this.onChangeText(value)}
           placeholder={I18n.t("Search")}
