@@ -7,7 +7,6 @@ import { connect } from "react-redux";
 // Actions
 
 import {
-  excludeNotifTypes,
   loadNotificationPrefs,
   setNotificationPref
 } from "../../user/actions/notifPrefs";
@@ -103,7 +102,7 @@ export class NotifPrefsPage extends React.PureComponent<
       )
     )
       return false;
-    return excludeNotifTypes.indexOf(notifPref.key) === -1;
+    return true;
   }
 
   public render() {
@@ -115,9 +114,9 @@ export class NotifPrefsPage extends React.PureComponent<
         <ConnectionTrackingBar />
         <ScrollView>
           <H4>{I18n.t("directory-notificationsTitle")}</H4>
-          {this.props.notificationPrefs
+          {Object.values(this.props.notificationPrefs)
             .filter(nn => this.isAllowed(nn))
-            .map(pref => (
+            .map((pref: any) => (
               <NotifPrefLine
                 key={pref.key}
                 i18nKey={pref.key}

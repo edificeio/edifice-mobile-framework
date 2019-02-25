@@ -1,4 +1,8 @@
-import { fetchJSONWithCache } from "../../infra/fetchWithCache";
+import deepmerge from "deepmerge";
+import {
+  fetchJSONWithCache,
+  signedFetchJson
+} from "../../infra/fetchWithCache";
 import { preference, savePreference } from "../../infra/Me";
 import userConfig from "../config";
 
@@ -8,49 +12,62 @@ export const actionTypeSetNotifPrefs = userConfig.createActionType(
 
 export function loadNotificationPrefs() {
   return async (dispatch, getState) => {
-    // console.log("load timeline default notif prefs");
-    const defaultNotifs = await fetchJSONWithCache(
-      "/timeline/notifications-defaults"
-    );
-    // console.log("load preference timeline prefs");
-    // console.log("default notif prefs", defaultNotifs);
-    const defaultNotifsPrefsConfig = defaultNotifs.reduce((acc, el) => {
-      // console.log("el:", el);
-      acc[el.key] = el;
-      // By default, all notif types seem to be activated, even if the backend say that only mailbow is activated.
-      // Uncomment the two lines below to force to show all notif prefs ON.
-      // acc[el.key].defaultFrequency = "IMMEDIATE";
-      // acc[el.key]["push-notif"] = true;
+    // 1 : Get user's timeline preferences
+
+    const rawUserTimelinePrefs = (await preference("timeline")) || {
+      config: {}
+    };
+    if (!rawUserTimelinePrefs.config) rawUserTimelinePrefs.config = {};
+    // console.log("rawUserTimelinePrefs", rawUserTimelinePrefs);
+
+    // 2 : Build user preferences
+
+    const userNotifPrefsConfig = Object.values(
+      rawUserTimelinePrefs.config
+    ).reduce((acc, el: any) => {
+      if (includeNotifKeys.includes(el.key)) {
+        acc[el.key] = { ...el, "push-notif": el["push-notif"] || false }; // In the eventual case of push-notifs is not defined for this key, we consider `false`.
+      }
       return acc;
     }, {});
+    // console.log("userNotifPrefsConfig", userNotifPrefsConfig);
+
+    // 3 : Get default notif prefs
+
+    // These default prefs are also a complete list of existing prefs keys
+    // Also, the complete key list is filtred with excludeNotifTypes array.
+    const rawDefaultNotifsPrefsConfig = await fetchJSONWithCache(
+      "/timeline/notifications-defaults"
+    );
+    const defaultNotifsPrefsConfig = rawDefaultNotifsPrefsConfig.reduce(
+      (acc, el) => {
+        if (includeNotifKeys.includes(el.key)) {
+          acc[el.key] = { ...el, "push-notif": el["push-notif"] || false }; // In the eventual case of push-notifs is not defined for this key, we consider `false`.
+        }
+        return acc;
+      },
+      {}
+    );
     // console.log("defaultNotifsPrefsConfig", defaultNotifsPrefsConfig);
-    const timelinePrefs = (await preference("timeline")) || {
-      config: defaultNotifsPrefsConfig,
-      page: 0,
-      type: []
-    };
-    // console.log("timeline prefs:", timelinePrefs);
-    const newNotifs = defaultNotifs.map(notif => ({
-      ...notif,
-      defaultFrequency:
-        timelinePrefs.config && timelinePrefs.config[notif.key]
-          ? timelinePrefs.config[notif.key].defaultFrequency
-          : notif.defaultFrequency,
-      "push-notif":
-        timelinePrefs.config &&
-        timelinePrefs.config[notif.key] &&
-        timelinePrefs.config[notif.key].defaultFrequency === "IMMEDIATE"
-          ? timelinePrefs.config[notif.key]["push-notif"]
-          : false
-    }));
+
+    // 4 : We merge the user values in the default ones.
+
+    const mergedNotifPrefs = deepmerge(
+      defaultNotifsPrefsConfig,
+      userNotifPrefsConfig
+    );
+    // console.log("mergedNotifPrefs", mergedNotifPrefs);
+
+    // 5 : Dispatch load
 
     dispatch({
-      notificationPrefs: newNotifs,
+      notificationPrefs: mergedNotifPrefs,
       type: actionTypeSetNotifPrefs
     });
   };
 }
 
+/*
 export const excludeNotifTypes = [
   "blog.publish-comment",
   "blog.share",
@@ -69,29 +86,41 @@ export const excludeNotifTypes = [
   "schoolbook.word-resend",
   "schoolbook.word-shared"
 ];
+*/
 
-export function setNotificationPref(notif, value, notificationPrefs) {
+/**
+ * Only these preferences keys are used by Pocket for push-notifications.
+ */
+export const includeNotifKeys = [
+  "blog.publish-post",
+  "news.info-shared",
+  "messagerie.send-message",
+  "schoolbook.publish"
+];
+
+export function setNotificationPref(
+  notif: { key: string },
+  value: boolean,
+  notificationPrefs: object
+) {
   return async (dispatch, getState) => {
-    const newPrefs = notificationPrefs.reduce((acc, cur, i) => {
-      acc[cur.key] = {
-        ...cur,
-        defaultFrequency:
-          notif.key === cur.key && value ? "IMMEDIATE" : cur.defaultFrequency,
-        "push-notif": notif.key === cur.key ? value : cur["push-notif"] === true
-      };
-      return acc;
-    }, {});
+    // console.log("set notif pref", notif, value, notificationPrefs);
+    const newNotificationPrefs = {
+      ...notificationPrefs,
+      [notif.key]: {
+        ...notif,
+        "push-notif": value
+      }
+    };
+    // console.log("newNotificationPrefs", newNotificationPrefs);
 
     dispatch({
-      notificationPrefs: Object.keys(newPrefs).map(p => ({
-        ...newPrefs[p],
-        key: p
-      })),
+      notificationPrefs: newNotificationPrefs,
       type: actionTypeSetNotifPrefs
     });
 
     savePreference("timeline", {
-      config: newPrefs
+      config: newNotificationPrefs
     });
   };
 }

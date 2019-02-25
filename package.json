@@ -101,6 +101,7 @@
     "appcenter-analytics": "1.11.0",
     "appcenter-crashes": "1.11.0",
     "base-64": "^0.1.0",
+    "deepmerge": "^3.2.0",
     "fast-html-parser": "1.0.1",
     "glamorous-native": "1.4.0",
     "i18n-js": "^3.1.0",
