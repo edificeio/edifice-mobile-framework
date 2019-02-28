@@ -11,6 +11,9 @@
  *    images: boolean (default true)
  *    iframes: boolean (default true) videos and other web content
  *    thumbnailSize: string (default "1600x0") thumbnail size for images (useless if images = false)
+ *    globalTextStyle: style applied to rendered first-level text elements.
+ *
+ *    plus all options available in htmlConverter.
  * }
  */
 
@@ -28,7 +31,7 @@ import {
 } from "react-native";
 import WebView from "react-native-android-fullscreen-webview-video";
 import sax from "sax";
-import { HtmlConverter } from ".";
+import { HtmlConverter, IHtmlConverterOptions } from ".";
 import Conf from "../../Conf";
 import { CommonStyles } from "../../styles/common/styles";
 import { Loading } from "../../ui";
@@ -36,13 +39,14 @@ import { Images } from "../../ui/Images";
 import { A, Bold, Italic } from "../../ui/Typography";
 import { signImagesUrls, signUrl } from "../oauth";
 
-export interface IHtmlConverterJsxOptions {
+export interface IHtmlConverterJsxOptions extends IHtmlConverterOptions {
   formatting?: boolean;
   hyperlinks?: boolean;
   images?: boolean;
   iframes?: boolean;
   audio?: boolean;
   thumbnailSize?: string;
+  globalTextStyle?: TextStyle;
 }
 
 // Interfaces for supported HTML Elements
@@ -108,6 +112,7 @@ export class HtmlConverterJsx extends HtmlConverter {
   public static defaultOpts: IHtmlConverterJsxOptions = {
     audio: true,
     formatting: true,
+    globalTextStyle: {},
     hyperlinks: true,
     iframes: true,
     images: true,
@@ -161,7 +166,7 @@ export class HtmlConverterJsx extends HtmlConverter {
   protected currentLink?: string = null;
 
   public constructor(html: string, opts: IHtmlConverterJsxOptions = {}) {
-    super(html);
+    super(html, opts);
     this.opts = { ...HtmlConverterJsx.defaultOpts, ...opts };
     this.postConstruct();
   }
@@ -176,7 +181,7 @@ export class HtmlConverterJsx extends HtmlConverter {
       The parse() method here construct the array, and the renderParse() method convert it to JSX.
       Both of these two methods stores the result in `this.render`, so after conversion, the array representation isn't available anymore.
     */
-    console.log("input HTML", this._html);
+    // console.log("input HTML", this._html);
     this._render = [];
 
     // Now we put all content in a top-level TextNugget, to be sure that we are not going to have sucessing top-level text nuggets.
@@ -712,7 +717,10 @@ export class HtmlConverterJsx extends HtmlConverter {
           const style = index === 0 ? {} : { marginTop: 15 };
 
           if (nugget.type === HtmlConverterNuggetTypes.Text) {
-            return this.renderParseText(nugget, index, style);
+            return this.renderParseText(nugget, index, {
+              ...this.opts.globalTextStyle,
+              ...style
+            });
           } else if (nugget.type === HtmlConverterNuggetTypes.Images) {
             return this.renderParseImages(nugget, index, style);
           } else if (nugget.type === HtmlConverterNuggetTypes.Iframe) {

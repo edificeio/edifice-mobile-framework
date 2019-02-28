@@ -8,9 +8,18 @@
  * The JSX interpreter can ignore some rich content types using his `ignore` and/or his `mode` attribute.
  *
  * Warning : parsing and interpreting are costly, don't overuse it. Be sure to cache the result to be not computed again.
+ *
+ * @param opts object conversion options : {
+ *   ignoreClasses: string[] class anmes of tag that will be ignored from parsing.
+ * }
  */
 
 import sax from "sax";
+import saxophone from "saxophone";
+
+export interface IHtmlConverterOptions {
+  ignoreClasses?: string[];
+}
 
 export class HtmlConverter {
   // tslint:disable-next-line:variable-name
@@ -29,12 +38,38 @@ export class HtmlConverter {
     return this._render;
   }
 
-  protected parser: sax.SAXParser; /// The sax parser
+  protected parser; /// The sax parser
+
+  /**
+   * Converter options
+   */
+  public static defaultOpts: IHtmlConverterOptions = {
+    ignoreClasses: []
+  };
+  protected opts: IHtmlConverterOptions;
+
+  /**
+   * Current absolute deepness level, computed with all tags.
+   */
+  protected absoluteDeepnessLevel: number = 0;
+
+  /**
+   * Ignore current deepness level
+   */
+  protected ignoreDeepnessLevel: number = undefined;
+
+  protected isIgnoring = () =>
+    this.ignoreDeepnessLevel &&
+    this.absoluteDeepnessLevel >= this.ignoreDeepnessLevel;
 
   protected getParsingEventHandlers() {
     return {
       onclosetag: (tagName: string) => {
         // console.warn("TAG CLOSE : /" + tagName + " !!! " + Math.random());
+        if (!htmlVoidElements.includes(tagName)) --this.absoluteDeepnessLevel;
+        console.log("close tag :", tagName, this.absoluteDeepnessLevel);
+        if (this.isIgnoring()) return null;
+        this.ignoreDeepnessLevel = undefined;
         return tagName;
       },
       onend: () => {
@@ -47,18 +82,40 @@ export class HtmlConverter {
       },
       onopentag: (tag: sax.Tag) => {
         // console.warn("TAG OPEN : " + tag.name + " !!! " + Math.random());
+        if (!htmlVoidElements.includes(tag.name)) ++this.absoluteDeepnessLevel;
+        console.log("open tag :", tag.name, this.absoluteDeepnessLevel);
+
+        if (this.opts.ignoreClasses && tag.attributes["class"]) {
+          const classes = tag.attributes["class"].split(" ");
+          let willBeIgnored = false;
+
+          classes.map(className => {
+            if (this.opts.ignoreClasses.includes(className))
+              willBeIgnored = true;
+          });
+
+          if (willBeIgnored) {
+            // console.log("will be ignored until closing");
+            this.ignoreDeepnessLevel = this.absoluteDeepnessLevel;
+          }
+        }
+
+        if (this.isIgnoring()) tag.name = null;
         return tag;
       },
       ontext: (text: string) => {
         // text = text.replace(/\u200B/g, ""); // remowe ZWSP (Zero-Width SPace) fucking character !
+        if (this.isIgnoring()) return null;
         if (!text) return "";
+        console.log(text);
         if (text.match(/\S/)) return text; // Filter whitespace-only strings.
         return " ";
       }
     };
   }
 
-  public constructor(html: string) {
+  public constructor(html: string, opts?: IHtmlConverterOptions) {
+    this.opts = { ...HtmlConverter.defaultOpts, ...opts };
     html = html.replace(/\u200B/g, "").replace("<div></div>", "<br/>"); // remowe ZWSP (Zero-Width SPace) fucking character AND replace empty <div>s by <br>
     this._html = "<body>" + html + "</body>"; // html code MUST have a root element. // TODO : use a boolean to know of the <body> tag is already present.
     this.initSaxParser();
@@ -90,3 +147,21 @@ export class HtmlConverter {
     Object.assign(this.parser, this.getParsingEventHandlers());
   }
 }
+
+// List from HTML specs https://www.w3.org/TR/html5/syntax.html#writing-html-documents-elements
+export const htmlVoidElements = [
+  "area",
+  "base",
+  "br",
+  "col",
+  "embed",
+  "hr",
+  "img",
+  "input",
+  "link",
+  "meta",
+  "param",
+  "source",
+  "track",
+  "wbr"
+];

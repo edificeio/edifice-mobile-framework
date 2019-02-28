@@ -10,34 +10,44 @@ import { Me } from "../../infra/Me";
 import { signUrl } from "../../infra/oauth";
 
 import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
-import { DateView } from "../../ui/DateView";
-import { TouchableImageOptional } from "../../ui/ImageOptional";
-import { Italic } from "../../ui/Typography";
-import { ConversationMessageStatus } from "../actions/sendMessage";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
+import { DateView } from "../../ui/DateView";
+import { HtmlContentView } from "../../ui/HtmlContentView";
+import { ConversationMessageStatus } from "../actions/sendMessage";
 
-const ImageMessage = style.image({
-  height: 130,
-  width: 200
-});
-const ImageContainer = props => (
-  <View
-    style={{
-      elevation: 3,
-      shadowColor: CommonStyles.shadowColor,
-      shadowOffset: CommonStyles.shadowOffset,
-      shadowOpacity: CommonStyles.shadowOpacity,
-      shadowRadius: CommonStyles.shadowRadius
-    }}
-  >
-    <ImageMessage {...props} />
-  </View>
+const MessageBubble = ({ contentHtml, isMine }) => (
+  <BubbleStyle my={isMine}>
+    <HtmlContentView
+      html={contentHtml}
+      opts={{
+        globalTextStyle: {
+          color: isMine ? "white" : CommonStyles.textColor,
+          fontFamily: CommonStyles.primaryFontFamily,
+          fontSize: 14
+        },
+        ignoreClass: ["signature", "medium-text"]
+      }}
+    />
+  </BubbleStyle>
 );
 
-const TextBubble = ({ content, isMine }) => (
-  <BubbleStyle my={isMine}>
-    <Content my={isMine}>{content}</Content>
-  </BubbleStyle>
+const BubbleStyle = style.view(
+  {
+    alignSelf: "stretch",
+    elevation: 2,
+    justifyContent: "center",
+    marginBottom: 10,
+    marginTop: 6,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    shadowColor: CommonStyles.shadowColor,
+    shadowOffset: CommonStyles.shadowOffset,
+    shadowOpacity: CommonStyles.shadowOpacity,
+    shadowRadius: CommonStyles.shadowRadius
+  },
+  ({ my }): ViewStyle => ({
+    backgroundColor: my ? CommonStyles.iconColorOn : "white"
+  })
 );
 
 const MessageStatus = ({ status, date }) => {
@@ -79,12 +89,13 @@ export default class ThreadMessage extends React.PureComponent<
     const isMine = from === Me.session.userId;
     // medium-text is used to write previous sender
     // should be replaced with better selector for stability
+    // console.log("body message", body);
     const newHtml = adaptator(body)
       .removeAfter(".medium-text")
       .removeNode(".signature")
       .toHTML();
-    const messageText = adaptator(newHtml).toText();
-    const images = adaptator(newHtml).toImagesArray();
+    // const messageText = adaptator(newHtml).toText();
+    // const images = adaptator(newHtml).toImagesArray();
     const receiverText =
       to.length > 1
         ? I18n.t("conversation-receivers", { count: to.length })
@@ -123,34 +134,11 @@ export default class ThreadMessage extends React.PureComponent<
               </MessageInfosStatus>
             </MessageInfosDetails>
           </MessageInfos>
-          {messageText ? (
-            <TextBubble content={messageText} isMine={isMine} />
+          {body ? (
+            <MessageBubble contentHtml={body} isMine={isMine} />
           ) : (
             <View />
           )}
-          {images.map((el, index) => {
-            return (
-              <TouchableImageOptional
-                key={index}
-                onPress={() => {
-                  this.props.onOpenImage(index, images);
-                }}
-                source={signUrl(el.src)}
-                imageComponent={ImageContainer}
-                errorComponent={
-                  <View
-                    style={{
-                      backgroundColor: CommonStyles.entryfieldBorder,
-                      paddingHorizontal: 16,
-                      paddingVertical: 12
-                    }}
-                  >
-                    <Italic>{I18n.t("imageNotAvailable")}</Italic>
-                  </View>
-                }
-              />
-            );
-          })}
         </MessageContainer>
       </MessageBlock>
     );
@@ -158,17 +146,17 @@ export default class ThreadMessage extends React.PureComponent<
 }
 
 const AvatarContainer = style.view({
+  alignItems: "flex-start",
   height: 35,
-  width: 35,
   justifyContent: "center",
-  alignItems: "flex-start"
+  width: 35
 });
 const MessageInfos = style.view({
-  flex: 1,
-  justifyContent: "space-between",
   alignItems: "center",
   alignSelf: "stretch",
+  flex: 1,
   flexDirection: "row",
+  justifyContent: "space-between",
   padding: 0
 });
 const MessageInfosDetails = style.view({
@@ -179,8 +167,8 @@ const MessageInfosStatus = style.view({
   paddingTop: 5
 });
 const MessageContainer = style.view({
-  flex: 1,
   alignItems: "flex-start",
+  flex: 1,
   flexDirection: "column"
 });
 const MessageStatusText = style.text({
@@ -199,32 +187,13 @@ const ReceiverLink = style.view({
   borderBottomWidth: 1
 });
 const MessageBlock = style.view({
+  alignItems: "flex-end",
   flex: 1,
   flexDirection: "row",
-  alignItems: "flex-end",
   justifyContent: "flex-start",
   marginRight: 0,
   padding: 15
 });
-
-const BubbleStyle = style.view(
-  {
-    alignSelf: "stretch",
-    justifyContent: "center",
-    marginBottom: 10,
-    marginTop: 6,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    shadowColor: CommonStyles.shadowColor,
-    shadowOffset: CommonStyles.shadowOffset,
-    shadowOpacity: CommonStyles.shadowOpacity,
-    shadowRadius: CommonStyles.shadowRadius,
-    elevation: 2
-  },
-  ({ my }): ViewStyle => ({
-    backgroundColor: my ? CommonStyles.iconColorOn : "white"
-  })
-);
 
 const Content = style.text(
   {

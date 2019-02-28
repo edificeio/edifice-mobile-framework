@@ -284,7 +284,7 @@ export default connect(
     /*const receiversIds = lastMessage
       ? ThreadInput.findReceivers2(lastMessage)
       : [];
-    console.log("receiversIds", receiversIds);*/
+    // console.log("receiversIds", receiversIds);*/
 
     return {
       lastMessage,

@@ -104,6 +104,7 @@
     "deepmerge": "^3.2.0",
     "fast-html-parser": "1.0.1",
     "glamorous-native": "1.4.0",
+    "html-entities": "^1.2.1",
     "i18n-js": "^3.1.0",
     "memoize-one": "^4.0.2",
     "moize": "^5.4.1",
@@ -140,6 +141,7 @@
     "redux-thunk": "^2.3.0",
     "rn-fetch-blob": "^0.10.13",
     "sax": "^1.2.4",
+    "saxophone": "^0.5.0",
     "unorm": "^1.4.1",
     "util": "0.10.3"
   }

@@ -12,16 +12,14 @@ import { View } from "react-native";
 
 import { Loading } from ".";
 import { fetchJSONWithCache } from "../infra/fetchWithCache";
-import HtmlConverterJsx, {
-  IHtmlConverterJsxOptions
-} from "../infra/htmlConverter/jsx2";
+import HtmlParserRN, { IHtmlParserRNOptions } from "../infra/htmlParser/rn";
 import { Italic } from "./Typography";
 
 export interface IHtmlContentViewProps {
   navigation?: any;
   html?: string;
   source?: string;
-  opts?: IHtmlConverterJsxOptions;
+  opts?: IHtmlParserRNOptions;
   loadingComp?: JSX.Element;
   getContentFromResource?: (responseJson: any) => string;
 }
@@ -82,9 +80,11 @@ export class HtmlContentView extends React.PureComponent<
       else this.setState({ html });
     } else if (!this.state.jsx) {
       // Else, if there is not JSX, try to compute it.
+      const htmlParser = new HtmlParserRN(this.props.opts);
       this.setState({
         done: true,
-        jsx: HtmlConverterJsx(this.state.html, this.props.opts).render
+        jsx: htmlParser.parse(this.state.html) as JSX.Element
+        // jsx: HtmlConverterJsx(this.state.html, this.props.opts).render
       });
     }
   }
