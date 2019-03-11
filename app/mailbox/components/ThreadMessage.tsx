@@ -1,7 +1,7 @@
 import style from "glamorous-native";
 import I18n from "i18n-js";
 import * as React from "react";
-import { View, ViewStyle } from "react-native";
+import { Text, View, ViewStyle } from "react-native";
 
 import { CommonStyles } from "../../styles/common/styles";
 
@@ -14,6 +14,8 @@ import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { DateView } from "../../ui/DateView";
 import { HtmlContentView } from "../../ui/HtmlContentView";
 import { ConversationMessageStatus } from "../actions/sendMessage";
+import { Icon } from "../../ui";
+import ThreadMessageAttachment from "./ThreadMessageAttachment";
 
 const MessageBubble = ({ contentHtml, isMine }) => (
   <BubbleStyle my={isMine}>
@@ -66,8 +68,18 @@ const MessageStatus = ({ status, date }) => {
       </MessageStatusText>
     );
 };
+
 export default class ThreadMessage extends React.PureComponent<
   {
+    attachments: Array<{
+      id: string;
+      name: string;
+      charset: string;
+      filename: string;
+      contentType: string;
+      contentTransferEncoding: string;
+      size: number; // in Bytes
+    }>;
     body: string;
     date: any;
     displayNames: any[];
@@ -84,7 +96,15 @@ export default class ThreadMessage extends React.PureComponent<
   undefined
 > {
   public render() {
-    const { body, date, to = [], toName = [], from = "", status } = this.props;
+    const {
+      attachments,
+      body,
+      date,
+      to = [],
+      toName = [],
+      from = "",
+      status
+    } = this.props;
 
     const isMine = from === Me.session.userId;
     // medium-text is used to write previous sender
@@ -104,6 +124,9 @@ export default class ThreadMessage extends React.PureComponent<
       return <style.View />;
     }
     const senderText = this.props.displayNames.find(el => el[0] === from)[1];
+    let firstAttachment = true;
+
+    console.log("message props", this.props);
 
     return (
       <MessageBlock style={{ flex: 0 }}>
@@ -139,6 +162,29 @@ export default class ThreadMessage extends React.PureComponent<
           ) : (
             <View />
           )}
+          {attachments && attachments.length ? (
+            <BubbleStyle
+              my={isMine}
+              style={{
+                flex: 1,
+                paddingHorizontal: 2,
+                paddingVertical: 2
+              }}
+            >
+              {attachments.map(att => {
+                const ret = (
+                  <ThreadMessageAttachment
+                    attachment={att}
+                    style={{ marginTop: firstAttachment ? 0 : 2 }}
+                    isMine={isMine}
+                    key={att.id}
+                  />
+                );
+                firstAttachment = false;
+                return ret;
+              })}
+            </BubbleStyle>
+          ) : null}
         </MessageContainer>
       </MessageBlock>
     );

@@ -36,6 +36,15 @@ export type IConversationMessageListBackend = Array<{
   date: number;
   thread_id: string;
   unread: boolean;
+  attachments: Array<{
+    id: string;
+    name: string;
+    charset: string;
+    filename: string;
+    contentType: string;
+    contentTransferEncoding: string;
+    size: number; // in Bytes
+  }>;
 }>;
 
 /**

@@ -234,7 +234,7 @@ export function fetchConversationThreadOlderMessages(threadId: string) {
         messages[message.id] = message;
       }
       const messageIds = data.map(message => message.id);
-      // console.log("thread older messages received: ", messages, messageIds);
+      console.log("thread older messages received: ", messages, messageIds);
       // dispatch
       dispatch(conversationMessagesReceived(messages)); // message contents
       dispatch(conversationThreadAppendReceived(messageIds, threadId, false)); // messages ids ordered
@@ -267,7 +267,7 @@ export function fetchConversationThreadNewerMessages(threadId: string) {
         messages[message.id] = message;
       }
       const messageIds = data.map(message => message.id);
-      // console.log("thread newer messages received: ", messages, messageIds);
+      console.log("thread newer messages received: ", messages, messageIds);
       // dispatch
       dispatch(conversationMessagesReceived(messages)); // message contents
       dispatch(conversationThreadAppendReceived(messageIds, threadId, true)); // messages ids ordered
@@ -294,7 +294,7 @@ export function fetchConversationThreadResetMessages(threadId: string) {
         messages[message.id] = message;
       }
       const messageIds = data.map(message => message.id);
-      // console.log("thread newer messages received: ", messages, messageIds);
+      console.log("thread newer messages received: ", messages, messageIds);
       // dispatch
       dispatch(conversationMessagesReceived(messages)); // message contents
       dispatch(conversationThreadResetReceived(messageIds, threadId)); // messages ids ordered
