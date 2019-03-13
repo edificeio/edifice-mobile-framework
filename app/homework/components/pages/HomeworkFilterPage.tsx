@@ -29,7 +29,7 @@ import { Loading } from "../../../ui";
 import ConnectionTrackingBar from "../../../ui/ConnectionTrackingBar";
 import { EmptyScreen } from "../../../ui/EmptyScreen";
 import { Checkbox } from "../../../ui/forms/Checkbox";
-import { Bold } from "../../../ui/Typography";
+import { Bold, Heavy } from "../../../ui/Typography";
 
 // Main component ---------------------------------------------------------------------------------
 
@@ -116,7 +116,7 @@ export class HomeworkFilterPage extends React.PureComponent<
                 paddingRight: 4
               }}
             >
-              <Bold>{item.title}</Bold>
+              <Heavy>{item.title}</Heavy>
             </View>
             <View style={{ justifyContent: "center" }}>
               <Checkbox

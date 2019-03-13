@@ -2,7 +2,7 @@ import style from "glamorous-native";
 import { CommonStyles } from "../styles/common/styles";
 
 export const Bold = style.text({
-  color: CommonStyles.textColor, // Bold text is always black
+  // color: CommonStyles.textColor, // Bold text is always black
   fontFamily: CommonStyles.primaryFontFamily,
   fontSize: 14,
   fontWeight: "600"
@@ -19,6 +19,13 @@ export const Light = style.text({
   fontFamily: CommonStyles.primaryFontFamilyLight,
   fontSize: 12,
   fontWeight: "400"
+});
+
+export const Heavy = style.text({
+  color: CommonStyles.textColor, // Heavy text is always black
+  fontFamily: CommonStyles.primaryFontFamily,
+  fontSize: 14,
+  fontWeight: "600"
 });
 
 export const Paragraph = style.text(

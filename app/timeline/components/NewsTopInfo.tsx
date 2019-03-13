@@ -8,7 +8,7 @@ import * as React from "react";
 import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
 import { CenterPanel, Header, LeftPanel } from "../../ui/ContainerContent";
 import { DateView } from "../../ui/DateView";
-import { Bold, Light } from "../../ui/Typography";
+import { Heavy, Light } from "../../ui/Typography";
 
 export default ({
   senderId,
@@ -23,7 +23,7 @@ export default ({
       <SingleAvatar userId={senderId} />
     </LeftPanel>
     <CenterPanel>
-      <Bold>
+      <Heavy>
         {senderName}
         <Light>
           {" "}
@@ -31,7 +31,7 @@ export default ({
           {I18n.t(`timeline-postType-${type}`)}{" "}
         </Light>
         {resourceName}
-      </Bold>
+      </Heavy>
       <DateView date={date} short={false} />
     </CenterPanel>
   </Header>

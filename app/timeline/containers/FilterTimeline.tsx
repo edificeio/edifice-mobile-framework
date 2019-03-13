@@ -11,7 +11,7 @@ import {
 } from "../../ui/headers/Header";
 import { PageContainer, ListItem } from "../../ui/ContainerContent";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
-import { Bold } from "../../ui/Typography";
+import { Heavy } from "../../ui/Typography";
 import { Checkbox } from "../../ui/forms/Checkbox";
 import Tracking from "../../tracking/TrackingManager";
 
@@ -107,7 +107,7 @@ export class FilterTimeline extends React.Component<
           style={{ justifyContent: "space-between" }}
           onPress={() => this.checkAllApps(!this.allAppsChecked)}
         >
-          <Bold>{I18n.t(`timeline-allFilter`)}</Bold>
+          <Heavy>{I18n.t(`timeline-allFilter`)}</Heavy>
           <Checkbox
             checked={this.allAppsChecked}
             onCheck={() => this.checkAllApps(true)}
@@ -120,7 +120,7 @@ export class FilterTimeline extends React.Component<
             style={{ justifyContent: "space-between" }}
             onPress={() => this.checkApp(app, !app.checked)}
           >
-            <Bold>{I18n.t(`timeline-${app.name.toLowerCase()}Filter`)}</Bold>
+            <Heavy>{I18n.t(`timeline-${app.name.toLowerCase()}Filter`)}</Heavy>
             <Checkbox
               checked={app.checked}
               onCheck={() => this.checkApp(app, true)}
