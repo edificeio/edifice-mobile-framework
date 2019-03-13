@@ -2,7 +2,14 @@ import I18n from "i18n-js";
 
 import style from "glamorous-native";
 import * as React from "react";
-import { Dimensions, Text, View, ViewStyle, ImageProps, ImageURISource } from "react-native";
+import {
+  Dimensions,
+  Text,
+  View,
+  ViewStyle,
+  ImageProps,
+  ImageURISource
+} from "react-native";
 import { Row } from ".";
 import { Carousel } from "./Carousel";
 import { CommonStyles } from "../styles/common/styles";
@@ -196,7 +203,10 @@ export class Images extends React.Component<
             {images.length > 4 && (
               <BubbleView style={{ bottom: heightRatio / 4 - 15 }}>
                 <BubbleText onPress={() => this.openImage(3)}>
-                  +{images.length - 4}
+                  +
+                  {images.length - 3
+                  /* -3 instead of -4 because of the last one has the dark foreground*/
+                  }
                 </BubbleText>
               </BubbleView>
             )}
