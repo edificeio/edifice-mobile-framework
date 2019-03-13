@@ -48,6 +48,8 @@ target 'mobileapp' do
 
   pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
 
+  pod 'RNPermissions', :path => '../node_modules/react-native-permissions'
+
 end
 
 post_install do |installer|

@@ -15,6 +15,11 @@
   "common-disconnected": "No está conectado a Internet",
   "common-ErrorLoadingResource": "Este contenido es inaccesible.",
   "common-ErrorNetwork": "Error de red",
+  "common-VersionTitle":"Nueva versión en Play Store",
+  "common-VersionContentMandatory":"Hay una nueva versión ({{version}}) disponible en Play Store. Actualice su aplicación",
+  "common-VersionContent":"Hay una nueva versión ({{version}}) disponible en Play Store por si desea actualizar su aplicación.",
+  "common-VersionUpdate":"Actualizar",
+  "common-VersionSkip":"No, gracias.",
   "Connect": "Iniciar sesión",
   "Activate": "Activar mi cuenta",
   "activation-errorLoading": "Error de red.",
@@ -49,7 +54,7 @@
   "homework-task-empty-title": "Cuaderno",
   "Homework": "Cuaderno",
   "imageNotAvailable": "Imagen no disponible",
-
+  "soundNotAvailable": "Reproductor de audio no disponible",
   "linkTo": "Enlace",
   "loadingFailedMessage": "Error de carga. Compruebe la conexión a Internet.",
   "Login": "Usuario",
@@ -89,6 +94,7 @@
   "to": "Para :",
   "today": " Hoy ",
   "tryagain": "Vuelva a intentarlo",
+  "version-number": "Versión",
   "welcome": "Bienvenido",
   "date":{
     "day_names": [

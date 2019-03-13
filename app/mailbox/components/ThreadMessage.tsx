@@ -80,6 +80,7 @@ export default class ThreadMessage extends React.PureComponent<
       contentTransferEncoding: string;
       size: number; // in Bytes
     }>;
+    id: string;
     body: string;
     date: any;
     displayNames: any[];
@@ -126,7 +127,7 @@ export default class ThreadMessage extends React.PureComponent<
     const senderText = this.props.displayNames.find(el => el[0] === from)[1];
     let firstAttachment = true;
 
-    console.log("message props", this.props);
+    // console.log("message props", this.props);
 
     return (
       <MessageBlock style={{ flex: 0 }}>
@@ -178,6 +179,7 @@ export default class ThreadMessage extends React.PureComponent<
                     style={{ marginTop: firstAttachment ? 0 : 2 }}
                     isMine={isMine}
                     key={att.id}
+                    messageId={this.props.id}
                   />
                 );
                 firstAttachment = false;

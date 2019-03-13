@@ -29,7 +29,7 @@ export class OAuth2RessourceOwnerPasswordClient {
    */
   private static DEFAULT_HEADERS = {
     // tslint:disable-next-line:prettier
-    "Accept": "application/json, application/x-www-form-urlencoded",
+    Accept: "application/json, application/x-www-form-urlencoded",
     "Content-Type": "application/x-www-form-urlencoded"
   };
 
@@ -380,3 +380,6 @@ export function signUrl(url: string): ImageURISource {
     uri: url
   });
 }
+
+export const getAuthHeader = () =>
+  OAuth2RessourceOwnerPasswordClient.connection.sign({});
