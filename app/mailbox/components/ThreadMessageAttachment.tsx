@@ -278,7 +278,7 @@ export default class ThreadMessageAttachment extends React.PureComponent<
             .catch(err => {
               // console.log("error stats", err);
             });*/
-          RNFetchBlob.ios.previewDocument(res.path());
+          // RNFetchBlob.ios.previewDocument(res.path());
         } else if (Platform.OS === "android") {
           const baseDir =
             RNFetchBlob.fs.dirs.DownloadDir || RNFetchBlob.fs.dirs.DocumentDir;
