@@ -58,18 +58,10 @@ export function loadNotificationPrefs() {
     );
     // console.log("mergedNotifPrefs", mergedNotifPrefs);
 
-    // 5 : Sort merged notifs prefs
-
-    const sortedNotifPrefs = {};
-    includeNotifKeys.map(prefName => {
-      sortedNotifPrefs[prefName] = mergedNotifPrefs[prefName];
-    });
-    // console.log("sortedNotifPrefs", sortedNotifPrefs);
-
     // 5 : Dispatch load
 
     dispatch({
-      notificationPrefs: sortedNotifPrefs,
+      notificationPrefs: mergedNotifPrefs,
       type: actionTypeSetNotifPrefs
     });
   };

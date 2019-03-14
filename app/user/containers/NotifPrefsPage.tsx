@@ -8,7 +8,8 @@ import { connect } from "react-redux";
 
 import {
   loadNotificationPrefs,
-  setNotificationPref
+  setNotificationPref,
+  includeNotifKeys
 } from "../../user/actions/notifPrefs";
 
 // Components
@@ -82,6 +83,7 @@ export class NotifPrefsPage extends React.PureComponent<
 
   public isAllowed(notifPref) {
     // Compute a good version of uppercased allowed apps.
+    // console.log("is allowed ?", notifPref);
     const { availableApps } = this.props;
     const availableAppsWithUppercase = {};
     Object.keys(availableApps).forEach(app => {
@@ -106,7 +108,7 @@ export class NotifPrefsPage extends React.PureComponent<
   }
 
   public render() {
-    if (this.props.notificationPrefs.length === 0) {
+    if (Object.keys(this.props.notificationPrefs).length === 0) {
       return <Loading />;
     }
     return (
@@ -133,10 +135,17 @@ export class NotifPrefsPage extends React.PureComponent<
 
 export default connect(
   (state: any) => {
+    const sortedNotifPrefs = {};
+    includeNotifKeys.map(prefName => {
+      if (state.user.auth.notificationPrefs[prefName])
+        sortedNotifPrefs[prefName] =
+          state.user.auth.notificationPrefs[prefName];
+    });
+    // console.log("sortedNotifPrefs", sortedNotifPrefs);
     return {
       availableApps: state.timeline.selectedApps, // TODO: WTF ?! Profile app has to not depends on another ! Get the app list separately.
       legalapps: state.user.auth.apps,
-      notificationPrefs: state.user.auth.notificationPrefs
+      notificationPrefs: sortedNotifPrefs
     };
   },
   dispatch => ({
