@@ -58,10 +58,18 @@ export function loadNotificationPrefs() {
     );
     // console.log("mergedNotifPrefs", mergedNotifPrefs);
 
+    // 5 : Sort merged notifs prefs
+
+    const sortedNotifPrefs = {};
+    includeNotifKeys.map(prefName => {
+      sortedNotifPrefs[prefName] = mergedNotifPrefs[prefName];
+    });
+    // console.log("sortedNotifPrefs", sortedNotifPrefs);
+
     // 5 : Dispatch load
 
     dispatch({
-      notificationPrefs: mergedNotifPrefs,
+      notificationPrefs: sortedNotifPrefs,
       type: actionTypeSetNotifPrefs
     });
   };
@@ -90,12 +98,14 @@ export const excludeNotifTypes = [
 
 /**
  * Only these preferences keys are used by Pocket for push-notifications.
+ * /!\ Caution : Order matters. Notifs prefs will be displayed in the same order as defined here.
  */
 export const includeNotifKeys = [
-  "blog.publish-post",
-  "news.info-shared",
   "messagerie.send-message",
-  "schoolbook.publish"
+  "schoolbook.publish",
+  "blog.publish-post",
+  "news.info-shared"
+  // TODO (Soon) Homework
 ];
 
 export function setNotificationPref(
