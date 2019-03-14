@@ -14,9 +14,8 @@ import userConfig from "../config";
 import firebase from "react-native-firebase";
 import Conf from "../../Conf";
 import Tracking from "../../tracking/TrackingManager"; // TODO make tracking back !
-import { initActivationAccount } from "./activation";
 import { userService } from "../service";
-
+import { initActivationAccount } from "./activation";
 
 // TYPES ------------------------------------------------------------------------------------------------
 
@@ -26,7 +25,6 @@ export enum LoginResult {
   connectionError
 }
 
-
 // ACTION TYPES --------------------------------------------------------------------------------------
 
 export const actionTypeRequestLogin = userConfig.createActionType(
@@ -35,10 +33,11 @@ export const actionTypeRequestLogin = userConfig.createActionType(
 export const actionTypeLoggedIn = userConfig.createActionType("LOGGED_IN");
 export const actionTypeLoginError = userConfig.createActionType("LOGIN_ERROR");
 export const actionTypeLoggedOut = userConfig.createActionType("LOGGED_OUT");
-export const actionTypeLoginCancel = userConfig.createActionType("LOGIN_CANCEL");
+export const actionTypeLoginCancel = userConfig.createActionType(
+  "LOGIN_CANCEL"
+);
 
 // THUNKS -----------------------------------------------------------------------------------------
-
 
 export function login(
   redirectOnError: boolean = false,
@@ -64,21 +63,7 @@ export function login(
         await OAuth2RessourceOwnerPasswordClient.connection.loadToken();
       }
 
-      // === 2: Get firebase device token and store it in the backend
-      const hasPermission = await firebase.messaging().hasPermission();
-      if (hasPermission) {
-        await userService.registerFCMToken();
-      } else {
-        try {
-          // console.log("asking for perms...");
-          await firebase.messaging().requestPermission();
-          await userService.registerFCMToken();
-        } catch (e) {
-          // console.log("Hasnt got permission to register the device token");
-        }
-      }
-
-      // === 3: Gather logged user information
+      // === 2: Gather logged user information
       const userinfo2 = await fetchJSONWithCache("/auth/oauth2/userinfo", {
         headers: {
           Accept: "application/json;version=2.0"
@@ -92,12 +77,26 @@ export function login(
         `/directory/user/${userinfo2.userId}`
       );
 
-      // === 4: check user validity
+      // === 3: check user validity
 
       if (!userinfo2.hasApp) {
         const err = new Error("EAUTH: You are not a premium user.");
         (err as any).authErr = OAuthError.NOT_PREMIUM;
         throw err;
+      }
+
+      // === 4: Get firebase device token and store it in the backend
+      const hasPermission = await firebase.messaging().hasPermission();
+      if (hasPermission) {
+        await userService.registerFCMToken();
+      } else {
+        try {
+          // console.log("asking for perms...");
+          await firebase.messaging().requestPermission();
+          await userService.registerFCMToken();
+        } catch (e) {
+          // console.log("Hasnt got permission to register the device token");
+        }
       }
 
       // === 5: validate login
@@ -126,10 +125,10 @@ export function login(
             err.authErr === OAuthError.BAD_CREDENTIALS
               ? "bad credentials"
               : err.authErr === OAuthError.NOT_PREMIUM
-                ? "not premium"
-                : err.authErr === OAuthError.NETWORK_ERROR
-                  ? "network error"
-                  : "unkown",
+              ? "not premium"
+              : err.authErr === OAuthError.NETWORK_ERROR
+              ? "network error"
+              : "unkown",
           isManual: credentials ? "true" : "false",
           platform: Conf.currentPlatform.url
         });
@@ -143,29 +142,41 @@ export function login(
           break;
         case OAuthError.BAD_CREDENTIALS:
           // === try to see whether the user has used his activationCode as password
-          const res = await fetch(`${Conf.currentPlatform.url}/auth/activation/match`, {
-            body: JSON.stringify({
-              login: credentials.username,
-              password: credentials.password
-            }),
-            headers: {
-              "Accept": "application/json",
-              "Content-Type": "application/json"
-            },
-            method: "post"
-          });
+          const res = await fetch(
+            `${Conf.currentPlatform.url}/auth/activation/match`,
+            {
+              body: JSON.stringify({
+                login: credentials.username,
+                password: credentials.password
+              }),
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+              },
+              method: "post"
+            }
+          );
           // if server return 200 and match is true => password is activationcode
           if (res.ok) {
             const body = await res.json();
             if (body.match) {
-              dispatch(initActivationAccount({
-                login: credentials.username,
-                activationCode: credentials.password
-              }, true))
+              dispatch(
+                initActivationAccount(
+                  {
+                    activationCode: credentials.password,
+                    login: credentials.username
+                  },
+                  true
+                )
+              );
               return;
             }
           } else {
-            console.warn("[User][login] match fail with error code: ", res.status, res.statusText)
+            console.warn(
+              "[User][login] match fail with error code: ",
+              res.status,
+              res.statusText
+            );
           }
           dispatch({
             errmsg: "auth-loginFailed",
@@ -237,6 +248,7 @@ export function refreshToken(newToken) {
       await userService.registerFCMToken(newToken);
       // console.log("Fcm Token (refresh put) :", newToken, putTokenResponse);
     } catch (e) {
+      // tslint:disable-next-line:no-console
       console.warn(e);
     }
   };
