@@ -71,6 +71,13 @@ export const A = style.text({
   fontSize: 14
 });
 
+export const Link = style.text({
+  // Neutral link does not show a particular color
+  // color: CommonStyles.actionColor,
+  fontFamily: CommonStyles.primaryFontFamily,
+  fontSize: 14
+});
+
 export const H4 = style.text({
   color: "#414355",
   fontFamily: CommonStyles.primaryFontFamily,

@@ -18,6 +18,7 @@
  * - `iframes` (boolean) should iframes be intergrated. Default `true`.
  * - `audio` (boolean) should audio medias be integrated. Default `true`.
  * - `globalTextStyle` (TextStyle) style that will be applied to all rendered <Text> elements.
+ * - `linkTextStyle` (TextStyle) additional style applied to text links.
  */
 
 import { Dimensions, TextStyle } from "react-native";
@@ -49,6 +50,7 @@ export interface IHtmlParserRNOptions extends IHtmlParserAbstractOptions {
   iframes?: boolean;
   audio?: boolean;
   globalTextStyle?: TextStyle;
+  linkTextStyle?: TextStyle;
 }
 
 export default class HtmlParserRN extends HtmlParserAbstract<
@@ -64,6 +66,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
     hyperlinks: true,
     iframes: true,
     images: true,
+    linkTextStyle: {},
     textFormatting: true
   };
 
@@ -147,7 +150,12 @@ export default class HtmlParserRN extends HtmlParserAbstract<
 
   protected didParse = (render: JSX.Element | INugget[]) => {
     const output = (renderNuggets(render, {
-      [HtmlParserNuggetTypes.Text]: this.opts.globalTextStyle,
+      [HtmlParserNuggetTypes.Text]: {
+        all: this.opts.globalTextStyle,
+        ...(Object.keys(this.opts.linkTextStyle).length
+          ? { [HtmlParserJsxTextVariant.Link]: this.opts.linkTextStyle }
+          : null)
+      },
       [HtmlParserNuggetTypes.Images]: {},
       [HtmlParserNuggetTypes.Iframe]: {},
       [HtmlParserNuggetTypes.Audio]: {}

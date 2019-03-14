@@ -5,9 +5,18 @@
 
 import I18n from "i18n-js";
 import * as React from "react";
-import { Image, Text, TextStyle, View, ViewStyle, Linking, Platform, StatusBar } from "react-native";
+import {
+  Image,
+  Text,
+  TextStyle,
+  View,
+  ViewStyle,
+  Linking,
+  Platform,
+  StatusBar
+} from "react-native";
 import WebView from "react-native-android-fullscreen-webview-video";
-import { Bold, Italic, A } from "../../ui/Typography";
+import { Bold, Italic, A, Link } from "../../ui/Typography";
 import { Images } from "../../ui/Images";
 import { signImagesUrls, signUrl } from "../oauth";
 import { Loading } from "../../ui";
@@ -74,12 +83,19 @@ export interface IAudioNugget extends INugget {
 export function renderNuggets(
   nuggets,
   globalStyles: {
-    [HtmlParserNuggetTypes.Text]: TextStyle;
+    [HtmlParserNuggetTypes.Text]: {
+      all?: TextStyle;
+      [HtmlParserJsxTextVariant.None]?: TextStyle;
+      [HtmlParserJsxTextVariant.Bold]?: TextStyle;
+      [HtmlParserJsxTextVariant.Italic]?: TextStyle;
+      [HtmlParserJsxTextVariant.Link]?: TextStyle;
+    };
     [HtmlParserNuggetTypes.Images]: ViewStyle;
     [HtmlParserNuggetTypes.Iframe]: ViewStyle;
     [HtmlParserNuggetTypes.Audio]: ViewStyle;
   }
 ): JSX.Element {
+  // console.log("globalStyles", globalStyles);
   return (
     <View>
       {nuggets.map((nugget, index) => {
@@ -87,10 +103,12 @@ export function renderNuggets(
         const style = index === 0 ? {} : { marginTop: 15 };
 
         if (nugget.type === HtmlParserNuggetTypes.Text) {
-          return renderParseText(nugget, index, {
-            ...globalStyles[HtmlParserNuggetTypes.Text],
-            ...style
-          });
+          return renderParseText(
+            nugget,
+            index,
+            style,
+            globalStyles[HtmlParserNuggetTypes.Text]
+          );
         } else if (nugget.type === HtmlParserNuggetTypes.Images) {
           return renderParseImages(nugget, index, {
             ...globalStyles[HtmlParserNuggetTypes.Images],
@@ -125,8 +143,21 @@ export function renderNuggets(
 function renderParseText(
   nugget: ITextNugget | IInlineImageNugget | string,
   key: string,
-  style: TextStyle = {}
+  style: TextStyle = {},
+  textStyles: {
+    all?: TextStyle;
+    [HtmlParserJsxTextVariant.None]?: TextStyle;
+    [HtmlParserJsxTextVariant.Bold]?: TextStyle;
+    [HtmlParserJsxTextVariant.Italic]?: TextStyle;
+    [HtmlParserJsxTextVariant.Link]?: TextStyle;
+  }
 ): JSX.Element {
+  // -1 - Default opts
+  textStyles = {
+    [HtmlParserJsxTextVariant.Link]: { color: CommonStyles.actionColor },
+    ...textStyles
+  };
+  // console.log("textStyles", textStyles);
   // 0 - If the text is acually an inline image, render it elsewhere.
   if (
     (nugget as IInlineImageNugget).type === HtmlParserNuggetTypes.InlineImage
@@ -143,7 +174,8 @@ function renderParseText(
     if (typeof child === "string") {
       return child;
     } else {
-      return renderParseText(child, key + "-" + index);
+      const { all, ...newTextStyles } = textStyles; // Omit global text styles in children text nuggets
+      return renderParseText(child, key + "-" + index, {}, newTextStyles);
     }
   });
 
@@ -151,30 +183,40 @@ function renderParseText(
   switch ((nugget as ITextNugget).variant) {
     case HtmlParserJsxTextVariant.None:
       return (
-        <Text key={key} style={style}>
+        <Text key={key} style={{ ...style, ...textStyles.all }}>
           {children}
         </Text>
       );
     case HtmlParserJsxTextVariant.Bold:
       return (
-        <Bold key={key} style={style}>
+        <Bold
+          key={key}
+          style={{ ...style, ...textStyles[HtmlParserJsxTextVariant.Bold] }}
+        >
           {children}
         </Bold>
       );
     case HtmlParserJsxTextVariant.Italic:
       return (
-        <Italic key={key} style={style}>
+        <Italic
+          key={key}
+          style={{ ...style, ...textStyles[HtmlParserJsxTextVariant.Italic] }}
+        >
           {children}
         </Italic>
       );
     case HtmlParserJsxTextVariant.Link:
       return (
-        <A
+        <Link
           key={key}
-          onPress={() => Linking.openURL((nugget as ILinkTextNugget).url)}
+          onPress={() => {
+            // console.log("touched", (nugget as ILinkTextNugget).url);
+            Linking.openURL((nugget as ILinkTextNugget).url);
+          }}
+          style={{ ...style, ...textStyles[HtmlParserJsxTextVariant.Link] }}
         >
           {children}
-        </A>
+        </Link>
       );
   }
 }

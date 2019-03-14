@@ -27,7 +27,15 @@ const MessageBubble = ({ contentHtml, isMine }) => (
           fontFamily: CommonStyles.primaryFontFamily,
           fontSize: 14
         },
-        ignoreClass: ["signature", "medium-text"]
+        ignoreClass: ["signature", "medium-text"],
+        ...(isMine
+          ? {
+              linkTextStyle: {
+                color: "white",
+                textDecorationLine: "underline"
+              }
+            }
+          : null)
       }}
     />
   </BubbleStyle>
