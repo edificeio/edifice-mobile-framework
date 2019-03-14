@@ -34,6 +34,7 @@ export const loadSchoolbooks = (): Promise<any[]> => {
         schoolbooks = [...schoolbooks, ...messages];
         // console.log("loaded schoolbooks list", schoolbooks);
       } catch (e) {
+        // tslint:disable-next-line:no-console
         console.warn(e);
       }
     } else {
@@ -58,6 +59,7 @@ export const loadSchoolbooks = (): Promise<any[]> => {
         schoolbooks = [...schoolbooks, ...messages];
         // console.log("schooloobks:", schoolbooks);
       } catch (e) {
+        // tslint:disable-next-line:no-console
         console.warn(e);
         throw e;
       }
@@ -208,6 +210,7 @@ export const fillData = async (availableApps: object, results: any[]) => {
   const newResults = [];
   const availableAppsWithUppercase = {};
   const urls: string[] = [];
+  // console.log("avaiable apps", availableApps);
   Object.keys(availableApps).forEach(app => {
     availableAppsWithUppercase[app] = availableApps[app];
     availableAppsWithUppercase[app.toUpperCase()] = availableApps[app];

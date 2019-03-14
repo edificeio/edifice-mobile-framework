@@ -67,7 +67,7 @@ export class HtmlConverter {
       onclosetag: (tagName: string) => {
         // console.warn("TAG CLOSE : /" + tagName + " !!! " + Math.random());
         if (!htmlVoidElements.includes(tagName)) --this.absoluteDeepnessLevel;
-        console.log("close tag :", tagName, this.absoluteDeepnessLevel);
+        // console.log("close tag :", tagName, this.absoluteDeepnessLevel);
         if (this.isIgnoring()) return null;
         this.ignoreDeepnessLevel = undefined;
         return tagName;
@@ -83,7 +83,7 @@ export class HtmlConverter {
       onopentag: (tag: sax.Tag) => {
         // console.warn("TAG OPEN : " + tag.name + " !!! " + Math.random());
         if (!htmlVoidElements.includes(tag.name)) ++this.absoluteDeepnessLevel;
-        console.log("open tag :", tag.name, this.absoluteDeepnessLevel);
+        // console.log("open tag :", tag.name, this.absoluteDeepnessLevel);
 
         if (this.opts.ignoreClasses && tag.attributes["class"]) {
           const classes = tag.attributes["class"].split(" ");
@@ -107,7 +107,7 @@ export class HtmlConverter {
         // text = text.replace(/\u200B/g, ""); // remowe ZWSP (Zero-Width SPace) fucking character !
         if (this.isIgnoring()) return null;
         if (!text) return "";
-        console.log(text);
+        // console.log(text);
         if (text.match(/\S/)) return text; // Filter whitespace-only strings.
         return " ";
       }

@@ -15,9 +15,9 @@ import { News } from "../components/News";
 import styles from "../../styles";
 import Tracking from "../../tracking/TrackingManager";
 
+import { clearFilterConversation } from "../../mailbox/actions/filter";
 import { fetchTimeline, listTimeline } from "../actions/list";
 import { INewsModel } from "../reducer";
-import { clearFilterConversation } from "../../mailbox/actions/filter";
 
 export class TimelineHeader extends React.Component<
   { navigation?: any },
@@ -71,6 +71,7 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
       "didFocus",
       payload => {
         this.props.onFocus();
+        if (this.props.availableApps) this.fetchLatest();
       }
     );
   }

@@ -8,7 +8,10 @@ import {
   IHomeworkPageProps
 } from "../components/pages/HomeworkPage";
 
-import { fetchHomeworkDiaryListIfNeeded } from "../actions/diaryList";
+import {
+  fetchHomeworkDiaryListIfNeeded,
+  fetchHomeworkDiaryList
+} from "../actions/diaryList";
 import { homeworkTaskSelected } from "../actions/selectedTask";
 import { fetchHomeworkTasks } from "../actions/tasks";
 
@@ -97,11 +100,14 @@ class HomeworkPageContainer extends React.PureComponent<
 
   public async componentDidMount() {
     await this.loadSelectedDiary();
-    this.props.dispatch(fetchHomeworkDiaryListIfNeeded());
+    this.props.dispatch(fetchHomeworkDiaryList());
     this.props.onFocus();
     this.didFocusSubscription = this.props.navigation.addListener(
       "didFocus",
       payload => {
+        this.props.dispatch(fetchHomeworkDiaryList());
+        if (this.props.diaryId)
+          this.props.dispatch(fetchHomeworkTasks(this.props.diaryId));
         this.props.onFocus();
       }
     );
