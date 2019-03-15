@@ -75,7 +75,18 @@ const attachmentIconsByFileExt: Array<{
 ];
 const defaultAttachmentIcon = "attached";
 const getAttachmentIconByExt = (filename: string) => {
-  return "attached"; // TODO : detect what type of file it is.
+  // from https://stackoverflow.com/a/12900504/6111343
+  const ext = filename
+    // tslint:disable-next-line:no-bitwise
+    .slice(((filename.lastIndexOf(".") - 1) >>> 0) + 2)
+    .toLowerCase();
+
+  let icon: string = defaultAttachmentIcon; // default returned value if no one match
+  attachmentIconsByFileExt.map(type => {
+    if (type.exts.includes(ext)) icon = type.icon;
+  });
+
+  return icon;
 };
 
 export default class ThreadMessageAttachment extends React.PureComponent<
