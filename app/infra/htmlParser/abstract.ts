@@ -16,6 +16,7 @@
 
 import { AllHtmlEntities } from "html-entities";
 import Saxophone from "saxophone";
+import { parseAttrs } from "../../utils/attrs";
 
 const entitiesTransformer = new AllHtmlEntities();
 
@@ -94,7 +95,7 @@ export class HtmlParserAbstract<RenderType> {
     try {
       html = this.beforeParseAbstract(html);
       this.html = html;
-      // console.log("html before parse:", this.html);
+      console.log("html before parse:", this.html);
       if (!this.html) return null;
       this.saxophone.parse(this.html);
       // Now this.render is available.
@@ -136,10 +137,10 @@ export class HtmlParserAbstract<RenderType> {
     isSelfClosing: boolean;
   }) {
     // 0 - Curating input
+    console.log("onTagOpenAbstract", tag.name, tag.attrs, tag.isSelfClosing);
     const tagName = tag.name.toLowerCase();
-    const tagAttrs: { [attr: string]: string } = Saxophone.parseAttrs(
-      tag.attrs
-    );
+    const tagAttrs: { [attr: string]: string } = parseAttrs(tag.attrs);
+    console.log("after attrs parse", tagAttrs);
 
     // console.log(`open <${tagName}> at deepness ${this.currentDeepnessLevel}`);
 
