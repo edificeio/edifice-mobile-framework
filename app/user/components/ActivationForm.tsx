@@ -113,6 +113,8 @@ export function InputEmail(props: { email: string, form: ActivationFormModel, on
         value={props.email}
         hasError={props.form.showEmailError(props.email)}
         keyboardType="email-address"
+        autoCorrect={false}
+        autoComplete="off"
     />
 }
 
