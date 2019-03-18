@@ -8,14 +8,14 @@
 
 import I18n from "i18n-js";
 import * as React from "react";
-import { View } from "react-native";
+import { View, ViewProps } from "react-native";
 
 import { Loading } from ".";
 import { fetchJSONWithCache } from "../infra/fetchWithCache";
 import HtmlParserRN, { IHtmlParserRNOptions } from "../infra/htmlParser/rn";
 import { Italic } from "./Typography";
 
-export interface IHtmlContentViewProps {
+export interface IHtmlContentViewProps extends ViewProps {
   navigation?: any;
   html?: string;
   source?: string;
@@ -92,13 +92,13 @@ export class HtmlContentView extends React.PureComponent<
   public render() {
     if (this.state.error)
       return (
-        <View>
+        <View {...this.props}>
           <Italic>{I18n.t("common-ErrorLoadingResource")}</Italic>
         </View>
       );
 
     const loadingComp = this.props.loadingComp || <Loading />;
 
-    return <View>{this.state.jsx || loadingComp}</View>;
+    return <View {...this.props}>{this.state.jsx || loadingComp}</View>;
   }
 }

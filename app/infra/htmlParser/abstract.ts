@@ -95,7 +95,7 @@ export class HtmlParserAbstract<RenderType> {
     try {
       html = this.beforeParseAbstract(html);
       this.html = html;
-      console.log("html before parse:", this.html);
+      // console.log("html before parse:", this.html);
       if (!this.html) return null;
       this.saxophone.parse(this.html);
       // Now this.render is available.
@@ -137,10 +137,8 @@ export class HtmlParserAbstract<RenderType> {
     isSelfClosing: boolean;
   }) {
     // 0 - Curating input
-    console.log("onTagOpenAbstract", tag.name, tag.attrs, tag.isSelfClosing);
     const tagName = tag.name.toLowerCase();
     const tagAttrs: { [attr: string]: string } = parseAttrs(tag.attrs);
-    console.log("after attrs parse", tagAttrs);
 
     // console.log(`open <${tagName}> at deepness ${this.currentDeepnessLevel}`);
 
@@ -227,7 +225,7 @@ export class HtmlParserAbstract<RenderType> {
   protected beforeParseAbstract(html: string): string {
     if (this.opts.preventZWSP) html = html.replace(/\u200B/g, "");
     if (this.opts.fixVoidTags) html = autoCloseVoidTags(html);
-    if (this.opts.emptyDiv2Br) html = html.replace("<div></div>", "<br/>");
+    if (this.opts.emptyDiv2Br) html = html.replace(/<div[^>]*><\/div>/g, "<br/>");
     html = "<html>" + html + "</html>"; // html code MUST have a root element. // TODO : use a boolean to know of the <html> tag is already present.
     if (this.beforeParse) html = this.beforeParse(html);
     return html;

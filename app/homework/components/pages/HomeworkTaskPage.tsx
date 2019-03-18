@@ -18,9 +18,10 @@ import "moment/locale/fr";
 import { CommonStyles } from "../../../styles/common/styles";
 moment.locale("fr");
 
-import HtmlToJsx from "../../../infra/htmlConverter/jsx2";
+// import HtmlToJsx from "../../../infra/htmlConverter/jsx2";
 
-import memoize from "memoize-one";
+// import memoize from "memoize-one";
+import { HtmlContentView } from "../../../ui/HtmlContentView";
 
 // Main component ---------------------------------------------------------------------------------
 
@@ -39,6 +40,7 @@ export interface IHomeworkTaskPageOtherProps {
 export type IHomeworkTaskPageProps = IHomeworkTaskPageDataProps &
   IHomeworkTaskPageOtherProps;
 
+/*
 const convert = memoize(
   html =>
     HtmlToJsx(html, {
@@ -48,6 +50,7 @@ const convert = memoize(
       images: true
     }).render
 );
+*/
 
 export class HomeworkTaskPage extends React.PureComponent<
   IHomeworkTaskPageProps,
@@ -78,7 +81,8 @@ export class HomeworkTaskPage extends React.PureComponent<
             {/* TODO typo */}
             {formattedDate}
           </Text>
-          <View paddingTop={20}>{convert(taskContent)}</View>
+          {/*<View paddingTop={20}>{convert(taskContent)}</View>*/}
+          <HtmlContentView style={{ paddingTop: 20 }} html={taskContent} />
         </ScrollView>
       </PageContainer>
     );
