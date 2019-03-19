@@ -48,6 +48,7 @@ export const loadSchoolbooks = (): Promise<any[]> => {
             `/schoolbook/list/0/${childId}`
           );
           messages = messages || [];
+          messages = messages.map(msg => ({ ...msg, childId }));
           schoolbooks = [...schoolbooks, ...messages];
           // console.log("schooloobks of child:", messages);
         }
@@ -121,6 +122,7 @@ const dataTypes = {
           ...defaultContent,
           htmlContent: schoolbook.text,
           resourceId: wordId,
+          schoolbookData: schoolbook,
           title: schoolbook.title
         };
       }

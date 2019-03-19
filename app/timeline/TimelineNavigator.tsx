@@ -5,7 +5,7 @@ import {
   FilterHeaderConnect,
   FilterTimelineConnect
 } from "./containers/FilterTimeline";
-import { NewsContent, NewsContentHeader } from "./containers/NewsContent";
+import { NewsContentHeader, NewsContentRouter } from "./containers/NewsContent";
 import Timeline, { TimelineHeader } from "./containers/Timeline";
 
 export default createStackNavigator(
@@ -42,7 +42,7 @@ export default createStackNavigator(
           },
           navigation
         ),
-      screen: NewsContent
+      screen: NewsContentRouter
     }
   },
   {

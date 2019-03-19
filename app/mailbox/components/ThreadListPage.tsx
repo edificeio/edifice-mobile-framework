@@ -40,7 +40,12 @@ import ThreadItem from "../components/ThreadItem";
 // Type definitions
 
 import { IConversationThread } from "../reducers/threadList";
-import { ModalContent, ModalBox } from "../../ui/Modal";
+import {
+  ModalContent,
+  ModalBox,
+  ModalContentBlock,
+  ModalContentText
+} from "../../ui/Modal";
 import { LightP } from "../../ui/Typography";
 import Tracking from "../../tracking/TrackingManager";
 
@@ -192,16 +197,23 @@ export class ThreadListPage extends React.PureComponent<
 
   public renderDeleteModal = (threadId: string) => (
     <ModalContent>
-      <LightP>{I18n.t("common-confirm")}</LightP>
-      <LightP>{I18n.t("conversation-deleteThread")}</LightP>
-      <ButtonsOkCancel
-        onCancel={() => {
-          this.setState({ showDeleteModal: false });
-          this.swipeRef.recenter();
-        }}
-        onValid={() => this.handleDeleteThread(threadId)}
-        title={I18n.t("delete")}
-      />
+      <ModalContentBlock>
+        <ModalContentText>
+          {I18n.t("common-confirm")}
+          {"\n"}
+          {I18n.t("conversation-deleteThread")}
+        </ModalContentText>
+      </ModalContentBlock>
+      <ModalContentBlock>
+        <ButtonsOkCancel
+          onCancel={() => {
+            this.setState({ showDeleteModal: false });
+            this.swipeRef.recenter();
+          }}
+          onValid={() => this.handleDeleteThread(threadId)}
+          title={I18n.t("delete")}
+        />
+      </ModalContentBlock>
     </ModalContent>
   ); // TS-ISSUE
 

@@ -26,7 +26,12 @@ import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { DateView } from "../../ui/DateView";
 import { HtmlContentView } from "../../ui/HtmlContentView";
-import { ModalBox, ModalContent } from "../../ui/Modal";
+import {
+  ModalBox,
+  ModalContent,
+  ModalContentBlock,
+  ModalContentText
+} from "../../ui/Modal";
 import { LightP } from "../../ui/Typography";
 import { ConversationMessageStatus } from "../actions/sendMessage";
 
@@ -212,18 +217,21 @@ export default class ThreadMessageAttachment extends React.PureComponent<
     return (
       <ModalBox backdropOpacity={0.5} isVisible={this.state.showModal}>
         <ModalContent>
-          <LightP>{I18n.t("download-confirm")}</LightP>
-          <LightP>
-            {I18n.t("download-fileinfo", {
-              name: att.filename,
-              size: Filesize(att.size, { round: 1 })
-            })}
-          </LightP>
-          <ButtonsOkCancel
-            onCancel={() => this.setState({ showModal: false })}
-            onValid={() => this.startDownload(att)}
-            title={I18n.t("download")}
-          />
+          <ModalContentBlock>
+            <ModalContentText>
+              {I18n.t("download-confirm", {
+                name: att.filename,
+                size: Filesize(att.size, { round: 1 })
+              })}
+            </ModalContentText>
+          </ModalContentBlock>
+          <ModalContentBlock>
+            <ButtonsOkCancel
+              onCancel={() => this.setState({ showModal: false })}
+              onValid={() => this.startDownload(att)}
+              title={I18n.t("download")}
+            />
+          </ModalContentBlock>
         </ModalContent>
       </ModalBox>
     );

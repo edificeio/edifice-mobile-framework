@@ -3,6 +3,7 @@ import * as React from "react";
 import { CommonStyles } from "../styles/common/styles";
 import TouchableOpacity from "./CustomTouchableOpacity";
 import { Icon } from "./icons/Icon";
+import { TouchableOpacityProps, View } from "react-native";
 
 export interface ButtonTextIconProps {
   onPress: () => any;
@@ -11,20 +12,24 @@ export interface ButtonTextIconProps {
   rightName?: string;
   title: string;
   whiteSpace?: string;
+  style?: TouchableOpacityProps;
 }
 
 const ButtonText = style.text({
   backgroundColor: "transparent",
   color: CommonStyles.actionColor,
   fontWeight: "400",
-  paddingHorizontal: 15,
+  marginHorizontal: 15,
   textAlign: "center",
   textAlignVertical: "center"
 });
 
 const ButtonContainer = style(TouchableOpacity)({
-  justifyContent: "center",
-  alignItems: "center"
+  alignItems: "center",
+  flex: 0,
+  flexGrow: 0,
+  flexShrink: 0,
+  justifyContent: "center"
 });
 
 export const ButtonTextIcon = ({
@@ -33,10 +38,11 @@ export const ButtonTextIcon = ({
   title,
   leftName = "",
   rightName = "",
-  whiteSpace = " "
+  whiteSpace = " ",
+  style
 }: ButtonTextIconProps) => {
   return (
-    <ButtonContainer onPress={onPress} disabled={disabled}>
+    <ButtonContainer style={style} onPress={onPress} disabled={disabled}>
       <ButtonText>
         {leftName.length > 0 && <Icon name={leftName} />}
         {whiteSpace}

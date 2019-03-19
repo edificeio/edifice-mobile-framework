@@ -14,7 +14,7 @@ import {
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
 import { AppTitle, Header, HeaderIcon } from "../../ui/headers/Header";
-import { ModalBox, ModalContent } from "../../ui/Modal";
+import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from "../../ui/Modal";
 import { Label, LightP } from "../../ui/Typography";
 import { clearFilterConversation } from "../../mailbox/actions/filter";
 
@@ -71,13 +71,20 @@ export class ProfilePage extends React.PureComponent<
 
   public disconnectBox = () => (
     <ModalContent>
-      <LightP>{I18n.t("common-confirm")}</LightP>
-      <LightP>{I18n.t("auth-disconnectConfirm")}</LightP>
-      <ButtonsOkCancel
-        onCancel={() => this.setState({ showDisconnect: false })}
-        onValid={() => this.disconnect()}
-        title={I18n.t("directory-disconnectButton")}
-      />
+      <ModalContentBlock>
+        <ModalContentText>
+          {I18n.t("common-confirm")}
+          {"\n"}
+          {I18n.t("auth-disconnectConfirm")}
+        </ModalContentText>
+      </ModalContentBlock>
+      <ModalContentBlock>
+        <ButtonsOkCancel
+          onCancel={() => this.setState({ showDisconnect: false })}
+          onValid={() => this.disconnect()}
+          title={I18n.t("directory-disconnectButton")}
+        />
+      </ModalContentBlock>
     </ModalContent>
   ); // TS-ISSUE
 
