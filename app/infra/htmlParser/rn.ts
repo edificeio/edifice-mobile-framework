@@ -128,6 +128,11 @@ export default class HtmlParserRN extends HtmlParserAbstract<
    */
   protected currentLink?: string = null;
 
+  /**
+   * Current div empty -> line break
+   */
+  protected currentDivIsEmpty?: boolean = true;
+
   // ----------------------------------------------------------------------------------------------
 
   public constructor(opts?: IHtmlParserRNOptions) {
@@ -169,6 +174,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
   protected onTagOpen = (tag: ISaxTagOpen) => {
     switch (tag.name) {
       case "div":
+        this.currentDivIsEmpty = true;
       case "p":
         this.lineBreaksToInsert = this.lineBreaksToInsert || 1;
         break;
@@ -210,6 +216,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
     switch (tag.name) {
       // after these html tags we have to jump to a new line
       case "div":
+        if (this.currentDivIsEmpty) ++this.lineBreaksToInsert;
       case "p":
         this.lineBreaksToInsert = this.lineBreaksToInsert || 1;
         break;
@@ -283,6 +290,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
       this.insertNewTextNugget(text);
       this.currentImageNugget = null; // Text breaks image groups (spaces don't count)
       this.firstWord = false;
+      this.currentDivIsEmpty = false;
     }
   }
 
@@ -421,6 +429,8 @@ export default class HtmlParserRN extends HtmlParserAbstract<
     if (!this.opts.images) return;
     // console.log(`encourtered image : "${tag.attributes}"`);
 
+    this.currentDivIsEmpty = false;
+
     // 0 - Check if it's a smiley
     const isEmoji = tag.attrs.class && tag.attrs.class.match(/smiley/);
 
@@ -481,6 +491,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
     };
     this.insertTopLevelNugget(iframeNugget);
     this.currentImageNugget = null; // Iframes breaks image groups
+    this.currentDivIsEmpty = false;
   }
 
   /**
@@ -504,6 +515,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
     };
     this.insertTopLevelNugget(audioNugget);
     this.currentImageNugget = null; // Audio breaks image groups
+    this.currentDivIsEmpty = false;
   }
 
   // ----------------------------------------------------------------------------------------------
