@@ -1,6 +1,6 @@
 import I18n from "i18n-js";
 import * as React from "react";
-import { ScrollView, View, Animated } from "react-native";
+import { ScrollView, View, Animated, Linking } from "react-native";
 
 import { createStackNavigator, NavigationActions } from "react-navigation";
 import Conf from "../../Conf";
@@ -27,7 +27,7 @@ import {
   ModalContentBlock,
   ModalContentText
 } from "../../ui/Modal";
-import { Bold, Light, LightP } from "../../ui/Typography";
+import { Bold, Light, LightP, A } from "../../ui/Typography";
 import { schoolbooks } from "../actions/dataTypes";
 import NewsTopInfo from "../components/NewsTopInfo";
 
@@ -142,7 +142,7 @@ export class NewsContent extends React.Component<
       );
     }
     const isParent = Me.session.type && Me.session.type.includes("Relative");
-    const { resourceId } = this.props.navigation.state.params.news;
+    const { resourceId, resourceUri } = this.props.navigation.state.params.news;
     // console.log("nav state params", this.props.navigation.state.params);
     return (
       <PageContainer>
@@ -166,6 +166,17 @@ export class NewsContent extends React.Component<
           }}
         >
           <ArticleContainer>{this.newsContent()}</ArticleContainer>
+          {resourceUri ? (
+            <View style={{ marginTop: 12 }}>
+              <A
+                onPress={() => {
+                  Linking.openURL(Conf.currentPlatform.url + resourceUri);
+                }}
+              >
+                {I18n.t("timeline-viewInBrowser")}
+              </A>
+            </View>
+          ) : null}
         </ScrollView>
         {!this.state.isAckBefore && isParent && schoolbookData
           ? this.renderAck()

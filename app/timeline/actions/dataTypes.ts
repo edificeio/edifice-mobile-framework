@@ -227,6 +227,7 @@ export const fillData = async (availableApps: object, results: any[]) => {
       if (newResult && !urls.includes(newResult.url)) {
         newResult.application = result.type.toLowerCase();
         newResults.push(newResult);
+        // console.log("GOT :", newResult);
         urls.push(newResult.url);
       }
     }
