@@ -27,7 +27,7 @@ import {
   ModalContentBlock,
   ModalContentText
 } from "../../ui/Modal";
-import { Bold, Light, LightP, A } from "../../ui/Typography";
+import { Bold, Light, LightP, A, Italic } from "../../ui/Typography";
 import { schoolbooks } from "../actions/dataTypes";
 import NewsTopInfo from "../components/NewsTopInfo";
 
@@ -55,6 +55,7 @@ export class NewsContent extends React.Component<
     isAcking: boolean;
     isAckBefore: boolean;
     ackOpacity: Animated.Value;
+    showAckBeforeMessage: boolean;
   }
 > {
   constructor(props) {
@@ -79,7 +80,8 @@ export class NewsContent extends React.Component<
         ackOpacity: new Animated.Value(1),
         isAck,
         isAckBefore: isAck,
-        isAcking: false
+        isAcking: false,
+        showAckBeforeMessage: isAck
       };
     } else {
       // This dummy data prevent non-schoolbook posts to raise exceptions
@@ -87,7 +89,8 @@ export class NewsContent extends React.Component<
         ackOpacity: new Animated.Value(1),
         isAck: false,
         isAckBefore: false,
-        isAcking: false
+        isAcking: false,
+        showAckBeforeMessage: false
       };
     }
   }
@@ -108,9 +111,29 @@ export class NewsContent extends React.Component<
       title,
       url
     } = this.props.navigation.state.params.news;
+    let schoolbookData;
+    if (this.props.navigation.state.params.news.application === "schoolbook") {
+      schoolbookData = schoolbooks.find(
+        s =>
+          s.id.toString() === this.props.navigation.state.params.news.resourceId
+      );
+    }
+    const isParent = Me.session.type && Me.session.type.includes("Relative");
     return (
       <View>
         <NewsTopInfo {...this.props.navigation.state.params.news} />
+        {this.state.showAckBeforeMessage && isParent && schoolbookData ? (
+          <View style={{ marginBottom: 12 }}>
+            <Italic style={{ color: CommonStyles.lightTextColor }}>
+              <Icon
+                name="eye"
+                color={CommonStyles.lightTextColor}
+                paddingHorizontal={12}
+              />{" "}
+              {I18n.t("schoolbook-already-confirmed")}
+            </Italic>
+          </View>
+        ) : null}
         <HtmlContentView
           source={url}
           getContentFromResource={responseJSON => responseJSON.content}
@@ -273,7 +296,11 @@ export class NewsContent extends React.Component<
           thisSchoolbook.acknowledgments = [{ owner: Me.session.userId }];
         }
       }
-      this.setState({ isAck: true, isAcking: false });
+      this.setState({
+        isAck: true,
+        isAcking: false,
+        showAckBeforeMessage: true
+      });
       Animated.timing(
         // Animate over time
         this.state.ackOpacity, // The animated value to drive

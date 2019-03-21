@@ -85,6 +85,7 @@
   "schoolbook-back-without-ack-confirm": "Souhaitez-vous quitter cet écran sans confirmer la lecture du mot ?",
   "schoolbook-back-with-ack": "Confirmer la lecture",
   "schoolbook-back-without-ack": "Quitter",
+  "schoolbook-already-confirmed": "Vous avez confirmé la lecture ce de mot",
   "timeline-allFilter": "Tous",
   "timeline-blogFilter": "Blog",
   "timeline-emptyScreenText": "C’est calme ici... Vous connaissez l’expression \"le calme avant la tempête\" ?",
