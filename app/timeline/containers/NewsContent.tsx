@@ -182,7 +182,7 @@ export class NewsContent extends React.Component<
           contentContainerStyle={{
             paddingBottom:
               !this.state.isAckBefore && isParent && schoolbookData
-                ? 20 + 24 + 14
+                ? 20 + 40 + 20
                 : 20,
             paddingHorizontal: 20,
             paddingTop: 20
@@ -226,7 +226,7 @@ export class NewsContent extends React.Component<
           backgroundColor: "rgba(248,248,250, 0.7)",
           bottom: 0,
           justifyContent: "center",
-          paddingVertical: 12,
+          paddingVertical: 20,
           position: "absolute",
           width: "100%"
         }}
@@ -245,7 +245,7 @@ export class NewsContent extends React.Component<
           bottom: 0,
           justifyContent: "center",
           opacity: this.state.ackOpacity, // opacity animation
-          paddingVertical: 12,
+          paddingVertical: 20,
           position: "absolute",
           width: "100%"
         }}
