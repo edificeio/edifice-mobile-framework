@@ -18,10 +18,10 @@
 // imports ----------------------------------------------------------------------------------------
 
 import style from "glamorous-native";
+import I18n from "i18n-js";
 import * as React from "react";
 const { FlatList, View } = style;
 import { RefreshControl } from "react-native";
-import I18n from "i18n-js";
 
 import { ListItem, PageContainer } from "../../../ui/ContainerContent";
 
@@ -29,7 +29,7 @@ import { Loading } from "../../../ui";
 import ConnectionTrackingBar from "../../../ui/ConnectionTrackingBar";
 import { EmptyScreen } from "../../../ui/EmptyScreen";
 import { Checkbox } from "../../../ui/forms/Checkbox";
-import { Bold, Heavy } from "../../../ui/Typography";
+import { TextBold } from "../../../ui/text";
 
 // Main component ---------------------------------------------------------------------------------
 
@@ -61,7 +61,9 @@ export class HomeworkFilterPage extends React.PureComponent<
   IHomeworkFilterPageProps,
   {}
 > {
-  private flatList: FlatList<string>; /* TS-ISSUE : FlatList is declared in glamorous */ // react-native FlatList component ref
+  private flatList: FlatList<
+    string
+  >; /* TS-ISSUE : FlatList is declared in glamorous */ // react-native FlatList component ref
   private setFlatListRef: any; // FlatList setter, executed when this component is mounted.
 
   constructor(props) {
@@ -116,7 +118,7 @@ export class HomeworkFilterPage extends React.PureComponent<
                 paddingRight: 4
               }}
             >
-              <Heavy>{item.title}</Heavy>
+              <TextBold>{item.title}</TextBold>
             </View>
             <View style={{ justifyContent: "center" }}>
               <Checkbox
@@ -163,7 +165,7 @@ export class HomeworkFilterPage extends React.PureComponent<
   public handleSelectedHomeworkChanged = (diaryId, diaryTitle) => {
     this.props.onSelect(diaryId, diaryTitle);
     this.props.navigation.goBack(); // TODO : Should the navigation be in mapDispatchToProps or not ?
-  } /* TS-ISSUE: Syntax error on this line because of a collision between TSlint and Prettier. */
+  }; /* TS-ISSUE: Syntax error on this line because of a collision between TSlint and Prettier. */
 }
 
 export default HomeworkFilterPage;

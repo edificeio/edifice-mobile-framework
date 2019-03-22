@@ -53,6 +53,14 @@
 	<string>$(PRODUCT_NAME) would like access to your photo gallery</string>
 	<key>UIAppFonts</key>
 	<array>
+		<string>OpenSans-Regular.ttf</string>
+		<string>OpenSans-Italic.ttf</string>
+		<string>OpenSans-Light.ttf</string>
+		<string>OpenSans-LightItalic.ttf</string>
+		<string>OpenSans-SemiBold.ttf</string>
+		<string>OpenSans-SemiBoldItalic.ttf</string>
+		<string>OpenSans-Bold.ttf</string>
+		<string>OpenSans-BoldItalic.ttf</string>
 		<string>Entypo.ttf</string>
 		<string>EvilIcons.ttf</string>
 		<string>Feather.ttf</string>
@@ -64,20 +72,9 @@
 		<string>Octicons.ttf</string>
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
-		<string>OpenSans-Bold.ttf</string>
-		<string>OpenSans-Light.ttf</string>
-		<string>OpenSans-Semibold.ttf</string>
-		<string>OpenSans.ttf</string>
 		<string>icomoon.ttf</string>
 		<string>fontello.ttf</string>
 		<string>icomoon.woff</string>
-		<string>OpenSans-bold.TTF</string>
-		<string>OpenSans-light.TTF</string>
-		<string>OpenSans-semibold.TTF</string>
-		<string>OpenSans.TTF</string>
-		<string>OpenSans-bold.ttf</string>
-		<string>OpenSans-light.ttf</string>
-		<string>OpenSans-semibold.ttf</string>
 		<string>AntDesign.ttf</string>
 		<string>FontAwesome5_Brands.ttf</string>
 		<string>FontAwesome5_Regular.ttf</string>

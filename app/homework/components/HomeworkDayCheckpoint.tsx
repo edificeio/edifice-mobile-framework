@@ -11,8 +11,8 @@
 
 import style from "glamorous-native";
 import * as React from "react";
-const { View, Text } = style;
-import { CommonStyles } from "../../styles/common/styles";
+const { View } = style;
+import { Text, TextColor } from "../../ui/text";
 
 import HomeworkCircleNumber from "./HomeworkCircleNumber";
 
@@ -37,8 +37,7 @@ export const HomeworkDayCheckpoint = ({
 }: IHomeworkDayCheckpointProps) => (
   <View style={[homeworkDayCheckpointStyle, style]}>
     <HomeworkCircleNumber nb={nb} active={active} />
-    <Text color={CommonStyles.lightTextColor} fontSize={12}>
-      {/* TODO typo */}
+    <Text color={TextColor.Light} fontSize={12}>
       {text.toUpperCase()}
     </Text>
   </View>

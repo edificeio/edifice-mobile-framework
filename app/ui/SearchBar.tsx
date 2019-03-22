@@ -1,11 +1,12 @@
 import style from "glamorous-native";
 import * as React from "react";
-import { Keyboard } from 'react-native'
+import { Keyboard } from "react-native";
 import { CommonStyles } from "../styles/common/styles";
 import { Header, HeaderIcon } from "./headers/Header";
 import { CloseIcon, SearchIcon } from "./icons/SearchIcon";
 import { connect } from "react-redux";
 import I18n from "i18n-js";
+import { Weight } from "./Typography";
 
 export interface SearchBarProps {
   onChange: (searchText) => void;
@@ -65,14 +66,11 @@ const TextInput = style.textInput(
     alignSelf: "center",
     color: "white",
     flex: 1,
+    fontFamily: CommonStyles.primaryFontFamily,
     fontSize: 18,
-    fontWeight: "400",
     marginLeft: 8
   },
   ({ value }) => ({
-    fontFamily:
-      value.length === 0
-        ? CommonStyles.primaryFontFamilyLight
-        : CommonStyles.primaryFontFamily
+    fontWeight: value.length === 0 ? Weight.Light : Weight.Normal
   })
 );

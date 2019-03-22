@@ -8,20 +8,17 @@
 
 import style from "glamorous-native";
 import * as React from "react";
-const { Text, ScrollView, View } = style;
+const { ScrollView } = style;
 
 import { PageContainer } from "../../../ui/ContainerContent";
 
 import moment, { Moment } from "moment";
 // tslint:disable-next-line:no-submodule-imports
 import "moment/locale/fr";
-import { CommonStyles } from "../../../styles/common/styles";
 moment.locale("fr");
 
-// import HtmlToJsx from "../../../infra/htmlConverter/jsx2";
-
-// import memoize from "memoize-one";
 import { HtmlContentView } from "../../../ui/HtmlContentView";
+import { Text } from "../../../ui/text";
 
 // Main component ---------------------------------------------------------------------------------
 
@@ -77,10 +74,7 @@ export class HomeworkTaskPage extends React.PureComponent<
             paddingVertical: 20
           }}
         >
-          <Text fontSize={14} color={CommonStyles.textColor} lineHeight={20}>
-            {/* TODO typo */}
-            {formattedDate}
-          </Text>
+          <Text>{formattedDate}</Text>
           {/*<View paddingTop={20}>{convert(taskContent)}</View>*/}
           <HtmlContentView style={{ paddingTop: 20 }} html={taskContent} />
         </ScrollView>

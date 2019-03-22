@@ -15,6 +15,7 @@ import { DateView } from "../../ui/DateView";
 import { Me } from "../../infra/Me";
 import { CommonStyles } from "../../styles/common/styles";
 
+import { FontWeight } from "../../ui/text";
 import { IConversationThread } from "../reducers/threadList";
 
 export interface IThreadItemProps extends IConversationThread {
@@ -62,13 +63,11 @@ export default ({
 const Author = style.text(
   {
     color: CommonStyles.textColor,
+    fontFamily: CommonStyles.primaryFontFamily,
     fontSize: 14
   },
   ({ nb }) => ({
-    fontFamily:
-      nb > 0
-        ? CommonStyles.primaryFontFamilySemibold
-        : CommonStyles.primaryFontFamily
+    fontWeight: nb > 0 ? FontWeight.SemiBold : FontWeight.Normal
   })
 );
 

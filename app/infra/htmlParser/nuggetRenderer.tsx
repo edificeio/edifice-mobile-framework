@@ -7,20 +7,19 @@ import I18n from "i18n-js";
 import * as React from "react";
 import {
   Image,
-  Text,
-  TextStyle,
-  View,
-  ViewStyle,
   Linking,
   Platform,
-  StatusBar
+  StatusBar,
+  TextStyle,
+  View,
+  ViewStyle
 } from "react-native";
 import WebView from "react-native-android-fullscreen-webview-video";
-import { Bold, Italic, A, Link } from "../../ui/Typography";
-import { Images } from "../../ui/Images";
-import { signImagesUrls, signUrl } from "../oauth";
-import { Loading } from "../../ui";
 import { CommonStyles } from "../../styles/common/styles";
+import { Loading } from "../../ui";
+import { Images } from "../../ui/Images";
+import { Text, TextBold, TextColor, TextItalic, TextLink, NestedText, NestedTextBold, NestedTextItalic, NestedTextLink } from "../../ui/text";
+import { signImagesUrls, signUrl } from "../oauth";
 
 export enum HtmlParserJsxTextVariant {
   None = 0,
@@ -107,7 +106,8 @@ export function renderNuggets(
             nugget,
             index,
             style,
-            globalStyles[HtmlParserNuggetTypes.Text]
+            globalStyles[HtmlParserNuggetTypes.Text],
+            false
           );
         } else if (nugget.type === HtmlParserNuggetTypes.Images) {
           return renderParseImages(nugget, index, {
@@ -150,11 +150,12 @@ function renderParseText(
     [HtmlParserJsxTextVariant.Bold]?: TextStyle;
     [HtmlParserJsxTextVariant.Italic]?: TextStyle;
     [HtmlParserJsxTextVariant.Link]?: TextStyle;
-  }
+  },
+  nested: boolean = false
 ): JSX.Element {
   // -1 - Default opts
   textStyles = {
-    [HtmlParserJsxTextVariant.Link]: { color: CommonStyles.actionColor },
+    [HtmlParserJsxTextVariant.Link]: { color: TextColor.Action },
     ...textStyles
   };
   // console.log("textStyles", textStyles);
@@ -175,39 +176,43 @@ function renderParseText(
       return child;
     } else {
       const { all, ...newTextStyles } = textStyles; // Omit global text styles in children text nuggets
-      return renderParseText(child, key + "-" + index, {}, newTextStyles);
+      return renderParseText(child, key + "-" + index, {}, newTextStyles, true);
     }
   });
 
   // 2 - Compute nugget JSX tag
   switch ((nugget as ITextNugget).variant) {
     case HtmlParserJsxTextVariant.None:
+      const TextComp = nested ? NestedText : Text;
       return (
-        <Text key={key} style={{ ...style, ...textStyles.all }}>
+        <TextComp key={key} style={{ ...style, ...textStyles.all }}>
           {children}
-        </Text>
+        </TextComp>
       );
     case HtmlParserJsxTextVariant.Bold:
+      const BoldTextComp = nested ? NestedTextBold : TextBold;
       return (
-        <Bold
+        <BoldTextComp
           key={key}
           style={{ ...style, ...textStyles[HtmlParserJsxTextVariant.Bold] }}
         >
           {children}
-        </Bold>
+        </BoldTextComp>
       );
     case HtmlParserJsxTextVariant.Italic:
+      const ItalicTextComp = nested ? NestedTextItalic : TextItalic;
       return (
-        <Italic
+        <ItalicTextComp
           key={key}
           style={{ ...style, ...textStyles[HtmlParserJsxTextVariant.Italic] }}
         >
           {children}
-        </Italic>
+        </ItalicTextComp>
       );
     case HtmlParserJsxTextVariant.Link:
+      const LinkTextComp = nested ? NestedTextLink : TextLink;
       return (
-        <Link
+        <LinkTextComp
           key={key}
           onPress={() => {
             // console.log("touched", (nugget as ILinkTextNugget).url);
@@ -216,7 +221,7 @@ function renderParseText(
           style={{ ...style, ...textStyles[HtmlParserJsxTextVariant.Link] }}
         >
           {children}
-        </Link>
+        </LinkTextComp>
       );
   }
 }
@@ -350,7 +355,7 @@ function renderParseAudio(
         ...style
       }}
     >
-      <Italic>{I18n.t("soundNotAvailable")}</Italic>
+      <TextItalic>{I18n.t("soundNotAvailable")}</TextItalic>
     </View>
   );
 }

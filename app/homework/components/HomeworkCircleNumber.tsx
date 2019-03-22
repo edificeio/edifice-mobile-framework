@@ -11,8 +11,9 @@
 
 import style from "glamorous-native";
 import * as React from "react";
-const { Text, View } = style;
+const { View } = style;
 import { CommonStyles } from "../../styles/common/styles";
+import { Text, TextColor } from "../../ui/text";
 
 export interface IHomeworkCircleNumberProps {
   style?: any;
@@ -50,13 +51,7 @@ export const HomeworkCircleNumber = ({
 
   return (
     <View style={[homeworkCircleNumberStyle, backgroundStyle, style]}>
-      <Text
-        color={
-          active ? CommonStyles.tabBottomColor : CommonStyles.lightTextColor
-        }
-        fontSize={12}
-      >
-        {/* TODO typo */}
+      <Text color={active ? TextColor.Inverse : TextColor.Light} fontSize={12}>
         {nb}
       </Text>
     </View>

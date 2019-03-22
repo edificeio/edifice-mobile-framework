@@ -1,6 +1,7 @@
 import style from "glamorous-native";
 import { CommonStyles } from "../styles/common/styles";
 import TouchableOpacity from "../ui/CustomTouchableOpacity";
+import { Weight } from "./Typography";
 
 export const ArticleContainer = style.view({
   paddingTop: 5,
@@ -59,16 +60,14 @@ export const RightPanel = style.view({
 export const Content = style.text(
   {
     color: CommonStyles.iconColorOff,
-    fontFamily: CommonStyles.primaryFontFamilyLight,
+    fontFamily: CommonStyles.primaryFontFamily,
     fontSize: 12,
+    fontWeight: Weight.Light,
     marginTop: 10
   },
   ({ nb = 0 }) => ({
     color: nb > 0 ? CommonStyles.textColor : CommonStyles.iconColorOff,
-    fontFamily:
-      nb > 0
-        ? CommonStyles.primaryFontFamily
-        : CommonStyles.primaryFontFamilyLight
+    fontWeight: nb > 0 ? Weight.Normal : Weight.Light
   })
 );
 

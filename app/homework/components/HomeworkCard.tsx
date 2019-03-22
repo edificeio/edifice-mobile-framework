@@ -13,10 +13,10 @@
 import style from "glamorous-native";
 import I18n from "i18n-js";
 import * as React from "react";
-const { Text } = style;
 import HtmlToText from "../../infra/htmlConverter/text";
 import { CommonStyles } from "../../styles/common/styles";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
+import { Text } from "../../ui/text";
 import { A } from "../../ui/Typography";
 
 export interface IHomeworkCardProps {
@@ -50,7 +50,7 @@ export const HomeworkCard = ({
   return (
     <TouchableOpacity style={[homeworkCardStyle, style]} onPress={onPress}>
       {formattedContent ? (
-        <Text fontSize={14} color={CommonStyles.textColor} lineHeight={20}>
+        <Text>
           {/* TODO typo */}
           {formattedContent.content}
           {formattedContent.cropped ? <A> {I18n.t("seeMore")}</A> : null}

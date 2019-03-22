@@ -20,6 +20,7 @@ import {
 
 import mailboxConfig from "../config";
 import { IConversationThread } from "../reducers/threadList";
+import { Weight } from "../../ui/Typography";
 
 const legendStyle: TextStyle = {
   alignSelf: "center",
@@ -29,7 +30,8 @@ const legendStyle: TextStyle = {
 
 const Legend14 = style.text({
   ...legendStyle,
-  fontFamily: CommonStyles.primaryFontFamilyBold,
+  fontFamily: CommonStyles.primaryFontFamily,
+  fontWeight: Weight.Bold,
   height: 45,
   marginBottom: 30,
   textAlign: "center",
@@ -39,8 +41,9 @@ const Legend14 = style.text({
 
 const Legend12 = style.text({
   ...legendStyle,
-  fontFamily: CommonStyles.primaryFontFamilyLight,
+  fontFamily: CommonStyles.primaryFontFamily,
   fontSize: 11,
+  fontWeight: Weight.Light,
   height: 18,
   marginBottom: 25
 });

@@ -28,10 +28,10 @@ export const CommonStyles = {
   placeholderColor: "#B2BECDDD",
   // primaryBorderColor: "#bcbbc1",
   // primaryButtonColor: "#007396",
-  primaryFontFamily: "OpenSans",
-  primaryFontFamilyBold: "OpenSans-bold",
-  primaryFontFamilyLight: "OpenSans-light",
-  primaryFontFamilySemibold: "OpenSans-semibold",
+  primaryFontFamily: "OpenSans-Regular",
+  // primaryFontFamilyBold: "OpenSans-Bold",
+  // primaryFontFamilyLight: "OpenSans-Light",
+  // primaryFontFamilySemibold: "OpenSans-SemiBold",
   // primaryTitleColor: "#007396",
   // secondaryBackGroundColor: "#f9fafb",
   // secondaryButtonColor: "#fc624d",
@@ -54,7 +54,8 @@ export const CommonStyles = {
   // titleColor: "#1467ff",
   warning: "#FFB000",
   success: "#19CA72",
-  error: "#E04B35"
+  error: "#E04B35",
+  white: "#fff"
 };
 
 setCustomText({ style: { fontFamily: CommonStyles.primaryFontFamily } });

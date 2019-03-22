@@ -11,8 +11,7 @@ export const navScreenOptions = (props, { state }) => {
   return {
     header,
     headerStyle: {
-      backgroundColor: CommonStyles.mainColorTheme,
-      paddingHorizontal: 20
+      backgroundColor: CommonStyles.mainColorTheme
     },
     headerTintColor: "white",
     headerTitleStyle: {
