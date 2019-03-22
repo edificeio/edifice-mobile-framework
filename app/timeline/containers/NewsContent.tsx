@@ -1,6 +1,6 @@
 import I18n from "i18n-js";
 import * as React from "react";
-import { ScrollView, View, Animated, Linking } from "react-native";
+import { Animated, Linking, ScrollView, View } from "react-native";
 
 import { createStackNavigator, NavigationActions } from "react-navigation";
 import Conf from "../../Conf";
@@ -11,13 +11,7 @@ import { CommonStyles } from "../../styles/common/styles";
 import { ButtonsOkCancel, FlatButton, Icon } from "../../ui";
 import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
-import {
-  ArticleContainer,
-  CenterPanel,
-  Header,
-  LeftPanel,
-  PageContainer
-} from "../../ui/ContainerContent";
+import { ArticleContainer, PageContainer } from "../../ui/ContainerContent";
 import { DateView } from "../../ui/DateView";
 import { ResourceTitle } from "../../ui/headers/ResourceTitle";
 import { HtmlContentView } from "../../ui/HtmlContentView";
@@ -27,7 +21,7 @@ import {
   ModalContentBlock,
   ModalContentText
 } from "../../ui/Modal";
-import { Bold, Light, LightP, A, Italic } from "../../ui/Typography";
+import { A, Italic } from "../../ui/Typography";
 import { schoolbooks } from "../actions/dataTypes";
 import NewsTopInfo from "../components/NewsTopInfo";
 
@@ -54,29 +48,49 @@ export class NewsContent extends React.Component<
     isAck: boolean;
     isAcking: boolean;
     isAckBefore: boolean;
+    ackNames: string[];
     ackOpacity: Animated.Value;
     showAckBeforeMessage: boolean;
   }
 > {
+  /**
+   * get the schoolbook correpsonding data. Call it only if you're sure that the post is a schoolbook.
+   */
+  protected getSchoolbookData() {
+    return schoolbooks.find(
+      s =>
+        s.id.toString() === this.props.navigation.state.params.news.resourceId
+    );
+  }
+
+  protected get isSchoolbook() {
+    return this.props.navigation.state.params.news.application === "schoolbook";
+  }
+
+  protected getIsAck() {
+    const schoolbookData = this.getSchoolbookData();
+    // console.log("schoolbook data", schoolbookData);
+    let isAck = false;
+    if (schoolbookData.acknowledgments)
+      schoolbookData.acknowledgments.map(ack => {
+        if (Me.session.userId === ack.owner) isAck = true;
+      });
+    return isAck;
+  }
+
+  protected getAckNames() {
+    const schoolbookData = this.getSchoolbookData();
+    return schoolbookData.acknowledgments
+      ? schoolbookData.acknowledgments.map(el => el.parent_name)
+      : [];
+  }
+
   constructor(props) {
     super(props);
-    /* const {
-      schoolbookData // Only for schoolbooks
-    } = this.props.navigation.state.params.news; */
-    if (this.props.navigation.state.params.news.application === "schoolbook") {
-      // console.log("schoolbooks loaded", schoolbooks);
-      // console.log("news", this.props.navigation.state.params.news);
-      const schoolbookData = schoolbooks.find(
-        s =>
-          s.id.toString() === this.props.navigation.state.params.news.resourceId
-      );
-      let isAck = false;
-      // console.log("schoolbookData", schoolbookData);
-      if (schoolbookData.acknowledgments)
-        schoolbookData.acknowledgments.map(ack => {
-          if (Me.session.userId === ack.owner) isAck = true;
-        });
+    if (this.isSchoolbook) {
+      const isAck = this.getIsAck();
       this.state = {
+        ackNames: this.getAckNames(),
         ackOpacity: new Animated.Value(1),
         isAck,
         isAckBefore: isAck,
@@ -86,6 +100,7 @@ export class NewsContent extends React.Component<
     } else {
       // This dummy data prevent non-schoolbook posts to raise exceptions
       this.state = {
+        ackNames: [],
         ackOpacity: new Animated.Value(1),
         isAck: false,
         isAckBefore: false,
@@ -112,27 +127,52 @@ export class NewsContent extends React.Component<
       url
     } = this.props.navigation.state.params.news;
     let schoolbookData;
-    if (this.props.navigation.state.params.news.application === "schoolbook") {
-      schoolbookData = schoolbooks.find(
-        s =>
-          s.id.toString() === this.props.navigation.state.params.news.resourceId
-      );
-    }
+    if (this.isSchoolbook) schoolbookData = this.getSchoolbookData();
+    // console.log("session", Me.session);
     const isParent = Me.session.type && Me.session.type.includes("Relative");
     return (
       <View>
         <NewsTopInfo {...this.props.navigation.state.params.news} />
-        {this.state.showAckBeforeMessage && isParent && schoolbookData ? (
-          <View style={{ marginBottom: 12 }}>
-            <Italic style={{ color: CommonStyles.lightTextColor }}>
-              <Icon
-                name="eye"
-                color={CommonStyles.lightTextColor}
-                paddingHorizontal={12}
-              />{" "}
-              {I18n.t("schoolbook-already-confirmed")}
-            </Italic>
-          </View>
+        {// Show who has confirmed reading this word
+        this.isSchoolbook && schoolbookData ? (
+          isParent ? (
+            // Case 1 : Parent
+            this.state.showAckBeforeMessage ? (
+              <View style={{ marginBottom: 12 }}>
+                <Italic style={{ color: CommonStyles.lightTextColor }}>
+                  <Icon
+                    name="eye"
+                    color={CommonStyles.lightTextColor}
+                    paddingHorizontal={12}
+                  />{" "}
+                  {I18n.t("schoolbook-already-confirmed")}
+                </Italic>
+              </View>
+            ) : null
+          ) : // Case 2-1 : Other people - someone has read
+          this.state.ackNames.length ? (
+            <View style={{ marginBottom: 12 }}>
+              <Italic style={{ color: CommonStyles.lightTextColor }}>
+                <Icon
+                  name="eye"
+                  color={CommonStyles.lightTextColor}
+                  paddingHorizontal={12}
+                />{" "}
+                {I18n.t("schoolbook-read-by")} {this.state.ackNames.join(", ")}
+              </Italic>
+            </View> // Case 2-2 : Other people - no one has read
+          ) : (
+            <View style={{ marginBottom: 12 }}>
+              <Italic style={{ color: CommonStyles.lightTextColor }}>
+                <Icon
+                  name="eye"
+                  color={CommonStyles.lightTextColor}
+                  paddingHorizontal={12}
+                />{" "}
+                {I18n.t("schoolbook-must-read")}
+              </Italic>
+            </View>
+          )
         ) : null}
         <HtmlContentView
           source={url}
@@ -157,6 +197,7 @@ export class NewsContent extends React.Component<
       this.props.navigation.state
     );
     */
+    // console.log("render state", this.state);
     let schoolbookData;
     if (this.props.navigation.state.params.news.application === "schoolbook") {
       schoolbookData = schoolbooks.find(
@@ -410,7 +451,8 @@ NewsContentRouter.router.getStateForAction = (action, state) => {
   if (
     action.type !== NavigationActions.BACK ||
     !state ||
-    state.routes[state.index].params.news.application !== "schoolbook"
+    state.routes[state.index].params.news.application !== "schoolbook" ||
+    (Me.session.type && !Me.session.type.includes("Relative"))
   )
     return defaultGetStateForAction(action, state);
 

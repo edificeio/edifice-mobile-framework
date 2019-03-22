@@ -86,6 +86,8 @@
   "schoolbook-back-with-ack": "Confirmer la lecture",
   "schoolbook-back-without-ack": "Quitter",
   "schoolbook-already-confirmed": "Vous avez confirmé la lecture de ce mot",
+  "schoolbook-must-read": "Un parent doit lire ce mot !",
+  "schoolbook-read-by": "Lu par",
   "timeline-allFilter": "Tous",
   "timeline-blogFilter": "Blog",
   "timeline-emptyScreenText": "C’est calme ici... Vous connaissez l’expression \"le calme avant la tempête\" ?",
