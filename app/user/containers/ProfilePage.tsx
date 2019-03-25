@@ -14,11 +14,19 @@ import {
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
 import { AppTitle, Header, HeaderIcon } from "../../ui/headers/Header";
-import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from "../../ui/Modal";
+import {
+  ModalBox,
+  ModalContent,
+  ModalContentBlock,
+  ModalContentText
+} from "../../ui/Modal";
 import { Label, LightP } from "../../ui/Typography";
 import { clearFilterConversation } from "../../mailbox/actions/filter";
 
 import packageJson from "../../../package.json";
+import { View } from "react-native";
+import { Avatar, Size } from "../../ui/avatars/Avatar";
+import { TextBold } from "../../ui/text";
 
 export class ProfilePageHeader extends React.PureComponent<
   {
@@ -99,6 +107,30 @@ export class ProfilePage extends React.PureComponent<
             {this.disconnectBox()}
           </ModalBox>
         )}
+        <View
+          style={{
+            alignItems: "center",
+            backgroundColor: "white",
+            flex: 0,
+            flexDirection: "row",
+            flexGrow: 0,
+            justifyContent: "flex-start",
+            padding: 15,
+            width: "100%"
+          }}
+        >
+          <View style={{ margin: 10, paddingRight: 15 }}>
+            <Avatar id={Me.session.userId} size={Size.verylarge} decorate />
+          </View>
+          <TextBold
+            style={{
+              flexGrow: 0,
+              flexShrink: 1
+            }}
+          >
+            {Me.session.displayName}
+          </TextBold>
+        </View>
         <ContainerSpacer />
         <ButtonLine
           title={"directory-notificationsTitle"}
