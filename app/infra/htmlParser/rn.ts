@@ -40,11 +40,13 @@ import {
   ILinkTextNugget,
   INugget,
   ITextNugget,
-  renderNuggets
+  renderNuggets,
+  IColorTextNugget
 } from "./nuggetRenderer";
 
 export interface IHtmlParserRNOptions extends IHtmlParserAbstractOptions {
   textFormatting?: boolean;
+  textColor?: boolean;
   hyperlinks?: boolean;
   images?: boolean;
   iframes?: boolean;
@@ -67,6 +69,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
     iframes: true,
     images: true,
     linkTextStyle: {},
+    textColor: true,
     textFormatting: true
   };
 
@@ -299,41 +302,60 @@ export default class HtmlParserRN extends HtmlParserAbstract<
    * @param tag sax.Tag
    */
   protected parseOpenSpanTag(tag: ISaxTagOpen): void {
-    if (!this.opts.textFormatting) return;
     let nbComputedNuggets = 0;
-    const tagStyle = tag.attrs.style;
-    if (tagStyle) {
-      if (tagStyle.match(/font-style ?: ?italic/)) {
-        this.parseOpenItalicTag(tag);
-        ++nbComputedNuggets;
+    const tagStyles = tag.attrs.style.split(";");
+    for (let tagStyle of tagStyles) {
+      // console.log(`tagstyle: "${tagStyle}"`);
+      tagStyle = tagStyle.trim();
+      if (this.opts.textFormatting) {
+        if (tagStyle.match(/font-style ?: ?italic/)) {
+          this.parseOpenItalicTag(tag);
+          ++nbComputedNuggets;
+        }
+        if (tagStyle.match(/font-weight ?: ?(bold|700)/)) {
+          this.parseOpenBoldTag(tag);
+          ++nbComputedNuggets;
+        }
       }
-      if (tagStyle.match(/font-weight ?: ?(bold|700)/)) {
-        this.parseOpenBoldTag(tag);
-        ++nbComputedNuggets;
+      if (this.opts.textColor) {
+        const colormatches = tagStyle.match(/^color ?: ?([^;]+)/);
+        if (colormatches) {
+          // console.log("colormatches", colormatches);
+          this.parseOpenColorTag(tag, colormatches[1]);
+          ++nbComputedNuggets;
+        }
+
+        const bgmatches = tagStyle.match(/^background-color ?: ?([^;]+)/);
+        if (bgmatches) {
+          // console.log("mbgatches", bgmatches);
+          this.parseOpenBgColorTag(tag, bgmatches[1]);
+          ++nbComputedNuggets;
+        }
       }
-    }
-    this.computedTextNuggetsBySpans.push(nbComputedNuggets);
-    /*console.log(
+      /*console.log(
       "encourtered OPEN span that generate",
       nbComputedNuggets,
       "nuggets"
     );*/
+    }
+    this.computedTextNuggetsBySpans.push(nbComputedNuggets);
   }
 
   /**
    * Parse a closing <span> tag, closing each TextNugget it has generated when it was opened.
    */
   protected parseCloseSpanTag(): void {
-    if (!this.opts.textFormatting) return;
-    const nbComputedNuggets = this.computedTextNuggetsBySpans.pop();
-    for (let i = 0; i < nbComputedNuggets; ++i) {
-      this.closeCurrentTextNugget();
-    }
-    /*console.log(
+    if (this.opts.textFormatting || this.opts.textColor) {
+      const nbComputedNuggets = this.computedTextNuggetsBySpans.pop();
+      for (let i = 0; i < nbComputedNuggets; ++i) {
+        this.closeCurrentTextNugget();
+      }
+      /*console.log(
       "encourtered CLOSE span that generated",
       nbComputedNuggets,
       "nuggets"
     );*/
+    }
   }
 
   /**
@@ -407,6 +429,40 @@ export default class HtmlParserRN extends HtmlParserAbstract<
     };
     this.insertNewTextNugget(nugget);
     this.currentLink = cleanUrl;
+  }
+
+  /**
+   * Parse a opening <span> tag that changes background color. Insert an empty styled TextNugget at the deepest level.
+   * @param tag sax.Tag
+   */
+  protected parseOpenBgColorTag(tag: ISaxTagOpen, color: string): void {
+    if (!this.opts.textColor) return;
+    // console.log("encourtered OPEN bgcolor", color);
+    const nugget: IColorTextNugget = {
+      children: [],
+      color,
+      parent: null,
+      type: HtmlParserNuggetTypes.Text,
+      variant: HtmlParserJsxTextVariant.BgColor
+    };
+    this.insertNewTextNugget(nugget);
+  }
+
+  /**
+   * Parse a opening <span> tag that changes text color. Insert an empty styled TextNugget at the deepest level.
+   * @param tag sax.Tag
+   */
+  protected parseOpenColorTag(tag: ISaxTagOpen, color: string): void {
+    if (!this.opts.textColor) return;
+    // console.log("encourtered OPEN color", color);
+    const nugget: IColorTextNugget = {
+      children: [],
+      color,
+      parent: null,
+      type: HtmlParserNuggetTypes.Text,
+      variant: HtmlParserJsxTextVariant.Color
+    };
+    this.insertNewTextNugget(nugget);
   }
 
   /**

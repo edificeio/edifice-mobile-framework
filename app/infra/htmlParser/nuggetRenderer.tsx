@@ -18,14 +18,26 @@ import WebView from "react-native-android-fullscreen-webview-video";
 import { CommonStyles } from "../../styles/common/styles";
 import { Loading } from "../../ui";
 import { Images } from "../../ui/Images";
-import { Text, TextBold, TextColor, TextItalic, TextLink, NestedText, NestedTextBold, NestedTextItalic, NestedTextLink } from "../../ui/text";
+import {
+  Text,
+  TextBold,
+  TextColor,
+  TextItalic,
+  TextLink,
+  NestedText,
+  NestedTextBold,
+  NestedTextItalic,
+  NestedTextLink
+} from "../../ui/text";
 import { signImagesUrls, signUrl } from "../oauth";
 
 export enum HtmlParserJsxTextVariant {
   None = 0,
   Bold,
   Italic,
-  Link
+  Link,
+  Color,
+  BgColor
 }
 
 export enum HtmlParserNuggetTypes {
@@ -48,6 +60,10 @@ export interface ITextNugget extends INugget {
 
 export interface ILinkTextNugget extends ITextNugget {
   url: string;
+}
+
+export interface IColorTextNugget extends ITextNugget {
+  color: string;
 }
 
 export interface IImageComponentAttributes {
@@ -222,6 +238,32 @@ function renderParseText(
         >
           {children}
         </LinkTextComp>
+      );
+    case HtmlParserJsxTextVariant.Color:
+      const ColorTextComp = nested ? NestedText : Text;
+      return (
+        <ColorTextComp
+          key={key}
+          style={{
+            ...style,
+            color: (nugget as IColorTextNugget).color
+          }}
+        >
+          {children}
+        </ColorTextComp>
+      );
+    case HtmlParserJsxTextVariant.BgColor:
+      const BgColorTextComp = nested ? NestedText : Text;
+      return (
+        <BgColorTextComp
+          key={key}
+          style={{
+            ...style,
+            backgroundColor: (nugget as IColorTextNugget).color
+          }}
+        >
+          {children}
+        </BgColorTextComp>
       );
   }
 }
