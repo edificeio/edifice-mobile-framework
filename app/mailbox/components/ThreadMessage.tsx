@@ -35,7 +35,8 @@ const MessageBubble = ({ contentHtml, isMine }) => (
                 textDecorationLine: "underline"
               }
             }
-          : null)
+          : null),
+        textColor: !isMine
       }}
     />
   </BubbleStyle>
