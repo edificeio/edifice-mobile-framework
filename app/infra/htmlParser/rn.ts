@@ -303,7 +303,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
    */
   protected parseOpenSpanTag(tag: ISaxTagOpen): void {
     let nbComputedNuggets = 0;
-    const tagStyles = tag.attrs.style.split(";");
+    const tagStyles = tag.attrs.style ? tag.attrs.style.split(";") : [];
     for (let tagStyle of tagStyles) {
       // console.log(`tagstyle: "${tagStyle}"`);
       tagStyle = tagStyle.trim();
