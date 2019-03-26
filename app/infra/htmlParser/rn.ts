@@ -33,6 +33,7 @@ import {
   HtmlParserJsxTextVariant,
   HtmlParserNuggetTypes,
   IAudioNugget,
+  IColorTextNugget,
   IIframeNugget,
   IImageComponentAttributes,
   IImagesNugget,
@@ -40,8 +41,7 @@ import {
   ILinkTextNugget,
   INugget,
   ITextNugget,
-  renderNuggets,
-  IColorTextNugget
+  renderNuggets
 } from "./nuggetRenderer";
 
 export interface IHtmlParserRNOptions extends IHtmlParserAbstractOptions {
@@ -206,6 +206,9 @@ export default class HtmlParserRN extends HtmlParserAbstract<
       case "em":
         this.parseOpenItalicTag(tag);
         break;
+      case "u":
+        this.parseOpenUnderlineTag(tag);
+        break;
       case "span":
         this.parseOpenSpanTag(tag);
         break;
@@ -233,6 +236,9 @@ export default class HtmlParserRN extends HtmlParserAbstract<
       case "i":
       case "em":
         this.parseCloseItalicTag();
+        break;
+      case "u":
+        this.parseCloseUnderlineTag();
         break;
       case "span":
         this.parseCloseSpanTag();
@@ -314,6 +320,10 @@ export default class HtmlParserRN extends HtmlParserAbstract<
         }
         if (tagStyle.match(/font-weight ?: ?(bold|700)/)) {
           this.parseOpenBoldTag(tag);
+          ++nbComputedNuggets;
+        }
+        if (tagStyle.match(/text-decoration ?: ?underline/)) {
+          this.parseOpenUnderlineTag(tag);
           ++nbComputedNuggets;
         }
       }
@@ -403,6 +413,30 @@ export default class HtmlParserRN extends HtmlParserAbstract<
   protected parseCloseItalicTag(): void {
     if (!this.opts.textFormatting) return;
     // console.log("encourtered CLOSE italic");
+    this.closeCurrentTextNugget();
+  }
+
+  /**
+   * Parse a opening <i> or <em> tag. Insert an empty styled TextNugget at the deepest level.
+   * @param tag sax.Tag
+   */
+  protected parseOpenUnderlineTag(tag: ISaxTagOpen): void {
+    if (!this.opts.textFormatting) return;
+    // console.log("encourtered OPEN underline");
+    this.insertNewTextNugget({
+      children: [],
+      parent: null,
+      type: HtmlParserNuggetTypes.Text,
+      variant: HtmlParserJsxTextVariant.Underline
+    });
+  }
+
+  /**
+   * Parse a closing <i> or <em> tag.
+   */
+  protected parseCloseUnderlineTag(): void {
+    if (!this.opts.textFormatting) return;
+    // console.log("encourtered CLOSE underline");
     this.closeCurrentTextNugget();
   }
 

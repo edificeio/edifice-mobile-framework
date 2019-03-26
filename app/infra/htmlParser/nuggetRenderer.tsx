@@ -19,15 +19,15 @@ import { CommonStyles } from "../../styles/common/styles";
 import { Loading } from "../../ui";
 import { Images } from "../../ui/Images";
 import {
+  NestedText,
+  NestedTextBold,
+  NestedTextItalic,
+  NestedTextLink,
   Text,
   TextBold,
   TextColor,
   TextItalic,
-  TextLink,
-  NestedText,
-  NestedTextBold,
-  NestedTextItalic,
-  NestedTextLink
+  TextLink
 } from "../../ui/text";
 import { signImagesUrls, signUrl } from "../oauth";
 
@@ -36,6 +36,7 @@ export enum HtmlParserJsxTextVariant {
   Bold,
   Italic,
   Link,
+  Underline,
   Color,
   BgColor
 }
@@ -103,6 +104,7 @@ export function renderNuggets(
       [HtmlParserJsxTextVariant.None]?: TextStyle;
       [HtmlParserJsxTextVariant.Bold]?: TextStyle;
       [HtmlParserJsxTextVariant.Italic]?: TextStyle;
+      [HtmlParserJsxTextVariant.Underline]?: TextStyle;
       [HtmlParserJsxTextVariant.Link]?: TextStyle;
     };
     [HtmlParserNuggetTypes.Images]: ViewStyle;
@@ -165,6 +167,7 @@ function renderParseText(
     [HtmlParserJsxTextVariant.None]?: TextStyle;
     [HtmlParserJsxTextVariant.Bold]?: TextStyle;
     [HtmlParserJsxTextVariant.Italic]?: TextStyle;
+    [HtmlParserJsxTextVariant.Underline]?: TextStyle;
     [HtmlParserJsxTextVariant.Link]?: TextStyle;
   },
   nested: boolean = false
@@ -225,6 +228,20 @@ function renderParseText(
           {children}
         </ItalicTextComp>
       );
+    case HtmlParserJsxTextVariant.Underline:
+      const UnderlineTextComp = nested ? NestedText : Text;
+      return (
+        <UnderlineTextComp
+          key={key}
+          style={{
+            ...style,
+            ...textStyles[HtmlParserJsxTextVariant.Underline],
+            textDecorationLine: "underline"
+          }}
+        >
+          {children}
+        </UnderlineTextComp>
+      );
     case HtmlParserJsxTextVariant.Link:
       const LinkTextComp = nested ? NestedTextLink : TextLink;
       return (
@@ -234,7 +251,10 @@ function renderParseText(
             // console.log("touched", (nugget as ILinkTextNugget).url);
             Linking.openURL((nugget as ILinkTextNugget).url);
           }}
-          style={{ ...style, ...textStyles[HtmlParserJsxTextVariant.Link] }}
+          style={{
+            ...style,
+            ...textStyles[HtmlParserJsxTextVariant.Link]
+          }}
         >
           {children}
         </LinkTextComp>
