@@ -95,11 +95,68 @@ export const excludeNotifTypes = [
 export const includeNotifKeys = [
   "messagerie.send-message",
   "schoolbook.publish",
+  "schoolbook.word-resend",
   "blog.publish-post",
   "news.info-shared"
   // TODO (Soon) Homework
 ];
 
+/**
+ * Only these preferences keys are used by Pocket for push-notifications. On button per app.
+ * /!\ Caution : Order matters. Notifs prefs will be displayed in the same order as defined here.
+ */
+export const includeNotifKeysByApp = [
+  {
+    appName: "messagerie",
+    notifKeys: ["messagerie.send-message"]
+  },
+  {
+    appName: "schoolbook",
+    notifKeys: ["schoolbook.publish", "schoolbook.word-resend"]
+  },
+  {
+    appName: "blog",
+    notifKeys: ["blog.publish-post"]
+  },
+  {
+    appName: "news",
+    notifKeys: ["news.info-shared"]
+  }
+];
+
+export function action_toggleNotifPrefsByApp(
+  appName: string,
+  value: boolean,
+  notificationPrefs: object
+) {
+  return async (dispatch, getState) => {
+    // console.log("toggle notif prefs for app", appName);
+    const newNotificationPrefs = {
+      ...notificationPrefs
+    };
+
+    for (const pref of Object.values(newNotificationPrefs)) {
+      // console.log(pref);
+      const prefAppName = pref["type"].toLowerCase();
+      if (appName === prefAppName) {
+        pref["push-notif"] = value;
+      }
+    }
+
+    // console.log("new prefs", newNotificationPrefs);
+
+    dispatch({
+      notificationPrefs: newNotificationPrefs,
+      type: actionTypeSetNotifPrefs
+    });
+
+    savePreference("timeline", {
+      config: newNotificationPrefs
+    });
+  };
+}
+
+// Deprecated. Use `action_toggleNotifPrefsByApp` instead to toggle all pref of an app
 export function setNotificationPref(
   notif: { key: string },
   value: boolean,

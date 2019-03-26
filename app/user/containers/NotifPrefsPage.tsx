@@ -7,9 +7,10 @@ import { connect } from "react-redux";
 // Actions
 
 import {
+  action_toggleNotifPrefsByApp,
+  includeNotifKeys,
   loadNotificationPrefs,
-  setNotificationPref,
-  includeNotifKeys
+  setNotificationPref
 } from "../../user/actions/notifPrefs";
 
 // Components
@@ -100,9 +101,30 @@ export class NotifPrefsPage extends React.PureComponent<
       return false;
     if (
       !this.props.legalapps.includes(
-        stringCapitalize(notifPref["app-name"].toLowerCase())
+        stringCapitalize(notifPref["type"].toLowerCase())
       )
     )
+      return false;
+    return true;
+  }
+
+  public isAppAllowed(appName) {
+    // Compute a good version of uppercased allowed apps.
+    const { availableApps } = this.props;
+    const availableAppsWithUppercase = {};
+    Object.keys(availableApps).forEach(app => {
+      availableAppsWithUppercase[app] = availableApps[app];
+      availableAppsWithUppercase[app.toUpperCase()] = availableApps[app];
+    });
+    const stringCapitalize = (str: string) =>
+      str.charAt(0).toUpperCase() + str.slice(1);
+    // Do verification
+    if (
+      !availableAppsWithUppercase.hasOwnProperty(appName.toUpperCase()) && // TODO: Get the available apps NOT from timeline
+      appName.toUpperCase() !== "MESSAGERIE"
+    )
+      return false;
+    if (!this.props.legalapps.includes(stringCapitalize(appName.toLowerCase())))
       return false;
     return true;
   }
@@ -111,20 +133,34 @@ export class NotifPrefsPage extends React.PureComponent<
     if (Object.keys(this.props.notificationPrefs).length === 0) {
       return <Loading />;
     }
+    // console.log("this.props.notificationPrefs", this.props.notificationPrefs);
+    const notifPrefsLines = [
+      ...new Set(
+        Object.values(this.props.notificationPrefs).map(pref =>
+          pref["type"].toLowerCase()
+        )
+      )
+    ];
+    // console.log("notifPrefLines", notifPrefsLines);
+
     return (
       <PageContainer>
         <ConnectionTrackingBar />
         <ScrollView>
           <H4>{I18n.t("directory-notificationsTitle")}</H4>
-          {Object.values(this.props.notificationPrefs)
-            .filter(nn => this.isAllowed(nn))
-            .map((pref: any) => (
+          {notifPrefsLines
+            .filter(appName => this.isAppAllowed(appName))
+            .map((appName: string) => (
               <NotifPrefLine
-                key={pref.key}
-                i18nKey={pref.key}
-                value={pref["push-notif"]}
-                onCheck={() => this.setPref(pref, true)}
-                onUncheck={() => this.setPref(pref, false)}
+                key={appName}
+                i18nKey={`notif-pref-${appName}`}
+                value={
+                  Object.values(this.props.notificationPrefs).find(
+                    pref => pref["type"].toLowerCase() === appName
+                  )["push-notif"]
+                }
+                onCheck={() => this.setPref(appName, true)}
+                onUncheck={() => this.setPref(appName, false)}
               />
             ))}
         </ScrollView>
@@ -151,7 +187,7 @@ export default connect(
   dispatch => ({
     onInit: () => dispatch(loadNotificationPrefs() as any),
     onTogglePref: (notification, pref, notificationPrefs) =>
-      dispatch(setNotificationPref(
+      dispatch(action_toggleNotifPrefsByApp(
         notification,
         pref,
         notificationPrefs
