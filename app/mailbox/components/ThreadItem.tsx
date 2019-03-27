@@ -1,4 +1,5 @@
 import style from "glamorous-native";
+import I18n from "i18n-js";
 import * as React from "react";
 
 import { GridAvatars } from "../../ui/avatars/GridAvatars";
@@ -31,8 +32,11 @@ export default ({
   onPress,
   to,
   from,
-  cc
+  cc,
+  ...others
 }: IThreadItemProps) => {
+  // console.log("ThreadItem", subject, `from "${from}" to`, to, cc, others);
+  // console.log("ThreadItem", subject, findReceivers2(to, from, cc));
   return (
     <ListItem nb={unread} onPress={() => onPress(id, displayNames, subject)}>
       <LeftPanel>
@@ -41,7 +45,10 @@ export default ({
       <CenterPanel>
         <Author nb={unread} numberOfLines={1}>
           {findReceivers2(to, from, cc)
-            .map(r => displayNames.find(dn => dn[0] === r)[1])
+            .map(r => {
+              const u = displayNames.find(dn => dn[0] === r);
+              return u ? u[1] : I18n.t("unknown-user");
+            })
             .join(", ")}
         </Author>
         {subject && subject.length ? (
@@ -81,7 +88,9 @@ const Author = style.text(
  */
 export const findReceivers = (to, from, cc) => {
   cc = cc || [];
-  const newTo = [...to, ...cc, from].filter(el => el !== Me.session.userId);
+  const newTo = from
+    ? [...to, ...cc, from].filter(el => el !== Me.session.userId)
+    : [...to, ...cc].filter(el => el !== Me.session.userId);
   if (newTo.length === 0) {
     return [Me.session.userId];
   }
@@ -92,7 +101,9 @@ export const findReceivers2 = (to, from, cc) => {
   cc = cc || [];
   const receiversSet = new Set(
     // By using a Set we guarantee that we'll not have duplicates
-    [...to, ...cc, from].filter(el => el !== Me.session.userId)
+    from
+      ? [...to, ...cc, from].filter(el => el !== Me.session.userId)
+      : [...to, ...cc].filter(el => el !== Me.session.userId)
   );
   if (receiversSet.size === 0) {
     receiversSet.add(Me.session.userId);

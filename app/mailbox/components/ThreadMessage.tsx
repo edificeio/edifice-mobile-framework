@@ -133,7 +133,8 @@ export default class ThreadMessage extends React.PureComponent<
     if (!body) {
       return <style.View />;
     }
-    const senderText = this.props.displayNames.find(el => el[0] === from)[1];
+    const s = this.props.displayNames.find(el => el[0] === from);
+    const senderText = s ? s[1] : I18n.t("unknown-user");
     let firstAttachment = true;
 
     // console.log("message props", this.props);

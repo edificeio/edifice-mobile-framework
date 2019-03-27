@@ -1,3 +1,4 @@
+import I18n from "i18n-js";
 import * as React from "react";
 import { connect } from "react-redux";
 import unorm from "unorm";
@@ -127,7 +128,10 @@ const searchText = thread => {
     (thread.subject || "") +
       " " +
       findReceivers2(thread.to, thread.from, thread.cc)
-        .map(r => thread.displayNames.find(dn => dn[0] === r)[1])
+        .map(r => {
+          const u = thread.displayNames.find(dn => dn[0] === r);
+          return u ? u[1] : I18n.t("unknown-user");
+        })
         .join(", ")
   ).toLowerCase();
   return searchtext;

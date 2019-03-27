@@ -66,6 +66,7 @@
   "News": "News",
   "next": "Next",
   "notif-pref-blog": "New blog post",
+  "notif-pref-homework": "[TODO] Mise à jour du cahier de textes",
   "notif-pref-messagerie": "New message",
   "notif-pref-news": "Newsfeed shared",
   "notif-pref-schoolbook": "New message in your schoolbook",
@@ -107,6 +108,7 @@
   "to": "To :",
   "today": " Today ",
   "tryagain": "Try again",
+  "unknown-user": "[TODO] Unknown user",
   "version-number": "Version",
   "welcome": "Welcome",
 

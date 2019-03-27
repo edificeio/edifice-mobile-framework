@@ -1,4 +1,5 @@
 import style from "glamorous-native";
+import I18n from "i18n-js";
 import * as React from "react";
 import { TextStyle, View } from "react-native";
 import { connect } from "react-redux";
@@ -18,9 +19,9 @@ import {
   TouchableEndBarPanel
 } from "../../ui/headers/Header";
 
+import { Weight } from "../../ui/Typography";
 import mailboxConfig from "../config";
 import { IConversationThread } from "../reducers/threadList";
-import { Weight } from "../../ui/Typography";
 
 const legendStyle: TextStyle = {
   alignSelf: "center",
@@ -100,7 +101,12 @@ export class ThreadsTopBar extends React.PureComponent<IThreadsBarProps, {}> {
       imageSet.add(Me.session.userId);
     }
     const images = [...imageSet];
-    const names = images.map(el => displayNames.find(dn => dn[0] === el)[1]);
+    // console.log("ThreadPageHeader displayNames", displayNames);
+    // console.log("images", images);
+    const names = images.map(el => {
+      const u = displayNames.find(dn => dn[0] === el);
+      return u ? u[1] : I18n.t("unknown-user");
+    });
 
     return (
       <Header onLayout={() => this.setHeaderHeight()}>
