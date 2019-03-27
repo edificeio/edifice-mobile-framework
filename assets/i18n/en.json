@@ -82,6 +82,7 @@
   "schoolbook-back-without-ack-confirm": "[TODO] Souhaitez-vous quitter cet écran sans confirmer la lecture du mot ?",
   "schoolbook-back-without-ack": "Quit",
   "schoolbook-must-read": "A parent must read this message!",
+  "schoolbook-readByNbRelatives": "[TODO] Read by {{nb}} relatives",
   "schoolbook-read-by": "Read by",
   "schoolbook-response": "[TODO] Suivi d'un mot",
   "scrapbook-modified": "[TODO] Modification d'un cahier multimédia",

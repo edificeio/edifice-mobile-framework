@@ -85,6 +85,16 @@ export class NewsContent extends React.Component<
       : [];
   }
 
+  protected getAckNumber() {
+    const schoolbookData = this.getSchoolbookData();
+    // console.log("schoolbook data", schoolbookData);
+    return schoolbookData.acknowledgments
+      ? schoolbookData.acknowledgments.length
+      : schoolbookData.ack_number
+      ? schoolbookData.ack_number
+      : 0;
+  }
+
   constructor(props) {
     super(props);
     if (this.isSchoolbook) {
@@ -129,7 +139,16 @@ export class NewsContent extends React.Component<
     let schoolbookData;
     if (this.isSchoolbook) schoolbookData = this.getSchoolbookData();
     // console.log("session", Me.session);
-    const isParent = Me.session.type && Me.session.type.includes("Relative");
+    const isStudent =
+      Me.session.type &&
+      (Me.session.type === "Student" || Me.session.type.includes("Student"));
+    const isParent =
+      !isStudent && Me.session.type && Me.session.type.includes("Relative");
+    const isTeacherOrPersonnel =
+      !isStudent &&
+      Me.session.type &&
+      (Me.session.type.includes("Teacher") ||
+        Me.session.type.includes("Personnel"));
     return (
       <View>
         <NewsTopInfo {...this.props.navigation.state.params.news} />
@@ -149,8 +168,8 @@ export class NewsContent extends React.Component<
                 </Italic>
               </View>
             ) : null
-          ) : // Case 2-1 : Other people - someone has read
-          this.state.ackNames.length ? (
+          ) : // Case 2 : Teacher and Personnel
+          isTeacherOrPersonnel ? (
             <View style={{ marginBottom: 12 }}>
               <Italic style={{ color: CommonStyles.lightTextColor }}>
                 <Icon
@@ -158,21 +177,37 @@ export class NewsContent extends React.Component<
                   color={CommonStyles.lightTextColor}
                   paddingHorizontal={12}
                 />{" "}
-                {I18n.t("schoolbook-read-by")} {this.state.ackNames.join(", ")}
-              </Italic>
-            </View> // Case 2-2 : Other people - no one has read
-          ) : (
-            <View style={{ marginBottom: 12 }}>
-              <Italic style={{ color: CommonStyles.lightTextColor }}>
-                <Icon
-                  name="eye"
-                  color={CommonStyles.lightTextColor}
-                  paddingHorizontal={12}
-                />{" "}
-                {I18n.t("schoolbook-must-read")}
+                {I18n.t("schoolbook-readByNbRelatives", {
+                  nb: this.getAckNumber()
+                })}
               </Italic>
             </View>
-          )
+          ) : isStudent ? ( // Case 3-1 : Student - someone has read
+            this.state.ackNames.length ? (
+              <View style={{ marginBottom: 12 }}>
+                <Italic style={{ color: CommonStyles.lightTextColor }}>
+                  <Icon
+                    name="eye"
+                    color={CommonStyles.lightTextColor}
+                    paddingHorizontal={12}
+                  />{" "}
+                  {I18n.t("schoolbook-read-by")}{" "}
+                  {this.state.ackNames.join(", ")}
+                </Italic>
+              </View> // Case 3-2 : Student - no one has read
+            ) : (
+              <View style={{ marginBottom: 12 }}>
+                <Italic style={{ color: CommonStyles.lightTextColor }}>
+                  <Icon
+                    name="eye"
+                    color={CommonStyles.lightTextColor}
+                    paddingHorizontal={12}
+                  />{" "}
+                  {I18n.t("schoolbook-must-read")}
+                </Italic>
+              </View>
+            )
+          ) : null
         ) : null}
         <HtmlContentView
           source={url}

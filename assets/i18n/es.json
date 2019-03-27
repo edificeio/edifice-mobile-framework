@@ -82,6 +82,7 @@
   "schoolbook-back-without-ack-confirm": "[TODO] Souhaitez-vous quitter cet écran sans confirmer la lecture du mot ?",
   "schoolbook-back-without-ack": "[TODO] Dejar",
   "schoolbook-must-read": "Un padre debe leer el mensaje",
+  "schoolbook-readByNbRelatives": "[TODO] Leído por {{nb}} responsibles",
   "schoolbook-read-by": "Leído por",
   "schoolbook-response": "[TODO] Suivi d'un mot",
   "scrapbook-modified": "[TODO] Modification d'un cahier multimédia",

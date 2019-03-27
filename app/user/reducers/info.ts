@@ -48,7 +48,7 @@ export interface IUserInfoState {
   surname?: string;
   teaches?: boolean;
   tel?: string;
-  type?: string[];
+  type?: string[] | string;
   visibleInfos?: string[];
 }
 
