@@ -5,9 +5,9 @@ import { TextInput, TextInputProps } from "react-native";
 
 const TextInputContainer = style.view(
   {
+    height: 40,
     paddingTop: 4,
-    width: "100%",
-    height: 40
+    width: "100%"
   },
   ({ hasError, focus }) => ({
     borderBottomColor: hasError
@@ -21,16 +21,23 @@ const TextInputContainer = style.view(
 
 const Input = style.textInput({
   color: CommonStyles.textInputColor,
-  height: 40,
+  fontFamily: CommonStyles.primaryFontFamily,
   fontSize: 14,
-  fontFamily: CommonStyles.primaryFontFamily
+  height: 40
 });
+
+export type TextInputLineProps = {
+  hasError: boolean;
+  onFocus?: () => void;
+  onBlur?: () => void;
+  placeholder: string;
+  inputRef: (ref: TextInput) => void;
+  secureTextEntry?: boolean;
+} & TextInputProps;
 
 export class TextInputLine extends React.Component<
   {
-    onChangeText: (text: string) => void;
     hasError: boolean;
-    value: string;
     onFocus?: () => void;
     onBlur?: () => void;
     placeholder: string;
@@ -58,29 +65,17 @@ export class TextInputLine extends React.Component<
   }
 
   public render() {
-    const {
-      onChangeText,
-      hasError,
-      value,
-      onFocus,
-      onBlur,
-      placeholder,
-      secureTextEntry
-    } = this.props;
+    const { hasError } = this.props;
 
     return (
       <TextInputContainer hasError={hasError} focus={this.state.isFocused}>
         <Input
           innerRef={r => this.props.inputRef(r)}
-          onChangeText={value => onChangeText(value)}
           onBlur={() => this.onBlur()}
           onFocus={() => this.onFocus()}
-          placeholder={placeholder}
           placeholderTextColor={CommonStyles.placeholderColor}
-          secureTextEntry={secureTextEntry}
           underlineColorAndroid={"transparent"}
           autoCapitalize="none"
-          value={value}
           {...this.props}
         />
       </TextInputContainer>

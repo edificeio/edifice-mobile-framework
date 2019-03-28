@@ -32,6 +32,7 @@ import { checkVersionThenLogin, updateVersionIfWanted, IVersionContext } from ".
 import VersionModal from "../components/VersionModal";
 import { getAuthState } from "../selectors";
 import BottomSwitcher from "../../ui/BottomSwitcher";
+import { PasswordInputLine } from "../../ui/forms/PasswordInputLine";
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -161,13 +162,12 @@ export class LoginPage extends React.Component<
             hasError={error && !this.state.typing}
             keyboardType="email-address"
           />
-          <TextInputLine
+          <PasswordInputLine
             inputRef={this.setInputPasswordRef}
             placeholder={I18n.t("Password")}
             onChangeText={(password: string) =>
               this.setState({ password, typing: true })
             }
-            secureTextEntry={true}
             value={this.state.password}
             hasError={error && !this.state.typing}
           />
