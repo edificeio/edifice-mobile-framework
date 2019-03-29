@@ -15,6 +15,7 @@ import {
   createMainTabNavOption
 } from "./helpers/mainTabNavigator";
 import ActivationPage from "../user/containers/ActivationPage";
+import ForgotPage from "../user/containers/ForgotPage";
 
 // MAIN NAVIGATOR -------------------------------------------------------------------------
 
@@ -129,6 +130,7 @@ export const RootNavigator: NavigationContainer = createSwitchNavigator({
   Bootstrap: () => <View />,
   Login: { screen: LoginPage },
   Activation: { screen: ActivationPage },
+  Forgot: { screen: ForgotPage },
   Main: { screen: () => <MainNavigator /> },
   PlatformSelect: { screen: PlatformSelectPage }
 });

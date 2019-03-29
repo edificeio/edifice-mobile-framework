@@ -24,6 +24,7 @@ import {
 import { A, Italic } from "../../ui/Typography";
 import { schoolbooks } from "../actions/dataTypes";
 import NewsTopInfo from "../components/NewsTopInfo";
+import Tracking from "../../tracking/TrackingManager";
 
 export class NewsContentHeader extends React.Component<
   { navigation?: any },
@@ -269,6 +270,9 @@ export class NewsContent extends React.Component<
             <View style={{ marginTop: 12 }}>
               <A
                 onPress={() => {
+                  Tracking.logEvent("responsiveLink", {
+                    application: this.props.navigation.state.params.news.application
+                  });
                   Linking.openURL(Conf.currentPlatform.url + resourceUri);
                 }}
               >
@@ -372,6 +376,9 @@ export class NewsContent extends React.Component<
           thisSchoolbook.acknowledgments = [{ owner: Me.session.userId }];
         }
       }
+
+      Tracking.logEvent("confirmMessage");
+
       this.setState({
         isAck: true,
         isAcking: false,

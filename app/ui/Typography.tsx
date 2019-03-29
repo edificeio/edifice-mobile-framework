@@ -182,3 +182,14 @@ export const ErrorMessage = glamorous.text({
   padding: 5,
   textAlign: "center"
 });
+
+export const InfoMessage = glamorous.text({
+  alignSelf: "center",
+  color: CommonStyles.textColor,
+  flexGrow: 0,
+  fontFamily: CommonStyles.primaryFontFamily,
+  fontSize: 14,
+  marginTop: 15,
+  padding: 5,
+  textAlign: "center"
+});

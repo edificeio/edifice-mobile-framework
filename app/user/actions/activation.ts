@@ -9,6 +9,7 @@ import { asyncActionTypes } from "../../infra/redux/async";
 import { navigate } from "../../navigation/helpers/navHelper";
 import userConfig from "../config";
 import { actionTypeLoginCancel, login } from "./login";
+import Tracking from "../../tracking/TrackingManager";
 
 // TYPES ------------------------------------------------------------------------------------------------
 export interface IActivationContext {
@@ -188,6 +189,11 @@ export function activationAccount(model: IActivationModel) {
           return;
         }
       }
+
+      Tracking.logEvent("activateAccount", {
+        platform: Conf.currentPlatform.displayName
+      });
+
       // === 4 - call thunk login using login/password
       // console.log("[User][Activation] redirecting to login...", res.status, model)
       await dispatch(

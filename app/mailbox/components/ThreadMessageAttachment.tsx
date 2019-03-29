@@ -34,6 +34,7 @@ import {
 } from "../../ui/Modal";
 import { LightP } from "../../ui/Typography";
 import { ConversationMessageStatus } from "../actions/sendMessage";
+import Tracking from "../../tracking/TrackingManager";
 
 export interface IAttachment {
   id: string;
@@ -257,6 +258,8 @@ export default class ThreadMessageAttachment extends React.PureComponent<
       await Permissions.request("android.permission.WRITE_EXTERNAL_STORAGE");
     }
 
+    Tracking.logEvent("downloadAttachments");
+
     this.setState({
       downloadState: DownloadState.Downloading,
       showModal: false
@@ -340,6 +343,7 @@ export default class ThreadMessageAttachment extends React.PureComponent<
 
   public openDownloadedFile() {
     if (this.state.localFile) {
+      Tracking.logEvent("openAttachments");
       if (Platform.OS === "ios") {
         RNFetchBlob.ios.previewDocument(this.state.localFile);
       } else if (Platform.OS === "android") {

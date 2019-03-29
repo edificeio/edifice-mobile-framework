@@ -28,19 +28,24 @@ import Conf from "../../Conf";
 import { navigate } from "../../navigation/helpers/navHelper";
 import { CommonStyles } from "../../styles/common/styles";
 import { Icon } from "../../ui/";
-import { checkVersionThenLogin, updateVersionIfWanted, IVersionContext } from "../actions/version";
-import VersionModal from "../components/VersionModal";
-import { getAuthState } from "../selectors";
 import BottomSwitcher from "../../ui/BottomSwitcher";
 import { PasswordInputLine } from "../../ui/forms/PasswordInputLine";
+import { Text, TextColor } from "../../ui/text";
+import {
+  checkVersionThenLogin,
+  IVersionContext,
+  updateVersionIfWanted
+} from "../actions/version";
+import VersionModal from "../components/VersionModal";
+import { getAuthState } from "../selectors";
 
 // Props definition -------------------------------------------------------------------------------
 
 export interface ILoginPageDataProps {
   auth: IUserAuthState;
   headerHeight: number;
-  //version
-  versionContext: IVersionContext
+  // version
+  versionContext: IVersionContext;
   versionModal: boolean;
   version: string;
   versionMandatory: boolean;
@@ -88,7 +93,7 @@ const FormContainer = style.view({
 export class LoginPage extends React.Component<
   ILoginPageProps,
   ILoginPageState
-  > {
+> {
   // Refs
   private inputLogin: TextInput = null;
   private setInputLoginRef = el => (this.inputLogin = el);
@@ -110,7 +115,14 @@ export class LoginPage extends React.Component<
   // Render
 
   public render() {
-    const { versionContext, versionMandatory, versionModal, version, onSkipVersion, onUpdateVersion } = this.props;
+    const {
+      versionContext,
+      versionMandatory,
+      versionModal,
+      version,
+      onSkipVersion,
+      onUpdateVersion
+    } = this.props;
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
         <KeyboardAvoidingView
@@ -118,10 +130,13 @@ export class LoginPage extends React.Component<
           behavior={Platform.OS === "ios" ? "padding" : undefined}
         >
           <ConnectionTrackingBar style={{ position: "absolute" }} />
-          <VersionModal mandatory={versionMandatory} version={version}
+          <VersionModal
+            mandatory={versionMandatory}
+            version={version}
             visibility={versionModal}
             onCancel={() => onSkipVersion(versionContext)}
-            onSubmit={() => onUpdateVersion(versionContext)} />
+            onSubmit={() => onUpdateVersion(versionContext)}
+          />
           <TouchableWithoutFeedback
             style={{ flex: 1 }}
             onPress={() => this.unfocus()}
@@ -189,6 +204,22 @@ export class LoginPage extends React.Component<
               title={I18n.t("Connect")}
               loading={loggingIn || loggedIn}
             />
+            <View
+              style={{
+                alignItems: "center",
+                justifyContent: "center"
+              }}
+            >
+              <Text
+                color={TextColor.Light}
+                style={{ textDecorationLine: "underline", marginTop: 48 }}
+                onPress={() => {
+                  navigate("Forgot");
+                }}
+              >
+                {I18n.t("forgot-password")}
+              </Text>
+            </View>
           </View>
         </FormContainer>
         <BottomSwitcher onPress={() => this.handleBackToPlatformSelector()}>
@@ -222,8 +253,11 @@ export class LoginPage extends React.Component<
 
 export default connect(
   (state: any, props: any): ILoginPageDataProps => {
-    const auth: IUserAuthState = getAuthState(state)
-    let version = "", versionModal = false, versionMandatory = false, versionContext: IVersionContext = null;
+    const auth: IUserAuthState = getAuthState(state);
+    let version = "",
+      versionModal = false,
+      versionMandatory = false,
+      versionContext: IVersionContext = null;
     if (auth.versionContext && auth.versionContext.version) {
       versionContext = auth.versionContext;
       version = versionContext.version.newVersion;
@@ -240,14 +274,16 @@ export default connect(
     };
   },
   (dispatch): ILoginPageEventProps => ({
-    onSkipVersion: (version) => {
-      dispatch<any>(updateVersionIfWanted(version, false))
+    onSkipVersion: version => {
+      dispatch<any>(updateVersionIfWanted(version, false));
     },
-    onUpdateVersion: (version) => {
-      dispatch<any>(updateVersionIfWanted(version, true))
+    onUpdateVersion: version => {
+      dispatch<any>(updateVersionIfWanted(version, true));
     },
     onLogin: (userlogin, password) => {
-      dispatch<any>(checkVersionThenLogin(false, { username: userlogin, password }));
+      dispatch<any>(
+        checkVersionThenLogin(false, { username: userlogin, password })
+      );
     }
   })
 )(LoginPage);
