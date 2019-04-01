@@ -141,6 +141,7 @@ export class HtmlParserAbstract<RenderType> {
     const tagAttrs: { [attr: string]: string } = parseAttrs(tag.attrs);
 
     // console.log(`open <${tagName}> at deepness ${this.currentDeepnessLevel}`);
+    // console.log(this.currentIgnoredDeepnessLevel);
 
     // 1 - Compute if the tag needs to be ignored
 
@@ -163,7 +164,7 @@ export class HtmlParserAbstract<RenderType> {
       ++this.currentDeepnessLevel;
 
     // 3 - Call custom event handler if tag is not ignored
-    if (!willBeIgnored && this.onTagOpen)
+    if (!this.isIgnoring && !willBeIgnored && this.onTagOpen)
       this.onTagOpen({
         attrs: tagAttrs,
         isSelfClosing: tag.isSelfClosing,
@@ -187,6 +188,7 @@ export class HtmlParserAbstract<RenderType> {
   }
 
   protected onProcessingInstructionAbstract(instruction: { contents: string }) {
+    if (this.isIgnoring) return;
     if (this.onProcessingInstruction) this.onProcessingInstruction(instruction);
   }
 
@@ -201,10 +203,12 @@ export class HtmlParserAbstract<RenderType> {
   }
 
   protected onCdataAbstract(cdata: { contents: string }) {
+    if (this.isIgnoring) return;
     if (this.onCdata) this.onCdata(cdata);
   }
 
   protected onCommentAbstract(comment: { contents: string }) {
+    if (this.isIgnoring) return;
     if (this.onComment) this.onComment(comment);
   }
 
