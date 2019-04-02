@@ -5,6 +5,8 @@ import { MixpanelInstance } from "react-native-mixpanel";
 import Conf from "../Conf";
 import { Me } from "../infra/Me";
 
+import packageJson from "../../package.json";
+
 export default class Tracking {
   // Mixpanel
 
@@ -80,6 +82,9 @@ export default class Tracking {
       Tracking.mixpanel.set({ $userId: Me.session.userId });
       Tracking.mixpanel.set({ $userType: Me.session.type });
       Tracking.mixpanel.set({ $email: Me.session.email });
+      Tracking.mixpanel.set({
+        $app: packageJson.ode.appid.replace(/com\.ode\.(\w+)/, "$1")
+      });
     }
   }
 }
