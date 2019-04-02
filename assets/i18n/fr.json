@@ -90,7 +90,7 @@
   "schoolbook-back-without-ack-confirm": "Souhaitez-vous quitter cet écran sans confirmer la lecture du mot ?",
   "schoolbook-back-without-ack": "Quitter",
   "schoolbook-must-read": "Un parent doit lire ce mot !",
-  "schoolbook-readByNbRelatives": "Lu par {{nb}} responsables",
+  "schoolbook-readByNbRelatives": "Lu par {{nb}} responsable(s)",
   "schoolbook-read-by": "Lu par",
   "schoolbook-response": "Suivi d'un mot",
   "scrapbook-modified": "Modification d'un cahier multimédia",
