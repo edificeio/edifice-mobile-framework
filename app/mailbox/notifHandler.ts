@@ -2,8 +2,8 @@ import Conf from "../Conf";
 import { signedFetch } from "../infra/fetchWithCache";
 import { nainNavNavigate } from "../navigation/helpers/navHelper";
 import {
-  fetchConversationThreadList,
-  fetchConversationThreadResetMessages
+  fetchConversationThreadResetMessages,
+  resetConversationThreadList
 } from "./actions/threadList";
 import conversationThreadSelected from "./actions/threadSelected";
 
@@ -22,7 +22,7 @@ export default dispatch => async notificationData => {
   // console.log("notif message", message);
   try {
     try {
-      await dispatch(await fetchConversationThreadList());
+      await dispatch(await resetConversationThreadList());
     } catch (e) {
       if (!(e.type && e.type === "ALREADY_FETCHED")) {
         throw e;
