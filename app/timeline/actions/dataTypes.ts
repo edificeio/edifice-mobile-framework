@@ -80,6 +80,7 @@ const dataTypes = {
       : null;
     const wordId = split && split[split.length - 1];
     const wordUri = `/schoolbook/word/${wordId}`; // news.params.wordUri || news.params.resourceUri;
+    const resourceUri = `/schoolbook#/word/${wordId}`;
 
     const defaultContent = {
       date: news.date.$date,
@@ -96,7 +97,7 @@ const dataTypes = {
       ),
       message: news.preview.text,
       resourceName: news.params.wordTitle,
-      resourceUri: news.params.resourceUri,
+      resourceUri,
       senderId: news.sender,
       senderName: news.params.username,
       subtitle: I18n.t("schoolbook-appTitle"), // Subitle is displayed in little in NewsContent
