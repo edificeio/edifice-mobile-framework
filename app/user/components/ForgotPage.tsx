@@ -89,7 +89,7 @@ export class ForgotPage extends React.PureComponent<
     const errorMsg = isError ? (result as { error: string }).error : null;
     const errorText = errorMsg
       ? I18n.t("forgot-" + errorMsg.replace(/\./g, "-"))
-      : "forgot-unknownError";
+      : "common-ErrorUnknown";
 
     const isSuccess =
       result.hasOwnProperty("status") &&
