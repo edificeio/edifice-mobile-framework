@@ -151,7 +151,7 @@ export class NewsContent extends React.Component<
       (Me.session.type.includes("Teacher") ||
         Me.session.type.includes("Personnel"));
     return (
-      <View>
+      <View style={{ width: "100%", flex: 1 }}>
         <NewsTopInfo {...this.props.navigation.state.params.news} />
         {// Show who has confirmed reading this word
         this.isSchoolbook && schoolbookData ? (
@@ -243,7 +243,7 @@ export class NewsContent extends React.Component<
     }
     const isParent = Me.session.type && Me.session.type.includes("Relative");
     const { resourceId, resourceUri } = this.props.navigation.state.params.news;
-    // console.log("nav state params", this.props.navigation.state.params);
+    console.log("nav state params", this.props.navigation.state.params);
     return (
       <PageContainer>
         <ConnectionTrackingBar />
