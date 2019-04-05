@@ -72,6 +72,12 @@ export function login(
       // console.log("oauth2 userinfo", userinfo2);
       // console.log(userinfo2.apps);
       userinfo2.apps = userinfo2.apps.map(e => e.name);
+
+      // Some applications haven't a precise name... ☹️
+      if (userinfo2.apps.includes("Cahier de texte"))
+        userinfo2.apps.push("Homeworks");
+      if (userinfo2.apps.includes("Actualites")) userinfo2.apps.push("News");
+
       // console.log("apps: ", userinfo2.apps);
       const userdata = await fetchJSONWithCache(
         `/directory/user/${userinfo2.userId}`
@@ -125,10 +131,10 @@ export function login(
             err.authErr === OAuthError.BAD_CREDENTIALS
               ? "bad credentials"
               : err.authErr === OAuthError.NOT_PREMIUM
-              ? "not premium"
-              : err.authErr === OAuthError.NETWORK_ERROR
-              ? "network error"
-              : "unkown",
+                ? "not premium"
+                : err.authErr === OAuthError.NETWORK_ERROR
+                  ? "network error"
+                  : "unkown",
           isManual: credentials ? "true" : "false",
           platform: Conf.currentPlatform.url
         });

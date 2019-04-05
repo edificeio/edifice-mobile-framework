@@ -84,7 +84,6 @@ export class NotifPrefsPage extends React.PureComponent<
 
   public isAllowed(notifPref) {
     // Compute a good version of uppercased allowed apps.
-    // console.log("is allowed ?", notifPref);
     const { availableApps } = this.props;
     const availableAppsWithUppercase = {};
     Object.keys(availableApps).forEach(app => {
@@ -96,7 +95,8 @@ export class NotifPrefsPage extends React.PureComponent<
       str.charAt(0).toUpperCase() + str.slice(1);
     if (
       !availableAppsWithUppercase.hasOwnProperty(notifPref.type) && // TODO: Get the available apps NOT from timeline
-      notifPref.type !== "MESSAGERIE"
+      notifPref.type !== "MESSAGERIE" &&
+      notifPref.type !== "HOMEWORKS"
     )
       return false;
     if (
@@ -110,6 +110,7 @@ export class NotifPrefsPage extends React.PureComponent<
 
   public isAppAllowed(appName) {
     // Compute a good version of uppercased allowed apps.
+    // console.log("is app allowed ?", appName, this.props.legalapps);
     const { availableApps } = this.props;
     const availableAppsWithUppercase = {};
     Object.keys(availableApps).forEach(app => {
@@ -121,7 +122,8 @@ export class NotifPrefsPage extends React.PureComponent<
     // Do verification
     if (
       !availableAppsWithUppercase.hasOwnProperty(appName.toUpperCase()) && // TODO: Get the available apps NOT from timeline
-      appName.toUpperCase() !== "MESSAGERIE"
+      appName.toUpperCase() !== "MESSAGERIE" &&
+      appName.toUpperCase() !== "HOMEWORKS"
     )
       return false;
     if (!this.props.legalapps.includes(stringCapitalize(appName.toLowerCase())))

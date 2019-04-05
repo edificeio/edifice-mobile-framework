@@ -92,14 +92,17 @@ export const excludeNotifTypes = [
  * Only these preferences keys are used by Pocket for push-notifications.
  * /!\ Caution : Order matters. Notifs prefs will be displayed in the same order as defined here.
  */
+/*
 export const includeNotifKeys = [
   "messagerie.send-message",
   "schoolbook.publish",
   "schoolbook.word-resend",
   "blog.publish-post",
-  "news.info-shared"
-  // TODO (Soon) Homework
+  "news.info-shared",
+  "homeworks.share",
+  "homeworks.entries.modified"
 ];
+*/
 
 /**
  * Only these preferences keys are used by Pocket for push-notifications. On button per app.
@@ -121,8 +124,18 @@ export const includeNotifKeysByApp = [
   {
     appName: "news",
     notifKeys: ["news.info-shared"]
+  },
+  {
+    appName: "homeworks",
+    notifKeys: ["homeworks.share", "homeworks.entries.modified"]
   }
 ];
+
+export const includeNotifKeys = [];
+includeNotifKeysByApp.forEach(app =>
+  app.notifKeys.forEach(key => includeNotifKeys.push(key))
+);
+// console.log("includeNotifKeys", includeNotifKeys);
 
 export function action_toggleNotifPrefsByApp(
   appName: string,
