@@ -144,7 +144,7 @@ class AppStoreUnconnected extends React.Component<
   public componentWillUnmount() {
     RNLanguages.removeEventListener("change", this.onLanguagesChange);
     AppState.removeEventListener("change", this.handleAppStateChange);
-    this.notificationOpenedListener();
+    if (this.notificationOpenedListener) this.notificationOpenedListener();
     this.onTokenRefreshListener();
   }
 
