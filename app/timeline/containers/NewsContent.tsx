@@ -52,17 +52,25 @@ export class NewsContent extends React.Component<
     ackNames: string[];
     ackOpacity: Animated.Value;
     showAckBeforeMessage: boolean;
+    schoolbookData: object;
   }
 > {
   /**
    * get the schoolbook correpsonding data. Call it only if you're sure that the post is a schoolbook.
    */
+  private schoolbookData;
   protected getSchoolbookData() {
-    // console.log(schoolbooks);
-    return schoolbooks.find(
-      s =>
-        s.id.toString() === this.props.navigation.state.params.news.resourceId
-    );
+    // console.log("schoolbooks", schoolbooks);
+    // console.log(this.props.navigation.state.params);
+    if (!this.schoolbookData) {
+      const sc = schoolbooks.find(
+        s =>
+          s.id.toString() === this.props.navigation.state.params.news.resourceId
+      );
+      this.schoolbookData = sc;
+      return sc;
+    }
+    return this.schoolbookData;
   }
 
   protected get isSchoolbook() {
@@ -74,6 +82,7 @@ export class NewsContent extends React.Component<
     // console.log("schoolbook data", schoolbookData);
     // console.log(this.props.navigation.state.params);
     let isAck = false;
+    if (!schoolbookData) return undefined;
     if (schoolbookData.acknowledgments)
       schoolbookData.acknowledgments.map(ack => {
         if (Me.session.userId === ack.owner) isAck = true;
@@ -83,6 +92,7 @@ export class NewsContent extends React.Component<
 
   protected getAckNames() {
     const schoolbookData = this.getSchoolbookData();
+    if (!schoolbookData) return undefined;
     return schoolbookData.acknowledgments
       ? schoolbookData.acknowledgments.map(el => el.parent_name)
       : [];
@@ -90,6 +100,7 @@ export class NewsContent extends React.Component<
 
   protected getAckNumber() {
     const schoolbookData = this.getSchoolbookData();
+    if (!schoolbookData) return undefined;
     // console.log("schoolbook data", schoolbookData);
     return schoolbookData.acknowledgments
       ? schoolbookData.acknowledgments.length
@@ -108,6 +119,7 @@ export class NewsContent extends React.Component<
         isAck,
         isAckBefore: isAck,
         isAcking: false,
+        schoolbookData: null,
         showAckBeforeMessage: isAck
       };
     } else {
@@ -118,6 +130,7 @@ export class NewsContent extends React.Component<
         isAck: false,
         isAckBefore: false,
         isAcking: false,
+        schoolbookData: null,
         showAckBeforeMessage: false
       };
     }
