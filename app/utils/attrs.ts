@@ -55,7 +55,8 @@ export const parseAttrs = input => {
 
     // this is XML so we need a value for the attribute
     if (position === end) {
-      throw new Error("Expected a value for the attribute");
+      // throw new Error("Expected a value for the attribute");
+      continue;
     }
 
     const attrName = input.slice(startName, position);
@@ -70,7 +71,8 @@ export const parseAttrs = input => {
     const endQuote = input.indexOf(startQuote, position);
 
     if (endQuote === -1) {
-      throw new Error("Unclosed attribute value");
+      // throw new Error("Unclosed attribute value");
+      position = endQuote + 1;
     }
 
     const attrValue = input.slice(position, endQuote);
