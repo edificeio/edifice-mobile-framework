@@ -57,6 +57,7 @@ export function loadCurrentPlatform() {
     const platformId = await AsyncStorage.getItem(PLATFORM_STORAGE_KEY);
     if (platformId) {
       if (!Conf.platforms.hasOwnProperty(platformId)) {
+        navigate("PlatformSelect");
         throw new Error(
           `Error: LOADED platform "${platformId}" doesn't exists.`
         );
