@@ -99,6 +99,7 @@
   "timeline-blogFilter": "Blog",
   "timeline-emptyScreenText": "C’est calme ici... Vous connaissez l’expression \"le calme avant la tempête\" ?",
   "timeline-emptyScreenTitle": "C’est désert... Il y a quelqu’un ?",
+  "timeline-eventType-ACKNOWLEDGE": "a confirmé la lecture du mot",
   "timeline-eventType-INFO-SHARED": "a partagé",
   "timeline-eventType-PUBLISH-POST": "a publié le billet de",
   "timeline-eventType-PUBLISH": "a publié",

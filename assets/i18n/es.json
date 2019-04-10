@@ -100,6 +100,7 @@
   "timeline-blogFilter": "Blog",
   "timeline-emptyScreenText": "Está todo muy tranquilo. ¿Conoce la expresión \"la calma antes de la tormenta\"?",
   "timeline-emptyScreenTitle": "No se ve ni un alma. ¿Hay alguien?",
+  "timeline-eventType-ACKNOWLEDGE": "[TODO] a lu",
   "timeline-eventType-INFO-SHARED": "ha compartido",
   "timeline-eventType-PUBLISH-POST": "ha publicado una entrada de",
   "timeline-eventType-PUBLISH": "ha publicado",

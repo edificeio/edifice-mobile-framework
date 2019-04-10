@@ -28,7 +28,9 @@ export default ({
         <Light>
           {" "}
           {I18n.t(`timeline-eventType-${eventType}`)}{" "}
-          {I18n.t(`timeline-postType-${type}`)}{" "}
+          {eventType !== "ACKNOWLEDGE" // Acknowledge notifs has their own text
+            ? I18n.t(`timeline-postType-${type}`) + " "
+            : null}
         </Light>
         {resourceName}
       </Heavy>

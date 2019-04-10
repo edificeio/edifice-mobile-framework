@@ -8,6 +8,7 @@ import { signedFetch } from "../../infra/fetchWithCache";
 import { Me } from "../../infra/Me";
 import { navScreenOptions } from "../../navigation/helpers/navHelper";
 import { CommonStyles } from "../../styles/common/styles";
+import Tracking from "../../tracking/TrackingManager";
 import { ButtonsOkCancel, FlatButton, Icon } from "../../ui";
 import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
@@ -24,7 +25,6 @@ import {
 import { A, Italic } from "../../ui/Typography";
 import { schoolbooks } from "../actions/dataTypes";
 import NewsTopInfo from "../components/NewsTopInfo";
-import Tracking from "../../tracking/TrackingManager";
 
 export class NewsContentHeader extends React.Component<
   { navigation?: any },
@@ -58,6 +58,7 @@ export class NewsContent extends React.Component<
    * get the schoolbook correpsonding data. Call it only if you're sure that the post is a schoolbook.
    */
   protected getSchoolbookData() {
+    // console.log(schoolbooks);
     return schoolbooks.find(
       s =>
         s.id.toString() === this.props.navigation.state.params.news.resourceId
@@ -71,6 +72,7 @@ export class NewsContent extends React.Component<
   protected getIsAck() {
     const schoolbookData = this.getSchoolbookData();
     // console.log("schoolbook data", schoolbookData);
+    // console.log(this.props.navigation.state.params);
     let isAck = false;
     if (schoolbookData.acknowledgments)
       schoolbookData.acknowledgments.map(ack => {
@@ -243,7 +245,7 @@ export class NewsContent extends React.Component<
     }
     const isParent = Me.session.type && Me.session.type.includes("Relative");
     const { resourceId, resourceUri } = this.props.navigation.state.params.news;
-    console.log("nav state params", this.props.navigation.state.params);
+    // console.log("nav state params", this.props.navigation.state.params);
     return (
       <PageContainer>
         <ConnectionTrackingBar />

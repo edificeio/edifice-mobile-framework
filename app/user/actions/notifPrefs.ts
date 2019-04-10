@@ -115,7 +115,11 @@ export const includeNotifKeysByApp = [
   },
   {
     appName: "schoolbook",
-    notifKeys: ["schoolbook.publish", "schoolbook.word-resend"]
+    notifKeys: [
+      "schoolbook.publish",
+      "schoolbook.word-resend",
+      "schoolbook.acknowledge"
+    ]
   },
   {
     appName: "blog",

@@ -37,6 +37,21 @@ export const loadSchoolbooks = (): Promise<any[]> => {
         // tslint:disable-next-line:no-console
         console.warn(e);
       }
+    } else if (Me.session.type.indexOf("Teacher") !== -1) {
+      try {
+        // console.log("im a teacher");
+        // console.log("session :", Me.session);
+        let messages = await fetchJSONWithCache(`/schoolbook/list`, {
+          body: JSON.stringify({ filter: "Any", page: 0 }),
+          method: "POST"
+        });
+        messages = messages || [];
+        schoolbooks = [...schoolbooks, ...messages];
+        // console.log("loaded schoolbooks list", schoolbooks);
+      } catch (e) {
+        // tslint:disable-next-line:no-console
+        console.warn(e);
+      }
     } else {
       try {
         // console.log("im NOT a child", Me.session);
@@ -73,6 +88,7 @@ export const loadSchoolbooks = (): Promise<any[]> => {
 
 const dataTypes = {
   SCHOOLBOOK: async (news, timeline) => {
+    // console.log("news.params.resourceUri", news.params.resourceUri);
     const split = news.params.resourceUri
       ? news.params.resourceUri.split("/")
       : news.params.wordUri
@@ -88,12 +104,14 @@ const dataTypes = {
       htmlContent: undefined,
       id: news._id,
       images: signImagesUrls(
-        news.preview.images.map(url => ({
-          alt: "",
-          src: (url as string).startsWith("/")
-            ? Conf.currentPlatform.url + url
-            : url
-        }))
+        news.preview.images
+          ? news.preview.images.map(url => ({
+              alt: "",
+              src: (url as string).startsWith("/")
+                ? Conf.currentPlatform.url + url
+                : url
+            }))
+          : []
       ),
       message: news.preview.text,
       resourceName: news.params.wordTitle,
