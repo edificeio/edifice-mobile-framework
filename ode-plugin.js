@@ -156,16 +156,18 @@ function _walkSync(directory, filelist, filter) {
 async function _updateAppIds(ode) {
     //update gradle.properties
     const appid = ode["appid"];
+    const appidAndroid = ode["appidAndroid"] || appid;
+    const appidIOS = ode["appidIOS"] || appid;
     const appname = ode["appname"];
     const gradlePropertiesPath = path.resolve(__dirname, ode["properties"]["android"]);
     let gradleProperties = await readFile(gradlePropertiesPath, { encoding: "utf-8" });
-    gradleProperties = gradleProperties.replace(/(APPID=)(.*)/, "$1" + appid).replace(/(APPNAME=)(.*)/, "$1" + appname)
+    gradleProperties = gradleProperties.replace(/(APPID=)(.*)/, "$1" + appidAndroid).replace(/(APPNAME=)(.*)/, "$1" + appname)
     await writeFile(gradlePropertiesPath, gradleProperties);
     //update info.plist
     const infoPlistPath = path.resolve(__dirname, ode["properties"]["ios"]);
     let infoPlist = await readFile(infoPlistPath, { encoding: "utf-8" });
     const appnameIOS = appname.replace(" ","&#x2007;");//https://stackoverflow.com/questions/46337691/bundle-display-name-missing-space-characters
-    infoPlist = infoPlist.replace(/(<key>CFBundleIdentifier<\/key>\s*<string>)(.*)(<\/string>)/, "$1" + appid + "$3").replace(/(<key>CFBundleDisplayName<\/key>\s*<string>)(.*)(<\/string>)/, "$1" + appnameIOS + "$3")
+    infoPlist = infoPlist.replace(/(<key>CFBundleIdentifier<\/key>\s*<string>)(.*)(<\/string>)/, "$1" + appidIOS + "$3").replace(/(<key>CFBundleDisplayName<\/key>\s*<string>)(.*)(<\/string>)/, "$1" + appnameIOS + "$3")
     await writeFile(infoPlistPath, infoPlist);
 }
 function _overrideFileListAbsolute(name) {
