@@ -56,7 +56,8 @@ I18n.defaultLocale = "en";
 I18n.translations = {
   en: require("../assets/i18n/en"),
   es: require("../assets/i18n/es"),
-  fr: require("../assets/i18n/fr")
+  fr: require("../assets/i18n/fr"),
+  pt: require("../assets/i18n/pt")
 };
 // Print current device language
 // console.log("language", RNLanguages.language);
