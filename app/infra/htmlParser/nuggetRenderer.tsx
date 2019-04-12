@@ -407,37 +407,42 @@ function renderParseAudio(
   key: string,
   style: ViewStyle = {}
 ): JSX.Element {
-  const _quonsole = console;
   const src = signUrl(nugget.src);
-  console.log("src", src);
   return (
     <View
       key={key}
       style={{
         backgroundColor: CommonStyles.entryfieldBorder,
-        height: 200,
+        height: 80,
         paddingHorizontal: 16,
         paddingVertical: 12,
         width: "100%",
         ...style
       }}
     >
-      <Video
-        source={src}
-        onLoadStart={err => _quonsole.log("star§t", err)}
-        onLoad={err => _quonsole.log("LOAD", err)}
-        onError={err => _quonsole.log("err video", err)}
-        onProgress={(a, b, c) => _quonsole.log("PROGRESS", a, b, c)}
-        controls={true}
-        audioOnly={true}
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          bottom: 0,
-          right: 0
-        }}
-      />
+      {Platform.OS === "android" ? (
+        <Video
+          source={src}
+          /*
+          onLoadStart={err => console.log("star§t", err)}
+          onLoad={err => console.log("LOAD", err)}
+          onError={err => console.log("err video", err)}
+          */
+          controls={true}
+          audioOnly={true}
+          paused={true}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            backgroundColor: "white"
+          }}
+        />
+      ) : (
+        <TextItalic>{I18n.t("soundNotAvailable")}</TextItalic>
+      )}
     </View>
   );
 }
