@@ -15,6 +15,7 @@ import {
   ViewStyle
 } from "react-native";
 import WebView from "react-native-android-fullscreen-webview-video";
+import Video from "react-native-video";
 import { CommonStyles } from "../../styles/common/styles";
 import { Loading } from "../../ui";
 import { Images } from "../../ui/Images";
@@ -406,18 +407,37 @@ function renderParseAudio(
   key: string,
   style: ViewStyle = {}
 ): JSX.Element {
+  const _quonsole = console;
+  const src = signUrl(nugget.src);
+  console.log("src", src);
   return (
     <View
       key={key}
       style={{
         backgroundColor: CommonStyles.entryfieldBorder,
+        height: 200,
         paddingHorizontal: 16,
         paddingVertical: 12,
         width: "100%",
         ...style
       }}
     >
-      <TextItalic>{I18n.t("soundNotAvailable")}</TextItalic>
+      <Video
+        source={src}
+        onLoadStart={err => _quonsole.log("star§t", err)}
+        onLoad={err => _quonsole.log("LOAD", err)}
+        onError={err => _quonsole.log("err video", err)}
+        onProgress={(a, b, c) => _quonsole.log("PROGRESS", a, b, c)}
+        controls={true}
+        audioOnly={true}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          bottom: 0,
+          right: 0
+        }}
+      />
     </View>
   );
 }

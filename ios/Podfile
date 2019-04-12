@@ -50,6 +50,8 @@ target 'mobileapp' do
 
   pod 'RNPermissions', :path => '../node_modules/react-native-permissions'
 
+  pod 'react-native-video', :path => '../node_modules/react-native-video'
+
 end
 
 post_install do |installer|

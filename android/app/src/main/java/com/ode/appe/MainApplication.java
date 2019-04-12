@@ -3,6 +3,7 @@ package com.ode.appe;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.brentvatne.react.ReactVideoPackage;
 import com.yonahforst.rnpermissions.RNPermissionsPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.airship.customwebview.CustomWebViewPackage;
@@ -48,6 +49,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
+            new ReactVideoPackage(),
             new RNPermissionsPackage(),
             new RNDeviceInfo(),
             new CustomWebViewPackage(),
