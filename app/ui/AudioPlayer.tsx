@@ -4,7 +4,7 @@
 
 import I18n from "i18n-js";
 import * as React from "react";
-import { Platform, View, ViewStyle } from "react-native";
+import { Platform, Text, View, ViewStyle } from "react-native";
 import RNFS from "react-native-fs";
 import Video from "react-native-video";
 import VideoPlayer from "react-native-video-controls";
@@ -28,7 +28,8 @@ class CustomRNVideoPlayerControls extends VideoPlayer<
   IAudioPlayerProps,
   IAudioPlayerState
 > {
-  public props: IAudioPlayerProps; // For typings
+  public props: any; // For typings
+  public state: any; // For typings
 
   public constructor(props) {
     super(props);
@@ -43,6 +44,42 @@ class CustomRNVideoPlayerControls extends VideoPlayer<
   }
   public clearControlTimeout() {
     return;
+  }
+  public hideControlAnimation() {
+    return;
+  }
+  public _hideControls() {
+    return;
+  }
+
+  public calculateTime() {
+    /* if (this.state.showTimeRemaining) {
+      const time = this.state.duration - this.state.currentTime;
+      return `-${this.formatTime(time)}`;
+    }*/
+
+    return (
+      this.formatTime(this.state.currentTime) +
+      " / " +
+      this.formatTime(this.state.duration)
+    );
+  }
+
+  public renderTimer() {
+    return this.renderControl(
+      <Text
+        style={{
+          backgroundColor: "transparent",
+          color: "#FFF",
+          fontSize: 11,
+          textAlign: "right"
+        }}
+      >
+        {this.calculateTime()}
+      </Text>,
+      this.methods.toggleTimer,
+      { width: 160 }
+    );
   }
 }
 
