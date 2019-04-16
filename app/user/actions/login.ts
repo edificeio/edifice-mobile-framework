@@ -11,6 +11,7 @@ import { navigate } from "../../navigation/helpers/navHelper";
 import userConfig from "../config";
 
 // Legacy imports
+import { PushNotificationIOS } from "react-native";
 import firebase from "react-native-firebase";
 import Conf from "../../Conf";
 import Tracking from "../../tracking/TrackingManager"; // TODO make tracking back !
@@ -92,6 +93,11 @@ export function login(
       }
 
       // === 4: Get firebase device token and store it in the backend
+      PushNotificationIOS.checkPermissions(async permissions => {
+        if (!permissions.alert || !permissions.badge || !permissions.sound) {
+          await PushNotificationIOS.requestPermissions();
+        }
+      });
       const hasPermission = await firebase.messaging().hasPermission();
       if (hasPermission) {
         await userService.registerFCMToken();
