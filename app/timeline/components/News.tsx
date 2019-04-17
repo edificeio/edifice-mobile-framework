@@ -41,8 +41,8 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
       images = []
     } = this.props;
     return (
-      <ArticleContainer>
-        <TouchCard onPress={() => this.open(false)}>
+      <ArticleContainer style={{ width: "100%" }}>
+        <TouchCard onPress={() => this.open(false)} style={{ width: "100%" }}>
           <View>
             <NewsTopInfo {...this.props} />
             <Preview textContent={message} onExpend={() => this.open(true)} />
