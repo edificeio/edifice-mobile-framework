@@ -117,7 +117,7 @@
     "react-native-android-fullscreen-webview-video": "^1.0.3",
     "react-native-app-link": "^1.0.0",
     "react-native-device-info": "^0.26.2",
-    "react-native-fast-image": "^5.1.1",
+    "react-native-fast-image": "5.2.0",
     "react-native-fence-html": "1.0.6",
     "react-native-firebase": "^5.2.1",
     "react-native-fit-image": "1.5.4",
