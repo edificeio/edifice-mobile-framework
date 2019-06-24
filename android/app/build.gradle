@@ -147,7 +147,9 @@ android {
 dependencies {
     compile project(':react-native-video')
     compile project(':react-native-permissions')
-    compile project(':react-native-device-info')
+    compile (project(':react-native-device-info')) {
+        exclude group: "com.google.android.gms"
+    }
     compile project(':react-native-android-fullscreen-webview-video')
     compile project(':appcenter-crashes')
     compile project(':appcenter-analytics')
@@ -195,3 +197,4 @@ task copyDownloadableDepsToLibs(type: Copy) {
 
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 apply plugin: 'com.google.gms.google-services'
+com.google.gms.googleservices.GoogleServicesPlugin.config.disableVersionCheck = true
