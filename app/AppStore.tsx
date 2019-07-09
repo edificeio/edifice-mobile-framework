@@ -146,7 +146,7 @@ class AppStoreUnconnected extends React.Component<
     RNLanguages.removeEventListener("change", this.onLanguagesChange);
     AppState.removeEventListener("change", this.handleAppStateChange);
     if (this.notificationOpenedListener) this.notificationOpenedListener();
-    this.onTokenRefreshListener();
+    if (this.onTokenRefreshListener) this.onTokenRefreshListener();
   }
 
   private onLanguagesChange = ({ language }) => {
