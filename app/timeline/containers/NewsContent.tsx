@@ -527,7 +527,7 @@ NewsContentRouter.router.getStateForAction = (action, state) => {
   );
   let isAck = false;
   // console.log("schoolbookData", schoolbookData);
-  if (schoolbookData.acknowledgments)
+  if (schoolbookData && schoolbookData.acknowledgments)
     schoolbookData.acknowledgments.map(ack => {
       if (Me.session.userId === ack.owner) isAck = true;
     });
