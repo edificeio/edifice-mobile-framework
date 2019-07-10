@@ -7,22 +7,41 @@ import { Me } from "../infra/Me";
 
 import packageJson from "../../package.json";
 
+const getUnsafeInitializedFlag = (mixpanelInstance:any):boolean => {
+  return mixpanelInstance.initialized;
+}
 export default class Tracking {
   // Mixpanel
 
   private static mixpanel;
   private static mixpanelToken: string;
-  private static isMixpanelReady: boolean = false;
-
-  public static async initMixpanel() {
+  private static mixPanelPromise:Promise<void> = Promise.resolve();
+  public static initMixpanel() {
     if (Platform.OS === "ios") {
       Tracking.mixpanelToken = Conf.mixPanel.token;
     } else if (Platform.OS === "android") {
       Tracking.mixpanelToken = Conf.mixPanel.token;
     }
-    Tracking.mixpanel = new MixpanelInstance(Tracking.mixpanelToken);
-    await Tracking.mixpanel.initialize();
-    Tracking.isMixpanelReady = true;
+    return Tracking.initMixPanelIfNeeded();
+  }
+  //#25549
+  private static async initMixPanelIfNeeded():Promise<boolean>{
+    if(!Tracking.mixpanel) {
+      Tracking.mixpanel = new MixpanelInstance(Tracking.mixpanelToken);
+      Tracking.mixPanelPromise = Tracking.mixpanel.initialize();
+      await Tracking.mixPanelPromise;
+      return getUnsafeInitializedFlag(Tracking.mixpanel);
+    }else{
+      await Tracking.mixPanelPromise;
+      if(getUnsafeInitializedFlag(Tracking.mixpanel)){
+        return true;
+      }else{
+        Tracking.mixPanelPromise = Tracking.mixpanel.initialize();
+        await Tracking.mixPanelPromise;
+        return getUnsafeInitializedFlag(Tracking.mixpanel);
+      }
+    }
+    
   }
 
   // Firebase Analytics
@@ -67,13 +86,14 @@ export default class Tracking {
     }
   }
 
-  public static logEvent(name: string, params?) {
+  public static async logEvent(name: string, params?) {
     // console.log("TRACK", name, params);
     if (Tracking.analytics) {
       if (params) Tracking.analytics.logEvent(name, params);
       else Tracking.analytics.logEvent(name);
     }
-    if (Tracking.isMixpanelReady) {
+    const isInited = await Tracking.initMixPanelIfNeeded();
+    if (isInited) {
       if (params) Tracking.mixpanel.track(name, params);
       else Tracking.mixpanel.track(name);
       // TODO: Must we put here here, or juste one time after the login ?
