@@ -3,6 +3,7 @@ import Tracking from "../tracking/TrackingManager";
 import { listTimeline } from "./actions/list";
 import { storedFilters, timelineApps } from "./actions/storedFilters";
 import { loadSchoolbooks, resetLoadingState } from "./actions/dataTypes";
+import { NotificationHandlerFactory } from "../infra/pushNotification";
 
 const openNotif = {
   "/schoolbook": async (data, latestNews) => {
@@ -43,8 +44,8 @@ const openNotif = {
     );
   }
 };
-
-export default dispatch => async (notificationData, legalapps) => {
+//TODO types args
+const timelineNotifHandlerFactory:NotificationHandlerFactory<any,any,any> = dispatch => async (notificationData, legalapps) => {
   for (const path in openNotif) {
     if (notificationData.resourceUri.startsWith(path)) {
       // console.log("before await schoolbooks");
@@ -76,6 +77,9 @@ export default dispatch => async (notificationData, legalapps) => {
       } else {
         nainNavNavigate("notifications");
       }
+      return true;
     }
   }
+  return false;
 };
+export default timelineNotifHandlerFactory;

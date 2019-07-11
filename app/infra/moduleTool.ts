@@ -1,5 +1,6 @@
 import I18n from "i18n-js";
 import { createMainTabNavOption } from "../navigation/helpers/mainTabNavigator";
+import { NotificationHandlerFactory } from "./pushNotification";
 
 /**
  * All specs to define functional module
@@ -33,6 +34,7 @@ export interface IFunctionalConfig {
   reducerName?: string;
   displayName?: string;
   iconName?: string;
+  notifHandlerFactory?:()=>Promise<NotificationHandlerFactory<any,any,any>>;
 }
 
 export default class FunctionalModuleConfig implements IFunctionalConfig {
@@ -42,6 +44,7 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
   public reducerName: string;
   public displayName: string;
   public iconName: string;
+  public notifHandlerFactory?:()=>Promise<NotificationHandlerFactory<any,any,any>>;
 
   public constructor(opts: IFunctionalConfig) {
     this.name = opts.name;
@@ -51,6 +54,7 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
     this.reducerName = opts.reducerName || this.name;
     this.displayName = opts.displayName || this.name;
     this.iconName = opts.iconName || this.name;
+    this.notifHandlerFactory = opts.notifHandlerFactory;
   }
 
   public getLocalState(globalState) {

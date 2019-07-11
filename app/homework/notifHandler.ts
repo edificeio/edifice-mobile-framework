@@ -3,10 +3,12 @@ import { signedFetch } from "../infra/fetchWithCache";
 import { nainNavNavigate } from "../navigation/helpers/navHelper";
 import { fetchHomeworkDiaryList } from "./actions/diaryList";
 import homeworkDiarySelected from "./actions/selectedDiary";
+import { NotificationHandlerFactory } from "../infra/pushNotification";
 
-export default dispatch => async notificationData => {
+//TODO add types args
+const homeworksNotificationHandlerFactory:NotificationHandlerFactory<any,any,any> = dispatch => async notificationData => {
   if (!notificationData.resourceUri.startsWith("/homeworks")) {
-    return;
+    return false;
   }
   // console.log("notifData", notificationData);
 
@@ -51,4 +53,6 @@ export default dispatch => async notificationData => {
     nainNavNavigate("listThreads");
   }
   */
+ return true;
 };
+export default homeworksNotificationHandlerFactory;

@@ -232,7 +232,7 @@ export const fillData = async (availableApps: object, results: any[]) => {
   const availableAppsWithUppercase = {};
   const urls: string[] = [];
   // console.log("avaiable apps", availableApps);
-  Object.keys(availableApps).forEach(app => {
+  Object.keys(availableApps || {}).forEach(app => {
     availableAppsWithUppercase[app] = availableApps[app];
     availableAppsWithUppercase[app.toUpperCase()] = availableApps[app];
   });

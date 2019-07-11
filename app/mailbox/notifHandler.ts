@@ -6,10 +6,12 @@ import {
   resetConversationThreadList
 } from "./actions/threadList";
 import conversationThreadSelected from "./actions/threadSelected";
+import { NotificationHandlerFactory } from "../infra/pushNotification";
 
-export default dispatch => async notificationData => {
+//TODO add types args
+const mailboxNotifHandlerFactory :NotificationHandlerFactory<any,any,any> =  dispatch => async notificationData => {
   if (!notificationData.resourceUri.startsWith("/conversation")) {
-    return;
+    return false;
   }
   const split = notificationData.resourceUri.split("/");
   const messageId = split[split.length - 1];
@@ -39,4 +41,6 @@ export default dispatch => async notificationData => {
     console.warn(e);
     nainNavNavigate("listThreads");
   }
+  return true;
 };
+export default mailboxNotifHandlerFactory;
