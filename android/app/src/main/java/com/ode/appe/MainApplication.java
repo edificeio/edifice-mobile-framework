@@ -1,41 +1,29 @@
 package com.ode.appe;
 
 import android.app.Application;
+import android.util.Log;
 
+import com.facebook.react.PackageList;
+import com.facebook.hermes.reactexecutor.HermesExecutorFactory;
+import com.facebook.react.bridge.JavaScriptExecutorFactory;
 import com.facebook.react.ReactApplication;
-import com.brentvatne.react.ReactVideoPackage;
-import com.yonahforst.rnpermissions.RNPermissionsPackage;
-import com.learnium.RNDeviceInfo.RNDeviceInfo;
-import com.airship.customwebview.CustomWebViewPackage;
+import com.reactnativecommunity.netinfo.NetInfoPackage;
+import com.facebook.react.ReactNativeHost;
+import com.facebook.react.ReactPackage;
+import com.facebook.soloader.SoLoader;
+
+// Appcenter manual linking (automatic linking does not work)
 import com.microsoft.appcenter.reactnative.crashes.AppCenterReactNativeCrashesPackage;
 import com.microsoft.appcenter.reactnative.analytics.AppCenterReactNativeAnalyticsPackage;
 import com.microsoft.appcenter.reactnative.appcenter.AppCenterReactNativePackage;
-import com.dylanvann.fastimage.FastImageViewPackage;
-import com.kevinejohn.RNMixpanel.RNMixpanel;
-import com.reactcommunity.rnlanguages.RNLanguagesPackage;
-import com.github.xfumihiro.react_native_image_to_base64.ImageToBase64Package;
-import com.RNFetchBlob.RNFetchBlobPackage;
-import com.imagepicker.ImagePickerPackage;
-import com.entria.views.RNViewOverflowPackage;
-import com.facebook.react.ReactNativeHost;
-import com.facebook.react.ReactPackage;
-import com.facebook.react.shell.MainReactPackage;
-import com.facebook.soloader.SoLoader;
-import com.oblador.vectoricons.VectorIconsPackage;
-import com.reactnativecomponent.splashscreen.RCTSplashScreenPackage;
-import com.rnfs.RNFSPackage;
 
-import java.util.Arrays;
-import java.util.List;
-
-import io.invertase.firebase.RNFirebasePackage;
-import io.invertase.firebase.analytics.RNFirebaseAnalyticsPackage;
-import io.invertase.firebase.fabric.crashlytics.RNFirebaseCrashlyticsPackage;
+// React Native Firebase modules (needs to be linked manually)
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
-import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
-import io.invertase.firebase.perf.RNFirebasePerformancePackage;
 
-import com.kevinejohn.RNMixpanel.*;
+// React Native WebView manual linking (automatic linking not supported)
+import com.reactnativecommunity.webview.RNCWebViewPackage;
+
+import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -47,32 +35,15 @@ public class MainApplication extends Application implements ReactApplication {
 
     @Override
     protected List<ReactPackage> getPackages() {
-      return Arrays.<ReactPackage>asList(
-            new MainReactPackage(),
-            new ReactVideoPackage(),
-            new RNPermissionsPackage(),
-            new RNDeviceInfo(),
-            new CustomWebViewPackage(),
-            new AppCenterReactNativeCrashesPackage(MainApplication.this, getResources().getString(R.string.appCenterCrashes_whenToSendCrashes)),
-            new AppCenterReactNativeAnalyticsPackage(MainApplication.this, getResources().getString(R.string.appCenterAnalytics_whenToEnableAnalytics)),
-            new AppCenterReactNativePackage(MainApplication.this),
-            new FastImageViewPackage(),
-            new RNMixpanel(),
-            new RNLanguagesPackage(),
-            new RNViewOverflowPackage(),
-            new ImagePickerPackage(),
-            new RCTSplashScreenPackage(),
-            new RNFetchBlobPackage(),
-            new ImageToBase64Package(),
-            new RNFSPackage(),
-            new VectorIconsPackage(),
-            new RNFirebasePackage(),
-            new RNFirebaseAnalyticsPackage(),
-            new RNFirebaseCrashlyticsPackage(),
-            //new RNFirebasePerformancePackage(),
-            new RNFirebaseNotificationsPackage(),
-            new RNFirebaseMessagingPackage()
-      );
+      @SuppressWarnings("UnnecessaryLocalVariable")
+      List<ReactPackage> packages = new PackageList(this).getPackages();
+      // Packages that cannot be autolinked yet can be added manually here, for example:
+      // packages.add(new MyReactNativePackage());
+      packages.add(new AppCenterReactNativeCrashesPackage(MainApplication.this, getResources().getString(R.string.appCenterCrashes_whenToSendCrashes)));
+      packages.add(new AppCenterReactNativeAnalyticsPackage(MainApplication.this, getResources().getString(R.string.appCenterAnalytics_whenToEnableAnalytics)));
+      packages.add(new AppCenterReactNativePackage(MainApplication.this));
+      packages.add(new RNFirebaseMessagingPackage());
+      return packages;
     }
 
     @Override

@@ -182,12 +182,12 @@ function _overrideFileListAbsolute(name) {
  * If @param acceptall is setted, it will accept by default all confirmation.
  * You can also give @param gitUri @param gitUser and @param gitPwd used by fetch config
  */
-async function overrideSwitchTo(name, skipRestore, acceptAll, gitUri, gitUser, gitPwd) {
+async function overrideSwitchTo(name, skipRestore, acceptAll, gitUri, gitBranch, gitUser, gitPwd) {
     if (name == "default") {
         //n ooverride to apply => only fetch config
         let confirm = acceptAll || await _askConfirm('Do you want to fetch the default config');
         if (confirm) {
-            await fetchConfig(gitUri, gitUser, gitPwd);
+            await fetchConfig(gitUri, gitBranch, gitUser, gitPwd);
             return;
         }
     }
@@ -246,7 +246,7 @@ async function overrideSwitchTo(name, skipRestore, acceptAll, gitUri, gitUser, g
     //
     let confirm = acceptAll || await _askConfirm('Do you want to set the config ' + odeOverride["configid"]);
     if (confirm) {
-        await fetchConfig(gitUri, gitUser, gitPwd);
+        await fetchConfig(gitUri, gitBranch, gitUser, gitPwd);
     }
 }
 /**
@@ -467,11 +467,11 @@ async function overrideCreate() {
     }
 }
 /**
- * Fetch config files from a safe repo. If @param uri is setted, it does not prompt the user to fill uri. 
+ * Fetch config files from a safe repo. If @param uri ans @param branch are setted, it does not prompt the user to fill uri and branch.
  */
-async function fetchConfig(uri, username, password) {
+async function fetchConfig(uri, branch, username, password) {
     const ode = await _packageJsonOde();
-    if (!uri) {
+    if (!uri || !branch) {
         const response = await prompts([{
             type: 'text',
             name: 'uri',
@@ -479,6 +479,11 @@ async function fetchConfig(uri, username, password) {
             initial: ode["config"]["url"] || "",
             message: "What is the repo's URL?",
             validate: value => value && value.trim().length > 0
+        }, {
+            type: 'text',
+            name: 'branch',
+            message: "What branch of the repo?",
+            initial: ode["config"]["branch"] || ""
         }, {
             type: 'text',
             name: 'username',
@@ -489,6 +494,7 @@ async function fetchConfig(uri, username, password) {
             message: "What is the repo's password?"
         }]);
         uri = response.uri;
+        branch = response.branch || "master";
         username = response.username;
         password = response.password;
     }
@@ -512,14 +518,18 @@ async function fetchConfig(uri, username, password) {
             fullUri = protocol + username + "@" + uriWithoutProtocol;
         }
     }
-    const gitCmd = "git clone " + fullUri + " " + tmpDir;
+    let gitCmd = "git clone";
+    if (branch) {
+        gitCmd += ` --single-branch --branch ${branch}`;
+    }
+    gitCmd += " " + fullUri + " " + tmpDir;
     await exec(gitCmd);
     //copy each config files
     const configId = ode["config"]["id"];
     const baseSrcPath = path.resolve(tmpDir, configId);
     const copyPromises = [];
     for (srcFilename in ode["config"]) {
-        if (srcFilename != "id" && srcFilename != "url") {
+        if (srcFilename != "id" && srcFilename != "url" && srcFilename != "branch") {
             const destFilepath = ode["config"][srcFilename];
             const destFilepathFull = path.resolve(__dirname, destFilepath);
             const srcFilepathFull = path.resolve(baseSrcPath, srcFilename);
@@ -546,6 +556,9 @@ require('yargs')
         yargs.option('uri', {
             describe: 'uri of the git repo (uri could include password and username)',
             alias: 'h'
+        }).option('branch', {
+            describe: 'branch of the git repo',
+            alias: 'b'
         }).option('username', {
             describe: 'username of the git repo',
             alias: 'u'
@@ -554,7 +567,7 @@ require('yargs')
             alias: 'p'
         })
     }, (argv) => {
-        fetchConfig(yargs.uri, yargs.username, yargs.password);
+        fetchConfig(yargs.uri, yargs.branch, yargs.username, yargs.password);
     })
     .command("override", "manage overrides", (yargs) => {
         yargs.command('switch', 'switch to an override', (yargs) => {
@@ -566,6 +579,9 @@ require('yargs')
             }).option('uri', {
                 describe: 'uri of the git repo (uri could include password and username)',
                 alias: 'h'
+            }).option('branch', {
+                describe: 'branch of the git repo',
+                alias: 'b'
             }).option('username', {
                 describe: 'username of the git repo',
                 alias: 'u'
@@ -577,7 +593,7 @@ require('yargs')
                 alias: 'a'
             })
         }, (argv) => {
-            overrideSwitchTo(argv.to, argv.dontrestore, argv.acceptall, argv.uri, argv.username, argv.password);
+            overrideSwitchTo(argv.to, argv.dontrestore, argv.acceptall, argv.uri, argv.branch, argv.username, argv.password);
         }).command('restore', 'restore the default override', (yargs) => { }, (argv) => {
             overrideRestore();
         }).command('backup', 'backup the current override', (yargs) => { }, (argv) => {

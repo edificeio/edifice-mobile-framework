@@ -1,63 +1,72 @@
-# Uncomment the next line to define a global platform for your project
 platform :ios, '9.0'
-project 'mobileapp.xcodeproj'
+require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-target 'mobileapp' do
-  pod 'AppCenter/Crashes', '~> 1.12.0'
-  pod 'AppCenter/Analytics', '~> 1.12.0'
-  pod 'AppCenterReactNativeShared', '~> 1.11.0'
-  # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
-  # use_frameworks!
-  pod "yoga", :path => "../node_modules/react-native/ReactCommon/yoga"
-  pod 'React', :path => '../node_modules/react-native', :subspecs => [
-    # 'BatchedBridge', # Required For React Native 0.45.0+
-    'Core',
-    'CxxBridge',
-    'DevSupport',
-    'RCTText',
-    'RCTNetwork',
-    'RCTWebSocket',
-    'RCTImage'
-    # Add any other subspecs you want to use in your project
-  ]
+target 'appe' do
 
-  # Third party deps podspec link
+  # React Native Firebase
+  pod 'Firebase/Core', '~> 6.3.0'
+  pod 'Firebase/Messaging', '~> 6.3.0'
+
+  # Appcenter (manual iOS linking as described in https://docs.microsoft.com/en-us/appcenter/sdk/getting-started/react-native#32-ios-only-integrate-the-ios-sdk-without-react-native-link)
+  pod 'appcenter', path: '../node_modules/appcenter/ios'
+  pod 'appcenter-analytics', path: '../node_modules/appcenter-analytics/ios'
+  pod 'appcenter-crashes', path: '../node_modules/appcenter-crashes/ios'
+  pod 'AppCenter/Analytics', '~> 2.1.0'
+  pod 'AppCenter/Crashes', '~> 2.1.0'
+  pod 'AppCenterReactNativeShared', '~> 2.1.0'
+  # pod 'appcenter-push', path: '../node_modules/appcenter-push/ios' # No code push
+
+  # React Native Mixpanel manual linking (automatic linking not supported)
+  pod 'react-native-mixpanel', :path => '../node_modules/react-native-mixpanel'
+
+  # React Native WebView manual linking (automatic linking not supported)
+  pod 'react-native-webview', :path => '../node_modules/react-native-webview'
+
+  # React
+  pod 'React', :path => '../node_modules/react-native/'
+  pod 'React-Core', :path => '../node_modules/react-native/React'
+  pod 'React-DevSupport', :path => '../node_modules/react-native/React'
+  pod 'React-fishhook', :path => '../node_modules/react-native/Libraries/fishhook'
+  pod 'React-RCTActionSheet', :path => '../node_modules/react-native/Libraries/ActionSheetIOS'
+  pod 'React-RCTAnimation', :path => '../node_modules/react-native/Libraries/NativeAnimation'
+  pod 'React-RCTBlob', :path => '../node_modules/react-native/Libraries/Blob'
+  pod 'React-RCTImage', :path => '../node_modules/react-native/Libraries/Image'
+  pod 'React-RCTLinking', :path => '../node_modules/react-native/Libraries/LinkingIOS'
+  pod 'React-RCTNetwork', :path => '../node_modules/react-native/Libraries/Network'
+  pod 'React-RCTSettings', :path => '../node_modules/react-native/Libraries/Settings'
+  pod 'React-RCTText', :path => '../node_modules/react-native/Libraries/Text'
+  pod 'React-RCTVibration', :path => '../node_modules/react-native/Libraries/Vibration'
+  pod 'React-RCTWebSocket', :path => '../node_modules/react-native/Libraries/WebSocket'
+
+  pod 'React-cxxreact', :path => '../node_modules/react-native/ReactCommon/cxxreact'
+  pod 'React-jsi', :path => '../node_modules/react-native/ReactCommon/jsi'
+  pod 'React-jsiexecutor', :path => '../node_modules/react-native/ReactCommon/jsiexecutor'
+  pod 'React-jsinspector', :path => '../node_modules/react-native/ReactCommon/jsinspector'
+  pod 'yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
+
+  # External pods for React
   pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
-  pod 'RNFirebase', path: '../node_modules/react-native-firebase/ios'
-  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
-  # Pods for mobileapp
-  pod 'Firebase/Core'
-  pod 'Fabric', '~> 1.7.2'
-  pod 'Crashlytics', '~> 3.9.3'
-  pod 'Firebase/Performance'
-  pod 'Firebase/Messaging'
-  pod 'Mixpanel', '~> 3.3.7'
-  pod 'rn-fetch-blob', :path => '../node_modules/rn-fetch-blob'
-  pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
+  pod 'react-native-netinfo', :path => '../node_modules/@react-native-community/netinfo'
 
-  pod 'RNLanguages', :path => '../node_modules/react-native-languages'
+  pod 'RNCPushNotificationIOS', :path => '../node_modules/@react-native-community/push-notification-ios'
 
+  target 'appeTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
 
-  pod 'react-native-mixpanel', :path => '../node_modules/react-native-mixpanel'
-
-  pod 'react-native-fast-image', :path => '../node_modules/react-native-fast-image'
-
-
-  pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
-
-  pod 'RNPermissions', :path => '../node_modules/react-native-permissions'
-
-  pod 'react-native-video', :path => '../node_modules/react-native-video'
-
+  use_native_modules!
 end
 
-post_install do |installer|
-  installer.pods_project.targets.each do |target|
-    if target.name == "React"
-      target.remove_from_project
-    end
+target 'appe-tvOS' do
+  # Pods for appe-tvOS
+
+  target 'appe-tvOSTests' do
+    inherit! :search_paths
+    # Pods for testing
   end
+
 end
