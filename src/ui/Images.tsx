@@ -193,23 +193,23 @@ export class Images extends React.Component<
               onPress={() => this.openImage(3)}
             >
               <StretchImage source={images[3].src} />
+              {images.length > 4 && (
+                <Overlay
+                  style={{ height: heightRatio / 2 - 5 }}
+                  onPress={() => this.openImage(3)}
+                />
+              )}
+              {images.length > 4 && (
+                <BubbleView style={{ bottom: heightRatio / 4 - 15 }}>
+                  <BubbleText onPress={() => this.openImage(3)}>
+                    +
+                    {images.length - 3
+                    /* -3 instead of -4 because of the last one has the dark foreground*/
+                    }
+                  </BubbleText>
+                </BubbleView>
+              )}
             </QuarterImage>
-            {images.length > 4 && (
-              <Overlay
-                style={{ height: heightRatio / 2 - 5 }}
-                onPress={() => this.openImage(3)}
-              />
-            )}
-            {images.length > 4 && (
-              <BubbleView style={{ bottom: heightRatio / 4 - 15 }}>
-                <BubbleText onPress={() => this.openImage(3)}>
-                  +
-                  {images.length - 3
-                  /* -3 instead of -4 because of the last one has the dark foreground*/
-                  }
-                </BubbleText>
-              </BubbleView>
-            )}
           </Column>
         </Row>
       );

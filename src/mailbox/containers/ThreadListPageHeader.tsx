@@ -37,6 +37,7 @@ export class ConversationTopBar extends React.PureComponent<
   }
 
   public close() {
+    // console.log("close");
     this.setState({ searching: false });
     this.props.filter("");
   }
@@ -49,6 +50,7 @@ export class ConversationTopBar extends React.PureComponent<
   }*/
 
   public openSearch() {
+    // console.log("openSearch");
     this.setState({ searching: true, autoFocus: true });
     this.props.filter("");
     Tracking.logEvent("searchConversation");

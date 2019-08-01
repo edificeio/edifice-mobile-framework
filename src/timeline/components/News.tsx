@@ -45,7 +45,10 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
         <TouchCard onPress={() => this.open(false)} style={{ width: "100%" }}>
           <View>
             <NewsTopInfo {...this.props} />
-            <Preview textContent={message} onExpend={() => this.open(true)} />
+            { message && /\S/.test(message) ?
+              <Preview textContent={message} onExpend={() => this.open(true)} />
+              : undefined
+            }
             {images.length ? (
               <Images
                 images={images as any} // TODO: `images` has not the right array object format

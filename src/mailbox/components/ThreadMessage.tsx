@@ -124,12 +124,12 @@ export default class ThreadMessage extends React.PureComponent<
     if (!body) {
       return <style.View />;
     }
-    const getSenderText = (displayNames:string[], from:string)=>{
+    const getSenderText = (displayNames: Array<[string, string, boolean]>, from:string) => {
       if(displayNames){
-        const text = displayNames.find(el => el && el[0] === from);
-        if(text){
-          return text;
-        }
+        const res = displayNames.find(el => el && el[0] === from);
+        if(res){
+          return res[1];
+        } else return I18n.t("unknown-user");
       }
       return I18n.t("unknown-user");
     }

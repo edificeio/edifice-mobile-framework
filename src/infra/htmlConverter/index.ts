@@ -14,7 +14,7 @@
  * }
  */
 
-import saxophone from "saxophone";
+import sax from "sax";
 
 export interface IHtmlConverterOptions {
   ignoreClasses?: string[];
@@ -79,7 +79,7 @@ export class HtmlConverter {
         this.parser.error = null;
         this.parser.resume();
       },
-      onopentag: (tag: saxophone.Tag) => {
+      onopentag: (tag: sax.Tag) => {
         // console.warn("TAG OPEN : " + tag.name + " !!! " + Math.random());
         if (!htmlVoidElements.includes(tag.name)) ++this.absoluteDeepnessLevel;
         // console.log("open tag :", tag.name, this.absoluteDeepnessLevel);
@@ -136,7 +136,7 @@ export class HtmlConverter {
   }
 
   protected initSaxParser() {
-    this.parser = saxophone.parser(false, {
+    this.parser = sax.parser(false, {
       lowercase: true,
       normalize: true,
       position: false,

@@ -55,10 +55,6 @@ export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
       </Header>
     );
   }
-
-  public componentDidUpdate() {
-    if (!this.props.text) this.props.onClose();
-  }
 }
 
 const TextInput = style.textInput(

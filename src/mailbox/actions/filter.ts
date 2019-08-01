@@ -15,7 +15,7 @@ export const actionTypeClearFilter = conversationConfig.createActionType(
   "FILTER_CLEAR"
 );
 export const clearFilterConversation = dispatch => () => {
-  // console.log("dispatch", actionTypeClearFilter);
+  // console.log("clear filter", actionTypeClearFilter);
   dispatch({
     type: actionTypeClearFilter
   });
