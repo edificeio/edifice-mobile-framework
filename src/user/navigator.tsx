@@ -5,6 +5,7 @@ import { navScreenOptions } from "../navigation/helpers/navHelper";
 import NotifPrefsPage, {
   NotifPrefsPageHeader
 } from "./containers/NotifPrefsPage";
+import UserPage, { UserPageHeader } from "./containers/UserPage";
 import ProfilePage, { ProfilePageHeader } from "./containers/ProfilePage";
 
 export default createStackNavigator({
@@ -12,11 +13,11 @@ export default createStackNavigator({
     navigationOptions: ({ navigation }) =>
       navScreenOptions(
         {
-          header: <ProfilePageHeader navigation={navigation} />
+          header: <UserPageHeader navigation={navigation} />
         },
         navigation
       ),
-    screen: ProfilePage
+    screen: UserPage
   },
 
   NotifPrefs: {
@@ -28,5 +29,16 @@ export default createStackNavigator({
         navigation
       ),
     screen: NotifPrefsPage
+  },
+
+  MyProfile: {
+    navigationOptions: ({ navigation }) =>
+      navScreenOptions(
+        {
+          header: <ProfilePageHeader navigation={navigation} isEditMode={navigation.getParam("edit", false)} />,
+        },
+        navigation
+      ),
+    screen: ProfilePage
   }
 });

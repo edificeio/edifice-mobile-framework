@@ -4,6 +4,7 @@ import { RowProperties } from ".";
 import I18n from "i18n-js";
 import TouchableOpacity from "../ui/CustomTouchableOpacity";
 import { Icon } from "./icons/Icon";
+import { CommonStyles } from "../styles/common/styles";
 
 const Container = style(TouchableOpacity)({
   alignItems: "center",
@@ -19,6 +20,13 @@ const Container = style(TouchableOpacity)({
 
 export const ContainerSpacer = style.view({
   marginTop: 20
+});
+
+export const ContainerLabel = style.text({
+  paddingHorizontal: 15,
+  marginTop: 14,
+  marginBottom: 6,
+  color: CommonStyles.textColor
 });
 
 export const NoTouchableContainer = style.view({

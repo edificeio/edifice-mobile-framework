@@ -1,46 +1,64 @@
 import * as React from "react";
 import I18n from "i18n-js";
 import { connect } from "react-redux";
-
-import { logout } from "../actions/login";
-import { ButtonsOkCancel } from "../../ui";
 import {
   ButtonLine,
   NoTouchableContainer,
   ContainerSpacer,
-  ContainerView
+  ContainerView,
+  ContainerLabel
 } from "../../ui/ButtonLine";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
-import { AppTitle, Header, HeaderIcon } from "../../ui/headers/Header";
-import {
-  ModalBox,
-  ModalContent,
-  ModalContentBlock,
-  ModalContentText
-} from "../../ui/Modal";
-import { Label, LightP } from "../../ui/Typography";
-import { clearFilterConversation } from "../../mailbox/actions/filter";
+import { Header, HeaderIcon, Title } from "../../ui/headers/Header";
 
-import DeviceInfo from 'react-native-device-info';
-import { View } from "react-native";
-import { Avatar, Size } from "../../ui/avatars/Avatar";
-import { TextBold } from "../../ui/text";
+import { View, ScrollView } from "react-native";
 import { getSessionInfo } from "../../AppStore";
+import { Back } from "../../ui/headers/Back";
+import { IUserInfoState } from "../reducers/info";
+import { IUserAuthState } from "../reducers/auth";
+import { Label } from "../../ui/Typography";
+import { UserCard } from "../components/UserCard";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 export class ProfilePageHeader extends React.PureComponent<
   {
     navigation: any;
+    isEditMode: boolean;
   },
   undefined
 > {
   public render() {
     return (
-      <Header>
-        <HeaderIcon name={null} hidden={true} />
-        <AppTitle>{I18n.t("Profile")}</AppTitle>
-        <HeaderIcon name={null} hidden={true} />
-      </Header>
+      this.props.isEditMode ?
+        <Header>
+          <TouchableOpacity
+            style={{ paddingHorizontal: 18, marginRight: "auto" }}
+            onPress={() => this.props.navigation.setParams(
+              { "edit": false },
+              "MyProfile"
+            )}
+          ><Title>{I18n.t("Cancel")}</Title></TouchableOpacity>
+          <TouchableOpacity
+            style={{ paddingHorizontal: 18, marginLeft: "auto" }}
+            onPress={() => this.props.navigation.setParams(
+              { "edit": false },
+              "MyProfile"
+            )}
+          ><Title>{I18n.t("Save")}</Title></TouchableOpacity>
+        </Header>
+        :
+        <Header>
+          <Back navigation={this.props.navigation} />
+          <Title style={{ marginRight: "auto" }}>{I18n.t("MyProfile")}</Title>
+          {/*<TouchableOpacity
+            style={{ paddingHorizontal: 18 }}
+            onPress={() => this.props.navigation.setParams(
+              { "edit": true },
+              "MyProfile"
+            )}
+            ><Title>{I18n.t("Edit")}</Title></TouchableOpacity>*/}
+        </Header>
     );
   }
 }
@@ -48,116 +66,67 @@ export class ProfilePageHeader extends React.PureComponent<
 // tslint:disable-next-line:max-classes-per-file
 export class ProfilePage extends React.PureComponent<
   {
-    onFocus: () => Promise<void>;
-    onLogout: () => Promise<void>;
+    userauth: IUserAuthState;
+    userinfo: IUserInfoState;
     navigation: any;
-  },
-  { showDisconnect: boolean }
+  }
 > {
-  public state = {
-    showDisconnect: false
-  };
-
-  private didFocusSubscription;
-  public componentDidMount() {
-    this.props.onFocus();
-    this.didFocusSubscription = this.props.navigation.addListener(
-      "didFocus",
-      payload => {
-        this.props.onFocus();
-      }
-    );
-  }
-  public componentWillUnmount() {
-    this.didFocusSubscription.remove();
-  }
-
-  public disconnect() {
-    this.setState({ showDisconnect: false });
-    this.props.onLogout();
-  }
-
-  public disconnectBox = () => (
-    <ModalContent>
-      <ModalContentBlock>
-        <ModalContentText>
-          {I18n.t("common-confirm")}
-          {"\n"}
-          {I18n.t("auth-disconnectConfirm")}
-        </ModalContentText>
-      </ModalContentBlock>
-      <ModalContentBlock>
-        <ButtonsOkCancel
-          onCancel={() => this.setState({ showDisconnect: false })}
-          onValid={() => this.disconnect()}
-          title={I18n.t("directory-disconnectButton")}
-        />
-      </ModalContentBlock>
-    </ModalContent>
-  ); // TS-ISSUE
 
   public render() {
-    //avoid setstate on modalbox when unmounted
-    const { showDisconnect } = this.state;
     return (
       <PageContainer>
         <ConnectionTrackingBar />
-        {showDisconnect && (
-          <ModalBox backdropOpacity={0.5} isVisible={showDisconnect}>
-            {this.disconnectBox()}
-          </ModalBox>
-        )}
-        <View
-          style={{
-            alignItems: "center",
-            backgroundColor: "white",
-            flex: 0,
-            flexDirection: "row",
-            flexGrow: 0,
-            justifyContent: "flex-start",
-            padding: 15,
-            width: "100%"
-          }}
-        >
-          <View style={{ margin: 10, paddingRight: 15 }}>
-            <Avatar id={getSessionInfo().userId} size={Size.verylarge} decorate />
-          </View>
-          <TextBold
-            style={{
-              flexGrow: 0,
-              flexShrink: 1
-            }}
-          >
-            {getSessionInfo().displayName}
-          </TextBold>
-        </View>
-        <ContainerSpacer />
-        <ButtonLine
-          title={"directory-notificationsTitle"}
-          onPress={() => this.props.navigation.navigate("NotifPrefs")}
-        />
-        <ContainerSpacer />
-        <ContainerView>
-          <Label>
-            {I18n.t("version-number")} {DeviceInfo.getVersion()}
-          </Label>
-        </ContainerView>
-        <ContainerSpacer />
-        <ButtonLine
-          title={"directory-disconnectButton"}
-          hideIcon={true}
-          color={"#F64D68"}
-          onPress={() => this.setState({ showDisconnect: true })}
-        />
+        <ScrollView alwaysBounceVertical={false} >
+
+          <UserCard
+            id={this.props.userinfo.id!}
+            displayName={this.props.userinfo.displayName!}
+            type={this.props.userinfo.type!}
+          />
+
+          <ContainerLabel>{I18n.t("Login")}</ContainerLabel>
+          <ContainerView><Label>{this.props.userauth.login}</Label></ContainerView>
+
+          {/*<ContainerLabel>{I18n.t("Password")}</ContainerLabel>
+          <ButtonLine title="PasswordChange" onPress={() => false}/>*/}
+
+          <ContainerLabel>{I18n.t("Firstname")}</ContainerLabel>
+          <ContainerView><Label>{this.props.userinfo.firstName}</Label></ContainerView>
+
+          <ContainerLabel>{I18n.t("Lastname")}</ContainerLabel>
+          <ContainerView><Label>{this.props.userinfo.lastName}</Label></ContainerView>
+
+          <ContainerLabel>{I18n.t("DisplayName")}</ContainerLabel>
+          <ContainerView><Label>{this.props.userinfo.displayName}</Label></ContainerView>
+
+          <ContainerLabel>{I18n.t("EmailAddress")}</ContainerLabel>
+          <ContainerView><Label>{this.props.userinfo.email}</Label></ContainerView>
+
+          <ContainerLabel>{I18n.t("Phone")}</ContainerLabel>
+          <ContainerView><Label>{this.props.userinfo.tel}</Label></ContainerView>
+
+          <ContainerLabel>{I18n.t("CellPhone")}</ContainerLabel>
+          <ContainerView><Label>{this.props.userinfo.mobile}</Label></ContainerView>
+
+          <ContainerLabel>{I18n.t("Birthdate")}</ContainerLabel>
+          <ContainerView><Label>{this.props.userinfo.birthDate!.format('L')}</Label></ContainerView>
+
+          <ContainerSpacer/>
+
+        </ScrollView>
+
       </PageContainer>
     );
   }
 }
 
 export default connect(
-  state => ({}),
-  dispatch => ({
-    onFocus: () => clearFilterConversation(dispatch)(),
-    onLogout: () => dispatch<any>(logout())
-  })
+  state => {
+    const ret = {
+      userauth: state.user.auth,
+      userinfo: state.user.info
+    }
+    return ret;
+  },
+  dispatch => ({})
 )(ProfilePage);

@@ -7,7 +7,7 @@ import { actionTypeLoggedIn, actionTypeLoggedOut } from "../actions/login";
 export interface IUserInfoState {
   address?: string;
   administrativeStructures?: Array<{ id: string }>;
-  birthdate?: moment.Moment;
+  birthDate?: moment.Moment;
   blocked?: boolean;
   checksum?: string;
   children?: Array<{ displayName: string; externalId: string; id: string }>;
@@ -60,7 +60,7 @@ const infoReducer = (state: IUserInfoState = stateDefault, action) => {
       const session = {
         ...action.userdata,
         ...action.userbook,
-        birthdate: moment(action.userbook.birthdate),
+        birthDate: moment(action.userbook.birthDate),
         lastLogin: moment(action.userdata.lastLogin),
         modified: moment(action.userdata.modified)
       };

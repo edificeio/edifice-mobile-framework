@@ -55,7 +55,13 @@ export const CommonStyles = {
   warning: "#FFB000",
   success: "#19CA72",
   error: "#E04B35",
-  white: "#fff"
+  white: "#fff",
+  profileTypes: {
+    Student: "#ff8500",
+    Relative: "#4bafd5",
+    Personnel: "#763294",
+    Teacher: "#46bfaf"
+  }
 };
 
 setCustomText({ style: { fontFamily: CommonStyles.primaryFontFamily } });
