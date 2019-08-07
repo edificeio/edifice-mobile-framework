@@ -2,7 +2,7 @@
 import I18n from "i18n-js";
 import * as React from "react";
 import { View } from "react-native";
-import { createAppContainer, createSwitchNavigator, NavigationContainer } from "react-navigation";
+import { createAppContainer, createSwitchNavigator, NavigationContainer, NavigationContainerComponent } from "react-navigation";
 import { connect } from "react-redux";
 
 // ODE framework modules
@@ -69,7 +69,7 @@ function getMainNavContainer(apps: string[]) {
  * This holds a global reference to the active Main navigator container.
  * => It's a component so it needs to be capitalized.
  */
-export let CurrentMainNavigationContainer: NavigationContainer;
+export let CurrentMainNavigationContainerComponent: NavigationContainerComponent;
 
 interface MainNavigatorHOCProps { apps: string[]; notification: Notification; dispatch: any };
 
@@ -88,24 +88,28 @@ class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
   private static lastOpenNotifData: string;
 
   public async componentDidUpdate() {
+    // this.props.notification && console.log("CHECK routing notif data");
     if (
       this.props.notification &&
       this.props.notification.data.params !== MainNavigatorHOC.lastOpenNotifData
     ) {
       MainNavigatorHOC.lastOpenNotifData = this.props.notification.data.params;
       const data = JSON.parse(this.props.notification.data.params);
-      // console.log("routing from notif data", data);
+      // console.log("Routing from notif data", data);
       pushNotifications(this.props.dispatch)(data, this.props.apps);
+    } else {
+      this.props.notification && console.log("Notif data already handled:", MainNavigatorHOC.lastOpenNotifData)
     }
   }
 
   public render() {
     // console.log("render new navigator", Math.random());
     const { apps, ...forwardProps } = this.props;
-    CurrentMainNavigationContainer = getMainNavContainer(apps);
+    const MainNavigationContainer = getMainNavContainer(apps);
+    // console.log(MainNavigationContainer);
 
     return (
-      <CurrentMainNavigationContainer
+      <MainNavigationContainer
         {...forwardProps}
         onNavigationStateChange={(prevState, currentState, action) => {
           // console.log("main nav state change :", prevState, currentState, action);
@@ -121,6 +125,9 @@ class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
             Tracking.logEvent("menuTab", {
               tab: currentTabRouteName
             });
+        }}
+        ref={nav => {
+          CurrentMainNavigationContainerComponent = nav!;
         }}
       />
     );

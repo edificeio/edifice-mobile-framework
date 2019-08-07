@@ -19,6 +19,7 @@ import com.microsoft.appcenter.reactnative.appcenter.AppCenterReactNativePackage
 
 // React Native Firebase modules (needs to be linked manually)
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
+import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 
 // React Native WebView manual linking (automatic linking not supported)
 import com.reactnativecommunity.webview.RNCWebViewPackage;
@@ -43,6 +44,7 @@ public class MainApplication extends Application implements ReactApplication {
       packages.add(new AppCenterReactNativeAnalyticsPackage(MainApplication.this, getResources().getString(R.string.appCenterAnalytics_whenToEnableAnalytics)));
       packages.add(new AppCenterReactNativePackage(MainApplication.this));
       packages.add(new RNFirebaseMessagingPackage());
+      packages.add(new RNFirebaseNotificationsPackage());
       return packages;
     }
 

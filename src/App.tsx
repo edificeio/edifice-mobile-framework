@@ -171,6 +171,7 @@ class AppStoreUnconnected extends React.Component<
       notification,
       type: "NOTIFICATION_OPEN"
     });
+    SplashScreen.hide();
   };
 
   private handleFCMTokenModified = (fcmToken: any) => {

@@ -13,7 +13,7 @@ const normalizeUrl = (url:string)=>{
   }
 }
 export default (dispatch: Dispatch) => async (data: NotificationData, apps: string[]) => {
-  //function for calling handlerfactory
+  // function for calling handlerfactory
   let manageCount = 0;
   const call = async (notifHandlerFactory:NotificationHandlerFactory<any,any,any>) => {
     try {
@@ -35,7 +35,7 @@ export default (dispatch: Dispatch) => async (data: NotificationData, apps: stri
     }
   }
   //if no handler managed the notification => redirect to web
-  if (manageCount == 0) {
+  if (!manageCount) {
     if (!Conf.currentPlatform) {
       throw new Error("Must have a platform selected to redirect the user");
     }

@@ -2,7 +2,7 @@ import { NavigationActions } from "react-navigation";
 
 import { rootNavigatorRef } from "../../AppScreen";
 import { CommonStyles } from "../../styles/common/styles";
-import { currentNavigatorRef } from "../RootNavigator";
+import { CurrentMainNavigationContainerComponent } from "../RootNavigator";
 
 export const navScreenOptions = (props, { state }) => {
   const { params = {} } = state;
@@ -34,6 +34,7 @@ export const navScreenOptions = (props, { state }) => {
  * @param params additional parameters ot pass to navigation state
  */
 export const navigate = (route, params = {}) => {
+  // console.log("ROOT navigate", route, rootNavigatorRef);
   return rootNavigatorRef.dispatch(
     NavigationActions.navigate({ routeName: route, params })
   );
@@ -46,7 +47,8 @@ export const navigate = (route, params = {}) => {
  * @param params additional parameters ot pass to navigation state
  */
 export const nainNavNavigate = (route, params = {}) => {
-  return currentNavigatorRef.dispatch(
+  // console.log("nainNavNavigate", route, CurrentMainNavigationContainerComponent);
+  return CurrentMainNavigationContainerComponent.dispatch(
     NavigationActions.navigate({ routeName: route, params })
   );
 };

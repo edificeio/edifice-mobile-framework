@@ -9,7 +9,7 @@ import conversationThreadSelected from "./actions/threadSelected";
 import { NotificationHandlerFactory } from "../infra/pushNotification";
 
 //TODO add types args
-const mailboxNotifHandlerFactory :NotificationHandlerFactory<any,any,any> =  dispatch => async notificationData => {
+const mailboxNotifHandlerFactory :NotificationHandlerFactory<any,any,any> = dispatch => async notificationData => {
   if (!notificationData.resourceUri.startsWith("/conversation")) {
     return false;
   }
