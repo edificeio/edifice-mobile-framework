@@ -34,7 +34,7 @@ export const navScreenOptions = (props, { state }) => {
  * @param params additional parameters ot pass to navigation state
  */
 export const navigate = (route, params = {}) => {
-  // console.log("ROOT navigate", route, rootNavigatorRef);
+  // console.log("ROOT navigate", route);
   return rootNavigatorRef.dispatch(
     NavigationActions.navigate({ routeName: route, params })
   );
@@ -47,7 +47,7 @@ export const navigate = (route, params = {}) => {
  * @param params additional parameters ot pass to navigation state
  */
 export const nainNavNavigate = (route, params = {}) => {
-  // console.log("nainNavNavigate", route, CurrentMainNavigationContainerComponent);
+  // console.log("nainNavNavigate", route);
   return CurrentMainNavigationContainerComponent.dispatch(
     NavigationActions.navigate({ routeName: route, params })
   );

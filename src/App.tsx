@@ -88,12 +88,14 @@ class AppStoreUnconnected extends React.Component<
   }
 
   public async componentWillMount() {
+    // console.log("APP will mount");
     await Tracking.init();
     RNLocalize.addEventListener("change", this.handleLocalizationChange);
     AppState.addEventListener("change", this.handleAppStateChange);
   }
 
   public async componentDidMount() {
+    // console.log("APP did mount");
     if (this.props.currentPlatformId) {
       //IF WE ARE NOT IN ACTIVATION MODE => TRY TO LOGIN => ELSE STAY ON ACTIVATION PAGE
       if (!isInActivatingMode(this.props.store.getState())) {
@@ -134,10 +136,6 @@ class AppStoreUnconnected extends React.Component<
       await this.props.store.dispatch(loadCurrentPlatform());
     }
     SplashScreen.hide();
-  }
-
-  public async componentDidUpdate() {
-    this.componentDidMount();
   }
 
   public componentWillUnmount() {

@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import RNFetchBlob from "rn-fetch-blob";
 const dirs = RNFetchBlob.fs.dirs;
-import * as Permissions from "react-native-permissions";
+import Permissions from "react-native-permissions";
 
 import { CommonStyles } from "../../styles/common/styles";
 
@@ -253,7 +253,7 @@ export default class ThreadMessageAttachment extends React.PureComponent<
     // console.log("start download");
     // console.log(Permissions);
     if (Platform.OS === "android") {
-      await Permissions.request("android.permission.WRITE_EXTERNAL_STORAGE");
+      await Permissions.request("storage");
     }
 
     Tracking.logEvent("downloadAttachments");
@@ -262,88 +262,86 @@ export default class ThreadMessageAttachment extends React.PureComponent<
       downloadState: DownloadState.Downloading,
       showModal: false
     });
-    RNFetchBlob.config({
-      /*addAndroidDownloads: {
-        notification: true,
-        useDownloadManager: true
-      },*/
-      fileCache: true
-      // path: dirs.DocumentDir + "/" + att.filename
-    })
-      .fetch(
-        "GET",
-        `${Conf.currentPlatform.url}/conversation/message/${
-          this.props.messageId
-        }/attachment/${this.props.attachment.id}`,
-        getAuthHeader()["headers"]
-      )
-      .progress((received, total) => {
-        // console.log("progress", received, att.size);
-        this.setState({
-          progress: received / att.size
-        });
+
+    let fetchPromise;
+    if (Platform.OS === "ios") {
+      fetchPromise = RNFetchBlob.config({
+        path: dirs.DocumentDir + "/" + att.filename
       })
-      .then(res => {
-        // the temp file path
-        // console.log("The file saved to ", res.path());
-        if (Platform.OS === "ios") {
+        .fetch(
+          "GET",
+          `${Conf.currentPlatform.url}/conversation/message/${
+            this.props.messageId
+          }/attachment/${this.props.attachment.id}`,
+          getAuthHeader()["headers"]
+        )
+        .progress((received, total) => {
+          // console.log("progress", received, att.size);
+          this.setState({
+            progress: received / att.size
+          });
+        })
+        .then(res => {
+          // the temp file path
+          // console.log("The file saved to ", res.path());
           this.setState({
             localFile: res.path()
           });
-          /*RNFetchBlob.fs
-            .stat(res.path())
-            .then(stats => {
-              // console.log(stats);
-            })
-            .catch(err => {
-              // console.log("error stats", err);
-            });*/
-          // RNFetchBlob.ios.previewDocument(res.path());
-        } else if (Platform.OS === "android") {
+        })
+    } else if (Platform.OS === "android") {
+      fetchPromise = RNFetchBlob.config({
+        fileCache: true
+      })
+        .fetch(
+          "GET",
+          `${Conf.currentPlatform.url}/conversation/message/${
+            this.props.messageId
+          }/attachment/${this.props.attachment.id}`,
+          getAuthHeader()["headers"]
+        )
+        .progress((received, total) => {
+          // console.log("progress", received, att.size);
+          this.setState({
+            progress: received / att.size
+          });
+        })
+        .then(res => {
+          // the temp file path
+          // console.log("The file saved to ", res.path());
           const baseDir =
             RNFetchBlob.fs.dirs.DownloadDir || RNFetchBlob.fs.dirs.DocumentDir;
           const path = `${baseDir}/${att.filename}`;
           this.setState({
             localFile: path
           });
-          // console.log("path", path);
           RNFetchBlob.fs.writeFile(path, res.path(), "uri");
-          /*RNFetchBlob.fs
-            .stat(path)
-            .then(stats => {
-              // console.log(stats);
-            })
-            .catch(err => {
-              // console.log("error stats", err);
-            });*/
-        } else {
-          // tslint:disable-next-line:no-console
-          console.warn(
-            "Cannot handle file for devices other than ios/android."
-          );
-        }
-      })
-      .then(res => {
-        this.setState({
-          downloadState: DownloadState.Success,
-          progress: 1
-        });
-      })
-      .catch((errorMessage, statusCode) => {
-        // error handling
-        // console.log("Error downloading", statusCode, errorMessage);
-        this.setState({
-          downloadState: DownloadState.Error,
-          progress: 0
-        });
+        })
+    } else {
+      // tslint:disable-next-line:no-console
+      console.warn("Cannot handle file for devices other than ios/android.");
+    }
+
+    fetchPromise && fetchPromise.then(res => {
+      this.setState({
+        downloadState: DownloadState.Success,
+        progress: 1
       });
+    })
+    .catch((errorMessage, statusCode) => {
+      // error handling
+      console.log("Error downloading", statusCode, errorMessage);
+      this.setState({
+        downloadState: DownloadState.Error,
+        progress: 0
+      });
+    });
   }
 
   public openDownloadedFile() {
     if (this.state.localFile) {
       Tracking.logEvent("openAttachments");
       if (Platform.OS === "ios") {
-        RNFetchBlob.ios.previewDocument(this.state.localFile);
+        RNFetchBlob.ios.openDocument(this.state.localFile);
       } else if (Platform.OS === "android") {
         // console.log("TODO open file on android", this.state.localFile);
         // console.log(Mime, Mime.getType(this.state.localFile));
