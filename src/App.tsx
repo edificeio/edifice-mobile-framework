@@ -96,46 +96,53 @@ class AppStoreUnconnected extends React.Component<
 
   public async componentDidMount() {
     // console.log("APP did mount");
+    if (!this.props.currentPlatformId) {
+      // console.log("awaiting get platform id");
+      const loadedPlatformId = await this.props.store.dispatch(loadCurrentPlatform());
+      if (loadedPlatformId) await this.startupLogin();
+    }
     if (this.props.currentPlatformId) {
-      //IF WE ARE NOT IN ACTIVATION MODE => TRY TO LOGIN => ELSE STAY ON ACTIVATION PAGE
-      if (!isInActivatingMode(this.props.store.getState())) {
-        // Auto Login if possible
-        this.props.store.dispatch(checkVersionThenLogin(true));
-      }
-
-      if (!AppStoreUnconnected.initialNotifRouted) {
-        const notificationOpen: NotificationOpen = await firebase
-          .notifications()
-          .getInitialNotification();
-        if (notificationOpen) {
-          // console.log("on notif (LAUNCH):", notificationOpen);
-          this.handleNotification(notificationOpen);
-        }
-      }
-
-      //TODO unsubscribe on unmount=>leak
-      if (!this.notificationOpenedListener)
-        this.notificationOpenedListener = firebase
-          .notifications()
-          .onNotificationOpened((notificationOpen: NotificationOpen) => {
-            // console.log("on notif (REBACK):", notificationOpen);
-            AppStoreUnconnected.initialNotifRouted = true;
-            return this.handleNotification(notificationOpen);
-          });
-
-      AppStoreUnconnected.initialNotifRouted = false;
-
-      if (!this.onTokenRefreshListener)
-        this.onTokenRefreshListener = firebase
-          .messaging()
-          .onTokenRefresh(fcmToken => {
-            this.handleFCMTokenModified(fcmToken);
-          });
-    } else {
-      // Load platform
-      await this.props.store.dispatch(loadCurrentPlatform());
+      await this.startupLogin();
     }
     SplashScreen.hide();
+  }
+
+  private async startupLogin() {
+    // console.log("startup login");
+    //IF WE ARE NOT IN ACTIVATION MODE => TRY TO LOGIN => ELSE STAY ON ACTIVATION PAGE
+    if (!isInActivatingMode(this.props.store.getState())) {
+      // Auto Login if possible
+      this.props.store.dispatch(checkVersionThenLogin(true));
+    }
+
+    if (!AppStoreUnconnected.initialNotifRouted) {
+      const notificationOpen: NotificationOpen = await firebase
+        .notifications()
+        .getInitialNotification();
+      if (notificationOpen) {
+        // console.log("on notif (LAUNCH):", notificationOpen);
+        this.handleNotification(notificationOpen);
+      }
+    }
+
+    //TODO unsubscribe on unmount=>leak
+    if (!this.notificationOpenedListener)
+      this.notificationOpenedListener = firebase
+        .notifications()
+        .onNotificationOpened((notificationOpen: NotificationOpen) => {
+          // console.log("on notif (REBACK):", notificationOpen);
+          AppStoreUnconnected.initialNotifRouted = true;
+          return this.handleNotification(notificationOpen);
+        });
+
+    AppStoreUnconnected.initialNotifRouted = false;
+
+    if (!this.onTokenRefreshListener)
+      this.onTokenRefreshListener = firebase
+        .messaging()
+        .onTokenRefresh(fcmToken => {
+          this.handleFCMTokenModified(fcmToken);
+        });
   }
 
   public componentWillUnmount() {

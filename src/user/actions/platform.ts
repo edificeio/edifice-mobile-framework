@@ -55,6 +55,7 @@ export function selectPlatform(platformId: string, redirect: boolean = false) {
 export function loadCurrentPlatform() {
   return async (dispatch, getState) => {
     const platformId = await AsyncStorage.getItem(PLATFORM_STORAGE_KEY);
+    // console.log("platformId", platformId);
     if (platformId) {
       if (!Conf.platforms.hasOwnProperty(platformId)) {
         navigate("PlatformSelect");
@@ -66,6 +67,7 @@ export function loadCurrentPlatform() {
     } else {
       navigate("PlatformSelect");
     }
+    return platformId;
   };
 }
 
