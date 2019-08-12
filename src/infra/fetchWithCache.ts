@@ -27,7 +27,7 @@ export async function signedFetch(
       try {
         await OAuth2RessourceOwnerPasswordClient.connection.refreshToken();
       } catch (err) {
-        navigate("Login");
+        navigate("LoginHome");
       }
     }
     // tslint:disable-next-line:no-console

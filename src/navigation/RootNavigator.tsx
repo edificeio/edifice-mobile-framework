@@ -2,7 +2,7 @@
 import I18n from "i18n-js";
 import * as React from "react";
 import { View } from "react-native";
-import { createAppContainer, createSwitchNavigator, NavigationContainer, NavigationContainerComponent } from "react-navigation";
+import { createAppContainer, createSwitchNavigator, NavigationContainerComponent } from "react-navigation";
 import { connect } from "react-redux";
 
 // ODE framework modules
@@ -15,14 +15,11 @@ import TimelineNavigator from "../timeline/TimelineNavigator";
 import Tracking from "../tracking/TrackingManager";
 
 // Screens
-import LoginPage from "../user/containers/LoginPage";
-import PlatformSelectPage from "../user/containers/PlatformSelectPage";
 import {
   createMainTabNavigator,
   createMainTabNavOption
 } from "./helpers/mainTabNavigator";
-import ActivationPage from "../user/containers/ActivationPage";
-import ForgotPage from "../user/containers/ForgotPage";
+import LoginNavigator from "./LoginNavigator";
 
 /**
  * MAIN NAVIGATOR
@@ -160,11 +157,8 @@ export const MainNavigator = connect(mapStateToProps)(MainNavigatorHOC);
 
 const RootNavigator = createSwitchNavigator({
   Bootstrap: () => <View />,
-  Login: { screen: LoginPage },
-  Activation: { screen: ActivationPage },
-  Forgot: { screen: ForgotPage },
+  Login: { screen: LoginNavigator },
   Main: { screen: () => <MainNavigator /> },
-  PlatformSelect: { screen: PlatformSelectPage }
 });
 
 export const RootNavigationContainer = createAppContainer(RootNavigator);

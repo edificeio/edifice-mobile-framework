@@ -1,7 +1,7 @@
 import style from "glamorous-native";
 import I18n from "i18n-js";
 import * as React from "react";
-import { Alert, KeyboardAvoidingView, Linking, Platform } from "react-native";
+import { Alert, KeyboardAvoidingView, Linking, Platform, SafeAreaView } from "react-native";
 import Conf from "../../../ode-framework-conf";
 import { navigate } from "../../navigation/helpers/navHelper";
 import { CommonStyles } from "../../styles/common/styles";
@@ -47,7 +47,7 @@ export type IActivationPageProps = IActivationPageDataProps &
 export class ActivationPage extends React.PureComponent<
   IActivationPageProps,
   IActivationPageState
-> {
+  > {
   // fully controller component
   public state: IActivationPageState = {
     ...this.props,
@@ -121,65 +121,67 @@ export class ActivationPage extends React.PureComponent<
     const hasErrorKey = !!errorText;
     const isSubmitLoading = submitState == SubmitState.Loading;
     return (
-      <FormPage>
-        <KeyboardAvoidingView
-          style={{ flex: 1, backgroundColor: "#ffffff" }}
-          behavior={Platform.OS === "ios" ? "padding" : undefined}
-        >
-          <FormTouchable onPress={() => formModel.blur()}>
-            <FormWrapper>
-              <FormContainer>
-                <LogoWrapper>
-                  <Logo source={Conf.currentPlatform.logo} />
-                </LogoWrapper>
-                <InputLogin
-                  login={login}
-                  form={formModel}
-                  onChange={this.onChange("login")}
-                />
-                <InputPassword
-                  password={password}
-                  form={formModel}
-                  onChange={this.onChange("password")}
-                />
-                <InputPasswordConfirm
-                  confirm={confirm}
-                  form={formModel}
-                  onChange={this.onChange("confirm")}
-                />
-                <InputEmail
-                  email={email}
-                  form={formModel}
-                  onChange={this.onChange("email")}
-                />
-                <InputPhone
-                  phone={phone}
-                  form={formModel}
-                  onChange={this.onChange("phone")}
-                />
-                <ErrorMessage>
-                  {" "}
-                  {hasErrorKey && !typing ? errorText : ""}{" "}
-                </ErrorMessage>
-                <ButtonWrapper error={hasErrorKey} typing={typing}>
-                  <FlatButton
-                    onPress={() => this.handleActivation()}
-                    disabled={isNotValid}
-                    title={I18n.t("Activate")}
-                    loading={isSubmitLoading}
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
+        <FormPage>
+          <KeyboardAvoidingView
+            style={{ flex: 1, backgroundColor: "#ffffff" }}
+            behavior={Platform.OS === "ios" ? "padding" : undefined}
+          >
+            <FormTouchable onPress={() => formModel.blur()}>
+              <FormWrapper>
+                <FormContainer>
+                  <LogoWrapper>
+                    <Logo source={Conf.currentPlatform.logo} />
+                  </LogoWrapper>
+                  <InputLogin
+                    login={login}
+                    form={formModel}
+                    onChange={this.onChange("login")}
                   />
-                </ButtonWrapper>
-                <CGULink onPress={this.handleOpenCGU}>
-                  <CGUText>{I18n.t("activation-cgu")}</CGUText>
-                </CGULink>
-              </FormContainer>
-            </FormWrapper>
-          </FormTouchable>
-          <BottomSwitcher onPress={() => this.handleBackToPlatformSelector()}>
-            {Conf.currentPlatform.displayName}{" "}
-          </BottomSwitcher>
-        </KeyboardAvoidingView>
-      </FormPage>
+                  <InputPassword
+                    password={password}
+                    form={formModel}
+                    onChange={this.onChange("password")}
+                  />
+                  <InputPasswordConfirm
+                    confirm={confirm}
+                    form={formModel}
+                    onChange={this.onChange("confirm")}
+                  />
+                  <InputEmail
+                    email={email}
+                    form={formModel}
+                    onChange={this.onChange("email")}
+                  />
+                  <InputPhone
+                    phone={phone}
+                    form={formModel}
+                    onChange={this.onChange("phone")}
+                  />
+                  <ErrorMessage>
+                    {" "}
+                    {hasErrorKey && !typing ? errorText : ""}{" "}
+                  </ErrorMessage>
+                  <ButtonWrapper error={hasErrorKey} typing={typing}>
+                    <FlatButton
+                      onPress={() => this.handleActivation()}
+                      disabled={isNotValid}
+                      title={I18n.t("Activate")}
+                      loading={isSubmitLoading}
+                    />
+                  </ButtonWrapper>
+                  <CGULink onPress={this.handleOpenCGU}>
+                    <CGUText>{I18n.t("activation-cgu")}</CGUText>
+                  </CGULink>
+                </FormContainer>
+              </FormWrapper>
+            </FormTouchable>
+            <BottomSwitcher onPress={() => this.handleBackToPlatformSelector()}>
+              {Conf.currentPlatform.displayName}{" "}
+            </BottomSwitcher>
+          </KeyboardAvoidingView>
+        </FormPage>
+      </SafeAreaView>
     );
   }
 

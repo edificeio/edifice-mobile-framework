@@ -45,7 +45,7 @@ export function selectPlatform(platformId: string, redirect: boolean = false) {
       type: actionTypePlatformSelect
     });
 
-    if (redirect) navigate("Login");
+    if (redirect) navigate("LoginHome");
   };
 }
 

@@ -57,7 +57,7 @@ export function checkVersionThenLogin(
         }
         if (version.hasNewVersion) {
             // === 2 if we have not yet redirected to login...
-            if (redirectOnError) navigate("Login");
+            if (redirectOnError) navigate("LoginHome");
             // === 3 if any new version display to the user
             dispatch(checkNewVersionFounded(version, redirectOnError, credentials));
         } else {

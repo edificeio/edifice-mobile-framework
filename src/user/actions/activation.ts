@@ -115,7 +115,7 @@ export function initActivationAccount(
       // === 2 - Navigate if needed
       if (redirect) {
         // console.log("[User][Activation] redirecting to Activation Page...")
-        navigate("Activation");
+        navigate("LoginActivation");
       }
       dispatch({ type: actionTypeLoginCancel });
       // === 3 - send result to store
@@ -214,6 +214,6 @@ export function activationAccount(model: IActivationModel) {
 
 export function cancelActivationAccount() {
   return () => {
-    navigate("Login");
+    navigate("LoginHome");
   };
 }

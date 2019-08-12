@@ -224,7 +224,7 @@ export function login(
             type: actionTypeLoginError
           });
       }
-      if (redirectOnError) navigate("Login");
+      if (redirectOnError) navigate("LoginHome");
     }
   };
 }
@@ -252,9 +252,9 @@ export function logout() {
       dispatch({ type: actionTypeLoggedOut });
 
       // === 4: Nav back on the login screen
-      navigate("Login");
+      navigate("LoginHome");
     } catch (err) {
-      navigate("Login");
+      navigate("LoginHome");
     }
   };
 }

@@ -9,7 +9,8 @@ import {
   SafeAreaView,
   TextInput,
   TouchableWithoutFeedback,
-  View
+  View,
+  ScrollView
 } from "react-native";
 import { connect } from "react-redux";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
@@ -93,7 +94,7 @@ const FormContainer = style.view({
 export class LoginPage extends React.Component<
   ILoginPageProps,
   ILoginPageState
-> {
+  > {
   // Refs
   private inputLogin: TextInput = null;
   private setInputLoginRef = el => (this.inputLogin = el);
@@ -165,63 +166,74 @@ export class LoginPage extends React.Component<
 
     return (
       <View style={{ flex: 1 }}>
-        <FormContainer>
-          {this.renderLogo()}
-          <TextInputLine
-            inputRef={this.setInputLoginRef}
-            placeholder={I18n.t("Login")}
-            onChangeText={(login: string) =>
-              this.setState({ login: login.trim(), typing: true })
-            }
-            value={this.state.login}
-            hasError={error && !this.state.typing}
-            keyboardType="email-address"
-          />
-          <PasswordInputLine
-            inputRef={this.setInputPasswordRef}
-            placeholder={I18n.t("Password")}
-            onChangeText={(password: string) =>
-              this.setState({ password, typing: true })
-            }
-            value={this.state.password}
-            hasError={error && !this.state.typing}
-          />
-          <ErrorMessage>
-            {this.state.typing ? "" : error && I18n.t(error)}
-          </ErrorMessage>
-
-          <View
-            style={{
-              alignItems: "center",
-              flexGrow: 2,
-              justifyContent: "flex-start",
-              marginTop: error && !this.state.typing ? 10 : 30
-            }}
-          >
-            <FlatButton
-              onPress={() => this.handleLogin()}
-              disabled={this.isSubmitDisabled}
-              title={I18n.t("Connect")}
-              loading={loggingIn || loggedIn}
+        <ScrollView alwaysBounceVertical={false}>
+          <FormContainer>
+            {this.renderLogo()}
+            <TextInputLine
+              inputRef={this.setInputLoginRef}
+              placeholder={I18n.t("Login")}
+              onChangeText={(login: string) =>
+                this.setState({ login: login.trim(), typing: true })
+              }
+              value={this.state.login}
+              hasError={error && !this.state.typing}
+              keyboardType="email-address"
             />
+            <PasswordInputLine
+              inputRef={this.setInputPasswordRef}
+              placeholder={I18n.t("Password")}
+              onChangeText={(password: string) =>
+                this.setState({ password, typing: true })
+              }
+              value={this.state.password}
+              hasError={error && !this.state.typing}
+            />
+            <ErrorMessage>
+              {this.state.typing ? "" : error && I18n.t(error)}
+            </ErrorMessage>
+
             <View
               style={{
                 alignItems: "center",
-                justifyContent: "center"
+                flexGrow: 2,
+                justifyContent: "flex-start",
+                marginTop: error && !this.state.typing ? 10 : 30
               }}
             >
-              <Text
-                color={TextColor.Light}
-                style={{ textDecorationLine: "underline", marginTop: 48 }}
-                onPress={() => {
-                  navigate("Forgot");
+              <FlatButton
+                onPress={() => this.handleLogin()}
+                disabled={this.isSubmitDisabled}
+                title={I18n.t("Connect")}
+                loading={loggingIn || loggedIn}
+              />
+              <View
+                style={{
+                  alignItems: "center",
+                  justifyContent: "center"
                 }}
               >
-                {I18n.t("forgot-password")}
-              </Text>
+                <Text
+                  color={TextColor.Light}
+                  style={{ textDecorationLine: "underline", marginTop: 48 }}
+                  onPress={() => {
+                    navigate("LoginForgot");
+                  }}
+                >
+                  {I18n.t("forgot-password")}
+                </Text>
+                {Conf.currentPlatform.federation && <Text
+                  color={TextColor.Light}
+                  style={{ textDecorationLine: "underline", marginTop: 48, textAlign: "center" }}
+                  onPress={() => {
+                    navigate("FederatedAccount");
+                  }}
+                >
+                  {I18n.t("federatedAccount-link")}
+                </Text>}
+              </View>
             </View>
-          </View>
-        </FormContainer>
+          </FormContainer>
+        </ScrollView>
         <BottomSwitcher onPress={() => this.handleBackToPlatformSelector()}>
           {Conf.currentPlatform.displayName}{" "}
         </BottomSwitcher>

@@ -98,7 +98,7 @@
   },
   "ode": {
     "appid": "com.ode.appe",
-    "appname": "app-e-dev-valentin",
+    "appname": "app-e-dev-default",
     "properties": {
       "ios": "ios/appe/Info.plist",
       "android": "android/gradle.properties"

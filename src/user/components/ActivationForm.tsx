@@ -76,7 +76,7 @@ export function InputLogin(props: { login: string, form: ActivationFormModel, on
     const validator = props.form.login;
     return <TextInputLine
         inputRef={(ref) => props.form.inputLogin = ref}
-        placeholder={I18n.t("Login")}
+        placeholder={I18n.t("LoginHome")}
         onChangeText={validator.changeCallback(props.onChange)}
         value={props.login}
         hasError={props.form.showLoginError(props.login)}
