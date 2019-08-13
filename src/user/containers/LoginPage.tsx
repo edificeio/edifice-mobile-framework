@@ -166,7 +166,7 @@ export class LoginPage extends React.Component<
 
     return (
       <View style={{ flex: 1 }}>
-        <ScrollView alwaysBounceVertical={false}>
+        <ScrollView alwaysBounceVertical={false} contentContainerStyle={{ flexGrow: 1 }}>
           <FormContainer>
             {this.renderLogo()}
             <TextInputLine
