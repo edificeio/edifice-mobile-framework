@@ -5,7 +5,7 @@ import { Animated, Linking, ScrollView, View } from "react-native";
 import { createStackNavigator, NavigationActions } from "react-navigation";
 import Conf from "../../../ode-framework-conf";
 import { signedFetch } from "../../infra/fetchWithCache";
-import { navScreenOptions } from "../../navigation/helpers/navHelper";
+import { standardNavScreenOptions } from "../../navigation/helpers/navHelper";
 import { CommonStyles } from "../../styles/common/styles";
 import Tracking from "../../tracking/TrackingManager";
 import { ButtonsOkCancel, FlatButton, Icon } from "../../ui";
@@ -482,7 +482,7 @@ export const NewsContentRouter = createStackNavigator(
   {
     NewsContentRouter: {
       navigationOptions: ({ navigation }) =>
-        navScreenOptions(
+        standardNavScreenOptions(
           {
             header: null,
             tabBarVisible: false

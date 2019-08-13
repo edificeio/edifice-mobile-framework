@@ -1,6 +1,6 @@
 import * as React from "react";
 import { createStackNavigator } from "react-navigation";
-import { navScreenOptions } from "../navigation/helpers/navHelper";
+import { standardNavScreenOptions } from "../navigation/helpers/navHelper";
 import NewThreadPage from "./containers/NewThreadPage";
 import NewThreadPageHeader from "./containers/NewThreadPageHeader";
 import ThreadListPage from "./containers/ThreadListPage";
@@ -13,7 +13,7 @@ import ReceiverListPageHeader from "./components/ReceiverListPageHeader";
 export default createStackNavigator({
   listThreads: {
     navigationOptions: ({ navigation }) =>
-      navScreenOptions(
+      standardNavScreenOptions(
         {
           header: <ThreadListPageHeader navigation={navigation} />
         },
@@ -24,7 +24,7 @@ export default createStackNavigator({
 
   thread: {
     navigationOptions: ({ navigation }) =>
-      navScreenOptions(
+      standardNavScreenOptions(
         {
           header: <ThreadPageHeader navigation={navigation} />
         },
@@ -35,7 +35,7 @@ export default createStackNavigator({
 
   newThread: {
     navigationOptions: ({ navigation }) =>
-      navScreenOptions(
+      standardNavScreenOptions(
         {
           header: (
             <NewThreadPageHeader
@@ -49,7 +49,7 @@ export default createStackNavigator({
   },
   listReceivers: {
     navigationOptions: ({ navigation }) =>
-      navScreenOptions(
+      standardNavScreenOptions(
         {
           header: <ReceiverListPageHeader navigation={navigation} />
         },

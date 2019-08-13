@@ -10,9 +10,9 @@ import {
 } from "../../ui/ButtonLine";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
-import { Header, HeaderIcon, Title } from "../../ui/headers/Header";
+import { Header, HeaderIcon, Title, sensitiveStylePanel, AppTitle } from "../../ui/headers/Header";
 
-import { View, ScrollView } from "react-native";
+import { View, ScrollView, SafeAreaView } from "react-native";
 import { getSessionInfo } from "../../AppStore";
 import { Back } from "../../ui/headers/Back";
 import { IUserInfoState } from "../reducers/info";
@@ -20,48 +20,48 @@ import { IUserAuthState } from "../reducers/auth";
 import { Label } from "../../ui/Typography";
 import { UserCard } from "../components/UserCard";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { standardNavScreenOptions } from "../../navigation/helpers/navHelper";
+import { NavigationScreenProp } from "react-navigation";
+import { HeaderAction, HeaderBackAction } from "../../ui/headers/NewHeader";
 
-export class ProfilePageHeader extends React.PureComponent<
-  {
-    navigation: any;
-    isEditMode: boolean;
-  },
-  undefined
-> {
-  public render() {
-    return (
-      this.props.isEditMode ?
-        <Header>
-          <TouchableOpacity
-            style={{ paddingHorizontal: 18, marginRight: "auto" }}
-            onPress={() => this.props.navigation.setParams(
-              { "edit": false },
-              "MyProfile"
-            )}
-          ><Title>{I18n.t("Cancel")}</Title></TouchableOpacity>
-          <TouchableOpacity
-            style={{ paddingHorizontal: 18, marginLeft: "auto" }}
-            onPress={() => this.props.navigation.setParams(
-              { "edit": false },
-              "MyProfile"
-            )}
-          ><Title>{I18n.t("Save")}</Title></TouchableOpacity>
-        </Header>
-        :
-        <Header>
-          <Back navigation={this.props.navigation} />
-          <Title style={{ marginRight: "auto" }}>{I18n.t("MyProfile")}</Title>
-          {/*<TouchableOpacity
-            style={{ paddingHorizontal: 18 }}
-            onPress={() => this.props.navigation.setParams(
-              { "edit": true },
-              "MyProfile"
-            )}
-            ><Title>{I18n.t("Edit")}</Title></TouchableOpacity>*/}
-        </Header>
+
+export const ProfilePageNavigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
+  const isEditMode = navigation.getParam("edit", false);
+  if (isEditMode) {
+    return standardNavScreenOptions(
+      {
+        title: I18n.t("MyProfile"),
+        headerLeft: <HeaderAction
+          onPress={() => navigation.setParams(
+            { "edit": false }
+          )}
+          title={I18n.t("Cancel")}
+        />,
+        headerRight: <HeaderAction
+          onPress={() => navigation.setParams(
+            { "edit": false }
+          )}
+          title={I18n.t("Save")}
+        />,
+      },
+      navigation
+    );
+  } else {
+    return standardNavScreenOptions(
+      {
+        title: I18n.t("MyProfile"),
+        headerLeft: <HeaderBackAction navigation={navigation}/>,
+        headerRight: <HeaderAction
+          onPress={() => navigation.setParams(
+            { "edit": true }
+          )}
+          title={I18n.t("Edit")}
+        />,
+      },
+      navigation
     );
   }
-}
+};
 
 // tslint:disable-next-line:max-classes-per-file
 export class ProfilePage extends React.PureComponent<
@@ -77,6 +77,7 @@ export class ProfilePage extends React.PureComponent<
       <PageContainer>
         <ConnectionTrackingBar />
         <ScrollView alwaysBounceVertical={false} >
+          <SafeAreaView>
 
           <UserCard
             id={this.props.userinfo.id!}
@@ -111,7 +112,7 @@ export class ProfilePage extends React.PureComponent<
           <ContainerLabel>{I18n.t("Birthdate")}</ContainerLabel>
           <ContainerView><Label>{this.props.userinfo.birthDate!.format('L')}</Label></ContainerView>
 
-          <ContainerSpacer/>
+          </SafeAreaView>
 
         </ScrollView>
 

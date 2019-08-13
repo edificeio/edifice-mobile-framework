@@ -1,17 +1,21 @@
+import * as React from "react";
 import { NavigationActions } from "react-navigation";
 
 import { rootNavigatorRef } from "../../AppScreen";
 import { CommonStyles } from "../../styles/common/styles";
 import { CurrentMainNavigationContainerComponent } from "../RootNavigator";
+import { Back } from "../../ui/headers/Back";
 
-export const navScreenOptions = (props, { state }) => {
+export const standardNavScreenOptions = (props, { state }) => {
   const { params = {} } = state;
   const { header } = params;
 
   return {
     header,
     headerStyle: {
-      backgroundColor: CommonStyles.mainColorTheme
+      backgroundColor: CommonStyles.mainColorTheme,
+      elevation: 5,
+      height: 56
     },
     headerTintColor: "white",
     headerTitleStyle: {
@@ -20,9 +24,11 @@ export const navScreenOptions = (props, { state }) => {
       fontFamily: CommonStyles.primaryFontFamily,
       fontSize: 16,
       fontWeight: "400",
-      textAlign: "center"
+      textAlign: "center",
+      flex: 1
     },
     tabBarVisible: header !== null,
+    headerBackTitle: null,
     ...props
   };
 };

@@ -1,11 +1,16 @@
 import style from "glamorous-native";
 import * as React from "react";
-import { Platform, ViewStyle } from "react-native";
+import { Platform, ViewStyle, SafeAreaView } from "react-native";
 import { connect } from "react-redux";
 
 import { Icon } from "..";
 import { CommonStyles } from "../../styles/common/styles";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
+
+/**
+ * DEPRECATED
+ * Use the navigationOtions way as used in the user functional module, combined with ./NewHeader.tsx.
+ */
 
 const isIphoneX = () => false; // ToDo use React Navigation iPhoneX Compatibility here
 const iosStatusBarHeight = isIphoneX() ? 40 : 20;
@@ -19,7 +24,7 @@ const containerBar: ViewStyle = {
   paddingTop: Platform.OS === "ios" ? iosStatusBarHeight : 0
 };
 
-const HeaderStyle = style.view({
+const HeaderStyle = style(SafeAreaView)({
   justifyContent: "flex-start",
   paddingTop: Platform.OS === "ios" ? iosStatusBarHeight : 0,
   flexDirection: "row",
@@ -48,7 +53,7 @@ export const Header = connect((state: any) => ({
   connectionTracker: state.connectionTracker
 }))(HeaderComponent);
 
-const sensitiveStylePanel: ViewStyle = {
+export const sensitiveStylePanel: ViewStyle = {
   alignItems: "center",
   height: 56,
   justifyContent: "center",

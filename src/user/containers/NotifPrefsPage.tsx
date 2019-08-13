@@ -22,6 +22,9 @@ import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
 import { H4 } from "../../ui/Typography";
 import { NotifPrefLine } from "../components/NotifPrefLine";
+import { NavigationScreenProp } from "react-navigation";
+import { standardNavScreenOptions } from "../../navigation/helpers/navHelper";
+import { HeaderBackAction } from "../../ui/headers/NewHeader";
 
 // Type definitions
 
@@ -35,7 +38,7 @@ export class NotifPrefsPageHeader extends React.PureComponent<
     navigation: any;
   },
   undefined
-> {
+  > {
   public render() {
     return (
       <Header>
@@ -46,6 +49,15 @@ export class NotifPrefsPageHeader extends React.PureComponent<
     );
   }
 }
+
+export const NotifPrefsPageNavigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) =>
+  standardNavScreenOptions(
+    {
+      headerLeft: <HeaderBackAction navigation={navigation} />,
+      title: I18n.t("directory-notificationsTitle"),
+    },
+    navigation
+  );
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -73,7 +85,7 @@ export type INotifPrefsPageProps = INotifPrefsPageDataProps &
 export class NotifPrefsPage extends React.PureComponent<
   INotifPrefsPageProps,
   undefined
-> {
+  > {
   public componentDidMount() {
     this.props.onInit();
   }

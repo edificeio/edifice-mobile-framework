@@ -28,23 +28,17 @@ import { Avatar, Size } from "../../ui/avatars/Avatar";
 import { TextBold } from "../../ui/text";
 import { getSessionInfo } from "../../AppStore";
 import { UserCard } from "../components/UserCard";
+import { NavigationScreenProp } from "react-navigation";
+import { standardNavScreenOptions } from "../../navigation/helpers/navHelper";
 
-export class UserPageHeader extends React.PureComponent<
-  {
-    navigation: any;
-  },
-  undefined
-> {
-  public render() {
-    return (
-      <Header>
-        <HeaderIcon name={null} hidden={true} />
-        <AppTitle>{I18n.t("Profile")}</AppTitle>
-        <HeaderIcon name={null} hidden={true} />
-      </Header>
-    );
-  }
-}
+export const UserPageNavigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) =>
+  standardNavScreenOptions(
+    {
+      headerBackTitle: null,
+      title: I18n.t("MyProfile"),
+    },
+    navigation
+  );
 
 // tslint:disable-next-line:max-classes-per-file
 export class UserPage extends React.PureComponent<

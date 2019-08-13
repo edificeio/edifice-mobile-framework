@@ -1,44 +1,31 @@
 import * as React from "react";
-import { createStackNavigator } from "react-navigation";
-import { navScreenOptions } from "../navigation/helpers/navHelper";
+import I18n from "i18n-js";
+import { createStackNavigator, NavigationState, NavigationContainer, NavigationContainerComponent, NavigationScreenProp } from "react-navigation";
+import { standardNavScreenOptions } from "../navigation/helpers/navHelper";
 
 import NotifPrefsPage, {
-  NotifPrefsPageHeader
+  NotifPrefsPageHeader, NotifPrefsPageNavigationOptions
 } from "./containers/NotifPrefsPage";
-import UserPage, { UserPageHeader } from "./containers/UserPage";
-import ProfilePage, { ProfilePageHeader } from "./containers/ProfilePage";
+import UserPage, { UserPageHeader, UserPageNavigationOptions } from "./containers/UserPage";
+import ProfilePage, { ProfilePageNavigationOptions } from "./containers/ProfilePage";
+import { Back } from "../ui/headers/Back";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { Title } from "../ui/headers/Header";
+import { HeaderBackAction } from "../ui/headers/NewHeader";
 
 export default createStackNavigator({
   Profile: {
-    navigationOptions: ({ navigation }) =>
-      navScreenOptions(
-        {
-          header: <UserPageHeader navigation={navigation} />
-        },
-        navigation
-      ),
+    navigationOptions: UserPageNavigationOptions,
     screen: UserPage
   },
 
   NotifPrefs: {
-    navigationOptions: ({ navigation }) =>
-      navScreenOptions(
-        {
-          header: <NotifPrefsPageHeader navigation={navigation} />
-        },
-        navigation
-      ),
+    navigationOptions: NotifPrefsPageNavigationOptions,
     screen: NotifPrefsPage
   },
 
   MyProfile: {
-    navigationOptions: ({ navigation }) =>
-      navScreenOptions(
-        {
-          header: <ProfilePageHeader navigation={navigation} isEditMode={navigation.getParam("edit", false)} />,
-        },
-        navigation
-      ),
+    navigationOptions: ProfilePageNavigationOptions,
     screen: ProfilePage
   }
 });
