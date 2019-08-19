@@ -1,6 +1,7 @@
 import moment from "moment";
 
 import { actionTypeLoggedIn, actionTypeLoggedOut } from "../actions/login";
+import { actionTypeProfileUpdateSuccess } from "../actions/profile";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -24,10 +25,12 @@ export interface IUserInfoState {
   homePhone?: string;
   health?: string;
   hobbies?: Array<{ category: string; values: string; visibility: string }>;
+  id?: string;
   joinKey?: string[];
   lastDomain?: string;
   lastLogin?: moment.Moment;
   lastName?: string;
+  mobile?: string;
   modified?: moment.Moment;
   modules?: string[];
   mood?: string;
@@ -67,6 +70,12 @@ const infoReducer = (state: IUserInfoState = stateDefault, action) => {
       return session;
     case actionTypeLoggedOut:
       return stateDefault;
+    case actionTypeProfileUpdateSuccess:
+      return {
+        ...state,
+        ...action.updatedProfileValues,
+        modified: moment()
+      }
     default:
       return state;
   }

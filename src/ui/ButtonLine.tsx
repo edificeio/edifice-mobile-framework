@@ -49,6 +49,18 @@ export const ContainerView = style.view({
   paddingHorizontal: 15
 });
 
+export const ContainerTextInput = style.textInput({
+  alignItems: "center",
+  flexDirection: "row",
+  backgroundColor: "white",
+  borderBottomWidth: 1,
+  borderColor: "#ddd",
+  height: 46,
+  justifyContent: "flex-start",
+  // marginTop: 20,
+  paddingHorizontal: 15
+});
+
 const LinkStyle = style.text(
   {
     fontSize: 14,

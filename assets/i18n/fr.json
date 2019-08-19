@@ -94,6 +94,7 @@
   "Phone": "Téléphone",
   "CellPhone": "Téléphone mobile",
   "Profile": "Profil",
+  "ProfileInvalidInformation": "Certains champs sont invalides. Veuillez vérifier vos informations et corriger les erreurs avant de les enregistrer.",
   "schoolbook-acknowledge": "Confirmer la lecture",
   "schoolbook-already-confirmed": "Vous avez confirmé la lecture de ce mot",
   "schoolbook-appTitle": "Carnet de liaison",

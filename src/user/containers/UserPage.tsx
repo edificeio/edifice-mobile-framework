@@ -35,7 +35,7 @@ export const UserPageNavigationOptions = ({ navigation }: { navigation: Navigati
   standardNavScreenOptions(
     {
       headerBackTitle: null,
-      title: I18n.t("MyProfile"),
+      title: I18n.t("Profile"),
     },
     navigation
   );
