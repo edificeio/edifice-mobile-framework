@@ -4,16 +4,18 @@ import thunkMiddleware from "redux-thunk";
 import moduleDefinitions from "./AppModules";
 import { getReducersFromModuleDefinitions } from "./infra/moduleTool";
 
+import notifier from "./infra/notifier/reducer";
 import connectionTracker from "./infra/reducers/connectionTracker";
 import ui from "./infra/reducers/ui";
 import timeline from "./timeline/reducer";
 import { IUserInfoState } from "./user/reducers/info";
 import { IUserAuthState } from "./user/reducers/auth";
 
-console.log("REDUCERS", getReducersFromModuleDefinitions(moduleDefinitions));
+// console.log("REDUCERS", getReducersFromModuleDefinitions(moduleDefinitions));
 
 const reducers = {
   connectionTracker,
+  notifier,
   ui,
   ...getReducersFromModuleDefinitions(moduleDefinitions)
 };

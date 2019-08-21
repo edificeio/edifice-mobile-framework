@@ -9,7 +9,7 @@ type ValueChangeOriginal<T> = (value: T) => void;
 export type ValueChangeArgs<T> = { value: T, valid: boolean };
 export type ValueChange<T> = (value: ValueChangeArgs<T>) => void;
 export type ValueGetter<T> = () => T
-interface IValidatorContext<T> {
+export interface IValidatorContext<T> {
     isValid: IValidator
     isNotValid: IValidator
     changeCallback: (onChange: ValueChange<T>) => ValueChangeOriginal<T>

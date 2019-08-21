@@ -9,7 +9,7 @@ import { FlatButton, Loading } from "../../ui";
 import BottomSwitcher from "../../ui/BottomSwitcher";
 import { ErrorMessage } from "../../ui/Typography";
 import { IActivationModel, IActivationUserInfo } from "../actions/activation";
-import { ContextState, SubmitState } from "../reducers/activation";
+import { ContextState, SubmitState } from "../../utils/SubmitState";
 import {
   ActivationFormModel,
   InputEmail,

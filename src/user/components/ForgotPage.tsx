@@ -20,7 +20,7 @@ import { Text, TextH1 } from "../../ui/text";
 import { ErrorMessage, InfoMessage, TextColor } from "../../ui/Typography";
 import { IActivationModel, IActivationUserInfo } from "../actions/activation";
 import { IForgotModel } from "../actions/forgot";
-import { ContextState, SubmitState } from "../reducers/activation";
+import { ContextState, SubmitState } from "../../utils/SubmitState";
 import {
   ActivationFormModel,
   InputEmail,

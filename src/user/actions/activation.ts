@@ -10,16 +10,9 @@ import { navigate } from "../../navigation/helpers/navHelper";
 import userConfig from "../config";
 import { actionTypeLoginCancel, login } from "./login";
 import Tracking from "../../tracking/TrackingManager";
+import { IActivationContext } from "../../utils/SubmitState";
 
 // TYPES ------------------------------------------------------------------------------------------------
-export interface IActivationContext {
-  cgu: boolean;
-  passwordRegex: string;
-  mandatory: {
-    mail: boolean;
-    phone: boolean;
-  };
-}
 
 export interface IActivationUserInfo {
   login: string;

@@ -8,12 +8,14 @@ import auth from "./auth";
 import info from "./info";
 import activation from "./activation";
 import forgot from "./forgot";
+import changePassword from "./changePassword";
 
 const rootReducer: (state: any, action: Action) => any = combineReducers({
   auth,
   info,
   activation,
-  forgot
+  forgot,
+  changePassword
 });
 
 export default rootReducer;

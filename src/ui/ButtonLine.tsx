@@ -75,14 +75,17 @@ export const ButtonLine = ({
   onPress,
   title,
   color,
-  hideIcon
+  hideIcon,
+  disabled = false
 }: {
   onPress: () => any;
   title: string;
   color?: string;
   hideIcon?: boolean;
-}) => (
-  <Container onPress={() => onPress()}>
+  disabled?: boolean;
+}) => {
+  const Comp = disabled ? ContainerView : Container;
+  return <Comp {...(!disabled ? { onPress: () => onPress()} : {})}>
     {/* FIXME: a ButtonLine without onClick prop will raise an error. Fire an event up or use onPress={onPress}. */}
     <LinkStyle color={color}>{I18n.t(title)}</LinkStyle>
     {/* FIXME: This UI button force to use translation. It shouldn't. */}
@@ -93,5 +96,5 @@ export const ButtonLine = ({
         style={{ transform: [{ rotate: "270deg" }] }}
       />
     )}
-  </Container>
-);
+  </Comp>;
+}

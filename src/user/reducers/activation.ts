@@ -1,14 +1,8 @@
 import {
-    actionTypeActivationContext, IActivationContext, IActivationContextFetchedAction, IActivationUserInfo, IActivationContextRequestedAction, IActivationModel, actionTypeActivationSubmit, IActivationSubmitRequestedAction, IActivationSubmitErrorAction
+    actionTypeActivationContext, IActivationContextFetchedAction, IActivationUserInfo, IActivationContextRequestedAction, IActivationModel, actionTypeActivationSubmit, IActivationSubmitRequestedAction, IActivationSubmitErrorAction
 } from "../actions/activation";
+import { SubmitState, ContextState, IActivationContext } from "../../utils/SubmitState";
 
-// TYPE DEFINITIONS -------------------------------------------------------------------------------
-export enum SubmitState {
-    Void, Loading, Failed, Success
-}
-export enum ContextState {
-    Void, Loading, Failed, Success
-}
 export interface IActivationState {
     isActivating: boolean
     context: IActivationContext

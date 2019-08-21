@@ -18,6 +18,7 @@ export interface IUserInfoState {
   email?: string;
   emailAcademy?: string;
   externalId?: string;
+  federated?: boolean;
   firstName?: string;
   functionalGroups?: Array<{ id: string; name: string }>;
   functions?: any[];

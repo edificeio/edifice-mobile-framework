@@ -4,7 +4,8 @@ import { connect } from "react-redux";
 import {
   ContainerView,
   ContainerLabel,
-  ContainerTextInput
+  ContainerTextInput,
+  ButtonLine
 } from "../../ui/ButtonLine";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
@@ -19,8 +20,10 @@ import { NavigationScreenProp, NavigationState, NavigationParams } from "react-n
 import { HeaderAction, HeaderBackAction } from "../../ui/headers/NewHeader";
 import { CommonStyles } from "../../styles/common/styles";
 import { IUpdatableProfileValues, profileUpdateAction } from "../actions/profile";
-import { AnyAction } from "redux";
+import { AnyAction, Dispatch } from "redux";
 import { ThunkDispatch } from "redux-thunk";
+import Notifier from "../../infra/notifier/container";
+import { changePasswordResetAction } from "../actions/changePassword";
 
 export interface IProfilePageDataProps {
   userauth: IUserAuthState;
@@ -29,6 +32,7 @@ export interface IProfilePageDataProps {
 
 export interface IProfilePageEventProps {
   onSave: (updatedProfileValues: IUpdatableProfileValues) => void;
+  dispatch: Dispatch;
 }
 
 export interface IProfilePageOtherProps {
@@ -133,9 +137,11 @@ export class ProfilePage extends React.PureComponent<
   }
 
   public render() {
+    const isEditMode = this.props.navigation.getParam("edit", false);
     return (
       <PageContainer>
         <ConnectionTrackingBar />
+        <Notifier/>
         <KeyboardAvoidingView behavior="height" keyboardVerticalOffset={Platform.select({ ios: 100, android: undefined })}>
           <ScrollView alwaysBounceVertical={false}>
             <SafeAreaView>
@@ -151,8 +157,16 @@ export class ProfilePage extends React.PureComponent<
                 getter: () => this.props.userauth.login
               })}
 
-              {/*<ContainerLabel>{I18n.t("Password")}</ContainerLabel>
-          <ButtonLine title="PasswordChange" onPress={() => false}/>*/}
+              {!this.props.userinfo.federated ?
+                <View {...(isEditMode ? { style: { opacity: 0.33 } } : {})}>
+                  <ContainerLabel>{I18n.t("Password")}</ContainerLabel>
+                  <ButtonLine title="PasswordChange" disabled={isEditMode} onPress={() => {
+                    this.props.dispatch(changePasswordResetAction());
+                    this.props.navigation.navigate("ChangePassword");
+                  }} />
+                </View> :
+                null
+              }
 
               {this.renderItem({
                 title: I18n.t("Firstname"),
@@ -262,6 +276,7 @@ export default connect(
   (dispatch: ThunkDispatch<any, void, AnyAction>) => ({
     onSave(updatedProfileValues: IUpdatableProfileValues) {
       dispatch(profileUpdateAction(updatedProfileValues));
-    }
+    },
+    dispatch
   })
 )(ProfilePage);
