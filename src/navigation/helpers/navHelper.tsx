@@ -12,12 +12,16 @@ export const standardNavScreenOptions = (props, { state }) => {
 
   return {
     header,
+    headerTintColor: "white",
+    tabBarVisible: header !== null,
+    headerBackTitle: null,
+    ...props,
     headerStyle: {
       backgroundColor: CommonStyles.mainColorTheme,
       elevation: 5,
-      height: 56
+      height: 56,
+      ...(props.headerStyle || {})
     },
-    headerTintColor: "white",
     headerTitleStyle: {
       alignSelf: "center",
       color: "white",
@@ -25,11 +29,9 @@ export const standardNavScreenOptions = (props, { state }) => {
       fontSize: 16,
       fontWeight: "400",
       textAlign: "center",
-      flex: 1
+      flex: 1,
+      ...(props.headerTitleStyle || {})
     },
-    tabBarVisible: header !== null,
-    headerBackTitle: null,
-    ...props
   };
 };
 

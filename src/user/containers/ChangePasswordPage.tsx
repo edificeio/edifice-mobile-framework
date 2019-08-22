@@ -53,6 +53,7 @@ class ChangePasswordPageContainer extends React.PureComponent<
       {
         title: I18n.t("PasswordChange"),
         headerLeft: <HeaderBackAction navigation={navigation} />,
+        headerTitleStyle: { marginLeft: 0, marginRight: 'auto', textAlign: 'left' }
       },
       navigation
     );

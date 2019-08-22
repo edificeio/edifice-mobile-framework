@@ -6,6 +6,7 @@ import NotifPrefsPage, {
 import UserPage, { UserPageNavigationOptions } from "./containers/UserPage";
 import ProfilePage from "./containers/ProfilePage";
 import ChangePasswordPage from "./containers/ChangePasswordPage";
+import StructuresPage from "./containers/StructuresPage";
 
 export default createStackNavigator({
   Profile: {
@@ -24,5 +25,9 @@ export default createStackNavigator({
 
   ChangePassword: {
     screen: ChangePasswordPage
+  },
+
+  Structures: {
+    screen: StructuresPage
   }
 });
