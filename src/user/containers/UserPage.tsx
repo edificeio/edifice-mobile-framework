@@ -111,6 +111,11 @@ export class UserPage extends React.PureComponent<
         />
         <ContainerSpacer />
         <ButtonLine
+          title={"directory-structuresTitle"}
+          onPress={() => this.props.navigation.navigate("Structures")}
+        />
+        <ContainerSpacer />
+        <ButtonLine
           title={"directory-notificationsTitle"}
           onPress={() => this.props.navigation.navigate("NotifPrefs")}
         />

@@ -52,6 +52,7 @@
   "delete": "Supprimer",
   "directory-disconnectButton": "Se déconnecter",
   "directory-notificationsTitle": "Notifications",
+  "directory-structuresTitle": "Établissement(s) et classe(s)",
   "DisplayName": "Nom affiché",
   "download-confirm": "Souhaitez-vous télécharger\n{{name}} ({{size}}) ?",
   "download-error": "Erreur.",

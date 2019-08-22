@@ -16,6 +16,8 @@ import { standardNavScreenOptions } from "../../navigation/helpers/navHelper";
 import { HeaderBackAction } from "../../ui/headers/NewHeader";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { Dispatch } from "redux";
+import { ContainerLabel, NoTouchableContainer, ContainerSpacer } from "../../ui/ButtonLine";
+import { Text } from "../../ui/text";
 
 // TYPES ------------------------------------------------------------------------------------------
 
@@ -176,25 +178,28 @@ export class ChangePasswordPage extends React.PureComponent<
             <FormTouchable onPress={() => formModel.blur()}>
               <FormWrapper>
                 <FormContainer>
+                  <NoTouchableContainer style={{ paddingHorizontal: 20 }}><Text>{I18n.t("PasswordOld")}</Text></NoTouchableContainer>
                   <OldPasswordField
                     oldPassword={oldPassword}
                     form={formModel}
                     onChange={this.onChange("oldPassword")}
                   />
+                  <MiniSpacer/>
+                  <NoTouchableContainer style={{ paddingHorizontal: 20 }}><Text>{I18n.t("PasswordNew")}</Text></NoTouchableContainer>
                   <NewPasswordField
                     newPassword={newPassword}
                     form={formModel}
                     onChange={this.onChange("newPassword")}
                   />
+                  <MiniSpacer/>
+                  <NoTouchableContainer style={{ paddingHorizontal: 20 }}><Text>{I18n.t("PasswordNewConfirm")}</Text></NoTouchableContainer>
                   <PasswordConfirmField
                     confirm={confirm}
                     form={formModel}
                     onChange={this.onChange("confirm")}
                   />
-                  <ErrorMessage>
-                    {" "}
-                    {hasErrorKey && !typing ? errorText : ""}{" "}
-                  </ErrorMessage>
+                  <MiniSpacer />
+                  <MiniSpacer/>
                   <ButtonWrapper error={hasErrorKey} typing={typing}>
                     <FlatButton
                       onPress={() => this.handleSubmit()}
@@ -203,6 +208,10 @@ export class ChangePasswordPage extends React.PureComponent<
                       loading={isSubmitLoading}
                     />
                   </ButtonWrapper>
+                  <ErrorMessage>
+                    {" "}
+                    {hasErrorKey && !typing ? errorText : ""}{" "}
+                  </ErrorMessage>
                 </FormContainer>
               </FormWrapper>
             </FormTouchable>
@@ -218,8 +227,9 @@ function OldPasswordField(
 ) {
   const validator = props.form.oldPassword;
   return <PasswordInputLine
+    style={{ marginHorizontal: 40, marginTop: -15 }}
     inputRef={(ref) => props.form.inputOldPassword = ref}
-    placeholder={I18n.t("PasswordOld")}
+    placeholder="●●●●●●●"
     onChangeText={validator.changeCallback(props.onChange)}
     value={props.oldPassword}
     hasError={props.form.showOldPasswordError(props.oldPassword)}
@@ -230,8 +240,9 @@ function NewPasswordField(
 ) {
   const validator = props.form.newPassword;
   return <PasswordInputLine
+    style={{ marginHorizontal: 40, marginTop: -15 }}
     inputRef={(ref) => props.form.inputNewPassword = ref}
-    placeholder={I18n.t("PasswordNew")}
+    placeholder="●●●●●●●●●"
     onChangeText={validator.changeCallback(props.onChange)}
     value={props.newPassword}
     hasError={props.form.showNewPasswordError(props.newPassword)}
@@ -242,8 +253,9 @@ function PasswordConfirmField(
 ) {
   const validator = props.form.confirm;
   return <PasswordInputLine
+    style={{ marginHorizontal: 40, marginTop: -15 }}
     inputRef={(ref) => props.form.inputPasswordConfirm = ref}
-    placeholder={I18n.t("PasswordNewConfirm")}
+    placeholder="●●●●●●●●●"
     onChangeText={validator.changeCallback(props.onChange)}
     value={props.confirm}
     hasError={props.form.showPasswordConfirmError(props.confirm)}
@@ -260,17 +272,20 @@ const FormContainer = style.view({
   alignItems: "center",
   flex: 1,
   flexDirection: "column",
-  justifyContent: "center",
-  padding: 40,
-  paddingTop: 60
+  justifyContent: "flex-start",
+  padding: 0,
+  paddingTop: 30
 });
 const ButtonWrapper = style.view(
   {
     alignItems: "center",
-    flexGrow: 2,
+    flex: 0,
     justifyContent: "flex-start"
   },
   ({ error, typing }: { error: boolean, typing: boolean }) => ({
     marginTop: error && !typing ? 10 : 10
   })
 );
+const MiniSpacer = style.view({
+  marginTop: 10
+});

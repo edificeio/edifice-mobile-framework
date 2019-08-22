@@ -62,6 +62,7 @@ const infoReducer = (state: IUserInfoState = stateDefault, action) => {
   switch (action.type) {
     case actionTypeLoggedIn:
       const session = {
+        ...action.userPublicInfo,
         ...action.userdata,
         ...action.userbook,
         birthDate: moment(action.userbook.birthDate),

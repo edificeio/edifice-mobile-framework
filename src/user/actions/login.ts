@@ -73,7 +73,7 @@ export function login(
           Accept: "application/json;version=2.0"
         }
       });
-      // console.log("oauth2 userinfo", userinfo2);
+      console.log("oauth2 userinfo", userinfo2);
       // console.log(userinfo2.apps);
       userinfo2.apps = userinfo2.apps.map(e => e.name);
 
@@ -82,11 +82,6 @@ export function login(
         userinfo2.apps.push("Homeworks");
       if (userinfo2.apps.includes("Actualites")) userinfo2.apps.push("News");
 
-      // console.log("apps: ", userinfo2.apps);
-      const userdata = await fetchJSONWithCache(
-        `/directory/user/${userinfo2.userId}`
-      );
-
       // === 3: check user validity
 
       if (!userinfo2.hasApp) {
@@ -94,6 +89,15 @@ export function login(
         (err as any).authErr = OAuthError.NOT_PREMIUM;
         throw err;
       }
+
+      // console.log("apps: ", userinfo2.apps);
+      const userdata = await fetchJSONWithCache(
+        `/directory/user/${userinfo2.userId}`
+      );
+      console.log("oauth2 userdata", userdata);
+
+      const userPublicInfo = await fetchJSONWithCache("/userbook/api/person?id=" + userinfo2.userId);
+      console.log("oauth2 userPublicInfo", userPublicInfo);
 
       // === 4: Get firebase device token and store it in the backend
       if (
@@ -126,7 +130,8 @@ export function login(
       dispatch({
         type: actionTypeLoggedIn,
         userbook: userinfo2,
-        userdata
+        userdata,
+        userPublicInfo: userPublicInfo.result[0]
       });
 
       // === 6: Tracking reporting (only on success)

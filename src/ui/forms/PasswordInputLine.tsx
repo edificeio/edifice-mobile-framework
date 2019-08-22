@@ -20,7 +20,7 @@ export class PasswordInputLine extends React.Component<
     const { iconShow = "eye", iconHide = "eye-slash" } = this.props;
 
     return (
-      <View style={{ width: "100%" }}>
+      <View style={{ alignSelf: "stretch", flex: 0 }}>
         <TextInputLine
           secureTextEntry={this.state.hide}
           clearTextOnFocus={false}
@@ -30,10 +30,12 @@ export class PasswordInputLine extends React.Component<
               showHideController: (text as unknown) as boolean
             });
           }}
-          style={{
-            paddingRight: 32
-          }}
           {...this.props}
+          style={{
+            paddingRight: 32,
+            flex: 0,
+            ...this.props.style as object
+          }}
         />
         {this.state.showHideController ? (
           <TouchableOpacity

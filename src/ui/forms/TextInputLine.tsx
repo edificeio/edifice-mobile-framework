@@ -1,13 +1,13 @@
 import * as React from "react";
 import style from "glamorous-native";
 import { CommonStyles } from "../../styles/common/styles";
-import { TextInput, TextInputProps } from "react-native";
+import { TextInput, TextInputProps, View } from "react-native";
 
 const TextInputContainer = style.view(
   {
     height: 40,
     paddingTop: 4,
-    width: "100%"
+    flex: 1
   },
   ({ hasError, focus }) => ({
     borderBottomColor: hasError
@@ -68,17 +68,20 @@ export class TextInputLine extends React.Component<
     const { hasError } = this.props;
 
     return (
-      <TextInputContainer hasError={hasError} focus={this.state.isFocused}>
-        <Input
-          innerRef={r => this.props.inputRef(r)}
-          onBlur={() => this.onBlur()}
-          onFocus={() => this.onFocus()}
-          placeholderTextColor={CommonStyles.placeholderColor}
-          underlineColorAndroid={"transparent"}
-          autoCapitalize="none"
-          {...this.props}
-        />
-      </TextInputContainer>
+      <View style={{ alignSelf: "stretch" }}>
+        <TextInputContainer hasError={hasError} focus={this.state.isFocused} style={this.props.style}>
+          <Input
+            innerRef={r => this.props.inputRef(r)}
+            onBlur={() => this.onBlur()}
+            onFocus={() => this.onFocus()}
+            placeholderTextColor={CommonStyles.placeholderColor}
+            underlineColorAndroid={"transparent"}
+            autoCapitalize="none"
+            {...this.props}
+            style={{}}
+          />
+        </TextInputContainer>
+      </View>
     );
   }
 }
