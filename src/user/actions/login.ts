@@ -72,8 +72,8 @@ export function login(
         headers: {
           Accept: "application/json;version=2.0"
         }
-      });
-      console.log("oauth2 userinfo", userinfo2);
+      }) as any;
+      // console.log("oauth2 userinfo", userinfo2);
       // console.log(userinfo2.apps);
       userinfo2.apps = userinfo2.apps.map(e => e.name);
 
@@ -93,11 +93,15 @@ export function login(
       // console.log("apps: ", userinfo2.apps);
       const userdata = await fetchJSONWithCache(
         `/directory/user/${userinfo2.userId}`
-      );
-      console.log("oauth2 userdata", userdata);
+      ) as any;
+      // console.log("childrenStructure", await fetchJSONWithCache('/directory/user/' + userinfo2.userId + '/children'));
+      userdata.childrenStructure = userinfo2.type === "Relative" ?
+        await (fetchJSONWithCache('/directory/user/' + userinfo2.userId + '/children') as any) :
+        undefined;
+      // console.log("oauth2 userdata", userdata);
 
       const userPublicInfo = await fetchJSONWithCache("/userbook/api/person?id=" + userinfo2.userId);
-      console.log("oauth2 userPublicInfo", userPublicInfo);
+      // console.log("oauth2 userPublicInfo", userPublicInfo);
 
       // === 4: Get firebase device token and store it in the backend
       if (

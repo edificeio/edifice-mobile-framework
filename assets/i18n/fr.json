@@ -55,6 +55,8 @@
   "directory-disconnectButton": "Se déconnecter",
   "directory-notificationsTitle": "Notifications",
   "directory-structuresTitle": "Établissement(s) et classe(s)",
+  "directory-relativesTitle": "Responsable(s)",
+  "directory-childrenTitle": "Enfants(s)",
   "DisplayName": "Nom affiché",
   "download-confirm": "Souhaitez-vous télécharger\n{{name}} ({{size}}) ?",
   "download-error": "Erreur.",

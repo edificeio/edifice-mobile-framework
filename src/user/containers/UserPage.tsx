@@ -115,6 +115,21 @@ export class UserPage extends React.PureComponent<
           onPress={() => this.props.navigation.navigate("Structures")}
         />
         <ContainerSpacer />
+        {getSessionInfo().type === "Student" ? <>
+          <ButtonLine
+            title={"directory-relativesTitle"}
+            onPress={() => this.props.navigation.navigate("Relatives")}
+          />
+          <ContainerSpacer />
+        </> :
+        getSessionInfo().type === "Relative" ? <>
+          <ButtonLine
+            title={"directory-childrenTitle"}
+            onPress={() => this.props.navigation.navigate("Children")}
+          />
+          <ContainerSpacer />
+        </> :
+        null}
         <ButtonLine
           title={"directory-notificationsTitle"}
           onPress={() => this.props.navigation.navigate("NotifPrefs")}

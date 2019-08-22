@@ -3,32 +3,28 @@ import * as React from "react";
 import { PageContainer } from "../../ui/ContainerContent";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { ScrollView, SafeAreaView, View } from "react-native";
-import { Text, TextColor, NestedText } from "../../ui/text";
-import { ContainerView, ContainerSpacer } from "../../ui/ButtonLine";
-import { CommonStyles } from "../../styles/common/styles";
 import { standardNavScreenOptions } from "../../navigation/helpers/navHelper";
 import { NavigationScreenProp } from "react-navigation";
 import { HeaderBackAction } from "../../ui/headers/NewHeader";
-import { H4 } from "../../ui/Typography";
+import { UserCard } from "./UserCard";
 
 // TYPES ------------------------------------------------------------------------------------------
 
-export interface IStructuresPageProps {
-  schools: Array<{
+export interface IRelativesPageProps {
+  relatives: Array<{
+    displayName: string;
     id: string;
-    name: string;
-    classes: string[]
   }>;
 }
 
 // COMPONENT --------------------------------------------------------------------------------------
 
-export class StructuresPage extends React.PureComponent<IStructuresPageProps>{
+export class RelativesPage extends React.PureComponent<IRelativesPageProps>{
 
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
     return standardNavScreenOptions(
       {
-        title: I18n.t("directory-structuresTitle"),
+        title: I18n.t("directory-relativesTitle"),
         headerLeft: <HeaderBackAction navigation={navigation} />,
         headerTitleStyle: { marginLeft: 0, marginRight: 'auto', textAlign: 'left' }
       },
@@ -40,25 +36,13 @@ export class StructuresPage extends React.PureComponent<IStructuresPageProps>{
     return <PageContainer>
       <ConnectionTrackingBar/>
       <ScrollView alwaysBounceVertical={false}>
+        <View style={{marginTop: 40}}></View>
         <SafeAreaView>
-          <H4>{I18n.t("structuresTitle")}</H4>
-          {this.props.schools ? this.props.schools.map(school => <View key={school.id}>
-            <ContainerView>
-              <Text color={TextColor.Light}>{school.name}</Text>
-            </ContainerView>
-            <View style={{
-              marginLeft: 40,
-              marginRight: 20,
-              marginVertical: 10
-            }}>
-              {school.classes ? school.classes.map(classe => <View key={classe}>
-                <Text>
-                  <NestedText style={{ color: CommonStyles.profileTypes.Student }}>◆ </NestedText>
-                  {classe}
-                </Text>
-              </View>) : null}
-            </View>
-          </View>) : null}
+          {this.props.relatives && this.props.relatives.map(user => {
+            return <View style={{ marginBottom: 15 }} key={user.id}>
+              <UserCard id={user.id} displayName={user.displayName} type="Relative" />
+            </View>;
+          })}
         </SafeAreaView>
       </ScrollView>
     </PageContainer>;

@@ -7,6 +7,8 @@ import UserPage, { UserPageNavigationOptions } from "./containers/UserPage";
 import ProfilePage from "./containers/ProfilePage";
 import ChangePasswordPage from "./containers/ChangePasswordPage";
 import StructuresPage from "./containers/StructuresPage";
+import RelativesPage from "./containers/RelativesPage";
+import ChildrenPage from "./containers/ChildrenPage";
 
 export default createStackNavigator({
   Profile: {
@@ -29,5 +31,13 @@ export default createStackNavigator({
 
   Structures: {
     screen: StructuresPage
+  },
+
+  Relatives: {
+    screen: RelativesPage
+  },
+
+  Children: {
+    screen: ChildrenPage
   }
 });
