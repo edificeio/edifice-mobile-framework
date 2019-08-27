@@ -100,7 +100,7 @@ export class OAuth2RessourceOwnerPasswordClient {
    * Sanitize the scopes option to be a string.
    */
   public sanitizeScope(scopes: string[]): string {
-    return Array.isArray(scopes) ? scopes.join(" ") : scopes || "";
+    return Array.isArray(scopes) ? scopes.join(" ").trim() : scopes || "";
   }
 
   /**
