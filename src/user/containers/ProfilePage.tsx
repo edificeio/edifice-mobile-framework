@@ -15,7 +15,7 @@ import { IUserInfoState } from "../reducers/info";
 import { IUserAuthState } from "../reducers/auth";
 import { Label } from "../../ui/Typography";
 import { UserCard } from "../components/UserCard";
-import { standardNavScreenOptions } from "../../navigation/helpers/navHelper";
+import { standardNavScreenOptions } from "../../navigation/helpers/navBuilder";
 import { NavigationScreenProp, NavigationState, NavigationParams } from "react-navigation";
 import { HeaderAction, HeaderBackAction } from "../../ui/headers/NewHeader";
 import { CommonStyles } from "../../styles/common/styles";

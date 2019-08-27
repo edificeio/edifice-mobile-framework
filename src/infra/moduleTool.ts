@@ -18,7 +18,7 @@ export function toSnakeCase(camelCase: string) {
     str = str.replace(
       new RegExp(upperChars[i]),
       "_" + upperChars[i].toLowerCase()
-    );
+    );  
   }
 
   if (str.slice(0, 1) === "_") {
@@ -35,7 +35,8 @@ export interface IFunctionalConfig {
   reducerName: string;
   displayName: string;
   iconName: string;
-  notifHandlerFactory:()=>Promise<NotificationHandlerFactory<any,any,any>>;
+  group: boolean;
+  notifHandlerFactory: () => Promise<NotificationHandlerFactory<any, any, any>>;
 }
 
 export interface IAppModule {
@@ -54,7 +55,8 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
   public reducerName: string;
   public displayName: string;
   public iconName: string;
-  public notifHandlerFactory:()=>Promise<NotificationHandlerFactory<any,any,any>>;
+  public group: boolean;
+  public notifHandlerFactory: () => Promise<NotificationHandlerFactory<any, any, any>>;
 
   public constructor(opts: IFunctionalConfig) {
     this.name = opts.name;
@@ -64,6 +66,7 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
     this.reducerName = opts.reducerName || this.name;
     this.displayName = opts.displayName || this.name;
     this.iconName = opts.iconName || this.name;
+    this.group = opts.group === undefined ? true : opts.group;
     this.notifHandlerFactory = opts.notifHandlerFactory;
   }
 
@@ -80,7 +83,7 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
       screen: comp,
 
       navigationOptions: () =>
-        createMainTabNavOption(I18n.t(this.displayName), this.iconName)
+        this.group ? createMainTabNavOption(I18n.t(this.displayName), this.iconName) : { header: null },
     };
   }
 }

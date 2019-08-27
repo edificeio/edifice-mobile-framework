@@ -6,12 +6,12 @@ import { createAppContainer, createSwitchNavigator, NavigationContainerComponent
 import { connect } from "react-redux";
 
 // ODE framework modules
-import { getRoutesFromModuleDefinitions } from "../infra/moduleTool";
-import moduleDefinitions from "../AppModules";
+import { IAppModule } from "../infra/moduleTool";
 import pushNotifications from "../pushNotifications";
 
 // Other functional modules
 import TimelineNavigator from "../timeline/TimelineNavigator";
+import { getMyAppNavigator } from "../myAppMenu/containers/MyAppGrid";
 import Tracking from "../tracking/TrackingManager";
 
 // Screens
@@ -19,6 +19,7 @@ import {
   createMainTabNavigator,
   createMainTabNavOption
 } from "./helpers/mainTabNavigator";
+import { getRoutes, getModules } from "./helpers/navBuilder";
 import LoginNavigator from "./LoginNavigator";
 
 /**
@@ -32,20 +33,19 @@ import LoginNavigator from "./LoginNavigator";
  * @param apps Allowed functional module names to be displayed.
  */
 function getMainRoutes(apps: string[]) {
-  // moduleDefinitions, filtered by `apps`.
-  const definitionsIntersection = moduleDefinitions.filter(mod =>
-    apps.includes(mod.config.apiName)
-  );
+  const filter = (mod: IAppModule) => apps.includes(mod.config.apiName) && !mod.config.group;
   return {
-    // TODO : make Timeline a regular module ant put it in moduleDefinitions.
     timeline: {
       screen: TimelineNavigator,
 
-      navigationOptions: () =>
+      navigationOptions: () => 
         createMainTabNavOption(I18n.t("News"), "nouveautes")
     },
-
-    ...getRoutesFromModuleDefinitions(definitionsIntersection)
+    myApp: {
+      screen: getMyAppNavigator(apps),
+      navigationOptions: () => createMainTabNavOption("MesApps", "nouveautes"),
+    },
+    ...getRoutes(getModules(filter)),
   };
 }
 
@@ -75,7 +75,7 @@ class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
     return (
       this.props.notification !== nextProps.notification ||
       !compareArrays(this.props.apps, nextProps.apps!)
-    );
+    );  
   }
 
   public async componentDidMount() {
@@ -89,7 +89,7 @@ class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
     if (
       this.props.notification &&
       this.props.notification.data.params !== MainNavigatorHOC.lastOpenNotifData
-    ) {
+      ) {
       MainNavigatorHOC.lastOpenNotifData = this.props.notification.data.params;
       const data = JSON.parse(this.props.notification.data.params);
       // console.log("Routing from notif data", data);
@@ -116,7 +116,7 @@ class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
           const prevIndex = prevState.index;
           const currentIndex = currentState.index;
           if (prevIndex === currentIndex) return;
-          const currentTabRouteName =
+          const currentTabRouteName = 
             currentState.routes[currentIndex].routeName;
           if (currentTabRouteName)
             Tracking.logEvent("menuTab", {

@@ -1,39 +1,7 @@
-import * as React from "react";
 import { NavigationActions } from "react-navigation";
 
 import { rootNavigatorRef } from "../../AppScreen";
-import { CommonStyles } from "../../styles/common/styles";
 import { CurrentMainNavigationContainerComponent } from "../RootNavigator";
-import { Back } from "../../ui/headers/Back";
-
-export const standardNavScreenOptions = (props, { state }) => {
-  const { params = {} } = state;
-  const { header } = params;
-
-  return {
-    header,
-    headerTintColor: "white",
-    tabBarVisible: header !== null,
-    headerBackTitle: null,
-    ...props,
-    headerStyle: {
-      backgroundColor: CommonStyles.mainColorTheme,
-      elevation: 5,
-      height: 56,
-      ...(props.headerStyle || {})
-    },
-    headerTitleStyle: {
-      alignSelf: "center",
-      color: "white",
-      fontFamily: CommonStyles.primaryFontFamily,
-      fontSize: 16,
-      fontWeight: "400",
-      textAlign: "center",
-      flex: 1,
-      ...(props.headerTitleStyle || {})
-    },
-  };
-};
 
 /**
  * Use the Root Navigator to go on another page.
@@ -43,9 +11,7 @@ export const standardNavScreenOptions = (props, { state }) => {
  */
 export const navigate = (route, params = {}) => {
   // console.log("ROOT navigate", route);
-  return rootNavigatorRef.dispatch(
-    NavigationActions.navigate({ routeName: route, params })
-  );
+  return rootNavigatorRef.dispatch(NavigationActions.navigate({ routeName: route, params }));
 };
 
 /**
@@ -56,7 +22,5 @@ export const navigate = (route, params = {}) => {
  */
 export const nainNavNavigate = (route, params = {}) => {
   // console.log("nainNavNavigate", route);
-  return CurrentMainNavigationContainerComponent.dispatch(
-    NavigationActions.navigate({ routeName: route, params })
-  );
+  return CurrentMainNavigationContainerComponent.dispatch(NavigationActions.navigate({ routeName: route, params }));
 };
