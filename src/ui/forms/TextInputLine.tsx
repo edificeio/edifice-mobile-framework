@@ -68,7 +68,7 @@ export class TextInputLine extends React.Component<
     const { hasError } = this.props;
 
     return (
-      <View style={{ alignSelf: "stretch" }}>
+      <View style={{ alignSelf: "stretch", flex: 0 }}>
         <TextInputContainer hasError={hasError} focus={this.state.isFocused} style={this.props.style}>
           <Input
             innerRef={r => this.props.inputRef(r)}
