@@ -95,7 +95,7 @@ export class ProfilePage extends React.PureComponent<
 
               {this.renderItem({
                 title: I18n.t("Login"),
-                getter: () => this.state.loginAlias,
+                getter: () => this.state.loginAlias || this.props.userinfo.login,
                 editable: true,
                 setter: (loginAlias) => this.setState({ loginAlias }),
                 validator: { key: "loginAliasValid", regex: /^[0-9a-z\-\.]+$/ }

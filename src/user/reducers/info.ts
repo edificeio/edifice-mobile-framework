@@ -31,6 +31,7 @@ export interface IUserInfoState {
   lastDomain?: string;
   lastLogin?: moment.Moment;
   lastName?: string;
+  login?: string;
   loginAlias?: string;
   mobile?: string;
   modified?: moment.Moment;
