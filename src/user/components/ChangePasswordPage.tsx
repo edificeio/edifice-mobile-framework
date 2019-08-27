@@ -12,7 +12,7 @@ import { ErrorMessage } from "../../ui/Typography";
 import { FlatButton } from "../../ui/FlatButton";
 import { getSessionInfo } from "../../AppStore";
 import { NavigationScreenProp } from "react-navigation";
-import { standardNavScreenOptions } from "../../navigation/helpers/navHelper";
+import { standardNavScreenOptions } from "../../navigation/helpers/navBuilder";
 import { HeaderBackAction } from "../../ui/headers/NewHeader";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { Dispatch } from "redux";

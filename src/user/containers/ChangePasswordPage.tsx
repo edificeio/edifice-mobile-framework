@@ -9,7 +9,7 @@ import { AnyAction } from "redux";
 import { changePasswordAction, cancelChangePasswordAction, initChangePasswordAction, IChangePasswordUserInfo } from "../actions/changePassword";
 import { ThunkAction } from "redux-thunk";
 import { NavigationScreenProp } from "react-navigation";
-import { standardNavScreenOptions } from "../../navigation/helpers/navHelper";
+import { standardNavScreenOptions } from "../../navigation/helpers/navBuilder";
 import { HeaderBackAction } from "../../ui/headers/NewHeader";
 
 const mapStateToProps: (

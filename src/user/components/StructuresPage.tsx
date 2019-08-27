@@ -6,7 +6,7 @@ import { ScrollView, SafeAreaView, View } from "react-native";
 import { Text, TextColor, NestedText } from "../../ui/text";
 import { ContainerView, ContainerSpacer } from "../../ui/ButtonLine";
 import { CommonStyles } from "../../styles/common/styles";
-import { standardNavScreenOptions } from "../../navigation/helpers/navHelper";
+import { standardNavScreenOptions } from "../../navigation/helpers/navBuilder";
 import { NavigationScreenProp } from "react-navigation";
 import { HeaderBackAction } from "../../ui/headers/NewHeader";
 import { H4 } from "../../ui/Typography";

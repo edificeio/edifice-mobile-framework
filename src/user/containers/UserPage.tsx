@@ -29,7 +29,7 @@ import { TextBold } from "../../ui/text";
 import { getSessionInfo } from "../../AppStore";
 import { UserCard } from "../components/UserCard";
 import { NavigationScreenProp } from "react-navigation";
-import { standardNavScreenOptions } from "../../navigation/helpers/navHelper";
+import { standardNavScreenOptions } from "../../navigation/helpers/navBuilder";
 
 export const UserPageNavigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) =>
   standardNavScreenOptions(

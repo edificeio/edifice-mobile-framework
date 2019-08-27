@@ -1,6 +1,6 @@
 import * as React from "react";
 import { createStackNavigator } from "react-navigation";
-import { standardNavScreenOptions } from "../navigation/helpers/navHelper";
+import { standardNavScreenOptions } from "../navigation/helpers/navBuilder";
 import NewThreadPage from "./containers/NewThreadPage";
 import NewThreadPageHeader from "./containers/NewThreadPageHeader";
 import ThreadListPage from "./containers/ThreadListPage";
