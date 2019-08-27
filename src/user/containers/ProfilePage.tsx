@@ -19,7 +19,7 @@ import { standardNavScreenOptions } from "../../navigation/helpers/navHelper";
 import { NavigationScreenProp, NavigationState, NavigationParams } from "react-navigation";
 import { HeaderAction, HeaderBackAction } from "../../ui/headers/NewHeader";
 import { CommonStyles } from "../../styles/common/styles";
-import { IUpdatableProfileValues, profileUpdateAction } from "../actions/profile";
+import { IUpdatableProfileValues, profileUpdateAction, profileUpdateErrorAction } from "../actions/profile";
 import { AnyAction, Dispatch } from "redux";
 import { ThunkDispatch } from "redux-thunk";
 import Notifier from "../../infra/notifier/container";
@@ -44,7 +44,8 @@ export type IProfilePageProps = IProfilePageDataProps & IProfilePageEventProps &
 export type IProfilePageState = IUpdatableProfileValues & {
   emailValid?: boolean,
   homePhoneValid?: boolean,
-  mobileValid?: boolean
+  mobileValid?: boolean,
+  loginAliasValid?: boolean,
 }
 
 // tslint:disable-next-line:max-classes-per-file
@@ -53,85 +54,25 @@ export class ProfilePage extends React.PureComponent<
   IProfilePageState
   > {
 
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
-    const isEditMode = navigation.getParam("edit", false);
-    if (isEditMode) {
-      return standardNavScreenOptions(
-        {
-          title: I18n.t("MyProfile"),
-          headerLeft: <HeaderAction
-            onPress={() => {
-              navigation.setParams(
-                { "edit": false }
-              );
-              navigation.getParam("onCancel")();
-            }}
-            title={I18n.t("Cancel")}
-          />,
-          headerRight: <HeaderAction
-            onPress={() => {
-              const values = navigation.getParam("updatedProfileValues") as IProfilePageState;
-              if (values) {
-                if (values.emailValid && values.homePhoneValid && values.mobileValid) {
-                  navigation.setParams(
-                    { "edit": false }
-                  );
-                  navigation.getParam("onSave")(navigation.getParam("updatedProfileValues"));
-                } else {
-                  Alert.alert(I18n.t("ProfileInvalidInformation"));
-                }
-              } else {
-                navigation.setParams(
-                  { "edit": false }
-                );
-              }
-            }}
-            title={I18n.t("Save")}
-          />,
-        },
-        navigation
-      );
-    } else {
-      return standardNavScreenOptions(
-        {
-          title: I18n.t("MyProfile"),
-          headerLeft: <HeaderBackAction navigation={navigation} />,
-          headerRight: <HeaderAction
-            onPress={() => navigation.setParams(
-              { "edit": true }
-            )}
-            title={I18n.t("Edit")}
-          />,
-        },
-        navigation
-      );
-    }
-  };
-
-  defaultState: () => IProfilePageState = () => ({
+  defaultState: (force?: boolean) => IProfilePageState = (force) => ({
     displayName: this.props.userinfo.displayName,
     email: this.props.userinfo.email,
     homePhone: this.props.userinfo.homePhone,
     mobile: this.props.userinfo.mobile,
     emailValid: true,
     homePhoneValid: true,
-    mobileValid: true
+    mobileValid: true,
+    loginAlias: this.props.userinfo.loginAlias,
+    loginAliasValid: true
   })
 
   state = this.defaultState();
-
-  componentDidMount() {
-    this.props.navigation.setParams({
-      onSave: this.props.onSave,
-      onCancel: () => this.setState(this.defaultState())
-    });
-  }
 
   setState(newState: IProfilePageState) {
     super.setState(newState);
     setTimeout(() => {
       this.props.navigation.setParams({
-        updatedProfileValues: this.state
+        updatedProfileValues: { ...this.state }
       });
     });
   }
@@ -154,7 +95,10 @@ export class ProfilePage extends React.PureComponent<
 
               {this.renderItem({
                 title: I18n.t("Login"),
-                getter: () => this.props.userauth.login
+                getter: () => this.state.loginAlias,
+                editable: true,
+                setter: (loginAlias) => this.setState({ loginAlias }),
+                validator: { key: "loginAliasValid", regex: /^[0-9a-z\-\.]+$/ }
               })}
 
               {!this.props.userinfo.federated ?
@@ -265,6 +209,74 @@ export class ProfilePage extends React.PureComponent<
   }
 }
 
+export class ProfilePageContainer extends React.PureComponent<IProfilePageProps> {
+  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
+    const isEditMode = navigation.getParam("edit", false);
+    if (isEditMode) {
+      return standardNavScreenOptions(
+        {
+          title: I18n.t("MyProfile"),
+          headerLeft: <HeaderAction
+            onPress={() => {
+              navigation.setParams(
+                { "edit": false }
+              );
+              navigation.getParam("onCancel")();
+            }}
+            title={I18n.t("Cancel")}
+          />,
+          headerRight: <HeaderAction
+            onPress={() => {
+              const values = navigation.getParam("updatedProfileValues") as IProfilePageState;
+              if (values) {
+                if (values.emailValid && values.homePhoneValid && values.mobileValid) {
+                  navigation.setParams(
+                    { "edit": false }
+                  );
+                  navigation.getParam("onSave")(navigation.getParam("updatedProfileValues"));
+                } else {
+                  Alert.alert(I18n.t("ProfileInvalidInformation"));
+                }
+              } else {
+                navigation.setParams(
+                  { "edit": false }
+                );
+              }
+            }}
+            title={I18n.t("Save")}
+          />,
+        },
+        navigation
+      );
+    } else {
+      return standardNavScreenOptions(
+        {
+          title: I18n.t("MyProfile"),
+          headerLeft: <HeaderBackAction navigation={navigation} />,
+          headerRight: <HeaderAction
+            onPress={() => navigation.setParams(
+              { "edit": true }
+            )}
+            title={I18n.t("Edit")}
+          />,
+        },
+        navigation
+      );
+    }
+  };
+
+  render() {
+    return <ProfilePage {...this.props} key={this.props.userinfo.forceRefreshKey} />
+  }
+
+  componentDidMount() {
+    this.props.navigation.setParams({
+      onSave: this.props.onSave,
+      onCancel: () => { this.props.dispatch(profileUpdateErrorAction({})) }
+    });
+  }
+}
+
 export default connect(
   (state: any) => {
     const ret = {
@@ -279,4 +291,4 @@ export default connect(
     },
     dispatch
   })
-)(ProfilePage);
+)(ProfilePageContainer);

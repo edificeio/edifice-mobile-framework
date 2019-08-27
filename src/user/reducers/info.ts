@@ -1,7 +1,7 @@
 import moment from "moment";
 
 import { actionTypeLoggedIn, actionTypeLoggedOut } from "../actions/login";
-import { actionTypeProfileUpdateSuccess } from "../actions/profile";
+import { actionTypeProfileUpdateSuccess, actionTypeProfileUpdateError, actionTypeProfileUpdateRequested } from "../actions/profile";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -31,6 +31,7 @@ export interface IUserInfoState {
   lastDomain?: string;
   lastLogin?: moment.Moment;
   lastName?: string;
+  loginAlias?: string;
   mobile?: string;
   modified?: moment.Moment;
   modules?: string[];
@@ -52,16 +53,21 @@ export interface IUserInfoState {
   tel?: string;
   type?: string[] | string;
   visibleInfos?: string[];
+
+  forceRefreshKey: number;
 }
 
 // THE REDUCER ------------------------------------------------------------------------------------
 
-const stateDefault: IUserInfoState = {};
+const stateDefault: IUserInfoState = {
+  forceRefreshKey: 0
+};
 
 const infoReducer = (state: IUserInfoState = stateDefault, action) => {
   switch (action.type) {
     case actionTypeLoggedIn:
       const session = {
+        ...stateDefault,
         ...action.userPublicInfo,
         ...action.userdata,
         ...action.userbook,
@@ -77,6 +83,11 @@ const infoReducer = (state: IUserInfoState = stateDefault, action) => {
         ...state,
         ...action.updatedProfileValues,
         modified: moment()
+      }
+    case actionTypeProfileUpdateError:
+      return {
+        ...state,
+        forceRefreshKey: state.forceRefreshKey + 1
       }
     default:
       return state;
