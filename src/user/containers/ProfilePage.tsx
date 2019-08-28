@@ -100,8 +100,7 @@ export class ProfilePage extends React.PureComponent<
                 editable: true,
                 setter: (loginAlias) => this.setState({ loginAlias }),
                 validator: { key: "loginAliasValid", regex: /^[0-9a-z\-\.]+$/ },
-                placeholder: this.props.userinfo.login,
-                placeholderTextColor: TextColor.Normal
+                placeholder: this.props.userinfo.login
               })}
 
               {!this.props.userinfo.federated ?
