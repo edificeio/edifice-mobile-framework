@@ -31,7 +31,7 @@ import { CommonStyles } from "../../styles/common/styles";
 import { Icon } from "../../ui/";
 import BottomSwitcher from "../../ui/BottomSwitcher";
 import { PasswordInputLine } from "../../ui/forms/PasswordInputLine";
-import { Text, TextColor } from "../../ui/text";
+import { Text, TextColor, TextBold } from "../../ui/text";
 import {
   checkVersionThenLogin,
   IVersionContext,
@@ -164,6 +164,8 @@ export class LoginPage extends React.Component<
   protected renderForm() {
     const { loggingIn, loggedIn, error } = this.props.auth;
 
+    const FederationTextComponent = error ? TextBold : Text;
+
     return (
       <View style={{ flex: 1 }}>
         <ScrollView alwaysBounceVertical={false} contentContainerStyle={{ flexGrow: 1 }}>
@@ -221,15 +223,19 @@ export class LoginPage extends React.Component<
                 >
                   {I18n.t("forgot-password")}
                 </Text>
-                {Conf.currentPlatform.federation && <Text
-                  color={TextColor.Light}
-                  style={{ textDecorationLine: "underline", marginTop: 48, textAlign: "center" }}
+                {Conf.currentPlatform.federation && <FederationTextComponent
+                  style={{
+                    textDecorationLine: "underline",
+                    marginTop: 48,
+                    textAlign: "center",
+                    color: error ? CommonStyles.profileTypes.Student : TextColor.Light
+                  }}
                   onPress={() => {
                     navigate("FederatedAccount");
                   }}
                 >
                   {I18n.t("federatedAccount-link")}
-                </Text>}
+                </FederationTextComponent>}
               </View>
             </View>
           </FormContainer>

@@ -60,7 +60,8 @@ export const CommonStyles = {
     Student: "#ff8500",
     Relative: "#4bafd5",
     Personnel: "#763294",
-    Teacher: "#46bfaf"
+    Teacher: "#46bfaf",
+    Guest: "#ff61c0"
   }
 };
 

@@ -24,6 +24,7 @@ import { AnyAction, Dispatch } from "redux";
 import { ThunkDispatch } from "redux-thunk";
 import Notifier from "../../infra/notifier/container";
 import { changePasswordResetAction } from "../actions/changePassword";
+import { TextColor } from "../../ui/text";
 
 export interface IProfilePageDataProps {
   userauth: IUserAuthState;
@@ -95,10 +96,12 @@ export class ProfilePage extends React.PureComponent<
 
               {this.renderItem({
                 title: I18n.t("Login"),
-                getter: () => this.state.loginAlias || this.props.userinfo.login,
+                getter: () => isEditMode ? this.state.loginAlias : this.state.loginAlias || this.props.userinfo.login,
                 editable: true,
                 setter: (loginAlias) => this.setState({ loginAlias }),
-                validator: { key: "loginAliasValid", regex: /^[0-9a-z\-\.]+$/ }
+                validator: { key: "loginAliasValid", regex: /^[0-9a-z\-\.]+$/ },
+                placeholder: this.props.userinfo.login,
+                placeholderTextColor: TextColor.Normal
               })}
 
               {!this.props.userinfo.federated ?
@@ -169,13 +172,15 @@ export class ProfilePage extends React.PureComponent<
     );
   }
 
-  private renderItem({ title, getter, editable = false, setter, keyboardType, validator }: {
+  private renderItem({ title, getter, editable = false, setter, keyboardType, validator, placeholder, placeholderTextColor }: {
     title: string,
     getter: () => string | undefined,
     editable?: boolean,
     setter?: (val: any) => void,
     keyboardType?: KeyboardTypeOptions,
-    validator?: { key: keyof IProfilePageState, regex: RegExp }
+    validator?: { key: keyof IProfilePageState, regex: RegExp },
+    placeholder?: string,
+    placeholderTextColor?: string
   }) {
     const isEditMode = this.props.navigation.getParam("edit", false);
     const label = <ContainerLabel>{title}</ContainerLabel>;
@@ -193,6 +198,8 @@ export class ProfilePage extends React.PureComponent<
             setter!(text);
           }}
           {...(keyboardType ? { keyboardType } : {})}
+          {...(placeholder ? { placeholder } : {})}
+          {...(placeholderTextColor ? { placeholderTextColor } : {})}
         >
           <Label style={{
             color: validator ? this.state[validator.key] ? CommonStyles.textColor : CommonStyles.errorColor : CommonStyles.textColor
