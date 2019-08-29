@@ -1,6 +1,6 @@
 {
   "name": "appe",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "private": true,
   "scripts": {
     "appcenter:build:android": "react-native bundle --platform android --dev false --entry-file 'index.js' --bundle-output 'android/app/src/main/assets/index.android.bundle' --assets-dest 'android/app/build/generated/res/react/release'",
