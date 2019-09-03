@@ -2,7 +2,7 @@
 import I18n from "i18n-js";
 import * as React from "react";
 import { View } from "react-native";
-import { createAppContainer, createSwitchNavigator, NavigationContainerComponent } from "react-navigation";
+import { createAppContainer, createSwitchNavigator, NavigationContainerComponent, NavigationContainer } from "react-navigation";
 import { connect } from "react-redux";
 
 // ODE framework modules
@@ -11,7 +11,6 @@ import pushNotifications from "../pushNotifications";
 
 // Other functional modules
 import TimelineNavigator from "../timeline/TimelineNavigator";
-import { getMyAppNavigator } from "../myAppMenu/containers/MyAppGrid";
 import Tracking from "../tracking/TrackingManager";
 
 // Screens
@@ -41,11 +40,7 @@ function getMainRoutes(apps: string[]) {
       navigationOptions: () => 
         createMainTabNavOption(I18n.t("News"), "nouveautes")
     },
-    myApp: {
-      screen: getMyAppNavigator(apps),
-      navigationOptions: () => createMainTabNavOption("MesApps", "nouveautes"),
-    },
-    ...getRoutes(getModules(filter)),
+    ...getRoutes(getModules(filter), apps),
   };
 }
 
@@ -73,9 +68,9 @@ interface MainNavigatorHOCProps { apps: string[]; notification: Notification; di
 class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
   public shouldComponentUpdate(nextProps: Partial<MainNavigatorHOCProps>) {
     return (
-      this.props.notification !== nextProps.notification ||
+      this.props.notification !== nextProps.notification || 
       !compareArrays(this.props.apps, nextProps.apps!)
-    );  
+    );
   }
 
   public async componentDidMount() {
@@ -144,7 +139,7 @@ class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
 }
 
 const mapStateToProps = ({ user }) => ({
-  apps: ["user", ...user.auth.apps],
+  apps: ["user", "myapps", ...user.auth.apps],
   notification: user.auth.notification
 });
 

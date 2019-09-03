@@ -12,6 +12,10 @@ export default [
     module: require("./mailbox").default
   },
   {
+    config: require("./myAppMenu/config").default,
+    module: require("./myAppMenu").default,
+  },
+  {
     config: require("./homework/config").default,
     module: require("./homework").default
   },

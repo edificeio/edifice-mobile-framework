@@ -2,6 +2,7 @@ import I18n from "i18n-js";
 import { createMainTabNavOption } from "../navigation/helpers/mainTabNavigator";
 import { NotificationHandlerFactory } from "./pushNotification";
 import { Reducer } from "redux";
+import { NavigationScreenConfig, NavigationScreenOptions, NavigationComponent } from "react-navigation";
 
 /**
  * All specs to define functional module
@@ -40,13 +41,15 @@ export interface IFunctionalConfig {
 }
 
 export interface IAppModule {
-  config: IFunctionalConfig,
+  config: IFunctionalConfig;
   module: {
-    reducer: Reducer<any>,
-    root: React.ComponentClass<any>,
-    route: any
-  }
+    reducer: Reducer<any>;
+    root: React.ComponentClass<any>;
+    route: any;
+    getRoute: Function;
+  };
 }
+export type navOptionsBuilder = (arg: FunctionalModuleConfig) => NavigationScreenConfig<NavigationScreenOptions>;
 
 export default class FunctionalModuleConfig implements IFunctionalConfig {
   public name: string;
@@ -61,7 +64,7 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
   public constructor(opts: IFunctionalConfig) {
     this.name = opts.name;
     this.apiName = opts.apiName || this.name;
-    this.actionPrefix =
+    this.actionPrefix = 
       opts.actionPrefix || toSnakeCase(this.name).toUpperCase() + "_";
     this.reducerName = opts.reducerName || this.name;
     this.displayName = opts.displayName || this.name;
@@ -86,6 +89,11 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
         this.group ? createMainTabNavOption(I18n.t(this.displayName), this.iconName) : { header: null },
     };
   }
+
+  public createFunctionRoute(comp: any) {
+    return (args?: any) => 
+      this.createRoute(comp(args))
+  }
 }
 
 export function getReducersFromModuleDefinitions(
@@ -97,11 +105,12 @@ export function getReducersFromModuleDefinitions(
   );
 }
 
-export function getRoutesFromModuleDefinitions(
-  defs: IAppModule[]
-) {
+export function getRoutesFromModuleDefinitions(defs: IAppModule[], args?: any) {
+  const getModuleRoute = (mod: IAppModule) =>
+    !mod.module.route && !!mod.module.getRoute ? mod.module.getRoute(args) : mod.module.route;
+
   return defs.reduce(
-    (acc, mod) => ({ ...acc, [mod.config.name]: mod.module.route }),
+    (acc, mod) => ({ ...acc, [mod.config.name]: getModuleRoute(mod) }), 
     {}
   );
 }
