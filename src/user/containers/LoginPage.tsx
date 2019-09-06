@@ -240,9 +240,10 @@ export class LoginPage extends React.Component<
             </View>
           </FormContainer>
         </ScrollView>
+        {Conf.platforms && Object.keys(Conf.platforms).length > 1 ?
         <BottomSwitcher onPress={() => this.handleBackToPlatformSelector()}>
           {Conf.currentPlatform.displayName}{" "}
-        </BottomSwitcher>
+        </BottomSwitcher> : null}
       </View>
     );
   }

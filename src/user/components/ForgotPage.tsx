@@ -167,9 +167,10 @@ export class ForgotPage extends React.PureComponent<
                 </View>
               </FormContainer>
             </FormWrapper>
+            {Conf.platforms && Object.keys(Conf.platforms).length > 1 ?
             <BottomSwitcher onPress={() => this.handleBackToPlatformSelector()}>
               {Conf.currentPlatform.displayName}{" "}
-            </BottomSwitcher>
+            </BottomSwitcher> : null}
           </KeyboardAvoidingView>
         </FormPage>
       </SafeAreaView>

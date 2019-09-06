@@ -7,6 +7,8 @@ import ForgotPage from "../user/containers/ForgotPage";
 import PlatformSelectPage from "../user/containers/PlatformSelectPage";
 import FederatedAccountPage from "../user/containers/FederatedAccount";
 
+import Conf from "../../ode-framework-conf";
+
 /**
  * # Login Navigator
  *
@@ -22,6 +24,6 @@ export default createStackNavigator({
   LoginForgot: { screen: ForgotPage },
   FederatedAccount: { screen: FederatedAccountPage }
 }, {
-    initialRouteName: 'PlatformSelect',
+    initialRouteName: Conf.platforms && Object.keys(Conf.platforms).length > 1 ? 'PlatformSelect' : 'LoginHome',
     headerMode: 'none',
   });

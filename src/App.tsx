@@ -15,13 +15,14 @@ import {
 
 // JS
 import I18n from "i18n-js";
+import Conf from "../ode-framework-conf";
 
 // ODE Mobile Framework Modules
 import Tracking from "./tracking/TrackingManager";
 
 // ODE Mobile Framework Redux
 import { refreshToken } from "./user/actions/login";
-import { loadCurrentPlatform } from "./user/actions/platform";
+import { loadCurrentPlatform, selectPlatform } from "./user/actions/platform";
 import { isInActivatingMode } from "./user/selectors";
 import { checkVersionThenLogin } from "./user/actions/version";
 
@@ -101,9 +102,15 @@ class AppStoreUnconnected extends React.Component<
   public async componentDidMount() {
     // console.log("APP did mount");
     if (!this.props.currentPlatformId) {
-      // console.log("awaiting get platform id");
-      const loadedPlatformId = await this.props.store.dispatch(loadCurrentPlatform());
-      if (loadedPlatformId) await this.startupLogin();
+      // If only one platform in conf => auto-select it.
+      if (Conf.platforms && Object.keys(Conf.platforms).length === 1) {
+        await this.props.store.dispatch(selectPlatform(Object.keys(Conf.platforms)[0]));
+        await this.startupLogin();
+      } else {
+        // console.log("awaiting get platform id");
+        const loadedPlatformId = await this.props.store.dispatch(loadCurrentPlatform());
+        if (loadedPlatformId) await this.startupLogin();
+      }
     }
     if (this.props.currentPlatformId) {
       await this.startupLogin();
