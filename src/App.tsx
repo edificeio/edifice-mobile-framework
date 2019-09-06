@@ -52,13 +52,17 @@ const initI18n = () => {
     fr: require("../assets/i18n/fr"),
     pt: require("../assets/i18n/pt")
   };
-  const { languageTag, isRTL } =
+  const res =
       RNLocalize.findBestAvailableLanguage(Object.keys(I18n.translations)) as {
         languageTag: string;
         isRTL: boolean;
     };
-  I18nManager.forceRTL(isRTL);
-  I18n.locale = languageTag;
+  if(res){
+    I18nManager.forceRTL(res.isRTL);
+    I18n.locale = res.languageTag;
+  }else{
+    I18n.locale = I18n.defaultLocale;
+  }
 }
 initI18n();
 
