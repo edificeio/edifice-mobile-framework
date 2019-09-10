@@ -50,7 +50,8 @@ const timelineNotifHandlerFactory:NotificationHandlerFactory<any,any,any> = disp
     if (notificationData.resourceUri.startsWith(path)) {
       // console.log("before await schoolbooks");
       resetLoadingState();
-      await loadSchoolbooks();
+      if (legalapps.includes("Schoolbook"))
+        await loadSchoolbooks();
       dispatch({
         news: [],
         type: "FETCH_NEW_TIMELINE"
