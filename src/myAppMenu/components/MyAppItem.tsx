@@ -5,6 +5,7 @@ import { Icon } from "../../ui";
 import { TextH1, TextColor } from "../../ui/text";
 import { TouchCard } from "../../ui/Card";
 import { ArticleContainer } from "../../ui/ContainerContent";
+import { checkHasIcon } from "../../ui/icons/Icon";
 
 const MyAppItemStyle = StyleSheet.create({
   flexItem: {
@@ -42,7 +43,7 @@ export default (props: IMyAppItem) => {
   return (
     <ArticleContainer style={MyAppItemStyle.flexItem}>
       <TouchCard style={MyAppItemStyle.touchCard} onPress={props.onPress}>
-        <Icon size={50} name={props.iconName+"-on"} />
+        <Icon size={50} name={checkHasIcon(props.iconName) ? props.iconName : props.iconName+"-on"} />
         <TextH1 style={MyAppItemStyle.textStyle}>{props.displayName}</TextH1>
       </TouchCard>
     </ArticleContainer>
