@@ -38,7 +38,7 @@ export function openConnector(connectorAddress: string, successCallback: Functio
     try {
       const intermediateResponse = await signedFetch(connectorAddress);
       const finalUrl = intermediateResponse.headers.get("location");
-      const isSupported = await Linking.canOpenURL(connectorAddress);
+      const isSupported = await Linking.canOpenURL(finalUrl);
       if (isSupported === true) {
         await Linking.openURL(finalUrl);
         dispatch(connectorConnected());
