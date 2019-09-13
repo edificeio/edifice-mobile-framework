@@ -16,6 +16,10 @@ export default [
     module: require("./pronote").default
   },
   {
+    config: require("./lvs/config").default,
+    module: require("./lvs").default
+  },
+  {
     config: require("./myAppMenu/config").default,
     module: require("./myAppMenu").default
   },
