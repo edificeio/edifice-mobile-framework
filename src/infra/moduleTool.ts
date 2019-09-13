@@ -38,6 +38,7 @@ export interface IFunctionalConfig {
   iconName: string;
   group: boolean;
   notifHandlerFactory: () => Promise<NotificationHandlerFactory<any, any, any>>;
+  hasRight: (apps: string[]) => boolean; 
 }
 
 export interface IAppModule {
@@ -60,6 +61,7 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
   public iconName: string;
   public group: boolean;
   public notifHandlerFactory: () => Promise<NotificationHandlerFactory<any, any, any>>;
+  public hasRight: (apps: string[]) => boolean; 
 
   public constructor(opts: IFunctionalConfig) {
     this.name = opts.name;
@@ -71,6 +73,7 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
     this.iconName = opts.iconName || this.name;
     this.group = opts.group === undefined ? true : opts.group;
     this.notifHandlerFactory = opts.notifHandlerFactory;
+    this.hasRight = opts.hasRight || (apps => apps.includes(this.apiName))
   }
 
   public getLocalState(globalState: any) {

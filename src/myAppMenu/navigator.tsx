@@ -7,7 +7,7 @@ import { getRoutes, standardNavScreenOptions, getModules } from "../navigation/h
 import MyAppGrid from "./components/MyAppGrid";
 
 export default (apps: string[]) => {
-    const filter = (mod: IAppModule) => apps.includes(mod.config.apiName) && mod.config.group;
+    const filter = (mod: IAppModule) => mod.config.hasRight(apps) && mod.config.group;
     const modules = getModules(filter);
     return createStackNavigator({
       myApps: {

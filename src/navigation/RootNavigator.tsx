@@ -32,7 +32,7 @@ import LoginNavigator from "./LoginNavigator";
  * @param apps Allowed functional module names to be displayed.
  */
 function getMainRoutes(apps: string[]) {
-  const filter = (mod: IAppModule) => apps.includes(mod.config.apiName) && !mod.config.group;
+  const filter = (mod: IAppModule) => mod.config.hasRight(apps) && !mod.config.group;
   return {
     timeline: {
       screen: TimelineNavigator,
