@@ -9,7 +9,7 @@ import { AnyAction } from "redux";
 import { changePasswordAction, cancelChangePasswordAction, initChangePasswordAction, IChangePasswordUserInfo } from "../actions/changePassword";
 import { ThunkAction } from "redux-thunk";
 import { NavigationScreenProp } from "react-navigation";
-import { standardNavScreenOptions } from "../../navigation/helpers/navHelper";
+import { alternativeNavScreenOptions } from "../../navigation/helpers/navHelper";
 import { HeaderBackAction } from "../../ui/headers/NewHeader";
 
 const mapStateToProps: (
@@ -49,11 +49,10 @@ class ChangePasswordPageContainer extends React.PureComponent<
   > {
 
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
-    return standardNavScreenOptions(
+    return alternativeNavScreenOptions(
       {
         title: I18n.t("PasswordChange"),
-        headerLeft: <HeaderBackAction navigation={navigation} />,
-        headerTitleStyle: { marginLeft: 0, marginRight: 'auto', textAlign: 'left' }
+        headerLeft: <HeaderBackAction navigation={navigation} />
       },
       navigation
     );

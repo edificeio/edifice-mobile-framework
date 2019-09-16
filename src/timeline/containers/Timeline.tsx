@@ -18,24 +18,9 @@ import Tracking from "../../tracking/TrackingManager";
 import { clearFilterConversation } from "../../mailbox/actions/filter";
 import { fetchTimeline, listTimeline } from "../actions/list";
 import { INewsModel } from "../reducer";
-
-export class TimelineHeader extends React.Component<
-  { navigation?: any },
-  undefined
-> {
-  public render() {
-    return (
-      <Header>
-        <HeaderIcon
-          onPress={() => this.props.navigation.navigate("filterTimeline")}
-          name={"filter"}
-        />
-        <AppTitle>{I18n.t("News")}</AppTitle>
-        <HeaderIcon name={"filter"} hidden={true} />
-      </Header>
-    );
-  }
-}
+import { standardNavScreenOptions } from "../../navigation/helpers/navHelper";
+import { NavigationScreenProp } from "react-navigation";
+import { HeaderAction } from "../../ui/headers/NewHeader";
 
 interface ITimelineProps {
   isFetching: boolean;
@@ -53,8 +38,24 @@ interface ITimelineProps {
 
 // tslint:disable-next-line:max-classes-per-file
 class Timeline extends React.Component<ITimelineProps, undefined> {
+
+  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) =>
+  standardNavScreenOptions(
+    {
+      headerBackTitle: null,
+      title: I18n.t("News"),
+      headerLeft: <HeaderAction
+        onPress={() => {
+          navigation.navigate("filterTimeline");
+        }}
+        name="filter"
+      />,
+    },
+    navigation
+  );
+
   private flatList: any;
-  private pageNumber: number;
+  private pageNumber: number = 0;
 
   public componentDidMount() {
     this.flatList = null;

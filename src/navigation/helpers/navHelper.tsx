@@ -6,6 +6,9 @@ import { CommonStyles } from "../../styles/common/styles";
 import { CurrentMainNavigationContainerComponent } from "../RootNavigator";
 import { Back } from "../../ui/headers/Back";
 
+/**
+ * Options for a header with centered title
+ */
 export const standardNavScreenOptions = (props, { state }) => {
   const { params = {} } = state;
   const { header } = params;
@@ -34,6 +37,15 @@ export const standardNavScreenOptions = (props, { state }) => {
     },
   };
 };
+
+/**
+ * Options for a header with left-aligned title
+ */
+export const alternativeNavScreenOptions = (props, navigation) =>
+  standardNavScreenOptions({
+    headerTitleStyle: { textAlign: "left", marginHorizontal: 0 },
+    ...props
+  }, navigation);
 
 /**
  * Use the Root Navigator to go on another page.

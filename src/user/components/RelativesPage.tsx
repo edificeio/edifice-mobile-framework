@@ -3,7 +3,7 @@ import * as React from "react";
 import { PageContainer } from "../../ui/ContainerContent";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { ScrollView, SafeAreaView, View } from "react-native";
-import { standardNavScreenOptions } from "../../navigation/helpers/navHelper";
+import { alternativeNavScreenOptions } from "../../navigation/helpers/navHelper";
 import { NavigationScreenProp } from "react-navigation";
 import { HeaderBackAction } from "../../ui/headers/NewHeader";
 import { UserCard } from "./UserCard";
@@ -22,11 +22,10 @@ export interface IRelativesPageProps {
 export class RelativesPage extends React.PureComponent<IRelativesPageProps>{
 
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
-    return standardNavScreenOptions(
+    return alternativeNavScreenOptions(
       {
         title: I18n.t("directory-relativesTitle"),
-        headerLeft: <HeaderBackAction navigation={navigation} />,
-        headerTitleStyle: { marginLeft: 0, marginRight: 'auto', textAlign: 'left' }
+        headerLeft: <HeaderBackAction navigation={navigation} />
       },
       navigation
     );
