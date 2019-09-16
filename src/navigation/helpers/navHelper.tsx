@@ -22,6 +22,8 @@ export const standardNavScreenOptions = (props, { state }) => {
     headerStyle: {
       backgroundColor: CommonStyles.mainColorTheme,
       elevation: 5,
+      shadowOpacity: 0.3,
+      shadowRadius: 4,
       height: 56,
       ...(props.headerStyle || {})
     },
