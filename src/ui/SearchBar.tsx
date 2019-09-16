@@ -10,7 +10,6 @@ import { Weight } from "./Typography";
 
 export interface SearchBarProps {
   onChange: (searchText) => void;
-  onClose: () => void;
   text?: string;
   autoFocus?: boolean;
 }
@@ -26,33 +25,20 @@ export class SearchBar extends React.PureComponent<SearchBarProps, {}> {
     this.setState({ value });
   }
 
-  public onClose() {
-    this.props.onClose();
-  }
-
-  public onBlur() {
-    // this.props.onClose();
-  }
-
   public render() {
     return (
-      <Header>
-        <HeaderIcon name={"search"} />
-        <TextInput
-          onBlur={() => this.onBlur()}
-          autoFocus={!!this.props.autoFocus}
-          enablesReturnKeyAutomatically={true}
-          onChangeText={value => this.onChangeText(value)}
-          placeholder={I18n.t("Search")}
-          placeholderTextColor={"white"}
-          returnKeyType={"search"}
-          underlineColorAndroid={"transparent"}
-          value={this.state.value}
-          blurOnSubmit={true}
-          onSubmitEditing={() => Keyboard.dismiss()}
-        />
-        <HeaderIcon onPress={() => this.onClose()} name={"close"} />
-      </Header>
+      <TextInput
+        autoFocus={!!this.props.autoFocus}
+        enablesReturnKeyAutomatically={true}
+        onChangeText={value => this.onChangeText(value)}
+        placeholder={I18n.t("Search")}
+        placeholderTextColor={"white"}
+        returnKeyType={"search"}
+        underlineColorAndroid={"transparent"}
+        value={this.state.value}
+        blurOnSubmit={true}
+        onSubmitEditing={() => Keyboard.dismiss()}
+      />
     );
   }
 }

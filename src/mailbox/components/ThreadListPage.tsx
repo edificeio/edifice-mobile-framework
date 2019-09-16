@@ -18,7 +18,6 @@ import style from "glamorous-native";
 import * as React from "react";
 import I18n from "i18n-js";
 import Swipeable from "react-native-swipeable";
-import ViewOverflow from "react-native-view-overflow";
 
 import moment from "moment";
 // tslint:disable-next-line:no-submodule-imports
@@ -27,7 +26,7 @@ moment.locale("fr");
 
 // Components
 import { RefreshControl } from "react-native";
-const { View, FlatList, Text } = style;
+const { FlatList } = style;
 import styles from "../../styles";
 
 import { Icon, Loading, ButtonsOkCancel } from "../../ui";
@@ -46,7 +45,6 @@ import {
   ModalContentBlock,
   ModalContentText
 } from "../../ui/Modal";
-import { LightP } from "../../ui/Typography";
 import Tracking from "../../tracking/TrackingManager";
 
 // Misc

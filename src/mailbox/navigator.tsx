@@ -12,13 +12,6 @@ import ReceiverListPageHeader from "./components/ReceiverListPageHeader";
 
 export default createStackNavigator({
   listThreads: {
-    navigationOptions: ({ navigation }) =>
-      standardNavScreenOptions(
-        {
-          header: <ThreadListPageHeader navigation={navigation} />
-        },
-        navigation
-      ),
     screen: ThreadListPage
   },
 

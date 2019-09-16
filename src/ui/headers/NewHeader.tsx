@@ -59,15 +59,17 @@ export class HeaderAction extends React.PureComponent<{
   title?: string,
   style?: ViewStyle
   onPress?: () => void,
+  disabled?: boolean
 }> {
   render() {
-    const { name, hidden, onPress, iconSize, title, style } = this.props;
-    return <TouchableOpacity
+    const { name, hidden, onPress, iconSize, title, style, disabled = false } = this.props;
+    const ActionComponent = disabled ? View : TouchableOpacity;
+    return <ActionComponent
       onPress={() => onPress && onPress()}
-      style={style}
+      style={{ ...(disabled ? { opacity: 0.7 } : {}),  ...style }}
     >
       {name && <HeaderIcon name={name} hidden={hidden} iconSize={iconSize} />}
       {title && <HeaderActionText>{title}</HeaderActionText>}
-    </TouchableOpacity>;
+    </ActionComponent>;
   }
 }

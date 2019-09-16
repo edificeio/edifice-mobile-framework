@@ -8,14 +8,12 @@ import { FlatButton, Loading } from "../../ui";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
 import { EmptyScreen } from "../../ui/EmptyScreen";
-import { AppTitle, Header, HeaderIcon } from "../../ui/headers/Header";
 import { ErrorMessage } from "../../ui/Typography";
 import { News } from "../components/News";
 
 import styles from "../../styles";
 import Tracking from "../../tracking/TrackingManager";
 
-import { clearFilterConversation } from "../../mailbox/actions/filter";
 import { fetchTimeline, listTimeline } from "../actions/list";
 import { INewsModel } from "../reducer";
 import { standardNavScreenOptions } from "../../navigation/helpers/navHelper";
@@ -33,7 +31,6 @@ interface ITimelineProps {
   fetchFailed: boolean;
   isAuthenticated: boolean;
   legalapps: any;
-  onFocus: () => void;
 }
 
 // tslint:disable-next-line:max-classes-per-file
@@ -67,19 +64,6 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
         this.props.legalapps
       );
     }
-    this.props.onFocus();
-    this.didFocusSubscription = this.props.navigation.addListener(
-      "didFocus",
-      payload => {
-        this.props.onFocus();
-        if (this.props.availableApps) this.fetchLatest();
-      }
-    );
-  }
-
-  private didFocusSubscription;
-  public componentWillUnmount() {
-    this.didFocusSubscription.remove();
   }
 
   public nextPage() {
@@ -234,7 +218,6 @@ export default connect(
   }),
   dispatch => ({
     fetch: availableApps => fetchTimeline(dispatch)(availableApps),
-    onFocus: () => clearFilterConversation(dispatch)(),
     sync: (page: number, availableApps, legalapps) =>
       listTimeline(dispatch)(page, availableApps, legalapps)
   })
