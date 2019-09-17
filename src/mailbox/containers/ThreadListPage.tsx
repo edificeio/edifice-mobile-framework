@@ -130,6 +130,14 @@ class ThreadListPageContainer extends React.PureComponent<
 
   constructor(props: IThreadListPageProps & { dispatch: any }) {
     super(props);
+    // Initial setup
+    this.resetSearch();
+    this.reloadList();
+    // Header events setup
+    this.props.navigation.setParams({
+      onResetSearch: this.resetSearch.bind(this),
+      onNewThread: () => { this.props.navigation.navigate("newThread"); }
+    });
   }
 
   public resetSearch() {
@@ -150,15 +158,6 @@ class ThreadListPageContainer extends React.PureComponent<
   }
 
   // lifecycle ------------------------------------------------------------------------------------
-
-  public componentWillMount() {
-    this.resetSearch();
-    this.reloadList();
-    this.props.navigation.setParams({
-      onResetSearch: this.resetSearch.bind(this),
-      onNewThread: () => { this.props.navigation.navigate("newThread"); }
-    });
-  }
 
   private blurListener: any;
   public componentDidMount() {

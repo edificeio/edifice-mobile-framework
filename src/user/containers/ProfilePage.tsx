@@ -275,7 +275,9 @@ export class ProfilePageContainer extends React.PureComponent<IProfilePageProps>
     return <ProfilePage {...this.props} key={this.props.userinfo.forceRefreshKey} />
   }
 
-  componentDidMount() {
+  constructor(props: IProfilePageProps) {
+    super(props);
+    // Header events setup
     this.props.navigation.setParams({
       onSave: this.props.onSave,
       onCancel: () => { this.props.dispatch(profileUpdateErrorAction({})) }

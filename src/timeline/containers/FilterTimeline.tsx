@@ -12,17 +12,17 @@ import { alternativeNavScreenOptions } from "../../navigation/helpers/navHelper"
 import { HeaderAction } from "../../ui/headers/NewHeader";
 import { Dispatch } from "redux";
 
+export interface FilterTimelineProps {
+  selectedApps: string[];
+  availableApps: string[];
+  legalApps: string[];
+  pickFilters: (selectedApps: string[]) => void;
+  setFilters: (apps: string[], legalApps: string[]) => void;
+  navigation: NavigationScreenProp<NavigationState, NavigationParams>;
+}
+
 // tslint:disable-next-line:max-classes-per-file
-export class FilterTimeline extends React.Component<
-  {
-    selectedApps: string[];
-    availableApps: string[];
-    legalApps: string[];
-    pickFilters: (selectedApps: string[]) => void;
-    setFilters: (apps: string[], legalApps: string[]) => void;
-    navigation: NavigationScreenProp<NavigationState, NavigationParams>;
-  }
-  > {
+export class FilterTimeline extends React.Component<FilterTimelineProps> {
 
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) =>
     alternativeNavScreenOptions(
@@ -44,7 +44,9 @@ export class FilterTimeline extends React.Component<
       navigation
     );
 
-  componentDidMount() {
+  constructor(props: FilterTimelineProps) {
+    super(props);
+    // Header events setup
     this.props.navigation.setParams({
       onApply: () => {
         this.props.setFilters(this.props.selectedApps, this.props.legalApps);
