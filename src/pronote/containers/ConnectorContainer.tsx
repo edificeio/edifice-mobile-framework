@@ -93,7 +93,7 @@ const profileMap = {
   TEACHER: "professeur",
   STUDENT: "eleve",
   RELATIVE: "parent",
-  PERSEDUCNAT: "direction",
+  PERSONNEL: "direction",
 };
 
 const getConnectorAddress: (appAddress: string, userType: string) => string = (appAddress, userType) =>
