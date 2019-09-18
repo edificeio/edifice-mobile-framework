@@ -2,9 +2,9 @@ import I18n from "i18n-js";
 import * as React from "react";
 import style from "glamorous-native";
 
-import { IChangePasswordModel, IChangePasswordUserInfo, changePasswordResetAction } from "../actions/changePassword";
+import { IChangePasswordModel, IChangePasswordUserInfo } from "../actions/changePassword";
 import { ContextState, SubmitState } from "../../utils/SubmitState";
-import { ValueChangeArgs, ValidatorBuilder, ValueGetter, ValueChange, IValidatorContext } from "../../utils/form";
+import { ValueChangeArgs, ValidatorBuilder, ValueGetter, ValueChange } from "../../utils/form";
 import { Alert, TextInput, SafeAreaView, KeyboardAvoidingView, Platform } from "react-native";
 import { Loading } from "../../ui/Loading";
 import { PasswordInputLine } from "../../ui/forms/PasswordInputLine";

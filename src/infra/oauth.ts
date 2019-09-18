@@ -345,6 +345,9 @@ export const scopes = `
  timeline
  userinfo
  workspace
+ portal
+ cas
+ sso
 `.split("\n "); // Here the space after "\n" is important, they represent the indentation & the space between the words when "\n" is removed.
 // You can copy the string directly in the "scope" field in a browser. Keep this indentation intact.
 

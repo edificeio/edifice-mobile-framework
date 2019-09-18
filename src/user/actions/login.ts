@@ -75,6 +75,7 @@ export function login(
       }) as any;
       // console.log("oauth2 userinfo", userinfo2);
       // console.log(userinfo2.apps);
+      userinfo2.appsInfo = userinfo2.apps;
       userinfo2.apps = userinfo2.apps.map(e => e.name);
 
       // Some applications haven't a precise name... ☹️

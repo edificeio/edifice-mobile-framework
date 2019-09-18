@@ -2,7 +2,7 @@
 import I18n from "i18n-js";
 import * as React from "react";
 import { View } from "react-native";
-import { createAppContainer, createSwitchNavigator, NavigationContainerComponent } from "react-navigation";
+import { createAppContainer, createSwitchNavigator, NavigationContainerComponent, NavigationContainer } from "react-navigation";
 import { connect } from "react-redux";
 
 // ODE framework modules
@@ -11,7 +11,6 @@ import pushNotifications from "../pushNotifications";
 
 // Other functional modules
 import TimelineNavigator from "../timeline/TimelineNavigator";
-import { getMyAppNavigator } from "../myAppMenu/containers/MyAppGrid";
 import Tracking from "../tracking/TrackingManager";
 
 // Screens
@@ -33,19 +32,18 @@ import LoginNavigator from "./LoginNavigator";
  * @param apps Allowed functional module names to be displayed.
  */
 function getMainRoutes(apps: string[]) {
-  const filter = (mod: IAppModule) => apps.includes(mod.config.apiName) && !mod.config.group;
+  const filter = (mod: IAppModule) => {
+    console.log("mod", mod);
+    return mod.config.hasRight(apps) && !mod.config.group;
+  }
   return {
     timeline: {
       screen: TimelineNavigator,
 
-      navigationOptions: () => 
+      navigationOptions: () =>
         createMainTabNavOption(I18n.t("News"), "nouveautes")
     },
-    myApp: {
-      screen: getMyAppNavigator(apps),
-      navigationOptions: () => createMainTabNavOption("MesApps", "nouveautes"),
-    },
-    ...getRoutes(getModules(filter)),
+    ...getRoutes(getModules(filter), apps),
   };
 }
 
@@ -75,7 +73,7 @@ class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
     return (
       this.props.notification !== nextProps.notification ||
       !compareArrays(this.props.apps, nextProps.apps!)
-    );  
+    );
   }
 
   public async componentDidMount() {
@@ -102,6 +100,7 @@ class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
   public render() {
     // console.log("render new navigator", Math.random());
     const { apps, ...forwardProps } = this.props;
+    console.log("APPPPS", apps);
     const MainNavigationContainer = getMainNavContainer(apps);
     // console.log(MainNavigationContainer);
 
@@ -116,7 +115,7 @@ class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
           const prevIndex = prevState.index;
           const currentIndex = currentState.index;
           if (prevIndex === currentIndex) return;
-          const currentTabRouteName = 
+          const currentTabRouteName =
             currentState.routes[currentIndex].routeName;
           if (currentTabRouteName)
             Tracking.logEvent("menuTab", {
@@ -144,7 +143,7 @@ class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
 }
 
 const mapStateToProps = ({ user }) => ({
-  apps: ["user", ...user.auth.apps],
+  apps: ["user", "myapps", ...user.auth.apps],
   notification: user.auth.notification
 });
 

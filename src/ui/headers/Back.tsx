@@ -1,7 +1,6 @@
 import * as React from "react";
-import { HeaderIcon } from './Header';
-import { Icon } from "..";
+import { HeaderIcon } from "./Header";
 
 export const Back = ({ navigation }) => (
-	<HeaderIcon onPress={() => navigation.goBack()} name={ "back" }></HeaderIcon>
+	<HeaderIcon onPress={() => navigation.goBack(null)} name={"back"}></HeaderIcon>
 )

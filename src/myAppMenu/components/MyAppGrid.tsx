@@ -16,7 +16,7 @@ class MyAppGrid extends React.PureComponent<any, {}> {
         data={modules}
         contentContainerStyle={{ alignContent: "stretch" }}
         renderItem={({ item }: any) => (
-          <MyAppItem {...item} onPress={() => this.props.navigation.navigate(item.config.name)} />
+          <MyAppItem displayName={I18n.t(item.config.displayName)} iconName={item.config.iconName} onPress={() => this.props.navigation.navigate(item.config.name)} />
         )}
         keyExtractor={(item: IAppModule) => item.config.name}
         numColumns={2}
@@ -39,9 +39,6 @@ class MyAppGrid extends React.PureComponent<any, {}> {
   public render() {
     let pageContent = null;
     const { modules } = this.props;
-
-    console.log("modules", modules);
-    console.log("modules length", modules.length);
 
     if (modules.length == 0) {
       pageContent = this.renderEmpty();

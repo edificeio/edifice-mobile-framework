@@ -29,6 +29,7 @@ export interface IUserAuthState {
   loggingIn: boolean;
   // available applications
   apps: string[];
+  appsInfo: string[];
   // technical
   notification: Notification;
   // platform
@@ -42,6 +43,7 @@ export interface IUserAuthState {
 
 export const stateDefault: IUserAuthState = {
   apps: [],
+  appsInfo: [],
   loggedIn: false,
   loggingIn: false,
   notification: null,
@@ -82,6 +84,7 @@ const authReducer = (
       return {
         ...state,
         apps: action.userbook.apps,
+        appsInfo: action.userbook.appsInfo,
         error: "",
         loggedIn: true,
         loggingIn: false,

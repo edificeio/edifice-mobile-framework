@@ -5,6 +5,7 @@ import I18n from "i18n-js";
 
 // Components
 import { AppTitle, Header, HeaderIcon } from "../../../ui/headers/Header";
+import { Back } from "../../../ui/headers/Back";
 
 import moment from "moment";
 // tslint:disable-next-line:no-submodule-imports
@@ -26,7 +27,8 @@ export const HomeworkPageHeader = ({
     : I18n.t("Homework");
 
   return (
-    <Header>
+    <Header>      
+      <Back navigation={navigation} />
       <HeaderIcon
         onPress={() => navigation.navigate("HomeworkFilter")}
         name="filter"
