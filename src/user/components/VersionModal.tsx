@@ -45,16 +45,22 @@ export default function VersionModal(props: {
     return (
       <ModalBox backdropOpacity={0.5} isVisible={visibility}>
         <ModalContent>
-          <LightP>{I18n.t("common-VersionTitle")}</LightP>
-          <Paragraph style={{ textAlign: "center", paddingTop: 12 }}>
-            {I18n.t("common-VersionContent", { version })}
-          </Paragraph>
-          <ButtonsOkCancelReverse
-            onCancel={onCancel}
-            onValid={onSubmit}
-            cancelText={I18n.t("common-VersionSkip")}
-            title={I18n.t("common-VersionUpdate")}
-          />
+          <ModalContentBlock>
+            <LightP>{I18n.t("common-VersionTitle")}</LightP>
+          </ModalContentBlock>
+          <ModalContentBlock>
+            <Paragraph style={{ textAlign: "center", paddingTop: 12 }}>
+              {I18n.t("common-VersionContent", { version })}
+            </Paragraph>
+          </ModalContentBlock>
+          <ModalContentBlock>
+            <ButtonsOkCancelReverse
+              onCancel={onCancel}
+              onValid={onSubmit}
+              cancelText={I18n.t("common-VersionSkip")}
+              title={I18n.t("common-VersionUpdate")}
+            />
+          </ModalContentBlock>
         </ModalContent>
       </ModalBox>
     );

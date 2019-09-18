@@ -1,6 +1,6 @@
 import * as React from "react";
 import { createStackNavigator } from "react-navigation";
-import { standardNavScreenOptions } from "../../navigation/helpers/navBuilder";
+import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { AppTitle, Header } from "../headers/Header";
 import { UiShowCase } from "./UiShowcase";
 

@@ -3,7 +3,7 @@ import * as React from "react";
 import { PageContainer } from "../../ui/ContainerContent";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { ScrollView, SafeAreaView, View } from "react-native";
-import { standardNavScreenOptions } from "../../navigation/helpers/navBuilder";
+import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { NavigationScreenProp } from "react-navigation";
 import { HeaderBackAction } from "../../ui/headers/NewHeader";
 import { UserCard } from "./UserCard";
@@ -26,11 +26,10 @@ export interface IChildrenPageProps {
 export class ChildrenPage extends React.PureComponent<IChildrenPageProps>{
 
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
-    return standardNavScreenOptions(
+    return alternativeNavScreenOptions(
       {
         title: I18n.t("directory-childrenTitle"),
-        headerLeft: <HeaderBackAction navigation={navigation} />,
-        headerTitleStyle: { marginLeft: 0, marginRight: 'auto', textAlign: 'left' }
+        headerLeft: <HeaderBackAction navigation={navigation} />
       },
       navigation
     );

@@ -1,7 +1,6 @@
 import {
   clearRequestsCache,
   fetchJSONWithCache,
-  signedFetch
 } from "../../infra/fetchWithCache";
 import {
   OAuth2RessourceOwnerPasswordClient,
@@ -18,6 +17,7 @@ import Tracking from "../../tracking/TrackingManager"; // TODO make tracking bac
 import { userService } from "../service";
 import { initActivationAccount } from "./activation";
 import PushNotificationIOS from "@react-native-community/push-notification-ios";
+import { clearTimeline } from "../../timeline/actions/clearTimeline";
 
 // TYPES ------------------------------------------------------------------------------------------------
 
@@ -249,6 +249,8 @@ export function logout() {
       Tracking.logEvent("logout", {
         platform: Conf.currentPlatform.url
       });
+
+      clearTimeline(dispatch)(); // ToDo: this is ugly. Timeline should be cleared when logout.
 
       // === 1: Unregister the device token from the backend
       await userService.unregisterFCMToken();

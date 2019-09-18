@@ -1,5 +1,3 @@
-import Conf from "../../ode-framework-conf";
-import { signedFetch } from "../infra/fetchWithCache";
 import { nainNavNavigate } from "../navigation/helpers/navHelper";
 import { fetchHomeworkDiaryList } from "./actions/diaryList";
 import homeworkDiarySelected from "./actions/selectedDiary";

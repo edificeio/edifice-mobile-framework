@@ -6,7 +6,6 @@ import { fetchJSONWithCache } from "../../infra/fetchWithCache";
 import { clearPickedUsers } from "./pickUser";
 import conversationThreadSelected from "./threadSelected";
 
-import { navigate } from "../../navigation/helpers/navHelper";
 import { getSessionInfo } from "../../AppStore";
 
 export const actionTypeThreadCreated = mailboxConf.createActionType(

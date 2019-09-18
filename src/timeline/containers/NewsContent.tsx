@@ -2,17 +2,15 @@ import I18n from "i18n-js";
 import * as React from "react";
 import { Animated, Linking, ScrollView, View } from "react-native";
 
-import { createStackNavigator, NavigationActions } from "react-navigation";
+import { createStackNavigator, NavigationActions, NavigationScreenProp } from "react-navigation";
 import Conf from "../../../ode-framework-conf";
 import { signedFetch } from "../../infra/fetchWithCache";
-import { standardNavScreenOptions } from "../../navigation/helpers/navBuilder";
+import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { CommonStyles } from "../../styles/common/styles";
 import Tracking from "../../tracking/TrackingManager";
 import { ButtonsOkCancel, FlatButton, Icon } from "../../ui";
-import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { ArticleContainer, PageContainer } from "../../ui/ContainerContent";
-import { DateView } from "../../ui/DateView";
 import { ResourceTitle } from "../../ui/headers/ResourceTitle";
 import { HtmlContentView } from "../../ui/HtmlContentView";
 import {
@@ -25,22 +23,7 @@ import { A, Italic } from "../../ui/Typography";
 import { schoolbooks } from "../actions/dataTypes";
 import NewsTopInfo from "../components/NewsTopInfo";
 import { getSessionInfo } from "../../AppStore";
-
-export class NewsContentHeader extends React.Component<
-  { navigation?: any },
-  undefined
-> {
-  public render() {
-    const { news } = this.props.navigation.state.params;
-    return (
-      <ResourceTitle
-        title={news.title}
-        subTitle={news.subtitle}
-        navigation={this.props.navigation}
-      />
-    );
-  }
-}
+import { Back } from "../../ui/headers/Back";
 
 // tslint:disable-next-line:max-classes-per-file
 export class NewsContent extends React.Component<
@@ -55,6 +38,7 @@ export class NewsContent extends React.Component<
     schoolbookData: object;
   }
 > {
+
   /**
    * get the schoolbook correpsonding data. Call it only if you're sure that the post is a schoolbook.
    */
@@ -481,21 +465,25 @@ export class NewsContent extends React.Component<
 export const NewsContentRouter = createStackNavigator(
   {
     NewsContentRouter: {
-      navigationOptions: ({ navigation }) =>
-        standardNavScreenOptions(
-          {
-            header: null,
-            tabBarVisible: false
-          },
-          navigation
-        ),
       screen: NewsContent
     }
   },
   {
-    initialRouteName: "NewsContentRouter"
+    initialRouteName: "NewsContentRouter",
+    headerMode: 'none'
   }
 );
+NewsContentRouter.navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) =>
+  alternativeNavScreenOptions(
+    {
+      headerTitle: <ResourceTitle
+        title={navigation.state.params && navigation.state.params.news.title}
+        subTitle={navigation.state.params && navigation.state.params.news.subtitle}
+      />,
+      headerBackImage: <Back navigation={navigation}/>
+    },
+    navigation
+  );
 
 const defaultGetStateForAction = NewsContentRouter.router.getStateForAction;
 

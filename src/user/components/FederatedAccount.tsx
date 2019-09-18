@@ -2,11 +2,6 @@ import style from "glamorous-native";
 import I18n from "i18n-js";
 import * as React from "react";
 import {
-  Alert,
-  KeyboardAvoidingView,
-  Linking,
-  Platform,
-  TextInput,
   View,
   SafeAreaView
 } from "react-native";
@@ -14,10 +9,8 @@ import Conf from "../../../ode-framework-conf";
 import { navigate } from "../../navigation/helpers/navHelper";
 import { FlatButton } from "../../ui";
 import BottomSwitcher from "../../ui/BottomSwitcher";
-import { TextInputLine } from "../../ui/forms/TextInputLine";
-import { Text, TextH1, TextLightItalic } from "../../ui/text";
-import { ErrorMessage, InfoMessage, TextColor } from "../../ui/Typography";
-import { IForgotModel } from "../actions/forgot";
+import { Text, TextLightItalic } from "../../ui/text";
+import { TextColor } from "../../ui/Typography";
 
 // TYPES ---------------------------------------------------------------------------
 
@@ -70,9 +63,10 @@ export class FederatedAccountPage extends React.PureComponent<
               </View>
             </FormContainer>
           </FormWrapper>
+          {Conf.platforms && Object.keys(Conf.platforms).length > 1 ?
           <BottomSwitcher onPress={() => this.handleBackToPlatformSelector()}>
             {Conf.currentPlatform.displayName}{" "}
-          </BottomSwitcher>
+          </BottomSwitcher> : null}
         </FormPage>
       </SafeAreaView>
     );

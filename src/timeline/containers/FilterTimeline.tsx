@@ -1,75 +1,68 @@
 import * as React from "react";
-import { View } from "react-native";
 import I18n from "i18n-js";
 import { connect } from "react-redux";
 import { pickFilters, setFilters } from "../actions/pickFilter";
-import {
-  Header,
-  HeaderIcon,
-  Title,
-  HeaderAction
-} from "../../ui/headers/Header";
 import { PageContainer, ListItem } from "../../ui/ContainerContent";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { Heavy } from "../../ui/Typography";
 import { Checkbox } from "../../ui/forms/Checkbox";
 import Tracking from "../../tracking/TrackingManager";
+import { NavigationScreenProp, NavigationState, NavigationParams } from "react-navigation";
+import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
+import { HeaderAction } from "../../ui/headers/NewHeader";
+import { Dispatch } from "redux";
 
-export class FilterHeader extends React.Component<
-  {
-    navigation: any;
-    pickFilters: (apps) => void;
-    setFilters: (apps, legalApps) => void;
-    availableApps;
-    selectedApps;
-    legalApps;
-  },
-  undefined
-> {
-  apply() {
-    this.props.setFilters(this.props.selectedApps, this.props.legalApps);
-    Tracking.logEvent("filterTimeline", {
-      filterBy: JSON.stringify(this.props.selectedApps)
-    });
-    this.props.navigation.goBack();
-  }
-
-  cancel() {
-    this.props.pickFilters(this.props.availableApps);
-    this.props.navigation.goBack();
-  }
-
-  render() {
-    return (
-      <Header>
-        <HeaderIcon name={"close"} onPress={() => this.cancel()} />
-        <Title>{I18n.t("timeline-filterBy")}</Title>
-        <HeaderAction onPress={() => this.apply()}>
-          {I18n.t("apply")}
-        </HeaderAction>
-      </Header>
-    );
-  }
+export interface FilterTimelineProps {
+  selectedApps: string[];
+  availableApps: string[];
+  legalApps: string[];
+  pickFilters: (selectedApps: string[]) => void;
+  setFilters: (apps: string[], legalApps: string[]) => void;
+  navigation: NavigationScreenProp<NavigationState, NavigationParams>;
 }
 
-export const FilterHeaderConnect = connect(
-  (state: any) => ({
-    selectedApps: state.timeline.selectedApps,
-    availableApps: state.timeline.availableApps,
-    legalApps: state.user.auth.apps
-  }),
-  dispatch => ({
-    pickFilters: apps => pickFilters(dispatch)(apps),
-    setFilters: (apps, legalapps) => setFilters(dispatch)(apps, legalapps)
-  })
-)(FilterHeader);
-
 // tslint:disable-next-line:max-classes-per-file
-export class FilterTimeline extends React.Component<
-  { selectedApps: any; pickFilters: (selectedApps: any) => void },
-  any
-> {
-  checkApp(app, val) {
+export class FilterTimeline extends React.Component<FilterTimelineProps> {
+
+  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) =>
+    alternativeNavScreenOptions(
+      {
+        title: I18n.t("timeline-filterBy"),
+        headerLeft: <HeaderAction
+          onPress={() => {
+            navigation.getParam("onCancel")();
+          }}
+          name="close"
+        />,
+        headerRight: <HeaderAction
+          onPress={() => {
+            navigation.getParam("onApply")();
+          }}
+          title={I18n.t("apply")}
+        />,
+      },
+      navigation
+    );
+
+  constructor(props: FilterTimelineProps) {
+    super(props);
+    // Header events setup
+    this.props.navigation.setParams({
+      onApply: () => {
+        this.props.setFilters(this.props.selectedApps, this.props.legalApps);
+        Tracking.logEvent("filterTimeline", {
+          filterBy: JSON.stringify(this.props.selectedApps)
+        });
+        this.props.navigation.goBack();
+      },
+      onCancel: () => {
+        this.props.pickFilters(this.props.availableApps);
+        this.props.navigation.goBack();
+      }
+    });
+  }
+
+  checkApp(app: any, val: any) {
     const newSelectedApps = { ...this.props.selectedApps };
     newSelectedApps[app.name] = val;
     this.props.pickFilters(newSelectedApps);
@@ -135,9 +128,12 @@ export class FilterTimeline extends React.Component<
 
 export const FilterTimelineConnect = connect(
   (state: any) => ({
-    selectedApps: state.timeline.selectedApps
+    selectedApps: state.timeline.selectedApps,
+    availableApps: state.timeline.availableApps,
+    legalApps: state.user.auth.apps
   }),
-  dispatch => ({
-    pickFilters: apps => pickFilters(dispatch)(apps)
+  (dispatch: Dispatch) => ({
+    pickFilters: (apps: string[]) => pickFilters(dispatch)(apps),
+    setFilters: (apps: string[], legalapps: string[]) => setFilters(dispatch)(apps, legalapps)
   })
 )(FilterTimeline);

@@ -8,34 +8,17 @@ import { FlatButton, Loading } from "../../ui";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
 import { EmptyScreen } from "../../ui/EmptyScreen";
-import { AppTitle, Header, HeaderIcon } from "../../ui/headers/Header";
 import { ErrorMessage } from "../../ui/Typography";
 import { News } from "../components/News";
 
 import styles from "../../styles";
 import Tracking from "../../tracking/TrackingManager";
 
-import { clearFilterConversation } from "../../mailbox/actions/filter";
 import { fetchTimeline, listTimeline } from "../actions/list";
 import { INewsModel } from "../reducer";
-
-export class TimelineHeader extends React.Component<
-  { navigation?: any },
-  undefined
-> {
-  public render() {
-    return (
-      <Header>
-        <HeaderIcon
-          onPress={() => this.props.navigation.navigate("filterTimeline")}
-          name={"filter"}
-        />
-        <AppTitle>{I18n.t("News")}</AppTitle>
-        <HeaderIcon name={"filter"} hidden={true} />
-      </Header>
-    );
-  }
-}
+import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
+import { NavigationScreenProp } from "react-navigation";
+import { HeaderAction } from "../../ui/headers/NewHeader";
 
 interface ITimelineProps {
   isFetching: boolean;
@@ -48,13 +31,28 @@ interface ITimelineProps {
   fetchFailed: boolean;
   isAuthenticated: boolean;
   legalapps: any;
-  onFocus: () => void;
 }
 
 // tslint:disable-next-line:max-classes-per-file
 class Timeline extends React.Component<ITimelineProps, undefined> {
+
+  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) =>
+  standardNavScreenOptions(
+    {
+      headerBackTitle: null,
+      title: I18n.t("News"),
+      headerLeft: <HeaderAction
+        onPress={() => {
+          navigation.navigate("filterTimeline");
+        }}
+        name="filter"
+      />,
+    },
+    navigation
+  );
+
   private flatList: any;
-  private pageNumber: number;
+  private pageNumber: number = 0;
 
   public componentDidMount() {
     this.flatList = null;
@@ -66,19 +64,6 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
         this.props.legalapps
       );
     }
-    this.props.onFocus();
-    this.didFocusSubscription = this.props.navigation.addListener(
-      "didFocus",
-      payload => {
-        this.props.onFocus();
-        if (this.props.availableApps) this.fetchLatest();
-      }
-    );
-  }
-
-  private didFocusSubscription;
-  public componentWillUnmount() {
-    this.didFocusSubscription.remove();
   }
 
   public nextPage() {
@@ -233,7 +218,6 @@ export default connect(
   }),
   dispatch => ({
     fetch: availableApps => fetchTimeline(dispatch)(availableApps),
-    onFocus: () => clearFilterConversation(dispatch)(),
     sync: (page: number, availableApps, legalapps) =>
       listTimeline(dispatch)(page, availableApps, legalapps)
   })

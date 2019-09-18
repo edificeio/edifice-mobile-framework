@@ -4,8 +4,6 @@ import * as React from "react";
 import { TextStyle, View } from "react-native";
 import { connect } from "react-redux";
 
-import { setHeader } from "../../infra/actions/ui";
-
 import { CommonStyles } from "../../styles/common/styles";
 import { Line } from "../../ui";
 import { Size } from "../../ui/avatars/Avatar";
@@ -59,7 +57,6 @@ export const ContainerAvatars = style.view({
 export interface IThreadsBarProps {
   navigation?: any;
   thread: IConversationThread;
-  setHeader: (height: number) => void;
 }
 
 export class ThreadsTopBar extends React.PureComponent<IThreadsBarProps, {}> {
@@ -69,14 +66,6 @@ export class ThreadsTopBar extends React.PureComponent<IThreadsBarProps, {}> {
   };
 
   public static expanded;
-
-  public setHeaderHeight() {
-    if (this.state.expand) {
-      this.props.setHeader(220);
-    } else {
-      this.props.setHeader(56);
-    }
-  }
 
   private onPress() {
     ThreadsTopBar.expanded = !this.state.expand;
@@ -109,7 +98,7 @@ export class ThreadsTopBar extends React.PureComponent<IThreadsBarProps, {}> {
     });
 
     return (
-      <Header onLayout={() => this.setHeaderHeight()}>
+      <Header>
         <View
           style={{
             alignItems: "center",
@@ -160,7 +149,5 @@ export default connect(
       thread: localState.data.byId[selectedThreadId]
     };
   },
-  dispatch => ({
-    setHeader: (height: number) => setHeader(dispatch)(height)
-  })
+  dispatch => ({})
 )(ThreadsTopBar);

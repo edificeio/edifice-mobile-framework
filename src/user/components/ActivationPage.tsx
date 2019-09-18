@@ -178,9 +178,10 @@ export class ActivationPage extends React.PureComponent<
                 </FormWrapper>
               </FormTouchable>
             </ScrollView>
+            {Conf.platforms && Object.keys(Conf.platforms).length > 1 ?
             <BottomSwitcher onPress={() => this.handleBackToPlatformSelector()}>
               {Conf.currentPlatform.displayName}{" "}
-            </BottomSwitcher>
+            </BottomSwitcher> : null}
           </KeyboardAvoidingView>
         </FormPage>
       </SafeAreaView>

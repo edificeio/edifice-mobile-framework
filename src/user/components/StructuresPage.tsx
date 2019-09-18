@@ -6,7 +6,7 @@ import { ScrollView, SafeAreaView, View } from "react-native";
 import { Text, TextColor, NestedText } from "../../ui/text";
 import { ContainerView, ContainerSpacer } from "../../ui/ButtonLine";
 import { CommonStyles } from "../../styles/common/styles";
-import { standardNavScreenOptions } from "../../navigation/helpers/navBuilder";
+import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { NavigationScreenProp } from "react-navigation";
 import { HeaderBackAction } from "../../ui/headers/NewHeader";
 import { H4 } from "../../ui/Typography";
@@ -26,11 +26,10 @@ export interface IStructuresPageProps {
 export class StructuresPage extends React.PureComponent<IStructuresPageProps>{
 
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
-    return standardNavScreenOptions(
+    return alternativeNavScreenOptions(
       {
         title: I18n.t("directory-structuresTitle"),
-        headerLeft: <HeaderBackAction navigation={navigation} />,
-        headerTitleStyle: { marginLeft: 0, marginRight: 'auto', textAlign: 'left' }
+        headerLeft: <HeaderBackAction navigation={navigation} />
       },
       navigation
     );

@@ -2,13 +2,10 @@
  * Activate account action(s)
  * Build actions to be dispatched to activate a new account
  */
-import I18n from "i18n-js";
 import { Action } from "redux";
 import Conf from "../../../ode-framework-conf";
 import { asyncActionTypes } from "../../infra/redux/async";
-import { navigate } from "../../navigation/helpers/navHelper";
 import userConfig from "../config";
-import { actionTypeLoginCancel, login } from "./login";
 import Tracking from "../../tracking/TrackingManager";
 
 // TYPES ------------------------------------------------------------------------------------------

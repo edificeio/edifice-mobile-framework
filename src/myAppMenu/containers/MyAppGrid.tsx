@@ -2,7 +2,8 @@ import * as React from "react";
 import { createStackNavigator } from "react-navigation";
 import { AppTitle, Header } from "../../ui/headers/Header";
 import { IAppModule } from "../../infra/moduleTool";
-import { getRoutes, standardNavScreenOptions, getModules } from "../../navigation/helpers/navBuilder";
+import { getRoutes, getModules } from "../../navigation/helpers/navBuilder";
+import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import MyAppGrid from "../components/MyAppGrid";
 
 /**

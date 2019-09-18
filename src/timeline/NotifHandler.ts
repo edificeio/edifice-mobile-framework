@@ -1,7 +1,7 @@
 import { nainNavNavigate } from "../navigation/helpers/navHelper";
 import Tracking from "../tracking/TrackingManager";
 import { listTimeline } from "./actions/list";
-import { storedFilters, timelineApps } from "./actions/storedFilters";
+import { storedFilters, } from "./actions/storedFilters";
 import { loadSchoolbooks, resetLoadingState } from "./actions/dataTypes";
 import { NotificationHandlerFactory } from "../infra/pushNotification";
 
@@ -50,7 +50,8 @@ const timelineNotifHandlerFactory:NotificationHandlerFactory<any,any,any> = disp
     if (notificationData.resourceUri.startsWith(path)) {
       // console.log("before await schoolbooks");
       resetLoadingState();
-      await loadSchoolbooks();
+      if (legalapps.includes("Schoolbook"))
+        await loadSchoolbooks();
       dispatch({
         news: [],
         type: "FETCH_NEW_TIMELINE"

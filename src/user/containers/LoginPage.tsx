@@ -13,25 +13,22 @@ import {
   ScrollView
 } from "react-native";
 import { connect } from "react-redux";
-import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 
 // Components
 import { FlatButton } from "../../ui";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { TextInputLine } from "../../ui/forms/TextInputLine";
-import { ErrorMessage, Label } from "../../ui/Typography";
+import { ErrorMessage } from "../../ui/Typography";
 
 // Type definitions
-import { LoginResult } from "../actions/login";
 import { IUserAuthState } from "../reducers/auth";
 
 import Conf from "../../../ode-framework-conf";
 import { navigate } from "../../navigation/helpers/navHelper";
 import { CommonStyles } from "../../styles/common/styles";
-import { Icon } from "../../ui/";
 import BottomSwitcher from "../../ui/BottomSwitcher";
 import { PasswordInputLine } from "../../ui/forms/PasswordInputLine";
-import { Text, TextColor } from "../../ui/text";
+import { Text, TextColor, TextBold } from "../../ui/text";
 import {
   checkVersionThenLogin,
   IVersionContext,
@@ -164,6 +161,8 @@ export class LoginPage extends React.Component<
   protected renderForm() {
     const { loggingIn, loggedIn, error } = this.props.auth;
 
+    const FederationTextComponent = error ? TextBold : Text;
+
     return (
       <View style={{ flex: 1 }}>
         <ScrollView alwaysBounceVertical={false} contentContainerStyle={{ flexGrow: 1 }}>
@@ -221,22 +220,27 @@ export class LoginPage extends React.Component<
                 >
                   {I18n.t("forgot-password")}
                 </Text>
-                {Conf.currentPlatform.federation && <Text
-                  color={TextColor.Light}
-                  style={{ textDecorationLine: "underline", marginTop: 48, textAlign: "center" }}
+                {Conf.currentPlatform.federation && <FederationTextComponent
+                  style={{
+                    textDecorationLine: "underline",
+                    marginTop: 48,
+                    textAlign: "center",
+                    color: error ? CommonStyles.profileTypes.Student : TextColor.Light
+                  }}
                   onPress={() => {
                     navigate("FederatedAccount");
                   }}
                 >
                   {I18n.t("federatedAccount-link")}
-                </Text>}
+                </FederationTextComponent>}
               </View>
             </View>
           </FormContainer>
         </ScrollView>
+        {Conf.platforms && Object.keys(Conf.platforms).length > 1 ?
         <BottomSwitcher onPress={() => this.handleBackToPlatformSelector()}>
           {Conf.currentPlatform.displayName}{" "}
-        </BottomSwitcher>
+        </BottomSwitcher> : null}
       </View>
     );
   }

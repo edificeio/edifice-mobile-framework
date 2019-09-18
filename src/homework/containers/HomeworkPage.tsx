@@ -17,7 +17,6 @@ import { fetchHomeworkTasks } from "../actions/tasks";
 
 import Tracking from "../../tracking/TrackingManager";
 import homeworkDiarySelected from "../actions/selectedDiary";
-import { clearFilterConversation } from "../../mailbox/actions/filter";
 
 const mapStateToProps: (state: any) => IHomeworkPageDataProps = state => {
   // Extract data from state
@@ -71,7 +70,6 @@ const mapDispatchToProps: (
 ) => IHomeworkPageEventProps = dispatch => {
   return {
     dispatch,
-    onFocus: () => clearFilterConversation(dispatch)(),
     onRefresh: diaryId => {
       Tracking.logEvent("refreshNotebook");
       dispatch(fetchHomeworkTasks(diaryId));
@@ -101,21 +99,6 @@ class HomeworkPageContainer extends React.PureComponent<
   public async componentDidMount() {
     await this.loadSelectedDiary();
     this.props.dispatch(fetchHomeworkDiaryList());
-    this.props.onFocus();
-    this.didFocusSubscription = this.props.navigation.addListener(
-      "didFocus",
-      payload => {
-        this.props.dispatch(fetchHomeworkDiaryList());
-        if (this.props.diaryId)
-          this.props.dispatch(fetchHomeworkTasks(this.props.diaryId));
-        this.props.onFocus();
-      }
-    );
-  }
-
-  private didFocusSubscription;
-  public componentWillUnmount() {
-    this.didFocusSubscription.remove();
   }
 
   private async loadSelectedDiary() {

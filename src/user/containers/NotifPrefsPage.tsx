@@ -23,7 +23,7 @@ import { PageContainer } from "../../ui/ContainerContent";
 import { H4 } from "../../ui/Typography";
 import { NotifPrefLine } from "../components/NotifPrefLine";
 import { NavigationScreenProp } from "react-navigation";
-import { standardNavScreenOptions } from "../../navigation/helpers/navBuilder";
+import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderBackAction } from "../../ui/headers/NewHeader";
 
 // Type definitions

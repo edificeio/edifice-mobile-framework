@@ -11,12 +11,9 @@ import { PasswordInputLine } from "../../ui/forms/PasswordInputLine";
 import { ErrorMessage } from "../../ui/Typography";
 import { FlatButton } from "../../ui/FlatButton";
 import { getSessionInfo } from "../../AppStore";
-import { NavigationScreenProp } from "react-navigation";
-import { standardNavScreenOptions } from "../../navigation/helpers/navBuilder";
-import { HeaderBackAction } from "../../ui/headers/NewHeader";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { Dispatch } from "redux";
-import { ContainerLabel, NoTouchableContainer, ContainerSpacer } from "../../ui/ButtonLine";
+import { NoTouchableContainer } from "../../ui/ButtonLine";
 import { Text } from "../../ui/text";
 
 // TYPES ------------------------------------------------------------------------------------------

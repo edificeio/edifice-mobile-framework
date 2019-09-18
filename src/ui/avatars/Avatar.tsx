@@ -156,6 +156,8 @@ export class Avatar extends React.Component<
   public componentWillUnmount() {
   }
 
+  get isMissingId() { return !this.props.id; }
+
   get isGroup() {
     return this.props.id.length < 36;
   }
@@ -242,6 +244,10 @@ export class Avatar extends React.Component<
     let width = 45;
     if (this.props.width) {
       width = this.props.width;
+    }
+
+    if(this.isMissingId){
+      return this.renderNoAvatar(width);
     }
 
     if (this.isGroup) {

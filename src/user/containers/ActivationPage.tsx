@@ -1,6 +1,5 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { navigate } from "../../navigation/helpers/navHelper";
 import {
   activationAccount,
   cancelActivationAccount,
