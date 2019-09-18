@@ -66,7 +66,7 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
     this.reducerName = opts.reducerName || this.name;
     this.displayName = opts.displayName || this.name;
     this.iconName = opts.iconName || this.name;
-    this.group = opts.group === undefined ? true : opts.group;
+    this.group = opts.group;
     this.notifHandlerFactory = opts.notifHandlerFactory;
   }
 
@@ -83,7 +83,7 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
       screen: comp,
 
       navigationOptions: () =>
-        this.group ? createMainTabNavOption(I18n.t(this.displayName), this.iconName) : { header: null },
+        this.group ? { header: null } : createMainTabNavOption(I18n.t(this.displayName), this.iconName),
     };
   }
 }
