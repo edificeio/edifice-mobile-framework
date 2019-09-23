@@ -1,7 +1,8 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import I18n from "i18n-js";
 
-import { loadVisibles } from "../actions/createThread";
+import { loadVisibles, createThread } from "../actions/createThread";
 import { pickUser, unpickUser } from "../actions/pickUser";
 
 import { IUser } from "../../user/reducers";
@@ -10,6 +11,11 @@ import { PageContainer } from "../../ui/ContainerContent";
 import SearchUser from "../../ui/SearchUser";
 
 import mailboxConfig from "../config";
+import { NavigationScreenProp } from "react-navigation";
+import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
+import { HeaderBackAction, HeaderAction } from "../../ui/headers/NewHeader";
+import { Dispatch, AnyAction } from "redux";
+import { ThunkDispatch } from "redux-thunk";
 
 interface INewThreadPageProps {
   remainingUsers: IUser[];
@@ -17,15 +23,58 @@ interface INewThreadPageProps {
   pickedUsers: IUser[];
   pickUser: (user: IUser) => void;
   unpickUser: (user: IUser) => void;
+  navigation: NavigationScreenProp<{}>
+  createThread: (pickedUsers: any) => any;
 }
 
 class NewThreadPage extends React.PureComponent<
   INewThreadPageProps,
   undefined
 > {
+  static navigationOptions = ({ navigation, screenProps }: { navigation: NavigationScreenProp<{}>, screenProps: INewThreadPageProps }) => {
+    return alternativeNavScreenOptions({
+      title: I18n.t("conversation-newMessage"),
+      headerLeft: <HeaderBackAction navigation={navigation} />,
+      headerRight: <HeaderAction
+        title={I18n.t("next")}
+        disabled={!navigation.getParam("canCreate", false)}
+        onPress={() => { navigation.getParam("canCreate", false) && navigation.getParam("onCreate")() }}
+      />,
+    }, navigation);
+  }
+
+  constructor(props: INewThreadPageProps) {
+    super(props);
+    // Header events setup
+    this.props.navigation.setParams({
+      canCreate: false,
+      onCreate: this.handleCreateThread.bind(this)
+    });
+  }
+
   public componentDidMount() {
     this.props.loadVisibles();
   }
+
+  public handleCreateThread() {
+    const newConversation = this.props.createThread(this.props.pickedUsers);
+    this.props.navigation.replace("thread", newConversation.id);
+  }
+
+  public updateHeaderProps() {
+    this.props.navigation.setParams({
+      canCreate: this.props.pickedUsers.length > 0
+    })
+  }
+
+  public getSnapshotBeforeUpdate(prevProps: INewThreadPageProps, prevState: any) {
+    if (prevProps.pickedUsers !== this.props.pickedUsers) {
+      this.updateHeaderProps();
+    }
+    return null;
+  }
+
+  public componentDidUpdate() {} // ComponentDidUpdate must exist if getSnapshotBeforeUpdate() does.
 
   public render() {
     return (
@@ -33,8 +82,12 @@ class NewThreadPage extends React.PureComponent<
         <SearchUser
           remaining={this.props.remainingUsers}
           picked={this.props.pickedUsers}
-          onPickUser={user => this.props.pickUser(user)}
-          onUnpickUser={user => this.props.unpickUser(user)}
+          onPickUser={(user: any) => {
+            this.props.pickUser(user);
+          }}
+          onUnpickUser={(user: any) => {
+            this.props.unpickUser(user);
+          }}
         />
       </PageContainer>
     );
@@ -50,9 +103,10 @@ export default connect(
       remainingUsers: usersState.remaining
     };
   },
-  dispatch => ({
+  (dispatch: Dispatch & ThunkDispatch<any, void, AnyAction>) => ({
     loadVisibles: () => loadVisibles(dispatch)(),
-    pickUser: user => pickUser(dispatch)(user),
-    unpickUser: user => unpickUser(dispatch)(user)
+    pickUser: (user: any) => pickUser(dispatch)(user),
+    unpickUser: (user: any) => unpickUser(dispatch)(user),
+    createThread: (pickedUsers: any[]) => dispatch(createThread(pickedUsers))
   })
 )(NewThreadPage);

@@ -26,17 +26,6 @@ export default createStackNavigator({
   },
 
   newThread: {
-    navigationOptions: ({ navigation }) =>
-      standardNavScreenOptions(
-        {
-          header: (
-            <NewThreadPageHeader
-              navigation={navigation} // TS-ISSUE
-            />
-          )
-        },
-        navigation
-      ),
     screen: NewThreadPage
   },
   listReceivers: {

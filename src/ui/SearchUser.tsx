@@ -58,7 +58,7 @@ export default class SearchUser extends React.Component<
       ) !== -1);
 
   public expend() {
-    // console.log(this.state.max)
+    // console.log("state max: ", this.state.max)
     this.setState({ ...this.state, max: this.state.max + 20 });
   }
 
@@ -95,7 +95,7 @@ export default class SearchUser extends React.Component<
             ))}
             <TextInput
               ref={r => (this.input = r)}
-              style={{ flex: 1, minWidth: 100, height: 40 }}
+              style={{ flex: 1, minWidth: 100, height: 40, color: CommonStyles.textColor }}
               underlineColorAndroid={"transparent"}
               value={this.state.searchText}
               onChangeText={text =>
