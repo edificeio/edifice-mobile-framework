@@ -13,7 +13,8 @@ const HeaderIconStyle: ViewStyle = {
   alignItems: "center",
   height: 56,
   justifyContent: "center",
-  width: 60
+  width: 60,
+  flex: 0
 };
 
 const iconsDeltaSizes = {
@@ -21,7 +22,7 @@ const iconsDeltaSizes = {
 };
 
 export interface IHeaderIconProps {
-  name: string;
+  name: string | null;
   hidden?: boolean;
   iconSize?: number;
 }
@@ -34,8 +35,12 @@ export const HeaderIcon = ({ name, hidden, iconSize }: IHeaderIconProps) => (
 );
 
 // Use this in place React Navigation Back implementation.
-export const HeaderBackAction = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => (
-  <HeaderAction onPress={() => navigation.goBack()} name={"back"} />
+export const HeaderBackAction = ({
+  navigation, style
+}: {
+  navigation: NavigationScreenProp<{}>, style?: ViewStyle
+}) => (
+  <HeaderAction onPress={() => navigation.goBack()} name={"back"} style={style} />
 )
 
 // HEADER TEXTS

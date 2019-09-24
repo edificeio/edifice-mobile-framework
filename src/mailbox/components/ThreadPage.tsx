@@ -43,7 +43,8 @@ import { IConversationThread } from "../reducers/threadList";
 
 import { signImagesUrls } from "../../infra/oauth";
 import ThreadInput from "./ThreadInput";
-import ThreadInputReceivers from "./ThreadInputReceiver";
+import { Dispatch } from "redux";
+import { NavigationScreenProp } from "react-navigation";
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -64,7 +65,8 @@ export interface IThreadPageEventProps {
 }
 
 export interface IThreadPageOtherProps {
-  navigation?: any;
+  navigation?: NavigationScreenProp<{}>;
+  dispatch: Dispatch;
 }
 
 export type IThreadPageProps = IThreadPageDataProps &

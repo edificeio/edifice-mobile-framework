@@ -105,6 +105,16 @@ class ThreadListPageContainer extends React.PureComponent<
           name="new_message"
           iconSize={24}
         />,
+        headerLeftContainerStyle: {
+          alignItems: "flex-start"
+        },
+        headerRightContainerStyle: {
+          alignItems: "flex-start"
+        },
+        headerTitleContainerStyle: {
+          alignItems: "flex-start",
+          height: 55.667 // 🍔 Big (M)hack of the death of the world. The `alignItems` property doesn't seem to work here.
+        }
       },
         navigation) :
       alternativeNavScreenOptions({
