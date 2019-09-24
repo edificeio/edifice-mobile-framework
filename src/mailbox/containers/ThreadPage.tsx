@@ -96,6 +96,7 @@ class ThreadPageContainer extends React.PureComponent<
         : <View><Text>Loading</Text></View>,
       headerStyle: {
         height: showDetails ? 56 + 160 : 56,
+        overflow: "hidden"
       },
       headerLeftContainerStyle: {
         alignItems: "flex-start"

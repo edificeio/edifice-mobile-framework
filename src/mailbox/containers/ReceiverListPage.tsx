@@ -1,14 +1,17 @@
+import I18n from "i18n-js";
 import * as React from "react";
 import { connect } from "react-redux";
 import {
     IReceiverListPageDataProps,
     IReceiverListPageEventProps,
-    IReceiverListPageOtherProps,
     ReceiverListPage,
     IReceiverListPageProps
 } from "../components/ReceiverListPage";
 import conversationConfig from "../config";
 import { IConversationReceiverList } from "../reducers";
+import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
+import { NavigationScreenProp } from "react-navigation";
+import { HeaderBackAction } from "../../ui/headers/NewHeader";
 
 const mapStateToProps: (state: any) => IReceiverListPageDataProps = state => {
     const receiverState: IConversationReceiverList = state[conversationConfig.reducerName].receiversDisplay;
@@ -29,6 +32,20 @@ const mapDispatchToProps: (
 };
 
 class ReceiverListPageContainer extends React.PureComponent<IReceiverListPageProps & { dispatch: any }, {}> {
+
+    static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
+        return alternativeNavScreenOptions(
+            {
+                title: navigation.getParam('title') || I18n.t("conversation-receiverList"),
+                headerLeft: <HeaderBackAction navigation={navigation} />,
+                headerStyle: {
+                    overflow: "hidden"
+                },
+            },
+            navigation
+        );
+    };
+
     public render() {
         return (
             <ReceiverListPage
