@@ -1,6 +1,6 @@
 import style from "glamorous-native";
 import * as React from "react";
-import { createBottomTabNavigator } from "react-navigation";
+import { createBottomTabNavigator, NavigationState, NavigationScreenProp } from "react-navigation";
 
 import { CommonStyles } from "../../styles/common/styles";
 import { IconOnOff } from "../../ui";
@@ -57,7 +57,7 @@ const MainTabNavigationLabel = style.text(
   })
 );
 
-export const shouldTabBarBeVisible = ({ navigation }) => {
+export const shouldTabBarBeVisible = ({ navigation }: { navigation: NavigationScreenProp<NavigationState> }) => {
   let tabBarVisible = true;
   if (navigation.state.index > 0) {
     tabBarVisible = false;
