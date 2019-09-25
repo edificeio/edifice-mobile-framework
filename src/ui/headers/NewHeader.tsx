@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { Icon } from "..";
 import { CommonStyles } from "../../styles/common/styles";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
-import { NavigationScreenProp } from "react-navigation";
+import { NavigationScreenProp, NavigationActions } from "react-navigation";
 import { ViewStyle, View } from "react-native";
 import { Text } from "../text";
 
@@ -40,7 +40,7 @@ export const HeaderBackAction = ({
 }: {
   navigation: NavigationScreenProp<{}>, style?: ViewStyle
 }) => (
-  <HeaderAction onPress={() => navigation.goBack()} name={"back"} style={style} />
+    <HeaderAction onPress={() => navigation.dispatch(NavigationActions.back())} name={"back"} style={style} />
 )
 
 // HEADER TEXTS
