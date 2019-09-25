@@ -10,7 +10,8 @@ import {
   TextInput,
   TouchableWithoutFeedback,
   View,
-  ScrollView
+  ScrollView,
+  Linking
 } from "react-native";
 import { connect } from "react-redux";
 
@@ -199,12 +200,19 @@ export class LoginPage extends React.Component<
                 marginTop: error && !this.state.typing ? 10 : 30
               }}
             >
+              {error === "auth-notPremium" && !this.state.typing ?
               <FlatButton
+                onPress={() => this.handleGoToWeb()}
+                disabled={false}
+                title={I18n.t("LoginWeb")}
+                loading={false}
+              /> : <FlatButton
                 onPress={() => this.handleLogin()}
                 disabled={this.isSubmitDisabled}
                 title={I18n.t("Connect")}
                 loading={loggingIn || loggedIn}
-              />
+              />}
+
               <View
                 style={{
                   alignItems: "center",
@@ -253,6 +261,10 @@ export class LoginPage extends React.Component<
       this.state.password
     );
     this.setState({ typing: false });
+  }
+
+  protected handleGoToWeb() {
+    Linking.openURL((Conf.currentPlatform as any).url);
   }
 
   protected handleBackToPlatformSelector() {

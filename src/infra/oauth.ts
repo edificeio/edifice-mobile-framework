@@ -135,7 +135,8 @@ export class OAuth2RessourceOwnerPasswordClient {
    */
   public async getToken(
     username: string,
-    password: string
+    password: string,
+    saveToken: boolean = true
   ): Promise<IOAuthToken> {
     // 1: Build request
     const body = {
@@ -164,7 +165,7 @@ export class OAuth2RessourceOwnerPasswordClient {
         ...data,
         expires_at: this.getExpirationDate(data.expires_in)
       };
-      await this.saveToken();
+      saveToken && await this.saveToken();
       return this.token;
     } catch (err) {
       // tslint:disable-next-line:no-console
@@ -202,7 +203,7 @@ export class OAuth2RessourceOwnerPasswordClient {
   /**
    * Saves given token information in local storage.
    */
-  private async saveToken() {
+  public async saveToken() {
     try {
       await AsyncStorage.setItem("token", JSON.stringify(this.token));
     } catch (err) {

@@ -59,7 +59,8 @@ export function login(
       if (credentials) {
         await OAuth2RessourceOwnerPasswordClient.connection.getToken(
           credentials.username,
-          credentials.password
+          credentials.password,
+          false
         );
       } else {
         // Here, an offline user will try to load a token.
@@ -138,6 +139,7 @@ export function login(
         userdata,
         userPublicInfo: userPublicInfo.result[0]
       });
+      OAuth2RessourceOwnerPasswordClient.connection.saveToken();
 
       // === 6: Tracking reporting (only on success)
 
