@@ -1,6 +1,5 @@
 import { IAppModule } from "./infra/moduleTool";
 
-
 /**
  * Write here the app-e functional modules imports.
  * Order has importance, functional modules will be shown in the same order in the bottom bar.

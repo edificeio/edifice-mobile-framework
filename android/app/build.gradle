@@ -205,12 +205,6 @@ dependencies {
     implementation project(':appcenter-crashes')
     implementation project(':appcenter-analytics')
 
-    // React Native Mixpanel manual linking (automatic linking not supported)
-    implementation project(':react-native-mixpanel')
-
-    // React Native WebView manual linking (automatic linking not supported)
-    implementation project(':react-native-webview')
-
     if (enableHermes) {
       def hermesPath = "../../node_modules/hermesvm/android/";
       debugImplementation files(hermesPath + "hermes-debug.aar")

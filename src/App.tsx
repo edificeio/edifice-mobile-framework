@@ -27,7 +27,7 @@ import { isInActivatingMode } from "./user/selectors";
 import { checkVersionThenLogin } from "./user/actions/version";
 
 // Store
-import { store } from "./AppStore";
+import { generateStore, global } from "./AppStore";
 
 // Main Screen
 import AppScreen from "./AppScreen";
@@ -36,6 +36,31 @@ import AppScreen from "./AppScreen";
 import { CommonStyles } from './styles/common/styles';
 import SplashScreen from "react-native-splash-screen";
 
+// Modules
+
+import moduleDefinitions from "./AppModules";
+import { getReducersFromModuleDefinitions } from "./infra/moduleTool";
+
+import notifier from "./infra/notifier/reducer";
+import connectionTracker from "./infra/reducers/connectionTracker";
+import ui from "./infra/reducers/ui";
+import timeline from "./timeline/reducer";
+import { combineReducers } from "redux";
+
+// console.log("REDUCERS", getReducersFromModuleDefinitions(moduleDefinitions));
+console.log("moduleDefinitions", moduleDefinitions);
+const reducers = {
+  connectionTracker,
+  notifier,
+  ui,
+  ...getReducersFromModuleDefinitions(moduleDefinitions)
+};
+const rootReducer = combineReducers({
+  ...reducers,
+  timeline // TODO put this in module definitions
+});
+// Hack : edit the imported store. This is ugly but prevent circular deps.
+global.store = generateStore(rootReducer);
 
 // Disable Yellow Box on release builds.
 if (!__DEV__) {
@@ -204,11 +229,11 @@ function connectWithStore(store: any, WrappedComponent:any , ...args: [any?, any
 
 const mapStateToProps = (state: any, props: any) => ({
   currentPlatformId: state.user.auth.platformId,
-  store
+  store : global.store
 });
 
 export const AppStore = connectWithStore(
-  store,
+  global.store,
   AppStoreUnconnected,
   mapStateToProps
 );
