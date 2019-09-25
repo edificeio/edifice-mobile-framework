@@ -23,7 +23,7 @@ import HomeworkCard from "./HomeworkCard";
 import HomeworkDayCheckpoint from "./HomeworkDayCheckpoint";
 
 // Type definitions
-import { IHomeworkDay } from "../reducers/tasks";
+import { IHomeworkDay, IHomeworkTask } from "../reducers/tasks";
 
 // Misc
 import today from "../../utils/today";
@@ -31,7 +31,7 @@ import today from "../../utils/today";
 interface IHomeworkDayTasksProps {
   style?: any;
   data: IHomeworkDay;
-  onSelect?: (itemId: string, date: moment.Moment) => void;
+  onSelect?: (item: IHomeworkTask, date: moment.Moment) => void;
 }
 
 // tslint:disable-next-line:max-classes-per-file
@@ -45,7 +45,7 @@ export class HomeworkDayTasks extends React.PureComponent<
 
   public render() {
     const { data, onSelect, style } = this.props;
-    const tasksAsArray = Object.values(data.tasks);
+    const tasksAsArray = Object.values(data.tasks) as IHomeworkTask[];
 
     return (
       <View style={[style]}>
@@ -59,7 +59,7 @@ export class HomeworkDayTasks extends React.PureComponent<
             title={item.title}
             content={item.content}
             key={item.id}
-            onPress={() => onSelect(item.id, this.props.data.date)}
+            onPress={() => onSelect!(item, this.props.data.date)}
           />
         ))}
       </View>

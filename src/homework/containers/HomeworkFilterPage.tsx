@@ -5,7 +5,8 @@ import {
   IHomeworkFilterPageDataProps,
   IHomeworkFilterPageEventProps,
   IHomeworkFilterPageProps
-} from "../components/pages/HomeworkFilterPage";
+} from "../components/HomeworkFilterPage";
+import I18n from "i18n-js";
 
 import {
   fetchHomeworkDiaryList,
@@ -14,6 +15,9 @@ import {
 import { homeworkDiarySelected } from "../actions/selectedDiary";
 
 import Tracking from "../../tracking/TrackingManager";
+import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
+import { NavigationScreenProp } from "react-navigation";
+import { HeaderBackAction } from "../../ui/headers/NewHeader";
 
 const mapStateToProps: (state: any) => IHomeworkFilterPageDataProps = state => {
   // Extract data from state
@@ -60,6 +64,16 @@ class HomeworkFilterPageContainer extends React.PureComponent<
   IHomeworkFilterPageProps & { dispatch: any },
   {}
 > {
+  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
+    return alternativeNavScreenOptions(
+      {
+        title: I18n.t("homework-select"),
+        headerLeft: <HeaderBackAction navigation={navigation} />
+      },
+      navigation
+    );
+  };
+
   constructor(props) {
     super(props);
   }

@@ -23,13 +23,13 @@ import * as React from "react";
 const { FlatList, View } = style;
 import { RefreshControl } from "react-native";
 
-import { ListItem, PageContainer } from "../../../ui/ContainerContent";
+import { ListItem, PageContainer } from "../../ui/ContainerContent";
 
-import { Loading } from "../../../ui";
-import ConnectionTrackingBar from "../../../ui/ConnectionTrackingBar";
-import { EmptyScreen } from "../../../ui/EmptyScreen";
-import { Checkbox } from "../../../ui/forms/Checkbox";
-import { TextBold } from "../../../ui/text";
+import { Loading } from "../../ui";
+import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
+import { EmptyScreen } from "../../ui/EmptyScreen";
+import { Checkbox } from "../../ui/forms/Checkbox";
+import { TextBold } from "../../ui/text";
 
 // Main component ---------------------------------------------------------------------------------
 
@@ -147,7 +147,7 @@ export class HomeworkFilterPage extends React.PureComponent<
   private renderEmptyScreen() {
     return (
       <EmptyScreen
-        imageSrc={require("../../../../assets/images/empty-screen/homework.png")}
+        imageSrc={require("../../../assets/images/empty-screen/homework.png")}
         imgWidth={265.98}
         imgHeight={279.97}
         text={I18n.t("homework-emptyScreenText")}

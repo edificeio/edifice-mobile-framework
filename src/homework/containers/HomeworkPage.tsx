@@ -6,10 +6,10 @@ import {
   IHomeworkPageDataProps,
   IHomeworkPageEventProps,
   IHomeworkPageProps
-} from "../components/pages/HomeworkPage";
+} from "../components/HomeworkPage";
+import I18n from "i18n-js";
 
 import {
-  fetchHomeworkDiaryListIfNeeded,
   fetchHomeworkDiaryList
 } from "../actions/diaryList";
 import { homeworkTaskSelected } from "../actions/selectedTask";
@@ -17,6 +17,10 @@ import { fetchHomeworkTasks } from "../actions/tasks";
 
 import Tracking from "../../tracking/TrackingManager";
 import homeworkDiarySelected from "../actions/selectedDiary";
+import { NavigationScreenProp } from "react-navigation";
+import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
+import { HeaderAction, HeaderBackAction } from "../../ui/headers/NewHeader";
+import { Moment } from "moment";
 
 const mapStateToProps: (state: any) => IHomeworkPageDataProps = state => {
   // Extract data from state
@@ -88,6 +92,26 @@ class HomeworkPageContainer extends React.PureComponent<
   IHomeworkPageProps & { dispatch: any },
   {}
 > {
+  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
+    const date = navigation.getParam('date') as Moment;
+    let headerText = date ? date.format("MMMM YYYY") : null;
+    headerText = headerText
+      ? headerText.charAt(0).toUpperCase() + headerText.slice(1)
+      : I18n.t("Homework");
+
+    return standardNavScreenOptions(
+      {
+        title: headerText,
+        headerLeft: <HeaderBackAction navigation={navigation} />,
+        headerRight: <HeaderAction
+          name="filter"
+          onPress={() => navigation.navigate("HomeworkFilter")}
+        />
+      },
+      navigation
+    );
+  }
+
   constructor(props) {
     super(props);
   }

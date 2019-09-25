@@ -32,19 +32,20 @@ moment.locale("fr");
 import { RefreshControl } from "react-native";
 const { View, FlatList } = style;
 
-import { Loading } from "../../../ui";
-import ConnectionTrackingBar from "../../../ui/ConnectionTrackingBar";
-import { PageContainer } from "../../../ui/ContainerContent";
-import { EmptyScreen } from "../../../ui/EmptyScreen";
+import { Loading } from "../../ui";
+import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
+import { PageContainer } from "../../ui/ContainerContent";
+import { EmptyScreen } from "../../ui/EmptyScreen";
 
-import HomeworkDayTasks from "../HomeworkDayTasks";
-import HomeworkTimeline from "../HomeworkTimeline";
+import HomeworkDayTasks from "./HomeworkDayTasks";
+import HomeworkTimeline from "./HomeworkTimeline";
 
 // Type definitions
-import { IHomeworkTask, IHomeworkTasks } from "../../reducers/tasks";
+import { IHomeworkTask, IHomeworkTasks } from "../reducers/tasks";
 
 // Misc
-import today from "../../../utils/today";
+import today from "../../utils/today";
+import { NavigationScreenProp } from "react-navigation";
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -67,7 +68,7 @@ export interface IHomeworkPageEventProps {
 }
 
 export interface IHomeworkPageOtherProps {
-  navigation?: any;
+  navigation?: NavigationScreenProp<{}>;
 }
 
 export type IHomeworkPageProps = IHomeworkPageDataProps &
@@ -137,9 +138,10 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
             <ViewOverflow>
               <HomeworkDayTasks
                 data={item}
-                onSelect={(itemId, date) => {
-                  onSelect(diaryId, date, itemId);
-                  navigation.navigate("HomeworkTask"); // TODO : Should the navigation be in mapDispatchToProps or not ?
+                onSelect={(item, date) => {
+                  console.log("item:", )
+                  onSelect!(diaryId!, date, item.id);
+                  navigation!.navigate("HomeworkTask", {"title": item.title}); // TODO : Should the navigation be in mapDispatchToProps or not ?
                 }}
               />
             </ViewOverflow>
@@ -162,7 +164,7 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
   private renderEmptyScreen() {
     return (
       <EmptyScreen
-        imageSrc={require("../../../../assets/images/empty-screen/homework.png")}
+        imageSrc={require("../../../assets/images/empty-screen/homework.png")}
         imgWidth={265.98}
         imgHeight={279.97}
         text={I18n.t("homework-emptyScreenText")}
@@ -184,10 +186,10 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
       tasksByDay &&
       tasksByDay.length === 0 &&
       !isFetching &&
-      moment.isMoment(navigation.getParam("homework-date")) &&
-      !navigation.getParam("homework-date").isSame(today(), "month") // Prevent infinite update
+      moment.isMoment(navigation.getParam("date")) &&
+      !navigation.getParam("date").isSame(today(), "month") // Prevent infinite update
     ) {
-      navigation.setParams({ "homework-date": false }, "Homework");
+      navigation.setParams({ "date": false }, "Homework");
     }
   }
 
@@ -198,7 +200,7 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
     if (!firstItem) return;
     const firstItemDate = firstItem.item.date;
     this.props.navigation.setParams(
-      { "homework-date": firstItemDate },
+      { "date": firstItemDate },
       "Homework"
     );
     // TODO : this line causes a re-render, AND a re-parse of all the html contents... Needs to be cached.

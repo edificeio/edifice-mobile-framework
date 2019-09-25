@@ -9,16 +9,20 @@
 import style from "glamorous-native";
 import * as React from "react";
 const { ScrollView } = style;
+import I18n from "i18n-js";
 
-import { PageContainer } from "../../../ui/ContainerContent";
+import { PageContainer } from "../../ui/ContainerContent";
 
 import moment, { Moment } from "moment";
 // tslint:disable-next-line:no-submodule-imports
 import "moment/locale/fr";
 moment.locale("fr");
 
-import { HtmlContentView } from "../../../ui/HtmlContentView";
-import { Text } from "../../../ui/text";
+import { HtmlContentView } from "../../ui/HtmlContentView";
+import { Text } from "../../ui/text";
+import { NavigationScreenProp } from "react-navigation";
+import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
+import { HeaderBackAction } from "../../ui/headers/NewHeader";
 
 // Main component ---------------------------------------------------------------------------------
 
@@ -52,8 +56,19 @@ const convert = memoize(
 export class HomeworkTaskPage extends React.PureComponent<
   IHomeworkTaskPageProps,
   {}
-> {
-  constructor(props) {
+  > {
+  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
+    console.log("title", navigation.getParam('title'));
+    return alternativeNavScreenOptions(
+      {
+        title: navigation.getParam('title') || I18n.t("homework-task-empty-title"),
+        headerLeft: <HeaderBackAction navigation={navigation} />,
+      },
+      navigation
+    );
+  }
+
+  constructor(props: IHomeworkTaskPageProps) {
     super(props);
   }
 
@@ -61,7 +76,7 @@ export class HomeworkTaskPage extends React.PureComponent<
 
   public render() {
     const { date, taskContent } = this.props;
-    let formattedDate = date.format("dddd LL");
+    let formattedDate = date!.format("dddd LL");
     formattedDate =
       formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
 
