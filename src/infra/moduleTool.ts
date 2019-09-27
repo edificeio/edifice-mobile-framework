@@ -3,6 +3,7 @@ import { createMainTabNavOption } from "../navigation/helpers/mainTabNavigator";
 import { NotificationHandlerFactory } from "./pushNotification";
 import { Reducer } from "redux";
 import { NavigationScreenConfig, NavigationScreenOptions, NavigationComponent } from "react-navigation";
+import { CommonStyles } from "../styles/common/styles";
 
 /**
  * All specs to define functional module
@@ -36,6 +37,7 @@ export interface IFunctionalConfig {
   reducerName: string;
   displayName: string;
   iconName: string;
+  iconColor: string;
   group: boolean;
   notifHandlerFactory: () => Promise<NotificationHandlerFactory<any, any, any>>;
   hasRight: (apps: string[]) => boolean; 
@@ -59,6 +61,7 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
   public reducerName: string;
   public displayName: string;
   public iconName: string;
+  public iconColor: string;
   public group: boolean;
   public notifHandlerFactory: () => Promise<NotificationHandlerFactory<any, any, any>>;
   public hasRight: (apps: string[]) => boolean; 
@@ -72,6 +75,7 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
     this.displayName = opts.displayName || this.name;
     this.iconName = opts.iconName || this.name;
     this.group = opts.group === undefined ? false : opts.group;
+    this.iconColor = opts.iconColor || CommonStyles.actionColor;
     this.notifHandlerFactory = opts.notifHandlerFactory;
     this.hasRight = opts.hasRight || (apps => apps.includes(this.apiName))
   }
