@@ -16,7 +16,7 @@ class MyAppGrid extends React.PureComponent<any, {}> {
         data={modules}
         contentContainerStyle={{ alignContent: "stretch" }}
         renderItem={({ item }: any) => (
-          <MyAppItem displayName={I18n.t(item.config.displayName)} iconName={item.config.iconName} onPress={() => this.props.navigation.navigate(item.config.name)} />
+          <MyAppItem displayName={I18n.t(item.config.displayName)} iconColor={item.config.iconColor} iconName={item.config.iconName} onPress={() => this.props.navigation.navigate(item.config.name)} />
         )}
         keyExtractor={(item: IAppModule) => item.config.name}
         numColumns={2}

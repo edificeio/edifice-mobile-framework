@@ -34,16 +34,21 @@ const MyAppItemStyle = StyleSheet.create({
 });
 
 export interface IMyAppItem {
-  displayName:string,
-  iconName:string,
-  onPress:() => void
+  iconColor: string;
+  displayName: string;
+  iconName: string;
+  onPress: () => void;
 }
 
 export default (props: IMyAppItem) => {
   return (
     <ArticleContainer style={MyAppItemStyle.flexItem}>
       <TouchCard style={MyAppItemStyle.touchCard} onPress={props.onPress}>
-        <Icon size={50} name={checkHasIcon(props.iconName) ? props.iconName : props.iconName+"-on"} />
+        <Icon
+          color={props.iconColor}
+          size={50}
+          name={checkHasIcon(props.iconName) ? props.iconName : props.iconName + "-on"}
+        />
         <TextH1 style={MyAppItemStyle.textStyle}>{props.displayName}</TextH1>
       </TouchCard>
     </ArticleContainer>
