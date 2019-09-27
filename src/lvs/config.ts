@@ -8,8 +8,9 @@ export default new FunctionalModuleConfig({
   iconName: "lvs",
   group: true,
   hasRight: (apps) => {
+    const regexp = /la[- ]+vie[- ]+scolaire/i
     for(let app of apps) {
-      if(app.toUpperCase().includes("LVS")) {
+      if(app.toUpperCase().includes("LVS") || regexp.test(app)) {
         return true
       }
     }
