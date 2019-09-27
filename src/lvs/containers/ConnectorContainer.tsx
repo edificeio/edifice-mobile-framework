@@ -78,11 +78,16 @@ class ConnectorContainer extends React.PureComponent<IConnectorContainerProps> {
 }
 
 const findLvsConnector: (apps: Array<IApplicationBackend>) => string = apps => {
+  const regexp = /la[- ]+vie[- ]+scolaire/i
+
   for (const app of apps) {
     if (
       app.name.toUpperCase().includes("LVS") ||
       app.displayName.toUpperCase().includes("LVS") ||
-      app.address.toUpperCase().includes("LVS")
+      app.address.toUpperCase().includes("LVS") || 
+      regexp.test(app.name) ||
+      regexp.test(app.displayName) ||
+      regexp.test(app.address)
     ) {
       return app.address;
     }
