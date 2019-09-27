@@ -86,11 +86,11 @@ export function login(
 
       // === 3: check user validity
 
-      if (!userinfo2.hasApp) {
-        const err = new Error("EAUTH: You are not a premium user.");
-        (err as any).authErr = OAuthError.NOT_PREMIUM;
-        throw err;
-      }
+      // if (!userinfo2.hasApp) {
+      //   const err = new Error("EAUTH: You are not a premium user.");
+      //   (err as any).authErr = OAuthError.NOT_PREMIUM;
+      //   throw err;
+      // }
 
       // console.log("apps: ", userinfo2.apps);
       const userdata = await fetchJSONWithCache(
