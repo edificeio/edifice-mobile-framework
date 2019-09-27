@@ -6,6 +6,7 @@ export default new FunctionalModuleConfig({
   name: "pronote",
   displayName: "Pronote",
   iconName: "pronote",
+  iconColor: "#763294",
   group: true,
   hasRight: (apps) => {
     for(let app of apps) {
