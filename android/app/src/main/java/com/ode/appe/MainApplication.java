@@ -13,9 +13,9 @@ import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
 
 // Appcenter manual linking (automatic linking does not work)
-import com.microsoft.appcenter.reactnative.crashes.AppCenterReactNativeCrashesPackage;
-import com.microsoft.appcenter.reactnative.analytics.AppCenterReactNativeAnalyticsPackage;
-import com.microsoft.appcenter.reactnative.appcenter.AppCenterReactNativePackage;
+// import com.microsoft.appcenter.reactnative.crashes.AppCenterReactNativeCrashesPackage;
+// import com.microsoft.appcenter.reactnative.analytics.AppCenterReactNativeAnalyticsPackage;
+// import com.microsoft.appcenter.reactnative.appcenter.AppCenterReactNativePackage;
 
 // React Native Firebase modules (needs to be linked manually)
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
@@ -40,9 +40,9 @@ public class MainApplication extends Application implements ReactApplication {
       List<ReactPackage> packages = new PackageList(this).getPackages();
       // Packages that cannot be autolinked yet can be added manually here, for example:
       // packages.add(new MyReactNativePackage());
-      packages.add(new AppCenterReactNativeCrashesPackage(MainApplication.this, getResources().getString(R.string.appCenterCrashes_whenToSendCrashes)));
-      packages.add(new AppCenterReactNativeAnalyticsPackage(MainApplication.this, getResources().getString(R.string.appCenterAnalytics_whenToEnableAnalytics)));
-      packages.add(new AppCenterReactNativePackage(MainApplication.this));
+      // packages.add(new AppCenterReactNativeCrashesPackage(MainApplication.this, getResources().getString(R.string.appCenterCrashes_whenToSendCrashes)));
+      // packages.add(new AppCenterReactNativeAnalyticsPackage(MainApplication.this, getResources().getString(R.string.appCenterAnalytics_whenToEnableAnalytics)));
+      // packages.add(new AppCenterReactNativePackage(MainApplication.this));
       packages.add(new RNFirebaseMessagingPackage());
       packages.add(new RNFirebaseNotificationsPackage());
       return packages;

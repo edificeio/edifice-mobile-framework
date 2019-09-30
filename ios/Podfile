@@ -8,12 +8,12 @@ target 'appe' do
   pod 'Firebase/Messaging', '~> 6.3.0'
 
   # Appcenter (manual iOS linking as described in https://docs.microsoft.com/en-us/appcenter/sdk/getting-started/react-native#32-ios-only-integrate-the-ios-sdk-without-react-native-link)
-  pod 'appcenter', path: '../node_modules/appcenter/ios'
-  pod 'appcenter-analytics', path: '../node_modules/appcenter-analytics/ios'
-  pod 'appcenter-crashes', path: '../node_modules/appcenter-crashes/ios'
-  pod 'AppCenter/Analytics', '~> 2.1.0'
-  pod 'AppCenter/Crashes', '~> 2.1.0'
-  pod 'AppCenterReactNativeShared', '~> 2.1.0'
+  # pod 'appcenter', path: '../node_modules/appcenter/ios'
+  # pod 'appcenter-analytics', path: '../node_modules/appcenter-analytics/ios'
+  # pod 'appcenter-crashes', path: '../node_modules/appcenter-crashes/ios'
+  # pod 'AppCenter/Analytics', '~> 2.1.0'
+  # pod 'AppCenter/Crashes', '~> 2.1.0'
+  # pod 'AppCenterReactNativeShared', '~> 2.1.0'
   # pod 'appcenter-push', path: '../node_modules/appcenter-push/ios' # No code push
 
   # React Native WebView manual linking (automatic linking not supported)

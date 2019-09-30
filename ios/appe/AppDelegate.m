@@ -10,7 +10,9 @@
 // #import <AppCenterReactNativeCrashes/AppCenterReactNativeCrashes.h>
 // #import <AppCenterReactNativeAnalytics/AppCenterReactNativeAnalytics.h>
 // #import <AppCenterReactNative/AppCenterReactNative.h>
-// AppCenter manual linking as desbribed in https://docs.microsoft.com/en-us/appcenter/sdk/getting-started/react-native#32-ios-only-integrate-the-ios-sdk-without-react-native-link
+
+// https://docs.microsoft.com/en-us/appcenter/sdk/getting-started/react-native#32-ios-only-integrate-the-ios-sdk-without-react-native-link
+#import <AppCenterReactNativeShared/AppCenterReactNativeShared.h>
 #import <AppCenterReactNative.h>
 #import <AppCenterReactNativeAnalytics.h>
 #import <AppCenterReactNativeCrashes.h>
@@ -43,6 +45,8 @@
   // [AppCenterReactNative register];  // Initialize AppCenter
   // AppCenter manual linking as desbribed in https://docs.microsoft.com/en-us/appcenter/sdk/getting-started/react-native#32-ios-only-integrate-the-ios-sdk-without-react-native-link
   [AppCenterReactNative register];
+  [AppCenterReactNativeAnalytics registerWithInitiallyEnabled:true];
+  [AppCenterReactNativeCrashes registerWithAutomaticProcessing];
 
 
   // [AppCenterReactNativePush register]; // No code push configured

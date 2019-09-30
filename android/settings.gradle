@@ -5,12 +5,12 @@ apply from: file("../node_modules/@react-native-community/cli-platform-android/n
 include ':app'
 
 // Appcenter manual linking (automatic linking does not work)
-include ':appcenter-crashes'
-project(':appcenter-crashes').projectDir = new File(rootProject.projectDir, '../node_modules/appcenter-crashes/android')
-include ':appcenter-analytics'
-project(':appcenter-analytics').projectDir = new File(rootProject.projectDir, '../node_modules/appcenter-analytics/android')
-include ':appcenter'
-project(':appcenter').projectDir = new File(rootProject.projectDir, '../node_modules/appcenter/android')
+// include ':appcenter-crashes'
+// project(':appcenter-crashes').projectDir = new File(rootProject.projectDir, '../node_modules/appcenter-crashes/android')
+// include ':appcenter-analytics'
+// project(':appcenter-analytics').projectDir = new File(rootProject.projectDir, '../node_modules/appcenter-analytics/android')
+// include ':appcenter'
+// project(':appcenter').projectDir = new File(rootProject.projectDir, '../node_modules/appcenter/android')
 
 // React Native WebView manual linking (automatic linking not supported)
 include ':react-native-webview'

@@ -201,9 +201,9 @@ dependencies {
     implementation "com.google.firebase:firebase-messaging:18.0.0"
 
     // Appcenter manual linking (automatic linking does not work)
-    implementation project(':appcenter')
-    implementation project(':appcenter-crashes')
-    implementation project(':appcenter-analytics')
+    // implementation project(':appcenter')
+    // implementation project(':appcenter-crashes')
+    // implementation project(':appcenter-analytics')
 
     if (enableHermes) {
       def hermesPath = "../../node_modules/hermesvm/android/";
