@@ -18,7 +18,7 @@ import { fetchTimeline, listTimeline } from "../actions/list";
 import { INewsModel } from "../reducer";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { NavigationScreenProp } from "react-navigation";
-import { HeaderAction } from "../../ui/headers/NewHeader";
+import { HeaderAction, HeaderIcon } from "../../ui/headers/NewHeader";
 
 interface ITimelineProps {
   isFetching: boolean;
@@ -39,7 +39,6 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) =>
   standardNavScreenOptions(
     {
-      headerBackTitle: null,
       title: I18n.t("News"),
       headerLeft: <HeaderAction
         onPress={() => {
@@ -47,6 +46,7 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
         }}
         name="filter"
       />,
+      headerRight: <HeaderIcon name={null} hidden={true}/>
     },
     navigation
   );

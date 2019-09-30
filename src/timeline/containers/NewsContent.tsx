@@ -24,6 +24,7 @@ import { schoolbooks } from "../actions/dataTypes";
 import NewsTopInfo from "../components/NewsTopInfo";
 import { getSessionInfo } from "../../AppStore";
 import { Back } from "../../ui/headers/Back";
+import { HeaderBackAction } from "../../ui/headers/NewHeader";
 
 // tslint:disable-next-line:max-classes-per-file
 export class NewsContent extends React.Component<
@@ -480,7 +481,7 @@ NewsContentRouter.navigationOptions = ({ navigation }: { navigation: NavigationS
         title={navigation.state.params && navigation.state.params.news.title}
         subTitle={navigation.state.params && navigation.state.params.news.subtitle}
       />,
-      headerBackImage: <Back navigation={navigation}/>
+      headerLeft: <HeaderBackAction navigation={navigation}/>
     },
     navigation
   );

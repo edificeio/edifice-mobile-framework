@@ -23,7 +23,7 @@ import { PageContainer } from "../../ui/ContainerContent";
 import { H4 } from "../../ui/Typography";
 import { NotifPrefLine } from "../components/NotifPrefLine";
 import { NavigationScreenProp } from "react-navigation";
-import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
+import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderBackAction } from "../../ui/headers/NewHeader";
 
 // Type definitions
@@ -51,7 +51,7 @@ export class NotifPrefsPageHeader extends React.PureComponent<
 }
 
 export const NotifPrefsPageNavigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) =>
-  standardNavScreenOptions(
+  alternativeNavScreenOptions(
     {
       headerLeft: <HeaderBackAction navigation={navigation} />,
       title: I18n.t("directory-notificationsTitle"),
