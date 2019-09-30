@@ -147,17 +147,21 @@ export class LoginPage extends React.Component<
     );
   }
 
-  protected renderLogo = () => (
-    <View
+  protected renderLogo = () => {
+    const logoStyle = { height: 50, width: 200 };
+    if (Conf.currentPlatform.logoStyle) {
+      Object.assign(logoStyle, Conf.currentPlatform.logoStyle!);
+    }
+    return <View
       style={{ flexGrow: 2, alignItems: "center", justifyContent: "center" }}
     >
       <Image
         resizeMode="contain"
-        style={{ height: 50, width: 200 }}
+        style={logoStyle}
         source={Conf.currentPlatform.logo}
       />
-    </View>
-  ); // TS-ISSUE
+    </View>;
+  }; // TS-ISSUE
 
   protected renderForm() {
     const { loggingIn, loggedIn, error } = this.props.auth;
