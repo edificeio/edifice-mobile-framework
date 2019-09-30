@@ -16,6 +16,9 @@ target 'appe' do
   # pod 'AppCenterReactNativeShared', '~> 2.1.0'
   # pod 'appcenter-push', path: '../node_modules/appcenter-push/ios' # No code push
 
+  # React Native Mixpanel manual linking (automatic linking not supported)
+  pod 'react-native-mixpanel', :path => '../node_modules/react-native-mixpanel'
+
   # React Native WebView manual linking (automatic linking not supported)
   pod 'react-native-webview', :path => '../node_modules/react-native-webview'
 
