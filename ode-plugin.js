@@ -161,7 +161,16 @@ async function _updateAppIds(ode) {
     const appname = ode["appname"];
     const gradlePropertiesPath = path.resolve(__dirname, ode["properties"]["android"]);
     let gradleProperties = await readFile(gradlePropertiesPath, { encoding: "utf-8" });
-    gradleProperties = gradleProperties.replace(/(APPID=)(.*)/, "$1" + appidAndroid).replace(/(APPNAME=)(.*)/, "$1" + appname)
+    // from https://stackoverflow.com/a/21014576/6111343
+    const toUnicode = input => {
+        let result = '';
+        for (let i = 0; i < input.length; i++) {
+            // Assumption: all characters are < 0xffff
+            result += "\\u" + ("000" + input[i].charCodeAt(0).toString(16)).substr(-4);
+        }
+        return result;
+    };
+    gradleProperties = gradleProperties.replace(/(APPID=)(.*)/, "$1" + appidAndroid).replace(/(APPNAME=)(.*)/, "$1" + toUnicode(appname))
     await writeFile(gradlePropertiesPath, gradleProperties);
     //update info.plist
     const infoPlistPath = path.resolve(__dirname, ode["properties"]["ios"]);
