@@ -5,5 +5,5 @@ import FunctionalModuleConfig from "../infra/moduleTool";
 export default new FunctionalModuleConfig({
   name: "myapps",
   displayName: "MyApplications",
-  iconName: "apps"
+  iconName: "icon-apps"
 });

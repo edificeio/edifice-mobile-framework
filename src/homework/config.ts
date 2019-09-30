@@ -7,6 +7,7 @@ export default new FunctionalModuleConfig({
   apiName: "Cahier de texte",
   displayName: "Homework",
   iconName: "devoirs",
+  iconColor: "#46bfaf",
   group: true,
   notifHandlerFactory: async () => {
     //must lazy load to avoid compile errors
