@@ -30,5 +30,9 @@ export default [
   {
     config: require("./user/config").default,
     module: require("./user").default
-  }
+  },
+  {
+    config: require("./workspace/config").default,
+    module: require("./workspace").default
+  },
 ] as IAppModule[];
