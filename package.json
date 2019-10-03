@@ -3,12 +3,15 @@
   "version": "0.2.12",
   "private": true,
   "scripts": {
+    "android": "react-native run-android",
     "appcenter:build:android": "react-native bundle --platform android --dev false --entry-file 'index.js' --bundle-output 'android/app/src/main/assets/index.android.bundle' --assets-dest 'android/app/build/generated/res/react/release'",
     "appcenter:build:ios": "react-native bundle --platform ios --dev false --entry-file 'index.js' --bundle-output 'ios/appe/main.jsbundle' --assets-dest './ios'",
     "appcenter:config": "node ode-plugin.js override switch --to=$APPCENTER_TO --dontrestore --acceptall --uri=$APPCENTER_URI --branch=$APPCENTER_CONF_BRANCH --username=$APPCENTER_USERNAME --password=$APPCENTER_PWD",
+    "devices": "adb devices",
+    "ios": "react-native run-ios",
     "lint": "eslint .",
     "postinstall": "npx react-native-jetifier",
-    "start": "react-native start",
+    "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest",
     "tsc": "tsc -p tsconfig.json --watch"
   },
@@ -97,8 +100,8 @@
     "cacheDirectory": ".jest/cache"
   },
   "ode": {
-    "appid": "com.ode.appe",
-    "appname": "app-e-dev-default",
+    "appid": "cgi.appv2.test",
+    "appname": "Ile-de-France Test",
     "properties": {
       "ios": "ios/appe/Info.plist",
       "android": "android/gradle.properties"
@@ -109,15 +112,12 @@
       "ios/appe/Images.xcassets/*"
     ],
     "config": {
-      "id": "dev-default",
-      "url": "http://code.web-education.net/ODE/mobileapp-config.git",
-      "branch": "x64",
-      "google-services.android.json": "android/app/google-services.json",
-      "google-services.ios.plist": "ios/appe/GoogleService-Info.plist",
-      "ode-framework-conf.ts": "ode-framework-conf.ts",
-      "AppCenter-Config.plist": "ios/appe/AppCenter-Config.plist",
-      "appcenter-config.json": "android/app/src/main/assets/appcenter-config.json"
+      "id": "cgi.appv2.test.conf",
+      "url": "https://github.com/rollinq/mobileapp-testconfig/",
+      "google-services.json": "android/app/google-services.json",
+      "GoogleService-Info.plist": "ios/appe/GoogleService-Info.plist",
+      "ode-framework-conf.ts": "ode-framework-conf.ts"
     },
-    "current": "dev-default"
+    "current": "IDF"
   }
 }
