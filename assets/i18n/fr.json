@@ -153,11 +153,12 @@
   "welcome": "Bienvenue",
 
   "profileTypes": {
-    "Student": "Élève",
-    "Relative": "Responsable",
-    "Teacher": "Enseignant",
+    "Guest": "Invité",
     "Personnel": "Personnel",
-    "Guest": "Invité"
+    "Relative": "Responsable",
+    "Structure": "Structure",
+    "Student": "Élève",
+    "Teacher": "Enseignant"
   },
 
   "date": {

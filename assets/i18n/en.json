@@ -152,6 +152,15 @@
   "version-number": "Version",
   "welcome": "Welcome",
 
+  "profileTypes": {
+    "Guest": "Guest",
+    "Personnel": "Staff",
+    "Relative": "Parent",
+    "Structure": "School",
+    "Student": "Student",
+    "Teacher": "Teacher"
+  },
+
   "date":{
     "day_names": [
       "Sunday",
