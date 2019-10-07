@@ -17,4 +17,3 @@ sudo gem install cocoapods -v $COCOAPODS_VER
 echo "Finished installing CocoaPods version $COCOAPODS_VER"
 
 pod cache clean --all
-pod repo update
