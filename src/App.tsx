@@ -1,6 +1,6 @@
 // RN Imports
 import * as React from "react";
-import { StatusBar, View, AppState, I18nManager } from "react-native";
+import { StatusBar, View, AppState } from "react-native";
 import * as RNLocalize from "react-native-localize";
 
 // Redux
@@ -14,7 +14,6 @@ import {
 } from "react-native-firebase/notifications";
 
 // JS
-import I18n from "i18n-js";
 import Conf from "../ode-framework-conf";
 
 // ODE Mobile Framework Modules
@@ -35,7 +34,7 @@ import AppScreen from "./AppScreen";
 // Style
 import { CommonStyles } from './styles/common/styles';
 import SplashScreen from "react-native-splash-screen";
-
+import { initI18n } from "./infra/i18n";
 
 // Disable Yellow Box on release builds.
 if (!__DEV__) {
@@ -44,27 +43,6 @@ if (!__DEV__) {
 }
 
 // Translation setup
-const initI18n = () => {
-  I18n.fallbacks = true;
-  I18n.defaultLocale = "en";
-  I18n.translations = {
-    en: require("../assets/i18n/en"),
-    es: require("../assets/i18n/es"),
-    fr: require("../assets/i18n/fr"),
-    pt: require("../assets/i18n/pt")
-  };
-  const res =
-      RNLocalize.findBestAvailableLanguage(Object.keys(I18n.translations)) as {
-        languageTag: string;
-        isRTL: boolean;
-    };
-  if(res){
-    I18nManager.forceRTL(res.isRTL);
-    I18n.locale = res.languageTag;
-  }else{
-    I18n.locale = I18n.defaultLocale;
-  }
-}
 initI18n();
 
 class AppStoreUnconnected extends React.Component<
