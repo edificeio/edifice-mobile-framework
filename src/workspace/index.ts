@@ -1,4 +1,4 @@
-import conversationConfig from "./config";
+import config from "./config";
 
 import mainComp from "./navigator";
 import mainReducer from "./reducers";
@@ -10,7 +10,7 @@ export const root = mainComp;
 export const reducer = mainReducer;
 
 // Route
-export const route = conversationConfig.createRoute(root);
+export const route = config.createRoute(root);
 
 export default {
   reducer,

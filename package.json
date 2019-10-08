@@ -68,8 +68,14 @@
     "@babel/runtime": "^7.5.4",
     "@jumpn/react-native-jetifier": "^0.1.4",
     "@react-native-community/eslint-config": "^0.0.5",
-    "@types/jest": "^24.0.15",
-    "@types/react": "^16.8.23",
+    "@types/core-js": "^2.5.2",
+    "@types/node": "^12.7.11",
+    "@types/react-navigation": "^3.0.8",
+    "@types/react-redux": "^7.1.4",
+    "@types/redux": "^3.6.0",
+    "@types/webpack-env": "^1.14.0",
+    "@types/jest": "^24.0.18",
+    "@types/react": "^16.9.5",
     "@types/react-native": "^0.60.0",
     "@types/react-test-renderer": "^16.8.2",
     "babel-jest": "^24.8.0",
@@ -100,8 +106,8 @@
     "cacheDirectory": ".jest/cache"
   },
   "ode": {
-    "appid": "cgi.appv2.test",
-    "appname": "Ile-de-France Test",
+    "appid": "com.ode.appe",
+    "appname": "app-e-dev-default",
     "properties": {
       "ios": "ios/appe/Info.plist",
       "android": "android/gradle.properties"
@@ -112,12 +118,15 @@
       "ios/appe/Images.xcassets/*"
     ],
     "config": {
-      "id": "cgi.appv2.test.conf",
-      "url": "https://github.com/rollinq/mobileapp-testconfig/",
-      "google-services.json": "android/app/google-services.json",
-      "GoogleService-Info.plist": "ios/appe/GoogleService-Info.plist",
-      "ode-framework-conf.ts": "ode-framework-conf.ts"
+      "id": "dev-default",
+      "url": "http://code.web-education.net/ODE/mobileapp-config.git",
+      "branch": "x64",
+      "google-services.android.json": "android/app/google-services.json",
+      "google-services.ios.plist": "ios/appe/GoogleService-Info.plist",
+      "ode-framework-conf.ts": "ode-framework-conf.ts",
+      "AppCenter-Config.plist": "ios/appe/AppCenter-Config.plist",
+      "appcenter-config.json": "android/app/src/main/assets/appcenter-config.json"
     },
-    "current": "IDF"
+    "current": "dev-default"
   }
 }

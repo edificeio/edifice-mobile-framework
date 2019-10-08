@@ -1,18 +1,10 @@
 import { combineReducers } from "redux";
-
-import { IConversationMessageList, IConversationMessage } from "../actions/sendMessage";
-import messages from "./messages";
-import threadList, { IConversationThread, IConversationThreadList } from "./list";
-import threadSelected from "./threadSelected";
-import receiversDisplay, { IConversationReceiverList } from "./receiversDisplay";
-import users from "./users";
+import documents from "./documents";
+import folders from "./documents";
 
 const rootReducer = combineReducers({
-  messages,
-  threadList,
-  threadSelected,
-  receiversDisplay,
-  users
+  folders,
+  documents
 });
-export { IConversationMessageList, IConversationMessage, IConversationReceiverList, IConversationThread, IConversationThreadList }
+
 export default rootReducer;

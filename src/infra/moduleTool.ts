@@ -33,14 +33,14 @@ export function toSnakeCase(camelCase: string) {
 export interface IFunctionalConfig {
   name: string;
   apiName: string; // name in list of avaible apps received from the backend
-  actionPrefix: string;
-  reducerName: string;
+  actionPrefix?: string;
+  reducerName?: string;
   displayName: string;
   iconName: string;
-  iconColor: string;
-  group: boolean;
-  notifHandlerFactory: () => Promise<NotificationHandlerFactory<any, any, any>>;
-  hasRight: (apps: string[]) => boolean; 
+  iconColor?: string;
+  group?: boolean;
+  notifHandlerFactory?: () => Promise<NotificationHandlerFactory<any, any, any>>;
+  hasRight?: (apps: string[]) => boolean;
 }
 
 export interface IAppModule {
