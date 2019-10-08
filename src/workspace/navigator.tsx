@@ -1,8 +1,8 @@
 import { createStackNavigator } from "react-navigation";
-import Page from "./containers/Page";
+import ContainerList from "./containers/List";
 
 export default createStackNavigator({
-  page: {
-    screen: Page
+  Workspace: {
+    screen: ContainerList
   },
 });
