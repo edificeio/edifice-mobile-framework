@@ -4,12 +4,12 @@
  */
 import asyncReducer from "../../infra/redux/async";
 
-import { actionTypes } from "../actions/documents"
+import { actionTypes } from "../actions/folders"
 import { IWorkspaceFolderArray } from "../types";
 
 const stateDefault: IWorkspaceFolderArray = {};
 
-const documentsListReducer = (
+const foldersListReducer = (
   state: IWorkspaceFolderArray = stateDefault,
   action
 ) => {
@@ -22,7 +22,7 @@ const documentsListReducer = (
 };
 
 export default asyncReducer<IWorkspaceFolderArray>(
-  documentsListReducer,
+  foldersListReducer,
   actionTypes
 );
 
