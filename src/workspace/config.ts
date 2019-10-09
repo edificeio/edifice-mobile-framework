@@ -1,5 +1,4 @@
 import FunctionalModuleConfig from "../infra/moduleTool";
-import {NotificationHandlerFactory} from "../infra/pushNotification";
 
 // tslint:disable:object-literal-sort-keys
 
