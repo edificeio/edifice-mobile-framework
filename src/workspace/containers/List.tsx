@@ -4,8 +4,8 @@ import config from "../config";
 import { NavigationScreenProp } from "react-navigation";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { bindActionCreators } from "redux";
-import { getDocuments } from "../actions/documents";
-import { getFolders } from "../actions/folders";
+import { getFolderDocuments } from "../actions/documents";
+import { getSubFolders } from "../actions/folders";
 import List from "../components/List";
 import { View } from "react-native";
 
@@ -16,7 +16,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => {
-  return bindActionCreators({ getDocuments, getFolders }, dispatch);
+  return bindActionCreators({ getFolderDocuments, getSubFolders }, dispatch);
 };
 
 class ContainerList extends React.PureComponent<any, {}> {
@@ -29,14 +29,26 @@ class ContainerList extends React.PureComponent<any, {}> {
     );
   };
 
-  public componentDidMount() {
-    this.props.getDocuments();
-    this.props.getFolders();
+  private refreshScreen = () => {
+    this.props.getFolderDocuments(this.props.navigation.getParam("id"));
+    this.props.getSubFolders(this.props.navigation.getParam("id"));
+  }
+
+  private refreshOnGoBack = this.props.navigation.addListener("didFocus", this.refreshScreen)
+
+  public componentWillUnmount() {
+    this.refreshOnGoBack.remove()
   }
 
   public render() {
     if (this.props.folders || this.props.documents) {
-      return <List folders={this.props.folders} documents={this.props.documents} />;
+      return (
+        <List
+          navigate={(id, name) => this.props.navigation.push("FolderView", { id, name })}
+          folders={this.props.folders}
+          documents={this.props.documents}
+        />
+      );
     } else {
       <View />;
     }

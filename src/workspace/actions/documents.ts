@@ -45,11 +45,25 @@ export function documentsListFetchError(errmsg: string) {
 
 // THUNKS -----------------------------------------------------------------------------------------
 
-export function getDocuments() {
+export function getFolderDocuments(parentId: string) {
+  return getDocuments({ parentId });
+}
+
+function getDocuments(parameters: Partial<IDocumentsParameters>) {
+  const formatParameters = (parameters = {}) => {
+    let result = "?";
+    for (let key in parameters) {
+      if (parameters[key]) {
+        result = result.concat(`${key}=${parameters[key]}&`);
+      }
+    }
+    return result.slice(0, -1);
+  };
+
   return async (dispatch, getState) => {
     dispatch(documentsListRequested());
     try {
-      const data = await asyncGetJson(`/workspace/documents`, backendDocumentsAdapter);
+      const data = await asyncGetJson(`/workspace/documents${formatParameters(parameters)}`, backendDocumentsAdapter);
       dispatch(documentsListReceived(data));
     } catch (errmsg) {
       dispatch(documentsListFetchError(errmsg));

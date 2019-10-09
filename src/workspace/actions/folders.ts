@@ -5,7 +5,7 @@
 
 import { asyncActionTypes, asyncGetJson } from "../../infra/redux/async";
 import workspaceConfig from "../config";
-import { IWorkspaceBackendFolderArray, IWorkspaceFolderArray } from "../types";
+import { IWorkspaceBackendFolderArray, IWorkspaceFolderArray, IFoldersParameters, FiltersEnum } from "../types";
 
 // ADAPTER ----------------------------------------------------------------------------------------
 
@@ -45,11 +45,29 @@ export function foldersListFetchError(errmsg: string) {
 
 // THUNKS -----------------------------------------------------------------------------------------
 
-export function getFolders() {
+export function getFilteredFolders(filter: FiltersEnum) {
+  return getFolders({ filter });
+}
+
+export function getSubFolders(parentId: string) {
+  return getFolders({ filter: FiltersEnum.owner, parentId });
+}
+
+function getFolders(parameters: Partial<IFoldersParameters>) {
+  const formatParameters = (parameters = {}) => {
+    let result = "?";
+    for (let key in parameters) {
+      if (parameters[key]) {
+        result = result.concat(`${key}=${parameters[key]}&`);
+      }
+    }
+    return result.slice(0, -1);
+  };
+
   return async (dispatch, getState) => {
     dispatch(foldersListRequested());
     try {
-      const data = await asyncGetJson(`/workspace/folders/list`, backendFoldersAdapter);
+      const data = await asyncGetJson(`/workspace/folders/list${formatParameters(parameters)}`, backendFoldersAdapter);
       dispatch(foldersListReceived(data));
     } catch (errmsg) {
       dispatch(foldersListFetchError(errmsg));

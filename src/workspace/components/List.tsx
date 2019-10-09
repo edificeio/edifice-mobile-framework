@@ -1,27 +1,16 @@
 // Libraries
 import * as React from "react";
 import { View, FlatList } from "react-native";
-
-import { Text } from "../../ui/Typography";
-
-// Main component ---------------------------------------------------------------------------------
+import Folder from "./Folder";
+import File from "./File";
 
 export default class List extends React.PureComponent<any> {
-  // Render
-
-  private displayItem = ({item}) => {
-    return (
-      <View>
-        <Text>{item.name}</Text>
-      </View>
-    );
-  };
 
   public render() {
     return (
       <View>
-        <FlatList data={Object.values(this.props.folders)} renderItem={this.displayItem} />
-        <FlatList data={Object.values(this.props.documents)} renderItem={this.displayItem} />
+        <FlatList data={Object.values(this.props.folders)} renderItem={({item}) => (<Folder {...item} navigate={this.props.navigate}/>)} />
+        <FlatList data={Object.values(this.props.documents)} renderItem={({item}) => (<File {...item}/>)} />
       </View>
     );
   }
