@@ -25,7 +25,7 @@ export const Entity = ({date, id, isFolder, name, number, onPress, ownerName}: I
     return (
         <TouchableOpacity style={style.containerStyle} onPress={() => onPress(id)}>
             <LeftPanel>
-                <Icon size={layoutSize.LAYOUT_50} name={isFolder ? "folder1" : "file-pdf"} />
+                <Icon size={layoutSize.LAYOUT_40} name={isFolder ? "folder1" : "file-pdf"} />
             </LeftPanel>
             <CenterPanel>
                 <Text><Bold>{name}</Bold></Text>

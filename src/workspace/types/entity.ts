@@ -47,6 +47,7 @@ export interface INavigationProps {
 
 export interface IDataProps {
   filesFolders: IEntityArray;
+  isFetching: boolean
 }
 
 export type IProps = IActionProps & IEventProps & INavigationProps & IDataProps
