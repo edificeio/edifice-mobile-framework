@@ -1,5 +1,6 @@
 import { Dimensions, StyleSheet } from "react-native";
 import { CommonStyles } from './common/styles';
+import {layoutSize} from "./common/layoutSize";
 
 export const deviceWidth = Dimensions.get("window").width
 
@@ -63,6 +64,22 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 		paddingVertical: 12,
 	},
+	item_flexrow: {
+		backgroundColor: "white",
+		flexDirection: "row",
+		paddingHorizontal: 16,
+		paddingVertical: 12,
+	},
+	LeftBottomPosition: {
+		position: 'absolute',
+		left: layoutSize.LAYOUT_4,
+		bottom: layoutSize.LAYOUT_4,
+	},
+	LeftTopPosition: {
+		position: 'absolute',
+		left: layoutSize.LAYOUT_4,
+		top: 0,
+	},
 	line: {
 		alignItems: "center",
 		justifyContent: "center",
@@ -84,6 +101,16 @@ const styles = StyleSheet.create({
 		fontSize: 14,
 		textDecorationLine: "underline",
 	},
+	RightBottomPosition: {
+		position: 'absolute',
+		right: layoutSize.LAYOUT_4,
+		bottom: layoutSize.LAYOUT_4,
+	},
+	RightTopPosition: {
+		position: 'absolute',
+		right: layoutSize.LAYOUT_4,
+		top: 0,
+	},
 	statusText: {
 		color: CommonStyles.fadColor,
 		fontSize: 7,
@@ -93,6 +120,16 @@ const styles = StyleSheet.create({
 		color: CommonStyles.textInputColor,
 		fontFamily: CommonStyles.primaryFontFamily,
 		fontSize: 14,
+	},
+	textHeader: {
+		color: CommonStyles.shadowColor,
+		fontFamily: CommonStyles.secondaryFontFamily,
+		fontSize: layoutSize.LAYOUT_15
+	},
+	textMin: {
+		color: CommonStyles.fadColor,
+		fontFamily: CommonStyles.secondaryFontFamily,
+		fontSize: layoutSize.LAYOUT_10,
 	},
 	webview: {
 		backgroundColor: "#eee",
