@@ -1,8 +1,8 @@
 import { combineReducers } from "redux";
-import filesFolders from "./entities";
+import workspace from "./entities";
 
 const rootReducer = combineReducers({
-  filesFolders,
+  workspace,
 });
 
 export default rootReducer;

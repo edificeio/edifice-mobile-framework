@@ -5,23 +5,26 @@
 import asyncReducer from "../../infra/redux/async";
 
 import { actionTypes } from "../actions/list"
-import { IEntityArray } from "../types/entity";
+import {IStateWorkspace} from "../types/entity";
 
-const stateDefault: IEntityArray = {};
+const stateDefault: IStateWorkspace = {};
 
 const entitiesListReducer = (
-  state: IEntityArray = stateDefault,
+  state: IStateWorkspace = stateDefault,
   action: any
 ) => {
   switch (action.type) {
     case actionTypes.received:
-      return action.data;
+      return {
+      ...state,
+      [action.id ? action.id : "root"]: action.data
+    }
     default:
       return state;
   }
 };
 
-export default asyncReducer<IEntityArray>(
+export default asyncReducer<IStateWorkspace>(
   entitiesListReducer,
   actionTypes
 );
