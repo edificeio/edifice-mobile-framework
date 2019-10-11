@@ -10,6 +10,8 @@ import {IEntity, IProps} from "../types/entity";
 import {Entity} from "../components";
 import {fetchWorkspaceList} from "../actions/list";
 import {Loading} from "../../ui";
+import {CommonStyles} from "../../styles/common/styles";
+import {layoutSize} from "../../styles/common/layoutSize";
 
 
 const HeaderBackAction = ({navigation, style}: {
@@ -53,6 +55,16 @@ export class List extends React.PureComponent<IProps, {}> {
         this.props.navigation.navigate({routeName: "Workspace", params: {backId, filter, parentId}, key: parentId})
     }
 
+    renderSeparator = () => (
+        <View
+            style={{
+                borderTopColor: CommonStyles.borderColorLighter,
+                borderTopWidth: 1,
+                marginLeft: layoutSize.LAYOUT_70,
+            }}
+        />
+    );
+
     public render() {
         const {filesFolders, isFetching} = this.props
 
@@ -63,6 +75,7 @@ export class List extends React.PureComponent<IProps, {}> {
             <View>
                 <FlatList
                     data={Object.values(filesFolders)}
+                    ItemSeparatorComponent={this.renderSeparator}
                     keyExtractor={(item: IEntity) => item.id}
                     renderItem={({item}) => <Entity {...item} onPress={this.onPress.bind(this)}/>}
                 />

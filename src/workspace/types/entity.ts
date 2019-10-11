@@ -20,7 +20,7 @@ export type IRight = {
 }
 
 export type IEntity = IRight & {
-  date: string,
+  date: number,
   id: string,
   name: string,
   number: number
