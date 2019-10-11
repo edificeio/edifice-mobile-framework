@@ -6,7 +6,7 @@ import {NavigationScreenProp} from "react-navigation";
 import {standardNavScreenOptions} from "../../navigation/helpers/navScreenOptions";
 import {HeaderAction} from "../../ui/headers/NewHeader";
 import {FlatList, View, ViewStyle} from "react-native";
-import {IEntity, IProps} from "../types/entity";
+import {IEntity, IProps, IStateWorkspace} from "../types/entity";
 import {Entity} from "../components";
 import {fetchWorkspaceList} from "../actions/list";
 import {Loading} from "../../ui";
@@ -21,12 +21,9 @@ const HeaderBackAction = ({navigation, style}: {
     const parentId = navigation.getParam("backId")
 
     return (
-        <HeaderAction
-            onPress={() => navigation.navigate({routeName: "Workspace", params: {filter, parentId}, key: Math.random().toString()})}
-            name={"back"} style={style}/>
+        <HeaderAction onPress={() => navigation.pop()} name={"back"} style={style}/>
     )
 }
-
 
 
 export class List extends React.PureComponent<IProps, {}> {
@@ -52,7 +49,7 @@ export class List extends React.PureComponent<IProps, {}> {
         const filter = this.props.navigation.getParam("filter")
         const backId = this.props.navigation.getParam("parentId")
 
-        this.props.navigation.navigate({routeName: "Workspace", params: {backId, filter, parentId}, key: parentId})
+        this.props.navigation.push( "Workspace", {filter, parentId})
     }
 
     renderSeparator = () => (
@@ -84,11 +81,14 @@ export class List extends React.PureComponent<IProps, {}> {
     }
 }
 
-const mapStateToProps = (state: any) => {
-    const filesFolders = config.getLocalState(state).filesFolders.data;
-    const {isFetching} = config.getLocalState(state).filesFolders;
-    return {filesFolders, isFetching};
-};
+const mapStateToProps = (state: any, props: any) => {
+    const stateWorkspace: IStateWorkspace = config.getLocalState(state).workspace.data
+    const {isFetching} = config.getLocalState(state).workspace;
+    const parentId = props.navigation.getParam("parentId") || "root";
+
+    return {filesFolders: stateWorkspace[parentId] || [], isFetching};
+}
+
 
 const mapDispatchToProps = (dispatch: any) => {
     return bindActionCreators({fetchWorkspaceList}, dispatch);

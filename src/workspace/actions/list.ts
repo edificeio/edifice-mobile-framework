@@ -7,7 +7,7 @@ import {
   asyncActionTypes,
 } from "../../infra/redux/async";
 import workspaceConfig from "../config";
-import {IEntityArray, IFiltersParameters, IState} from "../types/entity";
+import {IEntityArray, IFiltersParameters} from "../types/entity";
 import {getFolders} from "./helpers/folders";
 import {getDocuments} from "./helpers/documents";
 
@@ -25,8 +25,8 @@ export function workspaceListRequested() {
   return { type: actionTypes.requested };
 }
 
-export function workspaceListReceived(data: IEntityArray) {
-  return { type: actionTypes.received, data, receivedAt: Date.now() };
+export function workspaceListReceived(data: IEntityArray, id: string|undefined) {
+  return { type: actionTypes.received, data, id, receivedAt: Date.now() };
 }
 
 export function workspaceListFetchError(errmsg: string) {
@@ -40,7 +40,7 @@ export function workspaceListFetchError(errmsg: string) {
  * Dispatches WORKSPACE_LIST_REQUESTED, WORKSPACE_LIST_RECEIVED, and WORKSPACE_LIST_FETCH_ERROR if an error occurs.
  */
 export function fetchWorkspaceList(parameters: IFiltersParameters) {
-  return async (dispatch: any, state: IState) => {
+  return async (dispatch: any, state: any) => {
     dispatch(workspaceListRequested());
 
     try {
@@ -48,7 +48,7 @@ export function fetchWorkspaceList(parameters: IFiltersParameters) {
     let dataDocuments = await getDocuments(parameters)
     let data = { ...dataFolders, ...dataDocuments}
 
-      dispatch(workspaceListReceived(data));
+      dispatch(workspaceListReceived(data, parameters.parentId));
     } catch (errmsg) {
       dispatch(workspaceListFetchError(errmsg));
     }

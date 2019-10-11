@@ -59,7 +59,7 @@ const backendDocumentsAdapter: (data: IBackendDocumentArray) => IEntityArray= da
 // FETCH -----------------------------------------------------------------------------------------
 
 export async function getDocuments(parameters: IFiltersParameters) {
-  const formatParameters = (parameters = {}) => {
+  const formatParameters = (parameters: IFiltersParameters = {}) => {
     let result = "?";
     for (let key in parameters) {
       if (parameters[key] == undefined)
