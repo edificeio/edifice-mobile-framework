@@ -151,6 +151,7 @@
   "unknown-user": "Unknown user",
   "version-number": "Version",
   "welcome": "Welcome",
+  "workspace": "Workspace",
 
   "profileTypes": {
     "Guest": "Guest",
