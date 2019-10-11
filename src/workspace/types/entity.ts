@@ -29,9 +29,12 @@ export type IEntity = IRight & {
 
 export type IEntityArray = IArrayById<IEntity>;
 
-export interface IState {
+export interface IStateView {
+  id: string,
   filesFolders: IEntityArray;
 }
+
+export type IStateWorkspace = IArrayById<IStateView>;
 
 export interface IActionProps {
   fetchWorkspaceList: (params: IFiltersParameters) => void
