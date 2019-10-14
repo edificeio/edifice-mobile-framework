@@ -5,6 +5,7 @@
 
 import { asyncGetJson } from "../../../infra/redux/async";
 import {IEntityArray, IFiltersParameters} from "../../types/entity";
+import { filters } from "./filters";
 
 // TYPE -------------------------------------------------------------------------------------------
 
@@ -40,7 +41,7 @@ export type IBackendDocumentArray = Array<IBackendDocument>;
 // ADAPTER ----------------------------------------------------------------------------------------
 
 const backendDocumentsAdapter: (data: IBackendDocumentArray) => IEntityArray= data => {
-  const result = {} as any;
+  const result = {} as IEntityArray;
   if (!data) return result;
   for (const item of data) {
     result[item._id] = {
@@ -49,7 +50,7 @@ const backendDocumentsAdapter: (data: IBackendDocumentArray) => IEntityArray= da
       isFolder: false,
       name: item.name,
       number: 0,
-      owner: item.owner,
+      owner: filters(item.owner),
       ownerName: item.ownerName,
     };
   }
@@ -62,9 +63,9 @@ export async function getDocuments(parameters: IFiltersParameters) {
   const formatParameters = (parameters: IFiltersParameters = {}) => {
     let result = "?";
     for (let key in parameters) {
-      if (parameters[key] == undefined)
+      if ((parameters as any)[key] == undefined)
         continue
-      result = result.concat(`${key}=${parameters[key]}&`);
+      result = result.concat(`${key}=${(parameters as any)[key]}&`);
     }
     return result.slice(0, -1);
   };

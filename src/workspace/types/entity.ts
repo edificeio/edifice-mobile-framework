@@ -1,21 +1,20 @@
 import rootReducer from "../reducers";
 import { NavigationScreenProp } from "react-navigation";
-import {IArrayById} from "../../infra/collections";
 
-export enum FiltersEnum {
+export enum Filters {
   owner = "owner",
   shared = "shared",
   protected = "protected",
-  trash = "trash",
+  trash = "trash"
 }
 
-export type IFiltersParameters = {
-  filter?: FiltersEnum;
+export interface IFiltersParameters {
+  filter?: Filters;
   parentId?: string;
 };
 
 export type IRight = {
-  owner: FiltersEnum;
+  owner: Filters;
   ownerName: string;
 }
 
@@ -27,14 +26,13 @@ export type IEntity = IRight & {
   isFolder: boolean
 }
 
-export type IEntityArray = IArrayById<IEntity>;
-
-export interface IStateView {
-  id: string,
-  filesFolders: IEntityArray;
+export interface IEntityArray {
+  [key: string]: IEntity;
 }
 
-export type IStateWorkspace = IArrayById<IStateView>;
+export interface IStateWorkspace {
+  [key: string]: IEntityArray;
+}
 
 export interface IActionProps {
   fetchWorkspaceList: (params: IFiltersParameters) => void

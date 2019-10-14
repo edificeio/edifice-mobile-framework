@@ -1,4 +1,5 @@
 import { fetchJSONWithCache } from "../fetchWithCache";
+import { Reducer } from "redux";
 
 /**
  * Async iterable reducer constructor.
@@ -22,11 +23,19 @@ import { fetchJSONWithCache } from "../fetchWithCache";
 
 // TYPE DEFINITIONS ----------------------------------------------------------------------------------------
 
-export interface IAsyncReducer<T> {
-  data: T;
+export interface IAction<T> {
+  id?: string,
+  type: string;
+  receivedAt?: Date;
+  data?: T
+}
+
+
+export interface IState<T> {
+  data: T | undefined;
   didInvalidate: boolean;
   isFetching: boolean;
-  lastUpdated: Date;
+  lastUpdated: Date | null;
 }
 
 export interface IAsyncActionTypes {
@@ -70,7 +79,7 @@ export const asyncActionTypes: (
  * Returns if data should be fetched again from the server.
  * @param state the asyncReducer state.
  */
-export const shouldFetch: (state: IAsyncReducer<any>) => boolean = state => {
+export const shouldFetch: (state: IState<any>) => boolean = state => {
   if (state === undefined) return true;
   if (state.isFetching) {
     return false;
@@ -110,15 +119,13 @@ export const asyncGetJson: <DataTypeBackend, DataType>(
  * @param fetchFunc function to fetch data. Must return a value that could be directely put into the reducer data.
  * @param args optional - additional arguments to be passed to the fetchFunc.
  */
-export const asyncFetchIfNeeded: <
-  DataType = any,
-  StateType extends IAsyncReducer<DataType> = IAsyncReducer<DataType>
->(
+export const asyncFetchIfNeeded: <DataType = any,
+  StateType extends IState<DataType> = IState<DataType>>(
   localState: (globalState: any) => StateType,
   fetchFunc: (...args: any[]) => DataType,
   ...args: any[]
 ) => any = (localState, fetchFunc, ...args) => {
-  return (dispatch, getState) => {
+  return (dispatch: any, getState: any) => {
     if (shouldFetch(localState(getState()))) {
       return dispatch(fetchFunc(...args));
     }
@@ -134,17 +141,17 @@ export const asyncFetchIfNeeded: <
  * @param actionTypes You have to give the action types you use for this reducer. Pass the result of asyncActionTypes().
  */
 export default function asyncReducer<T>(
-  dataReducer: (state?: T, action?: any) => T,
+  dataReducer: Reducer<T, IAction<T>>,
   actionTypes: IAsyncActionTypes
-) {
+): Reducer< any, any> {
   return (
-    state: IAsyncReducer<T> = {
+    state: IState<T> = {
       data: undefined, // Set by homework.diaryList reducer.
       didInvalidate: true,
       isFetching: false,
       lastUpdated: null
     },
-    action: { type: string; receivedAt?: Date; data?: T }
+    action: IAction<T>
   ) => {
     // Reducing
     const data = dataReducer(state.data, action);
@@ -167,7 +174,7 @@ export default function asyncReducer<T>(
           data,
           didInvalidate: false,
           isFetching: false,
-          lastUpdated: action.receivedAt
+          lastUpdated: action.receivedAt || null
         };
       case actionTypes.fetchError:
         return {
