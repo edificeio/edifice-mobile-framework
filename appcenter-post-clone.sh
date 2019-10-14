@@ -5,15 +5,14 @@
 # (Remove this file if this issue is resolved)
 #!/usr/bin/env bash
 
-# echo 'Doing some post-clone stuff...'
+echo 'Installing CocoaPods 1.7.5'
+echo 'Remove this script when AppCenter module will be compatible with CocoaPods 1.8.x'
 
-#This should match what's in Podfile.lock for COCOAPODS:
-# COCOAPODS_VER=1.7.5
+# Remove installed cocoapods version
+sudo gem uninstall cocoapods -a -x
 
-# echo "Installing CocoaPods version $COCOAPODS_VER"
+# Install v1.7.5
+sudo gem install cocoapods -v 1.7.5
 
-# sudo gem install cocoapods -v $COCOAPODS_VER
-
-# echo "Finished installing CocoaPods version $COCOAPODS_VER"
-
-# pod cache clean --all
+# Pod cache clean
+# pod cache clean --all # NO WAY !!
