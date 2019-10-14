@@ -38,6 +38,11 @@ export class List extends React.PureComponent<IProps, {}> {
   };
 
   public componentDidMount() {
+    const {filesFolders} = this.props
+
+    if (Object.keys(filesFolders).length > 0)   // already read
+      return
+
     this.props.fetchWorkspaceList(
       {
         filter: this.props.navigation.getParam("filter"),
