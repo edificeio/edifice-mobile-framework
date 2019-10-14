@@ -4,10 +4,8 @@
  */
 
 import { asyncGetJson } from "../../../infra/redux/async";
-import {
-  FiltersEnum,
-  IEntityArray, IFiltersParameters
-} from "../../types/entity";
+import { Filters, IEntityArray, IFiltersParameters } from "../../types/entity";
+import { filters } from "./filters";
 
 // TYPE -------------------------------------------------------------------------------------------
 
@@ -33,7 +31,7 @@ export type IBackendFolderArray = Array<IBackendFolder>;
 // ADAPTER ----------------------------------------------------------------------------------------
 
 const backendFoldersAdapter: (data: IBackendFolderArray) => IEntityArray = data => {
-  const result = {} as any;
+  const result = {} as IEntityArray;
   if (!data) return result;
   for (const item of data) {
     result[item._id] = {
@@ -42,7 +40,7 @@ const backendFoldersAdapter: (data: IBackendFolderArray) => IEntityArray = data 
       isFolder: true,
       name: item.name,
       number: 1,
-      owner: item.owner,
+      owner: filters(item.owner),
       ownerName: item.ownerName,
     };
   }
@@ -51,22 +49,21 @@ const backendFoldersAdapter: (data: IBackendFolderArray) => IEntityArray = data 
 
 // THUNKS -----------------------------------------------------------------------------------------
 
-export function getFilteredFolders(filter: FiltersEnum) {
+export function getFilteredFolders(filter: Filters) {
   return getFolders({ filter });
 }
 
 export function getSubFolders(parentId: string) {
-  return getFolders({ filter: FiltersEnum.owner, parentId });
+  return getFolders({ filter: Filters.owner, parentId });
 }
 
 export async function getFolders(parameters: IFiltersParameters) {
   const formatParameters = (parameters = {}) => {
     let result = "?";
-    for (let key in parameters)
-    {
-      if (parameters[key] == undefined)
+    for (let key in parameters) {
+      if ((parameters as any)[key] == undefined)
         continue
-      result = result.concat(`${key}=${parameters[key]}&`);
+      result = result.concat(`${key}=${(parameters as any)[key]}&`);
     }
     return result.slice(0, -1);
   };

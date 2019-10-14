@@ -2,23 +2,24 @@
  * Workspace state reducer
  * Holds a list of available homework diary Ids in a simple Array
  */
-import asyncReducer from "../../infra/redux/async";
+import { Reducer } from "redux";
+import asyncReducer, { IAction } from "../../infra/redux/async";
 
 import { actionTypes } from "../actions/list"
-import {IStateWorkspace} from "../types/entity";
+import { IStateWorkspace } from "../types/entity";
 
 const stateDefault: IStateWorkspace = {};
 
-const entitiesListReducer = (
+const entitiesListReducer: Reducer<IStateWorkspace, IAction<any>> = (
   state: IStateWorkspace = stateDefault,
-  action: any
+  action: IAction<any>
 ) => {
   switch (action.type) {
     case actionTypes.received:
       return {
-      ...state,
-      [action.id ? action.id : "root"]: action.data
-    }
+        ...state,
+        [action.id ? action.id : "root"]: action.data
+      }
     default:
       return state;
   }
@@ -27,5 +28,5 @@ const entitiesListReducer = (
 export default asyncReducer<IStateWorkspace>(
   entitiesListReducer,
   actionTypes
-);
+)
 
