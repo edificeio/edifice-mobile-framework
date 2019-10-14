@@ -25,6 +25,7 @@ import { ThunkDispatch } from "redux-thunk";
 import Notifier from "../../infra/notifier/container";
 import { changePasswordResetAction } from "../actions/changePassword";
 import { TextColor } from "../../ui/text";
+import { getSessionInfo } from "../../AppStore";
 
 export interface IProfilePageDataProps {
   userauth: IUserAuthState;
@@ -217,6 +218,7 @@ export class ProfilePage extends React.PureComponent<
 
 export class ProfilePageContainer extends React.PureComponent<IProfilePageProps> {
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
+    const canEdit = getSessionInfo().type !== "Student";
     const isEditMode = navigation.getParam("edit", false);
     if (isEditMode) {
       return standardNavScreenOptions(
@@ -231,7 +233,7 @@ export class ProfilePageContainer extends React.PureComponent<IProfilePageProps>
             }}
             title={I18n.t("Cancel")}
           />,
-          headerRight: <HeaderAction
+          headerRight: canEdit ? <HeaderAction
             onPress={() => {
               const values = navigation.getParam("updatedProfileValues") as IProfilePageState;
               if (values) {
@@ -250,7 +252,7 @@ export class ProfilePageContainer extends React.PureComponent<IProfilePageProps>
               }
             }}
             title={I18n.t("Save")}
-          />,
+          /> : null,
         },
         navigation
       );
@@ -259,12 +261,12 @@ export class ProfilePageContainer extends React.PureComponent<IProfilePageProps>
         {
           title: I18n.t("MyProfile"),
           headerLeft: <HeaderBackAction navigation={navigation} />,
-          headerRight: <HeaderAction
+          headerRight: canEdit ? <HeaderAction
             onPress={() => navigation.setParams(
               { "edit": true }
             )}
             title={I18n.t("Edit")}
-          />,
+          /> : null,
         },
         navigation
       );
