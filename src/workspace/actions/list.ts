@@ -44,8 +44,10 @@ export function fetchWorkspaceList(parameters: IFiltersParameters) {
     dispatch(workspaceListRequested());
 
     try {
-      let dataFolders = await getFolders(parameters);
-      let dataDocuments = await getDocuments(parameters);
+      let foldersPromise = getFolders(parameters);
+      let documentsPromise = getDocuments(parameters);
+      let dataFolders = await foldersPromise;
+      let dataDocuments = await documentsPromise;
       let data = { ...dataFolders, ...dataDocuments };
 
       dispatch(workspaceListReceived(data, parameters.parentId));
