@@ -6,12 +6,13 @@ import { NavigationScreenProp } from "react-navigation";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderAction } from "../../ui/headers/NewHeader";
 import { FlatList, View, ViewStyle } from "react-native";
-import { IEntity, IProps, IStateWorkspace } from "../types/entity";
+import { FilterId, IEntity, IProps, IStateWorkspace } from "../types/entity";
 import { Entity } from "../components";
 import { fetchWorkspaceList } from "../actions/list";
 import { Loading } from "../../ui";
 import { CommonStyles } from "../../styles/common/styles";
 import { layoutSize } from "../../styles/common/layoutSize";
+import { filters } from "../types/filters";
 
 
 const HeaderBackAction = ({ navigation, style }: {
@@ -30,7 +31,7 @@ export class List extends React.PureComponent<IProps, {}> {
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
     return standardNavScreenOptions(
       {
-        title: "Workspace",
+        title: navigation.getParam("title") || "Workspace",
         headerLeft: <HeaderBackAction navigation={navigation}/>,
       },
       navigation
@@ -38,7 +39,7 @@ export class List extends React.PureComponent<IProps, {}> {
   };
 
   public componentDidMount() {
-    const {filesFolders} = this.props
+    const { filesFolders } = this.props
 
     if (Object.keys(filesFolders).length > 0)   // already read
       return
@@ -51,10 +52,10 @@ export class List extends React.PureComponent<IProps, {}> {
   }
 
   public onPress(parentId: string) {
-    const filter = this.props.navigation.getParam("filter")
-    const backId = this.props.navigation.getParam("parentId")
+    const filter = this.props.navigation.getParam("filter") || this.props.filesFolders[parentId].filter
+    const title = this.props.filesFolders[parentId].name
 
-    this.props.navigation.push("Workspace", { filter, parentId })
+    this.props.navigation.push("Workspace", { filter, parentId, title})
   }
 
   renderSeparator = () => (
@@ -103,3 +104,4 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(List);
+

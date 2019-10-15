@@ -4,8 +4,8 @@
  */
 
 import { asyncGetJson } from "../../../infra/redux/async";
-import { Filters, IEntityArray, IFiltersParameters } from "../../types/entity";
-import { filters } from "./filters";
+import { FilterId, IEntityArray, IFiltersParameters } from "../../types/entity";
+import { factoryRootFolder } from "./factoryRootFolder";
 
 // TYPE -------------------------------------------------------------------------------------------
 
@@ -40,29 +40,49 @@ const backendFoldersAdapter: (data: IBackendFolderArray) => IEntityArray = data 
       isFolder: true,
       name: item.name,
       number: 1,
-      owner: filters(item.owner),
+      owner: item.owner,
       ownerName: item.ownerName,
     };
   }
   return result;
 };
 
+// ROOT FOLDERS ----------------------------------------------------------------------------------
+
+const getRootFolders: () => IEntityArray = () => {
+  const result = {} as IEntityArray;
+
+  result[FilterId.owner] = factoryRootFolder(FilterId.owner)
+  result[FilterId.protected] = factoryRootFolder(FilterId.protected)
+  result[FilterId.shared] = factoryRootFolder(FilterId.shared)
+  result[FilterId.trash] = factoryRootFolder(FilterId.trash)
+
+  return result;
+};
+
 // THUNKS -----------------------------------------------------------------------------------------
 
-export function getFilteredFolders(filter: Filters) {
+export function getFilteredFolders(filter: FilterId) {
   return getFolders({ filter });
 }
 
 export function getSubFolders(parentId: string) {
-  return getFolders({ filter: Filters.owner, parentId });
+  return getFolders({ filter: FilterId.owner, parentId });
 }
 
 export async function getFolders(parameters: IFiltersParameters) {
+  const { parentId } = parameters;
+
+  if (!parentId)
+    return getRootFolders();
+
   const formatParameters = (parameters = {}) => {
     let result = "?";
     for (let key in parameters) {
       if ((parameters as any)[key] == undefined)
-        continue
+        continue;
+      if (key === "parentId" && (parameters as any)[key] in FilterId)    // its a root folder, no pass parentId
+        continue;
       result = result.concat(`${key}=${(parameters as any)[key]}&`);
     }
     return result.slice(0, -1);
@@ -70,3 +90,4 @@ export async function getFolders(parameters: IFiltersParameters) {
 
   return await asyncGetJson(`/workspace/folders/list${formatParameters(parameters)}`, backendFoldersAdapter);
 }
+

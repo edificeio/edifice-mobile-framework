@@ -1,6 +1,6 @@
 import * as React from "react"
-import { TouchableOpacity, View } from "react-native";
-import { IEventProps, IEntity } from "../types/entity";
+import { Image, TouchableOpacity, View } from "react-native";
+import { IEventProps, IEntity, FilterId } from "../types/entity";
 
 import { CommonStyles } from "../../styles/common/styles";
 import { Icon } from "../../ui";
@@ -9,14 +9,15 @@ import { CenterPanel, LeftPanel } from "../../ui/ContainerContent";
 import { layoutSize } from "../../styles/common/layoutSize";
 import { DateView } from "../../ui/DateView";
 import style from "../../styles"
+import { filters } from "../types/filters";
+import Conf from "../../../ode-framework-conf";
 
 
 export const Entity = ({ date, id, isFolder, name, number, onPress, ownerName }: IEntity & IEventProps) => {
   return (
     <TouchableOpacity style={style.item_flexrow} onPress={() => onPress(id)}>
       <LeftPanel>
-        <Icon color={isFolder ? CommonStyles.grey : undefined} size={layoutSize.LAYOUT_40}
-              name={isFolder ? "folder1" : "file-pdf"}/>
+        {renderIcon( id, isFolder, name)}
       </LeftPanel>
       <CenterPanel>
         <View style={style.LeftTopPosition}>
@@ -33,3 +34,39 @@ export const Entity = ({ date, id, isFolder, name, number, onPress, ownerName }:
   )
 };
 
+const renderIcon = ( id: string | null, isFolder: boolean, name: string): any => {
+  const icon = getIcon(id, isFolder, name)
+
+  if (icon)
+    return (
+      <Icon color={CommonStyles.grey} size={layoutSize.LAYOUT_40} name={icon}/>
+    );
+  else
+    return (
+      <Image
+        style={{width: layoutSize.LAYOUT_40, height: layoutSize.LAYOUT_40}}
+        source={{uri: `${(Conf.currentPlatform as any).url}/workspace/document/${id}?thumbnail=120x120`}}
+      />
+    )
+}
+
+const getIcon = ( id: string | null, isFolder: boolean, name: string): string | null => {
+
+  if (isFolder) {
+    switch (filters(id)) {
+      case FilterId.owner:
+        return "folder1"
+      case FilterId.shared:
+        return "shared_files"
+      case FilterId.protected:
+        return "added_files"
+      case FilterId.trash:
+        return "delete"
+      default:
+        return "folder1"
+    }
+  }
+  if (name && name.endsWith(".pdf"))
+    return "pdf_files"
+  return null
+}
