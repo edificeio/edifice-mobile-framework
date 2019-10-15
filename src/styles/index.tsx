@@ -123,12 +123,10 @@ const styles = StyleSheet.create({
 	},
 	textHeader: {
 		color: CommonStyles.shadowColor,
-		fontFamily: CommonStyles.secondaryFontFamily,
 		fontSize: layoutSize.LAYOUT_15
 	},
 	textMin: {
 		color: CommonStyles.fadColor,
-		fontFamily: CommonStyles.secondaryFontFamily,
 		fontSize: layoutSize.LAYOUT_10,
 	},
 	webview: {
