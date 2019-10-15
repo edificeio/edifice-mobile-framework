@@ -5,7 +5,7 @@
 
 import { asyncGetJson } from "../../../infra/redux/async";
 import {IEntityArray, IFiltersParameters} from "../../types/entity";
-import { filters } from "./filters";
+import { filters } from "../../types/filters";
 
 // TYPE -------------------------------------------------------------------------------------------
 
@@ -60,6 +60,11 @@ const backendDocumentsAdapter: (data: IBackendDocumentArray) => IEntityArray= da
 // FETCH -----------------------------------------------------------------------------------------
 
 export async function getDocuments(parameters: IFiltersParameters) {
+  const { parentId } = parameters;
+
+  if (!parentId)
+    return {};
+
   const formatParameters = (parameters: IFiltersParameters = {}) => {
     let result = "?";
     for (let key in parameters) {

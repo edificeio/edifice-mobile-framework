@@ -1,7 +1,7 @@
 import rootReducer from "../reducers";
 import { NavigationScreenProp } from "react-navigation";
 
-export enum Filters {
+export enum FilterId {
   owner = "owner",
   shared = "shared",
   protected = "protected",
@@ -9,17 +9,18 @@ export enum Filters {
 }
 
 export interface IFiltersParameters {
-  filter?: Filters;
+  filter?: FilterId;
   parentId?: string;
 };
 
 export type IRight = {
-  owner: Filters;
+  owner: string;
   ownerName: string;
 }
 
 export type IEntity = IRight & {
   date: number,
+  filter?: FilterId,
   id: string,
   name: string,
   number: number

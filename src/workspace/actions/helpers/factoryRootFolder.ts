@@ -1,0 +1,15 @@
+import I18n from "i18n-js";
+import { FilterId, IEntity } from "../../types/entity";
+
+export const factoryRootFolder = ( filterId: FilterId): IEntity => {
+  return {
+    date: 0,
+    filter: filterId,
+    id: filterId,
+    isFolder: true,
+    name: I18n.t(filterId),
+    number: 1,
+    owner: "",
+    ownerName: "",
+  }
+}
