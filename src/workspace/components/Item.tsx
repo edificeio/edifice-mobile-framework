@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Image, TouchableOpacity, View } from "react-native";
-import { IEventProps, IEntity, FilterId } from "../types/entity";
+import { IEventProps, IItem, FilterId } from "../types";
 
 import { CommonStyles } from "../../styles/common/styles";
 import { Icon } from "../../ui";
@@ -9,11 +9,11 @@ import { CenterPanel, LeftPanel } from "../../ui/ContainerContent";
 import { layoutSize } from "../../styles/common/layoutSize";
 import { DateView } from "../../ui/DateView";
 import style from "../../styles"
-import { filters } from "../types/filters";
+import { filters } from "../types/filters/helpers/filters";
 import Conf from "../../../ode-framework-conf";
 
 
-export const Entity = ({ date, id, isFolder, name, number, onPress, ownerName }: IEntity & IEventProps) => {
+export const Item = ({ date, id, isFolder, name, number, onPress, ownerName }: IItem & IEventProps) => {
   return (
     <TouchableOpacity style={style.item_flexrow} onPress={() => onPress(id)}>
       <LeftPanel>
@@ -35,7 +35,7 @@ export const Entity = ({ date, id, isFolder, name, number, onPress, ownerName }:
 };
 
 const renderIcon = ( id: string | null, isFolder: boolean, name: string): any => {
-  const icon = getIcon(id, isFolder, name)
+  const icon = getIcon(id, isFolder, name);
 
   if (icon)
     return (
@@ -48,25 +48,25 @@ const renderIcon = ( id: string | null, isFolder: boolean, name: string): any =>
         source={{uri: `${(Conf.currentPlatform as any).url}/workspace/document/${id}?thumbnail=120x120`}}
       />
     )
-}
+};
 
 const getIcon = ( id: string | null, isFolder: boolean, name: string): string | null => {
 
   if (isFolder) {
     switch (filters(id)) {
       case FilterId.owner:
-        return "folder1"
+        return "folder1";
       case FilterId.shared:
-        return "shared_files"
+        return "shared_files";
       case FilterId.protected:
-        return "added_files"
+        return "added_files";
       case FilterId.trash:
-        return "delete"
+        return "delete";
       default:
         return "folder1"
     }
   }
   if (name && name.endsWith(".pdf"))
-    return "pdf_files"
+    return "pdf_files";
   return null
-}
+};

@@ -1,6 +1,6 @@
 
-import {Entity} from "./Entity"
+import {Item} from "./Item"
 
 export {
-    Entity
+    Item
 }

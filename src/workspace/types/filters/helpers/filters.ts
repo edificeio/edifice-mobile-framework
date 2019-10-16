@@ -1,4 +1,4 @@
-import { FilterId } from "./entity";
+import { FilterId } from "../index";
 
 export const filters = (value: string | null): FilterId => {
   switch (value) {

@@ -1,9 +1,12 @@
 import { createStackNavigator } from "react-navigation";
-import ContainerList from "./containers/List";
-// import RootFolders from "./containers/RootFolders";
+import ContainerList from "./containers/Items";
+import { Details } from "./containers/Details"
 
 export default createStackNavigator({
   Workspace: {
     screen: ContainerList
+  },
+  WorkspaceDetails: {
+    screen: Details
   }
 });

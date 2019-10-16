@@ -4,8 +4,8 @@
  */
 
 import { asyncGetJson } from "../../../infra/redux/async";
-import {IEntityArray, IFiltersParameters} from "../../types/entity";
-import { filters } from "../../types/filters";
+import {IItems, IFiltersParameters} from "../../types";
+import { filters } from "../../types/filters/helpers/filters";
 
 // TYPE -------------------------------------------------------------------------------------------
 
@@ -40,8 +40,8 @@ export type IBackendDocumentArray = Array<IBackendDocument>;
 
 // ADAPTER ----------------------------------------------------------------------------------------
 
-const backendDocumentsAdapter: (data: IBackendDocumentArray) => IEntityArray= data => {
-  const result = {} as IEntityArray;
+const backendDocumentsAdapter: (data: IBackendDocumentArray) => IItems= data => {
+  const result = {} as IItems;
   if (!data) return result;
   for (const item of data) {
     result[item._id] = {
@@ -69,7 +69,7 @@ export async function getDocuments(parameters: IFiltersParameters) {
     let result = "?";
     for (let key in parameters) {
       if ((parameters as any)[key] == undefined)
-        continue
+        continue;
       result = result.concat(`${key}=${(parameters as any)[key]}&`);
     }
     return result.slice(0, -1);
