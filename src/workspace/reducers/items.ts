@@ -6,12 +6,12 @@ import { Reducer } from "redux";
 import asyncReducer, { IAction } from "../../infra/redux/async";
 
 import { actionTypes } from "../actions/list"
-import { IStateWorkspace } from "../types/entity";
+import { IStateItems } from "../types";
 
-const stateDefault: IStateWorkspace = {};
+const stateDefault: IStateItems = {};
 
-const entitiesListReducer: Reducer<IStateWorkspace, IAction<any>> = (
-  state: IStateWorkspace = stateDefault,
+const itemsReducer: Reducer<IStateItems, IAction<any>> = (
+  state: IStateItems = stateDefault,
   action: IAction<any>
 ) => {
   switch (action.type) {
@@ -19,14 +19,14 @@ const entitiesListReducer: Reducer<IStateWorkspace, IAction<any>> = (
       return {
         ...state,
         [action.id ? action.id : "root"]: action.data
-      }
+      };
     default:
       return state;
   }
 };
 
-export default asyncReducer<IStateWorkspace>(
-  entitiesListReducer,
+export default asyncReducer<IStateItems>(
+  itemsReducer,
   actionTypes
 )
 

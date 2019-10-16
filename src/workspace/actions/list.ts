@@ -7,7 +7,7 @@ import {
   asyncActionTypes,
 } from "../../infra/redux/async";
 import workspaceConfig from "../config";
-import { IEntityArray, IFiltersParameters } from "../types/entity";
+import { IItems, IFiltersParameters } from "../types";
 import { getFolders } from "./helpers/folders";
 import { getDocuments } from "./helpers/documents";
 
@@ -25,7 +25,7 @@ export function workspaceListRequested() {
   return { type: actionTypes.requested };
 }
 
-export function workspaceListReceived(data: IEntityArray, id: string | undefined) {
+export function workspaceListReceived(data: IItems, id: string | undefined) {
   return { type: actionTypes.received, data, id, receivedAt: Date.now() };
 }
 

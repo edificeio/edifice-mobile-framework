@@ -1,9 +1,11 @@
 import { combineReducers } from "redux";
-import workspace from "./entities";
-import {IStateWorkspace} from "../types/entity";
+import items from "./items";
+import details from "./details";
+import {IStateItems} from "../types";
 
-const rootReducer = combineReducers<IStateWorkspace>({
-  workspace,
+const rootReducer = combineReducers<IStateItems>({
+  details,
+  items,
 });
 
 export default rootReducer;

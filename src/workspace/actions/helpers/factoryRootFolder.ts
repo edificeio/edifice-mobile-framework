@@ -1,7 +1,7 @@
 import I18n from "i18n-js";
-import { FilterId, IEntity } from "../../types/entity";
+import { FilterId, IItem } from "../../types";
 
-export const factoryRootFolder = ( filterId: FilterId): IEntity => {
+export const factoryRootFolder = ( filterId: FilterId): IItem => {
   return {
     date: 0,
     filter: filterId,
@@ -12,4 +12,4 @@ export const factoryRootFolder = ( filterId: FilterId): IEntity => {
     owner: "",
     ownerName: "",
   }
-}
+};
