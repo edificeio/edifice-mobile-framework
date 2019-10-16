@@ -4,7 +4,7 @@
  */
 
 import { asyncGetJson } from "../../../infra/redux/async";
-import { FilterId, IEntityArray, IFiltersParameters } from "../../types/entity";
+import { FilterId, IItems, IFiltersParameters } from "../../types";
 import { factoryRootFolder } from "./factoryRootFolder";
 
 // TYPE -------------------------------------------------------------------------------------------
@@ -30,8 +30,8 @@ export type IBackendFolderArray = Array<IBackendFolder>;
 
 // ADAPTER ----------------------------------------------------------------------------------------
 
-const backendFoldersAdapter: (data: IBackendFolderArray) => IEntityArray = data => {
-  const result = {} as IEntityArray;
+const backendFoldersAdapter: (data: IBackendFolderArray) => IItems = data => {
+  const result = {} as IItems;
   if (!data) return result;
   for (const item of data) {
     result[item._id] = {
@@ -49,13 +49,13 @@ const backendFoldersAdapter: (data: IBackendFolderArray) => IEntityArray = data 
 
 // ROOT FOLDERS ----------------------------------------------------------------------------------
 
-const getRootFolders: () => IEntityArray = () => {
-  const result = {} as IEntityArray;
+const getRootFolders: () => IItems = () => {
+  const result = {} as IItems;
 
-  result[FilterId.owner] = factoryRootFolder(FilterId.owner)
-  result[FilterId.protected] = factoryRootFolder(FilterId.protected)
-  result[FilterId.shared] = factoryRootFolder(FilterId.shared)
-  result[FilterId.trash] = factoryRootFolder(FilterId.trash)
+  result[FilterId.owner] = factoryRootFolder(FilterId.owner);
+  result[FilterId.protected] = factoryRootFolder(FilterId.protected);
+  result[FilterId.shared] = factoryRootFolder(FilterId.shared);
+  result[FilterId.trash] = factoryRootFolder(FilterId.trash);
 
   return result;
 };
