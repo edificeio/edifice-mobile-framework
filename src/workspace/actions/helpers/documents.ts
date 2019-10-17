@@ -4,7 +4,7 @@
  */
 
 import { asyncGetJson } from "../../../infra/redux/async";
-import {IItems, IFiltersParameters} from "../../types";
+import { IItems, IFiltersParameters, IFile } from "../../types";
 import { filters } from "../../types/filters/helpers/filters";
 
 // TYPE -------------------------------------------------------------------------------------------
@@ -40,18 +40,20 @@ export type IBackendDocumentArray = Array<IBackendDocument>;
 
 // ADAPTER ----------------------------------------------------------------------------------------
 
-const backendDocumentsAdapter: (data: IBackendDocumentArray) => IItems= data => {
-  const result = {} as IItems;
+const backendDocumentsAdapter: (data: IBackendDocumentArray) => IItems<IFile> = data => {
+  const result = {} as IItems<IFile>;
   if (!data) return result;
   for (const item of data) {
     result[item._id] = {
-      date: Date.now(),
+      contentType: item.metadata["content-type"],
+      date: parseInt(item.modified),
+      fileName: item.metadata.filename,
       id: item._id,
       isFolder: false,
       name: item.name,
-      number: 0,
       owner: filters(item.owner),
       ownerName: item.ownerName,
+      size: item.metadata.size
     };
   }
   return result;

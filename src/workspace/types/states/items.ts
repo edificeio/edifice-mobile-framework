@@ -1,20 +1,24 @@
-import { FilterId } from "../filters";
 import { IRight } from "./right";
 
 export type IItem = IRight & {
   date: number,
-  filter?: FilterId,
   id: string,
   name: string,
-  number: number
   isFolder: boolean
 }
 
-export interface IItems {
-  [key: string]: IItem;
+export type IFile = IItem & {
+  contentType: string;
+  fileName: string,
+  size: number
 }
 
-export interface IStateItems {
-  [key: string]: IItems;
+export type IFolder = IItem & {
+  number: number
 }
 
+export interface IItems<Item> {
+  [key: string]: Item
+}
+
+export type IState = IItems<IItems<IItem>>

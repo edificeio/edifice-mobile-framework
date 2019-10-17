@@ -4,7 +4,7 @@
  */
 
 import { asyncGetJson } from "../../../infra/redux/async";
-import { FilterId, IItems, IFiltersParameters } from "../../types";
+import { FilterId, IItems, IFolder, IFiltersParameters } from "../../types";
 import { factoryRootFolder } from "./factoryRootFolder";
 
 // TYPE -------------------------------------------------------------------------------------------
@@ -30,12 +30,12 @@ export type IBackendFolderArray = Array<IBackendFolder>;
 
 // ADAPTER ----------------------------------------------------------------------------------------
 
-const backendFoldersAdapter: (data: IBackendFolderArray) => IItems = data => {
-  const result = {} as IItems;
+const backendFoldersAdapter: (data: IBackendFolderArray) => IItems<IFolder> = data => {
+  const result = {} as IItems<IFolder>;
   if (!data) return result;
   for (const item of data) {
     result[item._id] = {
-      date: Date.now(),
+      date: parseInt(item.modified),
       id: item._id,
       isFolder: true,
       name: item.name,
@@ -49,8 +49,8 @@ const backendFoldersAdapter: (data: IBackendFolderArray) => IItems = data => {
 
 // ROOT FOLDERS ----------------------------------------------------------------------------------
 
-const getRootFolders: () => IItems = () => {
-  const result = {} as IItems;
+const getRootFolders: () => IItems<IFolder> = () => {
+  const result = {} as IItems<IFolder>;
 
   result[FilterId.owner] = factoryRootFolder(FilterId.owner);
   result[FilterId.protected] = factoryRootFolder(FilterId.protected);
