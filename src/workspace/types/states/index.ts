@@ -1,10 +1,9 @@
-import { IItem, IItems, IStateItems } from "./items";
-import { IDetails, IStateDetails } from "./details";
+import { IItem, IItems, IFile, IFolder, IState } from "./items";
 
 export {
   IItem,
   IItems,
-  IStateItems,
-  IDetails,
-  IStateDetails
+  IFile,
+  IFolder,
+  IState
 }

@@ -1,14 +1,11 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import config from "../config";
-import { bindActionCreators } from "redux";
 import { NavigationScreenProp } from "react-navigation";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderAction } from "../../ui/headers/NewHeader";
 import { View, ViewStyle } from "react-native";
-import { IProps, IStateItems } from "../types";
-import { fetchWorkspaceList } from "../actions/list";
-import { Loading } from "../../ui";
+import { EVENT_TYPE, IDetailsProps, IItem } from "../types";
+import { ItemDetails } from "../components";
 
 
 
@@ -21,7 +18,9 @@ const HeaderBackAction = ({ navigation, style }: {
 }
 
 
-export class Details extends React.PureComponent<IProps> {
+export class Details extends React.PureComponent<IDetailsProps> {
+  readonly state = { inProgress: true};
+
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
     return standardNavScreenOptions(
       {
@@ -32,33 +31,30 @@ export class Details extends React.PureComponent<IProps> {
     );
   };
 
-  public componentDidMount() {
+  public onEvent( type: EVENT_TYPE, item: IItem) {
+    switch(type) {
+      case EVENT_TYPE.DOWNLOAD:
+        return
+      case EVENT_TYPE.SHARE:
+        return
+    }
   }
 
   public render() {
-    const { isFetching } = this.props
-
-    if (isFetching)
-      return <Loading/>;
-
+    const item = this.props.navigation.getParam("item");
     return (
-      <View>
-      </View>
-    )
+      <ItemDetails {...item} onEvent={this.onEvent}/>
+    );
   }
 }
 
 const mapStateToProps = (state: any, props: any) => {
-  const stateDetails: IStateItems = config.getLocalState(state).details.data
-  const { isFetching } = config.getLocalState(state).details;
-  const parentId = props.navigation.getParam("parentId") || "root";
-
-  return { details: stateDetails[parentId] || {}, isFetching };
+  return null;
 }
 
 
 const mapDispatchToProps = (dispatch: any) => {
-  return bindActionCreators({ fetchWorkspaceList }, dispatch);
+  return null
 };
 
 export default connect(

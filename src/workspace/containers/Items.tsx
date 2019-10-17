@@ -6,7 +6,7 @@ import { NavigationScreenProp } from "react-navigation";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderAction } from "../../ui/headers/NewHeader";
 import { FlatList, View, ViewStyle } from "react-native";
-import { IItem, IProps, IStateItems } from "../types";
+import { EVENT_TYPE, IItem, IItemsProps, IState } from "../types";
 import { Item } from "../components";
 import { fetchWorkspaceList } from "../actions/list";
 import { Loading } from "../../ui";
@@ -23,7 +23,7 @@ const HeaderBackAction = ({ navigation, style }: {
 };
 
 
-export class Items extends React.PureComponent<IProps> {
+export class Items extends React.PureComponent<IItemsProps> {
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
     return standardNavScreenOptions(
       {
@@ -47,14 +47,18 @@ export class Items extends React.PureComponent<IProps> {
       });
   }
 
-  public onPress(parentId: string) {
-    const filter = this.props.navigation.getParam("filter") || this.props.items[parentId].filter;
-    const title = this.props.items[parentId].name;
-    const isFolder = this.props.items[parentId].isFolder;
+  public onEvent( type: EVENT_TYPE, item: IItem) {
+    const {id: parentId, name: title, isFolder} = item;
 
-    isFolder
-      ? this.props.navigation.push("Workspace", { filter, parentId, title})
-      : this.props.navigation.push("WorkspaceDetails", { filter, parentId, title})
+    switch(type) {
+      case EVENT_TYPE.SELECT:
+        const filter = this.props.navigation.getParam("filter") || parentId;
+
+        isFolder
+          ? this.props.navigation.push("Workspace", { filter, parentId, title})
+          : this.props.navigation.push("WorkspaceDetails", { item, title})
+        return
+    }
   }
 
   renderSeparator = () => (
@@ -76,10 +80,10 @@ export class Items extends React.PureComponent<IProps> {
     return (
       <View>
         <FlatList
-          data={Object.values(items)}
+          data={Object.values(items) as IItem[]}
           ItemSeparatorComponent={this.renderSeparator}
           keyExtractor={(item: IItem) => item.id}
-          renderItem={({ item }) => <Item {...item} onPress={this.onPress.bind(this)}/>}
+          renderItem={({ item }) => <Item {...item} onEvent={this.onEvent.bind(this)}/>}
         />
       </View>
     )
@@ -87,7 +91,7 @@ export class Items extends React.PureComponent<IProps> {
 }
 
 const mapStateToProps = (state: any, props: any) => {
-  const stateItems: IStateItems = config.getLocalState(state).items.data;
+  const stateItems: IState = config.getLocalState(state).items.data;
   const { isFetching } = config.getLocalState(state).items;
   const parentId = props.navigation.getParam("parentId") || "root";
 
