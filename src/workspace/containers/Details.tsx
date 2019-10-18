@@ -4,12 +4,9 @@ import { NavigationScreenProp } from "react-navigation";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderAction } from "../../ui/headers/NewHeader";
 import { StyleSheet, View, ViewStyle } from "react-native";
-import { EVENT_TYPE, IDetailsProps, IItem } from "../types";
+import { EVENT_TYPE, IDetailsProps, IFile } from "../types";
 import { ItemDetails } from "../components";
-import { CommonStyles } from "../../styles/common/styles";
-import { layoutSize } from "../../styles/common/layoutSize";
-
-
+import { startDownload } from "../../infra/actions/downloadHelper";
 
 const HeaderBackAction = ({ navigation, style }: {
   navigation: NavigationScreenProp<{}>, style?: ViewStyle
@@ -39,10 +36,10 @@ export class Details extends React.PureComponent<IDetailsProps> {
     );
   };
 
-  public onEvent( type: EVENT_TYPE, item: IItem) {
+  public onEvent( type: EVENT_TYPE, item: IFile) {
     switch(type) {
       case EVENT_TYPE.DOWNLOAD:
-        return
+        startDownload(item)
       case EVENT_TYPE.SHARE:
         return
     }
