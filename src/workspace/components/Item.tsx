@@ -23,12 +23,10 @@ export const Item = ({onEvent, ...item}: IItem & IEventProps) => {
         {renderIcon( id, isFolder, name)}
       </LeftIconPanel>
       <CenterPanel>
-        <View style={style.LeftTopPosition}>
+        <View style={date != 0 ? style.LeftTopPosition : style.leftMiddlePosition}>
           <Text numberOfLines={1} style={style.textHeader}>{name}</Text>
         </View>
-        <View style={style.LeftBottomPosition}>
-          <DateView date={date} min/>
-        </View>
+        {date != 0 && <View style={style.LeftBottomPosition}><DateView date={date} min/></View>}
       </CenterPanel>
     </TouchableOpacity>
   )
