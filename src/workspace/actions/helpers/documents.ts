@@ -6,6 +6,7 @@
 import { asyncGetJson } from "../../../infra/redux/async";
 import { IItems, IFiltersParameters, IFile } from "../../types";
 import { filters } from "../../types/filters/helpers/filters";
+import moment from "moment";
 
 // TYPE -------------------------------------------------------------------------------------------
 
@@ -46,7 +47,7 @@ const backendDocumentsAdapter: (data: IBackendDocumentArray) => IItems<IFile> = 
   for (const item of data) {
     result[item._id] = {
       contentType: item.metadata["content-type"],
-      date: parseInt(item.modified),
+      date: moment(item.modified, "YYYY-MM-DD HH:mm.ss.SSS").toDate().getTime(),
       fileName: item.metadata.filename,
       id: item._id,
       isFolder: false,
