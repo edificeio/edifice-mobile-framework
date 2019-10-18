@@ -31,13 +31,10 @@ export type IBackendDocument = {
   modified: string;
   owner: string;
   ownerName: string;
-  thumbnails: {
-    [id: string]: string;
-  };
+  thumbnails: { [id: string]: string };
 };
 
 export type IBackendDocumentArray = Array<IBackendDocument>;
-
 
 // ADAPTER ----------------------------------------------------------------------------------------
 
@@ -48,13 +45,14 @@ const backendDocumentsAdapter: (data: IBackendDocumentArray) => IItems<IFile> = 
     result[item._id] = {
       contentType: item.metadata["content-type"],
       date: moment(item.modified, "YYYY-MM-DD HH:mm.ss.SSS").toDate().getTime(),
-      fileName: item.metadata.filename,
       id: item._id,
       isFolder: false,
       name: item.name,
       owner: filters(item.owner),
       ownerName: item.ownerName,
-      size: item.metadata.size
+      filename: item.metadata.filename,
+      size: item.metadata.size,
+      url: `/workspace/document/${item._id}`
     };
   }
   return result;
@@ -65,14 +63,12 @@ const backendDocumentsAdapter: (data: IBackendDocumentArray) => IItems<IFile> = 
 export async function getDocuments(parameters: IFiltersParameters) {
   const { parentId } = parameters;
 
-  if (!parentId)
-    return {};
+  if (!parentId) return {};
 
   const formatParameters = (parameters: IFiltersParameters = {}) => {
     let result = "?";
     for (let key in parameters) {
-      if ((parameters as any)[key] == undefined)
-        continue;
+      if ((parameters as any)[key] == undefined) continue;
       result = result.concat(`${key}=${(parameters as any)[key]}&`);
     }
     return result.slice(0, -1);
