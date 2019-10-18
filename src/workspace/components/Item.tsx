@@ -5,7 +5,7 @@ import { IEventProps, IItem, FilterId, EVENT_TYPE } from "../types";
 import { CommonStyles } from "../../styles/common/styles";
 import { Icon } from "../../ui";
 import { Text } from "../../ui/text";
-import { CenterPanel, LeftPanel } from "../../ui/ContainerContent";
+import { CenterPanel, LeftIconPanel } from "../../ui/ContainerContent";
 import { layoutSize } from "../../styles/common/layoutSize";
 import { DateView } from "../../ui/DateView";
 import style from "../../styles"
@@ -15,14 +15,13 @@ import { renderIcon } from "../utils/image";
 
 
 export const Item = ({onEvent, ...item}: IItem & IEventProps) => {
-  const iconStyle = {width: layoutSize.LAYOUT_40, height: layoutSize.LAYOUT_40}
   const {id, isFolder, name, date} = item;
 
   return (
     <TouchableOpacity style={style.item_flexrow} onPress={() => onEvent( EVENT_TYPE.SELECT, item)}>
-      <LeftPanel>
-        {renderIcon( id, isFolder, name, iconStyle)}
-      </LeftPanel>
+      <LeftIconPanel>
+        {renderIcon( id, isFolder, name)}
+      </LeftIconPanel>
       <CenterPanel>
         <View style={style.LeftTopPosition}>
           <Text numberOfLines={1} style={style.textHeader}>{name}</Text>

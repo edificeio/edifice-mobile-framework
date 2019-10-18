@@ -2,6 +2,7 @@ import style from "glamorous-native";
 import { CommonStyles } from "../styles/common/styles";
 import TouchableOpacity from "../ui/CustomTouchableOpacity";
 import { Weight } from "./Typography";
+import { layoutSize } from "../styles/common/layoutSize";
 
 export const ArticleContainer = style.view({
   paddingTop: 5,
@@ -40,6 +41,14 @@ export const LeftPanel = style.view({
   justifyContent: "center",
   minHeight: 50,
   width: 50
+});
+
+export const LeftIconPanel = style.view({
+  justifyContent: "center",
+  minHeight: 54,
+  width: 54,
+  margin: 0,
+  marginRight: layoutSize.LAYOUT_10
 });
 
 export const CenterPanel = style.view({

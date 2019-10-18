@@ -7,6 +7,7 @@ import {
 import { CommonStyles } from "../styles/common/styles";
 
 import TextStylePropTypes from "react-native/Libraries/Text/TextStylePropTypes";
+import { layoutSize } from "../styles/common/layoutSize";
 
 /**
  * Font weights defined in this font family
@@ -138,6 +139,7 @@ export const TextSemiBold = (props: TextProps) => (
     }}
   />
 );
+
 export const NestedTextSemiBold = (props: TextProps) => (
   <NestedText
     {...props}
@@ -176,6 +178,18 @@ export const TextBold = (props: TextProps) => (
     }}
   />
 );
+
+export const TextBold15 = (props: TextProps) => (
+  <Text
+    {...props}
+    style={{
+      fontWeight: FontWeight.Bold,
+      fontSize: layoutSize.LAYOUT_15,
+      ...(props.style as object)
+    }}
+  />
+);
+
 export const NestedTextBold = (props: TextProps) => (
   <NestedText
     {...props}
