@@ -1,5 +1,5 @@
 import * as React from "react"
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { IEventProps, EVENT_TYPE } from "../types";
 
 import { CommonStyles } from "../../styles/common/styles";
@@ -13,21 +13,19 @@ import I18n from "i18n-js";
 
 const styles = StyleSheet.create({
   mainPanel: {
-    margin: layoutSize.LAYOUT_14
+    backgroundColor: '#FFFFFF',
   },
   contentPanel: {
     flexDirection: 'row',
-    height: layoutSize.LAYOUT_160,
+    height: layoutSize.LAYOUT_120,
     justifyContent: 'space-around',
   },
   imagePanel: {
-    backgroundColor: 'white',
     flexDirection: 'row',
     justifyContent: 'space-around',
+    margin: layoutSize.LAYOUT_14
   },
   touchCard: {
-    height: "80%",
-    width: "80%",
     alignItems: "center",
     justifyContent: "space-evenly",
   }
@@ -43,14 +41,14 @@ export const ItemDetails = ({onEvent, ...item} : IFile & IEventProps) => {
         {renderImage(id, false, name)}
       </View>
       <View style={styles.contentPanel}>
-        <TouchCard style={styles.touchCard} onPress={() => onEvent(EVENT_TYPE.DOWNLOAD, item)}>
+        <TouchableOpacity style={styles.touchCard} onPress={() => onEvent(EVENT_TYPE.DOWNLOAD, item)}>
           <Icon color={CommonStyles.profileTypes.Student} size={layoutSize.LAYOUT_60} name="download"/>
           <TextBold15>{I18n.t("download")}</TextBold15>
-        </TouchCard>
-        <TouchCard style={styles.touchCard} onPress={() => onEvent(EVENT_TYPE.SHARE, item)}>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.touchCard} onPress={() => onEvent(EVENT_TYPE.SHARE, item)}>
           <Icon color={CommonStyles.profileTypes.Student} size={layoutSize.LAYOUT_60} name="share-variant"/>
           <TextBold15>{I18n.t("share")}</TextBold15>
-        </TouchCard>
+        </TouchableOpacity>
       </View>
     </View>
   )

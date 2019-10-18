@@ -6,6 +6,7 @@
 import { asyncGetJson } from "../../../infra/redux/async";
 import { FilterId, IItems, IFolder, IFiltersParameters } from "../../types";
 import { factoryRootFolder } from "./factoryRootFolder";
+import moment from "moment";
 
 // TYPE -------------------------------------------------------------------------------------------
 
@@ -35,7 +36,7 @@ const backendFoldersAdapter: (data: IBackendFolderArray) => IItems<IFolder> = da
   if (!data) return result;
   for (const item of data) {
     result[item._id] = {
-      date: parseInt(item.modified),
+      date: moment(item.modified, "YYYY-MM-DD HH:mm.ss.SSS").toDate().getTime(),
       id: item._id,
       isFolder: true,
       name: item.name,

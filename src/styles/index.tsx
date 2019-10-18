@@ -75,6 +75,10 @@ const styles = StyleSheet.create({
 		left: layoutSize.LAYOUT_4,
 		bottom: layoutSize.LAYOUT_4,
 	},
+	leftMiddlePosition: {
+		alignItems: "center",
+		left: layoutSize.LAYOUT_4,
+	},
 	LeftTopPosition: {
 		position: 'absolute',
 		left: layoutSize.LAYOUT_4,
