@@ -63,14 +63,6 @@ const getRootFolders: () => IItems<IFolder> = () => {
 
 // THUNKS -----------------------------------------------------------------------------------------
 
-export function getFilteredFolders(filter: FilterId) {
-  return getFolders({ filter });
-}
-
-export function getSubFolders(parentId: string) {
-  return getFolders({ filter: FilterId.owner, parentId });
-}
-
 export async function getFolders(parameters: IFiltersParameters) {
   const { parentId } = parameters;
 
