@@ -6,22 +6,40 @@ import { CommonStyles } from "../../styles/common/styles";
 import { layoutSize } from "../../styles/common/layoutSize";
 import { Image } from "react-native";
 import * as React from "react";
+import { signUrl } from "../../infra/oauth";
 
-export const renderIcon = ( id: string | null, isFolder: boolean, name: string, style: any): any => {
+export const renderIcon = ( id: string | null, isFolder: boolean, name: string): any => {
   const icon = getIcon(id, isFolder, name);
-  const uri = `${Conf.currentPlatform.url}/workspace/document/${id}?thumbnail=120x120`
 
   if (icon)
     return (
-      <Icon color={CommonStyles.grey} size={layoutSize.LAYOUT_40} name={icon}/>
+      <Icon color={CommonStyles.grey} size={layoutSize.LAYOUT_50} name={icon}/>
     );
-  else
+  else {
+    // @ts-ignore
+    const uri = `${Conf.currentPlatform.url}/workspace/document/${id}?thumbnail=120x120`
+    const style = {width: layoutSize.LAYOUT_50, height: layoutSize.LAYOUT_50}
     return (
-      <Image
-        style={style}
-        source={{uri}}
-      />
+      <Image style={style} source={signUrl(uri)} />
     )
+  }
+};
+
+export const renderImage = ( id: string | null, isFolder: boolean, name: string): any => {
+  const icon = getIcon(id, isFolder, name);
+
+  if (icon)
+    return (
+      <Icon color={CommonStyles.grey} size={layoutSize.LAYOUT_200} name={icon}/>
+    );
+  else {
+    // @ts-ignore
+    const uri = `${Conf.currentPlatform.url}/workspace/document/${id}?thumbnail=200*200`
+    const style = {width: "100%", height: layoutSize.LAYOUT_200}
+    return (
+      <Image style={style} source={signUrl(uri)} />
+    )
+  }
 };
 
 const getIcon = ( id: string | null, isFolder: boolean, name: string): string | null => {
@@ -35,7 +53,7 @@ const getIcon = ( id: string | null, isFolder: boolean, name: string): string | 
       case FilterId.protected:
         return "added_files";
       case FilterId.trash:
-        return "delete";
+        return "deleted_files";
       default:
         return "folder1"
     }
