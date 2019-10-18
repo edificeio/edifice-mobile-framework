@@ -5,13 +5,29 @@ import { bindActionCreators } from "redux";
 import { NavigationScreenProp } from "react-navigation";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderAction } from "../../ui/headers/NewHeader";
-import { FlatList, View, ViewStyle } from "react-native";
+import { FlatList, StyleSheet, View, ViewStyle } from "react-native";
 import { EVENT_TYPE, IItem, IItemsProps, IState } from "../types";
 import { Item } from "../components";
 import { fetchWorkspaceList } from "../actions/list";
 import { Loading } from "../../ui";
 import { CommonStyles } from "../../styles/common/styles";
 import { layoutSize } from "../../styles/common/layoutSize";
+
+const styles = StyleSheet.create({
+  mainPanel: {
+    backgroundColor: "#FFF6F8",
+    flex: 1
+  },
+  separator: {
+    borderBottomColor: CommonStyles.borderColorLighter,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    marginLeft: layoutSize.LAYOUT_84
+  },
+  endSeparator: {
+    borderBottomColor: CommonStyles.borderColorLighter,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  }
+});
 
 
 const HeaderBackAction = ({ navigation, style }: {
@@ -47,29 +63,19 @@ export class Items extends React.PureComponent<IItemsProps> {
       });
   }
 
-  public onEvent( type: EVENT_TYPE, item: IItem) {
-    const {id: parentId, name: title, isFolder} = item;
+  public onEvent(type: EVENT_TYPE, item: IItem) {
+    const { id: parentId, name: title, isFolder } = item;
 
-    switch(type) {
+    switch (type) {
       case EVENT_TYPE.SELECT:
         const filter = this.props.navigation.getParam("filter") || parentId;
 
         isFolder
-          ? this.props.navigation.push("Workspace", { filter, parentId, title})
-          : this.props.navigation.push("WorkspaceDetails", { item, title})
+          ? this.props.navigation.push("Workspace", { filter, parentId, title })
+          : this.props.navigation.push("WorkspaceDetails", { item, title })
         return
     }
   }
-
-  renderSeparator = () => (
-    <View
-      style={{
-        borderTopColor: CommonStyles.borderColorLighter,
-        borderTopWidth: 1,
-        marginLeft: layoutSize.LAYOUT_70,
-      }}
-    />
-  );
 
   public render() {
     const { items, isFetching } = this.props;
@@ -78,13 +84,15 @@ export class Items extends React.PureComponent<IItemsProps> {
       return <Loading/>;
 
     return (
-      <View>
-        <FlatList
-          data={Object.values(items) as IItem[]}
-          ItemSeparatorComponent={this.renderSeparator}
-          keyExtractor={(item: IItem) => item.id}
-          renderItem={({ item }) => <Item {...item} onEvent={this.onEvent.bind(this)}/>}
-        />
+      <View style={styles.mainPanel}>
+        <View style={styles.endSeparator}>
+          <FlatList
+            data={Object.values(items) as IItem[]}
+            ItemSeparatorComponent={() => <View style={styles.separator}/>}
+            keyExtractor={(item: IItem) => item.id}
+            renderItem={({ item }) => <Item {...item} onEvent={this.onEvent.bind(this)}/>}
+          />
+        </View>
       </View>
     )
   }

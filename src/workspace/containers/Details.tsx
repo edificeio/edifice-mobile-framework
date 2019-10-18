@@ -3,9 +3,11 @@ import { connect } from "react-redux";
 import { NavigationScreenProp } from "react-navigation";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderAction } from "../../ui/headers/NewHeader";
-import { View, ViewStyle } from "react-native";
+import { StyleSheet, View, ViewStyle } from "react-native";
 import { EVENT_TYPE, IDetailsProps, IItem } from "../types";
 import { ItemDetails } from "../components";
+import { CommonStyles } from "../../styles/common/styles";
+import { layoutSize } from "../../styles/common/layoutSize";
 
 
 
@@ -15,8 +17,14 @@ const HeaderBackAction = ({ navigation, style }: {
   return (
     <HeaderAction onPress={() => navigation.pop()} name={"back"} style={style}/>
   )
-}
+};
 
+const styles = StyleSheet.create({
+  mainPanel: {
+    backgroundColor: "#FFF6F8",
+    flex: 1
+  }
+});
 
 export class Details extends React.PureComponent<IDetailsProps> {
   readonly state = { inProgress: true};
@@ -43,7 +51,9 @@ export class Details extends React.PureComponent<IDetailsProps> {
   public render() {
     const item = this.props.navigation.getParam("item");
     return (
-      <ItemDetails {...item} onEvent={this.onEvent}/>
+      <View style={styles.mainPanel}>
+        <ItemDetails {...item} onEvent={this.onEvent}/>
+      </View>
     );
   }
 }
