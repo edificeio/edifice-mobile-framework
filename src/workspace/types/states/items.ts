@@ -1,16 +1,17 @@
 import { IRight } from "./right";
 
 export type IItem = IRight & {
-  date: number,
-  id: string,
-  name: string,
-  isFolder: boolean
+  date: number;
+  id: string;
+  name: string;
+  isFolder: boolean;
 }
 
 export type IFile = IItem & {
   contentType: string;
-  fileName: string,
-  size: number
+  filename: string;
+  size: number;
+  url: string;
 }
 
 export type IFolder = IItem & {

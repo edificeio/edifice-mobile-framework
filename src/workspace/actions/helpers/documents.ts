@@ -31,13 +31,10 @@ export type IBackendDocument = {
   modified: string;
   owner: string;
   ownerName: string;
-  thumbnails: {
-    [id: string]: string;
-  };
+  thumbnails: { [id: string]: string };
 };
 
 export type IBackendDocumentArray = Array<IBackendDocument>;
-
 
 // ADAPTER ----------------------------------------------------------------------------------------
 
@@ -54,7 +51,8 @@ const backendDocumentsAdapter: (data: IBackendDocumentArray) => IItems<IFile> = 
       name: item.name,
       owner: filters(item.owner),
       ownerName: item.ownerName,
-      size: item.metadata.size
+      size: item.metadata.size,
+      url: `/workspace/document/${item._id}`
     };
   }
   return result;
@@ -65,14 +63,12 @@ const backendDocumentsAdapter: (data: IBackendDocumentArray) => IItems<IFile> = 
 export async function getDocuments(parameters: IFiltersParameters) {
   const { parentId } = parameters;
 
-  if (!parentId)
-    return {};
+  if (!parentId) return {};
 
   const formatParameters = (parameters: IFiltersParameters = {}) => {
     let result = "?";
     for (let key in parameters) {
-      if ((parameters as any)[key] == undefined)
-        continue;
+      if ((parameters as any)[key] == undefined) continue;
       result = result.concat(`${key}=${(parameters as any)[key]}&`);
     }
     return result.slice(0, -1);
