@@ -3,7 +3,7 @@ import { FilterId } from "../types/filters";
 import Conf from "../../../ode-framework-conf";
 import { Icon } from "../../ui";
 import { CommonStyles } from "../../styles/common/styles";
-import { layoutSize } from "../../styles/common/layoutSize";
+import {DEVICE_HEIGHT, layoutSize} from "../../styles/common/layoutSize";
 import { Image } from "react-native";
 import * as React from "react";
 import { signUrl } from "../../infra/oauth";
@@ -34,8 +34,8 @@ export const renderImage = ( id: string | null, isFolder: boolean, name: string)
     );
   else {
     // @ts-ignore
-    const uri = `${Conf.currentPlatform.url}/workspace/document/${id}?thumbnail=200*200`
-    const style = {width: "100%", height: layoutSize.LAYOUT_200}
+    const uri = `${Conf.currentPlatform.url}/workspace/document/${id}`
+    const style = {width: "100%", height: DEVICE_HEIGHT - layoutSize.LAYOUT_200}
     return (
       <Image style={style} source={signUrl(uri)} />
     )
