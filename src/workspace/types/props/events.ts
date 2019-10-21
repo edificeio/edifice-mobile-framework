@@ -1,10 +1,10 @@
 import { IItem } from "../states";
 
 export enum EVENT_TYPE {
-  SELECT,
   DOWNLOAD,
+  PREVIEW,
+  SELECT,
   SHARE,
-  PREVIEW
 }
 
 export interface IEventProps {
