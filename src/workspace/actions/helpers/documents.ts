@@ -45,7 +45,7 @@ const backendDocumentsAdapter: (data: IBackendDocumentArray) => IItems<IFile> = 
     result[item._id] = {
       contentType: item.metadata["content-type"],
       date: moment(item.modified, "YYYY-MM-DD HH:mm.ss.SSS").toDate().getTime(),
-      fileName: item.metadata.filename,
+      filename: item.metadata.filename,
       id: item._id,
       isFolder: false,
       name: item.name,

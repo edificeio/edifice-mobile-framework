@@ -9,6 +9,7 @@ import { layoutSize } from "../../styles/common/layoutSize";
 import { IFile } from "../types/states";
 import { renderImage } from "../utils/image";
 import I18n from "i18n-js";
+import { TouchCard } from "../../ui/Card";
 
 const styles = StyleSheet.create({
   mainPanel: {
@@ -36,9 +37,9 @@ export const ItemDetails = ({ onEvent, ...item }: IFile & IEventProps) => {
 
   return (
     <View style={styles.mainPanel}>
-      <View style={styles.imagePanel}>
-        {renderImage(id, false, name)}
-      </View>
+      <TouchableOpacity style={styles.imagePanel} onPress={() => onEvent(EVENT_TYPE.PREVIEW, item)}>
+          {renderImage(id, false, name)}
+      </TouchableOpacity>
       <View style={styles.contentPanel}>
         <ButtonIconText
           name="download"
@@ -47,7 +48,7 @@ export const ItemDetails = ({ onEvent, ...item }: IFile & IEventProps) => {
         </ButtonIconText>
         <ButtonIconText
           name="share-variant"
-          onPress={() => onEvent(EVENT_TYPE.DOWNLOAD, item)}
+          onPress={() => onEvent(EVENT_TYPE.SHARE, item)}
         >
           {I18n.t("share")}
         </ButtonIconText>

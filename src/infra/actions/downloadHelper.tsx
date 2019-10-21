@@ -50,3 +50,27 @@ export const openDownloadedFile = (filepath:string) => {
     }
   }
 };
+
+export const openPreview = async (downloadable: IDownloadable) => {
+  let path = "";
+  if (Platform.OS === "android") {
+    await Permissions.request("storage");
+    path = RNFetchBlob.fs.dirs.DownloadDir;
+  } else if (Platform.OS === "ios") {
+    path = RNFetchBlob.fs.dirs.DocumentDir;
+  }
+  const indexOfExt = downloadable.filename.lastIndexOf(".");
+
+  if (indexOfExt) {
+    const filename = downloadable.filename.substr(indexOfExt);
+
+    path += `/${filename}`;
+    console.log("path", path)
+
+    await RNFetchBlob
+        .config({path})
+        .fetch("GET", Conf.currentPlatform.url + downloadable.url, getAuthHeader()["headers"])
+
+    await openDownloadedFile(path);
+  }
+}

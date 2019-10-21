@@ -6,7 +6,7 @@ import { HeaderAction } from "../../ui/headers/NewHeader";
 import { StyleSheet, View, ViewStyle } from "react-native";
 import { EVENT_TYPE, IDetailsProps, IFile } from "../types";
 import { ItemDetails } from "../components";
-import { startDownload } from "../../infra/actions/downloadHelper";
+import {openPreview, startDownload} from "../../infra/actions/downloadHelper";
 
 const HeaderBackAction = ({ navigation, style }: {
   navigation: NavigationScreenProp<{}>, style?: ViewStyle
@@ -40,6 +40,10 @@ export class Details extends React.PureComponent<IDetailsProps> {
     switch(type) {
       case EVENT_TYPE.DOWNLOAD:
         startDownload(item)
+        return
+      case EVENT_TYPE.PREVIEW:
+        openPreview( item)
+        return
       case EVENT_TYPE.SHARE:
         return
     }
