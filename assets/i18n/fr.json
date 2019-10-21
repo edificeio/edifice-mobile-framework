@@ -16,6 +16,7 @@
   "auth-unknownError": "Erreur lors de l'authentification. Veuillez réessayer.",
   "back": "Retour",
   "Birthdate": "Date de naissance",
+  "by": "par: ",
   "Cancel": "Annuler",
   "CellPhone": "Téléphone mobile",
   "change-password-errorLoading": "Nous n'avons pas pu charger les données nécessaires pour modifier votre mot de passe. Veuillez réessayer ultérieurement.",

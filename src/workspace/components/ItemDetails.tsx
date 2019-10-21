@@ -3,13 +3,10 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { IEventProps, EVENT_TYPE } from "../types";
 import I18n from "i18n-js";
 
-import { CommonStyles } from "../../styles/common/styles";
 import { ButtonIconText, Icon } from "../../ui";
-import { TextBold15 } from "../../ui/text";
 import { layoutSize } from "../../styles/common/layoutSize";
 import { IFile } from "../types/states";
 import { renderImage } from "../utils/image";
-import { TouchCard } from "../../ui/Card";
 
 const styles = StyleSheet.create({
   mainPanel: {

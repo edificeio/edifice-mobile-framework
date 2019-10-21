@@ -101,6 +101,17 @@ export const TextLight = (props: TextProps) => (
     }}
   />
 );
+
+export const TextMin = (props: TextProps) => (
+  <NestedText
+    {...props}
+    style={{
+      fontSize: layoutSize.LAYOUT_10,
+      color: CommonStyles.lightTextColor,
+    }}
+  />
+);
+
 export const NestedTextLight = (props: TextProps) => (
   <NestedText
     {...props}

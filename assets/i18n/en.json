@@ -16,6 +16,7 @@
   "auth-unknownError": "Authentication failed. Please try again.",
   "back": "Back",
   "Birthdate": "Date of birth",
+  "by": "par: ",
   "Cancel": "Cancel",
   "CellPhone": "Mobile phone",
   "change-password-errorLoading": "#",

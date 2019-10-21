@@ -1,5 +1,5 @@
 import I18n from "i18n-js";
-import { FilterId, IFolder, IItem } from "../../types";
+import { FilterId, IFolder } from "../../types";
 
 export const factoryRootFolder = ( filterId: FilterId): IFolder => {
   return {
