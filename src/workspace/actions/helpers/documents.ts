@@ -4,7 +4,7 @@
  */
 
 import { asyncGetJson } from "../../../infra/redux/async";
-import { IItems, IFiltersParameters, IFile } from "../../types";
+import {IItems, IFiltersParameters, IFile, FilterId, IFolder, IItem} from "../../types";
 import { filters } from "../../types/filters/helpers/filters";
 import moment from "moment";
 
@@ -60,19 +60,22 @@ const backendDocumentsAdapter: (data: IBackendDocumentArray) => IItems<IFile> = 
 
 // FETCH -----------------------------------------------------------------------------------------
 
-export async function getDocuments(parameters: IFiltersParameters) {
+export function getDocuments(parameters: IFiltersParameters): Promise<IItems<IItem>> {
   const { parentId } = parameters;
 
-  if (!parentId) return {};
+  if (!parentId) return Promise.resolve({});
 
-  const formatParameters = (parameters: IFiltersParameters = {}) => {
+  const formatParameters = (parameters = {}) => {
     let result = "?";
+
     for (let key in parameters) {
-      if ((parameters as any)[key] == undefined) continue;
+      if (!(parameters as any)[key]) continue;
+      if (key === "parentId" && (parameters as any)[key] in FilterId)    // its a root folder, no pass parentId
+        continue;
       result = result.concat(`${key}=${(parameters as any)[key]}&`);
     }
     return result.slice(0, -1);
   };
 
-  return await asyncGetJson(`/workspace/documents${formatParameters(parameters)}`, backendDocumentsAdapter);
+  return asyncGetJson(`/workspace/documents${formatParameters(parameters)}`, backendDocumentsAdapter);
 }

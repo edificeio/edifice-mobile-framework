@@ -63,16 +63,16 @@ const getRootFolders: () => IItems<IFolder> = () => {
 
 // THUNKS -----------------------------------------------------------------------------------------
 
-export async function getFolders(parameters: IFiltersParameters) {
+export function getFolders(parameters: IFiltersParameters): Promise<IItems<IFolder>> {
   const { parentId } = parameters;
 
   if (!parentId)
-    return getRootFolders();
+    return Promise.resolve(getRootFolders());
 
   const formatParameters = (parameters = {}) => {
     let result = "?";
     for (let key in parameters) {
-      if ((parameters as any)[key] == undefined)
+      if (!(parameters as any)[key])
         continue;
       if (key === "parentId" && (parameters as any)[key] in FilterId)    // its a root folder, no pass parentId
         continue;
@@ -81,6 +81,6 @@ export async function getFolders(parameters: IFiltersParameters) {
     return result.slice(0, -1);
   };
 
-  return await asyncGetJson(`/workspace/folders/list${formatParameters(parameters)}`, backendFoldersAdapter);
+  return asyncGetJson(`/workspace/folders/list${formatParameters(parameters)}`, backendFoldersAdapter);
 }
 
