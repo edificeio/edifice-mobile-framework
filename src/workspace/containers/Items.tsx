@@ -51,11 +51,6 @@ export class Items extends React.PureComponent<IItemsProps> {
   };
 
   public componentDidMount() {
-    const { items } = this.props;
-
-    if (Object.keys(items).length > 0)   // already read
-      return;
-
     this.props.fetchWorkspaceList(
       {
         filter: this.props.navigation.getParam("filter"),
@@ -79,15 +74,16 @@ export class Items extends React.PureComponent<IItemsProps> {
 
   public render() {
     const { items, isFetching } = this.props;
+    const itemsArray = Object.values(items);
 
-    if (isFetching)
+    if (isFetching && itemsArray.length === 0)
       return <Loading/>;
 
     return (
       <View style={styles.mainPanel}>
         <View style={styles.endSeparator}>
           <FlatList
-            data={Object.values(items) as IItem[]}
+            data={itemsArray}
             ItemSeparatorComponent={() => <View style={styles.separator}/>}
             keyExtractor={(item: IItem) => item.id}
             renderItem={({ item }) => <Item {...item} onEvent={this.onEvent.bind(this)}/>}
