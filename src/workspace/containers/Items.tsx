@@ -5,11 +5,10 @@ import { bindActionCreators } from "redux";
 import { NavigationScreenProp } from "react-navigation";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderAction } from "../../ui/headers/NewHeader";
-import { FlatList, StyleSheet, View, ViewStyle } from "react-native";
+import {FlatList, RefreshControl, StyleSheet, View, ViewStyle} from "react-native";
 import {EVENT_TYPE, FilterId, IItem, IItemsProps, IState} from "../types";
 import { Item } from "../components";
 import { fetchWorkspaceList } from "../actions/list";
-import { Loading } from "../../ui";
 import { CommonStyles } from "../../styles/common/styles";
 import { layoutSize } from "../../styles/common/layoutSize";
 import {EmptyScreen} from "../../ui/EmptyScreen";
@@ -54,6 +53,10 @@ export class Items extends React.PureComponent<IItemsProps> {
   };
 
   public componentDidMount() {
+    this.makeRequest();
+  }
+
+  public makeRequest() {
     this.props.fetchWorkspaceList(
       {
         filter: this.props.navigation.getParam("filter"),
@@ -140,10 +143,7 @@ export class Items extends React.PureComponent<IItemsProps> {
     const { items, isFetching } = this.props;
     const itemsArray = Object.values(items);
 
-    if (isFetching && itemsArray.length === 0)
-      return <Loading/>;
-
-    if (itemsArray.length === 0)
+    if (!isFetching && itemsArray.length === 0)
       return this.renderEmptyScreen();
 
     return (
@@ -153,6 +153,12 @@ export class Items extends React.PureComponent<IItemsProps> {
             data={itemsArray}
             ItemSeparatorComponent={() => <View style={styles.separator}/>}
             keyExtractor={(item: IItem) => item.id}
+            refreshControl={
+              <RefreshControl
+                refreshing={isFetching}
+                onRefresh={this.makeRequest}
+              />
+            }
             renderItem={({ item }) => <Item {...item} onEvent={this.onEvent.bind(this)}/>}
           />
         </View>
