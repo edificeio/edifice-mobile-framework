@@ -6,12 +6,15 @@ import { NavigationScreenProp } from "react-navigation";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderAction } from "../../ui/headers/NewHeader";
 import { FlatList, StyleSheet, View, ViewStyle } from "react-native";
-import { EVENT_TYPE, IItem, IItemsProps, IState } from "../types";
+import {EVENT_TYPE, FilterId, IItem, IItemsProps, IState} from "../types";
 import { Item } from "../components";
 import { fetchWorkspaceList } from "../actions/list";
 import { Loading } from "../../ui";
 import { CommonStyles } from "../../styles/common/styles";
 import { layoutSize } from "../../styles/common/layoutSize";
+import {EmptyScreen} from "../../ui/EmptyScreen";
+import I18n from "i18n-js";
+
 
 const styles = StyleSheet.create({
   mainPanel: {
@@ -72,12 +75,76 @@ export class Items extends React.PureComponent<IItemsProps> {
     }
   }
 
-  public render() {
+  public renderEmptyScreen(): React.ReactNode {
+    const parentId = this.props.navigation.getParam("parentId");
+
+    return parentId === FilterId.trash
+      ? this.renderEmptyTrash()
+      : parentId in FilterId
+        ? this.renderEmptyWorkspace()
+        : this.renderEmptyFolder()
+  }
+
+  public renderEmptyTrash(): React.ReactNode {
+    return (
+      <EmptyScreen
+        imageSrc={require("../../../assets/images/empty-screen/empty-trash.png")}
+        imgWidth={265}
+        imgHeight={336}
+        text={I18n.t("trash-emptyScreenText")}
+        title={I18n.t("trash-emptyScreenTitle")}
+        scale={0.76}
+      />
+    );
+  }
+
+  public renderEmptyFolder(): React.ReactNode {
+    return (
+      <EmptyScreen
+        imageSrc={require("../../../assets/images/empty-screen/empty-folder.png")}
+        imgWidth={500}
+        imgHeight={500}
+        text=""
+        title=""
+        scale={0.7}
+      />
+    );
+  }
+
+  public renderEmptyWorkspace(): React.ReactNode {
+    const parentId = this.props.navigation.getParam("parentId");
+    const text = parentId === FilterId.owner
+      ? I18n.t("owner-emptyScreenText")
+      : parentId === FilterId.protected
+        ? I18n.t("protected-emptyScreenText")
+        : I18n.t("share-emptyScreenText")
+    const title = parentId === FilterId.owner
+      ? I18n.t("owner-emptyScreenTitle")
+      : parentId === FilterId.protected
+        ? I18n.t("protected-emptyScreenTitle")
+        : I18n.t("share-emptyScreenTitle")
+
+    return (
+      <EmptyScreen
+        imageSrc={require("../../../assets/images/empty-screen/empty-workspace.png")}
+        imgWidth={400}
+        imgHeight={316}
+        text={text}
+        title={title}
+        scale={0.76}
+      />
+    );
+  }
+
+  public render(): React.ReactNode {
     const { items, isFetching } = this.props;
     const itemsArray = Object.values(items);
 
     if (isFetching && itemsArray.length === 0)
       return <Loading/>;
+
+    if (itemsArray.length === 0)
+      return this.renderEmptyScreen();
 
     return (
       <View style={styles.mainPanel}>

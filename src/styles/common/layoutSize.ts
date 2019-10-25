@@ -86,3 +86,5 @@ export const layoutSize = {
 }
 
 export const DEVICE_HEIGHT = Dimensions.get("window").height - layoutSize.LAYOUT_25
+
+export const DEVICE_WIDTH = Dimensions.get("window").width

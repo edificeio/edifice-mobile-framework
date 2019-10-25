@@ -93,7 +93,7 @@ export class Images extends React.Component<
     fullscreen: false
   };
 
-  public openImage(index) {
+  public openImage(index: any) {
     this.setState({ fullscreen: true, currentImage: index });
   }
 
