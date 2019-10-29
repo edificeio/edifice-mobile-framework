@@ -4,7 +4,8 @@ export default new FunctionalModuleConfig({
   name: "workspace",
   apiName: "Espace documentaire",
   displayName: "workspace",
-  iconName: "folder",
+  iconName: "workspace_folder",
+  iconColor: "#e21d3a",
   group: true
 });
 

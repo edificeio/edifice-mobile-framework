@@ -1,18 +1,19 @@
 import * as React from "react";
+import {FlatList, RefreshControl, StyleSheet, View, ViewStyle} from "react-native";
 import { connect } from "react-redux";
-import config from "../config";
+import I18n from "i18n-js";
 import { bindActionCreators } from "redux";
 import { NavigationScreenProp } from "react-navigation";
+import config from "../config";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderAction } from "../../ui/headers/NewHeader";
-import {FlatList, RefreshControl, StyleSheet, View, ViewStyle} from "react-native";
 import {EVENT_TYPE, FilterId, IItem, IItemsProps, IState} from "../types";
 import { Item } from "../components";
 import { fetchWorkspaceList } from "../actions/list";
 import { CommonStyles } from "../../styles/common/styles";
 import { layoutSize } from "../../styles/common/layoutSize";
 import {EmptyScreen} from "../../ui/EmptyScreen";
-import I18n from "i18n-js";
+import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 
 
 const styles = StyleSheet.create({
@@ -148,6 +149,7 @@ export class Items extends React.PureComponent<IItemsProps> {
 
     return (
       <View style={styles.mainPanel}>
+        <ConnectionTrackingBar />
         <View style={styles.endSeparator}>
           <FlatList
             data={itemsArray}
@@ -156,7 +158,7 @@ export class Items extends React.PureComponent<IItemsProps> {
             refreshControl={
               <RefreshControl
                 refreshing={isFetching}
-                onRefresh={this.makeRequest}
+                onRefresh={this.makeRequest.bind(this)}
               />
             }
             renderItem={({ item }) => <Item {...item} onEvent={this.onEvent.bind(this)}/>}

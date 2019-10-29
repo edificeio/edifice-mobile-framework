@@ -60,5 +60,11 @@ const getIcon = ( id: string | null, isFolder: boolean, name: string): string | 
   }
   if (name && name.endsWith(".pdf"))
     return "pdf_files";
+  if (name && (name.endsWith(".doc") || name.endsWith(".docx") || name.endsWith(".dot") || name.endsWith(".dotm") || name.endsWith(".dotx") || name.endsWith(".docm")))
+    return "file-word";
+  if (name && (name.endsWith(".ppt") || name.endsWith(".pptx") || name.endsWith(".pps")))
+    return "file-powerpoint";
+  if (name && (name.endsWith(".xls") || name.endsWith(".xlsx") || name.endsWith(".xlsm") || name.endsWith(".xltm")))
+    return "file-excel";
   return null
 };
