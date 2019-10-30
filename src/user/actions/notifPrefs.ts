@@ -1,7 +1,6 @@
 import deepmerge from "deepmerge";
 import {
   fetchJSONWithCache,
-  signedFetchJson
 } from "../../infra/fetchWithCache";
 import { preference, savePreference } from "../../infra/Me";
 import userConfig from "../config";
@@ -11,7 +10,7 @@ export const actionTypeSetNotifPrefs = userConfig.createActionType(
 );
 
 export function loadNotificationPrefs() {
-  return async (dispatch, getState) => {
+  return async (dispatch: any, getState: any) => {
     // 1 : Get user's timeline preferences
 
     const rawUserTimelinePrefs = (await preference("timeline")) || {
@@ -25,7 +24,7 @@ export function loadNotificationPrefs() {
     const userNotifPrefsConfig = Object.values(
       rawUserTimelinePrefs.config
     ).reduce((acc, el: any) => {
-      if (includeNotifKeys.includes(el.key)) {
+      if (includeNotifKeys.includes(el.key as never)) {
         acc[el.key] = { ...el, "push-notif": el["push-notif"] || false }; // In the eventual case of push-notifs is not defined for this key, we consider `false`.
       }
       return acc;
@@ -39,9 +38,9 @@ export function loadNotificationPrefs() {
     const rawDefaultNotifsPrefsConfig = await fetchJSONWithCache(
       "/timeline/notifications-defaults"
     );
-    const defaultNotifsPrefsConfig = rawDefaultNotifsPrefsConfig.reduce(
-      (acc, el) => {
-        if (includeNotifKeys.includes(el.key)) {
+    const defaultNotifsPrefsConfig = !rawDefaultNotifsPrefsConfig ? {} : rawDefaultNotifsPrefsConfig.reduce(
+      (acc: any, el: any) => {
+        if (includeNotifKeys.includes(el.key as never)) {
           acc[el.key] = { ...el, "push-notif": el["push-notif"] || false }; // In the eventual case of push-notifs is not defined for this key, we consider `false`.
         }
         return acc;
@@ -132,6 +131,10 @@ export const includeNotifKeysByApp = [
   {
     appName: "homeworks",
     notifKeys: ["homeworks.share", "homeworks.entries.modified"]
+  },
+  {
+    appName: "workspace",
+    notifKeys: [ "workspace.comment-folder", "workspace.contrib-folder", "workspace.share", "workspace.share-foler", "workspace.storage"]
   }
 ];
 
@@ -146,7 +149,7 @@ export function action_toggleNotifPrefsByApp(
   value: boolean,
   notificationPrefs: object
 ) {
-  return async (dispatch, getState) => {
+  return async (dispatch: any, getState: any) => {
     // console.log("toggle notif prefs for app", appName);
     const newNotificationPrefs = {
       ...notificationPrefs
@@ -179,7 +182,7 @@ export function setNotificationPref(
   value: boolean,
   notificationPrefs: object
 ) {
-  return async (dispatch, getState) => {
+  return async (dispatch: any, getState: any) => {
     // console.log("set notif pref", notif, value, notificationPrefs);
     const newNotificationPrefs = {
       ...notificationPrefs,

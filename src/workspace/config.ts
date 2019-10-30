@@ -6,6 +6,17 @@ export default new FunctionalModuleConfig({
   displayName: "workspace",
   iconName: "workspace_folder",
   iconColor: "#e21d3a",
-  group: true
+  group: true,
+  notifHandlerFactory: async () => {
+    //must lazy load to avoid compile errors
+    const res = await import("./notifHandler");
+    const val: any = res.default;
+    //sometime dynamic import include default in default
+    if (val.default) {
+      return val.default;
+    } else {
+      return val;
+    }
+  }
 });
 
