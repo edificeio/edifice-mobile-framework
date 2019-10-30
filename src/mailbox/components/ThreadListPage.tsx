@@ -146,6 +146,7 @@ export class ThreadListPage extends React.PureComponent<
 
   public renderThreadList() {
     const { isFetching, isRefreshing, onNextPage, onRefresh } = this.props;
+
     return (
       <FlatList
         refreshControl={
@@ -174,6 +175,7 @@ export class ThreadListPage extends React.PureComponent<
         style={styles.grid}
         keyboardShouldPersistTaps={"always"}
         scrollEnabled={!this.state.isSwiping}
+        ListFooterComponent={isFetching ? this.renderLoading() : null}
       />
     );
   }
