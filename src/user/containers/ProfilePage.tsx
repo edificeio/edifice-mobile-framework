@@ -26,6 +26,7 @@ import Notifier from "../../infra/notifier/container";
 import { changePasswordResetAction } from "../actions/changePassword";
 import { TextColor } from "../../ui/text";
 import { getSessionInfo } from "../../AppStore";
+import { ValidatorBuilder } from "../../utils/form"
 
 export interface IProfilePageDataProps {
   userauth: IUserAuthState;
@@ -138,7 +139,7 @@ export class ProfilePage extends React.PureComponent<
                 editable: true,
                 setter: (email) => this.setState({ email }),
                 keyboardType: "email-address",
-                validator: { key: "emailValid", regex: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/ }
+                validator: { key: "emailValid", regex: ValidatorBuilder.MAIL_REGEX }
               })}
 
               {this.renderItem({
@@ -147,7 +148,7 @@ export class ProfilePage extends React.PureComponent<
                 editable: true,
                 setter: (homePhone) => this.setState({ homePhone }),
                 keyboardType: "phone-pad",
-                validator: { key: "homePhoneValid", regex: /^(00|\+)?(?:[0-9] ?-?\.?){6,15}$/ }
+                validator: { key: "homePhoneValid", regex: ValidatorBuilder.PHONE_REGEX }
               })}
 
               {this.renderItem({
@@ -156,7 +157,7 @@ export class ProfilePage extends React.PureComponent<
                 editable: true,
                 setter: (mobile) => this.setState({ mobile }),
                 keyboardType: "phone-pad",
-                validator: { key: "mobileValid", regex: /^(00|\+)?(?:[0-9] ?-?\.?){6,15}$/ }
+                validator: { key: "mobileValid", regex: ValidatorBuilder.PHONE_REGEX }
               })}
 
               {this.renderItem({

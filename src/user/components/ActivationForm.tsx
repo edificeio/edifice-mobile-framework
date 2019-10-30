@@ -122,7 +122,7 @@ export function InputPhone(props: { phone: string, form: ActivationFormModel, on
     const validator = props.form.phone;
     return <TextInputLine
         inputRef={(ref) => props.form.inputPhone = ref}
-        placeholder={I18n.t("Phone")}
+        placeholder={I18n.t("CellPhone")}
         onChangeText={validator.changeCallback(props.onChange)}
         value={props.phone}
         hasError={props.form.showPhoneError(props.phone)}
