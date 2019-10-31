@@ -9,14 +9,8 @@ import TouchableOpacity from "../ui/CustomTouchableOpacity";
 import { removeAccents } from "../utils/string";
 
 export const UserLabel = style.text({
-  backgroundColor: CommonStyles.primaryLight,
   color: CommonStyles.primary,
-  borderRadius: 3,
-  padding: 5,
   textAlignVertical: "center",
-  height: 30,
-  marginHorizontal: 3,
-  marginVertical: 5
 });
 
 const ScrollField = style.scrollView({
@@ -78,19 +72,26 @@ export default class SearchUser extends React.Component<
   };
 
   public render() {
-    // console.log(this.state)
     let index = 0;
     return (
       <PageContainer>
-        <ScrollField>
+        <ScrollField alwaysBounceVertical={false}>
           <FieldContainer>
             <To>{I18n.t("to")}</To>
             {this.props.picked.map(p => (
               <TouchableOpacity
                 key={"Touchable_" + index++}
                 onPress={() => this.props.onUnpickUser(p)}
+                style={{
+                  backgroundColor: CommonStyles.primaryLight,
+                  borderRadius: 3,
+                  padding: 5,
+                  maxWidth: "100%",
+                  marginHorizontal: 3,
+                  marginVertical: 5,
+                }}
               >
-                <UserLabel>{p.name || p.displayName}</UserLabel>
+                <UserLabel numberOfLines={2}>{p.name || p.displayName}</UserLabel>
               </TouchableOpacity>
             ))}
             <TextInput
