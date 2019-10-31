@@ -29,23 +29,26 @@ import "moment/locale/fr";
 moment.locale("fr");
 
 // Components
-import { RefreshControl } from "react-native";
-const { View, FlatList } = style;
+import { RefreshControl, SectionList } from "react-native";
+const { View } = style;
 
 import { Loading } from "../../ui";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
 import { EmptyScreen } from "../../ui/EmptyScreen";
 
-import HomeworkDayTasks from "./HomeworkDayTasks";
 import HomeworkTimeline from "./HomeworkTimeline";
+import HomeworkDayCheckpoint from "./HomeworkDayCheckpoint";
+import HomeworkCard from "./HomeworkCard";
 
 // Type definitions
 import { IHomeworkTask, IHomeworkTasks } from "../reducers/tasks";
+import { IHomeworkDiary } from "../reducers/diaryList";
 
 // Misc
 import today from "../../utils/today";
 import { NavigationScreenProp } from "react-navigation";
+import { CommonStyles } from "../../styles/common/styles";
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -53,6 +56,7 @@ export interface IHomeworkPageDataProps {
   isFetching?: boolean;
   diaryId?: string;
   didInvalidate?: boolean;
+  diaryInformation?: IHomeworkDiary
   tasksByDay?: Array<{
     id: string;
     date: moment.Moment;
@@ -125,28 +129,40 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
       onScrollBeginDrag
     } = this.props;
 
+    const data = tasksByDay ? tasksByDay.map(day => ({
+      title: day.date,
+      data: day.tasks.map(task => ({
+        ...task,
+        date: day.date
+      }))
+    })) : []
+
     return (
       <View style={{ flex: 1 }}>
         <HomeworkTimeline />
-        <FlatList
-          innerRef={this.setFlatListRef}
-          data={tasksByDay}
+        <View style={{ backgroundColor: CommonStyles.lightGrey, height: 15, width: "100%", position: "absolute", top: 0, zIndex: 1, marginLeft: 50 }} />
+        <SectionList
+          ref={this.setFlatListRef}
+          sections={data}
           CellRendererComponent={
             ViewOverflow
           } /* TS-ISSUE : CellRendererComponent is an official FlatList prop */
           renderItem={({ item }) => (
-            <ViewOverflow>
-              <HomeworkDayTasks
-                data={item}
-                onSelect={(item, date) => {
-                  console.log("item:", )
-                  onSelect!(diaryId!, date, item.id);
-                  navigation!.navigate("HomeworkTask", {"title": item.title}); // TODO : Should the navigation be in mapDispatchToProps or not ?
-                }}
-              />
-            </ViewOverflow>
+              <HomeworkCard
+              title={item.title}
+              content={item.content}
+              key={item.id}
+              onPress={() => onSelect!(diaryId!, item, item.date)}
+            />
           )}
-          keyExtractor={item => item.date.format("YYYY-MM-DD")}
+          renderSectionHeader={({ section: { title } }) => (
+            <HomeworkDayCheckpoint
+              nb={title.date()}
+              text={title.format("dddd D MMMM")}
+              active={title.isSame(today(), "day")}
+            />
+          )}
+          keyExtractor={item => item.id}
           ListFooterComponent={() => <View height={15} />}
           refreshControl={
             <RefreshControl
@@ -154,8 +170,8 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
               onRefresh={() => onRefresh(diaryId)}
             />
           }
-          onViewableItemsChanged={this.handleViewableItemsChanged}
           onScrollBeginDrag={() => onScrollBeginDrag()}
+          stickySectionHeadersEnabled
         />
       </View>
     );
@@ -176,35 +192,6 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
   private renderLoading() {
     return <Loading />;
   }
-
-  // Lifecycle
-
-  public componentDidUpdate() {
-    const { tasksByDay, isFetching, navigation } = this.props;
-    if (
-      // If it's an empty screen, we put today's month in the header
-      tasksByDay &&
-      tasksByDay.length === 0 &&
-      !isFetching &&
-      moment.isMoment(navigation.getParam("date")) &&
-      !navigation.getParam("date").isSame(today(), "month") // Prevent infinite update
-    ) {
-      navigation.setParams({ "date": false }, "Homework");
-    }
-  }
-
-  // Event Handlers
-
-  public handleViewableItemsChanged = info => {
-    const firstItem = info.viewableItems[0];
-    if (!firstItem) return;
-    const firstItemDate = firstItem.item.date;
-    this.props.navigation.setParams(
-      { "date": firstItemDate },
-      "Homework"
-    );
-    // TODO : this line causes a re-render, AND a re-parse of all the html contents... Needs to be cached.
-  }; /* TS-ISSUE: Syntax error on this line because of a collision between TSlint and Prettier. */
 }
 
 export default HomeworkPage;
