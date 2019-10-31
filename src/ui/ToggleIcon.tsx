@@ -1,10 +1,11 @@
 import * as React from "react";
 import style from "glamorous-native";
 import { Icon } from ".";
+import { CommonStyles } from "../styles/common/styles"
 
 const ToggleView = style.view(
 	{
-        backgroundColor: '#FEBF32', 
+        backgroundColor: CommonStyles.secondary, 
         borderRadius: 15, 
         height: 30, 
         width: 30, 
