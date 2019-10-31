@@ -22,7 +22,7 @@ export const createActionThreadSelected: (
 });
 
 export function conversationThreadSelected(threadId: string) {
-  return async dispatch => {
+  return dispatch => {
     dispatch(createActionThreadSelected(threadId));
   };
 }

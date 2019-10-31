@@ -13,6 +13,7 @@ import style from "glamorous-native";
 import * as React from "react";
 const { View } = style;
 import { Text, TextColor } from "../../ui/text";
+import { CommonStyles } from "../../styles/common/styles";
 
 import HomeworkCircleNumber from "./HomeworkCircleNumber";
 
@@ -26,7 +27,8 @@ export interface IHomeworkDayCheckpointProps {
 const homeworkDayCheckpointStyle = {
   alignItems: "center",
   flexDirection: "row",
-  marginTop: 15
+  marginTop: 15,
+  backgroundColor: CommonStyles.lightGrey,
 };
 
 export const HomeworkDayCheckpoint = ({
@@ -37,9 +39,13 @@ export const HomeworkDayCheckpoint = ({
 }: IHomeworkDayCheckpointProps) => (
   <View style={[homeworkDayCheckpointStyle, style]}>
     <HomeworkCircleNumber nb={nb} active={active} />
-    <Text color={TextColor.Light} fontSize={12}>
-      {text.toUpperCase()}
-    </Text>
+    <View 
+      style={{ flex: 1, paddingBottom: 15, marginBottom: -15, paddingLeft: 5, marginLeft: -5, backgroundColor: CommonStyles.lightGrey}}
+    >
+      <Text color={TextColor.Light} fontSize={12}>
+        {text.toUpperCase()}
+      </Text>
+    </View>
   </View>
 );
 

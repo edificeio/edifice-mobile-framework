@@ -10,7 +10,6 @@ import I18n from "i18n-js";
 export type IUser = { id: string, name: string, displayName: string, checked: boolean };
 const UserName = style.text({
     fontWeight: 'bold',
-    height: 51,
     textAlignVertical: 'center',
     flex: 1,
     paddingLeft: 15,
@@ -20,7 +19,7 @@ const UserName = style.text({
 
 const UserLine = ({ id, displayName, name, checked, onPick, onUnpick, selectable }) => (
     <TouchableOpacity onPress={() => !checked ? onPick() : onUnpick()}>
-        <Line style={{ padding: 20, paddingBottom: 0, alignItems: 'center' }}>
+        <Line style={{ padding: 10, alignItems: 'center' }}>
             <SingleAvatar size={51} userId={id} />
             <UserName numberOfLines={2}>{name || displayName}</UserName>
             {selectable && <Checkbox checked={checked} onCheck={() => onPick()} onUncheck={() => onUnpick()} />}

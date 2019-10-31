@@ -153,7 +153,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
     };
     this.insertNewTextNugget(allTextWrapper);
     const { height, width } = Dimensions.get("window");
-    this.thumbnailSizeQuery = `?thumbnail=${width}`;
+    this.thumbnailSizeQuery = `?thumbnail=${width}x0`;
     return html;
   };
 

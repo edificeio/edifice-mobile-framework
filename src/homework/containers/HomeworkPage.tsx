@@ -27,25 +27,26 @@ const mapStateToProps: (state: any) => IHomeworkPageDataProps = state => {
   const localState = state.homework;
   const selectedDiaryId = localState.selectedDiary;
   const currentDiaryTasks = localState.tasks[selectedDiaryId];
+  const diaryInformation = localState.diaryList.data[selectedDiaryId];
   if (!selectedDiaryId || !currentDiaryTasks)
     if (localState.diaryList.didInvalidate)
       return {
         /* Initial props if there is not initialisation yet.
         For the hack, we consider app is already fetching to avoid a screen blinking. */
-        diaryId: null,
+        diaryId: undefined,
         didInvalidate: true,
         isFetching: true,
-        lastUpdated: null,
-        tasksByDay: null
+        lastUpdated: undefined,
+        tasksByDay: undefined
       };
     else {
       return {
         /* Here is an mepty screen displayer */
-        diaryId: null,
+        diaryId: undefined,
         didInvalidate: true,
         isFetching: false,
-        lastUpdated: null,
-        tasksByDay: null
+        lastUpdated: undefined,
+        tasksByDay: undefined
       };
     }
   const { didInvalidate, isFetching, lastUpdated } = currentDiaryTasks;
@@ -65,7 +66,8 @@ const mapStateToProps: (state: any) => IHomeworkPageDataProps = state => {
     didInvalidate,
     isFetching,
     lastUpdated,
-    tasksByDay
+    tasksByDay,
+    diaryInformation,
   };
 };
 
@@ -93,15 +95,11 @@ class HomeworkPageContainer extends React.PureComponent<
   {}
 > {
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
-    const date = navigation.getParam('date') as Moment;
-    let headerText = date ? date.format("MMMM YYYY") : null;
-    headerText = headerText
-      ? headerText.charAt(0).toUpperCase() + headerText.slice(1)
-      : I18n.t("Homework");
+    const diaryTitle = navigation.getParam("diaryTitle")
 
     return standardNavScreenOptions(
       {
-        title: headerText,
+        title: diaryTitle || I18n.t("Homework"),
         headerLeft: <HeaderBackAction navigation={navigation} />,
         headerRight: <HeaderAction
           name="filter"
@@ -123,6 +121,13 @@ class HomeworkPageContainer extends React.PureComponent<
   public async componentDidMount() {
     await this.loadSelectedDiary();
     this.props.dispatch(fetchHomeworkDiaryList());
+  }
+
+  public componentDidUpdate() {
+    const { diaryInformation, navigation } = this.props
+    if (diaryInformation && navigation && diaryInformation.title && diaryInformation.title !== navigation.getParam("diaryTitle")) {
+      navigation.setParams({diaryTitle: diaryInformation.title })
+    }
   }
 
   private async loadSelectedDiary() {

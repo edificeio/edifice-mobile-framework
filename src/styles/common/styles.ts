@@ -3,6 +3,7 @@ import { setCustomText } from "react-native-global-props";
 
 export const CommonStyles = {
   primary: "#299cc8",
+  secondary: "#ff8500",
   primaryLight: "#EAF5F9",
   lightGrey: "rgb(248,248,250)",
   grey: "rgb(188,188,190)",

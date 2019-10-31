@@ -36,7 +36,7 @@ function matchString(text1: string, text2: string) {
 ///
 export class ValidatorBuilder {
     static MAIL_REGEX = /^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
-    static PHONE_REGEX = /^(00|\+)?(?:[0-9] ?-?\.?){6,14}[0-9]$/;
+    static PHONE_REGEX = /^(00|\+)?(?:[0-9] ?-?\.?){6,15}$/;
     validators: IValidator[] = []
     withRequired(required: boolean) {
         if (required) {

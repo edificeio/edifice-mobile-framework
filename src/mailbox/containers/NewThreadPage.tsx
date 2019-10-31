@@ -16,6 +16,7 @@ import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenO
 import { HeaderBackAction, HeaderAction } from "../../ui/headers/NewHeader";
 import { Dispatch, AnyAction } from "redux";
 import { ThunkDispatch } from "redux-thunk";
+import conversationThreadSelected from "../actions/threadSelected";
 
 interface INewThreadPageProps {
   remainingUsers: IUser[];
@@ -24,7 +25,7 @@ interface INewThreadPageProps {
   pickUser: (user: IUser) => void;
   unpickUser: (user: IUser) => void;
   navigation: NavigationScreenProp<{}>
-  createThread: (pickedUsers: any) => any;
+  createAndSelectThread: (pickedUsers: any) => any;
 }
 
 class NewThreadPage extends React.PureComponent<
@@ -57,8 +58,8 @@ class NewThreadPage extends React.PureComponent<
   }
 
   public handleCreateThread() {
-    const newConversation = this.props.createThread(this.props.pickedUsers);
-    this.props.navigation.replace("thread", newConversation.id);
+    this.props.createAndSelectThread(this.props.pickedUsers);
+    this.props.navigation.replace("thread");
   }
 
   public updateHeaderProps() {
@@ -107,6 +108,9 @@ export default connect(
     loadVisibles: () => loadVisibles(dispatch)(),
     pickUser: (user: any) => pickUser(dispatch)(user),
     unpickUser: (user: any) => unpickUser(dispatch)(user),
-    createThread: (pickedUsers: any[]) => dispatch(createThread(pickedUsers))
+    createAndSelectThread: (pickedUsers: any[]) => {
+      const newConversation = dispatch(createThread(pickedUsers))
+      dispatch(conversationThreadSelected(newConversation.id))
+    }
   })
 )(NewThreadPage);
