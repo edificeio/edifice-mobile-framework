@@ -108,7 +108,8 @@ export class NotifPrefsPage extends React.PureComponent<
     if (
       !availableAppsWithUppercase.hasOwnProperty(notifPref.type) && // TODO: Get the available apps NOT from timeline
       notifPref.type !== "MESSAGERIE" &&
-      notifPref.type !== "HOMEWORKS"
+      notifPref.type !== "HOMEWORKS" &&
+      notifPref.type !== "WORKSPACE"
     )
       return false;
     if (
@@ -135,7 +136,8 @@ export class NotifPrefsPage extends React.PureComponent<
     if (
       !availableAppsWithUppercase.hasOwnProperty(appName.toUpperCase()) && // TODO: Get the available apps NOT from timeline
       appName.toUpperCase() !== "MESSAGERIE" &&
-      appName.toUpperCase() !== "HOMEWORKS"
+      appName.toUpperCase() !== "HOMEWORKS" &&
+      appName.toUpperCase() !== "WORKSPACE"
     )
       return false;
     if (!this.props.legalapps.includes(stringCapitalize(appName.toLowerCase())))

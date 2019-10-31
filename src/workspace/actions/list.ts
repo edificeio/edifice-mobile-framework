@@ -10,7 +10,6 @@ import workspaceConfig from "../config";
 import { IItems, IFiltersParameters, IItem } from "../types";
 import { getFolders } from "./helpers/folders";
 import { getDocuments } from "./helpers/documents";
-import { Item } from "../components";
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

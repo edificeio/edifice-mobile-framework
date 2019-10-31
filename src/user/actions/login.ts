@@ -82,6 +82,8 @@ export function login(
       // Some applications haven't a precise name... ☹️
       if (userinfo2.apps.includes("Cahier de texte"))
         userinfo2.apps.push("Homeworks");
+      if (userinfo2.apps.includes("Espace documentaire"))
+        userinfo2.apps.push("Workspace");
       if (userinfo2.apps.includes("Actualites")) userinfo2.apps.push("News");
 
       // === 3: check user validity

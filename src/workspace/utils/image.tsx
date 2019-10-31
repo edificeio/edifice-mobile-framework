@@ -7,7 +7,6 @@ import {DEVICE_HEIGHT, layoutSize} from "../../styles/common/layoutSize";
 import { Image } from "react-native";
 import * as React from "react";
 import { signUrl } from "../../infra/oauth";
-import {SvgUri} from "react-native-svg";
 
 export const renderIcon = ( id: string | null, isFolder: boolean, name: string): any => {
   const icon = getIcon(id, isFolder, name);
@@ -35,20 +34,11 @@ export const renderImage = ( id: string | null, isFolder: boolean, name: string)
     return (
       <Icon color={CommonStyles.grey} size={layoutSize.LAYOUT_200} name={icon}/>
     );
-  else if (name.endsWith(".svg")) {
-    <SvgUri
-      width="100%"
-      height={height}
-      uri={signUrl(uri).uri || null}
-    />
-  }
-  else {
     // @ts-ignore
     const style = {width: "100%", height}
     return (
       <Image style={style} source={signUrl(uri)} />
     )
-  }
 };
 
 const getIcon = ( id: string | null, isFolder: boolean, name: string): string | null => {
