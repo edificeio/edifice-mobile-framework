@@ -152,7 +152,10 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
               title={item.title}
               content={item.content}
               key={item.id}
-              onPress={() => onSelect!(diaryId!, item, item.date)}
+              onPress={() => {
+                onSelect!(diaryId!, item.date, item.id);
+                navigation!.navigate("HomeworkTask", { "title": item.title });
+              }}
             />
           )}
           renderSectionHeader={({ section: { title } }) => (
