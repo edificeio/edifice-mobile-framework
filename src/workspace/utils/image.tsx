@@ -4,9 +4,10 @@ import Conf from "../../../ode-framework-conf";
 import { Icon } from "../../ui";
 import { CommonStyles } from "../../styles/common/styles";
 import {DEVICE_HEIGHT, layoutSize} from "../../styles/common/layoutSize";
-import { Image } from "react-native";
+import {Image, View} from "react-native";
 import * as React from "react";
 import { signUrl } from "../../infra/oauth";
+import {IFile} from "../types";
 
 export const renderIcon = ( id: string | null, isFolder: boolean, name: string): any => {
   const icon = getIcon(id, isFolder, name);
@@ -25,23 +26,20 @@ export const renderIcon = ( id: string | null, isFolder: boolean, name: string):
   }
 };
 
-export const renderImage = ( id: string | null, isFolder: boolean, name: string): any => {
-  const icon = getIcon(id, isFolder, name);
-  const uri = `${Conf.currentPlatform.url}/workspace/document/${id}`
-  const height = DEVICE_HEIGHT - layoutSize.LAYOUT_200
+export const renderImage = ( item: IFile, isFolder: boolean, name: string): any => {
+  const icon = getIcon(item.id, isFolder, name);
+  const uri = `${Conf.currentPlatform.url}/workspace/document/${item.id}`;
 
   if (icon)
     return (
       <Icon color={CommonStyles.grey} size={layoutSize.LAYOUT_200} name={icon}/>
     );
-    // @ts-ignore
-    const style = {width: "100%", height}
-    return (
-      <Image style={style} source={signUrl(uri)} />
-    )
+  return (
+    <Image style={{ width: '100%', height: '100%'}} resizeMode='cover' source={signUrl(uri)} />
+  )
 };
 
-const getIcon = ( id: string | null, isFolder: boolean, name: string): string | null => {
+const getIcon = ( id: string | null, isFolder: boolean, pName: string | null): string | null => {
 
   if (isFolder) {
     switch (filters(id)) {
@@ -57,6 +55,11 @@ const getIcon = ( id: string | null, isFolder: boolean, name: string): string | 
         return "folder1"
     }
   }
+  if (!pName)
+    return null;
+
+  const name = pName.toLowerCase()
+
   if (name && name.endsWith(".pdf"))
     return "pdf_files";
   if (name && (name.endsWith(".doc") || name.endsWith(".docx") || name.endsWith(".dot") || name.endsWith(".dotm") || name.endsWith(".dotx") || name.endsWith(".docm")))

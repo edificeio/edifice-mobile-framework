@@ -18,7 +18,7 @@ import {renderEmptyScreen} from "../utils/empty";
 
 const styles = StyleSheet.create({
   mainPanel: {
-    backgroundColor: "#FFF6F8",
+    backgroundColor: CommonStyles.lightGrey,
     flex: 1
   },
   separator: {

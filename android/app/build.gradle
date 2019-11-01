@@ -195,10 +195,12 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
+    implementation "com.google.android.gms:play-services-base:17.1.0"
+
     // Firebase dependencies (see https://rnfirebase.io/docs/v5.x.x/installation/android)
-    implementation "com.google.android.gms:play-services-base:16.1.0"
-    implementation "com.google.firebase:firebase-core:16.0.9"
-    implementation "com.google.firebase:firebase-messaging:18.0.0"
+    implementation 'com.google.firebase:firebase-analytics:17.2.1'
+    implementation "com.google.firebase:firebase-core:17.2.1"
+    implementation "com.google.firebase:firebase-messaging:20.0.0"
 
     // Appcenter manual linking (automatic linking does not work)
     // implementation project(':appcenter')

@@ -7,6 +7,7 @@ import { StyleSheet, View, ViewStyle } from "react-native";
 import { EVENT_TYPE, IDetailsProps, IFile } from "../types";
 import { ItemDetails } from "../components";
 import {openPreview, startDownload} from "../../infra/actions/downloadHelper";
+import {CommonStyles} from "../../styles/common/styles";
 
 const HeaderBackAction = ({ navigation, style }: {
   navigation: NavigationScreenProp<{}>, style?: ViewStyle
@@ -18,7 +19,7 @@ const HeaderBackAction = ({ navigation, style }: {
 
 const styles = StyleSheet.create({
   mainPanel: {
-    backgroundColor: "#FFF6F8",
+    backgroundColor: CommonStyles.lightGrey,
     flex: 1
   }
 });

@@ -10,7 +10,9 @@ export const startDownload = async (downloadable: IFile) => {
   let path = await getDirName() + '/' + downloadable.filename;
 
   const res: FetchBlobResponse = await RNFetchBlob
-    .config({path})
+    .config({
+      path
+    })
     .fetch("GET", Conf.currentPlatform.url + downloadable.url, getAuthHeader()["headers"])
 
   openDownloadedFile(res.path())
@@ -30,8 +32,9 @@ export const openPreview = async (downloadable: IFile) => {
 const openDownloadedFile = (filepath: string, ext = false): void => {
   if (Platform.OS === "ios")
     RNFetchBlob.ios.openDocument(filepath);
-  else if (Platform.OS === "android")
+  else if (Platform.OS === "android") {
     RNFetchBlob.android.actionViewIntent(filepath, Mime.getType(filepath) || 'text/html');
+  }
   else
     console.warn("Cannot handle file for devices other than ios/android.");
 };

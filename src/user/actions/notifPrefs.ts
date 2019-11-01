@@ -134,7 +134,7 @@ export const includeNotifKeysByApp = [
   },
   {
     appName: "workspace",
-    notifKeys: [ "workspace.comment-folder", "workspace.contrib-folder", "workspace.share", "workspace.share-folder", "workspace.storage"]
+    notifKeys: [ "workspace.contrib-folder", "workspace.share", "workspace.share-folder"]
   }
 ];
 

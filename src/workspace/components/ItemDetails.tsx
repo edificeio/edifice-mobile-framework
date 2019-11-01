@@ -10,6 +10,7 @@ import { renderImage } from "../utils/image";
 
 const styles = StyleSheet.create({
   mainPanel: {
+    flex: 1,
     backgroundColor: '#FFFFFF',
   },
   contentPanel: {
@@ -19,8 +20,9 @@ const styles = StyleSheet.create({
   },
   imagePanel: {
     flexDirection: 'row',
+    flex: 1,
     justifyContent: 'space-around',
-    margin: layoutSize.LAYOUT_14
+    margin: layoutSize.LAYOUT_14,
   },
   touchCard: {
     alignItems: "center",
@@ -35,7 +37,7 @@ export const ItemDetails = ({ onEvent, ...item }: IFile & IEventProps) => {
   return (
     <View style={styles.mainPanel}>
       <TouchableOpacity style={styles.imagePanel} onPress={() => onEvent(EVENT_TYPE.PREVIEW, item)}>
-          {renderImage(id, false, name)}
+          {renderImage(item, false, name)}
       </TouchableOpacity>
       <View style={styles.contentPanel}>
         <ButtonIconText

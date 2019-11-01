@@ -6,6 +6,7 @@ import { TextH1, TextColor } from "../../ui/text";
 import { TouchCard } from "../../ui/Card";
 import { ArticleContainer } from "../../ui/ContainerContent";
 import { checkHasIcon } from "../../ui/icons/Icon";
+import {layoutSize} from "../../styles/common/layoutSize";
 
 const MyAppItemStyle = StyleSheet.create({
   flexItem: {
@@ -13,7 +14,7 @@ const MyAppItemStyle = StyleSheet.create({
     paddingBottom: 0,
     paddingHorizontal: 0,
     flex: 0.5,
-    height: 180,
+    height: layoutSize.LAYOUT_120,
     justifyContent: "space-around",
     alignContent: "space-around",
     alignItems: "center",
@@ -28,6 +29,7 @@ const MyAppItemStyle = StyleSheet.create({
 
   textStyle: {
     color: TextColor.Normal,
+    fontSize: layoutSize.LAYOUT_16,
     marginBottom: 0,
     marginTop: 0,
   },
