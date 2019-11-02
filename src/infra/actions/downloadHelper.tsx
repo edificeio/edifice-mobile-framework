@@ -11,22 +11,31 @@ export const startDownload = async (downloadable: IFile) => {
 
   const res: FetchBlobResponse = await RNFetchBlob
     .config({
-      path
+      addAndroidDownloads : {
+        useDownloadManager: true,
+        notification: true,
+        mediaScannable : true,
+        path,
+      },
     })
     .fetch("GET", Conf.currentPlatform.url + downloadable.url, getAuthHeader()["headers"])
 
-  openDownloadedFile(res.path())
+  return res;
 };
 
 export const openPreview = async (downloadable: IFile) => {
-  const res: FetchBlobResponse = await RNFetchBlob
+  const res = await downloadOnCache( downloadable)
+
+  openDownloadedFile(res.path());
+}
+
+export const downloadOnCache = async (downloadable: IFile): Promise<FetchBlobResponse> => {
+  return await RNFetchBlob
     .config({
       fileCache: true,
       appendExt: getExtension(downloadable.filename)
     })
     .fetch("GET", Conf.currentPlatform.url + downloadable.url, getAuthHeader()["headers"]);
-
-  openDownloadedFile(res.path());
 }
 
 const openDownloadedFile = (filepath: string, ext = false): void => {
@@ -39,7 +48,7 @@ const openDownloadedFile = (filepath: string, ext = false): void => {
     console.warn("Cannot handle file for devices other than ios/android.");
 };
 
-const getDirName = async () : Promise<string> => {
+export const getDirName = async () : Promise<string> => {
   if (Platform.OS === "android") {
     await Permissions.request("storage");
     return RNFetchBlob.fs.dirs.DownloadDir;

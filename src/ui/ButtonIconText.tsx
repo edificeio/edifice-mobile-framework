@@ -22,22 +22,17 @@ const Container = style.view({
 const TouchableOpacity = style.touchableOpacity( {
     alignItems: "center",
     justifyContent: "center",
-    width: layoutSize.LAYOUT_60,
-    height: layoutSize.LAYOUT_60,
-    borderRadius: layoutSize.LAYOUT_30,
-    shadowColor: 'rgba(0,0,0, .4)', // IOS
-    shadowOffset: { height: 1, width: 1 }, // IOS
-    shadowOpacity: 1, // IOS
-    shadowRadius: 1, //IOS
+    width: layoutSize.LAYOUT_42,
+    height: layoutSize.LAYOUT_42,
+    borderRadius: layoutSize.LAYOUT_20,
     backgroundColor: CommonStyles.profileTypes.Student,
-    elevation: 3, // Android
   });
 
 export const ButtonIconText = ({ name, onPress, children }: ButtonTextIconProps) => {
   return (
     <Container>
       <TouchableOpacity onPress={onPress}>
-        <Icon color="white" size={layoutSize.LAYOUT_32} name={name} />
+        <Icon color="white" size={layoutSize.LAYOUT_24} name={name} />
       </TouchableOpacity>
       <TextBold15>{children}</TextBold15>
     </Container>

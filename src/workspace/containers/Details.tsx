@@ -3,11 +3,12 @@ import { connect } from "react-redux";
 import { NavigationScreenProp } from "react-navigation";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderAction } from "../../ui/headers/NewHeader";
-import { StyleSheet, View, ViewStyle } from "react-native";
+import { StyleSheet, View, ViewStyle} from "react-native";
 import { EVENT_TYPE, IDetailsProps, IFile } from "../types";
 import { ItemDetails } from "../components";
 import {openPreview, startDownload} from "../../infra/actions/downloadHelper";
 import {CommonStyles} from "../../styles/common/styles";
+import {share} from "../../infra/actions/share";
 
 const HeaderBackAction = ({ navigation, style }: {
   navigation: NavigationScreenProp<{}>, style?: ViewStyle
@@ -46,6 +47,7 @@ export class Details extends React.PureComponent<IDetailsProps> {
         openPreview( item)
         return
       case EVENT_TYPE.SHARE:
+        share(item)
         return
     }
   }
