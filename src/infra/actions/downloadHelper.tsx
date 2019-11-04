@@ -8,16 +8,21 @@ import {IFile} from "../../workspace/types";
 
 export const startDownload = async (downloadable: IFile) => {
   let path = await getDirName() + '/' + downloadable.filename;
-
-  const res: FetchBlobResponse = await RNFetchBlob
-    .config({
-      addAndroidDownloads : {
+  const config = Platform.OS === "android"
+  ? {
+      addAndroidDownloads: {
         useDownloadManager: true,
         notification: true,
-        mediaScannable : true,
-        path,
-      },
-    })
+        mediaScannable: true,
+        path
+      }
+    }
+  : {
+      path
+    }
+
+  const res: FetchBlobResponse = await RNFetchBlob
+    .config(config)
     .fetch("GET", Conf.currentPlatform.url + downloadable.url, getAuthHeader()["headers"])
 
   return res;

@@ -7,16 +7,21 @@ import { ButtonIconText, Icon } from "../../ui";
 import {DEVICE_WIDTH, layoutSize} from "../../styles/common/layoutSize";
 import { IFile } from "../types/states";
 import { renderImage } from "../utils/image";
-import LinearGradient from "react-native-linear-gradient";
+import {CommonStyles} from "../../styles/common/styles";
 
 const styles = StyleSheet.create({
   mainPanel: {
-    display: 'flex',
     flex: 1,
-    backgroundColor: '#000000',
+    flexGrow: 1,
+    backgroundColor: CommonStyles.lightGrey,
   },
-  contentPanel: {
+  buttonPanel: {
+    position: 'absolute',
+    flex: 1,
     flexDirection: 'row',
+    bottom: 0,
+    left: 0,
+    right: 0,
     height: layoutSize.LAYOUT_50,
     justifyContent: 'space-around',
   },
@@ -24,12 +29,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     flexDirection: 'row',
     flex: 1,
+    flexGrow: 1,
     alignItems: "center",
-    justifyContent: 'center'
-  },
-  touchCard: {
-    alignItems: "center",
-    justifyContent: "space-evenly",
+    justifyContent: 'center',
   }
 });
 
@@ -42,13 +44,13 @@ export const ItemDetails = ({ onEvent, ...item }: IFile & IEventProps) => {
       <TouchableOpacity style={styles.imagePanel} onPress={() => onEvent(EVENT_TYPE.PREVIEW, item)}>
           {renderImage(item, false, name)}
       </TouchableOpacity>
-        <View  style={styles.contentPanel}>
-            <ButtonIconText
-              name="share-variant"
-              onPress={() => onEvent(EVENT_TYPE.SHARE, item)} />
-            <ButtonIconText
-              name="download"
-              onPress={() => onEvent(EVENT_TYPE.DOWNLOAD, item)}/>
+      <View  style={styles.buttonPanel}>
+        <ButtonIconText
+          name="download"
+          onPress={() => onEvent(EVENT_TYPE.DOWNLOAD, item)}/>
+        <ButtonIconText
+          name="share-variant"
+          onPress={() => onEvent(EVENT_TYPE.SHARE, item)} />
       </View>
     </View>
   )

@@ -1,11 +1,12 @@
+import * as React from "react";
+import {Image} from "react-native"
+import ImageScalable from 'react-native-scalable-image';
 import { filters } from "../types/filters/helpers/filters";
 import { FilterId } from "../types/filters";
 import Conf from "../../../ode-framework-conf";
 import { Icon } from "../../ui";
 import { CommonStyles } from "../../styles/common/styles";
-import {DEVICE_HEIGHT, layoutSize} from "../../styles/common/layoutSize";
-import {Image, View} from "react-native";
-import * as React from "react";
+import {DEVICE_WIDTH, layoutSize} from "../../styles/common/layoutSize";
 import { signUrl } from "../../infra/oauth";
 import {IFile} from "../types";
 
@@ -35,7 +36,7 @@ export const renderImage = ( item: IFile, isFolder: boolean, name: string): any 
       <Icon color={CommonStyles.grey} size={layoutSize.LAYOUT_200} name={icon}/>
     );
   return (
-    <Image style={{ width: '100%', height: '100%'}} resizeMode='cover' source={signUrl(uri)} />
+    <ImageScalable width={DEVICE_WIDTH()} source={signUrl(uri)} />
   )
 };
 
@@ -70,5 +71,7 @@ const getIcon = ( id: string | null, isFolder: boolean, pName: string | null): s
     return "file-excel";
   if (name && (name.endsWith(".svg") || name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".bmp") || name.endsWith(".tiff") || name.endsWith(".bmp")))
     return null;
+  if (name && (name.endsWith(".zip") || name.endsWith(".7z") || name.endsWith(".gz") || name.endsWith(".tgz")))
+    return "file-archive"
   return "file-document-outline"
 };

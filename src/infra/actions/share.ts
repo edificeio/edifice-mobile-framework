@@ -1,14 +1,17 @@
 import Share from "react-native-share";
-import {downloadOnCache} from "./downloadHelper";
+import {startDownload} from "./downloadHelper";
 import {IFile} from "../../workspace/types/states";
 import Mime from "mime";
+import {Platform} from "react-native";
 
 export const share = async (downloadable: IFile) => {
-  const res = await downloadOnCache( downloadable)
-  const path = res.path();
+  const res = await startDownload( downloadable)
+  const path = res.path()
+  const mime = downloadable.contentType
 
-  Share.open({
-    type: Mime.getType(path) || 'text/html',
-    url:path
+  await Share.open({
+    type: mime || 'text/html',
+    url: Platform.OS === 'android' ? 'file://' + path : path,
+    showAppsToView: true
   })
 };

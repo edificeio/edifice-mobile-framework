@@ -18,13 +18,6 @@ const HeaderBackAction = ({ navigation, style }: {
   )
 };
 
-const styles = StyleSheet.create({
-  mainPanel: {
-    backgroundColor: CommonStyles.lightGrey,
-    flex: 1
-  }
-});
-
 export class Details extends React.PureComponent<IDetailsProps> {
   readonly state = { inProgress: true};
 
@@ -55,9 +48,7 @@ export class Details extends React.PureComponent<IDetailsProps> {
   public render() {
     const item = this.props.navigation.getParam("item");
     return (
-      <View style={styles.mainPanel}>
         <ItemDetails {...item} onEvent={this.onEvent}/>
-      </View>
     );
   }
 }
