@@ -72,7 +72,7 @@ export function getFolders(parameters: IFiltersParameters): Promise<IItems<IFold
   const formatParameters = (parameters = {}) => {
     let result = "?";
     for (let key in parameters) {
-      if (!(parameters as any)[key])
+      if (!(parameters as any)[key])                                      // parameter empty
         continue;
       if (key === "parentId" && (parameters as any)[key] in FilterId)    // its a root folder, no pass parentId
         continue;

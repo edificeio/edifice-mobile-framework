@@ -8,6 +8,7 @@ import { CommonStyles } from "../../styles/common/styles";
 import {DEVICE_HEIGHT, DEVICE_WIDTH, layoutSize} from "../../styles/common/layoutSize";
 import { signUrl } from "../../infra/oauth";
 import {IFile} from "../types";
+import FastImage from "react-native-fast-image";
 
 export const renderIcon = ( id: string | null, isFolder: boolean, name: string): any => {
   const icon = getIcon(id, isFolder, name);
@@ -36,10 +37,10 @@ export const renderImage = ( item: IFile, isFolder: boolean, name: string): any 
       <Icon color={CommonStyles.grey} size={layoutSize.LAYOUT_200} name={icon}/>
     );
   return (
-      <Image
+      <FastImage
           style={{ width: DEVICE_WIDTH(), height}}
           source={signUrl(uri)}
-          resizeMode='contain'
+          resizeMode={FastImage.resizeMode.contain}
       />
   )
 };

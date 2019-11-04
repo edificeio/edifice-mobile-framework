@@ -43,7 +43,6 @@ const backendDocumentsAdapter: (data: IBackendDocumentArray) => IItems<IFile> = 
   if (!data) return result;
   for (const item of data) {
     result[item._id] = {
-      contentType: item.metadata["content-type"],
       date: moment(item.modified, "YYYY-MM-DD HH:mm.ss.SSS").toDate().getTime(),
       filename: item.metadata.filename,
       id: item._id,
@@ -51,8 +50,7 @@ const backendDocumentsAdapter: (data: IBackendDocumentArray) => IItems<IFile> = 
       name: item.name,
       owner: filters(item.owner),
       ownerName: item.ownerName,
-      size: item.metadata.size,
-      url: `/workspace/document/${item._id}`
+      size: item.metadata.size
     };
   }
   return result;
