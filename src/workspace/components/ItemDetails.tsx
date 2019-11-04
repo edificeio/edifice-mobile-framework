@@ -15,23 +15,20 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: CommonStyles.lightGrey,
   },
-  buttonPanel: {
-    position: 'absolute',
-    flex: 1,
-    flexDirection: 'row',
-    bottom: 0,
-    left: 0,
-    right: 0,
+  bottomPanel: {
     height: layoutSize.LAYOUT_50,
+  },
+  buttonPanel: {
+    flexDirection: 'row',
+    flex: 1,
     justifyContent: 'space-around',
   },
   imagePanel: {
     backgroundColor: 'transparent',
-    flexDirection: 'row',
     flex: 1,
     flexGrow: 1,
     alignItems: "center",
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
   }
 });
 
@@ -44,6 +41,7 @@ export const ItemDetails = ({ onEvent, ...item }: IFile & IEventProps) => {
       <TouchableOpacity style={styles.imagePanel} onPress={() => onEvent(EVENT_TYPE.PREVIEW, item)}>
           {renderImage(item, false, name)}
       </TouchableOpacity>
+      <View  style={styles.bottomPanel}>
       <View  style={styles.buttonPanel}>
         <ButtonIconText
           name="download"
@@ -51,6 +49,7 @@ export const ItemDetails = ({ onEvent, ...item }: IFile & IEventProps) => {
         <ButtonIconText
           name="share-variant"
           onPress={() => onEvent(EVENT_TYPE.SHARE, item)} />
+      </View>
       </View>
     </View>
   )

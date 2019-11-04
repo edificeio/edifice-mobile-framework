@@ -85,6 +85,6 @@ export const layoutSize = {
     LAYOUT_375: normalize(375),
 }
 
-export const DEVICE_HEIGHT = () => Dimensions.get("window").height - layoutSize.LAYOUT_25
+export const DEVICE_HEIGHT = () => Dimensions.get("window").height;
 
-export const DEVICE_WIDTH = () => Dimensions.get("window").width
+export const DEVICE_WIDTH = () => Dimensions.get("window").width;

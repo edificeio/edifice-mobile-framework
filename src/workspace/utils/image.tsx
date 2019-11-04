@@ -1,12 +1,11 @@
 import * as React from "react";
 import {Image} from "react-native"
-import ImageScalable from 'react-native-scalable-image';
 import { filters } from "../types/filters/helpers/filters";
 import { FilterId } from "../types/filters";
 import Conf from "../../../ode-framework-conf";
 import { Icon } from "../../ui";
 import { CommonStyles } from "../../styles/common/styles";
-import {DEVICE_WIDTH, layoutSize} from "../../styles/common/layoutSize";
+import {DEVICE_HEIGHT, DEVICE_WIDTH, layoutSize} from "../../styles/common/layoutSize";
 import { signUrl } from "../../infra/oauth";
 import {IFile} from "../types";
 
@@ -30,13 +29,18 @@ export const renderIcon = ( id: string | null, isFolder: boolean, name: string):
 export const renderImage = ( item: IFile, isFolder: boolean, name: string): any => {
   const icon = getIcon(item.id, isFolder, name);
   const uri = `${Conf.currentPlatform.url}/workspace/document/${item.id}`;
+  const height = DEVICE_HEIGHT() - layoutSize.LAYOUT_160;
 
   if (icon)
     return (
       <Icon color={CommonStyles.grey} size={layoutSize.LAYOUT_200} name={icon}/>
     );
   return (
-    <ImageScalable width={DEVICE_WIDTH()} source={signUrl(uri)} />
+      <Image
+          style={{ width: DEVICE_WIDTH(), height}}
+          source={signUrl(uri)}
+          resizeMode='contain'
+      />
   )
 };
 

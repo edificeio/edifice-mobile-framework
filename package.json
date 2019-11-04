@@ -41,7 +41,6 @@
     "react-native": "0.60.6",
     "react-native-app-link": "1.0.0",
     "react-native-device-info": "2.2.2",
-    "react-native-fast-image": "7.0.2",
     "react-native-firebase": "5.5.6",
     "react-native-fs": "2.13.3",
     "react-native-gesture-handler": "~1.4.1",
