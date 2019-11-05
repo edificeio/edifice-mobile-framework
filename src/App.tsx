@@ -96,6 +96,42 @@ class AppStoreUnconnected extends React.Component<
     SplashScreen.hide();
   }
 
+  public async componentDidUpdate(prevProps: any) {
+    const loggedIn = (this.props as any).loggedIn
+
+    if (loggedIn && loggedIn !== prevProps.loggedIn) {
+      // push notif subscription
+      if (!AppStoreUnconnected.initialNotifRouted) {
+        const notificationOpen: NotificationOpen = await firebase
+          .notifications()
+          .getInitialNotification();
+        if (notificationOpen) {
+          // console.log("on notif (LAUNCH):", notificationOpen);
+          this.handleNotification(notificationOpen);
+        }
+      }
+
+      //TODO unsubscribe on unmount=>leak
+      if (!this.notificationOpenedListener)
+        this.notificationOpenedListener = firebase
+          .notifications()
+          .onNotificationOpened((notificationOpen: NotificationOpen) => {
+            // console.log("on notif (REBACK):", notificationOpen);
+            AppStoreUnconnected.initialNotifRouted = true;
+            return this.handleNotification(notificationOpen);
+          });
+
+      AppStoreUnconnected.initialNotifRouted = false;
+
+      if (!this.onTokenRefreshListener)
+        this.onTokenRefreshListener = firebase
+          .messaging()
+          .onTokenRefresh(fcmToken => {
+            this.handleFCMTokenModified(fcmToken);
+          });
+    }
+  }
+
   private async startupLogin() {
     // console.log("startup login");
     //IF WE ARE NOT IN ACTIVATION MODE => TRY TO LOGIN => ELSE STAY ON ACTIVATION PAGE
@@ -103,35 +139,6 @@ class AppStoreUnconnected extends React.Component<
       // Auto Login if possible
       this.props.store.dispatch(checkVersionThenLogin(true));
     }
-
-    if (!AppStoreUnconnected.initialNotifRouted) {
-      const notificationOpen: NotificationOpen = await firebase
-        .notifications()
-        .getInitialNotification();
-      if (notificationOpen) {
-        // console.log("on notif (LAUNCH):", notificationOpen);
-        this.handleNotification(notificationOpen);
-      }
-    }
-
-    //TODO unsubscribe on unmount=>leak
-    if (!this.notificationOpenedListener)
-      this.notificationOpenedListener = firebase
-        .notifications()
-        .onNotificationOpened((notificationOpen: NotificationOpen) => {
-          // console.log("on notif (REBACK):", notificationOpen);
-          AppStoreUnconnected.initialNotifRouted = true;
-          return this.handleNotification(notificationOpen);
-        });
-
-    AppStoreUnconnected.initialNotifRouted = false;
-
-    if (!this.onTokenRefreshListener)
-      this.onTokenRefreshListener = firebase
-        .messaging()
-        .onTokenRefresh(fcmToken => {
-          this.handleFCMTokenModified(fcmToken);
-        });
   }
 
   public componentWillUnmount() {
@@ -182,6 +189,7 @@ function connectWithStore(store: any, WrappedComponent:any , ...args: [any?, any
 
 const mapStateToProps = (state: any, props: any) => ({
   currentPlatformId: state.user.auth.platformId,
+  loggedIn: state.user.auth.loggedIn,
   store
 });
 
