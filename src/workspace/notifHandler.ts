@@ -30,7 +30,8 @@ const notifHandlerFactory :NotificationHandlerFactory<any,any,any> = dispatch =>
       filename: name,
       owner: "",
       ownerName: "",
-      size: 0
+      size: 0,
+      url: `/workspace/document/${parentId}`
     };
     nainNavNavigate("WorkspaceDetails", {item, title: name})
   }

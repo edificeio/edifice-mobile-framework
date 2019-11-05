@@ -8,8 +8,10 @@ export type IItem = IRight & {
 }
 
 export type IFile = IItem & {
+  contentType?: string;
   filename: string;
   size: number;
+  url: string;
 }
 
 export type IFolder = IItem & {
