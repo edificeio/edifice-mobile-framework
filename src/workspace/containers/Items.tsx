@@ -43,6 +43,8 @@ const HeaderBackAction = ({ navigation, style }: {
 
 
 export class Items extends React.PureComponent<IItemsProps> {
+  redirected = false;
+
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
     return standardNavScreenOptions(
       {
@@ -55,6 +57,21 @@ export class Items extends React.PureComponent<IItemsProps> {
 
   public componentDidMount() {
     this.makeRequest();
+  }
+
+  // permits to manage push notif navigation
+  public shouldComponentUpdate() {
+    const childRoute = this.props.navigation.getParam("childRoute");
+    const childParams = this.props.navigation.getParam("childParams")
+
+    if (childRoute && !this.redirected) {
+      this.redirected = true;
+      this.props.navigation.push(
+        childRoute,
+        childParams);
+      return false;
+    }
+    return true;
   }
 
   public makeRequest() {
@@ -125,7 +142,7 @@ export class Items extends React.PureComponent<IItemsProps> {
 const mapStateToProps = (state: any, props: any) => {
   const stateItems: IState = config.getLocalState(state).items.data;
   const { isFetching } = config.getLocalState(state).items;
-  const parentId = props.navigation.getParam("parentId") || "root";
+  const parentId = props.navigation.getParam("parentId") || FilterId.root;
 
   return { items: stateItems[parentId] || {}, isFetching };
 };

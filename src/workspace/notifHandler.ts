@@ -1,5 +1,5 @@
 import Conf from "../../ode-framework-conf";
-import {nainNavNavigate, navigate} from "../navigation/helpers/navHelper";
+import {nainNavNavigate, nainSubNavNavigate, navigate} from "../navigation/helpers/navHelper";
 import {NotificationHandlerFactory} from "../infra/pushNotification";
 import {FilterId, IFile} from "./types";
 import {factoryRootFolder} from "./actions/helpers/factoryRootFolder";
@@ -17,14 +17,17 @@ const notifHandlerFactory :NotificationHandlerFactory<any,any,any> = dispatch =>
 
   const name = (notificationData as any).resourceName
   const isFolder = notificationData.resourceUri.indexOf( '/folder/') > 0
-  //const filter = (notificationData as any).doc === "share"
-  //   ? FilterId.shared
-  //   : (notificationData as any).doc
 
   if (isFolder) {
-    // nainNavNavigate("Workspace", {filter: null, parentId: FilterId.root, title: I18n.t('workspace')})
-    nainNavNavigate("Workspace", {filter: FilterId.shared, parentId: FilterId.shared, title: I18n.t(FilterId.shared)})
-    nainNavNavigate("Workspace", {filter: FilterId.shared, parentId, title: name})
+    nainNavNavigate(
+      "Workspace",
+      {
+        filter: FilterId.root,
+        parentId: FilterId.root,
+        title: I18n.t('workspace'),
+        childRoute: "Workspace",
+        childParams: {parentId, filter: FilterId.shared, title: name}
+      })
   }
   else {
     const item: IFile = {
@@ -38,9 +41,15 @@ const notifHandlerFactory :NotificationHandlerFactory<any,any,any> = dispatch =>
       size: 0,
       url: `/workspace/document/${parentId}`
     };
-    // nainNavNavigate("Workspace", {filter: null, parentId: FilterId.root, title: I18n.t('workspace')})
-    nainNavNavigate("Workspace", {filter: FilterId.shared, parentId: FilterId.shared, title: I18n.t(FilterId.shared)})
-    nainNavNavigate("WorkspaceDetails", {item, title: name})
+    nainNavNavigate(
+      "Workspace",
+      {
+        filter: FilterId.root,
+        parentId: FilterId.root,
+        title: I18n.t('workspace'),
+        childRoute: "WorkspaceDetails",
+        childParams: {item, title: name}
+      })
   }
 
   return true;
