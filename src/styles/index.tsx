@@ -70,11 +70,6 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 		paddingVertical: 12,
 	},
-	LeftBottomPosition: {
-		position: 'absolute',
-		left: layoutSize.LAYOUT_4,
-		bottom: layoutSize.LAYOUT_4,
-	},
 	leftMiddlePosition: {
 		alignItems: "center",
 		left: layoutSize.LAYOUT_4,
@@ -105,16 +100,6 @@ const styles = StyleSheet.create({
 		fontSize: 14,
 		textDecorationLine: "underline",
 	},
-	RightBottomPosition: {
-		position: 'absolute',
-		right: layoutSize.LAYOUT_4,
-		bottom: layoutSize.LAYOUT_4,
-	},
-	RightTopPosition: {
-		position: 'absolute',
-		right: layoutSize.LAYOUT_4,
-		top: 0,
-	},
 	statusText: {
 		color: CommonStyles.fadColor,
 		fontSize: 7,
@@ -128,10 +113,6 @@ const styles = StyleSheet.create({
 	textHeader: {
 		color: CommonStyles.shadowColor,
 		fontSize: layoutSize.LAYOUT_15
-	},
-	textMin: {
-		color: CommonStyles.fadColor,
-		fontSize: layoutSize.LAYOUT_10,
 	},
 	webview: {
 		backgroundColor: "#eee",
