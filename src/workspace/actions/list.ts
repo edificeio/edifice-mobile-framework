@@ -36,6 +36,10 @@ export function workspaceListFetchError(errmsg: string) {
 
 // THUNKS -----------------------------------------------------------------------------------------
 
+const sortOnName = ( a: string, b: string) : boolean => {
+  return a < b;
+}
+
 /**
  * Calls a fetch operation to get workspace list from the backend.
  * Dispatches WORKSPACE_LIST_REQUESTED, WORKSPACE_LIST_RECEIVED, and WORKSPACE_LIST_FETCH_ERROR if an error occurs.
@@ -47,7 +51,7 @@ export function fetchWorkspaceList(parameters: IFiltersParameters) {
     try {
       let foldersPromise = getFolders(parameters);
       let documentsPromise = getDocuments(parameters);
-      let dataFolders = await foldersPromise;
+      let dataFolders : IItems<IItem> = await foldersPromise;
       let dataDocuments = await documentsPromise;
       let data = { ...dataFolders, ...dataDocuments };
 

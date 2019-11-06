@@ -1,7 +1,8 @@
 import Conf from "../../ode-framework-conf";
-import { nainNavNavigate } from "../navigation/helpers/navHelper";
-import { NotificationHandlerFactory } from "../infra/pushNotification";
+import {nainNavNavigate} from "../navigation/helpers/navHelper";
+import {NotificationHandlerFactory} from "../infra/pushNotification";
 import {FilterId, IFile} from "./types";
+import {factoryRootFolder} from "./actions/helpers/factoryRootFolder";
 
 const notifHandlerFactory :NotificationHandlerFactory<any,any,any> = dispatch => async notificationData => {
 
@@ -19,8 +20,10 @@ const notifHandlerFactory :NotificationHandlerFactory<any,any,any> = dispatch =>
     ? FilterId.shared
     : (notificationData as any).doc
 
-  if (isFolder)
-    nainNavNavigate("Workspace", { filter, parentId, title: name })
+  if (isFolder) {
+    await nainNavNavigate("Workspace", {filter, ...factoryRootFolder( FilterId.shared)})
+    nainNavNavigate("Workspace", {filter, parentId, title: name})
+  }
   else {
     const item: IFile = {
       date: Date.now(),
@@ -33,6 +36,7 @@ const notifHandlerFactory :NotificationHandlerFactory<any,any,any> = dispatch =>
       size: 0,
       url: `/workspace/document/${parentId}`
     };
+    await nainNavNavigate("Workspace", {filter, ...factoryRootFolder( FilterId.shared)})
     nainNavNavigate("WorkspaceDetails", {item, title: name})
   }
 

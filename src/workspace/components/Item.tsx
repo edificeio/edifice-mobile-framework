@@ -12,6 +12,8 @@ import { renderIcon } from "../utils/image";
 
 export const Item = ({onEvent, ...item}: IItem & IEventProps) => {
   const {id, isFolder, name, date, ownerName = ""} = item;
+  const longOwnerName = `${I18n.t("by")}${ownerName}`
+  const shortOwnerName = longOwnerName.replace(/(.{40})..+/, "$1…");
 
   return (
     <TouchableOpacity style={style.item_flexrow} onPress={() => onEvent( EVENT_TYPE.SELECT, item)}>
@@ -23,7 +25,7 @@ export const Item = ({onEvent, ...item}: IItem & IEventProps) => {
           <Text numberOfLines={1} style={style.textHeader}>{name}</Text>
         </View>
         {date != 0 && <View style={style.LeftBottomPosition}><DateView date={date} min/></View>}
-        {ownerName.length > 0 && <View style={style.RightBottomPosition}><TextMin>{I18n.t("by")}{ownerName}</TextMin></View>}
+        {ownerName.length > 0 && <View style={style.RightBottomPosition}><TextMin>{shortOwnerName}</TextMin></View>}
       </CenterPanel>
     </TouchableOpacity>
   )

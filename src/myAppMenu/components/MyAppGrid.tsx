@@ -1,5 +1,6 @@
 import * as React from "react";
-import { FlatList } from "react-native";
+// @ts-ignore’
+import GridList from 'react-native-grid-list';
 import I18n from "i18n-js";
 
 import { PageContainer } from "../../ui/ContainerContent";
@@ -8,18 +9,20 @@ import { EmptyScreen } from "../../ui/EmptyScreen";
 import MyAppItem from "./MyAppItem";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { IAppModule } from "../../infra/moduleTool";
+import {layoutSize} from "../../styles/common/layoutSize";
+import {CommonStyles} from "../../styles/common/styles";
 
 class MyAppGrid extends React.PureComponent<any, {}> {
   private renderGrid(modules: IAppModule[]) {
     return (
-      <FlatList
+      <GridList
+        style={{ marginLeft: layoutSize.LAYOUT_10, marginTop: layoutSize.LAYOUT_10 }}
         data={modules}
-        contentContainerStyle={{ alignContent: "stretch" }}
         renderItem={({ item }: any) => (
           <MyAppItem displayName={I18n.t(item.config.displayName)} iconColor={item.config.iconColor} iconName={item.config.iconName} onPress={() => this.props.navigation.navigate(item.config.name)} />
         )}
         keyExtractor={(item: IAppModule) => item.config.name}
-        numColumns={2}
+        numColumns={ 2 }
       />
     );
   }

@@ -4,47 +4,42 @@ import I18n from "i18n-js";
 import {FilterId} from "../types/filters";
 import {FlatList, RefreshControl, StyleSheet, View} from "react-native";
 import {CommonStyles} from "../../styles/common/styles";
-import {layoutSize} from "../../styles/common/layoutSize";
+import {DEVICE_HEIGHT, DEVICE_WIDTH, layoutSize} from "../../styles/common/layoutSize";
 
 const styles = StyleSheet.create({
   mainPanel: {
     backgroundColor: "#FFF6F8",
     flex: 1
   },
-  separator: {
-    borderBottomColor: CommonStyles.borderColorLighter,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    marginLeft: layoutSize.LAYOUT_84
-  },
-  endSeparator: {
-    borderBottomColor: CommonStyles.borderColorLighter,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-  }
 });
 
 export const renderEmptyTrash = (): React.ReactNode => {
   return (
-    <EmptyScreen
-      imageSrc={require("../../../assets/images/empty-screen/empty-trash.png")}
-      imgWidth={265}
-      imgHeight={336}
-      text={I18n.t("trash-emptyScreenText")}
-      title={I18n.t("trash-emptyScreenTitle")}
-      scale={0.76}
-    />
+    <View style={{ flex: 1, flexGrow: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <EmptyScreen
+        imageSrc={require("../../../assets/images/empty-screen/empty-trash.png")}
+        imgWidth={265}
+        imgHeight={336}
+        text={I18n.t("trash-emptyScreenText")}
+        title={I18n.t("trash-emptyScreenTitle")}
+        scale={0.76}
+      />
+    </View>
   );
 }
 
 export const renderEmptyFolder = (): React.ReactNode => {
   return (
-    <EmptyScreen
-      imageSrc={require("../../../assets/images/empty-screen/empty-folder.png")}
-      imgWidth={500}
-      imgHeight={500}
-      text=""
-      title=""
-      scale={0.7}
-    />
+    <View style={{ width: DEVICE_WIDTH(), height: DEVICE_HEIGHT() - layoutSize.LAYOUT_110, justifyContent: 'center', alignItems: 'center'}}>
+      <EmptyScreen
+        imageSrc={require("../../../assets/images/empty-screen/empty-folder.png")}
+        imgWidth={500}
+        imgHeight={500}
+        text=""
+        title=""
+        scale={0.7}
+      />
+    </View>
   );
 }
 
@@ -61,18 +56,20 @@ export const renderEmptyWorkspace = (parentId: string): React.ReactNode => {
       : I18n.t("share-emptyScreenTitle")
 
   return (
-    <EmptyScreen
-      imageSrc={require("../../../assets/images/empty-screen/empty-workspace.png")}
-      imgWidth={400}
-      imgHeight={316}
-      text={text}
-      title={title}
-      scale={0.76}
-    />
+    <View style={{ flex: 1, flexGrow: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <EmptyScreen
+        imageSrc={require("../../../assets/images/empty-screen/empty-workspace.png")}
+        imgWidth={400}
+        imgHeight={316}
+        text={text}
+        title={title}
+        scale={0.76}
+      />
+    </View>
   );
 }
 
-export const renderEmptyScreen = (parentId: string, onRefresh: () => void): React.ReactNode => {
+export const renderEmptyList = (parentId: string, onRefresh: () => void): React.ReactNode => {
 
 /*  return parentId === FilterId.trash
     ? renderEmptyTrash()
@@ -82,7 +79,6 @@ export const renderEmptyScreen = (parentId: string, onRefresh: () => void): Reac
 */
   return (
     <View style={styles.mainPanel}>
-      <View style={styles.endSeparator}>
         <FlatList
           data={renderEmptyContent(parentId) as any}
           keyExtractor={(item: any) => item.id}
@@ -95,7 +91,6 @@ export const renderEmptyScreen = (parentId: string, onRefresh: () => void): Reac
           renderItem={ ({item}) => (item as any).render()}
         />
       </View>
-    </View>
   )
 }
 

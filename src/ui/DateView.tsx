@@ -11,7 +11,7 @@ const ViewDate = style.view({
         height: 16
     },
     ({min}): ViewStyle => ({
-        marginBottom: min ? 0 : 4,
+        marginBottom: min ? -2 : 4,
     })
 )
 

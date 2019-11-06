@@ -6,33 +6,32 @@ import Conf from "../../../ode-framework-conf";
 import {getAuthHeader} from "../oauth";
 import {IFile} from "../../workspace/types";
 
-export const startDownload = async (downloadable: IFile) => {
+export const startDownload = async (downloadable: IFile, withManager = true): Promise<FetchBlobResponse> => {
   let path = await getDirName() + '/' + downloadable.filename;
   const config = Platform.OS === "android"
   ? {
       addAndroidDownloads: {
-        useDownloadManager: true,
-        notification: true,
+        useDownloadManager: withManager,
+        notification: withManager,
         mediaScannable: true,
         path
       }
     }
   : {
-      path
-    }
+      path,
+      appendExt: getExtension(downloadable.filename)
+    };
 
-  const res: FetchBlobResponse = await RNFetchBlob
+  return await RNFetchBlob
     .config(config)
     .fetch("GET", Conf.currentPlatform.url + downloadable.url, getAuthHeader()["headers"])
-
-  return res;
 };
 
 export const openPreview = async (downloadable: IFile) => {
   const res = await downloadOnCache( downloadable)
 
   openDownloadedFile(res.path());
-}
+};
 
 export const downloadOnCache = async (downloadable: IFile): Promise<FetchBlobResponse> => {
   return await RNFetchBlob
@@ -41,7 +40,7 @@ export const downloadOnCache = async (downloadable: IFile): Promise<FetchBlobRes
       appendExt: getExtension(downloadable.filename)
     })
     .fetch("GET", Conf.currentPlatform.url + downloadable.url, getAuthHeader()["headers"]);
-}
+};
 
 const openDownloadedFile = (filepath: string, ext = false): void => {
   if (Platform.OS === "ios")
@@ -62,8 +61,8 @@ export const getDirName = async () : Promise<string> => {
   }
   console.warn("Cannot handle file for devices other than ios/android.");
   return "";
-}
+};
 
 const getExtension = ( filename: string) : string => {
   return filename.substr(filename.lastIndexOf(".") + 1)
-}
+};

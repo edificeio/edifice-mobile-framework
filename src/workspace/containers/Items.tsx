@@ -13,7 +13,7 @@ import { fetchWorkspaceList } from "../actions/list";
 import { CommonStyles } from "../../styles/common/styles";
 import { layoutSize } from "../../styles/common/layoutSize";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
-import {renderEmptyScreen} from "../utils/empty";
+import {renderEmptyList} from "../utils/empty";
 
 
 const styles = StyleSheet.create({
@@ -79,13 +79,23 @@ export class Items extends React.PureComponent<IItemsProps> {
     }
   }
 
+  private sortItems( a: IItem, b: IItem): number {
+    return a.isFolder
+      ? b.isFolder
+        ? a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+        : -1
+      : b.isFolder
+        ? 1
+        : a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+  }
+
   public render(): React.ReactNode {
     const { items, isFetching } = this.props;
-    const itemsArray = Object.values(items);
+    const itemsArray = Object.values(items).sort((a, b) => this.sortItems(a, b));
     const parentId = this.props.navigation.getParam("parentId") || null;
 
     if (!isFetching && itemsArray.length === 0)
-      return renderEmptyScreen(parentId, this.makeRequest.bind(this));
+      return renderEmptyList(parentId, this.makeRequest.bind(this));
 
     return (
       <View style={styles.mainPanel}>

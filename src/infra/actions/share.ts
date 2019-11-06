@@ -5,7 +5,7 @@ import Mime from "mime";
 import {Platform} from "react-native";
 
 export const share = async (downloadable: IFile) => {
-  const res = await startDownload( downloadable)
+  const res = await startDownload( downloadable, false)
   const path = res.path()
   const mime = downloadable.contentType
 

@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
     backgroundColor: CommonStyles.lightGrey,
   },
   bottomPanel: {
-    height: layoutSize.LAYOUT_50,
+    height: layoutSize.LAYOUT_68,
   },
   buttonPanel: {
     flexDirection: 'row',
@@ -45,10 +45,14 @@ export const ItemDetails = ({ onEvent, ...item }: IFile & IEventProps) => {
       <View  style={styles.buttonPanel}>
         <ButtonIconText
           name="download"
-          onPress={() => onEvent(EVENT_TYPE.DOWNLOAD, item)}/>
+          onPress={() => onEvent(EVENT_TYPE.DOWNLOAD, item)}>
+          {I18n.t("download")}
+        </ButtonIconText>
         <ButtonIconText
           name="share-variant"
-          onPress={() => onEvent(EVENT_TYPE.SHARE, item)} />
+          onPress={() => onEvent(EVENT_TYPE.SHARE, item)}>
+          {I18n.t("share")}
+        </ButtonIconText>
       </View>
       </View>
     </View>
