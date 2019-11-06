@@ -28,20 +28,20 @@ export const renderEmptyTrash = (): React.ReactNode => {
   );
 }
 
-export const renderEmptyFolder = (): React.ReactNode => {
-  return (
-    <View style={{ width: DEVICE_WIDTH(), height: DEVICE_HEIGHT() - layoutSize.LAYOUT_110, justifyContent: 'center', alignItems: 'center'}}>
-      <EmptyScreen
-        imageSrc={require("../../../assets/images/empty-screen/empty-folder.png")}
-        imgWidth={500}
-        imgHeight={500}
-        text=""
-        title=""
-        scale={0.7}
-      />
-    </View>
-  );
-}
+// export const renderEmptyFolder = (): React.ReactNode => {
+//   return (
+//     <View style={{ width: DEVICE_WIDTH(), height: DEVICE_HEIGHT() - layoutSize.LAYOUT_110, justifyContent: 'center', alignItems: 'center'}}>
+//       <EmptyScreen
+//         imageSrc={require("../../../assets/images/empty-screen/empty-folder.png")}
+//         imgWidth={500}
+//         imgHeight={500}
+//         text=""
+//         title=""
+//         scale={0.7}
+//       />
+//     </View>
+//   );
+// }
 
 export const renderEmptyWorkspace = (parentId: string): React.ReactNode => {
   const text = parentId === FilterId.owner
@@ -98,7 +98,5 @@ export const renderEmptyContent = (parentId: string): React.ReactNode => {
 
   return parentId === FilterId.trash
     ? [{ id: "1", render: () => renderEmptyTrash()}]
-    : parentId in FilterId
-      ? [{id: "1", render: () => renderEmptyWorkspace(parentId)}]
-      : [{id: "1", render: () => renderEmptyFolder()}]
+    : [{id: "1", render: () => renderEmptyWorkspace(parentId)}]
 }
