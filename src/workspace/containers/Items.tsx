@@ -7,7 +7,7 @@ import { NavigationScreenProp } from "react-navigation";
 import config from "../config";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderAction } from "../../ui/headers/NewHeader";
-import {EVENT_TYPE, IItem, IItemsProps, IState} from "../types";
+import {EVENT_TYPE, FilterId, IItem, IItemsProps, IState} from "../types";
 import { Item } from "../components";
 import { fetchWorkspaceList } from "../actions/list";
 import { CommonStyles } from "../../styles/common/styles";
@@ -61,7 +61,7 @@ export class Items extends React.PureComponent<IItemsProps> {
     this.props.fetchWorkspaceList(
       {
         filter: this.props.navigation.getParam("filter"),
-        parentId: this.props.navigation.getParam("parentId")
+        parentId: this.props.navigation.getParam("parentId") || FilterId.root
       });
   }
 
@@ -91,8 +91,11 @@ export class Items extends React.PureComponent<IItemsProps> {
 
   public render(): React.ReactNode {
     const { items, isFetching } = this.props;
-    const itemsArray = Object.values(items).sort((a, b) => this.sortItems(a, b));
+    const values = Object.values(items);
     const parentId = this.props.navigation.getParam("parentId") || null;
+    const itemsArray = parentId === FilterId.root || parentId === null
+      ? values
+      : values.sort((a, b) => this.sortItems(a, b));
 
     if (!isFetching && itemsArray.length === 0)
       return renderEmptyList(parentId, this.makeRequest.bind(this));

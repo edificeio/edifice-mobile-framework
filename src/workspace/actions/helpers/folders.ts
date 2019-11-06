@@ -66,7 +66,7 @@ const getRootFolders: () => IItems<IFolder> = () => {
 export function getFolders(parameters: IFiltersParameters): Promise<IItems<IFolder>> {
   const { parentId } = parameters;
 
-  if (!parentId)
+  if (parentId === FilterId.root)
     return Promise.resolve(getRootFolders());
 
   const formatParameters = (parameters = {}) => {

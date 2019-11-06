@@ -63,7 +63,7 @@ const backendDocumentsAdapter: (data: IBackendDocumentArray) => IItems<IFile> = 
 export function getDocuments(parameters: IFiltersParameters): Promise<IItems<IItem>> {
   const { parentId } = parameters;
 
-  if (!parentId) return Promise.resolve({});
+  if (parentId === FilterId.root) return Promise.resolve({});
 
   const formatParameters = (parameters = {}) => {
     let result = "?";

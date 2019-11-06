@@ -51,7 +51,7 @@ export function fetchWorkspaceList(parameters: IFiltersParameters) {
     try {
       let foldersPromise = getFolders(parameters);
       let documentsPromise = getDocuments(parameters);
-      let dataFolders : IItems<IItem> = await foldersPromise;
+      let dataFolders = await foldersPromise;
       let dataDocuments = await documentsPromise;
       let data = { ...dataFolders, ...dataDocuments };
 

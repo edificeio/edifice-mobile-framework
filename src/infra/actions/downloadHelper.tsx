@@ -11,7 +11,7 @@ export const startDownload = async (downloadable: IFile, withManager = true): Pr
   const config = Platform.OS === "android"
   ? {
       addAndroidDownloads: {
-        useDownloadManager: withManager,
+        useDownloadManager: true,
         notification: withManager,
         mediaScannable: true,
         path
