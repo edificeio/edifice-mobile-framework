@@ -1,5 +1,5 @@
 import * as React from "react"
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import {Platform, StyleSheet, TouchableOpacity, View} from "react-native";
 import { IEventProps, EVENT_TYPE } from "../types";
 import I18n from "i18n-js";
 
@@ -44,15 +44,15 @@ export const ItemDetails = ({ onEvent, ...item }: IFile & IEventProps) => {
       <View  style={styles.bottomPanel}>
       <View  style={styles.buttonPanel}>
         <ButtonIconText
-          name="download"
-          onPress={() => onEvent(EVENT_TYPE.DOWNLOAD, item)}>
-          {I18n.t("download")}
-        </ButtonIconText>
-        <ButtonIconText
           name="share-variant"
           onPress={() => onEvent(EVENT_TYPE.SHARE, item)}>
           {I18n.t("share")}
         </ButtonIconText>
+        {Platform.OS === "android" && <ButtonIconText
+          name="download"
+          onPress={() => onEvent(EVENT_TYPE.DOWNLOAD, item)}>
+          {I18n.t("download")}
+        </ButtonIconText>}
       </View>
       </View>
     </View>
