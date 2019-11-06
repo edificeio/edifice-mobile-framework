@@ -166,7 +166,9 @@
   "unknown-user": "Utilisateur inconnu",
   "version-number": "Version",
   "welcome": "Bienvenue",
-  "workspace": "Espace documentaire",
+  "workspace": "Espace Documentaire",
+  "subFolder-emptyScreenText": "",
+  "subFolder-emptyScreenTitle": "Ce dossier est vide ...",
 
   "profileTypes": {
     "Guest": "Invité",
