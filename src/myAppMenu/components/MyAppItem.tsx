@@ -6,30 +6,25 @@ import { TextH1, TextColor } from "../../ui/text";
 import { TouchCard } from "../../ui/Card";
 import { ArticleContainer } from "../../ui/ContainerContent";
 import { checkHasIcon } from "../../ui/icons/Icon";
+import {HALF_WIDTH, layoutSize} from "../../styles/common/layoutSize";
+import {CommonStyles} from "../../styles/common/styles";
 
 const MyAppItemStyle = StyleSheet.create({
-  flexItem: {
-    paddingTop: 0,
-    paddingBottom: 0,
-    paddingHorizontal: 0,
-    flex: 0.5,
-    height: 180,
-    justifyContent: "space-around",
-    alignContent: "space-around",
-    alignItems: "center",
-  },
-
   touchCard: {
-    height: "80%",
-    width: "80%",
+    width: HALF_WIDTH(layoutSize.LAYOUT_10),
+    height: layoutSize.LAYOUT_100,
     alignItems: "center",
-    justifyContent: "space-evenly",
+    justifyContent: "center",
+    marginBottom: layoutSize.LAYOUT_10,
+    padding: 0
   },
 
   textStyle: {
     color: TextColor.Normal,
+    fontSize: layoutSize.LAYOUT_14,
     marginBottom: 0,
     marginTop: 0,
+    padding: 0
   },
 });
 
@@ -42,15 +37,13 @@ export interface IMyAppItem {
 
 export default (props: IMyAppItem) => {
   return (
-    <ArticleContainer style={MyAppItemStyle.flexItem}>
       <TouchCard style={MyAppItemStyle.touchCard} onPress={props.onPress}>
         <Icon
           color={props.iconColor}
-          size={50}
+          size={layoutSize.LAYOUT_50}
           name={checkHasIcon(props.iconName) ? props.iconName : props.iconName + "-on"}
         />
-        <TextH1 style={MyAppItemStyle.textStyle}>{props.displayName}</TextH1>
+        <TextH1 numberOfLines={1} style={MyAppItemStyle.textStyle}>{props.displayName}</TextH1>
       </TouchCard>
-    </ArticleContainer>
   );
 };

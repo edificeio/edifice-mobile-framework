@@ -1,12 +1,14 @@
+import * as React from "react";
+import {Image, View} from "react-native"
 import { filters } from "../types/filters/helpers/filters";
 import { FilterId } from "../types/filters";
 import Conf from "../../../ode-framework-conf";
 import { Icon } from "../../ui";
 import { CommonStyles } from "../../styles/common/styles";
-import {DEVICE_HEIGHT, layoutSize} from "../../styles/common/layoutSize";
-import { Image } from "react-native";
-import * as React from "react";
+import {DEVICE_HEIGHT, DEVICE_WIDTH, layoutSize} from "../../styles/common/layoutSize";
 import { signUrl } from "../../infra/oauth";
+import {IFile} from "../types";
+import FastImage, {FastImageSource} from "react-native-fast-image";
 
 export const renderIcon = ( id: string | null, isFolder: boolean, name: string): any => {
   const icon = getIcon(id, isFolder, name);
@@ -25,23 +27,27 @@ export const renderIcon = ( id: string | null, isFolder: boolean, name: string):
   }
 };
 
-export const renderImage = ( id: string | null, isFolder: boolean, name: string): any => {
-  const icon = getIcon(id, isFolder, name);
-  const uri = `${Conf.currentPlatform.url}/workspace/document/${id}`
-  const height = DEVICE_HEIGHT - layoutSize.LAYOUT_200
+export const renderImage = ( item: IFile, isFolder: boolean, name: string): any => {
+  const icon = getIcon(item.id, isFolder, name);
+  const uri = `${Conf.currentPlatform.url}/workspace/document/${item.id}`;
+  const height = DEVICE_HEIGHT() - layoutSize.LAYOUT_160;
 
   if (icon)
     return (
-      <Icon color={CommonStyles.grey} size={layoutSize.LAYOUT_200} name={icon}/>
+      <View style={{ width: DEVICE_WIDTH(), height, justifyContent: 'center', alignItems: 'center'}}>
+        <Icon color={CommonStyles.grey} size={layoutSize.LAYOUT_200} name={icon}/>
+      </View>
     );
-    // @ts-ignore
-    const style = {width: "100%", height}
-    return (
-      <Image style={style} source={signUrl(uri)} />
-    )
+  return (
+      <Image
+          style={{ width: DEVICE_WIDTH(), height}}
+          source={signUrl(uri)}
+          resizeMode={FastImage.resizeMode.contain}
+      />
+  )
 };
 
-const getIcon = ( id: string | null, isFolder: boolean, name: string): string | null => {
+const getIcon = ( id: string | null, isFolder: boolean, pName: string | null): string | null => {
 
   if (isFolder) {
     switch (filters(id)) {
@@ -57,15 +63,24 @@ const getIcon = ( id: string | null, isFolder: boolean, name: string): string | 
         return "folder1"
     }
   }
-  if (name && name.endsWith(".pdf"))
+  if (!pName)
+    return "file-document-outline"
+
+  const name = pName.toLowerCase()
+
+  if (name.endsWith(".pdf"))
     return "pdf_files";
-  if (name && (name.endsWith(".doc") || name.endsWith(".docx") || name.endsWith(".dot") || name.endsWith(".dotm") || name.endsWith(".dotx") || name.endsWith(".docm")))
+  if (name.endsWith(".doc") || name.endsWith(".docx") || name.endsWith(".dot") || name.endsWith(".dotm") || name.endsWith(".dotx") || name.endsWith(".docm"))
     return "file-word";
-  if (name && (name.endsWith(".ppt") || name.endsWith(".pptx") || name.endsWith(".pps")))
+  if (name.endsWith(".ppt") || name.endsWith(".pptx") || name.endsWith(".pps"))
     return "file-powerpoint";
-  if (name && (name.endsWith(".xls") || name.endsWith(".xlsx") || name.endsWith(".xlsm") || name.endsWith(".xltm")))
+  if (name.endsWith(".xls") || name.endsWith(".xlsx") || name.endsWith(".xlsm") || name.endsWith(".xltm"))
     return "file-excel";
-  if (name && (name.endsWith(".svg") || name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".bmp") || name.endsWith(".tiff") || name.endsWith(".bmp")))
+  if (name.endsWith(".svg"))
+    return "file-document-outline";
+  if (name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".bmp") || name.endsWith(".tiff") || name.endsWith(".bmp"))
     return null;
+  if (name.endsWith(".zip") || name.endsWith(".7z") || name.endsWith(".gz") || name.endsWith(".tgz"))
+    return "file-archive"
   return "file-document-outline"
 };

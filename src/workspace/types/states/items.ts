@@ -8,7 +8,7 @@ export type IItem = IRight & {
 }
 
 export type IFile = IItem & {
-  contentType: string;
+  contentType?: string;
   filename: string;
   size: number;
   url: string;

@@ -6,37 +6,53 @@ import Conf from "../../../ode-framework-conf";
 import {getAuthHeader} from "../oauth";
 import {IFile} from "../../workspace/types";
 
-export const startDownload = async (downloadable: IFile) => {
+export const startDownload = async (downloadable: IFile, withManager = true): Promise<FetchBlobResponse> => {
   let path = await getDirName() + '/' + downloadable.filename;
+  const config = Platform.OS === "android"
+  ? {
+      addAndroidDownloads: {
+        useDownloadManager: true,
+        notification: withManager,
+        mediaScannable: true,
+        path
+      }
+    }
+  : {
+      path,
+      appendExt: getExtension(downloadable.filename)
+    };
 
-  const res: FetchBlobResponse = await RNFetchBlob
-    .config({path})
+  return await RNFetchBlob
+    .config(config)
     .fetch("GET", Conf.currentPlatform.url + downloadable.url, getAuthHeader()["headers"])
-
-  openDownloadedFile(res.path())
 };
 
 export const openPreview = async (downloadable: IFile) => {
-  const res: FetchBlobResponse = await RNFetchBlob
+  const res = await downloadOnCache( downloadable)
+
+  openDownloadedFile(res.path());
+};
+
+export const downloadOnCache = async (downloadable: IFile): Promise<FetchBlobResponse> => {
+  return await RNFetchBlob
     .config({
       fileCache: true,
       appendExt: getExtension(downloadable.filename)
     })
     .fetch("GET", Conf.currentPlatform.url + downloadable.url, getAuthHeader()["headers"]);
+};
 
-  openDownloadedFile(res.path());
-}
-
-const openDownloadedFile = (filepath: string, ext = false): void => {
+export const openDownloadedFile = (filepath: string, ext = false): void => {
   if (Platform.OS === "ios")
     RNFetchBlob.ios.openDocument(filepath);
-  else if (Platform.OS === "android")
+  else if (Platform.OS === "android") {
     RNFetchBlob.android.actionViewIntent(filepath, Mime.getType(filepath) || 'text/html');
+  }
   else
     console.warn("Cannot handle file for devices other than ios/android.");
 };
 
-const getDirName = async () : Promise<string> => {
+export const getDirName = async () : Promise<string> => {
   if (Platform.OS === "android") {
     await Permissions.request("storage");
     return RNFetchBlob.fs.dirs.DownloadDir;
@@ -45,8 +61,8 @@ const getDirName = async () : Promise<string> => {
   }
   console.warn("Cannot handle file for devices other than ios/android.");
   return "";
-}
+};
 
 const getExtension = ( filename: string) : string => {
   return filename.substr(filename.lastIndexOf(".") + 1)
-}
+};

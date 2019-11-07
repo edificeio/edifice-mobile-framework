@@ -4,7 +4,8 @@ import { Details } from "./containers/Details"
 
 export default createStackNavigator({
   Workspace: {
-    screen: ContainerList
+    screen: ContainerList,
+    params: { parentId: 'root', filter: 'root' }
   },
   WorkspaceDetails: {
     screen: Details

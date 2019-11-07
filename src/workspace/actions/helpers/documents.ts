@@ -42,6 +42,7 @@ const backendDocumentsAdapter: (data: IBackendDocumentArray) => IItems<IFile> = 
   const result = {} as IItems<IFile>;
   if (!data) return result;
   for (const item of data) {
+    if (item.deleted) continue;
     result[item._id] = {
       contentType: item.metadata["content-type"],
       date: moment(item.modified, "YYYY-MM-DD HH:mm.ss.SSS").toDate().getTime(),
@@ -63,7 +64,7 @@ const backendDocumentsAdapter: (data: IBackendDocumentArray) => IItems<IFile> = 
 export function getDocuments(parameters: IFiltersParameters): Promise<IItems<IItem>> {
   const { parentId } = parameters;
 
-  if (!parentId) return Promise.resolve({});
+  if (parentId === FilterId.root) return Promise.resolve({});
 
   const formatParameters = (parameters = {}) => {
     let result = "?";

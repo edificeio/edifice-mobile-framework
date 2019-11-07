@@ -141,6 +141,8 @@
   "shared": "Shared documents",
   "soundNotAvailable": "Audio player not available",
   "structuresTitle": "School(s) and class(es)",
+  "subFolder-emptyScreenText": "",
+  "subFolder-emptyScreenTitle": "This folder is empty ...",
   "timeline-allFilter": "All",
   "timeline-blogFilter": "Blog",
   "timeline-emptyScreenText": "All quiet on the Western front. Are you familiar with the saying \"the calm before the storm\"?",
@@ -166,9 +168,7 @@
   "unknown-user": "Unknown user",
   "version-number": "Version",
   "welcome": "Welcome",
-  "workspace": "Workspace",
-  "workspace-emptyScreenText": "Avec la Messagerie, commencez dès maintenant à communiquer avec les membres de votre réseau.",
-  "workspace-emptyScreenTitle": "Pas l’ombre d’un message...",
+  "workspace": "Espace Documentaire",
 
   "profileTypes": {
     "Guest": "Guest",

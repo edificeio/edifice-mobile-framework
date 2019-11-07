@@ -105,6 +105,7 @@ export class NotifPrefsPage extends React.PureComponent<
     // Do verification
     const stringCapitalize = (str: string) =>
       str.charAt(0).toUpperCase() + str.slice(1);
+
     if (
       !availableAppsWithUppercase.hasOwnProperty(notifPref.type) && // TODO: Get the available apps NOT from timeline
       notifPref.type !== "MESSAGERIE" &&
@@ -112,6 +113,7 @@ export class NotifPrefsPage extends React.PureComponent<
       notifPref.type !== "WORKSPACE"
     )
       return false;
+
     if (
       !this.props.legalapps.includes(
         stringCapitalize(notifPref["type"].toLowerCase())

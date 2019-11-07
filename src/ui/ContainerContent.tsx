@@ -45,6 +45,7 @@ export const LeftPanel = style.view({
 
 export const LeftIconPanel = style.view({
   justifyContent: "center",
+  alignItems: 'center',
   minHeight: 54,
   width: 54,
   margin: 0,

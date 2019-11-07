@@ -35,6 +35,7 @@ const backendFoldersAdapter: (data: IBackendFolderArray) => IItems<IFolder> = da
   const result = {} as IItems<IFolder>;
   if (!data) return result;
   for (const item of data) {
+    if (item.deleted) continue;
     result[item._id] = {
       date: moment(item.modified, "YYYY-MM-DD HH:mm.ss.SSS").toDate().getTime(),
       id: item._id,
@@ -66,13 +67,13 @@ const getRootFolders: () => IItems<IFolder> = () => {
 export function getFolders(parameters: IFiltersParameters): Promise<IItems<IFolder>> {
   const { parentId } = parameters;
 
-  if (!parentId)
+  if (parentId === FilterId.root)
     return Promise.resolve(getRootFolders());
 
   const formatParameters = (parameters = {}) => {
     let result = "?";
     for (let key in parameters) {
-      if (!(parameters as any)[key])
+      if (!(parameters as any)[key])                                      // parameter empty
         continue;
       if (key === "parentId" && (parameters as any)[key] in FilterId)    // its a root folder, no pass parentId
         continue;
