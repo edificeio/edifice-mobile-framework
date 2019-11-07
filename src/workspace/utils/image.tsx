@@ -51,6 +51,7 @@ export const renderImage = ( item: IFile, isFolder: boolean, name: string): any 
           style={{ width: width(), height: height()}}
           imageComponent={Image}
           errorComponent={<UnavailableImage />}
+          resizeMode={FastImage.resizeMode.contain}
           source={signUrl(uri)}
       />
   )
