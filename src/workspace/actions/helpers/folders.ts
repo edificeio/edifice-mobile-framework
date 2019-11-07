@@ -35,6 +35,7 @@ const backendFoldersAdapter: (data: IBackendFolderArray) => IItems<IFolder> = da
   const result = {} as IItems<IFolder>;
   if (!data) return result;
   for (const item of data) {
+    if (item.deleted) continue;
     result[item._id] = {
       date: moment(item.modified, "YYYY-MM-DD HH:mm.ss.SSS").toDate().getTime(),
       id: item._id,
