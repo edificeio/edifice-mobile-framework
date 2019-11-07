@@ -6,7 +6,7 @@ import { Reducer } from "redux";
 import asyncReducer, { IAction } from "../../infra/redux/async";
 
 import { actionTypes } from "../actions/list"
-import { IState } from "../types";
+import {FilterId, IState} from "../types";
 
 const stateDefault: IState = {};
 
@@ -18,7 +18,7 @@ const itemsReducer: Reducer<IState, IAction<any>> = (
     case actionTypes.received:
       return {
         ...state,
-        [action.id]: action.data
+        [action.id || FilterId.root]: action.data
       };
     default:
       return state;

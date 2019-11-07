@@ -24,7 +24,7 @@ import { Reducer } from "redux";
 // TYPE DEFINITIONS ----------------------------------------------------------------------------------------
 
 export interface IAction<T> {
-  id: string,
+  id?: string,
   type: string;
   receivedAt?: Date;
   data?: T
