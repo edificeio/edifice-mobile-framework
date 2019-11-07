@@ -17,14 +17,14 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 	},
 	buttonPanel: {
-		marginTop: 7,
+		marginTop: layoutSize.LAYOUT_7,
 	},
 	buttonStyle: {
 		alignSelf: "center",
 		backgroundColor: "transparent",
 		color: CommonStyles.actionColor,
 		fontWeight: "400",
-		paddingHorizontal: 15,
+		paddingHorizontal: layoutSize.LAYOUT_15,
 	},
 	containerErrorText: {
 		alignSelf: "center",
@@ -34,8 +34,8 @@ const styles = StyleSheet.create({
 	containerInfo: {
 		backgroundColor: "#fcfcfccc",
 		flexWrap: "wrap",
-		minHeight: 15,
-		padding: 4,
+		minHeight: layoutSize.LAYOUT_15,
+		padding: layoutSize.LAYOUT_4,
 	},
 	containerInfoText: {
 		alignSelf: "center",
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
 	formGrid: {
 		backgroundColor: CommonStyles.lightGrey,
 		flex: 1,
-		paddingHorizontal: 34,
+		paddingHorizontal: layoutSize.LAYOUT_34,
 	},
 	grid: {
 		backgroundColor: CommonStyles.lightGrey,
@@ -61,14 +61,14 @@ const styles = StyleSheet.create({
 		borderBottomColor: "#ddd",
 		borderBottomWidth: 1,
 		flexDirection: "column",
-		paddingHorizontal: 16,
-		paddingVertical: 12,
+		paddingHorizontal: layoutSize.LAYOUT_16,
+		paddingVertical: layoutSize.LAYOUT_12,
 	},
 	item_flexrow: {
 		backgroundColor: "white",
 		flexDirection: "row",
-		paddingHorizontal: 16,
-		paddingVertical: 12,
+		paddingHorizontal: layoutSize.LAYOUT_16,
+		paddingVertical: layoutSize.LAYOUT_12,
 	},
 	leftMiddlePosition: {
 		alignItems: "center",
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 	},
 	link: {
-		marginTop: 10,
+		marginTop: layoutSize.LAYOUT_10,
 		textDecorationLine: "underline",
 	},
 	loading: {
@@ -97,18 +97,18 @@ const styles = StyleSheet.create({
 	minitext: {
 		color: CommonStyles.miniTextColor,
 		fontFamily: CommonStyles.primaryFontFamily,
-		fontSize: 14,
+		fontSize: layoutSize.LAYOUT_14,
 		textDecorationLine: "underline",
 	},
 	statusText: {
 		color: CommonStyles.fadColor,
-		fontSize: 7,
+		fontSize: layoutSize.LAYOUT_7,
 		fontWeight: "300",
 	},
 	text: {
 		color: CommonStyles.textInputColor,
 		fontFamily: CommonStyles.primaryFontFamily,
-		fontSize: 14,
+		fontSize: layoutSize.LAYOUT_14,
 	},
 	textHeader: {
 		color: CommonStyles.shadowColor,

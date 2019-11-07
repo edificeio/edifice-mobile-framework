@@ -5,9 +5,10 @@ const [shortDimension, longDimension] = width < height ? [width, height] : [heig
 export const DEVICE_SCALE = shortDimension / 375
 
 /* utils ==================================================================== */
+const scale = (size: number) => DEVICE_SCALE * size;
 
 function normalize(size: number): number {
-    return Math.round(DEVICE_SCALE * size)
+    return size + Math.round(scale(size) - size ) * 0.2
 }
 
 /* export =================================================================== */
