@@ -6,7 +6,7 @@ import { bindActionCreators } from "redux";
 import { NavigationScreenProp } from "react-navigation";
 import config from "../config";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
-import { HeaderAction } from "../../ui/headers/NewHeader";
+import { HeaderAction, HeaderIcon } from "../../ui/headers/NewHeader";
 import { EVENT_TYPE, FilterId, IItem, IItemsProps, IState } from "../types";
 import { Item } from "../components";
 import { fetchWorkspaceList } from "../actions/list";
@@ -34,8 +34,9 @@ export class Items extends React.PureComponent<IItemsProps> {
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
     return standardNavScreenOptions(
       {
-        title: navigation.getParam("title") || "Workspace",
+        title: navigation.getParam("title") || I18n.t(config.displayName),
         headerLeft: <HeaderBackAction navigation={navigation} />,
+        headerRight: <HeaderIcon name={null} hidden={true}/>
       },
       navigation
     );
