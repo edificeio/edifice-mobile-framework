@@ -62,8 +62,8 @@ export class Items extends React.PureComponent<IItemsProps> {
 
   public makeRequest() {
     this.props.fetchWorkspaceList({
-      filter: this.props.navigation.getParam("filter") || FilterId.root,
-      parentId: this.props.navigation.getParam("parentId") || FilterId.root,
+      filter: this.props.navigation.getParam("filter"),
+      parentId: this.props.navigation.getParam("parentId"),
     });
   }
 
@@ -97,7 +97,7 @@ export class Items extends React.PureComponent<IItemsProps> {
     const values = Object.values(items);
     const parentId = this.props.navigation.getParam("parentId") || null;
     const itemsArray =
-      parentId === FilterId.root || parentId === null ? values : values.sort((a, b) => this.sortItems(a, b));
+      parentId === FilterId.root ? values : values.sort((a, b) => this.sortItems(a, b));
 
     return (
       <PageContainer>
@@ -119,7 +119,7 @@ export class Items extends React.PureComponent<IItemsProps> {
 const mapStateToProps = (state: any, props: any) => {
   const stateItems: IState = config.getLocalState(state).items.data;
   const { isFetching } = config.getLocalState(state).items;
-  const parentId = props.navigation.getParam("parentId") || FilterId.root;
+  const parentId = props.navigation.getParam("parentId");
 
   return { items: stateItems[parentId] || {}, isFetching };
 };

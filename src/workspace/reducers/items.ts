@@ -18,7 +18,7 @@ const itemsReducer: Reducer<IState, IAction<any>> = (
     case actionTypes.received:
       return {
         ...state,
-        [action.id ? action.id : "root"]: action.data
+        [action.id]: action.data
       };
     default:
       return state;
