@@ -5,6 +5,7 @@ export const CommonStyles = {
   primary: "#299cc8",
   primaryLight: "#EAF5F9",
   lightGrey: "rgb(248,248,250)",
+  missingGrey: "rgb(218,218,210)",
   grey: "rgb(188,188,190)",
   lightTextColor: "#858FA9",
   actionColor: "#2A9CC8",

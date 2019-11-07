@@ -37,7 +37,9 @@ export const ItemDetails = ({ onEvent, ...item }: IFile & IEventProps) => {
 
   const getPreviewImage = () => {
     if (Platform.OS == "ios") {
-      return renderImage(item, false, name);
+      return (
+        renderImage(item, false, name)
+      )
     } else {
       return (
         <TouchableOpacity style={styles.imagePanel} onPress={() => onEvent(EVENT_TYPE.PREVIEW, item)}>
