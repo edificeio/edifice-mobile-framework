@@ -141,6 +141,8 @@
   "shared": "Documents partagés",
   "soundNotAvailable": "Lecteur audio non disponible",
   "structuresTitle": "Établissement(s) de rattachement et classe(s)",
+  "subFolder-emptyScreenText": "",
+  "subFolder-emptyScreenTitle": "Ce dossier est vide ...",
   "timeline-allFilter": "Tous",
   "timeline-blogFilter": "Blog",
   "timeline-emptyScreenText": "C’est calme ici... Vous connaissez l’expression \"le calme avant la tempête\" ?",
@@ -167,8 +169,6 @@
   "version-number": "Version",
   "welcome": "Bienvenue",
   "workspace": "Espace Documentaire",
-  "subFolder-emptyScreenText": "",
-  "subFolder-emptyScreenTitle": "Ce dossier est vide ...",
 
   "profileTypes": {
     "Guest": "Invité",

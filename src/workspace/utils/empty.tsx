@@ -39,7 +39,7 @@ export const getEmptyScreen = (parentId: string): React.ReactElement => {
       return (<EmptyScreen
         imageSrc={require("../../../assets/images/empty-screen/empty-trash.png")}
         imgWidth={400}
-        imgHeight={316}
+        imgHeight={507}
         text={I18n.t("trash-emptyScreenText")}
         title={I18n.t("trash-emptyScreenTitle")}
         scale={0.76}
@@ -47,9 +47,9 @@ export const getEmptyScreen = (parentId: string): React.ReactElement => {
     }
     default: {
       return (<EmptyScreen
-        imageSrc={require("../../../assets/images/empty-screen/empty-workspace.png")}
+        imageSrc={require("../../../assets/images/empty-screen/empty-search.png")}
         imgWidth={400}
-        imgHeight={316}
+        imgHeight={393}
         text={I18n.t("subFolder-emptyScreenText")}
         title={I18n.t("subFolder-emptyScreenTitle")}
         scale={0.76}

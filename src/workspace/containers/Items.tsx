@@ -62,17 +62,18 @@ export class Items extends React.PureComponent<IItemsProps> {
 
   public makeRequest() {
     this.props.fetchWorkspaceList({
-      filter: this.props.navigation.getParam("filter"),
+      filter: this.props.navigation.getParam("filter") || FilterId.root,
       parentId: this.props.navigation.getParam("parentId") || FilterId.root,
     });
   }
 
   public onEvent(type: EVENT_TYPE, item: IItem) {
     const { id: parentId, name: title, isFolder } = item;
+    const filterId = this.props.navigation.getParam("filter")
 
     switch (type) {
       case EVENT_TYPE.SELECT:
-        const filter = this.props.navigation.getParam("filter") || parentId;
+        const filter = filterId == FilterId.root ? parentId : filterId
 
         isFolder
           ? this.props.navigation.push("Workspace", { filter, parentId, title })
