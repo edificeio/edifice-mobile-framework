@@ -91,5 +91,3 @@ export const layoutSize = {
 export const DEVICE_HEIGHT = () => Dimensions.get("window").height;
 
 export const DEVICE_WIDTH = () => Dimensions.get("window").width;
-
-export const HALF_WIDTH = (margin: number) => DEVICE_WIDTH() / 2 - margin - margin / 2;

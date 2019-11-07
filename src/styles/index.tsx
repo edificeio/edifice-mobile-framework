@@ -64,21 +64,6 @@ const styles = StyleSheet.create({
 		paddingHorizontal: layoutSize.LAYOUT_16,
 		paddingVertical: layoutSize.LAYOUT_12,
 	},
-	item_flexrow: {
-		backgroundColor: "white",
-		flexDirection: "row",
-		paddingHorizontal: layoutSize.LAYOUT_16,
-		paddingVertical: layoutSize.LAYOUT_12,
-	},
-	leftMiddlePosition: {
-		alignItems: "center",
-		left: layoutSize.LAYOUT_4,
-	},
-	LeftTopPosition: {
-		position: 'absolute',
-		left: layoutSize.LAYOUT_4,
-		top: 0,
-	},
 	line: {
 		alignItems: "center",
 		justifyContent: "center",
@@ -109,10 +94,6 @@ const styles = StyleSheet.create({
 		color: CommonStyles.textInputColor,
 		fontFamily: CommonStyles.primaryFontFamily,
 		fontSize: layoutSize.LAYOUT_14,
-	},
-	textHeader: {
-		color: CommonStyles.shadowColor,
-		fontSize: layoutSize.LAYOUT_15
 	},
 	webview: {
 		backgroundColor: "#eee",
