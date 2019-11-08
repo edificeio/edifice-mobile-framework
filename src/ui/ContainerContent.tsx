@@ -15,8 +15,8 @@ export const ArticleContainer = style.view({
 export const ListItem = style(TouchableOpacity)(
   {
     backgroundColor: "#FFFFFF",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: layoutSize.LAYOUT_10,
+    paddingVertical: layoutSize.LAYOUT_12,
     borderBottomColor: CommonStyles.borderBottomItem,
     flexDirection: "row"
   },

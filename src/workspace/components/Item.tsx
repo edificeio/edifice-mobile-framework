@@ -14,16 +14,16 @@ const style = StyleSheet.create({
   item_flexrow: {
     backgroundColor: "white",
     flexDirection: "row",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: layoutSize.LAYOUT_16,
+    paddingVertical: layoutSize.LAYOUT_12,
   },
   centerPanel: {
     alignItems: "stretch",
-    justifyContent: "space-evenly",
+    justifyContent: "space-around",
   },
   fileName: {
     color: CommonStyles.shadowColor,
-    fontSize: layoutSize.LAYOUT_15,
+    fontSize: layoutSize.LAYOUT_14,
   },
   date: { flex: 1, alignItems: "flex-start" },
   author: { flex: 3, alignItems: "flex-end" },
