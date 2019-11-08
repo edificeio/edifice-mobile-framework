@@ -25,7 +25,7 @@ const MyAppItemStyle = StyleSheet.create({
     textAlign:"center",
     marginBottom: 0,
     marginTop: 0,
-    marginHorizontal: 10,
+    marginHorizontal: 0,
     padding: 0
   },
 });
