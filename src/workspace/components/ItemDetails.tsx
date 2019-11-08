@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, TouchableOpacity, View, Platform } from "react-native";
+import { StyleSheet, TouchableOpacity, View, Platform, SafeAreaView } from "react-native";
 import { IEventProps, EVENT_TYPE } from "../types";
 import I18n from "i18n-js";
 
@@ -47,7 +47,7 @@ export const ItemDetails = ({ onEvent, ...item }: IFile & IEventProps) => {
   };
 
   return (
-    <View style={styles.mainPanel}>
+    <SafeAreaView style={styles.mainPanel}>
       <View style={styles.bodyPanel}>
         {getPreviewImage()}
       </View>
@@ -61,6 +61,6 @@ export const ItemDetails = ({ onEvent, ...item }: IFile & IEventProps) => {
           </ButtonIconText>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
