@@ -14,7 +14,6 @@ const HeaderBackAction = ({ navigation, style }: { navigation: NavigationScreenP
 };
 
 export class Details extends React.PureComponent<IDetailsProps> {
-  readonly state = { inProgress: true };
 
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
     return standardNavScreenOptions(

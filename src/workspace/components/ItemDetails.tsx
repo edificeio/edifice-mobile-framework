@@ -15,20 +15,17 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: CommonStyles.lightGrey,
   },
+  bodyPanel: {
+    flex: 1,
+    flexGrow: 1,
+  },
   bottomPanel: {
-    height: layoutSize.LAYOUT_68,
+    height: layoutSize.LAYOUT_80,
   },
   buttonPanel: {
     flexDirection: "row",
     flex: 1,
     justifyContent: "space-around",
-  },
-  imagePanel: {
-    backgroundColor: "transparent",
-    flex: 1,
-    flexGrow: 1,
-    alignItems: "center",
-    justifyContent: "flex-start",
   },
 });
 
@@ -42,7 +39,7 @@ export const ItemDetails = ({ onEvent, ...item }: IFile & IEventProps) => {
       )
     } else {
       return (
-        <TouchableOpacity style={styles.imagePanel} onPress={() => onEvent(EVENT_TYPE.PREVIEW, item)}>
+        <TouchableOpacity onPress={() => onEvent(EVENT_TYPE.PREVIEW, item)}>
           {renderImage(item, false, name)}
         </TouchableOpacity>
       );
@@ -51,7 +48,9 @@ export const ItemDetails = ({ onEvent, ...item }: IFile & IEventProps) => {
 
   return (
     <View style={styles.mainPanel}>
-      {getPreviewImage()}
+      <View style={styles.bodyPanel}>
+        {getPreviewImage()}
+      </View>
       <View style={styles.bottomPanel}>
         <View style={styles.buttonPanel}>
           <ButtonIconText name="download" onPress={() => onEvent(EVENT_TYPE.DOWNLOAD, item)}>
