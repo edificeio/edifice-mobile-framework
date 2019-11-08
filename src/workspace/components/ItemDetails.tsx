@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, TouchableOpacity, View, Platform } from "react-native";
+import { StyleSheet, TouchableOpacity, View, Platform, SafeAreaView } from "react-native";
 import { IEventProps, EVENT_TYPE } from "../types";
 import I18n from "i18n-js";
 
@@ -15,20 +15,17 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: CommonStyles.lightGrey,
   },
+  bodyPanel: {
+    flex: 1,
+    flexGrow: 1,
+  },
   bottomPanel: {
-    height: layoutSize.LAYOUT_68,
+    height: layoutSize.LAYOUT_80,
   },
   buttonPanel: {
     flexDirection: "row",
     flex: 1,
     justifyContent: "space-around",
-  },
-  imagePanel: {
-    backgroundColor: "transparent",
-    flex: 1,
-    flexGrow: 1,
-    alignItems: "center",
-    justifyContent: "flex-start",
   },
 });
 
@@ -37,10 +34,12 @@ export const ItemDetails = ({ onEvent, ...item }: IFile & IEventProps) => {
 
   const getPreviewImage = () => {
     if (Platform.OS == "ios") {
-      return renderImage(item, false, name);
+      return (
+        renderImage(item, false, name)
+      )
     } else {
       return (
-        <TouchableOpacity style={styles.imagePanel} onPress={() => onEvent(EVENT_TYPE.PREVIEW, item)}>
+        <TouchableOpacity onPress={() => onEvent(EVENT_TYPE.PREVIEW, item)}>
           {renderImage(item, false, name)}
         </TouchableOpacity>
       );
@@ -48,8 +47,10 @@ export const ItemDetails = ({ onEvent, ...item }: IFile & IEventProps) => {
   };
 
   return (
-    <View style={styles.mainPanel}>
-      {getPreviewImage()}
+    <SafeAreaView style={styles.mainPanel}>
+      <View style={styles.bodyPanel}>
+        {getPreviewImage()}
+      </View>
       <View style={styles.bottomPanel}>
         <View style={styles.buttonPanel}>
           <ButtonIconText name="download" onPress={() => onEvent(EVENT_TYPE.DOWNLOAD, item)}>
@@ -60,6 +61,6 @@ export const ItemDetails = ({ onEvent, ...item }: IFile & IEventProps) => {
           </ButtonIconText>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };

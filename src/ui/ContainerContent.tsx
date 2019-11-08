@@ -15,8 +15,8 @@ export const ArticleContainer = style.view({
 export const ListItem = style(TouchableOpacity)(
   {
     backgroundColor: "#FFFFFF",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: layoutSize.LAYOUT_10,
+    paddingVertical: layoutSize.LAYOUT_12,
     borderBottomColor: CommonStyles.borderBottomItem,
     flexDirection: "row"
   },
@@ -33,21 +33,21 @@ export const Header = style.view({
   flexDirection: "row",
   justifyContent: "flex-start",
   marginBottom: 6,
-  minHeight: 50,
+  minHeight: layoutSize.LAYOUT_50,
   width: "100%"
 });
 
 export const LeftPanel = style.view({
   justifyContent: "center",
-  minHeight: 50,
-  width: 50
+  minHeight: layoutSize.LAYOUT_50,
+  width: layoutSize.LAYOUT_50
 });
 
 export const LeftIconPanel = style.view({
   justifyContent: "center",
   alignItems: 'center',
-  minHeight: 54,
-  width: 54,
+  minHeight: layoutSize.LAYOUT_54,
+  width: layoutSize.LAYOUT_50,
   margin: 0,
   marginRight: layoutSize.LAYOUT_10
 });
@@ -62,16 +62,16 @@ export const CenterPanel = style.view({
 
 export const RightPanel = style.view({
   alignItems: "center",
-  height: 50,
+  height: layoutSize.LAYOUT_50,
   justifyContent: "flex-end",
-  width: 50
+  width: layoutSize.LAYOUT_50
 });
 
 export const Content = style.text(
   {
     color: CommonStyles.iconColorOff,
     fontFamily: CommonStyles.primaryFontFamily,
-    fontSize: 12,
+    fontSize: layoutSize.LAYOUT_12,
     fontWeight: Weight.Light,
     marginTop: 10
   },

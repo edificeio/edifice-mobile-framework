@@ -1,6 +1,6 @@
 import { AsyncStorage } from "react-native";
 
-export const timelineApps = ["Blog", "News", "Schoolbook", "Workspace"];
+export const timelineApps = ["Blog", "News", "Schoolbook"];
 
 function getLegalTimelineApps(apps: string[]) {
   // HACK ! Beaceause sometimes "News" is "Actualités" and "Actualités" is "News".

@@ -9,6 +9,9 @@ import {DEVICE_HEIGHT, DEVICE_WIDTH, layoutSize} from "../../styles/common/layou
 import { signUrl } from "../../infra/oauth";
 import {IFile} from "../types";
 import FastImage, {FastImageSource} from "react-native-fast-image";
+import ImageOptional from "../../ui/ImageOptional";
+import {Italic} from "../../ui/Typography";
+import I18n from "i18n-js";
 
 export const renderIcon = ( id: string | null, isFolder: boolean, name: string): any => {
   const icon = getIcon(id, isFolder, name);
@@ -22,7 +25,13 @@ export const renderIcon = ( id: string | null, isFolder: boolean, name: string):
     const uri = `${Conf.currentPlatform.url}/workspace/document/${id}?thumbnail=120x120`
     const style = {width: layoutSize.LAYOUT_50, height: layoutSize.LAYOUT_50}
     return (
-      <Image style={style} source={signUrl(uri)} />
+        // resizeRatio === contain by default
+        <ImageOptional
+            style={style}
+            imageComponent={Image}
+            errorComponent={<UnavailableIcon/>}
+            source={signUrl(uri)}
+        />
     )
   }
 };
@@ -30,19 +39,20 @@ export const renderIcon = ( id: string | null, isFolder: boolean, name: string):
 export const renderImage = ( item: IFile, isFolder: boolean, name: string): any => {
   const icon = getIcon(item.id, isFolder, name);
   const uri = `${Conf.currentPlatform.url}/workspace/document/${item.id}`;
-  const height = DEVICE_HEIGHT() - layoutSize.LAYOUT_160;
 
   if (icon)
     return (
-      <View style={{ width: DEVICE_WIDTH(), height, justifyContent: 'center', alignItems: 'center'}}>
+      <View style={{ width: width(), height: height(), justifyContent: 'center', alignItems: 'center'}}>
         <Icon color={CommonStyles.grey} size={layoutSize.LAYOUT_200} name={icon}/>
       </View>
     );
   return (
-      <Image
-          style={{ width: DEVICE_WIDTH(), height}}
-          source={signUrl(uri)}
+      <ImageOptional
+          style={{ width: width(), height: height()}}
+          imageComponent={Image}
+          errorComponent={<UnavailableImage />}
           resizeMode={FastImage.resizeMode.contain}
+          source={signUrl(uri)}
       />
   )
 };
@@ -84,3 +94,21 @@ const getIcon = ( id: string | null, isFolder: boolean, pName: string | null): s
     return "file-archive"
   return "file-document-outline"
 };
+
+const UnavailableImage = () => (
+  <View style={{ width: width(), height: height(), justifyContent: 'center', alignItems: 'center'}}>
+    <Icon color={CommonStyles.missingGrey} size={layoutSize.LAYOUT_200} name={'picture'}/>
+  </View>
+);
+
+const UnavailableIcon = () => (
+  <Icon color={CommonStyles.missingGrey} size={layoutSize.LAYOUT_46} name={'picture'}/>
+);
+
+const height = () => {
+  return DEVICE_HEIGHT() - layoutSize.LAYOUT_160
+}
+
+const width = () => {
+  return DEVICE_WIDTH()
+}
