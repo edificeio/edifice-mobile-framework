@@ -16,10 +16,10 @@
   "auth-unknownError": "Error de autenticación. Vuelva a intentarlo.",
   "back": "Atrás",
   "Birthdate": "fecha de nacimiento",
-
+  "by": "por: ",
   "Cancel": "Cancelar",
   "CellPhone": "Teléfono móvil",
-  "change-password-errorLoading": "#",
+  "change-password-errorLoading": "No pudimos cargar los datos necesarios para cambiar su contraseña. Por favor intente nuevamente más tarde.",
   "changePassword-errorSubmit": "Error al restablecer la contraseña.",
   "common-confirm": "¿Está seguro de que desea ",
   "common-connected": "Conectado",
@@ -100,27 +100,27 @@
   "notif-pref-messagerie": "Nuevo mensaje",
   "notif-pref-news": "Noticia compartida",
   "notif-pref-schoolbook": "Nuevo mensaje en tu cuaderno de correspondencia",
-
+  "notif-pref-workspace": "Actualización del espacio documental",
   "On": "en",
-
-
+  "owner-emptyScreenText": "Bienvenido a su espacio documental, la nube que le permite almacenar todos sus recursos en línea.",
+  "owner-emptyScreenTitle": "Todavía no tienes ningún documento…",
   "owner": "Documentos personales",
   "Password": "Contraseña",
   "PasswordChange": "Nueva contraseña",
-  "PasswordChangeSuccess": "#",
+  "PasswordChangeSuccess": "La contraseña se modificó correctamente.",
   "PasswordConfirm": "Confirmación de la nueva contraseña",
   "PasswordNew": "Nueva contraseña",
   "PasswordNewConfirm": "Confirmación de la nueva contraseña",
   "PasswordOld": "Antigua contraseña",
   "Phone": "Teléfono móvil",
   "Profile": "Perfil",
-  "ProfileChangeError": "#",
+  "ProfileChangeError": "Error al guardar la información.",
   "ProfileChangeLoginError": "El nombre de usuario ya existe.",
-  "ProfileChangeSuccess": "#",
-  "ProfileInvalidInformation": "#",
+  "ProfileChangeSuccess": "Su información ha sido modificada.",
+  "ProfileInvalidInformation": "Algunos campos no son válidos. Verifique su información y corrija los errores antes de guardar.",
   "Pronote": "Pronote",
-
-
+  "protected-emptyScreenText": "¿Ha agregado una docena de fotos directamente a su Blog y desea reutilizarlas? No hay problema ! Encuéntralas, ordenadas, aquí mismo.",
+  "protected-emptyScreenTitle": "No hay nada en el estante",
   "protected": "Documentos agregados en las aplicaciones",
   "Save": "Guardar",
   "schoolbook-acknowledge": "Confirmar la lectura del mensaje",
@@ -135,8 +135,8 @@
   "Search": "Buscar ...",
   "seeMore": "Ver más",
   "select-platform": "¡Seleccione su red social educativa!",
-
-
+  "share-emptyScreenText": "En este espacio, encuentre todos los documentos que ha compartido con otros, pero también los documentos a los que se le ha dado acceso.",
+  "share-emptyScreenTitle": "No hay nada en el estante",
   "share": "Compartidos",
   "shared": "Documentos compartidos",
   "soundNotAvailable": "Reproductor de audio no disponible",
@@ -159,14 +159,14 @@
   "timeline-viewInBrowser": "Consultar desde el navegador",
   "to": "Para :",
   "today": " Hoy ",
-
-
+  "trash-emptyScreenText": "¿Qué está buscando? Su papelera está vacía.",
+  "trash-emptyScreenTitle": "",
   "trash": "Basura",
   "tryagain": "Vuelva a intentarlo",
   "unknown-user": "Usuario desconocido",
   "version-number": "Versión",
   "welcome": "Bienvenido",
-  "workspace": "Workspace",
+  "workspace": "Espacio documental",
 
   "profileTypes": {
     "Guest": "Invitado",
