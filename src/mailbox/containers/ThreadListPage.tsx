@@ -103,6 +103,7 @@ class ThreadListPageContainer extends React.PureComponent<
           onPress={() => { navigation.getParam('onNewThread')() }}
           name="new_message"
           iconSize={24}
+          primary
         />,
         headerLeftContainerStyle: {
           alignItems: "flex-start"
