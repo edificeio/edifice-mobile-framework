@@ -143,6 +143,8 @@
   "shared": "Documentos compartidos",
   "soundNotAvailable": "Reproductor de audio no disponible",
   "structuresTitle": "Establecimiento(s) de incorporación y clase(s)",
+  "subFolder-emptyScreenText": "",
+  "subFolder-emptyScreenTitle": "Esta carpeta está vacía...",
   "timeline-actualitesFilter": "Noticias",
   "timeline-allFilter": "Todo",
   "timeline-blogFilter": "Blog",
