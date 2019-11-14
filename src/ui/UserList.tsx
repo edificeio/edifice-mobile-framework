@@ -34,13 +34,12 @@ export default function UserList(props: {
     onUnpickUser?: (user: IUser) => void,
     onEndReached?: () => void
 }) {
-    let childIndex = 0;
     return (
         <FlatList
             keyboardShouldPersistTaps={'always'}
             style={{ flex: 1, borderTopColor: '#EEEEEE', borderTopWidth: 1 }}
             data={props.users}
-            keyExtractor={u => u.id + (childIndex++)}//increment in next line
+            keyExtractor={u => u.id}//increment in next line
             renderItem={(el) => <UserLine
                 selectable={props.selectable}
                 onPick={() => props.onPickUser && props.onPickUser(el.item)}

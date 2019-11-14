@@ -3,6 +3,7 @@ import * as React from "react";
 import { ImageProps, ImageURISource } from "react-native";
 import Conf from "../../../ode-framework-conf";
 import { Connection } from "../../infra/Connection";
+import { shallowEqual } from "react-redux";
 
 export enum Size {
   aligned,
@@ -154,10 +155,12 @@ export class Avatar extends React.Component<
 
   get userId() { return this.props.sourceOrId && typeof this.props.sourceOrId === "string" ? this.props.sourceOrId : this.props.id }
 
-  public componentDidMount() {
-  }
-
-  public componentWillUnmount() {
+  public shouldComponentUpdate(nextProps, nextState) {
+    let status: string;
+    let comparedNextState: any, comparedState: any;
+    ({ status, ...comparedNextState } = nextState);
+    ({ status, ...comparedState } = this.state);
+    return !shallowEqual(comparedState, comparedNextState) || !shallowEqual(this.props, nextProps);
   }
 
   get isMissingSourceAndId() { return !this.props.sourceOrId && !this.props.id }
