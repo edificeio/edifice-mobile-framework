@@ -38,7 +38,6 @@ export function createThread(pickedUsers) {
       newThread,
       type: actionTypeThreadCreated
     });
-    clearPickedUsers(dispatch)();
     dispatch(conversationThreadSelected(newThread.id));
 
     return newThread;

@@ -58,7 +58,7 @@ export default class SearchUser extends React.Component<
 
   get usersArray(): IUser[] {
     return [
-      ...this.props.picked.filter(v => this.isMatch(v)),
+      ...this.props.picked,
       ...this.props.remaining
         .filter(v => this.state.searchText && this.isMatch(v))
         .slice(0, this.state.max)
