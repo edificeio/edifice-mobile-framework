@@ -41,6 +41,7 @@
   "conversation-emptyScreenTitle": "No hay ningún mensaje...",
   "conversation-failedSent": "Mensaje no enviado ",
   "conversation-newMessage": "Nuevo mensaje",
+
   "conversation-receiver": "1 destinatario",
   "conversation-receiverList": "Destinatarios",
   "conversation-receiverPrefix": "para",

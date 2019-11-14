@@ -41,6 +41,7 @@
   "conversation-emptyScreenTitle": "Pas l’ombre d’un message...",
   "conversation-failedSent": "Message non reçu",
   "conversation-newMessage": "Nouveau message",
+  "conversation-newThreadSubjectPrefix": "Discussion avec ",
   "conversation-receiver": "1 destinataire",
   "conversation-receiverList": "Destinataires",
   "conversation-receiverPrefix": "à",

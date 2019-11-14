@@ -8,6 +8,8 @@ import conversationThreadSelected from "./threadSelected";
 
 import { getSessionInfo } from "../../AppStore";
 
+import I18n from "i18n-js";
+
 export const actionTypeThreadCreated = mailboxConf.createActionType(
   "THREAD_CREATED"
 );
@@ -24,7 +26,7 @@ export function createThread(pickedUsers) {
       id: "temp",
       messages: [],
       subject:
-        "Discussion avec " +
+        I18n.t("conversation-newThreadSubjectPrefix") + 
         pickedUsers
           .map(u => (u as IUser).displayName || (u as IGroup).name)
           .join(", "),
