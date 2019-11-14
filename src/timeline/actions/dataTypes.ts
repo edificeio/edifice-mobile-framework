@@ -129,7 +129,9 @@ const dataTypes = {
     try {
       await loadSchoolbooks();
       // tslint:disable-next-line:triple-equals
-      const schoolbook = schoolbooks.find(s => s.id == wordId); // This is a dirty comparison between a string and a number. Keep "==" please.
+      const selectedSchoolbooks = schoolbooks.filter(s => s.id == wordId); // This is a dirty comparison between a string and a number. Keep "==" please.
+      const childrenIds = selectedSchoolbooks.map(s => s.childId)
+      const schoolbook = selectedSchoolbooks && selectedSchoolbooks[0]
 
       if (timeline.find(e => e.resourceId === wordId)) {
         return null;
@@ -141,7 +143,8 @@ const dataTypes = {
           htmlContent: schoolbook.text,
           resourceId: wordId,
           schoolbookData: schoolbook,
-          title: schoolbook.title
+          title: schoolbook.title,
+          childrenIds
         };
       }
       return defaultContent;

@@ -289,7 +289,7 @@ export class NewsContent extends React.Component<
   }
 
   public renderAck() {
-    const { resourceId } = this.props.navigation.state.params.news;
+    const { resourceId, childrenIds } = this.props.navigation.state.params.news;
 
     // Call it only for schoolbooks ! // TODO : reformat this component to be speicalized
     const schoolbookData = schoolbooks.find(
@@ -312,7 +312,7 @@ export class NewsContent extends React.Component<
         }}
       >
         <FlatButton
-          onPress={() => this.acknowledge(resourceId, schoolbookData.childId)}
+          onPress={() => this.acknowledge(resourceId, childrenIds)}
           title={I18n.t("schoolbook-acknowledge")}
           loading={this.state.isAcking}
         />
@@ -351,22 +351,29 @@ export class NewsContent extends React.Component<
     );
   }
 
-  public async acknowledge(wordId, childId) {
+  public async acknowledge(wordId, childrenIds) {
     // Call it only for schoolbooks !
     try {
-      // console.log("acknowledge", wordId, childId);
+      // console.log("acknowledge", wordId, childrenIds);
       this.setState({ isAcking: true });
-      const response = await signedFetch(
-        `${
-          Conf.currentPlatform.url
-        }/schoolbook/relation/acknowledge/${wordId}/${childId}`,
-        {
-          method: "POST"
+      const acknowledgements = childrenIds.map((id: string) => (
+        signedFetch(
+          `${
+            Conf.currentPlatform.url
+          }/schoolbook/relation/acknowledge/${wordId}/${id}`,
+          {
+            method: "POST"
+          }
+        )
+      ))
+      const responses = await Promise.all(acknowledgements);
+      
+      responses.forEach((response: Response) => {
+        if (!response.ok) {
+          throw new Error(response.status + " " + response.statusText);
         }
-      );
-      if (!response.ok) {
-        throw new Error(response.status + " " + response.statusText);
-      }
+      })
+
       const thisSchoolbook = schoolbooks.find(s => s.id.toString() === wordId);
       // console.log("this schoolbook", thisSchoolbook);
       if (thisSchoolbook) {
@@ -400,7 +407,7 @@ export class NewsContent extends React.Component<
     }
   }
 
-  public renderBackModal(wordId, childId) {
+  public renderBackModal(wordId, childrenIds) {
     return (
       <ModalContent>
         <ModalContentBlock>
@@ -443,7 +450,7 @@ export class NewsContent extends React.Component<
                 confirmBackSchoolbook: false,
                 forceBack: true
               });
-              await this.acknowledge(wordId, childId);
+              await this.acknowledge(wordId, childrenIds);
               requestAnimationFrame(() => {
                 /* console.log(
                 "go back",
