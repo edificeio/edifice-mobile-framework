@@ -7,6 +7,7 @@ import {
   Linking,
   Modal,
   Platform,
+  Image,
   Text,
   View,
   StatusBar
@@ -59,6 +60,7 @@ export class Carousel extends React.Component<
       width: number;
       height: number;
     };
+    imageSizes: Array<{width: number, height: number}>;
   }
 > {
   public carouselRef: any;
@@ -89,10 +91,29 @@ export class Carousel extends React.Component<
     viewport: {
       height: Dimensions.get("window").height,
       width: Dimensions.get("window").width
-    }
+    },
+    imageSizes: []
   };
 
+  componentDidMount() {
+    const { images } = this.props
+    images.forEach((image, index) => 
+      Image.getSizeWithHeaders(
+        image.src.uri,
+        image.src.headers,
+        (width: number, height: number) => this.setState(prevstate => {
+          const newImagesSizes = prevstate.imageSizes;
+          newImagesSizes[index] = {width, height};
+          return { imageSizes: newImagesSizes }
+        }),
+        console.log('Could not get image dimensions')
+      )
+    )
+
+  }
+
   public render() {
+    const { imageSizes } = this.state
     return (
       <Modal
         visible={this.props.visible}
@@ -124,19 +145,23 @@ export class Carousel extends React.Component<
                 key={index}
                 style={{
                   height: "100%",
-                  width: Dimensions.get("window").width
+                  width: Dimensions.get("window").width,
+                  justifyContent: "center",
+                  alignItems: "center"
                 }}
               >
-                <ImageOptional
-                  imageComponent={FastImage}
-                  errorComponent={<UnavailableImage />}
-                  style={{
-                    height: "100%",
-                    width: Dimensions.get("window").width
-                  }}
-                  resizeMode={FastImage.resizeMode.contain}
-                  source={item.src}
-                />
+                {imageSizes[index] &&
+                  <ImageOptional
+                    imageComponent={FastImage}
+                    errorComponent={<UnavailableImage />}
+                    style={{
+                      height: Math.min(Dimensions.get("window").height, imageSizes[index].height),
+                      width: Math.min(Dimensions.get("window").width, imageSizes[index].width),
+                    }}
+                    resizeMode={FastImage.resizeMode.contain}
+                    source={item.src}
+                  />
+                }
                 {item.linkTo ? (
                   <View
                     style={{
