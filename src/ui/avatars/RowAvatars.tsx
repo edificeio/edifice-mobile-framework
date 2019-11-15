@@ -23,7 +23,10 @@ const Skipped = style.text({
 })
 
 export interface IAvatarsProps {
-	images: Array<string | ImageURISource>
+	images: Array<string | ImageURISource | {
+		id: string;
+		isGroup: boolean;
+	}>;
 	onSlideIndex?: (index: number) => void
 	size?: Size;
 }

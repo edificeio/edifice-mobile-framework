@@ -50,8 +50,17 @@ export const actionTypeLoadVisibles = mailboxConf.createActionType(
 
 export const loadVisibles = dispatch => async () => {
   const visibles = await fetchJSONWithCache(`/conversation/visible`);
+  const groups = visibles && visibles.groups.map(group => ({
+    ...group,
+    isGroup: true
+  }))
+  const users = visibles && visibles.users.map(user => ({
+    ...user,
+    isGroup: false
+  }))
+
   dispatch({
     type: actionTypeLoadVisibles,
-    visibles: [...visibles.groups, ...visibles.users]
+    visibles: [...groups, ...users]
   });
 };

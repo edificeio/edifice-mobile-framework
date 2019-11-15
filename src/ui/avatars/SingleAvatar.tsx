@@ -9,6 +9,10 @@ export interface IAvatarsState {
 		width: number
 	}
 	slideIndex: number
+	userId: string | {
+		id: string;
+		isGroup: boolean;
+	  };
 }
 
 export const SingleAvatar = ({ userId, size = 45 }) => <Avatar size={ Size.large } sourceOrId={ userId } width={ size } />;

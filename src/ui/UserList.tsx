@@ -7,7 +7,7 @@ import { Line } from './Grid';
 import { Checkbox } from './forms/Checkbox';
 import I18n from "i18n-js";
 
-export type IUser = { id: string, name: string, displayName: string, checked: boolean };
+export type IUser = { id: string, name: string, displayName: string, isGroup: boolean, checked: boolean };
 const UserName = style.text({
     fontWeight: 'bold',
     textAlignVertical: 'center',
@@ -17,10 +17,10 @@ const UserName = style.text({
     color: CommonStyles.textColor,
 });
 
-const UserLine = ({ id, displayName, name, checked, onPick, onUnpick, selectable }) => (
+const UserLine = ({ id, displayName, name, checked, onPick, onUnpick, selectable, isGroup }) => (
     <TouchableOpacity onPress={() => !checked ? onPick() : onUnpick()}>
         <Line style={{ padding: 10, alignItems: 'center' }}>
-            <SingleAvatar size={51} userId={id} />
+            <SingleAvatar size={51} userId={{ id, isGroup }} />
             <UserName numberOfLines={2}>{name || displayName}</UserName>
             {selectable && <Checkbox checked={checked} onCheck={() => onPick()} onUncheck={() => onUnpick()} />}
         </Line>

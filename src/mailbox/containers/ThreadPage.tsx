@@ -120,10 +120,13 @@ class ThreadPageContainer extends React.PureComponent<
     if (imageSet.size === 0) {
       imageSet.add(getSessionInfo().userId!);
     }
-    const images = [...imageSet];
+    const images = [...imageSet].map((receiverId: string) => ({
+      id: receiverId,
+      isGroup: displayNames.find(displayName => displayName[0] === receiverId)![2],
+    }))
 
     const names = images.map(el => {
-      const u = displayNames.find(dn => dn[0] === el);
+      const u = displayNames.find(dn => dn[0] === el.id);
       return u ? u[1] : I18n.t("unknown-user");
     });
 
