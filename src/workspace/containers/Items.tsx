@@ -1,13 +1,13 @@
 import * as React from "react";
-import { FlatList, RefreshControl, StyleSheet, View, ViewStyle } from "react-native";
+import { FlatList, StyleSheet, ViewStyle, View } from "react-native";
 import { connect } from "react-redux";
 import I18n from "i18n-js";
 import { bindActionCreators } from "redux";
-import { NavigationScreenProp } from "react-navigation";
+import { NavigationScreenProp, NavigationEventSubscription } from "react-navigation";
 import config from "../config";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderAction, HeaderIcon } from "../../ui/headers/NewHeader";
-import { EVENT_TYPE, FilterId, IItem, IItemsProps, IState } from "../types";
+import { EVENT_TYPE, FilterId, IItem, IItemsProps } from "../types";
 import { Item } from "../components";
 import { fetchWorkspaceList } from "../actions/list";
 import { CommonStyles } from "../../styles/common/styles";
@@ -15,6 +15,7 @@ import { layoutSize } from "../../styles/common/layoutSize";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { getEmptyScreen } from "../utils/empty";
 import { PageContainer } from "../../ui/ContainerContent";
+import { Loading } from "../../ui";
 
 const styles = StyleSheet.create({
   separator: {
@@ -28,53 +29,74 @@ const HeaderBackAction = ({ navigation, style }: { navigation: NavigationScreenP
   return <HeaderAction onPress={() => navigation.pop()} name={"back"} style={style} />;
 };
 
-export class Items extends React.PureComponent<IItemsProps> {
+export class Items extends React.Component<IItemsProps, { isFocused: boolean }> {
   redirected = false;
+  focusListener!: NavigationEventSubscription;
+  blurListener!: NavigationEventSubscription;
 
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
     return standardNavScreenOptions(
       {
         title: navigation.getParam("title") || I18n.t(config.displayName),
         headerLeft: <HeaderBackAction navigation={navigation} />,
-        headerRight: <HeaderIcon name={null} hidden={true}/>
+        headerRight: <HeaderIcon name={null} hidden={true} />,
       },
       navigation
     );
   };
 
+  constructor(props: IItemsProps) {
+    super(props);
+
+    this.state = { isFocused: true };
+  }
+
   public componentDidMount() {
-    this.makeRequest();
+    this.focusListener = this.props.navigation.addListener("willFocus", () => {
+      this.setState({ isFocused: true });
+      this.makeRequest();
+    });
+    this.blurListener = this.props.navigation.addListener("didBlur", () => {
+      this.setState({ isFocused: false });
+    });
+  }
+
+  public componentWillUnmount() {
+    this.focusListener.remove();
+    this.blurListener.remove();
   }
 
   // permits to manage push notif navigation
   public shouldComponentUpdate() {
-    const childRoute = this.props.navigation.getParam("childRoute");
-    const childParams = this.props.navigation.getParam("childParams")
-
-    if (childRoute && !this.redirected) {
-      this.redirected = true;
-      this.props.navigation.push(
-        childRoute,
-        childParams);
+    if (!this.state.isFocused) {
       return false;
+    } else {
+      const childRoute = this.props.navigation.getParam("childRoute");
+      const childParams = this.props.navigation.getParam("childParams");
+
+      if (childRoute && !this.redirected) {
+        this.redirected = true;
+        this.props.navigation.push(childRoute, childParams);
+        return false;
+      }
+      return true;
     }
-    return true;
   }
 
-  public makeRequest() {
-    this.props.fetchWorkspaceList({
+  private makeRequest() {
+    return this.props.fetchWorkspaceList({
       filter: this.props.navigation.getParam("filter"),
       parentId: this.props.navigation.getParam("parentId"),
     });
   }
 
-  public onEvent(type: EVENT_TYPE, item: IItem) {
+  private onEvent(type: EVENT_TYPE, item: IItem) {
     const { id: parentId, name: title, isFolder } = item;
-    const filterId = this.props.navigation.getParam("filter")
+    const filterId = this.props.navigation.getParam("filter");
 
     switch (type) {
       case EVENT_TYPE.SELECT:
-        const filter = filterId == FilterId.root ? parentId : filterId
+        const filter = filterId == FilterId.root ? parentId : filterId;
 
         isFolder
           ? this.props.navigation.push("Workspace", { filter, parentId, title })
@@ -95,34 +117,45 @@ export class Items extends React.PureComponent<IItemsProps> {
 
   public render(): React.ReactNode {
     const { items, isFetching } = this.props;
-    const values = Object.values(items);
-    const parentId = this.props.navigation.getParam("parentId") || null;
-    const itemsArray =
-      parentId === FilterId.root ? values : values.sort((a, b) => this.sortItems(a, b));
+
+    const getViewToRender = () => {
+      if (items == undefined) {
+        return <Loading />;
+      } else {
+        const values = Object.values(items);
+        const parentId = this.props.navigation.getParam("parentId") || null;
+        const itemsArray = parentId === FilterId.root ? values : values.sort((a, b) => this.sortItems(a, b));
+
+        return (
+          <FlatList
+            contentContainerStyle={{ flexGrow: 1 }}
+            data={itemsArray}
+            ListEmptyComponent={getEmptyScreen(parentId)}
+            ItemSeparatorComponent={() => <View style={styles.separator} />}
+            keyExtractor={(item: IItem) => item.id}
+            refreshing={isFetching}
+            onRefresh={() => this.makeRequest()}
+            renderItem={({ item }) => <Item {...item} onEvent={this.onEvent.bind(this)} />}
+          />
+        );
+      }
+    };
 
     return (
       <PageContainer>
         <ConnectionTrackingBar />
-        <FlatList
-          contentContainerStyle={!isFetching && itemsArray.length === 0 ? { flex: 1 } : null}
-          data={itemsArray}
-          ListEmptyComponent={() => (isFetching ? null : getEmptyScreen(parentId))}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
-          keyExtractor={(item: IItem) => item.id}
-          refreshControl={<RefreshControl refreshing={isFetching} onRefresh={this.makeRequest.bind(this)} />}
-          renderItem={({ item }) => <Item {...item} onEvent={this.onEvent.bind(this)} />}
-        />
+        {getViewToRender()}
       </PageContainer>
     );
   }
 }
 
 const mapStateToProps = (state: any, props: any) => {
-  const stateItems: IState = config.getLocalState(state).items.data;
   const { isFetching } = config.getLocalState(state).items;
   const parentId = props.navigation.getParam("parentId");
+  const items = config.getLocalState(state).items.data[parentId];
 
-  return { items: stateItems[parentId] || {}, isFetching };
+  return { items, isFetching };
 };
 
 const mapDispatchToProps = (dispatch: any) => {
