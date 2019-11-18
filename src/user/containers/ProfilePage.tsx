@@ -129,7 +129,7 @@ export class ProfilePage extends React.PureComponent<
               {this.renderItem({
                 title: I18n.t("DisplayName"),
                 getter: () => this.state.displayName,
-                editable: true,
+                editable: this.props.userinfo.type !== "Relative",
                 setter: (displayName) => this.setState({ displayName })
               })}
 
