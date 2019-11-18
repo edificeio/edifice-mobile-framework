@@ -2,7 +2,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { NavigationScreenProp } from "react-navigation";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
-import { HeaderAction } from "../../ui/headers/NewHeader";
+import { HeaderAction, HeaderIcon } from "../../ui/headers/NewHeader";
 import { ViewStyle, Platform } from "react-native";
 import { EVENT_TYPE, IDetailsProps, IFile } from "../types";
 import { ItemDetails } from "../components";
@@ -20,6 +20,7 @@ export class Details extends React.PureComponent<IDetailsProps> {
       {
         title: navigation.getParam("title"),
         headerLeft: <HeaderBackAction navigation={navigation} />,
+        headerRight: <HeaderIcon name={null} hidden={true} />,
       },
       navigation
     );
