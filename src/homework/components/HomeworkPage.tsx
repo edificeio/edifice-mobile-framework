@@ -75,9 +75,14 @@ export interface IHomeworkPageOtherProps {
   navigation?: NavigationScreenProp<{}>;
 }
 
+interface IHomeworkPageState {
+  fetching: boolean;
+}
+
 export type IHomeworkPageProps = IHomeworkPageDataProps &
   IHomeworkPageEventProps &
-  IHomeworkPageOtherProps;
+  IHomeworkPageOtherProps &
+  IHomeworkPageState;
 
 // Main component ---------------------------------------------------------------------------------
 
@@ -97,8 +102,25 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
       this.flatList = element;
     };
   }
+  public state={
+    fetching: false
+  }
 
   // Render
+
+  getDerivedStateFromProps(nextProps: any, prevState: any) {
+    if(nextProps.isFetching !== prevState.fetching){
+      return { fetching: nextProps.isFetching};
+   }
+   else return null;
+  }
+
+  componentDidUpdate(prevProps: any) {
+    const { isFetching } = this.props
+    if(prevProps.isFetching !== isFetching){
+      this.setState({fetching: isFetching});
+    }
+  }
 
   public render() {
     const pageContent =
@@ -122,12 +144,12 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
     const {
       diaryId,
       tasksByDay,
-      isFetching,
       navigation,
       onRefresh,
       onSelect,
       onScrollBeginDrag
     } = this.props;
+    const { fetching } = this.state
 
     const data = tasksByDay ? tasksByDay.map(day => ({
       title: day.date,
@@ -169,8 +191,11 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
           ListFooterComponent={() => <View height={15} />}
           refreshControl={
             <RefreshControl
-              refreshing={isFetching}
-              onRefresh={() => onRefresh(diaryId)}
+              refreshing={fetching}
+              onRefresh={() => {
+                this.setState({ fetching: true })
+                onRefresh(diaryId)
+              }}
             />
           }
           onScrollBeginDrag={() => onScrollBeginDrag()}
