@@ -41,7 +41,7 @@
   "conversation-emptyScreenTitle": "No message in sight...",
   "conversation-failedSent": "Message not sent",
   "conversation-newMessage": "New message",
-
+  "conversation-newThreadSubjectPrefix": "Discussion with ",
   "conversation-receiver": "1 recipient",
   "conversation-receiverList": "Recipients",
   "conversation-receiverPrefix": "to",
