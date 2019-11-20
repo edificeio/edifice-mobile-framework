@@ -152,7 +152,7 @@ class AppStoreUnconnected extends React.Component<
             parentId: FilterId.root,
             title: I18n.t('workspace'),
             childRoute: "Workspace",
-            childParams: {parentId: "owner", filter: FilterId.shared, title: I18n.t('owner'), url: this.urlIntent}
+            childParams: {parentId: "owner", filter: FilterId.owner, title: I18n.t('owner'), url: this.urlIntent}
           })
         this.urlIntent = null;
       }

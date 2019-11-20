@@ -6,7 +6,7 @@
 import {
   asyncActionTypes,
 } from "../../infra/redux/async";
-import workspaceConfig from "../config";
+import config from "../config";
 import { IItems, IFiltersParameters, IItem } from "../types";
 import { getFolders } from "./helpers/folders";
 import { getDocuments } from "./helpers/documents";
@@ -15,39 +15,39 @@ import { getDocuments } from "./helpers/documents";
 
 
 export const actionTypes = asyncActionTypes(
-  workspaceConfig.createActionType("WORKSPACE_LIST")
+  config.createActionType("WORKSPACE_LIST")
 );
 
-export function workspaceListInvalidated() {
+export function listInvalidated() {
   return { type: actionTypes.invalidated };
 }
 
-export function workspaceListRequested() {
+export function listRequested() {
   return { type: actionTypes.requested };
 }
 
-export function workspaceListReceived(data: IItems<IItem>, id: string | undefined) {
+export function listReceived(data: IItems<IItem>, id: string | undefined) {
   return { type: actionTypes.received, data, id, receivedAt: Date.now() };
 }
 
-export function workspaceListFetchError(errmsg: string) {
+export function listError(errmsg: string) {
   return { type: actionTypes.fetchError, error: true, errmsg };
 }
 
 /**
- * Calls a fetch operation to get workspace list from the backend.
+ * Get workspace list from the backend.
  * Dispatches WORKSPACE_LIST_REQUESTED, WORKSPACE_LIST_RECEIVED, and WORKSPACE_LIST_FETCH_ERROR if an error occurs.
  */
-export function fetchWorkspaceList(parameters: IFiltersParameters) {
+export function getList(parameters: IFiltersParameters) {
   return async (dispatch: any, state: any) => {
-    dispatch(workspaceListRequested());
+    dispatch(listRequested());
 
     try {
       let [dataFolders, dataDocuments] = await Promise.all([getFolders(parameters), getDocuments(parameters)]);
 
-      dispatch(workspaceListReceived({ ...dataFolders, ...dataDocuments }, parameters.parentId));
+      dispatch(listReceived({ ...dataFolders, ...dataDocuments }, parameters.parentId));
     } catch (errmsg) {
-      dispatch(workspaceListFetchError(errmsg));
+      dispatch(listError(errmsg));
     }
   };
 }

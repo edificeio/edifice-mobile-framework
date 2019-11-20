@@ -3,15 +3,17 @@
  * Build actions to be dispatched to the hworkspace list reducer.
  */
 
+import FS, {StatResult} from 'react-native-fs';
 import RNFB from 'rn-fetch-blob';
 import Mime from "mime";
 import moment from "moment";
-import {asyncGetJson} from "../../../infra/redux/async";
+import { asyncGetJson } from "../../../infra/redux/async";
 import {IItems, IFiltersParameters, IFile, FilterId, IItem} from "../../types";
-import {filters} from "../../types/filters/helpers/filters";
+import { filters } from "../../types/filters/helpers/filters";
 import Conf from "../../../../ode-framework-conf";
-import {uriToFormData} from "./uriToFormData";
-import {OAuth2RessourceOwnerPasswordClient} from "../../../infra/oauth";
+import {signedFetch} from "../../../infra/fetchWithCache";
+import {fileToFormData} from "./fileToFormData2";
+
 
 
 // TYPE -------------------------------------------------------------------------------------------
@@ -68,7 +70,7 @@ const backendDocumentsAdapter: (data: IBackendDocumentArray) => IItems<IFile> = 
 // GET -----------------------------------------------------------------------------------------
 
 export function getDocuments(parameters: IFiltersParameters): Promise<IItems<IItem>> {
-  const {parentId} = parameters;
+  const { parentId } = parameters;
 
   if (parentId === FilterId.root) return Promise.resolve({});
 
@@ -87,29 +89,46 @@ export function getDocuments(parameters: IFiltersParameters): Promise<IItems<IIt
   return asyncGetJson(`/workspace/documents${formatParameters(parameters)}`, backendDocumentsAdapter);
 }
 
+//keep reference to original value
+const originalXMLHttpRequest = window.XMLHttpRequest;
+
+// UPLOAD --------------------------------------------------------------------------------------
+
+//keep reference to original value
+const originalXMLHttpRequest = window.XMLHttpRequest;
+
 // UPLOAD --------------------------------------------------------------------------------------
 
 export const uploadDocument = (uri: string, onEnd: any) => {
   const fileName = uri.substring(uri.lastIndexOf('/') + 1);
+  const mime = Mime.getType(uri);
 
-  const signedHeaders = OAuth2RessourceOwnerPasswordClient.connection.sign({}).headers;
-  const headers = {...signedHeaders, "content-Type": "multipart/form-data"};
+  FS.readFile(uri, 'base64')
+    .then((data:any) => {
+      const file: File = new File( [data], fileName, {type: `image/png;BASE64`})
+      fileToFormData(file)
+        .then((formData: any) => {
 
-  RNFB.fetch(
-    "POST",
-    `${Conf.currentPlatform.url}/workspace/document?quality=1&thumbnail=120x120&thumbnail=100x100&thumbnail=290x290&thumbnail=381x381&thumbnail=1600x0`,
-    headers,
-    [{
-      name: 'file',
-      filename: "image.png",
-      data: RNFB.wrap(uri)
-    }],
-  )
-    .then((response) => {
-      onEnd(response)
-    })
-    .catch((err) => {
-        console.log(err)
-      }
-    )
+          // window.XMLHttpRequest = RNFB.polyfill.XMLHttpRequest
+
+          signedFetch(
+            `${Conf.currentPlatform.url}/workspace/document?quality=1&thumbnail=120x120&thumbnail=100x100&thumbnail=290x290&thumbnail=381x381&thumbnail=1600x0`,
+            {
+              method: "POST",
+              body: formData,
+              headers: {
+                headers: {"Content-Type": "multipart/form-data"}
+              }
+            }
+          )
+            .then((response) => {
+              window.XMLHttpRequest = originalXMLHttpRequest;
+              onEnd(response)
+            })
+            .catch((err) => {
+              window.XMLHttpRequest = originalXMLHttpRequest;
+              console.log(err)
+            })
+        })
+    });
 }

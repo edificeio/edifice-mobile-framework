@@ -1,5 +1,5 @@
 import * as React from "react";
-import { FlatList, StyleSheet, ViewStyle, View } from "react-native";
+import {FlatList, StyleSheet, View, ViewStyle} from "react-native";
 import { connect } from "react-redux";
 import I18n from "i18n-js";
 import { bindActionCreators } from "redux";
@@ -9,7 +9,7 @@ import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOpti
 import { HeaderAction, HeaderIcon } from "../../ui/headers/NewHeader";
 import { EVENT_TYPE, FilterId, IItem, IItemsProps } from "../types";
 import { Item } from "../components";
-import { fetchWorkspaceList } from "../actions/list";
+import { getList } from "../actions/list";
 import { CommonStyles } from "../../styles/common/styles";
 import { layoutSize } from "../../styles/common/layoutSize";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
@@ -17,6 +17,7 @@ import { getEmptyScreen } from "../utils/empty";
 import { PageContainer } from "../../ui/ContainerContent";
 import { Loading } from "../../ui";
 import { removeAccents } from "../../utils/string";
+import {upload} from "../actions/upload";
 
 const styles = StyleSheet.create({
   separator: {
@@ -84,8 +85,8 @@ export class Items extends React.Component<IItemsProps, { isFocused: boolean }> 
     }
   }
 
-  private makeRequest() {
-    return this.props.fetchWorkspaceList({
+  public makeRequest() {
+    this.props.getList({
       filter: this.props.navigation.getParam("filter"),
       parentId: this.props.navigation.getParam("parentId"),
     });
@@ -163,7 +164,7 @@ const mapStateToProps = (state: any, props: any) => {
 };
 
 const mapDispatchToProps = (dispatch: any) => {
-  return bindActionCreators({ fetchWorkspaceList }, dispatch);
+  return bindActionCreators({ getList, upload }, dispatch);
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Items);
