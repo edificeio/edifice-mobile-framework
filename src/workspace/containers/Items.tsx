@@ -16,6 +16,7 @@ import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { getEmptyScreen } from "../utils/empty";
 import { PageContainer } from "../../ui/ContainerContent";
 import { Loading } from "../../ui";
+import { removeAccents } from "../../utils/string";
 
 const styles = StyleSheet.create({
   separator: {
@@ -106,13 +107,16 @@ export class Items extends React.Component<IItemsProps, { isFocused: boolean }> 
   }
 
   private sortItems(a: IItem, b: IItem): number {
-    return a.isFolder
-      ? b.isFolder
-        ? a.name.toLowerCase().localeCompare(b.name.toLowerCase())
-        : -1
-      : b.isFolder
-      ? 1
-      : a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+    const sortByType = (a: IItem, b: IItem): number => {
+      if (a.isFolder == b.isFolder) return 0;
+      else return a.isFolder ? -1 : 1;
+    };
+
+    const sortByName = (a: IItem, b: IItem): number => {
+      return removeAccents(a.name.toLocaleLowerCase()).localeCompare(removeAccents(b.name.toLocaleLowerCase()));
+    };
+
+    return sortByType(a, b) != 0 ? sortByType(a, b) : sortByName(a, b);
   }
 
   public render(): React.ReactNode {
@@ -124,7 +128,7 @@ export class Items extends React.Component<IItemsProps, { isFocused: boolean }> 
       } else {
         const values = Object.values(items);
         const parentId = this.props.navigation.getParam("parentId") || null;
-        const itemsArray = parentId === FilterId.root ? values : values.sort((a, b) => this.sortItems(a, b));
+        const itemsArray = parentId === FilterId.root ? values : values.sort(this.sortItems);
 
         return (
           <FlatList
@@ -162,7 +166,4 @@ const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators({ fetchWorkspaceList }, dispatch);
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Items);
+export default connect(mapStateToProps, mapDispatchToProps)(Items);
