@@ -30,4 +30,6 @@ const Container = style.view({
 	flexDirection: "row",
 	flexWrap: "nowrap",
 	justifyContent: "center",
+	width: 45,
+	height: 45
 });

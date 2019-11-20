@@ -4,8 +4,10 @@ import I18n from "i18n-js";
 
 import { IAppModule } from "../infra/moduleTool";
 import { getRoutes, getModules } from "../navigation/helpers/navBuilder";
-import { standardNavScreenOptions } from "../navigation/helpers/navScreenOptions";
+import { standardNavScreenOptions, alternativeNavScreenOptions } from "../navigation/helpers/navScreenOptions";
+import { HeaderAction, HeaderBackAction } from "../ui/headers/NewHeader";
 import MyAppGrid from "./components/MyAppGrid";
+import NotificationListPage from "./containers/NotificationListPage";
 
 const MyAppGridContainer = (modules: IAppModule[]) => createStackNavigator({
   myAppsGrid: {
@@ -13,10 +15,38 @@ const MyAppGridContainer = (modules: IAppModule[]) => createStackNavigator({
     navigationOptions: ({ navigation }: { navigation: NavigationScreenProp<{}> }) =>
       standardNavScreenOptions(
         {
-          title: I18n.t("MyApplications")
+          title: I18n.t("MyApplications"),
+          headerRight: <HeaderAction
+            onPress={() => { navigation.navigate('notifications') }}
+            //TODO: on-off logic? (redux)
+            name={`icon-notif-${true? "on" : "off"}`}
+            iconSize={36}
+          />,
+          headerLeftContainerStyle: {
+            alignItems: "flex-start"
+          },
+          headerRightContainerStyle: {
+            alignItems: "flex-start"
+          },
+          headerTitleContainerStyle: {
+            alignItems: "flex-start",
+            height: 55.667 // 🍔 Big (M)hack of the death of the world. The `alignItems` property doesn't seem to work here.
+          }
         },
         navigation
       ),
+  },
+  notifications: {
+    screen: NotificationListPage,
+    navigationOptions: ({ navigation }: { navigation: NavigationScreenProp<{}> }) =>
+    alternativeNavScreenOptions(
+      {
+        //TODO: translate
+        title: "Toutes mes notifications",
+        headerLeft: <HeaderBackAction navigation={navigation} />,
+      },
+      navigation
+    ),
   }
 });
 

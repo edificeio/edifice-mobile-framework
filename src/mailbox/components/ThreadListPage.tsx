@@ -145,7 +145,7 @@ export class ThreadListPage extends React.PureComponent<
   }
 
   public renderThreadList() {
-    const { isFetching, isRefreshing, onNextPage, onRefresh } = this.props;
+    const { isFetching, isRefreshing, onNextPage, onRefresh, threads } = this.props;
 
     return (
       <FlatList
@@ -160,7 +160,7 @@ export class ThreadListPage extends React.PureComponent<
             }}
           />
         }
-        data={this.props.threads}
+        data={threads}
         onEndReached={() => {
           onNextPage();
           Tracking.logEvent("refreshConversation", {

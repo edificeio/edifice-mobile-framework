@@ -2,8 +2,7 @@ import style from "glamorous-native";
 import I18n from "i18n-js";
 import * as React from "react";
 
-import { GridAvatars } from "../../ui/avatars/GridAvatars";
-import { CircleNumber } from "../../ui/CircleNumber";
+import { BadgeAvatar } from "../../ui/BadgeAvatar";
 import {
   CenterPanel,
   Content,
@@ -40,7 +39,7 @@ export default ({
   return (
     <ListItem nb={unread} onPress={() => onPress(id, displayNames, subject)}>
       <LeftPanel>
-        <GridAvatars users={findReceivers2(to, from, cc)} />
+        <BadgeAvatar avatars={findReceivers2(to, from, cc)} badgeContent={unread} />
       </LeftPanel>
       <CenterPanel>
         <Author nb={unread} numberOfLines={1}>
@@ -61,7 +60,6 @@ export default ({
       </CenterPanel>
       <RightPanel>
         <DateView date={date} strong={unread > 0} />
-        <CircleNumber nb={unread} />
       </RightPanel>
     </ListItem>
   );

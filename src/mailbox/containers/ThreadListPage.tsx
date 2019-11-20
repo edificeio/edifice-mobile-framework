@@ -24,7 +24,6 @@ import { NavigationScreenProp, NavigationEventPayload, NavigationCompleteTransit
 import { standardNavScreenOptions, alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderAction } from "../../ui/headers/NewHeader";
 import { SearchBar } from "../../ui/SearchBar";
-import { traceProps } from "../../utils/debugPropTrace";
 
 // Search query tools
 

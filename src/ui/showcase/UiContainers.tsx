@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Text, View } from "react-native";
 import { TouchCard } from "../Card";
-import { CircleNumber } from "../CircleNumber";
+import { Badge } from "../Badge";
 import { DateView } from "../DateView";
 import glamorous from "glamorous-native"
 
@@ -17,7 +17,7 @@ export default () => (
         <MarginTouchCard>
             <Text>Card and TouchCard (with custom margin)</Text>
         </MarginTouchCard>
-        <CircleNumber nb={33}/>
+        <Badge content={33}/>
         <DateView date={Date.now()} short={false}/>
     </View>
 );
