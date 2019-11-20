@@ -4,13 +4,11 @@
  */
 
 import RNFB from 'rn-fetch-blob';
-import Mime from "mime";
 import moment from "moment";
 import {asyncGetJson} from "../../../infra/redux/async";
 import {IItems, IFiltersParameters, IFile, FilterId, IItem} from "../../types";
 import {filters} from "../../types/filters/helpers/filters";
 import Conf from "../../../../ode-framework-conf";
-import {uriToFormData} from "./uriToFormData";
 import {OAuth2RessourceOwnerPasswordClient} from "../../../infra/oauth";
 
 
