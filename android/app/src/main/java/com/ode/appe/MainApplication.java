@@ -25,6 +25,8 @@ import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 // React Native WebView manual linking (automatic linking not supported)
 import com.reactnativecommunity.webview.RNCWebViewPackage;
 
+import com.rngrp.RNGRPPackage;
+
 import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {

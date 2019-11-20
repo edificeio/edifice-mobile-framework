@@ -90,26 +90,30 @@ export function getDocuments(parameters: IFiltersParameters): Promise<IItems<IIt
 // UPLOAD --------------------------------------------------------------------------------------
 
 export const uploadDocument = (uri: string, onEnd: any) => {
-  const fileName = uri.substring(uri.lastIndexOf('/') + 1);
+  var RNGRP = require('react-native-get-real-path');
 
-  const signedHeaders = OAuth2RessourceOwnerPasswordClient.connection.sign({}).headers;
-  const headers = {...signedHeaders, "content-Type": "multipart/form-data"};
+  RNGRP.getRealPathFromURI(uri).then((filePath: string) => {
+    const filename = filePath.substring(filePath.lastIndexOf('/') + 1);
 
-  RNFB.fetch(
-    "POST",
-    `${Conf.currentPlatform.url}/workspace/document?quality=1&thumbnail=120x120&thumbnail=100x100&thumbnail=290x290&thumbnail=381x381&thumbnail=1600x0`,
-    headers,
-    [{
-      name: 'file',
-      filename: "image.png",
-      data: RNFB.wrap(uri)
-    }],
-  )
-    .then((response) => {
-      onEnd(response)
-    })
-    .catch((err) => {
-        console.log(err)
-      }
+    const signedHeaders = OAuth2RessourceOwnerPasswordClient.connection.sign({}).headers;
+    const headers = {...signedHeaders, "content-Type": "multipart/form-data"};
+
+    RNFB.fetch(
+      "POST",
+      `${Conf.currentPlatform.url}/workspace/document?quality=1&thumbnail=120x120&thumbnail=100x100&thumbnail=290x290&thumbnail=381x381&thumbnail=1600x0`,
+      headers,
+      [{
+        name: 'file',
+        filename,
+        data: RNFB.wrap(uri)
+      }],
     )
+      .then((response) => {
+        onEnd(response)
+      })
+      .catch((err) => {
+          console.log(err)
+        }
+      )
+  });
 }
