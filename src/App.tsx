@@ -2,6 +2,9 @@
 import * as React from "react";
 import { StatusBar, View, AppState } from "react-native";
 import * as RNLocalize from "react-native-localize";
+import RNFileShareIntent from 'react-native-file-share-intent';
+
+
 
 // Redux
 import { Provider, connect } from "react-redux";
@@ -35,6 +38,9 @@ import AppScreen from "./AppScreen";
 import { CommonStyles } from './styles/common/styles';
 import SplashScreen from "react-native-splash-screen";
 import { initI18n } from "./infra/i18n";
+import {nainNavNavigate} from "./navigation/helpers/navHelper";
+import {FilterId} from "./workspace/types/filters";
+import I18n from "i18n-js";
 
 // Disable Yellow Box on release builds.
 if (!__DEV__) {
@@ -51,6 +57,7 @@ class AppStoreUnconnected extends React.Component<
 > {
   private notificationOpenedListener?: () => void;
   private onTokenRefreshListener?: () => void;
+  private urlIntent = null
 
   public state = {
     appState: null
@@ -93,6 +100,12 @@ class AppStoreUnconnected extends React.Component<
     if (this.props.currentPlatformId) {
       await this.startupLogin();
     }
+    // intent
+    if(RNFileShareIntent){
+      RNFileShareIntent.getFilepath((url:any) => {
+        this.urlIntent = url;
+      })
+    }
     SplashScreen.hide();
   }
 
@@ -129,6 +142,20 @@ class AppStoreUnconnected extends React.Component<
           .onTokenRefresh(fcmToken => {
             this.handleFCMTokenModified(fcmToken);
           });
+
+      // intent
+      if (this.urlIntent) {
+        nainNavNavigate(
+          "Workspace",
+          {
+            filter: FilterId.root,
+            parentId: FilterId.root,
+            title: I18n.t('workspace'),
+            childRoute: "Workspace",
+            childParams: {parentId: "owner", filter: FilterId.shared, title: I18n.t('owner'), url: this.urlIntent}
+          })
+        this.urlIntent = null;
+      }
     }
   }
 

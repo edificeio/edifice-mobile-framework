@@ -42,7 +42,7 @@ export const downloadOnCache = async (downloadable: IFile): Promise<FetchBlobRes
     .fetch("GET", Conf.currentPlatform.url + downloadable.url, getAuthHeader()["headers"]);
 };
 
-export const openDownloadedFile = (filepath: string, ext = false): void => {
+export const openDownloadedFile = (filepath: string): void => {
   if (Platform.OS === "ios")
     RNFetchBlob.ios.openDocument(filepath);
   else if (Platform.OS === "android") {
