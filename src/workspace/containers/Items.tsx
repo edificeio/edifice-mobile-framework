@@ -8,7 +8,7 @@ import config from "../config";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderAction, HeaderIcon } from "../../ui/headers/NewHeader";
 import { EVENT_TYPE, FilterId, IItem, IItemsProps } from "../types";
-import { Item } from "../components";
+import { Item, HeaderMenu } from "../components";
 import { getList } from "../actions/list";
 import { CommonStyles } from "../../styles/common/styles";
 import { layoutSize } from "../../styles/common/layoutSize";
@@ -31,17 +31,20 @@ const HeaderBackAction = ({ navigation, style }: { navigation: NavigationScreenP
   return <HeaderAction onPress={() => navigation.pop()} name={"back"} style={style} />;
 };
 
+const menuItems = [{label: "Ajouter un document", iconName: "folder"}, {label: "Créer un dossier", iconName: "trash"}]
+
 export class Items extends React.Component<IItemsProps, { isFocused: boolean }> {
   redirected = false;
   focusListener!: NavigationEventSubscription;
   blurListener!: NavigationEventSubscription;
+
 
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
     return standardNavScreenOptions(
       {
         title: navigation.getParam("title") || I18n.t(config.displayName),
         headerLeft: <HeaderBackAction navigation={navigation} />,
-        headerRight: <HeaderIcon name={null} hidden={true} />,
+        headerRight: <HeaderMenu items={menuItems}/>
       },
       navigation
     );

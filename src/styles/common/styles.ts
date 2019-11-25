@@ -75,7 +75,8 @@ export const CommonStyles = {
     Personnel: "#763294",
     Teacher: "#46bfaf",
     Guest: "#ff61c0"
-  }
+  },
+  secondary: "#FF7A24"
 };
 
 setCustomText({ style: { fontFamily: CommonStyles.primaryFontFamily } });
