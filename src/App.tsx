@@ -1,6 +1,6 @@
 // RN Imports
 import * as React from "react";
-import { StatusBar, View, AppState } from "react-native";
+import { StatusBar, View, AppState, Linking } from "react-native";
 import * as RNLocalize from "react-native-localize";
 import RNFileShareIntent from 'react-native-file-share-intent';
 
@@ -57,7 +57,7 @@ class AppStoreUnconnected extends React.Component<
 > {
   private notificationOpenedListener?: () => void;
   private onTokenRefreshListener?: () => void;
-  private urlIntent = null
+  private contentUri: string | null = null;
 
   public state = {
     appState: null
@@ -100,12 +100,7 @@ class AppStoreUnconnected extends React.Component<
     if (this.props.currentPlatformId) {
       await this.startupLogin();
     }
-    // intent
-    if(RNFileShareIntent){
-      RNFileShareIntent.getFilepath((url:any) => {
-        this.urlIntent = url;
-      })
-    }
+    this._checkContentUri();
     SplashScreen.hide();
   }
 
@@ -142,20 +137,10 @@ class AppStoreUnconnected extends React.Component<
           .onTokenRefresh(fcmToken => {
             this.handleFCMTokenModified(fcmToken);
           });
+    }
 
-      // intent
-      if (this.urlIntent) {
-        nainNavNavigate(
-          "Workspace",
-          {
-            filter: FilterId.root,
-            parentId: FilterId.root,
-            title: I18n.t('workspace'),
-            childRoute: "Workspace",
-            childParams: {parentId: "owner", filter: FilterId.owner, title: I18n.t('owner'), url: this.urlIntent}
-          })
-        this.urlIntent = null;
-      }
+    if (loggedIn) {
+      this._handleContentUri()
     }
   }
 
@@ -181,8 +166,59 @@ class AppStoreUnconnected extends React.Component<
   };
 
   private handleAppStateChange = (nextAppState: string) => {
+    if (this.state.appState === "background" && nextAppState === 'active') {
+      this._checkContentUri()
+    }
+    else if (this.state.appState === "active" && nextAppState === 'background')
+      this._clearContentUri();
     this.setState({ appState: nextAppState });
   };
+
+  private _checkContentUri = async () => {
+    await this._getInitialUrl();
+    RNFileShareIntent && RNFileShareIntent.getFilePath((contentUri: string) => {
+      if (contentUri) {
+        this.contentUri = contentUri;
+      }
+    });
+  }
+
+  _getInitialUrl = async () => {
+    const url = await Linking.getInitialURL()
+    return url
+  }
+
+  _clearContentUri = () => {
+    this.contentUri = null;
+  }
+
+  /**
+   * process content uri
+   * @return processed a contentUri or no
+   */
+  _handleContentUri = (): boolean => {
+    const contentUri = this.contentUri
+
+    if (contentUri) {
+      this._clearContentUri();
+      nainNavNavigate(
+        "Workspace",
+        {
+          contentUri: null,
+          filter: FilterId.root,
+          parentId: FilterId.root,
+          title: I18n.t('workspace'),
+          childRoute: "Workspace",
+          childParams: {
+            parentId: "owner",
+            filter: FilterId.owner,
+            title: I18n.t('owner'),
+            contentUri
+          }
+        })
+    }
+    return contentUri != null;
+  }
 
   private static initialNotifRouted: boolean = false;
 

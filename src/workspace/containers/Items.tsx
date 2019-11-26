@@ -18,6 +18,8 @@ import { PageContainer } from "../../ui/ContainerContent";
 import { Loading } from "../../ui";
 import { removeAccents } from "../../utils/string";
 import {upload} from "../actions/upload";
+import withNotifyWrapper from "../utils/withNotifyWrapper";
+import withLinkingWrapper from "../utils/withLinkingWrapper";
 
 const styles = StyleSheet.create({
   separator: {
@@ -95,7 +97,7 @@ export class Items extends React.Component<IItemsProps, { isFocused: boolean }> 
     });
   }
 
-  private onEvent(type: EVENT_TYPE, item: IItem) {
+  public onEvent(type: EVENT_TYPE, item: IItem) {
     const { id: parentId, name: title, isFolder } = item;
     const filterId = this.props.navigation.getParam("filter");
 
@@ -170,4 +172,7 @@ const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators({ getList, upload }, dispatch);
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Items);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withNotifyWrapper(withLinkingWrapper(Items)));

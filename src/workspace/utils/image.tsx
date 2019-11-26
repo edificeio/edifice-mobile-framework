@@ -8,10 +8,8 @@ import { CommonStyles } from "../../styles/common/styles";
 import {DEVICE_HEIGHT, DEVICE_WIDTH, layoutSize} from "../../styles/common/layoutSize";
 import { signUrl } from "../../infra/oauth";
 import {IFile} from "../types";
-import FastImage, {FastImageSource} from "react-native-fast-image";
+import FastImage from "react-native-fast-image";
 import ImageOptional from "../../ui/ImageOptional";
-import {Italic} from "../../ui/Typography";
-import I18n from "i18n-js";
 
 export const renderIcon = ( id: string | null, isFolder: boolean, name: string): any => {
   const icon = getIcon(id, isFolder, name);

@@ -2,33 +2,34 @@
 
 import {asyncActionTypes} from "../../infra/redux/async";
 import config from "../config";
-import {uploadDocument} from "./helpers/documents";
+import {backendDocumentsAdapter, uploadDocument} from "./helpers/documents";
 import {getList} from "./list";
-import {FilterId} from "../types";
+import {ContentUri, FilterId} from "../types";
+import {addReceived} from "./add";
 
 
 
 // ACTION UPLOAD ------------------------------------------------------------------------------------
 
 
-export const actionTypes = asyncActionTypes(
+export const actionTypesUpload = asyncActionTypes(
   config.createActionType("WORKSPACE_UPLOAD")
 );
 
 export function uploadInvalidated() {
-  return { type: actionTypes.invalidated };
+  return { type: actionTypesUpload.invalidated };
 }
 
 export function uploadRequested() {
-  return { type: actionTypes.requested };
+  return { type: actionTypesUpload.requested };
 }
 
 export function uploadReceived(data?: any, id?: string | undefined) {
-  return { type: actionTypes.received, data, id, receivedAt: Date.now() };
+  return { type: actionTypesUpload.received, data, id, receivedAt: Date.now() };
 }
 
 export function uploadError(errmsg: string) {
-  return { type: actionTypes.fetchError, error: true, errmsg };
+  return { type: actionTypesUpload.fetchError, error: true, errmsg };
 }
 
 // THUNKS -----------------------------------------------------------------------------------------
@@ -41,14 +42,21 @@ const sortOnName = ( a: string, b: string) : boolean => {
  * Take a file from the mobile and post it to the backend.
  * Dispatches WORKSPACE_UPLOAD_REQUESTED, WORKSPACE_UPLOAD_RECEIVED, and WORKSPACE_UPLOAD_FETCH_ERROR if an error occurs.
  */
-export function upload(uriContent: string) {
+export function upload(uriContent: ContentUri[]) {
   console.log( "upload url " + uriContent);
   return async (dispatch: any, state: any) => {
 
     try {
-      uploadDocument(uriContent, () => {
-        dispatch(getList({filter: FilterId.owner}));
-        dispatch(uploadReceived());
+      uploadDocument(uriContent, (response: any) => {
+        if (response.data) {
+          const data = JSON.parse(response.data);
+          if (Array.isArray(data))
+            dispatch(addReceived(backendDocumentsAdapter(data), FilterId.owner));
+          else
+            dispatch(addReceived(backendDocumentsAdapter([data]), FilterId.owner));
+          // dispatch(getList({filter: FilterId.owner}));
+          dispatch(uploadReceived());
+        }
       })
     }
     catch( ex) {

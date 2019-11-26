@@ -14,24 +14,24 @@ import { getDocuments } from "./helpers/documents";
 // ACTION LIST ------------------------------------------------------------------------------------
 
 
-export const actionTypes = asyncActionTypes(
+export const actionTypesList = asyncActionTypes(
   config.createActionType("WORKSPACE_LIST")
 );
 
 export function listInvalidated() {
-  return { type: actionTypes.invalidated };
+  return { type: actionTypesList.invalidated };
 }
 
 export function listRequested() {
-  return { type: actionTypes.requested };
+  return { type: actionTypesList.requested };
 }
 
 export function listReceived(data: IItems<IItem>, id: string | undefined) {
-  return { type: actionTypes.received, data, id, receivedAt: Date.now() };
+  return { type: actionTypesList.received, data, id, receivedAt: Date.now() };
 }
 
 export function listError(errmsg: string) {
-  return { type: actionTypes.fetchError, error: true, errmsg };
+  return { type: actionTypesList.fetchError, error: true, errmsg };
 }
 
 /**

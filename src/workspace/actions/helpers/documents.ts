@@ -6,7 +6,7 @@
 import RNFB from 'rn-fetch-blob';
 import moment from "moment";
 import {asyncGetJson} from "../../../infra/redux/async";
-import {IItems, IFiltersParameters, IFile, FilterId, IItem} from "../../types";
+import {IItems, IFiltersParameters, IFile, FilterId, IItem, ContentUri} from "../../types";
 import {filters} from "../../types/filters/helpers/filters";
 import Conf from "../../../../ode-framework-conf";
 import {OAuth2RessourceOwnerPasswordClient} from "../../../infra/oauth";
@@ -42,7 +42,7 @@ export type IBackendDocumentArray = Array<IBackendDocument>;
 
 // ADAPTER ----------------------------------------------------------------------------------------
 
-const backendDocumentsAdapter: (data: IBackendDocumentArray) => IItems<IFile> = data => {
+export const backendDocumentsAdapter: (data: IBackendDocumentArray) => IItems<IFile> = data => {
   const result = {} as IItems<IFile>;
   if (!data) return result;
   for (const item of data) {
@@ -87,31 +87,23 @@ export function getDocuments(parameters: IFiltersParameters): Promise<IItems<IIt
 
 // UPLOAD --------------------------------------------------------------------------------------
 
-export const uploadDocument = (uri: string, onEnd: any) => {
-  var RNGRP = require('react-native-get-real-path');
+export const uploadDocument = (uri: ContentUri[], onEnd: any) => {
+  const signedHeaders = OAuth2RessourceOwnerPasswordClient.connection.sign({}).headers;
+  const headers = {...signedHeaders, "content-Type": "multipart/form-data"};
+  const body = uri.reduce( (acc, item, index) =>
+    [...acc, { name: `document${index}`, type: item.mime, filename: item.name, data: RNFB.wrap(item.uri)}], [])
 
-  RNGRP.getRealPathFromURI(uri).then((filePath: string) => {
-    const filename = filePath.substring(filePath.lastIndexOf('/') + 1);
-
-    const signedHeaders = OAuth2RessourceOwnerPasswordClient.connection.sign({}).headers;
-    const headers = {...signedHeaders, "content-Type": "multipart/form-data"};
-
-    RNFB.fetch(
-      "POST",
-      `${Conf.currentPlatform.url}/workspace/document?quality=1&thumbnail=120x120&thumbnail=100x100&thumbnail=290x290&thumbnail=381x381&thumbnail=1600x0`,
-      headers,
-      [{
-        name: 'file',
-        filename,
-        data: RNFB.wrap(uri)
-      }],
+  RNFB.fetch(
+    "POST",
+    `${Conf.currentPlatform.url}/workspace/document?quality=1&thumbnail=120x120&thumbnail=100x100&thumbnail=290x290&thumbnail=381x381&thumbnail=1600x0`,
+    headers,
+    body,
+  )
+    .then((response) => {
+      onEnd(response)
+    })
+    .catch((err) => {
+        console.log(err)
+      }
     )
-      .then((response) => {
-        onEnd(response)
-      })
-      .catch((err) => {
-          console.log(err)
-        }
-      )
-  });
 }

@@ -1,8 +1,7 @@
 import Conf from "../../ode-framework-conf";
-import {nainNavNavigate, nainSubNavNavigate, navigate} from "../navigation/helpers/navHelper";
+import {nainNavNavigate} from "../navigation/helpers/navHelper";
 import {NotificationHandlerFactory} from "../infra/pushNotification";
 import {FilterId, IFile} from "./types";
-import {factoryRootFolder} from "./actions/helpers/factoryRootFolder";
 import I18n from "i18n-js";
 
 const notifHandlerFactory :NotificationHandlerFactory<any,any,any> = dispatch => async notificationData => {

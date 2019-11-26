@@ -1,10 +1,10 @@
 import { createStackNavigator } from "react-navigation";
-import ContainerList from "./containers/Items";
+import ContainerItems from "./containers/Items";
 import { Details } from "./containers/Details"
 
 export default createStackNavigator({
   Workspace: {
-    screen: ContainerList,
+    screen: ContainerItems,
     params: { parentId: 'root', filter: 'root' }
   },
   WorkspaceDetails: {
