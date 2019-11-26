@@ -41,8 +41,7 @@ const MyAppGridContainer = (modules: IAppModule[]) => createStackNavigator({
     navigationOptions: ({ navigation }: { navigation: NavigationScreenProp<{}> }) =>
     alternativeNavScreenOptions(
       {
-        //TODO: translate
-        title: "Toutes mes notifications",
+        title: I18n.t("Notifications"),
         headerLeft: <HeaderBackAction navigation={navigation} />,
       },
       navigation

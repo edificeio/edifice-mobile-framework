@@ -52,3 +52,8 @@ export const NewContent = style.text(
     fontWeight: nb > 0 ? Weight.Normal : Weight.Light
   })
 );
+
+export const NewPageContainer = style.view({
+  backgroundColor: CommonStyles.lightGrey,
+  flex: 1
+});

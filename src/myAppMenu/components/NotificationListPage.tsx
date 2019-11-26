@@ -6,7 +6,7 @@
  * Props :
  *    `isFetching` - is data currently fetching from the server.
  *    `isRefreshing` - is data currenty fetching in order to reset displayed list.
- *    `threads` - list of threads to display
+ *    `notifications` - list of notifications to display
  *
  *    `navigation` - React Navigation instance.
  */
@@ -17,7 +17,6 @@
 import style from "glamorous-native";
 import * as React from "react";
 import I18n from "i18n-js";
-//import Swipeable from "react-native-swipeable";
 
 import moment from "moment";
 // tslint:disable-next-line:no-submodule-imports
@@ -25,111 +24,73 @@ import "moment/locale/fr";
 moment.locale("fr");
 
 // Components
-import { View, RefreshControl } from "react-native";
+import { RefreshControl } from "react-native";
 const { FlatList } = style;
 import styles from "../../styles";
 
-import { Icon, Loading, ButtonsOkCancel } from "../../ui";
+import { Loading } from "../../ui";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
-import { PageContainer, ListItem } from "../../ui/ContainerContent";
-import { NewListItem } from "./NewContainerContent";
-// import TouchableOpacity from "../../ui/CustomTouchableOpacity";
+import { NewPageContainer, NewListItem } from "./NewContainerContent";
 import { EmptyScreen } from "../../ui/EmptyScreen";
 import { TextBright } from "../../ui/Typography";
 import NotificationItem from "./NotificationItem";
 
 // // Type definitions
 
-// import { IConversationThread } from "../reducers/threadList";
-// import {
-//   ModalContent,
-//   ModalBox,
-//   ModalContentBlock,
-//   ModalContentText
-// } from "../../ui/Modal";
-// import Tracking from "../../tracking/TrackingManager";
+import { INotification, INotificationList } from "../reducers/notificationList";
 
 // // Misc
 
 // Props definition -------------------------------------------------------------------------------
 
-// export interface IThreadListPageDataProps {
-//   isFetching?: boolean;
-//   isRefreshing?: boolean;
-//   threads?: IConversationThread[];
-//   page?: number;
-// }
+export interface INotificationListPageDataProps {
+  isFetching?: boolean;
+  isRefreshing?: boolean;
+  notifications?: INotificationList;
+}
 
-// export interface IThreadListPageEventProps {
-//   // Because of presence of a state in the container, eventProps are not passed using mapDispatchToProps.
-//   // So, eventProps that are using the state are passed in *OtherProps.
-//   onOpenThread?: (threadId: string) => void;
-//   onFocus?: () => void;
-//   onDeleteThread?: (threadId: string) => void;
-// }
+export interface INotificationListPageEventProps {
+  // Because of presence of a state in the container, eventProps are not passed using mapDispatchToProps.
+  // So, eventProps that are using the state are passed in *OtherProps.
+  onOpenNotification?: (notificationId: string) => void;
+  onFocus?: () => void;
+}
 
-// export interface IThreadListPageOtherProps {
-//   navigation?: any;
-//   onNextPage?: () => void;
-//   onRefresh?: () => void;
-// }
+export interface INotificationListPageOtherProps {
+  navigation?: any;
+  onRefresh?: () => void;
+}
 
-// export type IThreadListPageProps = IThreadListPageDataProps &
-//   IThreadListPageEventProps &
-//   IThreadListPageOtherProps;
-
-// const RightButton = style(TouchableOpacity)({
-//   backgroundColor: "#EC5D61",
-//   flex: 1,
-//   justifyContent: "center",
-//   paddingLeft: 34
-// });
+export type INotificationListPageProps = INotificationListPageDataProps &
+  INotificationListPageEventProps &
+  INotificationListPageOtherProps;
 
 // Main component ---------------------------------------------------------------------------------
 
-export class NotificationListPage extends React.PureComponent
-// <
-// IThreadListPageProps,
-// {
-//   isSwiping: boolean;
-//   showDeleteModal: boolean;
-//   swipedThreadId: string;
-// }
-// > 
+export class NotificationListPage extends React.PureComponent<
+INotificationListPageProps,
 {
-//   private swipeRef = undefined;
 
-//   constructor(props) {
-//     super(props);
-//     this.state = {
-//       isSwiping: false,
-//       showDeleteModal: false,
-//       swipedThreadId: null
-//     };
-// }
+}
+> {
 
 // Render
 
   public render() {
-    //const { isFetching, isRefreshing, notifications } = this.props;
-    //const isEmpty = notifications.length === 0;
-    const isEmpty = false
+    const { isFetching = false, isRefreshing = false, notifications } = this.props;
+    const isEmpty = notifications && notifications.length === 0;
 
     const pageContent = isEmpty
-      //? isFetching || isRefreshing
-      ? false
+      ? isFetching || isRefreshing
         ? this.renderLoading()
         : this.renderEmptyScreen()
       : this.renderNotificationList();
 
     return (
-      <PageContainer>
+      <NewPageContainer>
         <ConnectionTrackingBar />
-        {/* <ModalBox backdropOpacity={0.5} isVisible={this.state.showDeleteModal}>
-          {this.renderDeleteModal(this.state.swipedThreadId)}
-        </ModalBox> */}
         {pageContent}
-      </PageContainer>
+      </NewPageContainer>
     );
   }
 
@@ -140,21 +101,18 @@ export class NotificationListPage extends React.PureComponent
   public renderEmptyScreen() {
     return (
       <EmptyScreen
-        //TO DO: get real image/title/text
-        imageSrc={require("../../../assets/images/empty-screen/conversations.png")}
+        //TO DO: rename empty search?
+        imageSrc={require("../../../assets/images/empty-screen/empty-search.png")}
         imgWidth={571}
         imgHeight={261}
-        text={I18n.t("conversation-emptyScreenText")}
-        title={I18n.t("conversation-emptyScreenTitle")}
+        title={I18n.t("notifications-emptyScreenTitle")}
         scale={0.76}
       />
     );
   }
 
   public renderNotificationList() {
-    //const { isRefreshing, onRefresh, notifications } = this.props;
-    const notifications = [{}, {}, {}, {}, {}]
-    const isRefreshing = false
+    const { isRefreshing = false, onRefresh, notifications } = this.props;
 
     return (
       <FlatList
@@ -162,25 +120,26 @@ export class NotificationListPage extends React.PureComponent
           <RefreshControl
             refreshing={isRefreshing}
             onRefresh={() => {
-              // onRefresh();
-              // Tracking.logEvent("refreshConversation", {
-              //   direction: "up"
-              // });
+              onRefresh();
             }}
           />
         }
         data={notifications}
-        renderItem={({ item }: { item: IConversationThread }) =>
-          this.renderNotificationItem(item)
-        }
-        keyExtractor={(item: IConversationThread) => item.id}
+        renderItem={({ item }: { item: INotification }) => {
+          return (
+            <NotificationItem
+              {...item}
+              onPress={e => this.handleOpenNotification(item.id)}
+            />
+          )
+        }}
+        keyExtractor={(item: INotification) => item.id}
         style={styles.grid}
         keyboardShouldPersistTaps={"always"}
-        //scrollEnabled={!this.state.isSwiping}
-        ListFooterComponent={notifications.length === 25 ?
+        ListFooterComponent={notifications && notifications.length === 25 ?
           <NewListItem disabled>
             <TextBright>
-              "Vous avez lu vos 25 dernières notifications"
+              Vous avez lu vos 25 dernières notifications
             </TextBright>
           </NewListItem>
           :
@@ -189,88 +148,17 @@ export class NotificationListPage extends React.PureComponent
       />
     );
   }
-
-  // public renderSwipeDelete(threadId: string) {
-  //   return [
-  //     <RightButton
-  //       onPress={() =>
-  //         this.setState({
-  //           showDeleteModal: true,
-  //           swipedThreadId: threadId
-  //         })
-  //       }
-  //     >
-  //       <Icon size={18} color="#ffffff" name="trash" />
-  //     </RightButton>
-  //   ];
-  // }
-
-  // public renderDeleteModal = (threadId: string) => (
-  //   <ModalContent>
-  //     <ModalContentBlock>
-  //       <ModalContentText>
-  //         {I18n.t("common-confirm")}
-  //         {"\n"}
-  //         {I18n.t("conversation-deleteThread")}
-  //       </ModalContentText>
-  //     </ModalContentBlock>
-  //     <ModalContentBlock>
-  //       <ButtonsOkCancel
-  //         onCancel={() => {
-  //           this.setState({ showDeleteModal: false });
-  //           this.swipeRef.recenter();
-  //         }}
-  //         onValid={() => this.handleDeleteThread(threadId)}
-  //         title={I18n.t("delete")}
-  //       />
-  //     </ModalContentBlock>
-  //   </ModalContent>
-  // ); // TS-ISSUE
-
-  public renderNotificationItem(notification: IConversationThread) {
-    return (
-      // <Swipeable
-      //   rightButtons={this.renderSwipeDelete(thread.id)}
-      //   onRightButtonsOpenRelease={(e, g, r) => {
-      //     this.swipeRef = r;
-      //   }}
-      //   onSwipeStart={(e, g, r) => {
-      //     if (this.swipeRef) this.swipeRef.recenter();
-      //     this.setState({ isSwiping: true });
-      //   }}
-      //   onSwipeRelease={() => this.setState({ isSwiping: false })}
-      // >
-        <NotificationItem
-          {...notification}
-          onPress={e => this.handleOpenNotification(notification.id)}
-        />
-      // </Swipeable>
-    );
-  }
   // Lifecycle
 
   // Event Handlers
 
   public handleOpenNotification(notificationId: string) {
-    // const threadInfo = this.props.threads!.find(el => el.id === threadId);
-    // if (!threadInfo) return;
-    // this.props.onOpenThread && this.props.onOpenThread(threadId);
-    // this.props.navigation.navigate("thread", { threadInfo });
-    // const isUnread = threadInfo.unread;
-    // Tracking.logEvent("readConversation", {
-    //   unread: isUnread
-    //   // TODO : track waitingTime & total messages read for this user
-    // });
+    // const notificationInfo = this.props.notifications!.find(el => el.id === notificationId);
+    // if (!notificationInfo) return;
+    // this.props.onOpenNotification && this.props.onOpenNotification(notificationId);
+    // this.props.navigation.navigate("notification", { notificationInfo });
+    // const isUnread = notificationInfo.unread;
   }
-
-  // public handleDeleteThread(threadId) {
-  //   this.swipeRef.recenter();
-  //   this.props.onDeleteThread(threadId);
-  //   this.setState({
-  //     showDeleteModal: false,
-  //     swipedThreadId: null
-  //   });
-  // }
 }
 
 export default NotificationListPage;
