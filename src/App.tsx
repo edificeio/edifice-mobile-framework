@@ -1,6 +1,6 @@
 // RN Imports
 import * as React from "react";
-import { StatusBar, View, AppState, Linking } from "react-native";
+import {StatusBar, View, AppState, Linking} from "react-native";
 import * as RNLocalize from "react-native-localize";
 import RNFileShareIntent from 'react-native-file-share-intent';
 
@@ -42,6 +42,7 @@ import {nainNavNavigate} from "./navigation/helpers/navHelper";
 import {FilterId} from "./workspace/types/filters";
 import I18n from "i18n-js";
 import {ContentUri} from "./workspace/types";
+import {upload} from "./workspace/actions/upload";
 
 // Disable Yellow Box on release builds.
 if (!__DEV__) {
@@ -58,7 +59,7 @@ class AppStoreUnconnected extends React.Component<
 > {
   private notificationOpenedListener?: () => void;
   private onTokenRefreshListener?: () => void;
-  private contentUri: ContentUri | null = null;
+  private contentUri: ContentUri[] | null = null;
 
   public state = {
     appState: null
@@ -202,6 +203,7 @@ class AppStoreUnconnected extends React.Component<
 
     if (contentUri) {
       this._clearContentUri();
+      this.props.store.dispatch(upload(contentUri))
       nainNavNavigate(
         "Workspace",
         {

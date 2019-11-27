@@ -22,7 +22,6 @@ import {upload} from "../actions/upload";
 import withNavigationWrapper from "../utils/withNavigationWrapper";
 import { DocumentPickerResponse } from "react-native-document-picker";
 
-
 const styles = StyleSheet.create({
   separator: {
     borderBottomColor: CommonStyles.borderColorLighter,
@@ -180,6 +179,8 @@ export class Items extends React.Component<IItemsProps, { isFocused: boolean }> 
 
 const mapStateToProps = (state: any, props: any) => {
   const { isFetching } = config.getLocalState(state).items;
+  const contentUri = props.navigation.getParam("contentUri");     // for component notification
+  const childParams = props.navigation.getParam("childParams");   // for component notification
   const parentId = props.navigation.getParam("parentId");
   const items = config.getLocalState(state).items.data[parentId];
 
@@ -190,7 +191,4 @@ const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators({ getList, upload }, dispatch);
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withNavigationWrapper(Items));
+export default connect(mapStateToProps, mapDispatchToProps)(withNavigationWrapper(Items));

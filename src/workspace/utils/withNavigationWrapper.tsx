@@ -3,23 +3,25 @@ import * as React from "react"
 
 export interface INotifyProps {
   navigation: any,
+  upload: any
 }
 
 
-export default function withNotifyWrapper(WrappedComponent: React.Component): React.Component {
+export default function withNavigationWrapper(WrappedComponent: React.Component): React.Component {
   class HOC extends React.Component<INotifyProps> {
     filter: string | null = null
+    contentUri:string | null = null
 
-    public componentDidMount() {
-      this._handleNotify(this.props.navigation);
+    public componentWillMount(): boolean {
+      return this._handleNavigation(this.props.navigation);
     }
 
     // permits to manage push notif navigation and app linking
     public shouldComponentUpdate(nextProps: Readonly<any>): boolean {
-      return this._handleNotify(nextProps.navigation);
+      return this._handleNavigation(nextProps.navigation);
     }
 
-    private _handleNotify(navigation: any) {
+    private _handleNavigation(navigation: any) {
       const childRoute: string = navigation.getParam("childRoute");
       const childParams: any = navigation.getParam("childParams");
 
