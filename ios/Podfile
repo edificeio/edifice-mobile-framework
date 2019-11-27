@@ -53,6 +53,7 @@ target 'appe' do
   pod 'RNCPushNotificationIOS', :path => '../node_modules/@react-native-community/push-notification-ios'
 
   pod 'RNTextSize', :path => '../node_modules/react-native-text-size/ios/RNTextSize.podspec'
+  pod 'react-native-document-picker', :path => '../node_modules/react-native-document-picker'
 
   target 'appeTests' do
     inherit! :search_paths

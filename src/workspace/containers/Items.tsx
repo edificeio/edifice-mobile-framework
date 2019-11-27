@@ -7,8 +7,8 @@ import { NavigationScreenProp, NavigationEventSubscription } from "react-navigat
 import config from "../config";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderAction, HeaderIcon } from "../../ui/headers/NewHeader";
-import { EVENT_TYPE, FilterId, IItem, IItemsProps } from "../types";
-import { Item, HeaderMenu } from "../components";
+import { EVENT_TYPE, FilterId, IItem, IItemsProps, IState } from "../types";
+import { Item } from "../components";
 import { getList } from "../actions/list";
 import { CommonStyles } from "../../styles/common/styles";
 import { layoutSize } from "../../styles/common/layoutSize";
@@ -17,9 +17,10 @@ import { getEmptyScreen } from "../utils/empty";
 import { PageContainer } from "../../ui/ContainerContent";
 import { Loading } from "../../ui";
 import { removeAccents } from "../../utils/string";
+import { pickFile } from "../../infra/actions/pickFile";
 import {upload} from "../actions/upload";
-import withNotifyWrapper from "../utils/withNotifyWrapper";
 import withLinkingWrapper from "../utils/withLinkingWrapper";
+import { DocumentPickerResponse } from "react-native-document-picker";
 
 const styles = StyleSheet.create({
   separator: {
@@ -33,20 +34,24 @@ const HeaderBackAction = ({ navigation, style }: { navigation: NavigationScreenP
   return <HeaderAction onPress={() => navigation.pop()} name={"back"} style={style} />;
 };
 
-const menuItems = [{label: "Ajouter un document", iconName: "folder"}, {label: "Créer un dossier", iconName: "trash"}]
-
 export class Items extends React.Component<IItemsProps, { isFocused: boolean }> {
   redirected = false;
   focusListener!: NavigationEventSubscription;
   blurListener!: NavigationEventSubscription;
 
-
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
+    const headerRight =
+      navigation.getParam("parentId") != FilterId.owner ? (
+        <HeaderIcon name={null} hidden={true} />
+      ) : (
+        <HeaderAction name="plus" onPress={() => pickFile().then(navigation.state.params.upload)} />
+      );
+
     return standardNavScreenOptions(
       {
         title: navigation.getParam("title") || I18n.t(config.displayName),
         headerLeft: <HeaderBackAction navigation={navigation} />,
-        headerRight: <HeaderMenu items={menuItems}/>
+        headerRight,
       },
       navigation
     );
@@ -66,6 +71,18 @@ export class Items extends React.Component<IItemsProps, { isFocused: boolean }> 
     this.blurListener = this.props.navigation.addListener("didBlur", () => {
       this.setState({ isFocused: false });
     });
+    this.props.navigation.setParams({
+      upload: this.upload.bind(this),
+    });
+  }
+
+  upload(fileURI: DocumentPickerResponse) {
+    if (fileURI) {
+      const { uri, type, name } = fileURI;
+      return this.props.upload([{ uri, mime: type, name, path: "" }]);
+    } else {
+      console.log("pick failed", fileURI);
+    }
   }
 
   public componentWillUnmount() {
@@ -172,7 +189,4 @@ const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators({ getList, upload }, dispatch);
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withNotifyWrapper(withLinkingWrapper(Items)));
+export default connect(mapStateToProps, mapDispatchToProps)(withNotifyWrapper(withLinkingWrapper(Items)));
