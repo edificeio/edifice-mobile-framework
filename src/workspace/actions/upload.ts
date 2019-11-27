@@ -54,7 +54,7 @@ export function upload(uriContent: ContentUri[]) {
             dispatch(addReceived(backendDocumentsAdapter(data), FilterId.owner));
           else
             dispatch(addReceived(backendDocumentsAdapter([data]), FilterId.owner));
-          // dispatch(getList({filter: FilterId.owner}));
+          dispatch(getList({filter: FilterId.owner}));
           dispatch(uploadReceived());
         }
       })
