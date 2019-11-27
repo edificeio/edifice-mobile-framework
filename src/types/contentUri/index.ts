@@ -1,5 +1,5 @@
 export type ContentUri = {
-  mime: number;
+  mime: string;
   name: string;
   path: string;
   uri: string

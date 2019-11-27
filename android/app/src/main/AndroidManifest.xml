@@ -39,10 +39,13 @@
               <category android:name="android.intent.category.LAUNCHER" />
               <action android:name="android.intent.action.SEND" />
               <category android:name="android.intent.category.DEFAULT" />
-              <data android:mimeType="text/plain" />
-              <data android:mimeType="image/*" />
-              <data android:mimeType="video/*" />
               <data android:mimeType="application/*" />
+              <data android:mimeType="audio/*" />
+              <data android:mimeType="image/*" />
+              <data android:mimeType="message/*" />
+              <data android:mimeType="text/*" />
+              <data android:mimeType="video/*" />
+              <data android:mimeType="x-world/*" />
           </intent-filter>
       </activity>
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />

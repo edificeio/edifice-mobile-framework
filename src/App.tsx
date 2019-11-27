@@ -41,6 +41,7 @@ import { initI18n } from "./infra/i18n";
 import {nainNavNavigate} from "./navigation/helpers/navHelper";
 import {FilterId} from "./workspace/types/filters";
 import I18n from "i18n-js";
+import {ContentUri} from "./workspace/types";
 
 // Disable Yellow Box on release builds.
 if (!__DEV__) {
@@ -57,7 +58,7 @@ class AppStoreUnconnected extends React.Component<
 > {
   private notificationOpenedListener?: () => void;
   private onTokenRefreshListener?: () => void;
-  private contentUri: string | null = null;
+  private contentUri: ContentUri | null = null;
 
   public state = {
     appState: null
@@ -175,8 +176,8 @@ class AppStoreUnconnected extends React.Component<
   };
 
   private _checkContentUri = async () => {
-    await this._getInitialUrl();
-    RNFileShareIntent && RNFileShareIntent.getFilePath((contentUri: string) => {
+    const url = await this._getInitialUrl();
+    RNFileShareIntent && RNFileShareIntent.getFilePath((contentUri: ContentUri) => {
       if (contentUri) {
         this.contentUri = contentUri;
       }

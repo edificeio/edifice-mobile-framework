@@ -19,8 +19,9 @@ import { Loading } from "../../ui";
 import { removeAccents } from "../../utils/string";
 import { pickFile } from "../../infra/actions/pickFile";
 import {upload} from "../actions/upload";
-import withLinkingWrapper from "../utils/withLinkingWrapper";
+import withNavigationWrapper from "../utils/withNavigationWrapper";
 import { DocumentPickerResponse } from "react-native-document-picker";
+
 
 const styles = StyleSheet.create({
   separator: {
@@ -189,4 +190,7 @@ const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators({ getList, upload }, dispatch);
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withNotifyWrapper(withLinkingWrapper(Items)));
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withNavigationWrapper(Items));

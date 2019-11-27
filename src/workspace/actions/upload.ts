@@ -3,7 +3,6 @@
 import {asyncActionTypes} from "../../infra/redux/async";
 import config from "../config";
 import {backendDocumentsAdapter, uploadDocument} from "./helpers/documents";
-import {getList} from "./list";
 import {ContentUri, FilterId} from "../types";
 import {addReceived} from "./add";
 
@@ -54,7 +53,6 @@ export function upload(uriContent: ContentUri[]) {
             dispatch(addReceived(backendDocumentsAdapter(data), FilterId.owner));
           else
             dispatch(addReceived(backendDocumentsAdapter([data]), FilterId.owner));
-          dispatch(getList({filter: FilterId.owner}));
           dispatch(uploadReceived());
         }
       })
