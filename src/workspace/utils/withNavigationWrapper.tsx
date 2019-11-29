@@ -1,42 +1,46 @@
 import * as React from "react"
+import {AppState} from "react-native";
 
 
 export interface INotifyProps {
   navigation: any,
-  upload: any
+  upload: any,
+  getList:any,
+  notification: any
 }
 
 
 export default function withNavigationWrapper(WrappedComponent: React.Component): React.Component {
-  class HOC extends React.Component<INotifyProps> {
-    filter: string | null = null
-    contentUri:string | null = null
+  class HOC extends React.PureComponent<INotifyProps> {
 
-    public componentWillMount(): boolean {
-      return this._handleNavigation(this.props.navigation);
+    public componentDidUpdate() {
+      this._navigate();
     }
 
-    // permits to manage push notif navigation and app linking
-    public shouldComponentUpdate(nextProps: Readonly<any>): boolean {
-      return this._handleNavigation(nextProps.navigation);
-    }
+    _clearNavigation = () => {
+      const {navigation} = this.props;
 
-    private _handleNavigation(navigation: any) {
+      navigation.setParams({"childRoute": undefined});
+      navigation.setParams({"childParams": undefined});
+    };
+
+    _navigate = () => {
+      const {navigation} = this.props;
       const childRoute: string = navigation.getParam("childRoute");
       const childParams: any = navigation.getParam("childParams");
 
-      if (childRoute && childParams && childParams.filter !== this.filter) {
-        this.filter = childParams.filter;
+      if (childRoute && childParams) {
         navigation.push(
           childRoute,
-          navigation.getParam("childParams"));
-        return false;
+          childParams);
+
+        this._clearNavigation();
       }
-      return true;
-    }
+    };
 
     render() {
-      return <WrappedComponent {...this.props} />;
+      const {notification, ...rest} = this.props;
+      return <WrappedComponent {...rest} />;
     }
   }
 

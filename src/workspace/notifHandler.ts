@@ -14,8 +14,8 @@ const notifHandlerFactory :NotificationHandlerFactory<any,any,any> = dispatch =>
 
   if (!Conf.currentPlatform) throw new Error("must specify a platform");
 
-  const name = (notificationData as any).resourceName
-  const isFolder = notificationData.resourceUri.indexOf( '/folder/') > 0
+  const name = (notificationData as any).resourceName;
+  const isFolder = notificationData.resourceUri.indexOf( '/folder/') > 0;
 
   if (isFolder) {
     nainNavNavigate(

@@ -3,8 +3,8 @@ import { StyleSheet, TouchableOpacity, View, Platform, SafeAreaView } from "reac
 import { IEventProps, EVENT_TYPE } from "../types";
 import I18n from "i18n-js";
 
-import { ButtonIconText, Icon } from "../../ui";
-import { DEVICE_WIDTH, layoutSize } from "../../styles/common/layoutSize";
+import { ButtonIconText } from "../../ui";
+import { layoutSize } from "../../styles/common/layoutSize";
 import { IFile } from "../types/states";
 import { renderImage } from "../utils/image";
 import { CommonStyles } from "../../styles/common/styles";
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
 });
 
 export const ItemDetails = ({ onEvent, ...item }: IFile & IEventProps) => {
-  const { id, name } = item;
+  const { name } = item;
 
   const getPreviewImage = () => {
     if (Platform.OS == "ios") {

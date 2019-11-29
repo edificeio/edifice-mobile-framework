@@ -9,4 +9,4 @@ export enum FilterId {
 export interface IFiltersParameters {
   filter?: FilterId;
   parentId?: string;
-};
+}

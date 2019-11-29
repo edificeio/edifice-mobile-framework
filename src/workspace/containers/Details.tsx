@@ -1,5 +1,4 @@
 import * as React from "react";
-import { connect } from "react-redux";
 import { NavigationScreenProp } from "react-navigation";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderAction, HeaderIcon } from "../../ui/headers/NewHeader";
@@ -54,16 +53,3 @@ export class Details extends React.PureComponent<IDetailsProps> {
     return <ItemDetails {...item} onEvent={this.onEvent} />;
   }
 }
-
-const mapStateToProps = (state: any, props: any) => {
-  return null;
-};
-
-const mapDispatchToProps = (dispatch: any) => {
-  return null;
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Details);

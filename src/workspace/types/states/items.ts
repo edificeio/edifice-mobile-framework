@@ -19,7 +19,14 @@ export type IFolder = IItem & {
 }
 
 export interface IItems<Item> {
+  isFetching: boolean,
+  data: {
+    [key: string]: Item
+  }
+}
+
+export interface IRootItems<Item> {
   [key: string]: Item
 }
 
-export type IState = IItems<IItems<IItem>>
+export type IState = IRootItems<IItems<IItem>>

@@ -15,10 +15,6 @@ export const actionTypesUpload = asyncActionTypes(
   config.createActionType("WORKSPACE_UPLOAD")
 );
 
-export function uploadInvalidated() {
-  return { type: actionTypesUpload.invalidated };
-}
-
 export function uploadRequested() {
   return { type: actionTypesUpload.requested };
 }
@@ -35,7 +31,7 @@ export function uploadError(errmsg: string) {
 
 const sortOnName = ( a: string, b: string) : boolean => {
   return a < b;
-}
+};
 
 /**
  * Take a file from the mobile and post it to the backend.
@@ -46,6 +42,7 @@ export function upload(uriContent: ContentUri[]) {
   return async (dispatch: any, state: any) => {
 
     try {
+      dispatch(uploadRequested());
       uploadDocument(uriContent, (response: any) => {
         if (response.data) {
           const data = JSON.parse(response.data);

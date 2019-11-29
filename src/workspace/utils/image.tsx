@@ -20,8 +20,8 @@ export const renderIcon = ( id: string | null, isFolder: boolean, name: string):
     );
   else {
     // @ts-ignore
-    const uri = `${Conf.currentPlatform.url}/workspace/document/${id}?thumbnail=120x120`
-    const style = {width: layoutSize.LAYOUT_50, height: layoutSize.LAYOUT_50}
+    const uri = `${Conf.currentPlatform.url}/workspace/document/${id}?thumbnail=120x120`;
+    const style = {width: layoutSize.LAYOUT_50, height: layoutSize.LAYOUT_50};
     return (
         // resizeRatio === contain by default
         <ImageOptional
@@ -72,9 +72,9 @@ const getIcon = ( id: string | null, isFolder: boolean, pName: string | null): s
     }
   }
   if (!pName)
-    return "file-document-outline"
+    return "file-document-outline";
 
-  const name = pName.toLowerCase()
+  const name = pName.toLowerCase();
 
   if (name.endsWith(".pdf"))
     return "pdf_files";
@@ -89,7 +89,7 @@ const getIcon = ( id: string | null, isFolder: boolean, pName: string | null): s
   if (name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".bmp") || name.endsWith(".tiff") || name.endsWith(".bmp"))
     return null;
   if (name.endsWith(".zip") || name.endsWith(".7z") || name.endsWith(".gz") || name.endsWith(".tgz"))
-    return "file-archive"
+    return "file-archive";
   return "file-document-outline"
 };
 
@@ -105,8 +105,8 @@ const UnavailableIcon = () => (
 
 const height = () => {
   return DEVICE_HEIGHT() - layoutSize.LAYOUT_160
-}
+};
 
 const width = () => {
   return DEVICE_WIDTH()
-}
+};

@@ -1,13 +1,15 @@
-import {Platform} from "react-native";
+import {PermissionsAndroid, Platform} from "react-native";
 import Mime from "mime";
 import Permissions from "react-native-permissions";
 import RNFetchBlob, {FetchBlobResponse} from "rn-fetch-blob";
 import Conf from "../../../ode-framework-conf";
 import {getAuthHeader} from "../oauth";
 import {IFile} from "../../workspace/types";
+import {platform} from "os";
 
 export const startDownload = async (downloadable: IFile, withManager = true): Promise<FetchBlobResponse> => {
   let path = await getDirName() + '/' + downloadable.filename;
+
   const config = Platform.OS === "android"
   ? {
       addAndroidDownloads: {
@@ -22,7 +24,7 @@ export const startDownload = async (downloadable: IFile, withManager = true): Pr
       appendExt: getExtension(downloadable.filename)
     };
 
-  return await RNFetchBlob
+  return RNFetchBlob
     .config(config)
     .fetch("GET", Conf.currentPlatform.url + downloadable.url, getAuthHeader()["headers"])
 };
@@ -54,7 +56,7 @@ export const openDownloadedFile = (filepath: string): void => {
 
 export const getDirName = async () : Promise<string> => {
   if (Platform.OS === "android") {
-    await Permissions.request("storage");
+    await Permissions.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE);
     return RNFetchBlob.fs.dirs.DownloadDir;
   } else if (Platform.OS === "ios") {
     return RNFetchBlob.fs.dirs.DocumentDir;

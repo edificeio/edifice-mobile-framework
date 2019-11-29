@@ -1,10 +1,7 @@
 // RN Imports
 import * as React from "react";
-import {StatusBar, View, AppState, Linking} from "react-native";
+import { StatusBar, View, AppState } from "react-native";
 import * as RNLocalize from "react-native-localize";
-import RNFileShareIntent from 'react-native-file-share-intent';
-
-
 
 // Redux
 import { Provider, connect } from "react-redux";
@@ -38,11 +35,8 @@ import AppScreen from "./AppScreen";
 import { CommonStyles } from './styles/common/styles';
 import SplashScreen from "react-native-splash-screen";
 import { initI18n } from "./infra/i18n";
-import {nainNavNavigate} from "./navigation/helpers/navHelper";
-import {FilterId} from "./workspace/types/filters";
-import I18n from "i18n-js";
-import {ContentUri} from "./workspace/types";
-import {upload} from "./workspace/actions/upload";
+import withLinkingAppWrapper from "./infra/withLinkingAppWrapper";
+import {CurrentMainNavigationContainerComponent} from "./navigation/RootNavigator";
 
 // Disable Yellow Box on release builds.
 if (!__DEV__) {
@@ -59,7 +53,6 @@ class AppStoreUnconnected extends React.Component<
 > {
   private notificationOpenedListener?: () => void;
   private onTokenRefreshListener?: () => void;
-  private contentUri: ContentUri[] | null = null;
 
   public state = {
     appState: null
@@ -102,7 +95,6 @@ class AppStoreUnconnected extends React.Component<
     if (this.props.currentPlatformId) {
       await this.startupLogin();
     }
-    this._checkContentUri();
     SplashScreen.hide();
   }
 
@@ -140,10 +132,6 @@ class AppStoreUnconnected extends React.Component<
             this.handleFCMTokenModified(fcmToken);
           });
     }
-
-    if (loggedIn) {
-      this._handleContentUri()
-    }
   }
 
   private async startupLogin() {
@@ -168,60 +156,8 @@ class AppStoreUnconnected extends React.Component<
   };
 
   private handleAppStateChange = (nextAppState: string) => {
-    if (this.state.appState === "background" && nextAppState === 'active') {
-      this._checkContentUri()
-    }
-    else if (this.state.appState === "active" && nextAppState === 'background')
-      this._clearContentUri();
     this.setState({ appState: nextAppState });
   };
-
-  private _checkContentUri = async () => {
-    const url = await this._getInitialUrl();
-    RNFileShareIntent && RNFileShareIntent.getFilePath((contentUri: ContentUri) => {
-      if (contentUri) {
-        this.contentUri = contentUri;
-      }
-    });
-  }
-
-  _getInitialUrl = async () => {
-    const url = await Linking.getInitialURL()
-    return url
-  }
-
-  _clearContentUri = () => {
-    this.contentUri = null;
-  }
-
-  /**
-   * process content uri
-   * @return processed a contentUri or no
-   */
-  _handleContentUri = (): boolean => {
-    const contentUri = this.contentUri
-
-    if (contentUri) {
-      this._clearContentUri();
-      this.props.store.dispatch(upload(contentUri))
-      nainNavNavigate(
-        "Workspace",
-        {
-          contentUri: null,
-          filter: FilterId.root,
-          parentId: FilterId.root,
-          title: I18n.t('workspace'),
-          childRoute: "Workspace",
-          childParams: {
-            parentId: "owner",
-            filter: FilterId.owner,
-            title: I18n.t('owner'),
-            contentUri
-          }
-        })
-    }
-    return contentUri != null;
-  }
 
   private static initialNotifRouted: boolean = false;
 
@@ -256,12 +192,13 @@ function connectWithStore(store: any, WrappedComponent:any , ...args: [any?, any
 const mapStateToProps = (state: any, props: any) => ({
   currentPlatformId: state.user.auth.platformId,
   loggedIn: state.user.auth.loggedIn,
+  CurrentMainNavigationContainerComponent,
   store
 });
 
 export const AppStore = connectWithStore(
   store,
-  AppStoreUnconnected,
+  withLinkingAppWrapper(AppStoreUnconnected),
   mapStateToProps
 );
 

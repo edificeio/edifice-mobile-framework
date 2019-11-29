@@ -91,7 +91,7 @@ export const uploadDocument = (uri: ContentUri[], onEnd: any) => {
   const signedHeaders = OAuth2RessourceOwnerPasswordClient.connection.sign({}).headers;
   const headers = {...signedHeaders, "content-Type": "multipart/form-data"};
   const body = uri.reduce( (acc, item, index) =>
-    [...acc, { name: `document${index}`, type: item.mime, filename: item.name, data: RNFB.wrap(item.uri)}], [])
+    [...acc, { name: `document${index}`, type: item.mime, filename: item.name, data: RNFB.wrap(item.uri)}], []);
 
   RNFB.fetch(
     "POST",
@@ -106,4 +106,4 @@ export const uploadDocument = (uri: ContentUri[], onEnd: any) => {
         console.log(err)
       }
     )
-}
+};

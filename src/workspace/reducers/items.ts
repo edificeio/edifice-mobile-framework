@@ -11,31 +11,40 @@ import {actionTypesAdd} from "../actions/add";
 
 const stateDefault: IState = {};
 
-const itemsReducer: Reducer<IState, IAction<any>> = (
-  state: IState = stateDefault,
-  action: IAction<any>
-) => {
-  return {
-    ...state,
-    [action.id || FilterId.root]: node(state[action.id || FilterId.root], action)
-  }
-};
-
-export default asyncReducer<IState>(
-  itemsReducer,
-  actionTypesList
-)
 
 const node = (state:any, action:IAction<any>) => {
   switch (action.type) {
     case actionTypesList.received:
-      return action.data
+      return action.data;
     case actionTypesAdd.received:
       return {
         ...state,
         ...action.data
-      }
+      };
     default:
       return state
   }
-}
+};
+
+
+const itemsReducer: Reducer<IState, IAction<any>> = (
+  state: IState = stateDefault,
+  action: IAction<any>
+) => {
+  switch (action.type) {
+    case actionTypesList.fetchError:
+    case actionTypesList.requested:
+    case actionTypesList.received:
+    case actionTypesAdd.fetchError:
+    case actionTypesAdd.requested:
+    case actionTypesAdd.received:
+      return {
+        ...state,
+        [action.id || FilterId.root]: asyncReducer<IState>(node, actionTypesList)(state[action.id || FilterId.root] || {}, action)
+      };
+    default:
+      return state;
+  }
+};
+
+export default itemsReducer;
