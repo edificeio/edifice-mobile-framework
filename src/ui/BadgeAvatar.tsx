@@ -1,10 +1,10 @@
 import * as React from "react";
-import { View } from "react-native";
+import { View, ImageURISource } from "react-native";
 import { Badge } from "./Badge";
 import { GridAvatars } from "./avatars/GridAvatars";
 
 export interface BadgeAvatarProps {
-  avatars: string[];
+  avatars: Array<string | ImageURISource>;
   badgeContent: number | string;
   badgeColor?: string;
 }

@@ -100,7 +100,6 @@ export function fetchNotificationList() {
     dispatch(notificationListRequested());
 
     try {
-      //TODO: add? resetLoadingState();
       const availableApps = getState().user.auth.apps;
       const appParams = availableApps.map((app: string) => {
         `&type=${removeAccents(app.replace(/\s/g, "").toUpperCase())}`

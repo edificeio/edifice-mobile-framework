@@ -2,7 +2,7 @@ import style from "glamorous-native"
 import * as React from "react"
 import Carousel from "react-native-snap-carousel"
 import { Avatar, Size } from "./Avatar";
-import { Text, View, Dimensions } from "react-native";
+import { View, Dimensions, ImageURISource } from "react-native";
 import { CommonStyles } from '../../styles/common/styles';
 
 const SkippedContainer = style.view({
@@ -23,7 +23,7 @@ const Skipped = style.text({
 })
 
 export interface IAvatarsProps {
-	images: string[]
+	images: Array<string | ImageURISource>
 	onSlideIndex?: (index: number) => void
 	size?: Size;
 }
@@ -91,7 +91,7 @@ export class RowAvatars extends React.Component<IAvatarsProps, IAvatarsState> {
 		
 		return (
 			<Container>
-				{ images.map((image, idx) => <Avatar size={ Size.aligned } key={idx} index={idx} count={images.length} id={image} />) }
+				{ images.map((image, idx) => <Avatar size={ Size.aligned } key={idx} index={idx} count={images.length} sourceOrId={image} />) }
 				{ skipped ? <SkippedContainer><Skipped>+{ skipped }</Skipped></SkippedContainer> : <View /> }
 			</Container>
 		)

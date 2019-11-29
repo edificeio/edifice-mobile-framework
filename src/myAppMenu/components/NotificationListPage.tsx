@@ -77,7 +77,7 @@ INotificationListPageProps,
 // Render
 
   public render() {
-    const { isFetching = false, isRefreshing = false, notifications } = this.props;
+    const { isFetching, isRefreshing, notifications } = this.props;
     const isEmpty = notifications && notifications.length === 0;
 
     const pageContent = isEmpty
@@ -112,7 +112,7 @@ INotificationListPageProps,
   }
 
   public renderNotificationList() {
-    const { isRefreshing = false, onRefresh, notifications } = this.props;
+    const { isRefreshing, onRefresh, notifications } = this.props;
 
     return (
       <FlatList
@@ -153,12 +153,14 @@ INotificationListPageProps,
   // Event Handlers
 
   public handleOpenNotification(notificationId: string) {
-    // const notificationInfo = this.props.notifications!.find(el => el.id === notificationId);
+    // const notificationInfo = this.props.notifications!.find(el => el.id === notificationId);    
     // if (!notificationInfo) return;
     // this.props.onOpenNotification && this.props.onOpenNotification(notificationId);
     // this.props.navigation.navigate("notification", { notificationInfo });
     // const isUnread = notificationInfo.unread;
   }
 }
+//TODO: transfer to action doc (create thunk)
+//need ressource uri in param
 
 export default NotificationListPage;

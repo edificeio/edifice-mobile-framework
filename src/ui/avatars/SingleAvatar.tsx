@@ -11,4 +11,4 @@ export interface IAvatarsState {
 	slideIndex: number
 }
 
-export const SingleAvatar = ({ userId, size = 45 }) => <Avatar size={ Size.large } id={ userId } width={ size } />;
+export const SingleAvatar = ({ userId, size = 45 }) => <Avatar size={ Size.large } sourceOrId={ userId } width={ size } />;

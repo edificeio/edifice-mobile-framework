@@ -53,6 +53,7 @@ export class HtmlConverterText extends HtmlConverter {
           this._render += this.ignoreLineBreaks ? " " : "\n";
           this.newLine = false;
         }
+        text = text.replace(/<\/[a-z]+>/gi, "")
         this._render += text;
         return text;
       }

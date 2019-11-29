@@ -1,6 +1,6 @@
 import style from "glamorous-native";
 import * as React from "react";
-import { ImageProps } from "react-native";
+import { ImageProps, ImageURISource } from "react-native";
 import Conf from "../../../ode-framework-conf";
 import { Connection } from "../../infra/Connection";
 
@@ -125,7 +125,9 @@ const SmallContainer = style.view(
 export interface IAvatarProps {
   count?: number;
   decorate?: boolean;
-  id: string;
+  //id is obsolete (we can now use the prop sourceOrId)
+  id?: string;
+  sourceOrId?: ImageURISource | string;
   index?: number;
   large?: boolean;
   size: Size;
@@ -150,16 +152,18 @@ export class Avatar extends React.Component<
     this.state = { status: "initial" };
   }
 
+  get userId() { return this.props.sourceOrId && typeof this.props.sourceOrId === "string" ? this.props.sourceOrId : this.props.id }
+
   public componentDidMount() {
   }
 
   public componentWillUnmount() {
   }
 
-  get isMissingId() { return !this.props.id; }
+  get isMissingSourceAndId() { return !this.props.sourceOrId && !this.props.id }
 
   get isGroup() {
-    return this.props.id.length < 36;
+    return this.userId && this.userId.length < 36;
   }
 
   renderNoAvatar(width) {
@@ -246,7 +250,7 @@ export class Avatar extends React.Component<
       width = this.props.width;
     }
 
-    if(this.isMissingId){
+    if(this.isMissingSourceAndId){
       return this.renderNoAvatar(width);
     }
 
@@ -273,6 +277,11 @@ export class Avatar extends React.Component<
         this.setState({ status: "success" })
       }
     };
+    const source = !this.userId && this.props.sourceOrId ? this.props.sourceOrId as ImageURISource : {
+      uri: `${Conf.currentPlatform.url}/userbook/avatar/${
+        this.userId
+        }?thumbnail=${this.props.size === Size.verylarge ? "150x150" : "100x100"}`
+    }
     //in case of success,initial,loading status...
     if (this.props.size === Size.large || this.count === 1) {
       if (!Conf.currentPlatform) throw new Error("must specify a platform");
@@ -280,11 +289,7 @@ export class Avatar extends React.Component<
         <LargeContainer style={{ width, height: width }}>
           <LargeImage
             {...sharedProps}
-            source={{
-              uri: `${Conf.currentPlatform.url}/userbook/avatar/${
-                this.props.id
-                }?thumbnail=100x100`
-            }}
+            source={source}
             style={{ width, height: width }}
           />
         </LargeContainer>
@@ -295,11 +300,7 @@ export class Avatar extends React.Component<
         <AlignedContainer index={this.props.index}>
           <AlignedImage
             {...sharedProps}
-            source={{
-              uri: `${Conf.currentPlatform.url}/userbook/avatar/${
-                this.props.id
-                }?thumbnail=100x100`
-            }}
+            source={source}
           />
         </AlignedContainer>
       );
@@ -310,11 +311,7 @@ export class Avatar extends React.Component<
           <VeryLargeImage
             {...sharedProps}
             decorate={this.decorate}
-            source={{
-              uri: `${Conf.currentPlatform.url}/userbook/avatar/${
-                this.props.id
-                }?thumbnail=150x150`
-            }}
+            source={source}
           />
         </VLContainer>
       );
@@ -325,11 +322,7 @@ export class Avatar extends React.Component<
           <SmallImage
             {...sharedProps}
             count={this.props.count || 1}
-            source={{
-              uri: `${Conf.currentPlatform.url}/userbook/avatar/${
-                this.props.id
-                }?thumbnail=100x100`
-            }}
+            source={source}
           />
         </SmallContainer>
       );

@@ -1,13 +1,13 @@
 import style from "glamorous-native"
 import * as React from "react"
-import Carousel from "react-native-snap-carousel"
 import { Avatar, Size } from "./Avatar";
+import { ImageURISource } from "react-native";
 
 export interface IAvatarsProps {
-	users: string[];
+	users: Array<string | ImageURISource>;
 }
 
-export class GridAvatars extends React.Component<IAvatarsProps, undefined> {
+export class GridAvatars extends React.Component<IAvatarsProps> {
 
 	public render() {
 		const { users } = this.props
@@ -18,7 +18,7 @@ export class GridAvatars extends React.Component<IAvatarsProps, undefined> {
         
 		return (
 			<Container>
-				{users.map((image, idx) => <Avatar size={Size.small} key={idx} index={idx} count={users.length} id={image} />)}
+				{users.map((user, idx) => <Avatar size={Size.small} key={idx} index={idx} count={users.length} sourceOrId={user} />)}
 			</Container>
 		)
 	}

@@ -1,4 +1,3 @@
-import I18n from "i18n-js";
 import * as React from "react";
 import { connect } from "react-redux";
 import {
@@ -7,15 +6,8 @@ import {
   INotificationListPageProps,
   NotificationListPage
 } from "../components/NotificationListPage";
-import myAppMenuConfig from "../config";
 
-import {
-  // conversationSetThreadRead,
-  fetchNotificationList,
-  // fetchConversationThreadResetMessages,
-  // resetConversationThreadList
-} from "../actions/notificationList";
-// import { conversationThreadSelected } from "../actions/threadSelected";
+import { fetchNotificationList } from "../actions/notificationList";
 
 // ------------------
 
@@ -23,12 +15,13 @@ const mapStateToProps: (state: any) => INotificationListPageDataProps = state =>
   // Extract data from state
   const localState = state.myapps;
   const notificationList = localState.notificationList;
-  const { didInvalidate, isFetching, lastUpdated, data } = notificationList;
+  const { didInvalidate, isFetching, isRefreshing, lastUpdated, data } = notificationList;
 
   // Format props
   return {
     didInvalidate,
     isFetching,
+    isRefreshing,
     lastUpdated,
     notifications: data
   };
@@ -38,13 +31,7 @@ const mapDispatchToProps: (
   dispatch: any
 ) => INotificationListPageEventProps = dispatch => {
   return {
-    dispatch,
-    // onRefresh: () => {
-    //   dispatch(fetchHomeworkTasks());
-    // },
-    // onSelect: (diaryId, date, itemId) => {
-    //   dispatch(homeworkTaskSelected(diaryId, date, itemId));
-    // }
+    dispatch
   };
 };
 
@@ -58,33 +45,25 @@ class NotificationListPageContainer extends React.PureComponent<
   constructor(props: INotificationListPageProps & { dispatch: any }) {
     super(props);
     // Initial setup
-    //this.reloadList();
+    this.reloadList();
   }
 
-  // public reloadList() {
-  //   if (this.props.isFetching) return;
-  //   console.log("refreshing")
-  //   //this.props.dispatch(resetConversationThreadList());
-  // }
+  public reloadList() {
+    if (this.props.isFetching) return;
+    this.props.dispatch(fetchNotificationList());
+  }
 
   // // lifecycle ------------------------------------------------------------------------------------
 
   public render() {
     const { notifications } = this.props
-    console.log("NOTIFICATIONS:::", notifications)
-    const notifs = [{}]
-    return notifications && notifications.length ? (
+    return (
       <NotificationListPage
         {...this.props}
         notifications={notifications}
-        //onRefresh={this.reloadList.bind(this)}     
+        onRefresh={this.reloadList.bind(this)}     
       />
-    ) : null
-    //TODO: improve (logic in component?)
-  }
-
-  public async componentDidMount() {
-    this.props.dispatch(fetchNotificationList());
+    )
   }
 }
 

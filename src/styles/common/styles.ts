@@ -2,6 +2,15 @@ import { Text } from "react-native";
 import { setCustomText } from "react-native-global-props";
 
 export const CommonStyles = {
+  themeOpenEnt: {
+    cyan: "#4bafd5",
+    green: "#46bfaf",
+    yellow: "#ecbe30",
+    red: "#e13a3a",
+    pink: "#b930a2",
+    purple: "#763294",
+    indigo: "#1a22a2"
+  },
   primary: "#299cc8",
   secondary: "#ff8500",
   primaryLight: "#EAF5F9",
