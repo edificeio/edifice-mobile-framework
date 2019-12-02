@@ -52,7 +52,7 @@ export interface INotificationListPageDataProps {
 export interface INotificationListPageEventProps {
   // Because of presence of a state in the container, eventProps are not passed using mapDispatchToProps.
   // So, eventProps that are using the state are passed in *OtherProps.
-  onOpenNotification?: (notificationId: string) => void;
+  onHandleNotification?: (notification: INotification) => void;
   onFocus?: () => void;
 }
 
@@ -112,7 +112,7 @@ INotificationListPageProps,
   }
 
   public renderNotificationList() {
-    const { isRefreshing, onRefresh, notifications } = this.props;
+    const { isRefreshing, onRefresh, notifications, onHandleNotification } = this.props;
 
     return (
       <FlatList
@@ -129,7 +129,7 @@ INotificationListPageProps,
           return (
             <NotificationItem
               {...item}
-              onPress={e => this.handleOpenNotification(item.id)}
+              onPress={() => onHandleNotification!(item)}
             />
           )
         }}
@@ -148,19 +148,6 @@ INotificationListPageProps,
       />
     );
   }
-  // Lifecycle
-
-  // Event Handlers
-
-  public handleOpenNotification(notificationId: string) {
-    // const notificationInfo = this.props.notifications!.find(el => el.id === notificationId);    
-    // if (!notificationInfo) return;
-    // this.props.onOpenNotification && this.props.onOpenNotification(notificationId);
-    // this.props.navigation.navigate("notification", { notificationInfo });
-    // const isUnread = notificationInfo.unread;
-  }
 }
-//TODO: transfer to action doc (create thunk)
-//need ressource uri in param
 
 export default NotificationListPage;

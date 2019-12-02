@@ -9,9 +9,10 @@ import {
   asyncFetchIfNeeded,
   asyncGetJson
 } from "../../infra/redux/async";
+import pushNotifications from "../../pushNotifications";
 import notificationConfig from "../config";
 
-import { INotificationList } from "../reducers/notificationList";
+import { INotificationList, INotification } from "../reducers/notificationList";
 import { removeAccents } from "../../utils/string";
 
 /** Returns the local state (global state -> notification -> notificationList). Give the global state as parameter. */
@@ -95,7 +96,7 @@ export function notificationListFetchError(errmsg: string) {
  * Calls a fetch operation to get notification list from the backend.
  * Dispatches NOTIFICATION_LIST_REQUESTED, NOTIFICATION_LIST_RECEIVED, and NOTIFICATION_LIST_FETCH_ERROR if an error occurs.
  */
-export function fetchNotificationList() {
+export function fetchNotificationListAction() {
   return async (dispatch, getState) => {
     dispatch(notificationListRequested());
 
@@ -117,8 +118,23 @@ export function fetchNotificationList() {
 }
 
 /**
+ * Calls the main notif handler using the notification infos.
+ */
+export function handleNotificationAction(notification: INotification) {
+  return async (dispatch, getState) => {
+    try {
+      const availableApps = getState().user.auth.apps;
+      pushNotifications(dispatch)(notification.params, availableApps)
+    } catch (errmsg) {
+      console.warn("Unable to redirect notification: ", errmsg)
+    }
+  }
+}
+
+
+/**
  * Calls a fetch operation to get the notification list from the backend, only if needed data is not present or invalidated.
  */
 export function fetchNotificationListIfNeeded() {
-  return asyncFetchIfNeeded(localState, fetchNotificationList);
+  return asyncFetchIfNeeded(localState, fetchNotificationListAction);
 }

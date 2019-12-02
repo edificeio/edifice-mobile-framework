@@ -7,7 +7,8 @@ import {
   NotificationListPage
 } from "../components/NotificationListPage";
 
-import { fetchNotificationList } from "../actions/notificationList";
+import { fetchNotificationListAction, handleNotificationAction } from "../actions/notificationList";
+import { INotification } from "../reducers/notificationList";
 
 // ------------------
 
@@ -31,7 +32,10 @@ const mapDispatchToProps: (
   dispatch: any
 ) => INotificationListPageEventProps = dispatch => {
   return {
-    dispatch
+    dispatch,
+    onHandleNotification: (notification: INotification) =>  {
+      dispatch(handleNotificationAction(notification))
+    }
   };
 };
 
@@ -50,7 +54,7 @@ class NotificationListPageContainer extends React.PureComponent<
 
   public reloadList() {
     if (this.props.isFetching) return;
-    this.props.dispatch(fetchNotificationList());
+    this.props.dispatch(fetchNotificationListAction());
   }
 
   // // lifecycle ------------------------------------------------------------------------------------
@@ -61,7 +65,7 @@ class NotificationListPageContainer extends React.PureComponent<
       <NotificationListPage
         {...this.props}
         notifications={notifications}
-        onRefresh={this.reloadList.bind(this)}     
+        onRefresh={this.reloadList.bind(this)} 
       />
     )
   }
