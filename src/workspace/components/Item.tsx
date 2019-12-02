@@ -30,12 +30,12 @@ const style = StyleSheet.create({
 });
 
 export const Item = ({ onEvent, ...item }: IItem & IEventProps) => {
-  const { id, isFolder, name, date, ownerName = "" } = item;
+  const { id, isFolder, name, date, ownerName = "", contentType } = item;
   const longOwnerName = `${I18n.t("by")}${ownerName}`;
 
   return (
     <ListItem borderBottomWidth={0} onPress={() => onEvent(EVENT_TYPE.SELECT, item)}>
-      <LeftIconPanel>{renderIcon(id, isFolder, name)}</LeftIconPanel>
+      <LeftIconPanel>{renderIcon(id, isFolder, name, contentType)}</LeftIconPanel>
       <CenterPanel style={style.centerPanel}>
         <Text numberOfLines={1} style={style.fileName}>
           {name}

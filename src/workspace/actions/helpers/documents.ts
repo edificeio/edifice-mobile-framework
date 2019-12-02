@@ -5,11 +5,13 @@
 
 import RNFB from 'rn-fetch-blob';
 import moment from "moment";
+import Mime from "mime";
 import {asyncGetJson} from "../../../infra/redux/async";
 import {IItems, IFiltersParameters, IFile, FilterId, IItem, ContentUri} from "../../types";
 import {filters} from "../../types/filters/helpers/filters";
 import Conf from "../../../../ode-framework-conf";
 import {OAuth2RessourceOwnerPasswordClient} from "../../../infra/oauth";
+import {Platform} from "react-native";
 
 
 // TYPE -------------------------------------------------------------------------------------------
@@ -87,11 +89,10 @@ export function getDocuments(parameters: IFiltersParameters): Promise<IItems<IIt
 
 // UPLOAD --------------------------------------------------------------------------------------
 
-export const uploadDocument = (uri: ContentUri[], onEnd: any) => {
+export const uploadDocument = (uri: any, onEnd: any) => {
   const signedHeaders = OAuth2RessourceOwnerPasswordClient.connection.sign({}).headers;
   const headers = {...signedHeaders, "content-Type": "multipart/form-data"};
-  const body = uri.reduce( (acc, item, index) =>
-    [...acc, { name: `document${index}`, type: item.mime, filename: item.name, data: RNFB.wrap(item.uri)}], []);
+  const body = buildBody(uri);
 
   RNFB.fetch(
     "POST",
@@ -107,3 +108,22 @@ export const uploadDocument = (uri: ContentUri[], onEnd: any) => {
       }
     )
 };
+
+export const buildBody = ( contentUri: any):any => {
+  if (Platform.OS === "android")
+    return (contentUri as any[]).reduce( (acc, item, index) =>
+      [...acc, { name: `document${index}`, type: item.mime, filename: item.name, data: RNFB.wrap(item.uri)}], [])
+   else {
+     const fullPath:string = contentUri
+     const start = fullPath.indexOf( "file:///")
+       ? 8
+       : fullPath.indexOf( "file://")
+          ? 7
+          : 0;
+     const path = fullPath.substring( start);
+     const type = Mime.getType(path);
+     const filename = fullPath.substring(fullPath.lastIndexOf('/') + 1 );
+
+     return { name: `document${0}`, type, filename, data: RNFB.wrap(path)}
+  }
+}

@@ -37,7 +37,7 @@ const sortOnName = ( a: string, b: string) : boolean => {
  * Take a file from the mobile and post it to the backend.
  * Dispatches WORKSPACE_UPLOAD_REQUESTED, WORKSPACE_UPLOAD_RECEIVED, and WORKSPACE_UPLOAD_FETCH_ERROR if an error occurs.
  */
-export function upload(uriContent: ContentUri[]) {
+export function upload(uriContent: any) {
   console.log( "upload url " + uriContent);
   return async (dispatch: any, state: any) => {
 
@@ -46,10 +46,8 @@ export function upload(uriContent: ContentUri[]) {
       uploadDocument(uriContent, (response: any) => {
         if (response.data) {
           const data = JSON.parse(response.data);
-          if (Array.isArray(data))
-            dispatch(addReceived(backendDocumentsAdapter(data), FilterId.owner));
-          else
-            dispatch(addReceived(backendDocumentsAdapter([data]), FilterId.owner));
+          const dataArray = Array.isArray(data) ? data : [data];
+          dispatch(addReceived(backendDocumentsAdapter(dataArray), FilterId.owner));
           dispatch(uploadReceived());
         }
       })

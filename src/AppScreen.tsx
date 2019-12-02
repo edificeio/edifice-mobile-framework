@@ -1,15 +1,12 @@
 import * as React from "react";
-import SplashScreen from "react-native-splash-screen";
 import { connect } from "react-redux";
 
-import { RootNavigationContainer } from "./navigation/RootNavigator";
-import pushNotifications from "./pushNotifications";
-import Tracking from "./tracking/TrackingManager";
-import { Component } from "glamorous-native";
+import {CurrentMainNavigationContainerComponent, RootNavigationContainer} from "./navigation/RootNavigator";
+import withLinkingAppWrapper from "./infra/withLinkingAppWrapper";
 
 export let rootNavigatorRef = null;
 
-export class AppScreen extends React.Component<any> {
+class _AppScreen extends React.Component<any> {
   public navigator: any;
   public static router = RootNavigationContainer.router;
 
@@ -25,4 +22,11 @@ export class AppScreen extends React.Component<any> {
   }
 }
 
-export default connect()(AppScreen);
+const mapStateToProps = (state: any, props: any) => ({
+  loggedIn: state.user.auth.loggedIn,
+  CurrentMainNavigationContainerComponent,
+});
+
+const AppScreen = connect(mapStateToProps)(withLinkingAppWrapper(_AppScreen));
+
+export default AppScreen;

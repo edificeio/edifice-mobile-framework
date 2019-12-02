@@ -1,6 +1,7 @@
 import { IRight } from "./right";
 
 export type IItem = IRight & {
+  contentType?: string;
   date: number;
   id: string;
   name: string;
@@ -8,7 +9,6 @@ export type IItem = IRight & {
 }
 
 export type IFile = IItem & {
-  contentType?: string;
   filename: string;
   size: number;
   url: string;

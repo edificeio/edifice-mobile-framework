@@ -1,5 +1,5 @@
 import * as React from "react";
-import {FlatList, StyleSheet, View, ViewStyle} from "react-native";
+import { FlatList, StyleSheet, View, ViewStyle } from "react-native";
 import { connect } from "react-redux";
 import I18n from "i18n-js";
 import { bindActionCreators } from "redux";
@@ -18,8 +18,8 @@ import { PageContainer } from "../../ui/ContainerContent";
 import { Loading } from "../../ui";
 import { removeAccents } from "../../utils/string";
 import { pickFile } from "../../infra/actions/pickFile";
-import {upload} from "../actions/upload";
-import withNavigationWrapper from "../utils/withNavigationWrapper";
+import { upload } from "../actions/upload";
+import { withNavigationUploadWrapper } from "../utils/withNavigationUploadWrapper";
 import { DocumentPickerResponse } from "react-native-document-picker";
 
 const styles = StyleSheet.create({
@@ -191,6 +191,4 @@ const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators({ getList, upload }, dispatch);
 };
 
-export const ContainerRootItems = connect(mapStateToProps, mapDispatchToProps)(withNavigationWrapper(Items));
-
-export default connect(mapStateToProps, mapDispatchToProps)(Items);
+export default connect(mapStateToProps, mapDispatchToProps)(withNavigationUploadWrapper(Items));

@@ -35,7 +35,6 @@ import AppScreen from "./AppScreen";
 import { CommonStyles } from './styles/common/styles';
 import SplashScreen from "react-native-splash-screen";
 import { initI18n } from "./infra/i18n";
-import withLinkingAppWrapper from "./infra/withLinkingAppWrapper";
 import {CurrentMainNavigationContainerComponent} from "./navigation/RootNavigator";
 
 // Disable Yellow Box on release builds.
@@ -192,13 +191,12 @@ function connectWithStore(store: any, WrappedComponent:any , ...args: [any?, any
 const mapStateToProps = (state: any, props: any) => ({
   currentPlatformId: state.user.auth.platformId,
   loggedIn: state.user.auth.loggedIn,
-  CurrentMainNavigationContainerComponent,
   store
 });
 
 export const AppStore = connectWithStore(
   store,
-  withLinkingAppWrapper(AppStoreUnconnected),
+  AppStoreUnconnected,
   mapStateToProps
 );
 

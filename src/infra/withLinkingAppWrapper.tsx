@@ -1,27 +1,27 @@
 import * as React from "react"
 import RNFileShareIntent from 'react-native-file-share-intent';
-import {AppState, Linking, Platform} from "react-native";
-import {nainNavNavigate, navigate} from "../navigation/helpers/navHelper";
+import {AppState, AppStateStatus, Platform} from "react-native";
+import {nainNavNavigate} from "../navigation/helpers/navHelper";
 import {FilterId} from "../workspace/types/filters";
 import I18n from "i18n-js";
-import {ContentUri} from "../types/contentUri";
-import {upload} from "../workspace/actions/upload";
 
 export interface IProps {
   loggedIn: any,
   CurrentMainNavigationContainerComponent: any,
-  store:any,
+  upload: any
 }
 
 export default function withLinkingAppWrapper(WrappedComponent: React.Component): React.Component {
   class HOC extends React.Component<IProps, {}> {
-    contentUri: ContentUri[] = [];
+    contentUri: any = Platform.OS === "android"
+      ? []
+      : "";
     redirected: boolean = false;
     uploaded: boolean = false;
 
     public componentDidMount() {
-      this._checkContentUri();
       AppState.addEventListener("change", this._handleAppStateChange);
+      this._checkContentUri();
     }
 
     public componentWillUnmount() {
@@ -32,7 +32,7 @@ export default function withLinkingAppWrapper(WrappedComponent: React.Component)
       this._handleContentUri()
     }
 
-    private _handleAppStateChange = (nextAppState: string) => {
+    private _handleAppStateChange = (nextAppState: AppStateStatus) => {
       if (nextAppState === 'active') {
         this._checkContentUri();
       }
@@ -41,9 +41,8 @@ export default function withLinkingAppWrapper(WrappedComponent: React.Component)
       }
     };
 
-    private _checkContentUri = async () => {
-      const url = await this._getInitialUrl();
-      RNFileShareIntent && RNFileShareIntent.getFilePath((contentUri: ContentUri[]) => {
+    private _checkContentUri = () => {
+      RNFileShareIntent && RNFileShareIntent.getFilePath((contentUri: any) => {
         if (contentUri) {
           this.contentUri = contentUri;
         }
@@ -53,16 +52,12 @@ export default function withLinkingAppWrapper(WrappedComponent: React.Component)
     private _handleContentUri = () => {
 
       if (this.props.loggedIn && this.contentUri.length > 0) {
-        if (!this.uploaded) {
-          this.uploaded = true;
-          this.props.store.dispatch(upload(this.contentUri));
-        }
-
         if (!this.redirected && this.props.CurrentMainNavigationContainerComponent) {
           this.redirected = true;
           nainNavNavigate(
             "Workspace",
             {
+              contentUri: null,
               filter: FilterId.root,
               parentId: FilterId.root,
               title: I18n.t('workspace'),
@@ -71,6 +66,7 @@ export default function withLinkingAppWrapper(WrappedComponent: React.Component)
                 parentId: "owner",
                 filter: FilterId.owner,
                 title: I18n.t('owner'),
+                contentUri: this.contentUri
               }
             })
         }
@@ -83,11 +79,6 @@ export default function withLinkingAppWrapper(WrappedComponent: React.Component)
       this.contentUri = [];
       this.redirected = false
       this.uploaded = false;
-    }
-
-    _getInitialUrl = async () => {
-      const url = await Linking.getInitialURL()
-      return url
     }
 
     render() {
