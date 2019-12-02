@@ -54,13 +54,9 @@ const getAppInfos: {
 }
 
 export default ({
-  id,
   date,
-  eventType,
   message,
   params,
-  recipients,
-  resource,
   sender,
   type,
   unread = false,

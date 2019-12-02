@@ -54,7 +54,6 @@ const notificationListAdapter: (
   let result = [] as INotificationList;
   if (!data) return result;
   result = data.results.map(item => ({
-    //TODO: use all? (/update in other files)
     id: item._id,
     date: moment(item.date.$date),
     eventType: item["event-type"],
