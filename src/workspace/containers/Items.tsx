@@ -169,7 +169,7 @@ const mapStateToProps = (state: any, props: any) => {
   const parentId = props.navigation.getParam("parentId");
   const parentIdItems = stateItems[parentId] || {};
   const isFetching = parentIdItems.isFetching || false;
-  const items = parentIdItems.data || {};
+  const items = parentIdItems.data;
 
   return { items, isFetching };
 };
