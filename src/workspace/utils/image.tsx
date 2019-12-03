@@ -35,7 +35,7 @@ export const renderIcon = ( id: string | null, isFolder: boolean, name: string, 
 };
 
 export const renderImage = ( item: IFile, isFolder: boolean, name: string): any => {
-  const icon = getIcon(item.id, isFolder, name);
+  const icon = getIcon(item.id, isFolder, name, item.contentType);
   const uri = `${Conf.currentPlatform.url}/workspace/document/${item.id}`;
 
   if (icon)

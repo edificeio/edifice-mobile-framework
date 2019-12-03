@@ -16,7 +16,7 @@ export function withNavigationUploadWrapper(WrappedComponent: React.Component): 
     }
 
     _navigationAndUpload = () => {
-      const {navigation, upload} = this.props;
+      const {navigation, uploadAction} = this.props;
       const childRoute: string = navigation.getParam("childRoute");
       const childParams: any = navigation.getParam("childParams");
       const contentUri: any = navigation.getParam("contentUri");
@@ -29,7 +29,7 @@ export function withNavigationUploadWrapper(WrappedComponent: React.Component): 
       }
 
       if (contentUri) {
-        upload(contentUri);
+        uploadAction(contentUri);
         this._clearNavigation();
       }
     };

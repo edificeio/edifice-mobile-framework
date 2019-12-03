@@ -1,6 +1,6 @@
 import { IFiltersParameters } from "../filters";
 
 export interface IActionProps {
-  getList: (params: IFiltersParameters) => void
-  upload: (fileUri: string) => void
+  listAction: (params: IFiltersParameters) => void
+  uploadAction: (fileUri: string) => void
 }

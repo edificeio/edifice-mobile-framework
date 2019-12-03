@@ -1,6 +1,6 @@
 import * as React from "react"
 import RNFileShareIntent from 'react-native-file-share-intent';
-import {AppState, AppStateStatus, Platform} from "react-native";
+import {AppState, AppStateStatus, Linking, Platform} from "react-native";
 import {nainNavNavigate} from "../navigation/helpers/navHelper";
 import {FilterId} from "../workspace/types/filters";
 import I18n from "i18n-js";
@@ -12,12 +12,13 @@ export interface IProps {
 }
 
 export default function withLinkingAppWrapper(WrappedComponent: React.Component): React.Component {
-  class HOC extends React.Component<IProps, {}> {
-    contentUri: any = Platform.OS === "android"
-      ? []
-      : "";
+  class HOC extends React.Component<IProps, {refresh: boolean}> {
+    contentUri: any = null;
     redirected: boolean = false;
     uploaded: boolean = false;
+    state = {
+      refresh: false,
+    }
 
     public componentDidMount() {
       AppState.addEventListener("change", this._handleAppStateChange);
@@ -41,17 +42,18 @@ export default function withLinkingAppWrapper(WrappedComponent: React.Component)
       }
     };
 
-    private _checkContentUri = () => {
+    private _checkContentUri = async () => {
+      await this._getInitialUrl();                       // important to stay. Permits to recalculate contentUri
       RNFileShareIntent && RNFileShareIntent.getFilePath((contentUri: any) => {
         if (contentUri) {
           this.contentUri = contentUri;
+          this.setState( {refresh: !this.state.refresh})  // permit to have componentDidUpdate
         }
       });
     }
 
     private _handleContentUri = () => {
-
-      if (this.props.loggedIn && this.contentUri.length > 0) {
+      if (this.props.loggedIn && this.contentUri) {
         if (!this.redirected && this.props.CurrentMainNavigationContainerComponent) {
           this.redirected = true;
           nainNavNavigate(
@@ -76,9 +78,14 @@ export default function withLinkingAppWrapper(WrappedComponent: React.Component)
     _clearContentUri = () => {
       if (Platform.OS === "android")
         RNFileShareIntent.clearFilePath();
-      this.contentUri = [];
+      this.contentUri = null;
       this.redirected = false
       this.uploaded = false;
+    }
+
+    _getInitialUrl = async () => {
+      const url = await Linking.getInitialURL()
+      return url
     }
 
     render() {

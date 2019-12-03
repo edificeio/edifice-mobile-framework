@@ -34,7 +34,7 @@ export function listError(errmsg: string, id: string | undefined) {
  * Get workspace list from the backend.
  * Dispatches WORKSPACE_LIST_REQUESTED, WORKSPACE_LIST_RECEIVED, and WORKSPACE_LIST_FETCH_ERROR if an error occurs.
  */
-export function getList(parameters: IFiltersParameters) {
+export function listAction(parameters: IFiltersParameters) {
   return async (dispatch: any, state: any) => {
     dispatch(listRequested(parameters.parentId));
 
