@@ -3,16 +3,13 @@
  * Build actions to be dispatched to the hworkspace list reducer.
  */
 
-import RNFB from 'rn-fetch-blob';
+import RNFB from "rn-fetch-blob";
 import moment from "moment";
-import Mime from "mime";
-import {asyncGetJson} from "../../../infra/redux/async";
-import {IItems, IFiltersParameters, IFile, FilterId, IItem, ContentUri} from "../../types";
-import {filters} from "../../types/filters/helpers/filters";
+import { asyncGetJson } from "../../../infra/redux/async";
+import { IItems, IFiltersParameters, IFile, FilterId, IItem, ContentUri } from "../../types";
+import { filters } from "../../types/filters/helpers/filters";
 import Conf from "../../../../ode-framework-conf";
-import {OAuth2RessourceOwnerPasswordClient} from "../../../infra/oauth";
-import {Platform} from "react-native";
-
+import { OAuth2RessourceOwnerPasswordClient } from "../../../infra/oauth";
 
 // TYPE -------------------------------------------------------------------------------------------
 
@@ -51,7 +48,9 @@ export const backendDocumentsAdapter: (data: IBackendDocumentArray) => IItems<IF
     if (item.deleted) continue;
     result[item._id] = {
       contentType: item.metadata["content-type"],
-      date: moment(item.modified, "YYYY-MM-DD HH:mm.ss.SSS").toDate().getTime(),
+      date: moment(item.modified, "YYYY-MM-DD HH:mm.ss.SSS")
+        .toDate()
+        .getTime(),
       filename: item.metadata.filename,
       id: item._id,
       isFolder: false,
@@ -59,7 +58,7 @@ export const backendDocumentsAdapter: (data: IBackendDocumentArray) => IItems<IF
       owner: filters(item.owner),
       ownerName: item.ownerName,
       size: item.metadata.size,
-      url: `/workspace/document/${item._id}`
+      url: `/workspace/document/${item._id}`,
     };
   }
   return result;
@@ -68,7 +67,7 @@ export const backendDocumentsAdapter: (data: IBackendDocumentArray) => IItems<IF
 // GET -----------------------------------------------------------------------------------------
 
 export function getDocuments(parameters: IFiltersParameters): Promise<IItems<IItem>> {
-  const {parentId} = parameters;
+  const { parentId } = parameters;
 
   if (parentId === FilterId.root) return Promise.resolve({});
 
@@ -77,7 +76,8 @@ export function getDocuments(parameters: IFiltersParameters): Promise<IItems<IIt
 
     for (let key in parameters) {
       if (!(parameters as any)[key]) continue;
-      if (key === "parentId" && (parameters as any)[key] in FilterId)    // its a root folder, no pass parentId
+      if (key === "parentId" && (parameters as any)[key] in FilterId)
+        // its a root folder, no pass parentId
         continue;
       result = result.concat(`${key}=${(parameters as any)[key]}&`);
     }
@@ -89,41 +89,27 @@ export function getDocuments(parameters: IFiltersParameters): Promise<IItems<IIt
 
 // UPLOAD --------------------------------------------------------------------------------------
 
-export const uploadDocument = (uri: any, onEnd: any) => {
+export const uploadDocument = (content: ContentUri[], onEnd: any) => {
   const signedHeaders = OAuth2RessourceOwnerPasswordClient.connection.sign({}).headers;
-  const headers = {...signedHeaders, "content-Type": "multipart/form-data"};
-  const body = buildBody(uri);
+  const headers = { ...signedHeaders, "content-Type": "multipart/form-data" };
+  const body = content.reduce(
+    (acc, item, index) => [
+      ...acc,
+      { name: `document${index}`, type: item.mime, filename: item.name, data: RNFB.wrap(item.uri) },
+    ],
+    []
+  );
 
   RNFB.fetch(
     "POST",
     `${Conf.currentPlatform.url}/workspace/document?quality=1&thumbnail=120x120&thumbnail=100x100&thumbnail=290x290&thumbnail=381x381&thumbnail=1600x0`,
     headers,
-    body,
+    body
   )
-    .then((response) => {
-      onEnd(response)
+    .then(response => {
+      onEnd(response);
     })
-    .catch((err) => {
-        console.log(err)
-      }
-    )
+    .catch(err => {
+      console.log(err);
+    });
 };
-
-export const buildBody = ( contentUri: any):any => {
-  if (Platform.OS === "android")
-    return (contentUri as any[]).reduce( (acc, item, index) =>
-      [...acc, { name: `document${index}`, type: item.mime, filename: item.name, data: RNFB.wrap(item.uri)}], [])
-   else {
-     const fullPath:string = contentUri
-     const start = fullPath.indexOf( "file:///")
-       ? 8
-       : fullPath.indexOf( "file://")
-          ? 7
-          : 0;
-     const path = fullPath.substring( start);
-     const type = Mime.getType(path);
-     const filename = fullPath.substring(fullPath.lastIndexOf('/') + 1 );
-
-     return { name: `document${0}`, type, filename, data: RNFB.wrap(path)}
-  }
-}
