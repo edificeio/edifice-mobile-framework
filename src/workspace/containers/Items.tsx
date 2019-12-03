@@ -7,7 +7,7 @@ import { NavigationScreenProp, NavigationEventSubscription } from "react-navigat
 import config from "../config";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderAction, HeaderIcon } from "../../ui/headers/NewHeader";
-import { EVENT_TYPE, FilterId, IItem, IItemsProps, IState } from "../types";
+import { EVENT_TYPE, FilterId, IItem, IItemsProps, IState, ContentUri } from "../types";
 import { Item } from "../components";
 import { listAction } from "../actions/list";
 import { CommonStyles } from "../../styles/common/styles";
@@ -18,7 +18,7 @@ import { PageContainer } from "../../ui/ContainerContent";
 import { Loading } from "../../ui";
 import { removeAccents } from "../../utils/string";
 import { uploadAction } from "../actions/upload";
-import { pickFile } from "../../infra/actions/pickFile";
+import pickFile from "../../infra/actions/pickFile";
 import { withNavigationUploadWrapper } from "../utils/withNavigationUploadWrapper";
 import { DocumentPickerResponse } from "react-native-document-picker";
 
@@ -76,12 +76,11 @@ export class Items extends React.Component<IItemsProps, { isFocused: boolean }> 
     });
   }
 
-  upload(fileURI: DocumentPickerResponse) {
-    if (fileURI) {
-      const { uri, type, name } = fileURI;
-      return this.props.uploadAction([{ uri, mime: type, name, path: "" }]);
+  upload(content: ContentUri) {
+    if (content) {
+      this.props.uploadAction(content);
     } else {
-      console.log("pick failed", fileURI);
+      console.log("pick failed", content);
     }
   }
 
@@ -92,7 +91,7 @@ export class Items extends React.Component<IItemsProps, { isFocused: boolean }> 
 
   // permits to manage push notif navigation
   public shouldComponentUpdate() {
-    return this.state.isFocused
+    return this.state.isFocused;
   }
 
   public makeRequest() {

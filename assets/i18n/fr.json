@@ -171,6 +171,9 @@
   "version-number": "Version",
   "welcome": "Bienvenue",
   "workspace": "Espace documentaire",
+  "workspace-image":"Ajouter une image",
+  "workspace-document":"Ajouter un document",
+  "workspace-pick":"Choissisez le type de fichier à ajouter",
 
   "profileTypes": {
     "Guest": "Invité",
