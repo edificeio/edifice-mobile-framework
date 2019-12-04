@@ -1,8 +1,12 @@
 import style from "glamorous-native";
 import I18n from "i18n-js";
 import * as React from "react";
+import { View, Linking } from "react-native";
+import { LayoutEvent } from "react-navigation";
+import rnTextSize, { TSMeasureParams, TSMeasureResult } from "react-native-text-size"
 
-import { BadgeAvatar } from "../../ui/BadgeAvatar";
+import Conf from "../../../ode-framework-conf";
+
 import {
   NewListItem,
   NewLeftPanel,
@@ -11,12 +15,14 @@ import {
   NewContent
 } from "./NewContainerContent";
 import { DateView } from "../../ui/DateView";
+import { FontWeight } from "../../ui/text";
+import { BadgeAvatar } from "../../ui/BadgeAvatar";
+import { Icon } from "../../ui/icons/Icon";
 
 import { CommonStyles } from "../../styles/common/styles";
 
-import { FontWeight } from "../../ui/text";
 import { INotification } from "../reducers/notificationList";
-import { Icon } from "../../ui/icons/Icon";
+import { newContentStyle } from "../components/NewContainerContent"
 import HtmlToText from "../../infra/htmlConverter/text";
 
 export interface INotificationItemProps extends INotification {
@@ -53,56 +59,115 @@ const getAppInfos: {
   "WORKSPACE": { name: "Espace documentaire", icon: "folder", color: CommonStyles.themeOpenEnt.red },
 }
 
-export default ({
-  date,
-  message,
-  params,
-  sender,
-  type,
-  unread = false,
-  onPress,
-}: INotificationItemProps) => {
-  const formattedContent = HtmlToText(message, true).render.replace(params.username, "").trim();
-  return (
-    <NewListItem nb={unread} onPress={() => onPress()}>
-      <NewLeftPanel>
-        <BadgeAvatar
-          avatars={[sender || require("../../../assets/images/system-avatar.png")]}
-          badgeContent={getAppInfos[type] && getAppInfos[type].icon}
-          badgeColor={getAppInfos[type] && getAppInfos[type].color}
-        />
-      </NewLeftPanel>
-      <NewCenterPanel>
-        <Author nb={unread} numberOfLines={1}>
-          {params && params.username || getAppInfos[type] && getAppInfos[type].name}
-        </Author>
-        {message && message.length ? (
-          <NewContent nb={unread} numberOfLines={2}>
-            {formattedContent}
-          </NewContent>
-        ) : (
-          <style.View />
-        )}
-      </NewCenterPanel>
-      <NewRightPanel>
-        <DateView date={date} strong={unread > 0} />
-        <Icon
-          name="arrow_down"
-          color={"#868CA0"}
-          style={{ transform: [{ rotate: "270deg" }] }}
-        />
-      </NewRightPanel>
-    </NewListItem>
-  );
-};
 
-const Author = style.text(
-  {
-    color: CommonStyles.textColor,
-    fontFamily: CommonStyles.primaryFontFamily,
-    fontSize: 14
-  },
-  ({ nb }) => ({
-    fontWeight: nb > 0 ? FontWeight.SemiBold : FontWeight.Normal
-  })
-);
+export class NotificationItem extends React.PureComponent<
+INotificationItemProps,
+{
+
+}
+> {
+  state= {
+    isExtended: false,
+    longText: false,
+    measuredText: false,
+  }
+
+// Render
+
+  public measureText = async (evt: LayoutEvent) => {
+    this.setState({ measuredText: true })
+    if (evt.nativeEvent.lines.length >= 2) {
+      const layout = evt.nativeEvent.lines[1];
+      const text = layout.text
+      const {fontFamily, fontSize, fontWeight } = newContentStyle
+      const result:TSMeasureResult = await rnTextSize.measure({
+        text,
+        fontFamily,
+        fontSize,
+        fontWeight
+      } as TSMeasureParams);
+      if (layout.width + 1 < result.width) {
+        this.setState({ longText: true })
+      }
+    }
+  }
+
+  // public normalizeUrl = (url:string)=>{
+  //   try{
+  //     return url.replace(/([^:]\/)\/+/g, "$1");
+  //   }catch(e){
+  //     return url;
+  //   }
+  // }
+
+  // public redirectToUser(uri: string) {
+  //   if (!Conf.currentPlatform) {
+  //     throw new Error("Must have a platform selected to redirect the user");
+  //   }
+  //   //const web = "https://recette.opendigitaleducation.com/userbook/annuaire#/b92e3d37-16b0-4ed9-b4c3-992091687132#Teacher"
+  //   //const test = "/userbook/annuaire#/b92e3d37-16b0-4ed9-b4c3-992091687132#Teacher"
+  //   const url = `${(Conf.currentPlatform as any).url}${uri}`
+  //   Linking.canOpenURL(uri).then(supported => {
+  //     if (supported) {
+  //       Linking.openURL(uri);
+  //     } else {
+  //       console.warn("[notification] Don't know how to open URI: ", url);
+  //     }
+  //   });
+  // }
+
+  public render() {
+    const { date, message, params, sender, type, onPress } = this.props;
+    const { isExtended, longText, measuredText } =this.state;
+    const formattedContent = HtmlToText(message, !isExtended).render.replace(params.username, "").trim();
+    const Author = style.text(
+      {
+        color: CommonStyles.textColor,
+        fontFamily: CommonStyles.primaryFontFamily,
+        fontSize: 14
+      },
+      ({ nb }) => ({
+        fontWeight: nb > 0 ? FontWeight.SemiBold : FontWeight.Normal
+      })
+    );
+
+    return (
+      <NewListItem>
+        <NewLeftPanel disabled={params && !params.username} onPress={() => this.redirectToUser(params.uri)}>
+          <BadgeAvatar
+            avatars={[sender || require("../../../assets/images/system-avatar.png")]}
+            badgeContent={getAppInfos[type] && getAppInfos[type].icon}
+            badgeColor={getAppInfos[type] && getAppInfos[type].color}
+          />
+        </NewLeftPanel>
+        <NewCenterPanel onPress={() => onPress()}>
+          <Author numberOfLines={1}>
+            {params && params.username || getAppInfos[type] && getAppInfos[type].name}
+          </Author>
+          {message && message.length ? (
+            <NewContent
+              numberOfLines={isExtended ? undefined : 2}
+              onTextLayout={!measuredText && this.measureText}
+            >
+              {formattedContent}
+            </NewContent>
+          ) : (
+            <style.View />
+          )}
+        </NewCenterPanel>
+        <NewRightPanel disabled={!longText} onPress={() => this.setState({ isExtended: !isExtended })}>
+          <DateView date={date}/>
+          <View style={{ flex: 1, justifyContent: "center" }}>
+            {longText &&
+              <Icon
+                name="arrow_down"
+                color={"#868CA0"}
+                style={isExtended && {transform: [{ rotate: "180deg" }]}}
+              />
+            }
+          </View>
+        </NewRightPanel>
+      </NewListItem>
+    );
+  }
+}

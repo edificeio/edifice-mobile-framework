@@ -33,7 +33,7 @@ import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { NewPageContainer, NewListItem } from "./NewContainerContent";
 import { EmptyScreen } from "../../ui/EmptyScreen";
 import { TextBright } from "../../ui/Typography";
-import NotificationItem from "./NotificationItem";
+import { NotificationItem } from "./NotificationItem";
 
 // // Type definitions
 
@@ -101,7 +101,6 @@ INotificationListPageProps,
   public renderEmptyScreen() {
     return (
       <EmptyScreen
-        //TO DO: rename empty search?
         imageSrc={require("../../../assets/images/empty-screen/empty-search.png")}
         imgWidth={571}
         imgHeight={261}

@@ -3,7 +3,7 @@ import { CommonStyles } from "../../styles/common/styles";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { Weight } from "../../ui/Typography";
 
-export const NewListItem = style(TouchableOpacity)(
+export const NewListItem = style.view(
   {
     backgroundColor: "#FFFFFF",
     paddingHorizontal: 10,
@@ -18,13 +18,12 @@ export const NewListItem = style(TouchableOpacity)(
   })
 );
 
-export const NewLeftPanel = style.view({
+export const NewLeftPanel = style(TouchableOpacity)({
   justifyContent: "center",
-  minHeight: 50,
   width: 50
 });
 
-export const NewCenterPanel = style.view({
+export const NewCenterPanel = style(TouchableOpacity)({
   alignItems: "flex-start",
   flex: 1,
   justifyContent: "center",
@@ -32,21 +31,22 @@ export const NewCenterPanel = style.view({
   padding: 2
 });
 
-export const NewRightPanel = style.view({
+export const NewRightPanel = style(TouchableOpacity)({
   alignItems: "center",
-  height: 50,
-  justifyContent: "space-between",
+  justifyContent: "center",
   width: 50
 });
 
+export const newContentStyle = {
+  color: CommonStyles.iconColorOff,
+  fontFamily: CommonStyles.primaryFontFamily,
+  fontSize: 12,
+  fontWeight: Weight.Light,
+  marginTop: 10
+}
+
 export const NewContent = style.text(
-  {
-    color: CommonStyles.iconColorOff,
-    fontFamily: CommonStyles.primaryFontFamily,
-    fontSize: 12,
-    fontWeight: Weight.Light,
-    marginTop: 10
-  },
+  newContentStyle,
   ({ nb = 0 }) => ({
     color: nb > 0 ? CommonStyles.textColor : CommonStyles.iconColorOff,
     fontWeight: nb > 0 ? Weight.Normal : Weight.Light

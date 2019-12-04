@@ -18,9 +18,8 @@ const MyAppGridContainer = (modules: IAppModule[]) => createStackNavigator({
           title: I18n.t("MyApplications"),
           headerRight: <HeaderAction
             onPress={() => { navigation.navigate('notifications') }}
-            //TODO: on-off logic? (redux)
-            name={`icon-notif-${true? "on" : "off"}`}
-            iconSize={36}
+            name="icon-notif-on"
+            iconSize={24}
           />,
           headerLeftContainerStyle: {
             alignItems: "flex-start"

@@ -28,7 +28,7 @@ export interface INotification {
   sender: string;
   type: string;
 }
-//TODO: add isRefreshing here? (like threadList reducer)
+
 export type INotificationList = INotification[];
 
 // THE REDUCER ------------------------------------------------------------------------------------
