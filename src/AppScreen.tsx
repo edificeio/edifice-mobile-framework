@@ -1,8 +1,7 @@
 import * as React from "react";
-import { connect } from "react-redux";
 
-import {CurrentMainNavigationContainerComponent, RootNavigationContainer} from "./navigation/RootNavigator";
-import withLinkingAppWrapper from "./infra/withLinkingAppWrapper";
+import {RootNavigationContainer} from "./navigation/RootNavigator";
+import {withLinkingAppWrapper} from "./infra/withLinkingAppWrapper";
 
 export let rootNavigatorRef = null;
 
@@ -22,11 +21,6 @@ class _AppScreen extends React.Component<any> {
   }
 }
 
-const mapStateToProps = (state: any, props: any) => ({
-  loggedIn: state.user.auth.loggedIn,
-  CurrentMainNavigationContainerComponent,
-});
-
-const AppScreen = connect(mapStateToProps)(withLinkingAppWrapper(_AppScreen));
+const AppScreen = withLinkingAppWrapper(_AppScreen);
 
 export default AppScreen;

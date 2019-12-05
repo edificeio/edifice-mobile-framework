@@ -14,6 +14,8 @@ import {
   INewVersionAction,
   IVersionContext
 } from "../actions/version";
+import {getMainNavContainer} from "../../navigation/RootNavigator";
+import {NavigationContainer} from "react-navigation";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -37,6 +39,7 @@ export interface IUserAuthState {
   //version
   skipVersion: boolean;
   versionContext: IVersionContext;
+  MainNavigationContainer: NavigationContainer | null
 }
 
 // THE REDUCER ------------------------------------------------------------------------------------
@@ -46,6 +49,7 @@ export const stateDefault: IUserAuthState = {
   appsInfo: [],
   loggedIn: false,
   loggingIn: false,
+  MainNavigationContainer: null,
   notification: null,
   notificationPrefs: [],
   platformId: null,
@@ -89,6 +93,7 @@ const authReducer = (
         loggedIn: true,
         loggingIn: false,
         login: action.userbook.login,
+        MainNavigationContainer: getMainNavContainer(["user", "myapps", ...action.userbook.apps]),
         synced: true,
         userId: action.userbook.id
       };

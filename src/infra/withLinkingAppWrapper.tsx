@@ -4,83 +4,82 @@ import {AppState, AppStateStatus, Linking, Platform} from "react-native";
 import {nainNavNavigate} from "../navigation/helpers/navHelper";
 import {FilterId} from "../workspace/types/filters";
 import I18n from "i18n-js";
+import {connect} from "react-redux";
 
 export interface IProps {
   loggedIn: any,
-  CurrentMainNavigationContainerComponent: any,
+  refMainNavigationContainer: any,
   upload: any
 }
 
-export default function withLinkingAppWrapper(WrappedComponent: React.Component): React.Component {
-  class HOC extends React.Component<IProps, {refresh: boolean}> {
+function _withLinkingAppWrapper(WrappedComponent: React.Component): React.Component {
+  class HOC extends React.Component<IProps, {appState: string}> {
     contentUri: any = null;
     redirected: boolean = false;
-    uploaded: boolean = false;
+
     state = {
-      refresh: false,
+      appState: "active",
     }
 
     public componentDidMount() {
       AppState.addEventListener("change", this._handleAppStateChange);
-      this._checkContentUri();
     }
 
     public componentWillUnmount() {
       AppState.removeEventListener("change", this._handleAppStateChange);
     }
 
-    async componentDidUpdate(prevProps: any) {
-      this._handleContentUri()
-    }
-
     private _handleAppStateChange = (nextAppState: AppStateStatus) => {
       if (nextAppState === 'active') {
-        this._checkContentUri();
+        this.setState( {appState: nextAppState})
       }
       if (nextAppState.match(/inactive|background/)) {
-        this._clearContentUri();
+        this.setState( {appState: nextAppState})
       }
     };
 
-    private _checkContentUri = async () => {
-      await this._getInitialUrl();                       // important to stay. Permits to recalculate contentUri
-      RNFileShareIntent && RNFileShareIntent.getFilePath((contentUri: any) => {
-        if (contentUri) {
-          this.contentUri = contentUri;
-          this.setState( {refresh: !this.state.refresh})  // permit to have componentDidUpdate
-        }
-      });
+    public componentDidUpdate() {
+        this._checkAndHandle();
     }
 
-    private _handleContentUri = () => {
-      if (this.props.loggedIn && this.contentUri) {
-        if (!this.redirected && this.props.CurrentMainNavigationContainerComponent) {
-          this.redirected = true;
-          nainNavNavigate(
-            "Workspace",
-            {
-              contentUri: null,
-              filter: FilterId.root,
-              parentId: FilterId.root,
-              title: I18n.t('workspace'),
-              childRoute: "Workspace",
-              childParams: {
-                parentId: "owner",
-                filter: FilterId.owner,
-                title: I18n.t('owner'),
-                contentUri: this.contentUri
-              }
-            })
-        }
+    private  _checkAndHandle = async () => {
+      if (this.state.appState.match(/inactive|background/)) {
+        this._clear();
+        return;
+      }
+      const {loggedIn, refMainNavigationContainer} = this.props;
+
+      if (!this.redirected && loggedIn && refMainNavigationContainer) {
+//        const url = await this._getInitialUrl();                       // important to stay. Permits to recalculate contentUri
+
+//        console.log( "===============================>>>>>>>>>> " + url);
+        RNFileShareIntent && RNFileShareIntent.getFilePath((contentUri: any) => {
+          if (!this.redirected && contentUri) {
+            this.redirected = true;
+            nainNavNavigate(
+              "Workspace",
+              {
+                contentUri: null,
+                filter: FilterId.root,
+                parentId: FilterId.root,
+                title: I18n.t('workspace'),
+                childRoute: "Workspace",
+                childParams: {
+                  parentId: "owner",
+                  filter: FilterId.owner,
+                  title: I18n.t('owner'),
+                  contentUri
+                }
+              })
+          }
+        });
       }
     }
 
-    _clearContentUri = () => {
+    private _clear() {
       if (Platform.OS === "android")
         RNFileShareIntent.clearFilePath();
-      this.contentUri = null;
       this.redirected = false
-      this.uploaded = false;
     }
 
     _getInitialUrl = async () => {
@@ -95,5 +94,13 @@ export default function withLinkingAppWrapper(WrappedComponent: React.Component)
   return HOC;
 }
 
+const mapStateToProps = (state: any, props: any) => ({
+  loggedIn: state.user.auth.loggedIn,
+  refMainNavigationContainer: state.refMainNavigationReducer.refMainNavigationContainer,
+});
+
+export const withLinkingAppWrapper = (WrappedComponent: React.Component<any>) => {
+  return connect( mapStateToProps)(_withLinkingAppWrapper(WrappedComponent));
+}
 
 

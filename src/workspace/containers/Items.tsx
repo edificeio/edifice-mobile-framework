@@ -34,8 +34,7 @@ const HeaderBackAction = ({ navigation, style }: { navigation: NavigationScreenP
   return <HeaderAction onPress={() => navigation.pop()} name={"back"} style={style} />;
 };
 
-export class Items extends React.Component<IItemsProps, { isFocused: boolean }> {
-  redirected = false;
+export class Items extends React.PureComponent<IItemsProps, { isFocused: boolean }> {
   focusListener!: NavigationEventSubscription;
   blurListener!: NavigationEventSubscription;
 
@@ -59,17 +58,11 @@ export class Items extends React.Component<IItemsProps, { isFocused: boolean }> 
 
   constructor(props: IItemsProps) {
     super(props);
-
-    this.state = { isFocused: true };
   }
 
   public componentDidMount() {
     this.focusListener = this.props.navigation.addListener("willFocus", () => {
-      this.setState({ isFocused: true });
       this.makeRequest();
-    });
-    this.blurListener = this.props.navigation.addListener("didBlur", () => {
-      this.setState({ isFocused: false });
     });
     this.props.navigation.setParams({
       upload: this.upload.bind(this),
@@ -86,12 +79,6 @@ export class Items extends React.Component<IItemsProps, { isFocused: boolean }> 
 
   public componentWillUnmount() {
     this.focusListener.remove();
-    this.blurListener.remove();
-  }
-
-  // permits to manage push notif navigation
-  public shouldComponentUpdate() {
-    return this.state.isFocused;
   }
 
   public makeRequest() {

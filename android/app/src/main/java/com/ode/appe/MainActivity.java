@@ -2,6 +2,7 @@ package com.ode.appe;
 
 import com.facebook.react.ReactActivity;
 import android.os.Bundle;
+import android.content.Intent;
 
 // React Navigation deps
 import com.facebook.react.ReactActivityDelegate;
@@ -30,6 +31,12 @@ public class MainActivity extends ReactActivity {
                 return new RNGestureHandlerEnabledRootView(MainActivity.this);
             }
         };
+    }
+
+    @Override
+    public void onNewIntent(final Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
     }
 
     @Override

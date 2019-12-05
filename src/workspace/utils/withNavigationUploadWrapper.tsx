@@ -3,20 +3,21 @@ import {AppState} from "react-native";
 
 
 export interface INotifyProps {
+  isFetching: false,
   navigation: any,
-  upload: any,
+  uploadAction: any,
 }
 
 
 export function withNavigationUploadWrapper(WrappedComponent: React.Component): React.Component {
-  class HOC extends React.PureComponent<INotifyProps> {
+  class HOC extends React.Component<INotifyProps> {
 
     public componentDidUpdate() {
       this._navigationAndUpload();
     }
 
     _navigationAndUpload = () => {
-      const {navigation, uploadAction} = this.props;
+      const {isFetching, navigation, uploadAction} = this.props;
       const childRoute: string = navigation.getParam("childRoute");
       const childParams: any = navigation.getParam("childParams");
       const contentUri: any = navigation.getParam("contentUri");
@@ -28,7 +29,7 @@ export function withNavigationUploadWrapper(WrappedComponent: React.Component): 
         this._clearNavigation();
       }
 
-      if (contentUri) {
+      if (contentUri && !isFetching) {
         uploadAction(contentUri);
         this._clearNavigation();
       }

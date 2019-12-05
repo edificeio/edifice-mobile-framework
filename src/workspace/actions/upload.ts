@@ -5,6 +5,7 @@ import config from "../config";
 import { backendDocumentsAdapter, uploadDocument } from "./helpers/documents";
 import { ContentUri, FilterId } from "../types";
 import { addReceived } from "./add";
+import {listAction} from "./list";
 
 // ACTION UPLOAD ------------------------------------------------------------------------------------
 
@@ -35,7 +36,11 @@ export function uploadAction(uriContent: ContentUri[] | ContentUri) {
         if (response.data) {
           const data = JSON.parse(response.data);
           const dataArray = Array.isArray(data) ? data : [data];
-          dispatch(addReceived(backendDocumentsAdapter(dataArray), FilterId.owner));
+          dispatch( listAction({                          // better to do addReceived, but sometime data is erased by a previous long listAction
+            filter: FilterId.owner,
+            parentId: FilterId.owner,
+          }));
+          //dispatch(addReceived(backendDocumentsAdapter(dataArray), FilterId.owner));
           dispatch(uploadReceived());
         }
       });

@@ -10,12 +10,14 @@ import ui from "./infra/reducers/ui";
 import timeline from "./timeline/reducer";
 import { IUserInfoState } from "./user/reducers/info";
 import { IUserAuthState } from "./user/reducers/auth";
+import { refMainNavigationReducer } from "./navigation/reducers/refMainNavigationContainer";
 
 // console.log("REDUCERS", getReducersFromModuleDefinitions(moduleDefinitions));
 
 const reducers = {
   connectionTracker,
   notifier,
+  refMainNavigationReducer,
   ui,
   ...getReducersFromModuleDefinitions(moduleDefinitions)
 };

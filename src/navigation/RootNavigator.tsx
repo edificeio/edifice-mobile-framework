@@ -20,6 +20,9 @@ import {
 } from "./helpers/mainTabNavigator";
 import { getRoutes, getModules } from "./helpers/navBuilder";
 import LoginNavigator from "./LoginNavigator";
+import {bindActionCreators} from "redux";
+import {refMainNavigationContainerAction} from "./actions/refMainNavigationContainer";
+
 
 /**
  * MAIN NAVIGATOR
@@ -55,7 +58,7 @@ function getMainNavigator(apps: string[]) {
   return createMainTabNavigator(getMainRoutes(apps));
 }
 
-function getMainNavContainer(apps: string[]) {
+export function getMainNavContainer(apps: string[]) {
   const navigator = getMainNavigator(apps);
   return createAppContainer(navigator)
 }
@@ -66,14 +69,11 @@ function getMainNavContainer(apps: string[]) {
  */
 export let CurrentMainNavigationContainerComponent: NavigationContainerComponent;
 
-interface MainNavigatorHOCProps { apps: string[]; notification: Notification; dispatch: any };
+interface MainNavigatorHOCProps { apps: string[]; MainNavigationContainer: any, notification: Notification; dispatch: any, refMainNavigationContainerAction: any };
 
 class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
   public shouldComponentUpdate(nextProps: Partial<MainNavigatorHOCProps>) {
-    return (
-      this.props.notification !== nextProps.notification ||
-      !compareArrays(this.props.apps, nextProps.apps!)
-    );
+    return (this.props.notification !== nextProps.notification);
   }
 
   public async componentDidMount() {
@@ -97,36 +97,35 @@ class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
     }
   }
 
-  public render() {
-    // console.log("render new navigator", Math.random());
-    const { apps, ...forwardProps } = this.props;
-    console.log("APPPPS", apps);
-    const MainNavigationContainer = getMainNavContainer(apps);
-    // console.log(MainNavigationContainer);
+  public render()
+    {
+      const { MainNavigationContainer, ...rest} = this.props;
 
-    return (
-      <MainNavigationContainer
-        {...forwardProps}
-        onNavigationStateChange={(prevState, currentState, action) => {
-          // console.log("main nav state change :", prevState, currentState, action);
-          // Track if tab has changed
-          // console.log("On nav state changed : ", prevState, currentState, action)
-          if (action.type !== "Navigation/NAVIGATE") return;
-          const prevIndex = prevState.index;
-          const currentIndex = currentState.index;
-          if (prevIndex === currentIndex) return;
-          const currentTabRouteName =
-            currentState.routes[currentIndex].routeName;
-          if (currentTabRouteName)
-            Tracking.logEvent("menuTab", {
-              tab: currentTabRouteName
-            });
-        }}
-        ref={nav => {
-          CurrentMainNavigationContainerComponent = nav!;
-        }}
-      />
-    );
+      return (
+        <MainNavigationContainer
+          {...rest}
+          onNavigationStateChange={(prevState: any, currentState: any, action: any) => {
+            // console.log("main nav state change :", prevState, currentState, action);
+            // Track if tab has changed
+            // console.log("On nav state changed : ", prevState, currentState, action)
+            if (action.type !== "Navigation/NAVIGATE") return;
+            const prevIndex = prevState.index;
+            const currentIndex = currentState.index;
+            if (prevIndex === currentIndex) return;
+            const currentTabRouteName =
+              currentState.routes[currentIndex].routeName;
+            if (currentTabRouteName)
+              Tracking.logEvent("menuTab", {
+                tab: currentTabRouteName
+              });
+          }}
+          ref={nav => {
+            CurrentMainNavigationContainerComponent = nav!;
+            this.props.refMainNavigationContainerAction(nav!);
+          }}
+        />
+      );
+    }
     /* CAUTION :
        React Navigation doen't support dynamic routes.
        Here we emulate this by regenerate a runtime a new router and NavigationContainer each time `apps` props is modified.
@@ -139,15 +138,18 @@ class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
 
        So, until React Navigation doest support dynamic routes, don't mind of this warning.
     */
-  }
 }
 
+const mapDispatchToProps = (dispatch: any) => {
+  return bindActionCreators({ refMainNavigationContainerAction }, dispatch);
+};
+
 const mapStateToProps = ({ user }) => ({
-  apps: ["user", "myapps", ...user.auth.apps],
+  MainNavigationContainer: user.auth.MainNavigationContainer,
   notification: user.auth.notification
 });
 
-export const MainNavigator = connect(mapStateToProps)(MainNavigatorHOC);
+export const MainNavigator = connect(mapStateToProps, mapDispatchToProps)(MainNavigatorHOC);
 
 /**
  * ROOT NAVIGATOR
