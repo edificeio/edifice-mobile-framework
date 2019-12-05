@@ -15,10 +15,10 @@ export interface INotification {
   eventType: string;
   message: string;
   params: {
-    resourceUri: string;
-    uri: string;
-    username: string;
-    wordTitle: string;
+    uri?: string;
+    profilUri?: string;
+    username?: string;
+    resourceName?: string;
   };
   recipients: Array<{
     unread: number;

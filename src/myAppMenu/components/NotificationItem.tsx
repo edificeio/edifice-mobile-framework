@@ -1,9 +1,8 @@
-import style from "glamorous-native";
-import I18n from "i18n-js";
 import * as React from "react";
 import { View, Linking } from "react-native";
 import { LayoutEvent } from "react-navigation";
 import rnTextSize, { TSMeasureParams, TSMeasureResult } from "react-native-text-size"
+import style from "glamorous-native";
 
 import Conf from "../../../ode-framework-conf";
 
@@ -27,6 +26,12 @@ import HtmlToText from "../../infra/htmlConverter/text";
 
 export interface INotificationItemProps extends INotification {
   onPress: () => void;
+}
+
+interface INotificationItemState {
+  isExtended: boolean;
+  longText: boolean;
+  measuredText: boolean;
 }
 
 const getAppInfos: {
@@ -59,12 +64,9 @@ const getAppInfos: {
   "WORKSPACE": { name: "Espace documentaire", icon: "folder", color: CommonStyles.themeOpenEnt.red },
 }
 
-
 export class NotificationItem extends React.PureComponent<
-INotificationItemProps,
-{
-
-}
+  INotificationItemProps,
+  INotificationItemState
 > {
   state= {
     isExtended: false,
@@ -72,15 +74,13 @@ INotificationItemProps,
     measuredText: false,
   }
 
-// Render
-
   public measureText = async (evt: LayoutEvent) => {
     this.setState({ measuredText: true })
     if (evt.nativeEvent.lines.length >= 2) {
       const layout = evt.nativeEvent.lines[1];
       const text = layout.text
       const {fontFamily, fontSize, fontWeight } = newContentStyle
-      const result:TSMeasureResult = await rnTextSize.measure({
+      const result: TSMeasureResult = await rnTextSize.measure({
         text,
         fontFamily,
         fontSize,
@@ -92,34 +92,26 @@ INotificationItemProps,
     }
   }
 
-  // public normalizeUrl = (url:string)=>{
-  //   try{
-  //     return url.replace(/([^:]\/)\/+/g, "$1");
-  //   }catch(e){
-  //     return url;
-  //   }
-  // }
+  public goToUserProfile(uri?: string) {
+    if (!Conf.currentPlatform || !uri) {
+      throw new Error("Must have a platform selected and a uri to redirect the user");
+    }
+    const url = `${(Conf.currentPlatform as any).url}${uri}`
+    Linking.canOpenURL(url).then(supported => {
+      if (supported) {
+        Linking.openURL(url);
+      } else {
+        console.warn("[notification] Don't know how to open URI: ", url);
+      }
+    });
+  }
 
-  // public redirectToUser(uri: string) {
-  //   if (!Conf.currentPlatform) {
-  //     throw new Error("Must have a platform selected to redirect the user");
-  //   }
-  //   //const web = "https://recette.opendigitaleducation.com/userbook/annuaire#/b92e3d37-16b0-4ed9-b4c3-992091687132#Teacher"
-  //   //const test = "/userbook/annuaire#/b92e3d37-16b0-4ed9-b4c3-992091687132#Teacher"
-  //   const url = `${(Conf.currentPlatform as any).url}${uri}`
-  //   Linking.canOpenURL(uri).then(supported => {
-  //     if (supported) {
-  //       Linking.openURL(uri);
-  //     } else {
-  //       console.warn("[notification] Don't know how to open URI: ", url);
-  //     }
-  //   });
-  // }
+  // Render
 
   public render() {
     const { date, message, params, sender, type, onPress } = this.props;
     const { isExtended, longText, measuredText } =this.state;
-    const formattedContent = HtmlToText(message, !isExtended).render.replace(params.username, "").trim();
+    const formattedContent = HtmlToText(message, !isExtended).render.replace(params.username, "").replace("\n ", "\n").trim();
     const Author = style.text(
       {
         color: CommonStyles.textColor,
@@ -133,12 +125,17 @@ INotificationItemProps,
 
     return (
       <NewListItem>
-        <NewLeftPanel disabled={params && !params.username} onPress={() => this.redirectToUser(params.uri)}>
-          <BadgeAvatar
-            avatars={[sender || require("../../../assets/images/system-avatar.png")]}
-            badgeContent={getAppInfos[type] && getAppInfos[type].icon}
-            badgeColor={getAppInfos[type] && getAppInfos[type].color}
-          />
+        <NewLeftPanel
+          disabled={params && !params.username}
+          //onPress={() => this.goToUserProfile(params.uri || params.profilUri)}
+        >
+          <View style={{ position: "absolute" }}>
+            <BadgeAvatar
+              avatars={[sender || require("../../../assets/images/system-avatar.png")]}
+              badgeContent={getAppInfos[type] && getAppInfos[type].icon}
+              badgeColor={getAppInfos[type] && getAppInfos[type].color}
+            />
+          </View>
         </NewLeftPanel>
         <NewCenterPanel onPress={() => onPress()}>
           <Author numberOfLines={1}>

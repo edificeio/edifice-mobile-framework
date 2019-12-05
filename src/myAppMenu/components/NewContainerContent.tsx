@@ -20,7 +20,8 @@ export const NewListItem = style.view(
 
 export const NewLeftPanel = style(TouchableOpacity)({
   justifyContent: "center",
-  width: 50
+  width: 50,
+  height: 66,
 });
 
 export const NewCenterPanel = style(TouchableOpacity)({

@@ -101,8 +101,8 @@
   "notif-pref-news": "Newsfeed shared",
   "notif-pref-schoolbook": "New message in your schoolbook",
   "notif-pref-workspace": "Workspace update",
-  
-  
+  "notifications-emptyScreenTitle": "No notification in sight.",
+  "Notifications": "All my notifications",
   "On": "in",
   "owner": "Personnal Documents",
   "owner-emptyScreenText": "Bienvenue dans votre espace documentaire, le cloud qui vous permet de stocker en ligne toutes vos ressources.",
