@@ -72,9 +72,6 @@ export let CurrentMainNavigationContainerComponent: NavigationContainerComponent
 interface MainNavigatorHOCProps { apps: string[]; MainNavigationContainer: any, notification: Notification; dispatch: any, refMainNavigationContainerAction: any };
 
 class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
-  public shouldComponentUpdate(nextProps: Partial<MainNavigatorHOCProps>) {
-    return (this.props.notification !== nextProps.notification);
-  }
 
   public async componentDidMount() {
     await this.componentDidUpdate();
