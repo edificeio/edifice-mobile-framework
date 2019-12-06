@@ -106,8 +106,6 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
     fetching: false
   }
 
-  // Render
-
   getDerivedStateFromProps(nextProps: any, prevState: any) {
     if(nextProps.isFetching !== prevState.fetching){
       return { fetching: nextProps.isFetching};
@@ -118,9 +116,11 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
   componentDidUpdate(prevProps: any) {
     const { isFetching } = this.props
     if(prevProps.isFetching !== isFetching){
-      this.setState({fetching: isFetching});
+      this.setState({ fetching: isFetching });
     }
   }
+
+  // Render
 
   public render() {
     const pageContent =

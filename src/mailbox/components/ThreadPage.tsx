@@ -74,15 +74,17 @@ export type IThreadPageProps = IThreadPageDataProps &
   IThreadPageOtherProps;
 
 export interface IThreadPageState {
-  showCarousel: boolean;
-  images: Array<{ src: string; alt: string }>;
   imageCurrent: number;
+  images: Array<{ src: string; alt: string }>;
+  showCarousel: boolean;
+  fetching: boolean;
 }
 
 export const defaultState: IThreadPageState = {
   imageCurrent: 0,
   images: [],
-  showCarousel: false
+  showCarousel: false,
+  fetching: false,
 };
 
 // Main component ---------------------------------------------------------------------------------
@@ -98,6 +100,20 @@ export class ThreadPage extends React.PureComponent<
 
   public todaySeparatorAlreadyDisplayed: boolean = false;
   public onEndReachedCalledDuringMomentum = true;
+
+  getDerivedStateFromProps(nextProps: any, prevState: any) {
+    if(nextProps.isFetching !== prevState.fetching){
+      return { fetching: nextProps.isFetching};
+   }
+   else return null;
+  }
+
+  componentDidUpdate(prevProps: any) {
+    const { isFetching } = this.props
+    if(prevProps.isFetching !== isFetching){
+      this.setState({ fetching: isFetching });
+    }
+  }
 
   // Render
 
@@ -123,15 +139,14 @@ export class ThreadPage extends React.PureComponent<
 
   public renderMessageList() {
     const {
-      isFetching,
       isFetchingFirst,
-      isRefreshing,
       onGetNewer,
       onGetOlder,
       threadInfo,
       messages,
       headerHeight
     } = this.props;
+    const { fetching } = this.state;
     //TODO get focus from thread input + send action when press (should threadinputreceiver in threadinput?)
     return (
       <KeyboardAvoidingView
@@ -149,8 +164,11 @@ export class ThreadPage extends React.PureComponent<
         <FlatList
           refreshControl={
             <RefreshControl
-              refreshing={isRefreshing}
-              onRefresh={() => onGetNewer(threadInfo.id)}
+              refreshing={fetching}
+              onRefresh={() => {
+                this.setState({ fetching: true })
+                onGetNewer(threadInfo.id)
+              }}
               style={{ transform: [{ scaleY: -1 }] }}
             />
           }
