@@ -53,10 +53,6 @@ class AppStoreUnconnected extends React.Component<
   private notificationOpenedListener?: () => void;
   private onTokenRefreshListener?: () => void;
 
-  public state = {
-    appState: null
-  };
-
   public render() {
     return (
       <Provider store={this.props.store}>
@@ -75,7 +71,6 @@ class AppStoreUnconnected extends React.Component<
     // console.log("APP will mount");
     await Tracking.init();
     RNLocalize.addEventListener("change", this.handleLocalizationChange);
-    AppState.addEventListener("change", this.handleAppStateChange);
   }
 
   public async componentDidMount() {
@@ -144,7 +139,6 @@ class AppStoreUnconnected extends React.Component<
 
   public componentWillUnmount() {
     RNLocalize.removeEventListener("change", this.handleLocalizationChange);
-    AppState.removeEventListener("change", this.handleAppStateChange);
     if (this.notificationOpenedListener) this.notificationOpenedListener();
     if (this.onTokenRefreshListener) this.onTokenRefreshListener();
   }
@@ -152,10 +146,6 @@ class AppStoreUnconnected extends React.Component<
   private handleLocalizationChange = () => {
     initI18n()
     this.forceUpdate();
-  };
-
-  private handleAppStateChange = (nextAppState: string) => {
-    this.setState({ appState: nextAppState });
   };
 
   private static initialNotifRouted: boolean = false;

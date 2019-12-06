@@ -2,6 +2,7 @@ import * as React from "react";
 
 import {RootNavigationContainer} from "./navigation/RootNavigator";
 import {withLinkingAppWrapper} from "./infra/withLinkingAppWrapper";
+import {connect} from "react-redux";
 
 export let rootNavigatorRef = null;
 
