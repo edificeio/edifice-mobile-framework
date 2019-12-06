@@ -21,6 +21,6 @@ class _AppScreen extends React.Component<any> {
   }
 }
 
-const AppScreen = withLinkingAppWrapper(_AppScreen);
+const AppScreen = connect()(withLinkingAppWrapper(_AppScreen));
 
 export default AppScreen;
