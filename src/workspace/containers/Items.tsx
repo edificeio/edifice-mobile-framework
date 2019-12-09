@@ -17,10 +17,6 @@ import { getEmptyScreen } from "../utils/empty";
 import { PageContainer } from "../../ui/ContainerContent";
 import { Loading } from "../../ui";
 import { removeAccents } from "../../utils/string";
-import { uploadAction } from "../actions/upload";
-import pickFile from "../../infra/actions/pickFile";
-import { withNavigationUploadWrapper } from "../utils/withNavigationUploadWrapper";
-import { DocumentPickerResponse } from "react-native-document-picker";
 
 const styles = StyleSheet.create({
   separator: {
@@ -36,7 +32,6 @@ const HeaderBackAction = ({ navigation, style }: { navigation: NavigationScreenP
 
 export class Items extends React.PureComponent<IItemsProps, { isFocused: boolean }> {
   focusListener!: NavigationEventSubscription;
-  blurListener!: NavigationEventSubscription;
 
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
     const headerRight =
@@ -163,6 +158,8 @@ const mapStateToProps = (state: any, props: any) => {
 
 const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators({ listAction, uploadAction }, dispatch);
+  return bindActionCreators({ listAction}, dispatch);
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withNavigationUploadWrapper(Items));
+export default connect(mapStateToProps, mapDispatchToProps)(withNavigationWrapper(withUploadWrapper(Items)));

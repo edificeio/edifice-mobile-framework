@@ -2,26 +2,16 @@ import * as React from "react";
 
 import {RootNavigationContainer} from "./navigation/RootNavigator";
 import {withLinkingAppWrapper} from "./infra/withLinkingAppWrapper";
-import {connect} from "react-redux";
 
-export let rootNavigatorRef = null;
+export let rootNavigatorRef: any = null;
 
-class _AppScreen extends React.Component<any> {
-  public navigator: any;
-  public static router = RootNavigationContainer.router;
-
-  public async componentDidMount() {
-    rootNavigatorRef = this.navigator;
-  }
-
-  public setNavigator(nav: any) {
-    this.navigator = nav;
-  }
-  public render() {
-    return <RootNavigationContainer ref={nav => this.setNavigator(nav)} />;
-  }
+function _AppScreen() {
+  return (
+    <RootNavigationContainer ref={nav => rootNavigatorRef = nav} />
+  )
 }
 
-const AppScreen = connect()(withLinkingAppWrapper(_AppScreen));
+
+const AppScreen = withLinkingAppWrapper(_AppScreen);
 
 export default AppScreen;

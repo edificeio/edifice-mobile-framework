@@ -1,10 +1,10 @@
 import * as React from "react"
 import RNFileShareIntent from 'react-native-file-share-intent';
-import {Platform} from "react-native";
+import {AppState, AppStateStatus, Platform} from "react-native";
 import {nainNavNavigate} from "../navigation/helpers/navHelper";
 import {FilterId} from "../workspace/types/filters";
 import I18n from "i18n-js";
-import {connect} from "react-redux";
+import {connect, ConnectedComponent} from "react-redux";
 
 export interface IProps {
   loggedIn: any,
@@ -15,31 +15,52 @@ export interface IProps {
 function _withLinkingAppWrapper(WrappedComponent: React.Component): React.Component {
   class HOC extends React.Component<IProps, { appState: string }> {
     contentUri: any = null;
-    redirected: boolean = false;
-
     state = {
-      appState: "active",
-    }
+      appState: 'active',
+    };
 
     public componentDidMount() {
+      AppState.addEventListener('change', this._handleAppStateChange);
+      this._checkContentUri();
+    }
 
-      RNFileShareIntent && RNFileShareIntent.getFilePath((contentUri: any) => {
-        if (!this.redirected && contentUri) {
-          this.contentUri = contentUri;
-          this.setState({appState: "linking"});
-        }
-      });
+    public componentWillUnmount() {
+      AppState.removeEventListener('change', this._handleAppStateChange);
     }
 
     public componentDidUpdate() {
-      this._checkAndHandle();
+      this._handleContentUri();
     }
 
-    private _checkAndHandle = async () => {
+    _handleAppStateChange = (nextAppState: AppStateStatus) => {
+      if (nextAppState === 'active') {
+        this._checkContentUri();
+      }
+      if (nextAppState.match(/inactive|background/)) {
+        this._clearContentUri();
+      }
+    };
+
+    _checkContentUri = () => {
       const {loggedIn, refMainNavigationContainer} = this.props;
 
-      if (!this.redirected && loggedIn && refMainNavigationContainer && this.contentUri) {
-        this.redirected = true;
+      if (!this.contentUri && RNFileShareIntent) {
+        RNFileShareIntent.getFilePath((contentUri: any) => {
+          if (!this.contentUri && contentUri) {
+            this.contentUri = contentUri;
+            this.setState({appState: 'active'}); // permit to have componentDidUpdate
+          }
+        })
+      }
+    }
+
+    _handleContentUri = () => {
+      const {loggedIn, refMainNavigationContainer} = this.props;
+
+      if (this.state.appState === 'active' && loggedIn && refMainNavigationContainer && this.contentUri) {
+        const contentUri = this.contentUri;
+
+        this.contentUri = null;
         nainNavNavigate(
           "Workspace",
           {
@@ -52,11 +73,19 @@ function _withLinkingAppWrapper(WrappedComponent: React.Component): React.Compon
               parentId: "owner",
               filter: FilterId.owner,
               title: I18n.t('owner'),
-              contentUri: this.contentUri,
+              contentUri: contentUri,
             }
-          })
+          });
       }
     }
+
+    _clearContentUri = () => {
+      if (Platform.OS === 'android') {
+        RNFileShareIntent.clearFilePath();
+      }
+      this.contentUri = null;
+      this.setState({appState: 'inactive'}); // permit to have componentDidUpdate
+    };
 
     render() {
       return <WrappedComponent {...this.props} />;
@@ -71,7 +100,7 @@ const mapStateToProps = (state: any, props: any) => ({
   refMainNavigationContainer: state.refMainNavigationReducer.refMainNavigationContainer,
 });
 
-export const withLinkingAppWrapper = (WrappedComponent: React.Component<any>) => {
+export const withLinkingAppWrapper = (WrappedComponent: React.Component): ConnectedComponent => {
   return connect(mapStateToProps)(_withLinkingAppWrapper(WrappedComponent));
 }
 
