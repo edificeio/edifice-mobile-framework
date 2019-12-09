@@ -60,7 +60,7 @@ const getIcon = ( id: string | null, isFolder: boolean, pName: string | null, co
   if (isFolder) {
     switch (filters(id)) {
       case FilterId.owner:
-        return "folder1";
+        return "folder11";
       case FilterId.shared:
         return "shared_files";
       case FilterId.protected:
@@ -68,7 +68,7 @@ const getIcon = ( id: string | null, isFolder: boolean, pName: string | null, co
       case FilterId.trash:
         return "deleted_files";
       default:
-        return "folder1"
+        return "folder11"
     }
   }
 
