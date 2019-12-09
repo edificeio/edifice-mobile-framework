@@ -32,7 +32,7 @@ export function uploadAction(uriContent: ContentUri[] | ContentUri) {
     try {
       const content = Array.isArray(uriContent) ? uriContent : [uriContent];
       dispatch(uploadRequested());
-      uploadDocument(content, (response: any) => {
+      uploadDocument(dispatch, content, (response: any) => {
         if (response.data) {
           const data = JSON.parse(response.data);
           const dataArray = Array.isArray(data) ? data : [data];

@@ -7,6 +7,7 @@ import { getReducersFromModuleDefinitions } from "./infra/moduleTool";
 import notifier from "./infra/notifier/reducer";
 import connectionTracker from "./infra/reducers/connectionTracker";
 import ui from "./infra/reducers/ui";
+import progress from "./infra/reducers/progress";
 import timeline from "./timeline/reducer";
 import { IUserInfoState } from "./user/reducers/info";
 import { IUserAuthState } from "./user/reducers/auth";
@@ -19,6 +20,7 @@ const reducers = {
   notifier,
   refMainNavigationReducer,
   ui,
+  progress,
   ...getReducersFromModuleDefinitions(moduleDefinitions)
 };
 

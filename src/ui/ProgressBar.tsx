@@ -1,67 +1,31 @@
 import * as React from "react";
 import { View } from "react-native";
 import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
 import styles, { deviceWidth } from "../styles";
 
-function isLoading(synced) {
-  if (synced === undefined) {
-    return false;
-  }
-  return synced.reduce((acc, elemIsSync) => acc || !elemIsSync, false);
-}
-
-interface ProgressBarState {
-  width?: number;
-}
 
 export interface ProgressBarProps {
-  synced: boolean[];
+  value: number;
 }
 
-export class ProgressBar extends React.Component<
-  ProgressBarProps,
-  ProgressBarState
-> {
-  public state: ProgressBarState = {
-    width: 0
-  };
-  public timerID = null;
-
-  public componentWillReceiveProps(newProps) {
-    if (isLoading(newProps.synced)) {
-      this.timerID = setInterval(
-        () =>
-          this.setState({
-            width: (this.state.width + deviceWidth / 10) % deviceWidth
-          }),
-        400
-      );
-    }
-
-    if (!isLoading(newProps.synced)) {
-      clearInterval(this.timerID);
-    }
-  }
+export class ProgressBar extends React.Component<ProgressBarProps> {
 
   public render() {
-    const { synced } = this.props;
+    const { value } = this.props;
+    const width = value ? (value * deviceWidth) / 100 : 0
 
-    return isLoading(synced) ? (
-      <View style={[styles.loading, { width: this.state.width }]} />
+    return value > 0 && value < 100 ? (
+      <View style={[styles.loading, { width}]} />
     ) : (
       <View />
     );
   }
 }
 
-const mapStateToProps = state => ({
-  synced: [state.user.auth.synced]
+const mapStateToProps = (state:any) => ({
+  value: [state.progress.value]
 });
 
-const dispatchAndMapActions = dispatch => bindActionCreators({}, dispatch);
-
 export default connect(
-  mapStateToProps,
-  dispatchAndMapActions
+  mapStateToProps
 )(ProgressBar);

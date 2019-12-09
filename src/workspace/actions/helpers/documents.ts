@@ -10,6 +10,7 @@ import { IItems, IFiltersParameters, IFile, FilterId, IItem, ContentUri } from "
 import { filters } from "../../types/filters/helpers/filters";
 import Conf from "../../../../ode-framework-conf";
 import { OAuth2RessourceOwnerPasswordClient } from "../../../infra/oauth";
+import {progressAction} from "../../../infra/actions/progress";
 
 // TYPE -------------------------------------------------------------------------------------------
 
@@ -89,7 +90,7 @@ export function getDocuments(parameters: IFiltersParameters): Promise<IItems<IIt
 
 // UPLOAD --------------------------------------------------------------------------------------
 
-export const uploadDocument = (content: ContentUri[], onEnd: any) => {
+export const uploadDocument = (dispatch: any, content: ContentUri[], onEnd: any) => {
   const signedHeaders = OAuth2RessourceOwnerPasswordClient.connection.sign({}).headers;
   const headers = { ...signedHeaders, "content-Type": "multipart/form-data" };
   const body = content.reduce(
@@ -106,6 +107,10 @@ export const uploadDocument = (content: ContentUri[], onEnd: any) => {
     headers,
     body
   )
+    .uploadProgress({ interval: 100 },(written,total)=>{
+      if (total > 1000000)
+      dispatch(progressAction((written/total)*100))
+    })
     .then(response => {
       onEnd(response);
     })

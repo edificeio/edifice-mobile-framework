@@ -35,7 +35,7 @@ import AppScreen from "./AppScreen";
 import { CommonStyles } from './styles/common/styles';
 import SplashScreen from "react-native-splash-screen";
 import { initI18n } from "./infra/i18n";
-import {CurrentMainNavigationContainerComponent} from "./navigation/RootNavigator";
+import {ProgressBar} from "./ui";
 
 // Disable Yellow Box on release builds.
 if (!__DEV__) {
@@ -47,7 +47,7 @@ if (!__DEV__) {
 initI18n();
 
 class AppStoreUnconnected extends React.Component<
-  { currentPlatformId: string; store: any },
+  { currentPlatformId: string; progressValue: number; store: any },
   {}
 > {
   private notificationOpenedListener?: () => void;
@@ -61,6 +61,7 @@ class AppStoreUnconnected extends React.Component<
             backgroundColor={CommonStyles.statusBarColor}
             barStyle="light-content"
           />
+          <ProgressBar value={this.props.progressValue}/>
           <AppScreen />
         </View>
       </Provider>
@@ -181,7 +182,8 @@ function connectWithStore(store: any, WrappedComponent:any , ...args: [any?, any
 const mapStateToProps = (state: any, props: any) => ({
   currentPlatformId: state.user.auth.platformId,
   loggedIn: state.user.auth.loggedIn,
-  store
+  store,
+  progressValue: state.progress.value
 });
 
 export const AppStore = connectWithStore(
