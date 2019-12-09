@@ -17,6 +17,12 @@ import { getEmptyScreen } from "../utils/empty";
 import { PageContainer } from "../../ui/ContainerContent";
 import { Loading } from "../../ui";
 import { removeAccents } from "../../utils/string";
+import { uploadAction } from "../actions/upload";
+import pickFile from "../../infra/actions/pickFile";
+import { withNavigationUploadWrapper } from "../utils/withNavigationUploadWrapper";
+import {withNavigationWrapper} from "../utils/withNavigationWrapper";
+import {withUploadWrapper} from "../utils/withUploadWrapper";
+
 
 const styles = StyleSheet.create({
   separator: {
@@ -158,8 +164,6 @@ const mapStateToProps = (state: any, props: any) => {
 
 const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators({ listAction, uploadAction }, dispatch);
-  return bindActionCreators({ listAction}, dispatch);
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withNavigationUploadWrapper(Items));
 export default connect(mapStateToProps, mapDispatchToProps)(withNavigationWrapper(withUploadWrapper(Items)));
