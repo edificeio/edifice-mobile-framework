@@ -76,13 +76,13 @@ class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
     return (this.props.MainNavigationContainer !== nextProps.MainNavigationContainer || this.props.notification !== nextProps.notification);
   }
 
-  public async componentDidMount() {
-    await this.componentDidUpdate();
+  public componentDidMount() {
+    this.componentDidUpdate();
   }
 
   private static lastOpenNotifData: string;
 
-  public async componentDidUpdate() {
+  public componentDidUpdate() {
     // this.props.notification && console.log("CHECK routing notif data");
     if (
       this.props.notification &&
@@ -100,6 +100,9 @@ class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
   public render()
     {
       const { MainNavigationContainer, ...rest} = this.props;
+
+      if (!MainNavigationContainer)
+        return null;
 
       return (
         <MainNavigationContainer
@@ -141,7 +144,7 @@ class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
 }
 
 const mapDispatchToProps = (dispatch: any) => {
-  return bindActionCreators({ refMainNavigationContainerAction }, dispatch);
+  return bindActionCreators({ dispatch, refMainNavigationContainerAction }, dispatch);
 };
 
 const mapStateToProps = ({ user }) => ({

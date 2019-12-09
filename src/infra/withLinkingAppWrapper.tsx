@@ -44,7 +44,7 @@ function _withLinkingAppWrapper(WrappedComponent: React.Component): React.Compon
     _checkContentUri = () => {
       const {loggedIn, refMainNavigationContainer} = this.props;
 
-      if (!this.contentUri && RNFileShareIntent) {
+      if (!this.contentUri && RNFileShareIntent && Platform.OS === 'android') {
         RNFileShareIntent.getFilePath((contentUri: any) => {
           if (!this.contentUri && contentUri) {
             this.contentUri = contentUri;
