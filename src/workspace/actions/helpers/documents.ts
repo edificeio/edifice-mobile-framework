@@ -10,7 +10,7 @@ import { IItems, IFiltersParameters, IFile, FilterId, IItem, ContentUri } from "
 import { filters } from "../../types/filters/helpers/filters";
 import Conf from "../../../../ode-framework-conf";
 import { OAuth2RessourceOwnerPasswordClient } from "../../../infra/oauth";
-import {progressAction} from "../../../infra/actions/progress";
+import {progressAction, progressEndAction} from "../../../infra/actions/progress";
 
 // TYPE -------------------------------------------------------------------------------------------
 
@@ -112,6 +112,7 @@ export const uploadDocument = (dispatch: any, content: ContentUri[], onEnd: any)
       dispatch(progressAction((written/total)*100))
     })
     .then(response => {
+      dispatch(progressEndAction());
       onEnd(response);
     })
     .catch(err => {
