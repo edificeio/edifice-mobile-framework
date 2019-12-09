@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
 		textDecorationLine: "underline",
 	},
 	loading: {
-		backgroundColor: "#ff5000",
+		backgroundColor: "#30ff30",
 		height: 3,
 	},
 	marginTop: {

@@ -1,4 +1,4 @@
-import {ACTION_TYPE_PROGRESS, ACTION_TYPE_PROGRESS_INIT} from "../actions/progress";
+import {ACTION_TYPE_PROGRESS, ACTION_TYPE_PROGRESS_END, ACTION_TYPE_PROGRESS_INIT} from "../actions/progress";
 
 interface UiState{
   value: number
@@ -9,7 +9,7 @@ const initialState = {
 }
 
 export default (state: UiState = initialState, action:any): UiState => {
-  if(action.type === ACTION_TYPE_PROGRESS_INIT){
+  if(action.type === ACTION_TYPE_PROGRESS_INIT || action.type === ACTION_TYPE_PROGRESS_END ){
     return {
       ...state,
       value: 0
