@@ -13,19 +13,15 @@ export interface INotifyProps {
 
 export function _withNavigationWrapper(WrappedComponent: React.Component): React.Component {
   class HOC extends React.Component<INotifyProps> {
-    oldChildRoute: any = null;
 
-    public componentDidMount()  {
-      this.componentDidUpdate();
-    }
-
-    public componentDidUpdate() {
+    public componentDidUpdate(): void {
       const {navigation} = this.props;
       const childRoute: any = navigation.getParam("childRoute");
       const childParams: any = navigation.getParam("childParams");
 
-      if (childRoute && childParams && this.oldChildRoute !== childRoute) {
-        this.oldChildRoute = childRoute;
+      if (childRoute && childParams) {
+        navigation.setParams({"childRoute": undefined});
+        navigation.setParams({"childParams": undefined});
         navigation.push(
           childRoute,
           childParams);
@@ -47,7 +43,7 @@ const mapStateToProps = (state: any, props: any) => ({
 });
 
 const mapDispatchToProps = (dispatch: any) => {
-  return bindActionCreators({ listAction, uploadAction }, dispatch);
+  return bindActionCreators({listAction, uploadAction}, dispatch);
 };
 
 export const withNavigationWrapper = (WrappedComponent: React.Component): ConnectedComponent<any, any> => {

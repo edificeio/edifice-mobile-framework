@@ -15,6 +15,7 @@ export interface IProps {
 function _withLinkingAppWrapper(WrappedComponent: React.Component): React.Component {
   class HOC extends React.Component<IProps, { appState: string }> {
     contentUri: any = null;
+    redirected: boolean = false;
     state = {
       appState: 'active',
     };
@@ -57,10 +58,8 @@ function _withLinkingAppWrapper(WrappedComponent: React.Component): React.Compon
     _handleContentUri = () => {
       const {loggedIn, refMainNavigationContainer} = this.props;
 
-      if (this.state.appState === 'active' && loggedIn && refMainNavigationContainer && this.contentUri) {
-        const contentUri = this.contentUri;
-
-        this.contentUri = null;
+      if (this.state.appState === 'active' && loggedIn && refMainNavigationContainer && this.contentUri && !this.redirected) {
+        this.redirected = true;
         nainNavNavigate(
           "Workspace",
           {
@@ -73,7 +72,7 @@ function _withLinkingAppWrapper(WrappedComponent: React.Component): React.Compon
               parentId: "owner",
               filter: FilterId.owner,
               title: I18n.t('owner'),
-              contentUri: contentUri,
+              contentUri: this.contentUri,
             }
           });
       }
@@ -84,6 +83,7 @@ function _withLinkingAppWrapper(WrappedComponent: React.Component): React.Compon
         RNFileShareIntent.clearFilePath();
       }
       this.contentUri = null;
+      this.redirected = false;
       this.setState({appState: 'inactive'}); // permit to have componentDidUpdate
     };
 

@@ -16,14 +16,22 @@ export interface INotifyProps {
 
 export function _withUploadWrapper(WrappedComponent: React.Component): React.Component {
   class HOC extends React.Component<INotifyProps> {
-    render() {
+    contentUri = [{
+      uri: ""
+    }];
+
+    componentDidUpdate(): void {
       const {isFetching, navigation, uploadAction} = this.props;
       const contentUri: any = navigation.getParam("contentUri");
 
-      if (contentUri && !isFetching) {
+      if (contentUri && contentUri[0].uri !== this.contentUri[0].uri && !isFetching) {
+        this.contentUri = contentUri;
         navigation.setParams({"contentUri": undefined});
         uploadAction(contentUri);
       }
+    }
+
+    render() {
       return <WrappedComponent {...this.props} />;
     }
   }
