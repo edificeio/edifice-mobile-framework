@@ -20,7 +20,8 @@ export function createThread(pickedUsers) {
       date: Date.now(),
       displayNames: pickedUsers.map((u: any) => [
         u.id,
-        u.displayName || u.name
+        u.displayName || u.name,
+        u.isGroup
       ]).concat([[getSessionInfo().userId, getSessionInfo().displayName]]),
       from: getSessionInfo().userId,
       id: "temp",
