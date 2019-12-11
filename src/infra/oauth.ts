@@ -115,8 +115,8 @@ export class OAuth2RessourceOwnerPasswordClient {
    * To use with the standard fetch API, call `fetch(url, sign(init))`.
    */
   public sign(requestObject) {
-    if (!this.token || !this.token.access_token) {
-      console.warn("cant't sign", requestObject);
+    if (!this.hasToken) {
+      console.warn("can't sign", requestObject);
       throw new Error("EAUTH: Unable to sign without access token.");
     }
 
@@ -253,6 +253,13 @@ export class OAuth2RessourceOwnerPasswordClient {
       console.warn("Refreshing token failed: ", err);
       throw err;
     }
+  }
+
+  /**
+   * See if access token exists
+   */
+  get hasToken() {
+    return this.token && this.token.access_token;
   }
 
   /**

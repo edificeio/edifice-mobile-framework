@@ -225,6 +225,8 @@ export function login(
             errmsg: "auth-notPremium",
             type: actionTypeLoginError
           });
+          // End user session since no app rights (once regained, will have to login again)
+          dispatch(endSession());
           break;
         case OAuthError.NETWORK_ERROR:
           dispatch({
@@ -243,31 +245,34 @@ export function login(
   };
 }
 
+function endSession() {
+  return async (dispatch, getState) => {
+      // Unregister the device token from the backend
+      await userService.unregisterFCMToken();
+      // Erase stored oauth2 token and cache information
+      await OAuth2RessourceOwnerPasswordClient.connection.eraseToken();
+      // Validate log out
+      dispatch({ type: actionTypeLoggedOut });
+  }
+}
+
 export function logout() {
   return async (dispatch, getState) => {
     try {
       if (!Conf.currentPlatform) throw new Error("must specify a platform");
-      const login = getState().user.auth.login;
 
       // === 0: Tracking reporting, only on manual logout
-
       Tracking.logEvent("logout", {
         platform: Conf.currentPlatform.url
       });
 
       clearTimeline(dispatch)(); // ToDo: this is ugly. Timeline should be cleared when logout.
 
-      // === 1: Unregister the device token from the backend
-      await userService.unregisterFCMToken();
-      // console.log("Fcm Token (delete) :", token, deleteTokenResponse);
-      // === 2: Erase stored oauth2 token and cache information
-      await OAuth2RessourceOwnerPasswordClient.connection.eraseToken();
+      // // === 1: End user session
+      await dispatch(endSession())
       await clearRequestsCache();
 
-      // === 3: Validate log out
-      dispatch({ type: actionTypeLoggedOut });
-
-      // === 4: Nav back on the login screen
+      // === 2: Nav back on the login screen
       navigate("LoginHome");
     } catch (err) {
       navigate("LoginHome");
