@@ -1,4 +1,4 @@
-import { nainNavNavigate } from "../navigation/helpers/navHelper";
+import { mainNavNavigate } from "../navigation/helpers/navHelper";
 import { fetchHomeworkDiaryList } from "./actions/diaryList";
 import homeworkDiarySelected from "./actions/selectedDiary";
 import { NotificationHandlerFactory } from "../infra/pushNotification";
@@ -20,7 +20,7 @@ const homeworksNotificationHandlerFactory:NotificationHandlerFactory<any,any,any
   dispatch(homeworkDiarySelected(diaryId));
 
   // console.log("go to homework");
-  nainNavNavigate("Homework");
+  mainNavNavigate("Homework");
 
   /*
   const split = notificationData.resourceUri.split("/");
@@ -45,10 +45,10 @@ const homeworksNotificationHandlerFactory:NotificationHandlerFactory<any,any,any
     await dispatch(
       await fetchConversationThreadResetMessages(message.thread_id)
     );
-    nainNavNavigate("thread");
+    mainNavNavigate("thread");
   } catch (e) {
     console.warn(e);
-    nainNavNavigate("listThreads");
+    mainNavNavigate("listThreads");
   }
   */
  return true;

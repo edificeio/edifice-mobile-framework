@@ -1,5 +1,5 @@
 import Conf from "../../ode-framework-conf";
-import {nainNavNavigate} from "../navigation/helpers/navHelper";
+import {mainNavNavigate} from "../navigation/helpers/navHelper";
 import {NotificationHandlerFactory} from "../infra/pushNotification";
 import {FilterId, IFile} from "./types";
 import I18n from "i18n-js";
@@ -18,7 +18,7 @@ const notifHandlerFactory :NotificationHandlerFactory<any,any,any> = dispatch =>
   const isFolder = notificationData.resourceUri.indexOf( '/folder/') > 0;
 
   if (isFolder) {
-    nainNavNavigate(
+    mainNavNavigate(
       "Workspace",
       {
         filter: FilterId.root,
@@ -40,7 +40,7 @@ const notifHandlerFactory :NotificationHandlerFactory<any,any,any> = dispatch =>
       size: 0,
       url: `/workspace/document/${parentId}`
     };
-    nainNavNavigate(
+    mainNavNavigate(
       "Workspace",
       {
         filter: FilterId.root,

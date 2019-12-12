@@ -158,7 +158,7 @@ class ThreadListPageContainer extends React.PureComponent<
   }
 
   public reloadList() {
-    if (this.props.isFetching) return;
+    if (this.props.isFetching || !this.props.navigation.isFocused()) return;
     this.props.dispatch(resetConversationThreadList());
   }
 

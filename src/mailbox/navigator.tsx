@@ -8,11 +8,9 @@ export default createStackNavigator({
   listThreads: {
     screen: ThreadListPage
   },
-
   thread: {
     screen: ThreadPage
   },
-
   newThread: {
     screen: NewThreadPage
   },

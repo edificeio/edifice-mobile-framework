@@ -8,7 +8,7 @@ import { asyncActionTypes } from "../../infra/redux/async";
 import Conf from "../../../ode-framework-conf";
 import { getSessionInfo } from "../../AppStore";
 import Tracking from "../../tracking/TrackingManager";
-import { nainNavNavigate } from "../../navigation/helpers/navHelper";
+import { mainNavNavigate } from "../../navigation/helpers/navHelper";
 import { notifierShowAction } from "../../infra/notifier/actions";
 import { ThunkDispatch } from "redux-thunk";
 
@@ -167,7 +167,7 @@ export function changePasswordAction(model: IChangePasswordModel) {
 
       // === 5 - change password finished successfully
       dispatch(changePasswordSubmitReceivedAction());
-      nainNavNavigate("MyProfile");
+      mainNavNavigate("MyProfile");
       dispatch(notifierShowAction({
         text: I18n.t("PasswordChangeSuccess"),
         icon: 'checked',
@@ -183,6 +183,6 @@ export function changePasswordAction(model: IChangePasswordModel) {
 
 export function cancelChangePasswordAction() {
   return () => {
-    nainNavNavigate("MyProfile");
+    mainNavNavigate("MyProfile");
   };
 }
