@@ -37,6 +37,7 @@
   "connector-connectFailed": "Impossible d'ouvrir le lien !",
   "conversation-chatPlaceholder": "Ecrivez un message...",
   "conversation-deleteThread": "supprimer cette conversation ?",
+  "conversation-emptyMessage": "Message vide",
   "conversation-emptyScreenText": "Avec la Messagerie, commencez dès maintenant à communiquer avec les membres de votre réseau.",
   "conversation-emptyScreenTitle": "Pas l’ombre d’un message...",
   "conversation-failedSent": "Message non reçu",

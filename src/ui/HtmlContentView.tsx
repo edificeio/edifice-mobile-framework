@@ -19,6 +19,7 @@ export interface IHtmlContentViewProps extends ViewProps {
   navigation?: any;
   html?: string;
   source?: string;
+  emptyMessage?: string | JSX.Element;
   opts?: IHtmlParserRNOptions;
   loadingComp?: JSX.Element;
   getContentFromResource?: (responseJson: any) => string;
@@ -90,15 +91,26 @@ export class HtmlContentView extends React.PureComponent<
   }
 
   public render() {
-    if (this.state.error)
+    const { error, jsx } = this.state
+    const { loadingComp, emptyMessage} = this.props
+    const hasContent = jsx && jsx.props.children.some((child: any) => child != undefined && child != null)
+    const loadingComponent = loadingComp || <Loading />;
+
+    if (error) {
       return (
         <View {...this.props}>
           <Italic>{I18n.t("common-ErrorLoadingResource")}</Italic>
         </View>
       );
-
-    const loadingComp = this.props.loadingComp || <Loading />;
-
-    return <View {...this.props}>{this.state.jsx || loadingComp}</View>;
+    } else if (!hasContent) {
+      return typeof emptyMessage === "string" ?
+        <View {...this.props}>
+          <Italic>{emptyMessage}</Italic>
+        </View>
+      : 
+        emptyMessage
+    } else {
+      return <View {...this.props}>{jsx || loadingComponent}</View>;
+    }
   }
 }

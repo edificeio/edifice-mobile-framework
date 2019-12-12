@@ -37,6 +37,7 @@
   "connector-connectFailed": "Não é possível abrir o link !",
   "conversation-chatPlaceholder": "Escreva sua mensagem... ",
   "conversation-deleteThread": "Apagar essa conversa?",
+  "conversation-emptyMessage": "Mensagem vazia",
   "conversation-emptyScreenText": "Com as Mensagens, você já pode começar a comunicar com os membros da sua rede.",
   "conversation-emptyScreenTitle": "Nehuma mensagem por aquí...",
   "conversation-failedSent": "Mensagen não recebida",

@@ -37,6 +37,7 @@
   "connector-connectFailed": "Impossible to open the link !",
   "conversation-chatPlaceholder": "Write a message...",
   "conversation-deleteThread": "delete this conversation ?",
+  "conversation-emptyMessage": "Empty message",
   "conversation-emptyScreenText": "With Mailbox, start communicating with the other members of your network.",
   "conversation-emptyScreenTitle": "No message in sight...",
   "conversation-failedSent": "Message not sent",
