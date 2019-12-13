@@ -12,10 +12,10 @@ type Captions = {
 };
 
 const captions: Captions = {
-  image: I18n.t("workspace-image"),
-  document: I18n.t("workspace-document"),
-  cancel: I18n.t("Cancel"),
-  title: I18n.t("workspace-pick"),
+  image: "workspace-image",
+  document: "workspace-document",
+  cancel: "Cancel",
+  title: "workspace-pick",
 };
 
 type FilePickerPromise = (resolve: (payload: ContentUri) => void, reject: (error: Error) => void) => void;
@@ -25,7 +25,15 @@ const pick = () => {
 };
 
 const pickIOS: FilePickerPromise = (resolve, reject) => {
-  const { image, document, cancel, title } = captions;
+  const transformCaptions: (captions: Captions) => Captions = (captions) => {
+    let result = captions
+    for(let caption of Object.keys(captions)) {
+      result[caption] = I18n.t(captions[caption])
+    }
+    return result
+  }
+
+  const { image, document, cancel, title } = transformCaptions(captions);
   const options = [image, document, cancel];
   const handlers = [pickImage, pickDocument, () => pickClosed];
   const cancelButtonIndex = options.indexOf(cancel);
