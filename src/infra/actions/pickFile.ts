@@ -50,7 +50,7 @@ const pickImage: FilePickerPromise = (resolve, reject) => {
 const pickDocument: FilePickerPromise = async (resolve, reject) => {
   try {
     const result = await DocumentPicker.pick({
-      type: [DocumentPicker.types.images, DocumentPicker.types.pdf],
+      type: [DocumentPicker.types.allFiles],
     });
 
     const { uri, type, name } = result;
