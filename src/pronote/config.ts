@@ -10,7 +10,7 @@ export default new FunctionalModuleConfig({
   group: true,
   hasRight: (apps) => {
     for(let app of apps) {
-      if(app.toUpperCase().includes("PRONOTE")) {
+      if(app.address && app.address.toUpperCase().includes("PRONOTE")) {
         return true
       }
     }

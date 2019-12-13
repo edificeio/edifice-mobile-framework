@@ -29,7 +29,7 @@ export interface IUserAuthState {
   loggingIn: boolean;
   // available applications
   apps: string[];
-  appsInfo: string[];
+  appsInfo: any[];
   // technical
   notification: Notification;
   // platform

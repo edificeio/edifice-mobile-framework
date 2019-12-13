@@ -40,7 +40,7 @@ export interface IFunctionalConfig {
   iconColor?: string;
   group?: boolean;
   notifHandlerFactory?: () => Promise<NotificationHandlerFactory<any, any, any>>;
-  hasRight?: (apps: string[]) => boolean;
+  hasRight?: (apps: any[]) => boolean;
 }
 
 export interface IAppModule {
@@ -64,7 +64,7 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
   public iconColor: string;
   public group: boolean;
   public notifHandlerFactory: () => Promise<NotificationHandlerFactory<any, any, any>>;
-  public hasRight: (apps: string[]) => boolean; 
+  public hasRight: (apps: any[]) => boolean; 
 
   public constructor(opts: IFunctionalConfig) {
     this.name = opts.name;
@@ -77,7 +77,7 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
     this.group = opts.group === undefined ? false : opts.group;
     this.iconColor = opts.iconColor || CommonStyles.actionColor;
     this.notifHandlerFactory = opts.notifHandlerFactory;
-    this.hasRight = opts.hasRight || (apps => apps.includes(this.apiName))
+    this.hasRight = opts.hasRight || (apps => apps.some(app => app.name == this.apiName))
   }
 
   public getLocalState(globalState: any) {

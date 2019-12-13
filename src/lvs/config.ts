@@ -10,7 +10,7 @@ export default new FunctionalModuleConfig({
   hasRight: (apps) => {
     const regexp = /la[- ]+vie[- ]+scolaire/i
     for(let app of apps) {
-      if(app.toUpperCase().includes("LVS") || regexp.test(app)) {
+      if(app.address && app.address.toUpperCase().includes("LVS") || regexp.test(app.address)) {
         return true
       }
     }

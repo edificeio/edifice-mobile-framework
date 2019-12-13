@@ -96,10 +96,18 @@ const profileMap = {
   PERSONNEL: "direction",
 };
 
-const getConnectorAddress: (appAddress: string, userType: string) => string = (appAddress, userType) =>
-  `${Conf.currentPlatform.url}/cas/oauth/login?service=${encodeURIComponent(appAddress)}mobile.${
-    profileMap[userType.toUpperCase()]
-  }.html`;
+const getConnectorAddress: (appAddress: string, userType: string) => string = (appAddress, userType) => {
+
+  const getSlash = link => {
+    let service = decodeURIComponent(link)
+    return service.charAt(service.length - 1) == '/' ? "" : '%2F'
+  }
+
+  let link = `${Conf.currentPlatform.url}/cas/oauth/login?service=${encodeURIComponent(appAddress)}`;
+  const role = profileMap[userType.toUpperCase()];
+  link += `${getSlash(link)}mobile.${role}.html`;
+  return link
+}
 
 const mapStateToProps: (state: any) => IConnectorContainerDataProps = state => {
   const connectorState = connectorConfig.getLocalState(state);

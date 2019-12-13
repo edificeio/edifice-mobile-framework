@@ -33,10 +33,10 @@ import withLinkingAppWrapper from "../infra/withLinkingAppWrapper";
  * Get React Navigation routes definitions for given functional modules (they need to be declared in AppModules.ts)
  * @param apps Allowed functional module names to be displayed.
  */
-function getMainRoutes(apps: string[]) {
+function getMainRoutes(appsInfo: any[]) {
   const filter = (mod: IAppModule) => {
     console.log("mod", mod);
-    return mod.config.hasRight(apps) && !mod.config.group;
+    return mod.config.hasRight(appsInfo) && !mod.config.group;
   };
   return {
     timeline: {
@@ -44,7 +44,7 @@ function getMainRoutes(apps: string[]) {
 
       navigationOptions: () => createMainTabNavOption(I18n.t("News"), "nouveautes"),
     },
-    ...getRoutes(getModules(filter), apps),
+    ...getRoutes(getModules(filter), appsInfo),
   };
 }
 
@@ -52,12 +52,12 @@ function getMainRoutes(apps: string[]) {
  * Build a tab navigator with given functional modules (they need to be declared in AppModules.ts).
  * @param apps Allowed functional module names to be displayed.
  */
-function getMainNavigator(apps: string[]) {
-  return createMainTabNavigator(getMainRoutes(apps));
+function getMainNavigator(appsInfo: any[]) {
+  return createMainTabNavigator(getMainRoutes(appsInfo));
 }
 
-function getMainNavContainer(apps: string[]) {
-  const navigator = getMainNavigator(apps);
+function getMainNavContainer(appsInfo: any[]) {
+  const navigator = getMainNavigator(appsInfo);
   return createAppContainer(navigator);
 }
 
@@ -68,6 +68,7 @@ function getMainNavContainer(apps: string[]) {
 export let CurrentMainNavigationContainerComponent: NavigationContainerComponent;
 
 interface MainNavigatorHOCProps {
+  appsInfo: any[];
   apps: string[];
   notification: Notification;
   dispatch: any;
@@ -97,8 +98,8 @@ class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
   }
 
   public render() {
-    const { apps, ...forwardProps } = this.props;
-    const MainNavigationContainer = getMainNavContainer(apps);
+    const { appsInfo, ...forwardProps } = this.props;
+    const MainNavigationContainer = getMainNavContainer(appsInfo);
 
     return (
       <MainNavigationContainer
@@ -139,6 +140,7 @@ class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
 
 const mapStateToProps = ({ user }) => ({
   apps: ["user", "myapps", ...user.auth.apps],
+  appsInfo: [{name:"user"}, {name:"myapps"}, ...user.auth.appsInfo],
   notification: user.auth.notification,
 });
 

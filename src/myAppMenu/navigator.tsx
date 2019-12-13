@@ -48,7 +48,7 @@ const MyAppGridContainer = (modules: IAppModule[]) => createStackNavigator({
   }
 });
 
-export default (apps: string[]) => {
+export default (apps: any[]) => {
     const filter = (mod: IAppModule) => mod.config.hasRight(apps) && mod.config.group;
     const modules = getModules(filter);
     return createStackNavigator({
