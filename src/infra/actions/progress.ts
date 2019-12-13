@@ -3,7 +3,6 @@ export const ACTION_TYPE_PROGRESS_END = "progress_end";
 export const ACTION_TYPE_PROGRESS = "progress";
 
 export interface IRefMainNavigationContainerAction {
-  refMainNavigationContainer?: any,
   type: string
 }
 

@@ -1,17 +1,10 @@
 import * as React from "react"
-import {connect, ConnectedComponent} from "react-redux";
-import {bindActionCreators} from "redux";
-import {listAction} from "../actions/list";
-import {uploadAction} from "../actions/upload";
-
 
 export interface INotifyProps {
   navigation: any,
-  uploadAction: any,
 }
 
-
-export function _withNavigationWrapper(WrappedComponent: React.Component): React.Component {
+export default function withNavigationWrapper(WrappedComponent: React.Component): React.Component {
   class HOC extends React.Component<INotifyProps> {
     childRoute: any = null;
     childParams: any = null;
@@ -42,17 +35,4 @@ export function _withNavigationWrapper(WrappedComponent: React.Component): React
 
   HOC.navigationOptions = WrappedComponent.navigationOptions;
   return HOC;
-}
-
-const mapStateToProps = (state: any, props: any) => ({
-  loggedIn: state.user.auth.loggedIn,
-  refMainNavigationContainer: state.refMainNavigationReducer.refMainNavigationContainer,
-});
-
-const mapDispatchToProps = (dispatch: any) => {
-  return bindActionCreators({listAction, uploadAction}, dispatch);
-};
-
-export const withNavigationWrapper = (WrappedComponent: React.Component): ConnectedComponent<any, any> => {
-  return connect(mapStateToProps)(_withNavigationWrapper(WrappedComponent));
 }

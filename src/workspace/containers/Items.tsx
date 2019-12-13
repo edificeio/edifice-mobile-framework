@@ -19,10 +19,8 @@ import { Loading } from "../../ui";
 import { removeAccents } from "../../utils/string";
 import { uploadAction } from "../actions/upload";
 import pickFile from "../../infra/actions/pickFile";
-import { withNavigationUploadWrapper } from "../utils/withNavigationUploadWrapper";
-import {withNavigationWrapper} from "../utils/withNavigationWrapper";
-import {withUploadWrapper} from "../utils/withUploadWrapper";
-
+import withNavigationWrapper from "../utils/withNavigationWrapper";
+import { withUploadWrapper } from "../utils/withUploadWrapper";
 
 const styles = StyleSheet.create({
   separator: {
@@ -56,10 +54,6 @@ export class Items extends React.PureComponent<IItemsProps, { isFocused: boolean
       navigation
     );
   };
-
-  constructor(props: IItemsProps) {
-    super(props);
-  }
 
   public componentDidMount() {
     this.focusListener = this.props.navigation.addListener("willFocus", () => {

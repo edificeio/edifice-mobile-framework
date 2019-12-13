@@ -2,7 +2,11 @@
 import I18n from "i18n-js";
 import * as React from "react";
 import { View } from "react-native";
-import { createAppContainer, createSwitchNavigator, NavigationContainerComponent, NavigationContainer } from "react-navigation";
+import {
+  createAppContainer,
+  createSwitchNavigator,
+  NavigationContainerComponent,
+} from "react-navigation";
 import { connect } from "react-redux";
 
 // ODE framework modules
@@ -14,15 +18,10 @@ import TimelineNavigator from "../timeline/TimelineNavigator";
 import Tracking from "../tracking/TrackingManager";
 
 // Screens
-import {
-  createMainTabNavigator,
-  createMainTabNavOption
-} from "./helpers/mainTabNavigator";
+import { createMainTabNavigator, createMainTabNavOption } from "./helpers/mainTabNavigator";
 import { getRoutes, getModules } from "./helpers/navBuilder";
 import LoginNavigator from "./LoginNavigator";
-import {bindActionCreators} from "redux";
-import {refMainNavigationContainerAction} from "./actions/refMainNavigationContainer";
-
+import withLinkingAppWrapper from "../infra/withLinkingAppWrapper";
 
 /**
  * MAIN NAVIGATOR
@@ -38,13 +37,12 @@ function getMainRoutes(apps: string[]) {
   const filter = (mod: IAppModule) => {
     console.log("mod", mod);
     return mod.config.hasRight(apps) && !mod.config.group;
-  }
+  };
   return {
     timeline: {
       screen: TimelineNavigator,
 
-      navigationOptions: () =>
-        createMainTabNavOption(I18n.t("News"), "nouveautes")
+      navigationOptions: () => createMainTabNavOption(I18n.t("News"), "nouveautes"),
     },
     ...getRoutes(getModules(filter), apps),
   };
@@ -58,9 +56,9 @@ function getMainNavigator(apps: string[]) {
   return createMainTabNavigator(getMainRoutes(apps));
 }
 
-export function getMainNavContainer(apps: string[]) {
+function getMainNavContainer(apps: string[]) {
   const navigator = getMainNavigator(apps);
-  return createAppContainer(navigator)
+  return createAppContainer(navigator);
 }
 
 /**
@@ -69,11 +67,15 @@ export function getMainNavContainer(apps: string[]) {
  */
 export let CurrentMainNavigationContainerComponent: NavigationContainerComponent;
 
-interface MainNavigatorHOCProps { apps: string[]; MainNavigationContainer: any, notification: Notification; dispatch: any, refMainNavigationContainerAction: any };
+interface MainNavigatorHOCProps {
+  apps: string[];
+  notification: Notification;
+  dispatch: any;
+}
 
 class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
   public shouldComponentUpdate(nextProps: Partial<MainNavigatorHOCProps>) {
-    return (this.props.MainNavigationContainer !== nextProps.MainNavigationContainer || this.props.notification !== nextProps.notification);
+    return this.props.notification !== nextProps.notification || !compareArrays(this.props.apps, nextProps.apps!);
   }
 
   public componentDidMount() {
@@ -84,52 +86,44 @@ class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
 
   public componentDidUpdate() {
     // this.props.notification && console.log("CHECK routing notif data");
-    if (
-      this.props.notification &&
-      this.props.notification.data.params !== MainNavigatorHOC.lastOpenNotifData
-      ) {
+    if (this.props.notification && this.props.notification.data.params !== MainNavigatorHOC.lastOpenNotifData) {
       MainNavigatorHOC.lastOpenNotifData = this.props.notification.data.params;
       const data = JSON.parse(this.props.notification.data.params);
       // console.log("Routing from notif data", data);
       pushNotifications(this.props.dispatch)(data, this.props.apps);
     } else {
-      this.props.notification && console.log("Notif data already handled:", MainNavigatorHOC.lastOpenNotifData)
+      this.props.notification && console.log("Notif data already handled:", MainNavigatorHOC.lastOpenNotifData);
     }
   }
 
-  public render()
-    {
-      const { MainNavigationContainer, ...rest} = this.props;
+  public render() {
+    const { apps, ...forwardProps } = this.props;
+    const MainNavigationContainer = getMainNavContainer(apps);
 
-      if (!MainNavigationContainer)
-        return null;
-
-      return (
-        <MainNavigationContainer
-          {...rest}
-          onNavigationStateChange={(prevState: any, currentState: any, action: any) => {
-            // console.log("main nav state change :", prevState, currentState, action);
-            // Track if tab has changed
-            // console.log("On nav state changed : ", prevState, currentState, action)
-            if (action.type !== "Navigation/NAVIGATE") return;
-            const prevIndex = prevState.index;
-            const currentIndex = currentState.index;
-            if (prevIndex === currentIndex) return;
-            const currentTabRouteName =
-              currentState.routes[currentIndex].routeName;
-            if (currentTabRouteName)
-              Tracking.logEvent("menuTab", {
-                tab: currentTabRouteName
-              });
-          }}
-          ref={nav => {
-            CurrentMainNavigationContainerComponent = nav!;
-            this.props.refMainNavigationContainerAction(nav!);
-          }}
-        />
-      );
-    }
-    /* CAUTION :
+    return (
+      <MainNavigationContainer
+        {...forwardProps}
+        onNavigationStateChange={(prevState: any, currentState: any, action: any) => {
+          // console.log("main nav state change :", prevState, currentState, action);
+          // Track if tab has changed
+          // console.log("On nav state changed : ", prevState, currentState, action)
+          if (action.type !== "Navigation/NAVIGATE") return;
+          const prevIndex = prevState.index;
+          const currentIndex = currentState.index;
+          if (prevIndex === currentIndex) return;
+          const currentTabRouteName = currentState.routes[currentIndex].routeName;
+          if (currentTabRouteName)
+            Tracking.logEvent("menuTab", {
+              tab: currentTabRouteName,
+            });
+        }}
+        ref={nav => {
+          CurrentMainNavigationContainerComponent = nav!;
+        }}
+      />
+    );
+  }
+  /* CAUTION :
        React Navigation doen't support dynamic routes.
        Here we emulate this by regenerate a runtime a new router and NavigationContainer each time `apps` props is modified.
        React-Redux is used to update the MainNavigatorHOC when `apps` are loaded.
@@ -143,16 +137,12 @@ class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
     */
 }
 
-const mapDispatchToProps = (dispatch: any) => {
-  return bindActionCreators({ dispatch, refMainNavigationContainerAction }, dispatch);
-};
-
 const mapStateToProps = ({ user }) => ({
-  MainNavigationContainer: user.auth.MainNavigationContainer,
-  notification: user.auth.notification
+  apps: ["user", "myapps", ...user.auth.apps],
+  notification: user.auth.notification,
 });
 
-export const MainNavigator = connect(mapStateToProps, mapDispatchToProps)(MainNavigatorHOC);
+export const MainNavigator = connect(mapStateToProps)(withLinkingAppWrapper(MainNavigatorHOC));
 
 /**
  * ROOT NAVIGATOR

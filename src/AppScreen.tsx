@@ -1,17 +1,11 @@
 import * as React from "react";
 
-import {RootNavigationContainer} from "./navigation/RootNavigator";
-import {withLinkingAppWrapper} from "./infra/withLinkingAppWrapper";
+import { RootNavigationContainer} from "./navigation/RootNavigator";
 
 export let rootNavigatorRef: any = null;
 
-function _AppScreen() {
+export default function AppScreen() {
   return (
     <RootNavigationContainer ref={nav => rootNavigatorRef = nav} />
   )
 }
-
-
-const AppScreen = withLinkingAppWrapper(_AppScreen);
-
-export default AppScreen;
