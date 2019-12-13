@@ -4,11 +4,11 @@ import { connect } from "react-redux";
 import styles, { deviceWidth } from "../styles";
 
 
-export interface ProgressBarProps {
+interface ProgressBarProps {
   value: number;
 }
 
-export class ProgressBar extends React.Component<ProgressBarProps> {
+class ProgressBar extends React.Component<ProgressBarProps> {
 
   public render() {
     const { value } = this.props;

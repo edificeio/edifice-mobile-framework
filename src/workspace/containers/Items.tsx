@@ -15,7 +15,7 @@ import { layoutSize } from "../../styles/common/layoutSize";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { getEmptyScreen } from "../utils/empty";
 import { PageContainer } from "../../ui/ContainerContent";
-import { Loading } from "../../ui";
+import { Loading, ProgressBar } from "../../ui";
 import { removeAccents } from "../../utils/string";
 import { uploadAction } from "../actions/upload";
 import pickFile from "../../infra/actions/pickFile";
@@ -140,6 +140,7 @@ export class Items extends React.PureComponent<IItemsProps, { isFocused: boolean
     return (
       <PageContainer>
         <ConnectionTrackingBar />
+        <ProgressBar />
         {getViewToRender()}
       </PageContainer>
     );

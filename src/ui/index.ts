@@ -4,7 +4,7 @@ import { ButtonIconText } from "./ButtonIconText";
 import { ButtonTextIcon } from "./ButtonTextIcon";
 import { Icon, IconProps } from "./icons/Icon"
 import { IconOnOff } from "./icons/IconOnOff"
-import { ProgressBar } from "./ProgressBar"
+import ProgressBar from "./ProgressBar"
 
 export {
 	ButtonIconText,

@@ -108,7 +108,7 @@ export const uploadDocument = (dispatch: any, content: ContentUri[], onEnd: any)
     headers,
     body
   )
-    .uploadProgress({ interval: 100 },(written,total)=>{
+    .uploadProgress({ interval: 250 },(written,total)=>{
       if (total > 1000000)
       dispatch(progressAction((written/total)*100))
     })
