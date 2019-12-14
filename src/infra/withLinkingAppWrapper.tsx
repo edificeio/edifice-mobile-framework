@@ -6,7 +6,7 @@ import { FilterId } from "../workspace/types/filters";
 import I18n from "i18n-js";
 
 export interface IWrapperState {
-  contentUri: string;
+  contentUri: string | null;
   handled: boolean;
 }
 
@@ -39,13 +39,16 @@ export default function withLinkingAppWrapper(WrappedComponent: React.Component)
       if (nextAppState === "active") {
         this._checkContentUri();
       }
+      if (nextAppState.match(/inactive|background/)) {
+        this._clearContentUri();
+      }
     };
 
     _checkContentUri = () => {
-      if (RNFileShareIntent && Platform.OS === "android") {
+      if (RNFileShareIntent && Platform.OS === "android" && !this.state.handled) {
         RNFileShareIntent.getFilePath((contentUri: any) => {
           if (contentUri && this.state.contentUri != contentUri) {
-            this.setState({ contentUri, handled: false }); // permit to have componentDidUpdate
+            this.setState({ contentUri, handled: true }); // permit to have componentDidUpdate
           }
         });
       }
@@ -65,8 +68,13 @@ export default function withLinkingAppWrapper(WrappedComponent: React.Component)
           contentUri: this.state.contentUri,
         },
       });
+    };
 
-      this.setState({ handled: true });
+    _clearContentUri = () => {
+      if (Platform.OS === 'android') {
+        RNFileShareIntent.clearFilePath();
+      }
+      this.setState({ contentUri: "", handled: false }); // permit to have componentDidUpdate
     };
 
     render() {
