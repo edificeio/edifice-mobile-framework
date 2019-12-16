@@ -73,6 +73,7 @@ class ThreadInput extends React.PureComponent<
     displayPlaceholder: boolean;
     send: (data: any) => Promise<void>;
     sendPhoto: (data: any) => Promise<void>;
+    onGetNewer: (threadId: string) => void;
     onReceiversTap: (
       conversation: IConversationThread | IConversationMessage
     ) => void;
@@ -108,13 +109,14 @@ class ThreadInput extends React.PureComponent<
     return [...to];
   }
 
-  private sendPhoto() {
-    const { textMessage, newThreadId } = this.state;
-    const { thread, lastMessage } = this.props;
+  private async sendPhoto() {
+    const { thread, lastMessage, sendPhoto, onGetNewer } = this.props;
+    const { newThreadId } = this.state;
 
     this.input.innerComponent.blur();
 
-    this.props.sendPhoto({
+    await onGetNewer(thread.id)
+    await sendPhoto({
       cc: thread.cc,
       parentId: lastMessage.id,
       subject: "Re: " + thread.subject,
@@ -124,7 +126,7 @@ class ThreadInput extends React.PureComponent<
   }
 
   private async onValid() {
-    const { thread, lastMessage } = this.props;
+    const { thread, lastMessage, send, onGetNewer } = this.props;
     const { textMessage } = this.state;
 
     this.input.innerComponent.setNativeProps({ keyboardType: "default" });
@@ -135,7 +137,8 @@ class ThreadInput extends React.PureComponent<
     });
     // console.log("thread object ", thread);
     // console.log("last message", lastMessage);
-    await this.props.send({
+    await onGetNewer(thread.id)
+    await send({
       body: `<div>${textMessage}</div>`,
       cc: thread.cc,
       displayNames: thread.displayNames,

@@ -192,6 +192,7 @@ export class ThreadPage extends React.PureComponent<
           emptyThread={!messages.length}
           displayPlaceholder={!isFetchingFirst}
           onReceiversTap={this.handleTapReceivers}
+          {...this.props}
         />
       </KeyboardAvoidingView>
     );

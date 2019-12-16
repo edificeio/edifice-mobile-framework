@@ -56,9 +56,9 @@ const mapDispatchToProps: (
 ) => IThreadPageEventProps = dispatch => {
   return {
     dispatch,
-    onGetNewer: (threadId: string) => {
+    onGetNewer: async (threadId: string) => {
       // console.log("get newer posts");
-      dispatch(fetchConversationThreadNewerMessages(threadId));
+      await dispatch(fetchConversationThreadNewerMessages(threadId));
       return;
     },
     onGetOlder: (threadId: string) => {
