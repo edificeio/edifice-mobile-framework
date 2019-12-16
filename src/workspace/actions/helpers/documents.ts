@@ -10,8 +10,8 @@ import { IItems, IFiltersParameters, IFile, FilterId, IItem, ContentUri } from "
 import { filters } from "../../types/filters/helpers/filters";
 import Conf from "../../../../ode-framework-conf";
 import { OAuth2RessourceOwnerPasswordClient } from "../../../infra/oauth";
-import {progressAction, progressEndAction} from "../../../infra/actions/progress";
-import {Platform, ToastAndroid} from "react-native";
+import { progressAction, progressEndAction, progressInitAction } from "../../../infra/actions/progress";
+import { Platform, ToastAndroid } from "react-native";
 
 // TYPE -------------------------------------------------------------------------------------------
 
@@ -101,25 +101,26 @@ export const uploadDocument = (dispatch: any, content: ContentUri[], onEnd: any)
     []
   );
 
+  dispatch(progressInitAction());
   RNFB.fetch(
     "POST",
     `${Conf.currentPlatform.url}/workspace/document?quality=1&thumbnail=120x120&thumbnail=100x100&thumbnail=290x290&thumbnail=381x381&thumbnail=1600x0`,
     headers,
     body
   )
-    .uploadProgress({ interval: 250 },(written,total)=>{
-      if (total > 1000000)
-      dispatch(progressAction((written/total)*100))
+    .uploadProgress({ interval: 100 }, (written, total) => {
+      dispatch(progressAction((written / total) * 100));
     })
     .then(response => {
-      dispatch(progressEndAction());
-      onEnd(response);
-      if (Platform.OS === "android")
-        ToastAndroid.show('Le document a bien été importé', ToastAndroid.SHORT);
+      dispatch(progressAction(100));
+      setTimeout(() => {
+        dispatch(progressEndAction());
+        if (Platform.OS === "android") ToastAndroid.show("Le document a bien été importé", ToastAndroid.SHORT);
+        onEnd(response);
+      }, 500);
     })
     .catch(err => {
-      if (Platform.OS === "android")
-        ToastAndroid.show(err.message, ToastAndroid.SHORT);
+      if (Platform.OS === "android") ToastAndroid.show(err.message, ToastAndroid.SHORT);
       dispatch(progressEndAction());
     });
 };

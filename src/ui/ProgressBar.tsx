@@ -14,7 +14,7 @@ class ProgressBar extends React.Component<ProgressBarProps> {
     const { value } = this.props;
     const width = value ? (value * deviceWidth) / 100 : 0
 
-    return value > 0 && value < 100 ? (
+    return value > 0 ? (
       <View style={[styles.loading, { width}]} />
     ) : (
       <View />
