@@ -37,7 +37,6 @@ const backendFoldersAdapter: (data: IBackendFolderArray) => IItems<IFolder> = da
   const result = {} as IItems<IFolder>;
   if (!data) return result;
   for (const item of data) {
-    if (item.deleted) continue;
     if (Conf.blacklistFolders && Conf.blacklistFolders.includes(item.externalId)) continue;
     result[item._id] = {
       date: moment(item.modified, "YYYY-MM-DD HH:mm.ss.SSS").toDate().getTime(),
@@ -69,7 +68,7 @@ const getRootFolders: () => IItems<IFolder> = () => {
 
 export function getFolders(parameters: IFiltersParameters): Promise<IItems<IFolder>> {
   const { parentId } = parameters;
-
+  
   if (parentId === FilterId.root) 
     return Promise.resolve(getRootFolders());
 

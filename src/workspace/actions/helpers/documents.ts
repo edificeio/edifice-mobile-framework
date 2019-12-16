@@ -47,7 +47,6 @@ export const backendDocumentsAdapter: (data: IBackendDocumentArray) => IItems<IF
   const result = {} as IItems<IFile>;
   if (!data) return result;
   for (const item of data) {
-    if (item.deleted) continue;
     result[item._id] = {
       contentType: item.metadata["content-type"],
       date: moment(item.modified, "YYYY-MM-DD HH:mm.ss.SSS")
