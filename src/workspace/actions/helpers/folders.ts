@@ -7,6 +7,7 @@ import { asyncGetJson } from "../../../infra/redux/async";
 import { FilterId, IItems, IFolder, IFiltersParameters } from "../../types";
 import { factoryRootFolder } from "./factoryRootFolder";
 import moment from "moment";
+import Conf from "../../../../ode-framework-conf"
 
 // TYPE -------------------------------------------------------------------------------------------
 
@@ -23,6 +24,7 @@ export type IBackendFolder = {
   deleted: boolean;
   eParent: string | null;
   eType: string;
+  externalId: string;
   inheritedShares: [];
   parents: [];
 };
@@ -36,6 +38,7 @@ const backendFoldersAdapter: (data: IBackendFolderArray) => IItems<IFolder> = da
   if (!data) return result;
   for (const item of data) {
     if (item.deleted) continue;
+    if (Conf.blacklistFolders && Conf.blacklistFolders.includes(item.externalId)) continue;
     result[item._id] = {
       date: moment(item.modified, "YYYY-MM-DD HH:mm.ss.SSS").toDate().getTime(),
       id: item._id,
@@ -67,7 +70,7 @@ const getRootFolders: () => IItems<IFolder> = () => {
 export function getFolders(parameters: IFiltersParameters): Promise<IItems<IFolder>> {
   const { parentId } = parameters;
 
-  if (parentId === FilterId.root)
+  if (parentId === FilterId.root) 
     return Promise.resolve(getRootFolders());
 
   const formatParameters = (parameters = {}) => {
