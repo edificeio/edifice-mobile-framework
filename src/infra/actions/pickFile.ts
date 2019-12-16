@@ -25,8 +25,8 @@ const pick = () => {
 };
 
 const pickIOS: FilePickerPromise = (resolve, reject) => {
-  const transformCaptions: (captions: Captions) => Captions = (captions) => {
-    let result = captions
+  const transformCaptions: (captions: Captions) => {} = (captions) => {
+    let result = {}
     for(let caption of Object.keys(captions)) {
       result[caption] = I18n.t(captions[caption])
     }
