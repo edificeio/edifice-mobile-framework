@@ -11,6 +11,7 @@ import { filters } from "../../types/filters/helpers/filters";
 import Conf from "../../../../ode-framework-conf";
 import { OAuth2RessourceOwnerPasswordClient } from "../../../infra/oauth";
 import {progressAction, progressEndAction} from "../../../infra/actions/progress";
+import {Platform, ToastAndroid} from "react-native";
 
 // TYPE -------------------------------------------------------------------------------------------
 
@@ -114,8 +115,12 @@ export const uploadDocument = (dispatch: any, content: ContentUri[], onEnd: any)
     .then(response => {
       dispatch(progressEndAction());
       onEnd(response);
+      if (Platform.OS === "android")
+        ToastAndroid.show('Le document a bien été importé', ToastAndroid.SHORT);
     })
     .catch(err => {
-      console.log(err);
+      if (Platform.OS === "android")
+        ToastAndroid.show(err.message, ToastAndroid.SHORT);
+      dispatch(progressEndAction());
     });
 };

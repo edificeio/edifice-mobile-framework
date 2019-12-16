@@ -15,7 +15,7 @@ export default function withLinkingAppWrapper(WrappedComponent: React.Component)
     constructor(props) {
       super(props);
       this.state = {
-        contentUri: "",
+        contentUri: null,
         handled: false,
       };
     }
@@ -74,7 +74,7 @@ export default function withLinkingAppWrapper(WrappedComponent: React.Component)
       if (Platform.OS === 'android') {
         RNFileShareIntent.clearFilePath();
       }
-      this.setState({ contentUri: "", handled: false }); // permit to have componentDidUpdate
+      this.setState({ contentUri: null, handled: false }); // permit to have componentDidUpdate
     };
 
     render() {
