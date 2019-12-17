@@ -8,7 +8,6 @@ import config from "../config";
 
 
 export interface INotifyProps {
-  isFetching: false,
   navigation: any,
   uploadAction: any
 }
@@ -21,10 +20,10 @@ export function _withUploadWrapper(WrappedComponent: React.Component): React.Com
     }];
 
     componentDidUpdate(): void {
-      const {isFetching, navigation, uploadAction} = this.props;
+      const {navigation, uploadAction} = this.props;
       const contentUri: any = navigation.getParam("contentUri");
 
-      if (contentUri && contentUri[0].uri !== this.contentUri[0].uri && !isFetching) {
+      if (contentUri && contentUri[0].uri !== this.contentUri[0].uri) {
         this.contentUri = contentUri;
         navigation.setParams({"contentUri": undefined});
         uploadAction(contentUri);
@@ -41,12 +40,7 @@ export function _withUploadWrapper(WrappedComponent: React.Component): React.Com
 }
 
 const mapStateToProps = (state: any, props: any) => {
-  const stateItems: IState = config.getLocalState(state).items;
-  const parentId = props.navigation.getParam("parentId");
-  const parentIdItems = stateItems[parentId] || {};
-  const isFetching = parentIdItems.isFetching || false;
-
-  return { isFetching };
+  return {};
 };
 
 const mapDispatchToProps = (dispatch: any) => {
