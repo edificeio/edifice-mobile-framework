@@ -20,7 +20,6 @@ import homeworkDiarySelected from "../actions/selectedDiary";
 import { NavigationScreenProp } from "react-navigation";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderAction, HeaderBackAction } from "../../ui/headers/NewHeader";
-import { Moment } from "moment";
 
 const mapStateToProps: (state: any) => IHomeworkPageDataProps = state => {
   // Extract data from state

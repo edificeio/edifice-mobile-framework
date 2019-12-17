@@ -111,13 +111,15 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
 
   public shouldComponentUpdate(nextProps, nextState) {
     if (nextProps.news !== this.props.news) return true;
-
     return false;
   }
 
   public renderList(news) {
+    const { isFetching, endReached } = this.props
+    const isEmpty = news && news.length === 0;
     return (
       <FlatList
+        contentContainerStyle={isEmpty ? { flex: 1 } : null}
         refreshControl={
           <RefreshControl
             refreshing={this.props.isFetching}
@@ -137,6 +139,17 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
         )}
         keyExtractor={(item: INewsModel) => item.id.toString()}
         style={styles.gridWhite}
+        ListEmptyComponent={
+          !isFetching && endReached ?
+            <EmptyScreen
+              imageSrc={require("../../../assets/images/empty-screen/timeline.png")}
+              imgWidth={407}
+              imgHeight={319}
+              text={I18n.t("timeline-emptyScreenText")}
+              title={I18n.t("timeline-emptyScreenTitle")}
+            />
+          : null     
+        }
       />
     );
   }
@@ -162,25 +175,13 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
     );
   }
 
-  public renderEmptyScreen() {
-    return (
-      <EmptyScreen
-        imageSrc={require("../../../assets/images/empty-screen/timeline.png")}
-        imgWidth={407}
-        imgHeight={319}
-        text={I18n.t("timeline-emptyScreenText")}
-        title={I18n.t("timeline-emptyScreenTitle")}
-      />
-    );
-  }
-
   public renderLoading() {
     return <Loading />;
   }
 
   public render() {
-    const { isFetching, fetchFailed } = this.props;
-    const { availableApps } = this.props;
+    const { isFetching, fetchFailed, availableApps } = this.props;
+    let { news } = this.props;
     const availableAppsWithUppercase = {};
     if (availableApps) {
       Object.keys(availableApps).forEach(app => {
@@ -188,17 +189,12 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
         availableAppsWithUppercase[app.toUpperCase()] = availableApps[app];
       });
     }
-    let { news } = this.props;
     if (availableApps) {
       news = news.filter(n => availableAppsWithUppercase[n.type]);
     }
 
     if (fetchFailed) {
       return this.renderFetchFailed();
-    }
-
-    if (!isFetching && (!news || news.length === 0) && this.props.endReached) {
-      return this.renderEmptyScreen();
     }
 
     return (
