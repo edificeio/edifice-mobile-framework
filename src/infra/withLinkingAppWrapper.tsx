@@ -1,29 +1,30 @@
 import * as React from "react";
 import RNFileShareIntent from "react-native-file-share-intent";
-import {DeviceEventEmitter, NativeEventEmitter, NativeModules} from "react-native";
+import { DeviceEventEmitter, NativeEventEmitter, NativeModules, Platform } from "react-native";
 import { nainNavNavigate } from "../navigation/helpers/navHelper";
 import { FilterId } from "../workspace/types/filters";
 import I18n from "i18n-js";
-import {ContentUri} from "../types/contentUri";
+import { ContentUri } from "../types/contentUri";
 
 export default function withLinkingAppWrapper(WrappedComponent: React.Component): React.Component {
   class HOC extends React.Component {
-    eventEmitter:NativeEventEmitter | null = null;
+    eventEmitter: NativeEventEmitter | null = null;
 
     public componentDidMount() {
+      if (Platform.OS === "android") {
+        RNFileShareIntent.getFilePath((contentUri: ContentUri) => {
+          this.navigate(contentUri);
+        });
 
-      RNFileShareIntent.getFilePath((contentUri: ContentUri) => {
-        this.navigate(contentUri);
-      });
+        this.eventEmitter = new NativeEventEmitter(NativeModules.RNFileShareIntent);
 
-      this.eventEmitter = new NativeEventEmitter(NativeModules.RNFileShareIntent);
-
-      this.eventEmitter.addListener('FileShareIntent', (contentUri: ContentUri) => {
-        this.navigate( contentUri);
-      });
+        this.eventEmitter.addListener("FileShareIntent", (contentUri: ContentUri) => {
+          this.navigate(contentUri);
+        });
+      }
     }
 
-    private navigate( contentUri: ContentUri) {
+    private navigate(contentUri: ContentUri) {
       nainNavNavigate("Workspace", {
         contentUri: null,
         filter: FilterId.root,
@@ -40,7 +41,7 @@ export default function withLinkingAppWrapper(WrappedComponent: React.Component)
     }
 
     public componentWillUnmount(): void {
-      this.eventEmitter?.removeListener( 'FileShareIntent', this.navigate);
+      if (Platform.OS === "android") this.eventEmitter?.removeListener("FileShareIntent", this.navigate);
     }
 
     public render() {
