@@ -12,6 +12,7 @@ import Conf from "../../../../ode-framework-conf";
 import { OAuth2RessourceOwnerPasswordClient } from "../../../infra/oauth";
 import { progressAction, progressEndAction, progressInitAction } from "../../../infra/actions/progress";
 import { Platform, ToastAndroid } from "react-native";
+import I18n from "i18n-js";
 
 // TYPE -------------------------------------------------------------------------------------------
 
@@ -115,12 +116,13 @@ export const uploadDocument = (dispatch: any, content: ContentUri[], onEnd: any)
       dispatch(progressAction(100));
       setTimeout(() => {
         dispatch(progressEndAction());
-        if (Platform.OS === "android") ToastAndroid.show("Le document a bien été importé", ToastAndroid.SHORT);
+        if (Platform.OS === "android") ToastAndroid.show(I18n.t("workspace-uploadSuccessful"), ToastAndroid.SHORT);
         onEnd(response);
       }, 500);
     })
     .catch(err => {
-      if (Platform.OS === "android") ToastAndroid.show(err.message, ToastAndroid.SHORT);
+      if (Platform.OS === "android") ToastAndroid.show(I18n.t("workspace-uploadFailed"), ToastAndroid.SHORT);
+      console.log("upload failed", err.message)
       dispatch(progressEndAction());
     });
 };
