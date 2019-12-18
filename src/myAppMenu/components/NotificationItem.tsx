@@ -7,11 +7,11 @@ import style from "glamorous-native";
 import Conf from "../../../ode-framework-conf";
 
 import {
-  NewListItem,
-  NewLeftPanel,
-  NewCenterPanel,
-  NewRightPanel,
-  NewContent
+  ListItem,
+  LeftPanel,
+  CenterPanel,
+  RightPanel,
+  Content
 } from "./NewContainerContent";
 import { DateView } from "../../ui/DateView";
 import { FontWeight } from "../../ui/text";
@@ -21,7 +21,7 @@ import { Icon } from "../../ui/icons/Icon";
 import { CommonStyles } from "../../styles/common/styles";
 
 import { INotification } from "../reducers/notificationList";
-import { newContentStyle } from "../components/NewContainerContent"
+import { contentStyle } from "../components/NewContainerContent"
 import HtmlToText from "../../infra/htmlConverter/text";
 
 export interface INotificationItemProps extends INotification {
@@ -79,7 +79,7 @@ export class NotificationItem extends React.PureComponent<
     if (evt.nativeEvent.lines.length >= 2) {
       const layout = evt.nativeEvent.lines[1];
       const text = layout.text
-      const {fontFamily, fontSize, fontWeight } = newContentStyle
+      const {fontFamily, fontSize, fontWeight } = contentStyle
       const result: TSMeasureResult = await rnTextSize.measure({
         text,
         fontFamily,
@@ -92,11 +92,11 @@ export class NotificationItem extends React.PureComponent<
     }
   }
 
-  public goToUserProfile(uri?: string) {
-    if (!Conf.currentPlatform || !uri) {
-      throw new Error("Must have a platform selected and a uri to redirect the user");
+  public goToUserProfile(userId: string) {
+    if (!Conf.currentPlatform || !userId) {
+      throw new Error("Must have a platform selected and a userId to redirect the user");
     }
-    const url = `${(Conf.currentPlatform as any).url}${uri}`
+    const url = `${(Conf.currentPlatform as any).url}/userbook/annuaire#${userId}`
     Linking.canOpenURL(url).then(supported => {
       if (supported) {
         Linking.openURL(url);
@@ -124,10 +124,12 @@ export class NotificationItem extends React.PureComponent<
     );
 
     return (
-      <NewListItem>
-        <NewLeftPanel
-          disabled={params && !params.username}
-          //onPress={() => this.goToUserProfile(params.uri || params.profilUri)}
+      <ListItem>
+        <LeftPanel
+          disabled
+          // no navigation towards user webpage for now
+          // disabled={!sender}
+          // onPress={() => this.goToUserProfile(sender)}
         >
           <View style={{ position: "absolute" }}>
             <BadgeAvatar
@@ -136,23 +138,23 @@ export class NotificationItem extends React.PureComponent<
               badgeColor={getAppInfos[type] && getAppInfos[type].color}
             />
           </View>
-        </NewLeftPanel>
-        <NewCenterPanel onPress={() => onPress()}>
+        </LeftPanel>
+        <CenterPanel onPress={() => onPress()}>
           <Author numberOfLines={1}>
             {params && params.username || getAppInfos[type] && getAppInfos[type].name}
           </Author>
           {message && message.length ? (
-            <NewContent
+            <Content
               numberOfLines={isExtended ? undefined : 2}
               onTextLayout={!measuredText && this.measureText}
             >
               {formattedContent}
-            </NewContent>
+            </Content>
           ) : (
             <style.View />
           )}
-        </NewCenterPanel>
-        <NewRightPanel disabled={!longText} onPress={() => this.setState({ isExtended: !isExtended })}>
+        </CenterPanel>
+        <RightPanel disabled={!longText} onPress={() => this.setState({ isExtended: !isExtended })}>
           <DateView date={date}/>
           <View style={{ flex: 1, justifyContent: "center" }}>
             {longText &&
@@ -163,8 +165,8 @@ export class NotificationItem extends React.PureComponent<
               />
             }
           </View>
-        </NewRightPanel>
-      </NewListItem>
+        </RightPanel>
+      </ListItem>
     );
   }
 }

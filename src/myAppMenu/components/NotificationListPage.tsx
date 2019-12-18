@@ -5,7 +5,6 @@
  *
  * Props :
  *    `isFetching` - is data currently fetching from the server.
- *    `isRefreshing` - is data currenty fetching in order to reset displayed list.
  *    `notifications` - list of notifications to display
  *
  *    `navigation` - React Navigation instance.
@@ -30,7 +29,7 @@ import styles from "../../styles";
 
 import { Loading } from "../../ui";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
-import { NewPageContainer, NewListItem } from "./NewContainerContent";
+import { PageContainer, ListItem } from "./NewContainerContent";
 import { EmptyScreen } from "../../ui/EmptyScreen";
 import { TextBright } from "../../ui/Typography";
 import { NotificationItem } from "./NotificationItem";
@@ -43,9 +42,13 @@ import { INotification, INotificationList } from "../reducers/notificationList";
 
 // Props definition -------------------------------------------------------------------------------
 
+interface INotificationListPageState {
+  fetching: boolean;
+}
+
 export interface INotificationListPageDataProps {
+  didInvalidate?: boolean;
   isFetching?: boolean;
-  isRefreshing?: boolean;
   notifications?: INotificationList;
 }
 
@@ -63,7 +66,8 @@ export interface INotificationListPageOtherProps {
 
 export type INotificationListPageProps = INotificationListPageDataProps &
   INotificationListPageEventProps &
-  INotificationListPageOtherProps;
+  INotificationListPageOtherProps &
+  INotificationListPageState;
 
 // Main component ---------------------------------------------------------------------------------
 
@@ -73,24 +77,37 @@ INotificationListPageProps,
 
 }
 > {
+  public state={
+    fetching: false
+  }
+
+  getDerivedStateFromProps(nextProps: any, prevState: any) {
+    if(nextProps.isFetching !== prevState.fetching){
+      return { fetching: nextProps.isFetching};
+   }
+    else return null;
+  }
+
+  componentDidUpdate(prevProps: any) {
+    const { isFetching } = this.props
+    if(prevProps.isFetching !== isFetching){
+      this.setState({fetching: isFetching});
+    }
+  }
 
 // Render
 
   public render() {
-    const { isFetching, isRefreshing, notifications } = this.props;
-    const isEmpty = notifications && notifications.length === 0;
-
-    const pageContent = isEmpty
-      ? isFetching || isRefreshing
-        ? this.renderLoading()
-        : this.renderEmptyScreen()
+    const { isFetching, didInvalidate } = this.props;
+    const pageContent = isFetching && didInvalidate
+      ? this.renderLoading()
       : this.renderNotificationList();
 
     return (
-      <NewPageContainer>
+      <PageContainer>
         <ConnectionTrackingBar />
         {pageContent}
-      </NewPageContainer>
+      </PageContainer>
     );
   }
 
@@ -98,31 +115,14 @@ INotificationListPageProps,
     return <Loading />;
   }
 
-  public renderEmptyScreen() {
-    return (
-      <EmptyScreen
-        imageSrc={require("../../../assets/images/empty-screen/empty-search.png")}
-        imgWidth={571}
-        imgHeight={261}
-        title={I18n.t("notifications-emptyScreenTitle")}
-        scale={0.76}
-      />
-    );
-  }
-
   public renderNotificationList() {
-    const { isRefreshing, onRefresh, notifications, onHandleNotification } = this.props;
+    const { onRefresh, notifications, onHandleNotification } = this.props;
+    const { fetching } = this.state
+    const isEmpty = notifications && notifications.length === 0;
 
     return (
       <FlatList
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={() => {
-              onRefresh();
-            }}
-          />
-        }
+        contentContainerStyle={isEmpty ? { flex: 1 } : null}
         data={notifications}
         renderItem={({ item }: { item: INotification }) => {
           return (
@@ -135,14 +135,32 @@ INotificationListPageProps,
         keyExtractor={(item: INotification) => item.id}
         style={styles.grid}
         keyboardShouldPersistTaps={"always"}
+        refreshControl={
+          <RefreshControl
+            refreshing={fetching}
+            onRefresh={() => {
+              this.setState({ fetching: true })
+              onRefresh()
+            }}
+          />
+        }
         ListFooterComponent={notifications && notifications.length === 25 ?
-          <NewListItem disabled>
+          <ListItem disabled>
             <TextBright>
               Vous avez lu vos 25 dernières notifications
             </TextBright>
-          </NewListItem>
+          </ListItem>
           :
           null
+        }
+        ListEmptyComponent={
+          <EmptyScreen
+            imageSrc={require("../../../assets/images/empty-screen/empty-search.png")}
+            imgWidth={571}
+            imgHeight={261}
+            title={I18n.t("notifications-emptyScreenTitle")}
+            scale={0.76}
+          />
         }
       />
     );

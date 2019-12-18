@@ -16,13 +16,12 @@ const mapStateToProps: (state: any) => INotificationListPageDataProps = state =>
   // Extract data from state
   const localState = state.myapps;
   const notificationList = localState.notificationList;
-  const { didInvalidate, isFetching, isRefreshing, lastUpdated, data } = notificationList;
+  const { didInvalidate, isFetching, lastUpdated, data } = notificationList;
 
   // Format props
   return {
     didInvalidate,
     isFetching,
-    isRefreshing,
     lastUpdated,
     notifications: data
   };
