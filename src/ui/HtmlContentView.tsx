@@ -108,7 +108,7 @@ export class HtmlContentView extends React.PureComponent<
           <Italic>{emptyMessage}</Italic>
         </View>
       : 
-        emptyMessage
+        emptyMessage || <Italic>{I18n.t("noContent")}</Italic>
     } else {
       return <View {...this.props}>{jsx || loadingComponent}</View>;
     }
