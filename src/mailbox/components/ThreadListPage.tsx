@@ -129,7 +129,7 @@ export class ThreadListPage extends React.PureComponent<
   }
 
   public renderThreadList() {
-    const { isRefreshing, onNextPage, onRefresh, threads } = this.props;
+    const { isFetching, isRefreshing, onNextPage, onRefresh, threads } = this.props;
     const { isSwiping } = this.state;
     const isEmpty = threads && threads.length === 0;
     return (
@@ -161,6 +161,7 @@ export class ThreadListPage extends React.PureComponent<
         style={styles.grid}
         keyboardShouldPersistTaps={"always"}
         scrollEnabled={!isSwiping}
+        ListFooterComponent={isFetching ? this.renderLoading() : null}
         ListEmptyComponent= {
           <EmptyScreen
             imageSrc={require("../../../assets/images/empty-screen/conversations.png")}

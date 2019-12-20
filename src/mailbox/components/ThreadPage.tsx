@@ -102,16 +102,16 @@ export class ThreadPage extends React.PureComponent<
   public onEndReachedCalledDuringMomentum = true;
 
   getDerivedStateFromProps(nextProps: any, prevState: any) {
-    if(nextProps.isFetching !== prevState.fetching){
-      return { fetching: nextProps.isFetching};
+    if(nextProps.isRefreshing !== prevState.fetching){
+      return { fetching: nextProps.isRefreshing};
    }
    else return null;
   }
 
   componentDidUpdate(prevProps: any) {
-    const { isFetching } = this.props
-    if(prevProps.isFetching !== isFetching){
-      this.setState({ fetching: isFetching });
+    const { isRefreshing } = this.props
+    if(prevProps.isRefreshing !== isRefreshing){
+      this.setState({ fetching: isRefreshing });
     }
   }
 
