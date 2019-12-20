@@ -5,7 +5,7 @@ import { View, LayoutChangeEvent, LayoutRectangle, Dimensions } from "react-nati
 export interface IShowMoreProps<T> {
     data: T[],
     renderLeft?: () => JSX.Element
-    renderItem: (index: number, value: T, props: { maxWidth: number }) => JSX.Element
+    renderItem: (index: number, value: string, props: { maxWidth: number }) => JSX.Element
     renderEllipsis: (nbHidden: number) => JSX.Element
 }
 
@@ -132,7 +132,8 @@ export class ShowMore<T> extends React.Component<IShowMoreProps<T>, IShowMoreSta
         const children: JSX.Element[] = [];
         for (let i = 0; i < max; i++) {
             const isLatest = i == (max - 1);
-            const child = renderItem(i, data[i], { maxWidth: isLatest ? lastMaxWidth : undefined });
+            const value = `${data[i]}${isLatest ? "" : ", "}`
+            const child = renderItem(i, value, { maxWidth: isLatest ? lastMaxWidth : undefined });
             if (measured) {
                 children.push(child);
             } else {
@@ -156,22 +157,26 @@ export class ShowMore<T> extends React.Component<IShowMoreProps<T>, IShowMoreSta
         const { renderLeft } = this.props;
         const { measured, maxHeight, maxWidth } = this.state;
         const screenWidth = Dimensions.get("screen").width;
-        return <View style={{
-            //hide component during layout
-            transform: measured ? [] : [{
-                translateX: screenWidth * 10
-            }],
-            opacity: measured ? 1 : 0,
-            flex: measured ? undefined : 1,
-            maxHeight: measured ? maxHeight : undefined,
-            maxWidth: measured ? maxWidth : undefined,
-            flexDirection: "row",
-            flexWrap: "nowrap",
-            overflow: "hidden"
-        }} onLayout={!measured && this.onLayoutParent}>
-            {renderLeft && renderLeft()}
-            {this.renderChildren()}
-            {this.renderEllipsis()}
-        </View>
+        return <View
+                    style={{
+                        //hide component during layout
+                        transform: measured ? [] : [{
+                            translateX: screenWidth * 10
+                        }],
+                        opacity: measured ? 1 : 0,
+                        flex: measured ? undefined : 1,
+                        maxHeight: measured ? maxHeight : undefined,
+                        maxWidth: measured ? maxWidth : undefined,
+                        flexDirection: "row",
+                        flexWrap: "nowrap",
+                        overflow: "hidden",
+                        alignItems: "flex-end"
+                    }} 
+                    onLayout={!measured && this.onLayoutParent}
+                >
+                    {renderLeft && renderLeft()}
+                    {this.renderChildren()}
+                    {this.renderEllipsis()}
+                </View>
     }
 }

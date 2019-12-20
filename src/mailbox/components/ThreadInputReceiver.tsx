@@ -6,7 +6,6 @@ import { TouchableOpacity } from "react-native";
 import { ShowMore } from "../../ui/ShowMore";
 import I18n from "i18n-js";
 
-
 export default function ThreadInputReceivers(props: { show: boolean, names: string[], onPress: () => void }) {
     const { names, onPress, show } = props;
     if (!show) {
@@ -14,10 +13,12 @@ export default function ThreadInputReceivers(props: { show: boolean, names: stri
     }
     return <ReceiverInput>
         <TouchableOpacity onPress={onPress}>
-            <ShowMore data={names}
+            <ShowMore 
+                data={names}
                 renderLeft={() => <ReceiverInputPrefix>{I18n.t("conversation-receiverPrefixInput")}</ReceiverInputPrefix>}
-                renderEllipsis={(count) => <UserLabel>+ {count}</UserLabel>}
-                renderItem={(index, value, props) => <UserLabel key={"UserLabel_" + index} style={{ maxWidth: props.maxWidth }} numberOfLines={1}>{value}</UserLabel>} />
+                renderEllipsis={(count) => <UserLabel> +{count}</UserLabel>}
+                renderItem={(index, value, props) => <UserLabel key={"UserLabel_" + index} style={{ maxWidth: props.maxWidth }} numberOfLines={1}>{value}</UserLabel>}
+            />
         </TouchableOpacity>
     </ReceiverInput>
 }
