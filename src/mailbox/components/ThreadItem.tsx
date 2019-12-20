@@ -39,7 +39,7 @@ export default ({
   return (
     <ListItem nb={unread} onPress={() => onPress(id, displayNames, subject)}>
       <LeftPanel>
-        <BadgeAvatar avatars={findReceivers2(to, from, cc)} badgeContent={unread} />
+        <BadgeAvatar avatars={findReceiversAvatars(to, from, cc, displayNames)} badgeContent={unread} />
       </LeftPanel>
       <CenterPanel>
         <Author nb={unread} numberOfLines={1}>
