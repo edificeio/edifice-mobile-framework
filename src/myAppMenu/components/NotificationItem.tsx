@@ -20,7 +20,7 @@ import { Icon } from "../../ui/icons/Icon";
 
 import { CommonStyles } from "../../styles/common/styles";
 
-import { INotification } from "../reducers/notificationList";
+import { INotification } from "../state/notificationList";
 import { contentStyle } from "../components/NewContainerContent"
 import HtmlToText from "../../infra/htmlConverter/text";
 

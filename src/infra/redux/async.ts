@@ -1,6 +1,8 @@
 import { fetchJSONWithCache } from "../fetchWithCache";
 import { Reducer } from "redux";
 
+// OBSOLETE.
+
 /**
  * Async iterable reducer constructor.
  *

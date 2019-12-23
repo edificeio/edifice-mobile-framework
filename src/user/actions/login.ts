@@ -19,7 +19,7 @@ import { userService } from "../service";
 import { initActivationAccount as initActivationAccountAction } from "./activation";
 import PushNotificationIOS from "@react-native-community/push-notification-ios";
 import { clearTimeline } from "../../timeline/actions/clearTimeline";
-import { Dispatch } from "redux";
+import { createEndSessionAction } from "../../infra/redux/reducerFactory";
 import { ThunkDispatch } from "redux-thunk";
 
 // TYPES ------------------------------------------------------------------------------------------------
@@ -319,6 +319,7 @@ export function logout() {
       // // === 1: End user session
       await dispatch(endSessionAction())
       await clearRequestsCache();
+      dispatch(createEndSessionAction());
 
       // === 2: Nav back on the login screen
       navigate("LoginHome");

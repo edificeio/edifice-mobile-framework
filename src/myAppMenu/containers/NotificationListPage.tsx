@@ -8,24 +8,24 @@ import {
 } from "../components/NotificationListPage";
 
 import { fetchNotificationListAction, handleNotificationAction } from "../actions/notificationList";
-import { INotification } from "../reducers/notificationList";
+import { INotification, getNotificationListState } from "../state/notificationList";
 
-// ------------------
+// ------------------------------------------------------------------------------------------------
 
 const mapStateToProps: (state: any) => INotificationListPageDataProps = state => {
   // Extract data from state
-  const localState = state.myapps;
-  const notificationList = localState.notificationList;
-  const { didInvalidate, isFetching, lastUpdated, data } = notificationList;
+  const notificationList = getNotificationListState(state);
+  const { isPristine, isFetching, data } = notificationList;
 
   // Format props
   return {
-    didInvalidate,
+    isPristine,
     isFetching,
-    lastUpdated,
     notifications: data
   };
 };
+
+// ------------------------------------------------------------------------------------------------
 
 const mapDispatchToProps: (
   dispatch: any
@@ -38,12 +38,12 @@ const mapDispatchToProps: (
   };
 };
 
+// ------------------------------------------------------------------------------------------------
+
 class NotificationListPageContainer extends React.PureComponent<
   INotificationListPageProps & { dispatch: any },
   {}
 > {
-
-  // // ----------------------------------------------------------------------------------------------
 
   constructor(props: INotificationListPageProps & { dispatch: any }) {
     super(props);
@@ -56,7 +56,7 @@ class NotificationListPageContainer extends React.PureComponent<
     this.props.dispatch(fetchNotificationListAction());
   }
 
-  // // lifecycle ------------------------------------------------------------------------------------
+  // lifecycle ------------------------------------------------------------------------------------
 
   public render() {
     const { notifications } = this.props
@@ -64,11 +64,13 @@ class NotificationListPageContainer extends React.PureComponent<
       <NotificationListPage
         {...this.props}
         notifications={notifications}
-        onRefresh={this.reloadList.bind(this)} 
+        onRefresh={this.reloadList.bind(this)}
       />
     )
   }
 }
+
+// ------------------------------------------------------------------------------------------------
 
 export default connect(
   mapStateToProps,
