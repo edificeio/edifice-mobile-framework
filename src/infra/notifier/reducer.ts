@@ -1,28 +1,14 @@
-import { AnyAction } from "redux";
-import { notifierActionTypes, NotifierState } from "./actions";
+import { initialState, notifierActionTypes } from "./state";
+import createReducer from "../redux/reducerFactory";
 
-const initialState: NotifierState = {
-  notifierType: 'info',
-  visible: false
-};
-
-export default (
-  state: NotifierState = initialState,
-  action: AnyAction
-): NotifierState => {
-  switch(action.type) {
-    case notifierActionTypes.show:
-      return {
-        ...state,
-        ...action,
-        visible: true
-      };
-    case notifierActionTypes.hide:
-      return {
-        ...state,
-        visible: false
-      };
-    default:
-      return state;
-  }
-};
+export default createReducer(initialState, {
+  [notifierActionTypes.show]: (state, action) => ({
+    ...state,
+    ...action,
+    visible: true
+  }),
+  [notifierActionTypes.hide]: (state, action) => ({
+    ...state,
+    visible: false
+  })
+})

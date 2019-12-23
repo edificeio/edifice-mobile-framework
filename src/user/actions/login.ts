@@ -18,6 +18,7 @@ import { userService } from "../service";
 import { initActivationAccount } from "./activation";
 import PushNotificationIOS from "@react-native-community/push-notification-ios";
 import { clearTimeline } from "../../timeline/actions/clearTimeline";
+import { createEndSessionAction } from "../../infra/redux/reducerFactory";
 
 // TYPES ------------------------------------------------------------------------------------------------
 
@@ -271,6 +272,7 @@ export function logout() {
       // // === 1: End user session
       await dispatch(endSession())
       await clearRequestsCache();
+      dispatch(createEndSessionAction());
 
       // === 2: Nav back on the login screen
       navigate("LoginHome");

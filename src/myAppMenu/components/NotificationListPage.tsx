@@ -36,7 +36,7 @@ import { NotificationItem } from "./NotificationItem";
 
 // // Type definitions
 
-import { INotification, INotificationList } from "../reducers/notificationList";
+import { INotification, INotificationList } from "../state/notificationList";
 
 // // Misc
 
@@ -47,7 +47,7 @@ interface INotificationListPageState {
 }
 
 export interface INotificationListPageDataProps {
-  didInvalidate?: boolean;
+  isPristine?: boolean;
   isFetching?: boolean;
   notifications?: INotificationList;
 }
@@ -98,8 +98,8 @@ INotificationListPageProps,
 // Render
 
   public render() {
-    const { isFetching, didInvalidate } = this.props;
-    const pageContent = isFetching && didInvalidate
+    const { isFetching, isPristine } = this.props;
+    const pageContent = isFetching && isPristine
       ? this.renderLoading()
       : this.renderNotificationList();
 
@@ -123,7 +123,7 @@ INotificationListPageProps,
     return (
       <FlatList
         contentContainerStyle={isEmpty ? { flex: 1 } : null}
-        data={notifications}
+        data={notifications || null}
         renderItem={({ item }: { item: INotification }) => {
           return (
             <NotificationItem
@@ -140,7 +140,7 @@ INotificationListPageProps,
             refreshing={fetching}
             onRefresh={() => {
               this.setState({ fetching: true })
-              onRefresh()
+              onRefresh!()
             }}
           />
         }

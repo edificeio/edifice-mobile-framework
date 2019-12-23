@@ -137,7 +137,7 @@ export async function fetchJSONWithCache(
     platform,
     r => r.json(),
     cr => cr.body
-  );
+  ) as Promise<any>;
 }
 
 /**
