@@ -1,7 +1,7 @@
 import * as React from "react";
 import RNFileShareIntent from "react-native-file-share-intent";
-import { DeviceEventEmitter, NativeEventEmitter, NativeModules, Platform } from "react-native";
-import { nainNavNavigate } from "../navigation/helpers/navHelper";
+import { NativeEventEmitter, NativeModules, Platform } from "react-native";
+import { mainNavNavigate } from "../navigation/helpers/navHelper";
 import { FilterId } from "../workspace/types/filters";
 import I18n from "i18n-js";
 import { ContentUri } from "../types/contentUri";
@@ -25,7 +25,7 @@ export default function withLinkingAppWrapper(WrappedComponent: React.Component)
     }
 
     private navigate(contentUri: ContentUri) {
-      nainNavNavigate("Workspace", {
+      mainNavNavigate("Workspace", {
         contentUri: null,
         filter: FilterId.root,
         parentId: FilterId.root,
