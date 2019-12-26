@@ -8,14 +8,6 @@ project(':@react-native-community_netinfo').projectDir = new File(rootProject.pr
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
 include ':app'
 
-// Appcenter manual linking (automatic linking does not work)
-// include ':appcenter-crashes'
-// project(':appcenter-crashes').projectDir = new File(rootProject.projectDir, '../node_modules/appcenter-crashes/android')
-// include ':appcenter-analytics'
-// project(':appcenter-analytics').projectDir = new File(rootProject.projectDir, '../node_modules/appcenter-analytics/android')
-// include ':appcenter'
-// project(':appcenter').projectDir = new File(rootProject.projectDir, '../node_modules/appcenter/android')
-
 // React Native Mixpanel manual linking (automatic linking not supported)
 include ':react-native-mixpanel'
 project(':react-native-mixpanel').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-mixpanel/android')

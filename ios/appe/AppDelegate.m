@@ -7,17 +7,6 @@
 
 #import "AppDelegate.h"
 
-// #import <AppCenterReactNativeCrashes/AppCenterReactNativeCrashes.h>
-// #import <AppCenterReactNativeAnalytics/AppCenterReactNativeAnalytics.h>
-// #import <AppCenterReactNative/AppCenterReactNative.h>
-
-// https://docs.microsoft.com/en-us/appcenter/sdk/getting-started/react-native#32-ios-only-integrate-the-ios-sdk-without-react-native-link
-#import <AppCenterReactNativeShared/AppCenterReactNativeShared.h>
-#import <AppCenterReactNative.h>
-#import <AppCenterReactNativeAnalytics.h>
-#import <AppCenterReactNativeCrashes.h>
-// #import <AppCenterReactNativePush.h> // No code push configured
-
 // react-native-splash-screen
 #import "RNSplashScreen.h"
 
@@ -32,6 +21,11 @@
 #import <RNCPushNotificationIOS.h>
 
 #import <React/RCTLinkingManager.h>
+
+// App-Center automatic linking (but requires some manual steps anyway... See https://docs.microsoft.com/en-us/appcenter/sdk/getting-started/react-native)
+#import <AppCenterReactNative.h>
+#import <AppCenterReactNativeAnalytics.h>
+#import <AppCenterReactNativeCrashes.h>
 
 @implementation AppDelegate
 
@@ -57,16 +51,10 @@
   [FIRApp configure];
   [RNFirebaseNotifications configure];
 
-  // [AppCenterReactNativeCrashes registerWithAutomaticProcessing];  // Initialize AppCenter crashes
-  // [AppCenterReactNativeAnalytics registerWithInitiallyEnabled:true];  // Initialize AppCenter analytics
-  // [AppCenterReactNative register];  // Initialize AppCenter
-  // AppCenter manual linking as desbribed in https://docs.microsoft.com/en-us/appcenter/sdk/getting-started/react-native#32-ios-only-integrate-the-ios-sdk-without-react-native-link
+  // AppCenter (see https://docs.microsoft.com/en-us/appcenter/sdk/getting-started/react-native)
   [AppCenterReactNative register];
   [AppCenterReactNativeAnalytics registerWithInitiallyEnabled:true];
   [AppCenterReactNativeCrashes registerWithAutomaticProcessing];
-
-
-  // [AppCenterReactNativePush register]; // No code push configured
 
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge

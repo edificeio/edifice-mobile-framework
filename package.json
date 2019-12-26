@@ -22,9 +22,9 @@
   "dependencies": {
     "@react-native-community/netinfo": "4.1.2",
     "@react-native-community/push-notification-ios": "github:react-native-community/react-native-push-notification-ios#dcef241",
-    "appcenter": "^2.4.0",
-    "appcenter-analytics": "^2.4.0",
-    "appcenter-crashes": "^2.4.0",
+    "appcenter": "2.6.1",
+    "appcenter-analytics": "2.6.1",
+    "appcenter-crashes": "2.6.1",
     "base-64": "0.1.0",
     "buffer": "^5.4.3",
     "deepmerge": "4.0.0",

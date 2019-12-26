@@ -161,8 +161,9 @@ android {
             // Caution! In production, you need to generate your own keystore file.
             // see https://facebook.github.io/react-native/docs/signed-apk-android.
             // signingConfig signingConfigs.debug
-            minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            // minifyEnabled enableProguardInReleaseBuilds
+            // proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            // signingConfig signingConfigs.release
         }
     }
     // applicationVariants are e.g. debug, release
@@ -202,11 +203,6 @@ dependencies {
     // Firebase dependencies (see https://rnfirebase.io/docs/v5.x.x/installation/android)
     implementation 'com.google.firebase:firebase-analytics:17.2.1'
     implementation "com.google.firebase:firebase-messaging:20.0.0"
-
-    // Appcenter manual linking (automatic linking does not work)
-    // implementation project(':appcenter')
-    // implementation project(':appcenter-crashes')
-    // implementation project(':appcenter-analytics')
 
     // React Native Mixpanel manual linking (automatic linking not supported)
     implementation project(':react-native-mixpanel')
