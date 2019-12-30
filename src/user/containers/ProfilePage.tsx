@@ -86,7 +86,11 @@ export class ProfilePage extends React.PureComponent<
       <PageContainer>
         <ConnectionTrackingBar />
         <Notifier/>
-        <KeyboardAvoidingView behavior="height" keyboardVerticalOffset={Platform.select({ ios: 100, android: undefined })}>
+        <KeyboardAvoidingView
+          style={{ flex: 1, backgroundColor: "#ffffff" }}
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          keyboardVerticalOffset={Platform.select({ ios: 100, android: undefined })}
+        >
           <ScrollView alwaysBounceVertical={false}>
             <SafeAreaView>
 
