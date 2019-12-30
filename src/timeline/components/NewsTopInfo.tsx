@@ -4,11 +4,13 @@
 import I18n from "i18n-js";
 
 import * as React from "react";
+import { Text } from "react-native";
 
 import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
 import { CenterPanel, Header, LeftPanel } from "../../ui/ContainerContent";
-import { DateView } from "../../ui/DateView";
 import { Heavy, Light } from "../../ui/Typography";
+import { CommonStyles } from "../../styles/common/styles";
+import { getTimeToStr } from "../../utils/date";
 
 export default ({
   senderId,
@@ -34,7 +36,16 @@ export default ({
         </Light>
         {resourceName}
       </Heavy>
-      <DateView date={date} short={false} />
+      <Text
+        style={{
+          color: CommonStyles.lightTextColor,
+          fontFamily: CommonStyles.primaryFontFamily,
+          fontSize: 14
+        }}
+      >
+        {/* FIXME: Use moment.js instead of this */}
+        {getTimeToStr(date)}
+      </Text>
     </CenterPanel>
   </Header>
 );
