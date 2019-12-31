@@ -19,6 +19,7 @@
   "by": "par: ",
   "Cancel": "Annuler",
   "CellPhone": "Téléphone mobile",
+  "changePassword-errorFields": "Le formulaire contient des erreurs",
   "change-password-errorLoading": "Nous n'avons pas pu charger les données nécessaires pour modifier votre mot de passe. Veuillez réessayer ultérieurement.",
   "changePassword-errorSubmit": "Erreur durant la réinitialisation du mot de passe",
   "common-confirm": "Êtes-vous sûr de vouloir",

@@ -19,6 +19,7 @@
   "by": "par: ",
   "Cancel": "Cancel",
   "CellPhone": "Mobile phone",
+  "changePassword-errorFields": "The form contains errors",
   "change-password-errorLoading": "#",
   "changePassword-errorSubmit": "Error while resetting password",
   "common-confirm": "Are you sure you",

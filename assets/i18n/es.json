@@ -19,6 +19,7 @@
   "by": "por: ",
   "Cancel": "Cancelar",
   "CellPhone": "Teléfono móvil",
+  "changePassword-errorFields": "El formulario contiene errores",
   "change-password-errorLoading": "No pudimos cargar los datos necesarios para cambiar su contraseña. Por favor intente nuevamente más tarde.",
   "changePassword-errorSubmit": "Error al restablecer la contraseña.",
   "common-confirm": "¿Está seguro de que desea ",

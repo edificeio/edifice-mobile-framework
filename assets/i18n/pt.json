@@ -19,6 +19,7 @@
   "by": "por: ",
   "Cancel": "Cancelar",
   "CellPhone": "Celular",
+  "changePassword-errorFields": "O formulário contém erros",
   "change-password-errorLoading": "Não conseguimos baixar os dados necessários para alterar a sua senha. Por favor, tente novamente mais tarde.",
   "changePassword-errorSubmit": "Erro durante a reinicialização da senha.",
   "common-confirm": "Tem certeza de que deseja",

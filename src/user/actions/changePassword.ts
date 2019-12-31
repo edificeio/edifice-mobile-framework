@@ -156,7 +156,7 @@ export function changePasswordAction(model: IChangePasswordModel) {
         const resBody = await res.json();
         if (resBody.error) {
           // console.log("[User][Change password] failed with error", res.status, resBody)
-          dispatch(changePasswordSubmitErrorAction(resBody.error.message));
+          dispatch(changePasswordSubmitErrorAction(I18n.t("changePassword-errorFields")));
           return;
         }
       }
