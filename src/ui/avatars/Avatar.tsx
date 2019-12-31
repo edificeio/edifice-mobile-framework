@@ -304,7 +304,7 @@ export class Avatar extends React.Component<
     };
     const source = !this.userId && this.props.sourceOrId ? this.props.sourceOrId as ImageURISource : {
       uri: `${Conf.currentPlatform.url}/userbook/avatar/${
-        this.userId
+        typeof this.userId === "string" ? this.userId : this.userId!.id
         }?thumbnail=${this.props.size === Size.verylarge ? "150x150" : "100x100"}`
     }
     //in case of success,initial,loading status...
