@@ -27,8 +27,8 @@ function matchRegex(text: string, regex: RegExp | string) {
     const regexObject = typeof regex == "string" ? new RegExp(regex) : regex;
     return regexObject.test(text)
 }
-function matchString(text1: string, text2: string) {
-    return text1 == text2
+function compareString(text1: string, text2: string, match: boolean) {
+    return match? text1 == text2 : text1 != text2
 }
 
 ///
@@ -56,9 +56,9 @@ export class ValidatorBuilder {
     withEmail() {
         return this.withRegex(ValidatorBuilder.MAIL_REGEX);
     }
-    withMatchString(other: ValueGetter<string>) {
+    withCompareString(other: ValueGetter<string>, match: boolean) {
         this.validators.push((value) => {
-            return matchString(value, other());
+            return compareString(value, other(), match);
         })
         return this;
     }

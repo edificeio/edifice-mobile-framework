@@ -14,7 +14,7 @@ export class ActivationFormModel {
     }
     login = new ValidatorBuilder().withRequired(true).build<string>();
     password = new ValidatorBuilder().withRequired(true).withRegex(this.args.passwordRegex).build<string>();
-    confirm = new ValidatorBuilder().withRequired(true).withMatchString(this.args.password).build<string>();
+    confirm = new ValidatorBuilder().withRequired(true).withCompareString(this.args.password, true).build<string>();
     email = new ValidatorBuilder().withRequired(this.args.emailRequired).withEmail().build<string>();
     phone = new ValidatorBuilder().withRequired(this.args.phoneRequired).withPhone().build<string>();
     //

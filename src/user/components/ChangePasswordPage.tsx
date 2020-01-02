@@ -44,11 +44,12 @@ export type IChangePasswordPageProps =
 class ChangePasswordFormModel {
   constructor(private args: {
     passwordRegex: string,
-    newPassword: ValueGetter<string>
+    oldPassword: ValueGetter<string>,
+    newPassword: ValueGetter<string>,
   }) {}
   oldPassword = new ValidatorBuilder().withRequired(true).withRegex(this.args.passwordRegex).build<string>();
-  newPassword = new ValidatorBuilder().withRequired(true).withRegex(this.args.passwordRegex).build<string>();
-  confirm = new ValidatorBuilder().withRequired(true).withMatchString(this.args.newPassword).build<string>();
+  newPassword = new ValidatorBuilder().withRequired(true).withRegex(this.args.passwordRegex).withCompareString(this.args.oldPassword, false).build<string>();
+  confirm = new ValidatorBuilder().withRequired(true).withCompareString(this.args.newPassword, true).build<string>();
 
   inputOldPassword?: TextInput;
   inputNewPassword?: TextInput;
@@ -156,6 +157,7 @@ export class ChangePasswordPage extends React.PureComponent<
 
     const formModel = new ChangePasswordFormModel({
       ...this.props,
+      oldPassword: () => oldPassword,
       newPassword: () => newPassword
     });
     const isNotValid = !formModel.validate({ ...this.state });
