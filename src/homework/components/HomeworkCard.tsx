@@ -10,7 +10,6 @@
  *    - `onPress` : fires when the user touch the card
  */
 
-import style from "glamorous-native";
 import I18n from "i18n-js";
 import * as React from "react";
 import HtmlToText from "../../infra/htmlConverter/text";
@@ -49,23 +48,23 @@ export const HomeworkCard = ({
   const formattedContent = HtmlToText(content, false).excerpt;
   return (
     <TouchableOpacity style={[homeworkCardStyle, style]} onPress={onPress}>
-      {formattedContent ? (
+      {title &&
         <Text>
           {/* TODO typo */}
-          {formattedContent.content}
-          {formattedContent.cropped ? <A> {I18n.t("seeMore")}</A> : null}
+          {title}
         </Text>
-      ) : null}
-      {title ? (
+      }
+      {formattedContent &&
         <Text
           fontSize={12}
           color={CommonStyles.lightTextColor}
           marginTop={formattedContent ? 5 : 0}
         >
           {/* TODO typo */}
-          {title}
+          {formattedContent.content}
+          {formattedContent.cropped ? <A> {I18n.t("seeMore")}</A> : null}
         </Text>
-      ) : null}
+      }
     </TouchableOpacity>
   );
 };
