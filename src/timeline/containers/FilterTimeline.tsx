@@ -30,13 +30,13 @@ export class FilterTimeline extends React.Component<FilterTimelineProps> {
         title: I18n.t("timeline-filterBy"),
         headerLeft: <HeaderAction
           onPress={() => {
-            navigation.getParam("onCancel")();
+            navigation.getParam("onCancel") && navigation.getParam("onCancel")();
           }}
           name="close"
         />,
         headerRight: <HeaderAction
           onPress={() => {
-            navigation.getParam("onApply")();
+            navigation.getParam("onApply") && navigation.getParam("onApply")();
           }}
           title={I18n.t("apply")}
         />,

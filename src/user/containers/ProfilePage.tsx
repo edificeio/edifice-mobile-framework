@@ -24,7 +24,6 @@ import { AnyAction, Dispatch } from "redux";
 import { ThunkDispatch } from "redux-thunk";
 import Notifier from "../../infra/notifier/container";
 import { changePasswordResetAction } from "../actions/changePassword";
-import { TextColor } from "../../ui/text";
 import { getSessionInfo } from "../../AppStore";
 import { ValidatorBuilder } from "../../utils/form"
 
@@ -234,7 +233,7 @@ export class ProfilePageContainer extends React.PureComponent<IProfilePageProps>
               navigation.setParams(
                 { "edit": false }
               );
-              navigation.getParam("onCancel")();
+              navigation.getParam("onCancel") && navigation.getParam("onCancel")();
             }}
             title={I18n.t("Cancel")}
           />,
@@ -246,6 +245,7 @@ export class ProfilePageContainer extends React.PureComponent<IProfilePageProps>
                   navigation.setParams(
                     { "edit": false }
                   );
+                  navigation.getParam("onSave") &&
                   navigation.getParam("onSave")(navigation.getParam("updatedProfileValues"));
                 } else {
                   Alert.alert(I18n.t("ProfileInvalidInformation"));

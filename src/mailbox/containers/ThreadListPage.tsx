@@ -100,7 +100,7 @@ class ThreadListPageContainer extends React.PureComponent<
           name="search"
         />,
         headerRight: <HeaderAction
-          onPress={() => { navigation.getParam('onNewThread')() }}
+          onPress={() => { navigation.getParam('onNewThread') && navigation.getParam('onNewThread')() }}
           name="new_message"
           iconSize={24}
           primary
@@ -129,7 +129,7 @@ class ThreadListPageContainer extends React.PureComponent<
           disabled
         />,
         headerRight: <HeaderAction
-          onPress={() => { navigation.getParam('onResetSearch')() }}
+          onPress={() => { navigation.getParam('onResetSearch') && navigation.getParam('onResetSearch')() }}
           name="close"
         />,
       },
