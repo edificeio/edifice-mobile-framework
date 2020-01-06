@@ -164,8 +164,9 @@ class ThreadPageContainer extends React.PureComponent<
           alignItems: "stretch"
         }}>
           <CenterPanel
-            onPress={() => { navigation.setParams({ showDetails: false }); }}>
-            <LittleTitle numberOfLines={1}>
+            onPress={() => { navigation.setParams({ showDetails: false }); }}
+          >
+            <LittleTitle numberOfLines={2}>
               {threadInfo.subject}
             </LittleTitle>
           </CenterPanel>
@@ -205,9 +206,9 @@ export default connect(
 
 export const CenterPanel = style(TouchableOpacity)({
   alignItems: "stretch",
-  height: 56,
   justifyContent: "center",
   paddingVertical: 5,
+  height: 56,
   flex: 1
 });
 
@@ -216,7 +217,7 @@ export const LittleTitle = (style.text as any)(
     color: "white",
     fontFamily: CommonStyles.primaryFontFamily,
     fontWeight: "400",
-    textAlign: "center"
+    textAlign: "left"
   },
   ({ smallSize = false }: { smallSize: boolean }) => ({
     fontSize: smallSize ? 12 : 16

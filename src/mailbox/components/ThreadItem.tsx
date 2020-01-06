@@ -41,7 +41,7 @@ export default ({
       <LeftPanel>
         <BadgeAvatar avatars={findReceiversAvatars(to, from, cc, displayNames)} badgeContent={unread} />
       </LeftPanel>
-      <CenterPanel>
+      <CenterPanel style={{ marginRight: 0, paddingRight: 0 }}>
         <Author nb={unread} numberOfLines={1}>
           {findReceivers2(to, from, cc)
             .map(r => {
