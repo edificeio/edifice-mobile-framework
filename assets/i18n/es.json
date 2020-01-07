@@ -88,7 +88,7 @@
   "Lastname": "apellido",
   "linkTo": "Enlace",
   "loadingFailedMessage": "Error de carga. Compruebe la conexión a Internet.",
-  "login-back": "#",
+  "login-back": "Regresar a la autenticación",
   "Login": "Usuario",
   "LoginWeb": "Conectarse desde la web",
   "LVS": "LVS",
