@@ -6,6 +6,8 @@ import { IArrayById } from "../../infra/collections";
 import asyncReducer from "../../infra/redux/async";
 
 import { actionTypes } from "../actions/diaryList";
+import { createEndSessionActionType } from "../../infra/redux/reducerFactory";
+import { AnyAction } from "redux";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -23,11 +25,14 @@ const stateDefault: IHomeworkDiaryList = {};
 
 const homeworkDiaryListReducer = (
   state: IHomeworkDiaryList = stateDefault,
-  action
+  action: AnyAction
 ) => {
   switch (action.type) {
     case actionTypes.received:
       return action.data;
+    // Session flush forward-compatibility.
+    case createEndSessionActionType():
+      return stateDefault;
     default:
       return state;
   }

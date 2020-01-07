@@ -1,5 +1,7 @@
 import { AsyncStorage } from "react-native";
 import * as reducerActions from "./reducerActions";
+import { createEndSessionActionType } from "../infra/redux/reducerFactory";
+import { AnyAction } from "redux";
 
 interface IParams {
   blogTitle: string;
@@ -29,22 +31,29 @@ export interface INewsState {
   fetchFailed: boolean;
 }
 
+const initialState: INewsState = {
+  endReached: false,
+  isFetching: false,
+  news: [],
+  availableApps: undefined,
+  selectedApps: undefined,
+  refresh: true,
+  fetchFailed: false
+};
+
 export default (
-  state: INewsState = {
-    endReached: false,
-    isFetching: false,
-    news: [],
-    availableApps: undefined,
-    selectedApps: undefined,
-    refresh: true,
-    fetchFailed: false
-  },
-  action
+  state = initialState,
+  action: AnyAction
 ) => {
   for (let actionType in reducerActions) {
     if (action.type === actionType) {
       return reducerActions[actionType](state, action);
     }
+  }
+
+  // Session flush forward-compatibility.
+  if (action.type == createEndSessionActionType()) {
+    return initialState;
   }
 
   return {

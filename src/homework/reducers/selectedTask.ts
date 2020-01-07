@@ -11,6 +11,7 @@ export interface ISelectedHomeworkTaskState {
 }
 
 import { actionTypeTaskSelected } from "../actions/selectedTask";
+import { createEndSessionActionType } from "../../infra/redux/reducerFactory";
 
 function selectedTask(state: ISelectedHomeworkTaskState = null, action) {
   switch (action.type) {
@@ -21,6 +22,9 @@ function selectedTask(state: ISelectedHomeworkTaskState = null, action) {
         diaryId: action.diaryId,
         taskId: action.taskId
       };
+    // Session flush forward-compatibility.
+    case createEndSessionActionType():
+      return null;
     default:
       return state;
   }

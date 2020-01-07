@@ -15,6 +15,7 @@ import {
   IVersionContext
 } from "../actions/version";
 import { actionTypeForgotRequest, actionTypeForgetReceive } from "../actions/forgot";
+import { createEndSessionActionType } from "../../infra/redux/reducerFactory";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -49,6 +50,9 @@ const authReducer = (
         result: action.result
       };
     }
+    // Session flush forward-compatibility.
+    case createEndSessionActionType():
+      return stateDefault;
     default:
       return state;
   }

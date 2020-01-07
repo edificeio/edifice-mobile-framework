@@ -1,5 +1,7 @@
 import { actionTypeLoadVisibles } from "../actions/createThread";
 import { actionTypeUserPick, actionTypeUserUnpick, actionTypeUserClearPicks } from "../actions/pickUser";
+import { AnyAction } from "redux";
+import { createEndSessionActionType } from "../../infra/redux/reducerFactory";
 
 /**
  * Manage the selected users in mailbox.
@@ -17,10 +19,9 @@ const defaultState: IMailBoxUsersState = {
   visibles: []
 };
 
-// TODO : by default, state is `undefined`. That's cool, the app will force the user to select a homework diary to display. Therefore, we must keep the info in a local storage or something like this.
 export default function selectedThread(
   state: IMailBoxUsersState = defaultState,
-  action
+  action: AnyAction
 ) {
   switch (action.type) {
     case actionTypeLoadVisibles:
@@ -47,6 +48,9 @@ export default function selectedThread(
         picked: [],
         remaining: state.visibles
       };
+    // Session flush forward-compatibility.
+    case createEndSessionActionType():
+      return defaultState;
     default:
       return state;
   }

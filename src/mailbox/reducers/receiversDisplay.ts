@@ -3,6 +3,7 @@
  */
 
 import { actionTypeReceiversDisplay, IActionReceiversDisplay } from "../actions/displayReceivers";
+import { createEndSessionActionType } from "../../infra/redux/reducerFactory";
 
 export interface IConversationReceiverList {
   from: { id: string, name: string }
@@ -18,6 +19,9 @@ export default function receiversDisplay(state: IConversationReceiverList = defa
   switch (action.type) {
     case actionTypeReceiversDisplay:
       return { ...(action as IActionReceiversDisplay) };
+    // Session flush forward-compatibility.
+    case createEndSessionActionType():
+      return defaultState;
     default:
       return state;
   }

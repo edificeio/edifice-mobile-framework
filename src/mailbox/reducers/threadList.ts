@@ -18,9 +18,10 @@ import {
   actionTypeThreadResetReceived,
   actionTypeThreadDeleted
 } from "../actions/threadList";
-import { IConversationMessage } from "../actions/sendMessage";
 import { actionTypeMessageSendRequested, actionTypeMessageSent } from "../actions/sendMessage";
 import { actionTypeThreadCreated } from "../actions/createThread";
+import { AnyAction } from "redux";
+import { createEndSessionActionType } from "../../infra/redux/reducerFactory";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -57,7 +58,7 @@ const stateDefault: IConversationThreadList = {
 
 const conversationThreadListReducer = (
   state: IConversationThreadList = stateDefault,
-  action
+  action: AnyAction
 ) => {
   switch (action.type) {
     case actionTypes.received:
@@ -212,6 +213,9 @@ const conversationThreadListReducer = (
         byId,
         ids: state.ids.filter(v => v !== action.threadId)
       };
+    // Session flush forward-compatibility.
+    case createEndSessionActionType():
+      return stateDefault;
     default:
       return state;
   }
