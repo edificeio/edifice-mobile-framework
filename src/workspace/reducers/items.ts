@@ -8,6 +8,7 @@ import asyncReducer, { IAction } from "../../infra/redux/async";
 import { actionTypesList } from "../actions/list"
 import {FilterId, IState} from "../types";
 import {actionTypesAdd} from "../actions/add";
+import { createEndSessionActionType } from "../../infra/redux/reducerFactory";
 
 const stateDefault: IState = {};
 
@@ -42,6 +43,9 @@ const itemsReducer: Reducer<IState, IAction<any>> = (
         ...state,
         [action.id || FilterId.root]: asyncReducer<IState>(node, actionTypesList)(state[action.id || FilterId.root] || {}, action)
       };
+    // Session flush forward-compatibility.
+    case createEndSessionActionType():
+      return stateDefault;
     default:
       return state;
   }

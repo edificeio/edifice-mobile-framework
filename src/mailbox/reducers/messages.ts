@@ -12,6 +12,7 @@ import {
   IConversationMessageList,
   ConversationMessageStatus
 } from "../actions/sendMessage";
+import { createEndSessionActionType } from "../../infra/redux/reducerFactory";
 // THE REDUCER ------------------------------------------------------------------------------------
 
 const stateDefault: IConversationMessageList = {};
@@ -61,6 +62,9 @@ const conversationThreadListReducer = (
       result3[action.data.oldId].to = action.data.to;
       result3[action.data.oldId].status = ConversationMessageStatus.failed;
       return result3;
+    // Session flush forward-compatibility.
+    case createEndSessionActionType():
+      return stateDefault;
     default:
       return state;
   }

@@ -10,6 +10,7 @@ import asyncReducer, { IAction, IState } from "../../infra/redux/async";
 
 import { actionTypes } from "../actions/tasks";
 import { Reducer } from "redux";
+import { createEndSessionActionType } from "../../infra/redux/reducerFactory";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -89,6 +90,9 @@ const homeworkAllTasksReducer = (
           action
         )
       };
+    // Session flush forward-compatibility.
+    case createEndSessionActionType():
+      return homeworkAllTasksReducerStateDefault;
     default:
       return state;
   }

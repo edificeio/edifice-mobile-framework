@@ -14,6 +14,7 @@ import {
   INewVersionAction,
   IVersionContext
 } from "../actions/version";
+import { createEndSessionActionType } from "../../infra/redux/reducerFactory";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -126,6 +127,9 @@ const authReducer = (
         ...state,
         platformId: action.platformId
       };
+    // Session flush forward-compatibility.
+    case createEndSessionActionType():
+      return stateDefault;
     default:
       return state;
   }
