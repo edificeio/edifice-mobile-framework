@@ -37,7 +37,7 @@ import SplashScreen from "react-native-splash-screen";
 import { initI18n } from "./infra/i18n";
 
 // Disable Yellow Box on release builds.
-if (!__DEV__) {
+if (__DEV__) {
   // tslint:disable-next-line:no-console
   console.disableYellowBox = true;
 }

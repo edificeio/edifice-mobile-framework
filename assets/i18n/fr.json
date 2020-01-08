@@ -155,6 +155,7 @@
   "timeline-emptyScreenTitle": "C’est désert... Il y a quelqu’un ?",
   "timeline-eventType-ACKNOWLEDGE": "a confirmé la lecture du mot",
   "timeline-eventType-INFO-SHARED": "a partagé",
+  "timeline-eventType-NEWS-PUBLISHED": "a publié",
   "timeline-eventType-PUBLISH-POST": "a publié le billet de",
   "timeline-eventType-PUBLISH": "a publié",
   "timeline-eventType-WORD-SHARED": "a partagé",
@@ -180,6 +181,14 @@
   "workspace-pick":"Choissisez le type de fichier à ajouter",
   "workspace-uploadSuccessful": "Le document a bien été importé",
   "workspace-uploadFailed": "L'import du document a échoué",
+  "createPost-menu-title": "Créer :",
+  "createPost-menu-blog": "Billet de blog",
+  "createPost-menu-news": "Actualité",
+  "blog-selectPublishableBlog": "Choisir un blog",
+  "blog-sharedToNbPersons": "Partagé à {{nb}} personnes",
+  "blog-newPost": "Nouveau billet",
+  "blog-publishAction": "Publier",
+  "postCreatePlaceholder": "Écrivez un message...",
 
   "profileTypes": {
     "Guest": "Invité",

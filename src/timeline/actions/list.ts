@@ -28,7 +28,7 @@ export const fetchTimeline = dispatch => async availableApps => {
     // console.log("FETCH timeline");
     resetLoadingState();
     const news = await fetchJSONWithCache(
-      `/timeline/lastNotifications?page=0&${writeTypesParams(availableApps)}`,
+      `/timeline/lastNotifications?page=0&${writeTypesParams(availableApps)}&both=1`,
       {
         headers: {
           Accept: "application/json;version=2.0"
@@ -85,9 +85,7 @@ export const listTimeline = dispatch => async (
     }
 
     const news = await fetchJSONWithCache(
-      `/timeline/lastNotifications?page=${page}&${writeTypesParams(
-        availableApps
-      )}`,
+      `/timeline/lastNotifications?page=${page}&${writeTypesParams(availableApps)}&both=1`,
       {
         headers: {
           Accept: "application/json;version=2.0"
