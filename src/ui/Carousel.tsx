@@ -10,6 +10,7 @@ import {
   Image,
   Text,
   View,
+  ScrollView,
   StatusBar
 } from "react-native";
 import FastImage from "react-native-fast-image";
@@ -141,9 +142,13 @@ export class Carousel extends React.Component<
               item: { src: ImageURISource; alt: string; linkTo?: string };
               index: number;
             }) => (
-              <View
+              <ScrollView 
                 key={index}
-                style={{
+                scrollEnabled={false}
+                pinchGestureEnabled
+                maximumZoomScale={2.5}
+                minimumZoomScale={1.0}
+                contentContainerStyle={{
                   height: "100%",
                   width: Dimensions.get("window").width,
                   justifyContent: "center",
@@ -162,7 +167,7 @@ export class Carousel extends React.Component<
                     source={item.src}
                   />
                 }
-                {item.linkTo ? (
+                {item.linkTo &&
                   <View
                     style={{
                       bottom: 15,
@@ -199,8 +204,8 @@ export class Carousel extends React.Component<
                       </Text>
                     </TouchableOpacity>
                   </View>
-                ) : null}
-              </View>
+                }
+              </ScrollView>
             )}
             sliderWidth={this.state.viewport.width}
             itemWidth={this.state.viewport.width}
