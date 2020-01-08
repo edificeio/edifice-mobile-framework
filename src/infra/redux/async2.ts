@@ -41,6 +41,15 @@ export interface AsyncState<DataType> {
   error?: Error;
 }
 
+function createInitialState<DataType>(initialState: DataType) {
+  return ({
+    data: initialState,
+    isPristine: true,
+    isFetching: false,
+    error: undefined
+  });
+}
+
 // Reducer
 
 export interface ReceiptAction<DataType> extends AnyAction {
@@ -58,12 +67,7 @@ function _createAsyncReducer<DataType>(
   createReducerFunction: <StateType>(initialState: StateType, reducerActionsHandlerMap: IReducerActionsHandlerMap<StateType>, ...args: any[]) => Reducer<StateType, AnyAction>,
   createReducerFunctionAdditionalArgs: any[] = []
 ): Reducer<AsyncState<DataType>> {
-  const asyncInitialState = {
-    data: initialState,
-    isPristine: true,
-    isFetching: false,
-    error: undefined
-  };
+  const asyncInitialState = createInitialState(initialState);
   const dataReducer = createReducer(initialState, reducerActionsHandlerMap);
   const asyncReducer = createReducerFunction<AsyncState<DataType>>(asyncInitialState, {
     [actionTypes.request]: (state, action) => ({

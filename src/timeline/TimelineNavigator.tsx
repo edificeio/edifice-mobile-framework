@@ -2,6 +2,8 @@ import { createStackNavigator } from "react-navigation";
 import { FilterTimelineConnect } from "./containers/FilterTimeline";
 import { NewsContentRouter } from "./containers/NewsContent";
 import Timeline from "./containers/Timeline";
+import BlogSelectorPage from "./containers/BlogSelectorPage";
+import BlogCreatePostPage from "./containers/BlogCreatePostPage";
 
 export default createStackNavigator(
   {
@@ -15,6 +17,14 @@ export default createStackNavigator(
 
     newsContent: {
       screen: NewsContentRouter
+    },
+
+    blogSelect: {
+      screen: BlogSelectorPage
+    },
+
+    blogCreatePost: {
+      screen: BlogCreatePostPage
     }
   }
 );

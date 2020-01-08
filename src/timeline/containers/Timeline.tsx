@@ -3,6 +3,7 @@ import I18n from "i18n-js";
 import * as React from "react";
 import { FlatList, RefreshControl, View } from "react-native";
 import { connect } from "react-redux";
+import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 
 import { FlatButton, Loading } from "../../ui";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
@@ -15,10 +16,13 @@ import styles from "../../styles";
 import Tracking from "../../tracking/TrackingManager";
 
 import { fetchTimeline, listTimeline } from "../actions/list";
+import { fetchPublishableBlogsAction } from '../actions/publish';
 import { INewsModel } from "../reducer";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { NavigationScreenProp } from "react-navigation";
 import { HeaderAction, HeaderIcon } from "../../ui/headers/NewHeader";
+import { ThunkDispatch } from "redux-thunk";
+import { IBlogList } from "../state/publishableBlogs";
 
 interface ITimelineProps {
   isFetching: boolean;
@@ -31,28 +35,65 @@ interface ITimelineProps {
   fetchFailed: boolean;
   isAuthenticated: boolean;
   legalapps: any;
+  fetchPublishableBlogs: () => void
 }
+
+
+const OptionalCreateButton_Unconnected = ({ blogs, navigation }: { blogs: IBlogList, navigation: NavigationScreenProp<any> }) => blogs.length
+  ? <Menu ref={Timeline._createMenuRef} button={
+    <HeaderAction
+      onPress={() => { Timeline._createMenuRef.current?.show() }}
+      name="new_post"
+      iconSize={24}
+      primary
+    />
+  }>
+    <MenuItem disabled
+      onPress={() => {}}
+>{I18n.t('createPost-menu-title')}</MenuItem>
+    <MenuDivider />
+    <MenuItem
+      onPress={() => { navigation.getParam('onCreatePost') && navigation.getParam('onCreatePost')() }}
+    >{I18n.t('createPost-menu-blog')}</MenuItem>
+    <MenuItem disabled
+      onPress={() => {}}
+    >{I18n.t('createPost-menu-news')}</MenuItem>
+  </Menu>
+  : <HeaderIcon name={null} hidden={true} />
+const OptionalCreateButton = connect(
+  (state: any) => ({ blogs: state.timeline.publishableBlogs.data })
+)(OptionalCreateButton_Unconnected);
 
 // tslint:disable-next-line:max-classes-per-file
 class Timeline extends React.Component<ITimelineProps, undefined> {
 
+  static _createMenuRef: React.RefObject<Menu> = React.createRef();
+
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) =>
-  standardNavScreenOptions(
-    {
-      title: I18n.t("News"),
-      headerLeft: <HeaderAction
-        onPress={() => {
-          navigation.navigate("filterTimeline");
-        }}
-        name="filter"
-      />,
-      headerRight: <HeaderIcon name={null} hidden={true}/>
-    },
-    navigation
-  );
+    standardNavScreenOptions(
+      {
+        title: I18n.t("News"),
+        headerLeft: <HeaderAction
+          onPress={() => {
+            navigation.navigate("filterTimeline");
+          }}
+          name="filter"
+        />,
+        headerRight: <OptionalCreateButton navigation={navigation} />
+      },
+      navigation
+    );
 
   private flatList: any;
   private pageNumber: number = 0;
+
+  constructor(props: ITimelineProps) {
+    super(props);
+    this.props.fetchPublishableBlogs();
+    this.props.navigation.setParams({
+      onCreatePost: this.handleCreatePost.bind(this)
+    });
+  }
 
   public componentDidMount() {
     this.flatList = null;
@@ -148,7 +189,7 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
               text={I18n.t("timeline-emptyScreenText")}
               title={I18n.t("timeline-emptyScreenTitle")}
             />
-          : null     
+            : null
         }
       />
     );
@@ -204,6 +245,12 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
       </PageContainer>
     );
   }
+
+  handleCreatePost() {
+    console.log("CreatePost");
+    Timeline._createMenuRef.current?.hide();
+    this.props.navigation.navigate('blogSelect');
+  }
 }
 
 export default connect(
@@ -212,9 +259,10 @@ export default connect(
     isAuthenticated: state.user.auth.loggedIn,
     legalapps: state.user.auth.apps
   }),
-  dispatch => ({
+  (dispatch: ThunkDispatch<any, any, any>) => ({
     fetch: availableApps => fetchTimeline(dispatch)(availableApps),
     sync: (page: number, availableApps, legalapps) =>
-      listTimeline(dispatch)(page, availableApps, legalapps)
+      listTimeline(dispatch)(page, availableApps, legalapps),
+    fetchPublishableBlogs: () => dispatch(fetchPublishableBlogsAction())
   })
 )(Timeline);

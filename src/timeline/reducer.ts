@@ -2,6 +2,8 @@ import { AsyncStorage } from "react-native";
 import * as reducerActions from "./reducerActions";
 import { createEndSessionActionType } from "../infra/redux/reducerFactory";
 import { AnyAction } from "redux";
+import publishableBlogsReducer, { publishStatusReducer } from "./reducers/publishableBlogs";
+import { IPublishableBlogsState } from "./state/publishableBlogs";
 
 interface IParams {
   blogTitle: string;
@@ -29,6 +31,8 @@ export interface INewsState {
   selectedApps: any;
   refresh: boolean;
   fetchFailed: boolean;
+  publishableBlogs: IPublishableBlogsState;
+  publishStatus: { publishing: boolean }
 }
 
 const initialState: INewsState = {
@@ -38,7 +42,16 @@ const initialState: INewsState = {
   availableApps: undefined,
   selectedApps: undefined,
   refresh: true,
-  fetchFailed: false
+  fetchFailed: false,
+  publishableBlogs: {
+    data: [],
+    isPristine: true,
+    isFetching: false,
+    error: undefined
+  },
+  publishStatus: {
+    publishing: false
+  }
 };
 
 export default (
@@ -57,6 +70,8 @@ export default (
   }
 
   return {
-    ...state
+    ...state,
+    publishableBlogs: publishableBlogsReducer(state.publishableBlogs, action),
+    publishStatus: publishStatusReducer(state.publishStatus, action)
   };
 };
