@@ -13,10 +13,10 @@ import {
   conversationDeleteThread,
   conversationSetThreadRead,
   fetchConversationThreadList,
-  fetchConversationThreadResetMessages,
   resetConversationThreadList
 } from "../actions/threadList";
 import { conversationThreadSelected } from "../actions/threadSelected";
+import { fetchConversationThreadResetMessages } from "../actions/apiHelper";
 
 import { removeAccents } from "../../utils/string";
 import { findReceivers2 } from "../components/ThreadItem";

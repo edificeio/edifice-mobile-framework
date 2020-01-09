@@ -1,19 +1,19 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import {
+import { 
   IThreadPageDataProps,
-  IThreadPageEventProps,
-  IThreadPageProps,
-  ThreadPage
+  IThreadPageEventProps, 
+  IThreadPageProps, 
+  ThreadPage 
 } from "../components/ThreadPage";
 import conversationConfig from "../config";
 import I18n from "i18n-js";
 import style from "glamorous-native";
 
-import {
-  fetchConversationThreadNewerMessages,
+import { 
+  fetchConversationThreadNewerMessages, 
   fetchConversationThreadOlderMessages
-} from "../actions/threadList";
+} from "../actions/apiHelper";
 import { createActionReceiversDisplay, createActionThreadReceiversDisplay } from "../actions/displayReceivers";
 import { IConversationMessage, IConversationThread, IConversationMessageList } from "../reducers";
 import { NavigationScreenProp } from "react-navigation";
@@ -32,12 +32,12 @@ const mapStateToProps: (state: any) => IThreadPageDataProps = state => {
   const selectedThreadId: string = state[conversationConfig.reducerName].threadSelected;
   const selectedThread: IConversationThread =
     state[conversationConfig.reducerName].threadList.data.byId[
-    selectedThreadId
+      selectedThreadId
     ];
   // console.log("display thread", localState, selectedThreadId, selectedThread);
   const messages: IConversationMessage[] = selectedThread.messages.map(
     messageId => localState.data[messageId]
-  );
+    );
   const headerHeight = state.ui.headerHeight; // TODO: Ugly.
 
   // Format props
@@ -53,7 +53,7 @@ const mapStateToProps: (state: any) => IThreadPageDataProps = state => {
 
 const mapDispatchToProps: (
   dispatch: any
-) => IThreadPageEventProps = dispatch => {
+  ) => IThreadPageEventProps = dispatch => {
   return {
     dispatch,
     onGetNewer: async (threadId: string) => {
@@ -78,7 +78,7 @@ const mapDispatchToProps: (
 };
 
 class ThreadPageContainer extends React.PureComponent<
-  IThreadPageProps & { dispatch: any },
+  IThreadPageProps & { dispatch: any }, 
   {}
   > {
 
@@ -86,28 +86,28 @@ class ThreadPageContainer extends React.PureComponent<
     const showDetails = navigation.getParam("showDetails", false);
     const threadInfo = navigation.getParam("threadInfo");
     return standardNavScreenOptions({
-      headerLeft: showDetails ? null : <HeaderBackAction navigation={navigation} />,
-      headerRight: showDetails ? null : <View />,
-      headerTitle: threadInfo ?
-        showDetails ?
-          ThreadPageContainer.renderDetailsThreadHeader(threadInfo, navigation)
+        headerLeft: showDetails ? null : <HeaderBackAction navigation={navigation} />,
+        headerRight: showDetails ? null : <View />,
+        headerTitle: threadInfo ?
+          showDetails ?
+            ThreadPageContainer.renderDetailsThreadHeader(threadInfo, navigation)
           :
-          ThreadPageContainer.renderThreadHeader(threadInfo, navigation)
-        : <View><Text>Loading</Text></View>,
-      headerStyle: {
-        height: showDetails ? 56 + 160 : 56,
-        overflow: "hidden"
-      },
-      headerLeftContainerStyle: {
-        alignItems: "flex-start"
-      },
-      headerRightContainerStyle: {
-        alignItems: "flex-start"
-      },
-      headerTitleContainerStyle: {
-        alignItems: "flex-start",
-      }
-    }, navigation);
+            ThreadPageContainer.renderThreadHeader(threadInfo, navigation)
+          : <View><Text>Loading</Text></View>,
+        headerStyle: {
+          height: showDetails ? 56 + 160 : 56,
+          overflow: "hidden"
+        },
+        headerLeftContainerStyle: {
+          alignItems: "flex-start"
+        },
+        headerRightContainerStyle: {
+          alignItems: "flex-start"
+        },
+        headerTitleContainerStyle: {
+          alignItems: "flex-start",
+        }
+      }, navigation);
   }
 
   static getAvatarsAndNamesSet(threadInfo: IConversationThread) {
@@ -115,7 +115,7 @@ class ThreadPageContainer extends React.PureComponent<
     let { cc } = threadInfo;
     cc = cc || [];
     const imageSet = new Set(
-      [...to, ...cc, from].filter(el => el !== getSessionInfo().userId)
+      [...to, ...cc, from].filter(el => el && el !== getSessionInfo().userId)
     );
     if (imageSet.size === 0) {
       imageSet.add(getSessionInfo().userId!);
@@ -136,55 +136,55 @@ class ThreadPageContainer extends React.PureComponent<
   static renderThreadHeader(threadInfo: IConversationThread, navigation: NavigationScreenProp<{}>) {
     const { images } = ThreadPageContainer.getAvatarsAndNamesSet(threadInfo);
     return <CenterPanel
-      onPress={() => { navigation.setParams({ showDetails: true }); }}
-    >
-      <RowAvatars images={images} size={Size.small} />
-      <LittleTitle numberOfLines={1} smallSize={true}>
-        {threadInfo.subject}
-      </LittleTitle>
-    </CenterPanel>
+        onPress={() => { navigation.setParams({ showDetails: true }); }}
+      >
+        <RowAvatars images={images} size={Size.small} />
+        <LittleTitle numberOfLines={1} smallSize={true}>
+          {threadInfo.subject}
+        </LittleTitle>
+      </CenterPanel>
   }
 
   static renderDetailsThreadHeader(threadInfo: IConversationThread, navigation: NavigationScreenProp<{}>) {
     const { images, names } = ThreadPageContainer.getAvatarsAndNamesSet(threadInfo);
     return <View style={{
-      alignItems: "stretch",
-      width: "100%",
-      flex: 0,
-    }}>
-      <View style={{
-        flexDirection: "row",
-        justifyContent: "center"
-      }}>
-        <HeaderBackAction navigation={navigation} style={{
-          flex: 0
-        }} />
-        <View style={{
-          flex: 1,
-          alignItems: "stretch"
+          alignItems: "stretch",
+          width: "100%",
+          flex: 0,
         }}>
-          <CenterPanel
-            onPress={() => { navigation.setParams({ showDetails: false }); }}
-          >
-            <LittleTitle numberOfLines={2}>
-              {threadInfo.subject}
-            </LittleTitle>
-          </CenterPanel>
+        <View style={{
+          flexDirection: "row",
+          justifyContent: "center"
+        }}>
+          <HeaderBackAction navigation={navigation} style={{
+            flex: 0
+          }} />
+          <View style={{
+            flex: 1,
+            alignItems: "stretch"
+          }}>
+            <CenterPanel
+              onPress={() => { navigation.setParams({ showDetails: false }); }}
+            >
+              <LittleTitle numberOfLines={2}>
+                {threadInfo.subject}
+              </LittleTitle>
+            </CenterPanel>
+          </View>
+          <HeaderIcon name={null} />
         </View>
-        <HeaderIcon name={null} />
+        <ContainerAvatars>
+          <RowAvatars
+            onSlideIndex={slideIndex => {
+              navigation.setParams({ slideIndex: slideIndex });
+            }}
+            images={images}
+          />
+          <Legend14 numberOfLines={2}>
+            {names[navigation.getParam("slideIndex", 0)]}
+          </Legend14>
+        </ContainerAvatars>
       </View>
-      <ContainerAvatars>
-        <RowAvatars
-          onSlideIndex={slideIndex => {
-            navigation.setParams({ slideIndex: slideIndex });
-          }}
-          images={images}
-        />
-        <Legend14 numberOfLines={2}>
-          {names[navigation.getParam("slideIndex", 0)]}
-        </Legend14>
-      </ContainerAvatars>
-    </View>
   }
 
   constructor(props: IThreadPageProps) {

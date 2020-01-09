@@ -3,9 +3,9 @@ import I18n from "i18n-js";
 import * as React from "react";
 
 import { BadgeAvatar } from "../../ui/BadgeAvatar";
-import {
-  CenterPanel,
-  Content,
+import { 
+  CenterPanel, 
+  Content, 
   LeftPanel,
   ListItem,
   RightPanel
@@ -97,12 +97,7 @@ export const findReceivers = (to, from, cc) => {
 
 export const findReceivers2 = (to, from, cc) => {
   cc = cc || [];
-  const receiversSet = new Set(
-    // By using a Set we guarantee that we'll not have duplicates
-    from
-      ? [...to, ...cc, from].filter(el => el !== getSessionInfo().userId)
-      : [...to, ...cc].filter(el => el !== getSessionInfo().userId)
-  );
+  const receiversSet = new Set([...to, ...cc, from].filter(el => el && el !== getSessionInfo().userId));
   if (receiversSet.size === 0) {
     receiversSet.add(getSessionInfo().userId);
   }

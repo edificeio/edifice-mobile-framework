@@ -6,14 +6,7 @@ import moment from "moment";
 
 import { asyncActionTypes, asyncGetJson } from "../../infra/redux/async";
 import conversationConfig from "../config";
-import {
-  IConversationMessageList
-} from "./sendMessage";
 import { IConversationThreadList } from "../reducers/threadList";
-import {
-  conversationMessagesReceived,
-  conversationOrderedMessagesAdapter,
-} from "./messages";
 
 import Conf from "../../../ode-framework-conf";
 import { signedFetch } from "../../infra/fetchWithCache";
@@ -184,7 +177,7 @@ export function fetchConversationThreadList(page: number = 0) {
     dispatch(conversationThreadListRequested());
     try {
       const data = await asyncGetJson(
-        `/conversation/threads/list?page=${page}`,
+        `${conversationConfig.appInfo.prefix}/threads/list?page=${page}`,
         conversationThreadListAdapter
       );
       dispatch(conversationThreadListReceived(page, data)); // threads with message ids
@@ -199,107 +192,12 @@ export function resetConversationThreadList() {
     dispatch(conversationThreadListResetRequested());
     try {
       const data = await asyncGetJson(
-        `/conversation/threads/list?page=0`,
+        `${conversationConfig.appInfo.prefix}/threads/list?page=0`,
         conversationThreadListAdapter
       );
       dispatch(conversationThreadListResetReceived(data)); // thread infos
     } catch (errmsg) {
       console.warn(errmsg);
-      dispatch(conversationThreadListFetchError(errmsg));
-    }
-  };
-}
-
-export function fetchConversationThreadOlderMessages(threadId: string) {
-  return async (dispatch, getState) => {
-    try {
-      const threadInfo = localState(getState()).data.byId[threadId];
-      if (threadInfo.isFetchingOlder) return; // No fetch is already fetching, it's important, otherwise, there will maybe have doublons
-
-      dispatch(conversationThreadAppendRequested(threadId, false));
-      // Get the oldest known messageId
-      const oldestMessageId =
-        threadInfo.messages[threadInfo.messages.length - 1];
-      /*console.log(
-        `fetching older messages of ${threadId}, last message : ${oldestMessageId}`
-      );*/
-      // Fetch data
-      const data = await asyncGetJson(
-        `/conversation/thread/previous-messages/${oldestMessageId}`,
-        conversationOrderedMessagesAdapter
-      );
-      // Extract messageIds list and contents
-      const messages: IConversationMessageList = {};
-      for (const message of data) {
-        messages[message.id] = message;
-      }
-      const messageIds = data.map(message => message.id);
-      // console.log("thread older messages received: ", messages, messageIds);
-      // dispatch
-      dispatch(conversationMessagesReceived(messages)); // message contents
-      dispatch(conversationThreadAppendReceived(messageIds, threadId, false)); // messages ids ordered
-    } catch (errmsg) {
-      dispatch(conversationThreadListFetchError(errmsg));
-    }
-  };
-}
-
-export function fetchConversationThreadNewerMessages(threadId: string) {
-  return async (dispatch, getState) => {
-    try {
-      const threadInfo = localState(getState()).data.byId[threadId];
-      if (threadInfo.isFetchingNewer) return; // No fetch is already fetching, it's important, otherwise, there will maybe have doublons
-
-      dispatch(conversationThreadAppendRequested(threadId, true));
-      // Get the newest known messageId
-      const newestMessageId = threadInfo.messages[0];
-      /*console.log(
-        `fetching newer messages of ${threadId}, last message : ${newestMessageId}`
-      );*/
-      // Fetch data
-      const data = await asyncGetJson(
-        `/conversation/thread/new-messages/${newestMessageId}`,
-        conversationOrderedMessagesAdapter
-      );
-      // Extract messageIds list and contents
-      const messages: IConversationMessageList = {};
-      for (const message of data) {
-        messages[message.id] = message;
-      }
-      const messageIds = data.map(message => message.id);
-      // console.log("thread newer messages received: ", messages, messageIds);
-      // dispatch
-      dispatch(conversationMessagesReceived(messages)); // message contents
-      dispatch(conversationThreadAppendReceived(messageIds, threadId, true)); // messages ids ordered
-      dispatch(conversationSetThreadRead(threadId, true));
-    } catch (errmsg) {
-      dispatch(conversationThreadListFetchError(errmsg));
-    }
-  };
-}
-
-export function fetchConversationThreadResetMessages(threadId: string) {
-  return async (dispatch, getState) => {
-    try {
-      const threadInfo = localState(getState()).data.byId[threadId];
-      dispatch(conversationThreadResetRequested(threadId));
-      // Fetch data
-      const data = await asyncGetJson(
-        `/conversation/thread/messages/${threadId}`,
-        conversationOrderedMessagesAdapter
-      );
-      // Extract messageIds list and contents
-      const messages: IConversationMessageList = {};
-      for (const message of data) {
-        messages[message.id] = message;
-      }
-      const messageIds = data.map(message => message.id);
-      // console.log("thread newer messages received: ", messages, messageIds);
-      // dispatch
-      dispatch(conversationMessagesReceived(messages)); // message contents
-      dispatch(conversationThreadResetReceived(messageIds, threadId)); // messages ids ordered
-      dispatch(conversationSetThreadRead(threadId, true));
-    } catch (errmsg) {
       dispatch(conversationThreadListFetchError(errmsg));
     }
   };
@@ -315,7 +213,7 @@ export function conversationSetThreadRead(threadId: string, force?: boolean) {
       if (!Conf.currentPlatform) throw new Error("must specify a platform");
       // console.log("YES TOGGLE UNRAD");
       const response = await signedFetch(
-        `${Conf.currentPlatform.url}/conversation/thread/toggleUnread`,
+        `${Conf.currentPlatform.url}${conversationConfig.appInfo.prefix}/thread/toggleUnread`,
         {
           body: JSON.stringify({
             id: [threadId],
@@ -337,7 +235,7 @@ export function conversationDeleteThread(threadId: string) {
     try {
       if (!Conf.currentPlatform) throw new Error("must specify a platform");
       const response = await signedFetch(
-        `${Conf.currentPlatform.url}/conversation/thread/trash`,
+        `${Conf.currentPlatform.url}${conversationConfig.appInfo.prefix}/thread/trash`,
         {
           body: JSON.stringify({
             id: [threadId]

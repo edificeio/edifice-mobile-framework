@@ -427,19 +427,20 @@ export class OAuth2RessourceOwnerPasswordClient {
  * Scopes needed for the application.
  */
 export const scopes = `
-actualites
-blog
-conversation
-directory
-homeworks
-schoolbook
-timeline
-userinfo
-workspace
-portal
-cas
-sso
-`.split("\n");
+ actualites
+ blog
+ conversation
+ directory
+ homeworks
+ schoolbook
+ timeline
+ userinfo
+ workspace
+ portal
+ cas
+ sso
+ zimbra
+`.split("\n "); // Here the space after "\n" is important, they represent the indentation & the space between the words when "\n" is removed.
 // You can copy the string directly in the "scope" field in a browser. Keep this indentation intact.
 
 /**

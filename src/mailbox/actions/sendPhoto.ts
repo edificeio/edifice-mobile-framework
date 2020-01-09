@@ -1,19 +1,20 @@
 import moment from "moment";
 import Conf from "../../../ode-framework-conf";
+import conversationConfig from "../config"
 import Tracking from "../../tracking/TrackingManager";
 import generateUuid from "../../utils/uuid";
 
 import { takePhoto, uploadImage } from "../../infra/actions/workspace";
 import { signedFetch } from "../../infra/fetchWithCache";
-import {
-  ConversationMessageStatus,
-  IConversationMessage
+import { 
+  ConversationMessageStatus, 
+  IConversationMessage 
 } from "../actions/sendMessage";
 
-import {
-  actionTypeMessageSendError,
-  actionTypeMessageSendRequested,
-  actionTypeMessageSent
+import { 
+  actionTypeMessageSendError, 
+  actionTypeMessageSendRequested, 
+  actionTypeMessageSent 
 } from "./sendMessage";
 import { getSessionInfo } from "../../AppStore";
 
@@ -56,7 +57,7 @@ export const sendPhoto = dispatch => async (data: IConversationMessage) => {
 
     if (!Conf.currentPlatform) throw new Error("must specify a platform");
     const response = await signedFetch(
-      `${Conf.currentPlatform.url}/conversation/send?${replyTo}`,
+      `${Conf.currentPlatform.url}${conversationConfig.appInfo.prefix}/send?${replyTo}`, 
       {
         body: JSON.stringify(requestBody),
         headers: {

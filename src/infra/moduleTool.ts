@@ -18,10 +18,7 @@ export function toSnakeCase(camelCase: string) {
 
   let str = camelCase;
   for (let i = 0, n = upperChars.length; i < n; i++) {
-    str = str.replace(
-      new RegExp(upperChars[i]),
-      "_" + upperChars[i].toLowerCase()
-    );
+    str = str.replace(new RegExp(upperChars[i]), "_" + upperChars[i].toLowerCase());
   }
 
   if (str.slice(0, 1) === "_") {
@@ -40,7 +37,8 @@ export interface IFunctionalConfig {
   iconName: string;
   iconColor?: string;
   group?: boolean;
-  notifHandlerFactory?: () => Promise<NotificationHandlerFactory<any, any, any>>;
+  appInfo: backendUserApp;
+  notifHandlerFactory?: () => Promise<NotificationHandlerFactory>;
   hasRight?: (apps: any[]) => boolean;
 }
 
@@ -71,26 +69,25 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
   public constructor(opts: IFunctionalConfig) {
     this.name = opts.name;
     this.apiName = opts.apiName || this.name;
-    this.actionPrefix =
-      opts.actionPrefix || toSnakeCase(this.name).toUpperCase() + "_";
+    this.actionPrefix = opts.actionPrefix || toSnakeCase(this.name).toUpperCase() + "_";
     this.reducerName = opts.reducerName || this.name;
     this.displayName = opts.displayName || this.name;
     this.iconName = opts.iconName || this.name;
     this.group = opts.group === undefined ? false : opts.group;
     this.iconColor = opts.iconColor || CommonStyles.actionColor;
     this.notifHandlerFactory = opts.notifHandlerFactory;
-    this.hasRight = apps => this.hasRightWrapper(apps, opts.hasRight || (app => app.name == this.apiName))
+    this.hasRight = apps => this.hasRightWrapper(apps, opts.hasRight || (app => app.name == this.apiName));
   }
 
   private hasRightWrapper = (appsInfo: any[], hasRight: Function) => {
-    appsInfo.forEach(app => {
-      if(hasRight(app)) {
-        this.appInfo = app;
-        return true
+    for (let app in appsInfo) {
+      if (hasRight(appsInfo[app])) {
+        this.appInfo = appsInfo[app];
+        return true;
       }
-    })
-    return false
-  }
+    }
+    return false;
+  };
 
   public getLocalState(globalState: any) {
     return globalState[this.reducerName];
@@ -110,26 +107,17 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
   }
 
   public createFunctionRoute(comp: any) {
-    return (args?: any) =>
-      this.createRoute(comp(args))
+    return (args?: any) => this.createRoute(comp(args));
   }
 }
 
-export function getReducersFromModuleDefinitions(
-  defs: IAppModule[]
-) {
-  return defs.reduce(
-    (acc, mod) => ({ ...acc, [mod.config.reducerName]: mod.module.reducer }),
-    {}
-  );
+export function getReducersFromModuleDefinitions(defs: IAppModule[]) {
+  return defs.reduce((acc, mod) => ({ ...acc, [mod.config.reducerName]: mod.module.reducer }), {});
 }
 
 export function getRoutesFromModuleDefinitions(defs: IAppModule[], args?: any) {
   const getModuleRoute = (mod: IAppModule) =>
     !mod.module.route && !!mod.module.getRoute ? mod.module.getRoute(args) : mod.module.route;
 
-  return defs.reduce(
-    (acc, mod) => ({ ...acc, [mod.config.name]: getModuleRoute(mod) }),
-    {}
-  );
+  return defs.reduce((acc, mod) => ({ ...acc, [mod.config.name]: getModuleRoute(mod) }), {});
 }

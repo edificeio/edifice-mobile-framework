@@ -124,18 +124,20 @@ export function loginAction(
             Accept: "application/json;version=2.0"
           }
         }) as any;
-        console.log("oauth2 userinfo back response", userinfo2);
+        // console.log("oauth2 userinfo back response", userinfo2);
         // console.log(userinfo2.apps);
         userinfo2.appsInfo = userinfo2.apps;
         userinfo2.apps = userinfo2.apps.map((e: any) => e.name);
 
-        // Some applications haven't a precise name... 😫
+        // Some applications haven't a precise name... ☹️
         if (userinfo2.apps.includes("Cahier de texte"))
           userinfo2.apps.push("Homeworks");
         if (userinfo2.apps.includes("Espace documentaire"))
           userinfo2.apps.push("Workspace");
         if (userinfo2.apps.includes("Actualites")) userinfo2.apps.push("News");
-        // console.log("apps: ", userinfo2.apps);
+        if (userinfo2.apps.includes("Zimbra")) {
+          userinfo2.apps.push("Messagerie");
+        }
       } catch (err) {
         console.warn('[login] userinfo fetch failed');
         throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err);

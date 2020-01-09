@@ -81,7 +81,7 @@ export function sendMessage(data: IConversationMessage) {
       // console.log("3/ sent request to the server", requestbody, replyTo);
       if (!Conf.currentPlatform) throw new Error("must specify a platform");
       const response = await signedFetch(
-        `${Conf.currentPlatform.url}/conversation/send?${replyTo}`,
+        `${Conf.currentPlatform.url}${mailboxConfig.appInfo.prefix}/send?${replyTo}`,
         {
           body: JSON.stringify(requestbody),
           headers: {

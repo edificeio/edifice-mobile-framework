@@ -101,7 +101,7 @@ class ThreadInput extends React.PureComponent<
         ...conversation.to,
         ...(conversation.cc || []),
         conversation.from
-      ].filter(el => el !== getSessionInfo().userId)
+      ].filter(el => el && el !== getSessionInfo().userId)
     );
     if (to.size === 0) {
       return [getSessionInfo().userId];

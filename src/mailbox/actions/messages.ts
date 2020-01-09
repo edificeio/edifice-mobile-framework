@@ -2,96 +2,34 @@
  * Conversation messages actions
  * Build actions to be dispatched to the conversarion messages reducer.
  */
-import moment from "moment";
-
-import { asyncActionTypes, asyncGetJson } from "../../infra/redux/async";
+import { asyncActionTypes } from "../../infra/redux/async";
 import conversationConfig from "../config";
 
 import Conf from "../../../ode-framework-conf";
 import { signedFetch } from "../../infra/fetchWithCache";
-import {
-  IConversationMessageList,
-  IConversationMessageNativeArray
-} from "../actions/sendMessage";
+import { IConversationMessageList } from "../actions/sendMessage";
 
-/** Returns the local state (global state -> conversation2 -> messages). Give the global state as parameter. */
-const localState = globalState =>
-  conversationConfig.getLocalState(globalState).messages;
+// TYPE -------------------------------------------------------------------------------------------
 
-// ADAPTER ----------------------------------------------------------------------------------------
-
-// Data type of what is given by the backend.
-export type IConversationMessageListBackend = Array<{
+export interface IAttachment {
   id: string;
-  parent_id: string;
-  subject: string;
-  body: string;
-  from: string; // User id of the sender
-  fromName: string; // Name of the sender
-  to: string[]; // User Ids of the receivers
-  toName: string[]; // Name of the receivers
-  cc: string[]; // User Ids of the copy receivers
-  ccName: string[]; // Name of the copy receivers
-  displayNames: string[][]; // [0: id, 1: displayName] for each person concerned by this message.
-  date: number;
-  thread_id: string;
-  unread: boolean;
-  attachments: Array<{
-    id: string;
-    name: string;
-    charset: string;
-    filename: string;
-    contentType: string;
-    contentTransferEncoding: string;
-    size: number; // in Bytes
-  }>;
-}>;
-
-/**
- * Used when the data doesn't need to be ordered, but you want to merge a array in messages in another.
- */
-export const conversationMessagesAdapter: (
-  data: IConversationMessageListBackend
-) => IConversationMessageList = data => {
-  const result = {};
-  for (const message of data) {
-    result[message.id] = {
-      ...message,
-      date: moment(message.date),
-      parentId: message.parent_id,
-      threadId: message.thread_id
-    };
-  }
-  return result;
-};
-
-/**
- * Used when you want to keep the returned data order.
- */
-export const conversationOrderedMessagesAdapter: (
-  data: IConversationMessageListBackend
-) => IConversationMessageNativeArray = data => {
-  return data.map(message => ({
-    ...message,
-    date: moment(message.date),
-    parentId: message.parent_id,
-    rownum: undefined,
-    status: undefined,
-    threadId: message.thread_id
-  }));
-};
-
-export const actionTypeSetRead =
-  conversationConfig.createActionType("MESSAGES") + "_SET_READ";
-export function conversationMessagesSetRead(messageIds: string[]) {
-  return { type: actionTypeSetRead, messageIds };
+  name: string;
+  charset: string;
+  filename: string;
+  contentType: string;
+  contentTransferEncoding: string;
+  size: number; // in Bytes
 }
 
 // ACTION LIST ------------------------------------------------------------------------------------
 
-export const actionTypes = asyncActionTypes(
-  conversationConfig.createActionType("MESSAGES")
-);
+export const actionTypeSetRead = conversationConfig.createActionType("MESSAGES") + "_SET_READ";
+
+export function conversationMessagesSetRead(messageIds: string[]) {
+  return { type: actionTypeSetRead, messageIds };
+}
+
+export const actionTypes = asyncActionTypes(conversationConfig.createActionType("MESSAGES"));
 
 export function conversationMessagesInvalidated() {
   return { type: actionTypes.invalidated };
@@ -115,7 +53,7 @@ export function conversationSetMessagesRead(messageIds: string[]) {
   return async (dispatch, getState) => {
     try {
       if (!Conf.currentPlatform) throw new Error("must specify a platform");
-      await signedFetch(`${Conf.currentPlatform.url}/conversation/toggleUnread`, {
+      await signedFetch(`${Conf.currentPlatform.url}${conversationConfig.appInfo.prefix}/toggleUnread`, {
         body: JSON.stringify({
           id: messageIds,
           unread: false

@@ -33,6 +33,7 @@ import {
 import { LightP } from "../../ui/Typography";
 import { ConversationMessageStatus } from "../actions/sendMessage";
 import Tracking from "../../tracking/TrackingManager";
+import conversationConfig from "../config"
 
 export interface IAttachment {
   id: string;
@@ -270,7 +271,7 @@ export default class ThreadMessageAttachment extends React.PureComponent<
       })
         .fetch(
           "GET",
-          `${Conf.currentPlatform.url}/conversation/message/${
+          `${Conf.currentPlatform.url}${conversationConfig.appInfo.prefix}/message/${
             this.props.messageId
           }/attachment/${this.props.attachment.id}`,
           getAuthHeader()
@@ -294,7 +295,7 @@ export default class ThreadMessageAttachment extends React.PureComponent<
       })
         .fetch(
           "GET",
-          `${Conf.currentPlatform.url}/conversation/message/${
+          `${Conf.currentPlatform.url}${conversationConfig.appInfo.prefix}/message/${
             this.props.messageId
           }/attachment/${this.props.attachment.id}`,
           getAuthHeader()
