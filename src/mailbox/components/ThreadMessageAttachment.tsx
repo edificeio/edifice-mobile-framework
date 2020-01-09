@@ -270,7 +270,7 @@ export default class ThreadMessageAttachment extends React.PureComponent<
       })
         .fetch(
           "GET",
-          `${Conf.currentPlatform.url}/conversation/message/${
+          `${Conf.currentPlatform.url}/zimbra/message/${
             this.props.messageId
           }/attachment/${this.props.attachment.id}`,
           getAuthHeader()["headers"]
@@ -294,7 +294,7 @@ export default class ThreadMessageAttachment extends React.PureComponent<
       })
         .fetch(
           "GET",
-          `${Conf.currentPlatform.url}/conversation/message/${
+          `${Conf.currentPlatform.url}/zimbra/message/${
             this.props.messageId
           }/attachment/${this.props.attachment.id}`,
           getAuthHeader()["headers"]

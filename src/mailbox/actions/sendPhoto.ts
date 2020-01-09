@@ -56,7 +56,7 @@ export const sendPhoto = dispatch => async (data: IConversationMessage) => {
 
     if (!Conf.currentPlatform) throw new Error("must specify a platform");
     const response = await signedFetch(
-      `${Conf.currentPlatform.url}/conversation/send?${replyTo}`,
+      `${Conf.currentPlatform.url}/zimbra/send?${replyTo}`,
       {
         body: JSON.stringify(requestBody),
         headers: {

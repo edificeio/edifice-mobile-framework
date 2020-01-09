@@ -10,14 +10,14 @@ import { NotificationHandlerFactory } from "../infra/pushNotification";
 
 //TODO add types args
 const mailboxNotifHandlerFactory :NotificationHandlerFactory<any,any,any> = dispatch => async notificationData => {
-  if (!notificationData.resourceUri.startsWith("/conversation")) {
+  if (!notificationData.resourceUri.startsWith("/conversation") || !notificationData.resourceUri.startsWith("/zimbra")) {
     return false;
   }
   const split = notificationData.resourceUri.split("/");
   const messageId = split[split.length - 1];
   if (!Conf.currentPlatform) throw new Error("must specify a platform");
   const response = await signedFetch(
-    `${Conf.currentPlatform.url}/conversation/message/${messageId}`,
+    `${Conf.currentPlatform.url}/zimbra/message/${messageId}`,
     {}
   );
   const message = await response.json();

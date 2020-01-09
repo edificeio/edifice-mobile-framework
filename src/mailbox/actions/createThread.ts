@@ -50,7 +50,7 @@ export const actionTypeLoadVisibles = mailboxConf.createActionType(
 );
 
 export const loadVisibles = dispatch => async () => {
-  const visibles = await fetchJSONWithCache(`/conversation/visible`);
+  const visibles = await fetchJSONWithCache(`/zimbra/visible`);
   const groups = visibles && visibles.groups.map(group => ({
     ...group,
     isGroup: true

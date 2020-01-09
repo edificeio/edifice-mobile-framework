@@ -86,6 +86,9 @@ export function login(
       if (userinfo2.apps.includes("Espace documentaire"))
         userinfo2.apps.push("Workspace");
       if (userinfo2.apps.includes("Actualites")) userinfo2.apps.push("News");
+      if (userinfo2.apps.includes("Zimbra")) {
+        userinfo2.apps.push("Messagerie");
+      }
 
       // === 3: check user validity
 

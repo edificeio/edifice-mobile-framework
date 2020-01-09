@@ -184,7 +184,7 @@ export function fetchConversationThreadList(page: number = 0) {
     dispatch(conversationThreadListRequested());
     try {
       const data = await asyncGetJson(
-        `/conversation/threads/list?page=${page}`,
+        `/zimbra/threads/list?page=${page}`,
         conversationThreadListAdapter
       );
       dispatch(conversationThreadListReceived(page, data)); // threads with message ids
@@ -199,7 +199,7 @@ export function resetConversationThreadList() {
     dispatch(conversationThreadListResetRequested());
     try {
       const data = await asyncGetJson(
-        `/conversation/threads/list?page=0`,
+        `/zimbra/threads/list?page=0`,
         conversationThreadListAdapter
       );
       dispatch(conversationThreadListResetReceived(data)); // thread infos
@@ -225,7 +225,7 @@ export function fetchConversationThreadOlderMessages(threadId: string) {
       );*/
       // Fetch data
       const data = await asyncGetJson(
-        `/conversation/thread/previous-messages/${oldestMessageId}`,
+        `/zimbra/thread/previous-messages/${oldestMessageId}`,
         conversationOrderedMessagesAdapter
       );
       // Extract messageIds list and contents
@@ -258,7 +258,7 @@ export function fetchConversationThreadNewerMessages(threadId: string) {
       );*/
       // Fetch data
       const data = await asyncGetJson(
-        `/conversation/thread/new-messages/${newestMessageId}`,
+        `/zimbra/thread/new-messages/${newestMessageId}`,
         conversationOrderedMessagesAdapter
       );
       // Extract messageIds list and contents
@@ -285,7 +285,7 @@ export function fetchConversationThreadResetMessages(threadId: string) {
       dispatch(conversationThreadResetRequested(threadId));
       // Fetch data
       const data = await asyncGetJson(
-        `/conversation/thread/messages/${threadId}`,
+        `/zimbra/thread/messages/${threadId}`,
         conversationOrderedMessagesAdapter
       );
       // Extract messageIds list and contents
@@ -315,7 +315,7 @@ export function conversationSetThreadRead(threadId: string, force?: boolean) {
       if (!Conf.currentPlatform) throw new Error("must specify a platform");
       // console.log("YES TOGGLE UNRAD");
       const response = await signedFetch(
-        `${Conf.currentPlatform.url}/conversation/thread/toggleUnread`,
+        `${Conf.currentPlatform.url}/zimbra/thread/toggleUnread`,
         {
           body: JSON.stringify({
             id: [threadId],
@@ -337,7 +337,7 @@ export function conversationDeleteThread(threadId: string) {
     try {
       if (!Conf.currentPlatform) throw new Error("must specify a platform");
       const response = await signedFetch(
-        `${Conf.currentPlatform.url}/conversation/thread/trash`,
+        `${Conf.currentPlatform.url}/zimbra/thread/trash`,
         {
           body: JSON.stringify({
             id: [threadId]

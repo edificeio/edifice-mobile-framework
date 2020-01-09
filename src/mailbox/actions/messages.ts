@@ -115,7 +115,7 @@ export function conversationSetMessagesRead(messageIds: string[]) {
   return async (dispatch, getState) => {
     try {
       if (!Conf.currentPlatform) throw new Error("must specify a platform");
-      await signedFetch(`${Conf.currentPlatform.url}/conversation/toggleUnread`, {
+      await signedFetch(`${Conf.currentPlatform.url}/zimbra/toggleUnread`, {
         body: JSON.stringify({
           id: messageIds,
           unread: false
