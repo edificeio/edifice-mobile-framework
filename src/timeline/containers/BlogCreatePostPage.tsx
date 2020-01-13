@@ -2,23 +2,25 @@ import * as React from "react";
 import I18n from "i18n-js";
 import { connect } from "react-redux";
 import style from "glamorous-native";
-import { NavigationScreenProp, NavigationState } from "react-navigation";
+import { NavigationScreenProp, NavigationState, Header } from "react-navigation";
 import InputScrollView from 'react-native-input-scroll-view';
+import listenToKeyboardEvents from 'react-native-keyboard-aware-scroll-view/lib/KeyboardAwareHOC';
 
 import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderBackAction, HeaderAction } from "../../ui/headers/NewHeader";
 import { PageContainer } from "../../myAppMenu/components/NewContainerContent";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
-import { View, KeyboardAvoidingView } from "react-native";
+import { View, KeyboardAvoidingView, Platform, Keyboard, Text } from "react-native";
 import { Avatar, Size } from "../../ui/avatars/Avatar";
 import { IBlog } from "../state/publishableBlogs";
 import { IUserInfoState } from "../../user/state/info";
 import { TextBold, TextLight } from "../../ui/text";
-import { TextInput, ScrollView } from "react-native-gesture-handler";
+import { TextInput, ScrollView, TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { ThunkDispatch } from "redux-thunk";
 import { CommonStyles } from "../../styles/common/styles";
 import { GridAvatars } from "../../ui/avatars/GridAvatars";
 import { publishBlogPostAction } from "../actions/publish";
+import { hasNotch } from "react-native-device-info";
 
 export interface IBlogCreatePostDataProps {
   user: IUserInfoState;
@@ -34,6 +36,7 @@ export interface IBlogCreatePostOtherProps {
 }
 
 export interface IBlogCreatePostState {
+  title: string;
   content: string;
 }
 
@@ -50,7 +53,11 @@ export class BlogCreatePostPage_Unconnected extends React.PureComponent<IBlogCre
           navigation={navigation}
           title={I18n.t('blog-publishAction')}
           onPress={() => navigation.getParam('onPublishPost') && navigation.getParam('onPublishPost')()}
-          disabled={navigation.getParam('publishing', false)}
+          disabled={
+            navigation.getParam('publishing', false)
+            || navigation.getParam('title', '').length === 0
+            || navigation.getParam('content', '').length === 0
+          }
         />
       },
       navigation
@@ -60,6 +67,7 @@ export class BlogCreatePostPage_Unconnected extends React.PureComponent<IBlogCre
   constructor(props: IBlogCreatePostPageProps) {
     super(props);
     this.state = {
+      title: '',
       content: ''
     }
     this.props.navigation.setParams({
@@ -68,41 +76,73 @@ export class BlogCreatePostPage_Unconnected extends React.PureComponent<IBlogCre
   }
 
   render() {
-    return <PageContainer>
-      <KeyboardAvoidingView>
-        <ConnectionTrackingBar />
-        <View style={{
-          paddingHorizontal: 20,
-          paddingVertical: 20,
-          flexDirection: "row",
-          justifyContent: "center",
-          flex: 0
-        }}>
+    return <KeyboardAvoidingView
+      enabled
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      keyboardVerticalOffset={Platform.OS === "ios" ? hasNotch() ? 100 : 76 : undefined} // 🍔 Big-(M)Hack of the death : On iOS KeyboardAvoidingView not working properly.
+      style={{ flex: 1 }}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} style={{ height: '100%' }}>
+        <PageContainer style={{ flex: 1 }}>
+          <ConnectionTrackingBar />
+
           <View style={{
+            paddingHorizontal: 20,
+            paddingVertical: 20,
+            flexDirection: "row",
             justifyContent: "center",
-            width: 45,
-            height: 45
+            flex: 0
           }}>
-            <GridAvatars users={[this.props.user.id!]} />
+            <View style={{
+              justifyContent: "center",
+              width: 45,
+              height: 45
+            }}>
+              <GridAvatars users={[this.props.user.id!]} />
+            </View>
+            <View style={{
+              alignItems: "flex-start",
+              flex: 1,
+              justifyContent: "center",
+              marginHorizontal: 6,
+              padding: 2
+            }}>
+              <TextBold>{this.props.user.displayName}</TextBold>
+              <TextLight numberOfLines={1}>{(this.props.navigation.getParam('blog') as IBlog)?.title}</TextLight>
+            </View>
           </View>
-          <View style={{
-            alignItems: "flex-start",
-            flex: 1,
-            justifyContent: "center",
-            marginHorizontal: 6,
-            padding: 2
-          }}>
-            <TextBold>{this.props.user.displayName}</TextBold>
-            <TextLight numberOfLines={1}>{(this.props.navigation.getParam('blog') as IBlog)?.title}</TextLight>
-          </View>
-        </View>
-        <InputScrollView style={{ flex: 0 }}>
+
+          <TextBold style={{ paddingHorizontal: 20 }}>{I18n.t('postCreateTitleField')}</TextBold>
+          <TextInput
+            numberOfLines={1}
+            placeholder={I18n.t('postCreateTitlePlaceholder')}
+            value={this.state.title}
+            onChangeText={text => {
+              this.setState({ title: text });
+              this.props.navigation.setParams({ title: text })
+            }}
+            style={{
+              marginHorizontal: 20,
+              marginTop: 10, marginBottom: 20,
+              padding: 5,
+              backgroundColor: CommonStyles.tabBottomColor,
+              borderColor: CommonStyles.borderBottomItem,
+              borderWidth: 1,
+              borderRadius: 1
+            }}
+          />
+
+          <TextBold style={{ paddingHorizontal: 20 }}>{I18n.t('postCreateContentField')}</TextBold>
           <TextInput
             style={{
-              paddingHorizontal: 20,
-              paddingVertical: 20,
+              marginHorizontal: 20,
+              marginTop: 10, marginBottom: 20,
+              padding: 5,
               flex: 1,
-              marginBottom: 50
+              backgroundColor: CommonStyles.tabBottomColor,
+              borderColor: CommonStyles.borderBottomItem,
+              borderWidth: 1,
+              borderRadius: 1
             }}
             placeholder={I18n.t('postCreatePlaceholder')}
             multiline
@@ -110,16 +150,18 @@ export class BlogCreatePostPage_Unconnected extends React.PureComponent<IBlogCre
             value={this.state.content}
             onChangeText={text => {
               this.setState({ content: text });
+              this.props.navigation.setParams({ content: text})
             }}
           />
-        </InputScrollView>
-      </KeyboardAvoidingView>
-    </PageContainer>
+
+        </PageContainer>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   }
 
   componentDidUpdate(prevProps: IBlogCreatePostPageProps) {
     if (prevProps.publishing !== this.props.publishing) {
-      this.props.navigation.setParams({'publishing': this.props.publishing});
+      this.props.navigation.setParams({ 'publishing': this.props.publishing });
     }
   }
 

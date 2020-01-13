@@ -8,12 +8,13 @@ export interface IAvatarsProps {
 		id: string;
 		isGroup: boolean;
 	}>;
+	fallback?: ImageURISource;
 }
 
 export class GridAvatars extends React.Component<IAvatarsProps> {
 
 	public render() {
-		const { users } = this.props
+		const { users, fallback } = this.props
 
 		if (users.length > 4) {
 			users.length = 4
@@ -21,7 +22,7 @@ export class GridAvatars extends React.Component<IAvatarsProps> {
 		
 		return (
 			<Container>
-				{users.map((user, idx) => <Avatar size={Size.small} key={idx} index={idx} count={users.length} sourceOrId={user} />)}
+				{users.map((user, idx) => <Avatar size={Size.small} key={idx} index={idx} count={users.length} sourceOrId={user} fallback={fallback} />)}
 			</Container>
 		)
 	}

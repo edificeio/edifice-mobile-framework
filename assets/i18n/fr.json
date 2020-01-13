@@ -189,6 +189,9 @@
   "blog-newPost": "Nouveau billet",
   "blog-publishAction": "Publier",
   "postCreatePlaceholder": "Écrivez un message...",
+  "postCreateTitlePlaceholder": "Écrivez le titre",
+  "postCreateTitleField": "Titre du billet",
+  "postCreateContentField": "Contenu du billet",
 
   "profileTypes": {
     "Guest": "Invité",

@@ -247,7 +247,6 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
   }
 
   handleCreatePost() {
-    console.log("CreatePost");
     Timeline._createMenuRef.current?.hide();
     this.props.navigation.navigate('blogSelect');
   }
