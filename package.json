@@ -50,7 +50,6 @@
     "react-native-global-props": "github:opendigitaleducation/react-native-global-props",
     "react-native-grid-list": "^1.1.0",
     "react-native-image-picker": "1.0.1",
-    "react-native-input-scroll-view": "^1.9.5",
     "react-native-localize": "1.1.4",
     "react-native-material-menu": "^1.0.0",
     "react-native-mixpanel": "1.1.4",

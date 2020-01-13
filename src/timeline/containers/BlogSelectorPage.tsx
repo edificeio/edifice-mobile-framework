@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import style from "glamorous-native";
 
 import { IBlogList, IBlog, getPublishableBlogsState } from "../state/publishableBlogs";
-import { NavigationScreenProp, NavigationState } from "react-navigation";
+import { NavigationScreenProp, NavigationState, NavigationEventSubscription } from "react-navigation";
 import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderBackAction } from "../../ui/headers/NewHeader";
 import { PageContainer } from "../../ui/ContainerContent";
@@ -20,6 +20,10 @@ import { ThunkDispatch } from "redux-thunk";
 import { View } from "react-native";
 import { mainNavNavigate } from "../../navigation/helpers/navHelper";
 
+import Conf from "../../../ode-framework-conf";
+import { getAuthHeader } from "../../infra/oauth";
+import { fetchPublishableBlogsAction } from "../actions/publish";
+
 export interface IBlogSelectorPageDataProps {
   blogs: IBlogList;
   isFetching: boolean;
@@ -27,6 +31,7 @@ export interface IBlogSelectorPageDataProps {
 
 export interface IBlogSelectorPageEventProps {
   onBlogSelected: (blog: IBlog) => void;
+  onDidFocus: () => void;
 }
 
 export interface IBlogSelectorPageOtherProps {
@@ -47,6 +52,8 @@ export class BlogSelectorPage_Unconnected extends React.PureComponent<IBlogSelec
     );
   };
 
+  didFocusSubscription?: NavigationEventSubscription;
+
   render() {
     return <PageContainer>
       <ConnectionTrackingBar />
@@ -61,7 +68,11 @@ export class BlogSelectorPage_Unconnected extends React.PureComponent<IBlogSelec
   renderBlog(blog: IBlog) {
     return <ListItem style={{ width: '100%' }}>
       <LeftPanel onPress={() => this.props.onBlogSelected(blog)}>
-        <GridAvatars users={[blog.thumbnail || require("../../../assets/images/system-avatar.png")]} />
+        <GridAvatars users={[blog.thumbnail
+          ? { ...getAuthHeader(), uri: Conf.currentPlatform.url + blog.thumbnail }
+          : require("../../../assets/images/resource-avatar.png")
+        ]}
+          fallback={require("../../../assets/images/resource-avatar.png")} />
       </LeftPanel>
       <CustomTouchableOpacity style={{ flexDirection: 'row', flex: 1 }} onPress={() => this.props.onBlogSelected(blog)}>
         <View style={{ flexDirection: 'row', flex: 1 }}>
@@ -83,6 +94,14 @@ export class BlogSelectorPage_Unconnected extends React.PureComponent<IBlogSelec
         </View>
       </CustomTouchableOpacity>
     </ListItem>;
+  }
+
+  componentDidMount() {
+    this.didFocusSubscription = this.props.navigation.addListener('didFocus', this.props.onDidFocus.bind(this));
+  }
+
+  componentWillUnmount() {
+    this.didFocusSubscription?.remove();
   }
 
 }
@@ -111,8 +130,10 @@ export default connect(
   },
   (dispatch: ThunkDispatch<any, any, any>) => ({
     onBlogSelected: (blog: IBlog) => {
-      console.log("Selected", blog);
-      mainNavNavigate('blogCreatePost', {blog});
+      mainNavNavigate('blogCreatePost', { blog });
+    },
+    onDidFocus: () => {
+      dispatch(fetchPublishableBlogsAction());
     }
   })
 )(BlogSelectorPage_Unconnected);

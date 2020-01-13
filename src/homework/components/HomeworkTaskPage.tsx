@@ -58,7 +58,7 @@ export class HomeworkTaskPage extends React.PureComponent<
   {}
   > {
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
-    console.log("title", navigation.getParam('title'));
+    // console.log("title", navigation.getParam('title'));
     return alternativeNavScreenOptions(
       {
         title: navigation.getParam('title') || I18n.t("homework-task-empty-title"),
