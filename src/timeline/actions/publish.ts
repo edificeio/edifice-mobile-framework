@@ -28,7 +28,7 @@ export const fetchPublishableBlogsAction = () =>
 
 
 export const blogPublishActions = createAsyncActionCreators<{}>(blogPublishActionTypes);
-export const publishBlogPostAction = (blog: IBlog, content: string) =>
+export const publishBlogPostAction = (blog: IBlog, title: string, content: string) =>
   async (dispatch: Dispatch, getState: () => any) => {
     let api = `${Conf.currentPlatform.url}/blog/post/${blog._id}`;
     let apiOpts = { method: 'POST' }
@@ -39,7 +39,7 @@ export const publishBlogPostAction = (blog: IBlog, content: string) =>
       const result1 = await signedFetchJson(api, {
         ...apiOpts,
         body: JSON.stringify({
-          title: '',
+          title: title,
           content: `<p>${content}</p>`
         })
       });
