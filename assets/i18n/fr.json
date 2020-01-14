@@ -192,6 +192,7 @@
   "postCreateTitlePlaceholder": "Écrivez le titre",
   "postCreateTitleField": "Titre du billet",
   "postCreateContentField": "Contenu du billet",
+  "me-indicator": "(Moi)",
 
   "profileTypes": {
     "Guest": "Invité",
