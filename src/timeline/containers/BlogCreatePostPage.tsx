@@ -28,7 +28,7 @@ export interface IBlogCreatePostDataProps {
 }
 
 export interface IBlogCreatePostEventProps {
-  onPublish: (blog: IBlog, post: string) => void;
+  onPublish: (blog: IBlog, title: string, content: string) => void;
 }
 
 export interface IBlogCreatePostOtherProps {
@@ -150,7 +150,7 @@ export class BlogCreatePostPage_Unconnected extends React.PureComponent<IBlogCre
             value={this.state.content}
             onChangeText={text => {
               this.setState({ content: text });
-              this.props.navigation.setParams({ content: text})
+              this.props.navigation.setParams({ content: text })
             }}
           />
 
@@ -166,7 +166,11 @@ export class BlogCreatePostPage_Unconnected extends React.PureComponent<IBlogCre
   }
 
   handlePublishPost() {
-    this.props.onPublish(this.props.navigation.getParam('blog') as IBlog, this.state.content);
+    this.props.onPublish(
+      this.props.navigation.getParam('blog') as IBlog,
+      this.state.title,
+      this.state.content
+    );
   }
 
 }
@@ -177,8 +181,8 @@ export default connect(
     publishing: state.timeline.publishStatus.publishing
   }),
   (dispatch: ThunkDispatch<any, any, any>) => ({
-    onPublish: (blog: IBlog, post: string) => {
-      dispatch(publishBlogPostAction(blog, post));
+    onPublish: (blog: IBlog, title: string, content: string) => {
+      dispatch(publishBlogPostAction(blog, title, content));
     }
   })
 )(BlogCreatePostPage_Unconnected);
