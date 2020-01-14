@@ -23,6 +23,9 @@ import { NavigationScreenProp } from "react-navigation";
 import { HeaderAction, HeaderIcon } from "../../ui/headers/NewHeader";
 import { ThunkDispatch } from "redux-thunk";
 import { IBlogList } from "../state/publishableBlogs";
+import { hasNotch } from "react-native-device-info";
+import { CommonStyles } from "../../styles/common/styles";
+import { TextBold, Text, TextColor } from "../../ui/text";
 
 interface ITimelineProps {
   isFetching: boolean;
@@ -47,17 +50,25 @@ const OptionalCreateButton_Unconnected = ({ blogs, navigation }: { blogs: IBlogL
       iconSize={24}
       primary
     />
-  }>
+  }
+    style={{
+      marginTop: hasNotch ? 20 : 0
+    }}>
     <MenuItem disabled
-      onPress={() => {}}
->{I18n.t('createPost-menu-title')}</MenuItem>
+      style={{
+        backgroundColor: CommonStyles.lightGrey,
+        borderTopLeftRadius: 4,
+        borderTopRightRadius: 4
+      }}
+      onPress={() => { }}
+    ><TextBold style={{ color: TextColor.Light }}>{I18n.t('createPost-menu-title')}</TextBold></MenuItem>
     <MenuDivider />
     <MenuItem
       onPress={() => { navigation.getParam('onCreatePost') && navigation.getParam('onCreatePost')() }}
-    >{I18n.t('createPost-menu-blog')}</MenuItem>
+    ><Text style={{ color: CommonStyles.textColor }}>{I18n.t('createPost-menu-blog')}</Text></MenuItem>
     <MenuItem disabled
-      onPress={() => {}}
-    >{I18n.t('createPost-menu-news')}</MenuItem>
+      onPress={() => { }}
+    ><Text style={{ color: TextColor.Light, opacity: 0.5 }}>{I18n.t('createPost-menu-news')}</Text></MenuItem>
   </Menu>
   : <HeaderIcon name={null} hidden={true} />
 const OptionalCreateButton = connect(
@@ -79,7 +90,10 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
           }}
           name="filter"
         />,
-        headerRight: <OptionalCreateButton navigation={navigation} />
+        headerRight: <OptionalCreateButton navigation={navigation} />,
+        headerRightContainerStyle: {
+          alignItems: "flex-start"
+        },
       },
       navigation
     );
