@@ -11,6 +11,8 @@ import { CenterPanel, Header, LeftPanel } from "../../ui/ContainerContent";
 import { Heavy, Light } from "../../ui/Typography";
 import { CommonStyles } from "../../styles/common/styles";
 import { getTimeToStr } from "../../utils/date";
+import { getSessionInfo } from "../../AppStore";
+import { TextLight, TextColor } from "../../ui/text";
 
 export default ({
   senderId,
@@ -20,32 +22,35 @@ export default ({
   resourceName,
   date
 }) => (
-  <Header>
-    <LeftPanel>
-      <SingleAvatar userId={senderId} />
-    </LeftPanel>
-    <CenterPanel>
-      <Heavy>
-        {senderName}
-        <Light>
-          {" "}
-          {I18n.t(`timeline-eventType-${eventType}`)}{" "}
-          {eventType !== "ACKNOWLEDGE" // Acknowledge notifs has their own text
-            ? I18n.t(`timeline-postType-${type}`) + " "
-            : null}
-        </Light>
-        {resourceName}
-      </Heavy>
-      <Text
-        style={{
-          color: CommonStyles.lightTextColor,
-          fontFamily: CommonStyles.primaryFontFamily,
-          fontSize: 14
-        }}
-      >
-        {/* FIXME: Use moment.js instead of this */}
-        {getTimeToStr(date)}
-      </Text>
-    </CenterPanel>
-  </Header>
-);
+    <Header>
+      <LeftPanel>
+        <SingleAvatar userId={senderId} />
+      </LeftPanel>
+      <CenterPanel>
+        <Heavy>
+          {senderName}{senderId === getSessionInfo().userId
+            ? <TextLight color={TextColor.Light}>{` ${I18n.t('me-indicator')}`}</TextLight>
+            : ''
+          }
+          <Light>
+            {" "}
+            {I18n.t(`timeline-eventType-${eventType}`)}{" "}
+            {eventType !== "ACKNOWLEDGE" // Acknowledge notifs has their own text
+              ? I18n.t(`timeline-postType-${type}`) + " "
+              : null}
+          </Light>
+          {resourceName}
+        </Heavy>
+        <Text
+          style={{
+            color: CommonStyles.lightTextColor,
+            fontFamily: CommonStyles.primaryFontFamily,
+            fontSize: 14
+          }}
+        >
+          {/* FIXME: Use moment.js instead of this */}
+          {getTimeToStr(date)}
+        </Text>
+      </CenterPanel>
+    </Header>
+  );

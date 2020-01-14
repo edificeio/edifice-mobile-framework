@@ -9,7 +9,7 @@ import connectionTracker from "./infra/reducers/connectionTracker";
 import ui from "./infra/reducers/ui";
 import progress from "./infra/reducers/progress";
 import timeline from "./timeline/reducer";
-import { IUserInfoState } from "./user/reducers/info";
+import { IUserInfoState } from "./user/state/info";
 import { IUserAuthState } from "./user/reducers/auth";
 
 // console.log("REDUCERS", getReducersFromModuleDefinitions(moduleDefinitions));
