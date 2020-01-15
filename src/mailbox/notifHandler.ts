@@ -7,9 +7,10 @@ import {
 } from "./actions/threadList";
 import conversationThreadSelected from "./actions/threadSelected";
 import { NotificationHandlerFactory } from "../infra/pushNotification";
+import getAPIPrefix from "./actions/apiHelper";
 
 //TODO add types args
-const mailboxNotifHandlerFactory :NotificationHandlerFactory<any,any,any> = dispatch => async notificationData => {
+const mailboxNotifHandlerFactory :NotificationHandlerFactory = notificationData => async (dispatch, getState) => {
   if (!notificationData.resourceUri.startsWith("/conversation") || !notificationData.resourceUri.startsWith("/zimbra")) {
     return false;
   }
@@ -17,7 +18,7 @@ const mailboxNotifHandlerFactory :NotificationHandlerFactory<any,any,any> = disp
   const messageId = split[split.length - 1];
   if (!Conf.currentPlatform) throw new Error("must specify a platform");
   const response = await signedFetch(
-    `${Conf.currentPlatform.url}/zimbra/message/${messageId}`,
+    `${Conf.currentPlatform.url}${getAPIPrefix(getState())}/message/${messageId}`,
     {}
   );
   const message = await response.json();

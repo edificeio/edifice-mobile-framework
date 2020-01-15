@@ -110,7 +110,7 @@ export default connect(
     };
   },
   (dispatch: Dispatch & ThunkDispatch<any, void, AnyAction>) => ({
-    loadVisibles: () => loadVisibles(dispatch)(),
+    loadVisibles: () => dispatch(loadVisibles()),
     pickUser: (user: any) => pickUser(dispatch)(user),
     unpickUser: (user: any) => unpickUser(dispatch)(user),
     clearPickedUsers: () => clearPickedUsers(dispatch)(),

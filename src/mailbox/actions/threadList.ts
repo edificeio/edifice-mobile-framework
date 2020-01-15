@@ -17,6 +17,7 @@ import {
 
 import Conf from "../../../ode-framework-conf";
 import { signedFetch } from "../../infra/fetchWithCache";
+import getAPIPrefix from "./apiHelper"
 
 export const NB_THREADS_PER_PAGE = 10; // Needs to be the same value as the backend's one
 
@@ -184,7 +185,7 @@ export function fetchConversationThreadList(page: number = 0) {
     dispatch(conversationThreadListRequested());
     try {
       const data = await asyncGetJson(
-        `/zimbra/threads/list?page=${page}`,
+        `${getAPIPrefix(getState())}/threads/list?page=${page}`,
         conversationThreadListAdapter
       );
       dispatch(conversationThreadListReceived(page, data)); // threads with message ids
@@ -199,7 +200,7 @@ export function resetConversationThreadList() {
     dispatch(conversationThreadListResetRequested());
     try {
       const data = await asyncGetJson(
-        `/zimbra/threads/list?page=0`,
+        `${getAPIPrefix(getState())}/threads/list?page=0`,
         conversationThreadListAdapter
       );
       dispatch(conversationThreadListResetReceived(data)); // thread infos
@@ -225,7 +226,7 @@ export function fetchConversationThreadOlderMessages(threadId: string) {
       );*/
       // Fetch data
       const data = await asyncGetJson(
-        `/zimbra/thread/previous-messages/${oldestMessageId}`,
+        `${getAPIPrefix(getState())}/thread/previous-messages/${oldestMessageId}`,
         conversationOrderedMessagesAdapter
       );
       // Extract messageIds list and contents
@@ -258,7 +259,7 @@ export function fetchConversationThreadNewerMessages(threadId: string) {
       );*/
       // Fetch data
       const data = await asyncGetJson(
-        `/zimbra/thread/new-messages/${newestMessageId}`,
+        `${getAPIPrefix(getState())}/thread/new-messages/${newestMessageId}`,
         conversationOrderedMessagesAdapter
       );
       // Extract messageIds list and contents
@@ -285,7 +286,7 @@ export function fetchConversationThreadResetMessages(threadId: string) {
       dispatch(conversationThreadResetRequested(threadId));
       // Fetch data
       const data = await asyncGetJson(
-        `/zimbra/thread/messages/${threadId}`,
+        `${getAPIPrefix(getState())}/thread/messages/${threadId}`,
         conversationOrderedMessagesAdapter
       );
       // Extract messageIds list and contents
@@ -315,7 +316,7 @@ export function conversationSetThreadRead(threadId: string, force?: boolean) {
       if (!Conf.currentPlatform) throw new Error("must specify a platform");
       // console.log("YES TOGGLE UNRAD");
       const response = await signedFetch(
-        `${Conf.currentPlatform.url}/zimbra/thread/toggleUnread`,
+        `${Conf.currentPlatform.url}${getAPIPrefix(getState())}/thread/toggleUnread`,
         {
           body: JSON.stringify({
             id: [threadId],
@@ -337,7 +338,7 @@ export function conversationDeleteThread(threadId: string) {
     try {
       if (!Conf.currentPlatform) throw new Error("must specify a platform");
       const response = await signedFetch(
-        `${Conf.currentPlatform.url}/zimbra/thread/trash`,
+        `${Conf.currentPlatform.url}${getAPIPrefix(getState())}/thread/trash`,
         {
           body: JSON.stringify({
             id: [threadId]

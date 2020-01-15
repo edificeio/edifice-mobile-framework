@@ -4,7 +4,7 @@ import {NotificationHandlerFactory} from "../infra/pushNotification";
 import {FilterId, IFile} from "./types";
 import I18n from "i18n-js";
 
-const notifHandlerFactory :NotificationHandlerFactory<any,any,any> = dispatch => async notificationData => {
+const notifHandlerFactory :NotificationHandlerFactory = notificationData => async dispatch => {
 
   if (!notificationData.resourceUri.startsWith("/workspace")) {
     return false;

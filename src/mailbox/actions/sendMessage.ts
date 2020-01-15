@@ -8,6 +8,7 @@ import Tracking from "../../tracking/TrackingManager";
 import mailboxConfig from "../config";
 import { IArrayById } from "../../infra/collections";
 import { getSessionInfo } from "../../AppStore";
+import getAPIPrefix from "./apiHelper"
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -81,7 +82,7 @@ export function sendMessage(data: IConversationMessage) {
       // console.log("3/ sent request to the server", requestbody, replyTo);
       if (!Conf.currentPlatform) throw new Error("must specify a platform");
       const response = await signedFetch(
-        `${Conf.currentPlatform.url}/zimbra/send?${replyTo}`,
+        `${Conf.currentPlatform.url}${getAPIPrefix(getState())}/send?${replyTo}`,
         {
           body: JSON.stringify(requestbody),
           headers: {

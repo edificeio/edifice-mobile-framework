@@ -10,7 +10,7 @@ import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { DateView } from "../../ui/DateView";
 import { HtmlContentView } from "../../ui/HtmlContentView";
 import { ConversationMessageStatus } from "../actions/sendMessage";
-import ThreadMessageAttachment from "./ThreadMessageAttachment";
+import ThreadMessageAttachment from "../containers/ThreadMessageAttachment";
 import { getSessionInfo } from "../../AppStore";
 
 const MessageBubble = ({ contentHtml, isMine }) => (
@@ -186,7 +186,7 @@ export default class ThreadMessage extends React.PureComponent<
                   <ThreadMessageAttachment
                     attachment={att}
                     style={{ marginTop: firstAttachment ? 0 : 2 }}
-                    isMine={isMine}
+                    highlightColor={isMine ? "white" : CommonStyles.textColor}
                     key={att.id}
                     messageId={this.props.id}
                   />

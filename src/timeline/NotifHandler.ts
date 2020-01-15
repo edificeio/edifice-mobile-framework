@@ -45,7 +45,7 @@ const openNotif = {
   }
 };
 //TODO types args
-const timelineNotifHandlerFactory:NotificationHandlerFactory<any,any,any> = dispatch => async (notificationData, legalapps) => {
+const timelineNotifHandlerFactory:NotificationHandlerFactory = (notificationData, legalapps) => async dispatch => {
   for (const path in openNotif) {
     if (notificationData.resourceUri.startsWith(path)) {
       // console.log("before await schoolbooks");

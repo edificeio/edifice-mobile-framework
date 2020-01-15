@@ -4,7 +4,7 @@ import homeworkDiarySelected from "./actions/selectedDiary";
 import { NotificationHandlerFactory } from "../infra/pushNotification";
 
 //TODO add types args
-const homeworksNotificationHandlerFactory:NotificationHandlerFactory<any,any,any> = dispatch => async notificationData => {
+const homeworksNotificationHandlerFactory:NotificationHandlerFactory = notificationData => async dispatch => {
   if (!notificationData.resourceUri.startsWith("/homeworks")) {
     return false;
   }

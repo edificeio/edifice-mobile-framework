@@ -91,7 +91,7 @@ class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
       MainNavigatorHOC.lastOpenNotifData = this.props.notification.data.params;
       const data = JSON.parse(this.props.notification.data.params);
       // console.log("Routing from notif data", data);
-      pushNotifications(this.props.dispatch)(data, this.props.apps);
+      this.props.dispatch(pushNotifications(data, this.props.apps));
     } else {
       this.props.notification && console.log("Notif data already handled:", MainNavigatorHOC.lastOpenNotifData);
     }

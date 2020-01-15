@@ -39,7 +39,7 @@ export interface IFunctionalConfig {
   iconName: string;
   iconColor?: string;
   group?: boolean;
-  notifHandlerFactory?: () => Promise<NotificationHandlerFactory<any, any, any>>;
+  notifHandlerFactory?: () => Promise<NotificationHandlerFactory>;
   hasRight?: (apps: any[]) => boolean;
 }
 
@@ -63,7 +63,7 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
   public iconName: string;
   public iconColor: string;
   public group: boolean;
-  public notifHandlerFactory: () => Promise<NotificationHandlerFactory<any, any, any>>;
+  public notifHandlerFactory: () => Promise<NotificationHandlerFactory>;
   public hasRight: (apps: any[]) => boolean; 
 
   public constructor(opts: IFunctionalConfig) {

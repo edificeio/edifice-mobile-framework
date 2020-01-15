@@ -13,12 +13,20 @@ import {
   IConversationMessageList,
   IConversationMessageNativeArray
 } from "../actions/sendMessage";
+import getAPIPrefix from "./apiHelper"
 
-/** Returns the local state (global state -> conversation2 -> messages). Give the global state as parameter. */
-const localState = globalState =>
-  conversationConfig.getLocalState(globalState).messages;
 
 // ADAPTER ----------------------------------------------------------------------------------------
+
+export interface IAttachment {
+  id: string;
+  name: string;
+  charset: string;
+  filename: string;
+  contentType: string;
+  contentTransferEncoding: string;
+  size: number; // in Bytes
+}
 
 // Data type of what is given by the backend.
 export type IConversationMessageListBackend = Array<{
@@ -36,15 +44,7 @@ export type IConversationMessageListBackend = Array<{
   date: number;
   thread_id: string;
   unread: boolean;
-  attachments: Array<{
-    id: string;
-    name: string;
-    charset: string;
-    filename: string;
-    contentType: string;
-    contentTransferEncoding: string;
-    size: number; // in Bytes
-  }>;
+  attachments: Array<IAttachment>;
 }>;
 
 /**
@@ -115,7 +115,7 @@ export function conversationSetMessagesRead(messageIds: string[]) {
   return async (dispatch, getState) => {
     try {
       if (!Conf.currentPlatform) throw new Error("must specify a platform");
-      await signedFetch(`${Conf.currentPlatform.url}/zimbra/toggleUnread`, {
+      await signedFetch(`${Conf.currentPlatform.url}${getAPIPrefix(getState())}/toggleUnread`, {
         body: JSON.stringify({
           id: messageIds,
           unread: false

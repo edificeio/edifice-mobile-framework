@@ -5,19 +5,20 @@ import generateUuid from "../../utils/uuid";
 
 import { takePhoto, uploadImage } from "../../infra/actions/workspace";
 import { signedFetch } from "../../infra/fetchWithCache";
-import {
-  ConversationMessageStatus,
-  IConversationMessage
+import { 
+  ConversationMessageStatus, 
+  IConversationMessage 
 } from "../actions/sendMessage";
 
-import {
-  actionTypeMessageSendError,
-  actionTypeMessageSendRequested,
-  actionTypeMessageSent
+import { 
+  actionTypeMessageSendError, 
+  actionTypeMessageSendRequested, 
+  actionTypeMessageSent 
 } from "./sendMessage";
 import { getSessionInfo } from "../../AppStore";
+import getAPIPrefix from "./apiHelper";
 
-export const sendPhoto = dispatch => async (data: IConversationMessage) => {
+export const sendPhoto = (data: IConversationMessage) => async (dispatch, getState) => {
   const uri = await takePhoto();
 
   const newuuid = "tmp-" + generateUuid();
@@ -56,7 +57,7 @@ export const sendPhoto = dispatch => async (data: IConversationMessage) => {
 
     if (!Conf.currentPlatform) throw new Error("must specify a platform");
     const response = await signedFetch(
-      `${Conf.currentPlatform.url}/zimbra/send?${replyTo}`,
+      `${Conf.currentPlatform.url}${getAPIPrefix(getState())}/send?${replyTo}`, 
       {
         body: JSON.stringify(requestBody),
         headers: {

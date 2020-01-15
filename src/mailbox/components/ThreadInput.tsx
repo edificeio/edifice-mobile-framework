@@ -101,7 +101,7 @@ class ThreadInput extends React.PureComponent<
         ...conversation.to,
         ...(conversation.cc || []),
         conversation.from
-      ].filter(el => el !== getSessionInfo().userId)
+      ].filter(el => el && el !== getSessionInfo().userId)
     );
     if (to.size === 0) {
       return [getSessionInfo().userId];
@@ -296,6 +296,6 @@ export default connect(
   },
   dispatch => ({
     send: (data: any) => dispatch<any>(sendMessage(data)),
-    sendPhoto: (data: any) => sendPhoto(dispatch)(data)
+    sendPhoto: (data: any) => dispatch<any>(sendPhoto(data))
   })
 )(ThreadInput);

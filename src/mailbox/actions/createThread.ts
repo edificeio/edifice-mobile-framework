@@ -49,19 +49,22 @@ export const actionTypeLoadVisibles = mailboxConf.createActionType(
   "LOAD_VISIBLES"
 );
 
-export const loadVisibles = dispatch => async () => {
-  const visibles = await fetchJSONWithCache(`/zimbra/visible`);
-  const groups = visibles && visibles.groups.map(group => ({
-    ...group,
-    isGroup: true
-  }))
-  const users = visibles && visibles.users.map(user => ({
-    ...user,
-    isGroup: false
-  }))
+export function loadVisibles() {
+  return async (dispatch, getState) => {
+    //getVisibles
+    const visibles = await fetchJSONWithCache(`${getAPIPrefix(getState())}/visible`);
+    const groups = visibles && visibles.groups.map(group => ({
+      ...group,
+      isGroup: true
+    }))
+    const users = visibles && visibles.users.map(user => ({
+      ...user,
+      isGroup: false
+    }))
 
-  dispatch({
-    type: actionTypeLoadVisibles,
-    visibles: [...groups, ...users]
-  });
+    dispatch({
+      type: actionTypeLoadVisibles,
+      visibles: [...groups, ...users]
+    });
+  }
 };

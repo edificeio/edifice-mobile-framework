@@ -40,7 +40,7 @@ export function handleNotificationAction(notification: INotification) {
   return async (dispatch: Dispatch, getState: () => any) => {
     try {
       const availableApps = getState().user.auth.apps;
-      pushNotifications(dispatch)(notification.params, availableApps) // ToDo: Fix Type error here
+      dispatch(pushNotifications(notification.params, availableApps))
     } catch (errmsg) {
       console.warn("Unable to redirect notification: ", errmsg)
     }

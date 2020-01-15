@@ -12,12 +12,12 @@ const normalizeUrl = (url:string)=>{
     return url;
   }
 }
-export default (dispatch: Dispatch) => async (data: NotificationData, apps: string[]) => {
+export default (data: NotificationData, apps: string[]) => async (dispatch) => {
   // function for calling handlerfactory
   let manageCount = 0;
-  const call = async (notifHandlerFactory:NotificationHandlerFactory<any,any,any>) => {
+  const call = async (notifHandlerFactory:NotificationHandlerFactory) => {
     try {
-      const managed = await notifHandlerFactory(dispatch)(data, apps);
+      const managed = await dispatch(notifHandlerFactory(data, apps));
       if (managed) {
         manageCount++;
       }
