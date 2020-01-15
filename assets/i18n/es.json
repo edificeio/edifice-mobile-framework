@@ -92,6 +92,7 @@
   "Login": "Usuario",
   "LoginWeb": "Conectarse desde la web",
   "LVS": "LVS",
+  "me-indicator": "(Yo)",
   "myapp-emptyScreenText": "Parece que no tienes acceso a ninguna aplicación...",
   "myapp-emptyScreenTitle": "Ninguna aplicación !",
   "MyApplications": "Aplicaciones",
@@ -156,6 +157,7 @@
   "timeline-emptyScreenTitle": "No se ve ni un alma. ¿Hay alguien?",
   "timeline-eventType-ACKNOWLEDGE": "ha confirmado la lectura del mensaje",
   "timeline-eventType-INFO-SHARED": "ha compartido",
+  "timeline-eventType-NEWS-PUBLISHED": "",
   "timeline-eventType-PUBLISH-POST": "ha publicado una entrada de",
   "timeline-eventType-PUBLISH": "ha publicado",
   "timeline-eventType-WORD-SHARED": "ha compartido",
@@ -175,7 +177,8 @@
   "version-number": "Versión",
   "welcome": "Bienvenido",
   "workspace": "Espacio documental",
-
+  "workspace-uploadSuccessful": "",
+  
   "profileTypes": {
     "Guest": "Invitado",
     "Personnel": "Personal",
