@@ -16,7 +16,7 @@
   "auth-unknownError": "Authentication failed. Please try again.",
   "back": "Back",
   "Birthdate": "Date of birth",
-  "by": "par: ",
+  "by": "by: ",
   "Cancel": "Cancel",
   "CellPhone": "Mobile phone",
   "changePassword-errorFields": "The form contains errors",
@@ -174,7 +174,7 @@
   "unknown-user": "Unknown user",
   "version-number": "Version",
   "welcome": "Welcome",
-  "workspace": "Espace Documentaire",
+  "workspace": "Workspace",
 
   "profileTypes": {
     "Guest": "Guest",
