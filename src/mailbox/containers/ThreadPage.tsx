@@ -217,7 +217,7 @@ export const LittleTitle = (style.text as any)(
     color: "white",
     fontFamily: CommonStyles.primaryFontFamily,
     fontWeight: "400",
-    textAlign: "left"
+    textAlign: "center"
   },
   ({ smallSize = false }: { smallSize: boolean }) => ({
     fontSize: smallSize ? 12 : 16
