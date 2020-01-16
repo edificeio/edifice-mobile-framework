@@ -1,4 +1,4 @@
-import { createStackNavigator } from "react-navigation";
+import { createStackNavigator } from "react-navigation-stack";
 import ContainerItems from "./containers/Items";
 import { Details } from "./containers/Details"
 

@@ -1,7 +1,8 @@
 // RN Imports
 import * as React from "react";
-import { StatusBar, View, AppState } from "react-native";
+import { StatusBar, View } from "react-native";
 import * as RNLocalize from "react-native-localize";
+import "react-native-gesture-handler";
 
 // Redux
 import { Provider, connect } from "react-redux";

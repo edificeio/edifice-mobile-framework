@@ -1,5 +1,5 @@
 import * as React from "react";
-import { createStackNavigator } from "react-navigation";
+import { createStackNavigator } from "react-navigation-stack";
 
 import LoginPage from "../user/containers/LoginPage";
 import ActivationPage from "../user/containers/ActivationPage";

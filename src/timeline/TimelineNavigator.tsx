@@ -1,4 +1,4 @@
-import { createStackNavigator } from "react-navigation";
+import { createStackNavigator } from "react-navigation-stack";
 import { FilterTimelineConnect } from "./containers/FilterTimeline";
 import { NewsContentRouter } from "./containers/NewsContent";
 import Timeline from "./containers/Timeline";

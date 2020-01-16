@@ -2,7 +2,7 @@ import * as React from "react";
 import I18n from "i18n-js";
 import { connect } from "react-redux";
 import style from "glamorous-native";
-import { NavigationScreenProp, NavigationState, Header } from "react-navigation";
+import { NavigationScreenProp, NavigationState } from "react-navigation";
 import InputScrollView from 'react-native-input-scroll-view';
 import listenToKeyboardEvents from 'react-native-keyboard-aware-scroll-view/lib/KeyboardAwareHOC';
 

@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import style from "glamorous-native";
 
 import { IBlogList, IBlog, getPublishableBlogsState } from "../state/publishableBlogs";
-import { NavigationScreenProp, NavigationState, NavigationEventSubscription } from "react-navigation";
+import { NavigationScreenProp, NavigationState } from "react-navigation";
 import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderBackAction } from "../../ui/headers/NewHeader";
 import { PageContainer } from "../../ui/ContainerContent";
@@ -51,8 +51,6 @@ export class BlogSelectorPage_Unconnected extends React.PureComponent<IBlogSelec
       navigation
     );
   };
-
-  didFocusSubscription?: NavigationEventSubscription;
 
   render() {
     return <PageContainer>

@@ -1,6 +1,7 @@
 import style from "glamorous-native";
 import * as React from "react";
-import { createBottomTabNavigator, NavigationState, NavigationScreenProp } from "react-navigation";
+import { NavigationState, NavigationScreenProp } from "react-navigation";
+import { createBottomTabNavigator } from "react-navigation-tabs";
 
 import { CommonStyles } from "../../styles/common/styles";
 import { IconOnOff } from "../../ui";

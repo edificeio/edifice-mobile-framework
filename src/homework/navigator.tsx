@@ -1,4 +1,4 @@
-import { createStackNavigator } from "react-navigation";
+import { createStackNavigator } from "react-navigation-stack";
 import HomeworkFilterPage from "./containers/HomeworkFilterPage";
 import HomeworkPage from "./containers/HomeworkPage";
 import HomeworkTaskPage from "./containers/HomeworkTaskPage";

@@ -2,7 +2,8 @@ import I18n from "i18n-js";
 import * as React from "react";
 import { Animated, Linking, ScrollView, View } from "react-native";
 
-import { createStackNavigator, NavigationActions, NavigationScreenProp } from "react-navigation";
+import { NavigationActions, NavigationScreenProp } from "react-navigation";
+import { createStackNavigator } from "react-navigation-stack";
 import Conf from "../../../ode-framework-conf";
 import { signedFetch } from "../../infra/fetchWithCache";
 import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";

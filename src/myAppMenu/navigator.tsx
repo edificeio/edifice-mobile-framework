@@ -1,5 +1,6 @@
 import * as React from "react";
-import { createStackNavigator, NavigationScreenProp } from "react-navigation";
+import { NavigationScreenProp } from "react-navigation";
+import { createStackNavigator } from "react-navigation-stack";
 import I18n from "i18n-js";
 
 import { IAppModule } from "../infra/moduleTool";
