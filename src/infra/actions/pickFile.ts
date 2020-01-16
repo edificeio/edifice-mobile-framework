@@ -11,11 +11,25 @@ type Captions = {
   title: string;
 };
 
+type PhotoCaptions = {
+  title: string;
+  cancelButtonTitle: string;
+  takePhotoButtonTitle: string;
+  chooseFromLibraryButtonTitle: string;
+};
+
 const captions: Captions = {
   image: "workspace-image",
   document: "workspace-document",
   cancel: "Cancel",
   title: "workspace-pick",
+};
+
+const photoCaptions: PhotoCaptions = {
+  title: "workspace-photoPicker-title",
+  cancelButtonTitle: "Cancel",
+  takePhotoButtonTitle: "workspace-photoPicker-take",
+  chooseFromLibraryButtonTitle: "workspace-photoPicker-pick",
 };
 
 type FilePickerPromise = (resolve: (payload: ContentUri) => void, reject: (error: Error) => void) => void;
@@ -24,15 +38,15 @@ const pick = () => {
   return new Promise(Platform.OS === "ios" ? pickIOS : pickDocument);
 };
 
-const pickIOS: FilePickerPromise = (resolve, reject) => {
-  const transformCaptions: (captions: Captions) => {} = (captions) => {
-    let result = {}
-    for(let caption of Object.keys(captions)) {
-      result[caption] = I18n.t(captions[caption])
-    }
-    return result
+const transformCaptions: (captions: any) => {} = captions => {
+  let result = {};
+  for (let caption of Object.keys(captions)) {
+    result[caption] = I18n.t(captions[caption]);
   }
+  return result;
+};
 
+const pickIOS: FilePickerPromise = (resolve, reject) => {
   const { image, document, cancel, title } = transformCaptions(captions);
   const options = [image, document, cancel];
   const handlers = [pickImage, pickDocument, () => pickClosed];
@@ -44,13 +58,13 @@ const pickIOS: FilePickerPromise = (resolve, reject) => {
 };
 
 const pickImage: FilePickerPromise = (resolve, reject) => {
-  ImagePicker.showImagePicker(result => {
+  ImagePicker.showImagePicker(transformCaptions(photoCaptions), result => {
     if (result.didCancel) {
       reject(new Error("Action cancelled!"));
     } else {
       const { uri, fileName, type } = result;
 
-      resolve({ mime: type, name: fileName || uri.split('tmp/')[1], uri: uri.split("file://")[1] });
+      resolve({ mime: type, name: fileName || uri.split("tmp/")[1], uri: uri.split("file://")[1] });
     }
   });
 };
@@ -64,7 +78,7 @@ const pickDocument: FilePickerPromise = async (resolve, reject) => {
     const { uri, type, name } = result;
     const realURI = Platform.select({ android: uri, ios: decodeURI(uri).split("file://")[1] });
 
-    resolve({ mime: type, name: name, uri:realURI });
+    resolve({ mime: type, name: name, uri: realURI });
   } catch {
     reject(new Error("Action cancelled!"));
   }
