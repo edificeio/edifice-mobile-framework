@@ -7,6 +7,7 @@ export interface IBlog {
   visibility: string;
   title: string;
   thumbnail?: string;
+  trashed?: boolean;
   'comment-type': string;
   'publish-type': string;
   description?: string;
