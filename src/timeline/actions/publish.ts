@@ -16,10 +16,11 @@ export const fetchPublishableBlogsAction = () =>
     try {
       dispatch(publishableBlogsActions.request());
       const allBlogs: IBlog[] = await fetchJSONWithCache(api);
-      const filteredBlogs = resourceRightFilter(
+      const filteredBlogs = (resourceRightFilter(
         allBlogs,
         'org-entcore-blog-controllers-PostController|create',
-        getState().user.info) as IBlog[];
+        getState().user.info) as IBlog[])
+        .filter((blog: IBlog) => !blog.trashed);
       dispatch(publishableBlogsActions.receipt(filteredBlogs));
     } catch (err) {
       dispatch(publishableBlogsActions.error(err));

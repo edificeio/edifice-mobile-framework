@@ -61,6 +61,7 @@ export class BlogSelectorPage_Unconnected extends React.PureComponent<IBlogSelec
         data={this.props.blogs || []}
         keyExtractor={(item: IBlog) => item._id}
         renderItem={({ item }: { item: IBlog }) => this.renderBlog(item)}
+        alwaysBounceVertical={false}
       />
     </PageContainer>
   }
