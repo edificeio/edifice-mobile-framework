@@ -21,7 +21,7 @@ import Tracking from "../tracking/TrackingManager";
 import { createMainTabNavigator, createMainTabNavOption } from "./helpers/mainTabNavigator";
 import { getRoutes, getModules } from "./helpers/navBuilder";
 import LoginNavigator from "./LoginNavigator";
-import withLinkingAppWrapper from "../infra/withLinkingAppWrapper";
+import withLinkingAppWrapper from "../infra/wrapper/withLinkingAppWrapper";
 
 /**
  * MAIN NAVIGATOR

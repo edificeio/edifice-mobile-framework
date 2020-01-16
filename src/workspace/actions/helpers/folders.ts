@@ -7,7 +7,7 @@ import { asyncGetJson } from "../../../infra/redux/async";
 import { FilterId, IItems, IFolder, IFiltersParameters } from "../../types";
 import { factoryRootFolder } from "./factoryRootFolder";
 import moment from "moment";
-import Conf from "../../../../ode-framework-conf"
+import Conf from "../../../../ode-framework-conf";
 
 // TYPE -------------------------------------------------------------------------------------------
 
@@ -35,11 +35,17 @@ export type IBackendFolderArray = Array<IBackendFolder>;
 
 const backendFoldersAdapter: (data: IBackendFolderArray) => IItems<IFolder> = data => {
   const result = {} as IItems<IFolder>;
-  if (!data) return result;
+  if (!data) {
+    return result;
+  }
   for (const item of data) {
-    if (Conf.blacklistFolders && Conf.blacklistFolders.includes(item.externalId)) continue;
+    if (Conf.blacklistFolders && Conf.blacklistFolders.includes(item.externalId)) {
+      continue;
+    }
     result[item._id] = {
-      date: moment(item.modified, "YYYY-MM-DD HH:mm.ss.SSS").toDate().getTime(),
+      date: moment(item.modified, "YYYY-MM-DD HH:mm.ss.SSS")
+        .toDate()
+        .getTime(),
       id: item._id,
       isFolder: true,
       name: item.name,
@@ -68,17 +74,22 @@ const getRootFolders: () => IItems<IFolder> = () => {
 
 export function getFolders(parameters: IFiltersParameters): Promise<IItems<IFolder>> {
   const { parentId } = parameters;
-  
-  if (parentId === FilterId.root) 
+
+  if (parentId === FilterId.root) {
     return Promise.resolve(getRootFolders());
+  }
 
   const formatParameters = (parameters = {}) => {
     let result = "?";
     for (let key in parameters) {
-      if (!(parameters as any)[key])                                      // parameter empty
+      if (!(parameters as any)[key]) {
+        // parameter empty
         continue;
-      if (key === "parentId" && (parameters as any)[key] in FilterId)    // its a root folder, no pass parentId
+      }
+      if (key === "parentId" && (parameters as any)[key] in FilterId) {
+        // its a root folder, no pass parentId
         continue;
+      }
       result = result.concat(`${key}=${(parameters as any)[key]}&`);
     }
     return result.slice(0, -1);
@@ -87,3 +98,26 @@ export function getFolders(parameters: IFiltersParameters): Promise<IItems<IFold
   return asyncGetJson(`/workspace/folders/list${formatParameters(parameters)}`, backendFoldersAdapter);
 }
 
+export function createFolder({ name, parentId }): Promise<IItems<IFolder>> {
+  if (parentId === FilterId.root) {
+    return Promise.resolve(getRootFolders());
+  }
+
+  const formatParameters = (parameters = {}) => {
+    let result = "?";
+    for (let key in parameters) {
+      if (!(parameters as any)[key]) {
+        // parameter empty
+        continue;
+      }
+      if (key === "parentId" && (parameters as any)[key] in FilterId) {
+        // its a root folder, no pass parentId
+        continue;
+      }
+      result = result.concat(`${key}=${(parameters as any)[key]}&`);
+    }
+    return result.slice(0, -1);
+  };
+
+  return asyncGetJson("/workspace/folders/create", (data: any) => (data: any) => {});
+}

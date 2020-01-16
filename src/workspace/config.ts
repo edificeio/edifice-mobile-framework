@@ -17,6 +17,5 @@ export default new FunctionalModuleConfig({
     } else {
       return val;
     }
-  }
+  },
 });
-

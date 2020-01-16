@@ -3,7 +3,7 @@ export enum FilterId {
   shared = "shared",
   protected = "protected",
   root = "root",
-  trash = "trash"
+  trash = "trash",
 }
 
 export interface IFiltersParameters {

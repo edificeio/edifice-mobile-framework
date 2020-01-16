@@ -1,11 +1,13 @@
-import { IItem, IItems } from "../states";
+import { IItem } from "../states";
 import { IActionProps } from "./actions";
-import { IEventProps } from "./events";
+import { IEventProps } from "../../../types";
 import { INavigationProps } from "../index";
 
 export interface IDataItemsProps {
-  items: IItems<IItem>;
-  isFetching: boolean,
+  items: {
+    [key: string]: IItem;
+  };
+  isFetching: boolean;
 }
 
-export type IItemsProps = IActionProps & IEventProps & INavigationProps & IDataItemsProps
+export type IItemsProps = IActionProps & IEventProps & INavigationProps & IDataItemsProps;

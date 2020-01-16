@@ -1,13 +1,10 @@
 // ACTION LIST ------------------------------------------------------------------------------------
 
-
-import {asyncActionTypes} from "../../infra/redux/async";
+import { asyncActionTypes } from "../../infra/redux/async";
 import config from "../config";
-import {IItem, IItems} from "../types/states";
+import { IItem, IItems } from "../types/states";
 
-export const actionTypesAdd = asyncActionTypes(
-  config.createActionType("WORKSPACE_ADD")
-);
+export const actionTypesAdd = asyncActionTypes(config.createActionType('WORKSPACE_ADD'));
 
 export function addInvalidated() {
   return { type: actionTypesAdd.invalidated };

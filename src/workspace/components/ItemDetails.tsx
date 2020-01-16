@@ -34,9 +34,7 @@ export const ItemDetails = ({ onEvent, ...item }: IFile & IEventProps) => {
 
   const getPreviewImage = () => {
     if (Platform.OS == "ios") {
-      return (
-        renderImage(item, false, name)
-      )
+      return renderImage(item, false, name);
     } else {
       return (
         <TouchableOpacity onPress={() => onEvent(EVENT_TYPE.PREVIEW, item)}>
@@ -48,9 +46,7 @@ export const ItemDetails = ({ onEvent, ...item }: IFile & IEventProps) => {
 
   return (
     <SafeAreaView style={styles.mainPanel}>
-      <View style={styles.bodyPanel}>
-        {getPreviewImage()}
-      </View>
+      <View style={styles.bodyPanel}>{getPreviewImage()}</View>
       <View style={styles.bottomPanel}>
         <View style={styles.buttonPanel}>
           <ButtonIconText name="download" onPress={() => onEvent(EVENT_TYPE.DOWNLOAD, item)}>

@@ -1,7 +1,7 @@
 import I18n from "i18n-js";
 import { FilterId, IFolder } from "../../types";
 
-export const factoryRootFolder = ( filterId: FilterId): IFolder => {
+export const factoryRootFolder = (filterId: FilterId): IFolder => {
   return {
     date: 0,
     id: filterId,
@@ -10,5 +10,6 @@ export const factoryRootFolder = ( filterId: FilterId): IFolder => {
     number: 1,
     owner: "",
     ownerName: "",
-  }
+    contentType: "text",
+  };
 };

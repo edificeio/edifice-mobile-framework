@@ -6,13 +6,14 @@
 import RNFB from "rn-fetch-blob";
 import moment from "moment";
 import { asyncGetJson } from "../../../infra/redux/async";
-import { IItems, IFiltersParameters, IFile, FilterId, IItem, ContentUri } from "../../types";
+import { IFiltersParameters, IFile, FilterId, IItem, ContentUri } from "../../types";
 import { filters } from "../../types/filters/helpers/filters";
 import Conf from "../../../../ode-framework-conf";
 import { OAuth2RessourceOwnerPasswordClient, getDummySignedRequest, getAuthHeader } from "../../../infra/oauth";
 import { progressAction, progressEndAction, progressInitAction } from "../../../infra/actions/progress";
 import { Platform, ToastAndroid } from "react-native";
 import I18n from "i18n-js";
+import { IRootItems } from "../../types/states/items";
 
 // TYPE -------------------------------------------------------------------------------------------
 
@@ -44,9 +45,11 @@ export type IBackendDocumentArray = Array<IBackendDocument>;
 
 // ADAPTER ----------------------------------------------------------------------------------------
 
-export const backendDocumentsAdapter: (data: IBackendDocumentArray) => IItems<IFile> = data => {
-  const result = {} as IItems<IFile>;
-  if (!data) return result;
+export const backendDocumentsAdapter: (data: IBackendDocumentArray) => IRootItems<IFile> = data => {
+  const result = {} as IRootItems<IFile>;
+  if (!data) {
+    return result;
+  }
   for (const item of data) {
     result[item._id] = {
       contentType: item.metadata["content-type"],
@@ -68,19 +71,25 @@ export const backendDocumentsAdapter: (data: IBackendDocumentArray) => IItems<IF
 
 // GET -----------------------------------------------------------------------------------------
 
-export function getDocuments(parameters: IFiltersParameters): Promise<IItems<IItem>> {
+export function getDocuments(parameters: IFiltersParameters): Promise<IRootItems<IItem>> {
   const { parentId } = parameters;
 
-  if (parentId === FilterId.root) return Promise.resolve({});
+  if (parentId === FilterId.root) {
+    return Promise.resolve({});
+  }
 
   const formatParameters = (parameters = {}) => {
     let result = "?";
 
     for (let key in parameters) {
-      if (!(parameters as any)[key]) continue;
-      if (key === "parentId" && (parameters as any)[key] in FilterId)
+      if (!(parameters as any)[key]) {
+        // skip empty parameters
+        continue;
+      }
+      if (key === "parentId" && (parameters as any)[key] in FilterId) {
         // its a root folder, no pass parentId
         continue;
+      }
       result = result.concat(`${key}=${(parameters as any)[key]}&`);
     }
     return result.slice(0, -1);
@@ -105,7 +114,9 @@ export const uploadDocument = (dispatch: any, content: ContentUri[], onEnd: any)
   dispatch(progressInitAction());
   RNFB.fetch(
     "POST",
-    `${Conf.currentPlatform.url}/workspace/document?quality=1&thumbnail=120x120&thumbnail=100x100&thumbnail=290x290&thumbnail=381x381&thumbnail=1600x0`,
+    `${
+      Conf.currentPlatform.url
+    }/workspace/document?quality=1&thumbnail=120x120&thumbnail=100x100&thumbnail=290x290&thumbnail=381x381&thumbnail=1600x0`,
     headers,
     body
   )
@@ -116,13 +127,17 @@ export const uploadDocument = (dispatch: any, content: ContentUri[], onEnd: any)
       dispatch(progressAction(100));
       setTimeout(() => {
         dispatch(progressEndAction());
-        if (Platform.OS === "android") ToastAndroid.show(I18n.t("workspace-uploadSuccessful"), ToastAndroid.SHORT);
+        if (Platform.OS === "android") {
+          ToastAndroid.show(I18n.t("workspace-uploadSuccessful"), ToastAndroid.SHORT);
+        }
         onEnd(response);
       }, 500);
     })
     .catch(err => {
-      if (Platform.OS === "android") ToastAndroid.show(I18n.t("workspace-uploadFailed"), ToastAndroid.SHORT);
-      console.log("upload failed", err.message)
+      if (Platform.OS === "android") {
+        ToastAndroid.show(I18n.t("workspace-uploadFailed"), ToastAndroid.SHORT);
+      }
+      console.log("upload failed", err.message);
       dispatch(progressEndAction());
     });
 };

@@ -5,7 +5,7 @@ import { HeaderAction, HeaderIcon } from "../../ui/headers/NewHeader";
 import { ViewStyle, Platform } from "react-native";
 import { EVENT_TYPE, IDetailsProps, IFile } from "../types";
 import { ItemDetails } from "../components";
-import { openPreview, startDownload, openDownloadedFile } from "../../infra/actions/downloadHelper";
+import { openPreview, downloadFile } from "../../infra/actions/downloadHelper";
 import { share } from "../../infra/actions/share";
 
 const HeaderBackAction = ({ navigation, style }: { navigation: NavigationScreenProp<{}>; style?: ViewStyle }) => {
@@ -13,7 +13,6 @@ const HeaderBackAction = ({ navigation, style }: { navigation: NavigationScreenP
 };
 
 export class Details extends React.PureComponent<IDetailsProps> {
-
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
     return standardNavScreenOptions(
       {
@@ -28,15 +27,11 @@ export class Details extends React.PureComponent<IDetailsProps> {
   public onEvent(type: EVENT_TYPE, item: IFile) {
     switch (type) {
       case EVENT_TYPE.DOWNLOAD: {
-        if(Platform.OS == "ios") {
-          startDownload(item).then(res => openDownloadedFile(res.path()));
-        } else {
-          startDownload(item);
-        }
+        downloadFile(item);
         return;
       }
       case EVENT_TYPE.PREVIEW: {
-        if(Platform.OS != "ios") {
+        if (Platform.OS != "ios") {
           openPreview(item);
         }
         return;

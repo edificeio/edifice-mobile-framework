@@ -1,6 +1,5 @@
 import style from "glamorous-native";
 import * as React from "react";
-import { StyleSheet } from "react-native";
 import { CommonStyles } from "../styles/common/styles";
 import { Icon } from "./icons/Icon";
 import { layoutSize } from "../styles/common/layoutSize";
@@ -8,16 +7,24 @@ import { TextBold15 } from "./text";
 
 export interface ButtonTextIconProps {
   onPress: () => any;
-  children?: any,
+  children?: any;
   disabled?: boolean;
-  name: string,
+  name: string;
+  size?: number;
+  style?: any;
   whiteSpace?: string;
 }
 
-const Container = style.view({
-  alignItems: "center",
-  justifyContent: "space-evenly",
-});
+const Container = style.view(
+  {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-evenly",
+  },
+  (props: any) => ({
+    style: props.style ? props.style : null,
+  })
+);
 
 const TouchableOpacity = style.touchableOpacity( {
     alignItems: "center",
@@ -28,11 +35,11 @@ const TouchableOpacity = style.touchableOpacity( {
     backgroundColor: CommonStyles.profileTypes.Student,
   });
 
-export const ButtonIconText = ({ name, onPress, children }: ButtonTextIconProps) => {
+export const ButtonIconText = ({ name, onPress, children, size, style }: ButtonTextIconProps) => {
   return (
-    <Container>
+    <Container style={style}>
       <TouchableOpacity onPress={onPress}>
-        <Icon color="white" size={layoutSize.LAYOUT_24} name={name} />
+        <Icon color="white" size={size ? size : layoutSize.LAYOUT_24} name={name} />
       </TouchableOpacity>
       <TextBold15>{children}</TextBold15>
     </Container>

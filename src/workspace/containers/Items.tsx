@@ -1,13 +1,9 @@
 import * as React from "react";
-import { FlatList, StyleSheet, View, ViewStyle } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 import { connect } from "react-redux";
-import I18n from "i18n-js";
-import { bindActionCreators } from "redux";
-import { NavigationScreenProp, NavigationEventSubscription } from "react-navigation";
+import { NavigationEventSubscription } from "react-navigation";
 import config from "../config";
-import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
-import { HeaderAction, HeaderIcon } from "../../ui/headers/NewHeader";
-import { EVENT_TYPE, FilterId, IItem, IItemsProps, IState, ContentUri } from "../types";
+import { FilterId, IItem, IItemsProps, IState } from "../types";
 import { Item } from "../components";
 import { listAction } from "../actions/list";
 import { CommonStyles } from "../../styles/common/styles";
@@ -17,10 +13,10 @@ import { getEmptyScreen } from "../utils/empty";
 import { PageContainer } from "../../ui/ContainerContent";
 import { Loading, ProgressBar } from "../../ui";
 import { removeAccents } from "../../utils/string";
-import { uploadAction } from "../actions/upload";
-import pickFile from "../../infra/actions/pickFile";
+import withUploadWrapper from "../utils/withUploadWrapper";
+import withMenuWrapper from "../utils/withMenuWrapper";
 import withNavigationWrapper from "../utils/withNavigationWrapper";
-import { withUploadWrapper } from "../utils/withUploadWrapper";
+import { ISelectedProps } from "../../types/ievents";
 
 const styles = StyleSheet.create({
   separator: {
@@ -30,46 +26,13 @@ const styles = StyleSheet.create({
   },
 });
 
-const HeaderBackAction = ({ navigation, style }: { navigation: NavigationScreenProp<{}>; style?: ViewStyle }) => {
-  return <HeaderAction onPress={() => navigation.pop()} name={"back"} style={style} />;
-};
-
-export class Items extends React.PureComponent<IItemsProps, { isFocused: boolean }> {
+export class Items extends React.PureComponent<IItemsProps & ISelectedProps, { isFocused: boolean }> {
   focusListener!: NavigationEventSubscription;
-
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
-    const headerRight =
-      navigation.getParam("parentId") != FilterId.owner ? (
-        <HeaderIcon name={null} hidden={true} />
-      ) : (
-        <HeaderAction name="plus" onPress={() => pickFile().then(navigation.state.params.upload)} />
-      );
-
-    return standardNavScreenOptions(
-      {
-        title: navigation.getParam("title") || I18n.t(config.displayName),
-        headerLeft: <HeaderBackAction navigation={navigation} />,
-        headerRight,
-      },
-      navigation
-    );
-  };
 
   public componentDidMount() {
     this.focusListener = this.props.navigation.addListener("willFocus", () => {
       this.makeRequest();
     });
-    this.props.navigation.setParams({
-      upload: this.upload.bind(this),
-    });
-  }
-
-  upload(content: ContentUri) {
-    if (content) {
-      this.props.uploadAction(content);
-    } else {
-      console.log("pick failed", content);
-    }
   }
 
   public componentWillUnmount() {
@@ -83,25 +46,13 @@ export class Items extends React.PureComponent<IItemsProps, { isFocused: boolean
     });
   }
 
-  public onEvent(type: EVENT_TYPE, item: IItem) {
-    const { id: parentId, name: title, isFolder } = item;
-    const filterId = this.props.navigation.getParam("filter");
-
-    switch (type) {
-      case EVENT_TYPE.SELECT:
-        const filter = filterId == FilterId.root ? parentId : filterId;
-
-        isFolder
-          ? this.props.navigation.push("Workspace", { filter, parentId, title })
-          : this.props.navigation.push("WorkspaceDetails", { item, title });
-        return;
-    }
-  }
-
   private sortItems(a: IItem, b: IItem): number {
     const sortByType = (a: IItem, b: IItem): number => {
-      if (a.isFolder == b.isFolder) return 0;
-      else return a.isFolder ? -1 : 1;
+      if (a.isFolder == b.isFolder) {
+        return 0;
+      } else {
+        return a.isFolder ? -1 : 1;
+      }
     };
 
     const sortByName = (a: IItem, b: IItem): number => {
@@ -112,15 +63,14 @@ export class Items extends React.PureComponent<IItemsProps, { isFocused: boolean
   }
 
   public render(): React.ReactNode {
-    const { items, isFetching } = this.props;
-
-    const getViewToRender = () => {
-      if (items == undefined) {
+    const getViewToRender = ({ items, isFetching = false }: IItemsProps) => {
+      if (items === undefined) {
         return <Loading />;
       } else {
         const values = Object.values(items);
         const parentId = this.props.navigation.getParam("parentId") || null;
         const itemsArray = parentId === FilterId.root ? values : values.sort(this.sortItems);
+        const { selected } = this.props;
 
         return (
           <FlatList
@@ -131,7 +81,9 @@ export class Items extends React.PureComponent<IItemsProps, { isFocused: boolean
             keyExtractor={(item: IItem) => item.id}
             refreshing={isFetching}
             onRefresh={() => this.makeRequest()}
-            renderItem={({ item }) => <Item {...item} onEvent={this.onEvent.bind(this)} />}
+            renderItem={({ item }) => (
+              <Item item={item} onEvent={this.props.onEvent} selected={selected[item.id]} simple={false} />
+            )}
           />
         );
       }
@@ -141,24 +93,25 @@ export class Items extends React.PureComponent<IItemsProps, { isFocused: boolean
       <PageContainer>
         <ConnectionTrackingBar />
         <ProgressBar />
-        {getViewToRender()}
+        {getViewToRender(this.props)}
       </PageContainer>
     );
   }
 }
 
-const mapStateToProps = (state: any, props: any) => {
-  const stateItems: IState = config.getLocalState(state).items;
+const getProps = (stateItems: IState, props: any) => {
   const parentId = props.navigation.getParam("parentId");
   const parentIdItems = stateItems[parentId] || {};
   const isFetching = parentIdItems.isFetching || false;
-  const items = parentIdItems.data;
 
-  return { items, isFetching };
+  return { isFetching, items: parentIdItems.data };
 };
 
-const mapDispatchToProps = (dispatch: any) => {
-  return bindActionCreators({ listAction, uploadAction }, dispatch);
+const mapStateToProps = (state: any, props: any) => {
+  return { selected: state.workspace.selected, ...getProps(state.workspace.items, props) };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withNavigationWrapper(withUploadWrapper(Items)));
+export default connect(
+  mapStateToProps,
+  { listAction }
+)(withMenuWrapper(withNavigationWrapper(withUploadWrapper(Items))));

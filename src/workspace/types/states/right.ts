@@ -1,4 +1,4 @@
 export type IRight = {
-  owner: string;
-  ownerName: string;
-}
+  owner?: string;
+  ownerName?: string;
+};

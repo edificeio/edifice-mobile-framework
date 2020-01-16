@@ -15,5 +15,5 @@ export const route = config.createRoute(root);
 export default {
   reducer,
   root,
-  route
+  route,
 };

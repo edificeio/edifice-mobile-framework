@@ -1,5 +1,5 @@
 import { IActionProps } from "./actions";
-import { IEventProps } from "./events";
+import { IEventProps } from "../../../types/ievents";
 import { INavigationProps } from "../index";
 
-export type IDetailsProps = IActionProps & IEventProps & INavigationProps
+export type IDetailsProps = IActionProps & IEventProps & INavigationProps;

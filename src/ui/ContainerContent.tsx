@@ -52,6 +52,15 @@ export const LeftIconPanel = style.view({
   marginRight: layoutSize.LAYOUT_10
 });
 
+export const LeftSmallIconPanel = style.view({
+  justifyContent: "center",
+  alignItems: 'center',
+  minHeight: layoutSize.LAYOUT_34,
+  width: layoutSize.LAYOUT_30,
+  margin: 0,
+  marginRight: layoutSize.LAYOUT_5
+});
+
 export const CenterPanel = style.view({
   alignItems: "flex-start",
   flex: 1,

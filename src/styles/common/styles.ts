@@ -9,10 +9,9 @@ export const CommonStyles = {
     red: "#e13a3a",
     pink: "#b930a2",
     purple: "#763294",
-    indigo: "#1a22a2"
+    indigo: "#1a22a2",
   },
   primary: "#299cc8",
-  secondary: "#ff8500",
   primaryLight: "#EAF5F9",
   lightGrey: "rgb(248,248,250)",
   missingGrey: "rgb(218,218,210)",
@@ -23,6 +22,7 @@ export const CommonStyles = {
   borderBottomItem: "#dddddd",
   // borderBottomNewsItem: "#e7e7e7",
   borderColorLighter: "#e2e2e2",
+  borderColorVeryLighter: "#e2e2e299",
   // cardTitle: "#1467ff",
   elevation: 20,
   entryfieldBorder: "#DCDDE0",
@@ -54,7 +54,7 @@ export const CommonStyles = {
   shadowColor: "rgba(0, 0, 0, 1.0)",
   shadowOffset: {
     height: 2,
-    width: 0
+    width: 0,
   },
   shadowOpacity: 0.25,
   shadowRadius: 2,
@@ -74,9 +74,9 @@ export const CommonStyles = {
     Relative: "#4bafd5",
     Personnel: "#763294",
     Teacher: "#46bfaf",
-    Guest: "#ff61c0"
+    Guest: "#ff61c0",
   },
-  secondary: "#FF7A24"
+  secondary: "#FF7A24",
 };
 
 setCustomText({ style: { fontFamily: CommonStyles.primaryFontFamily } });
