@@ -10,7 +10,7 @@ const WORKSPACE_FOLDER = "/workspace/folder";
 export const actionTypesCreateFolder = asyncActionTypes(config.createActionType(`${WORKSPACE_FOLDER}/create`));
 
 /**
- * Get workspace folder from the backend.
+ * Create workspace folder to the backend.
  * Dispatches WORKSPACE_FOLDER_REQUESTED, WORKSPACE_FOLDER_RECEIVED, and WORKSPACE_FOLDER_FETCH_ERROR if an error occurs.
  */
 export function createFolderAction(name, id) {

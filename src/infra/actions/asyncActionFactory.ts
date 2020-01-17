@@ -1,7 +1,6 @@
-import { asyncFetchJson, IAsyncActionTypes } from "../redux/async";
+import { IAsyncActionTypes } from "../redux/async";
 import { fetchJSONWithCache, signedFetch } from "../fetchWithCache";
 import Conf from "../../../ode-framework-conf";
-import objectToFormData from "object-to-formdata";
 import querystring from "querystring";
 
 export type IAdapterType = (receivedData: any) => any;

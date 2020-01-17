@@ -11,7 +11,8 @@ import * as React from "react";
 import { standardNavScreenOptions } from "../navigation/helpers/navScreenOptions";
 import { downloadFile } from "../infra/actions/downloadHelper";
 import { pickFile } from "./utils/pickFile";
-import {createFolderAction} from "./actions/create";
+import { createFolderAction } from "./actions/create";
+import { renameAction } from "./actions/rename";
 
 export default createStackNavigator(
   {
@@ -100,7 +101,8 @@ export default createStackNavigator(
                   input: "filename",
                   okLabel: "Modifier",
                 },
-                onEvent: ({ selected }: ISelectedProps) => Alert.alert("Elements selected" + JSON.stringify(selected)),
+                onEvent: ({ dispatch, parentId, selected, value }) =>
+                  dispatch(renameAction(value, selected[0], parentId)),
               },
               {
                 text: "Delete",

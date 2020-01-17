@@ -1,9 +1,3 @@
-/**
- * Pour information: on a regroupé dans un meme wrapper withNavigationWrapper et withMenuWrapper
- * afin de pouvoir recupérer la bonne valeur de:
- * navigation.getParam({filter}) suite à un navigation.push('Workspace', { filter, parentId, title })
- * Le fait que navigation.push() soit fait dans un composant et navigation.getParam dans un autre composant posent problème
- */
 import * as React from "react";
 import { View } from "react-native";
 import { EVENT_TYPE, IEvent } from "../../types/ievents";
@@ -49,12 +43,12 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
     }
 
     public handleEvent({ type, item }: IEvent) {
-      const { dispatch, navigation, selectAction, selectedFileItems } = this.props;
+      const { dispatch, navigation, selectedFileItems } = this.props;
 
       switch (type) {
         case EVENT_TYPE.SELECT:
           if (selectedFileItems.length) {
-            selectAction(item);
+            dispatch(selectAction(item));
           } else {
             const { id: parentId, name: title, isFolder } = item;
             const filterId = this.props.navigation.getParam("filter");
@@ -67,14 +61,14 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
           return;
 
         case EVENT_TYPE.LONG_SELECT:
-          selectAction(item);
+          dispatch(selectAction(item));
           return;
 
         case EVENT_TYPE.MENU_SELECT:
           const selectedMenuItem = (item as any) as IMenuItem;
 
           if (selectedMenuItem.id === "back") {
-            selectAction(null);
+            dispatch(selectAction(null));
             return;
           } // deselect items
 
@@ -102,7 +96,12 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
 
       return (
         <View style={{ flex: 1 }}>
-          <WrappedComponent {...rest as T} navigation={navigation} onEvent={this.handleEvent.bind(this)} />
+          <WrappedComponent
+            {...rest as T}
+            dispatch={dispatch}
+            navigation={navigation}
+            onEvent={this.handleEvent.bind(this)}
+          />
           <FloatingAction
             menuItems={menuItems}
             onEvent={this.handleEvent.bind(this)}
@@ -120,7 +119,12 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
               visible={this.state.dialogVisible}
               onValid={(param: IEvent) => {
                 this.setState({ dialogVisible: false });
-                selectedMenuItem.onEvent({ dispatch, navigation, parentId: navigation.getParam("parentId"), ...param });
+                selectedMenuItem.onEvent({
+                  dispatch,
+                  navigation,
+                  parentId: navigation.getParam("parentId"),
+                  ...param,
+                });
               }}
               onCancel={() => this.setState({ dialogVisible: false })}
             />
@@ -138,5 +142,5 @@ const mapStateToProps = (state: any) => {
 export default (wrappedComponent: React.ComponentType<any>): React.ComponentType<any> =>
   connect(
     mapStateToProps,
-    dispatch => ({ dispatch, selectAction })
+    null
   )(withMenuWrapper(wrappedComponent));

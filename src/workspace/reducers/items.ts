@@ -5,8 +5,9 @@
 import asyncReducer, { IAction } from "../../infra/redux/async";
 
 import { actionTypesList } from "../actions/list";
-import { FilterId, IItem, IState } from "../types";
 import { actionTypesCreateFolder } from "../actions/create";
+import { actionTypesRename } from "../actions/rename";
+import { IItem, IState } from "../types";
 
 const stateDefault: IState = {};
 
@@ -20,6 +21,10 @@ export default (state: IState = stateDefault, action: IAction<IItem>) => {
     case actionTypesList.requested:
     case actionTypesList.received:
       return pushData(state, action, actionTypesList);
+    case actionTypesRename.fetchError:
+    case actionTypesRename.requested:
+    case actionTypesRename.received:
+      return pushData(state, action, actionTypesRename);
     default:
       return state;
   }
