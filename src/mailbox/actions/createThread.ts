@@ -6,6 +6,8 @@ import { fetchJSONWithCache } from "../../infra/fetchWithCache";
 import { clearPickedUsers } from "./pickUser";
 import conversationThreadSelected from "./threadSelected";
 
+import generateUuid from "../../utils/uuid";
+
 import { getSessionInfo } from "../../AppStore";
 
 import I18n from "i18n-js";
@@ -24,7 +26,7 @@ export function createThread(pickedUsers) {
         u.isGroup
       ]).concat([[getSessionInfo().userId, getSessionInfo().displayName]]),
       from: getSessionInfo().userId,
-      id: "temp",
+      id: "tmp-" + generateUuid(),
       messages: [],
       subject:
         I18n.t("conversation-newThreadSubjectPrefix") + 
