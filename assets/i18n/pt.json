@@ -106,6 +106,7 @@
   "notif-pref-schoolbook": "Comunicados, nova mensagem",
   "notif-pref-workspace": "Atualização do Espaço de Documentos",
   "notifications-emptyScreenTitle": "Não há notificação no horizonte.",
+  "notifications-readRecent": "Você leu suas últimas {{notificationsLimit}} notificações",
   "Notifications": "Todas as minhas notificações",
   "On": "",
   "owner-emptyScreenText": "Bemvindo no seu Espaço de Documentos, o Cloud no quál vai poder armazenar online todos os seus recursos.",

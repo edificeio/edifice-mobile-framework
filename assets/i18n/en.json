@@ -106,6 +106,7 @@
   "notif-pref-schoolbook": "New message in your schoolbook",
   "notif-pref-workspace": "Workspace update",
   "notifications-emptyScreenTitle": "No notification in sight.",
+  "notifications-readRecent": "You have read your last {{notificationsLimit}} notifications",
   "Notifications": "All my notifications",
   "On": "in",
   "owner": "Personnal Documents",

@@ -107,6 +107,7 @@
   "notif-pref-schoolbook": "Nuevo mensaje en tu cuaderno de correspondencia",
   "notif-pref-workspace": "Actualización del espacio documental",
   "notifications-emptyScreenTitle": "No hay notificación en el horizonte.",
+  "notifications-readRecent": "Ha leído sus últimas {{notificationsLimit}} notificaciones",
   "Notifications": "Todas mis notificaciones",
   "On": "en",
   "owner-emptyScreenText": "Bienvenido a su espacio documental, la nube que le permite almacenar todos sus recursos en línea.",

@@ -119,6 +119,7 @@ INotificationListPageProps,
     const { onRefresh, notifications, onHandleNotification } = this.props;
     const { fetching } = this.state
     const isEmpty = notifications && notifications.length === 0;
+    const notificationsLimit = 25;
 
     return (
       <FlatList
@@ -144,10 +145,10 @@ INotificationListPageProps,
             }}
           />
         }
-        ListFooterComponent={notifications && notifications.length === 25 ?
+        ListFooterComponent={notifications && notifications.length === notificationsLimit ?
           <ListItem disabled>
             <TextBright>
-              Vous avez lu vos 25 dernières notifications
+              {I18n.t("notifications-readRecent", { notificationsLimit })}
             </TextBright>
           </ListItem>
           :

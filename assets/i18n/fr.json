@@ -107,6 +107,7 @@
     "notif-pref-schoolbook": "Nouveau mot",
     "notif-pref-workspace": "Mise à jour espace documentaire",
     "notifications-emptyScreenTitle": "Pas de notification à l'horizon.",
+    "notifications-readRecent": "Vous avez lu vos {{notificationsLimit}} dernières notifications",
     "Notifications": "Toutes mes notifications",
     "On": "dans",
     "owner-emptyScreenText": "Bienvenue dans votre espace documentaire, le cloud qui vous permet de stocker en ligne toutes vos ressources.",
