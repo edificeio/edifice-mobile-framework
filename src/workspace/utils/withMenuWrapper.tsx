@@ -82,7 +82,12 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
           if (selectedMenuItem.dialog) {
             this.setState({ dialogVisible: true, selectedMenuItem });
           } else {
-            selectedMenuItem.onEvent({ dispatch, navigation, selected: selectedFileItems });
+            selectedMenuItem.onEvent({
+              dispatch,
+              navigation,
+              parentId: navigation.getParam("parentId"),
+              selected: selectedFileItems,
+            });
           }
           return;
       }
@@ -115,7 +120,7 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
               visible={this.state.dialogVisible}
               onValid={(param: IEvent) => {
                 this.setState({ dialogVisible: false });
-                selectedMenuItem.onEvent({ dispatch, navigation, ...param });
+                selectedMenuItem.onEvent({ dispatch, navigation, parentId: navigation.getParam("parentId"), ...param });
               }}
               onCancel={() => this.setState({ dialogVisible: false })}
             />

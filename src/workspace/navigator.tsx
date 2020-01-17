@@ -11,6 +11,7 @@ import * as React from "react";
 import { standardNavScreenOptions } from "../navigation/helpers/navScreenOptions";
 import { downloadFile } from "../infra/actions/downloadHelper";
 import { pickFile } from "./utils/pickFile";
+import {createFolderAction} from "./actions/create";
 
 export default createStackNavigator(
   {
@@ -36,7 +37,7 @@ export default createStackNavigator(
                   input: true,
                   okLabel: "Créer",
                 },
-                onEvent: () => Alert.alert("Creer dossier"),
+                onEvent: ({ dispatch, parentId, value }) => dispatch(createFolderAction(value, parentId)),
               },
             ],
           },

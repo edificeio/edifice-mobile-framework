@@ -6,30 +6,41 @@ import asyncReducer, { IAction } from "../../infra/redux/async";
 
 import { actionTypesList } from "../actions/list";
 import { FilterId, IItem, IState } from "../types";
+import { actionTypesCreateFolder } from "../actions/create";
 
 const stateDefault: IState = {};
 
-const node = (state: any, action: IAction<any>) => {
+export default (state: IState = stateDefault, action: IAction<IItem>) => {
   switch (action.type) {
+    case actionTypesCreateFolder.fetchError:
+    case actionTypesCreateFolder.requested:
+    case actionTypesCreateFolder.received:
+      return pushData(state, action, actionTypesCreateFolder);
+    case actionTypesList.fetchError:
+    case actionTypesList.requested:
     case actionTypesList.received:
-      return action.data;
+      return pushData(state, action, actionTypesList);
     default:
       return state;
   }
 };
 
-export default (state: IState = stateDefault, action: IAction<IItem>) => {
+function pushData(state, action, actionTypes) {
+  return {
+    ...state,
+    [action.id]: asyncReducer<IState>(node, actionTypes)(state[action.id] || {}, action),
+  };
+}
+
+const node = (state: any, action: IAction<any>) => {
   switch (action.type) {
-    case actionTypesList.fetchError:
-    case actionTypesList.requested:
-    case actionTypesList.received:
+    case actionTypesCreateFolder.received:
       return {
         ...state,
-        [action.id || FilterId.root]: asyncReducer<IState>(node, actionTypesList)(
-          state[action.id || FilterId.root] || {},
-          action
-        ),
+        [action.data.id]: action.data,
       };
+    case actionTypesList.received:
+      return action.data;
     default:
       return state;
   }

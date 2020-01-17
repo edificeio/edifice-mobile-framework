@@ -98,26 +98,22 @@ export function getFolders(parameters: IFiltersParameters): Promise<IItems<IFold
   return asyncGetJson(`/workspace/folders/list${formatParameters(parameters)}`, backendFoldersAdapter);
 }
 
-export function createFolder({ name, parentId }): Promise<IItems<IFolder>> {
-  if (parentId === FilterId.root) {
-    return Promise.resolve(getRootFolders());
+export function formatResult(data) {
+  const result = {} as IItems<IFolder>;
+
+  if (!data) {
+    return result;
   }
 
-  const formatParameters = (parameters = {}) => {
-    let result = "?";
-    for (let key in parameters) {
-      if (!(parameters as any)[key]) {
-        // parameter empty
-        continue;
-      }
-      if (key === "parentId" && (parameters as any)[key] in FilterId) {
-        // its a root folder, no pass parentId
-        continue;
-      }
-      result = result.concat(`${key}=${(parameters as any)[key]}&`);
-    }
-    return result.slice(0, -1);
+  return {
+    date: moment(data.modified, "YYYY-MM-DD HH:mm.ss.SSS")
+      .toDate()
+      .getTime(),
+    id: data._id,
+    isFolder: true,
+    name: data.name,
+    number: 1,
+    owner: data.owner,
+    ownerName: data.ownerName,
   };
-
-  return asyncGetJson("/workspace/folders/create", (data: any) => (data: any) => {});
 }
