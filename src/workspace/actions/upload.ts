@@ -2,24 +2,36 @@
 
 import { asyncActionTypes } from "../../infra/redux/async";
 import config from "../config";
-import { uploadDocument } from "./helpers/documents";
-import { ContentUri, FilterId } from "../types";
-import { listAction } from "./list";
+import {backendDocumentsAdapter, uploadDocument} from "./helpers/documents";
+import { ContentUri } from "../types";
 
 // ACTION UPLOAD ------------------------------------------------------------------------------------
 
 export const actionTypesUpload = asyncActionTypes(config.createActionType("WORKSPACE_UPLOAD"));
 
 export function uploadRequested() {
-  return { type: actionTypesUpload.requested };
+  return {
+    type: actionTypesUpload.requested,
+    parentId: "owner",
+  };
 }
 
-export function uploadReceived(data?: any, id?: string | undefined) {
-  return { type: actionTypesUpload.received, data, id, receivedAt: Date.now() };
+export function uploadReceived(data: any) {
+  return {
+    type: actionTypesUpload.received,
+    data,
+    parentId: "owner",
+    receivedAt: Date.now(),
+  };
 }
 
 export function uploadError(errmsg: string) {
-  return { type: actionTypesUpload.fetchError, error: true, errmsg };
+  return {
+    type: actionTypesUpload.fetchError,
+    error: true,
+    errmsg,
+    parentId: "owner",
+  };
 }
 
 /**
@@ -33,17 +45,9 @@ export function uploadAction(uriContent: ContentUri[] | ContentUri) {
       dispatch(uploadRequested());
       uploadDocument(dispatch, content, (response: any) => {
         if (response.data) {
-          // const data = JSON.parse(response.data);
-          // const dataArray = Array.isArray(data) ? data : [data];
-          dispatch(
-            listAction({
-              // better to do addReceived, but sometime data is erased by a previous long listAction
-              filter: FilterId.owner,
-              parentId: FilterId.owner,
-            })
-          );
-          //dispatch(addReceived(backendDocumentsAdapter(dataArray), FilterId.owner));
-          dispatch(uploadReceived());
+          const data = JSON.parse(response.data);
+          const dataArray = Array.isArray(data) ? data : [data];
+          dispatch(uploadReceived(backendDocumentsAdapter(dataArray)));
         }
       });
     } catch (ex) {
@@ -52,3 +56,5 @@ export function uploadAction(uriContent: ContentUri[] | ContentUri) {
     }
   };
 }
+
+

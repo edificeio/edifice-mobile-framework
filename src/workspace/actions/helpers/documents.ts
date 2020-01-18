@@ -5,14 +5,14 @@
 
 import RNFB from "rn-fetch-blob";
 import moment from "moment";
+import { Platform, ToastAndroid } from "react-native";
+import I18n from "i18n-js";
 import { asyncGetJson } from "../../../infra/redux/async";
 import { IFiltersParameters, IFile, FilterId, IItem, ContentUri } from "../../types";
 import { filters } from "../../types/filters/helpers/filters";
 import Conf from "../../../../ode-framework-conf";
 import { OAuth2RessourceOwnerPasswordClient, getDummySignedRequest, getAuthHeader } from "../../../infra/oauth";
 import { progressAction, progressEndAction, progressInitAction } from "../../../infra/actions/progress";
-import { Platform, ToastAndroid } from "react-native";
-import I18n from "i18n-js";
 import { IRootItems } from "../../types/states/items";
 
 // TYPE -------------------------------------------------------------------------------------------
@@ -114,9 +114,7 @@ export const uploadDocument = (dispatch: any, content: ContentUri[], onEnd: any)
   dispatch(progressInitAction());
   RNFB.fetch(
     "POST",
-    `${
-      Conf.currentPlatform.url
-    }/workspace/document?quality=1&thumbnail=120x120&thumbnail=100x100&thumbnail=290x290&thumbnail=381x381&thumbnail=1600x0`,
+    `${Conf.currentPlatform.url}/workspace/document?quality=1&thumbnail=120x120&thumbnail=100x100&thumbnail=290x290&thumbnail=381x381&thumbnail=1600x0`,
     headers,
     body
   )

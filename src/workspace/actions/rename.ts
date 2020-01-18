@@ -18,5 +18,5 @@ export const actionTypesRename = asyncActionTypes(config.createActionType(`${WOR
 export function renameAction(name, item, parentId) {
   const url = item.isFolder ? `${WORKSPACE_FOLDER_RENAME}/${item.id}` : `${WORKSPACE_FILE_RENAME}/${item.id}`;
 
-  return asyncActionFactory(url, { name, id: parentId }, actionTypesRename, { post: true }, formatResult);
+  return asyncActionFactory(url, { name, parentId }, actionTypesRename, { post: true }, formatResult);
 }

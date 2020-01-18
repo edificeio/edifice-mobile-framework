@@ -33,7 +33,7 @@ export default (state: IState = stateDefault, action: IAction<IItem>) => {
 function pushData(state, action, actionTypes) {
   return {
     ...state,
-    [action.id]: asyncReducer<IState>(node, actionTypes)(state[action.id] || {}, action),
+    [action.payload.parentId]: asyncReducer<IState>(node, actionTypes)(state[action.payload.parentId] || {}, action),
   };
 }
 

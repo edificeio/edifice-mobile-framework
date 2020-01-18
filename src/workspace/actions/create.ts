@@ -13,10 +13,10 @@ export const actionTypesCreateFolder = asyncActionTypes(config.createActionType(
  * Create workspace folder to the backend.
  * Dispatches WORKSPACE_FOLDER_REQUESTED, WORKSPACE_FOLDER_RECEIVED, and WORKSPACE_FOLDER_FETCH_ERROR if an error occurs.
  */
-export function createFolderAction(name, id) {
+export function createFolderAction(name, parentId) {
   return asyncActionFactory(
     WORKSPACE_FOLDER,
-    id === "owner" ? { name, id } : { name, parentFolderId: id, id },
+    parentId === "owner" ? { name, parentId} : {name, parentId, parentFolderId: parentId},
     actionTypesCreateFolder,
     { post: true, formData: true },
     formatResult

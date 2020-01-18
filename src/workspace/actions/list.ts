@@ -5,40 +5,26 @@
 
 import { asyncActionTypes } from "../../infra/redux/async";
 import config from "../config";
-import { IItems, IFiltersParameters, IItem } from "../types";
+import { IFiltersParameters } from "../types";
 import { getFolders } from "./helpers/folders";
 import { getDocuments } from "./helpers/documents";
+import { asyncActionRawFactory } from "../../infra/actions/asyncActionFactory";
 
 // ACTION LIST ------------------------------------------------------------------------------------
 
-export const actionTypesList = asyncActionTypes(config.createActionType("WORKSPACE_LIST"));
-
-export function listRequested(id: string | undefined) {
-  return { type: actionTypesList.requested, id };
-}
-
-export function listReceived(data: IItems<IItem>, id: string | undefined) {
-  return { type: actionTypesList.received, data, id, receivedAt: Date.now() };
-}
-
-export function listError(errmsg: string, id: string | undefined) {
-  return { type: actionTypesList.fetchError, error: true, errmsg, id };
-}
+export const actionTypesList = asyncActionTypes(config.createActionType("/workspace/list"));
 
 /**
  * Get workspace list from the backend.
  * Dispatches WORKSPACE_LIST_REQUESTED, WORKSPACE_LIST_RECEIVED, and WORKSPACE_LIST_FETCH_ERROR if an error occurs.
  */
-export function listAction(parameters: IFiltersParameters) {
-  return async (dispatch: any) => {
-    dispatch(listRequested(parameters.parentId));
+export function listAction(payload: IFiltersParameters) {
+  return asyncActionRawFactory(actionTypesList, payload, async () => {
+    const [dataFolders, dataDocuments] = await Promise.all([getFolders(payload), getDocuments(payload)]);
 
-    try {
-      let [dataFolders, dataDocuments] = await Promise.all([getFolders(parameters), getDocuments(parameters)]);
-
-      dispatch(listReceived({ ...dataFolders, ...dataDocuments }, parameters.parentId));
-    } catch (errmsg) {
-      dispatch(listError(errmsg, parameters.parentId));
-    }
-  };
+    return {
+      ...dataFolders,
+      ...dataDocuments,
+    };
+  });
 }
