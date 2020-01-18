@@ -15,11 +15,11 @@ export function asyncActionFactory(
   return async (dispatch: any) => {
     let json = null;
 
-    dispatch({ type: asyncActionTypes.requested, id: payload.id });
+    dispatch({ type: asyncActionTypes.requested, payload });
 
     try {
       if (options.post) {
-        const body = options.formData ? querystring.stringify(payload) : payload
+        const body = options.formData ? querystring.stringify(payload) : JSON.stringify(payload);
         const response = await signedFetch(`${Conf.currentPlatform.url}${type}`, {
           body,
           headers: {
@@ -38,9 +38,27 @@ export function asyncActionFactory(
 
       const data = adapter(json);
 
-      dispatch({ type: asyncActionTypes.received, data, receivedAt: Date.now(), id: payload.id, payload }); // will be better to pass payload than id of payload
+      dispatch({ type: asyncActionTypes.received, data, receivedAt: Date.now(), payload }); // will be better to pass payload than id of payload
     } catch (errmsg) {
-      dispatch({ type: asyncActionTypes.fetchError, errmsg, id: payload.id, payload });
+      dispatch({ type: asyncActionTypes.fetchError, errmsg, payload });
+    }
+  };
+}
+
+export function asyncActionRawFactory(
+  asyncActionTypes: IAsyncActionTypes,
+  payload: any,
+  fetch: (any) => Promise<any>
+) {
+  return async (dispatch: any) => {
+    dispatch({ type: asyncActionTypes.requested, payload });
+
+    try {
+      const data = await fetch(payload);
+
+      dispatch({ type: asyncActionTypes.received, data, payload, receivedAt: Date.now() }); // will be better to pass payload than id of payload
+    } catch (errmsg) {
+      dispatch({ type: asyncActionTypes.fetchError, errmsg, payload });
     }
   };
 }
