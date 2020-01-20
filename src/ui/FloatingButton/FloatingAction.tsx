@@ -4,8 +4,9 @@ import FloatingActionItem from "./FloatingActionItem";
 import { layoutSize } from "../../styles/common/layoutSize";
 import { CommonStyles } from "../../styles/common/styles";
 import { IFloatingProps, IMenuItem } from "../types";
-import { ButtonIconText } from "..";
 import { INbSelected } from "../Toolbar/Toolbar";
+import TouchableOpacity from "../CustomTouchableOpacity";
+import { ButtonIconText } from "..";
 
 class FloatingAction extends Component<IFloatingProps & INbSelected, IState> {
   state = {
@@ -65,7 +66,7 @@ class FloatingAction extends Component<IFloatingProps & INbSelected, IState> {
     }
 
     return (
-      <ButtonIconText style={styles.button} name={iconName} onPress={this.animateButton} size={layoutSize.LAYOUT_18} />
+      <ButtonIconText style={styles.button} name={iconName} onPress={this.animateButton}  />
     );
   }
 
@@ -95,12 +96,25 @@ class FloatingAction extends Component<IFloatingProps & INbSelected, IState> {
       return null;
     }
 
-    return (
-      <View style={styles.overlay}>
-        {this.renderMainButton()}
-        {this.renderActions()}
-      </View>
-    );
+    const { menuItems } = this.props;
+    const { active } = this.state;
+
+    if (active) {
+      return (
+        <View style={styles.overlay}>
+          {this.renderMainButton()}
+          <TouchableOpacity onPress={this.animateButton} style={styles.overlayActions}>
+            {this.renderActions()}
+          </TouchableOpacity>
+        </View>
+      );
+    }
+
+    if (!active || (menuItems && menuItems.length === 0)) {
+      return <View style={styles.overlay}>{this.renderMainButton()}</View>;
+    }
+
+    return null;
   }
 }
 
@@ -116,15 +130,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     position: "absolute",
     right: layoutSize.LAYOUT_10,
-    top: layoutSize.LAYOUT_36,
+    top: 0,
     width: layoutSize.LAYOUT_200,
     zIndex: 10,
   },
   button: {
     elevation: 10,
     position: "absolute",
-    right: layoutSize.LAYOUT_10,
-    top: -layoutSize.LAYOUT_26,
+    right: layoutSize.LAYOUT_20,
+    top: -layoutSize.LAYOUT_30,
     zIndex: 10,
   },
   overlay: {
@@ -133,6 +147,13 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 0,
     top: 0,
+  },
+  overlayActions: {
+    bottom: 0,
+    left: 0,
+    position: "absolute",
+    right: 0,
+    top: layoutSize.LAYOUT_26,
   },
   separator: {
     borderBottomColor: CommonStyles.borderColorVeryLighter,

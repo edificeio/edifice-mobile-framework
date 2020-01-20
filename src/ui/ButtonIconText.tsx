@@ -29,9 +29,9 @@ const Container = style.view(
 const TouchableOpacity = style.touchableOpacity( {
     alignItems: "center",
     justifyContent: "center",
-    width: layoutSize.LAYOUT_42,
-    height: layoutSize.LAYOUT_42,
-    borderRadius: layoutSize.LAYOUT_20,
+    width: layoutSize.LAYOUT_48,
+    height: layoutSize.LAYOUT_48,
+    borderRadius: layoutSize.LAYOUT_24,
     backgroundColor: CommonStyles.profileTypes.Student,
   });
 
