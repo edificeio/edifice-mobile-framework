@@ -26,7 +26,7 @@ export function pastAction(parentId: string, selected: Array<IId>) {
     `${WORKSPACE_PAST}/${parentId}`,
     { ids: toPast, parentId },
     actionTypesPast,
-    formatResults,
-    { method: "post" }
+    null,
+    { method: "post", refresh: true }
   );
 }

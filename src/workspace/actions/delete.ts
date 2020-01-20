@@ -5,12 +5,12 @@ import { IId } from "../../types";
 
 const WORKSPACE_DELETE = "/workspace/documents/trash";
 
-export const actionTypesPast = asyncActionTypes(config.createActionType(`${WORKSPACE_DELETE}`));
+export const actionTypesDelete = asyncActionTypes(config.createActionType(`${WORKSPACE_DELETE}`));
 
 export function deleteAction(dispatch, parentId: string, selected: Array<IId>) {
   const toDelete: Array<String> = selected.reduce((acc: String[], item) => [...acc, item.id], []);
 
-  return asyncActionFactory(`${WORKSPACE_DELETE}`, { ids: toDelete, parentId }, actionTypesPast, null, {
+  return asyncActionFactory(`${WORKSPACE_DELETE}`, { ids: toDelete, parentId }, actionTypesDelete, null, {
     method: "put",
     refresh: true,
   })

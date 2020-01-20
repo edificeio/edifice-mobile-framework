@@ -1,9 +1,10 @@
 import * as React from "react";
-import { FlatList, View } from "react-native";
+import {FlatList, StyleSheet, View} from "react-native";
 import Dialog from "react-native-dialog";
 import { IFile, IItem } from "../../workspace/types/states/items";
 import { Item } from "../../workspace/components";
-import { layoutSize } from "../../styles/common/layoutSize";
+import {DEVICE_WIDTH, layoutSize} from "../../styles/common/layoutSize";
+import {Header} from "react-navigation-stack";
 
 type IProps = {
   title: string;
@@ -54,8 +55,8 @@ export class ConfigDialog extends React.Component<IProps, IState> {
         <>
           <Dialog.Title>{title}</Dialog.Title>
           <Dialog.Input
+            underlineColorAndroid={"#ff8000cc"}
             value={this.getValue()}
-            wrapperStyle={{ borderBottom: "1px solid green" }}
             onChangeText={(value: string) => this.setState({ value })}
           />
         </>
@@ -92,10 +93,15 @@ export class ConfigDialog extends React.Component<IProps, IState> {
       <View>
         <Dialog.Container visible>
           {this.fill()}
-          <Dialog.Button label="Annuler" onPress={this.props.onCancel.bind(this)} />
-          <Dialog.Button label={okLabel ? okLabel : "Valider"} onPress={this.onPress.bind(this)} />
+          <Dialog.Button label="Annuler" onPress={this.props.onCancel.bind(this)}  style={{color: "#bbbbbb"}}/>
+          <Dialog.Button label={okLabel ? okLabel : "Valider"} onPress={this.onPress.bind(this)} style={{color: "#ff8000"}}/>
         </Dialog.Container>
       </View>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  textInput: {
+  },
+})

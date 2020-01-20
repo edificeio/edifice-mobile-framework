@@ -50,18 +50,12 @@ function pushData(state, action, actionTypes) {
 const node = (state: any, action: IAction<any>) => {
   switch (action.type) {
     case actionTypesUpload.received:
-    case actionTypesPast.received:
     case actionTypesRename.received:
     case actionTypesCreateFolder.received:
-      if (action.data instanceof Array)
         return {
           ...state,
           ...action.data,
         };
-      return {
-        ...state,
-        [action.data.id]: action.data,
-      };
     case actionTypesList.received:
       return action.data;
     default:

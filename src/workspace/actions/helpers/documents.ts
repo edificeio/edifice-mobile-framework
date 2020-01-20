@@ -42,13 +42,15 @@ export type IBackendDocument = {
   thumbnails: { [id: string]: string };
 };
 
+
 export type IDocumentArray = Array<any>;
 
 // ADAPTER ----------------------------------------------------------------------------------------
 
 export const formatResults: (data: IDocumentArray | IBackendDocument | IBackendFolder) => IRootItems<IId> = data => {
+  let result = {} as IRootItems<IId>;
+
   if (data instanceof Array) {
-    let result = {} as IRootItems<IId>;
     if (!data) {
       return result;
     }
@@ -56,15 +58,18 @@ export const formatResults: (data: IDocumentArray | IBackendDocument | IBackendF
       result[item._id] = formatResult(item);
     }
     return result;
-  } else return formatResult(data);
+  } else {
+    result[data._id] = formatResult(data);
+    return result;
+  }
 };
 
-export function formatResult(item: IBackendDocument | IBackendFolder | any): IFile | IFolder {
+function formatResult(item: IBackendDocument | IBackendFolder | any): IFile | IFolder {
   if (item.metadata) return formatFileResult(item as IBackendDocument);
   else return formatFolderResult(item as IBackendFolder);
 }
 
-export function formatFileResult(item: IBackendDocument): IFile {
+function formatFileResult(item: IBackendDocument): IFile {
   const result = {} as IFile;
 
   if (!item) {
