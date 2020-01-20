@@ -2,35 +2,41 @@
 
 import { asyncActionTypes } from "../../infra/redux/async";
 import config from "../config";
-import {backendDocumentsAdapter, uploadDocument} from "./helpers/documents";
+import { formatResults, uploadDocument } from "./helpers/documents";
 import { ContentUri } from "../types";
 
 // ACTION UPLOAD ------------------------------------------------------------------------------------
 
 export const actionTypesUpload = asyncActionTypes(config.createActionType("WORKSPACE_UPLOAD"));
 
-export function uploadRequested() {
+export function uploadRequested(parentId) {
   return {
     type: actionTypesUpload.requested,
-    parentId: "owner",
+    payload: {
+      parentId
+    },
   };
 }
 
-export function uploadReceived(data: any) {
+export function uploadReceived(parentId, data: any) {
   return {
     type: actionTypesUpload.received,
     data,
-    parentId: "owner",
     receivedAt: Date.now(),
+    payload: {
+      parentId
+    },
   };
 }
 
-export function uploadError(errmsg: string) {
+export function uploadError(parentId, errmsg: string) {
   return {
     type: actionTypesUpload.fetchError,
     error: true,
     errmsg,
-    parentId: "owner",
+    payload: {
+      parentId
+    },
   };
 }
 
@@ -38,23 +44,20 @@ export function uploadError(errmsg: string) {
  * Take a file from the mobile and post it to the backend.
  * Dispatches WORKSPACE_UPLOAD_REQUESTED, WORKSPACE_UPLOAD_RECEIVED, and WORKSPACE_UPLOAD_FETCH_ERROR if an error occurs.
  */
-export function uploadAction(uriContent: ContentUri[] | ContentUri) {
+export function uploadAction(parentId: string, uriContent: ContentUri[] | ContentUri) {
   return async (dispatch: any) => {
     try {
       const content = Array.isArray(uriContent) ? uriContent : [uriContent];
-      dispatch(uploadRequested());
-      uploadDocument(dispatch, content, (response: any) => {
+      dispatch(uploadRequested(parentId));
+      uploadDocument(dispatch, parentId, content, (response: any) => {
         if (response.data) {
           const data = JSON.parse(response.data);
-          const dataArray = Array.isArray(data) ? data : [data];
-          dispatch(uploadReceived(backendDocumentsAdapter(dataArray)));
+          dispatch(uploadReceived(parentId, formatResults(data)));
         }
       });
     } catch (ex) {
       console.log(ex.message);
-      dispatch(uploadError(ex));
+      dispatch(uploadError(parentId, ex));
     }
   };
 }
-
-

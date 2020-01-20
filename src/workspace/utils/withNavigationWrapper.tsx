@@ -15,7 +15,7 @@ function withNavigationWrapper<T extends IProps>(WrappedComponent: React.Compone
       const childParams: any = navigation.getParam("childParams");
 
       if (childRoute && childParams) {
-        if (childRoute != this.childRoute || childParams != this.childParams) {
+        if (childRoute !== this.childRoute || childParams !== this.childParams) {
           this.childRoute = childRoute;
           this.childParams = childParams;
           navigation.setParams({ childRoute: undefined });

@@ -6,11 +6,11 @@ import Conf from "../../../ode-framework-conf";
 import { getAuthHeader } from "../oauth";
 import { IFile } from "../../workspace/types";
 
-export const downloadFiles = (downloadable: Array<IFile>, withManager = true) => {
-  downloadable.map(document => downloadFile(document, withManager));
+export const downloadFiles = async (downloadable: Array<IFile>, withManager = true) => {
+  downloadable.map( document => downloadFile( document, withManager));
 };
 
-export const downloadFile = (downloadable: IFile, withManager = true) => {
+export const downloadFile = async (downloadable: IFile, withManager = true) => {
   if (Platform.OS === "ios") {
     startDownload(downloadable, withManager).then(res => openDownloadedFile(res.path()));
   } else {

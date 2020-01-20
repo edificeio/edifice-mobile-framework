@@ -1,8 +1,8 @@
+import I18n from "i18n-js";
 import Conf from "../../ode-framework-conf";
 import { mainNavNavigate } from "../navigation/helpers/navHelper";
 import { NotificationHandlerFactory } from "../infra/pushNotification";
 import { FilterId, IFile } from "./types";
-import I18n from "i18n-js";
 
 const notifHandlerFactory: NotificationHandlerFactory<any, any, any> = () => async notificationData => {
   if (!notificationData.resourceUri.startsWith("/workspace")) {

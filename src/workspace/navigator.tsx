@@ -1,18 +1,21 @@
 import { createStackNavigator } from "react-navigation-stack";
-import ContainerItems from "./containers/Items";
-import { Details } from "./containers/Details";
-import { ISelectedProps } from "../types/ievents";
 import { Alert } from "react-native";
 import { NavigationScreenProp } from "react-navigation";
 import I18n from "i18n-js";
+import * as React from "react";
+import ContainerItems from "./containers/Items";
+import { Details } from "./containers/Details";
+import { ISelectedProps } from "../types/ievents";
 import config from "./config";
 import { HeaderAction, HeaderIcon } from "../ui/headers/NewHeader";
-import * as React from "react";
 import { standardNavScreenOptions } from "../navigation/helpers/navScreenOptions";
-import { downloadFile } from "../infra/actions/downloadHelper";
+import { downloadFile, downloadFiles } from "../infra/actions/downloadHelper";
 import { pickFile } from "./utils/pickFile";
 import { createFolderAction } from "./actions/create";
 import { renameAction } from "./actions/rename";
+import { copyAction, pastAction } from "./actions/copypast";
+import {deleteAction} from "./actions/delete";
+import {FilterId} from "./types";
 
 export default createStackNavigator(
   {
@@ -27,7 +30,7 @@ export default createStackNavigator(
                 text: "Ajouter Document",
                 icon: "file-plus",
                 id: "addDocument",
-                onEvent: ({ dispatch }: any) => pickFile({ dispatch }),
+                onEvent: ({ dispatch, parentId }: any) => pickFile({ dispatch, parentId }),
               },
               {
                 text: "Créer dossier",
@@ -63,16 +66,16 @@ export default createStackNavigator(
                 text: "Copier",
                 icon: "content-copy",
                 id: "copy",
-                dialog: {
-                  title: "Copier dans Documents personnel",
+                onEvent: ({ dispatch, navigation,selected }) => {
+                  dispatch(copyAction(selected))
+                  navigation.push("Workspace", { filter: FilterId.owner, parentId: FilterId.owner})
                 },
-                onEvent: ({ selected }: ISelectedProps) => Alert.alert("Elements selected" + JSON.stringify(selected)),
               },
               {
                 text: "Download",
                 icon: "download",
                 id: "download",
-                onEvent: ({ item }: ISelectedProps) => downloadFile(item),
+                onEvent: ({ selected }: ISelectedProps) => downloadFiles(selected),
               },
             ],
           },
@@ -98,7 +101,7 @@ export default createStackNavigator(
                 monoselect: true,
                 dialog: {
                   title: "Renommer:",
-                  input: "filename",
+                  input: "name",
                   okLabel: "Modifier",
                 },
                 onEvent: ({ dispatch, parentId, selected, value }) =>
@@ -112,26 +115,15 @@ export default createStackNavigator(
                   title: "Vous etes sur le point de supprimer:",
                   okLabel: "Supprimer",
                 },
-                onEvent: ({ selected }: ISelectedProps) => Alert.alert("Elements selected" + JSON.stringify(selected)),
+                onEvent: ({ dispatch, parentId, selected }) => dispatch(deleteAction(dispatch, parentId, selected)),
               },
               {
                 text: "Copier",
                 icon: "content-copy",
                 id: "copy",
-                dialog: {
-                  title: "Copier dans Documents personnel",
-                  okLabel: "Copier",
-                },
-                onEvent: ({ selected }: ISelectedProps) => Alert.alert("Elements selected" + JSON.stringify(selected)),
+                onEvent: ({ dispatch, selected }) => dispatch(copyAction(selected)),
               },
-              /*               {
-                  text: "Move",
-                  icon: "package-up",
-                  id: "move",
-                  onEvent: ({ selected }: ISelectedProps) =>
-                    Alert.alert("Elements selected" + JSON.stringify(selected)),
-                },
- */ {
+              {
                 text: "Download",
                 icon: "download",
                 id: "download",
@@ -140,7 +132,33 @@ export default createStackNavigator(
                   title: "Téléchargement documents:",
                   okLabel: "Télécharger",
                 },
-                onEvent: ({ item }: ISelectedProps) => downloadFile(item),
+                onEvent: ({ selected }: ISelectedProps) => downloadFiles(selected),
+              },
+            ],
+          },
+          {
+            filter: "past",
+            items: [
+              {
+                text: "Back",
+                icon: "chevron-left1",
+                id: "back",
+                onEvent: () => null,
+              },
+              {
+                id: "nbSelected",
+              },
+              {
+                id: "separator",
+              },
+              {
+                text: "Coller",
+                icon: "content-copy",
+                id: "past",
+                dialog: {
+                  title: "Coller dans Documents personnel",
+                },
+                onEvent: ({ dispatch, parentId, selected }) => dispatch(pastAction(parentId, selected)),
               },
             ],
           },
@@ -160,8 +178,8 @@ export default createStackNavigator(
       standardNavScreenOptions(
         {
           title: navigation.getParam("title") || I18n.t(config.displayName),
-          headerLeft: <HeaderAction onPress={() => navigation.pop()} name={"back"} />,
-          headerRight: <HeaderIcon name={null} hidden={true} />,
+          headerLeft: <HeaderAction onPress={() => navigation.pop()} name="back" />,
+          headerRight: <HeaderIcon name={null} hidden />,
         },
         navigation
       ),

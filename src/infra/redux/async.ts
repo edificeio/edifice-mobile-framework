@@ -26,10 +26,10 @@ import { Reducer } from "redux";
 // TYPE DEFINITIONS ----------------------------------------------------------------------------------------
 
 export interface IAction<T> {
-  id?: string;
   type: string;
   receivedAt?: Date;
   data?: T;
+  payload?: any;
 }
 
 export interface IState<T> {

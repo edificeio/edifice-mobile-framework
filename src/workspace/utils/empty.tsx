@@ -1,6 +1,6 @@
 import * as React from "react";
-import { EmptyScreen } from "../../ui/EmptyScreen";
 import I18n from "i18n-js";
+import { EmptyScreen } from "../../ui/EmptyScreen";
 import { FilterId } from "../types/filters";
 
 export const getEmptyScreen = (parentId: string): React.ReactElement => {

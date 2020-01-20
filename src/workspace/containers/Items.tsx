@@ -2,7 +2,6 @@ import * as React from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import { connect } from "react-redux";
 import { NavigationEventSubscription } from "react-navigation";
-import config from "../config";
 import { FilterId, IItem, IItemsProps, IState } from "../types";
 import { Item } from "../components";
 import { listAction } from "../actions/list";
@@ -48,7 +47,7 @@ export class Items extends React.PureComponent<IItemsProps & ISelectedProps, { i
 
   private sortItems(a: IItem, b: IItem): number {
     const sortByType = (a: IItem, b: IItem): number => {
-      if (a.isFolder == b.isFolder) {
+      if (a.isFolder === b.isFolder) {
         return 0;
       } else {
         return a.isFolder ? -1 : 1;
@@ -59,7 +58,7 @@ export class Items extends React.PureComponent<IItemsProps & ISelectedProps, { i
       return removeAccents(a.name.toLocaleLowerCase()).localeCompare(removeAccents(b.name.toLocaleLowerCase()));
     };
 
-    return sortByType(a, b) != 0 ? sortByType(a, b) : sortByName(a, b);
+    return sortByType(a, b) !== 0 ? sortByType(a, b) : sortByName(a, b);
   }
 
   public render(): React.ReactNode {
@@ -111,7 +110,6 @@ const mapStateToProps = (state: any, props: any) => {
   return { selected: state.workspace.selected, ...getProps(state.workspace.items, props) };
 };
 
-export default connect(
-  mapStateToProps,
-  { listAction }
-)(withMenuWrapper(withNavigationWrapper(withUploadWrapper(Items))));
+export default connect(mapStateToProps, { listAction })(
+  withMenuWrapper(withNavigationWrapper(withUploadWrapper(Items)))
+);

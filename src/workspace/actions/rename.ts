@@ -3,11 +3,10 @@
 import { asyncActionTypes } from "../../infra/redux/async";
 import config from "../config";
 import { asyncActionFactory } from "../../infra/actions/asyncActionFactory";
-import { formatResult } from "./helpers/folders";
+import { formatResult } from "./helpers/documents";
 
-const WORKSPACE_RENAME = "/workspace/document/rename";
+const WORKSPACE_RENAME = "/workspace/rename";
 const WORKSPACE_FOLDER_RENAME = "/workspace/folder/rename";
-const WORKSPACE_FILE_RENAME = "/workspace/file/rename";
 
 export const actionTypesRename = asyncActionTypes(config.createActionType(`${WORKSPACE_RENAME}`));
 
@@ -16,7 +15,7 @@ export const actionTypesRename = asyncActionTypes(config.createActionType(`${WOR
  * Dispatches WORKSPACE_RENAME_REQUESTED, WORKSPACE_RENAME_RECEIVED, and WORKSPACE_RENAME_FETCH_ERROR if an error occurs.
  */
 export function renameAction(name, item, parentId) {
-  const url = item.isFolder ? `${WORKSPACE_FOLDER_RENAME}/${item.id}` : `${WORKSPACE_FILE_RENAME}/${item.id}`;
+  const url = item.isFolder ? `${WORKSPACE_FOLDER_RENAME}/${item.id}` : `${WORKSPACE_RENAME}/${item.id}`;
 
-  return asyncActionFactory(url, { name, parentId }, actionTypesRename, { post: true }, formatResult);
+  return asyncActionFactory(url, { name, parentId }, actionTypesRename, formatResult, { method: "put" });
 }

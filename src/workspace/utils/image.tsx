@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Image, View } from "react-native";
+import FastImage from "react-native-fast-image";
 import { filters } from "../types/filters/helpers/filters";
 import { FilterId } from "../types/filters";
 import Conf from "../../../ode-framework-conf";
@@ -7,8 +8,7 @@ import { Icon } from "../../ui";
 import { CommonStyles } from "../../styles/common/styles";
 import {DEVICE_HEIGHT, DEVICE_WIDTH, layoutSize} from "../../styles/common/layoutSize";
 import { DEPRECATED_signImageURISource } from "../../infra/oauth";
-import {IFile} from "../types";
-import FastImage from "react-native-fast-image";
+import { IFile } from "../types";
 import ImageOptional from "../../ui/ImageOptional";
 
 export const renderSmallIcon = (
@@ -164,11 +164,11 @@ const getIcon = (
 
 const UnavailableImage = () => (
   <View style={{ width: width(), height: height(), justifyContent: "center", alignItems: "center" }}>
-    <Icon color={CommonStyles.missingGrey} size={layoutSize.LAYOUT_200} name={"picture"} />
+    <Icon color={CommonStyles.missingGrey} size={layoutSize.LAYOUT_200} name="picture" />
   </View>
 );
 
-const UnavailableIcon = () => <Icon color={CommonStyles.missingGrey} size={layoutSize.LAYOUT_46} name={"picture"} />;
+const UnavailableIcon = () => <Icon color={CommonStyles.missingGrey} size={layoutSize.LAYOUT_46} name="picture" />;
 
 const height = () => {
   return DEVICE_HEIGHT() - layoutSize.LAYOUT_160;

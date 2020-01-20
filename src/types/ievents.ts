@@ -21,7 +21,7 @@ export interface IEventProps {
 
 export interface ISelectedProps {
   item: IFile;
-  selected: Array<IFile> | boolean;
+  selected: Array<IFile>;
   value: any;
   navigation: any;
 }

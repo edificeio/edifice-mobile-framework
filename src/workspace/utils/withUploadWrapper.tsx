@@ -1,6 +1,6 @@
 import * as React from "react";
-import { uploadAction } from "../actions/upload";
 import { connect } from "react-redux";
+import { uploadAction } from "../actions/upload";
 
 export interface IProps {
   navigation: any;
@@ -34,7 +34,4 @@ function withUploadWrapper<T extends IProps>(WrappedComponent: React.ComponentTy
 }
 
 export default (wrappedComponent: React.ComponentType<any>): React.ComponentType<any> =>
-  connect(
-    null,
-    { uploadAction }
-  )(withUploadWrapper(wrappedComponent));
+  connect(null, { uploadAction })(withUploadWrapper(wrappedComponent));

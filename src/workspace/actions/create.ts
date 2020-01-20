@@ -3,7 +3,7 @@
 import { asyncActionTypes } from "../../infra/redux/async";
 import config from "../config";
 import { asyncActionFactory } from "../../infra/actions/asyncActionFactory";
-import { formatResult } from "./helpers/folders";
+import { formatResult } from "./helpers/documents";
 
 const WORKSPACE_FOLDER = "/workspace/folder";
 
@@ -16,9 +16,9 @@ export const actionTypesCreateFolder = asyncActionTypes(config.createActionType(
 export function createFolderAction(name, parentId) {
   return asyncActionFactory(
     WORKSPACE_FOLDER,
-    parentId === "owner" ? { name, parentId} : {name, parentId, parentFolderId: parentId},
+    parentId === "owner" ? { name, parentId } : { name, parentId, parentFolderId: parentId },
     actionTypesCreateFolder,
-    { post: true, formData: true },
-    formatResult
+    formatResult,
+    { method: "post", formData: true }
   );
 }

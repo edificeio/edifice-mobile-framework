@@ -5,28 +5,27 @@
 import { SELECT_ACTION_TYPE, SELECT_CLEAR_ACTION_TYPE } from "../actions/select";
 import { IItem } from "../types";
 import { IAction } from "../../infra/redux/async";
-import { IId } from "../../types";
 
 export type ISelectState<T> = {
   [key: string]: T;
 };
 
-export default (state: ISelectState<IItem> = {}, action: IAction<IItem> & IId) => {
+export default (state: ISelectState<IItem> = {}, action: IAction<IItem>) => {
   switch (action.type) {
-    case SELECT_CLEAR_ACTION_TYPE:
-      return {};
     case SELECT_ACTION_TYPE:
-      if (action.id === "") {
+      if (action.payload.id === "") {
         return {};
       }
-      if (state[action.id]) {
-        delete state[action.id];
+      if (state[action.payload.id]) {
+        delete state[action.payload.id];
         return { ...state };
       }
       return {
         ...state,
-        [action.id]: action.data,
+        [action.payload.id]: action.payload,
       };
+    case SELECT_CLEAR_ACTION_TYPE:
+      return {};
     default:
       return state;
   }

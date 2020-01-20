@@ -8,15 +8,25 @@ import { actionTypesList } from "../actions/list";
 import { actionTypesCreateFolder } from "../actions/create";
 import { actionTypesRename } from "../actions/rename";
 import { IItem, IState } from "../types";
+import { actionTypesPast } from "../actions/copypast";
+import {actionTypesUpload} from "../actions/upload";
 
 const stateDefault: IState = {};
 
 export default (state: IState = stateDefault, action: IAction<IItem>) => {
   switch (action.type) {
+    case actionTypesUpload.fetchError:
+    case actionTypesUpload.requested:
+    case actionTypesUpload.received:
+      return pushData(state, action, actionTypesUpload);
     case actionTypesCreateFolder.fetchError:
     case actionTypesCreateFolder.requested:
     case actionTypesCreateFolder.received:
       return pushData(state, action, actionTypesCreateFolder);
+    case actionTypesPast.fetchError:
+    case actionTypesPast.requested:
+    case actionTypesPast.received:
+      return pushData(state, action, actionTypesPast);
     case actionTypesList.fetchError:
     case actionTypesList.requested:
     case actionTypesList.received:
@@ -39,7 +49,15 @@ function pushData(state, action, actionTypes) {
 
 const node = (state: any, action: IAction<any>) => {
   switch (action.type) {
+    case actionTypesUpload.received:
+    case actionTypesPast.received:
+    case actionTypesRename.received:
     case actionTypesCreateFolder.received:
+      if (action.data instanceof Array)
+        return {
+          ...state,
+          ...action.data,
+        };
       return {
         ...state,
         [action.data.id]: action.data,

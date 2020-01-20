@@ -30,9 +30,9 @@ export class ConfigDialog extends React.Component<IProps, IState> {
     const { value } = this.state;
 
     if (value) {
-      onValid({ item: selected[0], selected, value });
+      onValid({ value });
     } else {
-      onValid({ item: selected[0], selected });
+      onValid({});
     }
   }
 

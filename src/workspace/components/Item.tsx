@@ -33,8 +33,7 @@ export const Item = ({ onEvent, item, selected, simple }: IEventProps & ISelecte
       onLongPress={() => onEvent({ type: EVENT_TYPE.LONG_SELECT, id: item.id, item })}
       onPress={() => onEvent({ type: EVENT_TYPE.SELECT, id: item.id, item })}
       style={{ backgroundColor: selected ? "#eee" : "#fff" }}
-      borderBottomWidth={simple ? 0 : 1}
-    >
+      borderBottomWidth={simple ? 0 : 1}>
       {simple ? (
         <LeftSmallIconPanel>{renderSmallIcon(id, isFolder, name, contentType)}</LeftSmallIconPanel>
       ) : (
@@ -44,9 +43,9 @@ export const Item = ({ onEvent, item, selected, simple }: IEventProps & ISelecte
         <Text numberOfLines={1} style={style.fileName}>
           {name}
         </Text>
-        {!simple && date != 0 && ownerName.length > 0 && (
+        {!simple && date !== 0 && ownerName.length > 0 && (
           <View style={{ flexDirection: "row" }}>
-            {date != 0 && (
+            {date !== 0 && (
               <View style={style.date}>
                 <DateView min date={date} />
               </View>
@@ -59,8 +58,7 @@ export const Item = ({ onEvent, item, selected, simple }: IEventProps & ISelecte
                   style={{
                     fontSize: layoutSize.LAYOUT_10,
                     color: CommonStyles.lightTextColor,
-                  }}
-                >
+                  }}>
                   {longOwnerName}
                 </NestedText>
               </View>

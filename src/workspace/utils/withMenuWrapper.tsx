@@ -1,19 +1,21 @@
 import * as React from "react";
 import { View } from "react-native";
+import { connect } from "react-redux";
 import { EVENT_TYPE, IEvent } from "../../types/ievents";
 import { FilterId } from "../types/filters";
-import { selectAction } from "../actions/select";
-import { connect } from "react-redux";
+import { selectAction, selectClearAction } from "../actions/select";
 import { IMenuItem } from "../../ui/types";
 import { FloatingAction } from "../../ui/FloatingButton";
 import { ToolbarAction } from "../../ui/Toolbar";
 import { ConfigDialog } from "../../ui/ConfigDialog";
 import { IFile } from "../types";
+import { copyClearAction } from "../actions/copypast";
 
 export interface IProps {
   dispatch: any;
   navigation: any;
-  selectedFileItems: Array<IFile>;
+  pastFileItems: Array<IFile>;
+  SelectedDocumentItems: Array<IFile>;
   selectAction: Function;
 }
 
@@ -32,9 +34,9 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
     };
 
     getMenuItems(idMenu: string): IMenuItem[] {
-      const { navigation } = this.props;
+      const { navigation, pastFileItems } = this.props;
       const popupItems = navigation.getParam(idMenu) || [];
-      const filter = navigation ? navigation.getParam("filter") : "root";
+      const filter = pastFileItems.length ? "past" : navigation ? navigation.getParam("filter") : "root";
 
       return popupItems.reduce(
         (acc: any, items: any) => (items.filter === filter || items.filter === "root" ? items.items : acc),
@@ -43,11 +45,11 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
     }
 
     public handleEvent({ type, item }: IEvent) {
-      const { dispatch, navigation, selectedFileItems } = this.props;
+      const { dispatch, navigation, pastFileItems, SelectedDocumentItems } = this.props;
 
       switch (type) {
         case EVENT_TYPE.SELECT:
-          if (selectedFileItems.length) {
+          if (!pastFileItems.length && SelectedDocumentItems.length) {
             dispatch(selectAction(item));
           } else {
             const { id: parentId, name: title, isFolder } = item;
@@ -61,14 +63,15 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
           return;
 
         case EVENT_TYPE.LONG_SELECT:
-          dispatch(selectAction(item));
+          if (!pastFileItems.length) dispatch(selectAction(item));
           return;
 
-        case EVENT_TYPE.MENU_SELECT:
+        case EVENT_TYPE.MENU_SELECT: {
           const selectedMenuItem = (item as any) as IMenuItem;
 
           if (selectedMenuItem.id === "back") {
-            dispatch(selectAction(null));
+            dispatch(selectClearAction());
+            dispatch(copyClearAction());
             return;
           } // deselect items
 
@@ -80,15 +83,15 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
               dispatch,
               navigation,
               parentId: navigation.getParam("parentId"),
-              selected: selectedFileItems,
+              selected: pastFileItems.length ? pastFileItems : SelectedDocumentItems,
             });
           }
-          return;
+        }
       }
     }
 
     render() {
-      const { dispatch, navigation, selectedFileItems, ...rest } = this.props;
+      const { dispatch, navigation, pastFileItems, SelectedDocumentItems, ...rest } = this.props;
       const menuItems = this.getMenuItems("popupItems");
       const toolbarItems = this.getMenuItems("toolbarItems");
       const { dialogVisible, selectedMenuItem } = this.state;
@@ -97,7 +100,7 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
       return (
         <View style={{ flex: 1 }}>
           <WrappedComponent
-            {...rest as T}
+            {...(rest as T)}
             dispatch={dispatch}
             navigation={navigation}
             onEvent={this.handleEvent.bind(this)}
@@ -105,17 +108,17 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
           <FloatingAction
             menuItems={menuItems}
             onEvent={this.handleEvent.bind(this)}
-            nbSelected={selectedFileItems.length}
+            nbSelected={SelectedDocumentItems.length}
           />
           <ToolbarAction
             menuItems={toolbarItems}
             onEvent={this.handleEvent.bind(this)}
-            nbSelected={selectedFileItems.length}
+            nbSelected={SelectedDocumentItems.length}
           />
           {dialogVisible && (
             <ConfigDialog
               {...dialogParams}
-              selected={selectedFileItems}
+              selected={SelectedDocumentItems}
               visible={this.state.dialogVisible}
               onValid={(param: IEvent) => {
                 this.setState({ dialogVisible: false });
@@ -124,6 +127,7 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
                   navigation,
                   parentId: navigation.getParam("parentId"),
                   ...param,
+                  selected: pastFileItems.length ? pastFileItems : SelectedDocumentItems,
                 });
               }}
               onCancel={() => this.setState({ dialogVisible: false })}
@@ -136,11 +140,11 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
 }
 
 const mapStateToProps = (state: any) => {
-  return { selectedFileItems: Object.values(state.workspace.selected) };
+  return {
+    SelectedDocumentItems: Object.values(state.workspace.selected),
+    pastFileItems: state.workspace.copy,
+  };
 };
 
 export default (wrappedComponent: React.ComponentType<any>): React.ComponentType<any> =>
-  connect(
-    mapStateToProps,
-    null
-  )(withMenuWrapper(wrappedComponent));
+  connect(mapStateToProps, null)(withMenuWrapper(wrappedComponent));

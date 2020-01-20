@@ -1,15 +1,15 @@
 import * as React from "react";
 import { NavigationScreenProp } from "react-navigation";
+import { ViewStyle, Platform } from "react-native";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderAction, HeaderIcon } from "../../ui/headers/NewHeader";
-import { ViewStyle, Platform } from "react-native";
 import { EVENT_TYPE, IDetailsProps, IFile } from "../types";
 import { ItemDetails } from "../components";
 import { openPreview, downloadFile } from "../../infra/actions/downloadHelper";
 import { share } from "../../infra/actions/share";
 
 const HeaderBackAction = ({ navigation, style }: { navigation: NavigationScreenProp<{}>; style?: ViewStyle }) => {
-  return <HeaderAction onPress={() => navigation.pop()} name={"back"} style={style} />;
+  return <HeaderAction onPress={() => navigation.pop()} name="back" style={style} />;
 };
 
 export class Details extends React.PureComponent<IDetailsProps> {
@@ -18,7 +18,7 @@ export class Details extends React.PureComponent<IDetailsProps> {
       {
         title: navigation.getParam("title"),
         headerLeft: <HeaderBackAction navigation={navigation} />,
-        headerRight: <HeaderIcon name={null} hidden={true} />,
+        headerRight: <HeaderIcon name={null} hidden />,
       },
       navigation
     );
@@ -31,14 +31,13 @@ export class Details extends React.PureComponent<IDetailsProps> {
         return;
       }
       case EVENT_TYPE.PREVIEW: {
-        if (Platform.OS != "ios") {
+        if (Platform.OS !== "ios") {
           openPreview(item);
         }
         return;
       }
       case EVENT_TYPE.SHARE: {
         share(item);
-        return;
       }
     }
   }

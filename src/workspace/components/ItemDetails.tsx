@@ -1,7 +1,7 @@
 import * as React from "react";
 import { StyleSheet, TouchableOpacity, View, Platform, SafeAreaView } from "react-native";
-import { IEventProps, EVENT_TYPE } from "../types";
 import I18n from "i18n-js";
+import { IEventProps, EVENT_TYPE } from "../types";
 
 import { ButtonIconText } from "../../ui";
 import { layoutSize } from "../../styles/common/layoutSize";
@@ -33,7 +33,7 @@ export const ItemDetails = ({ onEvent, ...item }: IFile & IEventProps) => {
   const { name } = item;
 
   const getPreviewImage = () => {
-    if (Platform.OS == "ios") {
+    if (Platform.OS === "ios") {
       return renderImage(item, false, name);
     } else {
       return (
