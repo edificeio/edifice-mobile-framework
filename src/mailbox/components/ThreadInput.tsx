@@ -139,7 +139,7 @@ class ThreadInput extends React.PureComponent<
     // console.log("last message", lastMessage);
     await onGetNewer(thread.id)
     await send({
-      body: `<div>${textMessage}</div>`,
+      body: `<div>${textMessage.replace(/\n/g, '<br>')}</div>`,
       cc: thread.cc,
       displayNames: thread.displayNames,
       parentId: lastMessage ? lastMessage.id : undefined,
