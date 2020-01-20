@@ -6,7 +6,7 @@ export default new FunctionalModuleConfig({
   name: "homework",
   apiName: "Cahier de texte",
   displayName: "Homework",
-  iconName: "devoirs",
+  iconName: "book-alt",
   iconColor: "#46bfaf",
   group: true,
   notifHandlerFactory: async () => {
