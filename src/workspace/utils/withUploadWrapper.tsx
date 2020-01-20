@@ -23,7 +23,7 @@ function withUploadWrapper<T extends IProps>(WrappedComponent: React.ComponentTy
       if (contentUri && contentUri[0].uri !== this.contentUri[0].uri) {
         this.contentUri = contentUri;
         navigation.setParams({ contentUri: undefined });
-        this.props.uploadAction(contentUri);
+        this.props.uploadAction("owner", contentUri);
       }
     }
 

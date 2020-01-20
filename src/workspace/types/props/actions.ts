@@ -4,5 +4,5 @@ import { ContentUri, IItem } from "..";
 export interface IActionProps {
   listAction: (params: IFiltersParameters) => void;
   selectAction: (item: IItem) => void;
-  uploadAction: (fileUri: ContentUri) => void;
+  uploadAction: (parentId: string, fileUri: ContentUri) => void;
 }

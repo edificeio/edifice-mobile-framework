@@ -99,14 +99,13 @@ export const uploadDocument = (dispatch: any, parentId: string, content: Content
     ],
     []
   );
+  const url =
+    parentId === "owner"
+      ? `${Conf.currentPlatform.url}/workspace/document?quality=1&thumbnail=120x120&thumbnail=100x100&thumbnail=290x290&thumbnail=381x381&thumbnail=1600x0`
+      : `${Conf.currentPlatform.url}/workspace/document?parentId=${parentId}&quality=1&thumbnail=120x120&thumbnail=100x100&thumbnail=290x290&thumbnail=381x381&thumbnail=1600x0`;
 
   dispatch(progressInitAction());
-  RNFB.fetch(
-    "POST",
-    `${Conf.currentPlatform.url}/workspace/document?parentId=${parentId}&quality=1&thumbnail=120x120&thumbnail=100x100&thumbnail=290x290&thumbnail=381x381&thumbnail=1600x0`,
-    headers,
-    body
-  )
+  RNFB.fetch("POST", url, headers, body)
     .uploadProgress({ interval: 100 }, (written, total) => {
       dispatch(progressAction((written / total) * 100));
     })
