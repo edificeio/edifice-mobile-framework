@@ -15,7 +15,7 @@ export interface IProps {
   dispatch: any;
   navigation: any;
   pastFileItems: Array<IFile>;
-  SelectedDocumentItems: Array<IFile>;
+  selectedDocumentItems: Array<IFile>;
   selectAction: Function;
 }
 
@@ -34,22 +34,22 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
     };
 
     getMenuItems(idMenu: string): IMenuItem[] {
-      const { navigation, pastFileItems } = this.props;
-      const popupItems = navigation.getParam(idMenu) || [];
+      const { navigation, pastFileItems, selectedDocumentItems } = this.props;
+      const allMenuItems = navigation.getParam(idMenu) || [];
       const filter = pastFileItems.length ? "past" : navigation ? navigation.getParam("filter") : "root";
 
-      return popupItems.reduce(
+      return allMenuItems.reduce(
         (acc: any, items: any) => (items.filter === filter || items.filter === "root" ? items.items : acc),
         []
       );
     }
 
     public handleEvent({ type, item }: IEvent) {
-      const { dispatch, navigation, pastFileItems, SelectedDocumentItems } = this.props;
+      const { dispatch, navigation, pastFileItems, selectedDocumentItems } = this.props;
 
       switch (type) {
         case EVENT_TYPE.SELECT:
-          if (!pastFileItems.length && SelectedDocumentItems.length) {
+          if (!pastFileItems.length && selectedDocumentItems.length) {
             dispatch(selectAction(item));
           } else {
             const { id: parentId, name: title, isFolder } = item;
@@ -83,7 +83,7 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
               dispatch,
               navigation,
               parentId: navigation.getParam("parentId"),
-              selected: pastFileItems.length ? pastFileItems : SelectedDocumentItems,
+              selected: pastFileItems.length ? pastFileItems : selectedDocumentItems,
             });
           }
         }
@@ -91,7 +91,7 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
     }
 
     render() {
-      const { dispatch, navigation, pastFileItems, SelectedDocumentItems, ...rest } = this.props;
+      const { dispatch, navigation, pastFileItems, selectedDocumentItems, ...rest } = this.props;
       const menuItems = this.getMenuItems("popupItems");
       const toolbarItems = this.getMenuItems("toolbarItems");
       const { dialogVisible, selectedMenuItem } = this.state;
@@ -108,17 +108,17 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
           <FloatingAction
             menuItems={menuItems}
             onEvent={this.handleEvent.bind(this)}
-            nbSelected={SelectedDocumentItems.length}
+            nbSelected={selectedDocumentItems.length}
           />
           <ToolbarAction
             menuItems={toolbarItems}
             onEvent={this.handleEvent.bind(this)}
-            nbSelected={SelectedDocumentItems.length}
+            nbSelected={selectedDocumentItems.length}
           />
           {dialogVisible && (
             <ConfigDialog
               {...dialogParams}
-              selected={SelectedDocumentItems}
+              selected={selectedDocumentItems}
               visible={this.state.dialogVisible}
               onValid={(param: IEvent) => {
                 this.setState({ dialogVisible: false });
@@ -127,7 +127,7 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
                   navigation,
                   parentId: navigation.getParam("parentId"),
                   ...param,
-                  selected: pastFileItems.length ? pastFileItems : SelectedDocumentItems,
+                  selected: pastFileItems.length ? pastFileItems : selectedDocumentItems,
                 });
               }}
               onCancel={() => this.setState({ dialogVisible: false })}
@@ -141,7 +141,7 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
 
 const mapStateToProps = (state: any) => {
   return {
-    SelectedDocumentItems: Object.values(state.workspace.selected),
+    selectedDocumentItems: Object.values(state.workspace.selected),
     pastFileItems: state.workspace.copy,
   };
 };

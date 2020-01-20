@@ -98,7 +98,7 @@ export default createStackNavigator(
                 text: "Editer",
                 icon: "pencil",
                 id: "edit",
-                monoselect: true,
+                monoselection: true,
                 dialog: {
                   title: "Renommer:",
                   input: "name",
@@ -127,7 +127,6 @@ export default createStackNavigator(
                 text: "Download",
                 icon: "download",
                 id: "download",
-                monoselection: true,
                 dialog: {
                   title: "Téléchargement documents:",
                   okLabel: "Télécharger",

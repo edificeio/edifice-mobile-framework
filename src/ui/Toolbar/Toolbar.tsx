@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import { Header } from "react-navigation-stack";
 import ToolbarActionItem from "./ToolbarActionItem";
@@ -9,7 +9,7 @@ export type INbSelected = {
   nbSelected: number;
 };
 
-class Toolbar extends Component<IFloatingProps & INbSelected, IState> {
+class Toolbar extends PureComponent<IFloatingProps & INbSelected, IState> {
   state = {
     active: false,
   };
@@ -53,7 +53,7 @@ class Toolbar extends Component<IFloatingProps & INbSelected, IState> {
         <FlatList
           contentContainerStyle={styles.firstActions}
           data={firstItems}
-          horizontal={true}
+          horizontal
           ItemSeparatorComponent={() => <View style={styles.separator} />}
           keyExtractor={(item: IMenuItem) => item.id}
           renderItem={({ item }) => (
@@ -67,7 +67,7 @@ class Toolbar extends Component<IFloatingProps & INbSelected, IState> {
         <FlatList
           contentContainerStyle={styles.lastActions}
           data={lastItems}
-          horizontal={true}
+          horizontal
           ItemSeparatorComponent={() => <View style={styles.separator} />}
           keyExtractor={(item: IMenuItem) => item.id}
           renderItem={({ item }) => (

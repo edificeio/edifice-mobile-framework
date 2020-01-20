@@ -1,12 +1,13 @@
 import * as React from "react";
-import { Icon } from "..";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { EVENT_TYPE } from "../../types";
 import { layoutSize } from "../../styles/common/layoutSize";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { Text } from "../text";
+import { Icon } from "..";
 
 const Item = ({ onEvent, item, nbSelected }: any) => {
-  const { icon, id } = item;
+  const { icon, id, monoselection } = item;
+  const disable = monoselection && nbSelected !== 1;
 
   if (id === "nbSelected") {
     return (
@@ -21,9 +22,8 @@ const Item = ({ onEvent, item, nbSelected }: any) => {
   return (
     <TouchableOpacity
       style={styles.touchPanel}
-      onPress={() => onEvent({ type: EVENT_TYPE.MENU_SELECT, id: item.id, item })}
-    >
-      <Icon color="#ffffff" size={layoutSize.LAYOUT_24} name={icon} />
+      onPress={() => (disable ? null : onEvent({ type: EVENT_TYPE.MENU_SELECT, id: item.id, item }))}>
+      <Icon color={disable ? "#e2e2e2" : "#ffffff"} size={layoutSize.LAYOUT_24} name={icon} />
     </TouchableOpacity>
   );
 };
