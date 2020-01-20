@@ -71,13 +71,12 @@ export class ConfigDialog extends React.Component<IProps, IState> {
                 maxHeight: layoutSize.LAYOUT_375,
                 marginTop: layoutSize.LAYOUT_10,
                 marginBottom: layoutSize.LAYOUT_10,
-              }}
-            >
+              }}>
               <FlatList
                 ItemSeparatorComponent={() => <View style={{ backgroundColor: "#ffffff", width: "100%", height: 0 }} />}
                 data={selected}
                 keyExtractor={(item: IItem) => item.id}
-                renderItem={({ item }) => <Item item={item} simple={true} />}
+                renderItem={({ item }) => <Item item={item} simple onEvent={f => f} />}
               />
             </View>
           )}
@@ -91,7 +90,7 @@ export class ConfigDialog extends React.Component<IProps, IState> {
 
     return (
       <View>
-        <Dialog.Container visible={true}>
+        <Dialog.Container visible>
           {this.fill()}
           <Dialog.Button label="Annuler" onPress={this.props.onCancel.bind(this)} />
           <Dialog.Button label={okLabel ? okLabel : "Valider"} onPress={this.onPress.bind(this)} />
