@@ -4,6 +4,6 @@ import FunctionalModuleConfig from "../infra/moduleTool";
 
 export default new FunctionalModuleConfig({
   name: "user",
-  displayName: "Profile",
+  displayName: "MyAccount",
   iconName: "profile"
 });
