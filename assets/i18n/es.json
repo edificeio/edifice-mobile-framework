@@ -179,7 +179,14 @@
   "version-number": "Versión",
   "welcome": "Bienvenido",
   "workspace": "Espacio documental",
-  "workspace-uploadSuccessful": "",
+  "workspace-image": "Agregar imagen",
+  "workspace-document": "Agregar documento",
+  "workspace-pick": "Selecciona tipo de documento",
+  "workspace-uploadSuccessful": "El documento se ha importado correctamente",
+  "workspace-uploadFailed": "Error al importar documento",
+  "workspace-photoPicker-title": "Selecciona una foto",
+  "workspace-photoPicker-take": "Tomar una fotografía",
+  "workspace-photoPicker-pick": "Seleccionar en la galería",
   
   "profileTypes": {
     "Guest": "Invitado",

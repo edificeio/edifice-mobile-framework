@@ -176,7 +176,15 @@
   "unknown-user": "Unknown user",
   "version-number": "Version",
   "welcome": "Welcome",
-  "workspace": "Espace Documentaire",
+  "workspace": "Workspace",
+  "workspace-image": "Add an image",
+  "workspace-document": "Add a document",
+  "workspace-pick": "Select file type",
+  "workspace-uploadSuccessful": "The document has been successfully imported",
+  "workspace-uploadFailed": "Error importing document",
+  "workspace-photoPicker-title": "Select a photo",
+  "workspace-photoPicker-take": "Take a picture",
+  "workspace-photoPicker-pick": "Select in the gallery",
 
   "profileTypes": {
     "Guest": "Guest",
