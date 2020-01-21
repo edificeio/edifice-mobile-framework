@@ -48,13 +48,13 @@ export const HomeworkCard = ({
   const formattedContent = HtmlToText(content, false).excerpt;
   return (
     <TouchableOpacity style={[homeworkCardStyle, style]} onPress={onPress}>
-      {title &&
+      {title ? 
         <Text>
           {/* TODO typo */}
           {title}
         </Text>
-      }
-      {formattedContent &&
+      : null}
+      {formattedContent ?
         <Text
           fontSize={12}
           color={CommonStyles.lightTextColor}
@@ -64,7 +64,7 @@ export const HomeworkCard = ({
           {formattedContent.content}
           {formattedContent.cropped ? <A> {I18n.t("seeMore")}</A> : null}
         </Text>
-      }
+      : null}
     </TouchableOpacity>
   );
 };
