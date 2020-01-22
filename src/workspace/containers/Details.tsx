@@ -8,7 +8,7 @@ import { ItemDetails } from "../components";
 import { openPreview, downloadFile } from "../../infra/actions/downloadHelper";
 import { share } from "../../infra/actions/share";
 
-const HeaderBackAction = ({ navigation, style }: { navigation: NavigationScreenProp<{}>; style?: ViewStyle }) => {
+const HeaderBackAction = ({ navigation, style }: { navigation: any; style?: ViewStyle }) => {
   return <HeaderAction onPress={() => navigation.pop()} name="back" style={style} />;
 };
 
@@ -24,26 +24,26 @@ export class Details extends React.PureComponent<IDetailsProps> {
     );
   };
 
-  public onEvent(type: EVENT_TYPE, item: IFile) {
+  public handleEvent({ type, item }) {
     switch (type) {
       case EVENT_TYPE.DOWNLOAD: {
-        downloadFile(item);
+        downloadFile(item as IFile);
         return;
       }
       case EVENT_TYPE.PREVIEW: {
         if (Platform.OS !== "ios") {
-          openPreview(item);
+          openPreview(item as IFile);
         }
         return;
       }
       case EVENT_TYPE.SHARE: {
-        share(item);
+        share(item as IFile);
       }
     }
   }
 
   public render() {
     const item = this.props.navigation.getParam("item");
-    return <ItemDetails {...item} onEvent={this.onEvent} />;
+    return <ItemDetails item={item} onEvent={this.handleEvent} />;
   }
 }

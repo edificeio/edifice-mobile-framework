@@ -13,7 +13,7 @@ export function uploadRequested(parentId) {
   return {
     type: actionTypesUpload.requested,
     payload: {
-      parentId
+      parentId,
     },
   };
 }
@@ -24,7 +24,7 @@ export function uploadReceived(parentId, data: any) {
     data,
     receivedAt: Date.now(),
     payload: {
-      parentId
+      parentId,
     },
   };
 }
@@ -35,7 +35,7 @@ export function uploadError(parentId, errmsg: string) {
     error: true,
     errmsg,
     payload: {
-      parentId
+      parentId,
     },
   };
 }

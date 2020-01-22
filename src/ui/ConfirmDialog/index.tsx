@@ -1,10 +1,10 @@
 import * as React from "react";
-import {FlatList, StyleSheet, View} from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 import Dialog from "react-native-dialog";
+import { Header } from "react-navigation-stack";
 import { IFile, IItem } from "../../workspace/types/states/items";
 import { Item } from "../../workspace/components";
-import {DEVICE_WIDTH, layoutSize} from "../../styles/common/layoutSize";
-import {Header} from "react-navigation-stack";
+import { DEVICE_WIDTH, layoutSize } from "../../styles/common/layoutSize";
 
 type IProps = {
   title: string;
@@ -20,14 +20,14 @@ export type IState = {
   value: any;
 };
 
-export class ConfigDialog extends React.Component<IProps, IState> {
+export class ConfirmDialog extends React.Component<IProps, IState> {
   state = {
     value: null,
   };
 
   onPress() {
     // call getValue() to get the values of the form
-    const { onValid, selected } = this.props;
+    const { onValid } = this.props;
     const { value } = this.state;
 
     if (value) {
@@ -38,7 +38,7 @@ export class ConfigDialog extends React.Component<IProps, IState> {
   }
 
   getValue() {
-    if (this.state.value) {
+    if (this.state.value !== null) {
       return this.state.value;
     }
 
@@ -55,7 +55,8 @@ export class ConfigDialog extends React.Component<IProps, IState> {
         <>
           <Dialog.Title>{title}</Dialog.Title>
           <Dialog.Input
-            underlineColorAndroid={"#ff8000cc"}
+            autoFocus
+            underlineColorAndroid="#ff8000cc"
             value={this.getValue()}
             onChangeText={(value: string) => this.setState({ value })}
           />
@@ -93,8 +94,12 @@ export class ConfigDialog extends React.Component<IProps, IState> {
       <View>
         <Dialog.Container visible>
           {this.fill()}
-          <Dialog.Button label="Annuler" onPress={this.props.onCancel.bind(this)}  style={{color: "#bbbbbb"}}/>
-          <Dialog.Button label={okLabel ? okLabel : "Valider"} onPress={this.onPress.bind(this)} style={{color: "#ff8000"}}/>
+          <Dialog.Button label="Annuler" onPress={this.props.onCancel.bind(this)} style={{ color: "#bbbbbb" }} />
+          <Dialog.Button
+            label={okLabel ? okLabel : "Valider"}
+            onPress={this.onPress.bind(this)}
+            style={{ color: "#ff8000" }}
+          />
         </Dialog.Container>
       </View>
     );
@@ -102,6 +107,5 @@ export class ConfigDialog extends React.Component<IProps, IState> {
 }
 
 const styles = StyleSheet.create({
-  textInput: {
-  },
-})
+  textInput: {},
+});

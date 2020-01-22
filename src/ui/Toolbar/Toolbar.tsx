@@ -7,6 +7,7 @@ import { IFloatingProps, IMenuItem } from "../types";
 
 export type INbSelected = {
   nbSelected: number;
+  readonly?: boolean;
 };
 
 class Toolbar extends PureComponent<IFloatingProps & INbSelected, IState> {
@@ -30,7 +31,7 @@ class Toolbar extends PureComponent<IFloatingProps & INbSelected, IState> {
   };
 
   renderActions(menuItems: IMenuItem[]) {
-    const { onEvent } = this.props;
+    const { onEvent, readonly } = this.props;
     let foundSeparator = false;
     const firstItems = menuItems.filter(item => {
       if (!foundSeparator && item.id !== "separator") {
@@ -74,6 +75,7 @@ class Toolbar extends PureComponent<IFloatingProps & INbSelected, IState> {
             <ToolbarActionItem
               item={item}
               nbSelected={this.props.nbSelected}
+              readonly={readonly}
               onEvent={onEvent ? onEvent : () => null}
             />
           )}

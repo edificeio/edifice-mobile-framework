@@ -9,7 +9,6 @@ import { DateView } from "../../ui/DateView";
 import { renderIcon, renderSmallIcon } from "../utils/image";
 import { layoutSize } from "../../styles/common/layoutSize";
 import { CommonStyles } from "../../styles/common/styles";
-import { ISelectedProps } from "../../types/ievents";
 
 const style = StyleSheet.create({
   centerPanel: {
@@ -24,7 +23,7 @@ const style = StyleSheet.create({
   author: { flex: 3, alignItems: "flex-end" },
 });
 
-export const Item = ({ onEvent, item, selected, simple }: IEventProps & ISelectedProps & any) => {
+export const Item = ({ onEvent, item, selected, simple }: IEventProps & any) => {
   const { id, isFolder, name, date, ownerName = "", contentType } = item;
   const longOwnerName = `${I18n.t("by")}${ownerName}`;
 
@@ -32,7 +31,7 @@ export const Item = ({ onEvent, item, selected, simple }: IEventProps & ISelecte
     <ListItem
       onLongPress={() => onEvent({ type: EVENT_TYPE.LONG_SELECT, id: item.id, item })}
       onPress={() => onEvent({ type: EVENT_TYPE.SELECT, id: item.id, item })}
-      style={{ backgroundColor: selected ? "#2A9CC825" : "#fff"}}
+      style={{ backgroundColor: selected ? "#2A9CC825" : "#fff" }}
       borderBottomWidth={simple ? 0 : 1}>
       {simple ? (
         <LeftSmallIconPanel>{renderSmallIcon(id, isFolder, name, contentType)}</LeftSmallIconPanel>

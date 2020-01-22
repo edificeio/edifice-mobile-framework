@@ -9,7 +9,7 @@ export interface IProps {
 
 // intent managment
 function withUploadWrapper<T extends IProps>(WrappedComponent: React.ComponentType<T>): React.ComponentType<T> {
-  return class extends React.Component<T> {
+  return class extends React.PureComponent<T> {
     contentUri = [
       {
         uri: "",
@@ -34,4 +34,4 @@ function withUploadWrapper<T extends IProps>(WrappedComponent: React.ComponentTy
 }
 
 export default (wrappedComponent: React.ComponentType<any>): React.ComponentType<any> =>
-  connect(null, { uploadAction })(withUploadWrapper(wrappedComponent));
+  withUploadWrapper(wrappedComponent);

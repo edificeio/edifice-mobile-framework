@@ -5,7 +5,7 @@ export interface IProps {
 }
 
 function withNavigationWrapper<T extends IProps>(WrappedComponent: React.ComponentType<T>): React.ComponentType<T> {
-  return class extends React.Component<T> {
+  return class extends React.PureComponent<T> {
     childRoute: any = null;
     childParams: any = null;
 

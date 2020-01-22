@@ -16,6 +16,8 @@ import withUploadWrapper from "../utils/withUploadWrapper";
 import withMenuWrapper from "../utils/withMenuWrapper";
 import withNavigationWrapper from "../utils/withNavigationWrapper";
 import { ISelectedProps } from "../../types/ievents";
+import { uploadAction } from "../actions/upload";
+import {nbItems} from "../utils";
 
 const styles = StyleSheet.create({
   separator: {
@@ -62,30 +64,29 @@ export class Items extends React.PureComponent<IItemsProps & ISelectedProps, { i
   }
 
   public render(): React.ReactNode {
-    const getViewToRender = ({ items, isFetching = false }: IItemsProps) => {
+    const getViewToRender = ({ items, isFetching = false, selectedItems }: IItemsProps & ISelectedProps) => {
       if (items === undefined) {
         return <Loading />;
-      } else {
-        const values = Object.values(items);
-        const parentId = this.props.navigation.getParam("parentId") || null;
-        const itemsArray = parentId === FilterId.root ? values : values.sort(this.sortItems);
-        const { selected } = this.props;
-
-        return (
-          <FlatList
-            contentContainerStyle={{ flexGrow: 1 }}
-            data={itemsArray}
-            ListEmptyComponent={getEmptyScreen(parentId)}
-            ItemSeparatorComponent={() => <View style={styles.separator} />}
-            keyExtractor={(item: IItem) => item.id}
-            refreshing={isFetching}
-            onRefresh={() => this.makeRequest()}
-            renderItem={({ item }) => (
-              <Item item={item} onEvent={this.props.onEvent} selected={selected[item.id]} simple={false} />
-            )}
-          />
-        );
       }
+
+      const values = Object.values(items);
+      const parentId = this.props.navigation.getParam("parentId") || null;
+      const itemsArray = parentId === FilterId.root ? values : values.sort(this.sortItems);
+
+      return (
+        <FlatList
+          contentContainerStyle={{ flexGrow: 1 }}
+          data={itemsArray}
+          ListEmptyComponent={getEmptyScreen(parentId)}
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
+          keyExtractor={(item: IItem) => item.id}
+          refreshing={isFetching}
+          onRefresh={() => this.makeRequest()}
+          renderItem={({ item }) => (
+            <Item item={item} onEvent={this.props.onEvent} selected={selectedItems[item.id]} simple={false} />
+          )}
+        />
+      );
     };
 
     return (
@@ -107,9 +108,13 @@ const getProps = (stateItems: IState, props: any) => {
 };
 
 const mapStateToProps = (state: any, props: any) => {
-  return { selected: state.workspace.selected, ...getProps(state.workspace.items, props) };
+  return {
+    selectedItems: state.workspace.selected,
+    nbSelectedItems: nbItems(state.workspace.selected),
+    ...getProps(state.workspace.items, props),
+  };
 };
 
-export default connect(mapStateToProps, { listAction })(
+export default connect(mapStateToProps, { listAction, uploadAction })(
   withMenuWrapper(withNavigationWrapper(withUploadWrapper(Items)))
 );

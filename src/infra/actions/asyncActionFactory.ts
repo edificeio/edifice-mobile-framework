@@ -3,32 +3,29 @@ import { fetchJSONWithCache, signedFetch } from "../fetchWithCache";
 import Conf from "../../../ode-framework-conf";
 import querystring from "querystring";
 import {ToastAndroid} from "react-native";
-import I18n from "i18n-js";
-import {listAction} from "../../workspace/actions/list";
-import {FilterId} from "../../workspace/types";
 
-export type IAdapterType = (receivedData: any) => any;
+export type IAdapterType = ( receivedData: any) => any;
 
 export function asyncActionFactory(
   type: string,
-  payload: any,
+  payload,
   asyncActionTypes: IAsyncActionTypes,
   adapter: IAdapterType | null,
   options,
 ) {
   return async (dispatch: any) => {
+    const { parentId, ...body} = payload;
     let json = null;
-    let { parentId, ...body} = payload;
 
     dispatch({ type: asyncActionTypes.requested, payload });
 
     try {
       if (options.method === "post" || options.method === "put") {
-        body = options.formData ? querystring.stringify(body) : JSON.stringify(body);
+        const formatedBody = options.formData ? querystring.stringify(body) : JSON.stringify(body);
         const response = await signedFetch(`${Conf.currentPlatform.url}${type}`, {
-          body,
+          body: formatedBody,
           headers: {
-            method: options.method? options.method : "get",
+            method: options.method,
             Accept: "application/json",
             "Content-Type": options.formData ? "application/x-www-form-urlencoded; charset=UTF-8" : "application/json",
           },
@@ -36,22 +33,16 @@ export function asyncActionFactory(
         });
         json = await response.json();
       } else {
-        json = await fetchJSONWithCache(type, {
-          method: "GET",
-          ...payload,
-        });
+        json = await fetchJSONWithCache(type);
       }
 
-      const data = adapter ? adapter(json) : json;
+      const data = adapter ? adapter( json) : json;
 
-      dispatch({ type: asyncActionTypes.received, data, receivedAt: Date.now(), payload }); // will be better to pass payload than id of payload
+      return dispatch({ type: asyncActionTypes.received, data, receivedAt: Date.now(), payload }); // will be better to pass payload than id of payload
 
-      if (options.refresh) {
-        dispatch(listAction( {parentId: payload.parentId, filter: FilterId.owner}));
-      }
     } catch (errmsg) {
       ToastAndroid.show('error', errmsg);
-      dispatch({ type: asyncActionTypes.fetchError, errmsg, payload });
+      return dispatch({ type: asyncActionTypes.fetchError, errmsg, payload });
     }
   };
 }

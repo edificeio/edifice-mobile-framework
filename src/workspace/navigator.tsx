@@ -1,21 +1,20 @@
 import { createStackNavigator } from "react-navigation-stack";
-import { Alert } from "react-native";
-import { NavigationScreenProp } from "react-navigation";
 import I18n from "i18n-js";
 import * as React from "react";
 import ContainerItems from "./containers/Items";
 import { Details } from "./containers/Details";
-import { ISelectedProps } from "../types/ievents";
+import { ISelectedParams } from "../types/ievents";
 import config from "./config";
 import { HeaderAction, HeaderIcon } from "../ui/headers/NewHeader";
 import { standardNavScreenOptions } from "../navigation/helpers/navScreenOptions";
-import { downloadFile, downloadFiles } from "../infra/actions/downloadHelper";
+import { downloadFiles } from "../infra/actions/downloadHelper";
 import { pickFile } from "./utils/pickFile";
 import { createFolderAction } from "./actions/create";
 import { renameAction } from "./actions/rename";
-import { copyAction, pastAction } from "./actions/copypast";
-import {deleteAction} from "./actions/delete";
-import {FilterId} from "./types";
+import { copyDocuments, cutDocuments, pastDocuments } from "./utils/copypast";
+import { deleteAction } from "./actions/delete";
+import { FilterId } from "./types";
+import { listAction } from "./actions/list";
 
 export default createStackNavigator(
   {
@@ -66,16 +65,13 @@ export default createStackNavigator(
                 text: "Copier",
                 icon: "content-copy",
                 id: "copy",
-                onEvent: ({ dispatch, navigation,selected }) => {
-                  dispatch(copyAction(selected))
-                  navigation.push("Workspace", { filter: FilterId.owner, parentId: FilterId.owner})
-                },
+                onEvent: params => copyDocuments(params),
               },
               {
                 text: "Download",
                 icon: "download",
                 id: "download",
-                onEvent: ({ selected }: ISelectedProps) => downloadFiles(selected),
+                onEvent: ({ selected }: ISelectedParams) => downloadFiles(selected),
               },
             ],
           },
@@ -105,7 +101,7 @@ export default createStackNavigator(
                   okLabel: "Modifier",
                 },
                 onEvent: ({ dispatch, parentId, selected, value }) =>
-                  dispatch(renameAction(value, selected[0], parentId)),
+                  dispatch(renameAction(value, selected, parentId)),
               },
               {
                 text: "Delete",
@@ -115,13 +111,23 @@ export default createStackNavigator(
                   title: "Vous etes sur le point de supprimer:",
                   okLabel: "Supprimer",
                 },
-                onEvent: ({ dispatch, parentId, selected }) => dispatch(deleteAction(dispatch, parentId, selected)),
+                onEvent: ({ dispatch, parentId, selected }) => dispatch(deleteAction(parentId, selected)),
               },
               {
                 text: "Copier",
                 icon: "content-copy",
                 id: "copy",
-                onEvent: ({ dispatch, selected }) => dispatch(copyAction(selected)),
+                onEvent: params => copyDocuments(params),
+              },
+              {
+                text: "Déplacer",
+                icon: "package-up",
+                id: "move",
+                writeAccess: true,
+                dialog: {
+                  title: "Déplacer documents",
+                },
+                onEvent: params => cutDocuments(params),
               },
               {
                 text: "Download",
@@ -131,13 +137,10 @@ export default createStackNavigator(
                   title: "Téléchargement documents:",
                   okLabel: "Télécharger",
                 },
-                onEvent: ({ selected }: ISelectedProps) => downloadFiles(selected),
+                onEvent: ({ selected }: ISelectedParams) => downloadFiles(selected),
               },
             ],
-          },
-          {
-            filter: "past",
-            items: [
+            past: [
               {
                 text: "Back",
                 icon: "chevron-left1",
@@ -151,13 +154,24 @@ export default createStackNavigator(
                 id: "separator",
               },
               {
+                text: "Créer dossier",
+                icon: "added_files",
+                id: "AddFolder",
+                dialog: {
+                  title: "Créer dossier:",
+                  input: true,
+                  okLabel: "Créer",
+                },
+                onEvent: ({ dispatch, parentId, value }) => dispatch(createFolderAction(value, parentId)),
+              },
+              {
                 text: "Coller",
                 icon: "content-copy",
                 id: "past",
                 dialog: {
-                  title: "Coller dans Documents personnel",
+                  title: "Coller",
                 },
-                onEvent: ({ dispatch, parentId, selected }) => dispatch(pastAction(parentId, selected)),
+                onEvent: params => pastDocuments(params),
               },
             ],
           },
@@ -173,7 +187,7 @@ export default createStackNavigator(
       filter: "root",
       parentId: "root",
     },
-    defaultNavigationOptions: ({ navigation }: { navigation: NavigationScreenProp<{}> }) =>
+    defaultNavigationOptions: ({ navigation }: { navigation: any }) =>
       standardNavScreenOptions(
         {
           title: navigation.getParam("title") || I18n.t(config.displayName),

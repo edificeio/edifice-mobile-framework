@@ -7,16 +7,42 @@ import RNFB from "rn-fetch-blob";
 import moment from "moment";
 import { Platform, ToastAndroid } from "react-native";
 import I18n from "i18n-js";
-import { IFile, ContentUri, IFolder } from "../../types";
+import { IFile, ContentUri, IFolder, IItem } from "../../types";
 import { filters } from "../../types/filters/helpers/filters";
 import Conf from "../../../../ode-framework-conf";
 import { OAuth2RessourceOwnerPasswordClient, getDummySignedRequest, getAuthHeader } from "../../../infra/oauth";
 import { progressAction, progressEndAction, progressInitAction } from "../../../infra/actions/progress";
 import { IRootItems } from "../../types/states/items";
-import { formatFolderResult, IBackendFolder } from "./folders";
-import { IId } from "../../../types";
 
-// TYPE -------------------------------------------------------------------------------------------
+export type IDocumentArray = Array<any>;
+
+// ADAPTER ----------------------------------------------------------------------------------------
+
+export const formatResults: (
+  data: IDocumentArray | IBackendDocument | IBackendFolder
+) => IRootItems<IFile | IFolder> = data => {
+  let result = {} as IRootItems<IFile | IFolder>;
+
+  if (data instanceof Array) {
+    if (!data) {
+      return result;
+    }
+    for (const item of data) {
+      result[item._id] = formatResult(item);
+    }
+    return result;
+  } else {
+    result[data._id] = formatResult(data);
+    return result;
+  }
+};
+
+function formatResult(item: IBackendDocument | IBackendFolder | any): IFile | IFolder {
+  if (item.metadata) return formatFileResult(item as IBackendDocument);
+  else return formatFolderResult(item as IBackendFolder);
+}
+
+// File TYPE -------------------------------------------------------------------------------------------
 
 export type IBackendDocument = {
   _id: string;
@@ -42,39 +68,10 @@ export type IBackendDocument = {
   thumbnails: { [id: string]: string };
 };
 
-
-export type IDocumentArray = Array<any>;
-
 // ADAPTER ----------------------------------------------------------------------------------------
 
-export const formatResults: (data: IDocumentArray | IBackendDocument | IBackendFolder) => IRootItems<IId> = data => {
-  let result = {} as IRootItems<IId>;
-
-  if (data instanceof Array) {
-    if (!data) {
-      return result;
-    }
-    for (const item of data) {
-      result[item._id] = formatResult(item);
-    }
-    return result;
-  } else {
-    result[data._id] = formatResult(data);
-    return result;
-  }
-};
-
-function formatResult(item: IBackendDocument | IBackendFolder | any): IFile | IFolder {
-  if (item.metadata) return formatFileResult(item as IBackendDocument);
-  else return formatFolderResult(item as IBackendFolder);
-}
-
 function formatFileResult(item: IBackendDocument): IFile {
-  const result = {} as IFile;
-
-  if (!item) {
-    return result;
-  }
+  if (!item || !item._id) return {} as IFile;
 
   return {
     contentType: item.metadata["content-type"],
@@ -89,6 +86,44 @@ function formatFileResult(item: IBackendDocument): IFile {
     ownerName: item.ownerName,
     size: item.metadata.size,
     url: `/workspace/document/${item._id}`,
+  };
+}
+
+// Folder TYPE -------------------------------------------------------------------------------------------
+
+export type IBackendFolder = {
+  _id: string;
+  created: string;
+  modified: string;
+  owner: string;
+  ownerName: string;
+  name: string;
+  application: string;
+  shared: [];
+  ancestors: [];
+  deleted: boolean;
+  eParent: string | null;
+  eType: string;
+  externalId: string;
+  inheritedShares: [];
+  parents: [];
+};
+
+// ADAPTER ----------------------------------------------------------------------------------------
+
+function formatFolderResult(item: IBackendFolder): IFolder {
+  if (!item || !item._id) return {} as IFolder;
+
+  return {
+    date: moment(item.modified, "YYYY-MM-DD HH:mm.ss.SSS")
+      .toDate()
+      .getTime(),
+    id: item._id,
+    isFolder: true,
+    name: item.name,
+    owner: filters(item.owner),
+    ownerName: item.ownerName,
+    number: 1,
   };
 }
 
@@ -128,7 +163,6 @@ export const uploadDocument = (dispatch: any, parentId: string, content: Content
       if (Platform.OS === "android") {
         ToastAndroid.show(I18n.t("workspace-uploadFailed"), ToastAndroid.SHORT);
       }
-      console.log("upload failed", err.message);
       dispatch(progressEndAction());
     });
 };

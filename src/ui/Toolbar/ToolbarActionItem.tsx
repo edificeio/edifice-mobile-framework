@@ -5,9 +5,9 @@ import { layoutSize } from "../../styles/common/layoutSize";
 import { Text } from "../text";
 import { Icon } from "..";
 
-const Item = ({ onEvent, item, nbSelected }: any) => {
-  const { icon, id, monoselection } = item;
-  const disable = monoselection && nbSelected !== 1;
+const Item = ({ onEvent, item, nbSelected, readonly }: any) => {
+  const { writeAccess, icon, id, monoselection } = item;
+  const disable = monoselection && nbSelected !== 1 || readonly && writeAccess;
 
   if (id === "nbSelected") {
     return (
@@ -23,7 +23,7 @@ const Item = ({ onEvent, item, nbSelected }: any) => {
     <TouchableOpacity
       style={styles.touchPanel}
       onPress={() => (disable ? null : onEvent({ type: EVENT_TYPE.MENU_SELECT, id: item.id, item }))}>
-      <Icon color={disable ? "#e2e2e2" : "#ffffff"} size={layoutSize.LAYOUT_24} name={icon} />
+      <Icon color={disable ? "#77777750" : "#ffffff"} size={layoutSize.LAYOUT_24} name={icon} />
     </TouchableOpacity>
   );
 };

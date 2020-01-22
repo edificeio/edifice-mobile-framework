@@ -26,8 +26,8 @@ export interface IItems<Item> {
   };
 }
 
-export interface IRootItems<Item> {
-  [key: string]: Item;
+export interface IRootItems<T> {
+  [key: string]: T;
 }
 
 export type IState = IRootItems<IItems<IItem>>;

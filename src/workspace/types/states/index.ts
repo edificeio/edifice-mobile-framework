@@ -1,3 +1,4 @@
 import { IItem, IItems, IFile, IFolder, IState } from "./items";
+import { ICopyPast } from "./copypast";
 
-export { IItem, IItems, IFile, IFolder, IState };
+export { ICopyPast, IItem, IItems, IFile, IFolder, IState };
