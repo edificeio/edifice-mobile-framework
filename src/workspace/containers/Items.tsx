@@ -17,7 +17,7 @@ import withMenuWrapper from "../utils/withMenuWrapper";
 import withNavigationWrapper from "../utils/withNavigationWrapper";
 import { ISelectedProps } from "../../types/ievents";
 import { uploadAction } from "../actions/upload";
-import {nbItems} from "../utils";
+import { nbItems } from "../utils";
 
 const styles = StyleSheet.create({
   separator: {
@@ -57,6 +57,10 @@ export class Items extends React.PureComponent<IItemsProps & ISelectedProps, { i
     };
 
     const sortByName = (a: IItem, b: IItem): number => {
+      if (!b.name)
+        return 1;
+      if (!a.name)
+        return -1;
       return removeAccents(a.name.toLocaleLowerCase()).localeCompare(removeAccents(b.name.toLocaleLowerCase()));
     };
 
@@ -65,12 +69,15 @@ export class Items extends React.PureComponent<IItemsProps & ISelectedProps, { i
 
   public render(): React.ReactNode {
     const getViewToRender = ({ items, isFetching = false, selectedItems }: IItemsProps & ISelectedProps) => {
-      if (items === undefined) {
+      if (isFetching) {
         return <Loading />;
       }
+      const parentId = this.props.navigation.getParam("parentId") || null;
+
+      if (!nbItems(items))
+        return getEmptyScreen(parentId);
 
       const values = Object.values(items);
-      const parentId = this.props.navigation.getParam("parentId") || null;
       const itemsArray = parentId === FilterId.root ? values : values.sort(this.sortItems);
 
       return (
@@ -101,10 +108,12 @@ export class Items extends React.PureComponent<IItemsProps & ISelectedProps, { i
 
 const getProps = (stateItems: IState, props: any) => {
   const parentId = props.navigation.getParam("parentId");
-  const parentIdItems = stateItems[parentId] || {};
-  const isFetching = parentIdItems.isFetching || false;
+  const parentIdItems = stateItems[parentId] || {
+    isFetching: false,
+    data: {}
+  };
 
-  return { isFetching, items: parentIdItems.data };
+  return { isFetching: parentIdItems.isFetching, items: parentIdItems.data };
 };
 
 const mapStateToProps = (state: any, props: any) => {

@@ -13,8 +13,6 @@ import { createFolderAction } from "./actions/create";
 import { renameAction } from "./actions/rename";
 import { copyDocuments, cutDocuments, pastDocuments } from "./utils/copypast";
 import { deleteAction } from "./actions/delete";
-import { FilterId } from "./types";
-import { listAction } from "./actions/list";
 
 export default createStackNavigator(
   {
@@ -100,8 +98,7 @@ export default createStackNavigator(
                   input: "name",
                   okLabel: "Modifier",
                 },
-                onEvent: ({ dispatch, parentId, selected, value }) =>
-                  dispatch(renameAction(value, selected, parentId)),
+                onEvent: ({ dispatch, parentId, selected, value }) => dispatch(renameAction(value, selected, parentId)),
               },
               {
                 text: "Delete",

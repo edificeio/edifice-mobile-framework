@@ -1,7 +1,7 @@
 import { IItem } from "./items";
-import { ISelectState } from "../../reducers/select";
+import { IItems } from "../../reducers/select";
 
 export type ICopyPast = {
-  selected: ISelectState<IItem> | { "empty": boolean};
+  selected: IItems<IItem> | { empty: boolean };
   cut: boolean;
 };

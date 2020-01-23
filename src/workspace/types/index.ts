@@ -8,7 +8,7 @@ import {
   INavigationProps,
   EVENT_TYPE,
 } from "./props";
-import { IItem, IItems, IFolder, IFile, IState } from "./states";
+import { IAsyncItems, IItem, IItems, IFolder, IFile, IState } from "./states";
 import { ContentUri } from "../../types/contentUri";
 
 export {
@@ -22,6 +22,7 @@ export {
   IActionProps,
   IEventProps,
   INavigationProps,
+  IAsyncItems,
   IItem,
   IItems,
   IFolder,

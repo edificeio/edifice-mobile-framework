@@ -19,15 +19,13 @@ export type IFolder = IItem & {
   number: number;
 };
 
-export interface IItems<Item> {
-  isFetching: boolean;
-  data: {
-    [key: string]: Item;
-  };
-}
-
-export interface IRootItems<T> {
+export interface IItems<T> {
   [key: string]: T;
 }
 
-export type IState = IRootItems<IItems<IItem>>;
+export interface IAsyncItems {
+  isFetching?: boolean;
+  data: IItems<IAsyncItems>;
+}
+
+export type IState = IAsyncItems;

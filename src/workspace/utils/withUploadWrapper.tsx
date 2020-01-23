@@ -1,6 +1,4 @@
 import * as React from "react";
-import { connect } from "react-redux";
-import { uploadAction } from "../actions/upload";
 
 export interface IProps {
   navigation: any;

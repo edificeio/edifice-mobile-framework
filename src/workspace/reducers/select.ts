@@ -10,13 +10,13 @@ import { actionTypesUpload } from "../actions/upload";
 import { actionTypesRename } from "../actions/rename";
 import { actionTypesPast } from "../actions/copypast";
 
-export type ISelectState<T> = {
+export type IItems<T> = {
   [key: string]: T;
 };
 
 const initialState = {};
 
-export default (state: ISelectState<IItem> | { empty: boolean} = initialState, action: IAction<IItem>) => {
+export default (state: IItems<IItem> = initialState, action: IAction<IItem>) => {
   switch (action.type) {
     case actionTypesDelete.received:
     case actionTypesPast.received:
@@ -24,19 +24,16 @@ export default (state: ISelectState<IItem> | { empty: boolean} = initialState, a
     case actionTypesRename.received:
       return {};
     case SELECT_ACTION_TYPE:
-      if (action.payload.id === "") {
-        return initialState;
-      }
-      if (state[action.payload.id]) {
-        delete state[action.payload.id];
+      if (state[action.data.id]) {
+        delete state[action.data.id];
         return { ...state };
       }
       return {
         ...state,
-        [action.payload.id]: action.payload,
+        [action.data.id]: action.data,
       };
     case SELECT_CLEAR_ACTION_TYPE:
-      return initialState
+      return initialState;
     default:
       return state;
   }

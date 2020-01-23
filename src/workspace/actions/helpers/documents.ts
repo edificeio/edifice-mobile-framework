@@ -7,33 +7,48 @@ import RNFB from "rn-fetch-blob";
 import moment from "moment";
 import { Platform, ToastAndroid } from "react-native";
 import I18n from "i18n-js";
-import { IFile, ContentUri, IFolder, IItem } from "../../types";
+import { IFile, ContentUri, IFolder, IItems, IItem } from "../../types";
 import { filters } from "../../types/filters/helpers/filters";
 import Conf from "../../../../ode-framework-conf";
 import { OAuth2RessourceOwnerPasswordClient, getDummySignedRequest, getAuthHeader } from "../../../infra/oauth";
 import { progressAction, progressEndAction, progressInitAction } from "../../../infra/actions/progress";
-import { IRootItems } from "../../types/states/items";
 
 export type IDocumentArray = Array<any>;
 
 // ADAPTER ----------------------------------------------------------------------------------------
 
+function checkAncestorsAndFormat(result, item, parentId) {
+  const { eParent } = item;
+
+  if (typeof item === "string") {
+    result[item as string] = item;
+    return result;
+  }
+
+  if (!parentId || eParent === parentId) {
+    result[item._id] = formatResult(item);
+    return result;
+  }
+
+  return result;
+}
+
 export const formatResults: (
-  data: IDocumentArray | IBackendDocument | IBackendFolder
-) => IRootItems<IFile | IFolder> = data => {
-  let result = {} as IRootItems<IFile | IFolder>;
+  data: IDocumentArray | IBackendDocument | IBackendFolder | string[],
+  parentId?: string
+) => IItems<IItem | string> = (data, parentId) => {
+  let result = {} as IItems<IFile | IFolder | string>;
 
   if (data instanceof Array) {
     if (!data) {
       return result;
     }
     for (const item of data) {
-      result[item._id] = formatResult(item);
+      result = checkAncestorsAndFormat(result, item, parentId);
     }
     return result;
   } else {
-    result[data._id] = formatResult(data);
-    return result;
+    return checkAncestorsAndFormat(result, data, parentId);
   }
 };
 
@@ -159,7 +174,7 @@ export const uploadDocument = (dispatch: any, parentId: string, content: Content
         onEnd(response);
       }, 500);
     })
-    .catch(err => {
+    .catch(() => {
       if (Platform.OS === "android") {
         ToastAndroid.show(I18n.t("workspace-uploadFailed"), ToastAndroid.SHORT);
       }

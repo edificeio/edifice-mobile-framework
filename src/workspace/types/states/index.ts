@@ -1,4 +1,4 @@
-import { IItem, IItems, IFile, IFolder, IState } from "./items";
+import { IAsyncItems, IItem, IFile, IFolder, IItems, IState } from "./items";
 import { ICopyPast } from "./copypast";
 
-export { ICopyPast, IItem, IItems, IFile, IFolder, IState };
+export { IAsyncItems, ICopyPast, IItem, IFile, IFolder, IItems, IState };

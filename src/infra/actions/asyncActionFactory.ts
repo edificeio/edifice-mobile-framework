@@ -4,7 +4,7 @@ import Conf from "../../../ode-framework-conf";
 import querystring from "querystring";
 import {ToastAndroid} from "react-native";
 
-export type IAdapterType = ( receivedData: any) => any;
+export type IAdapterType = ( receivedData: any, parentId?: string) => any;
 
 export function asyncActionFactory(
   type: string,
@@ -36,7 +36,7 @@ export function asyncActionFactory(
         json = await fetchJSONWithCache(type);
       }
 
-      const data = adapter ? adapter( json) : json;
+      const data = adapter ? adapter( json, parentId) : json;
 
       return dispatch({ type: asyncActionTypes.received, data, receivedAt: Date.now(), payload }); // will be better to pass payload than id of payload
 

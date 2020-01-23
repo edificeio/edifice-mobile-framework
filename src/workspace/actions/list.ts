@@ -8,7 +8,6 @@ import config from "../config";
 import { FilterId, IFiltersParameters, IFolder, IItems } from "../types";
 import { formatResults } from "./helpers/documents";
 import { asyncActionRawFactory } from "../../infra/actions/asyncActionFactory";
-import { IRootItems } from "../types/states/items";
 import { IId } from "../../types";
 import { factoryRootFolder } from "./helpers/factoryRootFolder";
 
@@ -36,6 +35,27 @@ export function listAction(payload: IFiltersParameters) {
   });
 }
 
+// GET -----------------------------------------------------------------------------------------
+
+export function getDocuments(parameters: IFiltersParameters): Promise<IItems<IId | string>> {
+  return asyncGetJson(`/workspace/documents${formatParameters(parameters)}`, formatResults);
+}
+
+export function getFolders(parameters: IFiltersParameters): Promise<IItems<IId | string>> {
+  return asyncGetJson(`/workspace/folders/list${formatParameters(parameters)}`, formatResults);
+}
+
+const getRootFolders: () => IItems<IFolder> = () => {
+  const result = {} as IItems<IFolder>;
+
+  result[FilterId.owner] = factoryRootFolder(FilterId.owner);
+  result[FilterId.protected] = factoryRootFolder(FilterId.protected);
+  result[FilterId.shared] = factoryRootFolder(FilterId.shared);
+  result[FilterId.trash] = factoryRootFolder(FilterId.trash);
+
+  return result;
+};
+
 const formatParameters = (parameters = {}) => {
   let result = "?";
 
@@ -51,25 +71,4 @@ const formatParameters = (parameters = {}) => {
     result = result.concat(`${key}=${(parameters as any)[key]}&`);
   }
   return result.slice(0, -1);
-};
-
-// GET -----------------------------------------------------------------------------------------
-
-export function getDocuments(parameters: IFiltersParameters): Promise<IRootItems<IId>> {
-  return asyncGetJson(`/workspace/documents${formatParameters(parameters)}`, formatResults);
-}
-
-export function getFolders(parameters: IFiltersParameters): Promise<IRootItems<IId>> {
-  return asyncGetJson(`/workspace/folders/list${formatParameters(parameters)}`, formatResults);
-}
-
-const getRootFolders: () => IItems<IFolder> = () => {
-  const result = {} as IItems<IFolder>;
-
-  result[FilterId.owner] = factoryRootFolder(FilterId.owner);
-  result[FilterId.protected] = factoryRootFolder(FilterId.protected);
-  result[FilterId.shared] = factoryRootFolder(FilterId.shared);
-  result[FilterId.trash] = factoryRootFolder(FilterId.trash);
-
-  return result;
 };

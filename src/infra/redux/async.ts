@@ -28,7 +28,7 @@ import { Reducer } from "redux";
 export interface IAction<T> {
   type: string;
   receivedAt?: Date;
-  data?: T;
+  data: T;
   payload?: any;
 }
 

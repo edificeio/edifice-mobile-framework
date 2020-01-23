@@ -1,6 +1,6 @@
 import { IFiltersParameters } from "../filters";
-import { ContentUri, IItem } from "..";
 import { IId } from "../../../types";
+import { ContentUri, IItem } from "..";
 
 export interface IActionProps {
   deleteAction: (parentId: string, selected: Array<IId>) => void;

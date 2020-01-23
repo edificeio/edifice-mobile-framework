@@ -10,16 +10,16 @@ import { ToolbarAction } from "../../ui/Toolbar";
 import { ConfirmDialog } from "../../ui/ConfirmDialog";
 import { IItem } from "../types";
 import { copyClearAction } from "../actions/copypast";
-import { ISelectState } from "../reducers/select";
-import { getFirstItem, isEmpty, nbItems } from "./index";
+import { IItems } from "../reducers/select";
+import { nbItems } from "./index";
 
 export interface IProps {
   dispatch: any;
   navigation: any;
-  clipboardItems: ISelectState<IItem>;
+  clipboardItems: IItems<IItem>;
   nbClipboardItems: number;
   nbSelectedItems: number;
-  selectedItems: ISelectState<IItem>;
+  selectedItems: IItems<IItem>;
   selectAction: Function;
   cut: boolean;
 }
@@ -56,7 +56,15 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
     }
 
     public handleEvent({ type, item }: IEvent) {
-      const { dispatch, navigation, clipboardItems, cut, nbClipboardItems, nbSelectedItems, selectedItems } = this.props;
+      const {
+        dispatch,
+        navigation,
+        clipboardItems,
+        cut,
+        nbClipboardItems,
+        nbSelectedItems,
+        selectedItems,
+      } = this.props;
 
       switch (type) {
         case EVENT_TYPE.SELECT:
@@ -106,13 +114,21 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
     }
 
     render() {
-      const { dispatch, cut, navigation, clipboardItems, nbClipboardItems, nbSelectedItems, selectedItems, ...rest } = this.props;
+      const {
+        dispatch,
+        cut,
+        navigation,
+        clipboardItems,
+        nbClipboardItems,
+        nbSelectedItems,
+        selectedItems,
+        ...rest
+      } = this.props;
       const parentId = navigation.getParam("parentId");
       const popupMenuItems = this.getMenuItems("popupItems");
       const toolbarItems = this.getMenuItems("toolbarItems");
       const { dialogVisible, selectedMenuItem } = this.state;
       const nbItems = nbClipboardItems || nbSelectedItems;
-      const items = clipboardItems || selectedItems;
 
       return (
         <View style={{ flex: 1 }}>
@@ -123,16 +139,12 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
             navigation={navigation}
             onEvent={this.handleEvent.bind(this)}
           />
-          <FloatingAction
-            menuItems={popupMenuItems}
-            onEvent={this.handleEvent.bind(this)}
-            nbSelected={nbItems}
-          />
+          <FloatingAction menuItems={popupMenuItems} onEvent={this.handleEvent.bind(this)} nbSelected={nbItems} />
           <ToolbarAction menuItems={toolbarItems} onEvent={this.handleEvent.bind(this)} nbSelected={nbItems} />
           {dialogVisible && (
             <ConfirmDialog
               {...selectedMenuItem.dialog}
-              selected={Object.values( selectedMenuItem.id === "past" ? clipboardItems : selectedItems)}
+              selected={Object.values(selectedMenuItem.id === "past" ? clipboardItems : selectedItems)}
               visible={this.state.dialogVisible}
               onValid={(param: IEvent) => {
                 this.setState({ dialogVisible: false });
@@ -141,7 +153,7 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
                   navigation,
                   parentId,
                   cut,
-                  selected: selectedMenuItem.id === "past" ? clipboardItems : selectedItems,
+                  selected: nbClipboardItems ? clipboardItems : selectedItems,
                   ...param,
                 });
               }}
