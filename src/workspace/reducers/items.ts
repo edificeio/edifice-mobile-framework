@@ -13,11 +13,11 @@ import { actionTypesUpload } from "../actions/upload";
 import { actionTypesDelete } from "../actions/delete";
 
 const stateDefault: IState = {
-  isFetching: true,
+  isFetching: false,
   data: {},
 };
 
-export default (state: IState = stateDefault, action: IAction<IItems<IItem>>) => {
+export default (state: IState = stateDefault, action: IAction<IItems<IItem | string>>) => {
   switch (action.type) {
     case actionTypesDelete.fetchError:
     case actionTypesDelete.requested:
@@ -48,32 +48,35 @@ export default (state: IState = stateDefault, action: IAction<IItems<IItem>>) =>
   }
 };
 
-function pushData(state: IState, action: IAction<IItems<IItem>>, actionTypes) {
+function pushData(state: IState, action: IAction<IItems<IItem | string>>, actionTypes) {
   return {
-    ...state,
-    [action.payload.parentId]: asyncReducer<IItems<IItem>>(node, actionTypes)(
-      state[action.payload.parentId] || {},
-      action
-    ),
+    isFetching: false,
+    data: {
+      ...state.data,
+      [action.payload.parentId]: asyncReducer<IItems<IItem>>(node, actionTypes)(
+        state.data[action.payload.parentId],
+        action
+      ),
+    },
   };
 }
 
-const node = (state: IItems<IItem>, action: IAction<IItems<IItem | string>>): IItems<IItem> => {
+const node = (data: IItems<IItem> = {}, action: IAction<IItems<IItem | string>>): IItems<IItem> => {
   switch (action.type) {
     case actionTypesDelete.received:
-      for (const id in action.data as IItems<string>) delete state[id];
-      return { ...state };
+      for (const id in action.data as IItems<string>) delete data[id];
+      return { ...data };
     case actionTypesUpload.received:
     case actionTypesRename.received:
     case actionTypesPast.received:
     case actionTypesCreateFolder.received:
       return {
-        ...state,
+        ...data,
         ...(action.data as IItems<IItem>),
       };
     case actionTypesList.received:
       return action.data as IItems<IItem>;
     default:
-      return state;
+      return data;
   }
 };

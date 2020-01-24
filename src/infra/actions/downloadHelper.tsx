@@ -1,16 +1,16 @@
-import {PermissionsAndroid, Platform} from "react-native";
+import { PermissionsAndroid, Platform } from "react-native";
 import Mime from "mime";
 import Permissions from "react-native-permissions";
-import RNFetchBlob, {FetchBlobResponse} from "rn-fetch-blob";
+import RNFetchBlob, { FetchBlobResponse } from "rn-fetch-blob";
 import Conf from "../../../ode-framework-conf";
 import { getAuthHeader } from "../oauth";
 import { IFile } from "../../workspace/types";
 
-export const downloadFiles = async (downloadable: Array<IFile>, withManager = true) => {
-  downloadable.map( document => downloadFile( document, withManager));
+export const downloadFiles = (downloadable: Array<IFile>, withManager = true) => {
+  downloadable.map(document => startDownload(document, withManager));
 };
 
-export const downloadFile = async (downloadable: IFile, withManager = true) => {
+export const downloadFile = (downloadable: IFile, withManager = true) => {
   if (Platform.OS === "ios") {
     startDownload(downloadable, withManager).then(res => openDownloadedFile(res.path()));
   } else {
@@ -19,21 +19,22 @@ export const downloadFile = async (downloadable: IFile, withManager = true) => {
 };
 
 export const startDownload = async (downloadable: IFile, withManager = true): Promise<FetchBlobResponse> => {
-  let path = await getDirName() + '/' + downloadable.filename;
+  let path = (await getDirName()) + "/" + downloadable.filename;
 
-  const config = Platform.OS === "android"
-  ? {
-      addAndroidDownloads: {
-        useDownloadManager: true,
-        notification: withManager,
-        mediaScannable: true,
-        path
-      }
-    }
-  : {
-      path,
-      appendExt: getExtension(downloadable.filename)
-    };
+  const config =
+    Platform.OS === "android"
+      ? {
+          addAndroidDownloads: {
+            useDownloadManager: true,
+            notification: withManager,
+            mediaScannable: true,
+            path,
+          },
+        }
+      : {
+          path,
+          appendExt: getExtension(downloadable.filename),
+        };
 
   return RNFetchBlob.config(config).fetch(
     "GET",
@@ -43,7 +44,7 @@ export const startDownload = async (downloadable: IFile, withManager = true): Pr
 };
 
 export const openPreview = async (downloadable: IFile) => {
-  const res = await downloadOnCache( downloadable)
+  const res = await downloadOnCache(downloadable);
 
   openDownloadedFile(res.path());
 };
@@ -56,16 +57,13 @@ export const downloadOnCache = async (downloadable: IFile): Promise<FetchBlobRes
 };
 
 export const openDownloadedFile = (filepath: string): void => {
-  if (Platform.OS === "ios")
-    RNFetchBlob.ios.openDocument(filepath);
+  if (Platform.OS === "ios") RNFetchBlob.ios.openDocument(filepath);
   else if (Platform.OS === "android") {
-    RNFetchBlob.android.actionViewIntent(filepath, Mime.getType(filepath) || 'text/html');
-  }
-  else
-    console.warn("Cannot handle file for devices other than ios/android.");
+    RNFetchBlob.android.actionViewIntent(filepath, Mime.getType(filepath) || "text/html");
+  } else console.warn("Cannot handle file for devices other than ios/android.");
 };
 
-export const getDirName = async () : Promise<string> => {
+export const getDirName = async (): Promise<string> => {
   if (Platform.OS === "android") {
     await Permissions.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE);
     return RNFetchBlob.fs.dirs.DownloadDir;
@@ -76,6 +74,6 @@ export const getDirName = async () : Promise<string> => {
   return "";
 };
 
-const getExtension = ( filename: string) : string => {
-  return filename.substr(filename.lastIndexOf(".") + 1)
+const getExtension = (filename: string): string => {
+  return filename.substr(filename.lastIndexOf(".") + 1);
 };

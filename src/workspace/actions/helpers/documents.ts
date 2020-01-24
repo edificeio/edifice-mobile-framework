@@ -25,7 +25,7 @@ function checkAncestorsAndFormat(result, item, parentId) {
     return result;
   }
 
-  if (!parentId || eParent === parentId) {
+  if (!parentId || eParent === parentId || (!eParent && parentId === "owner")) {
     result[item._id] = formatResult(item);
     return result;
   }
@@ -43,9 +43,7 @@ export const formatResults: (
     if (!data) {
       return result;
     }
-    for (const item of data) {
-      result = checkAncestorsAndFormat(result, item, parentId);
-    }
+    (data as Array<any>).map(item => (result = checkAncestorsAndFormat(result, item, parentId)));
     return result;
   } else {
     return checkAncestorsAndFormat(result, data, parentId);
@@ -93,7 +91,7 @@ function formatFileResult(item: IBackendDocument): IFile {
     date: moment(item.modified, "YYYY-MM-DD HH:mm.ss.SSS")
       .toDate()
       .getTime(),
-    filename: item.metadata.filename,
+    filename: item.name,
     id: item._id,
     isFolder: false,
     name: item.name,

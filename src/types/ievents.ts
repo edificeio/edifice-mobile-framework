@@ -1,7 +1,6 @@
 import { IId } from "./iid";
 import { IFile, IItem } from "../workspace/types";
-import {IRight} from "../workspace/types/states/right";
-import {ISelectState} from "../workspace/reducers/select";
+import {IItems} from "../workspace/reducers/select";
 
 export enum EVENT_TYPE {
   DOWNLOAD,
@@ -23,12 +22,12 @@ export interface IEventProps {
 
 export interface ISelectedParams {
   item: IFile;
-  selected: Array<IFile>;
+  selected: IItems<IItem>;
   value: any;
   navigation: any;
 }
 
 export interface ISelectedProps {
-  selectedItems: ISelectState<IItem>;
+  selectedItems: IItems<IItem>;
   nbSelectedItems: number;
 }

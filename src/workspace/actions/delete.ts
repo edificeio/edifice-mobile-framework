@@ -3,7 +3,7 @@ import config from "../config";
 import { asyncActionFactory } from "../../infra/actions/asyncActionFactory";
 import { IItems } from "../reducers/select";
 import { IItem } from "../types/states";
-import {formatResults} from "./helpers/documents";
+import { formatResults } from "./helpers/documents";
 
 const WORKSPACE_DELETE = "/workspace/documents/trash";
 

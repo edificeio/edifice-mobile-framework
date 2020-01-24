@@ -9,6 +9,7 @@ import { actionTypesDelete } from "../actions/delete";
 import { actionTypesUpload } from "../actions/upload";
 import { actionTypesRename } from "../actions/rename";
 import { actionTypesPast } from "../actions/copypast";
+import {actionTypesDownload} from "../actions/download";
 
 export type IItems<T> = {
   [key: string]: T;
@@ -18,6 +19,7 @@ const initialState = {};
 
 export default (state: IItems<IItem> = initialState, action: IAction<IItem>) => {
   switch (action.type) {
+    case actionTypesDownload.received:
     case actionTypesDelete.received:
     case actionTypesPast.received:
     case actionTypesUpload.received:

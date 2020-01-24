@@ -3,16 +3,15 @@ import I18n from "i18n-js";
 import * as React from "react";
 import ContainerItems from "./containers/Items";
 import { Details } from "./containers/Details";
-import { ISelectedParams } from "../types/ievents";
 import config from "./config";
 import { HeaderAction, HeaderIcon } from "../ui/headers/NewHeader";
 import { standardNavScreenOptions } from "../navigation/helpers/navScreenOptions";
-import { downloadFiles } from "../infra/actions/downloadHelper";
 import { pickFile } from "./utils/pickFile";
 import { createFolderAction } from "./actions/create";
 import { renameAction } from "./actions/rename";
 import { copyDocuments, cutDocuments, pastDocuments } from "./utils/copypast";
 import { deleteAction } from "./actions/delete";
+import {downloadAction} from "./actions/download";
 
 export default createStackNavigator(
   {
@@ -63,13 +62,20 @@ export default createStackNavigator(
                 text: "Copier",
                 icon: "content-copy",
                 id: "copy",
+                dialog: {
+                  title: "Copier documents",
+                },
                 onEvent: params => copyDocuments(params),
               },
               {
                 text: "Download",
                 icon: "download",
                 id: "download",
-                onEvent: ({ selected }: ISelectedParams) => downloadFiles(selected),
+                dialog: {
+                  title: "Téléchargement documents:",
+                  okLabel: "Télécharger",
+                },
+                onEvent: ({ dispatch, parentId, selected }) => dispatch(downloadAction(parentId, selected)),
               },
             ],
           },
@@ -114,6 +120,9 @@ export default createStackNavigator(
                 text: "Copier",
                 icon: "content-copy",
                 id: "copy",
+                dialog: {
+                  title: "Copier documents",
+                },
                 onEvent: params => copyDocuments(params),
               },
               {
@@ -134,7 +143,7 @@ export default createStackNavigator(
                   title: "Téléchargement documents:",
                   okLabel: "Télécharger",
                 },
-                onEvent: ({ selected }: ISelectedParams) => downloadFiles(selected),
+                onEvent: ({ dispatch, parentId, selected }) => dispatch(downloadAction(parentId, selected)),
               },
             ],
             past: [
@@ -165,9 +174,6 @@ export default createStackNavigator(
                 text: "Coller",
                 icon: "content-copy",
                 id: "past",
-                dialog: {
-                  title: "Coller",
-                },
                 onEvent: params => pastDocuments(params),
               },
             ],
