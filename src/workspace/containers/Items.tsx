@@ -16,7 +16,6 @@ import withUploadWrapper from "../utils/withUploadWrapper";
 import withMenuWrapper from "../utils/withMenuWrapper";
 import withNavigationWrapper from "../utils/withNavigationWrapper";
 import { ISelectedProps } from "../../types/ievents";
-import { uploadAction } from "../actions/upload";
 import { nbItems } from "../utils";
 
 const styles = StyleSheet.create({
@@ -117,6 +116,6 @@ const mapStateToProps = (state: any, props: any) => {
   };
 };
 
-export default connect(mapStateToProps, { listAction, uploadAction })(
+export default connect(mapStateToProps, { listAction })(
   withMenuWrapper(withNavigationWrapper(withUploadWrapper(Items)))
 );

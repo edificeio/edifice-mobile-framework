@@ -1,7 +1,7 @@
 import { NavigationActions } from "react-navigation";
 
 import { rootNavigatorRef } from "../../AppScreen";
-import { CurrentMainNavigationContainerComponent } from "../RootNavigator";
+import NavigationService from "../NavigationService";
 
 /**
  * Use the Root Navigator to go on another page.
@@ -21,6 +21,5 @@ export const navigate = (route, params = {}) => {
  * @param params additional parameters ot pass to navigation state
  */
 export const mainNavNavigate = (route, params = {}) => {
-  // console.log("mainNavNavigate", route);
-  return CurrentMainNavigationContainerComponent.dispatch(NavigationActions.navigate({ routeName: route, params }));
+  return NavigationService.navigate(route, params);
 };

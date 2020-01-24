@@ -1,27 +1,36 @@
 import * as React from "react";
+import { nbItems } from "./index";
+import { connect } from "react-redux";
+import { setInOwnerWorkspace } from "../../navigation/NavigationService";
+import { contentUriAction } from "../actions/contentUri";
+import { uploadAction } from "../actions/upload";
 
 export interface IProps {
   navigation: any;
   uploadAction: any;
+  contentUri: any;
+  dispatch: any;
 }
 
 // intent managment
 function withUploadWrapper<T extends IProps>(WrappedComponent: React.ComponentType<T>): React.ComponentType<T> {
   return class extends React.PureComponent<T> {
-    contentUri = [
-      {
-        uri: "",
-      },
-    ];
 
     componentDidUpdate(): void {
-      const { navigation } = this.props;
-      const contentUri: any = navigation.getParam("contentUri");
+      const { navigation, dispatch } = this.props;
+      const filterId = navigation.getParam("filter");
+      const parentId = navigation.getParam("parentId");
 
-      if (contentUri && contentUri[0].uri !== this.contentUri[0].uri) {
-        this.contentUri = contentUri;
-        navigation.setParams({ contentUri: undefined });
-        this.props.uploadAction("owner", contentUri);
+      // signal we are in owner workspace
+      setInOwnerWorkspace(filterId === "owner");
+
+      if (filterId === "owner") {
+        const {contentUri} = this.props;
+
+        if (contentUri && contentUri.length) {
+          dispatch(contentUriAction(null));
+          dispatch(uploadAction(parentId, contentUri));
+        }
       }
     }
 
@@ -31,5 +40,11 @@ function withUploadWrapper<T extends IProps>(WrappedComponent: React.ComponentTy
   };
 }
 
+const mapStateToProps = (state: any) => {
+  return {
+    contentUri: state.workspace.contentUri,
+  };
+};
+
 export default (wrappedComponent: React.ComponentType<any>): React.ComponentType<any> =>
-  withUploadWrapper(wrappedComponent);
+  connect(mapStateToProps, null)(withUploadWrapper(wrappedComponent));

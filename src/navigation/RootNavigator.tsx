@@ -22,6 +22,7 @@ import { createMainTabNavigator, createMainTabNavOption } from "./helpers/mainTa
 import { getRoutes, getModules } from "./helpers/navBuilder";
 import LoginNavigator from "./LoginNavigator";
 import withLinkingAppWrapper from "../infra/wrapper/withLinkingAppWrapper";
+import NavigationService from "./NavigationService";
 
 /**
  * MAIN NAVIGATOR
@@ -60,12 +61,6 @@ function getMainNavContainer(appsInfo: any[]) {
   const navigator = getMainNavigator(appsInfo);
   return createAppContainer(navigator);
 }
-
-/**
- * This holds a global reference to the active Main navigator container.
- * => It's a component so it needs to be capitalized.
- */
-export let CurrentMainNavigationContainerComponent: NavigationContainerComponent;
 
 interface MainNavigatorHOCProps {
   appsInfo: any[];
@@ -119,7 +114,7 @@ class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
             });
         }}
         ref={nav => {
-          CurrentMainNavigationContainerComponent = nav!;
+          NavigationService.setTopLevelNavigator(nav);
         }}
       />
     );
@@ -144,7 +139,7 @@ const mapStateToProps = ({ user }) => ({
   notification: user.auth.notification,
 });
 
-export const MainNavigator = connect(mapStateToProps)(withLinkingAppWrapper(MainNavigatorHOC));
+export const MainNavigator = connect(mapStateToProps, null)(withLinkingAppWrapper(MainNavigatorHOC));
 
 /**
  * ROOT NAVIGATOR

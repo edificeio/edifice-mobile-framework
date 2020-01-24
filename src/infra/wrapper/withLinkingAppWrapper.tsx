@@ -5,8 +5,11 @@ import I18n from "i18n-js";
 import { mainNavNavigate } from "../../navigation/helpers/navHelper";
 import { FilterId } from "../../workspace/types/filters";
 import { ContentUri } from "../../types/contentUri";
+import {contentUriAction} from "../../workspace/actions/contentUri";
+import {isInOwnerWorkspace} from "../../navigation/NavigationService";
 
 export interface IProps {
+  dispatch: any,
 }
 
 export default function withLinkingAppWrapper<T extends IProps>(
@@ -30,19 +33,22 @@ export default function withLinkingAppWrapper<T extends IProps>(
     }
 
     private navigate(contentUri: ContentUri) {
-      mainNavNavigate("Workspace", {
-        contentUri: null,
-        filter: FilterId.root,
-        parentId: FilterId.root,
-        title: I18n.t("workspace"),
-        childRoute: "Workspace",
-        childParams: {
-          parentId: "owner",
-          filter: FilterId.owner,
-          title: I18n.t("owner"),
-          contentUri: [contentUri],
-        },
-      });
+      this.props.dispatch( contentUriAction(contentUri instanceof Array ? contentUri :  [contentUri]))
+      RNFileShareIntent.clearFilePath();
+
+      // check to see if already in workspace
+      if (!isInOwnerWorkspace())
+        mainNavNavigate("Workspace", {
+          filter: FilterId.root,
+          parentId: FilterId.root,
+          title: I18n.t("workspace"),
+          childRoute: "Workspace",
+          childParams: {
+            parentId: "owner",
+            filter: FilterId.owner,
+            title: I18n.t("owner"),
+          },
+        });
     }
 
     public componentWillUnmount(): void {

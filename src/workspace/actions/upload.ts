@@ -4,6 +4,7 @@ import { asyncActionTypes } from "../../infra/redux/async";
 import config from "../config";
 import { formatResults, uploadDocument } from "./helpers/documents";
 import { ContentUri } from "../types";
+import {COPY_CLEAR_ACTION_TYPE} from "./copypast";
 
 // ACTION UPLOAD ------------------------------------------------------------------------------------
 
