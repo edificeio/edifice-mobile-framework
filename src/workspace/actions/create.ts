@@ -15,7 +15,7 @@ export const actionTypesCreateFolder = asyncActionTypes(config.createActionType(
  *
  * response format: {"name":"fff","application":"media-library","shared":[],""_id: ....}
  */
-export function createFolderAction(name, parentId) {
+export function createFolderAction(parentId, name) {
   return asyncActionFactory(
     WORKSPACE_FOLDER,
     parentId === "owner" ? { name, parentId } : { name, parentId, parentFolderId: parentId },

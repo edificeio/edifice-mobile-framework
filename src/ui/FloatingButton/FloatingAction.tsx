@@ -4,11 +4,11 @@ import FloatingActionItem from "./FloatingActionItem";
 import { layoutSize } from "../../styles/common/layoutSize";
 import { CommonStyles } from "../../styles/common/styles";
 import { IFloatingProps, IMenuItem } from "../types";
-import { INbSelected } from "../Toolbar/Toolbar";
+import { ISelected } from "../Toolbar/Toolbar";
 import TouchableOpacity from "../CustomTouchableOpacity";
 import { ButtonIconText } from "..";
 
-class FloatingAction extends Component<IFloatingProps & INbSelected, IState> {
+class FloatingAction extends Component<IFloatingProps & ISelected, IState> {
   state = {
     active: false,
   };
@@ -90,9 +90,9 @@ class FloatingAction extends Component<IFloatingProps & INbSelected, IState> {
   }
 
   render() {
-    const { nbSelected } = this.props;
+    const { selected } = this.props;
 
-    if (nbSelected) {
+    if (selected.length) {
       return null;
     }
 

@@ -5,15 +5,18 @@ import { layoutSize } from "../../styles/common/layoutSize";
 import { Text } from "../text";
 import { Icon } from "..";
 
-const Item = ({ onEvent, item, nbSelected, readonly }: any) => {
-  const { writeAccess, icon, id, monoselection } = item;
-  const disable = monoselection && nbSelected !== 1 || readonly && writeAccess;
+const Item = ({ onEvent, item, selected, readonly }: any) => {
+  const { writeAccess, icon, id, options = {} } = item;
+  let disable = options.monoselection && selected.length !== 1 || readonly && writeAccess;
+  const isFolder = selected.filter( item => item.isFolder);
+
+  disable = disable || (isFolder.length && options.onlyFiles)
 
   if (id === "nbSelected") {
     return (
       <View style={styles.nbSelected}>
         <Text numberOfLines={1} style={styles.text}>
-          {nbSelected}
+          {selected.length}
         </Text>
       </View>
     );

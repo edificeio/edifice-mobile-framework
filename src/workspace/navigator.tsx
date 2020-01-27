@@ -37,7 +37,7 @@ export default createStackNavigator(
                   input: true,
                   okLabel: "Créer",
                 },
-                onEvent: ({ dispatch, parentId, value }) => dispatch(createFolderAction(value, parentId)),
+                onEvent: ({ dispatch, parentId, value }) => dispatch(createFolderAction(parentId, value)),
               },
             ],
           },
@@ -71,6 +71,7 @@ export default createStackNavigator(
                 text: "Download",
                 icon: "download",
                 id: "download",
+                options: { onlyFiles: true},
                 dialog: {
                   title: "Téléchargement documents:",
                   okLabel: "Télécharger",
@@ -98,13 +99,13 @@ export default createStackNavigator(
                 text: "Editer",
                 icon: "pencil",
                 id: "edit",
-                monoselection: true,
+                options: { monoselection: true},
                 dialog: {
                   title: "Renommer:",
                   input: "name",
                   okLabel: "Modifier",
                 },
-                onEvent: ({ dispatch, parentId, selected, value }) => dispatch(renameAction(value, selected, parentId)),
+                onEvent: ({ dispatch, parentId, selected, value }) => dispatch(renameAction(parentId, selected, value)),
               },
               {
                 text: "Delete",
@@ -139,6 +140,7 @@ export default createStackNavigator(
                 text: "Download",
                 icon: "download",
                 id: "download",
+                options: { onlyFiles: true},
                 dialog: {
                   title: "Téléchargement documents:",
                   okLabel: "Télécharger",

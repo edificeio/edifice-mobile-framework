@@ -1,14 +1,14 @@
 import { EVENT_TYPE, IId, IEventProps } from "../../types";
 
 import { IEvent } from "../../types/ievents";
-import {IFile, IItem} from "../../workspace/types/states";
-import {ISelectState} from "../../workspace/reducers/select";
+import {IItems} from "../../workspace/reducers/select";
+import {IItem} from "../../workspace/types/states";
 
 type IMenuEvent = {
   cut?: boolean,
   dispatch: any;
   navigation: any;
-  selected: ISelectState<IItem>;
+  selected: IItems<IItem>,
   item?: any;
   parentId: any;
 };
@@ -18,6 +18,7 @@ export type IMenuItem = IId & {
   icon: string;
   text: string;
   type: EVENT_TYPE;
+  options?: any,
   dialog?: any;
 };
 

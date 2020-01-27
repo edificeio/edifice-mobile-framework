@@ -129,6 +129,7 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
       const toolbarItems = this.getMenuItems("toolbarItems");
       const { dialogVisible, selectedMenuItem } = this.state;
       const nbItems = nbClipboardItems || nbSelectedItems;
+      const selectedArrayItems = Object.values(selectedMenuItem.id === "past" ? clipboardItems : selectedItems);
 
       return (
         <View style={{ flex: 1 }}>
@@ -139,12 +140,12 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
             navigation={navigation}
             onEvent={this.handleEvent.bind(this)}
           />
-          <FloatingAction menuItems={popupMenuItems} onEvent={this.handleEvent.bind(this)} nbSelected={nbItems} />
-          <ToolbarAction menuItems={toolbarItems} onEvent={this.handleEvent.bind(this)} nbSelected={nbItems} />
+          <FloatingAction menuItems={popupMenuItems} onEvent={this.handleEvent.bind(this)} selected={selectedArrayItems} />
+          <ToolbarAction menuItems={toolbarItems} onEvent={this.handleEvent.bind(this)} selected={selectedArrayItems} />
           {dialogVisible && (
             <ConfirmDialog
               {...selectedMenuItem.dialog}
-              selected={Object.values(selectedMenuItem.id === "past" ? clipboardItems : selectedItems)}
+              selected={selectedArrayItems}
               visible={this.state.dialogVisible}
               onValid={(param: IEvent) => {
                 this.setState({ dialogVisible: false });

@@ -4,13 +4,14 @@ import { Header } from "react-navigation-stack";
 import ToolbarActionItem from "./ToolbarActionItem";
 import { DEVICE_WIDTH, layoutSize } from "../../styles/common/layoutSize";
 import { IFloatingProps, IMenuItem } from "../types";
+import {IItem} from "../../workspace/types";
 
-export type INbSelected = {
-  nbSelected: number;
+export type ISelected = {
+  selected: Array<IItem>;
   readonly?: boolean;
 };
 
-class Toolbar extends PureComponent<IFloatingProps & INbSelected, IState> {
+class Toolbar extends PureComponent<IFloatingProps & ISelected, IState> {
   state = {
     active: false,
   };
@@ -31,7 +32,7 @@ class Toolbar extends PureComponent<IFloatingProps & INbSelected, IState> {
   };
 
   renderActions(menuItems: IMenuItem[]) {
-    const { onEvent, readonly } = this.props;
+    const { onEvent, readonly, selected } = this.props;
     let foundSeparator = false;
     const firstItems = menuItems.filter(item => {
       if (!foundSeparator && item.id !== "separator") {
@@ -60,7 +61,7 @@ class Toolbar extends PureComponent<IFloatingProps & INbSelected, IState> {
           renderItem={({ item }) => (
             <ToolbarActionItem
               item={item}
-              nbSelected={this.props.nbSelected}
+              selected={selected}
               onEvent={onEvent ? onEvent : () => null}
             />
           )}
@@ -74,7 +75,7 @@ class Toolbar extends PureComponent<IFloatingProps & INbSelected, IState> {
           renderItem={({ item }) => (
             <ToolbarActionItem
               item={item}
-              nbSelected={this.props.nbSelected}
+              selected={selected}
               readonly={readonly}
               onEvent={onEvent ? onEvent : () => null}
             />
@@ -85,9 +86,9 @@ class Toolbar extends PureComponent<IFloatingProps & INbSelected, IState> {
   }
 
   render() {
-    const { menuItems, nbSelected } = this.props;
+    const { menuItems, selected } = this.props;
 
-    if (!menuItems || menuItems.length === 0 || !nbSelected) {
+    if (!menuItems || menuItems.length === 0 || !selected.length) {
       return null;
     }
 
