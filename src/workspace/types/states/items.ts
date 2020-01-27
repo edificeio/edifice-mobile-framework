@@ -24,8 +24,11 @@ export interface IItems<T> {
 }
 
 export interface IAsyncItems {
-  isFetching?: boolean;
-  data: IItems<IAsyncItems | IItem>;
+  isFetching: boolean;
+  data: IItems<IItem>;
 }
 
-export type IState = IAsyncItems;
+export type IState = {
+    isFetching: boolean;
+    data: IItems<IAsyncItems>;
+}

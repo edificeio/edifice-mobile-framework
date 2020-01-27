@@ -35,7 +35,9 @@ function withUploadWrapper<T extends IProps>(WrappedComponent: React.ComponentTy
     }
 
     render() {
-      return <WrappedComponent {...this.props} />;
+      const { contentUri, ...rest}: any = this.props;
+
+      return <WrappedComponent {...rest} />;
     }
   };
 }
