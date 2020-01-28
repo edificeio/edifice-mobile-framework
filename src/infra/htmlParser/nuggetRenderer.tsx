@@ -249,7 +249,7 @@ function renderParseText(
           key={key}
           onPress={() => {
             // console.log("touched", (nugget as ILinkTextNugget).url);
-            Linking.openURL((nugget as ILinkTextNugget).url);
+            (nugget as ILinkTextNugget).url && Linking.openURL((nugget as ILinkTextNugget).url);
           }}
           style={{
             ...style,

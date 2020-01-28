@@ -449,7 +449,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
     if (!this.opts.hyperlinks) return;
     // console.log("encourtered OPEN link");
     let cleanUrl = tag.attrs.href;
-    if (cleanUrl.startsWith("/")) {
+    if (cleanUrl && cleanUrl.startsWith("/")) {
       // Absolute url. We must add the platform domain name manually.
       if (!Conf.currentPlatform) throw new Error("must specify a platform");
       cleanUrl = Conf.currentPlatform.url + cleanUrl;
