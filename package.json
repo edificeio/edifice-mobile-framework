@@ -41,7 +41,6 @@
     "react-native": "0.60.6",
     "react-native-app-link": "1.0.0",
     "react-native-device-info": "^5.4.1",
-    "react-native-dialog": "github:mauriziocarella/react-native-dialog",
     "react-native-document-picker": "^3.2.4",
     "react-native-fast-image": "^7.0.2",
     "react-native-file-share-intent": "github:jacquesbonet/react-native-file-share-intent",

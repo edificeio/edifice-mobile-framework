@@ -1,10 +1,14 @@
 import * as React from "react";
 import { FlatList, StyleSheet, View } from "react-native";
-import Dialog from "react-native-dialog";
-import { Header } from "react-navigation-stack";
 import { IFile, IItem } from "../../workspace/types/states/items";
 import { Item } from "../../workspace/components";
 import { DEVICE_WIDTH, layoutSize } from "../../styles/common/layoutSize";
+
+import DialogButtonOk from "./buttonOk";
+import DialogButtonCancel from "./buttonCancel";
+import DialogContainer from "./container";
+import DialogInput from "./input";
+import DialogTitle from "./title";
 
 type IProps = {
   title: string;
@@ -17,55 +21,79 @@ type IProps = {
 };
 
 export type IState = {
-  value: any;
+  disabled: boolean;
+  value: {
+    prefix: string;
+    suffix: string;
+  };
 };
 
 export class ConfirmDialog extends React.Component<IProps, IState> {
   state = {
-    value: null,
+    disabled: false,
+    value: this.getInitialValue(),
   };
 
   onPress() {
-    // call getValue() to get the values of the form
-    const { onValid } = this.props;
-    const { value } = this.state;
-
-    if (value) {
-      onValid({ value });
-    } else {
-      onValid({});
-    }
+    this.props.onValid({ value: this.getFinalValue() });
   }
 
-  getValue() {
-    if (this.state.value !== null) {
-      return this.state.value;
-    }
-
+  getInitialValue() {
     const { input, selected } = this.props;
 
-    return selected.length ? selected[0][input] || "" : "";
+    const value = selected.length ? selected[0][input] || "" : "";
+    const index = value.lastIndexOf(".");
+    const suffix = index > 0 ? value.substring(index) : "";
+    const prefix = index > 0 ? value.substring(0, index) : value;
+
+    return {
+      prefix,
+      suffix,
+    };
+  }
+
+  setValue(value: string) {
+    this.setState({
+      value: {
+        prefix: value,
+        suffix: this.state.value.suffix,
+      },
+      disabled: value.length === 0,
+    });
+  }
+
+  getFinalValue() {
+    const { prefix, suffix } = this.state.value;
+
+    return `${prefix}${suffix}`;
   }
 
   fill() {
     const { input, selected, title } = this.props;
+    const { prefix } = this.state.value;
 
     if (input) {
       return (
         <>
-          <Dialog.Title>{title}</Dialog.Title>
-          <Dialog.Input
-            autoFocus
-            underlineColorAndroid="#ff8000cc"
-            value={this.getValue()}
-            onChangeText={(value: string) => this.setState({ value })}
+          <DialogTitle>{title}</DialogTitle>
+          <DialogInput
+            value={prefix}
+            onChangeText={(value: string) =>
+              this.setState({
+                value: {
+                  prefix: value,
+                  suffix: this.state.value.suffix,
+                },
+                disabled: value.length === 0,
+              })
+            }
           />
         </>
       );
     } else {
       return (
         <>
-          <Dialog.Title>{title}</Dialog.Title>
+          <DialogTitle>{title}</DialogTitle>
           {selected && (
             <View
               style={{
@@ -89,18 +117,15 @@ export class ConfirmDialog extends React.Component<IProps, IState> {
 
   render() {
     const { okLabel } = this.props;
+    const { disabled } = this.state;
 
     return (
       <View>
-        <Dialog.Container visible>
+        <DialogContainer visible>
           {this.fill()}
-          <Dialog.Button label="Annuler" onPress={this.props.onCancel.bind(this)} style={{ color: "#bbbbbb" }} />
-          <Dialog.Button
-            label={okLabel ? okLabel : "Valider"}
-            onPress={this.onPress.bind(this)}
-            style={{ color: "#ff8000" }}
-          />
-        </Dialog.Container>
+          <DialogButtonCancel onPress={this.props.onCancel.bind(this)} />
+          <DialogButtonOk disabled={disabled} label={okLabel ? okLabel : "Valider"} onPress={this.onPress.bind(this)} />
+        </DialogContainer>
       </View>
     );
   }
