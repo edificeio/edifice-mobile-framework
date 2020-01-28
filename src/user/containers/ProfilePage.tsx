@@ -165,7 +165,7 @@ export class ProfilePage extends React.PureComponent<
 
               {this.renderItem({
                 title: I18n.t("Birthdate"),
-                getter: () => this.props.userinfo.birthDate!.format('L')
+                getter: () => this.props.userinfo.birthDate!.format('L') === "Invalid date" ? I18n.t("common-InvalidDate") : this.props.userinfo.birthDate!.format('L')
               })}
 
             </SafeAreaView>

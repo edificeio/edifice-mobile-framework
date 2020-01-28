@@ -29,6 +29,7 @@
   "common-ErrorLoadingResource": "Cette ressource est inaccessible.",
   "common-ErrorNetwork": "Erreur de réseau",
   "common-ErrorUnknown": "Erreur",
+  "common-InvalidDate": "Date invalide",
   "common-VersionContent": "Une nouvelle version ({{version}}) est disponible sur le store si vous le souhaitez.",
   "common-VersionContentMandatory": "Une nouvelle version ({{version}}) est disponible sur le store. Veuillez mettre à jour votre application.",
   "common-VersionSkip": "Non merci",

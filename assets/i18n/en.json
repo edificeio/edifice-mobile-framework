@@ -29,6 +29,7 @@
   "common-ErrorLoadingResource": "This content is inaccessible.",
   "common-ErrorNetwork": "Network errors",
   "common-ErrorUnknown": "Error",
+  "common-InvalidDate": "Invalid date",
   "common-VersionContent":"A new version ({{version}}) is available on the Play Store if you would like to update your app.",
   "common-VersionContentMandatory":"A new version ({{version}}) is available on the Play Store if you would like to update your app. Please update your application.",
   "common-VersionSkip":"No, thank you",
