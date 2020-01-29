@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import { layoutSize } from "../../styles/common/layoutSize";
+import I18n from "i18n-js";
 
 type IProps = {
   onPress: (any) => void;
@@ -14,7 +15,7 @@ export default class DialogButton extends React.PureComponent<IProps> {
 
     return (
       <TouchableOpacity style={styles.button} onPress={onPress}>
-        <Text style={styles.text}>Annuler</Text>
+        <Text style={styles.text}>{I18n.t("Cancel")}</Text>
       </TouchableOpacity>
     );
   }

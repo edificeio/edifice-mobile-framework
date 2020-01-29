@@ -97,10 +97,13 @@ export class ConfirmDialog extends React.Component<IProps, IState> {
           {selected && (
             <View
               style={{
-                height: layoutSize.LAYOUT_200,
-                maxHeight: layoutSize.LAYOUT_375,
+                maxHeight: layoutSize.LAYOUT_450,
+                height: layoutSize.LAYOUT_60 * selected.length,
                 marginTop: layoutSize.LAYOUT_10,
                 marginBottom: layoutSize.LAYOUT_10,
+                position: 'relative',
+                display: 'flex',
+                flex: 0,
               }}>
               <FlatList
                 ItemSeparatorComponent={() => <View style={{ backgroundColor: "#ffffff", width: "100%", height: 0 }} />}

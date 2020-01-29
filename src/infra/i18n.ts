@@ -10,7 +10,7 @@ import "moment/locale/es";
 import "moment/locale/pt";
 
 // Translation setup
-export const initI18n = () => {
+const initI18n = () => {
     I18n.fallbacks = true;
     I18n.defaultLocale = "en";
     I18n.translations = {
@@ -33,4 +33,11 @@ export const initI18n = () => {
         I18n.locale = I18n.defaultLocale;
         moment.locale(undefined);
     }
+}
+
+let initDone = false;
+
+if (!initDone) {
+    initI18n();
+    initDone = true;
 }

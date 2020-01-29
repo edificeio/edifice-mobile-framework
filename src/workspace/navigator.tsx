@@ -6,12 +6,19 @@ import { Details } from "./containers/Details";
 import config from "./config";
 import { HeaderAction, HeaderIcon } from "../ui/headers/NewHeader";
 import { standardNavScreenOptions } from "../navigation/helpers/navScreenOptions";
-import { pickFile } from "./utils/pickFile";
-import { createFolderAction } from "./actions/create";
-import { renameAction } from "./actions/rename";
-import { copyDocuments, cutDocuments, pastDocuments } from "./utils/copypast";
-import { deleteAction } from "./actions/delete";
-import {downloadAction} from "./actions/download";
+import {
+  addMenu,
+  backMenu,
+  copyMenu,
+  createMenu,
+  deleteMenu,
+  downloadMenu,
+  moveMenu,
+  nbSelectedMenu,
+  pastMenu,
+  renameMenu,
+  separatorMenu,
+} from "./utils/menus";
 
 export default createStackNavigator(
   {
@@ -21,164 +28,27 @@ export default createStackNavigator(
         popupItems: [
           {
             filter: "owner",
-            items: [
-              {
-                text: "Ajouter Document",
-                icon: "file-plus",
-                id: "addDocument",
-                onEvent: ({ dispatch, parentId }: any) => pickFile({ dispatch, parentId }),
-              },
-              {
-                text: "Créer dossier",
-                icon: "added_files",
-                id: "AddFolder",
-                dialog: {
-                  title: "Créer dossier:",
-                  input: true,
-                  okLabel: "Créer",
-                },
-                onEvent: ({ dispatch, parentId, value }) => dispatch(createFolderAction(parentId, value)),
-              },
-            ],
+            items: [addMenu(), createMenu()],
           },
         ],
         toolbarItems: [
           {
             filter: "root",
-            items: [
-              {
-                text: "Back",
-                icon: "chevron-left1",
-                id: "back",
-                onEvent: () => null,
-              },
-              {
-                id: "nbSelected",
-              },
-              {
-                id: "separator",
-              },
-              {
-                text: "Copier",
-                icon: "content-copy",
-                id: "copy",
-                dialog: {
-                  title: "Copier documents",
-                },
-                onEvent: params => copyDocuments(params),
-              },
-              {
-                text: "Download",
-                icon: "download",
-                id: "download",
-                options: { onlyFiles: true},
-                dialog: {
-                  title: "Téléchargement documents:",
-                  okLabel: "Télécharger",
-                },
-                onEvent: ({ dispatch, parentId, selected }) => dispatch(downloadAction(parentId, selected)),
-              },
-            ],
+            items: [backMenu(), nbSelectedMenu(), separatorMenu(), copyMenu(), downloadMenu()],
           },
           {
             filter: "owner",
             items: [
-              {
-                text: "Back",
-                icon: "chevron-left1",
-                id: "back",
-                onEvent: () => null,
-              },
-              {
-                id: "nbSelected",
-              },
-              {
-                id: "separator",
-              },
-              {
-                text: "Editer",
-                icon: "pencil",
-                id: "edit",
-                options: { monoselection: true},
-                dialog: {
-                  title: "Renommer:",
-                  input: "name",
-                  okLabel: "Modifier",
-                },
-                onEvent: ({ dispatch, parentId, selected, value }) => dispatch(renameAction(parentId, selected, value)),
-              },
-              {
-                text: "Delete",
-                icon: "delete",
-                id: "delete",
-                dialog: {
-                  title: "Vous etes sur le point de supprimer:",
-                  okLabel: "Supprimer",
-                },
-                onEvent: ({ dispatch, parentId, selected }) => dispatch(deleteAction(parentId, selected)),
-              },
-              {
-                text: "Copier",
-                icon: "content-copy",
-                id: "copy",
-                dialog: {
-                  title: "Copier documents",
-                },
-                onEvent: params => copyDocuments(params),
-              },
-              {
-                text: "Déplacer",
-                icon: "package-up",
-                id: "move",
-                writeAccess: true,
-                dialog: {
-                  title: "Déplacer documents",
-                },
-                onEvent: params => cutDocuments(params),
-              },
-              {
-                text: "Download",
-                icon: "download",
-                id: "download",
-                options: { onlyFiles: true},
-                dialog: {
-                  title: "Téléchargement documents:",
-                  okLabel: "Télécharger",
-                },
-                onEvent: ({ dispatch, parentId, selected }) => dispatch(downloadAction(parentId, selected)),
-              },
+              backMenu(),
+              nbSelectedMenu(),
+              separatorMenu(),
+              renameMenu(),
+              deleteMenu(),
+              copyMenu(),
+              moveMenu(),
+              downloadMenu(),
             ],
-            past: [
-              {
-                text: "Back",
-                icon: "chevron-left1",
-                id: "back",
-                onEvent: () => null,
-              },
-              {
-                id: "nbSelected",
-              },
-              {
-                id: "separator",
-              },
-              {
-                text: "Créer dossier",
-                icon: "added_files",
-                id: "AddFolder",
-                dialog: {
-                  title: "Créer dossier:",
-                  input: true,
-                  okLabel: "Créer",
-                },
-                onEvent: ({ dispatch, parentId, value }) => dispatch(createFolderAction(value, parentId)),
-              },
-              {
-                text: "Coller",
-                icon: "content-copy",
-                id: "past",
-                onEvent: params => pastDocuments(params),
-              },
-            ],
+            past: [backMenu(), nbSelectedMenu(), separatorMenu(), pastMenu(), createMenu()],
           },
         ],
       },

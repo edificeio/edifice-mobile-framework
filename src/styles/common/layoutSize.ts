@@ -87,6 +87,7 @@ export const layoutSize = {
   LAYOUT_300: normalize(300),
   LAYOUT_350: normalize(350),
   LAYOUT_375: normalize(375),
+  LAYOUT_450: normalize(450),
 };
 
 export const DEVICE_HEIGHT = () => Dimensions.get("window").height;
