@@ -24,28 +24,28 @@ import Conf from "../../../ode-framework-conf";
 import { getAuthHeader } from "../../infra/oauth";
 import { fetchPublishableBlogsAction } from "../actions/publish";
 
-export interface IBlogSelectorPageDataProps {
+export interface IContentSelectorPageDataProps {
   blogs: IBlogList;
   isFetching: boolean;
 }
 
-export interface IBlogSelectorPageEventProps {
-  onBlogSelected: (blog: IBlog) => void;
+export interface IContentSelectorPageEventProps {
+  onContentSelected: (blog: IBlog, postType: string) => void;
   onDidFocus: () => void;
 }
 
-export interface IBlogSelectorPageOtherProps {
+export interface IContentSelectorPageOtherProps {
   navigation: NavigationScreenProp<NavigationState>;
 }
 
-export type IBlogSelectorPageProps = IBlogSelectorPageDataProps & IBlogSelectorPageEventProps & IBlogSelectorPageOtherProps;
+export type IContentSelectorPageProps = IContentSelectorPageDataProps & IContentSelectorPageEventProps & IContentSelectorPageOtherProps;
 
-export class BlogSelectorPage_Unconnected extends React.PureComponent<IBlogSelectorPageProps> {
+export class ContentSelectorPage_Unconnected extends React.PureComponent<IContentSelectorPageProps> {
 
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<NavigationState> }) => {
     return alternativeNavScreenOptions(
       {
-        title: I18n.t("blog-selectPublishableBlog"),
+        title: I18n.t(`createPost-select-${navigation.getParam("postType")}`),
         headerLeft: <HeaderBackAction navigation={navigation} />
       },
       navigation
@@ -58,32 +58,33 @@ export class BlogSelectorPage_Unconnected extends React.PureComponent<IBlogSelec
       <FlatList
         data={this.props.blogs || []}
         keyExtractor={(item: IBlog) => item._id}
-        renderItem={({ item }: { item: IBlog }) => this.renderBlog(item)}
+        renderItem={({ item }: { item: IBlog }) => this.renderContent(item)}
         alwaysBounceVertical={false}
       />
     </PageContainer>
   }
 
-  renderBlog(blog: IBlog) {
+  renderContent(item: IBlog) {
+    const postType = this.props.navigation.getParam("postType")
     return <ListItem style={{ width: '100%' }}>
-      <LeftPanel onPress={() => this.props.onBlogSelected(blog)}>
-        <GridAvatars users={[blog.thumbnail
-          ? { ...getAuthHeader(), uri: Conf.currentPlatform.url + blog.thumbnail }
+      <LeftPanel onPress={() => this.props.onContentSelected(item, postType)}>
+        <GridAvatars users={[item.thumbnail
+          ? { ...getAuthHeader(), uri: Conf.currentPlatform.url + item.thumbnail }
           : require("../../../assets/images/resource-avatar.png")
         ]}
           fallback={require("../../../assets/images/resource-avatar.png")} />
       </LeftPanel>
-      <CustomTouchableOpacity style={{ flexDirection: 'row', flex: 1 }} onPress={() => this.props.onBlogSelected(blog)}>
+      <CustomTouchableOpacity style={{ flexDirection: 'row', flex: 1 }} onPress={() => this.props.onContentSelected(item, postType)}>
         <View style={{ flexDirection: 'row', flex: 1 }}>
-          <CenterPanel onPress={() => this.props.onBlogSelected(blog)}>
+          <CenterPanel onPress={() => this.props.onContentSelected(item, postType)}>
             <BlogTitle numberOfLines={1}>
-              {blog.title}
+              {item.title}
             </BlogTitle>
             <Content>
-              {I18n.t('blog-sharedToNbPersons', { nb: blog.shared?.length || 0 })}
+              {I18n.t('createPost-sharedToNbPersons', { nb: item.shared?.length || 0 })}
             </Content>
           </CenterPanel>
-          <RightPanel onPress={() => this.props.onBlogSelected(blog)}>
+          <RightPanel onPress={() => this.props.onContentSelected(item, postType)}>
             <Icon
               name="arrow_down"
               color={"#868CA0"}
@@ -128,11 +129,11 @@ export default connect(
     return { blogs, isFetching };
   },
   (dispatch: ThunkDispatch<any, any, any>) => ({
-    onBlogSelected: (blog: IBlog) => {
-      mainNavNavigate('blogCreatePost', { blog });
+    onContentSelected: (blog: IBlog, postType: string) => {
+      mainNavNavigate('createPost', { blog, postType });
     },
     onDidFocus: () => {
       dispatch(fetchPublishableBlogsAction());
     }
   })
-)(BlogSelectorPage_Unconnected);
+)(ContentSelectorPage_Unconnected);

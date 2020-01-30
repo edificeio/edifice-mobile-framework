@@ -43,34 +43,46 @@ interface ITimelineProps {
 
 
 const OptionalCreateButton_Unconnected = ({ blogs, navigation }: { blogs: IBlogList, navigation: NavigationScreenProp<any> }) => blogs.length
-  ? <Menu ref={Timeline._createMenuRef} button={
-    <HeaderAction
-      onPress={() => { Timeline._createMenuRef.current?.show() }}
-      name="new_post"
-      iconSize={24}
-      primary
-    />
-  }
-    style={{
-      marginTop: hasNotch ? 20 : 0
-    }}>
-    <MenuItem disabled
+  ? 
+    <Menu
+      ref={Timeline._createMenuRef}
+      button={
+        <HeaderAction
+          onPress={() => { Timeline._createMenuRef.current?.show() }}
+          name="new_post"
+          iconSize={24}
+          primary
+        />
+      }
       style={{
-        backgroundColor: CommonStyles.lightGrey,
-        borderTopLeftRadius: 4,
-        borderTopRightRadius: 4
+        marginTop: hasNotch ? 20 : 0
       }}
-      onPress={() => { }}
-    ><TextBold style={{ color: TextColor.Light }}>{I18n.t('createPost-menu-title')}</TextBold></MenuItem>
-    <MenuDivider />
-    <MenuItem
-      onPress={() => { navigation.getParam('onCreatePost') && navigation.getParam('onCreatePost')() }}
-    ><Text style={{ color: CommonStyles.textColor }}>{I18n.t('createPost-menu-blog')}</Text></MenuItem>
-    <MenuItem disabled
-      onPress={() => { }}
-    ><Text style={{ color: TextColor.Light, opacity: 0.5 }}>{I18n.t('createPost-menu-news')}</Text></MenuItem>
-  </Menu>
-  : <HeaderIcon name={null} hidden={true} />
+    >
+      <MenuItem
+        disabled
+        style={{
+          backgroundColor: CommonStyles.lightGrey,
+          borderTopLeftRadius: 4,
+          borderTopRightRadius: 4
+        }}
+        onPress={() => { }}
+      >
+        <TextBold style={{ color: TextColor.Light }}>{I18n.t('createPost-menu-title')}</TextBold>
+      </MenuItem>
+      <MenuDivider />
+      <MenuItem
+        onPress={() => { navigation.getParam('onCreatePost') && navigation.getParam('onCreatePost')('blog') }}
+      >
+        <Text style={{ color: CommonStyles.textColor }}>{I18n.t('createPost-menu-blog')}</Text>
+      </MenuItem>
+      <MenuItem
+        onPress={() => { navigation.getParam('onCreatePost') && navigation.getParam('onCreatePost')('news') }}
+      >
+        <Text style={{ color: CommonStyles.textColor }}>{I18n.t('createPost-menu-news')}</Text>
+      </MenuItem>
+    </Menu>
+  : 
+    <HeaderIcon name={null} hidden={true} />
 const OptionalCreateButton = connect(
   (state: any) => ({ blogs: state.timeline.publishableBlogs.data })
 )(OptionalCreateButton_Unconnected);
@@ -260,9 +272,9 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
     );
   }
 
-  handleCreatePost() {
+  handleCreatePost(postType: string) {
     Timeline._createMenuRef.current?.hide();
-    this.props.navigation.navigate('blogSelect');
+    this.props.navigation.navigate("contentSelect", { postType });
   }
 }
 

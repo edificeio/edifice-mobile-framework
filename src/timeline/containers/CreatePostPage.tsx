@@ -22,36 +22,36 @@ import { GridAvatars } from "../../ui/avatars/GridAvatars";
 import { publishBlogPostAction } from "../actions/publish";
 import { hasNotch } from "react-native-device-info";
 
-export interface IBlogCreatePostDataProps {
+export interface ICreatePostDataProps {
   user: IUserInfoState;
   publishing: boolean;
 }
 
-export interface IBlogCreatePostEventProps {
+export interface ICreatePostEventProps {
   onPublish: (blog: IBlog, title: string, content: string) => void;
 }
 
-export interface IBlogCreatePostOtherProps {
+export interface ICreatePostOtherProps {
   navigation: NavigationScreenProp<NavigationState>;
 }
 
-export interface IBlogCreatePostState {
+export interface ICreatePostState {
   title: string;
   content: string;
 }
 
-export type IBlogCreatePostPageProps = IBlogCreatePostDataProps & IBlogCreatePostEventProps & IBlogCreatePostOtherProps;
+export type ICreatePostPageProps = ICreatePostDataProps & ICreatePostEventProps & ICreatePostOtherProps;
 
-export class BlogCreatePostPage_Unconnected extends React.PureComponent<IBlogCreatePostPageProps, IBlogCreatePostState> {
+export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostPageProps, ICreatePostState> {
 
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<NavigationState> }) => {
     return alternativeNavScreenOptions(
       {
-        title: I18n.t("blog-newPost"),
+        title: I18n.t(`createPost-newPost-${navigation.getParam("postType")}`),
         headerLeft: <HeaderBackAction navigation={navigation} />,
         headerRight: <HeaderAction
           navigation={navigation}
-          title={I18n.t('blog-publishAction')}
+          title={I18n.t('createPost-publishAction')}
           onPress={() => navigation.getParam('onPublishPost') && navigation.getParam('onPublishPost')()}
           disabled={
             navigation.getParam('publishing', false)
@@ -64,7 +64,7 @@ export class BlogCreatePostPage_Unconnected extends React.PureComponent<IBlogCre
     );
   };
 
-  constructor(props: IBlogCreatePostPageProps) {
+  constructor(props: ICreatePostPageProps) {
     super(props);
     this.state = {
       title: '',
@@ -112,10 +112,10 @@ export class BlogCreatePostPage_Unconnected extends React.PureComponent<IBlogCre
             </View>
           </View>
 
-          <TextBold style={{ paddingHorizontal: 20 }}>{I18n.t('postCreateTitleField')}</TextBold>
+          <TextBold style={{ paddingHorizontal: 20 }}>{I18n.t('createPost-create-titleField')}</TextBold>
           <TextInput
             numberOfLines={1}
-            placeholder={I18n.t('postCreateTitlePlaceholder')}
+            placeholder={I18n.t('createPost-create-titlePlaceholder')}
             value={this.state.title}
             onChangeText={text => {
               this.setState({ title: text });
@@ -132,7 +132,7 @@ export class BlogCreatePostPage_Unconnected extends React.PureComponent<IBlogCre
             }}
           />
 
-          <TextBold style={{ paddingHorizontal: 20 }}>{I18n.t('postCreateContentField')}</TextBold>
+          <TextBold style={{ paddingHorizontal: 20 }}>{I18n.t('createPost-create-contentField')}</TextBold>
           <TextInput
             style={{
               marginHorizontal: 20,
@@ -144,7 +144,7 @@ export class BlogCreatePostPage_Unconnected extends React.PureComponent<IBlogCre
               borderWidth: 1,
               borderRadius: 1
             }}
-            placeholder={I18n.t('postCreatePlaceholder')}
+            placeholder={I18n.t('createPost-create-contentPlaceholder')}
             multiline
             textAlignVertical="top"
             value={this.state.content}
@@ -159,7 +159,7 @@ export class BlogCreatePostPage_Unconnected extends React.PureComponent<IBlogCre
     </KeyboardAvoidingView>
   }
 
-  componentDidUpdate(prevProps: IBlogCreatePostPageProps) {
+  componentDidUpdate(prevProps: ICreatePostPageProps) {
     if (prevProps.publishing !== this.props.publishing) {
       this.props.navigation.setParams({ 'publishing': this.props.publishing });
     }
@@ -185,4 +185,4 @@ export default connect(
       dispatch(publishBlogPostAction(blog, title, content));
     }
   })
-)(BlogCreatePostPage_Unconnected);
+)(CreatePostPage_Unconnected);
