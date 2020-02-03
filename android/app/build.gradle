@@ -192,9 +192,6 @@ android {
 }
 
 dependencies {
-    implementation project(':react-native-text-size')
-    implementation project(':react-native-document-picker')
-    implementation project(':@react-native-community_netinfo')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
@@ -205,10 +202,8 @@ dependencies {
     implementation "com.google.firebase:firebase-messaging:20.0.0"
 
     // React Native Mixpanel manual linking (automatic linking not supported)
-    implementation project(':react-native-mixpanel')
 
     // React Native WebView manual linking (automatic linking not supported)
-    implementation project(':react-native-webview')
 
     if (enableHermes) {
       def hermesPath = "../../node_modules/hermesvm/android/";

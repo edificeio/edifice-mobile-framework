@@ -7,9 +7,6 @@ import com.facebook.react.PackageList;
 import com.facebook.hermes.reactexecutor.HermesExecutorFactory;
 import com.facebook.react.bridge.JavaScriptExecutorFactory;
 import com.facebook.react.ReactApplication;
-import com.github.amarcruz.rntextsize.RNTextSizePackage;
-import io.github.elyx0.reactnativedocumentpicker.DocumentPickerPackage;
-import com.reactnativecommunity.netinfo.NetInfoPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
@@ -19,7 +16,6 @@ import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 
 // React Native WebView manual linking (automatic linking not supported)
-import com.reactnativecommunity.webview.RNCWebViewPackage;
 
 import java.util.List;
 

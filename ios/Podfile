@@ -8,10 +8,8 @@ target 'appe' do
   pod 'Firebase/Messaging', '~> 6.3.0'
 
   # React Native Mixpanel manual linking (automatic linking not supported)
-  pod 'react-native-mixpanel', :path => '../node_modules/react-native-mixpanel'
 
   # React Native WebView manual linking (automatic linking not supported)
-  pod 'react-native-webview', :path => '../node_modules/react-native-webview'
 
   # React
   pod 'React', :path => '../node_modules/react-native/'
@@ -39,12 +37,9 @@ target 'appe' do
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
-  pod 'react-native-netinfo', :path => '../node_modules/@react-native-community/netinfo'
 
   pod 'RNCPushNotificationIOS', :path => '../node_modules/@react-native-community/push-notification-ios'
 
-  pod 'RNTextSize', :path => '../node_modules/react-native-text-size/ios/RNTextSize.podspec'
-  pod 'react-native-document-picker', :path => '../node_modules/react-native-document-picker'
 
   target 'appeTests' do
     inherit! :search_paths
