@@ -4,6 +4,8 @@ import { createEndSessionActionType } from "../infra/redux/reducerFactory";
 import { AnyAction } from "redux";
 import publishableBlogsReducer, { publishStatusReducer } from "./reducers/publishableBlogs";
 import { IPublishableBlogsState } from "./state/publishableBlogs";
+import { IBlogCommentListState } from "./state/commentList";
+import blogCommentsReducer from "./reducers/blogCommentList";
 
 interface IParams {
   blogTitle: string;
@@ -31,6 +33,7 @@ export interface INewsState {
   selectedApps: any;
   refresh: boolean;
   fetchFailed: boolean;
+  blogComments: IBlogCommentListState;
   publishableBlogs: IPublishableBlogsState;
   publishStatus: { publishing: boolean }
 }
@@ -71,6 +74,7 @@ export default (
 
   return {
     ...state,
+    blogComments: blogCommentsReducer(state.blogComments, action),
     publishableBlogs: publishableBlogsReducer(state.publishableBlogs, action),
     publishStatus: publishStatusReducer(state.publishStatus, action)
   };

@@ -1,6 +1,6 @@
 import I18n from "i18n-js";
 import * as React from "react";
-import { Animated, Linking, ScrollView, View } from "react-native";
+import { Animated, Linking, ScrollView, View, FlatList, Text, RefreshControl } from "react-native";
 
 import { NavigationActions, NavigationScreenProp } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
@@ -20,26 +20,70 @@ import {
   ModalContentBlock,
   ModalContentText
 } from "../../ui/Modal";
-import { A, Italic } from "../../ui/Typography";
+import { A, Italic, TextBright } from "../../ui/Typography";
 import { schoolbooks } from "../actions/dataTypes";
 import NewsTopInfo from "../components/NewsTopInfo";
 import { getSessionInfo } from "../../AppStore";
 import { Back } from "../../ui/headers/Back";
 import { HeaderBackAction } from "../../ui/headers/NewHeader";
 
+import { connect } from "react-redux";
+import { ThunkDispatch } from "redux-thunk";
+import { getBlogCommentListState, IBlogComment } from "../state/commentList";
+import { fetchBlogCommentListAction } from "../actions/commentList";
+import { ListItem, LeftPanel, CenterPanel, RightPanel } from "../../myAppMenu/components/NewContainerContent";
+import style from "glamorous-native";
+import { FontWeight } from "../../ui/text";
+import CustomTouchableOpacity from "../../ui/CustomTouchableOpacity";
+import { GridAvatars } from "../../ui/avatars/GridAvatars";
+import { getTimeToStr } from "../../utils/date";
+
+interface INewsContentPageState {
+  isAck: boolean;
+  isAcking: boolean;
+  isAckBefore: boolean;
+  ackNames: string[];
+  ackOpacity: Animated.Value;
+  showAckBeforeMessage: boolean;
+  schoolbookData: object;
+  fetching: boolean;
+}
+
+export interface INewsContentPageDataProps {
+  isPristine?: boolean;
+  isFetching?: boolean;
+}
+
+export interface INewsContentPageOtherProps {
+  navigation?: any;
+  onRefresh?: () => void;
+}
+
+export type INewsContentPageProps = INewsContentPageDataProps &
+INewsContentPageOtherProps &
+INewsContentPageState;
+
 // tslint:disable-next-line:max-classes-per-file
-export class NewsContent extends React.Component<
-  { navigation?: any },
-  {
-    isAck: boolean;
-    isAcking: boolean;
-    isAckBefore: boolean;
-    ackNames: string[];
-    ackOpacity: Animated.Value;
-    showAckBeforeMessage: boolean;
-    schoolbookData: object;
-  }
+class NewsContentPage_Unconnected extends React.Component<
+INewsContentPageProps,
+{
+
+}
 > {
+
+  getDerivedStateFromProps(nextProps: any, prevState: any) {
+    if(nextProps.isFetching !== prevState.fetching){
+      return { fetching: nextProps.isFetching};
+   }
+    else return null;
+  }
+
+  componentDidUpdate(prevProps: any) {
+    const { isFetching } = this.props
+    if(prevProps.isFetching !== isFetching){
+      this.setState({fetching: isFetching});
+    }
+  }
 
   /**
    * get the schoolbook correpsonding data. Call it only if you're sure that the post is a schoolbook.
@@ -106,7 +150,8 @@ export class NewsContent extends React.Component<
         isAckBefore: isAck,
         isAcking: false,
         schoolbookData: null,
-        showAckBeforeMessage: isAck
+        showAckBeforeMessage: isAck,
+        fetching: false
       };
     } else {
       // This dummy data prevent non-schoolbook posts to raise exceptions
@@ -117,9 +162,20 @@ export class NewsContent extends React.Component<
         isAckBefore: false,
         isAcking: false,
         schoolbookData: null,
-        showAckBeforeMessage: false
+        showAckBeforeMessage: false,
+        fetching: false
       };
     }
+    this.reloadList();
+  }
+
+  public reloadList() {
+    const { isFetching, navigation } = this.props;
+    const resource = navigation.getParam("news").resource
+    const resourceId = navigation.getParam("news").resourceId
+    const blogPostId = `${resource}/${resourceId}`
+    if (isFetching) return;
+    this.props.dispatch(fetchBlogCommentListAction(blogPostId));
   }
 
   public newsContent() {
@@ -138,6 +194,7 @@ export class NewsContent extends React.Component<
       title,
       url
     } = this.props.navigation.state.params.news;
+
     let schoolbookData;
     if (this.isSchoolbook) schoolbookData = this.getSchoolbookData();
     // console.log("session", getSessionInfo());
@@ -244,6 +301,9 @@ export class NewsContent extends React.Component<
     }
     const isParent = getSessionInfo().type && getSessionInfo().type.includes("Relative");
     const { resourceId, resourceUri } = this.props.navigation.state.params.news;
+    const { blogComments } = this.props;
+    const { fetching } = this.state
+
     // console.log("nav state params", this.props.navigation.state.params);
     return (
       <PageContainer>
@@ -281,12 +341,67 @@ export class NewsContent extends React.Component<
               </A>
             </View>
           ) : null}
+          <FlatList
+            data={blogComments || null}
+            ListHeaderComponent={blogComments && blogComments.length > 0 ?
+              <ListItem disabled style={{ justifyContent: "flex-start" }}>
+                <TextBright>
+                  {blogComments.length} {I18n.t("timeline-comment")}{blogComments.length > 1 && "s"}
+                </TextBright>
+              </ListItem>
+              :
+              null
+            }
+            renderItem={({ item, index }: { item: IBlogComment, index: number }) => this.renderBlogComment(item, index )}
+            keyExtractor={(item: IBlogComment) => item.id}
+            alwaysBounceVertical={false}
+            //style={styles.grid}
+            refreshControl={
+              <RefreshControl
+                refreshing={fetching}
+                onRefresh={() => {
+                  this.setState({ fetching: true })
+                  this.reloadList.bind(this)
+                }}
+              />
+            }
+          />
         </ScrollView>
-        {!this.state.isAckBefore && isParent && schoolbookData
+        {/*!this.state.isAckBefore && isParent && schoolbookData*/ true
           ? this.renderAck()
           : null}
       </PageContainer>
     );
+  }
+
+  public renderBlogComment(blogComment: IBlogComment, index: number) {
+    return(
+      <ListItem
+        style={{ backgroundColor: index % 2 === 0 ? CommonStyles.extraLightGrey : CommonStyles.lightGrey }}
+      >
+        <LeftPanel>
+          <GridAvatars
+            users={[blogComment.author
+            ? blogComment.author.userId
+            : require("../../../assets/images/resource-avatar.png")
+            ]}
+            fallback={require("../../../assets/images/resource-avatar.png")}
+          />
+        </LeftPanel>
+        <View style={{ flexDirection: 'row', flex: 1 }}>
+          <CenterPanel>
+            <CommentAuthor numberOfLines={1}>
+              {blogComment.author.username}
+              {/* FIXME: Use moment.js instead of this */}
+              {getTimeToStr(blogComment.created)}
+            </CommentAuthor>
+            <Content numberOfLines={5}>
+              {blogComment.comment}
+            </Content>
+          </CenterPanel>
+        </View>
+      </ListItem>
+    )
   }
 
   public renderAck() {
@@ -471,10 +586,44 @@ export class NewsContent extends React.Component<
   }
 }
 
+const CommentAuthor = style.text(
+  {
+    color: CommonStyles.textColor,
+    fontFamily: CommonStyles.primaryFontFamily,
+    fontSize: 14,
+    fontWeight: FontWeight.SemiBold
+  }
+);
+
+export const Content = style.text({
+  color: CommonStyles.iconColorOff,
+  fontFamily: CommonStyles.primaryFontFamily,
+  fontSize: 12,
+  fontWeight: FontWeight.Light,
+  marginTop: 10
+});
+
+const NewsContentPage = connect(
+  (state: any) => {
+    const { data: blogComments, isFetching } = getBlogCommentListState(state);
+    return { blogComments, isFetching };
+  },
+  (dispatch: any) => /*INotificationListPageEventProps =*/ dispatch => {
+    return {
+      dispatch,
+      // onHandleNotification: (notification: INotification) =>  {
+      //   dispatch(handleNotificationAction(notification))
+      // }
+    }
+  }
+)(NewsContentPage_Unconnected);
+
+export default NewsContentPage
+
 export const NewsContentRouter = createStackNavigator(
   {
     NewsContentRouter: {
-      screen: NewsContent
+      screen: NewsContentPage
     }
   },
   {
