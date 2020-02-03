@@ -8,12 +8,5 @@ export default new FunctionalModuleConfig({
   iconName: "pronote",
   iconColor: "#763294",
   group: true,
-  hasRight: (apps) => {
-    for(let app of apps) {
-      if(app.address && app.address.toUpperCase().includes("PRONOTE")) {
-        return true
-      }
-    }
-    return false;
-  }
+  hasRight: app => app.address && app.address.toUpperCase().includes("PRONOTE")
 });

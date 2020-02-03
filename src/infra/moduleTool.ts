@@ -4,6 +4,7 @@ import { NotificationHandlerFactory } from "./pushNotification";
 import { Reducer } from "redux";
 import { NavigationScreenConfig, NavigationScreenOptions, NavigationComponent } from "react-navigation";
 import { CommonStyles } from "../styles/common/styles";
+import { backendUserApp } from "../user/reducers/auth";
 
 /**
  * All specs to define functional module
@@ -63,6 +64,7 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
   public iconName: string;
   public iconColor: string;
   public group: boolean;
+  public appInfo: backendUserApp;
   public notifHandlerFactory: () => Promise<NotificationHandlerFactory<any, any, any>>;
   public hasRight: (apps: any[]) => boolean; 
 
@@ -77,7 +79,17 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
     this.group = opts.group === undefined ? false : opts.group;
     this.iconColor = opts.iconColor || CommonStyles.actionColor;
     this.notifHandlerFactory = opts.notifHandlerFactory;
-    this.hasRight = opts.hasRight || (apps => apps.some(app => app.name == this.apiName))
+    this.hasRight = apps => this.hasRightWrapper(apps, opts.hasRight || (app => app.name == this.apiName))
+  }
+
+  private hasRightWrapper = (appsInfo: any[], hasRight: Function) => {
+    appsInfo.forEach(app => {
+      if(hasRight(app)) {
+        this.appInfo = app;
+        return true
+      }
+    })
+    return false
   }
 
   public getLocalState(globalState: any) {

@@ -18,6 +18,15 @@ import { createEndSessionActionType } from "../../infra/redux/reducerFactory";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
+export type backendUserApp = 
+  {
+    name: string,
+    address: string,
+    displayName: string,
+    display: boolean,
+    prefix: string
+}
+
 export interface IUserAuthState {
   // user account information
   login?: string;
@@ -30,7 +39,7 @@ export interface IUserAuthState {
   loggingIn: boolean;
   // available applications
   apps: string[];
-  appsInfo: any[];
+  appsInfo: backendUserApp[];
   // technical
   notification: Notification;
   // platform
