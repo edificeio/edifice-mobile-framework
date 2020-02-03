@@ -15,7 +15,6 @@ import {
   downloadMenu,
   moveMenu,
   nbSelectedMenu,
-  pastMenu,
   renameMenu,
   separatorMenu,
 } from "./utils/menus";
@@ -48,7 +47,6 @@ export default createStackNavigator(
               moveMenu(),
               downloadMenu(),
             ],
-            past: [backMenu(), nbSelectedMenu(), separatorMenu(), pastMenu(), createMenu()],
           },
         ],
       },

@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, Text } from "react-native";
+import {layoutSize} from "../../styles/common/layoutSize";
 
 export default class DialogTitle extends React.PureComponent {
   static displayName = "DialogTitle";
@@ -14,5 +15,6 @@ const styles = StyleSheet.create({
   text: {
     fontWeight: "500",
     fontSize: 18,
+    marginBottom: layoutSize.LAYOUT_16,
   },
 });

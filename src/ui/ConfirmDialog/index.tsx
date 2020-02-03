@@ -8,13 +8,18 @@ import DialogButtonOk from "./buttonOk";
 import DialogButtonCancel from "./buttonCancel";
 import DialogContainer from "./container";
 import DialogInput from "./input";
+import DialogSelect from "./select";
 import DialogTitle from "./title";
+import {ITreeItem} from "../../workspace/actions/helpers/formatListFolders";
+import select from "../../workspace/reducers/select";
 
 type IProps = {
   title: string;
   input: any;
   okLabel: string;
-  selected: Array<IFile>;
+  selectDestination: boolean;
+  selected: IFile[];
+  folders: ITreeItem[],
   visible: boolean;
   onValid: Function;
   onCancel: Function;
@@ -26,15 +31,17 @@ export type IState = {
     prefix: string;
     suffix: string;
   };
+  valueSelect: string;
 };
 
 export class ConfirmDialog extends React.Component<IProps, IState> {
   state = {
     disabled: false,
     value: this.getInitialValue(),
+    valueSelect: "",
   };
 
-  onPress() {
+  onValid() {
     this.props.onValid({ value: this.getFinalValue() });
   }
 
@@ -52,24 +59,19 @@ export class ConfirmDialog extends React.Component<IProps, IState> {
     };
   }
 
-  setValue(value: string) {
-    this.setState({
-      value: {
-        prefix: value,
-        suffix: this.state.value.suffix,
-      },
-      disabled: value.length === 0,
-    });
-  }
-
   getFinalValue() {
-    const { prefix, suffix } = this.state.value;
+    const { input, selectDestination  } = this.props;
+    const { value, valueSelect, } = this.state;
+    const { prefix, suffix } = value;
 
-    return `${prefix}${suffix}`;
+    if (input)
+      return `${prefix}${suffix}`;
+    else if (selectDestination)
+      return valueSelect;
   }
 
   fill() {
-    const { input, selected, title } = this.props;
+    const { folders, input, selectDestination, selected, title } = this.props;
     const { prefix } = this.state.value;
 
     if (input) {
@@ -90,6 +92,20 @@ export class ConfirmDialog extends React.Component<IProps, IState> {
           />
         </>
       );
+    } else if (selectDestination) {
+      return (
+        <>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogSelect
+            data={folders}
+            onPress={({ item }) =>
+              this.setState({
+                valueSelect: item.id,
+              })
+            }
+          />
+        </>
+      );
     } else {
       return (
         <>
@@ -101,8 +117,8 @@ export class ConfirmDialog extends React.Component<IProps, IState> {
                 height: layoutSize.LAYOUT_60 * selected.length,
                 marginTop: layoutSize.LAYOUT_10,
                 marginBottom: layoutSize.LAYOUT_10,
-                position: 'relative',
-                display: 'flex',
+                position: "relative",
+                display: "flex",
                 flex: 0,
               }}>
               <FlatList
@@ -127,7 +143,7 @@ export class ConfirmDialog extends React.Component<IProps, IState> {
         <DialogContainer visible>
           {this.fill()}
           <DialogButtonCancel onPress={this.props.onCancel.bind(this)} />
-          <DialogButtonOk disabled={disabled} label={okLabel ? okLabel : "Valider"} onPress={this.onPress.bind(this)} />
+          <DialogButtonOk disabled={disabled} label={okLabel ? okLabel : "Valider"} onPress={this.onValid.bind(this)} />
         </DialogContainer>
       </View>
     );

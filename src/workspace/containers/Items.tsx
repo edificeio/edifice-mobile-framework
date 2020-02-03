@@ -10,13 +10,14 @@ import { layoutSize } from "../../styles/common/layoutSize";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { getEmptyScreen } from "../utils/empty";
 import { PageContainer } from "../../ui/ContainerContent";
-import { Loading, ProgressBar } from "../../ui";
+import { ProgressBar } from "../../ui";
 import { removeAccents } from "../../utils/string";
 import withUploadWrapper from "../utils/withUploadWrapper";
 import withMenuWrapper from "../utils/withMenuWrapper";
 import withNavigationWrapper from "../utils/withNavigationWrapper";
 import { ISelectedProps } from "../../types/ievents";
 import { nbItems } from "../utils";
+import { listFoldersAction } from "../actions/listFolders";
 
 const styles = StyleSheet.create({
   separator: {

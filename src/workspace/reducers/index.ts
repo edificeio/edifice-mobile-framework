@@ -1,14 +1,14 @@
 import { combineReducers } from "redux";
+import contentUri from "./contentUri";
+import folders from "./folders";
 import items from "./items";
 import selected from "./select";
-import copy from "./copypast";
-import contentUri from "./contentUri";
 
 const rootReducer = combineReducers<any>({
+  contentUri,
+  folders,
   items,
   selected,
-  contentUri,
-  copy,
 });
 
 export default rootReducer;

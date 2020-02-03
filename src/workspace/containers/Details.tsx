@@ -13,7 +13,7 @@ const HeaderBackAction = ({ navigation, style }: { navigation: any; style?: View
 };
 
 export class Details extends React.PureComponent<IDetailsProps> {
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
+  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
     return standardNavScreenOptions(
       {
         title: navigation.getParam("title"),

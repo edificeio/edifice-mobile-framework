@@ -1,7 +1,7 @@
 import React from "react";
 import { KeyboardAvoidingView, StyleSheet, View } from "react-native";
 import AnimatedModal from "react-native-modal";
-import {layoutSize} from "../../styles/common/layoutSize";
+import { layoutSize } from "../../styles/common/layoutSize";
 
 type IProps = {
   visible: boolean;
@@ -17,7 +17,7 @@ export default class DialogContainer extends React.PureComponent<IProps> {
     const titleChildrens = [];
     const buttonChildrens = [];
     const otherChildrens = [];
-    React.Children.forEach(children, child => {
+    React.Children.forEach(children, (child: any) => {
       if (!child) {
         return;
       }

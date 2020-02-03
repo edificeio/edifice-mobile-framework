@@ -1,5 +1,5 @@
 import I18n from "i18n-js";
-import { copyDocuments, cutDocuments, pastDocuments } from "./copypast";
+import { copyDocuments, moveDocuments } from "./copypast";
 import { downloadAction } from "../actions/download";
 import { createFolderAction } from "../actions/create";
 import { deleteAction } from "../actions/delete";
@@ -7,13 +7,13 @@ import { pickFile } from "./pickFile";
 import { renameAction } from "../actions/rename";
 
 export const addMenu = () => {
-  return ({
+  return {
     text: I18n.t("add-document"),
     icon: "file-plus",
     id: "addDocument",
     onEvent: ({ dispatch, parentId }: any) => pickFile({ dispatch, parentId }),
-  });
-}
+  };
+};
 
 export const backMenu = () => ({
   text: "Back",
@@ -32,16 +32,6 @@ export const createMenu = () => ({
     okLabel: I18n.t("create"),
   },
   onEvent: ({ dispatch, parentId, value }) => dispatch(createFolderAction(parentId, value)),
-});
-
-export const copyMenu = () => ({
-  text: I18n.t("copy"),
-  icon: "content-copy",
-  id: "copy",
-  dialog: {
-    title: I18n.t("copy-documents"),
-  },
-  onEvent: params => copyDocuments(params),
 });
 
 export const deleteMenu = () => ({
@@ -67,6 +57,19 @@ export const downloadMenu = () => ({
   onEvent: ({ dispatch, parentId, selected }) => dispatch(downloadAction(parentId, selected)),
 });
 
+export const copyMenu = () => ({
+  text: I18n.t("copy"),
+  icon: "content-copy",
+  id: "copy",
+  writeAccess: true,
+  dialog: {
+    title: I18n.t("copy-documents"),
+    okLabel: I18n.t("copy"),
+    selectDestination: true,
+  },
+  onEvent: params => copyDocuments(params),
+});
+
 export const moveMenu = () => ({
   text: I18n.t("move"),
   icon: "package-up",
@@ -75,19 +78,13 @@ export const moveMenu = () => ({
   dialog: {
     title: I18n.t("move-documents"),
     okLabel: I18n.t("move"),
+    selectDestination: true,
   },
-  onEvent: params => cutDocuments(params),
+  onEvent: params => moveDocuments(params),
 });
 
 export const nbSelectedMenu = () => ({
   id: "nbSelected",
-});
-
-export const pastMenu = () => ({
-  text: I18n.t("past"),
-  icon: "content-copy",
-  id: "past",
-  onEvent: params => pastDocuments(params),
 });
 
 export const renameMenu = () => ({

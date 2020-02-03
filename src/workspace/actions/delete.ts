@@ -10,7 +10,7 @@ const WORKSPACE_DELETE = "/workspace/documents/trash";
 export const actionTypesDelete = asyncActionTypes(config.createActionType(`${WORKSPACE_DELETE}`));
 
 export function deleteAction(parentId: string, selected: IItems<IItem>) {
-  const toDelete: Array<String> = Object.values(selected).reduce((acc: String[], item) => [...acc, item.id], []);
+  const toDelete: string[] = Object.values(selected).reduce((acc: string[], item) => [...acc, item.id], []);
 
   return asyncActionFactory(`${WORKSPACE_DELETE}`, { ids: toDelete, parentId }, actionTypesDelete, formatResults, {
     method: "put",

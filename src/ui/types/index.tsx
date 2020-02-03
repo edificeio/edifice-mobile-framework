@@ -10,7 +10,8 @@ type IMenuEvent = {
   navigation: any;
   selected: IItems<IItem>,
   item?: any;
-  parentId: any;
+  filterId: string,
+  parentId: string;
 };
 
 export type IMenuItem = IId & {

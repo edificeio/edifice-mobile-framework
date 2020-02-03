@@ -16,7 +16,7 @@ export const actionTypesRename = asyncActionTypes(config.createActionType(`${WOR
  * Rename document.
  * Dispatches WORKSPACE_RENAME_REQUESTED, WORKSPACE_RENAME_RECEIVED, and WORKSPACE_RENAME_FETCH_ERROR if an error occurs.
  */
-export function renameAction( parentId: String, selected: IItems<IItem>, name: String) {
+export function renameAction(parentId: string, selected: IItems<IItem>, name: string) {
   const item = Object.values(selected)[0];
   const url = item.isFolder ? `${WORKSPACE_FOLDER_RENAME}/${item.id}` : `${WORKSPACE_RENAME}/${item.id}`;
 

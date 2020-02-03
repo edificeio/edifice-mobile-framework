@@ -1,5 +1,4 @@
 import * as React from "react";
-import { nbItems } from "./index";
 import { connect } from "react-redux";
 import { setInOwnerWorkspace } from "../../navigation/NavigationService";
 import { contentUriAction } from "../actions/contentUri";
@@ -15,7 +14,6 @@ export interface IProps {
 // intent managment
 function withUploadWrapper<T extends IProps>(WrappedComponent: React.ComponentType<T>): React.ComponentType<T> {
   return class extends React.PureComponent<T> {
-
     componentDidUpdate(): void {
       const { navigation, dispatch } = this.props;
       const filterId = navigation.getParam("filter");
@@ -25,7 +23,7 @@ function withUploadWrapper<T extends IProps>(WrappedComponent: React.ComponentTy
       setInOwnerWorkspace(filterId === "owner");
 
       if (filterId === "owner") {
-        const {contentUri} = this.props;
+        const { contentUri } = this.props;
 
         if (contentUri && contentUri.length) {
           dispatch(contentUriAction(null));
@@ -35,7 +33,7 @@ function withUploadWrapper<T extends IProps>(WrappedComponent: React.ComponentTy
     }
 
     render() {
-      const { contentUri, ...rest}: any = this.props;
+      const { contentUri, ...rest }: any = this.props;
 
       return <WrappedComponent {...rest} />;
     }

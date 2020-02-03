@@ -4,13 +4,9 @@
  */
 import { SET_CONTENT_URI_TYPE } from "../actions/contentUri";
 
-const initialState = [
-  {
-    uri: "",
-  },
-];
+const initialState = null;
 
-export default (state = "", action: any) => {
+export default (state = initialState, action: any) => {
   switch (action.type) {
     case SET_CONTENT_URI_TYPE:
       return action.payload;

@@ -1,18 +1,24 @@
-import { copyAction, cutAction, pastAction } from "../actions/copypast";
-import { FilterId } from "../types/filters";
+import { pastAction } from "../actions/copypast";
 import { deleteAction } from "../actions/delete";
 
-export function copyDocuments({ navigation, dispatch, selected }) {
-  dispatch(copyAction(selected));
-  navigation.push("Workspace", { filter: FilterId.owner, parentId: FilterId.owner });
+/**
+ *
+ * @param dispatch
+ * @param parentId  the parentId of the copied document
+ * @param selected  the list of document to move
+ * @param value     the destination folder id
+ */
+export function copyDocuments({ dispatch, parentId, selected, value }) {
+  dispatch(pastAction(value, selected));
 }
 
-export function cutDocuments({ navigation, dispatch, selected }) {
-  dispatch(cutAction(selected));
-  navigation.push("Workspace", { filter: FilterId.owner, parentId: FilterId.owner });
-}
-
-export function pastDocuments({ dispatch, parentId, cut, selected }) {
-  if (cut) dispatch(pastAction(parentId, selected)).then(() => dispatch(deleteAction(parentId, selected)));
-  else dispatch(pastAction(parentId, selected));
+/**
+ *
+ * @param dispatch
+ * @param parentId  the parentId of the copied document
+ * @param selected  The list of document to move
+ * @param value     the destination folder id
+ */
+export function moveDocuments({ dispatch, parentId, selected, value }) {
+  dispatch(pastAction(value, selected)).then(() => dispatch(deleteAction(parentId, selected)));
 }

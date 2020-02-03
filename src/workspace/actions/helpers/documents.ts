@@ -13,7 +13,7 @@ import Conf from "../../../../ode-framework-conf";
 import { OAuth2RessourceOwnerPasswordClient, getDummySignedRequest, getAuthHeader } from "../../../infra/oauth";
 import { progressAction, progressEndAction, progressInitAction } from "../../../infra/actions/progress";
 
-export type IDocumentArray = Array<any>;
+export type IDocumentArray = any[];
 
 // ADAPTER ----------------------------------------------------------------------------------------
 
@@ -43,7 +43,7 @@ export const formatResults: (
     if (!data) {
       return result;
     }
-    (data as Array<any>).map(item => (result = checkAncestorsAndFormat(result, item, parentId)));
+    (data as any[]).map(item => (result = checkAncestorsAndFormat(result, item, parentId)));
     return result;
   } else {
     return checkAncestorsAndFormat(result, data, parentId);
