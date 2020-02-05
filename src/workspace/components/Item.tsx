@@ -17,7 +17,14 @@ const style = StyleSheet.create({
   },
   fileName: {
     color: CommonStyles.shadowColor,
-    fontSize: layoutSize.LAYOUT_14,
+    fontSize: layoutSize.LAYOUT_15,
+    fontFamily: "roboto",
+    fontWeight: "600",
+  },
+  fileNameSimple: {
+    color: CommonStyles.shadowColor,
+    fontSize: layoutSize.LAYOUT_13,
+    fontFamily: "roboto",
   },
   date: { flex: 1, alignItems: "flex-start" },
   author: { flex: 3, alignItems: "flex-end" },
@@ -39,7 +46,7 @@ export const Item = ({ onEvent, item, selected, simple }: IEventProps & any) => 
         <LeftIconPanel>{renderIcon(id, isFolder, name, contentType)}</LeftIconPanel>
       )}
       <CenterPanel style={style.centerPanel}>
-        <Text numberOfLines={1} style={style.fileName}>
+        <Text numberOfLines={1} style={simple ? style.fileNameSimple : style.fileName}>
           {name}
         </Text>
         {!simple && date !== 0 && ownerName.length > 0 && (
@@ -57,6 +64,7 @@ export const Item = ({ onEvent, item, selected, simple }: IEventProps & any) => 
                   style={{
                     fontSize: layoutSize.LAYOUT_10,
                     color: CommonStyles.lightTextColor,
+                    fontFamily:"roboto",
                   }}>
                   {longOwnerName}
                 </NestedText>

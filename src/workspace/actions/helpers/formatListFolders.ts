@@ -87,7 +87,7 @@ function mapObject(item: IBackendFolder): ITreeItem {
   return {
     id: item._id,
     name: item.name,
-    parentId: item.eParent ? item.eParent : "0",
+    parentId: item.eParent ? item.eParent : "owner",
     sortNo: item.name,
   };
 }

@@ -7,9 +7,6 @@ target 'appe' do
   pod 'Firebase/Core', '~> 6.3.0'
   pod 'Firebase/Messaging', '~> 6.3.0'
 
-  # React Native Mixpanel manual linking (automatic linking not supported)
-
-  # React Native WebView manual linking (automatic linking not supported)
 
   # React
   pod 'React', :path => '../node_modules/react-native/'

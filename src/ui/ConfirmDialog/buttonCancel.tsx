@@ -23,9 +23,9 @@ export default class DialogButton extends React.PureComponent<IProps> {
 
 const styles = StyleSheet.create({
   button: {
-    borderRadius: 3,
+    borderRadius: 2,
     backgroundColor: "#C0C0C0",
-    paddingHorizontal: layoutSize.LAYOUT_12,
+    paddingHorizontal: layoutSize.LAYOUT_16,
     paddingVertical: layoutSize.LAYOUT_8,
     justifyContent: "center",
     alignItems: "center",
@@ -34,6 +34,7 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: "center",
     backgroundColor: "transparent",
-    fontSize: layoutSize.LAYOUT_15,
+    fontFamily:"roboto",
+    fontSize: layoutSize.LAYOUT_14,
   },
 });

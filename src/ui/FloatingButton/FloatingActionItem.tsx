@@ -16,7 +16,7 @@ const Item = ({ onEvent, item }: IEventProps & any) => {
       onPress={() => onEvent({ type: EVENT_TYPE.MENU_SELECT, id: item.id, item })}
     >
       <LeftIconPanel style={style.leftPanel}>
-        <Icon color="#ffffff" size={layoutSize.LAYOUT_28} name={icon} />
+        <Icon color="#000000" size={layoutSize.LAYOUT_28} name={icon} />
       </LeftIconPanel>
       <CenterPanel style={style.centerPanel}>
         <Text numberOfLines={1} style={style.fileName}>
@@ -32,7 +32,7 @@ export default Item;
 const style = StyleSheet.create({
   centerPanel: {
     alignItems: "center",
-    backgroundColor: "#ff8000",
+    backgroundColor: "transparent",
     flexDirection: "row",
     flexGrow: 3,
     justifyContent: "flex-start",
@@ -40,11 +40,11 @@ const style = StyleSheet.create({
     marginLeft: -20,
   },
   fileName: {
-    color: "#ffffff",
+    color: "#000000",
     fontSize: layoutSize.LAYOUT_14,
   },
   leftPanel: {
-    backgroundColor: "#ff8000",
+    backgroundColor: "transparent",
     flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "center",
@@ -54,7 +54,7 @@ const style = StyleSheet.create({
     padding: 2,
   },
   touchPanel: {
-    backgroundColor: "#ff8000",
+    backgroundColor: "transparent",
     flexDirection: "row",
     flex: 1,
     paddingLeft: 5,

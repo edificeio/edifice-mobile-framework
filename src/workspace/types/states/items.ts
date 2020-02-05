@@ -6,7 +6,8 @@ export type IItem = IRight &
     contentType?: string;
     date?: number;
     name: string;
-    isFolder: boolean;
+    isFolder?: boolean;
+    parentId: string;
   };
 
 export type IFile = IItem & {

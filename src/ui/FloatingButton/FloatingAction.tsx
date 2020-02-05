@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     overflow: "visible",
     backgroundColor: "#ffffff",
     position: "absolute",
-    right: layoutSize.LAYOUT_10,
+    right: layoutSize.LAYOUT_2,
     top: 0,
     width: layoutSize.LAYOUT_200,
     zIndex: 10,
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     elevation: 10,
     position: "absolute",
     right: layoutSize.LAYOUT_20,
-    top: -layoutSize.LAYOUT_30,
+    top: -layoutSize.LAYOUT_34,
     zIndex: 10,
   },
   overlay: {
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     top: layoutSize.LAYOUT_26,
   },
   separator: {
-    borderBottomColor: CommonStyles.borderColorVeryLighter,
+    borderBottomColor: CommonStyles.borderColorLighter,
     borderBottomWidth: 1,
     width: "100%",
   },

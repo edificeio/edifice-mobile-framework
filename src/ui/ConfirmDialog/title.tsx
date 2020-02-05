@@ -13,8 +13,9 @@ export default class DialogTitle extends React.PureComponent {
 
 const styles = StyleSheet.create({
   text: {
-    fontWeight: "500",
-    fontSize: 18,
-    marginBottom: layoutSize.LAYOUT_16,
+    fontWeight: "600",
+    fontFamily: "roboto bold",
+    fontSize: layoutSize.LAYOUT_15,
+    marginBottom: layoutSize.LAYOUT_8,
   },
 });

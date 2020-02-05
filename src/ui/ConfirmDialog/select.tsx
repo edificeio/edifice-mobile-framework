@@ -1,7 +1,7 @@
 import React from "react";
-import TreeSelect from "react-native-tree-select";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import TreeSelect from "./treeSelect";
 import { View } from "react-native";
-import { Icon } from "../index";
 import { layoutSize } from "../../styles/common/layoutSize";
 import { ITreeItem } from "../../workspace/actions/helpers/formatListFolders";
 
@@ -13,7 +13,7 @@ type IProps = {
 export default class Select extends React.PureComponent<IProps> {
   static displayName = "DialogSelect";
   state = {
-    defaultSelectedId: [],
+    defaultSelectedId: ["owner"],
   };
 
   onPress({ item }) {
@@ -40,25 +40,12 @@ export default class Select extends React.PureComponent<IProps> {
         <TreeSelect
           data={data}
           defaultSelectedId={this.state.defaultSelectedId}
-          // isOpen
-          // openIds={['A01']}
-          isShowTreeId={false}
-          itemStyle={{
-            // backgroudColor: '#8bb0ee',
-            fontSize: layoutSize.LAYOUT_14,
-            color: "#995962",
-          }}
           openIds={["owner"]}
-          selectedItemStyle={{
-            backgroundColor: "#f7edca",
-            fontSize: layoutSize.LAYOUT_14,
-            color: "#171e99",
-          }}
           onClick={onPress}
           onClickLeaf={onPress}
           treeNodeStyle={{
-            openIcon: <Icon size={16} color="#171e99" style={{ marginRight: 10 }} name="arrow_down" />,
-            closeIcon: <Icon size={18} color="#171e99" style={{ marginRight: 10 }} name="chevron-left1" />,
+            openIcon: <Icon size={layoutSize.LAYOUT_24} color="#FF8800" name="menu-down" />,
+            closeIcon: <Icon size={layoutSize.LAYOUT_24} color="#FF8800" name="menu-right" />,
           }}
         />
       </View>

@@ -24,6 +24,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginBottom: layoutSize.LAYOUT_20,
     color: "#777777",
+    fontFamily:"roboto",
     fontSize: layoutSize.LAYOUT_16,
   },
 });

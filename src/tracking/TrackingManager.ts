@@ -1,60 +1,33 @@
 import { Platform } from "react-native";
-import firebase from "react-native-firebase";
-import { MixpanelInstance } from "react-native-mixpanel";
+import mixPanel from "react-native-mixpanel";
 
 import Conf from "../../ode-framework-conf";
 
 import DeviceInfo from 'react-native-device-info';
 import { getSessionInfo } from "../AppStore";
 
-const getUnsafeInitializedFlag = (mixpanelInstance:any):boolean => {
-  return mixpanelInstance.initialized;
-}
 export default class Tracking {
   // Mixpanel
 
   private static mixpanel;
   private static mixpanelToken: string;
-  private static mixPanelPromise:Promise<void> = Promise.resolve();
-  public static initMixpanel() {
-    if (Platform.OS === "ios") {
-      Tracking.mixpanelToken = Conf.mixPanel.token;
-    } else if (Platform.OS === "android") {
-      Tracking.mixpanelToken = Conf.mixPanel.token;
-    }
-    return Tracking.initMixPanelIfNeeded();
-  }
-  //#25549
+
   private static async initMixPanelIfNeeded():Promise<boolean>{
     if(!Tracking.mixpanel) {
-      Tracking.mixpanel = new MixpanelInstance(Tracking.mixpanelToken);
-      Tracking.mixPanelPromise = Tracking.mixpanel.initialize();
-      await Tracking.mixPanelPromise;
-      return getUnsafeInitializedFlag(Tracking.mixpanel);
-    }else{
-      await Tracking.mixPanelPromise;
-      if(getUnsafeInitializedFlag(Tracking.mixpanel)){
-        return true;
-      }else{
-        Tracking.mixPanelPromise = Tracking.mixpanel.initialize();
-        await Tracking.mixPanelPromise;
-        return getUnsafeInitializedFlag(Tracking.mixpanel);
+      Tracking.mixpanel = mixPanel;
+      if (Platform.OS === "ios") {
+        Tracking.mixpanelToken = Conf.mixPanel.token;
+      } else if (Platform.OS === "android") {
+        Tracking.mixpanelToken = Conf.mixPanel.token;
       }
+      await mixPanel.sharedInstanceWithToken(Tracking.mixpanelToken, false, false);
     }
-    
+    return true;
   }
 
   // Common methods
 
   public static async init() {
-    try {
-      // console.log("Setting up Tracking manager...");
-      await Tracking.initMixpanel();
-      // console.log("Tracking manager is set up");
-    } catch (e) {
-      // tslint:disable-next-line:no-console
-      console.warn(e);
-    }
   }
 
   public static async logEvent(name: string, params?) {
