@@ -41,7 +41,6 @@ export const CommonStyles = {
   // primaryBorderColor: "#bcbbc1",
   // primaryButtonColor: "#007396",
   primaryFontFamily: "OpenSans-Regular",
-  secondaryFontFamily: "Roboto",
   // primaryFontFamilyBold: "OpenSans-Bold",
   // primaryFontFamilyLight: "OpenSans-Light",
   // primaryFontFamilySemibold: "OpenSans-SemiBold",

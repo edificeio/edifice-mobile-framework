@@ -19,7 +19,6 @@ export default class DialogInput extends React.PureComponent<IProps> {
 const styles = StyleSheet.create({
   textInput: {
     color: "#21212138",
-    fontFamily: "Roboto",
     fontSize: layoutSize.LAYOUT_16,
     borderColor: "#00000012",
     borderBottomWidth: 1,

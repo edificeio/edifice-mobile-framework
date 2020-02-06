@@ -61,7 +61,6 @@ export default class TreeSelect extends React.PureComponent<IProps, IState> {
     openIds: ["owner"],
     selectedItemStyle: {
       backgroundColor: "#2A9CC825",
-      fontFamily: "Roboto",
       fontSize: layoutSize.LAYOUT_14,
       color: "#000000",
     },
@@ -329,7 +328,6 @@ export default class TreeSelect extends React.PureComponent<IProps, IState> {
           style={{
             height: layoutSize.LAYOUT_40,
             fontSize: layoutSize.LAYOUT_15,
-            fontFamily: "Roboto",
             paddingHorizontal: 5,
             flex: 1,
           }}

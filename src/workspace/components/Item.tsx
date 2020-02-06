@@ -18,12 +18,10 @@ const style = StyleSheet.create({
   fileName: {
     color: CommonStyles.shadowColor,
     fontSize: layoutSize.LAYOUT_15,
-    fontFamily: "Roboto",
   },
   fileNameSimple: {
     color: CommonStyles.shadowColor,
     fontSize: layoutSize.LAYOUT_14,
-    fontFamily: "Roboto",
   },
   date: { flex: 1, alignItems: "flex-start" },
   author: { flex: 3, alignItems: "flex-end" },
@@ -63,7 +61,6 @@ export const Item = ({ onEvent, item, selected, simple }: IEventProps & any) => 
                   style={{
                     fontSize: layoutSize.LAYOUT_10,
                     color: CommonStyles.lightTextColor,
-                    fontFamily:"Roboto",
                   }}>
                   {longOwnerName}
                 </NestedText>
