@@ -16,7 +16,7 @@ export const CommonStyles = {
   lightGrey: "rgb(248,248,250)",
   missingGrey: "rgb(218,218,210)",
   grey: "rgb(188,188,190)",
-  lightTextColor: "#7a7a7A",
+  lightTextColor: "#858FA9",
   actionColor: "#2A9CC8",
   // actionColorDisabled: "#2A9CC888",
   borderBottomItem: "#dddddd",
