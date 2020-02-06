@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, Text } from "react-native";
-import {layoutSize} from "../../styles/common/layoutSize";
+import { layoutSize } from "../../styles/common/layoutSize";
 
 export default class DialogTitle extends React.PureComponent {
   static displayName = "DialogTitle";

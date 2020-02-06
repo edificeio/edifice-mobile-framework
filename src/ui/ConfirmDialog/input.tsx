@@ -3,8 +3,8 @@ import { StyleSheet, TextInput } from "react-native";
 import { layoutSize } from "../../styles/common/layoutSize";
 
 type IProps = {
-  value: string,
-  onChangeText: (event) => void,
+  value: string;
+  onChangeText: (event) => void;
 };
 
 export default class DialogInput extends React.PureComponent<IProps> {
@@ -13,7 +13,13 @@ export default class DialogInput extends React.PureComponent<IProps> {
   render() {
     const { value, ...otherProps } = this.props;
     return (
-      <TextInput autoFocus underlineColorAndroid={"tranparent"} style={styles.textInput} value={value} {...otherProps} />
+      <TextInput
+        autoFocus
+        underlineColorAndroid="tranparent"
+        style={styles.textInput}
+        value={value}
+        {...otherProps}
+      />
     );
   }
 }
@@ -21,7 +27,7 @@ export default class DialogInput extends React.PureComponent<IProps> {
 const styles = StyleSheet.create({
   textInput: {
     color: "#21212138",
-    fontFamily:"Roboto",
+    fontFamily: "Roboto",
     fontSize: layoutSize.LAYOUT_16,
   },
 });

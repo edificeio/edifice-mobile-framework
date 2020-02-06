@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
-import {layoutSize} from "../../styles/common/layoutSize";
+import { layoutSize } from "../../styles/common/layoutSize";
 
 type IProps = {
   label: string;
@@ -40,10 +40,10 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   text: {
-    color: 'white',
+    color: "white",
     textAlign: "center",
     backgroundColor: "transparent",
-    fontFamily:"Roboto",
+    fontFamily: "Roboto",
     fontSize: layoutSize.LAYOUT_14,
   },
 });

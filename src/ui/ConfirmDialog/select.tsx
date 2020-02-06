@@ -1,7 +1,7 @@
 import React from "react";
+import { View } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import TreeSelect from "./treeSelect";
-import { View } from "react-native";
 import { layoutSize } from "../../styles/common/layoutSize";
 import { ITreeItem } from "../../workspace/actions/helpers/formatListFolders";
 import { IId } from "../../types";

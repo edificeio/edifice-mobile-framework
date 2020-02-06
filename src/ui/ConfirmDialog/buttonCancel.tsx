@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
-import { layoutSize } from "../../styles/common/layoutSize";
 import I18n from "i18n-js";
+import { layoutSize } from "../../styles/common/layoutSize";
 
 type IProps = {
   onPress: (any) => void;
@@ -31,10 +31,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   text: {
-    color: 'white',
+    color: "white",
     textAlign: "center",
     backgroundColor: "transparent",
-    fontFamily:"Roboto",
+    fontFamily: "Roboto",
     fontSize: layoutSize.LAYOUT_14,
   },
 });

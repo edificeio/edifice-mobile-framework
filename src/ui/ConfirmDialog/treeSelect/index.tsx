@@ -90,19 +90,19 @@ export default class TreeSelect extends React.PureComponent<IProps, IState> {
         for (let id of openIds) {
           // eslint-disable-line
           const routes = this._find(data, id);
-          routes.map(parent => nodesStatus[parent.id] = true);
+          routes.map(parent => (nodesStatus[parent.id] = true));
         }
       }
       if (defaultSelectedId && defaultSelectedId.length) {
         for (let id of defaultSelectedId) {
           // eslint-disable-line
           const routes = this._find(data, id);
-          routes.map(parent => nodesStatus[parent.id] = true);
+          routes.map(parent => (nodesStatus[parent.id] = true));
         }
       }
       return nodesStatus;
     }
-    breadthFirstRecursion(data).map(item => nodesStatus[item.id] = true);
+    breadthFirstRecursion(data).map(item => (nodesStatus[item.id] = true));
     return nodesStatus;
   };
 
@@ -241,7 +241,7 @@ export default class TreeSelect extends React.PureComponent<IProps, IState> {
     const selectedColor = selectedItemStyle && selectedItemStyle.color;
     const isCurrentNode = currentNode === item.id;
 
-    if (!this.matchStackFilter(item) || excludeData.filter( exclude => item.id === exclude.id).length) return null;
+    if (!this.matchStackFilter(item) || excludeData.filter(exclude => item.id === exclude.id).length) return null;
 
     if (item && item.children && item.children.length) {
       const isOpen = (this.state.nodesStatus && this.state.nodesStatus[item.id]) || false;
@@ -269,7 +269,7 @@ export default class TreeSelect extends React.PureComponent<IProps, IState> {
               </Text>
             </View>
           </TouchableOpacity>
-          {isOpen &&
+          {isOpen && (
             <FlatList
               keyExtractor={(childrenItem, i) => i.toString()}
               style={{ flex: 1, marginLeft: layoutSize.LAYOUT_15 }}
@@ -279,7 +279,7 @@ export default class TreeSelect extends React.PureComponent<IProps, IState> {
               extraData={this.state}
               renderItem={this._renderRow}
             />
-          }
+          )}
         </View>
       );
     }

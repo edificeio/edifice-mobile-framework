@@ -10,7 +10,7 @@ import DialogContainer from "./container";
 import DialogInput from "./input";
 import DialogSelect from "./select";
 import DialogTitle from "./title";
-import {ITreeItem} from "../../workspace/actions/helpers/formatListFolders";
+import { ITreeItem } from "../../workspace/actions/helpers/formatListFolders";
 
 type IProps = {
   title: string;
@@ -18,7 +18,7 @@ type IProps = {
   okLabel: string;
   selectDestination: boolean;
   selected: IFile[];
-  folders: ITreeItem[],
+  folders: ITreeItem[];
   visible: boolean;
   onValid: Function;
   onCancel: Function;
@@ -59,14 +59,12 @@ export class ConfirmDialog extends React.Component<IProps, IState> {
   }
 
   getFinalValue() {
-    const { input, selectDestination  } = this.props;
-    const { value, valueSelect, } = this.state;
+    const { input, selectDestination } = this.props;
+    const { value, valueSelect } = this.state;
     const { prefix, suffix } = value;
 
-    if (input)
-      return `${prefix}${suffix}`;
-    else if (selectDestination)
-      return valueSelect;
+    if (input) return `${prefix}${suffix}`;
+    else if (selectDestination) return valueSelect;
   }
 
   fill() {
@@ -149,7 +147,3 @@ export class ConfirmDialog extends React.Component<IProps, IState> {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  textInput: {},
-});
