@@ -4,10 +4,12 @@ import TreeSelect from "./treeSelect";
 import { View } from "react-native";
 import { layoutSize } from "../../styles/common/layoutSize";
 import { ITreeItem } from "../../workspace/actions/helpers/formatListFolders";
+import { IId } from "../../types";
 
 type IProps = {
   onPress: (event) => void;
   data: ITreeItem[];
+  excludeData: IId[];
 };
 
 export default class Select extends React.PureComponent<IProps> {
@@ -24,7 +26,7 @@ export default class Select extends React.PureComponent<IProps> {
   }
 
   render() {
-    const { data, onPress } = this.props;
+    const { data, excludeData, onPress } = this.props;
 
     return (
       <View
@@ -40,6 +42,7 @@ export default class Select extends React.PureComponent<IProps> {
         <TreeSelect
           data={data}
           defaultSelectedId={this.state.defaultSelectedId}
+          excludeData={excludeData}
           openIds={["owner"]}
           onClick={onPress}
           treeNodeStyle={{

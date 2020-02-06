@@ -6,7 +6,7 @@ import { breadthFirstRecursion } from "../utils/menutransform";
 import { layoutSize } from "../../../styles/common/layoutSize";
 import { IItem } from "../../../workspace/types";
 import { ITreeItem } from "../../../workspace/actions/helpers/formatListFolders";
-import { IItems } from "../../../types/iid";
+import { IId, IItems } from "../../../types/iid";
 
 const styles = StyleSheet.create({
   collapseIcon: {
@@ -32,11 +32,12 @@ const styles = StyleSheet.create({
 type IProps = {
   data: ITreeItem[];
   defaultSelectedId?: string[];
-  openAll?: boolean;
+  excludeData: IId[];
   isShowTreeId?: boolean;
   itemStyle?: any;
   leafCanBeSelected?: any;
   onClick?: Function;
+  openAll?: boolean;
   openIds?: string[];
   selectedItemStyle?: any;
   selectType?: any;
@@ -234,13 +235,13 @@ export default class TreeSelect extends React.PureComponent<IProps, IState> {
 
   _renderRow = ({ item }) => {
     const { currentNode } = this.state;
-    const { isShowTreeId = false, selectedItemStyle, itemStyle, leafCanBeSelected } = this.props;
+    const { isShowTreeId = false, excludeData, selectedItemStyle, itemStyle, leafCanBeSelected } = this.props;
     const { backgroundColor, fontSize, color } = itemStyle && itemStyle;
     const selectedFontSize = selectedItemStyle && selectedItemStyle.fontSize;
     const selectedColor = selectedItemStyle && selectedItemStyle.color;
     const isCurrentNode = currentNode === item.id;
 
-    if (!this.matchStackFilter(item)) return null;
+    if (!this.matchStackFilter(item) || excludeData.filter( exclude => item.id === exclude.id).length) return null;
 
     if (item && item.children && item.children.length) {
       const isOpen = (this.state.nodesStatus && this.state.nodesStatus[item.id]) || false;

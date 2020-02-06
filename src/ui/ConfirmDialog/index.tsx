@@ -2,7 +2,7 @@ import * as React from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import { IFile, IItem } from "../../workspace/types/states/items";
 import { Item } from "../../workspace/components";
-import { DEVICE_WIDTH, layoutSize } from "../../styles/common/layoutSize";
+import { layoutSize } from "../../styles/common/layoutSize";
 
 import DialogButtonOk from "./buttonOk";
 import DialogButtonCancel from "./buttonCancel";
@@ -11,7 +11,6 @@ import DialogInput from "./input";
 import DialogSelect from "./select";
 import DialogTitle from "./title";
 import {ITreeItem} from "../../workspace/actions/helpers/formatListFolders";
-import select from "../../workspace/reducers/select";
 
 type IProps = {
   title: string;
@@ -98,6 +97,7 @@ export class ConfirmDialog extends React.Component<IProps, IState> {
           <DialogTitle>{title}</DialogTitle>
           <DialogSelect
             data={folders}
+            excludeData={selected}
             onPress={({ item }) =>
               this.setState({
                 valueSelect: item.id,
