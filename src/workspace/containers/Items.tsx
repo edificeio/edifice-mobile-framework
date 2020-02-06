@@ -17,7 +17,6 @@ import withMenuWrapper from "../utils/withMenuWrapper";
 import withNavigationWrapper from "../utils/withNavigationWrapper";
 import { ISelectedProps } from "../../types/ievents";
 import { nbItems } from "../utils";
-import { listFoldersAction } from "../actions/listFolders";
 
 const styles = StyleSheet.create({
   separator: {

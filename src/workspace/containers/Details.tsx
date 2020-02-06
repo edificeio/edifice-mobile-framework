@@ -6,7 +6,6 @@ import { openPreview, downloadFile } from "../../infra/actions/downloadHelper";
 import { share } from "../../infra/actions/share";
 
 export class Details extends React.PureComponent<IDetailsProps> {
-
   public handleEvent({ type, item }) {
     switch (type) {
       case EVENT_TYPE.DOWNLOAD: {

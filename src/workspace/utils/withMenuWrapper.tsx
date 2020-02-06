@@ -50,7 +50,7 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
     }
 
     public handleEvent({ type, item }: IEvent) {
-      const { dispatch, navigation, cut, nbSelectedItems, selectedItems } = this.props;
+      const { dispatch, navigation, nbSelectedItems, selectedItems } = this.props;
 
       switch (type) {
         case EVENT_TYPE.SELECT:
@@ -68,9 +68,10 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
 
             if (Object.values(selectedItems).filter(selectedItem => selectedItem.id === parentId).length === 1) return;
 
-            isFolder
-              ? navigation.push("Workspace", { filter, parentId, title })
-              : navigation.push("WorkspaceDetails", { item, title });
+            if (isFolder)
+              navigation.push("Workspace", { filter, parentId, title })
+            else
+              navigation.push("WorkspaceDetails", { item, title });
           }
           return;
 
@@ -89,8 +90,7 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
 
           // check to see if dialog
           if (selectedMenuItem.dialog) {
-            if (selectedMenuItem.dialog.selectDestination)
-              this.props.dispatch(listFoldersAction());
+            if (selectedMenuItem.dialog.selectDestination) this.props.dispatch(listFoldersAction());
 
             this.setState({ dialogVisible: true, selectedMenuItem });
           } else {

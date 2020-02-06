@@ -10,7 +10,7 @@ type IResult = {
   notFormated: IBackendFolder[];
 };
 
-export function formatResults(data: IBackendFolder[], parentId?: string): ITreeItem[] {
+export function formatResults(data: IBackendFolder[]): ITreeItem[] {
   let result: IResult = {
     treeItems: [],
     notFormated: data,
@@ -25,7 +25,7 @@ export function formatResults(data: IBackendFolder[], parentId?: string): ITreeI
     });
   } while (result.notFormated.length !== notFormatedLength);
   return result.treeItems;
-};
+}
 
 function insertItem(result: IResult, item: IBackendFolder): IResult {
   const { treeItems, notFormated } = result;
