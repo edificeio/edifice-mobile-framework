@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
   separator: {
     borderBottomColor: CommonStyles.borderColorLighter,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    marginLeft: layoutSize.LAYOUT_84,
+    marginLeft: layoutSize.LAYOUT_80,
   },
 });
 

@@ -18,13 +18,12 @@ const style = StyleSheet.create({
   fileName: {
     color: CommonStyles.shadowColor,
     fontSize: layoutSize.LAYOUT_15,
-    fontFamily: "roboto",
-    fontWeight: "600",
+    fontFamily: "Roboto",
   },
   fileNameSimple: {
     color: CommonStyles.shadowColor,
-    fontSize: layoutSize.LAYOUT_13,
-    fontFamily: "roboto",
+    fontSize: layoutSize.LAYOUT_14,
+    fontFamily: "Roboto",
   },
   date: { flex: 1, alignItems: "flex-start" },
   author: { flex: 3, alignItems: "flex-end" },
@@ -39,7 +38,7 @@ export const Item = ({ onEvent, item, selected, simple }: IEventProps & any) => 
       onLongPress={() => onEvent({ type: EVENT_TYPE.LONG_SELECT, id: item.id, item })}
       onPress={() => onEvent({ type: EVENT_TYPE.SELECT, id: item.id, item })}
       style={{ backgroundColor: selected ? "#2A9CC825" : "#fff" }}
-      borderBottomWidth={simple ? 0 : 1}>
+      borderBottomWidth={0}>
       {simple ? (
         <LeftSmallIconPanel>{renderSmallIcon(id, isFolder, name, contentType)}</LeftSmallIconPanel>
       ) : (
@@ -64,7 +63,7 @@ export const Item = ({ onEvent, item, selected, simple }: IEventProps & any) => 
                   style={{
                     fontSize: layoutSize.LAYOUT_10,
                     color: CommonStyles.lightTextColor,
-                    fontFamily:"roboto",
+                    fontFamily:"Roboto",
                   }}>
                   {longOwnerName}
                 </NestedText>

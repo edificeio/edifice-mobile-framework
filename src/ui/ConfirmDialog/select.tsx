@@ -42,7 +42,6 @@ export default class Select extends React.PureComponent<IProps> {
           defaultSelectedId={this.state.defaultSelectedId}
           openIds={["owner"]}
           onClick={onPress}
-          onClickLeaf={onPress}
           treeNodeStyle={{
             openIcon: <Icon size={layoutSize.LAYOUT_24} color="#FF8800" name="menu-down" />,
             closeIcon: <Icon size={layoutSize.LAYOUT_24} color="#FF8800" name="menu-right" />,

@@ -11,20 +11,17 @@ export default class DialogInput extends React.PureComponent<IProps> {
   static displayName = "DialogInput";
 
   render() {
-    const { ...otherProps } = this.props;
+    const { value, ...otherProps } = this.props;
     return (
-      <TextInput autoFocus underlineColorAndroid="#eeeeee" style={styles.textInput} {...otherProps} />
+      <TextInput autoFocus underlineColorAndroid={"tranparent"} style={styles.textInput} value={value} {...otherProps} />
     );
   }
 }
 
 const styles = StyleSheet.create({
   textInput: {
-    height: layoutSize.LAYOUT_40,
-    marginLeft: 10,
-    marginBottom: layoutSize.LAYOUT_20,
-    color: "#777777",
-    fontFamily:"roboto",
+    color: "#21212138",
+    fontFamily:"Roboto",
     fontSize: layoutSize.LAYOUT_16,
   },
 });

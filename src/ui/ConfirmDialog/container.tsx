@@ -17,16 +17,16 @@ export default class DialogContainer extends React.PureComponent<IProps> {
     const titleChildrens = [];
     const buttonChildrens = [];
     const otherChildrens = [];
-    React.Children.forEach(children, (child: any) => {
+    React.Children.forEach<any>(children, child => {
       if (!child) {
         return;
       }
       if (child.type.name === "DialogTitle" || child.type.displayName === "DialogTitle") {
-        titleChildrens.push(child);
+        titleChildrens.push(child as never);
       } else if (child.type.name === "DialogButton" || child.type.displayName === "DialogButton") {
-        buttonChildrens.push(child);
+        buttonChildrens.push(child as never);
       } else {
-        otherChildrens.push(child);
+        otherChildrens.push(child as never);
       }
     });
     return (

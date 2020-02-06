@@ -1,11 +1,12 @@
-import React, { Component } from "react";
+import React from "react";
 import { StyleSheet, View, TextInput, FlatList, Text, TouchableOpacity } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import I18n from "i18n-js";
 import { breadthFirstRecursion } from "../utils/menutransform";
 import { layoutSize } from "../../../styles/common/layoutSize";
 import { IItem } from "../../../workspace/types";
 import { ITreeItem } from "../../../workspace/actions/helpers/formatListFolders";
-import I18n from "i18n-js";
+import { IItems } from "../../../types/iid";
 
 const styles = StyleSheet.create({
   collapseIcon: {
@@ -30,23 +31,21 @@ const styles = StyleSheet.create({
 
 type IProps = {
   data: ITreeItem[];
-  defaultSelectedId: string[];
-  isOpen: boolean;
-  isShowTreeId: boolean;
-  itemStyle: any;
-  leafCanBeSelected: any;
-  onClick: Function;
-  onClickLeaf: Function;
-  onPress: (event) => void;
-  openIds: string[];
-  selectedItemStyle: any;
-  selectType: any;
-  treeNodeStyle: any;
+  defaultSelectedId?: string[];
+  openAll?: boolean;
+  isShowTreeId?: boolean;
+  itemStyle?: any;
+  leafCanBeSelected?: any;
+  onClick?: Function;
+  openIds?: string[];
+  selectedItemStyle?: any;
+  selectType?: any;
+  treeNodeStyle?: any;
 };
 
 type IState = {
   currentNode: any;
-  nodesStatus: any;
+  nodesStatus: IItems<any>;
   searchValue: string;
 };
 
@@ -54,13 +53,14 @@ export default class TreeSelect extends React.PureComponent<IProps, IState> {
   routes = [];
   static defaultProps = {
     itemStyle: {
+      backgroundColor: "#ffffff",
       fontSize: layoutSize.LAYOUT_14,
       color: "#000000",
     },
     openIds: ["owner"],
     selectedItemStyle: {
       backgroundColor: "#2A9CC825",
-      fontFamily: "roboto",
+      fontFamily: "Roboto",
       fontSize: layoutSize.LAYOUT_14,
       color: "#000000",
     },
@@ -82,26 +82,26 @@ export default class TreeSelect extends React.PureComponent<IProps, IState> {
   };
 
   _initNodesStatus = () => {
-    const { isOpen = false, data, openIds = [], defaultSelectedId = [] } = this.props;
-    const nodesStatus = new Map();
-    if (!isOpen) {
+    const { openAll = false, data, openIds = [], defaultSelectedId = [] } = this.props;
+    const nodesStatus = {};
+    if (!openAll) {
       if (openIds && openIds.length) {
         for (let id of openIds) {
           // eslint-disable-line
           const routes = this._find(data, id);
-          routes.map(parent => nodesStatus.set(parent.id, true));
+          routes.map(parent => nodesStatus[parent.id] = true);
         }
       }
       if (defaultSelectedId && defaultSelectedId.length) {
         for (let id of defaultSelectedId) {
           // eslint-disable-line
           const routes = this._find(data, id);
-          routes.map(parent => nodesStatus.set(parent.id, true));
+          routes.map(parent => nodesStatus[parent.id] = true);
         }
       }
       return nodesStatus;
     }
-    breadthFirstRecursion(data).map(item => nodesStatus.set(item.id, true));
+    breadthFirstRecursion(data).map(item => nodesStatus[item.id] = true);
     return nodesStatus;
   };
 
@@ -132,42 +132,23 @@ export default class TreeSelect extends React.PureComponent<IProps, IState> {
     return stack;
   };
 
-  _onPressCollapse = ({ e, item }) => {
-    // eslint-disable-line
+  _onClick = ({ item }) => {
     const { data } = this.props;
     const routes = this._find(data, item.id);
-    const currentNodeStatus = this.state.nodesStatus.get(item.id);
-    const nodesStatus = new Map();
+    const currentNodeStatus = this.state.nodesStatus[item.id];
+    const nodesStatus = this.state.nodesStatus;
 
-    routes.forEach(child => nodesStatus.set(child.id, true));
-    nodesStatus.set(item.id, !currentNodeStatus);
-    nodesStatus.set("owner", true);
+    nodesStatus[item.id] = !currentNodeStatus;
 
     this.setState(
       state => ({
+        ...state,
         currentNode: item.id,
         nodesStatus,
       }),
       () => {
         const { onClick } = this.props;
         onClick && onClick({ item, routes, currentNode: this.state.currentNode });
-      }
-    );
-  };
-
-  _onClickLeaf = ({ e, item }) => {
-    // eslint-disable-line
-    const { onClickLeaf, onClick } = this.props;
-    const { data } = this.props;
-
-    this.setState(
-      state => ({
-        currentNode: item.id,
-      }),
-      () => {
-        const routes = this._find(data, item.id);
-        onClick && onClick({ item, routes, currentNode: this.state.currentNode });
-        onClickLeaf && onClickLeaf({ item, routes, currentNode: this.state.currentNode });
       }
     );
   };
@@ -202,12 +183,15 @@ export default class TreeSelect extends React.PureComponent<IProps, IState> {
   };
 
   /**
-   * Say if a subelement match the filter criteria
+   * Say if a subelement match the filter criteria,
+   * if yes open the parent
    * @param item
    * @returns {RegExpMatchArray | Promise<Response | undefined> | * | boolean}
    */
   matchStackFilter = item => {
     const { searchValue } = this.state;
+
+    if (!searchValue || searchValue.length === 0) return true;
 
     if (item.id === "owner") return true;
 
@@ -220,14 +204,14 @@ export default class TreeSelect extends React.PureComponent<IProps, IState> {
   /**
    * Set node status to search criteria
    */
-  getRootFilters = (searchValue) => {
+  calculateNodesStatus = searchValue => {
     const { data } = this.props;
-    const nodesStatus = new Map();
+    const nodesStatus = {};
 
     if (searchValue.length) {
       const filteredItems = data.reduce((acc, child) => [...acc, ...this.getFilters(child, searchValue)], []);
 
-      filteredItems.map(item => nodesStatus.set(item.id, true));
+      filteredItems.map(item => (nodesStatus[item.id] = true));
     }
     return nodesStatus;
   };
@@ -251,7 +235,7 @@ export default class TreeSelect extends React.PureComponent<IProps, IState> {
   _renderRow = ({ item }) => {
     const { currentNode } = this.state;
     const { isShowTreeId = false, selectedItemStyle, itemStyle, leafCanBeSelected } = this.props;
-    const { backgroudColor, fontSize, color } = itemStyle && itemStyle;
+    const { backgroundColor, fontSize, color } = itemStyle && itemStyle;
     const selectedFontSize = selectedItemStyle && selectedItemStyle.fontSize;
     const selectedColor = selectedItemStyle && selectedItemStyle.color;
     const isCurrentNode = currentNode === item.id;
@@ -259,14 +243,14 @@ export default class TreeSelect extends React.PureComponent<IProps, IState> {
     if (!this.matchStackFilter(item)) return null;
 
     if (item && item.children && item.children.length) {
-      const isOpen = (this.state.nodesStatus && this.state.nodesStatus.get(item && item.id)) || false;
+      const isOpen = (this.state.nodesStatus && this.state.nodesStatus[item.id]) || false;
       return (
         <View>
-          <TouchableOpacity onPress={e => this._onPressCollapse({ e, item })}>
+          <TouchableOpacity onPress={() => this._onClick({ item })}>
             <View
               style={{
                 flexDirection: "row",
-                backgroundColor: isCurrentNode ? "#2A9CC825" : backgroudColor || "#fff",
+                backgroundColor: isCurrentNode ? "#2A9CC825" : backgroundColor || "#fff",
                 marginBottom: 2,
                 height: layoutSize.LAYOUT_30,
                 alignItems: "center",
@@ -284,7 +268,7 @@ export default class TreeSelect extends React.PureComponent<IProps, IState> {
               </Text>
             </View>
           </TouchableOpacity>
-          {!isOpen ? null : (
+          {isOpen &&
             <FlatList
               keyExtractor={(childrenItem, i) => i.toString()}
               style={{ flex: 1, marginLeft: layoutSize.LAYOUT_15 }}
@@ -294,16 +278,16 @@ export default class TreeSelect extends React.PureComponent<IProps, IState> {
               extraData={this.state}
               renderItem={this._renderRow}
             />
-          )}
+          }
         </View>
       );
     }
     return (
-      <TouchableOpacity onPress={e => this._onClickLeaf({ e, item })}>
+      <TouchableOpacity onPress={e => this._onClick({ item })}>
         <View
           style={{
             flexDirection: "row",
-            backgroundColor: isCurrentNode ? "#2A9CC825" : backgroudColor || "#fff",
+            backgroundColor: isCurrentNode ? "#2A9CC825" : backgroundColor || "#fff",
             marginBottom: 2,
             height: 30,
             alignItems: "center",
@@ -320,9 +304,9 @@ export default class TreeSelect extends React.PureComponent<IProps, IState> {
     );
   };
 
-  _onSearch = (value) => {
+  _onSearch = value => {
     this.setState({
-      nodesStatus: this.getRootFilters(value),
+      nodesStatus: this.calculateNodesStatus(value),
       searchValue: value,
     });
   };
@@ -342,16 +326,16 @@ export default class TreeSelect extends React.PureComponent<IProps, IState> {
         }}>
         <TextInput
           style={{
-            height: layoutSize.LAYOUT_34,
-            fontSize: layoutSize.LAYOUT_14,
-            fontFamily: "raboto",
+            height: layoutSize.LAYOUT_40,
+            fontSize: layoutSize.LAYOUT_15,
+            fontFamily: "Roboto",
             paddingHorizontal: 5,
             flex: 1,
           }}
           value={searchValue}
           placeholder={I18n.t("Search")}
           placeholderTextColor="#e9e5e1"
-          returnKeyType={"search"}
+          returnKeyType="search"
           autoCapitalize="none"
           underlineColorAndroid="transparent"
           autoCorrect={false}

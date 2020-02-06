@@ -1,4 +1,4 @@
-export const breadthFirstRecursion = (treeData, params) => {
+export const breadthFirstRecursion = (treeData, params?) => {
   params = {
     sortCodeName: params && params.sortCodeName ? params.sortCodeName : "sortCode",
     parentName: params && params.parentName ? params.parentName : "parent",

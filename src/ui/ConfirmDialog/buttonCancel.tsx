@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: "center",
     backgroundColor: "transparent",
-    fontFamily:"roboto",
+    fontFamily:"Roboto",
     fontSize: layoutSize.LAYOUT_14,
   },
 });

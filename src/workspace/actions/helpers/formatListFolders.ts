@@ -2,7 +2,6 @@
  * workspace list actions
  * Build actions to be dispatched to the hworkspace list reducer.
  */
-import { TreeItem } from "react-native-tree-select";
 
 // ADAPTER ----------------------------------------------------------------------------------------
 
@@ -11,43 +10,22 @@ type IResult = {
   notFormated: IBackendFolder[];
 };
 
-export const formatResults: (data: IBackendFolder[], parentId?: string) => ITreeItem[] = (data, parentId) => {
+export function formatResults(data: IBackendFolder[], parentId?: string): ITreeItem[] {
   let result: IResult = {
-    treeItems: [] as ITreeItem[],
+    treeItems: [],
     notFormated: data,
   };
-  let loop = 0;
+  let notFormatedLength = 0;
 
   do {
+    notFormatedLength = result.notFormated.length;
     result = result.notFormated.reduce((acc, item) => insertItem(acc, item), {
       treeItems: result.treeItems,
-      notFormated: [],
+      notFormated: [] as IBackendFolder[],
     });
-  } while (result.notFormated.length === 0 && loop++ < 5);
+  } while (result.notFormated.length !== notFormatedLength);
   return result.treeItems;
 };
-
-// Folder TYPE -------------------------------------------------------------------------------------------
-
-export type IBackendFolder = {
-  _id: string;
-  created: string;
-  modified: string;
-  owner: string;
-  ownerName: string;
-  name: string;
-  application: string;
-  shared: [];
-  ancestors: [];
-  deleted: boolean;
-  eParent: string | null;
-  eType: string;
-  externalId: string;
-  inheritedShares: [];
-  parents: [];
-};
-
-export type ITreeItem = TreeItem;
 
 function insertItem(result: IResult, item: IBackendFolder): IResult {
   const { treeItems, notFormated } = result;
@@ -89,5 +67,34 @@ function mapObject(item: IBackendFolder): ITreeItem {
     name: item.name,
     parentId: item.eParent ? item.eParent : "owner",
     sortNo: item.name,
+    children: [],
   };
 }
+
+// Folder TYPE -------------------------------------------------------------------------------------------
+
+export type IBackendFolder = {
+  _id: string;
+  created: string;
+  modified: string;
+  owner: string;
+  ownerName: string;
+  name: string;
+  application: string;
+  shared: [];
+  ancestors: [];
+  deleted: boolean;
+  eParent: string | null;
+  eType: string;
+  externalId: string;
+  inheritedShares: [];
+  parents: [];
+};
+
+export type ITreeItem = {
+  id: string;
+  name: string;
+  parentId: string;
+  sortNo: string;
+  children: ITreeItem[];
+};

@@ -38,12 +38,6 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
       selectedMenuItem: initialMenuItem,
     };
 
-    componentDidMount() {
-      const { dispatch } = this.props;
-
-      dispatch(listFoldersAction());
-    }
-
     getMenuItems(idSectionMenu: string): IMenuItem[] {
       const { navigation } = this.props;
       const sectionMenuItems = navigation.getParam(idSectionMenu) || [];
@@ -95,6 +89,9 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
 
           // check to see if dialog
           if (selectedMenuItem.dialog) {
+            if (selectedMenuItem.dialog.selectDestination)
+              this.props.dispatch(listFoldersAction());
+
             this.setState({ dialogVisible: true, selectedMenuItem });
           } else {
             selectedMenuItem.onEvent({
