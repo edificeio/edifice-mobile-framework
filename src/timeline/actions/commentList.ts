@@ -19,9 +19,10 @@ export const dataActions = createAsyncActionCreators<IBlogCommentList>(blogComme
  * Calls a fetch operation to get blog comment list from the backend.
  * Dispatches COMMENT_LIST_REQUESTED, COMMENT_LIST_RECEIVED, and COMMENT_LIST_FETCH_ERROR if an error occurs.
  */
-export function fetchBlogCommentListAction(blogPostId: string) {
+export function fetchBlogCommentListAction(blogPostId: string, clear: boolean = false) {
   return async (dispatch: Dispatch) => {
     try {
+      clear && dispatch(dataActions.clear());
       dispatch(dataActions.request());
       const data = await blogCommentListService.get(blogPostId);
       dispatch(dataActions.receipt(data));

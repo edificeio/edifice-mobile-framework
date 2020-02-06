@@ -33,7 +33,7 @@ export interface INewsState {
   selectedApps: any;
   refresh: boolean;
   fetchFailed: boolean;
-  blogComments: IBlogCommentListState;
+  selectedBlogComments: IBlogCommentListState;
   publishableBlogs: IPublishableBlogsState;
   publishStatus: { publishing: boolean }
 }
@@ -74,7 +74,7 @@ export default (
 
   return {
     ...state,
-    blogComments: blogCommentsReducer(state.blogComments, action),
+    selectedBlogComments: blogCommentsReducer(state.selectedBlogComments, action),
     publishableBlogs: publishableBlogsReducer(state.publishableBlogs, action),
     publishStatus: publishStatusReducer(state.publishStatus, action)
   };

@@ -25,7 +25,7 @@ export const initialState: IBlogCommentList = [];
 
 /** Returns the sub local state (global state -> notification -> notificationList). Give the global state as parameter. */
 export const getBlogCommentListState = (globalState: any) =>
-    globalState.timeline.blogComments as IBlogCommentListState;
+    globalState.timeline.selectedBlogComments as IBlogCommentListState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 

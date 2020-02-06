@@ -26,6 +26,7 @@ export const CommonStyles = {
   borderColorVeryLighter: "#e2e2e299",
   // cardTitle: "#1467ff",
   elevation: 20,
+  lightBlue: "#EEF3F8",
   entryfieldBorder: "#DCDDE0",
   errorColor: "#EC5D61",
   fadColor: "#444444",

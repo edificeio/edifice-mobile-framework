@@ -28,7 +28,7 @@ const blogCommentListAdapter: (
     state: item.state,
     author: item.author,
     created: moment(item.created.$date),
-  }))
+  })).reverse()
   return result;
 };
 

@@ -9,7 +9,7 @@ import { signedFetch } from "../../infra/fetchWithCache";
 import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { CommonStyles } from "../../styles/common/styles";
 import Tracking from "../../tracking/TrackingManager";
-import { ButtonsOkCancel, FlatButton, Icon } from "../../ui";
+import { ButtonsOkCancel, FlatButton, Icon, Loading } from "../../ui";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { ArticleContainer, PageContainer } from "../../ui/ContainerContent";
 import { ResourceTitle } from "../../ui/headers/ResourceTitle";
@@ -30,7 +30,7 @@ import { HeaderBackAction } from "../../ui/headers/NewHeader";
 import { connect } from "react-redux";
 import { ThunkDispatch } from "redux-thunk";
 import { getBlogCommentListState, IBlogComment } from "../state/commentList";
-import { fetchBlogCommentListAction } from "../actions/commentList";
+import { fetchBlogCommentListAction, dataActions } from "../actions/commentList";
 import { ListItem, LeftPanel, CenterPanel, RightPanel } from "../../myAppMenu/components/NewContainerContent";
 import style from "glamorous-native";
 import { FontWeight } from "../../ui/text";
@@ -166,19 +166,136 @@ INewsContentPageProps,
         fetching: false
       };
     }
-    this.reloadList();
+    this.reloadCommentList(true);
   }
 
-  public reloadList() {
+  public reloadCommentList(clear = false) {
     const { isFetching, navigation } = this.props;
+    const type = navigation.getParam("news").type
     const resource = navigation.getParam("news").resource
     const resourceId = navigation.getParam("news").resourceId
     const blogPostId = `${resource}/${resourceId}`
+    const isCommentable = type === "BLOG" || type === "NEWS";
     if (isFetching) return;
-    this.props.dispatch(fetchBlogCommentListAction(blogPostId));
+    isCommentable
+    ? this.props.dispatch(fetchBlogCommentListAction(blogPostId, clear))
+    : this.props.dispatch(dataActions.clear())
   }
 
-  public newsContent() {
+  public render() {
+    /*
+    // console.log(
+      "main render nav kay",
+      this.props.navigation.state.key,
+      this.props.navigation.state
+    );
+    */
+    // console.log("render state", this.state);
+    let schoolbookData;
+    if (this.props.navigation.state.params.news.application === "schoolbook") {
+      schoolbookData = schoolbooks.find(
+        s =>
+          s.id.toString() === this.props.navigation.state.params.news.resourceId
+      );
+    }
+    const isParent = getSessionInfo().type && getSessionInfo().type.includes("Relative");
+    const { resourceId, resourceUri, type } = this.props.navigation.state.params.news;
+    const { isFetching, isPristine, selectedBlogComments } = this.props;
+    const { fetching } = this.state;
+    const isCommentable = type === "BLOG" || type === "NEWS";
+    // console.log("nav state params", this.props.navigation.state.params);
+    return (
+      <PageContainer>
+        <ConnectionTrackingBar />
+        {isParent && schoolbookData ? (
+          <ModalBox
+            backdropOpacity={0.5}
+            isVisible={this.props.navigation.state.params.confirmBackSchoolbook}
+          >
+            {this.renderBackModal(resourceId, schoolbookData.childId)}
+          </ModalBox>
+        ) : null}
+        <FlatList
+          contentContainerStyle={{
+            paddingTop: 20,
+            paddingBottom:
+              !this.state.isAckBefore && isParent && schoolbookData
+                ? 20 + 40 + 20
+                : 20
+          }}
+          ListHeaderComponent={
+            <View>
+              <View style={{ paddingHorizontal: 20 }}>
+                <ArticleContainer>{this.renderNews()}</ArticleContainer>
+                {resourceUri ? (
+                  <View style={{ marginTop: 12 }}>
+                    <A
+                      onPress={() => {
+                        Tracking.logEvent("responsiveLink", {
+                          application: this.props.navigation.state.params.news.application
+                        });
+                        Linking.openURL(Conf.currentPlatform.url + resourceUri);
+                      }}
+                    >
+                      {I18n.t("timeline-viewInBrowser")}
+                    </A>
+                  </View>
+                ) : null}
+              </View>
+              {isCommentable && !isPristine ?
+                <ListItem
+                  style={{ 
+                    justifyContent: "flex-start",
+                    alignItems: "center",
+                    marginTop: 5,
+                    marginBottom: 4,
+                    shadowColor: "#6B7C93",
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.2,
+                    elevation: 1,
+                  }}
+                >
+                  <Icon
+                    name="new_comment"
+                    color={"#868CA0"}
+                    size={16}
+                    style={{ marginRight: 5 }}
+                  />
+                  <TextBright>
+                    {selectedBlogComments.length} {I18n.t("timeline-comment")}{selectedBlogComments.length !== 1 && "s"}
+                  </TextBright>
+                </ListItem>
+                :
+                null
+              }
+            </View>
+          }
+          data={selectedBlogComments || null}
+          renderItem={({ item }: { item: IBlogComment }) => this.renderBlogComment(item)}
+          keyExtractor={(item: IBlogComment) => item.id}
+          ListEmptyComponent={selectedBlogComments.length === 0 && isFetching && isPristine ? <Loading /> : null}
+          refreshControl={
+            isCommentable
+            ?
+            <RefreshControl
+              refreshing={fetching && !isPristine}
+              onRefresh={() => {
+                this.setState({ fetching: true })
+                this.reloadCommentList()
+              }}
+            />
+            : null
+          }
+        />
+        {!this.state.isAckBefore && isParent && schoolbookData
+          ? this.renderAck()
+          : null
+        }
+      </PageContainer>
+    );
+  }
+
+  public renderNews() {
     const {
       date,
       id,
@@ -192,6 +309,7 @@ INewsContentPageProps,
       senderName,
       subtitle,
       title,
+      type,
       url
     } = this.props.navigation.state.params.news;
 
@@ -283,103 +401,10 @@ INewsContentPageProps,
     );
   }
 
-  public render() {
-    /*
-    // console.log(
-      "main render nav kay",
-      this.props.navigation.state.key,
-      this.props.navigation.state
-    );
-    */
-    // console.log("render state", this.state);
-    let schoolbookData;
-    if (this.props.navigation.state.params.news.application === "schoolbook") {
-      schoolbookData = schoolbooks.find(
-        s =>
-          s.id.toString() === this.props.navigation.state.params.news.resourceId
-      );
-    }
-    const isParent = getSessionInfo().type && getSessionInfo().type.includes("Relative");
-    const { resourceId, resourceUri } = this.props.navigation.state.params.news;
-    const { blogComments } = this.props;
-    const { fetching } = this.state
-
-    // console.log("nav state params", this.props.navigation.state.params);
-    return (
-      <PageContainer>
-        <ConnectionTrackingBar />
-        {isParent && schoolbookData ? (
-          <ModalBox
-            backdropOpacity={0.5}
-            isVisible={this.props.navigation.state.params.confirmBackSchoolbook}
-          >
-            {this.renderBackModal(resourceId, schoolbookData.childId)}
-          </ModalBox>
-        ) : null}
-        <ScrollView
-          contentContainerStyle={{
-            paddingBottom:
-              !this.state.isAckBefore && isParent && schoolbookData
-                ? 20 + 40 + 20
-                : 20,
-            paddingHorizontal: 20,
-            paddingTop: 20
-          }}
-        >
-          <ArticleContainer>{this.newsContent()}</ArticleContainer>
-          {resourceUri ? (
-            <View style={{ marginTop: 12 }}>
-              <A
-                onPress={() => {
-                  Tracking.logEvent("responsiveLink", {
-                    application: this.props.navigation.state.params.news.application
-                  });
-                  Linking.openURL(Conf.currentPlatform.url + resourceUri);
-                }}
-              >
-                {I18n.t("timeline-viewInBrowser")}
-              </A>
-            </View>
-          ) : null}
-          <FlatList
-            data={blogComments || null}
-            ListHeaderComponent={blogComments && blogComments.length > 0 ?
-              <ListItem disabled style={{ justifyContent: "flex-start" }}>
-                <TextBright>
-                  {blogComments.length} {I18n.t("timeline-comment")}{blogComments.length > 1 && "s"}
-                </TextBright>
-              </ListItem>
-              :
-              null
-            }
-            renderItem={({ item, index }: { item: IBlogComment, index: number }) => this.renderBlogComment(item, index )}
-            keyExtractor={(item: IBlogComment) => item.id}
-            alwaysBounceVertical={false}
-            //style={styles.grid}
-            refreshControl={
-              <RefreshControl
-                refreshing={fetching}
-                onRefresh={() => {
-                  this.setState({ fetching: true })
-                  this.reloadList.bind(this)
-                }}
-              />
-            }
-          />
-        </ScrollView>
-        {/*!this.state.isAckBefore && isParent && schoolbookData*/ true
-          ? this.renderAck()
-          : null}
-      </PageContainer>
-    );
-  }
-
-  public renderBlogComment(blogComment: IBlogComment, index: number) {
+  public renderBlogComment(blogComment: IBlogComment) {
     return(
-      <ListItem
-        style={{ backgroundColor: index % 2 === 0 ? CommonStyles.extraLightGrey : CommonStyles.lightGrey }}
-      >
-        <LeftPanel>
+      <ListItem style={{ backgroundColor: CommonStyles.lightBlue }}>
+        <LeftPanel disabled>
           <GridAvatars
             users={[blogComment.author
             ? blogComment.author.userId
@@ -388,18 +413,20 @@ INewsContentPageProps,
             fallback={require("../../../assets/images/resource-avatar.png")}
           />
         </LeftPanel>
-        <View style={{ flexDirection: 'row', flex: 1 }}>
-          <CenterPanel>
-            <CommentAuthor numberOfLines={1}>
+        <CenterPanel disabled>
+          <View style={{ flexDirection: "row", alignItems: "center", width: "80%" }}>
+            <CommentAuthor numberOfLines={2}>
               {blogComment.author.username}
+            </CommentAuthor>
+            <CommentDate>
               {/* FIXME: Use moment.js instead of this */}
               {getTimeToStr(blogComment.created)}
-            </CommentAuthor>
-            <Content numberOfLines={5}>
-              {blogComment.comment}
-            </Content>
-          </CenterPanel>
-        </View>
+            </CommentDate>
+          </View>
+          <CommentContent numberOfLines={5}>
+            {blogComment.comment}
+          </CommentContent>
+        </CenterPanel>
       </ListItem>
     )
   }
@@ -590,30 +617,36 @@ const CommentAuthor = style.text(
   {
     color: CommonStyles.textColor,
     fontFamily: CommonStyles.primaryFontFamily,
-    fontSize: 14,
-    fontWeight: FontWeight.SemiBold
+    fontSize: 12,
+    fontWeight: FontWeight.SemiBold,
+    marginRight: 5,
   }
 );
 
-export const Content = style.text({
-  color: CommonStyles.iconColorOff,
+const CommentDate = style.text(
+  {
+    color: CommonStyles.lightTextColor,
+    fontFamily: CommonStyles.primaryFontFamily,
+    fontSize: 10,
+    fontWeight: FontWeight.Light,
+  }
+);
+
+const CommentContent = style.text({
+  color: CommonStyles.textColor,
   fontFamily: CommonStyles.primaryFontFamily,
   fontSize: 12,
-  fontWeight: FontWeight.Light,
-  marginTop: 10
+  marginTop: 5
 });
 
 const NewsContentPage = connect(
   (state: any) => {
-    const { data: blogComments, isFetching } = getBlogCommentListState(state);
-    return { blogComments, isFetching };
+    const { data: selectedBlogComments, isFetching, isPristine } = getBlogCommentListState(state);
+    return { selectedBlogComments, isFetching, isPristine };
   },
   (dispatch: any) => /*INotificationListPageEventProps =*/ dispatch => {
     return {
       dispatch,
-      // onHandleNotification: (notification: INotification) =>  {
-      //   dispatch(handleNotificationAction(notification))
-      // }
     }
   }
 )(NewsContentPage_Unconnected);

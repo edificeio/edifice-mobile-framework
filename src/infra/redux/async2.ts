@@ -3,19 +3,21 @@ import createReducer, { IReducerActionsHandlerMap, createSessionReducer } from "
 
 // Action Types
 
-export type AsyncActionTypeKey = 'request' | 'receipt' | 'error';
+export type AsyncActionTypeKey = 'request' | 'receipt' | 'error' | 'clear';
 export type AsyncActionTypes = { [key in AsyncActionTypeKey]: string };
 
 const asyncActionTypeSuffixes: AsyncActionTypes = {
   'request': '_REQUEST',
   'receipt': '_RECEIPT',
-  'error': '_ERROR'
+  'error': '_ERROR',
+  'clear': '_CLEAR'
 }
 
 export type AsyncActionCreators<DataType> = {
   'request': () => AnyAction,
   'receipt': (data: DataType) => ReceiptAction<DataType>,
-  'error': (err: Error) => ErrorAction
+  'error': (err: Error) => ErrorAction,
+  'clear': () => AnyAction
 };
 
 export const createAsyncActionTypes: (prefixUpperCase: string) => AsyncActionTypes =
@@ -29,7 +31,8 @@ export const createAsyncActionCreators: <DataType>(actionTypes: AsyncActionTypes
   <DataType>(actionTypes: AsyncActionTypes) => ({
     'request': () => ({ type: actionTypes.request }),
     'receipt': (data: DataType) => ({ type: actionTypes.receipt, data }),
-    'error': (error: Error) => ({ type: actionTypes.error, error })
+    'error': (error: Error) => ({ type: actionTypes.error, error }),
+    'clear': () => ({ type: actionTypes.clear }),
   });
 
 // State
@@ -84,7 +87,9 @@ function _createAsyncReducer<DataType>(
       ...state,
       isFetching: false,
       error: action.error
-    })
+    }),
+    [actionTypes.clear]: (state, action) => 
+      asyncInitialState
   } as IReducerActionsHandlerMap<AsyncState<DataType>>,
     ...createReducerFunctionAdditionalArgs);
 
