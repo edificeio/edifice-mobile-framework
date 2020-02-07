@@ -88,7 +88,7 @@ function _createAsyncReducer<DataType>(
       isFetching: false,
       error: action.error
     }),
-    [actionTypes.clear]: (state, action) => 
+    [actionTypes.clear]: () => 
       asyncInitialState
   } as IReducerActionsHandlerMap<AsyncState<DataType>>,
     ...createReducerFunctionAdditionalArgs);

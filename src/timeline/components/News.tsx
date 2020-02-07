@@ -8,7 +8,8 @@ import { INewsModel } from "../reducer";
 import { TouchCard } from "../../ui/Card";
 import { ArticleContainer } from "../../ui/ContainerContent";
 import { Images } from "../../ui/Images";
-import { Preview } from "../../ui/Preview";
+import { TextPreview } from "../../ui/TextPreview";
+import { CommonStyles } from "../../styles/common/styles";
 import NewsTopInfo from "./NewsTopInfo";
 
 interface INewsProps extends INewsModel {
@@ -46,7 +47,11 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
           <View>
             <NewsTopInfo {...this.props} />
             { message && /\S/.test(message) ?
-              <Preview textContent={message} onExpend={() => this.open(true)} />
+              <TextPreview
+                textContent={message}
+                textStyle={{ color: CommonStyles.textColor }}
+                onExpand={() => this.open(true)}
+              />
               : undefined
             }
             {images.length ? (

@@ -1,9 +1,11 @@
 import I18n from "i18n-js";
 import * as React from "react";
-import { Animated, Linking, ScrollView, View, FlatList, Text, RefreshControl } from "react-native";
-
+import { Animated, Linking, View, FlatList, RefreshControl } from "react-native";
 import { NavigationActions, NavigationScreenProp } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
+import { connect } from "react-redux";
+import style from "glamorous-native";
+
 import Conf from "../../../ode-framework-conf";
 import { signedFetch } from "../../infra/fetchWithCache";
 import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
@@ -12,6 +14,7 @@ import Tracking from "../../tracking/TrackingManager";
 import { ButtonsOkCancel, FlatButton, Icon, Loading } from "../../ui";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { ArticleContainer, PageContainer } from "../../ui/ContainerContent";
+import { GridAvatars } from "../../ui/avatars/GridAvatars";
 import { ResourceTitle } from "../../ui/headers/ResourceTitle";
 import { HtmlContentView } from "../../ui/HtmlContentView";
 import {
@@ -21,22 +24,16 @@ import {
   ModalContentText
 } from "../../ui/Modal";
 import { A, Italic, TextBright } from "../../ui/Typography";
-import { schoolbooks } from "../actions/dataTypes";
-import NewsTopInfo from "../components/NewsTopInfo";
-import { getSessionInfo } from "../../AppStore";
-import { Back } from "../../ui/headers/Back";
 import { HeaderBackAction } from "../../ui/headers/NewHeader";
-
-import { connect } from "react-redux";
-import { ThunkDispatch } from "redux-thunk";
-import { getBlogCommentListState, IBlogComment } from "../state/commentList";
-import { fetchBlogCommentListAction, dataActions } from "../actions/commentList";
-import { ListItem, LeftPanel, CenterPanel, RightPanel } from "../../myAppMenu/components/NewContainerContent";
-import style from "glamorous-native";
 import { FontWeight } from "../../ui/text";
-import CustomTouchableOpacity from "../../ui/CustomTouchableOpacity";
-import { GridAvatars } from "../../ui/avatars/GridAvatars";
+import NewsTopInfo from "../components/NewsTopInfo";
+import { ListItem, LeftPanel, CenterPanel, contentStyle } from "../../myAppMenu/components/NewContainerContent";
+import { getSessionInfo } from "../../AppStore";
+import { schoolbooks } from "../actions/dataTypes";
+import { fetchBlogCommentListAction, dataActions } from "../actions/commentList";
+import { getBlogCommentListState, IBlogComment, IBlogCommentList } from "../state/commentList";
 import { getTimeToStr } from "../../utils/date";
+import { TextPreview } from "../../ui/TextPreview";
 
 interface INewsContentPageState {
   isAck: boolean;
@@ -52,6 +49,7 @@ interface INewsContentPageState {
 export interface INewsContentPageDataProps {
   isPristine?: boolean;
   isFetching?: boolean;
+  selectedBlogComments: IBlogCommentList;
 }
 
 export interface INewsContentPageOtherProps {
@@ -247,7 +245,7 @@ INewsContentPageProps,
                   style={{ 
                     justifyContent: "flex-start",
                     alignItems: "center",
-                    marginTop: 5,
+                    marginTop: 10,
                     marginBottom: 4,
                     shadowColor: "#6B7C93",
                     shadowOffset: { width: 0, height: 2 },
@@ -273,7 +271,8 @@ INewsContentPageProps,
           data={selectedBlogComments || null}
           renderItem={({ item }: { item: IBlogComment }) => this.renderBlogComment(item)}
           keyExtractor={(item: IBlogComment) => item.id}
-          ListEmptyComponent={selectedBlogComments.length === 0 && isFetching && isPristine ? <Loading /> : null}
+          // FIXME: remove 'type === "BLOG"' condition (once implement API call for news-comments)
+          ListEmptyComponent={type === "BLOG" && isFetching && isPristine ? <Loading /> : null}
           refreshControl={
             isCommentable
             ?
@@ -309,7 +308,6 @@ INewsContentPageProps,
       senderName,
       subtitle,
       title,
-      type,
       url
     } = this.props.navigation.state.params.news;
 
@@ -423,9 +421,18 @@ INewsContentPageProps,
               {getTimeToStr(blogComment.created)}
             </CommentDate>
           </View>
-          <CommentContent numberOfLines={5}>
-            {blogComment.comment}
-          </CommentContent>
+          <TextPreview
+            numberOfLines={5}
+            textContent={blogComment.comment}
+            textStyle={{
+              color: CommonStyles.textColor,
+              fontFamily: CommonStyles.primaryFontFamily,
+              fontSize: 12,
+              marginTop: 5
+            }}
+            expandMessage={I18n.t("readMore")}
+            expansionTextStyle={{ fontSize: 12 }}
+          />
         </CenterPanel>
       </ListItem>
     )
@@ -632,19 +639,12 @@ const CommentDate = style.text(
   }
 );
 
-const CommentContent = style.text({
-  color: CommonStyles.textColor,
-  fontFamily: CommonStyles.primaryFontFamily,
-  fontSize: 12,
-  marginTop: 5
-});
-
 const NewsContentPage = connect(
   (state: any) => {
     const { data: selectedBlogComments, isFetching, isPristine } = getBlogCommentListState(state);
     return { selectedBlogComments, isFetching, isPristine };
   },
-  (dispatch: any) => /*INotificationListPageEventProps =*/ dispatch => {
+  (dispatch: any) => dispatch => {
     return {
       dispatch,
     }

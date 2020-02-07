@@ -68,7 +68,7 @@ export class NotificationItem extends React.PureComponent<
   INotificationItemProps,
   INotificationItemState
 > {
-  state= {
+  state = {
     isExtended: false,
     longText: false,
     measuredText: false,
