@@ -5,6 +5,7 @@ import TreeSelect from "./treeSelect";
 import { layoutSize } from "../../styles/common/layoutSize";
 import { ITreeItem } from "../../workspace/actions/helpers/formatListFolders";
 import { IId } from "../../types";
+import { CommonStyles } from "../../styles/common/styles";
 
 type IProps = {
   onPress: (event) => void;
@@ -46,8 +47,8 @@ export default class Select extends React.PureComponent<IProps> {
           openIds={["owner"]}
           onClick={onPress}
           treeNodeStyle={{
-            openIcon: <Icon size={layoutSize.LAYOUT_24} color="#FF8800" name="menu-down" />,
-            closeIcon: <Icon size={layoutSize.LAYOUT_24} color="#FF8800" name="menu-right" />,
+            openIcon: <Icon size={layoutSize.LAYOUT_24} color={CommonStyles.orangeColorTheme} name="menu-down" />,
+            closeIcon: <Icon size={layoutSize.LAYOUT_24} color={CommonStyles.orangeColorTheme} name="menu-right" />,
           }}
         />
       </View>

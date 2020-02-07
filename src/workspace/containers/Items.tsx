@@ -7,16 +7,14 @@ import { Item } from "../components";
 import { listAction } from "../actions/list";
 import { CommonStyles } from "../../styles/common/styles";
 import { layoutSize } from "../../styles/common/layoutSize";
-import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { getEmptyScreen } from "../utils/empty";
 import { PageContainer } from "../../ui/ContainerContent";
-import { ProgressBar } from "../../ui";
 import { removeAccents } from "../../utils/string";
 import withUploadWrapper from "../utils/withUploadWrapper";
 import withMenuWrapper from "../utils/withMenuWrapper";
 import withNavigationWrapper from "../utils/withNavigationWrapper";
 import { ISelectedProps } from "../../types/ievents";
-import { nbItems } from "../utils";
+import { IDispatchProps } from "../../types";
 
 const styles = StyleSheet.create({
   separator: {
@@ -26,7 +24,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export class Items extends React.PureComponent<IItemsProps & ISelectedProps, { isFocused: boolean }> {
+export class Items extends React.PureComponent<IDispatchProps & IItemsProps & ISelectedProps, { isFocused: boolean }> {
   focusListener!: NavigationEventSubscription;
 
   public componentWillMount() {
@@ -40,10 +38,14 @@ export class Items extends React.PureComponent<IItemsProps & ISelectedProps, { i
   }
 
   public makeRequest() {
-    this.props.listAction({
-      filter: this.props.navigation.getParam("filter"),
-      parentId: this.props.navigation.getParam("parentId"),
-    });
+    const { dispatch } = this.props;
+
+    dispatch(
+      listAction({
+        filter: this.props.navigation.getParam("filter"),
+        parentId: this.props.navigation.getParam("parentId"),
+      })
+    );
   }
 
   private sortItems(a: IItem, b: IItem): number {
@@ -65,15 +67,16 @@ export class Items extends React.PureComponent<IItemsProps & ISelectedProps, { i
   }
 
   public render(): React.ReactNode {
-    const getViewToRender = ({ items, isFetching = true, selectedItems }: IItemsProps & ISelectedProps) => {
-      const parentId = this.props.navigation.getParam("parentId") || null;
-      const values = Object.values(items);
+    const { items, isFetching = true, selectedItems } = this.props;
+    const parentId = this.props.navigation.getParam("parentId") || null;
+    const values = Object.values(items);
 
-      if (!values.length && !isFetching) return getEmptyScreen(parentId);
+    if (!values.length && !isFetching) return getEmptyScreen(parentId);
 
-      const itemsArray = parentId === FilterId.root ? values : values.sort(this.sortItems);
+    const itemsArray = parentId === FilterId.root ? values : values.sort(this.sortItems);
 
-      return (
+    return (
+      <PageContainer>
         <FlatList
           contentContainerStyle={{ flexGrow: 1 }}
           data={itemsArray}
@@ -85,14 +88,6 @@ export class Items extends React.PureComponent<IItemsProps & ISelectedProps, { i
             <Item item={item} onEvent={this.props.onEvent} selected={selectedItems[item.id]} simple={false} />
           )}
         />
-      );
-    };
-
-    return (
-      <PageContainer>
-        <ConnectionTrackingBar />
-        <ProgressBar />
-        {getViewToRender(this.props)}
       </PageContainer>
     );
   }
@@ -110,12 +105,8 @@ const getProps = (stateItems: IState, props: any) => {
 
 const mapStateToProps = (state: any, props: any) => {
   return {
-    selectedItems: state.workspace.selected,
-    nbSelectedItems: nbItems(state.workspace.selected),
     ...getProps(state.workspace.items, props),
   };
 };
 
-export default connect(mapStateToProps, { listAction })(
-  withMenuWrapper(withNavigationWrapper(withUploadWrapper(Items)))
-);
+export default withMenuWrapper(withNavigationWrapper(withUploadWrapper(connect(mapStateToProps, {})(Items))));

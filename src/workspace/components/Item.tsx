@@ -35,7 +35,7 @@ export const Item = ({ onEvent, item, selected, simple }: IEventProps & any) => 
     <ListItem
       onLongPress={() => onEvent({ type: EVENT_TYPE.LONG_SELECT, id: item.id, item })}
       onPress={() => onEvent({ type: EVENT_TYPE.SELECT, id: item.id, item })}
-      style={{ backgroundColor: selected ? "#2A9CC825" : "#fff", margin: simple ? -layoutSize.LAYOUT_6 : 0}}
+      style={{ backgroundColor: selected ? "#2A9CC825" : "#fff", margin: simple ? -layoutSize.LAYOUT_6 : 0 }}
       borderBottomWidth={0}>
       {simple ? (
         <LeftSmallIconPanel>{renderSmallIcon(id, isFolder, name, contentType)}</LeftSmallIconPanel>

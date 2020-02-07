@@ -7,6 +7,8 @@ import { IFloatingProps, IMenuItem } from "../types";
 import { ISelected } from "../Toolbar/Toolbar";
 import TouchableOpacity from "../CustomTouchableOpacity";
 import { ButtonIconText } from "..";
+import { deviceWidth } from "../../styles";
+import { Header } from "react-navigation-stack";
 
 class FloatingAction extends Component<IFloatingProps & ISelected, IState> {
   state = {
@@ -65,9 +67,7 @@ class FloatingAction extends Component<IFloatingProps & ISelected, IState> {
       return null;
     }
 
-    return (
-      <ButtonIconText style={styles.button} name={iconName} onPress={this.animateButton}  />
-    );
+    return <ButtonIconText style={styles.button} name={iconName} onPress={this.animateButton} />;
   }
 
   renderActions() {
@@ -101,17 +101,17 @@ class FloatingAction extends Component<IFloatingProps & ISelected, IState> {
 
     if (active) {
       return (
-        <View style={styles.overlay}>
+        <>
           {this.renderMainButton()}
           <TouchableOpacity onPress={this.animateButton} style={styles.overlayActions}>
             {this.renderActions()}
           </TouchableOpacity>
-        </View>
+        </>
       );
     }
 
     if (!active || (menuItems && menuItems.length === 0)) {
-      return <View style={styles.overlay}>{this.renderMainButton()}</View>;
+      return this.renderMainButton();
     }
 
     return null;
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     position: "absolute",
     right: layoutSize.LAYOUT_2,
-    top: 0,
+    top: layoutSize.LAYOUT_54,
     width: layoutSize.LAYOUT_200,
     zIndex: 10,
   },
@@ -138,15 +138,8 @@ const styles = StyleSheet.create({
     elevation: 10,
     position: "absolute",
     right: layoutSize.LAYOUT_20,
-    top: -layoutSize.LAYOUT_34,
+    top: layoutSize.LAYOUT_24,
     zIndex: 10,
-  },
-  overlay: {
-    bottom: 0,
-    left: 0,
-    position: "absolute",
-    right: 0,
-    top: 0,
   },
   overlayActions: {
     bottom: 0,

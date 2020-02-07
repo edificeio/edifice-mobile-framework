@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import { layoutSize } from "../../styles/common/layoutSize";
+import { CommonStyles } from "../../styles/common/styles";
 
 type IProps = {
   label: string;
@@ -28,7 +29,7 @@ export default class DialogButton extends React.PureComponent<IProps> {
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: "#FF8000",
+    backgroundColor: CommonStyles.orangeColorTheme,
     borderRadius: 2,
     marginLeft: layoutSize.LAYOUT_16,
     paddingHorizontal: layoutSize.LAYOUT_16,

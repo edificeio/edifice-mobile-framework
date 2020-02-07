@@ -47,4 +47,4 @@ const mapStateToProps = (state: any) => {
 };
 
 export default (wrappedComponent: React.ComponentType<any>): React.ComponentType<any> =>
-  connect(mapStateToProps, null)(withUploadWrapper(wrappedComponent));
+  connect(mapStateToProps, {})(withUploadWrapper(wrappedComponent));

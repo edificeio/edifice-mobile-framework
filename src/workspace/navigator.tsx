@@ -1,11 +1,6 @@
 import { createStackNavigator } from "react-navigation-stack";
-import I18n from "i18n-js";
-import * as React from "react";
 import ContainerItems from "./containers/Items";
-import { Details } from "./containers/Details";
-import config from "./config";
-import { HeaderAction, HeaderIcon } from "../ui/headers/NewHeader";
-import { standardNavScreenOptions } from "../navigation/helpers/navScreenOptions";
+import Details from "./containers/Details";
 import {
   addMenu,
   backMenu,
@@ -13,10 +8,12 @@ import {
   createMenu,
   deleteMenu,
   downloadMenu,
+  emptyMenu,
   moveMenu,
   nbSelectedMenu,
   renameMenu,
   separatorMenu,
+  titleMenu,
 } from "./utils/menus";
 
 export default createStackNavigator(
@@ -31,6 +28,12 @@ export default createStackNavigator(
           },
         ],
         toolbarItems: [
+          {
+            filter: "root",
+            items: [backMenu(), titleMenu(), emptyMenu()],
+          },
+        ],
+        toolbarSelectedItems: [
           {
             filter: "root",
             items: [backMenu(), nbSelectedMenu(), separatorMenu(), copyMenu(), downloadMenu()],
@@ -53,6 +56,14 @@ export default createStackNavigator(
     },
     WorkspaceDetails: {
       screen: Details,
+      params: {
+        toolbarItems: [
+          {
+            filter: "root",
+            items: [backMenu(), titleMenu(), emptyMenu()],
+          },
+        ],
+      },
     },
   },
   {
@@ -60,14 +71,6 @@ export default createStackNavigator(
       filter: "root",
       parentId: "root",
     },
-    defaultNavigationOptions: ({ navigation }: { navigation: any }) =>
-      standardNavScreenOptions(
-        {
-          title: navigation.getParam("title") || I18n.t(config.displayName),
-          headerLeft: <HeaderAction onPress={() => navigation.pop()} name="back" />,
-          headerRight: <HeaderIcon name={null} hidden />,
-        },
-        navigation
-      ),
+    headerMode: "none",
   }
 );

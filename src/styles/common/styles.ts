@@ -35,6 +35,7 @@ export const CommonStyles = {
   inverseColor: "#F8F8FA",
   // linkColor: "#2a97f5",
   mainColorTheme: "#2A9CC8",
+  orangeColorTheme: "#FF8000",
   miniTextColor: "#858FA9",
   nonLue: "#2A9CC81A",
   placeholderColor: "#B2BECDDD",

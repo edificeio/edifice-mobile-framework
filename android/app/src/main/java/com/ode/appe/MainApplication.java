@@ -15,8 +15,6 @@ import com.facebook.soloader.SoLoader;
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 
-// React Native WebView manual linking (automatic linking not supported)
-
 import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {

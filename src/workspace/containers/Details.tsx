@@ -4,8 +4,9 @@ import { EVENT_TYPE, IDetailsProps, IFile } from "../types";
 import { ItemDetails } from "../components";
 import { openPreview, downloadFile } from "../../infra/actions/downloadHelper";
 import { share } from "../../infra/actions/share";
+import withMenuWrapper from "../utils/withMenuWrapper";
 
-export class Details extends React.PureComponent<IDetailsProps> {
+class Details extends React.PureComponent<IDetailsProps> {
   public handleEvent({ type, item }) {
     switch (type) {
       case EVENT_TYPE.DOWNLOAD: {
@@ -29,3 +30,5 @@ export class Details extends React.PureComponent<IDetailsProps> {
     return <ItemDetails item={item} onEvent={this.handleEvent} />;
   }
 }
+
+export default withMenuWrapper(Details);

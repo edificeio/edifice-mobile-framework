@@ -12,6 +12,9 @@ import { ConfirmDialog } from "../../ui/ConfirmDialog";
 import { IItem } from "../types";
 import { IItems } from "../reducers/select";
 import { ITreeItem } from "../actions/helpers/formatListFolders";
+import { nbItems } from "./index";
+import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
+import { ProgressBar } from "../../ui";
 
 export interface IProps {
   dispatch: any;
@@ -68,10 +71,8 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
 
             if (Object.values(selectedItems).filter(selectedItem => selectedItem.id === parentId).length === 1) return;
 
-            if (isFolder)
-              navigation.push("Workspace", { filter, parentId, title })
-            else
-              navigation.push("WorkspaceDetails", { item, title });
+            if (isFolder) navigation.push("Workspace", { filter, parentId, title });
+            else navigation.push("WorkspaceDetails", { item, title });
           }
           return;
 
@@ -84,7 +85,8 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
           const filterId = navigation.getParam("filter");
 
           if (selectedMenuItem.id === "back") {
-            dispatch(selectClearAction());
+            if (nbSelectedItems) dispatch(selectClearAction());
+            else navigation.pop();
             return;
           } // deselect items
 
@@ -110,26 +112,21 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
       const { dispatch, cut, folders, navigation, nbSelectedItems, selectedItems, ...rest } = this.props;
       const parentId = navigation.getParam("parentId");
       const popupMenuItems = this.getMenuItems("popupItems");
-      const toolbarItems = this.getMenuItems("toolbarItems");
+      const toolbarItems = this.getMenuItems(nbSelectedItems ? "toolbarSelectedItems" : "toolbarItems");
       const filterId = navigation.getParam("filter");
       const { dialogVisible, selectedMenuItem } = this.state;
       const selectedArrayItems = Object.values(selectedItems);
 
       return (
-        <View style={{ flex: 1 }}>
-          <WrappedComponent
-            {...(rest as T)}
-            selectedItems={selectedItems}
-            dispatch={dispatch}
+        <View style={{ backgroundColor: "transparent", flex: 1 }}>
+          <ConnectionTrackingBar />
+          <ProgressBar />
+          <ToolbarAction
+            menuItems={toolbarItems}
             navigation={navigation}
-            onEvent={this.handleEvent.bind(this)}
-          />
-          <FloatingAction
-            menuItems={popupMenuItems}
             onEvent={this.handleEvent.bind(this)}
             selected={selectedArrayItems}
           />
-          <ToolbarAction menuItems={toolbarItems} onEvent={this.handleEvent.bind(this)} selected={selectedArrayItems} />
           {dialogVisible && (
             <ConfirmDialog
               {...selectedMenuItem.dialog}
@@ -150,6 +147,18 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
               onCancel={() => this.setState({ dialogVisible: false })}
             />
           )}
+          <WrappedComponent
+            {...(rest as T)}
+            selectedItems={selectedItems}
+            dispatch={dispatch}
+            navigation={navigation}
+            onEvent={this.handleEvent.bind(this)}
+          />
+          <FloatingAction
+            menuItems={popupMenuItems}
+            onEvent={this.handleEvent.bind(this)}
+            selected={selectedArrayItems}
+          />
         </View>
       );
     }
@@ -159,8 +168,10 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
 const mapStateToProps = (state: any) => {
   return {
     folders: state.workspace.folders,
+    nbSelectedItems: nbItems(state.workspace.selected),
+    selectedItems: state.workspace.selected,
   };
 };
 
 export default (wrappedComponent: React.ComponentType<any>): React.ComponentType<any> =>
-  connect(mapStateToProps, null)(withMenuWrapper(wrappedComponent));
+  connect(mapStateToProps)(withMenuWrapper(wrappedComponent));

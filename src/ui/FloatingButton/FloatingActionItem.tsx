@@ -13,8 +13,7 @@ const Item = ({ onEvent, item }: IEventProps & any) => {
   return (
     <TouchableOpacity
       style={style.touchPanel}
-      onPress={() => onEvent({ type: EVENT_TYPE.MENU_SELECT, id: item.id, item })}
-    >
+      onPress={() => onEvent({ type: EVENT_TYPE.MENU_SELECT, id: item.id, item })}>
       <LeftIconPanel style={style.leftPanel}>
         <Icon color="#000000" size={layoutSize.LAYOUT_28} name={icon} />
       </LeftIconPanel>

@@ -103,3 +103,11 @@ export const renameMenu = () => ({
 export const separatorMenu = () => ({
   id: "separator",
 });
+
+export const titleMenu = () => ({
+  id: "title",
+});
+
+export const emptyMenu = () => ({
+  id: "empty",
+});
