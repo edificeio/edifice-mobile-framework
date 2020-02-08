@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View } from "react-native";
+import { SafeAreaView, View } from "react-native";
 import { connect } from "react-redux";
 import { EVENT_TYPE, IEvent } from "../../types/ievents";
 import { FilterId } from "../types/filters";
@@ -118,48 +118,50 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
       const selectedArrayItems = Object.values(selectedItems);
 
       return (
-        <View style={{ backgroundColor: "transparent", flex: 1 }}>
-          <ConnectionTrackingBar />
-          <ProgressBar />
-          <ToolbarAction
-            menuItems={toolbarItems}
-            navigation={navigation}
-            onEvent={this.handleEvent.bind(this)}
-            selected={selectedArrayItems}
-          />
-          {dialogVisible && (
-            <ConfirmDialog
-              {...selectedMenuItem.dialog}
-              folders={folders}
+        <SafeAreaView style={{ flex: 1 }}>
+          <View style={{ flex: 1 }}>
+            <ConnectionTrackingBar />
+            <ProgressBar />
+            <ToolbarAction
+              menuItems={toolbarItems}
+              navigation={navigation}
+              onEvent={this.handleEvent.bind(this)}
               selected={selectedArrayItems}
-              visible={this.state.dialogVisible}
-              onValid={(param: IEvent) => {
-                this.setState({ dialogVisible: false });
-                selectedMenuItem.onEvent({
-                  dispatch,
-                  filterId,
-                  navigation,
-                  parentId,
-                  selected: selectedItems,
-                  ...param,
-                });
-              }}
-              onCancel={() => this.setState({ dialogVisible: false })}
             />
-          )}
-          <WrappedComponent
-            {...(rest as T)}
-            selectedItems={selectedItems}
-            dispatch={dispatch}
-            navigation={navigation}
-            onEvent={this.handleEvent.bind(this)}
-          />
-          <FloatingAction
-            menuItems={popupMenuItems}
-            onEvent={this.handleEvent.bind(this)}
-            selected={selectedArrayItems}
-          />
-        </View>
+            {dialogVisible && (
+              <ConfirmDialog
+                {...selectedMenuItem.dialog}
+                folders={folders}
+                selected={selectedArrayItems}
+                visible={this.state.dialogVisible}
+                onValid={(param: IEvent) => {
+                  this.setState({ dialogVisible: false });
+                  selectedMenuItem.onEvent({
+                    dispatch,
+                    filterId,
+                    navigation,
+                    parentId,
+                    selected: selectedItems,
+                    ...param,
+                  });
+                }}
+                onCancel={() => this.setState({ dialogVisible: false })}
+              />
+            )}
+            <WrappedComponent
+              {...(rest as T)}
+              selectedItems={selectedItems}
+              dispatch={dispatch}
+              navigation={navigation}
+              onEvent={this.handleEvent.bind(this)}
+            />
+            <FloatingAction
+              menuItems={popupMenuItems}
+              onEvent={this.handleEvent.bind(this)}
+              selected={selectedArrayItems}
+            />
+          </View>
+        </SafeAreaView>
       );
     }
   };

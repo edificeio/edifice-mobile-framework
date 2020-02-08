@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
   headerTitleStyle: {
     color: "#ffffff",
     fontFamily: CommonStyles.primaryFontFamily,
-    fontSize: 16,
+    fontSize: layoutSize.LAYOUT_16,
     fontWeight: "400",
     textAlign: "center",
   },
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
   },
   nbSelectedText: {
     color: "#ffffff",
-    fontSize: layoutSize.LAYOUT_20,
+    fontSize: layoutSize.LAYOUT_16,
     fontWeight: "bold",
   },
   textWrapper: {

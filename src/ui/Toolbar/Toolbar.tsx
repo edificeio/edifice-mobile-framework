@@ -1,12 +1,11 @@
 import React, { PureComponent } from "react";
-import { FlatList, Platform, SafeAreaView, StyleSheet, View } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 import { Header } from "react-navigation-stack";
 import { DEVICE_WIDTH, layoutSize } from "../../styles/common/layoutSize";
 import { IFloatingProps, IMenuItem } from "../types";
 import { IItem, INavigationProps } from "../../workspace/types";
 import Item from "./Item";
 import { CommonStyles } from "../../styles/common/styles";
-import style from "glamorous-native";
 
 export type ISelected = {
   selected: Array<IItem>;
@@ -59,7 +58,11 @@ class Toolbar extends PureComponent<INavigationProps & IFloatingProps & ISelecte
     const { firstItems, titleItem, lastItems } = this.getSections(menuItems);
 
     return (
-      <HeaderStyle selected={selected}>
+      <View
+        style={{
+          ...styles.headerStyle,
+          backgroundColor: selected && selected.length ? CommonStyles.orangeColorTheme : CommonStyles.mainColorTheme,
+        }}>
         <FlatList
           contentContainerStyle={{
             ...styles.firstActions,
@@ -103,15 +106,21 @@ class Toolbar extends PureComponent<INavigationProps & IFloatingProps & ISelecte
             />
           )}
         />
-      </HeaderStyle>
+      </View>
     );
   }
 }
 
 interface IState {}
 
-const HeaderStyle = style(SafeAreaView)(
-  {
+const styles = StyleSheet.create({
+  firstActions: {
+    width: layoutSize.LAYOUT_70,
+    height: Header.HEIGHT,
+    justifyContent: "flex-start",
+    alignItems: "center",
+  },
+  headerStyle: {
     backgroundColor: CommonStyles.mainColorTheme,
     elevation: 5,
     shadowOpacity: 0.3,
@@ -120,19 +129,6 @@ const HeaderStyle = style(SafeAreaView)(
     alignItems: "center",
     width: DEVICE_WIDTH(),
     height: Header.HEIGHT,
-    justifyContent: "flex-start",
-  },
-  ({ selected }) => ({
-    backgroundColor: selected && selected.length ? CommonStyles.orangeColorTheme : CommonStyles.mainColorTheme,
-  })
-);
-
-const styles = StyleSheet.create({
-  firstActions: {
-    width: layoutSize.LAYOUT_70,
-    height: Header.HEIGHT,
-    justifyContent: "flex-start",
-    alignItems: "center",
   },
   middleActions: {
     height: Header.HEIGHT,
