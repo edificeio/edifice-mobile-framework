@@ -13,7 +13,7 @@ import { actionTypesUpload } from "../actions/upload";
 import { actionTypesDelete } from "../actions/delete";
 
 const stateDefault: IState = {
-  isFetching: false,
+  isFetching: null,
   data: {},
 };
 

@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export class Items extends React.PureComponent<IDispatchProps & IItemsProps & ISelectedProps, { isFocused: boolean }> {
+export class Items extends React.Component<IDispatchProps & IItemsProps & ISelectedProps, { isFocused: boolean }> {
   focusListener!: NavigationEventSubscription;
 
   public componentWillMount() {
@@ -67,23 +67,28 @@ export class Items extends React.PureComponent<IDispatchProps & IItemsProps & IS
   }
 
   public render(): React.ReactNode {
-    const { items, isFetching = true, selectedItems } = this.props;
+    const { items, isFetching, selectedItems } = this.props;
     const parentId = this.props.navigation.getParam("parentId") || null;
     const values = Object.values(items);
 
-    if (!values.length && !isFetching) return getEmptyScreen(parentId);
+    if (values.length ===  0) {
+      if (isFetching === null) return <View style={{ backgroundColor: "transparent" }} />;
+      else if (!isFetching) return getEmptyScreen(parentId);
+    }
 
     const itemsArray = parentId === FilterId.root ? values : values.sort(this.sortItems);
 
     return (
       <PageContainer>
         <FlatList
-          contentContainerStyle={{ flexGrow: 1 }}
+          contentContainerStyle={{ backgroundColor: CommonStyles.lightGrey, flexGrow: 1 }}
           data={itemsArray}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
           keyExtractor={(item: IItem) => item.id}
-          refreshing={isFetching}
-          onRefresh={() => this.makeRequest()}
+          refreshing={this.props.isFetching}
+          onRefresh={() => {
+            this.makeRequest();
+          }}
           renderItem={({ item }) => (
             <Item item={item} onEvent={this.props.onEvent} selected={selectedItems[item.id]} simple={false} />
           )}
@@ -96,7 +101,7 @@ export class Items extends React.PureComponent<IDispatchProps & IItemsProps & IS
 const getProps = (stateItems: IState, props: any) => {
   const parentId = props.navigation.getParam("parentId");
   const parentIdItems = stateItems.data[parentId] || {
-    isFetching: true,
+    isFetching: null,
     data: {},
   };
 

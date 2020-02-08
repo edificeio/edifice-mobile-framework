@@ -1,23 +1,27 @@
+import querystring from "querystring";
+import { ToastAndroid } from "react-native";
 import { IAsyncActionTypes } from "../redux/async";
 import { fetchJSONWithCache, signedFetch } from "../fetchWithCache";
 import Conf from "../../../ode-framework-conf";
-import querystring from "querystring";
-import {ToastAndroid} from "react-native";
 
-export type IAdapterType = ( receivedData: any, parentId?: string) => any;
+export type IAdapterType = (receivedData: any, parentId?: string) => any;
 
 export function asyncActionFactory(
   type: string,
   payload,
   asyncActionTypes: IAsyncActionTypes,
   adapter: IAdapterType | null,
-  options,
+  options
 ) {
   return async (dispatch: any) => {
-    const { parentId, ...body} = payload;
+    const { parentId, ...body } = payload;
     let json = null;
 
-    dispatch({ type: asyncActionTypes.requested, payload });
+    window.setTimeout(() => {
+      if (!json) {
+        dispatch({ type: asyncActionTypes.requested, payload });
+      }
+    }, 500);
 
     try {
       if (options.method === "post" || options.method === "put") {
@@ -36,28 +40,28 @@ export function asyncActionFactory(
         json = await fetchJSONWithCache(type);
       }
 
-      const data = adapter ? adapter( json, parentId) : json;
+      const data = adapter ? adapter(json, parentId) : json;
 
       return dispatch({ type: asyncActionTypes.received, data, receivedAt: Date.now(), payload }); // will be better to pass payload than id of payload
-
     } catch (errmsg) {
-      ToastAndroid.show('error', errmsg);
+      ToastAndroid.show("error", errmsg);
       return dispatch({ type: asyncActionTypes.fetchError, errmsg, payload });
     }
   };
 }
 
-export function asyncActionRawFactory(
-  asyncActionTypes: IAsyncActionTypes,
-  payload: any,
-  fetch: (any) => Promise<any>
-) {
+export function asyncActionRawFactory(asyncActionTypes: IAsyncActionTypes, payload: any, fetch: (any) => Promise<any>) {
+  let data: Response | null = null;
+
   return async (dispatch: any) => {
-    dispatch({ type: asyncActionTypes.requested, payload });
+    window.setTimeout(() => {
+      if (!data) {
+        dispatch({ type: asyncActionTypes.requested, payload });
+      }
+    }, 500);
 
     try {
-      const data = await fetch(payload);
-
+      data = await fetch(payload);
       dispatch({ type: asyncActionTypes.received, data, payload, receivedAt: Date.now() }); // will be better to pass payload than id of payload
     } catch (errmsg) {
       dispatch({ type: asyncActionTypes.fetchError, errmsg, payload });
