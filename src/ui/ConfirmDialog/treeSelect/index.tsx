@@ -196,7 +196,7 @@ export default class TreeSelect extends React.PureComponent<IProps, IState> {
     if (item.id === "owner") return true;
 
     return (
-      item.name.match(searchValue) ||
+      item.name.toLowerCase().match(searchValue) ||
       (item.children && item.children.reduce((acc, child) => acc || this.matchStackFilter(child), false))
     );
   };
@@ -223,7 +223,7 @@ export default class TreeSelect extends React.PureComponent<IProps, IState> {
    * @returns {*[]}
    */
   getFilters = (item, searchValue): any[] => {
-    const matchItem = item.name.match(searchValue);
+    const matchItem = item.name.toLowerCase().match(searchValue);
     const subItems = item.children
       ? item.children.reduce((acc, child) => [...acc, ...this.getFilters(child, searchValue)], [])
       : [];
