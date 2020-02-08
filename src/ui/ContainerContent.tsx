@@ -91,6 +91,6 @@ export const Content = style.text(
 );
 
 export const PageContainer = style.view({
-  backgroundColor: CommonStyles.lightGrey,
+  backgroundColor: "transparent",
   flex: 1
 });

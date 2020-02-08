@@ -15,6 +15,7 @@ import {
   separatorMenu,
   titleMenu,
 } from "./utils/menus";
+import { Animated, Easing } from "react-native";
 
 export default createStackNavigator(
   {
@@ -72,5 +73,23 @@ export default createStackNavigator(
       parentId: "root",
     },
     headerMode: "none",
+    transitionConfig: () => ({
+      transitionSpec: {
+        duration: 0,
+        easing: Easing.out(Easing.poly(4)),
+        timing: Animated.timing,
+      },
+      screenInterpolator: sceneProps => {
+        const { position, scene } = sceneProps;
+        const { index } = scene;
+
+        const opacity = position.interpolate({
+          inputRange: [index - 1, index - 0.99, index],
+          outputRange: [0, 1, 1],
+        });
+
+        return { transform: [] };
+      },
+    }),
   }
 );
