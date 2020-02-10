@@ -39,12 +39,13 @@ export function asyncActionFactory(
       } else {
         json = await fetchJSONWithCache(type);
       }
+      if (json && json.error)
+        return dispatch({ type: asyncActionTypes.fetchError, errmsg: json.error, payload });
 
       const data = adapter ? adapter(json, parentId) : json;
 
       return dispatch({ type: asyncActionTypes.received, data, receivedAt: Date.now(), payload }); // will be better to pass payload than id of payload
     } catch (errmsg) {
-      ToastAndroid.show("error", errmsg);
       return dispatch({ type: asyncActionTypes.fetchError, errmsg, payload });
     }
   };

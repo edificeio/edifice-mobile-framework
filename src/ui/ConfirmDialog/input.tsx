@@ -12,7 +12,7 @@ export default class DialogInput extends React.PureComponent<IProps> {
 
   render() {
     const { value, ...otherProps } = this.props;
-    return <TextInput autoFocus style={styles.textInput} value={value} {...otherProps} />
+    return <TextInput autoFocus style={styles.textInput} value={value} {...otherProps} />;
   }
 }
 

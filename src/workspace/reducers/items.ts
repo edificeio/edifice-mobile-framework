@@ -2,6 +2,8 @@
  * Workspace state reducer
  * Holds a list of simple element in a simple Array
  */
+import { Alert } from "react-native";
+import I18n from "i18n-js";
 import asyncReducer, { IAction } from "../../infra/redux/async";
 
 import { actionTypesList } from "../actions/list";
@@ -49,6 +51,16 @@ export default (state: IState = stateDefault, action: IAction<IItems<IItem | str
 };
 
 function pushData(state: IState, action: IAction<IItems<IItem | string>>, actionTypes) {
+  if (action.errmsg && action.errmsg.length > 0) {
+    Alert.alert(I18n.t("ErrorNetwork"), I18n.t(action.errmsg));
+    return {
+      isFetching: false,
+      data: {
+        ...state.data,
+      },
+    };
+  }
+
   return {
     isFetching: false,
     data: {

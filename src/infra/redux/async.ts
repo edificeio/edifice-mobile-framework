@@ -26,6 +26,7 @@ import { Reducer } from "redux";
 // TYPE DEFINITIONS ----------------------------------------------------------------------------------------
 
 export interface IAction<T> {
+  errmsg?: string;
   type: string;
   receivedAt?: Date;
   data: T;

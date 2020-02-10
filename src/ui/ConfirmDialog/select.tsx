@@ -8,6 +8,7 @@ import { IId } from "../../types";
 import { CommonStyles } from "../../styles/common/styles";
 
 type IProps = {
+  defaultSelectedId?: string[];
   onPress: (event) => void;
   data: ITreeItem[];
   excludeData: IId[];
@@ -16,7 +17,7 @@ type IProps = {
 export default class Select extends React.PureComponent<IProps> {
   static displayName = "DialogSelect";
   state = {
-    defaultSelectedId: ["owner"],
+    defaultSelectedId: this.props.defaultSelectedId ? this.props.defaultSelectedId : ["owner"],
   };
 
   onPress({ item }) {

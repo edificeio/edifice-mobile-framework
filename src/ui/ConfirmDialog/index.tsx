@@ -95,10 +95,11 @@ export class ConfirmDialog extends React.Component<IProps, IState> {
           <DialogTitle>{title}</DialogTitle>
           <DialogSelect
             data={folders}
+            defaultSelectedId={[selected[0].parentId]}
             excludeData={selected}
             onPress={({ item }) =>
               this.setState({
-                valueSelect: item.id,
+                valueSelect: item.id && item.id.length ? item.id : "owner",
               })
             }
           />
@@ -121,7 +122,9 @@ export class ConfirmDialog extends React.Component<IProps, IState> {
                 flex: 0,
               }}>
               <FlatList
-                ItemSeparatorComponent={() => <View style={{ backgroundColor: "#ffffff", width: "100%", height: 0, margin: 0, padding: 0 }} />}
+                ItemSeparatorComponent={() => (
+                  <View style={{ backgroundColor: "#ffffff", width: "100%", height: 0, margin: 0, padding: 0 }} />
+                )}
                 data={selected}
                 keyExtractor={(item: IItem) => item.id}
                 renderItem={({ item }) => <Item item={item} simple onEvent={f => f} />}

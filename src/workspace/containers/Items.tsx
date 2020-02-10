@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
 export class Items extends React.Component<IDispatchProps & IItemsProps & ISelectedProps, { isFocused: boolean }> {
   focusListener!: NavigationEventSubscription;
 
-  public componentWillMount() {
+  public UNSAFE_componentWillMount() {
     this.focusListener = this.props.navigation.addListener("willFocus", () => {
       this.makeRequest();
     });
@@ -71,7 +71,7 @@ export class Items extends React.Component<IDispatchProps & IItemsProps & ISelec
     const parentId = this.props.navigation.getParam("parentId") || null;
     const values = Object.values(items);
 
-    if (values.length ===  0) {
+    if (values.length === 0) {
       if (isFetching === null) return <View style={{ backgroundColor: "transparent" }} />;
       else if (!isFetching) return getEmptyScreen(parentId);
     }
