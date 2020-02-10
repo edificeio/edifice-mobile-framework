@@ -10,6 +10,7 @@ import { ButtonIconText } from "..";
 import { deviceWidth } from "../../styles";
 import { Header } from "react-navigation-stack";
 
+
 class FloatingAction extends Component<IFloatingProps & ISelected, IState> {
   state = {
     active: false,
