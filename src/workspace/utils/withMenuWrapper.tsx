@@ -120,22 +120,6 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
 
       return (
         <>
-          <View
-            style={{
-              backgroundColor: nbSelectedItems
-                ? CommonStyles.orangeStatusbarColorTheme
-                : CommonStyles.mainStatusbarColorTheme,
-            }}>
-            <StatusBar
-              barStyle="light-content"
-              hidden={false}
-              backgroundColor={
-                nbSelectedItems ? CommonStyles.orangeStatusbarColorTheme : CommonStyles.mainStatusbarColorTheme
-              }
-              translucent={false}
-              networkActivityIndicatorVisible={true}
-            />
-          </View>
           <SafeAreaView style={{ flex: 1 }}>
             <View style={{ flex: 1 }}>
               <ConnectionTrackingBar />

@@ -80,14 +80,6 @@ export default createStackNavigator(
         timing: Animated.timing,
       },
       screenInterpolator: sceneProps => {
-        const { position, scene } = sceneProps;
-        const { index } = scene;
-
-        const opacity = position.interpolate({
-          inputRange: [index - 1, index - 0.99, index],
-          outputRange: [0, 1, 1],
-        });
-
         return { transform: [] };
       },
     }),
