@@ -112,13 +112,14 @@ interface IState {
 const styles = StyleSheet.create({
   actions: {
     borderRadius: layoutSize.LAYOUT_4,
+    elevation:5,
     overflow: "visible",
     backgroundColor: "#ffffff",
     position: "absolute",
     right: layoutSize.LAYOUT_12,
     top: layoutSize.LAYOUT_54,
     width: layoutSize.LAYOUT_200,
-    zIndex: 10,
+    zIndex: 5,
     ...getShadow()
   },
   button: {
@@ -126,7 +127,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: layoutSize.LAYOUT_20,
     top: layoutSize.LAYOUT_24,
-    zIndex: 10,
+    zIndex: 5,
+    ...getShadow(),
   },
   overlayActions: {
     bottom: 0,
@@ -146,12 +148,7 @@ export default FloatingAction;
 
 function getShadow() {
   return {
-    elevation: 4,
     shadowColor: "#000",
-    shadowOffset: {
-      width: 3,
-      height: 5,
-    },
     shadowOpacity: 0.7,
     shadowRadius: 3.0,
   };
