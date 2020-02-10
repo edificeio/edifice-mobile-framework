@@ -150,6 +150,7 @@ export default FloatingAction;
 function getShadow() {
   return {
     shadowColor: "#000",
+    shadowOffset: { height: 2, width: 2},
     shadowOpacity: 0.7,
     shadowRadius: 3.0,
   };
