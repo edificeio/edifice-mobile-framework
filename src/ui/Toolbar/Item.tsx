@@ -1,12 +1,12 @@
 import * as React from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
+import I18n from "i18n-js";
+import { Header } from "react-navigation-stack";
 import { EVENT_TYPE } from "../../types";
 import { DEVICE_WIDTH, layoutSize } from "../../styles/common/layoutSize";
 import { Text } from "../text";
-import { Icon } from "..";
-import I18n from "i18n-js";
 import { CommonStyles } from "../../styles/common/styles";
-import { Header } from "react-navigation-stack";
+import { Icon } from "..";
 
 const Item = ({ onEvent, item, navigation, selected, readonly }: any) => {
   const { writeAccess, icon, id, options = {} } = item;
@@ -41,7 +41,8 @@ const Item = ({ onEvent, item, navigation, selected, readonly }: any) => {
         style={{
           ...styles.touchPanel,
           backgroundColor: selected && selected.length ? CommonStyles.orangeColorTheme : CommonStyles.mainColorTheme,
-        }}></View>
+        }}
+      />
     );
   }
 
@@ -72,7 +73,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "flex-start",
     width: layoutSize.LAYOUT_30,
-    height: Header.HEIGHT,
+    height: 56,
   },
   nbSelectedText: {
     color: "#ffffff",
@@ -85,12 +86,12 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     width: DEVICE_WIDTH() - layoutSize.LAYOUT_140,
-    height: Header.HEIGHT,
+    height: 56,
   },
   touchPanel: {
     justifyContent: "center",
     alignItems: "center",
     width: layoutSize.LAYOUT_58,
-    height: Header.HEIGHT,
+    height: 56,
   },
 });

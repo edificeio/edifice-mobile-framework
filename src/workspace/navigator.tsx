@@ -1,3 +1,4 @@
+import { Animated } from "react-native";
 import { createStackNavigator } from "react-navigation-stack";
 import ContainerItems from "./containers/Items";
 import Details from "./containers/Details";
@@ -15,7 +16,6 @@ import {
   separatorMenu,
   titleMenu,
 } from "./utils/menus";
-import { Animated, Easing } from "react-native";
 
 export default createStackNavigator(
   {
@@ -75,13 +75,9 @@ export default createStackNavigator(
     headerMode: "none",
     transitionConfig: () => ({
       transitionSpec: {
-        duration: 0,
-        easing: Easing.out(Easing.poly(4)),
         timing: Animated.timing,
       },
-      screenInterpolator: sceneProps => {
-        return { transform: [] };
-      },
+      screenInterpolator: () => {},
     }),
   }
 );

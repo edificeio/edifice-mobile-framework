@@ -8,24 +8,11 @@ import Item from "./Item";
 import { CommonStyles } from "../../styles/common/styles";
 
 export type ISelected = {
-  selected: Array<IItem>;
+  selected: IItem[];
   readonly?: boolean;
 };
 
 class Toolbar extends PureComponent<INavigationProps & IFloatingProps & ISelected, IState> {
-  getShadow = () => {
-    return {
-      elevation: 10,
-      shadowColor: "#000",
-      shadowOffset: {
-        width: 5,
-        height: 8,
-      },
-      shadowOpacity: 0.45,
-      shadowRadius: 3.84,
-    };
-  };
-
   getSections(menuItems: IMenuItem[]) {
     let foundSeparator: boolean | string = false;
     let titleItem: IMenuItem | null = null;
@@ -116,27 +103,26 @@ interface IState {}
 const styles = StyleSheet.create({
   firstActions: {
     width: layoutSize.LAYOUT_70,
-    height: Header.HEIGHT,
+    height: 56,
     justifyContent: "flex-start",
     alignItems: "center",
   },
   headerStyle: {
-    backgroundColor: CommonStyles.mainColorTheme,
     elevation: 5,
     shadowOpacity: 0.3,
     shadowRadius: 4,
     flexDirection: "row",
     alignItems: "center",
     width: DEVICE_WIDTH(),
-    height: Header.HEIGHT,
+    height: 56,
   },
   middleActions: {
-    height: Header.HEIGHT,
+    height: 56,
     justifyContent: "space-between",
     alignItems: "center",
   },
   lastActions: {
-    height: Header.HEIGHT,
+    height: 56,
     justifyContent: "flex-end",
     alignItems: "center",
   },
@@ -144,7 +130,7 @@ const styles = StyleSheet.create({
   separatorPanel: {
     backgroundColor: CommonStyles.orangeColorTheme,
     width: 0,
-    height: Header.HEIGHT,
+    height: 56,
   },
 });
 
