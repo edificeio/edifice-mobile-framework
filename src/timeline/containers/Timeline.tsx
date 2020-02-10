@@ -147,7 +147,7 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
     });
   }
 
-  public componentWillReceiveProps(nextProps) {
+  public UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.refresh) {
       this.pageNumber = 0;
       this.props.sync(

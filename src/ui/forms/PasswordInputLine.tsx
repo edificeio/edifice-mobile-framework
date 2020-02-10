@@ -1,8 +1,8 @@
 import * as React from "react";
 import { View, TouchableOpacity, Platform } from "react-native";
-import { Icon } from "..";
 import { TextInputLine, TextInputLineProps } from "./TextInputLine";
 import { TextColor } from "../text";
+import { Icon } from "..";
 
 export class PasswordInputLine extends React.Component<
   {
@@ -13,7 +13,7 @@ export class PasswordInputLine extends React.Component<
 > {
   public state = {
     hide: true,
-    showHideController: false
+    showHideController: false,
   };
 
   public render() {
@@ -27,14 +27,14 @@ export class PasswordInputLine extends React.Component<
           onChange={({ nativeEvent: { eventCount, target, text } }) => {
             if (Platform.OS === "ios") return;
             this.setState({
-              showHideController: (text as unknown) as boolean
+              showHideController: (text as unknown) as boolean,
             });
           }}
           {...this.props}
           style={{
             paddingRight: 32,
             flex: 0,
-            ...this.props.style as object
+            ...(this.props.style as object),
           }}
         />
         {this.state.showHideController ? (
@@ -45,14 +45,9 @@ export class PasswordInputLine extends React.Component<
             style={{
               bottom: 8,
               position: "absolute",
-              right: 8
-            }}
-          >
-            <Icon
-              name={this.state.hide ? iconShow : iconHide}
-              size={16}
-              color={TextColor.Normal}
-            />
+              right: 8,
+            }}>
+            <Icon name={this.state.hide ? iconShow : iconHide} size={16} color={TextColor.Normal} />
           </TouchableOpacity>
         ) : null}
       </View>

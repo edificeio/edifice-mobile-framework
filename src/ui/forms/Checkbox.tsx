@@ -1,8 +1,8 @@
 import style from "glamorous-native";
 import * as React from "react";
-import { Icon } from "..";
 import { CommonStyles } from "../../styles/common/styles";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
+import { Icon } from "..";
 
 const TapCircle = style(TouchableOpacity)(
   {
@@ -10,28 +10,25 @@ const TapCircle = style(TouchableOpacity)(
     borderRadius: 14,
     height: 25,
     justifyContent: "center",
-    width: 25
+    width: 25,
   },
   ({ checked = false }) => ({
     backgroundColor: checked ? CommonStyles.primary : "#FFFFFF",
     borderColor: checked ? CommonStyles.primary : "#DDDDDD",
-    borderWidth: checked ? 0 : 2
+    borderWidth: checked ? 0 : 2,
   })
 );
 
 export const Checkbox = ({
   checked,
   onUncheck,
-  onCheck
+  onCheck,
 }: {
   checked: boolean;
   onUncheck?: () => void;
   onCheck?: () => void;
 }) => (
-  <TapCircle
-    onPress={() => (checked ? onUncheck && onUncheck() : onCheck && onCheck())}
-    checked={checked}
-  >
-    <Icon size={17} name={"checked"} color={"white"} />
+  <TapCircle onPress={() => (checked ? onUncheck && onUncheck() : onCheck && onCheck())} checked={checked}>
+    <Icon size={17} name="checked" color="white" />
   </TapCircle>
 );

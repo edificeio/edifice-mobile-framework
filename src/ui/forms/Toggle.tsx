@@ -1,9 +1,9 @@
 import * as React from "react";
 import style from "glamorous-native";
-import { Icon } from "..";
-import { CommonStyles } from "../../styles/common/styles";
 import { View, Animated } from "react-native";
+import { CommonStyles } from "../../styles/common/styles";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
+import { Icon } from "..";
 
 const TapCircle = style(TouchableOpacity)(
   {
@@ -17,10 +17,10 @@ const TapCircle = style(TouchableOpacity)(
     left: 0,
     top: 0,
     borderWidth: 1,
-    elevation: 2
+    elevation: 2,
   },
   ({ checked = false }) => ({
-    borderColor: checked ? CommonStyles.primary : "#DDDDDD"
+    borderColor: checked ? CommonStyles.primary : "#DDDDDD",
   })
 );
 
@@ -34,12 +34,12 @@ const Container = style(TouchableOpacity)(
     borderColor: "#dddddd",
     position: "absolute",
     left: 0,
-    top: 0
+    top: 0,
   },
   ({ checked = false }) => ({
     backgroundColor: checked ? CommonStyles.primary : "#efefef",
     borderColor: checked ? CommonStyles.primary : "#DDDDDD",
-    borderWidth: checked ? 0 : 1
+    borderWidth: checked ? 0 : 1,
   })
 );
 
@@ -51,38 +51,30 @@ export class Toggle extends React.Component<
     super(props);
 
     this.state = {
-      positionAnim: new Animated.Value(props.checked ? 20 : 0)
+      positionAnim: new Animated.Value(props.checked ? 20 : 0),
     };
   }
 
-  componentWillReceiveProps(newProps, oldProps) {
+  UNSAFE_componentWillReceiveProps(newProps, oldProps) {
     if (newProps.checked !== oldProps.checked) {
       Animated.timing(this.state.positionAnim, {
         toValue: newProps.checked ? 20 : 0,
-        duration: 500
+        duration: 500,
       }).start();
     }
   }
 
   switchCheck() {
-    this.props.checked
-      ? this.props.onUncheck && this.props.onUncheck()
-      : this.props.onCheck && this.props.onCheck();
+    this.props.checked ? this.props.onUncheck && this.props.onUncheck() : this.props.onCheck && this.props.onCheck();
   }
 
   render() {
     return (
       <View style={{ width: 40, height: 22 }}>
-        <Container
-          onPress={() => this.switchCheck()}
-          checked={this.props.checked}
-        />
+        <Container onPress={() => this.switchCheck()} checked={this.props.checked} />
 
         <Animated.View style={{ left: this.state.positionAnim }}>
-          <TapCircle
-            onPress={() => this.switchCheck()}
-            checked={this.props.checked}
-          />
+          <TapCircle onPress={() => this.switchCheck()} checked={this.props.checked} />
         </Animated.View>
       </View>
     );

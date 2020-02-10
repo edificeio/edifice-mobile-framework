@@ -1,12 +1,6 @@
 import * as React from "react";
-import {
-  Text as RNText,
-  TextProps as RNTextProps,
-  TextStyle as RNTextStyle
-} from "react-native";
+import { Text as RNText, TextProps as RNTextProps, TextStyle as RNTextStyle } from "react-native";
 import { CommonStyles } from "../styles/common/styles";
-
-import TextStylePropTypes from "react-native/Libraries/Text/TextStylePropTypes";
 import { layoutSize } from "../styles/common/layoutSize";
 
 /**
@@ -16,7 +10,7 @@ export enum FontWeight {
   Normal = "400",
   Light = "200",
   SemiBold = "600",
-  Bold = "700"
+  Bold = "700",
 }
 
 /**
@@ -34,7 +28,7 @@ export const TextColor = {
   Error: CommonStyles.errorColor,
   Inverse: CommonStyles.white,
   Light: CommonStyles.lightTextColor,
-  Normal: CommonStyles.textColor
+  Normal: CommonStyles.textColor,
 };
 
 /**
@@ -44,7 +38,27 @@ export const rem = (ratio: number) => fontSize * ratio;
 
 export type TextProps = RNTextProps & RNTextStyle & { children?: any };
 
-const stylePropNames = Object.keys(TextStylePropTypes);
+const stylePropNames = [
+  "color",
+  "fontFamily",
+  "fontSize",
+  "fontStyle",
+  "fontWeight",
+  "fontVariant",
+  "textShadowOffset",
+  "textShadowRadius",
+  "textShadowColor",
+  "letterSpacing",
+  "lineHeight",
+  "textAlign",
+  "textAlignVertical",
+  "includeFontPadding",
+  "textDecorationLine",
+  "textDecorationStyle",
+  "textDecorationColor",
+  "textTransform",
+  "writingDirection",
+];
 
 /**
  * Overloaded Text element. Use it everywhere instead of ReactNative.Text.
@@ -66,7 +80,7 @@ export const Text = (props: TextProps) => {
         ...stylePropNames.reduce((acc, key) => {
           if (props[key]) acc[key] = props[key];
           return acc;
-        }, {})
+        }, {}),
       }}
     />
   );
@@ -87,7 +101,7 @@ export const NestedTextItalic = (props: TextProps) => (
     {...props}
     style={{
       fontStyle: "italic",
-      ...(props.style as object)
+      ...(props.style as object),
     }}
   />
 );
@@ -97,7 +111,7 @@ export const TextLight = (props: TextProps) => (
     {...props}
     style={{
       fontWeight: FontWeight.Light,
-      ...(props.style as object)
+      ...(props.style as object),
     }}
   />
 );
@@ -107,7 +121,7 @@ export const NestedTextLight = (props: TextProps) => (
     {...props}
     style={{
       fontWeight: FontWeight.Light,
-      ...(props.style as object)
+      ...(props.style as object),
     }}
   />
 );
@@ -117,7 +131,7 @@ export const TextLightItalic = (props: TextProps) => (
     {...props}
     style={{
       fontStyle: "italic",
-      ...(props.style as object)
+      ...(props.style as object),
     }}
   />
 );
@@ -126,7 +140,7 @@ export const NestedTextLightItalic = (props: TextProps) => (
     {...props}
     style={{
       fontStyle: "italic",
-      ...(props.style as object)
+      ...(props.style as object),
     }}
   />
 );
@@ -136,7 +150,7 @@ export const TextSemiBold = (props: TextProps) => (
     {...props}
     style={{
       fontWeight: FontWeight.SemiBold,
-      ...(props.style as object)
+      ...(props.style as object),
     }}
   />
 );
@@ -146,7 +160,7 @@ export const NestedTextSemiBold = (props: TextProps) => (
     {...props}
     style={{
       fontWeight: FontWeight.SemiBold,
-      ...(props.style as object)
+      ...(props.style as object),
     }}
   />
 );
@@ -156,7 +170,7 @@ export const TextSemiBoldItalic = (props: TextProps) => (
     {...props}
     style={{
       fontStyle: "italic",
-      ...(props.style as object)
+      ...(props.style as object),
     }}
   />
 );
@@ -165,7 +179,7 @@ export const NestedTextSemiBoldItalic = (props: TextProps) => (
     {...props}
     style={{
       fontStyle: "italic",
-      ...(props.style as object)
+      ...(props.style as object),
     }}
   />
 );
@@ -175,7 +189,7 @@ export const TextBold = (props: TextProps) => (
     {...props}
     style={{
       fontWeight: FontWeight.Bold,
-      ...(props.style as object)
+      ...(props.style as object),
     }}
   />
 );
@@ -186,7 +200,7 @@ export const TextBold15 = (props: TextProps) => (
     style={{
       fontWeight: FontWeight.Bold,
       fontSize: layoutSize.LAYOUT_15,
-      ...(props.style as object)
+      ...(props.style as object),
     }}
   />
 );
@@ -196,7 +210,7 @@ export const NestedTextBold = (props: TextProps) => (
     {...props}
     style={{
       fontWeight: FontWeight.Bold,
-      ...(props.style as object)
+      ...(props.style as object),
     }}
   />
 );
@@ -206,7 +220,7 @@ export const TextBoldItalic = (props: TextProps) => (
     {...props}
     style={{
       fontStyle: "italic",
-      ...(props.style as object)
+      ...(props.style as object),
     }}
   />
 );
@@ -215,7 +229,7 @@ export const NestedTextBoldItalic = (props: TextProps) => (
     {...props}
     style={{
       fontStyle: "italic",
-      ...(props.style as object)
+      ...(props.style as object),
     }}
   />
 );
@@ -233,7 +247,7 @@ export const TextH1 = (props: TextProps) => (
       fontSize: 18,
       marginBottom: 20,
       marginTop: 20,
-      ...(props.style as object)
+      ...(props.style as object),
     }}
   />
 );
@@ -244,7 +258,7 @@ export const TextLink = (props: TextProps) => (
     {...props}
     style={{
       color: TextColor.Action,
-      ...(props.style as object)
+      ...(props.style as object),
     }}
   />
 );
@@ -253,7 +267,7 @@ export const NestedTextLink = (props: TextProps) => (
     {...props}
     style={{
       color: TextColor.Action,
-      ...(props.style as object)
+      ...(props.style as object),
     }}
   />
 );

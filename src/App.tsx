@@ -64,7 +64,7 @@ class AppStoreUnconnected extends React.Component<
     );
   }
 
-  public async componentWillMount() {
+  public async UNSAFE_componentWillMount() {
     // console.log("APP will mount");
     await Tracking.init();
     RNLocalize.addEventListener("change", this.handleLocalizationChange);

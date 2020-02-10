@@ -56,7 +56,7 @@ export class ForgotPage extends React.PureComponent<
 
   private didFocusSubscription;
 
-  public componentWillMount() {
+  public UNSAFE_componentWillMount() {
     this.didFocusSubscription = this.props.navigation.addListener(
       "didFocus",
       payload => {

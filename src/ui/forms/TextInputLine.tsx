@@ -1,13 +1,13 @@
 import * as React from "react";
 import style from "glamorous-native";
-import { CommonStyles } from "../../styles/common/styles";
 import { TextInput, TextInputProps, View } from "react-native";
+import { CommonStyles } from "../../styles/common/styles";
 
 const TextInputContainer = style.view(
   {
     height: 40,
     paddingTop: 4,
-    flex: 1
+    flex: 1,
   },
   ({ hasError, focus }) => ({
     borderBottomColor: hasError
@@ -15,7 +15,7 @@ const TextInputContainer = style.view(
       : focus
       ? CommonStyles.iconColorOn
       : CommonStyles.entryfieldBorder,
-    borderBottomWidth: focus || hasError ? 2 : 1
+    borderBottomWidth: focus || hasError ? 2 : 1,
   })
 );
 
@@ -23,7 +23,7 @@ const Input = style.textInput({
   color: CommonStyles.textInputColor,
   fontFamily: CommonStyles.primaryFontFamily,
   fontSize: 14,
-  height: 40
+  height: 40,
 });
 
 export type TextInputLineProps = {
@@ -47,19 +47,19 @@ export class TextInputLine extends React.Component<
   { isFocused: boolean }
 > {
   state = {
-    isFocused: false
+    isFocused: false,
   };
 
   onBlur() {
     this.setState({
-      isFocused: false
+      isFocused: false,
     });
     this.props.onBlur && this.props.onBlur();
   }
 
   onFocus() {
     this.setState({
-      isFocused: true
+      isFocused: true,
     });
     this.props.onFocus && this.props.onFocus();
   }
@@ -75,7 +75,7 @@ export class TextInputLine extends React.Component<
             onBlur={() => this.onBlur()}
             onFocus={() => this.onFocus()}
             placeholderTextColor={CommonStyles.placeholderColor}
-            underlineColorAndroid={"transparent"}
+            underlineColorAndroid="transparent"
             autoCapitalize="none"
             {...this.props}
             style={{}}
