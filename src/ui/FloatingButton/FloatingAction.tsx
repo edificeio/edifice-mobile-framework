@@ -17,19 +17,6 @@ class FloatingAction extends Component<IFloatingProps & ISelected, IState> {
 
   visible = true;
 
-  getShadow = () => {
-    return {
-      elevation: 10,
-      shadowColor: "#000",
-      shadowOffset: {
-        width: 5,
-        height: 8,
-      },
-      shadowOpacity: 0.45,
-      shadowRadius: 3.84,
-    };
-  };
-
   reset = () => {
     this.setState({
       active: false,
@@ -124,18 +111,18 @@ interface IState {
 
 const styles = StyleSheet.create({
   actions: {
-    elevation: 10,
-    borderRadius: layoutSize.LAYOUT_6,
+    borderRadius: layoutSize.LAYOUT_4,
     overflow: "visible",
     backgroundColor: "#ffffff",
     position: "absolute",
-    right: layoutSize.LAYOUT_2,
+    right: layoutSize.LAYOUT_12,
     top: layoutSize.LAYOUT_54,
     width: layoutSize.LAYOUT_200,
     zIndex: 10,
+    ...getShadow()
   },
   button: {
-    elevation: 10,
+    elevation: 5,
     position: "absolute",
     right: layoutSize.LAYOUT_20,
     top: layoutSize.LAYOUT_24,
@@ -149,10 +136,23 @@ const styles = StyleSheet.create({
     top: layoutSize.LAYOUT_26,
   },
   separator: {
-    borderBottomColor: CommonStyles.borderColorLighter,
+    borderBottomColor: CommonStyles.borderColorVeryLighter,
     borderBottomWidth: 1,
     width: "100%",
   },
 });
 
 export default FloatingAction;
+
+function getShadow() {
+  return {
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 3,
+      height: 5,
+    },
+    shadowOpacity: 0.7,
+    shadowRadius: 3.0,
+  };
+};
