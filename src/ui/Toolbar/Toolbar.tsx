@@ -108,9 +108,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   headerStyle: {
-    elevation: 5,
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
     flexDirection: "row",
     alignItems: "center",
     width: DEVICE_WIDTH(),
