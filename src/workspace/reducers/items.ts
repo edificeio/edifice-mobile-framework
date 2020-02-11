@@ -4,6 +4,7 @@
  */
 import { Alert } from "react-native";
 import I18n from "i18n-js";
+import Toast from 'react-native-tiny-toast'
 import asyncReducer, { IAction } from "../../infra/redux/async";
 
 import { actionTypesList } from "../actions/list";
@@ -33,9 +34,10 @@ export default (state: IState = stateDefault, action: IAction<IItems<IItem | str
     case actionTypesCreateFolder.requested:
     case actionTypesCreateFolder.received:
       return pushData(state, action, actionTypesCreateFolder);
+    case actionTypesPast.received:
+      Toast.showSuccess(I18n.t("copy-success"))
     case actionTypesPast.fetchError:
     case actionTypesPast.requested:
-    case actionTypesPast.received:
       return pushData(state, action, actionTypesPast);
     case actionTypesList.fetchError:
     case actionTypesList.requested:
@@ -52,7 +54,7 @@ export default (state: IState = stateDefault, action: IAction<IItems<IItem | str
 
 function pushData(state: IState, action: IAction<IItems<IItem | string>>, actionTypes) {
   if (action.errmsg && action.errmsg.length > 0) {
-    Alert.alert(I18n.t("ErrorNetwork"), I18n.t(action.errmsg));
+    Toast.show(I18n.t(action.errmsg));
     return {
       isFetching: false,
       data: {

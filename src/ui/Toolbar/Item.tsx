@@ -35,6 +35,12 @@ const Item = ({ onEvent, item, navigation, selected, readonly }: any) => {
     );
   }
 
+  if (id === "separator") {
+    return (
+      <View style={styles.separator} />
+    );
+  }
+
   if (id === "empty") {
     return (
       <View
@@ -69,16 +75,23 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   nbSelected: {
-    backgroundColor: CommonStyles.orangeColorTheme,
     justifyContent: "center",
     alignItems: "flex-start",
-    width: layoutSize.LAYOUT_30,
+    width: layoutSize.LAYOUT_42,
     height: 56,
   },
   nbSelectedText: {
     color: "#ffffff",
     fontSize: layoutSize.LAYOUT_16,
     fontWeight: "bold",
+  },
+  separator: {
+    flexDirection: 'row',
+    justifyContent: "center",
+    alignItems: "center",
+    flexGrow: 1,
+    flexShrink: 1,
+    height: 56,
   },
   textWrapper: {
     justifyContent: "center",

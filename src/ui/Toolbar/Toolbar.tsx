@@ -102,7 +102,7 @@ interface IState {}
 
 const styles = StyleSheet.create({
   firstActions: {
-    width: layoutSize.LAYOUT_70,
+    width: layoutSize.LAYOUT_80,
     height: 56,
     justifyContent: "flex-start",
     alignItems: "center",
