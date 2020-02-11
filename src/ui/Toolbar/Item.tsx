@@ -1,7 +1,6 @@
 import * as React from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import I18n from "i18n-js";
-import { Header } from "react-navigation-stack";
 import { EVENT_TYPE } from "../../types";
 import { DEVICE_WIDTH, layoutSize } from "../../styles/common/layoutSize";
 import { Text } from "../text";
@@ -36,28 +35,16 @@ const Item = ({ onEvent, item, navigation, selected, readonly }: any) => {
   }
 
   if (id === "separator") {
-    return (
-      <View style={styles.separator} />
-    );
+    return <View style={styles.separator} />;
   }
 
   if (id === "empty") {
-    return (
-      <View
-        style={{
-          ...styles.touchPanel,
-          backgroundColor: selected && selected.length ? CommonStyles.orangeColorTheme : CommonStyles.mainColorTheme,
-        }}
-      />
-    );
+    return <View style={styles.touchPanel} />;
   }
 
   return (
     <TouchableOpacity
-      style={{
-        ...styles.touchPanel,
-        backgroundColor: selected && selected.length ? CommonStyles.orangeColorTheme : CommonStyles.mainColorTheme,
-      }}
+      style={styles.touchPanel}
       onPress={() => (disable ? null : onEvent && onEvent({ type: EVENT_TYPE.MENU_SELECT, id: item.id, item }))}>
       <Icon color={disable ? "#77777750" : "#ffffff"} size={layoutSize.LAYOUT_24} name={icon} />
     </TouchableOpacity>
@@ -78,7 +65,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "flex-start",
     width: layoutSize.LAYOUT_42,
-    height: 56,
   },
   nbSelectedText: {
     color: "#ffffff",
@@ -86,12 +72,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   separator: {
-    flexDirection: 'row',
+    flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
     flexGrow: 1,
     flexShrink: 1,
-    height: 56,
   },
   textWrapper: {
     justifyContent: "center",
@@ -99,12 +84,10 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     width: DEVICE_WIDTH() - layoutSize.LAYOUT_140,
-    height: 56,
   },
   touchPanel: {
     justifyContent: "center",
     alignItems: "center",
     width: layoutSize.LAYOUT_58,
-    height: 56,
   },
 });

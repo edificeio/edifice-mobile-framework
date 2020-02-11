@@ -2,7 +2,6 @@
  * Workspace state reducer
  * Holds a list of simple element in a simple Array
  */
-import { Alert } from "react-native";
 import I18n from "i18n-js";
 import Toast from 'react-native-tiny-toast'
 import asyncReducer, { IAction } from "../../infra/redux/async";

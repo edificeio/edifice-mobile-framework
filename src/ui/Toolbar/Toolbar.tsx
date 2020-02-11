@@ -45,15 +45,11 @@ class Toolbar extends PureComponent<INavigationProps & IFloatingProps & ISelecte
     const { firstItems, titleItem, lastItems } = this.getSections(menuItems);
 
     return (
-      <View
-        style={{
-          ...styles.headerStyle,
-          backgroundColor: selected && selected.length ? CommonStyles.orangeColorTheme : CommonStyles.mainColorTheme,
-        }}>
+      <>
         <FlatList
           contentContainerStyle={{
             ...styles.firstActions,
-            backgroundColor: selected && selected.length ? CommonStyles.orangeColorTheme : "#2a9cc8",
+            backgroundColor: selected && selected.length ? CommonStyles.orangeColorTheme : undefined,
           }}
           data={firstItems}
           horizontal
@@ -65,7 +61,10 @@ class Toolbar extends PureComponent<INavigationProps & IFloatingProps & ISelecte
         />
         {titleItem && (
           <FlatList
-            contentContainerStyle={styles.middleActions}
+            contentContainerStyle={{
+              ...styles.middleActions,
+              backgroundColor: selected && selected.length ? CommonStyles.orangeColorTheme : undefined,
+            }}
             data={[titleItem!]}
             horizontal
             ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -76,7 +75,7 @@ class Toolbar extends PureComponent<INavigationProps & IFloatingProps & ISelecte
         <FlatList
           contentContainerStyle={{
             ...styles.lastActions,
-            backgroundColor: selected && selected.length ? CommonStyles.orangeColorTheme : CommonStyles.mainColorTheme,
+            backgroundColor: selected && selected.length ? CommonStyles.orangeColorTheme : undefined,
             width: selected && selected.length ? DEVICE_WIDTH() - layoutSize.LAYOUT_70 : layoutSize.LAYOUT_70,
           }}
           data={lastItems}
@@ -93,7 +92,7 @@ class Toolbar extends PureComponent<INavigationProps & IFloatingProps & ISelecte
             />
           )}
         />
-      </View>
+      </>
     );
   }
 }
@@ -102,33 +101,22 @@ interface IState {}
 
 const styles = StyleSheet.create({
   firstActions: {
-    width: layoutSize.LAYOUT_80,
+    alignItems: "center",
     height: 56,
     justifyContent: "flex-start",
-    alignItems: "center",
-  },
-  headerStyle: {
-    flexDirection: "row",
-    alignItems: "center",
-    width: DEVICE_WIDTH(),
-    height: 56,
-  },
-  middleActions: {
-    height: 56,
-    justifyContent: "space-between",
-    alignItems: "center",
   },
   lastActions: {
+    alignItems: "center",
     height: 56,
     justifyContent: "flex-end",
+    paddingRight: layoutSize.LAYOUT_16,
+  },
+  middleActions: {
     alignItems: "center",
+    height: 56,
+    justifyContent: "space-between",
   },
   separator: {},
-  separatorPanel: {
-    backgroundColor: CommonStyles.orangeColorTheme,
-    width: 0,
-    height: 56,
-  },
 });
 
 export default Toolbar;
