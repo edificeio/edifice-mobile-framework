@@ -84,3 +84,6 @@ assets/icons/*
 ios/assets
 ios/appe/main.jsbundle
 
+# Metals (scala)
+.metals
+
