@@ -148,10 +148,10 @@ export default FloatingAction;
 
 function getShadow() {
   return {
-    elevation: 5,
+    elevation: 3,
     shadowColor: "#000",
-    shadowOffset: { width: -1, height: -1},
+    shadowOffset: { width: 0, height: 1},
     shadowOpacity: 0.7,
-    shadowRadius: 5.0,
+    shadowRadius: 1.5,
   };
 };
