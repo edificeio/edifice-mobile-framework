@@ -34,8 +34,8 @@ const photoCaptions: PhotoCaptions = {
 
 type FilePickerPromise = (resolve: (payload: ContentUri) => void, reject: (error: Error) => void) => void;
 
-const pick = () => {
-  return new Promise(Platform.OS === "ios" ? pickIOS : pickDocument);
+const pick = (onlyImages: boolean) => {
+  return new Promise(Platform.OS === "ios" ? onlyImages ? pickImage : pickIOS : pickDocument(onlyImages));
 };
 
 const transformCaptions: (captions: any) => {} = captions => {
@@ -69,10 +69,10 @@ const pickImage: FilePickerPromise = (resolve, reject) => {
   });
 };
 
-const pickDocument: FilePickerPromise = async (resolve, reject) => {
+const pickDocument: FilePickerPromise = (onlyImages) => async (resolve, reject) => {
   try {
     const result = await DocumentPicker.pick({
-      type: [DocumentPicker.types.allFiles],
+      type: [onlyImages ? DocumentPicker.types.images : DocumentPicker.types.allFiles],
     });
 
     const { uri, type, name } = result;

@@ -1,26 +1,25 @@
 import * as React from "react";
 import I18n from "i18n-js";
 import { connect } from "react-redux";
-import style from "glamorous-native";
 import { NavigationScreenProp, NavigationState } from "react-navigation";
-import InputScrollView from 'react-native-input-scroll-view';
-import listenToKeyboardEvents from 'react-native-keyboard-aware-scroll-view/lib/KeyboardAwareHOC';
+import { hasNotch } from "react-native-device-info";
+import { ThunkDispatch } from "redux-thunk";
+import { TextInput, TouchableWithoutFeedback, TouchableOpacity, FlatList } from "react-native-gesture-handler";
+import { View, KeyboardAvoidingView, Platform, Keyboard, ImageBackground } from "react-native";
 
-import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
+import { Icon } from "../../ui";
 import { HeaderBackAction, HeaderAction } from "../../ui/headers/NewHeader";
-import { PageContainer } from "../../myAppMenu/components/NewContainerContent";
+import { GridAvatars } from "../../ui/avatars/GridAvatars";
+import { TextBold, TextLight } from "../../ui/text";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
-import { View, KeyboardAvoidingView, Platform, Keyboard, Text } from "react-native";
-import { Avatar, Size } from "../../ui/avatars/Avatar";
+import { A } from "../../ui/Typography";
+import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
+import { PageContainer } from "../../myAppMenu/components/NewContainerContent";
 import { IBlog } from "../state/publishableBlogs";
 import { IUserInfoState } from "../../user/state/info";
-import { TextBold, TextLight } from "../../ui/text";
-import { TextInput, ScrollView, TouchableWithoutFeedback } from "react-native-gesture-handler";
-import { ThunkDispatch } from "redux-thunk";
 import { CommonStyles } from "../../styles/common/styles";
-import { GridAvatars } from "../../ui/avatars/GridAvatars";
 import { publishBlogPostAction } from "../actions/publish";
-import { hasNotch } from "react-native-device-info";
+import pickFile from "../../infra/actions/pickFile";
 
 export interface ICreatePostDataProps {
   user: IUserInfoState;
@@ -38,6 +37,7 @@ export interface ICreatePostOtherProps {
 export interface ICreatePostState {
   title: string;
   content: string;
+  images: [];
 }
 
 export type ICreatePostPageProps = ICreatePostDataProps & ICreatePostEventProps & ICreatePostOtherProps;
@@ -68,7 +68,8 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
     super(props);
     this.state = {
       title: '',
-      content: ''
+      content: '',
+      images: []
     }
     this.props.navigation.setParams({
       onPublishPost: this.handlePublishPost.bind(this)
@@ -76,6 +77,8 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
   }
 
   render() {
+    const { title, content, images } = this.state;
+    const { user, navigation } = this.props;
     return <KeyboardAvoidingView
       enabled
       behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -98,7 +101,7 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
               width: 45,
               height: 45
             }}>
-              <GridAvatars users={[this.props.user.id!]} />
+              <GridAvatars users={[user.id!]} />
             </View>
             <View style={{
               alignItems: "flex-start",
@@ -107,8 +110,8 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
               marginHorizontal: 6,
               padding: 2
             }}>
-              <TextBold>{this.props.user.displayName}</TextBold>
-              <TextLight numberOfLines={1}>{(this.props.navigation.getParam('blog') as IBlog)?.title}</TextLight>
+              <TextBold>{user.displayName}</TextBold>
+              <TextLight numberOfLines={1}>{(navigation.getParam('blog') as IBlog)?.title}</TextLight>
             </View>
           </View>
 
@@ -116,10 +119,10 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
           <TextInput
             numberOfLines={1}
             placeholder={I18n.t('createPost-create-titlePlaceholder')}
-            value={this.state.title}
+            value={title}
             onChangeText={text => {
               this.setState({ title: text });
-              this.props.navigation.setParams({ title: text })
+              navigation.setParams({ title: text })
             }}
             style={{
               marginHorizontal: 20,
@@ -132,13 +135,14 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
             }}
           />
 
-          <TextBold style={{ paddingHorizontal: 20 }}>{I18n.t('createPost-create-contentField')}</TextBold>
+          <TextBold style={{ paddingLeft: 20, paddingRight: 10 }}>{I18n.t('createPost-create-contentField')}</TextBold>
           <TextInput
             style={{
               marginHorizontal: 20,
-              marginTop: 10, marginBottom: 20,
+              marginTop: 10,
+              marginBottom: 20,
               padding: 5,
-              flex: 1,
+              flex: images.length > 0 ? 2 : 3,
               backgroundColor: CommonStyles.tabBottomColor,
               borderColor: CommonStyles.borderBottomItem,
               borderWidth: 1,
@@ -147,29 +151,97 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
             placeholder={I18n.t('createPost-create-contentPlaceholder')}
             multiline
             textAlignVertical="top"
-            value={this.state.content}
+            value={content}
             onChangeText={text => {
               this.setState({ content: text });
-              this.props.navigation.setParams({ content: text })
+              navigation.setParams({ content: text })
             }}
           />
 
+          <View
+            style={{
+              marginHorizontal: 20,
+              marginTop: 10,
+              marginBottom: 20,
+              padding: 5,
+              flex: 1,
+              backgroundColor: CommonStyles.tabBottomColor,
+              borderColor: CommonStyles.borderBottomItem,
+              borderWidth: 1,
+              borderRadius: 1,
+              justifyContent: "center",
+            }}
+            >
+              <TouchableOpacity
+                style={{ alignItems: "center" }}
+                onPress={() => {
+                  pickFile(true)
+                  .then(image => {
+                    console.log(image)
+                    this.setState({ images: [...images, image.uri] })                    
+                    console.log(images)
+                  })
+                }}
+              >
+                <A>{I18n.t('createPost-create-mediaField')}</A>
+                <Icon
+                  name="camera-on"
+                  size={22}
+                  color={CommonStyles.actionColor}
+                />
+              </TouchableOpacity>
+              {images.length > 0 &&
+                <FlatList 
+                  data={images}
+                  contentContainerStyle={{ paddingTop: 10 }}
+                  horizontal
+                  renderItem={({ item, index }) => {
+                    return(
+                      <ImageBackground source={{ uri: item }} resizeMode="cover" style={{ width: 100, height: 100, marginHorizontal: 2 }}>
+                        <TouchableOpacity
+                          onPress={() => {
+                            let imagesToPublish = [...images];
+                            imagesToPublish.splice(index, 1);
+                            this.setState({ images: imagesToPublish });
+                          }}
+                        >
+                          <Icon
+                            name="close"
+                            style={{
+                              width: 20,
+                              height: 20,
+                              borderRadius: 10,
+                              paddingVertical: 4,
+                              paddingHorizontal: 4,
+                              backgroundColor: CommonStyles.white,
+                            }}
+                          />
+                        </TouchableOpacity>
+                      </ImageBackground>
+                    )
+                  }}
+                />
+              }
+            </View>
         </PageContainer>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   }
 
   componentDidUpdate(prevProps: ICreatePostPageProps) {
-    if (prevProps.publishing !== this.props.publishing) {
-      this.props.navigation.setParams({ 'publishing': this.props.publishing });
+    const { publishing, navigation } = this.props;
+    if (prevProps.publishing !== publishing) {
+      navigation.setParams({ 'publishing': publishing });
     }
   }
 
   handlePublishPost() {
-    this.props.onPublish(
-      this.props.navigation.getParam('blog') as IBlog,
-      this.state.title,
-      this.state.content
+    const { onPublish, navigation } = this.props;
+    const { title, content } = this.state;
+    onPublish(
+      navigation.getParam('blog') as IBlog,
+      title,
+      content
     );
   }
 

@@ -81,6 +81,7 @@
     "create-folder": "Créer dossier",
     "createPost-create-contentField": "Contenu du billet",
     "createPost-create-contentPlaceholder": "Écrivez un message...",
+    "createPost-create-mediaField": "Ajouter des photos à votre billet",
     "createPost-create-titleField": "Titre du billet", 
     "createPost-create-titlePlaceholder": "Écrivez le titre",
     "createPost-menu-title": "Créer :",

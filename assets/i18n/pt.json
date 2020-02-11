@@ -69,6 +69,9 @@
   "conversation-responsePlaceholder": "Responder a todos...",
   "conversation-sendingMessage": "Enviando...",
   "Conversation": "Mensagens",
+
+
+  "createPost-create-mediaField": "Adicionar fotos ao seu post",
   "delete": "Suprimir",
   "directory-childrenTitle": "Filhos",
   "directory-disconnectButton": "Finalizar sessão",
