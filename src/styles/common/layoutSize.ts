@@ -2,13 +2,13 @@ import { Dimensions } from "react-native";
 
 const { width, height } = Dimensions.get("window");
 const [shortDimension] = width < height ? [width, height] : [height, width];
-export const DEVICE_SCALE = shortDimension / 375;
+export const DEVICE_SCALE = shortDimension / 400;
 
 /* utils ==================================================================== */
 const scale = (size: number) => DEVICE_SCALE * size;
 
 function normalize(size: number): number {
-  return size + (scale(size) - size) * 0.3;
+  return size + (scale(size) - size) * 0.2;
 }
 
 /* export =================================================================== */
