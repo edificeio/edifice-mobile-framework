@@ -125,8 +125,8 @@ const styles = StyleSheet.create({
   },
   button: {
     position: "absolute",
-    right: layoutSize.LAYOUT_20,
-    top: layoutSize.LAYOUT_24,
+    right: layoutSize.LAYOUT_24,
+    top: layoutSize.LAYOUT_30,
     zIndex: 5,
     ...getShadow(),
   },
