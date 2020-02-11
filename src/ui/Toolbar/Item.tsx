@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   headerTitleStyle: {
     color: "#ffffff",
     fontFamily: CommonStyles.primaryFontFamily,
-    fontSize: layoutSize.LAYOUT_16,
+    fontSize: layoutSize.LAYOUT_15,
     fontWeight: "400",
     textAlign: "center",
   },
