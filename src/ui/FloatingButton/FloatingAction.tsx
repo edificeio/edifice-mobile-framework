@@ -9,6 +9,7 @@ import TouchableOpacity from "../CustomTouchableOpacity";
 import { ButtonIconText } from "..";
 import { deviceWidth } from "../../styles";
 import { Header } from "react-navigation-stack";
+import { getShadow } from "../ButtonIconText";
 
 
 class FloatingAction extends Component<IFloatingProps & ISelected, IState> {
@@ -125,10 +126,9 @@ const styles = StyleSheet.create({
   },
   button: {
     position: "absolute",
-    right: layoutSize.LAYOUT_24,
-    top: layoutSize.LAYOUT_30,
+    right: layoutSize.LAYOUT_18,
+    top: layoutSize.LAYOUT_25,
     zIndex: 5,
-    ...getShadow(),
   },
   overlayActions: {
     bottom: 0,
@@ -146,12 +146,3 @@ const styles = StyleSheet.create({
 
 export default FloatingAction;
 
-function getShadow() {
-  return {
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1},
-    shadowOpacity: 0.7,
-    shadowRadius: 1.5,
-  };
-};

@@ -14,9 +14,10 @@ class Details extends React.PureComponent<IDetailsProps> {
         return;
       }
       case EVENT_TYPE.PREVIEW: {
-        if (Platform.OS !== "ios") {
+        if (Platform.OS === "ios")
+          downloadFile(item as IFile);
+        else
           openPreview(item as IFile);
-        }
         return;
       }
       case EVENT_TYPE.SHARE: {

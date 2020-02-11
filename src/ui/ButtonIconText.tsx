@@ -4,6 +4,8 @@ import { CommonStyles } from "../styles/common/styles";
 import { Icon } from "./icons/Icon";
 import { layoutSize } from "../styles/common/layoutSize";
 import { TextBold15 } from "./text";
+import { StyleSheet } from "react-native";
+import FloatingAction from "./FloatingButton/FloatingAction";
 
 export interface ButtonTextIconProps {
   onPress: () => any;
@@ -29,15 +31,15 @@ const Container = style.view(
 const TouchableOpacity = style.touchableOpacity( {
     alignItems: "center",
     justifyContent: "center",
-    width: layoutSize.LAYOUT_48,
-    height: layoutSize.LAYOUT_48,
-    borderRadius: layoutSize.LAYOUT_24,
+    width: layoutSize.LAYOUT_46,
+    height: layoutSize.LAYOUT_46,
+    borderRadius: layoutSize.LAYOUT_23,
     backgroundColor: CommonStyles.profileTypes.Student,
   });
 
 export const ButtonIconText = ({ name, onPress, children, size, style }: ButtonTextIconProps) => {
   return (
-    <Container style={style}>
+    <Container style={[styles.button, style]}>
       <TouchableOpacity onPress={onPress}>
         <Icon color="white" size={size ? size : layoutSize.LAYOUT_24} name={name} />
       </TouchableOpacity>
@@ -45,3 +47,22 @@ export const ButtonIconText = ({ name, onPress, children, size, style }: ButtonT
     </Container>
   );
 };
+
+const styles = StyleSheet.create({
+  button: {
+    ...getShadow(),
+  },
+});
+
+export default FloatingAction;
+
+export function getShadow() {
+  return {
+    elevation: 5,
+    shadowColor: "#444",
+    shadowOffset: { width: 0, height: 1},
+    shadowOpacity: 0.5,
+    shadowRadius: 1.5,
+  };
+};
+

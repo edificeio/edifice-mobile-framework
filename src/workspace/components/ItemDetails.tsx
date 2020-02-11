@@ -45,7 +45,7 @@ export const ItemDetails = ({ onEvent, item }: IEventProps & any) => {
   };
 
   return (
-    <SafeAreaView style={styles.mainPanel}>
+    <View style={styles.mainPanel}>
       <View style={styles.bodyPanel}>{getPreviewImage()}</View>
       <View style={styles.bottomPanel}>
         <View style={styles.buttonPanel}>
@@ -57,6 +57,6 @@ export const ItemDetails = ({ onEvent, item }: IEventProps & any) => {
           </ButtonIconText>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
