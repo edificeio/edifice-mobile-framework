@@ -124,7 +124,6 @@ const styles = StyleSheet.create({
     ...getShadow()
   },
   button: {
-    elevation: 5,
     position: "absolute",
     right: layoutSize.LAYOUT_20,
     top: layoutSize.LAYOUT_24,
@@ -149,9 +148,10 @@ export default FloatingAction;
 
 function getShadow() {
   return {
+    elevation: 5,
     shadowColor: "#000",
-    shadowOffset: { height: 2, width: 2},
+    shadowOffset: { width: -1, height: -1},
     shadowOpacity: 0.7,
-    shadowRadius: 3.0,
+    shadowRadius: 5.0,
   };
 };
