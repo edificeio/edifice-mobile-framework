@@ -114,12 +114,11 @@ interface IState {
 const styles = StyleSheet.create({
   actions: {
     borderRadius: layoutSize.LAYOUT_4,
-    elevation:5,
     overflow: "visible",
     backgroundColor: "#ffffff",
     position: "absolute",
-    right: layoutSize.LAYOUT_12,
-    top: layoutSize.LAYOUT_54,
+    right: 16,
+    top: 60,
     width: layoutSize.LAYOUT_200,
     zIndex: 5,
     ...getShadow()
@@ -127,7 +126,7 @@ const styles = StyleSheet.create({
   button: {
     position: "absolute",
     right: 20,
-    top: 20,
+    top: 24,
     zIndex: 5,
   },
   overlayActions: {
@@ -135,7 +134,7 @@ const styles = StyleSheet.create({
     left: 0,
     position: "absolute",
     right: 0,
-    top: layoutSize.LAYOUT_26,
+    top: 35,
   },
   separator: {
     borderBottomColor: CommonStyles.borderColorVeryLighter,

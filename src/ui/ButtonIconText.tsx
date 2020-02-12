@@ -60,9 +60,9 @@ export function getShadow() {
   return {
     elevation: 5,
     shadowColor: "#444",
-    shadowOffset: { width: 0, height: 2},
-    shadowOpacity: 0.5,
-    shadowRadius: 1.5,
+    shadowOffset: { width: 0, height: 1},
+    shadowOpacity: 0.3,
+    shadowRadius: 1,
   };
 };
 
