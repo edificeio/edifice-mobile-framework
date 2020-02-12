@@ -1,5 +1,5 @@
 import * as React from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import { FlatList, View } from "react-native";
 import { IFile, IItem } from "../../workspace/types/states/items";
 import { Item } from "../../workspace/components";
 import { layoutSize } from "../../styles/common/layoutSize";
@@ -13,15 +13,17 @@ import DialogTitle from "./title";
 import { ITreeItem } from "../../workspace/actions/helpers/formatListFolders";
 
 type IProps = {
-  title: string;
+  filterId: string;
+  folders: ITreeItem[];
   input: any;
   okLabel: string;
+  onCancel: Function;
+  onValid: Function;
+  parentId: string;
   selectDestination: boolean;
   selected: IFile[];
-  folders: ITreeItem[];
+  title: string;
   visible: boolean;
-  onValid: Function;
-  onCancel: Function;
 };
 
 export type IState = {
@@ -37,7 +39,7 @@ export class ConfirmDialog extends React.Component<IProps, IState> {
   state = {
     disabled: false,
     value: this.getInitialValue(),
-    valueSelect: "",
+    valueSelect: this.props.filterId === "owner" ? this.props.parentId : "owner",
   };
 
   onValid() {
@@ -68,7 +70,7 @@ export class ConfirmDialog extends React.Component<IProps, IState> {
   }
 
   fill() {
-    const { folders, input, selectDestination, selected, title } = this.props;
+    const { folders, input, parentId, selectDestination, selected, title } = this.props;
     const { prefix } = this.state.value;
 
     if (input) {
@@ -91,19 +93,19 @@ export class ConfirmDialog extends React.Component<IProps, IState> {
       );
     } else if (selectDestination) {
       return (
-        <>
+        <View>
           <DialogTitle>{title}</DialogTitle>
           <DialogSelect
             data={folders}
-            defaultSelectedId={[selected[0].parentId]}
+            defaultSelectedId={[parentId]}
             excludeData={selected}
-            onPress={({ item }) =>
+            onPress={id =>
               this.setState({
-                valueSelect: item.id && item.id.length ? item.id : "owner",
+                valueSelect: id && id.length ? id : "owner",
               })
             }
           />
-        </>
+        </View>
       );
     } else {
       return (

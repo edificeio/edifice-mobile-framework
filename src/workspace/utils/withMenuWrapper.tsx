@@ -133,6 +133,8 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
             <ConfirmDialog
               {...selectedMenuItem.dialog}
               folders={folders}
+              filterId={filterId}
+              parentId={parentId}
               selected={selectedArrayItems}
               visible={this.state.dialogVisible}
               onValid={(param: IEvent) => {

@@ -32,17 +32,11 @@ const styles = StyleSheet.create({
 export const ItemDetails = ({ onEvent, item }: IEventProps & any) => {
   const { name } = item as IFile;
 
-  const getPreviewImage = () => {
-    if (Platform.OS === "ios") {
-      return renderImage(item, false, name);
-    } else {
-      return (
-        <TouchableOpacity onPress={() => onEvent({ type: EVENT_TYPE.PREVIEW, item })}>
-          {renderImage(item, false, name)}
-        </TouchableOpacity>
-      );
-    }
-  };
+  const getPreviewImage = () => (
+    <TouchableOpacity onPress={() => onEvent({ type: EVENT_TYPE.PREVIEW, item })}>
+      {renderImage(item, false, name)}
+    </TouchableOpacity>
+  );
 
   return (
     <View style={styles.mainPanel}>

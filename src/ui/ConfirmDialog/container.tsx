@@ -58,7 +58,6 @@ export default class DialogContainer extends React.PureComponent<IProps> {
 
 const styles = StyleSheet.create({
   modal: {
-    flex: 1,
     marginLeft: 0,
     marginRight: 0,
     marginTop: 0,

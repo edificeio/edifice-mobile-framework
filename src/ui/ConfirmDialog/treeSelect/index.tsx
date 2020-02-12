@@ -1,111 +1,73 @@
-import React from "react";
+import React, { useState } from "react";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { StyleSheet, View, TextInput, FlatList, Text, TouchableOpacity } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import I18n from "i18n-js";
-import { breadthFirstRecursion } from "../utils/menutransform";
-import { layoutSize } from "../../../styles/common/layoutSize";
+import { DEVICE_HEIGHT, layoutSize } from "../../../styles/common/layoutSize";
 import { IItem } from "../../../workspace/types";
 import { ITreeItem } from "../../../workspace/actions/helpers/formatListFolders";
-import { IId, IItems } from "../../../types/iid";
-
-const styles = StyleSheet.create({
-  collapseIcon: {
-    width: 0,
-    height: 0,
-    marginRight: 2,
-    borderStyle: "solid",
-  },
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  contentContainer: {
-    paddingBottom: layoutSize.LAYOUT_18,
-    backgroundColor: "white",
-  },
-  textName: {
-    fontSize: layoutSize.LAYOUT_14,
-    marginLeft: 5,
-  },
-});
+import { IId } from "../../../types/iid";
+import { CommonStyles } from "../../../styles/common/styles";
 
 type IProps = {
   data: ITreeItem[];
-  defaultSelectedId?: string[];
+  defaultSelectedId: string[];
   excludeData: IId[];
   isShowTreeId?: boolean;
-  itemStyle?: any;
   leafCanBeSelected?: any;
   onClick?: Function;
-  openAll?: boolean;
-  openIds?: string[];
-  selectedItemStyle?: any;
+  openIds: string[];
   selectType?: any;
   treeNodeStyle?: any;
 };
 
-type IState = {
-  currentNode: any;
-  nodesStatus: IItems<any>;
-  searchValue: string;
-};
+export default function TreeSelect({
+  data,
+  defaultSelectedId = [],
+  excludeData = [],
+  onClick = f => f,
+  openIds = ["owner"],
+}: IProps) {
+  const [currentNode, setCurrentNode] = useState(_initCurrentNode(defaultSelectedId));
+  const [nodesStatus, setNodesStatus] = useState(_initNodesStatus(data, openIds, defaultSelectedId));
+  const [searchValue, setSearchValue] = useState("");
+  const selectedColor = "#000000";
 
-export default class TreeSelect extends React.PureComponent<IProps, IState> {
-  routes = [];
-  static defaultProps = {
-    itemStyle: {
-      backgroundColor: "#ffffff",
-      fontSize: layoutSize.LAYOUT_14,
-      color: "#000000",
-    },
-    openIds: ["owner"],
-    selectedItemStyle: {
-      backgroundColor: "#2A9CC825",
-      fontSize: layoutSize.LAYOUT_14,
-      color: "#000000",
-    },
-  };
+  function _initCurrentNode(defaultSelectedId) {
+    if (!defaultSelectedId || !defaultSelectedId.length) {
+      return "owner";
+    }
+    for (let id of defaultSelectedId) {
+      let routes = _find(data, id);
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      nodesStatus: this._initNodesStatus(),
-      currentNode: this._initCurrentNode(),
-      searchValue: "",
-    };
+      if (routes.length === 0) {
+        return "owner";
+      }
+    }
+    return defaultSelectedId[0];
   }
 
-  _initCurrentNode = () => {
-    const { defaultSelectedId } = this.props;
-
-    return (defaultSelectedId && defaultSelectedId[0]) || null;
-  };
-
-  _initNodesStatus = () => {
-    const { openAll = false, data, openIds = [], defaultSelectedId = [] } = this.props;
+  function _initNodesStatus(data, openIds = [] as string[], defaultSelectedId = [] as string[]) {
     const nodesStatus = {};
-    if (!openAll) {
-      if (openIds && openIds.length) {
-        for (let id of openIds) {
-          // eslint-disable-line
-          const routes = this._find(data, id);
-          routes.map(parent => (nodesStatus[parent.id] = true));
-        }
+    if (openIds && openIds.length) {
+      for (let id of openIds) {
+        const routes = _find(data, id);
+        routes.map(parent => (nodesStatus[parent.id] = true));
       }
-      if (defaultSelectedId && defaultSelectedId.length) {
-        for (let id of defaultSelectedId) {
-          // eslint-disable-line
-          const routes = this._find(data, id);
-          routes.map(parent => (nodesStatus[parent.id] = true));
-        }
-      }
-      return nodesStatus;
     }
-    breadthFirstRecursion(data).map(item => (nodesStatus[item.id] = true));
-    return nodesStatus;
-  };
+    if (defaultSelectedId && defaultSelectedId.length) {
+      for (let id of defaultSelectedId) {
+        // eslint-disable-line
+        let routes = _find(data, id);
 
-  _find = (data, id) => {
+        if (routes.length === 0) routes = _find(data, "owner");
+        routes.map(parent => (nodesStatus[parent.id] = true));
+      }
+    }
+    return nodesStatus;
+  }
+
+  function _find(data, id) {
     const stack: IItem[] = [];
     let going = true;
 
@@ -130,31 +92,23 @@ export default class TreeSelect extends React.PureComponent<IProps, IState> {
 
     walker(data, id);
     return stack;
-  };
+  }
 
-  _onClick = ({ item }) => {
-    const { data } = this.props;
-    const routes = this._find(data, item.id);
-    const currentNodeStatus = this.state.nodesStatus[item.id];
-    const nodesStatus = this.state.nodesStatus;
+  const _onClick = ({ item }) => {
+    const currentNodeStatus = nodesStatus[item.id];
 
     nodesStatus[item.id] = !currentNodeStatus;
 
-    this.setState(
-      state => ({
-        ...state,
-        currentNode: item.id,
-        nodesStatus,
-      }),
-      () => {
-        const { onClick } = this.props;
-        onClick && onClick({ item, routes, currentNode: this.state.currentNode });
-      }
-    );
+    setNodesStatus(nodesStatus);
+    setCurrentNode(item.id);
+    onClick(item.id);
   };
 
-  _renderTreeNodeIcon = isOpen => {
-    const { treeNodeStyle } = this.props;
+  const _renderTreeNodeIcon = isOpen => {
+    const treeNodeStyle = {
+      openIcon: <Icon size={layoutSize.LAYOUT_24} color={CommonStyles.orangeColorTheme} name="menu-down" />,
+      closeIcon: <Icon size={layoutSize.LAYOUT_24} color={CommonStyles.orangeColorTheme} name="menu-right" />,
+    };
     const collapseIcon = isOpen
       ? {
           borderRightWidth: 5,
@@ -188,28 +142,28 @@ export default class TreeSelect extends React.PureComponent<IProps, IState> {
    * @param item
    * @returns {RegExpMatchArray | Promise<Response | undefined> | * | boolean}
    */
-  matchStackFilter = item => {
-    const { searchValue } = this.state;
-
+  const matchStackFilter = item => {
     if (!searchValue || searchValue.length === 0) return true;
 
     if (item.id === "owner") return true;
 
     return (
       item.name.toLowerCase().match(searchValue) ||
-      (item.children && item.children.reduce((acc, child) => acc || this.matchStackFilter(child), false))
+      (item.children && item.children.reduce((acc, child) => acc || matchStackFilter(child), false))
     );
   };
 
   /**
-   * Set node status to search criteria
+   * Set node status according search criteria
    */
-  calculateNodesStatus = searchValue => {
-    const { data } = this.props;
+  const calculateNodesStatus = searchValue => {
     const nodesStatus = {};
 
     if (searchValue.length) {
-      const filteredItems = data.reduce((acc, child) => [...acc, ...this.getFilters(child, searchValue)], []);
+      const filteredItems = data.reduce(
+        (acc, child) => [...acc, ..._getFilters(child, searchValue)],
+        [] as ITreeItem[]
+      );
 
       filteredItems.map(item => (nodesStatus[item.id] = true));
     }
@@ -222,31 +176,30 @@ export default class TreeSelect extends React.PureComponent<IProps, IState> {
    * @param searchValue
    * @returns {*[]}
    */
-  getFilters = (item, searchValue): any[] => {
+  const _getFilters = (item: ITreeItem, searchValue: string): ITreeItem[] => {
     const matchItem = item.name.toLowerCase().match(searchValue);
     const subItems = item.children
-      ? item.children.reduce((acc, child) => [...acc, ...this.getFilters(child, searchValue)], [])
+      ? item.children.reduce((acc, child) => [...acc, ..._getFilters(child, searchValue)], [] as ITreeItem[])
       : [];
 
     if (subItems.length > 0 || matchItem) return [item, ...subItems];
     return [];
   };
 
-  _renderRow = ({ item }) => {
-    const { currentNode } = this.state;
-    const { isShowTreeId = false, excludeData, selectedItemStyle, itemStyle, leafCanBeSelected } = this.props;
-    const { backgroundColor, fontSize, color } = itemStyle && itemStyle;
-    const selectedFontSize = selectedItemStyle && selectedItemStyle.fontSize;
-    const selectedColor = selectedItemStyle && selectedItemStyle.color;
-    const isCurrentNode = currentNode === item.id;
+  const _renderRow = ({ item }) => {
+    const backgroundColor = "#ffffff",
+      fontSize = layoutSize.LAYOUT_14,
+      color = "#000000",
+      selectedFontSize = layoutSize.LAYOUT_14,
+      isCurrentNode = currentNode === item.id;
 
-    if (!this.matchStackFilter(item) || excludeData.filter(exclude => item.id === exclude.id).length) return null;
+    if (!matchStackFilter(item) || excludeData.filter(exclude => item.id === exclude.id).length) return null;
 
     if (item && item.children && item.children.length) {
-      const isOpen = (this.state.nodesStatus && this.state.nodesStatus[item.id]) || false;
+      const isOpen = nodesStatus[item.id] || false;
       return (
         <View>
-          <TouchableOpacity onPress={() => this._onClick({ item })}>
+          <TouchableOpacity onPress={() => _onClick({ item })}>
             <View
               style={{
                 flexDirection: "row",
@@ -255,14 +208,11 @@ export default class TreeSelect extends React.PureComponent<IProps, IState> {
                 height: layoutSize.LAYOUT_30,
                 alignItems: "center",
               }}>
-              {this._renderTreeNodeIcon(isOpen)}
-              {isShowTreeId && <Text style={{ fontSize: layoutSize.LAYOUT_14, marginLeft: 4 }}>{item.id}</Text>}
+              {_renderTreeNodeIcon(isOpen)}
               <Text
                 style={[
                   styles.textName,
-                  !leafCanBeSelected && isCurrentNode
-                    ? { fontSize: selectedFontSize, color: selectedColor }
-                    : { fontSize, color },
+                  isCurrentNode ? { fontSize: selectedFontSize, color: selectedColor } : { fontSize, color },
                 ]}>
                 {item.name}
               </Text>
@@ -273,17 +223,15 @@ export default class TreeSelect extends React.PureComponent<IProps, IState> {
               keyExtractor={(childrenItem, i) => i.toString()}
               style={{ flex: 1, marginLeft: layoutSize.LAYOUT_15 }}
               onEndReachedThreshold={0.01}
-              {...this.props}
-              data={item.children}
-              extraData={this.state}
-              renderItem={this._renderRow}
+              data={item.children.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))}
+              renderItem={_renderRow}
             />
           )}
         </View>
       );
     }
     return (
-      <TouchableOpacity onPress={e => this._onClick({ item })}>
+      <TouchableOpacity onPress={e => _onClick({ item })}>
         <View
           style={{
             flexDirection: "row",
@@ -304,15 +252,12 @@ export default class TreeSelect extends React.PureComponent<IProps, IState> {
     );
   };
 
-  _onSearch = value => {
-    this.setState({
-      nodesStatus: this.calculateNodesStatus(value),
-      searchValue: value,
-    });
+  const _onSearch = value => {
+    setNodesStatus(calculateNodesStatus(value));
+    setSearchValue(value);
   };
 
-  _renderSearchBar = () => {
-    const { searchValue } = this.state;
+  const _renderSearchBar = () => {
     return (
       <View
         style={{
@@ -340,7 +285,7 @@ export default class TreeSelect extends React.PureComponent<IProps, IState> {
           autoCorrect={false}
           blurOnSubmit
           clearButtonMode="while-editing"
-          onChangeText={text => this._onSearch(text)}
+          onChangeText={text => _onSearch(text)}
         />
         <TouchableOpacity
           style={{
@@ -357,21 +302,46 @@ export default class TreeSelect extends React.PureComponent<IProps, IState> {
       </View>
     );
   };
-  render() {
-    const { data } = this.props;
-    return (
-      <View style={styles.container}>
-        {this._renderSearchBar()}
-        <FlatList
-          keyExtractor={(item, i) => i.toString()}
-          style={{ flex: 1, marginVertical: 5, paddingHorizontal: 15 }}
-          onEndReachedThreshold={0.01}
-          {...this.props}
-          data={data}
-          extraData={this.state}
-          renderItem={this._renderRow}
-        />
-      </View>
-    );
-  }
+
+  return (
+    <View style={styles.container}>
+      {_renderSearchBar()}
+      <FlatList
+        keyExtractor={(item, i) => i.toString()}
+        style={styles.flatList}
+        onEndReachedThreshold={0.01}
+        data={data}
+        renderItem={_renderRow}
+      />
+    </View>
+  );
 }
+
+const styles = StyleSheet.create({
+  collapseIcon: {
+    width: 0,
+    height: 0,
+    marginRight: 2,
+    borderStyle: "solid",
+  },
+  container: {
+    flexGrow: 0,
+    backgroundColor: "#fff",
+  },
+  contentContainer: {
+    paddingBottom: layoutSize.LAYOUT_18,
+    backgroundColor: "white",
+  },
+  flatList: {
+    flexGrow: 0,
+    marginVertical: 5,
+    maxHeight: DEVICE_HEIGHT() - layoutSize.LAYOUT_250,
+    marginTop: layoutSize.LAYOUT_10,
+    marginBottom: layoutSize.LAYOUT_10,
+    paddingHorizontal: 15,
+  },
+  textName: {
+    fontSize: layoutSize.LAYOUT_14,
+    marginLeft: 5,
+  },
+});
