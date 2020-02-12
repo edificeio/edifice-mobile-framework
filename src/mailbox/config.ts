@@ -18,5 +18,5 @@ export default new FunctionalModuleConfig({
       return val;
     }
   },
-  hasRight: (apps) => (apps => apps.some(app => app.name == 'Messagerie' || app.name == 'Zimbra'))
+  hasRight: app => app.name == "Messagerie" || app.name == "Zimbra",
 });
