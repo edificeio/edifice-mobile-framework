@@ -74,7 +74,7 @@ const getNewerMessages = async (threadId, threadMessages, page) => {
 };
 
 export const zimbraGetOlderMessages = (threadInfo: IConversationThread) => {
-  const page = Math.floor(threadInfo.messages.length / Conf.currentPlatform.zimbraMaxMailPerPage || 10);
+  const page = Math.floor(threadInfo.messages.length / (Conf.currentPlatform.zimbraMaxMailPerPage || 10));
   return getOlderMessages(threadInfo.id, threadInfo.messages, page);
 };
 
