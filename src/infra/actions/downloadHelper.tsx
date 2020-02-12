@@ -7,7 +7,7 @@ import { getAuthHeader } from "../oauth";
 import { IFile } from "../../workspace/types";
 
 export const downloadFiles = (downloadable: Array<IFile>, withManager = true) => {
-  downloadable.map(document => startDownload(document, withManager));
+  downloadable.map(document => downloadFile(document, withManager));
 };
 
 export const downloadFile = (downloadable: IFile, withManager = true) => {
