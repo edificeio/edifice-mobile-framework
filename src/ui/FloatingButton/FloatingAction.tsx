@@ -126,8 +126,8 @@ const styles = StyleSheet.create({
   },
   button: {
     position: "absolute",
-    right: layoutSize.LAYOUT_18,
-    top: layoutSize.LAYOUT_25,
+    right: 20,
+    top: 20,
     zIndex: 5,
   },
   overlayActions: {

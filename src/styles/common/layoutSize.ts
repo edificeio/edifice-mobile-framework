@@ -8,7 +8,7 @@ export const DEVICE_SCALE = shortDimension / 440;
 const scale = (size: number) => DEVICE_SCALE * size;
 
 function normalize(size: number): number {
-  return size + (scale(size) - size) * 0.2;
+  return size // + (scale(size) - size) * 0.1; until will not be use on all the appli, its unneccessary
 }
 
 /* export =================================================================== */
