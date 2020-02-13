@@ -7,7 +7,7 @@ import RNFB from "rn-fetch-blob";
 import moment from "moment";
 import { Platform, ToastAndroid } from "react-native";
 import I18n from "i18n-js";
-import { IFile, ContentUri, IFolder, IItems, IItem } from "../../types";
+import { IFile, ContentUri, IFolder, IItems, IItem, FilterId } from "../../types";
 import { filters } from "../../types/filters/helpers/filters";
 import Conf from "../../../../ode-framework-conf";
 import { OAuth2RessourceOwnerPasswordClient, getDummySignedRequest, getAuthHeader } from "../../../infra/oauth";
@@ -152,10 +152,11 @@ export const uploadDocument = (dispatch: any, parentId: string, content: Content
     ],
     []
   );
-  const url =
-    parentId === "owner"
-      ? `${Conf.currentPlatform.url}/workspace/document?quality=1&thumbnail=120x120&thumbnail=100x100&thumbnail=290x290&thumbnail=381x381&thumbnail=1600x0`
-      : `${Conf.currentPlatform.url}/workspace/document?parentId=${parentId}&quality=1&thumbnail=120x120&thumbnail=100x100&thumbnail=290x290&thumbnail=381x381&thumbnail=1600x0`;
+
+  const parentIdParam = parentId === FilterId.owner && "parentId=" + parentId + "&";
+  const protectedParam = parentId === FilterId.protected && "protected=true&application=media-library&";
+
+  const url = `${Conf.currentPlatform.url}/workspace/document?${parentIdParam}${protectedParam}quality=1&thumbnail=120x120&thumbnail=100x100&thumbnail=290x290&thumbnail=381x381&thumbnail=1600x0`;
 
   dispatch(progressInitAction());
   RNFB.fetch("POST", url, headers, body)

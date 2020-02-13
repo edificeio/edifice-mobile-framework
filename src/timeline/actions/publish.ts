@@ -29,19 +29,35 @@ export const fetchPublishableBlogsAction = () =>
 
 
 export const blogPublishActions = createAsyncActionCreators<{}>(blogPublishActionTypes);
-export const publishBlogPostAction = (blog: IBlog, title: string, content: string) =>
+export const publishBlogPostAction = (blog: IBlog, title: string, content: string, workspaceUploads?: any) =>
   async (dispatch: Dispatch, getState: () => any) => {
     let api = `${Conf.currentPlatform.url}/blog/post/${blog._id}`;
     let apiOpts = { method: 'POST' }
+
     try {
+      let blogPostHtml = `<p class="ng-scope" style="">${content}</p>`
+      if (workspaceUploads) {
+        const uploadKeys = Object.keys(workspaceUploads)
+        const lastUploadKey = uploadKeys[uploadKeys.length-1]
+        const lastUpload = workspaceUploads[lastUploadKey]
+        const imagePath = lastUpload.url
+        const images = `<img src="${imagePath}?thumbnail=2600x0" class="">`
+        const imagesHtml = 
+        `<p class="ng-scope" style="">
+          <span contenteditable="false" class="image-container ng-scope" style="">
+            ${images}
+          </span>
+        </p>`
+        blogPostHtml = blogPostHtml + imagesHtml
+      }
 
       dispatch(blogPublishActions.request());
 
       const result1 = await signedFetchJson(api, {
         ...apiOpts,
         body: JSON.stringify({
-          title: title,
-          content: `<p>${content}</p>`
+          title,
+          content: blogPostHtml
         })
       });
 

@@ -35,7 +35,7 @@ const photoCaptions: PhotoCaptions = {
 type FilePickerPromise = (resolve: (payload: ContentUri) => void, reject: (error: Error) => void) => void;
 
 const pick = (onlyImages: boolean) => {
-  return new Promise(Platform.OS === "ios" ? onlyImages ? pickImage : pickIOS : pickDocument(onlyImages));
+  return new Promise(Platform.OS === "ios" ? (onlyImages ? pickImage : pickIOS) : pickDocument(onlyImages));
 };
 
 const transformCaptions: (captions: any) => {} = captions => {
@@ -49,7 +49,7 @@ const transformCaptions: (captions: any) => {} = captions => {
 const pickIOS: FilePickerPromise = (resolve, reject) => {
   const { image, document, cancel, title } = transformCaptions(captions);
   const options = [image, document, cancel];
-  const handlers = [pickImage, pickDocument, () => pickClosed];
+  const handlers = [pickImage, pickDocument(), () => pickClosed];
   const cancelButtonIndex = options.indexOf(cancel);
 
   ActionSheetIOS.showActionSheetWithOptions({ options, cancelButtonIndex, title }, buttonIndex => {
@@ -69,7 +69,7 @@ const pickImage: FilePickerPromise = (resolve, reject) => {
   });
 };
 
-const pickDocument: FilePickerPromise = (onlyImages) => async (resolve, reject) => {
+const pickDocument: FilePickerPromise = onlyImages => async (resolve, reject) => {
   try {
     const result = await DocumentPicker.pick({
       type: [onlyImages ? DocumentPicker.types.images : DocumentPicker.types.allFiles],

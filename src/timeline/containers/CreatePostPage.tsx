@@ -20,14 +20,18 @@ import { IUserInfoState } from "../../user/state/info";
 import { CommonStyles } from "../../styles/common/styles";
 import { publishBlogPostAction } from "../actions/publish";
 import pickFile from "../../infra/actions/pickFile";
+import { uploadAction } from "../../workspace/actions/upload";
+import { ContentUri } from "../../types/contentUri";
 
 export interface ICreatePostDataProps {
   user: IUserInfoState;
   publishing: boolean;
+  workspaceItems: object;
 }
 
 export interface ICreatePostEventProps {
-  onPublish: (blog: IBlog, title: string, content: string) => void;
+  onPublish: (blog: IBlog, title: string, content: string,  workspaceUploads?: object) => void;
+  onUpload: (images: ContentUri[], forApp: boolean) => void;
 }
 
 export interface ICreatePostOtherProps {
@@ -37,7 +41,7 @@ export interface ICreatePostOtherProps {
 export interface ICreatePostState {
   title: string;
   content: string;
-  images: [];
+  images: ContentUri[];
 }
 
 export type ICreatePostPageProps = ICreatePostDataProps & ICreatePostEventProps & ICreatePostOtherProps;
@@ -176,11 +180,9 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
                 style={{ alignItems: "center" }}
                 onPress={() => {
                   pickFile(true)
-                  .then(image => {
-                    console.log(image)
-                    this.setState({ images: [...images, image.uri] })                    
-                    console.log(images)
-                  })
+                    .then(selectedImage => {
+                      this.setState({ images: [...images, selectedImage] })                    
+                    })
                 }}
               >
                 <A>{I18n.t('createPost-create-mediaField')}</A>
@@ -197,7 +199,15 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
                   horizontal
                   renderItem={({ item, index }) => {
                     return(
-                      <ImageBackground source={{ uri: item }} resizeMode="cover" style={{ width: 100, height: 100, marginHorizontal: 2 }}>
+                      <ImageBackground
+                        source={{ uri: item.uri }}
+                        resizeMode="cover"
+                        style={{ 
+                          width: 100,
+                          height: 100,
+                          marginRight: index === images.length - 1 ? 0 : 5
+                        }}
+                      >
                         <TouchableOpacity
                           onPress={() => {
                             let imagesToPublish = [...images];
@@ -229,32 +239,46 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
   }
 
   componentDidUpdate(prevProps: ICreatePostPageProps) {
-    const { publishing, navigation } = this.props;
+    const { publishing, navigation, workspaceItems, onPublish } = this.props;
+    const { title, content} = this.state;
     if (prevProps.publishing !== publishing) {
       navigation.setParams({ 'publishing': publishing });
+    }
+    if (prevProps.workspaceItems !== workspaceItems && workspaceItems.protected.data) {
+      onPublish(
+        navigation.getParam('blog') as IBlog,
+        title,
+        content,
+        workspaceItems.protected.data
+      );
     }
   }
 
   handlePublishPost() {
-    const { onPublish, navigation } = this.props;
-    const { title, content } = this.state;
-    onPublish(
-      navigation.getParam('blog') as IBlog,
-      title,
-      content
-    );
+    const { onPublish, onUpload, navigation } = this.props;
+    const { title, content, images} = this.state;
+    images.length > 0
+      ? onUpload(images, true)
+      : onPublish(
+        navigation.getParam('blog') as IBlog,
+        title,
+        content
+      );
   }
-
 }
 
 export default connect(
   (state: any) => ({
     user: state.user.info,
-    publishing: state.timeline.publishStatus.publishing
+    publishing: state.timeline.publishStatus.publishing,
+    workspaceItems: state.workspace.items
   }),
   (dispatch: ThunkDispatch<any, any, any>) => ({
-    onPublish: (blog: IBlog, title: string, content: string) => {
-      dispatch(publishBlogPostAction(blog, title, content));
+    onUpload: (images: ContentUri[], forApp: boolean) => {
+      dispatch(uploadAction(images, forApp))
+    },
+    onPublish: (blog: IBlog, title: string, content: string, workspaceUploads?: object) => {
+      dispatch(publishBlogPostAction(blog, title, content, workspaceUploads));
     }
   })
 )(CreatePostPage_Unconnected);
