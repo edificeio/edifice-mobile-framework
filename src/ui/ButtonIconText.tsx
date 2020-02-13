@@ -39,30 +39,40 @@ const TouchableOpacity = style.touchableOpacity( {
 
 export const ButtonIconText = ({ name, onPress, children, size, style }: ButtonTextIconProps) => {
   return (
-    <Container style={[styles.button, style]}>
-      <TouchableOpacity onPress={onPress}>
+    <>
+      <TouchableOpacity onPress={onPress} style={[styles.button, style]}>
         <Icon color="white" size={size ? size : layoutSize.LAYOUT_25} name={name} />
       </TouchableOpacity>
       <TextBold15>{children}</TextBold15>
-    </Container>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   button: {
-    ...getShadow(),
+    ...getButtonShadow(),
   },
 });
 
 export default FloatingAction;
 
-export function getShadow() {
+export function getButtonShadow() {
+  return {
+    elevation: 24,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 12},
+    shadowOpacity: 0.58,
+    shadowRadius: 16,
+  };
+};
+
+export function getMenuShadow() {
   return {
     elevation: 5,
-    shadowColor: "#444",
-    shadowOffset: { width: 0, height: 1},
-    shadowOpacity: 0.3,
-    shadowRadius: 1,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2},
+    shadowOpacity: 0.25,
+    shadowRadius: 3.8,
   };
 };
 

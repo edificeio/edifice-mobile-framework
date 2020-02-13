@@ -13,7 +13,7 @@ import TouchableOpacity from "../../ui/CustomTouchableOpacity";
  */
 
 const isIphoneX = () => false; // ToDo use React Navigation iPhoneX Compatibility here
-const iosStatusBarHeight = isIphoneX() ? 40 : 20;
+export const iosStatusBarHeight = isIphoneX() ? 40 : 20;
 
 const containerBar: ViewStyle = {
   alignItems: "center",

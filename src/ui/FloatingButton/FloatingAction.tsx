@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { FlatList, Keyboard, StyleSheet, View } from "react-native";
+import { FlatList, Keyboard, Platform, StyleSheet, View } from "react-native";
 import FloatingActionItem from "./FloatingActionItem";
 import { layoutSize } from "../../styles/common/layoutSize";
 import { CommonStyles } from "../../styles/common/styles";
@@ -7,9 +7,8 @@ import { IFloatingProps, IMenuItem } from "../types";
 import { ISelected } from "../Toolbar/Toolbar";
 import TouchableOpacity from "../CustomTouchableOpacity";
 import { ButtonIconText } from "..";
-import { deviceWidth } from "../../styles";
-import { Header } from "react-navigation-stack";
-import { getShadow } from "../ButtonIconText";
+import { getMenuShadow } from "../ButtonIconText";
+import { iosStatusBarHeight } from "../headers/Header";
 
 
 class FloatingAction extends Component<IFloatingProps & ISelected, IState> {
@@ -117,16 +116,16 @@ const styles = StyleSheet.create({
     overflow: "visible",
     backgroundColor: "#ffffff",
     position: "absolute",
-    right: 16,
-    top: 60,
+    right: 12,
+    top: 78,
     width: layoutSize.LAYOUT_200,
     zIndex: 5,
-    ...getShadow()
+    ...getMenuShadow()
   },
   button: {
     position: "absolute",
     right: 20,
-    top: 24,
+    top: Platform.OS === "ios" ? iosStatusBarHeight + 24 : 24,
     zIndex: 5,
   },
   overlayActions: {
@@ -134,7 +133,7 @@ const styles = StyleSheet.create({
     left: 0,
     position: "absolute",
     right: 0,
-    top: 35,
+    top: Platform.OS === "ios" ? iosStatusBarHeight : 0,
   },
   separator: {
     borderBottomColor: CommonStyles.borderColorVeryLighter,
