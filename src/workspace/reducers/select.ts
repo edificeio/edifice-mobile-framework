@@ -8,8 +8,9 @@ import { IAction } from "../../infra/redux/async";
 import { actionTypesDelete } from "../actions/delete";
 import { actionTypesUpload } from "../actions/upload";
 import { actionTypesRename } from "../actions/rename";
-import { actionTypesPast } from "../actions/copypast";
 import { actionTypesDownload } from "../actions/download";
+import { actionTypesPast } from "../actions/past";
+import { actionTypesMove } from "../actions/move";
 
 export type IItems<T> = {
   [key: string]: T;
@@ -31,6 +32,7 @@ export default (state: IItems<IItem> = initialState, action: IAction<IItem>) => 
     case actionTypesDownload.received:
     case actionTypesDelete.received:
     case actionTypesPast.received:
+    case actionTypesMove.received:
     case actionTypesUpload.received:
     case actionTypesRename.received:
     case SELECT_CLEAR_ACTION_TYPE:

@@ -29,7 +29,6 @@ export function asyncActionFactory(
         const response = await signedFetch(`${Conf.currentPlatform.url}${type}`, {
           body: formatedBody,
           headers: {
-            method: options.method,
             Accept: "application/json",
             "Content-Type": options.formData ? "application/x-www-form-urlencoded; charset=UTF-8" : "application/json",
           },

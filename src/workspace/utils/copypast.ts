@@ -1,5 +1,5 @@
-import { pastAction } from "../actions/copypast";
-import { deleteAction } from "../actions/delete";
+import { moveAction } from "../actions/move";
+import { pastAction } from "../actions/past";
 
 /**
  *
@@ -20,5 +20,5 @@ export function copyDocuments({ dispatch, parentId, selected, value }) {
  * @param value     the destination folder id
  */
 export function moveDocuments({ dispatch, parentId, selected, value }) {
-  dispatch(pastAction(value, selected)).then(() => dispatch(deleteAction(parentId, selected)));
+  dispatch(moveAction(value, parentId, selected));
 }

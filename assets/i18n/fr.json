@@ -118,6 +118,7 @@
     "modify": "Modifier",
     "move": "Déplacer",
     "move-documents": "Déplacer documents dans:",
+    "move-success": "Déplacement fait",
     "myapp-emptyScreenText": "Il semblerait que vous n'ayez accès à aucune application ...",
     "myapp-emptyScreenTitle": "Aucune application !",
     "MyApplications": "Mes applis",

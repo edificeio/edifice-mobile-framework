@@ -3,16 +3,17 @@
  * Holds a list of simple element in a simple Array
  */
 import I18n from "i18n-js";
-import Toast from 'react-native-tiny-toast'
+import Toast from "react-native-tiny-toast";
 import asyncReducer, { IAction } from "../../infra/redux/async";
 
 import { actionTypesList } from "../actions/list";
 import { actionTypesCreateFolder } from "../actions/create";
 import { actionTypesRename } from "../actions/rename";
 import { IItem, IItems, IState } from "../types";
-import { actionTypesPast } from "../actions/copypast";
+import { actionTypesPast } from "../actions/past";
 import { actionTypesUpload } from "../actions/upload";
 import { actionTypesDelete } from "../actions/delete";
+import { actionTypesMove } from "../actions/move";
 
 const stateDefault: IState = {
   isFetching: null,
@@ -34,10 +35,15 @@ export default (state: IState = stateDefault, action: IAction<IItems<IItem | str
     case actionTypesCreateFolder.received:
       return pushData(state, action, actionTypesCreateFolder);
     case actionTypesPast.received:
-      Toast.showSuccess(I18n.t("copy-success"))
+      Toast.showSuccess(I18n.t("copy-success"));
     case actionTypesPast.fetchError:
     case actionTypesPast.requested:
       return pushData(state, action, actionTypesPast);
+    case actionTypesMove.received:
+      Toast.showSuccess(I18n.t("move-success"));
+    case actionTypesMove.fetchError:
+    case actionTypesMove.requested:
+      return pushData(state, action, actionTypesMove);
     case actionTypesList.fetchError:
     case actionTypesList.requested:
     case actionTypesList.received:
@@ -76,6 +82,7 @@ function pushData(state: IState, action: IAction<IItems<IItem | string>>, action
 
 const node = (data: IItems<IItem> = {}, action: IAction<IItems<IItem | string>>): IItems<IItem> => {
   switch (action.type) {
+    case actionTypesMove.received:
     case actionTypesDelete.received:
       for (const id in action.data as IItems<string>) delete data[id];
       return { ...data };
