@@ -10,7 +10,7 @@ import { fetchConversationThreadResetMessages } from "./actions/apiHelper";
 //TODO add types args
 const mailboxNotifHandlerFactory :NotificationHandlerFactory<any,any,any> = dispatch => async notificationData => {
   if (
-    !notificationData.resourceUri.startsWith("/conversation") ||
+    !notificationData.resourceUri.startsWith("/conversation") &&
     !notificationData.resourceUri.startsWith("/zimbra")
   ) {
     return false;
