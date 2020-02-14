@@ -29,19 +29,16 @@ export const fetchPublishableBlogsAction = () =>
 
 
 export const blogPublishActions = createAsyncActionCreators<{}>(blogPublishActionTypes);
-export const publishBlogPostAction = (blog: IBlog, title: string, content: string, workspaceUploads?: any) =>
+export const publishBlogPostAction = (blog: IBlog, title: string, content: string, uploadedBlogPostDocuments?: any) =>
   async (dispatch: Dispatch, getState: () => any) => {
     let api = `${Conf.currentPlatform.url}/blog/post/${blog._id}`;
     let apiOpts = { method: 'POST' }
 
     try {
       let blogPostHtml = `<p class="ng-scope" style="">${content}</p>`
-      if (workspaceUploads) {
-        const uploadKeys = Object.keys(workspaceUploads)
-        const lastUploadKey = uploadKeys[uploadKeys.length-1]
-        const lastUpload = workspaceUploads[lastUploadKey]
-        const imagePath = lastUpload.url
-        const images = `<img src="${imagePath}?thumbnail=2600x0" class="">`
+      if (uploadedBlogPostDocuments) {
+        const blogPostUploads = Object.values(uploadedBlogPostDocuments)
+        const images = blogPostUploads.map(blogPostUpload => `<img src="${blogPostUpload.url}?thumbnail=2600x0" class="">`).join("")
         const imagesHtml = 
         `<p class="ng-scope" style="">
           <span contenteditable="false" class="image-container ng-scope" style="">

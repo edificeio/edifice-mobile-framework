@@ -45,11 +45,11 @@ export function uploadError(parentId, errmsg: string) {
  * Dispatches WORKSPACE_UPLOAD_REQUESTED, WORKSPACE_UPLOAD_RECEIVED, and WORKSPACE_UPLOAD_FETCH_ERROR if an error occurs.
  */
 export function uploadAction(parentId: string, uriContent: ContentUri[] | ContentUri) {
-  return async (dispatch: any) => {
+  return (dispatch: any) => {
     try {
       const content = Array.isArray(uriContent) ? uriContent : [uriContent];
       dispatch(uploadRequested(parentId));
-      uploadDocument(dispatch, parentId, content, (response: any) => {
+      return uploadDocument(dispatch, parentId, content, (response: any) => {
         if (response.data) {
           const data = JSON.parse(response.data);
           dispatch(uploadReceived(parentId, formatResults(data)));

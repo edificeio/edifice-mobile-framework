@@ -145,38 +145,38 @@ function formatFolderResult(item: IBackendFolder): IFolder {
 export const uploadDocument = (dispatch: any, parentId: string, content: ContentUri[], onEnd: any) => {
   const signedHeaders = getAuthHeader();
   const headers = { ...signedHeaders, "content-Type": "multipart/form-data" };
-  const body = content.reduce(
-    (acc, item, index) => [
-      ...acc,
-      { name: `document${index}`, type: item.mime, filename: item.name, data: RNFB.wrap(item.uri) },
-    ],
-    []
-  );
 
-  const parentIdParam = parentId === FilterId.owner && "parentId=" + parentId + "&";
-  const protectedParam = parentId === FilterId.protected && "protected=true&application=media-library&";
+  const parentIdParam = parentId === FilterId.owner ? "parentId=" + parentId + "&" : "";
+  const protectedParam = parentId === FilterId.protected ? "protected=true&application=media-library&" : "";
 
   const url = `${Conf.currentPlatform.url}/workspace/document?${parentIdParam}${protectedParam}quality=1&thumbnail=120x120&thumbnail=100x100&thumbnail=290x290&thumbnail=381x381&thumbnail=1600x0`;
 
   dispatch(progressInitAction());
-  RNFB.fetch("POST", url, headers, body)
-    .uploadProgress({ interval: 100 }, (written, total) => {
-      dispatch(progressAction((written / total) * 100));
-    })
-    .then(response => {
-      dispatch(progressAction(100));
-      setTimeout(() => {
-        dispatch(progressEndAction());
+  const uploads = content.map((item, index) => {
+    return RNFB.fetch("POST", url, headers, [
+      { name: `document${index}`, type: item.mime, filename: item.name, data: RNFB.wrap(item.uri) },
+    ])
+      .uploadProgress({ interval: 100 }, (written, total) => {
+        dispatch(progressAction((written / total) * 100));
+      })
+      .then(response => {
+        dispatch(progressAction(100));
+        setTimeout(() => {
+          dispatch(progressEndAction());
+          if (Platform.OS === "android") {
+            ToastAndroid.show(I18n.t("workspace-uploadSuccessful"), ToastAndroid.SHORT);
+          }
+          onEnd(response);
+        }, 500);
+        return JSON.parse(response.data);
+      })
+      .catch(() => {
         if (Platform.OS === "android") {
-          ToastAndroid.show(I18n.t("workspace-uploadSuccessful"), ToastAndroid.SHORT);
+          ToastAndroid.show(I18n.t("workspace-uploadFailed"), ToastAndroid.SHORT);
         }
-        onEnd(response);
-      }, 500);
-    })
-    .catch(() => {
-      if (Platform.OS === "android") {
-        ToastAndroid.show(I18n.t("workspace-uploadFailed"), ToastAndroid.SHORT);
-      }
-      dispatch(progressEndAction());
-    });
+        dispatch(progressEndAction());
+      });
+  });
+
+  return Promise.all(uploads).then(data => formatResults(data, undefined));
 };

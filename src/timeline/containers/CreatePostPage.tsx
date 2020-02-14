@@ -7,7 +7,7 @@ import { ThunkDispatch } from "redux-thunk";
 import { TextInput, TouchableWithoutFeedback, TouchableOpacity, FlatList } from "react-native-gesture-handler";
 import { View, KeyboardAvoidingView, Platform, Keyboard, ImageBackground } from "react-native";
 
-import { Icon } from "../../ui";
+import { Icon, Loading } from "../../ui";
 import { HeaderBackAction, HeaderAction } from "../../ui/headers/NewHeader";
 import { GridAvatars } from "../../ui/avatars/GridAvatars";
 import { TextBold, TextLight } from "../../ui/text";
@@ -22,6 +22,7 @@ import { publishBlogPostAction } from "../actions/publish";
 import pickFile from "../../infra/actions/pickFile";
 import { uploadAction } from "../../workspace/actions/upload";
 import { ContentUri } from "../../types/contentUri";
+import { FilterId } from "../../workspace/types";
 
 export interface ICreatePostDataProps {
   user: IUserInfoState;
@@ -30,8 +31,8 @@ export interface ICreatePostDataProps {
 }
 
 export interface ICreatePostEventProps {
-  onPublish: (blog: IBlog, title: string, content: string,  workspaceUploads?: object) => void;
-  onUpload: (images: ContentUri[], forApp: boolean) => void;
+  onUploadPostDocuments: (images: ContentUri[]) => void;
+  onPublishPost: (blog: IBlog, title: string, content: string, uploadedPostDocuments?: object) => void;
 }
 
 export interface ICreatePostOtherProps {
@@ -53,16 +54,22 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
       {
         title: I18n.t(`createPost-newPost-${navigation.getParam("postType")}`),
         headerLeft: <HeaderBackAction navigation={navigation} />,
-        headerRight: <HeaderAction
-          navigation={navigation}
-          title={I18n.t('createPost-publishAction')}
-          onPress={() => navigation.getParam('onPublishPost') && navigation.getParam('onPublishPost')()}
-          disabled={
-            navigation.getParam('publishing', false)
-            || navigation.getParam('title', '').length === 0
-            || navigation.getParam('content', '').length === 0
-          }
-        />
+        headerRight: navigation.getParam('uploadingPostDocuments')
+          ? <Loading
+              small
+              customColor={CommonStyles.lightGrey} 
+              customStyle={{ paddingHorizontal: 18 }}
+            />
+          : <HeaderAction
+              navigation={navigation}
+              title={I18n.t('createPost-publishAction')}
+              onPress={() => navigation.getParam('onPublishPost') && navigation.getParam('onPublishPost')()}
+              disabled={
+                navigation.getParam('publishing', false)
+                || navigation.getParam('title', '').length === 0
+                || navigation.getParam('content', '').length === 0
+              }
+            />
       },
       navigation
     );
@@ -181,7 +188,7 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
                 onPress={() => {
                   pickFile(true)
                     .then(selectedImage => {
-                      this.setState({ images: [...images, selectedImage] })                    
+                      this.setState({ images: [...images, selectedImage] })
                     })
                 }}
               >
@@ -239,31 +246,29 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
   }
 
   componentDidUpdate(prevProps: ICreatePostPageProps) {
-    const { publishing, navigation, workspaceItems, onPublish } = this.props;
-    const { title, content} = this.state;
+    const { publishing, navigation } = this.props;
     if (prevProps.publishing !== publishing) {
       navigation.setParams({ 'publishing': publishing });
     }
-    if (prevProps.workspaceItems !== workspaceItems && workspaceItems.protected.data) {
-      onPublish(
-        navigation.getParam('blog') as IBlog,
-        title,
-        content,
-        workspaceItems.protected.data
-      );
-    }
   }
 
-  handlePublishPost() {
-    const { onPublish, onUpload, navigation } = this.props;
+  async handlePublishPost() {
+    const { onPublishPost, onUploadPostDocuments, navigation } = this.props;
     const { title, content, images} = this.state;
-    images.length > 0
-      ? onUpload(images, true)
-      : onPublish(
-        navigation.getParam('blog') as IBlog,
-        title,
-        content
-      );
+
+    let uploadedPostDocuments = undefined;
+    if (images.length > 0) {
+      navigation.setParams({ uploadingPostDocuments: true })
+      uploadedPostDocuments = await onUploadPostDocuments(images)
+      navigation.setParams({ uploadingPostDocuments: false })
+    }
+
+    onPublishPost(
+      navigation.getParam('blog') as IBlog,
+      title,
+      content,
+      uploadedPostDocuments
+    );
   }
 }
 
@@ -271,14 +276,11 @@ export default connect(
   (state: any) => ({
     user: state.user.info,
     publishing: state.timeline.publishStatus.publishing,
-    workspaceItems: state.workspace.items
   }),
   (dispatch: ThunkDispatch<any, any, any>) => ({
-    onUpload: (images: ContentUri[], forApp: boolean) => {
-      dispatch(uploadAction(images, forApp))
+    onUploadPostDocuments: async (images: ContentUri[]) => dispatch(uploadAction(FilterId.protected, images)),
+    onPublishPost: (blog: IBlog, title: string, content: string, uploadedPostDocuments?: object) => {
+      dispatch(publishBlogPostAction(blog, title, content, uploadedPostDocuments));
     },
-    onPublish: (blog: IBlog, title: string, content: string, workspaceUploads?: object) => {
-      dispatch(publishBlogPostAction(blog, title, content, workspaceUploads));
-    }
   })
 )(CreatePostPage_Unconnected);

@@ -75,11 +75,11 @@ const OptionalCreateButton_Unconnected = ({ blogs, navigation }: { blogs: IBlogL
       >
         <Text style={{ color: CommonStyles.textColor }}>{I18n.t('createPost-menu-blog')}</Text>
       </MenuItem>
-      <MenuItem
+      {/* <MenuItem
         onPress={() => { navigation.getParam('onCreatePost') && navigation.getParam('onCreatePost')('news') }}
       >
         <Text style={{ color: CommonStyles.textColor }}>{I18n.t('createPost-menu-news')}</Text>
-      </MenuItem>
+      </MenuItem> */}
     </Menu>
   : 
     <HeaderIcon name={null} hidden={true} />
