@@ -1,10 +1,10 @@
 import style from "glamorous-native";
 import * as React from "react";
+import { StyleSheet } from "react-native";
 import { CommonStyles } from "../styles/common/styles";
 import { Icon } from "./icons/Icon";
 import { layoutSize } from "../styles/common/layoutSize";
 import { TextBold15 } from "./text";
-import { StyleSheet } from "react-native";
 import FloatingAction from "./FloatingButton/FloatingAction";
 
 export interface ButtonTextIconProps {
@@ -19,7 +19,6 @@ export interface ButtonTextIconProps {
 
 const Container = style.view(
   {
-    backgroundColor: "transparent",
     display: "flex",
     alignItems: "center",
     justifyContent: "space-evenly",
@@ -29,23 +28,29 @@ const Container = style.view(
   })
 );
 
-const TouchableOpacity = style.touchableOpacity( {
-    alignItems: "center",
-    justifyContent: "center",
-    width: layoutSize.LAYOUT_50,
-    height: layoutSize.LAYOUT_50,
-    borderRadius: layoutSize.LAYOUT_25,
-    backgroundColor: CommonStyles.profileTypes.Student,
-  });
+const TouchableOpacity = style.touchableOpacity({
+  alignItems: "center",
+  justifyContent: "center",
+  width: layoutSize.LAYOUT_50,
+  height: layoutSize.LAYOUT_50,
+  borderRadius: layoutSize.LAYOUT_25,
+  backgroundColor: CommonStyles.profileTypes.Student,
+});
 
-export const ButtonIconText = ({ name, onPress, children, size, style }: ButtonTextIconProps) => {
+export const ButtonIconText = ({ style, children, ...rest }: ButtonTextIconProps) => {
   return (
-    <Container style={style}>
-      <TouchableOpacity onPress={onPress} style={[styles.button, style]}>
-        <Icon color="white" size={size ? size : layoutSize.LAYOUT_25} name={name} />
-      </TouchableOpacity>
+    <Container>
+      <ButtonIcon {...rest} style={[styles.button, style]} />
       <TextBold15>{children}</TextBold15>
     </Container>
+  );
+};
+
+export const ButtonIcon = ({ name, onPress, children, size, style }: ButtonTextIconProps) => {
+  return (
+    <TouchableOpacity onPress={onPress} style={[styles.button, style]}>
+      <Icon color="white" size={size ? size : layoutSize.LAYOUT_25} name={name} />
+    </TouchableOpacity>
   );
 };
 

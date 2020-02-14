@@ -23,7 +23,7 @@ type IProps = {
 
 export default function TreeSelect({
   data,
-  defaultSelectedId = [],
+  defaultSelectedId = ["owner"],
   excludeData = [],
   onClick = f => f,
   openIds = ["owner"],
@@ -34,7 +34,7 @@ export default function TreeSelect({
   const selectedColor = "#000000";
 
   function _initCurrentNode(defaultSelectedId) {
-    if (!defaultSelectedId || !defaultSelectedId.length) {
+    if (!defaultSelectedId.length) {
       return "owner";
     }
     for (let id of defaultSelectedId) {
@@ -47,8 +47,9 @@ export default function TreeSelect({
     return defaultSelectedId[0];
   }
 
-  function _initNodesStatus(data, openIds = [] as string[], defaultSelectedId = [] as string[]) {
+  function _initNodesStatus(data, openIds = ["owner"] as string[], defaultSelectedId = ["owner"] as string[]) {
     const nodesStatus = {};
+
     if (openIds && openIds.length) {
       for (let id of openIds) {
         const routes = _find(data, id);
@@ -57,7 +58,6 @@ export default function TreeSelect({
     }
     if (defaultSelectedId && defaultSelectedId.length) {
       for (let id of defaultSelectedId) {
-        // eslint-disable-line
         let routes = _find(data, id);
 
         if (routes.length === 0) routes = _find(data, "owner");

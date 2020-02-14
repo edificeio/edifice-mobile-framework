@@ -6,9 +6,8 @@ import { CommonStyles } from "../../styles/common/styles";
 import { IFloatingProps, IMenuItem } from "../types";
 import { ISelected } from "../Toolbar/Toolbar";
 import TouchableOpacity from "../CustomTouchableOpacity";
-import { ButtonIconText } from "..";
-import { getMenuShadow } from "../ButtonIconText";
 import { iosStatusBarHeight } from "../headers/Header";
+import { ButtonIcon, getMenuShadow } from "../ButtonIconText";
 
 
 class FloatingAction extends Component<IFloatingProps & ISelected, IState> {
@@ -55,7 +54,7 @@ class FloatingAction extends Component<IFloatingProps & ISelected, IState> {
       return null;
     }
 
-    return <ButtonIconText style={styles.button} name={iconName} onPress={this.animateButton} />;
+    return <ButtonIcon style={styles.button} name={iconName} onPress={this.animateButton} />;
   }
 
   renderActions() {
@@ -119,14 +118,14 @@ const styles = StyleSheet.create({
     right: 12,
     top: 78,
     width: layoutSize.LAYOUT_200,
-    zIndex: 5,
+    zIndex: 10,
     ...getMenuShadow()
   },
   button: {
     position: "absolute",
     right: 20,
-    top: Platform.OS === "ios" ? iosStatusBarHeight + 20 : 20,
-    zIndex: 5,
+    top: Platform.OS === "ios" ? iosStatusBarHeight + 22 : 22,
+    zIndex: 10,
   },
   overlayActions: {
     bottom: 0,
