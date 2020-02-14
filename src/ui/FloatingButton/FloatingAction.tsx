@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   button: {
     position: "absolute",
     right: 20,
-    top: Platform.OS === "ios" ? iosStatusBarHeight + 24 : 24,
+    top: Platform.OS === "ios" ? iosStatusBarHeight + 20 : 20,
     zIndex: 5,
   },
   overlayActions: {

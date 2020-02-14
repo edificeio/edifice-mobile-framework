@@ -19,6 +19,7 @@ export interface ButtonTextIconProps {
 
 const Container = style.view(
   {
+    backgroundColor: "transparent",
     display: "flex",
     alignItems: "center",
     justifyContent: "space-evenly",
@@ -39,12 +40,12 @@ const TouchableOpacity = style.touchableOpacity( {
 
 export const ButtonIconText = ({ name, onPress, children, size, style }: ButtonTextIconProps) => {
   return (
-    <>
+    <Container style={style}>
       <TouchableOpacity onPress={onPress} style={[styles.button, style]}>
         <Icon color="white" size={size ? size : layoutSize.LAYOUT_25} name={name} />
       </TouchableOpacity>
       <TextBold15>{children}</TextBold15>
-    </>
+    </Container>
   );
 };
 
@@ -58,11 +59,11 @@ export default FloatingAction;
 
 export function getButtonShadow() {
   return {
-    elevation: 24,
+    elevation: 5,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 12},
-    shadowOpacity: 0.58,
-    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 2},
+    shadowOpacity: 0.25,
+    shadowRadius: 3.8,
   };
 };
 
