@@ -93,9 +93,11 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
 
           // check to see if dialog
           if (selectedMenuItem.dialog) {
-            if (selectedMenuItem.dialog.selectDestination) this.props.dispatch(listFoldersAction());
-
-            this.setState({ dialogVisible: true, selectedMenuItem });
+            if (selectedMenuItem.dialog.selectDestination)
+              this.props
+                .dispatch(listFoldersAction())
+                .then(() => this.setState({ dialogVisible: true, selectedMenuItem }));   // we refresh folders before calling confirm dialog
+            else this.setState({ dialogVisible: true, selectedMenuItem });
           } else {
             selectedMenuItem.onEvent({
               dispatch,
