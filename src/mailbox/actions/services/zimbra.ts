@@ -26,7 +26,12 @@ const isTrash: (message: IZimbraMessageMessageBackend) => boolean = message => {
 export const zimbraOrderedMessagesAdapter: (
   data: IZimbraMessageListBackend
 ) => IConversationMessageNativeArray = data => {
-  return conversationOrderedMessagesAdapter(data.filter(message => !isDraft(message) && !isTrash(message)));
+  const filteredTrashDraft = data.filter(message => !isDraft(message) && !isTrash(message));
+  const sanitizedMails = filteredTrashDraft.map(mail => {
+    const sanitizedBody = RegExp(/<body[^>]*>(.*)<\/body>\s*<\/html>\s*$/gs).exec(mail.body)
+    return { ...mail, body: sanitizedBody ? sanitizedBody[1] : mail.body };
+  });
+  return conversationOrderedMessagesAdapter(sanitizedMails);
 };
 
 // API ----------------------------------------------------------------------------------------
