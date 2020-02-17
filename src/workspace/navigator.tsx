@@ -8,6 +8,7 @@ import {
   copyMenu,
   createMenu,
   deleteMenu,
+  trashMenu,
   downloadMenu,
   emptyMenu,
   moveMenu,
@@ -16,6 +17,7 @@ import {
   separatorMenu,
   titleMenu,
 } from "./utils/menus";
+import { FilterId } from "./types";
 
 export default createStackNavigator(
   {
@@ -24,33 +26,37 @@ export default createStackNavigator(
       params: {
         popupItems: [
           {
-            filter: "owner",
+            filter: FilterId.owner,
             items: [addMenu(), createMenu()],
           },
         ],
         toolbarItems: [
           {
-            filter: "root",
+            filter: FilterId.root,
             items: [backMenu(), titleMenu(), emptyMenu()],
           },
         ],
         toolbarSelectedItems: [
           {
-            filter: "root",
+            filter: FilterId.root,
             items: [backMenu(), nbSelectedMenu(), separatorMenu(), copyMenu(), downloadMenu()],
           },
           {
-            filter: "owner",
+            filter: FilterId.owner,
             items: [
               backMenu(),
               nbSelectedMenu(),
               separatorMenu(),
               renameMenu(),
-              deleteMenu(),
+              trashMenu(),
               copyMenu(),
               moveMenu(),
               downloadMenu(),
             ],
+          },
+          {
+            filter: FilterId.trash,
+            items: [backMenu(), nbSelectedMenu(), separatorMenu(), deleteMenu(), downloadMenu()],
           },
         ],
       },
@@ -60,7 +66,7 @@ export default createStackNavigator(
       params: {
         toolbarItems: [
           {
-            filter: "root",
+            filter: FilterId.root,
             items: [backMenu(), titleMenu(), emptyMenu()],
           },
         ],

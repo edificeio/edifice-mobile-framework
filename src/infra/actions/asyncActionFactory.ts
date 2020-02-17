@@ -24,7 +24,7 @@ export function asyncActionFactory(
     }, 500);
 
     try {
-      if (options.method === "post" || options.method === "put") {
+      if (options.method != "get") {
         const formatedBody = options.formData ? querystring.stringify(body) : JSON.stringify(body);
         const response = await signedFetch(`${Conf.currentPlatform.url}${type}`, {
           body: formatedBody,

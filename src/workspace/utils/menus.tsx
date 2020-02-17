@@ -2,7 +2,7 @@ import I18n from "i18n-js";
 import { copyDocuments, moveDocuments } from "./copypast";
 import { downloadAction } from "../actions/download";
 import { createFolderAction } from "../actions/create";
-import { deleteAction } from "../actions/delete";
+import { deleteAction, trashAction } from "../actions/delete";
 import { pickFile } from "./pickFile";
 import { renameAction } from "../actions/rename";
 
@@ -32,6 +32,17 @@ export const createMenu = () => ({
     okLabel: I18n.t("create"),
   },
   onEvent: ({ dispatch, parentId, value }) => dispatch(createFolderAction(parentId, value)),
+});
+
+export const trashMenu = () => ({
+  text: I18n.t("delete"),
+  icon: "delete",
+  id: "delete",
+  dialog: {
+    title: I18n.t("trash-confirm"),
+    okLabel: I18n.t("delete"),
+  },
+  onEvent: ({ dispatch, parentId, selected }) => dispatch(trashAction(parentId, selected)),
 });
 
 export const deleteMenu = () => ({

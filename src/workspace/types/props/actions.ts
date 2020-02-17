@@ -3,6 +3,7 @@ import { IId } from "../../../types";
 import { ContentUri, IItem } from "..";
 
 export interface IActionProps {
+  trashAction: (parentId: string, selected: IId[]) => void;
   deleteAction: (parentId: string, selected: IId[]) => void;
   listFoldersAction: () => void;
   listAction: (params: IFiltersParameters) => void;
