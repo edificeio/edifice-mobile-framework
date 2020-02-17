@@ -78,7 +78,8 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
           return;
 
         case EVENT_TYPE.LONG_SELECT:
-          dispatch(selectAction(item));
+          const filterId = navigation.getParam("filter");
+          if (filterId != "root") dispatch(selectAction(item));
           return;
 
         case EVENT_TYPE.MENU_SELECT: {
