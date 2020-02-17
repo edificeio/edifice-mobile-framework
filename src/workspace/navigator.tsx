@@ -79,11 +79,5 @@ export default createStackNavigator(
       parentId: "root",
     },
     headerMode: "none",
-    transitionConfig: () => ({
-      transitionSpec: {
-        timing: Animated.timing,
-      },
-      screenInterpolator: () => {},
-    }),
   }
 );
