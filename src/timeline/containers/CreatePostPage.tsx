@@ -260,7 +260,6 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
     if (images.length > 0) {
       navigation.setParams({ uploadingPostDocuments: true })
       uploadedPostDocuments = await onUploadPostDocuments(images)
-      navigation.setParams({ uploadingPostDocuments: false })
     }
 
     onPublishPost(
