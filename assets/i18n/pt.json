@@ -68,6 +68,7 @@
   "conversation-receiverTo": "Destinatário",
   "conversation-responsePlaceholder": "Responder a todos...",
   "conversation-sendingMessage": "Enviando...",
+  "conversation-subjectPrefixInput": "Assunto :",
   "Conversation": "Mensagens",
 
 
@@ -186,7 +187,6 @@
   "timeline-postType-SCHOOLBOOK": "O aviso",
   "timeline-schoolbookFilter": "Comunicados",
   "timeline-viewInBrowser": "Consultar no navegador",
-  "to": "Para",
   "today": "Hoje",
   "trash-emptyScreenText": "Uh... Procurando alguma coisa? A lixeira está vazia.",
   "trash-emptyScreenTitle": "",

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { UserLabel } from "../../ui/SearchUser";
+import { UserLabel } from "../../ui/SelectThreadInfos";
 import { CommonStyles } from "../../styles/common/styles";
 import style from "glamorous-native";
 import { TouchableOpacity } from "react-native";

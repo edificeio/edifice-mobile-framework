@@ -8,7 +8,7 @@ import { pickUser, unpickUser, clearPickedUsers } from "../actions/pickUser";
 import { IUser } from "../../user/reducers";
 
 import { PageContainer } from "../../ui/ContainerContent";
-import SearchUser from "../../ui/SearchUser";
+import SelectThreadInfos from "../../ui/SelectThreadInfos";
 
 import mailboxConfig from "../config";
 import { NavigationScreenProp } from "react-navigation";
@@ -17,16 +17,20 @@ import { HeaderBackAction, HeaderAction } from "../../ui/headers/NewHeader";
 import { Dispatch, AnyAction } from "redux";
 import { ThunkDispatch } from "redux-thunk";
 import conversationThreadSelected from "../actions/threadSelected";
+import { selectSubject, clearSubject } from "../actions/selectSubject";
 
 interface INewThreadPageProps {
   remainingUsers: IUser[];
   loadVisibles: () => Promise<void>;
   pickedUsers: IUser[];
+  subject: string;
+  selectSubject: (subject: string) => void;
   pickUser: (user: IUser) => void;
   unpickUser: (user: IUser) => void;
   clearPickedUsers: () => Promise<void>;
+  clearSubject: () => Promise<void>;
   navigation: NavigationScreenProp<{}>
-  createAndSelectThread: (pickedUsers: any) => any;
+  createAndSelectThread: (pickedUsers: any[], threadSubject?: string) => any;
 }
 
 class NewThreadPage extends React.PureComponent<
@@ -59,7 +63,7 @@ class NewThreadPage extends React.PureComponent<
   }
 
   public handleCreateThread() {
-    const threadInfo = this.props.createAndSelectThread(this.props.pickedUsers);
+    const threadInfo = this.props.createAndSelectThread(this.props.pickedUsers, this.props.subject);
     this.props.navigation.replace("thread", { threadInfo });
   }
 
@@ -80,20 +84,24 @@ class NewThreadPage extends React.PureComponent<
 
   public componentWillUnmount() {
     this.props.clearPickedUsers();
+    this.props.clearSubject();
   }
 
   public render() {
     return (
       <PageContainer>
-        <SearchUser
-          remaining={this.props.remainingUsers}
-          picked={this.props.pickedUsers}
+        <SelectThreadInfos
+          onSelectSubject={(subject: string) => {
+            this.props.selectSubject(subject);
+          }}
           onPickUser={(user: any) => {
             this.props.pickUser(user);
           }}
           onUnpickUser={(user: any) => {
             this.props.unpickUser(user);
           }}
+          pickedUsers={this.props.pickedUsers}
+          remainingUsers={this.props.remainingUsers}
         />
       </PageContainer>
     );
@@ -103,19 +111,23 @@ class NewThreadPage extends React.PureComponent<
 export default connect(
   (state: any) => {
     // console.log(state);
+    const subjectState = state[mailboxConfig.reducerName].subject;
     const usersState = state[mailboxConfig.reducerName].users;
     return {
+      subject: subjectState,
       pickedUsers: usersState.picked,
       remainingUsers: usersState.remaining
     };
   },
   (dispatch: Dispatch & ThunkDispatch<any, void, AnyAction>) => ({
     loadVisibles: () => loadVisibles(dispatch)(),
+    selectSubject: (subject: string) => selectSubject(dispatch)(subject),
     pickUser: (user: any) => pickUser(dispatch)(user),
     unpickUser: (user: any) => unpickUser(dispatch)(user),
     clearPickedUsers: () => clearPickedUsers(dispatch)(),
-    createAndSelectThread: (pickedUsers: any[]) => {
-      const newConversation = dispatch(createThread(pickedUsers))
+    clearSubject: () => clearSubject(dispatch)(),
+    createAndSelectThread: (pickedUsers: any[], threadSubject: string) => {
+      const newConversation = dispatch(createThread(pickedUsers, threadSubject))
       dispatch(conversationThreadSelected(newConversation.id))
       return newConversation
     }

@@ -1,23 +1,22 @@
-import { IGroup, IUser } from "../../user/reducers";
-
-import mailboxConf from "../config";
-
-import { fetchJSONWithCache } from "../../infra/fetchWithCache";
-import { clearPickedUsers } from "./pickUser";
-import conversationThreadSelected from "./threadSelected";
-
-import { getSessionInfo } from "../../AppStore";
-
 import I18n from "i18n-js";
-
+import { IGroup, IUser } from "../../user/reducers";
+import mailboxConf from "../config";
+import { fetchJSONWithCache } from "../../infra/fetchWithCache";
+import conversationThreadSelected from "./threadSelected";
+import { getSessionInfo } from "../../AppStore";
 import generateUuid from "../../utils/uuid";
 
 export const actionTypeThreadCreated = mailboxConf.createActionType(
   "THREAD_CREATED"
 );
 
-export function createThread(pickedUsers) {
+export function createThread(pickedUsers: any[], threadSubject: string) {
   return (dispatch, getState) => {
+    const subject = threadSubject || 
+      I18n.t("conversation-newThreadSubjectPrefix") + 
+      pickedUsers
+        .map(u => (u as IUser).displayName || (u as IGroup).name)
+        .join(", ")
     const newThread = {
       date: Date.now(),
       displayNames: pickedUsers.map((u: any) => [
@@ -28,11 +27,7 @@ export function createThread(pickedUsers) {
       from: getSessionInfo().userId,
       id: "tmp-" + generateUuid(),
       messages: [],
-      subject:
-        I18n.t("conversation-newThreadSubjectPrefix") + 
-        pickedUsers
-          .map(u => (u as IUser).displayName || (u as IGroup).name)
-          .join(", "),
+      subject,
       to: pickedUsers.map((u: any) => u.id),
       unread: 0
     };

@@ -6,13 +6,15 @@ import threadList, { IConversationThread, IConversationThreadList } from "./thre
 import threadSelected from "./threadSelected";
 import receiversDisplay, { IConversationReceiverList } from "./receiversDisplay";
 import users from "./users";
+import subject from "./subject";
 
 const rootReducer = combineReducers({
   messages,
   threadList,
   threadSelected,
   receiversDisplay,
-  users
+  users,
+  subject
 });
 export { IConversationMessageList, IConversationMessage, IConversationReceiverList, IConversationThread, IConversationThreadList }
 export default rootReducer;

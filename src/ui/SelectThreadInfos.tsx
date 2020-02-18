@@ -24,21 +24,22 @@ const FieldContainer = style.view({
   backgroundColor: "#FFFFFF",
   alignItems: "center",
   paddingVertical: 10,
-  paddingHorizontal: 17
+  paddingHorizontal: 17,
 });
 
-const To = style.text({
+const FieldName = style.text({
   textAlignVertical: "center",
   marginRight: 5,
   marginVertical: 5,
-  marginHorizontal: 3
+  marginHorizontal: 3,
+  color: CommonStyles.lightTextColor
 });
 
-export default class SearchUser extends React.Component<
-  { remaining; picked; onPickUser; onUnpickUser },
-  { searchText: string; max: number }
+export default class SelectThreadInfos extends React.Component<
+  { remainingUsers; pickedUsers; onPickUser; onUnpickUser; onSelectSubject },
+  { searchText: string; subjectText: string; max: number }
 > {
-  state = { searchText: "", max: 20 };
+  state = { searchText: "", subjectText: "", max: 20 };
   input: any;
 
   public isMatch = visible =>
@@ -52,14 +53,13 @@ export default class SearchUser extends React.Component<
       ) !== -1);
 
   public expend() {
-    // console.log("state max: ", this.state.max)
-    this.setState({ ...this.state, max: this.state.max + 20 });
+    this.setState({ max: this.state.max + 20 });
   }
 
   get usersArray(): IUser[] {
     return [
-      ...this.props.picked,
-      ...this.props.remaining
+      ...this.props.pickedUsers,
+      ...this.props.remainingUsers
         .filter(v => this.state.searchText && this.isMatch(v))
         .slice(0, this.state.max)
     ];
@@ -67,18 +67,23 @@ export default class SearchUser extends React.Component<
 
   public pickUser = (user: IUser) => {
     this.props.onPickUser(user);
-    this.setState({ ...this.state, searchText: "" });
-    this.input.clear();
+    this.setState({ searchText: "" });
+  };
+
+  public selectSubject = (subject: string) => {
+    this.setState({ subjectText: subject });
+    this.props.onSelectSubject(subject);
   };
 
   public render() {
+    const { searchText, subjectText } = this.state;
     let index = 0;
     return (
       <PageContainer>
         <ScrollField alwaysBounceVertical={false}>
           <FieldContainer>
-            <To>{I18n.t("to")}</To>
-            {this.props.picked.map(p => (
+            <FieldName>{I18n.t("conversation-receiverPrefixInput")}</FieldName>
+            {this.props.pickedUsers.map(p => (
               <TouchableOpacity
                 key={"Touchable_" + index++}
                 onPress={() => this.props.onUnpickUser(p)}
@@ -98,13 +103,21 @@ export default class SearchUser extends React.Component<
               ref={r => (this.input = r)}
               style={{ flex: 1, minWidth: 100, height: 40, color: CommonStyles.textColor }}
               underlineColorAndroid={"transparent"}
-              value={this.state.searchText}
-              onChangeText={text =>
-                this.setState({ ...this.state, searchText: text })
-              }
+              value={searchText}
+              onChangeText={text => this.setState({ searchText: text })}
             />
           </FieldContainer>
         </ScrollField>
+        <FieldContainer>
+          <FieldName>{I18n.t("conversation-subjectPrefixInput")}</FieldName>
+          <TextInput
+            ref={r => (this.input = r)}
+            style={{ flex: 1, minWidth: 100, height: 40, color: CommonStyles.textColor, paddingTop: 2 }}
+            underlineColorAndroid={"transparent"}
+            value={subjectText}
+            onChangeText={text => this.selectSubject(text)}
+          />
+        </FieldContainer>
         <UserList
           selectable={true}
           users={this.usersArray}
