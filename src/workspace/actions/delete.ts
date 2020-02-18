@@ -8,7 +8,7 @@ import { formatResults } from "./helpers/documents";
 const WORKSPACE_TRASH = "/workspace/documents/trash";
 const WORKSPACE_DELETE = "/workspace/documents";
 
-export const actionTypesDelete = asyncActionTypes(config.createActionType(`${WORKSPACE_DELETE}`));
+export const actionTypesDelete = asyncActionTypes(config.createActionType(`${WORKSPACE_TRASH}`));
 
 export function trashAction(parentId: string, selected: IItems<IItem>) {
   const toDelete: string[] = Object.values(selected).reduce((acc: string[], item) => [...acc, item.id], []);
