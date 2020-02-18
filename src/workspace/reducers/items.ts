@@ -14,6 +14,7 @@ import { actionTypesPast } from "../actions/past";
 import { actionTypesUpload } from "../actions/upload";
 import { actionTypesDelete } from "../actions/delete";
 import { actionTypesMove } from "../actions/move";
+import { actionTypesRestore } from "../actions/restore";
 
 const stateDefault: IState = {
   isFetching: null,
@@ -44,6 +45,11 @@ export default (state: IState = stateDefault, action: IAction<IItems<IItem | str
     case actionTypesMove.fetchError:
     case actionTypesMove.requested:
       return pushData(state, action, actionTypesMove);
+      case actionTypesRestore.received:
+      Toast.showSuccess(I18n.t("restore-successful"));
+    case actionTypesRestore.fetchError:
+    case actionTypesRestore.requested:
+      return pushData(state, action, actionTypesRestore);
     case actionTypesList.fetchError:
     case actionTypesList.requested:
     case actionTypesList.received:
@@ -83,6 +89,7 @@ function pushData(state: IState, action: IAction<IItems<IItem | string>>, action
 const node = (data: IItems<IItem> = {}, action: IAction<IItems<IItem | string>>): IItems<IItem> => {
   switch (action.type) {
     case actionTypesMove.received:
+    case actionTypesRestore.received:
     case actionTypesDelete.received:
       for (const id in action.data as IItems<string>) delete data[id];
       return { ...data };

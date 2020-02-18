@@ -11,6 +11,7 @@ import { actionTypesRename } from "../actions/rename";
 import { actionTypesDownload } from "../actions/download";
 import { actionTypesPast } from "../actions/past";
 import { actionTypesMove } from "../actions/move";
+import { actionTypesRestore } from "../actions/restore";
 
 export type IItems<T> = {
   [key: string]: T;
@@ -31,6 +32,7 @@ export default (state: IItems<IItem> = initialState, action: IAction<IItem>) => 
       };
     case actionTypesDownload.received:
     case actionTypesDelete.received:
+    case actionTypesRestore.received:
     case actionTypesPast.received:
     case actionTypesMove.received:
     case actionTypesUpload.received:

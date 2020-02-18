@@ -5,6 +5,7 @@ import { createFolderAction } from "../actions/create";
 import { deleteAction, trashAction } from "../actions/delete";
 import { pickFile } from "./pickFile";
 import { renameAction } from "../actions/rename";
+import { restoreAction } from "../actions/restore";
 
 export const addMenu = () => {
   return {
@@ -66,6 +67,13 @@ export const downloadMenu = () => ({
     okLabel: I18n.t("download"),
   },
   onEvent: ({ dispatch, parentId, selected }) => dispatch(downloadAction(parentId, selected)),
+});
+
+export const restoreMenu = () => ({
+  text: "restore",
+  icon: "restore",
+  id: "restore",
+  onEvent: ({ dispatch, parentId, selected }) => dispatch(restoreAction(parentId, selected)),
 });
 
 export const copyMenu = () => ({

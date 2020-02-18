@@ -15,6 +15,7 @@ import {
   nbSelectedMenu,
   renameMenu,
   separatorMenu,
+  restoreMenu,
   titleMenu,
 } from "./utils/menus";
 import { FilterId } from "./types";
@@ -56,7 +57,7 @@ export default createStackNavigator(
           },
           {
             filter: FilterId.trash,
-            items: [backMenu(), nbSelectedMenu(), separatorMenu(), deleteMenu(), downloadMenu()],
+            items: [backMenu(), nbSelectedMenu(), separatorMenu(), deleteMenu(), restoreMenu(), downloadMenu()],
           },
         ],
       },
