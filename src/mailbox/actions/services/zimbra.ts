@@ -28,7 +28,7 @@ export const zimbraOrderedMessagesAdapter: (
 ) => IConversationMessageNativeArray = data => {
   const filteredTrashDraft = data.filter(message => !isDraft(message) && !isTrash(message));
   const sanitizedMails = filteredTrashDraft.map(mail => {
-    const sanitizedBody = RegExp(/<body[^>]*>(.*)<\/body>\s*<\/html>\s*$/gs).exec(mail.body)
+    const sanitizedBody = RegExp(/<body[^>]*>(.*)<\/body>\s*<\/html>\s*$/gs).exec(mail.body);
     return { ...mail, body: sanitizedBody ? sanitizedBody[1] : mail.body };
   });
   return conversationOrderedMessagesAdapter(sanitizedMails);
@@ -38,6 +38,10 @@ export const zimbraOrderedMessagesAdapter: (
 
 const getOlderMessages = async (threadId, threadMessages, page) => {
   try {
+    if (threadId.startsWith("tmp-")) {
+      return [];
+    }
+
     const data = await asyncGetJson(`/zimbra/thread/get-page/${threadId}?page=${page}`, zimbraOrderedMessagesAdapter);
 
     if (data.length == 0) {
@@ -54,12 +58,16 @@ const getOlderMessages = async (threadId, threadMessages, page) => {
       return getOlderMessages(threadId, threadMessages, page + 1);
     }
   } catch (e) {
-    return Promise.reject(e);
+    return e;
   }
 };
 
 const getNewerMessages = async (threadId, threadMessages, page) => {
   try {
+    if (threadId.startsWith("tmp-")) {
+      return [];
+    }
+
     const data = await asyncGetJson(`/zimbra/thread/get-page/${threadId}?page=${page}`, zimbraOrderedMessagesAdapter);
 
     if (data.length == 0) {
@@ -74,17 +82,19 @@ const getNewerMessages = async (threadId, threadMessages, page) => {
       return [...data, ...getNewerMessages(threadId, threadMessages, page + 1)];
     }
   } catch (e) {
-    return Promise.reject(e);
+    return e;
   }
 };
 
-export const zimbraGetOlderMessages = (threadInfo: IConversationThread) => {
+export const zimbraGetOlderMessages = async (threadInfo: IConversationThread) => {
   const page = Math.floor(threadInfo.messages.length / (Conf.currentPlatform.zimbraMaxMailPerPage || 10));
-  return getOlderMessages(threadInfo.id, threadInfo.messages, page);
+  const result = await getOlderMessages(threadInfo.id, threadInfo.messages, page);
+  return Array.isArray(result) ? Promise.resolve(result) : Promise.reject(result);
 };
 
-export const zimbraGetNewerMessages = (threadInfo: IConversationThread) => {
-  return getNewerMessages(threadInfo.id, threadInfo.messages, 0);
+export const zimbraGetNewerMessages = async (threadInfo: IConversationThread) => {
+  const result = await getNewerMessages(threadInfo.id, threadInfo.messages, 0);
+  return Array.isArray(result) ? Promise.resolve(result) : Promise.reject(result);
 };
 
 export const zimbraGetThreadMessages = (threadId: string) => {
