@@ -146,7 +146,7 @@ export const uploadDocument = (dispatch: any, parentId: string, content: Content
   const signedHeaders = getAuthHeader();
   const headers = { ...signedHeaders, "content-Type": "multipart/form-data" };
 
-  const parentIdParam = parentId === FilterId.owner ? "parentId=" + parentId + "&" : "";
+  const parentIdParam = !!parentId ? `parentId=${parentId}&` : "";
   const protectedParam = parentId === FilterId.protected ? "protected=true&application=media-library&" : "";
 
   const url = `${Conf.currentPlatform.url}/workspace/document?${parentIdParam}${protectedParam}quality=1&thumbnail=120x120&thumbnail=100x100&thumbnail=290x290&thumbnail=381x381&thumbnail=1600x0`;
