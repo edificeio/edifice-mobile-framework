@@ -1,7 +1,7 @@
 import I18n from "i18n-js";
 
 import * as React from "react";
-import { FlatList, RefreshControl, View } from "react-native";
+import { FlatList, RefreshControl, View, Text } from "react-native";
 import { connect } from "react-redux";
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 
@@ -25,7 +25,9 @@ import { ThunkDispatch } from "redux-thunk";
 import { IBlogList } from "../state/publishableBlogs";
 import { hasNotch } from "react-native-device-info";
 import { CommonStyles } from "../../styles/common/styles";
-import { TextBold, Text, TextColor } from "../../ui/text";
+import { TextBold, TextColor } from "../../ui/text";
+import { TempFloatingAction } from "../../ui/FloatingButton";
+import { Header } from "../../ui/headers/Header";
 
 interface ITimelineProps {
   isFetching: boolean;
@@ -44,43 +46,24 @@ interface ITimelineProps {
 
 const OptionalCreateButton_Unconnected = ({ blogs, navigation }: { blogs: IBlogList, navigation: NavigationScreenProp<any> }) => blogs.length
   ? 
-    <Menu
-      ref={Timeline._createMenuRef}
-      button={
-        <HeaderAction
-          onPress={() => { Timeline._createMenuRef.current?.show() }}
-          name="new_post"
-          iconSize={24}
-          primary
-        />
-      }
-      style={{
-        marginTop: hasNotch ? 20 : 0
-      }}
-    >
-      <MenuItem
-        disabled
-        style={{
-          backgroundColor: CommonStyles.lightGrey,
-          borderTopLeftRadius: 4,
-          borderTopRightRadius: 4
-        }}
-        onPress={() => { }}
-      >
-        <TextBold style={{ color: TextColor.Light }}>{I18n.t('createPost-menu-title')}</TextBold>
-      </MenuItem>
-      <MenuDivider />
-      <MenuItem
-        onPress={() => { navigation.getParam('onCreatePost') && navigation.getParam('onCreatePost')('blog') }}
-      >
-        <Text style={{ color: CommonStyles.textColor }}>{I18n.t('createPost-menu-blog')}</Text>
-      </MenuItem>
-      {/* <MenuItem
-        onPress={() => { navigation.getParam('onCreatePost') && navigation.getParam('onCreatePost')('news') }}
-      >
-        <Text style={{ color: CommonStyles.textColor }}>{I18n.t('createPost-menu-news')}</Text>
-      </MenuItem> */}
-    </Menu>
+    <TempFloatingAction
+      menuItems={
+        [{
+          text: I18n.t('createPost-menu-blog'),
+          icon: "bullhorn",
+          id: "addDocument",
+          onEvent: ({ dispatch, parentId }: any) => pickFile({ dispatch, parentId }),
+        },
+        // {
+        //   text: I18n.t("createPost-menu-news"),
+        //   icon: "newspaper",
+        //   id: "AddFolder",
+        //   onEvent: ({ dispatch, parentId, value }) => dispatch(createFolderAction(parentId, value)),
+        // }
+        ]}
+      onEvent={() => { navigation.getParam('onCreatePost') && navigation.getParam('onCreatePost')() }}
+      selected={[]}
+    />
   : 
     <HeaderIcon name={null} hidden={true} />
 const OptionalCreateButton = connect(
@@ -247,7 +230,7 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
   }
 
   public render() {
-    const { isFetching, fetchFailed, availableApps } = this.props;
+    const { isFetching, fetchFailed, availableApps, navigation } = this.props;
     let { news } = this.props;
     const availableAppsWithUppercase = {};
     if (availableApps) {
@@ -266,8 +249,49 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
 
     return (
       <PageContainer>
+        <Header>
+          <HeaderAction
+            onPress={() => {
+              navigation.navigate("filterTimeline");
+            }}
+            name="filter"
+          />
+          <Text
+            style={{
+              alignSelf: "center",
+              color: "white",
+              fontFamily: CommonStyles.primaryFontFamily,
+              fontSize: 16,
+              fontWeight: "400",
+              textAlign: "center",
+              flex: 1
+            }}
+          >
+            {I18n.t("News")}
+          </Text>
+          <View style={{ width: 60 }}/>
+        </Header>
         <ConnectionTrackingBar />
         {isFetching ? this.renderLoading() : this.renderList(news)}
+        {this.props.blogs.length ? 
+          <TempFloatingAction
+            menuItems={
+              [{
+                text: I18n.t('createPost-menu-blog'),
+                icon: "bullhorn",
+              },
+              // {
+              //   text: I18n.t("createPost-menu-news"),
+              //   icon: "newspaper",
+              //   id: "AddFolder",
+              // }
+              ]}
+            onEvent={() => { 
+              navigation.getParam('onCreatePost') && navigation.getParam('onCreatePost')("blog") 
+            }}
+            selected={[]}
+          />
+        : null }
       </PageContainer>
     );
   }
@@ -282,7 +306,8 @@ export default connect(
   (state: any) => ({
     ...state.timeline,
     isAuthenticated: state.user.auth.loggedIn,
-    legalapps: state.user.auth.apps
+    legalapps: state.user.auth.apps,
+    blogs: state.timeline.publishableBlogs.data
   }),
   (dispatch: ThunkDispatch<any, any, any>) => ({
     fetch: availableApps => fetchTimeline(dispatch)(availableApps),

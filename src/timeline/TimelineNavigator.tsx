@@ -8,7 +8,11 @@ import CreatePostPage from "./containers/CreatePostPage";
 export default createStackNavigator(
   {
     notifications: {
-      screen: Timeline
+      screen: Timeline,
+      navigationOptions:{
+        header: null,
+        headerStyle: { }
+      }
     },
 
     filterTimeline: {

@@ -90,159 +90,157 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
   render() {
     const { title, content, images } = this.state;
     const { user, navigation } = this.props;
-    return <KeyboardAvoidingView
+    return <PageContainer style={{ flex: 1 }}>
+    <KeyboardAvoidingView
       enabled
       behavior={Platform.OS === "ios" ? "padding" : undefined}
       keyboardVerticalOffset={Platform.OS === "ios" ? hasNotch() ? 100 : 76 : undefined} // 🍔 Big-(M)Hack of the death : On iOS KeyboardAvoidingView not working properly.
       style={{ flex: 1 }}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} style={{ height: '100%' }}>
-        <PageContainer style={{ flex: 1 }}>
-          <ConnectionTrackingBar />
-
+        <ConnectionTrackingBar />
+        <View style={{
+          paddingHorizontal: 20,
+          paddingVertical: 20,
+          flexDirection: "row",
+          justifyContent: "center",
+          flex: 0
+        }}>
           <View style={{
-            paddingHorizontal: 20,
-            paddingVertical: 20,
-            flexDirection: "row",
             justifyContent: "center",
-            flex: 0
+            width: 45,
+            height: 45
           }}>
-            <View style={{
-              justifyContent: "center",
-              width: 45,
-              height: 45
-            }}>
-              <GridAvatars users={[user.id!]} />
-            </View>
-            <View style={{
-              alignItems: "flex-start",
-              flex: 1,
-              justifyContent: "center",
-              marginHorizontal: 6,
-              padding: 2
-            }}>
-              <TextBold>{user.displayName}</TextBold>
-              <TextLight numberOfLines={1}>{(navigation.getParam('blog') as IBlog)?.title}</TextLight>
-            </View>
+            <GridAvatars users={[user.id!]} />
           </View>
+          <View style={{
+            alignItems: "flex-start",
+            flex: 1,
+            justifyContent: "center",
+            marginHorizontal: 6,
+            padding: 2
+          }}>
+            <TextBold>{user.displayName}</TextBold>
+            <TextLight numberOfLines={1}>{(navigation.getParam('blog') as IBlog)?.title}</TextLight>
+          </View>
+        </View>
 
-          <TextBold style={{ paddingHorizontal: 20 }}>{I18n.t('createPost-create-titleField')}</TextBold>
-          <TextInput
-            numberOfLines={1}
-            placeholder={I18n.t('createPost-create-titlePlaceholder')}
-            value={title}
-            onChangeText={text => {
-              this.setState({ title: text });
-              navigation.setParams({ title: text })
-            }}
-            style={{
-              marginHorizontal: 20,
-              marginTop: 10, marginBottom: 20,
-              padding: 5,
-              backgroundColor: CommonStyles.tabBottomColor,
-              borderColor: CommonStyles.borderBottomItem,
-              borderWidth: 1,
-              borderRadius: 1
-            }}
-          />
+        <TextBold style={{ paddingHorizontal: 20 }}>{I18n.t('createPost-create-titleField')}</TextBold>
+        <TextInput
+          numberOfLines={1}
+          placeholder={I18n.t('createPost-create-titlePlaceholder')}
+          value={title}
+          onChangeText={text => {
+            this.setState({ title: text });
+            navigation.setParams({ title: text })
+          }}
+          style={{
+            marginHorizontal: 20,
+            marginTop: 10, marginBottom: 20,
+            padding: 5,
+            backgroundColor: CommonStyles.tabBottomColor,
+            borderColor: CommonStyles.borderBottomItem,
+            borderWidth: 1,
+            borderRadius: 1
+          }}
+        />
 
-          <TextBold style={{ paddingLeft: 20, paddingRight: 10 }}>{I18n.t('createPost-create-contentField')}</TextBold>
-          <TextInput
-            style={{
-              marginHorizontal: 20,
-              marginTop: 10,
-              marginBottom: 20,
-              padding: 5,
-              flex: images.length > 0 ? 2 : 3,
-              backgroundColor: CommonStyles.tabBottomColor,
-              borderColor: CommonStyles.borderBottomItem,
-              borderWidth: 1,
-              borderRadius: 1
-            }}
-            placeholder={I18n.t('createPost-create-contentPlaceholder')}
-            multiline
-            textAlignVertical="top"
-            value={content}
-            onChangeText={text => {
-              this.setState({ content: text });
-              navigation.setParams({ content: text })
-            }}
-          />
-
-          <View
-            style={{
-              marginHorizontal: 20,
-              marginTop: 10,
-              marginBottom: 20,
-              padding: 5,
-              flex: 1,
-              backgroundColor: CommonStyles.tabBottomColor,
-              borderColor: CommonStyles.borderBottomItem,
-              borderWidth: 1,
-              borderRadius: 1,
-              justifyContent: "center",
-            }}
-            >
-              <TouchableOpacity
-                style={{ alignItems: "center" }}
-                onPress={() => {
-                  pickFile(true)
-                    .then(selectedImage => {
-                      this.setState({ images: [...images, selectedImage] })
-                    })
-                }}
-              >
-                <A>{I18n.t('createPost-create-mediaField')}</A>
-                <Icon
-                  name="camera-on"
-                  size={22}
-                  color={CommonStyles.actionColor}
-                />
-              </TouchableOpacity>
-              {images.length > 0 &&
-                <FlatList 
-                  data={images}
-                  contentContainerStyle={{ paddingTop: 10 }}
-                  horizontal
-                  renderItem={({ item, index }) => {
-                    return(
-                      <ImageBackground
-                        source={{ uri: item.uri }}
-                        resizeMode="cover"
-                        style={{ 
-                          width: 100,
-                          height: 100,
-                          marginRight: index === images.length - 1 ? 0 : 5
-                        }}
-                      >
-                        <TouchableOpacity
-                          onPress={() => {
-                            let imagesToPublish = [...images];
-                            imagesToPublish.splice(index, 1);
-                            this.setState({ images: imagesToPublish });
-                          }}
-                        >
-                          <Icon
-                            name="close"
-                            style={{
-                              width: 20,
-                              height: 20,
-                              borderRadius: 10,
-                              paddingVertical: 4,
-                              paddingHorizontal: 4,
-                              backgroundColor: CommonStyles.white,
-                            }}
-                          />
-                        </TouchableOpacity>
-                      </ImageBackground>
-                    )
-                  }}
-                />
-              }
-            </View>
-        </PageContainer>
+        <TextBold style={{ paddingLeft: 20, paddingRight: 10 }}>{I18n.t('createPost-create-contentField')}</TextBold>
+        <TextInput
+          style={{
+            marginHorizontal: 20,
+            marginTop: 10,
+            marginBottom: 20,
+            padding: 5,
+            flex: 1,
+            backgroundColor: CommonStyles.tabBottomColor,
+            borderColor: CommonStyles.borderBottomItem,
+            borderWidth: 1,
+            borderRadius: 1
+          }}
+          placeholder={I18n.t('createPost-create-contentPlaceholder')}
+          multiline
+          textAlignVertical="top"
+          value={content}
+          onChangeText={text => {
+            this.setState({ content: text });
+            navigation.setParams({ content: text })
+          }}
+        />
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
+    
+    <View
+      style={{
+        marginHorizontal: 20,
+        marginTop: 10,
+        marginBottom: 20,
+        padding: 5,
+        backgroundColor: CommonStyles.tabBottomColor,
+        borderColor: CommonStyles.borderBottomItem,
+        borderWidth: 1,
+        borderRadius: 1,
+        justifyContent: "center",
+      }}
+      >
+        <TouchableOpacity
+          style={{ alignItems: "center" }}
+          onPress={() => {
+            pickFile(true)
+              .then(selectedImage => {
+                this.setState({ images: [...images, selectedImage] })
+              })
+          }}
+        >
+          <A>{I18n.t('createPost-create-mediaField')}</A>
+          <Icon
+            name="camera-on"
+            size={22}
+            color={CommonStyles.actionColor}
+          />
+        </TouchableOpacity>
+        {images.length > 0 &&
+          <FlatList 
+            data={images}
+            contentContainerStyle={{ paddingTop: 10 }}
+            horizontal
+            renderItem={({ item, index }) => {
+              return(
+                <ImageBackground
+                  source={{ uri: item.uri }}
+                  resizeMode="cover"
+                  style={{ 
+                    width: 100,
+                    height: 100,
+                    marginRight: index === images.length - 1 ? 0 : 5
+                  }}
+                >
+                  <TouchableOpacity
+                    onPress={() => {
+                      let imagesToPublish = [...images];
+                      imagesToPublish.splice(index, 1);
+                      this.setState({ images: imagesToPublish });
+                    }}
+                  >
+                    <Icon
+                      name="close"
+                      style={{
+                        width: 20,
+                        height: 20,
+                        borderRadius: 10,
+                        paddingVertical: 4,
+                        paddingHorizontal: 4,
+                        backgroundColor: CommonStyles.white,
+                      }}
+                    />
+                  </TouchableOpacity>
+                </ImageBackground>
+              )
+            }}
+          />
+        }
+      </View>
+    </PageContainer>
   }
 
   componentDidUpdate(prevProps: ICreatePostPageProps) {

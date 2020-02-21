@@ -34,7 +34,7 @@ const TouchableOpacity = style.touchableOpacity({
   width: layoutSize.LAYOUT_50,
   height: layoutSize.LAYOUT_50,
   borderRadius: layoutSize.LAYOUT_25,
-  backgroundColor: CommonStyles.profileTypes.Student,
+  backgroundColor: CommonStyles.secondary,
 });
 
 export const ButtonIconText = ({ style, children, ...rest }: ButtonTextIconProps) => {

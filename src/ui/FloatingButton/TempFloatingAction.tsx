@@ -10,7 +10,7 @@ import { iosStatusBarHeight } from "../headers/Header";
 import { ButtonIcon, getMenuShadow } from "../ButtonIconText";
 import { hasNotch } from "react-native-device-info";
 
-class FloatingAction extends Component<IFloatingProps & ISelected, IState> {
+class TempFloatingAction extends Component<IFloatingProps & ISelected, IState> {
   state = {
     active: false,
   };
@@ -48,7 +48,7 @@ class FloatingAction extends Component<IFloatingProps & ISelected, IState> {
 
   renderMainButton() {
     const { menuItems } = this.props;
-    const iconName = this.state.active ? "close" : "add";
+    const iconName = this.state.active ? "close" : "new_post";
 
     if (!menuItems || menuItems.length === 0) {
       return null;
@@ -69,6 +69,7 @@ class FloatingAction extends Component<IFloatingProps & ISelected, IState> {
       <FlatList
         contentContainerStyle={styles.actions}
         data={menuItems}
+        scrollEnabled={false}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         keyExtractor={(item: IMenuItem) => item.id}
         renderItem={({ item }) => <FloatingActionItem item={item} onEvent={this.handleEvent.bind(this)} />}
@@ -116,23 +117,22 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     position: "absolute",
     right: 12,
-    top: 78,
+    top: 81,
     width: layoutSize.LAYOUT_200,
     zIndex: 10,
     ...getMenuShadow()
   },
   button: {
-    position: "absolute",
+    position: Platform.OS === "ios" ? "absolute" : "absolute",
     right: 20,
     top: Platform.OS === "ios" ? hasNotch() ? iosStatusBarHeight + 44 : 44 : 22,
-    zIndex: 10,
   },
   overlayActions: {
     bottom: 0,
     left: 0,
     position: "absolute",
     right: 0,
-    top: Platform.OS === "ios" ? hasNotch() ? iosStatusBarHeight + 23 : 23 : 0,
+    top: Platform.OS === "ios" ? hasNotch() ? iosStatusBarHeight + 20 : iosStatusBarHeight : -3,
   },
   separator: {
     borderBottomColor: CommonStyles.borderColorVeryLighter,
@@ -141,4 +141,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FloatingAction;
+export default TempFloatingAction;
