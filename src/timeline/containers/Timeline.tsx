@@ -3,7 +3,6 @@ import I18n from "i18n-js";
 import * as React from "react";
 import { FlatList, RefreshControl, View, Text } from "react-native";
 import { connect } from "react-redux";
-import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 
 import { FlatButton, Loading } from "../../ui";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
@@ -23,9 +22,7 @@ import { NavigationScreenProp } from "react-navigation";
 import { HeaderAction, HeaderIcon } from "../../ui/headers/NewHeader";
 import { ThunkDispatch } from "redux-thunk";
 import { IBlogList } from "../state/publishableBlogs";
-import { hasNotch } from "react-native-device-info";
 import { CommonStyles } from "../../styles/common/styles";
-import { TextBold, TextColor } from "../../ui/text";
 import { TempFloatingAction } from "../../ui/FloatingButton";
 import { Header } from "../../ui/headers/Header";
 
