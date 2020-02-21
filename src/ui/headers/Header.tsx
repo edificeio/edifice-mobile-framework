@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import { Icon } from "..";
 import { CommonStyles } from "../../styles/common/styles";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
+import { hasNotch } from "react-native-device-info";
 
 /**
  * DEPRECATED
@@ -29,7 +30,8 @@ const HeaderStyle = style(SafeAreaView)({
   paddingTop: Platform.OS === "ios" ? iosStatusBarHeight : 0,
   flexDirection: "row",
   backgroundColor: CommonStyles.mainColorTheme,
-  alignItems: "center"
+  alignItems: "center",
+  height: Platform.OS === "ios" ? hasNotch() ? 100 : 76 : undefined
 });
 
 export const HeaderComponent = ({

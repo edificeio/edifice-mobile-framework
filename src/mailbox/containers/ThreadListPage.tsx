@@ -1,6 +1,7 @@
 import I18n from "i18n-js";
 import * as React from "react";
 import { connect } from "react-redux";
+import { Platform  } from "react-native";
 import {
   IThreadListPageDataProps,
   IThreadListPageEventProps,
@@ -24,6 +25,7 @@ import { NavigationScreenProp, NavigationEventPayload, NavigationCompleteTransit
 import { standardNavScreenOptions, alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderAction } from "../../ui/headers/NewHeader";
 import { SearchBar } from "../../ui/SearchBar";
+import { hasNotch } from "react-native-device-info";
 
 // Search query tools
 
@@ -104,6 +106,7 @@ class ThreadListPageContainer extends React.PureComponent<
           name="new_message"
           iconSize={24}
           primary
+          style={{ marginTop: Platform.OS === "ios" ? hasNotch() ? 0 : 4 : 2 }}
         />,
         headerLeftContainerStyle: {
           alignItems: "flex-start"

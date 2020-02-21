@@ -31,7 +31,7 @@ export const HeaderIcon = ({ name, hidden, iconSize, primary }: IHeaderIconProps
   <View
     style={[
       HeaderIconStyle,
-      primary && {backgroundColor: CommonStyles.secondary, borderRadius: 30, height: 50, width: 50, marginTop: 20, marginRight: 20, elevation: 20,  shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 4 }
+      primary && {backgroundColor: CommonStyles.secondary, borderRadius: 30, height: 50, width: 50, marginTop: 20, marginRight: 20,   shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 4 }
     ]}
   >
     <Icon
