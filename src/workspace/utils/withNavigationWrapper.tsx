@@ -9,7 +9,15 @@ function withNavigationWrapper<T extends IProps>(WrappedComponent: React.Compone
     childRoute: any = null;
     childParams: any = null;
 
-    public componentDidUpdate(): void {
+    public componentDidMount() {
+      this.handleNavigation();
+    }
+
+    public componentDidUpdate() {
+      this.handleNavigation()
+    }
+
+    private handleNavigation(){
       const { navigation } = this.props;
       const childRoute: any = navigation.getParam("childRoute");
       const childParams: any = navigation.getParam("childParams");

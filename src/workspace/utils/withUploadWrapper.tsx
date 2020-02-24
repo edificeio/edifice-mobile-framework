@@ -14,7 +14,16 @@ export interface IProps {
 // intent managment
 function withUploadWrapper<T extends IProps>(WrappedComponent: React.ComponentType<T>): React.ComponentType<T> {
   return class extends React.PureComponent<T> {
-    componentDidUpdate(): void {
+
+    public componentDidMount() {
+      this.handleIntent();
+    }
+
+    public componentDidUpdate() {
+      this.handleIntent()
+    }
+
+    private handleIntent() {
       const { navigation, dispatch } = this.props;
       const filterId = navigation.getParam("filter");
       const parentId = navigation.getParam("parentId");

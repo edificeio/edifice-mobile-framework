@@ -1,4 +1,3 @@
-import { Animated } from "react-native";
 import { createStackNavigator } from "react-navigation-stack";
 import ContainerItems from "./containers/Items";
 import Details from "./containers/Details";
@@ -19,6 +18,7 @@ import {
   titleMenu,
 } from "./utils/menus";
 import { FilterId } from "./types";
+import I18n from "i18n-js";
 
 export default createStackNavigator(
   {
@@ -78,6 +78,7 @@ export default createStackNavigator(
     initialRouteParams: {
       filter: "root",
       parentId: "root",
+      title: I18n.t("workspace"),
     },
     headerMode: "none",
   }
