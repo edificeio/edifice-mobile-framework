@@ -20,9 +20,8 @@ import { IUserInfoState } from "../../user/state/info";
 import { CommonStyles } from "../../styles/common/styles";
 import { publishBlogPostAction } from "../actions/publish";
 import pickFile from "../../infra/actions/pickFile";
-import { uploadAction } from "../../workspace/actions/upload";
 import { ContentUri } from "../../types/contentUri";
-import { FilterId } from "../../workspace/types";
+import { uploadDocument, formatResults } from "../../workspace/actions/helpers/documents";
 
 export interface ICreatePostDataProps {
   user: IUserInfoState;
@@ -48,7 +47,7 @@ export interface ICreatePostState {
 export type ICreatePostPageProps = ICreatePostDataProps & ICreatePostEventProps & ICreatePostOtherProps;
 
 export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostPageProps, ICreatePostState> {
-
+  
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<NavigationState> }) => {
     return alternativeNavScreenOptions(
       {
@@ -269,13 +268,19 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
   }
 }
 
+const uploadActionTimeline = images => async dispatch => {
+  const response = await uploadDocument(dispatch, images);
+  const data = response.map(item => JSON.parse(item));
+  return formatResults(data);
+};
+
 export default connect(
   (state: any) => ({
     user: state.user.info,
     publishing: state.timeline.publishStatus.publishing,
   }),
   (dispatch: ThunkDispatch<any, any, any>) => ({
-    onUploadPostDocuments: async (images: ContentUri[]) => dispatch(uploadAction(FilterId.protected, images)),
+    onUploadPostDocuments: async (images: ContentUri[]) => dispatch(uploadActionTimeline(images)),
     onPublishPost: (blog: IBlog, title: string, content: string, uploadedPostDocuments?: object) => {
       dispatch(publishBlogPostAction(blog, title, content, uploadedPostDocuments));
     },
