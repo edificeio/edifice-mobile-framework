@@ -131,6 +131,7 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
               selected={selectedArrayItems}
             />
           </Header>
+          <ConnectionTrackingBar/>
           <ProgressBar />
           {dialogVisible && (
             <ConfirmDialog
