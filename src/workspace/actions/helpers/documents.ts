@@ -38,11 +38,10 @@ export const formatResults: (
   parentId?: string
 ) => IItems<IItem | string> = (data, parentId) => {
   let result = {} as IItems<IFile | IFolder | string>;
-
-  if (data instanceof Array) {
-    if (!data) {
-      return result;
-    }
+  
+  if (!data) {
+    return result;
+  } else if (data instanceof Array) {
     (data as any[]).map(item => (result = checkAncestorsAndFormat(result, item, parentId)));
     return result;
   } else {
