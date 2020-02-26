@@ -39,6 +39,10 @@ const conversationThreadListAdapter: (
     ids: []
   };
 
+  if(!data) {
+    return result
+  }
+
   for (const thread of data) {
     // 1, For each thread, extract thread info in `result.threads`
     result.byId[thread.id] = {
