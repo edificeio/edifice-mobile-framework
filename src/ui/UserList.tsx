@@ -41,7 +41,7 @@ export default function UserList(props: {
             data={props.users}
             keyExtractor={u => u.id}//increment in next line
             renderItem={(el) => <UserLine
-                selectable={props.selectable}
+                selectable={false}
                 onPick={() => props.onPickUser && props.onPickUser(el.item)}
                 onUnpick={() => props.onUnpickUser && props.onUnpickUser(el.item)} {...el.item} />}
             onEndReached={() => props.onEndReached && props.onEndReached()}
