@@ -6,6 +6,7 @@ import { deleteAction, trashAction } from "../actions/delete";
 import { pickFile } from "./pickFile";
 import { renameAction } from "../actions/rename";
 import { restoreAction } from "../actions/restore";
+import { Platform } from "react-native";
 
 export const addMenu = () => {
   return {
@@ -61,7 +62,7 @@ export const downloadMenu = () => ({
   text: I18n.t("download"),
   icon: "download",
   id: "download",
-  options: { onlyFiles: true },
+  options: { onlyFiles: true, monoselection: Platform.OS === "ios" },
   dialog: {
     title: I18n.t("download-documents"),
     okLabel: I18n.t("download"),
