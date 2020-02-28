@@ -20,7 +20,7 @@ export const fetchPublishableBlogsAction = () =>
         allBlogs,
         'org-entcore-blog-controllers-PostController|create',
         getState().user.info) as IBlog[])
-        .filter((blog: IBlog) => !blog.trashed);
+        .filter((blog: IBlog) => !blog.trashed && blog.shared && blog.shared.length > 0);
       dispatch(publishableBlogsActions.receipt(filteredBlogs));
     } catch (err) {
       dispatch(publishableBlogsActions.error(err));
