@@ -28,7 +28,7 @@ const TrackingContainer = style(TouchableOpacity)({
 
 const container = {
   width: "100%",
-  elevation: 6,
+  elevation: 4,
   backgroundColor: "#FFFFFF"
 };
 
@@ -140,13 +140,13 @@ export class ConnectionTrackingBar extends React.Component<
               <ActivityIndicator
                 size="small"
                 color={"#FFFFFF"}
-                style={{ marginRight: 20 }}
+                style={{ marginRight: 80 }}
               />
             ) : (
               <Icon
                 name={this.iconName}
                 size={18}
-                style={{ marginRight: 20, marginTop: 10 }}
+                style={{ marginRight: 80, marginTop: 10 }}
                 color={"#FFFFFF"}
               />
             )}
