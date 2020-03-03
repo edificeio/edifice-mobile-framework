@@ -27,7 +27,7 @@ const style = StyleSheet.create({
   author: { flex: 3, alignItems: "flex-end" },
 });
 
-export const Item = ({ onEvent, item, selected, simple }: IEventProps & any) => {
+export const Item = ({ onEvent, item, selected }: IEventProps & any) => {
   const { id, isFolder, name, date, ownerName = "", contentType } = item;
   const longOwnerName = `${I18n.t("by")}${ownerName}`;
 
@@ -35,39 +35,33 @@ export const Item = ({ onEvent, item, selected, simple }: IEventProps & any) => 
     <ListItem
       onLongPress={() => onEvent({ type: EVENT_TYPE.LONG_SELECT, id: item.id, item })}
       onPress={() => onEvent({ type: EVENT_TYPE.SELECT, id: item.id, item })}
-      style={{ backgroundColor: selected ? "#2A9CC825" : "#fff", margin: simple ? -layoutSize.LAYOUT_6 : 0 }}
+      style={{ backgroundColor: selected ? "#2A9CC825" : "#fff", margin: 0 }}
       borderBottomWidth={0}>
-      {simple ? (
-        <LeftSmallIconPanel>{renderSmallIcon(id, isFolder, name, contentType)}</LeftSmallIconPanel>
-      ) : (
-        <LeftIconPanel>{renderIcon(id, isFolder, name, contentType)}</LeftIconPanel>
-      )}
+      <LeftIconPanel>{renderIcon(id, isFolder, name, contentType)}</LeftIconPanel>
       <CenterPanel style={style.centerPanel}>
-        <Text numberOfLines={1} style={simple ? style.fileNameSimple : style.fileName}>
+        <Text numberOfLines={1} style={style.fileName}>
           {name}
         </Text>
-        {!simple && date !== 0 && ownerName.length > 0 && (
-          <View style={{ flexDirection: "row" }}>
-            {date !== 0 && (
-              <View style={style.date}>
-                <DateView min date={date} />
-              </View>
-            )}
-            {ownerName.length > 0 && (
-              <View style={style.author}>
-                <NestedText
-                  numberOfLines={1}
-                  ellipsizeMode="tail"
-                  style={{
-                    fontSize: layoutSize.LAYOUT_10,
-                    color: CommonStyles.lightTextColor,
-                  }}>
-                  {longOwnerName}
-                </NestedText>
-              </View>
-            )}
-          </View>
-        )}
+        <View style={{ flexDirection: "row" }}>
+          {!!date && (
+            <View style={style.date}>
+              <DateView min date={date} />
+            </View>
+          )}
+          {ownerName.length > 0 && (
+            <View style={style.author}>
+              <NestedText
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={{
+                  fontSize: layoutSize.LAYOUT_10,
+                  color: CommonStyles.lightTextColor,
+                }}>
+                {longOwnerName}
+              </NestedText>
+            </View>
+          )}
+        </View>
       </CenterPanel>
     </ListItem>
   );
