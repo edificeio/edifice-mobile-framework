@@ -22,6 +22,7 @@ import { publishBlogPostAction } from "../actions/publish";
 import pickFile from "../../infra/actions/pickFile";
 import { ContentUri } from "../../types/contentUri";
 import { uploadDocument, formatResults } from "../../workspace/actions/helpers/documents";
+import { FilterId } from "../../workspace/types";
 
 export interface ICreatePostDataProps {
   user: IUserInfoState;
@@ -274,7 +275,7 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
 }
 
 const uploadActionTimeline = images => async dispatch => {
-  const response = await uploadDocument(dispatch, images);
+  const response = await uploadDocument(dispatch, images, FilterId.protected);
   const data = response.map(item => JSON.parse(item));
   return formatResults(data);
 };
