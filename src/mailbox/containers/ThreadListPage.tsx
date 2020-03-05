@@ -104,7 +104,6 @@ class ThreadListPageContainer extends React.PureComponent<
         headerRight: <HeaderAction
           onPress={() => { navigation.getParam('onNewThread') && navigation.getParam('onNewThread')() }}
           name="new_message"
-          iconSize={24}
           primary
           style={{ marginTop: Platform.OS === "ios" ? hasNotch() ? 0 : 4 : 2 }}
         />,
