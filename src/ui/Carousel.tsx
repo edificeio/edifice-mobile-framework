@@ -107,7 +107,6 @@ export class Carousel extends React.Component<
           newImagesSizes[index] = {width, height};
           return { imageSizes: newImagesSizes }
         }),
-        console.log('Could not get image dimensions')
       )
     )
 

@@ -5,7 +5,7 @@ import { NavigationScreenProp, NavigationState } from "react-navigation";
 import { hasNotch } from "react-native-device-info";
 import { ThunkDispatch } from "redux-thunk";
 import { TextInput, TouchableWithoutFeedback, TouchableOpacity, FlatList } from "react-native-gesture-handler";
-import { View, ScrollView, KeyboardAvoidingView, Platform, Keyboard, ImageBackground } from "react-native";
+import { View, ScrollView, KeyboardAvoidingView, Platform, Keyboard, Image } from "react-native";
 
 import { Icon, Loading } from "../../ui";
 import { HeaderBackAction, HeaderAction } from "../../ui/headers/NewHeader";
@@ -23,6 +23,7 @@ import pickFile from "../../infra/actions/pickFile";
 import { ContentUri } from "../../types/contentUri";
 import { uploadDocument, formatResults } from "../../workspace/actions/helpers/documents";
 import { FilterId } from "../../workspace/types";
+import { Carousel } from "../../ui/Carousel";
 
 export interface ICreatePostDataProps {
   user: IUserInfoState;
@@ -43,6 +44,8 @@ export interface ICreatePostState {
   title: string;
   content: string;
   images: ContentUri[];
+  showCarousel: boolean;
+  imageCurrent: number;
 }
 
 export type ICreatePostPageProps = ICreatePostDataProps & ICreatePostEventProps & ICreatePostOtherProps;
@@ -80,7 +83,9 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
     this.state = {
       title: '',
       content: '',
-      images: []
+      images: [],
+      showCarousel: false,
+      imageCurrent: 0,
     }
     this.props.navigation.setParams({
       onPublishPost: this.handlePublishPost.bind(this)
@@ -88,8 +93,11 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
   }
 
   render() {
-    const { title, content, images } = this.state;
+    const { title, content, images, showCarousel, imageCurrent } = this.state;
     const { user, navigation } = this.props;
+    const imagesAdded = images.length > 0;
+    const carouselImages = images.map(image => ({src: { uri: image.uri }, alt: "image"}));
+    
     return (
       <PageContainer style={{ flex: 1 }}>
         <KeyboardAvoidingView
@@ -98,6 +106,13 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
           keyboardVerticalOffset={Platform.OS === "ios" ? hasNotch() ? 100 : 76 : undefined} // 🍔 Big-(M)Hack of the death : On iOS KeyboardAvoidingView not working properly.
           style={{ flex: 1 }}
         >
+          <Carousel
+            images={carouselImages}
+            startIndex={imageCurrent}
+            visible={showCarousel}
+            onClose={() => this.setState({ showCarousel: false })}
+            key={images.length}
+          />
           <ScrollView alwaysBounceVertical={false} contentContainerStyle={{ flexGrow: 1 }}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} style={{ height: '100%' }}>
               <ConnectionTrackingBar />
@@ -140,11 +155,11 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
                 style={{
                   marginHorizontal: 20,
                   marginTop: 10, marginBottom: 20,
-                  padding: 5,
+                  padding: 10,
                   backgroundColor: CommonStyles.tabBottomColor,
                   borderColor: CommonStyles.borderBottomItem,
                   borderWidth: 1,
-                  borderRadius: 1
+                  borderRadius: 5
                 }}
               />
 
@@ -154,11 +169,11 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
                   marginHorizontal: 20,
                   marginTop: 10,
                   marginBottom: 20,
-                  padding: 5,
+                  padding: 10,
                   backgroundColor: CommonStyles.tabBottomColor,
                   borderColor: CommonStyles.borderBottomItem,
                   borderWidth: 1,
-                  borderRadius: 1,
+                  borderRadius: 5,
                   height: 140,
                 }}
                 placeholder={I18n.t('createPost-create-contentPlaceholder')}
@@ -176,16 +191,16 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
                   marginHorizontal: 20,
                   marginTop: 10,
                   marginBottom: 20,
-                  padding: 5,
+                  padding: 10,
                   backgroundColor: CommonStyles.tabBottomColor,
                   borderColor: CommonStyles.borderBottomItem,
                   borderWidth: 1,
-                  borderRadius: 1,
+                  borderRadius: 5,
                   justifyContent: "center",
                 }}
               >
                 <TouchableOpacity
-                  style={{ alignItems: "center" }}
+                  style={{ alignItems: "center", justifyContent: "center", flexDirection: imagesAdded ? "row" : "column" }}
                   onPress={() => {
                     pickFile(true)
                       .then(selectedImage => {
@@ -193,49 +208,70 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
                       })
                   }}
                 >
-                  <A>{I18n.t('createPost-create-mediaField')}</A>
+                  <A style={{ marginRight: imagesAdded? 5 : 0 }}>{I18n.t('createPost-create-mediaField')}</A>
                   <Icon
                     name="camera-on"
-                    size={22}
+                    size={imagesAdded ? 15 : 22}
                     color={CommonStyles.actionColor}
                   />
                 </TouchableOpacity>
-                {images.length > 0 &&
+
+                {imagesAdded &&
                   <FlatList 
                     data={images}
-                    contentContainerStyle={{ paddingTop: 10 }}
                     horizontal
                     renderItem={({ item, index }) => {
                       return(
-                        <ImageBackground
-                          source={{ uri: item.uri }}
-                          resizeMode="cover"
-                          style={{ 
-                            width: 100,
-                            height: 100,
-                            marginRight: index === images.length - 1 ? 0 : 5
-                          }}
-                        >
-                          <TouchableOpacity
-                            onPress={() => {
-                              let imagesToPublish = [...images];
-                              imagesToPublish.splice(index, 1);
-                              this.setState({ images: imagesToPublish });
-                            }}
-                          >
-                            <Icon
-                              name="close"
+                          <View style={{ paddingTop: 20 }}>
+                            <TouchableOpacity
+                              onPress={() => this.setState({ showCarousel: true, imageCurrent: index })}
                               style={{
-                                width: 20,
-                                height: 20,
-                                borderRadius: 10,
-                                paddingVertical: 4,
-                                paddingHorizontal: 4,
-                                backgroundColor: CommonStyles.white,
+                                shadowColor: "#6B7C93",
+                                shadowOffset: { width: 0, height: 2 },
+                                shadowOpacity: 0.8,
+                                elevation: 20,
+                                backgroundColor: "white",
+                                marginRight: index === images.length - 1 ? 15 : 30,
                               }}
-                            />
-                          </TouchableOpacity>
-                        </ImageBackground>
+                            >
+                              <Image
+                                source={{ uri: item.uri }}
+                                style={{ width: 110, height: 110 }}
+                                resizeMode="cover"
+                              />
+                            </TouchableOpacity>
+                            <View style={{ position: "absolute", left: 85, top: -7 }}>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  let imagesToPublish = [...images];
+                                  imagesToPublish.splice(index, 1);
+                                  this.setState({ images: imagesToPublish });
+                                }}
+                                style={{ 
+                                  width: 50,
+                                  height: 50,
+                                  justifyContent: "center",
+                                  alignItems: "center"
+                                }}
+                              >
+                                <Icon
+                                  name="close"
+                                  style={{
+                                    width: 30,
+                                    height: 30,
+                                    borderRadius: 15,
+                                    paddingVertical: 6,
+                                    paddingHorizontal: 6,
+                                    marginTop: 2,
+                                    marginRight: 2,
+                                    backgroundColor: CommonStyles.lightGrey,
+                                    overflow: "hidden",
+                                  }}
+                                  size={18}
+                                />
+                              </TouchableOpacity>
+                            </View>
+                          </View>
                       )
                     }}
                   />
