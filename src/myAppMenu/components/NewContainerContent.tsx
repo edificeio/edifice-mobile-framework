@@ -43,7 +43,6 @@ export const contentStyle = {
   fontFamily: CommonStyles.primaryFontFamily,
   fontSize: 12,
   fontWeight: Weight.Light,
-  marginTop: 10
 }
 
 export const Content = style.text(
