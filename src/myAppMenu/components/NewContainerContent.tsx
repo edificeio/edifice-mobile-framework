@@ -13,7 +13,7 @@ export const ListItem = style.view(
     borderBottomWidth: 1,
     justifyContent: "center"
   },
-  ({ highlighted = false }: { highlighted: boolean }) => ({
+  ({ highlighted = false }: { highlighted?: boolean }) => ({
     backgroundColor: highlighted ? CommonStyles.nonLue : "#FFFFFF",
   })
 );

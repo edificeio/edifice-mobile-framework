@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import style from "glamorous-native";
 
 import { IBlogList, IBlog, getPublishableBlogsState } from "../state/publishableBlogs";
-import { NavigationScreenProp, NavigationState } from "react-navigation";
+import { NavigationScreenProp, NavigationState, NavigationEventSubscription } from "react-navigation";
 import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderBackAction } from "../../ui/headers/NewHeader";
 import { PageContainer } from "../../ui/ContainerContent";
@@ -61,6 +61,8 @@ export class ContentSelectorPage_Unconnected extends React.PureComponent<IConten
     );
   };
 
+  protected didFocusSubscription?: NavigationEventSubscription;
+
   componentDidUpdate(prevProps, prevState) {
     const { isFetching } = this.props
     if (prevProps.isFetching !== isFetching) {
@@ -73,13 +75,15 @@ export class ContentSelectorPage_Unconnected extends React.PureComponent<IConten
   }
 
   render() {
+    const isEmpty = this.props.blogs && this.props.blogs.length === 0;
     return <PageContainer>
       <ConnectionTrackingBar />
-      {this.props.blogs && this.props.blogs.length ? <FlatList
+
+      <FlatList
         data={this.props.blogs || []}
         keyExtractor={(item: IBlog) => item._id}
         renderItem={({ item }: { item: IBlog }) => this.renderContent(item)}
-        alwaysBounceVertical={false}
+        alwaysBounceVertical={true}
         refreshControl={
           !this.props.isPristine ?
             <RefreshControl
@@ -90,26 +94,30 @@ export class ContentSelectorPage_Unconnected extends React.PureComponent<IConten
               }}
             /> : undefined
         }
-      /> : this.props.isPristine ?
-          <Loading /> :
-          <EmptyScreen
-            imageSrc={require("../../../assets/images/empty-screen/blog.png")}
-            imgWidth={265.98}
-            imgHeight={279.97}
-            text={I18n.t("blog-emptyScreenText")}
-            title={I18n.t("blog-emptyScreenTitle")}
-            buttonText={I18n.t("blog-emptyScreenButton")}
-            buttonAction={() => {
-              const url = `${(Conf.currentPlatform as any).url}/blog`;
-              Linking.canOpenURL(url).then(supported => {
-                if (supported) {
-                  Linking.openURL(url);
-                } else {
-                  console.warn("[Blog] Cannot open URL: ", url);
-                }
-              });
-            }}
-          />}
+        contentContainerStyle={isEmpty ? { flex: 1 } : undefined}
+        ListEmptyComponent={
+          this.props.isPristine ?
+            <Loading /> :
+            <EmptyScreen
+              imageSrc={require("../../../assets/images/empty-screen/blog.png")}
+              imgWidth={265.98}
+              imgHeight={279.97}
+              text={I18n.t("blog-emptyScreenText")}
+              title={I18n.t("blog-emptyScreenTitle")}
+              buttonText={I18n.t("blog-emptyScreenButton")}
+              buttonAction={() => {
+                const url = `${(Conf.currentPlatform as any).url}/blog`;
+                Linking.canOpenURL(url).then(supported => {
+                  if (supported) {
+                    Linking.openURL(url);
+                  } else {
+                    console.warn("[Blog] Cannot open URL: ", url);
+                  }
+                });
+              }}
+            />
+        }
+      />
     </PageContainer>
   }
 
