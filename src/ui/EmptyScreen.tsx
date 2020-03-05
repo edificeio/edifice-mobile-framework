@@ -17,23 +17,28 @@ import * as React from "react";
 import { Dimensions, Image, ImageSourcePropType, View } from "react-native";
 import { PageContainer } from "./ContainerContent";
 import { H1, Quote } from "./Typography";
+import { FlatButton } from "./FlatButton";
 
 export const EmptyScreen = ({
   imageSrc,
-  svgXmlData,
+  // svgXmlData,
   title,
   text,
   imgWidth,
   imgHeight,
-  scale
+  scale,
+  buttonText,
+  buttonAction
 }: {
   imageSrc?: ImageSourcePropType;
-  svgXmlData?: string;
+  // svgXmlData?: string;
   title?: string;
   text?: string;
   imgWidth: number;
   imgHeight: number;
   scale?: number;
+  buttonText?: string;
+  buttonAction?: () => void;
 }) => {
   const { width, height } = Dimensions.get("window");
   const ratio = imgWidth / imgHeight;
@@ -65,6 +70,14 @@ export const EmptyScreen = ({
       >
         {text}
       </Quote>
+
+      {buttonAction && buttonText ? <FlatButton
+        onPress={buttonAction}
+        disabled={false}
+        title={buttonText}
+        loading={false}
+      /> : null}
+
     </PageContainer>
   );
 };

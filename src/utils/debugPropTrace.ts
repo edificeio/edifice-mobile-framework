@@ -9,13 +9,13 @@ export function traceProps(prevProps: {}, prevState: {}, print: boolean = false)
     }
     Object.entries(this.props).forEach(([key, val]) => {
         prevProps[key] !== val && console.log(`Prop '${key}' changed`);
-        print && prevProps[key] !== val && console.log(`${prevProps[key]}' ===> ${val}`);
+        print && prevProps[key] !== val && console.log(`${prevProps[key]} ===> ${val}`);
     }
     );
     if (this.state) {
         Object.entries(this.state).forEach(([key, val]) => {
             prevState[key] !== val && console.log(`State '${key}' changed`);
-            print && prevState[key] !== val && console.log(`${prevState[key]}' ===> ${val}`);
+            print && prevState[key] !== val && console.log(`${prevState[key]} ===> ${val}`);
         }
         );
     }

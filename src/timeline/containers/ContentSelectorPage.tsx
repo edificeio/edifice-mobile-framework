@@ -17,21 +17,26 @@ import { CommonStyles } from "../../styles/common/styles";
 import { Icon } from "../../ui/icons/Icon";
 import CustomTouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { ThunkDispatch } from "redux-thunk";
-import { View } from "react-native";
+import { View, RefreshControl, Linking } from "react-native";
 import { mainNavNavigate } from "../../navigation/helpers/navHelper";
 
 import Conf from "../../../ode-framework-conf";
 import { getAuthHeader } from "../../infra/oauth";
 import { fetchPublishableBlogsAction } from "../actions/publish";
+import { Loading } from "../../ui/Loading";
+import { EmptyScreen } from "../../ui/EmptyScreen";
+import { traceProps } from "../../utils/debugPropTrace";
 
 export interface IContentSelectorPageDataProps {
   blogs: IBlogList;
   isFetching: boolean;
+  isPristine: boolean;
 }
 
 export interface IContentSelectorPageEventProps {
   onContentSelected: (blog: IBlog, postType: string) => void;
   onDidFocus: () => void;
+  onRefresh: () => void;
 }
 
 export interface IContentSelectorPageOtherProps {
@@ -40,7 +45,11 @@ export interface IContentSelectorPageOtherProps {
 
 export type IContentSelectorPageProps = IContentSelectorPageDataProps & IContentSelectorPageEventProps & IContentSelectorPageOtherProps;
 
-export class ContentSelectorPage_Unconnected extends React.PureComponent<IContentSelectorPageProps> {
+export type IContentSelectorPageState = {
+  isFetching: boolean;
+}
+
+export class ContentSelectorPage_Unconnected extends React.PureComponent<IContentSelectorPageProps, IContentSelectorPageState> {
 
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<NavigationState> }) => {
     return alternativeNavScreenOptions(
@@ -52,15 +61,55 @@ export class ContentSelectorPage_Unconnected extends React.PureComponent<IConten
     );
   };
 
+  componentDidUpdate(prevProps, prevState) {
+    const { isFetching } = this.props
+    if (prevProps.isFetching !== isFetching) {
+      this.setState({ isFetching });
+    }
+  }
+
+  state: IContentSelectorPageState = {
+    isFetching: false
+  }
+
   render() {
     return <PageContainer>
       <ConnectionTrackingBar />
-      <FlatList
+      {this.props.blogs && this.props.blogs.length ? <FlatList
         data={this.props.blogs || []}
         keyExtractor={(item: IBlog) => item._id}
         renderItem={({ item }: { item: IBlog }) => this.renderContent(item)}
         alwaysBounceVertical={false}
-      />
+        refreshControl={
+          !this.props.isPristine ?
+            <RefreshControl
+              refreshing={this.state.isFetching}
+              onRefresh={() => {
+                this.setState({ isFetching: true });
+                this.props.onRefresh();
+              }}
+            /> : undefined
+        }
+      /> : this.props.isPristine ?
+          <Loading /> :
+          <EmptyScreen
+            imageSrc={require("../../../assets/images/empty-screen/blog.png")}
+            imgWidth={265.98}
+            imgHeight={279.97}
+            text={I18n.t("blog-emptyScreenText")}
+            title={I18n.t("blog-emptyScreenTitle")}
+            buttonText={I18n.t("blog-emptyScreenButton")}
+            buttonAction={() => {
+              const url = `${(Conf.currentPlatform as any).url}/blog`;
+              Linking.canOpenURL(url).then(supported => {
+                if (supported) {
+                  Linking.openURL(url);
+                } else {
+                  console.warn("[Blog] Cannot open URL: ", url);
+                }
+              });
+            }}
+          />}
     </PageContainer>
   }
 
@@ -125,14 +174,17 @@ export const Content = style.text({
 
 export default connect(
   (state: any) => {
-    const { data: blogs, isFetching } = getPublishableBlogsState(state);
-    return { blogs, isFetching };
+    const { data: blogs, isFetching, isPristine } = getPublishableBlogsState(state);
+    return { blogs, isFetching, isPristine };
   },
   (dispatch: ThunkDispatch<any, any, any>) => ({
     onContentSelected: (blog: IBlog, postType: string) => {
       mainNavNavigate('createPost', { blog, postType });
     },
     onDidFocus: () => {
+      dispatch(fetchPublishableBlogsAction());
+    },
+    onRefresh: () => {
       dispatch(fetchPublishableBlogsAction());
     }
   })

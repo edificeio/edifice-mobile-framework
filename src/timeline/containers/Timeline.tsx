@@ -37,65 +37,19 @@ interface ITimelineProps {
   fetchFailed: boolean;
   isAuthenticated: boolean;
   legalapps: any;
-  fetchPublishableBlogs: () => void
+  hasCreationRightsMap: { [app in 'blog' | 'news']: boolean }
 }
-
-
-const OptionalCreateButton_Unconnected = ({ blogs, navigation }: { blogs: IBlogList, navigation: NavigationScreenProp<any> }) => blogs.length
-  ? 
-    <TempFloatingAction
-      menuItems={
-        [{
-          text: I18n.t('createPost-menu-blog'),
-          icon: "bullhorn",
-          id: "addDocument",
-          onEvent: ({ dispatch, parentId }: any) => pickFile({ dispatch, parentId }),
-        },
-        // {
-        //   text: I18n.t("createPost-menu-news"),
-        //   icon: "newspaper",
-        //   id: "AddFolder",
-        //   onEvent: ({ dispatch, parentId, value }) => dispatch(createFolderAction(parentId, value)),
-        // }
-        ]}
-      onEvent={() => { navigation.getParam('onCreatePost') && navigation.getParam('onCreatePost')() }}
-      selected={[]}
-    />
-  : 
-    <HeaderIcon name={null} hidden={true} />
-const OptionalCreateButton = connect(
-  (state: any) => ({ blogs: state.timeline.publishableBlogs.data })
-)(OptionalCreateButton_Unconnected);
 
 // tslint:disable-next-line:max-classes-per-file
 class Timeline extends React.Component<ITimelineProps, undefined> {
 
   static _createMenuRef: React.RefObject<Menu> = React.createRef();
 
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) =>
-    standardNavScreenOptions(
-      {
-        title: I18n.t("News"),
-        headerLeft: <HeaderAction
-          onPress={() => {
-            navigation.navigate("filterTimeline");
-          }}
-          name="filter"
-        />,
-        headerRight: <OptionalCreateButton navigation={navigation} />,
-        headerRightContainerStyle: {
-          alignItems: "flex-start"
-        },
-      },
-      navigation
-    );
-
   private flatList: any;
   private pageNumber: number = 0;
 
   constructor(props: ITimelineProps) {
     super(props);
-    this.props.fetchPublishableBlogs();
     this.props.navigation.setParams({
       onCreatePost: this.handleCreatePost.bind(this)
     });
@@ -270,7 +224,7 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
         </Header>
         <ConnectionTrackingBar />
         {isFetching ? this.renderLoading() : this.renderList(news)}
-        {this.props.blogs.length ? 
+        {this.props.hasCreationRightsMap.blog ?
           <TempFloatingAction
             menuItems={
               [{
@@ -283,8 +237,8 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
               //   id: "AddFolder",
               // }
               ]}
-            onEvent={() => { 
-              navigation.getParam('onCreatePost') && navigation.getParam('onCreatePost')("blog") 
+            onEvent={() => {
+              navigation.getParam('onCreatePost') && navigation.getParam('onCreatePost')("blog")
             }}
             selected={[]}
           />
@@ -304,12 +258,14 @@ export default connect(
     ...state.timeline,
     isAuthenticated: state.user.auth.loggedIn,
     legalapps: state.user.auth.apps,
-    blogs: state.timeline.publishableBlogs.data
+    hasCreationRightsMap: {
+      blog: state.user.info.authorizedActions.find(e => e.name === 'org.entcore.blog.controllers.BlogController|publish'),
+      news: state.user.info.authorizedActions.find(e => e.name === 'net.atos.entng.actualites.controllers.ThreadController|createThread') // ToDo : Is this the right authorizedAction ?
+    }
   }),
   (dispatch: ThunkDispatch<any, any, any>) => ({
     fetch: availableApps => fetchTimeline(dispatch)(availableApps),
     sync: (page: number, availableApps, legalapps) =>
-      listTimeline(dispatch)(page, availableApps, legalapps),
-    fetchPublishableBlogs: () => dispatch(fetchPublishableBlogsAction())
+      listTimeline(dispatch)(page, availableApps, legalapps)
   })
 )(Timeline);
