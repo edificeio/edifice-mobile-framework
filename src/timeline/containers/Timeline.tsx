@@ -258,7 +258,7 @@ export default connect(
     ...state.timeline,
     isAuthenticated: state.user.auth.loggedIn,
     legalapps: state.user.auth.apps,
-    hasCreationRightsMap: {
+    hasCreationRightsMap: state.user.auth.loggedIn && {
       blog: state.user.info.authorizedActions.find(e => e.name === 'org.entcore.blog.controllers.BlogController|publish'),
       news: state.user.info.authorizedActions.find(e => e.name === 'net.atos.entng.actualites.controllers.ThreadController|createThread') // ToDo : Is this the right authorizedAction ?
     }
