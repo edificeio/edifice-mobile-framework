@@ -241,7 +241,7 @@ export class ProfilePageContainer extends React.PureComponent<IProfilePageProps>
             onPress={() => {
               const values = navigation.getParam("updatedProfileValues") as IProfilePageState;
               if (values) {
-                if (values.emailValid && values.homePhoneValid && values.mobileValid) {
+                if (values.loginAliasValid && values.emailValid && values.homePhoneValid && values.mobileValid) {
                   navigation.setParams(
                     { "edit": false }
                   );
