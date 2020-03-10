@@ -4,14 +4,14 @@ import style from "glamorous-native";
 import * as React from "react";
 import {
   Dimensions,
-  Text,
   View,
   ViewStyle,
   ImageProps,
   ImageURISource
 } from "react-native";
+import { withNavigation } from 'react-navigation';
+
 import { Row } from ".";
-import { Carousel } from "./Carousel";
 import { CommonStyles } from "../styles/common/styles";
 import { Italic } from "./Typography";
 import ImageOptional from "./ImageOptional";
@@ -49,6 +49,17 @@ const Column = style.view({
   width: "50%"
 });
 
+const BubbleView = style.view({
+  backgroundColor: "rgba(0,0,0,0.5)",
+  borderRadius: 15,
+  height: 30,
+  left: "50%",
+  marginLeft: -10,
+  padding: 5,
+  position: "absolute",
+  width: 30
+});
+
 /*const StretchImage = style.image({
   height: "100%",
   width: "100%"
@@ -81,24 +92,22 @@ const StretchImage = (props: ImageProps) => (
   />
 );
 
-export class Images extends React.Component<
+class Images extends React.Component<
   {
     images: Array<{ src: ImageURISource; alt: string; linkTo?: string }>;
     style?: ViewStyle;
+    navigation: any;
   },
   any
 > {
-  public state = {
-    currentImage: 0,
-    fullscreen: false
-  };
 
-  public openImage(index: any) {
-    this.setState({ fullscreen: true, currentImage: index });
+  public openImage(startIndex: any) {
+    const { images, navigation } = this.props;
+    navigation.navigate("carouselModal", { images, startIndex })
   }
 
   public images() {
-    const { width, height } = Dimensions.get("window");
+    const { width } = Dimensions.get("window");
     const { images } = this.props;
 
     const heightRatio = width * 0.6;
@@ -217,35 +226,19 @@ export class Images extends React.Component<
   }
 
   public render() {
-    const { width, height } = Dimensions.get("window");
+    const { width } = Dimensions.get("window");
     const heightRatio = width * 0.6;
-
     const { images, style } = this.props;
-    if (images.length === 0) return <View />;
 
+    if (images.length === 0) return <View />;
     return (
       <View style={style}>
         <ContainerImage style={{ height: heightRatio }}>
           {this.images()}
         </ContainerImage>
-        <Carousel
-          images={images}
-          visible={this.state.fullscreen}
-          onClose={() => this.setState({ fullscreen: false })}
-          startIndex={this.state.currentImage}
-        />
       </View>
     );
   }
 }
 
-const BubbleView = style.view({
-  backgroundColor: "rgba(0,0,0,0.5)",
-  borderRadius: 15,
-  height: 30,
-  left: "50%",
-  marginLeft: -10,
-  padding: 5,
-  position: "absolute",
-  width: 30
-});
+export default withNavigation(Images)

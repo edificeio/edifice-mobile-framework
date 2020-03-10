@@ -22,7 +22,7 @@ moment.locale("fr");
 
 // Components
 import { KeyboardAvoidingView, Platform, RefreshControl } from "react-native";
-const { View, FlatList, Text } = style;
+const { View, FlatList } = style;
 import styles from "../../styles";
 
 import { Loading } from "../../ui";
@@ -33,7 +33,6 @@ import Tracking from "../../tracking/TrackingManager";
 
 // Type definitions
 
-import { Carousel } from "../../ui/Carousel";
 import {
   IConversationMessage
 } from "../actions/sendMessage";
@@ -41,7 +40,6 @@ import { IConversationThread } from "../reducers/threadList";
 
 // Misc
 
-import { DEPRECATED_signImagesUrls } from "../../infra/oauth";
 import ThreadInput from "./ThreadInput";
 import { Dispatch } from "redux";
 import { NavigationScreenProp } from "react-navigation";
@@ -74,16 +72,10 @@ export type IThreadPageProps = IThreadPageDataProps &
   IThreadPageOtherProps;
 
 export interface IThreadPageState {
-  imageCurrent: number;
-  images: Array<{ src: string; alt: string }>;
-  showCarousel: boolean;
   fetching: boolean;
 }
 
 export const defaultState: IThreadPageState = {
-  imageCurrent: 0,
-  images: [],
-  showCarousel: false,
   fetching: false,
 };
 
@@ -152,13 +144,6 @@ export class ThreadPage extends React.PureComponent<
             behavior={Platform.OS === "ios" ? "padding" : undefined}
             keyboardVerticalOffset={headerHeight}
           >
-            <Carousel
-              startIndex={imageCurrent}
-              visible={showCarousel}
-              onClose={() => this.setState({ showCarousel: false })}
-            images={DEPRECATED_signImagesUrls(images)}
-            />
-
             <FlatList
               refreshControl={
                 <RefreshControl
@@ -207,10 +192,6 @@ export class ThreadPage extends React.PureComponent<
         */}
         <ThreadMessage
           {...message}
-          onOpenImage={(
-            imageIndex: number,
-            images: Array<{ alt: string; src: string }>
-          ) => this.handleOpenImage(imageIndex, images)}
           onTapReceivers={() => this.handleTapReceivers(message)}
         />
       </View>
@@ -242,16 +223,6 @@ export class ThreadPage extends React.PureComponent<
     );
   }
   */
-  public handleOpenImage(
-    imageIndex: number,
-    images: Array<{ src: string; alt: string }>
-  ) {
-    this.setState({
-      imageCurrent: imageIndex,
-      images,
-      showCarousel: true
-    });
-  }
 
   // Lifecycle
 

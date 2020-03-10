@@ -5,8 +5,8 @@ import { View } from "react-native";
 import {
   createAppContainer,
   createSwitchNavigator,
-  NavigationContainerComponent,
 } from "react-navigation";
+import { createStackNavigator } from "react-navigation-stack";
 import { connect } from "react-redux";
 
 // ODE framework modules
@@ -23,6 +23,9 @@ import { getRoutes, getModules } from "./helpers/navBuilder";
 import LoginNavigator from "./LoginNavigator";
 import withLinkingAppWrapper from "../infra/wrapper/withLinkingAppWrapper";
 import NavigationService from "./NavigationService";
+
+// Components
+import { Carousel } from "../ui/Carousel";
 
 /**
  * MAIN NAVIGATOR
@@ -54,7 +57,18 @@ function getMainRoutes(appsInfo: any[]) {
  * @param apps Allowed functional module names to be displayed.
  */
 function getMainNavigator(appsInfo: any[]) {
-  return createMainTabNavigator(getMainRoutes(appsInfo));
+  const mainTabNavigator = createMainTabNavigator(getMainRoutes(appsInfo));
+  const RootStack = createStackNavigator({
+    mainTabNavigator,
+    carouselModal: {
+      screen: Carousel,
+    },
+  }, {
+    mode: 'modal',
+    headerMode: 'none',
+  })
+  
+  return RootStack;
 }
 
 function getMainNavContainer(appsInfo: any[]) {

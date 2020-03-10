@@ -17,7 +17,7 @@ import {
 import WebView from "react-native-webview";
 import { Loading } from "../../ui";
 import AudioPlayer from "../../ui/AudioPlayer";
-import { Images } from "../../ui/Images";
+import Images from "../../ui/Images";
 import {
   NestedText,
   NestedTextBold,

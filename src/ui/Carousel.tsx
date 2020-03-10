@@ -5,22 +5,26 @@ import {
   Dimensions,
   ImageURISource,
   Linking,
-  Modal,
   Platform,
   Image,
   Text,
   View,
   ScrollView,
-  StatusBar
+  StatusBar,
+  Animated,
 } from "react-native";
 import FastImage from "react-native-fast-image";
 import RNCarousel from "react-native-snap-carousel";
+import { PinchGestureHandler, State, PanGestureHandler } from "react-native-gesture-handler";
+import { NavigationScreenProp, NavigationState } from "react-navigation";
+import { hasNotch } from "react-native-device-info";
 
 import { Icon } from ".";
 import { CommonStyles } from "../styles/common/styles";
 import TouchableOpacity from "./CustomTouchableOpacity";
 import ImageOptional from "./ImageOptional";
 import { A, Italic } from "./Typography";
+import { iosStatusBarHeight } from "./headers/Header";
 
 const Close = style(TouchableOpacity)({
   alignItems: "center",
@@ -29,7 +33,7 @@ const Close = style(TouchableOpacity)({
   justifyContent: "center",
   position: "absolute",
   right: 0,
-  top: Platform.OS === "ios" ? 20 : 0,
+  top: Platform.OS === "ios" ? hasNotch() ? iosStatusBarHeight + 20 : 20 : 0,
   width: 40
 });
 
@@ -48,29 +52,181 @@ const UnavailableImage = () => (
   </View>
 );
 
+const AnimatedFastImage = Animated.createAnimatedComponent(FastImage);
+
 export class Carousel extends React.Component<
   {
-    images: Array<{ src: ImageURISource; alt: string; linkTo?: string }>;
-    visible: boolean;
-    startIndex?: number;
-    onClose: () => void;
+    navigation: NavigationScreenProp<NavigationState>;
   },
   {
-    fullscreen: boolean;
     viewport: {
       width: number;
       height: number;
     };
-    imageSizes: Array<{width: number, height: number}>;
+    imageSizes: Array<{ width: number, height: number }>;
+    currentIndex: number;
+    canPanHorizontal: boolean;
+    canPanVertical: boolean;
   }
-> {
+  > {
   public carouselRef: any;
   public currentScroll = 0;
   public previousScroll = 0;
   public currentImage: number = 0;
 
+  public state = {
+    viewport: {
+      height: Dimensions.get("window").height,
+      width: Dimensions.get("window").width
+    },
+    imageSizes: [],
+    currentIndex: this.props.navigation && this.props.navigation.getParam("startIndex") || 0,
+    canPanHorizontal: false,
+    canPanVertical: false
+  };
+
+  baseOffsetX = new Animated.Value(0);
+  panOffsetX = new Animated.Value(0);
+  offsetX = Animated.add(this.baseOffsetX, this.panOffsetX);
+  lastOffsetX = 0;
+  baseOffsetY = new Animated.Value(0);
+  panOffsetY = new Animated.Value(0);
+  offsetY = Animated.add(this.baseOffsetY, this.panOffsetY);
+  lastOffsetY = 0;
+
+  public onPanXSpringEvent = () => {
+    Animated.spring(this.baseOffsetX, {
+      toValue: this.lastOffsetX > 0 ? this.sideHiddenWidth : -this.sideHiddenWidth,
+      useNativeDriver: true,
+      friction: 10
+    }).start()
+    this.lastOffsetX = this.lastOffsetX > 0 ? this.sideHiddenWidth : -this.sideHiddenWidth;
+  }
+
+  public onPanYSpringEvent = () => {
+    Animated.spring(this.baseOffsetY, {
+      toValue: this.lastOffsetY > 0 ? this.sideHiddenHeight : -this.sideHiddenHeight,
+      useNativeDriver: true,
+      friction: 10
+    }).start()
+    this.lastOffsetY = this.lastOffsetY > 0 ? this.sideHiddenHeight : -this.sideHiddenHeight;
+  }
+  
+  public allowedPanGestures: () => any = () => {
+    const { canPanHorizontal } = this.state;
+    const gestures: { translationY: any, translationX?: any } = { translationY: this.panOffsetY };
+    canPanHorizontal && (gestures.translationX = this.panOffsetX);
+    return gestures;
+  }
+  
+  public onPanGestureEvent = () => Animated.event([{nativeEvent: this.allowedPanGestures()}]);
+  
+  public onPanStateChange = event => {
+    if (event.nativeEvent.oldState === State.ACTIVE) {
+      const { canPanHorizontal, currentIndex, imageSizes } = this.state;
+      const { navigation } = this.props;
+      const panSpringLimit = 100;
+
+      this.lastOffsetY += event.nativeEvent.translationY;
+      this.baseOffsetY.setValue(this.lastOffsetY);
+      this.panOffsetY.setValue(0);
+      if (canPanHorizontal) {
+        this.lastOffsetX += event.nativeEvent.translationX;
+        this.baseOffsetX.setValue(this.lastOffsetX);
+        this.panOffsetX.setValue(0);
+      }
+
+      if (this.sideHiddenWidth <= Math.abs(this.lastOffsetX)) {
+        if (this.sideHiddenWidth + panSpringLimit < Math.abs(this.lastOffsetX)) {
+          if (this.lastOffsetX > 0) {
+            currentIndex === 0 ? this.onPanXSpringEvent() : this.carouselRef.snapToPrev();
+          } else {
+            currentIndex === imageSizes.length-1 ? this.onPanXSpringEvent() : this.carouselRef.snapToNext();
+          }
+        } else this.onPanXSpringEvent();
+      }
+      if (this.sideHiddenHeight <= Math.abs(this.lastOffsetY)) {
+        if (this.sideHiddenHeight + panSpringLimit < this.lastOffsetY) {
+          navigation.goBack();
+        } else this.onPanYSpringEvent();
+      }
+    }
+  }
+
+  baseScale = new Animated.Value(1);
+  pinchScale = new Animated.Value(1);
+  scale = Animated.multiply(this.baseScale, this.pinchScale);
+  lastScale = 1;
+  sideHiddenWidth = 0;
+  sideHiddenHeight = 0;
+
+  public onZoomEvent = Animated.event([{nativeEvent: { scale: this.pinchScale }}])
+
+  public onZoomStateChange = event => {
+    if (event.nativeEvent.oldState === State.ACTIVE) {
+      const { imageSizes, currentIndex } = this.state;
+
+      this.lastScale *= event.nativeEvent.scale;
+      this.baseScale.setValue(this.lastScale);
+      this.pinchScale.setValue(1);
+
+      const minScale = 1;
+      const maxScale = 5;
+
+      let displayedWidth;
+      let displayedHeight;
+      const isWithinScreeen = imageSizes[currentIndex].width <= Dimensions.get("window").width && imageSizes[currentIndex].height <= Dimensions.get("window").height;
+      const isVerticalImage = imageSizes[currentIndex].width < imageSizes[currentIndex].height;
+      const isThinVerticalImage = isVerticalImage && imageSizes[currentIndex].width < Dimensions.get("window").width;
+      if (isWithinScreeen) {
+        displayedWidth = imageSizes[currentIndex].width;
+        displayedHeight = imageSizes[currentIndex].height;
+      } else if (isThinVerticalImage) {
+        displayedWidth = imageSizes[currentIndex].width * (Dimensions.get("window").height/imageSizes[currentIndex].height);
+        displayedHeight = Dimensions.get("window").height;
+      } else {
+        displayedWidth = Dimensions.get("window").width;
+        displayedHeight = imageSizes[currentIndex].height * (Dimensions.get("window").width/imageSizes[currentIndex].width);
+      } 
+
+      const scaledImageWidth = this.lastScale < maxScale ? this.lastScale * displayedWidth : maxScale * displayedWidth;
+      const totalHiddenWidth = scaledImageWidth - Dimensions.get("window").width < 0 ? 0 : scaledImageWidth - Dimensions.get("window").width;
+      const sideHiddenWidth = totalHiddenWidth/2;
+      this.sideHiddenWidth = sideHiddenWidth;
+
+      const scaledImageHeight = this.lastScale < maxScale ? this.lastScale * displayedHeight : maxScale * displayedHeight;
+      const totalHiddenHeight = scaledImageHeight - Dimensions.get("window").height < 0 ? 0 : scaledImageHeight - Dimensions.get("window").height;
+      const sideHiddenHeight = totalHiddenHeight/2;
+      this.sideHiddenHeight = sideHiddenHeight;
+
+      scaledImageWidth > Dimensions.get("window").width ? this.setState({ canPanHorizontal: true }) : this.setState({ canPanHorizontal: false });
+      scaledImageHeight > Dimensions.get("window").height ? this.setState({ canPanVertical: true }) : this.setState({ canPanVertical: false });
+
+      if (this.lastScale > maxScale) {
+        this.lastScale = maxScale;
+        Animated.spring(this.baseScale, {
+          toValue: maxScale,
+          useNativeDriver: true,
+          friction: 10
+        }).start()
+      } else if (this.lastScale < minScale) {
+        Animated.spring(this.baseScale, {
+          toValue: 1,
+          useNativeDriver: true,
+          friction: 10
+        }).start()
+        this.lastScale = 1;
+        this.panOffsetX.setValue(0);
+        this.baseOffsetX.setValue(0);
+        this.lastOffsetX = 0;
+        this.panOffsetY.setValue(0);
+        this.baseOffsetY.setValue(0);
+        this.lastOffsetY = 0;
+      }
+    }
+  }
+
   public scrollToCurrentImage() {
-    // console.log("scroll to current", this.currentImage);
     this.carouselRef.scrollToIndex({
       index: this.currentImage,
       viewOffset: 0,
@@ -79,7 +235,6 @@ export class Carousel extends React.Component<
   }
 
   public slideToImage(e: number) {
-    // console.log("scroll to", e);
     this.carouselRef.scrollToIndex({
       index: e,
       viewOffset: 0,
@@ -87,138 +242,163 @@ export class Carousel extends React.Component<
     });
   }
 
-  public state = {
-    fullscreen: false,
-    viewport: {
-      height: Dimensions.get("window").height,
-      width: Dimensions.get("window").width
-    },
-    imageSizes: []
-  };
-
   componentDidMount() {
-    const { images } = this.props
-    images.forEach((image, index) => 
+    const { navigation } = this.props;
+    const images = navigation && navigation.getParam("images") || [];
+    images.forEach((image, index) =>
       Image.getSizeWithHeaders(
         image.src.uri,
         image.src.headers,
         (width: number, height: number) => this.setState(prevstate => {
           const newImagesSizes = prevstate.imageSizes;
-          newImagesSizes[index] = {width, height};
+          newImagesSizes[index] = { width, height };
           return { imageSizes: newImagesSizes }
         }),
       )
     )
-
   }
 
   public render() {
-    const { imageSizes } = this.state
+    const { navigation } = this.props;
+    const { imageSizes, viewport, currentIndex, canPanHorizontal, canPanVertical } = this.state;
+    const images = navigation && navigation.getParam("images") || [];
+    const startIndex = navigation && navigation.getParam("startIndex");
+
     return (
-      <Modal
-        visible={this.props.visible}
-        onRequestClose={() => this.setState({ fullscreen: false })}
-        transparent={true}
+      <View
+        style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.90)" }}
+        onLayout={() => {
+          this.setState({
+            viewport: {
+              height: Dimensions.get("window").height,
+              width: Dimensions.get("window").width
+            }
+          });
+        }}
       >
-        <View
-          style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.90)" }}
-          onLayout={() => {
-            this.setState({
-              viewport: {
-                height: Dimensions.get("window").height,
-                width: Dimensions.get("window").width
+        <StatusBar backgroundColor="rgba(0,0,0,0.90)" barStyle="light-content" />
+        <RNCarousel
+          data={images}
+          renderItem={({
+            item,
+            index
+          }: {
+            item: { src: ImageURISource; alt: string; linkTo?: string };
+            index: number;
+          }) => (
+            <ScrollView 
+              key={index}
+              scrollEnabled={false}
+              contentContainerStyle={{
+                height: "100%",
+                width: Dimensions.get("window").width,
+                justifyContent: "center",
+                alignItems: "center"
+              }}
+            >
+              {imageSizes[index] &&
+                <ImageOptional
+                  source={item.src}
+                  errorComponent={<UnavailableImage />}
+                  imageComponent={() => (
+                    <PanGestureHandler
+                      onGestureEvent={this.onPanGestureEvent()}
+                      onHandlerStateChange={this.onPanStateChange}
+                      enabled={canPanHorizontal || canPanVertical}
+                    >
+                      <PinchGestureHandler
+                        onGestureEvent={ this.onZoomEvent }
+                        onHandlerStateChange={this.onZoomStateChange}
+                      >
+                        <Animated.View>
+                          <AnimatedFastImage
+                            source={item.src}
+                            style={{
+                              height: Math.min(Dimensions.get("window").height, imageSizes[index].height),
+                              width: Math.min(Dimensions.get("window").width, imageSizes[index].width),
+                              transform: [
+                                { scale: currentIndex === index ? this.scale : 1 },
+                                { translateX: currentIndex === index ? Animated.divide(this.offsetX, this.scale) : 0 },
+                                { translateY: currentIndex === index ? Animated.divide(this.offsetY, this.scale) : 0 }
+                              ]
+                            }}
+                            resizeMode="contain"
+                          />
+                        </Animated.View>
+                      </PinchGestureHandler>
+                    </PanGestureHandler>
+                  )}
+                />
+                
               }
-            });
-          }}
-        >
-          <StatusBar backgroundColor="black" barStyle="light-content" />
-          <RNCarousel
-            data={this.props.images}
-            renderItem={({
-              item,
-              index
-            }: {
-              item: { src: ImageURISource; alt: string; linkTo?: string };
-              index: number;
-            }) => (
-              <ScrollView 
-                key={index}
-                scrollEnabled={false}
-                pinchGestureEnabled
-                maximumZoomScale={2.5}
-                minimumZoomScale={1.0}
-                contentContainerStyle={{
-                  height: "100%",
-                  width: Dimensions.get("window").width,
-                  justifyContent: "center",
-                  alignItems: "center"
-                }}
-              >
-                {imageSizes[index] &&
-                  <ImageOptional
-                    imageComponent={FastImage}
-                    errorComponent={<UnavailableImage />}
+              {item.linkTo &&
+                <View
+                  style={{
+                    bottom: 15,
+                    padding: 20,
+                    position: "absolute",
+                    width: "100%"
+                  }}
+                >
+                  <TouchableOpacity
+                    onPress={() => Linking.openURL(item.linkTo)}
                     style={{
-                      height: Math.min(Dimensions.get("window").height, imageSizes[index].height),
-                      width: Math.min(Dimensions.get("window").width, imageSizes[index].width),
-                    }}
-                    resizeMode={FastImage.resizeMode.contain}
-                    source={item.src}
-                  />
-                }
-                {item.linkTo &&
-                  <View
-                    style={{
-                      bottom: 15,
-                      padding: 20,
-                      position: "absolute",
+                      backgroundColor: "rgba(0, 0, 0, 0.6)",
+                      padding: 10,
                       width: "100%"
                     }}
                   >
-                    <TouchableOpacity
-                      onPress={() => Linking.openURL(item.linkTo)}
+                    <Text
                       style={{
-                        backgroundColor: "rgba(0, 0, 0, 0.6)",
-                        padding: 10,
+                        color: CommonStyles.lightGrey,
+                        textAlign: "center",
                         width: "100%"
                       }}
                     >
-                      <Text
-                        style={{
-                          color: CommonStyles.lightGrey,
-                          textAlign: "center",
-                          width: "100%"
-                        }}
-                      >
-                        {I18n.t("linkTo")}{" "}
-                        <A>
-                          {(() => {
-                            const matches = item.linkTo.match(
-                              // from https://stackoverflow.com/a/8498629/6111343
-                              /^https?\:\/\/([^\/:?#]+)(?:[\/:?#]|$)/i
-                            );
-                            return matches && matches[1];
-                          })()}
-                        </A>
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                }
-              </ScrollView>
-            )}
-            sliderWidth={this.state.viewport.width}
-            itemWidth={this.state.viewport.width}
-            firstItem={this.props.startIndex || 0}
-            ref={r => (this.carouselRef = r)}
-            scrollEventThrottle={16}
-            keyExtractor={(item, index) => index.toString()}
-            decelerationRate="fast"
-          />
-          <Close onPress={() => this.props.onClose()}>
-            <Icon size={16} color="#ffffff" name="close" />
-          </Close>
-        </View>
-      </Modal>
+                      {I18n.t("linkTo")}{" "}
+                      <A>
+                        {(() => {
+                          const matches = item.linkTo.match(
+                            // from https://stackoverflow.com/a/8498629/6111343
+                            /^https?\:\/\/([^\/:?#]+)(?:[\/:?#]|$)/i
+                          );
+                          return matches && matches[1];
+                        })()}
+                      </A>
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              }
+            </ScrollView>
+          )}
+          sliderWidth={viewport.width}
+          itemWidth={viewport.width}
+          firstItem={startIndex || 0}
+          ref={r => (this.carouselRef = r)}
+          scrollEventThrottle={16}
+          keyExtractor={(index: number) => index.toString()}
+          decelerationRate="fast"
+          onSnapToItem={(index: number) => {
+            this.setState({ 
+              currentIndex: index,
+              canPanHorizontal: false,
+              canPanVertical: false 
+            });
+            this.pinchScale.setValue(1);
+            this.baseScale.setValue(1);
+            this.lastScale = 1;
+            this.panOffsetX.setValue(0);
+            this.baseOffsetX.setValue(0);
+            this.lastOffsetX = 0;
+            this.panOffsetY.setValue(0);
+            this.baseOffsetY.setValue(0);
+            this.lastOffsetY = 0;
+          }}
+        />
+        <Close onPress={() => navigation.goBack()}>
+          <Icon size={16} color="#ffffff" name="close" />
+        </Close>
+      </View>
     );
   }
 }

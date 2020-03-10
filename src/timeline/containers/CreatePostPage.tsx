@@ -5,7 +5,7 @@ import { NavigationScreenProp, NavigationState } from "react-navigation";
 import { hasNotch } from "react-native-device-info";
 import { ThunkDispatch } from "redux-thunk";
 import { TextInput, TouchableWithoutFeedback, TouchableOpacity, FlatList } from "react-native-gesture-handler";
-import { View, ScrollView, KeyboardAvoidingView, Platform, Keyboard, Image } from "react-native";
+import { View, ScrollView, KeyboardAvoidingView, Platform, Keyboard, Image, Text } from "react-native";
 
 import { Icon, Loading } from "../../ui";
 import { HeaderBackAction, HeaderAction } from "../../ui/headers/NewHeader";
@@ -23,7 +23,6 @@ import pickFile from "../../infra/actions/pickFile";
 import { ContentUri } from "../../types/contentUri";
 import { uploadDocument, formatResults } from "../../workspace/actions/helpers/documents";
 import { FilterId } from "../../workspace/types";
-import { Carousel } from "../../ui/Carousel";
 
 export interface ICreatePostDataProps {
   user: IUserInfoState;
@@ -44,8 +43,6 @@ export interface ICreatePostState {
   title: string;
   content: string;
   images: ContentUri[];
-  showCarousel: boolean;
-  imageCurrent: number;
 }
 
 export type ICreatePostPageProps = ICreatePostDataProps & ICreatePostEventProps & ICreatePostOtherProps;
@@ -84,8 +81,6 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
       title: '',
       content: '',
       images: [],
-      showCarousel: false,
-      imageCurrent: 0,
     }
     this.props.navigation.setParams({
       onPublishPost: this.handlePublishPost.bind(this)
@@ -93,7 +88,7 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
   }
 
   render() {
-    const { title, content, images, showCarousel, imageCurrent } = this.state;
+    const { title, content, images } = this.state;
     const { user, navigation } = this.props;
     const imagesAdded = images.length > 0;
     const carouselImages = images.map(image => ({src: { uri: image.uri }, alt: "image"}));
@@ -106,13 +101,6 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
           keyboardVerticalOffset={Platform.OS === "ios" ? hasNotch() ? 100 : 76 : undefined} // 🍔 Big-(M)Hack of the death : On iOS KeyboardAvoidingView not working properly.
           style={{ flex: 1 }}
         >
-          <Carousel
-            images={carouselImages}
-            startIndex={imageCurrent}
-            visible={showCarousel}
-            onClose={() => this.setState({ showCarousel: false })}
-            key={images.length}
-          />
           <ScrollView alwaysBounceVertical={false} contentContainerStyle={{ flexGrow: 1 }}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} style={{ height: '100%' }}>
               <ConnectionTrackingBar />
@@ -225,7 +213,7 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
                       return(
                           <View style={{ paddingTop: 20 }}>
                             <TouchableOpacity
-                              onPress={() => this.setState({ showCarousel: true, imageCurrent: index })}
+                              onPress={() => navigation.navigate("carouselModal", { images: carouselImages, startIndex: index })}
                               style={{
                                 shadowColor: "#6B7C93",
                                 shadowOffset: { width: 0, height: 2 },

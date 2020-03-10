@@ -1,7 +1,7 @@
 import I18n from "i18n-js";
 
 import * as React from "react";
-import { FlatList, RefreshControl, View, Text } from "react-native";
+import { FlatList, RefreshControl, View, Text, Animated } from "react-native";
 import { connect } from "react-redux";
 
 import { FlatButton, Loading } from "../../ui";
@@ -25,6 +25,7 @@ import { IBlogList } from "../state/publishableBlogs";
 import { CommonStyles } from "../../styles/common/styles";
 import { TempFloatingAction } from "../../ui/FloatingButton";
 import { Header } from "../../ui/headers/Header";
+import { PinchGestureHandler, State } from "react-native-gesture-handler";
 
 interface ITimelineProps {
   isFetching: boolean;
@@ -180,6 +181,28 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
     return <Loading />;
   }
 
+  scale = new Animated.Value(1)
+
+  onZoomEvent = Animated.event(
+    [
+      {
+        nativeEvent: { scale: this.scale }
+      }
+    ],
+    {
+      useNativeDriver: true
+    }
+  )
+
+  onZoomStateChange = event => {
+    if (event.nativeEvent.oldState === State.ACTIVE) {
+      Animated.spring(this.scale, {
+        toValue: 1,
+        useNativeDriver: true
+      }).start()
+    }
+  }
+
   public render() {
     const { isFetching, fetchFailed, availableApps, navigation } = this.props;
     let { news } = this.props;
@@ -223,6 +246,22 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
           <View style={{ width: 60 }}/>
         </Header>
         <ConnectionTrackingBar />
+        {/* <PinchGestureHandler
+        onGestureEvent={this.onZoomEvent}
+        onHandlerStateChange={this.onZoomStateChange}>
+        <Animated.Image
+          source={{
+            uri:
+              'https://images.pexels.com/photos/104827/cat-pet-animal-domestic-104827.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'
+          }}
+          style={{
+            width: 400,
+            height: 400,
+            transform: [{ scale: this.scale }]
+          }}
+          resizeMode='contain'
+        />
+      </PinchGestureHandler> */}
         {isFetching ? this.renderLoading() : this.renderList(news)}
         {this.props.hasCreationRightsMap.blog ?
           <TempFloatingAction

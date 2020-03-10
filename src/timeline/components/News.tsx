@@ -7,7 +7,7 @@ import { INewsModel } from "../reducer";
 
 import { TouchCard } from "../../ui/Card";
 import { ArticleContainer } from "../../ui/ContainerContent";
-import { Images } from "../../ui/Images";
+import Images from "../../ui/Images";
 import { TextPreview } from "../../ui/TextPreview";
 import { CommonStyles } from "../../styles/common/styles";
 import NewsTopInfo from "./NewsTopInfo";
