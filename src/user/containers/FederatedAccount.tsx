@@ -11,7 +11,7 @@ const mapDispatchToProps: (dispatch) => IFederatedAccountPageEventProps = dispat
   return {
     dispatch,
     onLink() {
-      Linking.openURL(Conf.currentPlatform.url + "/userbook/mon-compte#/edit-me");
+      Linking.openURL(Conf.currentPlatform.federationUrl || Conf.currentPlatform.url + "/userbook/mon-compte#/edit-me");
     },
   };
 };
