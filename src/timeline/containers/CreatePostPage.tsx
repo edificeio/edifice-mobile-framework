@@ -220,6 +220,7 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
                   <FlatList 
                     data={images}
                     horizontal
+                    persistentScrollbar
                     renderItem={({ item, index }) => {
                       return(
                           <View style={{ paddingTop: 20 }}>
