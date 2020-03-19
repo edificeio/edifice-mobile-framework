@@ -113,7 +113,7 @@ class ThreadInput extends React.PureComponent<
     const { thread, lastMessage, sendPhoto, onGetNewer } = this.props;
     const { newThreadId } = this.state;
 
-    this.input.innerComponent.blur();
+    this.input && this.input.innerComponent.blur();
 
     await onGetNewer(thread.id)
     await sendPhoto({
@@ -129,8 +129,8 @@ class ThreadInput extends React.PureComponent<
     const { thread, lastMessage, send, onGetNewer } = this.props;
     const { textMessage } = this.state;
 
-    this.input.innerComponent.setNativeProps({ keyboardType: "default" });
-    this.input.innerComponent.blur();
+    this.input && this.input.innerComponent.setNativeProps({ keyboardType: "default" });
+    this.input && this.input.innerComponent.blur();
 
     this.setState({
       textMessage: ""
@@ -225,8 +225,8 @@ class ThreadInput extends React.PureComponent<
             <ChatIcon
               onPress={() => {
                 if (this.state.selected === Selected.keyboard)
-                  this.input.innerComponent.blur();
-                else this.input.innerComponent.focus();
+                  this.input && this.input.innerComponent.blur();
+                else this.input && this.input.innerComponent.focus();
               }}
             >
               <IconOnOff
