@@ -51,7 +51,7 @@ export class RowAvatars extends React.Component<IAvatarsProps, IAvatarsState> {
 	private renderItem({ item, index }) {
 		return (
 			<Slide>
-				<Avatar size={Size.verylarge} index={index} id={item} decorate={index === this.state.slideIndex} />
+				<Avatar size={Size.verylarge} index={index} sourceOrId={item} decorate={index === this.state.slideIndex} />
 			</Slide>
 		)
 	}
