@@ -1,6 +1,13 @@
 import I18n from "i18n-js";
 
+export function isValidDate(timestamp) {
+  return new Date(timestamp) instanceof Date && !isNaN(new Date(timestamp));
+}
+
 export function getTimeToStr(timestamp) {
+  if (!isValidDate(timestamp)){
+    return "";
+  }
   if (sameDay(timestamp)) {
     const dateHours = new Date(timestamp).getHours();
     const nowHours = new Date().getHours();
@@ -27,6 +34,9 @@ export function getTimeToStr(timestamp) {
 }
 
 export function getTimeToShortStr(timestamp) {
+  if (!isValidDate(timestamp)){
+    return "";
+  }
   if (sameDay(timestamp)) {
     const dateHours = new Date(timestamp).getHours();
     const nowHours = new Date().getHours();
