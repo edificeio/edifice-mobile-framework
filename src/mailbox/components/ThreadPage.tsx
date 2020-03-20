@@ -119,11 +119,9 @@ export class ThreadPage extends React.PureComponent<
 
   public render() {
     const { isFetching, threadInfo } = this.props;
-    const messages = threadInfo.messages;
-    const isEmpty = messages.length === 0;
-
-    const pageContent =
-      isEmpty && isFetching ? this.renderLoading() : this.renderMessageList();
+    const messages = threadInfo && threadInfo.messages;
+    const isEmpty = messages && messages.length === 0;
+    const pageContent = isEmpty && isFetching ? this.renderLoading() : this.renderMessageList();
 
     return (
       <PageContainer>
@@ -146,56 +144,63 @@ export class ThreadPage extends React.PureComponent<
       messages,
       headerHeight
     } = this.props;
-    const { fetching } = this.state;
+    const { 
+      fetching,
+      imageCurrent,
+      showCarousel,
+      images
+    } = this.state;
     //TODO get focus from thread input + send action when press (should threadinputreceiver in threadinput?)
-    return (
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-        keyboardVerticalOffset={headerHeight}
-      >
-        <Carousel
-          startIndex={this.state.imageCurrent}
-          visible={this.state.showCarousel}
-          onClose={() => this.setState({ showCarousel: false })}
-          images={signImagesUrls(this.state.images)}
-        />
-
-        <FlatList
-          refreshControl={
-            <RefreshControl
-              refreshing={fetching}
-              onRefresh={() => {
-                this.setState({ fetching: true })
-                onGetNewer(threadInfo.id)
-              }}
-              style={{ transform: [{ scaleY: -1 }] }}
+    return !threadInfo 
+      ? <View /> 
+      : (
+          <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === "ios" ? "padding" : undefined}
+            keyboardVerticalOffset={headerHeight}
+          >
+            <Carousel
+              startIndex={imageCurrent}
+              visible={showCarousel}
+              onClose={() => this.setState({ showCarousel: false })}
+              images={signImagesUrls(images)}
             />
-          }
-          data={messages}
-          renderItem={({ item }) => this.renderMessageItem(item)}
-          style={styles.grid}
-          inverted={true}
-          keyExtractor={(item: IConversationMessage) => item.id}
-          onEndReached={() => {
-            if (!this.onEndReachedCalledDuringMomentum) {
-              onGetOlder(threadInfo.id);
-              this.onEndReachedCalledDuringMomentum = true;
-            }
-          }}
-          onEndReachedThreshold={0.1}
-          onMomentumScrollBegin={() => {
-            this.onEndReachedCalledDuringMomentum = false;
-          }}
-        />
-        <ThreadInput
-          emptyThread={!messages.length}
-          displayPlaceholder={!isFetchingFirst}
-          onReceiversTap={this.handleTapReceivers}
-          {...this.props}
-        />
-      </KeyboardAvoidingView>
-    );
+
+            <FlatList
+              refreshControl={
+                <RefreshControl
+                  refreshing={fetching}
+                  onRefresh={() => {
+                    this.setState({ fetching: true })
+                    onGetNewer(threadInfo.id)
+                  }}
+                  style={{ transform: [{ scaleY: -1 }] }}
+                />
+              }
+              data={messages}
+              renderItem={({ item }) => this.renderMessageItem(item)}
+              style={styles.grid}
+              inverted={true}
+              keyExtractor={(item: IConversationMessage) => item.id}
+              onEndReached={() => {
+                if (!this.onEndReachedCalledDuringMomentum) {
+                  onGetOlder(threadInfo.id);
+                  this.onEndReachedCalledDuringMomentum = true;
+                }
+              }}
+              onEndReachedThreshold={0.1}
+              onMomentumScrollBegin={() => {
+                this.onEndReachedCalledDuringMomentum = false;
+              }}
+            />
+            <ThreadInput
+              emptyThread={!messages.length}
+              displayPlaceholder={!isFetchingFirst}
+              onReceiversTap={this.handleTapReceivers}
+              {...this.props}
+            />
+          </KeyboardAvoidingView>
+        );
   }
 
   public renderMessageItem(message: IConversationMessage) {
