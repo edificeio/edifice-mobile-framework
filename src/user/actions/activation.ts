@@ -8,7 +8,7 @@ import Conf from "../../../ode-framework-conf";
 import { asyncActionTypes } from "../../infra/redux/async";
 import { navigate } from "../../navigation/helpers/navHelper";
 import userConfig from "../config";
-import { actionTypeLoginCancel, login } from "./login";
+import { actionTypeLoginCancel, loginAction } from "./login";
 import Tracking from "../../tracking/TrackingManager";
 import { IActivationContext } from "../../utils/SubmitState";
 
@@ -190,7 +190,7 @@ export function activationAccount(model: IActivationModel) {
       // === 4 - call thunk login using login/password
       // console.log("[User][Activation] redirecting to login...", res.status, model)
       await dispatch(
-        login(true, {
+        loginAction(true, {
           username: model.login,
           password: model.password
         })

@@ -11,17 +11,17 @@ import { OAuth2RessourceOwnerPasswordClient } from "./oauth";
 
 /**
  * Perform a fetch operation with a oAuth Token. Use it like fetch().
- * @param url url including platform
+ * @param requestInfo url including platform
  * @param init request options
  */
 export async function signedFetch(
-  url: string,
-  init: any = {}
+  requestInfo: RequestInfo,
+  init?: RequestInit
 ): Promise<Response> {
   try {
     if (!OAuth2RessourceOwnerPasswordClient.connection)
       throw new Error("no active oauth connection");
-    if (OAuth2RessourceOwnerPasswordClient.connection.isExpired()) {
+    if (OAuth2RessourceOwnerPasswordClient.connection.getIsTokenExpired()) {
       // tslint:disable-next-line:no-console
       // console.log("Token expired. Refreshing...");
       try {
@@ -32,9 +32,9 @@ export async function signedFetch(
     }
     // tslint:disable-next-line:no-console
     // console.log("Token expires in ", oauth.expiresIn() / 1000, "seconds");
-    const params = OAuth2RessourceOwnerPasswordClient.connection.sign(init);
+    const req = OAuth2RessourceOwnerPasswordClient.connection.signRequest(requestInfo, init);
     // console.log("signed fetch:", url, params);
-    return fetch(url, params);
+    return fetch(req);
   } catch (err) {
     // tslint:disable-next-line:no-console
     console.warn("Failed fetch with token: ", err);

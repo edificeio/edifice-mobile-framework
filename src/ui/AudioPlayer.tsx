@@ -10,7 +10,7 @@ import Video from "react-native-video";
 import VideoPlayer from "react-native-video-controls";
 import RNFetchBlob from "rn-fetch-blob";
 import { Loading } from ".";
-import { getAuthHeader } from "../infra/oauth";
+import { getDummySignedRequest } from "../infra/oauth";
 import { CommonStyles } from "../styles/common/styles";
 import { TextItalic } from "./text";
 
@@ -204,7 +204,7 @@ export default class AudioPlayer extends React.Component<
     try {
       RNFS.downloadFile({
         fromUrl: this.props.source,
-        headers: getAuthHeader()["headers"],
+        headers: getDummySignedRequest()["headers"],
         toFile: path
       })
         .promise.then(r => {
@@ -236,7 +236,7 @@ export default class AudioPlayer extends React.Component<
       RNFetchBlob.config({
         fileCache: true
       })
-        .fetch("GET", this.props.source, getAuthHeader()["headers"])
+        .fetch("GET", this.props.source, getDummySignedRequest()["headers"])
         .then(res => {
           // the temp file path
           this.setState({

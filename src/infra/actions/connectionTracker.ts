@@ -4,6 +4,7 @@ let isWatching = false;
 let wasDisconnected = false;
 
 const handleConnection = (isConnected, dispatch) => {
+    console.log("CONNECTION STATE Changes : ", isConnected);
     if(isConnected){
         dispatch({ type: 'CONNECTED_CONNECTION_TRACKER'});
         setTimeout(() => {
@@ -31,10 +32,7 @@ export const checkConnection = dispatch => () => {
 }
 
 export const watchConnection = dispatch => () => {
-    if(isWatching){
-        return;
-    }
-
+    if(isWatching){ return }
     isWatching = true;
     NetInfo.fetch().then(state => handleConnection(state.isConnected, dispatch));
     NetInfo.addEventListener(state => handleConnection(state.isConnected, dispatch));

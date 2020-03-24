@@ -3,7 +3,7 @@ import Mime from "mime";
 import Permissions from "react-native-permissions";
 import RNFetchBlob, {FetchBlobResponse} from "rn-fetch-blob";
 import Conf from "../../../ode-framework-conf";
-import {getAuthHeader} from "../oauth";
+import {getDummySignedRequest} from "../oauth";
 import {IFile} from "../../workspace/types";
 import {platform} from "os";
 
@@ -26,7 +26,7 @@ export const startDownload = async (downloadable: IFile, withManager = true): Pr
 
   return RNFetchBlob
     .config(config)
-    .fetch("GET", Conf.currentPlatform.url + downloadable.url, getAuthHeader()["headers"])
+    .fetch("GET", Conf.currentPlatform.url + downloadable.url, getDummySignedRequest()["headers"])
 };
 
 export const openPreview = async (downloadable: IFile) => {
@@ -41,7 +41,7 @@ export const downloadOnCache = async (downloadable: IFile): Promise<FetchBlobRes
       fileCache: true,
       appendExt: getExtension(downloadable.filename)
     })
-    .fetch("GET", Conf.currentPlatform.url + downloadable.url, getAuthHeader()["headers"]);
+    .fetch("GET", Conf.currentPlatform.url + downloadable.url, getDummySignedRequest()["headers"]);
 };
 
 export const openDownloadedFile = (filepath: string): void => {

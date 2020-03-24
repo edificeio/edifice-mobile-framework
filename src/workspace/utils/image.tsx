@@ -6,7 +6,7 @@ import Conf from "../../../ode-framework-conf";
 import { Icon } from "../../ui";
 import { CommonStyles } from "../../styles/common/styles";
 import {DEVICE_HEIGHT, DEVICE_WIDTH, layoutSize} from "../../styles/common/layoutSize";
-import { signUrl } from "../../infra/oauth";
+import { DEPRECATED_signImageURISource } from "../../infra/oauth";
 import {IFile} from "../types";
 import FastImage from "react-native-fast-image";
 import ImageOptional from "../../ui/ImageOptional";
@@ -28,7 +28,7 @@ export const renderIcon = ( id: string | null, isFolder: boolean, name: string, 
             style={style}
             imageComponent={Image}
             errorComponent={<UnavailableIcon/>}
-            source={signUrl(uri)}
+            source={DEPRECATED_signImageURISource(uri)}
         />
     )
   }
@@ -50,7 +50,7 @@ export const renderImage = ( item: IFile, isFolder: boolean, name: string): any 
           imageComponent={Image}
           errorComponent={<UnavailableImage />}
           resizeMode={FastImage.resizeMode.contain}
-          source={signUrl(uri)}
+          source={DEPRECATED_signImageURISource(uri)}
       />
   )
 };

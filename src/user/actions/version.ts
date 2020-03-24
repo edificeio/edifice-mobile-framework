@@ -1,7 +1,7 @@
 import userConfig from "../config";
 import { userService } from "../service";
 import { Action } from "redux";
-import { login } from "./login";
+import { loginAction } from "./login";
 import { navigate } from "../../navigation/helpers/navHelper";
 import { getAuthState } from "../selectors";
 
@@ -45,7 +45,7 @@ export function checkVersionThenLogin(
         // === 0 if the user already skip ... login
         const state = getAuthState(getState());
         if (state.skipVersion) {
-            dispatch(login(redirectOnError, credentials));
+            dispatch(loginAction(redirectOnError, credentials));
         }
         // === 1 check whether a new version exists (if not already checked)
         let version:{ canContinue: boolean, hasNewVersion: boolean, newVersion: string } = null;
@@ -62,7 +62,7 @@ export function checkVersionThenLogin(
             dispatch(checkNewVersionFounded(version, redirectOnError, credentials));
         } else {
             //no new version so login...
-            dispatch(login(redirectOnError, credentials));
+            dispatch(loginAction(redirectOnError, credentials));
         }
     }
 }
@@ -76,7 +76,7 @@ export function updateVersionIfWanted(context: IVersionContext, update: boolean)
         } else if (version.canContinue) {
             //user dont want to update (and he can) so login
             dispatch(skipVersion())
-            dispatch(login(context.redirectOnError, context.credentials));
+            dispatch(loginAction(context.redirectOnError, context.credentials));
         } else {
             //user cant continue. stay in login page
         }

@@ -3,7 +3,7 @@ import I18n from "i18n-js";
 import Conf from "../../../ode-framework-conf";
 import { Connection } from "../../infra/Connection";
 import { fetchJSONWithCache } from "../../infra/fetchWithCache";
-import { signImagesUrls } from "../../infra/oauth";
+import { DEPRECATED_signImagesUrls } from "../../infra/oauth";
 import { getSessionInfo } from "../../AppStore";
 
 let loadingState = "idle";
@@ -102,7 +102,7 @@ const dataTypes = {
       eventType: news["event-type"],
       htmlContent: undefined,
       id: news._id,
-      images: signImagesUrls(
+      images: DEPRECATED_signImagesUrls(
         news.preview.images
           ? news.preview.images.map(url => ({
               alt: "",
@@ -164,7 +164,7 @@ const dataTypes = {
         date: news.date.$date,
         eventType: news["event-type"],
         id: news._id,
-        images: signImagesUrls(
+        images: DEPRECATED_signImagesUrls(
           news.preview.images.map(url => ({
             alt: "",
             src: (url as string).startsWith("/")
@@ -195,7 +195,7 @@ const dataTypes = {
         date: news.date.$date,
         eventType: news["event-type"],
         id: news._id,
-        images: signImagesUrls(
+        images: DEPRECATED_signImagesUrls(
           news.preview.images.map(url => ({
             alt: "",
             src: (url as string).startsWith("/")

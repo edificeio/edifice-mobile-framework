@@ -14,6 +14,7 @@ import {
   Linking
 } from "react-native";
 import { connect } from "react-redux";
+import DeviceInfo from 'react-native-device-info';
 
 // Components
 import { FlatButton } from "../../ui";
@@ -44,16 +45,18 @@ export interface ILoginPageDataProps {
   auth: IUserAuthState;
   headerHeight: number;
   // version
-  versionContext: IVersionContext;
+  versionContext: IVersionContext | null;
   versionModal: boolean;
   version: string;
   versionMandatory: boolean;
+  // connection
+  connected: boolean;
 }
 
 export interface ILoginPageEventProps {
-  onSkipVersion(versionContext: IVersionContext);
-  onUpdateVersion(versionContext: IVersionContext);
-  onLogin(userlogin: string, password: string);
+  onSkipVersion(versionContext: IVersionContext): void;
+  onUpdateVersion(versionContext: IVersionContext): void;
+  onLogin(userlogin: string, password: string): void;
 }
 
 export interface ILoginPageOtherProps {
@@ -67,8 +70,8 @@ export type ILoginPageProps = ILoginPageDataProps &
 // State definition -------------------------------------------------------------------------------
 
 export interface ILoginPageState {
-  login: string;
-  password: string;
+  login?: string;
+  password?: string;
   typing: boolean;
 }
 
@@ -94,14 +97,14 @@ export class LoginPage extends React.Component<
   ILoginPageState
   > {
   // Refs
-  private inputLogin: TextInput = null;
-  private setInputLoginRef = el => (this.inputLogin = el);
+  private inputLogin: TextInput | null = null;
+  private setInputLoginRef = (el: TextInput) => (this.inputLogin = el);
 
-  private inputPassword: TextInput = null;
-  private setInputPasswordRef = el => (this.inputPassword = el);
+  private inputPassword: TextInput | null = null;
+  private setInputPasswordRef = (el: TextInput) => (this.inputPassword = el);
 
   // Set default state
-  constructor(props) {
+  constructor(props: ILoginPageProps) {
     super(props);
     this.state = initialState;
   }
@@ -133,8 +136,8 @@ export class LoginPage extends React.Component<
             mandatory={versionMandatory}
             version={version}
             visibility={versionModal}
-            onCancel={() => onSkipVersion(versionContext)}
-            onSubmit={() => onUpdateVersion(versionContext)}
+            onCancel={() => versionContext && onSkipVersion(versionContext)}
+            onSubmit={() => versionContext && onUpdateVersion(versionContext)}
           />
           <TouchableWithoutFeedback
             style={{ flex: 1 }}
@@ -149,8 +152,8 @@ export class LoginPage extends React.Component<
 
   protected renderLogo = () => {
     const logoStyle = { height: 50, width: 200 };
-    if (Conf.currentPlatform.logoStyle) {
-      Object.assign(logoStyle, Conf.currentPlatform.logoStyle!);
+    if ((Conf.currentPlatform as any).logoStyle) {
+      Object.assign(logoStyle, (Conf.currentPlatform as any).logoStyle!);
     }
     return <View
       style={{ flexGrow: 2, alignItems: "center", justifyContent: "center" }}
@@ -158,10 +161,10 @@ export class LoginPage extends React.Component<
       <Image
         resizeMode="contain"
         style={logoStyle}
-        source={Conf.currentPlatform.logo}
+        source={(Conf.currentPlatform as any).logo}
       />
     </View>;
-  }; // TS-ISSUE
+  };
 
   protected renderForm() {
     const { loggingIn, loggedIn, error } = this.props.auth;
@@ -180,7 +183,7 @@ export class LoginPage extends React.Component<
                 this.setState({ login: login.trim(), typing: true })
               }
               value={this.state.login}
-              hasError={error && !this.state.typing}
+              hasError={(error && !this.state.typing) as boolean}
               keyboardType="email-address"
             />
             <PasswordInputLine
@@ -190,10 +193,10 @@ export class LoginPage extends React.Component<
                 this.setState({ password, typing: true })
               }
               value={this.state.password}
-              hasError={error && !this.state.typing}
+              hasError={(error && !this.state.typing) as boolean}
             />
             <ErrorMessage>
-              {this.state.typing ? "" : error && I18n.t(error)}
+              {this.state.typing ? "" : error && I18n.t('auth-error-' + error, { version: DeviceInfo.getVersion(), errorcode: error })}
             </ErrorMessage>
 
             <View
@@ -204,7 +207,7 @@ export class LoginPage extends React.Component<
                 marginTop: error && !this.state.typing ? 10 : 30
               }}
             >
-              {error === "auth-notPremium" && !this.state.typing ?
+              {error === "not_premium" && !this.state.typing ?
               <FlatButton
                 onPress={() => this.handleGoToWeb()}
                 disabled={false}
@@ -212,7 +215,7 @@ export class LoginPage extends React.Component<
                 loading={false}
               /> : <FlatButton
                 onPress={() => this.handleLogin()}
-                disabled={this.isSubmitDisabled}
+                disabled={this.isSubmitDisabled || !this.props.connected}
                 title={I18n.t("Connect")}
                 loading={loggingIn || loggedIn}
               />}
@@ -232,7 +235,7 @@ export class LoginPage extends React.Component<
                 >
                   {I18n.t("forgot-password")}
                 </Text>
-                {Conf.currentPlatform.federation && <FederationTextComponent
+                {(Conf.currentPlatform as any).federation && <FederationTextComponent
                   style={{
                     textDecorationLine: "underline",
                     marginTop: 48,
@@ -251,7 +254,7 @@ export class LoginPage extends React.Component<
         </ScrollView>
         {Conf.platforms && Object.keys(Conf.platforms).length > 1 ?
         <BottomSwitcher onPress={() => this.handleBackToPlatformSelector()}>
-          {Conf.currentPlatform.displayName}{" "}
+          {(Conf.currentPlatform as any).displayName}{" "}
         </BottomSwitcher> : null}
       </View>
     );
@@ -261,7 +264,7 @@ export class LoginPage extends React.Component<
 
   protected async handleLogin() {
     await this.props.onLogin(
-      this.state.login || this.props.auth.login,
+      this.state.login || this.props.auth.login, // ToDo: fix this TS issue
       this.state.password
     );
     this.setState({ typing: false });
@@ -278,8 +281,8 @@ export class LoginPage extends React.Component<
   // Other public methods
 
   public unfocus() {
-    this.inputLogin.blur();
-    this.inputPassword.blur();
+    this.inputLogin && this.inputLogin.blur();
+    this.inputPassword && this.inputPassword.blur();
   }
 }
 
@@ -289,7 +292,7 @@ export default connect(
     let version = "",
       versionModal = false,
       versionMandatory = false,
-      versionContext: IVersionContext = null;
+      versionContext: IVersionContext | null = null;
     if (auth.versionContext && auth.versionContext.version) {
       versionContext = auth.versionContext;
       version = versionContext.version.newVersion;
@@ -302,7 +305,8 @@ export default connect(
       versionMandatory,
       version,
       versionModal,
-      versionContext
+      versionContext,
+      connected: !!state.connectionTracker.connected,
     };
   },
   (dispatch): ILoginPageEventProps => ({

@@ -16,11 +16,45 @@ export interface IOAuthToken {
   scope: string;
 }
 
-export enum OAuthError {
-  NO_TOKEN,
-  BAD_CREDENTIALS,
-  NOT_PREMIUM,
-  NETWORK_ERROR
+export enum OAuthErrorType {
+  // Response errors
+  INVALID_CLIENT = 'invalid_client',
+  INVALID_GRANT = 'invalid_grant',
+  BAD_CREDENTIALS = 'bad_credentials',
+  BLOCKED_USER = 'blocked_user',
+  PLATFORM_UNAVAILABLE = 'platform_unavailable',
+  TOO_LOAD = 'too_load',
+  UNKNOWN_DENIED = 'unknown_denied',
+  UNKNOWN_RESPONSE = 'unknown_response',
+  // Non-response errors
+  NETWORK_ERROR = 'network_error',
+  PARSE_ERROR = 'parse_error',
+  BAD_RESPONSE = 'bad_response',
+  // Not initialized
+  NOT_INITIALIZED = 'not_initilized'
+}
+export interface OAuthErrorDetails {
+  type: OAuthErrorType,
+  error?: string;
+  description?: string;
+}
+export type OAuthError = Error & OAuthErrorDetails;
+
+export const sanitizeScope = (scopes: string[]) =>
+  Array.isArray(scopes) ? scopes.join(" ").trim() : scopes || "";
+
+export class OAuthClientInfo {
+  clientId: string;
+  clientSecret: string;
+  scope: string[];
+
+  constructor(clientId: string, clientSecret: string, scope: string[]) {
+    this.clientId = clientId;
+    this.clientSecret = clientSecret;
+    this.scope = scope;
+  }
+
+  get scopeString(): string { return sanitizeScope(this.scope); }
 }
 
 export class OAuth2RessourceOwnerPasswordClient {
@@ -36,17 +70,14 @@ export class OAuth2RessourceOwnerPasswordClient {
   /**
    * Current active oauth connection.
    */
-  public static connection: OAuth2RessourceOwnerPasswordClient = null;
+  public static connection: OAuth2RessourceOwnerPasswordClient | null = null;
 
-  // tslint:disable-next-line:variable-name
-  private token: IOAuthToken = null;
-  private accessTokenUri: string = "";
-  private clientId: string = "";
-  private clientSecret: string = "";
-  private scope: string[] = [];
+  private token: IOAuthToken | null = null; // Current active token information
+  private clientInfo: OAuthClientInfo | null = null; // Current connected client information
+  private accessTokenUri: string = ""; // Uri to get or refresh the token
 
   /**
-   * Inialize a oAuth connection.
+   * Inialize a oAuth connection. DOES NOT get token.
    * NOTE : This module offers a global instance of this class that is configured to work with ODE's backend API.
    * Use it only to create a new connection.
    * @param accessTokenUri URL where to get oAuth tokens
@@ -61,52 +92,74 @@ export class OAuth2RessourceOwnerPasswordClient {
     scope: string[]
   ) {
     this.accessTokenUri = accessTokenUri;
-    this.clientId = clientId;
-    this.clientSecret = clientSecret;
-    this.scope = scope;
+    this.clientInfo = new OAuthClientInfo(clientId, clientSecret, scope);
   }
 
   /**
-   * Pull an authentication error from the response data.
-   *
-   * @param  {Object} data
-   * @return {string}
+   * Create a throwable authentication error object from the JSON response data or from custom data.
+   * Use this returns always an error.
+   * @param data
    */
-  private getAuthError(body) {
-    if (body.error) {
-      const err: Error & { body?: any; code?: string } = new Error(body.error);
-      err.body = body;
-      err.code = "EAUTH";
-      return err;
+  private createAuthError(body: { error: string, error_description?: string }): OAuthError;
+  private createAuthError<T extends object>(type: OAuthErrorType, error: string, description?: string, additionalData?: T): OAuthError & T;
+  private createAuthError<T extends object>(bodyOrType: { error: string, error_description?: string } | OAuthErrorType, error?: string, description?: string, additionalData?: T): OAuthError & T {
+    let err: OAuthError = new Error("EAUTH: returned error") as any;
+    err.name = "EAUTH";
+    if (bodyOrType && typeof bodyOrType === 'object' && bodyOrType.hasOwnProperty('error')) {
+      // create from body
+      Object.assign(err, bodyOrType);
+      if (bodyOrType.error === 'invalid_client') {
+        err.type = OAuthErrorType.INVALID_CLIENT;
+      } else if (bodyOrType.error === 'invalid_grant') {
+        err.type = OAuthErrorType.INVALID_GRANT;
+      } else if (bodyOrType.error === 'access_denied') {
+        if (bodyOrType.error_description === 'auth.error.authenticationFailed') {
+          err.type = OAuthErrorType.BAD_CREDENTIALS;
+        } else if (bodyOrType.error_description === 'auth.error.blockedUser') {
+          err.type = OAuthErrorType.BLOCKED_USER;
+        } else if (bodyOrType.error_description === 'auth.error.global') {
+          err.type = OAuthErrorType.PLATFORM_UNAVAILABLE;
+        } else {
+          err.type = OAuthErrorType.UNKNOWN_DENIED;
+        }
+      } else if (bodyOrType.error === 'quota_overflow') {
+        err.type = OAuthErrorType.TOO_LOAD;
+      }else {
+        err.type = OAuthErrorType.UNKNOWN_RESPONSE;
+      }
+    } else if (bodyOrType && typeof bodyOrType === 'object' && error) {
+      // create from type
+      err.type = bodyOrType as unknown as OAuthErrorType;
+      err.error = error;
+      err.description = description;
+      additionalData && Object.assign(err, additionalData);
+    } else {
+      throw new Error(`[getAuthError] Bad parameter: ${bodyOrType}`);
     }
-    return null;
+    return err as OAuthError & T;
   }
 
   /**
    * Attempt to parse response body as JSON, fall back to parsing as a query string.
    *
-   * @param {string} body
-   * @return {Object}
+   * @param body
    */
-  private async parseResponseBody(response: Response) {
+  private async parseResponseJSON(response: Response) {
     try {
       return await response.json();
     } catch (e) {
+      const err: OAuthError = new Error("EAUTH: invalid Json oauth response") as any;
+      err.name = 'EAUTH';
+      err.type = OAuthErrorType.UNKNOWN_RESPONSE;
+      err.description = "Body is not JSON data."
       throw new Error("EAUTH: invalid Json oauth response");
     }
   }
 
   /**
-   * Sanitize the scopes option to be a string.
-   */
-  public sanitizeScope(scopes: string[]): string {
-    return Array.isArray(scopes) ? scopes.join(" ").trim() : scopes || "";
-  }
-
-  /**
    * Create basic auth header.
    */
-  private getAuthHeader(clientId: string, clientSecret: string): string {
+  private createAuthHeader(clientId: string, clientSecret: string): string {
     return "Basic " + btoa(clientId || "" + ":" + clientSecret || "");
   }
 
@@ -114,88 +167,147 @@ export class OAuth2RessourceOwnerPasswordClient {
    * Sign a standardised request object with user authentication information.
    * To use with the standard fetch API, call `fetch(url, sign(init))`.
    */
-  public sign(requestObject) {
+  public signRequest(requestInfo: RequestInfo, init?: RequestInit) {
     if (!this.hasToken) {
-      console.warn("can't sign", requestObject);
-      throw new Error("EAUTH: Unable to sign without access token.");
+      throw new Error("EAUTH: Unable to sign request without active access token.");
     }
-
-    requestObject.headers = requestObject.headers || {};
-    if (this.token.token_type.toLowerCase() === "bearer") {
+    if (this.token!.token_type.toLowerCase() === 'bearer') {
       // console.log("token:", this.token.access_token);
-      requestObject.headers.Authorization = "Bearer " + this.token.access_token;
+      const req = new Request(requestInfo, {
+        ...init,
+        headers: {
+          ...init?.headers,
+          Authorization: "Bearer " + this.token!.access_token
+        }
+      });
+      return req;
     } else {
-      throw new Error("EAUTH: Only Bearer token type supported.");
+      throw new Error("EAUTH: Only Bearer token type supported. Given " + this.token!.token_type);
     }
-    return requestObject;
+  }
+
+  /**
+   * Perform a fetch request specially for auth requests.
+   * This checks EAUTH and HTTP errors and parses the response as a JSON object.
+   * @param url
+   * @param options
+   */
+  private async request(url: string, options: any) {
+    // 1: Initialize request
+    const body = querystring.stringify(options.body);
+    const query = querystring.stringify(options.query);
+    if (query) {
+      // 1.1: Append url query with the given one
+      url += (url.indexOf("?") === -1 ? "?" : "&") + query;
+    }
+    // 2: Send request
+    let response: Response;
+    try {
+      response = await fetch(url, {
+        body,
+        headers: options.headers,
+        method: options.method
+      });
+    } catch (err) {
+      if (err instanceof Error)
+        (err as OAuthError).type = OAuthErrorType.NETWORK_ERROR;
+      throw err;
+    }
+    // 3: Check HTTP Status
+    if (!response.ok) {
+      const errdata = await this.parseResponseJSON(response);
+      throw this.createAuthError(errdata);
+    }
+    // 4: Parse reponse
+    let data: any;
+    try {
+      data = await this.parseResponseJSON(response);
+    } catch (err) {
+      if (err instanceof Error)
+        (err as OAuthError).type = OAuthErrorType.PARSE_ERROR;
+      throw err;
+    }
+    // 5: Check if response is error
+    // console.log("[OAuth] data:", data);
+    if (data?.error) {
+      throw this.createAuthError(data);
+    }
+    // 6: OK
+    return data;
   }
 
   /**
    * Get a fresh new access token with owner credentials
    */
-  public async getToken(
+  public async getNewToken(
     username: string,
     password: string,
     saveToken: boolean = true
   ): Promise<IOAuthToken> {
+    if (!this.clientInfo) {
+      throw this.createAuthError(OAuthErrorType.NOT_INITIALIZED, 'no client info provided');
+    }
     // 1: Build request
     const body = {
-      client_id: this.clientId,
-      client_secret: this.clientSecret,
+      client_id: this.clientInfo.clientId,
+      client_secret: this.clientInfo.clientSecret,
       grant_type: "password",
+      scope: this.clientInfo.scopeString,
+      username,
       password,
-      scope: this.sanitizeScope(this.scope),
-      username
     };
     const headers = {
       ...OAuth2RessourceOwnerPasswordClient.DEFAULT_HEADERS,
-      Authorization: this.getAuthHeader(this.clientId, this.clientSecret)
+      Authorization: this.createAuthHeader(this.clientInfo.clientId, this.clientInfo.clientSecret)
     };
 
     try {
-      // ("get token oauth ", this.accessTokenUri)
       // 2: Call oAuth API
       const data = await this.request(this.accessTokenUri, {
         body,
         headers,
         method: "POST"
       });
-      // 3: Build token from data and save it
+      // 3: Build token from data
+      if (!data.hasOwnProperty('access_token')) {
+        throw this.createAuthError(OAuthErrorType.BAD_RESPONSE, 'no access_token returned', '', {data});
+      }
       this.token = {
         ...data,
-        expires_at: this.getExpirationDate(data.expires_in)
+        expires_at: OAuth2RessourceOwnerPasswordClient.getExpirationDate(data.expires_in)
       };
+      // 4: Save token if asked
       saveToken && await this.saveToken();
-      return this.token;
+      return this.token!;
     } catch (err) {
       // tslint:disable-next-line:no-console
       console.warn("Get token failed: ", err);
-      if (err.body && err.body.error && err.body.error === "invalid_grant") {
-        err.authErr = OAuthError.BAD_CREDENTIALS;
-      }
+      (err as Error).name = "[oAuth] getToken failed: " + err.name;
       throw err;
     }
   }
 
   /**
-   * Read stored token in local storage.
+   * Read stored token in local storage. No-op if no token is stored, return undefined.
    */
-  public async loadToken() {
+  public async loadToken(): Promise<IOAuthToken | undefined> {
     try {
-      const storedToken = JSON.parse(await AsyncStorage.getItem("token"));
+      const rawStoredToken = await AsyncStorage.getItem("token");
+      if (!rawStoredToken) {
+        return undefined;
+      }
+      const storedToken = JSON.parse(rawStoredToken);
       if (!storedToken) {
-        const err = new Error("EAUTH: No token stored");
-        (err as any).authErr = OAuthError.NO_TOKEN;
+        const err = new Error("[oAuth] loadToken: Unable to parse stored token");
         throw err;
       }
       this.token = {
         ...storedToken,
         expires_at: new Date(storedToken.expires_at)
       };
+      return this.token!;
     } catch (err) {
-      if (err.authErr !== OAuthError.NO_TOKEN)
-        // tslint:disable-next-line:no-console
-        console.warn("Load token failed: ", err);
+      console.warn("[oAuth] loadToken: ", err);
       throw err;
     }
   }
@@ -208,7 +320,7 @@ export class OAuth2RessourceOwnerPasswordClient {
       await AsyncStorage.setItem("token", JSON.stringify(this.token));
     } catch (err) {
       // tslint:disable-next-line:no-console
-      console.warn("Saving token failed: ", err);
+      console.warn("[oAuth] saveToken: ", err);
       throw err;
     }
   }
@@ -217,20 +329,23 @@ export class OAuth2RessourceOwnerPasswordClient {
    * Refresh the user access token.
    */
   public async refreshToken(): Promise<IOAuthToken> {
+    if (!this.clientInfo) {
+      throw this.createAuthError(OAuthErrorType.NOT_INITIALIZED, 'no client info provided');
+    }
     if (!this.token || !this.token.refresh_token)
-      throw new Error("EAUTH: No refresh token provided.");
+      throw new Error("[oAuth] refreshToken: No refresh token provided.");
 
     // 1: Build request
     const body = {
-      client_id: this.clientId,
-      client_secret: this.clientSecret,
+      client_id: this.clientInfo.clientId,
+      client_secret: this.clientInfo.clientSecret,
       grant_type: "refresh_token",
       refresh_token: this.token.refresh_token,
-      scope: this.sanitizeScope(this.scope)
+      scope: this.clientInfo.scopeString
     };
     const headers = {
       ...OAuth2RessourceOwnerPasswordClient.DEFAULT_HEADERS,
-      Authorization: this.getAuthHeader(this.clientId, this.clientSecret)
+      Authorization: this.createAuthHeader(this.clientInfo.clientId, this.clientInfo.clientSecret)
     };
 
     try {
@@ -240,17 +355,21 @@ export class OAuth2RessourceOwnerPasswordClient {
         headers,
         method: "POST"
       });
+      if (!data.hasOwnProperty('access_token')) {
+        throw this.createAuthError(OAuthErrorType.BAD_RESPONSE, 'no access_token returned', '', { data });
+      }
       // 3: Construct the token with received data
       this.token = {
         ...this.token,
         ...data,
-        expires_at: this.getExpirationDate(data.expires_in)
+        expires_at: OAuth2RessourceOwnerPasswordClient.getExpirationDate(data.expires_in)
       };
+      // Save token
       await this.saveToken();
-      return this.token;
+      return this.token!;
     } catch (err) {
       // tslint:disable-next-line:no-console
-      console.warn("Refreshing token failed: ", err);
+      console.warn("[oAuth] refreshToken: ", err);
       throw err;
     }
   }
@@ -265,63 +384,27 @@ export class OAuth2RessourceOwnerPasswordClient {
   /**
    * Is stored token actually expired ?
    */
-  public isExpired() {
-    return this.token && new Date() > this.token.expires_at;
+  public getIsTokenExpired() {
+    if (!this.hasToken) throw new Error('[isExpired]: No token');
+    return new Date() > this.token!.expires_at;
   }
 
   /**
    * Returns time before expiring in milliseconds (date.getTime())
    */
-  public expiresIn() {
-    return this.token.expires_at.getTime() - Date.now();
+  public getTokenExpiresIn() {
+    if (!this.hasToken) throw new Error('[expiresIn]: No token');
+    return this.token!.expires_at.getTime() - Date.now();
   }
 
   /**
    * Generates a new expiration date from a number of seconds added to the now Date.
    * @param seconds
    */
-  private getExpirationDate(seconds: number) {
+  private static getExpirationDate(seconds: number) {
     const expin = new Date();
     expin.setSeconds(expin.getSeconds() + seconds);
     return expin;
-  }
-
-  /**
-   * Perform a fetch request specially for auth requests.
-   * This checks EAUTH and HTTP errors and parses the response as a JSON object.
-   * @param url
-   * @param options
-   */
-  private async request(url: string, options: any) {
-    const body = querystring.stringify(options.body);
-    const query = querystring.stringify(options.query);
-    if (query) {
-      // append url query with the given one
-      url += (url.indexOf("?") === -1 ? "?" : "&") + query;
-    }
-    let response;
-    try {
-      response = await fetch(url, {
-        body,
-        headers: options.headers,
-        method: options.method
-      });
-    } catch (err) {
-      err.authErr = OAuthError.NETWORK_ERROR;
-      throw err;
-    }
-    const data = await this.parseResponseBody(response);
-    const authErr = this.getAuthError(data);
-    if (authErr) throw authErr;
-    if (response.status < 200 || response.status >= 399) {
-      const statusErr = new Error("HTTP status " + response.status) as any;
-      statusErr.status = response.status;
-      statusErr.body = response.body;
-      statusErr.code = "ESTATUS";
-      statusErr.authErr = OAuthError.NETWORK_ERROR;
-      throw statusErr;
-    }
-    return data;
   }
 
   /**
@@ -334,7 +417,7 @@ export class OAuth2RessourceOwnerPasswordClient {
       this.token = null;
     } catch (err) {
       // tslint:disable-next-line:no-console
-      console.warn("Failed erasing token: ", err);
+      console.warn("[oAuth] eraseToken: ", err);
       throw err;
     }
   }
@@ -344,30 +427,114 @@ export class OAuth2RessourceOwnerPasswordClient {
  * Scopes needed for the application.
  */
 export const scopes = `
- actualites
- blog
- conversation
- directory
- homeworks
- schoolbook
- timeline
- userinfo
- workspace
- portal
- cas
- sso
-`.split("\n "); // Here the space after "\n" is important, they represent the indentation & the space between the words when "\n" is removed.
+actualites
+blog
+conversation
+directory
+homeworks
+schoolbook
+timeline
+userinfo
+workspace
+portal
+cas
+sso
+`.split("\n");
 // You can copy the string directly in the "scope" field in a browser. Keep this indentation intact.
+
+/**
+ * Returns if the given url need to be signed.
+ * An url must be signed if it point to the current platform.
+ * If the url contains a protocol identifier, it noot be signed.
+ * @param absoluteUrl
+ */
+export function getIsUrlSignable(absoluteUrl: string): boolean {
+  return (
+    absoluteUrl.indexOf("://") === -1 ||
+    absoluteUrl.indexOf((Conf.currentPlatform as any).url) !== -1
+  );
+}
+
+/**
+ * Returns an empty signed request, just to get the authorisation header.
+ */
+export function getDummySignedRequest() {
+  if (!OAuth2RessourceOwnerPasswordClient.connection)
+    throw new Error('[oAuth] getDummySignedRequest: no token');
+  return OAuth2RessourceOwnerPasswordClient.connection.signRequest('<dummy request>');
+}
+/**
+ * Returns an headers object containing only the authorisation header.
+ */
+export function getAuthHeader(): { Authorization : string } {
+  const ret = { Authorization: getDummySignedRequest().headers.get('Authorization') };
+  if (!ret.Authorization) throw new Error("[oAuth] getAuthHeader: empty auth header");
+  return ret as { Authorization: string };
+}
+
+/**
+ * Returns a signed request from an url or a request
+ */
+export function signRequest(requestInfo: RequestInfo): RequestInfo {
+  if (!OAuth2RessourceOwnerPasswordClient.connection)
+    throw new Error('[oAuth] signRequest: no token');
+
+  if (requestInfo instanceof Request) {
+    return getIsUrlSignable(requestInfo.url) ?
+      OAuth2RessourceOwnerPasswordClient.connection.signRequest(requestInfo) :
+      requestInfo;
+  } else { /* requestInfo is string */
+    return getIsUrlSignable(requestInfo) ?
+      OAuth2RessourceOwnerPasswordClient.connection.signRequest(requestInfo) :
+      requestInfo;
+  }
+}
+
+/**
+ * Returns a signed imageURISource from an url or an imageURISource
+ */
+export function signImageURISource(imageURISource: ImageURISource | string): ImageURISource | string {
+  if (!OAuth2RessourceOwnerPasswordClient.connection)
+    throw new Error('[oAuth] signImageURISource: no token');
+
+  if (typeof imageURISource === 'object') {
+    if (!imageURISource.uri) throw new Error('[oAuth] signImageURISource: no uri');
+    if (getIsUrlSignable(imageURISource.uri)) {
+      return {...imageURISource, headers: {...imageURISource.headers, ...getAuthHeader()}};
+    } else {
+      return imageURISource;
+    }
+  }
+  else { /* imageURISource is string */
+    if (getIsUrlSignable(imageURISource)) {
+      return { uri: imageURISource, headers: getAuthHeader() };
+    } else {
+      return imageURISource;
+    }
+  }
+}
+
+/**
+ * Returns a signed imageURISource from an url or an imageURISource for all images in the given array.
+ * @param images
+ */
+export function signImageURISourceArray(images: Array<{ src: ImageURISource | string; alt: string }>): Array<{ src: ImageURISource | string; alt: string }> {
+  return images.map(
+    im => ({ ...im, src: signImageURISource(im.src) })
+  );
+}
+
+// ============ DEPRECATED SECTION ============= //
 
 /**
  * Returns a image array with signed url requests.
  */
-export function signImagesUrls(
+export function DEPRECATED_signImagesUrls(
   images: Array<{ src: string; alt: string }>
 ): Array<{ src: ImageURISource; alt: string }> {
   return images.map(v => ({
     ...v,
-    src: signUrl(v.src)
+    src: DEPRECATED_signImageURISource(v.src)
   }));
 }
 
@@ -375,22 +542,23 @@ export function signImagesUrls(
  * Build a signed request from an url.
  * This function skip the signing if url points to an another web domain.
  */
-export function signUrl(url: string): ImageURISource {
+export function DEPRECATED_signImageURISource(url: string): ImageURISource {
+  if (!OAuth2RessourceOwnerPasswordClient.connection)
+    throw new Error('[oAuth] signUrl: no token')
   // console.log(url);
   // If there is a protocol AND url doen't contain plateform url, doesn't sign it.
   if (
     url.indexOf("://") !== -1 &&
-    url.indexOf(Conf.currentPlatform.url) === -1
+    url.indexOf((Conf.currentPlatform as any).url) === -1
   ) {
     // console.log("external image, not sign");
     return { uri: url };
   }
   // console.log("internal, signed");
-  return OAuth2RessourceOwnerPasswordClient.connection.sign({
-    method: "GET",
-    uri: url
-  });
+  return {
+    method: 'GET',
+    uri: url,
+    headers: getAuthHeader()
+  }
 }
 
-export const getAuthHeader = () =>
-  OAuth2RessourceOwnerPasswordClient.connection.sign({});

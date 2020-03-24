@@ -41,7 +41,7 @@ import { IConversationThread } from "../reducers/threadList";
 
 // Misc
 
-import { signImagesUrls } from "../../infra/oauth";
+import { DEPRECATED_signImagesUrls } from "../../infra/oauth";
 import ThreadInput from "./ThreadInput";
 import { Dispatch } from "redux";
 import { NavigationScreenProp } from "react-navigation";
@@ -163,7 +163,7 @@ export class ThreadPage extends React.PureComponent<
               startIndex={imageCurrent}
               visible={showCarousel}
               onClose={() => this.setState({ showCarousel: false })}
-              images={signImagesUrls(images)}
+            images={DEPRECATED_signImagesUrls(images)}
             />
 
             <FlatList

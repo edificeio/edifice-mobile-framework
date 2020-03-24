@@ -9,7 +9,7 @@ import { asyncGetJson } from "../../../infra/redux/async";
 import { IItems, IFiltersParameters, IFile, FilterId, IItem, ContentUri } from "../../types";
 import { filters } from "../../types/filters/helpers/filters";
 import Conf from "../../../../ode-framework-conf";
-import { OAuth2RessourceOwnerPasswordClient } from "../../../infra/oauth";
+import { OAuth2RessourceOwnerPasswordClient, getDummySignedRequest, getAuthHeader } from "../../../infra/oauth";
 import { progressAction, progressEndAction, progressInitAction } from "../../../infra/actions/progress";
 import { Platform, ToastAndroid } from "react-native";
 import I18n from "i18n-js";
@@ -92,7 +92,7 @@ export function getDocuments(parameters: IFiltersParameters): Promise<IItems<IIt
 // UPLOAD --------------------------------------------------------------------------------------
 
 export const uploadDocument = (dispatch: any, content: ContentUri[], onEnd: any) => {
-  const signedHeaders = OAuth2RessourceOwnerPasswordClient.connection.sign({}).headers;
+  const signedHeaders = getAuthHeader();
   const headers = { ...signedHeaders, "content-Type": "multipart/form-data" };
   const body = content.reduce(
     (acc, item, index) => [

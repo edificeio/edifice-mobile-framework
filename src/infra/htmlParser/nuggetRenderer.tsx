@@ -29,7 +29,7 @@ import {
   TextItalic,
   TextLink
 } from "../../ui/text";
-import { signImagesUrls, signUrl } from "../oauth";
+import { DEPRECATED_signImagesUrls, DEPRECATED_signImageURISource } from "../oauth";
 
 export enum HtmlParserJsxTextVariant {
   None = 0,
@@ -300,7 +300,7 @@ function renderParseImages(
   style: ViewStyle = {}
 ): JSX.Element {
   return (
-    <Images images={signImagesUrls(nugget.images)} key={key} style={style} />
+    <Images images={DEPRECATED_signImagesUrls(nugget.images)} key={key} style={style} />
   );
 }
 
@@ -317,7 +317,7 @@ function renderParseInlineImage(
 ): JSX.Element {
   return (
     <Image
-      source={signUrl(nugget.src)}
+      source={DEPRECATED_signImageURISource(nugget.src)}
       style={{
         height: 20,
         width: 20
