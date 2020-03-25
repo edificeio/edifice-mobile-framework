@@ -70,7 +70,7 @@ export class ConnectionTrackingBar extends React.Component<
         }).start();
       }
 
-      if (!this.props.visible && this.previousVisible) {
+      if (!this.props.visible && this.previousVisible && this.props.connected) {
         this.previousVisible = false;
         Animated.timing(this.state.fadeAnim, {
           toValue: 0,
