@@ -2,16 +2,21 @@ import { Dispatch } from "redux";
 
 import { fetchJSONWithCache, signedFetchJson } from "../../infra/fetchWithCache";
 import { resourceRightFilter } from "../../utils/resourceRights";
-import { createAsyncActionCreators } from "../../infra/redux/async2";
-import { publishableBlogsActionTypes as publishableBlogsActionTypes, IBlog, blogPublishActionTypes } from "../state/publishableBlogs";
+import { createAsyncActionCreators, AsyncState } from "../../infra/redux/async2";
+import { publishableBlogsActionTypes as publishableBlogsActionTypes, IBlog, blogPublishActionTypes, IBlogList } from "../state/publishableBlogs";
 import { fetchTimeline } from "./list";
 import { storedFilters } from "./storedFilters";
 import { mainNavNavigate } from "../../navigation/helpers/navHelper";
 import Conf from "../../../ode-framework-conf";
 
 export const publishableBlogsActions = createAsyncActionCreators<IBlog[]>(publishableBlogsActionTypes);
-export const fetchPublishableBlogsAction = () =>
+export const fetchPublishableBlogsAction = (optional: boolean = false) =>
   async (dispatch: Dispatch, getState: () => any) => {
+    const state = getState();
+    if (optional && (
+      !(state.timeline.publishableBlogs as AsyncState<IBlogList>).isPristine
+      || (state.timeline.publishableBlogs as AsyncState<IBlogList>).isFetching)
+    ) return;
     const api = `/blog/list/all`;
     try {
       dispatch(publishableBlogsActions.request());
@@ -39,8 +44,8 @@ export const publishBlogPostAction = (blog: IBlog, title: string, content: strin
       if (uploadedBlogPostDocuments) {
         const blogPostUploads = Object.values(uploadedBlogPostDocuments)
         const images = blogPostUploads.map(blogPostUpload => `<img src="${blogPostUpload.url}?thumbnail=2600x0" class="">`).join("")
-        const imagesHtml = 
-        `<p class="ng-scope" style="">
+        const imagesHtml =
+          `<p class="ng-scope" style="">
           <span contenteditable="false" class="image-container ng-scope" style="">
             ${images}
           </span>
@@ -58,7 +63,7 @@ export const publishBlogPostAction = (blog: IBlog, title: string, content: strin
         })
       });
 
-      api = `${Conf.currentPlatform.url}/blog/post/publish/${blog._id}/${(result1 as {_id: string})._id}`;
+      api = `${Conf.currentPlatform.url}/blog/post/publish/${blog._id}/${(result1 as { _id: string })._id}`;
       apiOpts = { method: 'PUT' };
       const result2 = await signedFetchJson(api, apiOpts);
 

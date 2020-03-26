@@ -190,7 +190,7 @@ export default connect(
       mainNavNavigate('createPost', { blog, postType });
     },
     onDidFocus: () => {
-      dispatch(fetchPublishableBlogsAction());
+      // dispatch(fetchPublishableBlogsAction());
     },
     onRefresh: () => {
       dispatch(fetchPublishableBlogsAction());

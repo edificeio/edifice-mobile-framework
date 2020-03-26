@@ -26,6 +26,7 @@ import { CommonStyles } from "../../styles/common/styles";
 import { TempFloatingAction } from "../../ui/FloatingButton";
 import { Header } from "../../ui/headers/Header";
 import { PinchGestureHandler, State } from "react-native-gesture-handler";
+import { AsyncState } from "../../infra/redux/async2";
 
 interface ITimelineProps {
   isFetching: boolean;
@@ -38,7 +39,8 @@ interface ITimelineProps {
   fetchFailed: boolean;
   isAuthenticated: boolean;
   legalapps: any;
-  hasCreationRightsMap: { [app in 'blog' | 'news']: boolean }
+  hasCreationRightsMap: { [app in 'blog' | 'news']: boolean };
+  onMount: () => void;
 }
 
 // tslint:disable-next-line:max-classes-per-file
@@ -66,6 +68,7 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
         this.props.legalapps
       );
     }
+    this.props.onMount && this.props.onMount();
   }
 
   public nextPage() {
@@ -298,13 +301,14 @@ export default connect(
     isAuthenticated: state.user.auth.loggedIn,
     legalapps: state.user.auth.apps,
     hasCreationRightsMap: state.user.auth.loggedIn && {
-      blog: state.user.info.authorizedActions.find(e => e.name === 'org.entcore.blog.controllers.BlogController|publish'),
-      news: state.user.info.authorizedActions.find(e => e.name === 'net.atos.entng.actualites.controllers.ThreadController|createThread') // ToDo : Is this the right authorizedAction ?
+      blog: () => (state.timeline.publishableBlogs as AsyncState<IBlogList>).data.length as unknown as boolean,
+      news: () => false // ToDo
     }
   }),
   (dispatch: ThunkDispatch<any, any, any>) => ({
     fetch: availableApps => fetchTimeline(dispatch)(availableApps),
     sync: (page: number, availableApps, legalapps) =>
-      listTimeline(dispatch)(page, availableApps, legalapps)
+      listTimeline(dispatch)(page, availableApps, legalapps),
+    onMount: () => { dispatch(fetchPublishableBlogsAction(true)) }
   })
 )(Timeline);
