@@ -250,7 +250,7 @@ INewsContentPageProps,
                     shadowColor: "#6B7C93",
                     shadowOffset: { width: 0, height: 2 },
                     shadowOpacity: 0.2,
-                    elevation: 5,
+                    elevation: 2,
                   }}
                 >
                   <Icon
