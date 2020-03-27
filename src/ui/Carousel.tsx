@@ -32,9 +32,10 @@ const Close = style(TouchableOpacity)({
   height: 40,
   justifyContent: "center",
   position: "absolute",
-  right: 0,
+  right: 5,
   top: Platform.OS === "ios" ? hasNotch() ? iosStatusBarHeight + 20 : 20 : 0,
-  width: 40
+  width: 40,
+  backgroundColor: "rgba(0,0,0,0.3)",
 });
 
 const UnavailableImage = () => (

@@ -188,7 +188,7 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
                 }}
               >
                 <TouchableOpacity
-                  style={{ alignItems: "center", justifyContent: "center", flexDirection: imagesAdded ? "row" : "column" }}
+                  style={{ alignItems: "center", justifyContent: "center", flexDirection: imagesAdded ? "row" : "column", marginVertical: 10 }}
                   onPress={() => {
                     pickFile(true)
                       .then(selectedImage => {
@@ -218,7 +218,7 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
                                 shadowColor: "#6B7C93",
                                 shadowOffset: { width: 0, height: 2 },
                                 shadowOpacity: 0.8,
-                                elevation: 20,
+                                elevation: 10,
                                 backgroundColor: "white",
                                 marginRight: index === images.length - 1 ? 15 : 30,
                               }}
