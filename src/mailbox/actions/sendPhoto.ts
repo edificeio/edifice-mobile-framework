@@ -17,12 +17,11 @@ import {
   actionTypeMessageSent 
 } from "./sendMessage";
 import { getSessionInfo } from "../../AppStore";
+import { conversationThreadSelected } from "./threadSelected";
 
 export const sendPhoto = dispatch => async (data: IConversationMessage) => {
   const uri = await takePhoto();
-
   const newuuid = "tmp-" + generateUuid();
-
   const fulldata = {
     ...data,
     body: `<div><img src="${uri}" /></div>`,
@@ -89,6 +88,8 @@ export const sendPhoto = dispatch => async (data: IConversationMessage) => {
       data: fulldata2,
       type: actionTypeMessageSent
     });
+
+    fulldata2.threadId.startsWith("tmp-") && dispatch(conversationThreadSelected(fulldata2.newId));
   } catch (e) {
     // tslint:disable-next-line:no-console
     console.warn(e);

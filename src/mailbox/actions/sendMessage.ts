@@ -8,6 +8,7 @@ import Tracking from "../../tracking/TrackingManager";
 import mailboxConfig from "../config";
 import { IArrayById } from "../../infra/collections";
 import { getSessionInfo } from "../../AppStore";
+import { conversationThreadSelected } from "./threadSelected";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -48,10 +49,7 @@ export const actionTypeMessageSendError = mailboxConfig.createActionType("SEND_F
 
 export function sendMessage(data: IConversationMessage) {
   return async (dispatch, getState) => {
-    // console.log(getState().mailbox);
-    // console.log("1/ trigger send message", data);
     const newuuid = "tmp-" + generateUuid();
-    // console.log("uuid:", newuuid);
     const fulldata = {
       ...data,
       date: moment(),
@@ -59,26 +57,25 @@ export function sendMessage(data: IConversationMessage) {
       id: newuuid,
       status: ConversationMessageStatus.sending
     };
-    // console.log("uuid 2e démarque:", newuuid);
-    // console.log("2/ dispatch sent message requested", fulldata);
+
     dispatch({
       data: fulldata,
       type: actionTypeMessageSendRequested
     });
-    // console.log(getState().mailbox);
 
     try {
       let replyTo = "";
       if (fulldata.parentId) {
         replyTo = "In-Reply-To=" + fulldata.parentId;
       }
+
       const requestbody = {
         body: fulldata.body,
         cc: fulldata.cc,
         subject: fulldata.subject,
         to: fulldata.to
       };
-      // console.log("3/ sent request to the server", requestbody, replyTo);
+
       if (!Conf.currentPlatform) throw new Error("must specify a platform");
       const response = await signedFetch(
         `${Conf.currentPlatform.url}${mailboxConfig.appInfo.prefix}/send?${replyTo}`,
@@ -91,13 +88,14 @@ export function sendMessage(data: IConversationMessage) {
           method: "POST"
         }
       );
+
       const json = await response.json();
-      // console.log("4/ server response :", json);
 
       Tracking.logEvent("sentMessage", {
         length: fulldata.body.length - 9,
         nbRecipients: fulldata.to.length + (fulldata.cc || []).length
       });
+
       const fulldata2 = {
         ...fulldata,
         date: moment(),
@@ -107,12 +105,13 @@ export function sendMessage(data: IConversationMessage) {
         parentId: fulldata.parentId,
         threadId: fulldata.threadId
       };
-      // console.log("6/ dispatch sent message :", fulldata2);
+
       dispatch({
         data: fulldata2,
         type: actionTypeMessageSent
       });
-      // console.log("7/ Ok :", getState().mailbox);
+      
+      fulldata2.threadId.startsWith("tmp-") && dispatch(conversationThreadSelected(fulldata2.newId));
     } catch (e) {
       // tslint:disable-next-line:no-console
       console.warn(e);

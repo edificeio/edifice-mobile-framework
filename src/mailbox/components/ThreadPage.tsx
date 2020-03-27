@@ -136,14 +136,17 @@ export class ThreadPage extends React.PureComponent<
       images
     } = this.state;
     //TODO get focus from thread input + send action when press (should threadinputreceiver in threadinput?)
-    return !threadInfo 
-      ? <View /> 
-      : (
-          <KeyboardAvoidingView
-            style={{ flex: 1 }}
-            behavior={Platform.OS === "ios" ? "padding" : undefined}
-            keyboardVerticalOffset={headerHeight}
-          >
+    return !threadInfo
+    ? <View />
+    : (
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        keyboardVerticalOffset={headerHeight}
+      >
+        {threadInfo.isFetchingFirst
+          ? <Loading />
+          :
             <FlatList
               refreshControl={
                 <RefreshControl
@@ -171,14 +174,15 @@ export class ThreadPage extends React.PureComponent<
                 this.onEndReachedCalledDuringMomentum = false;
               }}
             />
-            <ThreadInput
-              emptyThread={!messages.length}
-              displayPlaceholder={!isFetchingFirst}
-              onReceiversTap={this.handleTapReceivers}
-              {...this.props}
-            />
-          </KeyboardAvoidingView>
-        );
+        }
+        <ThreadInput
+          emptyThread={!messages.length}
+          displayPlaceholder={!isFetchingFirst}
+          onReceiversTap={this.handleTapReceivers}
+          {...this.props}
+        />
+      </KeyboardAvoidingView>
+    );
   }
 
   public renderMessageItem(message: IConversationMessage) {

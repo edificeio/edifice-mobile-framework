@@ -35,7 +35,7 @@ const mapStateToProps: (state: any) => IThreadPageDataProps = state => {
       selectedThreadId
     ];
   // console.log("display thread", localState, selectedThreadId, selectedThread);
-  const messages: IConversationMessage[] = selectedThread.messages.map(
+  const messages: IConversationMessage[] = selectedThread && selectedThread.messages.map(
     messageId => localState.data[messageId]
     );
   const headerHeight = state.ui.headerHeight; // TODO: Ugly.
@@ -43,9 +43,9 @@ const mapStateToProps: (state: any) => IThreadPageDataProps = state => {
   // Format props
   return {
     headerHeight,
-    isFetching: selectedThread.isFetchingOlder,
-    isRefreshing: selectedThread.isFetchingNewer,
-    isFetchingFirst: selectedThread.isFetchingFirst,
+    isFetching: selectedThread && selectedThread.isFetchingOlder,
+    isRefreshing: selectedThread && selectedThread.isFetchingNewer,
+    isFetchingFirst: selectedThread && selectedThread.isFetchingFirst,
     messages,
     threadInfo: selectedThread
   };

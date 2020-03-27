@@ -2,6 +2,13 @@ import I18n from "i18n-js";
 import * as React from "react";
 import { connect } from "react-redux";
 import { Platform  } from "react-native";
+import { 
+  NavigationScreenProp,
+  NavigationEventPayload,
+  NavigationCompleteTransitionAction,
+  withNavigationFocus 
+} from "react-navigation";
+
 import {
   IThreadListPageDataProps,
   IThreadListPageEventProps,
@@ -9,7 +16,6 @@ import {
   ThreadListPage
 } from "../components/ThreadListPage";
 import mailboxConfig from "../config";
-
 import {
   conversationDeleteThread,
   conversationSetThreadRead,
@@ -21,7 +27,6 @@ import { fetchConversationThreadResetMessages } from "../actions/apiHelper";
 
 import { removeAccents } from "../../utils/string";
 import { findReceivers2 } from "../components/ThreadItem";
-import { NavigationScreenProp, NavigationEventPayload, NavigationCompleteTransitionAction } from "react-navigation";
 import { standardNavScreenOptions, alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderAction } from "../../ui/headers/NewHeader";
 import { SearchBar } from "../../ui/SearchBar";
@@ -49,20 +54,21 @@ const sanifyQuery = (filter: string) => removeAccents(filter.toLowerCase());
 
 const mapStateToProps: (state: any) => IThreadListPageDataProps = state => {
   // Extract data from state
-  const localState = state[mailboxConfig.reducerName].threadList;
+  const mailboxState = state[mailboxConfig.reducerName]
+  const localState = mailboxState.threadList;
   try {
     return {
       isFetching: localState.isFetching,
       isRefreshing: localState.data.isRefreshing,
       page: localState.data.page,
-      threads: localState.data.ids.map((threadId: string) => localState.data.byId[threadId])
+      threads: localState.data.ids.map((threadId: string) => localState.data.byId[threadId]),
     };
   } catch (e) {
     return {
       isFetching: false,
       isRefreshing: false,
       page: 0,
-      threads: []
+      threads: [],
     };
   }
 };
@@ -80,8 +86,10 @@ const mapDispatchToProps: (
     },
     onOpenThread: (threadId: string) => {
       dispatch(conversationThreadSelected(threadId));
-      dispatch(fetchConversationThreadResetMessages(threadId));
-      dispatch(conversationSetThreadRead(threadId));
+      if (!threadId.startsWith("tmp-")) {
+        dispatch(fetchConversationThreadResetMessages(threadId));
+        dispatch(conversationSetThreadRead(threadId));
+      }
     }
   };
 };
@@ -210,4 +218,4 @@ class ThreadListPageContainer extends React.PureComponent<
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(ThreadListPageContainer);
+)(withNavigationFocus(ThreadListPageContainer));

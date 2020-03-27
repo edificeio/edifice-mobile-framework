@@ -185,15 +185,24 @@ const conversationThreadListReducer = (
       if (index !== -1) {
         msglist[index] = action.data.newId;
       }
+      const idsWithoutThreadId = state.ids.filter(id => id !== action.data.threadId);
+      const updatedThread = { ...state.byId[action.data.threadId], messages: msglist, id: action.data.newId };
+      const isTemporaryThread = action.data.threadId.startsWith("tmp-");
+      isTemporaryThread && delete state.byId[action.data.threadId]
       return {
         ...state,
-        byId: {
-          ...state.byId,
-          [action.data.threadId]: {
-            ...state.byId[action.data.threadId],
-            messages: msglist
-          }
-        }
+        byId: isTemporaryThread
+          ? 
+            { [action.data.newId]: updatedThread, ...state.byId }
+          :
+            {
+              ...state.byId,
+              [action.data.threadId]: {
+                ...state.byId[action.data.threadId],
+                messages: msglist
+              }
+            },
+        ids: isTemporaryThread ? [action.data.newId, ...idsWithoutThreadId] : state.ids
       };
     case actionTypeThreadCreated:
       // console.log("reducer (threadList): create thread");

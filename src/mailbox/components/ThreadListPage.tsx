@@ -241,9 +241,12 @@ export class ThreadListPage extends React.PureComponent<
   public handleOpenThread(threadId: string) {
     const { threads, onOpenThread, navigation } = this.props;
     const threadInfo = threads!.find(el => el.id === threadId);
+
     if (!threadInfo) return;
+
     onOpenThread && onOpenThread(threadId);
     navigation.navigate("thread", { threadInfo });
+
     const isUnread = threadInfo.unread;
     Tracking.logEvent("readConversation", {
       unread: isUnread
