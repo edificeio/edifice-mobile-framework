@@ -240,7 +240,7 @@ INewsContentPageProps,
                   </View>
                 ) : null}
               </View>
-              {isCommentable && !isPristine ?
+              {isCommentable && !isPristine && selectedBlogComments.length > 0 ?
                 <ListItem
                   style={{ 
                     justifyContent: "flex-start",
