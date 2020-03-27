@@ -162,7 +162,7 @@ export default class SelectThreadInfos extends React.Component<
               <FieldName>{I18n.t("conversation-subjectPrefixInput")}</FieldName>
               <TextInput
                 ref={r => (this.input = r)}
-                style={{ flex: 1, minWidth: 100, height: 40, color: CommonStyles.textColor, paddingTop: 2 }}
+                style={{ flex: 1, minWidth: 100, height: 40, color: CommonStyles.textColor, paddingTop: Platform.OS === "ios" ? 2 : 12 }}
                 underlineColorAndroid={"transparent"}
                 value={subjectText}
                 onChangeText={text => this.selectSubject(text)}
