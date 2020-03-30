@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     ...getMenuShadow()
   },
   button: {
-    position: Platform.OS === "ios" ? "absolute" : "absolute",
+    position: "absolute",
     right: 20,
     top: Platform.OS === "ios" ? hasNotch() ? iosStatusBarHeight + 44 : 44 : 22,
   },

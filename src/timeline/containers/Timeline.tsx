@@ -249,22 +249,6 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
           <View style={{ width: 60 }}/>
         </Header>
         <ConnectionTrackingBar />
-        {/* <PinchGestureHandler
-        onGestureEvent={this.onZoomEvent}
-        onHandlerStateChange={this.onZoomStateChange}>
-        <Animated.Image
-          source={{
-            uri:
-              'https://images.pexels.com/photos/104827/cat-pet-animal-domestic-104827.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'
-          }}
-          style={{
-            width: 400,
-            height: 400,
-            transform: [{ scale: this.scale }]
-          }}
-          resizeMode='contain'
-        />
-      </PinchGestureHandler> */}
         {isFetching ? this.renderLoading() : this.renderList(news)}
         {this.props.hasCreationRightsMap.blog ?
           <TempFloatingAction
