@@ -132,7 +132,7 @@ export class ShowMore<T> extends React.Component<IShowMoreProps<T>, IShowMoreSta
         const children: JSX.Element[] = [];
         for (let i = 0; i < max; i++) {
             const isLatest = i == (max - 1);
-            const value = `${data[i]}${isLatest ? "" : ", "}`
+            const value = `${data[i]}`;
             const child = renderItem(i, value, { maxWidth: isLatest ? lastMaxWidth : undefined });
             if (measured) {
                 children.push(child);
@@ -160,9 +160,9 @@ export class ShowMore<T> extends React.Component<IShowMoreProps<T>, IShowMoreSta
         return <View
                     style={{
                         //hide component during layout
-                        transform: measured ? [] : [{
-                            translateX: screenWidth * 10
-                        }],
+                        // transform: measured ? [] : [{
+                        //     translateX: screenWidth * 10
+                        // }],
                         opacity: measured ? 1 : 0,
                         flex: measured ? undefined : 1,
                         maxHeight: measured ? maxHeight : undefined,
@@ -170,7 +170,7 @@ export class ShowMore<T> extends React.Component<IShowMoreProps<T>, IShowMoreSta
                         flexDirection: "row",
                         flexWrap: "nowrap",
                         overflow: "hidden",
-                        alignItems: "flex-end"
+                        alignItems: "center"
                     }} 
                     onLayout={!measured && this.onLayoutParent}
                 >
