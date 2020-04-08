@@ -26,11 +26,11 @@ const containerBar: ViewStyle = {
 };
 
 const HeaderStyle = style(SafeAreaView)({
-  justifyContent: "flex-start",
-  paddingTop: Platform.OS === "ios" ? iosStatusBarHeight : 0,
   flexDirection: "row",
-  backgroundColor: CommonStyles.mainColorTheme,
+  justifyContent: "flex-start",
   alignItems: "center",
+  backgroundColor: CommonStyles.mainColorTheme,
+  paddingTop: Platform.OS === "ios" ? iosStatusBarHeight : 0,
   height: Platform.OS === "ios" ? hasNotch() ? 100 : 76 : undefined
 });
 

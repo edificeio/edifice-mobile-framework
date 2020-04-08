@@ -1,6 +1,6 @@
 import style from "glamorous-native";
 import * as React from "react";
-import { Keyboard } from "react-native";
+import { Keyboard, Platform } from "react-native";
 import { CommonStyles } from "../styles/common/styles";
 import { Header, HeaderIcon } from "./headers/Header";
 import { CloseIcon, SearchIcon } from "./icons/SearchIcon";
@@ -50,7 +50,7 @@ const TextInput = style.textInput(
     flex: 1,
     fontFamily: CommonStyles.primaryFontFamily,
     fontSize: 18,
-    marginLeft: 8
+    marginLeft: Platform.OS === "ios" ? 10 : 0
   },
   ({ value }) => ({
     fontWeight: value.length === 0 ? Weight.Light : Weight.Normal

@@ -114,13 +114,15 @@ export class ThreadListPage extends React.PureComponent<
       : this.renderThreadList();
 
     return (
-      <PageContainer>
+      // <PageContainer>
+      <>
         <ConnectionTrackingBar />
         <ModalBox backdropOpacity={0.5} isVisible={this.state.showDeleteModal}>
           {this.renderDeleteModal(this.state.swipedThreadId)}
         </ModalBox>
         {pageContent}
-      </PageContainer>
+      </>
+      // </PageContainer>
     );
   }
 

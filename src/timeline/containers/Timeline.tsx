@@ -25,7 +25,6 @@ import { IBlogList } from "../state/publishableBlogs";
 import { CommonStyles } from "../../styles/common/styles";
 import { TempFloatingAction } from "../../ui/FloatingButton";
 import { Header } from "../../ui/headers/Header";
-import { PinchGestureHandler, State } from "react-native-gesture-handler";
 import { AsyncState } from "../../infra/redux/async2";
 
 interface ITimelineProps {
@@ -184,28 +183,6 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
     return <Loading />;
   }
 
-  scale = new Animated.Value(1)
-
-  onZoomEvent = Animated.event(
-    [
-      {
-        nativeEvent: { scale: this.scale }
-      }
-    ],
-    {
-      useNativeDriver: true
-    }
-  )
-
-  onZoomStateChange = event => {
-    if (event.nativeEvent.oldState === State.ACTIVE) {
-      Animated.spring(this.scale, {
-        toValue: 1,
-        useNativeDriver: true
-      }).start()
-    }
-  }
-
   public render() {
     const { isFetching, fetchFailed, availableApps, navigation } = this.props;
     let { news } = this.props;
@@ -252,6 +229,7 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
         {isFetching ? this.renderLoading() : this.renderList(news)}
         {this.props.hasCreationRightsMap.blog ?
           <TempFloatingAction
+            iconName="new_post"
             menuItems={
               [{
                 text: I18n.t('createPost-menu-blog'),

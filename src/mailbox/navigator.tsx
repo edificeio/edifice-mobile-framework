@@ -6,7 +6,11 @@ import ReceiverListPage from "./containers/ReceiverListPage";
 
 export default createStackNavigator({
   listThreads: {
-    screen: ThreadListPage
+    screen: ThreadListPage,
+    navigationOptions: {
+      header: null,
+      headerStyle: { }
+    }
   },
   thread: {
     screen: ThreadPage

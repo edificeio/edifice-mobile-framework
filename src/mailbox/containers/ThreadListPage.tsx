@@ -1,7 +1,7 @@
 import I18n from "i18n-js";
 import * as React from "react";
 import { connect } from "react-redux";
-import { Platform  } from "react-native";
+import { Platform, View, Text } from "react-native";
 import { 
   NavigationScreenProp,
   NavigationEventPayload,
@@ -31,6 +31,10 @@ import { standardNavScreenOptions, alternativeNavScreenOptions } from "../../nav
 import { HeaderAction } from "../../ui/headers/NewHeader";
 import { SearchBar } from "../../ui/SearchBar";
 import { hasNotch } from "react-native-device-info";
+import { TempFloatingAction } from "../../ui/FloatingButton";
+import { PageContainer } from "../../ui/ContainerContent";
+import { Header } from "../../ui/headers/Header";
+import { CommonStyles } from "../../styles/common/styles";
 
 // Search query tools
 
@@ -101,50 +105,50 @@ class ThreadListPageContainer extends React.PureComponent<
 
   // Header definition ----------------------------------------------------------------------------
 
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
-    return !navigation.getParam('isSearching', false) ?
-      standardNavScreenOptions({
-        title: I18n.t("Conversation"),
-        headerLeft: <HeaderAction // ToDo : Hide if data is empty
-          onPress={() => { navigation.setParams({ isSearching: true }) }}
-          name="search"
-        />,
-        headerRight: <HeaderAction
-          onPress={() => { navigation.getParam('onNewThread') && navigation.getParam('onNewThread')() }}
-          name="new_message"
-          primary
-          style={{ marginTop: Platform.OS === "ios" ? hasNotch() ? 0 : 4 : 2 }}
-        />,
-        headerLeftContainerStyle: {
-          alignItems: "flex-start"
-        },
-        headerRightContainerStyle: {
-          alignItems: "flex-start"
-        },
-        headerTitleContainerStyle: {
-          alignItems: "flex-start",
-          height: 55.667 // 🍔 Big (M)hack of the death of the world. The `alignItems` property doesn't seem to work here.
-        }
-      },
-        navigation) :
-      alternativeNavScreenOptions({
-        headerTitle: <SearchBar
-          onChange={search => { navigation.setParams({ query: search }) }}
-          text={navigation.getParam('query', '')}
-          autoFocus={true}
-        />,
-        headerLeft: <HeaderAction
-          onPress={() => { return }}
-          name="search"
-          disabled
-        />,
-        headerRight: <HeaderAction
-          onPress={() => { navigation.getParam('onResetSearch') && navigation.getParam('onResetSearch')() }}
-          name="close"
-        />,
-      },
-        navigation);
-  }
+  // static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
+  //   return !navigation.getParam('isSearching', false) ?
+  //     standardNavScreenOptions({
+  //       title: I18n.t("Conversation"),
+  //       headerLeft: <HeaderAction // ToDo : Hide if data is empty
+  //         onPress={() => { navigation.setParams({ isSearching: true }) }}
+  //         name="search"
+  //       />,
+  //       headerRight: <HeaderAction
+  //         onPress={() => { navigation.getParam('onNewThread') && navigation.getParam('onNewThread')() }}
+  //         name="new_message"
+  //         primary
+  //         style={{ marginTop: Platform.OS === "ios" ? hasNotch() ? 0 : 4 : 2 }}
+  //       />,
+  //       headerLeftContainerStyle: {
+  //         alignItems: "flex-start"
+  //       },
+  //       headerRightContainerStyle: {
+  //         alignItems: "flex-start"
+  //       },
+  //       headerTitleContainerStyle: {
+  //         alignItems: "flex-start",
+  //         height: 55.667 // 🍔 Big (M)hack of the death of the world. The `alignItems` property doesn't seem to work here.
+  //       }
+  //     },
+  //       navigation) :
+  //     alternativeNavScreenOptions({
+  //       headerTitle: <SearchBar
+  //         onChange={search => { navigation.setParams({ query: search }) }}
+  //         text={navigation.getParam('query', '')}
+  //         autoFocus={true}
+  //       />,
+  //       headerLeft: <HeaderAction
+  //         onPress={() => { return }}
+  //         name="search"
+  //         disabled
+  //       />,
+  //       headerRight: <HeaderAction
+  //         onPress={() => { navigation.getParam('onResetSearch') && navigation.getParam('onResetSearch')() }}
+  //         name="close"
+  //       />,
+  //     },
+  //       navigation);
+  // }
 
   // ----------------------------------------------------------------------------------------------
 
@@ -196,6 +200,8 @@ class ThreadListPageContainer extends React.PureComponent<
   }
 
   public render() {
+    const { navigation } = this.props;
+    const isSearching = navigation.getParam('isSearching', false);
     const query = sanifyQuery(this.props.navigation.getParam('query', ''));
     let filteredThreads = this.props.threads;
     if (this.props.navigation.getParam('isSearching', false) && query) {
@@ -205,12 +211,59 @@ class ThreadListPageContainer extends React.PureComponent<
         : []
     }
     return (
-      <ThreadListPage
-        {...this.props}
-        threads={filteredThreads}
-        onNextPage={this.fetchNextPage.bind(this)}
-        onRefresh={this.reloadList.bind(this)}
-      />
+      <PageContainer>
+        <Header>
+          <HeaderAction
+            onPress={() => { isSearching ? null : navigation.setParams({ isSearching: true }) }}
+            name="search"
+            disabled={isSearching}
+          />
+          {isSearching ?
+            <>
+              <SearchBar
+                onChange={search => { navigation.setParams({ query: search }) }}
+                text={navigation.getParam('query', '')}
+                autoFocus={true}
+              />
+              <HeaderAction
+                onPress={() => { navigation.getParam('onResetSearch') && navigation.getParam('onResetSearch')() }}
+                name="close"
+              />
+            </>
+          : 
+            <>
+              <Text
+                style={{
+                  alignSelf: "center",
+                  color: "white",
+                  fontFamily: CommonStyles.primaryFontFamily,
+                  fontSize: 16,
+                  fontWeight: "400",
+                  textAlign: "center",
+                  flex: 1
+                }}
+              >
+                {I18n.t("Conversation")}
+              </Text>
+              <View style={{ width: 60 }}/>
+            </>
+          }
+        </Header>
+        <ThreadListPage
+          {...this.props}
+          threads={filteredThreads}
+          onNextPage={this.fetchNextPage.bind(this)}
+          onRefresh={this.reloadList.bind(this)}
+        />
+        {!isSearching &&
+          <TempFloatingAction
+            iconName="new_message"
+            iconSize={20}
+            onEvent={() => { navigation.getParam('onNewThread') && navigation.getParam('onNewThread')() }}
+            selected={[]}
+          />
+        }
+      </PageContainer>
     );
   }
 }
