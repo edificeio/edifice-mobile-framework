@@ -131,7 +131,7 @@ android {
         applicationId APPID
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 00040400
+        versionCode 00040401
         versionName "0.4.4"
         resValue "string", "app_name", "${APPNAME}"
         manifestPlaceholders = [ applicationName: APPNAME ]
