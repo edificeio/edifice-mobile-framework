@@ -14,7 +14,7 @@ import Permissions from "react-native-permissions";
 
 import { CommonStyles } from "../../styles/common/styles";
 
-import { DEPRECATED_signImageURISource, getDummySignedRequest } from "../../infra/oauth";
+import { getAuthHeader } from "../../infra/oauth";
 
 import Filesize from "filesize";
 import Mime from "mime";
@@ -273,7 +273,7 @@ export default class ThreadMessageAttachment extends React.PureComponent<
           `${Conf.currentPlatform.url}/conversation/message/${
             this.props.messageId
           }/attachment/${this.props.attachment.id}`,
-          getDummySignedRequest()["headers"]
+          getAuthHeader()
         )
         .progress((received, total) => {
           // console.log("progress", received, att.size);
@@ -297,7 +297,7 @@ export default class ThreadMessageAttachment extends React.PureComponent<
           `${Conf.currentPlatform.url}/conversation/message/${
             this.props.messageId
           }/attachment/${this.props.attachment.id}`,
-          getDummySignedRequest()["headers"]
+          getAuthHeader()
         )
         .progress((received, total) => {
           // console.log("progress", received, att.size);

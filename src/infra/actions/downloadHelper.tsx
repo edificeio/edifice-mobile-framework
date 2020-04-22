@@ -3,9 +3,20 @@ import Mime from "mime";
 import Permissions from "react-native-permissions";
 import RNFetchBlob, {FetchBlobResponse} from "rn-fetch-blob";
 import Conf from "../../../ode-framework-conf";
-import {getDummySignedRequest} from "../oauth";
-import {IFile} from "../../workspace/types";
-import {platform} from "os";
+import { getAuthHeader } from "../oauth";
+import { IFile } from "../../workspace/types";
+
+export const downloadFiles = (downloadable: Array<IFile>, withManager = true) => {
+  downloadable.map(document => downloadFile(document, withManager));
+};
+
+export const downloadFile = (downloadable: IFile, withManager = true) => {
+  if (Platform.OS === "ios") {
+    startDownload(downloadable, withManager).then(res => openDownloadedFile(res.path()));
+  } else {
+    startDownload(downloadable, withManager);
+  }
+};
 
 export const startDownload = async (downloadable: IFile, withManager = true): Promise<FetchBlobResponse> => {
   let path = await getDirName() + '/' + downloadable.filename;
@@ -24,9 +35,11 @@ export const startDownload = async (downloadable: IFile, withManager = true): Pr
       appendExt: getExtension(downloadable.filename)
     };
 
-  return RNFetchBlob
-    .config(config)
-    .fetch("GET", Conf.currentPlatform.url + downloadable.url, getDummySignedRequest()["headers"])
+  return RNFetchBlob.config(config).fetch(
+    "GET",
+    (Conf.currentPlatform as any).url + downloadable.url,
+    getAuthHeader()
+  );
 };
 
 export const openPreview = async (downloadable: IFile) => {
@@ -36,12 +49,10 @@ export const openPreview = async (downloadable: IFile) => {
 };
 
 export const downloadOnCache = async (downloadable: IFile): Promise<FetchBlobResponse> => {
-  return await RNFetchBlob
-    .config({
-      fileCache: true,
-      appendExt: getExtension(downloadable.filename)
-    })
-    .fetch("GET", Conf.currentPlatform.url + downloadable.url, getDummySignedRequest()["headers"]);
+  return await RNFetchBlob.config({
+    fileCache: true,
+    appendExt: getExtension(downloadable.filename),
+  }).fetch("GET", (Conf.currentPlatform as any).url + downloadable.url, getAuthHeader());
 };
 
 export const openDownloadedFile = (filepath: string): void => {
