@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import RNFetchBlob from "rn-fetch-blob";
 const dirs = RNFetchBlob.fs.dirs;
-import Permissions from "react-native-permissions";
+import Permissions, { PERMISSIONS } from "react-native-permissions";
 
 import { CommonStyles } from "../../styles/common/styles";
 
@@ -253,7 +253,7 @@ export default class ThreadMessageAttachment extends React.PureComponent<
     // console.log("start download");
     // console.log(Permissions);
     if (Platform.OS === "android") {
-      await Permissions.request("storage");
+      await Permissions.request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
     }
 
     Tracking.logEvent("downloadAttachments");
