@@ -123,11 +123,6 @@ export default class HtmlParserRN extends HtmlParserAbstract<
   protected firstWord: boolean = true;
 
   /**
-   * Computed thumbnail size for images
-   */
-  protected thumbnailSizeQuery?: string;
-
-  /**
    * Current link to url
    */
   protected currentLink?: string = null;
@@ -152,8 +147,6 @@ export default class HtmlParserRN extends HtmlParserAbstract<
       variant: HtmlParserJsxTextVariant.None
     };
     this.insertNewTextNugget(allTextWrapper);
-    const { height, width } = Dimensions.get("window");
-    this.thumbnailSizeQuery = `?thumbnail=${Math.ceil(width)}x0`;
     return html;
   };
 
@@ -544,7 +537,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
           src = Conf.currentPlatform.url + src;
         }
         const split = src.split("?");
-        src = split[0] + this.thumbnailSizeQuery;
+        src = split[0];
       }
       const img: IImageComponentAttributes = {
         alt: tag.attrs.alt,

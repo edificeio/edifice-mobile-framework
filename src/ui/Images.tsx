@@ -7,7 +7,8 @@ import {
   View,
   ViewStyle,
   ImageProps,
-  ImageURISource
+  ImageURISource,
+  useWindowDimensions
 } from "react-native";
 import { withNavigation } from 'react-navigation';
 
@@ -97,6 +98,7 @@ class Images extends React.Component<
     images: Array<{ src: ImageURISource; alt: string; linkTo?: string }>;
     style?: ViewStyle;
     navigation: any;
+    windowDimensions: any;
   },
   any
 > {
@@ -107,10 +109,19 @@ class Images extends React.Component<
   }
 
   public images() {
-    const { width } = Dimensions.get("window");
-    const { images } = this.props;
-
+    const { images, windowDimensions } = this.props;
+    const scale = windowDimensions.scale;
+    const width = windowDimensions.width;
     const heightRatio = width * 0.6;
+    const getThumbnailWidth = (isFullWidth?: boolean) => {
+      const pixelWidth = isFullWidth ? width * scale : (width * scale)/2;
+      const breakpoints = [750, 1080, 1440];
+      return breakpoints.find(b => pixelWidth < b) || breakpoints[breakpoints.length-1];
+    }
+    const getImageSource = (imageSrc, isFullWidth?: boolean) => {
+      const newUri = imageSrc.uri?.split("?")[0] + `?thumbnail=${getThumbnailWidth(isFullWidth)}x0`;
+      return { ...imageSrc, uri: newUri };
+    }
 
     if (images.length === 0) return <View />;
     if (images.length === 1) {
@@ -119,7 +130,7 @@ class Images extends React.Component<
           style={{ height: heightRatio }}
           onPress={() => this.openImage(0)}
         >
-          <StretchImage source={images[0].src} />
+          <StretchImage source={getImageSource(images[0].src, true)} />
         </SoloImage>
       );
     }
@@ -131,7 +142,7 @@ class Images extends React.Component<
               style={{ height: heightRatio }}
               onPress={() => this.openImage(0)}
             >
-              <StretchImage source={images[0].src} />
+              <StretchImage source={getImageSource(images[0].src)} />
             </SoloImage>
           </Column>
           <Column style={{ paddingLeft: 5 }}>
@@ -139,7 +150,7 @@ class Images extends React.Component<
               style={{ height: heightRatio }}
               onPress={() => this.openImage(1)}
             >
-              <StretchImage source={images[1].src} />
+              <StretchImage source={getImageSource(images[1].src)} />
             </SoloImage>
           </Column>
         </Row>
@@ -153,7 +164,7 @@ class Images extends React.Component<
               style={{ height: heightRatio }}
               onPress={() => this.openImage(0)}
             >
-              <StretchImage source={images[0].src} />
+              <StretchImage source={getImageSource(images[0].src)} />
             </SoloImage>
           </Column>
           <Column style={{ paddingLeft: 5 }}>
@@ -161,13 +172,13 @@ class Images extends React.Component<
               style={{ height: heightRatio / 2 - 5 }}
               onPress={() => this.openImage(1)}
             >
-              <StretchImage source={images[1].src} />
+              <StretchImage source={getImageSource(images[1].src)} />
             </QuarterImage>
             <QuarterImage
               style={{ height: heightRatio / 2 - 5 }}
               onPress={() => this.openImage(2)}
             >
-              <StretchImage source={images[2].src} />
+              <StretchImage source={getImageSource(images[2].src)} />
             </QuarterImage>
           </Column>
         </Row>
@@ -181,13 +192,13 @@ class Images extends React.Component<
               style={{ height: heightRatio / 2 - 5 }}
               onPress={() => this.openImage(0)}
             >
-              <StretchImage source={images[0].src} />
+              <StretchImage source={getImageSource(images[0].src)} />
             </QuarterImage>
             <QuarterImage
               style={{ height: heightRatio / 2 - 5 }}
               onPress={() => this.openImage(2)}
             >
-              <StretchImage source={images[2].src} />
+              <StretchImage source={getImageSource(images[2].src)} />
             </QuarterImage>
           </Column>
           <Column style={{ paddingLeft: 5 }}>
@@ -195,13 +206,13 @@ class Images extends React.Component<
               style={{ height: heightRatio / 2 - 5 }}
               onPress={() => this.openImage(1)}
             >
-              <StretchImage source={images[1].src} />
+              <StretchImage source={getImageSource(images[1].src)} />
             </QuarterImage>
             <QuarterImage
               style={{ height: heightRatio / 2 - 5 }}
               onPress={() => this.openImage(3)}
             >
-              <StretchImage source={images[3].src} />
+              <StretchImage source={getImageSource(images[3].src)} />
               {images.length > 4 && (
                 <Overlay
                   style={{ height: heightRatio / 2 - 5 }}
@@ -226,9 +237,9 @@ class Images extends React.Component<
   }
 
   public render() {
-    const { width } = Dimensions.get("window");
+    const { images, style, windowDimensions } = this.props;
+    const width = windowDimensions.width;
     const heightRatio = width * 0.6;
-    const { images, style } = this.props;
 
     if (images.length === 0) return <View />;
     return (
@@ -241,4 +252,10 @@ class Images extends React.Component<
   }
 }
 
-export default withNavigation(Images)
+const withWindowDimensions = (Component) => {
+  return (props) => {
+    return <Component {...props} windowDimensions={useWindowDimensions()} />;
+  }
+}
+
+export default withWindowDimensions(withNavigation(Images));
