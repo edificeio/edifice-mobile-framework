@@ -111,7 +111,7 @@
   "Lastname": "Last name",
   "linkTo": "Link",
   "loadingFailedMessage": "Loading failed. Please check your Internet connection.",
-  "login-back": "#",
+  "login-back": "Back to login",
   "Login": "Username",
   "LoginWeb": "Log in from the web",
   "LVS": "LVS",
