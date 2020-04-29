@@ -26,12 +26,15 @@ export function listAction(payload: IFiltersParameters) {
     if (parentId === FilterId.root) {
       return getRootFolders();
     }
+    /*
     const [dataFolders, dataDocuments] = await Promise.all([getFolders(payload), getDocuments(payload)]);
 
     return {
       ...dataFolders,
       ...dataDocuments,
     };
+    */
+   return await getDocuments(payload); // Now getDocuments returns folders too
   });
 }
 
@@ -58,7 +61,7 @@ const getRootFolders: () => IItems<IFolder> = () => {
 
 const formatParameters = (parameters = {}) => {
   let result = "?";
-
+  (parameters as { includeall: string }).includeall = 'true';
   for (let key in parameters) {
     if (!(parameters as any)[key]) {
       // skip empty parameters
