@@ -20,9 +20,6 @@ import I18n from "i18n-js";
 import Swipeable from "react-native-swipeable";
 
 import moment from "moment";
-// tslint:disable-next-line:no-submodule-imports
-import "moment/locale/fr";
-moment.locale("fr");
 
 // Components
 import { RefreshControl } from "react-native";

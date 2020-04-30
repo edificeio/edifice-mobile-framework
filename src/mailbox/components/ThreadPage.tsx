@@ -16,9 +16,6 @@ import style from "glamorous-native";
 import * as React from "react";
 
 import moment from "moment";
-// tslint:disable-next-line:no-submodule-imports
-import "moment/locale/fr";
-moment.locale("fr");
 
 // Components
 import { KeyboardAvoidingView, Platform, RefreshControl } from "react-native";

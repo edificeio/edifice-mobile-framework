@@ -13,10 +13,7 @@ import I18n from "i18n-js";
 
 import { PageContainer } from "../../ui/ContainerContent";
 
-import moment, { Moment } from "moment";
-// tslint:disable-next-line:no-submodule-imports
-import "moment/locale/fr";
-moment.locale("fr");
+import { Moment } from "moment";
 
 import { HtmlContentView } from "../../ui/HtmlContentView";
 import { Text } from "../../ui/text";

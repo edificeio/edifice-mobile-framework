@@ -24,9 +24,6 @@ import * as React from "react";
 import ViewOverflow from "react-native-view-overflow";
 
 import moment from "moment";
-// tslint:disable-next-line:no-submodule-imports
-import "moment/locale/fr";
-moment.locale("fr");
 
 // Components
 import { RefreshControl, SectionList } from "react-native";

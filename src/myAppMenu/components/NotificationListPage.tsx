@@ -17,11 +17,6 @@ import style from "glamorous-native";
 import * as React from "react";
 import I18n from "i18n-js";
 
-import moment from "moment";
-// tslint:disable-next-line:no-submodule-imports
-import "moment/locale/fr";
-moment.locale("fr");
-
 // Components
 import { RefreshControl } from "react-native";
 const { FlatList } = style;

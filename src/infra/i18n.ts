@@ -10,7 +10,7 @@ import "moment/locale/es";
 import "moment/locale/pt";
 
 // Translation setup
-const initI18n = () => {
+export const initI18n = () => {
     I18n.fallbacks = true;
     I18n.defaultLocale = "en";
     I18n.translations = {
@@ -28,6 +28,7 @@ const initI18n = () => {
         I18nManager.forceRTL(res.isRTL);
         I18n.locale = res.languageTag;
         const momentLocale = (I18n.locale as string).split('-')[0];
+        console.log("set moment.js locate to", momentLocale);
         moment.locale(momentLocale);
     } else {
         I18n.locale = I18n.defaultLocale;
