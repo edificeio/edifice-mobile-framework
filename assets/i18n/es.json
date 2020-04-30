@@ -56,6 +56,8 @@
   "common-VersionUpdate":"Actualizar",
   "Connect": "Iniciar sesión",
   "connector-connectFailed": "No se puede abrir el vínculo !",
+  "conversation-attachment-error": "Error al abrir el archivo",
+  "conversation-attachment-unsupportedFileType": "El formato del archivo no es reconocido por su dispositivo",
   "conversation-chatPlaceholder": "Escribe un mensaje...",
   "conversation-deleteThread": "eliminar esta conversación ?",
   "conversation-emptyMessage": "Mensaje vacio",

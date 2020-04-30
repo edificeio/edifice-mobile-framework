@@ -1,6 +1,7 @@
 import style from "glamorous-native";
 import I18n from "i18n-js";
 import * as React from "react";
+import { connect } from "react-redux";
 import {
   ActivityIndicator,
   Text,
@@ -20,20 +21,17 @@ import Filesize from "filesize";
 import Mime from "mime";
 import Conf from "../../../ode-framework-conf";
 import { ButtonsOkCancel, Icon, Loading } from "../../ui";
-import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
-import { DateView } from "../../ui/DateView";
-import { HtmlContentView } from "../../ui/HtmlContentView";
 import {
   ModalBox,
   ModalContent,
   ModalContentBlock,
   ModalContentText
 } from "../../ui/Modal";
-import { LightP } from "../../ui/Typography";
-import { ConversationMessageStatus } from "../actions/sendMessage";
 import Tracking from "../../tracking/TrackingManager";
 import conversationConfig from "../config"
+import { notifierShowAction } from "../../infra/notifier/actions";
+import Notifier from "../../infra/notifier/container";
 
 export interface IAttachment {
   id: string;
@@ -93,8 +91,42 @@ const getAttachmentIconByExt = (filename: string) => {
 
   return icon;
 };
+const openDownloadedFile = (localFile) => {
+  return (dispatch) => {
+    if (localFile) {
+      Tracking.logEvent("openAttachments");
+      if (Platform.OS === "ios") {
+        RNFetchBlob.ios.openDocument(localFile)
+          .catch(error => {
+            dispatch(notifierShowAction({
+              text: I18n.t(error.message.includes("not supported")
+                ? "conversation-attachment-unsupportedFileType"
+                : "conversation-attachment-error"
+              ),
+              type: 'warning'
+            }));
+          })
+      } else if (Platform.OS === "android") {
+        RNFetchBlob.android.actionViewIntent(localFile, Mime.getType(localFile))
+        // FIXME: implement catch (does not work on android, for now)
+          // .catch(error => {
+          //   dispatch(notifierShowAction({
+          //     text: I18n.t(error.message.includes("not supported")
+          //       ? "conversation-attachment-unsupportedFileType"
+          //       : "conversation-attachment-error"
+          //     ),
+          //     type: 'warning'
+          //   }));
+          // })
+      } else {
+        // tslint:disable-next-line:no-console
+        console.warn("Cannot handle file for devices other than ios/android.");
+      }
+    }
+  }
+}
 
-export default class ThreadMessageAttachment extends React.PureComponent<
+class ThreadMessageAttachment extends React.PureComponent<
   {
     attachment: IAttachment;
     style: ViewStyle;
@@ -121,6 +153,7 @@ export default class ThreadMessageAttachment extends React.PureComponent<
     const { attachment: att, style, isMine } = this.props;
     return (
       <View style={{ flex: 0 }}>
+        <Notifier/>
         <TouchableOpacity
           key={att.id}
           style={{
@@ -238,21 +271,16 @@ export default class ThreadMessageAttachment extends React.PureComponent<
   }
 
   public onPressAttachment(att: IAttachment) {
-    // console.log("attachment :", att);
-    // console.log("attstate", this.state);
-
     if (this.state.downloadState === DownloadState.Idle) {
       this.setState({ showModal: true });
     } else if (this.state.downloadState === DownloadState.Success) {
-      this.openDownloadedFile();
+      this.props.onOpenDownloadedFile(this.state.localFile);
     } else if (this.state.downloadState === DownloadState.Error) {
       this.startDownload(this.props.attachment);
     }
   }
 
   public async startDownload(att: IAttachment) {
-    // console.log("start download");
-    // console.log(Permissions);
     if (Platform.OS === "android") {
       await Permissions.request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
     }
@@ -277,14 +305,12 @@ export default class ThreadMessageAttachment extends React.PureComponent<
           getAuthHeader()
         )
         .progress((received, total) => {
-          // console.log("progress", received, att.size);
           this.setState({
             progress: received / att.size
           });
         })
         .then(res => {
           // the temp file path
-          // console.log("The file saved to ", res.path());
           this.setState({
             localFile: res.path()
           });
@@ -301,14 +327,12 @@ export default class ThreadMessageAttachment extends React.PureComponent<
           getAuthHeader()
         )
         .progress((received, total) => {
-          // console.log("progress", received, att.size);
           this.setState({
             progress: received / att.size
           });
         })
         .then(res => {
           // the temp file path
-          // console.log("The file saved to ", res.path());
           const baseDir =
             RNFetchBlob.fs.dirs.DownloadDir || RNFetchBlob.fs.dirs.DocumentDir;
           const path = `${baseDir}/${att.filename}`;
@@ -337,23 +361,11 @@ export default class ThreadMessageAttachment extends React.PureComponent<
       });
     });
   }
-
-  public openDownloadedFile() {
-    if (this.state.localFile) {
-      Tracking.logEvent("openAttachments");
-      if (Platform.OS === "ios") {
-        RNFetchBlob.ios.openDocument(this.state.localFile);
-      } else if (Platform.OS === "android") {
-        // console.log("TODO open file on android", this.state.localFile);
-        // console.log(Mime, Mime.getType(this.state.localFile));
-        RNFetchBlob.android.actionViewIntent(
-          this.state.localFile,
-          Mime.getType(this.state.localFile)
-        );
-      } else {
-        // tslint:disable-next-line:no-console
-        console.warn("Cannot handle file for devices other than ios/android.");
-      }
-    }
-  }
 }
+
+export default connect(
+  null,
+  dispatch => ({
+    onOpenDownloadedFile: (localFile) => dispatch(openDownloadedFile(localFile))
+  })
+)(ThreadMessageAttachment);

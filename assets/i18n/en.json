@@ -57,6 +57,8 @@
   "common-VersionUpdate":"Update",
   "Connect": "Log in",
   "connector-connectFailed": "Impossible to open the link !",
+  "conversation-attachment-error": "Error opening file",
+  "conversation-attachment-unsupportedFileType": "The format of your file is not recognized by your device",
   "conversation-chatPlaceholder": "Write a message...",
   "conversation-deleteThread": "delete this conversation ?",
   "conversation-emptyMessage": "Empty message",

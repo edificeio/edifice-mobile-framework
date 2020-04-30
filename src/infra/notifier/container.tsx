@@ -1,24 +1,28 @@
 import style from "glamorous-native";
 import * as React from "react";
 import { connect } from "react-redux";
+import { AnimatedValue, LayoutEvent } from "react-navigation";
 import { CommonStyles } from "../../styles/common/styles";
 import { Icon } from "../../ui/icons/Icon";
 import { Animated, ActivityIndicator, View } from "react-native";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
-import { AnimatedValue } from "react-navigation";
 import { NotifierType } from "./state";
 
 const NotifierText = style.text({
   color: "#FFFFFF",
   flex: 1,
   textAlign: "center",
-  lineHeight: 40,
-  marginLeft: 40
-});
+  alignSelf: "center"
+},
+({ noHeight, noMarginLeft  }) => ({
+  height: noHeight ? undefined : 40,
+  marginLeft: noMarginLeft? undefined : 40
+})
+);
 
 const NotifierWrapper = style(TouchableOpacity)({
-  flexDirection: "row",
-  flex: 1
+  flex: 1,
+  flexDirection: "row"
 });
 
 const wrapperStyle = {
@@ -36,13 +40,15 @@ class Notifier extends React.Component<
     visible: boolean;
     style?: any;
   },
-  { fadeAnim: AnimatedValue; slideAnim: AnimatedValue }
+  { fadeAnim: AnimatedValue; slideAnim: AnimatedValue, measuredText: boolean, longText: boolean }
   > {
   previousVisible: boolean = false;
 
   state = {
     fadeAnim: new Animated.Value(0),
-    slideAnim: new Animated.Value(0)
+    slideAnim: new Animated.Value(0),
+    measuredText: false,
+    longText: false
   };
 
   componentDidMount() {
@@ -50,8 +56,9 @@ class Notifier extends React.Component<
   }
 
   animate() {
+    const { visible } = this.props;
     setTimeout(() => {
-      if (this.props.visible && !this.previousVisible) {
+      if (visible && !this.previousVisible) {
         this.previousVisible = true;
         Animated.timing(this.state.fadeAnim, {
           toValue: 1,
@@ -64,7 +71,7 @@ class Notifier extends React.Component<
         }).start();
       }
 
-      if (!this.props.visible && this.previousVisible) {
+      if (!visible && this.previousVisible) {
         this.previousVisible = false;
         Animated.timing(this.state.fadeAnim, {
           toValue: 0,
@@ -84,7 +91,8 @@ class Notifier extends React.Component<
   }
 
   get barColor(): string {
-    const type = this.props.notifierType || 'info';
+    const { notifierType } = this.props;
+    const type = notifierType || 'info';
     return ({
       info: CommonStyles.primary,
       success: CommonStyles.success,
@@ -93,31 +101,51 @@ class Notifier extends React.Component<
     })[type];
   }
 
+  public measureText = (evt: LayoutEvent) => {
+    if (evt.nativeEvent.lines.length > 1) {
+      this.setState({ longText: true });
+    } else this.setState({ longText: false });
+    this.setState({ measuredText: true })
+  }
+
   public render() {
-    const { fadeAnim, slideAnim } = this.state;
+    const { style, text, icon, loading } = this.props;
+    const { fadeAnim, slideAnim, measuredText, longText } = this.state;
     return (
       <Animated.View
         style={{
           ...wrapperStyle,
-          ...this.props.style,
+          ...style,
           opacity: fadeAnim,
-          height: slideAnim
+          height: slideAnim,
         }}
       >
         <NotifierWrapper
           style={{ backgroundColor: this.barColor }}
         >
           <View style={{ flexDirection: "row", flex: 1 }}>
-            {this.props.text ? <NotifierText>{this.props.text}</NotifierText> : null}
-            {this.props.loading ? (
+            {text
+              ? 
+                <NotifierText
+                  numberOfLines={2}
+                  onTextLayout={this.measureText}
+                  noHeight={measuredText && !longText}
+                  noMarginLeft={!icon && !loading}
+                >
+                  {text}
+                </NotifierText>
+              : 
+                null
+            }
+            {loading ? (
               <ActivityIndicator
                 size="small"
                 color={"#FFFFFF"}
                 style={{ marginRight: 20 }}
               />
-            ) : this.props.icon ? (
+            ) : icon ? (
               <Icon
-                name={this.props.icon}
+                name={icon}
                 size={18}
                 style={{ marginRight: 20, marginTop: 10 }}
                 color={"#FFFFFF"}
