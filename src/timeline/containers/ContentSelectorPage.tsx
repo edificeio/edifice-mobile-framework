@@ -125,11 +125,13 @@ export class ContentSelectorPage_Unconnected extends React.PureComponent<IConten
     const postType = this.props.navigation.getParam("postType")
     return <ListItem style={{ width: '100%' }}>
       <LeftPanel onPress={() => this.props.onContentSelected(item, postType)}>
-        <GridAvatars users={[item.thumbnail
-          ? { ...getAuthHeader(), uri: Conf.currentPlatform.url + item.thumbnail }
-          : require("../../../assets/images/resource-avatar.png")
-        ]}
-          fallback={require("../../../assets/images/resource-avatar.png")} />
+        <GridAvatars 
+          users={[item.thumbnail
+            ? {headers: getAuthHeader(), uri: Conf.currentPlatform.url + item.thumbnail}
+            : require("../../../assets/images/resource-avatar.png")
+          ]}
+          fallback={require("../../../assets/images/resource-avatar.png")}
+        />
       </LeftPanel>
       <CustomTouchableOpacity style={{ flexDirection: 'row', flex: 1 }} onPress={() => this.props.onContentSelected(item, postType)}>
         <View style={{ flexDirection: 'row', flex: 1 }}>
