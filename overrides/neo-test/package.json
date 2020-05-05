@@ -1,0 +1,9 @@
+{
+  "ode": {
+    "current": "neo-test",
+    "appname": "NEO Pocket Test",
+    "appid": "com.ode.neo.test",
+    "appidIOS": "com.ode.neo2019.test",
+    "configid": "neo-test"
+  }
+}
