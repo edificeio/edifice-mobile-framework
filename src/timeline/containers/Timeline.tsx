@@ -17,15 +17,12 @@ import Tracking from "../../tracking/TrackingManager";
 import { fetchTimeline, listTimeline } from "../actions/list";
 import { fetchPublishableBlogsAction } from '../actions/publish';
 import { INewsModel } from "../reducer";
-import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
-import { NavigationScreenProp } from "react-navigation";
 import { HeaderAction, HeaderIcon } from "../../ui/headers/NewHeader";
 import { ThunkDispatch } from "redux-thunk";
-import { IBlogList } from "../state/publishableBlogs";
 import { CommonStyles } from "../../styles/common/styles";
 import { TempFloatingAction } from "../../ui/FloatingButton";
 import { Header } from "../../ui/headers/Header";
-import { AsyncState } from "../../infra/redux/async2";
+import { IBlogList } from "../state/publishableBlogs";
 
 interface ITimelineProps {
   isFetching: boolean;
@@ -38,7 +35,8 @@ interface ITimelineProps {
   fetchFailed: boolean;
   isAuthenticated: boolean;
   legalapps: any;
-  hasCreationRightsMap: { [app in 'blog' | 'news']: boolean };
+  authorizedActions: any;
+  publishableBlogs: IBlogList;
   onMount: () => void;
 }
 
@@ -184,7 +182,16 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
   }
 
   public render() {
-    const { isFetching, fetchFailed, availableApps, navigation } = this.props;
+    const { isFetching, fetchFailed, availableApps, navigation, authorizedActions, publishableBlogs } = this.props;
+    const canCreateBlog = authorizedActions && authorizedActions.some(action => action.displayName === "blog.create");
+    let buttonMenuItems = [];
+    if (publishableBlogs.length > 0 || canCreateBlog) {
+      buttonMenuItems.push({text: I18n.t('createPost-menu-blog'), icon: "bullhorn" });
+    }
+    // if (false) {
+    //   buttonMenuItems.push({text: I18n.t("createPost-menu-news"), icon: "newspaper", id: "AddFolder"})
+    // }
+    
     let { news } = this.props;
     const availableAppsWithUppercase = {};
     if (availableApps) {
@@ -227,20 +234,10 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
         </Header>
         <ConnectionTrackingBar />
         {isFetching ? this.renderLoading() : this.renderList(news)}
-        {this.props.hasCreationRightsMap.blog ?
+        {buttonMenuItems.length > 0 ?
           <TempFloatingAction
             iconName="new_post"
-            menuItems={
-              [{
-                text: I18n.t('createPost-menu-blog'),
-                icon: "bullhorn",
-              },
-              // {
-              //   text: I18n.t("createPost-menu-news"),
-              //   icon: "newspaper",
-              //   id: "AddFolder",
-              // }
-              ]}
+            menuItems={buttonMenuItems}
             onEvent={() => {
               navigation.getParam('onCreatePost') && navigation.getParam('onCreatePost')("blog")
             }}
@@ -262,10 +259,8 @@ export default connect(
     ...state.timeline,
     isAuthenticated: state.user.auth.loggedIn,
     legalapps: state.user.auth.apps,
-    hasCreationRightsMap: state.user.auth.loggedIn && {
-      blog: () => (state.timeline.publishableBlogs as AsyncState<IBlogList>).data.length as unknown as boolean,
-      news: () => false // ToDo
-    }
+    authorizedActions: state.user.info.authorizedActions,
+    publishableBlogs: state.timeline.publishableBlogs.data,
   }),
   (dispatch: ThunkDispatch<any, any, any>) => ({
     fetch: availableApps => fetchTimeline(dispatch)(availableApps),
