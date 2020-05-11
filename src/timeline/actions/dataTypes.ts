@@ -8,10 +8,9 @@ import { getSessionInfo } from "../../AppStore";
 
 let loadingState = "idle";
 const awaiters = [];
-export let schoolbooks = [];
+export let schoolbooks: Array<any> = [];
 export const loadSchoolbooks = (): Promise<any[]> => {
   return new Promise(async (resolve, reject) => {
-    // console.log("LOADing schoolbooks...");
     if (loadingState === "over") {
       resolve(schoolbooks);
       return;
@@ -24,55 +23,57 @@ export const loadSchoolbooks = (): Promise<any[]> => {
     awaiters.push(() => resolve(schoolbooks));
     if (getSessionInfo().type.indexOf("Student") !== -1) {
       try {
-        // console.log("im a child");
-        // console.log("session :", getSessionInfo());
+        let newSchoolbooks = [];
+
         let messages: any[] = await fetchJSONWithCache(
           `/schoolbook/list/0/${getSessionInfo().userId}`
         );
         messages = messages || [];
-        schoolbooks = [...schoolbooks, ...messages];
-        // console.log("loaded schoolbooks list", schoolbooks);
+        newSchoolbooks = [...newSchoolbooks, ...messages];
+
+        schoolbooks = newSchoolbooks;      
       } catch (e) {
         // tslint:disable-next-line:no-console
         console.warn(e);
       }
     } else if (getSessionInfo().type.indexOf("Teacher") !== -1) {
       try {
-        // console.log("im a teacher");
-        // console.log("session :", getSessionInfo());
+        let newSchoolbooks = [];
+
         let messages = await fetchJSONWithCache(`/schoolbook/list`, {
           body: JSON.stringify({ filter: "Any", page: 0 }),
           method: "POST"
         });
         messages = messages || [];
-        schoolbooks = [...schoolbooks, ...messages];
-        // console.log("loaded schoolbooks list", schoolbooks);
+        newSchoolbooks = [...newSchoolbooks, ...messages];
+
+        schoolbooks = newSchoolbooks;
       } catch (e) {
         // tslint:disable-next-line:no-console
         console.warn(e);
       }
     } else {
       try {
-        // console.log("im NOT a child", getSessionInfo());
+        let newSchoolbooks = [];
+
         for (const childId of Object.values((getSessionInfo() as any).childrenIds)) {
-          // console.log("loading messages for child", childId);
           if (!childId) continue;
-          // console.log("OK", childId);
           let messages = await fetchJSONWithCache(
             `/schoolbook/list/0/${childId}`
           );
           messages = messages || [];
           messages = messages.map(msg => ({ ...msg, childId }));
-          schoolbooks = [...schoolbooks, ...messages];
-          // console.log("schooloobks of child:", messages);
+          newSchoolbooks = [...newSchoolbooks, ...messages];
         }
+
         let messages = await fetchJSONWithCache(`/schoolbook/list`, {
           body: JSON.stringify({ filter: "Any", page: 0 }),
           method: "POST"
         });
         messages = messages || [];
-        schoolbooks = [...schoolbooks, ...messages];
-        // console.log("schooloobks:", schoolbooks);
+        newSchoolbooks = [...newSchoolbooks, ...messages];
+
+        schoolbooks = newSchoolbooks;
       } catch (e) {
         // tslint:disable-next-line:no-console
         console.warn(e);
@@ -87,7 +88,6 @@ export const loadSchoolbooks = (): Promise<any[]> => {
 
 const dataTypes = {
   SCHOOLBOOK: async (news, timeline) => {
-    // console.log("news.params.resourceUri", news.params.resourceUri);
     const split = news.params.resourceUri
       ? news.params.resourceUri.split("/")
       : news.params.wordUri
@@ -233,7 +233,6 @@ export const fillData = async (availableApps: object, results: any[]) => {
   const newResults = [];
   const availableAppsWithUppercase = {};
   const urls: string[] = [];
-  // console.log("avaiable apps", availableApps);
   Object.keys(availableApps || {}).forEach(app => {
     availableAppsWithUppercase[app] = availableApps[app];
     availableAppsWithUppercase[app.toUpperCase()] = availableApps[app];
@@ -248,7 +247,6 @@ export const fillData = async (availableApps: object, results: any[]) => {
       if (newResult && !urls.includes(newResult.url)) {
         newResult.application = result.type.toLowerCase();
         newResults.push(newResult);
-        // console.log("GOT :", newResult);
         urls.push(newResult.url);
       }
     }

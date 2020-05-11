@@ -27,7 +27,7 @@ import { A, Italic, TextBright } from "../../ui/Typography";
 import { HeaderBackAction } from "../../ui/headers/NewHeader";
 import { FontWeight } from "../../ui/text";
 import NewsTopInfo from "../components/NewsTopInfo";
-import { ListItem, LeftPanel, CenterPanel, contentStyle } from "../../myAppMenu/components/NewContainerContent";
+import { ListItem, LeftPanel, CenterPanel } from "../../myAppMenu/components/NewContainerContent";
 import { getSessionInfo } from "../../AppStore";
 import { schoolbooks } from "../actions/dataTypes";
 import { fetchBlogCommentListAction, dataActions } from "../actions/commentList";
@@ -42,7 +42,7 @@ interface INewsContentPageState {
   ackNames: string[];
   ackOpacity: Animated.Value;
   showAckBeforeMessage: boolean;
-  schoolbookData: object;
+  schoolbookData: object[];
   fetching: boolean;
 }
 
@@ -86,12 +86,11 @@ INewsContentPageProps,
   /**
    * get the schoolbook correpsonding data. Call it only if you're sure that the post is a schoolbook.
    */
-  private schoolbookData;
+  private unacknowledgedChildrenIds?: Array<string>;
+  private schoolbookData?: Array<any>;
   protected getSchoolbookData() {
-    // console.log("schoolbooks", schoolbooks);
-    // console.log(this.props.navigation.state.params);
     if (!this.schoolbookData) {
-      const sc = schoolbooks.find(
+      const sc = schoolbooks.filter(
         s =>
           s.id.toString() === this.props.navigation.state.params.news.resourceId
       );
@@ -106,34 +105,43 @@ INewsContentPageProps,
   }
 
   protected getIsAck() {
+    const { childrenIds } = this.props.navigation.state.params.news;
     const schoolbookData = this.getSchoolbookData();
-    // console.log("schoolbook data", schoolbookData);
-    // console.log(this.props.navigation.state.params);
+    let acknowledgedChildrenIds = [];
     let isAck = false;
+
     if (!schoolbookData) return undefined;
-    if (schoolbookData.acknowledgments)
-      schoolbookData.acknowledgments.map(ack => {
-        if (getSessionInfo().userId === ack.owner) isAck = true;
+    for (const schoolbook of schoolbookData) {
+      schoolbook.acknowledgments && schoolbook.acknowledgments.map(ack => {
+        if (getSessionInfo().userId === ack.owner) acknowledgedChildrenIds.push(schoolbook.childId);
       });
+    }
+
+    this.unacknowledgedChildrenIds = childrenIds.filter(childId => !acknowledgedChildrenIds.includes(childId))
+    if (schoolbookData.length === acknowledgedChildrenIds.length) isAck = true;
     return isAck;
   }
 
+  // Note: getAckNames() and getAckNumber() are only used for Students,
+  // and Student only have one element in the "schoolbookData" array (unlike Teachers)
+  // --> therefore, we can always use "schoolbookData[0]"
   protected getAckNames() {
     const schoolbookData = this.getSchoolbookData();
     if (!schoolbookData) return undefined;
-    return schoolbookData.acknowledgments
-      ? schoolbookData.acknowledgments.map(el => el.parent_name)
+
+    return schoolbookData[0].acknowledgments
+      ? schoolbookData[0].acknowledgments.map(el => el.parent_name)
       : [];
   }
 
   protected getAckNumber() {
     const schoolbookData = this.getSchoolbookData();
     if (!schoolbookData) return undefined;
-    // console.log("schoolbook data", schoolbookData);
-    return schoolbookData.acknowledgments
-      ? schoolbookData.acknowledgments.length
-      : schoolbookData.ack_number
-      ? schoolbookData.ack_number
+
+    return schoolbookData[0].acknowledgments
+      ? schoolbookData[0].acknowledgments.length
+      : schoolbookData[0].ack_number
+      ? schoolbookData[0].ack_number
       : 0;
   }
 
@@ -151,6 +159,7 @@ INewsContentPageProps,
         showAckBeforeMessage: isAck,
         fetching: false
       };
+      this.props.navigation.setParams({ isAck });
     } else {
       // This dummy data prevent non-schoolbook posts to raise exceptions
       this.state = {
@@ -181,27 +190,16 @@ INewsContentPageProps,
   }
 
   public render() {
-    /*
-    // console.log(
-      "main render nav kay",
-      this.props.navigation.state.key,
-      this.props.navigation.state
-    );
-    */
-    // console.log("render state", this.state);
     let schoolbookData;
-    if (this.props.navigation.state.params.news.application === "schoolbook") {
-      schoolbookData = schoolbooks.find(
-        s =>
-          s.id.toString() === this.props.navigation.state.params.news.resourceId
-      );
+    if (this.isSchoolbook) {
+      schoolbookData = this.getSchoolbookData();
     }
     const isParent = getSessionInfo().type && getSessionInfo().type.includes("Relative");
     const { resourceId, resourceUri, type } = this.props.navigation.state.params.news;
     const { isFetching, isPristine, selectedBlogComments } = this.props;
     const { fetching } = this.state;
     const isCommentable = type === "BLOG" || type === "NEWS";
-    // console.log("nav state params", this.props.navigation.state.params);
+
     return (
       <PageContainer>
         <ConnectionTrackingBar />
@@ -210,7 +208,7 @@ INewsContentPageProps,
             backdropOpacity={0.5}
             isVisible={this.props.navigation.state.params.confirmBackSchoolbook}
           >
-            {this.renderBackModal(resourceId, schoolbookData.childId)}
+            {this.renderBackModal(resourceId, this.unacknowledgedChildrenIds)}
           </ModalBox>
         ) : null}
         <FlatList
@@ -313,7 +311,6 @@ INewsContentPageProps,
 
     let schoolbookData;
     if (this.isSchoolbook) schoolbookData = this.getSchoolbookData();
-    // console.log("session", getSessionInfo());
     const isStudent =
       getSessionInfo().type &&
       (getSessionInfo().type === "Student" || getSessionInfo().type.includes("Student"));
@@ -439,15 +436,8 @@ INewsContentPageProps,
   }
 
   public renderAck() {
-    const { resourceId, childrenIds } = this.props.navigation.state.params.news;
-
+    const { resourceId } = this.props.navigation.state.params.news;
     // Call it only for schoolbooks ! // TODO : reformat this component to be speicalized
-    const schoolbookData = schoolbooks.find(
-      s =>
-        s.id.toString() === this.props.navigation.state.params.news.resourceId
-    );
-
-    // console.log("this.state", this.state);
 
     return !this.state.isAck ? (
       <View
@@ -462,7 +452,7 @@ INewsContentPageProps,
         }}
       >
         <FlatButton
-          onPress={() => this.acknowledge(resourceId, childrenIds)}
+          onPress={() => this.acknowledge(resourceId, this.unacknowledgedChildrenIds)}
           title={I18n.t("schoolbook-acknowledge")}
           loading={this.state.isAcking}
         />
@@ -501,12 +491,11 @@ INewsContentPageProps,
     );
   }
 
-  public async acknowledge(wordId, childrenIds) {
+  public async acknowledge(wordId, unacknowledgedChildrenIds) {
     // Call it only for schoolbooks !
     try {
-      // console.log("acknowledge", wordId, childrenIds);
       this.setState({ isAcking: true });
-      const acknowledgements = childrenIds.map((id: string) => (
+      const acknowledgements = unacknowledgedChildrenIds.map((id: string) => (
         signedFetch(
           `${
             Conf.currentPlatform.url
@@ -524,13 +513,15 @@ INewsContentPageProps,
         }
       })
 
-      const thisSchoolbook = schoolbooks.find(s => s.id.toString() === wordId);
-      // console.log("this schoolbook", thisSchoolbook);
-      if (thisSchoolbook) {
-        if (thisSchoolbook.acknowledgments) {
-          thisSchoolbook.acknowledgments.push({ owner: getSessionInfo().userId });
-        } else {
-          thisSchoolbook.acknowledgments = [{ owner: getSessionInfo().userId }];
+      let schoolbookData;
+      if (this.isSchoolbook) schoolbookData = this.getSchoolbookData();
+      if (schoolbookData) {
+        for (const schoolbook of schoolbookData) {
+          if (unacknowledgedChildrenIds.includes(schoolbook.childId)) {
+            schoolbook.acknowledgments
+            ? schoolbook.acknowledgments.push({ owner: getSessionInfo().userId })
+            : schoolbook.acknowledgments = [{ owner: getSessionInfo().userId }]
+          }
         }
       }
 
@@ -541,6 +532,8 @@ INewsContentPageProps,
         isAcking: false,
         showAckBeforeMessage: true
       });
+      this.props.navigation.setParams({ isAck: true });
+
       Animated.timing(
         // Animate over time
         this.state.ackOpacity, // The animated value to drive
@@ -557,7 +550,7 @@ INewsContentPageProps,
     }
   }
 
-  public renderBackModal(wordId, childrenIds) {
+  public renderBackModal(wordId, unacknowledgedChildrenIds) {
     return (
       <ModalContent>
         <ModalContentBlock>
@@ -568,46 +561,22 @@ INewsContentPageProps,
         <ModalContentBlock>
           <ButtonsOkCancel
             onCancel={() => {
-              // console.log("will NOT ack");
-              /* console.log(
-              "will go back",
-              this.props.navigation.state.key,
-              this.props.navigation.state
-            );*/
               this.props.navigation.setParams({
                 confirmBackSchoolbook: false,
                 forceBack: true
               });
               const navkey = this.props.navigation.state.key;
               requestAnimationFrame(() => {
-                /* console.log(
-                "go back",
-                this.props.navigation.state.key,
-                this.props.navigation.state
-              ); */
-                // console.log(lastNavKey);
                 this.props.navigation.goBack(lastNavKey);
               });
             }}
             onValid={async () => {
-              // console.log("will ACK");
-              /* console.log(
-              "will go back",
-              this.props.navigation.state.key,
-              this.props.navigation.state
-            ); */
               this.props.navigation.setParams({
                 confirmBackSchoolbook: false,
                 forceBack: true
               });
-              await this.acknowledge(wordId, childrenIds);
+              await this.acknowledge(wordId, unacknowledgedChildrenIds);
               requestAnimationFrame(() => {
-                /* console.log(
-                "go back",
-                this.props.navigation.state.key,
-                this.props.navigation.state
-              ); */
-                // console.log(lastNavKey);
                 this.props.navigation.goBack(lastNavKey);
               });
             }}
@@ -653,6 +622,7 @@ const NewsContentPage = connect(
 
 export default NewsContentPage
 
+
 export const NewsContentRouter = createStackNavigator(
   {
     NewsContentRouter: {
@@ -683,7 +653,6 @@ const defaultGetStateForAction = NewsContentRouter.router.getStateForAction;
 let lastNavKey;
 
 NewsContentRouter.router.getStateForAction = (action, state) => {
-  // console.log("getStateForAction", state, action);
   if (
     action.type !== NavigationActions.BACK ||
     !state ||
@@ -695,25 +664,12 @@ NewsContentRouter.router.getStateForAction = (action, state) => {
   lastNavKey = state.key;
 
   if (state.routes[0].params.forceBack) {
-    // console.log("ok, go back");
     return defaultGetStateForAction(action, state);
   }
 
-  // console.log("getStateForAction suite", state, action);
-
-  const schoolbookData = schoolbooks.find(
-    s => s.id.toString() === state.routes[state.index].params.news.resourceId
-  );
-  let isAck = false;
-  // console.log("schoolbookData", schoolbookData);
-  if (schoolbookData && schoolbookData.acknowledgments)
-    schoolbookData.acknowledgments.map(ack => {
-      if (getSessionInfo().userId === ack.owner) isAck = true;
-    });
-  // console.log("is ack", isAck);
+  const isAck = state.routes[state.index].params.isAck;
 
   if (!isAck) {
-    // console.log("will cancel back action and change params");
     // Returning null from getStateForAction means that the action
     // has been handled/blocked, but there is not a new state
     /*return {
@@ -730,7 +686,6 @@ NewsContentRouter.router.getStateForAction = (action, state) => {
       }),
       state
     );
-    // console.log("newstate", newstate);
     return newstate;
   }
 
