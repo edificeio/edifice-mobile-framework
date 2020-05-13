@@ -5,19 +5,21 @@ export const notifierShowAction = (opts: {
   text?: string;
   icon?: string;
   loading?: boolean;
-  type: NotifierType,
-  persistent?: boolean
+  type: NotifierType;
+  persistent?: boolean;
+  duration?: number
 }) => {
   return (dispatch: Dispatch) => {
     if (!opts.persistent) {
-      setTimeout(() => dispatch(notifierHideAction()), 2000);
+      setTimeout(() => dispatch(notifierHideAction()), opts.duration || 2000);
     }
     dispatch({
       type: notifierActionTypes.show,
       notifierType: opts.type,
       text: opts.text,
       icon: opts.icon,
-      loading: opts.loading
+      loading: opts.loading,
+      duration: opts.duration
     });
   }
 }

@@ -14,6 +14,7 @@ import { News } from "../components/News";
 import styles from "../../styles";
 import Tracking from "../../tracking/TrackingManager";
 
+import Notifier from "../../infra/notifier/container";
 import { fetchTimeline, listTimeline } from "../actions/list";
 import { fetchPublishableBlogsAction } from '../actions/publish';
 import { INewsModel } from "../reducer";
@@ -233,6 +234,7 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
           <View style={{ width: 60 }}/>
         </Header>
         <ConnectionTrackingBar />
+        <Notifier style={{ marginRight: 40 }} />
         {isFetching ? this.renderLoading() : this.renderList(news)}
         {buttonMenuItems.length > 0 ?
           <TempFloatingAction

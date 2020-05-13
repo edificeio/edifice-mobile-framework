@@ -1,13 +1,16 @@
-import { Dispatch } from "redux";
+import { Dispatch, AnyAction } from "redux";
 
 import { fetchJSONWithCache, signedFetchJson } from "../../infra/fetchWithCache";
-import { resourceRightFilter } from "../../utils/resourceRights";
+import { resourceRightFilter, resourceHasRight } from "../../utils/resourceRights";
 import { createAsyncActionCreators, AsyncState } from "../../infra/redux/async2";
 import { publishableBlogsActionTypes as publishableBlogsActionTypes, IBlog, blogPublishActionTypes, IBlogList } from "../state/publishableBlogs";
 import { fetchTimeline } from "./list";
 import { storedFilters } from "./storedFilters";
 import { mainNavNavigate } from "../../navigation/helpers/navHelper";
 import Conf from "../../../ode-framework-conf";
+import { notifierShowAction } from "../../infra/notifier/actions";
+import { ThunkDispatch } from "redux-thunk";
+import I18n from "i18n-js";
 
 export const publishableBlogsActions = createAsyncActionCreators<IBlog[]>(publishableBlogsActionTypes);
 export const fetchPublishableBlogsAction = (optional: boolean = false) =>
@@ -35,7 +38,7 @@ export const fetchPublishableBlogsAction = (optional: boolean = false) =>
 
 export const blogPublishActions = createAsyncActionCreators<{}>(blogPublishActionTypes);
 export const publishBlogPostAction = (blog: IBlog, title: string, content: string, uploadedBlogPostDocuments?: any) =>
-  async (dispatch: Dispatch, getState: () => any) => {
+  async (dispatch: Dispatch & ThunkDispatch<any, void, AnyAction>, getState: () => any) => {
     let api = `${Conf.currentPlatform.url}/blog/post/${blog._id}`;
     let apiOpts = { method: 'POST' }
 
@@ -63,9 +66,16 @@ export const publishBlogPostAction = (blog: IBlog, title: string, content: strin
         })
       });
 
-      api = `${Conf.currentPlatform.url}/blog/post/publish/${blog._id}/${(result1 as { _id: string })._id}`;
+      const hasSubmitRight = resourceHasRight(blog, 'org-entcore-blog-controllers-PostController|submit', getState().user.info);
+      const hasPublishRight = resourceHasRight(blog, 'org-entcore-blog-controllers-PostController|publish', getState().user.info);
+
+      const api2 = hasPublishRight
+        ? `${Conf.currentPlatform.url}/blog/post/publish/${blog._id}/${(result1 as { _id: string })._id}`
+        : hasSubmitRight
+          ? `${Conf.currentPlatform.url}/blog/post/submit/${blog._id}/${(result1 as { _id: string })._id}`
+          : undefined;
       apiOpts = { method: 'PUT' };
-      const result2 = await signedFetchJson(api, apiOpts);
+      const result2 = api2 && await signedFetchJson(api2, apiOpts);
 
       dispatch(blogPublishActions.receipt([result1, result2]));
 
@@ -76,6 +86,12 @@ export const publishBlogPostAction = (blog: IBlog, title: string, content: strin
 
       // Nav back to timeline
       mainNavNavigate('notifications');
+      dispatch(notifierShowAction({
+        text: I18n.t(hasPublishRight ? 'createPost-publishSuccess' : hasSubmitRight ? 'createPost-submitSuccess' : 'createPost-createSuccess'),
+        icon: 'checked',
+        type: 'success',
+        duration: 5000
+      }));
 
     } catch (err) {
       dispatch(blogPublishActions.error(err));

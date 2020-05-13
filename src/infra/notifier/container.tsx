@@ -123,11 +123,11 @@ class Notifier extends React.Component<
         <NotifierWrapper
           style={{ backgroundColor: this.barColor }}
         >
-          <View style={{ flexDirection: "row", flex: 1 }}>
+          <View style={{ flexDirection: "row", flex: 1, ...style }}>
             {text
               ? 
                 <NotifierText
-                  numberOfLines={2}
+                  numberOfLines={3}
                   onTextLayout={this.measureText}
                   noHeight={measuredText && !longText}
                   noMarginLeft={!icon && !loading}

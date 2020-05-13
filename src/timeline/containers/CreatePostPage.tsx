@@ -62,7 +62,13 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
             />
           : <HeaderAction
               navigation={navigation}
-              title={I18n.t('createPost-publishAction')}
+              title={navigation.getParam('blog')
+                ? (navigation.getParam('blog') as IBlog)['publish-type']
+                  ? (navigation.getParam('blog') as IBlog)['publish-type'] === 'IMMEDIATE'
+                    ? I18n.t('createPost-publishAction')
+                    : I18n.t('createPost-submitAction')
+                  : ''
+                : ''}
               onPress={() => navigation.getParam('onPublishPost') && navigation.getParam('onPublishPost')()}
               disabled={
                 navigation.getParam('publishing', false)
