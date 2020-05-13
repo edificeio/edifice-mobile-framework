@@ -188,7 +188,7 @@ export class Carousel extends React.Component<
       } else {
         displayedWidth = Dimensions.get("window").width;
         displayedHeight = imageSizes[currentIndex].height * (Dimensions.get("window").width/imageSizes[currentIndex].width);
-      } 
+      }
 
       const scaledImageWidth = this.lastScale < maxScale ? this.lastScale * displayedWidth : maxScale * displayedWidth;
       const totalHiddenWidth = scaledImageWidth - Dimensions.get("window").width < 0 ? 0 : scaledImageWidth - Dimensions.get("window").width;
@@ -265,6 +265,12 @@ export class Carousel extends React.Component<
     const images = navigation && navigation.getParam("images") || [];
     const startIndex = navigation && navigation.getParam("startIndex");
 
+    const imagePinch = React.createRef<PinchGestureHandler>();
+    const imagePan = React.createRef<PanGestureHandler>();
+
+    // console.log("canPanH", canPanHorizontal);
+    // console.log("canPanV", canPanVertical);
+
     return (
       <View
         style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.90)" }}
@@ -306,10 +312,14 @@ export class Carousel extends React.Component<
                       onGestureEvent={this.onPanGestureEvent()}
                       onHandlerStateChange={this.onPanStateChange}
                       enabled={canPanHorizontal || canPanVertical}
+                      ref={imagePan}
+                      simultaneousHandlers={imagePinch}
                     >
                       <PinchGestureHandler
                         onGestureEvent={ this.onZoomEvent }
                         onHandlerStateChange={this.onZoomStateChange}
+                        ref={imagePinch}
+                        simultaneousHandlers={imagePan}
                       >
                         <Animated.View>
                           <AnimatedFastImage
