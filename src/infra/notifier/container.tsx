@@ -1,35 +1,17 @@
 import style from "glamorous-native";
 import * as React from "react";
+import { Animated, ActivityIndicator, View, Text, Platform } from "react-native";
 import { connect } from "react-redux";
 import { AnimatedValue, LayoutEvent } from "react-navigation";
 import { CommonStyles } from "../../styles/common/styles";
 import { Icon } from "../../ui/icons/Icon";
-import { Animated, ActivityIndicator, View } from "react-native";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { NotifierType } from "./state";
-
-const NotifierText = style.text({
-  color: "#FFFFFF",
-  flex: 1,
-  textAlign: "center",
-  alignSelf: "center"
-},
-({ noHeight, noMarginLeft  }) => ({
-  height: noHeight ? undefined : 40,
-  marginLeft: noMarginLeft? undefined : 40
-})
-);
 
 const NotifierWrapper = style(TouchableOpacity)({
   flex: 1,
   flexDirection: "row"
 });
-
-const wrapperStyle = {
-  width: "100%",
-  elevation: 6,
-  backgroundColor: "#FFFFFF"
-};
 
 class Notifier extends React.Component<
   {
@@ -40,7 +22,7 @@ class Notifier extends React.Component<
     visible: boolean;
     style?: any;
   },
-  { fadeAnim: AnimatedValue; slideAnim: AnimatedValue, measuredText: boolean, longText: boolean }
+  { fadeAnim: AnimatedValue; slideAnim: AnimatedValue, measuredText: boolean, longText: boolean, notifierHeight: number }
   > {
   previousVisible: boolean = false;
 
@@ -48,46 +30,43 @@ class Notifier extends React.Component<
     fadeAnim: new Animated.Value(0),
     slideAnim: new Animated.Value(0),
     measuredText: false,
-    longText: false
+    longText: false,
+    notifierHeight: 0,
   };
-
-  componentDidMount() {
-    this.animate();
-  }
 
   animate() {
     const { visible } = this.props;
-    setTimeout(() => {
-      if (visible && !this.previousVisible) {
-        this.previousVisible = true;
-        Animated.timing(this.state.fadeAnim, {
-          toValue: 1,
-          duration: 500
-        }).start();
+    const { notifierHeight, fadeAnim, slideAnim } = this.state;
 
-        Animated.timing(this.state.slideAnim, {
-          toValue: 40,
-          duration: 500
-        }).start();
-      }
+    if (notifierHeight > 0) {
+      setTimeout(() => {
+        if (visible && !this.previousVisible) {
+          this.previousVisible = true;
+          Animated.timing(fadeAnim, {
+            toValue: 1,
+            duration: 500
+          }).start();
 
-      if (!visible && this.previousVisible) {
-        this.previousVisible = false;
-        Animated.timing(this.state.fadeAnim, {
-          toValue: 0,
-          duration: 500
-        }).start();
+          Animated.timing(slideAnim, {
+            toValue: notifierHeight,
+            duration: 500
+          }).start();
+        }
 
-        Animated.timing(this.state.slideAnim, {
-          toValue: 0,
-          duration: 500
-        }).start();
-      }
-    }, 200);
-  }
+        if (!visible && this.previousVisible) {
+          this.previousVisible = false;
+          Animated.timing(fadeAnim, {
+            toValue: 0,
+            duration: 500
+          }).start();
 
-  componentDidUpdate() {
-    this.animate();
+          Animated.timing(slideAnim, {
+            toValue: 0,
+            duration: 500
+          }).start();
+        }
+      }, 200)
+    }
   }
 
   get barColor(): string {
@@ -102,20 +81,34 @@ class Notifier extends React.Component<
   }
 
   public measureText = (evt: LayoutEvent) => {
-    if (evt.nativeEvent.lines.length > 1) {
-      this.setState({ longText: true });
-    } else this.setState({ longText: false });
-    this.setState({ measuredText: true })
+    const textBlockHeight = evt.nativeEvent.lines[0].height * evt.nativeEvent.lines.length;
+    evt.nativeEvent.lines.length > 1
+    ? this.setState({ measuredText: true, longText: true, notifierHeight: textBlockHeight })
+    : this.setState({ measuredText: true, longText: false, notifierHeight: 40 })
+  }
+
+  componentDidMount() {
+    this.animate();
+  }
+  
+  componentDidUpdate() {
+    this.animate();
   }
 
   public render() {
     const { style, text, icon, loading } = this.props;
-    const { fadeAnim, slideAnim, measuredText, longText } = this.state;
+    const { fadeAnim, slideAnim, measuredText, longText, notifierHeight } = this.state;
+    const heightIos = measuredText && !longText ? undefined : notifierHeight;
+    const height = Platform.OS === "ios" ? heightIos : undefined;
+    const marginLeft = !icon && !loading ? undefined : 40;
+
     return (
       <Animated.View
         style={{
-          ...wrapperStyle,
           ...style,
+          width: "100%",
+          backgroundColor: "#FFFFFF",
+          elevation: 6,
           opacity: fadeAnim,
           height: slideAnim,
         }}
@@ -123,17 +116,27 @@ class Notifier extends React.Component<
         <NotifierWrapper
           style={{ backgroundColor: this.barColor }}
         >
-          <View style={{ flexDirection: "row", flex: 1, ...style }}>
+          <View
+            style={[
+              { flexDirection: "row", flex: 1, ...style },
+              icon && !loading && { alignItems: "center" }
+            ]}
+          >
             {text
               ? 
-                <NotifierText
-                  numberOfLines={3}
+                <Text
                   onTextLayout={this.measureText}
-                  noHeight={measuredText && !longText}
-                  noMarginLeft={!icon && !loading}
+                  style={{
+                    flex: 1,
+                    color: "#FFFFFF",
+                    textAlign: "center",
+                    alignSelf: "center",
+                    height,
+                    marginLeft
+                  }}
                 >
                   {text}
-                </NotifierText>
+                </Text>
               : 
                 null
             }
@@ -147,7 +150,7 @@ class Notifier extends React.Component<
               <Icon
                 name={icon}
                 size={18}
-                style={{ marginRight: 20, marginTop: 10 }}
+                style={{ marginRight: 20 }}
                 color={"#FFFFFF"}
               />
             ) : null}
