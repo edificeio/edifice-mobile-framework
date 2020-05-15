@@ -19,7 +19,7 @@ export interface IUserInfoState {
   firstName?: string;
   functionalGroups?: Array<{ id: string; name: string }>;
   functions?: any[];
-  groups?: any[];
+  groupsIds?: any[];
   homePhone?: string;
   health?: string;
   hobbies?: Array<{ category: string; values: string; visibility: string }>;

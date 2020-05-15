@@ -82,8 +82,8 @@ export class HeaderAction extends React.PureComponent<{
       onPress={() => !disabled && onPress && onPress()}
       style={{ ...(disabled ? { opacity: 0.7 } : {}),  ...style }}
     >
-      {name && <HeaderIcon name={name} hidden={hidden} iconSize={iconSize} primary={primary} />}
-      {title && <HeaderActionText>{title}</HeaderActionText>}
+      {name ? <HeaderIcon name={name} hidden={hidden} iconSize={iconSize} primary={primary} /> : undefined}
+      {title ? <HeaderActionText>{title}</HeaderActionText> : undefined}
     </ActionComponent>;
   }
 }

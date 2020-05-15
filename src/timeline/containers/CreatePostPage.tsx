@@ -23,6 +23,7 @@ import pickFile from "../../infra/actions/pickFile";
 import { ContentUri } from "../../types/contentUri";
 import { uploadDocument, formatResults } from "../../workspace/actions/helpers/documents";
 import { FilterId } from "../../workspace/types";
+import { resourceHasRight } from "../../utils/resourceRights";
 
 export interface ICreatePostDataProps {
   user: IUserInfoState;
@@ -48,7 +49,7 @@ export interface ICreatePostState {
 export type ICreatePostPageProps = ICreatePostDataProps & ICreatePostEventProps & ICreatePostOtherProps;
 
 export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostPageProps, ICreatePostState> {
-  
+
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<NavigationState> }) => {
     return alternativeNavScreenOptions(
       {
@@ -56,26 +57,27 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
         headerLeft: <HeaderBackAction navigation={navigation} />,
         headerRight: navigation.getParam('uploadingPostDocuments')
           ? <Loading
-              small
-              customColor={CommonStyles.lightGrey} 
-              customStyle={{ paddingHorizontal: 18 }}
-            />
+            small
+            customColor={CommonStyles.lightGrey}
+            customStyle={{ paddingHorizontal: 18 }}
+          />
           : <HeaderAction
-              navigation={navigation}
-              title={navigation.getParam('blog')
-                ? (navigation.getParam('blog') as IBlog)['publish-type']
-                  ? (navigation.getParam('blog') as IBlog)['publish-type'] === 'IMMEDIATE'
-                    ? I18n.t('createPost-publishAction')
-                    : I18n.t('createPost-submitAction')
-                  : ''
-                : ''}
-              onPress={() => navigation.getParam('onPublishPost') && navigation.getParam('onPublishPost')()}
-              disabled={
-                navigation.getParam('publishing', false)
-                || navigation.getParam('title', '').length === 0
-                || navigation.getParam('content', '').length === 0
-              }
-            />
+            navigation={navigation}
+            title={navigation.getParam('blog') && navigation.getParam('userinfo')
+              ? (navigation.getParam('blog') as IBlog)['publish-type']
+                ? (navigation.getParam('blog') as IBlog)['publish-type'] === 'IMMEDIATE'
+                  || (resourceHasRight(navigation.getParam('blog') as IBlog, 'org-entcore-blog-controllers-PostController|submit', navigation.getParam('userinfo')))
+                  ? I18n.t('createPost-publishAction')
+                  : I18n.t('createPost-submitAction')
+                : ''
+              : ''}
+            onPress={() => navigation.getParam('onPublishPost') && navigation.getParam('onPublishPost')()}
+            disabled={
+              navigation.getParam('publishing', false)
+              || navigation.getParam('title', '').length === 0
+              || navigation.getParam('content', '').length === 0
+            }
+          />
       },
       navigation
     );
@@ -89,7 +91,8 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
       images: [],
     }
     this.props.navigation.setParams({
-      onPublishPost: this.handlePublishPost.bind(this)
+      onPublishPost: this.handlePublishPost.bind(this),
+      'userinfo': this.props.user
     })
   }
 
@@ -97,8 +100,8 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
     const { title, content, images } = this.state;
     const { user, navigation } = this.props;
     const imagesAdded = images.length > 0;
-    const carouselImages = images.map(image => ({src: { uri: image.uri }, alt: "image"}));
-    
+    const carouselImages = images.map(image => ({ src: { uri: image.uri }, alt: "image" }));
+
     return (
       <PageContainer style={{ flex: 1 }}>
         <KeyboardAvoidingView
@@ -179,7 +182,7 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
                   navigation.setParams({ content: text })
                 }}
               />
-          
+
               <View
                 style={{
                   marginHorizontal: 20,
@@ -202,7 +205,7 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
                       })
                   }}
                 >
-                  <A style={{ marginRight: imagesAdded? 5 : 0 }}>{I18n.t('createPost-create-mediaField')}</A>
+                  <A style={{ marginRight: imagesAdded ? 5 : 0 }}>{I18n.t('createPost-create-mediaField')}</A>
                   <Icon
                     name="camera-on"
                     size={imagesAdded ? 15 : 22}
@@ -211,62 +214,62 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
                 </TouchableOpacity>
 
                 {imagesAdded &&
-                  <FlatList 
+                  <FlatList
                     data={images}
                     horizontal
                     persistentScrollbar
                     renderItem={({ item, index }) => {
-                      return(
-                          <View style={{ paddingTop: 20 }}>
+                      return (
+                        <View style={{ paddingTop: 20 }}>
+                          <TouchableOpacity
+                            onPress={() => navigation.navigate("carouselModal", { images: carouselImages, startIndex: index })}
+                            style={{
+                              shadowColor: "#6B7C93",
+                              shadowOffset: { width: 0, height: 2 },
+                              shadowOpacity: 0.8,
+                              elevation: 10,
+                              backgroundColor: "white",
+                              marginRight: index === images.length - 1 ? 15 : 30,
+                            }}
+                          >
+                            <Image
+                              source={{ uri: item.uri }}
+                              style={{ width: 110, height: 110 }}
+                              resizeMode="cover"
+                            />
+                          </TouchableOpacity>
+                          <View style={{ position: "absolute", left: 85, top: -7 }}>
                             <TouchableOpacity
-                              onPress={() => navigation.navigate("carouselModal", { images: carouselImages, startIndex: index })}
+                              onPress={() => {
+                                let imagesToPublish = [...images];
+                                imagesToPublish.splice(index, 1);
+                                this.setState({ images: imagesToPublish });
+                              }}
                               style={{
-                                shadowColor: "#6B7C93",
-                                shadowOffset: { width: 0, height: 2 },
-                                shadowOpacity: 0.8,
-                                elevation: 10,
-                                backgroundColor: "white",
-                                marginRight: index === images.length - 1 ? 15 : 30,
+                                width: 50,
+                                height: 50,
+                                justifyContent: "center",
+                                alignItems: "center"
                               }}
                             >
-                              <Image
-                                source={{ uri: item.uri }}
-                                style={{ width: 110, height: 110 }}
-                                resizeMode="cover"
+                              <Icon
+                                name="close"
+                                style={{
+                                  width: 30,
+                                  height: 30,
+                                  borderRadius: 15,
+                                  paddingVertical: 6,
+                                  paddingHorizontal: 6,
+                                  marginTop: 2,
+                                  marginRight: 2,
+                                  backgroundColor: CommonStyles.lightGrey,
+                                  overflow: "hidden",
+                                }}
+                                size={18}
                               />
                             </TouchableOpacity>
-                            <View style={{ position: "absolute", left: 85, top: -7 }}>
-                              <TouchableOpacity
-                                onPress={() => {
-                                  let imagesToPublish = [...images];
-                                  imagesToPublish.splice(index, 1);
-                                  this.setState({ images: imagesToPublish });
-                                }}
-                                style={{ 
-                                  width: 50,
-                                  height: 50,
-                                  justifyContent: "center",
-                                  alignItems: "center"
-                                }}
-                              >
-                                <Icon
-                                  name="close"
-                                  style={{
-                                    width: 30,
-                                    height: 30,
-                                    borderRadius: 15,
-                                    paddingVertical: 6,
-                                    paddingHorizontal: 6,
-                                    marginTop: 2,
-                                    marginRight: 2,
-                                    backgroundColor: CommonStyles.lightGrey,
-                                    overflow: "hidden",
-                                  }}
-                                  size={18}
-                                />
-                              </TouchableOpacity>
-                            </View>
                           </View>
+                        </View>
                       )
                     }}
                   />
@@ -280,7 +283,7 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
   }
 
   componentDidUpdate(prevProps: ICreatePostPageProps) {
-    const { publishing, navigation } = this.props;
+    const { publishing, navigation, user } = this.props;
     if (prevProps.publishing !== publishing) {
       navigation.setParams({ 'publishing': publishing });
     }
@@ -288,7 +291,7 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
 
   async handlePublishPost() {
     const { onPublishPost, onUploadPostDocuments, navigation } = this.props;
-    const { title, content, images} = this.state;
+    const { title, content, images } = this.state;
 
     let uploadedPostDocuments = undefined;
     if (images.length > 0) {
