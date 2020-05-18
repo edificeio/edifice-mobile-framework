@@ -308,6 +308,15 @@ export class Carousel extends React.Component<
                   source={item.src}
                   errorComponent={<UnavailableImage />}
                   imageComponent={() => (
+                    <Animated.View style={{
+                      height: Math.min(Dimensions.get("window").height, imageSizes[index].height),
+                      width: Math.min(Dimensions.get("window").width, imageSizes[index].width),
+                      transform: [
+                        { scale: currentIndex === index ? this.scale : 1 },
+                        { translateX: currentIndex === index ? Animated.divide(this.offsetX, this.scale) : 0 },
+                        { translateY: currentIndex === index ? Animated.divide(this.offsetY, this.scale) : 0 }
+                      ]
+                    }}>
                     <PanGestureHandler
                       onGestureEvent={this.onPanGestureEvent()}
                       onHandlerStateChange={this.onPanStateChange}
@@ -327,17 +336,13 @@ export class Carousel extends React.Component<
                             style={{
                               height: Math.min(Dimensions.get("window").height, imageSizes[index].height),
                               width: Math.min(Dimensions.get("window").width, imageSizes[index].width),
-                              transform: [
-                                { scale: currentIndex === index ? this.scale : 1 },
-                                { translateX: currentIndex === index ? Animated.divide(this.offsetX, this.scale) : 0 },
-                                { translateY: currentIndex === index ? Animated.divide(this.offsetY, this.scale) : 0 }
-                              ]
                             }}
                             resizeMode="contain"
                           />
                         </Animated.View>
                       </PinchGestureHandler>
                     </PanGestureHandler>
+                    </Animated.View>
                   )}
                 />
                 
