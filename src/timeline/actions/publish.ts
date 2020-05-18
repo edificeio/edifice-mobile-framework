@@ -87,10 +87,14 @@ export const publishBlogPostAction = (blog: IBlog, title: string, content: strin
       // Nav back to timeline
       mainNavNavigate('notifications');
       dispatch(notifierShowAction({
-        text: I18n.t(hasPublishRight ? 'createPost-publishSuccess' : hasSubmitRight ? 'createPost-submitSuccess' : 'createPost-createSuccess'),
+        text: I18n.t(
+          hasSubmitRight || hasPublishRight
+            ? blog['publish-type'] === 'IMMEDIATE' ? 'createPost-publishSuccess' : 'createPost-submitSuccess'
+            : 'createPost-createSuccess'
+          ),
         icon: 'checked',
         type: 'success',
-        duration: 5000
+        duration: 8000
       }));
 
     } catch (err) {
