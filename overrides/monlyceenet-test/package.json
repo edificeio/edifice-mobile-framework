@@ -2,7 +2,7 @@
   "ode": {
     "current": "monlyceenet-test",
     "appname": "MonLycée.net Test",
-    "appid": "com.ode.monlyceenet.test",
+    "appid": "com.ode.monlyceenet",
     "configid": "monlyceenet-test"
   }
 }
