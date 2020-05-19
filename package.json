@@ -140,7 +140,7 @@
     "config": {
       "id": "dev-default",
       "url": "http://code.web-education.net/ODE/mobileapp-config.git",
-      "branch": "x64",
+      "branch": "master",
       "google-services.android.json": "android/app/google-services.json",
       "google-services.ios.plist": "ios/appe/GoogleService-Info.plist",
       "ode-framework-conf.ts": "ode-framework-conf.ts",
