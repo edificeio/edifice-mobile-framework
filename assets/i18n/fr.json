@@ -50,6 +50,7 @@
     "common-ErrorNetwork": "Erreur de réseau",
     "common-ErrorUnknown": "Erreur",
     "common-InvalidDate": "Date invalide",
+    "common-ok": "OK",
     "common-VersionContent": "Une nouvelle version ({{version}}) est disponible sur le store si vous le souhaitez.",
     "common-VersionContentMandatory": "Une nouvelle version ({{version}}) est disponible sur le store. Veuillez mettre à jour votre application.",
     "common-VersionSkip": "Non merci",
@@ -252,6 +253,8 @@
     "workspace-photoPicker-title": "Sélectionnez une photo",
     "workspace-photoPicker-take": "Prendre une photo",
     "workspace-photoPicker-pick": "Choisir dans la galerie",
+    "workspace-quota-overflowTitle": "Quota atteint",
+    "workspace-quota-overflowText": "Votre espace de stockage est plein. Vous ne pouvez plus importer de documents.",
 
     "profileTypes": {
       "Guest": "Invité",

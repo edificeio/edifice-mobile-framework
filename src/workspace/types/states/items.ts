@@ -30,6 +30,9 @@ export interface IAsyncItems {
 }
 
 export type IState = {
-  isFetching: boolean | null;
+  error?: {
+    type: string;
+    errmsg: string;
+  };
   data: IItems<IAsyncItems>;
 };

@@ -26,6 +26,8 @@ type IProps = {
   visible: boolean;
 };
 
+export { DialogButtonOk, DialogButtonCancel, DialogContainer, DialogInput, DialogSelect, DialogTitle };
+
 export type IState = {
   disabled: boolean;
   value: {

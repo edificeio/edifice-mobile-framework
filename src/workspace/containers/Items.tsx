@@ -1,20 +1,22 @@
 import * as React from "react";
 import { FlatList, StyleSheet, View } from "react-native";
-import { connect } from "react-redux";
 import { NavigationEventSubscription } from "react-navigation";
-import { FilterId, IItem, IItemsProps, IState } from "../types";
-import { Item } from "../components";
-import { listAction } from "../actions/list";
-import { CommonStyles } from "../../styles/common/styles";
+import { connect } from "react-redux";
+
 import { layoutSize } from "../../styles/common/layoutSize";
-import { getEmptyScreen } from "../utils/empty";
+import { CommonStyles } from "../../styles/common/styles";
+import { IDispatchProps } from "../../types";
+import { ISelectedProps } from "../../types/ievents";
 import { PageContainer } from "../../ui/ContainerContent";
 import { removeAccents } from "../../utils/string";
-import withUploadWrapper from "../utils/withUploadWrapper";
+import { listAction } from "../actions/list";
+import { Item } from "../components";
+import { FilterId, IItem, IItemsProps, IState } from "../types";
+import { getEmptyScreen } from "../utils/empty";
 import withMenuWrapper from "../utils/withMenuWrapper";
 import withNavigationWrapper from "../utils/withNavigationWrapper";
-import { ISelectedProps } from "../../types/ievents";
-import { IDispatchProps } from "../../types";
+import withUploadErrorWrapper from "../utils/withUploadErrorWrapper";
+import withUploadWrapper from "../utils/withUploadWrapper";
 
 const styles = StyleSheet.create({
   separator: {
@@ -114,4 +116,6 @@ const mapStateToProps = (state: any, props: any) => {
   };
 };
 
-export default withMenuWrapper(withNavigationWrapper(withUploadWrapper(connect(mapStateToProps, {})(Items))));
+export default withMenuWrapper(
+  withNavigationWrapper(withUploadWrapper(withUploadErrorWrapper(connect(mapStateToProps, {})(Items))))
+);

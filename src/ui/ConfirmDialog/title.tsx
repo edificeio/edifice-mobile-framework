@@ -1,13 +1,19 @@
 import React from "react";
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet, Text, TextStyle, View } from "react-native";
+
 import { layoutSize } from "../../styles/common/layoutSize";
 
-export default class DialogTitle extends React.PureComponent {
+export default class DialogTitle extends React.PureComponent<{ style?: TextStyle }> {
   static displayName = "DialogTitle";
 
   render() {
-    const { children } = this.props;
-    return <Text style={styles.text}>{children}</Text>;
+    const { children, style } = this.props;
+
+    if (Array.isArray(children)) {
+      return <View style={[styles.container, style]}>{children}</View>;
+    } else {
+      return <Text style={[styles.text, style]}>{children}</Text>;
+    }
   }
 }
 
@@ -16,5 +22,10 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: layoutSize.LAYOUT_16,
     marginBottom: layoutSize.LAYOUT_10,
+  },
+  container: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignContent: "flex-end",
   },
 });

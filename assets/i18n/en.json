@@ -50,6 +50,7 @@
   "common-ErrorNetwork": "Network errors",
   "common-ErrorUnknown": "Error",
   "common-InvalidDate": "Invalid date",
+  "common-ok": "OK",
   "common-VersionContent":"A new version ({{version}}) is available on the Play Store if you would like to update your app.",
   "common-VersionContentMandatory":"A new version ({{version}}) is available on the Play Store if you would like to update your app. Please update your application.",
   "common-VersionSkip":"No, thank you",
@@ -251,6 +252,8 @@
   "workspace-photoPicker-title": "Select a photo",
   "workspace-photoPicker-take": "Take a picture",
   "workspace-photoPicker-pick": "Select in the gallery",
+  "workspace-quota-overflowTitle": "Quota reached",
+  "workspace-quota-overflowText": "Your storage space is full. You cannot upload more files.",
 
   "profileTypes": {
     "Guest": "Guest",

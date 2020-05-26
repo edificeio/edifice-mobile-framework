@@ -38,7 +38,7 @@ export const formatResults: (
   parentId?: string
 ) => IItems<IItem | string> = (data, parentId) => {
   let result = {} as IItems<IFile | IFolder | string>;
-  
+
   if (!data) {
     return result;
   } else if (data instanceof Array) {
@@ -163,20 +163,9 @@ export const uploadDocument = (dispatch: any, content: ContentUri[], parentId?: 
         dispatch(progressAction(100));
         dispatch(progressEndAction());
 
-        if (response && response.respInfo.status % 200 < 100) {
-          if (Platform.OS === "android") {
-            setTimeout(() => {
-              ToastAndroid.show(I18n.t("workspace-uploadSuccessful"), ToastAndroid.SHORT);
-            }, 500);
-          }
+        if (response && response.respInfo.status >= 200 && response.respInfo.status < 300) {
           return Promise.resolve(response.data);
         } else {
-          if (Platform.OS === "android") {
-            console.log(response);
-            setTimeout(() => {
-              ToastAndroid.show(I18n.t("workspace-uploadFailed"), ToastAndroid.SHORT);
-            }, 500);
-          }
           return Promise.reject(response.data);
         }
       })
