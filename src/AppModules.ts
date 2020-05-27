@@ -32,8 +32,12 @@ import { IAppModule } from "./infra/moduleTool/types";
     order: 4,
     config: require("./homework/config").default,
     module: require("./homework").default
-  },*/
-  /*{
+  },
+  {
+    config: require("./viescolaire/config").default,
+    module: require("./viescolaire").default
+  },
+  {
     order: 5,
     config: require("./user/config").default,
     module: require("./user").default

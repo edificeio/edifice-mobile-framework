@@ -46,6 +46,7 @@ require("./homework");
 require("./zimbra");
 require("./user");
 require("./workspace");
+require("./viescolaire");
 
 // Store
 import { createMainStore } from "./AppStore";
