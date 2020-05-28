@@ -6,13 +6,13 @@ import I18n from "i18n-js";
 import { DEVICE_HEIGHT, layoutSize } from "../../../styles/common/layoutSize";
 import { IItem } from "../../../workspace/types";
 import { ITreeItem } from "../../../workspace/actions/helpers/formatListFolders";
-import { IId } from "../../../types/iid";
+import { IFile } from "../../../workspace/types/states/items";
 import { CommonStyles } from "../../../styles/common/styles";
 
 type IProps = {
   data: ITreeItem[];
   defaultSelectedId: string[];
-  excludeData: IId[];
+  excludeData: IFile[];
   isShowTreeId?: boolean;
   leafCanBeSelected?: any;
   onClick?: Function;
@@ -94,14 +94,14 @@ export default function TreeSelect({
     return stack;
   }
 
-  const _onClick = ({ item }) => {
+  const _onClick = ({ item, isParentOfSelection }) => {
     const currentNodeStatus = nodesStatus[item.id];
 
     nodesStatus[item.id] = !currentNodeStatus;
 
     setNodesStatus(nodesStatus);
     setCurrentNode(item.id);
-    onClick(item.id);
+    onClick(item.id, isParentOfSelection);
   };
 
   const _renderTreeNodeIcon = isOpen => {
@@ -192,14 +192,18 @@ export default function TreeSelect({
       color = "#000000",
       selectedFontSize = layoutSize.LAYOUT_14,
       isCurrentNode = currentNode === item.id;
+    const parentIdOfSelection = _initCurrentNode(defaultSelectedId);
+    const isParentOfSelection= parentIdOfSelection === item.id;
+    const selectedFolders = excludeData.filter(exclude => exclude.isFolder)
+    const allFoldersSelected = item.children.length === selectedFolders.length;
 
     if (!matchStackFilter(item) || excludeData.filter(exclude => item.id === exclude.id).length) return null;
 
-    if (item && item.children && item.children.length) {
+    if (item && item.children && item.children.length && !(isParentOfSelection && allFoldersSelected)) {
       const isOpen = nodesStatus[item.id] || false;
       return (
         <View>
-          <TouchableOpacity onPress={() => _onClick({ item })}>
+          <TouchableOpacity onPress={() => _onClick({ item, isParentOfSelection })}>
             <View
               style={{
                 flexDirection: "row",
@@ -231,7 +235,7 @@ export default function TreeSelect({
       );
     }
     return (
-      <TouchableOpacity onPress={e => _onClick({ item })}>
+      <TouchableOpacity onPress={e => _onClick({ item, isParentOfSelection })}>
         <View
           style={{
             flexDirection: "row",

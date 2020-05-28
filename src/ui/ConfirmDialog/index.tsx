@@ -37,7 +37,7 @@ export type IState = {
 
 export class ConfirmDialog extends React.Component<IProps, IState> {
   state = {
-    disabled: false,
+    disabled: !this.props.input && this.props.selectDestination,
     value: this.getInitialValue(),
     valueSelect: this.props.filterId === "owner" ? this.props.parentId : "owner",
   };
@@ -99,9 +99,10 @@ export class ConfirmDialog extends React.Component<IProps, IState> {
             data={folders}
             defaultSelectedId={[parentId]}
             excludeData={selected}
-            onPress={id =>
+            onPress={(id, isParentOfSelection) =>
               this.setState({
                 valueSelect: id && id.length ? id : "owner",
+                disabled: isParentOfSelection
               })
             }
           />
