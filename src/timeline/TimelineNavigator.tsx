@@ -1,5 +1,5 @@
 import { createStackNavigator } from "react-navigation-stack";
-import { FilterTimelineConnect } from "./containers/FilterTimeline";
+import FilterTimelineConnect from "./containers/FilterTimeline";
 import { NewsContentRouter } from "./containers/NewsContent";
 import Timeline from "./containers/Timeline";
 import ContentSelectorPage from "./containers/ContentSelectorPage";
@@ -10,8 +10,7 @@ export default createStackNavigator(
     notifications: {
       screen: Timeline,
       navigationOptions:{
-        header: null,
-        headerStyle: { }
+        header: null
       }
     },
 

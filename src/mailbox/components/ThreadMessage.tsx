@@ -11,8 +11,9 @@ import { HtmlContentView } from "../../ui/HtmlContentView";
 import { BubbleStyle } from "../../ui/BubbleStyle";
 import { IAttachment } from "../../ui/Attachment";
 import { ConversationMessageStatus } from "../actions/sendMessage";
-import { getSessionInfo } from "../../AppStore";
 import { AttachmentGroup } from "../../ui/AttachmentGroup";
+import { getSessionInfo } from "../../App";
+import { Trackers } from "../../infra/tracker";
 
 const MessageBubble = ({ contentHtml, isMine, hasAttachments }) => (
   <BubbleStyle my={isMine} style={hasAttachments && { marginBottom: 3 }}>
@@ -28,11 +29,11 @@ const MessageBubble = ({ contentHtml, isMine, hasAttachments }) => (
         ignoreClass: ["signature", "medium-text"],
         ...(isMine
           ? {
-              linkTextStyle: {
-                color: "white",
-                textDecorationLine: "underline"
-              }
+            linkTextStyle: {
+              color: "white",
+              textDecorationLine: "underline"
             }
+          }
           : null),
         textColor: !isMine
       }}
@@ -75,7 +76,7 @@ export default class ThreadMessage extends React.PureComponent<
     onTapReceivers: () => void;
   },
   undefined
-> {
+  > {
   public render() {
     const {
       attachments,
@@ -99,10 +100,10 @@ export default class ThreadMessage extends React.PureComponent<
     if (!body) {
       return <style.View />;
     }
-    const getSenderText = (displayNames: Array<[string, string, boolean]>, from:string) => {
-      if(displayNames){
+    const getSenderText = (displayNames: Array<[string, string, boolean]>, from: string) => {
+      if (displayNames) {
         const res = displayNames.find(el => el && el[0] === from);
-        if(res){
+        if (res) {
           return res[1];
         } else return I18n.t("unknown-user");
       }
@@ -140,19 +141,23 @@ export default class ThreadMessage extends React.PureComponent<
             </MessageInfosDetails>
           </MessageInfos>
           {body ? (
-            <MessageBubble 
+            <MessageBubble
               contentHtml={body}
               isMine={isMine}
               hasAttachments={hasAttachments}
             />
           ) : (
-            <View />
-          )}
+              <View />
+            )}
           {hasAttachments
             ? <AttachmentGroup
-                attachments={attachments}
-                containerStyle={{ flex: 1, marginLeft: 25 }}
-              />
+              attachments={attachments}
+              containerStyle={{ flex: 1, marginLeft: 25 }}
+              onDownload={att => Trackers.trackEvent("Conversation", "DOWNLOAD ATTACHMENT")}
+              onError={att => Trackers.trackEvent("Conversation", "DOWNLOAD ATTACHMENT ERROR")}
+              onDownloadAll={() => Trackers.trackEvent("Conversation", "DOWNLOAD ALL ATTACHMENTS")}
+              onOpen={() => Trackers.trackEvent("Conversation", "OPEN ATTACHMENT")}
+            />
             : null
           }
         </MessageContainer>

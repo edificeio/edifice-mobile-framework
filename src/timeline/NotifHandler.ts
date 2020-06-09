@@ -1,9 +1,9 @@
 import { mainNavNavigate } from "../navigation/helpers/navHelper";
-import Tracking from "../tracking/TrackingManager";
 import { listTimeline } from "./actions/list";
 import { storedFilters, } from "./actions/storedFilters";
 import { loadSchoolbooks, resetLoadingState } from "./actions/dataTypes";
 import { NotificationHandlerFactory } from "../infra/pushNotification";
+import { Trackers } from "../infra/tracker";
 
 const openNotif = {
   "/schoolbook": async (data, latestNews) => {
@@ -45,7 +45,7 @@ const openNotif = {
   }
 };
 //TODO types args
-const timelineNotifHandlerFactory:NotificationHandlerFactory<any,any,any> = dispatch => async (notificationData, legalapps) => {
+const timelineNotifHandlerFactory:NotificationHandlerFactory<any,any,any> = dispatch => async (notificationData, legalapps, doTrack) => {
   for (const path in openNotif) {
     if (notificationData.resourceUri.startsWith(path)) {
       // console.log("before await schoolbooks");
@@ -67,17 +67,14 @@ const timelineNotifHandlerFactory:NotificationHandlerFactory<any,any,any> = disp
       const item = await openNotif[path](notificationData, latestNews);
       // console.log("got item :", item);
       if (item) {
-        Tracking.logEvent("readNews", {
-          application: item.application,
-          articleName: item.title,
-          authorName: item.senderName,
-          published: item.date,
-          articleId: item.id
-        });
         mainNavNavigate("newsContent", { news: item, expend: true });
       } else {
         mainNavNavigate("notifications");
       }
+
+      const notifPathBegin = '/' + notificationData.resourceUri.replace(/^\/+/g, '').split('/')[0];
+      doTrack && Trackers.trackEvent(doTrack, "Timeline", notifPathBegin);
+
       return true;
     }
   }

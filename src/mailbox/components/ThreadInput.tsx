@@ -16,7 +16,7 @@ import { Line } from "../../ui/Grid";
 import { ToggleIcon } from "../../ui/ToggleIcon";
 import { IConversationThread } from "../reducers/threadList";
 import ThreadInputReceivers from "./ThreadInputReceiver";
-import { getSessionInfo } from "../../AppStore";
+import { getSessionInfo } from "../../App";
 
 // TODO : Debt : Needs to be refactored.
 

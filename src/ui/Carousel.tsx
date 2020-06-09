@@ -25,6 +25,7 @@ import TouchableOpacity from "./CustomTouchableOpacity";
 import ImageOptional from "./ImageOptional";
 import { A, Italic } from "./Typography";
 import { iosStatusBarHeight } from "./headers/Header";
+import withViewTracking from "../infra/tracker/withViewTracking";
 
 const Close = style(TouchableOpacity)({
   alignItems: "center",
@@ -55,7 +56,7 @@ const UnavailableImage = () => (
 
 const AnimatedFastImage = Animated.createAnimatedComponent(FastImage);
 
-export class Carousel extends React.Component<
+class Carousel extends React.Component<
   {
     navigation: NavigationScreenProp<NavigationState>;
   },
@@ -418,3 +419,5 @@ export class Carousel extends React.Component<
     );
   }
 }
+
+export default withViewTracking('carousel')(Carousel);

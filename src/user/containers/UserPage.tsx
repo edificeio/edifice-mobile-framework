@@ -20,11 +20,12 @@ import {
 import { Label, } from "../../ui/Typography";
 
 import DeviceInfo from 'react-native-device-info';
-import { getSessionInfo } from "../../AppStore";
+import { getSessionInfo } from "../../App";
 import { UserCard } from "../components/UserCard";
 import { NavigationScreenProp } from "react-navigation";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { Dispatch } from "redux";
+import withViewTracking from "../../infra/tracker/withViewTracking";
 
 export const UserPageNavigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) =>
   standardNavScreenOptions(
@@ -132,7 +133,7 @@ export class UserPage extends React.PureComponent<
   }
 }
 
-export default connect(
+const UserPageConnected = connect(
   (state: any) => {
     const ret = {
       userinfo: state.user.info
@@ -143,3 +144,5 @@ export default connect(
     onLogout: () => dispatch<any>(logout())
   })
 )(UserPage);
+
+export default withViewTracking("user")(UserPageConnected);

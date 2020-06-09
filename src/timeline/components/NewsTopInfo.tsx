@@ -11,7 +11,7 @@ import { CenterPanel, Header, LeftPanel } from "../../ui/ContainerContent";
 import { Heavy, Light } from "../../ui/Typography";
 import { CommonStyles } from "../../styles/common/styles";
 import { getTimeToStr } from "../../utils/date";
-import { getSessionInfo } from "../../AppStore";
+import { getSessionInfo } from "../../App";
 import { TextLight, TextColor } from "../../ui/text";
 
 export default ({

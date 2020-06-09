@@ -4,6 +4,7 @@ import { asyncActionFactory } from "../../infra/actions/asyncActionFactory";
 import { formatResults } from "./helpers/documents";
 import { IItem, IItems } from "../types";
 import { IId } from "../../types";
+import { Trackers } from "../../infra/tracker";
 
 const WORKSPACE_PAST = "/workspace/documents/copy";
 
@@ -17,6 +18,8 @@ export function pastAction(destinationId: string, selected: IItems<IItem>) {
   const parentId = !destinationId || !destinationId.length ? "owner" : destinationId;
   const ids: string[] = Object.values(selected).reduce((acc: string[], item: IId) => [...acc, item.id], []);
   const root = parentId === "owner" ? "root" : parentId;
+
+  Trackers.trackEvent("Workspace", "COPY", undefined, Object.keys(selected).length)
 
   return asyncActionFactory(
     `${WORKSPACE_PAST}/${root}`,

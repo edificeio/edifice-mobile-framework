@@ -8,9 +8,10 @@ import Conf from "../../../ode-framework-conf";
 import { asyncActionTypes } from "../../infra/redux/async";
 import { navigate } from "../../navigation/helpers/navHelper";
 import userConfig from "../config";
-import { actionTypeLoginCancel, loginAction } from "./login";
-import Tracking from "../../tracking/TrackingManager";
+import { actionTypeLoginCancel } from "./actionTypes/login";
+import { loginAction } from './login';
 import { IActivationContext } from "../../utils/SubmitState";
+import { Trackers } from "../../infra/tracker";
 
 // TYPES ------------------------------------------------------------------------------------------------
 
@@ -107,20 +108,21 @@ export function initActivationAccount(
       const res = await fetch(`${Conf.currentPlatform.url}/auth/context`);
       // === 2 - Navigate if needed
       if (redirect) {
-        // console.log("[User][Activation] redirecting to Activation Page...")
+        console.log("[User][Activation] redirecting to Activation Page...")
         navigate("LoginActivation");
       }
       dispatch({ type: actionTypeLoginCancel });
       // === 3 - send result to store
       if (!res.ok) {
-        // console.log("[User][Activation] fetched context failed...", res.status)
+        console.log("[User][Activation] fetched context failed...", res.status)
         dispatch(activationContextError());
         return;
       }
       const activationContext: IActivationContext = await res.json();
-      // console.log("[User][Activation] fetched context :", activationContext)
+      console.log("[User][Activation] fetched context :", activationContext)
       dispatch(activationContextReceived(activationContext));
     } catch (e) {
+      console.warn(e);
       dispatch(activationContextError());
     }
   };
@@ -177,15 +179,12 @@ export function activationAccount(model: IActivationModel) {
         // checking response header
         const resBody = await res.json();
         if (resBody.error) {
-          // console.log("[User][Activation] failed with error", res.status, resBody)
+          console.log("[User][Activation] failed with error", res.status, resBody)
           dispatch(activationSubmitError(resBody.error.message));
+          Trackers.trackEvent('Auth', 'ACTIVATE ERROR', resBody.error.message);
           return;
         }
       }
-
-      Tracking.logEvent("activateAccount", {
-        platform: Conf.currentPlatform.displayName
-      });
 
       // === 4 - call thunk login using login/password
       // console.log("[User][Activation] redirecting to login...", res.status, model)
@@ -198,9 +197,12 @@ export function activationAccount(model: IActivationModel) {
       // === 5 - activation finished successfully
       dispatch(activationSubmitReceived());
       // console.log("[User][Activate] finished!")
+      // === 6 - Tracking
+      Trackers.trackEvent('Auth', 'ACTIVATE');
     } catch (e) {
       console.warn("[User][Activation] failed to submit activation ", e);
       dispatch(activationSubmitError(I18n.t("activation-errorSubmit")));
+      Trackers.trackEvent('Auth', 'ACTIVATE ERROR');
     }
   };
 }

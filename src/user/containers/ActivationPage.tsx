@@ -13,6 +13,7 @@ import {
 } from "../components/ActivationPage";
 import userConfig from "../config";
 import { IActivationState } from "../reducers/activation";
+import withViewTracking from "../../infra/tracker/withViewTracking";
 
 const mapStateToProps: (
   state: any
@@ -62,7 +63,9 @@ class ActivationPageContainer extends React.PureComponent<
   }
 }
 
-export default connect(
+const ConnectedActivationPage = connect(
   mapStateToProps,
   mapDispatchToProps
 )(ActivationPageContainer);
+
+export default withViewTracking('auth/activation')(ConnectedActivationPage);

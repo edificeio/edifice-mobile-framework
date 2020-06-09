@@ -19,8 +19,9 @@ import {
 } from "./utils/menus";
 import { FilterId } from "./types";
 import I18n from "i18n-js";
+import withViewTracking from "../infra/tracker/withViewTracking";
 
-export default createStackNavigator(
+const WorkspaceNavigator = createStackNavigator(
   {
     Workspace: {
       screen: ContainerItems,
@@ -83,3 +84,5 @@ export default createStackNavigator(
     headerMode: "none",
   }
 );
+
+export default withViewTracking('Workspace')(WorkspaceNavigator);

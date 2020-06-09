@@ -2,9 +2,10 @@ import { mainNavNavigate } from "../navigation/helpers/navHelper";
 import { fetchHomeworkDiaryList } from "./actions/diaryList";
 import homeworkDiarySelected from "./actions/selectedDiary";
 import { NotificationHandlerFactory } from "../infra/pushNotification";
+import { Trackers } from "../infra/tracker";
 
 //TODO add types args
-const homeworksNotificationHandlerFactory:NotificationHandlerFactory<any,any,any> = dispatch => async notificationData => {
+const homeworksNotificationHandlerFactory:NotificationHandlerFactory<any,any,any> = dispatch => async (notificationData, apps, doTrack) => {
   if (!notificationData.resourceUri.startsWith("/homeworks")) {
     return false;
   }
@@ -51,6 +52,9 @@ const homeworksNotificationHandlerFactory:NotificationHandlerFactory<any,any,any
     mainNavNavigate("listThreads");
   }
   */
+
+  doTrack && Trackers.trackEvent(doTrack, "Homework", "/homeworks");
+
  return true;
 };
 export default homeworksNotificationHandlerFactory;

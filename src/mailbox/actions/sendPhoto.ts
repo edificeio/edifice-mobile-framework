@@ -1,7 +1,6 @@
 import moment from "moment";
 import Conf from "../../../ode-framework-conf";
 import conversationConfig from "../config"
-import Tracking from "../../tracking/TrackingManager";
 import generateUuid from "../../utils/uuid";
 
 import { takePhoto, uploadImage } from "../../infra/actions/workspace";
@@ -16,7 +15,7 @@ import {
   actionTypeMessageSendRequested, 
   actionTypeMessageSent 
 } from "./sendMessage";
-import { getSessionInfo } from "../../AppStore";
+import { getSessionInfo } from "../../App";
 import { conversationThreadSelected } from "./threadSelected";
 
 export const sendPhoto = dispatch => async (data: IConversationMessage) => {
@@ -56,7 +55,7 @@ export const sendPhoto = dispatch => async (data: IConversationMessage) => {
 
     if (!Conf.currentPlatform) throw new Error("must specify a platform");
     const response = await signedFetch(
-      `${Conf.currentPlatform.url}${conversationConfig.appInfo.prefix}/send?${replyTo}`, 
+      `${(Conf.currentPlatform as any).url}${conversationConfig.appInfo.prefix}/send?${replyTo}`,
       {
         body: JSON.stringify(requestBody),
         headers: {
@@ -67,11 +66,6 @@ export const sendPhoto = dispatch => async (data: IConversationMessage) => {
       }
     );
     const json = await response.json();
-
-    Tracking.logEvent("sentMessage", {
-      length: fulldata.body.length - 9,
-      nbRecipients: fulldata.to.length + (fulldata.cc || []).length
-    });
 
     const fulldata2 = {
       ...fulldata,

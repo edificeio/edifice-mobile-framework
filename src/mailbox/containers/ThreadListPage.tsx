@@ -35,6 +35,8 @@ import { TempFloatingAction } from "../../ui/FloatingButton";
 import { PageContainer } from "../../ui/ContainerContent";
 import { Header } from "../../ui/headers/Header";
 import { CommonStyles } from "../../styles/common/styles";
+import withViewTracking from "../../infra/tracker/withViewTracking";
+import { Trackers } from "../../infra/tracker";
 
 // Search query tools
 
@@ -259,7 +261,10 @@ class ThreadListPageContainer extends React.PureComponent<
           <TempFloatingAction
             iconName="new_message"
             iconSize={20}
-            onEvent={() => { navigation.getParam('onNewThread') && navigation.getParam('onNewThread')() }}
+            onEvent={() => {
+              navigation.getParam('onNewThread') && navigation.getParam('onNewThread')();
+              Trackers.trackEvent("Conversation", "SEARCH");
+            }}
             selected={[]}
           />
         }
@@ -268,7 +273,9 @@ class ThreadListPageContainer extends React.PureComponent<
   }
 }
 
-export default connect(
+const ThreadListPageContainerConnected = connect(
   mapStateToProps,
   mapDispatchToProps
 )(withNavigationFocus(ThreadListPageContainer));
+
+export default withViewTracking("conversation")(ThreadListPageContainerConnected);

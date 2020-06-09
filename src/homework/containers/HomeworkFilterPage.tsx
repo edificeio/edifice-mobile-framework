@@ -14,10 +14,10 @@ import {
 } from "../actions/diaryList";
 import { homeworkDiarySelected } from "../actions/selectedDiary";
 
-import Tracking from "../../tracking/TrackingManager";
 import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { NavigationScreenProp } from "react-navigation";
 import { HeaderBackAction } from "../../ui/headers/NewHeader";
+import withViewTracking from "../../infra/tracker/withViewTracking";
 
 const mapStateToProps: (state: any) => IHomeworkFilterPageDataProps = state => {
   // Extract data from state
@@ -54,9 +54,6 @@ const mapDispatchToProps: (
     dispatch,
     onRefresh: () => dispatch(fetchHomeworkDiaryList()),
     onSelect: (diaryId, trackingKeyword) => {
-      Tracking.logEvent("selectNotebook", {
-        tab: trackingKeyword || "undefined"
-      });
       dispatch(homeworkDiarySelected(diaryId));
     }
   };
@@ -89,7 +86,9 @@ class HomeworkFilterPageContainer extends React.PureComponent<
   }
 }
 
-export default connect(
+const HomeworkFilterPageContainerConnected = connect(
   mapStateToProps,
   mapDispatchToProps
 )(HomeworkFilterPageContainer);
+
+export default withViewTracking("homework/filter")(HomeworkFilterPageContainerConnected);

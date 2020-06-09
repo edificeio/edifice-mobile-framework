@@ -7,10 +7,12 @@ import { EmptyScreen } from "../../ui/EmptyScreen";
 
 import MyAppItem from "./MyAppItem";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
-import { IAppModule } from "../../infra/moduleTool";
+import { IAppModule } from "../../infra/moduleTool/types";
 import { View, ScrollView } from "react-native";
+import withViewTracking from "../../infra/tracker/withViewTracking";
+import { NavigationScreenProp, NavigationState } from "react-navigation";
 
-class MyAppGrid extends React.PureComponent<any, {}> {
+class MyAppGrid extends React.PureComponent<{ navigation : NavigationScreenProp<NavigationState>}, {}> {
   private renderGrid(modules: IAppModule[]) {
     return (
       <ScrollView>
@@ -60,4 +62,4 @@ class MyAppGrid extends React.PureComponent<any, {}> {
   }
 }
 
-export default MyAppGrid;
+export default withViewTracking('myapps')(MyAppGrid);

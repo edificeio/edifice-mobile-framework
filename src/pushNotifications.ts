@@ -4,6 +4,7 @@ import { Dispatch } from "redux";
 import { NotificationData, NotificationHandlerFactory } from "./infra/pushNotification";
 import timelineHandlerFactory from "./timeline/NotifHandler";
 import { Linking } from "react-native";
+import { Trackers } from "./infra/tracker";
 
 const normalizeUrl = (url:string)=>{
   try{
@@ -12,12 +13,12 @@ const normalizeUrl = (url:string)=>{
     return url;
   }
 }
-export default (dispatch: Dispatch) => async (data: NotificationData, apps: string[]) => {
+export default (dispatch: Dispatch) => async (data: NotificationData, apps: string[], doTrack: false | string = "Push Notification") => {
   // function for calling handlerfactory
   let manageCount = 0;
   const call = async (notifHandlerFactory:NotificationHandlerFactory<any,any,any>) => {
     try {
-      const managed = await notifHandlerFactory(dispatch)(data, apps);
+      const managed = await notifHandlerFactory(dispatch)(data, apps, doTrack);
       if (managed) {
         manageCount++;
       }
@@ -40,6 +41,9 @@ export default (dispatch: Dispatch) => async (data: NotificationData, apps: stri
       throw new Error("Must have a platform selected to redirect the user");
     }
     const url = normalizeUrl(`${(Conf.currentPlatform as any).url}/${data.resourceUri}`)
+    console.log("data", data.resourceUri.split('/'));
+    const notifPathBegin = '/' + data.resourceUri.replace(/^\/+/g, '').split('/')[0];
+    doTrack && Trackers.trackEvent(doTrack, "Browser", notifPathBegin);
     Linking.canOpenURL(url).then(supported => {
       if (supported) {
         Linking.openURL(url);

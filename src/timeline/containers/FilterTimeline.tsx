@@ -6,11 +6,11 @@ import { PageContainer, ListItem } from "../../ui/ContainerContent";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { Heavy } from "../../ui/Typography";
 import { Checkbox } from "../../ui/forms/Checkbox";
-import Tracking from "../../tracking/TrackingManager";
 import { NavigationScreenProp, NavigationState, NavigationParams } from "react-navigation";
 import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderAction } from "../../ui/headers/NewHeader";
 import { Dispatch } from "redux";
+import withViewTracking from "../../infra/tracker/withViewTracking";
 
 export interface FilterTimelineProps {
   selectedApps: string[];
@@ -24,35 +24,12 @@ export interface FilterTimelineProps {
 // tslint:disable-next-line:max-classes-per-file
 export class FilterTimeline extends React.Component<FilterTimelineProps> {
 
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) =>
-    alternativeNavScreenOptions(
-      {
-        title: I18n.t("timeline-filterBy"),
-        headerLeft: <HeaderAction
-          onPress={() => {
-            navigation.getParam("onCancel") && navigation.getParam("onCancel")();
-          }}
-          name="close"
-        />,
-        headerRight: <HeaderAction
-          onPress={() => {
-            navigation.getParam("onApply") && navigation.getParam("onApply")();
-          }}
-          title={I18n.t("apply")}
-        />,
-      },
-      navigation
-    );
-
   constructor(props: FilterTimelineProps) {
     super(props);
     // Header events setup
     this.props.navigation.setParams({
       onApply: () => {
         this.props.setFilters(this.props.selectedApps, this.props.legalApps);
-        Tracking.logEvent("filterTimeline", {
-          filterBy: JSON.stringify(this.props.selectedApps)
-        });
         this.props.navigation.goBack();
       },
       onCancel: () => {
@@ -126,7 +103,7 @@ export class FilterTimeline extends React.Component<FilterTimelineProps> {
   }
 }
 
-export const FilterTimelineConnect = connect(
+const FilterTimelineConnect = connect(
   (state: any) => ({
     selectedApps: state.timeline.selectedApps,
     availableApps: state.timeline.availableApps,
@@ -137,3 +114,30 @@ export const FilterTimelineConnect = connect(
     setFilters: (apps: string[], legalapps: string[]) => setFilters(dispatch)(apps, legalapps)
   })
 )(FilterTimeline);
+
+
+const FilterTimelineOK = withViewTracking("timeline/filter")(FilterTimelineConnect);
+
+FilterTimelineOK.navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) =>
+  alternativeNavScreenOptions(
+    {
+      title: I18n.t("timeline-filterBy"),
+      headerLeft: <HeaderAction
+        onPress={() => {
+          navigation.getParam("onCancel") && navigation.getParam("onCancel")();
+        }}
+        name="close"
+      />,
+      headerRight: <HeaderAction
+        onPress={() => {
+          navigation.getParam("onApply") && navigation.getParam("onApply")();
+        }}
+        title={I18n.t("apply")}
+      />,
+    },
+    navigation
+  );
+
+
+export default FilterTimelineOK;
+

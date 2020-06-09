@@ -18,6 +18,7 @@ import { Dispatch, AnyAction } from "redux";
 import { ThunkDispatch } from "redux-thunk";
 import conversationThreadSelected from "../actions/threadSelected";
 import { selectSubject, clearSubject } from "../actions/selectSubject";
+import withViewTracking from "../../infra/tracker/withViewTracking";
 
 interface INewThreadPageProps {
   remainingUsers: IUser[];
@@ -108,7 +109,7 @@ class NewThreadPage extends React.PureComponent<
   }
 }
 
-export default connect(
+const NewThreadPageConnected = connect(
   (state: any) => {
     // console.log(state);
     const subjectState = state[mailboxConfig.reducerName].subject;
@@ -133,3 +134,5 @@ export default connect(
     }
   })
 )(NewThreadPage);
+
+export default withViewTracking("conversation/new")(NewThreadPageConnected);

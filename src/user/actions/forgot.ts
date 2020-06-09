@@ -6,7 +6,6 @@ import { Action } from "redux";
 import Conf from "../../../ode-framework-conf";
 import { asyncActionTypes } from "../../infra/redux/async";
 import userConfig from "../config";
-import Tracking from "../../tracking/TrackingManager";
 
 // TYPES ------------------------------------------------------------------------------------------
 
@@ -56,11 +55,9 @@ export function action_forgotSubmit(userLogin: string) {
     try {
       // console.log("action_forgotSubmit");
       dispatch(actionCreateForgotRequest(userLogin));
-      Tracking.logEvent("forgotPassword", {
-        platform: Conf.currentPlatform.displayName
-      });
+
       const res = await fetch(
-        `${Conf.currentPlatform.url}/auth/forgot-password`,
+        `${(Conf.currentPlatform as any).url}/auth/forgot-password`,
         {
           body: JSON.stringify({
             login: userLogin,

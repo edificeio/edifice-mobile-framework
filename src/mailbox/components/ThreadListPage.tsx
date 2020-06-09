@@ -42,7 +42,6 @@ import {
   ModalContentBlock,
   ModalContentText
 } from "../../ui/Modal";
-import Tracking from "../../tracking/TrackingManager";
 
 // Misc
 
@@ -139,18 +138,12 @@ export class ThreadListPage extends React.PureComponent<
             refreshing={isRefreshing}
             onRefresh={() => {
               onRefresh();
-              Tracking.logEvent("refreshConversation", {
-                direction: "up"
-              });
             }}
           />
         }
         data={threads}
         onEndReached={() => {
           onNextPage();
-          Tracking.logEvent("refreshConversation", {
-            direction: "down"
-          });
         }}
         onEndReachedThreshold={0.1}
         renderItem={({ item }: { item: IConversationThread }) =>
@@ -247,10 +240,6 @@ export class ThreadListPage extends React.PureComponent<
     navigation.navigate("thread", { threadInfo });
 
     const isUnread = threadInfo.unread;
-    Tracking.logEvent("readConversation", {
-      unread: isUnread
-      // TODO : track waitingTime & total messages read for this user
-    });
   }
 
   public handleDeleteThread(threadId) {

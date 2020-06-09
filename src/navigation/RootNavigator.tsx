@@ -10,12 +10,11 @@ import { createStackNavigator } from "react-navigation-stack";
 import { connect } from "react-redux";
 
 // ODE framework modules
-import { IAppModule } from "../infra/moduleTool";
+import { IAppModule } from "../infra/moduleTool/types";
 import pushNotifications from "../pushNotifications";
 
 // Other functional modules
 import TimelineNavigator from "../timeline/TimelineNavigator";
-import Tracking from "../tracking/TrackingManager";
 
 // Screens
 import { createMainTabNavigator, createMainTabNavOption } from "./helpers/mainTabNavigator";
@@ -25,7 +24,7 @@ import withLinkingAppWrapper from "../infra/wrapper/withLinkingAppWrapper";
 import NavigationService from "./NavigationService";
 
 // Components
-import { Carousel } from "../ui/Carousel";
+import Carousel from "../ui/Carousel";
 
 /**
  * MAIN NAVIGATOR
@@ -67,7 +66,7 @@ function getMainNavigator(appsInfo: any[]) {
     mode: 'modal',
     headerMode: 'none',
   })
-  
+
   return RootStack;
 }
 
@@ -122,10 +121,7 @@ class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
           const currentIndex = currentState.index;
           if (prevIndex === currentIndex) return;
           const currentTabRouteName = currentState.routes[currentIndex].routeName;
-          if (currentTabRouteName)
-            Tracking.logEvent("menuTab", {
-              tab: currentTabRouteName,
-            });
+          if (currentTabRouteName) { /* ToDo: Track event here */ }
         }}
         ref={nav => {
           NavigationService.setTopLevelNavigator(nav);

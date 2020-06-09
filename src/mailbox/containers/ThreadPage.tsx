@@ -19,12 +19,14 @@ import { IConversationMessage, IConversationThread, IConversationMessageList } f
 import { NavigationScreenProp } from "react-navigation";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderBackAction, HeaderIcon } from "../../ui/headers/NewHeader";
-import { getSessionInfo } from "../../AppStore";
+import { getSessionInfo } from "../../App";
 import { RowAvatars } from "../../ui/avatars/RowAvatars";
 import { Size } from "../../ui/avatars/Avatar";
 import { CommonStyles } from "../../styles/common/styles";
 import { View, TextStyle, TouchableOpacity } from "react-native";
 import { FontWeight, Text } from "../../ui/text";
+import deviceInfoModule from "react-native-device-info";
+import withViewTracking from "../../infra/tracker/withViewTracking";
 
 const mapStateToProps: (state: any) => IThreadPageDataProps = state => {
   // Extract data from state
@@ -95,7 +97,11 @@ class ThreadPageContainer extends React.PureComponent<
             ThreadPageContainer.renderThreadHeader(threadInfo, navigation)
           : <View><Text>Loading</Text></View>,
         headerStyle: {
-          height: showDetails ? 56 + 160 : 56,
+          height: showDetails
+            ? deviceInfoModule.hasNotch()
+              ? 100 + 160 : 56 + 160
+            : deviceInfoModule.hasNotch()
+              ? 100 : 56,
           overflow: "hidden"
         },
         headerLeftContainerStyle: {
@@ -199,10 +205,12 @@ class ThreadPageContainer extends React.PureComponent<
   }
 }
 
-export default connect(
+const ThreadPageContainerConnected = connect(
   mapStateToProps,
   mapDispatchToProps
 )(ThreadPageContainer);
+
+export default withViewTracking("conversation/thread")(ThreadPageContainerConnected);
 
 export const CenterPanel = style(TouchableOpacity)({
   alignItems: "stretch",

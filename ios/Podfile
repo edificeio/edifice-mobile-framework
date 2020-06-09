@@ -1,4 +1,4 @@
-platform :ios, '9.0'
+platform :ios, '10.0'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
 target 'appe' do
@@ -6,9 +6,6 @@ target 'appe' do
   # React Native Firebase
   pod 'Firebase/Core', '~> 6.3.0'
   pod 'Firebase/Messaging', '~> 6.3.0'
-
-  # React Native Mixpanel manual linking (automatic linking not supported)
-  pod 'react-native-mixpanel', :path => '../node_modules/react-native-mixpanel'
 
   # React
   pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"

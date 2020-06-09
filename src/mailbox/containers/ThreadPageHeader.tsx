@@ -19,7 +19,7 @@ import {
 import { Weight } from "../../ui/Typography";
 import mailboxConfig from "../config";
 import { IConversationThread } from "../reducers/threadList";
-import { getSessionInfo } from "../../AppStore";
+import { getSessionInfo } from "../../App";
 
 const legendStyle: TextStyle = {
   alignSelf: "center",

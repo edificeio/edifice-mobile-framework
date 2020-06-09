@@ -9,6 +9,7 @@ import {
 
 import { fetchNotificationListAction, handleNotificationAction } from "../actions/notificationList";
 import { INotification, getNotificationListState } from "../state/notificationList";
+import withViewTracking from "../../infra/tracker/withViewTracking";
 
 // ------------------------------------------------------------------------------------------------
 
@@ -72,7 +73,9 @@ class NotificationListPageContainer extends React.PureComponent<
 
 // ------------------------------------------------------------------------------------------------
 
-export default connect(
+const NotificationListPageContainerConnected = connect(
   mapStateToProps,
   mapDispatchToProps
 )(NotificationListPageContainer);
+
+export default withViewTracking('myapps/notifications')(NotificationListPageContainerConnected);

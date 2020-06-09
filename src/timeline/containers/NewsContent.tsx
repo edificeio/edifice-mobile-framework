@@ -10,7 +10,6 @@ import Conf from "../../../ode-framework-conf";
 import { signedFetch, fetchJSONWithCache } from "../../infra/fetchWithCache";
 import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { CommonStyles } from "../../styles/common/styles";
-import Tracking from "../../tracking/TrackingManager";
 import { ButtonsOkCancel, FlatButton, Icon, Loading } from "../../ui";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { ArticleContainer, PageContainer } from "../../ui/ContainerContent";
@@ -28,12 +27,14 @@ import { HeaderBackAction } from "../../ui/headers/NewHeader";
 import { FontWeight } from "../../ui/text";
 import NewsTopInfo from "../components/NewsTopInfo";
 import { ListItem, LeftPanel, CenterPanel } from "../../myAppMenu/components/NewContainerContent";
-import { getSessionInfo } from "../../AppStore";
+import { getSessionInfo } from "../../App";
 import { schoolbooks } from "../actions/dataTypes";
 import { fetchBlogCommentListAction, dataActions } from "../actions/commentList";
 import { getBlogCommentListState, IBlogComment, IBlogCommentList } from "../state/commentList";
 import { getTimeToStr } from "../../utils/date";
 import { TextPreview } from "../../ui/TextPreview";
+import withViewTracking from "../../infra/tracker/withViewTracking";
+import { Trackers } from "../../infra/tracker";
 
 interface INewsContentPageState {
   isAck: boolean;
@@ -258,10 +259,8 @@ INewsContentPageProps,
                 ? <View style={{ marginTop: 12 }}>
                     <A
                       onPress={() => {
-                        Tracking.logEvent("responsiveLink", {
-                          application: this.props.navigation.state.params.news.application
-                        });
                         Linking.openURL(Conf.currentPlatform.url + resourceUri);
+                        Trackers.trackEvent("Timeline", "GO TO", "View in Browser");
                       }}
                     >
                       {I18n.t("timeline-viewInBrowser")}
@@ -440,6 +439,10 @@ INewsContentPageProps,
               iframes: true,
               images: true
             }}
+            onDownload={att => Trackers.trackEvent("Timeline", "DOWNLOAD ATTACHMENT")}
+            onError={att => Trackers.trackEvent("Timeline", "DOWNLOAD ATTACHMENT ERROR")}
+            onDownloadAll={() => Trackers.trackEvent("Timeline", "DOWNLOAD ALL ATTACHMENTS")}
+            onOpen={() => Trackers.trackEvent("Timeline", "OPEN ATTACHMENT")}
           />
         : 
           null
@@ -578,8 +581,6 @@ INewsContentPageProps,
         }
       }
 
-      Tracking.logEvent("confirmMessage");
-
       this.setState({
         isAck: true,
         isAcking: false,
@@ -597,6 +598,8 @@ INewsContentPageProps,
           useNativeDriver: true
         }
       ).start(); // Starts the animation
+
+      Trackers.trackEvent('Scoolbook', 'CONFIRM');
     } catch (e) {
       // tslint:disable-next-line:no-console
       console.warn(e);
@@ -661,7 +664,7 @@ const CommentDate = style.text(
   }
 );
 
-const NewsContentPage = connect(
+const NewsContentPageConnected = connect(
   (state: any) => {
     const { data: selectedBlogComments, isFetching, isPristine, error } = getBlogCommentListState(state);
     return { selectedBlogComments, isFetching, isPristine, error };
@@ -673,7 +676,12 @@ const NewsContentPage = connect(
   }
 )(NewsContentPage_Unconnected);
 
-export default NewsContentPage
+const NewsContentPage = withViewTracking(
+  (props: INewsContentPageProps) => {
+    const { type } = props.navigation.state.params.news;
+    return `timeline/details/${type}`;
+  }
+)(NewsContentPageConnected);
 
 
 export const NewsContentRouter = createStackNavigator(

@@ -7,6 +7,7 @@ import homeworkConfig from "../config";
 import { AsyncStorage } from "react-native";
 import { Action } from "redux";
 import { fetchHomeworkTasks } from "./tasks";
+import { Trackers } from "../../infra/tracker";
 
 export const actionTypeDiarySelected = homeworkConfig.createActionType(
   "DIARY_SELECTED"
@@ -28,6 +29,7 @@ export function homeworkDiarySelected(diaryId: string) {
     await AsyncStorage.setItem("diary-selected", diaryId);
     dispatch(createActionDiarySelected(diaryId));
     dispatch(fetchHomeworkTasks(diaryId));
+    Trackers.trackEvent("Homework", "SELECT");
   };
 }
 

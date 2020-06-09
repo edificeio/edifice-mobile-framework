@@ -1,10 +1,9 @@
 import I18n from "i18n-js";
-import { createMainTabNavOption } from "../navigation/helpers/mainTabNavigator";
-import { NotificationHandlerFactory } from "./pushNotification";
-import { Reducer } from "redux";
-import { NavigationScreenConfig, NavigationScreenOptions, NavigationComponent } from "react-navigation";
-import { CommonStyles } from "../styles/common/styles";
-import { backendUserApp } from "../user/reducers/auth";
+import { createMainTabNavOption } from "../../navigation/helpers/mainTabNavigator";
+import { NotificationHandlerFactory } from "../pushNotification";
+import { CommonStyles } from "../../styles/common/styles";
+import { backendUserApp } from "../../user/reducers/auth";
+import { IFunctionalConfig, IAppModule } from "./types";
 
 /**
  * All specs to define functional module
@@ -28,30 +27,7 @@ export function toSnakeCase(camelCase: string) {
   return str;
 }
 
-export interface IFunctionalConfig {
-  name: string;
-  apiName: string; // name in list of avaible apps received from the backend
-  actionPrefix?: string;
-  reducerName?: string;
-  displayName: string;
-  iconName: string;
-  iconColor?: string;
-  group?: boolean;
-  appInfo: backendUserApp;
-  notifHandlerFactory?: () => Promise<NotificationHandlerFactory>;
-  hasRight?: (apps: any[]) => boolean;
-}
 
-export interface IAppModule {
-  config: IFunctionalConfig;
-  module: {
-    reducer: Reducer<any>;
-    root: React.ComponentClass<any>;
-    route: any;
-    getRoute: Function;
-  };
-}
-export type navOptionsBuilder = (arg: FunctionalModuleConfig) => NavigationScreenConfig<NavigationScreenOptions>;
 
 export default class FunctionalModuleConfig implements IFunctionalConfig {
   public name: string;
@@ -64,7 +40,7 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
   public group: boolean;
   public appInfo: backendUserApp;
   public notifHandlerFactory: () => Promise<NotificationHandlerFactory<any, any, any>>;
-  public hasRight: (apps: any[]) => boolean; 
+  public hasRight: (apps: any[]) => boolean;
 
   public constructor(opts: IFunctionalConfig) {
     this.name = opts.name;

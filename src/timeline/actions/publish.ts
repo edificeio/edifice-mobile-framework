@@ -11,6 +11,7 @@ import Conf from "../../../ode-framework-conf";
 import { notifierShowAction } from "../../infra/notifier/actions";
 import { ThunkDispatch } from "redux-thunk";
 import I18n from "i18n-js";
+import { Trackers } from "../../infra/tracker";
 
 export const publishableBlogsActions = createAsyncActionCreators<IBlog[]>(publishableBlogsActionTypes);
 export const fetchPublishableBlogsAction = (optional: boolean = false) =>
@@ -78,6 +79,8 @@ export const publishBlogPostAction = (blog: IBlog, title: string, content: strin
       const result2 = api2 && await signedFetchJson(api2, apiOpts);
 
       dispatch(blogPublishActions.receipt([result1, result2]));
+
+      Trackers.trackEvent('Timeline', 'CREATE', 'BlogPost');
 
       // Fetch timeline at the end
       const legalapps = getState().user.auth.apps;

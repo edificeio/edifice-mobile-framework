@@ -25,6 +25,8 @@ import { NotifPrefLine } from "../components/NotifPrefLine";
 import { NavigationScreenProp } from "react-navigation";
 import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderBackAction } from "../../ui/headers/NewHeader";
+import withViewTracking from "../../infra/tracker/withViewTracking";
+import { Trackers } from "../../infra/tracker";
 
 // Type definitions
 
@@ -92,6 +94,7 @@ export class NotifPrefsPage extends React.PureComponent<
 
   public setPref(pref, value) {
     this.props.onTogglePref(pref, value, this.props.notificationPrefs);
+    Trackers.trackEvent("Profile", "TOGGLE PUSH NOTIF", pref, value ? 1 : 0);
   }
 
   public isAllowed(notifPref) {
@@ -187,7 +190,7 @@ export class NotifPrefsPage extends React.PureComponent<
   }
 }
 
-export default connect(
+const NotifPrefsPageConnected = connect(
   (state: any) => {
     const sortedNotifPrefs = {};
     includeNotifKeys.map(prefName => {
@@ -212,3 +215,5 @@ export default connect(
       ) as any)
   })
 )(NotifPrefsPage);
+
+export default withViewTracking('user/notifPrefs')(NotifPrefsPageConnected);

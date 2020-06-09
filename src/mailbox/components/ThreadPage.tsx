@@ -24,7 +24,6 @@ import { Loading } from "../../ui";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
 import ThreadMessage from "../components/ThreadMessage";
-import Tracking from "../../tracking/TrackingManager";
 import Conf from "../../../ode-framework-conf";
 import conversationConfig from "../config"
 
@@ -203,13 +202,11 @@ export class ThreadPage extends React.PureComponent<
   }
   public handleTapReceivers = (message: IConversationMessage) => {
     //TODO move orchestration to thunk
-    Tracking.logEvent("seeRecipient");
     this.props.onTapReceivers && this.props.onTapReceivers(message);
     this.props.navigation.navigate("listReceivers");
   }
   public handleTapReceiversFromThread = (thread: IConversationThread) => {
     //TODO move orchestration to thunk
-    Tracking.logEvent("seeRecipient");
     this.props.onTapReceiversFromThread && this.props.onTapReceiversFromThread(thread);
     this.props.navigation.navigate("listReceivers");
   }

@@ -1,5 +1,6 @@
 import { storeFilters } from "./storedFilters";
 import { listTimeline } from "./list";
+import { Trackers } from "../../infra/tracker";
 
 export const pickFilters = dispatch => selectedApps => {
   dispatch({
@@ -16,4 +17,6 @@ export const setFilters = dispatch => (availableApps, legalapps) => {
 
   storeFilters(availableApps);
   listTimeline(dispatch)(0, availableApps, legalapps);
+
+  Trackers.trackEvent("Timeline", "FILTER");
 };

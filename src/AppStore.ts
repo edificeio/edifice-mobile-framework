@@ -9,38 +9,40 @@ import connectionTracker from "./infra/reducers/connectionTracker";
 import ui from "./infra/reducers/ui";
 import progress from "./infra/reducers/progress";
 import timeline from "./timeline/reducer";
-import { IUserInfoState } from "./user/state/info";
-import { IUserAuthState } from "./user/reducers/auth";
 
+// console.log("MODULE DEFS ", moduleDefinitions);
 // console.log("REDUCERS", getReducersFromModuleDefinitions(moduleDefinitions));
 
-const reducers = {
-  connectionTracker,
-  notifiers,
-  ui,
-  progress,
-  ...getReducersFromModuleDefinitions(moduleDefinitions)
-};
+export function createMainStore() {
 
-const rootReducer = combineReducers({
-  ...reducers,
-  timeline // TODO put this in module definitions
-});
+  console.log("create store");
 
-const enhancer = applyMiddleware(thunkMiddleware);
-export const store = window.__REDUX_DEVTOOLS_EXTENSION__ ?
-  createStore(
-    rootReducer,
-    compose(
-      enhancer,
-      window.__REDUX_DEVTOOLS_EXTENSION__()
-    )
-  ) :
-  createStore(
-    rootReducer,
-    enhancer
-  );
+  const reducers = {
+    connectionTracker,
+    notifiers,
+    ui,
+    progress,
+    ...getReducersFromModuleDefinitions(moduleDefinitions)
+  };
 
-export const getSessionInfo = () => ({
-  ...(store.getState() as any).user.info
-}) as IUserInfoState & IUserAuthState;
+  const rootReducer = combineReducers({
+    ...reducers,
+    timeline // TODO put this in module definitions
+  });
+
+  const enhancer = applyMiddleware(thunkMiddleware);
+  const store = window.__REDUX_DEVTOOLS_EXTENSION__ ?
+    createStore(
+      rootReducer,
+      compose(
+        enhancer,
+        window.__REDUX_DEVTOOLS_EXTENSION__()
+      )
+    ) :
+    createStore(
+      rootReducer,
+      enhancer
+    );
+
+  return store;
+}

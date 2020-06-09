@@ -3,7 +3,7 @@ import { NavigationScreenProp } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 import I18n from "i18n-js";
 
-import { IAppModule } from "../infra/moduleTool";
+import { IAppModule } from "../infra/moduleTool/types";
 import { getRoutes, getModules } from "../navigation/helpers/navBuilder";
 import { standardNavScreenOptions, alternativeNavScreenOptions } from "../navigation/helpers/navScreenOptions";
 import { HeaderAction, HeaderBackAction } from "../ui/headers/NewHeader";
@@ -29,8 +29,7 @@ const MyAppGridContainer = (modules: IAppModule[]) => createStackNavigator({
             alignItems: "flex-start"
           },
           headerTitleContainerStyle: {
-            alignItems: "flex-start",
-            height: 55.667 // 🍔 Big (M)hack of the death of the world. The `alignItems` property doesn't seem to work here.
+            alignItems: "flex-start"
           }
         },
         navigation

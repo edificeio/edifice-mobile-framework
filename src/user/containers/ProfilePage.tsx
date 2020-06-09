@@ -11,7 +11,7 @@ import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
 
 import { View, ScrollView, SafeAreaView, KeyboardAvoidingView, Platform, KeyboardTypeOptions, Alert } from "react-native";
-import { IUserInfoState } from "../reducers/info";
+import { IUserInfoState } from "../state/info";
 import { IUserAuthState } from "../reducers/auth";
 import { Label } from "../../ui/Typography";
 import { UserCard } from "../components/UserCard";
@@ -24,8 +24,9 @@ import { AnyAction, Dispatch } from "redux";
 import { ThunkDispatch } from "redux-thunk";
 import Notifier from "../../infra/notifier/container";
 import { changePasswordResetAction } from "../actions/changePassword";
-import { getSessionInfo } from "../../AppStore";
+import { getSessionInfo } from "../../App";
 import { ValidatorBuilder } from "../../utils/form"
+import withViewTracking from "../../infra/tracker/withViewTracking";
 
 export interface IProfilePageDataProps {
   userauth: IUserAuthState;
@@ -292,7 +293,7 @@ export class ProfilePageContainer extends React.PureComponent<IProfilePageProps>
   }
 }
 
-export default connect(
+const ProfilePageConnected = connect(
   (state: any) => {
     const ret = {
       userauth: state.user.auth,
@@ -307,3 +308,5 @@ export default connect(
     dispatch
   })
 )(ProfilePageContainer);
+
+export default withViewTracking('user/profile')(ProfilePageConnected);

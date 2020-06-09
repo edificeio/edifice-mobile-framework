@@ -24,6 +24,7 @@ import { ContentUri } from "../../types/contentUri";
 import { uploadDocument, formatResults } from "../../workspace/actions/helpers/documents";
 import { FilterId } from "../../workspace/types";
 import { resourceHasRight } from "../../utils/resourceRights";
+import withViewTracking from "../../infra/tracker/withViewTracking";
 
 export interface ICreatePostDataProps {
   user: IUserInfoState;
@@ -49,39 +50,6 @@ export interface ICreatePostState {
 export type ICreatePostPageProps = ICreatePostDataProps & ICreatePostEventProps & ICreatePostOtherProps;
 
 export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostPageProps, ICreatePostState> {
-
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<NavigationState> }) => {
-    return alternativeNavScreenOptions(
-      {
-        title: I18n.t(`createPost-newPost-${navigation.getParam("postType")}`),
-        headerLeft: <HeaderBackAction navigation={navigation} />,
-        headerRight: navigation.getParam('uploadingPostDocuments')
-          ? <Loading
-            small
-            customColor={CommonStyles.lightGrey}
-            customStyle={{ paddingHorizontal: 18 }}
-          />
-          : <HeaderAction
-            navigation={navigation}
-            title={navigation.getParam('blog') && navigation.getParam('userinfo')
-              ? (navigation.getParam('blog') as IBlog)['publish-type']
-                ? (navigation.getParam('blog') as IBlog)['publish-type'] === 'IMMEDIATE'
-                  || (resourceHasRight(navigation.getParam('blog') as IBlog, 'org-entcore-blog-controllers-PostController|submit', navigation.getParam('userinfo')))
-                  ? I18n.t('createPost-publishAction')
-                  : I18n.t('createPost-submitAction')
-                : ''
-              : ''}
-            onPress={() => navigation.getParam('onPublishPost') && navigation.getParam('onPublishPost')()}
-            disabled={
-              navigation.getParam('publishing', false)
-              || navigation.getParam('title', '').length === 0
-              || navigation.getParam('content', '').length === 0
-            }
-          />
-      },
-      navigation
-    );
-  };
 
   constructor(props: ICreatePostPageProps) {
     super(props);
@@ -314,7 +282,7 @@ const uploadActionTimeline = images => async dispatch => {
   return formatResults(data);
 };
 
-export default connect(
+const CreatePostPage = connect(
   (state: any) => ({
     user: state.user.info,
     publishing: state.timeline.publishStatus.publishing,
@@ -326,3 +294,40 @@ export default connect(
     },
   })
 )(CreatePostPage_Unconnected);
+
+const CreatePostPageOK = withViewTracking("timeline/create/blog/content")(CreatePostPage);
+
+CreatePostPageOK.navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<NavigationState> }) => {
+  return alternativeNavScreenOptions(
+    {
+      title: I18n.t(`createPost-newPost-${navigation.getParam("postType")}`),
+      headerLeft: <HeaderBackAction navigation={navigation} />,
+      headerRight: navigation.getParam('uploadingPostDocuments')
+        ? <Loading
+          small
+          customColor={CommonStyles.lightGrey}
+          customStyle={{ paddingHorizontal: 18 }}
+        />
+        : <HeaderAction
+          navigation={navigation}
+          title={navigation.getParam('blog') && navigation.getParam('userinfo')
+            ? (navigation.getParam('blog') as IBlog)['publish-type']
+              ? (navigation.getParam('blog') as IBlog)['publish-type'] === 'IMMEDIATE'
+                || (resourceHasRight(navigation.getParam('blog') as IBlog, 'org-entcore-blog-controllers-PostController|submit', navigation.getParam('userinfo')))
+                ? I18n.t('createPost-publishAction')
+                : I18n.t('createPost-submitAction')
+              : ''
+            : ''}
+          onPress={() => navigation.getParam('onPublishPost') && navigation.getParam('onPublishPost')()}
+          disabled={
+            navigation.getParam('publishing', false)
+            || navigation.getParam('title', '').length === 0
+            || navigation.getParam('content', '').length === 0
+          }
+        />
+    },
+    navigation
+  );
+};
+
+export default CreatePostPageOK;

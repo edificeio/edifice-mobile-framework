@@ -10,7 +10,7 @@ import { Loading } from "../../ui/Loading";
 import { PasswordInputLine } from "../../ui/forms/PasswordInputLine";
 import { ErrorMessage } from "../../ui/Typography";
 import { FlatButton } from "../../ui/FlatButton";
-import { getSessionInfo } from "../../AppStore";
+import { getSessionInfo } from "../../App";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { Dispatch } from "redux";
 import { NoTouchableContainer } from "../../ui/ButtonLine";

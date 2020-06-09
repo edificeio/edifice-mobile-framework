@@ -14,6 +14,7 @@ import Conf from "../../../ode-framework-conf";
 import { CommonStyles } from "../../styles/common/styles";
 import { selectPlatform } from "../actions/platform";
 import { IUserAuthState } from "../reducers/auth";
+import withViewTracking from "../../infra/tracker/withViewTracking";
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -58,6 +59,7 @@ export class PlatformSelectPage extends React.PureComponent<
   IPlatformSelectPageProps,
   {}
 > {
+
   public render() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
@@ -115,11 +117,13 @@ export class PlatformSelectPage extends React.PureComponent<
   }
 }
 
-export default connect(
+const ConnectedPlatformselectPage = connect(
   (state: any, props: any) => ({}),
   dispatch => ({
     onPlatformSelected: (platformId: string) => {
-      dispatch<any>(selectPlatform(platformId, true));
+      dispatch(selectPlatform(platformId, true, true));
     }
   })
 )(PlatformSelectPage);
+
+export default withViewTracking('auth/platforms')(ConnectedPlatformselectPage);

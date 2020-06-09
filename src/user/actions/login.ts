@@ -8,19 +8,19 @@ import {
   OAuthErrorType
 } from "../../infra/oauth";
 import { navigate } from "../../navigation/helpers/navHelper";
-import userConfig from "../config";
 
 // Legacy imports
 import { Platform } from "react-native";
 import firebase from "react-native-firebase";
 import Conf from "../../../ode-framework-conf";
-import Tracking from "../../tracking/TrackingManager"; // TODO make tracking back !
 import { userService } from "../service";
 import { initActivationAccount as initActivationAccountAction } from "./activation";
 import PushNotificationIOS from "@react-native-community/push-notification-ios";
 import { clearTimeline } from "../../timeline/actions/clearTimeline";
 import { createEndSessionAction } from "../../infra/redux/reducerFactory";
 import { ThunkDispatch } from "redux-thunk";
+import { actionTypeRequestLogin, actionTypeLoggedIn, actionTypeLoginError, actionTypeLoggedOut } from "./actionTypes/login";
+import { Trackers } from "../../infra/tracker";
 
 // TYPES ------------------------------------------------------------------------------------------------
 
@@ -64,11 +64,7 @@ export enum DEPRECATED_LoginResult {
 
 // ACTION TYPES --------------------------------------------------------------------------------------
 
-export const actionTypeRequestLogin = userConfig.createActionType("REQUEST_LOGIN");
-export const actionTypeLoggedIn = userConfig.createActionType("LOGGED_IN");
-export const actionTypeLoginError = userConfig.createActionType("LOGIN_ERROR");
-export const actionTypeLoggedOut = userConfig.createActionType("LOGGED_OUT");
-export const actionTypeLoginCancel = userConfig.createActionType("LOGIN_CANCEL");
+// Now in ./actionTypes/login.ts
 
 // THUNKS -----------------------------------------------------------------------------------------
 
@@ -218,10 +214,21 @@ export function loginAction(
 
       // === 6: Tracking reporting (only on success)
 
-      Tracking.logEvent("login", {
-        isManual: credentials ? "true" : "false",
-        platform: (Conf.currentPlatform as any).url
-      });
+      // ToDo
+      await Promise.all([
+        Trackers.setUserId(userinfo2.userId),
+        Trackers.setCustomDimension(1 /* Profile */, userinfo2.type),
+        Trackers.setCustomDimension(2 /* School */,
+          userinfo2.administrativeStructures && userinfo2.administrativeStructures.length
+            ? userinfo2.administrativeStructures[0].id
+            : userinfo2.structures && userinfo2.structures.length
+              ? userinfo2.structures[0]
+              : 'no structure'
+        ),
+        Trackers.setCustomDimension(3 /* Project */, (Conf.currentPlatform as any).url.replace(/(^\w+:|^)\/\//, '')) // remove protocol
+      ]);
+      if (credentials) await Trackers.trackEvent('Auth', 'LOGIN'); // Track manual login (with credentials)
+      else await Trackers.trackEvent('Auth', 'RESTORE'); // track separately auto login (with stored token)
 
       // === 7: navigate back to the main screen
       navigate("Main");
@@ -274,18 +281,19 @@ export function loginAction(
       }
 
       // === 2: Log error (Continue only if activation match failed)
-      console.warn(err);
-      Tracking.logEvent('failedLogin', {
-        case: err.type,
-        isManual: credentials ? "true" : "false",
-        platform: (Conf.currentPlatform as any).url
-      })
+      console.warn(err, "type:", err.type);
+      // ToDo Tracking
 
       // === 3: dispatch error
       dispatch({
         errmsg: err.type,
         type: actionTypeLoginError
       });
+
+      // Track
+
+      if (credentials) await Trackers.trackEvent('Auth', 'LOGIN ERROR', err.type); // Track manual login (with credentials)
+      else await Trackers.trackEvent('Auth', 'RESTORE ERROR', err.type); // track separately auto login (with stored token)
 
       // === 4: Redirect if asked
       if (redirectOnError) navigate("LoginHome");
@@ -312,9 +320,7 @@ export function logout() {
       if (!Conf.currentPlatform) throw new Error("must specify a platform");
 
       // === 0: Tracking reporting, only on manual logout
-      Tracking.logEvent("logout", {
-        platform: (Conf.currentPlatform as any).url
-      });
+      // ToDo
 
       clearTimeline(dispatch)(); // ToDo: this is ugly. Timeline should be cleared when logout.
 
@@ -322,6 +328,7 @@ export function logout() {
       await dispatch(endSessionAction())
       await clearRequestsCache();
       dispatch(createEndSessionAction());
+      Trackers.trackEvent('Auth', 'LOGOUT');
 
       // === 2: Nav back on the login screen
       navigate("LoginHome");

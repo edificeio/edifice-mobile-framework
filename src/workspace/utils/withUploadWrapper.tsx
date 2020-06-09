@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { setInOwnerWorkspace } from "../../navigation/NavigationService";
 import { contentUriAction } from "../actions/contentUri";
 import { uploadAction } from "../actions/upload";
+import { Trackers } from "../../infra/tracker";
 
 export interface IProps {
   navigation: any;
@@ -36,7 +37,8 @@ function withUploadWrapper<T extends IProps>(WrappedComponent: React.ComponentTy
 
         if (contentUri && contentUri.length) {
           dispatch(contentUriAction(null));
-          dispatch(uploadAction(parentId, contentUri));
+          dispatch(uploadAction(parentId, contentUri, false));
+          Trackers.trackEvent("Workspace", "SHARE FROM");
         }
       }
     }

@@ -1,6 +1,6 @@
 import moment from "moment";
 
-import { actionTypeLoggedIn, actionTypeLoggedOut } from "../actions/login";
+import { actionTypeLoggedIn, actionTypeLoggedOut } from "../actions/actionTypes/login";
 import { actionTypeProfileUpdateSuccess, actionTypeProfileUpdateError } from "../actions/profile";
 import { createSessionReducer } from "../../infra/redux/reducerFactory";
 import { initialState } from "../state/info";

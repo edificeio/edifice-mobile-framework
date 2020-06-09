@@ -3,13 +3,13 @@ import generateUuid from "../../utils/uuid";
 
 import Conf from "../../../ode-framework-conf";
 import { signedFetch } from "../../infra/fetchWithCache";
-import Tracking from "../../tracking/TrackingManager";
 
 import mailboxConfig from "../config";
 import { IArrayById } from "../../infra/collections";
-import { getSessionInfo } from "../../AppStore";
+import { getSessionInfo } from "../../App";
 import { conversationThreadSelected } from "./threadSelected";
 import { IAttachment } from "./messages";
+import { Trackers } from "../../infra/tracker";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -80,7 +80,7 @@ export function sendMessage(data: IConversationMessage) {
 
       if (!Conf.currentPlatform) throw new Error("must specify a platform");
       const response = await signedFetch(
-        `${Conf.currentPlatform.url}${mailboxConfig.appInfo.prefix}/send?${replyTo}`,
+        `${(Conf.currentPlatform as any).url}${mailboxConfig.appInfo.prefix}/send?${replyTo}`,
         {
           body: JSON.stringify(requestbody),
           headers: {
@@ -92,11 +92,6 @@ export function sendMessage(data: IConversationMessage) {
       );
 
       const json = await response.json();
-
-      Tracking.logEvent("sentMessage", {
-        length: fulldata.body.length - 9,
-        nbRecipients: fulldata.to.length + (fulldata.cc || []).length
-      });
 
       const fulldata2 = {
         ...fulldata,
@@ -114,6 +109,8 @@ export function sendMessage(data: IConversationMessage) {
       });
       
       fulldata2.threadId.startsWith("tmp-") && dispatch(conversationThreadSelected(fulldata2.newId));
+
+      Trackers.trackEvent("Conversation", "SEND");
     } catch (e) {
       // tslint:disable-next-line:no-console
       console.warn(e);

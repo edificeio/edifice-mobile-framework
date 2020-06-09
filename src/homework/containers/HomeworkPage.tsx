@@ -15,11 +15,11 @@ import {
 import { homeworkTaskSelected } from "../actions/selectedTask";
 import { fetchHomeworkTasks } from "../actions/tasks";
 
-import Tracking from "../../tracking/TrackingManager";
 import homeworkDiarySelected from "../actions/selectedDiary";
 import { NavigationScreenProp } from "react-navigation";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderAction, HeaderBackAction } from "../../ui/headers/NewHeader";
+import withViewTracking from "../../infra/tracker/withViewTracking";
 
 const mapStateToProps: (state: any) => IHomeworkPageDataProps = state => {
   // Extract data from state
@@ -76,14 +76,10 @@ const mapDispatchToProps: (
   return {
     dispatch,
     onRefresh: diaryId => {
-      Tracking.logEvent("refreshNotebook");
       dispatch(fetchHomeworkTasks(diaryId));
     },
-    onScrollBeginDrag: () => {
-      Tracking.logEvent("scrollNotebook");
-    },
+    onScrollBeginDrag: () => {},
     onSelect: (diaryId, date, itemId) => {
-      Tracking.logEvent("readHomework");
       dispatch(homeworkTaskSelected(diaryId, date, itemId));
     }
   };
@@ -135,7 +131,9 @@ class HomeworkPageContainer extends React.PureComponent<
   }
 }
 
-export default connect(
+const HomeworkPageContainerConnected = connect(
   mapStateToProps,
   mapDispatchToProps
 )(HomeworkPageContainer);
+
+export default withViewTracking("homework")(HomeworkPageContainerConnected);

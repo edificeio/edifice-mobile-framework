@@ -1,6 +1,4 @@
 import NetInfo from "@react-native-community/netinfo";
-import Tracking from "../tracking/TrackingManager";
-
 
 class ConnectionManager {
   private static BACK_LISTENERS_KEY = "back";
@@ -50,7 +48,6 @@ let notifyTimer: Date | undefined;
 const notifyConnectionError = () => {
   if (!notifyTimer || notifyTimer.getHours() !== new Date().getHours()) {
     notifyTimer = new Date();
-    Tracking.logEvent("connectionProblem");
   }
 };
 

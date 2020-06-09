@@ -4,8 +4,8 @@ import Conf from "../../../ode-framework-conf";
 import { Connection } from "../../infra/Connection";
 import { fetchJSONWithCache } from "../../infra/fetchWithCache";
 import { signURISource, signURISourceArray } from "../../infra/oauth";
-import { getSessionInfo } from "../../AppStore";
 import { IMediaModel } from "../reducer";
+import { getSessionInfo } from "../../App";
 
 let loadingState = "idle";
 const awaiters = [];

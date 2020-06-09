@@ -4,7 +4,7 @@ import {
   actionTypeLoginCancel,
   actionTypeLoginError,
   actionTypeRequestLogin
-} from "../actions/login";
+} from "../actions/actionTypes/login";
 import { actionTypeSetNotifPrefs } from "../actions/notifPrefs";
 import { actionTypePlatformSelect } from "../actions/platform";
 import {

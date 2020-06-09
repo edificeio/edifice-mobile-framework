@@ -5,6 +5,7 @@ import { OAuth2RessourceOwnerPasswordClient, scopes } from "../../infra/oauth";
 
 import { AsyncStorage } from "react-native";
 import { navigate } from "../../navigation/helpers/navHelper";
+import { Trackers } from "../../infra/tracker";
 
 export const PLATFORM_STORAGE_KEY = "currentPlatform";
 
@@ -17,7 +18,7 @@ export const actionTypePlatformSelect = userConfig.createActionType(
  * Stores the new select platform Id in AsyncReducer.
  * @param platformId
  */
-export function selectPlatform(platformId: string, redirect: boolean = false) {
+export function selectPlatform(platformId: string, redirect: boolean = false, doTrack: boolean = false) {
   return async (dispatch, getState) => {
     // === 1 - Verify that platformId exists
     if (!Conf.platforms.hasOwnProperty(platformId)) {
@@ -45,6 +46,11 @@ export function selectPlatform(platformId: string, redirect: boolean = false) {
       type: actionTypePlatformSelect
     });
 
+    // === 6 - Track event
+
+    doTrack && Trackers.trackEvent('Connection', 'SELECT PLATFORM', (Conf.currentPlatform as any).url.replace(/(^\w+:|^)\/\//, ''));
+
+    // === End
     if (redirect) navigate("LoginHome");
   };
 }

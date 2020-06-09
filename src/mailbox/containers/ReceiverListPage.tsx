@@ -12,6 +12,7 @@ import { IConversationReceiverList } from "../reducers";
 import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { NavigationScreenProp } from "react-navigation";
 import { HeaderBackAction } from "../../ui/headers/NewHeader";
+import withViewTracking from "../../infra/tracker/withViewTracking";
 
 const mapStateToProps: (state: any) => IReceiverListPageDataProps = state => {
     const receiverState: IConversationReceiverList = state[conversationConfig.reducerName].receiversDisplay;
@@ -56,7 +57,9 @@ class ReceiverListPageContainer extends React.PureComponent<IReceiverListPagePro
 
 }
 
-export default connect(
+const ReceiverListPageContainerConnected = connect(
     mapStateToProps,
     mapDispatchToProps
 )(ReceiverListPageContainer);
+
+export default withViewTracking("conversation/receivers")(ReceiverListPageContainerConnected);

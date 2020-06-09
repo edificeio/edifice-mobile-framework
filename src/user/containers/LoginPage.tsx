@@ -38,6 +38,7 @@ import {
 } from "../actions/version";
 import VersionModal from "../components/VersionModal";
 import { getAuthState } from "../selectors";
+import withViewTracking from "../../infra/tracker/withViewTracking";
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -286,7 +287,7 @@ export class LoginPage extends React.Component<
   }
 }
 
-export default connect(
+const ConnectedLoginPage = connect(
   (state: any, props: any): ILoginPageDataProps => {
     const auth: IUserAuthState = getAuthState(state);
     let version = "",
@@ -323,3 +324,5 @@ export default connect(
     }
   })
 )(LoginPage);
+
+export default withViewTracking('auth/login')(ConnectedLoginPage);

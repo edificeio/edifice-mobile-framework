@@ -20,6 +20,7 @@ import { Text } from "../../ui/text";
 import { NavigationScreenProp } from "react-navigation";
 import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderBackAction } from "../../ui/headers/NewHeader";
+import { Trackers } from "../../infra/tracker";
 
 // Main component ---------------------------------------------------------------------------------
 
@@ -88,7 +89,13 @@ export class HomeworkTaskPage extends React.PureComponent<
         >
           <Text>{formattedDate}</Text>
           {/*<View paddingTop={20}>{convert(taskContent)}</View>*/}
-          <HtmlContentView style={{ paddingTop: 20 }} html={taskContent} />
+          <HtmlContentView
+            style={{ paddingTop: 20 }}
+            html={taskContent}
+            onDownload={att => Trackers.trackEvent("Homeworks", "DOWNLOAD ATTACHMENT")}
+            onError={att => Trackers.trackEvent("Homeworks", "DOWNLOAD ATTACHMENT ERROR")}
+            onDownloadAll={() => Trackers.trackEvent("Homeworks", "DOWNLOAD ALL ATTACHMENTS")}
+            onOpen={() => Trackers.trackEvent("Homeworks", "OPEN ATTACHMENT")}/>
         </ScrollView>
       </PageContainer>
     );

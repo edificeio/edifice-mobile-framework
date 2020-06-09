@@ -26,6 +26,7 @@ import { fetchPublishableBlogsAction } from "../actions/publish";
 import { Loading } from "../../ui/Loading";
 import { EmptyScreen } from "../../ui/EmptyScreen";
 import { traceProps } from "../../utils/debugPropTrace";
+import withViewTracking from "../../infra/tracker/withViewTracking";
 
 export interface IContentSelectorPageDataProps {
   blogs: IBlogList;
@@ -50,16 +51,6 @@ export type IContentSelectorPageState = {
 }
 
 export class ContentSelectorPage_Unconnected extends React.PureComponent<IContentSelectorPageProps, IContentSelectorPageState> {
-
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<NavigationState> }) => {
-    return alternativeNavScreenOptions(
-      {
-        title: I18n.t(`createPost-select-${navigation.getParam("postType")}`),
-        headerLeft: <HeaderBackAction navigation={navigation} />
-      },
-      navigation
-    );
-  };
 
   protected didFocusSubscription?: NavigationEventSubscription;
 
@@ -182,7 +173,7 @@ export const Content = style.text({
   marginTop: 10
 });
 
-export default connect(
+const ContentSelectorPage = connect(
   (state: any) => {
     const { data: blogs, isFetching, isPristine } = getPublishableBlogsState(state);
     return { blogs, isFetching, isPristine };
@@ -199,3 +190,17 @@ export default connect(
     }
   })
 )(ContentSelectorPage_Unconnected);
+
+const ContentSelectorPageOK = withViewTracking("timeline/create/blog/selector")(ContentSelectorPage);
+
+ContentSelectorPageOK.navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<NavigationState> }) => {
+  return alternativeNavScreenOptions(
+    {
+      title: I18n.t(`createPost-select-${navigation.getParam("postType")}`),
+      headerLeft: <HeaderBackAction navigation={navigation} />
+    },
+    navigation
+  );
+};
+
+export default ContentSelectorPageOK;

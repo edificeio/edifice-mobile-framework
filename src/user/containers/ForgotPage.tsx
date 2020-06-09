@@ -8,6 +8,7 @@ import {
 import userConfig from "../config";
 import { action_forgotSubmit, action_forgotReset } from "../actions/forgot";
 import { IUserForgotState } from "../reducers/forgot";
+import withViewTracking from "../../infra/tracker/withViewTracking";
 
 const mapStateToProps: (state: any) => IForgotPageDataProps = state => {
   const forgotState: IUserForgotState = state[userConfig.reducerName].forgot;
@@ -29,7 +30,9 @@ const mapDispatchToProps: (dispatch) => IForgotPageEventProps = dispatch => {
   };
 };
 
-export default connect(
+const ConnectedForgatPage = connect(
   mapStateToProps,
   mapDispatchToProps
 )(ForgotPage);
+
+export default withViewTracking('auth/forgot')(ConnectedForgatPage);

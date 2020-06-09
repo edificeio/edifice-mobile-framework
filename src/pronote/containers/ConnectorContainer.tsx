@@ -16,6 +16,7 @@ import { Back } from "../../ui/headers/Back";
 import ConnectorView from "../components/ConnectorView";
 import { openConnector } from "../actions/connector";
 import { bindActionCreators } from "redux";
+import withViewTracking from "../../infra/tracker/withViewTracking";
 
 interface IApplicationBackend {
   name: string;
@@ -124,7 +125,7 @@ const mapDispatchToProps: (dispatch: any) => IConnectorContainerEventProps = dis
   return bindActionCreators({ openConnector }, dispatch);
 };
 
-export default connect(
+export default withViewTracking("pronote")(connect(
   mapStateToProps,
   mapDispatchToProps
-)(ConnectorContainer);
+)(ConnectorContainer));

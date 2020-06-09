@@ -5,6 +5,7 @@ import Conf from "../../../ode-framework-conf";
 import { signedFetch, signedFetchJson } from "../../infra/fetchWithCache";
 import { notifierShowAction } from "../../infra/notifier/actions";
 import { ThunkDispatch } from "redux-thunk";
+import { Trackers } from "../../infra/tracker";
 
 // TYPES
 
@@ -68,6 +69,7 @@ export function profileUpdateAction(updatedProfileValues: IUpdatableProfileValue
         icon: 'checked',
         type: 'success'
       }));
+      Trackers.trackEvent("Profile", "UPDATE");
     } catch (e) {
       console.warn(e);
       dispatch(profileUpdateErrorAction(updatedProfileValues));
@@ -79,6 +81,7 @@ export function profileUpdateAction(updatedProfileValues: IUpdatableProfileValue
           icon: 'close',
           type: 'error'
         }));
+        Trackers.trackEvent("Profile", "UPDATE ERROR", "ProfileChangeLoginError");
       } else {
         dispatch(notifierShowAction({
           id: "profile",
@@ -86,6 +89,8 @@ export function profileUpdateAction(updatedProfileValues: IUpdatableProfileValue
           icon: 'close',
           type: 'error'
         }));
+        Trackers.trackEvent("Profile", "UPDATE ERROR", "ProfileChangeError");
+
       }
     }
   }

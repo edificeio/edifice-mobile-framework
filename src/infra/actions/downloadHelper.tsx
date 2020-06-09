@@ -5,6 +5,7 @@ import RNFetchBlob, { FetchBlobResponse } from "rn-fetch-blob";
 import Conf from "../../../ode-framework-conf";
 import { getAuthHeader } from "../oauth";
 import { IFile } from "../../workspace/types";
+import { Trackers } from "../tracker";
 
 export const downloadFiles = (downloadable: Array<IFile>, withManager = true) => {
   downloadable.map(document => downloadFile(document, withManager));
@@ -18,7 +19,7 @@ export const downloadFile = (downloadable: IFile, withManager = true) => {
   }
 };
 
-export const startDownload = async (downloadable: IFile, withManager = true): Promise<FetchBlobResponse> => {
+export const startDownload = async (downloadable: IFile, withManager = true, doTrack: boolean = true): Promise<FetchBlobResponse> => {
   let path = (await getDirName()) + "/" + downloadable.filename;
 
   const config =
@@ -35,6 +36,8 @@ export const startDownload = async (downloadable: IFile, withManager = true): Pr
           path,
           appendExt: getExtension(downloadable.filename),
         };
+
+  doTrack && Trackers.trackEvent("Workspace", "DOWNLOAD", getExtension(downloadable.filename));
 
   return RNFetchBlob.config(config).fetch(
     "GET",
@@ -74,6 +77,6 @@ export const getDirName = async (): Promise<string> => {
   return "";
 };
 
-const getExtension = (filename: string): string => {
+export const getExtension = (filename: string): string => {
   return filename.substr(filename.lastIndexOf(".") + 1);
 };

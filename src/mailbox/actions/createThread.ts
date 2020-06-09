@@ -3,8 +3,9 @@ import { IGroup, IUser } from "../../user/reducers";
 import mailboxConf from "../config";
 import { fetchJSONWithCache } from "../../infra/fetchWithCache";
 import conversationThreadSelected from "./threadSelected";
-import { getSessionInfo } from "../../AppStore";
+import { getSessionInfo } from "../../App";
 import generateUuid from "../../utils/uuid";
+import { Trackers } from "../../infra/tracker";
 
 export const actionTypeThreadCreated = mailboxConf.createActionType(
   "THREAD_CREATED"
@@ -37,6 +38,8 @@ export function createThread(pickedUsers: any[], threadSubject: string) {
       type: actionTypeThreadCreated
     });
     dispatch(conversationThreadSelected(newThread.id));
+
+    Trackers.trackEvent("Conversation", "CREATE");
 
     return newThread;
   };

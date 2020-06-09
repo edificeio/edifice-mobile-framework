@@ -26,6 +26,10 @@ export interface IHtmlContentViewProps extends ViewProps {
   opts?: IHtmlParserRNOptions;
   loadingComp?: JSX.Element;
   getContentFromResource?: (responseJson: any) => string;
+  onDownload?: (att: IAttachment) => void;
+  onError?: (att: IAttachment) => void;
+  onOpen?: (att: IAttachment) => void;
+  onDownloadAll?: () => void;
 }
 
 interface IHtmlContentViewState {
@@ -147,6 +151,10 @@ export class HtmlContentView extends React.PureComponent<
             ? <AttachmentGroup
                 attachments={attachments}
                 containerStyle={{ marginTop: 12 }}
+                onDownload={this.props.onDownload}
+                onError={this.props.onError}
+                onDownloadAll={this.props.onDownloadAll}
+                onOpen={this.props.onOpen}
               />
             : null
           }

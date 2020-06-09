@@ -12,7 +12,6 @@ import { ErrorMessage } from "../../ui/Typography";
 import { News } from "../components/News";
 
 import styles from "../../styles";
-import Tracking from "../../tracking/TrackingManager";
 
 import Notifier from "../../infra/notifier/container";
 import { fetchTimeline, listTimeline } from "../actions/list";
@@ -24,6 +23,7 @@ import { CommonStyles } from "../../styles/common/styles";
 import { TempFloatingAction } from "../../ui/FloatingButton";
 import { Header } from "../../ui/headers/Header";
 import { IBlogList } from "../state/publishableBlogs";
+import withViewTracking from "../../infra/tracker/withViewTracking";
 
 interface ITimelineProps {
   isFetching: boolean;
@@ -76,19 +76,10 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
         this.props.availableApps,
         this.props.legalapps
       );
-      Tracking.logEvent("refreshTimeline", { direction: "down" });
     }
   }
 
   public openNews(item, expend) {
-    Tracking.logEvent("readNews", {
-      application: item.application,
-      articleId: item.id,
-      articleName: item.title,
-      authorName: item.senderName,
-      published: item.date
-    });
-
     this.props.navigation.navigate("newsContent", {
       expend,
       news: item
@@ -109,7 +100,6 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
 
   public fetchLatest() {
     this.props.fetch(this.props.availableApps);
-    Tracking.logEvent("refreshTimeline", { direction: "up" });
   }
 
   public shouldComponentUpdate(nextProps, nextState) {
@@ -256,7 +246,7 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
   }
 }
 
-export default connect(
+const ConnectedTimeline = connect(
   (state: any) => ({
     ...state.timeline,
     isAuthenticated: state.user.auth.loggedIn,
@@ -271,3 +261,5 @@ export default connect(
     onMount: () => { dispatch(fetchPublishableBlogsAction(true)) }
   })
 )(Timeline);
+
+export default withViewTracking("timeline")(ConnectedTimeline);

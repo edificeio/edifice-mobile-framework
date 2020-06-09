@@ -6,9 +6,10 @@ import { resetConversationThreadList } from "./actions/threadList";
 import conversationThreadSelected from "./actions/threadSelected";
 import { NotificationHandlerFactory } from "../infra/pushNotification";
 import { fetchConversationThreadResetMessages } from "./actions/apiHelper";
+import { Trackers } from "../infra/tracker";
 
 //TODO add types args
-const mailboxNotifHandlerFactory :NotificationHandlerFactory<any,any,any> = dispatch => async notificationData => {
+const mailboxNotifHandlerFactory :NotificationHandlerFactory<any,any,any> = dispatch => async (notificationData, apps, doTrack) => {
   if (
     !notificationData.resourceUri.startsWith("/conversation") &&
     !notificationData.resourceUri.startsWith("/zimbra")
@@ -38,6 +39,8 @@ const mailboxNotifHandlerFactory :NotificationHandlerFactory<any,any,any> = disp
     console.warn(e);
     mainNavNavigate("listThreads");
   }
+  const notifPathBegin = '/' + notificationData.resourceUri.replace(/^\/+/g, '').split('/')[0];
+  doTrack && Trackers.trackEvent(doTrack, "Conversation", notifPathBegin);
   return true;
 };
 export default mailboxNotifHandlerFactory;

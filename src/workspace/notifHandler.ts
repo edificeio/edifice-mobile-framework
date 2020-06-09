@@ -3,8 +3,9 @@ import Conf from "../../ode-framework-conf";
 import { mainNavNavigate } from "../navigation/helpers/navHelper";
 import { NotificationHandlerFactory } from "../infra/pushNotification";
 import { FilterId, IFile } from "./types";
+import { Trackers } from "../infra/tracker";
 
-const notifHandlerFactory: NotificationHandlerFactory<any, any, any> = () => async notificationData => {
+const notifHandlerFactory: NotificationHandlerFactory<any, any, any> = () => async (notificationData, apps, doTrack) => {
   if (!notificationData.resourceUri.startsWith("/workspace")) {
     return false;
   }
@@ -47,6 +48,8 @@ const notifHandlerFactory: NotificationHandlerFactory<any, any, any> = () => asy
       childParams: { item, title: name },
     });
   }
+
+  doTrack && Trackers.trackEvent(doTrack, "Workspace", "/workspace");
 
   return true;
 };

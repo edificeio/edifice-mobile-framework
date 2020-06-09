@@ -11,6 +11,10 @@ export class AttachmentGroup extends React.PureComponent<
   {
     attachments: Array<IAttachment>;
     containerStyle?: any;
+    onDownload?: (att: IAttachment) => void;
+    onError?: (att: IAttachment) => void;
+    onOpen?: (att: IAttachment) => void;
+    onDownloadAll?: () => void;
   },
   {
     downloadAll: boolean;
@@ -52,7 +56,10 @@ export class AttachmentGroup extends React.PureComponent<
           </View>
           {attachments.length > 1
           ? <TouchableOpacity
-              onPress={() => this.setState({ downloadAll: true })}
+              onPress={() => {
+                this.setState({ downloadAll: true })
+                this.props.onDownloadAll && this.props.onDownloadAll()
+              }}
             >
               <A style={{ fontSize: 12 }}>{I18n.t("download-all")}</A>
             </TouchableOpacity>
@@ -72,6 +79,9 @@ export class AttachmentGroup extends React.PureComponent<
               key={index}
               attachment={att}
               starDownload={downloadAll}
+              onDownload={this.props.onDownload}
+              onError={this.props.onError}
+              onOpen={this.props.onOpen}
               style={{ marginTop: index === 0 ? 0 : 2 }}
             />
           ))}

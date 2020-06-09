@@ -1,19 +1,3 @@
-import {
-  actionTypeLoggedIn,
-  actionTypeLoggedOut,
-  actionTypeLoginCancel,
-  actionTypeLoginError,
-  actionTypeRequestLogin
-} from "../actions/login";
-import { actionTypeSetNotifPrefs } from "../actions/notifPrefs";
-import { actionTypePlatformSelect } from "../actions/platform";
-import {
-  actionTypeNewVersion,
-  actionTypeRequestVersion,
-  actionTypeSkipVersion,
-  INewVersionAction,
-  IVersionContext
-} from "../actions/version";
 import { actionTypeForgotRequest, actionTypeForgetReceive } from "../actions/forgot";
 import { createEndSessionActionType } from "../../infra/redux/reducerFactory";
 

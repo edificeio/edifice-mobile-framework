@@ -1,7 +1,7 @@
 // RN Imports
 import * as React from "react";
 import { initI18n } from "./infra/i18n";
-import { StatusBar, View } from "react-native";
+import { StatusBar, View, AppState, AppStateStatus } from "react-native";
 import * as RNLocalize from "react-native-localize";
 import "react-native-gesture-handler";
 
@@ -19,7 +19,7 @@ import {
 import Conf from "../ode-framework-conf";
 
 // ODE Mobile Framework Modules
-import Tracking from "./tracking/TrackingManager";
+import { Trackers } from './infra/tracker';
 
 // ODE Mobile Framework Redux
 import { refreshToken } from "./user/actions/login";
@@ -27,15 +27,26 @@ import { loadCurrentPlatform, selectPlatform } from "./user/actions/platform";
 import { isInActivatingMode } from "./user/selectors";
 import { checkVersionThenLogin } from "./user/actions/version";
 
-// Store
-import { store } from "./AppStore";
-
 // Main Screen
 import AppScreen from "./AppScreen";
 
 // Style
 import { CommonStyles } from './styles/common/styles';
 import SplashScreen from "react-native-splash-screen";
+
+// Functionnal modules // THIS IS UGLY. it is a workaround for include matomo tracking.
+require("./mailbox");
+require("./pronote");
+require("./lvs");
+require("./myAppMenu");
+require("./homework");
+require("./user");
+require("./workspace");
+
+// Store
+import { createMainStore } from "./AppStore";
+import { IUserAuthState } from "./user/reducers/auth";
+import { IUserInfoState } from "./user/state/info";
 
 // Disable Yellow Box on release builds.
 if (__DEV__) {
@@ -46,7 +57,7 @@ if (__DEV__) {
 class AppStoreUnconnected extends React.Component<
   { currentPlatformId: string; store: any },
   {}
-> {
+  > {
   private notificationOpenedListener?: () => void;
   private onTokenRefreshListener?: () => void;
 
@@ -64,13 +75,17 @@ class AppStoreUnconnected extends React.Component<
     );
   }
 
-  public async UNSAFE_componentWillMount() {
-    // console.log("APP will mount");
-    await Tracking.init();
-    RNLocalize.addEventListener("change", this.handleLocalizationChange);
-  }
-
   public async componentDidMount() {
+
+    // Event handlers
+    RNLocalize.addEventListener('change', this.handleLocalizationChange);
+    AppState.addEventListener('change', this.handleAppStateChange);
+
+    // Tracking
+    await Trackers.init();
+    Trackers.trackEvent('Application', 'STARTUP');
+    // await Trackers.test();
+
     // console.log("APP did mount");
     if (!this.props.currentPlatformId) {
       // If only one platform in conf => auto-select it.
@@ -87,6 +102,8 @@ class AppStoreUnconnected extends React.Component<
       await this.startupLogin();
     }
     SplashScreen.hide();
+
+    this.handleAppStateChange('active'); // Call this manually after Tracker is set up
   }
 
   public async componentDidUpdate(prevProps: any) {
@@ -136,6 +153,7 @@ class AppStoreUnconnected extends React.Component<
 
   public componentWillUnmount() {
     RNLocalize.removeEventListener("change", this.handleLocalizationChange);
+    AppState.removeEventListener('change', this.handleAppStateChange);
     if (this.notificationOpenedListener) this.notificationOpenedListener();
     if (this.onTokenRefreshListener) this.onTokenRefreshListener();
   }
@@ -145,7 +163,17 @@ class AppStoreUnconnected extends React.Component<
     this.forceUpdate();
   };
 
+  private handleAppStateChange = (nextAppState: AppStateStatus) => {
+    if (nextAppState === 'active') {
+      console.log('[App State] now in active mode');
+      Trackers.trackEvent('Application', 'DISPLAY');
+    } else if (nextAppState === 'background') {
+      console.log('[App State] now in background mode');
+    }
+  }
+
   private static initialNotifRouted: boolean = false;
+  private static lastNotificationHandeld = undefined;
 
   private handleNotification = (notificationOpen: NotificationOpen) => {
     // AppStoreUnconnected.initialNotifRouted = true;
@@ -155,7 +183,6 @@ class AppStoreUnconnected extends React.Component<
     // Get information about the notification that was opened
     const notification: Notification = notificationOpen.notification;
     // console.log("got notification !!", notification);
-    Tracking.logEvent("openNotificationPush");
     this.props.store.dispatch({
       notification,
       type: "NOTIFICATION_OPEN"
@@ -168,23 +195,37 @@ class AppStoreUnconnected extends React.Component<
   };
 }
 
-function connectWithStore(store: any, WrappedComponent:any , ...args: [any?, any?, any?, any?]) {
+function connectWithStore(store: any, WrappedComponent: any, ...args: [any?, any?, any?, any?]) {
   const ConnectedWrappedComponent = connect(...args)(WrappedComponent);
   return (props: any) => {
     return <ConnectedWrappedComponent {...props} store={store} />;
   };
 }
 
+const theStore: any = { store: undefined };
+const getStore = () => {
+  // console.log("get the store", theStore.store);
+  if (theStore.store == undefined) theStore.store = createMainStore();
+  // console.log("the store is", theStore.store);
+  return theStore.store;
+}
+
 const mapStateToProps = (state: any) => ({
   currentPlatformId: state.user.auth.platformId,
   loggedIn: state.user.auth.loggedIn,
-  store,
+  store: getStore(),
 });
 
-export const AppStore = connectWithStore(
-  store,
-  AppStoreUnconnected,
-  mapStateToProps
-);
+export const AppStore = () => {
+  return connectWithStore(
+    getStore(),
+    AppStoreUnconnected,
+    mapStateToProps
+  )
+};
 
-export default AppStore;
+export default AppStore();
+
+export const getSessionInfo = () => ({
+  ...(getStore().getState() as any).user.info
+}) as IUserInfoState & IUserAuthState;

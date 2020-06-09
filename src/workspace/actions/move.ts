@@ -5,6 +5,7 @@ import { formatResults } from "./helpers/documents";
 import { FilterId, IItem, IItems } from "../types";
 import { IId } from "../../types";
 import { actionTypesList, getDocuments, getFolders } from "./list";
+import { Trackers } from "../../infra/tracker";
 
 const WORKSPACE_MOVE = "/workspace/documents/move";
 
@@ -18,6 +19,8 @@ export function moveAction(destinationId: string, origineParentId: string, selec
   const parentId = !destinationId || !destinationId.length ? "owner" : destinationId;
   const ids: string[] = Object.values(selected).reduce((acc: string[], item: IId) => [...acc, item.id], []);
   const root = parentId === "owner" ? "root" : parentId;
+
+  Trackers.trackEvent("Workspace", "MOVE", undefined, Object.keys(selected).length)
 
   return asyncActionFactory(
     `${WORKSPACE_MOVE}/${root}`,

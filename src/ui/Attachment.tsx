@@ -26,7 +26,6 @@ import {
   ModalContentBlock,
   ModalContentText
 } from "./Modal";
-import Tracking from "../tracking/TrackingManager";
 import { notifierShowAction } from "../infra/notifier/actions";
 import Notifier from "../infra/notifier/container";
 
@@ -94,7 +93,6 @@ const getAttachmentIconByExt = (filename: string) => {
 const openDownloadedFile = (notifierId: string, localFile?: string) => {
   return (dispatch) => {
     if (localFile) {
-      Tracking.logEvent("openAttachments");
       if (Platform.OS === "ios") {
         (RNFetchBlob.ios.openDocument(localFile) as unknown as Promise<any>) // TS declaration for RNFetchBlob iOS is incomplete
           .catch(error => {
@@ -139,7 +137,10 @@ class Attachment extends React.PureComponent<
     attachment: IAttachment;
     starDownload: boolean;
     style: ViewStyle;
-    onOpenDownloadedFile: (notifierId: string, localFile?: string) => void
+    onOpenDownloadedFile: (notifierId: string, localFile?: string) => void;
+    onDownload?: (att: IAttachment) => void;
+    onError?: (att: IAttachment) => void;
+    onOpen?: (att: IAttachment) => void;
   },
   {
     downloadState: DownloadState;
@@ -305,6 +306,7 @@ class Attachment extends React.PureComponent<
       this.setState({ showModal: true });
     } else if (downloadState === DownloadState.Success) {
       onOpenDownloadedFile(notifierId, localFile);
+      this.props.onOpen && this.props.onOpen(attachment);
     } else if (downloadState === DownloadState.Error) {
       this.startDownload(attachment);
     }
@@ -329,8 +331,6 @@ class Attachment extends React.PureComponent<
     if (Platform.OS === "android") {
       await Permissions.request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
     }
-
-    Tracking.logEvent("downloadAttachments");
 
     this.setState({
       downloadState: DownloadState.Downloading,
@@ -379,10 +379,13 @@ class Attachment extends React.PureComponent<
                   .then(() => this.setState({ localFile: newpath }))
                   .catch((errorMessage) => console.log(errorMessage))
             })
+
+          this.props.onDownload && this.props.onDownload(att);
         })
         .catch(errorMessage => {
           // error handling 
           console.log(errorMessage);
+          this.props.onError && this.props.onError(att);
         })
     }
 

@@ -1,4 +1,5 @@
 import { CommonStyles } from "../../styles/common/styles";
+import deviceInfoModule from "react-native-device-info";
 
 /**
  * Options for a header with centered title
@@ -18,7 +19,7 @@ export const standardNavScreenOptions = (props, { state }) => {
             elevation: 5,
             shadowOpacity: 0.3,
             shadowRadius: 4,
-            height: 56,
+            height: deviceInfoModule.hasNotch() ? 100 : 56,
             ...(props.headerStyle || {})
         },
         headerTitleStyle: {
@@ -28,7 +29,6 @@ export const standardNavScreenOptions = (props, { state }) => {
             fontSize: 16,
             fontWeight: "400",
             textAlign: "center",
-            flex: 1,
             ...(props.headerTitleStyle || {})
         },
     };
@@ -39,6 +39,14 @@ export const standardNavScreenOptions = (props, { state }) => {
  */
 export const alternativeNavScreenOptions = (props, navigation) =>
     standardNavScreenOptions({
-        headerTitleStyle: { textAlign: "left", marginHorizontal: 0 },
+        headerTitleStyle: {
+            alignSelf: "center",
+            color: "white",
+            fontFamily: CommonStyles.primaryFontFamily,
+            fontSize: 16,
+            fontWeight: "400",
+            textAlign: "left",
+            marginHorizontal: 0
+        },
         ...props
     }, navigation);

@@ -16,7 +16,7 @@ import { CommonStyles } from "../../styles/common/styles";
 
 import { FontWeight } from "../../ui/text";
 import { IConversationThread } from "../reducers/threadList";
-import { getSessionInfo } from "../../AppStore";
+import { getSessionInfo } from "../../App";
 
 export interface IThreadItemProps extends IConversationThread {
   onPress: (id: string, displayNames: string[][], subject: string) => void;

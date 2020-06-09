@@ -6,11 +6,11 @@ import userConfig from "../config";
 import { asyncActionTypes } from "../../infra/redux/async";
 
 import Conf from "../../../ode-framework-conf";
-import { getSessionInfo } from "../../AppStore";
-import Tracking from "../../tracking/TrackingManager";
+import { getSessionInfo } from "../../App";
 import { mainNavNavigate } from "../../navigation/helpers/navHelper";
 import { notifierShowAction } from "../../infra/notifier/actions";
 import { ThunkDispatch } from "redux-thunk";
+import { Trackers } from "../../infra/tracker";
 
 // TYPES ------------------------------------------------------------------------------------------------
 
@@ -161,10 +161,6 @@ export function changePasswordAction(model: IChangePasswordModel) {
         }
       }
 
-      Tracking.logEvent("changePassword", {
-        platform: Conf.currentPlatform.displayName
-      });
-
       // === 5 - change password finished successfully
       dispatch(changePasswordSubmitReceivedAction());
       mainNavNavigate("MyProfile");
@@ -175,9 +171,12 @@ export function changePasswordAction(model: IChangePasswordModel) {
         type: 'success'
       }));
       // console.log("[User][Change password] finished!")
+      Trackers.trackEvent("Profile", "CHANGE PASSWORD");
     } catch (e) {
       console.warn("[User][Change password] failed to submit", e);
       dispatch(changePasswordSubmitErrorAction(I18n.t("changePassword-errorSubmit")));
+      Trackers.trackEvent("Profile", "CHANGE PASSWORD ERROR");
+
     }
   };
 }
