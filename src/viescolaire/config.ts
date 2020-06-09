@@ -4,7 +4,7 @@ export default new FunctionalModuleConfig({
   name: "viescolaire",
   apiName: "Vie Scolaire",
   displayName: "viesco",
-  iconName: "reservation",
+  iconName: "school",
   hasRight: apps => true
 });
 
