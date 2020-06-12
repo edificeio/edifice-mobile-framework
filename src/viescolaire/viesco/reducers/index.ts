@@ -1,6 +1,5 @@
+import subjectsList from "./subjects";
+import personnelList from "./personnel";
 import { combineReducers } from "redux";
-import children from "./children";
 
-const rootReducer = combineReducers({ children });
-
-export default rootReducer;
+export default combineReducers({ subjectsList, personnelList });

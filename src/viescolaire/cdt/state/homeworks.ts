@@ -1,16 +1,23 @@
 import moment from "moment";
 
-import { createAsyncActionTypes, AsyncState } from "../../../infra/redux/async2";
+import { createAsyncActionTypes, AsyncState, AsyncActionTypes } from "../../../infra/redux/async2";
 import viescoConfig from "../../config";
 
 // THE MODEL --------------------------------------------------------------------------------------
 
 export interface IHomework {
+  due_date: moment.Moment;
   id: string;
-  date: moment.Moment;
-  subject: string;
+  progress?: {
+    created: string;
+    homework_id: number;
+    modified: string;
+    state_id: number;
+    state_label: string;
+    user_id: string;
+  };
+  subject_id: string;
   type: string;
-  completed: boolean
 }
 
 export type IHomeworkList = IHomework[];
@@ -19,11 +26,11 @@ export type IHomeworkList = IHomework[];
 
 export type IHomeworkListState = AsyncState<IHomeworkList>;
 
-export const initialState: IHomeworkListState = [];
+export const initialState: IHomeworkList = [];
 
-export const getHomeworkListState = (globalState: any) =>
-  viescoConfig.getLocalState(globalState).homeworkList as IHomeworkListState;
+export const getHomeworksListState = (globalState: any) =>
+  viescoConfig.getLocalState(globalState).cdt.homeworksList as IHomeworkListState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const actionTypes = createAsyncActionTypes(viescoConfig.createActionType("CDT_HOMEWORK_LIST"));
+export const actionTypes : AsyncActionTypes = createAsyncActionTypes(viescoConfig.createActionType("CDT_HOMEWORK_LIST"));
