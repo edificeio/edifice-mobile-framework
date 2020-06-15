@@ -150,7 +150,7 @@ export function activationAccount(model: IActivationModel) {
         phone: model.phone,
         theme
       };
-      let formdata = new FormData();
+      let formdata = new URLSearchParams();
       for (let key in payload) {
         formdata.append(key, payload[key]);
       }
@@ -161,7 +161,7 @@ export function activationAccount(model: IActivationModel) {
         body: formdata,
         headers: {
           Accept: "application/json",
-          "Content-Type": "multipart/form-data"
+          "Content-Type": "application/x-www-form-urlencoded"
         },
         method: "post"
       });
