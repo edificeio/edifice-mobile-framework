@@ -34,17 +34,14 @@ export default class HomeworkList extends React.PureComponent<{getfunction:any},
     let getHomeworkDataList = [];
     try {
       getHomeworkDataList = await this.props.getfunction;
-      console.log("hmlist: ", getHomeworkDataList);
       this.setState({homeworkDataList: getHomeworkDataList});
     }
     catch(e) {
-      console.log("caught error: ", e);
       this.setState({homeworkDataList: getHomeworkDataList});
     }
   }
 
   private homeworkToDo() {
-    console.log("djddkdlmsdblablabl");
     return (
       <>
         { this.state.homeworkDataList != undefined && this.state.homeworkDataList.length > 0 ?
@@ -66,8 +63,7 @@ export default class HomeworkList extends React.PureComponent<{getfunction:any},
             imageSrc={require("../../../../assets/images/empty-screen/empty-homework.png")}
             imgWidth={265}
             imgHeight={280}
-            text={I18n.t("homework-emptyScreenText")}
-            title={I18n.t("homework-emptyScreenTitle")}
+            title={I18n.t("viesco-homework-EmptyScreenText")}
           />
         }
       </>
@@ -95,8 +91,7 @@ export default class HomeworkList extends React.PureComponent<{getfunction:any},
             imageSrc={require("../../../../assets/images/empty-screen/empty-evaluations.png")}
             imgWidth={265}
             imgHeight={280}
-            text={I18n.t("homework-emptyScreenText")}
-            title={I18n.t("homework-emptyScreenTitle")}
+            title={I18n.t("viesco-session-EmptyScreenText")}
           />
         }
       </>

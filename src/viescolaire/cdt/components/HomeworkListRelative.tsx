@@ -1,6 +1,7 @@
 import * as React from "react";
-import { View, StyleSheet, Switch, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Switch, TouchableOpacity, Platform } from "react-native";
 import moment from "moment";
+import I18n from "i18n-js";
 
 import { Text, TextBold } from "../../../ui/text";
 import { PageContainer } from "../../../ui/ContainerContent";
@@ -9,13 +10,19 @@ import { getHomeworkListState } from "../state/homeworks";
 import { HomeworkItem } from "./homework";
 import { SessionItem } from "./session";
 import { EmptyScreen } from "../../../ui/EmptyScreen";
-import I18n from "i18n-js";
+import { DatePicker } from "../../../ui/DatePicker";
 
 const style = StyleSheet.create({
   homeworkPart: { paddingVertical: 8, paddingHorizontal: 15 },
   title: { fontSize: 18 },
   subtitle: { color: "#AFAFAF" },
-  course: { fontWeight: "bold", textTransform: "uppercase" }
+  course: { fontWeight: "bold", textTransform: "uppercase" },
+  grid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });
 
 export default class HomeworkList extends React.PureComponent<{getfunction:any}, any> {
@@ -34,26 +41,22 @@ export default class HomeworkList extends React.PureComponent<{getfunction:any},
     let getHomeworkDataList = [];
     try {
       getHomeworkDataList = await this.props.getfunction;
-      console.log("hmlist: ", getHomeworkDataList);
       this.setState({homeworkDataList: getHomeworkDataList});
     }
     catch(e) {
-      console.log("caught error: ", e);
       this.setState({homeworkDataList: getHomeworkDataList});
     }
   }
 
   private homeworkToDo() {
-    console.log("djddkdlmsdblablabl");
     return (
       <>
         { this.state.homeworkDataList != undefined && this.state.homeworkDataList.length > 0 ?
           <View>
-            <Text>Travail à faire</Text>
             { this.state.homeworkDataList.map((course, index, list) => (
               <TouchableOpacity onPress={() => this.props.navigation.navigate("HomeworkPage")}>
                 { index === 0 || course.due_date.substring(0, 10) != list[index -1].due_date.substring(0, 10) ?
-                  <TextBold>Pour {moment(course.due_date).format("dddd Do MMMM")}</TextBold>
+                  <TextBold>{I18n.t("viesco-homework-fordate")} {moment(course.due_date).format("dddd Do MMMM")}</TextBold>
                   : null
                 }
                 <HomeworkItem disabled checked={true} title={course.subject_id} subtitle={course.type.label} />
@@ -66,8 +69,7 @@ export default class HomeworkList extends React.PureComponent<{getfunction:any},
             imageSrc={require("../../../../assets/images/empty-screen/empty-homework.png")}
             imgWidth={265}
             imgHeight={280}
-            text={I18n.t("homework-emptyScreenText")}
-            title={I18n.t("homework-emptyScreenTitle")}
+            title={I18n.t("viesco-homework-EmptyScreenText")}
           />
         }
       </>
@@ -79,11 +81,10 @@ export default class HomeworkList extends React.PureComponent<{getfunction:any},
       <>
         { this.state.homeworkDataList != undefined && this.state.homeworkDataList.length > 0 ?
           <View>
-            <Text>Séances</Text>
             { this.state.homeworkDataList.map((session, index, list) => (
               <TouchableOpacity onPress={() => this.props.navigation.navigate("SessionPage")}>
                 { index === 0 || session.date.substring(0, 10) != list[index -1].date.substring(0, 10) ?
-                  <TextBold>{moment(session.date).format("Do/MM/YY")}</TextBold>
+                  <TextBold>{moment(session.date).format("DD/MM/YY")}</TextBold>
                   : null
                 }
                 <SessionItem matiere={session.subject_id} author={session.teacher_id} />
@@ -95,8 +96,7 @@ export default class HomeworkList extends React.PureComponent<{getfunction:any},
             imageSrc={require("../../../../assets/images/empty-screen/empty-evaluations.png")}
             imgWidth={265}
             imgHeight={280}
-            text={I18n.t("homework-emptyScreenText")}
-            title={I18n.t("homework-emptyScreenTitle")}
+            title={I18n.t("viesco-session-EmptyScreenText")}
           />
         }
       </>
@@ -110,12 +110,21 @@ export default class HomeworkList extends React.PureComponent<{getfunction:any},
   public render() {
     return (
       <PageContainer style={style.homeworkPart}>
-        <Switch
-          style={{ marginTop: 30 }}
-          onValueChange={this.toggleSwitch}
-          value={this.state.switchValue}
-        />
-        { !this.state.switchValue ? <Text>TOTO</Text> : this.sessionToDo()}
+        <View style={ style.grid }>
+          <Text>Du &ensp;</Text><DatePicker onGetDate={(dateStart) => console.log("dateStart: ", dateStart)} />
+          <Text>&emsp;Au &ensp;</Text><DatePicker onGetDate={(dateEnd) => console.log("dateEnd: ", dateEnd)} />
+        </View>
+        <View style={ style.grid }>
+          <Text>{I18n.t("viesco-homework")}</Text>
+          <Switch
+            style={{ marginTop: 30 }}
+            trackColor={{ false: "#FA9700", true: "#2BAB6F"}}
+            onValueChange={this.toggleSwitch}
+            value={this.state.switchValue}
+          />
+          <Text>{I18n.t("viesco-session")}</Text>
+        </View>
+        { !this.state.switchValue ? this.homeworkToDo() : <Text>TOTO</Text> }
       </PageContainer>
     );
   };

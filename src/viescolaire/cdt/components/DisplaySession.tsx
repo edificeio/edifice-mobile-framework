@@ -1,6 +1,7 @@
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
 import moment from "moment";
+import I18n from "i18n-js";
 
 import { Text, TextBold } from "../../../ui/text";
 import { PageContainer } from "../../../ui/ContainerContent";
@@ -10,9 +11,9 @@ import { HtmlContentView } from "../../../ui/HtmlContentView";
 
 const style = StyleSheet.create({
   sessionPart: { paddingVertical: 8, paddingHorizontal: 15 },
-  pageTitle: { color: "#AFAFAF" },
+  pageTitle: { color: "#AFAFAF", textTransform: "uppercase" },
   title: { fontSize: 18 },
-  subtitle: { color: "#AFAFAF" },
+  subtitle: { color: "#AFAFAF", marginBottom: 15 },
   course: { fontWeight: "bold", textTransform: "uppercase" }
 });
 
@@ -31,11 +32,9 @@ export default class DisplayHomework extends React.PureComponent<{getfunction:an
     let getSessionData = {};
     try {
       getSessionData = await this.props.getfunction;
-      console.log("hm: ", getSessionData);
       this.setState({sessionData: getSessionData});
     }
     catch(e) {
-      console.log("caught error: ", e);
       this.setState({sessionData: getSessionData});
     }
   }
@@ -48,7 +47,7 @@ export default class DisplayHomework extends React.PureComponent<{getfunction:an
             { this.state.sessionData.description ?
               <>
                 <Icon size={20} color="#00ab6f" name="reservation" />
-                <Text>&emsp;{moment(this.state.sessionData.date).format("Do/MM/YY")}</Text>
+                <Text>&emsp;{moment(this.state.sessionData.date).format("DD/MM/YY")}</Text>
                 <Text style={style.course}>&emsp;{this.state.sessionData.subject_id}</Text>
               </>
               : null
@@ -57,7 +56,7 @@ export default class DisplayHomework extends React.PureComponent<{getfunction:an
         </View>
 
         <View style={[style.sessionPart]}>
-          <Text style={ style.pageTitle }>SEANCE</Text>
+          <Text style={ style.pageTitle }>{I18n.t("viesco-session")}</Text>
           <TextBold style={style.title}>{this.state.sessionData.title}</TextBold>
           { this.state.sessionData.description ?
             <HtmlContentView html = {this.state.sessionData.description} />

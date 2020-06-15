@@ -28,7 +28,6 @@ class Session extends React.PureComponent<any> {
   }
   
   public render() {
-    console.log(this.props);
     return <DisplaySession {...this.props} />;
   }
 }

@@ -34,7 +34,7 @@ class HomeworkListRelativeContainer extends React.PureComponent<{ navigation: { 
 
 const mapStateToProps: (state: any) => any = state => {
   return {
-    getfunction: fetchJSONWithCache(`/diary/sessions/own/2020-06-15/2020-06-15/97a7363c-c000-429e-9c8c-d987b2a2c204`)
+    getfunction: fetchJSONWithCache(`/diary/homeworks/own/2020-03-15/2020-06-15/97a7363c-c000-429e-9c8c-d987b2a2c204`)
   };
 };
 
