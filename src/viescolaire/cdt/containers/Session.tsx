@@ -8,9 +8,9 @@ import { fetchJSONWithCache } from "../../../infra/fetchWithCache";
 import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
 import { HeaderBackAction } from "../../../ui/headers/NewHeader";
 import { HeaderAction } from "../../../ui/headers/Header";
-import DisplayHomework from "../components/DisplayHomework";
+import DisplaySession from "../components/DisplaySession";
 
-class Homework extends React.PureComponent<any> {
+class Session extends React.PureComponent<any> {
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
     const diaryTitle = navigation.getParam("diaryTitle")
 
@@ -29,13 +29,13 @@ class Homework extends React.PureComponent<any> {
   
   public render() {
     console.log(this.props);
-    return <DisplayHomework {...this.props} />;
+    return <DisplaySession {...this.props} />;
   }
 }
 
 const mapStateToProps: (state: any) => any = state => {
   return {
-    getfunction: fetchJSONWithCache(`/diary/homework/49`)
+    getfunction: fetchJSONWithCache(`/diary/session/38`)
   };
 };
 
@@ -43,4 +43,4 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
   return bindActionCreators({}, dispatch);
 };
 
-export default connect(mapStateToProps)(Homework);
+export default connect(mapStateToProps)(Session);
