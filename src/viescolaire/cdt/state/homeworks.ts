@@ -26,11 +26,12 @@ export type IHomeworkList = IHomework[];
 
 export type IHomeworkListState = AsyncState<IHomeworkList>;
 
-export const initialState: IHomeworkList = [];
+export const initialState: IHomeworkListState = { data: [], isPristine: true, isFetching: false };
 
 export const getHomeworksListState = (globalState: any) =>
   viescoConfig.getLocalState(globalState).cdt.homeworksList as IHomeworkListState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const actionTypes : AsyncActionTypes = createAsyncActionTypes(viescoConfig.createActionType("CDT_HOMEWORK_LIST"));
+export const listActionTypes : AsyncActionTypes = createAsyncActionTypes(viescoConfig.createActionType("CDT_HOMEWORK_LIST"));
+export const updateActionTypes : AsyncActionTypes = createAsyncActionTypes(viescoConfig.createActionType("CDT_HOMEWORK_UPDATE"));

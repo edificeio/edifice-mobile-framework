@@ -71,3 +71,11 @@ export const homeworkListService = {
     return data;
   },
 };
+
+export const homeworkService = {
+  post: async(homeworkId: number, isDone: boolean) => {
+    const status = isDone ? 'done' : 'todo';
+    const result = await fetchJSONWithCache(`/diary/homework/progress/${homeworkId}/${status}`, { method: 'post' });
+    return { homeworkId, status };
+  }
+}

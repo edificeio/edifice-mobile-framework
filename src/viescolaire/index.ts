@@ -1,14 +1,16 @@
 import config from "./config";
 
+import { combineReducers } from "redux";
 import mainComp from "./navigator";
-import mainReducer from "./viesco/reducers";
+import viesco from "./viesco/reducers";
+import cdt from "./cdt/reducers";
 import { registerModule } from "../AppModules";
 
 // Main component
 export const root = mainComp;
 
 // Reducer
-export const reducer = mainReducer;
+export const reducer = combineReducers({ viesco, cdt });
 
 // Route
 export const route = config.createRoute(root);
@@ -16,13 +18,11 @@ export const route = config.createRoute(root);
 const module = {
   reducer,
   root,
-  route
+  route,
 };
 export default module;
 
-registerModule(
-  {
-    config: require("./config").default,
-    module
-  }
-)
+registerModule({
+  config: require("./config").default,
+  module,
+});

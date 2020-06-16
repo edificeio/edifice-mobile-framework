@@ -6,12 +6,13 @@
 import { Dispatch } from "redux";
 
 import { createAsyncActionCreators } from "../../../infra/redux/async2";
-import { homeworkListService, homeworkChildService } from "../services/homeworks";
-import { actionTypes, IHomeworkList } from "../state/homeworks";
+import { homeworkListService, homeworkChildService, homeworkService } from "../services/homeworks";
+import { listActionTypes, IHomeworkList, updateActionTypes } from "../state/homeworks";
 
 // ACTION LIST ------------------------------------------------------------------------------------
 
-export const dataActions = createAsyncActionCreators<IHomeworkList>(actionTypes);
+export const dataActions = createAsyncActionCreators<IHomeworkList>(listActionTypes);
+export const customActions = createAsyncActionCreators<{homeworkId: number, status: string}>(updateActionTypes);
 
 // THUNKS -----------------------------------------------------------------------------------------
 
@@ -35,6 +36,18 @@ export function fetchChildHomeworkAction(childId: string, structureId: string, s
       dispatch(dataActions.receipt(data));
     } catch (errmsg) {
       dispatch(dataActions.error(errmsg));
+    }
+  };
+}
+
+export function updateHomeworkProgressAction(homeworkId: number, isDone: boolean) {
+  return async (dispatch: Dispatch) => {
+    try {
+      dispatch(customActions.request());
+      const data = await homeworkService.post(homeworkId, isDone);
+      dispatch(customActions.receipt(data));
+    } catch (errmsg) {
+      dispatch(customActions.error(errmsg));
     }
   };
 }
