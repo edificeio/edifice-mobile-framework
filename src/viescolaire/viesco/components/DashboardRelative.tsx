@@ -7,7 +7,7 @@ import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
 import { Text, TextBold } from "../../../ui/text";
 import { HomeworkItem } from "../../cdt/components/homework";
 import { DenseDevoirList } from "../../competences/components/Item";
-import { ChildPicker } from "./ChildPicker";
+import ChildPicker from "../containers/ChildPicker";
 
 const style = StyleSheet.create({
   dashboardPart: { paddingVertical: 8, paddingHorizontal: 15 },
@@ -41,6 +41,7 @@ type DashboardProps = {
   children: any[];
   homeworks: any[];
   evaluations: any[];
+  selectChild: (child) => void;
 };
 
 const IconButton = ({ icon, color, text, onPress }) => {
@@ -94,15 +95,11 @@ export default class Dashboard extends React.PureComponent<DashboardProps> {
   }
 
   public render() {
-    const { children, homeworks, evaluations } = this.props;
+    const { homeworks, evaluations } = this.props;
+
     return (
-      <View>
-        <ChildPicker
-          selectedChild={children[0]}
-          children={children}
-          onChange={val => console.log(val)}
-          onAbsence={() => console.log("absence")}
-        />
+      <View style={{ flex: 1 }}>
+        <ChildPicker />
         {this.renderNavigationGrid()}
         <ScrollView>
           {this.renderHomework(homeworks)}

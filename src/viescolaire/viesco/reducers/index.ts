@@ -1,12 +1,6 @@
 import { combineReducers } from "redux";
+import children from "./children";
 
-const dummy = (state: any = {}, action: any) => {
-  switch (action.type) {
-    default:
-      return state;
-  }
-};
-
-const rootReducer = combineReducers({ dummy });
+const rootReducer = combineReducers({ children });
 
 export default rootReducer;
