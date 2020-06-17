@@ -1,7 +1,9 @@
 import * as React from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
-import { Text, TextBold, TouchableOpacity, Icon } from "../../../ui";
-import { LeftColoredItem, CheckBoxItem } from "./Item";
+import { Text, View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { Icon } from "../../../ui";
+import { TextBold } from "../../../ui/text";
+import { HomeworkItem } from "../../cdt/components/homework";
+import moment from "moment";
 
 const style = StyleSheet.create({
   dashboardPart: { paddingVertical: 8, paddingHorizontal: 15 },
@@ -31,6 +33,10 @@ const style = StyleSheet.create({
   evaluations: {},
 });
 
+type DashboardProps = {
+  homeworks?: any[];
+};
+
 const IconButton = ({ icon, color, text, onPress }) => {
   return (
     <View style={style.gridButtonContainer}>
@@ -55,12 +61,33 @@ export default class Dashboard extends React.PureComponent<any & dashboardProps>
   }
 
   private renderHomework(homeworks) {
+    let homeworksByDate = {};
+    homeworks.forEach((hm) => {
+      const key = moment(hm.date).format('YYYY-MM-DD');
+      if(typeof homeworksByDate[key] === 'undefined') homeworksByDate[key] = [];
+      homeworksByDate[key].push(hm);
+    });
+
+    const tomorrowDate = moment().add(1, 'day');
+
+    homeworksByDate = Object.keys(homeworksByDate).sort().slice(0, 5).reduce(function(memo, current) { 
+        memo[current] = homeworksByDate[current]
+        return memo;
+      }, {}
+    );
+
     return (
       <View style={style.dashboardPart}>
         <TextBold style={style.title}>Travail à faire</TextBold>
-        <Text style={style.subtitle}>Pour demain</Text>
-        {homeworks.map(({ completed, subject, type }) => (
-          <CheckBoxItem checked={completed} title={subject} subtitle={type} />
+        {Object.keys(homeworksByDate).map(date => (
+          <>
+          <Text style={style.subtitle}>
+            Pour {moment(date).isSame(tomorrowDate, 'day') ? 'demain' : `le ${moment(date).format('DD/MM/YYYY')}`}
+          </Text>
+          {homeworksByDate[date].map(homework => (
+            <HomeworkItem checked={homework.completed} title={homework.subject} subtitle={homework.type} />
+          ))}
+          </>
         ))}
       </View>
     );
