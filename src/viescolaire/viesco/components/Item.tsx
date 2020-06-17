@@ -94,7 +94,7 @@ const SidedItem: React.FunctionComponent<SidedItemProps> = props => {
       case SidedComponentDirection.Top:
         return { borderTopColor: color, borderTopWidth: 6 };
       case SidedComponentDirection.Bottom:
-        return { borderBottomColor: color, borderBottomWidth: 6 };
+        return { borderBottomColor: color, borderBottomWidth: 12 };
     }
   };
 
