@@ -1,7 +1,8 @@
-import I18n from "i18n-js";
 import * as React from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 
+//import I18n from "../../../infra/i18n";
+import I18n from "i18n-js"
 import { Icon } from "../../../ui";
 import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
 import { Text, TextBold } from "../../../ui/text";
@@ -53,7 +54,7 @@ const IconButton = ({ icon, color, text, onPress }) => {
   );
 };
 
-export default class Dashboard extends React.PureComponent<DashboardProps> {
+export default class Dashboard extends React.PureComponent<any & DashboardProps> {
   private renderNavigationGrid() {
     return (
       <View style={[style.dashboardPart, style.grid]}>
@@ -64,7 +65,7 @@ export default class Dashboard extends React.PureComponent<DashboardProps> {
           <IconButton onPress={() => true} text="Emploi du temps" color="#162EAE" icon="reservation" />
         </View>
         <View style={style.gridButtonContainer}>
-          <IconButton onPress={() => true} text="Cahier de texte" color="#2BAB6F" icon="reservation" />
+          <IconButton onPress={() => this.props.navigation.navigate("HomeworkListRelative")} text="Cahier de texte" color="#2BAB6F" icon="reservation" />
         </View>
         <View style={style.gridButtonContainer}>
           <IconButton onPress={() => true} text="Evaluations" color="#F95303" icon="reservation" />

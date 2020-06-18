@@ -9,7 +9,7 @@ import DashboardRelative from "./DashboardRelative";
 import DashboardStudent from "./DashboardStudent";
 import DashboardTeacher from "./DashboardTeacher";
 
-export default class Dashboard extends React.PureComponent<any> {
+export default class Dashboard extends React.PureComponent<{ navigation: { navigate } }, any> {
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<any> }) =>
     standardNavScreenOptions(
       {
@@ -35,7 +35,7 @@ export default class Dashboard extends React.PureComponent<any> {
     return (
       <PageContainer>
         <ConnectionTrackingBar />
-        <DashboardContainer />
+        <DashboardContainer {...this.props} />
       </PageContainer>
     );
   }

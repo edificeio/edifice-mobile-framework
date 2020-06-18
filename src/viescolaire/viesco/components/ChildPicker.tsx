@@ -1,7 +1,8 @@
-import I18n from "i18n-js";
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
 
+//import I18n from "../../../infra/i18n";
+import I18n from "i18n-js"
 import { CommonStyles } from "../../../styles/common/styles";
 import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
 import Dropdown from "../../../ui/Dropdown";

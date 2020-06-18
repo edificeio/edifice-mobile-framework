@@ -42,13 +42,13 @@ const IconButton = ({ icon, color, text, onPress }) => {
   );
 };
 
-export default class Dashboard extends React.PureComponent<dashboardProps> {
+export default class Dashboard extends React.PureComponent<any & dashboardProps> {
   private renderNavigationGrid() {
     return (
       <View style={[style.dashboardPart, style.grid]}>
         <IconButton onPress={() => true} text={"Historique"} color={"#FCB602"} icon={"reservation"} />
         <IconButton onPress={() => true} text={"Emploi du temps"} color={"#162EAE"} icon={"reservation"} />
-        <IconButton onPress={() => true} text={"Cahier de texte"} color={"#2BAB6F"} icon={"reservation"} />
+        <IconButton onPress={() => this.props.navigation.navigate("HomeworkListStudent")} text={"Cahier de texte"} color={"#2BAB6F"} icon={"reservation"} />
         <IconButton onPress={() => true} text={"Evaluations"} color={"#F95303"} icon={"reservation"} />
       </View>
     );
