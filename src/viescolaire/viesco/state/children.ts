@@ -23,7 +23,7 @@ export const initialState: IChildState = {
 
 };
 
-export const getSelectedChild = (globalState: any) => viescoConfig.getLocalState(globalState).children.selectedChild;
+export const getSelectedChild = (globalState: any) => viescoConfig.getLocalState(globalState).viesco.children.selectedChild;
 
 export const getChildrenList = (globalState: any) => userConfig.getLocalState(globalState).info.children;
 
