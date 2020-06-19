@@ -10,6 +10,9 @@ export interface ISession {
   date: moment.Moment;
   subject_id: string;
   start_time: string;
+  teacher_id: string;
+  description: string;
+  title: string;
 }
 
 export type ISessionList = ISession[];

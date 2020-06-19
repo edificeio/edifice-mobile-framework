@@ -46,6 +46,8 @@ const homeworkListAdapter: (data: IHomeworkListBackend) => IHomeworkList = data 
     type: item.type.label,
     subject_id: item.subject_id,
     progress: item.progress,
+    description: item.description,
+    created_date: moment(item.created),
   }));
   return result;
 };

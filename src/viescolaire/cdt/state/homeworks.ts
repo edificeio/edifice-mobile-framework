@@ -18,6 +18,8 @@ export interface IHomework {
   };
   subject_id: string;
   type: string;
+  description: string;
+  created_date: moment.Moment;
 }
 
 export type IHomeworkList = IHomework[];

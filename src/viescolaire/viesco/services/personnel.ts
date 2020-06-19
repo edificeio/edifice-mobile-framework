@@ -44,7 +44,7 @@ const personnelListAdapter: (data: IPersonnelListBackend) => IPersonnelList = da
 
 export const personnelListService = {
   get: async (structureId: string) => {
-    const personnel : Array<any> = await fetchJSONWithCache(`/viescolaire/user/list?profile=Personnel&structureId=${structureId}`);
+    const personnel : Array<any> = await fetchJSONWithCache(`/viescolaire/user/list?profile=Teacher&structureId=${structureId}`);
     const data : IPersonnelList = personnelListAdapter(personnel);
 
     return data;

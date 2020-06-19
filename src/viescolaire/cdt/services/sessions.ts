@@ -1,10 +1,11 @@
-import { ISessionList } from "../state/sessions";
 import moment from "moment";
+
 import { fetchJSONWithCache } from "../../../infra/fetchWithCache";
+import { ISessionList } from "../state/sessions";
 import { IHomeworkListBackend } from "./homeworks";
 
 // Data type of what is given by the backend.
-export type ISessionListBackend = Array<{
+export type ISessionListBackend = {
   annotation: string;
   audience_id: string;
   color: string;
@@ -26,34 +27,36 @@ export type ISessionListBackend = Array<{
   teacher_id: string;
   title: string;
   type_id: number;
-}>;
+}[];
 
 const sessionListAdapter: (data: ISessionListBackend) => ISessionList = data => {
-  let result = [] as  ISessionList;
+  let result = [] as ISessionList;
   if (!data) return result;
   result = data.map(item => ({
     id: item.id,
     date: moment(item.date),
     subject_id: item.subject_id,
     start_time: item.start_time,
+    teacher_id: item.teacher_id,
+    description: item.description,
+    title: item.title,
   }));
   return result;
 };
 
 export const sessionChildService = {
-  get: async(childId: string, startDate: string, endDate: string) => {
-
+  get: async (childId: string, startDate: string, endDate: string) => {
     const results = await fetchJSONWithCache(`/diary/sessions/child/${startDate}/${endDate}/${childId}`);
 
     const data = sessionListAdapter(results);
 
     return data;
-  }
-}
+  },
+};
 
 export const sessionListService = {
   get: async (structureId: string, startDate: string, endDate: string) => {
-
+    console.log('args :', structureId, startDate, endDate);
     const results = await fetchJSONWithCache(`/diary/sessions/own/${startDate}/${endDate}/${structureId}`);
 
     const data = sessionListAdapter(results);

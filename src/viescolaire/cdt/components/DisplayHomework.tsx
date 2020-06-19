@@ -16,38 +16,27 @@ const style = StyleSheet.create({
   course: { fontWeight: "bold", textTransform: "uppercase" }
 });
 
-export default class DisplayHomework extends React.PureComponent<{getfunction:any}, {homeworkData:any}> {
+export default class DisplayHomework extends React.PureComponent<{getfunction:any, navigation: any}, {homework:any}> {
   constructor(props) {
     super(props);
+    const homework = {...this.props.navigation.state.params};
+    console.log('homework', homework);
     this.state = {
-      homeworkData: {}
-    }
-
-    this.datprops = this.datprops.bind(this);
-    this.datprops();
-  }
-  
-  datprops = async () => {
-    let getHomeworkData = {};
-    try {
-      getHomeworkData = await this.props.getfunction;
-      this.setState({homeworkData: getHomeworkData});
-    }
-    catch(e) {
-      this.setState({homeworkData: getHomeworkData});
+      homework,
     }
   }
 
   public render() {
+    const { homework } = this.state;
     return (
       <PageContainer>
         <View style={{ justifyContent: "flex-end", flexDirection: "row" }}>
           <LeftColoredItem shadow style={{ alignItems: "flex-end", flexDirection: "row" }} color="#FA9700">
-            { this.state.homeworkData.description ?
+            { homework.description ?
               <>
                 <Icon size={20} color="#FA9700" name="reservation" />
-                <Text>&emsp;{moment(this.state.homeworkData.created).format("DD/MM/YY")}</Text>
-                <Text style={style.course}>&emsp;Matière</Text>
+                <Text>&emsp;{moment(homework.created_date).format("DD/MM/YY")}</Text>
+                <Text style={style.course}>&emsp;{homework.subject}</Text>
               </>
               : null
             }
@@ -56,9 +45,9 @@ export default class DisplayHomework extends React.PureComponent<{getfunction:an
 
         <View style={[style.homeworkPart]}>
           <TextBold style={style.title}>{I18n.t("viesco-homework-home")}</TextBold>
-          <Text style={style.subtitle}>{I18n.t("viesco-homework-fordate")} {moment(this.state.homeworkData.due_date).format("Do MMMM YYYY")}</Text>
-          { this.state.homeworkData.description ?
-            <HtmlContentView html = {this.state.homeworkData.description} />
+          <Text style={style.subtitle}>{I18n.t("viesco-homework-fordate")} {moment(homework.due_date).format("Do MMMM YYYY")}</Text>
+          { homework.description ?
+            <HtmlContentView html = {homework.description} />
             : null
           }
         </View>

@@ -274,6 +274,8 @@
   "viesco-homework-EmptyScreenText": "No homework to do...",
   "viesco-eval-EmptyScreenText": "No new evaluation...",
   "viesco-session-EmptyScreenText": "No new session...",
+  "viesco-from": "From",
+  "viesco-to": "To",
   "welcome": "Welcome",
   "workspace": "Workspace",
   "workspace-image": "Add an image",

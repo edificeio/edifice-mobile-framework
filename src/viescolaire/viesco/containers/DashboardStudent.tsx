@@ -7,7 +7,7 @@ import moment from "moment";
 
 class Dashboard extends React.PureComponent<{homeworks: any[], getHomeworks: any}> {
   public componentDidMount() {
-    this.props.getHomeworks();
+    //this.props.getHomeworks();
   }
 
   public render() {
@@ -40,4 +40,4 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
   return bindActionCreators({ getHomeworks: () => {} }, dispatch);
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
+export default connect(mapStateToProps)(Dashboard);

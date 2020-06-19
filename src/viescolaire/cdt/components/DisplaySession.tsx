@@ -17,38 +17,26 @@ const style = StyleSheet.create({
   course: { fontWeight: "bold", textTransform: "uppercase" }
 });
 
-export default class DisplayHomework extends React.PureComponent<{getfunction:any}, {sessionData:any}> {
+export default class DisplayHomework extends React.PureComponent<{getfunction:any, navigation:any}, {session:any}> {
   constructor(props) {
     super(props);
+    const session = {...this.props.navigation.state.params}
     this.state = {
-      sessionData: {}
-    }
-
-    this.datprops = this.datprops.bind(this);
-    this.datprops();
-  }
-  
-  datprops = async () => {
-    let getSessionData = {};
-    try {
-      getSessionData = await this.props.getfunction;
-      this.setState({sessionData: getSessionData});
-    }
-    catch(e) {
-      this.setState({sessionData: getSessionData});
-    }
+      session
+    };
   }
 
   public render() {
+    const { session } = this.state;
     return (
       <PageContainer>
         <View style={{ justifyContent: "flex-end", flexDirection: "row" }}>
           <LeftColoredItem shadow style={{ alignItems: "flex-end", flexDirection: "row" }} color="#00ab6f">
-            { this.state.sessionData.description ?
+            { session.description ?
               <>
                 <Icon size={20} color="#00ab6f" name="reservation" />
-                <Text>&emsp;{moment(this.state.sessionData.date).format("DD/MM/YY")}</Text>
-                <Text style={style.course}>&emsp;{this.state.sessionData.subject_id}</Text>
+                <Text>&emsp;{moment(session.date).format("DD/MM/YY")}</Text>
+                <Text style={style.course}>&emsp;{session.subject}</Text>
               </>
               : null
             }
@@ -57,9 +45,9 @@ export default class DisplayHomework extends React.PureComponent<{getfunction:an
 
         <View style={[style.sessionPart]}>
           <Text style={ style.pageTitle }>{I18n.t("viesco-session")}</Text>
-          <TextBold style={style.title}>{this.state.sessionData.title}</TextBold>
-          { this.state.sessionData.description ?
-            <HtmlContentView html = {this.state.sessionData.description} />
+          <TextBold style={style.title}>{session.title}</TextBold>
+          { session.description ?
+            <HtmlContentView html = {session.description} />
             : null
           }
         </View>
