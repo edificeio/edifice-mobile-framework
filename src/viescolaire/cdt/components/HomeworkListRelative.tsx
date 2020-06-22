@@ -225,7 +225,7 @@ export default class HomeworkList extends React.PureComponent<any, any> {
           </ScrollView>
         ) : (
           <EmptyScreen
-            imageSrc={require("../../../../assets/images/empty-screen/empty-evaluations.png")}
+            imageSrc={require("../../../../assets/images/empty-screen/empty-homework.png")}
             imgWidth={265}
             imgHeight={280}
             title={I18n.t("viesco-session-EmptyScreenText")}
@@ -240,9 +240,9 @@ export default class HomeworkList extends React.PureComponent<any, any> {
       <PageContainer style={style.homeworkPart}>
         <View style={style.grid}>
           <Text>{I18n.t("viesco-from")} &ensp;</Text>
-          <DatePicker onGetDate={this.onStartDateChange} />
+          <DatePicker endDate={this.state.endDate} onGetDate={this.onStartDateChange} />
           <Text>&emsp;{I18n.t("viesco-to")} &ensp;</Text>
-          <DatePicker onGetDate={this.onEndDateChange} />
+          <DatePicker startDate={this.state.startDate} onGetDate={this.onEndDateChange} />
         </View>
         <View style={style.grid}>
           <Text>{I18n.t("viesco-homework")}</Text>
