@@ -1,6 +1,9 @@
+import I18n from "i18n-js";
 import React from "react";
+import { View, StyleSheet } from "react-native";
+
+import { Text, TextBold } from "../../../ui/Typography";
 import { BottomColoredItem } from "../../viesco/components/Item";
-import { View, Text, StyleSheet } from "react-native";
 
 export default class PresenceCard extends React.Component<any, any> {
   constructor(props) {
@@ -8,15 +11,16 @@ export default class PresenceCard extends React.Component<any, any> {
     this.state = {
       expanded: false,
       displayedElements: props.elements.slice(0, 2),
-    }
+    };
   }
 
   toggleExpand = () => {
+    const { expanded } = this.state;
     this.setState({
-      expanded: !this.state.expanded,
-      displayedElements: !this.state.expanded ? this.props.elements : this.props.elements.slice(0, 2),
+      expanded: !expanded,
+      displayedElements: !expanded ? this.props.elements : this.props.elements.slice(0, 2),
     });
-  }
+  };
 
   public render() {
     const { displayedElements, expanded } = this.state;
@@ -26,51 +30,47 @@ export default class PresenceCard extends React.Component<any, any> {
         <View style={[style.mainView, elements.length === 0 ? {} : style.bottomMargin]}>
           <Text style={style.title}>{title}</Text>
           <View style={style.flexRow}>
-            <Text style={[style.elementsNumber, style.bold]}>
-              {elements.length}
-            </Text>
-            {elements.length === 0 && 
-              <Text style={style.emptyText}>
-                Rien à afficher
-              </Text>
-            }
+            <TextBold style={style.elementsNumber}>{elements.length}</TextBold>
+            {elements.length === 0 && <Text style={style.emptyText}>{I18n.t("viesco-empty-card")}</Text>}
             <View style={style.justifyCenter}>
               {elements.length > 0 &&
                 displayedElements.map(elem => (
-                <Text>
-                  <Text style={{color: color}}>▪</Text> 
-                  <Text style={style.bold}>{elem.date} - </Text>
-                  {elem.time}
-                </Text>
-              ))
-              }
+                  <Text>
+                    <Text style={{ color }}>▪</Text>
+                    <TextBold>{elem.date} - </TextBold>
+                    {elem.time}
+                  </Text>
+                ))}
             </View>
           </View>
         </View>
-        {elements.length > 2 && !expanded ? (
-        <Text onPress={this.toggleExpand} style={style.seeMore}>
-          Voir plus <Text style={style.bold}>+</Text>
-          </Text>
-        ) : (<></>)}
-        {elements.length > 2 && expanded ? (
+        {elements.length > 2 && (
           <Text onPress={this.toggleExpand} style={style.seeMore}>
-            Voir moins <Text style={style.bold}>-</Text>
+            {expanded ? (
+              <>
+                {I18n.t("seeLess")} <TextBold>-</TextBold>
+              </>
+            ) : (
+              <>
+                {I18n.t("seeMore")} <TextBold>+</TextBold>
+              </>
+            )}
           </Text>
-        ) : (<></>)}
+        )}
       </BottomColoredItem>
     );
   }
 }
 
 const style = StyleSheet.create({
-  title: { 
-    fontSize: 16, 
-    textTransform: 'uppercase', 
-    color: "gray" 
+  title: {
+    fontSize: 16,
+    textTransform: "uppercase",
+    color: "gray",
   },
   mainView: {
     marginTop: 3,
-    paddingHorizontal: 4
+    paddingHorizontal: 4,
   },
   bottomMargin: {
     marginBottom: 7,
@@ -85,24 +85,24 @@ const style = StyleSheet.create({
     shadowRadius: 4.65,
     elevation: 6,
   },
-  flexRow: {flexDirection: 'row'},
+  flexRow: { flexDirection: "row" },
   elementsNumber: {
     marginHorizontal: 30,
     fontSize: 48,
   },
   justifyCenter: {
-    justifyContent: 'center'
+    justifyContent: "center",
   },
   bold: {
-    fontWeight: 'bold'
+    fontWeight: "bold",
   },
   seeMore: {
-    alignSelf: 'flex-end',
+    alignSelf: "flex-end",
   },
   emptyText: {
-    alignSelf: 'center',
-    textAlign: 'center',
-    color: 'grey',
-    flexGrow: 1
+    alignSelf: "center",
+    textAlign: "center",
+    color: "grey",
+    flexGrow: 1,
   },
 });

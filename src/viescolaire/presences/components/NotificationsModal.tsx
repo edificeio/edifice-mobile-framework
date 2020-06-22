@@ -1,8 +1,15 @@
-import * as React from 'react';
-import { View, Button, Text, StyleSheet } from 'react-native';
-import { ModalBox } from '../../../ui/Modal';
+import I18n from "i18n-js";
+import * as React from "react";
+import { View, StyleSheet } from "react-native";
 
-export default class NotificationsModal extends React.PureComponent<{modal: boolean, onClose?: any, data: any}, {visible: boolean}> {
+import ButtonOk from "../../../ui/ConfirmDialog/buttonOk";
+import { ModalBox } from "../../../ui/Modal";
+import { Text } from "../../../ui/text";
+
+export default class NotificationsModal extends React.PureComponent<
+  { modal: boolean; onClose?: any; data: any },
+  { visible: boolean }
+> {
   constructor(props) {
     super(props);
     this.state = {
@@ -15,64 +22,75 @@ export default class NotificationsModal extends React.PureComponent<{modal: bool
       visible: false,
     });
     this.props.onClose();
-  }
+  };
 
   public render() {
     const data = [
       {
-        name: 'BABIN Loïc',
-        events: [{
-            type: 'absences non justifiées',
-            color: 'red',
-            occurrences: [{
-                primaryText: '17/01/21',
-                secondaryText: '8:30 - 9:25',
-              }]
-          }]
+        name: "BABIN Loïc",
+        events: [
+          {
+            type: "absences non justifiées",
+            color: "red",
+            occurrences: [
+              {
+                primaryText: "17/01/21",
+                secondaryText: "8:30 - 9:25",
+              },
+            ],
+          },
+        ],
       },
       {
-        name: 'BABIN Noémie',
-        events: [{
-            type: 'retard',
-            color: 'purple',
-            occurrences: [{
-                primaryText: '17/01/21',
-                secondaryText: '8:30 - 9:25 - 5mn',
-              }]
-          }]
-      }];
-      
+        name: "BABIN Noémie",
+        events: [
+          {
+            type: "retard",
+            color: "purple",
+            occurrences: [
+              {
+                primaryText: "17/01/21",
+                secondaryText: "8:30 - 9:25 - 5mn",
+              },
+            ],
+          },
+        ],
+      },
+    ];
+
     return (
       <ModalBox backdropOpacity={0.5} isVisible={this.state.visible}>
         <View style={style.modalContainerView}>
           <View style={style.modalContentView}>
-            <Text style={style.modalTitle}>Notifications</Text>
+            <Text style={style.modalTitle}>{I18n.t("viesco-notifications")}</Text>
             {data.map(child => (
               <View>
                 <Text style={style.bold}>{child.name}</Text>
                 <View style={style.modalSubsection}>
-                  {child.events.map(event => (<>
-                    <Text style={style.eventTitle}>{event.type}</Text>
-                    {event.occurrences.map(occ => (
-                      <Text style={{color: event.color}}>
-                        ▪ <Text style={style.bold}>{occ.primaryText}</Text> - {occ.secondaryText}
-                      </Text>
-                    ))}
-                  </>))}
+                  {child.events.map(event => (
+                    <>
+                      <Text style={style.eventTitle}>{event.type}</Text>
+                      {event.occurrences.map(occ => (
+                        <Text style={{ color: event.color }}>
+                          ▪ <Text style={style.bold}>{occ.primaryText}</Text> - {occ.secondaryText}
+                        </Text>
+                      ))}
+                    </>
+                  ))}
                 </View>
               </View>
             ))}
-            <Button color='orange' title='ok' onPress={this.onClose}/>
+            <ButtonOk label={I18n.t("common-ok")} onPress={this.onClose} />
           </View>
         </View>
       </ModalBox>
     );
   }
-};
+}
 
 const style = StyleSheet.create({
   bold: {
-    fontWeight: 'bold'
+    fontWeight: "bold",
   },
   modalTitle: {
     marginBottom: 10,
@@ -83,18 +101,19 @@ const style = StyleSheet.create({
     marginBottom: 15,
   },
   eventTitle: {
-    textTransform: 'uppercase',
-    color: 'grey'
+    textTransform: "uppercase",
+    color: "grey",
   },
   modalContainerView: {
     flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalContentView: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 5,
     padding: 25,
-  },}
-);
+    alignItems: "stretch",
+  },
+});
