@@ -6,7 +6,7 @@
 import { Dispatch } from "redux";
 
 import { createAsyncActionCreators } from "../../../infra/redux/async2";
-import { sessionListService, sessionChildService } from "../services/sessions";
+import { sessionsService } from "../services/sessions";
 import { actionTypes, ISessionList } from "../state/sessions";
 
 // ACTION LIST ------------------------------------------------------------------------------------
@@ -19,7 +19,7 @@ export function fetchSessionListAction(structureId: string, startDate: string, e
   return async (dispatch: Dispatch) => {
     try {
       dispatch(dataActions.request());
-      const data = await sessionListService.get(structureId, startDate, endDate);
+      const data = await sessionsService.get(structureId, startDate, endDate);
       dispatch(dataActions.receipt(data));
     } catch (errmsg) {
       dispatch(dataActions.error(errmsg));
@@ -31,7 +31,7 @@ export function fetchChildSessionAction(childId: string, startDate: string, endD
   return async (dispatch: Dispatch) => {
     try {
       dispatch(dataActions.request());
-      const data = await sessionChildService.get(childId, startDate, endDate);
+      const data = await sessionsService.getFromChildId(childId, startDate, endDate);
       dispatch(dataActions.receipt(data));
     } catch (errmsg) {
       dispatch(dataActions.error(errmsg));

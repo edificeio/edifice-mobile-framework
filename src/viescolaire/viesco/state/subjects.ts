@@ -22,4 +22,4 @@ export const getSubjectsListState = (globalState: any) =>
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const actionTypes : AsyncActionTypes = createAsyncActionTypes(viescoConfig.createActionType("VIESCO_SUBJECT_LIST"));
+export const actionTypes : AsyncActionTypes = createAsyncActionTypes(viescoConfig.createActionType("SUBJECT_LIST"));

@@ -23,4 +23,4 @@ export const getPersonnelListState = (globalState: any) =>
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const actionTypes : AsyncActionTypes = createAsyncActionTypes(viescoConfig.createActionType("VIESCO_PERSONNEL_LIST"));
+export const actionTypes : AsyncActionTypes = createAsyncActionTypes(viescoConfig.createActionType("PERSONNEL_LIST"));

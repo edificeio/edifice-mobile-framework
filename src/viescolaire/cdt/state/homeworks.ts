@@ -28,7 +28,7 @@ export type IHomeworkList = IHomework[];
 
 export type IHomeworkListState = AsyncState<IHomeworkList>;
 
-export const initialState: IHomeworkListState = { data: [], isPristine: true, isFetching: false };
+export const initialState: IHomeworkList = [];
 
 export const getHomeworksListState = (globalState: any) =>
   viescoConfig.getLocalState(globalState).cdt.homeworksList as IHomeworkListState;

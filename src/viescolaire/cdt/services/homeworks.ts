@@ -1,9 +1,10 @@
-import { IHomeworkList } from "../state/homeworks";
 import moment from "moment";
+
 import { fetchJSONWithCache } from "../../../infra/fetchWithCache";
+import { IHomeworkList } from "../state/homeworks";
 
 // Data type of what is given by the backend.
-export type IHomeworkListBackend = Array<{
+export type IHomeworkListBackend = {
   audience_id: string;
   color: string;
   created: string;
@@ -35,7 +36,7 @@ export type IHomeworkListBackend = Array<{
   };
   type_id: number;
   workload: number;
-}>;
+}[];
 
 const homeworkListAdapter: (data: IHomeworkListBackend) => IHomeworkList = data => {
   let result = [] as IHomeworkList;
@@ -52,32 +53,26 @@ const homeworkListAdapter: (data: IHomeworkListBackend) => IHomeworkList = data 
   return result;
 };
 
-export const homeworkChildService = {
-  get: async(childId: string, structureId: string, startDate: string, endDate: string) => {
-
-    const results = await fetchJSONWithCache(`/diary/homeworks/child/${startDate}/${endDate}/${childId}/${structureId}`);
-
-    const data : IHomeworkList = homeworkListAdapter(results);
-
-    return data;
-  }
-}
-
-export const homeworkListService = {
+export const homeworksService = {
   get: async (structureId: string, startDate: string, endDate: string) => {
-
     const results = await fetchJSONWithCache(`/diary/homeworks/own/${startDate}/${endDate}/${structureId}`);
 
-    const data : IHomeworkList = homeworkListAdapter(results);
+    const data: IHomeworkList = homeworkListAdapter(results);
 
     return data;
   },
-};
+  getFromChildId: async (childId: string, structureId: string, startDate: string, endDate: string) => {
+    const results = await fetchJSONWithCache(
+      `/diary/homeworks/child/${startDate}/${endDate}/${childId}/${structureId}`
+    );
 
-export const homeworkService = {
-  post: async(homeworkId: number, isDone: boolean) => {
-    const status = isDone ? 'done' : 'todo';
-    const result = await fetchJSONWithCache(`/diary/homework/progress/${homeworkId}/${status}`, { method: 'post' });
+    const data: IHomeworkList = homeworkListAdapter(results);
+
+    return data;
+  },
+  updateProgress: async (homeworkId: number, isDone: boolean) => {
+    const status = isDone ? "done" : "todo";
+    const result = await fetchJSONWithCache(`/diary/homework/progress/${homeworkId}/${status}`, { method: "post" });
     return { homeworkId, status };
-  }
-}
+  },
+};
