@@ -1,17 +1,13 @@
 import { createStackNavigator } from "react-navigation-stack";
 
 import Homework from "./containers/Homework";
-import HomeworkListRelative from "./containers/HomeworkListRelative";
-import HomeworkListStudent from "./containers/HomeworkListStudent";
+import HomeworkList from "./containers/HomeworkList";
 import Session from "./containers/Session";
 
 export default createStackNavigator(
   {
-    HomeworkListRelative: {
-      screen: HomeworkListRelative,
-    },
-    HomeworkListStudent: {
-      screen: HomeworkListStudent,
+    HomeworkList: {
+      screen: HomeworkList,
     },
     HomeworkPage: {
       screen: Homework,

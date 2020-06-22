@@ -42,15 +42,24 @@ export default class HomeworkList extends React.PureComponent<any, any> {
       endSessionsDate: moment(),
       fetching: homeworks.isFetching || sessions.isFetching || personnel.isFetching || subjects.isFetching,
       structureId: "97a7363c-c000-429e-9c8c-d987b2a2c204",
+      childId: "f8f4e952-8696-4ca0-a6bb-9f0b465445e9",
     };
   }
 
   async componentDidMount() {
     const { structureId, startDate, endDate } = this.state;
-    const startDateString = moment(startDate).format("YYYY-MM-DD");
-    const endDateString = moment(endDate).format("YYYY-MM-DD");
-    this.props.fetchHomeworks(structureId, startDateString, endDateString);
-    this.props.fetchSessions(structureId, startDateString, endDateString);
+    if (this.props.navigation.state.params.user_type === "Relative") {
+      const { childId } = this.state;
+      const startDateString = moment(startDate).format("YYYY-MM-DD");
+      const endDateString = moment(endDate).format("YYYY-MM-DD");
+      this.props.fetchChildHomeworks(childId, structureId, startDateString, endDateString);
+      this.props.fetchChildSessions(childId, startDateString, endDateString);
+    } else {
+      const startDateString = moment(startDate).format("YYYY-MM-DD");
+      const endDateString = moment(endDate).format("YYYY-MM-DD");
+      this.props.fetchHomeworks(structureId, startDateString, endDateString);
+      this.props.fetchSessions(structureId, startDateString, endDateString);
+    }
     this.props.fetchSubjects(structureId);
     this.props.fetchPersonnel(structureId);
   }
@@ -68,17 +77,23 @@ export default class HomeworkList extends React.PureComponent<any, any> {
   }
 
   updateHomeworks = () => {
-    const { structureId, startHomeworksDate, endHomeworksDate } = this.state;
+    const { childId, structureId, startHomeworksDate, endHomeworksDate } = this.state;
     const startDateString = moment(startHomeworksDate).format("YYYY-MM-DD");
     const endDateString = moment(endHomeworksDate).format("YYYY-MM-DD");
-    this.props.fetchHomeworks(structureId, startDateString, endDateString);
+    {this.props.navigation.state.params.user_type === "Relative"
+      ? this.props.fetchChildHomeworks(childId, structureId, startDateString, endDateString)
+      : this.props.fetchHomeworks(structureId, startDateString, endDateString);
+    }
   };
 
   updateSessions = async () => {
-    const { structureId, startSessionsDate, endSessionsDate } = this.state;
+    const { childId, structureId, startSessionsDate, endSessionsDate } = this.state;
     const startDateString = moment(startSessionsDate).format("YYYY-MM-DD");
     const endDateString = moment(endSessionsDate).format("YYYY-MM-DD");
-    this.props.fetchSessions(structureId, startDateString, endDateString);
+    {this.props.navigation.state.params.user_type === "Relative"
+      ? this.props.fetchChildSessions(childId, startDateString, endDateString)
+      : this.props.fetchSessions(structureId, startDateString, endDateString);
+    }
   };
 
   onStartDateChange = startDate => {
@@ -166,7 +181,7 @@ export default class HomeworkList extends React.PureComponent<any, any> {
   };
 
   private homeworkToDo() {
-    const homeworkDataList = this.props.homeworks.data;
+    const { homeworkDataList } = this.state;
     const homeworksArray = Object.values(homeworkDataList);
     homeworksArray.sort((a, b) => a.due_date - b.due_date);
     return (
@@ -182,11 +197,19 @@ export default class HomeworkList extends React.PureComponent<any, any> {
                     {I18n.t("viesco-homework-fordate")} {moment(homework.due_date).format("dddd Do MMMM")}
                   </TextBold>
                 ) : null}
-                <HomeworkItem
-                  checked={this.isHomeworkDone(homework)}
-                  title={this.getSubjectName(homework.subject_id)}
-                  subtitle={homework.type}
-                />
+                {this.props.navigation.state.params.user_type === "Relative"
+                  ? <HomeworkItem
+                    disabled
+                    checked={this.isHomeworkDone(homework)}
+                    title={this.getSubjectName(homework.subject_id)}
+                    subtitle={homework.type}
+                  />
+                  : <HomeworkItem
+                    checked={this.isHomeworkDone(homework)}
+                    title={this.getSubjectName(homework.subject_id)}
+                    subtitle={homework.type}
+                  />
+                }
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -223,7 +246,7 @@ export default class HomeworkList extends React.PureComponent<any, any> {
           </ScrollView>
         ) : (
           <EmptyScreen
-            imageSrc={require("../../../../assets/images/empty-screen/empty-evaluations.png")}
+            imageSrc={require("../../../../assets/images/empty-screen/empty-homework.png")}
             imgWidth={265}
             imgHeight={280}
             title={I18n.t("viesco-session-EmptyScreenText")}
@@ -238,9 +261,9 @@ export default class HomeworkList extends React.PureComponent<any, any> {
       <PageContainer style={style.homeworkPart}>
         <View style={style.grid}>
           <Text>{I18n.t("viesco-from")} &ensp;</Text>
-          <DatePicker onGetDate={this.onStartDateChange} />
+          <DatePicker endDate={this.state.endDate} onGetDate={this.onStartDateChange} />
           <Text>&emsp;{I18n.t("viesco-to")} &ensp;</Text>
-          <DatePicker onGetDate={this.onEndDateChange} />
+          <DatePicker startDate={this.state.startDate} onGetDate={this.onEndDateChange} />
         </View>
         <View style={style.grid}>
           <Text>{I18n.t("viesco-homework")}</Text>

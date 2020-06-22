@@ -10,9 +10,9 @@ import { fetchPersonnelListAction } from "../../viesco/actions/personnel";
 import { fetchSubjectListAction } from "../../viesco/actions/subjects";
 import { getPersonnelListState } from "../../viesco/state/personnel";
 import { getSubjectsListState } from "../../viesco/state/subjects";
-import { fetchChildHomeworkAction } from "../actions/homeworks";
-import { fetchChildSessionAction } from "../actions/sessions";
-import HomeworkListRelative from "../components/HomeworkListRelative";
+import { fetchChildHomeworkAction, fetchHomeworkListAction } from "../actions/homeworks";
+import { fetchChildSessionAction, fetchSessionListAction } from "../actions/sessions";
+import HomeworkList from "../components/HomeworkList";
 import { getHomeworksListState } from "../state/homeworks";
 import { getSessionsListState } from "../state/sessions";
 
@@ -31,7 +31,7 @@ class HomeworkListRelativeContainer extends React.PureComponent<{ navigation: { 
   };
 
   public render() {
-    return <HomeworkListRelative {...this.props} />;
+    return <HomeworkList {...this.props} />;
   }
 }
 
@@ -46,11 +46,16 @@ const mapStateToProps: (state: any) => any = state => {
 
 const mapDispatchToProps: (dispatch: any) => any = dispatch => {
   return {
-    fetchHomeworks: (childId, structureId, startDate, endDate) =>
+    fetchChildHomeworks: (childId, structureId, startDate, endDate) =>
       dispatch(fetchChildHomeworkAction(childId, structureId, startDate, endDate)),
-    fetchSessions: (childId, startDate, endDate) => dispatch(fetchChildSessionAction(childId, startDate, endDate)),
+    fetchChildSessions: (childId, startDate, endDate) => dispatch(fetchChildSessionAction(childId, startDate, endDate)),
     fetchPersonnel: structureId => dispatch(fetchPersonnelListAction(structureId)),
     fetchSubjects: structureId => dispatch(fetchSubjectListAction(structureId)),
+
+    fetchHomeworks: (structureId, startDate, endDate) =>
+      dispatch(fetchHomeworkListAction(structureId, startDate, endDate)),
+    fetchSessions: (structureId, startDate, endDate) =>
+      dispatch(fetchSessionListAction(structureId, startDate, endDate)),
   };
 };
 
