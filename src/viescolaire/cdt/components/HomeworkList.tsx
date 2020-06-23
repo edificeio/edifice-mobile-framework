@@ -1,7 +1,7 @@
 import I18n from "i18n-js";
 import moment from "moment";
 import * as React from "react";
-import { View, StyleSheet, Switch, TouchableOpacity, ScrollView } from "react-native";
+import { View, StyleSheet, Switch, TouchableOpacity, ScrollView, RefreshControl } from "react-native";
 
 import { Loading } from "../../../ui";
 import { PageContainer } from "../../../ui/ContainerContent";
@@ -22,7 +22,16 @@ const style = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  scrollView: {
+    flex: 1,
+  },
 });
+
+function wait(timeout) {
+  return new Promise(resolve => {
+    setTimeout(resolve, timeout);
+  });
+}
 
 export default class HomeworkList extends React.PureComponent<any, any> {
   constructor(props) {
@@ -43,6 +52,7 @@ export default class HomeworkList extends React.PureComponent<any, any> {
       fetching: homeworks.isFetching || sessions.isFetching || personnel.isFetching || subjects.isFetching,
       structureId: "97a7363c-c000-429e-9c8c-d987b2a2c204",
       childId: "f8f4e952-8696-4ca0-a6bb-9f0b465445e9",
+      refreshing: false,
     };
   }
 
@@ -180,6 +190,30 @@ export default class HomeworkList extends React.PureComponent<any, any> {
     };
   };
 
+  onRefreshHomeworks = () => {
+    this.setState({ refreshing: true });
+    const startDateString = moment(this.state.startDate).format("YYYY-MM-DD");
+    const endDateString = moment(this.state.endDate).format("YYYY-MM-DD");
+    if (this.props.navigation.state.params.user_type === "Relative") {
+      this.props.fetchChildHomeworks(this.state.childId, this.state.structureId, startDateString, endDateString);
+    } else {
+      this.props.fetchHomeworks(this.state.structureId, startDateString, endDateString);
+    }
+    wait(2000).then(() => this.setState({ refreshing: false }));
+  }
+
+  onRefreshSessions = () => {
+    this.setState({ refreshing: true });
+    const startDateString = moment(this.state.startDate).format("YYYY-MM-DD");
+    const endDateString = moment(this.state.endDate).format("YYYY-MM-DD");
+    if (this.props.navigation.state.params.user_type === "Relative") {
+      this.props.fetchChildSessions(this.state.childId, startDateString, endDateString);
+    } else {
+      this.props.fetchSessions(this.state.structureId, startDateString, endDateString);
+    }
+    wait(2000).then(() => this.setState({ refreshing: false }));
+  }
+
   private homeworkToDo() {
     const { homeworkDataList } = this.state;
     const homeworksArray = Object.values(homeworkDataList);
@@ -187,7 +221,9 @@ export default class HomeworkList extends React.PureComponent<any, any> {
     return (
       <>
         {this.state.homeworkDataList != undefined && homeworksArray.length > 0 ? (
-          <ScrollView>
+          <ScrollView
+            contentContainerStyle={style.scrollView}
+            refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefreshHomeworks} />}>
             {homeworksArray.map((homework, index, list) => (
               <TouchableOpacity
                 onPress={() => this.props.navigation.navigate("HomeworkPage", this.homeworkDetailsAdapter(homework))}>
@@ -229,7 +265,9 @@ export default class HomeworkList extends React.PureComponent<any, any> {
     return (
       <>
         {this.state.sessionDataList != undefined && this.state.sessionDataList.length > 0 ? (
-          <ScrollView>
+          <ScrollView
+            contentContainerStyle={style.scrollView}
+            refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefreshSessions} />}>
             {this.state.sessionDataList.map((session, index, list) => (
               <TouchableOpacity
                 onPress={() => this.props.navigation.navigate("SessionPage", this.sessionDetailsAdapter(session))}>
