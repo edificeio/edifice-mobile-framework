@@ -59,7 +59,7 @@ export default class Dashboard extends React.PureComponent<any & DashboardProps>
     return (
       <View style={[style.dashboardPart, style.grid]}>
         <View style={style.gridButtonContainer}>
-          <IconButton onPress={() => true} text="Historique" color="#FCB602" icon="reservation" />
+          <IconButton onPress={() => this.props.navigation.navigate("History")} text="Historique" color="#FCB602" icon="reservation" />
         </View>
         <View style={style.gridButtonContainer}>
           <IconButton onPress={() => true} text="Emploi du temps" color="#162EAE" icon="reservation" />
