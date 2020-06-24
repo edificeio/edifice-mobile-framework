@@ -6,11 +6,9 @@ import { connect } from "react-redux";
 import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
 import { HeaderAction } from "../../../ui/headers/Header";
 import { HeaderBackAction } from "../../../ui/headers/NewHeader";
-import { fetchPersonnelListAction } from "../../viesco/actions/personnel";
-import { fetchSubjectListAction } from "../../viesco/actions/subjects";
 import { getPersonnelListState } from "../../viesco/state/personnel";
 import { getSubjectsListState } from "../../viesco/state/subjects";
-import { fetchChildHomeworkAction, fetchHomeworkListAction } from "../actions/homeworks";
+import { fetchChildHomeworkAction, fetchHomeworkListAction, updateHomeworkProgressAction } from "../actions/homeworks";
 import { fetchChildSessionAction, fetchSessionListAction } from "../actions/sessions";
 import HomeworkList from "../components/HomeworkList";
 import { getHomeworksListState } from "../state/homeworks";
@@ -53,6 +51,7 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
       dispatch(fetchHomeworkListAction(structureId, startDate, endDate)),
     fetchSessions: (structureId, startDate, endDate) =>
       dispatch(fetchSessionListAction(structureId, startDate, endDate)),
+    updateHomeworkProgress: (homeworkId, isDone) => dispatch(updateHomeworkProgressAction(homeworkId, isDone)),
   };
 };
 

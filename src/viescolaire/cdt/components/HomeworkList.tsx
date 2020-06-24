@@ -88,9 +88,10 @@ export default class HomeworkList extends React.PureComponent<any, any> {
     const { childId, structureId, startHomeworksDate, endHomeworksDate } = this.state;
     const startDateString = moment(startHomeworksDate).format("YYYY-MM-DD");
     const endDateString = moment(endHomeworksDate).format("YYYY-MM-DD");
-    {this.props.navigation.state.params.user_type === "Relative"
-      ? this.props.fetchChildHomeworks(childId, structureId, startDateString, endDateString)
-      : this.props.fetchHomeworks(structureId, startDateString, endDateString);
+    {
+      this.props.navigation.state.params.user_type === "Relative"
+        ? this.props.fetchChildHomeworks(childId, structureId, startDateString, endDateString)
+        : this.props.fetchHomeworks(structureId, startDateString, endDateString);
     }
   };
 
@@ -98,9 +99,10 @@ export default class HomeworkList extends React.PureComponent<any, any> {
     const { childId, structureId, startSessionsDate, endSessionsDate } = this.state;
     const startDateString = moment(startSessionsDate).format("YYYY-MM-DD");
     const endDateString = moment(endSessionsDate).format("YYYY-MM-DD");
-    {this.props.navigation.state.params.user_type === "Relative"
-      ? this.props.fetchChildSessions(childId, startDateString, endDateString)
-      : this.props.fetchSessions(structureId, startDateString, endDateString);
+    {
+      this.props.navigation.state.params.user_type === "Relative"
+        ? this.props.fetchChildSessions(childId, startDateString, endDateString)
+        : this.props.fetchSessions(structureId, startDateString, endDateString);
     }
   };
 
@@ -198,7 +200,7 @@ export default class HomeworkList extends React.PureComponent<any, any> {
       this.props.fetchHomeworks(this.state.structureId, startDateString, endDateString);
     }
     wait(2000).then(() => this.setState({ refreshing: false }));
-  }
+  };
 
   onRefreshSessions = () => {
     this.setState({ refreshing: true });
@@ -210,7 +212,7 @@ export default class HomeworkList extends React.PureComponent<any, any> {
       this.props.fetchSessions(this.state.structureId, startDateString, endDateString);
     }
     wait(2000).then(() => this.setState({ refreshing: false }));
-  }
+  };
 
   private homeworkToDo() {
     const { homeworkDataList } = this.state;
@@ -231,19 +233,23 @@ export default class HomeworkList extends React.PureComponent<any, any> {
                     {I18n.t("viesco-homework-fordate")} {moment(homework.due_date).format("dddd Do MMMM")}
                   </TextBold>
                 ) : null}
-                {this.props.navigation.state.params.user_type === "Relative"
-                  ? <HomeworkItem
+                {this.props.navigation.state.params.user_type === "Relative" ? (
+                  <HomeworkItem
                     disabled
                     checked={this.isHomeworkDone(homework)}
                     title={this.getSubjectName(homework.subject_id)}
                     subtitle={homework.type}
                   />
-                  : <HomeworkItem
+                ) : (
+                  <HomeworkItem
                     checked={this.isHomeworkDone(homework)}
                     title={this.getSubjectName(homework.subject_id)}
                     subtitle={homework.type}
+                    onChange={() => {
+                      this.props.updateHomeworkProgress(homework.id, !this.isHomeworkDone(homework));
+                    }}
                   />
-                }
+                )}
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -270,7 +276,7 @@ export default class HomeworkList extends React.PureComponent<any, any> {
               <TouchableOpacity
                 onPress={() => this.props.navigation.navigate("SessionPage", this.sessionDetailsAdapter(session))}>
                 {index === 0 ||
-                moment(session.date).format("DD/MM/YY") != moment(list[index - 1].date).format("DD/MM/YY") ? (
+                moment(session.date).format("DD/MM/YY") !== moment(list[index - 1].date).format("DD/MM/YY") ? (
                   <TextBold>{moment(session.date).format("DD/MM/YY")}</TextBold>
                 ) : null}
                 <SessionItem
