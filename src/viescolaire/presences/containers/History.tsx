@@ -1,10 +1,26 @@
+import I18n from "i18n-js";
 import * as React from "react";
+import { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 
+import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
 import { PageContainer } from "../../../ui/ContainerContent";
+import { HeaderBackAction } from "../../../ui/headers/NewHeader";
 import History from "../components/History";
 
-class AbsenceHistory extends React.PureComponent<{ data: any }> {
+class AbsenceHistory extends React.PureComponent<{ navigation: { navigate }; data: any }> {
+  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
+    return standardNavScreenOptions(
+      {
+        title: I18n.t("viesco-history"),
+        headerLeft: <HeaderBackAction navigation={navigation} />,
+        headerStyle: {
+          backgroundColor: "#FCB602",
+        },
+      },
+      navigation
+    );
+  };
   public render() {
     return (
       <PageContainer>

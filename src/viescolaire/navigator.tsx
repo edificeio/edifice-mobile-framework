@@ -5,7 +5,17 @@ import PresencesNavigator from "./presences/navigator";
 import Dashboard from "./viesco/containers/Dashboard";
 
 export default createStackNavigator({
-  Dashboard: Dashboard,
-  cdt: HomeworkNavigator,
-  presences: PresencesNavigator,
+  Dashboard,
+  cdt: {
+    screen: HomeworkNavigator,
+    navigationOptions: {
+      header: null,
+    },
+  },
+  presences: {
+    screen: PresencesNavigator,
+    navigationOptions: {
+      header: null,
+    },
+  },
 });

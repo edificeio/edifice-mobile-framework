@@ -4,7 +4,6 @@ import { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 
 import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
-import { HeaderAction } from "../../../ui/headers/Header";
 import { HeaderBackAction } from "../../../ui/headers/NewHeader";
 import { getPersonnelListState } from "../../viesco/state/personnel";
 import { getSubjectsListState } from "../../viesco/state/subjects";
@@ -22,7 +21,9 @@ class HomeworkListRelativeContainer extends React.PureComponent<{ navigation: { 
       {
         title: diaryTitle || I18n.t("Homework"),
         headerLeft: <HeaderBackAction navigation={navigation} />,
-        headerRight: <HeaderAction name="filter" onPress={() => navigation.navigate("HomeworkFilter")} />,
+        headerStyle: {
+          backgroundColor: "#2BAB6F",
+        },
       },
       navigation
     );

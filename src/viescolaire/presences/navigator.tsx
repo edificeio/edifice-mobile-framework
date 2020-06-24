@@ -9,6 +9,6 @@ export default createStackNavigator(
     },
   },
   {
-    headerMode: "none",
+    headerMode: "screen",
   }
 );
