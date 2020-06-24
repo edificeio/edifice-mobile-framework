@@ -5,14 +5,10 @@ import { bindActionCreators } from "redux";
 import DashboardComponent from "../components/DashboardTeacher";
 
 class Dashboard extends React.PureComponent<any> {
-  public componentDidMount() {}
-
   public render() {
-    return <DashboardComponent {...props} />;
+    return <DashboardComponent {...this.props} />;
   }
 }
-
-// ------------------------------------------------------------------------------------------------
 
 const mapStateToProps: (state: any) => any = state => {
   return {};
