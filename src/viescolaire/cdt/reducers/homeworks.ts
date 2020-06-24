@@ -9,10 +9,6 @@ const actionTypes = {
 };
 
 const reducerActionsMap = {
-  [actionTypes.receipt]: (state, action) => {
-    action.data = action.data.reduce((result, homework) => ((result[homework.id] = homework), result), {});
-    return { ...state };
-  },
   [actionTypes.updateReceipt]: (state, action) => {
     let stateUpdated = Object.assign({}, state);
     stateUpdated[action.data.homeworkId].progress.state_label = action.data.status;

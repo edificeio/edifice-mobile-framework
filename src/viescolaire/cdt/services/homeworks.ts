@@ -39,17 +39,19 @@ export type IHomeworkListBackend = {
 }[];
 
 const homeworkListAdapter: (data: IHomeworkListBackend) => IHomeworkList = data => {
-  let result = [] as IHomeworkList;
+  let result = {} as IHomeworkList;
   if (!data) return result;
-  result = data.map(item => ({
-    id: item.id,
-    due_date: moment(item.due_date),
-    type: item.type.label,
-    subject_id: item.subject_id,
-    progress: item.progress,
-    description: item.description,
-    created_date: moment(item.created),
-  }));
+  data.forEach(item => {
+    result[item.id] = {
+      id: item.id,
+      due_date: moment(item.due_date),
+      type: item.type.label,
+      subject_id: item.subject_id,
+      progress: item.progress,
+      description: item.description,
+      created_date: moment(item.created),
+    };
+  });
   return result;
 };
 

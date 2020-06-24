@@ -22,18 +22,24 @@ export interface IHomework {
   created_date: moment.Moment;
 }
 
-export type IHomeworkList = IHomework[];
+export type IHomeworkList = {
+  [key: string]: IHomework;
+};
 
 // THE STATE --------------------------------------------------------------------------------------
 
 export type IHomeworkListState = AsyncState<IHomeworkList>;
 
-export const initialState: IHomeworkList = [];
+export const initialState: IHomeworkList = {};
 
 export const getHomeworksListState = (globalState: any) =>
   viescoConfig.getLocalState(globalState).cdt.homeworksList as IHomeworkListState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const listActionTypes : AsyncActionTypes = createAsyncActionTypes(viescoConfig.createActionType("CDT_HOMEWORK_LIST"));
-export const updateActionTypes : AsyncActionTypes = createAsyncActionTypes(viescoConfig.createActionType("CDT_HOMEWORK_UPDATE"));
+export const listActionTypes: AsyncActionTypes = createAsyncActionTypes(
+  viescoConfig.createActionType("CDT_HOMEWORK_LIST")
+);
+export const updateActionTypes: AsyncActionTypes = createAsyncActionTypes(
+  viescoConfig.createActionType("CDT_HOMEWORK_UPDATE")
+);
