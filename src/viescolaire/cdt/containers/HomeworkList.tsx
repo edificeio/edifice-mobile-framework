@@ -49,9 +49,6 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
     fetchChildHomeworks: (childId, structureId, startDate, endDate) =>
       dispatch(fetchChildHomeworkAction(childId, structureId, startDate, endDate)),
     fetchChildSessions: (childId, startDate, endDate) => dispatch(fetchChildSessionAction(childId, startDate, endDate)),
-    fetchPersonnel: structureId => dispatch(fetchPersonnelListAction(structureId)),
-    fetchSubjects: structureId => dispatch(fetchSubjectListAction(structureId)),
-
     fetchHomeworks: (structureId, startDate, endDate) =>
       dispatch(fetchHomeworkListAction(structureId, startDate, endDate)),
     fetchSessions: (structureId, startDate, endDate) =>

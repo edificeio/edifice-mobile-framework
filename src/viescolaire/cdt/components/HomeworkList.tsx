@@ -70,8 +70,6 @@ export default class HomeworkList extends React.PureComponent<any, any> {
       this.props.fetchHomeworks(structureId, startDateString, endDateString);
       this.props.fetchSessions(structureId, startDateString, endDateString);
     }
-    this.props.fetchSubjects(structureId);
-    this.props.fetchPersonnel(structureId);
   }
 
   componentDidUpdate() {

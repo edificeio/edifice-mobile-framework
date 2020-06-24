@@ -1,7 +1,26 @@
+import * as React from "react";
 import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
 
+import { fetchPersonnelListAction } from "../actions/personnel";
+import { fetchSubjectListAction } from "../actions/subjects";
 import DashboardComponent from "../components/DashboardRelative";
+
+class Dashboard extends React.PureComponent<{
+  homeworks: any[];
+  evaluations: any[];
+  structureId: string;
+  getSubjects: any;
+  getTeachers: any;
+}> {
+  public componentDidMount() {
+    this.props.getSubjects(this.props.structureId);
+    this.props.getTeachers(this.props.structureId);
+  }
+
+  public render() {
+    return <DashboardComponent {...this.props} />;
+  }
+}
 
 // ------------------------------------------------------------------------------------------------
 
@@ -20,15 +39,21 @@ const mapStateToProps: (state: any) => any = state => {
     { subject: "Mathématiques", date: "18/03/2020", note: "11/20" },
   ];
 
+  const structureId = "97a7363c-c000-429e-9c8c-d987b2a2c204";
+
   return {
     homeworks,
     evaluations,
+    structureId,
   };
 };
 
 const mapDispatchToProps: (dispatch: any) => any = dispatch => {
   // return bindActionCreators({ getChildrenList, getHomeworks, getLastEval }, dispatch);
-  return bindActionCreators({}, dispatch);
+  return {
+    getSubjects: structureId => dispatch(fetchSubjectListAction(structureId)),
+    getTeachers: structureId => dispatch(fetchPersonnelListAction(structureId)),
+  };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(DashboardComponent);
+export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
