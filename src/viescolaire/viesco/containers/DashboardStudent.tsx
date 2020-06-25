@@ -1,6 +1,7 @@
 import moment from "moment";
 import * as React from "react";
 import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
 import { fetchPersonnelListAction } from "../actions/personnel";
 import { fetchSubjectListAction } from "../actions/subjects";
@@ -52,10 +53,13 @@ const mapStateToProps: (state: any) => any = state => {
 };
 
 const mapDispatchToProps: (dispatch: any) => any = dispatch => {
-  return {
-    getSubjects: structureId => dispatch(fetchSubjectListAction(structureId)),
-    getTeachers: structureId => dispatch(fetchPersonnelListAction(structureId)),
-  };
+  return bindActionCreators(
+    {
+      getSubjects: fetchSubjectListAction,
+      getTeachers: fetchPersonnelListAction,
+    },
+    dispatch
+  );
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);

@@ -2,6 +2,7 @@ import I18n from "i18n-js";
 import * as React from "react";
 import { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
 import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
 import { HeaderBackAction } from "../../../ui/headers/NewHeader";
@@ -44,16 +45,16 @@ const mapStateToProps: (state: any) => any = state => {
 };
 
 const mapDispatchToProps: (dispatch: any) => any = dispatch => {
-  return {
-    fetchChildHomeworks: (childId, structureId, startDate, endDate) =>
-      dispatch(fetchChildHomeworkAction(childId, structureId, startDate, endDate)),
-    fetchChildSessions: (childId, startDate, endDate) => dispatch(fetchChildSessionAction(childId, startDate, endDate)),
-    fetchHomeworks: (structureId, startDate, endDate) =>
-      dispatch(fetchHomeworkListAction(structureId, startDate, endDate)),
-    fetchSessions: (structureId, startDate, endDate) =>
-      dispatch(fetchSessionListAction(structureId, startDate, endDate)),
-    updateHomeworkProgress: (homeworkId, isDone) => dispatch(updateHomeworkProgressAction(homeworkId, isDone)),
-  };
+  return bindActionCreators(
+    {
+      fetchChildHomeworks: fetchChildHomeworkAction,
+      fetchChildSessions: fetchChildSessionAction,
+      fetchHomeworks: fetchHomeworkListAction,
+      fetchSessions: fetchSessionListAction,
+      updateHomeworkProgress: updateHomeworkProgressAction,
+    },
+    dispatch
+  );
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomeworkListRelativeContainer);
