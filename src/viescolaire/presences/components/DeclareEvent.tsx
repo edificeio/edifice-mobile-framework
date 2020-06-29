@@ -1,7 +1,10 @@
 import DateTimePicker from "@react-native-community/datetimepicker";
 import I18n, { t } from "i18n-js";
+import moment from "moment";
 import * as React from "react";
 import { View, StyleSheet, TextInput, KeyboardAvoidingView, Platform } from "react-native";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
 import { Icon } from "../../../ui";
 import ButtonOk from "../../../ui/ConfirmDialog/buttonOk";
@@ -9,6 +12,7 @@ import { PageContainer } from "../../../ui/ContainerContent";
 import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
 import { Text, TextBold, Label } from "../../../ui/Typography";
 import { LeftColoredItem } from "../../viesco/components/Item";
+import { postLateEvent, updateLateEvent, postLeavingEvent, deleteEvent } from "../actions/events";
 
 type DeclarationState = {
   showPicker: boolean;
@@ -18,9 +22,17 @@ type DeclarationState = {
 
 type DeclarationProps = {
   type: "late" | "leaving";
+  declareLateness: any;
+  updateLateness: any;
+  declareLeaving: any;
+  updateLeaving: any;
+  deleteEvent: any;
+  studentId: string;
+  eventId: string;
+  registerId: string;
 };
 
-export default class DeclareEvent extends React.PureComponent<DeclarationProps, DeclarationState> {
+export class DeclareEvent extends React.PureComponent<DeclarationProps, DeclarationState> {
   constructor(props) {
     super(props);
     this.state = {
@@ -47,11 +59,35 @@ export default class DeclareEvent extends React.PureComponent<DeclarationProps, 
 
   onSubmit = () => {
     const { date, reason } = this.state;
-    console.log("submitting declaration", date, reason);
+    const {
+      type,
+      declareLateness,
+      declareLeaving,
+      updateLateness,
+      updateLeaving,
+      studentId,
+      eventId,
+      registerId,
+    } = this.props;
+    const momentDate = moment(date);
+    if (type === "late") {
+      if (eventId === undefined) {
+        declareLateness(studentId, momentDate, reason, registerId, moment());
+      } else {
+        updateLateness(studentId, momentDate, reason, registerId, moment());
+      }
+    } else if (type === "leaving") {
+      if (eventId === undefined) {
+        declareLeaving(studentId, momentDate, reason, registerId, moment());
+      } else {
+        updateLeaving(studentId, momentDate, reason, registerId, moment());
+      }
+    }
   };
 
   onCancel = () => {
-    console.log("cancelling declaration");
+    const { deleteEvent, registerId, eventId } = this.props;
+    deleteEvent(registerId, eventId);
   };
 
   getSpecificProperties(type) {
@@ -80,7 +116,8 @@ export default class DeclareEvent extends React.PureComponent<DeclarationProps, 
 
   public render() {
     const { showPicker, date } = this.state;
-    const { mainColor, lightColor, mainText, inputLabel } = this.getSpecificProperties("leaving");
+    const { eventId } = this.props;
+    const { mainColor, lightColor, mainText, inputLabel } = this.getSpecificProperties("late");
     return (
       <PageContainer>
         <KeyboardAvoidingView style={[style.container]} behavior={Platform.OS === "ios" ? "padding" : undefined}>
@@ -109,7 +146,7 @@ export default class DeclareEvent extends React.PureComponent<DeclarationProps, 
             />
           </View>
           <View style={{ flexDirection: "row", justifyContent: "center", flexWrap: "nowrap" }}>
-            <ButtonOk label={I18n.t("delete")} onPress={this.onCancel} />
+            {eventId !== undefined && <ButtonOk label={I18n.t("delete")} onPress={this.onCancel} />}
             <ButtonOk label={I18n.t("viesco-confirm")} onPress={this.onSubmit} />
           </View>
         </KeyboardAvoidingView>
@@ -150,3 +187,22 @@ const style = StyleSheet.create({
     backgroundColor: "white",
   },
 });
+
+const mapStateToProps = (state: any) => {
+  return {};
+};
+
+const mapDispatchToProps = (dispatch: any) => {
+  return bindActionCreators(
+    {
+      declareLateness: postLateEvent,
+      updateLateness: updateLateEvent,
+      declareLeaving: postLeavingEvent,
+      updateLeaving: postLeavingEvent,
+      deleteEvent,
+    },
+    dispatch
+  );
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(DeclareEvent);
