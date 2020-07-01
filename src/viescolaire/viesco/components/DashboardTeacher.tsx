@@ -8,9 +8,17 @@ import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
 import { Text } from "../../../ui/text";
 import CallList from "../../presences/containers/TeacherCallList";
 import { BottomColoredItem } from "../components/Item";
+import StructurePicker from "./StructurePicker";
 
 const style = StyleSheet.create({
   dashboardPart: { paddingVertical: 8, paddingHorizontal: 15 },
+  coursesPart: {
+    backgroundColor: "white",
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    elevation: 3,
+    marginBottom: 20,
+  },
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -36,7 +44,7 @@ const style = StyleSheet.create({
 const ImageButton = ({ imageSrc, color, text, onPress }) => {
   return (
     <TouchableOpacity onPress={onPress}>
-      <BottomColoredItem shadow style={{ alignItems: "center", flexDirection: "column" }} color={color}>
+      <BottomColoredItem shadow style={{ alignItems: "center", flexDirection: "column", elevation: 1 }} color={color}>
         <Image source={imageSrc} style={{ height: 70, width: 70 }} resizeMode="contain" />
         <Text>{text}</Text>
       </BottomColoredItem>
@@ -70,9 +78,11 @@ export default class Dashboard extends React.PureComponent<any> {
     return (
       <PageContainer>
         <ConnectionTrackingBar />
-        {/*<StructurePicker onChange={val => console.log(val)} />*/}
-        <View style={style.dashboardPart}>
+        <View style={style.coursesPart}>
+          {/*<StructurePicker />*/}
           <CallList {...this.props} />
+        </View>
+        <View style={style.dashboardPart}>
           {this.renderNavigationGrid()}
         </View>
       </PageContainer>

@@ -1,9 +1,9 @@
 import * as React from "react";
 import { connect } from "react-redux";
 
-import { fetchCoursesAction } from "../actions/teacherCourses";
+import { fetchCoursesAction, fetchCoursesRegisterAction } from "../actions/teacherCourses";
 import TeacherCallList from "../components/TeacherCallList";
-import { getCoursesListState } from "../state/teacherCourses";
+import { getCoursesListState, getCoursesRegisterState } from "../state/teacherCourses";
 
 class CallList extends React.PureComponent<any> {
   public render() {
@@ -14,6 +14,7 @@ class CallList extends React.PureComponent<any> {
 const mapStateToProps: (state: any) => any = state => {
   return {
     courses: getCoursesListState(state),
+    register: getCoursesRegisterState(state),
   };
 };
 
@@ -21,6 +22,9 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
   return {
     fetchCourses: (teacherId, structureId, startDate, endDate) => {
       dispatch(fetchCoursesAction(teacherId, structureId, startDate, endDate));
+    },
+    fetchRegisterId: (course_data) => {
+      dispatch(fetchCoursesRegisterAction(course_data));
     },
   };
 };
