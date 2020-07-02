@@ -1,4 +1,3 @@
-import { createAsyncActionTypes, AsyncState } from "../../../infra/redux/async2";
 import viescoConfig from "../../config";
 
 export type IEvent = {
@@ -13,17 +12,11 @@ export type IEvent = {
   reason_id?: number;
 };
 
-export type IEventsList = {
-  [register_id: number]: {
-    [event_id: number]: IEvent;
-  }
+const prefix = viescoConfig.createActionType("CALL_EVENT");
+
+export const eventsActionsTypes = {
+  post: prefix + "_POST",
+  put: prefix + "_PUT",
+  delete: prefix + "_DELETE",
+  error: prefix + "_ERROR",
 };
-
-export type IEventsListState = AsyncState<IEventsList>;
-
-export const initialState: IEventsList = {};
-
-export const getClassesCallListState = (globalState: any) =>
-  viescoConfig.getLocalState(globalState).presences.callList as IEventsListState;
-
-export const actionTypes = createAsyncActionTypes(viescoConfig.createActionType("CALL_EVENT"));

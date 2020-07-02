@@ -85,7 +85,7 @@ export default class CallList extends React.PureComponent<any, any> {
       registerId: register.data.id,
       fetching,
     });
-    this.props.navigation.navigate("CallSheetPage");
+    this.props.navigation.navigate("CallSheetPage", { registerId: 18741 });
   }
 
   private _renderItem({ item, index }) {

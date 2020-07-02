@@ -1,29 +1,26 @@
+import I18n from "i18n-js";
 import moment from "moment";
 import * as React from "react";
 import { View, StyleSheet, ScrollView, RefreshControl } from "react-native";
 
+import ButtonOk from "../../../ui/ConfirmDialog/buttonOk";
 import ConnectionTrackingBar from "../../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../../ui/ContainerContent";
-import { Text, TextBold } from "../../../ui/text";
+import { Text, TextBold } from "../../../ui/Typography";
+import { Icon } from "../../../ui/icons/Icon";
 import { LeftColoredItem } from "../../viesco/components/Item";
+import StudentRow from "./StudentRow";
 
 const style = StyleSheet.create({
-  scrollView: { flex: 1, minHeight: 300 },
-  studentsList: {
-    justifyContent: "flex-start",
-    flexDirection: "row",
-    height: 60,
-    borderRadius: 5,
-    elevation: 2,
-    padding: 10,
+  scrollView: { flex: 1, minHeight: 300, paddingBottom: 125 },
+  validateButton: {
+    alignSelf: "center",
+    width: "40%",
+    margin: 20,
   },
+  classesView: { justifyContent: "flex-end", flexDirection: "row", paddingBottom: 15 },
+  topItem: { justifyContent: "flex-end", flexDirection: "row" },
 });
-
-function wait(timeout) {
-  return new Promise(resolve => {
-    setTimeout(resolve, timeout);
-  });
-}
 
 export default class CallSheet extends React.PureComponent<any, any> {
   constructor(props) {
@@ -34,11 +31,13 @@ export default class CallSheet extends React.PureComponent<any, any> {
       refreshing: false,
       callData: callList.data,
       fetching: callList.isFetching,
+      isScrolling: false,
     };
   }
 
   componentDidMount() {
-    this.props.fetchClassesCall("16307");
+    const { registerId } = this.props.navigation.state.params;
+    this.props.fetchClassesCallAction(registerId);
   }
 
   componentDidUpdate() {
@@ -47,28 +46,74 @@ export default class CallSheet extends React.PureComponent<any, any> {
     this.setState({
       callData: callList.data,
       fetching,
+      refreshing: fetching,
     });
   }
 
   onRefreshStudentsList = () => {
     this.setState({ refreshing: true });
-    this.props.fetchClassesCall("16307");
-
-    wait(2000).then(() => this.setState({ refreshing: false }));
-  }
+    const { registerId } = this.props.navigation.state.params;
+    this.props.fetchClassesCallAction(registerId);
+  };
 
   private StudentsList() {
+    const { students } = this.state.callData;
+    const studentsList = students.sort((a, b) => a.name.localeCompare(b.name));
+    const { registerId } = this.props.navigation.state.params;
+    const { postAbsentEvent, deleteEvent, navigation } = this.props;
     return (
       <>
-        {this.state.callData.students.length > 0 ? (
+        {studentsList.length > 0 ? (
           <ScrollView
             contentContainerStyle={style.scrollView}
-            refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefreshStudentsList} />}>
-            {this.state.callData.students.map((student, index, list) => (
-              <View style={style.studentsList}>
-                <Text>{student.name}</Text>
-              </View>
+            refreshControl={
+              <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefreshStudentsList} />
+            }>
+            {studentsList.map(student => (
+              <StudentRow
+                student={student}
+                lateCallback={event =>
+                  this.props.navigation.navigate("DeclareEvent", {
+                    type: "late",
+                    registerId,
+                    student,
+                    startDate: "2020-07-01T10:40:00.000",
+                    endDate: "2020-07-01T11:35:00.000",
+                    event,
+                  })
+                }
+                leavingCallback={event =>
+                  this.props.navigation.navigate("DeclareEvent", {
+                    type: "leaving",
+                    registerId,
+                    student,
+                    startDate: "2020-07-01T10:40:00.000",
+                    endDate: "2020-07-01T11:35:00.000",
+                    event,
+                  })
+                }
+                checkAbsent={() => {
+                  postAbsentEvent(
+                    student.id,
+                    registerId,
+                    moment("2020-07-01T10:40:00.000"),
+                    moment("2020-07-01T11:35:00.000")
+                  );
+                }}
+                uncheckAbsent={event => {
+                  deleteEvent(event);
+                }}
+              />
             ))}
+            <View style={style.validateButton}>
+              <ButtonOk
+                label={I18n.t("viesco-validate")}
+                onPress={() => {
+                  navigation.goBack(null);
+                  /* todo: validate register */
+                }}
+              />
+            </View>
           </ScrollView>
         ) : null}
       </>
@@ -77,13 +122,18 @@ export default class CallSheet extends React.PureComponent<any, any> {
 
   private ClassesInfos() {
     return (
-      <View style={{ justifyContent: "flex-end", flexDirection: "row", paddingBottom: 15 }}>
-        <LeftColoredItem shadow style={{ justifyContent: "flex-end", flexDirection: "row" }} color="#FFB600">
+      <View style={style.classesView}>
+        <LeftColoredItem shadow style={style.topItem} color="#FFB600">
           <Text>
-            {moment(this.state.callData.start_date).format("hh:mm")} - {moment(this.state.callData.end_date).format("hh:mm")}
+            {moment(this.state.callData.start_date).format("hh:mm")} -{" "}
+            {moment(this.state.callData.end_date).format("hh:mm")}
           </Text>
-          <Text>&emsp;Salle 302</Text>
-          <TextBold style={{ fontSize: 20 }}>&emsp;6ème6</TextBold>
+          <Text>
+            &emsp;
+            <Icon name="pin_drop" size={18} />
+            Salle 302
+          </Text>
+          <TextBold>&emsp;6ème6</TextBold>
         </LeftColoredItem>
       </View>
     );
@@ -96,7 +146,7 @@ export default class CallSheet extends React.PureComponent<any, any> {
         {this.StudentsList()}
       </View>
     );
-  }
+  };
 
   public render() {
     return (

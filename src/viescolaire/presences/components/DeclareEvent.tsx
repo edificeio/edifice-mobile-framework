@@ -1,16 +1,19 @@
 import DateTimePicker from "@react-native-community/datetimepicker";
-import I18n, { t } from "i18n-js";
+import I18n from "i18n-js";
 import moment from "moment";
 import * as React from "react";
 import { View, StyleSheet, TextInput, KeyboardAvoidingView, Platform } from "react-native";
+import { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
+import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
 import { Icon } from "../../../ui";
 import ButtonOk from "../../../ui/ConfirmDialog/buttonOk";
 import { PageContainer } from "../../../ui/ContainerContent";
 import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
 import { Text, TextBold, Label } from "../../../ui/Typography";
+import { HeaderBackAction } from "../../../ui/headers/NewHeader";
 import { LeftColoredItem } from "../../viesco/components/Item";
 import { postLateEvent, updateLateEvent, postLeavingEvent, deleteEvent } from "../actions/events";
 
@@ -21,25 +24,50 @@ type DeclarationState = {
 };
 
 type DeclarationProps = {
-  type: "late" | "leaving";
   declareLateness: any;
   updateLateness: any;
   declareLeaving: any;
   updateLeaving: any;
   deleteEvent: any;
-  studentId: string;
-  eventId: string;
-  registerId: string;
+  navigation: NavigationScreenProp<any>;
 };
 
 export class DeclareEvent extends React.PureComponent<DeclarationProps, DeclarationState> {
+  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
+    return standardNavScreenOptions(
+      {
+        title: navigation.getParam("title"),
+        headerLeft: <HeaderBackAction navigation={navigation} />,
+        headerStyle: {
+          backgroundColor: navigation.getParam("color"),
+        },
+      },
+      navigation
+    );
+  };
   constructor(props) {
     super(props);
-    this.state = {
-      showPicker: false,
-      date: new Date(),
-      reason: "",
-    };
+    const { event } = props.navigation.state.params;
+    if (event === undefined) {
+      this.state = {
+        showPicker: false,
+        date: new Date(),
+        reason: "",
+      };
+    } else {
+      if (event.type_id === 2)
+        this.state = { date: moment(event.end_date).toDate(), reason: event.comment, showPicker: false };
+      else if (event.type_id === 3)
+        this.state = { date: moment(event.start_date).toDate(), reason: event.comment, showPicker: false };
+    }
+  }
+
+  componentDidMount() {
+    const properties = this.getSpecificProperties(this.props.navigation.state.params.type);
+    this.props.navigation.setParams({
+      title: properties.title,
+      color: properties.mainColor,
+    });
   }
 
   onTimeChange = (event, selectedDate) => {
@@ -59,35 +87,32 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
 
   onSubmit = () => {
     const { date, reason } = this.state;
-    const {
-      type,
-      declareLateness,
-      declareLeaving,
-      updateLateness,
-      updateLeaving,
-      studentId,
-      eventId,
-      registerId,
-    } = this.props;
+    const { declareLateness, declareLeaving, updateLateness, updateLeaving } = this.props;
+    const { type, student, event, registerId, startDate, endDate } = this.props.navigation.state.params;
     const momentDate = moment(date);
+    const startDateMoment = moment(startDate);
+    const endDateMoment = moment(endDate);
     if (type === "late") {
-      if (eventId === undefined) {
-        declareLateness(studentId, momentDate, reason, registerId, moment());
+      if (event === undefined) {
+        declareLateness(student.id, momentDate, reason, registerId, startDateMoment);
       } else {
-        updateLateness(studentId, momentDate, reason, registerId, moment());
+        updateLateness(student.id, momentDate, reason, event.id, registerId, startDateMoment);
       }
     } else if (type === "leaving") {
-      if (eventId === undefined) {
-        declareLeaving(studentId, momentDate, reason, registerId, moment());
+      if (event === undefined) {
+        declareLeaving(student.id, momentDate, reason, registerId, endDateMoment);
       } else {
-        updateLeaving(studentId, momentDate, reason, registerId, moment());
+        updateLeaving(student.id, momentDate, reason, event.id, registerId, endDateMoment);
       }
     }
+    this.props.navigation.goBack();
   };
 
   onCancel = () => {
-    const { deleteEvent, registerId, eventId } = this.props;
-    deleteEvent(registerId, eventId);
+    const { event } = this.props.navigation.state.params;
+    const { deleteEvent } = this.props;
+    deleteEvent(event);
+    this.props.navigation.goBack();
   };
 
   getSpecificProperties(type) {
@@ -96,17 +121,20 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
       lightColor: "",
       mainText: "",
       inputLabel: "",
+      title: "",
     };
     switch (type) {
       case "late":
         result.mainColor = "#9c2cb4";
         result.lightColor = "rgb(179, 0, 179)";
+        result.title = I18n.t("viesco-lateness");
         result.mainText = I18n.t("viesco-arrived");
         result.inputLabel = I18n.t("viesco-arrived-motive");
         break;
       case "leaving":
         result.mainColor = "#24a1ac";
         result.lightColor = "#2dc5d2";
+        result.title = I18n.t("viesco-leaving");
         result.mainText = I18n.t("viesco-left");
         result.inputLabel = I18n.t("viesco-left-motive");
         break;
@@ -116,8 +144,10 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
 
   public render() {
     const { showPicker, date } = this.state;
-    const { eventId } = this.props;
-    const { mainColor, lightColor, mainText, inputLabel } = this.getSpecificProperties("late");
+    const { type, event, student, startDate, endDate } = this.props.navigation.state.params;
+    const { mainColor, lightColor, mainText, inputLabel } = this.getSpecificProperties(type);
+    const startDateString = moment(startDate).format("H:mm");
+    const endDateString = moment(endDate).format("H:mm");
     return (
       <PageContainer>
         <KeyboardAvoidingView style={[style.container]} behavior={Platform.OS === "ios" ? "padding" : undefined}>
@@ -125,8 +155,11 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
           <LeftColoredItem color={mainColor} style={style.recapHeader}>
             <Text>
               <Icon color="grey" size={12} name="access_time" />
-              <Text> 8:30 - 9:25 </Text>
-              <TextBold>BERRADA RKHAMI Farah</TextBold>
+              <Text>
+                {" "}
+                {startDateString} - {endDateString}{" "}
+              </Text>
+              <TextBold>{student.name}</TextBold>
             </Text>
           </LeftColoredItem>
           <Text style={[style.underlinedText, { borderBottomColor: mainColor, color: mainColor }]}>{mainText}</Text>
@@ -140,13 +173,14 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
           <View style={style.inputContainer}>
             <Label style={{ fontSize: 12 }}>{inputLabel}</Label>
             <TextInput
+              defaultValue={event === undefined ? "" : event.comment}
               placeholder={I18n.t("viesco-enter-text")}
               underlineColorAndroid="lightgrey"
               onChangeText={this.onReasonChange}
             />
           </View>
           <View style={{ flexDirection: "row", justifyContent: "center", flexWrap: "nowrap" }}>
-            {eventId !== undefined && <ButtonOk label={I18n.t("delete")} onPress={this.onCancel} />}
+            {event !== undefined && <ButtonOk label={I18n.t("delete")} onPress={this.onCancel} />}
             <ButtonOk label={I18n.t("viesco-confirm")} onPress={this.onSubmit} />
           </View>
         </KeyboardAvoidingView>

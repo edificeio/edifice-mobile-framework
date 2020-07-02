@@ -1,11 +1,15 @@
 import moment from "moment";
 import { Dispatch } from "redux";
 
-import { createAsyncActionCreators } from "../../../infra/redux/async2";
 import { eventsService } from "../services/events";
-import { actionTypes, IEvent } from "../state/events";
+import { eventsActionsTypes } from "../state/events";
 
-export const actions = createAsyncActionCreators<IEvent>(actionTypes);
+export const eventsActions = {
+  post: data => ({ type: eventsActionsTypes.post, data }),
+  put: data => ({ type: eventsActionsTypes.put, data }),
+  delete: data => ({ type: eventsActionsTypes.delete, data }),
+  error: error => ({ type: eventsActionsTypes.error, error }),
+};
 
 export function postLateEvent(
   studentId: string,
@@ -16,42 +20,39 @@ export function postLateEvent(
 ) {
   return async (dispatch: Dispatch) => {
     try {
-      dispatch(actions.request());
       const result = await eventsService.postLate(studentId, date, comment, registerId, courseStart);
-      dispatch(actions.receipt(result));
+      dispatch(eventsActions.post(result));
     } catch (errmsg) {
-      dispatch(actions.error(errmsg));
+      dispatch(eventsActions.error(errmsg));
     }
   };
 }
 
 export function updateLateEvent(
-  studentId: string,
+  student_id: string,
   date: moment.Moment,
   comment: string,
-  eventId: number,
-  registerId: number,
-  courseStart: moment.Moment
+  id: number,
+  register_id: number,
+  course_start: moment.Moment
 ) {
   return async (dispatch: Dispatch) => {
     try {
-      dispatch(actions.request());
-      const result = await eventsService.putLate(studentId, date, comment, eventId, registerId, courseStart);
-      dispatch(actions.receipt(result));
+      await eventsService.putLate(student_id, date, comment, id, register_id, course_start);
+      dispatch(eventsActions.put({ id, student_id, comment, register_id, course_start, course_end: date }));
     } catch (errmsg) {
-      dispatch(actions.error(errmsg));
+      dispatch(eventsActions.error(errmsg));
     }
   };
 }
 
-export function deleteEvent(registerId: number, eventId: number) {
+export function deleteEvent(event) {
   return async (dispatch: Dispatch) => {
     try {
-      dispatch(actions.request());
-      const result = await eventsService.deleteEvent(registerId, eventId);
-      dispatch(actions.receipt(result));
+      await eventsService.deleteEvent(event.id);
+      dispatch(eventsActions.delete(event));
     } catch (errmsg) {
-      dispatch(actions.error(errmsg));
+      dispatch(eventsActions.error(errmsg));
     }
   };
 }
@@ -65,30 +66,44 @@ export function postLeavingEvent(
 ) {
   return async (dispatch: Dispatch) => {
     try {
-      dispatch(actions.request());
       const result = await eventsService.postLeaving(studentId, date, comment, registerId, courseEnd);
-      dispatch(actions.receipt(result));
+      dispatch(eventsActions.post(result));
     } catch (errmsg) {
-      dispatch(actions.error(errmsg));
+      dispatch(eventsActions.error(errmsg));
     }
   };
 }
 
 export function updateLeavingEvent(
-  studentId: string,
+  student_id: string,
   date: moment.Moment,
   comment: string,
-  eventId: number,
+  id: number,
+  register_id: number,
+  course_end: moment.Moment
+) {
+  return async (dispatch: Dispatch) => {
+    try {
+      await eventsService.putLeaving(student_id, date, comment, id, register_id, course_end);
+      dispatch(eventsActions.put({ id, student_id, comment, register_id, course_start: date, course_end }));
+    } catch (errmsg) {
+      dispatch(eventsActions.error(errmsg));
+    }
+  };
+}
+
+export function postAbsentEvent(
+  studentId: string,
   registerId: number,
+  courseStart: moment.Moment,
   courseEnd: moment.Moment
 ) {
   return async (dispatch: Dispatch) => {
     try {
-      dispatch(actions.request());
-      const result = await eventsService.putLeaving(studentId, date, comment, eventId, registerId, courseEnd);
-      dispatch(actions.receipt(result));
+      const result = await eventsService.postAbsent(studentId, registerId, courseStart, courseEnd);
+      dispatch(eventsActions.post(result));
     } catch (errmsg) {
-      dispatch(actions.error(errmsg));
+      dispatch(eventsActions.error(errmsg));
     }
   };
 }
