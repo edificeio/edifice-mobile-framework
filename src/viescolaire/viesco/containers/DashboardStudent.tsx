@@ -3,19 +3,32 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
+import { getSessionInfo } from "../../../App";
+import { fetchHomeworkListAction, updateHomeworkProgressAction } from "../../cdt/actions/homeworks";
+import { getHomeworksListState } from "../../cdt/state/homeworks";
 import { fetchPersonnelListAction } from "../actions/personnel";
 import { fetchSubjectListAction } from "../actions/subjects";
 import DashboardComponent from "../components/DashboardStudent";
+import { getSubjectsListState } from "../state/subjects";
 
 class Dashboard extends React.PureComponent<{
   homeworks: any[];
   structureId: string;
   getSubjects: any;
   getTeachers: any;
+  getHomeworks: any;
 }> {
   public componentDidMount() {
-    this.props.getSubjects(this.props.structureId);
-    this.props.getTeachers(this.props.structureId);
+    const structureId = getSessionInfo().administrativeStructures[0].id;
+    this.props.getSubjects(structureId);
+    this.props.getTeachers(structureId);
+    this.props.getHomeworks(
+      structureId,
+      moment().format("YYYY-MM-DD"),
+      moment()
+        .add(1, "M")
+        .format("YYYY-MM-DD")
+    );
   }
 
   public render() {
@@ -26,29 +39,12 @@ class Dashboard extends React.PureComponent<{
 // ------------------------------------------------------------------------------------------------
 
 const mapStateToProps: (state: any) => any = state => {
-  // const homeworks = state.homeworks;
-
-  const homeworks = [
-    { subject: "Mathématiques", type: "Controle", completed: true, date: moment("2020-06-18") },
-    { subject: "Physique", type: "Controle", completed: true, date: moment("2020-06-18") },
-    { subject: "Anglais", type: "Exercice Maison", completed: false, date: moment("2020-07-18") },
-    {
-      subject: "Science de la Vie & De La Terre ",
-      type: "Exercice Maison",
-      completed: false,
-      date: moment("2020-06-19"),
-    },
-    { subject: "Science de la Vie & De La Terre ", type: "Controle", completed: false, date: moment("2020-06-20") },
-    { subject: "Chimie", type: "Controle", completed: true, date: moment("2020-06-21") },
-    { subject: "Français", type: "Exercice Maison", completed: true, date: moment("2020-06-22") },
-    { subject: "Espagnol", type: "Exercice Maison", completed: false, date: moment("2020-08-18") },
-  ];
-
-  const structureId = "97a7363c-c000-429e-9c8c-d987b2a2c204";
+  const homeworks = getHomeworksListState(state);
+  const subjects = getSubjectsListState(state);
 
   return {
     homeworks,
-    structureId,
+    subjects,
   };
 };
 
@@ -57,6 +53,8 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
     {
       getSubjects: fetchSubjectListAction,
       getTeachers: fetchPersonnelListAction,
+      getHomeworks: fetchHomeworkListAction,
+      updateHomeworkProgress: updateHomeworkProgressAction,
     },
     dispatch
   );

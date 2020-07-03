@@ -4,6 +4,7 @@ import { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
+import { getSessionInfo } from "../../../App";
 import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
 import { HeaderBackAction } from "../../../ui/headers/NewHeader";
 import { getPersonnelListState } from "../../viesco/state/personnel";
@@ -41,6 +42,10 @@ const mapStateToProps: (state: any) => any = state => {
     sessions: getSessionsListState(state),
     personnel: getPersonnelListState(state),
     subjects: getSubjectsListState(state),
+    structureId:
+      getSessionInfo().type === "Student"
+        ? getSessionInfo().administrativeStructures[0].id
+        : "97a7363c-c000-429e-9c8c-d987b2a2c204", // TODO handle relative with childpicker
   };
 };
 

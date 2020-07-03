@@ -2,6 +2,7 @@ import I18n from "i18n-js";
 import * as React from "react";
 import { NavigationScreenProp } from "react-navigation";
 
+import { getSessionInfo } from "../../../App";
 import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
 import ConnectionTrackingBar from "../../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../../ui/ContainerContent";
@@ -30,7 +31,7 @@ export default class Dashboard extends React.PureComponent<{ navigation: { navig
   };
 
   public render() {
-    const DashboardContainer = this.getDashboardForType("Relative");
+    const DashboardContainer = this.getDashboardForType(getSessionInfo().type);
 
     return (
       <PageContainer>

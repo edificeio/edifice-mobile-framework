@@ -50,14 +50,14 @@ export default class HomeworkList extends React.PureComponent<any, any> {
       startSessionsDate: moment(),
       endSessionsDate: moment(),
       fetching: homeworks.isFetching || sessions.isFetching || personnel.isFetching || subjects.isFetching,
-      structureId: "97a7363c-c000-429e-9c8c-d987b2a2c204",
       childId: "f8f4e952-8696-4ca0-a6bb-9f0b465445e9",
       refreshing: false,
     };
   }
 
   async componentDidMount() {
-    const { structureId, startDate, endDate } = this.state;
+    const { startDate, endDate } = this.state;
+    const { structureId } = this.props;
     if (this.props.navigation.state.params.user_type === "Relative") {
       const { childId } = this.state;
       const startDateString = moment(startDate).format("YYYY-MM-DD");
@@ -85,7 +85,8 @@ export default class HomeworkList extends React.PureComponent<any, any> {
   }
 
   updateHomeworks = () => {
-    const { childId, structureId, startHomeworksDate, endHomeworksDate } = this.state;
+    const { childId, startHomeworksDate, endHomeworksDate } = this.state;
+    const { structureId } = this.props;
     const startDateString = moment(startHomeworksDate).format("YYYY-MM-DD");
     const endDateString = moment(endHomeworksDate).format("YYYY-MM-DD");
     {
@@ -96,7 +97,8 @@ export default class HomeworkList extends React.PureComponent<any, any> {
   };
 
   updateSessions = async () => {
-    const { childId, structureId, startSessionsDate, endSessionsDate } = this.state;
+    const { childId, startSessionsDate, endSessionsDate } = this.state;
+    const { structureId } = this.props;
     const startDateString = moment(startSessionsDate).format("YYYY-MM-DD");
     const endDateString = moment(endSessionsDate).format("YYYY-MM-DD");
     {

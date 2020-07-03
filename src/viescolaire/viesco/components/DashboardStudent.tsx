@@ -1,9 +1,12 @@
+import I18n from "i18n-js";
+import moment from "moment";
 import * as React from "react";
 import { Text, View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { NavigationActions } from "react-navigation";
+
 import { Icon } from "../../../ui";
 import { TextBold } from "../../../ui/text";
 import { HomeworkItem } from "../../cdt/components/homework";
-import moment from "moment";
 
 const style = StyleSheet.create({
   dashboardPart: { paddingVertical: 8, paddingHorizontal: 15 },
@@ -41,7 +44,7 @@ const IconButton = ({ icon, color, text, onPress }) => {
   return (
     <View style={style.gridButtonContainer}>
       <TouchableOpacity onPress={onPress} style={[style.gridButton, { backgroundColor: color }]}>
-        <Icon size={20} color={"white"} name={icon} />
+        <Icon size={20} color="white" name={icon} />
         <Text style={style.gridButtonText}>{text}</Text>
       </TouchableOpacity>
     </View>
@@ -52,46 +55,82 @@ export default class Dashboard extends React.PureComponent<any & dashboardProps>
   private renderNavigationGrid() {
     return (
       <View style={[style.dashboardPart, style.grid]}>
-        <IconButton onPress={() => this.props.navigation.navigate("History")} text={"Historique"} color={"#FCB602"} icon={"reservation"} />
-        <IconButton onPress={() => true} text={"Emploi du temps"} color={"#162EAE"} icon={"reservation"} />
+        <IconButton
+          onPress={() =>
+            this.props.navigation.navigate(
+              "presences",
+              {},
+              NavigationActions.navigate({
+                routeName: "History",
+              })
+            )
+          }
+          text={I18n.t("viesco-history")}
+          color="#FCB602"
+          icon="reservation"
+        />
+        <IconButton onPress={() => true} text={I18n.t("viesco-timetable")} color="#162EAE" icon="reservation" />
         <IconButton
           onPress={() => this.props.navigation.navigate("HomeworkList", { user_type: "Student" })}
-          text={"Cahier de texte"}
-          color={"#2BAB6F"}
-          icon={"reservation"}
+          text={I18n.t("viesco-homework")}
+          color="#2BAB6F"
+          icon="reservation"
         />
-        <IconButton onPress={() => true} text={"Evaluations"} color={"#F95303"} icon={"reservation"} />
+        <IconButton onPress={() => true} text={I18n.t("viesco-tests")} color="#F95303" icon="reservation" />
       </View>
     );
   }
 
+  getSubjectName = subjectId => {
+    const subjectsList = this.props.subjects.data;
+    const result = subjectsList.find(subject => subject.subjectId === subjectId);
+    if (typeof result === "undefined") return "";
+    return result.subjectLabel;
+  };
+
+  isHomeworkDone = homework => {
+    if (homework.progress === null) return false;
+    return homework.progress.state_label === "done";
+  };
+
   private renderHomework(homeworks) {
     let homeworksByDate = {};
-    homeworks.forEach((hm) => {
-      const key = moment(hm.date).format('YYYY-MM-DD');
-      if(typeof homeworksByDate[key] === 'undefined') homeworksByDate[key] = [];
+    Object.values(homeworks).forEach(hm => {
+      const key = moment(hm.due_date).format("YYYY-MM-DD");
+      if (typeof homeworksByDate[key] === "undefined") homeworksByDate[key] = [];
       homeworksByDate[key].push(hm);
     });
 
-    const tomorrowDate = moment().add(1, 'day');
+    const tomorrowDate = moment().add(1, "day");
 
-    homeworksByDate = Object.keys(homeworksByDate).sort().slice(0, 5).reduce(function(memo, current) { 
-        memo[current] = homeworksByDate[current]
+    homeworksByDate = Object.keys(homeworksByDate)
+      .sort()
+      .slice(0, 5)
+      .reduce(function(memo, current) {
+        memo[current] = homeworksByDate[current];
         return memo;
-      }, {}
-    );
+      }, {});
 
     return (
       <View style={style.dashboardPart}>
-        <TextBold style={style.title}>Travail à faire</TextBold>
+        <TextBold style={style.title}>{I18n.t("viesco-homework")}</TextBold>
         {Object.keys(homeworksByDate).map(date => (
           <>
-          <Text style={style.subtitle}>
-            Pour {moment(date).isSame(tomorrowDate, 'day') ? 'demain' : `le ${moment(date).format('DD/MM/YYYY')}`}
-          </Text>
-          {homeworksByDate[date].map(homework => (
-            <HomeworkItem checked={homework.completed} title={homework.subject} subtitle={homework.type} />
-          ))}
+            <Text style={style.subtitle}>
+              {moment(date).isSame(tomorrowDate, "day")
+                ? I18n.t("viesco-homework-fortomorrow")
+                : `${I18n.t("viesco-homework-fordate")} ${moment(date).format("DD/MM/YYYY")}`}
+            </Text>
+            {homeworksByDate[date].map(homework => (
+              <HomeworkItem
+                checked={homework.progress && homework.progress.state_id === 2}
+                title={this.getSubjectName(homework.subject_id)}
+                subtitle={homework.type}
+                onChange={() => {
+                  this.props.updateHomeworkProgress(homework.id, !this.isHomeworkDone(homework));
+                }}
+              />
+            ))}
           </>
         ))}
       </View>
@@ -103,7 +142,7 @@ export default class Dashboard extends React.PureComponent<any & dashboardProps>
     return (
       <View>
         {this.renderNavigationGrid()}
-        <ScrollView>{this.renderHomework(homeworks)}</ScrollView>
+        <ScrollView>{this.renderHomework(homeworks.data)}</ScrollView>
       </View>
     );
   }
