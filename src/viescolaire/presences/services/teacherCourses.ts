@@ -67,11 +67,9 @@ const coursesRegisterAdapter: (data: ICoursesRegisterBackend) => ICoursesRegiste
 
 export const coursesRegisterService = {
   get: async (course_data) => {
-    console.log("serv: ", course_data);
     const data = coursesRegisterAdapter(
       await fetchJSONWithCache(`/presences/registers`, { body: course_data, method: "post" })
     );
-    console.log("ServData: ", data);
     return data;
   }
 }
