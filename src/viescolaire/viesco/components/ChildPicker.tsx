@@ -1,8 +1,8 @@
+import I18n from "i18n-js";
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
 
 //import I18n from "../../../infra/i18n";
-import I18n from "i18n-js"
 import { CommonStyles } from "../../../styles/common/styles";
 import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
 import Dropdown from "../../../ui/Dropdown";
@@ -38,9 +38,10 @@ export default class ChildPicker extends React.PureComponent<{
   children: IChildArray;
   selectChild: (t: string) => void;
   declareAbsence: (t: string) => void;
+  hideButton?: boolean;
 }> {
   public render() {
-    const { selectedChild, children, selectChild, declareAbsence } = this.props;
+    const { selectedChild, children, selectChild, declareAbsence, hideButton } = this.props;
 
     const keyExtractor = child => Object.keys(children)[Object.values(children).findIndex(item => item == child)];
 
@@ -54,9 +55,11 @@ export default class ChildPicker extends React.PureComponent<{
             keyExtractor={item => keyExtractor(item)}
             renderItem={(item: IChild) => item.lastName + " " + item.firstName}
           />
-          <TouchableOpacity onPress={() => declareAbsence(selectedChild)} style={styles.declareAbsenceButton}>
-            <Text>{I18n.t("viesco-declareAbsence")}</Text>
-          </TouchableOpacity>
+          {hideButton || (
+            <TouchableOpacity onPress={() => declareAbsence(selectedChild)} style={styles.declareAbsenceButton}>
+              <Text>{I18n.t("viesco-declareAbsence")}</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     );

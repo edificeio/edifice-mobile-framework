@@ -19,7 +19,7 @@ class Dashboard extends React.PureComponent<{
   getHomeworks: any;
 }> {
   public componentDidMount() {
-    const structureId = getSessionInfo().administrativeStructures[0].id;
+    const { structureId } = this.props;
     this.props.getSubjects(structureId);
     this.props.getTeachers(structureId);
     this.props.getHomeworks(
@@ -41,10 +41,12 @@ class Dashboard extends React.PureComponent<{
 const mapStateToProps: (state: any) => any = state => {
   const homeworks = getHomeworksListState(state);
   const subjects = getSubjectsListState(state);
+  const structureId = getSessionInfo().administrativeStructures[0].id;
 
   return {
     homeworks,
     subjects,
+    structureId,
   };
 };
 

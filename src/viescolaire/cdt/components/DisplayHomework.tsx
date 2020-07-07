@@ -20,7 +20,6 @@ export default class DisplayHomework extends React.PureComponent<{getfunction:an
   constructor(props) {
     super(props);
     const homework = {...this.props.navigation.state.params};
-    console.log('homework', homework);
     this.state = {
       homework,
     }

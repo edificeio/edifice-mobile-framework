@@ -30,20 +30,35 @@ const IconButton = ({ icon, color, text, onPress }) => {
   );
 };
 
-export class DatePicker extends React.PureComponent<any> {
+type DatePickerProps = {
+  date: moment.Moment;
+  startDate?: moment.Moment;
+  endDate?: moment.Moment;
+  onGetDate: any;
+};
+
+type DatePickerState = {
+  date: moment.Moment;
+  show: boolean;
+};
+
+export class DatePicker extends React.PureComponent<DatePickerProps, DatePickerState> {
   constructor(props) {
     super(props);
 
     this.state = {
-      date: new Date(),
+      date: this.props.date,
       show: false,
     };
   }
 
   private onChangeDate = (event, selectedDate) => {
-    const currentDate = selectedDate || this.state.date;
-    this.setState({ date: currentDate, show: false });
-    this.props.onGetDate(moment(this.state.date).format("YYYY-MM-DD"));
+    if (event.type === "dismissed") {
+      this.setState({ show: false });
+    } else {
+      this.setState({ date: moment(selectedDate), show: false });
+      this.props.onGetDate(this.state.date);
+    }
   };
 
   private onShowCalendar = () => {
@@ -57,21 +72,21 @@ export class DatePicker extends React.PureComponent<any> {
       <View style={style.grid}>
         <IconButton
           onPress={this.onShowCalendar}
-          text={moment(this.state.date).format("DD/MM/YY")}
+          text={this.state.date.format("DD/MM/YY")}
           color="white"
           icon="reservation"
         />
         {this.state.show && this.props.endDate !== undefined && (
           <DateTimePicker
-            maximumDate={new Date(Date.parse(this.props.endDate))}
-            value={this.state.date}
+            maximumDate={this.props.endDate.toDate()}
+            value={this.state.date.toDate()}
             onChange={this.onChangeDate}
           />
         )}
         {this.state.show && this.props.startDate !== undefined && (
           <DateTimePicker
-            minimumDate={new Date(Date.parse(this.props.startDate))}
-            value={this.state.date}
+            minimumDate={this.props.startDate.toDate()}
+            value={this.state.date.toDate()}
             onChange={this.onChangeDate}
           />
         )}
