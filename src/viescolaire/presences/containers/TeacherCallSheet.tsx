@@ -6,7 +6,7 @@ import { bindActionCreators } from "redux";
 
 import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
 import { HeaderBackAction } from "../../../ui/headers/NewHeader";
-import { postAbsentEvent, deleteEvent } from "../actions/events";
+import { postAbsentEvent, deleteEvent, validateRegisterAction } from "../actions/events";
 import { fetchClassesCallAction } from "../actions/teacherClassesCall";
 import TeacherCallSheet from "../components/TeacherCallSheet";
 import { getClassesCallListState } from "../state/teacherClassesCall";
@@ -37,7 +37,10 @@ const mapStateToProps: (state: any) => any = state => {
 };
 
 const mapDispatchToProps: (dispatch: any) => any = dispatch => {
-  return bindActionCreators({ fetchClassesCallAction, postAbsentEvent, deleteEvent }, dispatch);
+  return bindActionCreators(
+    { getClasses: fetchClassesCallAction, postAbsentEvent, deleteEvent, validateRegister: validateRegisterAction },
+    dispatch
+  );
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CallSheet);

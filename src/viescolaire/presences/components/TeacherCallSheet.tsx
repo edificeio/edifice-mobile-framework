@@ -37,7 +37,7 @@ export default class CallSheet extends React.PureComponent<any, any> {
 
   componentDidMount() {
     const { registerId } = this.props.navigation.state.params;
-    this.props.fetchClassesCallAction(registerId);
+    this.props.getClasses(registerId);
   }
 
   componentDidUpdate() {
@@ -53,7 +53,7 @@ export default class CallSheet extends React.PureComponent<any, any> {
   onRefreshStudentsList = () => {
     this.setState({ refreshing: true });
     const { registerId } = this.props.navigation.state.params;
-    this.props.fetchClassesCallAction(registerId);
+    this.props.getClasses(registerId);
   };
 
   private StudentsList() {
@@ -109,8 +109,8 @@ export default class CallSheet extends React.PureComponent<any, any> {
               <ButtonOk
                 label={I18n.t("viesco-validate")}
                 onPress={() => {
+                  this.props.validateRegister(registerId);
                   navigation.goBack(null);
-                  /* todo: validate register */
                 }}
               />
             </View>

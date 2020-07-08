@@ -1,6 +1,6 @@
 import moment from "moment";
 
-import { fetchJSONWithCache } from "../../../infra/fetchWithCache";
+import { fetchJSONWithCache, fetchWithCache } from "../../../infra/fetchWithCache";
 import { IEvent } from "../state/events";
 
 export type IEventBackend = {
@@ -161,6 +161,14 @@ export const eventsService = {
   deleteEvent: async (eventId: number) => {
     await fetchJSONWithCache(`/presences/events/${eventId}`, {
       method: "delete",
+    });
+  },
+  updateRegisterStatus: async (registerId: number, status: number) => {
+    await fetchWithCache(`/presences/registers/${registerId}/status`, {
+      body: JSON.stringify({
+        state_id: status,
+      }),
+      method: "put",
     });
   },
 };
