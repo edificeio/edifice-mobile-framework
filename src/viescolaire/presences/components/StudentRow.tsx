@@ -25,7 +25,7 @@ const style = StyleSheet.create({
     width: 45,
     marginLeft: 10,
   },
-  alignRightContainer: { flexGrow: 1, flexDirection: "row-reverse"},
+  alignRightContainer: { flexGrow: 1, flexDirection: "row-reverse" },
   dash: { height: 10, width: 30, borderRadius: 10 },
   swipeButtons: { flexDirection: "row-reverse", flexGrow: 1 },
   swipeButton: { width: 60, alignItems: "center", justifyContent: "center" },
@@ -126,8 +126,16 @@ export default class StudentRow extends React.PureComponent<StudentRowProps, Stu
           </View>
           <View style={style.alignRightContainer}>
             {absentEvent !== undefined && <View style={[style.dash, style.red]} />}
-            {lateEvent !== undefined && <View style={[style.dash, style.purple]} />}
-            {leavingEvent !== undefined && <View style={[style.dash, style.blue]} />}
+            {lateEvent !== undefined && (
+              <TouchableOpacity onPress={() => lateCallback(lateEvent)}>
+                <View style={[style.dash, style.purple]} />
+              </TouchableOpacity>
+            )}
+            {leavingEvent !== undefined && (
+              <TouchableOpacity onPress={() => leavingCallback(leavingEvent)}>
+                <View style={[style.dash, style.blue]} />
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       </Swipeable>
