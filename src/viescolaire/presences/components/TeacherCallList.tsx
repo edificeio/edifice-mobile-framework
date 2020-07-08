@@ -44,12 +44,12 @@ export default class CallList extends React.PureComponent<any, any> {
   constructor(props) {
     super(props);
 
-    const { courses, register } = props;
+    const { courses, register, teacher_id, structure_id } = props;
     this.state = {
       coursesDataList: courses.data,
       fetching: courses.isFetching || register.isFetching,
-      teacherId: "95eb76f0-273f-4a55-95e4-8739c06fdfff",
-      structureId: "97a7363c-c000-429e-9c8c-d987b2a2c204",
+      teacherId: teacher_id,
+      structureId: structure_id,
       startDate: moment().format("YYYY-MM-DD"),
       endDate: moment().format("YYYY-MM-DD"),
       registerId: "16307",
@@ -62,14 +62,18 @@ export default class CallList extends React.PureComponent<any, any> {
     this.props.fetchCourses(this.state.teacherId, this.state.structureId, this.state.startDate, this.state.endDate);
   }
 
-  componentDidUpdate() {
-    const { courses, register } = this.props;
+  componentDidUpdate(prevProps) {
+    const { courses, register, structure_id } = this.props;
     const fetching = courses.isFetching || register.isFetching;
     this.setState({
       coursesDataList: courses.data,
       registerId: register.data.id,
+      structureId: structure_id,
       fetching,
     });
+    if (prevProps.structure_id !== structure_id) {
+      this.props.fetchCourses(this.state.teacherId, structure_id, this.state.startDate, this.state.endDate);
+    }
   }
 
   async getCourseRegisterId(course) {
@@ -91,9 +95,7 @@ export default class CallList extends React.PureComponent<any, any> {
       registerId: register.data.id,
       fetching,
     });
-    console.log("register_id: ", this.state.registerId);
     this.props.navigation.navigate("CallSheetPage", { registerId: 18741 });
-    //this.props.navigation.navigate("CallSheetPage", { register_id: this.state.registerId });
   }
 
   private _renderItem({ item, index }) {
@@ -163,7 +165,6 @@ export default class CallList extends React.PureComponent<any, any> {
       </View>
     );
   }
-
 
   public render() {
     return (

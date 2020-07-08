@@ -81,7 +81,7 @@ export default class Dropdown<T, V> extends React.PureComponent<IDropdownProps<T
     <TouchableWithoutFeedback onLayout={onLayout} onPress={onPress}>
       <View style={[styles.selected, style]}>
         {children}
-        {displayArrow && <Icon size={20} name="chevron-left1" />}
+        {displayArrow && <Icon size={20} name="arrow_down" />}
       </View>
     </TouchableWithoutFeedback>
   );

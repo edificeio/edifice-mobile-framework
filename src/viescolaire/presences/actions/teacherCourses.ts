@@ -21,13 +21,11 @@ export function fetchCoursesAction(teacherId: string, structureId: string, start
 
 export function fetchCoursesRegisterAction(course_data) {
   return async (dispatch: Dispatch) => {
-    console.log(course_data);
     try {
       dispatch(dataActionsRegister.request());
       const data = await coursesRegisterService.get(course_data);
       dispatch(dataActionsRegister.receipt(data));
     } catch (errmsg) {
-      console.log("errmesg: ", errmsg);
       dispatch(dataActionsRegister.error(errmsg));
     }
   };
