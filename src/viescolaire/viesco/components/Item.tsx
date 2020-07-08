@@ -1,9 +1,8 @@
 import * as React from "react";
-import { View, StyleSheet, ViewStyle, StyleProp } from "react-native";
+import { StyleSheet, ViewStyle, StyleProp } from "react-native";
 
 import { CommonStyles } from "../../../styles/common/styles";
 import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
-import { color } from "react-native-reanimated";
 
 const styleConstant = StyleSheet.create({
   container: {
@@ -18,7 +17,7 @@ const styleConstant = StyleSheet.create({
     shadowOffset: CommonStyles.shadowOffset,
     shadowOpacity: CommonStyles.shadowOpacity,
     shadowRadius: CommonStyles.shadowRadius,
-    elevation: 2,
+    elevation: 3,
   },
 });
 
@@ -27,6 +26,7 @@ type ItemProps = {
   color?: string;
   selected?: boolean;
   onPress?: () => any;
+  shadow: boolean;
 };
 
 enum SidedComponentDirection {
@@ -46,44 +46,33 @@ type SidedItemProps = ItemProps & { shadow?: boolean; color: string; side: Sided
  * @param color     the color of the border, if the component is selected
  * @param onPress
  * @param children
+ * @param shadow
  */
 export const Item: React.FunctionComponent<ItemProps> = ({
   style,
   selected,
   color,
+  shadow,
   onPress = () => false,
   children,
 }) => {
   const selectedStyle = color && selected ? { borderWidth: 2, borderColor: color } : {};
+  style = [styleConstant.container, selectedStyle, style];
+  if (shadow) style.push(styleConstant.containerShadow);
 
   return (
-    <TouchableOpacity
-      disabled={onPress != null}
-      style={[styleConstant.container, selectedStyle, style]}
-      onPress={onPress}>
+    <TouchableOpacity disabled={onPress != null} style={style} onPress={onPress}>
       {children}
     </TouchableOpacity>
   );
 };
 
 /**
- * Item with shadow
- * @param props
- */
-const ShadowedItem: React.FunctionComponent<ItemProps> = props => (
-  <View style={styleConstant.containerShadow}>
-    <Item {...props} />
-  </View>
-);
-
-/**
  * Item with a border colored
  * @param props
  */
 const SidedItem: React.FunctionComponent<SidedItemProps> = props => {
-  const { side, shadow, style, ...rest } = props;
-
-  const ItemComponent = shadow ? ShadowedItem : Item;
+  const { side, style, ...rest } = props;
 
   const getStyleFromSide: (side: SidedComponentDirection, color: string) => ViewStyle = (side, color) => {
     switch (side) {
@@ -98,7 +87,7 @@ const SidedItem: React.FunctionComponent<SidedItemProps> = props => {
     }
   };
 
-  return <ItemComponent style={[getStyleFromSide(side, props.color), style]} {...rest} />;
+  return <Item style={[getStyleFromSide(side, props.color), style]} {...rest} />;
 };
 
 /**

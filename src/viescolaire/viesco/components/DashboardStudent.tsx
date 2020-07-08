@@ -116,21 +116,26 @@ export default class Dashboard extends React.PureComponent<any & dashboardProps>
         <TextBold style={style.title}>{I18n.t("viesco-homework")}</TextBold>
         {Object.keys(homeworksByDate).map(date => (
           <>
-            <Text style={style.subtitle}>
-              {moment(date).isSame(tomorrowDate, "day")
-                ? I18n.t("viesco-homework-fortomorrow")
-                : `${I18n.t("viesco-homework-fordate")} ${moment(date).format("DD/MM/YYYY")}`}
-            </Text>
-            {homeworksByDate[date].map(homework => (
-              <HomeworkItem
-                checked={homework.progress && homework.progress.state_id === 2}
-                title={this.getSubjectName(homework.subject_id)}
-                subtitle={homework.type}
-                onChange={() => {
-                  this.props.updateHomeworkProgress(homework.id, !this.isHomeworkDone(homework));
-                }}
-              />
-            ))}
+            {moment(date).isAfter(moment()) && (
+              <>
+                <Text style={style.subtitle}>
+                  {moment(date).isSame(tomorrowDate, "day")
+                    ? I18n.t("viesco-homework-fortomorrow")
+                    : `${I18n.t("viesco-homework-fordate")} ${moment(date).format("DD/MM/YYYY")}`}
+                </Text>
+                {homeworksByDate[date].map(homework => (
+                  <HomeworkItem
+                    hideCheckbox={homework.progress === null}
+                    checked={homework.progress && homework.progress.state_id === 2}
+                    title={this.getSubjectName(homework.subject_id)}
+                    subtitle={homework.type}
+                    onChange={() => {
+                      this.props.updateHomeworkProgress(homework.id, !this.isHomeworkDone(homework));
+                    }}
+                  />
+                ))}
+              </>
+            )}
           </>
         ))}
       </View>

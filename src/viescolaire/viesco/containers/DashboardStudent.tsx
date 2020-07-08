@@ -1,5 +1,6 @@
 import moment from "moment";
 import * as React from "react";
+import { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
@@ -17,18 +18,29 @@ class Dashboard extends React.PureComponent<{
   getSubjects: any;
   getTeachers: any;
   getHomeworks: any;
+  navigation: NavigationScreenProp<any>;
 }> {
+  constructor(props) {
+    super(props);
+    const { structureId, getHomeworks } = props;
+    this.state = {
+      // fetching next month homeworks only, when screen is focused
+      focusListener: this.props.navigation.addListener("willFocus", () => {
+        getHomeworks(
+          structureId,
+          moment().format("YYYY-MM-DD"),
+          moment()
+            .add(1, "month")
+            .format("YYYY-MM-DD")
+        );
+      }),
+    };
+  }
+
   public componentDidMount() {
     const { structureId } = this.props;
     this.props.getSubjects(structureId);
     this.props.getTeachers(structureId);
-    this.props.getHomeworks(
-      structureId,
-      moment().format("YYYY-MM-DD"),
-      moment()
-        .add(1, "M")
-        .format("YYYY-MM-DD")
-    );
   }
 
   public render() {
