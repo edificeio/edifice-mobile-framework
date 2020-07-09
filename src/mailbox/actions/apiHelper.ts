@@ -34,7 +34,8 @@ type MailServiceCallback = {
 // UTILITY FUNCTION ----------------------------------------------------------------------------------------
 
 const pickService = (callback: MailServiceCallback) => {
-  return callback[config.appInfo.name.toUpperCase() as MAIL_SERVICE_TYPE];
+  // return callback[config.appInfo.name.toUpperCase() as MAIL_SERVICE_TYPE];
+  return callback[MAIL_SERVICE_TYPE.MESSAGERIE];
 };
 
 // API --------------------------------------------------------------------------------------------------
