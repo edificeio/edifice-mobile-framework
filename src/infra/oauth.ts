@@ -492,36 +492,35 @@ export function signRequest(requestInfo: RequestInfo): RequestInfo {
 }
 
 /**
- * Returns a signed imageURISource from an url or an imageURISource
+ * Returns a signed URISource from a url or an imageURISource.
  */
-export function signImageURISource(imageURISource: ImageURISource | string): ImageURISource | string {
+export function signURISource(URISource: ImageURISource | string): ImageURISource {
   if (!OAuth2RessourceOwnerPasswordClient.connection)
-    throw new Error('[oAuth] signImageURISource: no token');
+    throw new Error('[oAuth] signURISource: no token');
 
-  if (typeof imageURISource === 'object') {
-    if (!imageURISource.uri) throw new Error('[oAuth] signImageURISource: no uri');
-    if (getIsUrlSignable(imageURISource.uri)) {
-      return {...imageURISource, headers: {...imageURISource.headers, ...getAuthHeader()}};
+  if (typeof URISource === 'object') {
+    if (!URISource.uri) throw new Error('[oAuth] signURISource: no uri');
+    if (getIsUrlSignable(URISource.uri)) {
+      return {...URISource, headers: {...URISource.headers, ...getAuthHeader()}};
     } else {
-      return imageURISource;
+      return URISource;
     }
-  }
-  else { /* imageURISource is string */
-    if (getIsUrlSignable(imageURISource)) {
-      return { uri: imageURISource, headers: getAuthHeader() };
+  } else { /* URISource is string */
+    if (getIsUrlSignable(URISource)) {
+      return { uri: URISource, headers: getAuthHeader() };
     } else {
-      return imageURISource;
+      return { uri: URISource };
     }
   }
 }
 
 /**
- * Returns a signed imageURISource from an url or an imageURISource for all images in the given array.
+ * Returns a signed URISource from a url or an imageURISource for all items in the given array.
  * @param images
  */
-export function signImageURISourceArray(images: Array<{ src: ImageURISource | string; alt: string }>): Array<{ src: ImageURISource | string; alt: string }> {
-  return images.map(
-    im => ({ ...im, src: signImageURISource(im.src) })
+export function signURISourceArray(URISources: Array<{ src: ImageURISource | string; alt: string }>): Array<{ src: ImageURISource | string; alt: string }> {
+  return URISources.map(
+    URISource => ({ ...URISource, src: signURISource(URISource.src) })
   );
 }
 

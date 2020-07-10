@@ -9,7 +9,7 @@ import Images from "../../ui/Images";
 import { A } from "../../ui/Typography";
 import NewsTopInfo from "./NewsTopInfo";
 import { Icon } from "../../ui/icons/Icon";
-import AudioPlayer from "../../ui/AudioPlayer";
+import Player from "../../ui/Player";
 import { IFrame } from "../../ui/IFrame";
 import { INewsModel, IMediaModel } from "../reducer";
 
@@ -50,10 +50,8 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
             style={message ? { marginTop: 15 } : {}}
           />
         )
-      } else if (firstItem.type === "video") {
-        return; //TODO: handle videos
-      } else if (firstItem.type === "audio") {
-        return <AudioPlayer source={firstItem.src as string}/>
+      } else if (firstItem.type === "video" || firstItem.type === "audio") {
+        return <Player type={firstItem.type} source={firstItem.src as string}/>
       } else if (firstItem.type === "iframe") {
         return (
           <TouchableOpacity activeOpacity={1}>

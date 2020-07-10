@@ -212,7 +212,7 @@
   "share-emptyScreenText": "Dans cet espace, retrouvez tous les documents que vous avez partagés aux autres, mais aussi les documents auxquels on vous a donné accès.Eh oui ! C'est beau d'échanger.",
   "share-emptyScreenTitle": "Oups, il n’y a rien sur l’étagère…",
   "shared": "Shared documents",
-  "soundNotAvailable": "Audio player not available",
+  "audioNotAvailable": "Audio player not available",
   "structuresTitle": "School(s) and class(es)",
   "subFolder-emptyScreenText": "",
   "subFolder-emptyScreenTitle": "This folder is empty ...",

@@ -11,7 +11,7 @@ import {
   View,
   ViewStyle
 } from "react-native";
-import AudioPlayer from "../../ui/AudioPlayer";
+import Player from "../../ui/Player";
 import Images from "../../ui/Images";
 import {
   NestedText,
@@ -354,7 +354,7 @@ function renderParseAudio(
 ): JSX.Element {
   return (
     <View key={key}>
-      <AudioPlayer source={nugget.src} style={style} />
+      <Player type="audio" source={nugget.src} style={style} />
     </View>
   );
 }

@@ -3,7 +3,7 @@ import I18n from "i18n-js";
 import Conf from "../../../ode-framework-conf";
 import { Connection } from "../../infra/Connection";
 import { fetchJSONWithCache } from "../../infra/fetchWithCache";
-import { signImageURISource, signImageURISourceArray } from "../../infra/oauth";
+import { signURISource, signURISourceArray } from "../../infra/oauth";
 import { getSessionInfo } from "../../AppStore";
 import { IMediaModel } from "../reducer";
 
@@ -97,13 +97,13 @@ const transformedMedia = (media: IMediaModel[]) => {
   return media.map(mediaItem => ({
       type: mediaItem.type,
       src: mediaItem.type === "image"
-      ? {src: signImageURISource(transformedSrc(mediaItem.src as string))}
+      ? {src: signURISource(transformedSrc(mediaItem.src as string))}
       : transformedSrc(mediaItem.src as string)
     }))
 }
 
 const transformedImages = (images: string[]) => {
-  const signedImages = signImageURISourceArray(images.map(url => ({alt: "", src: transformedSrc(url)})));
+  const signedImages = signURISourceArray(images.map(url => ({alt: "", src: transformedSrc(url)})));
   return signedImages.map(image => ({type: "image", src: {...image}}));
 }
 
