@@ -356,6 +356,9 @@ class Attachment extends React.PureComponent<
           this.setState({
             progress: received / fileSize
           });
+          // TODO: wait for RNFetchBlob tu accept this PR (https://github.com/joltup/rn-fetch-blob/pull/558),
+          // which solves an issue (https://github.com/joltup/rn-fetch-blob/issues/275) that prevents several
+          // progress bars from being displayed in parallel (iOs-only)
         })
         .then(res => {
           // the temp file path
