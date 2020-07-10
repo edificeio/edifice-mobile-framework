@@ -22,9 +22,9 @@ export const dataActions = createAsyncActionCreators<IBlogCommentList>(blogComme
 export function fetchBlogCommentListAction(blogPostId: string, clear: boolean = false) {
   return async (dispatch: Dispatch) => {
     try {
-      clear && dispatch(dataActions.clear());
       dispatch(dataActions.request());
       const data = await blogCommentListService.get(blogPostId);
+      clear && dispatch(dataActions.clear());
       dispatch(dataActions.receipt(data));
     } catch (errmsg) {
       dispatch(dataActions.error(errmsg));

@@ -49,7 +49,7 @@ function createInitialState<DataType>(initialState: DataType) {
     data: initialState,
     isPristine: true,
     isFetching: false,
-    error: undefined
+    error: false
   });
 }
 

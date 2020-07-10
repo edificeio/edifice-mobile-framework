@@ -44,12 +44,14 @@ interface INewsContentPageState {
   showAckBeforeMessage: boolean;
   schoolbookData: object[];
   fetching: boolean;
+  fetchError: boolean;
   newsData: object[];
 }
 
 export interface INewsContentPageDataProps {
   isPristine?: boolean;
   isFetching?: boolean;
+  error?: boolean;
   selectedBlogComments: IBlogCommentList;
 }
 
@@ -82,11 +84,13 @@ INewsContentPageProps,
 > {
 
   componentDidMount() {
+    const { dispatch } = this.props;
+    !this.isSchoolbook && dispatch(dataActions.clear());
     !this.isSchoolbook && this.reloadCommentList(true);
   }
 
   componentDidUpdate(prevProps: any) {
-    const { isFetching } = this.props
+    const { isFetching } = this.props;
     if(prevProps.isFetching !== isFetching){
       this.setState({fetching: isFetching});
     }
@@ -167,6 +171,7 @@ INewsContentPageProps,
         schoolbookData: null,
         showAckBeforeMessage: isAck,
         fetching: false,
+        fetchError: false,
         newsData: [],
       };
       this.props.navigation.setParams({ isAck });
@@ -181,12 +186,13 @@ INewsContentPageProps,
         schoolbookData: null,
         showAckBeforeMessage: false,
         fetching: false,
+        fetchError: false,
         newsData: [],
       };
     }
   }
 
-  // For blog posts, we need to make an extra call to fetch its comments
+  // For blog posts, we need to make an extra call to fetch comments
   // For news posts, we fetch the entire post (outside the html component) in order to display the comments
   public async reloadCommentList(clear = false) {
     const { isFetching, navigation, dispatch } = this.props;
@@ -201,9 +207,13 @@ INewsContentPageProps,
     } else if (type === "BLOG") {
       dispatch(fetchBlogCommentListAction(blogPostId, clear));
     } else if (type === "NEWS") {
-      this.setState({ fetching: true });
-      const newsData = await fetchJSONWithCache(url);
-      this.setState({ newsData, fetching: false })
+      try {
+        this.setState({ fetching: true, fetchError: false });
+        const newsData = await fetchJSONWithCache(url);
+        this.setState({ fetching: false, newsData });
+      } catch {
+        this.setState({ fetching: false, fetchError: true });
+      }
     }
   }
 
@@ -213,12 +223,13 @@ INewsContentPageProps,
       schoolbookData = this.getSchoolbookData();
     }
     const isParent = getSessionInfo().type && getSessionInfo().type.includes("Relative");
-    const { isPristine, selectedBlogComments, navigation } = this.props;
-    const { fetching, newsData  } = this.state;
+    const { selectedBlogComments, isPristine, error, navigation } = this.props;
+    const { fetching, newsData } = this.state;
     const { resourceId, resourceUri, type } = navigation.state.params.news;
     const newsComments = newsData.comments && JSON.parse(newsData.comments);
     const isCommentable = type === "BLOG" || type === "NEWS";
     const commentsData = type === "BLOG" ? selectedBlogComments : type === "NEWS" ? newsComments : undefined;
+    const blogCommentsError = type === "BLOG" && error;
 
     return (
       <PageContainer>
@@ -243,8 +254,8 @@ INewsContentPageProps,
             <View>
               <View style={{ paddingHorizontal: 20 }}>
                 <ArticleContainer>{this.renderNews()}</ArticleContainer>
-                {resourceUri && (!fetching || type == 'BLOG') && !(type == 'BLOG' && isPristine) ? (
-                  <View style={{ marginTop: 12 }}>
+                {resourceUri
+                ? <View style={{ marginTop: 12 }}>
                     <A
                       onPress={() => {
                         Tracking.logEvent("responsiveLink", {
@@ -256,9 +267,10 @@ INewsContentPageProps,
                       {I18n.t("timeline-viewInBrowser")}
                     </A>
                   </View>
-                ) : null}
+                : null
+                }
               </View>
-              {commentsData && commentsData.length > 0 ?
+              {commentsData && commentsData.length > 0 || blogCommentsError ?
                 <ListItem
                   style={{ 
                     justifyContent: "flex-start",
@@ -271,15 +283,23 @@ INewsContentPageProps,
                     elevation: 2,
                   }}
                 >
-                  <Icon
-                    name="new_comment"
-                    color={"#868CA0"}
-                    size={16}
-                    style={{ marginRight: 5 }}
-                  />
-                  <TextBright>
-                    {commentsData.length} {I18n.t("timeline-comment")}{commentsData.length > 1 && "s"}
-                  </TextBright>
+                  {blogCommentsError && (!commentsData || commentsData.length === 0)
+                  ? <TextBright>
+                      {I18n.t("timeline-comment-error")}
+                    </TextBright>
+                    
+                  : <>
+                      <Icon
+                        name="new_comment"
+                        color={"#868CA0"}
+                        size={16}
+                        style={{ marginRight: 5 }}
+                      />
+                      <TextBright>
+                        {commentsData.length} {I18n.t("timeline-comment")}{commentsData.length > 1 && "s"}
+                      </TextBright>
+                    </>
+                  }
                 </ListItem>
                 :
                 null
@@ -296,7 +316,7 @@ INewsContentPageProps,
               refreshing={fetching && !isPristine}
               onRefresh={() => {
                 this.setState({ fetching: true })
-                this.reloadCommentList()
+                this.reloadCommentList(true)
               }}
             />
             : null
@@ -327,7 +347,7 @@ INewsContentPageProps,
       url
     } = this.props.navigation.state.params.news;
     const { type } = this.props.navigation.state.params.news;
-    const { fetching, newsData } = this.state;
+    const { fetching, fetchError, newsData } = this.state;
 
     let schoolbookData;
     if (this.isSchoolbook) schoolbookData = this.getSchoolbookData();
@@ -402,8 +422,11 @@ INewsContentPageProps,
             )
           ) : null
         ) : null}
-        {type === "NEWS" && fetching && !newsData.content
+        {type === "NEWS" ? fetching && !newsData.content
         ? <Loading/>
+        : fetchError && (!newsData || newsData.length === 0)
+        ? <Italic>{I18n.t("common-ErrorLoadingResource")}</Italic>
+        : null
         : null
         }
         {type === "NEWS" && newsData.content && !fetching || type !== "NEWS" ?
@@ -640,8 +663,8 @@ const CommentDate = style.text(
 
 const NewsContentPage = connect(
   (state: any) => {
-    const { data: selectedBlogComments, isFetching, isPristine } = getBlogCommentListState(state);
-    return { selectedBlogComments, isFetching, isPristine };
+    const { data: selectedBlogComments, isFetching, isPristine, error } = getBlogCommentListState(state);
+    return { selectedBlogComments, isFetching, isPristine, error };
   },
   (dispatch: any) => dispatch => {
     return {

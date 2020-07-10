@@ -219,6 +219,7 @@
     "timeline-allFilter": "Tous",
     "timeline-blogFilter": "Blog",
     "timeline-comment": "Commentaire",
+    "timeline-comment-error": "Impossible d’afficher les commentaires",
     "timeline-emptyScreenText": "C’est calme ici... Vous connaissez l’expression \"le calme avant la tempête\" ?",
     "timeline-emptyScreenTitle": "C’est désert... Il y a quelqu’un ?",
     "timeline-endOfFeed" : "Vous avez lu vos {{nb}} dernières notifications",
