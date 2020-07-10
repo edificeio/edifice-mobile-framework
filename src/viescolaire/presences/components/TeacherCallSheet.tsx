@@ -26,18 +26,20 @@ export default class CallSheet extends React.PureComponent<any, any> {
   constructor(props) {
     super(props);
 
+    const { courseInfos } = this.props.navigation.state.params;
     const { callList } = props;
     this.state = {
       refreshing: false,
       callData: callList.data,
       fetching: callList.isFetching,
+      course: courseInfos,
       isScrolling: false,
     };
   }
 
   componentDidMount() {
     const { registerId } = this.props.navigation.state.params;
-    this.props.getClasses(registerId);
+    this.props.getClasses(this.state.course.registerId);
   }
 
   componentDidUpdate() {
@@ -52,14 +54,13 @@ export default class CallSheet extends React.PureComponent<any, any> {
 
   onRefreshStudentsList = () => {
     this.setState({ refreshing: true });
-    const { registerId } = this.props.navigation.state.params;
-    this.props.getClasses(registerId);
+    this.props.getClasses(this.state.course.registerId);
   };
 
   private StudentsList() {
     const { students } = this.state.callData;
     const studentsList = students.sort((a, b) => a.name.localeCompare(b.name));
-    const { registerId } = this.props.navigation.state.params;
+    const { registerId } = this.props.navigation.state.params.courseInfos;
     const { postAbsentEvent, deleteEvent, navigation } = this.props;
     return (
       <>
@@ -77,8 +78,8 @@ export default class CallSheet extends React.PureComponent<any, any> {
                     type: "late",
                     registerId,
                     student,
-                    startDate: "2020-07-01T10:40:00.000",
-                    endDate: "2020-07-01T11:35:00.000",
+                    startDate: this.state.callData.start_date,
+                    endDate: this.state.callData.end_date,
                     event,
                   })
                 }
@@ -87,8 +88,8 @@ export default class CallSheet extends React.PureComponent<any, any> {
                     type: "leaving",
                     registerId,
                     student,
-                    startDate: "2020-07-01T10:40:00.000",
-                    endDate: "2020-07-01T11:35:00.000",
+                    startDate: this.state.callData.start_date,
+                    endDate: this.state.callData.end_date,
                     event,
                   })
                 }
@@ -96,8 +97,8 @@ export default class CallSheet extends React.PureComponent<any, any> {
                   postAbsentEvent(
                     student.id,
                     registerId,
-                    moment("2020-07-01T10:40:00.000"),
-                    moment("2020-07-01T11:35:00.000")
+                    moment(this.state.callData.start_date),
+                    moment(this.state.callData.end_date)
                   );
                 }}
                 uncheckAbsent={event => {
@@ -125,15 +126,14 @@ export default class CallSheet extends React.PureComponent<any, any> {
       <View style={style.classesView}>
         <LeftColoredItem shadow style={style.topItem} color="#FFB600">
           <Text>
-            {moment(this.state.callData.start_date).format("hh:mm")} -{" "}
-            {moment(this.state.callData.end_date).format("hh:mm")}
+            {moment(this.state.callData.start_date).format("LT")} - {moment(this.state.callData.end_date).format("LT")}
           </Text>
           <Text>
             &emsp;
             <Icon name="pin_drop" size={18} />
-            Salle 302
+            {I18n.t("viesco-room")} {this.state.course.classroom}
           </Text>
-          <TextBold>&emsp;6ème6</TextBold>
+          <TextBold>&emsp;{this.state.course.grade}</TextBold>
         </LeftColoredItem>
       </View>
     );

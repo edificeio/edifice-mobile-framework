@@ -12,6 +12,7 @@ export type ICoursesListBackend = Array <{
   endDate:  string;
   roomLabels: string;
   groups: string;
+  registerId: string;
 }>
 
 const coursesAdapter: (data: ICoursesListBackend) => ICoursesList = data => {
@@ -26,6 +27,7 @@ const coursesAdapter: (data: ICoursesListBackend) => ICoursesList = data => {
     endDate: moment(item.endDate),
     roomLabels: item.roomLabels,
     groups: item.groups,
+    registerId: item.registerId,
   }));
   return result;
 };

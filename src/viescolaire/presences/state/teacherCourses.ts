@@ -12,6 +12,7 @@ export interface ICourses {
   endDate: moment.Moment;
   roomLabels: string;
   groups: string;
+  registerId: string;
 }
 
 export type ICoursesList = ICourses[];

@@ -11,11 +11,11 @@ import { BottomColoredItem } from "../../viesco/components/Item";
 
 const CoursesCallSheet = ({ color, text, onPress, opacityNb }) => {
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity onPress={onPress} style={{ opacity: opacityNb }}>
       <BottomColoredItem shadow style={style.coursesCardContainer} color={color}>
         <ImageBackground
           source={require("../../../../assets/viesco/presences.png")}
-          style={{ width: "100%", height: 180, opacity: opacityNb }}
+          style={{ width: "100%", height: 180, opacity: 1 }}
           imageStyle={style.image}
           resizeMode="contain">
           <View style={[style.gridInfoContainer, { marginBottom: 30 }]}>
@@ -52,7 +52,6 @@ export default class CallList extends React.PureComponent<any, any> {
       structureId: structure_id,
       startDate: moment().format("YYYY-MM-DD"),
       endDate: moment().format("YYYY-MM-DD"),
-      registerId: "16307",
       activeIndex: 0,
       firstItemIndex: 0,
     };
@@ -76,26 +75,34 @@ export default class CallList extends React.PureComponent<any, any> {
     }
   }
 
-  async getCourseRegisterId(course) {
-    const courseData = JSON.stringify({
-      course_id: course.id,
-      structure_id: course.structureId,
-      start_date: moment(course.startDate).format("YYYY-MM-DD HH:MM:SS"),
-      end_date: moment(course.endDate).format("YYYY-MM-DD HH:MM:SS"),
-      subject_id: course.subjectId,
-      groups: course.groups,
-      classes: course.classes,
-      split_slot: true,
-    });
+  async getCourseRegisterId(course, index) {
+    let courseRegisterInfos = {
+      classroom: course.roomLabels,
+      grade: course.classes,
+      registerId: course.registerId,
+    };
 
-    await this.props.fetchRegisterId(courseData);
-    const { register } = this.props;
-    const fetching = register.isFetching;
-    this.setState({
-      registerId: register.data.id,
-      fetching,
-    });
-    this.props.navigation.navigate("CallSheetPage", { registerId: 18741 });
+    if (course.registerId === null) {
+      const courseData = JSON.stringify({
+        course_id: course.id,
+        structure_id: course.structureId,
+        start_date: moment(course.startDate).format("YYYY-MM-DD HH:mm:ss"),
+        end_date: moment(course.endDate).format("YYYY-MM-DD HH:mm:ss"),
+        subject_id: course.subjectId,
+        groups: course.groups,
+        classes: course.classes,
+        split_slot: true,
+      });
+
+      await this.props.fetchRegisterId(courseData);
+      const { register } = this.props;
+      const fetching = register.isFetching;
+      this.setState({ fetching });
+      this.state.coursesDataList[index].registerId = register.data.id;
+      courseRegisterInfos.registerId = 18741;
+    }
+
+    this.props.navigation.navigate("CallSheetPage", { courseInfos: courseRegisterInfos });
   }
 
   private _renderItem({ item, index }) {
@@ -103,7 +110,7 @@ export default class CallList extends React.PureComponent<any, any> {
     const isCourseEnded = item.endDate.isAfter(moment());
     return (
       <CoursesCallSheet
-        onPress={() => this.getCourseRegisterId(item)}
+        onPress={() => this.getCourseRegisterId(item, index)}
         text={{
           start_hour: moment(item.startDate).format("LT"),
           end_hour: moment(item.endDate).format("LT"),
@@ -111,32 +118,20 @@ export default class CallList extends React.PureComponent<any, any> {
           classroom: item.roomLabels,
         }}
         color="#FFB600"
-        opacityNb={isCourseStarted || isCourseEnded ? 1 : 0.2}
+        opacityNb={isCourseStarted || isCourseEnded ? 1 : 0.4}
       />
     );
   }
 
   private carouselDisplayCurrentCourse() {
     this.state.coursesDataList.sort((a, b) => a.startDate - b.startDate);
-    let index = 0;
-    index = this.state.coursesDataList.findIndex(index => moment(index.endDate).isAfter(moment()));
     const dataLength = this.state.coursesDataList.length - 1;
+    let index = this.state.coursesDataList.findIndex(index => moment(index.endDate).isAfter(moment()));
     if (index === -1) {
-      this.setState({ firstItemIndex: dataLength });
       index = dataLength;
-    } else {
-      this.setState({ firstItemIndex: index });
     }
+    this.setState({ firstItemIndex: index });
     return index;
-  }
-
-  private renderPagination() {
-    const dataLength = this.state.coursesDataList.length - 1;
-    let currentIndex = this.state.firstItemIndex + this.state.activeIndex;
-    if (currentIndex > dataLength || this.state.activeIndex > dataLength) {
-      currentIndex = dataLength;
-    }
-    return currentIndex;
   }
 
   private displayCoursesCalls() {
@@ -145,7 +140,7 @@ export default class CallList extends React.PureComponent<any, any> {
     return (
       <View>
         <TextBold style={{ fontSize: 15, marginBottom: 10 }}>
-          {I18n.t("viesco-register-date")} {moment().format("DD MMMM YYYY")}
+          {I18n.t("viesco-register-date")} {moment(this.state.startDate).format("DD MMMM YYYY")}
         </TextBold>
         <RNCarousel
           data={this.state.coursesDataList}
@@ -158,7 +153,7 @@ export default class CallList extends React.PureComponent<any, any> {
         />
         <Pagination
           dotsLength={this.state.coursesDataList.length}
-          activeDotIndex={this.renderPagination()}
+          activeDotIndex={this.state.activeIndex || firstIndex}
           dotStyle={style.carouselDot}
           inactiveDotStyle={style.carouselInactiveDot}
         />
