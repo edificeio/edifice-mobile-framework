@@ -59,15 +59,16 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
   }
 
   public render() {
-    const { message } = this.props;
+    const { message, media } = this.props;
+    const firstItem = media[0];
 
     return (
       <ArticleContainer style={{ width: "100%" }}>
         <TouchCard onPress={() => this.open(false)} style={{ width: "100%" }}>
           <View>
             <NewsTopInfo {...this.props} />
-            {message && /\S/.test(message) ?
-              <Text style={{ color: CommonStyles.textColor }}>
+            {message && /\S/.test(message)
+            ? <Text style={{ color: CommonStyles.textColor, marginBottom: firstItem ? 10 : undefined }}>
                 {message}
               </Text>
               : null

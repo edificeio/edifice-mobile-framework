@@ -100,6 +100,7 @@ export default class Player extends React.Component<
                   loaded={loaded}
                   type={type}
                   style={{...playerStyle, alignSelf: "center", backgroundColor: loaded ? "black" : undefined}}
+                  customStyles={type === "audio" ? {controls: {backgroundColor: undefined}} : undefined}
                 />,
               default: null
             })}

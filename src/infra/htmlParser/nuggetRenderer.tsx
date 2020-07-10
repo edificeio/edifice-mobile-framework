@@ -42,7 +42,8 @@ export enum HtmlParserNuggetTypes {
   Images,
   Iframe,
   InlineImage,
-  Audio
+  Audio,
+  Video
 }
 
 export interface INugget {
@@ -86,6 +87,10 @@ export interface IAudioNugget extends INugget {
   src: string;
 }
 
+export interface IVideoNugget extends INugget {
+  src: string;
+}
+
 // ------------------------------------------------------------------------------------------------
 
 /**
@@ -106,6 +111,7 @@ export function renderNuggets(
     [HtmlParserNuggetTypes.Images]: ViewStyle;
     [HtmlParserNuggetTypes.Iframe]: ViewStyle;
     [HtmlParserNuggetTypes.Audio]: ViewStyle;
+    [HtmlParserNuggetTypes.Video]: ViewStyle;
   }
 ): JSX.Element {
   // console.log("globalStyles", globalStyles);
@@ -136,6 +142,11 @@ export function renderNuggets(
         } else if (nugget.type === HtmlParserNuggetTypes.Audio) {
           return renderParseAudio(nugget, index, {
             ...globalStyles[HtmlParserNuggetTypes.Audio],
+            ...style
+          });
+        } else if (nugget.type === HtmlParserNuggetTypes.Video) {
+          return renderParseVideo(nugget, index, {
+            ...globalStyles[HtmlParserNuggetTypes.Video],
             ...style
           });
         } else {
@@ -355,6 +366,24 @@ function renderParseAudio(
   return (
     <View key={key}>
       <Player type="audio" source={nugget.src} style={style} />
+    </View>
+  );
+}
+
+/**
+ * Build JSX <Video> Element from an AudioNugget
+ * @param nugget A Top-level VideoNugget.
+ * @param key the traditional React key prop
+ * @param style
+ */
+function renderParseVideo(
+  nugget: IVideoNugget,
+  key: string,
+  style: ViewStyle = {}
+): JSX.Element {
+  return (
+    <View key={key}>
+      <Player type="video" source={nugget.src} style={style} />
     </View>
   );
 }

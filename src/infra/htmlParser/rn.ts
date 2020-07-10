@@ -14,7 +14,8 @@
  * Own options :
  * - `textFormating` (boolean) should basic text formatting (bold, italic) should be emited. Default `true`.
  * - `hyperlinks` (boolean) should hyperlinks (<a> tags) should be interpreted. Default `true`.
- * - `images` (boolean) should images should be rendered. Default `true`.
+ * - `images` (boolean) should images be rendered. Default `true`.
+ * - `video` (boolean) should video medias be integrated. Default `true`.
  * - `iframes` (boolean) should iframes be intergrated. Default `true`.
  * - `audio` (boolean) should audio medias be integrated. Default `true`.
  * - `globalTextStyle` (TextStyle) style that will be applied to all rendered <Text> elements.
@@ -33,6 +34,7 @@ import {
   HtmlParserJsxTextVariant,
   HtmlParserNuggetTypes,
   IAudioNugget,
+  IVideoNugget,
   IColorTextNugget,
   IIframeNugget,
   IImageComponentAttributes,
@@ -51,6 +53,7 @@ export interface IHtmlParserRNOptions extends IHtmlParserAbstractOptions {
   images?: boolean;
   iframes?: boolean;
   audio?: boolean;
+  video?: boolean;
   globalTextStyle?: TextStyle;
   linkTextStyle?: TextStyle;
 }
@@ -64,6 +67,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
   public static defaultOpts: IHtmlParserRNOptions = {
     ...HtmlParserAbstract.defaultOpts,
     audio: true,
+    video: true,
     globalTextStyle: {},
     hyperlinks: true,
     iframes: true,
@@ -160,7 +164,8 @@ export default class HtmlParserRN extends HtmlParserAbstract<
       },
       [HtmlParserNuggetTypes.Images]: {},
       [HtmlParserNuggetTypes.Iframe]: {},
-      [HtmlParserNuggetTypes.Audio]: {}
+      [HtmlParserNuggetTypes.Audio]: {},
+      [HtmlParserNuggetTypes.Video]: {}
     }) as any) as JSX.Element;
     return output;
   };
@@ -208,6 +213,9 @@ export default class HtmlParserRN extends HtmlParserAbstract<
         break;
       case "audio":
         this.parseAudioTag(tag);
+        break;
+      case "video":
+        this.parseVideoTag(tag);
         break;
     }
   };
@@ -599,6 +607,30 @@ export default class HtmlParserRN extends HtmlParserAbstract<
     };
     this.insertTopLevelNugget(audioNugget);
     this.currentImageNugget = null; // Audio breaks image groups
+    this.currentDivIsEmpty = false;
+  }
+
+  /**
+   * Append the array-object representation of the render with a new video media.
+   * A video media representation is an object like { type: "video", src: string }
+   * @param tag sax.Tag <video> tag with its src attribute
+   */
+  protected parseVideoTag(tag: ISaxTagOpen): void {
+    if (!this.opts.video) return;
+    let src = tag.attrs.src;
+    if (src.indexOf("file://") === -1) {
+      // TODO : Better parse video url and detect cases
+      if (src.indexOf("://") === -1) {
+        if (!Conf.currentPlatform) throw new Error("must specify a platform");
+        src = Conf.currentPlatform.url + src;
+      }
+    }
+    const videoNugget: IVideoNugget = {
+      src,
+      type: HtmlParserNuggetTypes.Video
+    };
+    this.insertTopLevelNugget(videoNugget);
+    this.currentImageNugget = null; // Video breaks image groups
     this.currentDivIsEmpty = false;
   }
 
