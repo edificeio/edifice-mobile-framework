@@ -125,7 +125,9 @@ const dataTypes = {
       id: news._id,
       media: news.preview.images
         ? transformedImages(news.preview.images)
-        : transformedMedia(news.preview.media),
+        : news.preview.medias
+          ? transformedMedia(news.preview.medias)
+          : undefined,
       message: news.preview.text,
       resourceName: news.params.wordTitle,
       resourceUri,
@@ -180,7 +182,9 @@ const dataTypes = {
         id: news._id,
         media: news.preview.images
           ? transformedImages(news.preview.images)
-          : transformedMedia(news.preview.media),
+          : news.preview.medias
+            ? transformedMedia(news.preview.medias)
+            : undefined,
         message: news.preview.text,
         resourceId: infoId,
         resourceName: news.params.resourceName,
@@ -206,7 +210,9 @@ const dataTypes = {
         id: news._id,
         media: news.preview.images
           ? transformedImages(news.preview.images)
-          : transformedMedia(news.preview.media),
+          : news.preview.medias
+            ? transformedMedia(news.preview.medias)
+            : undefined,
         message: news.preview.text,
         resource: news.resource,
         resourceId: news["sub-resource"],
