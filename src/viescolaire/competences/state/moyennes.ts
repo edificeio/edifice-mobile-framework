@@ -20,7 +20,7 @@ export type IMoyenneListState = AsyncState<IMoyenneList>;
 export const initialState: IMoyenneList = [];
 
 export const getMoyenneListState = (globalState: any) =>
-  viescoConfig.getLocalState(globalState).moyennesList as IMoyenneListState;
+  viescoConfig.getLocalState(globalState).competences.moyennesList as IMoyenneListState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 

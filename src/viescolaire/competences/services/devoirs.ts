@@ -21,7 +21,7 @@ export type IDevoirListBackend = {
   status: string;
 };
 
-const devoirListAdapter: (data: IMoyenneListBackend) => IDevoirList = data => {
+const devoirListAdapter: (data: IDevoirListBackend) => IDevoirList = data => {
   let result = [] as IDevoirList;
   if (!data) return result;
   result = data.results.map(item => ({

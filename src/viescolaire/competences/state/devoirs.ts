@@ -22,7 +22,7 @@ export type IDevoirListState = AsyncState<IDevoirList>;
 export const initialState: IDevoirList = [];
 
 export const getDevoirListState = (globalState: any) =>
-  viescoConfig.getLocalState(globalState).devoirsList as IDevoirListState;
+  viescoConfig.getLocalState(globalState).competences.devoirsList as IDevoirListState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
