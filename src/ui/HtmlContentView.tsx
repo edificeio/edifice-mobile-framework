@@ -91,7 +91,7 @@ export class HtmlContentView extends React.PureComponent<
   }
 
   public render() {
-    const { error, jsx } = this.state
+    const { error, jsx,loading } = this.state
     const { loadingComp, emptyMessage} = this.props
     const hasContent = jsx && jsx.props.children.some((child: any) => child != undefined && child != null)
     const loadingComponent = loadingComp || <Loading />;
@@ -102,7 +102,7 @@ export class HtmlContentView extends React.PureComponent<
           <Italic>{I18n.t("common-ErrorLoadingResource")}</Italic>
         </View>
       );
-    } else if (!hasContent) {
+    } else if (!loading && !hasContent) {
       return typeof emptyMessage === "string" ?
         <View {...this.props}>
           <Italic>{emptyMessage}</Italic>

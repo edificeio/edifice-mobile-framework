@@ -7,7 +7,7 @@ import { connect } from "react-redux";
 import style from "glamorous-native";
 
 import Conf from "../../../ode-framework-conf";
-import { signedFetch } from "../../infra/fetchWithCache";
+import { signedFetch, fetchJSONWithCache } from "../../infra/fetchWithCache";
 import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { CommonStyles } from "../../styles/common/styles";
 import Tracking from "../../tracking/TrackingManager";
@@ -44,6 +44,7 @@ interface INewsContentPageState {
   showAckBeforeMessage: boolean;
   schoolbookData: object[];
   fetching: boolean;
+  newsData: object[];
 }
 
 export interface INewsContentPageDataProps {
@@ -61,6 +62,17 @@ export type INewsContentPageProps = INewsContentPageDataProps &
 INewsContentPageOtherProps &
 INewsContentPageState;
 
+export type INewsComment = {
+  comment: string;
+  created: string;
+  modified: string;
+  owner: string;
+  username: string;
+  _id: string;
+}
+
+export type IPostComment = INewsComment | IBlogComment;
+
 // tslint:disable-next-line:max-classes-per-file
 class NewsContentPage_Unconnected extends React.Component<
 INewsContentPageProps,
@@ -69,11 +81,8 @@ INewsContentPageProps,
 }
 > {
 
-  getDerivedStateFromProps(nextProps: any, prevState: any) {
-    if(nextProps.isFetching !== prevState.fetching){
-      return { fetching: nextProps.isFetching};
-   }
-    else return null;
+  componentDidMount() {
+    !this.isSchoolbook && this.reloadCommentList(true);
   }
 
   componentDidUpdate(prevProps: any) {
@@ -157,7 +166,8 @@ INewsContentPageProps,
         isAcking: false,
         schoolbookData: null,
         showAckBeforeMessage: isAck,
-        fetching: false
+        fetching: false,
+        newsData: [],
       };
       this.props.navigation.setParams({ isAck });
     } else {
@@ -170,23 +180,31 @@ INewsContentPageProps,
         isAcking: false,
         schoolbookData: null,
         showAckBeforeMessage: false,
-        fetching: false
+        fetching: false,
+        newsData: [],
       };
     }
-    this.reloadCommentList(true);
   }
 
-  public reloadCommentList(clear = false) {
-    const { isFetching, navigation } = this.props;
-    const type = navigation.getParam("news").type
-    const resource = navigation.getParam("news").resource
-    const resourceId = navigation.getParam("news").resourceId
-    const blogPostId = `${resource}/${resourceId}`
-    const isCommentable = type === "BLOG" || type === "NEWS";
-    if (isFetching) return;
-    isCommentable
-    ? this.props.dispatch(fetchBlogCommentListAction(blogPostId, clear))
-    : this.props.dispatch(dataActions.clear())
+  // For blog posts, we need to make an extra call to fetch its comments
+  // For news posts, we fetch the entire post (outside the html component) in order to display the comments
+  public async reloadCommentList(clear = false) {
+    const { isFetching, navigation, dispatch } = this.props;
+    const type = navigation.getParam("news").type;
+    const resource = navigation.getParam("news").resource;
+    const resourceId = navigation.getParam("news").resourceId;
+    const blogPostId = `${resource}/${resourceId}`;
+    const url = navigation.state.params.news.url;
+    
+    if (isFetching) {
+      return;
+    } else if (type === "BLOG") {
+      dispatch(fetchBlogCommentListAction(blogPostId, clear));
+    } else if (type === "NEWS") {
+      this.setState({ fetching: true });
+      const newsData = await fetchJSONWithCache(url);
+      this.setState({ newsData, fetching: false })
+    }
   }
 
   public render() {
@@ -195,10 +213,12 @@ INewsContentPageProps,
       schoolbookData = this.getSchoolbookData();
     }
     const isParent = getSessionInfo().type && getSessionInfo().type.includes("Relative");
-    const { resourceId, resourceUri, type } = this.props.navigation.state.params.news;
-    const { isFetching, isPristine, selectedBlogComments } = this.props;
-    const { fetching } = this.state;
+    const { isPristine, selectedBlogComments, navigation } = this.props;
+    const { fetching, newsData  } = this.state;
+    const { resourceId, resourceUri, type } = navigation.state.params.news;
+    const newsComments = newsData.comments && JSON.parse(newsData.comments);
     const isCommentable = type === "BLOG" || type === "NEWS";
+    const commentsData = type === "BLOG" ? selectedBlogComments : type === "NEWS" ? newsComments : undefined;
 
     return (
       <PageContainer>
@@ -223,7 +243,7 @@ INewsContentPageProps,
             <View>
               <View style={{ paddingHorizontal: 20 }}>
                 <ArticleContainer>{this.renderNews()}</ArticleContainer>
-                {resourceUri ? (
+                {resourceUri && (!fetching || type == 'BLOG') && !(type == 'BLOG' && isPristine) ? (
                   <View style={{ marginTop: 12 }}>
                     <A
                       onPress={() => {
@@ -238,7 +258,7 @@ INewsContentPageProps,
                   </View>
                 ) : null}
               </View>
-              {isCommentable && !isPristine && selectedBlogComments.length > 0 ?
+              {commentsData && commentsData.length > 0 ?
                 <ListItem
                   style={{ 
                     justifyContent: "flex-start",
@@ -258,7 +278,7 @@ INewsContentPageProps,
                     style={{ marginRight: 5 }}
                   />
                   <TextBright>
-                    {selectedBlogComments.length} {I18n.t("timeline-comment")}{selectedBlogComments.length !== 1 && "s"}
+                    {commentsData.length} {I18n.t("timeline-comment")}{commentsData.length > 1 && "s"}
                   </TextBright>
                 </ListItem>
                 :
@@ -266,11 +286,9 @@ INewsContentPageProps,
               }
             </View>
           }
-          data={selectedBlogComments || null}
-          renderItem={({ item }: { item: IBlogComment }) => this.renderBlogComment(item)}
-          keyExtractor={(item: IBlogComment) => item.id}
-          // FIXME: remove 'type === "BLOG"' condition (once implement API call for news-comments)
-          ListEmptyComponent={type === "BLOG" && isFetching && isPristine ? <Loading /> : null}
+          data={commentsData}
+          renderItem={({ item }: { item: IPostComment }) => this.renderComment(item)}
+          keyExtractor={(item: IPostComment) => (item as IBlogComment).id || (item as INewsComment)._id.toString()}
           refreshControl={
             isCommentable
             ?
@@ -308,6 +326,8 @@ INewsContentPageProps,
       title,
       url
     } = this.props.navigation.state.params.news;
+    const { type } = this.props.navigation.state.params.news;
+    const { fetching, newsData } = this.state;
 
     let schoolbookData;
     if (this.isSchoolbook) schoolbookData = this.getSchoolbookData();
@@ -321,6 +341,7 @@ INewsContentPageProps,
       getSessionInfo().type &&
       (getSessionInfo().type.includes("Teacher") ||
         getSessionInfo().type.includes("Personnel"));
+
     return (
       <View style={{ width: "100%", flex: 1 }}>
         <NewsTopInfo {...this.props.navigation.state.params.news} />
@@ -381,29 +402,38 @@ INewsContentPageProps,
             )
           ) : null
         ) : null}
-        <HtmlContentView
-          source={url}
-          getContentFromResource={responseJSON => responseJSON.content}
-          opts={{
-            formatting: true,
-            hyperlinks: true,
-            iframes: true,
-            images: true
-          }}
-          html={htmlContent}
-        />
+        {type === "NEWS" && fetching && !newsData.content
+        ? <Loading/>
+        : null
+        }
+        {type === "NEWS" && newsData.content && !fetching || type !== "NEWS" ?
+          <HtmlContentView
+            source={type === "NEWS" ? undefined : url}
+            html={type === "NEWS" ? newsData.content : htmlContent}
+            getContentFromResource={responseJSON => responseJSON.content}
+            opts={{
+              formatting: true,
+              hyperlinks: true,
+              iframes: true,
+              images: true
+            }}
+          />
+        : 
+          null
+        }
       </View>
     );
   }
 
-  public renderBlogComment(blogComment: IBlogComment) {
+  public renderComment(comment: IPostComment) {
     return(
       <ListItem style={{ backgroundColor: CommonStyles.lightBlue }}>
         <LeftPanel disabled>
           <GridAvatars
-            users={[blogComment.author
-            ? blogComment.author.userId
-            : require("../../../assets/images/resource-avatar.png")
+            users={[
+              (comment as INewsComment).owner ||
+              (comment as IBlogComment).author && (comment as IBlogComment).author.userId ||
+              require("../../../assets/images/resource-avatar.png")
             ]}
             fallback={require("../../../assets/images/resource-avatar.png")}
           />
@@ -411,16 +441,16 @@ INewsContentPageProps,
         <CenterPanel disabled>
           <View style={{ flexDirection: "row", alignItems: "center", width: "80%" }}>
             <CommentAuthor numberOfLines={2}>
-              {blogComment.author.username}
+              {(comment as INewsComment).username || (comment as IBlogComment).author && (comment as IBlogComment).author.username}
             </CommentAuthor>
             <CommentDate>
               {/* FIXME: Use moment.js instead of this */}
-              {getTimeToStr(blogComment.created)}
+              {getTimeToStr(comment.created)}
             </CommentDate>
           </View>
           <TextPreview
             numberOfLines={5}
-            textContent={blogComment.comment}
+            textContent={comment.comment}
             textStyle={{
               color: CommonStyles.textColor,
               fontFamily: CommonStyles.primaryFontFamily,
