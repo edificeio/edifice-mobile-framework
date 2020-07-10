@@ -1,6 +1,5 @@
 package com.ode.appe;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
@@ -13,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.WindowManager;
 import android.widget.MediaController;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -28,14 +28,14 @@ public class VideoActivity extends AppCompatActivity {
     private String videoPath;
     private Map<String, String> videoHeaders = null;
 
-    private static ProgressDialog progressDialog;
     VideoView myVideoView;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.player_fullscreen);
         Intent i = getIntent();
         if(i != null){
@@ -52,8 +52,6 @@ public class VideoActivity extends AppCompatActivity {
                     System.err.println(e.getMessage());
                 }
             }
-            progressDialog = ProgressDialog.show(VideoActivity.this, "", "Buffering video...", true);
-            progressDialog.setCancelable(true);
             PlayVideo();
         }
         else{
@@ -80,7 +78,6 @@ public class VideoActivity extends AppCompatActivity {
             myVideoView.requestFocus();
             myVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 public void onPrepared(MediaPlayer mp) {
-                    progressDialog.dismiss();
                     if(BridgeModule.duration!=0)
                      myVideoView.seekTo(BridgeModule.duration);
                     myVideoView.start();
@@ -89,7 +86,6 @@ public class VideoActivity extends AppCompatActivity {
 
 
         } catch (Exception e) {
-            progressDialog.dismiss();
             System.out.println("Video Play Error :" + e.toString());
             finish();
         }

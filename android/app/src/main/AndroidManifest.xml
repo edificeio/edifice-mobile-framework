@@ -56,7 +56,10 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".VideoActivity" android:screenOrientation="sensorLandscape" android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".VideoActivity"
+            android:configChanges="orientation|screenSize"
+        />
 
     </application>
 

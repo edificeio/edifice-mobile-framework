@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Platform, StatusBar, ViewStyle } from "react-native";
+import { View, Platform, StatusBar, ViewStyle, TouchableOpacity } from "react-native";
 import WebView from "react-native-webview";
 import { Loading } from ".";
 
@@ -11,7 +11,7 @@ interface IIFrameProps {
 export const IFrame = ({source, style ={}}: IIFrameProps) => {
   return (
     // `overflow: hidden` prevent a display bug on Android
-    <View style={{ height: 200, ...style, overflow: "hidden" }}>
+    <TouchableOpacity activeOpacity={1} style={{ height: 200, overflow: "hidden", ...style }}>
       <WebView
         style={{ alignSelf: "stretch" }}
         source={{ uri: source }}
@@ -26,9 +26,10 @@ export const IFrame = ({source, style ={}}: IIFrameProps) => {
             <Loading />
           </View>
         )}
-        startInLoadingState={true}
         scrollEnabled={false}
-        useWebKit={true}
+        startInLoadingState
+        mediaPlaybackRequiresUserAction
+        useWebKit
         /* On Android, the status bar is by default visible, even when a video is playing fullscreen */
         /* Thanks for the tip, Nabil ! :) */
         {...(Platform.OS === "android"
@@ -62,6 +63,6 @@ export const IFrame = ({source, style ={}}: IIFrameProps) => {
             }
           : {})}
       />
-    </View>
+    </TouchableOpacity>
   );
 }

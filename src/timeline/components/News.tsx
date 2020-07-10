@@ -53,11 +53,7 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
       } else if (firstItem.type === "video" || firstItem.type === "audio") {
         return <Player type={firstItem.type} source={firstItem.src as string}/>
       } else if (firstItem.type === "iframe") {
-        return (
-          <TouchableOpacity activeOpacity={1}>
-            <IFrame source={firstItem.src as string} />
-          </TouchableOpacity>
-        )
+        return <IFrame source={firstItem.src as string} />
       }
     }
   }

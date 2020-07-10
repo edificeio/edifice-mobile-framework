@@ -8,7 +8,6 @@ import { View, ViewStyle, Dimensions, TouchableOpacity, Platform } from "react-n
 import VideoPlayer from "react-native-video";
 import VideoPlayerAndroid from "react-native-video-player";
 import { signURISource } from "../infra/oauth";
-import { CommonStyles } from "../styles/common/styles";
 import { TextItalic } from "./text";
 import { Loading } from "./Loading";
 
@@ -39,36 +38,24 @@ export default class Player extends React.Component<
     const { source, type, style } = this.props;
     const { error, videoRatio, loaded } = this.state;
     const { height } = Dimensions.get("window");
-    const playerProps = {
-      source: signURISource(source),
-      onLoad: res => {
-        const { width, height } = res.naturalSize;
-        const videoRatio = height !== 0 ? width / height : 0;
-        this.setState({ videoRatio, loaded: true });
-      },
-      onError: err => {
-        console.log("video error:", err);
-        this.setState({ error: true });
-      },
-      style: {
-        backgroundColor: "black",
-        width: "100%",
-        maxHeight: "100%",
-        aspectRatio: type === "video"
-          ? videoRatio ? videoRatio : 16/9
-          : type === "audio"
-          ? 9/2
-          : undefined,
-        borderRadius: Platform.OS === "ios" && type=== "audio" ? 12 : undefined,
-        opacity: loaded ? 1 : 0
-      },
-      controlTimeout: 0,
-      seekColor: CommonStyles.actionColor,
-      paused: true,
-      disableBack: true,
-      disableVolume: true,
-      disableFullscreen: true,
-      controls: Platform.OS === "ios"
+    const playerStyle = {
+      width: "100%",
+      maxHeight: "100%",
+      aspectRatio: type === "video"
+        ? videoRatio ? videoRatio : 16/9
+        : type === "audio"
+        ? 9/2
+        : undefined,
+      borderRadius: type=== "audio" ? 12 : undefined,
+    }
+    const onLoad = res => {
+      const { width, height } = res.naturalSize;
+      const videoRatio = height !== 0 ? width / height : 0;
+      this.setState({ videoRatio, loaded: true });
+    }
+    const onError = err => {
+      console.log("video error:", err);
+      this.setState({ error: true });
     }
 
     if (!source) {
@@ -95,8 +82,25 @@ export default class Player extends React.Component<
         ? <TextItalic>{I18n.t(`${type}NotAvailable`)}</TextItalic>
         : <TouchableOpacity activeOpacity={1}>
             {Platform.select({
-              ios: <VideoPlayer {...playerProps}/>,
-              android: <VideoPlayerAndroid video={signURISource(source)}/>,
+              ios: 
+                <VideoPlayer
+                  source={signURISource(source)}
+                  onLoad={onLoad}
+                  onError={onError}
+                  paused
+                  controls
+                  style={playerStyle}
+                />,
+              android: 
+                <VideoPlayerAndroid
+                  video={signURISource(source)}
+                  onLoad={onLoad}
+                  onError={onError}
+                  disableFullscreen={type === "audio"}
+                  loaded={loaded}
+                  type={type}
+                  style={{...playerStyle, alignSelf: "center", backgroundColor: loaded ? "black" : undefined}}
+                />,
               default: null
             })}
           </TouchableOpacity>
