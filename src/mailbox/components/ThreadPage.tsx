@@ -15,8 +15,6 @@
 import style from "glamorous-native";
 import * as React from "react";
 
-import moment from "moment";
-
 // Components
 import { KeyboardAvoidingView, Platform, RefreshControl } from "react-native";
 const { View, FlatList } = style;
@@ -27,16 +25,14 @@ import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
 import ThreadMessage from "../components/ThreadMessage";
 import Tracking from "../../tracking/TrackingManager";
+import Conf from "../../../ode-framework-conf";
+import conversationConfig from "../config"
 
 // Type definitions
-
-import {
-  IConversationMessage
-} from "../actions/sendMessage";
+import { IConversationMessage } from "../actions/sendMessage";
 import { IConversationThread } from "../reducers/threadList";
 
 // Misc
-
 import ThreadInput from "./ThreadInput";
 import { Dispatch } from "redux";
 import { NavigationScreenProp } from "react-navigation";
@@ -126,12 +122,19 @@ export class ThreadPage extends React.PureComponent<
       messages,
       headerHeight
     } = this.props;
-    const { 
-      fetching,
-      imageCurrent,
-      showCarousel,
-      images
-    } = this.state;
+    const { fetching } = this.state;
+    const messagesData = messages && messages.map(message => {
+      return {
+        ...message,
+        attachments: message.attachments && message.attachments.map(att => ({
+          ...att,
+          url: `${(Conf.currentPlatform as any).url}${conversationConfig.appInfo.prefix}/message/${
+            message.id
+          }/attachment/${att.id}`,
+        }))
+      }
+    })
+
     //TODO get focus from thread input + send action when press (should threadinputreceiver in threadinput?)
     return !threadInfo
     ? <View />
@@ -155,7 +158,7 @@ export class ThreadPage extends React.PureComponent<
                   style={{ transform: [{ scaleY: -1 }] }}
                 />
               }
-              data={messages}
+              data={messagesData}
               renderItem={({ item }) => this.renderMessageItem(item)}
               style={styles.grid}
               inverted={true}

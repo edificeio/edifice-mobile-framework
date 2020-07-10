@@ -234,7 +234,7 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
           <View style={{ width: 60 }}/>
         </Header>
         <ConnectionTrackingBar />
-        <Notifier style={{ marginRight: 40 }} />
+        <Notifier id="timeline" style={{ marginRight: 40 }} />
         {isFetching ? this.renderLoading() : this.renderList(news)}
         {buttonMenuItems.length > 0 ?
           <TempFloatingAction

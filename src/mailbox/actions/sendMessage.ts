@@ -9,6 +9,7 @@ import mailboxConfig from "../config";
 import { IArrayById } from "../../infra/collections";
 import { getSessionInfo } from "../../AppStore";
 import { conversationThreadSelected } from "./threadSelected";
+import { IAttachment } from "./messages";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -30,6 +31,7 @@ export interface IConversationMessage {
   unread: boolean; // Self-explaining
   rownum: number; // number of the message in the thread (starting from 1 from the newest to the latest).
   status: ConversationMessageStatus; // sending status of the message
+  attachments: Array<IAttachment>;
 }
 
 export type IConversationMessageList = IArrayById<IConversationMessage>;

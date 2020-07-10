@@ -169,6 +169,7 @@ export function changePasswordAction(model: IChangePasswordModel) {
       dispatch(changePasswordSubmitReceivedAction());
       mainNavNavigate("MyProfile");
       dispatch(notifierShowAction({
+        id: "profile",
         text: I18n.t("PasswordChangeSuccess"),
         icon: 'checked',
         type: 'success'

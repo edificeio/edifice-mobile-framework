@@ -10,10 +10,13 @@ import I18n from "i18n-js";
 import * as React from "react";
 import { View, ViewProps } from "react-native";
 
-import { Loading } from ".";
+import { Loading, Icon } from ".";
 import { fetchJSONWithCache } from "../infra/fetchWithCache";
 import HtmlParserRN, { IHtmlParserRNOptions } from "../infra/htmlParser/rn";
 import { Italic } from "./Typography";
+import { IAttachment } from "./Attachment";
+import Conf from "../../ode-framework-conf";
+import { AttachmentGroup } from "./AttachmentGroup";
 
 export interface IHtmlContentViewProps extends ViewProps {
   navigation?: any;
@@ -26,11 +29,12 @@ export interface IHtmlContentViewProps extends ViewProps {
 }
 
 interface IHtmlContentViewState {
-  html?: string; // Loaded Html
-  jsx?: JSX.Element; // Computed Jsx
-  error?: boolean; // Has loading cressource failed ?
-  loading?: boolean; // Is resource loading ?
-  done?: boolean; // Is content fully loaded ?
+  loading?: boolean; // Is resource loading?
+  done?: boolean; // Is content fully loaded?
+  error?: boolean; // Has loading ressource failed?
+  html?: string; // Loaded html
+  attachments: IAttachment[] // Attachments in html
+  jsx?: JSX.Element; // Computed jsx
 }
 
 export class HtmlContentView extends React.PureComponent<
@@ -40,11 +44,12 @@ export class HtmlContentView extends React.PureComponent<
   public constructor(props) {
     super(props);
     this.state = {
+      loading: false,
       done: false,
       error: false,
       html: this.props.html || undefined,
-      jsx: undefined,
-      loading: false
+      attachments: [],
+      jsx: undefined
     };
   }
 
@@ -53,7 +58,6 @@ export class HtmlContentView extends React.PureComponent<
   }
 
   public async componentDidUpdate() {
-    // console.log("state", this.state);
     if (this.state.jsx) return;
     try {
       await this.compute();
@@ -63,38 +67,64 @@ export class HtmlContentView extends React.PureComponent<
     }
   }
 
-  public async compute() {
-    if (this.state.done) return;
-    this.setState({ loading: true });
-    if (!this.state.html) {
-      if (!this.props.getContentFromResource)
-        throw new Error(
-          "HtmlContentView: You must provide `getContentFromResource` along with the `source` props."
-        );
-      // If there is no Html, try to load it.
-      // console.log("load", this.props.source);
-      if (this.state.loading) return;
-      const responseJson = await fetchJSONWithCache(this.props.source);
-      // console.log("repsonse", responseJson);
-      const html = this.props.getContentFromResource(responseJson);
-      if (!html) this.setState({ error: true });
-      else this.setState({ html });
-    } else if (!this.state.jsx) {
-      // Else, if there is not JSX, try to compute it.
-      const htmlParser = new HtmlParserRN(this.props.opts);
-      this.setState({
-        done: true,
-        jsx: htmlParser.parse(this.state.html) as JSX.Element
-        // jsx: HtmlConverterJsx(this.state.html, this.props.opts).render
-      });
-    }
+  public generateAttachments(html: string) {
+    const attachmentGroupRegex = /<div class="download-attachments">.*?<\/a><\/div><\/div>/g;
+    const attachmentGroupsHtml = html.match(attachmentGroupRegex);
+    const attachmentsHtml = attachmentGroupsHtml && attachmentGroupsHtml.join().match(/<a.*?>.*?<\/a>/g);
+    const attachments = attachmentsHtml && attachmentsHtml.map(attHtml => {
+      const attUrl = attHtml.match(/\/workspace\/document\/.*?(?=")/g);
+      const attDisplayName = attHtml.match(/<\/div>.*?<\/a>/g);
+      return ({
+        url: attUrl && `${(Conf.currentPlatform as any).url}${attUrl[0]}`,
+        displayName: attDisplayName && attDisplayName[0].replace(/<\/div>/g, "").replace(/<\/a>/g, ""),
+      } as IAttachment)
+    });
+    html = html.replace(attachmentGroupRegex, "");
+    this.setState({ html });
+    attachments && this.setState({ attachments });
   }
 
+  public async compute() {
+    const { loading, done, html, jsx } = this.state
+    const { getContentFromResource, source, opts } = this.props;
+    const hasAttachments = html && html.includes('<div class="download-attachments">');
+    if (done) return;
+    this.setState({ loading: true });
+
+    if (!html) {
+      // If there is no Html, try to load it
+      if (!getContentFromResource || !source)
+        throw new Error(
+          "HtmlContentView: When the html prop isn't provided, you must provide both the `getContentFromResource` and `source` props."
+        );
+      if (loading) return;
+
+      const responseJson = await fetchJSONWithCache(source);
+      const responseHtml = getContentFromResource(responseJson);
+
+      if (!responseHtml) {
+        this.setState({ error: true });
+      } else this.setState({ html: responseHtml });
+    } else if (!jsx) {
+      // Else, if there is not JSX, try to compute it
+      if (hasAttachments) {
+        this.generateAttachments(html);
+      } else {
+        const htmlParser = new HtmlParserRN(opts);
+        this.setState({
+          done: true,
+          jsx: htmlParser.parse(html) as JSX.Element
+        });
+      }
+    }
+  }
+  
   public render() {
-    const { error, jsx,loading } = this.state
+    const { error, jsx, attachments, loading } = this.state
     const { loadingComp, emptyMessage} = this.props
     const hasContent = jsx && jsx.props.children.some((child: any) => child != undefined && child != null)
     const loadingComponent = loadingComp || <Loading />;
+    const hasAttachments = attachments && attachments.length;
 
     if (error) {
       return (
@@ -110,7 +140,18 @@ export class HtmlContentView extends React.PureComponent<
       : 
         emptyMessage || <Italic>{I18n.t("noContent")}</Italic>
     } else {
-      return <View {...this.props}>{jsx || loadingComponent}</View>;
+      return (
+        <>
+          <View {...this.props}>{jsx || loadingComponent}</View>
+          {hasAttachments
+            ? <AttachmentGroup
+                attachments={attachments}
+                containerStyle={{ marginTop: 12 }}
+              />
+            : null
+          }
+        </>
+      )
     }
   }
 }

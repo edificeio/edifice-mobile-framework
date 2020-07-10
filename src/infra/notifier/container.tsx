@@ -6,7 +6,7 @@ import { AnimatedValue, LayoutEvent } from "react-navigation";
 import { CommonStyles } from "../../styles/common/styles";
 import { Icon } from "../../ui/icons/Icon";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
-import { NotifierType } from "./state";
+import { NotifierState } from "./state";
 
 const NotifierWrapper = style(TouchableOpacity)({
   flex: 1,
@@ -15,11 +15,10 @@ const NotifierWrapper = style(TouchableOpacity)({
 
 class Notifier extends React.Component<
   {
-    notifierType: NotifierType;
-    text?: string;
-    icon?: string;
-    loading?: boolean;
-    visible: boolean;
+    id: string;
+    notifiers: {
+      [key: string]: NotifierState
+    };
     style?: any;
   },
   { fadeAnim: AnimatedValue; slideAnim: AnimatedValue, measuredText: boolean, longText: boolean, notifierHeight: number }
@@ -35,8 +34,10 @@ class Notifier extends React.Component<
   };
 
   animate() {
-    const { visible } = this.props;
+    const { id } = this.props;
     const { notifierHeight, fadeAnim, slideAnim } = this.state;
+    const notifier = this.props.notifiers[id];
+    const visible = notifier && notifier.visible;
 
     if (notifierHeight > 0) {
       setTimeout(() => {
@@ -70,8 +71,10 @@ class Notifier extends React.Component<
   }
 
   get barColor(): string {
-    const { notifierType } = this.props;
-    const type = notifierType || 'info';
+    const { id } = this.props;
+    const notifier = this.props.notifiers[id];
+    const type = notifier && notifier.notifierType || 'info';
+    
     return ({
       info: CommonStyles.primary,
       success: CommonStyles.success,
@@ -96,8 +99,12 @@ class Notifier extends React.Component<
   }
 
   public render() {
-    const { style, text, icon, loading } = this.props;
+    const { style, id } = this.props;
     const { fadeAnim, slideAnim, measuredText, longText, notifierHeight } = this.state;
+    const notifier = this.props.notifiers[id];
+    const loading = notifier && notifier.loading;
+    const text = notifier && notifier.text;
+    const icon = notifier && notifier.icon;
     const heightIos = measuredText && !longText ? undefined : notifierHeight;
     const height = Platform.OS === "ios" ? heightIos : undefined;
     const marginLeft = !icon && !loading ? undefined : 40;
@@ -163,6 +170,6 @@ class Notifier extends React.Component<
 
 export default connect(
   (state: any) => ({
-    ...state.notifier
+    notifiers: state.notifiers
   })
 )(Notifier);

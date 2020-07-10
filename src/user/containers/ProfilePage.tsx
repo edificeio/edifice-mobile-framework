@@ -84,7 +84,7 @@ export class ProfilePage extends React.PureComponent<
     return (
       <PageContainer>
         <ConnectionTrackingBar />
-        <Notifier/>
+        <Notifier id="profile" />
         <KeyboardAvoidingView
           style={{ flex: 1, backgroundColor: "#ffffff" }}
           behavior={Platform.OS === "ios" ? "padding" : undefined}

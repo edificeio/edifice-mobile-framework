@@ -63,6 +63,7 @@ export function profileUpdateAction(updatedProfileValues: IUpdatableProfileValue
       }
       dispatch(profileUpdateSuccessAction(updatedProfileValues));
       dispatch(notifierShowAction({
+        id: "profile",
         text: I18n.t("ProfileChangeSuccess"),
         icon: 'checked',
         type: 'success'
@@ -73,12 +74,14 @@ export function profileUpdateAction(updatedProfileValues: IUpdatableProfileValue
 
       if ((e as Error).message.match(/loginAlias/)) {
         dispatch(notifierShowAction({
+          id: "profile",
           text: I18n.t("ProfileChangeLoginError"),
           icon: 'close',
           type: 'error'
         }));
       } else {
         dispatch(notifierShowAction({
+          id: "profile",
           text: I18n.t("ProfileChangeError"),
           icon: 'close',
           type: 'error'

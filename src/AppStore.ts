@@ -4,7 +4,7 @@ import thunkMiddleware from "redux-thunk";
 import moduleDefinitions from "./AppModules";
 import { getReducersFromModuleDefinitions } from "./infra/moduleTool";
 
-import notifier from "./infra/notifier/reducer";
+import notifiers from "./infra/notifier/reducer";
 import connectionTracker from "./infra/reducers/connectionTracker";
 import ui from "./infra/reducers/ui";
 import progress from "./infra/reducers/progress";
@@ -16,7 +16,7 @@ import { IUserAuthState } from "./user/reducers/auth";
 
 const reducers = {
   connectionTracker,
-  notifier,
+  notifiers,
   ui,
   progress,
   ...getReducersFromModuleDefinitions(moduleDefinitions)

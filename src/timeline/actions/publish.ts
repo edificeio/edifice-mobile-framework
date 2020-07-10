@@ -87,6 +87,7 @@ export const publishBlogPostAction = (blog: IBlog, title: string, content: strin
       // Nav back to timeline
       mainNavNavigate('notifications');
       dispatch(notifierShowAction({
+        id: "timeline",
         text: I18n.t(
           hasSubmitRight || hasPublishRight
             ? blog['publish-type'] === 'IMMEDIATE' ? 'createPost-publishSuccess' : 'createPost-submitSuccess'

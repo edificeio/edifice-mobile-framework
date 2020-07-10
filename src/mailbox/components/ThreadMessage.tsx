@@ -1,20 +1,21 @@
 import style from "glamorous-native";
 import I18n from "i18n-js";
 import * as React from "react";
-import { View, ViewStyle, Text } from "react-native";
+import { View } from "react-native";
 
 import { CommonStyles } from "../../styles/common/styles";
-
 import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { DateView } from "../../ui/DateView";
 import { HtmlContentView } from "../../ui/HtmlContentView";
+import { BubbleStyle } from "../../ui/BubbleStyle";
+import { IAttachment } from "../../ui/Attachment";
 import { ConversationMessageStatus } from "../actions/sendMessage";
-import ThreadMessageAttachment from "../containers/ThreadMessageAttachment";
 import { getSessionInfo } from "../../AppStore";
+import { AttachmentGroup } from "../../ui/AttachmentGroup";
 
-const MessageBubble = ({ contentHtml, isMine }) => (
-  <BubbleStyle my={isMine}>
+const MessageBubble = ({ contentHtml, isMine, hasAttachments }) => (
+  <BubbleStyle my={isMine} style={hasAttachments && { marginBottom: 3 }}>
     <HtmlContentView
       html={contentHtml}
       emptyMessage={I18n.t("conversation-emptyMessage")}
@@ -39,25 +40,6 @@ const MessageBubble = ({ contentHtml, isMine }) => (
   </BubbleStyle>
 );
 
-const BubbleStyle = style.view(
-  {
-    alignSelf: "stretch",
-    elevation: 2,
-    justifyContent: "center",
-    marginBottom: 10,
-    marginTop: 6,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    shadowColor: CommonStyles.shadowColor,
-    shadowOffset: CommonStyles.shadowOffset,
-    shadowOpacity: CommonStyles.shadowOpacity,
-    shadowRadius: CommonStyles.shadowRadius
-  },
-  ({ my }): ViewStyle => ({
-    backgroundColor: my ? CommonStyles.iconColorOn : "white"
-  })
-);
-
 const MessageStatus = ({ status, date }) => {
   if (status === undefined || status === ConversationMessageStatus.sent)
     return <DateView date={date} />;
@@ -77,15 +59,7 @@ const MessageStatus = ({ status, date }) => {
 
 export default class ThreadMessage extends React.PureComponent<
   {
-    attachments: Array<{
-      id: string;
-      name: string;
-      charset: string;
-      filename: string;
-      contentType: string;
-      contentTransferEncoding: string;
-      size: number; // in Bytes
-    }>;
+    attachments: Array<IAttachment>;
     id: string;
     body: string;
     date: any;
@@ -113,6 +87,7 @@ export default class ThreadMessage extends React.PureComponent<
       status
     } = this.props;
 
+    const hasAttachments = attachments && attachments.length;
     const isMine = from === getSessionInfo().userId;
     // medium-text is used to write previous sender
     // should be replaced with better selector for stability
@@ -134,9 +109,6 @@ export default class ThreadMessage extends React.PureComponent<
       return I18n.t("unknown-user");
     }
     const senderText = getSenderText(this.props.displayNames, from);
-    let firstAttachment = true;
-
-    // console.log("message props", this.props);
 
     return (
       <MessageBlock style={{ flex: 0 }}>
@@ -168,34 +140,21 @@ export default class ThreadMessage extends React.PureComponent<
             </MessageInfosDetails>
           </MessageInfos>
           {body ? (
-            <MessageBubble contentHtml={body} isMine={isMine} />
+            <MessageBubble 
+              contentHtml={body}
+              isMine={isMine}
+              hasAttachments={hasAttachments}
+            />
           ) : (
             <View />
           )}
-          {attachments && attachments.length ? (
-            <BubbleStyle
-              my={isMine}
-              style={{
-                flex: 1,
-                paddingHorizontal: 2,
-                paddingVertical: 2
-              }}
-            >
-              {attachments.map(att => {
-                const ret = (
-                  <ThreadMessageAttachment
-                    attachment={att}
-                    style={{ marginTop: firstAttachment ? 0 : 2 }}
-                    isMine={isMine}
-                    key={att.id}
-                    messageId={this.props.id}
-                  />
-                );
-                firstAttachment = false;
-                return ret;
-              })}
-            </BubbleStyle>
-          ) : null}
+          {hasAttachments
+            ? <AttachmentGroup
+                attachments={attachments}
+                containerStyle={{ flex: 1, marginLeft: 25 }}
+              />
+            : null
+          }
         </MessageContainer>
       </MessageBlock>
     );
@@ -251,14 +210,3 @@ const MessageBlock = style.view({
   marginRight: 0,
   padding: 15
 });
-
-const Content = style.text(
-  {
-    color: CommonStyles.iconColorOff,
-    fontFamily: CommonStyles.primaryFontFamily,
-    fontSize: 14
-  },
-  ({ my }) => ({
-    color: my ? "white" : CommonStyles.textColor
-  })
-);

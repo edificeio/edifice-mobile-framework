@@ -2,19 +2,21 @@ import { Dispatch } from "redux";
 import { NotifierType, notifierActionTypes } from "./state";
 
 export const notifierShowAction = (opts: {
+  type: NotifierType;
+  id: string;
   text?: string;
   icon?: string;
   loading?: boolean;
-  type: NotifierType;
   persistent?: boolean;
   duration?: number
 }) => {
   return (dispatch: Dispatch) => {
     if (!opts.persistent) {
-      setTimeout(() => dispatch(notifierHideAction()), opts.duration || 2000);
+      setTimeout(() => dispatch(notifierHideAction(opts.id)), opts.duration || 2000);
     }
     dispatch({
       type: notifierActionTypes.show,
+      id: opts.id,
       notifierType: opts.type,
       text: opts.text,
       icon: opts.icon,
@@ -24,6 +26,7 @@ export const notifierShowAction = (opts: {
   }
 }
 
-export const notifierHideAction = () => ({
-  type: notifierActionTypes.hide
+export const notifierHideAction = (id) => ({
+  type: notifierActionTypes.hide,
+  id
 });
