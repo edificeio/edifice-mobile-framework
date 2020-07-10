@@ -30,6 +30,7 @@ public class MainApplication extends Application implements ReactApplication {
       List<ReactPackage> packages = new PackageList(this).getPackages();
       packages.add(new RNFirebaseMessagingPackage());
       packages.add(new RNFirebaseNotificationsPackage());
+      packages.add(new BridgePackage());
       return packages;
     }
 

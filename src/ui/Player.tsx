@@ -4,9 +4,9 @@
 
 import I18n from "i18n-js";
 import * as React from "react";
-import { Text, View, ViewStyle, Dimensions, TouchableOpacity, Platform } from "react-native";
+import { View, ViewStyle, Dimensions, TouchableOpacity, Platform } from "react-native";
 import VideoPlayer from "react-native-video";
-import VideoPlayerControls from "react-native-video-controls";
+import VideoPlayerAndroid from "react-native-video-player";
 import { signURISource } from "../infra/oauth";
 import { CommonStyles } from "../styles/common/styles";
 import { TextItalic } from "./text";
@@ -22,61 +22,6 @@ interface IPlayerState {
   loaded: boolean;
   error: boolean;
   videoRatio: number;
-}
-
-class CustomVideoPlayerControls extends VideoPlayerControls<
-  IPlayerProps,
-  IPlayerState
-> {
-  public props: any; // For typings
-  public state: any; // For typings
-
-  public constructor(props) {
-    super(props);
-  }
-
-  // Disable the timeout that hides the controls
-  public setControlTimeout() {
-    return;
-  }
-  public resetControlTimeout() {
-    return;
-  }
-  public clearControlTimeout() {
-    return;
-  }
-  public hideControlAnimation() {
-    return;
-  }
-  public _hideControls() {
-    return;
-  }
-
-  public calculateTime() {
-    const { currentTime, duration } = this.state;
-    return (
-      this.formatTime(currentTime) +
-      " / " +
-      this.formatTime(duration)
-    );
-  }
-
-  public renderTimer() {
-    return this.renderControl(
-      <Text
-        style={{
-          backgroundColor: "transparent",
-          color: "#FFF",
-          fontSize: 11,
-          textAlign: "right"
-        }}
-      >
-        {this.calculateTime()}
-      </Text>,
-      this.methods.toggleTimer,
-      { width: 160 }
-    );
-  }
 }
 
 // tslint:disable-next-line:max-classes-per-file
@@ -149,12 +94,11 @@ export default class Player extends React.Component<
         {error
         ? <TextItalic>{I18n.t(`${type}NotAvailable`)}</TextItalic>
         : <TouchableOpacity activeOpacity={1}>
-            {Platform.OS === "ios"
-            ? <VideoPlayer {...playerProps}/>
-            : Platform.OS === "android"
-            ? <CustomVideoPlayerControls {...playerProps}/>
-            : null
-            }
+            {Platform.select({
+              ios: <VideoPlayer {...playerProps}/>,
+              android: <VideoPlayerAndroid video={signURISource(source)}/>,
+              default: null
+            })}
           </TouchableOpacity>
         }
       </View>

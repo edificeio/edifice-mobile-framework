@@ -65,7 +65,7 @@
     "react-native-tiny-toast": "^1.0.6",
     "react-native-vector-icons": "6.6.0",
     "react-native-video": "github:react-native-community/react-native-video",
-    "react-native-video-controls": "~2.4.0",
+    "react-native-video-player": "https://github.com/opendigitaleducation/react-native-fullscreenvideo-player",
     "react-native-view-overflow": "0.0.4",
     "react-native-webview": "~7.5.1",
     "react-navigation": "~4.1.1",

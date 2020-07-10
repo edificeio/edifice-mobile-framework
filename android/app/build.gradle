@@ -195,6 +195,10 @@ dependencies {
     // React Native Mixpanel manual linking (automatic linking not supported)
     implementation project(':react-native-mixpanel')
 
+    // Jackson to put headers to a fullscreen video
+    implementation "com.fasterxml.jackson.core:jackson-core:2.11.1"
+    implementation "com.fasterxml.jackson.core:jackson-databind:2.11.1"
+
     if (enableHermes) {
       def hermesPath = "../../node_modules/hermes-engine/android/";
       debugImplementation files(hermesPath + "hermes-debug.aar")
