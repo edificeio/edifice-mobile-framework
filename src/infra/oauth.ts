@@ -152,7 +152,7 @@ export class OAuth2RessourceOwnerPasswordClient {
       err.name = 'EAUTH';
       err.type = OAuthErrorType.UNKNOWN_RESPONSE;
       err.description = "Body is not JSON data."
-      throw new Error("EAUTH: invalid Json oauth response");
+      throw err as OAuthError;
     }
   }
 
