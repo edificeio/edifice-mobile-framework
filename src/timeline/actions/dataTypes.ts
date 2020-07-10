@@ -3,8 +3,9 @@ import I18n from "i18n-js";
 import Conf from "../../../ode-framework-conf";
 import { Connection } from "../../infra/Connection";
 import { fetchJSONWithCache } from "../../infra/fetchWithCache";
-import { DEPRECATED_signImagesUrls } from "../../infra/oauth";
+import { signImageURISource, signImageURISourceArray } from "../../infra/oauth";
 import { getSessionInfo } from "../../AppStore";
+import { IMediaModel } from "../reducer";
 
 let loadingState = "idle";
 const awaiters = [];
@@ -86,6 +87,26 @@ export const loadSchoolbooks = (): Promise<any[]> => {
   });
 };
 
+const transformedSrc = (src: string) => {
+  return src.startsWith("/")
+  ? (Conf.currentPlatform as any).url + src
+  : src
+}
+
+const transformedMedia = (media: IMediaModel[]) => {
+  return media.map(mediaItem => ({
+      type: mediaItem.type,
+      src: mediaItem.type === "image"
+      ? {src: signImageURISource(transformedSrc(mediaItem.src as string))}
+      : transformedSrc(mediaItem.src as string)
+    }))
+}
+
+const transformedImages = (images: string[]) => {
+  const signedImages = signImageURISourceArray(images.map(url => ({alt: "", src: transformedSrc(url)})));
+  return signedImages.map(image => ({type: "image", src: {...image}}));
+}
+
 const dataTypes = {
   SCHOOLBOOK: async (news, timeline) => {
     const split = news.params.resourceUri
@@ -102,16 +123,9 @@ const dataTypes = {
       eventType: news["event-type"],
       htmlContent: undefined,
       id: news._id,
-      images: DEPRECATED_signImagesUrls(
-        news.preview.images
-          ? news.preview.images.map(url => ({
-              alt: "",
-              src: (url as string).startsWith("/")
-                ? Conf.currentPlatform.url + url
-                : url
-            }))
-          : []
-      ),
+      media: news.preview.images
+        ? transformedImages(news.preview.images)
+        : transformedMedia(news.preview.media),
       message: news.preview.text,
       resourceName: news.params.wordTitle,
       resourceUri,
@@ -164,14 +178,9 @@ const dataTypes = {
         date: news.date.$date,
         eventType: news["event-type"],
         id: news._id,
-        images: DEPRECATED_signImagesUrls(
-          news.preview.images.map(url => ({
-            alt: "",
-            src: (url as string).startsWith("/")
-              ? Conf.currentPlatform.url + url
-              : url
-          }))
-        ),
+        media: news.preview.images
+          ? transformedImages(news.preview.images)
+          : transformedMedia(news.preview.media),
         message: news.preview.text,
         resourceId: infoId,
         resourceName: news.params.resourceName,
@@ -195,14 +204,9 @@ const dataTypes = {
         date: news.date.$date,
         eventType: news["event-type"],
         id: news._id,
-        images: DEPRECATED_signImagesUrls(
-          news.preview.images.map(url => ({
-            alt: "",
-            src: (url as string).startsWith("/")
-              ? Conf.currentPlatform.url + url
-              : url
-          }))
-        ),
+        media: news.preview.images
+          ? transformedImages(news.preview.images)
+          : transformedMedia(news.preview.media),
         message: news.preview.text,
         resource: news.resource,
         resourceId: news["sub-resource"],

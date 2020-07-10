@@ -3,19 +3,14 @@
  * The aim is to render a React Native Element from INugget array.
  */
 
-import I18n from "i18n-js";
 import * as React from "react";
 import {
   Image,
   Linking,
-  Platform,
-  StatusBar,
   TextStyle,
   View,
   ViewStyle
 } from "react-native";
-import WebView from "react-native-webview";
-import { Loading } from "../../ui";
 import AudioPlayer from "../../ui/AudioPlayer";
 import Images from "../../ui/Images";
 import {
@@ -29,6 +24,7 @@ import {
   TextItalic,
   TextLink
 } from "../../ui/text";
+import { IFrame } from "../../ui/IFrame";
 import { DEPRECATED_signImagesUrls, DEPRECATED_signImageURISource } from "../oauth";
 
 export enum HtmlParserJsxTextVariant {
@@ -339,58 +335,8 @@ function renderParseIframe(
   style: ViewStyle = {}
 ): JSX.Element {
   return (
-    // `overflow: hidden` prevent a display bug on Android
-    <View key={key} style={{ height: 200, ...style, overflow: "hidden" }}>
-      <WebView
-        style={{ alignSelf: "stretch" }}
-        source={{ uri: nugget.src }}
-        renderLoading={() => (
-          <View
-            style={{
-              backgroundColor: "#eeeeee",
-              height: "100%",
-              width: "100%"
-            }}
-          >
-            <Loading />
-          </View>
-        )}
-        startInLoadingState={true}
-        scrollEnabled={false}
-        useWebKit={true}
-        /* On Android, the status bar is by default visible, even when a video is playing fullscreen */
-        /* Thanks for the tip, Nabil ! :) */
-        {...(Platform.OS === "android"
-          ? {
-              injectedJavaScript: `
-                let isFullscreen = false;
-                function check() {
-                  if (isFullscreen) {
-                    window.postMessage("-fullscreen-off");
-                  } else {
-                    window.postMessage("-fullscreen-on");
-                  }
-                  isFullscreen = !isFullscreen;
-                }
-                document.addEventListener('webkitfullscreenchange', function(e) {
-                    check();
-                }, false);
-                document.addEventListener('mozfullscreenchange', function(e) {
-                    check();
-                }, false);
-                document.addEventListener('fullscreenchange', function(e) {
-                    check();
-                }, false);
-              `,
-              onMessage: (data: any) => {
-                if (data.nativeEvent.data === "-fullscreen-off")
-                  StatusBar.setHidden(false);
-                else if (data.nativeEvent.data === "-fullscreen-on")
-                  StatusBar.setHidden(true);
-              }
-            }
-          : {})}
-      />
+    <View key={key}>
+      <IFrame source={nugget.src} style={style} />
     </View>
   );
 }

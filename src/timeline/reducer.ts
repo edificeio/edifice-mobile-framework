@@ -1,22 +1,22 @@
-import { AsyncStorage } from "react-native";
-import * as reducerActions from "./reducerActions";
-import { createEndSessionActionType } from "../infra/redux/reducerFactory";
+import { ImageURISource } from "react-native";
 import { AnyAction } from "redux";
-import publishableBlogsReducer, { publishStatusReducer } from "./reducers/publishableBlogs";
 import { IPublishableBlogsState } from "./state/publishableBlogs";
 import { IBlogCommentListState } from "./state/commentList";
+import * as reducerActions from "./reducerActions";
+import publishableBlogsReducer, { publishStatusReducer } from "./reducers/publishableBlogs";
 import blogCommentsReducer from "./reducers/blogCommentList";
+import { createEndSessionActionType } from "../infra/redux/reducerFactory";
 
-interface IParams {
-  blogTitle: string;
-  username: string;
+export interface IMediaModel {
+  type: "image" | "video" | "audio" | "iframe";
+  src: string | { src: ImageURISource; alt: string;};
 }
 
 export interface INewsModel {
   date: number;
   eventType: string;
   id: string;
-  images: object[];
+  media: IMediaModel[];
   message: string;
   preview: string;
   resourceName: string;

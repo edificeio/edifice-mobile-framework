@@ -6,7 +6,6 @@ import I18n from "i18n-js";
 import * as React from "react";
 import { Platform, Text, View, ViewStyle } from "react-native";
 import RNFS from "react-native-fs";
-import Video from "react-native-video";
 import VideoPlayer from "react-native-video-controls";
 import RNFetchBlob from "rn-fetch-blob";
 import { Loading } from ".";

@@ -137,7 +137,7 @@ class Timeline extends React.Component<ITimelineProps, undefined> {
           <News
             {...item as INewsModel}
             index={index}
-            onPress={expend => this.openNews(item, expend)}
+            onPress={expand => this.openNews(item, expand)}
           />
         )}
         keyExtractor={(item: INewsModel) => item.id.toString()}
