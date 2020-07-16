@@ -64,12 +64,17 @@ export default class CallList extends React.PureComponent<any, any> {
   componentDidUpdate(prevProps) {
     const { courses, register, structure_id } = this.props;
     const fetching = courses.isFetching || register.isFetching;
-    this.setState({
-      coursesDataList: courses.data,
-      registerId: register.data.id,
-      structureId: structure_id,
-      fetching,
-    });
+    this.setState(
+      {
+        coursesDataList: courses.data,
+        registerId: register.data.id,
+        structureId: structure_id,
+        fetching,
+      },
+      () => {
+        if (prevProps.courses.data.length === 0 && courses.data.length > 0) this.carouselDisplayCurrentCourse();
+      }
+    );
     if (prevProps.structure_id !== structure_id) {
       this.props.fetchCourses(this.state.teacherId, structure_id, this.state.startDate, this.state.endDate);
     }
@@ -77,6 +82,7 @@ export default class CallList extends React.PureComponent<any, any> {
 
   async getCourseRegisterId(course, index) {
     let courseRegisterInfos = {
+      id: course.id,
       classroom: course.roomLabels,
       grade: course.classes,
       registerId: course.registerId,
@@ -94,12 +100,7 @@ export default class CallList extends React.PureComponent<any, any> {
         split_slot: true,
       });
 
-      await this.props.fetchRegisterId(courseData);
-      const { register } = this.props;
-      const fetching = register.isFetching;
-      this.setState({ fetching });
-      this.state.coursesDataList[index].registerId = register.data.id;
-      courseRegisterInfos.registerId = 18741;
+      this.props.fetchRegisterId(courseData);
     }
 
     this.props.navigation.navigate("CallSheetPage", { courseInfos: courseRegisterInfos });
@@ -124,19 +125,22 @@ export default class CallList extends React.PureComponent<any, any> {
   }
 
   private carouselDisplayCurrentCourse() {
-    this.state.coursesDataList.sort((a, b) => a.startDate - b.startDate);
-    const dataLength = this.state.coursesDataList.length - 1;
-    let index = this.state.coursesDataList.findIndex(index => moment(index.endDate).isAfter(moment()));
+    const { coursesDataList } = this.state;
+    const coursesList = coursesDataList.sort((a, b) => a.startDate - b.startDate);
+    const dataLength = coursesList.length - 1;
+    let index = coursesList.findIndex(index => moment(index.endDate).isAfter(moment()));
     if (index === -1) {
       index = dataLength;
     }
-    this.setState({ firstItemIndex: index });
-    return index;
+    this.setState({ coursesDataList: [...coursesList], firstItemIndex: index }, () => {
+      if (this.carouselRef !== null && this.carouselRef !== undefined) {
+        setTimeout(() => this.carouselRef.snapToItem(index), 750);
+      }
+    });
   }
 
   private displayCoursesCalls() {
     const { width } = Dimensions.get("window");
-    const firstIndex = this.carouselDisplayCurrentCourse();
     return (
       <View>
         <TextBold style={{ fontSize: 15, marginBottom: 10 }}>
@@ -147,13 +151,12 @@ export default class CallList extends React.PureComponent<any, any> {
           renderItem={e => this._renderItem(e)}
           sliderWidth={width - 54}
           itemWidth={width - 54}
-          firstItem={firstIndex}
           ref={r => (this.carouselRef = r)}
           onSnapToItem={index => this.setState({ activeIndex: index })}
         />
         <Pagination
           dotsLength={this.state.coursesDataList.length}
-          activeDotIndex={this.state.activeIndex || firstIndex}
+          activeDotIndex={this.state.activeIndex}
           dotStyle={style.carouselDot}
           inactiveDotStyle={style.carouselInactiveDot}
         />

@@ -10,6 +10,7 @@ import { postAbsentEvent, deleteEvent, validateRegisterAction } from "../actions
 import { fetchClassesCallAction } from "../actions/teacherClassesCall";
 import TeacherCallSheet from "../components/TeacherCallSheet";
 import { getClassesCallListState } from "../state/teacherClassesCall";
+import { getCoursesListState } from "../state/teacherCourses";
 
 class CallSheet extends React.PureComponent<any> {
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<any> }) => {
@@ -26,13 +27,15 @@ class CallSheet extends React.PureComponent<any> {
   };
 
   public render() {
-    return <TeacherCallSheet {...this.props} />;
+    const course = this.props.courses.find(course => course.id === this.props.navigation.state.params.courseInfos.id);
+    return <TeacherCallSheet {...this.props} course={course} />;
   }
 }
 
 const mapStateToProps: (state: any) => any = state => {
   return {
     callList: getClassesCallListState(state),
+    courses: getCoursesListState(state).data,
   };
 };
 

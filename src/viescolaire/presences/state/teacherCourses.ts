@@ -46,3 +46,7 @@ export const getCoursesRegisterState = (globalState: any) =>
   viescoConfig.getLocalState(globalState).presences.coursesRegister as ICoursesRegisterInfosState;
 
 export const actionTypesRegister = createAsyncActionTypes(viescoConfig.createActionType("COURSES_REGISTER"));
+
+export const registerActionTypes = {
+  post: viescoConfig.createActionType("COURSES_REGISTER") + "_POST",
+};

@@ -109,9 +109,9 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
   };
 
   onCancel = () => {
-    const { event } = this.props.navigation.state.params;
+    const { event, student } = this.props.navigation.state.params;
     const { deleteEvent } = this.props;
-    deleteEvent(event);
+    deleteEvent({ ...event, student_id: student.id });
     this.props.navigation.goBack();
   };
 

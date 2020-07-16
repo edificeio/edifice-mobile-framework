@@ -7,8 +7,9 @@ import { IClassesCall, actionTypes } from "../state/teacherClassesCall";
 export const dataActions = createAsyncActionCreators<IClassesCall>(actionTypes);
 
 export function fetchClassesCallAction(callId) {
-  return async (dispatch: Dispatch, getState: () => any) => {
+  return async (dispatch: Dispatch) => {
     try {
+      dispatch(dataActions.clear());
       dispatch(dataActions.request());
       const data = await classesCallService.get(callId);
       dispatch(dataActions.receipt(data));
