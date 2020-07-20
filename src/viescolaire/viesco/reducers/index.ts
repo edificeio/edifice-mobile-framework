@@ -1,7 +1,9 @@
-import subjectsList from "./subjects";
-import personnelList from "./personnel";
-import children from "./children";
-import structure from "./structure";
 import { combineReducers } from "redux";
 
-export default combineReducers({ subjectsList, personnelList, children, structure });
+import children from "./children";
+import periods from "./periods";
+import personnelList from "./personnel";
+import structure from "./structure";
+import subjectsList from "./subjects";
+
+export default combineReducers({ subjectsList, personnelList, children, structure, periods });
