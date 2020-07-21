@@ -5,12 +5,11 @@ import { View, StyleSheet } from "react-native";
 import { Text, TextBold } from "../../../ui/Typography";
 import { BottomColoredItem } from "../../viesco/components/Item";
 
-export default class PresenceCard extends React.Component<any, any> {
+export default class PresenceCard extends React.PureComponent<any, any> {
   constructor(props) {
     super(props);
     this.state = {
       expanded: false,
-      displayedElements: props.elements.slice(0, 2),
     };
   }
 
@@ -23,25 +22,17 @@ export default class PresenceCard extends React.Component<any, any> {
   };
 
   public render() {
-    const { displayedElements, expanded } = this.state;
-    const { color, title, elements } = this.props;
+    const { expanded } = this.state;
+    const displayedElements = this.props.elements.slice(0, 2);
+    const { color, title, elements, renderEvent } = this.props;
     return (
-      <BottomColoredItem style={style.shadow} color={color}>
+      <BottomColoredItem shadow color={color}>
         <View style={[style.mainView, elements.length === 0 ? {} : style.bottomMargin]}>
           <Text style={style.title}>{title}</Text>
           <View style={style.flexRow}>
             <TextBold style={style.elementsNumber}>{elements.length}</TextBold>
             {elements.length === 0 && <Text style={style.emptyText}>{I18n.t("viesco-empty-card")}</Text>}
-            <View style={style.justifyCenter}>
-              {elements.length > 0 &&
-                displayedElements.map(elem => (
-                  <Text>
-                    <Text style={{ color }}>▪</Text>
-                    <TextBold>{elem.date} - </TextBold>
-                    {elem.time}
-                  </Text>
-                ))}
-            </View>
+            <View style={style.justifyCenter}>{displayedElements.map(event => renderEvent(event, color))}</View>
           </View>
         </View>
         {elements.length > 2 && (
@@ -74,16 +65,6 @@ const style = StyleSheet.create({
   },
   bottomMargin: {
     marginBottom: 7,
-  },
-  shadow: {
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.27,
-    shadowRadius: 4.65,
-    elevation: 6,
   },
   flexRow: { flexDirection: "row" },
   elementsNumber: {

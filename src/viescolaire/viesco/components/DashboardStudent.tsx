@@ -62,6 +62,9 @@ export default class Dashboard extends React.PureComponent<any & dashboardProps>
               {},
               NavigationActions.navigate({
                 routeName: "History",
+                params: {
+                  user_type: "Student",
+                },
               })
             )
           }

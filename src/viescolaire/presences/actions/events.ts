@@ -2,13 +2,19 @@ import moment from "moment";
 import { Dispatch } from "redux";
 
 import { eventsService } from "../services/events";
-import { eventsActionsTypes } from "../state/events";
+import { teacherEventsActionsTypes, studentEventsActionsTypes } from "../state/events";
 
-export const eventsActions = {
-  post: data => ({ type: eventsActionsTypes.post, data }),
-  put: data => ({ type: eventsActionsTypes.put, data }),
-  delete: data => ({ type: eventsActionsTypes.delete, data }),
-  error: error => ({ type: eventsActionsTypes.error, error }),
+export const callEventsActions = {
+  post: data => ({ type: teacherEventsActionsTypes.post, data }),
+  put: data => ({ type: teacherEventsActionsTypes.put, data }),
+  delete: data => ({ type: teacherEventsActionsTypes.delete, data }),
+  error: error => ({ type: teacherEventsActionsTypes.error, error }),
+};
+
+export const studentEventsActions = {
+  event: data => ({ type: studentEventsActionsTypes.event, data }),
+  notebook: data => ({ type: studentEventsActionsTypes.notebook, data }),
+  incident: data => ({ type: studentEventsActionsTypes.incident, data }),
 };
 
 export function postLateEvent(
@@ -22,9 +28,9 @@ export function postLateEvent(
     try {
       const result = await eventsService.postLate(studentId, date, comment, registerId, courseStart);
       eventsService.updateRegisterStatus(registerId, 2);
-      dispatch(eventsActions.post(result));
+      dispatch(callEventsActions.post(result));
     } catch (errmsg) {
-      dispatch(eventsActions.error(errmsg));
+      dispatch(callEventsActions.error(errmsg));
     }
   };
 }
@@ -41,9 +47,9 @@ export function updateLateEvent(
     try {
       await eventsService.putLate(student_id, date, comment, id, register_id, course_start);
       eventsService.updateRegisterStatus(register_id, 2);
-      dispatch(eventsActions.put({ id, student_id, comment, register_id, course_start, course_end: date }));
+      dispatch(callEventsActions.put({ id, student_id, comment, register_id, course_start, course_end: date }));
     } catch (errmsg) {
-      dispatch(eventsActions.error(errmsg));
+      dispatch(callEventsActions.error(errmsg));
     }
   };
 }
@@ -53,9 +59,9 @@ export function deleteEvent(event) {
     try {
       await eventsService.deleteEvent(event.id);
       eventsService.updateRegisterStatus(event.register_id, 2);
-      dispatch(eventsActions.delete(event));
+      dispatch(callEventsActions.delete(event));
     } catch (errmsg) {
-      dispatch(eventsActions.error(errmsg));
+      dispatch(callEventsActions.error(errmsg));
     }
   };
 }
@@ -71,9 +77,9 @@ export function postLeavingEvent(
     try {
       const result = await eventsService.postLeaving(studentId, date, comment, registerId, courseEnd);
       eventsService.updateRegisterStatus(registerId, 2);
-      dispatch(eventsActions.post(result));
+      dispatch(callEventsActions.post(result));
     } catch (errmsg) {
-      dispatch(eventsActions.error(errmsg));
+      dispatch(callEventsActions.error(errmsg));
     }
   };
 }
@@ -90,9 +96,9 @@ export function updateLeavingEvent(
     try {
       await eventsService.putLeaving(student_id, date, comment, id, register_id, course_end);
       eventsService.updateRegisterStatus(register_id, 2);
-      dispatch(eventsActions.put({ id, student_id, comment, register_id, course_start: date, course_end }));
+      dispatch(callEventsActions.put({ id, student_id, comment, register_id, course_start: date, course_end }));
     } catch (errmsg) {
-      dispatch(eventsActions.error(errmsg));
+      dispatch(callEventsActions.error(errmsg));
     }
   };
 }
@@ -107,9 +113,9 @@ export function postAbsentEvent(
     try {
       const result = await eventsService.postAbsent(studentId, registerId, courseStart, courseEnd);
       eventsService.updateRegisterStatus(registerId, 2);
-      dispatch(eventsActions.post(result));
+      dispatch(callEventsActions.post(result));
     } catch (errmsg) {
-      dispatch(eventsActions.error(errmsg));
+      dispatch(callEventsActions.error(errmsg));
     }
   };
 }
@@ -119,7 +125,31 @@ export function validateRegisterAction(registerId: number) {
     try {
       eventsService.updateRegisterStatus(registerId, 3);
     } catch (errmsg) {
-      dispatch(eventsActions.error(errmsg));
+      dispatch(callEventsActions.error(errmsg));
     }
+  };
+}
+
+export function getStudentEvents(
+  studentId: string,
+  structureId: string,
+  startDate: moment.Moment,
+  endDate: moment.Moment
+) {
+  return async (dispatch: Dispatch) => {
+    const promises = [
+      eventsService.fetchStudentEvents(studentId, structureId, startDate, endDate),
+      eventsService.fetchStudentForgottenNotebook(studentId, structureId, startDate, endDate),
+      eventsService.fetchStudentIncidents(studentId, structureId, startDate, endDate),
+    ];
+    Promise.all(promises)
+      .then(([events, notebooks, incidents]) => {
+        dispatch(studentEventsActions.event(events));
+        dispatch(studentEventsActions.notebook(notebooks));
+        dispatch(studentEventsActions.incident(incidents));
+      })
+      .catch(errmsg => {
+        console.error("student events error", errmsg);
+      });
   };
 }

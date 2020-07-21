@@ -441,6 +441,7 @@ export const scopes = `
  sso
  zimbra
  presences
+ incidents
  competences
  diary
  viescolaire
