@@ -18,6 +18,7 @@ export const dataActions = createAsyncActionCreators<IDevoirList>(actionTypes);
 export function fetchDevoirListAction() {
   return async (dispatch: Dispatch) => {
     try {
+      dispatch(dataActions.clear());
       dispatch(dataActions.request());
       const data = await devoirListService.get();
       dispatch(dataActions.receipt(data));

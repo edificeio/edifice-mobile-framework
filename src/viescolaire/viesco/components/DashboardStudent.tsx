@@ -80,7 +80,12 @@ export default class Dashboard extends React.PureComponent<any & dashboardProps>
           color="#2BAB6F"
           icon="check-1"
         />
-        <IconButton onPress={() => true} text={I18n.t("viesco-tests")} color="#F95303" icon="stats-bars2" />
+        <IconButton
+          onPress={() => this.props.navigation.navigate("EvaluationList")}
+          text={I18n.t("viesco-tests")}
+          color="#F95303"
+          icon="stats-bars2"
+        />
       </View>
     );
   }
