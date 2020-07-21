@@ -37,6 +37,7 @@ class AbsenceHistory extends React.PureComponent<
       start_date: moment.Moment;
       end_date: moment.Moment;
     };
+    periods: any[];
     events: {
       justified: any[];
       unjustified: any[];
@@ -63,12 +64,14 @@ class AbsenceHistory extends React.PureComponent<
 
   constructor(props) {
     super(props);
-    const { periods, events } = this.props;
-    const period = periods.data.find(o => o.order === 1);
+    const { periods, events, year } = this.props;
+    const fullPeriods = [{ ...year.data, order: -1 }, ...periods.data];
+    const period = fullPeriods.find(o => o.order === -1);
     this.state = {
-      selected: 1,
+      selected: -1,
       period,
       events,
+      periods: fullPeriods,
     };
   }
 
@@ -80,20 +83,27 @@ class AbsenceHistory extends React.PureComponent<
   }
 
   public componentDidUpdate(prevProps, prevState) {
-    const { periods } = this.props;
+    const { periods, year } = this.props;
+    const fullPeriods = [{ ...year.data, order: -1 }, ...periods.data];
     // on periods init
     if (prevProps.periods.isPristine && !periods.isPristine) {
       this.setState({
-        selected: 1,
-        period: periods.data.find(o => o.order === 1),
+        selected: -1,
+        period: fullPeriods.find(o => o.order === -1),
+        periods: fullPeriods,
       });
-      return;
     }
 
-    const { childId, structureId, year } = this.props;
+    const { childId, structureId } = this.props;
     // on year init
-    if (prevProps.year.isPristine && !this.props.year.isPristine)
+    if (prevProps.year.isPristine && !year.isPristine) {
+      this.setState({
+        selected: -1,
+        period: fullPeriods.find(o => o.order === -1),
+        periods: fullPeriods,
+      });
       this.props.getEvents(childId, structureId, year.data.start_date, year.data.end_date);
+    }
 
     if (this.state.period !== undefined) {
       const { start_date, end_date } = this.state.period;
@@ -101,6 +111,7 @@ class AbsenceHistory extends React.PureComponent<
       const end_period = end_date.clone().add(1, "d");
       if (
         prevState.period === undefined ||
+        (!this.props.events.isPristine && prevProps.events.isPristine) ||
         !start_date.isSame(prevState.period.start_date, "d") ||
         !end_date.isSame(prevState.period.end_date, "d")
       ) {
@@ -143,8 +154,8 @@ class AbsenceHistory extends React.PureComponent<
   }
 
   onPeriodChange = newPeriod => {
-    const { periods } = this.props;
-    const period = periods.data.find(o => o.order === newPeriod);
+    const { periods } = this.state;
+    const period = periods.find(o => o.order === newPeriod);
     this.setState({
       selected: newPeriod,
       period,
@@ -158,6 +169,7 @@ class AbsenceHistory extends React.PureComponent<
           {...this.props}
           events={this.state.events}
           onPeriodChange={this.onPeriodChange}
+          periods={this.state.periods}
           selected={this.state.selected}
         />
       </PageContainer>
@@ -174,7 +186,7 @@ const mapStateToProps = (state: any) => {
   const groupId =
     type === "Student"
       ? getSessionInfo().classes[0]
-      : getSessionInfo().classes[getSessionInfo().childrenIds.findIndex(i => i === childId)]
+      : getSessionInfo().classes[getSessionInfo().childrenIds.findIndex(i => i === childId)];
   const structureId =
     type === "Student"
       ? getSessionInfo().administrativeStructures[0].id

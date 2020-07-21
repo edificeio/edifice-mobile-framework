@@ -57,6 +57,7 @@ export const initialState = {
   notebooks: [],
   punishments: [],
   incidents: [],
+  isPristine: true,
 };
 
 export const teacherEventsActionsTypes = {

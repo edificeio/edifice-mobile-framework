@@ -17,13 +17,12 @@ export default class PresenceCard extends React.PureComponent<any, any> {
     const { expanded } = this.state;
     this.setState({
       expanded: !expanded,
-      displayedElements: !expanded ? this.props.elements : this.props.elements.slice(0, 2),
     });
   };
 
   public render() {
     const { expanded } = this.state;
-    const displayedElements = this.props.elements.slice(0, 2);
+    const displayedElements = expanded ? this.props.elements : this.props.elements.slice(0, 2);
     const { color, title, elements, renderEvent } = this.props;
     return (
       <BottomColoredItem shadow color={color}>

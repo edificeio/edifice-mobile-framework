@@ -80,7 +80,8 @@ class History extends React.PureComponent<HistoryProps> {
   };
 
   renderOption = option => {
-    return I18n.t("viesco-trimester") + " " + option.order;
+    if (option.order === -1) return I18n.t("viesco-fullyear");
+    else return I18n.t("viesco-trimester") + " " + option.order;
   };
 
   keyExtractor = item => {
@@ -91,12 +92,12 @@ class History extends React.PureComponent<HistoryProps> {
     const { events, onPeriodChange, selected, periods } = this.props;
     return (
       <View>
-        {this.props.navigation.state.params.user_type === "Relative" && <ChildPicker hideButton />}
+        {this.props.navigation.state.params.user_type === "Relative" && <ChildPicker />}
         <ScrollView contentContainerStyle={[style.container]}>
           <Dropdown
             style={style.selector}
             value={selected}
-            data={periods.data}
+            data={periods}
             onSelect={onPeriodChange}
             renderItem={this.renderOption}
             keyExtractor={this.keyExtractor}
