@@ -7,6 +7,7 @@ import { NavigationActions } from "react-navigation";
 //import I18n from "../../../infra/i18n";
 import { Icon } from "../../../ui";
 import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
+import { EmptyScreen } from "../../../ui/EmptyScreen";
 import { Text, TextBold } from "../../../ui/text";
 import { HomeworkItem } from "../../cdt/components/homework";
 import { DenseDevoirList } from "../../competences/components/Item";
@@ -120,6 +121,14 @@ export default class Dashboard extends React.PureComponent<any & DashboardProps>
       <View style={style.dashboardPart}>
         <TextBold style={style.title}>{I18n.t("viesco-homework")}</TextBold>
         <Text style={style.subtitle}>{I18n.t("viesco-homework-fortomorrow")}</Text>
+        {tomorrowHomeworks.length === 0 && (
+          <EmptyScreen
+            imageSrc={require("../../../../assets/images/empty-screen/empty-homework.png")}
+            imgWidth={64}
+            imgHeight={64}
+            title={I18n.t("viesco-homework-EmptyScreenText")}
+          />
+        )}
         {tomorrowHomeworks.map(homework => (
           <HomeworkItem
             disabled
@@ -133,10 +142,21 @@ export default class Dashboard extends React.PureComponent<any & DashboardProps>
   }
 
   private renderLastEval(evaluations) {
+    // return (
+    //   <View style={style.dashboardPart}>
+    //     <TextBold style={style.title}>{I18n.t("viesco-lasteval")}</TextBold>
+    //     <DenseDevoirList devoirs={evaluations} />
+    //   </View>
+    // );
     return (
       <View style={style.dashboardPart}>
         <TextBold style={style.title}>{I18n.t("viesco-lasteval")}</TextBold>
-        <DenseDevoirList devoirs={evaluations} />
+        <EmptyScreen
+          imageSrc={require("../../../../assets/images/empty-screen/empty-evaluations.png")}
+          imgWidth={64}
+          imgHeight={64}
+          title={I18n.t("viesco-eval-EmptyScreenText")}
+        />
       </View>
     );
   }

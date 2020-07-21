@@ -5,6 +5,7 @@ import { Text, View, StyleSheet, ScrollView, TouchableOpacity } from "react-nati
 import { NavigationActions } from "react-navigation";
 
 import { Icon } from "../../../ui";
+import { EmptyScreen } from "../../../ui/EmptyScreen";
 import { TextBold } from "../../../ui/text";
 import { HomeworkItem } from "../../cdt/components/homework";
 
@@ -117,6 +118,14 @@ export default class Dashboard extends React.PureComponent<any & dashboardProps>
     return (
       <View style={style.dashboardPart}>
         <TextBold style={style.title}>{I18n.t("viesco-homework")}</TextBold>
+        {Object.values(homeworks).length === 0 && (
+          <EmptyScreen
+            imageSrc={require("../../../../assets/images/empty-screen/empty-homework.png")}
+            imgWidth={64}
+            imgHeight={64}
+            title={I18n.t("viesco-homework-EmptyScreenText")}
+          />
+        )}
         {Object.keys(homeworksByDate).map(date => (
           <>
             {moment(date).isAfter(moment()) && (
@@ -145,12 +154,29 @@ export default class Dashboard extends React.PureComponent<any & dashboardProps>
     );
   }
 
+  private renderEvaluations(evaluations) {
+    return (
+      <View style={style.dashboardPart}>
+        <TextBold style={style.title}>{I18n.t("viesco-lasteval")}</TextBold>
+        <EmptyScreen
+          imageSrc={require("../../../../assets/images/empty-screen/empty-evaluations.png")}
+          imgWidth={64}
+          imgHeight={64}
+          title={I18n.t("viesco-eval-EmptyScreenText")}
+        />
+      </View>
+    );
+  }
+
   public render() {
     const { homeworks } = this.props;
     return (
       <View>
         {this.renderNavigationGrid()}
-        <ScrollView>{this.renderHomework(homeworks.data)}</ScrollView>
+        <ScrollView>
+          {this.renderHomework(homeworks.data)}
+          {this.renderEvaluations({})}
+        </ScrollView>
       </View>
     );
   }
