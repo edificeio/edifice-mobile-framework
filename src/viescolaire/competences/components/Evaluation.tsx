@@ -1,4 +1,5 @@
 import I18n from "i18n-js";
+import moment from "moment";
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
 
@@ -7,6 +8,7 @@ import Dropdown from "../../../ui/Dropdown";
 import { EmptyScreen } from "../../../ui/EmptyScreen";
 import { Text, TextBold } from "../../../ui/text";
 import ChildPicker from "../../viesco/containers/ChildPicker";
+import { IPeriod } from "../../viesco/state/periods";
 import { GradesDevoirs, GradesDevoirsMoyennes } from "./Item";
 
 export default class Competences extends React.PureComponent<any, any> {
@@ -22,36 +24,30 @@ export default class Competences extends React.PureComponent<any, any> {
       selectedDiscipline: "Disciplines",
       selectedPeriod: "Période",
       disciplineId: "",
+      startDate: moment(),
+      endDate: moment(),
     };
   }
 
   componentDidMount() {
     this.props.getDevoirs();
+    this.props.getPeriods(this.props.structureId, this.props.groupId);
+    this.props.getYear();
   }
 
   componentDidUpdate(prevProps, prevState) {
     const { devoirsList, devoirsMoyennesList } = this.props;
     const fetching = devoirsList.isFetching || devoirsMoyennesList;
     if (prevProps.devoirsList !== this.state.devoirs && this.state.screenDisplay !== "period") {
-      this.setState(
-        {
-          devoirs: devoirsList.data,
-          fetching,
-        },
-        () => {
-          this.renderDevoirsList();
-        }
-      );
+      this.setState({
+        devoirs: devoirsList.data,
+        fetching,
+      });
     } else if (prevProps.devoirsMoyennesList !== this.state.devoirs && this.state.screenDisplay === "period") {
-      this.setState(
-        {
-          devoirs: devoirsMoyennesList.data,
-          fetching,
-        },
-        () => {
-          this.renderDevoirsByPeriod();
-        }
-      );
+      this.setState({
+        devoirs: devoirsMoyennesList.data,
+        fetching,
+      });
     }
   }
 
@@ -65,6 +61,16 @@ export default class Competences extends React.PureComponent<any, any> {
     }
   };
 
+  renderOption = item => {
+    if (item === parseInt(item, 10)) {
+      return I18n.t("viesco-trimester") + " " + item;
+    } else if (item === "Période") {
+      return "Période";
+    } else {
+      return I18n.t("viesco-year");
+    }
+  };
+
   private renderDevoirsByPeriod() {
     return (
       <View style={{ height: "78%" }}>
@@ -73,10 +79,9 @@ export default class Competences extends React.PureComponent<any, any> {
         this.props.devoirsMoyennesList.data === this.state.devoirs ? (
           <View style={{ flex: 1 }}>
             <View style={{ flexDirection: "row" }}>
-              <TextBold style={{ marginBottom: 10 }}>{this.state.selectedPeriod.toUpperCase()}</TextBold>
+              <TextBold style={{ marginBottom: 10 }}>{this.renderOption(this.state.selectedPeriod)}</TextBold>
               <Text>- {I18n.t("viesco-average").toUpperCase()}</Text>
             </View>
-            {console.log("devoirsP: ", this.state.devoirs)}
             <GradesDevoirsMoyennes devoirs={this.state.devoirs} />
           </View>
         ) : (
@@ -99,7 +104,7 @@ export default class Competences extends React.PureComponent<any, any> {
         ) : (
           <View style={{ flexDirection: "row" }}>
             <TextBold style={{ marginBottom: 10 }}>{this.state.selectedDiscipline}&ensp;</TextBold>
-            <Text style={{ color: "#AFAFAF" }}>{this.state.selectedPeriod.toUpperCase()}</Text>
+            <Text style={{ color: "#AFAFAF" }}>{this.renderOption(this.state.selectedPeriod)}</Text>
           </View>
         )}
         {this.state.devoirs !== undefined && this.state.devoirs.length > 0 ? (
@@ -122,7 +127,7 @@ export default class Competences extends React.PureComponent<any, any> {
       subjectId = this.state.subjectsList.find(item => item.subjectLabel === discipline).subjectId;
 
       if (this.state.selectedPeriod !== "Période") {
-        this.props.getDevoirs(subjectId, this.state.selectedPeriod);
+        this.props.getDevoirs(subjectId, this.state.startDate, this.state.endDate);
       } else {
         this.props.getDevoirs(subjectId);
       }
@@ -130,11 +135,27 @@ export default class Competences extends React.PureComponent<any, any> {
     this.setState({ selectedDiscipline: discipline, disciplineId: subjectId }, this.screenRenderOpt);
   }
 
-  private initDevoirsByPeriods(period) {
-    if (this.state.disciplineId === "") {
-      this.props.getDevoirsMoyennes(period);
+  private initPeriodsDates(period) {
+    const { periods, year } = this.props;
+    if (period === "Période") {
+      this.setState({ startDate: moment() });
+      this.setState({ endDate: moment() });
+    } else if (period === year.data) {
+      this.setState({ startDate: period.start_date });
+      this.setState({ endDate: period.end_date });
     } else {
-      this.props.getDevoirs(this.state.disciplineId, period);
+      const trimester = periods.data.find(order => period);
+      this.setState({ startDate: trimester.start_date });
+      this.setState({ endDate: trimester.end_date });
+    }
+  }
+
+  private initDevoirsByPeriods(period) {
+    this.initPeriodsDates(period);
+    if (this.state.disciplineId === "") {
+      this.props.getDevoirsMoyennes(this.state.startDate, this.state.endDate);
+    } else {
+      this.props.getDevoirs(this.state.disciplineId, this.state.startDate, this.state.endDate);
     }
     this.setState({ selectedPeriod: period }, this.screenRenderOpt);
   }
@@ -154,14 +175,17 @@ export default class Competences extends React.PureComponent<any, any> {
   }
 
   private displayPeriodsDropdown() {
-    const periods = ["Période", "Trimestre 1", "Trimestre 2", "Trimestre 3", "Année"];
+    const { periods, year } = this.props;
+    let periodsList = ["Période"];
+    periods.data.map(({ order }) => periodsList.push(order));
+    periodsList.push(year.data);
 
     return (
       <Dropdown
-        data={Object.values(periods)}
+        data={Object.values(periodsList)}
         value={this.state.selectedPeriod}
         onSelect={(period: string) => this.initDevoirsByPeriods(period)}
-        renderItem={(item: string) => item}
+        renderItem={(item: IPeriod) => this.renderOption(item)}
       />
     );
   }
@@ -169,7 +193,7 @@ export default class Competences extends React.PureComponent<any, any> {
   public render() {
     return (
       <PageContainer>
-        {this.props.userType === "Relative" ? <ChildPicker hideButton /> : null}
+        {this.props.userType === "Relative" && <ChildPicker hideButton />}
         <View style={styles.dashboardPart}>
           <Text style={styles.subtitle}>{I18n.t("viesco-report-card")}</Text>
           <View style={styles.containerDropdowns}>

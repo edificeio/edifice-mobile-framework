@@ -185,8 +185,8 @@ export const DenseDevoirList = ({ devoirs }) => (
 
 export const GradesDevoirsMoyennes = ({ devoirs }) => (
   <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-    {devoirs.map((devoir, index) => (
-      <LeftColoredItem color={getColorFromNote(devoir.note, 10)}>
+    {devoirs.map(devoir => (
+      <LeftColoredItem color={getColorFromNote(devoir.note, 10)} key={devoir.id}>
         <View style={styleConstant.devoirsList}>
           <View style={{ padding: 8 }}>
             <TextBold style={{ textTransform: "uppercase" }}>{devoir.matiere}</TextBold>
@@ -210,8 +210,8 @@ export const GradesDevoirsMoyennes = ({ devoirs }) => (
 
 export const GradesDevoirs = ({ devoirs }) => (
   <ScrollView>
-    {devoirs.map((devoir, index) => (
-      <View style={styleConstant.devoirsList}>
+    {devoirs.map(devoir => (
+      <View style={styleConstant.devoirsList} key={devoir.id}>
         <View style={{ padding: 8 }}>
           <TextBold style={{ textTransform: "uppercase" }}>{devoir.matiere}</TextBold>
           <Text style={{ textTransform: "uppercase" }}>{devoir.teacher}</Text>

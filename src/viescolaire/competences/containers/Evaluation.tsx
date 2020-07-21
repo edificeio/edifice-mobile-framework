@@ -8,6 +8,9 @@ import { getSessionInfo } from "../../../App";
 import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
 import { PageContainer } from "../../../ui/ContainerContent";
 import { HeaderBackAction } from "../../../ui/headers/NewHeader";
+import { fetchPeriodsListAction, fetchYearAction } from "../../viesco/actions/periods";
+import { getSelectedChild } from "../../viesco/state/children";
+import { getPeriodsListState, getYearState } from "../../viesco/state/periods";
 import { getSubjectsListState } from "../../viesco/state/subjects";
 import { fetchDevoirListAction } from "../actions/devoirs";
 import { fetchDevoirMoyennesListAction } from "../actions/moyennes";
@@ -39,11 +42,30 @@ export class Evaluation extends React.PureComponent<{ navigation: { navigate } }
 }
 
 const mapStateToProps: (state: any) => any = state => {
+  const userType = getSessionInfo().type;
+  const childId = userType === "Student" ? getSessionInfo().id : getSelectedChild(state);
+  const groupId =
+    userType === "Student"
+      ? getSessionInfo().classes[0]
+      : getSessionInfo().classes[getSessionInfo().childrenIds.findIndex(i => i === childId)];
+  const structureId =
+  userType === "Student"
+      ? getSessionInfo().administrativeStructures[0].id
+      : getSessionInfo().schools.find(school =>
+          getSessionInfo()
+            .childrenStructure.filter(struct => struct.children.some(c => c.id === getSelectedChild(state)))
+            .map(r => r.structureName)
+            .includes(school.name)
+        ).id;
   return {
     devoirsList: getDevoirListState(state),
     devoirsMoyennesList: getMoyenneListState(state),
     subjects: getSubjectsListState(state),
-    userType: getSessionInfo().type,
+    userType,
+    periods: getPeriodsListState(state),
+    year: getYearState(state),
+    groupId,
+    structureId,
   };
 };
 
@@ -51,6 +73,8 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
   return bindActionCreators({
       getDevoirs: fetchDevoirListAction,
       getDevoirsMoyennes: fetchDevoirMoyennesListAction,
+      getPeriods: fetchPeriodsListAction,
+      getYear: fetchYearAction,
     },
     dispatch
   );
