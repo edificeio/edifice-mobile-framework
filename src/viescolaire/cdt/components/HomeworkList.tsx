@@ -14,7 +14,7 @@ import { HomeworkItem } from "./homework";
 import { SessionItem } from "./session";
 
 const style = StyleSheet.create({
-  homeworkPart: { paddingBottom: 8, paddingHorizontal: 15 },
+  homeworkPart: { flex: 1, paddingBottom: 8, paddingHorizontal: 15 },
   title: { fontSize: 18 },
   subtitle: { color: "#AFAFAF" },
   course: { fontWeight: "bold", textTransform: "uppercase" },
@@ -220,25 +220,27 @@ export default class HomeworkList extends React.PureComponent<HomeworkListProps,
   public render() {
     const { startDate, endDate, onStartDateChange, onEndDateChange, switchValue, toggleSwitch } = this.props;
     return (
-      <PageContainer style={style.homeworkPart}>
-        {this.props.navigation.state.params.user_type === "Relative" && <ChildPicker hideButton />}
-        <View style={style.grid}>
-          <Text>{I18n.t("viesco-from")} &ensp;</Text>
-          <DatePicker date={startDate} endDate={endDate} onGetDate={onStartDateChange} />
-          <Text>&emsp;{I18n.t("viesco-to")} &ensp;</Text>
-          <DatePicker date={endDate} startDate={startDate} onGetDate={onEndDateChange} />
+      <PageContainer>
+        {this.props.navigation.state.params.user_type === "Relative" && <ChildPicker />}
+        <View style={style.homeworkPart}>
+          <View style={style.grid}>
+            <Text>{I18n.t("viesco-from")} &ensp;</Text>
+            <DatePicker date={startDate} endDate={endDate} onGetDate={onStartDateChange} />
+            <Text>&emsp;{I18n.t("viesco-to")} &ensp;</Text>
+            <DatePicker date={endDate} startDate={startDate} onGetDate={onEndDateChange} />
+          </View>
+          <View style={style.grid}>
+            <Text>{I18n.t("viesco-homework")}</Text>
+            <Switch
+              style={{ marginTop: 30 }}
+              trackColor={{ false: "#FA9700", true: "#2BAB6F" }}
+              onValueChange={toggleSwitch}
+              value={switchValue}
+            />
+            <Text>{I18n.t("viesco-session")}</Text>
+          </View>
+          {this.state.fetching ? <Loading /> : !switchValue ? this.renderHomeworks() : this.renderSessions()}
         </View>
-        <View style={style.grid}>
-          <Text>{I18n.t("viesco-homework")}</Text>
-          <Switch
-            style={{ marginTop: 30 }}
-            trackColor={{ false: "#FA9700", true: "#2BAB6F" }}
-            onValueChange={toggleSwitch}
-            value={switchValue}
-          />
-          <Text>{I18n.t("viesco-session")}</Text>
-        </View>
-        {this.state.fetching ? <Loading /> : !switchValue ? this.renderHomeworks() : this.renderSessions()}
       </PageContainer>
     );
   }

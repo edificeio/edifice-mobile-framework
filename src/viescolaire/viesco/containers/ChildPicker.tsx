@@ -7,7 +7,7 @@ import { getChildrenList, getSelectedChild } from "../state/children";
 
 const mapStateToProps: (state: any) => any = state => {
   return {
-    children: getChildrenList(state),
+    childrenArray: getChildrenList(state),
     selectedChild: getSelectedChild(state),
   };
 };
