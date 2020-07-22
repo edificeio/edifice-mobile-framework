@@ -6,6 +6,7 @@ import { IStructureArray, IStructure } from "../state/structure";
 
 const styles = StyleSheet.create({
   container: {
+    zIndex: 20,
     marginTop: 10,
     paddingBottom: 10,
     marginHorizontal: 20,
