@@ -1,5 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
 import { getSessionInfo } from "../../../App";
 import { getSelectedStructure } from "../../viesco/state/structure";
@@ -24,14 +25,10 @@ const mapStateToProps: (state: any) => any = state => {
 };
 
 const mapDispatchToProps: (dispatch: any) => any = dispatch => {
-  return {
-    fetchCourses: (teacherId, structureId, startDate, endDate) => {
-      dispatch(fetchCoursesAction(teacherId, structureId, startDate, endDate));
-    },
-    fetchRegisterId: (course_data) => {
-      dispatch(fetchCoursesRegisterAction(course_data));
-    },
-  };
+  return bindActionCreators(
+    { fetchCourses: fetchCoursesAction, fetchRegisterId: fetchCoursesRegisterAction },
+    dispatch
+  );
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CallList);
