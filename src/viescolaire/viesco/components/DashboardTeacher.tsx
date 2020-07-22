@@ -2,6 +2,7 @@ import I18n from "i18n-js";
 import * as React from "react";
 import { View, StyleSheet, Image } from "react-native";
 
+import { CommonStyles } from "../../../styles/common/styles";
 import ConnectionTrackingBar from "../../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../../ui/ContainerContent";
 import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
@@ -16,7 +17,11 @@ const style = StyleSheet.create({
     backgroundColor: "white",
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
-    elevation: 5,
+    elevation: CommonStyles.elevation,
+    shadowColor: CommonStyles.shadowColor,
+    shadowOffset: CommonStyles.shadowOffset,
+    shadowOpacity: CommonStyles.shadowOpacity,
+    shadowRadius: CommonStyles.shadowRadius,
     marginBottom: 10,
   },
   grid: {
@@ -27,6 +32,11 @@ const style = StyleSheet.create({
     width: "50%",
     paddingVertical: 8,
     paddingHorizontal: 12,
+    elevation: CommonStyles.elevation,
+    shadowColor: CommonStyles.shadowColor,
+    shadowOffset: CommonStyles.shadowOffset,
+    shadowOpacity: CommonStyles.shadowOpacity,
+    shadowRadius: CommonStyles.shadowRadius,
   },
   gridButton: {
     borderRadius: 5,

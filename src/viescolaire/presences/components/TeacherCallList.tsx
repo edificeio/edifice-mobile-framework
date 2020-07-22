@@ -8,10 +8,21 @@ import { Icon } from "../../../ui";
 import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
 import { Text, TextBold } from "../../../ui/text";
 import { BottomColoredItem } from "../../viesco/components/Item";
+import { CommonStyles } from "../../../styles/common/styles";
 
-const CoursesCallSheet = ({ color, text, onPress, opacityNb }) => {
+const CoursesCallSheet = ({ color, text, onPress, isCourseNow }) => {
+  const courseNowStyle = isCourseNow
+    ? {
+        opacity: 1,
+        elevation: CommonStyles.elevation,
+        shadowColor: CommonStyles.shadowColor,
+        shadowOffset: CommonStyles.shadowOffset,
+        shadowOpacity: CommonStyles.shadowOpacity,
+        shadowRadius: CommonStyles.shadowRadius,
+      }
+    : { opacity: 0.4 };
   return (
-    <TouchableOpacity onPress={onPress} style={{ opacity: opacityNb }}>
+    <TouchableOpacity onPress={onPress} style={courseNowStyle}>
       <BottomColoredItem shadow style={style.coursesCardContainer} color={color}>
         <ImageBackground
           source={require("../../../../assets/viesco/presences.png")}
@@ -80,7 +91,7 @@ export default class CallList extends React.PureComponent<any, any> {
     }
   }
 
-  async getCourseRegisterId(course, index) {
+  async getCourseRegisterId(course) {
     let courseRegisterInfos = {
       id: course.id,
       classroom: course.roomLabels,
@@ -106,12 +117,11 @@ export default class CallList extends React.PureComponent<any, any> {
     this.props.navigation.navigate("CallSheetPage", { courseInfos: courseRegisterInfos });
   }
 
-  private _renderItem({ item, index }) {
-    const isCourseStarted = item.startDate.isAfter(moment());
-    const isCourseEnded = item.endDate.isAfter(moment());
+  private _renderItem({ item }) {
+    const isCourseNow = moment().isBetween(item.startDate, item.endDate);
     return (
       <CoursesCallSheet
-        onPress={() => this.getCourseRegisterId(item, index)}
+        onPress={() => this.getCourseRegisterId(item)}
         text={{
           start_hour: moment(item.startDate).format("LT"),
           end_hour: moment(item.endDate).format("LT"),
@@ -119,7 +129,7 @@ export default class CallList extends React.PureComponent<any, any> {
           classroom: item.roomLabels,
         }}
         color="#FFB600"
-        opacityNb={isCourseStarted || isCourseEnded ? 1 : 0.4}
+        isCourseNow={isCourseNow}
       />
     );
   }
@@ -175,7 +185,7 @@ export default class CallList extends React.PureComponent<any, any> {
               {I18n.t("viesco-register-date")} {moment().format("DD MMMM YYYY")}
             </TextBold>
             <View style={[style.noCallChip, { backgroundColor: "#E61610" }]} />
-            <Text style={style.noCallText}>{I18n.t("viesco-no-register-today")}</Text>
+            <TextBold style={style.noCallText}>{I18n.t("viesco-no-register-today")}</TextBold>
             <View style={[style.noCallChip, { backgroundColor: "#FFB600" }]} />
           </View>
         )}
