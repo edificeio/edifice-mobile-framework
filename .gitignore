@@ -5,8 +5,6 @@
 # Xcode
 #
 build/
-ios/Pods/
-ios/Podfile.lock
 *.pbxuser
 !default.pbxuser
 *.mode1v3
@@ -22,9 +20,6 @@ DerivedData
 *.hmap
 *.ipa
 *.xcuserstate
-
-# VS Code
-.vscode/
 
 # Android/IntelliJ
 #
@@ -82,8 +77,13 @@ assets/icons/*
 
 # Asset bundles
 ios/assets
-ios/appe/main.jsbundle
 
 # Metals (scala)
 .metals
 
+# Bundle artifact
+*.jsbundle
+
+# CocoaPods
+/ios/Pods/
+/ios/Podfile.lock

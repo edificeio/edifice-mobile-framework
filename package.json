@@ -41,7 +41,7 @@
     "querystring": "0.2.0",
     "react": "~16.9.0",
     "react-lifecycles-compat": "^3.0.4",
-    "react-native": "~0.61.5",
+    "react-native": "~0.63.1",
     "react-native-app-link": "1.0.0",
     "react-native-device-info": "^5.4.1",
     "react-native-document-picker": "~3.2.4",

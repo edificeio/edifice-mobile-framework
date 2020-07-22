@@ -16,7 +16,7 @@ module.exports = {
       },
     }),
   },
-  resolver:{
+  resolver: {
     blacklistRE: blacklist([
       /android\/app\/build\/.*/,
       /ios\/assets\/.*/
