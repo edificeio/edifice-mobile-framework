@@ -17,6 +17,11 @@ import HomeworkList from "../components/HomeworkList";
 import { getHomeworksListState } from "../state/homeworks";
 import { getSessionsListState } from "../state/sessions";
 
+enum switchState {
+  HOMEWORK,
+  SESSION,
+}
+
 type HomeworkListProps = {
   homeworks: any;
   sessions: any;
@@ -33,7 +38,7 @@ type HomeworkListProps = {
 };
 
 type HomeworkListState = {
-  switchValue: boolean;
+  switchValue: switchState;
   startDate: moment.Moment;
   endDate: moment.Moment;
   startHomeworksDate: moment.Moment;
@@ -46,7 +51,7 @@ class HomeworkListRelativeContainer extends React.PureComponent<HomeworkListProp
   constructor(props) {
     super(props);
     this.state = {
-      switchValue: false,
+      switchValue: switchState.HOMEWORK,
       startDate: moment(),
       endDate: moment().add(1, "week"),
       startHomeworksDate: moment(),
@@ -77,22 +82,32 @@ class HomeworkListRelativeContainer extends React.PureComponent<HomeworkListProp
   };
 
   onStartDateChange = startDate => {
-    if (this.state.switchValue) {
-      this.setState({ startDate, startSessionsDate: startDate });
-      this.updateSessions();
-    } else {
-      this.setState({ startDate, startHomeworksDate: startDate });
-      this.updateHomeworks();
+    switch (this.state.switchValue) {
+      case switchState.HOMEWORK: {
+        this.setState({ startDate, startHomeworksDate: startDate });
+        this.updateHomeworks();
+        break;
+      }
+      case switchState.SESSION: {
+        this.setState({ startDate, startSessionsDate: startDate });
+        this.updateSessions();
+        break;
+      }
     }
   };
 
   onEndDateChange = endDate => {
-    if (this.state.switchValue) {
-      this.setState({ endDate, endSessionsDate: endDate });
-      this.updateSessions();
-    } else {
-      this.setState({ endDate, endHomeworksDate: endDate });
-      this.updateHomeworks();
+    switch (this.state.switchValue) {
+      case switchState.HOMEWORK: {
+        this.setState({ endDate, endHomeworksDate: endDate });
+        this.updateHomeworks();
+        break;
+      }
+      case switchState.SESSION: {
+        this.setState({ endDate, endSessionsDate: endDate });
+        this.updateSessions();
+        break;
+      }
     }
   };
 
@@ -136,23 +151,28 @@ class HomeworkListRelativeContainer extends React.PureComponent<HomeworkListProp
     this.setState({ switchValue: value });
     const { startDate, endDate, startHomeworksDate, endHomeworksDate, startSessionsDate, endSessionsDate } = this.state;
     // fetching homeworks/sessions on switch only if last fetch was with different dates
-    if (value) {
-      if (
-        startDate.format("YYMMDD") !== startSessionsDate.format("YYMMDD") ||
-        endDate.format("YYMMDD") !== endSessionsDate.format("YYMMDD")
-      ) {
-        this.setState({ startSessionsDate: startDate, endSessionsDate: endDate }, () => {
-          this.updateSessions();
-        });
+    switch (value) {
+      case switchState.SESSION: {
+        if (
+          startDate.format("YYMMDD") !== startSessionsDate.format("YYMMDD") ||
+          endDate.format("YYMMDD") !== endSessionsDate.format("YYMMDD")
+        ) {
+          this.setState({ startSessionsDate: startDate, endSessionsDate: endDate }, () => {
+            this.updateSessions();
+          });
+        }
+        break;
       }
-    } else {
-      if (
-        startDate.format("YYMMDD") !== startHomeworksDate.format("YYMMDD") ||
-        endDate.format("YYMMDD") !== endHomeworksDate.format("YYMMDD")
-      ) {
-        this.setState({ startHomeworksDate: startDate, endHomeworksDate: endDate }, () => {
-          this.updateHomeworks();
-        });
+      case switchState.HOMEWORK: {
+        if (
+          startDate.format("YYMMDD") !== startHomeworksDate.format("YYMMDD") ||
+          endDate.format("YYMMDD") !== endHomeworksDate.format("YYMMDD")
+        ) {
+          this.setState({ startHomeworksDate: startDate, endHomeworksDate: endDate }, () => {
+            this.updateHomeworks();
+          });
+        }
+        break;
       }
     }
   };
@@ -164,7 +184,8 @@ class HomeworkListRelativeContainer extends React.PureComponent<HomeworkListProp
         {...this.state}
         onStartDateChange={this.onStartDateChange}
         onEndDateChange={this.onEndDateChange}
-        toggleSwitch={this.toggleSwitch}
+        switchValue={this.state.switchValue === switchState.SESSION ? true : false}
+        toggleSwitch={val => (val ? this.toggleSwitch(switchState.SESSION) : this.toggleSwitch(switchState.HOMEWORK))}
       />
     );
   }
