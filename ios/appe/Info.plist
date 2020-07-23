@@ -37,10 +37,10 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
 	<key>NSAppleMusicUsageDescription</key>
 	<string>$(PRODUCT_NAME) would like access to your media library</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>$(PRODUCT_NAME) would like to use bluetooth connection</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>$(PRODUCT_NAME) requires Bluetooth to connect to our hardware.</string>
 	<key>NSCalendarsUsageDescription</key>
@@ -61,8 +61,6 @@
 	<string>$(PRODUCT_NAME) would like access to your photo gallery to send photos to your educational network.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>$(PRODUCT_NAME) would like to use speech recognition</string>
-	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>$(PRODUCT_NAME) would like to use bluetooth connection</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>icomoon.ttf</string>
@@ -79,6 +77,8 @@
 	<array>
 		<string>remote-notification</string>
 	</array>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
@@ -88,11 +88,14 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
