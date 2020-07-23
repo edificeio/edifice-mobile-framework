@@ -13,42 +13,43 @@ import { fetchPeriodsListAction, fetchYearAction } from "../../viesco/actions/pe
 import { getSelectedChild } from "../../viesco/state/children";
 import { getPeriodsListState, getYearState } from "../../viesco/state/periods";
 import { getStudentEvents } from "../actions/events";
-import History from "../components/History";
+import HistoryComponent from "../components/History";
 import { getHistoryEvents } from "../state/events";
 
-class AbsenceHistory extends React.PureComponent<
-  {
-    navigation: NavigationScreenProp<any>;
-    data: any;
-    getEvents: any;
-    getPeriods: any;
-    getYear: any;
-    events: any;
-    year: any;
-    periods: any;
-    childId: string;
-    structureId: string;
-    groupId: string;
-  },
-  {
-    selected: number;
-    period: {
-      order: number;
-      start_date: moment.Moment;
-      end_date: moment.Moment;
-    };
-    periods: any[];
-    events: {
-      justified: any[];
-      unjustified: any[];
-      lateness: any[];
-      departure: any[];
-      incidents: any[];
-      punishments: any[];
-      notebooks: any[];
-    };
-  }
-> {
+interface HistoryProps {
+  navigation: NavigationScreenProp<any>;
+  data: any;
+  getEvents: any;
+  getPeriods: any;
+  getYear: any;
+  events: any;
+  year: any;
+  periods: any;
+  childId: string;
+  structureId: string;
+  groupId: string;
+}
+
+interface HistoryState {
+  selected: number;
+  period: {
+    order: number;
+    start_date: moment.Moment;
+    end_date: moment.Moment;
+  };
+  periods: any[];
+  events: {
+    justified: any[];
+    unjustified: any[];
+    lateness: any[];
+    departure: any[];
+    incidents: any[];
+    punishments: any[];
+    notebooks: any[];
+  };
+}
+
+class History extends React.PureComponent<HistoryProps, HistoryState> {
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
     return standardNavScreenOptions(
       {
@@ -165,7 +166,7 @@ class AbsenceHistory extends React.PureComponent<
   public render() {
     return (
       <PageContainer>
-        <History
+        <HistoryComponent
           {...this.props}
           events={this.state.events}
           onPeriodChange={this.onPeriodChange}
@@ -216,4 +217,4 @@ const mapDispatchToProps = (dispatch: any) =>
     dispatch
   );
 
-export default connect(mapStateToProps, mapDispatchToProps)(AbsenceHistory);
+export default connect(mapStateToProps, mapDispatchToProps)(History);
