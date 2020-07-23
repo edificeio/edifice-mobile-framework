@@ -4,8 +4,8 @@ import { connect } from "react-redux";
 import { NavigationScreenProp, NavigationState } from "react-navigation";
 import { hasNotch } from "react-native-device-info";
 import { ThunkDispatch } from "redux-thunk";
-import { TextInput, TouchableWithoutFeedback, TouchableOpacity, FlatList } from "react-native-gesture-handler";
-import { View, ScrollView, KeyboardAvoidingView, Platform, Keyboard, Image, Text } from "react-native";
+import { TextInput, TouchableWithoutFeedback, TouchableOpacity } from "react-native-gesture-handler";
+import { View, ScrollView, KeyboardAvoidingView, Platform, Keyboard } from "react-native";
 
 import { Icon, Loading } from "../../ui";
 import { HeaderBackAction, HeaderAction } from "../../ui/headers/NewHeader";
@@ -19,12 +19,12 @@ import { IBlog } from "../state/publishableBlogs";
 import { IUserInfoState } from "../../user/state/info";
 import { CommonStyles } from "../../styles/common/styles";
 import { publishBlogPostAction } from "../actions/publish";
-import pickFile from "../../infra/actions/pickFile";
 import { ContentUri } from "../../types/contentUri";
 import { uploadDocument, formatResults } from "../../workspace/actions/helpers/documents";
 import { FilterId } from "../../workspace/types";
 import { resourceHasRight } from "../../utils/resourceRights";
 import withViewTracking from "../../infra/tracker/withViewTracking";
+import { AttachmentPicker } from "../../ui/AttachmentPicker";
 
 export interface ICreatePostDataProps {
   user: IUserInfoState;
@@ -54,8 +54,8 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
   constructor(props: ICreatePostPageProps) {
     super(props);
     this.state = {
-      title: '',
-      content: '',
+      title: "",
+      content: "",
       images: [],
     }
     this.props.navigation.setParams({
@@ -64,11 +64,12 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
     })
   }
 
+  public attachmentPickerRef: any;
+
   render() {
     const { title, content, images } = this.state;
     const { user, navigation } = this.props;
     const imagesAdded = images.length > 0;
-    const carouselImages = images.map(image => ({ src: { uri: image.uri }, alt: "image" }));
 
     return (
       <PageContainer style={{ flex: 1 }}>
@@ -166,12 +167,7 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
               >
                 <TouchableOpacity
                   style={{ alignItems: "center", justifyContent: "center", flexDirection: imagesAdded ? "row" : "column", marginVertical: 10 }}
-                  onPress={() => {
-                    pickFile(true)
-                      .then(selectedImage => {
-                        this.setState({ images: [...images, selectedImage] })
-                      })
-                  }}
+                  onPress={() => this.attachmentPickerRef.onPickAttachment()}
                 >
                   <A style={{ marginRight: imagesAdded ? 5 : 0 }}>{I18n.t('createPost-create-mediaField')}</A>
                   <Icon
@@ -180,68 +176,17 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
                     color={CommonStyles.actionColor}
                   />
                 </TouchableOpacity>
-
-                {imagesAdded &&
-                  <FlatList
-                    data={images}
-                    horizontal
-                    persistentScrollbar
-                    renderItem={({ item, index }) => {
-                      return (
-                        <View style={{ paddingTop: 20 }}>
-                          <TouchableOpacity
-                            onPress={() => navigation.navigate("carouselModal", { images: carouselImages, startIndex: index })}
-                            style={{
-                              shadowColor: "#6B7C93",
-                              shadowOffset: { width: 0, height: 2 },
-                              shadowOpacity: 0.8,
-                              elevation: 10,
-                              backgroundColor: "white",
-                              marginRight: index === images.length - 1 ? 15 : 30,
-                            }}
-                          >
-                            <Image
-                              source={{ uri: item.uri }}
-                              style={{ width: 110, height: 110 }}
-                              resizeMode="cover"
-                            />
-                          </TouchableOpacity>
-                          <View style={{ position: "absolute", left: 85, top: -7 }}>
-                            <TouchableOpacity
-                              onPress={() => {
-                                let imagesToPublish = [...images];
-                                imagesToPublish.splice(index, 1);
-                                this.setState({ images: imagesToPublish });
-                              }}
-                              style={{
-                                width: 50,
-                                height: 50,
-                                justifyContent: "center",
-                                alignItems: "center"
-                              }}
-                            >
-                              <Icon
-                                name="close"
-                                style={{
-                                  width: 30,
-                                  height: 30,
-                                  borderRadius: 15,
-                                  paddingVertical: 6,
-                                  paddingHorizontal: 6,
-                                  marginTop: 2,
-                                  marginRight: 2,
-                                  backgroundColor: CommonStyles.lightGrey,
-                                  overflow: "hidden",
-                                }}
-                                size={18}
-                              />
-                            </TouchableOpacity>
-                          </View>
-                        </View>
-                      )
-                    }}
-                  />
-                }
+                <AttachmentPicker
+                  ref={r => (this.attachmentPickerRef = r)}
+                  onlyImages
+                  attachments={images}
+                  onAttachmentSelected={selectedImage => {
+                    this.setState({ images: [...images, selectedImage] })
+                  }}
+                  onAttachmentRemoved={imagesToSend => {
+                    this.setState({ images: imagesToSend });
+                  }}
+                />
               </View>
             </TouchableWithoutFeedback>
           </ScrollView>
@@ -304,10 +249,10 @@ CreatePostPageOK.navigationOptions = ({ navigation }: { navigation: NavigationSc
       headerLeft: <HeaderBackAction navigation={navigation} />,
       headerRight: navigation.getParam('uploadingPostDocuments')
         ? <Loading
-          small
-          customColor={CommonStyles.lightGrey}
-          customStyle={{ paddingHorizontal: 18 }}
-        />
+            small
+            customColor={CommonStyles.lightGrey}
+            customStyle={{ paddingHorizontal: 18 }}
+          />
         : <HeaderAction
           navigation={navigation}
           title={navigation.getParam('blog') && navigation.getParam('userinfo')

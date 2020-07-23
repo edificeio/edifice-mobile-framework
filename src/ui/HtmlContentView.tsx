@@ -125,7 +125,7 @@ export class HtmlContentView extends React.PureComponent<
   
   public render() {
     const { error, jsx, attachments, loading } = this.state
-    const { loadingComp, emptyMessage} = this.props
+    const { loadingComp, emptyMessage, onDownload, onError, onDownloadAll, onOpen } = this.props
     const hasContent = jsx && jsx.props.children.some((child: any) => child != undefined && child != null)
     const loadingComponent = loadingComp || <Loading />;
     const hasAttachments = attachments && attachments.length;
@@ -151,10 +151,10 @@ export class HtmlContentView extends React.PureComponent<
             ? <AttachmentGroup
                 attachments={attachments}
                 containerStyle={{ marginTop: 12 }}
-                onDownload={this.props.onDownload}
-                onError={this.props.onError}
-                onDownloadAll={this.props.onDownloadAll}
-                onOpen={this.props.onOpen}
+                onDownload={onDownload}
+                onError={onError}
+                onDownloadAll={onDownloadAll}
+                onOpen={onOpen}
               />
             : null
           }

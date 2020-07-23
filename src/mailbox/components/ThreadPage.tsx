@@ -14,9 +14,10 @@
 // Libraries
 import style from "glamorous-native";
 import * as React from "react";
+import { hasNotch } from "react-native-device-info";
 
 // Components
-import { KeyboardAvoidingView, Platform, RefreshControl } from "react-native";
+import { KeyboardAvoidingView, Platform, RefreshControl, Dimensions } from "react-native";
 const { View, FlatList } = style;
 import styles from "../../styles";
 
@@ -35,6 +36,7 @@ import { IConversationThread } from "../reducers/threadList";
 import ThreadInput from "./ThreadInput";
 import { Dispatch } from "redux";
 import { NavigationScreenProp } from "react-navigation";
+import { TouchableOpacity as RNGHTouchableOpacity } from "react-native-gesture-handler";
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -65,10 +67,12 @@ export type IThreadPageProps = IThreadPageDataProps &
 
 export interface IThreadPageState {
   fetching: boolean;
+  isDimmed: boolean;
 }
 
 export const defaultState: IThreadPageState = {
   fetching: false,
+  isDimmed: false,
 };
 
 // Main component ---------------------------------------------------------------------------------
@@ -121,7 +125,9 @@ export class ThreadPage extends React.PureComponent<
       messages,
       headerHeight
     } = this.props;
-    const { fetching } = this.state;
+    const { fetching, isDimmed } = this.state;
+    const screenWidth = Dimensions.get("window").width;
+    const screenHeight = Dimensions.get("window").height;
     const messagesData = messages && messages.map(message => {
       return {
         ...message,
@@ -141,45 +147,62 @@ export class ThreadPage extends React.PureComponent<
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
-        keyboardVerticalOffset={headerHeight}
+        keyboardVerticalOffset={Platform.OS === "ios" ? hasNotch() ? 44 /*(status bar height)*/ + 51 : 51 : headerHeight}
       >
-        {threadInfo.isFetchingFirst
-          ? <Loading />
-          :
-            <FlatList
-              refreshControl={
-                <RefreshControl
-                  refreshing={fetching}
-                  onRefresh={() => {
-                    this.setState({ fetching: true })
-                    onGetNewer(threadInfo.id)
-                  }}
-                  style={{ transform: [{ scaleY: -1 }] }}
-                />
-              }
-              data={messagesData}
-              renderItem={({ item }) => this.renderMessageItem(item)}
-              style={styles.grid}
-              inverted={true}
-              keyExtractor={(item: IConversationMessage) => item.id}
-              onEndReached={() => {
-                if (!this.onEndReachedCalledDuringMomentum) {
-                  onGetOlder(threadInfo.id);
-                  this.onEndReachedCalledDuringMomentum = true;
+        <View style={{flex: 1}}>
+          {threadInfo.isFetchingFirst
+            ? <Loading />
+            : <View style={{flex: 1, marginBottom: 81}}>
+                {isDimmed
+                  ? <View
+                      style={{
+                        position: "absolute",
+                        zIndex: 1,
+                        backgroundColor: "grey",
+                        opacity: 0.5,
+                        width: screenWidth,
+                        height: screenHeight
+                      }}
+                    />
+                  : null
                 }
-              }}
-              onEndReachedThreshold={0.1}
-              onMomentumScrollBegin={() => {
-                this.onEndReachedCalledDuringMomentum = false;
-              }}
-            />
-        }
-        <ThreadInput
-          emptyThread={!messages.length}
-          displayPlaceholder={!isFetchingFirst}
-          onReceiversTap={this.handleTapReceivers}
-          {...this.props}
-        />
+                <FlatList
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={fetching}
+                      onRefresh={() => {
+                        this.setState({ fetching: true })
+                        onGetNewer(threadInfo.id)
+                      }}
+                      style={{ transform: [{ scaleY: -1 }] }}
+                    />
+                  }
+                  data={messagesData}
+                  renderItem={({ item }) => this.renderMessageItem(item)}
+                  style={styles.grid}
+                  inverted={true}
+                  keyExtractor={(item: IConversationMessage) => item.id}
+                  onEndReached={() => {
+                    if (!this.onEndReachedCalledDuringMomentum) {
+                      onGetOlder(threadInfo.id);
+                      this.onEndReachedCalledDuringMomentum = true;
+                    }
+                  }}
+                  onEndReachedThreshold={0.1}
+                  onMomentumScrollBegin={() => {
+                    this.onEndReachedCalledDuringMomentum = false;
+                  }}
+                />
+              </View>
+          }
+          <ThreadInput
+            emptyThread={!messages.length}
+            displayPlaceholder={!isFetchingFirst}
+            onReceiversTap={this.handleTapReceivers}
+            onDimBackground={dim => this.setState({ isDimmed: dim })}
+            {...this.props}
+          />
+        </View>
       </KeyboardAvoidingView>
     );
   }

@@ -1,19 +1,18 @@
 import style from "glamorous-native";
 import I18n from "i18n-js";
 import * as React from "react";
-import { Platform, View } from "react-native";
+import { Platform, View, Dimensions } from "react-native";
 import { connect } from "react-redux";
 
-import { CommonStyles } from "../../styles/common/styles";
-import conversationConfig from "../config";
-
-import { IConversationMessage, sendMessage } from "../actions/sendMessage";
-import { sendPhoto } from "../actions/sendPhoto";
-
-import { IconOnOff } from "../../ui";
+import { IconOnOff, Loading } from "../../ui";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { Line } from "../../ui/Grid";
-import { ToggleIcon } from "../../ui/ToggleIcon";
+import { IconButton } from "../../ui/IconButton";
+import { IAttachmentSend, IAttachment } from "../../ui/Attachment";
+import { AttachmentPicker } from "../../ui/AttachmentPicker";
+import { CommonStyles } from "../../styles/common/styles";
+import conversationConfig from "../config";
+import { createDraft, sendAttachments, sendMessage, IConversationMessage } from "../actions/sendMessage";
 import { IConversationThread } from "../reducers/threadList";
 import ThreadInputReceivers from "./ThreadInputReceiver";
 import { getSessionInfo } from "../../App";
@@ -37,21 +36,21 @@ const ChatIcon = style(TouchableOpacity)({
   width: 58
 });
 
-const SendContainer = style(TouchableOpacity)({
+const ActionContainer = style(TouchableOpacity)({
   alignItems: "center",
   alignSelf: "flex-end",
-  height: 40,
   justifyContent: "center",
+  height: 40,
+  width: 58,
   paddingBottom: 10,
   paddingLeft: 20,
-  paddingRight: 10,
-  width: 58
+  paddingRight: 10
 });
 
 const TextInput = style.textInput({
   lineHeight: 20,
   margin: 0,
-  maxHeight: 81,
+  maxHeight: 110,
   paddingVertical: 5,
   width: "100%"
 });
@@ -62,7 +61,7 @@ const ContainerInput = style.view({
   paddingLeft: 20,
   paddingRight: 10,
   paddingTop: Platform.OS === "ios" ? 10 : 0,
-  width: "100%"
+  width: Dimensions.get("window").width,
 });
 
 class ThreadInput extends React.PureComponent<
@@ -71,25 +70,36 @@ class ThreadInput extends React.PureComponent<
     lastMessage: IConversationMessage;
     emptyThread: boolean;
     displayPlaceholder: boolean;
-    send: (data: any) => Promise<void>;
-    sendPhoto: (data: any) => Promise<void>;
+    createDraft: (data: any) => Promise<string>;
+    sendAttachments: (attachments: IAttachmentSend[], messageId: string) => Promise<IAttachment[]>;
+    sendMessage: (data: any, attachments?: IAttachment[], messageId?: string) => Promise<void>;
     onGetNewer: (threadId: string) => void;
     onReceiversTap: (
       conversation: IConversationThread | IConversationMessage
     ) => void;
+    onDimBackground: (dim: boolean) => void;
   },
   {
+    newThreadId: string;
     selected: Selected;
     textMessage: string;
-    newThreadId: string;
+    attachments: IAttachmentSend[];
+    sending: boolean;
+    isHalfScreen: boolean;
+    attachmentsHeightHalfScreen: number;
   }
 > {
   private input: any;
+  public attachmentPickerRef: any;
 
   public state = {
     newThreadId: undefined,
     selected: Selected.none,
-    textMessage: ""
+    textMessage: "",
+    attachments: [],
+    sending: false,
+    isHalfScreen: false,
+    attachmentsHeightHalfScreen: undefined
   };
 
   public static findReceivers2(
@@ -109,44 +119,35 @@ class ThreadInput extends React.PureComponent<
     return [...to];
   }
 
-  private async sendPhoto() {
-    const { thread, lastMessage, sendPhoto, onGetNewer } = this.props;
-    const { newThreadId } = this.state;
-
-    this.input && this.input.innerComponent.blur();
-
-    await onGetNewer(thread.id)
-    await sendPhoto({
-      cc: thread.cc,
-      parentId: lastMessage.id,
-      subject: "Re: " + thread.subject,
-      threadId: newThreadId || thread.id,
-      to: ThreadInput.findReceivers2(thread)
-    });
-  }
-
   private async onValid() {
-    const { thread, lastMessage, send, onGetNewer } = this.props;
-    const { textMessage } = this.state;
-
-    this.input && this.input.innerComponent.setNativeProps({ keyboardType: "default" });
-    this.input && this.input.innerComponent.blur();
-
-    this.setState({
-      textMessage: ""
-    });
-    // console.log("thread object ", thread);
-    // console.log("last message", lastMessage);
-    await onGetNewer(thread.id)
-    await send({
-      body: `<div>${textMessage.replace(/\n/g, '<br>')}</div>`,
+    const { thread, lastMessage, onGetNewer, createDraft, sendAttachments, sendMessage } = this.props;
+    const { attachments, textMessage } = this.state;
+    const attachmentsToSend = attachments;
+    const attachmentsAdded = attachments.length > 0;
+    const messageData = {
+      body: textMessage ? `<div>${textMessage.replace(/\n/g, '<br>')}</div>` : undefined,
       cc: thread.cc,
       displayNames: thread.displayNames,
       parentId: lastMessage ? lastMessage.id : undefined,
       subject: "Re: " + thread.subject,
       threadId: thread.id,
       to: ThreadInput.findReceivers2(thread)
-    });
+    }
+
+    this.input && this.input.innerComponent.setNativeProps({ keyboardType: "default" });
+    this.input && this.input.innerComponent.blur();
+    this.setState({textMessage: "", attachments: [], sending: true});
+
+    await onGetNewer(thread.id)
+    if (attachmentsAdded) {
+      const messageId = await createDraft(messageData);
+      const sentAttachments = await sendAttachments(attachmentsToSend, messageId);
+      await sendMessage(messageData, sentAttachments, messageId);
+      this.setState({sending: false});
+    } else {
+      await sendMessage(messageData);
+      this.setState({sending: false});
+    }
   }
 
   public focus() {
@@ -180,9 +181,19 @@ class ThreadInput extends React.PureComponent<
       />
     );
   }
+
+  componentDidUpdate() {
+    const { onDimBackground } = this.props;
+    const { attachments } = this.state;
+    const attachmentsAdded = attachments.length > 0;
+    attachmentsAdded ? onDimBackground(true) : onDimBackground(false);
+  }
+
   public render() {
-    const { selected, textMessage } = this.state;
+    const { selected, textMessage, attachments, sending, isHalfScreen, attachmentsHeightHalfScreen } = this.state;
     const { displayPlaceholder, thread, lastMessage } = this.props;
+    const attachmentsAdded = attachments.length > 0;
+    const halfDeviceHeight = Dimensions.get("window").height/2;
     const receiversIds = lastMessage
       ? ThreadInput.findReceivers2(lastMessage)
       : [];
@@ -193,65 +204,94 @@ class ThreadInput extends React.PureComponent<
       : thread.displayNames
           .filter(dN => receiversIds.indexOf(dN[0]) > -1)
           .map(dN => dN[1]);
-    // console.log("rerender thread input", receiverNames);
     const showReceivers =
       (selected == Selected.keyboard ||
         (textMessage && textMessage.length > 0)) &&
       receiverNames.length >= 2;
     // iOS hack => does not display placeholder on update
+
     return (
-      <View>
-        <ThreadInputReceivers
-          names={receiverNames}
-          show={showReceivers}
-          onPress={() => this.props.onReceiversTap(lastMessage || thread)}
-        />
-        <ContainerFooterBar>
-          <ContainerInput>
-            {displayPlaceholder &&
-              this.props.emptyThread &&
-              this.renderInput(
-                textMessage,
-                I18n.t("conversation-chatPlaceholder")
-              )}
-            {displayPlaceholder &&
-              !this.props.emptyThread &&
-              this.renderInput(
-                textMessage,
-                I18n.t("conversation-responsePlaceholder")
-              )}
-          </ContainerInput>
-          <Line style={{ height: 40 }}>
-            <ChatIcon
-              onPress={() => {
-                if (this.state.selected === Selected.keyboard)
-                  this.input && this.input.innerComponent.blur();
-                else this.input && this.input.innerComponent.focus();
-              }}
-            >
-              <IconOnOff
-                focused={true}
-                name={"keyboard"}
-                style={{ marginLeft: 4 }}
-              />
-            </ChatIcon>
-            {/*Platform.OS !== "ios"*/ false ? ( // TODO : we hide this for both ios & android for the moment.
+      <View
+        style={{ maxHeight: halfDeviceHeight, position: "absolute", bottom: 0 }}
+        onLayout={event => {
+          const { height } = event.nativeEvent.layout;
+          this.setState({ isHalfScreen: height === halfDeviceHeight })
+        }}
+      >
+        <View 
+          onLayout={event => {
+            const { height: inputHeight } = event.nativeEvent.layout;
+            this.setState({ attachmentsHeightHalfScreen: halfDeviceHeight - inputHeight })
+          }}
+        >
+          <ThreadInputReceivers
+            names={receiverNames}
+            show={showReceivers}
+            onPress={() => this.props.onReceiversTap(lastMessage || thread)}
+          />
+          <ContainerFooterBar>
+            <ContainerInput>
+              {displayPlaceholder &&
+                this.props.emptyThread &&
+                this.renderInput(
+                  textMessage,
+                  I18n.t("conversation-chatPlaceholder")
+                )}
+              {displayPlaceholder &&
+                !this.props.emptyThread &&
+                this.renderInput(
+                  textMessage,
+                  I18n.t("conversation-responsePlaceholder")
+                )}
+            </ContainerInput>
+            <Line style={{ height: 40 }}>
               <ChatIcon
-                onPress={() => this.sendPhoto()}
-                style={{ marginBottom: 5 }}
+                onPress={() => {
+                  if (this.state.selected === Selected.keyboard)
+                    this.input && this.input.innerComponent.blur();
+                  else this.input && this.input.innerComponent.focus();
+                }}
               >
-                <IconOnOff name={"camera"} />
+                <IconOnOff
+                  focused={true}
+                  name={"keyboard"}
+                  style={{ marginLeft: 4 }}
+                />
               </ChatIcon>
-            ) : null}
-            {!!this.state.textMessage ? (
-              <View style={{ flex: 1, alignItems: "flex-end" }}>
-                <SendContainer onPress={() => this.onValid()}>
-                  <ToggleIcon show={true} icon={"send_icon"} />
-                </SendContainer>
+              <View style={{ flex: 1, justifyContent: "flex-end", flexDirection: "row"}}>
+                <ActionContainer onPress={() => this.attachmentPickerRef.onPickAttachment()}>
+                  <IconButton
+                    iconName="attached"
+                    iconStyle={{transform: [{ rotate: "270deg" }]}}
+                    iconColor={CommonStyles.primary}
+                    buttonStyle={{borderColor: CommonStyles.primary, borderWidth: 1, backgroundColor: undefined}}
+                  />
+                </ActionContainer>
+                <ActionContainer
+                  disabled={sending}
+                  onPress={() => textMessage || attachmentsAdded ? this.onValid() : null}
+                >
+                  {sending
+                    ? <Loading small/>
+                    : <IconButton iconName="send_icon" disabled={!(textMessage || attachmentsAdded)}/>
+                  }
+                </ActionContainer>
               </View>
-            ) : null}
-          </Line>
-        </ContainerFooterBar>
+            </Line>
+          </ContainerFooterBar>
+        </View>
+        <AttachmentPicker
+          ref={r => (this.attachmentPickerRef = r)}
+          attachments={attachments}
+          onAttachmentSelected={selectedAttachment => {
+            this.setState({ attachments: [...attachments, selectedAttachment] })
+          }}
+          onAttachmentRemoved={attachmentsToSend => {
+            this.setState({ attachments: attachmentsToSend });
+          }}
+          isContainerHalfScreen={isHalfScreen}
+          attachmentsHeightHalfScreen={attachmentsHeightHalfScreen}
+        />
       </View>
     );
   }
@@ -272,30 +312,18 @@ export default connect(
       state[conversationConfig.reducerName].threadList.data.byId[
         selectedThreadId
       ];
-    /*console.log(
-      "messages",
-      selectedThread,
-      state[conversationConfig.reducerName].messages,
-      selectedThread.messages[0]
-    );*/
     const lastMessage =
       state[conversationConfig.reducerName].messages.data[
         selectedThread.messages[0]
       ];
-
-    // console.log("selected thread last message:", lastMessage);
-    /*const receiversIds = lastMessage
-      ? ThreadInput.findReceivers2(lastMessage)
-      : [];
-    // console.log("receiversIds", receiversIds);*/
-
     return {
       lastMessage,
       thread: selectedThread
     };
   },
   dispatch => ({
-    send: (data: any) => dispatch<any>(sendMessage(data)),
-    sendPhoto: (data: any) => sendPhoto(dispatch)(data)
+    createDraft: (data: any) => dispatch<any>(createDraft(data)),
+    sendAttachments: (attachments: IAttachmentSend[], messageId: string) => dispatch<any>(sendAttachments(attachments, messageId)),
+    sendMessage: (data: any, attachments?: IAttachmentSend[], messageId?: string) => dispatch<any>(sendMessage(data, attachments, messageId)),
   })
 )(ThreadInput);

@@ -9,15 +9,12 @@ import {
   Platform
 } from "react-native";
 import RNFetchBlob, { FetchBlobResponse } from "rn-fetch-blob";
-
 import Permissions, { PERMISSIONS } from "react-native-permissions";
-
-import { CommonStyles } from "../styles/common/styles";
-
-import { getAuthHeader } from "../infra/oauth";
-
 import Filesize from "filesize";
 import Mime from "mime";
+
+import { CommonStyles } from "../styles/common/styles";
+import { getAuthHeader } from "../infra/oauth";
 import { ButtonsOkCancel, Icon } from ".";
 import TouchableOpacity from "./CustomTouchableOpacity";
 import {
@@ -28,17 +25,25 @@ import {
 } from "./Modal";
 import { notifierShowAction } from "../infra/notifier/actions";
 import Notifier from "../infra/notifier/container";
+import { IconButton } from "./IconButton";
+import { mainNavNavigate } from "../navigation/helpers/navHelper";
 
 export interface IAttachment {
-  url: string;
-  filename?: string;
+  charset?: string;
+  contentTransferEncoding?: string;
+  contentType?: string;
   displayName?: string;
+  filename?: string;
   id?: string;
   name?: string;
-  charset?: string;
-  contentType?: string;
-  contentTransferEncoding?: string;
-  size: number; // in Bytes
+  size?: number; // in Bytes
+  url: string;
+}
+
+export interface IAttachmentSend {
+  mime: string;
+  name: string;
+  uri: string;
 }
 
 export enum DownloadState {
@@ -71,7 +76,7 @@ const attachmentIconsByFileExt: Array<{
     icon: "file-archive"
   },
   {
-    exts: ["png", "jpg", "jpeg"],
+    exts: ["png", "jpg", "jpeg", "gif", "tiff", "bmp", "heif", "heic"],
     icon: "picture"
   }
 ];
@@ -90,11 +95,11 @@ const getAttachmentIconByExt = (filename: string) => {
 
   return icon;
 };
-const openDownloadedFile = (notifierId: string, localFile?: string) => {
+const openFile = (notifierId: string, filePath?: string) => {
   return (dispatch) => {
-    if (localFile) {
+    if (filePath) {
       if (Platform.OS === "ios") {
-        (RNFetchBlob.ios.openDocument(localFile) as unknown as Promise<any>) // TS declaration for RNFetchBlob iOS is incomplete
+        (RNFetchBlob.ios.openDocument(filePath) as unknown as Promise<any>) // TS declaration for RNFetchBlob iOS is incomplete
           .catch(error => {
             dispatch(notifierShowAction({
               id: notifierId,
@@ -106,7 +111,7 @@ const openDownloadedFile = (notifierId: string, localFile?: string) => {
             }));
           })
       } else if (Platform.OS === "android") {
-        RNFetchBlob.android.actionViewIntent(localFile, Mime.getType(localFile) || "text/plain")
+        RNFetchBlob.android.actionViewIntent(filePath, Mime.getType(filePath) || "text/plain")
         // FIXME: implement catch (does not work on android, for now)
           // .catch(error => {
           //   dispatch(notifierShowAction({
@@ -134,24 +139,28 @@ const openDownloadedFile = (notifierId: string, localFile?: string) => {
 
 class Attachment extends React.PureComponent<
   {
-    attachment: IAttachment;
+    attachment: IAttachment | IAttachmentSend;
     starDownload: boolean;
     style: ViewStyle;
-    onOpenDownloadedFile: (notifierId: string, localFile?: string) => void;
-    onDownload?: (att: IAttachment) => void;
-    onError?: (att: IAttachment) => void;
-    onOpen?: (att: IAttachment) => void;
+    editMode?: boolean;
+    onRemove?: () => void;
+    onOpenFile: (notifierId: string, filePath?: string) => void;
+    onDownload?: () => void;
+    onError?: () => void;
+    onOpen?: () => void;
   },
   {
     downloadState: DownloadState;
     progress: number; // From 0 to 1
     showModal: boolean;
-    localFile?: string;
+    downloadedFile?: string;
   }
 > {
-  get attId() { 
-    const { attachment } = this.props;
-    return attachment.url && attachment.url.split('/').pop();
+  get attId() {
+    const { attachment, editMode } = this.props;
+    return editMode
+      ? (attachment as IAttachmentSend).uri && (attachment as IAttachmentSend).uri.split('/').pop()
+      : (attachment as IAttachment).url && (attachment as IAttachment).url!.split('/').pop();
   }
 
   public constructor(props) {
@@ -168,12 +177,12 @@ class Attachment extends React.PureComponent<
     const { downloadState } = this.state;
     const canDownload = this.attId && downloadState !== DownloadState.Success && downloadState !== DownloadState.Downloading;
     if(prevProps.starDownload !== starDownload){
-      canDownload && this.startDownload(attachment);
+      canDownload && this.startDownload(attachment as IAttachment);
     }
   }
 
   public render() {
-    const { attachment: att, style } = this.props;
+    const { attachment: att, style, editMode, onRemove } = this.props;
     const { downloadState, progress } = this.state;
     const notifierId = `attachment/${this.attId}`;
 
@@ -181,13 +190,13 @@ class Attachment extends React.PureComponent<
       <View style={{ flex: 0 }}>
         <Notifier id={notifierId} />
         <TouchableOpacity
+          onPress={() => this.onPressAttachment(notifierId)}
           style={{
             alignItems: "center",
             flex: 0,
             flexDirection: "row",
             ...style
           }}
-          onPress={() => this.onPressAttachment(notifierId)}
         >
           <View
             style={{
@@ -197,7 +206,7 @@ class Attachment extends React.PureComponent<
               width: downloadState === DownloadState.Success ? 0 : `${progress * 100}%`
             }}
           />
-          <View style={{ padding: 12, flex: 0, flexDirection: "row" }}>
+          <View style={{ padding: 12, flex: 0, flexDirection: "row", alignItems: "center" }}>
             {downloadState === DownloadState.Downloading ? (
               <ActivityIndicator
                 size="small"
@@ -222,7 +231,12 @@ class Attachment extends React.PureComponent<
               <Icon
                 color={CommonStyles.textColor}
                 size={16}
-                name={getAttachmentIconByExt(att.filename || att.displayName || "")}
+                name={getAttachmentIconByExt(
+                  (editMode && (att as IAttachmentSend).name)
+                  || (att as IAttachment).filename
+                  || (att as IAttachment).displayName
+                  || ""
+                )}
                 style={{ flex: 0, marginRight: 8 }}
               />
             }
@@ -247,7 +261,10 @@ class Attachment extends React.PureComponent<
                   textDecorationStyle: "solid"
                 }}
               >
-                {att.filename || att.displayName || I18n.t("download-untitled")} {!this.attId && I18n.t("download-invalidUrl")}
+                {(editMode && (att as IAttachmentSend).name)
+                || (att as IAttachment).filename
+                || (att as IAttachment).displayName
+                || I18n.t("download-untitled")} {!this.attId && I18n.t("download-invalidUrl")}
               </Text>
             </Text>
             <Text
@@ -262,6 +279,16 @@ class Attachment extends React.PureComponent<
                 ? " " + I18n.t("tryagain")
                 : null}
             </Text>
+            {editMode
+            ? <TouchableOpacity onPress={() => onRemove && onRemove()}>
+                <IconButton
+                  iconName="close"
+                  iconColor="#000000"
+                  buttonStyle={{ backgroundColor: CommonStyles.lightGrey }}
+                />
+              </TouchableOpacity>
+            : null
+            }
           </View>
         </TouchableOpacity>
         {this.renderModal()}
@@ -279,15 +306,15 @@ class Attachment extends React.PureComponent<
           <ModalContentBlock>
             <ModalContentText>
               {I18n.t("download-confirm", {
-                name: att.filename || att.displayName || I18n.t("download-untitled"),
-                size: att.size ? ` (${Filesize(att.size, { round: 1 })})` : ""
+                name: (att as IAttachment).filename || (att as IAttachment).displayName || I18n.t("download-untitled"),
+                size: (att as IAttachment).size ? ` (${Filesize((att as IAttachment).size, { round: 1 })})` : ""
               })}
             </ModalContentText>
           </ModalContentBlock>
           <ModalContentBlock>
             <ButtonsOkCancel
               onCancel={() => this.setState({ showModal: false })}
-              onValid={() => this.startDownload(att)}
+              onValid={() => this.startDownload(att as IAttachment)}
               title={I18n.t("download")}
             />
           </ModalContentBlock>
@@ -297,18 +324,23 @@ class Attachment extends React.PureComponent<
   }
 
   public onPressAttachment(notifierId: string) {
-    const { onOpenDownloadedFile, attachment } = this.props;
-    const { downloadState, localFile } = this.state;
+    const { onOpenFile, onOpen, attachment, editMode } = this.props;
+    const { downloadState, downloadedFile } = this.state;
+    const filePath = editMode ? (attachment as IAttachmentSend).uri : downloadedFile;
+    const fileType = editMode ? (attachment as IAttachmentSend).mime : (attachment as IAttachment).contentType;
+    const carouselImage = [{ src: { uri: filePath }, alt: "image" }];
 
-    if(!this.attId) {
+    if (!this.attId) {
       return undefined
+    } else if (editMode || downloadState === DownloadState.Success) {
+      onOpen && onOpen();
+      fileType && fileType.startsWith("image")
+        ? mainNavNavigate("carouselModal", { images: carouselImage })
+        : onOpenFile(notifierId, filePath);
     } else if (downloadState === DownloadState.Idle) {
       this.setState({ showModal: true });
-    } else if (downloadState === DownloadState.Success) {
-      onOpenDownloadedFile(notifierId, localFile);
-      this.props.onOpen && this.props.onOpen(attachment);
     } else if (downloadState === DownloadState.Error) {
-      this.startDownload(attachment);
+      this.startDownload(attachment as IAttachment);
     }
   }
 
@@ -328,87 +360,89 @@ class Attachment extends React.PureComponent<
   }
 
   public async startDownload(att: IAttachment) {
-    if (Platform.OS === "android") {
-      await Permissions.request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
-    }
+    if (att.url) {
+      if (Platform.OS === "android") {
+        await Permissions.request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
+      }
 
-    this.setState({
-      downloadState: DownloadState.Downloading,
-      showModal: false
-    });
+      this.setState({
+        downloadState: DownloadState.Downloading,
+        showModal: false
+      });
 
-    let fetchPromise;
+      let fetchPromise;
 
-    if (Platform.OS !== "ios" && Platform.OS !== "android") {
-      // tslint:disable-next-line:no-console
-      console.warn("Cannot handle file for devices other than ios/android.");
-    } else {
-      fetchPromise = RNFetchBlob.config({
-        fileCache: true
+      if (Platform.OS !== "ios" && Platform.OS !== "android") {
+        // tslint:disable-next-line:no-console
+        console.warn("Cannot handle file for devices other than ios/android.");
+      } else {
+        fetchPromise = RNFetchBlob.config({
+          fileCache: true
+        })
+          .fetch(
+            "GET",
+            att.url,
+            getAuthHeader()
+          )
+          .progress((received, total) => {
+            const fileSize = att.size || total;
+            this.setState({
+              progress: received / fileSize
+            });
+            // TODO: wait for RNFetchBlob tu accept this PR (https://github.com/joltup/rn-fetch-blob/pull/558),
+            // which solves an issue (https://github.com/joltup/rn-fetch-blob/issues/275) that prevents several
+            // progress bars from being displayed in parallel (iOs-only)
+          })
+          .then(res => {
+            // the temp file path
+            const originalName = this.getOriginalName(res, att);
+            const formattedOriginalName = originalName && originalName.replace(/\//g, "_");
+            const baseDir = Platform.OS === "android" ? dirs.DownloadDir || dirs.DocumentDir : dirs.DocumentDir;
+            const newpath = `${baseDir}/${formattedOriginalName}`;
+            if (!originalName) throw new Error("file can't be saved (unknown name and extension)");
+
+            RNFetchBlob.fs.exists(newpath)
+              .then(exists => {
+                exists
+                ? RNFetchBlob.fs.unlink(newpath)
+                    .then(() => RNFetchBlob.fs.mv(res.path(), newpath))
+                    .then(() => this.setState({ downloadedFile: newpath }))
+                    .catch((errorMessage) => console.log(errorMessage))
+                : RNFetchBlob.fs.mv(res.path(), newpath)
+                    .then(() => this.setState({ downloadedFile: newpath }))
+                    .catch((errorMessage) => console.log(errorMessage))
+              })
+
+            this.props.onDownload && this.props.onDownload();
+          })
+          .catch(errorMessage => {
+            // error handling 
+            console.log(errorMessage);
+            this.props.onError && this.props.onError();
+          })
+      }
+
+      fetchPromise && fetchPromise.then(res => {
+        this.setState({
+          downloadState: DownloadState.Success,
+          progress: 1
+        });
       })
-        .fetch(
-          "GET",
-          att.url,
-          getAuthHeader()
-        )
-        .progress((received, total) => {
-          const fileSize = att.size || total;
-          this.setState({
-            progress: received / fileSize
-          });
-          // TODO: wait for RNFetchBlob tu accept this PR (https://github.com/joltup/rn-fetch-blob/pull/558),
-          // which solves an issue (https://github.com/joltup/rn-fetch-blob/issues/275) that prevents several
-          // progress bars from being displayed in parallel (iOs-only)
-        })
-        .then(res => {
-          // the temp file path
-          const originalName = this.getOriginalName(res, att);
-          const formattedOriginalName = originalName && originalName.replace(/\//g, "_");
-          const baseDir = Platform.OS === "android" ? dirs.DownloadDir || dirs.DocumentDir : dirs.DocumentDir;
-          const newpath = `${baseDir}/${formattedOriginalName}`;
-          if (!originalName) throw new Error("file can't be saved (unknown name and extension)");
-
-          RNFetchBlob.fs.exists(newpath)
-            .then(exists => {
-              exists
-              ? RNFetchBlob.fs.unlink(newpath)
-                  .then(() => RNFetchBlob.fs.mv(res.path(), newpath))
-                  .then(() => this.setState({ localFile: newpath }))
-                  .catch((errorMessage) => console.log(errorMessage))
-              : RNFetchBlob.fs.mv(res.path(), newpath)
-                  .then(() => this.setState({ localFile: newpath }))
-                  .catch((errorMessage) => console.log(errorMessage))
-            })
-
-          this.props.onDownload && this.props.onDownload(att);
-        })
-        .catch(errorMessage => {
-          // error handling 
-          console.log(errorMessage);
-          this.props.onError && this.props.onError(att);
-        })
+      .catch((errorMessage, statusCode) => {
+        // error handling
+        console.log("Error downloading", statusCode, errorMessage);
+        this.setState({
+          downloadState: DownloadState.Error,
+          progress: 0
+        });
+      });
     }
-
-    fetchPromise && fetchPromise.then(res => {
-      this.setState({
-        downloadState: DownloadState.Success,
-        progress: 1
-      });
-    })
-    .catch((errorMessage, statusCode) => {
-      // error handling
-      console.log("Error downloading", statusCode, errorMessage);
-      this.setState({
-        downloadState: DownloadState.Error,
-        progress: 0
-      });
-    });
   }
 }
 
 export default connect(
   null,
   dispatch => ({
-    onOpenDownloadedFile: (notifierId, localFile) => dispatch(openDownloadedFile(notifierId, localFile))
+    onOpenFile: (notifierId, filePath) => dispatch(openFile(notifierId, filePath))
   })
 )(Attachment);

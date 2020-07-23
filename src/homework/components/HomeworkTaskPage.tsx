@@ -92,10 +92,10 @@ export class HomeworkTaskPage extends React.PureComponent<
           <HtmlContentView
             style={{ paddingTop: 20 }}
             html={taskContent}
-            onDownload={att => Trackers.trackEvent("Homeworks", "DOWNLOAD ATTACHMENT")}
-            onError={att => Trackers.trackEvent("Homeworks", "DOWNLOAD ATTACHMENT ERROR")}
-            onDownloadAll={() => Trackers.trackEvent("Homeworks", "DOWNLOAD ALL ATTACHMENTS")}
-            onOpen={() => Trackers.trackEvent("Homeworks", "OPEN ATTACHMENT")}/>
+            onDownload={att => Trackers.trackEvent("Homeworks", "DOWNLOAD ATTACHMENT", "Read mode")}
+            onError={att => Trackers.trackEvent("Homeworks", "DOWNLOAD ATTACHMENT ERROR", "Read mode")}
+            onDownloadAll={() => Trackers.trackEvent("Homeworks", "DOWNLOAD ALL ATTACHMENTS", "Read mode")}
+            onOpen={() => Trackers.trackEvent("Homeworks", "OPEN ATTACHMENT", "Read mode")}/>
         </ScrollView>
       </PageContainer>
     );

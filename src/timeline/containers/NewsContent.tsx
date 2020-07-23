@@ -439,10 +439,10 @@ INewsContentPageProps,
               iframes: true,
               images: true
             }}
-            onDownload={att => Trackers.trackEvent("Timeline", "DOWNLOAD ATTACHMENT")}
-            onError={att => Trackers.trackEvent("Timeline", "DOWNLOAD ATTACHMENT ERROR")}
-            onDownloadAll={() => Trackers.trackEvent("Timeline", "DOWNLOAD ALL ATTACHMENTS")}
-            onOpen={() => Trackers.trackEvent("Timeline", "OPEN ATTACHMENT")}
+            onDownload={att => Trackers.trackEvent("Timeline", "DOWNLOAD ATTACHMENT", "Read mode")}
+            onError={att => Trackers.trackEvent("Timeline", "DOWNLOAD ATTACHMENT ERROR", "Read mode")}
+            onDownloadAll={() => Trackers.trackEvent("Timeline", "DOWNLOAD ALL ATTACHMENTS", "Read mode")}
+            onOpen={() => Trackers.trackEvent("Timeline", "OPEN ATTACHMENT", "Read mode")}
           />
         : 
           null

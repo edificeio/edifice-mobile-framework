@@ -1,5 +1,6 @@
 import * as React from "react";
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, FlatList } from "react-native";
+import { TouchableOpacity as RNGHTouchableOpacity } from "react-native-gesture-handler";
 import I18n from "i18n-js";
 import { BubbleStyle } from "./BubbleStyle";
 import { Bold, A } from "./Typography";
@@ -11,9 +12,13 @@ export class AttachmentGroup extends React.PureComponent<
   {
     attachments: Array<IAttachment>;
     containerStyle?: any;
-    onDownload?: (att: IAttachment) => void;
-    onError?: (att: IAttachment) => void;
-    onOpen?: (att: IAttachment) => void;
+    editMode?: boolean;
+    isContainerHalfScreen?: boolean;
+    attachmentsHeightHalfScreen?: number;
+    onRemove?: (index: number) => void;
+    onDownload?: () => void;
+    onError?: () => void;
+    onOpen?: () => void;
     onDownloadAll?: () => void;
   },
   {
@@ -28,44 +33,56 @@ export class AttachmentGroup extends React.PureComponent<
   }
 
   public render() {
-    const { attachments, containerStyle } = this.props;
+    const { 
+      attachments,editMode,
+      containerStyle,
+      isContainerHalfScreen,
+      attachmentsHeightHalfScreen,
+      onRemove,
+      onDownload,
+      onDownloadAll,
+      onError,
+      onOpen
+    } = this.props;
     const { downloadAll } = this.state;
-
     return (
       <View style={containerStyle}>
-        <BubbleStyle
-          style={{
-            flex: 1,
-            marginTop: 0,
-            marginBottom: 0,
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <View style={{ flexDirection: "row" }}>
-            <Bold style={{ marginRight: 5 }}>
-              {I18n.t(`attachment${attachments.length > 1 ? "s" : ""}`)}
-            </Bold>
-            <Icon
-              color={CommonStyles.textColor}
-              size={16}
-              name={"attached"}
-              style={{ flex: 0, marginRight: 8, transform: [{ rotate: "270deg" }] }}
-            />
-          </View>
-          {attachments.length > 1
-          ? <TouchableOpacity
-              onPress={() => {
-                this.setState({ downloadAll: true })
-                this.props.onDownloadAll && this.props.onDownloadAll()
+        {editMode
+          ? null
+          : <BubbleStyle
+              style={{
+                flex: 1,
+                marginTop: 0,
+                marginBottom: 0,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
               }}
             >
-              <A style={{ fontSize: 12 }}>{I18n.t("download-all")}</A>
-            </TouchableOpacity>
-          : null
-          }
-        </BubbleStyle>
+              <View style={{ flexDirection: "row" }}>
+                <Bold style={{ marginRight: 5 }}>
+                  {I18n.t(`attachment${attachments.length > 1 ? "s" : ""}`)}
+                </Bold>
+                <Icon
+                  color={CommonStyles.textColor}
+                  size={16}
+                  name={"attached"}
+                  style={{ flex: 0, marginRight: 8, transform: [{ rotate: "270deg" }] }}
+                />
+              </View>
+              {attachments.length > 1
+              ? <TouchableOpacity
+                  onPress={() => {
+                    this.setState({ downloadAll: true });
+                    onDownloadAll && onDownloadAll();
+                  }}
+                >
+                  <A style={{ fontSize: 12 }}>{I18n.t("download-all")}</A>
+                </TouchableOpacity>
+              : null
+              }
+            </BubbleStyle>
+        }
         <BubbleStyle
           style={{
             flex: 1,
@@ -73,18 +90,24 @@ export class AttachmentGroup extends React.PureComponent<
             marginTop: 0,
             marginBottom: 0,
           }}
-        >
-          {attachments.map((att, index) => (
-            <Attachment
-              key={index}
-              attachment={att}
-              starDownload={downloadAll}
-              onDownload={this.props.onDownload}
-              onError={this.props.onError}
-              onOpen={this.props.onOpen}
-              style={{ marginTop: index === 0 ? 0 : 2 }}
-            />
-          ))}
+        > 
+          <FlatList
+            style={{maxHeight: isContainerHalfScreen ? attachmentsHeightHalfScreen : undefined}} // TODO: refactor (use flex/height, instead of props)
+            data={attachments}
+            renderItem={({ item, index }) => 
+              <Attachment
+                key={index}
+                attachment={item}
+                starDownload={downloadAll}
+                onDownload={onDownload}
+                onError={onError}
+                onOpen={onOpen}
+                style={{marginTop: index === 0 ? 0 : 2}}
+                editMode={editMode}
+                onRemove={() => onRemove && onRemove(index)}
+              />       
+            }
+          />
         </BubbleStyle>
       </View>
     )

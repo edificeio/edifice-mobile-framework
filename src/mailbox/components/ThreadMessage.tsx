@@ -87,19 +87,19 @@ export default class ThreadMessage extends React.PureComponent<
       from = "",
       status
     } = this.props;
-
     const hasAttachments = attachments && attachments.length;
     const isMine = from === getSessionInfo().userId;
     // medium-text is used to write previous sender
     // should be replaced with better selector for stability
-    // console.log("body message", body);
     const receiverText =
       to.length > 1
         ? I18n.t("conversation-receivers", { count: to.length })
         : I18n.t("conversation-receiver");
-    if (!body) {
-      return <style.View />;
+
+    if (!(body || attachments)) {
+      return <View />;
     }
+
     const getSenderText = (displayNames: Array<[string, string, boolean]>, from: string) => {
       if (displayNames) {
         const res = displayNames.find(el => el && el[0] === from);
@@ -140,24 +140,23 @@ export default class ThreadMessage extends React.PureComponent<
               </MessageInfosStatus>
             </MessageInfosDetails>
           </MessageInfos>
-          {body ? (
-            <MessageBubble
-              contentHtml={body}
-              isMine={isMine}
-              hasAttachments={hasAttachments}
-            />
-          ) : (
-              <View />
-            )}
+          {body
+            ? <MessageBubble
+                contentHtml={body}
+                isMine={isMine}
+                hasAttachments={hasAttachments}
+              />
+           : null
+          }
           {hasAttachments
             ? <AttachmentGroup
-              attachments={attachments}
-              containerStyle={{ flex: 1, marginLeft: 25 }}
-              onDownload={att => Trackers.trackEvent("Conversation", "DOWNLOAD ATTACHMENT")}
-              onError={att => Trackers.trackEvent("Conversation", "DOWNLOAD ATTACHMENT ERROR")}
-              onDownloadAll={() => Trackers.trackEvent("Conversation", "DOWNLOAD ALL ATTACHMENTS")}
-              onOpen={() => Trackers.trackEvent("Conversation", "OPEN ATTACHMENT")}
-            />
+                attachments={attachments}
+                containerStyle={{ flex: 1, marginLeft: 25 }}
+                onDownload={() => Trackers.trackEvent("Conversation", "DOWNLOAD ATTACHMENT", "Read mode")}
+                onError={() => Trackers.trackEvent("Conversation", "DOWNLOAD ATTACHMENT ERROR", "Read mode")}
+                onDownloadAll={() => Trackers.trackEvent("Conversation", "DOWNLOAD ALL ATTACHMENTS", "Read mode")}
+                onOpen={() => Trackers.trackEvent("Conversation", "OPEN ATTACHMENT", "Read mode")}
+              />
             : null
           }
         </MessageContainer>
