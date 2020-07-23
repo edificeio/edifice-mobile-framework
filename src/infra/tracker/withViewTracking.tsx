@@ -60,7 +60,7 @@ export default function withViewTracking<
         return <WrappedComponent {...restProps} />;
       }
     }
-    (WithViewTracking as React.ComponentClass<AllProps, ComponentState>).displayName = `WithSubscription(${getDisplayName(WrappedComponent)})`;
+    (WithViewTracking as React.ComponentClass<AllProps, ComponentState>).displayName = `WithViewTracking(${getDisplayName(WrappedComponent)})`;
     const RefForwardingFactory = (props: AllProps, ref: React.Component<ComponentProps, ComponentState>) => (
       <WithViewTracking {...props} forwardedRef={ref} />
     );
