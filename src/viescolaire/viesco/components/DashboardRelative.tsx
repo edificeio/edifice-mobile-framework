@@ -166,7 +166,7 @@ export default class Dashboard extends React.PureComponent<any & DashboardProps>
 
     return (
       <View style={{ flex: 1 }}>
-        <ChildPicker />
+        <ChildPicker declareAbsence={id => this.props.navigation.navigate("Declaration", { id })} />
         {this.renderNavigationGrid()}
         <ScrollView>
           {this.renderHomework(homeworks)}
