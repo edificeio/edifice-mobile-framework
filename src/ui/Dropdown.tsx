@@ -9,6 +9,7 @@ import { TextBold } from "./text";
 
 interface IDropdownProps<T, V> {
   style?: ViewStyle;
+  containerStyle?: ViewStyle;
   value?: V;
   data: T[];
   onSelect: (item: V) => void;
@@ -110,7 +111,7 @@ export default class Dropdown<T, V> extends React.PureComponent<IDropdownProps<T
     const selectedItem = getSelectedItem();
 
     return (
-      <View style={{ flex: 1 }}>
+      <View style={[{ flex: 1 }, this.props.containerStyle]}>
         <SelectedValue
           style={this.props.style}
           onLayout={onLayout}
