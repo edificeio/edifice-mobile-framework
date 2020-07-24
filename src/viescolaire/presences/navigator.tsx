@@ -6,15 +6,9 @@ import TeacherCallSheet from "./containers/TeacherCallSheet";
 
 export default createStackNavigator(
   {
-    CallSheetPage: {
-      screen: TeacherCallSheet,
-    },
-    DeclareEvent: {
-      screen: DeclareEvent,
-    },
-    History: {
-      screen: History,
-    },
+    CallSheetPage: TeacherCallSheet,
+    DeclareEvent,
+    History,
   },
   {
     headerMode: "screen",
