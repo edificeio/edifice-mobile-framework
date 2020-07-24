@@ -71,14 +71,14 @@ export class AttachmentGroup extends React.PureComponent<
                 />
               </View>
               {attachments.length > 1
-              ? <TouchableOpacity
+              ? <RNGHTouchableOpacity
                   onPress={() => {
                     this.setState({ downloadAll: true });
                     onDownloadAll && onDownloadAll();
                   }}
                 >
                   <A style={{ fontSize: 12 }}>{I18n.t("download-all")}</A>
-                </TouchableOpacity>
+              </RNGHTouchableOpacity>
               : null
               }
             </BubbleStyle>

@@ -17,6 +17,7 @@ import { CommonStyles } from "../styles/common/styles";
 import { getAuthHeader } from "../infra/oauth";
 import { ButtonsOkCancel, Icon } from ".";
 import TouchableOpacity from "./CustomTouchableOpacity";
+import { TouchableOpacity as RNGHTouchableOpacity } from "react-native-gesture-handler";
 import {
   ModalBox,
   ModalContent,
@@ -189,7 +190,7 @@ class Attachment extends React.PureComponent<
     return (
       <View style={{ flex: 0 }}>
         <Notifier id={notifierId} />
-        <TouchableOpacity
+        <RNGHTouchableOpacity
           onPress={() => this.onPressAttachment(notifierId)}
           style={{
             alignItems: "center",
@@ -280,17 +281,17 @@ class Attachment extends React.PureComponent<
                 : null}
             </Text>
             {editMode
-            ? <TouchableOpacity onPress={() => onRemove && onRemove()}>
+              ? <RNGHTouchableOpacity onPress={() => onRemove && onRemove()}>
                 <IconButton
                   iconName="close"
                   iconColor="#000000"
                   buttonStyle={{ backgroundColor: CommonStyles.lightGrey }}
                 />
-              </TouchableOpacity>
+              </RNGHTouchableOpacity>
             : null
             }
           </View>
-        </TouchableOpacity>
+        </RNGHTouchableOpacity>
         {this.renderModal()}
       </View>
     );

@@ -6,6 +6,7 @@ import { View } from "react-native";
 import { CommonStyles } from "../../styles/common/styles";
 import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
+import { TouchableOpacity as RNGHTouchableOpacity } from "react-native-gesture-handler";
 import { DateView } from "../../ui/DateView";
 import { HtmlContentView } from "../../ui/HtmlContentView";
 import { BubbleStyle } from "../../ui/BubbleStyle";
@@ -123,7 +124,7 @@ export default class ThreadMessage extends React.PureComponent<
                 <ReceiverText numberOfLines={1} ellipsizeMode="tail">
                   {senderText}
                 </ReceiverText>
-                <TouchableOpacity
+                <RNGHTouchableOpacity
                   onPress={() => this.props.onTapReceivers()}
                   style={{ flexDirection: "row" }}
                 >
@@ -133,7 +134,7 @@ export default class ThreadMessage extends React.PureComponent<
                   <ReceiverLink>
                     <ReceiverText>{receiverText}</ReceiverText>
                   </ReceiverLink>
-                </TouchableOpacity>
+                </RNGHTouchableOpacity>
               </View>
               <MessageInfosStatus style={{ flex: 0 }}>
                 <MessageStatus status={status} date={date} />

@@ -36,6 +36,7 @@ import { IConversationThread } from "../reducers/threadList";
 import ThreadInput from "./ThreadInput";
 import { Dispatch } from "redux";
 import { NavigationScreenProp } from "react-navigation";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import { TouchableOpacity as RNGHTouchableOpacity } from "react-native-gesture-handler";
 
 // Props definition -------------------------------------------------------------------------------
@@ -52,8 +53,9 @@ export interface IThreadPageDataProps {
 export interface IThreadPageEventProps {
   onGetNewer?: (threadId: string) => void;
   onGetOlder?: (threadId: string) => void;
-  onTapReceivers?(message: IConversationMessage)
-  onTapReceiversFromThread?(thread: IConversationThread)
+  onTapReceivers?: (message: IConversationMessage) => void;
+  onTapReceiversFromThread?: (thread: IConversationThread) => void;
+  onSelectMessage?: (message: IConversationMessage) => void;
 }
 
 export interface IThreadPageOtherProps {
@@ -209,7 +211,15 @@ export class ThreadPage extends React.PureComponent<
 
   public renderMessageItem(message: IConversationMessage) {
     return (
-      <View>
+      <RNGHTouchableOpacity
+        onLongPress={() => {
+          this.props.onSelectMessage && this.props.onSelectMessage(message);
+          console.log("onLongPress", message);
+        }}
+        onPressIn={() => {
+          console.log("onPressIn", message);
+        }}
+      >
         {/*!this.todaySeparatorAlreadyDisplayed &&
           message.date.isSameOrAfter(today(), "day") &&
         this.renderTodaySeparator()*/
@@ -220,7 +230,7 @@ export class ThreadPage extends React.PureComponent<
           {...message}
           onTapReceivers={() => this.handleTapReceivers(message)}
         />
-      </View>
+      </RNGHTouchableOpacity>
     );
   }
   public handleTapReceivers = (message: IConversationMessage) => {

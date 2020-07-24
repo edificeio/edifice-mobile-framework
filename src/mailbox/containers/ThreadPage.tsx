@@ -81,12 +81,13 @@ const mapDispatchToProps: (
 
 class ThreadPageContainer extends React.PureComponent<
   IThreadPageProps & { dispatch: any }, 
-  {}
+  { selectedMessage?: IConversationMessage }
   > {
 
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
     const showDetails = navigation.getParam("showDetails", false);
     const threadInfo = navigation.getParam("threadInfo");
+    const selectedMessage: IConversationMessage | undefined = navigation.getParam("selectedMessage");
     return standardNavScreenOptions({
         headerLeft: showDetails ? null : <HeaderBackAction navigation={navigation} />,
         headerRight: showDetails ? null : <View />,
@@ -101,8 +102,7 @@ class ThreadPageContainer extends React.PureComponent<
             ? deviceInfoModule.hasNotch()
               ? 100 + 160 : 56 + 160
             : deviceInfoModule.hasNotch()
-              ? 100 : 56,
-          overflow: "hidden"
+              ? 100 : 56
         },
         headerLeftContainerStyle: {
           alignItems: "flex-start"
@@ -201,7 +201,12 @@ class ThreadPageContainer extends React.PureComponent<
   }
 
   public render() {
-    return <ThreadPage {...this.props} />;
+    return <ThreadPage {...this.props}
+      onSelectMessage={(message) => {
+        // this.setState({selectedMessage: message});
+        this.props.navigation?.setParams({ selectedMessage: message });
+      }}
+    />;
   }
 }
 
