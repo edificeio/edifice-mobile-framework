@@ -75,6 +75,7 @@ export default class ThreadMessage extends React.PureComponent<
       images: Array<{ src: string; alt: string }>
     ) => void;
     onTapReceivers: () => void;
+    selected?: boolean;
   },
   undefined
   > {
@@ -111,9 +112,14 @@ export default class ThreadMessage extends React.PureComponent<
       return I18n.t("unknown-user");
     }
     const senderText = getSenderText(this.props.displayNames, from);
+    console.log("threadMessage", this.props.selected, this.props.id);
 
     return (
-      <MessageBlock style={{ flex: 0 }}>
+      <MessageBlock style={{
+        flex: 0,
+        backgroundColor: this.props.selected ? CommonStyles.nonLue : undefined,
+        borderWidth: 8,
+        borderColor: CommonStyles.lightGrey }}>
         <MessageContainer style={{ flex: 0 }}>
           <MessageInfos style={{ flex: 0 }}>
             <MessageInfosDetails style={{ flex: 0 }}>
@@ -213,5 +219,5 @@ const MessageBlock = style.view({
   flexDirection: "row",
   justifyContent: "flex-start",
   marginRight: 0,
-  padding: 15
+  padding: 15 - 8
 });

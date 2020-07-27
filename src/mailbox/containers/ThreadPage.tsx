@@ -17,8 +17,8 @@ import {
 import { createActionReceiversDisplay, createActionThreadReceiversDisplay } from "../actions/displayReceivers";
 import { IConversationMessage, IConversationThread, IConversationMessageList } from "../reducers";
 import { NavigationScreenProp } from "react-navigation";
-import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
-import { HeaderBackAction, HeaderIcon } from "../../ui/headers/NewHeader";
+import { standardNavScreenOptions, alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
+import { HeaderBackAction, HeaderIcon, HeaderAction } from "../../ui/headers/NewHeader";
 import { getSessionInfo } from "../../App";
 import { RowAvatars } from "../../ui/avatars/RowAvatars";
 import { Size } from "../../ui/avatars/Avatar";
@@ -88,13 +88,28 @@ class ThreadPageContainer extends React.PureComponent<
     const showDetails = navigation.getParam("showDetails", false);
     const threadInfo = navigation.getParam("threadInfo");
     const selectedMessage: IConversationMessage | undefined = navigation.getParam("selectedMessage");
-    return standardNavScreenOptions({
+    if (selectedMessage) {
+      return alternativeNavScreenOptions({
+        headerLeft: <HeaderAction name="close" onPress={() => {
+          navigation?.setParams({ selectedMessage: undefined });
+        }}/>,
+        headerRight: <View style={{ flexDirection: "row" }}>
+          <HeaderAction title={I18n.t("reply")} />
+          <HeaderAction title={I18n.t("transfer")}/>
+        </View>,
+        headerStyle: {
+          backgroundColor: CommonStyles.orangeColorTheme
+        },
+        headerTitle: null
+      }, navigation);
+    } else {
+      return standardNavScreenOptions({
         headerLeft: showDetails ? null : <HeaderBackAction navigation={navigation} />,
         headerRight: showDetails ? null : <View />,
         headerTitle: threadInfo ?
           showDetails ?
             ThreadPageContainer.renderDetailsThreadHeader(threadInfo, navigation)
-          :
+            :
             ThreadPageContainer.renderThreadHeader(threadInfo, navigation)
           : <View><Text>Loading</Text></View>,
         headerStyle: {
@@ -114,6 +129,7 @@ class ThreadPageContainer extends React.PureComponent<
           alignItems: "flex-start",
         }
       }, navigation);
+    }
   }
 
   static getAvatarsAndNamesSet(threadInfo: IConversationThread) {

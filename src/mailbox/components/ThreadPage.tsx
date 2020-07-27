@@ -210,6 +210,7 @@ export class ThreadPage extends React.PureComponent<
   }
 
   public renderMessageItem(message: IConversationMessage) {
+    console.log("this.message.id", message.id, this.props.navigation?.getParam('selectedMessage'));
     return (
       <RNGHTouchableOpacity
         onLongPress={() => {
@@ -229,6 +230,7 @@ export class ThreadPage extends React.PureComponent<
         <ThreadMessage
           {...message}
           onTapReceivers={() => this.handleTapReceivers(message)}
+          selected={this.props.navigation?.getParam('selectedMessage')?.id == message.id}
         />
       </RNGHTouchableOpacity>
     );
