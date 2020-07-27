@@ -112,7 +112,7 @@ export default class ThreadMessage extends React.PureComponent<
       return I18n.t("unknown-user");
     }
     const senderText = getSenderText(this.props.displayNames, from);
-    console.log("threadMessage", this.props.selected, this.props.id);
+    // console.log("threadMessage", this.props.selected, this.props.id);
 
     return (
       <MessageBlock style={{

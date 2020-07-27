@@ -210,15 +210,15 @@ export class ThreadPage extends React.PureComponent<
   }
 
   public renderMessageItem(message: IConversationMessage) {
-    console.log("this.message.id", message.id, this.props.navigation?.getParam('selectedMessage'));
+    // console.log("this.message.id", message.id, this.props.navigation?.getParam('selectedMessage'));
     return (
       <RNGHTouchableOpacity
         onLongPress={() => {
           this.props.onSelectMessage && this.props.onSelectMessage(message);
-          console.log("onLongPress", message);
+          // console.log("onLongPress", message);
         }}
         onPressIn={() => {
-          console.log("onPressIn", message);
+          // console.log("onPressIn", message);
         }}
       >
         {/*!this.todaySeparatorAlreadyDisplayed &&

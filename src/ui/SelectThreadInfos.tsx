@@ -38,10 +38,10 @@ const FieldName = style.text({
 
 
 export default class SelectThreadInfos extends React.Component<
-  { remainingUsers; pickedUsers; onPickUser; onUnpickUser; onSelectSubject },
-  { searchText: string; subjectText: string; max: number }
+  { remainingUsers; pickedUsers; onPickUser; onUnpickUser; onSelectSubject; subject; },
+  { searchText: string; subjectText?: string; max: number }
 > {
-  state = { searchText: "", subjectText: "", max: 20 };
+  state = { searchText: "", subjectText: undefined, max: 20 };
   input: any;
 
   public inputRef: any;
@@ -82,8 +82,9 @@ export default class SelectThreadInfos extends React.Component<
   };
 
   public render() {
-    const { searchText, subjectText } = this.state;
-    const { onUnpickUser, pickedUsers } = this.props;
+    let { searchText, subjectText } = this.state;
+    const { onUnpickUser, pickedUsers, subject } = this.props;
+    subjectText = subjectText ?? subject;
     let index = 0;
     return (
       <PageContainer>

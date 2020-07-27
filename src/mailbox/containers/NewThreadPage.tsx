@@ -19,6 +19,7 @@ import { ThunkDispatch } from "redux-thunk";
 import conversationThreadSelected from "../actions/threadSelected";
 import { selectSubject, clearSubject } from "../actions/selectSubject";
 import withViewTracking from "../../infra/tracker/withViewTracking";
+import { IConversationMessage } from "../reducers";
 
 interface INewThreadPageProps {
   remainingUsers: IUser[];
@@ -61,11 +62,40 @@ class NewThreadPage extends React.PureComponent<
 
   public componentDidMount() {
     this.props.loadVisibles();
+    // Setup form navigation params
+    if (this.props.navigation.getParam('message')) {
+      const message: IConversationMessage = this.props.navigation.getParam('message');
+      const type: string = this.props.navigation.getParam('type', 'new');
+      // console.log("setup message", type, message, this.props);
+      // Subject
+      let subject: string | undefined = undefined;
+      if (message.subject) {
+        if (type === 'reply') {
+          subject = message.subject.startsWith("Re: ") ? message.subject : "Re: " + message.subject;
+        } else if (type === 'transfer') {
+          subject = message.subject.startsWith("Tr: ") ? message.subject : "Tr: " + message.subject;
+        }
+      }
+      subject && this.props.selectSubject && this.props.selectSubject(subject);
+      // Receivers
+      if (type === 'reply') {
+        const receivers: IUser[] = message.to ? (message.to as string[]).map(uid => ({
+          userId: uid,
+          displayName: (() => {
+            const dn: [string, string, boolean] | undefined = message.displayNames ? (message.displayNames as Array<[string, string, boolean]>).find(e => e[0] === uid) : undefined;
+            return dn ? dn[1] : undefined;
+          })()
+        })).filter(e => e.displayName) as IUser[] : [];
+        receivers.forEach(u => this.props.pickUser(u));
+      }
+    }
   }
 
   public handleCreateThread() {
     const threadInfo = this.props.createAndSelectThread(this.props.pickedUsers, this.props.subject);
-    this.props.navigation.replace("thread", { threadInfo });
+    const message: IConversationMessage = this.props.navigation.getParam('message');
+    const type: string = this.props.navigation.getParam('type', 'new');
+    this.props.navigation.replace("thread", { threadInfo, message, type });
   }
 
   public updateHeaderProps() {
@@ -102,6 +132,7 @@ class NewThreadPage extends React.PureComponent<
             this.props.unpickUser(user);
           }}
           pickedUsers={this.props.pickedUsers}
+          subject={this.props.subject}
           remainingUsers={this.props.remainingUsers}
         />
       </PageContainer>
