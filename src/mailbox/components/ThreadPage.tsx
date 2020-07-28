@@ -48,6 +48,7 @@ export interface IThreadPageDataProps {
   threadInfo?: IConversationThread; // global thread information
   messages?: IConversationMessage[]; // message info & content for all given messageIds in threadInfo. Given from the most recent to the oldest one.
   headerHeight?: number; // header height, really ?
+  backMessage?: IConversationMessage;
 }
 
 export interface IThreadPageEventProps {

@@ -16,6 +16,8 @@ import { createDraft, sendAttachments, sendMessage, IConversationMessage } from 
 import { IConversationThread } from "../reducers/threadList";
 import ThreadInputReceivers from "./ThreadInputReceiver";
 import { getSessionInfo } from "../../App";
+import { MessageBubble } from "./ThreadMessage";
+import { ScrollView } from "react-native-gesture-handler";
 
 // TODO : Debt : Needs to be refactored.
 
@@ -78,6 +80,7 @@ class ThreadInput extends React.PureComponent<
       conversation: IConversationThread | IConversationMessage
     ) => void;
     onDimBackground: (dim: boolean) => void;
+    backMessage?: IConversationMessage;
   },
   {
     newThreadId: string;
@@ -280,6 +283,11 @@ class ThreadInput extends React.PureComponent<
             </Line>
           </ContainerFooterBar>
         </View>
+        {this.props.backMessage ? <ScrollView style={{ maxHeight: 150 }}>
+          <MessageBubble
+            contentHtml={this.props.backMessage.body}
+          />
+        </ScrollView> : null}
         <AttachmentPicker
           ref={r => (this.attachmentPickerRef = r)}
           attachments={attachments}
