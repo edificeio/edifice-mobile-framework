@@ -42,6 +42,9 @@ import { IAppModule } from "./infra/moduleTool/types";
     order: 6,
     config: require("./workspace/config").default,
     module: require("./workspace").default
+  },{
+    config: require("./zimbra/config").default,
+    module: require("./zimbra").default
   },*/
 ] as IAppModule[];
 

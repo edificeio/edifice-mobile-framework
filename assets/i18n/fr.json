@@ -276,6 +276,15 @@
     "workspace-photoPicker-pick": "Choisir dans la galerie",
     "workspace-quota-overflowTitle": "Quota atteint",
     "workspace-quota-overflowText": "Votre espace de stockage est plein. Vous ne pouvez plus importer de documents.",
+    "zimbra-inbox": "Boite de réception",
+    "zimbra-sent-messages": "Message envoyés",
+    "zimbra-drafts": "Brouillons",
+    "zimbra-trash": "Corbeille",
+    "zimbra-spams": "Pourriels",
+    "zimbra-messages": "Messages",
+    "zimbra-directories": "Dossiers",
+    "zimbra-create-directory": "Créer un dossier",
+    "zimbra-storage": "Stockage",
 
     "profileTypes": {
       "Guest": "Invité",

@@ -276,6 +276,15 @@
   "workspace-photoPicker-pick": "Select in the gallery",
   "workspace-quota-overflowTitle": "Quota reached",
   "workspace-quota-overflowText": "Your storage space is full. You cannot upload more files.",
+  "zimbra-inbox": "Inbox",
+  "zimbra-outbox": "Outbox",
+  "zimbra-drafts": "Drafts",
+  "zimbra-trash": "Trash",
+  "zimbra-spams": "Spams",
+  "zimbra-messages": "Messages",
+  "zimbra-directories": "Directories",
+  "zimbra-create-directory": "Create directory",
+  "zimbra-storage": "Storage",
 
   "profileTypes": {
     "Guest": "Guest",
