@@ -1,6 +1,6 @@
 import style from "glamorous-native";
 import * as React from "react";
-import { TextInput, KeyboardAvoidingView, ScrollView, Platform, TouchableWithoutFeedback, Keyboard } from "react-native";
+import { TextInput, KeyboardAvoidingView, ScrollView, Platform, TouchableWithoutFeedback, Keyboard, View } from "react-native";
 import { hasNotch } from "react-native-device-info";
 import { CommonStyles } from "../styles/common/styles";
 import I18n from "i18n-js";
@@ -8,6 +8,9 @@ import { PageContainer } from "./ContainerContent";
 import UserList, { IUser } from "./UserList";
 import TouchableOpacity from "../ui/CustomTouchableOpacity";
 import { removeAccents } from "../utils/string";
+import { IConversationMessage } from "../mailbox/reducers";
+import { MessageBubble } from "../mailbox/components/ThreadMessage";
+import { Text, TextBold, TextColor } from "./text";
 
 export const UserLabel = style.text({
   color: CommonStyles.primary,
@@ -38,9 +41,9 @@ const FieldName = style.text({
 
 
 export default class SelectThreadInfos extends React.Component<
-  { remainingUsers; pickedUsers; onPickUser; onUnpickUser; onSelectSubject; subject; },
+  { remainingUsers; pickedUsers; onPickUser; onUnpickUser; onSelectSubject; subject; message: IConversationMessage; type: string },
   { searchText: string; subjectText?: string; max: number }
-> {
+  > {
   state = { searchText: "", subjectText: undefined, max: 20 };
   input: any;
 
@@ -134,14 +137,14 @@ export default class SelectThreadInfos extends React.Component<
                   }}
                   onKeyPress={({ nativeEvent }) => {
                     searchText.length === 0
-                    && nativeEvent.key === "Backspace"
-                    && onUnpickUser(pickedUsers[pickedUsers.length-1])
+                      && nativeEvent.key === "Backspace"
+                      && onUnpickUser(pickedUsers[pickedUsers.length - 1])
                   }}
                 />
               </FieldContainer>
             </ScrollField>
 
-            {this.usersArray.length > 0 ? 
+            {this.usersArray.length > 0 ?
               <ScrollView
                 keyboardShouldPersistTaps="always"
                 alwaysBounceVertical={false}
@@ -155,11 +158,11 @@ export default class SelectThreadInfos extends React.Component<
                   onEndReached={() => this.expend()}
                 />
               </ScrollView>
-            : 
+              :
               null
             }
 
-            <FieldContainer style={{ borderTopColor: '#EEEEEE', borderTopWidth: 1}}>
+            <FieldContainer style={{ borderTopColor: '#EEEEEE', borderTopWidth: 1 }}>
               <FieldName>{I18n.t("conversation-subjectPrefixInput")}</FieldName>
               <TextInput
                 ref={r => (this.input = r)}
@@ -169,6 +172,16 @@ export default class SelectThreadInfos extends React.Component<
                 onChangeText={text => this.selectSubject(text)}
               />
             </FieldContainer>
+            {this.props.message ? <View style={{ margin: 12 }}>
+              <TextBold>{
+                this.props.type === 'reply'
+                  ? I18n.t("conversation-reply-backMessage")
+                  : this.props.type === 'transfer'
+                    ? I18n.t("conversation-transfer-backMessage") : ""
+              }</TextBold>
+              <MessageBubble
+                contentHtml={this.props.message.body}
+              /></View> : null}
           </KeyboardAvoidingView>
         </TouchableWithoutFeedback>
       </PageContainer>

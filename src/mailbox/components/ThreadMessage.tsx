@@ -16,7 +16,7 @@ import { AttachmentGroup } from "../../ui/AttachmentGroup";
 import { getSessionInfo } from "../../App";
 import { Trackers } from "../../infra/tracker";
 
-const MessageBubble = ({ contentHtml, isMine, hasAttachments }) => (
+export const MessageBubble = ({ contentHtml, isMine, hasAttachments }) => (
   <BubbleStyle my={isMine} style={hasAttachments && { marginBottom: 3 }}>
     <HtmlContentView
       html={contentHtml}

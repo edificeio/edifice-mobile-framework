@@ -34,6 +34,8 @@ export const initI18n = () => {
         I18n.locale = I18n.defaultLocale;
         moment.locale(undefined);
     }
+
+    // console.log("I18n.translations", I18n.translations);
 }
 
 let initDone = false;

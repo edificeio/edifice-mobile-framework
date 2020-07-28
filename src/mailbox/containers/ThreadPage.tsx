@@ -94,13 +94,13 @@ class ThreadPageContainer extends React.PureComponent<
           navigation?.setParams({ selectedMessage: undefined });
         }}/>,
         headerRight: <View style={{ flexDirection: "row" }}>
-          <HeaderAction title={I18n.t("conversation.reply")} onPress={() => {
+          <HeaderAction title={I18n.t("conversation-reply")} onPress={() => {
             navigation.navigate('newThread', {
               type: 'reply',
               message: selectedMessage
             })
           }}/>
-          <HeaderAction title={I18n.t("conversation.transfer")} onPress={() => {
+          <HeaderAction title={I18n.t("conversation-transfer")} onPress={() => {
             navigation.navigate('newThread', {
               type: 'transfer',
               message: selectedMessage

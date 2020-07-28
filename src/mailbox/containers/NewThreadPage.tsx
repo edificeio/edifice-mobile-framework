@@ -26,6 +26,7 @@ interface INewThreadPageProps {
   loadVisibles: () => Promise<void>;
   pickedUsers: IUser[];
   subject: string;
+  message?: IConversationMessage;
   selectSubject: (subject: string) => void;
   pickUser: (user: IUser) => void;
   unpickUser: (user: IUser) => void;
@@ -40,8 +41,13 @@ class NewThreadPage extends React.PureComponent<
   undefined
 > {
   static navigationOptions = ({ navigation, screenProps }: { navigation: NavigationScreenProp<{}>, screenProps: INewThreadPageProps }) => {
+    const type = navigation.getParam('type', 'new');
     return alternativeNavScreenOptions({
-      title: I18n.t("conversation-newMessage"),
+      title: I18n.t({
+        'new': "conversation-newMessage",
+        'reply': "conversation-reply",
+        'transfer': "conversation-transfer"
+      }[type] || "conversation-newMessage"),
       headerLeft: <HeaderBackAction navigation={navigation} />,
       headerRight: <HeaderAction
         title={I18n.t("next")}
@@ -134,6 +140,8 @@ class NewThreadPage extends React.PureComponent<
           pickedUsers={this.props.pickedUsers}
           subject={this.props.subject}
           remainingUsers={this.props.remainingUsers}
+          message={this.props.navigation.getParam('message')}
+          type={this.props.navigation.getParam('type')}
         />
       </PageContainer>
     );
