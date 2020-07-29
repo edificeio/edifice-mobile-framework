@@ -23,4 +23,18 @@ export const foldersService = {
     const folders = await fetchJSONWithCache(`/zimbra/folders/list`);
     return foldersAdapter(folders);
   },
+  post: async (name: string, parentId: string | null = null) => {
+    const body = {
+      name,
+    } as any;
+    if (parentId) body.parentId = parentId;
+    await fetchJSONWithCache(`/zimbra/folder`, {
+      method: "post",
+      body: JSON.stringify(body),
+    });
+    return {
+      name,
+      parent_id: parentId,
+    };
+  },
 };

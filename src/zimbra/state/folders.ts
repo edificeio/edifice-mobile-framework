@@ -24,3 +24,4 @@ export const getFolderListState = (globalState: any) =>
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
 export const actionTypes = createAsyncActionTypes(folderConfig.createActionType("FOLDERS_LIST"));
+export const postFolderType = folderConfig.createActionType("POST_FOLDER");

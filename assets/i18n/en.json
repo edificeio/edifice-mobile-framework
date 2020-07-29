@@ -285,6 +285,8 @@
   "zimbra-directories": "Directories",
   "zimbra-create-directory": "Create directory",
   "zimbra-storage": "Storage",
+  "zimbra-directory-name": "Directory name",
+  "zimbra-create": "Create",
 
   "profileTypes": {
     "Guest": "Guest",
