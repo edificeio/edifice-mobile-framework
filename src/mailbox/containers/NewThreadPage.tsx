@@ -85,7 +85,12 @@ class NewThreadPage extends React.PureComponent<
       subject && this.props.selectSubject && this.props.selectSubject(subject);
       // Receivers
       if (type === 'reply') {
-        const receivers: IUser[] = message.to ? (message.to as string[]).map(uid => ({
+        // let allIds = message.to ? message.to : [];
+        // allIds.push(message.from);
+        // allIds = allIds.filter(id => id !== getSessionInfo().userId!);
+        // if (!allIds.length) allIds.push(getSessionInfo().userId!);
+        const allIds = [message.from];
+        const receivers: IUser[] = allIds ? (allIds as string[]).map(uid => ({
           userId: uid,
           displayName: (() => {
             const dn: [string, string, boolean] | undefined = message.displayNames ? (message.displayNames as Array<[string, string, boolean]>).find(e => e[0] === uid) : undefined;

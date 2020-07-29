@@ -81,6 +81,7 @@ class ThreadInput extends React.PureComponent<
     ) => void;
     onDimBackground: (dim: boolean) => void;
     backMessage?: IConversationMessage;
+    sendingType: string;
   },
   {
     newThreadId: string;
@@ -123,12 +124,44 @@ class ThreadInput extends React.PureComponent<
   }
 
   private async onValid() {
-    const { thread, lastMessage, onGetNewer, createDraft, sendAttachments, sendMessage } = this.props;
+    const { thread, lastMessage, onGetNewer, createDraft, sendAttachments, sendMessage, backMessage, sendingType } = this.props;
     const { attachments, textMessage } = this.state;
     const attachmentsToSend = attachments;
     const attachmentsAdded = attachments.length > 0;
+    const replyTemplate = `
+<p>&nbsp;</p><p class="row"><hr /></p>
+<p class="medium-text">
+	<span translate key="transfer.from"></span><em> [[mail.sender().displayName]]</em>
+	<br /><span class="medium-importance" translate key="transfer.date"></span><em> [[mail.longDate()]]</em>
+	<br /><span class="medium-importance" translate key="transfer.subject"></span><em> [[mail.subject]]</em>
+	<br /><span class="medium-importance" translate key="transfer.to"></span>
+	<em class="medium-importance" ng-repeat="receiver in mail.to"><em> [[mail.map(receiver).displayName]]</em><span ng-if="$index !== mail.to.length - 1 && receiver.displayName">,</span>
+	</em>
+	<br /><span class="medium-importance" translate key="transfer.cc"></span>
+	<em class="medium-importance" ng-repeat="receiver in mail.cc"><em> [[mail.map(receiver).displayName]]</em><span ng-if="$index !== mail.cc.length - 1 && receiver.displayName">,</span>
+	</em>
+</p>`;
+    const transferTemplate = `
+<p>&nbsp;</p><p class="row"><hr /></p>
+<p class="medium-text">
+	<span translate key="transfer.from"></span><em> [[mail.sender().displayName]]</em>
+	<br /><span class="medium-importance" translate key="transfer.date"></span><em> [[mail.longDate()]]</em>
+	<br /><span class="medium-importance" translate key="transfer.subject"></span><em> [[mail.subject]]</em>
+	<br /><span class="medium-importance" translate key="transfer.to"></span>
+	<em class="medium-importance" ng-repeat="receiver in mail.to"><em> [[mail.map(receiver).displayName]]</em><span ng-if="$index !== mail.to.length - 1">,</span>
+	</em>
+	<br /><span class="medium-importance" translate key="transfer.cc"></span>
+	<em class="medium-importance" ng-repeat="receiver in mail.cc"><em> [[mail.map(receiver).displayName]]</em><span ng-if="$index !== mail.cc.length - 1">,</span>
+	</em>
+</p>`;
+    let body = textMessage ? `<div>${textMessage.replace(/\n/g, '<br>')}</div>` : '';
+    if (backMessage) {
+      if (sendingType === 'reply') body = `${body}${replyTemplate}<br><blockquote>${backMessage.body ? backMessage.body : ''}</blockquote>`;
+      else if (sendingType === 'transfer') body = `${body}${transferTemplate}<br><blockquote>${backMessage.body ? backMessage.body : ''}</blockquote>`
+    }
+    // console.log("body", body);
     const messageData = {
-      body: textMessage ? `<div>${textMessage.replace(/\n/g, '<br>')}</div>` : undefined,
+      body,
       cc: thread.cc,
       displayNames: thread.displayNames,
       parentId: lastMessage ? lastMessage.id : undefined,
@@ -140,6 +173,10 @@ class ThreadInput extends React.PureComponent<
     this.input && this.input.innerComponent.setNativeProps({ keyboardType: "default" });
     this.input && this.input.innerComponent.blur();
     this.setState({textMessage: "", attachments: [], sending: true});
+    this.props.navigation?.setParams({
+      type: undefined,
+      message: undefined
+    })
 
     await onGetNewer(thread.id)
     if (attachmentsAdded) {

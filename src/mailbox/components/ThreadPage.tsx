@@ -49,6 +49,7 @@ export interface IThreadPageDataProps {
   messages?: IConversationMessage[]; // message info & content for all given messageIds in threadInfo. Given from the most recent to the oldest one.
   headerHeight?: number; // header height, really ?
   backMessage?: IConversationMessage;
+  sendingType: string;
 }
 
 export interface IThreadPageEventProps {

@@ -228,13 +228,14 @@ class ThreadPageContainer extends React.PureComponent<
 
   public render() {
     const backMessage = this.props.navigation?.getParam('message');
-    const createType = this.props.navigation?.getParam('type', 'new');
+    const sendingType = this.props.navigation?.getParam('type', 'new');
     return <ThreadPage {...this.props}
       onSelectMessage={(message) => {
         // this.setState({selectedMessage: message});
         this.props.navigation?.setParams({ selectedMessage: message });
       }}
       backMessage={backMessage}
+      sendingType={sendingType}
     />;
   }
 }
