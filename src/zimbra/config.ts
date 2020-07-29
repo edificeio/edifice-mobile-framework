@@ -4,6 +4,7 @@ import FunctionalModuleConfig from "../infra/moduleTool";
 
 export default new FunctionalModuleConfig({
   name: "zimbra",
-  displayName: "Zimbra",
-  iconName: "mailbox",
+  displayName: "Conversation",
+  iconName: "mail",
+  hasRight: app => app.name === "Messagerie" || app.name === "Zimbra",
 });

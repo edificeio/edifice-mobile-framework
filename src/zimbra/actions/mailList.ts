@@ -10,12 +10,11 @@ export const dataActions = createAsyncActionCreators<IMailList>(actionTypes);
 
 // THUNKS -----------------------------------------------------------------------------------------
 
-export function fetchMailListAction() {
+export function fetchMailListAction(page) {
   return async (dispatch: Dispatch, getState: () => any) => {
     try {
       dispatch(dataActions.request());
-      const availableApps = getState().user.auth.apps;
-      const data = await mailListService.get(availableApps);
+      const data = await mailListService.get(page);
       dispatch(dataActions.receipt(data));
     } catch (errmsg) {
       dispatch(dataActions.error(errmsg));
