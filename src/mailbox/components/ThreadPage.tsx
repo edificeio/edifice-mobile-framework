@@ -231,7 +231,6 @@ export class ThreadPage extends React.PureComponent<
         */}
         <ThreadMessage
           {...message}
-          onTapReceivers={() => this.handleTapReceivers(message)}
           selected={this.props.navigation?.getParam('selectedMessage')?.id == message.id}
         />
       </RNGHTouchableOpacity>

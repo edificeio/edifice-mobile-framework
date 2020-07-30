@@ -1,5 +1,9 @@
 import * as React from "react";
+import { View, TextStyle, TouchableOpacity } from "react-native";
 import { connect } from "react-redux";
+import I18n from "i18n-js";
+import style from "glamorous-native";
+
 import { 
   IThreadPageDataProps,
   IThreadPageEventProps, 
@@ -7,9 +11,6 @@ import {
   ThreadPage 
 } from "../components/ThreadPage";
 import conversationConfig from "../config";
-import I18n from "i18n-js";
-import style from "glamorous-native";
-
 import { 
   fetchConversationThreadNewerMessages, 
   fetchConversationThreadOlderMessages
@@ -21,12 +22,11 @@ import { standardNavScreenOptions, alternativeNavScreenOptions } from "../../nav
 import { HeaderBackAction, HeaderIcon, HeaderAction } from "../../ui/headers/NewHeader";
 import { getSessionInfo } from "../../App";
 import { RowAvatars } from "../../ui/avatars/RowAvatars";
-import { Size } from "../../ui/avatars/Avatar";
 import { CommonStyles } from "../../styles/common/styles";
-import { View, TextStyle, TouchableOpacity } from "react-native";
 import { FontWeight, Text } from "../../ui/text";
 import deviceInfoModule from "react-native-device-info";
 import withViewTracking from "../../infra/tracker/withViewTracking";
+import { IconButton } from "../../ui/IconButton";
 
 const mapStateToProps: (state: any) => IThreadPageDataProps = state => {
   // Extract data from state
@@ -87,6 +87,7 @@ class ThreadPageContainer extends React.PureComponent<
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
     const showDetails = navigation.getParam("showDetails", false);
     const threadInfo = navigation.getParam("threadInfo");
+    const onTapReceivers = navigation.getParam("onTapReceivers");
     const selectedMessage: IConversationMessage | undefined = navigation.getParam("selectedMessage");
     if (selectedMessage) {
       return alternativeNavScreenOptions({
@@ -115,7 +116,37 @@ class ThreadPageContainer extends React.PureComponent<
     } else {
       return standardNavScreenOptions({
         headerLeft: showDetails ? null : <HeaderBackAction navigation={navigation} />,
-        headerRight: showDetails ? null : <View />,
+        headerRight: showDetails
+          ? null
+          : <View style={{flexDirection: "row", alignItems: "center"}}>
+              <View style={{ width: 1, height: "80%", backgroundColor: "#FFF" }} />
+              <HeaderAction
+                  customComponent={
+                    <View 
+                      style={{ 
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: 70,
+                        height: "100%"
+                      }}
+                    >
+                      <IconButton
+                        iconName="informations"
+                        iconSize={16}
+                        buttonStyle={{ height: 18, width: 18, borderRadius: undefined, backgroundColor: undefined }}
+                      />
+                      <LittleTitle smallSize italic>
+                        {I18n.t("seeDetails")}
+                      </LittleTitle>
+                    </View>
+                  }
+                  onPress={() => {
+                    //TODO move orchestration to thunk
+                    onTapReceivers && onTapReceivers(threadInfo);
+                    navigation.navigate("listReceivers");
+                  }}
+                />
+            </View>,
         headerTitle: threadInfo ?
           showDetails ?
             ThreadPageContainer.renderDetailsThreadHeader(threadInfo, navigation)
@@ -136,7 +167,7 @@ class ThreadPageContainer extends React.PureComponent<
           alignItems: "flex-start"
         },
         headerTitleContainerStyle: {
-          alignItems: "flex-start",
+          alignItems: "flex-start"
         }
       }, navigation);
     }
@@ -161,20 +192,24 @@ class ThreadPageContainer extends React.PureComponent<
       const foundDisplayName = displayNames.find(displayName => displayName[0] === receiverId);
       return foundDisplayName ? foundDisplayName[1] : I18n.t("unknown-user");
     });
-
     return { images, names };
   }
 
   static renderThreadHeader(threadInfo: IConversationThread, navigation: NavigationScreenProp<{}>) {
-    const { images } = ThreadPageContainer.getAvatarsAndNamesSet(threadInfo);
-    return <CenterPanel
-        onPress={() => { navigation.setParams({ showDetails: true }); }}
-      >
-        <RowAvatars images={images} size={Size.small} />
-        <LittleTitle numberOfLines={1} smallSize={true}>
-          {threadInfo.subject}
-        </LittleTitle>
+    const receiversText = threadInfo.to.length > 1
+      ? I18n.t("conversation-receivers", { count: threadInfo.to.length })
+      : I18n.t("conversation-receiver");
+
+    return (
+      <CenterPanel onPress={() => { navigation.setParams({ showDetails: true }); }}>
+          <LittleTitle numberOfLines={1} smallSize>
+            {threadInfo.subject}
+          </LittleTitle>
+          <LittleTitle smallSize italic>
+            {receiversText}
+          </LittleTitle>
       </CenterPanel>
+    )
   }
 
   static renderDetailsThreadHeader(threadInfo: IConversationThread, navigation: NavigationScreenProp<{}>) {
@@ -184,20 +219,10 @@ class ThreadPageContainer extends React.PureComponent<
           width: "100%",
           flex: 0,
         }}>
-        <View style={{
-          flexDirection: "row",
-          justifyContent: "center"
-        }}>
-          <HeaderBackAction navigation={navigation} style={{
-            flex: 0
-          }} />
-          <View style={{
-            flex: 1,
-            alignItems: "stretch"
-          }}>
-            <CenterPanel
-              onPress={() => { navigation.setParams({ showDetails: false }); }}
-            >
+        <View style={{ flexDirection: "row", justifyContent: "center" }}>
+          <HeaderBackAction navigation={navigation} style={{ flex: 0 }}/>
+          <View style={{flex: 1, alignItems: "stretch"}}>
+            <CenterPanel onPress={() => navigation.setParams({ showDetails: false })}>
               <LittleTitle numberOfLines={2}>
                 {threadInfo.subject}
               </LittleTitle>
@@ -207,10 +232,8 @@ class ThreadPageContainer extends React.PureComponent<
         </View>
         <ContainerAvatars>
           <RowAvatars
-            onSlideIndex={slideIndex => {
-              navigation.setParams({ slideIndex: slideIndex });
-            }}
             images={images}
+            onSlideIndex={slideIndex => {navigation.setParams({ slideIndex: slideIndex })}}
           />
           <Legend14 numberOfLines={2}>
             {names[navigation.getParam("slideIndex", 0)]}
@@ -222,7 +245,8 @@ class ThreadPageContainer extends React.PureComponent<
   constructor(props: IThreadPageProps) {
     super(props);
     this.props.navigation!.setParams({
-      threadInfo: this.props.threadInfo
+      threadInfo: this.props.threadInfo,
+      onTapReceivers: this.props.onTapReceivers
     });
   }
 
@@ -252,7 +276,7 @@ export const CenterPanel = style(TouchableOpacity)({
   justifyContent: "center",
   paddingVertical: 5,
   height: 56,
-  flex: 1
+  flex: 1,
 });
 
 export const LittleTitle = (style.text as any)(
@@ -260,10 +284,11 @@ export const LittleTitle = (style.text as any)(
     color: "white",
     fontFamily: CommonStyles.primaryFontFamily,
     fontWeight: "400",
-    textAlign: "center"
+    textAlign: "center",
   },
-  ({ smallSize = false }: { smallSize: boolean }) => ({
-    fontSize: smallSize ? 12 : 16
+  ({ smallSize = false, italic = false }: { smallSize: boolean, italic: boolean }) => ({
+    fontSize: smallSize ? 12 : 16,
+    fontStyle: italic ? "italic" : "normal",
   })
 );
 
@@ -271,13 +296,13 @@ export const ContainerAvatars = style.view({
   alignItems: "center",
   flex: 0,
   height: 160,
-  justifyContent: "flex-start"
+  justifyContent: "flex-start",
 });
 
 const legendStyle: TextStyle = {
   alignSelf: "center",
   color: "white",
-  flexWrap: "nowrap"
+  flexWrap: "nowrap",
 };
 
 const Legend14 = style.text({
@@ -287,5 +312,6 @@ const Legend14 = style.text({
   textAlign: "center",
   textAlignVertical: "center",
   width: "66%",
-  marginBottom: 30,
+  marginBottom: 10,
+  height: 40,
 });

@@ -1,5 +1,4 @@
 import * as React from "react";
-import { connect } from "react-redux";
 
 import { Icon } from "..";
 import { CommonStyles } from "../../styles/common/styles";
@@ -14,7 +13,7 @@ const HeaderIconStyle: ViewStyle = {
   justifyContent: "center",
   height: 56,
   width: 60,
-  flex: 0
+  flex: 0,
 };
 
 const iconsDeltaSizes = {
@@ -31,7 +30,7 @@ export const HeaderIcon = ({ name, hidden, iconSize, primary }: IHeaderIconProps
   <View
     style={[
       HeaderIconStyle,
-      primary && {backgroundColor: CommonStyles.secondary, borderRadius: 30, height: 50, width: 50, marginTop: 20, marginRight: 20,   shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 4 }
+      primary && {backgroundColor: CommonStyles.secondary, borderRadius: 30, height: 50, width: 50, marginTop: 20, marginRight: 20, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 4}
     ]}
   >
     <Icon
@@ -52,7 +51,6 @@ export const HeaderBackAction = ({
 )
 
 // HEADER TEXTS
-
 const HeaderActionText = (props: { [prop: string]: any }) => <View style={{
   paddingHorizontal: 18,
   height: 56,
@@ -62,10 +60,9 @@ const HeaderActionText = (props: { [prop: string]: any }) => <View style={{
   <Text style={{ color: "white" }} {...props} />
 </View>;
 
-
-
 // HEADER ACTION
 export class HeaderAction extends React.PureComponent<{
+  customComponent: JSX.Element;
   name?: string;
   hidden?: boolean;
   iconSize?: number;
@@ -76,12 +73,13 @@ export class HeaderAction extends React.PureComponent<{
   primary?: boolean
 }> {
   render() {
-    const { name, hidden, onPress, iconSize, title, style, disabled = false, primary } = this.props;
+    const { customComponent, name, hidden, onPress, iconSize, title, style, disabled = false, primary } = this.props;
     const ActionComponent = disabled ? View : TouchableOpacity;
     return <ActionComponent
       onPress={() => !disabled && onPress && onPress()}
       style={{ ...(disabled ? { opacity: 0.7 } : {}),  ...style }}
     >
+      {customComponent}
       {name ? <HeaderIcon name={name} hidden={hidden} iconSize={iconSize} primary={primary} /> : undefined}
       {title ? <HeaderActionText>{title}</HeaderActionText> : undefined}
     </ActionComponent>;

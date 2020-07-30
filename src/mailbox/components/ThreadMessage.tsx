@@ -1,12 +1,10 @@
-import style from "glamorous-native";
-import I18n from "i18n-js";
 import * as React from "react";
 import { View } from "react-native";
+import style from "glamorous-native";
+import I18n from "i18n-js";
 
 import { CommonStyles } from "../../styles/common/styles";
 import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
-import TouchableOpacity from "../../ui/CustomTouchableOpacity";
-import { TouchableOpacity as RNGHTouchableOpacity } from "react-native-gesture-handler";
 import { DateView } from "../../ui/DateView";
 import { HtmlContentView } from "../../ui/HtmlContentView";
 import { BubbleStyle } from "../../ui/BubbleStyle";
@@ -74,7 +72,6 @@ export default class ThreadMessage extends React.PureComponent<
       imageIndex: number,
       images: Array<{ src: string; alt: string }>
     ) => void;
-    onTapReceivers: () => void;
     selected?: boolean;
   },
   undefined
@@ -93,10 +90,6 @@ export default class ThreadMessage extends React.PureComponent<
     const isMine = from === getSessionInfo().userId;
     // medium-text is used to write previous sender
     // should be replaced with better selector for stability
-    const receiverText =
-      to.length > 1
-        ? I18n.t("conversation-receivers", { count: to.length })
-        : I18n.t("conversation-receiver");
 
     if (!(body || attachments)) {
       return <View />;
@@ -112,7 +105,6 @@ export default class ThreadMessage extends React.PureComponent<
       return I18n.t("unknown-user");
     }
     const senderText = getSenderText(this.props.displayNames, from);
-    // console.log("threadMessage", this.props.selected, this.props.id);
 
     return (
       <MessageBlock style={{
@@ -130,17 +122,6 @@ export default class ThreadMessage extends React.PureComponent<
                 <ReceiverText numberOfLines={1} ellipsizeMode="tail">
                   {senderText}
                 </ReceiverText>
-                <RNGHTouchableOpacity
-                  onPress={() => this.props.onTapReceivers()}
-                  style={{ flexDirection: "row" }}
-                >
-                  <ReceiverTextPrefix>
-                    {I18n.t("conversation-receiverPrefix")}{" "}
-                  </ReceiverTextPrefix>
-                  <ReceiverLink>
-                    <ReceiverText>{receiverText}</ReceiverText>
-                  </ReceiverLink>
-                </RNGHTouchableOpacity>
               </View>
               <MessageInfosStatus style={{ flex: 0 }}>
                 <MessageStatus status={status} date={date} />
@@ -202,16 +183,8 @@ const MessageStatusText = style.text({
   fontSize: 12,
   paddingBottom: 5
 });
-const ReceiverTextPrefix = style.text({
-  fontSize: 11,
-  paddingBottom: 2
-});
 const ReceiverText = style.text({
   fontSize: 11
-});
-const ReceiverLink = style.view({
-  borderBottomColor: "rgba(0,0,0,0.37)",
-  borderBottomWidth: 1
 });
 const MessageBlock = style.view({
   alignItems: "flex-end",
