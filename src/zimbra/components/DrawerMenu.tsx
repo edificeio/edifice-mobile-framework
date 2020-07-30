@@ -15,9 +15,14 @@ type DrawerMenuProps = {
   items: any[];
   folders: any;
   quota: any;
+  descriptors: any;
 };
 
-export default class DrawerMenu extends React.PureComponent<DrawerMenuProps> {
+type DrawerMenuState = {
+  showFolderCreationModal: any;
+};
+
+export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, DrawerMenuState> {
   constructor(props) {
     super(props);
     this.state = {
@@ -41,20 +46,21 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps> {
     const item = this.props.activeItemKey;
     const iconStyle = item === text ? [style.itemIcon, { color: "white" }] : style.itemIcon;
     switch (text) {
-      case I18n.t("zimbra-inbox"):
+      case "inbox":
         return <Icon size={16} name="inbox" style={iconStyle} />;
-      case I18n.t("zimbra-outbox"):
+      case "outbox":
         return <Icon size={16} name="outbox" style={iconStyle} />;
-      case I18n.t("zimbra-drafts"):
+      case "drafts":
         return <Icon size={16} name="file-document-outline" style={iconStyle} />;
-      case I18n.t("zimbra-trash"):
+      case "trash":
         return <Icon size={16} name="trash" style={iconStyle} />;
-      case I18n.t("zimbra-spams"):
+      case "spams":
         return <Icon size={16} name="deleted_files" style={iconStyle} />;
     }
   };
   render() {
-    const items = this.props.items;
+    const { items, descriptors } = this.props;
+    console.log("this.props", this.props);
     const { folders, quota } = this.props;
     const storagePercent = (quota.data.storage / Number(quota.data.quota)) * 100;
     return (
@@ -67,9 +73,11 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps> {
             style={this.props.activeItemKey === item.key ? [style.item, style.selectedItem] : style.item}>
             {this.getIcon(item.key)}
             {this.props.activeItemKey === item.key ? (
-              <TextBold style={[style.itemTextSelected, style.itemText]}>{item.key}</TextBold>
+              <TextBold style={[style.itemTextSelected, style.itemText]}>
+                {descriptors[item.key].options.drawerLabel}
+              </TextBold>
             ) : (
-              <Text style={style.itemText}>{item.key}</Text>
+              <Text style={style.itemText}>{descriptors[item.key].options.drawerLabel}</Text>
             )}
           </TouchableOpacity>
         ))}
