@@ -61,7 +61,7 @@ export default ({
   );
 };
 
-const Author = style.text(
+export const Author = style.text(
   {
     color: CommonStyles.textColor,
     fontFamily: CommonStyles.primaryFontFamily,

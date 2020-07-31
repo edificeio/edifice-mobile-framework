@@ -36,7 +36,7 @@ export default class MailList extends React.PureComponent<any, any> {
   private renderMailItemInfos(mailInfos) {
     const sender = mailInfos.displayNames.find(item => item[0] === mailInfos.from);
     return (
-      <TouchableOpacity onPress={() => true}>
+      <TouchableOpacity onPress={() => this.props.navigation.navigate("MailContent", { mailId: mailInfos.id })}>
         <Header style={[styles.containerMail, this.hasShadow(mailInfos.unread)]}>
           <LeftPanel>
             {mailInfos.unread && <Icon name="mail" size={18} color="#FC8500" />}
@@ -65,7 +65,7 @@ export default class MailList extends React.PureComponent<any, any> {
 
   onChangePage = distanceFromEnd => {
     if (distanceFromEnd === 0 && !this.props.isFetching) {
-      const { indexPage } = this.state;
+      const { indexPage, mails } = this.state;
       const currentPage = indexPage + 1;
       this.props.fetchMailListAction(currentPage);
       this.setState({

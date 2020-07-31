@@ -293,6 +293,8 @@
     "zimbra-cc": "Cc",
     "zimbra-bcc": "Cci",
     "zimbra-type-message": "Écrire un message...",
+    "zimbra-see_detail": "Voir le détail",
+    "zimbra-receiversCC": "Copie :",
 
     "profileTypes": {
       "Guest": "Invité",
