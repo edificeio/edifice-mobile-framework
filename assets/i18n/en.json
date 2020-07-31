@@ -288,6 +288,11 @@
   "zimbra-storage": "Storage",
   "zimbra-directory-name": "Directory name",
   "zimbra-create": "Create",
+  "zimbra-to": "To",
+  "zimbra-subject": "Subject",
+  "zimbra-cc": "Cc",
+  "zimbra-bcc": "Bcc",
+  "zimbra-type-message": "Type a message...",
 
   "profileTypes": {
     "Guest": "Guest",
