@@ -2,6 +2,7 @@ import I18n from "i18n-js";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
+import Toast from "react-native-tiny-toast";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
@@ -27,6 +28,11 @@ class CreateFolderModal extends React.PureComponent<any, any> {
   onConfirm = () => {
     this.props.createFolder(this.state.name);
     this.props.onClose();
+    Toast.show(I18n.t("zimbra-create-directory-confirm"), {
+      position: Toast.position.BOTTOM,
+      mask: false,
+      containerStyle: { width: "95%", backgroundColor: "" },
+    });
   };
 
   public render() {

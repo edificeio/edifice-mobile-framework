@@ -284,6 +284,7 @@
   "zimbra-messages": "Messages",
   "zimbra-directories": "Directories",
   "zimbra-create-directory": "Create directory",
+  "zimbra-create-directory-confirm": "Directory created",
   "zimbra-storage": "Storage",
   "zimbra-directory-name": "Directory name",
   "zimbra-create": "Create",
