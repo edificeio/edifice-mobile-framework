@@ -3,6 +3,7 @@ import { createDrawerNavigator } from "react-navigation-drawer";
 import { createStackNavigator } from "react-navigation-stack";
 
 import DrawerMenuContainer from "./containers/DrawerMenu";
+import MailItem from "./containers/MailContent";
 import MailList from "./containers/MailList";
 
 // using stack navigators so that headers can be displayed
@@ -13,7 +14,7 @@ const draftsStack = createStackNavigator({ drafts: MailList });
 const trashStack = createStackNavigator({ trash: MailList });
 const spamsStack = createStackNavigator({ spams: MailList });
 
-export default createDrawerNavigator(
+const DrawerNavigator = createDrawerNavigator(
   {
     inbox: {
       screen: inboxStack,
@@ -50,4 +51,16 @@ export default createDrawerNavigator(
     initialRouteName: "inbox",
     contentComponent: DrawerMenuContainer,
   }
+);
+
+export default createStackNavigator(
+  {
+    drawerNavigator: {
+      screen: DrawerNavigator,
+    },
+    mailDetail: {
+      screen: MailItem,
+    },
+  },
+  { initialRouteName: "drawerNavigator", headerMode: "none" }
 );

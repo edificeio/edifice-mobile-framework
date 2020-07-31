@@ -36,7 +36,10 @@ export default class MailList extends React.PureComponent<any, any> {
   private renderMailItemInfos(mailInfos) {
     const sender = mailInfos.displayNames.find(item => item[0] === mailInfos.from);
     return (
-      <TouchableOpacity onPress={() => this.props.navigation.navigate("MailContent", { mailId: mailInfos.id })}>
+      <TouchableOpacity
+        onPress={() => {
+          this.props.navigation.navigate("mailDetail", { mailId: mailInfos.id });
+        }}>
         <Header style={[styles.containerMail, this.hasShadow(mailInfos.unread)]}>
           <LeftPanel>
             {mailInfos.unread && <Icon name="mail" size={18} color="#FC8500" />}

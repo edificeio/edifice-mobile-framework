@@ -1,4 +1,5 @@
 import React from "react";
+import { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
@@ -11,10 +12,12 @@ import { getQuotaState } from "../state/quota";
 type DrawerMenuProps = {
   fetchFolders: any;
   fetchQuota: any;
-  activeItemKey: any;
+  activeItemKey: string;
   items: any[];
   folders: any;
   quota: any;
+  descriptors: any[];
+  navigation: NavigationScreenProp<any>;
 };
 
 export class DrawerMenuContainer extends React.Component<DrawerMenuProps> {

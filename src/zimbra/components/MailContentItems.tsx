@@ -4,7 +4,7 @@ import moment from "moment";
 import * as React from "react";
 import { View, Dimensions, StyleSheet } from "react-native";
 
-import { Icon } from "../../ui";
+import { Icon, ButtonIconText } from "../../ui";
 import { BadgeAvatar } from "../../ui/BadgeAvatar";
 import { Header, CenterPanel, LeftPanel } from "../../ui/ContainerContent";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
@@ -91,6 +91,19 @@ export const HeaderMail = ({ mailInfos }) => {
         <style.View />
       )}
     </View>
+  );
+};
+
+export const FooterButton = ({ icon, text, onPress }) => {
+  return (
+    <ButtonIconText
+      name={icon}
+      onPress={onPress}
+      style={{ backgroundColor: "white" }}
+      color="black"
+      colorText="#AFAFAF">
+      {text}
+    </ButtonIconText>
   );
 };
 

@@ -2,6 +2,7 @@ import I18n from "i18n-js";
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { TouchableOpacity, ScrollView } from "react-native-gesture-handler";
+import { NavigationScreenProp } from "react-navigation";
 
 import { Icon } from "../../ui";
 import { PageContainer } from "../../ui/ContainerContent";
@@ -11,11 +12,12 @@ import CreateFolderModal from "../containers/CreateFolderModal";
 type DrawerMenuProps = {
   fetchFolders: any;
   fetchQuota: any;
-  activeItemKey: any;
+  activeItemKey: string;
   items: any[];
   folders: any;
   quota: any;
-  descriptors: any;
+  descriptors: any[];
+  navigation: NavigationScreenProp<any>;
 };
 
 type DrawerMenuState = {
@@ -60,7 +62,6 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
   };
   render() {
     const { items, descriptors } = this.props;
-    console.log("this.props", this.props);
     const { folders, quota } = this.props;
     const storagePercent = (quota.data.storage / Number(quota.data.quota)) * 100;
     return (
@@ -70,7 +71,8 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
         </View>
         {items.map(item => (
           <TouchableOpacity
-            style={this.props.activeItemKey === item.key ? [style.item, style.selectedItem] : style.item}>
+            style={this.props.activeItemKey === item.key ? [style.item, style.selectedItem] : style.item}
+            onPress={() => this.props.navigation.navigate(item.routeName)}>
             {this.getIcon(item.key)}
             {this.props.activeItemKey === item.key ? (
               <TextBold style={[style.itemTextSelected, style.itemText]}>
