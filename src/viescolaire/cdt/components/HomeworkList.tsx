@@ -1,7 +1,7 @@
 import I18n from "i18n-js";
 import moment from "moment";
 import * as React from "react";
-import { View, StyleSheet, Switch, TouchableOpacity, ScrollView, RefreshControl } from "react-native";
+import { View, StyleSheet, Switch, TouchableOpacity, ScrollView, RefreshControl, Platform } from "react-native";
 import { NavigationScreenProp } from "react-navigation";
 
 import { Loading } from "../../../ui";
@@ -217,6 +217,30 @@ export default class HomeworkList extends React.PureComponent<HomeworkListProps,
     );
   }
 
+  private PlatformSpecificSwitch(props) {
+    const { value } = props;
+    let newProps = { ...props };
+    switch (Platform.OS) {
+      case "android": {
+        newProps = { thumbColor: value ? "#2BAB6F" : "#FA9700", ...newProps };
+        break;
+      }
+      case "ios": {
+        newProps = {
+          trackColor: { false: "#FA9700", true: "#2BAB6F" },
+          ios_backgroundColor: "#FA9700",
+          ...newProps,
+        };
+        break;
+      }
+      default: {
+        newProps = { trackColor: { false: "#FA9700", true: "#2BAB6F" }, ...newProps };
+        break;
+      }
+    }
+    return <Switch {...newProps} />;
+  }
+
   public render() {
     const { startDate, endDate, onStartDateChange, onEndDateChange, switchValue, toggleSwitch } = this.props;
     return (
@@ -231,9 +255,8 @@ export default class HomeworkList extends React.PureComponent<HomeworkListProps,
           </View>
           <View style={style.grid}>
             <Text>{I18n.t("viesco-homework")}</Text>
-            <Switch
-              style={{ marginTop: 30 }}
-              trackColor={{ false: "#FA9700", true: "#2BAB6F" }}
+            <this.PlatformSpecificSwitch
+              style={{ marginTop: 30, marginHorizontal: 12 }}
               onValueChange={toggleSwitch}
               value={switchValue}
             />
