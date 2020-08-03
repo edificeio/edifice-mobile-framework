@@ -177,7 +177,7 @@ export default class Dashboard extends React.PureComponent<any & DashboardProps>
           <TouchableOpacity
             onPress={() => this.props.navigation.navigate("Declaration", { childId })}
             style={styles.declareAbsenceButton}>
-            <Text>{I18n.t("viesco-declareAbsence")}</Text>
+            <TextBold style={{ color: "#FFFFFF" }}>{I18n.t("viesco-declareAbsence")}</TextBold>
           </TouchableOpacity>
         </ChildPicker>
 
