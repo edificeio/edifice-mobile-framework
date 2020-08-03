@@ -77,7 +77,11 @@ export const HeaderMail = ({ mailInfos }) => {
             icon="arrow_down"
           />
         </CenterPanel>
-        <Text>{moment(mailInfos.date).format("dddd LL")}</Text>
+        {!isVisible ? (
+          <Text>{moment(mailInfos.date).format("LL - LT")}</Text>
+        ) : (
+          <Text>{moment(mailInfos.date).format("dddd LL")}</Text>
+        )}
       </Header>
 
       {isVisible && <SendersDetails receivers={mailInfos.to} cc={mailInfos.cc} displayNames={mailInfos.displayNames} />}
@@ -110,10 +114,12 @@ export const FooterButton = ({ icon, text, onPress }) => {
 export const RenderPJs = ({ attachments }) => {
   const [isVisible, toggleVisible] = React.useState(false);
   return (
-    <View style={[styles.containerMail, { flexDirection: "row" }]}>
+    <View style={[styles.containerMail, { flexDirection: "column" }]}>
       <TouchableOpacity onPress={() => toggleVisible(!isVisible)} style={styles.gridButton}>
-        <Icon size={25} color="#2A9CC8" name="file-plus" />
-        <Text style={styles.gridButtonText}>&emsp;{attachments[0].filename}</Text>
+        <View style={styles.gridButton}>
+          <Icon size={25} color="#2A9CC8" name="file-plus" />
+          <Text style={styles.gridButtonText}>&emsp;{attachments[0].filename}</Text>
+        </View>
         {attachments.length > 1 && !isVisible && (
           <Text style={styles.gridButtonTextPJnb}>+{attachments.length - 1}</Text>
         )}
@@ -142,10 +148,10 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   gridButton: {
-    borderRadius: 5,
     flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
-    padding: 8,
+    paddingHorizontal: 5,
   },
   gridButtonText: {
     color: "#2A9CC8",
@@ -153,11 +159,12 @@ const styles = StyleSheet.create({
   },
   gridButtonTextPJnb: {
     color: "#2A9CC8",
-    alignSelf: "flex-end",
+    justifyContent: "flex-end",
+    alignItems: "flex-end",
   },
   gridButtonTextPJnames: {
     color: "#2A9CC8",
-    marginLeft: 43,
+    marginLeft: 50,
   },
   dotReceiverColor: {
     width: 8,

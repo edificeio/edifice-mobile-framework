@@ -295,6 +295,9 @@
   "zimbra-type-message": "Type a message...",
   "zimbra-see_detail": "See details",
   "zimbra-receiversCC": "Copy:",
+  "zimbra-reply": "Reply",
+  "zimbra-replyAll": "Reply All",
+  "zimbra-forward": "Forward",
 
   "profileTypes": {
     "Guest": "Guest",

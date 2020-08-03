@@ -11,8 +11,21 @@ import MailContent from "../components/MailContent";
 import { getMailContentState } from "../state/mailContent";
 
 class MailContentContainer extends React.PureComponent<any, any> {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      mailId: this.props.navigation.state.params.mailId,
+    };
+  }
   public componentDidMount() {
     this.props.fetchMailContentAction(this.props.navigation.state.params.mailId);
+  }
+
+  public componentDidUpdate() {
+    if (this.props.navigation.state.params.mailId !== this.state.mailId) {
+      this.props.fetchMailContentAction(this.props.navigation.state.params.mailId);
+    }
   }
 
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<any> }) => {

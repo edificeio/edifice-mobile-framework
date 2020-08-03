@@ -2,7 +2,6 @@ import I18n from "i18n-js";
 import * as React from "react";
 import { View, StyleSheet, Dimensions, ScrollView } from "react-native";
 
-import { ButtonIconText } from "../../ui/ButtonIconText";
 import { PageContainer } from "../../ui/ContainerContent";
 import { HtmlContentView } from "../../ui/HtmlContentView";
 import { RenderPJs, HeaderMail, FooterButton } from "./MailContentItems";

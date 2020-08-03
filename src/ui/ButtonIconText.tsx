@@ -15,6 +15,8 @@ export interface ButtonTextIconProps {
   size?: number;
   style?: any;
   whiteSpace?: string;
+  color? : string;
+  colorText? : string;
 }
 
 const Container = style.view(
@@ -37,19 +39,21 @@ const TouchableOpacity = style.touchableOpacity({
   backgroundColor: CommonStyles.secondary,
 });
 
-export const ButtonIconText = ({ style, children, ...rest }: ButtonTextIconProps) => {
+export const ButtonIconText = ({ style, children, colorText, ...rest }: ButtonTextIconProps) => {
+  if (colorText === undefined) colorText = "black";
   return (
     <Container>
       <ButtonIcon {...rest} style={[styles.button, style]} />
-      <TextBold15>{children}</TextBold15>
+      <TextBold15 color={colorText}>{children}</TextBold15>
     </Container>
   );
 };
 
-export const ButtonIcon = ({ name, onPress, children, size, style }: ButtonTextIconProps) => {
+export const ButtonIcon = ({ name, onPress, children, size, style, color }: ButtonTextIconProps) => {
+  if (color === undefined) color = "white";
   return (
     <TouchableOpacity onPress={onPress} style={[styles.button, style]}>
-      <Icon color="white" size={size ? size : layoutSize.LAYOUT_25} name={name} />
+      <Icon color={color} size={size ? size : layoutSize.LAYOUT_25} name={name} />
     </TouchableOpacity>
   );
 };
