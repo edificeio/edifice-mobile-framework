@@ -44,7 +44,8 @@ target 'appe' do
 
   pod 'RNCPushNotificationIOS', :path => '../node_modules/@react-native-community/push-notification-ios'
 
-
+  pod 'RNDateTimePicker', :path => '../node_modules/@react-native-community/datetimepicker'
+ 
   target 'appeTests' do
     inherit! :search_paths
     # Pods for testing

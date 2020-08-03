@@ -6,7 +6,7 @@ import { NavigationScreenProp } from "react-navigation";
 
 import { Loading } from "../../../ui";
 import { PageContainer } from "../../../ui/ContainerContent";
-import { DatePicker } from "../../../ui/DatePicker";
+import DatePicker from "../../../ui/DatePicker";
 import { EmptyScreen } from "../../../ui/EmptyScreen";
 import { Text, TextBold } from "../../../ui/text";
 import ChildPicker from "../../viesco/containers/ChildPicker";
@@ -248,10 +248,20 @@ export default class HomeworkList extends React.PureComponent<HomeworkListProps,
         {this.props.navigation.state.params.user_type === "Relative" && <ChildPicker />}
         <View style={style.homeworkPart}>
           <View style={style.grid}>
-            <Text>{I18n.t("viesco-from")} &ensp;</Text>
-            <DatePicker date={startDate} endDate={endDate} onGetDate={onStartDateChange} />
-            <Text>&emsp;{I18n.t("viesco-to")} &ensp;</Text>
-            <DatePicker date={endDate} startDate={startDate} onGetDate={onEndDateChange} />
+            <Text>{I18n.t("viesco-from")}</Text>
+            <DatePicker
+              style={{ marginHorizontal: 12 }}
+              date={startDate}
+              maximumDate={endDate}
+              onChangeDate={onStartDateChange}
+            />
+            <Text>{I18n.t("viesco-to")}</Text>
+            <DatePicker
+              style={{ marginHorizontal: 12 }}
+              date={endDate}
+              minimumDate={startDate}
+              onChangeDate={onEndDateChange}
+            />
           </View>
           <View style={style.grid}>
             <Text>{I18n.t("viesco-homework")}</Text>

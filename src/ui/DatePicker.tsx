@@ -1,13 +1,15 @@
 import DateTimePicker from "@react-native-community/datetimepicker";
+import I18n from "i18n-js";
 import moment from "moment";
-import React from "react";
-import { View, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import { View, StyleSheet, Platform, ViewStyle } from "react-native";
 
-import { Icon } from "./";
+import { Icon, ButtonsOkCancel } from "./";
 import TouchableOpacity from "./CustomTouchableOpacity";
+import { ModalContent, ModalBox, ModalContentBlock, ModalContentText } from "./Modal";
 import { Text } from "./text";
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -23,74 +25,112 @@ const style = StyleSheet.create({
 
 const IconButton = ({ icon, color, text, onPress }) => {
   return (
-    <TouchableOpacity onPress={onPress} style={[style.gridButton, { backgroundColor: color }]}>
+    <TouchableOpacity onPress={onPress} style={[styles.gridButton, { backgroundColor: color }]}>
       <Icon size={20} color="#2BAB6F" name={icon} />
-      <Text>{text}</Text>
+      <Text style={{ marginHorizontal: 5 }}>{text}</Text>
     </TouchableOpacity>
   );
 };
 
 type DatePickerProps = {
   date: moment.Moment;
-  startDate?: moment.Moment;
-  endDate?: moment.Moment;
-  onGetDate: any;
+  minimumDate?: moment.Moment;
+  maximumDate?: moment.Moment;
+  onChangeDate: any;
+  style?: ViewStyle;
 };
 
-type DatePickerState = {
-  date: moment.Moment;
-  show: boolean;
+const DatePickerIOS = ({ date, minimumDate, maximumDate, style, onChangeDate }: DatePickerProps) => {
+  const [visible, toggleModal] = useState(false);
+  const [selectedDate, changeDate] = useState(date);
+  const [temporaryDate, changeTempDate] = useState(date);
+  return (
+    <View style={[styles.grid, style]}>
+      <IconButton
+        onPress={() => toggleModal(true)}
+        text={selectedDate.format("DD/MM/YY")}
+        color="white"
+        icon="reservation"
+      />
+      <ModalBox isVisible={visible} onDismiss={() => toggleModal(false)}>
+        <ModalContent style={{ width: 350 }}>
+          <ModalContentBlock>
+            <ModalContentText>{I18n.t("cdt-pickDate")}</ModalContentText>
+          </ModalContentBlock>
+
+          <View style={{ width: "100%", marginBottom: 35, paddingHorizontal: 20 }}>
+            <DateTimePicker
+              mode="date"
+              maximumDate={maximumDate && maximumDate.toDate()}
+              minimumDate={minimumDate && minimumDate.toDate()}
+              value={temporaryDate.toDate()}
+              onChange={(event, newDate) => {
+                if (event.type === "dismissed") {
+                  toggleModal(false);
+                } else {
+                  changeTempDate(moment(newDate));
+                }
+              }}
+            />
+          </View>
+          <ModalContentBlock>
+            <ButtonsOkCancel
+              onCancel={() => {
+                toggleModal(false);
+              }}
+              onValid={() => {
+                toggleModal(false);
+                changeDate(temporaryDate);
+                onChangeDate(temporaryDate);
+              }}
+              title={I18n.t("common-ok")}
+            />
+          </ModalContentBlock>
+        </ModalContent>
+      </ModalBox>
+    </View>
+  );
 };
 
-export class DatePicker extends React.PureComponent<DatePickerProps, DatePickerState> {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      date: this.props.date,
-      show: false,
-    };
-  }
-
-  private onChangeDate = (event, selectedDate) => {
-    if (event.type === "dismissed") {
-      this.setState({ show: false });
-    } else {
-      this.setState({ date: moment(selectedDate), show: false });
-      this.props.onGetDate(this.state.date);
-    }
-  };
-
-  private onShowCalendar = () => {
-    if (!this.state.show) {
-      this.setState({ show: true });
-    }
-  };
-
-  public render() {
-    return (
-      <View style={style.grid}>
-        <IconButton
-          onPress={this.onShowCalendar}
-          text={this.state.date.format("DD/MM/YY")}
-          color="white"
-          icon="reservation"
+const DatePickerAndroid = ({ date, minimumDate, style, maximumDate, onChangeDate }: DatePickerProps) => {
+  const [visible, toggleModal] = useState(false);
+  const [selectedDate, changeDate] = useState(date);
+  return (
+    <View style={[styles.grid, style]}>
+      <IconButton
+        onPress={() => toggleModal(true)}
+        text={selectedDate.format("DD/MM/YY")}
+        color="white"
+        icon="reservation"
+      />
+      {visible && (
+        <DateTimePicker
+          mode="date"
+          maximumDate={maximumDate && maximumDate.toDate()}
+          minimumDate={minimumDate && minimumDate.toDate()}
+          value={selectedDate.toDate()}
+          onChange={(event, newDate) => {
+            if (event.type === "dismissed") {
+              toggleModal(false);
+            } else {
+              toggleModal(false);
+              changeDate(moment(newDate));
+              onChangeDate(moment(newDate));
+            }
+          }}
         />
-        {this.state.show && this.props.endDate !== undefined && (
-          <DateTimePicker
-            maximumDate={this.props.endDate.toDate()}
-            value={this.state.date.toDate()}
-            onChange={this.onChangeDate}
-          />
-        )}
-        {this.state.show && this.props.startDate !== undefined && (
-          <DateTimePicker
-            minimumDate={this.props.startDate.toDate()}
-            value={this.state.date.toDate()}
-            onChange={this.onChangeDate}
-          />
-        )}
-      </View>
-    );
+      )}
+    </View>
+  );
+};
+
+export default (props: DatePickerProps) => {
+  switch (Platform.OS) {
+    case "ios": {
+      return <DatePickerIOS {...props} />;
+    }
+    default: {
+      return <DatePickerAndroid {...props} />;
+    }
   }
-}
+};
