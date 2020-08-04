@@ -298,6 +298,10 @@
   "zimbra-reply": "Reply",
   "zimbra-replyAll": "Reply All",
   "zimbra-forward": "Forward",
+  "zimbra-mark-read": "Mark as read",
+  "zimbra-move": "Move",
+  "zimbra-download-all": "Download all attachments",
+  "zimbra-delete": "Delete",
 
   "profileTypes": {
     "Guest": "Guest",

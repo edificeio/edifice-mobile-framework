@@ -61,7 +61,7 @@ export default class MailList extends React.PureComponent<any, any> {
     return (
       <TouchableOpacity
         onPress={() => {
-          this.props.navigation.navigate("mailDetail", { mailId: mailInfos.id });
+          this.props.navigation.navigate("mailDetail", { mailId: mailInfos.id, subject: mailInfos.subject });
         }}
         onLongPress={() => this.selectItem(mailInfos)}>
         <Header style={[this.containerStyle(mailInfos.isChecked), this.hasShadow(mailInfos.unread)]}>
