@@ -2,6 +2,7 @@ import I18n from "i18n-js";
 import * as React from "react";
 import { View, StyleSheet, Dimensions, ScrollView } from "react-native";
 
+import { Loading } from "../../ui";
 import { PageContainer } from "../../ui/ContainerContent";
 import { HtmlContentView } from "../../ui/HtmlContentView";
 import { RenderPJs, HeaderMail, FooterButton } from "./MailContentItems";
@@ -10,8 +11,8 @@ export default class MailContent extends React.PureComponent<any, any> {
   private mailFooter() {
     return (
       <View style={styles.containerFooter}>
-        <FooterButton icon="undo2" text={I18n.t("zimbra-reply")} onPress={() => true} />
-        <FooterButton icon="undo2" text={I18n.t("zimbra-replyAll")} onPress={() => true} />
+        <FooterButton icon="reply" text={I18n.t("zimbra-reply")} onPress={() => true} />
+        <FooterButton icon="reply_all" text={I18n.t("zimbra-replyAll")} onPress={() => true} />
         <FooterButton icon="arrow-right" text={I18n.t("zimbra-forward")} onPress={() => true} />
         <FooterButton icon="delete" text={I18n.t("zimbra-reply")} onPress={() => true} />
       </View>
@@ -37,13 +38,17 @@ export default class MailContent extends React.PureComponent<any, any> {
   public render() {
     return (
       <PageContainer>
-        <View style={{ flex: 1 }}>
-          <View style={styles.topGreenBar} />
-          {this.props.mail.id && this.mailHeader()}
-          {this.props.mail.hasAttachment && <RenderPJs attachments={this.props.mail.attachments} />}
-          {this.props.mail.body && this.mailContent()}
-          {this.mailFooter()}
-        </View>
+        {this.props.isFetching ? (
+          <Loading />
+        ) : (
+          <View style={{ flex: 1 }}>
+            <View style={styles.topGreenBar} />
+            {this.props.mail.id && this.mailHeader()}
+            {this.props.mail.hasAttachment && <RenderPJs attachments={this.props.mail.attachments} />}
+            {this.props.mail.body && this.mailContent()}
+            {this.mailFooter()}
+          </View>
+        )}
       </PageContainer>
     );
   }

@@ -1,3 +1,4 @@
+import I18n from "i18n-js";
 import moment from "moment";
 import * as React from "react";
 import { View, StyleSheet, RefreshControl, Dimensions } from "react-native";
@@ -10,23 +11,33 @@ import { Header, LeftPanel, CenterPanel, PageContainer } from "../../ui/Containe
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
 import { Text, TextBold } from "../../ui/text";
-
-type MailListProps = {
-  notifications: any;
-  isFetching: boolean;
-};
+import { IMail } from "../state/mailContent";
 
 export default class MailList extends React.PureComponent<any, any> {
   constructor(props) {
     super(props);
 
-    const { notifications, isFetching } = this.props;
+    const { notifications } = this.props;
     this.state = {
       indexPage: 0,
       mails: notifications,
-      fetching: isFetching,
-      needToBeFired: false,
     };
+  }
+
+  componentDidMount() {
+    const { notifications } = this.props;
+    if (notifications !== undefined) this.setState({ mails: notifications });
+  }
+
+  componentDidUpdate(prevProps) {
+    const { notifications, isFetching } = this.props;
+    if (this.state.indexPage === 0 && !isFetching) this.setState({ mails: notifications });
+
+    if (notifications !== prevProps.notifications && !isFetching) {
+      const { mails } = this.state;
+      const joinedList = mails.concat(this.props.notifications);
+      this.setState({ mails: joinedList });
+    }
   }
 
   hasShadow = isShadow => {
@@ -57,39 +68,62 @@ export default class MailList extends React.PureComponent<any, any> {
                     {sender[1]}
                   </Text>
                 ))}
-              <Text style={styles.subjectDateColor}>{moment(mailInfos.date).format("dddd LL")}</Text>
+              <Text style={styles.greyColor}>{moment(mailInfos.date).format("dddd LL")}</Text>
             </View>
-            <Text style={styles.subjectDateColor}>{mailInfos.subject}</Text>
+            <View style={styles.mailInfos}>
+              <Text style={{ flex: 1, color: "#AFAFAF" }} numberOfLines={1}>
+                {mailInfos.subject}
+              </Text>
+              {mailInfos.hasAttachment && (
+                <Icon style={{ alignSelf: "flex-end" }} name="attached" size={18} color="black" />
+              )}
+            </View>
           </CenterPanel>
         </Header>
       </TouchableOpacity>
     );
   }
 
-  onChangePage = distanceFromEnd => {
-    if (distanceFromEnd === 0 && !this.props.isFetching) {
-      const { indexPage, mails } = this.state;
+  onChangePage = () => {
+    if (!this.props.isFetching && this.props.notifications !== undefined) {
+      const { indexPage } = this.state;
       const currentPage = indexPage + 1;
+      this.setState({ indexPage: currentPage });
       this.props.fetchMails(currentPage);
-      this.setState({
-        indexPage: currentPage,
-        mails: this.props.notifications,
-      });
     }
   };
 
+  refreshMailList = () => {
+    this.props.fetchMails(0);
+    this.setState({ indexPage: 0, mail: this.props.notifications });
+  };
+
+  refreshMailDataList = () => {
+    const { notifications } = this.props;
+    if (this.state.indexPage === 0) this.setState({ mails: notifications });
+    return this.state.mails;
+  };
+
   public render() {
+    console.log("mails: ", this.state.mails);
     return (
       <PageContainer>
         <SafeAreaView>
           <FlatList
-            data={this.props.notifications || this.state.mails}
+            data={this.state.mails}
             renderItem={({ item }) => this.renderMailItemInfos(item)}
+            extraData={this.state.mails}
+            keyExtractor={(item: IMail) => item.id}
             refreshControl={
-              <RefreshControl refreshing={this.props.isFetching} onRefresh={() => this.props.fetchMails(0)} />
+              <RefreshControl refreshing={this.props.isFetching} onRefresh={() => this.refreshMailList()} />
             }
-            onEndReachedThreshold={0.5}
-            onEndReached={({ distanceFromEnd }) => this.onChangePage(distanceFromEnd)}
+            onEndReachedThreshold={0.01}
+            onEndReached={() => this.onChangePage()}
+            ListEmptyComponent={
+              <View style={{ justifyContent: "center", alignItems: "center" }}>
+                <Text>{I18n.t("subFolder-emptyScreenTitle")}</Text>
+              </View>
+            }
           />
         </SafeAreaView>
       </PageContainer>
@@ -111,7 +145,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   mailInfoSender: { flex: 1 },
-  subjectDateColor: { color: "#AFAFAF" },
+  greyColor: { color: "#AFAFAF" },
   shadow: {
     elevation: 4,
     shadowColor: CommonStyles.shadowColor,
