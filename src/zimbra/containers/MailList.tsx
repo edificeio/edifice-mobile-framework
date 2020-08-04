@@ -48,6 +48,12 @@ class MailListContainer extends React.PureComponent<any, any> {
 const mapStateToProps: (state: any) => any = state => {
   const { isPristine, isFetching, data } = getMailListState(state);
 
+  if (data !== undefined && data.length > 0) {
+    for (let i = 0; i <= data.length - 1; i++) {
+      data[i]["isChecked"] = false;
+    }
+  }
+
   // Format props
   return {
     isPristine,
