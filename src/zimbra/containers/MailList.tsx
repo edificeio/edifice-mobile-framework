@@ -1,32 +1,45 @@
-import I18n from "i18n-js";
 import * as React from "react";
-import { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
-import { fetchMailListAction } from "../actions/mailList";
+import { fetchMailListAction, fetchMailListFromFolderAction } from "../actions/mailList";
 import MailList from "../components/MailList";
 import { getMailListState } from "../state/mailList";
 
 // ------------------------------------------------------------------------------------------------
 
 class MailListContainer extends React.PureComponent<any, any> {
-  public componentDidMount() {
-    this.props.fetchMailListAction(0);
+  constructor(props) {
+    super(props);
+    this.state = {
+      unsubscribe: this.props.navigation.addListener("didFocus", () => {
+        this.forceUpdate();
+      }),
+    };
   }
-
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<any> }) => {
-    return standardNavScreenOptions(
-      {
-        title: I18n.t("zimbra-inbox"),
-      },
-      navigation
-    );
+  private fetchMails = (page = 0) => {
+    const folderName = this.props.navigation.getParam("folderName");
+    if (!folderName || folderName === undefined) this.props.fetchMailListAction(page);
+    else this.props.fetchMailFromFolder(folderName, page);
   };
 
+  public componentDidMount() {
+    this.fetchMails();
+  }
+
+  componentDidUpdate(prevProps) {
+    const folderName = this.props.navigation.getParam("folderName");
+    if (folderName !== prevProps.navigation.getParam("folderName")) {
+      this.fetchMails();
+    }
+  }
+
+  componentWillUnmount() {
+    this.state.unsubscribe();
+  }
+
   public render() {
-    return <MailList {...this.props} />;
+    return <MailList {...this.props} fetchMails={this.fetchMails} />;
   }
 }
 
@@ -46,7 +59,7 @@ const mapStateToProps: (state: any) => any = state => {
 // ------------------------------------------------------------------------------------------------
 
 const mapDispatchToProps: (dispatch: any) => any = dispatch => {
-  return bindActionCreators({ fetchMailListAction }, dispatch);
+  return bindActionCreators({ fetchMailListAction, fetchMailFromFolder: fetchMailListFromFolderAction }, dispatch);
 };
 
 // ------------------------------------------------------------------------------------------------

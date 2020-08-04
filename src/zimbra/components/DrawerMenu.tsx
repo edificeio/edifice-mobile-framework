@@ -6,8 +6,9 @@ import { NavigationScreenProp } from "react-navigation";
 
 import { Icon } from "../../ui";
 import { PageContainer } from "../../ui/ContainerContent";
-import { Text, TextBold } from "../../ui/Typography";
+import { Text } from "../../ui/Typography";
 import CreateFolderModal from "../containers/CreateFolderModal";
+import DrawerOption from "./DrawerOption";
 
 type DrawerMenuProps = {
   fetchFolders: any;
@@ -44,54 +45,69 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
     });
   };
 
-  getIcon = text => {
-    const item = this.props.activeItemKey;
-    const iconStyle = item === text ? [style.itemIcon, { color: "white" }] : style.itemIcon;
-    switch (text) {
-      case "inbox":
-        return <Icon size={16} name="inbox" style={iconStyle} />;
-      case "outbox":
-        return <Icon size={16} name="outbox" style={iconStyle} />;
-      case "drafts":
-        return <Icon size={16} name="file-document-outline" style={iconStyle} />;
-      case "trash":
-        return <Icon size={16} name="trash" style={iconStyle} />;
-      case "spams":
-        return <Icon size={16} name="deleted_files" style={iconStyle} />;
-    }
+  isCurrentScreen = key => {
+    return !this.getCurrentFolder(this.props.navigation.state) && this.props.activeItemKey === key;
   };
+
+  getCurrentFolder = state => {
+    if (this.props.activeItemKey !== "inbox") return undefined;
+    const folderState = state.routes.find(r => r.key === "inbox");
+    if (folderState.params === undefined) return undefined;
+    return folderState.params.folderName;
+  };
+
   render() {
-    const { items, descriptors } = this.props;
-    const { folders, quota } = this.props;
+    const { navigation, folders, quota } = this.props;
     const storagePercent = (quota.data.storage / Number(quota.data.quota)) * 100;
+    const currentFolder = this.getCurrentFolder(this.props.navigation.state);
     return (
       <PageContainer style={style.container}>
         <View style={style.labelContainer}>
           <Text style={style.labelText}>{I18n.t("zimbra-messages")}</Text>
         </View>
-        {items.map(item => (
-          <TouchableOpacity
-            style={this.props.activeItemKey === item.key ? [style.item, style.selectedItem] : style.item}
-            onPress={() => this.props.navigation.navigate(item.routeName)}>
-            {this.getIcon(item.key)}
-            {this.props.activeItemKey === item.key ? (
-              <TextBold style={[style.itemTextSelected, style.itemText]}>
-                {descriptors[item.key].options.drawerLabel}
-              </TextBold>
-            ) : (
-              <Text style={style.itemText}>{descriptors[item.key].options.drawerLabel}</Text>
-            )}
-          </TouchableOpacity>
-        ))}
+        <DrawerOption
+          selected={this.isCurrentScreen("inbox")}
+          iconName="inbox"
+          label={I18n.t("zimbra-inbox")}
+          navigate={() => navigation.navigate("inbox", { key: "inbox", folderName: undefined })}
+        />
+        <DrawerOption
+          selected={this.isCurrentScreen("outbox")}
+          iconName="outbox"
+          label={I18n.t("zimbra-outbox")}
+          navigate={() => navigation.navigate("outbox")}
+        />
+        <DrawerOption
+          selected={this.isCurrentScreen("drafts")}
+          iconName="file-document-outline"
+          label={I18n.t("zimbra-drafts")}
+          navigate={() => navigation.navigate("drafts")}
+        />
+        <DrawerOption
+          selected={this.isCurrentScreen("trash")}
+          iconName="trash"
+          label={I18n.t("zimbra-trash")}
+          navigate={() => navigation.navigate("trash")}
+        />
+        <DrawerOption
+          selected={this.isCurrentScreen("spams")}
+          iconName="deleted_files"
+          label={I18n.t("zimbra-spams")}
+          navigate={() => navigation.navigate("spams")}
+        />
         <View style={style.labelContainer}>
           <Text style={style.labelText}>{I18n.t("zimbra-directories")}</Text>
         </View>
         <ScrollView>
           {folders.data.map(folder => (
-            <TouchableOpacity style={style.item}>
-              <Icon style={style.itemIcon} name="workspace_folder" />
-              <Text style={style.itemText}>{folder.name}</Text>
-            </TouchableOpacity>
+            <DrawerOption
+              selected={folder.name === currentFolder}
+              iconName="workspace_folder"
+              label={folder.name}
+              navigate={() => {
+                navigation.navigate("inbox", { key: folder.name, folderName: folder.name });
+              }}
+            />
           ))}
         </ScrollView>
         <View style={style.drawerBottom}>
@@ -132,25 +148,6 @@ const style = StyleSheet.create({
     paddingLeft: 10,
   },
   container: {},
-  item: {
-    padding: 7,
-    marginBottom: 8,
-    backgroundColor: "white",
-    flexDirection: "row",
-  },
-  selectedItem: {
-    backgroundColor: "orange",
-  },
-  itemText: {
-    marginLeft: 5,
-    fontSize: 18,
-  },
-  itemTextSelected: {
-    color: "white",
-  },
-  itemIcon: {
-    alignSelf: "center",
-  },
   loadBar: {
     backgroundColor: "lightgrey",
     width: "100%",

@@ -70,7 +70,7 @@ export default class MailList extends React.PureComponent<any, any> {
     if (distanceFromEnd === 0 && !this.props.isFetching) {
       const { indexPage, mails } = this.state;
       const currentPage = indexPage + 1;
-      this.props.fetchMailListAction(currentPage);
+      this.props.fetchMails(currentPage);
       this.setState({
         indexPage: currentPage,
         mails: this.props.notifications,
@@ -86,7 +86,7 @@ export default class MailList extends React.PureComponent<any, any> {
             data={this.props.notifications || this.state.mails}
             renderItem={({ item }) => this.renderMailItemInfos(item)}
             refreshControl={
-              <RefreshControl refreshing={this.props.isFetching} onRefresh={() => this.props.fetchMailListAction(0)} />
+              <RefreshControl refreshing={this.props.isFetching} onRefresh={() => this.props.fetchMails(0)} />
             }
             onEndReachedThreshold={0.5}
             onEndReached={({ distanceFromEnd }) => this.onChangePage(distanceFromEnd)}
