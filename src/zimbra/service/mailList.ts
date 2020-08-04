@@ -56,4 +56,8 @@ export const mailListService = {
     const data = await fetchJSONWithCache(``);
     return data;
   },
+  getFromFolder: async (folderLocation: string, page: number = 0) => {
+    const data = mailListAdapter(await fetchJSONWithCache(`/zimbra/list?folder=/Inbox/${folderLocation}&page=${page}`));
+    return data;
+  },
 };
