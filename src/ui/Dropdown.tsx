@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     borderBottomLeftRadius: 5,
     borderBottomRightRadius: 5,
+    zIndex: 1,
   },
 });
 

@@ -38,9 +38,9 @@ class History extends React.PureComponent<HistoryProps> {
       <View style={{ flex: 1 }}>
         {this.props.navigation.state.params.user_type === "Relative" && <ChildPicker />}
         <ScrollView contentContainerStyle={style.container}>
-          <View style={{ alignItems: "center", zIndex: 200  }}>
+          <View style={{ alignItems: "center", zIndex: 1 }}>
             <Dropdown
-              style={{ backgroundColor: "white"}}
+              style={{ backgroundColor: "white" }}
               containerStyle={{ flex: 0, width: "50%" }}
               value={selected}
               data={periods}
