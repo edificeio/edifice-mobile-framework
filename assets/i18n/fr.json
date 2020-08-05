@@ -298,10 +298,11 @@
     "zimbra-reply": "Répondre",
     "zimbra-replyAll": "Répondre à tous",
     "zimbra-forward": "Transférer",
-    "zimbra-mark-read": "Marquer comme lu",
+    "zimbra-mark-unread": "Marquer comme non lu",
     "zimbra-move": "Déplacer",
     "zimbra-download-all": "Télécharger pièces jointes",
     "zimbra-delete": "Supprimer",
+    "zimbra-move-to": "Déplacer vers",
 
     "profileTypes": {
       "Guest": "Invité",

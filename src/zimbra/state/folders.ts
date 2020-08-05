@@ -8,6 +8,7 @@ export interface IFolder {
   trashed: boolean;
   depth: number;
   name: string;
+  id: string;
 }
 
 export type IFolderList = IFolder[];

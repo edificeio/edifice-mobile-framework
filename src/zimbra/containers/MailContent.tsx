@@ -1,7 +1,7 @@
 import I18n from "i18n-js";
 import * as React from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { NavigationScreenProp } from "react-navigation";
+import { NavigationScreenProp, NavigationActions } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
@@ -11,10 +11,12 @@ import { Icon } from "../../ui";
 import { PageContainer } from "../../ui/ContainerContent";
 import { Text } from "../../ui/Typography";
 import { Header as HeaderComponent } from "../../ui/headers/Header";
-import { HeaderBackAction } from "../../ui/headers/NewHeader";
+import { HeaderAction } from "../../ui/headers/NewHeader";
+import { toggleReadAction, trashMailsAction } from "../actions/mail";
 import { fetchMailContentAction } from "../actions/mailContent";
 import MailContent from "../components/MailContent";
 import MailContentMenu from "../components/MailContentMenu";
+import MoveModal from "../containers/MoveToFolderModal";
 import { getMailContentState } from "../state/mailContent";
 
 class MailContentContainer extends React.PureComponent<any, any> {
@@ -24,6 +26,7 @@ class MailContentContainer extends React.PureComponent<any, any> {
     this.state = {
       mailId: this.props.navigation.state.params.mailId,
       showMenu: false,
+      showModal: false,
     };
   }
   public componentDidMount() {
@@ -52,28 +55,44 @@ class MailContentContainer extends React.PureComponent<any, any> {
     });
   };
 
-  markAsRead = () => console.log("marked as read");
+  public showModal = () => {
+    this.setState({
+      showModal: true,
+    });
+  };
 
-  move = () => console.log("moved");
+  public closeModal = () => {
+    this.setState({
+      showModal: false,
+    });
+  };
 
-  download = () => console.log("downloaded");
+  markAsRead = () => this.props.toggleRead([this.props.mail.id], false);
 
-  delete = () => console.log("deleted");
+  move = () => this.props.moveToInbox([this.props.mail.id]);
+
+  delete = () => this.props.trashMails([this.props.mail.id]);
+
+  goBack = () => {
+    const { navigation } = this.props;
+    navigation.state.params.onGoBack();
+    navigation.dispatch(NavigationActions.back());
+  };
 
   public render() {
-    const { navigation } = this.props;
-    const { showMenu } = this.state;
+    const { navigation, mail } = this.props;
+    const { showMenu, showModal } = this.state;
     const menuData = [
-      { text: I18n.t("zimbra-mark-read"), icon: "mail", onPress: this.markAsRead },
-      { text: I18n.t("zimbra-move"), icon: "inbox-1", onPress: this.move },
-      { text: I18n.t("zimbra-download-all"), icon: "download", onPress: this.download },
+      { text: I18n.t("zimbra-mark-unread"), icon: "mail", onPress: this.markAsRead },
+      { text: I18n.t("zimbra-move"), icon: "inbox-1", onPress: this.showModal },
+      // { text: I18n.t("zimbra-download-all"), icon: "download", onPress: () => {} },
       { text: I18n.t("zimbra-delete"), icon: "trash", onPress: this.delete },
     ];
     return (
       <>
         <PageContainer>
           <HeaderComponent>
-            <HeaderBackAction navigation={navigation} />
+            <HeaderAction onPress={this.goBack} name="back" />
             <Text
               style={{
                 alignSelf: "center",
@@ -92,6 +111,7 @@ class MailContentContainer extends React.PureComponent<any, any> {
           </HeaderComponent>
           <MailContent {...this.props} />
         </PageContainer>
+        <MoveModal mail={mail} show={showModal} closeModal={this.closeModal} />
         <MailContentMenu onClickOutside={this.showMenu} show={showMenu} data={menuData} />
       </>
     );
@@ -109,7 +129,14 @@ const mapStateToProps: (state: any) => any = state => {
 };
 
 const mapDispatchToProps: (dispatch: any) => any = dispatch => {
-  return bindActionCreators({ fetchMailContentAction }, dispatch);
+  return bindActionCreators(
+    {
+      fetchMailContentAction,
+      toggleRead: toggleReadAction,
+      trashMails: trashMailsAction,
+    },
+    dispatch
+  );
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MailContentContainer);

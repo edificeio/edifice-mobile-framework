@@ -9,6 +9,7 @@ export default createSessionAsyncReducer(initialState, actionTypes, {
     newState.push({
       name: action.data.name,
       parent_id: action.data.parent_id,
+      id: action.data.id,
       trashed: false,
       depth: 1,
     });

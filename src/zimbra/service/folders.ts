@@ -7,6 +7,7 @@ export type FoldersBackend = {
   trashed: boolean;
   depth: number;
   name: string;
+  id: string;
 }[];
 
 const foldersAdapter: (data: FoldersBackend) => IFolderList = data => {
@@ -15,6 +16,7 @@ const foldersAdapter: (data: FoldersBackend) => IFolderList = data => {
     trashed: folder.trashed,
     depth: folder.depth,
     name: folder.name,
+    id: folder.id,
   }));
 };
 
