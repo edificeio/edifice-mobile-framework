@@ -45,7 +45,7 @@ export default class MailList extends React.PureComponent<any, any> {
   };
 
   containerStyle = isChecked => {
-    return !isChecked ? styles.containerMail : styles.containerMailSelected;
+    return !isChecked ? null : styles.containerMailSelected;
   };
 
   selectItem = mailInfos => {
@@ -64,7 +64,8 @@ export default class MailList extends React.PureComponent<any, any> {
           this.props.navigation.navigate("mailDetail", { mailId: mailInfos.id, subject: mailInfos.subject });
         }}
         onLongPress={() => this.selectItem(mailInfos)}>
-        <Header style={[this.containerStyle(mailInfos.isChecked), this.hasShadow(mailInfos.unread)]}>
+        <Header
+          style={[styles.containerMail, this.containerStyle(mailInfos.isChecked), this.hasShadow(mailInfos.unread)]}>
           <LeftPanel>
             {mailInfos.unread && <Icon name="mail" size={18} color="#FC8500" />}
             <SingleAvatar userId={mailInfos.from} />
@@ -111,8 +112,16 @@ export default class MailList extends React.PureComponent<any, any> {
     this.setState({ indexPage: 0, mail: this.props.notifications });
   };
 
+  toggleUnread = () => {
+    let toggleListIds = "";
+    for (let i = 0; i < this.state.mails.length - 1; i++) {
+      if (this.state.mails[i].isChecked) toggleListIds = toggleListIds.concat("id=", this.state.mails[i].id, "&");
+    }
+    if (toggleListIds === "") return;
+    toggleListIds = toggleListIds.slice(0, -1);
+  };
+
   public render() {
-    console.log("mails: ", this.state.mails);
     return (
       <PageContainer>
         <SafeAreaView>
@@ -141,16 +150,12 @@ export default class MailList extends React.PureComponent<any, any> {
 const styles = StyleSheet.create({
   containerMail: {
     marginTop: 5,
-    marginHorizontal: 5,
-    maxWidth: Dimensions.get("window").width - 10,
+    marginHorizontal: 8,
+    maxWidth: Dimensions.get("window").width - 16,
     padding: 10,
     backgroundColor: "white",
   },
   containerMailSelected: {
-    marginTop: 5,
-    marginHorizontal: 5,
-    maxWidth: Dimensions.get("window").width - 10,
-    padding: 10,
     backgroundColor: "#C5E6F2",
   },
   mailInfos: {
