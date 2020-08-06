@@ -25,7 +25,7 @@ type DeclarationState = {
   comment: string;
   files: DocumentPickerResponse[];
 };
-export class AbsenceDeclaration extends React.PureComponent<DeclarationProps, DeclarationState> {
+class AbsenceDeclaration extends React.PureComponent<DeclarationProps, DeclarationState> {
   constructor(props) {
     super(props);
     this.state = {

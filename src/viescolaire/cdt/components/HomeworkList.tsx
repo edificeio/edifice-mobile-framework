@@ -30,10 +30,6 @@ const style = StyleSheet.create({
   },
 });
 
-type HomeworkListState = {
-  fetching: boolean;
-};
-
 type HomeworkListProps = {
   switchValue: boolean;
   startDate: moment.Moment;
@@ -57,34 +53,19 @@ type HomeworkListProps = {
   sessions: any;
   personnel: any;
   subjects: any;
+  isFetching: boolean;
 };
 
-export default class HomeworkList extends React.PureComponent<HomeworkListProps, HomeworkListState> {
-  constructor(props) {
-    super(props);
-    const { homeworks, sessions, personnel, subjects } = props;
-    this.state = {
-      fetching: homeworks.isFetching || sessions.isFetching || personnel.isFetching || subjects.isFetching,
-    };
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const { homeworks, sessions, personnel, subjects } = this.props;
-    const fetching = homeworks.isFetching || sessions.isFetching || personnel.isFetching || subjects.isFetching;
-    if (fetching !== prevState.fetching) {
-      this.setState({ fetching });
-    }
-  }
-
+export default class HomeworkList extends React.PureComponent<HomeworkListProps, {}> {
   getSubjectName = subjectId => {
-    const subjectsList = this.props.subjects.data;
+    const subjectsList = this.props.subjects;
     const result = subjectsList.find(subject => subject.subjectId === subjectId);
     if (typeof result === "undefined") return "";
     return result.subjectLabel;
   };
 
   getTeacherName = teacherId => {
-    const personnelList = this.props.personnel.data;
+    const personnelList = this.props.personnel;
     const result = personnelList.find(personnel => personnel.id === teacherId);
     if (typeof result === "undefined") return "";
     return `${result.lastName} ${result.firstName}`;
@@ -133,7 +114,7 @@ export default class HomeworkList extends React.PureComponent<HomeworkListProps,
   };
 
   private renderHomeworks() {
-    const homeworkDataList = this.props.homeworks.data;
+    const homeworkDataList = this.props.homeworks;
     const homeworksArray = Object.values(homeworkDataList);
     homeworksArray.sort((a, b) => a.due_date - b.due_date);
     return (
@@ -141,7 +122,7 @@ export default class HomeworkList extends React.PureComponent<HomeworkListProps,
         {homeworksArray.length > 0 ? (
           <ScrollView
             contentContainerStyle={style.scrollView}
-            refreshControl={<RefreshControl refreshing={this.state.fetching} onRefresh={this.onRefreshHomeworks} />}>
+            refreshControl={<RefreshControl refreshing={this.props.isFetching} onRefresh={this.onRefreshHomeworks} />}>
             {homeworksArray.map((homework, index, list) => (
               <TouchableOpacity
                 onPress={() => this.props.navigation.navigate("HomeworkPage", this.homeworkDetailsAdapter(homework))}>
@@ -184,13 +165,13 @@ export default class HomeworkList extends React.PureComponent<HomeworkListProps,
   }
 
   private renderSessions() {
-    const sessions = this.props.sessions.data;
+    const sessions = this.props.sessions;
     return (
       <>
         {sessions.length > 0 ? (
           <ScrollView
             contentContainerStyle={style.scrollView}
-            refreshControl={<RefreshControl refreshing={this.state.fetching} onRefresh={this.onRefreshSessions} />}>
+            refreshControl={<RefreshControl refreshing={this.props.isFetching} onRefresh={this.onRefreshSessions} />}>
             {sessions.map((session, index, list) => (
               <TouchableOpacity
                 onPress={() => this.props.navigation.navigate("SessionPage", this.sessionDetailsAdapter(session))}>
@@ -272,7 +253,7 @@ export default class HomeworkList extends React.PureComponent<HomeworkListProps,
             />
             <Text>{I18n.t("viesco-session")}</Text>
           </View>
-          {this.state.fetching ? <Loading /> : !switchValue ? this.renderHomeworks() : this.renderSessions()}
+          {this.props.isFetching ? <Loading /> : !switchValue ? this.renderHomeworks() : this.renderSessions()}
         </View>
       </PageContainer>
     );

@@ -16,6 +16,7 @@ import { fetchChildSessionAction, fetchSessionListAction } from "../actions/sess
 import HomeworkList from "../components/HomeworkList";
 import { getHomeworksListState } from "../state/homeworks";
 import { getSessionsListState } from "../state/sessions";
+import { INavigationProps } from "../../../types";
 
 enum switchState {
   HOMEWORK,
@@ -27,7 +28,6 @@ type HomeworkListProps = {
   sessions: any;
   personnel: any;
   subjects: any;
-  navigation: NavigationScreenProp<any>;
   childId: string;
   structureId: string;
   fetchChildHomeworks: any;
@@ -35,7 +35,7 @@ type HomeworkListProps = {
   fetchHomeworks: any;
   fetchSessions: any;
   updateHomeworkProgress: any;
-};
+} & INavigationProps;
 
 type HomeworkListState = {
   switchValue: switchState;
@@ -48,6 +48,21 @@ type HomeworkListState = {
 };
 
 class HomeworkListRelativeContainer extends React.PureComponent<HomeworkListProps, HomeworkListState> {
+  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
+    const diaryTitle = navigation.getParam("diaryTitle");
+
+    return standardNavScreenOptions(
+      {
+        title: diaryTitle || I18n.t("Homework"),
+        headerLeft: <HeaderBackAction navigation={navigation} />,
+        headerStyle: {
+          backgroundColor: "#2BAB6F",
+        },
+      },
+      navigation
+    );
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -109,21 +124,6 @@ class HomeworkListRelativeContainer extends React.PureComponent<HomeworkListProp
         break;
       }
     }
-  };
-
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
-    const diaryTitle = navigation.getParam("diaryTitle");
-
-    return standardNavScreenOptions(
-      {
-        title: diaryTitle || I18n.t("Homework"),
-        headerLeft: <HeaderBackAction navigation={navigation} />,
-        headerStyle: {
-          backgroundColor: "#2BAB6F",
-        },
-      },
-      navigation
-    );
   };
 
   public componentDidMount() {
@@ -192,11 +192,17 @@ class HomeworkListRelativeContainer extends React.PureComponent<HomeworkListProp
 }
 
 const mapStateToProps: (state: any) => any = state => {
+  const homeworksState = getHomeworksListState(state)
+  const sessionsState = getSessionsListState(state)
+  const subjectsState = getSubjectsListState(state)
+  const personnelState = getPersonnelListState(state)
+
   return {
-    homeworks: getHomeworksListState(state),
-    sessions: getSessionsListState(state),
-    personnel: getPersonnelListState(state),
-    subjects: getSubjectsListState(state),
+    homeworks: homeworksState.data,
+    sessions: sessionsState.data,
+    subjects: subjectsState.data,
+    personnel: personnelState.data,
+    isFetching: homeworksState.isFetching || sessionsState.isFetching || subjectsState.isFetching || personnelState.isFetching,
     childId: getSelectedChild(state),
     structureId:
       getSessionInfo().type === "Student"
