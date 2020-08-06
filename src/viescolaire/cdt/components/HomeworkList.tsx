@@ -10,8 +10,7 @@ import DatePicker from "../../../ui/DatePicker";
 import { EmptyScreen } from "../../../ui/EmptyScreen";
 import { Text, TextBold } from "../../../ui/text";
 import ChildPicker from "../../viesco/containers/ChildPicker";
-import { HomeworkItem } from "./homework";
-import { SessionItem } from "./session";
+import { HomeworkItem, SessionItem } from "./Items";
 
 const style = StyleSheet.create({
   homeworkPart: { flex: 1, paddingBottom: 8, paddingHorizontal: 15 },
@@ -122,32 +121,25 @@ export default class HomeworkList extends React.PureComponent<HomeworkListProps,
         contentContainerStyle={style.scrollView}
         refreshControl={<RefreshControl refreshing={this.props.isFetching} onRefresh={this.onRefreshHomeworks} />}>
         {homeworksArray.map((homework, index, list) => (
-          <TouchableOpacity
-            onPress={() => this.props.navigation.navigate("HomeworkPage", this.homeworkDetailsAdapter(homework))}>
+          <View>
             {index === 0 ||
             moment(homework.due_date).format("DD/MM/YY") !== moment(list[index - 1].due_date).format("DD/MM/YY") ? (
               <TextBold>
                 {I18n.t("viesco-homework-fordate")} {moment(homework.due_date).format("dddd Do MMMM")}
               </TextBold>
             ) : null}
-            {this.props.navigation.state.params.user_type === "Relative" ? (
-              <HomeworkItem
-                disabled
-                checked={this.isHomeworkDone(homework)}
-                title={this.getSubjectName(homework.subject_id)}
-                subtitle={homework.type}
-              />
-            ) : (
-              <HomeworkItem
-                checked={this.isHomeworkDone(homework)}
-                title={this.getSubjectName(homework.subject_id)}
-                subtitle={homework.type}
-                onChange={() => {
+            <HomeworkItem
+              onPress={() => this.props.navigation.navigate("HomeworkPage", this.homeworkDetailsAdapter(homework))}
+              disabled={this.props.navigation.state.params.user_type === "Relative"}
+              checked={this.isHomeworkDone(homework)}
+              title={this.getSubjectName(homework.subject_id)}
+              subtitle={homework.type}
+              onChange={() => {
+                this.props.navigation.state.params.user_type !== "Relative" &&
                   this.props.updateHomeworkProgress(homework.id, !this.isHomeworkDone(homework));
-                }}
-              />
-            )}
-          </TouchableOpacity>
+              }}
+            />
+          </View>
         ))}
       </ScrollView>
     );
@@ -160,17 +152,17 @@ export default class HomeworkList extends React.PureComponent<HomeworkListProps,
         contentContainerStyle={style.scrollView}
         refreshControl={<RefreshControl refreshing={this.props.isFetching} onRefresh={this.onRefreshSessions} />}>
         {sessions.map((session, index, list) => (
-          <TouchableOpacity
-            onPress={() => this.props.navigation.navigate("SessionPage", this.sessionDetailsAdapter(session))}>
+          <View>
             {index === 0 ||
             moment(session.date).format("DD/MM/YY") !== moment(list[index - 1].date).format("DD/MM/YY") ? (
               <TextBold>{moment(session.date).format("DD/MM/YY")}</TextBold>
             ) : null}
             <SessionItem
+              onPress={() => this.props.navigation.navigate("SessionPage", this.sessionDetailsAdapter(session))}
               matiere={this.getSubjectName(session.subject_id)}
               author={this.getTeacherName(session.teacher_id)}
             />
-          </TouchableOpacity>
+          </View>
         ))}
       </ScrollView>
     );

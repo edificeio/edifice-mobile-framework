@@ -9,7 +9,7 @@ import { Icon } from "../../../ui";
 import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
 import { EmptyScreen } from "../../../ui/EmptyScreen";
 import { Text, TextBold } from "../../../ui/text";
-import { HomeworkItem } from "../../cdt/components/homework";
+import { HomeworkItem } from "../../cdt/components/Items";
 import { DenseDevoirList } from "../../competences/components/Item";
 import ChildPicker from "../containers/ChildPicker";
 

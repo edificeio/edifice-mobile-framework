@@ -61,7 +61,7 @@ export const Item: React.FunctionComponent<ItemProps> = ({
   if (shadow) style.push(styleConstant.containerShadow);
 
   return (
-    <TouchableOpacity disabled={onPress != null} style={style} onPress={onPress}>
+    <TouchableOpacity disabled={onPress == null} style={style} onPress={onPress}>
       {children}
     </TouchableOpacity>
   );

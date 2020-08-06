@@ -7,7 +7,7 @@ import { NavigationActions } from "react-navigation";
 import { Icon } from "../../../ui";
 import { EmptyScreen } from "../../../ui/EmptyScreen";
 import { TextBold } from "../../../ui/text";
-import { HomeworkItem } from "../../cdt/components/homework";
+import { HomeworkItem } from "../../cdt/components/Items";
 
 const style = StyleSheet.create({
   dashboardPart: { paddingVertical: 8, paddingHorizontal: 15 },
