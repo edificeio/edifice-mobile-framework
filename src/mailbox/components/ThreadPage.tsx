@@ -203,6 +203,7 @@ export class ThreadPage extends React.PureComponent<
             emptyThread={!messages.length}
             displayPlaceholder={!isFetchingFirst}
             onReceiversTap={this.handleTapReceivers}
+            onChangeReceivers={this.handleChangeReceivers}
             onDimBackground={dim => this.setState({ isDimmed: dim })}
             {...this.props}
           />
@@ -245,6 +246,12 @@ export class ThreadPage extends React.PureComponent<
     //TODO move orchestration to thunk
     this.props.onTapReceiversFromThread && this.props.onTapReceiversFromThread(thread);
     this.props.navigation.navigate("listReceivers");
+  }
+  public handleChangeReceivers = (lastMessage: IConversationMessage) => {
+    this.props.navigation?.navigate('newThread', {
+      type: 'reply',
+      message: lastMessage
+    })
   }
   /*
   TODO : Dead code in old `conversation` module. So what to do this time ?

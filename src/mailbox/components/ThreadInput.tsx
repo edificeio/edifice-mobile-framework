@@ -267,7 +267,7 @@ class ThreadInput extends React.PureComponent<
           <ThreadInputReceivers
             names={receiverNames}
             show={showReceivers}
-            onPress={() => this.props.onReceiversTap(lastMessage || thread)}
+            onPress={() => this.props.onChangeReceivers(lastMessage || thread)}
           />
           <ContainerFooterBar>
             <ContainerInput>
