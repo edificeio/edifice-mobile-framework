@@ -21,7 +21,7 @@ export function createThread(pickedUsers: any[], threadSubject: string) {
     const newThread = {
       date: Date.now(),
       displayNames: pickedUsers.map((u: any) => [
-        u.id,
+        u.id || u.userId,
         u.displayName || u.name,
         u.isGroup
       ]).concat([[getSessionInfo().userId, getSessionInfo().displayName]]),
@@ -29,7 +29,7 @@ export function createThread(pickedUsers: any[], threadSubject: string) {
       id: "tmp-" + generateUuid(),
       messages: [],
       subject,
-      to: pickedUsers.map((u: any) => u.id),
+      to: pickedUsers.map((u: any) => u.id || u.userId),
       unread: 0
     };
 

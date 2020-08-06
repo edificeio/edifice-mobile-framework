@@ -164,7 +164,7 @@ export class Avatar extends React.Component<
     return idProp
       ? typeof idProp === "string"
         ? idProp
-        : idProp.hasOwnProperty('id')
+        : (idProp as { id: string; isGroup: boolean }).id
           ? idProp as { id: string; isGroup: boolean }
           : undefined
       : undefined
