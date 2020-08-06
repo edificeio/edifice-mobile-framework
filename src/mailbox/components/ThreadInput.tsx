@@ -164,7 +164,7 @@ class ThreadInput extends React.PureComponent<
       body,
       cc: thread.cc,
       displayNames: thread.displayNames,
-      parentId: lastMessage ? lastMessage.id : undefined,
+      parentId: lastMessage ? lastMessage.id : backMessage ? backMessage.id : undefined,
       subject: "Re: " + thread.subject,
       threadId: thread.id,
       to: ThreadInput.findReceivers2(thread)
