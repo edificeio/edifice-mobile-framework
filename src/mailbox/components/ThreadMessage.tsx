@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View } from "react-native";
+import { View, ScrollView, ViewStyle } from "react-native";
 import style from "glamorous-native";
 import I18n from "i18n-js";
 
@@ -14,29 +14,39 @@ import { AttachmentGroup } from "../../ui/AttachmentGroup";
 import { getSessionInfo } from "../../App";
 import { Trackers } from "../../infra/tracker";
 
-export const MessageBubble = ({ contentHtml, isMine, hasAttachments }) => (
-  <BubbleStyle my={isMine} style={hasAttachments && { marginBottom: 3 }}>
-    <HtmlContentView
-      html={contentHtml}
-      emptyMessage={I18n.t("conversation-emptyMessage")}
-      opts={{
-        globalTextStyle: {
-          color: isMine ? "white" : CommonStyles.textColor,
-          fontFamily: CommonStyles.primaryFontFamily,
-          fontSize: 14
-        },
-        ignoreClass: ["signature", "medium-text"],
-        ...(isMine
-          ? {
-            linkTextStyle: {
-              color: "white",
-              textDecorationLine: "underline"
+export const MessageBubble = ({ contentHtml, isMine, hasAttachments, canScroll = false, style, containerStyle } :
+  {
+    contentHtml: string,
+    isMine?: boolean,
+    hasAttachments?: boolean,
+    canScroll?: boolean,
+    style?: ViewStyle,
+    containerStyle?: ViewStyle
+  }) => (
+  <BubbleStyle my={isMine} style={[containerStyle, hasAttachments && { marginBottom: 3 }]}>
+    <ScrollView scrollEnabled={canScroll} style={style}>
+      <HtmlContentView
+        html={contentHtml}
+        emptyMessage={I18n.t("conversation-emptyMessage")}
+        opts={{
+          globalTextStyle: {
+            color: isMine ? "white" : CommonStyles.textColor,
+            fontFamily: CommonStyles.primaryFontFamily,
+            fontSize: 14
+          },
+          ignoreClass: ["signature", "medium-text"],
+          ...(isMine
+            ? {
+              linkTextStyle: {
+                color: "white",
+                textDecorationLine: "underline"
+              }
             }
-          }
-          : null),
-        textColor: !isMine
-      }}
-    />
+            : null),
+          textColor: !isMine
+        }}
+      />
+    </ScrollView>
   </BubbleStyle>
 );
 

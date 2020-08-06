@@ -85,8 +85,8 @@ export default class SelectThreadInfos extends React.Component<
   };
 
   public render() {
+    const { onUnpickUser, pickedUsers, subject, message, type } = this.props;
     let { searchText, subjectText } = this.state;
-    const { onUnpickUser, pickedUsers, subject } = this.props;
     subjectText = subjectText ?? subject;
     let index = 0;
     return (
@@ -143,7 +143,6 @@ export default class SelectThreadInfos extends React.Component<
                 />
               </FieldContainer>
             </ScrollField>
-
             {this.usersArray.length > 0 ?
               <ScrollView
                 keyboardShouldPersistTaps="always"
@@ -161,7 +160,6 @@ export default class SelectThreadInfos extends React.Component<
               :
               null
             }
-
             <FieldContainer style={{ borderTopColor: '#EEEEEE', borderTopWidth: 1 }}>
               <FieldName>{I18n.t("conversation-subjectPrefixInput")}</FieldName>
               <TextInput
@@ -172,16 +170,23 @@ export default class SelectThreadInfos extends React.Component<
                 onChangeText={text => this.selectSubject(text)}
               />
             </FieldContainer>
-            {this.props.message ? <View style={{ margin: 12 }}>
-              <TextBold>{
-                this.props.type === 'reply'
-                  ? I18n.t("conversation-reply-backMessage")
-                  : this.props.type === 'transfer'
-                    ? I18n.t("conversation-transfer-backMessage") : ""
-              }</TextBold>
-              <MessageBubble
-                contentHtml={this.props.message.body}
-              /></View> : null}
+            {message
+              ? <View style={{ margin: 12, flex: 1 }}>
+                  <TextBold>
+                    {type === 'reply'
+                      ? I18n.t("conversation-reply-backMessage")
+                      : type === 'transfer'
+                      ? I18n.t("conversation-transfer-backMessage")
+                      : ""
+                    }
+                  </TextBold>
+                  <MessageBubble
+                    canScroll
+                    contentHtml={message.body}
+                  />
+                </View>
+              : null
+            }
           </KeyboardAvoidingView>
         </TouchableWithoutFeedback>
       </PageContainer>
