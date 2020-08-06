@@ -1,18 +1,6 @@
 import { createSessionAsyncReducer } from "../../infra/redux/async2";
-import { initialState, actionTypes, postFolderType } from "../state/folders";
+import { initialState, actionTypes } from "../state/folders";
 
 // THE REDUCER ------------------------------------------------------------------------------------
 
-export default createSessionAsyncReducer(initialState, actionTypes, {
-  [postFolderType]: (state, action) => {
-    const newState = [...state];
-    newState.push({
-      name: action.data.name,
-      parent_id: action.data.parent_id,
-      id: action.data.id,
-      trashed: false,
-      depth: 1,
-    });
-    return newState;
-  },
-});
+export default createSessionAsyncReducer(initialState, actionTypes);

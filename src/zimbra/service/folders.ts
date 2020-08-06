@@ -35,10 +35,6 @@ export const foldersService = {
       method: "post",
       body: JSON.stringify(body),
     });
-    return {
-      name,
-      parent_id: parentId,
-    };
   },
   count: async (folderIds: string[], countInbox: boolean = true) => {
     const ids = [...folderIds];
