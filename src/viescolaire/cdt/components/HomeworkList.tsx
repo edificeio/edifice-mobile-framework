@@ -118,83 +118,61 @@ export default class HomeworkList extends React.PureComponent<HomeworkListProps,
     const homeworksArray = Object.values(homeworkDataList);
     homeworksArray.sort((a, b) => a.due_date - b.due_date);
     return (
-      <>
-        {homeworksArray.length > 0 ? (
-          <ScrollView
-            contentContainerStyle={style.scrollView}
-            refreshControl={<RefreshControl refreshing={this.props.isFetching} onRefresh={this.onRefreshHomeworks} />}>
-            {homeworksArray.map((homework, index, list) => (
-              <TouchableOpacity
-                onPress={() => this.props.navigation.navigate("HomeworkPage", this.homeworkDetailsAdapter(homework))}>
-                {index === 0 ||
-                moment(homework.due_date).format("DD/MM/YY") !== moment(list[index - 1].due_date).format("DD/MM/YY") ? (
-                  <TextBold>
-                    {I18n.t("viesco-homework-fordate")} {moment(homework.due_date).format("dddd Do MMMM")}
-                  </TextBold>
-                ) : null}
-                {this.props.navigation.state.params.user_type === "Relative" ? (
-                  <HomeworkItem
-                    disabled
-                    checked={this.isHomeworkDone(homework)}
-                    title={this.getSubjectName(homework.subject_id)}
-                    subtitle={homework.type}
-                  />
-                ) : (
-                  <HomeworkItem
-                    checked={this.isHomeworkDone(homework)}
-                    title={this.getSubjectName(homework.subject_id)}
-                    subtitle={homework.type}
-                    onChange={() => {
-                      this.props.updateHomeworkProgress(homework.id, !this.isHomeworkDone(homework));
-                    }}
-                  />
-                )}
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        ) : (
-          <EmptyScreen
-            imageSrc={require("../../../../assets/images/empty-screen/empty-homework.png")}
-            imgWidth={265}
-            imgHeight={280}
-            title={I18n.t("viesco-homework-EmptyScreenText")}
-          />
-        )}
-      </>
+      <ScrollView
+        contentContainerStyle={style.scrollView}
+        refreshControl={<RefreshControl refreshing={this.props.isFetching} onRefresh={this.onRefreshHomeworks} />}>
+        {homeworksArray.map((homework, index, list) => (
+          <TouchableOpacity
+            onPress={() => this.props.navigation.navigate("HomeworkPage", this.homeworkDetailsAdapter(homework))}>
+            {index === 0 ||
+            moment(homework.due_date).format("DD/MM/YY") !== moment(list[index - 1].due_date).format("DD/MM/YY") ? (
+              <TextBold>
+                {I18n.t("viesco-homework-fordate")} {moment(homework.due_date).format("dddd Do MMMM")}
+              </TextBold>
+            ) : null}
+            {this.props.navigation.state.params.user_type === "Relative" ? (
+              <HomeworkItem
+                disabled
+                checked={this.isHomeworkDone(homework)}
+                title={this.getSubjectName(homework.subject_id)}
+                subtitle={homework.type}
+              />
+            ) : (
+              <HomeworkItem
+                checked={this.isHomeworkDone(homework)}
+                title={this.getSubjectName(homework.subject_id)}
+                subtitle={homework.type}
+                onChange={() => {
+                  this.props.updateHomeworkProgress(homework.id, !this.isHomeworkDone(homework));
+                }}
+              />
+            )}
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
     );
   }
 
   private renderSessions() {
     const sessions = this.props.sessions;
     return (
-      <>
-        {sessions.length > 0 ? (
-          <ScrollView
-            contentContainerStyle={style.scrollView}
-            refreshControl={<RefreshControl refreshing={this.props.isFetching} onRefresh={this.onRefreshSessions} />}>
-            {sessions.map((session, index, list) => (
-              <TouchableOpacity
-                onPress={() => this.props.navigation.navigate("SessionPage", this.sessionDetailsAdapter(session))}>
-                {index === 0 ||
-                moment(session.date).format("DD/MM/YY") !== moment(list[index - 1].date).format("DD/MM/YY") ? (
-                  <TextBold>{moment(session.date).format("DD/MM/YY")}</TextBold>
-                ) : null}
-                <SessionItem
-                  matiere={this.getSubjectName(session.subject_id)}
-                  author={this.getTeacherName(session.teacher_id)}
-                />
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        ) : (
-          <EmptyScreen
-            imageSrc={require("../../../../assets/images/empty-screen/empty-homework.png")}
-            imgWidth={265}
-            imgHeight={280}
-            title={I18n.t("viesco-session-EmptyScreenText")}
-          />
-        )}
-      </>
+      <ScrollView
+        contentContainerStyle={style.scrollView}
+        refreshControl={<RefreshControl refreshing={this.props.isFetching} onRefresh={this.onRefreshSessions} />}>
+        {sessions.map((session, index, list) => (
+          <TouchableOpacity
+            onPress={() => this.props.navigation.navigate("SessionPage", this.sessionDetailsAdapter(session))}>
+            {index === 0 ||
+            moment(session.date).format("DD/MM/YY") !== moment(list[index - 1].date).format("DD/MM/YY") ? (
+              <TextBold>{moment(session.date).format("DD/MM/YY")}</TextBold>
+            ) : null}
+            <SessionItem
+              matiere={this.getSubjectName(session.subject_id)}
+              author={this.getTeacherName(session.teacher_id)}
+            />
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
     );
   }
 
@@ -221,6 +199,23 @@ export default class HomeworkList extends React.PureComponent<HomeworkListProps,
     }
     return <Switch {...newProps} />;
   }
+
+  private renderMainList = () => {
+    if (this.props.isFetching) {
+      return <Loading />;
+    } else if (this.props.homeworks.length == 0 && this.props.sessions.length == 0) {
+      return (
+        <EmptyScreen
+          imageSrc={require("../../../../assets/images/empty-screen/empty-homework.png")}
+          imgWidth={265}
+          imgHeight={280}
+          title={I18n.t(this.props.switchValue ? "viesco-session-EmptyScreenText" : "viesco-homework-EmptyScreenText")}
+        />
+      );
+    } else {
+      return this.props.switchValue ? this.renderSessions() : this.renderHomeworks();
+    }
+  };
 
   public render() {
     const { startDate, endDate, onStartDateChange, onEndDateChange, switchValue, toggleSwitch } = this.props;
@@ -253,7 +248,7 @@ export default class HomeworkList extends React.PureComponent<HomeworkListProps,
             />
             <Text>{I18n.t("viesco-session")}</Text>
           </View>
-          {this.props.isFetching ? <Loading /> : !switchValue ? this.renderHomeworks() : this.renderSessions()}
+          {this.renderMainList()}
         </View>
       </PageContainer>
     );
