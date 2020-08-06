@@ -7,14 +7,14 @@ import { CommonStyles } from "../../styles/common/styles";
 import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
 import { DateView } from "../../ui/DateView";
 import { HtmlContentView } from "../../ui/HtmlContentView";
-import { BubbleStyle } from "../../ui/BubbleStyle";
+import { BubbleStyle, BubbleScrollStyle } from "../../ui/BubbleStyle";
 import { IAttachment } from "../../ui/Attachment";
 import { ConversationMessageStatus } from "../actions/sendMessage";
 import { AttachmentGroup } from "../../ui/AttachmentGroup";
 import { getSessionInfo } from "../../App";
 import { Trackers } from "../../infra/tracker";
 
-export const MessageBubble = ({ contentHtml, isMine, hasAttachments, canScroll = false, style, containerStyle } :
+export const MessageBubble = ({ contentHtml, isMine, hasAttachments, canScroll = false, style, containerStyle }:
   {
     contentHtml: string,
     isMine?: boolean,
@@ -22,9 +22,9 @@ export const MessageBubble = ({ contentHtml, isMine, hasAttachments, canScroll =
     canScroll?: boolean,
     style?: ViewStyle,
     containerStyle?: ViewStyle
-  }) => (
-  <BubbleStyle my={isMine} style={[containerStyle, hasAttachments && { marginBottom: 3 }]}>
-    <ScrollView scrollEnabled={canScroll} style={style}>
+  }) => {
+  const BubbleComponent = canScroll ? BubbleScrollStyle : BubbleStyle;
+  return <BubbleComponent my={isMine} style={[containerStyle, hasAttachments && { marginBottom: 3 }]}>
       <HtmlContentView
         html={contentHtml}
         emptyMessage={I18n.t("conversation-emptyMessage")}
@@ -46,9 +46,8 @@ export const MessageBubble = ({ contentHtml, isMine, hasAttachments, canScroll =
           textColor: !isMine
         }}
       />
-    </ScrollView>
-  </BubbleStyle>
-);
+  </BubbleComponent>
+};
 
 const MessageStatus = ({ status, date }) => {
   if (status === undefined || status === ConversationMessageStatus.sent)
@@ -121,7 +120,8 @@ export default class ThreadMessage extends React.PureComponent<
         flex: 0,
         backgroundColor: this.props.selected ? CommonStyles.nonLue : undefined,
         borderWidth: 8,
-        borderColor: CommonStyles.lightGrey }}>
+        borderColor: CommonStyles.lightGrey
+      }}>
         <MessageContainer style={{ flex: 0 }}>
           <MessageInfos style={{ flex: 0 }}>
             <MessageInfosDetails style={{ flex: 0 }}>
@@ -140,21 +140,21 @@ export default class ThreadMessage extends React.PureComponent<
           </MessageInfos>
           {body
             ? <MessageBubble
-                contentHtml={body}
-                isMine={isMine}
-                hasAttachments={hasAttachments}
-              />
-           : null
+              contentHtml={body}
+              isMine={isMine}
+              hasAttachments={hasAttachments}
+            />
+            : null
           }
           {hasAttachments
             ? <AttachmentGroup
-                attachments={attachments}
-                containerStyle={{ flex: 1, marginLeft: 25 }}
-                onDownload={() => Trackers.trackEvent("Conversation", "DOWNLOAD ATTACHMENT", "Read mode")}
-                onError={() => Trackers.trackEvent("Conversation", "DOWNLOAD ATTACHMENT ERROR", "Read mode")}
-                onDownloadAll={() => Trackers.trackEvent("Conversation", "DOWNLOAD ALL ATTACHMENTS", "Read mode")}
-                onOpen={() => Trackers.trackEvent("Conversation", "OPEN ATTACHMENT", "Read mode")}
-              />
+              attachments={attachments}
+              containerStyle={{ flex: 1, marginLeft: 25 }}
+              onDownload={() => Trackers.trackEvent("Conversation", "DOWNLOAD ATTACHMENT", "Read mode")}
+              onError={() => Trackers.trackEvent("Conversation", "DOWNLOAD ATTACHMENT ERROR", "Read mode")}
+              onDownloadAll={() => Trackers.trackEvent("Conversation", "DOWNLOAD ALL ATTACHMENTS", "Read mode")}
+              onOpen={() => Trackers.trackEvent("Conversation", "OPEN ATTACHMENT", "Read mode")}
+            />
             : null
           }
         </MessageContainer>

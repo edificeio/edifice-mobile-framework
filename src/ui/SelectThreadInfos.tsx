@@ -1,6 +1,6 @@
 import style from "glamorous-native";
 import * as React from "react";
-import { TextInput, KeyboardAvoidingView, ScrollView, Platform, TouchableWithoutFeedback, Keyboard, View } from "react-native";
+import { TextInput, Platform, TouchableWithoutFeedback, Keyboard, View, KeyboardAvoidingView } from "react-native";
 import { hasNotch } from "react-native-device-info";
 import { CommonStyles } from "../styles/common/styles";
 import I18n from "i18n-js";
@@ -11,6 +11,8 @@ import { removeAccents } from "../utils/string";
 import { IConversationMessage } from "../mailbox/reducers";
 import { MessageBubble } from "../mailbox/components/ThreadMessage";
 import { Text, TextBold, TextColor } from "./text";
+import { ScrollView } from "react-native-gesture-handler";
+import { SafeAreaView } from "react-navigation";
 
 export const UserLabel = style.text({
   color: CommonStyles.primary,
@@ -91,104 +93,115 @@ export default class SelectThreadInfos extends React.Component<
     let index = 0;
     return (
       <PageContainer>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <KeyboardAvoidingView
-            enabled
-            behavior={Platform.OS === "ios" ? "padding" : undefined}
-            keyboardVerticalOffset={Platform.OS === "ios" ? hasNotch() ? 100 : 76 : undefined} // 🍔 Big-(M)Hack of the death : On iOS KeyboardAvoidingView not working properly.
-            style={{ flex: 1 }}
+        <SafeAreaView style={{ flex: 1 }}>
+          <KeyboardAvoidingView enabled behavior="padding" style={{ flex: 1 }}
+            keyboardVerticalOffset={Platform.OS === "ios" ? hasNotch() ? 100 : 56 : undefined} // 🍔 Big-(M)Hack of the death : On iOS KeyboardAvoidingView not working properly.
           >
-            <ScrollField
-              alwaysBounceVertical={false}
-              style={{ backgroundColor: "#FFFFFF" }}
-              ref={r => (this.inputRef = (r as any)?.innerComponent)}
-              onLayout={() => {
-                this.inputRef.scrollToEnd()
-              }}
-            >
-              <FieldContainer>
-                <FieldName>{I18n.t("conversation-receiverPrefixInput")}</FieldName>
-                {pickedUsers.map(p => (
-                  <TouchableOpacity
-                    key={"Touchable_" + index++}
-                    onPress={() => onUnpickUser(p)}
-                    style={{
-                      backgroundColor: CommonStyles.primaryLight,
-                      borderRadius: 3,
-                      padding: 5,
-                      maxWidth: "100%",
-                      marginHorizontal: 3,
-                      marginVertical: 5,
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+              <View style={{ flex: 1, borderBottomWidth: 4 }}>
+                {/* Name field */}
+                <FieldContainer>
+                  <FieldName>{I18n.t("conversation-receiverPrefixInput")}</FieldName>
+                  {pickedUsers.map(p => (
+                    <TouchableOpacity
+                      key={"Touchable_" + index++}
+                      onPress={() => onUnpickUser(p)}
+                      style={{
+                        backgroundColor: CommonStyles.primaryLight,
+                        borderRadius: 3,
+                        padding: 5,
+                        maxWidth: "100%",
+                        marginHorizontal: 3,
+                        marginVertical: 5,
+                      }}
+                    >
+                      <UserLabel numberOfLines={2}>{p.name || p.displayName}</UserLabel>
+                    </TouchableOpacity>
+                  ))}
+                  <TextInput
+                    ref={r => (this.input = r)}
+                    style={{ flex: 1, minWidth: 100, height: 40, color: CommonStyles.textColor }}
+                    underlineColorAndroid={"transparent"}
+                    value={searchText}
+                    onChangeText={text => {
+                      this.setState({ searchText: text });
                     }}
-                  >
-                    <UserLabel numberOfLines={2}>{p.name || p.displayName}</UserLabel>
-                  </TouchableOpacity>
-                ))}
-                <TextInput
-                  ref={r => (this.input = r)}
-                  style={{ flex: 1, minWidth: 100, height: 40, color: CommonStyles.textColor }}
-                  underlineColorAndroid={"transparent"}
-                  value={searchText}
-                  onChangeText={text => {
-                    this.setState({ searchText: text });
-                  }}
-                  onFocus={() => {
-                    this.inputRef.scrollToEnd();
-                  }}
-                  onKeyPress={({ nativeEvent }) => {
-                    searchText.length === 0
-                      && nativeEvent.key === "Backspace"
-                      && onUnpickUser(pickedUsers[pickedUsers.length - 1])
-                  }}
-                />
-              </FieldContainer>
-            </ScrollField>
-            {this.usersArray.length > 0 ?
-              <ScrollView
-                keyboardShouldPersistTaps="always"
-                alwaysBounceVertical={false}
-                contentContainerStyle={{ flexGrow: 1 }}
-              >
-                <UserList
-                  selectable={true}
-                  users={this.usersArray}
-                  onPickUser={user => this.pickUser(user)}
-                  onUnpickUser={user => onUnpickUser(user)}
-                  onEndReached={() => this.expend()}
-                />
-              </ScrollView>
-              :
-              null
-            }
-            <FieldContainer style={{ borderTopColor: '#EEEEEE', borderTopWidth: 1 }}>
-              <FieldName>{I18n.t("conversation-subjectPrefixInput")}</FieldName>
-              <TextInput
-                ref={r => (this.input = r)}
-                style={{ flex: 1, minWidth: 100, height: 40, color: CommonStyles.textColor, paddingTop: Platform.OS === "ios" ? 2 : 12 }}
-                underlineColorAndroid={"transparent"}
-                value={subjectText}
-                onChangeText={text => this.selectSubject(text)}
-              />
-            </FieldContainer>
-            {message
-              ? <View style={{ margin: 12, flex: 1 }}>
-                  <TextBold>
-                    {type === 'reply'
-                      ? I18n.t("conversation-reply-backMessage")
-                      : type === 'transfer'
-                      ? I18n.t("conversation-transfer-backMessage")
-                      : ""
-                    }
-                  </TextBold>
-                  <MessageBubble
-                    canScroll
-                    contentHtml={message.body}
+                    onKeyPress={({ nativeEvent }) => {
+                      searchText.length === 0
+                        && nativeEvent.key === "Backspace"
+                        && onUnpickUser(pickedUsers[pickedUsers.length - 1])
+                    }}
                   />
+                </FieldContainer>
+
+                <View style={{ flex: 1, borderWidth: 4, borderColor: "red" }}>
+
+                  {this.usersArray.length > 0 ?
+                    <ScrollView
+                      keyboardShouldPersistTaps="always"
+                      alwaysBounceVertical={false}
+                      contentContainerStyle={{ flexGrow: 1 }}
+                      style={{
+                        width: "100%",
+                        position: "absolute",
+                        top: 0, bottom: 0,
+                        zIndex: 1,
+                        backgroundColor: CommonStyles.tabBottomColor,
+                        borderWidth: 4,
+                        borderColor: "green"
+                      }}
+                    >
+                      <UserList
+                        selectable={true}
+                        users={this.usersArray}
+                        onPickUser={user => this.pickUser(user)}
+                        onUnpickUser={user => onUnpickUser(user)}
+                        onEndReached={() => this.expend()}
+                      />
+                    </ScrollView>
+                    :
+                    null
+                  }
+
+                  <View style={{ flex: 1, zIndex: 0 }}>
+                    <FieldContainer style={{ borderTopColor: '#EEEEEE', borderTopWidth: 1 }}>
+                      <FieldName>{I18n.t("conversation-subjectPrefixInput")}</FieldName>
+                      <TextInput
+                        ref={r => (this.input = r)}
+                        style={{ flex: 1, minWidth: 100, height: 40, color: CommonStyles.textColor, paddingTop: Platform.OS === "ios" ? 2 : 12 }}
+                        underlineColorAndroid={"transparent"}
+                        value={subjectText}
+                        onChangeText={text => this.selectSubject(text)}
+                      />
+                    </FieldContainer>
+                    {message
+                      ? <View style={{ margin: 12, flex: 1 }}>
+                        <TextBold>
+                          {type === 'reply'
+                            ? I18n.t("conversation-reply-backMessage")
+                            : type === 'transfer'
+                              ? I18n.t("conversation-transfer-backMessage")
+                              : ""
+                          }
+                        </TextBold>
+                        <View style={{ flex: 1, borderColor: "green", borderWidth: 4 }}>
+                          <MessageBubble
+                            canScroll
+                            contentHtml={message.body}
+                            containerStyle={{ flex: 0, maxHeight: "100%", borderWidth: 4 }}
+                          />
+                        </View>
+                      </View>
+                      : null
+                    }
+                  </View>
+
                 </View>
-              : null
-            }
+
+              </View>
+            </TouchableWithoutFeedback>
           </KeyboardAvoidingView>
-        </TouchableWithoutFeedback>
+        </SafeAreaView>
       </PageContainer>
     );
   }
