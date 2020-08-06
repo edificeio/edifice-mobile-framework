@@ -17,6 +17,7 @@ type DrawerMenuProps = {
   items: any[];
   folders: any;
   quota: any;
+  count: any;
   descriptors: any[];
   navigation: NavigationScreenProp<any>;
 };
@@ -57,7 +58,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
   };
 
   render() {
-    const { navigation, folders, quota } = this.props;
+    const { navigation, folders, quota, count } = this.props;
     const storagePercent = (quota.data.storage / Number(quota.data.quota)) * 100;
     const currentFolder = this.getCurrentFolder(this.props.navigation.state);
     return (
@@ -70,6 +71,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
           iconName="inbox"
           label={I18n.t("zimbra-inbox")}
           navigate={() => navigation.navigate("inbox", { key: "inbox", folderName: undefined })}
+          count={count.data.INBOX}
         />
         <DrawerOption
           selected={this.isCurrentScreen("outbox")}
@@ -107,6 +109,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
               navigate={() => {
                 navigation.navigate("inbox", { key: folder.name, folderName: folder.name });
               }}
+              count={count.data[folder.id]}
             />
           ))}
         </ScrollView>

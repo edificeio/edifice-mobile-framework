@@ -1,4 +1,5 @@
 import { fetchJSONWithCache } from "../../infra/fetchWithCache";
+import { ICount } from "../state/count";
 import { IFolderList } from "../state/folders";
 
 // Data type of what is given by the backend.
@@ -38,5 +39,20 @@ export const foldersService = {
       name,
       parent_id: parentId,
     };
+  },
+  count: async (folderIds: string[], countInbox: boolean = true) => {
+    const ids = [...folderIds];
+    if (countInbox) ids.push("INBOX");
+    const promises: Promise<any>[] = [];
+    ids.forEach(id => {
+      promises.push(fetchJSONWithCache(`/zimbra/count/${id}?unread=true`));
+    });
+    const results = await Promise.all(promises);
+    const ret: ICount = results.reduce((acc, res, i) => {
+      const new_acc = { ...acc };
+      new_acc[`${ids[i]}`] = res.count;
+      return new_acc;
+    }, {});
+    return ret;
   },
 };

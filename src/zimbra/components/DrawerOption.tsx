@@ -7,6 +7,7 @@ import { TextBold, Text } from "../../ui/Typography";
 
 type DrawerOptionProps = {
   label: string;
+  count?: number;
   selected: boolean;
   iconName: string;
   navigate: () => any;
@@ -14,14 +15,17 @@ type DrawerOptionProps = {
 
 export default class DrawerOption extends React.PureComponent<DrawerOptionProps> {
   public render() {
-    const { label, selected, iconName, navigate } = this.props;
+    const { label, selected, iconName, count, navigate } = this.props;
     const touchableStyle = selected ? [style.item, style.selectedItem] : style.item;
     const iconStyle = selected ? [style.itemIcon, { color: "white" }] : style.itemIcon;
+    const countString = count ? ` (${count})` : "";
     return (
       <TouchableOpacity style={touchableStyle} onPress={navigate} disabled={selected}>
         <Icon size={16} name={iconName} style={iconStyle} />
         {selected ? (
-          <TextBold style={[style.itemTextSelected, style.itemText]}>{label}</TextBold>
+          <TextBold style={[style.itemTextSelected, style.itemText]}>{label + countString}</TextBold>
+        ) : count ? (
+          <TextBold style={style.itemText}>{label + countString}</TextBold>
         ) : (
           <Text style={style.itemText}>{label}</Text>
         )}

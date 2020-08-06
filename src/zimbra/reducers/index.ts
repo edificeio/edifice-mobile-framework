@@ -1,5 +1,6 @@
 import { combineReducers } from "redux";
 
+import count from "./count";
 import folders from "./folders";
 import mailContent from "./mailContent";
 import mailList from "./mailList";
@@ -10,5 +11,6 @@ const rootReducer = combineReducers({
   folders,
   quota,
   mailContent,
+  count,
 });
 export default rootReducer;
