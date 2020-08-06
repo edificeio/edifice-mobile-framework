@@ -27,10 +27,8 @@ import { fetchConversationThreadResetMessages } from "../actions/apiHelper";
 
 import { removeAccents } from "../../utils/string";
 import { findReceivers2 } from "../components/ThreadItem";
-import { standardNavScreenOptions, alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderAction } from "../../ui/headers/NewHeader";
 import { SearchBar } from "../../ui/SearchBar";
-import { hasNotch } from "react-native-device-info";
 import { TempFloatingAction } from "../../ui/FloatingButton";
 import { PageContainer } from "../../ui/ContainerContent";
 import { Header } from "../../ui/headers/Header";

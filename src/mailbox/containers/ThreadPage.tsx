@@ -1,5 +1,6 @@
 import * as React from "react";
 import { View, TextStyle, TouchableOpacity } from "react-native";
+import { NavigationScreenProp, NavigationActions} from "react-navigation";
 import { connect } from "react-redux";
 import I18n from "i18n-js";
 import style from "glamorous-native";
@@ -15,9 +16,7 @@ import {
   fetchConversationThreadNewerMessages, 
   fetchConversationThreadOlderMessages
 } from "../actions/apiHelper";
-import { createActionReceiversDisplay, createActionThreadReceiversDisplay } from "../actions/displayReceivers";
 import { IConversationMessage, IConversationThread, IConversationMessageList } from "../reducers";
-import { NavigationScreenProp } from "react-navigation";
 import { standardNavScreenOptions, alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderBackAction, HeaderIcon, HeaderAction } from "../../ui/headers/NewHeader";
 import { getSessionInfo } from "../../App";
@@ -27,6 +26,8 @@ import { FontWeight, Text } from "../../ui/text";
 import deviceInfoModule from "react-native-device-info";
 import withViewTracking from "../../infra/tracker/withViewTracking";
 import { IconButton } from "../../ui/IconButton";
+import { createActionReceiversDisplay, createActionThreadReceiversDisplay } from "../actions/displayReceivers";
+import conversationThreadSelected from "../actions/threadSelected";
 
 const mapStateToProps: (state: any) => IThreadPageDataProps = state => {
   // Extract data from state
@@ -75,6 +76,10 @@ const mapDispatchToProps: (
     onTapReceiversFromThread: (thread: IConversationThread) => {
       dispatch(createActionThreadReceiversDisplay(thread))
       return;
+    },
+    onSelectThread: (threadId: string) => {
+      dispatch(conversationThreadSelected(threadId))
+      return;
     }
   };
 };
@@ -88,7 +93,9 @@ class ThreadPageContainer extends React.PureComponent<
     const showDetails = navigation.getParam("showDetails", false);
     const threadInfo = navigation.getParam("threadInfo");
     const onTapReceivers = navigation.getParam("onTapReceivers");
+    const onSelectThread = navigation.getParam("onSelectThread");
     const selectedMessage: IConversationMessage | undefined = navigation.getParam("selectedMessage");
+    const parentThread = navigation.getParam('parentThread');
     if (selectedMessage) {
       return alternativeNavScreenOptions({
         headerLeft: <HeaderAction name="close" onPress={() => {
@@ -98,13 +105,15 @@ class ThreadPageContainer extends React.PureComponent<
           <HeaderAction title={I18n.t("conversation-reply")} onPress={() => {
             navigation.navigate('newThread', {
               type: 'reply',
-              message: selectedMessage
+              message: selectedMessage,
+              parentThread: threadInfo
             })
           }}/>
           <HeaderAction title={I18n.t("conversation-transfer")} onPress={() => {
             navigation.navigate('newThread', {
               type: 'transfer',
-              message: selectedMessage
+              message: selectedMessage,
+              parentThread: threadInfo
             })
           }}/>
         </View>,
@@ -115,7 +124,16 @@ class ThreadPageContainer extends React.PureComponent<
       }, navigation);
     } else {
       return standardNavScreenOptions({
-        headerLeft: showDetails ? null : <HeaderBackAction navigation={navigation} />,
+        headerLeft: showDetails
+          ? null
+          : <HeaderAction
+              onPress={() => {
+                const parentThreadId = parentThread && parentThread.id;
+                parentThreadId && onSelectThread(parentThreadId);
+                navigation.dispatch(NavigationActions.back());
+              }}
+              name="back"
+            />,
         headerRight: showDetails
           ? null
           : <View style={{flexDirection: "row", alignItems: "center"}}>
@@ -152,7 +170,7 @@ class ThreadPageContainer extends React.PureComponent<
             ThreadPageContainer.renderDetailsThreadHeader(threadInfo, navigation)
             :
             ThreadPageContainer.renderThreadHeader(threadInfo, navigation)
-          : <View><Text>Loading</Text></View>,
+          : <View><Text>{I18n.t("loading")}</Text></View>,
         headerStyle: {
           height: showDetails
             ? deviceInfoModule.hasNotch()
@@ -246,7 +264,8 @@ class ThreadPageContainer extends React.PureComponent<
     super(props);
     this.props.navigation!.setParams({
       threadInfo: this.props.threadInfo,
-      onTapReceivers: this.props.onTapReceivers
+      onTapReceivers: this.props.onTapReceivers,
+      onSelectThread: this.props.onSelectThread
     });
   }
 

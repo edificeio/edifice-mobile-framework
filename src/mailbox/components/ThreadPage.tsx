@@ -55,6 +55,7 @@ export interface IThreadPageDataProps {
 export interface IThreadPageEventProps {
   onGetNewer?: (threadId: string) => void;
   onGetOlder?: (threadId: string) => void;
+  onSelectThread?: (threadId: string) => void;
   onTapReceivers?: (message: IConversationMessage) => void;
   onTapReceiversFromThread?: (thread: IConversationThread) => void;
   onSelectMessage?: (message: IConversationMessage) => void;

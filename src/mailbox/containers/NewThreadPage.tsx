@@ -106,7 +106,8 @@ class NewThreadPage extends React.PureComponent<
     const threadInfo = this.props.createAndSelectThread(this.props.pickedUsers, this.props.subject);
     const message: IConversationMessage = this.props.navigation.getParam('message');
     const type: string = this.props.navigation.getParam('type', 'new');
-    this.props.navigation.replace("thread", { threadInfo, message, type });
+    const parentThread = this.props.navigation.getParam('parentThread');
+    this.props.navigation.replace("thread", { threadInfo, message, type, parentThread });
   }
 
   public updateHeaderProps() {
