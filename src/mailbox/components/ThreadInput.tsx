@@ -367,8 +367,7 @@ class ThreadInput extends React.PureComponent<
             ? <MessageBubble
               canScroll
               contentHtml={backMessage.body}
-              style={{ maxHeight: 150 }}
-              containerStyle={{ marginBottom: 0, marginTop: 0 }}
+              containerStyle={{ maxHeight: 150, marginBottom: 0, marginTop: 0 }}
             />
             : null
           }

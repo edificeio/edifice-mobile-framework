@@ -134,7 +134,7 @@ export default class SelectThreadInfos extends React.Component<
                   />
                 </FieldContainer>
 
-                <View style={{ flex: 1, borderWidth: 4, borderColor: "red" }}>
+                <View style={{ flex: 1 }}>
 
                   {this.usersArray.length > 0 ?
                     <ScrollView
@@ -146,9 +146,7 @@ export default class SelectThreadInfos extends React.Component<
                         position: "absolute",
                         top: 0, bottom: 0,
                         zIndex: 1,
-                        backgroundColor: CommonStyles.tabBottomColor,
-                        borderWidth: 4,
-                        borderColor: "green"
+                        backgroundColor: CommonStyles.tabBottomColor
                       }}
                     >
                       <UserList
@@ -184,11 +182,11 @@ export default class SelectThreadInfos extends React.Component<
                               : ""
                           }
                         </TextBold>
-                        <View style={{ flex: 1, borderColor: "green", borderWidth: 4 }}>
+                        <View style={{ flex: 1 }}>
                           <MessageBubble
                             canScroll
                             contentHtml={message.body}
-                            containerStyle={{ flex: 0, maxHeight: "100%", borderWidth: 4 }}
+                            style={{ maxHeight: "100%" }}
                           />
                         </View>
                       </View>

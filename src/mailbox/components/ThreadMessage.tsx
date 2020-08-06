@@ -23,30 +23,63 @@ export const MessageBubble = ({ contentHtml, isMine, hasAttachments, canScroll =
     style?: ViewStyle,
     containerStyle?: ViewStyle
   }) => {
-  const BubbleComponent = canScroll ? BubbleScrollStyle : BubbleStyle;
-  return <BubbleComponent my={isMine} style={[containerStyle, hasAttachments && { marginBottom: 3 }]}>
-      <HtmlContentView
-        html={contentHtml}
-        emptyMessage={I18n.t("conversation-emptyMessage")}
-        opts={{
-          globalTextStyle: {
-            color: isMine ? "white" : CommonStyles.textColor,
-            fontFamily: CommonStyles.primaryFontFamily,
-            fontSize: 14
-          },
-          ignoreClass: ["signature", "medium-text"],
-          ...(isMine
-            ? {
-              linkTextStyle: {
-                color: "white",
-                textDecorationLine: "underline"
-              }
-            }
-            : null),
-          textColor: !isMine
-        }}
-      />
-  </BubbleComponent>
+  const bubbleStyle = {
+    alignSelf: "stretch",
+    marginBottom: 10,
+    marginTop: 6,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    // elevation: 2,
+    // shadowColor: CommonStyles.shadowColor,
+    // shadowOffset: CommonStyles.shadowOffset,
+    // shadowOpacity: CommonStyles.shadowOpacity,
+    // shadowRadius: CommonStyles.shadowRadius,
+    // backgroundColor: isMine ? CommonStyles.iconColorOn : "white",
+    //...style
+  }
+
+  style = {
+    ...style, elevation: 2,
+    shadowColor: CommonStyles.shadowColor,
+    shadowOffset: CommonStyles.shadowOffset,
+    shadowOpacity: CommonStyles.shadowOpacity,
+    shadowRadius: CommonStyles.shadowRadius,
+    backgroundColor: isMine ? CommonStyles.iconColorOn : "white",
+    alignSelf: "stretch"
+  }
+
+  const content = <View style={bubbleStyle}><HtmlContentView
+    html={contentHtml}
+    emptyMessage={I18n.t("conversation-emptyMessage")}
+    opts={{
+      globalTextStyle: {
+        color: isMine ? "white" : CommonStyles.textColor,
+        fontFamily: CommonStyles.primaryFontFamily,
+        fontSize: 14
+      },
+      ignoreClass: ["signature", "medium-text"],
+      ...(isMine
+        ? {
+          linkTextStyle: {
+            color: "white",
+            textDecorationLine: "underline"
+          }
+        }
+        : null),
+      textColor: !isMine
+    }}
+  /></View>;
+
+  return canScroll
+    ? <ScrollView
+      style={style}
+      contentContainerStyle={[containerStyle, hasAttachments && { marginBottom: 3 }]}
+      keyboardShouldPersistTaps="handled">
+      {content}
+    </ScrollView>
+    : <View style={style}>
+      {content}
+    </View>
 };
 
 const MessageStatus = ({ status, date }) => {
