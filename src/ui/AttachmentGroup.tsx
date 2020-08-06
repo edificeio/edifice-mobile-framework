@@ -7,6 +7,7 @@ import { Bold, A } from "./Typography";
 import { Icon } from ".";
 import { CommonStyles } from "../styles/common/styles";
 import Attachment, { IAttachment } from "./Attachment";
+import { SafeAreaView } from "react-navigation";
 
 export class AttachmentGroup extends React.PureComponent<
   {
@@ -85,14 +86,14 @@ export class AttachmentGroup extends React.PureComponent<
         }
         <BubbleStyle
           style={{
-            flex: 1,
+            flex: 0,
             paddingVertical: 2,
             marginTop: 0,
             marginBottom: 0,
           }}
-        > 
+        ><SafeAreaView>
           <FlatList
-            style={{maxHeight: isContainerHalfScreen ? attachmentsHeightHalfScreen : undefined}} // TODO: refactor (use flex/height, instead of props)
+            style={{flex: 0, maxHeight: isContainerHalfScreen ? attachmentsHeightHalfScreen : undefined}} // TODO: refactor (use flex/height, instead of props)
             data={attachments}
             renderItem={({ item, index }) => 
               <Attachment
@@ -105,9 +106,10 @@ export class AttachmentGroup extends React.PureComponent<
                 style={{marginTop: index === 0 ? 0 : 2}}
                 editMode={editMode}
                 onRemove={() => onRemove && onRemove(index)}
-              />       
+              />
             }
           />
+          </SafeAreaView>
         </BubbleStyle>
       </View>
     )

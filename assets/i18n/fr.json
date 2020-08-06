@@ -10,6 +10,8 @@
     "conversation-reply": "Répondre",
     "conversation-transfer-backMessage": "Message transféré :",
     "conversation-reply-backMessage": "En réponse à :",
+    "conversation-reply-to-name-action": "Répondre à {{name}}",
+    "conversation-reply-to-all-action": "Répondre à tous",
     "add-document": "Ajouter Document",
     "agoHours": "il y a {{hours}} h",
     "agoMinutes": "il y a {{minutes}} min",

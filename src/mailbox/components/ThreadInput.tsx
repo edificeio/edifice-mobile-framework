@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import style from "glamorous-native";
 import I18n from "i18n-js";
 
-import { IconOnOff, Loading } from "../../ui";
+import { IconOnOff, Loading, Icon } from "../../ui";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { Line } from "../../ui/Grid";
 import { IconButton } from "../../ui/IconButton";
@@ -17,6 +17,8 @@ import { IConversationThread } from "../reducers/threadList";
 import ThreadInputReceivers from "./ThreadInputReceiver";
 import { getSessionInfo } from "../../App";
 import { MessageBubble } from "./ThreadMessage";
+import { Text } from "../../ui/text";
+import { SafeAreaView } from "react-navigation";
 
 // TODO : Debt : Needs to be refactored.
 
@@ -83,15 +85,16 @@ class ThreadInput extends React.PureComponent<
     sendingType: string;
   },
   {
-    newThreadId: string;
+    newThreadId?: string;
     selected: Selected;
     textMessage: string;
     attachments: IAttachmentSend[];
     sending: boolean;
     isHalfScreen: boolean;
-    attachmentsHeightHalfScreen: number;
+    attachmentsHeightHalfScreen?: number;
+    showReplyHelperIfAvailable: boolean;
   }
-> {
+  > {
   private input: any;
   public attachmentPickerRef: any;
 
@@ -102,7 +105,8 @@ class ThreadInput extends React.PureComponent<
     attachments: [],
     sending: false,
     isHalfScreen: false,
-    attachmentsHeightHalfScreen: undefined
+    attachmentsHeightHalfScreen: undefined,
+    showReplyHelperIfAvailable: true
   };
 
   public static findReceivers2(
@@ -176,7 +180,7 @@ class ThreadInput extends React.PureComponent<
 
     this.input && this.input.innerComponent.setNativeProps({ keyboardType: "default" });
     this.input && this.input.innerComponent.blur();
-    this.setState({textMessage: "", attachments: [], sending: true});
+    this.setState({ textMessage: "", attachments: [], sending: true });
     this.props.navigation?.setParams({
       type: undefined,
       message: undefined
@@ -187,10 +191,10 @@ class ThreadInput extends React.PureComponent<
       const messageId = await createDraft(messageData);
       const sentAttachments = await sendAttachments(attachmentsToSend, messageId);
       await sendMessage(messageData, sentAttachments, messageId);
-      this.setState({sending: false});
+      this.setState({ sending: false });
     } else {
       await sendMessage(messageData);
-      this.setState({sending: false});
+      this.setState({ sending: false });
     }
   }
 
@@ -237,32 +241,68 @@ class ThreadInput extends React.PureComponent<
     const { displayPlaceholder, thread, lastMessage, backMessage } = this.props;
     const { selected, textMessage, attachments, sending, isHalfScreen, attachmentsHeightHalfScreen } = this.state;
     const attachmentsAdded = attachments.length > 0;
-    const halfDeviceHeight = Dimensions.get("window").height/2;
+    const halfDeviceHeight = Dimensions.get("window").height / 2;
     const receiversIds = lastMessage
       ? ThreadInput.findReceivers2(lastMessage)
       : [];
     const receiverNames = lastMessage
       ? lastMessage.displayNames
-          .filter(dN => receiversIds.indexOf(dN[0]) > -1)
-          .map(dN => dN[1])
+        .filter(dN => receiversIds.indexOf(dN[0]) > -1)
+        .map(dN => dN[1])
       : thread.displayNames
-          .filter(dN => receiversIds.indexOf(dN[0]) > -1)
-          .map(dN => dN[1]);
+        .filter(dN => receiversIds.indexOf(dN[0]) > -1)
+        .map(dN => dN[1]);
     const showReceivers =
       (selected == Selected.keyboard ||
         (textMessage && textMessage.length > 0)) &&
       receiverNames.length >= 2;
     // iOS hack => does not display placeholder on update
 
-    return (
-      <View
-        style={{ maxHeight: halfDeviceHeight, position: "absolute", bottom: 0 }}
+    if (this.state.showReplyHelperIfAvailable && lastMessage && receiversIds.length > 2) {
+      return <ContainerFooterBar>
+        <SafeAreaView style={{ flexDirection: 'row' }}>
+          <TouchableOpacity
+            style={{ alignItems: 'center', flex: 1, padding: 12 }}
+            onPress={() => {
+              this.props.navigation?.navigate('newThread', {
+                type: 'reply',
+                message: lastMessage
+              })
+            }}>
+            <Icon name="profile-on" size={24} color={CommonStyles.actionColor} style={{ marginBottom: 6 }} />
+            <Text color={CommonStyles.actionColor}>{I18n.t("conversation-reply-to-name-action", {
+              name: (() => {
+                const receiver = lastMessage.displayNames.find(dn => dn[0] === lastMessage.from);
+                return receiver ? receiver[1] : "";
+              })()
+            })}</Text>
+          </TouchableOpacity>
+          <View style={{
+            flex: 0,
+            flexBasis: 1,
+            marginVertical: 12,
+            backgroundColor: CommonStyles.borderColorLighter
+          }}
+          />
+          <TouchableOpacity
+            style={{ alignItems: 'center', flex: 1, padding: 12 }}
+            onPress={() => {
+              this.setState({ showReplyHelperIfAvailable: false });
+            }}>
+            <Icon name="users" size={24} color={CommonStyles.actionColor} style={{ marginBottom: 6 }} />
+            <Text color={CommonStyles.actionColor}>{I18n.t("conversation-reply-to-all-action")}</Text>
+          </TouchableOpacity>
+        </SafeAreaView>
+      </ContainerFooterBar>
+    } else return (
+      <SafeAreaView
+        style={{ maxHeight: halfDeviceHeight, backgroundColor: CommonStyles.tabBottomColor }}
         onLayout={event => {
           const { height } = event.nativeEvent.layout;
           this.setState({ isHalfScreen: height === halfDeviceHeight })
         }}
       >
-        <View 
+        <View
           onLayout={event => {
             const { height } = event.nativeEvent.layout;
             this.setState({ attachmentsHeightHalfScreen: halfDeviceHeight - height })
@@ -302,13 +342,13 @@ class ThreadInput extends React.PureComponent<
                   style={{ marginLeft: 4 }}
                 />
               </ChatIcon>
-              <View style={{ flex: 1, justifyContent: "flex-end", flexDirection: "row"}}>
+              <View style={{ flex: 1, justifyContent: "flex-end", flexDirection: "row" }}>
                 <ActionContainer onPress={() => this.attachmentPickerRef.onPickAttachment()}>
                   <IconButton
                     iconName="attached"
-                    iconStyle={{transform: [{ rotate: "270deg" }]}}
+                    iconStyle={{ transform: [{ rotate: "270deg" }] }}
                     iconColor={CommonStyles.primary}
-                    buttonStyle={{borderColor: CommonStyles.primary, borderWidth: 1, backgroundColor: undefined}}
+                    buttonStyle={{ borderColor: CommonStyles.primary, borderWidth: 1, backgroundColor: undefined }}
                   />
                 </ActionContainer>
                 <ActionContainer
@@ -316,8 +356,8 @@ class ThreadInput extends React.PureComponent<
                   onPress={() => textMessage || attachmentsAdded ? this.onValid() : null}
                 >
                   {sending
-                    ? <Loading small/>
-                    : <IconButton iconName="send_icon" disabled={!(textMessage || attachmentsAdded)}/>
+                    ? <Loading small />
+                    : <IconButton iconName="send_icon" disabled={!(textMessage || attachmentsAdded)} />
                   }
                 </ActionContainer>
               </View>
@@ -325,11 +365,11 @@ class ThreadInput extends React.PureComponent<
           </ContainerFooterBar>
           {backMessage
             ? <MessageBubble
-                canScroll
-                contentHtml={backMessage.body}
-                style={{ maxHeight: 150 }}
-                containerStyle={{ marginBottom: 0, marginTop: 0 }}
-              />
+              canScroll
+              contentHtml={backMessage.body}
+              style={{ maxHeight: 150 }}
+              containerStyle={{ marginBottom: 0, marginTop: 0 }}
+            />
             : null
           }
         </View>
@@ -345,7 +385,7 @@ class ThreadInput extends React.PureComponent<
           isContainerHalfScreen={isHalfScreen}
           attachmentsHeightHalfScreen={attachmentsHeightHalfScreen}
         />
-      </View>
+      </SafeAreaView>
     );
   }
 }
@@ -363,11 +403,11 @@ export default connect(
       state[conversationConfig.reducerName].threadSelected;
     const selectedThread =
       state[conversationConfig.reducerName].threadList.data.byId[
-        selectedThreadId
+      selectedThreadId
       ];
     const lastMessage =
       state[conversationConfig.reducerName].messages.data[
-        selectedThread.messages[0]
+      selectedThread.messages[0]
       ];
     return {
       lastMessage,

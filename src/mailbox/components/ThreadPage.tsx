@@ -157,7 +157,7 @@ export class ThreadPage extends React.PureComponent<
         <View style={{flex: 1}}>
           {threadInfo.isFetchingFirst
             ? <Loading />
-            : <View style={{flex: 1, marginBottom: 81}}>
+            : <View style={{flex: 1}}>
                 {isDimmed
                   ? <View
                       style={{
