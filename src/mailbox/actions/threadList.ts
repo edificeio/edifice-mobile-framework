@@ -55,7 +55,7 @@ const conversationThreadListAdapter: (
       isFetchingFirst: false,
       isFetchingOlder: false,
       messages: [],
-      subject: thread.subject.replace(/Tr :|Re :|Re:|Tr:/g, "").trim(), // TODO : do this at display time, not load time.
+      subject: thread.subject.trim(), // TODO : do this at display time, not load time.
       to: thread.to,
       unread: thread.unread
     };

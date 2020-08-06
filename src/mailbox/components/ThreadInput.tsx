@@ -165,7 +165,11 @@ class ThreadInput extends React.PureComponent<
       cc: thread.cc,
       displayNames: thread.displayNames,
       parentId: lastMessage ? lastMessage.id : backMessage ? backMessage.id : undefined,
-      subject: "Re: " + thread.subject,
+      subject: (sendingType === 'reply' || sendingType === 'transfer')
+        ? thread.subject // Already have prefix set
+        : lastMessage
+          ? "Re: " + thread.subject // Only adds "Re: " for replies without new thread
+          : thread.subject,
       threadId: thread.id,
       to: ThreadInput.findReceivers2(thread)
     }
