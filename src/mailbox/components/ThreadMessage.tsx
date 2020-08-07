@@ -8,7 +8,7 @@ import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
 import { DateView } from "../../ui/DateView";
 import { HtmlContentView } from "../../ui/HtmlContentView";
 import { BubbleStyle, BubbleScrollStyle } from "../../ui/BubbleStyle";
-import { IAttachment } from "../../ui/Attachment";
+import { IRemoteAttachment } from "../../ui/Attachment";
 import { ConversationMessageStatus } from "../actions/sendMessage";
 import { AttachmentGroup } from "../../ui/AttachmentGroup";
 import { getSessionInfo } from "../../App";
@@ -101,7 +101,7 @@ const MessageStatus = ({ status, date }) => {
 
 export default class ThreadMessage extends React.PureComponent<
   {
-    attachments: Array<IAttachment>;
+    attachments: Array<IRemoteAttachment>;
     id: string;
     body: string;
     date: any;

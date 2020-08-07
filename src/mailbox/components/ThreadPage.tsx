@@ -151,7 +151,7 @@ export class ThreadPage extends React.PureComponent<
     : (
       <KeyboardAvoidingView
         style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={Platform.OS === "ios" ? hasNotch() ? 44 /*(status bar height)*/ + 51 : 51 : headerHeight}
       >
         <View style={{flex: 1}}>
@@ -165,8 +165,7 @@ export class ThreadPage extends React.PureComponent<
                         zIndex: 1,
                         backgroundColor: "grey",
                         opacity: 0.5,
-                        width: screenWidth,
-                        height: screenHeight
+                        top: 0, bottom: 0, left: 0, right: 0
                       }}
                     />
                   : null

@@ -8,7 +8,7 @@ import { IconOnOff, Loading, Icon } from "../../ui";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { Line } from "../../ui/Grid";
 import { IconButton } from "../../ui/IconButton";
-import { IAttachmentSend, IAttachment } from "../../ui/Attachment";
+import { ILocalAttachment, IRemoteAttachment } from "../../ui/Attachment";
 import { AttachmentPicker } from "../../ui/AttachmentPicker";
 import { CommonStyles } from "../../styles/common/styles";
 import conversationConfig from "../config";
@@ -74,8 +74,8 @@ class ThreadInput extends React.PureComponent<
     emptyThread: boolean;
     displayPlaceholder: boolean;
     createDraft: (data: any) => Promise<string>;
-    sendAttachments: (attachments: IAttachmentSend[], messageId: string) => Promise<IAttachment[]>;
-    sendMessage: (data: any, attachments?: IAttachment[], messageId?: string) => Promise<void>;
+    sendAttachments: (attachments: ILocalAttachment[], messageId: string) => Promise<IRemoteAttachment[]>;
+    sendMessage: (data: any, attachments?: IRemoteAttachment[], messageId?: string) => Promise<void>;
     onGetNewer: (threadId: string) => void;
     onReceiversTap: (
       conversation: IConversationThread | IConversationMessage
@@ -88,7 +88,7 @@ class ThreadInput extends React.PureComponent<
     newThreadId?: string;
     selected: Selected;
     textMessage: string;
-    attachments: IAttachmentSend[];
+    attachments: Array<IRemoteAttachment | ILocalAttachment>;
     sending: boolean;
     isHalfScreen: boolean;
     attachmentsHeightHalfScreen?: number;
@@ -102,7 +102,11 @@ class ThreadInput extends React.PureComponent<
     newThreadId: undefined,
     selected: Selected.none,
     textMessage: "",
-    attachments: [],
+    attachments: this.props.sendingType === "transfer"
+      ? this.props.backMessage
+        ? this.props.backMessage.attachments
+        : []
+      : [],
     sending: false,
     isHalfScreen: false,
     attachmentsHeightHalfScreen: undefined,
@@ -415,7 +419,7 @@ export default connect(
   },
   dispatch => ({
     createDraft: (data: any) => dispatch<any>(createDraft(data)),
-    sendAttachments: (attachments: IAttachmentSend[], messageId: string) => dispatch<any>(sendAttachments(attachments, messageId)),
-    sendMessage: (data: any, attachments?: IAttachmentSend[], messageId?: string) => dispatch<any>(sendMessage(data, attachments, messageId)),
+    sendAttachments: (attachments: ILocalAttachment[], messageId: string) => dispatch<any>(sendAttachments(attachments, messageId)),
+    sendMessage: (data: any, attachments?: ILocalAttachment[], messageId?: string) => dispatch<any>(sendMessage(data, attachments, messageId)),
   })
 )(ThreadInput);

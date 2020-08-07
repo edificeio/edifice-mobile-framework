@@ -6,12 +6,12 @@ import { BubbleStyle } from "./BubbleStyle";
 import { Bold, A } from "./Typography";
 import { Icon } from ".";
 import { CommonStyles } from "../styles/common/styles";
-import Attachment, { IAttachment } from "./Attachment";
+import Attachment, { IRemoteAttachment } from "./Attachment";
 import { SafeAreaView } from "react-navigation";
 
 export class AttachmentGroup extends React.PureComponent<
   {
-    attachments: Array<IAttachment>;
+    attachments: Array<IRemoteAttachment>;
     containerStyle?: any;
     editMode?: boolean;
     isContainerHalfScreen?: boolean;
@@ -104,7 +104,7 @@ export class AttachmentGroup extends React.PureComponent<
                 onError={onError}
                 onOpen={onOpen}
                 style={{marginTop: index === 0 ? 0 : 2}}
-                editMode={editMode}
+                editMode={editMode && !item.hasOwnProperty("id")}
                 onRemove={() => onRemove && onRemove(index)}
               />
             }

@@ -94,11 +94,14 @@ export default class SelectThreadInfos extends React.Component<
     return (
       <PageContainer>
         <SafeAreaView style={{ flex: 1 }}>
-          <KeyboardAvoidingView enabled behavior="padding" style={{ flex: 1 }}
+          <KeyboardAvoidingView
+            enabled
+            behavior={Platform.select({ "ios": "padding", "android": undefined })}
+            style={{ flex: 1 }}
             keyboardVerticalOffset={Platform.OS === "ios" ? hasNotch() ? 100 : 56 : undefined} // 🍔 Big-(M)Hack of the death : On iOS KeyboardAvoidingView not working properly.
           >
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-              <View style={{ flex: 1, borderBottomWidth: 4 }}>
+              <View style={{ flex: 1 }}>
                 {/* Name field */}
                 <FieldContainer>
                   <FieldName>{I18n.t("conversation-receiverPrefixInput")}</FieldName>
@@ -146,6 +149,7 @@ export default class SelectThreadInfos extends React.Component<
                         position: "absolute",
                         top: 0, bottom: 0,
                         zIndex: 1,
+                        elevation: 1,
                         backgroundColor: CommonStyles.tabBottomColor
                       }}
                     >

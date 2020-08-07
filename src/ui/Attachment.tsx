@@ -29,7 +29,7 @@ import Notifier from "../infra/notifier/container";
 import { IconButton } from "./IconButton";
 import { mainNavNavigate } from "../navigation/helpers/navHelper";
 
-export interface IAttachment {
+export interface IRemoteAttachment {
   charset?: string;
   contentTransferEncoding?: string;
   contentType?: string;
@@ -41,7 +41,7 @@ export interface IAttachment {
   url: string;
 }
 
-export interface IAttachmentSend {
+export interface ILocalAttachment {
   mime: string;
   name: string;
   uri: string;
@@ -140,7 +140,7 @@ const openFile = (notifierId: string, filePath?: string) => {
 
 class Attachment extends React.PureComponent<
   {
-    attachment: IAttachment | IAttachmentSend;
+    attachment: IRemoteAttachment | ILocalAttachment;
     starDownload: boolean;
     style: ViewStyle;
     editMode?: boolean;
@@ -160,8 +160,8 @@ class Attachment extends React.PureComponent<
   get attId() {
     const { attachment, editMode } = this.props;
     return editMode
-      ? (attachment as IAttachmentSend).uri && (attachment as IAttachmentSend).uri.split('/').pop()
-      : (attachment as IAttachment).url && (attachment as IAttachment).url!.split('/').pop();
+      ? (attachment as ILocalAttachment).uri && (attachment as ILocalAttachment).uri.split('/').pop()
+      : (attachment as IRemoteAttachment).url && (attachment as IRemoteAttachment).url!.split('/').pop();
   }
 
   public constructor(props) {
@@ -178,7 +178,7 @@ class Attachment extends React.PureComponent<
     const { downloadState } = this.state;
     const canDownload = this.attId && downloadState !== DownloadState.Success && downloadState !== DownloadState.Downloading;
     if(prevProps.starDownload !== starDownload){
-      canDownload && this.startDownload(attachment as IAttachment);
+      canDownload && this.startDownload(attachment as IRemoteAttachment);
     }
   }
 
@@ -233,9 +233,9 @@ class Attachment extends React.PureComponent<
                 color={CommonStyles.textColor}
                 size={16}
                 name={getAttachmentIconByExt(
-                  (editMode && (att as IAttachmentSend).name)
-                  || (att as IAttachment).filename
-                  || (att as IAttachment).displayName
+                  (editMode && (att as ILocalAttachment).name)
+                  || (att as IRemoteAttachment).filename
+                  || (att as IRemoteAttachment).displayName
                   || ""
                 )}
                 style={{ flex: 0, marginRight: 8 }}
@@ -262,9 +262,9 @@ class Attachment extends React.PureComponent<
                   textDecorationStyle: "solid"
                 }}
               >
-                {(editMode && (att as IAttachmentSend).name)
-                || (att as IAttachment).filename
-                || (att as IAttachment).displayName
+                {(editMode && (att as ILocalAttachment).name)
+                || (att as IRemoteAttachment).filename
+                || (att as IRemoteAttachment).displayName
                 || I18n.t("download-untitled")} {!this.attId && I18n.t("download-invalidUrl")}
               </Text>
             </Text>
@@ -307,15 +307,15 @@ class Attachment extends React.PureComponent<
           <ModalContentBlock>
             <ModalContentText>
               {I18n.t("download-confirm", {
-                name: (att as IAttachment).filename || (att as IAttachment).displayName || I18n.t("download-untitled"),
-                size: (att as IAttachment).size ? ` (${Filesize((att as IAttachment).size, { round: 1 })})` : ""
+                name: (att as IRemoteAttachment).filename || (att as IRemoteAttachment).displayName || I18n.t("download-untitled"),
+                size: (att as IRemoteAttachment).size ? ` (${Filesize((att as IRemoteAttachment).size, { round: 1 })})` : ""
               })}
             </ModalContentText>
           </ModalContentBlock>
           <ModalContentBlock>
             <ButtonsOkCancel
               onCancel={() => this.setState({ showModal: false })}
-              onValid={() => this.startDownload(att as IAttachment)}
+              onValid={() => this.startDownload(att as IRemoteAttachment)}
               title={I18n.t("download")}
             />
           </ModalContentBlock>
@@ -327,8 +327,8 @@ class Attachment extends React.PureComponent<
   public onPressAttachment(notifierId: string) {
     const { onOpenFile, onOpen, attachment, editMode } = this.props;
     const { downloadState, downloadedFile } = this.state;
-    const filePath = editMode ? (attachment as IAttachmentSend).uri : downloadedFile;
-    const fileType = editMode ? (attachment as IAttachmentSend).mime : (attachment as IAttachment).contentType;
+    const filePath = editMode ? (attachment as ILocalAttachment).uri : downloadedFile;
+    const fileType = editMode ? (attachment as ILocalAttachment).mime : (attachment as IRemoteAttachment).contentType;
     const carouselImage = [{ src: { uri: filePath }, alt: "image" }];
 
     if (!this.attId) {
@@ -341,11 +341,11 @@ class Attachment extends React.PureComponent<
     } else if (downloadState === DownloadState.Idle) {
       this.setState({ showModal: true });
     } else if (downloadState === DownloadState.Error) {
-      this.startDownload(attachment as IAttachment);
+      this.startDownload(attachment as IRemoteAttachment);
     }
   }
 
-  public getOriginalName(res:FetchBlobResponse, att:IAttachment) {
+  public getOriginalName(res:FetchBlobResponse, att:IRemoteAttachment) {
     const resHeaders = res.info().headers;
     const attachmentId = this.attId;
 
@@ -360,7 +360,7 @@ class Attachment extends React.PureComponent<
     }
   }
 
-  public async startDownload(att: IAttachment) {
+  public async startDownload(att: IRemoteAttachment) {
     if (att.url) {
       if (Platform.OS === "android") {
         await Permissions.request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);

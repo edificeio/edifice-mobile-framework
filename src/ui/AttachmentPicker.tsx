@@ -3,12 +3,12 @@ import { AttachmentGroup } from "./AttachmentGroup";
 import { AttachmentGroupImages } from "./AttachmentGroupImages";
 import { ContentUri } from "../types/contentUri";
 import { Trackers } from "../infra/tracker";
-import { IAttachmentSend } from "./Attachment";
+import { ILocalAttachment } from "./Attachment";
 import pickFile from "../infra/actions/pickFile";
 
 export class AttachmentPicker extends React.PureComponent<
   {
-    attachments: ContentUri[] | IAttachmentSend[];
+    attachments: ContentUri[] | ILocalAttachment[];
     onAttachmentSelected: (selectedAtt) => void;
     onAttachmentRemoved: (selectedAtt) => void;
     onlyImages?: boolean;
@@ -41,7 +41,7 @@ export class AttachmentPicker extends React.PureComponent<
         />
       : <AttachmentGroup
           editMode
-          attachments={(attachments as IAttachmentSend[])}
+          attachments={(attachments as ILocalAttachment[])}
           onRemove={index => this.onRemoveAttachment(index)}
           onOpen={() => Trackers.trackEvent("Conversation", "OPEN ATTACHMENT", "Edit mode")}
           isContainerHalfScreen={isContainerHalfScreen}

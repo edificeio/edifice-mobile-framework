@@ -9,7 +9,7 @@ import { getSessionInfo } from "../../App";
 import { conversationThreadSelected } from "./threadSelected";
 import { IAttachment } from "./messages";
 import { Trackers } from "../../infra/tracker";
-import { IAttachmentSend } from "../../ui/Attachment";
+import { ILocalAttachment, IRemoteAttachment } from "../../ui/Attachment";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -132,7 +132,7 @@ export function createDraft(data: IConversationMessage) {
   };
 }
 
-export function sendAttachments(attachments: IAttachmentSend[], messageId: string) {
+export function sendAttachments(attachments: ILocalAttachment[], messageId: string) {
   return async dispatch => {
     const fulldata = {
       attachments,
@@ -148,13 +148,17 @@ export function sendAttachments(attachments: IAttachmentSend[], messageId: strin
 
     try {
       if (!Conf.currentPlatform) throw new Error("must specify a platform");
-      const attachmentUploads = attachments.map((att: IAttachmentSend) => {
+      const remoteAttachments = attachments.filter(att => att.hasOwnProperty("id"));
+      const attachmentUploads = attachments.map((att: ILocalAttachment | IRemoteAttachment) => {
+        if (att.hasOwnProperty("id")) return;
+        const attachment = att as ILocalAttachment;
         let formData = new FormData();
         formData.append("file", {
-          uri: att.uri,
-          type: att.mime,
-          name: att.name
+          uri: attachment.uri,
+          type: attachment.mime,
+          name: attachment.name
         } as any);
+        console.log("formdata:", formData);
         return signedFetch(
           `${(Conf.currentPlatform as any).url}/conversation/message/${messageId}/attachment`,
           {
@@ -166,7 +170,9 @@ export function sendAttachments(attachments: IAttachmentSend[], messageId: strin
             method: "POST"
           }
         )
-      })
+      }).filter(e => e !== undefined);
+      console.log("remote attachments:", remoteAttachments);
+      console.log("local attachments:", attachmentUploads);
       const responses = await Promise.all(attachmentUploads);
       const sentAttachmentIds = await Promise.all(responses.map(async res => {
         const parsedRes = await res.json();
@@ -176,13 +182,13 @@ export function sendAttachments(attachments: IAttachmentSend[], messageId: strin
         id: sentAttachmentId,
         filename: attachments[index].name,
         contentType: attachments[index].mime,
-      }))
+      }));
 
       const fulldata2 = {
         ...fulldata,
         date: moment(),
         from: getSessionInfo().userId,
-        sentAttachments
+        sentAttachments: [...remoteAttachments, ...sentAttachments]
       };
       dispatch({
         data: fulldata2,

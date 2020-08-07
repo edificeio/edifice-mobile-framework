@@ -14,7 +14,7 @@ import { Loading, Icon } from ".";
 import { fetchJSONWithCache } from "../infra/fetchWithCache";
 import HtmlParserRN, { IHtmlParserRNOptions } from "../infra/htmlParser/rn";
 import { Italic } from "./Typography";
-import { IAttachment } from "./Attachment";
+import { IRemoteAttachment } from "./Attachment";
 import Conf from "../../ode-framework-conf";
 import { AttachmentGroup } from "./AttachmentGroup";
 
@@ -26,9 +26,9 @@ export interface IHtmlContentViewProps extends ViewProps {
   opts?: IHtmlParserRNOptions;
   loadingComp?: JSX.Element;
   getContentFromResource?: (responseJson: any) => string;
-  onDownload?: (att: IAttachment) => void;
-  onError?: (att: IAttachment) => void;
-  onOpen?: (att: IAttachment) => void;
+  onDownload?: (att: IRemoteAttachment) => void;
+  onError?: (att: IRemoteAttachment) => void;
+  onOpen?: (att: IRemoteAttachment) => void;
   onDownloadAll?: () => void;
 }
 
@@ -37,7 +37,7 @@ interface IHtmlContentViewState {
   done?: boolean; // Is content fully loaded?
   error?: boolean; // Has loading ressource failed?
   html?: string; // Loaded html
-  attachments: IAttachment[] // Attachments in html
+  attachments: IRemoteAttachment[] // Attachments in html
   jsx?: JSX.Element; // Computed jsx
 }
 
@@ -81,7 +81,7 @@ export class HtmlContentView extends React.PureComponent<
       return ({
         url: attUrl && `${(Conf.currentPlatform as any).url}${attUrl[0]}`,
         displayName: attDisplayName && attDisplayName[0].replace(/<\/div>/g, "").replace(/<\/a>/g, ""),
-      } as IAttachment)
+      } as IRemoteAttachment)
     });
     html = html.replace(attachmentGroupRegex, "");
     this.setState({ html });
