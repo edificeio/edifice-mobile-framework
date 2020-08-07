@@ -2,7 +2,7 @@ import I18n from "i18n-js";
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { TouchableOpacity, ScrollView } from "react-native-gesture-handler";
-import { NavigationScreenProp } from "react-navigation";
+import { NavigationDrawerProp } from "react-navigation-drawer";
 
 import { Icon } from "../../ui";
 import { PageContainer } from "../../ui/ContainerContent";
@@ -19,7 +19,7 @@ type DrawerMenuProps = {
   quota: any;
   count: any;
   descriptors: any[];
-  navigation: NavigationScreenProp<any>;
+  navigation: NavigationDrawerProp<any>;
 };
 
 type DrawerMenuState = {
@@ -110,6 +110,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
               label={folder.name}
               navigate={() => {
                 navigation.navigate("inbox", { key: folder.name, folderName: folder.name });
+                navigation.closeDrawer();
               }}
               count={count.data[folder.id]}
             />
