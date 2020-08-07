@@ -64,7 +64,10 @@ export default class MailList extends React.PureComponent<any, any> {
           this.props.navigation.navigate("mailDetail", {
             mailId: mailInfos.id,
             subject: mailInfos.subject,
-            onGoBack: this.refreshMailList,
+            onGoBack: () => {
+              this.refreshMailList();
+              this.props.fetchCount(this.props.folders.data.map(f => f.id));
+            },
           });
         }}
         onLongPress={() => this.selectItem(mailInfos)}>

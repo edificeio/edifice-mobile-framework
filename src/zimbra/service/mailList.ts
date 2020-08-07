@@ -4,7 +4,7 @@ import { fetchJSONWithCache } from "../../infra/fetchWithCache";
 import { IMailList } from "../state/mailList";
 
 // Data type of what is given by the backend.
-export type IMailListBackend = Array <{
+export type IMailListBackend = {
   id: string;
   date: string;
   subject: string;
@@ -21,7 +21,7 @@ export type IMailListBackend = Array <{
   displayNames: [];
   attachments: [];
   from: string;
-}>;
+}[];
 
 const mailListAdapter: (data: IMailListBackend) => IMailList = data => {
   let result = [] as IMailList;
@@ -48,9 +48,21 @@ const mailListAdapter: (data: IMailListBackend) => IMailList = data => {
 };
 
 export const mailListService = {
-  get: async page => {
-    const data = mailListAdapter(await fetchJSONWithCache(`/zimbra/list?folder=/Inbox&page=${page}&unread=false`));
-    return data;
+  get: async (page, folder = "inbox") => {
+    switch (folder) {
+      case "inbox":
+        return mailListAdapter(await fetchJSONWithCache(`/zimbra/list?folder=/Inbox&page=${page}&unread=false`));
+      case "outbox":
+        return mailListAdapter(await fetchJSONWithCache(`/zimbra/list?folder=/Sent&page=${page}&unread=false`));
+      case "drafts":
+        return mailListAdapter(await fetchJSONWithCache(`/zimbra/list?folder=/Drafts&page=${page}&unread=false`));
+      case "trash":
+        return mailListAdapter(await fetchJSONWithCache(`/zimbra/list?folder=/Trash&page=${page}&unread=false`));
+      case "spams":
+        return mailListAdapter(await fetchJSONWithCache(`/zimbra/list?folder=/Junk&page=${page}&unread=false`));
+      default:
+        return [];
+    }
   },
   post: async (apps: string[]) => {
     const data = await fetchJSONWithCache(``);

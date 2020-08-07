@@ -2,8 +2,10 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
+import { fetchCountAction } from "../actions/count";
 import { fetchMailListAction, fetchMailListFromFolderAction } from "../actions/mailList";
 import MailList from "../components/MailList";
+import { getFolderListState } from "../state/folders";
 import { getMailListState } from "../state/mailList";
 
 // ------------------------------------------------------------------------------------------------
@@ -18,8 +20,9 @@ class MailListContainer extends React.PureComponent<any, any> {
     };
   }
   private fetchMails = (page = 0) => {
+    const key = this.props.navigation.getParam("key");
     const folderName = this.props.navigation.getParam("folderName");
-    if (!folderName || folderName === undefined) this.props.fetchMailListAction(page);
+    if (!folderName || folderName === undefined) this.props.fetchMailListAction(page, key);
     else this.props.fetchMailFromFolder(folderName, page);
   };
 
@@ -54,18 +57,24 @@ const mapStateToProps: (state: any) => any = state => {
     }
   }
 
+  const folders = getFolderListState(state);
+
   // Format props
   return {
     isPristine,
     isFetching,
     notifications: data,
+    folders,
   };
 };
 
 // ------------------------------------------------------------------------------------------------
 
 const mapDispatchToProps: (dispatch: any) => any = dispatch => {
-  return bindActionCreators({ fetchMailListAction, fetchMailFromFolder: fetchMailListFromFolderAction }, dispatch);
+  return bindActionCreators(
+    { fetchMailListAction, fetchMailFromFolder: fetchMailListFromFolderAction, fetchCount: fetchCountAction },
+    dispatch
+  );
 };
 
 // ------------------------------------------------------------------------------------------------

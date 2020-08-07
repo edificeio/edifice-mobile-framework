@@ -36,12 +36,11 @@ export const foldersService = {
       body: JSON.stringify(body),
     });
   },
-  count: async (folderIds: string[], countInbox: boolean = true) => {
-    const ids = [...folderIds];
-    if (countInbox) ids.push("INBOX");
+  count: async (folderIds: string[]) => {
+    const ids = folderIds.concat(["INBOX", "SPAMS", "DRAFTS"]);
     const promises: Promise<any>[] = [];
     ids.forEach(id => {
-      promises.push(fetchJSONWithCache(`/zimbra/count/${id}?unread=true`));
+      promises.push(fetchJSONWithCache(`/zimbra/count/${id}?unread=${id === "DRAFTS" ? "false" : "true"}`));
     });
     const results = await Promise.all(promises);
     const ret: ICount = results.reduce((acc, res, i) => {

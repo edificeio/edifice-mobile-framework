@@ -14,7 +14,7 @@ import { getQuotaState } from "../state/quota";
 type DrawerMenuProps = {
   fetchFolders: () => any;
   fetchQuota: () => any;
-  fetchCounts: (ids: string[], inbox: boolean) => any;
+  fetchCounts: (ids: string[]) => any;
   activeItemKey: string;
   items: any[];
   folders: any;
@@ -32,10 +32,7 @@ export class DrawerMenuContainer extends React.Component<DrawerMenuProps> {
 
   componentDidUpdate(prevProps) {
     if (prevProps.folders.isFetching && !this.props.folders.isFetching) {
-      this.props.fetchCounts(
-        this.props.folders.data.map(f => f.id),
-        true
-      );
+      this.props.fetchCounts(this.props.folders.data.map(f => f.id));
     }
   }
 

@@ -10,11 +10,11 @@ export const dataActions = createAsyncActionCreators<IMailList>(actionTypes);
 
 // THUNKS -----------------------------------------------------------------------------------------
 
-export function fetchMailListAction(page) {
-  return async (dispatch: Dispatch, getState: () => any) => {
+export function fetchMailListAction(page: number, folderName: string) {
+  return async (dispatch: Dispatch) => {
     try {
       dispatch(dataActions.request());
-      const data = await mailListService.get(page);
+      const data = await mailListService.get(page, folderName);
       dispatch(dataActions.receipt(data));
     } catch (errmsg) {
       dispatch(dataActions.error(errmsg));

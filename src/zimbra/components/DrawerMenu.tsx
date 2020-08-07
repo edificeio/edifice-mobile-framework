@@ -77,25 +77,27 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
           selected={this.isCurrentScreen("outbox")}
           iconName="outbox"
           label={I18n.t("zimbra-outbox")}
-          navigate={() => navigation.navigate("outbox")}
+          navigate={() => navigation.navigate("outbox", { key: "outbox", folderName: undefined })}
         />
         <DrawerOption
           selected={this.isCurrentScreen("drafts")}
           iconName="file-document-outline"
           label={I18n.t("zimbra-drafts")}
-          navigate={() => navigation.navigate("drafts")}
+          navigate={() => navigation.navigate("drafts", { key: "drafts", folderName: undefined })}
+          count={count.data.DRAFTS}
         />
         <DrawerOption
           selected={this.isCurrentScreen("trash")}
           iconName="trash"
           label={I18n.t("zimbra-trash")}
-          navigate={() => navigation.navigate("trash")}
+          navigate={() => navigation.navigate("trash", { key: "trash", folderName: undefined })}
         />
         <DrawerOption
           selected={this.isCurrentScreen("spams")}
           iconName="deleted_files"
           label={I18n.t("zimbra-spams")}
-          navigate={() => navigation.navigate("spams")}
+          navigate={() => navigation.navigate("spams", { key: "spams", folderName: undefined })}
+          count={count.data.SPAMS}
         />
         <View style={style.labelContainer}>
           <Text style={style.labelText}>{I18n.t("zimbra-directories")}</Text>
