@@ -42,7 +42,13 @@ class MailListContainer extends React.PureComponent<any, any> {
   }
 
   public render() {
-    return <MailList {...this.props} fetchMails={this.fetchMails} />;
+    return (
+      <MailList
+        {...this.props}
+        fetchMails={this.fetchMails}
+        isTrashed={this.props.navigation.getParam("key") === "trash"}
+      />
+    );
   }
 }
 

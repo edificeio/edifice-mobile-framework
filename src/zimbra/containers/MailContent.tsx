@@ -12,7 +12,7 @@ import { PageContainer } from "../../ui/ContainerContent";
 import { Text } from "../../ui/Typography";
 import { Header as HeaderComponent } from "../../ui/headers/Header";
 import { HeaderAction } from "../../ui/headers/NewHeader";
-import { toggleReadAction, trashMailsAction } from "../actions/mail";
+import { toggleReadAction, trashMailsAction, deleteMailsAction } from "../actions/mail";
 import { fetchMailContentAction } from "../actions/mailContent";
 import MailContent from "../components/MailContent";
 import MailContentMenu from "../components/MailContentMenu";
@@ -71,7 +71,12 @@ class MailContentContainer extends React.PureComponent<any, any> {
 
   move = () => this.props.moveToInbox([this.props.mail.id]);
 
-  delete = () => this.props.trashMails([this.props.mail.id]);
+  delete = () => {
+    const { navigation } = this.props;
+    const isTrashed = navigation.getParam("isTrashed");
+    if (isTrashed) this.props.deleteMails([this.props.mail.id]);
+    else this.props.trashMails([this.props.mail.id]);
+  };
 
   goBack = () => {
     const { navigation } = this.props;
@@ -134,6 +139,7 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
       fetchMailContentAction,
       toggleRead: toggleReadAction,
       trashMails: trashMailsAction,
+      deleteMails: deleteMailsAction,
     },
     dispatch
   );

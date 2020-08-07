@@ -68,6 +68,7 @@ export default class MailList extends React.PureComponent<any, any> {
               this.refreshMailList();
               this.props.fetchCount(this.props.folders.data.map(f => f.id));
             },
+            isTrashed: this.props.isTrashed,
           });
         }}
         onLongPress={() => this.selectItem(mailInfos)}>
