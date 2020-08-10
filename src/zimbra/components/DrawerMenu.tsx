@@ -51,8 +51,8 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
   };
 
   getCurrentFolder = state => {
-    if (this.props.activeItemKey !== "inbox") return undefined;
-    const folderState = state.routes.find(r => r.key === "inbox");
+    if (this.props.activeItemKey !== "folder") return undefined;
+    const folderState = state.routes.find(r => r.key === "folder");
     if (folderState.params === undefined) return undefined;
     return folderState.params.folderName;
   };
@@ -109,7 +109,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
               iconName="workspace_folder"
               label={folder.name}
               navigate={() => {
-                navigation.navigate("inbox", { key: folder.name, folderName: folder.name });
+                navigation.navigate("folder", { key: folder.name, folderName: folder.name });
                 navigation.closeDrawer();
               }}
               count={count.data[folder.id]}

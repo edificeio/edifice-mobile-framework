@@ -19,6 +19,7 @@ const DrawerNavigatorComponent = createDrawerNavigator(
     drafts: MailList,
     trash: MailList,
     spams: MailList,
+    folder: MailList,
   },
   {
     contentComponent: DrawerMenuContainer,
