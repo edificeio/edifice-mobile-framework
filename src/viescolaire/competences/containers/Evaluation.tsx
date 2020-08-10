@@ -9,7 +9,7 @@ import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenO
 import { PageContainer } from "../../../ui/ContainerContent";
 import { HeaderBackAction } from "../../../ui/headers/NewHeader";
 import { fetchPeriodsListAction, fetchYearAction } from "../../viesco/actions/periods";
-import { getSelectedChild } from "../../viesco/state/children";
+import { getSelectedChild, getSelectedChildStructure } from "../../viesco/state/children";
 import { getPeriodsListState, getYearState } from "../../viesco/state/periods";
 import { getSubjectsListState } from "../../viesco/state/subjects";
 import { fetchDevoirListAction } from "../actions/devoirs";
@@ -49,14 +49,7 @@ const mapStateToProps: (state: any) => any = state => {
       ? getSessionInfo().classes[0]
       : getSessionInfo().classes[getSessionInfo().childrenIds.findIndex(i => i === childId)];
   const structureId =
-  userType === "Student"
-      ? getSessionInfo().administrativeStructures[0].id
-      : getSessionInfo().schools.find(school =>
-          getSessionInfo()
-            .childrenStructure.filter(struct => struct.children.some(c => c.id === getSelectedChild(state)))
-            .map(r => r.structureName)
-            .includes(school.name)
-        ).id;
+    userType === "Student" ? getSessionInfo().administrativeStructures[0].id : getSelectedChildStructure(state)?.id;
   return {
     devoirsList: getDevoirListState(state),
     devoirsMoyennesList: getMoyenneListState(state),
@@ -70,7 +63,8 @@ const mapStateToProps: (state: any) => any = state => {
 };
 
 const mapDispatchToProps: (dispatch: any) => any = dispatch => {
-  return bindActionCreators({
+  return bindActionCreators(
+    {
       getDevoirs: fetchDevoirListAction,
       getDevoirsMoyennes: fetchDevoirMoyennesListAction,
       getPeriods: fetchPeriodsListAction,

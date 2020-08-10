@@ -6,10 +6,9 @@ import { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import { getSessionInfo } from "../../../App";
 import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
 import { HeaderBackAction } from "../../../ui/headers/NewHeader";
-import { getSelectedChild } from "../../viesco/state/children";
+import { getSelectedChild, getSelectedChildStructure } from "../../viesco/state/children";
 import Declaration from "../components/Declaration";
 import { absenceDeclarationService } from "../services/absence";
 
@@ -145,12 +144,7 @@ class AbsenceDeclaration extends React.PureComponent<DeclarationProps, Declarati
 
 const mapStateToProps = (state: any) => {
   const childId = getSelectedChild(state);
-  const structureId = getSessionInfo().schools.find(school =>
-    getSessionInfo()
-      .childrenStructure.filter(struct => struct.children.some(c => c.id === childId))
-      .map(r => r.structureName)
-      .includes(school.name)
-  ).id;
+  const structureId = getSelectedChildStructure(state)?.id
 
   return {
     childId,

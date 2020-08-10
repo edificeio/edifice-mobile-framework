@@ -8,7 +8,7 @@ import { bindActionCreators } from "redux";
 import { getSessionInfo } from "../../../App";
 import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
 import { HeaderBackAction } from "../../../ui/headers/NewHeader";
-import { getSelectedChild } from "../../viesco/state/children";
+import { getSelectedChild, getSelectedChildStructure } from "../../viesco/state/children";
 import { getPersonnelListState } from "../../viesco/state/personnel";
 import { getSubjectsListState } from "../../viesco/state/subjects";
 import { fetchChildHomeworkAction, fetchHomeworkListAction, updateHomeworkProgressAction } from "../actions/homeworks";
@@ -192,27 +192,23 @@ class HomeworkListRelativeContainer extends React.PureComponent<HomeworkListProp
 }
 
 const mapStateToProps: (state: any) => any = state => {
-  const homeworksState = getHomeworksListState(state)
-  const sessionsState = getSessionsListState(state)
-  const subjectsState = getSubjectsListState(state)
-  const personnelState = getPersonnelListState(state)
+  const homeworksState = getHomeworksListState(state);
+  const sessionsState = getSessionsListState(state);
+  const subjectsState = getSubjectsListState(state);
+  const personnelState = getPersonnelListState(state);
 
   return {
     homeworks: homeworksState.data,
     sessions: sessionsState.data,
     subjects: subjectsState.data,
     personnel: personnelState.data,
-    isFetching: homeworksState.isFetching || sessionsState.isFetching || subjectsState.isFetching || personnelState.isFetching,
+    isFetching:
+      homeworksState.isFetching || sessionsState.isFetching || subjectsState.isFetching || personnelState.isFetching,
     childId: getSelectedChild(state),
     structureId:
       getSessionInfo().type === "Student"
         ? getSessionInfo().administrativeStructures[0].id
-        : getSessionInfo().schools.find(school =>
-            getSessionInfo()
-              .childrenStructure.filter(struct => struct.children.some(c => c.id === getSelectedChild(state)))
-              .map(r => r.structureName)
-              .includes(school.name)
-          ).id,
+        : getSelectedChildStructure(state)?.id,
   };
 };
 

@@ -1,5 +1,6 @@
 import userConfig from "../../../user/config";
 import viescoConfig from "../../config";
+import { getSessionInfo } from "../../../App";
 
 // THE MODEL --------------------------------------------------------------------------------------
 
@@ -20,12 +21,21 @@ export type IChildState = {
 
 export const initialState: IChildState = {
   selectedChild: null,
-
 };
 
-export const getSelectedChild = (globalState: any) => viescoConfig.getLocalState(globalState).viesco.children.selectedChild;
+export const getSelectedChild = (globalState: any) =>
+  viescoConfig.getLocalState(globalState).viesco.children.selectedChild;
 
 export const getChildrenList = (globalState: any) => userConfig.getLocalState(globalState).info.children;
+
+export const getSelectedChildStructure = (globalState: any) => {
+  const infos = getSessionInfo();
+  return infos.schools?.find(
+    school =>
+      infos.childrenStructure?.find(school => school.children.some(child => child.id === getSelectedChild(globalState)))
+        ?.structureName == school.name
+  );
+};
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 

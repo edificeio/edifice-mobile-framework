@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from "moment";
 
 // State Type
 
@@ -9,6 +9,10 @@ export interface IUserInfoState {
   blocked?: boolean;
   checksum?: string;
   children?: Array<{ displayName: string; externalId: string; id: string }>;
+  childrenStructure?: Array<{
+    structureName: string;
+    children: Array<{ classNames: string[]; displayName: string; externalId: string; id: string }>;
+  }>;
   classCategories?: string[];
   classes?: string[];
   displayName?: string;
@@ -41,7 +45,7 @@ export interface IUserInfoState {
   relatedId?: string;
   relatedName?: string;
   relatedType?: string;
-  schools?: Array<{ classes: string[]; name: string }>;
+  schools?: Array<{ classes: string[]; name: string; id: string }>;
   source?: string;
   structureNodes?: any[];
   structures?: string[];
@@ -58,8 +62,7 @@ export interface IUserInfoState {
 // Default state
 
 export const initialState: IUserInfoState = {
-  forceRefreshKey: 0
+  forceRefreshKey: 0,
 };
 
 // Action Types
-

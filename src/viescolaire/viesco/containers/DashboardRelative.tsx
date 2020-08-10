@@ -10,7 +10,7 @@ import { getHomeworksListState } from "../../cdt/state/homeworks";
 import { fetchPersonnelListAction } from "../actions/personnel";
 import { fetchSubjectListAction } from "../actions/subjects";
 import DashboardComponent from "../components/DashboardRelative";
-import { getSelectedChild } from "../state/children";
+import { getSelectedChild, getSelectedChildStructure } from "../state/children";
 import { getSubjectsListState } from "../state/subjects";
 
 class Dashboard extends React.PureComponent<
@@ -80,13 +80,7 @@ const mapStateToProps: (state: any) => any = state => {
   const homeworks = getHomeworksListState(state);
   const subjects = getSubjectsListState(state);
   const schools = getSessionInfo().schools;
-  const structure = schools?.find(school =>
-    getSessionInfo()
-      .childrenStructure.filter(struct => struct.children.some(c => c.id === childId))
-      .map(r => r.structureName)
-      .includes(school.name)
-  );
-  const structureId = structure.id;
+  const structureId = getSelectedChildStructure(state)?.id
 
   const evaluations = [
     { subject: "Mathématiques", date: "23/03/2020", note: "15/20" },
