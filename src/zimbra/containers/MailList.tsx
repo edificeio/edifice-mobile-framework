@@ -1,4 +1,5 @@
 import * as React from "react";
+import { NavigationDrawerProp } from "react-navigation-drawer";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
@@ -10,20 +11,42 @@ import { getMailListState } from "../state/mailList";
 
 // ------------------------------------------------------------------------------------------------
 
-class MailListContainer extends React.PureComponent<any, any> {
+type MailListContainerProps = {
+  navigation: NavigationDrawerProp<any>;
+  fetchMailList: (page: number, key: string) => any;
+  fetchCount: (ids: string[]) => any;
+  fetchMailFromFolder: (folderName: string, page: number) => any;
+  isPristine: boolean;
+  isFetching: boolean;
+  notifications: any;
+  folders: any;
+};
+
+type MailListContainerState = {
+  unsubscribe: any;
+  fetchRequested: boolean;
+};
+
+class MailListContainer extends React.PureComponent<MailListContainerProps, MailListContainerState> {
   constructor(props) {
     super(props);
     this.state = {
       unsubscribe: this.props.navigation.addListener("didFocus", () => {
         this.forceUpdate();
       }),
+      fetchRequested: false,
     };
   }
   private fetchMails = (page = 0) => {
+    this.setState({ fetchRequested: true });
     const key = this.props.navigation.getParam("key");
     const folderName = this.props.navigation.getParam("folderName");
-    if (!folderName || folderName === undefined) this.props.fetchMailListAction(page, key);
+    if (!folderName || folderName === undefined) this.props.fetchMailList(page, key);
     else this.props.fetchMailFromFolder(folderName, page);
+  };
+
+  fetchCompleted = () => {
+    this.setState({ fetchRequested: false });
   };
 
   public componentDidMount() {
@@ -47,6 +70,8 @@ class MailListContainer extends React.PureComponent<any, any> {
         {...this.props}
         fetchMails={this.fetchMails}
         isTrashed={this.props.navigation.getParam("key") === "trash"}
+        fetchRequested={this.state.fetchRequested}
+        fetchCompleted={this.fetchCompleted}
       />
     );
   }
@@ -78,7 +103,11 @@ const mapStateToProps: (state: any) => any = state => {
 
 const mapDispatchToProps: (dispatch: any) => any = dispatch => {
   return bindActionCreators(
-    { fetchMailListAction, fetchMailFromFolder: fetchMailListFromFolderAction, fetchCount: fetchCountAction },
+    {
+      fetchMailList: fetchMailListAction,
+      fetchMailFromFolder: fetchMailListFromFolderAction,
+      fetchCount: fetchCountAction,
+    },
     dispatch
   );
 };

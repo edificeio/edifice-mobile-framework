@@ -4,6 +4,7 @@ import * as React from "react";
 import { View, StyleSheet, RefreshControl, Dimensions } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-navigation";
+import { NavigationDrawerProp } from "react-navigation-drawer";
 
 import { CommonStyles } from "../../styles/common/styles";
 import { Icon } from "../../ui";
@@ -13,7 +14,25 @@ import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
 import { Text, TextBold } from "../../ui/text";
 import { IMail } from "../state/mailContent";
 
-export default class MailList extends React.PureComponent<any, any> {
+type MailListProps = {
+  notifications: any;
+  isFetching: boolean;
+  fetchCompleted: () => any;
+  fetchMails: (page: number) => any;
+  fetchCount: (ids: string[]) => any;
+  folders: any;
+  isTrashed: boolean;
+  fetchRequested: boolean;
+  navigation: NavigationDrawerProp<any>;
+};
+
+type MailListState = {
+  indexPage: number;
+  mails: any;
+  nextPageCallable: boolean;
+};
+
+export default class MailList extends React.PureComponent<MailListProps, MailListState> {
   constructor(props) {
     super(props);
 
@@ -21,22 +40,28 @@ export default class MailList extends React.PureComponent<any, any> {
     this.state = {
       indexPage: 0,
       mails: notifications,
+      nextPageCallable: false,
     };
   }
 
-  componentDidMount() {
-    const { notifications } = this.props;
-    if (notifications !== undefined) this.setState({ mails: notifications });
-  }
-
   componentDidUpdate(prevProps) {
-    const { notifications, isFetching } = this.props;
-    if (this.state.indexPage === 0 && !isFetching) this.setState({ mails: notifications });
+    const { notifications, isFetching, fetchCompleted } = this.props;
+    if (this.state.indexPage === 0 && !isFetching && prevProps.isFetching && this.props.fetchRequested) {
+      this.setState({ mails: notifications });
+      fetchCompleted();
+    }
 
-    if (notifications !== prevProps.notifications && !isFetching) {
+    if (
+      notifications !== prevProps.notifications &&
+      this.state.indexPage > 0 &&
+      prevProps.isFetching &&
+      !isFetching &&
+      this.props.fetchRequested
+    ) {
       const { mails } = this.state;
       const joinedList = mails.concat(this.props.notifications);
       this.setState({ mails: joinedList });
+      fetchCompleted();
     }
   }
 
@@ -117,7 +142,7 @@ export default class MailList extends React.PureComponent<any, any> {
 
   refreshMailList = () => {
     this.props.fetchMails(0);
-    this.setState({ indexPage: 0, mail: this.props.notifications });
+    this.setState({ indexPage: 0 });
   };
 
   toggleUnread = () => {
@@ -141,8 +166,14 @@ export default class MailList extends React.PureComponent<any, any> {
             refreshControl={
               <RefreshControl refreshing={this.props.isFetching} onRefresh={() => this.refreshMailList()} />
             }
-            onEndReachedThreshold={0.01}
-            onEndReached={() => this.onChangePage()}
+            onEndReachedThreshold={0.001}
+            onScrollBeginDrag={() => this.setState({ nextPageCallable: true })}
+            onEndReached={() => {
+              if (this.state.nextPageCallable) {
+                this.setState({ nextPageCallable: false });
+                this.onChangePage();
+              }
+            }}
             ListEmptyComponent={
               <View style={{ justifyContent: "center", alignItems: "center" }}>
                 <Text>{I18n.t("subFolder-emptyScreenTitle")}</Text>
