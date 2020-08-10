@@ -24,9 +24,6 @@ const style = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  scrollView: {
-    flex: 1,
-  },
 });
 
 type HomeworkListProps = {
@@ -118,7 +115,6 @@ export default class HomeworkList extends React.PureComponent<HomeworkListProps,
     homeworksArray.sort((a, b) => a.due_date - b.due_date);
     return (
       <ScrollView
-        contentContainerStyle={style.scrollView}
         refreshControl={<RefreshControl refreshing={this.props.isFetching} onRefresh={this.onRefreshHomeworks} />}>
         {homeworksArray.map((homework, index, list) => (
           <View>
@@ -149,7 +145,6 @@ export default class HomeworkList extends React.PureComponent<HomeworkListProps,
     const sessions = this.props.sessions;
     return (
       <ScrollView
-        contentContainerStyle={style.scrollView}
         refreshControl={<RefreshControl refreshing={this.props.isFetching} onRefresh={this.onRefreshSessions} />}>
         {sessions.map((session, index, list) => (
           <View>
