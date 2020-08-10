@@ -44,9 +44,9 @@ const FieldName = style.text({
 
 export default class SelectThreadInfos extends React.Component<
   { remainingUsers; pickedUsers; onPickUser; onUnpickUser; onSelectSubject; subject; message: IConversationMessage; type: string },
-  { searchText: string; subjectText?: string; max: number }
+  { searchText: string; subjectText?: string; max: number, showHistory: boolean }
   > {
-  state = { searchText: "", subjectText: undefined, max: 20 };
+  state = { searchText: "", subjectText: undefined, max: 20, showHistory: false };
   input: any;
 
   public inputRef: any;
@@ -88,6 +88,10 @@ export default class SelectThreadInfos extends React.Component<
 
   public render() {
     const { onUnpickUser, pickedUsers, subject, message, type } = this.props;
+    const { showHistory } = this.state;
+    const messageMatch = message && message.body.match(/<div>.*?<\/div>/);
+    const messageHtml = messageMatch && messageMatch[0];
+    const historyHtml = message && message.body.replace(/<div>.*?<\/div>/, "");
     let { searchText, subjectText } = this.state;
     subjectText = subjectText ?? subject;
     let index = 0;
@@ -188,8 +192,11 @@ export default class SelectThreadInfos extends React.Component<
                         </TextBold>
                         <View style={{ flex: 1 }}>
                           <MessageBubble
+                            contentHtml={messageHtml}
+                            historyHtml={historyHtml}
+                            onShowHistory={() => this.setState({ showHistory: !showHistory })}
+                            showHistory={showHistory}
                             canScroll
-                            contentHtml={message.body}
                             style={{ maxHeight: "100%" }}
                           />
                         </View>

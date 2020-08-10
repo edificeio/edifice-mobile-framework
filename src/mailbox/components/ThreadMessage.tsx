@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, ScrollView, ViewStyle } from "react-native";
+import { View, ScrollView, ViewStyle, TouchableOpacity } from "react-native";
 import style from "glamorous-native";
 import I18n from "i18n-js";
 
@@ -7,37 +7,60 @@ import { CommonStyles } from "../../styles/common/styles";
 import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
 import { DateView } from "../../ui/DateView";
 import { HtmlContentView } from "../../ui/HtmlContentView";
-import { BubbleStyle, BubbleScrollStyle } from "../../ui/BubbleStyle";
 import { IRemoteAttachment } from "../../ui/Attachment";
 import { ConversationMessageStatus } from "../actions/sendMessage";
 import { AttachmentGroup } from "../../ui/AttachmentGroup";
 import { getSessionInfo } from "../../App";
 import { Trackers } from "../../infra/tracker";
+import { Icon } from "../../ui/icons/Icon";
+import { A } from "../../ui/Typography";
 
-export const MessageBubble = ({ contentHtml, isMine, hasAttachments, canScroll = false, style, containerStyle }:
+export const MessageBubble = ({ 
+    contentHtml,
+    historyHtml,
+    onShowHistory,
+    showHistory = false,
+    hasAttachments,
+    isMine,
+    canScroll = false,
+    style,
+    containerStyle
+  }:
   {
     contentHtml: string,
-    isMine?: boolean,
+    historyHtml?: string,
+    onShowHistory?: () => void,
+    showHistory?: boolean,
     hasAttachments?: boolean,
+    isMine?: boolean,
     canScroll?: boolean,
     style?: ViewStyle,
     containerStyle?: ViewStyle
   }) => {
+  const htmlOpts = {
+    globalTextStyle: {
+      color: isMine ? "white" : CommonStyles.textColor,
+      fontFamily: CommonStyles.primaryFontFamily,
+      fontSize: 14
+    },
+    ...(isMine
+      ? {
+        linkTextStyle: {
+          color: "white",
+          textDecorationLine: "underline"
+        }
+      }
+      : null),
+    textColor: !isMine
+  }
+  const htmlEmptyMessage = I18n.t("conversation-emptyMessage");
   const bubbleStyle = {
     alignSelf: "stretch",
     marginBottom: 10,
     marginTop: 6,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    // elevation: 2,
-    // shadowColor: CommonStyles.shadowColor,
-    // shadowOffset: CommonStyles.shadowOffset,
-    // shadowOpacity: CommonStyles.shadowOpacity,
-    // shadowRadius: CommonStyles.shadowRadius,
-    // backgroundColor: isMine ? CommonStyles.iconColorOn : "white",
-    //...style
   }
-
   style = {
     ...style, elevation: 2,
     shadowColor: CommonStyles.shadowColor,
@@ -48,38 +71,50 @@ export const MessageBubble = ({ contentHtml, isMine, hasAttachments, canScroll =
     alignSelf: "stretch"
   }
 
-  const content = <View style={bubbleStyle}><HtmlContentView
-    html={contentHtml}
-    emptyMessage={I18n.t("conversation-emptyMessage")}
-    opts={{
-      globalTextStyle: {
-        color: isMine ? "white" : CommonStyles.textColor,
-        fontFamily: CommonStyles.primaryFontFamily,
-        fontSize: 14
-      },
-      ignoreClass: ["signature", "medium-text"],
-      ...(isMine
-        ? {
-          linkTextStyle: {
-            color: "white",
-            textDecorationLine: "underline"
-          }
-        }
-        : null),
-      textColor: !isMine
-    }}
-  /></View>;
+  const content = 
+  <View style={bubbleStyle}>
+    <HtmlContentView
+      html={contentHtml}
+      emptyMessage={htmlEmptyMessage}
+      opts={htmlOpts}
+    />
+    {historyHtml
+      ? <TouchableOpacity
+          style={{ flexDirection: "row", alignItems: "center", marginTop: 20 }}
+          onPress={onShowHistory}
+        >
+          <Icon
+            name="arrow_down"
+            color={isMine ? "white" : CommonStyles.actionColor}
+            style={!showHistory && {transform: [{ rotate: "270deg" }]}}
+          />
+          <A style={{ color: isMine ? "white" : CommonStyles.actionColor }}>
+          {I18n.t("conversation-showHistory")}
+          </A>
+        </TouchableOpacity>
+      : null
+    }
+    {showHistory
+      ? <HtmlContentView
+          html={historyHtml}
+          emptyMessage={htmlEmptyMessage}
+          opts={htmlOpts}
+        />
+      : null
+    }
+  </View>;
 
   return canScroll
     ? <ScrollView
-      style={style}
-      contentContainerStyle={[containerStyle, hasAttachments && { marginBottom: 3 }]}
-      keyboardShouldPersistTaps="handled">
-      {content}
-    </ScrollView>
+        style={style}
+        contentContainerStyle={[containerStyle, hasAttachments && { marginBottom: 3 }]}
+        keyboardShouldPersistTaps="handled"
+      >
+        {content}
+      </ScrollView>
     : <View style={style}>
-      {content}
-    </View>
+        {content}
+      </View>
 };
 
 const MessageStatus = ({ status, date }) => {
@@ -103,6 +138,7 @@ export default class ThreadMessage extends React.PureComponent<
   {
     attachments: Array<IRemoteAttachment>;
     id: string;
+    threadId: string;
     body: string;
     date: any;
     displayNames: any[];
@@ -116,19 +152,33 @@ export default class ThreadMessage extends React.PureComponent<
     ) => void;
     selected?: boolean;
   },
-  undefined
+  {
+    showHistory: boolean;
+  }
   > {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      showHistory: false,
+    };
+  }
+
   public render() {
     const {
       attachments,
       body,
       date,
-      to = [],
-      toName = [],
       from = "",
-      status
+      status,
+      id,
+      threadId
     } = this.props;
-    const hasAttachments = attachments && attachments.length;
+    const { showHistory } = this.state;
+    const messageMatch = body.match(/<div>.*?<\/div>/);
+    const messageHtml = messageMatch && messageMatch[0];
+    const historyHtml = id === threadId ? body.replace(/<div>.*?<\/div>/, "") : undefined;
+    const hasAttachments = attachments && attachments.length > 0;
     const isMine = from === getSessionInfo().userId;
     // medium-text is used to write previous sender
     // should be replaced with better selector for stability
@@ -173,10 +223,13 @@ export default class ThreadMessage extends React.PureComponent<
           </MessageInfos>
           {body
             ? <MessageBubble
-              contentHtml={body}
-              isMine={isMine}
-              hasAttachments={hasAttachments}
-            />
+                contentHtml={messageHtml}
+                historyHtml={historyHtml}
+                onShowHistory={() => this.setState({ showHistory: !showHistory })}
+                showHistory={showHistory}
+                hasAttachments={hasAttachments}
+                isMine={isMine}
+              />
             : null
           }
           {hasAttachments
