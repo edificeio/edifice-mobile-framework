@@ -31,7 +31,7 @@ class CreateFolderModal extends React.PureComponent<any, any> {
     Toast.show(I18n.t("zimbra-create-directory-confirm"), {
       position: Toast.position.BOTTOM,
       mask: false,
-      containerStyle: { width: "95%", backgroundColor: "" },
+      containerStyle: { width: "95%", backgroundColor: "black" },
     });
   };
 
