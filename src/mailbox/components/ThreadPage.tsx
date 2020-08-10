@@ -17,7 +17,7 @@ import * as React from "react";
 import { hasNotch } from "react-native-device-info";
 
 // Components
-import { KeyboardAvoidingView, Platform, RefreshControl, Dimensions } from "react-native";
+import { KeyboardAvoidingView, Platform, RefreshControl, Dimensions, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
 const { View, FlatList } = style;
 import styles from "../../styles";
 
@@ -36,8 +36,6 @@ import { IConversationThread } from "../reducers/threadList";
 import ThreadInput from "./ThreadInput";
 import { Dispatch } from "redux";
 import { NavigationScreenProp } from "react-navigation";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { TouchableOpacity as RNGHTouchableOpacity } from "react-native-gesture-handler";
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -58,7 +56,7 @@ export interface IThreadPageEventProps {
   onSelectThread?: (threadId: string) => void;
   onTapReceivers?: (message: IConversationMessage) => void;
   onTapReceiversFromThread?: (thread: IConversationThread) => void;
-  onSelectMessage?: (message: IConversationMessage) => void;
+  onSelectMessage?: (message: IConversationMessage | undefined) => void;
 }
 
 export interface IThreadPageOtherProps {
@@ -154,60 +152,62 @@ export class ThreadPage extends React.PureComponent<
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={Platform.OS === "ios" ? hasNotch() ? 44 /*(status bar height)*/ + 51 : 51 : headerHeight}
       >
-        <View style={{flex: 1}}>
-          {threadInfo.isFetchingFirst
-            ? <Loading />
-            : <View style={{flex: 1}}>
-                {isDimmed
-                  ? <View
-                      style={{
-                        position: "absolute",
-                        zIndex: 1,
-                        backgroundColor: "grey",
-                        opacity: 0.5,
-                        top: 0, bottom: 0, left: 0, right: 0
-                      }}
-                    />
-                  : null
-                }
-                <FlatList
-                  refreshControl={
-                    <RefreshControl
-                      refreshing={fetching}
-                      onRefresh={() => {
-                        this.setState({ fetching: true })
-                        onGetNewer(threadInfo.id)
-                      }}
-                      style={{ transform: [{ scaleY: -1 }] }}
-                    />
+        <TouchableWithoutFeedback onPress={() => this.props.onSelectMessage && this.props.onSelectMessage(undefined)}>
+          <View style={{flex: 1}}>
+            {threadInfo.isFetchingFirst
+              ? <Loading />
+              : <View style={{flex: 1}}>
+                  {isDimmed
+                    ? <View
+                        style={{
+                          position: "absolute",
+                          zIndex: 1,
+                          backgroundColor: "grey",
+                          opacity: 0.5,
+                          top: 0, bottom: 0, left: 0, right: 0
+                        }}
+                      />
+                    : null
                   }
-                  data={messagesData}
-                  renderItem={({ item }) => this.renderMessageItem(item)}
-                  style={styles.grid}
-                  inverted={true}
-                  keyExtractor={(item: IConversationMessage) => item.id}
-                  onEndReached={() => {
-                    if (!this.onEndReachedCalledDuringMomentum) {
-                      onGetOlder(threadInfo.id);
-                      this.onEndReachedCalledDuringMomentum = true;
+                  <FlatList
+                    refreshControl={
+                      <RefreshControl
+                        refreshing={fetching}
+                        onRefresh={() => {
+                          this.setState({ fetching: true })
+                          onGetNewer(threadInfo.id)
+                        }}
+                        style={{ transform: [{ scaleY: -1 }] }}
+                      />
                     }
-                  }}
-                  onEndReachedThreshold={0.1}
-                  onMomentumScrollBegin={() => {
-                    this.onEndReachedCalledDuringMomentum = false;
-                  }}
-                />
-              </View>
-          }
-          <ThreadInput
-            emptyThread={!messages.length}
-            displayPlaceholder={!isFetchingFirst}
-            onReceiversTap={this.handleTapReceivers}
-            onChangeReceivers={this.handleChangeReceivers}
-            onDimBackground={dim => this.setState({ isDimmed: dim })}
-            {...this.props}
-          />
-        </View>
+                    data={messagesData}
+                    renderItem={({ item }) => this.renderMessageItem(item)}
+                    style={styles.grid}
+                    inverted={true}
+                    keyExtractor={(item: IConversationMessage) => item.id}
+                    onEndReached={() => {
+                      if (!this.onEndReachedCalledDuringMomentum) {
+                        onGetOlder(threadInfo.id);
+                        this.onEndReachedCalledDuringMomentum = true;
+                      }
+                    }}
+                    onEndReachedThreshold={0.1}
+                    onMomentumScrollBegin={() => {
+                      this.onEndReachedCalledDuringMomentum = false;
+                    }}
+                  />
+                </View>
+            }
+            <ThreadInput
+              emptyThread={!messages.length}
+              displayPlaceholder={!isFetchingFirst}
+              onReceiversTap={this.handleTapReceivers}
+              onChangeReceivers={this.handleChangeReceivers}
+              onDimBackground={dim => this.setState({ isDimmed: dim })}
+              {...this.props}
+            />
+          </View>
+        </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
     );
   }
@@ -215,7 +215,7 @@ export class ThreadPage extends React.PureComponent<
   public renderMessageItem(message: IConversationMessage) {
     // console.log("this.message.id", message.id, this.props.navigation?.getParam('selectedMessage'));
     return (
-      <RNGHTouchableOpacity
+      <TouchableOpacity
         onLongPress={() => {
           this.props.onSelectMessage && this.props.onSelectMessage(message);
           // console.log("onLongPress", message);
@@ -234,7 +234,7 @@ export class ThreadPage extends React.PureComponent<
           {...message}
           selected={this.props.navigation?.getParam('selectedMessage')?.id == message.id}
         />
-      </RNGHTouchableOpacity>
+      </TouchableOpacity>
     );
   }
   public handleTapReceivers = (message: IConversationMessage) => {
