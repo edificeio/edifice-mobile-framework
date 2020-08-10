@@ -1,5 +1,7 @@
 import I18n from "i18n-js";
 import React from "react";
+import { Platform, View } from "react-native";
+import { hasNotch } from "react-native-device-info";
 import { NavigationState } from "react-navigation";
 import { createDrawerNavigator, NavigationDrawerProp } from "react-navigation-drawer";
 
@@ -91,6 +93,22 @@ export default class DrawerNavigatorWrapper extends React.Component<any, any> {
             {title}
           </Text>
         </HeaderComponent>
+        <View
+          style={{
+            position: "absolute",
+            right: 0,
+            top: Platform.OS === "ios" ? (hasNotch() ? 0 : 4) : 2,
+            zIndex: 5,
+            elevation: 5,
+          }}>
+          <HeaderAction
+            name="new_message"
+            onPress={() => {
+              navigation.navigate("newMail", { currentFolder: this.getActiveRouteState(navigation.state).key });
+            }}
+            primary
+          />
+        </View>
         <DrawerNavigatorComponent navigation={navigation} />
       </PageContainer>
     );

@@ -37,16 +37,20 @@ const HeaderStyle = style(SafeAreaView)({
 export const HeaderComponent = ({
   connectionTracker,
   children,
+  color,
   onLayout
 }: {
   connectionTracker: any;
   children: any;
+  color?: string;
   onLayout?: () => void;
 }) => (
   <HeaderStyle
     onLayout={() => onLayout && onLayout()}
-    style={{ elevation: connectionTracker.visible ? 0 : 5 }}
-  >
+    style={{
+      elevation: connectionTracker.visible ? 0 : 5,
+      backgroundColor: color ? color : CommonStyles.mainColorTheme,
+    }}>
     {children}
   </HeaderStyle>
 );
