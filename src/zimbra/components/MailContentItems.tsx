@@ -73,9 +73,9 @@ export const HeaderMail = ({ mailInfos }) => {
           </Author>
           <IconButton
             onPress={() => toggleVisible(!isVisible)}
-            text="Voir le détail"
+            text={I18n.t("zimbra-see_detail")}
             color="#2A9CC8"
-            icon="arrow_down"
+            icon={isVisible ? "keyboard_arrow_up" : "keyboard_arrow_down"}
           />
         </CenterPanel>
         {!isVisible ? (
