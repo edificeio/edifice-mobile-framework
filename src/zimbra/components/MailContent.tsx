@@ -44,7 +44,7 @@ export default class MailContent extends React.PureComponent<any, any> {
           <View style={{ flex: 1 }}>
             <View style={styles.topGreenBar} />
             {this.props.mail.id && this.mailHeader()}
-            {this.props.mail.hasAttachment && <RenderPJs attachments={this.props.mail.attachments} />}
+            {this.props.mail.hasAttachment && <RenderPJs attachments={this.props.mail.attachments} mailId={this.props.mail.id} />}
             {this.props.mail.body !== undefined && this.mailContent()}
             {this.mailFooter()}
           </View>

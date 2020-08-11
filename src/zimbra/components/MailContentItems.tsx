@@ -4,6 +4,7 @@ import moment from "moment";
 import * as React from "react";
 import { View, Dimensions, StyleSheet } from "react-native";
 
+import { downloadFile } from "../../infra/actions/downloadHelper";
 import { Icon, ButtonIconText } from "../../ui";
 import { BadgeAvatar } from "../../ui/BadgeAvatar";
 import { Header, CenterPanel, LeftPanel } from "../../ui/ContainerContent";
@@ -111,28 +112,62 @@ export const FooterButton = ({ icon, text, onPress }) => {
   );
 };
 
-export const RenderPJs = ({ attachments }) => {
+const getFileIcon = (type: string) => {
+  switch (type) {
+    case "image/png":
+    case "image/jpeg":
+    case "image/gif":
+      return "picture";
+    case "audio/mpeg":
+    case "audio/ogg":
+      return "file-audio";
+    case "video/mpeg":
+    case "video/ogg":
+      return "file-video-outline";
+    case "application/pdf":
+      return "pdf_files";
+    case "text/html":
+    default:
+      return "file-document-outline";
+  }
+};
+
+export const RenderPJs = ({ attachments, mailId }) => {
   const [isVisible, toggleVisible] = React.useState(false);
+  const displayedAttachments = isVisible ? attachments : attachments.slice(0, 1);
   return (
     <View style={[styles.containerMail, { flexDirection: "column" }]}>
-      <TouchableOpacity onPress={() => toggleVisible(!isVisible)} style={styles.gridButton}>
-        <View style={styles.gridButton}>
-          <Icon size={25} color="#2A9CC8" name="file-plus" />
-          <Text style={styles.gridButtonText}>&emsp;{attachments[0].filename}</Text>
-        </View>
-        {attachments.length > 1 && !isVisible && (
-          <Text style={styles.gridButtonTextPJnb}>+{attachments.length - 1}</Text>
-        )}
-      </TouchableOpacity>
-      {isVisible &&
-        attachments.map(
-          (item, index) =>
-            index > 0 && (
-              <Text style={styles.gridButtonTextPJnames} key={item.id}>
-                {item.filename}
-              </Text>
-            )
-        )}
+      {displayedAttachments.map((item, index) => (
+        <TouchableOpacity
+          onPress={() => {
+            console.log("item: ", item);
+            downloadFile({
+              filename: item.filename,
+              url: `/zimbra/message/${mailId}/attachment/${item.id}`,
+              size: item.size,
+              id: item.id,
+              name: item.filename,
+              parentId: "",
+            });
+          }}>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Icon size={25} color="#2A9CC8" name={getFileIcon(item.contentType)} />
+            <Text style={styles.gridButtonTextPJnames} key={item.id}>
+              {item.filename}
+            </Text>
+            {index === 0 && (
+              <TouchableOpacity onPress={() => toggleVisible(!isVisible)} style={{ padding: 5 }}>
+                {attachments.length > 1 && (
+                  <Text style={styles.gridButtonTextPJnb}>
+                    {isVisible ? "-" : "+"}
+                    {attachments.length - 1}
+                  </Text>
+                )}
+              </TouchableOpacity>
+            )}
+          </View>
+        </TouchableOpacity>
+      ))}
     </View>
   );
 };
@@ -161,10 +196,12 @@ const styles = StyleSheet.create({
     color: "#2A9CC8",
     justifyContent: "flex-end",
     alignItems: "flex-end",
+    textAlign: "right",
   },
   gridButtonTextPJnames: {
     color: "#2A9CC8",
-    marginLeft: 50,
+    marginLeft: 5,
+    flexGrow: 1,
   },
   dotReceiverColor: {
     width: 8,
