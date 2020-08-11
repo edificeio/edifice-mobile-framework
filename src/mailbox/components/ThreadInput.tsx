@@ -93,6 +93,7 @@ class ThreadInput extends React.PureComponent<
     isHalfScreen: boolean;
     attachmentsHeightHalfScreen?: number;
     showReplyHelperIfAvailable: boolean;
+    showHistory: boolean;
   }
   > {
   private input: any;
@@ -110,7 +111,8 @@ class ThreadInput extends React.PureComponent<
     sending: false,
     isHalfScreen: false,
     attachmentsHeightHalfScreen: undefined,
-    showReplyHelperIfAvailable: true
+    showReplyHelperIfAvailable: true,
+    showHistory: false
   };
 
   public static findReceivers2(
@@ -243,8 +245,11 @@ class ThreadInput extends React.PureComponent<
 
   public render() {
     const { displayPlaceholder, thread, lastMessage, backMessage } = this.props;
-    const { selected, textMessage, attachments, sending, isHalfScreen, attachmentsHeightHalfScreen } = this.state;
+    const { selected, textMessage, attachments, sending, isHalfScreen, attachmentsHeightHalfScreen, showHistory } = this.state;
     const attachmentsAdded = attachments.length > 0;
+    const historyMatch = backMessage && backMessage.body.match(/<p class="medium-text.*/s)
+    const historyHtml = historyMatch && historyMatch[0];
+    const messageHtml = backMessage && backMessage.body.replace(/<p class="medium-text.*/s, "");
     const halfDeviceHeight = Dimensions.get("window").height / 2;
     const receiversIds = lastMessage
       ? ThreadInput.findReceivers2(lastMessage)
@@ -370,7 +375,10 @@ class ThreadInput extends React.PureComponent<
           {backMessage
             ? <MessageBubble
               canScroll
-              contentHtml={backMessage.body}
+              contentHtml={messageHtml}
+              historyHtml={historyHtml}
+              onShowHistory={() => this.setState({ showHistory: !showHistory })}
+              showHistory={showHistory}
               containerStyle={{ maxHeight: 150, marginBottom: 0, marginTop: 0 }}
             />
             : null

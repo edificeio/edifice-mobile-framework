@@ -89,9 +89,9 @@ export default class SelectThreadInfos extends React.Component<
   public render() {
     const { onUnpickUser, pickedUsers, subject, message, type } = this.props;
     const { showHistory } = this.state;
-    const messageMatch = message && message.body.match(/<div>.*?<\/div>/);
-    const messageHtml = messageMatch && messageMatch[0];
-    const historyHtml = message && message.body.replace(/<div>.*?<\/div>/, "");
+    const historyMatch = message && message.body.match(/<p class="medium-text.*/s)
+    const historyHtml = historyMatch && historyMatch[0];
+    const messageHtml = message && message.body.replace(/<p class="medium-text.*/s, "");
     let { searchText, subjectText } = this.state;
     subjectText = subjectText ?? subject;
     let index = 0;
