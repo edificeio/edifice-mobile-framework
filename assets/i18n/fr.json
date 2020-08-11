@@ -303,6 +303,7 @@
     "zimbra-download-all": "Télécharger pièces jointes",
     "zimbra-delete": "Supprimer",
     "zimbra-move-to": "Déplacer vers",
+    "zimbra-empty-mailbox": "Aucun message pour le moment",
 
     "profileTypes": {
       "Guest": "Invité",

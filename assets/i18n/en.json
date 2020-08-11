@@ -303,6 +303,7 @@
   "zimbra-download-all": "Download all attachments",
   "zimbra-delete": "Delete",
   "zimbra-move-to": "Move to",
+  "zimbra-empty-mailbox": "No message for now",
 
   "profileTypes": {
     "Guest": "Guest",

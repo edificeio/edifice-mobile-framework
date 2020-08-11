@@ -10,6 +10,7 @@ import { CommonStyles } from "../../styles/common/styles";
 import { Icon } from "../../ui";
 import { Header, LeftPanel, CenterPanel, PageContainer } from "../../ui/ContainerContent";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
+import { EmptyScreen } from "../../ui/EmptyScreen";
 import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
 import { Text, TextBold } from "../../ui/text";
 import { IMail } from "../state/mailContent";
@@ -96,7 +97,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
             isTrashed: this.props.isTrashed,
           });
         }}
-        onLongPress={() => this.selectItem(mailInfos)}>
+        onLongPress={() => {} /*this.selectItem(mailInfos) */}>
         <Header
           style={[styles.containerMail, this.containerStyle(mailInfos.isChecked), this.hasShadow(mailInfos.unread)]}>
           <LeftPanel>
@@ -157,30 +158,39 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
   public render() {
     return (
       <PageContainer>
-        <SafeAreaView>
-          <FlatList
-            data={this.state.mails}
-            renderItem={({ item }) => this.renderMailItemInfos(item)}
-            extraData={this.state.mails}
-            keyExtractor={(item: IMail) => item.id}
-            refreshControl={
-              <RefreshControl refreshing={this.props.isFetching} onRefresh={() => this.refreshMailList()} />
-            }
-            onEndReachedThreshold={0.001}
-            onScrollBeginDrag={() => this.setState({ nextPageCallable: true })}
-            onEndReached={() => {
-              if (this.state.nextPageCallable) {
-                this.setState({ nextPageCallable: false });
-                this.onChangePage();
+        {this.state.mails.length > 0 ? (
+          <SafeAreaView>
+            <FlatList
+              data={this.state.mails}
+              renderItem={({ item }) => this.renderMailItemInfos(item)}
+              extraData={this.state.mails}
+              keyExtractor={(item: IMail) => item.id}
+              refreshControl={
+                <RefreshControl refreshing={this.props.isFetching} onRefresh={() => this.refreshMailList()} />
               }
-            }}
-            ListEmptyComponent={
-              <View style={{ justifyContent: "center", alignItems: "center" }}>
-                <Text>{I18n.t("subFolder-emptyScreenTitle")}</Text>
-              </View>
-            }
+              onEndReachedThreshold={0.001}
+              onScrollBeginDrag={() => this.setState({ nextPageCallable: true })}
+              onEndReached={() => {
+                if (this.state.nextPageCallable) {
+                  this.setState({ nextPageCallable: false });
+                  this.onChangePage();
+                }
+              }}
+              ListEmptyComponent={
+                <View style={{ justifyContent: "center", alignItems: "center" }}>
+                  <Text>{I18n.t("subFolder-emptyScreenTitle")}</Text>
+                </View>
+              }
+            />
+          </SafeAreaView>
+        ) : (
+          <EmptyScreen
+            imageSrc={require("../../../assets/images/empty-screen/empty-mailBox.png")}
+            imgWidth={265.98}
+            imgHeight={279.97}
+            title={I18n.t("zimbra-empty-mailbox")}
           />
-        </SafeAreaView>
+        )}
       </PageContainer>
     );
   }
