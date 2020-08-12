@@ -132,7 +132,7 @@ export function createDraft(data: IConversationMessage) {
   };
 }
 
-export function sendAttachments(attachments: ILocalAttachment[], messageId: string) {
+export function sendAttachments(attachments: ILocalAttachment[], messageId: string, backMessage?: IConversationMessage) {
   return async dispatch => {
     const fulldata = {
       attachments,
@@ -171,8 +171,17 @@ export function sendAttachments(attachments: ILocalAttachment[], messageId: stri
           }
         )
       }).filter(e => e !== undefined);
-      console.log("remote attachments:", remoteAttachments);
-      console.log("local attachments:", attachmentUploads);
+      // console.log("remote attachments:", remoteAttachments);
+      // console.log("local attachments:", attachmentUploads);
+      // console.log("back message:", backMessage);
+      if (backMessage) {
+        const transferResponse = await signedFetch(
+          `${(Conf.currentPlatform as any).url}/conversation/message/${messageId}/forward/${backMessage.id}`,
+          {
+            method: "PUT"
+          }
+        )
+      }
       const responses = await Promise.all(attachmentUploads);
       const sentAttachmentIds = await Promise.all(responses.map(async res => {
         const parsedRes = await res.json();
@@ -195,7 +204,8 @@ export function sendAttachments(attachments: ILocalAttachment[], messageId: stri
         type: actionTypeAttachmentsSent
       });
       Trackers.trackEvent("Conversation", "SEND ATTACHMENTS", "", attachments.length);
-      return sentAttachments;
+      // console.log("sent Attchments in sendMEssage.tsx", fulldata2.sentAttachments);
+      return fulldata2.sentAttachments;
     } catch (e) {
       // tslint:disable-next-line:no-console
       console.warn(e);
@@ -224,6 +234,7 @@ export function sendMessage(data: IConversationMessage, sentAttachments?: IAttac
       id: newuuid,
       status: ConversationMessageStatus.sending
     };
+    // console.log("fuldata 1", fulldata);
     dispatch({
       data: fulldata,
       type: actionTypeMessageSendRequested
@@ -272,7 +283,9 @@ export function sendMessage(data: IConversationMessage, sentAttachments?: IAttac
         type: actionTypeMessageSent
       });
       fulldata2.threadId.startsWith("tmp-") && dispatch(conversationThreadSelected(fulldata2.newId));
+      // console.log("fulldata", fulldata2);
       Trackers.trackEvent("Conversation", "SEND");
+      return fulldata2.attachments;
     } catch (e) {
       // tslint:disable-next-line:no-console
       console.warn(e);

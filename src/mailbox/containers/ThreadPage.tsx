@@ -269,6 +269,16 @@ class ThreadPageContainer extends React.PureComponent<
     });
   }
 
+  componentDidUpdate(prevProps: IThreadPageProps) {
+    if (this.props.threadInfo?.id !== prevProps.threadInfo?.id) {
+      this.props.navigation!.setParams({
+        threadInfo: this.props.threadInfo,
+        onTapReceivers: this.props.onTapReceivers,
+        onSelectThread: this.props.onSelectThread
+      });
+    }
+  }
+
   public render() {
     const backMessage = this.props.navigation?.getParam('message');
     const sendingType = this.props.navigation?.getParam('type', 'new');

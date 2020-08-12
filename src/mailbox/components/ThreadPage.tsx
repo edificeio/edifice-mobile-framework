@@ -214,6 +214,7 @@ export class ThreadPage extends React.PureComponent<
 
   public renderMessageItem(message: IConversationMessage) {
     // console.log("this.message.id", message.id, this.props.navigation?.getParam('selectedMessage'));
+    // console.log("messge:", message);
     return (
       <TouchableOpacity
         onLongPress={() => {

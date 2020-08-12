@@ -18,7 +18,8 @@ import ThreadInputReceivers from "./ThreadInputReceiver";
 import { getSessionInfo } from "../../App";
 import { MessageBubble } from "./ThreadMessage";
 import { Text } from "../../ui/text";
-import { SafeAreaView } from "react-navigation";
+import { SafeAreaView, NavigationScreenProp, NavigationState, NavigationActions } from "react-navigation";
+import { IAttachment } from "../actions/messages";
 
 // TODO : Debt : Needs to be refactored.
 
@@ -74,7 +75,7 @@ class ThreadInput extends React.PureComponent<
     emptyThread: boolean;
     displayPlaceholder: boolean;
     createDraft: (data: any) => Promise<string>;
-    sendAttachments: (attachments: ILocalAttachment[], messageId: string) => Promise<IRemoteAttachment[]>;
+    sendAttachments: (attachments: ILocalAttachment[], messageId: string, backMessage?: IConversationMessage) => Promise<IRemoteAttachment[]>;
     sendMessage: (data: any, attachments?: IRemoteAttachment[], messageId?: string) => Promise<void>;
     onGetNewer: (threadId: string) => void;
     onReceiversTap: (
@@ -83,6 +84,7 @@ class ThreadInput extends React.PureComponent<
     onDimBackground: (dim: boolean) => void;
     backMessage?: IConversationMessage;
     sendingType: string;
+    navigation?: NavigationScreenProp<NavigationState>
   },
   {
     newThreadId?: string;
@@ -187,20 +189,25 @@ class ThreadInput extends React.PureComponent<
     this.input && this.input.innerComponent.setNativeProps({ keyboardType: "default" });
     this.input && this.input.innerComponent.blur();
     this.setState({ textMessage: "", attachments: [], sending: true });
-    this.props.navigation?.setParams({
-      type: undefined,
-      message: undefined
-    })
+    // this.props.navigation?.setParams({
+    //   type: undefined,
+    //   message: undefined
+    // })
 
     await onGetNewer(thread.id)
     if (attachmentsAdded) {
       const messageId = await createDraft(messageData);
-      const sentAttachments = await sendAttachments(attachmentsToSend, messageId);
-      await sendMessage(messageData, sentAttachments, messageId);
+      const sentAttachments = await sendAttachments(attachmentsToSend, messageId, backMessage);
+      // console.log("sentAttachments in ThreadInput", sentAttachments);
+      newId = await sendMessage(messageData, sentAttachments, messageId);
       this.setState({ sending: false });
+      this.props.navigation?.navigate('thread', { selectedMessage: undefined });
+      return sentAttachments;
     } else {
-      await sendMessage(messageData);
+      newId = await sendMessage(messageData);
       this.setState({ sending: false });
+      this.props.navigation?.navigate('thread', { selectedMessage: undefined });
+
     }
   }
 
@@ -428,7 +435,15 @@ export default connect(
   },
   dispatch => ({
     createDraft: (data: any) => dispatch<any>(createDraft(data)),
-    sendAttachments: (attachments: ILocalAttachment[], messageId: string) => dispatch<any>(sendAttachments(attachments, messageId)),
-    sendMessage: (data: any, attachments?: ILocalAttachment[], messageId?: string) => dispatch<any>(sendMessage(data, attachments, messageId)),
+    sendAttachments: async (attachments: ILocalAttachment[], messageId: string, backMessage?: IConversationMessage) => {
+      const ret = await dispatch(sendAttachments(attachments, messageId, backMessage));
+      // console.log("ret attachments:", ret);
+      return ret;
+    },
+    sendMessage: async (data: any, attachments?: IAttachment[], messageId?: string) => {
+      const ret = await dispatch(sendMessage(data, attachments, messageId));
+      // console.log("ret:", ret);
+      return ret;
+    },
   })
 )(ThreadInput);
