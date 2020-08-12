@@ -15,6 +15,7 @@ import { getPeriodsListState, getYearState } from "../../viesco/state/periods";
 import { getStudentEvents } from "../actions/events";
 import HistoryComponent from "../components/History";
 import { getHistoryEvents } from "../state/events";
+import { View } from "react-native";
 
 interface HistoryProps {
   navigation: NavigationScreenProp<any>;
@@ -55,6 +56,7 @@ class History extends React.PureComponent<HistoryProps, HistoryState> {
       {
         title: I18n.t("viesco-history"),
         headerLeft: <HeaderBackAction navigation={navigation} />,
+        headerRight: <View/>,
         headerStyle: {
           backgroundColor: "#FCB602",
         },

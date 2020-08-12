@@ -11,6 +11,7 @@ import { HeaderBackAction } from "../../../ui/headers/NewHeader";
 import { getSelectedChild, getSelectedChildStructure } from "../../viesco/state/children";
 import Declaration from "../components/Declaration";
 import { absenceDeclarationService } from "../services/absence";
+import { View } from "react-native";
 
 type DeclarationProps = {
   childId: string;
@@ -40,6 +41,7 @@ class AbsenceDeclaration extends React.PureComponent<DeclarationProps, Declarati
       {
         title: navigation.getParam("title") || I18n.t("viesco-absence-declaration"),
         headerLeft: <HeaderBackAction navigation={navigation} />,
+        headerRight: <View />,
         headerStyle: {
           backgroundColor: "#FCB602",
         },

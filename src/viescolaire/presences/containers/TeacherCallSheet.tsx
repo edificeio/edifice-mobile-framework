@@ -11,6 +11,7 @@ import { fetchClassesCallAction } from "../actions/teacherClassesCall";
 import TeacherCallSheet from "../components/TeacherCallSheet";
 import { getClassesCallListState } from "../state/teacherClassesCall";
 import { getCoursesListState } from "../state/teacherCourses";
+import { View } from "react-native";
 
 class CallSheet extends React.PureComponent<any> {
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<any> }) => {
@@ -18,6 +19,7 @@ class CallSheet extends React.PureComponent<any> {
       {
         title: I18n.t("viesco-register"),
         headerLeft: <HeaderBackAction navigation={navigation} />,
+        headerRight: <View/>,
         headerStyle: {
           backgroundColor: "#ffb600",
         },

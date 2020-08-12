@@ -38,6 +38,7 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
       {
         title: navigation.getParam("title"),
         headerLeft: <HeaderBackAction navigation={navigation} />,
+        headerRight: <View/>,
         headerStyle: {
           backgroundColor: navigation.getParam("color"),
         },

@@ -7,8 +7,8 @@ import I18n from "i18n-js";
 import { fetchJSONWithCache } from "../../../infra/fetchWithCache";
 import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
 import { HeaderBackAction } from "../../../ui/headers/NewHeader";
-import { HeaderAction } from "../../../ui/headers/Header";
 import DisplayHomework from "../components/DisplayHomework";
+import { View } from "react-native";
 
 class Homework extends React.PureComponent<any> {
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
@@ -18,10 +18,7 @@ class Homework extends React.PureComponent<any> {
       {
         title: diaryTitle || I18n.t("Homework"),
         headerLeft: <HeaderBackAction navigation={navigation} />,
-        headerRight: <HeaderAction
-          name="filter"
-          onPress={() => navigation.navigate("HomeworkFilter")}
-        />
+        headerRight: <View/>
       },
       navigation
     );

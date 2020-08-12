@@ -17,6 +17,7 @@ import HomeworkList from "../components/HomeworkList";
 import { getHomeworksListState } from "../state/homeworks";
 import { getSessionsListState } from "../state/sessions";
 import { INavigationProps } from "../../../types";
+import { View } from "react-native";
 
 enum switchState {
   HOMEWORK,
@@ -55,6 +56,7 @@ class HomeworkListRelativeContainer extends React.PureComponent<HomeworkListProp
       {
         title: diaryTitle || I18n.t("Homework"),
         headerLeft: <HeaderBackAction navigation={navigation} />,
+        headerRight: <View/>,
         headerStyle: {
           backgroundColor: "#2BAB6F",
         },

@@ -17,6 +17,7 @@ import { fetchDevoirMoyennesListAction } from "../actions/moyennes";
 import Competences from "../components/Evaluation";
 import { getDevoirListState } from "../state/devoirs";
 import { getMoyenneListState } from "../state/moyennes";
+import { View } from "react-native";
 
 export class Evaluation extends React.PureComponent<{ navigation: { navigate } }, any> {
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<any> }) => {
@@ -24,6 +25,7 @@ export class Evaluation extends React.PureComponent<{ navigation: { navigate } }
       {
         title: I18n.t("viesco-tests"),
         headerLeft: <HeaderBackAction navigation={navigation} />,
+        headerRight: <View/>,
         headerStyle: {
           backgroundColor: "#F95303",
         },

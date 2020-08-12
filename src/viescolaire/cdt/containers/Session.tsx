@@ -7,20 +7,20 @@ import I18n from "i18n-js";
 import { fetchJSONWithCache } from "../../../infra/fetchWithCache";
 import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
 import { HeaderBackAction } from "../../../ui/headers/NewHeader";
-import { HeaderAction } from "../../../ui/headers/Header";
 import DisplaySession from "../components/DisplaySession";
+import { View } from "react-native";
 
 class Session extends React.PureComponent<any> {
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
 
     return standardNavScreenOptions(
       {
-        title: I18n.t("viesco-session"),
+        title: I18n.t("Homework"),
         headerLeft: <HeaderBackAction navigation={navigation} />,
-        headerRight: <HeaderAction
-          name="filter"
-          onPress={() => navigation.navigate("HomeworkFilter")}
-        />
+        headerRight: <View/>,
+        headerStyle: {
+          backgroundColor: "#2BAB6F",
+        },
       },
       navigation
     );
