@@ -52,6 +52,9 @@ type StudentRowProps = {
 };
 
 export default class StudentRow extends React.PureComponent<StudentRowProps, StudentRowState> {
+
+  swipeableRef = null;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -104,12 +107,15 @@ export default class StudentRow extends React.PureComponent<StudentRowProps, Stu
     const { lateEvent, leavingEvent, absentEvent } = this.state;
     return (
       <Swipeable
+        onRef={ref => this.swipeableRef = ref}
         leftButtonWidth={120}
         leftButtons={this.swipeButtons(
           () => {
+            this.swipeableRef && this.swipeableRef.recenter();
             lateCallback(lateEvent);
           },
           () => {
+            this.swipeableRef && this.swipeableRef.recenter();
             leavingCallback(leavingEvent);
           }
         )}>
