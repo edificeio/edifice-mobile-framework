@@ -139,7 +139,7 @@ export default class Dashboard extends React.PureComponent<any & DashboardProps>
         {tomorrowHomeworks.map(homework => (
           <HomeworkItem
             disabled
-            checked={homework.progress && homework.progress.state_id === 2}
+            checked={this.isHomeworkDone(homework)}
             title={this.getSubjectName(homework.subject_id)}
             subtitle={homework.type}
           />

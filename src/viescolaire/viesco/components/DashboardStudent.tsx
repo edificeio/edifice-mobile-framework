@@ -142,8 +142,8 @@ export default class Dashboard extends React.PureComponent<any & dashboardProps>
                 </Text>
                 {homeworksByDate[date].map(homework => (
                   <HomeworkItem
-                    hideCheckbox={homework.progress === null}
-                    checked={homework.progress && homework.progress.state_id === 2}
+                    hideCheckbox={false}
+                    checked={this.isHomeworkDone(homework)}
                     title={this.getSubjectName(homework.subject_id)}
                     subtitle={homework.type}
                     onChange={() => {
