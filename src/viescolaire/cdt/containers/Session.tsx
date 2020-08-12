@@ -12,11 +12,10 @@ import DisplaySession from "../components/DisplaySession";
 
 class Session extends React.PureComponent<any> {
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
-    const diaryTitle = navigation.getParam("diaryTitle")
 
     return standardNavScreenOptions(
       {
-        title: diaryTitle || I18n.t("Homework"),
+        title: I18n.t("viesco-session"),
         headerLeft: <HeaderBackAction navigation={navigation} />,
         headerRight: <HeaderAction
           name="filter"

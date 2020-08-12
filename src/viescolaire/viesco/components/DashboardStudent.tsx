@@ -8,6 +8,7 @@ import { Icon } from "../../../ui";
 import { EmptyScreen } from "../../../ui/EmptyScreen";
 import { TextBold } from "../../../ui/text";
 import { HomeworkItem } from "../../cdt/components/Items";
+import { isHomeworkDone, homeworkDetailsAdapter, getSubjectName } from "../../utils/cdt";
 
 const style = StyleSheet.create({
   dashboardPart: { paddingVertical: 8, paddingHorizontal: 15 },
@@ -90,18 +91,6 @@ export default class Dashboard extends React.PureComponent<any & dashboardProps>
     );
   }
 
-  getSubjectName = subjectId => {
-    const subjectsList = this.props.subjects.data;
-    const result = subjectsList.find(subject => subject.subjectId === subjectId);
-    if (typeof result === "undefined") return "";
-    return result.subjectLabel;
-  };
-
-  isHomeworkDone = homework => {
-    if (homework.progress === null) return false;
-    return homework.progress.state_label === "done";
-  };
-
   private renderHomework(homeworks) {
     let homeworksByDate = {};
     Object.values(homeworks).forEach(hm => {
@@ -143,12 +132,22 @@ export default class Dashboard extends React.PureComponent<any & dashboardProps>
                 {homeworksByDate[date].map(homework => (
                   <HomeworkItem
                     hideCheckbox={false}
-                    checked={this.isHomeworkDone(homework)}
-                    title={this.getSubjectName(homework.subject_id)}
+                    checked={isHomeworkDone(homework)}
+                    title={getSubjectName(homework.subject_id, this.props.subjects.data)}
                     subtitle={homework.type}
                     onChange={() => {
-                      this.props.updateHomeworkProgress(homework.id, !this.isHomeworkDone(homework));
+                      this.props.updateHomeworkProgress(homework.id, !isHomeworkDone(homework));
                     }}
+                    onPress={() =>
+                      this.props.navigation.navigate(
+                        "cdt",
+                        {},
+                        NavigationActions.navigate({
+                          routeName: "HomeworkPage",
+                          params: homeworkDetailsAdapter(homework, this.props.subjects.data),
+                        })
+                      )
+                    }
                   />
                 ))}
               </>

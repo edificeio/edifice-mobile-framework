@@ -11,6 +11,7 @@ import { EmptyScreen } from "../../../ui/EmptyScreen";
 import { Text, TextBold } from "../../../ui/text";
 import ChildPicker from "../../viesco/containers/ChildPicker";
 import { HomeworkItem, SessionItem } from "./Items";
+import { isHomeworkDone, getSubjectName, homeworkDetailsAdapter, sessionDetailsAdapter, getTeacherName } from "../../utils/cdt";
 
 const style = StyleSheet.create({
   homeworkPart: { flex: 1, paddingBottom: 8, paddingHorizontal: 15 },
@@ -53,41 +54,6 @@ type HomeworkListProps = {
 };
 
 export default class HomeworkList extends React.PureComponent<HomeworkListProps, {}> {
-  getSubjectName = subjectId => {
-    const subjectsList = this.props.subjects;
-    const result = subjectsList.find(subject => subject.subjectId === subjectId);
-    if (typeof result === "undefined") return "";
-    return result.subjectLabel;
-  };
-
-  getTeacherName = teacherId => {
-    const personnelList = this.props.personnel;
-    const result = personnelList.find(personnel => personnel.id === teacherId);
-    if (typeof result === "undefined") return "";
-    return `${result.lastName} ${result.firstName}`;
-  };
-
-  isHomeworkDone = homework => homework.progress !== null && homework.progress.state_label === "done";
-
-  homeworkDetailsAdapter = homework => {
-    return {
-      subject: this.getSubjectName(homework.subject_id),
-      description: homework.description,
-      due_date: homework.due_date,
-      type: homework.type,
-      created_date: homework.created_date,
-    };
-  };
-
-  sessionDetailsAdapter = session => {
-    return {
-      subject: this.getSubjectName(session.subject_id),
-      date: session.date,
-      teacher: this.getTeacherName(session.teacher_id),
-      description: session.description,
-      title: session.title,
-    };
-  };
 
   onRefreshHomeworks = () => {
     const startDateString = moment(this.props.startDate).format("YYYY-MM-DD");
@@ -125,14 +91,14 @@ export default class HomeworkList extends React.PureComponent<HomeworkListProps,
               </TextBold>
             ) : null}
             <HomeworkItem
-              onPress={() => this.props.navigation.navigate("HomeworkPage", this.homeworkDetailsAdapter(homework))}
+              onPress={() => this.props.navigation.navigate("HomeworkPage", homeworkDetailsAdapter(homework, this.props.subjects))}
               disabled={this.props.navigation.state.params.user_type === "Relative"}
-              checked={this.isHomeworkDone(homework)}
-              title={this.getSubjectName(homework.subject_id)}
+              checked={isHomeworkDone(homework)}
+              title={getSubjectName(homework.subject_id, this.props.subjects)}
               subtitle={homework.type}
               onChange={() => {
                 this.props.navigation.state.params.user_type !== "Relative" &&
-                  this.props.updateHomeworkProgress(homework.id, !this.isHomeworkDone(homework));
+                  this.props.updateHomeworkProgress(homework.id, !isHomeworkDone(homework));
               }}
             />
           </View>
@@ -153,9 +119,9 @@ export default class HomeworkList extends React.PureComponent<HomeworkListProps,
               <TextBold>{moment(session.date).format("DD/MM/YY")}</TextBold>
             ) : null}
             <SessionItem
-              onPress={() => this.props.navigation.navigate("SessionPage", this.sessionDetailsAdapter(session))}
-              matiere={this.getSubjectName(session.subject_id)}
-              author={this.getTeacherName(session.teacher_id)}
+              onPress={() => this.props.navigation.navigate("SessionPage", sessionDetailsAdapter(session, this.props.subjects, this.props.personnel))}
+              matiere={getSubjectName(session.subject_id, this.props.subjects)}
+              author={getTeacherName(session.teacher_id, this.props.personnel)}
             />
           </View>
         ))}

@@ -12,6 +12,7 @@ import { Text, TextBold } from "../../../ui/text";
 import { HomeworkItem } from "../../cdt/components/Items";
 import { DenseDevoirList } from "../../competences/components/Item";
 import ChildPicker from "../containers/ChildPicker";
+import { isHomeworkDone, getSubjectName, homeworkDetailsAdapter } from "../../utils/cdt";
 
 const styles = StyleSheet.create({
   dashboardPart: { paddingVertical: 8, paddingHorizontal: 15 },
@@ -63,17 +64,6 @@ const IconButton = ({ icon, color, text, onPress }) => {
 };
 
 export default class Dashboard extends React.PureComponent<any & DashboardProps> {
-  getSubjectName = subjectId => {
-    const subjectsList = this.props.subjects.data;
-    const result = subjectsList.find(subject => subject.subjectId === subjectId);
-    if (typeof result === "undefined") return "";
-    return result.subjectLabel;
-  };
-
-  isHomeworkDone = homework => {
-    if (homework.progress === null) return false;
-    return homework.progress.state_label === "done";
-  };
 
   private renderNavigationGrid() {
     return (
@@ -139,9 +129,19 @@ export default class Dashboard extends React.PureComponent<any & DashboardProps>
         {tomorrowHomeworks.map(homework => (
           <HomeworkItem
             disabled
-            checked={this.isHomeworkDone(homework)}
-            title={this.getSubjectName(homework.subject_id)}
+            checked={isHomeworkDone(homework)}
+            title={getSubjectName(homework.subject_id, this.props.subjects.data)}
             subtitle={homework.type}
+            onPress={() =>
+              this.props.navigation.navigate(
+                "cdt",
+                {},
+                NavigationActions.navigate({
+                  routeName: "HomeworkPage",
+                  params: homeworkDetailsAdapter(homework, this.props.subjects.data),
+                })
+              )
+            }
           />
         ))}
       </View>
