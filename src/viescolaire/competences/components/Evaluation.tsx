@@ -165,12 +165,14 @@ export default class Competences extends React.PureComponent<any, any> {
     disciplines.unshift("Disciplines");
 
     return (
-      <Dropdown
-        data={Object.values(disciplines)}
-        value={this.state.selectedDiscipline}
-        onSelect={(discipline: string) => this.initDevoirsByDisciplines(discipline)}
-        renderItem={(item: string) => item}
-      />
+      // TODO adapt to new Dropdown
+      // <Dropdown
+      //   data={Object.values(disciplines)}
+      //   value={this.state.selectedDiscipline}
+      //   onSelect={(discipline: string) => this.initDevoirsByDisciplines(discipline)}
+      //   renderItem={(item: string) => item}
+      // />
+      <View />
     );
   }
 
@@ -181,12 +183,14 @@ export default class Competences extends React.PureComponent<any, any> {
     periodsList.push(year.data);
 
     return (
-      <Dropdown
-        data={Object.values(periodsList)}
-        value={this.state.selectedPeriod}
-        onSelect={(period: string) => this.initDevoirsByPeriods(period)}
-        renderItem={(item: IPeriod) => this.renderOption(item)}
-      />
+      // TODO adapt to new Dropdown
+      // <Dropdown
+      //   data={Object.values(periodsList)}
+      //   value={this.state.selectedPeriod}
+      //   onSelect={(period: string) => this.initDevoirsByPeriods(period)}
+      //   renderItem={(item: IPeriod) => this.renderOption(item)}
+      // />
+      <View />
     );
   }
 

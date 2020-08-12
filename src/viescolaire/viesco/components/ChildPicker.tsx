@@ -3,8 +3,8 @@ import * as React from "react";
 import { View, StyleSheet } from "react-native";
 
 import { CommonStyles } from "../../../styles/common/styles";
-import Dropdown from "../../../ui/Dropdown";
 import { IChildArray, IChild } from "../state/children";
+import Dropdown from "../../../ui/Dropdown";
 
 const styles = StyleSheet.create({
   shadow: {
@@ -42,15 +42,13 @@ export default class ChildPicker extends React.PureComponent<ChildPickerProps> {
 
     const dropdown = (
       <Dropdown
-        data={Object.values(childrenArray)}
+        data={Object.entries(childrenArray).map(([childId, childValue]) => ({ id: childId, ...childValue }))}
         value={selectedChild}
         onSelect={(child: string) => selectChild(child)}
-        keyExtractor={item => keyExtractor(item)}
+        keyExtractor={item => item.id}
         renderItem={(item: IChild) => item.lastName + " " + item.firstName}
       />
     );
-    const keyExtractor = child =>
-      Object.keys(childrenArray)[Object.values(childrenArray).findIndex(item => item === child)];
 
     const wrappedChildren = React.Children.map([dropdown, ...React.Children.toArray(children)], child =>
       React.cloneElement(child as React.ReactElement<any>, { style: [child.props.style, { margin: 5 }] })

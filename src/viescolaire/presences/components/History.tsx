@@ -26,7 +26,6 @@ type HistoryProps = {
 };
 
 class History extends React.PureComponent<HistoryProps> {
-
   renderOption = option => {
     if (option.order === -1) return I18n.t("viesco-fullyear");
     else return I18n.t("viesco-trimester") + " " + option.order;
@@ -38,17 +37,14 @@ class History extends React.PureComponent<HistoryProps> {
       <View style={{ flex: 1 }}>
         {this.props.navigation.state.params.user_type === "Relative" && <ChildPicker />}
         <ScrollView contentContainerStyle={style.container}>
-          <View style={{ alignItems: "center", zIndex: 1 }}>
-            <Dropdown
-              style={{ backgroundColor: "white" }}
-              containerStyle={{ flex: 0, width: "50%" }}
-              value={selected}
-              data={periods}
-              onSelect={onPeriodChange}
-              renderItem={this.renderOption}
-              keyExtractor={item => item.order}
-            />
-          </View>
+          <Dropdown
+            style={{ alignSelf: "center", width: "50%" }}
+            data={periods}
+            value={selected}
+            onSelect={onPeriodChange}
+            keyExtractor={item => item.order}
+            renderItem={this.renderOption}
+          />
           <UnjustifiedCard elements={events.unjustified} />
           <JustifiedCard elements={events.justified} />
           <LatenessCard elements={events.lateness} />

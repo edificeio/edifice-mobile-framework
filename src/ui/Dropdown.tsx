@@ -1,38 +1,32 @@
+import { Picker } from "@react-native-community/picker";
+import I18n from "i18n-js";
 import * as React from "react";
-import { View, StyleSheet, ViewStyle } from "react-native";
-import { ScrollView, TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { useState } from "react";
+import { View, StyleSheet, ViewStyle, Platform } from "react-native";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
-import { Icon } from ".";
+import { Icon, ButtonsOkCancel } from ".";
 import { CommonStyles } from "../styles/common/styles";
-import TouchableOpacity from "./CustomTouchableOpacity";
+import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from "./Modal";
 import { TextBold } from "./text";
 
-interface IDropdownProps<T, V> {
+interface IDropdownProps {
   style?: ViewStyle;
-  containerStyle?: ViewStyle;
-  value?: V;
-  data: T[];
-  onSelect: (item: V) => void;
-  renderItem?: (item: T) => string;
-  keyExtractor?: (item: T) => V;
-}
-
-interface IDropdownState<V> {
-  height: number;
-  width: number;
-  opened: boolean;
-  value?: V;
+  value?: string;
+  data: any[];
+  onSelect: (item: string) => void;
+  renderItem?: (item: any) => string;
+  keyExtractor?: (item: any) => string;
+  placeholder?: string;
 }
 
 const styles = StyleSheet.create({
   selected: {
-    padding: 10,
     borderRadius: 5,
     borderColor: CommonStyles.grey,
     borderWidth: 2,
     borderStyle: "solid",
-    flexDirection: "row",
-    alignItems: "center",
+    backgroundColor: "white",
   },
   dropdown: {
     backgroundColor: CommonStyles.white,
@@ -48,89 +42,81 @@ const styles = StyleSheet.create({
   },
 });
 
-export default class Dropdown<T, V> extends React.PureComponent<IDropdownProps<T, V>, IDropdownState<V>> {
-  constructor(props) {
-    super(props);
+const DropdownAndroid = ({ style, data, value, onSelect, renderItem, keyExtractor }: IDropdownProps) => {
+  const getItemRenderer = renderItem ? renderItem : item => item.toString();
+  const getItemKeyExtractor = keyExtractor ? keyExtractor : item => item.toString();
 
-    this.state = { value: this.props.value, opened: false, height: 50, width: 200 };
-  }
+  return (
+    <View style={[styles.selected, { flex: 1 }, style]}>
+      <Picker
+        style={{
+          color: CommonStyles.textColor,
+        }}
+        selectedValue={value}
+        onValueChange={(key, value) => onSelect(key as string)}>
+        {data.map(item => (
+          <Picker.Item label={getItemRenderer(item)} value={getItemKeyExtractor(item)} />
+        ))}
+      </Picker>
+    </View>
+  );
+};
 
-  private getItemRenderer = this.props.renderItem ? this.props.renderItem : item => item.toString();
+const DropdownIOS = ({ renderItem, keyExtractor, style, data, placeholder, value, onSelect }: IDropdownProps) => {
+  const getItemRenderer = renderItem ? renderItem : item => item.toString();
+  const getItemKeyExtractor = keyExtractor ? keyExtractor : item => item.toString();
 
-  private getItemKeyExtractor = this.props.keyExtractor ? this.props.keyExtractor : item => item;
+  const [visible, toggleModal] = useState(false);
+  const [selected, selectValue] = useState(value);
 
-  private getSelectedItem = () => {
-    return this.state.value ? this.props.data.find(item => this.getItemKeyExtractor(item) === this.state.value) : null;
-  };
+  return (
+    <View style={{ flex: 1 }}>
+      <TouchableWithoutFeedback
+        style={[styles.selected, { padding: 10, flexDirection: "row", alignItems: "center" }, style]}
+        onPress={() => toggleModal(true)}>
+        <TextBold style={{ flex: 1 }}>
+          {placeholder
+            ? placeholder
+            : value
+            ? getItemRenderer(data.find(item => getItemKeyExtractor(item) == value))
+            : " "}
+        </TextBold>
+        <Icon size={20} name="arrow_down" />
+      </TouchableWithoutFeedback>
+      <ModalBox isVisible={visible} onDismiss={() => toggleModal(false)}>
+        <ModalContent style={{ width: 350 }}>
+          <View style={{ width: "100%", marginBottom: 35, paddingHorizontal: 20 }}>
+            <Picker selectedValue={selected} onValueChange={(value, label) => selectValue(value as string)}>
+              {data.map(item => (
+                <Picker.Item label={getItemRenderer(item)} value={getItemKeyExtractor(item)} />
+              ))}
+            </Picker>
+          </View>
+          <ModalContentBlock>
+            <ButtonsOkCancel
+              onCancel={() => {
+                toggleModal(false);
+              }}
+              onValid={() => {
+                toggleModal(false);
+                onSelect(selected);
+              }}
+              title={I18n.t("common-ok")}
+            />
+          </ModalContentBlock>
+        </ModalContent>
+      </ModalBox>
+    </View>
+  );
+};
 
-  private getData = () => this.props.data.filter(item => this.getItemKeyExtractor(item) !== this.state.value);
-
-  private onLayout = event => {
-    this.setState({ height: event.nativeEvent.layout.height, width: event.nativeEvent.layout.width });
-  };
-
-  private onPress = (item?) => {
-    if (item == null) {
-      this.setState(previousState => ({ opened: !previousState.opened }));
-    } else {
-      this.setState({ value: this.getItemKeyExtractor(item) });
-      this.setState(previousState => ({ opened: !previousState.opened }));
-      this.props.onSelect(this.getItemKeyExtractor(item));
+export default (props: IDropdownProps) => {
+  switch (Platform.OS) {
+    case "ios": {
+      return <DropdownIOS {...props} />;
     }
-  };
-
-  private SelectedValue = ({ style, onLayout, onPress, children, displayArrow }) => (
-    <TouchableWithoutFeedback onLayout={onLayout} onPress={onPress}>
-      <View style={[styles.selected, style]}>
-        {children}
-        {displayArrow && <Icon size={20} name="arrow_down" />}
-      </View>
-    </TouchableWithoutFeedback>
-  );
-
-  private Option = ({ onSelect, children }) => (
-    <TouchableOpacity style={{ padding: 10 }} onPress={onSelect}>
-      <TextBold>{children}</TextBold>
-    </TouchableOpacity>
-  );
-
-  private Dropdown = ({ data, renderItem }) => {
-    return (
-      <View
-        style={[
-          styles.dropdown,
-          { top: this.state.height, maxHeight: this.state.height * 6, width: this.state.width },
-        ]}>
-        <ScrollView>{data.map(item => renderItem(item))}</ScrollView>
-      </View>
-    );
-  };
-
-  public render() {
-    const { Dropdown, Option, SelectedValue, onPress, onLayout, getData, getSelectedItem, getItemRenderer } = this;
-
-    const selectedItem = getSelectedItem();
-
-    return (
-      <View style={[{ flex: 1 }, this.props.containerStyle]}>
-        <SelectedValue
-          style={this.props.style}
-          onLayout={onLayout}
-          onPress={onPress}
-          displayArrow={getData().length !== 0}>
-          <TextBold style={{ flex: 1 }}>{selectedItem ? getItemRenderer(selectedItem) : " "}</TextBold>
-        </SelectedValue>
-        {this.state.opened && getData().length > 0 && (
-          <Dropdown
-            data={getData()}
-            renderItem={item => (
-              <Option onSelect={() => onPress(item)}>
-                <TextBold>{getItemRenderer(item)}</TextBold>
-              </Option>
-            )}
-          />
-        )}
-      </View>
-    );
+    default: {
+      return <DropdownAndroid {...props} />;
+    }
   }
-}
+};

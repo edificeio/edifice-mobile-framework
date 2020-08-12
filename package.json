@@ -25,6 +25,7 @@
     "@react-native-community/masked-view": "^0.1.10",
     "@react-native-community/datetimepicker": "^2.4.2",
     "@react-native-community/netinfo": "~4.1.5",
+    "@react-native-community/picker": "^1.6.6",
     "@react-native-community/push-notification-ios": "github:react-native-community/react-native-push-notification-ios#dcef241",
     "appcenter": "2.6.1",
     "appcenter-analytics": "2.6.1",

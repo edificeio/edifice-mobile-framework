@@ -24,15 +24,16 @@ export default class StructurePicker extends React.PureComponent<{
   public render() {
     const { selectedStructure, structures, selectStructure } = this.props;
 
-    const keyExtractor = structure => Object.values(structures).find(item => item.id === structure.id).id;
-
     return (
       <View style={styles.container}>
         <Dropdown
-          data={Object.values(structures)}
+          data={Object.entries(structures).map(([structureId, structureValue]) => ({
+            id: structureId,
+            ...structureValue,
+          }))}
           value={selectedStructure}
           onSelect={(structure: string) => selectStructure(structure)}
-          keyExtractor={item => keyExtractor(item)}
+          keyExtractor={item => item.id}
           renderItem={(item: IStructure) => item.name}
         />
       </View>
