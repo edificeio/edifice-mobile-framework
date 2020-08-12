@@ -247,9 +247,10 @@ class ThreadInput extends React.PureComponent<
     const { displayPlaceholder, thread, lastMessage, backMessage } = this.props;
     const { selected, textMessage, attachments, sending, isHalfScreen, attachmentsHeightHalfScreen, showHistory } = this.state;
     const attachmentsAdded = attachments.length > 0;
-    const historyMatch = backMessage && backMessage.body.match(/<p class="medium-text.*/s)
+    const historyRegex = /<p>&nbsp;<\/p><p class="row"><hr \/><\/p>.*/s;
+    const historyMatch = backMessage && backMessage.body.match(historyRegex)
     const historyHtml = historyMatch && historyMatch[0];
-    const messageHtml = backMessage && backMessage.body.replace(/<p class="medium-text.*/s, "");
+    const messageHtml = backMessage && backMessage.body.replace(historyRegex, "");
     const halfDeviceHeight = Dimensions.get("window").height / 2;
     const receiversIds = lastMessage
       ? ThreadInput.findReceivers2(lastMessage)

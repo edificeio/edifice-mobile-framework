@@ -175,9 +175,10 @@ export default class ThreadMessage extends React.PureComponent<
       threadId
     } = this.props;
     const { showHistory } = this.state;
-    const historyMatch = body.match(/<p class="medium-text.*/s)
+    const historyRegex = /<p>&nbsp;<\/p><p class="row"><hr \/><\/p>.*/s;
+    const historyMatch = body.match(historyRegex);
     const historyHtml = id === threadId ? historyMatch && historyMatch[0] : undefined;
-    const messageHtml = body.replace(/<p class="medium-text.*/s, "");
+    const messageHtml = body.replace(historyRegex, "");
     const hasAttachments = attachments && attachments.length > 0;
     const isMine = from === getSessionInfo().userId;
     // medium-text is used to write previous sender
