@@ -61,6 +61,22 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
   public render() {
     const { message, media } = this.props;
     const firstItem = media[0];
+    const hasAdditionalContent = () => {
+      if (message && message.endsWith("...")) { // the message is too long and is cropped
+        return true;
+      } if (firstItem) {
+          if (firstItem.type === "image") {
+            let imageCount = 0;
+            for (const mediaItem of media) {
+              if (mediaItem.type !== "image") { // even if the first batch of images has less than 4 images, there might be additional medias
+                return true;
+              }
+              imageCount++;
+            }
+            return imageCount > 4; // if there are only images, the first 4 are displayed
+          } else return media.length > 1; // if the first item is a video/audio/iframe, additional items aren't displayed
+      } else return false; // no additional text & no media
+    }
 
     return (
       <ArticleContainer style={{ width: "100%" }}>
@@ -75,27 +91,32 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
             }
             {this.getMediaPreview()}
           </View>
-          <View
-            style={{
-              marginVertical: 10,
-              marginHorizontal: -16,
-              height: 0.5,
-              backgroundColor: CommonStyles.grey,
-            }}
-          />
-          <TouchableOpacity
-            style={{ flexDirection: "row", alignSelf: "center" }}
-            onPress={() => this.open(true)}
-          >
-            <A style={{ marginRight: 10 }}>
-              {I18n.t("seeMore")}
-            </A>
-            <Icon
-              name="arrow_down"
-              color={CommonStyles.actionColor}
-              style={{transform: [{ rotate: "270deg" }]}}
-            />
-          </TouchableOpacity>
+          {hasAdditionalContent()
+            ? <>
+                <View
+                  style={{
+                    marginVertical: 10,
+                    marginHorizontal: -16,
+                    height: 0.5,
+                    backgroundColor: CommonStyles.grey,
+                  }}
+                />
+                <TouchableOpacity
+                  style={{ flexDirection: "row", alignSelf: "center" }}
+                  onPress={() => this.open(true)}
+                >
+                  <A style={{ marginRight: 10 }}>
+                    {I18n.t("seeMore")}
+                  </A>
+                  <Icon
+                    name="arrow_down"
+                    color={CommonStyles.actionColor}
+                    style={{transform: [{ rotate: "270deg" }]}}
+                  />
+                </TouchableOpacity>
+              </>
+            : null
+          }
         </TouchCard>
       </ArticleContainer>
     );

@@ -123,10 +123,10 @@ const dataTypes = {
       eventType: news["event-type"],
       htmlContent: undefined,
       id: news._id,
-      media: news.preview.images
-        ? transformedImages(news.preview.images)
-        : news.preview.medias
-          ? transformedMedia(news.preview.medias)
+      media: news.preview.medias
+        ? transformedMedia(news.preview.medias)
+        : news.preview.images
+          ? transformedImages(news.preview.images)
           : undefined,
       message: news.preview.text,
       resourceName: news.params.wordTitle,
@@ -180,10 +180,10 @@ const dataTypes = {
         date: news.date.$date,
         eventType: news["event-type"],
         id: news._id,
-        media: news.preview.images
-          ? transformedImages(news.preview.images)
-          : news.preview.medias
-            ? transformedMedia(news.preview.medias)
+        media: news.preview.medias
+          ? transformedMedia(news.preview.medias)
+          : news.preview.images
+            ? transformedImages(news.preview.images)
             : undefined,
         message: news.preview.text,
         resourceId: infoId,
@@ -208,10 +208,10 @@ const dataTypes = {
         date: news.date.$date,
         eventType: news["event-type"],
         id: news._id,
-        media: news.preview.images
-          ? transformedImages(news.preview.images)
-          : news.preview.medias
-            ? transformedMedia(news.preview.medias)
+        media: news.preview.medias
+          ? transformedMedia(news.preview.medias)
+          : news.preview.images
+            ? transformedImages(news.preview.images)
             : undefined,
         message: news.preview.text,
         resource: news.resource,
