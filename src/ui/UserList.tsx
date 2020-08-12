@@ -37,7 +37,16 @@ export default function UserList(props: {
     return (
         <FlatList
             keyboardShouldPersistTaps={'always'}
-            style={{ flex: 1, borderTopColor: '#EEEEEE', borderTopWidth: 1 }}
+            alwaysBounceVertical={false}
+            style={{
+                width: "100%",
+                position: "absolute",
+                top: 0, bottom: 0,
+                zIndex: 2,
+                elevation: 1,
+                backgroundColor: CommonStyles.tabBottomColor,
+                flex: 1, borderTopColor: '#EEEEEE', borderTopWidth: 1
+            }}
             data={props.users}
             keyExtractor={u => u.id}//increment in next line
             renderItem={(el) => <UserLine

@@ -23,7 +23,7 @@ export const MessageBubble = ({
     hasAttachments,
     isMine,
     canScroll = false,
-    style,
+    style: style2,
     containerStyle
   }:
   {
@@ -56,12 +56,12 @@ export const MessageBubble = ({
   const htmlEmptyMessage = I18n.t("conversation-emptyMessage");
   const bubbleStyle = {
     alignSelf: "stretch",
-    marginBottom: 10,
-    marginTop: 6,
+    // marginBottom: 10,
+    // marginTop: 6,
     paddingHorizontal: 16,
     paddingVertical: 12,
   }
-  style = {
+  style2 = {
     ...style, elevation: 2,
     shadowColor: CommonStyles.shadowColor,
     shadowOffset: CommonStyles.shadowOffset,
@@ -72,7 +72,7 @@ export const MessageBubble = ({
   }
 
   const content = 
-  <View style={bubbleStyle}>
+    <View style={bubbleStyle} onStartShouldSetResponder={() => true}>
     <HtmlContentView
       html={contentHtml}
       emptyMessage={htmlEmptyMessage}
@@ -106,13 +106,13 @@ export const MessageBubble = ({
 
   return canScroll
     ? <ScrollView
-        style={style}
+        style={style2}
         contentContainerStyle={[containerStyle, hasAttachments && { marginBottom: 3 }]}
         keyboardShouldPersistTaps="handled"
       >
         {content}
       </ScrollView>
-    : <View style={style}>
+    : <View style={style2}>
         {content}
       </View>
 };

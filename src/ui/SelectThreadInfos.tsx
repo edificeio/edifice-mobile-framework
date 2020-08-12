@@ -100,7 +100,6 @@ export default class SelectThreadInfos extends React.Component<
       <PageContainer>
         <SafeAreaView style={{ flex: 1 }}>
           <KeyboardAvoidingView
-            enabled
             behavior={Platform.select({ "ios": "padding", "android": undefined })}
             style={{ flex: 1 }}
             keyboardVerticalOffset={Platform.OS === "ios" ? hasNotch() ? 100 : 56 : undefined} // 🍔 Big-(M)Hack of the death : On iOS KeyboardAvoidingView not working properly.
@@ -145,32 +144,18 @@ export default class SelectThreadInfos extends React.Component<
                 <View style={{ flex: 1 }}>
 
                   {this.usersArray.length > 0 ?
-                    <ScrollView
-                      keyboardShouldPersistTaps="always"
-                      alwaysBounceVertical={false}
-                      contentContainerStyle={{ flexGrow: 1 }}
-                      style={{
-                        width: "100%",
-                        position: "absolute",
-                        top: 0, bottom: 0,
-                        zIndex: 1,
-                        elevation: 1,
-                        backgroundColor: CommonStyles.tabBottomColor
-                      }}
-                    >
-                      <UserList
-                        selectable={true}
-                        users={this.usersArray}
-                        onPickUser={user => this.pickUser(user)}
-                        onUnpickUser={user => onUnpickUser(user)}
-                        onEndReached={() => this.expend()}
-                      />
-                    </ScrollView>
+                    <UserList
+                      selectable={true}
+                      users={this.usersArray}
+                      onPickUser={user => this.pickUser(user)}
+                      onUnpickUser={user => onUnpickUser(user)}
+                      onEndReached={() => this.expend()}
+                    />
                     :
                     null
                   }
 
-                  <View style={{ flex: 1, zIndex: 0 }}>
+                  <View style={{ flex: 1, zIndex: 1 }}>
                     <FieldContainer style={{ borderTopColor: '#EEEEEE', borderTopWidth: 1 }}>
                       <FieldName>{I18n.t("conversation-subjectPrefixInput")}</FieldName>
                       <TextInput
@@ -191,7 +176,11 @@ export default class SelectThreadInfos extends React.Component<
                               : ""
                           }
                         </TextBold>
-                        <View style={{ flex: 1 }}>
+                        <View onStartShouldSetResponder={() => true} style={{
+                          flex: 1, shadowColor: CommonStyles.shadowColor,
+                          shadowOffset: CommonStyles.shadowOffset,
+                          shadowOpacity: CommonStyles.shadowOpacity,
+                          shadowRadius: CommonStyles.shadowRadius, }}>
                           <MessageBubble
                             contentHtml={messageHtml}
                             historyHtml={historyHtml}
@@ -199,6 +188,7 @@ export default class SelectThreadInfos extends React.Component<
                             showHistory={showHistory}
                             canScroll
                             style={{ maxHeight: "100%" }}
+                            onStartShouldSetResponder={() => true}
                           />
                         </View>
                       </View>
