@@ -19,7 +19,7 @@ const style = StyleSheet.create({
   gridButtonContainer: {
     width: "50%",
     paddingVertical: 8,
-    paddingHorizontal: 12,
+    paddingHorizontal: 6,
   },
   gridButton: {
     borderRadius: 5,

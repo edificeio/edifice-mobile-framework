@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
   gridButtonContainer: {
     width: "50%",
     paddingVertical: 8,
-    paddingHorizontal: 12,
+    paddingHorizontal: 6,
   },
   gridButton: {
     borderRadius: 5,
@@ -58,7 +58,7 @@ const IconButton = ({ icon, color, text, onPress }) => {
   return (
     <TouchableOpacity onPress={onPress} style={[styles.gridButton, { backgroundColor: color }]}>
       <Icon size={20} color="white" name={icon} />
-      <TextBold style={styles.gridButtonText}>{text}</TextBold>
+      <Text style={styles.gridButtonText}>{text}</Text>
     </TouchableOpacity>
   );
 };
