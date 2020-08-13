@@ -86,8 +86,15 @@ class History extends React.PureComponent<HistoryProps, HistoryState> {
   }
 
   public componentDidUpdate(prevProps, prevState) {
-    const { periods, year } = this.props;
+    const { periods, year, childId, structureId, groupId } = this.props;
     const fullPeriods = [{ ...year.data, order: -1 }, ...periods.data];
+
+    // on child change
+    if (prevProps.childId !== childId) {
+      this.props.getPeriods(structureId, groupId);
+      this.props.getYear(structureId);
+    }
+
     // on periods init
     if (prevProps.periods.isPristine && !periods.isPristine) {
       this.setState({
@@ -97,7 +104,6 @@ class History extends React.PureComponent<HistoryProps, HistoryState> {
       });
     }
 
-    const { childId, structureId } = this.props;
     // on year init
     if (prevProps.year.isPristine && !year.isPristine) {
       this.setState({

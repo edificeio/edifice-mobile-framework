@@ -24,4 +24,7 @@ export default createSessionReducer(initialState, {
     new_state.isPristine = false;
     return new_state;
   },
+  [studentEventsActionsTypes.clear]: () => {
+    return initialState;
+  },
 });

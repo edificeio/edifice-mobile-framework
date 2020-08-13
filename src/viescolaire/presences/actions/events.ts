@@ -15,6 +15,7 @@ export const studentEventsActions = {
   event: data => ({ type: studentEventsActionsTypes.event, data }),
   notebook: data => ({ type: studentEventsActionsTypes.notebook, data }),
   incident: data => ({ type: studentEventsActionsTypes.incident, data }),
+  clear: () => ({ type: studentEventsActionsTypes.clear }),
 };
 
 export function postLateEvent(

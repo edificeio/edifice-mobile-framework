@@ -71,6 +71,7 @@ export const studentEventsActionsTypes = {
   event: historyPrefix + "_GET_EVENTS",
   notebook: historyPrefix + "_GET_NOTEBOOKS",
   incident: historyPrefix + "_GET_INCIDENTS",
+  clear: historyPrefix + "_CLEAR",
 };
 
 export const getHistoryEvents = (globalState: any) =>
