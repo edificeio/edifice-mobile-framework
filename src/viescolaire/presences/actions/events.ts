@@ -16,6 +16,7 @@ export const studentEventsActions = {
   notebook: data => ({ type: studentEventsActionsTypes.notebook, data }),
   incident: data => ({ type: studentEventsActionsTypes.incident, data }),
   clear: () => ({ type: studentEventsActionsTypes.clear }),
+  error: data => ({ type: studentEventsActionsTypes.error, data }),
 };
 
 export function postLateEvent(
@@ -138,7 +139,7 @@ export function getStudentEvents(
   endDate: moment.Moment
 ) {
   return async (dispatch: Dispatch) => {
-    const promises = [
+    const promises : Promise<any>[] = [
       eventsService.fetchStudentEvents(studentId, structureId, startDate, endDate),
       eventsService.fetchStudentForgottenNotebook(studentId, structureId, startDate, endDate),
       eventsService.fetchStudentIncidents(studentId, structureId, startDate, endDate),
@@ -150,7 +151,7 @@ export function getStudentEvents(
         dispatch(studentEventsActions.incident(incidents));
       })
       .catch(errmsg => {
-        console.error("student events error", errmsg);
+        dispatch(studentEventsActions.error(errmsg));
       });
   };
 }

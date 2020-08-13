@@ -310,6 +310,7 @@
     "viesco-history-forgotten-notebooks": "Carnets oubliés",
     "viesco-history-incidents": "Incidents",
     "viesco-history-punishments": "Punitions",
+    "viesco-history-load-error": "Erreur au chargement des données de l'historique",
     "viesco-average": "Moyennes",
     "viesco-single-day": "Un jour",
     "viesco-several-days": "Plusieurs jours",

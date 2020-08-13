@@ -58,6 +58,7 @@ export const initialState = {
   punishments: [],
   incidents: [],
   isPristine: true,
+  error: "",
 };
 
 export const teacherEventsActionsTypes = {
@@ -72,6 +73,7 @@ export const studentEventsActionsTypes = {
   notebook: historyPrefix + "_GET_NOTEBOOKS",
   incident: historyPrefix + "_GET_INCIDENTS",
   clear: historyPrefix + "_CLEAR",
+  error: historyPrefix + "_ERROR",
 };
 
 export const getHistoryEvents = (globalState: any) =>

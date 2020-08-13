@@ -309,6 +309,7 @@
   "viesco-history-forgotten-notebooks": "Forgotten notebooks",
   "viesco-history-incidents": "Incidents",
   "viesco-history-punishments": "Punishments",
+  "viesco-history-load-error": "Error loading history data",
   "viesco-average": "Averages",
   "viesco-single-day": "Single day",
   "viesco-several-days": "Several days",

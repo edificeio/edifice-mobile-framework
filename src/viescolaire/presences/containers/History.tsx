@@ -1,5 +1,6 @@
 import I18n from "i18n-js";
 import moment from "moment";
+import Toast from "react-native-tiny-toast";
 import * as React from "react";
 import { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
@@ -86,7 +87,7 @@ class History extends React.PureComponent<HistoryProps, HistoryState> {
   }
 
   public componentDidUpdate(prevProps, prevState) {
-    const { periods, year, childId, structureId, groupId } = this.props;
+    const { periods, year, childId, structureId, groupId, events } = this.props;
     const fullPeriods = [{ ...year.data, order: -1 }, ...periods.data];
 
     // on child change
@@ -113,6 +114,14 @@ class History extends React.PureComponent<HistoryProps, HistoryState> {
       });
       this.props.getEvents(childId, structureId, year.data.start_date, year.data.end_date);
     }
+
+    // on error
+    if (prevProps.events.error !== events.error)
+      Toast.show(I18n.t("viesco-history-load-error"),{
+        position: Toast.position.CENTER,
+        containerStyle:{ padding: 30, backgroundColor: "#8a0000" },
+        textStyle: {},
+      });
 
     if (this.state.period !== undefined) {
       const { start_date, end_date } = this.state.period;

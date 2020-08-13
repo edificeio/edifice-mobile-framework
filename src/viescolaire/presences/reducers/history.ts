@@ -1,5 +1,6 @@
 import { createSessionReducer } from "../../../infra/redux/reducerFactory";
 import { studentEventsActionsTypes, initialState } from "../state/events";
+import { studentEventsActions } from "../actions/events";
 
 export default createSessionReducer(initialState, {
   [studentEventsActionsTypes.event]: (state = initialState, action) => {
@@ -27,4 +28,9 @@ export default createSessionReducer(initialState, {
   [studentEventsActionsTypes.clear]: () => {
     return initialState;
   },
+  [studentEventsActionsTypes.error] : (state, action) => {
+    const new_state = { ... state };
+    new_state.error = action.data;
+    return new_state;
+  }
 });
