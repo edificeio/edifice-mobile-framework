@@ -304,6 +304,8 @@
     "zimbra-delete": "Supprimer",
     "zimbra-move-to": "Déplacer vers",
     "zimbra-empty-mailbox": "Aucun message pour le moment",
+    "zimbra-send-mail": "Message envoyé",
+    "zimbra-missing-receiver": "Ce message doit contenir au moins un destinataire",
 
     "profileTypes": {
       "Guest": "Invité",

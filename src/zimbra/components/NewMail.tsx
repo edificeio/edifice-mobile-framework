@@ -8,6 +8,7 @@ import { Icon } from "../../ui";
 import { PageContainer } from "../../ui/ContainerContent";
 import { Text } from "../../ui/Typography";
 import { ISearchUsers } from "../service/newMail";
+import SelectMailInfos from "./SelectMailInfos";
 
 type NewMailContainerProps = {
   to: ISearchUsers;
@@ -16,7 +17,12 @@ type NewMailContainerProps = {
   subject: string;
   body: string;
   attachments: string[];
+  searchTo: ISearchUsers;
+  searchCc: ISearchUsers;
+  searchBcc: ISearchUsers;
   handleInputChange: any;
+  pickUser: any;
+  unpickUser: any;
 };
 
 type NewMailContainerState = {
@@ -31,30 +37,38 @@ export default class NewMail extends React.PureComponent<NewMailContainerProps, 
     };
   }
 
-  renderUsersSearch = inputName => {
-    let inputNameProps: ISearchUsers;
-    switch (inputName) {
-      case "to":
-        inputNameProps = this.props.to;
-        break;
-      case "cc":
-        inputNameProps = this.props.cc;
-        break;
-      case "bcc":
-        inputNameProps = this.props.bcc;
-        break;
-      default:
-        return;
-    }
+  renderHiddenCcRows = () => {
     return (
-      <View style={[style.shadow, { flexDirection: "column" }]}>
-        {inputNameProps.map(person => (
-          <View style={{ flexDirection: "row", marginBottom: 5 }}>
-            <View style={[style.dotReceiverColor, { backgroundColor: "orange" }]} />
-            <Text>{person.displayName}</Text>
-          </View>
-        ))}
-      </View>
+      <>
+        <View style={styles.inputRow}>
+          <SelectMailInfos
+            onPickUser={(user: any) => {
+              this.props.pickUser(user, "cc");
+            }}
+            onUnpickUser={(user: any) => {
+              this.props.unpickUser(user, "cc");
+            }}
+            pickedUsers={this.props.cc}
+            remainingUsers={this.props.searchCc}
+            onHandleInputChange={this.props.handleInputChange}
+            inputName="cc"
+          />
+        </View>
+        <View style={styles.inputRow}>
+          <SelectMailInfos
+            onPickUser={(user: any) => {
+              this.props.pickUser(user, "bcc");
+            }}
+            onUnpickUser={(user: any) => {
+              this.props.unpickUser(user, "bcc");
+            }}
+            pickedUsers={this.props.bcc}
+            remainingUsers={this.props.searchBcc}
+            onHandleInputChange={this.props.handleInputChange}
+            inputName="bcc"
+          />
+        </View>
+      </>
     );
   };
 
@@ -69,16 +83,20 @@ export default class NewMail extends React.PureComponent<NewMailContainerProps, 
     const { showCcRows } = this.state;
     return (
       <PageContainer>
-        <View style={style.headerView}>
-          <View style={style.inputRow}>
-            <Text style={{ marginTop: 20 }}>{I18n.t("zimbra-to")}: </Text>
-            <View style={style.textInput}>
-              <TextInput
-                underlineColorAndroid="lightgrey"
-                onChangeText={(text: string) => this.props.handleInputChange(text, "to")}
-              />
-              {this.props.to.length > 0 && this.renderUsersSearch("to")}
-            </View>
+        <View style={styles.headerView}>
+          <View style={styles.inputRow}>
+            <SelectMailInfos
+              onPickUser={(user: any) => {
+                this.props.pickUser(user, "to");
+              }}
+              onUnpickUser={(user: any) => {
+                this.props.unpickUser(user, "to");
+              }}
+              pickedUsers={this.props.to}
+              remainingUsers={this.props.searchTo}
+              onHandleInputChange={this.props.handleInputChange}
+              inputName="to"
+            />
             <TouchableOpacity onPress={this.switchShowCcRows}>
               <Icon
                 name={showCcRows ? "keyboard_arrow_up" : "keyboard_arrow_down"}
@@ -87,31 +105,12 @@ export default class NewMail extends React.PureComponent<NewMailContainerProps, 
               />
             </TouchableOpacity>
           </View>
-          {showCcRows && (
-            <>
-              <View style={style.inputRow}>
-                <Text>{I18n.t("zimbra-cc")}: </Text>
-                <TextInput
-                  underlineColorAndroid="lightgrey"
-                  style={style.textInput}
-                  onChangeText={(text: string) => this.props.handleInputChange(text, "cc")}
-                />
-              </View>
-              <View style={style.inputRow}>
-                <Text>{I18n.t("zimbra-bcc")}: </Text>
-                <TextInput
-                  underlineColorAndroid="lightgrey"
-                  style={style.textInput}
-                  onChangeText={(text: string) => this.props.handleInputChange(text, "bcc")}
-                />
-              </View>
-            </>
-          )}
-          <View style={style.inputRow}>
-            <Text>{I18n.t("zimbra-subject")}: </Text>
+          {showCcRows && this.renderHiddenCcRows()}
+          <View style={styles.inputRow}>
+            <Text style={{ color: CommonStyles.lightTextColor, marginTop: 20 }}>{I18n.t("zimbra-subject")}: </Text>
             <TextInput
               underlineColorAndroid="lightgrey"
-              style={style.textInput}
+              style={styles.textInput}
               onChangeText={(text: string) => this.props.handleInputChange(text, "subject")}
             />
           </View>
@@ -120,7 +119,7 @@ export default class NewMail extends React.PureComponent<NewMailContainerProps, 
           placeholder={I18n.t("zimbra-type-message")}
           textAlignVertical="top"
           multiline
-          style={style.textZone}
+          style={styles.textZone}
           onChangeText={(text: string) => this.props.handleInputChange(text, "body")}
         />
       </PageContainer>
@@ -128,17 +127,9 @@ export default class NewMail extends React.PureComponent<NewMailContainerProps, 
   }
 }
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   headerView: { backgroundColor: "white", marginBottom: 3 },
   inputRow: { flexDirection: "row", alignItems: "flex-start", paddingHorizontal: 10 },
   textInput: { flexGrow: 1, marginLeft: 10 },
-  textZone: { backgroundColor: "white", marginTop: 10, flexGrow: 1, padding: 8 },
-  dotReceiverColor: { width: 8, height: 8, borderRadius: 15, marginTop: 6, marginRight: 5 },
-  shadow: {
-    elevation: 4,
-    shadowColor: CommonStyles.shadowColor,
-    shadowOffset: CommonStyles.shadowOffset,
-    shadowOpacity: CommonStyles.shadowOpacity,
-    shadowRadius: CommonStyles.shadowRadius,
-  },
+  textZone: { marginTop: 10, flexGrow: 1, padding: 8 },
 });

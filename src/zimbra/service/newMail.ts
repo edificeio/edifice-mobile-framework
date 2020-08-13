@@ -1,12 +1,14 @@
 import { fetchJSONWithCache } from "../../infra/fetchWithCache";
 
-export type ISearchUsers = Array<{
+export type IUser = {
   id: string;
   displayName: string;
   groupDisplayName: string;
   profile: string;
   structureName: string;
-}>;
+};
+
+export type ISearchUsers = IUser[];
 
 export type ISearchUsersGroups = {
   groups: Array<{
@@ -39,5 +41,8 @@ export const newMailService = {
   },
   makeDraftMail: async mailDatas => {
     await fetchJSONWithCache(`/zimbra/draft`, { method: "POST", body: JSON.stringify(mailDatas) });
+  },
+  deleteMessage: async mailId => {
+    await fetchJSONWithCache(`/zimbra/trashid=${mailId}`);
   },
 };

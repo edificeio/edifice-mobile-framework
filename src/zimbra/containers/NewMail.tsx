@@ -1,7 +1,9 @@
+import I18n from "i18n-js";
 import React from "react";
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { NavigationScreenProp, NavigationState, NavigationActions } from "react-navigation";
+import Toast from "react-native-tiny-toast";
+import { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
@@ -11,17 +13,32 @@ import { Icon } from "../../ui";
 import { PageContainer } from "../../ui/ContainerContent";
 import { Header as HeaderComponent } from "../../ui/headers/Header";
 import { HeaderAction } from "../../ui/headers/NewHeader";
-import { sendMailAction, makeDraftMailAction, getSearchUsers } from "../actions/newMail";
+import { sendMailAction, makeDraftMailAction, deleteMessageAction } from "../actions/newMail";
 import NewMailComponent from "../components/NewMail";
-import { newMailService, ISearchUsers } from "../service/newMail";
+import { newMailService, ISearchUsers, IUser } from "../service/newMail";
+
+type StateTypes = {
+  inputName: string;
+  text: string;
+  to: ISearchUsers;
+  cc: ISearchUsers;
+  bcc: ISearchUsers;
+  searchTo: ISearchUsers;
+  searchCc: ISearchUsers;
+  searchBcc: ISearchUsers;
+};
 
 interface ICreateMailEventProps {
   sendMail: (mailDatas: object) => void;
   searchUsers: (search: string) => void;
+  makeDraft: (mailDatas: object) => void;
+  deleteMessage: (mailId: string) => void;
 }
 
 interface ICreateMailOtherProps {
   navigation: any;
+  remainingUsers: IUser[];
+  pickedUsers: IUser[];
 }
 
 interface ICreateMailState {
@@ -31,6 +48,11 @@ interface ICreateMailState {
   subject: string;
   body: string;
   attachments: string[];
+
+  searchTo: ISearchUsers;
+  searchCc: ISearchUsers;
+  searchBcc: ISearchUsers;
+  inputName: string;
 }
 
 type NewMailContainerProps = ICreateMailEventProps & ICreateMailOtherProps;
@@ -48,34 +70,66 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       subject: "",
       body: "",
       attachments: [],
+      searchTo: [],
+      searchCc: [],
+      searchBcc: [],
+      inputName: "",
     };
   }
 
-  renderSearchUser = async (text, inputName) => {
+  setSearchUsers = async (text: string, inputName: string) => {
     const resultUsers = await newMailService.getSearchUsers(text);
-    if (resultUsers !== undefined) this.setState({ to: resultUsers.users });
+    const key = inputName === "to" ? "searchTo" : inputName === "cc" ? "searchCc" : "searchBcc";
+    const newState = { ...this.state };
+    newState[key as keyof StateTypes] = resultUsers.users;
+    this.setState(newState);
+    return resultUsers.users;
   };
 
   handleInputChange = (text: string, inputName: string) => {
     switch (inputName) {
       case "to":
-        text.length <= 2 && this.setState({ to: [] });
-        text.length > 2 && this.renderSearchUser(text, inputName);
-        break;
+        return text.length > 2 ? this.setSearchUsers(text, inputName) : this.setState({ searchTo: [] });
       case "cc":
-        text.length <= 2 && this.setState({ cc: [] });
-        text.length > 2 && this.renderSearchUser(text, inputName);
-        break;
+        return text.length > 2 ? this.setSearchUsers(text, inputName) : this.setState({ searchCc: [] });
       case "bcc":
-        text.length <= 2 && this.setState({ bcc: [] });
-        text.length > 2 && this.renderSearchUser(text, inputName);
-        break;
+        return text.length > 2 ? this.setSearchUsers(text, inputName) : this.setState({ searchBcc: [] });
       case "subject":
         this.setState({ subject: text });
         break;
       case "body":
         this.setState({ body: text });
         break;
+    }
+  };
+
+  pickUser = (user, inputName) => {
+    const key = inputName === "to" ? "to" : inputName === "cc" ? "cc" : "bcc";
+    const keySearch = inputName === "to" ? "searchTo" : inputName === "cc" ? "searchCc" : "searchBcc";
+
+    if (this.state[key].findIndex(u => u.id === user.id) === -1) {
+      const newState = { ...this.state };
+      if (this.state[keySearch].findIndex(u => u.id === user.id) !== -1) {
+        newState[keySearch as keyof StateTypes] = this.state[keySearch].filter(function(person) {
+          return person !== user;
+        });
+      }
+      newState[key as keyof StateTypes] = [...this.state[key], user];
+      this.setState(newState);
+    }
+  };
+
+  unpickUser = (user, inputName) => {
+    const key = inputName === "to" ? "to" : inputName === "cc" ? "cc" : "bcc";
+    const keySearch = inputName === "to" ? "searchTo" : inputName === "cc" ? "searchCc" : "searchBcc";
+
+    if (this.state[key].findIndex(u => u.id === user.id) !== -1) {
+      const newState = { ...this.state };
+      newState[key as keyof StateTypes] = this.state[key].filter(function(person) {
+        return person !== user;
+      });
+      newState[keySearch as keyof StateTypes] = [...this.state[keySearch], user];
+      this.setState(newState);
     }
   };
 
@@ -89,23 +143,52 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
   };
 
   goBack = () => {
-    this.props.navigation.navigate("inbox");
+    const { to, cc, bcc, subject, body, attachments } = this.state;
+    if (to.length > 0 || cc.length > 0 || bcc.length > 0 || subject !== "" || body !== "" || attachments.length > 0) {
+      this.props.makeDraft({
+        to: to.map(to => to.id),
+        cc: cc.map(cc => cc.id),
+        bcc: bcc.map(bcc => bcc.id),
+        subject: subject,
+        body: body,
+        attachments: attachments,
+      });
+    }
+    this.props.navigation.navigate(this.props.navigation.state.params.currentFolder);
   };
 
   delete = () => {
-    //this.props.trashMails([this.props.mail.id]);
+    this.props.navigation.navigate(this.props.navigation.state.params.currentFolder);
   };
 
   handleSendNewMail = () => {
     const { to, cc, bcc, subject, body, attachments } = this.state;
-    //if to[] empty, not sending mail
-    this.props.sendMail({ to: to, cc: cc, bcc: bcc, subject: subject, body: body, attachments: attachments });
-    this.goBack();
-    // popup
+    if (to.length === 0 && cc.length === 0 && bcc.length === 0) {
+      Toast.show(I18n.t("zimbra-missing-receiver"), {
+        position: Toast.position.BOTTOM,
+        mask: false,
+        containerStyle: { width: "95%", backgroundColor: "black" },
+      });
+      return;
+    }
+    this.props.sendMail({
+      to: to.map(to => to.id),
+      cc: cc.map(cc => cc.id),
+      bcc: bcc.map(bcc => bcc.id),
+      subject: subject,
+      body: body,
+      attachments: attachments,
+    });
+
+    this.props.navigation.navigate(this.props.navigation.state.params.currentFolder);
+    Toast.show(I18n.t("zimbra-send-mail"), {
+      position: Toast.position.BOTTOM,
+      mask: false,
+      containerStyle: { width: "95%", backgroundColor: "black" },
+    });
   };
 
   public render() {
-    //return <NewMailComponent />;
     return (
       <PageContainer>
         <HeaderComponent color={CommonStyles.secondary}>
@@ -123,7 +206,12 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           </View>
         </HeaderComponent>
 
-        <NewMailComponent {...this.state} handleInputChange={this.handleInputChange} />
+        <NewMailComponent
+          {...this.state}
+          handleInputChange={this.handleInputChange}
+          pickUser={this.pickUser}
+          unpickUser={this.unpickUser}
+        />
       </PageContainer>
     );
   }
@@ -135,7 +223,7 @@ const mapStateToProps = (state: any) => {
 
 const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators(
-    { searchUsers: getSearchUsers, sendMail: sendMailAction, makeDraft: makeDraftMailAction },
+    { sendMail: sendMailAction, makeDraft: makeDraftMailAction, deleteMessage: deleteMessageAction },
     dispatch
   );
 };

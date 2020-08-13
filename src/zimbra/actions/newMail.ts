@@ -1,8 +1,12 @@
 import { newMailService } from "../service/newMail";
 
-export function getSearchUsers(search: string) {
+export function deleteMessageAction(mailId: string) {
   return async () => {
-    await newMailService.getSearchUsers(search);
+    try {
+      await newMailService.deleteMessage(mailId);
+    } catch (errmsg) {
+      console.error("ERROR delete mail: ", errmsg);
+    }
   };
 }
 
