@@ -152,62 +152,60 @@ export class ThreadPage extends React.PureComponent<
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={Platform.OS === "ios" ? hasNotch() ? 44 /*(status bar height)*/ + 51 : 51 : headerHeight}
       >
-        <TouchableWithoutFeedback onPress={() => this.props.onSelectMessage && this.props.onSelectMessage(undefined)}>
-          <View style={{flex: 1}}>
-            {threadInfo.isFetchingFirst
-              ? <Loading />
-              : <View style={{flex: 1}}>
-                  {isDimmed
-                    ? <View
-                        style={{
-                          position: "absolute",
-                          zIndex: 1,
-                          backgroundColor: "grey",
-                          opacity: 0.5,
-                          top: 0, bottom: 0, left: 0, right: 0
-                        }}
-                      />
-                    : null
+        <View style={{flex: 1}}>
+          {threadInfo.isFetchingFirst
+            ? <Loading />
+            : <View style={{flex: 1}}>
+                {isDimmed
+                  ? <View
+                      style={{
+                        position: "absolute",
+                        zIndex: 1,
+                        backgroundColor: "grey",
+                        opacity: 0.5,
+                        top: 0, bottom: 0, left: 0, right: 0
+                      }}
+                    />
+                  : null
+                }
+                <FlatList
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={fetching}
+                      onRefresh={() => {
+                        this.setState({ fetching: true })
+                        onGetNewer(threadInfo.id)
+                      }}
+                      style={{ transform: [{ scaleY: -1 }] }}
+                    />
                   }
-                  <FlatList
-                    refreshControl={
-                      <RefreshControl
-                        refreshing={fetching}
-                        onRefresh={() => {
-                          this.setState({ fetching: true })
-                          onGetNewer(threadInfo.id)
-                        }}
-                        style={{ transform: [{ scaleY: -1 }] }}
-                      />
+                  data={messagesData}
+                  renderItem={({ item }) => this.renderMessageItem(item)}
+                  style={styles.grid}
+                  inverted={true}
+                  keyExtractor={(item: IConversationMessage) => item.id}
+                  onEndReached={() => {
+                    if (!this.onEndReachedCalledDuringMomentum) {
+                      onGetOlder(threadInfo.id);
+                      this.onEndReachedCalledDuringMomentum = true;
                     }
-                    data={messagesData}
-                    renderItem={({ item }) => this.renderMessageItem(item)}
-                    style={styles.grid}
-                    inverted={true}
-                    keyExtractor={(item: IConversationMessage) => item.id}
-                    onEndReached={() => {
-                      if (!this.onEndReachedCalledDuringMomentum) {
-                        onGetOlder(threadInfo.id);
-                        this.onEndReachedCalledDuringMomentum = true;
-                      }
-                    }}
-                    onEndReachedThreshold={0.1}
-                    onMomentumScrollBegin={() => {
-                      this.onEndReachedCalledDuringMomentum = false;
-                    }}
-                  />
-                </View>
-            }
-            <ThreadInput
-              emptyThread={!messages.length}
-              displayPlaceholder={!isFetchingFirst}
-              onReceiversTap={this.handleTapReceivers}
-              onChangeReceivers={this.handleChangeReceivers}
-              onDimBackground={dim => this.setState({ isDimmed: dim })}
-              {...this.props}
-            />
-          </View>
-        </TouchableWithoutFeedback>
+                  }}
+                  onEndReachedThreshold={0.1}
+                  onMomentumScrollBegin={() => {
+                    this.onEndReachedCalledDuringMomentum = false;
+                  }}
+                />
+              </View>
+          }
+          <ThreadInput
+            emptyThread={!messages.length}
+            displayPlaceholder={!isFetchingFirst}
+            onReceiversTap={this.handleTapReceivers}
+            onChangeReceivers={this.handleChangeReceivers}
+            onDimBackground={dim => this.setState({ isDimmed: dim })}
+            {...this.props}
+          />
+        </View>
       </KeyboardAvoidingView>
     );
   }

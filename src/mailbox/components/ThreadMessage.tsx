@@ -73,7 +73,7 @@ export const MessageBubble = ({
   }
 
   const content = 
-    <View style={bubbleStyle} onStartShouldSetResponder={() => true}>
+    <View style={bubbleStyle}>
     <HtmlContentView
       html={contentHtml}
       emptyMessage={htmlEmptyMessage}
