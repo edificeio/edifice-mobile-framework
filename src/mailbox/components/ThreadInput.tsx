@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Platform, View, Dimensions } from "react-native";
+import { Platform, View, Dimensions, SafeAreaView } from "react-native";
 import { connect } from "react-redux";
 import style from "glamorous-native";
 import I18n from "i18n-js";
@@ -19,7 +19,7 @@ import ThreadInputReceivers from "./ThreadInputReceiver";
 import { getSessionInfo } from "../../App";
 import { MessageBubble } from "./ThreadMessage";
 import { Text } from "../../ui/text";
-import { SafeAreaView, NavigationScreenProp, NavigationState } from "react-navigation";
+import { NavigationScreenProp, NavigationState } from "react-navigation";
 import { IAttachment } from "../actions/messages";
 import { separateMessageHistory } from "../utils/messageHistory";
 

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, TouchableOpacity, FlatList } from "react-native";
+import { View, TouchableOpacity, FlatList, SafeAreaView } from "react-native";
 import { TouchableOpacity as RNGHTouchableOpacity } from "react-native-gesture-handler";
 import I18n from "i18n-js";
 import { BubbleStyle } from "./BubbleStyle";
@@ -7,7 +7,6 @@ import { Bold, A } from "./Typography";
 import { Icon } from ".";
 import { CommonStyles } from "../styles/common/styles";
 import Attachment, { IRemoteAttachment } from "./Attachment";
-import { SafeAreaView } from "react-navigation";
 
 export class AttachmentGroup extends React.PureComponent<
   {

@@ -1,6 +1,6 @@
 import style from "glamorous-native";
 import * as React from "react";
-import { TextInput, Platform, TouchableWithoutFeedback, Keyboard, View, KeyboardAvoidingView } from "react-native";
+import { TextInput, Platform, TouchableWithoutFeedback, Keyboard, View, KeyboardAvoidingView, SafeAreaView } from "react-native";
 import { hasNotch } from "react-native-device-info";
 import { CommonStyles } from "../styles/common/styles";
 import I18n from "i18n-js";
@@ -11,8 +11,6 @@ import { removeAccents } from "../utils/string";
 import { IConversationMessage } from "../mailbox/reducers";
 import { MessageBubble } from "../mailbox/components/ThreadMessage";
 import { TextBold } from "./text";
-import { ScrollView } from "react-native-gesture-handler";
-import { SafeAreaView } from "react-navigation";
 import { separateMessageHistory } from "../mailbox/utils/messageHistory";
 
 export const UserLabel = style.text({
