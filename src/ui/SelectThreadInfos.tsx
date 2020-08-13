@@ -10,9 +10,10 @@ import TouchableOpacity from "../ui/CustomTouchableOpacity";
 import { removeAccents } from "../utils/string";
 import { IConversationMessage } from "../mailbox/reducers";
 import { MessageBubble } from "../mailbox/components/ThreadMessage";
-import { Text, TextBold, TextColor } from "./text";
+import { TextBold } from "./text";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-navigation";
+import { separateMessageHistory } from "../mailbox/utils/messageHistory";
 
 export const UserLabel = style.text({
   color: CommonStyles.primary,
@@ -89,10 +90,9 @@ export default class SelectThreadInfos extends React.Component<
   public render() {
     const { onUnpickUser, pickedUsers, subject, message, type } = this.props;
     const { showHistory } = this.state;
-    const historyRegex = /<p>&nbsp;<\/p><p class="row"><hr \/><\/p>.*/s;
-    const historyMatch = message && message.body.match(historyRegex)
-    const historyHtml = historyMatch && historyMatch[0];
-    const messageHtml = message && message.body.replace(historyRegex, "");
+    const separatedBody = message && separateMessageHistory(message.body);
+    const historyHtml = separatedBody && separatedBody.historyHtml;
+    const messageHtml = separatedBody && separatedBody.messageHtml;
     let { searchText, subjectText } = this.state;
     subjectText = subjectText ?? subject;
     let index = 0;

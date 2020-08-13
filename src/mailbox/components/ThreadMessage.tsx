@@ -14,6 +14,7 @@ import { getSessionInfo } from "../../App";
 import { Trackers } from "../../infra/tracker";
 import { Icon } from "../../ui/icons/Icon";
 import { A } from "../../ui/Typography";
+import { separateMessageHistory } from "../utils/messageHistory";
 
 export const MessageBubble = ({ 
     contentHtml,
@@ -89,7 +90,7 @@ export const MessageBubble = ({
             style={!showHistory && {transform: [{ rotate: "270deg" }]}}
           />
           <A style={{ color: isMine ? "white" : CommonStyles.actionColor }}>
-          {I18n.t("conversation-showHistory")}
+          {I18n.t(showHistory ? "conversation-historyHide" : "conversation-historyShow")}
           </A>
         </TouchableOpacity>
       : null
@@ -175,10 +176,9 @@ export default class ThreadMessage extends React.PureComponent<
       threadId
     } = this.props;
     const { showHistory } = this.state;
-    const historyRegex = /<p>&nbsp;<\/p><p class="row"><hr \/><\/p>.*/s;
-    const historyMatch = body.match(historyRegex);
-    const historyHtml = id === threadId ? historyMatch && historyMatch[0] : undefined;
-    const messageHtml = body.replace(historyRegex, "");
+    const separatedBody = separateMessageHistory(body);
+    const historyHtml = id === threadId ? separatedBody.historyHtml : undefined;
+    const messageHtml = separatedBody.messageHtml;
     const hasAttachments = attachments && attachments.length > 0;
     const isMine = from === getSessionInfo().userId;
     // medium-text is used to write previous sender

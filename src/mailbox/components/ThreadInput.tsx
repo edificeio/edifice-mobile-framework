@@ -3,6 +3,7 @@ import { Platform, View, Dimensions } from "react-native";
 import { connect } from "react-redux";
 import style from "glamorous-native";
 import I18n from "i18n-js";
+import moment from "moment";
 
 import { IconOnOff, Loading, Icon } from "../../ui";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
@@ -18,8 +19,9 @@ import ThreadInputReceivers from "./ThreadInputReceiver";
 import { getSessionInfo } from "../../App";
 import { MessageBubble } from "./ThreadMessage";
 import { Text } from "../../ui/text";
-import { SafeAreaView, NavigationScreenProp, NavigationState, NavigationActions } from "react-navigation";
+import { SafeAreaView, NavigationScreenProp, NavigationState } from "react-navigation";
 import { IAttachment } from "../actions/messages";
+import { separateMessageHistory } from "../utils/messageHistory";
 
 // TODO : Debt : Needs to be refactored.
 
@@ -139,38 +141,53 @@ class ThreadInput extends React.PureComponent<
     const { attachments, textMessage } = this.state;
     const attachmentsToSend = attachments;
     const attachmentsAdded = attachments.length > 0;
-    const replyTemplate = `
+    const getSenderDisplayName = (message: IConversationMessage) => {
+      const foundSender = message && message.displayNames.find(displayName => displayName[0] === message.from);
+      return foundSender && foundSender[1] || "";
+    }
+    const getSentDate = (message: IConversationMessage) => message && moment(message.date).format("dddd DD MMMM YYYY") || "";
+    const getSubject = (message: IConversationMessage) => message && message.subject || "";
+    const getRecepientDisplayNames = (message: IConversationMessage, ccRecepients?: boolean) => {
+      let recepientDisplayNames: string[] = [];
+      const recepientIds = ccRecepients ? message.cc: message.to;
+      recepientIds && recepientIds.forEach(recepientId => {
+        const foundRecepient = message.displayNames.find(displayName => displayName[0] === recepientId);
+        foundRecepient && recepientDisplayNames.push(foundRecepient[1])
+      });
+      return recepientDisplayNames.length > 0 ? recepientDisplayNames.join(", "): "";
+    }
+    const getReplyTemplate = (message: IConversationMessage) => `
       <p>&nbsp;</p><p class="row"><hr /></p>
       <p class="medium-text">
-        <span translate key="transfer.from"></span><em> [[mail.sender().displayName]]</em>
-        <br /><span class="medium-importance" translate key="transfer.date"></span><em> [[mail.longDate()]]</em>
-        <br /><span class="medium-importance" translate key="transfer.subject"></span><em> [[mail.subject]]</em>
+        <span translate key="transfer.from"></span><em> ${getSenderDisplayName(message)}</em>
+        <br /><span class="medium-importance" translate key="transfer.date"></span><em> ${getSentDate(message)}</em>
+        <br /><span class="medium-importance" translate key="transfer.subject"></span><em> ${getSubject(message)}</em>
         <br /><span class="medium-importance" translate key="transfer.to"></span>
-        <em class="medium-importance" ng-repeat="receiver in mail.to"><em> [[mail.map(receiver).displayName]]</em><span ng-if="$index !== mail.to.length - 1 && receiver.displayName">,</span>
+        <em class="medium-importance" ng-repeat="receiver in mail.to"><em> ${message && getRecepientDisplayNames(message) || ""}</em><span ng-if="$index !== mail.to.length - 1 && receiver.displayName">,</span>
         </em>
         <br /><span class="medium-importance" translate key="transfer.cc"></span>
-        <em class="medium-importance" ng-repeat="receiver in mail.cc"><em> [[mail.map(receiver).displayName]]</em><span ng-if="$index !== mail.cc.length - 1 && receiver.displayName">,</span>
+        <em class="medium-importance" ng-repeat="receiver in mail.cc"><em> ${message && getRecepientDisplayNames(message, true) || ""}</em><span ng-if="$index !== mail.cc.length - 1 && receiver.displayName">,</span>
         </em>
       </p>`;
-    const transferTemplate = `
+    const getTransferTemplate = (message: IConversationMessage) => `
       <p>&nbsp;</p><p class="row"><hr /></p>
       <p class="medium-text">
-        <span translate key="transfer.from"></span><em> [[mail.sender().displayName]]</em>
-        <br /><span class="medium-importance" translate key="transfer.date"></span><em> [[mail.longDate()]]</em>
-        <br /><span class="medium-importance" translate key="transfer.subject"></span><em> [[mail.subject]]</em>
+        <span translate key="transfer.from"></span><em> ${getSenderDisplayName(message)}</em>
+        <br /><span class="medium-importance" translate key="transfer.date"></span><em> ${getSentDate(message)}</em>
+        <br /><span class="medium-importance" translate key="transfer.subject"></span><em> ${getSubject(message)}</em>
         <br /><span class="medium-importance" translate key="transfer.to"></span>
-        <em class="medium-importance" ng-repeat="receiver in mail.to"><em> [[mail.map(receiver).displayName]]</em><span ng-if="$index !== mail.to.length - 1">,</span>
+        <em class="medium-importance" ng-repeat="receiver in mail.to"><em> ${message && getRecepientDisplayNames(message) || ""}</em><span ng-if="$index !== mail.to.length - 1">,</span>
         </em>
         <br /><span class="medium-importance" translate key="transfer.cc"></span>
-        <em class="medium-importance" ng-repeat="receiver in mail.cc"><em> [[mail.map(receiver).displayName]]</em><span ng-if="$index !== mail.cc.length - 1">,</span>
+        <em class="medium-importance" ng-repeat="receiver in mail.cc"><em> ${message && getRecepientDisplayNames(message, true) || ""}</em><span ng-if="$index !== mail.cc.length - 1">,</span>
         </em>
       </p>`;
     let body = textMessage ? `<div>${textMessage.replace(/\n/g, '<br>')}</div>` : '';
     if (backMessage) {
-      if (sendingType === 'reply') body = `${body}${replyTemplate}<br><blockquote>${backMessage.body ? backMessage.body : ''}</blockquote>`;
-      else if (sendingType === 'transfer') body = `${body}${transferTemplate}<br><blockquote>${backMessage.body ? backMessage.body : ''}</blockquote>`;
+      if (sendingType === 'reply') body = `${body}${getReplyTemplate(backMessage)}<br><blockquote>${backMessage.body ? backMessage.body : ''}</blockquote>`;
+      else if (sendingType === 'transfer') body = `${body}${getTransferTemplate(backMessage)}<br><blockquote>${backMessage.body ? backMessage.body : ''}</blockquote>`;
     } else if (lastMessage) {
-      body = `${body}${replyTemplate}<br><blockquote>${lastMessage.body ? lastMessage.body : ''}</blockquote>`;
+      body = `${body}${getReplyTemplate(lastMessage)}<br><blockquote>${lastMessage.body ? lastMessage.body : ''}</blockquote>`;
     }
     const messageData = {
       body,
@@ -254,10 +271,9 @@ class ThreadInput extends React.PureComponent<
     const { displayPlaceholder, thread, lastMessage, backMessage } = this.props;
     const { selected, textMessage, attachments, sending, isHalfScreen, attachmentsHeightHalfScreen, showHistory } = this.state;
     const attachmentsAdded = attachments.length > 0;
-    const historyRegex = /<p>&nbsp;<\/p><p class="row"><hr \/><\/p>.*/s;
-    const historyMatch = backMessage && backMessage.body.match(historyRegex)
-    const historyHtml = historyMatch && historyMatch[0];
-    const messageHtml = backMessage && backMessage.body.replace(historyRegex, "");
+    const separatedBody = backMessage && separateMessageHistory(backMessage.body);
+    const historyHtml = separatedBody && separatedBody.historyHtml;
+    const messageHtml = separatedBody && separatedBody.messageHtml;
     const halfDeviceHeight = Dimensions.get("window").height / 2;
     const receiversIds = lastMessage
       ? ThreadInput.findReceivers2(lastMessage)
@@ -382,13 +398,13 @@ class ThreadInput extends React.PureComponent<
           </ContainerFooterBar>
           {backMessage
             ? <MessageBubble
-              canScroll
-              contentHtml={messageHtml}
-              historyHtml={historyHtml}
-              onShowHistory={() => this.setState({ showHistory: !showHistory })}
-              showHistory={showHistory}
-              containerStyle={{ maxHeight: 150, marginBottom: 0, marginTop: 0 }}
-            />
+                canScroll
+                contentHtml={messageHtml}
+                historyHtml={historyHtml}
+                onShowHistory={() => this.setState({ showHistory: !showHistory })}
+                showHistory={showHistory}
+                containerStyle={{ maxHeight: 150, marginBottom: 0, marginTop: 0 }}
+              />
             : null
           }
         </View>
