@@ -182,7 +182,7 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
           </View>
           <View style={{ flexDirection: "row", justifyContent: "center", flexWrap: "nowrap" }}>
             {event !== undefined && <ButtonOk label={I18n.t("delete")} onPress={this.onCancel} />}
-            <ButtonOk label={I18n.t("viesco-confirm")} onPress={this.onSubmit} />
+            <ButtonOk disabled={moment(this.state.date).isBefore(startDate) || moment(this.state.date).isAfter(endDate)} label={I18n.t("viesco-confirm")} onPress={this.onSubmit} />
           </View>
         </KeyboardAvoidingView>
       </PageContainer>
