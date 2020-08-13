@@ -88,13 +88,17 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
 
   onSubmit = () => {
     const { date, reason } = this.state;
-    const { declareLateness, declareLeaving, updateLateness, updateLeaving } = this.props;
+    const { declareLateness, declareLeaving, updateLateness, updateLeaving, deleteEvent } = this.props;
     const { type, student, event, registerId, startDate, endDate } = this.props.navigation.state.params;
     const momentDate = moment(date);
     const startDateMoment = moment(startDate);
     const endDateMoment = moment(endDate);
     if (type === "late") {
       if (event === undefined) {
+        // deleting absence when lateness is declared
+        const absence = student.events.find(i => i.type_id === 1);
+        if (absence !== undefined)
+          deleteEvent(absence);
         declareLateness(student.id, momentDate, reason, registerId, startDateMoment);
       } else {
         updateLateness(student.id, momentDate, reason, event.id, registerId, startDateMoment);
