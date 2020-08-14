@@ -46,7 +46,7 @@ export class AttachmentGroup extends React.PureComponent<
     } = this.props;
     const { downloadAll } = this.state;
     return (
-      <View style={containerStyle}>
+      <TouchableOpacity activeOpacity={1} style={containerStyle}>
         {editMode
           ? null
           : <BubbleStyle
@@ -110,7 +110,7 @@ export class AttachmentGroup extends React.PureComponent<
           />
           </SafeAreaView>
         </BubbleStyle>
-      </View>
+      </TouchableOpacity>
     )
   }
 }

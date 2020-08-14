@@ -16,7 +16,6 @@ import Mime from "mime";
 import { CommonStyles } from "../styles/common/styles";
 import { getAuthHeader } from "../infra/oauth";
 import { ButtonsOkCancel, Icon } from ".";
-import TouchableOpacity from "./CustomTouchableOpacity";
 import { TouchableOpacity as RNGHTouchableOpacity } from "react-native-gesture-handler";
 import {
   ModalBox,
@@ -36,7 +35,6 @@ export interface IRemoteAttachment {
   displayName?: string;
   filename?: string;
   id?: string;
-  name?: string;
   size?: number; // in Bytes
   url: string;
 }

@@ -94,12 +94,16 @@ const transformedSrc = (src: string) => {
 }
 
 const transformedMedia = (media: IMediaModel[]) => {
-  return media.map(mediaItem => ({
+  return media.map(mediaItem => {
+    const transformedMediaItem = {
       type: mediaItem.type,
       src: mediaItem.type === "image"
       ? {src: signURISource(transformedSrc(mediaItem.src as string))}
       : transformedSrc(mediaItem.src as string)
-    }))
+    };
+    if (mediaItem.name) transformedMediaItem.name = mediaItem.name;
+    return transformedMediaItem;
+  })
 }
 
 const transformedImages = (images: string[]) => {

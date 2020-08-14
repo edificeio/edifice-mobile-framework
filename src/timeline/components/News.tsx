@@ -12,6 +12,8 @@ import { Icon } from "../../ui/icons/Icon";
 import Player from "../../ui/Player";
 import { IFrame } from "../../ui/IFrame";
 import { INewsModel, IMediaModel } from "../reducer";
+import { AttachmentGroup } from "../../ui/AttachmentGroup";
+import { IRemoteAttachment } from "../../ui/Attachment";
 
 interface INewsProps extends INewsModel {
   onPress?: (expend?: boolean) => void;
@@ -37,7 +39,15 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
     const firstItem = media[0];
 
     if (firstItem) {
-      if (firstItem.type === "image") {
+      if (firstItem.type === "attachment") {
+        let mediaAttachments: IMediaModel[] = [];
+        for (const mediaItem of media) {
+          if (mediaAttachments.length === 4 || mediaItem.type !== "attachment") break;
+          mediaAttachments.push(mediaItem);
+        }
+        const attachments = mediaAttachments.map(mediaAtt => ({url: mediaAtt.src, displayName: mediaAtt.name}));
+        return <AttachmentGroup attachments={attachments as Array<IRemoteAttachment>}/>
+      } else if (firstItem.type === "image") {
         let images: IMediaModel[] = [];
         for (const mediaItem of media) {
           if (mediaItem.type !== "image") break;
@@ -58,25 +68,29 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
     }
   }
 
+  hasAdditionalContent() {
+    const { message, media } = this.props;
+    const firstItem = media[0];
+    
+    if (message && message.endsWith("...")) { // the message is too long and is cropped
+      return true;
+    } if (firstItem) {
+        if (firstItem.type === "image" || firstItem.type === "attachment") {
+          let mediaCount = 0;
+          for (const mediaItem of media) {
+            if (mediaItem.type !== firstItem.type) { // even if the first batch of images/attachments has less than 4 items, there might be additional medias
+              return true;
+            }
+            mediaCount++;
+          }
+          return mediaCount > 4; // if there are only images/attachments, only the first 4 are displayed
+        } else return media.length > 1; // if the first item is a video/audio/iframe, additional items aren't displayed
+    } else return false; // no additional text & no media
+  }
+
   public render() {
     const { message, media } = this.props;
     const firstItem = media[0];
-    const hasAdditionalContent = () => {
-      if (message && message.endsWith("...")) { // the message is too long and is cropped
-        return true;
-      } if (firstItem) {
-          if (firstItem.type === "image") {
-            let imageCount = 0;
-            for (const mediaItem of media) {
-              if (mediaItem.type !== "image") { // even if the first batch of images has less than 4 images, there might be additional medias
-                return true;
-              }
-              imageCount++;
-            }
-            return imageCount > 4; // if there are only images, the first 4 are displayed
-          } else return media.length > 1; // if the first item is a video/audio/iframe, additional items aren't displayed
-      } else return false; // no additional text & no media
-    }
 
     return (
       <ArticleContainer style={{ width: "100%" }}>
@@ -91,7 +105,7 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
             }
             {this.getMediaPreview()}
           </View>
-          {hasAdditionalContent()
+          {this.hasAdditionalContent()
             ? <>
                 <View
                   style={{

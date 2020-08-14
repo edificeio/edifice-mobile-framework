@@ -8,8 +8,9 @@ import blogCommentsReducer from "./reducers/blogCommentList";
 import { createEndSessionActionType } from "../infra/redux/reducerFactory";
 
 export interface IMediaModel {
-  type: "image" | "video" | "audio" | "iframe";
+  type: "image" | "video" | "audio" | "iframe" | "attachment";
   src: string | { src: ImageURISource; alt: string;};
+  name?: string;
 }
 
 export interface INewsModel {
