@@ -73,7 +73,7 @@ export const MessageBubble = ({
   }
 
   const content = 
-    <View style={bubbleStyle}>
+    <View style={bubbleStyle} onStartShouldSetResponder={canScroll ? () => true : undefined}>
     <HtmlContentView
       html={contentHtml}
       emptyMessage={htmlEmptyMessage}
