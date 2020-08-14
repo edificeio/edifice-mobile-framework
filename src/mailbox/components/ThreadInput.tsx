@@ -22,6 +22,7 @@ import { Text } from "../../ui/text";
 import { NavigationScreenProp, NavigationState } from "react-navigation";
 import { IAttachment } from "../actions/messages";
 import { separateMessageHistory } from "../utils/messageHistory";
+import { Trackers } from "../../infra/tracker";
 
 // TODO : Debt : Needs to be refactored.
 
@@ -301,6 +302,7 @@ class ThreadInput extends React.PureComponent<
                 type: 'reply',
                 message: lastMessage
               })
+              Trackers.trackEvent("Conversation", "REPLY TO ONE");
             }}>
             <Icon name="profile-on" size={24} color={CommonStyles.actionColor} style={{ marginBottom: 6 }} />
             <Text color={CommonStyles.actionColor}>{I18n.t("conversation-reply-to-name-action", {
@@ -321,6 +323,7 @@ class ThreadInput extends React.PureComponent<
             style={{ alignItems: 'center', flex: 1, padding: 12 }}
             onPress={() => {
               this.setState({ showReplyHelperIfAvailable: false });
+              Trackers.trackEvent("Conversation", "REPLY TO ALL");
             }}>
             <Icon name="users" size={24} color={CommonStyles.actionColor} style={{ marginBottom: 6 }} />
             <Text color={CommonStyles.actionColor}>{I18n.t("conversation-reply-to-all-action")}</Text>
@@ -335,7 +338,10 @@ class ThreadInput extends React.PureComponent<
         <ThreadInputReceivers
           names={receiverNames}
           show={showReceivers}
-          onPress={() => this.props.onChangeReceivers(lastMessage || thread)}
+          onPress={() => {
+            this.props.onChangeReceivers(lastMessage || thread);
+            Trackers.trackEvent("Conversation", "CHANGE RECEIVERS");
+          }}
         />
 
         <ContainerFooterBar>
@@ -405,10 +411,13 @@ class ThreadInput extends React.PureComponent<
           ref={r => (this.attachmentPickerRef = r)}
           attachments={attachments}
           onAttachmentSelected={selectedAttachment => {
-            this.setState({ attachments: [...attachments, selectedAttachment] })
+            this.setState({ attachments: [...attachments, selectedAttachment] });
+            Trackers.trackEvent("Conversation", "ADD ATTACHMENT");
           }}
           onAttachmentRemoved={attachmentsToSend => {
             this.setState({ attachments: attachmentsToSend });
+            Trackers.trackEvent("Conversation", "REMOVE ATTACHMENT");
+
           }}
           isContainerHalfScreen={isHalfScreen}
           attachmentsHeightHalfScreen={attachmentsHeightHalfScreen}

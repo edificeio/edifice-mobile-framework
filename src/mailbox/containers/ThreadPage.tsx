@@ -28,6 +28,7 @@ import withViewTracking from "../../infra/tracker/withViewTracking";
 import { IconButton } from "../../ui/IconButton";
 import { createActionReceiversDisplay, createActionThreadReceiversDisplay } from "../actions/displayReceivers";
 import conversationThreadSelected from "../actions/threadSelected";
+import { Trackers } from "../../infra/tracker";
 
 const mapStateToProps: (state: any) => IThreadPageDataProps = state => {
   // Extract data from state
@@ -108,6 +109,7 @@ class ThreadPageContainer extends React.PureComponent<
               message: selectedMessage,
               parentThread: threadInfo
             })
+            Trackers.trackEvent("Conversation", "REPLY TO MESSAGE");
           }}/>
           <HeaderAction title={I18n.t("conversation-transfer")} onPress={() => {
             navigation.navigate('newThread', {
@@ -115,6 +117,7 @@ class ThreadPageContainer extends React.PureComponent<
               message: selectedMessage,
               parentThread: threadInfo
             })
+            Trackers.trackEvent("Conversation", "TRANSFER MESSAGE");
           }}/>
         </View>,
         headerStyle: {
