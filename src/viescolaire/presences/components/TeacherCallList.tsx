@@ -3,9 +3,9 @@ import moment from "moment";
 import * as React from "react";
 import { View, StyleSheet, Dimensions, ImageBackground } from "react-native";
 import RNCarousel, { Pagination } from "react-native-snap-carousel";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 import { Icon } from "../../../ui";
-import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
 import { Text, TextBold } from "../../../ui/text";
 import { BottomColoredItem } from "../../viesco/components/Item";
 import { CommonStyles } from "../../../styles/common/styles";
