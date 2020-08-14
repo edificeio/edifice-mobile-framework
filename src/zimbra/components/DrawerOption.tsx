@@ -23,11 +23,17 @@ export default class DrawerOption extends React.PureComponent<DrawerOptionProps>
       <TouchableOpacity style={touchableStyle} onPress={navigate} disabled={selected}>
         <Icon size={16} name={iconName} style={iconStyle} />
         {selected ? (
-          <TextBold style={[style.itemTextSelected, style.itemText]}>{label + countString}</TextBold>
+          <TextBold numberOfLines={1} style={[style.itemTextSelected, style.itemText]}>
+            {label + countString}
+          </TextBold>
         ) : count ? (
-          <TextBold style={style.itemText}>{label + countString}</TextBold>
+          <TextBold numberOfLines={1} style={style.itemText}>
+            {label + countString}
+          </TextBold>
         ) : (
-          <Text style={style.itemText}>{label}</Text>
+          <Text numberOfLines={1} style={style.itemText}>
+            {label}
+          </Text>
         )}
       </TouchableOpacity>
     );
@@ -47,6 +53,8 @@ const style = StyleSheet.create({
   itemText: {
     marginLeft: 5,
     fontSize: 18,
+    overflow: "hidden",
+    paddingRight: 35,
   },
   itemTextSelected: {
     color: "white",

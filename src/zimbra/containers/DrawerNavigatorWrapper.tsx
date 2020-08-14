@@ -81,8 +81,10 @@ export default class DrawerNavigatorWrapper extends React.Component<any, any> {
             }}
           />
           <Text
+            numberOfLines={1}
             style={{
               alignSelf: "center",
+              paddingRight: 10,
               color: "white",
               fontFamily: CommonStyles.primaryFontFamily,
               fontSize: 16,
