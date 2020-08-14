@@ -32,7 +32,7 @@ export default class DisplayHomework extends React.PureComponent<{getfunction:an
       <PageContainer>
         <View style={{ justifyContent: "flex-end", flexDirection: "row" }}>
           <LeftColoredItem shadow style={{ alignItems: "flex-end", flexDirection: "row" }} color="#00ab6f">
-            <Icon size={20} color="#00ab6f" name="reservation" />
+            <Icon size={20} color="#00ab6f" name="date_range" />
             <Text>&emsp;{moment(session.date).format("DD/MM/YY")}</Text>
             <Text style={style.course}>&emsp;{session.subject}</Text>
           </LeftColoredItem>

@@ -33,7 +33,7 @@ export default class DisplayHomework extends React.PureComponent<{getfunction:an
           <LeftColoredItem shadow style={{ alignItems: "flex-end", flexDirection: "row" }} color="#FA9700">
             { homework.description ?
               <>
-                <Icon size={20} color="#FA9700" name="reservation" />
+                <Icon size={20} color="#FA9700" name="date_range" />
                 <Text>&emsp;{moment(homework.created_date).format("DD/MM/YY")}</Text>
                 <Text style={style.course}>&emsp;{homework.subject}</Text>
               </>

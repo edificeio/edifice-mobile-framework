@@ -50,7 +50,7 @@ const DatePickerIOS = ({ date, minimumDate, maximumDate, style, onChangeDate }: 
         onPress={() => toggleModal(true)}
         text={selectedDate.format("DD/MM/YY")}
         color="white"
-        icon="reservation"
+        icon="date_range"
       />
       <ModalBox isVisible={visible} onDismiss={() => toggleModal(false)}>
         <ModalContent style={{ width: 350 }}>
@@ -101,7 +101,7 @@ const DatePickerAndroid = ({ date, minimumDate, style, maximumDate, onChangeDate
         onPress={() => toggleModal(true)}
         text={selectedDate.format("DD/MM/YY")}
         color="white"
-        icon="reservation"
+        icon="date_range"
       />
       {visible && (
         <DateTimePicker
