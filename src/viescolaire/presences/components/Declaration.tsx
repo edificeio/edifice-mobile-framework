@@ -8,7 +8,7 @@ import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 
 import { DialogButtonOk } from "../../../ui/ConfirmDialog";
 import { PageContainer } from "../../../ui/ContainerContent";
-import { DatePicker } from "../../../ui/DatePicker";
+import DatePicker from "../../../ui/DatePicker";
 import { Text, TextBold } from "../../../ui/Typography";
 
 type DeclarationProps = {
@@ -139,13 +139,13 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
           </View>
           {singleDay || (
             <View style={style.row}>
-              <DatePicker date={startDate} endDate={endDate} onGetDate={updateStartDate} />
-              <DatePicker date={endDate} startDate={startDate} onGetDate={updateEndDate} />
+              <DatePicker date={startDate} maximumDate={endDate} onChangeDate={updateStartDate} />
+              <DatePicker date={endDate} minimumDate={startDate} onChangeDate={updateEndDate} />
             </View>
           )}
           {singleDay && (
             <View style={style.row}>
-              <DatePicker date={startDate} startDate={moment()} onGetDate={updateStartDate} />
+              <DatePicker date={startDate} minimumDate={moment()} onChangeDate={updateStartDate} />
             </View>
           )}
           <View style={style.row}>
