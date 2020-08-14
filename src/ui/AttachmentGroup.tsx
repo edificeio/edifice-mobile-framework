@@ -89,13 +89,14 @@ export class AttachmentGroup extends React.PureComponent<
             paddingVertical: 2,
             marginTop: 0,
             marginBottom: 0,
+            maxHeight: 150
           }}
         ><SafeAreaView>
           <FlatList
-            style={{flex: 0, maxHeight: isContainerHalfScreen ? attachmentsHeightHalfScreen : undefined}} // TODO: refactor (use flex/height, instead of props)
+            style={{flex: 0}} // TODO: refactor (use flex/height, instead of props)
             data={attachments}
             renderItem={({ item, index }) => 
-              <Attachment
+              <View onStartShouldSetResponder={() => true}><Attachment
                 key={index}
                 attachment={item}
                 starDownload={downloadAll}
@@ -105,7 +106,9 @@ export class AttachmentGroup extends React.PureComponent<
                 style={{marginTop: index === 0 ? 0 : 2}}
                 editMode={editMode && !item.hasOwnProperty("id")}
                 onRemove={() => onRemove && onRemove(index)}
+                
               />
+              </View>
             }
           />
           </SafeAreaView>

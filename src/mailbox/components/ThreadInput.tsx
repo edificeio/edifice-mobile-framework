@@ -149,12 +149,12 @@ class ThreadInput extends React.PureComponent<
     const getSubject = (message: IConversationMessage) => message && message.subject || "";
     const getRecepientDisplayNames = (message: IConversationMessage, ccRecepients?: boolean) => {
       let recepientDisplayNames: string[] = [];
-      const recepientIds = ccRecepients ? message.cc: message.to;
+      const recepientIds = ccRecepients ? message.cc : message.to;
       recepientIds && recepientIds.forEach(recepientId => {
         const foundRecepient = message.displayNames.find(displayName => displayName[0] === recepientId);
         foundRecepient && recepientDisplayNames.push(foundRecepient[1])
       });
-      return recepientDisplayNames.length > 0 ? recepientDisplayNames.join(", "): "";
+      return recepientDisplayNames.length > 0 ? recepientDisplayNames.join(", ") : "";
     }
     const getReplyTemplate = (message: IConversationMessage) => `
       <p>&nbsp;</p><p class="row"><hr /></p>
@@ -285,10 +285,10 @@ class ThreadInput extends React.PureComponent<
       : thread.displayNames
         .filter(dN => receiversIds.indexOf(dN[0]) > -1)
         .map(dN => dN[1]);
-    const showReceivers =
-      (selected == Selected.keyboard ||
-        (textMessage && textMessage.length > 0)) &&
-      receiverNames.length >= 2;
+    const showReceivers = true
+    // (selected == Selected.keyboard ||
+    //   (textMessage && textMessage.length > 0)) &&
+    // receiverNames.length >= 2;
     // iOS hack => does not display placeholder on update
 
     if (this.state.showReplyHelperIfAvailable && lastMessage && receiversIds.length > 2) {
@@ -328,86 +328,79 @@ class ThreadInput extends React.PureComponent<
         </SafeAreaView>
       </ContainerFooterBar>
     } else return (
-      <SafeAreaView
-        style={{ maxHeight: halfDeviceHeight, backgroundColor: CommonStyles.tabBottomColor }}
-        onLayout={event => {
-          const { height } = event.nativeEvent.layout;
-          this.setState({ isHalfScreen: height === halfDeviceHeight })
-        }}
-      >
-        <View
-          onLayout={event => {
-            const { height } = event.nativeEvent.layout;
-            this.setState({ attachmentsHeightHalfScreen: halfDeviceHeight - height })
-          }}
-        >
-          <ThreadInputReceivers
-            names={receiverNames}
-            show={showReceivers}
-            onPress={() => this.props.onChangeReceivers(lastMessage || thread)}
-          />
-          <ContainerFooterBar>
-            <ContainerInput>
-              {displayPlaceholder &&
-                this.props.emptyThread &&
-                this.renderInput(
-                  textMessage,
-                  I18n.t("conversation-chatPlaceholder")
-                )}
-              {displayPlaceholder &&
-                !this.props.emptyThread &&
-                this.renderInput(
-                  textMessage,
-                  I18n.t("conversation-responsePlaceholder")
-                )}
-            </ContainerInput>
-            <Line style={{ height: 40 }}>
-              <ChatIcon
-                onPress={() => {
-                  if (this.state.selected === Selected.keyboard)
-                    this.input && this.input.innerComponent.blur();
-                  else this.input && this.input.innerComponent.focus();
-                }}
-              >
-                <IconOnOff
-                  focused={true}
-                  name={"keyboard"}
-                  style={{ marginLeft: 4 }}
-                />
-              </ChatIcon>
-              <View style={{ flex: 1, justifyContent: "flex-end", flexDirection: "row" }}>
-                <ActionContainer onPress={() => this.attachmentPickerRef.onPickAttachment()}>
-                  <IconButton
-                    iconName="attached"
-                    iconStyle={{ transform: [{ rotate: "270deg" }] }}
-                    iconColor={CommonStyles.primary}
-                    buttonStyle={{ borderColor: CommonStyles.primary, borderWidth: 1, backgroundColor: undefined }}
-                  />
-                </ActionContainer>
-                <ActionContainer
-                  disabled={sending}
-                  onPress={() => textMessage || attachmentsAdded ? this.onValid() : null}
-                >
-                  {sending
-                    ? <Loading small />
-                    : <IconButton iconName="send_icon" disabled={!(textMessage || attachmentsAdded)} />
-                  }
-                </ActionContainer>
-              </View>
-            </Line>
-          </ContainerFooterBar>
-          {backMessage
-            ? <MessageBubble
-                canScroll
-                contentHtml={messageHtml}
-                historyHtml={historyHtml}
-                onShowHistory={() => this.setState({ showHistory: !showHistory })}
-                showHistory={showHistory}
-                containerStyle={{ maxHeight: 150, marginBottom: 0, marginTop: 0 }}
+      <SafeAreaView style={{
+        flex: 0,
+        maxHeight: "75%"
+      }}>
+        <ThreadInputReceivers
+          names={receiverNames}
+          show={showReceivers}
+          onPress={() => this.props.onChangeReceivers(lastMessage || thread)}
+        />
+
+        <ContainerFooterBar>
+          <ContainerInput>
+            {displayPlaceholder &&
+              this.props.emptyThread &&
+              this.renderInput(
+                textMessage,
+                I18n.t("conversation-chatPlaceholder")
+              )}
+            {displayPlaceholder &&
+              !this.props.emptyThread &&
+              this.renderInput(
+                textMessage,
+                I18n.t("conversation-responsePlaceholder")
+              )}
+          </ContainerInput>
+          <Line style={{ height: 40 }}>
+            <ChatIcon
+              onPress={() => {
+                if (this.state.selected === Selected.keyboard)
+                  this.input && this.input.innerComponent.blur();
+                else this.input && this.input.innerComponent.focus();
+              }}
+            >
+              <IconOnOff
+                focused={true}
+                name={"keyboard"}
+                style={{ marginLeft: 4 }}
               />
-            : null
-          }
-        </View>
+            </ChatIcon>
+            <View style={{ flex: 1, justifyContent: "flex-end", flexDirection: "row" }}>
+              <ActionContainer onPress={() => this.attachmentPickerRef.onPickAttachment()}>
+                <IconButton
+                  iconName="attached"
+                  iconStyle={{ transform: [{ rotate: "270deg" }] }}
+                  iconColor={CommonStyles.primary}
+                  buttonStyle={{ borderColor: CommonStyles.primary, borderWidth: 1, backgroundColor: undefined }}
+                />
+              </ActionContainer>
+              <ActionContainer
+                disabled={sending}
+                onPress={() => textMessage || attachmentsAdded ? this.onValid() : null}
+              >
+                {sending
+                  ? <Loading small />
+                  : <IconButton iconName="send_icon" disabled={!(textMessage || attachmentsAdded)} />
+                }
+              </ActionContainer>
+            </View>
+          </Line>
+        </ContainerFooterBar>
+
+        {backMessage
+          ? <MessageBubble
+            canScroll
+            contentHtml={messageHtml}
+            historyHtml={historyHtml}
+            onShowHistory={() => this.setState({ showHistory: !showHistory })}
+            showHistory={showHistory}
+            containerStyle={{ marginBottom: 0, marginTop: 0 }}
+          />
+          : null
+        }
+
         <AttachmentPicker
           ref={r => (this.attachmentPickerRef = r)}
           attachments={attachments}
@@ -420,7 +413,101 @@ class ThreadInput extends React.PureComponent<
           isContainerHalfScreen={isHalfScreen}
           attachmentsHeightHalfScreen={attachmentsHeightHalfScreen}
         />
+
       </SafeAreaView>
+      // <SafeAreaView
+      //   style={{ maxHeight: halfDeviceHeight, backgroundColor: CommonStyles.tabBottomColor }}
+      //   onLayout={event => {
+      //     const { height } = event.nativeEvent.layout;
+      //     this.setState({ isHalfScreen: height === halfDeviceHeight })
+      //   }}
+      // >
+      //   <View
+      //     onLayout={event => {
+      //       const { height } = event.nativeEvent.layout;
+      //       this.setState({ attachmentsHeightHalfScreen: halfDeviceHeight - height })
+      //     }}
+      //   >
+      //     <ThreadInputReceivers
+      //       names={receiverNames}
+      //       show={showReceivers}
+      //       onPress={() => this.props.onChangeReceivers(lastMessage || thread)}
+      //     />
+      //     <ContainerFooterBar>
+      //       <ContainerInput>
+      //         {displayPlaceholder &&
+      //           this.props.emptyThread &&
+      //           this.renderInput(
+      //             textMessage,
+      //             I18n.t("conversation-chatPlaceholder")
+      //           )}
+      //         {displayPlaceholder &&
+      //           !this.props.emptyThread &&
+      //           this.renderInput(
+      //             textMessage,
+      //             I18n.t("conversation-responsePlaceholder")
+      //           )}
+      //       </ContainerInput>
+      //       <Line style={{ height: 40 }}>
+      //         <ChatIcon
+      //           onPress={() => {
+      //             if (this.state.selected === Selected.keyboard)
+      //               this.input && this.input.innerComponent.blur();
+      //             else this.input && this.input.innerComponent.focus();
+      //           }}
+      //         >
+      //           <IconOnOff
+      //             focused={true}
+      //             name={"keyboard"}
+      //             style={{ marginLeft: 4 }}
+      //           />
+      //         </ChatIcon>
+      //         <View style={{ flex: 1, justifyContent: "flex-end", flexDirection: "row" }}>
+      //           <ActionContainer onPress={() => this.attachmentPickerRef.onPickAttachment()}>
+      //             <IconButton
+      //               iconName="attached"
+      //               iconStyle={{ transform: [{ rotate: "270deg" }] }}
+      //               iconColor={CommonStyles.primary}
+      //               buttonStyle={{ borderColor: CommonStyles.primary, borderWidth: 1, backgroundColor: undefined }}
+      //             />
+      //           </ActionContainer>
+      //           <ActionContainer
+      //             disabled={sending}
+      //             onPress={() => textMessage || attachmentsAdded ? this.onValid() : null}
+      //           >
+      //             {sending
+      //               ? <Loading small />
+      //               : <IconButton iconName="send_icon" disabled={!(textMessage || attachmentsAdded)} />
+      //             }
+      //           </ActionContainer>
+      //         </View>
+      //       </Line>
+      //     </ContainerFooterBar>
+      //     {backMessage
+      //       ? <MessageBubble
+      //           canScroll
+      //           contentHtml={messageHtml}
+      //           historyHtml={historyHtml}
+      //           onShowHistory={() => this.setState({ showHistory: !showHistory })}
+      //           showHistory={showHistory}
+      //           containerStyle={{ maxHeight: 150, marginBottom: 0, marginTop: 0 }}
+      //         />
+      //       : null
+      //     }
+      //   </View>
+      //   <AttachmentPicker
+      //     ref={r => (this.attachmentPickerRef = r)}
+      //     attachments={attachments}
+      //     onAttachmentSelected={selectedAttachment => {
+      //       this.setState({ attachments: [...attachments, selectedAttachment] })
+      //     }}
+      //     onAttachmentRemoved={attachmentsToSend => {
+      //       this.setState({ attachments: attachmentsToSend });
+      //     }}
+      //     isContainerHalfScreen={isHalfScreen}
+      //     attachmentsHeightHalfScreen={attachmentsHeightHalfScreen}
+      //   />
+      // </SafeAreaView>
     );
   }
 }

@@ -24,7 +24,7 @@ export const MessageBubble = ({
     hasAttachments,
     isMine,
     canScroll = false,
-    style: style2,
+    style,
     containerStyle
   }:
   {
@@ -62,7 +62,7 @@ export const MessageBubble = ({
     paddingHorizontal: 16,
     paddingVertical: 12,
   }
-  style2 = {
+  const style2 = {
     ...style, elevation: 2,
     shadowColor: CommonStyles.shadowColor,
     shadowOffset: CommonStyles.shadowOffset,
