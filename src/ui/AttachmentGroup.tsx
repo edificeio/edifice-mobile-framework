@@ -89,28 +89,30 @@ export class AttachmentGroup extends React.PureComponent<
             paddingVertical: 2,
             marginTop: 0,
             marginBottom: 0,
-            maxHeight: 150
+            maxHeight: editMode ? 150 : undefined,
           }}
-        ><SafeAreaView>
-          <FlatList
-            style={{flex: 0}} // TODO: refactor (use flex/height, instead of props)
-            data={attachments}
-            renderItem={({ item, index }) => 
-              <View onStartShouldSetResponder={() => true}><Attachment
-                key={index}
-                attachment={item}
-                starDownload={downloadAll}
-                onDownload={onDownload}
-                onError={onError}
-                onOpen={onOpen}
-                style={{marginTop: index === 0 ? 0 : 2}}
-                editMode={editMode && !item.hasOwnProperty("id")}
-                onRemove={() => onRemove && onRemove(index)}
-                
-              />
-              </View>
-            }
-          />
+        >
+          <SafeAreaView>
+            <FlatList
+              style={{flex: 0}}
+              data={attachments}
+              renderItem={({ item, index }) => 
+                <View onStartShouldSetResponder={() => true}>
+                  <Attachment
+                    key={index}
+                    attachment={item}
+                    starDownload={downloadAll}
+                    onDownload={onDownload}
+                    onError={onError}
+                    onOpen={onOpen}
+                    style={{marginTop: index === 0 ? 0 : 2}}
+                    editMode={editMode && !item.hasOwnProperty("id")}
+                    onRemove={() => onRemove && onRemove(index)}
+                    
+                  />
+                </View>
+              }
+            />
           </SafeAreaView>
         </BubbleStyle>
       </TouchableOpacity>

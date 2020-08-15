@@ -75,12 +75,12 @@ const attachmentIconsByFileExt: Array<{
     icon: "file-archive"
   },
   {
-    exts: ["png", "jpg", "jpeg", "gif", "tiff", "bmp", "heif", "heic"],
+    exts: ["png", "jpg", "jpeg", "gif", "tif", "tiff", "bmp", "heif", "heic"],
     icon: "picture"
   }
 ];
 const defaultAttachmentIcon = "attached";
-const getAttachmentIconByExt = (filename: string) => {
+const getAttachmentTypeByExt = (filename: string) => {
   // from https://stackoverflow.com/a/12900504/6111343
   const ext = filename
     // tslint:disable-next-line:no-bitwise
@@ -230,7 +230,7 @@ class Attachment extends React.PureComponent<
               <Icon
                 color={CommonStyles.textColor}
                 size={16}
-                name={getAttachmentIconByExt(
+                name={getAttachmentTypeByExt(
                   (editMode && (att as ILocalAttachment).name)
                   || (att as IRemoteAttachment).filename
                   || (att as IRemoteAttachment).displayName
@@ -325,15 +325,17 @@ class Attachment extends React.PureComponent<
   public onPressAttachment(notifierId: string) {
     const { onOpenFile, onOpen, attachment, editMode } = this.props;
     const { downloadState, downloadedFile } = this.state;
+    const fileType = editMode
+      ? (attachment as ILocalAttachment).mime
+      : (attachment as IRemoteAttachment).contentType || downloadedFile && getAttachmentTypeByExt(downloadedFile);
     const filePath = editMode ? (attachment as ILocalAttachment).uri : downloadedFile;
-    const fileType = editMode ? (attachment as ILocalAttachment).mime : (attachment as IRemoteAttachment).contentType;
     const carouselImage = [{ src: { uri: filePath }, alt: "image" }];
 
     if (!this.attId) {
       return undefined
     } else if (editMode || downloadState === DownloadState.Success) {
       onOpen && onOpen();
-      fileType && fileType.startsWith("image")
+      fileType && fileType.startsWith("image") || fileType === "picture"
         ? mainNavNavigate("carouselModal", { images: carouselImage })
         : onOpenFile(notifierId, filePath);
     } else if (downloadState === DownloadState.Idle) {

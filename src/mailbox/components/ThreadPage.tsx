@@ -129,8 +129,6 @@ export class ThreadPage extends React.PureComponent<
       headerHeight
     } = this.props;
     const { fetching, isDimmed } = this.state;
-    const screenWidth = Dimensions.get("window").width;
-    const screenHeight = Dimensions.get("window").height;
     const messagesData = messages && messages.map(message => {
       return {
         ...message,
