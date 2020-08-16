@@ -18,11 +18,6 @@ export const UserLabel = style.text({
   textAlignVertical: "center",
 });
 
-const ScrollField = style.scrollView({
-  maxHeight: 181,
-  flexGrow: 0
-});
-
 const FieldContainer = style.view({
   flexDirection: "row",
   flexWrap: "wrap",
@@ -165,31 +160,38 @@ export default class SelectThreadInfos extends React.Component<
                       />
                     </FieldContainer>
                     {message
-                      ? <View style={{ margin: 12, flex: 1 }}>
-                        <TextBold>
-                          {type === 'reply'
-                            ? I18n.t("conversation-reply-backMessage")
-                            : type === 'transfer'
-                              ? I18n.t("conversation-transfer-backMessage")
-                              : ""
-                          }
-                        </TextBold>
-                        <View onStartShouldSetResponder={() => true} style={{
-                          flex: 1, shadowColor: CommonStyles.shadowColor,
-                          shadowOffset: CommonStyles.shadowOffset,
-                          shadowOpacity: CommonStyles.shadowOpacity,
-                          shadowRadius: CommonStyles.shadowRadius, }}>
-                          <MessageBubble
-                            contentHtml={messageHtml}
-                            historyHtml={historyHtml}
-                            onShowHistory={() => this.setState({ showHistory: !showHistory })}
-                            showHistory={showHistory}
-                            canScroll
-                            style={{ maxHeight: "100%" }}
-                            onStartShouldSetResponder={() => true}
-                          />
+                      ? <View style={{margin: 12, flex: 1}}>
+                          <TextBold style={{marginBottom: 5}}>
+                            {type === 'reply'
+                              ? I18n.t("conversation-reply-backMessage")
+                              : type === 'transfer'
+                                ? I18n.t("conversation-transfer-backMessage")
+                                : ""
+                            }
+                          </TextBold>
+                          <View style={{flex: 1}}>
+                            <View
+                              onStartShouldSetResponder={() => true}
+                              style={{
+                                maxHeight: "100%",
+                                shadowColor: CommonStyles.shadowColor,
+                                shadowOffset: CommonStyles.shadowOffset,
+                                shadowOpacity: CommonStyles.shadowOpacity,
+                                shadowRadius: CommonStyles.shadowRadius
+                              }}
+                            >
+                              <MessageBubble
+                                contentHtml={messageHtml}
+                                historyHtml={historyHtml}
+                                onShowHistory={() => this.setState({ showHistory: !showHistory })}
+                                showHistory={showHistory}
+                                canScroll
+                                style={{ maxHeight: "100%" }}
+                                onStartShouldSetResponder={() => true}
+                              />
+                            </View>
+                          </View>
                         </View>
-                      </View>
                       : null
                     }
                   </View>
