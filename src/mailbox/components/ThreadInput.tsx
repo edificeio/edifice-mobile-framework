@@ -356,7 +356,7 @@ class ThreadInput extends React.PureComponent<
               !this.props.emptyThread &&
               this.renderInput(
                 textMessage,
-                I18n.t("conversation-responsePlaceholder")
+                I18n.t(`conversation-responsePlaceholder${receiversIds.length < 2 ? "Single" : ""}`)
               )}
           </ContainerInput>
           <Line style={{ height: 40 }}>
