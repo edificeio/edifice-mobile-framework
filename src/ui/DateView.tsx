@@ -8,7 +8,6 @@ import {ViewStyle} from "react-native";
 
 const ViewDate = style.view({
         alignItems: "center",
-        height: 16
     },
     ({min}): ViewStyle => ({
         marginBottom: min ? -2 : 4,
