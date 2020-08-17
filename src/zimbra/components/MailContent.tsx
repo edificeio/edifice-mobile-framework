@@ -11,10 +11,10 @@ export default class MailContent extends React.PureComponent<any, any> {
   private mailFooter() {
     return (
       <View style={styles.containerFooter}>
-        <FooterButton icon="reply" text={I18n.t("zimbra-reply")} onPress={() => true} />
-        <FooterButton icon="reply_all" text={I18n.t("zimbra-replyAll")} onPress={() => true} />
-        <FooterButton icon="arrow-right" text={I18n.t("zimbra-forward")} onPress={() => true} />
-        <FooterButton icon="delete" text={I18n.t("zimbra-reply")} onPress={() => true} />
+        <FooterButton icon="material-reply" text={I18n.t("zimbra-reply")} onPress={() => true} />
+        <FooterButton icon="material-reply-all" text={I18n.t("zimbra-replyAll")} onPress={() => true} />
+        <FooterButton icon="forward" text={I18n.t("zimbra-forward")} onPress={() => true} />
+        <FooterButton icon="material-delete" text={I18n.t("zimbra-delete")} onPress={() => true} />
       </View>
     );
   }

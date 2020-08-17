@@ -31,7 +31,7 @@ export default class MailContentMenu extends React.PureComponent<MailContentMenu
             renderItem={({ item }) => (
               <TouchableOpacity onPress={item.onPress}>
                 <View style={{ flexDirection: "row", alignItems: "center", padding: 15 }}>
-                  <Icon name={item.icon} size={18} style={{ marginRight: 10 }} />
+                  <Icon name={item.icon} size={22} style={{ marginRight: 10 }} />
                   <Text>{item.text}</Text>
                 </View>
               </TouchableOpacity>

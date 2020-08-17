@@ -29,7 +29,7 @@ const SendersDetails = ({ receivers, cc, displayNames }) => {
           <Text style={styles.greyColor}>{I18n.t("zimbra-receiversCC")}</Text>
           {cc.map(person => (
             <View style={{ flexDirection: "row", marginLeft: 5 }} key={person}>
-              <View style={[styles.dotReceiverColor, { backgroundColor: "orange" }]} />
+              <View style={[styles.dotReceiverColor, { backgroundColor: "#fc8500" }]} />
               <Text>{displayNames.find(item => item[0] === person)[1]}</Text>
             </View>
           ))}

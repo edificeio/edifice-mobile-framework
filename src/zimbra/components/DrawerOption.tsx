@@ -21,7 +21,7 @@ export default class DrawerOption extends React.PureComponent<DrawerOptionProps>
     const countString = count ? ` (${count})` : "";
     return (
       <TouchableOpacity style={touchableStyle} onPress={navigate} disabled={selected}>
-        <Icon size={16} name={iconName} style={iconStyle} />
+        <Icon size={22} name={iconName} style={iconStyle} />
         {selected ? (
           <TextBold numberOfLines={1} style={[style.itemTextSelected, style.itemText]}>
             {label + countString}
@@ -42,24 +42,25 @@ export default class DrawerOption extends React.PureComponent<DrawerOptionProps>
 
 const style = StyleSheet.create({
   item: {
-    padding: 7,
-    marginBottom: 8,
+    padding: 10,
+    paddingVertical: 12,
     backgroundColor: "white",
     flexDirection: "row",
   },
   selectedItem: {
-    backgroundColor: "orange",
+    backgroundColor: "#fc8500",
   },
   itemText: {
-    marginLeft: 5,
+    marginLeft: 10,
     fontSize: 18,
     overflow: "hidden",
-    paddingRight: 35,
+    paddingRight: 40,
   },
   itemTextSelected: {
     color: "white",
   },
   itemIcon: {
     alignSelf: "center",
+    marginHorizontal: 4,
   },
 });

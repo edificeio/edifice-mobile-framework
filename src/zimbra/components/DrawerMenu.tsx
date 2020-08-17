@@ -68,33 +68,33 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
         </View>
         <DrawerOption
           selected={this.isCurrentScreen("inbox")}
-          iconName="inbox"
+          iconName="material-inbox"
           label={I18n.t("zimbra-inbox")}
           navigate={() => navigation.navigate("inbox", { key: "inbox", folderName: undefined })}
           count={count.data.INBOX}
         />
         <DrawerOption
           selected={this.isCurrentScreen("outbox")}
-          iconName="outbox"
+          iconName="send"
           label={I18n.t("zimbra-outbox")}
           navigate={() => navigation.navigate("outbox", { key: "outbox", folderName: undefined })}
         />
         <DrawerOption
           selected={this.isCurrentScreen("drafts")}
-          iconName="file-document-outline"
+          iconName="insert_drive_file"
           label={I18n.t("zimbra-drafts")}
           navigate={() => navigation.navigate("drafts", { key: "drafts", folderName: undefined })}
           count={count.data.DRAFTS}
         />
         <DrawerOption
           selected={this.isCurrentScreen("trash")}
-          iconName="trash"
+          iconName="material-delete"
           label={I18n.t("zimbra-trash")}
           navigate={() => navigation.navigate("trash", { key: "trash", folderName: undefined })}
         />
         <DrawerOption
           selected={this.isCurrentScreen("spams")}
-          iconName="deleted_files"
+          iconName="delete_sweep"
           label={I18n.t("zimbra-spams")}
           navigate={() => navigation.navigate("spams", { key: "spams", folderName: undefined })}
           count={count.data.SPAMS}
@@ -106,7 +106,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
           {folders.data.map(folder => (
             <DrawerOption
               selected={folder.name === currentFolder}
-              iconName="workspace_folder"
+              iconName="material-folder"
               label={folder.name}
               navigate={() => {
                 navigation.navigate("folder", { key: folder.name, folderName: folder.name });
@@ -120,7 +120,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
           <TouchableOpacity
             onPress={this.onFolderCreationModalShow}
             style={[style.labelContainer, { marginBottom: 2 }]}>
-            <Icon name="workspace_folder" />
+            <Icon size={22} name="create_new_folder" />
             <Text style={[style.labelText, { justifyContent: "center", marginBottom: 2 }]}>
               {I18n.t("zimbra-create-directory")}
             </Text>
@@ -144,8 +144,9 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
 
 const style = StyleSheet.create({
   labelContainer: {
-    backgroundColor: "lightblue",
-    padding: 7,
+    backgroundColor: "#eef7fb",
+    paddingHorizontal: 5,
+    paddingVertical: 10,
     flexDirection: "row",
     alignItems: "center",
   },
@@ -153,7 +154,9 @@ const style = StyleSheet.create({
     fontSize: 18,
     paddingLeft: 10,
   },
-  container: {},
+  container: {
+    backgroundColor: "#FFF",
+  },
   loadBar: {
     backgroundColor: "lightgrey",
     width: "100%",

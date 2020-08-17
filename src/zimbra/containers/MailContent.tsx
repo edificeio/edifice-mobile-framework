@@ -88,10 +88,10 @@ class MailContentContainer extends React.PureComponent<any, any> {
     const { navigation, mail } = this.props;
     const { showMenu, showModal } = this.state;
     const menuData = [
-      { text: I18n.t("zimbra-mark-unread"), icon: "mail", onPress: this.markAsRead },
-      { text: I18n.t("zimbra-move"), icon: "inbox-1", onPress: this.showModal },
+      { text: I18n.t("zimbra-mark-unread"), icon: "email", onPress: this.markAsRead },
+      { text: I18n.t("zimbra-move"), icon: "unarchive", onPress: this.showModal },
       // { text: I18n.t("zimbra-download-all"), icon: "download", onPress: () => {} },
-      { text: I18n.t("zimbra-delete"), icon: "trash", onPress: this.delete },
+      { text: I18n.t("zimbra-delete"), icon: "material-delete", onPress: this.delete },
     ];
     return (
       <>
