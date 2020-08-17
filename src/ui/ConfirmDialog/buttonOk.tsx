@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, ViewStyle } from "react-native";
 import { layoutSize } from "../../styles/common/layoutSize";
 import { CommonStyles } from "../../styles/common/styles";
 
@@ -7,6 +7,7 @@ type IProps = {
   label: string;
   disabled: boolean;
   onPress: (any) => void;
+  style: ViewStyle;
 };
 
 export default class DialogButton extends React.PureComponent<IProps> {
@@ -17,10 +18,13 @@ export default class DialogButton extends React.PureComponent<IProps> {
   static displayName = "DialogButton";
 
   render() {
-    const { onPress, disabled, label } = this.props;
+    const { onPress, disabled, label, style } = this.props;
 
     return (
-      <TouchableOpacity style={[styles.button, disabled ? styles.disabled : {}]} onPress={onPress} disabled={disabled}>
+      <TouchableOpacity
+        style={[styles.button, style, disabled ? styles.disabled : {}]}
+        onPress={onPress}
+        disabled={disabled}>
         <Text style={styles.text}>{label}</Text>
       </TouchableOpacity>
     );

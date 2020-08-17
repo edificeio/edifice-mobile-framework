@@ -1,45 +1,35 @@
-import I18n from "i18n-js";
 import moment from "moment";
 import * as React from "react";
-import { DocumentPickerResponse } from "react-native-document-picker";
+import { View } from "react-native";
+import I18n from "i18n-js";
+
 import { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
 import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
 import { HeaderBackAction } from "../../../ui/headers/NewHeader";
-import { getSelectedChild, getSelectedChildStructure } from "../../viesco/state/children";
-import Declaration from "../components/Declaration";
-import { absenceDeclarationService } from "../services/absence";
-import { View } from "react-native";
+import DeclarationComponent from "../components/Declaration";
+import { declareAbsenceAction } from "../actions/declaration";
+import { INavigationProps } from "../../../types";
+import { getSelectedChild } from "../../viesco/state/children";
 
 type DeclarationProps = {
-  childId: string;
-  structureId: string;
-  navigation: NavigationScreenProp<any>;
-};
+  declareAbsenceAction: (startDate: moment.Moment, endDate: moment.Moment, comment: string) => void;
+  childName: string;
+} & INavigationProps;
+
 type DeclarationState = {
-  singleDay: boolean;
   startDate: moment.Moment;
   endDate: moment.Moment;
   comment: string;
-  files: DocumentPickerResponse[];
 };
-class AbsenceDeclaration extends React.PureComponent<DeclarationProps, DeclarationState> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      singleDay: true,
-      startDate: moment(),
-      endDate: moment().add(1, "h"),
-      comment: "",
-      files: [],
-    };
-  }
+
+class Declaration extends React.PureComponent<DeclarationProps, DeclarationState> {
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<any> }) => {
     return standardNavScreenOptions(
       {
-        title: navigation.getParam("title") || I18n.t("viesco-absence-declaration"),
+        title: `${I18n.t("viesco-absence-declaration")} ${navigation.getParam("childName")}`,
         headerLeft: <HeaderBackAction navigation={navigation} />,
         headerRight: <View />,
         headerStyle: {
@@ -50,24 +40,22 @@ class AbsenceDeclaration extends React.PureComponent<DeclarationProps, Declarati
     );
   };
 
-  switchSingleDay = () => {
-    const { singleDay } = this.state;
-    this.setState({ singleDay: !singleDay });
+  constructor(props) {
+    super(props);
+    this.props.navigation.setParams({ childName: this.props.childName });
+    this.state = {
+      startDate: moment(),
+      endDate: moment().add(1, "h"),
+      comment: "",
+    };
+  }
+
+  updateStartDate = date => {
+    this.setState({ startDate: date });
   };
 
-  updateStartDate = startDate => {
-    this.setState({
-      startDate,
-    });
-  };
-
-  updateEndDate = (endDate, cb: any = undefined) => {
-    this.setState(
-      {
-        endDate,
-      },
-      cb
-    );
+  updateEndDate = date => {
+    this.setState({ endDate: date });
   };
 
   updateComment = (comment: string) => {
@@ -76,85 +64,37 @@ class AbsenceDeclaration extends React.PureComponent<DeclarationProps, Declarati
     });
   };
 
-  onFilesPicked = (newFiles: DocumentPickerResponse[]) => {
-    const { files } = this.state;
-    this.setState({
-      files: files.concat(newFiles),
-    });
-  };
-
-  onFileDelete = (file: DocumentPickerResponse) => {
-    const { files } = this.state;
-    const newFiles = [...files];
-    const i = newFiles.findIndex(f => f.uri === file.uri);
-    newFiles.splice(i, 1);
-    this.setState({
-      files: newFiles,
-    });
-  };
-
-  validate = () => {
-    const { singleDay, endDate, startDate } = this.state;
-    if (singleDay) {
-      const updatedDate = moment(
-        endDate
-          .date(startDate.date())
-          .month(startDate.month())
-          .year(startDate.year())
-          .toDate()
-      );
-      this.updateEndDate(updatedDate, () => {
-        this.submitForm();
-      });
-    } else this.submitForm();
-  };
-
   submitForm = async () => {
-    const { startDate, endDate, comment, files } = this.state;
-    const { childId, structureId } = this.props;
-    if (files.length > 0) {
-      absenceDeclarationService.postAbsenceDeclarartionWithFiles(
-        startDate,
-        endDate,
-        childId,
-        structureId,
-        comment,
-        files
-      );
-    } else {
-      await absenceDeclarationService.postAbsenceDeclarartion(startDate, endDate, childId, structureId, comment);
-      this.props.navigation.goBack();
-    }
+    const { startDate, endDate, comment } = this.state;
+
+    await this.props.declareAbsenceAction(startDate, endDate, comment);
+    this.props.navigation.goBack();
   };
 
   public render() {
     return (
-      <Declaration
+      <DeclarationComponent
         {...this.props}
         {...this.state}
-        onSingleDaySwitch={this.switchSingleDay}
         updateEndDate={this.updateEndDate}
         updateStartDate={this.updateStartDate}
         updateComment={this.updateComment}
-        onFilesPicked={this.onFilesPicked}
-        onFileDelete={this.onFileDelete}
-        validate={this.validate}
+        submit={this.submitForm}
       />
     );
   }
 }
 
 const mapStateToProps = (state: any) => {
-  const childId = getSelectedChild(state);
-  const structureId = getSelectedChildStructure(state)?.id
+  const child = getSelectedChild(state);
 
   return {
-    childId,
-    structureId,
+    childName: child.lastName + " " + child.firstName,
   };
 };
+
 const mapDispatchToProps = (dispatch: any) => {
-  return bindActionCreators({}, dispatch);
+  return bindActionCreators({ declareAbsenceAction }, dispatch);
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(AbsenceDeclaration);
+export default connect(mapStateToProps, mapDispatchToProps)(Declaration);
