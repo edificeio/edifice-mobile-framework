@@ -45,7 +45,7 @@ export class Evaluation extends React.PureComponent<{ navigation: { navigate } }
 
 const mapStateToProps: (state: any) => any = state => {
   const userType = getSessionInfo().type;
-  const childId = userType === "Student" ? getSessionInfo().id : getSelectedChild(state);
+  const childId = userType === "Student" ? getSessionInfo().id : getSelectedChild(state).id;
   const groupId =
     userType === "Student"
       ? getSessionInfo().classes[0]

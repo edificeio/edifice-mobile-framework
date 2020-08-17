@@ -8,7 +8,7 @@ export interface IUserInfoState {
   birthDate?: moment.Moment;
   blocked?: boolean;
   checksum?: string;
-  children?: Array<{ displayName: string; externalId: string; id: string }>;
+  children?: { [id: string]: { displayName: string; externalId: string } };
   childrenStructure?: Array<{
     structureName: string;
     children: Array<{ classNames: string[]; displayName: string; externalId: string; id: string }>;

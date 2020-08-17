@@ -76,10 +76,9 @@ class Dashboard extends React.PureComponent<
 // ------------------------------------------------------------------------------------------------
 
 const mapStateToProps: (state: any) => any = state => {
-  const childId = getSelectedChild(state);
+  const childId = getSelectedChild(state).id;
   const homeworks = getHomeworksListState(state);
   const subjects = getSubjectsListState(state);
-  const schools = getSessionInfo().schools;
   const structureId = getSelectedChildStructure(state)?.id
 
   const evaluations = [

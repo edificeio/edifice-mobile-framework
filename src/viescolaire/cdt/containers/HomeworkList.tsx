@@ -206,7 +206,7 @@ const mapStateToProps: (state: any) => any = state => {
     personnel: personnelState.data,
     isFetching:
       homeworksState.isFetching || sessionsState.isFetching || subjectsState.isFetching || personnelState.isFetching,
-    childId: getSelectedChild(state),
+    childId: getSelectedChild(state).id,
     structureId:
       getSessionInfo().type === "Student"
         ? getSessionInfo().administrativeStructures[0].id

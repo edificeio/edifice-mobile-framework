@@ -5,13 +5,12 @@ import { getSessionInfo } from "../../../App";
 // THE MODEL --------------------------------------------------------------------------------------
 
 export interface IChild {
+  id: string;
   firstName: string;
   lastName: string;
 }
 
-export type IChildArray = {
-  [id: string]: IChild;
-};
+export type IChildArray = IChild[];
 
 // THE STATE --------------------------------------------------------------------------------------
 
@@ -23,17 +22,30 @@ export const initialState: IChildState = {
   selectedChild: null,
 };
 
-export const getSelectedChild = (globalState: any) =>
-  viescoConfig.getLocalState(globalState).viesco.children.selectedChild;
+export const getSelectedChild = (globalState: any) => {
+  const selectedChildId = viescoConfig.getLocalState(globalState).viesco.children.selectedChild;
+  const selectedChild = userConfig.getLocalState(globalState).info.children[selectedChildId];
+  return { id: selectedChildId, ...selectedChild };
+};
 
-export const getChildrenList = (globalState: any) => userConfig.getLocalState(globalState).info.children;
+export const getChildrenList = (globalState: any): IChildArray => {
+  const children = userConfig.getLocalState(globalState).info.children;
+  return Object.entries(children).map(
+    ([childId, childValue]) =>
+      ({
+        id: childId,
+        ...(childValue as Object),
+      } as IChild)
+  );
+};
 
 export const getSelectedChildStructure = (globalState: any) => {
   const infos = getSessionInfo();
   return infos.schools?.find(
     school =>
-      infos.childrenStructure?.find(school => school.children.some(child => child.id === getSelectedChild(globalState)))
-        ?.structureName == school.name
+      infos.childrenStructure?.find(school =>
+        school.children.some(child => child.id === getSelectedChild(globalState).id)
+      )?.structureName == school.name
   );
 };
 

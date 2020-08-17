@@ -31,19 +31,19 @@ const styles = StyleSheet.create({
 });
 
 export interface ChildPickerProps {
-  selectedChild: string;
+  selectedChildId: string;
   childrenArray: IChildArray;
   selectChild: (t: string) => void;
 }
 
 export default class ChildPicker extends React.PureComponent<ChildPickerProps> {
   public render() {
-    const { selectedChild, childrenArray, selectChild, children } = this.props;
+    const { selectedChildId, childrenArray, selectChild, children } = this.props;
 
     const dropdown = (
       <Dropdown
-        data={Object.entries(childrenArray).map(([childId, childValue]) => ({ id: childId, ...childValue }))}
-        value={selectedChild}
+        data={childrenArray}
+        value={selectedChildId}
         onSelect={(child: string) => selectChild(child)}
         keyExtractor={item => item.id}
         renderItem={(item: IChild) => item.lastName + " " + item.firstName}

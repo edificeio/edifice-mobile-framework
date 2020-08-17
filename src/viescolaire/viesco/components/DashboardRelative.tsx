@@ -10,9 +10,9 @@ import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
 import { EmptyScreen } from "../../../ui/EmptyScreen";
 import { Text, TextBold } from "../../../ui/text";
 import { HomeworkItem } from "../../cdt/components/Items";
-import { DenseDevoirList } from "../../competences/components/Item";
 import ChildPicker from "../containers/ChildPicker";
 import { isHomeworkDone, getSubjectName, homeworkDetailsAdapter } from "../../utils/cdt";
+import { INavigationProps } from "../../../types";
 
 const styles = StyleSheet.create({
   dashboardPart: { paddingVertical: 8, paddingHorizontal: 15 },
@@ -48,11 +48,9 @@ const styles = StyleSheet.create({
 });
 
 type DashboardProps = {
-  children: any[];
   homeworks: any[];
   evaluations: any[];
-  selectChild: (child) => void;
-};
+} & INavigationProps;
 
 const IconButton = ({ icon, color, text, onPress }) => {
   return (
@@ -63,7 +61,7 @@ const IconButton = ({ icon, color, text, onPress }) => {
   );
 };
 
-export default class Dashboard extends React.PureComponent<any & DashboardProps> {
+export default class Dashboard extends React.PureComponent<DashboardProps> {
 
   private renderNavigationGrid() {
     return (
@@ -169,13 +167,13 @@ export default class Dashboard extends React.PureComponent<any & DashboardProps>
   }
 
   public render() {
-    const { homeworks, evaluations, childId } = this.props;
+    const { homeworks, evaluations } = this.props;
 
     return (
       <View style={{ flex: 1 }}>
         <ChildPicker>
           <TouchableOpacity
-            onPress={() => this.props.navigation.navigate("Declaration", { childId })}
+            onPress={() => this.props.navigation.navigate("Declaration")}
             style={styles.declareAbsenceButton}>
             <TextBold style={{ color: "#FFFFFF" }}>{I18n.t("viesco-declareAbsence")}</TextBold>
           </TouchableOpacity>
