@@ -19,7 +19,8 @@ import { ThunkDispatch } from "redux-thunk";
 import conversationThreadSelected from "../actions/threadSelected";
 import { selectSubject, clearSubject } from "../actions/selectSubject";
 import withViewTracking from "../../infra/tracker/withViewTracking";
-import { IConversationMessage } from "../reducers";
+import { IConversationMessage, IConversationThread } from "../reducers";
+import { getSessionInfo } from "../../App";
 
 interface INewThreadPageProps {
   remainingUsers: IUser[];
@@ -68,11 +69,11 @@ class NewThreadPage extends React.PureComponent<
 
   public componentDidMount() {
     this.props.loadVisibles();
-    // Setup form navigation params
+    // Setup from navigation params
     if (this.props.navigation.getParam('message')) {
       const message: IConversationMessage = this.props.navigation.getParam('message');
       const type: string = this.props.navigation.getParam('type', 'new');
-      // console.log("setup message", type, message, this.props);
+      const replyToAll: boolean = this.props.navigation.getParam('replyToAll');
       // Subject
       let subject: string | undefined = undefined;
       if (message.subject) {
@@ -85,11 +86,7 @@ class NewThreadPage extends React.PureComponent<
       subject && this.props.selectSubject && this.props.selectSubject(subject);
       // Receivers
       if (type === 'reply') {
-        // let allIds = message.to ? message.to : [];
-        // allIds.push(message.from);
-        // allIds = allIds.filter(id => id !== getSessionInfo().userId!);
-        // if (!allIds.length) allIds.push(getSessionInfo().userId!);
-        const allIds = [message.from];
+        const allIds =  replyToAll ? NewThreadPage.findReceivers2(message) : [message.from];
         const receivers: IUser[] = allIds ? (allIds as string[]).map(uid => ({
           userId: uid,
           displayName: (() => {
@@ -100,6 +97,23 @@ class NewThreadPage extends React.PureComponent<
         receivers.forEach(u => this.props.pickUser(u));
       }
     }
+  }
+
+  public static findReceivers2(
+    conversation: IConversationThread | IConversationMessage
+  ) {
+    // TODO : Duplicate of ThreadItem.findReceivers() ?
+    const to = new Set(
+      [
+        ...conversation.to,
+        ...(conversation.cc || []),
+        conversation.from
+      ].filter(el => el && el !== getSessionInfo().userId)
+    );
+    if (to.size === 0) {
+      return [getSessionInfo().userId];
+    }
+    return [...to];
   }
 
   public handleCreateThread() {
@@ -156,7 +170,6 @@ class NewThreadPage extends React.PureComponent<
 
 const NewThreadPageConnected = connect(
   (state: any) => {
-    // console.log(state);
     const subjectState = state[mailboxConfig.reducerName].subject;
     const usersState = state[mailboxConfig.reducerName].users;
     return {

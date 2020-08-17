@@ -241,7 +241,8 @@ export class ThreadPage extends React.PureComponent<
   public handleChangeReceivers = (lastMessage: IConversationMessage) => {
     this.props.navigation?.navigate('newThread', {
       type: 'reply',
-      message: lastMessage
+      message: lastMessage,
+      replyToAll: true
     })
   }
   /*
