@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, TextStyle, TouchableOpacity } from "react-native";
+import { View, TextStyle } from "react-native";
 import { NavigationScreenProp, NavigationActions} from "react-navigation";
 import { connect } from "react-redux";
 import I18n from "i18n-js";
@@ -18,11 +18,10 @@ import {
 } from "../actions/apiHelper";
 import { IConversationMessage, IConversationThread, IConversationMessageList } from "../reducers";
 import { standardNavScreenOptions, alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
-import { HeaderBackAction, HeaderIcon, HeaderAction } from "../../ui/headers/NewHeader";
+import { HeaderAction } from "../../ui/headers/NewHeader";
 import { getSessionInfo } from "../../App";
-import { RowAvatars } from "../../ui/avatars/RowAvatars";
 import { CommonStyles } from "../../styles/common/styles";
-import { FontWeight, Text } from "../../ui/text";
+import { FontWeight } from "../../ui/text";
 import deviceInfoModule from "react-native-device-info";
 import withViewTracking from "../../infra/tracker/withViewTracking";
 import { IconButton } from "../../ui/IconButton";
@@ -91,7 +90,6 @@ class ThreadPageContainer extends React.PureComponent<
   > {
 
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
-    const showDetails = navigation.getParam("showDetails", false);
     const threadInfo = navigation.getParam("threadInfo");
     const onTapReceivers = navigation.getParam("onTapReceivers");
     const onSelectThread = navigation.getParam("onSelectThread");
@@ -127,59 +125,50 @@ class ThreadPageContainer extends React.PureComponent<
       }, navigation);
     } else {
       return standardNavScreenOptions({
-        headerLeft: showDetails
-          ? null
-          : <HeaderAction
-              onPress={() => {
-                const parentThreadId = parentThread && parentThread.id;
-                parentThreadId && onSelectThread(parentThreadId);
-                navigation.dispatch(NavigationActions.back());
-              }}
-              name="back"
-            />,
-        headerRight: showDetails
-          ? null
-          : <View style={{flexDirection: "row", alignItems: "center"}}>
-              <View style={{ width: 1, height: "80%", backgroundColor: "#FFF" }} />
-              <HeaderAction
-                  customComponent={
-                    <View 
-                      style={{ 
-                        alignItems: "center",
-                        justifyContent: "center",
-                        width: 70,
-                        height: "100%"
-                      }}
-                    >
-                      <IconButton
-                        iconName="informations"
-                        iconSize={16}
-                        buttonStyle={{ height: 18, width: 18, borderRadius: undefined, backgroundColor: undefined }}
-                      />
-                      <LittleTitle smallSize italic>
-                        {I18n.t("seeDetails")}
-                      </LittleTitle>
-                    </View>
-                  }
-                  onPress={() => {
-                    //TODO move orchestration to thunk
-                    onTapReceivers && onTapReceivers(threadInfo);
-                    navigation.navigate("listReceivers");
+        headerLeft: 
+          <HeaderAction
+            onPress={() => {
+              const parentThreadId = parentThread && parentThread.id;
+              parentThreadId && onSelectThread(parentThreadId);
+              navigation.dispatch(NavigationActions.back());
+            }}
+            name="back"
+          />,
+        headerRight:
+          <View style={{flexDirection: "row", alignItems: "center"}}>
+            <View style={{ width: 1, height: "80%", backgroundColor: "#FFF" }} />
+            <HeaderAction
+              customComponent={
+                <View 
+                  style={{ 
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: 70,
+                    height: "100%"
                   }}
-                />
-            </View>,
-        headerTitle: threadInfo ?
-          showDetails ?
-            ThreadPageContainer.renderDetailsThreadHeader(threadInfo, navigation)
-            :
-            ThreadPageContainer.renderThreadHeader(threadInfo, navigation)
-          : <View><Text>{I18n.t("loading")}</Text></View>,
+                >
+                  <IconButton
+                    iconName="informations"
+                    iconSize={16}
+                    buttonStyle={{ height: 18, width: 18, borderRadius: undefined, backgroundColor: undefined }}
+                  />
+                  <LittleTitle smallSize italic>
+                    {I18n.t("seeDetails")}
+                  </LittleTitle>
+                </View>
+              }
+              onPress={() => {
+                //TODO move orchestration to thunk
+                onTapReceivers && onTapReceivers(threadInfo);
+                navigation.navigate("listReceivers");
+              }}
+              />
+          </View>,
+        headerTitle: threadInfo
+          ? ThreadPageContainer.renderThreadHeader(threadInfo, navigation)
+          : <LittleTitle smallSize>{I18n.t("loading")}</LittleTitle>,
         headerStyle: {
-          height: showDetails
-            ? deviceInfoModule.hasNotch()
-              ? 100 + 160 : 56 + 160
-            : deviceInfoModule.hasNotch()
-              ? 100 : 56
+          height: deviceInfoModule.hasNotch() ? 100 : 56
         },
         headerLeftContainerStyle: {
           alignItems: "flex-start"
@@ -222,45 +211,15 @@ class ThreadPageContainer extends React.PureComponent<
       : I18n.t("conversation-receiver");
 
     return (
-      <CenterPanel onPress={() => { navigation.setParams({ showDetails: true }); }}>
-          <LittleTitle numberOfLines={1} smallSize>
-            {threadInfo.subject}
-          </LittleTitle>
-          <LittleTitle smallSize italic>
-            {receiversText}
-          </LittleTitle>
+      <CenterPanel>
+        <LittleTitle numberOfLines={1} smallSize>
+          {threadInfo.subject}
+        </LittleTitle>
+        <LittleTitle smallSize italic>
+          {receiversText}
+        </LittleTitle>
       </CenterPanel>
     )
-  }
-
-  static renderDetailsThreadHeader(threadInfo: IConversationThread, navigation: NavigationScreenProp<{}>) {
-    const { images, names } = ThreadPageContainer.getAvatarsAndNamesSet(threadInfo);
-    return <View style={{
-          alignItems: "stretch",
-          width: "100%",
-          flex: 0,
-        }}>
-        <View style={{ flexDirection: "row", justifyContent: "center" }}>
-          <HeaderBackAction navigation={navigation} style={{ flex: 0 }}/>
-          <View style={{flex: 1, alignItems: "stretch"}}>
-            <CenterPanel onPress={() => navigation.setParams({ showDetails: false })}>
-              <LittleTitle numberOfLines={2}>
-                {threadInfo.subject}
-              </LittleTitle>
-            </CenterPanel>
-          </View>
-          <HeaderIcon name={null} />
-        </View>
-        <ContainerAvatars>
-          <RowAvatars
-            images={images}
-            onSlideIndex={slideIndex => {navigation.setParams({ slideIndex: slideIndex })}}
-          />
-          <Legend14 numberOfLines={2}>
-            {names[navigation.getParam("slideIndex", 0)]}
-          </Legend14>
-        </ContainerAvatars>
-      </View>
   }
 
   constructor(props: IThreadPageProps) {
@@ -305,7 +264,7 @@ const ThreadPageContainerConnected = connect(
 
 export default withViewTracking("conversation/thread")(ThreadPageContainerConnected);
 
-export const CenterPanel = style(TouchableOpacity)({
+export const CenterPanel = style.view({
   alignItems: "stretch",
   justifyContent: "center",
   paddingVertical: 5,
