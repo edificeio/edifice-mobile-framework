@@ -292,7 +292,7 @@ class ThreadInput extends React.PureComponent<
     // receiverNames.length >= 2;
     // iOS hack => does not display placeholder on update
 
-    if (showReplyHelperIfAvailable && !lastMessageMine && receiversIds.length > 2) {
+    if (showReplyHelperIfAvailable && !lastMessageMine && receiversIds.length > 1) {
       return <ContainerFooterBar>
         <SafeAreaView style={{ flexDirection: 'row' }}>
           <TouchableOpacity
