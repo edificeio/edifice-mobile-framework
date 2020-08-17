@@ -6,12 +6,18 @@ import { NavigationScreenProp } from "react-navigation";
 
 import { Loading } from "../../../ui";
 import { PageContainer } from "../../../ui/ContainerContent";
-import DatePicker from "../../../ui/DatePicker";
+import DateTimePicker from "../../../ui/DateTimePicker";
 import { EmptyScreen } from "../../../ui/EmptyScreen";
 import { Text, TextBold } from "../../../ui/text";
 import ChildPicker from "../../viesco/containers/ChildPicker";
 import { HomeworkItem, SessionItem } from "./Items";
-import { isHomeworkDone, getSubjectName, homeworkDetailsAdapter, sessionDetailsAdapter, getTeacherName } from "../../utils/cdt";
+import {
+  isHomeworkDone,
+  getSubjectName,
+  homeworkDetailsAdapter,
+  sessionDetailsAdapter,
+  getTeacherName,
+} from "../../utils/cdt";
 
 const style = StyleSheet.create({
   homeworkPart: { flex: 1, paddingBottom: 8, paddingHorizontal: 15 },
@@ -54,7 +60,6 @@ type HomeworkListProps = {
 };
 
 export default class HomeworkList extends React.PureComponent<HomeworkListProps, {}> {
-
   onRefreshHomeworks = () => {
     const startDateString = moment(this.props.startDate).format("YYYY-MM-DD");
     const endDateString = moment(this.props.endDate).format("YYYY-MM-DD");
@@ -91,7 +96,9 @@ export default class HomeworkList extends React.PureComponent<HomeworkListProps,
               </TextBold>
             ) : null}
             <HomeworkItem
-              onPress={() => this.props.navigation.navigate("HomeworkPage", homeworkDetailsAdapter(homework, this.props.subjects))}
+              onPress={() =>
+                this.props.navigation.navigate("HomeworkPage", homeworkDetailsAdapter(homework, this.props.subjects))
+              }
               disabled={this.props.navigation.state.params.user_type === "Relative"}
               checked={isHomeworkDone(homework)}
               title={getSubjectName(homework.subject_id, this.props.subjects)}
@@ -119,7 +126,12 @@ export default class HomeworkList extends React.PureComponent<HomeworkListProps,
               <TextBold>{moment(session.date).format("DD/MM/YY")}</TextBold>
             ) : null}
             <SessionItem
-              onPress={() => this.props.navigation.navigate("SessionPage", sessionDetailsAdapter(session, this.props.subjects, this.props.personnel))}
+              onPress={() =>
+                this.props.navigation.navigate(
+                  "SessionPage",
+                  sessionDetailsAdapter(session, this.props.subjects, this.props.personnel)
+                )
+              }
               matiere={getSubjectName(session.subject_id, this.props.subjects)}
               author={getTeacherName(session.teacher_id, this.props.personnel)}
             />
@@ -178,18 +190,20 @@ export default class HomeworkList extends React.PureComponent<HomeworkListProps,
         <View style={style.homeworkPart}>
           <View style={style.grid}>
             <Text>{I18n.t("viesco-from")}</Text>
-            <DatePicker
+            <DateTimePicker
+              mode="date"
               style={{ marginHorizontal: 12 }}
-              date={startDate}
+              value={startDate}
               maximumDate={endDate}
-              onChangeDate={onStartDateChange}
+              onChange={onStartDateChange}
             />
             <Text>{I18n.t("viesco-to")}</Text>
-            <DatePicker
+            <DateTimePicker
+              mode="date"
               style={{ marginHorizontal: 12 }}
-              date={endDate}
+              value={endDate}
               minimumDate={startDate}
-              onChangeDate={onEndDateChange}
+              onChange={onEndDateChange}
             />
           </View>
           <View style={style.grid}>
