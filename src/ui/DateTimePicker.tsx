@@ -66,7 +66,7 @@ const DateTimePickerIOS = ({
       <ModalBox isVisible={visible} onDismiss={() => toggleModal(false)}>
         <ModalContent style={{ width: 350 }}>
           <ModalContentBlock>
-            <ModalContentText>{I18n.t("cdt-pickDate")}</ModalContentText>
+            <ModalContentText>{mode == "time" ? I18n.t("pick-hour") : I18n.t("pick-date")}</ModalContentText>
           </ModalContentBlock>
 
           <View style={{ width: "100%", marginBottom: 35, paddingHorizontal: 20 }}>
@@ -132,7 +132,6 @@ const DateTimePickerAndroid = ({
       {visible && (
         <DateTimePicker
           mode={mode}
-          display="spinner"
           is24Hour={true}
           maximumDate={maximumDate && maximumDate.toDate()}
           minimumDate={minimumDate && minimumDate.toDate()}

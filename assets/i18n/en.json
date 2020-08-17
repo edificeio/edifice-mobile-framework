@@ -197,6 +197,8 @@
   "PasswordNewConfirm": "Password confirmed",
   "PasswordOld": "Old password",
   "Phone": "Mobile phone",
+  "pick-date": "Pick a date",
+  "pick-hour": "Pick an hour",
   "postCreateContentField": "Post content",
   "postCreatePlaceholder": "Write a message...",
   "postCreateTitleField": "Post title",
