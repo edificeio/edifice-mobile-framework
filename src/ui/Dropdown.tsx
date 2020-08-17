@@ -18,6 +18,7 @@ interface IDropdownProps {
   renderItem?: (item: any) => string;
   keyExtractor?: (item: any) => string;
   placeholder?: string;
+  title?: string;
 }
 
 const styles = StyleSheet.create({
@@ -42,7 +43,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const DropdownAndroid = ({ style, data, value, onSelect, renderItem, keyExtractor }: IDropdownProps) => {
+const DropdownAndroid = ({ title, style, data, value, onSelect, renderItem, keyExtractor }: IDropdownProps) => {
   const getItemRenderer = renderItem ? renderItem : item => item.toString();
   const getItemKeyExtractor = keyExtractor ? keyExtractor : item => item.toString();
 
@@ -52,6 +53,7 @@ const DropdownAndroid = ({ style, data, value, onSelect, renderItem, keyExtracto
         style={{
           color: CommonStyles.textColor,
         }}
+        prompt={title}
         selectedValue={value}
         onValueChange={(key, value) => onSelect(key as string)}>
         {data.map(item => (
@@ -62,7 +64,16 @@ const DropdownAndroid = ({ style, data, value, onSelect, renderItem, keyExtracto
   );
 };
 
-const DropdownIOS = ({ renderItem, keyExtractor, style, data, placeholder, value, onSelect }: IDropdownProps) => {
+const DropdownIOS = ({
+  title,
+  renderItem,
+  keyExtractor,
+  style,
+  data,
+  placeholder,
+  value,
+  onSelect,
+}: IDropdownProps) => {
   const getItemRenderer = renderItem ? renderItem : item => item.toString();
   const getItemKeyExtractor = keyExtractor ? keyExtractor : item => item.toString();
 
@@ -85,6 +96,11 @@ const DropdownIOS = ({ renderItem, keyExtractor, style, data, placeholder, value
       </TouchableWithoutFeedback>
       <ModalBox isVisible={visible} onDismiss={() => toggleModal(false)}>
         <ModalContent style={{ width: 350 }}>
+          {!!title && (
+            <ModalContentBlock>
+              <ModalContentText>{title}</ModalContentText>
+            </ModalContentBlock>
+          )}
           <View style={{ width: "100%", marginBottom: 35, paddingHorizontal: 20 }}>
             <Picker selectedValue={selected} onValueChange={(value, label) => selectValue(value as string)}>
               {data.map(item => (

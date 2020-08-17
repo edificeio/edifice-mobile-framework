@@ -5,6 +5,7 @@ import { View, StyleSheet } from "react-native";
 import { CommonStyles } from "../../../styles/common/styles";
 import { IChildArray, IChild } from "../state/children";
 import Dropdown from "../../../ui/Dropdown";
+import I18n from "i18n-js";
 
 const styles = StyleSheet.create({
   shadow: {
@@ -45,6 +46,7 @@ export default class ChildPicker extends React.PureComponent<ChildPickerProps> {
         data={childrenArray}
         value={selectedChildId}
         onSelect={(child: string) => selectChild(child)}
+        title={I18n.t("viesco-pickChild")}
         keyExtractor={item => item.id}
         renderItem={(item: IChild) => item.lastName + " " + item.firstName}
       />
