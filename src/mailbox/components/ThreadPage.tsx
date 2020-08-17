@@ -36,6 +36,7 @@ import { IConversationThread } from "../reducers/threadList";
 import ThreadInput from "./ThreadInput";
 import { Dispatch } from "redux";
 import { NavigationScreenProp } from "react-navigation";
+import { getSessionInfo } from "../../App";
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -209,17 +210,10 @@ export class ThreadPage extends React.PureComponent<
   }
 
   public renderMessageItem(message: IConversationMessage) {
-    // console.log("this.message.id", message.id, this.props.navigation?.getParam('selectedMessage'));
-    // console.log("messge:", message);
+    const isMine = message && message.from === getSessionInfo().userId;
     return (
       <TouchableOpacity
-        onLongPress={() => {
-          this.props.onSelectMessage && this.props.onSelectMessage(message);
-          // console.log("onLongPress", message);
-        }}
-        onPressIn={() => {
-          // console.log("onPressIn", message);
-        }}
+        onLongPress={() => isMine ? null : this.props.onSelectMessage && this.props.onSelectMessage(message)}
       >
         {/*!this.todaySeparatorAlreadyDisplayed &&
           message.date.isSameOrAfter(today(), "day") &&

@@ -270,12 +270,12 @@ class ThreadInput extends React.PureComponent<
 
   public render() {
     const { displayPlaceholder, thread, lastMessage, backMessage } = this.props;
-    const { selected, textMessage, attachments, sending, isHalfScreen, attachmentsHeightHalfScreen, showHistory } = this.state;
+    const { textMessage, attachments, sending, isHalfScreen, attachmentsHeightHalfScreen, showHistory, showReplyHelperIfAvailable } = this.state;
+    const lastMessageMine = lastMessage && lastMessage.from === getSessionInfo().userId;
     const attachmentsAdded = attachments.length > 0;
     const separatedBody = backMessage && separateMessageHistory(backMessage.body);
     const historyHtml = separatedBody && separatedBody.historyHtml;
     const messageHtml = separatedBody && separatedBody.messageHtml;
-    const halfDeviceHeight = Dimensions.get("window").height / 2;
     const receiversIds = lastMessage
       ? ThreadInput.findReceivers2(lastMessage)
       : [];
@@ -292,7 +292,7 @@ class ThreadInput extends React.PureComponent<
     // receiverNames.length >= 2;
     // iOS hack => does not display placeholder on update
 
-    if (this.state.showReplyHelperIfAvailable && lastMessage && receiversIds.length > 2) {
+    if (showReplyHelperIfAvailable && !lastMessageMine && receiversIds.length > 2) {
       return <ContainerFooterBar>
         <SafeAreaView style={{ flexDirection: 'row' }}>
           <TouchableOpacity
