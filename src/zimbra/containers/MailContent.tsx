@@ -1,6 +1,7 @@
 import I18n from "i18n-js";
 import * as React from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import Toast from "react-native-tiny-toast";
 import { NavigationScreenProp, NavigationActions } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -67,6 +68,17 @@ class MailContentContainer extends React.PureComponent<any, any> {
     });
   };
 
+  mailMoved = () => {
+    const { navigation } = this.props;
+    navigation.state.params.onGoBack();
+    navigation.navigate("inbox", { key: "inbox", folderName: undefined });
+    Toast.show("Message déplacé", {
+      position: Toast.position.BOTTOM,
+      mask: false,
+      containerStyle: { width: "95%", backgroundColor: "black" },
+    });
+  };
+
   markAsRead = () => this.props.toggleRead([this.props.mail.id], false);
 
   move = () => this.props.moveToInbox([this.props.mail.id]);
@@ -116,7 +128,7 @@ class MailContentContainer extends React.PureComponent<any, any> {
           </HeaderComponent>
           <MailContent {...this.props} />
         </PageContainer>
-        <MoveModal mail={mail} show={showModal} closeModal={this.closeModal} />
+        <MoveModal mail={mail} show={showModal} closeModal={this.closeModal} successCallback={this.mailMoved} />
         <MailContentMenu onClickOutside={this.showMenu} show={showMenu} data={menuData} />
       </>
     );

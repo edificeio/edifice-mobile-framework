@@ -13,6 +13,7 @@ type MoveToFolderModalProps = {
   closeModal: () => any;
   moveToFolder: (ids: string[], folder: string) => any;
   moveToInbox: (ids: string[]) => any;
+  successCallback: () => any;
 };
 
 type MoveToFolderModalState = {
@@ -34,12 +35,13 @@ class MoveToFolderModal extends React.Component<MoveToFolderModalProps, MoveToFo
   };
 
   confirm = () => {
-    const { moveToFolder, moveToInbox, mail } = this.props;
+    const { moveToFolder, moveToInbox, mail, successCallback } = this.props;
     const { selectedFolder } = this.state;
     this.props.closeModal();
     if (!selectedFolder) return;
     else if (selectedFolder === "inbox") moveToInbox([mail.id]);
     else moveToFolder([mail.id], selectedFolder);
+    successCallback();
   };
 
   public render() {
