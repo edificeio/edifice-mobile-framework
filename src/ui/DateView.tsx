@@ -1,13 +1,14 @@
 import style from "glamorous-native";
 import * as React from "react";
 import {CommonStyles} from "../styles/common/styles";
-import {getTimeToShortStr, getTimeToStr, sameDay} from "../utils/date";
+import {getTimeToShortStr, getTimeToStr } from "../utils/date";
 import {Paragraph} from "./Typography";
 import {layoutSize} from "../styles/common/layoutSize";
 import {ViewStyle} from "react-native";
 
 const ViewDate = style.view({
         alignItems: "center",
+        height: 20
     },
     ({min}): ViewStyle => ({
         marginBottom: min ? -2 : 4,
