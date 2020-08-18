@@ -49,6 +49,7 @@ export interface IThreadPageDataProps {
   headerHeight?: number; // header height, really ?
   backMessage?: IConversationMessage;
   sendingType: string;
+  messageDraft?: string;
 }
 
 export interface IThreadPageEventProps {
@@ -127,7 +128,8 @@ export class ThreadPage extends React.PureComponent<
       onGetOlder,
       threadInfo,
       messages,
-      headerHeight
+      headerHeight,
+      messageDraft
     } = this.props;
     const { fetching, isDimmed } = this.state;
     const messagesData = messages && messages.map(message => {
@@ -198,9 +200,9 @@ export class ThreadPage extends React.PureComponent<
           }
           <ThreadInput
             emptyThread={!messages.length}
+            messageDraft={messageDraft}
             displayPlaceholder={!isFetchingFirst}
             onReceiversTap={this.handleTapReceivers}
-            onChangeReceivers={this.handleChangeReceivers}
             onDimBackground={dim => this.setState({ isDimmed: dim })}
             {...this.props}
           />
@@ -237,13 +239,6 @@ export class ThreadPage extends React.PureComponent<
     //TODO move orchestration to thunk
     this.props.onTapReceiversFromThread && this.props.onTapReceiversFromThread(thread);
     this.props.navigation.navigate("listReceivers");
-  }
-  public handleChangeReceivers = (lastMessage: IConversationMessage) => {
-    this.props.navigation?.navigate('newThread', {
-      type: 'reply',
-      message: lastMessage,
-      replyToAll: true
-    })
   }
   /*
   TODO : Dead code in old `conversation` module. So what to do this time ?

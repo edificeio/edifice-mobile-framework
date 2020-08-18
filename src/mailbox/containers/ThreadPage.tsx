@@ -92,7 +92,6 @@ class ThreadPageContainer extends React.PureComponent<
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
     const threadInfo = navigation.getParam("threadInfo");
     const onTapReceivers = navigation.getParam("onTapReceivers");
-    const onSelectThread = navigation.getParam("onSelectThread");
     const selectedMessage: IConversationMessage | undefined = navigation.getParam("selectedMessage");
     const parentThread = navigation.getParam('parentThread');
     if (selectedMessage) {
@@ -128,8 +127,6 @@ class ThreadPageContainer extends React.PureComponent<
         headerLeft: 
           <HeaderAction
             onPress={() => {
-              const parentThreadId = parentThread && parentThread.id;
-              parentThreadId && onSelectThread(parentThreadId);
               navigation.dispatch(NavigationActions.back());
             }}
             name="back"
@@ -241,9 +238,18 @@ class ThreadPageContainer extends React.PureComponent<
     }
   }
 
+  componentWillUnmount() {
+    const { navigation } = this.props;
+    const onSelectThread = navigation?.getParam("onSelectThread");
+    const parentThread = navigation?.getParam('parentThread');
+    const parentThreadId = parentThread && parentThread.id;
+    parentThreadId && onSelectThread(parentThreadId);
+  }
+
   public render() {
     const backMessage = this.props.navigation?.getParam('message');
     const sendingType = this.props.navigation?.getParam('type', 'new');
+    const messageDraft = this.props.navigation?.getParam('draft');
     return (
       <ThreadPage
         {...this.props}
@@ -252,6 +258,7 @@ class ThreadPageContainer extends React.PureComponent<
         }}
         backMessage={backMessage}
         sendingType={sendingType}
+        messageDraft={messageDraft}
       />
     );
   }

@@ -87,6 +87,7 @@ class ThreadInput extends React.PureComponent<
     onDimBackground: (dim: boolean) => void;
     backMessage?: IConversationMessage;
     sendingType: string;
+    messageDraft?: string;
     navigation?: NavigationScreenProp<NavigationState>
   },
   {
@@ -264,8 +265,13 @@ class ThreadInput extends React.PureComponent<
     attachmentsAdded ? onDimBackground(true) : onDimBackground(false);
   }
 
+  componentDidMount()  {
+    const { messageDraft } = this.props;
+    messageDraft ? this.setState({ textMessage: messageDraft }) : null;
+  }
+
   public render() {
-    const { displayPlaceholder, thread, lastMessage, backMessage } = this.props;
+    const { displayPlaceholder, thread, lastMessage, backMessage, threadInfo } = this.props;
     const { textMessage, attachments, sending, isHalfScreen, attachmentsHeightHalfScreen, showHistory, showReplyHelperIfAvailable } = this.state;
     const lastMessageMine = lastMessage && lastMessage.from === getSessionInfo().userId;
     const attachmentsAdded = attachments.length > 0;
@@ -282,7 +288,6 @@ class ThreadInput extends React.PureComponent<
       : thread.displayNames
         .filter(dN => receiversIds.indexOf(dN[0]) > -1)
         .map(dN => dN[1]);
-    const showReceivers = true
 
     if (showReplyHelperIfAvailable && !lastMessageMine && receiversIds.length > 1) {
       return <ContainerFooterBar>
@@ -292,7 +297,8 @@ class ThreadInput extends React.PureComponent<
             onPress={() => {
               this.props.navigation?.navigate('newThread', {
                 type: 'reply',
-                message: lastMessage
+                message: lastMessage,
+                parentThread: threadInfo
               })
               Trackers.trackEvent("Conversation", "REPLY TO ONE");
             }}>
@@ -327,14 +333,23 @@ class ThreadInput extends React.PureComponent<
         flex: 0,
         maxHeight: "75%"
       }}>
-        <ThreadInputReceivers
-          names={receiverNames}
-          show={showReceivers}
-          onPress={() => {
-            this.props.onChangeReceivers(lastMessage || thread);
-            Trackers.trackEvent("Conversation", "CHANGE RECEIVERS");
-          }}
-        />
+        {receiverNames && receiverNames.length > 0
+        ? <ThreadInputReceivers
+            show
+            names={receiverNames}
+            onPress={() => {
+              this.props.navigation?.navigate('newThread', {
+                type: 'reply',
+                message: (lastMessage || thread) as IConversationMessage,
+                replyToAll: true,
+                draft: textMessage,
+                parentThread: threadInfo
+              })
+              Trackers.trackEvent("Conversation", "CHANGE RECEIVERS");
+            }}
+          />
+        : null
+        }
         <ContainerFooterBar>
           <ContainerInput>
             {displayPlaceholder &&
