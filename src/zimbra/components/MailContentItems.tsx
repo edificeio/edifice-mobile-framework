@@ -2,11 +2,12 @@ import style from "glamorous-native";
 import I18n from "i18n-js";
 import moment from "moment";
 import * as React from "react";
-import { View, Dimensions, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 
 import { downloadFile } from "../../infra/actions/downloadHelper";
-import { Icon, ButtonIconText } from "../../ui";
+import { Icon } from "../../ui";
 import { BadgeAvatar } from "../../ui/BadgeAvatar";
+import { ButtonIcon } from "../../ui/ButtonIconText";
 import { Header, CenterPanel, LeftPanel } from "../../ui/ContainerContent";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { Text, TextBold } from "../../ui/text";
@@ -101,14 +102,21 @@ export const HeaderMail = ({ mailInfos }) => {
 
 export const FooterButton = ({ icon, text, onPress }) => {
   return (
-    <ButtonIconText
-      name={icon}
-      onPress={onPress}
-      style={{ backgroundColor: "white" }}
-      color="black"
-      colorText="#AFAFAF">
-      {text}
-    </ButtonIconText>
+    <View
+      style={{
+        alignItems: "center",
+        justifyContent: "space-evenly",
+        marginBottom: 10,
+      }}>
+      <ButtonIcon
+        name={icon}
+        onPress={onPress}
+        style={[{ backgroundColor: "white" }, styles.shadow]}
+        color="black"
+        colorText="#F4F7F9"
+      />
+      <Text>{text}</Text>
+    </View>
   );
 };
 
@@ -176,10 +184,7 @@ export const RenderPJs = ({ attachments, mailId }) => {
 
 const styles = StyleSheet.create({
   containerMail: {
-    marginTop: 5,
-    marginHorizontal: 5,
-    maxWidth: Dimensions.get("window").width - 10,
-    padding: 10,
+    padding: 15,
     backgroundColor: "white",
   },
   gridButton: {
@@ -211,4 +216,12 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   greyColor: { color: "#AFAFAF" },
+  shadow: {
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.8,
+    marginBottom: 10,
+  },
 });

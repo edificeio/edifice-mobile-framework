@@ -21,9 +21,11 @@ export default class MailContent extends React.PureComponent<any, any> {
 
   private mailContent() {
     return (
-      <ScrollView style={styles.containerMail}>
-        <HtmlContentView html={this.props.mail.body} />
-      </ScrollView>
+      <View style={styles.shadowContainer}>
+        <ScrollView style={styles.containerMail}>
+          <HtmlContentView html={this.props.mail.body} />
+        </ScrollView>
+      </View>
     );
   }
 
@@ -44,7 +46,9 @@ export default class MailContent extends React.PureComponent<any, any> {
           <View style={{ flex: 1 }}>
             <View style={styles.topGreenBar} />
             {this.props.mail.id && this.mailHeader()}
-            {this.props.mail.hasAttachment && <RenderPJs attachments={this.props.mail.attachments} mailId={this.props.mail.id} />}
+            {this.props.mail.hasAttachment && (
+              <RenderPJs attachments={this.props.mail.attachments} mailId={this.props.mail.id} />
+            )}
             {this.props.mail.body !== undefined && this.mailContent()}
             {this.mailFooter()}
           </View>
@@ -60,13 +64,25 @@ const styles = StyleSheet.create({
     height: 12,
     backgroundColor: "#46BFAF",
   },
+  shadowContainer: {
+    overflow: "hidden",
+    paddingBottom: 15,
+    flexGrow: 1,
+    maxHeight: "68%",
+    marginTop: 5,
+  },
   containerMail: {
     flexGrow: 1,
-    marginTop: 5,
-    marginHorizontal: 8,
-    maxWidth: Dimensions.get("window").width - 10,
-    maxHeight: "65%",
-    padding: 10,
+    padding: 20,
+    backgroundColor: "#FFF",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+    elevation: 6,
   },
   containerFooter: {
     flexDirection: "row",
