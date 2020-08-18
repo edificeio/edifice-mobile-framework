@@ -1,26 +1,89 @@
+import moment from "moment";
 import * as React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
 import { getSessionInfo } from "../../../App";
+import { INavigationProps } from "../../../types";
 import { getSelectedStructure } from "../../viesco/state/structure";
-import { fetchCoursesAction, fetchCoursesRegisterAction } from "../actions/teacherCourses";
-import TeacherCallList from "../components/TeacherCallList";
-import { getCoursesListState, getCoursesRegisterState } from "../state/teacherCourses";
+import { fetchCoursesRegisterAction } from "../actions/teacherCourseRegister";
+import { fetchCoursesAction } from "../actions/teacherCourses";
+import TeacherCallListComponent from "../components/TeacherCallList";
+import { getCoursesRegisterState } from "../state/teacherCourseRegister";
+import { getCoursesListState } from "../state/teacherCourses";
 
-class CallList extends React.PureComponent<any> {
-  public render() {
-    return <TeacherCallList {...this.props} />;
+type ICallListContainerProps = {
+  courses: any[];
+  registerId: string;
+  teacherId: string;
+  structureId: string;
+  isFetching: boolean;
+  fetchCourses: (teacherId: string, structureId: string, startDate: string, endDate: string) => void;
+  fetchRegisterId: (any: any) => void;
+} & INavigationProps;
+
+class TeacherCallList extends React.PureComponent<ICallListContainerProps> {
+  componentDidMount() {
+    this.fetchTodayCourses();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.structureId !== this.props.structureId) {
+      this.fetchTodayCourses();
+    }
+  }
+
+  fetchTodayCourses = () => {
+    const today = moment().format("YYYY-MM-DD");
+    this.props.fetchCourses(this.props.teacherId, this.props.structureId, today, today);
+  };
+
+  openCall = course => {
+    let courseRegisterInfos = {
+      id: course.id,
+      classroom: course.roomLabels,
+      grade: course.classes,
+      registerId: course.registerId,
+    };
+
+    if (course.registerId === null) {
+      const courseData = JSON.stringify({
+        course_id: course.id,
+        structure_id: course.structureId,
+        start_date: moment(course.startDate).format("YYYY-MM-DD HH:mm:ss"),
+        end_date: moment(course.endDate).format("YYYY-MM-DD HH:mm:ss"),
+        subject_id: course.subjectId,
+        groups: course.groups,
+        classes: course.classes,
+        split_slot: true,
+      });
+
+      this.props.fetchRegisterId(courseData);
+    }
+
+    this.props.navigation.navigate("CallSheetPage", { courseInfos: courseRegisterInfos });
+  };
+
+  render() {
+    return (
+      <TeacherCallListComponent
+        onCoursePress={this.openCall}
+        courseList={this.props.courses}
+        isFetching={this.props.isFetching}
+      />
+    );
   }
 }
 
 const mapStateToProps: (state: any) => any = state => {
+  const coursesData = getCoursesListState(state);
+  const registerData = getCoursesRegisterState(state);
+
   return {
-    courses: getCoursesListState(state),
-    register: getCoursesRegisterState(state),
-    teacher_id: getSessionInfo().id,
-    structure_id:
-      getSelectedStructure(state) !== undefined ? getSelectedStructure(state) : getSessionInfo().structures[0],
+    courses: coursesData.data,
+    teacherId: getSessionInfo().id,
+    structureId: getSelectedStructure(state),
+    isFetching: coursesData.isFetching || registerData.isFetching,
   };
 };
 
@@ -31,4 +94,4 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(CallList);
+export default connect(mapStateToProps, mapDispatchToProps)(TeacherCallList);

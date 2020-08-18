@@ -10,6 +10,7 @@ import { Text } from "../../../ui/text";
 import CallList from "../../presences/containers/TeacherCallList";
 import { BottomColoredItem } from "../components/Item";
 import StructurePicker from "../containers/StructurePicker";
+import { ScrollView } from "react-native-gesture-handler";
 
 const style = StyleSheet.create({
   dashboardPart: { paddingVertical: 8, paddingHorizontal: 15 },
@@ -23,6 +24,7 @@ const style = StyleSheet.create({
     shadowOpacity: CommonStyles.shadowOpacity,
     shadowRadius: CommonStyles.shadowRadius,
     marginBottom: 10,
+    height: 400,
   },
   grid: {
     flexDirection: "row",
@@ -62,38 +64,34 @@ const ImageButton = ({ imageSrc, color, text, onPress }) => {
   );
 };
 
-export default class Dashboard extends React.PureComponent<any> {
-  private renderNavigationGrid() {
-    return (
-      <View style={style.grid}>
-        <View style={style.gridButtonContainer}>
-          <ImageButton
-            onPress={() => true}
-            text={I18n.t("viesco-timetable")}
-            color="#162EAE"
-            imageSrc={require("../../../../assets/viesco/edt.png")} />
-        </View>
-        <View style={style.gridButtonContainer}>
-          <ImageButton
-            onPress={() => true}
-            text={I18n.t("Homework")}
-            color="#2BAB6F"
-            imageSrc={require("../../../../assets/viesco/cdt.png")} />
+export default props => (
+  <PageContainer>
+    <ConnectionTrackingBar />
+    <ScrollView overScrollMode="never" bounces={false}>
+      <View style={style.coursesPart}>
+        <StructurePicker />
+        <CallList {...props} />
+      </View>
+      <View style={style.dashboardPart}>
+        <View style={style.grid}>
+          <View style={style.gridButtonContainer}>
+            <ImageButton
+              onPress={() => true}
+              text={I18n.t("viesco-timetable")}
+              color="#162EAE"
+              imageSrc={require("../../../../assets/viesco/edt.png")}
+            />
+          </View>
+          <View style={style.gridButtonContainer}>
+            <ImageButton
+              onPress={() => true}
+              text={I18n.t("Homework")}
+              color="#2BAB6F"
+              imageSrc={require("../../../../assets/viesco/cdt.png")}
+            />
+          </View>
         </View>
       </View>
-    );
-  }
-
-  public render() {
-    return (
-      <PageContainer>
-        <ConnectionTrackingBar />
-        <View style={style.coursesPart}>
-          <StructurePicker />
-          <CallList {...this.props} />
-        </View>
-        <View style={style.dashboardPart}>{this.renderNavigationGrid()}</View>
-      </PageContainer>
-    );
-  }
-}
+    </ScrollView>
+  </PageContainer>
+);
