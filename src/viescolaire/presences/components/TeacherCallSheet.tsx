@@ -12,7 +12,6 @@ import { LeftColoredItem } from "../../viesco/components/Item";
 import StudentRow from "./StudentRow";
 
 const style = StyleSheet.create({
-  scrollView: { flex: 1, minHeight: 300, paddingBottom: 125 },
   validateButton: {
     alignSelf: "center",
     width: "40%",
@@ -69,7 +68,6 @@ export default class CallSheet extends React.PureComponent<any, any> {
       <>
         {studentsList.length > 0 ? (
           <ScrollView
-            contentContainerStyle={style.scrollView}
             refreshControl={
               <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefreshStudentsList} />
             }>
@@ -144,10 +142,10 @@ export default class CallSheet extends React.PureComponent<any, any> {
 
   renderCall = () => {
     return (
-      <View>
+      <>
         {this.ClassesInfos()}
         {this.StudentsList()}
-      </View>
+      </>
     );
   };
 
