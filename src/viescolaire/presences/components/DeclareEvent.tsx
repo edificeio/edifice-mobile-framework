@@ -1,4 +1,3 @@
-import DateTimePicker from "@react-native-community/datetimepicker";
 import I18n from "i18n-js";
 import moment from "moment";
 import * as React from "react";
@@ -11,14 +10,13 @@ import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenO
 import { Icon } from "../../../ui";
 import ButtonOk from "../../../ui/ConfirmDialog/buttonOk";
 import { PageContainer } from "../../../ui/ContainerContent";
-import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
+import DateTimePicker from "../../../ui/DateTimePicker";
 import { Text, TextBold, Label } from "../../../ui/Typography";
 import { HeaderBackAction } from "../../../ui/headers/NewHeader";
 import { LeftColoredItem } from "../../viesco/components/Item";
 import { postLateEvent, updateLateEvent, postLeavingEvent, deleteEvent } from "../actions/events";
 
 type DeclarationState = {
-  showPicker: boolean;
   date: Date;
   reason: string;
 };
@@ -38,7 +36,7 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
       {
         title: navigation.getParam("title"),
         headerLeft: <HeaderBackAction navigation={navigation} />,
-        headerRight: <View/>,
+        headerRight: <View />,
         headerStyle: {
           backgroundColor: navigation.getParam("color"),
         },
@@ -51,15 +49,12 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
     const { event } = props.navigation.state.params;
     if (event === undefined) {
       this.state = {
-        showPicker: false,
         date: new Date(),
         reason: "",
       };
     } else {
-      if (event.type_id === 2)
-        this.state = { date: moment(event.end_date).toDate(), reason: event.comment, showPicker: false };
-      else if (event.type_id === 3)
-        this.state = { date: moment(event.start_date).toDate(), reason: event.comment, showPicker: false };
+      if (event.type_id === 2) this.state = { date: moment(event.end_date).toDate(), reason: event.comment };
+      else if (event.type_id === 3) this.state = { date: moment(event.start_date).toDate(), reason: event.comment };
     }
   }
 
@@ -75,7 +70,6 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
     const { date } = this.state;
     const currentDate = selectedDate || date;
     this.setState({
-      showPicker: false,
       date: currentDate,
     });
   };
@@ -97,8 +91,7 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
       if (event === undefined) {
         // deleting absence when lateness is declared
         const absence = student.events.find(i => i.type_id === 1);
-        if (absence !== undefined)
-          deleteEvent(absence);
+        if (absence !== undefined) deleteEvent(absence);
         declareLateness(student.id, momentDate, reason, registerId, startDateMoment);
       } else {
         updateLateness(student.id, momentDate, reason, event.id, registerId, startDateMoment);
@@ -148,7 +141,7 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
   }
 
   public render() {
-    const { showPicker, date } = this.state;
+    const { date } = this.state;
     const { type, event, student, startDate, endDate } = this.props.navigation.state.params;
     const { mainColor, lightColor, mainText, inputLabel } = this.getSpecificProperties(type);
     const startDateString = moment(startDate).format("H:mm");
@@ -156,25 +149,29 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
     return (
       <PageContainer>
         <KeyboardAvoidingView style={[style.container]} behavior={Platform.OS === "ios" ? "padding" : undefined}>
-          {showPicker && <DateTimePicker value={date} mode="time" display="spinner" onChange={this.onTimeChange} />}
           <LeftColoredItem color={mainColor} style={style.recapHeader}>
-            <Text>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Icon color="grey" size={12} name="access_time" />
-              <Text>
-                {" "}
-                {startDateString} - {endDateString}{" "}
+              <Text style={{ marginHorizontal: 5 }}>
+                {startDateString} - {endDateString}
               </Text>
               <TextBold>{student.name}</TextBold>
-            </Text>
+            </View>
           </LeftColoredItem>
           <Text style={[style.underlinedText, { borderBottomColor: mainColor, color: mainColor }]}>{mainText}</Text>
-          <TouchableOpacity onPress={() => this.setState({ showPicker: true })}>
-            <View style={[style.timeView, { borderColor: lightColor }]}>
-              <Text style={{ fontSize: 55, paddingVertical: 50, textDecorationLine: "underline" }}>
-                {date.getHours()} : {(date.getMinutes() < 10 ? "0" : "") + date.getMinutes()}
-              </Text>
-            </View>
-          </TouchableOpacity>
+          <DateTimePicker
+            value={moment(date)}
+            mode="time"
+            onChange={this.onTimeChange}
+            renderDate={date => (
+              <View style={[style.timeView, { borderColor: lightColor }]}>
+                <Text style={{ fontSize: 55, paddingVertical: 50, textDecorationLine: "underline" }}>
+                  {date.format("HH : mm")}
+                </Text>
+              </View>
+            )}
+          />
+
           <View style={style.inputContainer}>
             <Label style={{ fontSize: 12 }}>{inputLabel}</Label>
             <TextInput
@@ -186,7 +183,11 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
           </View>
           <View style={{ flexDirection: "row", justifyContent: "center", flexWrap: "nowrap" }}>
             {event !== undefined && <ButtonOk label={I18n.t("delete")} onPress={this.onCancel} />}
-            <ButtonOk disabled={moment(this.state.date).isBefore(startDate) || moment(this.state.date).isAfter(endDate)} label={I18n.t("viesco-confirm")} onPress={this.onSubmit} />
+            <ButtonOk
+              disabled={moment(this.state.date).isBefore(startDate) || moment(this.state.date).isAfter(endDate)}
+              label={I18n.t("viesco-confirm")}
+              onPress={this.onSubmit}
+            />
           </View>
         </KeyboardAvoidingView>
       </PageContainer>
