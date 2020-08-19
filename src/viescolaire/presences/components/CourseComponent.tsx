@@ -21,10 +21,10 @@ const styles = StyleSheet.create({
   itemContent: { flex: 1, padding: 15, justifyContent: "space-evenly" },
 });
 
-export default ({ item, onPress, isCourseNow }) => (
+export default ({ item, onPress, isCourseNow, isCourseEditable }) => (
   <BottomColoredItem
     shadow={isCourseNow}
-    disabled={!isCourseNow}
+    disabled={!isCourseEditable}
     onPress={onPress}
     style={[styles.itemContainer, { opacity: isCourseNow ? 1 : 0.4 }]}
     color="#FFB600">

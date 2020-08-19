@@ -35,8 +35,16 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
   private Carousel = () => {
     const getCourseCallItem = item => {
       const isCourseNow = moment().isBetween(moment(item.startDate), moment(item.endDate));
+      const isCourseEditable = !moment(item.startDate).isAfter(moment());
 
-      return <CourseComponent onPress={() => onCoursePress(item)} item={item} isCourseNow={isCourseNow} />;
+      return (
+        <CourseComponent
+          onPress={() => onCoursePress(item)}
+          item={item}
+          isCourseEditable={isCourseEditable}
+          isCourseNow={isCourseNow}
+        />
+      );
     };
 
     const { courseList, onCoursePress } = this.props;
