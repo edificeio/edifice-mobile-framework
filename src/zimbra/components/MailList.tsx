@@ -82,6 +82,28 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     this.setState(prevState => ({ mails: { ...prevState.mails, [prevState.mails[indexMail]]: mailInfos } }));
   };
 
+  renderMailContent = mailInfos => {
+    if (mailInfos.state === "DRAFT" && mailInfos.systemFolder === "DRAFT") {
+      this.props.navigation.navigate("newMail", {
+        mailId: mailInfos.id,
+        onGoBack: () => {
+          this.refreshMailList();
+          this.props.fetchCount(this.props.folders.data.map(f => f.id));
+        },
+      });
+    } else {
+      this.props.navigation.navigate("mailDetail", {
+        mailId: mailInfos.id,
+        subject: mailInfos.subject,
+        onGoBack: () => {
+          this.refreshMailList();
+          this.props.fetchCount(this.props.folders.data.map(f => f.id));
+        },
+        isTrashed: this.props.isTrashed,
+      });
+    }
+  };
+
   private renderMailItemInfos(mailInfos) {
     let contact = ["", ""];
     if (mailInfos.systemFolder === "INBOX") contact = mailInfos.displayNames.find(item => item[0] === mailInfos.from);
@@ -90,15 +112,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     return (
       <TouchableOpacity
         onPress={() => {
-          this.props.navigation.navigate("mailDetail", {
-            mailId: mailInfos.id,
-            subject: mailInfos.subject,
-            onGoBack: () => {
-              this.refreshMailList();
-              this.props.fetchCount(this.props.folders.data.map(f => f.id));
-            },
-            isTrashed: this.props.isTrashed,
-          });
+          this.renderMailContent(mailInfos);
         }}
         // onLongPress={() => this.selectItem(mailInfos)}
       >

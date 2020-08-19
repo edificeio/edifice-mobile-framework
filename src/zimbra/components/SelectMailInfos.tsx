@@ -64,17 +64,17 @@ const styles = StyleSheet.create({
 const rolesDotColor = role => {
   switch (role) {
     case "Student":
-      return "#FF8500";
+      return CommonStyles.profileTypes.Student;
     case "Relative":
-      return "#4BAFD5";
+      return CommonStyles.profileTypes.Relative;
     case "Teacher":
-      return "#46BFAF";
+      return CommonStyles.profileTypes.Teacher;
     case "Personel":
-      return "#763294";
+      return CommonStyles.profileTypes.Personnel;
     case "PrincTeacherGroup":
       return "#8C939E";
     case "Guest":
-      return "#B930A2";
+      return CommonStyles.profileTypes.Guest;
     default:
       return "white";
   }

@@ -1,15 +1,5 @@
 import { newMailService } from "../service/newMail";
 
-export function deleteMessageAction(mailId: string) {
-  return async () => {
-    try {
-      await newMailService.deleteMessage(mailId);
-    } catch (errmsg) {
-      console.error("ERROR delete mail: ", errmsg);
-    }
-  };
-}
-
 export function sendMailAction(mailDatas) {
   return async () => {
     try {
@@ -26,6 +16,16 @@ export function makeDraftMailAction(mailDatas) {
       await newMailService.makeDraftMail(mailDatas);
     } catch (errmsg) {
       console.error("ERROR make draft: ", errmsg);
+    }
+  };
+}
+
+export function updateDraftMailAction(mailId: string, mailDatas) {
+  return async () => {
+    try {
+      await newMailService.updateDraftMail(mailId, mailDatas);
+    } catch (errmsg) {
+      console.error("ERROR update draft: ", errmsg);
     }
   };
 }

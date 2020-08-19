@@ -1,9 +1,9 @@
 import I18n from "i18n-js";
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Toast from "react-native-tiny-toast";
-import { NavigationScreenProp } from "react-navigation";
+import { NavigationScreenProp, NavigationActions } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
@@ -13,9 +13,12 @@ import { Icon } from "../../ui";
 import { PageContainer } from "../../ui/ContainerContent";
 import { Header as HeaderComponent } from "../../ui/headers/Header";
 import { HeaderAction } from "../../ui/headers/NewHeader";
-import { sendMailAction, makeDraftMailAction, deleteMessageAction } from "../actions/newMail";
+import { trashMailsAction } from "../actions/mail";
+import { fetchMailContentAction } from "../actions/mailContent";
+import { sendMailAction, makeDraftMailAction, updateDraftMailAction } from "../actions/newMail";
 import NewMailComponent from "../components/NewMail";
 import { newMailService, ISearchUsers, IUser } from "../service/newMail";
+import { getMailContentState, IMail } from "../state/mailContent";
 
 type StateTypes = {
   inputName: string;
@@ -32,13 +35,16 @@ interface ICreateMailEventProps {
   sendMail: (mailDatas: object) => void;
   searchUsers: (search: string) => void;
   makeDraft: (mailDatas: object) => void;
-  deleteMessage: (mailId: string) => void;
+  updateDraft: (mailId: string, mailDatas: object) => void;
+  trashMessage: (mailId: string[]) => void;
+  fetchMailContentAction: (mailId: string) => void;
 }
 
 interface ICreateMailOtherProps {
   navigation: any;
   remainingUsers: IUser[];
   pickedUsers: IUser[];
+  mail: IMail;
 }
 
 interface ICreateMailState {
@@ -60,6 +66,15 @@ type NewMailContainerProps = ICreateMailEventProps & ICreateMailOtherProps;
 type NewMailContainerState = ICreateMailState;
 
 class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreateMailState> {
+  defaultState = {
+    to: [],
+    cc: [],
+    bcc: [],
+    subject: "",
+    body: "",
+    attachments: [],
+  };
+
   constructor(props) {
     super(props);
 
@@ -76,6 +91,18 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       inputName: "",
     };
   }
+
+  componentDidMount = () => {
+    if (this.props.navigation.state.params.mailId !== undefined) {
+      this.props.fetchMailContentAction(this.props.navigation.state.params.mailId);
+    } else {
+      this.setState(this.defaultState);
+    }
+  };
+
+  updateStateValue = (bodyText) => {
+    this.setState({ body: bodyText });
+  };
 
   setSearchUsers = async (text: string, inputName: string) => {
     const resultUsers = await newMailService.getSearchUsers(text);
@@ -142,23 +169,46 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     );
   };
 
-  goBack = () => {
+  manageDraftMail = () => {
     const { to, cc, bcc, subject, body, attachments } = this.state;
     if (to.length > 0 || cc.length > 0 || bcc.length > 0 || subject !== "" || body !== "" || attachments.length > 0) {
-      this.props.makeDraft({
+      const mailDatas = {
         to: to.map(to => to.id),
         cc: cc.map(cc => cc.id),
         bcc: bcc.map(bcc => bcc.id),
         subject: subject,
-        body: body,
+        body: body !== "" ? `<div>${body.replace(/\n/g, "<br>")}</div>` : body,
         attachments: attachments,
-      });
+      };
+      if (this.props.navigation.state.params.mailId !== undefined) {
+        this.props.updateDraft(this.props.navigation.state.params.mailId, mailDatas);
+      } else {
+        this.props.makeDraft(mailDatas);
+      }
     }
-    this.props.navigation.navigate(this.props.navigation.state.params.currentFolder);
+  };
+
+  goBack = isMakeDraft => {
+    if (this.props.navigation.state.params.mailId !== undefined) {
+      if (isMakeDraft === "isDraft") this.manageDraftMail();
+      const { navigation } = this.props;
+      navigation.state.params.onGoBack();
+      navigation.dispatch(NavigationActions.back());
+    } else {
+      if (isMakeDraft === "isDraft") this.manageDraftMail();
+      this.props.navigation.navigate(this.props.navigation.state.params.currentFolder);
+    }
+    this.setState(this.defaultState);
   };
 
   delete = () => {
-    this.props.navigation.navigate(this.props.navigation.state.params.currentFolder);
+    if (this.props.navigation.state.params.mailId !== undefined) {
+      this.props.trashMessage([this.props.navigation.state.params.mailId]);
+      this.goBack("isNotDraft");
+    } else {
+      this.props.navigation.navigate(this.props.navigation.state.params.currentFolder);
+      this.setState(this.defaultState);
+    }
   };
 
   handleSendNewMail = () => {
@@ -176,11 +226,11 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       cc: cc.map(cc => cc.id),
       bcc: bcc.map(bcc => bcc.id),
       subject: subject,
-      body: body,
+      body: body !== "" ? `<div>${body.replace(/\n/g, "<br>")}</div>` : body,
       attachments: attachments,
     });
+    this.goBack("isNotDraft");
 
-    this.props.navigation.navigate(this.props.navigation.state.params.currentFolder);
     Toast.show(I18n.t("zimbra-send-mail"), {
       position: Toast.position.BOTTOM,
       mask: false,
@@ -192,7 +242,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     return (
       <PageContainer>
         <HeaderComponent color={CommonStyles.secondary}>
-          <HeaderAction onPress={this.goBack} name="back" />
+          <HeaderAction onPress={() => this.goBack("isDraft")} name="back" />
           <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-end" }}>
             <TouchableOpacity onPress={() => true}>
               <Icon name="attachment" size={24} color="white" style={{ marginRight: 10 }} />
@@ -208,9 +258,12 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
 
         <NewMailComponent
           {...this.state}
+          {...this.props}
+          mail={this.props.mail}
           handleInputChange={this.handleInputChange}
           pickUser={this.pickUser}
           unpickUser={this.unpickUser}
+          updateStateValue={this.updateStateValue}
         />
       </PageContainer>
     );
@@ -218,12 +271,23 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
 }
 
 const mapStateToProps = (state: any) => {
-  return {};
+  const { isFetching, data } = getMailContentState(state);
+
+  return {
+    mail: data,
+    isFetching,
+  };
 };
 
 const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators(
-    { sendMail: sendMailAction, makeDraft: makeDraftMailAction, deleteMessage: deleteMessageAction },
+    {
+      sendMail: sendMailAction,
+      makeDraft: makeDraftMailAction,
+      updateDraft: updateDraftMailAction,
+      trashMessage: trashMailsAction,
+      fetchMailContentAction,
+    },
     dispatch
   );
 };

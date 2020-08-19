@@ -42,7 +42,7 @@ export const newMailService = {
   makeDraftMail: async mailDatas => {
     await fetchJSONWithCache(`/zimbra/draft`, { method: "POST", body: JSON.stringify(mailDatas) });
   },
-  deleteMessage: async mailId => {
-    await fetchJSONWithCache(`/zimbra/trashid=${mailId}`);
+  updateDraftMail: async (mailId, mailDatas) => {
+    await fetchJSONWithCache(`/zimbra/draft/${mailId}`, { method: "PUT", body: JSON.stringify(mailDatas) });
   },
 };
