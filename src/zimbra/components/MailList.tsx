@@ -100,7 +100,8 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
             isTrashed: this.props.isTrashed,
           });
         }}
-        onLongPress={() => {} /*this.selectItem(mailInfos) */}>
+        // onLongPress={() => this.selectItem(mailInfos)}
+      >
         <Header
           style={[styles.containerMail, this.containerStyle(mailInfos.isChecked), this.hasShadow(mailInfos.unread)]}>
           <LeftPanel>
