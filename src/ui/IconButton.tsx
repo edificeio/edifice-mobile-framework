@@ -12,7 +12,6 @@ export const IconButton = (props: { iconName: string, iconColor?: string, iconSi
           borderRadius: 15,
           height: 30,
           width: 30,
-          elevation: 1,
           alignItems: "center",
           justifyContent: "center",
           opacity: props.disabled ? 0.5 : 1,
