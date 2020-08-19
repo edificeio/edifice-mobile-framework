@@ -168,7 +168,9 @@ export default class HomeworkList extends React.PureComponent<HomeworkListProps,
   private renderMainList = () => {
     if (this.props.isFetching) {
       return <Loading />;
-    } else if (this.props.homeworks.length == 0 && this.props.sessions.length == 0) {
+    } else if (
+      this.props.switchValue ? this.props.sessions.length === 0 : Object.keys(this.props.homeworks).length === 0
+    ) {
       return (
         <EmptyScreen
           imageSrc={require("../../../../assets/images/empty-screen/empty-homework.png")}
