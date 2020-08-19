@@ -13,11 +13,20 @@ import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { Text, TextBold } from "../../ui/text";
 import { findReceivers2, findReceiversAvatars, Author } from "./MailItem";
 
-const SendersDetails = ({ receivers, cc, displayNames }) => {
+const SendersDetails = ({ receivers, cc, displayNames, inInbox, sender }) => {
   return (
     <View>
+      {inInbox || (
+        <View style={{ flexDirection: "row" }}>
+          <Text style={styles.greyColor}>{I18n.t("zimbra-from-prefix")}</Text>
+          <View style={{ flexDirection: "row", marginLeft: 5 }} key={sender}>
+            <View style={[styles.dotReceiverColor, { backgroundColor: "purple" }]} />
+            <Text>{displayNames.find(item => item[0] === sender)[1]}</Text>
+          </View>
+        </View>
+      )}
       <View style={{ flexDirection: "row" }}>
-        <Text style={styles.greyColor}>{I18n.t("conversation-receiverPrefixInput")}</Text>
+        <Text style={styles.greyColor}>{I18n.t("zimbra-to-prefix")}</Text>
         {receivers.map(receiver => (
           <View style={{ flexDirection: "row", marginLeft: 5 }} key={receiver}>
             <View style={[styles.dotReceiverColor, { backgroundColor: "purple" }]} />
@@ -53,6 +62,7 @@ const IconButton = ({ icon, color, text, onPress }) => {
 
 export const HeaderMail = ({ mailInfos }) => {
   const [isVisible, toggleVisible] = React.useState(false);
+  const inInbox = mailInfos.systemFolder === "INBOX";
   return (
     <View style={styles.containerMail}>
       <Header>
@@ -86,11 +96,19 @@ export const HeaderMail = ({ mailInfos }) => {
         )}
       </Header>
 
-      {isVisible && <SendersDetails receivers={mailInfos.to} cc={mailInfos.cc} displayNames={mailInfos.displayNames} />}
+      {isVisible && (
+        <SendersDetails
+          receivers={mailInfos.to}
+          cc={mailInfos.cc}
+          displayNames={mailInfos.displayNames}
+          inInbox={inInbox}
+          sender={mailInfos.from}
+        />
+      )}
 
       {mailInfos.subject && mailInfos.subject.length ? (
         <View style={{ flexDirection: "row" }}>
-          <Text style={styles.greyColor}>{I18n.t("conversation-subjectPrefixInput")} </Text>
+          <Text style={styles.greyColor}>{I18n.t("zimbra-subject")} : </Text>
           <TextBold> {mailInfos.subject}</TextBold>
         </View>
       ) : (

@@ -83,7 +83,10 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
   };
 
   private renderMailItemInfos(mailInfos) {
-    const sender = mailInfos.displayNames.find(item => item[0] === mailInfos.from);
+    let contact = ["", ""];
+    if (mailInfos.systemFolder === "INBOX") contact = mailInfos.displayNames.find(item => item[0] === mailInfos.from);
+    else contact = mailInfos.displayNames.find(item => item[0] === mailInfos.to[0]);
+    if (contact === undefined) contact = ["", I18n.t("zimbra-unknown")];
     return (
       <TouchableOpacity
         onPress={() => {
@@ -106,14 +109,14 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
           </LeftPanel>
           <CenterPanel>
             <View style={styles.mailInfos}>
-              {sender &&
+              {contact &&
                 (mailInfos.unread ? (
                   <TextBold style={styles.mailInfoSender} numberOfLines={1}>
-                    {sender[1]}
+                    {contact[1]}
                   </TextBold>
                 ) : (
                   <Text style={styles.mailInfoSender} numberOfLines={1}>
-                    {sender[1]}
+                    {contact[1]}
                   </Text>
                 ))}
               <Text style={styles.greyColor}>{moment(mailInfos.date).format("dddd LL")}</Text>
