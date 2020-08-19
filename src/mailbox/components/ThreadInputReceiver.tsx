@@ -1,10 +1,11 @@
 import * as React from "react";
+import I18n from "i18n-js";
+
 import { UserLabel } from "../../ui/SelectThreadInfos";
 import { CommonStyles } from "../../styles/common/styles";
 import style from "glamorous-native";
 import { TouchableOpacity, View } from "react-native";
 import { ShowMore } from "../../ui/ShowMore";
-import I18n from "i18n-js";
 
 export default function ThreadInputReceivers(props: { show: boolean, names: string[], onPress: () => void }) {
     const { names, onPress, show } = props;
@@ -46,7 +47,7 @@ export default function ThreadInputReceivers(props: { show: boolean, names: stri
 
 const ReceiverInputPrefix = style.text({
     lineHeight: 40,
-    paddingLeft: 24,
+    paddingLeft: 20,
     paddingRight: 10
 });
 const ReceiverInput = style.view({
@@ -56,5 +57,6 @@ const ReceiverInput = style.view({
     elevation: 1,
     flexDirection: "column",
     justifyContent: "flex-start",
-    alignItems: "flex-start"
+    alignItems: "flex-start",
+    height: 40
 });
