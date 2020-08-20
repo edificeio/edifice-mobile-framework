@@ -10,40 +10,55 @@ import { Text } from "../../ui/Typography";
 import { IMail } from "../state/mailContent";
 import SelectMailInfos from "./SelectMailInfos";
 
+type IUserInfos = {
+  id: string;
+  displayName: string;
+}[];
+
 type NewMailContainerState = {
   showCcRows: boolean;
   mailInfos: IMail;
-  subject: string;
-  body: string;
 };
 
 export default class NewMail extends React.PureComponent<any, NewMailContainerState> {
   constructor(props) {
     super(props);
 
-    const { mail, subject, body } = this.props;
+    const { mail, to, cc, bcc, subject, body } = this.props;
+    const toUsers = this.updateRecipients("to", mail, to);
+    const ccUsers = this.updateRecipients("cc", mail, cc);
+    const bccUsers = this.updateRecipients("bcc", mail, bcc);
     const bodyText = mail.body && mail.body !== "undefined" ? mail.body.replace("<br>", /\n/g).slice(5, -6) : body;
-    this.props.updateStateValue(bodyText);
+    const subjectText = mail.subject && mail.subject !== "undefined" ? mail.subject : subject;
+    this.props.updateStateValue(toUsers, ccUsers, bccUsers, subjectText, bodyText);
 
     this.state = {
       showCcRows: false,
       mailInfos: mail,
-      subject: mail.subject !== "undefined" ? mail.subject : subject,
-      body: bodyText,
     };
   }
 
-  componentDidUpdate = () => {
-    const { mail, subject, body, navigation } = this.props;
-    if (mail !== this.state.mailInfos) {
-      const bodyText = mail.body && mail.body !== "undefined" ? mail.body.replace("<br>", /\n/g).slice(5, -6) : body;
-      this.setState({
-        mailInfos: mail,
-        subject: mail.subject !== "undefined" ? mail.subject : subject,
-        body: bodyText,
+  updateRecipients = (key, mail, recipient) => {
+    let users = [] as IUserInfos;
+    if (mail[key] !== undefined && mail[key].length > 0) {
+      mail[key].map(userId => {
+        users.push({ id: userId, displayName: mail.displayNames.find(item => item[0] === userId)[1] });
       });
-      this.props.updateStateValue(bodyText);
-    } else if (navigation.state.params.mailId === undefined) this.setState({ subject: "", body: "" });
+    } else users = recipient;
+    return users;
+  };
+
+  componentDidUpdate = () => {
+    const { mail, to, cc, bcc, subject, body } = this.props;
+    if (mail !== this.state.mailInfos) {
+      const toUsers = this.updateRecipients("to", mail, to);
+      const ccUsers = this.updateRecipients("cc", mail, cc);
+      const bccUsers = this.updateRecipients("bcc", mail, bcc);
+      const bodyText = mail.body && mail.body !== "undefined" ? mail.body.replace("<br>", /\n/g).slice(5, -6) : body;
+      const subjectText = mail.subject && mail.subject !== "undefined" ? mail.subject : subject;
+      this.setState({ mailInfos: mail });
+      this.props.updateStateValue(toUsers, ccUsers, bccUsers, subjectText, bodyText);
+    }
   };
 
   renderHiddenCcRows = () => {
@@ -132,7 +147,7 @@ export default class NewMail extends React.PureComponent<any, NewMailContainerSt
                 <TextInput
                   underlineColorAndroid="lightgrey"
                   style={styles.textInput}
-                  defaultValue={this.state.subject}
+                  defaultValue={this.props.subject}
                   onChangeText={(text: string) => this.props.handleInputChange(text, "subject")}
                 />
               </View>
@@ -142,7 +157,7 @@ export default class NewMail extends React.PureComponent<any, NewMailContainerSt
               textAlignVertical="top"
               multiline
               style={styles.textZone}
-              defaultValue={this.state.body}
+              defaultValue={this.props.body}
               onChangeText={(text: string) => this.props.handleInputChange(text, "body")}
             />
           </ScrollView>

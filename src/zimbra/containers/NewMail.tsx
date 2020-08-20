@@ -100,8 +100,8 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     }
   };
 
-  updateStateValue = (bodyText) => {
-    this.setState({ body: bodyText });
+  updateStateValue = (toUsers, ccUsers, bccUsers, subjectText, bodyText) => {
+    this.setState({ to: toUsers, cc: ccUsers, bcc: bccUsers, subject: subjectText, body: bodyText });
   };
 
   setSearchUsers = async (text: string, inputName: string) => {

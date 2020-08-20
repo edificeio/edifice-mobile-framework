@@ -166,7 +166,6 @@ export const RenderPJs = ({ attachments, mailId }) => {
       {displayedAttachments.map((item, index) => (
         <TouchableOpacity
           onPress={() => {
-            console.log("item: ", item);
             downloadFile({
               filename: item.filename,
               url: `/zimbra/message/${mailId}/attachment/${item.id}`,
