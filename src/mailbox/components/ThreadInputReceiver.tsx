@@ -24,10 +24,9 @@ export default function ThreadInputReceivers(props: { show: boolean, names: stri
                             style={{
                                 backgroundColor: CommonStyles.primaryLight,
                                 borderRadius: 3,
-                                padding: 5,
-                                maxWidth: "100%",
+                                padding: 4,
                                 marginHorizontal: 3,
-                                marginVertical: 5,    
+                                marginVertical: 5,
                             }}
                         >
                             <UserLabel 

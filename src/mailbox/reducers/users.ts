@@ -23,6 +23,7 @@ export default function selectedThread(
   state: IMailBoxUsersState = defaultState,
   action: AnyAction
 ) {
+  const actionUserId = action.user && action.user.userId || action.user && action.user.id;
   switch (action.type) {
     case actionTypeLoadVisibles:
       return {
@@ -34,12 +35,16 @@ export default function selectedThread(
       return {
         ...state,
         picked: [{ ...action.user, checked: true }, ...state.picked],
-        remaining: state.remaining.filter(u => u.id !== action.user.id)
+        remaining: state.remaining
+          .filter(u => u.userId !== actionUserId)
+          .filter(u => u.id !== actionUserId)
       };
     case actionTypeUserUnpick:
       return {
         ...state,
-        picked: state.picked.filter(u => u.id !== action.user.id),
+        picked: state.picked
+          .filter(u => u.userId !== actionUserId)
+          .filter(u => u.id !== actionUserId),
         remaining: [{ ...action.user, checked: false }, ...state.remaining]
       };
     case actionTypeUserClearPicks:

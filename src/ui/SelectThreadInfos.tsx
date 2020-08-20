@@ -127,8 +127,9 @@ export default class SelectThreadInfos extends React.Component<
                       this.setState({ searchText: text });
                     }}
                     onKeyPress={({ nativeEvent }) => {
-                      searchText.length === 0
-                        && nativeEvent.key === "Backspace"
+                      nativeEvent.key === "Backspace"
+                        && searchText.length === 0
+                        && pickedUsers.length > 0
                         && onUnpickUser(pickedUsers[pickedUsers.length - 1])
                     }}
                   />

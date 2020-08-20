@@ -67,13 +67,13 @@ class NewThreadPage extends React.PureComponent<
     });
   }
 
-  public componentDidMount() {
-    this.props.loadVisibles();
+  public async componentDidMount() {
+    const { loadVisibles, selectSubject, pickUser, navigation } = this.props;
     // Setup from navigation params
-    if (this.props.navigation.getParam('message')) {
-      const message: IConversationMessage = this.props.navigation.getParam('message');
-      const type: string = this.props.navigation.getParam('type', 'new');
-      const replyToAll: boolean = this.props.navigation.getParam('replyToAll');
+    if (navigation.getParam('message')) {
+      const message: IConversationMessage = navigation.getParam('message');
+      const type: string = navigation.getParam('type', 'new');
+      const replyToAll: boolean = navigation.getParam('replyToAll');
       // Subject
       let subject: string | undefined = undefined;
       if (message.subject) {
@@ -83,7 +83,7 @@ class NewThreadPage extends React.PureComponent<
           subject = message.subject.startsWith("Tr: ") ? message.subject : "Tr: " + message.subject;
         }
       }
-      subject && this.props.selectSubject && this.props.selectSubject(subject);
+      subject && selectSubject && selectSubject(subject);
       // Receivers
       if (type === 'reply') {
         const allIds =  replyToAll ? NewThreadPage.findReceivers2(message) : [message.from];
@@ -94,7 +94,8 @@ class NewThreadPage extends React.PureComponent<
             return dn ? dn[1] : undefined;
           })()
         })).filter(e => e.displayName) as IUser[] : [];
-        receivers.forEach(u => this.props.pickUser(u));
+        await loadVisibles();
+        receivers.forEach(u => pickUser(u));
       }
     }
   }
