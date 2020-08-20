@@ -14,7 +14,7 @@ import DateTimePicker from "../../../ui/DateTimePicker";
 import { Text, TextBold, Label } from "../../../ui/Typography";
 import { HeaderBackAction } from "../../../ui/headers/NewHeader";
 import { LeftColoredItem } from "../../viesco/components/Item";
-import { postLateEvent, updateLateEvent, postLeavingEvent, deleteEvent } from "../actions/events";
+import { postLateEvent, updateLateEvent, postLeavingEvent, updateLeavingEvent, deleteEvent } from "../actions/events";
 
 type DeclarationState = {
   date: Date;
@@ -44,6 +44,7 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
       navigation
     );
   };
+
   constructor(props) {
     super(props);
     const { event } = props.navigation.state.params;
@@ -66,7 +67,7 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
     });
   }
 
-  onTimeChange = (event, selectedDate) => {
+  onTimeChange = selectedDate => {
     const { date } = this.state;
     const currentDate = selectedDate || date;
     this.setState({
@@ -84,9 +85,9 @@ export class DeclareEvent extends React.PureComponent<DeclarationProps, Declarat
     const { date, reason } = this.state;
     const { declareLateness, declareLeaving, updateLateness, updateLeaving, deleteEvent } = this.props;
     const { type, student, event, registerId, startDate, endDate } = this.props.navigation.state.params;
-    const momentDate = moment(date);
-    const startDateMoment = moment(startDate);
-    const endDateMoment = moment(endDate);
+    const momentDate = moment(date).second(0);
+    const startDateMoment = moment(startDate).second(0);
+    const endDateMoment = moment(endDate).second(0);
     if (type === "late") {
       if (event === undefined) {
         // deleting absence when lateness is declared
@@ -238,7 +239,7 @@ const mapDispatchToProps = (dispatch: any) => {
       declareLateness: postLateEvent,
       updateLateness: updateLateEvent,
       declareLeaving: postLeavingEvent,
-      updateLeaving: postLeavingEvent,
+      updateLeaving: updateLeavingEvent,
       deleteEvent,
     },
     dispatch
