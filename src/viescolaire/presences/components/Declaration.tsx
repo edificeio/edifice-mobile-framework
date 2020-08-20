@@ -1,15 +1,15 @@
 import I18n from "i18n-js";
 import moment from "moment";
 import * as React from "react";
-import { View, StyleSheet, SafeAreaView } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
-import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
+import { View, StyleSheet, SafeAreaView, KeyboardAvoidingView, Keyboard, Platform } from "react-native";
+import { TextInput, ScrollView } from "react-native-gesture-handler";
 
+import { CommonStyles } from "../../../styles/common/styles";
 import { DialogButtonOk } from "../../../ui/ConfirmDialog";
+import ConnectionTrackingBar from "../../../ui/ConnectionTrackingBar";
+import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
 import DateTimePicker from "../../../ui/DateTimePicker";
 import { Text, TextBold } from "../../../ui/Typography";
-import { CommonStyles } from "../../../styles/common/styles";
-import ConnectionTrackingBar from "../../../ui/ConnectionTrackingBar";
 
 type DeclarationProps = {
   startDate: moment.Moment;
@@ -83,7 +83,13 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
     const TimePickerComponent = ({ time, onChange, title }) => (
       <DateTimePicker
         value={time}
-        style={{ flex: 1, justifyContent: "space-evenly", backgroundColor: "white", alignItems: "center", margin: 15 }}
+        style={{
+          flex: 1,
+          justifyContent: "space-evenly",
+          backgroundColor: "white",
+          alignItems: "center",
+          margin: 10,
+        }}
         renderDate={date => (
           <>
             <View
@@ -91,11 +97,11 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
                 borderStyle: "solid",
                 borderBottomWidth: 2,
                 borderColor: "#FCB602",
-                padding: 5,
+                padding: 10,
               }}>
               <Text style={{ color: "#FCB602", textTransform: "uppercase" }}>{title}</Text>
             </View>
-            <TextBold style={{ fontSize: 24 }}>{date.format("HH    :    mm")}</TextBold>
+            <TextBold style={{ padding: 10, fontSize: 24 }}>{date.format("HH    :    mm")}</TextBold>
           </>
         )}
         mode="time"
@@ -105,7 +111,7 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
 
     const DatePickers = () => (
       <>
-        {this.state.switchState == SwitchState.SINGLE ? (
+        {this.state.switchState === SwitchState.SINGLE ? (
           <DateTimePicker mode="date" value={startDate} minimumDate={moment()} onChange={updateStartDate} />
         ) : (
           <>
@@ -117,39 +123,43 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
     );
 
     return (
-      <SafeAreaView
-        style={{
-          backgroundColor: CommonStyles.lightGrey,
-          flex: 1,
-        }}>
+      <SafeAreaView>
         <ConnectionTrackingBar />
-        <View style={[styles.row, styles.switchContainer]}>
-          <LeftSwitchComponent />
-          <RightSwitchComponent />
-        </View>
-        <View style={styles.row}>
-          <DatePickers />
-        </View>
-        <View style={[styles.row, { flex: 1 }]}>
-          <TimePickerComponent title={I18n.t("viesco-from-hour")} time={startDate} onChange={updateStartDate} />
-          <TimePickerComponent title={I18n.t("viesco-to-hour")} time={endDate} onChange={updateEndDate} />
-        </View>
-        <View style={[styles.row, styles.inputContainer, { flexBasis: "40%", justifyContent: "flex-start" }]}>
-          <Text>{I18n.t("viesco-absence-motive")}</Text>
-          <TextInput
-            multiline={true}
-            placeholder={I18n.t("viesco-enter-text")}
-            value={comment}
-            underlineColorAndroid="lightgrey"
-            onChangeText={updateComment}
-          />
-        </View>
-        <DialogButtonOk
-          style={{ alignSelf: "center" }}
-          disabled={this.props.startDate.isAfter(this.props.endDate)}
-          label={I18n.t("viesco-validate")}
-          onPress={submit}
-        />
+        <KeyboardAvoidingView enabled={Platform.OS === "ios"} behavior="position" keyboardVerticalOffset={60}>
+          <ScrollView bounces={false} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="never">
+            <View style={[styles.row, styles.switchContainer]}>
+              <LeftSwitchComponent />
+              <RightSwitchComponent />
+            </View>
+
+            <View style={styles.row}>
+              <DatePickers />
+            </View>
+
+            <View style={styles.row}>
+              <TimePickerComponent title={I18n.t("viesco-from-hour")} time={startDate} onChange={updateStartDate} />
+              <TimePickerComponent title={I18n.t("viesco-to-hour")} time={endDate} onChange={updateEndDate} />
+            </View>
+
+            <View style={[styles.row, styles.inputContainer]}>
+              <TextBold style={{ marginBottom: 10 }}>{I18n.t("viesco-absence-motive")}</TextBold>
+              <TextInput
+                multiline
+                placeholder={I18n.t("viesco-enter-text")}
+                value={comment}
+                underlineColorAndroid="lightgrey"
+                onChangeText={updateComment}
+              />
+            </View>
+
+            <DialogButtonOk
+              style={{ alignSelf: "center" }}
+              disabled={this.props.startDate.isAfter(this.props.endDate)}
+              label={I18n.t("viesco-validate")}
+              onPress={submit}
+            />
+          </ScrollView>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     );
   }
@@ -158,7 +168,7 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
 const styles = StyleSheet.create({
   switchContainer: {
     justifyContent: "center",
-    paddingHorizontal: 20,
+    padding: 10,
   },
   switchPart: {
     flex: 1,
@@ -185,9 +195,9 @@ const styles = StyleSheet.create({
     shadowRadius: CommonStyles.shadowRadius,
   },
   row: {
-    marginVertical: 15,
-    flexDirection: "row",
+    marginVertical: 10,
     justifyContent: "space-evenly",
+    flexDirection: "row",
   },
   column: {
     flexDirection: "column",
