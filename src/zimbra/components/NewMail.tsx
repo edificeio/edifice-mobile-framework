@@ -21,25 +21,11 @@ type NewMailContainerState = {
 };
 
 export default class NewMail extends React.PureComponent<any, NewMailContainerState> {
-  constructor(props) {
-    super(props);
-
-    const { mail, to, cc, bcc, subject, body } = this.props;
-    const toUsers = this.updateRecipients("to", mail, to);
-    const ccUsers = this.updateRecipients("cc", mail, cc);
-    const bccUsers = this.updateRecipients("bcc", mail, bcc);
-    const bodyText = mail.body && mail.body !== "undefined" ? mail.body.replace("<br>", /\n/g).slice(5, -6) : body;
-    const subjectText = mail.subject && mail.subject !== "undefined" ? mail.subject : subject;
-    this.props.updateStateValue(toUsers, ccUsers, bccUsers, subjectText, bodyText);
-
-    this.state = {
-      showCcRows: false,
-      mailInfos: mail,
-    };
-  }
-
   updateRecipients = (key, mail, recipient) => {
+    const { navigation } = this.props;
     let users = [] as IUserInfos;
+    if (navigation.state.params.type === "FORWARD") return recipient;
+    else if (navigation.state.params.type === "REPLY" && key !== "to") return users;
     if (mail[key] !== undefined && mail[key].length > 0) {
       mail[key].map(userId => {
         users.push({ id: userId, displayName: mail.displayNames.find(item => item[0] === userId)[1] });
@@ -48,14 +34,44 @@ export default class NewMail extends React.PureComponent<any, NewMailContainerSt
     return users;
   };
 
+  constructor(props) {
+    super(props);
+
+    const { mail, to, cc, bcc, subject, body, navigation } = this.props;
+    const toUsers = this.updateRecipients("to", mail, to);
+    const ccUsers = this.updateRecipients("cc", mail, cc);
+    const bccUsers = this.updateRecipients("bcc", mail, bcc);
+    let bodyText = body;
+    let subjectText = mail.subject && mail.subject !== "undefined" ? mail.subject : subject;
+    if (navigation.state.params.type === "REPLY" || navigation.state.params.type === "REPLY_ALL")
+      subjectText = `${I18n.t("zimbra-reply-subject")} ${subject}`;
+    else if (navigation.state.params.type === "FORWARD") subjectText = `${I18n.t("zimbra-forward-subject")} ${subject}`;
+    else if (navigation.state.params.type === "DRAFT")
+      bodyText = mail.body && mail.body !== "undefined" ? mail.body.replace(/<br>/g, "\n").slice(5, -6) : body;
+    this.props.updateStateValue(toUsers, ccUsers, bccUsers, subjectText, bodyText);
+
+    this.state = {
+      showCcRows: false,
+      mailInfos: mail,
+    };
+  }
+
   componentDidUpdate = () => {
-    const { mail, to, cc, bcc, subject, body } = this.props;
+    const { mail, to, cc, bcc, subject, body, navigation } = this.props;
     if (mail !== this.state.mailInfos) {
       const toUsers = this.updateRecipients("to", mail, to);
       const ccUsers = this.updateRecipients("cc", mail, cc);
       const bccUsers = this.updateRecipients("bcc", mail, bcc);
-      const bodyText = mail.body && mail.body !== "undefined" ? mail.body.replace("<br>", /\n/g).slice(5, -6) : body;
-      const subjectText = mail.subject && mail.subject !== "undefined" ? mail.subject : subject;
+      let bodyText = body;
+      let subjectText = mail.subject && mail.subject !== "undefined" ? mail.subject : subject;
+      if (navigation.state.params.type === "REPLY" || navigation.state.params.type === "REPLY_ALL")
+        subjectText = mail.subject !== subject ? `${I18n.t("zimbra-reply-subject")} ${mail.subject}` : subject;
+      else if (navigation.state.params.type === "FORWARD")
+        subjectText = mail.subject !== subject ? `${I18n.t("zimbra-forward-subject")} ${mail.subject}` : subject;
+      else if (navigation.state.params.type === "DRAFT") {
+        bodyText = mail.body && mail.body !== "undefined" ? mail.body.replace(/<br>/g, "\n").slice(5, -6) : body;
+        subjectText = mail.subject && mail.subject !== "undefined" ? mail.subject : subject;
+      }
       this.setState({ mailInfos: mail });
       this.props.updateStateValue(toUsers, ccUsers, bccUsers, subjectText, bodyText);
     }

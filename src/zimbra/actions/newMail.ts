@@ -1,19 +1,19 @@
 import { newMailService } from "../service/newMail";
 
-export function sendMailAction(mailDatas) {
+export function sendMailAction(mailDatas, draftId: string, InReplyTo: string) {
   return async () => {
     try {
-      await newMailService.sendMail(mailDatas);
+      await newMailService.sendMail(mailDatas, draftId, InReplyTo);
     } catch (errmsg) {
       console.error("ERROR new mail: ", errmsg);
     }
   };
 }
 
-export function makeDraftMailAction(mailDatas) {
+export function makeDraftMailAction(mailDatas, inReplyTo: string, methodReply: string) {
   return async () => {
     try {
-      await newMailService.makeDraftMail(mailDatas);
+      await newMailService.makeDraftMail(mailDatas, inReplyTo, methodReply);
     } catch (errmsg) {
       console.error("ERROR make draft: ", errmsg);
     }

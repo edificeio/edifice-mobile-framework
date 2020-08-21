@@ -36,11 +36,18 @@ export const newMailService = {
     const data = SearchUsersAdapter(await fetchJSONWithCache(`/zimbra/visible?search=${search}`));
     return data;
   },
-  sendMail: async mailDatas => {
-    await fetchJSONWithCache(`/zimbra/send`, { method: "POST", body: JSON.stringify(mailDatas) });
+  sendMail: async (mailDatas, draftId, inReplyTo) => {
+    let urlParams = draftId !== "" || inReplyTo !== "" ? "?" : "";
+    urlParams = draftId !== "" ? `${urlParams}id=${draftId}` : urlParams;
+    console.log("urlParams: ", urlParams);
+    urlParams = inReplyTo !== "" ? `${urlParams}In-Reply-To=${inReplyTo}` : urlParams;
+    console.log("--urlParams: ", urlParams);
+    await fetchJSONWithCache(`/zimbra/send${urlParams}`, { method: "POST", body: JSON.stringify(mailDatas) });
   },
-  makeDraftMail: async mailDatas => {
-    await fetchJSONWithCache(`/zimbra/draft`, { method: "POST", body: JSON.stringify(mailDatas) });
+  makeDraftMail: async (mailDatas, inReplyTo, methodReply) => {
+    let method = methodReply !== "" ? methodReply : "undefined";
+    let urlParams = inReplyTo !== "" ? `?In-Reply-To=${inReplyTo}&reply=${method}` : "";
+    await fetchJSONWithCache(`/zimbra/draft${urlParams}`, { method: "POST", body: JSON.stringify(mailDatas) });
   },
   updateDraftMail: async (mailId, mailDatas) => {
     await fetchJSONWithCache(`/zimbra/draft/${mailId}`, { method: "PUT", body: JSON.stringify(mailDatas) });

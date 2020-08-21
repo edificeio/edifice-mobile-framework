@@ -32,14 +32,15 @@ type StateTypes = {
 };
 
 interface ICreateMailEventProps {
-  sendMail: (mailDatas: object) => void;
+  sendMail: (mailDatas: object, draftId: string, inReplyTo: string) => void;
   searchUsers: (search: string) => void;
-  makeDraft: (mailDatas: object) => void;
+  makeDraft: (mailDatas: object, inReplyTo: string, methodReply: string) => void;
   updateDraft: (mailId: string, mailDatas: object) => void;
   trashMessage: (mailId: string[]) => void;
   fetchMailContentAction: (mailId: string) => void;
 }
 
+// navigation.state.params.type can be { "NEW", "DRAFT", "REPLY", "REPLY_ALL", "FORWARD" }
 interface ICreateMailOtherProps {
   navigation: any;
   remainingUsers: IUser[];
@@ -170,9 +171,11 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
   };
 
   manageDraftMail = () => {
+    const { navigation } = this.props;
     const { to, cc, bcc, subject, body, attachments } = this.state;
     if (to.length > 0 || cc.length > 0 || bcc.length > 0 || subject !== "" || body !== "" || attachments.length > 0) {
       const mailDatas = {
+        //to: to.map(elem => (elem.id && elem.id !== undefined ? elem.id : elem)),
         to: to.map(to => to.id),
         cc: cc.map(cc => cc.id),
         bcc: bcc.map(bcc => bcc.id),
@@ -180,10 +183,14 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         body: body !== "" ? `<div>${body.replace(/\n/g, "<br>")}</div>` : body,
         attachments: attachments,
       };
-      if (this.props.navigation.state.params.mailId !== undefined) {
+      if (this.props.navigation.state.params.type === "DRAFT") {
         this.props.updateDraft(this.props.navigation.state.params.mailId, mailDatas);
       } else {
-        this.props.makeDraft(mailDatas);
+        if (navigation.state.params.type === "REPLY" || navigation.state.params.type === "REPLY_ALL")
+          this.props.makeDraft(mailDatas, navigation.state.params.mailId, "");
+        if (navigation.state.params.type === "FORWARD")
+          this.props.makeDraft(mailDatas, navigation.state.params.mailId, "F");
+        else this.props.makeDraft(mailDatas, "", "");
       }
     }
   };
@@ -194,7 +201,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       const { navigation } = this.props;
       navigation.state.params.onGoBack();
       navigation.dispatch(NavigationActions.back());
-    } else {
+    } else if (this.props.navigation.state.params.type === "NEW") {
       if (isMakeDraft === "isDraft") this.manageDraftMail();
       this.props.navigation.navigate(this.props.navigation.state.params.currentFolder);
     }
@@ -202,16 +209,17 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
   };
 
   delete = () => {
-    if (this.props.navigation.state.params.mailId !== undefined) {
+    if (this.props.navigation.state.params.type === "DRAFT") {
       this.props.trashMessage([this.props.navigation.state.params.mailId]);
       this.goBack("isNotDraft");
-    } else {
+    } else if (this.props.navigation.state.params.type === "NEW") {
       this.props.navigation.navigate(this.props.navigation.state.params.currentFolder);
       this.setState(this.defaultState);
     }
   };
 
   handleSendNewMail = () => {
+    const { navigation } = this.props;
     const { to, cc, bcc, subject, body, attachments } = this.state;
     if (to.length === 0 && cc.length === 0 && bcc.length === 0) {
       Toast.show(I18n.t("zimbra-missing-receiver"), {
@@ -221,14 +229,19 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       });
       return;
     }
-    this.props.sendMail({
+    const mailDatas = {
       to: to.map(to => to.id),
       cc: cc.map(cc => cc.id),
       bcc: bcc.map(bcc => bcc.id),
       subject: subject,
       body: body !== "" ? `<div>${body.replace(/\n/g, "<br>")}</div>` : body,
       attachments: attachments,
-    });
+    };
+    const mailId = navigation.state.params.mailId !== undefined ? navigation.state.params.mailId : "";
+    if (navigation.state.params.type === "NEW") this.props.sendMail(mailDatas, "", "");
+    else if (navigation.state.params.type === "DRAFT") this.props.sendMail(mailDatas, mailId, "");
+    else if (navigation.state.params.type === "REPLY" || navigation.state.params.type === "REPLY_ALL")
+      this.props.sendMail(mailDatas, "", mailId);
     this.goBack("isNotDraft");
 
     Toast.show(I18n.t("zimbra-send-mail"), {

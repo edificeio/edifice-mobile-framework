@@ -11,9 +11,37 @@ export default class MailContent extends React.PureComponent<any, any> {
   private mailFooter() {
     return (
       <View style={styles.containerFooter}>
-        <FooterButton icon="material-reply" text={I18n.t("zimbra-reply")} onPress={() => true} />
-        <FooterButton icon="material-reply-all" text={I18n.t("zimbra-replyAll")} onPress={() => true} />
-        <FooterButton icon="forward" text={I18n.t("zimbra-forward")} onPress={() => true} />
+        <FooterButton
+          icon="material-reply"
+          text={I18n.t("zimbra-reply")}
+          onPress={() =>
+            this.props.navigation.navigate("newMail", {
+              type: "REPLY",
+              mailId: this.props.mail.id,
+              onGoBack: this.props.navigation.state.params.onGoBack,
+            })
+          }
+        />
+        <FooterButton
+          icon="material-reply-all"
+          text={I18n.t("zimbra-replyAll")}
+          onPress={() =>
+            this.props.navigation.navigate("newMail", {
+              type: "REPLY_ALL",
+              mailId: this.props.mail.id,
+              onGoBack: this.props.navigation.state.params.onGoBack,
+            })
+          }
+        />
+        <FooterButton
+          icon="forward"
+          text={I18n.t("zimbra-forward")}
+          onPress={() =>
+            this.props.navigation.navigate("newMail", {
+              type: "FORWARD",
+              mailId: this.props.mail.id,
+              onGoBack: this.props.navigation.state.params.onGoBack,
+            })} />
         <FooterButton icon="material-delete" text={I18n.t("zimbra-delete")} onPress={() => true} />
       </View>
     );

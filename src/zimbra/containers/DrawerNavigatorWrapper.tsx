@@ -107,7 +107,10 @@ export default class DrawerNavigatorWrapper extends React.Component<any, any> {
           <HeaderAction
             name="new_message"
             onPress={() => {
-              navigation.navigate("newMail", { currentFolder: this.getActiveRouteState(navigation.state).key });
+              navigation.navigate("newMail", {
+                type: "NEW",
+                currentFolder: this.getActiveRouteState(navigation.state).key,
+              });
             }}
             primary
           />

@@ -85,6 +85,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
   renderMailContent = mailInfos => {
     if (mailInfos.state === "DRAFT" && mailInfos.systemFolder === "DRAFT") {
       this.props.navigation.navigate("newMail", {
+        type: "DRAFT",
         mailId: mailInfos.id,
         onGoBack: () => {
           this.refreshMailList();
