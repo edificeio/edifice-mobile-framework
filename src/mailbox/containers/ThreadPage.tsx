@@ -17,7 +17,7 @@ import {
   fetchConversationThreadOlderMessages
 } from "../actions/apiHelper";
 import { IConversationMessage, IConversationThread, IConversationMessageList } from "../reducers";
-import { standardNavScreenOptions, alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
+import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderAction } from "../../ui/headers/NewHeader";
 import { getSessionInfo } from "../../App";
 import { CommonStyles } from "../../styles/common/styles";
@@ -123,7 +123,7 @@ class ThreadPageContainer extends React.PureComponent<
         headerTitle: null
       }, navigation);
     } else {
-      return standardNavScreenOptions({
+      return alternativeNavScreenOptions({
         headerLeft: 
           <HeaderAction
             onPress={() => {
@@ -140,7 +140,7 @@ class ThreadPageContainer extends React.PureComponent<
                   style={{ 
                     alignItems: "center",
                     justifyContent: "center",
-                    width: 70,
+                    width: 100,
                     height: "100%"
                   }}
                 >
@@ -174,7 +174,12 @@ class ThreadPageContainer extends React.PureComponent<
           alignItems: "flex-start"
         },
         headerTitleContainerStyle: {
-          alignItems: "flex-start"
+          alignItems: "flex-start",
+          width: "100%",
+          flex: 1,
+          marginRight: 100,
+          justifyContent: "flex-start",
+          textAlign: "left"
         }
       }, navigation);
     }
@@ -284,7 +289,6 @@ export const LittleTitle = (style.text as any)(
     color: "white",
     fontFamily: CommonStyles.primaryFontFamily,
     fontWeight: "400",
-    textAlign: "center",
   },
   ({ smallSize = false, italic = false }: { smallSize: boolean, italic: boolean }) => ({
     fontSize: smallSize ? 12 : 16,

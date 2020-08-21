@@ -1,13 +1,12 @@
 import * as React from "react";
-import { Platform, View, Dimensions, SafeAreaView } from "react-native";
+import { Platform, View, SafeAreaView } from "react-native";
 import { connect } from "react-redux";
 import style from "glamorous-native";
 import I18n from "i18n-js";
 import moment from "moment";
 
-import { IconOnOff, Loading, Icon } from "../../ui";
+import { Loading, Icon } from "../../ui";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
-import { Line } from "../../ui/Grid";
 import { IconButton } from "../../ui/IconButton";
 import { ILocalAttachment, IRemoteAttachment } from "../../ui/Attachment";
 import { AttachmentPicker } from "../../ui/AttachmentPicker";
@@ -35,40 +34,12 @@ const ContainerFooterBar = style(View)({
   justifyContent: "flex-start"
 });
 
-const ChatIcon = style(TouchableOpacity)({
-  alignItems: "flex-start",
-  justifyContent: "center",
-  paddingLeft: 20,
-  paddingRight: 10,
-  width: 58
-});
-
-const ActionContainer = style(TouchableOpacity)({
-  alignItems: "center",
-  alignSelf: "flex-end",
-  justifyContent: "center",
-  height: 40,
-  width: 58,
-  paddingBottom: 10,
-  paddingLeft: 20,
-  paddingRight: 10
-});
-
 const TextInput = style.textInput({
   lineHeight: 20,
   margin: 0,
   maxHeight: 110,
   paddingVertical: 5,
   width: "100%"
-});
-
-const ContainerInput = style.view({
-  flexDirection: "row",
-  justifyContent: "center",
-  paddingLeft: 20,
-  paddingRight: 10,
-  paddingTop: Platform.OS === "ios" ? 10 : 0,
-  width: Dimensions.get("window").width,
 });
 
 class ThreadInput extends React.PureComponent<
@@ -351,54 +322,52 @@ class ThreadInput extends React.PureComponent<
         : null
         }
         <ContainerFooterBar>
-          <ContainerInput>
-            {displayPlaceholder &&
-              this.props.emptyThread &&
-              this.renderInput(
-                textMessage,
-                I18n.t("conversation-chatPlaceholder")
-              )}
-            {displayPlaceholder &&
-              !this.props.emptyThread &&
-              this.renderInput(
-                textMessage,
-                I18n.t(`conversation-responsePlaceholder${receiversIds.length < 2 ? "Single" : ""}`)
-              )}
-          </ContainerInput>
-          <Line style={{ height: 40 }}>
-            <ChatIcon
-              onPress={() => {
-                if (this.state.selected === Selected.keyboard)
-                  this.input && this.input.innerComponent.blur();
-                else this.input && this.input.innerComponent.focus();
-              }}
-            >
-              <IconOnOff
-                focused={true}
-                name={"keyboard"}
-                style={{ marginLeft: 4 }}
-              />
-            </ChatIcon>
-            <View style={{ flex: 1, justifyContent: "flex-end", flexDirection: "row" }}>
-              <ActionContainer onPress={() => this.attachmentPickerRef.onPickAttachment()}>
-                <IconButton
-                  iconName="attached"
-                  iconStyle={{ transform: [{ rotate: "270deg" }] }}
-                  iconColor={CommonStyles.primary}
-                  buttonStyle={{ borderColor: CommonStyles.primary, borderWidth: 1, backgroundColor: undefined }}
-                />
-              </ActionContainer>
-              <ActionContainer
-                disabled={sending}
-                onPress={() => textMessage || attachmentsAdded ? this.onValid() : null}
-              >
-                {sending
-                  ? <Loading small />
-                  : <IconButton iconName="send_icon" disabled={!(textMessage || attachmentsAdded)} />
-                }
-              </ActionContainer>
+          <View style={{flexDirection: "row", paddingVertical: Platform.OS === "ios" ? 10 : 0}}>
+            <View style={{flex: 3, paddingHorizontal: 8, justifyContent: "center"}}>
+              {displayPlaceholder &&
+                this.props.emptyThread &&
+                this.renderInput(
+                  textMessage,
+                  I18n.t("conversation-chatPlaceholder")
+                )
+              }
+              {displayPlaceholder &&
+                !this.props.emptyThread &&
+                this.renderInput(
+                  textMessage,
+                  I18n.t(`conversation-responsePlaceholder${receiversIds.length < 2 ? "Single" : ""}`)
+                )
+              }
             </View>
-          </Line>
+            <View style={{flex: 1, flexDirection: "row", justifyContent: "space-around", alignItems: "flex-end"}}>
+            <TouchableOpacity onPress={() => this.attachmentPickerRef.onPickAttachment()}>
+              <IconButton
+                iconName="attached"
+                iconStyle={{transform: [{ rotate: "270deg" }]}}
+                iconSize={20}
+                iconColor={CommonStyles.primary}
+                buttonStyle={{ borderColor: CommonStyles.primary, borderWidth: 1, backgroundColor: undefined, height: 40, width: 40, borderRadius: 20 }}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              disabled={sending}
+              onPress={() => textMessage || attachmentsAdded ? this.onValid() : null}
+            >
+              {sending
+                ? <Loading
+                    small
+                    customStyle={{height: 40, width: 40, alignItems: 'center', justifyContent: 'center'}}
+                  />
+                : <IconButton
+                    iconName="send_icon"
+                    iconSize={20}
+                    buttonStyle={{height: 40, width: 40, borderRadius: 20}}
+                    disabled={!(textMessage || attachmentsAdded)}
+                  />
+              }
+            </TouchableOpacity>
+            </View>
+          </View>
         </ContainerFooterBar>
 
         {backMessage
