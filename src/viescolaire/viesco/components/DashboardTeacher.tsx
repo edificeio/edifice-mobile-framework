@@ -72,7 +72,7 @@ export default props => (
         <StructurePicker />
         <CallList {...props} />
       </View>
-      <View style={style.dashboardPart}>
+      {/* <View style={style.dashboardPart}>
         <View style={style.grid}>
           <View style={style.gridButtonContainer}>
             <ImageButton
@@ -91,7 +91,7 @@ export default props => (
             />
           </View>
         </View>
-      </View>
+      </View> */}
     </ScrollView>
   </PageContainer>
 );

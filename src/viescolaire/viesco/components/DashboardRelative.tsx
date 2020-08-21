@@ -85,9 +85,9 @@ export default class Dashboard extends React.PureComponent<DashboardProps> {
             icon="access_time"
           />
         </View>
-        <View style={styles.gridButtonContainer}>
+        {/* <View style={styles.gridButtonContainer}>
           <IconButton onPress={() => true} text={I18n.t("viesco-timetable")} color="#162EAE" icon="calendar_today" />
-        </View>
+        </View> */}
         <View style={styles.gridButtonContainer}>
           <IconButton
             onPress={() => this.props.navigation.navigate("HomeworkList", { user_type: "Relative" })}
@@ -96,14 +96,14 @@ export default class Dashboard extends React.PureComponent<DashboardProps> {
             icon="checkbox-multiple-marked"
           />
         </View>
-        <View style={styles.gridButtonContainer}>
+        {/* <View style={styles.gridButtonContainer}>
           <IconButton
             onPress={() => this.props.navigation.navigate("EvaluationList")}
             text={I18n.t("viesco-tests")}
             color="#F95303"
             icon="equalizer"
           />
-        </View>
+        </View> */}
       </View>
     );
   }
