@@ -350,7 +350,7 @@ class ThreadInput extends React.PureComponent<
               />
             </TouchableOpacity>
             <TouchableOpacity
-              disabled={sending}
+              disabled={!(textMessage || attachmentsAdded)}
               onPress={() => textMessage || attachmentsAdded ? this.onValid() : null}
             >
               {sending

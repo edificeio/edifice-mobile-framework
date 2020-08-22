@@ -1,10 +1,10 @@
 import * as React from "react";
+import { TouchableOpacity, View } from "react-native";
+import style from "glamorous-native";
 import I18n from "i18n-js";
 
 import { UserLabel } from "../../ui/SelectThreadInfos";
 import { CommonStyles } from "../../styles/common/styles";
-import style from "glamorous-native";
-import { TouchableOpacity, View } from "react-native";
 import { ShowMore } from "../../ui/ShowMore";
 
 export default function ThreadInputReceivers(props: { show: boolean, names: string[], onPress: () => void }) {
@@ -14,10 +14,10 @@ export default function ThreadInputReceivers(props: { show: boolean, names: stri
     }
     return <ReceiverInput>
         <TouchableOpacity onPress={onPress}>
-            <ShowMore 
+            <ShowMore
                 data={names}
                 renderLeft={() => <ReceiverInputPrefix>{I18n.t("conversation-receiverPrefixInput")}</ReceiverInputPrefix>}
-                renderEllipsis={(count) => <UserLabel> +{count}</UserLabel>}
+                renderEllipsis={(count) => <UserLabel>+{count}</UserLabel>}
                 renderItem={(index, value, props) => {
                     return (
                         <View
@@ -46,8 +46,7 @@ export default function ThreadInputReceivers(props: { show: boolean, names: stri
 
 const ReceiverInputPrefix = style.text({
     lineHeight: 40,
-    paddingLeft: 20,
-    paddingRight: 10
+    paddingLeft: 8
 });
 const ReceiverInput = style.view({
     backgroundColor: CommonStyles.tabBottomColor,
