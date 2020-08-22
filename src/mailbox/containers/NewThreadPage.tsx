@@ -2,7 +2,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import I18n from "i18n-js";
 
-import { loadVisibles, createThread } from "../actions/createThread";
+import { createThread } from "../actions/createThread";
 import { pickUser, unpickUser, clearPickedUsers } from "../actions/pickUser";
 
 import { IUser } from "../../user/reducers";
@@ -24,7 +24,6 @@ import { getSessionInfo } from "../../App";
 
 interface INewThreadPageProps {
   remainingUsers: IUser[];
-  loadVisibles: () => Promise<void>;
   pickedUsers: IUser[];
   subject: string;
   message?: IConversationMessage;
@@ -68,7 +67,7 @@ class NewThreadPage extends React.PureComponent<
   }
 
   public async componentDidMount() {
-    const { loadVisibles, selectSubject, pickUser, navigation } = this.props;
+    const { selectSubject, pickUser, navigation } = this.props;
     // Setup from navigation params
     if (navigation.getParam('message')) {
       const message: IConversationMessage = navigation.getParam('message');
@@ -94,7 +93,6 @@ class NewThreadPage extends React.PureComponent<
             return dn ? dn[1] : undefined;
           })()
         })).filter(e => e.displayName) as IUser[] : [];
-        await loadVisibles();
         receivers.forEach(u => pickUser(u));
       }
     }
@@ -181,7 +179,6 @@ const NewThreadPageConnected = connect(
     };
   },
   (dispatch: Dispatch & ThunkDispatch<any, void, AnyAction>) => ({
-    loadVisibles: () => loadVisibles(dispatch)(),
     selectSubject: (subject: string) => selectSubject(dispatch)(subject),
     pickUser: (user: any) => pickUser(dispatch)(user),
     unpickUser: (user: any) => unpickUser(dispatch)(user),
