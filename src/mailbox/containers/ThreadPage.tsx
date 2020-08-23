@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, TextStyle } from "react-native";
+import { View, Text } from "react-native";
 import { NavigationScreenProp, NavigationActions} from "react-navigation";
 import { connect } from "react-redux";
 import I18n from "i18n-js";
@@ -19,9 +19,7 @@ import {
 import { IConversationMessage, IConversationThread, IConversationMessageList } from "../reducers";
 import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderAction } from "../../ui/headers/NewHeader";
-import { getSessionInfo } from "../../App";
 import { CommonStyles } from "../../styles/common/styles";
-import { FontWeight } from "../../ui/text";
 import deviceInfoModule from "react-native-device-info";
 import withViewTracking from "../../infra/tracker/withViewTracking";
 import { IconButton } from "../../ui/IconButton";
@@ -37,7 +35,6 @@ const mapStateToProps: (state: any) => IThreadPageDataProps = state => {
     state[conversationConfig.reducerName].threadList.data.byId[
       selectedThreadId
     ];
-  // console.log("display thread", localState, selectedThreadId, selectedThread);
   const messages: IConversationMessage[] = selectedThread && selectedThread.messages.map(
     messageId => localState.data[messageId]
     );
@@ -50,6 +47,7 @@ const mapStateToProps: (state: any) => IThreadPageDataProps = state => {
     isRefreshing: selectedThread && selectedThread.isFetchingNewer,
     isFetchingFirst: selectedThread && selectedThread.isFetchingFirst,
     messages,
+    threadId: selectedThreadId,
     threadInfo: selectedThread
   };
 };
@@ -91,9 +89,9 @@ class ThreadPageContainer extends React.PureComponent<
 
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
     const threadInfo = navigation.getParam("threadInfo");
+    const threadId = navigation.getParam("threadId");
     const onTapReceivers = navigation.getParam("onTapReceivers");
     const selectedMessage: IConversationMessage | undefined = navigation.getParam("selectedMessage");
-    const parentThread = navigation.getParam('parentThread');
     if (selectedMessage) {
       return alternativeNavScreenOptions({
         headerLeft: <HeaderAction name="close" onPress={() => {
@@ -126,10 +124,12 @@ class ThreadPageContainer extends React.PureComponent<
       return alternativeNavScreenOptions({
         headerLeft: 
           <HeaderAction
-            onPress={() => {
-              navigation.dispatch(NavigationActions.back());
-            }}
             name="back"
+            onPress={() => {
+              threadId.startsWith("tmp-")
+                ? navigation.dispatch(NavigationActions.back())
+                : navigation.popToTop();
+            }}
           />,
         headerRight:
           <View style={{flexDirection: "row", alignItems: "center"}}>
@@ -185,28 +185,6 @@ class ThreadPageContainer extends React.PureComponent<
     }
   }
 
-  static getAvatarsAndNamesSet(threadInfo: IConversationThread) {
-    const { displayNames, to, from } = threadInfo;
-    let { cc } = threadInfo;
-    cc = cc || [];
-    const imageSet = new Set(
-      [...to, ...cc, from].filter(el => el && el !== getSessionInfo().userId)
-    );
-    if (imageSet.size === 0) {
-      imageSet.add(getSessionInfo().userId!);
-    }
-    const images = [...imageSet].map((receiverId: string) => {
-      const foundDisplayName = displayNames.find(displayName => displayName[0] === receiverId);
-      return foundDisplayName ? { id: receiverId, isGroup: foundDisplayName[2] } : {};
-    })
-    
-    const names = [...imageSet].map((receiverId: string) => {
-      const foundDisplayName = displayNames.find(displayName => displayName[0] === receiverId);
-      return foundDisplayName ? foundDisplayName[1] : I18n.t("unknown-user");
-    });
-    return { images, names };
-  }
-
   static renderThreadHeader(threadInfo: IConversationThread, navigation: NavigationScreenProp<{}>) {
     const receiversText = threadInfo.to.length > 1
       ? I18n.t("conversation-receivers", { count: threadInfo.to.length })
@@ -228,6 +206,7 @@ class ThreadPageContainer extends React.PureComponent<
     super(props);
     this.props.navigation!.setParams({
       threadInfo: this.props.threadInfo,
+      threadId: this.props.threadId,
       onTapReceivers: this.props.onTapReceivers,
       onSelectThread: this.props.onSelectThread
     });
@@ -237,6 +216,7 @@ class ThreadPageContainer extends React.PureComponent<
     if (this.props.threadInfo?.id !== prevProps.threadInfo?.id) {
       this.props.navigation!.setParams({
         threadInfo: this.props.threadInfo,
+        threadId: this.props.threadId,
         onTapReceivers: this.props.onTapReceivers,
         onSelectThread: this.props.onSelectThread
       });
@@ -301,21 +281,4 @@ export const ContainerAvatars = style.view({
   flex: 0,
   height: 160,
   justifyContent: "flex-start",
-});
-
-const legendStyle: TextStyle = {
-  alignSelf: "center",
-  color: "white",
-  flexWrap: "nowrap",
-};
-
-const Legend14 = style.text({
-  ...legendStyle,
-  fontFamily: CommonStyles.primaryFontFamily,
-  fontWeight: FontWeight.Bold,
-  textAlign: "center",
-  textAlignVertical: "center",
-  width: "66%",
-  marginBottom: 10,
-  height: 40,
 });

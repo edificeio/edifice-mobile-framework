@@ -45,6 +45,7 @@ export interface IThreadPageDataProps {
   isFetching?: boolean; // is fetching older messages
   isRefreshing?: boolean; // is fetching newer messages
   threadInfo?: IConversationThread; // global thread information
+  threadId?: string // thread id
   messages?: IConversationMessage[]; // message info & content for all given messageIds in threadInfo. Given from the most recent to the oldest one.
   headerHeight?: number; // header height, really ?
   backMessage?: IConversationMessage;

@@ -184,16 +184,14 @@ class ThreadInput extends React.PureComponent<
     if (attachmentsAdded) {
       const messageId = await createDraft(messageData);
       const sentAttachments = await sendAttachments(attachmentsToSend, messageId, backMessage);
-      // console.log("sentAttachments in ThreadInput", sentAttachments);
       newId = await sendMessage(messageData, sentAttachments, messageId);
       this.setState({ sending: false });
-      this.props.navigation?.navigate('thread', { selectedMessage: undefined });
+      this.props.navigation?.setParams({ selectedMessage: undefined });
       return sentAttachments;
     } else {
       newId = await sendMessage(messageData);
       this.setState({ sending: false });
-      this.props.navigation?.navigate('thread', { selectedMessage: undefined });
-
+      this.props.navigation?.setParams({ selectedMessage: undefined });
     }
   }
 
