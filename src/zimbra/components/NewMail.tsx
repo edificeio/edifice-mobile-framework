@@ -18,6 +18,7 @@ type IUserInfos = {
 type NewMailContainerState = {
   showCcRows: boolean;
   mailInfos: IMail;
+  isPrevBody: Boolean;
 };
 
 export default class NewMail extends React.PureComponent<any, NewMailContainerState> {
@@ -48,11 +49,14 @@ export default class NewMail extends React.PureComponent<any, NewMailContainerSt
     else if (navigation.state.params.type === "FORWARD") subjectText = `${I18n.t("zimbra-forward-subject")} ${subject}`;
     else if (navigation.state.params.type === "DRAFT")
       bodyText = mail.body && mail.body !== "undefined" ? mail.body.replace(/<br>/g, "\n").slice(5, -6) : body;
+    if (navigation.state.params.type === "REPLY" || navigation.state.params.type === "REPLY_ALL" || navigation.state.params.type === "FORWARD")
+      this.props.updatePrevBody(mail.body && mail.body !== "undefined" ? mail.body.replace(/<br>/g, "\n").slice(5, -6) : body);
     this.props.updateStateValue(toUsers, ccUsers, bccUsers, subjectText, bodyText);
 
     this.state = {
       showCcRows: false,
       mailInfos: mail,
+      isPrevBody: false
     };
   }
 
@@ -71,6 +75,10 @@ export default class NewMail extends React.PureComponent<any, NewMailContainerSt
       else if (navigation.state.params.type === "DRAFT") {
         bodyText = mail.body && mail.body !== "undefined" ? mail.body.replace(/<br>/g, "\n").slice(5, -6) : body;
         subjectText = mail.subject && mail.subject !== "undefined" ? mail.subject : subject;
+      }
+      if (!this.state.isPrevBody && (navigation.state.params.type === "REPLY" || navigation.state.params.type === "REPLY_ALL" || navigation.state.params.type === "FORWARD")) {
+        this.setState({ isPrevBody: true});
+        this.props.updatePrevBody(mail.body && mail.body !== "undefined" ? mail.body.replace(/<br>/g, "\n").slice(5, -6) : body);
       }
       this.setState({ mailInfos: mail });
       this.props.updateStateValue(toUsers, ccUsers, bccUsers, subjectText, bodyText);

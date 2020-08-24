@@ -60,6 +60,7 @@ interface ICreateMailState {
   searchCc: ISearchUsers;
   searchBcc: ISearchUsers;
   inputName: string;
+  prevBody: string;
 }
 
 type NewMailContainerProps = ICreateMailEventProps & ICreateMailOtherProps;
@@ -74,6 +75,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     subject: "",
     body: "",
     attachments: [],
+    prevBody: "",
   };
 
   constructor(props) {
@@ -90,6 +92,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       searchCc: [],
       searchBcc: [],
       inputName: "",
+      prevBody: "",
     };
   }
 
@@ -103,6 +106,10 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
 
   updateStateValue = (toUsers, ccUsers, bccUsers, subjectText, bodyText) => {
     this.setState({ to: toUsers, cc: ccUsers, bcc: bccUsers, subject: subjectText, body: bodyText });
+  };
+
+  updatePrevBody = prevBodyText => {
+    this.setState({ prevBody: prevBodyText});
   };
 
   setSearchUsers = async (text: string, inputName: string) => {
@@ -172,15 +179,16 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
 
   manageDraftMail = () => {
     const { navigation } = this.props;
-    const { to, cc, bcc, subject, body, attachments } = this.state;
+    const { to, cc, bcc, subject, body, prevBody, attachments } = this.state;
     if (to.length > 0 || cc.length > 0 || bcc.length > 0 || subject !== "" || body !== "" || attachments.length > 0) {
+      const currBody = navigation.state.params.type === "REPLY" || navigation.state.params.type === "REPLY_ALL" || navigation.state.params.type === "FORWARD" ? body + "\n-------------------\n" + prevBody: body;
       const mailDatas = {
         //to: to.map(elem => (elem.id && elem.id !== undefined ? elem.id : elem)),
         to: to.map(to => to.id),
         cc: cc.map(cc => cc.id),
         bcc: bcc.map(bcc => bcc.id),
         subject: subject,
-        body: body !== "" ? `<div>${body.replace(/\n/g, "<br>")}</div>` : body,
+        body: currBody !== "" ? `<div>${currBody.replace(/\n/g, "<br>")}</div>` : body,
         attachments: attachments,
       };
       if (this.props.navigation.state.params.type === "DRAFT") {
@@ -220,7 +228,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
 
   handleSendNewMail = () => {
     const { navigation } = this.props;
-    const { to, cc, bcc, subject, body, attachments } = this.state;
+    const { to, cc, bcc, subject, body, prevBody, attachments } = this.state;
     if (to.length === 0 && cc.length === 0 && bcc.length === 0) {
       Toast.show(I18n.t("zimbra-missing-receiver"), {
         position: Toast.position.BOTTOM,
@@ -229,18 +237,19 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       });
       return;
     }
+    const currBody = navigation.state.params.type === "REPLY" || navigation.state.params.type === "REPLY_ALL" || navigation.state.params.type === "FORWARD" ? body + "\n-------------------\n" + prevBody: body;
     const mailDatas = {
       to: to.map(to => to.id),
       cc: cc.map(cc => cc.id),
       bcc: bcc.map(bcc => bcc.id),
       subject: subject,
-      body: body !== "" ? `<div>${body.replace(/\n/g, "<br>")}</div>` : body,
+      body: currBody !== "" ? `<div>${currBody.replace(/\n/g, "<br>")}</div>` : body,
       attachments: attachments,
     };
     const mailId = navigation.state.params.mailId !== undefined ? navigation.state.params.mailId : "";
     if (navigation.state.params.type === "NEW") this.props.sendMail(mailDatas, "", "");
     else if (navigation.state.params.type === "DRAFT") this.props.sendMail(mailDatas, mailId, "");
-    else if (navigation.state.params.type === "REPLY" || navigation.state.params.type === "REPLY_ALL")
+    else if (navigation.state.params.type === "REPLY" || navigation.state.params.type === "REPLY_ALL" || navigation.state.params.type === "FORWARD")
       this.props.sendMail(mailDatas, "", mailId);
     this.goBack("isNotDraft");
 
@@ -277,6 +286,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           pickUser={this.pickUser}
           unpickUser={this.unpickUser}
           updateStateValue={this.updateStateValue}
+          updatePrevBody={this.updatePrevBody}
         />
       </PageContainer>
     );
