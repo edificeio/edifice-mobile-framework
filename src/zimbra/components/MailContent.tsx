@@ -12,7 +12,7 @@ export default class MailContent extends React.PureComponent<any, any> {
     return (
       <View style={styles.containerFooter}>
         <FooterButton
-          icon="material-reply"
+          icon="reply"
           text={I18n.t("zimbra-reply")}
           onPress={() =>
             this.props.navigation.navigate("newMail", {
@@ -23,7 +23,7 @@ export default class MailContent extends React.PureComponent<any, any> {
           }
         />
         <FooterButton
-          icon="material-reply-all"
+          icon="reply_all"
           text={I18n.t("zimbra-replyAll")}
           onPress={() =>
             this.props.navigation.navigate("newMail", {
@@ -42,7 +42,7 @@ export default class MailContent extends React.PureComponent<any, any> {
               mailId: this.props.mail.id,
               onGoBack: this.props.navigation.state.params.onGoBack,
             })} />
-        <FooterButton icon="material-delete" text={I18n.t("zimbra-delete")} onPress={() => true} />
+        <FooterButton icon="delete" text={I18n.t("zimbra-delete")} onPress={() => true} />
       </View>
     );
   }

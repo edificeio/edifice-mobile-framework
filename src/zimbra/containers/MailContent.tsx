@@ -103,7 +103,7 @@ class MailContentContainer extends React.PureComponent<any, any> {
       { text: I18n.t("zimbra-mark-unread"), icon: "email", onPress: this.markAsRead },
       { text: I18n.t("zimbra-move"), icon: "unarchive", onPress: this.showModal },
       // { text: I18n.t("zimbra-download-all"), icon: "download", onPress: () => {} },
-      { text: I18n.t("zimbra-delete"), icon: "material-delete", onPress: this.delete },
+      { text: I18n.t("zimbra-delete"), icon: "delete", onPress: this.delete },
     ];
     return (
       <>

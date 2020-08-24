@@ -68,7 +68,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
         </View>
         <DrawerOption
           selected={this.isCurrentScreen("inbox")}
-          iconName="material-inbox"
+          iconName="inbox"
           label={I18n.t("zimbra-inbox")}
           navigate={() => navigation.navigate("inbox", { key: "inbox", folderName: undefined })}
           count={count.data.INBOX}
@@ -88,7 +88,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
         />
         <DrawerOption
           selected={this.isCurrentScreen("trash")}
-          iconName="material-delete"
+          iconName="delete"
           label={I18n.t("zimbra-trash")}
           navigate={() => navigation.navigate("trash", { key: "trash", folderName: undefined })}
         />
@@ -106,7 +106,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
           {folders.data.map(folder => (
             <DrawerOption
               selected={folder.name === currentFolder}
-              iconName="material-folder"
+              iconName="folder"
               label={folder.name}
               navigate={() => {
                 navigation.navigate("folder", { key: folder.name, folderName: folder.name });

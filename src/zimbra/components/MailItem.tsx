@@ -15,7 +15,7 @@ import { DateView } from "../../ui/DateView";
 import { CommonStyles } from "../../styles/common/styles";
 
 import { FontWeight } from "../../ui/text";
-import { getSessionInfo } from "../../AppStore";
+import { getSessionInfo } from "../../App";
 
 
 //TODO extract mail-specific field in order to make this component dumb
