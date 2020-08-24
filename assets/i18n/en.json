@@ -311,6 +311,8 @@
   "zimbra-empty-mailbox": "No message for now",
   "zimbra-send-mail": "Message sent",
   "zimbra-missing-receiver": "This message must contain at least one recipient",
+  "zimbra-message-deleted": "Message deleted",
+  "zimbra-message-moved": "Message moved",
 
   "profileTypes": {
     "Guest": "Guest",

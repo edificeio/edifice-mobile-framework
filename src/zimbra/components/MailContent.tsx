@@ -42,7 +42,7 @@ export default class MailContent extends React.PureComponent<any, any> {
               mailId: this.props.mail.id,
               onGoBack: this.props.navigation.state.params.onGoBack,
             })} />
-        <FooterButton icon="delete" text={I18n.t("zimbra-delete")} onPress={() => true} />
+        <FooterButton icon="delete" text={I18n.t("zimbra-delete")} onPress={this.props.delete} />
       </View>
     );
   }
@@ -50,9 +50,14 @@ export default class MailContent extends React.PureComponent<any, any> {
   private mailContent() {
     return (
       <View style={styles.shadowContainer}>
-        <ScrollView style={styles.containerMail}>
-          <HtmlContentView html={this.props.mail.body} />
-        </ScrollView>
+        <View style={styles.scrollContainer}>
+          <ScrollView
+            contentContainerStyle={{
+              padding: 10,
+            }}>
+            <HtmlContentView html={this.props.mail.body} />
+          </ScrollView>
+        </View>
       </View>
     );
   }
@@ -93,24 +98,23 @@ const styles = StyleSheet.create({
     backgroundColor: "#46BFAF",
   },
   shadowContainer: {
-    overflow: "hidden",
-    paddingBottom: 15,
+    paddingBottom: 110,
     flexGrow: 1,
-    maxHeight: "68%",
     marginTop: 5,
+    marginBottom: 0,
   },
-  containerMail: {
-    flexGrow: 1,
-    padding: 20,
+  scrollContainer: {
     backgroundColor: "#FFF",
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 3,
+      height: 5,
     },
-    shadowOpacity: 0.27,
-    shadowRadius: 4.65,
-    elevation: 6,
+    shadowOpacity: 0.34,
+    shadowRadius: 6.27,
+    elevation: 10,
+    flexGrow: 1,
+    maxHeight: "100%",
   },
   containerFooter: {
     flexDirection: "row",

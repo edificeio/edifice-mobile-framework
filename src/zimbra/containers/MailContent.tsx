@@ -72,7 +72,7 @@ class MailContentContainer extends React.PureComponent<any, any> {
     const { navigation } = this.props;
     navigation.state.params.onGoBack();
     navigation.navigate("inbox", { key: "inbox", folderName: undefined });
-    Toast.show("Message déplacé", {
+    Toast.show(I18n.t("zimbra-message-moved"), {
       position: Toast.position.BOTTOM,
       mask: false,
       containerStyle: { width: "95%", backgroundColor: "black" },
@@ -88,6 +88,12 @@ class MailContentContainer extends React.PureComponent<any, any> {
     const isTrashed = navigation.getParam("isTrashed");
     if (isTrashed) this.props.deleteMails([this.props.mail.id]);
     else this.props.trashMails([this.props.mail.id]);
+    this.goBack();
+    Toast.show(I18n.t("zimbra-message-deleted"), {
+      position: Toast.position.BOTTOM,
+      mask: false,
+      containerStyle: { width: "95%", backgroundColor: "black" },
+    });
   };
 
   goBack = () => {
@@ -126,7 +132,7 @@ class MailContentContainer extends React.PureComponent<any, any> {
               <Icon name="more_vert" size={24} color="white" style={{ marginRight: 10 }} />
             </TouchableOpacity>
           </HeaderComponent>
-          <MailContent {...this.props} />
+          <MailContent {...this.props} delete={this.delete} />
         </PageContainer>
         <MoveModal mail={mail} show={showModal} closeModal={this.closeModal} successCallback={this.mailMoved} />
         <MailContentMenu onClickOutside={this.showMenu} show={showMenu} data={menuData} />
