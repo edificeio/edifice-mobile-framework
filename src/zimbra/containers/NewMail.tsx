@@ -142,16 +142,16 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     const key = inputName === "to" ? "to" : inputName === "cc" ? "cc" : "bcc";
     const keySearch = inputName === "to" ? "searchTo" : inputName === "cc" ? "searchCc" : "searchBcc";
 
+    const newState = { ...this.state };
     if (this.state[key].findIndex(u => u.id === user.id) === -1) {
-      const newState = { ...this.state };
       if (this.state[keySearch].findIndex(u => u.id === user.id) !== -1) {
         newState[keySearch as keyof StateTypes] = this.state[keySearch].filter(function(person) {
           return person !== user;
         });
       }
-      newState[key as keyof StateTypes] = [...this.state[key], user];
-      this.setState(newState);
     }
+    newState[key as keyof StateTypes] = [...this.state[key], user];
+    this.setState(newState);
   };
 
   unpickUser = (user, inputName) => {
@@ -183,10 +183,9 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     if (to.length > 0 || cc.length > 0 || bcc.length > 0 || subject !== "" || body !== "" || attachments.length > 0) {
       const currBody = navigation.state.params.type === "REPLY" || navigation.state.params.type === "REPLY_ALL" || navigation.state.params.type === "FORWARD" ? body + "\n-------------------\n" + prevBody: body;
       const mailDatas = {
-        //to: to.map(elem => (elem.id && elem.id !== undefined ? elem.id : elem)),
-        to: to.map(to => to.id),
-        cc: cc.map(cc => cc.id),
-        bcc: bcc.map(bcc => bcc.id),
+        to: to.map(elem => (elem.id && elem.id !== undefined ? elem.id : elem)),
+        cc: cc.map(elem => (elem.id && elem.id !== undefined ? elem.id : elem)),
+        bcc: bcc.map(elem => (elem.id && elem.id !== undefined ? elem.id : elem)),
         subject: subject,
         body: currBody !== "" ? `<div>${currBody.replace(/\n/g, "<br>")}</div>` : body,
         attachments: attachments,
@@ -239,9 +238,9 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     }
     const currBody = navigation.state.params.type === "REPLY" || navigation.state.params.type === "REPLY_ALL" || navigation.state.params.type === "FORWARD" ? body + "\n-------------------\n" + prevBody: body;
     const mailDatas = {
-      to: to.map(to => to.id),
-      cc: cc.map(cc => cc.id),
-      bcc: bcc.map(bcc => bcc.id),
+      to: to.map(elem => (elem.id && elem.id !== undefined ? elem.id : elem)),
+      cc: cc.map(elem => (elem.id && elem.id !== undefined ? elem.id : elem)),
+      bcc: bcc.map(elem => (elem.id && elem.id !== undefined ? elem.id : elem)),
       subject: subject,
       body: currBody !== "" ? `<div>${currBody.replace(/\n/g, "<br>")}</div>` : body,
       attachments: attachments,

@@ -105,11 +105,11 @@ export function UserList(props: {
       data={props.users}
       keyExtractor={(user: IUser) => user.id} //increment in next line
       renderItem={user => (
-        <UserLine
-          onPick={() => props.onPickUser && props.onPickUser(user.item)}
-          onUnpick={() => props.onUnpickUser && props.onUnpickUser(user.item)}
-          {...user.item}
-        />
+          <UserLine
+            onPick={() => props.onPickUser && props.onPickUser(user.item)}
+            onUnpick={() => props.onUnpickUser && props.onUnpickUser(user.item)}
+            {...user.item}
+          />
       )}
       onEndReached={() => props.onEndReached && props.onEndReached()}
       refreshing
@@ -145,6 +145,12 @@ export default class SelectMailInfos extends React.Component<
   public pickUser = (user: IUser) => {
     const { onPickUser } = this.props;
     onPickUser(user);
+    this.setState({ searchText: "" });
+  };
+
+  public addExternalUser = (user: string) => {
+    const { onPickUser } = this.props;
+    if (user !== "" && user !== " ") onPickUser(user);
     this.setState({ searchText: "" });
   };
 
@@ -186,9 +192,13 @@ export default class SelectMailInfos extends React.Component<
                         marginHorizontal: 3,
                         marginVertical: 5,
                       }}>
-                      <Text style={styles.userLabel} numberOfLines={2}>
-                        {p.name || p.displayName}
-                      </Text>
+                      {typeof p === "string" ? (
+                        <Text style={styles.userLabel} numberOfLines={2}>{p}</Text>
+                      ) : (
+                        <Text style={styles.userLabel} numberOfLines={2}>
+                          {p.name || p.displayName}
+                        </Text>
+                      )}
                     </TouchableOpacity>
                   ))}
                 <TextInput
@@ -204,6 +214,7 @@ export default class SelectMailInfos extends React.Component<
                       nativeEvent.key === "Backspace" &&
                       onUnpickUser(pickedUsers[pickedUsers.length - 1]);
                   }}
+                  onSubmitEditing={e => this.addExternalUser(e.nativeEvent.text)}
                 />
               </View>
             </ScrollView>

@@ -39,9 +39,7 @@ export const newMailService = {
   sendMail: async (mailDatas, draftId, inReplyTo) => {
     let urlParams = draftId !== "" || inReplyTo !== "" ? "?" : "";
     urlParams = draftId !== "" ? `${urlParams}id=${draftId}` : urlParams;
-    console.log("urlParams: ", urlParams);
     urlParams = inReplyTo !== "" ? `${urlParams}In-Reply-To=${inReplyTo}` : urlParams;
-    console.log("--urlParams: ", urlParams);
     await fetchJSONWithCache(`/zimbra/send${urlParams}`, { method: "POST", body: JSON.stringify(mailDatas) });
   },
   makeDraftMail: async (mailDatas, inReplyTo, methodReply) => {
