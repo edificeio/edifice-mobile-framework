@@ -337,14 +337,14 @@ class ThreadInput extends React.PureComponent<
                 )
               }
             </View>
-            <View style={{flex: 1, flexDirection: "row", justifyContent: "space-around", alignItems: "flex-end"}}>
+            <View style={{flex: 1, flexDirection: "row", justifyContent: "space-evenly", alignItems: "flex-end"}}>
             <TouchableOpacity onPress={() => this.attachmentPickerRef.onPickAttachment()}>
               <IconButton
                 iconName="attached"
                 iconStyle={{transform: [{ rotate: "270deg" }]}}
                 iconSize={20}
                 iconColor={CommonStyles.primary}
-                buttonStyle={{ borderColor: CommonStyles.primary, borderWidth: 1, backgroundColor: undefined, height: 40, width: 40, borderRadius: 20 }}
+                buttonStyle={{ borderColor: CommonStyles.primary, borderWidth: 1, backgroundColor: undefined, height: 34, width: 34, borderRadius: 17 }}
               />
             </TouchableOpacity>
             <TouchableOpacity
@@ -354,12 +354,12 @@ class ThreadInput extends React.PureComponent<
               {sending
                 ? <Loading
                     small
-                    customStyle={{height: 40, width: 40, alignItems: 'center', justifyContent: 'center'}}
+                    customStyle={{height: 34, width: 34, alignItems: 'center', justifyContent: 'center'}}
                   />
                 : <IconButton
                     iconName="send_icon"
                     iconSize={20}
-                    buttonStyle={{height: 40, width: 40, borderRadius: 20}}
+                    buttonStyle={{height: 34, width: 34, borderRadius: 17}}
                     disabled={!(textMessage || attachmentsAdded)}
                   />
               }

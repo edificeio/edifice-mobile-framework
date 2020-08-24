@@ -133,7 +133,7 @@ class ThreadPageContainer extends React.PureComponent<
           />,
         headerRight:
           <View style={{flexDirection: "row", alignItems: "center"}}>
-            <View style={{ width: 1, height: "80%", backgroundColor: "#FFF" }} />
+            <View style={{ width: 1, height: "60%", backgroundColor: "#FFF" }} />
             <HeaderAction
               customComponent={
                 <View 
@@ -192,7 +192,7 @@ class ThreadPageContainer extends React.PureComponent<
 
     return (
       <CenterPanel>
-        <LittleTitle numberOfLines={1} smallSize>
+        <LittleTitle bold numberOfLines={1}>
           {threadInfo.subject}
         </LittleTitle>
         <LittleTitle smallSize italic>
@@ -268,11 +268,11 @@ export const LittleTitle = (style.text as any)(
   {
     color: "white",
     fontFamily: CommonStyles.primaryFontFamily,
-    fontWeight: "400",
   },
-  ({ smallSize = false, italic = false }: { smallSize: boolean, italic: boolean }) => ({
+  ({ smallSize = false, italic = false, bold = false }: { smallSize: boolean, italic: boolean, bold: boolean }) => ({
     fontSize: smallSize ? 12 : 16,
     fontStyle: italic ? "italic" : "normal",
+    fontWeight: bold ? "bold" : "400",
   })
 );
 
