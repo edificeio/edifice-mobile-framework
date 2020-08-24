@@ -136,10 +136,10 @@ class ThreadInput extends React.PureComponent<
         <br /><span class="medium-importance" translate key="transfer.date"></span><em> ${getSentDate(message)}</em>
         <br /><span class="medium-importance" translate key="transfer.subject"></span><em> ${getSubject(message)}</em>
         <br /><span class="medium-importance" translate key="transfer.to"></span>
-        <em class="medium-importance" ng-repeat="receiver in mail.to"><em> ${message && getRecepientDisplayNames(message) || ""}</em><span ng-if="$index !== mail.to.length - 1 && receiver.displayName">,</span>
+        <em class="medium-importance"><em> ${message && getRecepientDisplayNames(message) || ""}</em>
         </em>
         <br /><span class="medium-importance" translate key="transfer.cc"></span>
-        <em class="medium-importance" ng-repeat="receiver in mail.cc"><em> ${message && getRecepientDisplayNames(message, true) || ""}</em><span ng-if="$index !== mail.cc.length - 1 && receiver.displayName">,</span>
+        <em class="medium-importance"><em> ${message && getRecepientDisplayNames(message, true) || ""}</em>
         </em>
       </p>`;
     const getTransferTemplate = (message: IConversationMessage) => `
@@ -149,10 +149,10 @@ class ThreadInput extends React.PureComponent<
         <br /><span class="medium-importance" translate key="transfer.date"></span><em> ${getSentDate(message)}</em>
         <br /><span class="medium-importance" translate key="transfer.subject"></span><em> ${getSubject(message)}</em>
         <br /><span class="medium-importance" translate key="transfer.to"></span>
-        <em class="medium-importance" ng-repeat="receiver in mail.to"><em> ${message && getRecepientDisplayNames(message) || ""}</em><span ng-if="$index !== mail.to.length - 1">,</span>
+        <em class="medium-importance"><em> ${message && getRecepientDisplayNames(message) || ""}</em>
         </em>
         <br /><span class="medium-importance" translate key="transfer.cc"></span>
-        <em class="medium-importance" ng-repeat="receiver in mail.cc"><em> ${message && getRecepientDisplayNames(message, true) || ""}</em><span ng-if="$index !== mail.cc.length - 1">,</span>
+        <em class="medium-importance"><em> ${message && getRecepientDisplayNames(message, true) || ""}</em>
         </em>
       </p>`;
     let body = textMessage ? `<div>${textMessage.replace(/\n/g, '<br>')}</div>` : '';
