@@ -259,7 +259,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     };
     const mailId = navigation.state.params.mailId !== undefined ? navigation.state.params.mailId : "";
     if (navigation.state.params.type === "NEW") {
-      if (attachments.length === 0)
+      if (attachments !== undefined && attachments.length === 0)
         this.props.sendMail(mailDatas, "", "");
       else
         this.props.sendMail(mailDatas, mailId, "")
