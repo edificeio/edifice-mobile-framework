@@ -238,7 +238,8 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
 
   handleSendNewMail = () => {
     const { navigation } = this.props;
-    const { to, cc, bcc, subject, body, prevBody, attachments } = this.state;
+    const { to, cc, bcc, subject, body, prevBody } = this.state;
+    const { attachments } = this.props.mail;
     if (to.length === 0 && cc.length === 0 && bcc.length === 0) {
       Toast.show(I18n.t("zimbra-missing-receiver"), {
         position: Toast.position.BOTTOM,
@@ -257,7 +258,12 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       attachments: attachments,
     };
     const mailId = navigation.state.params.mailId !== undefined ? navigation.state.params.mailId : "";
-    if (navigation.state.params.type === "NEW") this.props.sendMail(mailDatas, "", "");
+    if (navigation.state.params.type === "NEW") {
+      if (attachments.length === 0)
+        this.props.sendMail(mailDatas, "", "");
+      else
+        this.props.sendMail(mailDatas, mailId, "")
+    }
     else if (navigation.state.params.type === "DRAFT") this.props.sendMail(mailDatas, mailId, "");
     else if (navigation.state.params.type === "REPLY" || navigation.state.params.type === "REPLY_ALL" || navigation.state.params.type === "FORWARD")
       this.props.sendMail(mailDatas, "", mailId);
