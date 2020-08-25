@@ -43,3 +43,9 @@ export function fetchMailContentAction(mailId) {
     }
   };
 }
+
+export function clearMailContentAction() {
+  return async (dispatch: Dispatch) => {
+    dispatch(dataActions.clear());
+  };
+}

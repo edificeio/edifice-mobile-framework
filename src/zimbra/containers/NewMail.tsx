@@ -15,7 +15,7 @@ import { PageContainer } from "../../ui/ContainerContent";
 import { Header as HeaderComponent } from "../../ui/headers/Header";
 import { HeaderAction } from "../../ui/headers/NewHeader";
 import { trashMailsAction } from "../actions/mail";
-import { fetchMailContentAction } from "../actions/mailContent";
+import { fetchMailContentAction, clearMailContentAction } from "../actions/mailContent";
 import {
   sendMailAction,
   makeDraftMailAction,
@@ -47,6 +47,7 @@ interface ICreateMailEventProps {
   postAttachments: (draftId: string, files: any[]) => void;
   deleteAttachment: (draftId: string, attachmentId: string) => void;
   fetchMailContentAction: (mailId: string) => void;
+  clearContent: () => void;
 }
 
 // navigation.state.params.type can be { "NEW", "DRAFT", "REPLY", "REPLY_ALL", "FORWARD" }
@@ -109,6 +110,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     if (this.props.navigation.state.params.mailId !== undefined) {
       this.props.fetchMailContentAction(this.props.navigation.state.params.mailId);
     } else {
+      this.props.clearContent();
       this.setState(this.defaultState);
     }
   };
@@ -273,8 +275,8 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     DocumentPicker.pickMultiple({
       type: [DocumentPicker.types.allFiles],
     })
-      .then(async res => {
-        this.props.postAttachments(this.props.mail.id, res);
+      .then(res => {
+        setTimeout(() => this.props.postAttachments(this.props.mail.id, res), 1500);
       })
       .catch(err => console.error("Document Picker Canceled", err));
   };
@@ -331,6 +333,7 @@ const mapDispatchToProps = (dispatch: any) => {
       trashMessage: trashMailsAction,
       postAttachments: addAttachmentAction,
       deleteAttachment: deleteAttachmentAction,
+      clearContent: clearMailContentAction,
       fetchMailContentAction,
     },
     dispatch
