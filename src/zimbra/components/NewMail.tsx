@@ -134,6 +134,8 @@ export default class NewMail extends React.PureComponent<any, NewMailContainerSt
 
   public render() {
     const { showCcRows } = this.state;
+    const { attachments, id } = this.props.mail;
+    const { deleteAttachment } = this.props;
     return (
       <PageContainer>
         {this.props.isFetching ? (
@@ -175,6 +177,17 @@ export default class NewMail extends React.PureComponent<any, NewMailContainerSt
                   onChangeText={(text: string) => this.props.handleInputChange(text, "subject")}
                 />
               </View>
+              <View style={styles.PJrow}>
+                {attachments &&
+                  attachments.map(att => (
+                    <View style={styles.PJitem}>
+                      <Text>{att.filename}</Text>
+                      <TouchableOpacity onPress={() => deleteAttachment(id, att.id)}>
+                        <Icon name="close" color="red" />
+                      </TouchableOpacity>
+                    </View>
+                  ))}
+              </View>
             </View>
             <TextInput
               placeholder={I18n.t("zimbra-type-message")}
@@ -196,4 +209,21 @@ const styles = StyleSheet.create({
   inputRow: { flexDirection: "row", alignItems: "flex-start", paddingHorizontal: 10 },
   textInput: { flexGrow: 1, marginLeft: 10 },
   textZone: { marginTop: 10, flexGrow: 1, padding: 8 },
+  PJrow: {},
+  PJitem: {
+    margin: 5,
+    padding: 5,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    backgroundColor: CommonStyles.lightGrey,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    alignItems: "center",
+  },
 });

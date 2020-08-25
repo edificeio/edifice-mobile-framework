@@ -1,6 +1,7 @@
 import I18n from "i18n-js";
 import React from "react";
 import { View } from "react-native";
+import DocumentPicker from "react-native-document-picker";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Toast from "react-native-tiny-toast";
 import { NavigationScreenProp, NavigationActions } from "react-navigation";
@@ -15,7 +16,13 @@ import { Header as HeaderComponent } from "../../ui/headers/Header";
 import { HeaderAction } from "../../ui/headers/NewHeader";
 import { trashMailsAction } from "../actions/mail";
 import { fetchMailContentAction } from "../actions/mailContent";
-import { sendMailAction, makeDraftMailAction, updateDraftMailAction } from "../actions/newMail";
+import {
+  sendMailAction,
+  makeDraftMailAction,
+  updateDraftMailAction,
+  addAttachmentAction,
+  deleteAttachmentAction,
+} from "../actions/newMail";
 import NewMailComponent from "../components/NewMail";
 import { newMailService, ISearchUsers, IUser } from "../service/newMail";
 import { getMailContentState, IMail } from "../state/mailContent";
@@ -37,6 +44,8 @@ interface ICreateMailEventProps {
   makeDraft: (mailDatas: object, inReplyTo: string, methodReply: string) => void;
   updateDraft: (mailId: string, mailDatas: object) => void;
   trashMessage: (mailId: string[]) => void;
+  postAttachments: (draftId: string, files: any[]) => void;
+  deleteAttachment: (draftId: string, attachmentId: string) => void;
   fetchMailContentAction: (mailId: string) => void;
 }
 
@@ -177,10 +186,10 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     );
   };
 
-  manageDraftMail = () => {
+  manageDraftMail = (forceDraft = false) => {
     const { navigation } = this.props;
     const { to, cc, bcc, subject, body, prevBody, attachments } = this.state;
-    if (to.length > 0 || cc.length > 0 || bcc.length > 0 || subject !== "" || body !== "" || attachments.length > 0) {
+    if (forceDraft || to.length > 0 || cc.length > 0 || bcc.length > 0 || subject !== "" || body !== "" || attachments.length > 0) {
       const currBody = navigation.state.params.type === "REPLY" || navigation.state.params.type === "REPLY_ALL" || navigation.state.params.type === "FORWARD" ? body + "\n-------------------\n" + prevBody: body;
       const mailDatas = {
         to: to.map(elem => (elem.id && elem.id !== undefined ? elem.id : elem)),
@@ -259,13 +268,24 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     });
   };
 
+  askForAttachment = () => {
+    if (this.props.mail.id === undefined) this.manageDraftMail(true);
+    DocumentPicker.pickMultiple({
+      type: [DocumentPicker.types.allFiles],
+    })
+      .then(async res => {
+        this.props.postAttachments(this.props.mail.id, res);
+      })
+      .catch(err => console.error("Document Picker Canceled", err));
+  };
+
   public render() {
     return (
       <PageContainer>
         <HeaderComponent color={CommonStyles.secondary}>
           <HeaderAction onPress={() => this.goBack("isDraft")} name="back" />
           <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-end" }}>
-            <TouchableOpacity onPress={() => true}>
+            <TouchableOpacity onPress={() => this.askForAttachment()}>
               <Icon name="attachment" size={24} color="white" style={{ marginRight: 10 }} />
             </TouchableOpacity>
             <TouchableOpacity onPress={this.handleSendNewMail.bind(this)}>
@@ -286,6 +306,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           unpickUser={this.unpickUser}
           updateStateValue={this.updateStateValue}
           updatePrevBody={this.updatePrevBody}
+          deleteAttachment={this.props.deleteAttachment}
         />
       </PageContainer>
     );
@@ -308,6 +329,8 @@ const mapDispatchToProps = (dispatch: any) => {
       makeDraft: makeDraftMailAction,
       updateDraft: updateDraftMailAction,
       trashMessage: trashMailsAction,
+      postAttachments: addAttachmentAction,
+      deleteAttachment: deleteAttachmentAction,
       fetchMailContentAction,
     },
     dispatch

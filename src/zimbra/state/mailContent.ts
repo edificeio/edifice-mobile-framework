@@ -40,3 +40,6 @@ export const getMailContentState = (globalState: any) =>
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
 export const actionTypes = createAsyncActionTypes(mailConfig.createActionType("MAIL_CONTENT"));
+export const postAttachmentActionType = mailConfig.createActionType("POST_ATTACHMENTS");
+export const deleteAttachmentActionType = mailConfig.createActionType("DELETE_ATTACHMENT");
+export const updateDraftIdActionType = mailConfig.createActionType("DRAFT_CREATED");

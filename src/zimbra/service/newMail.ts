@@ -1,4 +1,10 @@
+import RNFS from "react-native-fs";
+import RNFB from "rn-fetch-blob";
+
+import Conf from "../../../ode-framework-conf";
 import { fetchJSONWithCache } from "../../infra/fetchWithCache";
+import { getAuthHeader } from "../../infra/oauth";
+import { dataActions } from "../../timeline/actions/commentList";
 
 export type IUser = {
   id: string;
@@ -11,15 +17,29 @@ export type IUser = {
 export type ISearchUsers = IUser[];
 
 export type ISearchUsersGroups = {
-  groups: Array<{
+  groups: {
     id: string;
     name: string;
     displayName: string;
     profile: string;
     structureName: string;
-  }>;
+  }[];
   users: ISearchUsers;
-}
+};
+
+export type IAttachmentsBackend = {
+  data: string;
+  respInfo: {
+    status: number;
+  };
+};
+
+export type IAttachments = {
+  contentType: string;
+  filename: string;
+  id: string;
+  size: number;
+}[];
 
 const SearchUsersAdapter: (data: ISearchUsersGroups) => ISearchUsersGroups = data => {
   let result = {} as ISearchUsersGroups;
@@ -29,6 +49,14 @@ const SearchUsersAdapter: (data: ISearchUsersGroups) => ISearchUsersGroups = dat
     users: data.users,
   };
   return result;
+};
+
+const attachmentAdapter: (data: IAttachmentsBackend) => IAttachments = data => {
+  try {
+    return JSON.parse(data.data).attachments;
+  } catch (e) {
+    return [];
+  }
 };
 
 export const newMailService = {
@@ -45,9 +73,41 @@ export const newMailService = {
   makeDraftMail: async (mailDatas, inReplyTo, methodReply) => {
     let method = methodReply !== "" ? methodReply : "undefined";
     let urlParams = inReplyTo !== "" ? `?In-Reply-To=${inReplyTo}&reply=${method}` : "";
-    await fetchJSONWithCache(`/zimbra/draft${urlParams}`, { method: "POST", body: JSON.stringify(mailDatas) });
+    const response = await fetchJSONWithCache(`/zimbra/draft${urlParams}`, { method: "POST", body: JSON.stringify(mailDatas) });
+    return response.id;
   },
   updateDraftMail: async (mailId, mailDatas) => {
     await fetchJSONWithCache(`/zimbra/draft/${mailId}`, { method: "PUT", body: JSON.stringify(mailDatas) });
+  },
+  addAttachmentToDraft: async (draftId: string, files: any[]) => {
+    const signedHeaders: { Authorization: string } = getAuthHeader();
+    const url: string = `${Conf.currentPlatform.url}/zimbra/message/${draftId}/attachment`;
+    const base64files: string[] = await Promise.all(files.map(file => RNFS.readFile(file.uri, "base64")));
+
+    const results: any[] = [];
+
+    for (let i = 0; i < files.length; i++) {
+      await RNFB.fetch(
+        "POST",
+        url,
+        {
+          ...signedHeaders,
+          "Content-Type": "application/octet-stream",
+          "Content-Disposition": `attachment; filename=${encodeURIComponent(files[i].name)}`,
+        },
+        base64files[i]
+      ).then(response => {
+        if (response && response.respInfo.status >= 200 && response.respInfo.status < 300) {
+          Promise.resolve(attachmentAdapter(response));
+          results.push(attachmentAdapter(response));
+        } else {
+          Promise.reject(response.data);
+        }
+      });
+    }
+    return results[files.length - 1];
+  },
+  deleteAttachment: async (draftId: string, attachmentId: string) => {
+    return await fetchJSONWithCache(`/zimbra/message/${draftId}/attachment/${attachmentId}`, { method: "DELETE" });
   },
 };
