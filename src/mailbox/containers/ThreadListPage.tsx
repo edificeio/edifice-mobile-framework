@@ -34,7 +34,6 @@ import { Header } from "../../ui/headers/Header";
 import { CommonStyles } from "../../styles/common/styles";
 import withViewTracking from "../../infra/tracker/withViewTracking";
 import { Trackers } from "../../infra/tracker";
-import { loadVisibles } from "../actions/createThread";
 
 // Search query tools
 
@@ -95,7 +94,6 @@ const mapDispatchToProps: (
         dispatch(conversationSetThreadRead(threadId));
       }
     },
-    loadVisibles: () => loadVisibles(dispatch)(),
   };
 };
 
@@ -158,7 +156,6 @@ class ThreadListPageContainer extends React.PureComponent<
     // Initial setup
     this.resetSearch();
     this.reloadList();
-    this.loadVisibleRecepients();
     // Header events setup
     this.props.navigation.setParams({
       onResetSearch: this.resetSearch.bind(this),
@@ -176,10 +173,6 @@ class ThreadListPageContainer extends React.PureComponent<
   public reloadList() {
     if (this.props.isFetching || !this.props.navigation.isFocused()) return;
     this.props.dispatch(resetConversationThreadList());
-  }
-
-  public loadVisibleRecepients() {
-    this.props.loadVisibles();
   }
 
   public fetchNextPage() {

@@ -28,7 +28,8 @@ export default function selectedThread(
     case actionTypeLoadVisibles:
       return {
         ...state,
-        remaining: [...action.visibles],
+        remaining: [...action.visibles]
+          .filter(visible => !state.picked.some(picked => picked.userId === visible.id)),
         visibles: [...action.visibles]
       };
     case actionTypeUserPick:

@@ -2,7 +2,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import I18n from "i18n-js";
 
-import { createThread } from "../actions/createThread";
+import { loadVisibles, createThread } from "../actions/createThread";
 import { pickUser, unpickUser, clearPickedUsers } from "../actions/pickUser";
 
 import { IUser } from "../../user/reducers";
@@ -24,6 +24,7 @@ import { getSessionInfo } from "../../App";
 
 interface INewThreadPageProps {
   remainingUsers: IUser[];
+  loadVisibles: () => Promise<void>;	
   pickedUsers: IUser[];
   subject: string;
   message?: IConversationMessage;
@@ -66,9 +67,9 @@ class NewThreadPage extends React.PureComponent<
     });
   }
 
-  public async componentDidMount() {
-    const { selectSubject, pickUser, navigation } = this.props;
-    // Setup from navigation params
+  public componentDidMount() {
+    const { loadVisibles, selectSubject, pickUser, navigation } = this.props;
+    loadVisibles();
     if (navigation.getParam('message')) {
       const message: IConversationMessage = navigation.getParam('message');
       const type: string = navigation.getParam('type', 'new');
@@ -83,7 +84,6 @@ class NewThreadPage extends React.PureComponent<
         }
       }
       subject && selectSubject && selectSubject(subject);
-      // Receivers
       if (type === 'reply') {
         const allIds =  replyToAll ? NewThreadPage.findReceivers2(message) : [message.from];
         const receivers: IUser[] = allIds ? (allIds as string[]).map(uid => ({
@@ -93,7 +93,7 @@ class NewThreadPage extends React.PureComponent<
             return dn ? dn[1] : undefined;
           })()
         })).filter(e => e.displayName) as IUser[] : [];
-        receivers.forEach(u => pickUser(u));
+        receivers.forEach(receiver => pickUser(receiver));
       }
     }
   }
@@ -179,6 +179,7 @@ const NewThreadPageConnected = connect(
     };
   },
   (dispatch: Dispatch & ThunkDispatch<any, void, AnyAction>) => ({
+    loadVisibles: () => loadVisibles(dispatch)(),
     selectSubject: (subject: string) => selectSubject(dispatch)(subject),
     pickUser: (user: any) => pickUser(dispatch)(user),
     unpickUser: (user: any) => unpickUser(dispatch)(user),
