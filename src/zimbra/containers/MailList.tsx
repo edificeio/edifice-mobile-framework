@@ -8,6 +8,7 @@ import { fetchMailListAction, fetchMailListFromFolderAction } from "../actions/m
 import MailList from "../components/MailList";
 import { getFolderListState } from "../state/folders";
 import { getMailListState } from "../state/mailList";
+import withViewTracking from "../../infra/tracker/withViewTracking";
 
 // ------------------------------------------------------------------------------------------------
 
@@ -114,4 +115,4 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
 
 // ------------------------------------------------------------------------------------------------
 
-export default connect(mapStateToProps, mapDispatchToProps)(MailListContainer);
+export default withViewTracking("zimbra")(connect(mapStateToProps, mapDispatchToProps)(MailListContainer));
