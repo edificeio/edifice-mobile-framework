@@ -55,13 +55,13 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
             <View style={{ backgroundColor: "#eef7fb", width: "100%", padding: 4 }}>
               <Text style={{ fontSize: 18 }}>{I18n.t("zimbra-messages")}</Text>
             </View>
-            {this.renderOption("material-inbox", I18n.t("zimbra-inbox"), "inbox")}
+            {this.renderOption("inbox", I18n.t("zimbra-inbox"), "inbox")}
             <View style={{ backgroundColor: "lightblue", width: "100%", padding: 4 }}>
               <Text style={{ fontSize: 18 }}>{I18n.t("zimbra-directories")}</Text>
             </View>
             <ScrollView style={{ height: "33%" }}>
               {folders.data.map(f => (
-                <>{this.renderOption(f.id, f.name, "material-folder")}</>
+                <>{this.renderOption(f.id, f.name, "folder")}</>
               ))}
             </ScrollView>
             <View style={{ flexDirection: "row-reverse", padding: 20, paddingBottom: 10 }}>
