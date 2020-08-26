@@ -12,6 +12,7 @@ import { fetchSubjectListAction } from "../actions/subjects";
 import DashboardComponent from "../components/DashboardRelative";
 import { getSelectedChild, getSelectedChildStructure } from "../state/children";
 import { getSubjectsListState } from "../state/subjects";
+import withViewTracking from "../../../infra/tracker/withViewTracking";
 
 class Dashboard extends React.PureComponent<
   {
@@ -107,4 +108,4 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
+export default withViewTracking("viesco")(connect(mapStateToProps, mapDispatchToProps)(Dashboard));

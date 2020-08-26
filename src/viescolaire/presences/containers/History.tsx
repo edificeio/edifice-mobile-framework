@@ -17,6 +17,7 @@ import { getStudentEvents } from "../actions/events";
 import HistoryComponent from "../components/History";
 import { getHistoryEvents } from "../state/events";
 import { View } from "react-native";
+import withViewTracking from "../../../infra/tracker/withViewTracking";
 
 interface HistoryProps {
   navigation: NavigationScreenProp<any>;
@@ -227,4 +228,4 @@ const mapDispatchToProps = (dispatch: any) =>
     dispatch
   );
 
-export default connect(mapStateToProps, mapDispatchToProps)(History);
+export default withViewTracking("viesco/history")(connect(mapStateToProps, mapDispatchToProps)(History));

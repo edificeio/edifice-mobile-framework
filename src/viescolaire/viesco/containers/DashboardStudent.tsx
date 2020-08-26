@@ -11,6 +11,7 @@ import { fetchPersonnelListAction } from "../actions/personnel";
 import { fetchSubjectListAction } from "../actions/subjects";
 import DashboardComponent from "../components/DashboardStudent";
 import { getSubjectsListState } from "../state/subjects";
+import withViewTracking from "../../../infra/tracker/withViewTracking";
 
 class Dashboard extends React.PureComponent<{
   homeworks: any[];
@@ -74,4 +75,4 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
+export default withViewTracking("viesco")(connect(mapStateToProps, mapDispatchToProps)(Dashboard));

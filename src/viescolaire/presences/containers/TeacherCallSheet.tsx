@@ -12,6 +12,7 @@ import TeacherCallSheet from "../components/TeacherCallSheet";
 import { getClassesCallListState } from "../state/teacherClassesCall";
 import { getCoursesListState } from "../state/teacherCourses";
 import { View } from "react-native";
+import withViewTracking from "../../../infra/tracker/withViewTracking";
 
 class CallSheet extends React.PureComponent<any> {
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<any> }) => {
@@ -48,4 +49,4 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(CallSheet);
+export default withViewTracking("viesco/callSheet")(connect(mapStateToProps, mapDispatchToProps)(CallSheet));

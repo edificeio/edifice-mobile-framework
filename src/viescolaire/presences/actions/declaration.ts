@@ -3,6 +3,7 @@ import moment from "moment";
 import { declarationActionsTypes } from "../state/declaration";
 import { absenceDeclarationService } from "../services/declaration";
 import { getSelectedChild, getSelectedChildStructure } from "../../viesco/state/children";
+import { Trackers } from "../../../infra/tracker";
 
 export const declarationActions = {
   isPosting: () => ({ type: declarationActionsTypes.isPosting }),
@@ -23,6 +24,7 @@ export function declareAbsenceAction(startDate: moment.Moment, endDate: moment.M
         comment
       );
       dispatch(declarationActions.posted());
+      Trackers.trackEvent("viesco", "DECLARE ABSENCE")
     } catch (errmsg) {
       dispatch(declarationActions.error(errmsg));
     }

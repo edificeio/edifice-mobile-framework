@@ -13,6 +13,7 @@ import DeclarationComponent from "../components/Declaration";
 import { declareAbsenceAction } from "../actions/declaration";
 import { INavigationProps } from "../../../types";
 import { getSelectedChild } from "../../viesco/state/children";
+import withViewTracking from "../../../infra/tracker/withViewTracking";
 
 type DeclarationProps = {
   declareAbsenceAction: (startDate: moment.Moment, endDate: moment.Moment, comment: string) => void;
@@ -97,4 +98,4 @@ const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators({ declareAbsenceAction }, dispatch);
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Declaration);
+export default withViewTracking("viesco/absence")(connect(mapStateToProps, mapDispatchToProps)(Declaration));

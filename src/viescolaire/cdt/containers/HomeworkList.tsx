@@ -18,6 +18,7 @@ import { getHomeworksListState } from "../state/homeworks";
 import { getSessionsListState } from "../state/sessions";
 import { INavigationProps } from "../../../types";
 import { View } from "react-native";
+import withViewTracking from "../../../infra/tracker/withViewTracking";
 
 enum switchState {
   HOMEWORK,
@@ -227,4 +228,4 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(HomeworkListRelativeContainer);
+export default withViewTracking("viesco/cdt")(connect(mapStateToProps, mapDispatchToProps)(HomeworkListRelativeContainer));

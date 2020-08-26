@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
 import DashboardComponent from "../components/DashboardTeacher";
+import withViewTracking from "../../../infra/tracker/withViewTracking";
 
 class Dashboard extends React.PureComponent<any> {
   public render() {
@@ -18,4 +19,4 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
   return bindActionCreators({}, dispatch);
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
+export default withViewTracking("viesco")(connect(mapStateToProps, mapDispatchToProps)(Dashboard));
