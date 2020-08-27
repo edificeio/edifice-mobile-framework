@@ -50,8 +50,10 @@ export default class MailContent extends React.PureComponent<any, any> {
   private mailContent() {
     return (
       <View style={styles.shadowContainer}>
+        <View style={{ height: 115 }}></View>
         <View style={styles.scrollContainer}>
           <ScrollView
+            style={{ height: 1 }}
             contentContainerStyle={{
               padding: 10,
             }}>
@@ -98,12 +100,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#46BFAF",
   },
   shadowContainer: {
-    paddingBottom: 110,
     flexGrow: 1,
     marginTop: 5,
     marginBottom: 0,
+    flexDirection: "column-reverse",
   },
   scrollContainer: {
+    flexGrow: 1,
     backgroundColor: "#FFF",
     shadowColor: "#000",
     shadowOffset: {
@@ -113,8 +116,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.34,
     shadowRadius: 6.27,
     elevation: 10,
-    flexGrow: 1,
-    maxHeight: "100%",
   },
   containerFooter: {
     flexDirection: "row",
@@ -122,5 +123,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     width: "100%",
     bottom: 0,
+    zIndex: 10,
+    elevation: 10,
   },
 });
