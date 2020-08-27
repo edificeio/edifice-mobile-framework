@@ -76,10 +76,10 @@ export class HtmlContentView extends React.PureComponent<
     const attachmentGroupsHtml = html.match(attachmentGroupRegex);
     const attachmentsHtml = attachmentGroupsHtml && attachmentGroupsHtml.join().match(/<a.*?>.*?<\/a>/g);
     const attachments = attachmentsHtml && attachmentsHtml.map(attHtml => {
-      const attUrl = attHtml.match(/\/workspace\/document\/.*?(?=")/g);
+      const attUrl = attHtml.match(/href="(.*?)"/g);
       const attDisplayName = attHtml.match(/<\/div>.*?<\/a>/g);
       return ({
-        url: attUrl && `${(Conf.currentPlatform as any).url}${attUrl[0]}`,
+        url: attUrl && `${(Conf.currentPlatform as any).url}${attUrl[0].replace('href="', "").replace('"', "")}`,
         displayName: attDisplayName && attDisplayName[0].replace(/<\/div>/g, "").replace(/<\/a>/g, ""),
       } as IRemoteAttachment)
     });
