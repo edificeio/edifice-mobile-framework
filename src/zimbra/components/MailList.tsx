@@ -1,8 +1,7 @@
 import I18n from "i18n-js";
 import moment from "moment";
 import * as React from "react";
-import { View, StyleSheet, RefreshControl, Dimensions } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
+import { View, StyleSheet, RefreshControl, Dimensions, FlatList } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { NavigationDrawerProp } from "react-navigation-drawer";
 
