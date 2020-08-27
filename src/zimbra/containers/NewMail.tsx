@@ -262,7 +262,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       if (attachments !== undefined && attachments.length === 0)
         this.props.sendMail(mailDatas, "", "");
       else
-        this.props.sendMail(mailDatas, mailId, "")
+        this.props.sendMail(mailDatas, this.props.mail.id, "")
     }
     else if (navigation.state.params.type === "DRAFT") this.props.sendMail(mailDatas, mailId, "");
     else if (navigation.state.params.type === "REPLY" || navigation.state.params.type === "REPLY_ALL" || navigation.state.params.type === "FORWARD")
