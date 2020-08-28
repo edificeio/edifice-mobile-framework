@@ -398,7 +398,7 @@ class Attachment extends React.PureComponent<
             // the temp file path
             const originalName = this.getOriginalName(res, att);
             const formattedOriginalName = originalName && originalName.replace(/\//g, "_");
-            const baseDir = Platform.OS === "android" ? dirs.DownloadDir || dirs.DocumentDir : dirs.DocumentDir;
+            const baseDir = dirs.DocumentDir;
             const newpath = `${baseDir}/${formattedOriginalName}`;
             if (!originalName) throw new Error("file can't be saved (unknown name and extension)");
 
