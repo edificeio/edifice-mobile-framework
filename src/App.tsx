@@ -43,6 +43,7 @@ require("./pronote");
 require("./lvs");
 require("./myAppMenu");
 require("./homework");
+require("./zimbra");
 require("./user");
 require("./workspace");
 
