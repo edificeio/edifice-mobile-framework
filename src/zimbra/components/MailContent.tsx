@@ -2,10 +2,18 @@ import I18n from "i18n-js";
 import * as React from "react";
 import { View, StyleSheet, Dimensions, ScrollView } from "react-native";
 
+import { getSessionInfo } from "../../App";
 import { Loading } from "../../ui";
 import { PageContainer } from "../../ui/ContainerContent";
 import { HtmlContentView } from "../../ui/HtmlContentView";
-import { RenderPJs, HeaderMail, FooterButton } from "./MailContentItems";
+import { RenderPJs, HeaderMail, FooterButton, getColorOfRole } from "./MailContentItems";
+
+const GetTopBarColor = ({ senderId, receiverId }) => {
+  if (getSessionInfo().userId !== senderId)
+    return (<View style={[styles.topBar, { backgroundColor: getColorOfRole(senderId) }]} />)
+  else
+    return (<View style={[styles.topBar, { backgroundColor: getColorOfRole(receiverId) }]} />)
+};
 
 export default class MailContent extends React.PureComponent<any, any> {
   private mailFooter() {
@@ -79,7 +87,7 @@ export default class MailContent extends React.PureComponent<any, any> {
           <Loading />
         ) : (
           <View style={{ flex: 1 }}>
-            <View style={styles.topGreenBar} />
+            {this.props.mail.id && <GetTopBarColor senderId={this.props.mail.from} receiverId={this.props.mail.to[0]} />}
             {this.props.mail.id && this.mailHeader()}
             {this.props.mail.hasAttachment && (
               <RenderPJs attachments={this.props.mail.attachments} mailId={this.props.mail.id} />
@@ -94,10 +102,9 @@ export default class MailContent extends React.PureComponent<any, any> {
 }
 
 const styles = StyleSheet.create({
-  topGreenBar: {
+  topBar: {
     width: "100%",
     height: 12,
-    backgroundColor: "#46BFAF",
   },
   shadowContainer: {
     flexGrow: 1,

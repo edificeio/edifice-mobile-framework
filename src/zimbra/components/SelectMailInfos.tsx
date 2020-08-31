@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const rolesDotColor = role => {
+export const rolesDotColor = role => {
   switch (role) {
     case "Student":
       return CommonStyles.profileTypes.Student;

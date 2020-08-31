@@ -12,6 +12,23 @@ import { Header, CenterPanel, LeftPanel } from "../../ui/ContainerContent";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { Text, TextBold } from "../../ui/text";
 import { findReceivers2, findReceiversAvatars, Author } from "./MailItem";
+import { mailContentService } from "../service/mailContent";
+import { rolesDotColor } from "./SelectMailInfos";
+
+export function getColorOfRole(userId: string) {
+  const [dotColor, setDotColor] = React.useState("white");
+  async function getUsersRoleColor(userId: string) {
+    try {
+      const userArray = await mailContentService.getUserInfos(userId);
+      if (userArray.result) setDotColor(rolesDotColor(userArray.result[0].type[0]));
+      else setDotColor(rolesDotColor("Guest"))
+    } catch (err) {
+      setDotColor(rolesDotColor("Guest"))
+    }
+  }
+  React.useEffect(() => { getUsersRoleColor(userId) });
+  return dotColor;
+}
 
 const SendersDetails = ({ receivers, cc, displayNames, inInbox, sender }) => {
   return (
@@ -20,7 +37,7 @@ const SendersDetails = ({ receivers, cc, displayNames, inInbox, sender }) => {
         <View style={{ flexDirection: "row" }}>
           <Text style={styles.greyColor}>{I18n.t("zimbra-from-prefix")}</Text>
           <View style={{ flexDirection: "row", marginLeft: 5 }} key={sender}>
-            <View style={[styles.dotReceiverColor, { backgroundColor: "purple" }]} />
+            <View style={[styles.dotReceiverColor, { backgroundColor: getColorOfRole(displayNames.find(item => item[0] === sender)[0]) }]} />
             <Text>{displayNames.find(item => item[0] === sender)[1]}</Text>
           </View>
         </View>
@@ -29,7 +46,7 @@ const SendersDetails = ({ receivers, cc, displayNames, inInbox, sender }) => {
         <Text style={styles.greyColor}>{I18n.t("zimbra-to-prefix")}</Text>
         {receivers.map(receiver => (
           <View style={{ flexDirection: "row", marginLeft: 5 }} key={receiver}>
-            <View style={[styles.dotReceiverColor, { backgroundColor: "purple" }]} />
+            <View style={[styles.dotReceiverColor, { backgroundColor: getColorOfRole(displayNames.find(item => item[0] === receiver)[0]) }]} />
             <Text>{displayNames.find(item => item[0] === receiver)[1]}</Text>
           </View>
         ))}
@@ -39,7 +56,7 @@ const SendersDetails = ({ receivers, cc, displayNames, inInbox, sender }) => {
           <Text style={styles.greyColor}>{I18n.t("zimbra-receiversCC")}</Text>
           {cc.map(person => (
             <View style={{ flexDirection: "row", marginLeft: 5 }} key={person}>
-              <View style={[styles.dotReceiverColor, { backgroundColor: "#fc8500" }]} />
+              <View style={[styles.dotReceiverColor, { backgroundColor: getColorOfRole(displayNames.find(item => item[0] === person)[0]) }]} />
               <Text>{displayNames.find(item => item[0] === person)[1]}</Text>
             </View>
           ))}

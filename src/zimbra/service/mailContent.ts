@@ -50,9 +50,30 @@ const mailContentAdapter: (data: IMailContentBackend) => IMail = data => {
   return result;
 };
 
+export type IUserInfosBackend = {
+  result: Array <{
+    id: string;
+    displayNames: string;
+    type: string[];
+  }>;
+};
+
+const userInfosAdapter: (data: IUserInfosBackend) => IUserInfosBackend = data => {
+  let result = {} as IUserInfosBackend;
+  if (!data) return result;
+  result = {
+    result : data.result,
+  };
+  return result;
+};
+
 export const mailContentService = {
   get: async mailId => {
     const data = mailContentAdapter(await fetchJSONWithCache(`/zimbra/message/${mailId}`));
+    return data;
+  },
+  getUserInfos: async userId => {
+    const data = userInfosAdapter(await fetchJSONWithCache(`/userbook/api/person?id=${userId}&type=undefined`));
     return data;
   },
 };
