@@ -77,7 +77,7 @@ class TempFloatingAction extends Component<IFloatingProps & ISelected, IState> {
   render() {
     const { selected } = this.props;
 
-    if (selected.length) {
+    if (selected && selected.length) {
       return null;
     }
 

@@ -8,7 +8,7 @@ import Item from "./Item";
 import { CommonStyles } from "../../styles/common/styles";
 
 export type ISelected = {
-  selected: IItem[];
+  selected?: IItem[];
   readonly?: boolean;
 };
 

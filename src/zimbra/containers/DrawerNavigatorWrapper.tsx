@@ -13,6 +13,7 @@ import { Header as HeaderComponent } from "../../ui/headers/Header";
 import { HeaderAction } from "../../ui/headers/NewHeader";
 import DrawerMenuContainer from "./DrawerMenu";
 import MailList from "./MailList";
+import TempFloatingAction from "../../ui/FloatingButton/TempFloatingAction";
 
 const DrawerNavigatorComponent = createDrawerNavigator(
   {
@@ -96,26 +97,16 @@ export default class DrawerNavigatorWrapper extends React.Component<any, any> {
             {title}
           </Text>
         </HeaderComponent>
-        <View
-          style={{
-            position: "absolute",
-            right: 0,
-            top: Platform.OS === "ios" ? (hasNotch() ? 0 : 4) : 2,
-            zIndex: 5,
-            elevation: 5,
-          }}>
-          <HeaderAction
-            name="new_message"
-            onPress={() => {
-              navigation.navigate("newMail", {
-                type: "NEW",
-                currentFolder: this.getActiveRouteState(navigation.state).key,
-              });
-            }}
-            primary
-          />
-        </View>
         <DrawerNavigatorComponent navigation={navigation} />
+        <TempFloatingAction
+          iconName="new_message"
+          onEvent={() => {
+            this.props.navigation.navigate("newMail", {
+              type: "NEW",
+              currentFolder: this.getActiveRouteState(navigation.state).key,
+            });
+          }}
+        />
       </PageContainer>
     );
   }
