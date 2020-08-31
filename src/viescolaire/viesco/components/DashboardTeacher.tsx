@@ -53,12 +53,22 @@ const style = StyleSheet.create({
   },
 });
 
-const ImageButton = ({ imageSrc, color, text, onPress }) => {
+type ImageButtonProps = {
+  imageSrc: string;
+  color: string;
+  text: string;
+  onPress: any;
+  disabled?: boolean;
+}
+
+const ImageButton: React.SFC<ImageButtonProps> = ({ imageSrc, color, text, onPress, disabled }) => {
   return (
-    <TouchableOpacity onPress={onPress}>
-      <BottomColoredItem shadow style={{ alignItems: "center", flexDirection: "column", elevation: 3 }} color={color}>
-        <Image source={imageSrc} style={{ height: 70, width: 70 }} resizeMode="contain" />
-        <Text>{text}</Text>
+    <TouchableOpacity onPress={onPress} disabled={disabled}>
+      <BottomColoredItem shadow 
+        style={{ alignItems: "center", flexDirection: "column", elevation: 3, backgroundColor: disabled ? "#EEE" : "#FFF" }}
+        color={color}>
+        <Image source={imageSrc} style={{ height: 70, width: 70, opacity: disabled ? 0.35 : 1 }} resizeMode="contain" />
+        <Text style={{ opacity: disabled ? 0.35 : 1 }}>{text}</Text>
       </BottomColoredItem>
     </TouchableOpacity>
   );
@@ -72,7 +82,7 @@ export default props => (
         <StructurePicker />
         <CallList {...props} />
       </View>
-      {/* <View style={style.dashboardPart}>
+      <View style={style.dashboardPart}>
         <View style={style.grid}>
           <View style={style.gridButtonContainer}>
             <ImageButton
@@ -80,6 +90,7 @@ export default props => (
               text={I18n.t("viesco-timetable")}
               color="#162EAE"
               imageSrc={require("../../../../assets/viesco/edt.png")}
+              disabled
             />
           </View>
           <View style={style.gridButtonContainer}>
@@ -88,10 +99,11 @@ export default props => (
               text={I18n.t("Homework")}
               color="#2BAB6F"
               imageSrc={require("../../../../assets/viesco/cdt.png")}
+              disabled
             />
           </View>
         </View>
-      </View> */}
+      </View>
     </ScrollView>
   </PageContainer>
 );

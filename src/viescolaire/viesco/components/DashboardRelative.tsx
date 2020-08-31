@@ -89,6 +89,9 @@ export default class Dashboard extends React.PureComponent<DashboardProps> {
           <IconButton onPress={() => true} text={I18n.t("viesco-timetable")} color="#162EAE" icon="calendar_today" />
         </View> */}
         <View style={styles.gridButtonContainer}>
+          <IconButton onPress={() => true} text={I18n.t("viesco-timetable")} color="#7981ad" icon="calendar_today" />
+        </View>
+        <View style={styles.gridButtonContainer}>
           <IconButton
             onPress={() => this.props.navigation.navigate("HomeworkList", { user_type: "Relative" })}
             text={I18n.t("Homework")}
@@ -104,6 +107,14 @@ export default class Dashboard extends React.PureComponent<DashboardProps> {
             icon="equalizer"
           />
         </View> */}
+        <View style={styles.gridButtonContainer}>
+          <IconButton
+            onPress={() => true}
+            text={I18n.t("viesco-tests")}
+            color="#fab998"
+            icon="equalizer"
+          />
+        </View>
       </View>
     );
   }
