@@ -1,6 +1,6 @@
 import I18n from "i18n-js";
 import * as React from "react";
-import { View, StyleSheet, Dimensions, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView, SafeAreaView } from "react-native";
 
 import { getSessionInfo } from "../../App";
 import { Loading } from "../../ui";
@@ -10,9 +10,8 @@ import { RenderPJs, HeaderMail, FooterButton, getColorOfRole } from "./MailConte
 
 const GetTopBarColor = ({ senderId, receiverId }) => {
   if (getSessionInfo().userId !== senderId)
-    return (<View style={[styles.topBar, { backgroundColor: getColorOfRole(senderId) }]} />)
-  else
-    return (<View style={[styles.topBar, { backgroundColor: getColorOfRole(receiverId) }]} />)
+    return <View style={[styles.topBar, { backgroundColor: getColorOfRole(senderId) }]} />;
+  else return <View style={[styles.topBar, { backgroundColor: getColorOfRole(receiverId) }]} />;
 };
 
 export default class MailContent extends React.PureComponent<any, any> {
@@ -49,7 +48,9 @@ export default class MailContent extends React.PureComponent<any, any> {
               type: "FORWARD",
               mailId: this.props.mail.id,
               onGoBack: this.props.navigation.state.params.onGoBack,
-            })} />
+            })
+          }
+        />
         <FooterButton icon="delete" text={I18n.t("zimbra-delete")} onPress={this.props.delete} />
       </View>
     );
@@ -83,19 +84,23 @@ export default class MailContent extends React.PureComponent<any, any> {
   public render() {
     return (
       <PageContainer>
-        {this.props.isFetching ? (
-          <Loading />
-        ) : (
-          <View style={{ flex: 1 }}>
-            {this.props.mail.id && <GetTopBarColor senderId={this.props.mail.from} receiverId={this.props.mail.to[0]} />}
-            {this.props.mail.id && this.mailHeader()}
-            {this.props.mail.hasAttachment && (
-              <RenderPJs attachments={this.props.mail.attachments} mailId={this.props.mail.id} />
-            )}
-            {this.props.mail.body !== undefined && this.mailContent()}
-            {this.mailFooter()}
-          </View>
-        )}
+        <SafeAreaView style={{ flex: 1 }}>
+          {this.props.isFetching ? (
+            <Loading />
+          ) : (
+            <View style={{ flex: 1 }}>
+              {this.props.mail.id && (
+                <GetTopBarColor senderId={this.props.mail.from} receiverId={this.props.mail.to[0]} />
+              )}
+              {this.props.mail.id && this.mailHeader()}
+              {this.props.mail.hasAttachment && (
+                <RenderPJs attachments={this.props.mail.attachments} mailId={this.props.mail.id} />
+              )}
+              {this.props.mail.body !== undefined && this.mailContent()}
+              {this.mailFooter()}
+            </View>
+          )}
+        </SafeAreaView>
       </PageContainer>
     );
   }
