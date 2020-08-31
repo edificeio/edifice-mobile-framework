@@ -98,7 +98,7 @@ class Images extends React.Component<
     images: Array<{ src: ImageURISource; alt: string; linkTo?: string }>;
     style?: ViewStyle;
     navigation: any;
-    windowDimensions: any;
+    // windowDimensions: any;
   },
   any
 > {
@@ -109,9 +109,9 @@ class Images extends React.Component<
   }
 
   public images() {
-    const { images, windowDimensions } = this.props;
-    const scale = windowDimensions.scale;
-    const width = windowDimensions.width;
+    const { images } = this.props;
+    const scale = Dimensions.get('window').scale;
+    const width = Dimensions.get('window').width;
     const heightRatio = width * 0.6;
     const getThumbnailWidth = (isFullWidth?: boolean) => {
       const pixelWidth = isFullWidth ? width * scale : (width * scale)/2;
@@ -237,8 +237,8 @@ class Images extends React.Component<
   }
 
   public render() {
-    const { images, style, windowDimensions } = this.props;
-    const width = windowDimensions.width;
+    const { images, style } = this.props;
+    const width = Dimensions.get('window').width;
     const heightRatio = width * 0.6;
 
     if (images.length === 0) return <View />;
@@ -252,10 +252,10 @@ class Images extends React.Component<
   }
 }
 
-const withWindowDimensions = (Component) => {
-  return (props) => {
-    return <Component {...props} windowDimensions={useWindowDimensions()} />;
-  }
-}
+// const withWindowDimensions = (Component) => {
+//   return (props) => {
+//     return <Component {...props} windowDimensions={useWindowDimensions()} />;
+//   }
+// }
 
-export default withWindowDimensions(withNavigation(Images));
+export default /*withWindowDimensions*/(withNavigation(Images));
