@@ -19,6 +19,7 @@ export const IFrame = ({source, style={}, navigation}: IIFrameProps) => {
   return (
     // "overflow: hidden" prevents a display bug on Android
     <SafeAreaView style={{flex: 1, overflow: "hidden", ...style}}>
+      {fullScreenSource ? <StatusBar backgroundColor="rgba(0,0,0,0.90)" barStyle="dark-content" /> : null}
       <TouchableOpacity
         activeOpacity={1}
         style={{ 
