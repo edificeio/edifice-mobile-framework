@@ -44,7 +44,6 @@ export const IFrame = ({source, style={}, navigation}: IIFrameProps) => {
           scrollEnabled={false}
           startInLoadingState
           mediaPlaybackRequiresUserAction
-          useWebKit
           /* On Android, the status bar is by default visible, even when a video is playing fullscreen */
           /* Thanks for the tip, Nabil ! :) */
           {...(Platform.OS === "android"

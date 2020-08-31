@@ -71,7 +71,7 @@
     "react-native-video": "github:react-native-community/react-native-video",
     "react-native-video-player": "https://github.com/opendigitaleducation/react-native-fullscreenvideo-player",
     "react-native-view-overflow": "0.0.4",
-    "react-native-webview": "~7.5.1",
+    "react-native-webview": "^10.8.3",
     "react-navigation": "^4.3.9",
     "react-navigation-drawer": "~2.3.3",
     "react-navigation-header-buttons": "^3.0.4",
