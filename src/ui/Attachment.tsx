@@ -322,18 +322,23 @@ class Attachment extends React.PureComponent<
     );
   }
 
-  public onPressAttachment(notifierId: string) {
+  public async onPressAttachment(notifierId: string) {
     const { onOpenFile, onOpen, attachment, editMode } = this.props;
     const { downloadState, downloadedFile } = this.state;
     const fileType = editMode
       ? (attachment as ILocalAttachment).mime
       : (attachment as IRemoteAttachment).contentType || downloadedFile && getAttachmentTypeByExt(downloadedFile);
     const filePath = editMode ? (attachment as ILocalAttachment).uri : downloadedFile;
-    const carouselImage = [{ src: { uri: filePath }, alt: "image" }];
+    const carouselImage = Platform.OS === "android"
+      ? [{ src: { uri: "file://" + filePath }, alt: "image" }]
+      : [{ src: { uri: filePath }, alt: "image" }];
 
     if (!this.attId) {
       return undefined
     } else if (editMode || downloadState === DownloadState.Success) {
+      if (Platform.OS === "android") {
+        await Permissions.request(PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE);
+      }
       onOpen && onOpen();
       fileType && fileType.startsWith("image") || fileType === "picture"
         ? mainNavNavigate("carouselModal", { images: carouselImage })
