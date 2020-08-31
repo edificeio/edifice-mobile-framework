@@ -25,6 +25,7 @@ import NavigationService from "./NavigationService";
 
 // Components
 import Carousel from "../ui/Carousel";
+import { IFrame } from "../ui/IFrame";
 
 /**
  * MAIN NAVIGATOR
@@ -62,6 +63,9 @@ function getMainNavigator(appsInfo: any[]) {
     carouselModal: {
       screen: Carousel,
     },
+    iframeModal: {
+      screen: IFrame
+    }
   }, {
     mode: 'modal',
     headerMode: 'none',

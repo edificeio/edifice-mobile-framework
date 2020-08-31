@@ -17,27 +17,13 @@ import FastImage from "react-native-fast-image";
 import RNCarousel from "react-native-snap-carousel";
 import { PinchGestureHandler, State, PanGestureHandler } from "react-native-gesture-handler";
 import { NavigationScreenProp, NavigationState } from "react-navigation";
-import { hasNotch } from "react-native-device-info";
 
-import { Icon } from ".";
 import { CommonStyles } from "../styles/common/styles";
 import TouchableOpacity from "./CustomTouchableOpacity";
 import ImageOptional from "./ImageOptional";
 import { A, Italic } from "./Typography";
-import { iosStatusBarHeight } from "./headers/Header";
 import withViewTracking from "../infra/tracker/withViewTracking";
-
-const Close = style(TouchableOpacity)({
-  alignItems: "center",
-  borderRadius: 20,
-  height: 40,
-  justifyContent: "center",
-  position: "absolute",
-  right: 5,
-  top: Platform.OS === "ios" ? hasNotch() ? iosStatusBarHeight + 20 : 20 : 0,
-  width: 40,
-  backgroundColor: "rgba(0,0,0,0.3)",
-});
+import { FullScreenAction } from "./FullScreenAction";
 
 const UnavailableImage = () => (
   <View
@@ -412,9 +398,7 @@ class Carousel extends React.Component<
             this.lastOffsetY = 0;
           }}
         />
-        <Close onPress={() => navigation.goBack()}>
-          <Icon size={16} color="#ffffff" name="close" />
-        </Close>
+        <FullScreenAction icon="close" action={() => navigation.goBack()}/>
       </View>
     );
   }
