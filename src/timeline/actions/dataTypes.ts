@@ -88,9 +88,11 @@ export const loadSchoolbooks = (): Promise<any[]> => {
 };
 
 const transformedSrc = (src: string) => {
-  return src.startsWith("/")
-  ? (Conf.currentPlatform as any).url + src
-  : src
+  return src.startsWith("//")
+    ? `https:${src}`
+    : src.startsWith("/")
+    ? `${(Conf.currentPlatform as any).url}${src}`
+    : src
 }
 
 const transformedMedia = (media: IMediaModel[]) => {
