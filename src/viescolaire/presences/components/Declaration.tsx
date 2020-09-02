@@ -19,6 +19,7 @@ type DeclarationProps = {
   comment: string;
   updateComment: any;
   submit: () => void;
+  validate: () => boolean;
 };
 
 enum SwitchState {
@@ -39,8 +40,17 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
   }
 
   public componentDidUpdate(prevProps: DeclarationProps, prevState: DeclarationState) {
-    if (prevState.switchState != this.state.switchState && this.state.switchState == SwitchState.SINGLE) {
-      this.props.updateEndDate(this.props.startDate);
+    const singleDay = this.state.switchState === SwitchState.SINGLE;
+    const differentDay =
+      this.props.endDate.year() !== this.props.startDate.year() ||
+      this.props.endDate.dayOfYear() !== this.props.startDate.dayOfYear();
+
+    if (singleDay && differentDay) {
+      this.props.updateEndDate(
+        moment(this.props.endDate)
+          .year(this.props.startDate.year())
+          .dayOfYear(this.props.startDate.dayOfYear())
+      );
     }
   }
 
@@ -64,7 +74,7 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
           <View>
             <Text>{I18n.t("viesco-several-days")}</Text>
             <TextBold>
-              Du {startDate.format("DD/MM")} Au {endDate.format("DD/MM")}
+              {I18n.t("viesco-from")} {startDate.format("DD/MM")} {I18n.t("viesco-to")} {endDate.format("DD/MM")}
             </TextBold>
           </View>
         )}
@@ -112,10 +122,21 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
     const DatePickers = () => (
       <>
         {this.state.switchState === SwitchState.SINGLE ? (
-          <DateTimePicker mode="date" value={startDate} minimumDate={moment()} onChange={updateStartDate} />
+          <DateTimePicker
+            mode="date"
+            value={startDate}
+            minimumDate={moment().startOf("day")}
+            onChange={updateStartDate}
+          />
         ) : (
           <>
-            <DateTimePicker mode="date" value={startDate} maximumDate={endDate} onChange={updateStartDate} />
+            <DateTimePicker
+              mode="date"
+              value={startDate}
+              minimumDate={moment().startOf("day")}
+              maximumDate={endDate}
+              onChange={updateStartDate}
+            />
             <DateTimePicker mode="date" value={endDate} minimumDate={startDate} onChange={updateEndDate} />
           </>
         )}
@@ -154,7 +175,7 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
 
             <DialogButtonOk
               style={{ alignSelf: "center" }}
-              disabled={this.props.startDate.isAfter(this.props.endDate)}
+              disabled={!this.props.validate()}
               label={I18n.t("viesco-validate")}
               onPress={submit}
             />

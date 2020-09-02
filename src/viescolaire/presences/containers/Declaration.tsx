@@ -1,19 +1,18 @@
+import I18n from "i18n-js";
 import moment from "moment";
 import * as React from "react";
 import { View } from "react-native";
-import I18n from "i18n-js";
-
 import { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
-import { HeaderBackAction } from "../../../ui/headers/NewHeader";
-import DeclarationComponent from "../components/Declaration";
-import { declareAbsenceAction } from "../actions/declaration";
-import { INavigationProps } from "../../../types";
-import { getSelectedChild } from "../../viesco/state/children";
 import withViewTracking from "../../../infra/tracker/withViewTracking";
+import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
+import { INavigationProps } from "../../../types";
+import { HeaderBackAction } from "../../../ui/headers/NewHeader";
+import { getSelectedChild } from "../../viesco/state/children";
+import { declareAbsenceAction } from "../actions/declaration";
+import DeclarationComponent from "../components/Declaration";
 
 type DeclarationProps = {
   declareAbsenceAction: (startDate: moment.Moment, endDate: moment.Moment, comment: string) => void;
@@ -45,8 +44,12 @@ class Declaration extends React.PureComponent<DeclarationProps, DeclarationState
     super(props);
     this.props.navigation.setParams({ childName: this.props.childName });
     this.state = {
-      startDate: moment(),
-      endDate: moment().add(1, "h"),
+      startDate: moment()
+        .startOf("day")
+        .hour(7),
+      endDate: moment()
+        .startOf("day")
+        .hour(18),
       comment: "",
     };
   }
@@ -72,11 +75,18 @@ class Declaration extends React.PureComponent<DeclarationProps, DeclarationState
     this.props.navigation.goBack();
   };
 
+  validate = () => {
+    const startBeforeEnd = this.state.startDate.isBefore(this.state.endDate);
+    const startDayNotBeforeToday = this.state.startDate.isSameOrAfter(moment(), "day");
+    return startBeforeEnd && startDayNotBeforeToday;
+  };
+
   public render() {
     return (
       <DeclarationComponent
         {...this.props}
         {...this.state}
+        validate={this.validate}
         updateEndDate={this.updateEndDate}
         updateStartDate={this.updateStartDate}
         updateComment={this.updateComment}
