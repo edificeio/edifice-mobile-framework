@@ -131,9 +131,6 @@ export function loginAction(
         if (userinfo2.apps.includes("Espace documentaire"))
           userinfo2.apps.push("Workspace");
         if (userinfo2.apps.includes("Actualites")) userinfo2.apps.push("News");
-        if (userinfo2.apps.includes("Zimbra")) {
-          userinfo2.apps.push("Messagerie");
-        }
       } catch (err) {
         console.warn('[login] userinfo fetch failed');
         throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err);
