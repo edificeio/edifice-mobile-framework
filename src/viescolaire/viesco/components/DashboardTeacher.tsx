@@ -53,7 +53,7 @@ const style = StyleSheet.create({
   },
 });
 
-type ImageButtonProps = {
+interface ImageButtonProps {
   imageSrc: string;
   color: string;
   text: string;
@@ -61,16 +61,26 @@ type ImageButtonProps = {
   disabled?: boolean;
 }
 
-const ImageButton: React.SFC<ImageButtonProps> = ({ imageSrc, color, text, onPress, disabled }) => {
+const ImageButton = ({ imageSrc, color, text, onPress, disabled }: ImageButtonProps) => {
   return (
-    <TouchableOpacity onPress={onPress} disabled={disabled}>
-      <BottomColoredItem shadow 
-        style={{ alignItems: "center", flexDirection: "column", elevation: 3, backgroundColor: disabled ? "#EEE" : "#FFF" }}
-        color={color}>
-        <Image source={imageSrc} style={{ height: 70, width: 70, opacity: disabled ? 0.35 : 1 }} resizeMode="contain" />
-        <Text style={{ opacity: disabled ? 0.35 : 1 }}>{text}</Text>
+    <View style={style.gridButtonContainer}>
+      <BottomColoredItem
+        shadow
+        style={[
+          {
+            alignItems: "center",
+            flexDirection: "column",
+            backgroundColor: "#FFF",
+          },
+          { opacity: disabled ? 0.6 : 1 },
+        ]}
+        color={color}
+        onPress={onPress}
+        disabled={disabled}>
+        <Image source={imageSrc} style={{ height: 70, width: 70 }} resizeMode="contain" />
+        <Text>{text}</Text>
       </BottomColoredItem>
-    </TouchableOpacity>
+    </View>
   );
 };
 
@@ -84,24 +94,20 @@ export default props => (
       </View>
       <View style={style.dashboardPart}>
         <View style={style.grid}>
-          <View style={style.gridButtonContainer}>
-            <ImageButton
-              onPress={() => true}
-              text={I18n.t("viesco-timetable")}
-              color="#162EAE"
-              imageSrc={require("../../../../assets/viesco/edt.png")}
-              disabled
-            />
-          </View>
-          <View style={style.gridButtonContainer}>
-            <ImageButton
-              onPress={() => true}
-              text={I18n.t("Homework")}
-              color="#2BAB6F"
-              imageSrc={require("../../../../assets/viesco/cdt.png")}
-              disabled
-            />
-          </View>
+          <ImageButton
+            onPress={() => true}
+            text={I18n.t("viesco-timetable")}
+            color="#162EAE"
+            imageSrc={require("../../../../assets/viesco/edt.png")}
+            disabled
+          />
+          <ImageButton
+            onPress={() => true}
+            text={I18n.t("Homework")}
+            color="#2BAB6F"
+            imageSrc={require("../../../../assets/viesco/cdt.png")}
+            disabled
+          />
         </View>
       </View>
     </ScrollView>

@@ -46,14 +46,7 @@ type SidedItemProps = ItemProps & { shadow?: boolean; color: string; side: Sided
  * @param onPress
  * @param children
  */
-export const Item: React.FunctionComponent<ItemProps> = ({
-  style,
-  selected,
-  color,
-  onPress = () => false,
-  children,
-  disabled,
-}) => {
+export const Item: React.FunctionComponent<ItemProps> = ({ style, selected, color, onPress, children, disabled }) => {
   const selectedStyle = color && selected ? { borderWidth: 2, borderColor: color } : {};
 
   return (

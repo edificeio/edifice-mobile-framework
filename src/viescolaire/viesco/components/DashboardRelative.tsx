@@ -52,69 +52,67 @@ type DashboardProps = {
   evaluations: any[];
 } & INavigationProps;
 
-const IconButton = ({ icon, color, text, onPress }) => {
-  return (
-    <TouchableOpacity onPress={onPress} style={[styles.gridButton, { backgroundColor: color }]}>
+interface IIconButtonProps {
+  disabled?: boolean;
+  icon: string;
+  color: string;
+  text: string;
+  onPress: () => void;
+}
+
+const IconButton = ({ disabled, icon, color, text, onPress }: IIconButtonProps) => (
+  <View style={styles.gridButtonContainer}>
+    <TouchableOpacity
+      disabled={disabled}
+      onPress={onPress}
+      style={[styles.gridButton, { backgroundColor: color }, { opacity: disabled ? 0.6 : 1 }]}>
       <Icon size={20} color="white" name={icon} />
       <Text style={styles.gridButtonText}>{text}</Text>
     </TouchableOpacity>
-  );
-};
+  </View>
+);
 
 export default class Dashboard extends React.PureComponent<DashboardProps> {
-
   private renderNavigationGrid() {
     return (
       <View style={[styles.dashboardPart, styles.grid]}>
-        <View style={styles.gridButtonContainer}>
-          <IconButton
-            onPress={() =>
-              this.props.navigation.navigate(
-                "presences",
-                {},
-                NavigationActions.navigate({
-                  routeName: "History",
-                  params: {
-                    user_type: "Relative",
-                  },
-                })
-              )
-            }
-            text={I18n.t("viesco-history")}
-            color="#FCB602"
-            icon="access_time"
-          />
-        </View>
-        {/* <View style={styles.gridButtonContainer}>
-          <IconButton onPress={() => true} text={I18n.t("viesco-timetable")} color="#162EAE" icon="calendar_today" />
-        </View> */}
-        <View style={styles.gridButtonContainer}>
-          <IconButton onPress={() => true} text={I18n.t("viesco-timetable")} color="#7981ad" icon="calendar_today" />
-        </View>
-        <View style={styles.gridButtonContainer}>
-          <IconButton
-            onPress={() => this.props.navigation.navigate("HomeworkList", { user_type: "Relative" })}
-            text={I18n.t("Homework")}
-            color="#2BAB6F"
-            icon="checkbox-multiple-marked"
-          />
-        </View>
-        {/* <View style={styles.gridButtonContainer}>
-          <IconButton
-            onPress={() => this.props.navigation.navigate("EvaluationList")}
-            text={I18n.t("viesco-tests")}
-            color="#F95303"
-            icon="equalizer"
-          />
-        </View> */}
-        <View style={styles.gridButtonContainer}>
-          <IconButton
-            onPress={() => true}
-            text={I18n.t("viesco-tests")}
-            color="#fab998"
-            icon="equalizer"
-          />
-        </View>
+        <IconButton
+          onPress={() =>
+            this.props.navigation.navigate(
+              "presences",
+              {},
+              NavigationActions.navigate({
+                routeName: "History",
+                params: {
+                  user_type: "Relative",
+                },
+              })
+            )
+          }
+          text={I18n.t("viesco-history")}
+          color="#FCB602"
+          icon="access_time"
+        />
+        <IconButton
+          disabled
+          onPress={() => true}
+          text={I18n.t("viesco-timetable")}
+          color="#162EAE"
+          icon="calendar_today"
+        />
+        <IconButton
+          onPress={() => this.props.navigation.navigate("HomeworkList", { user_type: "Relative" })}
+          text={I18n.t("Homework")}
+          color="#2BAB6F"
+          icon="checkbox-multiple-marked"
+        />
+        <IconButton
+          disabled
+          onPress={() => this.props.navigation.navigate("EvaluationList")}
+          text={I18n.t("viesco-tests")}
+          color="#F95303"
+          icon="equalizer"
+        />
       </View>
     );
   }

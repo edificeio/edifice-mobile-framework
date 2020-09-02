@@ -10,7 +10,7 @@ import { TextBold } from "../../../ui/text";
 import { HomeworkItem } from "../../cdt/components/Items";
 import { isHomeworkDone, homeworkDetailsAdapter, getSubjectName } from "../../utils/cdt";
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   dashboardPart: { paddingVertical: 8, paddingHorizontal: 15 },
   grid: {
     flexDirection: "row",
@@ -38,25 +38,30 @@ const style = StyleSheet.create({
   evaluations: {},
 });
 
-type DashboardProps = {
-  homeworks?: any[];
-};
+interface IIconButtonProps {
+  disabled?: boolean;
+  icon: string;
+  color: string;
+  text: string;
+  onPress: () => void;
+}
 
-const IconButton = ({ icon, color, text, onPress }) => {
-  return (
-    <View style={style.gridButtonContainer}>
-      <TouchableOpacity onPress={onPress} style={[style.gridButton, { backgroundColor: color }]}>
-        <Icon size={20} color="white" name={icon} />
-        <Text style={style.gridButtonText}>{text}</Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
+const IconButton = ({ disabled, icon, color, text, onPress }: IIconButtonProps) => (
+  <View style={styles.gridButtonContainer}>
+    <TouchableOpacity
+      disabled={disabled}
+      onPress={onPress}
+      style={[styles.gridButton, { backgroundColor: color }, { opacity: disabled ? 0.6 : 1 }]}>
+      <Icon size={20} color="white" name={icon} />
+      <Text style={styles.gridButtonText}>{text}</Text>
+    </TouchableOpacity>
+  </View>
+);
 
-export default class Dashboard extends React.PureComponent<any & dashboardProps> {
+export default class Dashboard extends React.PureComponent<any> {
   private renderNavigationGrid() {
     return (
-      <View style={[style.dashboardPart, style.grid]}>
+      <View style={[styles.dashboardPart, styles.grid]}>
         <IconButton
           onPress={() =>
             this.props.navigation.navigate(
@@ -74,24 +79,24 @@ export default class Dashboard extends React.PureComponent<any & dashboardProps>
           color="#FCB602"
           icon="access_time"
         />
-        {/* <IconButton onPress={() => true} text={I18n.t("viesco-timetable")} color="#162EAE" icon="calendar_today" /> */}
-        <IconButton onPress={() => true} text={I18n.t("viesco-timetable")} color="#F95303" icon="calendar_today" />
+        <IconButton
+          disabled
+          onPress={() => true}
+          text={I18n.t("viesco-timetable")}
+          color="#162EAE"
+          icon="calendar_today"
+        />
         <IconButton
           onPress={() => this.props.navigation.navigate("HomeworkList", { user_type: "Student" })}
           text={I18n.t("Homework")}
           color="#2BAB6F"
           icon="checkbox-multiple-marked"
         />
-        {/* <IconButton
+        <IconButton
+          disabled
           onPress={() => this.props.navigation.navigate("EvaluationList")}
           text={I18n.t("viesco-tests")}
           color="#F95303"
-          icon="equalizer"
-        /> */}
-        <IconButton
-          onPress={() => true}
-          text={I18n.t("viesco-tests")}
-          color="#fab998"
           icon="equalizer"
         />
       </View>
@@ -117,8 +122,8 @@ export default class Dashboard extends React.PureComponent<any & dashboardProps>
       }, {});
 
     return (
-      <View style={style.dashboardPart}>
-        <TextBold style={style.title}>{I18n.t("viesco-homework")}</TextBold>
+      <View style={styles.dashboardPart}>
+        <TextBold style={styles.title}>{I18n.t("viesco-homework")}</TextBold>
         {Object.values(homeworks).length === 0 && (
           <EmptyScreen
             imageSrc={require("../../../../assets/images/empty-screen/empty-homework.png")}
@@ -131,7 +136,7 @@ export default class Dashboard extends React.PureComponent<any & dashboardProps>
           <>
             {moment(date).isAfter(moment()) && (
               <>
-                <Text style={style.subtitle}>
+                <Text style={styles.subtitle}>
                   {moment(date).isSame(tomorrowDate, "day")
                     ? I18n.t("viesco-homework-fortomorrow")
                     : `${I18n.t("viesco-homework-fordate")} ${moment(date).format("DD/MM/YYYY")}`}
@@ -167,8 +172,8 @@ export default class Dashboard extends React.PureComponent<any & dashboardProps>
 
   private renderEvaluations(evaluations) {
     return (
-      <View style={style.dashboardPart}>
-        <TextBold style={style.title}>{I18n.t("viesco-lasteval")}</TextBold>
+      <View style={styles.dashboardPart}>
+        <TextBold style={styles.title}>{I18n.t("viesco-lasteval")}</TextBold>
         <EmptyScreen
           imageSrc={require("../../../../assets/images/empty-screen/empty-evaluations.png")}
           imgWidth={64}
