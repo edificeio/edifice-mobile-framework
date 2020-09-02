@@ -52,18 +52,8 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
     this.group = opts.group === undefined ? false : opts.group;
     this.iconColor = opts.iconColor || CommonStyles.actionColor;
     this.notifHandlerFactory = opts.notifHandlerFactory;
-    this.hasRight = apps => this.hasRightWrapper(apps, opts.hasRight || (app => app.name == this.apiName));
+    this.hasRight = opts.hasRight || (apps => apps.some(app => app.name === this.apiName));
   }
-
-  private hasRightWrapper = (appsInfo: any[], hasRight: Function) => {
-    for (let app in appsInfo) {
-      if (hasRight(appsInfo[app])) {
-        this.appInfo = appsInfo[app];
-        return true;
-      }
-    }
-    return false;
-  };
 
   public getLocalState(globalState: any) {
     return globalState[this.reducerName];
