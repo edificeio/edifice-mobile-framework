@@ -398,7 +398,7 @@ class Carousel extends React.Component<
             this.lastOffsetY = 0;
           }}
         />
-        <FullScreenAction icon="close" action={() => navigation.goBack()}/>
+        <FullScreenAction iconName="close" action={() => navigation.goBack()}/>
       </View>
     );
   }

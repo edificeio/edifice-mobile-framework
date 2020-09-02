@@ -5,12 +5,14 @@ import { iosStatusBarHeight } from "./headers/Header";
 import { Icon } from ".";
 
 interface FullScreenActionProps {
-  icon: string;
+  iconName: string;
   action: () => void;
   customStyle?: object;
+  customIconSize?: number;
+  customIconColor?: number;
 }
 
-export const FullScreenAction = ({ icon, action, customStyle }: FullScreenActionProps) => (
+export const FullScreenAction = ({ iconName, action, customStyle, customIconSize, customIconColor }: FullScreenActionProps) => (
   <TouchableOpacity
     onPress={action}
     style={[{
@@ -27,6 +29,6 @@ export const FullScreenAction = ({ icon, action, customStyle }: FullScreenAction
       customStyle
     ]}
   >
-    <Icon size={16} color="#ffffff" name={icon} />
+    <Icon size={customIconSize || 16} color={customIconColor || "#ffffff"} name={iconName} />
   </TouchableOpacity>
 );

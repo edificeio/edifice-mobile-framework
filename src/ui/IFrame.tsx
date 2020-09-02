@@ -18,15 +18,17 @@ export class IFrame extends React.Component<
 },
 {
   httpError: boolean;
+  loaded: boolean;
 }
 > {
   state = {
-    httpError: false
+    httpError: false,
+    loaded: false
   }
 
   render() {
     const { source, style={}, navigation } = this.props;
-    const { httpError } = this.state;
+    const { httpError, loaded } = this.state;
     const fullScreenSource = navigation && navigation.getParam("source");
     const isEducationApp = source && source.includes("learningapps.org") || source && source.includes("educaplay.com");
     
@@ -64,6 +66,7 @@ export class IFrame extends React.Component<
                   startInLoadingState
                   mediaPlaybackRequiresUserAction
                   onHttpError={() => this.setState({httpError: true})}
+                  onLoadEnd={() => this.setState({loaded: true})}
                   /* On Android, the status bar is by default visible, even when a video is playing fullscreen */
                   /* Thanks for the tip, Nabil ! :) */
                   {...(Platform.OS === "android"
@@ -100,20 +103,32 @@ export class IFrame extends React.Component<
                 />
           }
         </TouchableOpacity>
-        {isEducationApp
+        {fullScreenSource
           ? <FullScreenAction
-              icon="fullscreen-on"
-              action={() => mainNavNavigate("iframeModal", {source})}
-              customStyle={{top: 5, right: 5}}
+              iconName="fullscreen-off"
+              action={() => navigation.goBack()}
+              customStyle={{backgroundColor: "rgba(63,63,63,0.8)", top: Platform.OS === "ios" ? hasNotch() ? iosStatusBarHeight + 30 : 25 : 0}}
             />
           : null
         }
-        {fullScreenSource
-          ? <FullScreenAction
-              icon="fullscreen-off"
-              action={() => navigation.goBack()}
-              customStyle={{top: Platform.OS === "ios" ? hasNotch() ? iosStatusBarHeight + 30 : 25 : 0}}
-            />
+        {isEducationApp && loaded
+          ? <TouchableOpacity
+              onPress={() => mainNavNavigate("iframeModal", {source})}
+              style={{
+                position: "absolute",
+                zIndex: 1,
+                top: 0, bottom: 0, left: 0, right: 0,
+                justifyContent: "center",
+                alignItems: "center"
+              }}
+            >
+              <FullScreenAction
+                iconName="fullscreen-on"
+                action={() => mainNavNavigate("iframeModal", {source})}
+                customStyle={{height: 70, width: 70, borderRadius: 35, position: "relative", top: undefined, right: undefined, backgroundColor: "rgba(63,63,63,0.8)"}}
+                customIconSize={30}
+              />
+            </TouchableOpacity>
           : null
         }
       </SafeAreaView>
