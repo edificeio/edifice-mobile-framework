@@ -23,13 +23,19 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
 
   constructor(props) {
     super(props);
+    this.state = { currentIndex: this.getCurrentCourseIndex(props.courseList) };
+  }
 
-    const courseIndexNow = this.props.courseList.findIndex(course =>
+  componentWillUpdate(nextProps) {
+    if (this.props.courseList !== nextProps.courseList)
+      this.setState({ currentIndex: this.getCurrentCourseIndex(nextProps.courseList) });
+  }
+
+  private getCurrentCourseIndex(courseList) {
+    const courseIndexNow = courseList.findIndex(course =>
       moment().isBetween(moment(course.startDate), moment(course.endDate))
     );
-    const courseIndex = courseIndexNow !== -1 ? courseIndexNow : 0;
-
-    this.state = { currentIndex: courseIndex };
+    return courseIndexNow !== -1 ? courseIndexNow : 0;
   }
 
   private Carousel = () => {
@@ -53,13 +59,14 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
       <>
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
           <RNCarousel
+            useScrollView
             data={courseList}
-            firstItem={this.state.currentIndex}
+            onLayout={() => setTimeout(() => this.carouselRef.snapToItem(this.state.currentIndex), 500)}
             renderItem={({ item }) => getCourseCallItem(item)}
             sliderWidth={useWindowDimensions().width}
             itemWidth={useWindowDimensions().width * 0.8}
             containerCustomStyle={{ height: 500 }}
-            onSnapToItem={index => this.setState({ currentIndex: index })}
+            onBeforeSnapToItem={index => this.setState({ currentIndex: index })}
             inactiveSlideScale={0.7}
             ref={r => (this.carouselRef = r)}
           />
