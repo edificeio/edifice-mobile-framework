@@ -1,12 +1,14 @@
 import I18n from "i18n-js";
-import moment from "moment";
 import * as React from "react";
+import { View } from "react-native";
 import { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
 import { getSessionInfo } from "../../../App";
+import withViewTracking from "../../../infra/tracker/withViewTracking";
 import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
+import { INavigationProps } from "../../../types";
 import { HeaderBackAction } from "../../../ui/headers/NewHeader";
 import { getSelectedChild, getSelectedChildStructure } from "../../viesco/state/children";
 import { getPersonnelListState } from "../../viesco/state/personnel";
@@ -16,14 +18,6 @@ import { fetchChildSessionAction, fetchSessionListAction } from "../actions/sess
 import HomeworkList from "../components/HomeworkList";
 import { getHomeworksListState } from "../state/homeworks";
 import { getSessionsListState } from "../state/sessions";
-import { INavigationProps } from "../../../types";
-import { View } from "react-native";
-import withViewTracking from "../../../infra/tracker/withViewTracking";
-
-enum switchState {
-  HOMEWORK,
-  SESSION,
-}
 
 type HomeworkListProps = {
   homeworks: any;
@@ -32,32 +26,24 @@ type HomeworkListProps = {
   subjects: any;
   childId: string;
   structureId: string;
-  fetchChildHomeworks: any;
-  fetchChildSessions: any;
   fetchHomeworks: any;
   fetchSessions: any;
-  updateHomeworkProgress: any;
+  fetchChildHomeworks: any;
+  fetchChildSessions: any;
+  updateHomeworkProgress?: any;
+  isFetchingHomework: boolean;
+  isFetchingSession: boolean;
 } & INavigationProps;
 
-type HomeworkListState = {
-  switchValue: switchState;
-  startDate: moment.Moment;
-  endDate: moment.Moment;
-  startHomeworksDate: moment.Moment;
-  endHomeworksDate: moment.Moment;
-  startSessionsDate: moment.Moment;
-  endSessionsDate: moment.Moment;
-};
-
-class HomeworkListRelativeContainer extends React.PureComponent<HomeworkListProps, HomeworkListState> {
+class HomeworkListRelativeContainer extends React.PureComponent<HomeworkListProps> {
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
     const diaryTitle = navigation.getParam("diaryTitle");
 
     return standardNavScreenOptions(
       {
         title: diaryTitle || I18n.t("Homework"),
-        headerLeft: <HeaderBackAction navigation={navigation} />,
-        headerRight: <View/>,
+        headerLeft: () => <HeaderBackAction navigation={navigation} />,
+        headerRight: () => <View />,
         headerStyle: {
           backgroundColor: "#2BAB6F",
         },
@@ -66,129 +52,29 @@ class HomeworkListRelativeContainer extends React.PureComponent<HomeworkListProp
     );
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      switchValue: switchState.HOMEWORK,
-      startDate: moment(),
-      endDate: moment().add(1, "week"),
-      startHomeworksDate: moment(),
-      endHomeworksDate: moment(),
-      startSessionsDate: moment(),
-      endSessionsDate: moment(),
-    };
-  }
+  private fetchHomeworks = (startDate, endDate) =>
+    getSessionInfo().type === "Student"
+      ? this.props.fetchHomeworks(this.props.structureId, startDate, endDate)
+      : this.props.fetchChildHomeworks(this.props.childId, this.props.structureId, startDate, endDate);
 
-  updateHomeworks = () => {
-    const { startHomeworksDate, endHomeworksDate } = this.state;
-    const { structureId, childId } = this.props;
-    const startDateString = startHomeworksDate.format("YYYY-MM-DD");
-    const endDateString = endHomeworksDate.format("YYYY-MM-DD");
-    if (this.props.navigation.state.params.user_type === "Relative")
-      this.props.fetchChildHomeworks(childId, structureId, startDateString, endDateString);
-    else this.props.fetchHomeworks(structureId, startDateString, endDateString);
-  };
-
-  updateSessions = async () => {
-    const { startSessionsDate, endSessionsDate } = this.state;
-    const { structureId, childId } = this.props;
-    const startDateString = startSessionsDate.format("YYYY-MM-DD");
-    const endDateString = endSessionsDate.format("YYYY-MM-DD");
-    if (this.props.navigation.state.params.user_type === "Relative")
-      this.props.fetchChildSessions(childId, startDateString, endDateString);
-    else this.props.fetchSessions(structureId, startDateString, endDateString);
-  };
-
-  onStartDateChange = startDate => {
-    switch (this.state.switchValue) {
-      case switchState.HOMEWORK: {
-        this.setState({ startDate, startHomeworksDate: startDate });
-        this.updateHomeworks();
-        break;
-      }
-      case switchState.SESSION: {
-        this.setState({ startDate, startSessionsDate: startDate });
-        this.updateSessions();
-        break;
-      }
-    }
-  };
-
-  onEndDateChange = endDate => {
-    switch (this.state.switchValue) {
-      case switchState.HOMEWORK: {
-        this.setState({ endDate, endHomeworksDate: endDate });
-        this.updateHomeworks();
-        break;
-      }
-      case switchState.SESSION: {
-        this.setState({ endDate, endSessionsDate: endDate });
-        this.updateSessions();
-        break;
-      }
-    }
-  };
-
-  public componentDidMount() {
-    const { structureId, childId } = this.props;
-    const { startDate, endDate } = this.state;
-    const startDateString = startDate.format("YYYY-MM-DD");
-    const endDateString = endDate.format("YYYY-MM-DD");
-    if (this.props.navigation.state.params.user_type === "Relative") {
-      this.props.fetchChildHomeworks(childId, structureId, startDateString, endDateString);
-      this.props.fetchChildSessions(childId, startDateString, endDateString);
-    } else {
-      this.props.fetchHomeworks(structureId, startDateString, endDateString);
-      this.props.fetchSessions(structureId, startDateString, endDateString);
-    }
-  }
-
-  public componentDidUpdate(prevProps) {
-    if (prevProps.childId !== this.props.childId) {
-      this.updateHomeworks();
-      this.updateSessions();
-    }
-  }
-
-  private toggleSwitch = value => {
-    this.setState({ switchValue: value });
-    const { startDate, endDate, startHomeworksDate, endHomeworksDate, startSessionsDate, endSessionsDate } = this.state;
-    // fetching homeworks/sessions on switch only if last fetch was with different dates
-    switch (value) {
-      case switchState.SESSION: {
-        if (
-          startDate.format("YYMMDD") !== startSessionsDate.format("YYMMDD") ||
-          endDate.format("YYMMDD") !== endSessionsDate.format("YYMMDD")
-        ) {
-          this.setState({ startSessionsDate: startDate, endSessionsDate: endDate }, () => {
-            this.updateSessions();
-          });
-        }
-        break;
-      }
-      case switchState.HOMEWORK: {
-        if (
-          startDate.format("YYMMDD") !== startHomeworksDate.format("YYMMDD") ||
-          endDate.format("YYMMDD") !== endHomeworksDate.format("YYMMDD")
-        ) {
-          this.setState({ startHomeworksDate: startDate, endHomeworksDate: endDate }, () => {
-            this.updateHomeworks();
-          });
-        }
-        break;
-      }
-    }
-  };
+  private fetchSessions = (startDate, endDate) =>
+    getSessionInfo().type === "Student"
+      ? this.props.fetchSessions(this.props.structureId, startDate, endDate)
+      : this.props.fetchChildSessions(this.props.childId, startDate, endDate);
 
   public render() {
     return (
       <HomeworkList
-        {...this.props}
-        {...this.state}
-        onStartDateChange={this.onStartDateChange}
-        onEndDateChange={this.onEndDateChange}
-        switchValue={this.state.switchValue === switchState.SESSION ? true : false}
-        toggleSwitch={val => (val ? this.toggleSwitch(switchState.SESSION) : this.toggleSwitch(switchState.HOMEWORK))}
+        navigation={this.props.navigation}
+        personnel={this.props.personnel}
+        subjects={this.props.subjects}
+        isFetchingHomework={this.props.isFetchingHomework}
+        isFetchingSession={this.props.isFetchingSession}
+        updateHomeworkProgress={this.props.updateHomeworkProgress}
+        homeworks={this.props.homeworks}
+        sessions={this.props.sessions}
+        onRefreshHomeworks={this.fetchHomeworks}
+        onRefreshSessions={this.fetchSessions}
       />
     );
   }
@@ -205,8 +91,8 @@ const mapStateToProps: (state: any) => any = state => {
     sessions: sessionsState.data,
     subjects: subjectsState.data,
     personnel: personnelState.data,
-    isFetching:
-      homeworksState.isFetching || sessionsState.isFetching || subjectsState.isFetching || personnelState.isFetching,
+    isFetchingHomework: homeworksState.isFetching || subjectsState.isFetching || personnelState.isFetching,
+    isFetchingSession: sessionsState.isFetching || subjectsState.isFetching || personnelState.isFetching,
     childId: getSelectedChild(state).id,
     structureId:
       getSessionInfo().type === "Student"
@@ -215,7 +101,7 @@ const mapStateToProps: (state: any) => any = state => {
   };
 };
 
-const mapDispatchToProps: (dispatch: any) => any = dispatch => {
+const mapDispatchToProps = (dispatch: any, props: HomeworkListProps) => {
   return bindActionCreators(
     {
       fetchChildHomeworks: fetchChildHomeworkAction,
@@ -228,4 +114,6 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
   );
 };
 
-export default withViewTracking("viesco/cdt")(connect(mapStateToProps, mapDispatchToProps)(HomeworkListRelativeContainer));
+export default withViewTracking("viesco/cdt")(
+  connect(mapStateToProps, mapDispatchToProps)(HomeworkListRelativeContainer)
+);

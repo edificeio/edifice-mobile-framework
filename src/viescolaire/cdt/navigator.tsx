@@ -6,15 +6,9 @@ import Session from "./containers/Session";
 
 export default createStackNavigator(
   {
-    HomeworkList: {
-      screen: HomeworkList,
-    },
-    HomeworkPage: {
-      screen: Homework,
-    },
-    SessionPage: {
-      screen: Session,
-    },
+    HomeworkList,
+    HomeworkPage: Homework,
+    SessionPage: Session,
   },
   {
     headerMode: "screen",

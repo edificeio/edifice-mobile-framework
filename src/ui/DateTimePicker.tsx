@@ -2,15 +2,27 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import I18n from "i18n-js";
 import moment from "moment";
 import React, { useState } from "react";
-import { View, StyleSheet, Platform, ViewStyle } from "react-native";
+import { View, Platform, ViewStyle } from "react-native";
 
 import { Icon, ButtonsOkCancel } from ".";
 import TouchableOpacity from "./CustomTouchableOpacity";
 import { ModalContent, ModalBox, ModalContentBlock, ModalContentText } from "./Modal";
 import { Text } from "./text";
 
-const IconButton = ({ icon, color, text, onPress }) => {
-  const style = {
+const IconButton = ({
+  icon,
+  color,
+  text,
+  style,
+  onPress,
+}: {
+  icon: string;
+  color: string;
+  text: string;
+  style?: ViewStyle;
+  onPress: () => void;
+}) => {
+  const containerStyle = {
     borderRadius: 5,
     flexDirection: "row",
     justifyContent: "center",
@@ -19,7 +31,7 @@ const IconButton = ({ icon, color, text, onPress }) => {
   };
 
   return (
-    <TouchableOpacity onPress={onPress} style={[style, { backgroundColor: color }]}>
+    <TouchableOpacity onPress={onPress} style={[containerStyle, { backgroundColor: color }, style]}>
       <Icon size={20} color="#2BAB6F" name={icon} />
       <Text style={{ marginHorizontal: 5 }}>{text}</Text>
     </TouchableOpacity>
@@ -56,6 +68,7 @@ const DateTimePickerIOS = ({
         </TouchableOpacity>
       ) : (
         <IconButton
+          style={style}
           onPress={() => toggleModal(true)}
           text={selectedTime.format("DD/MM/YY")}
           color="white"
@@ -123,6 +136,7 @@ const DateTimePickerAndroid = ({
         </TouchableOpacity>
       ) : (
         <IconButton
+          style={style}
           onPress={() => toggleModal(true)}
           text={selectedTime.format("DD/MM/YY")}
           color="white"

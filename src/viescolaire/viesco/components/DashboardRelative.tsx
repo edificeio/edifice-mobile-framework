@@ -101,7 +101,7 @@ export default class Dashboard extends React.PureComponent<DashboardProps> {
           icon="calendar_today"
         />
         <IconButton
-          onPress={() => this.props.navigation.navigate("HomeworkList", { user_type: "Relative" })}
+          onPress={() => this.props.navigation.navigate("HomeworkList")}
           text={I18n.t("Homework")}
           color="#2BAB6F"
           icon="checkbox-multiple-marked"
