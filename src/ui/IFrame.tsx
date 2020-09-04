@@ -30,8 +30,10 @@ export class IFrame extends React.Component<
     const { source, style={}, navigation } = this.props;
     const { httpError, loaded } = this.state;
     const fullScreenSource = navigation && navigation.getParam("source");
-    const isEducationApp = source && source.includes("learningapps.org") || source && source.includes("educaplay.com");
-    
+    const isEducationApp =
+      source && source.includes("learningapps")
+      || source && source.includes("educaplay")
+      || source && source.includes("edumedia");
     return (
       // "overflow: hidden" prevents a display bug on Android
       <SafeAreaView style={{flex: 1, overflow: "hidden", ...style}}>
