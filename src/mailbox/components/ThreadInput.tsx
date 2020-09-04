@@ -193,6 +193,8 @@ class ThreadInput extends React.PureComponent<
       this.setState({ sending: false });
       this.props.navigation?.setParams({ selectedMessage: undefined, message: undefined });
     }
+
+    this.setState({ showReplyHelperIfAvailable: true });
   }
 
   public focus() {
@@ -258,7 +260,7 @@ class ThreadInput extends React.PureComponent<
         .filter(dN => receiversIds.indexOf(dN[0]) > -1)
         .map(dN => dN[1]);
 
-    if (showReplyHelperIfAvailable && !lastMessageMine && receiversIds.length > 1) {
+    if (showReplyHelperIfAvailable && !this.state.sending && !lastMessageMine && receiversIds.length > 1) {
       return <ContainerFooterBar>
         <SafeAreaView style={{ flexDirection: 'row' }}>
           <TouchableOpacity
