@@ -176,35 +176,34 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
   public render() {
     return (
       <PageContainer>
-        <SafeAreaView>
-          <FlatList
-            data={this.state.mails.length > 0 ? this.state.mails : []}
-            renderItem={({ item }) => this.renderMailItemInfos(item)}
-            extraData={this.state.mails}
-            keyExtractor={(item: IMail) => item.id}
-            refreshControl={
-              <RefreshControl refreshing={this.props.isFetching} onRefresh={() => this.refreshMailList()} />
+        <FlatList
+          contentContainerStyle={{ flexGrow: 1 }}
+          data={this.state.mails.length > 0 ? this.state.mails : []}
+          renderItem={({ item }) => this.renderMailItemInfos(item)}
+          extraData={this.state.mails}
+          keyExtractor={(item: IMail) => item.id}
+          refreshControl={
+            <RefreshControl refreshing={this.props.isFetching} onRefresh={() => this.refreshMailList()} />
+          }
+          onEndReachedThreshold={0.001}
+          onScrollBeginDrag={() => this.setState({ nextPageCallable: true })}
+          onEndReached={() => {
+            if (this.state.nextPageCallable) {
+              this.setState({ nextPageCallable: false });
+              this.onChangePage();
             }
-            onEndReachedThreshold={0.001}
-            onScrollBeginDrag={() => this.setState({ nextPageCallable: true })}
-            onEndReached={() => {
-              if (this.state.nextPageCallable) {
-                this.setState({ nextPageCallable: false });
-                this.onChangePage();
-              }
-            }}
-            ListEmptyComponent={
-              <View style={{ height: Dimensions.get("window").height - 100 }}>
-                <EmptyScreen
-                  imageSrc={require("../../../assets/images/empty-screen/empty-mailBox.png")}
-                  imgWidth={265.98}
-                  imgHeight={279.97}
-                  title={I18n.t("zimbra-empty-mailbox")}
-                />
-              </View>
-            }
-          />
-        </SafeAreaView>
+          }}
+          ListEmptyComponent={
+            <View style={{ flex: 1 }}>
+              <EmptyScreen
+                imageSrc={require("../../../assets/images/empty-screen/empty-mailBox.png")}
+                imgWidth={265.98}
+                imgHeight={279.97}
+                title={I18n.t("zimbra-empty-mailbox")}
+              />
+            </View>
+          }
+        />
       </PageContainer>
     );
   }
