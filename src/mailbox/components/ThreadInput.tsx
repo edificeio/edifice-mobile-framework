@@ -186,12 +186,12 @@ class ThreadInput extends React.PureComponent<
       const sentAttachments = await sendAttachments(attachmentsToSend, messageId, backMessage);
       newId = await sendMessage(messageData, sentAttachments, messageId);
       this.setState({ sending: false });
-      this.props.navigation?.setParams({ selectedMessage: undefined });
+      this.props.navigation?.setParams({ selectedMessage: undefined, message: undefined });
       return sentAttachments;
     } else {
       newId = await sendMessage(messageData);
       this.setState({ sending: false });
-      this.props.navigation?.setParams({ selectedMessage: undefined });
+      this.props.navigation?.setParams({ selectedMessage: undefined, message: undefined });
     }
   }
 
@@ -367,7 +367,6 @@ class ThreadInput extends React.PureComponent<
             </View>
           </View>
         </ContainerFooterBar>
-
         {backMessage
           ? <MessageBubble
             canScroll
@@ -379,7 +378,6 @@ class ThreadInput extends React.PureComponent<
           />
           : null
         }
-
         <AttachmentPicker
           ref={r => (this.attachmentPickerRef = r)}
           attachments={attachments}

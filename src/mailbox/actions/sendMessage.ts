@@ -27,6 +27,7 @@ export interface IConversationMessage {
   ccName: string[]; // Name of the copy receivers
   displayNames: string[][]; // [0: id, 1: displayName] for each person concerned by this message.
   date: moment.Moment; // DateTime of the message
+  oldThreadId: string; // Old id of the thread
   threadId: string; // Id of the thread (Id of the first message in this thread).
   unread: boolean; // Self-explaining
   rownum: number; // number of the message in the thread (starting from 1 from the newest to the latest).
@@ -106,13 +107,14 @@ export function createDraft(data: IConversationMessage) {
         newId: messageId,
         oldId: newuuid,
         parentId: fulldata.parentId,
-        threadId: fulldata.threadId
+        oldThreadId: fulldata.threadId,
+        threadId: json.thread_id || (fulldata.threadId.startsWith("tmp-") ? json.id : fulldata.threadId)
       };
       dispatch({
         data: fulldata2,
         type: actionTypeDraftCreated
       });
-      fulldata2.threadId.startsWith("tmp-") && dispatch(conversationThreadSelected(fulldata2.newId));
+      fulldata2.oldThreadId !==fulldata2.threadId && dispatch(conversationThreadSelected(fulldata2.threadId));
       return messageId
     } catch (e) {
       // tslint:disable-next-line:no-console
@@ -276,13 +278,14 @@ export function sendMessage(data: IConversationMessage, sentAttachments?: IAttac
         newId: json.id,
         oldId: newuuid,
         parentId: fulldata.parentId,
-        threadId: fulldata.threadId
+        oldThreadId: fulldata.threadId,
+        threadId: json.thread_id || (fulldata.threadId.startsWith("tmp-") ? json.id : fulldata.threadId)
       };
       dispatch({
         data: fulldata2,
         type: actionTypeMessageSent
       });
-      fulldata2.threadId.startsWith("tmp-") && dispatch(conversationThreadSelected(fulldata2.newId));
+      fulldata2.oldThreadId !==fulldata2.threadId && dispatch(conversationThreadSelected(fulldata2.threadId));
       // console.log("fulldata", fulldata2);
       Trackers.trackEvent("Conversation", "SEND");
       return fulldata2.attachments;

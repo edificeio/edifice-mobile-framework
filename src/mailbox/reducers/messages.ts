@@ -49,11 +49,14 @@ const conversationThreadListReducer = (
       // action contains, `data: IConversationMessage (with newId and oldId instead of id)`
       // ("reducer: (messages) send message ok", action);
       const result2 = { ...state };
-      result2[action.data.newId] = result2[action.data.oldId];
-      result2[action.data.newId].status = ConversationMessageStatus.sent;
-      result2[action.data.newId].id = action.data.newId;
-      result2[action.data.newId].to = action.data.to;
-      delete result2[action.data.oldId];
+      result2[action.data.newId] = {
+        ...result2[action.data.oldId],
+        status: ConversationMessageStatus.sent,
+        id: action.data.newId,
+        to: action.data.to,
+        threadId: action.data.threadId
+      }
+      delete result2[action.data.oldId]
       return result2;
     case actionTypeMessageSendError:
       // action contains, `data: IConversationMessage`

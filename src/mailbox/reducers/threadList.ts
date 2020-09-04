@@ -180,20 +180,20 @@ const conversationThreadListReducer = (
     case actionTypeMessageSent:
       // action contains `data: IConversationMessage with oldId and newId instead of id`
       // console.log("reducer: (threadList) send message request", action);
-      const msglist = state.byId[action.data.threadId].messages;
+      const msglist = state.byId[action.data.oldThreadId].messages;
       const index = msglist.indexOf(action.data.oldId);
       if (index !== -1) {
         msglist[index] = action.data.newId;
       }
-      const idsWithoutThreadId = state.ids.filter(id => id !== action.data.threadId);
-      const updatedThread = { ...state.byId[action.data.threadId], messages: msglist, id: action.data.newId };
-      const isTemporaryThread = action.data.threadId.startsWith("tmp-");
-      isTemporaryThread && delete state.byId[action.data.threadId]
+      const idsWithoutThreadId = state.ids.filter(id => id !== action.data.oldThreadId);
+      const updatedThread = { ...state.byId[action.data.oldThreadId], messages: msglist, id: action.data.threadId };
+      const isTemporaryThread = action.data.oldThreadId.startsWith("tmp-");
+      isTemporaryThread && delete state.byId[action.data.oldThreadId]
       return {
         ...state,
         byId: isTemporaryThread
           ? 
-            { [action.data.newId]: updatedThread, ...state.byId }
+            { [action.data.threadId]: updatedThread, ...state.byId }
           :
             {
               ...state.byId,
@@ -202,7 +202,7 @@ const conversationThreadListReducer = (
                 messages: msglist
               }
             },
-        ids: isTemporaryThread ? [action.data.newId, ...idsWithoutThreadId] : state.ids
+        ids: isTemporaryThread ? [action.data.threadId, ...idsWithoutThreadId] : [...state.ids, action.data.threadId]
       };
     case actionTypeThreadCreated:
       // console.log("reducer (threadList): create thread");

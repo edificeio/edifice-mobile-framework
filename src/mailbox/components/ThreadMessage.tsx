@@ -87,7 +87,7 @@ export const MessageBubble = ({
           <Icon
             name="arrow_down"
             color={isMine ? "white" : CommonStyles.actionColor}
-            style={!showHistory && {transform: [{ rotate: "270deg" }]}}
+            style={!showHistory ? {transform: [{ rotate: "270deg" }]} : {marginRight: 2}}
           />
           <A style={{ color: isMine ? "white" : CommonStyles.actionColor }}>
           {I18n.t(showHistory ? "conversation-historyHide" : "conversation-historyShow")}
