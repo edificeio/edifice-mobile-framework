@@ -57,13 +57,13 @@ export const MessageBubble = ({
   const htmlEmptyMessage = I18n.t("conversation-emptyMessage");
   const bubbleStyle = {
     alignSelf: "stretch",
-    // marginBottom: 10,
-    // marginTop: 6,
     paddingHorizontal: 16,
     paddingVertical: 12,
+    maxWidth: "100%"
   }
   const style2 = {
-    ...style, elevation: 2,
+    ...style,
+    elevation: 2,
     shadowColor: CommonStyles.shadowColor,
     shadowOffset: CommonStyles.shadowOffset,
     shadowOpacity: CommonStyles.shadowOpacity,
