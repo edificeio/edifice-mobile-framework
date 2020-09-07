@@ -17,7 +17,7 @@ import * as React from "react";
 import { hasNotch } from "react-native-device-info";
 
 // Components
-import { KeyboardAvoidingView, Platform, RefreshControl, Dimensions, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
+import { KeyboardAvoidingView, Platform, RefreshControl, TouchableOpacity } from "react-native";
 const { View, FlatList } = style;
 import styles from "../../styles";
 
@@ -216,6 +216,7 @@ export class ThreadPage extends React.PureComponent<
     const isMine = message && message.from === getSessionInfo().userId;
     return (
       <TouchableOpacity
+        activeOpacity={1}
         onLongPress={() => isMine ? null : this.props.onSelectMessage && this.props.onSelectMessage(message)}
       >
         {/*!this.todaySeparatorAlreadyDisplayed &&
