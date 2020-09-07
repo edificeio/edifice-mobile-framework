@@ -176,7 +176,9 @@ class Attachment extends React.PureComponent<
     const { downloadState } = this.state;
     const canDownload = this.attId && downloadState !== DownloadState.Success && downloadState !== DownloadState.Downloading;
     if(prevProps.starDownload !== starDownload){
-      canDownload && this.startDownload(attachment as IRemoteAttachment);
+      canDownload 
+        && this.startDownload(attachment as IRemoteAttachment)
+            .catch(err => console.log(err))
     }
   }
 
@@ -313,7 +315,7 @@ class Attachment extends React.PureComponent<
           <ModalContentBlock>
             <ButtonsOkCancel
               onCancel={() => this.setState({ showModal: false })}
-              onValid={() => this.startDownload(att as IRemoteAttachment)}
+              onValid={() => this.startDownload(att as IRemoteAttachment).catch(err => console.log(err))}
               title={I18n.t("download")}
             />
           </ModalContentBlock>
@@ -346,7 +348,8 @@ class Attachment extends React.PureComponent<
     } else if (downloadState === DownloadState.Idle) {
       this.setState({ showModal: true });
     } else if (downloadState === DownloadState.Error) {
-      this.startDownload(attachment as IRemoteAttachment);
+      this.startDownload(attachment as IRemoteAttachment)
+        .catch(err => console.log(err));
     }
   }
 
@@ -368,7 +371,8 @@ class Attachment extends React.PureComponent<
   public async startDownload(att: IRemoteAttachment) {
     if (att.url) {
       if (Platform.OS === "android") {
-        await Permissions.request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
+        const permissionRes = await Permissions.request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
+        if (permissionRes !== "granted") throw new Error(`Permission ${permissionRes} to write external storage`);
       }
 
       this.setState({
