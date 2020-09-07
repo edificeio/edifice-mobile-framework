@@ -10,7 +10,7 @@ import { bindActionCreators } from "redux";
 
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { CommonStyles } from "../../styles/common/styles";
-import { Icon } from "../../ui";
+import { Icon, Loading } from "../../ui";
 import { PageContainer } from "../../ui/ContainerContent";
 import { Header as HeaderComponent } from "../../ui/headers/Header";
 import { HeaderAction } from "../../ui/headers/NewHeader";
@@ -26,6 +26,15 @@ import {
 import NewMailComponent from "../components/NewMail";
 import { newMailService, ISearchUsers, IUser } from "../service/newMail";
 import { getMailContentState, IMail } from "../state/mailContent";
+import pickFile from "../../infra/actions/pickFile";
+
+enum DraftType {
+  NEW,
+  DRAFT,
+  REPLY,
+  REPLY_ALL,
+  FORWARD,
+}
 
 type StateTypes = {
   inputName: string;
@@ -50,7 +59,6 @@ interface ICreateMailEventProps {
   clearContent: () => void;
 }
 
-// navigation.state.params.type can be { "NEW", "DRAFT", "REPLY", "REPLY_ALL", "FORWARD" }
 interface ICreateMailOtherProps {
   navigation: any;
   remainingUsers: IUser[];
@@ -74,8 +82,6 @@ interface ICreateMailState {
 }
 
 type NewMailContainerProps = ICreateMailEventProps & ICreateMailOtherProps;
-
-type NewMailContainerState = ICreateMailState;
 
 class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreateMailState> {
   defaultState = {
@@ -120,7 +126,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
   };
 
   updatePrevBody = prevBodyText => {
-    this.setState({ prevBody: prevBodyText});
+    this.setState({ prevBody: prevBodyText });
   };
 
   setSearchUsers = async (text: string, inputName: string) => {
@@ -191,8 +197,21 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
   manageDraftMail = (forceDraft = false) => {
     const { navigation } = this.props;
     const { to, cc, bcc, subject, body, prevBody, attachments } = this.state;
-    if (forceDraft || to.length > 0 || cc.length > 0 || bcc.length > 0 || subject !== "" || body !== "" || attachments.length > 0) {
-      const currBody = navigation.state.params.type === "REPLY" || navigation.state.params.type === "REPLY_ALL" || navigation.state.params.type === "FORWARD" ? body + "\n-------------------\n" + prevBody: body;
+    if (
+      forceDraft ||
+      to.length > 0 ||
+      cc.length > 0 ||
+      bcc.length > 0 ||
+      subject !== "" ||
+      body !== "" ||
+      attachments.length > 0
+    ) {
+      const currBody =
+        navigation.state.params.type === "REPLY" ||
+        navigation.state.params.type === "REPLY_ALL" ||
+        navigation.state.params.type === "FORWARD"
+          ? body + "\n-------------------\n" + prevBody
+          : body;
       const mailDatas = {
         to: to.map(elem => (elem.id && elem.id !== undefined ? elem.id : elem)),
         cc: cc.map(elem => (elem.id && elem.id !== undefined ? elem.id : elem)),
@@ -248,7 +267,12 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       });
       return;
     }
-    const currBody = navigation.state.params.type === "REPLY" || navigation.state.params.type === "REPLY_ALL" || navigation.state.params.type === "FORWARD" ? body + "\n-------------------\n" + prevBody: body;
+    const currBody =
+      navigation.state.params.type === "REPLY" ||
+      navigation.state.params.type === "REPLY_ALL" ||
+      navigation.state.params.type === "FORWARD"
+        ? body + "\n-------------------\n" + prevBody
+        : body;
     const mailDatas = {
       to: to.map(elem => (elem.id && elem.id !== undefined ? elem.id : elem)),
       cc: cc.map(elem => (elem.id && elem.id !== undefined ? elem.id : elem)),
@@ -259,13 +283,14 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     };
     const mailId = navigation.state.params.mailId !== undefined ? navigation.state.params.mailId : "";
     if (navigation.state.params.type === "NEW") {
-      if (attachments !== undefined && attachments.length === 0)
-        this.props.sendMail(mailDatas, "", "");
-      else
-        this.props.sendMail(mailDatas, this.props.mail.id, "")
-    }
-    else if (navigation.state.params.type === "DRAFT") this.props.sendMail(mailDatas, mailId, "");
-    else if (navigation.state.params.type === "REPLY" || navigation.state.params.type === "REPLY_ALL" || navigation.state.params.type === "FORWARD")
+      if (attachments !== undefined && attachments.length === 0) this.props.sendMail(mailDatas, "", "");
+      else this.props.sendMail(mailDatas, this.props.mail.id, "");
+    } else if (navigation.state.params.type === "DRAFT") this.props.sendMail(mailDatas, mailId, "");
+    else if (
+      navigation.state.params.type === "REPLY" ||
+      navigation.state.params.type === "REPLY_ALL" ||
+      navigation.state.params.type === "FORWARD"
+    )
       this.props.sendMail(mailDatas, "", mailId);
     this.goBack("isNotDraft");
 
@@ -277,14 +302,13 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
   };
 
   askForAttachment = () => {
-    if (this.props.mail.id === undefined) this.manageDraftMail(true);
-    DocumentPicker.pickMultiple({
-      type: [DocumentPicker.types.allFiles],
-    })
-      .then(res => {
-        setTimeout(() => this.props.postAttachments(this.props.mail.id, res), 1500);
-      })
-      .catch(err => console.error("Document Picker Canceled", err));
+    let promise;
+    if (this.props.mail.id === undefined) promise = this.manageDraftMail(true);
+    else promise = Promise.resolve();
+
+    pickFile().then(contentUri => {
+      this.props.postAttachments(this.props.mail.id, [contentUri]);
+    });
   };
 
   public render() {
@@ -304,18 +328,21 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
             </TouchableOpacity>
           </View>
         </HeaderComponent>
-
-        <NewMailComponent
-          {...this.state}
-          {...this.props}
-          mail={this.props.mail}
-          handleInputChange={this.handleInputChange}
-          pickUser={this.pickUser}
-          unpickUser={this.unpickUser}
-          updateStateValue={this.updateStateValue}
-          updatePrevBody={this.updatePrevBody}
-          deleteAttachment={this.props.deleteAttachment}
-        />
+        {this.props.isFetching ? (
+          <Loading />
+        ) : (
+          <NewMailComponent
+            {...this.state}
+            {...this.props}
+            mail={this.props.mail}
+            handleInputChange={this.handleInputChange}
+            pickUser={this.pickUser}
+            unpickUser={this.unpickUser}
+            updateStateValue={this.updateStateValue}
+            updatePrevBody={this.updatePrevBody}
+            deleteAttachment={this.props.deleteAttachment}
+          />
+        )}
       </PageContainer>
     );
   }

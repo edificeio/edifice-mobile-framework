@@ -1,4 +1,3 @@
-import I18n from "i18n-js";
 import * as React from "react";
 import {
   TextInput,
@@ -37,12 +36,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 3,
     color: CommonStyles.lightTextColor,
   },
-  userName: {
-    textAlignVertical: "center",
-    flex: 1,
-    paddingLeft: 15,
-    paddingRight: 15,
-  },
   textInput: {
     flex: 1,
     height: 40,
@@ -50,7 +43,6 @@ const styles = StyleSheet.create({
     borderBottomColor: "#EEEEEE",
     borderBottomWidth: 2,
   },
-  dotReceiverColor: { width: 8, height: 8, borderRadius: 15, marginTop: 17, marginRight: 5 },
   shadow: {
     backgroundColor: "white",
     elevation: 4,
@@ -82,12 +74,16 @@ export const rolesDotColor = role => {
 
 const UserLine = ({ id, displayName, name, checked, onPick, onUnpick, isGroup, profile }) => (
   <TouchableOpacity onPress={() => (!checked ? onPick() : onUnpick())}>
-    <View style={{ flexDirection: "row", height: 40, marginLeft: 10 }}>
-      <View style={[styles.dotReceiverColor, { backgroundColor: rolesDotColor(profile) }]} />
-      <Text style={styles.userName} numberOfLines={1}>
-        {name || displayName}
+    <Text style={{ flexDirection: "row", alignItems: "center", height: 40, marginLeft: 10 }} numberOfLines={1}>
+      <Text
+        style={{
+          color: rolesDotColor(profile),
+          fontSize: 20,
+        }}>
+        {"\u25CF "}
       </Text>
-    </View>
+      {name || displayName}
+    </Text>
   </TouchableOpacity>
 );
 
@@ -105,11 +101,11 @@ export function UserList(props: {
       data={props.users}
       keyExtractor={(user: IUser) => user.id} //increment in next line
       renderItem={user => (
-          <UserLine
-            onPick={() => props.onPickUser && props.onPickUser(user.item)}
-            onUnpick={() => props.onUnpickUser && props.onUnpickUser(user.item)}
-            {...user.item}
-          />
+        <UserLine
+          onPick={() => props.onPickUser && props.onPickUser(user.item)}
+          onUnpick={() => props.onUnpickUser && props.onUnpickUser(user.item)}
+          {...user.item}
+        />
       )}
       onEndReached={() => props.onEndReached && props.onEndReached()}
       refreshing
@@ -130,9 +126,10 @@ export default class SelectMailInfos extends React.Component<
     (visible.name &&
       removeAccents(visible.name.toLowerCase()).indexOf(removeAccents(this.state.searchText.toLowerCase())) !== -1) ||
     (visible.displayName &&
-      removeAccents(visible.displayName.toLowerCase()).indexOf(removeAccents(this.state.searchText.toLowerCase())) !== -1);
+      removeAccents(visible.displayName.toLowerCase()).indexOf(removeAccents(this.state.searchText.toLowerCase())) !==
+        -1);
 
-  public expend() {
+  public expand() {
     const { max } = this.state;
     this.setState({ max: max + 20 });
   }
@@ -159,7 +156,7 @@ export default class SelectMailInfos extends React.Component<
     const { onUnpickUser, pickedUsers, onHandleInputChange, inputName } = this.props;
     let index = 0;
     return (
-      <View style={{ width: "90%" }}>
+      <View style={{ flex: 1 }}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <KeyboardAvoidingView
             enabled
@@ -170,14 +167,6 @@ export default class SelectMailInfos extends React.Component<
               style={[styles.scrollField, { backgroundColor: "#FFFFFF" }]}
               ref={r => (this.inputRef = (r as any)?.innerComponent)}>
               <View style={styles.fieldContainer}>
-                <Text style={styles.fieldName}>
-                  {inputName === "to"
-                    ? I18n.t("zimbra-to")
-                    : inputName === "cc"
-                    ? I18n.t("zimbra-cc")
-                    : I18n.t("zimbra-bcc")}{" "}
-                  :
-                </Text>
                 {pickedUsers &&
                   pickedUsers.length > 0 &&
                   pickedUsers.map(p => (
@@ -193,7 +182,9 @@ export default class SelectMailInfos extends React.Component<
                         marginVertical: 5,
                       }}>
                       {typeof p === "string" ? (
-                        <Text style={styles.userLabel} numberOfLines={2}>{p}</Text>
+                        <Text style={styles.userLabel} numberOfLines={2}>
+                          {p}
+                        </Text>
                       ) : (
                         <Text style={styles.userLabel} numberOfLines={2}>
                           {p.name || p.displayName}
@@ -230,7 +221,7 @@ export default class SelectMailInfos extends React.Component<
                   users={this.usersArray}
                   onPickUser={user => this.pickUser(user)}
                   onUnpickUser={user => onUnpickUser(user)}
-                  onEndReached={() => this.expend()}
+                  onEndReached={() => this.expand()}
                 />
               </ScrollView>
             ) : null}

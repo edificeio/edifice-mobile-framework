@@ -1,11 +1,11 @@
 import I18n from "i18n-js";
 import React from "react";
-import { View, StyleSheet, RefreshControl } from "react-native";
-import { TextInput, TouchableOpacity, ScrollView } from "react-native-gesture-handler";
+import { View, StyleSheet, TextInput } from "react-native";
 
-import { CommonStyles } from "../../styles/common/styles";
-import { Icon, Loading } from "../../ui";
+import { CommonStyles, IOSShadowStyle } from "../../styles/common/styles";
+import { Icon } from "../../ui";
 import { PageContainer } from "../../ui/ContainerContent";
+import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { Text } from "../../ui/Typography";
 import { IMail } from "../state/mailContent";
 import SelectMailInfos from "./SelectMailInfos";
@@ -16,9 +16,8 @@ type IUserInfos = {
 }[];
 
 type NewMailContainerState = {
-  showCcRows: boolean;
   mailInfos: IMail;
-  isPrevBody: Boolean;
+  isPrevBody: boolean;
 };
 
 export default class NewMail extends React.PureComponent<any, NewMailContainerState> {
@@ -49,14 +48,19 @@ export default class NewMail extends React.PureComponent<any, NewMailContainerSt
     else if (navigation.state.params.type === "FORWARD") subjectText = `${I18n.t("zimbra-forward-subject")} ${subject}`;
     else if (navigation.state.params.type === "DRAFT")
       bodyText = mail.body && mail.body !== "undefined" ? mail.body.replace(/<br>/g, "\n").slice(5, -6) : body;
-    if (navigation.state.params.type === "REPLY" || navigation.state.params.type === "REPLY_ALL" || navigation.state.params.type === "FORWARD")
-      this.props.updatePrevBody(mail.body && mail.body !== "undefined" ? mail.body.replace(/<br>/g, "\n").slice(5, -6) : body);
+    if (
+      navigation.state.params.type === "REPLY" ||
+      navigation.state.params.type === "REPLY_ALL" ||
+      navigation.state.params.type === "FORWARD"
+    )
+      this.props.updatePrevBody(
+        mail.body && mail.body !== "undefined" ? mail.body.replace(/<br>/g, "\n").slice(5, -6) : body
+      );
     this.props.updateStateValue(toUsers, ccUsers, bccUsers, subjectText, bodyText);
 
     this.state = {
-      showCcRows: false,
       mailInfos: mail,
-      isPrevBody: false
+      isPrevBody: false,
     };
   }
 
@@ -76,154 +80,194 @@ export default class NewMail extends React.PureComponent<any, NewMailContainerSt
         bodyText = mail.body && mail.body !== "undefined" ? mail.body.replace(/<br>/g, "\n").slice(5, -6) : body;
         subjectText = mail.subject && mail.subject !== "undefined" ? mail.subject : subject;
       }
-      if (!this.state.isPrevBody && (navigation.state.params.type === "REPLY" || navigation.state.params.type === "REPLY_ALL" || navigation.state.params.type === "FORWARD")) {
-        this.setState({ isPrevBody: true});
-        this.props.updatePrevBody(mail.body && mail.body !== "undefined" ? mail.body.replace(/<br>/g, "\n").slice(5, -6) : body);
+      if (
+        !this.state.isPrevBody &&
+        (navigation.state.params.type === "REPLY" ||
+          navigation.state.params.type === "REPLY_ALL" ||
+          navigation.state.params.type === "FORWARD")
+      ) {
+        this.setState({ isPrevBody: true });
+        this.props.updatePrevBody(
+          mail.body && mail.body !== "undefined" ? mail.body.replace(/<br>/g, "\n").slice(5, -6) : body
+        );
       }
       this.setState({ mailInfos: mail });
       this.props.updateStateValue(toUsers, ccUsers, bccUsers, subjectText, bodyText);
     }
   };
 
-  renderHiddenCcRows = () => {
-    return (
-      <>
-        <View style={styles.inputRow}>
-          <SelectMailInfos
-            onPickUser={(user: any) => {
-              this.props.pickUser(user, "cc");
-            }}
-            onUnpickUser={(user: any) => {
-              this.props.unpickUser(user, "cc");
-            }}
-            pickedUsers={this.props.cc}
-            remainingUsers={this.props.searchCc}
-            onHandleInputChange={this.props.handleInputChange}
-            inputName="cc"
-          />
-        </View>
-        <View style={styles.inputRow}>
-          <SelectMailInfos
-            onPickUser={(user: any) => {
-              this.props.pickUser(user, "bcc");
-            }}
-            onUnpickUser={(user: any) => {
-              this.props.unpickUser(user, "bcc");
-            }}
-            pickedUsers={this.props.bcc}
-            remainingUsers={this.props.searchBcc}
-            onHandleInputChange={this.props.handleInputChange}
-            inputName="bcc"
-          />
-        </View>
-      </>
-    );
-  };
-
-  switchShowCcRows = () => {
-    const { showCcRows } = this.state;
-    this.setState({
-      showCcRows: !showCcRows,
-    });
-  };
-
-  refreshMailContent = () => {
+  componentDidMount() {
     if (this.props.navigation.state.params.mailId !== undefined)
       this.props.fetchMailContentAction(this.props.navigation.state.params.mailId);
-  };
+  }
 
   public render() {
-    const { showCcRows } = this.state;
     const { attachments, id } = this.props.mail;
-    const { deleteAttachment } = this.props;
+    const {
+      deleteAttachment,
+      pickUser,
+      unpickUser,
+      to,
+      searchTo,
+      cc,
+      searchCc,
+      bcc,
+      searchBcc,
+      subject,
+      handleInputChange,
+    } = this.props;
     return (
       <PageContainer>
-        {this.props.isFetching ? (
-          <Loading />
-        ) : (
-          <ScrollView
-            refreshControl={
-              <RefreshControl refreshing={this.props.isFetching} onRefresh={() => this.refreshMailContent()} />
-            }>
-            <View style={styles.headerView}>
-              <View style={styles.inputRow}>
-                <SelectMailInfos
-                  onPickUser={(user: any) => {
-                    this.props.pickUser(user, "to");
-                  }}
-                  onUnpickUser={(user: any) => {
-                    this.props.unpickUser(user, "to");
-                  }}
-                  pickedUsers={this.props.to}
-                  remainingUsers={this.props.searchTo}
-                  onHandleInputChange={this.props.handleInputChange}
-                  inputName="to"
-                />
-                <TouchableOpacity onPress={this.switchShowCcRows}>
-                  <Icon
-                    name={showCcRows ? "keyboard_arrow_up" : "keyboard_arrow_down"}
-                    size={28}
-                    style={{ marginHorizontal: 8, marginTop: 20 }}
-                  />
-                </TouchableOpacity>
-              </View>
-              {showCcRows && this.renderHiddenCcRows()}
-              <View style={styles.inputRow}>
-                <Text style={{ color: CommonStyles.lightTextColor, marginTop: 20 }}>{I18n.t("zimbra-subject")}: </Text>
-                <TextInput
-                  underlineColorAndroid="lightgrey"
-                  style={styles.textInput}
-                  defaultValue={this.props.subject}
-                  onChangeText={(text: string) => this.props.handleInputChange(text, "subject")}
-                />
-              </View>
-              <View style={styles.PJrow}>
-                {attachments &&
-                  attachments.map(att => (
-                    <View style={styles.PJitem}>
-                      <Text>{att.filename}</Text>
-                      <TouchableOpacity onPress={() => deleteAttachment(id, att.id)}>
-                        <Icon name="close" color="red" />
-                      </TouchableOpacity>
-                    </View>
-                  ))}
-              </View>
-            </View>
-            <TextInput
-              placeholder={I18n.t("zimbra-type-message")}
-              textAlignVertical="top"
-              multiline
-              style={styles.textZone}
-              defaultValue={this.props.body}
-              onChangeText={(text: string) => this.props.handleInputChange(text, "body")}
-            />
-          </ScrollView>
-        )}
+        <Headers
+          style={{ zIndex: 3 }}
+          pickUser={pickUser}
+          unpickUser={unpickUser}
+          to={to}
+          searchTo={searchTo}
+          cc={cc}
+          searchCc={searchCc}
+          bcc={bcc}
+          searchBcc={searchBcc}
+          subject={subject}
+          handleInputChange={handleInputChange}
+        />
+        <Attachments style={{ zIndex: 2 }} attachments={attachments} deleteAttachment={deleteAttachment} id={id} />
+        <View style={[styles.mailPart, { zIndex: 1, flexGrow: 1 }]}>
+          <TextInput
+            placeholder={I18n.t("zimbra-type-message")}
+            textAlignVertical="top"
+            multiline
+            style={{ flexGrow: 1 }}
+            defaultValue={this.props.body}
+            onChangeText={(text: string) => this.props.handleInputChange(text, "body")}
+          />
+        </View>
       </PageContainer>
     );
   }
 }
 
+const Headers = ({
+  style,
+  pickUser,
+  unpickUser,
+  to,
+  searchTo,
+  cc,
+  searchCc,
+  bcc,
+  searchBcc,
+  subject,
+  handleInputChange,
+}) => {
+  const [showExtraFields, toggleExtraFields] = React.useState(false);
+
+  return (
+    <View style={[styles.mailPart, style]}>
+      <HeaderLine title={I18n.t("zimbra-to")}>
+        <SelectMailInfos
+          onPickUser={(user: any) => {
+            pickUser(user, "to");
+          }}
+          onUnpickUser={(user: any) => {
+            unpickUser(user, "to");
+          }}
+          pickedUsers={to}
+          remainingUsers={searchTo}
+          onHandleInputChange={handleInputChange}
+          inputName="to"
+        />
+        <TouchableOpacity onPress={() => toggleExtraFields(!showExtraFields)}>
+          <Icon name={showExtraFields ? "keyboard_arrow_up" : "keyboard_arrow_down"} size={28} />
+        </TouchableOpacity>
+      </HeaderLine>
+      {showExtraFields && (
+        <>
+          <HeaderLine title={I18n.t("zimbra-cc")}>
+            <SelectMailInfos
+              onPickUser={(user: any) => {
+                pickUser(user, "cc");
+              }}
+              onUnpickUser={(user: any) => {
+                unpickUser(user, "cc");
+              }}
+              pickedUsers={cc}
+              remainingUsers={searchCc}
+              onHandleInputChange={handleInputChange}
+              inputName="cc"
+            />
+          </HeaderLine>
+          <HeaderLine title={I18n.t("zimbra-bcc")}>
+            <SelectMailInfos
+              onPickUser={(user: any) => {
+                pickUser(user, "bcc");
+              }}
+              onUnpickUser={(user: any) => {
+                unpickUser(user, "bcc");
+              }}
+              pickedUsers={bcc}
+              remainingUsers={searchBcc}
+              onHandleInputChange={handleInputChange}
+              inputName="bcc"
+            />
+          </HeaderLine>
+        </>
+      )}
+      <HeaderLine title={I18n.t("zimbra-subject")}>
+        <TextInput
+          style={styles.textInput}
+          defaultValue={subject}
+          onChangeText={(text: string) => handleInputChange(text, "subject")}
+        />
+      </HeaderLine>
+    </View>
+  );
+};
+
+const HeaderLine = ({ title, children }) => (
+  <View style={styles.inputRow}>
+    <Text style={{ color: CommonStyles.lightTextColor }}>{title} : </Text>
+    {children}
+  </View>
+);
+
+const Attachments = ({ style, attachments, deleteAttachment, id }) => (
+  <>
+    {attachments ? (
+      <View style={[styles.mailPart, style]}>
+        {attachments.map(att => (
+          <View style={styles.PJitem}>
+            <Text>{att.filename}</Text>
+            <TouchableOpacity onPress={() => deleteAttachment(id, att.id)}>
+              <Icon name="close" color="red" />
+            </TouchableOpacity>
+          </View>
+        ))}
+      </View>
+    ) : (
+      <View />
+    )}
+  </>
+);
+
 const styles = StyleSheet.create({
-  headerView: { backgroundColor: "white", marginBottom: 3 },
-  inputRow: { flexDirection: "row", alignItems: "flex-start", paddingHorizontal: 10 },
-  textInput: { flexGrow: 1, marginLeft: 10 },
-  textZone: { marginTop: 10, flexGrow: 1, padding: 8 },
-  PJrow: {},
+  mailPart: { padding: 5, backgroundColor: "white", elevation: CommonStyles.elevation, ...IOSShadowStyle },
+  inputRow: { flexDirection: "row", alignItems: "center", marginVertical: 5, paddingHorizontal: 10 },
+  textInput: {
+    flex: 1,
+    height: 40,
+    color: CommonStyles.textColor,
+    borderBottomColor: "#EEEEEE",
+    borderBottomWidth: 2,
+  },
   PJitem: {
     margin: 5,
     padding: 5,
     flexDirection: "row",
     justifyContent: "space-between",
     backgroundColor: CommonStyles.lightGrey,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
     alignItems: "center",
+    elevation: CommonStyles.elevation,
+    ...IOSShadowStyle,
   },
 });

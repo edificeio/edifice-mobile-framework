@@ -83,6 +83,13 @@ export const CommonStyles = {
   secondary: "#FF7A24",
 };
 
+export const IOSShadowStyle = {
+  shadowColor: CommonStyles.shadowColor,
+  shadowOffset: CommonStyles.shadowOffset,
+  shadowOpacity: CommonStyles.shadowOpacity,
+  shadowRadius: CommonStyles.shadowRadius,
+};
+
 setCustomText({ style: { fontFamily: CommonStyles.primaryFontFamily } });
 
 // Text.defaultProps.style = { fontFamily: CommonStyles.primaryFontFamily }; // Obsolete from RN 0.57
