@@ -5,6 +5,9 @@ import { StatusBar, View, AppState, AppStateStatus } from "react-native";
 import * as RNLocalize from "react-native-localize";
 import "react-native-gesture-handler";
 
+// Polyfills
+import 'ts-polyfill/lib/es2019-object';
+
 // Redux
 import { Provider, connect } from "react-redux";
 
