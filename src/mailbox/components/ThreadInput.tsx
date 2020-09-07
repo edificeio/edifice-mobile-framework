@@ -274,12 +274,14 @@ class ThreadInput extends React.PureComponent<
               Trackers.trackEvent("Conversation", "REPLY TO ONE");
             }}>
             <Icon name="profile-on" size={24} color={CommonStyles.actionColor} style={{ marginBottom: 6 }} />
-            <Text color={CommonStyles.actionColor}>{I18n.t("conversation-reply-to-name-action", {
-              name: (() => {
-                const receiver = lastMessage.displayNames.find(dn => dn[0] === lastMessage.from);
-                return receiver ? receiver[1] : "";
-              })()
-            })}</Text>
+            <Text color={CommonStyles.actionColor} style={{textAlign: "center"}}>
+              {I18n.t("conversation-reply-to-name-action", {
+                name: (() => {
+                  const receiver = lastMessage.displayNames.find(dn => dn[0] === lastMessage.from);
+                  return receiver ? receiver[1] : "";
+                  })()
+              })}
+            </Text>
           </TouchableOpacity>
           <View style={{
             flex: 0,
