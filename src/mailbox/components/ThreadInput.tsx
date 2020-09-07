@@ -324,7 +324,7 @@ class ThreadInput extends React.PureComponent<
         : null
         }
         <ContainerFooterBar>
-          <View style={{flexDirection: "row", paddingVertical: Platform.OS === "ios" ? 10 : 0}}>
+          <View style={{flexDirection: "row", paddingVertical: 10}}>
             <View style={{flex: 3, paddingHorizontal: 8, justifyContent: "center"}}>
               {displayPlaceholder &&
                 this.props.emptyThread &&
