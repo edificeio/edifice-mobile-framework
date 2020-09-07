@@ -131,7 +131,7 @@ INewsContentPageProps,
       });
     }
 
-    this.unacknowledgedChildrenIds = childrenIds.filter(childId => !acknowledgedChildrenIds.includes(childId))
+    this.unacknowledgedChildrenIds = (childrenIds || []).filter(childId => !acknowledgedChildrenIds.includes(childId))
     if (schoolbookData.length === acknowledgedChildrenIds.length) isAck = true;
     return isAck;
   }
