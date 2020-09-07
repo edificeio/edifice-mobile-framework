@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, Text } from "react-native";
+import { View, Text, Platform } from "react-native";
 import { NavigationScreenProp, NavigationActions} from "react-navigation";
 import { connect } from "react-redux";
 import I18n from "i18n-js";
@@ -175,11 +175,16 @@ class ThreadPageContainer extends React.PureComponent<
         },
         headerTitleContainerStyle: {
           alignItems: "flex-start",
-          width: "100%",
-          flex: 1,
-          marginRight: 100,
           justifyContent: "flex-start",
-          textAlign: "left"
+          flex: 1,
+          textAlign: "left",
+          ...Platform.select({
+            ios: {
+              width: "100%",
+              marginRight: 112
+          }, android: {
+              left: 60, right: 112
+          }})
         }
       }, navigation);
     }
