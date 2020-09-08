@@ -125,7 +125,9 @@ export default class NewMail extends React.PureComponent<any, NewMailContainerSt
           subject={subject}
           handleInputChange={handleInputChange}
         />
-        <Attachments style={{ zIndex: 2 }} attachments={attachments} deleteAttachment={deleteAttachment} id={id} />
+        {attachments && attachments.length > 0 && (
+          <Attachments style={{ zIndex: 2 }} attachments={attachments} deleteAttachment={deleteAttachment} id={id} />
+        )}
         <View style={[styles.mailPart, { zIndex: 1, flexGrow: 1 }]}>
           <TextInput
             placeholder={I18n.t("zimbra-type-message")}
@@ -227,22 +229,16 @@ const HeaderLine = ({ title, children }) => (
 );
 
 const Attachments = ({ style, attachments, deleteAttachment, id }) => (
-  <>
-    {attachments ? (
-      <View style={[styles.mailPart, style]}>
-        {attachments.map(att => (
-          <View style={styles.PJitem}>
-            <Text>{att.filename}</Text>
-            <TouchableOpacity onPress={() => deleteAttachment(id, att.id)}>
-              <Icon name="close" color="red" />
-            </TouchableOpacity>
-          </View>
-        ))}
+  <View style={[styles.mailPart, style]}>
+    {attachments.map(att => (
+      <View style={styles.PJitem}>
+        <Text>{att.filename}</Text>
+        <TouchableOpacity onPress={() => deleteAttachment(id, att.id)}>
+          <Icon name="close" color="red" />
+        </TouchableOpacity>
       </View>
-    ) : (
-      <View />
-    )}
-  </>
+    ))}
+  </View>
 );
 
 const styles = StyleSheet.create({
