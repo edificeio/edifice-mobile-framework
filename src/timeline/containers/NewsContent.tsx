@@ -5,6 +5,7 @@ import { NavigationActions, NavigationScreenProp } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 import { connect } from "react-redux";
 import style from "glamorous-native";
+import moment from "moment";
 
 import Conf from "../../../ode-framework-conf";
 import { signedFetch, fetchJSONWithCache } from "../../infra/fetchWithCache";
@@ -470,8 +471,7 @@ INewsContentPageProps,
               {(comment as INewsComment).username || (comment as IBlogComment).author && (comment as IBlogComment).author.username}
             </CommentAuthor>
             <CommentDate>
-              {/* FIXME: Use moment.js instead of this */}
-              {getTimeToStr(comment.created)}
+              {moment(comment.created).fromNow()}
             </CommentDate>
           </View>
           <TextPreview
