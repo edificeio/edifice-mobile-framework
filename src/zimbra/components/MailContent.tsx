@@ -9,9 +9,10 @@ import { HtmlContentView } from "../../ui/HtmlContentView";
 import { RenderPJs, HeaderMail, FooterButton, getColorOfRole } from "./MailContentItems";
 
 const GetTopBarColor = ({ senderId, receiverId }) => {
-  if (getSessionInfo().userId !== senderId)
-    return <View style={[styles.topBar, { backgroundColor: getColorOfRole(senderId) }]} />;
-  else return <View style={[styles.topBar, { backgroundColor: getColorOfRole(receiverId) }]} />;
+  const userId = getSessionInfo().userId === senderId ? receiverId : senderId;
+  const [color, setColor] = React.useState<string>();
+  getColorOfRole(userId).then(setColor);
+  return color ? <View style={[styles.topBar, { backgroundColor: color }]} /> : <View />;
 };
 
 export default class MailContent extends React.PureComponent<any, any> {
