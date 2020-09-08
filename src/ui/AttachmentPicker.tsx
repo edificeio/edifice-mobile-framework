@@ -20,6 +20,7 @@ export class AttachmentPicker extends React.PureComponent<
     const { onlyImages, onAttachmentSelected } = this.props;
     pickFile(onlyImages)
       .then(selectedAtt => onAttachmentSelected(selectedAtt))  
+      .catch(err => console.log(err))
   }
 
   public onRemoveAttachment(index) {

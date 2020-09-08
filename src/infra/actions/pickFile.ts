@@ -59,11 +59,10 @@ const pickIOS: FilePickerPromise = (resolve, reject) => {
 
 const pickImage: FilePickerPromise = (resolve, reject) => {
   ImagePicker.showImagePicker(transformCaptions(photoCaptions), result => {
-    if (result.didCancel) {
+    if (result.didCancel || result.error) {
       reject(new Error("Action cancelled!"));
     } else {
       const { uri, fileName, type } = result;
-
       resolve({ mime: type, name: fileName || uri.split("tmp/")[1], uri: uri.split("file://")[1] });
     }
   });
