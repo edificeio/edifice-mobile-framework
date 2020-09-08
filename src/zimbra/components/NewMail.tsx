@@ -1,10 +1,9 @@
 import I18n from "i18n-js";
 import React from "react";
-import { View, StyleSheet, TextInput } from "react-native";
+import { ScrollView, View, StyleSheet, TextInput } from "react-native";
 
 import { CommonStyles, IOSShadowStyle } from "../../styles/common/styles";
 import { Icon } from "../../ui";
-import { PageContainer } from "../../ui/ContainerContent";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { Text } from "../../ui/Typography";
 import { IMail } from "../state/mailContent";
@@ -117,7 +116,7 @@ export default class NewMail extends React.PureComponent<any, NewMailContainerSt
       handleInputChange,
     } = this.props;
     return (
-      <PageContainer>
+      <ScrollView bounces={false} contentContainerStyle={{ flexGrow: 1 }}>
         <Headers
           style={{ zIndex: 3 }}
           pickUser={pickUser}
@@ -137,12 +136,13 @@ export default class NewMail extends React.PureComponent<any, NewMailContainerSt
             placeholder={I18n.t("zimbra-type-message")}
             textAlignVertical="top"
             multiline
+            scrollEnabled={false}
             style={{ flexGrow: 1 }}
             defaultValue={this.props.body}
             onChangeText={(text: string) => this.props.handleInputChange(text, "body")}
           />
         </View>
-      </PageContainer>
+      </ScrollView>
     );
   }
 }
