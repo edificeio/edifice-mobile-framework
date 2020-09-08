@@ -1,16 +1,17 @@
 import I18n from "i18n-js";
 import React from "react";
 import { View } from "react-native";
-import DocumentPicker from "react-native-document-picker";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Toast from "react-native-tiny-toast";
 import { NavigationScreenProp, NavigationActions } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
+import pickFile from "../../infra/actions/pickFile";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { CommonStyles } from "../../styles/common/styles";
 import { Icon, Loading } from "../../ui";
+import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
 import { Header as HeaderComponent } from "../../ui/headers/Header";
 import { HeaderAction } from "../../ui/headers/NewHeader";
@@ -26,7 +27,6 @@ import {
 import NewMailComponent from "../components/NewMail";
 import { newMailService, ISearchUsers, IUser } from "../service/newMail";
 import { getMailContentState, IMail } from "../state/mailContent";
-import pickFile from "../../infra/actions/pickFile";
 
 enum DraftType {
   NEW,
@@ -328,6 +328,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
             </TouchableOpacity>
           </View>
         </HeaderComponent>
+        <ConnectionTrackingBar />
         {this.props.isFetching ? (
           <Loading />
         ) : (
