@@ -95,11 +95,6 @@ export default class NewMail extends React.PureComponent<any, NewMailContainerSt
     }
   };
 
-  componentDidMount() {
-    if (this.props.navigation.state.params.mailId !== undefined)
-      this.props.fetchMailContentAction(this.props.navigation.state.params.mailId);
-  }
-
   public render() {
     const { attachments, id } = this.props.mail;
     const {
