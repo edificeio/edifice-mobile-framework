@@ -1,6 +1,6 @@
 import I18n from "i18n-js";
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import Toast from "react-native-tiny-toast";
 import { connect } from "react-redux";
@@ -40,34 +40,28 @@ class CreateFolderModal extends React.PureComponent<any, any> {
     const { show } = this.props;
     return (
       <ModalBox isVisible={show} backdropOpacity={0.5}>
-        <ModalContent>
-          <TextBold style={style.modalTitle}>{I18n.t("zimbra-create-directory")}</TextBold>
-          <TextInput
-            value={name}
-            onChangeText={this.onNameChange}
-            style={style.modalInput}
-            placeholder={I18n.t("zimbra-directory-name")}
-            underlineColorAndroid="grey"
-          />
+        <ModalContent style={{ width: 350 }}>
           <ModalContentBlock>
-            <View style={style.buttonsContainer}>
-              <DialogButtonCancel onPress={this.props.onClose} />
-              <DialogButtonOk label={I18n.t("zimbra-create")} onPress={this.onConfirm} />
-            </View>
+            <TextBold>{I18n.t("zimbra-create-directory")}</TextBold>
+          </ModalContentBlock>
+
+          <View style={{ width: "100%", marginBottom: 35, paddingHorizontal: 20 }}>
+            <TextInput
+              value={name}
+              onChangeText={this.onNameChange}
+              placeholder={I18n.t("zimbra-directory-name")}
+              underlineColorAndroid="grey"
+            />
+          </View>
+          <ModalContentBlock style={{ flexDirection: "row" }}>
+            <DialogButtonCancel onPress={this.props.onClose} />
+            <DialogButtonOk disabled={!this.state.name} label={I18n.t("zimbra-create")} onPress={this.onConfirm} />
           </ModalContentBlock>
         </ModalContent>
       </ModalBox>
     );
   }
 }
-
-const style = StyleSheet.create({
-  buttonsContainer: {
-    flexDirection: "row",
-  },
-  modalTitle: { fontSize: 18, marginBottom: 5 },
-  modalInput: { width: "80%", marginBottom: 10 },
-});
 
 const mapStateToProps = (state: any) => {
   return {};
