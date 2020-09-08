@@ -83,11 +83,11 @@ class MailContentContainer extends React.PureComponent<any, any> {
 
   move = () => this.props.moveToInbox([this.props.mail.id]);
 
-  delete = () => {
+  delete = async () => {
     const { navigation } = this.props;
     const isTrashed = navigation.getParam("isTrashed");
-    if (isTrashed) this.props.deleteMails([this.props.mail.id]);
-    else this.props.trashMails([this.props.mail.id]);
+    if (isTrashed) await this.props.deleteMails([this.props.mail.id]);
+    else await this.props.trashMails([this.props.mail.id]);
     this.goBack();
     Toast.show(I18n.t("zimbra-message-deleted"), {
       position: Toast.position.BOTTOM,
