@@ -65,15 +65,22 @@ export const newMailService = {
     return data;
   },
   sendMail: async (mailDatas, draftId, inReplyTo) => {
-    let urlParams = draftId !== "" || inReplyTo !== "" ? "?" : "";
-    urlParams = draftId !== "" ? `${urlParams}id=${draftId}` : urlParams;
-    urlParams = inReplyTo !== "" ? `${urlParams}In-Reply-To=${inReplyTo}` : urlParams;
-    await fetchJSONWithCache(`/zimbra/send${urlParams}`, { method: "POST", body: JSON.stringify(mailDatas) });
+    const params: string[] = [];
+    if (!!draftId) params.push(`id=${draftId}`);
+    if (!!inReplyTo) params.push(`In-Reply-To=${inReplyTo}`);
+    const urlParams = params.join("&");
+    await fetchJSONWithCache(`/zimbra/send${!!urlParams ? "?" + urlParams : ""}`, {
+      method: "POST",
+      body: JSON.stringify(mailDatas),
+    });
   },
   makeDraftMail: async (mailDatas, inReplyTo, methodReply) => {
     let method = methodReply !== "" ? methodReply : "undefined";
     let urlParams = inReplyTo !== "" ? `?In-Reply-To=${inReplyTo}&reply=${method}` : "";
-    const response = await fetchJSONWithCache(`/zimbra/draft${urlParams}`, { method: "POST", body: JSON.stringify(mailDatas) });
+    const response = await fetchJSONWithCache(`/zimbra/draft${urlParams}`, {
+      method: "POST",
+      body: JSON.stringify(mailDatas),
+    });
     return response.id;
   },
   updateDraftMail: async (mailId, mailDatas) => {
