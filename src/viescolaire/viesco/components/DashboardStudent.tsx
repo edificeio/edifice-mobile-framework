@@ -51,7 +51,7 @@ const IconButton = ({ disabled, icon, color, text, onPress }: IIconButtonProps) 
     <TouchableOpacity
       disabled={disabled}
       onPress={onPress}
-      style={[styles.gridButton, { backgroundColor: color }, { opacity: disabled ? 0.6 : 1 }]}>
+      style={[styles.gridButton, { backgroundColor: disabled ? "#858FA9" : color }]}>
       <Icon size={20} color="white" name={icon} />
       <Text style={styles.gridButtonText}>{text}</Text>
     </TouchableOpacity>
