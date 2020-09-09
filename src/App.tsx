@@ -39,14 +39,14 @@ import SplashScreen from "react-native-splash-screen";
 
 // Functionnal modules // THIS IS UGLY. it is a workaround for include matomo tracking.
 require("./mailbox");
+require("./zimbra");
 require("./pronote");
 require("./lvs");
-require("./myAppMenu");
 require("./homework");
-require("./zimbra");
-require("./user");
 require("./workspace");
 require("./viescolaire");
+require("./myAppMenu");
+require("./user");
 
 // Store
 import { createMainStore } from "./AppStore";

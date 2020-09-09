@@ -21,7 +21,6 @@ export default module;
 
 registerModule(
   {
-    order: 6,
     config: require("./config").default,
     module
   }
