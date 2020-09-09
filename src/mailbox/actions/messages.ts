@@ -2,14 +2,34 @@
  * Conversation messages actions
  * Build actions to be dispatched to the conversarion messages reducer.
  */
-import { asyncActionTypes } from "../../infra/redux/async";
-import conversationConfig from "../config";
+import moment from "moment";
 
 import Conf from "../../../ode-framework-conf";
 import { signedFetch } from "../../infra/fetchWithCache";
-import { IConversationMessageList } from "../actions/sendMessage";
+import { asyncActionTypes } from "../../infra/redux/async";
+import { IConversationMessageList, IConversationMessageNativeArray } from "../actions/sendMessage";
+import conversationConfig from "../config";
 
-// TYPE -------------------------------------------------------------------------------------------
+// ADAPTER ----------------------------------------------------------------------------------------
+
+// Data type of what is given by the backend.
+export type IConversationMessageListBackend = {
+  id: string;
+  parent_id: string;
+  subject: string;
+  body: string;
+  from: string; // User id of the sender
+  fromName: string; // Name of the sender
+  to: string[]; // User Ids of the receivers
+  toName: string[]; // Name of the receivers
+  cc: string[]; // User Ids of the copy receivers
+  ccName: string[]; // Name of the copy receivers
+  displayNames: string[][]; // [0: id, 1: displayName] for each person concerned by this message.
+  date: number;
+  thread_id: string;
+  unread: boolean;
+  attachments: IAttachment[];
+}[];
 
 export interface IAttachment {
   id: string;
@@ -21,13 +41,29 @@ export interface IAttachment {
   size: number; // in Bytes
 }
 
-// ACTION LIST ------------------------------------------------------------------------------------
+/**
+ * Used when you want to keep the returned data order.
+ */
+export const conversationOrderedMessagesAdapter: (
+  data: IConversationMessageListBackend
+) => IConversationMessageNativeArray = data => {
+  return data.map(message => ({
+    ...message,
+    date: moment(message.date),
+    parentId: message.parent_id,
+    rownum: undefined,
+    status: undefined,
+    threadId: message.thread_id,
+  }));
+};
 
 export const actionTypeSetRead = conversationConfig.createActionType("MESSAGES") + "_SET_READ";
 
 export function conversationMessagesSetRead(messageIds: string[]) {
   return { type: actionTypeSetRead, messageIds };
 }
+
+// ACTION LIST ------------------------------------------------------------------------------------
 
 export const actionTypes = asyncActionTypes(conversationConfig.createActionType("MESSAGES"));
 
@@ -53,12 +89,12 @@ export function conversationSetMessagesRead(messageIds: string[]) {
   return async (dispatch, getState) => {
     try {
       if (!Conf.currentPlatform) throw new Error("must specify a platform");
-      await signedFetch(`${Conf.currentPlatform.url}${conversationConfig.appInfo.prefix}/toggleUnread`, {
+      await signedFetch(`${Conf.currentPlatform.url}/conversation/toggleUnread`, {
         body: JSON.stringify({
           id: messageIds,
-          unread: false
+          unread: false,
         }),
-        method: "POST"
+        method: "POST",
       });
       dispatch(conversationMessagesSetRead(messageIds));
     } catch (errmsg) {

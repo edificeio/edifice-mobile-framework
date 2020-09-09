@@ -7,15 +7,17 @@ import style from "glamorous-native";
 
 import { 
   IThreadPageDataProps,
-  IThreadPageEventProps, 
-  IThreadPageProps, 
-  ThreadPage 
+  IThreadPageEventProps,
+  IThreadPageProps,
+  ThreadPage
 } from "../components/ThreadPage";
 import conversationConfig from "../config";
-import { 
-  fetchConversationThreadNewerMessages, 
+
+import {
+  fetchConversationThreadNewerMessages,
   fetchConversationThreadOlderMessages
-} from "../actions/apiHelper";
+} from "../actions/threadList";
+import { createActionReceiversDisplay, createActionThreadReceiversDisplay } from "../actions/displayReceivers";
 import { IConversationMessage, IConversationThread, IConversationMessageList } from "../reducers";
 import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderAction } from "../../ui/headers/NewHeader";
@@ -23,7 +25,6 @@ import { CommonStyles } from "../../styles/common/styles";
 import deviceInfoModule from "react-native-device-info";
 import withViewTracking from "../../infra/tracker/withViewTracking";
 import { IconButton } from "../../ui/IconButton";
-import { createActionReceiversDisplay, createActionThreadReceiversDisplay } from "../actions/displayReceivers";
 import conversationThreadSelected from "../actions/threadSelected";
 import { Trackers } from "../../infra/tracker";
 import { createThread } from "../actions/createThread";
@@ -38,11 +39,11 @@ const mapStateToProps: (state: any) => IThreadPageDataProps = state => {
   const selectedThreadId: string = state[conversationConfig.reducerName].threadSelected;
   const selectedThread: IConversationThread =
     state[conversationConfig.reducerName].threadList.data.byId[
-      selectedThreadId
+    selectedThreadId
     ];
   const messages: IConversationMessage[] = selectedThread && selectedThread.messages.map(
     messageId => localState.data[messageId]
-    );
+  );
   const headerHeight = state.ui.headerHeight; // TODO: Ugly.
   const subjectState = state[mailboxConfig.reducerName].subject;
   const usersState = state[mailboxConfig.reducerName].users;
@@ -63,7 +64,7 @@ const mapStateToProps: (state: any) => IThreadPageDataProps = state => {
 
 const mapDispatchToProps: (
   dispatch: any
-  ) => IThreadPageEventProps = dispatch => {
+) => IThreadPageEventProps = dispatch => {
   return {
     dispatch,
     onGetNewer: async (threadId: string) => {
