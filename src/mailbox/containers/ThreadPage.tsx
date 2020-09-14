@@ -26,6 +26,11 @@ import { IconButton } from "../../ui/IconButton";
 import { createActionReceiversDisplay, createActionThreadReceiversDisplay } from "../actions/displayReceivers";
 import conversationThreadSelected from "../actions/threadSelected";
 import { Trackers } from "../../infra/tracker";
+import { createThread } from "../actions/createThread";
+import { selectSubject, clearSubject } from "../actions/selectSubject";
+import mailboxConfig from "../config";
+import { pickUser, clearPickedUsers } from "../actions/pickUser";
+import { IUser } from "../../user/reducers";
 
 const mapStateToProps: (state: any) => IThreadPageDataProps = state => {
   // Extract data from state
@@ -39,6 +44,8 @@ const mapStateToProps: (state: any) => IThreadPageDataProps = state => {
     messageId => localState.data[messageId]
     );
   const headerHeight = state.ui.headerHeight; // TODO: Ugly.
+  const subjectState = state[mailboxConfig.reducerName].subject;
+  const usersState = state[mailboxConfig.reducerName].users;
 
   // Format props
   return {
@@ -48,7 +55,9 @@ const mapStateToProps: (state: any) => IThreadPageDataProps = state => {
     isFetchingFirst: selectedThread && selectedThread.isFetchingFirst,
     messages,
     threadId: selectedThreadId,
-    threadInfo: selectedThread
+    threadInfo: selectedThread,
+    subject: subjectState,
+    pickedUsers: usersState.picked
   };
 };
 
@@ -78,7 +87,16 @@ const mapDispatchToProps: (
     onSelectThread: (threadId: string) => {
       dispatch(conversationThreadSelected(threadId))
       return;
-    }
+    },
+    createAndSelectThread: (pickedUsers: any[], threadSubject: string) => {
+      const newConversation = dispatch(createThread(pickedUsers, threadSubject))
+      dispatch(conversationThreadSelected(newConversation.id))
+      return newConversation
+    },
+    selectSubject: (subject: string) => selectSubject(dispatch)(subject),
+    pickUser: (user: any) => pickUser(dispatch)(user),
+    clearPickedUsers: () => clearPickedUsers(dispatch)(),
+    clearSubject: () => clearSubject(dispatch)(),
   };
 };
 
@@ -92,6 +110,12 @@ class ThreadPageContainer extends React.PureComponent<
     const threadId = navigation.getParam("threadId");
     const onTapReceivers = navigation.getParam("onTapReceivers");
     const selectedMessage: IConversationMessage | undefined = navigation.getParam("selectedMessage");
+    const selectSubject = navigation.getParam("selectSubject");
+    const createAndSelectThread = navigation.getParam("createAndSelectThread");
+    const pickUser = navigation.getParam("pickUser");
+    const clearPickedUsers = navigation.getParam("clearPickedUsers");
+    const clearSubject = navigation.getParam("clearSubject");
+
     if (selectedMessage) {
       return alternativeNavScreenOptions({
         headerLeft: <HeaderAction name="close" onPress={() => {
@@ -99,14 +123,41 @@ class ThreadPageContainer extends React.PureComponent<
         }}/>,
         headerRight: <View style={{ flexDirection: "row" }}>
           <HeaderAction title={I18n.t("conversation-reply")} onPress={() => {
-            navigation.navigate('newThread', {
-              type: 'reply',
-              message: selectedMessage,
-              parentThread: threadInfo
-            })
-            Trackers.trackEvent("Conversation", "REPLY TO MESSAGE");
+            //NOTE: previous behavior that allows to go on the thread-creation-page
+            // navigation.navigate('newThread', {
+            //   type: 'reply',
+            //   message: selectedMessage,
+            //   parentThread: threadInfo
+            // })
+            // Trackers.trackEvent("Conversation", "REPLY TO MESSAGE");
+            if (selectedMessage) {
+              clearPickedUsers();
+              clearSubject();
+              
+              let subject: string | undefined = undefined;
+              if (selectedMessage.subject) {
+                subject = selectedMessage.subject.startsWith("Re: ") ? selectedMessage.subject : "Re: " + selectedMessage.subject;
+              }
+              subject && selectSubject && selectSubject(subject);
+
+              const allIds = [selectedMessage.from];
+              const receivers: IUser[] = allIds ? (allIds as string[]).map(uid => ({
+                userId: uid,
+                displayName: (() => {
+                  const dn: [string, string, boolean] | undefined = selectedMessage.displayNames ? (selectedMessage.displayNames as Array<[string, string, boolean]>).find(e => e[0] === uid) : undefined;
+                  return dn ? dn[1] : undefined;
+                })()
+              })).filter(e => e.displayName) as IUser[] : [];
+              receivers.forEach(receiver => pickUser(receiver));
+
+              const replyThreadInfo = createAndSelectThread(receivers, subject);
+              navigation.push("thread", { threadInfo: replyThreadInfo, message: selectedMessage, type: 'reply', parentThread: threadInfo });
+              Trackers.trackEvent("Conversation", "REPLY TO MESSAGE");
+            }
           }}/>
           <HeaderAction title={I18n.t("conversation-transfer")} onPress={() => {
+            clearPickedUsers();
+            clearSubject();
             navigation.navigate('newThread', {
               type: 'transfer',
               message: selectedMessage,
@@ -213,7 +264,14 @@ class ThreadPageContainer extends React.PureComponent<
       threadInfo: this.props.threadInfo,
       threadId: this.props.threadId,
       onTapReceivers: this.props.onTapReceivers,
-      onSelectThread: this.props.onSelectThread
+      onSelectThread: this.props.onSelectThread,
+      selectSubject: this.props.selectSubject,
+      pickUser: this.props.pickUser,
+      createAndSelectThread: this.props.createAndSelectThread,
+      clearPickedUsers: this.props.clearPickedUsers,
+      clearSubject: this.props.clearSubject,
+      subject: this.props.subject,
+      pickedUsers: this.props.pickedUsers
     });
   }
 
@@ -223,7 +281,14 @@ class ThreadPageContainer extends React.PureComponent<
         threadInfo: this.props.threadInfo,
         threadId: this.props.threadId,
         onTapReceivers: this.props.onTapReceivers,
-        onSelectThread: this.props.onSelectThread
+        onSelectThread: this.props.onSelectThread,
+        selectSubject: this.props.selectSubject,
+        pickUser: this.props.pickUser,
+        createAndSelectThread: this.props.createAndSelectThread,
+        clearPickedUsers: this.props.clearPickedUsers,
+        clearSubject: this.props.clearSubject,
+        subject: this.props.subject,
+        pickedUsers: this.props.pickedUsers
       });
     }
   }
@@ -235,7 +300,7 @@ class ThreadPageContainer extends React.PureComponent<
     const parentThreadId = parentThread && parentThread.id;
     parentThreadId && onSelectThread(parentThreadId);
   }
-
+  
   public render() {
     const backMessage = this.props.navigation?.getParam('message');
     const sendingType = this.props.navigation?.getParam('type', 'new');

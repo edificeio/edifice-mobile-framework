@@ -12,6 +12,7 @@ import { ILocalAttachment, IRemoteAttachment } from "../../ui/Attachment";
 import { AttachmentPicker } from "../../ui/AttachmentPicker";
 import { CommonStyles } from "../../styles/common/styles";
 import conversationConfig from "../config";
+import mailboxConfig from "../config";
 import { createDraft, sendAttachments, sendMessage, IConversationMessage } from "../actions/sendMessage";
 import { IConversationThread } from "../reducers/threadList";
 import ThreadInputReceivers from "./ThreadInputReceiver";
@@ -22,6 +23,11 @@ import { NavigationScreenProp, NavigationState } from "react-navigation";
 import { IAttachment } from "../actions/messages";
 import { separateMessageHistory } from "../utils/messageHistory";
 import { Trackers } from "../../infra/tracker";
+import { createThread } from "../actions/createThread";
+import conversationThreadSelected from "../actions/threadSelected";
+import { IUser } from "../../user/reducers";
+import { pickUser, clearPickedUsers } from "../actions/pickUser";
+import { selectSubject, clearSubject } from "../actions/selectSubject";
 
 // TODO : Debt : Needs to be refactored.
 
@@ -51,6 +57,13 @@ class ThreadInput extends React.PureComponent<
     createDraft: (data: any) => Promise<string>;
     sendAttachments: (attachments: ILocalAttachment[], messageId: string, backMessage?: IConversationMessage) => Promise<IRemoteAttachment[]>;
     sendMessage: (data: any, attachments?: IRemoteAttachment[], messageId?: string) => Promise<void>;
+    createAndSelectThread: (pickedUsers: any[], threadSubject?: string) => any;
+    selectSubject: (subject: string) => void;
+    pickUser: (user: IUser) => void;
+    clearPickedUsers: () => Promise<void>;
+    clearSubject: () => Promise<void>;
+    pickedUsers: IUser[];
+    subject: string;
     onGetNewer: (threadId: string) => void;
     onReceiversTap: (
       conversation: IConversationThread | IConversationMessage
@@ -237,12 +250,13 @@ class ThreadInput extends React.PureComponent<
   }
 
   componentDidMount()  {
-    const { messageDraft } = this.props;
+    const { messageDraft, navigation } = this.props;
     messageDraft ? this.setState({ textMessage: messageDraft }) : null;
+    navigation?.getParam("hideReplyHelper") ? this.setState({ showReplyHelperIfAvailable: false }) : null;
   }
 
   public render() {
-    const { displayPlaceholder, thread, lastMessage, backMessage, threadInfo } = this.props;
+    const { displayPlaceholder, thread, lastMessage, backMessage, threadInfo, sendingType, clearPickedUsers, clearSubject } = this.props;
     const { textMessage, attachments, sending, isHalfScreen, attachmentsHeightHalfScreen, showHistory, showReplyHelperIfAvailable } = this.state;
     const lastMessageMine = lastMessage && lastMessage.from === getSessionInfo().userId;
     const attachmentsAdded = attachments.length > 0;
@@ -251,6 +265,8 @@ class ThreadInput extends React.PureComponent<
     const messageHtml = separatedBody && separatedBody.messageHtml;
     const receiversIds = lastMessage
       ? ThreadInput.findReceivers2(lastMessage)
+      : thread
+      ? ThreadInput.findReceivers2(thread)
       : [];
     const receiverNames = lastMessage
       ? lastMessage.displayNames
@@ -260,24 +276,49 @@ class ThreadInput extends React.PureComponent<
         .filter(dN => receiversIds.indexOf(dN[0]) > -1)
         .map(dN => dN[1]);
 
-    if (showReplyHelperIfAvailable && !this.state.sending && !lastMessageMine && receiversIds.length > 1) {
+    if (showReplyHelperIfAvailable && !sending && !lastMessageMine && receiversIds.length > 1) {
       return <ContainerFooterBar>
         <SafeAreaView style={{ flexDirection: 'row' }}>
           <TouchableOpacity
             style={{ alignItems: 'center', flex: 1, padding: 12 }}
             onPress={() => {
-              this.props.navigation?.navigate('newThread', {
-                type: 'reply',
-                message: lastMessage,
-                parentThread: threadInfo
-              })
-              Trackers.trackEvent("Conversation", "REPLY TO ONE");
+              //NOTE: previous behavior that allows to go on the thread-creation-page
+              // this.props.navigation?.navigate('newThread', {
+              //   type: 'reply',
+              //   message: lastMessage,
+              //   parentThread: threadInfo
+              // })
+
+              if (lastMessage) {
+                clearPickedUsers();
+                clearSubject();
+              
+                let subject: string | undefined = undefined;
+                if (lastMessage.subject) {
+                  subject = lastMessage.subject.startsWith("Re: ") ? lastMessage.subject : "Re: " + lastMessage.subject;
+                }
+                subject && this.props.selectSubject && this.props.selectSubject(subject);
+
+                const allIds = [lastMessage.from];
+                const receivers: IUser[] = allIds ? (allIds as string[]).map(uid => ({
+                  userId: uid,
+                  displayName: (() => {
+                    const dn: [string, string, boolean] | undefined = lastMessage.displayNames ? (lastMessage.displayNames as Array<[string, string, boolean]>).find(e => e[0] === uid) : undefined;
+                    return dn ? dn[1] : undefined;
+                  })()
+                })).filter(e => e.displayName) as IUser[] : [];
+                receivers.forEach(receiver => this.props.pickUser(receiver));
+
+                const replyThreadInfo = this.props.createAndSelectThread(receivers, subject);
+                this.props.navigation?.push("thread", { threadInfo: replyThreadInfo, message: lastMessage, type: 'reply', parentThread: threadInfo });
+                Trackers.trackEvent("Conversation", "REPLY TO ONE");
+              }
             }}>
             <Icon name="profile-on" size={24} color={CommonStyles.actionColor} style={{ marginBottom: 6 }} />
             <Text color={CommonStyles.actionColor} style={{textAlign: "center"}}>
               {I18n.t("conversation-reply-to-name-action", {
                 name: (() => {
-                  const receiver = lastMessage.displayNames.find(dn => dn[0] === lastMessage.from);
+                  const receiver = lastMessage && lastMessage.displayNames.find(dn => dn[0] === lastMessage.from);
                   return receiver ? receiver[1] : "";
                   })()
               })}
@@ -311,10 +352,24 @@ class ThreadInput extends React.PureComponent<
             show
             names={receiverNames}
             onPress={() => {
+              if (threadInfo) {
+                const allIds =  ThreadInput.findReceivers2(threadInfo);
+                const receivers: IUser[] = allIds ? (allIds as string[]).map(uid => ({
+                  userId: uid,
+                  displayName: (() => {
+                    const dn: [string, string, boolean] | undefined = threadInfo.displayNames ? (threadInfo.displayNames as Array<[string, string, boolean]>).find(e => e[0] === uid) : undefined;
+                    return dn ? dn[1] : undefined;
+                  })()
+                })).filter(e => e.displayName) as IUser[] : [];
+                clearPickedUsers();
+                clearSubject();
+                receivers.forEach(receiver => this.props.pickUser(receiver));
+              }
+
               this.props.navigation?.navigate('newThread', {
                 type: 'reply',
-                message: (lastMessage || thread) as IConversationMessage,
-                replyToAll: true,
+                replyToAll: sendingType !== "reply",
+                message: (lastMessage || backMessage || thread) as IConversationMessage,
                 draft: textMessage,
                 parentThread: threadInfo
               })
@@ -421,9 +476,13 @@ export default connect(
       state[conversationConfig.reducerName].messages.data[
       selectedThread.messages[0]
       ];
+    const subjectState = state[mailboxConfig.reducerName].subject;
+    const usersState = state[mailboxConfig.reducerName].users;
     return {
       lastMessage,
-      thread: selectedThread
+      thread: selectedThread,
+      subject: subjectState,
+      pickedUsers: usersState.picked
     };
   },
   dispatch => ({
@@ -438,5 +497,14 @@ export default connect(
       // console.log("ret:", ret);
       return ret;
     },
+    createAndSelectThread: (pickedUsers: any[], threadSubject: string) => {
+      const newConversation = dispatch(createThread(pickedUsers, threadSubject))
+      dispatch(conversationThreadSelected(newConversation.id))
+      return newConversation
+    },
+    selectSubject: (subject: string) => selectSubject(dispatch)(subject),
+    pickUser: (user: any) => pickUser(dispatch)(user),
+    clearPickedUsers: () => clearPickedUsers(dispatch)(),
+    clearSubject: () => clearSubject(dispatch)(),
   })
 )(ThreadInput);

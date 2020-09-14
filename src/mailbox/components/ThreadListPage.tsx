@@ -60,6 +60,8 @@ export interface IThreadListPageEventProps {
   onOpenThread?: (threadId: string) => void;
   onFocus?: () => void;
   onDeleteThread?: (threadId: string) => void;
+  clearPickedUsers: () => Promise<void>;
+  clearSubject: () => Promise<void>;
 }
 
 export interface IThreadListPageOtherProps {

@@ -37,6 +37,7 @@ import ThreadInput from "./ThreadInput";
 import { Dispatch } from "redux";
 import { NavigationScreenProp } from "react-navigation";
 import { getSessionInfo } from "../../App";
+import { IUser } from "../../user/reducers";
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -60,6 +61,13 @@ export interface IThreadPageEventProps {
   onTapReceivers?: (message: IConversationMessage) => void;
   onTapReceiversFromThread?: (thread: IConversationThread) => void;
   onSelectMessage?: (message: IConversationMessage | undefined) => void;
+  createAndSelectThread: (pickedUsers: any[], threadSubject?: string) => any;
+  selectSubject: (subject: string) => void;
+  pickUser: (user: IUser) => void;
+  clearPickedUsers: () => Promise<void>;
+  clearSubject: () => Promise<void>;
+  pickedUsers: IUser[];
+  subject: string;
 }
 
 export interface IThreadPageOtherProps {

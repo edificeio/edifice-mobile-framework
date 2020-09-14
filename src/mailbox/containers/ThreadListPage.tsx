@@ -34,6 +34,8 @@ import { Header } from "../../ui/headers/Header";
 import { CommonStyles } from "../../styles/common/styles";
 import withViewTracking from "../../infra/tracker/withViewTracking";
 import { Trackers } from "../../infra/tracker";
+import { clearPickedUsers } from "../actions/pickUser";
+import { clearSubject } from "../actions/selectSubject";
 
 // Search query tools
 
@@ -94,6 +96,8 @@ const mapDispatchToProps: (
         dispatch(conversationSetThreadRead(threadId));
       }
     },
+    clearPickedUsers: () => clearPickedUsers(dispatch)(),
+    clearSubject: () => clearSubject(dispatch)(),
   };
 };
 
@@ -159,7 +163,11 @@ class ThreadListPageContainer extends React.PureComponent<
     // Header events setup
     this.props.navigation.setParams({
       onResetSearch: this.resetSearch.bind(this),
-      onNewThread: () => { this.props.navigation.navigate("newThread"); }
+      onNewThread: () => {
+        this.props.clearPickedUsers();
+        this.props.clearSubject();
+        this.props.navigation.navigate("newThread");
+      }
     });
   }
 

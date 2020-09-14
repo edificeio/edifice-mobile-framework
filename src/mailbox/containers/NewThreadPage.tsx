@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import I18n from "i18n-js";
 
 import { loadVisibles, createThread } from "../actions/createThread";
-import { pickUser, unpickUser, clearPickedUsers } from "../actions/pickUser";
+import { pickUser, unpickUser } from "../actions/pickUser";
 
 import { IUser } from "../../user/reducers";
 
@@ -17,7 +17,7 @@ import { HeaderBackAction, HeaderAction } from "../../ui/headers/NewHeader";
 import { Dispatch, AnyAction } from "redux";
 import { ThunkDispatch } from "redux-thunk";
 import conversationThreadSelected from "../actions/threadSelected";
-import { selectSubject, clearSubject } from "../actions/selectSubject";
+import { selectSubject } from "../actions/selectSubject";
 import withViewTracking from "../../infra/tracker/withViewTracking";
 import { IConversationMessage, IConversationThread } from "../reducers";
 import { getSessionInfo } from "../../App";
@@ -31,8 +31,6 @@ interface INewThreadPageProps {
   selectSubject: (subject: string) => void;
   pickUser: (user: IUser) => void;
   unpickUser: (user: IUser) => void;
-  clearPickedUsers: () => Promise<void>;
-  clearSubject: () => Promise<void>;
   navigation: NavigationScreenProp<{}>
   createAndSelectThread: (pickedUsers: any[], threadSubject?: string) => any;
 }
@@ -51,7 +49,7 @@ class NewThreadPage extends React.PureComponent<
       }[type] || "conversation-newMessage"),
       headerLeft: <HeaderBackAction navigation={navigation} />,
       headerRight: <HeaderAction
-        title={I18n.t("next")}
+        title={I18n.t(type === "reply" ? "apply" : "next")}
         disabled={!navigation.getParam("canCreate", false)}
         onPress={() => { navigation.getParam("canCreate", false) && navigation.getParam("onCreate")() }}
       />,
@@ -68,7 +66,7 @@ class NewThreadPage extends React.PureComponent<
   }
 
   public componentDidMount() {
-    const { loadVisibles, selectSubject, pickUser, navigation } = this.props;
+    const { loadVisibles, selectSubject, navigation } = this.props;
     loadVisibles();
     if (navigation.getParam('message')) {
       const message: IConversationMessage = navigation.getParam('message');
@@ -77,24 +75,14 @@ class NewThreadPage extends React.PureComponent<
       // Subject
       let subject: string | undefined = undefined;
       if (message.subject) {
-        if (type === 'reply') {
+        if (type === 'reply' && replyToAll) {
           subject = message.subject.startsWith("Re: ") ? message.subject : "Re: " + message.subject;
-        } else if (type === 'transfer') {
+        } else
+        if (type === 'transfer') {
           subject = message.subject.startsWith("Tr: ") ? message.subject : "Tr: " + message.subject;
         }
       }
       subject && selectSubject && selectSubject(subject);
-      if (type === 'reply') {
-        const allIds =  replyToAll ? NewThreadPage.findReceivers2(message) : [message.from];
-        const receivers: IUser[] = allIds ? (allIds as string[]).map(uid => ({
-          userId: uid,
-          displayName: (() => {
-            const dn: [string, string, boolean] | undefined = message.displayNames ? (message.displayNames as Array<[string, string, boolean]>).find(e => e[0] === uid) : undefined;
-            return dn ? dn[1] : undefined;
-          })()
-        })).filter(e => e.displayName) as IUser[] : [];
-        receivers.forEach(receiver => pickUser(receiver));
-      }
     }
   }
 
@@ -121,7 +109,7 @@ class NewThreadPage extends React.PureComponent<
     const type: string = this.props.navigation.getParam('type', 'new');
     const parentThread = this.props.navigation.getParam('parentThread');
     const draft: string = this.props.navigation.getParam('draft');
-    this.props.navigation.push("thread", { threadInfo, message, type, parentThread, draft });
+    this.props.navigation.push("thread", { threadInfo, message, type, parentThread, draft, hideReplyHelper: true });
   }
 
   public updateHeaderProps() {
@@ -138,11 +126,6 @@ class NewThreadPage extends React.PureComponent<
   }
 
   public componentDidUpdate() {} // ComponentDidUpdate must exist if getSnapshotBeforeUpdate() does.
-
-  public componentWillUnmount() {
-    this.props.clearPickedUsers();
-    this.props.clearSubject();
-  }
 
   public render() {
     return (
@@ -183,8 +166,6 @@ const NewThreadPageConnected = connect(
     selectSubject: (subject: string) => selectSubject(dispatch)(subject),
     pickUser: (user: any) => pickUser(dispatch)(user),
     unpickUser: (user: any) => unpickUser(dispatch)(user),
-    clearPickedUsers: () => clearPickedUsers(dispatch)(),
-    clearSubject: () => clearSubject(dispatch)(),
     createAndSelectThread: (pickedUsers: any[], threadSubject: string) => {
       const newConversation = dispatch(createThread(pickedUsers, threadSubject))
       dispatch(conversationThreadSelected(newConversation.id))
