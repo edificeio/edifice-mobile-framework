@@ -2,7 +2,7 @@ import { Picker } from "@react-native-community/picker";
 import I18n from "i18n-js";
 import * as React from "react";
 import { useState } from "react";
-import { View, StyleSheet, ViewStyle, Platform } from "react-native";
+import { View, ViewStyle, Platform } from "react-native";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 import { Icon, ButtonsOkCancel } from ".";
@@ -21,34 +21,20 @@ interface IDropdownProps {
   title?: string;
 }
 
-const styles = StyleSheet.create({
-  selected: {
-    borderRadius: 5,
-    borderColor: CommonStyles.grey,
-    borderWidth: 2,
-    borderStyle: "solid",
-    backgroundColor: "white",
-  },
-  dropdown: {
-    backgroundColor: CommonStyles.white,
-    elevation: CommonStyles.elevation,
-    shadowColor: CommonStyles.shadowColor,
-    shadowOffset: CommonStyles.shadowOffset,
-    shadowOpacity: CommonStyles.shadowOpacity,
-    shadowRadius: CommonStyles.shadowRadius,
-    position: "absolute",
-    borderBottomLeftRadius: 5,
-    borderBottomRightRadius: 5,
-    zIndex: 1,
-  },
-});
+const selectedStyle = {
+  borderRadius: 5,
+  borderColor: CommonStyles.grey,
+  borderWidth: 2,
+  borderStyle: "solid",
+  backgroundColor: "white",
+} as ViewStyle;
 
 const DropdownAndroid = ({ title, style, data, value, onSelect, renderItem, keyExtractor }: IDropdownProps) => {
   const getItemRenderer = renderItem ? renderItem : item => item.toString();
   const getItemKeyExtractor = keyExtractor ? keyExtractor : item => item.toString();
 
   return (
-    <View style={[styles.selected, { flex: 1 }, style]}>
+    <View style={[selectedStyle, { flex: 1 }, style]}>
       <Picker
         style={{
           color: CommonStyles.textColor,
@@ -83,7 +69,7 @@ const DropdownIOS = ({
   return (
     <View style={{ flex: 1 }}>
       <TouchableWithoutFeedback
-        style={[styles.selected, { padding: 10, flexDirection: "row", alignItems: "center" }, style]}
+        style={[selectedStyle, { padding: 10, flexDirection: "row", alignItems: "center" }, style]}
         onPress={() => toggleModal(true)}>
         <TextBold style={{ flex: 1 }}>
           {placeholder
