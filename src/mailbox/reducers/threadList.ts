@@ -187,7 +187,7 @@ const conversationThreadListReducer = (
       }
       const idsWithoutOldThreadId = state.ids.filter(id => id !== action.data.oldThreadId);
       const idsWithoutOldNewThreadId = state.ids.filter(id => id !== action.data.oldThreadId && id !== action.data.threadId);
-      const updatedThread = { ...state.byId[action.data.oldThreadId], messages: msglist, id: action.data.threadId };
+      const updatedThread = { ...state.byId[action.data.oldThreadId], messages: msglist, id: action.data.threadId, date: action.data.date };
       const threadAlreadyExists = state.ids.includes(action.data.threadId);
       const isTemporaryThread = action.data.oldThreadId.startsWith("tmp-");
       isTemporaryThread && delete state.byId[action.data.oldThreadId]
@@ -201,7 +201,8 @@ const conversationThreadListReducer = (
               ...state.byId,
               [action.data.threadId]: {
                 ...state.byId[action.data.threadId],
-                messages: msglist
+                messages: msglist,
+                date: action.data.date
               }
             },
         ids: isTemporaryThread
