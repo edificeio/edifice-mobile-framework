@@ -33,7 +33,7 @@ export const dataActions = {
 // THUNKS -----------------------------------------------------------------------------------------
 
 export function fetchMailContentAction(mailId) {
-  return async (dispatch: Dispatch, getState: () => any) => {
+  return async (dispatch: Dispatch) => {
     try {
       dispatch(dataActions.request());
       const data = await mailContentService.get(mailId);
