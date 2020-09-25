@@ -2,7 +2,6 @@ import I18n from "i18n-js";
 import moment from "moment";
 import * as React from "react";
 import { View, StyleSheet, RefreshControl, Dimensions, FlatList } from "react-native";
-import { SafeAreaView } from "react-navigation";
 import { NavigationDrawerProp } from "react-navigation-drawer";
 
 import { CommonStyles } from "../../styles/common/styles";
@@ -12,6 +11,7 @@ import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { EmptyScreen } from "../../ui/EmptyScreen";
 import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
 import { Text, TextBold } from "../../ui/text";
+import { DraftType } from "../containers/NewMail";
 import { IMail } from "../state/mailContent";
 
 type MailListProps = {
@@ -84,7 +84,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
   renderMailContent = mailInfos => {
     if (mailInfos.state === "DRAFT" && mailInfos.systemFolder === "DRAFT") {
       this.props.navigation.navigate("newMail", {
-        type: "DRAFT",
+        type: DraftType.DRAFT,
         mailId: mailInfos.id,
         onGoBack: () => {
           this.refreshMailList();

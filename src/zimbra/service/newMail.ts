@@ -4,7 +4,6 @@ import RNFB from "rn-fetch-blob";
 import Conf from "../../../ode-framework-conf";
 import { fetchJSONWithCache } from "../../infra/fetchWithCache";
 import { getAuthHeader } from "../../infra/oauth";
-import { dataActions } from "../../timeline/actions/commentList";
 
 export type IUser = {
   id: string;
@@ -27,57 +26,38 @@ export type ISearchUsersGroups = {
   users: ISearchUsers;
 };
 
-export type IAttachmentsBackend = {
-  data: string;
-  respInfo: {
-    status: number;
-  };
-};
-
-export type IAttachments = {
-  contentType: string;
-  filename: string;
-  id: string;
-  size: number;
-}[];
-
-const SearchUsersAdapter: (data: ISearchUsersGroups) => ISearchUsersGroups = data => {
-  let result = {} as ISearchUsersGroups;
-  if (!data) return result;
-  result = {
-    groups: data.groups,
-    users: data.users,
-  };
-  return result;
-};
-
-const attachmentAdapter: (data: IAttachmentsBackend) => IAttachments = data => {
-  try {
-    return JSON.parse(data.data).attachments;
-  } catch (e) {
-    return [];
-  }
-};
-
 export const newMailService = {
-  getSearchUsers: async search => {
-    const data = SearchUsersAdapter(await fetchJSONWithCache(`/zimbra/visible?search=${search}`));
-    return data;
+  searchUsers: async search => {
+    return await fetchJSONWithCache(`/zimbra/visible?search=${search}`);
   },
   sendMail: async (mailDatas, draftId, inReplyTo) => {
-    const params: string[] = [];
-    if (!!draftId) params.push(`id=${draftId}`);
-    if (!!inReplyTo) params.push(`In-Reply-To=${inReplyTo}`);
-    const urlParams = params.join("&");
-    await fetchJSONWithCache(`/zimbra/send${!!urlParams ? "?" + urlParams : ""}`, {
+    const params = {
+      id: draftId,
+      "In-Reply-To": inReplyTo,
+    };
+
+    const paramsUrl = Object.entries(params)
+      .filter(([key, value]) => !!value)
+      .map(([key, value]) => `${key}=${value}`)
+      .join("&");
+
+    await fetchJSONWithCache(`/zimbra/send${paramsUrl?.length > 0 ? "?" + paramsUrl : ""}`, {
       method: "POST",
       body: JSON.stringify(mailDatas),
     });
   },
-  makeDraftMail: async (mailDatas, inReplyTo, methodReply) => {
-    let method = methodReply !== "" ? methodReply : "undefined";
-    let urlParams = inReplyTo !== "" ? `?In-Reply-To=${inReplyTo}&reply=${method}` : "";
-    const response = await fetchJSONWithCache(`/zimbra/draft${urlParams}`, {
+  makeDraftMail: async (mailDatas, inReplyTo, isForward) => {
+    const params = {
+      "In-Reply-To": inReplyTo,
+      reply: isForward ? "F" : null,
+    };
+
+    const paramsUrl = Object.entries(params)
+      .filter(([key, value]) => !!value)
+      .map(([key, value]) => `${key}=${value}`)
+      .join("&");
+
+    const response = await fetchJSONWithCache(`/zimbra/draft${paramsUrl?.length > 0 ? "?" + paramsUrl : ""}`, {
       method: "POST",
       body: JSON.stringify(mailDatas),
     });
@@ -86,33 +66,29 @@ export const newMailService = {
   updateDraftMail: async (mailId, mailDatas) => {
     await fetchJSONWithCache(`/zimbra/draft/${mailId}`, { method: "PUT", body: JSON.stringify(mailDatas) });
   },
-  addAttachmentToDraft: async (draftId: string, files: any[]) => {
-    const signedHeaders: { Authorization: string } = getAuthHeader();
-    const url: string = `${Conf.currentPlatform.url}/zimbra/message/${draftId}/attachment`;
-    const base64files: string[] = await Promise.all(files.map(file => RNFS.readFile(file.uri, "base64")));
+  addAttachment: async (draftId: string, file: any, handleProgession) => {
+    const url = `${Conf.currentPlatform.url}/zimbra/message/${draftId}/attachment`;
+    const fileObject = await RNFS.readFile(file.uri, "base64");
 
-    const results: any[] = [];
-
-    for (let i = 0; i < files.length; i++) {
-      await RNFB.fetch(
-        "POST",
-        url,
-        {
-          ...signedHeaders,
-          "Content-Type": "application/octet-stream",
-          "Content-Disposition": `attachment; filename=${encodeURIComponent(files[i].name)}`,
-        },
-        base64files[i]
-      ).then(response => {
+    return RNFB.fetch(
+      "POST",
+      url,
+      {
+        ...getAuthHeader(),
+        "Content-Disposition": `attachment; filename="${encodeURIComponent(file.name)}"`,
+      },
+      fileObject
+    )
+      .uploadProgress({ interval: 100 }, (written, total) => handleProgession((written / total) * 100))
+      .then(response => {
         if (response && response.respInfo.status >= 200 && response.respInfo.status < 300) {
-          Promise.resolve(attachmentAdapter(response));
-          results.push(attachmentAdapter(response));
+          console.log("Attachment upload successful", response.data);
+          return Promise.resolve(JSON.parse(response.data).attachments);
         } else {
-          Promise.reject(response.data);
+          console.log("Attachment upload failed", response.data);
+          return Promise.reject(response.data);
         }
       });
-    }
-    return results[files.length - 1];
   },
   deleteAttachment: async (draftId: string, attachmentId: string) => {
     return await fetchJSONWithCache(`/zimbra/message/${draftId}/attachment/${attachmentId}`, { method: "DELETE" });

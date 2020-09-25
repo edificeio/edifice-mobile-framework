@@ -1,19 +1,17 @@
 import I18n from "i18n-js";
+import moment from "moment";
 import React from "react";
 import { View } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import Toast from "react-native-tiny-toast";
-import { NavigationScreenProp, NavigationActions } from "react-navigation";
+import { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
+import { getSessionInfo } from "../../App";
 import pickFile from "../../infra/actions/pickFile";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { CommonStyles } from "../../styles/common/styles";
-import { Icon, Loading } from "../../ui";
-import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
-import { PageContainer } from "../../ui/ContainerContent";
-import { Header as HeaderComponent } from "../../ui/headers/Header";
+import { INavigationProps } from "../../types";
 import { HeaderAction } from "../../ui/headers/NewHeader";
 import { trashMailsAction } from "../actions/mail";
 import { fetchMailContentAction, clearMailContentAction } from "../actions/mailContent";
@@ -25,10 +23,10 @@ import {
   deleteAttachmentAction,
 } from "../actions/newMail";
 import NewMailComponent from "../components/NewMail";
-import { newMailService, ISearchUsers, IUser } from "../service/newMail";
+import { ISearchUsers } from "../service/newMail";
 import { getMailContentState, IMail } from "../state/mailContent";
 
-enum DraftType {
+export enum DraftType {
   NEW,
   DRAFT,
   REPLY,
@@ -36,315 +34,317 @@ enum DraftType {
   FORWARD,
 }
 
-type StateTypes = {
-  inputName: string;
-  text: string;
-  to: ISearchUsers;
-  cc: ISearchUsers;
-  bcc: ISearchUsers;
-  searchTo: ISearchUsers;
-  searchCc: ISearchUsers;
-  searchBcc: ISearchUsers;
-};
-
 interface ICreateMailEventProps {
   sendMail: (mailDatas: object, draftId: string, inReplyTo: string) => void;
-  searchUsers: (search: string) => void;
-  makeDraft: (mailDatas: object, inReplyTo: string, methodReply: string) => void;
+  makeDraft: (mailDatas: object, inReplyTo: string, isForward: boolean) => void;
   updateDraft: (mailId: string, mailDatas: object) => void;
   trashMessage: (mailId: string[]) => void;
-  postAttachments: (draftId: string, files: any[]) => void;
+  addAttachment: (draftId: string, files: any) => void;
   deleteAttachment: (draftId: string, attachmentId: string) => void;
-  fetchMailContentAction: (mailId: string) => void;
+  fetchMailContent: (mailId: string) => void;
   clearContent: () => void;
 }
 
 interface ICreateMailOtherProps {
-  navigation: any;
-  remainingUsers: IUser[];
-  pickedUsers: IUser[];
+  isFetching: boolean;
   mail: IMail;
 }
 
+type NewMailContainerProps = ICreateMailEventProps & ICreateMailOtherProps & INavigationProps;
+
 interface ICreateMailState {
+  id?: string;
+  mail: newMail;
+  tempAttachment?: any;
+  isPrefilling?: boolean;
+  prevBody?: string;
+  replyTo?: string;
+}
+
+type newMail = {
   to: ISearchUsers;
   cc: ISearchUsers;
   bcc: ISearchUsers;
   subject: string;
   body: string;
-  attachments: string[];
-
-  searchTo: ISearchUsers;
-  searchCc: ISearchUsers;
-  searchBcc: ISearchUsers;
-  inputName: string;
-  prevBody: string;
-}
-
-type NewMailContainerProps = ICreateMailEventProps & ICreateMailOtherProps;
+  attachments: any[];
+};
 
 class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreateMailState> {
-  defaultState = {
-    to: [],
-    cc: [],
-    bcc: [],
-    subject: "",
-    body: "",
-    attachments: [],
-    prevBody: "",
-  };
-
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      to: [],
-      cc: [],
-      bcc: [],
-      subject: "",
-      body: "",
-      attachments: [],
-      searchTo: [],
-      searchCc: [],
-      searchBcc: [],
-      inputName: "",
-      prevBody: "",
-    };
-  }
-
-  componentDidMount = () => {
-    if (this.props.navigation.state.params.mailId !== undefined) {
-      this.props.fetchMailContentAction(this.props.navigation.state.params.mailId);
-    } else {
-      this.props.clearContent();
-      this.setState(this.defaultState);
-    }
-  };
-
-  updateStateValue = (toUsers, ccUsers, bccUsers, subjectText, bodyText) => {
-    this.setState({ to: toUsers, cc: ccUsers, bcc: bccUsers, subject: subjectText, body: bodyText });
-  };
-
-  updatePrevBody = prevBodyText => {
-    this.setState({ prevBody: prevBodyText });
-  };
-
-  setSearchUsers = async (text: string, inputName: string) => {
-    const resultUsers = await newMailService.getSearchUsers(text);
-    const key = inputName === "to" ? "searchTo" : inputName === "cc" ? "searchCc" : "searchBcc";
-    const newState = { ...this.state };
-    newState[key as keyof StateTypes] = resultUsers.users;
-    this.setState(newState);
-    return resultUsers.users;
-  };
-
-  handleInputChange = (text: string, inputName: string) => {
-    switch (inputName) {
-      case "to":
-        return text.length > 2 ? this.setSearchUsers(text, inputName) : this.setState({ searchTo: [] });
-      case "cc":
-        return text.length > 2 ? this.setSearchUsers(text, inputName) : this.setState({ searchCc: [] });
-      case "bcc":
-        return text.length > 2 ? this.setSearchUsers(text, inputName) : this.setState({ searchBcc: [] });
-      case "subject":
-        this.setState({ subject: text });
-        break;
-      case "body":
-        this.setState({ body: text });
-        break;
-    }
-  };
-
-  pickUser = (user, inputName) => {
-    const key = inputName === "to" ? "to" : inputName === "cc" ? "cc" : "bcc";
-    const keySearch = inputName === "to" ? "searchTo" : inputName === "cc" ? "searchCc" : "searchBcc";
-
-    const newState = { ...this.state };
-    if (this.state[key].findIndex(u => u.id === user.id) === -1) {
-      if (this.state[keySearch].findIndex(u => u.id === user.id) !== -1) {
-        newState[keySearch as keyof StateTypes] = this.state[keySearch].filter(function(person) {
-          return person !== user;
-        });
-      }
-    }
-    newState[key as keyof StateTypes] = [...this.state[key], user];
-    this.setState(newState);
-  };
-
-  unpickUser = (user, inputName) => {
-    const key = inputName === "to" ? "to" : inputName === "cc" ? "cc" : "bcc";
-    const keySearch = inputName === "to" ? "searchTo" : inputName === "cc" ? "searchCc" : "searchBcc";
-
-    if (this.state[key].findIndex(u => u.id === user.id) !== -1) {
-      const newState = { ...this.state };
-      newState[key as keyof StateTypes] = this.state[key].filter(function(person) {
-        return person !== user;
-      });
-      newState[keySearch as keyof StateTypes] = [...this.state[keySearch], user];
-      this.setState(newState);
-    }
-  };
-
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
     return standardNavScreenOptions(
       {
-        header: null,
+        title: null,
+        headerLeft: () => {
+          const goBack = navigation.getParam("getGoBack", navigation.goBack);
+
+          return <HeaderAction onPress={() => goBack()} name="back" />;
+        },
+        headerRight: () => {
+          const askForAttachment = navigation.getParam("getAskForAttachment");
+          const sendDraft = navigation.getParam("getSendDraft");
+          const deleteDraft = navigation.getParam("getDeleteDraft");
+
+          return (
+            <View style={{ flexDirection: "row" }}>
+              {askForAttachment && (
+                <HeaderAction style={{ alignSelf: "flex-end" }} onPress={askForAttachment} name="attachment" />
+              )}
+              {sendDraft && <HeaderAction style={{ alignSelf: "flex-end" }} onPress={sendDraft} name="outbox" />}
+              {deleteDraft && <HeaderAction style={{ alignSelf: "flex-end" }} onPress={deleteDraft} name="delete" />}
+            </View>
+          );
+        },
+        headerStyle: {
+          backgroundColor: CommonStyles.secondary,
+        },
       },
       navigation
     );
   };
 
-  manageDraftMail = (forceDraft = false) => {
-    const { navigation } = this.props;
-    const { to, cc, bcc, subject, body, prevBody, attachments } = this.state;
-    if (
-      forceDraft ||
-      to.length > 0 ||
-      cc.length > 0 ||
-      bcc.length > 0 ||
-      subject !== "" ||
-      body !== "" ||
-      attachments.length > 0
-    ) {
-      const currBody =
-        navigation.state.params.type === "REPLY" ||
-        navigation.state.params.type === "REPLY_ALL" ||
-        navigation.state.params.type === "FORWARD"
-          ? body + "\n-------------------\n" + prevBody
-          : body;
-      const mailDatas = {
-        to: to.map(elem => (elem.id && elem.id !== undefined ? elem.id : elem)),
-        cc: cc.map(elem => (elem.id && elem.id !== undefined ? elem.id : elem)),
-        bcc: bcc.map(elem => (elem.id && elem.id !== undefined ? elem.id : elem)),
-        subject: subject,
-        body: currBody !== "" ? `<div>${currBody.replace(/\n/g, "<br>")}</div>` : body,
-        attachments: attachments,
+  constructor(props) {
+    super(props);
+
+    this.state = { mail: { to: [], cc: [], bcc: [], subject: "", body: "", attachments: [] } };
+  }
+
+  componentDidMount = () => {
+    this.props.navigation.setParams(this.navigationHeaderFunction);
+    if (this.props.navigation.getParam("mailId") !== undefined) {
+      this.setState({ isPrefilling: true });
+      this.props.fetchMailContent(this.props.navigation.getParam("mailId"));
+    }
+  };
+
+  componentDidUpdate = async (prevProps: NewMailContainerProps, prevState) => {
+    if (prevProps.mail !== this.props.mail) {
+      const { mail, ...rest } = this.getPrefilledMail();
+      this.setState(prevState => ({
+        ...prevState,
+        ...rest,
+        mail: { ...prevState.mail, ...mail },
+        isPrefilling: false,
+      }));
+    } else if (!prevState.isPrefilling && !this.state.isPrefilling && prevState.mail !== this.state.mail) {
+      this.saveDraft();
+    }
+  };
+
+  navigationHeaderFunction = {
+    getAskForAttachment: async () => {
+      const file = await pickFile();
+      const fileState = {
+        contentType: file.mime,
+        filename: file.name,
       };
-      if (this.props.navigation.state.params.type === "DRAFT") {
-        this.props.updateDraft(this.props.navigation.state.params.mailId, mailDatas);
+      this.setState({ tempAttachment: fileState });
+
+      try {
+        const newAttachments = await this.props.addAttachment(this.state.id, file);
+        this.setState(prevState => ({
+          mail: { ...prevState.mail, attachments: newAttachments },
+          tempAttachment: null,
+        }));
+      } catch (e) {
+        Toast.show(I18n.t("zimbra-attachment-error"), {
+          position: Toast.position.BOTTOM,
+        });
+        this.setState({ tempAttachment: null });
+      }
+    },
+    getSendDraft: async () => {
+      if (this.state.mail.to.length === 0) {
+        Toast.show(I18n.t("zimbra-missing-receiver"), {
+          position: Toast.position.BOTTOM,
+          mask: false,
+          containerStyle: { width: "95%", backgroundColor: "black" },
+        });
+        return;
+      }
+
+      try {
+        await this.props.sendMail(this.getMailData(), this.state.id, this.state.replyTo);
+
+        Toast.show(I18n.t("zimbra-send-mail"), {
+          position: Toast.position.BOTTOM,
+          mask: false,
+          containerStyle: { width: "95%", backgroundColor: "black" },
+        });
+        this.props.navigation.goBack();
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    getDeleteDraft: () => {
+      if (this.state.id) {
+        this.props.trashMessage([this.state.id]);
+      }
+      this.props.navigation.goBack();
+    },
+    getGoBack: () => {
+      this.saveDraft();
+      this.props.navigation.goBack();
+    },
+  };
+
+  getPrefilledMail = () => {
+    const draftType = this.props.navigation.getParam("type", DraftType.NEW);
+    const getDisplayName = id => this.props.mail.displayNames.find(([userId]) => userId === id)[1];
+    const getUser = id => ({ id, displayName: getDisplayName(id) });
+
+    const deleteHtmlContent = function(text) {
+      const regexp = /<(\S+)[^>]*>(.*)<\/\1>/gs;
+
+      if (regexp.test(text)) {
+        return deleteHtmlContent(text.replace(regexp, "$2"));
       } else {
-        if (navigation.state.params.type === "REPLY" || navigation.state.params.type === "REPLY_ALL")
-          this.props.makeDraft(mailDatas, navigation.state.params.mailId, "");
-        if (navigation.state.params.type === "FORWARD")
-          this.props.makeDraft(mailDatas, navigation.state.params.mailId, "F");
-        else this.props.makeDraft(mailDatas, "", "");
+        return text
+          .replace(/\<br\/\>/g, "\n")
+          .replace(/&nbsp/g, "")
+          .replace(/undefined/g, "");
+      }
+    };
+
+    const getPrevBody = () => {
+      const getUserArrayToString = users => users.map(getDisplayName).join(", ");
+
+      var from = getDisplayName(this.props.mail.from);
+      var date = moment(this.props.mail.date).format("DD/MM/YYYY HH:mm");
+      var subject = this.props.mail.subject;
+
+      const to = getUserArrayToString(this.props.mail.to);
+
+      var header =
+        "<br>" +
+        "<br>" +
+        '<p class="row ng-scope"></p>' +
+        '<hr class="ng-scope">' +
+        '<p class="ng-scope"></p>' +
+        '<p class="medium-text ng-scope">' +
+        '<span translate="" key="transfer.from"><span class="no-style ng-scope">De : </span></span>' +
+        '<em class="ng-binding">' +
+        from +
+        "</em>" +
+        "<br>" +
+        '<span class="medium-importance" translate="" key="transfer.date"><span class="no-style ng-scope">Date: </span></span>' +
+        '<em class="ng-binding">' +
+        date +
+        "</em>" +
+        "<br>" +
+        '<span class="medium-importance" translate="" key="transfer.subject"><span class="no-style ng-scope">Objet : </span></span>' +
+        '<em class="ng-binding">' +
+        subject +
+        "</em>" +
+        "<br>" +
+        '<span class="medium-importance" translate="" key="transfer.to"><span class="no-style ng-scope">A : </span></span>' +
+        '<em class="medium-importance">' +
+        to +
+        "</em>";
+
+      if (this.props.mail.cc.length > 0) {
+        const cc = getUserArrayToString(this.props.mail.cc);
+
+        header += `<br><span class="medium-importance" translate="" key="transfer.cc">
+        <span class="no-style ng-scope">Copie à : </span>
+        </span><em class="medium-importance ng-scope">${cc}</em>`;
+      }
+
+      header +=
+        '</p><blockquote class="ng-scope">' +
+        '<p class="ng-scope" style="font-size: 24px; line-height: 24px;">' +
+        deleteHtmlContent(this.props.mail.body) +
+        "</p>";
+
+      return header;
+    };
+
+    switch (draftType) {
+      case DraftType.REPLY: {
+        return {
+          replyTo: this.props.mail.id,
+          prevBody: getPrevBody(),
+          mail: {
+            to: [this.props.mail.from].map(getUser),
+            subject: I18n.t("zimbra-reply-subject") + this.props.mail.subject,
+          },
+        };
+      }
+      case DraftType.REPLY_ALL: {
+        return {
+          replyTo: this.props.mail.id,
+          prevBody: getPrevBody(),
+          mail: {
+            to: [this.props.mail.from, ...this.props.mail.to.filter(user => user !== getSessionInfo().userId)]
+              .filter((user, index, array) => array.indexOf(user) == index)
+              .map(getUser),
+            cc: this.props.mail.cc.filter(id => id !== this.props.mail.from).map(getUser),
+            subject: I18n.t("zimbra-reply-subject") + this.props.mail.subject,
+          },
+        };
+      }
+      case DraftType.FORWARD: {
+        return {
+          replyTo: this.props.mail.id,
+          prevBody: getPrevBody(),
+          mail: { subject: I18n.t("zimbra-forward-subject") + this.props.mail.subject },
+        };
+      }
+      case DraftType.DRAFT: {
+        return {
+          mail: {
+            to: this.props.mail.to.map(getUser),
+            cc: this.props.mail.cc.map(getUser),
+            cci: this.props.mail.bcc.map(getUser),
+            body: deleteHtmlContent(this.props.mail.body),
+          },
+        };
       }
     }
   };
 
-  goBack = isMakeDraft => {
-    if (this.props.navigation.state.params.mailId !== undefined) {
-      if (isMakeDraft === "isDraft") this.manageDraftMail();
-      const { navigation } = this.props;
-      navigation.state.params.onGoBack();
-      navigation.dispatch(NavigationActions.back());
-    } else if (this.props.navigation.state.params.type === "NEW") {
-      if (isMakeDraft === "isDraft") this.manageDraftMail();
-      this.props.navigation.navigate(this.props.navigation.state.params.currentFolder);
-    }
-    this.setState(this.defaultState);
+  getMailData = () => {
+    const { mail, prevBody } = this.state;
+
+    return Object.fromEntries(
+      Object.entries(mail).map(([key, value]) => {
+        if (key === "to" || key === "cc" || key === "bcc") return [key, value.map(user => user.id)];
+        else if (key === "body") return [key, value + prevBody || ""];
+        else return [key, value];
+      })
+    );
   };
 
-  delete = () => {
-    if (this.props.navigation.state.params.type === "DRAFT") {
-      this.props.trashMessage([this.props.navigation.state.params.mailId]);
-      this.goBack("isNotDraft");
-    } else if (this.props.navigation.state.params.type === "NEW") {
-      this.props.navigation.navigate(this.props.navigation.state.params.currentFolder);
-      this.setState(this.defaultState);
+  saveDraft = async () => {
+    if (this.state.id === undefined) {
+      const inReplyTo = this.props.navigation.getParam("InReplyTo");
+      const isForward = this.props.navigation.getParam("type") === DraftType.FORWARD;
+      const id = await this.props.makeDraft(this.getMailData(this.state.mail), inReplyTo, isForward);
+
+      this.setState({ id });
+    } else {
+      this.props.updateDraft(this.state.id, this.getMailData(this.state.mail));
     }
-  };
-
-  handleSendNewMail = () => {
-    const { navigation } = this.props;
-    const { to, cc, bcc, subject, body, prevBody } = this.state;
-    const { attachments } = this.props.mail;
-    if (to.length === 0 && cc.length === 0 && bcc.length === 0) {
-      Toast.show(I18n.t("zimbra-missing-receiver"), {
-        position: Toast.position.BOTTOM,
-        mask: false,
-        containerStyle: { width: "95%", backgroundColor: "black" },
-      });
-      return;
-    }
-    const currBody =
-      navigation.state.params.type === "REPLY" ||
-      navigation.state.params.type === "REPLY_ALL" ||
-      navigation.state.params.type === "FORWARD"
-        ? body + "\n-------------------\n" + prevBody
-        : body;
-    const mailDatas = {
-      to: to.map(elem => (elem.id && elem.id !== undefined ? elem.id : elem)),
-      cc: cc.map(elem => (elem.id && elem.id !== undefined ? elem.id : elem)),
-      bcc: bcc.map(elem => (elem.id && elem.id !== undefined ? elem.id : elem)),
-      subject: subject,
-      body: currBody !== "" ? `<div>${currBody.replace(/\n/g, "<br>")}</div>` : body,
-      attachments: attachments,
-    };
-    const mailId = navigation.state.params.mailId !== undefined ? navigation.state.params.mailId : "";
-    if (navigation.state.params.type === "NEW") {
-      if (attachments !== undefined && attachments.length === 0) this.props.sendMail(mailDatas, "", "");
-      else this.props.sendMail(mailDatas, this.props.mail.id, "");
-    } else if (navigation.state.params.type === "DRAFT") this.props.sendMail(mailDatas, mailId, "");
-    else if (
-      navigation.state.params.type === "REPLY" ||
-      navigation.state.params.type === "REPLY_ALL" ||
-      navigation.state.params.type === "FORWARD"
-    )
-      this.props.sendMail(mailDatas, "", mailId);
-    this.goBack("isNotDraft");
-
-    Toast.show(I18n.t("zimbra-send-mail"), {
-      position: Toast.position.BOTTOM,
-      mask: false,
-      containerStyle: { width: "95%", backgroundColor: "black" },
-    });
-  };
-
-  askForAttachment = () => {
-    let promise;
-    if (this.props.mail.id === undefined) promise = this.manageDraftMail(true);
-    else promise = Promise.resolve();
-
-    pickFile().then(contentUri => {
-      this.props.postAttachments(this.props.mail.id, [contentUri]);
-    });
   };
 
   public render() {
+    const { isPrefilling, mail } = this.state;
+    const { attachments, body, ...headers } = mail;
+
     return (
-      <PageContainer>
-        <HeaderComponent color={CommonStyles.secondary}>
-          <HeaderAction onPress={() => this.goBack("isDraft")} name="back" />
-          <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-end" }}>
-            <TouchableOpacity onPress={() => this.askForAttachment()}>
-              <Icon name="attachment" size={24} color="white" style={{ marginRight: 10 }} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={this.handleSendNewMail.bind(this)}>
-              <Icon name="outbox" size={24} color="white" style={{ marginRight: 10 }} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={this.delete.bind(this)}>
-              <Icon name="delete" size={24} color="white" style={{ marginRight: 10 }} />
-            </TouchableOpacity>
-          </View>
-        </HeaderComponent>
-        <ConnectionTrackingBar />
-        {this.props.isFetching ? (
-          <Loading />
-        ) : (
-          <NewMailComponent
-            {...this.state}
-            {...this.props}
-            mail={this.props.mail}
-            handleInputChange={this.handleInputChange}
-            pickUser={this.pickUser}
-            unpickUser={this.unpickUser}
-            updateStateValue={this.updateStateValue}
-            updatePrevBody={this.updatePrevBody}
-            deleteAttachment={this.props.deleteAttachment}
-          />
-        )}
-      </PageContainer>
+      <NewMailComponent
+        isFetching={this.props.isFetching || !!isPrefilling}
+        headers={headers}
+        onHeaderChange={headers => this.setState(prevState => ({ mail: { ...prevState.mail, ...headers } }))}
+        body={this.state.mail.body}
+        onBodyChange={body => this.setState(prevState => ({ mail: { ...prevState.mail, body } }))}
+        attachments={
+          this.state.tempAttachment
+            ? [...this.state.mail.attachments, this.state.tempAttachment]
+            : this.state.mail.attachments
+        }
+        onAttachmentChange={attachments => this.setState(prevState => ({ mail: { ...prevState.mail, attachments } }))}
+      />
     );
   }
 }
@@ -365,10 +365,10 @@ const mapDispatchToProps = (dispatch: any) => {
       makeDraft: makeDraftMailAction,
       updateDraft: updateDraftMailAction,
       trashMessage: trashMailsAction,
-      postAttachments: addAttachmentAction,
+      addAttachment: addAttachmentAction,
       deleteAttachment: deleteAttachmentAction,
       clearContent: clearMailContentAction,
-      fetchMailContentAction,
+      fetchMailContent: fetchMailContentAction,
     },
     dispatch
   );

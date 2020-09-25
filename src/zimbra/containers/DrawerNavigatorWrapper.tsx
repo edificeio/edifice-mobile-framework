@@ -1,19 +1,18 @@
 import I18n from "i18n-js";
 import React from "react";
-import { Platform, View } from "react-native";
-import { hasNotch } from "react-native-device-info";
 import { NavigationState } from "react-navigation";
 import { createDrawerNavigator, NavigationDrawerProp } from "react-navigation-drawer";
 
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { CommonStyles } from "../../styles/common/styles";
 import { PageContainer } from "../../ui/ContainerContent";
+import TempFloatingAction from "../../ui/FloatingButton/TempFloatingAction";
 import { Text } from "../../ui/Typography";
 import { Header as HeaderComponent } from "../../ui/headers/Header";
 import { HeaderAction } from "../../ui/headers/NewHeader";
 import DrawerMenuContainer from "./DrawerMenu";
 import MailList from "./MailList";
-import TempFloatingAction from "../../ui/FloatingButton/TempFloatingAction";
+import { DraftType } from "./NewMail";
 
 const DrawerNavigatorComponent = createDrawerNavigator(
   {
@@ -102,7 +101,7 @@ export default class DrawerNavigatorWrapper extends React.Component<any, any> {
           iconName="new_message"
           onEvent={() => {
             this.props.navigation.navigate("newMail", {
-              type: "NEW",
+              type: DraftType.NEW,
               currentFolder: this.getActiveRouteState(navigation.state).key,
             });
           }}

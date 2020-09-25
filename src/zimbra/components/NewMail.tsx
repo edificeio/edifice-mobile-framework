@@ -1,264 +1,219 @@
 import I18n from "i18n-js";
 import React from "react";
-import { ScrollView, View, StyleSheet, TextInput } from "react-native";
+import { ScrollView, View, StyleSheet, TextInput, ViewStyle } from "react-native";
 
 import { CommonStyles, IOSShadowStyle } from "../../styles/common/styles";
-import { Icon } from "../../ui";
+import { Icon, Loading } from "../../ui";
+import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
+import { PageContainer } from "../../ui/ContainerContent";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { Text } from "../../ui/Typography";
-import { IMail } from "../state/mailContent";
-import SelectMailInfos from "./SelectMailInfos";
+import { ISearchUsers } from "../service/newMail";
+import Attachment from "./Attachment";
+import SearchUserMail from "./SearchUserMail";
 
-type IUserInfos = {
-  id: string;
-  displayName: string;
-}[];
+type HeadersProps = { to: ISearchUsers; cc: ISearchUsers; bcc: ISearchUsers; subject: string };
 
-type NewMailContainerState = {
-  mailInfos: IMail;
-  isPrevBody: boolean;
-};
-
-export default class NewMail extends React.PureComponent<any, NewMailContainerState> {
-  updateRecipients = (key, mail, recipient) => {
-    const { navigation } = this.props;
-    let users = [] as IUserInfos;
-    if (navigation.state.params.type === "FORWARD") return recipient;
-    else if (navigation.state.params.type === "REPLY" && key !== "to") return users;
-    if (mail[key] !== undefined && mail[key].length > 0) {
-      mail[key].map(userId => {
-        users.push({ id: userId, displayName: mail.displayNames.find(item => item[0] === userId)[1] });
-      });
-    } else users = recipient;
-    return users;
-  };
-
-  constructor(props) {
-    super(props);
-
-    const { mail, to, cc, bcc, subject, body, navigation } = this.props;
-    const toUsers = this.updateRecipients("to", mail, to);
-    const ccUsers = this.updateRecipients("cc", mail, cc);
-    const bccUsers = this.updateRecipients("bcc", mail, bcc);
-    let bodyText = body;
-    let subjectText = mail.subject && mail.subject !== "undefined" ? mail.subject : subject;
-    if (navigation.state.params.type === "REPLY" || navigation.state.params.type === "REPLY_ALL")
-      subjectText = `${I18n.t("zimbra-reply-subject")} ${subject}`;
-    else if (navigation.state.params.type === "FORWARD") subjectText = `${I18n.t("zimbra-forward-subject")} ${subject}`;
-    else if (navigation.state.params.type === "DRAFT")
-      bodyText = mail.body && mail.body !== "undefined" ? mail.body.replace(/<br>/g, "\n").slice(5, -6) : body;
-    if (
-      navigation.state.params.type === "REPLY" ||
-      navigation.state.params.type === "REPLY_ALL" ||
-      navigation.state.params.type === "FORWARD"
-    )
-      this.props.updatePrevBody(
-        mail.body && mail.body !== "undefined" ? mail.body.replace(/<br>/g, "\n").slice(5, -6) : body
-      );
-    this.props.updateStateValue(toUsers, ccUsers, bccUsers, subjectText, bodyText);
-
-    this.state = {
-      mailInfos: mail,
-      isPrevBody: false,
-    };
-  }
-
-  componentDidUpdate = () => {
-    const { mail, to, cc, bcc, subject, body, navigation } = this.props;
-    if (mail !== this.state.mailInfos) {
-      const toUsers = this.updateRecipients("to", mail, to);
-      const ccUsers = this.updateRecipients("cc", mail, cc);
-      const bccUsers = this.updateRecipients("bcc", mail, bcc);
-      let bodyText = body;
-      let subjectText = mail.subject && mail.subject !== "undefined" ? mail.subject : subject;
-      if (navigation.state.params.type === "REPLY" || navigation.state.params.type === "REPLY_ALL")
-        subjectText = mail.subject !== subject ? `${I18n.t("zimbra-reply-subject")} ${mail.subject}` : subject;
-      else if (navigation.state.params.type === "FORWARD")
-        subjectText = mail.subject !== subject ? `${I18n.t("zimbra-forward-subject")} ${mail.subject}` : subject;
-      else if (navigation.state.params.type === "DRAFT") {
-        bodyText = mail.body && mail.body !== "undefined" ? mail.body.replace(/<br>/g, "\n").slice(5, -6) : body;
-        subjectText = mail.subject && mail.subject !== "undefined" ? mail.subject : subject;
-      }
-      if (
-        !this.state.isPrevBody &&
-        (navigation.state.params.type === "REPLY" ||
-          navigation.state.params.type === "REPLY_ALL" ||
-          navigation.state.params.type === "FORWARD")
-      ) {
-        this.setState({ isPrevBody: true });
-        this.props.updatePrevBody(
-          mail.body && mail.body !== "undefined" ? mail.body.replace(/<br>/g, "\n").slice(5, -6) : body
-        );
-      }
-      this.setState({ mailInfos: mail });
-      this.props.updateStateValue(toUsers, ccUsers, bccUsers, subjectText, bodyText);
-    }
-  };
-
-  public render() {
-    const { attachments, id } = this.props.mail;
-    const {
-      deleteAttachment,
-      pickUser,
-      unpickUser,
-      to,
-      searchTo,
-      cc,
-      searchCc,
-      bcc,
-      searchBcc,
-      subject,
-      handleInputChange,
-    } = this.props;
-    return (
-      <ScrollView bounces={false} contentContainerStyle={{ flexGrow: 1 }}>
-        <Headers
-          style={{ zIndex: 3 }}
-          pickUser={pickUser}
-          unpickUser={unpickUser}
-          to={to}
-          searchTo={searchTo}
-          cc={cc}
-          searchCc={searchCc}
-          bcc={bcc}
-          searchBcc={searchBcc}
-          subject={subject}
-          handleInputChange={handleInputChange}
-        />
-        {attachments && attachments.length > 0 && (
-          <Attachments style={{ zIndex: 2 }} attachments={attachments} deleteAttachment={deleteAttachment} id={id} />
-        )}
-        <View style={[styles.mailPart, { zIndex: 1, flexGrow: 1 }]}>
-          <TextInput
-            placeholder={I18n.t("zimbra-type-message")}
-            textAlignVertical="top"
-            multiline
-            scrollEnabled={false}
-            style={{ flexGrow: 1 }}
-            defaultValue={this.props.body}
-            onChangeText={(text: string) => this.props.handleInputChange(text, "body")}
-          />
-        </View>
-      </ScrollView>
-    );
-  }
+interface NewMailComponentProps {
+  isFetching: boolean;
+  headers: HeadersProps;
+  onHeaderChange: (header: Headers) => void;
+  body: string;
+  onBodyChange: (body: string) => void;
+  attachments: any[];
+  onAttachmentChange: (attachments: any[]) => void;
 }
 
-const Headers = ({
+const styles = StyleSheet.create({
+  mailPart: {
+    padding: 5,
+    backgroundColor: "white",
+    elevation: CommonStyles.elevation,
+    ...IOSShadowStyle,
+  },
+});
+
+export default ({
+  isFetching,
+  headers,
+  onHeaderChange,
+  body,
+  onBodyChange,
+  attachments,
+  onAttachmentChange,
+}: NewMailComponentProps) => {
+  return (
+    <PageContainer>
+      <ConnectionTrackingBar />
+      {isFetching ? (
+        <Loading />
+      ) : (
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }} bounces={false} keyboardShouldPersistTaps="never">
+          <Headers style={{ zIndex: 3 }} headers={headers} onChange={onHeaderChange} />
+          <Attachments style={{ zIndex: 2 }} attachments={attachments} onChange={onAttachmentChange} />
+          <Body style={{ zIndex: 1 }} value={body} onChange={onBodyChange} />
+        </ScrollView>
+      )}
+    </PageContainer>
+  );
+};
+
+const HeaderUsers = ({
   style,
-  pickUser,
-  unpickUser,
-  to,
-  searchTo,
-  cc,
-  searchCc,
-  bcc,
-  searchBcc,
-  subject,
-  handleInputChange,
-}) => {
-  const [showExtraFields, toggleExtraFields] = React.useState(false);
+  title,
+  onChange,
+  value,
+  children,
+}: React.PropsWithChildren<{ style?: ViewStyle; title: string; onChange; forUsers?: boolean; value: any }>) => {
+  const headerStyle = {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 5,
+    paddingHorizontal: 10,
+  } as ViewStyle;
 
   return (
-    <View style={[styles.mailPart, style]}>
-      <HeaderLine title={I18n.t("zimbra-to")}>
-        <SelectMailInfos
-          onPickUser={(user: any) => {
-            pickUser(user, "to");
-          }}
-          onUnpickUser={(user: any) => {
-            unpickUser(user, "to");
-          }}
-          pickedUsers={to}
-          remainingUsers={searchTo}
-          onHandleInputChange={handleInputChange}
-          inputName="to"
-        />
-        <TouchableOpacity onPress={() => toggleExtraFields(!showExtraFields)}>
-          <Icon name={showExtraFields ? "keyboard_arrow_up" : "keyboard_arrow_down"} size={28} />
-        </TouchableOpacity>
-      </HeaderLine>
-      {showExtraFields && (
-        <>
-          <HeaderLine title={I18n.t("zimbra-cc")}>
-            <SelectMailInfos
-              onPickUser={(user: any) => {
-                pickUser(user, "cc");
-              }}
-              onUnpickUser={(user: any) => {
-                unpickUser(user, "cc");
-              }}
-              pickedUsers={cc}
-              remainingUsers={searchCc}
-              onHandleInputChange={handleInputChange}
-              inputName="cc"
-            />
-          </HeaderLine>
-          <HeaderLine title={I18n.t("zimbra-bcc")}>
-            <SelectMailInfos
-              onPickUser={(user: any) => {
-                pickUser(user, "bcc");
-              }}
-              onUnpickUser={(user: any) => {
-                unpickUser(user, "bcc");
-              }}
-              pickedUsers={bcc}
-              remainingUsers={searchBcc}
-              onHandleInputChange={handleInputChange}
-              inputName="bcc"
-            />
-          </HeaderLine>
-        </>
-      )}
-      <HeaderLine title={I18n.t("zimbra-subject")}>
-        <TextInput
-          style={styles.textInput}
-          defaultValue={subject}
-          onChangeText={(text: string) => handleInputChange(text, "subject")}
-        />
-      </HeaderLine>
+    <View style={[headerStyle, style]}>
+      <Text style={{ color: CommonStyles.lightTextColor }}>{title} : </Text>
+      <SearchUserMail selectedUsersOrGroups={value} onChange={val => onChange(val)} />
+      {children}
     </View>
   );
 };
 
-const HeaderLine = ({ title, children }) => (
-  <View style={styles.inputRow}>
-    <Text style={{ color: CommonStyles.lightTextColor }}>{title} : </Text>
-    {children}
-  </View>
-);
+const HeaderSubject = ({
+  style,
+  title,
+  onChange,
+  value,
+}: React.PropsWithChildren<{ style?: ViewStyle; title: string; onChange; forUsers?: boolean; value: any }>) => {
+  const headerStyle = {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 5,
+    paddingHorizontal: 10,
+  } as ViewStyle;
 
-const Attachments = ({ style, attachments, deleteAttachment, id }) => (
-  <View style={[styles.mailPart, style]}>
-    {attachments.map(att => (
-      <View style={styles.PJitem}>
-        <Text>{att.filename}</Text>
-        <TouchableOpacity onPress={() => deleteAttachment(id, att.id)}>
-          <Icon name="close" color="red" />
-        </TouchableOpacity>
-      </View>
-    ))}
-  </View>
-);
-
-const styles = StyleSheet.create({
-  mailPart: { padding: 5, backgroundColor: "white", elevation: CommonStyles.elevation, ...IOSShadowStyle },
-  inputRow: { flexDirection: "row", alignItems: "center", marginVertical: 5, paddingHorizontal: 10 },
-  textInput: {
+  const inputStyle = {
     flex: 1,
     height: 40,
     color: CommonStyles.textColor,
     borderBottomColor: "#EEEEEE",
     borderBottomWidth: 2,
-  },
-  PJitem: {
-    margin: 5,
-    padding: 5,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    backgroundColor: CommonStyles.lightGrey,
-    alignItems: "center",
-    elevation: CommonStyles.elevation,
-    ...IOSShadowStyle,
-  },
-});
+  } as ViewStyle;
+
+  const textUpdateTimeout = React.useRef();
+  const [currentValue, updateCurrentValue] = React.useState(value);
+
+  React.useEffect(() => {
+    window.clearTimeout(textUpdateTimeout.current);
+    textUpdateTimeout.current = window.setTimeout(() => onChange(currentValue), 500);
+
+    return () => {
+      window.clearTimeout(textUpdateTimeout.current);
+    };
+  }, [currentValue]);
+
+  return (
+    <View style={[headerStyle, style]}>
+      <Text style={{ color: CommonStyles.lightTextColor }}>{title} : </Text>
+      <TextInput
+        style={inputStyle}
+        defaultValue={value}
+        numberOfLines={1}
+        onChangeText={text => updateCurrentValue(text)}
+      />
+    </View>
+  );
+};
+
+const Headers = ({ style, headers, onChange }) => {
+  const [showExtraFields, toggleExtraFields] = React.useState(false);
+  const { to, cc, bcc, subject } = headers;
+
+  return (
+    <View style={[styles.mailPart, style]}>
+      <HeaderUsers
+        style={{ zIndex: 4 }}
+        value={to}
+        onChange={to => onChange({ ...headers, to })}
+        title={I18n.t("zimbra-to")}>
+        <TouchableOpacity onPress={() => toggleExtraFields(!showExtraFields)}>
+          <Icon name={showExtraFields ? "keyboard_arrow_up" : "keyboard_arrow_down"} size={28} />
+        </TouchableOpacity>
+      </HeaderUsers>
+      {showExtraFields && (
+        <>
+          <HeaderUsers
+            style={{ zIndex: 3 }}
+            title={I18n.t("zimbra-cc")}
+            value={cc}
+            onChange={cc => onChange({ ...headers, cc })}
+          />
+          <HeaderUsers
+            style={{ zIndex: 2 }}
+            title={I18n.t("zimbra-bcc")}
+            value={bcc}
+            onChange={bcc => onChange({ ...headers, bcc })}
+          />
+        </>
+      )}
+      <HeaderSubject
+        title={I18n.t("zimbra-subject")}
+        value={subject}
+        onChange={subject => onChange({ ...headers, subject })}
+      />
+    </View>
+  );
+};
+
+const Attachments = ({ style, attachments, onChange }) => {
+  const removeAttachment = id => {
+    const newAttachments = attachments.filter(item => item.id !== id);
+    onChange(newAttachments);
+  };
+
+  return attachments.length === 0 ? (
+    <View />
+  ) : (
+    <View style={[styles.mailPart, style, { padding: 0 }]}>
+      {attachments.map(att => (
+        <Attachment
+          id={att.id || att.filename}
+          uploadSuccess={!!att.id}
+          fileType={att.contentType}
+          fileName={att.filename}
+          onRemove={() => removeAttachment(att.id)}
+        />
+      ))}
+    </View>
+  );
+};
+
+const Body = ({ style, value, onChange }) => {
+  const textUpdateTimeout = React.useRef();
+  const [currentValue, updateCurrentValue] = React.useState(value);
+
+  React.useEffect(() => {
+    window.clearTimeout(textUpdateTimeout.current);
+    textUpdateTimeout.current = window.setTimeout(() => onChange(currentValue), 500);
+
+    return () => {
+      window.clearTimeout(textUpdateTimeout.current);
+    };
+  }, [currentValue]);
+
+  return (
+    <View style={[styles.mailPart, style, { flexGrow: 1 }]}>
+      <TextInput
+        placeholder={I18n.t("zimbra-type-message")}
+        textAlignVertical="top"
+        multiline
+        scrollEnabled={false}
+        style={{ flexGrow: 1 }}
+        defaultValue={value}
+        onChangeText={text => updateCurrentValue(text)}
+      />
+    </View>
+  );
+};

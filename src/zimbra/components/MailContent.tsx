@@ -6,12 +6,14 @@ import { getSessionInfo } from "../../App";
 import { Loading } from "../../ui";
 import { PageContainer } from "../../ui/ContainerContent";
 import { HtmlContentView } from "../../ui/HtmlContentView";
-import { RenderPJs, HeaderMail, FooterButton, getColorOfRole } from "./MailContentItems";
+import { DraftType } from "../containers/NewMail";
+import { getUserColor } from "../utils/userColor";
+import { RenderPJs, HeaderMail, FooterButton } from "./MailContentItems";
 
 const GetTopBarColor = ({ senderId, receiverId }) => {
   const userId = getSessionInfo().userId === senderId ? receiverId : senderId;
   const [color, setColor] = React.useState<string>();
-  getColorOfRole(userId).then(setColor);
+  getUserColor(userId).then(setColor);
   return color ? <View style={[styles.topBar, { backgroundColor: color }]} /> : <View />;
 };
 
@@ -24,7 +26,7 @@ export default class MailContent extends React.PureComponent<any, any> {
           text={I18n.t("zimbra-reply")}
           onPress={() =>
             this.props.navigation.navigate("newMail", {
-              type: "REPLY",
+              type: DraftType.REPLY,
               mailId: this.props.mail.id,
               onGoBack: this.props.navigation.state.params.onGoBack,
             })
@@ -35,7 +37,7 @@ export default class MailContent extends React.PureComponent<any, any> {
           text={I18n.t("zimbra-replyAll")}
           onPress={() =>
             this.props.navigation.navigate("newMail", {
-              type: "REPLY_ALL",
+              type: DraftType.REPLY_ALL,
               mailId: this.props.mail.id,
               onGoBack: this.props.navigation.state.params.onGoBack,
             })
@@ -46,7 +48,7 @@ export default class MailContent extends React.PureComponent<any, any> {
           text={I18n.t("zimbra-forward")}
           onPress={() =>
             this.props.navigation.navigate("newMail", {
-              type: "FORWARD",
+              type: DraftType.FORWARD,
               mailId: this.props.mail.id,
               onGoBack: this.props.navigation.state.params.onGoBack,
             })

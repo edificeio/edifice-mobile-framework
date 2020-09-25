@@ -51,7 +51,7 @@ const mailContentAdapter: (data: IMailContentBackend) => IMail = data => {
 };
 
 export type IUserInfosBackend = {
-  result: Array <{
+  result: Array<{
     id: string;
     displayNames: string;
     type: string[];
@@ -62,7 +62,7 @@ const userInfosAdapter: (data: IUserInfosBackend) => IUserInfosBackend = data =>
   let result = {} as IUserInfosBackend;
   if (!data) return result;
   result = {
-    result : data.result,
+    result: data.result,
   };
   return result;
 };

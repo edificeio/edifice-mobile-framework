@@ -11,24 +11,14 @@ import { ButtonIcon } from "../../ui/ButtonIconText";
 import { Header, CenterPanel, LeftPanel } from "../../ui/ContainerContent";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { Text, TextBold } from "../../ui/text";
+import { getFileIcon } from "../utils/fileIcon";
+import { getUserColor, getProfileColor } from "../utils/userColor";
 import { findReceivers2, findReceiversAvatars, Author } from "./MailItem";
-import { mailContentService } from "../service/mailContent";
-import { rolesDotColor } from "./SelectMailInfos";
-
-export async function getColorOfRole(userId: string) {
-  try {
-    const { result } = await mailContentService.getUserInfos(userId);
-    if (result) return rolesDotColor(result[0].type[0]);
-    else return rolesDotColor("Guest");
-  } catch (err) {
-    return rolesDotColor("Guest");
-  }
-}
 
 const User = ({ userId, userName }) => {
-  const [dotColor, setDotColor] = React.useState(rolesDotColor("Guest"));
+  const [dotColor, setDotColor] = React.useState(getProfileColor("Guest"));
 
-  getColorOfRole(userId).then(setDotColor);
+  getUserColor(userId).then(setDotColor);
 
   return (
     <View style={{ flexDirection: "row", marginLeft: 5 }} key={userId}>
@@ -152,26 +142,6 @@ export const FooterButton = ({ icon, text, onPress }) => {
       <Text>{text}</Text>
     </View>
   );
-};
-
-const getFileIcon = (type: string) => {
-  switch (type) {
-    case "image/png":
-    case "image/jpeg":
-    case "image/gif":
-      return "picture";
-    case "audio/mpeg":
-    case "audio/ogg":
-      return "file-audio";
-    case "video/mpeg":
-    case "video/ogg":
-      return "file-video-outline";
-    case "application/pdf":
-      return "pdf_files";
-    case "text/html":
-    default:
-      return "file-document-outline";
-  }
 };
 
 export const RenderPJs = ({ attachments, mailId }) => {

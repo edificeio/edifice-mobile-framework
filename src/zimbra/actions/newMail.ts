@@ -1,7 +1,7 @@
 import { Dispatch } from "redux";
 
+import { progressAction, progressEndAction, progressInitAction } from "../../infra/actions/progress";
 import { newMailService } from "../service/newMail";
-import { dataActions } from "./mailContent";
 
 export function sendMailAction(mailDatas, draftId: string, InReplyTo: string) {
   return async () => {
@@ -13,45 +13,34 @@ export function sendMailAction(mailDatas, draftId: string, InReplyTo: string) {
   };
 }
 
-export function makeDraftMailAction(mailDatas, inReplyTo: string, methodReply: string) {
+export function makeDraftMailAction(mailDatas, inReplyTo: string, isForward: boolean) {
   return async (dispatch: Dispatch) => {
-    try {
-      const id = await newMailService.makeDraftMail(mailDatas, inReplyTo, methodReply);
-      dispatch(dataActions.updateId(id));
-    } catch (errmsg) {
-      console.error("ERROR make draft: ", errmsg);
-    }
+    return await newMailService.makeDraftMail(mailDatas, inReplyTo, isForward);
   };
 }
 
 export function updateDraftMailAction(mailId: string, mailDatas) {
   return async () => {
-    try {
-      await newMailService.updateDraftMail(mailId, mailDatas);
-    } catch (errmsg) {
-      console.error("ERROR update draft: ", errmsg);
-    }
+    return await newMailService.updateDraftMail(mailId, mailDatas);
   };
 }
 
-export function addAttachmentAction(mailId: string, attachments: any[]) {
+export function addAttachmentAction(mailId: string, attachment: any) {
   return async (dispatch: Dispatch) => {
     try {
-      const newAttachments = await newMailService.addAttachmentToDraft(mailId, attachments);
-      dispatch(dataActions.postAttachments(newAttachments));
+      dispatch(progressInitAction());
+      const handleProgress = progress => dispatch(progressAction(progress));
+      const newAttachments = await newMailService.addAttachment(mailId, attachment, handleProgress);
+      dispatch(progressEndAction());
+      return newAttachments;
     } catch (errmsg) {
-      console.error("ERROR uploading attachment", errmsg);
+      console.log("ERROR uploading attachment", errmsg);
+      dispatch(progressEndAction());
+      throw errmsg;
     }
   };
 }
 
 export function deleteAttachmentAction(mailId: string, attachmentId: string) {
-  return async (dispatch: Dispatch) => {
-    try {
-      await newMailService.deleteAttachment(mailId, attachmentId);
-      dispatch(dataActions.deleteAttachment(attachmentId));
-    } catch (errmsg) {
-      console.error("ERROR deleting attachment", errmsg);
-    }
-  };
+  return async (dispatch: Dispatch) => await newMailService.deleteAttachment(mailId, attachmentId);
 }
