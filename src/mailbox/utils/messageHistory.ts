@@ -1,7 +1,7 @@
 import I18n from "i18n-js";
 
 export const separateMessageHistory = (messageBody: string) => {
-  const historyRegex = /<p(.*)?>&nbsp;<\/p>.*/s;
+  const historyRegex = /<p(.*)?>&nbsp;<\/p>[\s\S]*/;
   const historyMatch = messageBody && messageBody.match(historyRegex);
   const historyHtml = historyMatch &&
   historyMatch[0]
