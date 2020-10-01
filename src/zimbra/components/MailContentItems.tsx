@@ -13,7 +13,7 @@ import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { Text, TextBold } from "../../ui/text";
 import { getFileIcon } from "../utils/fileIcon";
 import { getUserColor, getProfileColor } from "../utils/userColor";
-import { findReceivers2, findReceiversAvatars, Author } from "./MailItem";
+import { findReceivers2, findReceiversAvatars, Author, findSenderAvatar } from "./MailItem";
 
 const User = ({ userId, userName }) => {
   const [dotColor, setDotColor] = React.useState(getProfileColor("Guest"));
@@ -69,24 +69,31 @@ const IconButton = ({ icon, color, text, onPress }) => {
 export const HeaderMail = ({ mailInfos }) => {
   const [isVisible, toggleVisible] = React.useState(false);
   const inInbox = mailInfos.systemFolder === "INBOX";
+  const inOutboxOrDraft = mailInfos.systemFolder === "OUTBOX" || mailInfos.systemFolder === "DRAFT";
   return (
     <View style={styles.containerMail}>
       <Header>
         <LeftPanel style={{ justifyContent: "flex-start" }}>
           <BadgeAvatar
-            avatars={findReceiversAvatars(mailInfos.to, mailInfos.from, mailInfos.cc, mailInfos.displayNames)}
+            avatars={
+              inOutboxOrDraft
+                ? findReceiversAvatars(mailInfos.to, mailInfos.from, mailInfos.cc, mailInfos.displayNames)
+                : findSenderAvatar(mailInfos.from, mailInfos.displayNames)
+            }
             badgeContent={mailInfos.unread}
           />
         </LeftPanel>
 
         <CenterPanel style={{ marginRight: 0, paddingRight: 0 }}>
           <Author nb={mailInfos.unread} numberOfLines={1}>
-            {findReceivers2(mailInfos.to, mailInfos.from, mailInfos.cc)
-              .map(r => {
-                const u = mailInfos.displayNames.find(dn => dn[0] === r);
-                return u ? u[1] : I18n.t("unknown-user");
-              })
-              .join(", ")}
+            {inOutboxOrDraft
+              ? findReceivers2(mailInfos.to, mailInfos.from, mailInfos.cc)
+                  .map(r => {
+                    const u = mailInfos.displayNames.find(dn => dn[0] === r);
+                    return u ? u[1] : I18n.t("unknown-user");
+                  })
+                  .join(", ")
+              : mailInfos.displayNames.find(dn => dn[0] === mailInfos.from)[1]}
           </Author>
           <IconButton
             onPress={() => toggleVisible(!isVisible)}

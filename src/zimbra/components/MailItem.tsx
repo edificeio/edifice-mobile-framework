@@ -65,23 +65,12 @@ export const Author = style.text(
   {
     color: CommonStyles.textColor,
     fontFamily: CommonStyles.primaryFontFamily,
-    fontSize: 14
+    fontSize: 14,
   },
   ({ nb }) => ({
-    fontWeight: nb > 0 ? FontWeight.SemiBold : FontWeight.Normal
+    fontWeight: nb > 0 ? FontWeight.SemiBold : FontWeight.Normal,
   })
 );
-
-export const findReceivers = (to, from, cc) => {
-  cc = cc || [];
-  const newTo = from
-    ? [...to, ...cc, from].filter(el => el !== getSessionInfo().userId)
-    : [...to, ...cc].filter(el => el !== getSessionInfo().userId);
-  if (newTo.length === 0) {
-    return [getSessionInfo().userId];
-  }
-  return newTo;
-};
 
 export const findReceivers2 = (to, from, cc) => {
   cc = cc || [];
@@ -96,6 +85,11 @@ export const findReceiversAvatars = (to, from, cc, displayNames) => {
   const receiversIds: string[] = findReceivers2(to, from, cc);
   return receiversIds.map((receiverId: string) => {
     const foundDisplayName = displayNames.find(displayName => displayName[0] === receiverId);
-    return foundDisplayName ? { id: receiverId, isGroup: foundDisplayName[2]} : {};
-  })
+    return foundDisplayName ? { id: receiverId, isGroup: foundDisplayName[2] } : {};
+  });
+};
+
+export const findSenderAvatar = (from, displayNames) => {
+  const foundDisplayName = displayNames.find(displayName => displayName[0] === from);
+  return foundDisplayName ? [{ id: from, isGroup: foundDisplayName[2] }] : [{}];
 };
