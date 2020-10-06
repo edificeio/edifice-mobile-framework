@@ -141,7 +141,7 @@ INewsContentPageProps,
   // --> therefore, we can always use "schoolbookData[0]"
   protected getAckNames() {
     const schoolbookData = this.getSchoolbookData();
-    if (!schoolbookData) return undefined;
+    if (!schoolbookData || schoolbookData.length === 0) return undefined;
 
     return schoolbookData[0].acknowledgments
       ? schoolbookData[0].acknowledgments.map(el => el.parent_name)
@@ -150,7 +150,7 @@ INewsContentPageProps,
 
   protected getAckNumber() {
     const schoolbookData = this.getSchoolbookData();
-    if (!schoolbookData) return undefined;
+    if (!schoolbookData  || schoolbookData.length === 0) return undefined;
 
     return schoolbookData[0].acknowledgments
       ? schoolbookData[0].acknowledgments.length
@@ -346,7 +346,7 @@ INewsContentPageProps,
       url
     } = this.props.navigation.state.params.news;
     const { type } = this.props.navigation.state.params.news;
-    const { fetching, fetchError, newsData } = this.state;
+    const { fetching, fetchError, newsData, ackNames } = this.state;
 
     let schoolbookData;
     if (this.isSchoolbook) schoolbookData = this.getSchoolbookData();
@@ -381,7 +381,7 @@ INewsContentPageProps,
               </View>
             ) : null
           ) : // Case 2 : Teacher and Personnel
-          isTeacherOrPersonnel ? (
+          isTeacherOrPersonnel && this.getAckNumber() !== undefined ? (
             <View style={{ marginBottom: 12 }}>
               <Italic style={{ color: CommonStyles.lightTextColor }}>
                 <Icon
@@ -395,7 +395,7 @@ INewsContentPageProps,
               </Italic>
             </View>
           ) : isStudent ? ( // Case 3-1 : Student - someone has read
-            this.state.ackNames.length ? (
+            ackNames && ackNames.length ? (
               <View style={{ marginBottom: 12 }}>
                 <Italic style={{ color: CommonStyles.lightTextColor }}>
                   <Icon
@@ -404,7 +404,7 @@ INewsContentPageProps,
                     paddingHorizontal={12}
                   />{" "}
                   {I18n.t("schoolbook-read-by")}{" "}
-                  {this.state.ackNames.join(", ")}
+                  {ackNames.join(", ")}
                 </Italic>
               </View> // Case 3-2 : Student - no one has read
             ) : (
