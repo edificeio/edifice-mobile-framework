@@ -297,7 +297,9 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
             to: this.props.mail.to.map(getUser),
             cc: this.props.mail.cc.map(getUser),
             cci: this.props.mail.bcc.map(getUser),
+            subject: this.props.mail.subject,
             body: deleteHtmlContent(this.props.mail.body),
+            attachments: this.props.mail.attachments,
           },
         };
       }
