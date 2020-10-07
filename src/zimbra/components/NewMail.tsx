@@ -17,6 +17,7 @@ type HeadersProps = { to: ISearchUsers; cc: ISearchUsers; bcc: ISearchUsers; sub
 interface NewMailComponentProps {
   isFetching: boolean;
   headers: HeadersProps;
+  onDraftSave: () => void;
   onHeaderChange: (header: Headers) => void;
   body: string;
   onBodyChange: (body: string) => void;
@@ -36,6 +37,7 @@ const styles = StyleSheet.create({
 export default ({
   isFetching,
   headers,
+  onDraftSave,
   onHeaderChange,
   body,
   onBodyChange,
@@ -49,9 +51,14 @@ export default ({
         <Loading />
       ) : (
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} bounces={false} keyboardShouldPersistTaps="never">
-          <Headers style={{ zIndex: 3 }} headers={headers} onChange={onHeaderChange} />
-          <Attachments style={{ zIndex: 2 }} attachments={attachments} onChange={onAttachmentChange} />
-          <Body style={{ zIndex: 1 }} value={body} onChange={onBodyChange} />
+          <Headers style={{ zIndex: 3 }} headers={headers} onChange={onHeaderChange} onSave={onDraftSave} />
+          <Attachments
+            style={{ zIndex: 2 }}
+            attachments={attachments}
+            onChange={onAttachmentChange}
+            onSave={onDraftSave}
+          />
+          <Body style={{ zIndex: 1 }} value={body} onChange={onBodyChange} onSave={onDraftSave} />
         </ScrollView>
       )}
     </PageContainer>
@@ -62,9 +69,10 @@ const HeaderUsers = ({
   style,
   title,
   onChange,
+  onSave,
   value,
   children,
-}: React.PropsWithChildren<{ style?: ViewStyle; title: string; onChange; forUsers?: boolean; value: any }>) => {
+}: React.PropsWithChildren<{ style?: ViewStyle; title: string; onChange; onSave; forUsers?: boolean; value: any }>) => {
   const headerStyle = {
     flexDirection: "row",
     alignItems: "center",
@@ -85,8 +93,9 @@ const HeaderSubject = ({
   style,
   title,
   onChange,
+  onSave,
   value,
-}: React.PropsWithChildren<{ style?: ViewStyle; title: string; onChange; forUsers?: boolean; value: any }>) => {
+}: React.PropsWithChildren<{ style?: ViewStyle; title: string; onChange; onSave; forUsers?: boolean; value: any }>) => {
   const headerStyle = {
     flexDirection: "row",
     alignItems: "center",
@@ -122,12 +131,13 @@ const HeaderSubject = ({
         defaultValue={value}
         numberOfLines={1}
         onChangeText={text => updateCurrentValue(text)}
+        onEndEditing={() => onSave()}
       />
     </View>
   );
 };
 
-const Headers = ({ style, headers, onChange }) => {
+const Headers = ({ style, headers, onChange, onSave }) => {
   const [showExtraFields, toggleExtraFields] = React.useState(false);
   const { to, cc, bcc, subject } = headers;
 
@@ -137,6 +147,7 @@ const Headers = ({ style, headers, onChange }) => {
         style={{ zIndex: 4 }}
         value={to}
         onChange={to => onChange({ ...headers, to })}
+        onSave={() => onSave()}
         title={I18n.t("zimbra-to")}>
         <TouchableOpacity onPress={() => toggleExtraFields(!showExtraFields)}>
           <Icon name={showExtraFields ? "keyboard_arrow_up" : "keyboard_arrow_down"} size={28} />
@@ -149,12 +160,14 @@ const Headers = ({ style, headers, onChange }) => {
             title={I18n.t("zimbra-cc")}
             value={cc}
             onChange={cc => onChange({ ...headers, cc })}
+            onSave={() => onSave()}
           />
           <HeaderUsers
             style={{ zIndex: 2 }}
             title={I18n.t("zimbra-bcc")}
             value={bcc}
             onChange={bcc => onChange({ ...headers, bcc })}
+            onSave={() => onSave()}
           />
         </>
       )}
@@ -162,12 +175,13 @@ const Headers = ({ style, headers, onChange }) => {
         title={I18n.t("zimbra-subject")}
         value={subject}
         onChange={subject => onChange({ ...headers, subject })}
+        onSave={() => onSave()}
       />
     </View>
   );
 };
 
-const Attachments = ({ style, attachments, onChange }) => {
+const Attachments = ({ style, attachments, onChange, onSave }) => {
   const removeAttachment = id => {
     const newAttachments = attachments.filter(item => item.id !== id);
     onChange(newAttachments);
@@ -180,7 +194,7 @@ const Attachments = ({ style, attachments, onChange }) => {
       {attachments.map(att => (
         <Attachment
           id={att.id || att.filename}
-          uploadSuccess={!!att.id}
+          uploadSuccess={!!att.id && onSave()}
           fileType={att.contentType}
           fileName={att.filename}
           onRemove={() => removeAttachment(att.id)}
@@ -190,7 +204,7 @@ const Attachments = ({ style, attachments, onChange }) => {
   );
 };
 
-const Body = ({ style, value, onChange }) => {
+const Body = ({ style, value, onChange, onSave }) => {
   const textUpdateTimeout = React.useRef();
   const [currentValue, updateCurrentValue] = React.useState(value);
 
@@ -213,6 +227,7 @@ const Body = ({ style, value, onChange }) => {
         style={{ flexGrow: 1 }}
         defaultValue={value}
         onChangeText={text => updateCurrentValue(text)}
+        onEndEditing={() => onSave()}
       />
     </View>
   );

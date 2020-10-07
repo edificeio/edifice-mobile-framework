@@ -126,9 +126,8 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         mail: { ...prevState.mail, ...mail },
         isPrefilling: false,
       }));
-    } else if (!prevState.isPrefilling && !this.state.isPrefilling && prevState.mail !== this.state.mail) {
-      this.saveDraft();
-    }
+    } else if (this.props.navigation.getParam("mailId") !== undefined)
+      this.setState({ id: this.props.navigation.getParam("mailId") });
   };
 
   navigationHeaderFunction = {
@@ -276,7 +275,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           prevBody: getPrevBody(),
           mail: {
             to: [this.props.mail.from, ...this.props.mail.to.filter(user => user !== getSessionInfo().userId)]
-              .filter((user, index, array) => array.indexOf(user) == index)
+              .filter((user, index, array) => array.indexOf(user) === index)
               .map(getUser),
             cc: this.props.mail.cc.filter(id => id !== this.props.mail.from).map(getUser),
             subject: I18n.t("zimbra-reply-subject") + this.props.mail.subject,
@@ -319,11 +318,11 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     if (this.state.id === undefined) {
       const inReplyTo = this.props.navigation.getParam("InReplyTo");
       const isForward = this.props.navigation.getParam("type") === DraftType.FORWARD;
-      const id = await this.props.makeDraft(this.getMailData(this.state.mail), inReplyTo, isForward);
+      const idDraft = await this.props.makeDraft(this.getMailData(), inReplyTo, isForward);
 
-      this.setState({ id });
+      this.setState({ id: idDraft });
     } else {
-      this.props.updateDraft(this.state.id, this.getMailData(this.state.mail));
+      this.props.updateDraft(this.state.id, this.getMailData());
     }
   };
 
@@ -335,6 +334,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       <NewMailComponent
         isFetching={this.props.isFetching || !!isPrefilling}
         headers={headers}
+        onDraftSave={this.saveDraft}
         onHeaderChange={headers => this.setState(prevState => ({ mail: { ...prevState.mail, ...headers } }))}
         body={this.state.mail.body}
         onBodyChange={body => this.setState(prevState => ({ mail: { ...prevState.mail, body } }))}
