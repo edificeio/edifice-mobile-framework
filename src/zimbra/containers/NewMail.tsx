@@ -178,6 +178,8 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     getDeleteDraft: () => {
       if (this.state.id) {
         this.props.trashMessage([this.state.id]);
+        const navParams = this.props.navigation.state;
+        if (navParams.params && navParams.params.onGoBack) navParams.params.onGoBack();
       }
       this.props.navigation.goBack();
     },
