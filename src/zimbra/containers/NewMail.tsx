@@ -163,7 +163,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       }
 
       try {
-        await this.props.sendMail(this.getMailData(), this.state.id, this.state.replyTo);
+        this.props.sendMail(this.getMailData(), this.state.id, this.state.replyTo);
 
         Toast.show(I18n.t("zimbra-send-mail"), {
           position: Toast.position.BOTTOM,
@@ -307,12 +307,16 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
   };
 
   getMailData = () => {
-    const { mail, prevBody } = this.state;
+    let { mail, prevBody } = this.state;
+
+    if (prevBody === undefined) {
+      prevBody = "";
+    }
 
     return Object.fromEntries(
       Object.entries(mail).map(([key, value]) => {
         if (key === "to" || key === "cc" || key === "bcc") return [key, value.map(user => user.id)];
-        else if (key === "body") return [key, value + prevBody || ""];
+        else if (key === "body") return [key, value + prevBody];
         else return [key, value];
       })
     );
