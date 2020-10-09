@@ -288,7 +288,11 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         return {
           replyTo: this.props.mail.id,
           prevBody: getPrevBody(),
-          mail: { subject: I18n.t("zimbra-forward-subject") + this.props.mail.subject },
+          mail: {
+            subject: I18n.t("zimbra-forward-subject") + this.props.mail.subject,
+            body: "",
+            attachments: this.props.mail.attachments,
+          },
         };
       }
       case DraftType.DRAFT: {
