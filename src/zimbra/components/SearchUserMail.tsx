@@ -73,11 +73,13 @@ const Input = ({ value, onChangeText, onSubmit }) => {
 
 const FoundList = ({ foundUserOrGroup, addUser }) => {
   const absoluteListStyle = {
-    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
     width: "100%",
     zIndex: 10,
     backgroundColor: "white",
-    elevation: 4,
+    elevation: CommonStyles.elevation,
     maxHeight: Dimensions.get("window").height * 0.25,
     flexGrow: 1,
     ...IOSShadowStyle,
@@ -93,7 +95,7 @@ const FoundList = ({ foundUserOrGroup, addUser }) => {
       <TouchableOpacity
         style={{ flexDirection: "row", alignItems: "center", marginVertical: 5, marginLeft: 10 }}
         onPress={onPress}>
-        <Text numberOfLines={1} lineHeight={30}>
+        <Text numberOfLines={1} lineHeight={30} ellipsizeMode="tail">
           <Text
             style={{
               color,
