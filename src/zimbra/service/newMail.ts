@@ -1,4 +1,3 @@
-import RNFS from "react-native-fs";
 import RNFB from "rn-fetch-blob";
 
 import Conf from "../../../ode-framework-conf";
@@ -68,7 +67,7 @@ export const newMailService = {
   },
   addAttachment: async (draftId: string, file: any, handleProgession) => {
     const url = `${Conf.currentPlatform.url}/zimbra/message/${draftId}/attachment`;
-    const fileObject = await RNFS.readFile(file.uri, "base64");
+    const fileObject = RNFB.wrap(file.uri);
 
     return RNFB.fetch(
       "POST",
