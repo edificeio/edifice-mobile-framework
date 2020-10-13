@@ -1,3 +1,4 @@
+import { AllHtmlEntities } from "html-entities";
 import I18n from "i18n-js";
 import moment from "moment";
 import React from "react";
@@ -26,6 +27,8 @@ import {
 import NewMailComponent from "../components/NewMail";
 import { ISearchUsers } from "../service/newMail";
 import { getMailContentState, IMail } from "../state/mailContent";
+
+const entitiesTransformer = new AllHtmlEntities();
 
 export enum DraftType {
   NEW,
@@ -207,29 +210,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       if (regexp.test(text)) {
         return deleteHtmlContent(text.replace(regexp, "$2"));
       } else {
-        return text
-          .replace(/\<br\/\>/g, "\n")
-          .replace(/&nbsp/g, "")
-          .replace(/undefined/g, "")
-          .replace(/&euro;/g, "€")
-          .replace(/&amp;/g, "&")
-          .replace(/&quot;/g, '"')
-          .replace(/&#39;/g, "'")
-          .replace(/&bull;/g, "⸱")
-          .replace(/&radic;/g, "√")
-          .replace(/&pi;/g, "π")
-          .replace(/&divide;/g, "÷")
-          .replace(/&times;/g, "×")
-          .replace(/&para;/g, "¶")
-          .replace(/&pound;/g, "£")
-          .replace(/&yen;/g, "¥")
-          .replace(/&cent;/g, "¢")
-          .replace(/&deg;/g, "°")
-          .replace(/&copy;/g, "©")
-          .replace(/&reg;/g, "®")
-          .replace(/&trade;/g, "™")
-          .replace(/&lt;/g, "<")
-          .replace(/&gt;/g, ">");
+        return entitiesTransformer.decode(text);
       }
     };
 
