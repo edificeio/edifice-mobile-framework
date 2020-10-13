@@ -45,6 +45,11 @@ export const newMailService = {
       body: JSON.stringify(mailDatas),
     });
   },
+  forwardMail: async (draftId, forwardFrom) => {
+    await fetchJSONWithCache(`/zimbra/message/${draftId}/forward/${forwardFrom}`, {
+      method: "PUT",
+    });
+  },
   makeDraftMail: async (mailDatas, inReplyTo, isForward) => {
     const params = {
       "In-Reply-To": inReplyTo,

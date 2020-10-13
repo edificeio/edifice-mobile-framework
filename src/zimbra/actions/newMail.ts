@@ -13,6 +13,16 @@ export function sendMailAction(mailDatas, draftId: string, InReplyTo: string) {
   };
 }
 
+export function forwardMailAction(draftId: string, forwardFrom: string) {
+  return async () => {
+    try {
+      await newMailService.forwardMail(draftId, forwardFrom);
+    } catch (errmsg) {
+      console.error("ERROR forward mail: ", errmsg);
+    }
+  };
+}
+
 export function makeDraftMailAction(mailDatas, inReplyTo: string, isForward: boolean) {
   return async (dispatch: Dispatch) => {
     return await newMailService.makeDraftMail(mailDatas, inReplyTo, isForward);

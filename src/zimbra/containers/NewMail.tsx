@@ -21,6 +21,7 @@ import {
   updateDraftMailAction,
   addAttachmentAction,
   deleteAttachmentAction,
+  forwardMailAction,
 } from "../actions/newMail";
 import NewMailComponent from "../components/NewMail";
 import { ISearchUsers } from "../service/newMail";
@@ -36,6 +37,7 @@ export enum DraftType {
 
 interface ICreateMailEventProps {
   sendMail: (mailDatas: object, draftId: string, inReplyTo: string) => void;
+  forwardMail: (draftId: string, inReplyTo: string) => void;
   makeDraft: (mailDatas: object, inReplyTo: string, isForward: boolean) => void;
   updateDraft: (mailId: string, mailDatas: object) => void;
   trashMessage: (mailId: string[]) => void;
@@ -115,6 +117,11 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       this.setState({ isPrefilling: true });
       this.props.fetchMailContent(this.props.navigation.getParam("mailId"));
     }
+    const draftType = this.props.navigation.getParam("type");
+    if (draftType !== DraftType.DRAFT && draftType !== DraftType.NEW) {
+      this.setState({ id: undefined });
+      this.saveDraft();
+    }
   };
 
   componentDidUpdate = async (prevProps: NewMailContainerProps, prevState) => {
@@ -126,7 +133,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         mail: { ...prevState.mail, ...mail },
         isPrefilling: false,
       }));
-    } else if (this.props.navigation.getParam("mailId") !== undefined)
+    } else if (this.props.navigation.getParam("mailId") !== undefined && this.state.id === undefined)
       this.setState({ id: this.props.navigation.getParam("mailId") });
   };
 
@@ -345,13 +352,22 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     );
   };
 
+  forwardDraft = async () => {
+    try {
+      this.props.forwardMail(this.state.id, this.state.replyTo);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   saveDraft = async () => {
     if (this.state.id === undefined) {
-      const inReplyTo = this.props.navigation.getParam("InReplyTo");
+      const inReplyTo = this.props.mail.id;
       const isForward = this.props.navigation.getParam("type") === DraftType.FORWARD;
       const idDraft = await this.props.makeDraft(this.getMailData(), inReplyTo, isForward);
 
       this.setState({ id: idDraft });
+      if (isForward) this.forwardDraft();
     } else {
       this.props.updateDraft(this.state.id, this.getMailData());
     }
@@ -393,6 +409,7 @@ const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators(
     {
       sendMail: sendMailAction,
+      forwardMail: forwardMailAction,
       makeDraft: makeDraftMailAction,
       updateDraft: updateDraftMailAction,
       trashMessage: trashMailsAction,
