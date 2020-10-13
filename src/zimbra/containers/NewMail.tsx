@@ -303,13 +303,17 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         };
       }
       case DraftType.DRAFT: {
+        const prevbody = "<br><br>" + this.props.mail.body.split("<br><br>").slice(1).join("<br><br>");
+        const current_body = this.props.mail.body.split("<br><br>")[0];
+
         return {
+          prevBody: prevbody,
           mail: {
             to: this.props.mail.to.map(getUser),
             cc: this.props.mail.cc.map(getUser),
             cci: this.props.mail.bcc.map(getUser),
             subject: this.props.mail.subject,
-            body: deleteHtmlContent(this.props.mail.body),
+            body: current_body,
             attachments: this.props.mail.attachments,
           },
         };
