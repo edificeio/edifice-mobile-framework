@@ -180,6 +180,9 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           mask: false,
           containerStyle: { width: "95%", backgroundColor: "black" },
         });
+
+        const navParams = this.props.navigation.state;
+        if (navParams.params && navParams.params.onGoBack) navParams.params.onGoBack();
         this.props.navigation.goBack();
       } catch (e) {
         console.log(e);
@@ -195,6 +198,9 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     },
     getGoBack: () => {
       this.saveDraft();
+
+      const navParams = this.props.navigation.state;
+      if (navParams.params && navParams.params.onGoBack) navParams.params.onGoBack();
       this.props.navigation.goBack();
     },
   };
