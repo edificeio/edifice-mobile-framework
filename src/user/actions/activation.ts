@@ -152,7 +152,7 @@ export function activationAccount(model: IActivationModel) {
         phone: model.phone,
         theme
       };
-      let formdata = new URLSearchParams();
+      let formdata = new FormData();
       for (let key in payload) {
         formdata.append(key, payload[key]);
       }
@@ -163,7 +163,7 @@ export function activationAccount(model: IActivationModel) {
         body: formdata,
         headers: {
           Accept: "application/json",
-          "Content-Type": "application/x-www-form-urlencoded"
+          "Content-Type": "multipart/form-data"
         },
         method: "post"
       });
@@ -182,6 +182,7 @@ export function activationAccount(model: IActivationModel) {
           console.log("[User][Activation] failed with error", res.status, resBody)
           dispatch(activationSubmitError(resBody.error.message));
           Trackers.trackEvent('Auth', 'ACTIVATE ERROR', resBody.error.message);
+          console.log("resBody.error.message:", resBody.error.message)
           return;
         }
       }
