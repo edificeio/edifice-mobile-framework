@@ -60,16 +60,19 @@ export default class MailContent extends React.PureComponent<any, any> {
   }
 
   private mailContent() {
+    const regexp = /(\r\n|\n|\r)/gm;
+    const body = this.props.mail.body.replace(regexp, "<br>");
+
     return (
       <View style={styles.shadowContainer}>
-        <View style={{ height: 115 }}></View>
+        <View style={{ height: 115 }} />
         <View style={styles.scrollContainer}>
           <ScrollView
             style={{ height: 1 }}
             contentContainerStyle={{
               padding: 10,
             }}>
-            <HtmlContentView html={this.props.mail.body} />
+            <HtmlContentView html={body} />
           </ScrollView>
         </View>
       </View>
