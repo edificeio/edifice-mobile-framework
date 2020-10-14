@@ -329,7 +329,9 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
 
   getMailData = () => {
     let { mail, prevBody } = this.state;
+    const regexp = /(\r\n|\n|\r)/gm;
 
+    mail.body = mail.body.replace(regexp, "<br>");
     if (prevBody === undefined) {
       prevBody = "";
     }
@@ -374,7 +376,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         headers={headers}
         onDraftSave={this.saveDraft}
         onHeaderChange={headers => this.setState(prevState => ({ mail: { ...prevState.mail, ...headers } }))}
-        body={this.state.mail.body}
+        body={this.state.mail.body.replace(/<br>/gs, "\n")}
         onBodyChange={body => this.setState(prevState => ({ mail: { ...prevState.mail, body } }))}
         attachments={
           this.state.tempAttachment

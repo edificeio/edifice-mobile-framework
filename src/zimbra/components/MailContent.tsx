@@ -60,9 +60,6 @@ export default class MailContent extends React.PureComponent<any, any> {
   }
 
   private mailContent() {
-    const regexp = /(\r\n|\n|\r)/gm;
-    const body = this.props.mail.body.replace(regexp, "<br>");
-
     return (
       <View style={styles.shadowContainer}>
         <View style={{ height: 115 }} />
@@ -72,7 +69,7 @@ export default class MailContent extends React.PureComponent<any, any> {
             contentContainerStyle={{
               padding: 10,
             }}>
-            <HtmlContentView html={body} />
+            <HtmlContentView html={this.props.mail.body} />
           </ScrollView>
         </View>
       </View>
