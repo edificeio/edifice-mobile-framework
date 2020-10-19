@@ -6,7 +6,7 @@ import { studentEventsActions as historyActions } from "../../presences/actions/
 import { periodsDataActions as periodActions, yearDataActions as yearActions } from "../../viesco/actions/periods";
 import { dataActions as teacherActions } from "../../viesco/actions/personnel";
 import { dataActions as subjectActions } from "../../viesco/actions/subjects";
-import { selectChildActionType, getSelectedChild } from "../state/children";
+import { selectChildActionType } from "../state/children";
 
 // ACTION LIST ------------------------------------------------------------------------------------
 
@@ -16,15 +16,13 @@ export const selectChild = (child: string) => ({ type: selectChildActionType, se
 
 export function selectChildAction(child: string) {
   return async (dispatch: Dispatch, state) => {
-    if (child !== getSelectedChild(state).id) {
-      dispatch(homeworkActions.clear());
-      dispatch(sessionActions.clear());
-      dispatch(teacherActions.clear());
-      dispatch(subjectActions.clear());
-      dispatch(historyActions.clear());
-      dispatch(periodActions.clear());
-      dispatch(yearActions.clear());
-      dispatch(selectChild(child));
-    }
+    dispatch(homeworkActions.clear());
+    dispatch(sessionActions.clear());
+    dispatch(teacherActions.clear());
+    dispatch(subjectActions.clear());
+    dispatch(historyActions.clear());
+    dispatch(periodActions.clear());
+    dispatch(yearActions.clear());
+    dispatch(selectChild(child));
   };
 }

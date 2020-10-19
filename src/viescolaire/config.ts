@@ -1,7 +1,7 @@
 import FunctionalModuleConfig from "../infra/moduleTool";
 
 // const ViescoApps = ["COMPETENCES", "ABSENCES", "EDT", "PRESENCES", "INCIDENTS", "DIARY"];
-const ViescoApps = ["ABSENCES", "PRESENCES", "INCIDENTS", "DIARY"];
+const ViescoApps = ["PRESENCES", "INCIDENTS", "DIARY"];
 
 export default new FunctionalModuleConfig({
   name: "viescolaire",

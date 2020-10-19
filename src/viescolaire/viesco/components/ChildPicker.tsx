@@ -45,7 +45,11 @@ export default class ChildPicker extends React.PureComponent<ChildPickerProps> {
       <Dropdown
         data={childrenArray}
         value={selectedChildId}
-        onSelect={(child: string) => selectChild(child)}
+        onSelect={(child: string) => {
+          if (child !== selectedChildId) {
+            selectChild(child);
+          }
+        }}
         title={I18n.t("viesco-pickChild")}
         keyExtractor={item => item.id}
         renderItem={(item: IChild) => item.lastName + " " + item.firstName}
