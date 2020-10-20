@@ -75,6 +75,7 @@ class HomeworkListRelativeContainer extends React.PureComponent<HomeworkListProp
         sessions={this.props.sessions}
         onRefreshHomeworks={this.fetchHomeworks}
         onRefreshSessions={this.fetchSessions}
+        childId={this.props.childId}
       />
     );
   }

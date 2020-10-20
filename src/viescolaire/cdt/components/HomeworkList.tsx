@@ -48,6 +48,7 @@ type HomeworkListProps = {
   isFetchingSession: boolean;
   onRefreshHomeworks: any;
   onRefreshSessions: any;
+  childId: string;
 } & INavigationProps;
 
 export default (props: HomeworkListProps) => {
@@ -68,6 +69,11 @@ export default (props: HomeworkListProps) => {
   React.useEffect(() => {
     notFirstRender.current = true;
   }, []);
+
+  React.useEffect(() => {
+    onRefreshHomeworks();
+    onRefreshSessions();
+  }, [props.childId]);
 
   const onRefreshHomeworks = () =>
     props.onRefreshHomeworks(startDate.format("YYYY-MM-DD"), endDate.format("YYYY-MM-DD"));
@@ -125,9 +131,9 @@ export default (props: HomeworkListProps) => {
         </View>
         <Switch
           style={{ marginTop: 30, marginHorizontal: 12 }}
-          onValueChange={() =>
-            toggleSwitch(switchValue === SwitchState.SESSION ? SwitchState.HOMEWORK : SwitchState.SESSION)
-          }
+          onValueChange={() => {
+            toggleSwitch(switchValue === SwitchState.SESSION ? SwitchState.HOMEWORK : SwitchState.SESSION);
+          }}
           value={switchValue === SwitchState.SESSION}
           {...newProps}
         />
