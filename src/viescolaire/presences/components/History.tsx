@@ -4,6 +4,7 @@ import { View, StyleSheet } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { NavigationScreenProp } from "react-navigation";
 
+import { Loading } from "../../../ui";
 import Dropdown from "../../../ui/Dropdown";
 import ChildPicker from "../../viesco/containers/ChildPicker";
 import {
@@ -23,6 +24,8 @@ type HistoryProps = {
   onPeriodChange: any;
   navigation: NavigationScreenProp<any>;
   selected: number;
+  isFetchingData: boolean;
+  isPristineData: boolean;
 };
 
 class History extends React.PureComponent<HistoryProps> {
@@ -45,13 +48,19 @@ class History extends React.PureComponent<HistoryProps> {
             keyExtractor={item => item.order}
             renderItem={this.renderOption}
           />
-          <UnjustifiedCard elements={events.unjustified} />
-          <JustifiedCard elements={events.justified} />
-          <LatenessCard elements={events.lateness} />
-          <DepartureCard elements={events.departure} />
-          <ForgotNotebookCard elements={events.notebooks} />
-          <IncidentCard elements={events.incidents} />
-          <PunishmentCard elements={events.punishments} />
+          {this.props.isFetchingData || this.props.isPristineData ? (
+            <Loading />
+          ) : (
+            <>
+              <UnjustifiedCard elements={events.unjustified} />
+              <JustifiedCard elements={events.justified} />
+              <LatenessCard elements={events.lateness} />
+              <DepartureCard elements={events.departure} />
+              <ForgotNotebookCard elements={events.notebooks} />
+              <IncidentCard elements={events.incidents} />
+              <PunishmentCard elements={events.punishments} />
+            </>
+          )}
         </ScrollView>
       </View>
     );

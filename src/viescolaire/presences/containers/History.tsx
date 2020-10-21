@@ -1,12 +1,14 @@
 import I18n from "i18n-js";
 import moment from "moment";
-import Toast from "react-native-tiny-toast";
 import * as React from "react";
+import { View } from "react-native";
+import Toast from "react-native-tiny-toast";
 import { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
 import { getSessionInfo } from "../../../App";
+import withViewTracking from "../../../infra/tracker/withViewTracking";
 import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
 import { PageContainer } from "../../../ui/ContainerContent";
 import { HeaderBackAction } from "../../../ui/headers/NewHeader";
@@ -16,8 +18,6 @@ import { getPeriodsListState, getYearState } from "../../viesco/state/periods";
 import { getStudentEvents } from "../actions/events";
 import HistoryComponent from "../components/History";
 import { getHistoryEvents } from "../state/events";
-import { View } from "react-native";
-import withViewTracking from "../../../infra/tracker/withViewTracking";
 
 interface HistoryProps {
   navigation: NavigationScreenProp<any>;
@@ -58,7 +58,7 @@ class History extends React.PureComponent<HistoryProps, HistoryState> {
       {
         title: I18n.t("viesco-history"),
         headerLeft: <HeaderBackAction navigation={navigation} />,
-        headerRight: <View/>,
+        headerRight: <View />,
         headerStyle: {
           backgroundColor: "#FCB602",
         },
@@ -208,6 +208,8 @@ const mapStateToProps = (state: any) => {
       : getSessionInfo().classes[getSessionInfo().childrenIds.findIndex(i => i === childId)];
   const structureId =
     type === "Student" ? getSessionInfo().administrativeStructures[0].id : getSelectedChildStructure(state)?.id;
+  const isFetchingData = events.isFetching || periods.isFetching || year.isFetching;
+  const isPristineData = events.isPristine || periods.isPristine || year.isPristine;
   return {
     events,
     structureId,
@@ -215,6 +217,8 @@ const mapStateToProps = (state: any) => {
     periods,
     year,
     groupId,
+    isFetchingData,
+    isPristineData,
   };
 };
 

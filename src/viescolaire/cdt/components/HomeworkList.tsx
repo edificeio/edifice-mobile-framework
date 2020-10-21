@@ -71,6 +71,7 @@ export default (props: HomeworkListProps) => {
   }, []);
 
   React.useEffect(() => {
+    // on child change
     onRefreshHomeworks();
     onRefreshSessions();
   }, [props.childId]);
