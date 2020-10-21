@@ -46,6 +46,7 @@ class Dashboard extends React.PureComponent<
       }),
     };
   }
+
   public componentDidMount() {
     this.props.getSubjects(this.props.structureId);
     this.props.getTeachers(this.props.structureId);
@@ -56,16 +57,19 @@ class Dashboard extends React.PureComponent<
     if (prevProps.childId !== childId) {
       this.props.getSubjects(this.props.structureId);
       this.props.getTeachers(this.props.structureId);
-      this.props.getHomeworks(
-        childId,
-        structureId,
-        moment()
-          .add(1, "day")
-          .format("YYYY-MM-DD"),
-        moment()
-          .add(1, "day")
-          .format("YYYY-MM-DD")
-      );
+      this.props.navigation.addListener("willFocus", () => {
+        console.log("refreshing homeworks");
+        this.props.getHomeworks(
+          childId,
+          structureId,
+          moment()
+            .add(1, "day")
+            .format("YYYY-MM-DD"),
+          moment()
+            .add(1, "day")
+            .format("YYYY-MM-DD")
+        );
+      });
     }
   }
 

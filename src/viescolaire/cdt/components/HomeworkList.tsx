@@ -64,20 +64,15 @@ export default (props: HomeworkListProps) => {
       onRefreshHomeworks();
       onRefreshSessions();
     }
-  }, [startDate, endDate]);
+  }, [startDate, endDate, props.childId]);
 
   React.useEffect(() => {
     notFirstRender.current = true;
   }, []);
 
-  React.useEffect(() => {
-    // on child change
-    onRefreshHomeworks();
-    onRefreshSessions();
-  }, [props.childId]);
-
-  const onRefreshHomeworks = () =>
+  const onRefreshHomeworks = () => {
     props.onRefreshHomeworks(startDate.format("YYYY-MM-DD"), endDate.format("YYYY-MM-DD"));
+  };
 
   const onRefreshSessions = () => {
     props.onRefreshSessions(startDate.format("YYYY-MM-DD"), endDate.format("YYYY-MM-DD"));
@@ -213,7 +208,7 @@ const HomeworkList = ({
         <EmptyComponent title={I18n.t("viesco-homework-EmptyScreenText")} />
       ) : (
         homeworksArray.map((homework, index, list) => (
-          <View>
+          <View key={homework.id}>
             {index === 0 ||
             moment(homework.due_date).format("DD/MM/YY") !== moment(list[index - 1].due_date).format("DD/MM/YY") ? (
               <TextBold>
