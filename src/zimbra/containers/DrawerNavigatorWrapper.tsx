@@ -102,6 +102,7 @@ export default class DrawerNavigatorWrapper extends React.Component<any, any> {
           onEvent={() => {
             this.props.navigation.navigate("newMail", {
               type: DraftType.NEW,
+              mailId: undefined,
               currentFolder: this.getActiveRouteState(navigation.state).key,
             });
           }}

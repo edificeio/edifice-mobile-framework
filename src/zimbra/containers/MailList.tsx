@@ -1,14 +1,15 @@
 import * as React from "react";
+import { withNavigationFocus } from "react-navigation";
 import { NavigationDrawerProp } from "react-navigation-drawer";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
+import withViewTracking from "../../infra/tracker/withViewTracking";
 import { fetchCountAction } from "../actions/count";
 import { fetchMailListAction, fetchMailListFromFolderAction } from "../actions/mailList";
 import MailList from "../components/MailList";
 import { getFolderListState } from "../state/folders";
 import { getMailListState } from "../state/mailList";
-import withViewTracking from "../../infra/tracker/withViewTracking";
 
 // ------------------------------------------------------------------------------------------------
 
@@ -21,6 +22,7 @@ type MailListContainerProps = {
   isFetching: boolean;
   notifications: any;
   folders: any;
+  isFocused: boolean;
 };
 
 type MailListContainerState = {
@@ -56,7 +58,9 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
 
   componentDidUpdate(prevProps) {
     const folderName = this.props.navigation.getParam("folderName");
-    if (folderName !== prevProps.navigation.getParam("folderName")) {
+    if (!this.state.fetchRequested && folderName !== prevProps.navigation.getParam("folderName")) {
+      this.fetchMails();
+    } else if (!this.state.fetchRequested && prevProps.isFocused !== this.props.isFocused) {
       this.fetchMails();
     }
   }
@@ -115,4 +119,6 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
 
 // ------------------------------------------------------------------------------------------------
 
-export default withViewTracking("zimbra")(connect(mapStateToProps, mapDispatchToProps)(MailListContainer));
+const MailListContainerConnected = connect(mapStateToProps, mapDispatchToProps)(withNavigationFocus(MailListContainer));
+
+export default withViewTracking("zimbra/MailList")(MailListContainerConnected);

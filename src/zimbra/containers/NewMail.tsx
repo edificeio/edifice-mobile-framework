@@ -10,6 +10,7 @@ import { bindActionCreators } from "redux";
 
 import { getSessionInfo } from "../../App";
 import pickFile from "../../infra/actions/pickFile";
+import withViewTracking from "../../infra/tracker/withViewTracking";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { CommonStyles } from "../../styles/common/styles";
 import { INavigationProps } from "../../types";
@@ -121,7 +122,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       this.props.fetchMailContent(this.props.navigation.getParam("mailId"));
     }
     const draftType = this.props.navigation.getParam("type");
-    if (draftType !== DraftType.DRAFT && draftType !== DraftType.NEW) {
+    if (draftType !== DraftType.DRAFT) {
       this.setState({ id: undefined });
       this.saveDraft();
     }
@@ -415,4 +416,4 @@ const mapDispatchToProps = (dispatch: any) => {
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(NewMailContainer);
+export default withViewTracking("zimbra/NewMail")(connect(mapStateToProps, mapDispatchToProps)(NewMailContainer));
