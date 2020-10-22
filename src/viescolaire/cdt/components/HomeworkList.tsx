@@ -54,7 +54,7 @@ type HomeworkListProps = {
 export default (props: HomeworkListProps) => {
   const [switchValue, toggleSwitch] = React.useState<SwitchState>(SwitchState.HOMEWORK);
   const [startDate, setStartDate] = React.useState<moment.Moment>(moment());
-  const [endDate, setEndDate] = React.useState<moment.Moment>(moment().add(1, "week"));
+  const [endDate, setEndDate] = React.useState<moment.Moment>(moment().add(3, "week"));
 
   const notFirstRender = React.useRef(false);
 
