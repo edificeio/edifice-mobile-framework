@@ -1,6 +1,7 @@
 import { Dispatch } from "redux";
 
 import { createAsyncActionCreators } from "../../infra/redux/async2";
+import { Trackers } from "../../infra/tracker";
 import { quotaService } from "../service/quota";
 import { IQuota, actionTypes } from "../state/quota";
 
@@ -12,6 +13,7 @@ export const dataActions = createAsyncActionCreators<IQuota>(actionTypes);
 
 export function fetchQuotaAction() {
   return async (dispatch: Dispatch) => {
+    Trackers.trackEvent("Zimbra", "GET QUOTA");
     try {
       dispatch(dataActions.request());
       const data = await quotaService.get();

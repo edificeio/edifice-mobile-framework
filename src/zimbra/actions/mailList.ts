@@ -1,6 +1,7 @@
 import { Dispatch } from "redux";
 
 import { createAsyncActionCreators } from "../../infra/redux/async2";
+import { Trackers } from "../../infra/tracker";
 import { mailListService } from "../service/mailList";
 import { actionTypes, IMailList } from "../state/mailList";
 
@@ -12,6 +13,7 @@ export const dataActions = createAsyncActionCreators<IMailList>(actionTypes);
 
 export function fetchMailListAction(page: number, folderName: string) {
   return async (dispatch: Dispatch) => {
+    Trackers.trackEvent("Zimbra", "FETCH MAILING LIST");
     try {
       dispatch(dataActions.request());
       const data = await mailListService.get(page, folderName);
@@ -24,6 +26,7 @@ export function fetchMailListAction(page: number, folderName: string) {
 
 export function fetchMailListFromFolderAction(folderLocation: string, page: number) {
   return async (dispatch: Dispatch) => {
+    Trackers.trackEvent("Zimbra", "FETCH MAILING LIST FROM FOLDER");
     try {
       dispatch(dataActions.request());
       const data = await mailListService.getFromFolder(folderLocation, page);

@@ -1,6 +1,7 @@
 import { Dispatch } from "redux";
 
 import { createAsyncActionCreators } from "../../infra/redux/async2";
+import { Trackers } from "../../infra/tracker";
 import { mailContentService } from "../service/mailContent";
 import { actionTypes, IMail } from "../state/mailContent";
 
@@ -12,6 +13,7 @@ const dataActions = createAsyncActionCreators<IMail>(actionTypes);
 
 export function fetchMailContentAction(mailId) {
   return async (dispatch: Dispatch) => {
+    Trackers.trackEvent("Zimbra", "FETCH MAIL CONTENT");
     try {
       dispatch(dataActions.request());
       const data = await mailContentService.get(mailId);
