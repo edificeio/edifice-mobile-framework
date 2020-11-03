@@ -28,16 +28,19 @@ type MailListContainerProps = {
 type MailListContainerState = {
   unsubscribe: any;
   fetchRequested: boolean;
+  firstFetch: boolean;
 };
 
 class MailListContainer extends React.PureComponent<MailListContainerProps, MailListContainerState> {
   constructor(props) {
     super(props);
+
     this.state = {
       unsubscribe: this.props.navigation.addListener("didFocus", () => {
         this.forceUpdate();
       }),
       fetchRequested: false,
+      firstFetch: false,
     };
   }
   private fetchMails = (page = 0) => {
@@ -53,10 +56,12 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
   };
 
   public componentDidMount() {
+    if (this.props.navigation.getParam("key") === undefined) this.setState({ firstFetch: true });
     this.fetchMails();
   }
 
   componentDidUpdate(prevProps) {
+    if (!this.props.isFetching && this.state.firstFetch) this.setState({ firstFetch: false });
     const folderName = this.props.navigation.getParam("folderName");
     if (
       !this.state.fetchRequested &&
@@ -77,6 +82,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
         {...this.props}
         fetchMails={this.fetchMails}
         isTrashed={this.props.navigation.getParam("key") === "trash"}
+        firstFetch={this.state.firstFetch}
         fetchRequested={this.state.fetchRequested}
         fetchCompleted={this.fetchCompleted}
       />

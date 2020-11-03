@@ -5,7 +5,7 @@ import { View, StyleSheet, RefreshControl, Dimensions, FlatList } from "react-na
 import { NavigationDrawerProp } from "react-navigation-drawer";
 
 import { CommonStyles } from "../../styles/common/styles";
-import { Icon } from "../../ui";
+import { Icon, Loading } from "../../ui";
 import { Header, LeftPanel, CenterPanel, PageContainer } from "../../ui/ContainerContent";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { EmptyScreen } from "../../ui/EmptyScreen";
@@ -17,6 +17,7 @@ import { IMail } from "../state/mailContent";
 type MailListProps = {
   notifications: any;
   isFetching: boolean;
+  firstFetch: boolean;
   fetchCompleted: () => any;
   fetchMails: (page: number) => any;
   fetchCount: (ids: string[]) => any;
@@ -174,6 +175,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
   };
 
   public render() {
+    const { isFetching, firstFetch } = this.props;
     return (
       <PageContainer>
         <FlatList
@@ -183,7 +185,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
           extraData={this.state.mails}
           keyExtractor={(item: IMail) => item.id}
           refreshControl={
-            <RefreshControl refreshing={this.props.isFetching} onRefresh={() => this.refreshMailList()} />
+            <RefreshControl refreshing={isFetching && !firstFetch} onRefresh={() => this.refreshMailList()} />
           }
           onEndReachedThreshold={0.001}
           onScrollBeginDrag={() => this.setState({ nextPageCallable: true })}
@@ -194,14 +196,18 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
             }
           }}
           ListEmptyComponent={
-            <View style={{ flex: 1 }}>
-              <EmptyScreen
-                imageSrc={require("../../../assets/images/empty-screen/empty-mailBox.png")}
-                imgWidth={265.98}
-                imgHeight={279.97}
-                title={I18n.t("zimbra-empty-mailbox")}
-              />
-            </View>
+            isFetching && firstFetch ? (
+              <Loading />
+            ) : (
+              <View style={{ flex: 1 }}>
+                <EmptyScreen
+                  imageSrc={require("../../../assets/images/empty-screen/empty-mailBox.png")}
+                  imgWidth={265.98}
+                  imgHeight={279.97}
+                  title={I18n.t("zimbra-empty-mailbox")}
+                />
+              </View>
+            )
           }
         />
       </PageContainer>
