@@ -4,15 +4,14 @@ import * as React from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { NavigationActions } from "react-navigation";
 
-//import I18n from "../../../infra/i18n";
-import { Icon } from "../../../ui";
+import { INavigationProps } from "../../../types";
+import { Icon, Loading } from "../../../ui";
 import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
 import { EmptyScreen } from "../../../ui/EmptyScreen";
 import { Text, TextBold } from "../../../ui/text";
 import { HomeworkItem } from "../../cdt/components/Items";
-import ChildPicker from "../containers/ChildPicker";
 import { isHomeworkDone, getSubjectName, homeworkDetailsAdapter } from "../../utils/cdt";
-import { INavigationProps } from "../../../types";
+import ChildPicker from "../containers/ChildPicker";
 
 const styles = StyleSheet.create({
   dashboardPart: { paddingVertical: 8, paddingHorizontal: 15 },
@@ -125,7 +124,8 @@ export default class Dashboard extends React.PureComponent<DashboardProps> {
       <View style={styles.dashboardPart}>
         <TextBold style={styles.title}>{I18n.t("viesco-homework")}</TextBold>
         <Text style={styles.subtitle}>{I18n.t("viesco-homework-fortomorrow")}</Text>
-        {tomorrowHomeworks.length === 0 && (
+        {homeworks.isFetching && <Loading />}
+        {tomorrowHomeworks.length === 0 && !homeworks.isFetching && (
           <EmptyScreen
             imageSrc={require("../../../../assets/images/empty-screen/empty-homework.png")}
             imgWidth={64}
