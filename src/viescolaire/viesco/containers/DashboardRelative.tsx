@@ -13,63 +13,50 @@ import DashboardComponent from "../components/DashboardRelative";
 import { getSelectedChild, getSelectedChildStructure } from "../state/children";
 import { getSubjectsListState } from "../state/subjects";
 
-class Dashboard extends React.PureComponent<
-  {
-    homeworks: any;
-    evaluations: any[];
-    structureId: string;
-    childId: string;
-    getSubjects: any;
-    getHomeworks: any;
-    getTeachers: any;
-    navigation: NavigationScreenProp<any>;
-    isFocused: boolean;
-  },
-  { focusListener: any }
-> {
-  constructor(props) {
-    super(props);
-
-    const { childId, structureId, getHomeworks } = props;
-    this.state = {
-      // fetching next day homeworks only, when screen is focused
-      focusListener: this.props.navigation.addListener("willFocus", () => {
-        getHomeworks(
-          childId,
-          structureId,
-          moment()
-            .add(1, "day")
-            .format("YYYY-MM-DD"),
-          moment()
-            .add(1, "day")
-            .format("YYYY-MM-DD")
-        );
-      }),
-    };
-  }
-
+class Dashboard extends React.PureComponent<{
+  homeworks: any;
+  evaluations: any[];
+  structureId: string;
+  childId: string;
+  getSubjects: any;
+  getHomeworks: any;
+  getTeachers: any;
+  navigation: NavigationScreenProp<any>;
+  isFocused: boolean;
+}> {
   public componentDidMount() {
+    const { childId, structureId } = this.props;
     this.props.getSubjects(this.props.structureId);
     this.props.getTeachers(this.props.structureId);
+    this.props.getHomeworks(
+      childId,
+      structureId,
+      moment()
+        .add(1, "day")
+        .format("YYYY-MM-DD"),
+      moment()
+        .add(1, "day")
+        .format("YYYY-MM-DD")
+    );
   }
 
   public componentDidUpdate(prevProps) {
-    const { childId, structureId } = this.props;
+    const { childId, structureId, isFocused } = this.props;
     if (prevProps.childId !== childId) {
       this.props.getSubjects(this.props.structureId);
       this.props.getTeachers(this.props.structureId);
-      if (this.props.isFocused) {
-        this.props.getHomeworks(
-          childId,
-          structureId,
-          moment()
-            .add(1, "day")
-            .format("YYYY-MM-DD"),
-          moment()
-            .add(1, "day")
-            .format("YYYY-MM-DD")
-        );
-      }
+    }
+    if (isFocused && (prevProps.isFocused !== isFocused || prevProps.childId !== childId)) {
+      this.props.getHomeworks(
+        childId,
+        structureId,
+        moment()
+          .add(1, "day")
+          .format("YYYY-MM-DD"),
+        moment()
+          .add(1, "day")
+          .format("YYYY-MM-DD")
+      );
     }
   }
 
