@@ -6,7 +6,7 @@ import { newMailService } from "../service/newMail";
 
 export function sendMailAction(mailDatas, draftId: string, InReplyTo: string) {
   return async () => {
-    Trackers.trackEvent("Zimbra", "SEND MAIL");
+    Trackers.trackEvent("Zimbra", "SEND");
     try {
       await newMailService.sendMail(mailDatas, draftId, InReplyTo);
     } catch (errmsg) {
@@ -28,7 +28,11 @@ export function forwardMailAction(draftId: string, forwardFrom: string) {
 
 export function makeDraftMailAction(mailDatas, inReplyTo: string, isForward: boolean) {
   return async (dispatch: Dispatch) => {
-    Trackers.trackEvent("Zimbra", "MAKE DRAFT");
+    Trackers.trackEvent("Zimbra", "CREATED");
+    if(inReplyTo)
+      Trackers.trackEvent("Zimbra", "REPLY TO MESSAGE");
+    if(isForward)
+      Trackers.trackEvent("Zimbra", "TRANSFER MESSAGE");
     return await newMailService.makeDraftMail(mailDatas, inReplyTo, isForward);
   };
 }

@@ -26,7 +26,7 @@ export function fetchFoldersAction() {
 
 export function postFolderAction(name: string, parentId: string) {
   return async (dispatch: Dispatch) => {
-    Trackers.trackEvent("Zimbra", "POST FOLDER");
+    Trackers.trackEvent("Zimbra", "CREATE FOLDER");
     try {
       await foldersService.post(name, parentId);
       dispatch(dataActions.request());

@@ -74,10 +74,10 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
           count={count.data.INBOX}
         />
         <DrawerOption
-          selected={this.isCurrentScreen("outbox")}
+          selected={this.isCurrentScreen("sendMessages")}
           iconName="send"
           label={I18n.t("zimbra-outbox")}
-          navigate={() => navigation.navigate("outbox", { key: "outbox", folderName: undefined })}
+          navigate={() => navigation.navigate("sendMessages", { key: "sendMessages", folderName: undefined })}
         />
         <DrawerOption
           selected={this.isCurrentScreen("drafts")}

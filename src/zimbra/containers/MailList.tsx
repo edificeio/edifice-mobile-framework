@@ -129,4 +129,4 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
 
 const MailListContainerConnected = connect(mapStateToProps, mapDispatchToProps)(withNavigationFocus(MailListContainer));
 
-export default withViewTracking("zimbra/MailList")(MailListContainerConnected);
+export default withViewTracking("zimbra/"+this.props.navigation.getParam("key"))(MailListContainerConnected);

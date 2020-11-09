@@ -28,6 +28,7 @@ import {
 import NewMailComponent from "../components/NewMail";
 import { ISearchUsers } from "../service/newMail";
 import { getMailContentState, IMail } from "../state/mailContent";
+import {Trackers} from "../../infra/tracker";
 
 const entitiesTransformer = new AllHtmlEntities();
 
@@ -122,6 +123,12 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       this.props.fetchMailContent(this.props.navigation.getParam("mailId"));
     }
     const draftType = this.props.navigation.getParam("type");
+    if (draftType === DraftType.REPLY){
+      Trackers.trackEvent("Zimbra", "REPLY TO ONE");
+    }
+    if(draftType === DraftType.REPLY_ALL){
+      Trackers.trackEvent("Zimbra", "REPLY TO ALL");
+    }
     if (draftType !== DraftType.DRAFT) {
       this.setState({ id: undefined });
       this.saveDraft();
@@ -416,4 +423,4 @@ const mapDispatchToProps = (dispatch: any) => {
   );
 };
 
-export default withViewTracking("zimbra/NewMail")(connect(mapStateToProps, mapDispatchToProps)(NewMailContainer));
+export default withViewTracking("zimbra/NewMessage")(connect(mapStateToProps, mapDispatchToProps)(NewMailContainer));

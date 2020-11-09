@@ -10,6 +10,7 @@ import DrawerMenu from "../components/DrawerMenu";
 import { getCountListState } from "../state/count";
 import { getFolderListState } from "../state/folders";
 import { getQuotaState } from "../state/quota";
+import withViewTracking from "../../infra/tracker/withViewTracking";
 
 type DrawerMenuProps = {
   fetchFolders: () => any;
@@ -60,4 +61,4 @@ const mapDispatchToProps = (dispatch: any) => {
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(DrawerMenuContainer);
+export default withViewTracking("zimbra/folders")(connect(mapStateToProps, mapDispatchToProps)(DrawerMenuContainer));

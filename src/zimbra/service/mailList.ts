@@ -52,7 +52,7 @@ export const mailListService = {
     switch (folder) {
       case "inbox":
         return mailListAdapter(await fetchJSONWithCache(`/zimbra/list?folder=/Inbox&page=${page}&unread=false`));
-      case "outbox":
+      case "sendMessages":
         return mailListAdapter(await fetchJSONWithCache(`/zimbra/list?folder=/Sent&page=${page}&unread=false`));
       case "drafts":
         return mailListAdapter(await fetchJSONWithCache(`/zimbra/list?folder=/Drafts&page=${page}&unread=false`));

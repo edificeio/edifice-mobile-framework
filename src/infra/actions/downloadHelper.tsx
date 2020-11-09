@@ -12,10 +12,19 @@ export const downloadFiles = (downloadable: Array<IFile>, withManager = true) =>
 };
 
 export const downloadFile = (downloadable: IFile, withManager = true) => {
-  if (Platform.OS === "ios") {
-    startDownload(downloadable, withManager).then(res => openDownloadedFile(res.path()));
-  } else {
-    startDownload(downloadable, withManager);
+  if(downloadable.url.startsWith("/zimbra")){
+    Trackers.trackEvent("Zimbra", "DOWNLOAD ATTACHMENT");
+    if (Platform.OS === "ios") {
+      startDownload(downloadable, withManager, false).then(res => openDownloadedFile(res.path()));
+    } else {
+      startDownload(downloadable, withManager, false);
+    }
+  }else{
+    if (Platform.OS === "ios") {
+      startDownload(downloadable, withManager).then(res => openDownloadedFile(res.path()));
+    } else {
+      startDownload(downloadable, withManager);
+    }
   }
 };
 
