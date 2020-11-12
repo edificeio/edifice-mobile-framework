@@ -13,7 +13,6 @@ export const dataActions = createAsyncActionCreators<IQuota>(actionTypes);
 
 export function fetchQuotaAction() {
   return async (dispatch: Dispatch) => {
-    Trackers.trackEvent("Zimbra", "GET QUOTA");
     try {
       dispatch(dataActions.request());
       const data = await quotaService.get();

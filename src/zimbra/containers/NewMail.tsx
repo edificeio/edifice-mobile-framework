@@ -181,6 +181,8 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       }
 
       try {
+        const { mail } = this.state;
+        if (mail.attachments && mail.attachments.length !== 0) Trackers.trackEvent("Zimbra", "SEND ATTACHMENTS");
         this.props.sendMail(this.getMailData(), this.state.id, this.state.replyTo);
 
         Toast.show(I18n.t("zimbra-send-mail"), {

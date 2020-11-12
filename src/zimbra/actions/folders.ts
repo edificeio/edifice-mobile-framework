@@ -13,7 +13,6 @@ export const dataActions = createAsyncActionCreators<IFolderList>(actionTypes);
 
 export function fetchFoldersAction() {
   return async (dispatch: Dispatch) => {
-    Trackers.trackEvent("Zimbra", "FETCH FOLDERS");
     try {
       dispatch(dataActions.request());
       const data = await foldersService.get();
