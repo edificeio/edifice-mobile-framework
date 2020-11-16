@@ -29,10 +29,10 @@ export default function withViewTracking<
   type PrivateProps = { forwardedRef: React.RefObject<React.Component<ComponentProps, ComponentState>> };
   type AllProps = PrivateProps & ComponentProps;
 
-  const getPathAsArray = (() => {
-    if (typeof path === 'string') return path.split('/');
-    if (Array.isArray(path)) return path;
-    console.warn(`withViewTracking : must give view path as a string or a string[]. ${path} is not valid.`);
+  const getPathAsArray = ((resolvedPath: string[] | string) => {
+    if (typeof resolvedPath === 'string') return resolvedPath.split('/');
+    if (Array.isArray(resolvedPath)) return resolvedPath;
+    console.warn(`withViewTracking : must give view path as a string or a string[]. ${resolvedPath} is not valid.`);
     return [];
   });
   return (WrappedComponent: React.ComponentClass<ComponentProps, ComponentState>) => {
@@ -43,10 +43,10 @@ export default function withViewTracking<
         super(props);
         const { navigation } = this.props;
         this.focusListener = navigation.addListener("didFocus", () => {
-          if (typeof path === 'function') {
-            path = path(this.props);
-          }
-          tracker.trackView(getPathAsArray());
+          const resolvedPath = (typeof path === 'function')
+            ? path(this.props)
+            : path;
+          tracker.trackView(getPathAsArray(resolvedPath));
         });
       }
 
