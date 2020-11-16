@@ -46,7 +46,7 @@ export default function withViewTracking<
           const resolvedPath = (typeof path === 'function')
             ? path(this.props)
             : path;
-          tracker.trackView(getPathAsArray(resolvedPath));
+          resolvedPath && tracker.trackView(getPathAsArray(resolvedPath));
         });
       }
 
