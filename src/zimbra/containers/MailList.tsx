@@ -127,6 +127,16 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
 
 // ------------------------------------------------------------------------------------------------
 
+const viewsToTrack = ["inbox", "sendMessages", "drafts", "spams"];
+
 const MailListContainerConnected = connect(mapStateToProps, mapDispatchToProps)(withNavigationFocus(MailListContainer));
 
-export default withViewTracking("zimbra/MailList")(MailListContainerConnected);
+export default withViewTracking((props: MailListContainerProps) => {
+  const currentFolder = props.navigation.getParam("key");
+  if (currentFolder === undefined) return `zimbra/inbox`;
+  let toTrack = "";
+  viewsToTrack.map(viewName => {
+    if (viewName === currentFolder) toTrack = `zimbra/${currentFolder}`;
+  });
+  return toTrack;
+})(MailListContainerConnected);
