@@ -7,6 +7,7 @@ import { Icon, Loading } from "../../ui";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
+import { HtmlContentView } from "../../ui/HtmlContentView";
 import { Text } from "../../ui/Typography";
 import { ISearchUsers } from "../service/newMail";
 import Attachment from "./Attachment";
@@ -23,6 +24,7 @@ interface NewMailComponentProps {
   onBodyChange: (body: string) => void;
   attachments: any[];
   onAttachmentChange: (attachments: any[]) => void;
+  prevBody: any;
 }
 
 const styles = StyleSheet.create({
@@ -31,6 +33,13 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     elevation: CommonStyles.elevation,
     ...IOSShadowStyle,
+  },
+  lineSeparator: {
+    marginLeft: 15,
+    width: "50%",
+    borderStyle: "dashed",
+    borderBottomWidth: 1,
+    borderRadius: 1,
   },
 });
 
@@ -43,6 +52,7 @@ export default ({
   onBodyChange,
   attachments,
   onAttachmentChange,
+  prevBody,
 }: NewMailComponentProps) => {
   return (
     <PageContainer>
@@ -59,6 +69,7 @@ export default ({
             onSave={onDraftSave}
           />
           <Body style={{ zIndex: 1 }} value={body} onChange={onBodyChange} onSave={onDraftSave} />
+          {!!prevBody && <PrevBody prevBody={prevBody} />}
         </ScrollView>
       )}
     </PageContainer>
@@ -229,6 +240,15 @@ const Body = ({ style, value, onChange, onSave }) => {
         onChangeText={text => updateCurrentValue(text)}
         onEndEditing={() => onSave()}
       />
+    </View>
+  );
+};
+
+const PrevBody = ({ prevBody }) => {
+  return (
+    <View style={[styles.mailPart, { flexGrow: 1 }]}>
+      <View style={styles.lineSeparator} />
+      <HtmlContentView html={prevBody} />
     </View>
   );
 };

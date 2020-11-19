@@ -113,7 +113,10 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
   constructor(props) {
     super(props);
 
-    this.state = { mail: { to: [], cc: [], bcc: [], subject: "", body: "", attachments: [] } };
+    this.state = {
+      mail: { to: [], cc: [], bcc: [], subject: "", body: "", attachments: [] },
+      prevBody: "",
+    };
   }
 
   componentDidMount = () => {
@@ -277,7 +280,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       header +=
         '</p><blockquote class="ng-scope">' +
         '<p class="ng-scope" style="font-size: 24px; line-height: 24px;">' +
-        deleteHtmlContent(this.props.mail.body) +
+        this.props.mail.body +
         "</p>";
 
       return header;
@@ -394,6 +397,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
             : this.state.mail.attachments
         }
         onAttachmentChange={attachments => this.setState(prevState => ({ mail: { ...prevState.mail, attachments } }))}
+        prevBody={this.state.prevBody}
       />
     );
   }
