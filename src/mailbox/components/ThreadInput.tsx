@@ -127,6 +127,22 @@ class ThreadInput extends React.PureComponent<
     const { attachments, textMessage } = this.state;
     const attachmentsToSend = attachments;
     const attachmentsAdded = attachments.length > 0;
+
+    const getMessageSubject = () => {
+      const subject = backMessage ? backMessage.subject : lastMessage ? lastMessage.subject : thread.subject;
+      let subjectPrefix: string | undefined = undefined;
+      if (subject && sendingType) {
+        if (sendingType === "reply") {
+          subjectPrefix = I18n.t("conversation-subjectReplyPrefix");
+          return subject.includes(subjectPrefix) ? subject : subjectPrefix + " " + subject;
+        } else if (sendingType === "transfer") {
+          subjectPrefix = I18n.t("conversation-subjectTransferPrefix");
+          return subject.includes(subjectPrefix) ? subject : subjectPrefix + " " + subject;
+        } else if (sendingType === "new") {
+          return subject;   
+        }
+      }
+    }
     const getSenderDisplayName = (message: IConversationMessage) => {
       const foundSender = message && message.displayNames.find(displayName => displayName[0] === message.from);
       return foundSender && foundSender[1] || "";
@@ -168,6 +184,7 @@ class ThreadInput extends React.PureComponent<
         <em class="medium-importance"><em> ${message && getRecepientDisplayNames(message, true) || ""}</em>
         </em>
       </p>`;
+      
     let body = textMessage ? `<div>${textMessage.replace(/\n/g, '<br>')}</div>` : '';
     if (backMessage) {
       if (sendingType === 'reply') body = `${body}${getReplyTemplate(backMessage)}<br><blockquote>${backMessage.body ? backMessage.body : ''}</blockquote>`;
@@ -180,11 +197,7 @@ class ThreadInput extends React.PureComponent<
       cc: thread.cc,
       displayNames: thread.displayNames,
       parentId: lastMessage ? lastMessage.id : backMessage ? backMessage.id : undefined,
-      subject: (sendingType === 'reply' || sendingType === 'transfer')
-        ? thread.subject // Already have prefix set
-        : lastMessage
-          ? "Re: " + thread.subject // Only adds "Re: " for replies without new thread
-          : thread.subject,
+      subject: getMessageSubject(),
       threadId: thread.id,
       to: ThreadInput.findReceivers2(thread)
     }

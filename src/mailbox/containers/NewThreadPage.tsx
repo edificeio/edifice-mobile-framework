@@ -73,13 +73,15 @@ class NewThreadPage extends React.PureComponent<
       const type: string = navigation.getParam('type', 'new');
       const replyToAll: boolean = navigation.getParam('replyToAll');
       // Subject
+      let subjectPrefix: string | undefined = undefined;
       let subject: string | undefined = undefined;
       if (message.subject) {
-        if (type === 'reply' && replyToAll) {
-          subject = message.subject.startsWith("Re: ") ? message.subject : "Re: " + message.subject;
-        } else
-        if (type === 'transfer') {
-          subject = message.subject.startsWith("Tr: ") ? message.subject : "Tr: " + message.subject;
+        if (type === "reply" && replyToAll) {
+          subjectPrefix = I18n.t("conversation-subjectReplyPrefix");
+          subject = message.subject.includes(subjectPrefix) ? message.subject : subjectPrefix + " " + message.subject;
+        } else if (type === "transfer") {
+          subjectPrefix = I18n.t("conversation-subjectTransferPrefix");
+          subject = message.subject.includes(subjectPrefix) ? message.subject : subjectPrefix + " " + message.subject;
         }
       }
       subject && selectSubject && selectSubject(subject);

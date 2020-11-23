@@ -90,6 +90,8 @@
   "conversation-responsePlaceholderSingle": "Responder...",
   "conversation-sendingMessage": "Enviando...",
   "conversation-subjectPrefixInput": "Asunto :",
+  "conversation-subjectReplyPrefix": "Re:",
+  "conversation-subjectTransferPrefix": "Reenviar:",
   "conversation-transfer": "Reenviar",
   "conversation-transfer-backMessage": "Mensaje reenviado:",
   "Conversation": "Correo",

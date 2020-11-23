@@ -89,6 +89,8 @@
   "conversation-responsePlaceholderSingle": "Reply...",
   "conversation-sendingMessage": "Sending...",
   "conversation-subjectPrefixInput": "Subject:",
+  "conversation-subjectReplyPrefix": "Re:",
+  "conversation-subjectTransferPrefix": "Fwd:",
   "conversation-reply-to-all-action": "Reply all",
   "conversation-reply-to-name-action": "Reply to {{name}}",
   "conversation-transfer": "Forward",

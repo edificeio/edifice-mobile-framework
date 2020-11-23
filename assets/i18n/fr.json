@@ -92,6 +92,8 @@
     "conversation-responsePlaceholderSingle": "Répondre...",
     "conversation-sendingMessage": "En cours d'envoi...",
     "conversation-subjectPrefixInput": "Objet :",
+    "conversation-subjectReplyPrefix": "Re:",
+    "conversation-subjectTransferPrefix": "Tr:",
     "conversation-transfer": "Transférer",
     "conversation-transfer-backMessage": "Message transféré :",
     "Conversation": "Messagerie",
