@@ -206,8 +206,9 @@ export class EntcoreTracker extends Tracker<IEntcoreTrackerOptions> {
             "schoolbook": "SchoolBook",
             "homework": "Homeworks",
             "workspace": "Worksapce",
-            "conversation": "Conversation"
-            // ToDo : add Zimbra and Viesco
+            "conversation": "Conversation",
+            "zimbra": "Zimbra",
+            "viesco": "Presences"
         }
         if (this.lastModulename !== moduleName && moduleAccessMap.hasOwnProperty(moduleName)) {
             this.reportQueue.push(new Request(
