@@ -7,7 +7,7 @@ import { getAuthState } from "../selectors";
 
 export interface IVersionContext {
     redirectOnError?: boolean,
-    credentials?: { username: string; password: string }
+    credentials?: { username: string; password: string, rememberMe: boolean }
     version: { canContinue: boolean, hasNewVersion: boolean, newVersion: string }
 }
 
@@ -29,7 +29,7 @@ function checkVersionRequest(): Action {
 
 function checkNewVersionFounded(version: { canContinue: boolean, hasNewVersion: boolean, newVersion: string },
     redirectOnError: boolean,
-    credentials: { username: string; password: string }): INewVersionAction {
+    credentials: { username: string; password: string, rememberMe: boolean }): INewVersionAction {
     return { type: actionTypeNewVersion, version, redirectOnError, credentials }
 }
 function skipVersion(): Action {
@@ -40,7 +40,7 @@ function skipVersion(): Action {
 
 export function checkVersionThenLogin(
     redirectOnError: boolean = false,
-    credentials?: { username: string; password: string }) {
+    credentials?: { username: string; password: string, rememberMe: boolean }) {
     return async (dispatch, getState) => {
         // === 0 if the user already skip ... login
         const state = getAuthState(getState());

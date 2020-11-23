@@ -39,6 +39,7 @@ import {
 import VersionModal from "../components/VersionModal";
 import { getAuthState } from "../selectors";
 import withViewTracking from "../../infra/tracker/withViewTracking";
+import { Toggle } from "../../ui/forms/Toggle";
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -57,7 +58,7 @@ export interface ILoginPageDataProps {
 export interface ILoginPageEventProps {
   onSkipVersion(versionContext: IVersionContext): void;
   onUpdateVersion(versionContext: IVersionContext): void;
-  onLogin(userlogin: string, password: string): void;
+  onLogin(userlogin: string, password: string, rememberMe: boolean): void;
 }
 
 export interface ILoginPageOtherProps {
@@ -74,12 +75,14 @@ export interface ILoginPageState {
   login?: string;
   password?: string;
   typing: boolean;
+  rememberMe: boolean;
 }
 
 const initialState: ILoginPageState = {
   login: undefined,
   password: undefined,
-  typing: false
+  typing: false,
+  rememberMe: true
 };
 
 // Main component ---------------------------------------------------------------------------------
@@ -169,6 +172,7 @@ export class LoginPage extends React.Component<
 
   protected renderForm() {
     const { loggingIn, loggedIn, error } = this.props.auth;
+    const { login, password, typing, rememberMe } = this.state;
 
     const FederationTextComponent = error ? TextBold : Text;
 
@@ -183,8 +187,8 @@ export class LoginPage extends React.Component<
               onChangeText={(login: string) =>
                 this.setState({ login: login.trim(), typing: true })
               }
-              value={this.state.login}
-              hasError={(error && !this.state.typing) as boolean}
+              value={login}
+              hasError={(error && !typing) as boolean}
               keyboardType="email-address"
             />
             <PasswordInputLine
@@ -193,9 +197,17 @@ export class LoginPage extends React.Component<
               onChangeText={(password: string) =>
                 this.setState({ password, typing: true })
               }
-              value={this.state.password}
-              hasError={(error && !this.state.typing) as boolean}
+              value={password}
+              hasError={(error && !typing) as boolean}
             />
+            <View style={{ flexDirection: "row", alignSelf: "flex-end", marginTop: 20 }}>
+              <Text style={{ marginRight: 10, color: TextColor.Normal, fontSize: 12 }}>{I18n.t("RememberMe")}</Text>
+              <Toggle
+                checked={rememberMe}
+                onCheck={() => this.setState({ rememberMe: true })}
+                onUncheck={() => this.setState({ rememberMe: false })}
+              />
+            </View>
             <ErrorMessage>
               {this.state.typing ? "" : error && I18n.t('auth-error-' + error, { version: DeviceInfo.getVersion(), errorcode: error, currentplatform: (Conf.currentPlatform as any).url })}
             </ErrorMessage>
@@ -205,10 +217,10 @@ export class LoginPage extends React.Component<
                 alignItems: "center",
                 flexGrow: 2,
                 justifyContent: "flex-start",
-                marginTop: error && !this.state.typing ? 10 : 30
+                marginTop: error && !typing ? 10 : 30
               }}
             >
-              {(error === "not_premium" || error === "pre_deleted") && !this.state.typing ?
+              {(error === "not_premium" || error === "pre_deleted") && !typing ?
               <FlatButton
                 onPress={() => this.handleGoToWeb()}
                 disabled={false}
@@ -266,7 +278,8 @@ export class LoginPage extends React.Component<
   protected async handleLogin() {
     await this.props.onLogin(
       this.state.login || this.props.auth.login, // ToDo: fix this TS issue
-      this.state.password
+      this.state.password,
+      this.state.rememberMe
     );
     this.setState({ typing: false });
   }
@@ -317,9 +330,9 @@ const ConnectedLoginPage = connect(
     onUpdateVersion: version => {
       dispatch<any>(updateVersionIfWanted(version, true));
     },
-    onLogin: (userlogin, password) => {
+    onLogin: (userlogin, password, rememberMe) => {
       dispatch<any>(
-        checkVersionThenLogin(false, { username: userlogin, password })
+        checkVersionThenLogin(false, { username: userlogin, password, rememberMe })
       );
     }
   })

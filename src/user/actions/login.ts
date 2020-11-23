@@ -73,7 +73,7 @@ let checkingIOSPermissions = false;
 
 export function loginAction(
   redirectOnError: boolean = false,
-  credentials?: { username: string; password: string }
+  credentials?: { username: string; password: string, rememberMe: boolean }
 ) {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
@@ -208,7 +208,7 @@ export function loginAction(
           userdata,
           userPublicInfo: userPublicInfo.result[0]
         });
-        OAuth2RessourceOwnerPasswordClient.connection.saveToken();
+        credentials?.rememberMe && OAuth2RessourceOwnerPasswordClient.connection.saveToken();
       } catch (err) {
         console.warn('[login] userinfo fetch failed');
         throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err);
