@@ -123,7 +123,7 @@
     "directory-childrenTitle": "Enfants(s)",
     "directory-disconnectButton": "Se déconnecter",
     "directory-notificationsTitle": "Notifications",
-    "directory-relativesTitle": "Responsable(s)",
+    "directory-relativesTitle": "Parent(s)",
     "directory-structuresTitle": "Établissement(s) et classe(s)",
     "DisplayName": "Nom affiché",
     "download": "Télécharger",
@@ -240,7 +240,7 @@
     "schoolbook-back-without-ack": "Quitter",
     "schoolbook-must-read": "Un parent doit lire ce mot !",
     "schoolbook-read-by": "Lu par",
-    "schoolbook-readByNbRelatives": "Lu par {{nb}} responsable(s)",
+    "schoolbook-readByNbRelatives": "Lu par {{nb}} parent(s)",
     "Search": "Rechercher ...",
     "seeDetails": "Voir détails",
     "seeLess": "Voir moins",
@@ -390,7 +390,7 @@
     "profileTypes": {
       "Guest": "Invité",
       "Personnel": "Personnel",
-      "Relative": "Responsable",
+      "Relative": "Parent",
       "Structure": "Structure",
       "Student": "Élève",
       "Teacher": "Enseignant"
