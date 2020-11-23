@@ -9,7 +9,7 @@ import { EmptyScreen } from "../../ui/EmptyScreen";
 import MyAppItem from "./MyAppItem";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { IAppModule } from "../../infra/moduleTool/types";
-import { View, ScrollView, Linking } from "react-native";
+import { View, ScrollView, Linking, Platform } from "react-native";
 import withViewTracking from "../../infra/tracker/withViewTracking";
 import { NavigationScreenProp, NavigationState } from "react-navigation";
 import { FlatButton } from "../../ui/FlatButton";
@@ -33,7 +33,7 @@ class MyAppGrid extends React.PureComponent<{ navigation : NavigationScreenProp<
           ))}
         </View>
         <View style={{justifyContent: "center", height: 80}}>
-          <View>
+          <View style={{height: Platform.OS === "android" ? 40 : undefined}}>
             <FlatButton
               title={I18n.t("myapp-accessWeb")}
               loading={false}
