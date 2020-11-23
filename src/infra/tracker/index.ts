@@ -6,7 +6,8 @@
 import Matomo from "react-native-matomo-sdk";
 import Analytics from 'appcenter-analytics';
 import Conf from "../../../ode-framework-conf";
-import { IMatomoTrackerOptions, ITrackerOptions, IAppCenterTrackerOptions } from "./config";
+import { IMatomoTrackerOptions, ITrackerOptions, IAppCenterTrackerOptions, IEntcoreTrackerOptions } from "./config";
+import { signRequest } from "../oauth";
 
 export abstract class Tracker<OptionsType> {
     constructor(opts: OptionsType) { }
@@ -33,12 +34,13 @@ export abstract class Tracker<OptionsType> {
         }
     }
 
-    isReady: boolean = false;
-    isUserReady: boolean = false;
+    get isReady(): boolean { return false; }
+    get isUserReady(): boolean { return false; }
 }
 
 export class MatomoTracker extends Tracker<IMatomoTrackerOptions> {
     opts: IMatomoTrackerOptions;
+    private _isReady = false;
     constructor(opts: IMatomoTrackerOptions) {
         super(opts);
         this.opts = opts;
@@ -50,7 +52,7 @@ export class MatomoTracker extends Tracker<IMatomoTrackerOptions> {
         try {
             await Matomo.initialize(this.opts.url, this.opts.siteId)
                 .catch(error => { throw new Error(error); });
-            this.isReady = true;
+            this._isReady = true;
             console.log('[Matomo] Tracker successfully initilized');
         } catch (e) {
             console.warn("[Matomo] Failed to initialize Matomo", e);
@@ -97,6 +99,8 @@ export class MatomoTracker extends Tracker<IMatomoTrackerOptions> {
                 console.warn('[Matomo] Error setting user id', error, id, value),
             );
     }
+
+    get isReady(): boolean { return this._isReady; }
 }
 
 export const DefaultMatomoTracker = new MatomoTracker(Conf.matomo);
@@ -111,7 +115,6 @@ export class AppCenterTracker extends Tracker<IAppCenterTrackerOptions> {
 
     async init() {
         await super.init();
-        this.isReady = true;
         console.log('[AppCenter] Tracker successfully initilized');
     }
 
@@ -151,9 +154,69 @@ export class AppCenterTracker extends Tracker<IAppCenterTrackerOptions> {
         if (!this.isReady) return;
         this.currentDimensions[id] = value;
     }
+
+    get isReady(): boolean { return true; }
 }
 
 export const DefaultAppCenterTracker = new AppCenterTracker({});
+
+export class EntcoreTracker extends Tracker<IEntcoreTrackerOptions> {
+
+    reportQueue: Request[] = [];
+    sending: boolean = false;
+    errorCount: number = 0;
+    lastModulename: string | undefined = undefined;
+
+    constructor(opts: IAppCenterTrackerOptions) {
+        super(opts);
+    }
+
+    async sendReportQueue() {
+        if (this.sending) return; // Once at a time
+        this.sending = true;
+        while (this.sending && this.reportQueue.length) {
+            try {
+                const req = this.reportQueue[0].clone();
+                const res = await fetch(signRequest(this.reportQueue[0]));
+                if (res.ok) {
+                    this.reportQueue.shift();
+                    this.errorCount = 0;
+                    console.log('[EntcoreTracker] View tracked ' + await req?.text());
+                } else {
+                    throw new Error('[EntcoreTracker] Report failed. ' + await req?.text());
+                }
+            } catch (e) {
+                if (++this.errorCount >= 3) this.sending = false;
+            }
+        }
+        this.sending = false;
+    }
+
+    async trackView(path: string[]) {
+        await super.trackView(path);
+        if (!this.isReady) return
+        const moduleName = path[0] === 'timeline'
+            ? ['blog', 'news', 'schoolbook'].includes(path[2]?.toLowerCase())
+                ? path[2]
+                : 'timeline'
+            : path[0]
+        if (this.lastModulename !== moduleName) {
+            this.reportQueue.push(new Request(
+                `${Conf.currentPlatform.url}/infra/event/mobile/store`,
+                {
+                    method: 'POST',
+                    body: JSON.stringify({ module: moduleName })
+                }
+            ))
+            this.lastModulename = moduleName;
+        }
+        this.sendReportQueue();
+    }
+
+    get isReady(): boolean { return true; }
+}
+
+export const DefaultEntcoreTracker = new EntcoreTracker({});
 
 export class TrackerSet extends Tracker<{}> {
     private _trackers: Array<Tracker<any>> = [];
@@ -183,3 +246,4 @@ export class TrackerSet extends Tracker<{}> {
 export const Trackers = new TrackerSet({});
 Trackers.addTracker(DefaultMatomoTracker);
 Trackers.addTracker(DefaultAppCenterTracker);
+Trackers.addTracker(DefaultEntcoreTracker);

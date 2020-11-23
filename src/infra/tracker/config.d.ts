@@ -7,4 +7,8 @@ export interface IMatomoTrackerOptions {
     siteId: number;
 }
 
-export type ITrackerOptions = IAppCenterTrackerOptions & IMatomoTrackerOptions;
+export interface IEntcoreTrackerOptions {
+
+}
+
+export type ITrackerOptions = IAppCenterTrackerOptions & IMatomoTrackerOptions & IEntcoreTrackerOptions;

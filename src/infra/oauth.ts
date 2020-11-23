@@ -430,6 +430,7 @@ export class OAuth2RessourceOwnerPasswordClient {
  * Scopes needed for the application.
  */
 export const scopes = `
+ infra
  actualites
  blog
  conversation
