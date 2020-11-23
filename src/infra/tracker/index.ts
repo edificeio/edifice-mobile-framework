@@ -195,17 +195,26 @@ export class EntcoreTracker extends Tracker<IEntcoreTrackerOptions> {
     async trackView(path: string[]) {
         await super.trackView(path);
         if (!this.isReady) return
-        const moduleName = path[0] === 'timeline'
+        const moduleName = (path[0] === 'timeline'
             ? ['blog', 'news', 'schoolbook'].includes(path[2]?.toLowerCase())
                 ? path[2]
                 : 'timeline'
-            : path[0]
-        if (this.lastModulename !== moduleName) {
+            : path[0]).toLowerCase();
+        const moduleAccessMap = {
+            "blog": "Blog",
+            "news": "Actualites",
+            "schoolbook": "SchoolBook",
+            "homework": "Homeworks",
+            "workspace": "Worksapce",
+            "conversation": "Conversation"
+            // ToDo : add Zimbra and Viesco
+        }
+        if (this.lastModulename !== moduleName && moduleAccessMap.hasOwnProperty(moduleName)) {
             this.reportQueue.push(new Request(
                 `${Conf.currentPlatform.url}/infra/event/mobile/store`,
                 {
                     method: 'POST',
-                    body: JSON.stringify({ module: moduleName })
+                    body: JSON.stringify({ module: moduleAccessMap[moduleName] })
                 }
             ))
             this.lastModulename = moduleName;
