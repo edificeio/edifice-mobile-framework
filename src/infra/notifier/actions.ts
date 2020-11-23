@@ -12,7 +12,7 @@ export const notifierShowAction = (opts: {
 }) => {
   return (dispatch: Dispatch) => {
     if (!opts.persistent) {
-      setTimeout(() => dispatch(notifierHideAction(opts.id)), opts.duration || 2000);
+      setTimeout(() => dispatch(notifierHideAction(opts.id)), opts.duration || 5000);
     }
     dispatch({
       type: notifierActionTypes.show,

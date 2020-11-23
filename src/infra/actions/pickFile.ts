@@ -60,9 +60,9 @@ const pickIOS: FilePickerPromise = (resolve, reject) => {
 const pickImage: FilePickerPromise = (resolve, reject) => {
   ImagePicker.showImagePicker(transformCaptions(photoCaptions), result => {
     if (result.didCancel) {
-      reject(new Error("Cancelled"));
+      reject(new Error("Cancelled picking image"));
     } else if (result.error) {
-      reject(new Error("Error"));
+      reject(new Error("Error picking image"));
     } else {
       const { uri, fileName, type } = result;
       resolve({ mime: type, name: fileName || uri.split("tmp/")[1], uri: uri.split("file://")[1] });
@@ -81,12 +81,12 @@ const pickDocument = (onlyImages? : boolean) => async (resolve, reject) => {
 
     resolve({ mime: type, name: name, uri: realURI });
   } catch {
-    reject(new Error("Cancelled"));
+    reject(new Error("Error picking document"));
   }
 };
 
 const pickClosed = (_: any, reject: (error: Error) => void) => {
-  reject(new Error("Cancelled"));
+  reject(new Error("Cancelled picking document"));
 };
 
 export default pick;

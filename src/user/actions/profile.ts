@@ -43,7 +43,17 @@ export const profileUpdateErrorAction = profileUpdateActionBuilder(actionTypePro
 export function profileUpdateAction(updatedProfileValues: IUpdatableProfileValues, updateAvatar: boolean) {
   return async (dispatch: Dispatch & ThunkDispatch<any, void, AnyAction>, getState: () => any) => {
     const notifierId = `profile${updateAvatar ? "One" : "Two"}`;
-    
+    const notifierSuccessText = I18n.t(`ProfileChange${updateAvatar ? "Avatar" : ""}Success`);
+    const getNotifierErrorText = () => {
+      if (updateAvatar) {
+        return updatedProfileValues.picture === ""
+          ? I18n.t("ProfileDeleteAvatarError")
+          : I18n.t("ProfileChangeAvatarErrorUploaded")
+      } else {
+        return I18n.t("ProfileChangeError");
+      }
+    }
+
     if (!Conf.currentPlatform) throw new Error("must specify a platform");
     for (const index in updatedProfileValues) {
       if (updatedProfileValues.hasOwnProperty(index)) {
@@ -53,6 +63,7 @@ export function profileUpdateAction(updatedProfileValues: IUpdatableProfileValue
         }
       }
     }
+
     dispatch(profileUpdateRequestedAction(updatedProfileValues));
     try {
       const userId = getState().user.info.id;
@@ -69,7 +80,7 @@ export function profileUpdateAction(updatedProfileValues: IUpdatableProfileValue
       dispatch(profileUpdateSuccessAction(updateAvatar ? {photo: updatedProfileValues.picture} : updatedProfileValues));
       dispatch(notifierShowAction({
         id: notifierId,
-        text: I18n.t("ProfileChangeSuccess"),
+        text: notifierSuccessText,
         icon: 'checked',
         type: 'success'
       }));
@@ -89,12 +100,11 @@ export function profileUpdateAction(updatedProfileValues: IUpdatableProfileValue
       } else {
         dispatch(notifierShowAction({
           id: notifierId,
-          text: I18n.t("ProfileChangeError"),
+          text: getNotifierErrorText(),
           icon: 'close',
           type: 'error'
         }));
-        Trackers.trackEvent("Profile", "UPDATE ERROR", "ProfileChangeError");
-
+        Trackers.trackEvent("Profile", "UPDATE ERROR", `${updateAvatar ? "Avatar" : "Profile"}ChangeError`);
       }
     }
   }

@@ -59,8 +59,12 @@ export const UserCard = ({
       }}
     >
       {hasAvatar
-        ? <TouchableOpacity onPress={() => onChangeAvatar()}>
+        ? <TouchableOpacity
+            onPress={() => updatingAvatar ? null : onChangeAvatar()}
+            activeOpacity={updatingAvatar ? 1 : 0}
+          >
             <IconButton
+              disabled={updatingAvatar}
               iconName="pencil"
               iconColor={CommonStyles.white}
               iconSize={15}
@@ -69,8 +73,12 @@ export const UserCard = ({
           </TouchableOpacity>
         : <View style={{height: 30, width: 30}}/>
       }
-      <TouchableOpacity onPress={() => hasAvatar ? onDeleteAvatar() : onChangeAvatar()}>
+      <TouchableOpacity
+        onPress={() => updatingAvatar ? null : hasAvatar ? onDeleteAvatar() : onChangeAvatar()}
+        activeOpacity={updatingAvatar ? 1 : 0}
+      >
         <IconButton
+          disabled={updatingAvatar}
           iconName={hasAvatar ? "trash" : "camera-on"}
           iconColor={CommonStyles.white}
           buttonStyle={{backgroundColor: CommonStyles.primary}}

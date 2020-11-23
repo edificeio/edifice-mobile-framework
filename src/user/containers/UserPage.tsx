@@ -1,5 +1,4 @@
 import * as React from "react";
-import { Alert } from "react-native";
 import I18n from "i18n-js";
 import { connect } from "react-redux";
 import DeviceInfo from 'react-native-device-info';
@@ -35,6 +34,8 @@ import { signURISource } from "../../infra/oauth";
 import Conf from "../../../ode-framework-conf";
 import Notifier from "../../infra/notifier/container";
 import { IUserInfoState } from "../state/info";
+import { notifierShowAction } from "../../infra/notifier/actions";
+import { Trackers } from "../../infra/tracker";
 
 export const UserPageNavigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) =>
   standardNavScreenOptions(
@@ -45,12 +46,25 @@ export const UserPageNavigationOptions = ({ navigation }: { navigation: Navigati
     navigation
   );
 
+  const uploadAvatarError = () => {
+    return (dispatch) => {
+      dispatch(notifierShowAction({
+        id: "profileOne",
+        text: I18n.t("ProfileChangeAvatarError"),
+        icon: 'close',
+        type: 'error'
+      }));
+      Trackers.trackEvent("Profile", "UPDATE ERROR", "AvatarChangeError");
+    }
+  }
+
 // tslint:disable-next-line:max-classes-per-file
 export class UserPage extends React.PureComponent<
   {
     onLogout: () => Promise<void>;
     onUploadAvatar: (avatar: ContentUri[]) => Promise<void>;
     onUpdateAvatar: (uploadedAvatarUrl: string) => Promise<void>;
+    onUploadAvatarError: () => void;
     userinfo: IUserInfoState;
     navigation: any;
   },
@@ -87,12 +101,13 @@ export class UserPage extends React.PureComponent<
 
   public render() {
     //avoid setstate on modalbox when unmounted
-    const { onUploadAvatar, onUpdateAvatar, userinfo } = this.props;
+    const { onUploadAvatar, onUpdateAvatar, onUploadAvatarError, userinfo } = this.props;
     const { showDisconnect, updatingAvatar } = this.state;
+
     return (
       <PageContainer>
         <ConnectionTrackingBar/>
-        <Notifier id="profileOne" />
+        <Notifier id="profileOne"/>
         {showDisconnect && (
           <ModalBox backdropOpacity={0.5} isVisible={showDisconnect}>
             {this.disconnectBox()}
@@ -113,18 +128,18 @@ export class UserPage extends React.PureComponent<
               const uploadedAvatar = Object.values(formattedData)[0];
               const uploadedAvatarUrl = uploadedAvatar.url;
               await onUpdateAvatar(uploadedAvatarUrl);
-            } catch(err) {
-              err.message !== "Cancelled" && Alert.alert(I18n.t("ProfileChangeAvatarError"));
+            } catch (err) {
+              if (!(err instanceof Error) || err.message === "Error picking image") {
+                onUploadAvatarError();
+              }
             } finally {
               this.setState({updatingAvatar: false});
             }}
           }
           onDeleteAvatar={async () => {
             try {
-              this.setState({updatingAvatar: true})
-              await onUpdateAvatar("")
-            } catch(err) {
-              Alert.alert(I18n.t("ProfileDeleteAvatarError"));
+              this.setState({updatingAvatar: true});
+              await onUpdateAvatar("");
             } finally {
               this.setState({updatingAvatar: false});
             }
@@ -191,7 +206,8 @@ const UserPageConnected = connect(
   (dispatch: Dispatch) => ({
     onLogout: () => dispatch<any>(logout()),
     onUploadAvatar: (avatar: ContentUri[]) => uploadDocument(dispatch, avatar),
-    onUpdateAvatar: (imageWorkspaceUrl: string) => dispatch(profileUpdateAction({picture: imageWorkspaceUrl}, true))
+    onUpdateAvatar: (imageWorkspaceUrl: string) => dispatch(profileUpdateAction({picture: imageWorkspaceUrl}, true)),
+    onUploadAvatarError: () => dispatch(uploadAvatarError())
   })
 )(UserPage);
 
