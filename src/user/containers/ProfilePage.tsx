@@ -27,6 +27,8 @@ import { changePasswordResetAction } from "../actions/changePassword";
 import { getSessionInfo } from "../../App";
 import { ValidatorBuilder } from "../../utils/form"
 import withViewTracking from "../../infra/tracker/withViewTracking";
+import { signURISource } from "../../infra/oauth";
+import Conf from "../../../ode-framework-conf";
 
 export interface IProfilePageDataProps {
   userauth: IUserAuthState;
@@ -95,7 +97,9 @@ export class ProfilePage extends React.PureComponent<
             <SafeAreaView>
               
               <UserCard
-                id={this.props.userinfo.id!}
+                id={this.props.userinfo.photo 
+                  && signURISource(`${(Conf.currentPlatform as any).url}${this.props.userinfo.photo}`)
+                }
                 displayName={this.props.userinfo.displayName!}
                 type={this.props.userinfo.type! as "Student" | "Relative" | "Teacher" | "Personnel" | ("Student" | "Relative" | "Teacher" | "Personnel")[]}
               />

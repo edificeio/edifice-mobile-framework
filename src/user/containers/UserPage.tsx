@@ -144,9 +144,8 @@ export class UserPage extends React.PureComponent<
               this.setState({updatingAvatar: false});
             }
           }}
-          id={
-            userinfo.photo && signURISource(`${(Conf.currentPlatform as any).url}${userinfo.photo}`)
-            || getSessionInfo().userId!
+          id={userinfo.photo 
+            && signURISource(`${(Conf.currentPlatform as any).url}${userinfo.photo}`)
           }
           displayName={getSessionInfo().displayName!}
           type={getSessionInfo().type!}
