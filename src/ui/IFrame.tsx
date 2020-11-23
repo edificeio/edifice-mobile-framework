@@ -1,6 +1,5 @@
 import React from "react";
 import { View, Platform, StatusBar, ViewStyle, TouchableOpacity, SafeAreaView } from "react-native";
-import WebView from "react-native-webview";
 import I18n from "i18n-js";
 
 import { Loading } from ".";
@@ -9,6 +8,7 @@ import { FullScreenAction } from "./FullScreenAction";
 import { hasNotch } from "react-native-device-info";
 import { iosStatusBarHeight } from "./headers/Header";
 import { Italic } from "./Typography";
+import { SafeWebView } from "./Webview";
 
 export class IFrame extends React.Component<
 {
@@ -50,7 +50,7 @@ export class IFrame extends React.Component<
         >
           {httpError
             ? <Italic>{I18n.t("common-ErrorLoadingResource")}</Italic>
-            : <WebView
+            : <SafeWebView
                   style={{ alignSelf: "stretch"}}
                   source={{ uri: source || fullScreenSource }}
                   renderLoading={() => (

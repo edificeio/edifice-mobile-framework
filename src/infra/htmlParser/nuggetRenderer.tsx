@@ -335,7 +335,7 @@ function renderParseInlineImage(
 }
 
 /**
- * Build JSX <WebView> Element from an IframeNugget
+ * Build JSX <SafeWebView> Element from an IframeNugget
  * @param nugget IHtmlConverterIframeNugget A Top-level IframeNugget.
  * @param key string the traditional React key prop
  * @param style ViewStyle

@@ -576,7 +576,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
     // console.log(`encourtered iframe : "${tag.attributes}"`);
     // 1 - Build iframe ojbect representation
     let src = tag.attrs.src;
-    src = src.startsWith("//") ? "https:" + src : src; // (url starting by "//" won't work in <WebView>, manually add "https" if needed)
+    src = src.startsWith("//") ? "https:" + src : src; // (url starting by "//" won't work in <SafeWebView>, manually add "https" if needed)
     const iframeNugget: IIframeNugget = {
       src,
       type: HtmlParserNuggetTypes.Iframe
