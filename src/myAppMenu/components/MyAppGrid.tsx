@@ -1,6 +1,7 @@
 import * as React from "react";
 // @ts-ignore’
 import I18n from "i18n-js";
+import DeviceInfo from 'react-native-device-info';
 
 import { PageContainer } from "../../ui/ContainerContent";
 import { EmptyScreen } from "../../ui/EmptyScreen";
@@ -8,15 +9,19 @@ import { EmptyScreen } from "../../ui/EmptyScreen";
 import MyAppItem from "./MyAppItem";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { IAppModule } from "../../infra/moduleTool/types";
-import { View, ScrollView } from "react-native";
+import { View, ScrollView, Linking } from "react-native";
 import withViewTracking from "../../infra/tracker/withViewTracking";
 import { NavigationScreenProp, NavigationState } from "react-navigation";
+import { FlatButton } from "../../ui/FlatButton";
+import { CommonStyles } from "../../styles/common/styles";
+import { InfoBubble } from "../../ui/InfoBubble";
+import Conf from "../../../ode-framework-conf";
 
 class MyAppGrid extends React.PureComponent<{ navigation : NavigationScreenProp<NavigationState>}, {}> {
   private renderGrid(modules: IAppModule[]) {
     return (
-      <ScrollView>
-        <View style={{ flex: 1, flexDirection: "row", flexWrap: "wrap" }}>
+      <ScrollView contentContainerStyle={{justifyContent: "space-between", flexGrow: 1}} >
+        <View style={{flexDirection: "row", flexWrap: "wrap"}}>
           {modules.map(item => (
             <MyAppItem
               key={item.config.name}
@@ -26,6 +31,35 @@ class MyAppGrid extends React.PureComponent<{ navigation : NavigationScreenProp<
               onPress={() => this.props.navigation.navigate(item.config.name)}
             />
           ))}
+        </View>
+        <View style={{justifyContent: "center", height: 80}}>
+          <View>
+            <FlatButton
+              title={I18n.t("myapp-accessWeb")}
+              loading={false}
+              customButtonStyle={{backgroundColor: undefined, borderColor: CommonStyles.actionColor, borderWidth: 1.5}}
+              customTextStyle={{color: CommonStyles.actionColor}}
+              onPress={() => {
+                if (!Conf.currentPlatform) {
+                  console.warn("Must have a platform selected to redirect the user");
+                  return null;
+                }
+                const url = `${(Conf.currentPlatform as any).url}/welcome`
+                Linking.canOpenURL(url).then(supported => {
+                  if (supported) {
+                    Linking.openURL(url);
+                  } else {
+                    console.warn("[my apps] Don't know how to open URI: ", url);
+                  }
+                });
+              }}
+            />
+            <InfoBubble
+              infoText={I18n.t("myapp-infoBubbleText", {appName: DeviceInfo.getApplicationName()})}
+              infoTitle={I18n.t("myapp-infoBubbleTitle")}
+              infoImage={require("../../../assets/images/my-apps-infobubble.png")}
+            />
+          </View>
         </View>
       </ScrollView>
     );

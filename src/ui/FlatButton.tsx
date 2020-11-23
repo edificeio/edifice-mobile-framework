@@ -3,8 +3,7 @@ import * as React from "react";
 import { Row, RowProperties } from ".";
 import { CommonStyles } from "../styles/common/styles";
 import { Icon } from "./icons/Icon";
-import { connect } from "react-redux";
-import { View, ActivityIndicator } from "react-native";
+import { View, ActivityIndicator, ViewStyle, TextStyle } from "react-native";
 import styles from "../styles";
 import { Weight } from "./Typography";
 
@@ -19,6 +18,8 @@ export interface ValidTextIconProps {
   whiteSpace?: string;
   keyboardShow?: boolean;
   loading: boolean; // FIXME? Loading shouldn't be in state as it can change over time ?
+  customButtonStyle?: ViewStyle;
+  customTextStyle?: TextStyle;
 }
 
 export interface State {
@@ -30,12 +31,13 @@ const Disable = () => <View style={styles.Disable} />;
 export const FlatButton = ({
   disabled = false,
   leftName = "",
-  keyboardShow,
   onPress,
   rightName = "",
   title = "",
   whiteSpace = " ",
-  loading = false
+  loading = false,
+  customButtonStyle,
+  customTextStyle
 }: ValidTextIconProps) => {
   if (loading) {
     return <ActivityIndicator size="large" color={CommonStyles.primary} />;
@@ -43,15 +45,15 @@ export const FlatButton = ({
 
   return (
     <ValidStyle onPress={() => onPress()} disabled={disabled}>
-      <ButtonStyle disabled={disabled}>
-        <TextStyle disabled={disabled}>
+      <ButtonStyleComponent disabled={disabled} style={customButtonStyle}>
+        <TextStyleComponent disabled={disabled} style={customTextStyle}>
           {leftName.length > 0 && <Icon name={leftName} />}
           {whiteSpace}
           {title}
           {whiteSpace}
           {rightName.length > 0 && <Icon name={rightName} />}
-        </TextStyle>
-      </ButtonStyle>
+        </TextStyleComponent>
+      </ButtonStyleComponent>
       {disabled && <Disable />}
     </ValidStyle>
   );
@@ -67,7 +69,7 @@ const ValidStyle = (props: RowProperties) => (
   />
 );
 
-const ButtonStyle = style.view(
+const ButtonStyleComponent = style.view(
   {
     borderRadius: 38 * 0.5,
     paddingHorizontal: 36,
@@ -80,7 +82,7 @@ const ButtonStyle = style.view(
   })
 );
 
-const TextStyle = style.text(
+const TextStyleComponent = style.text(
   {
     fontFamily: CommonStyles.primaryFontFamily,
     fontSize: 14,
@@ -91,10 +93,3 @@ const TextStyle = style.text(
     color: disabled ? CommonStyles.actionColor : CommonStyles.inverseColor
   })
 );
-
-const isSynced = (synced: boolean[]) => {
-  if (synced === undefined) {
-    return true;
-  }
-  return synced.reduce((acc, elemIsSync) => acc || elemIsSync, false);
-};
