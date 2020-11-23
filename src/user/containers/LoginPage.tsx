@@ -220,7 +220,7 @@ export class LoginPage extends React.Component<
                 marginTop: error && !typing ? 10 : 30
               }}
             >
-              {(error === "not_premium" || error === "pre_deleted") && !typing ?
+              {(error === "not_premium" || error === "pre_deleted") && !this.state.typing ?
               <FlatButton
                 onPress={() => this.handleGoToWeb()}
                 disabled={false}
