@@ -182,7 +182,6 @@ export function activationAccount(model: IActivationModel) {
           console.log("[User][Activation] failed with error", res.status, resBody)
           dispatch(activationSubmitError(resBody.error.message));
           Trackers.trackEvent('Auth', 'ACTIVATE ERROR', resBody.error.message);
-          console.log("resBody.error.message:", resBody.error.message)
           return;
         }
       }

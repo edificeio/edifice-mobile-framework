@@ -254,7 +254,9 @@ INewsContentPageProps,
           ListHeaderComponent={
             <View>
               <View style={{ paddingHorizontal: 20 }}>
-                <ArticleContainer>{this.renderNews()}</ArticleContainer>
+                <ArticleContainer style={{paddingLeft: undefined, paddingRight: undefined}}>
+                  {this.renderNews()}
+                </ArticleContainer>
                 {resourceUri
                 ? <View style={{ marginTop: 12 }}>
                     <A

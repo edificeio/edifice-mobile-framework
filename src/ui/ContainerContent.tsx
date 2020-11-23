@@ -7,6 +7,8 @@ import { layoutSize } from "../styles/common/layoutSize";
 export const ArticleContainer = style.view({
   paddingTop: 5,
   paddingBottom: 5,
+  paddingLeft: 5,
+  paddingRight: 5,
   flex: 1,
   flexDirection: "column",
   flexWrap: "wrap"

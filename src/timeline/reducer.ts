@@ -5,6 +5,7 @@ import { IBlogCommentListState } from "./state/commentList";
 import * as reducerActions from "./reducerActions";
 import publishableBlogsReducer, { publishStatusReducer } from "./reducers/publishableBlogs";
 import blogCommentsReducer from "./reducers/blogCommentList";
+import flashMessageList from "./reducers/flashMessageList";
 import { createEndSessionActionType } from "../infra/redux/reducerFactory";
 
 export interface IMediaModel {
@@ -26,10 +27,27 @@ export interface INewsModel {
   type: string;
 }
 
+export interface IFlashMessageModel {
+  id: number;
+  contents: {
+    fr?: string;
+    en?: string;
+    es?: string;
+    de?: string;
+    pt?: string;
+    it?: string;
+    null: string
+  };
+  color: string | null;
+  customColor: string | null;
+  type?: string;
+}
+
 export interface INewsState {
   endReached: boolean;
   isFetching: boolean;
   news: INewsModel[];
+  flashMessages: IFlashMessageModel[];
   availableApps: any;
   selectedApps: any;
   refresh: boolean;
@@ -43,6 +61,7 @@ const initialState: INewsState = {
   endReached: false,
   isFetching: false,
   news: [],
+  flashMessages: [],
   availableApps: undefined,
   selectedApps: undefined,
   refresh: true,
@@ -77,6 +96,7 @@ export default (
     ...state,
     selectedBlogComments: blogCommentsReducer(state.selectedBlogComments, action),
     publishableBlogs: publishableBlogsReducer(state.publishableBlogs, action),
-    publishStatus: publishStatusReducer(state.publishStatus, action)
+    publishStatus: publishStatusReducer(state.publishStatus, action),
+    flashMessages: flashMessageList(state.flashMessages, action),
   };
 };
