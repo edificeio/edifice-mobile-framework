@@ -207,6 +207,7 @@ export class EntcoreTracker extends Tracker<IEntcoreTrackerOptions> {
             "homework": "Homeworks",
             "workspace": "Worksapce",
             "conversation": "Conversation",
+            "user": "MyAccount",
             "zimbra": "Zimbra",
             "viesco": "Presences"
         }
