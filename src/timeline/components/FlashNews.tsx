@@ -40,7 +40,7 @@ export class FlashNews extends React.PureComponent<IFlashNewsProps, INewsState> 
     const flashMessageHtml = contentsHasAppLanguage ? contents[appLanguage] : contents && contents[contentsLanguages[0]];
 
     return contents && contentsLanguages.length > 0
-      ? <ArticleContainer style={{ width: "100%" }}>
+      ? <ArticleContainer style={{ width: "100%", opacity: measuredText ? 1 : 0 }}>
           <TouchCard
             onLayout={e => {
               if (!measuredText) {
@@ -53,14 +53,15 @@ export class FlashNews extends React.PureComponent<IFlashNewsProps, INewsState> 
             style={{ 
               width: "100%",
               backgroundColor: CommonStyles.secondary,
-              paddingRight: 30,
-              height: longText && !isExtended ? 160 : undefined
+              height: longText && !isExtended ? 155 : undefined,
+              overflow: "hidden",
+              position: measuredText ? "relative" : "absolute"
             }}
           >
             <HtmlContentView
               html={flashMessageHtml}
               opts={{
-                globalTextStyle: {color: "#FFFFFF"},
+                globalTextStyle: {color: "#FFFFFF", paddingRight: 10},
                 textColor: false,
                 images: false,
                 iframes: false,
@@ -75,14 +76,21 @@ export class FlashNews extends React.PureComponent<IFlashNewsProps, INewsState> 
             </View>
             {longText && !isExtended
               ? <TouchableOpacity
-                  style={{ alignSelf: "flex-end" }}
+                  style={{
+                    backgroundColor: "#FFF",
+                    alignSelf: "flex-end",
+                    position: "absolute",
+                    bottom: 3,
+                    right: 6,
+                    paddingHorizontal: 5,
+                    borderRadius: 5
+                  }}
                   onPress={() => this.setState({isExtended: true})}
                 >
                   <Text
                     style={{ 
-                      color: "#FFFFFF",
+                      color: CommonStyles.secondary,
                       fontWeight: "bold",
-                      textDecorationLine: "underline",
                       fontStyle: "italic"
                     }}
                   >
