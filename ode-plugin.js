@@ -234,8 +234,10 @@ async function overrideSwitchTo(name, skipRestore, acceptAll, gitUri, gitBranch,
         const overrideFilePathRelative = path.relative(overridePath, overrideFilePath)
         const destFilePath = path.resolve(__dirname, overrideFilePathRelative);
         const destDirPath = path.dirname(destFilePath)
-        _mkdirsSync(destDirPath)
-        copyPromises.push(copyFile(overrideFilePath, destFilePath))
+        if (fs.existsSync(overrideFilePath)) {
+            _mkdirsSync(destDirPath)
+            copyPromises.push(copyFile(overrideFilePath, destFilePath))
+        }
     }
     await Promise.all(copyPromises);
     console.log("Files replaced successfully!")
@@ -542,8 +544,12 @@ async function fetchConfig(uri, branch, username, password) {
             const destFilepath = ode["config"][srcFilename];
             const destFilepathFull = path.resolve(__dirname, destFilepath);
             const srcFilepathFull = path.resolve(baseSrcPath, srcFilename);
-            console.log("Restoring config:", srcFilepathFull, "~>", destFilepathFull)
-            copyPromises.push(copyFile(srcFilepathFull, destFilepathFull));
+            if (fs.existsSync(srcFilepathFull)) {
+                console.log("Restoring config:", srcFilepathFull, "~>", destFilepathFull);
+                copyPromises.push(copyFile(srcFilepathFull, destFilepathFull));
+            } else {
+                console.log("Skipping config:", srcFilepathFull, "~>", destFilepathFull);
+            }
         }
     }
     await Promise.all(copyPromises);

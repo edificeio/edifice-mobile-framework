@@ -1,6 +1,6 @@
 // RN Imports
 import * as React from "react";
-import { initI18n } from "./infra/i18n";
+import { initI18n } from "./framework/i18n";
 import { StatusBar, View, AppState, AppStateStatus } from "react-native";
 import * as RNLocalize from "react-native-localize";
 import "react-native-gesture-handler";

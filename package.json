@@ -153,7 +153,13 @@
       "google-services.ios.plist": "ios/appe/GoogleService-Info.plist",
       "ode-framework-conf.ts": "ode-framework-conf.ts",
       "AppCenter-Config.plist": "ios/appe/AppCenter-Config.plist",
-      "appcenter-config.json": "android/app/src/main/assets/appcenter-config.json"
+      "appcenter-config.json": "android/app/src/main/assets/appcenter-config.json",
+      "conf/CustomTheme.ts": "src/conf/CustomTheme.ts",
+      "conf/IncludedModuleConfigs.ts": "src/conf/IncludedModuleConfigs.ts",
+      "conf/IncludedModules.ts": "src/conf/IncludedModules.ts",
+      "conf/I18nOverride/fr.json": "src/conf/I18nOverride/fr.json",
+      "conf/I18nOverride/en.json": "src/conf/I18nOverride/en.json",
+      "conf/I18nOverride/es.json": "src/conf/I18nOverride/es.json"
     },
     "current": "dev-default"
   }
