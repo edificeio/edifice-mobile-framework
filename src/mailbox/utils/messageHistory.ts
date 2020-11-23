@@ -20,7 +20,7 @@ export const separateMessageHistory = (messageBody: string) => {
 export const separateHistoryElements = (historyBody: string) => {
   let historyElements: string[] = [];
   let historyToCheck = historyBody;
-  const historyMessageRegex = /^(<p[^>]*?>&nbsp;<\/p>)(.*?)(<p[^>]*?>&nbsp;<\/p>.*)$/s
+  const historyMessageRegex = /^(<p[^>]*?>&nbsp;<\/p>)([\s\S]*?)(<p[^>]*?>&nbsp;<\/p>[\s\S]*)$/
   for (let i = 0; i < 5; i++) {
     const historyMessageMatch = historyToCheck && historyToCheck.match(historyMessageRegex);
     const historyMessageElement = historyMessageMatch &&  historyMessageMatch[2];
