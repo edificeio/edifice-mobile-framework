@@ -10,7 +10,7 @@ import { Platform } from "react-native";
 
 export const addMenu = () => {
   return {
-    text: I18n.t("add-document"),
+    text: I18n.t("add-file"),
     icon: "file-plus",
     id: "addDocument",
     onEvent: ({ dispatch, parentId }: any) => pickFile({ dispatch, parentId }),
