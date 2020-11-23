@@ -46,11 +46,23 @@ export const UserPageNavigationOptions = ({ navigation }: { navigation: Navigati
     navigation
   );
 
+  const pickImageError = () => {
+    return (dispatch) => {
+      dispatch(notifierShowAction({
+        id: "profileOne",
+        text: I18n.t("common-ErrorStorageAccess"),
+        icon: 'close',
+        type: 'error'
+      }));
+      Trackers.trackEvent("Profile", "UPDATE ERROR", "AvatarChangeError");
+    }
+  }
+
   const uploadAvatarError = () => {
     return (dispatch) => {
       dispatch(notifierShowAction({
         id: "profileOne",
-        text: I18n.t("ProfileChangeAvatarError"),
+        text: I18n.t("ProfileChangeAvatarErrorUpload"),
         icon: 'close',
         type: 'error'
       }));
@@ -64,6 +76,7 @@ export class UserPage extends React.PureComponent<
     onLogout: () => Promise<void>;
     onUploadAvatar: (avatar: ContentUri[]) => Promise<void>;
     onUpdateAvatar: (uploadedAvatarUrl: string) => Promise<void>;
+    onPickImageError: () => void;
     onUploadAvatarError: () => void;
     userinfo: IUserInfoState;
     navigation: any;
@@ -101,7 +114,7 @@ export class UserPage extends React.PureComponent<
 
   public render() {
     //avoid setstate on modalbox when unmounted
-    const { onUploadAvatar, onUpdateAvatar, onUploadAvatarError, userinfo } = this.props;
+    const { onUploadAvatar, onUpdateAvatar, onPickImageError, onUploadAvatarError, userinfo } = this.props;
     const { showDisconnect, updatingAvatar } = this.state;
 
     return (
@@ -129,7 +142,9 @@ export class UserPage extends React.PureComponent<
               const uploadedAvatarUrl = uploadedAvatar.url;
               await onUpdateAvatar(uploadedAvatarUrl);
             } catch (err) {
-              if (!(err instanceof Error) || err.message === "Error picking image") {
+              if (err.message === "Error picking image") {
+                onPickImageError();
+              } else if (!(err instanceof Error)) {
                 onUploadAvatarError();
               }
             } finally {
@@ -204,9 +219,10 @@ const UserPageConnected = connect(
   },
   (dispatch: Dispatch) => ({
     onLogout: () => dispatch<any>(logout()),
+    onPickImageError: () => dispatch(pickImageError()),
+    onUploadAvatarError: () => dispatch(uploadAvatarError()),
     onUploadAvatar: (avatar: ContentUri[]) => uploadDocument(dispatch, avatar),
-    onUpdateAvatar: (imageWorkspaceUrl: string) => dispatch(profileUpdateAction({picture: imageWorkspaceUrl}, true)),
-    onUploadAvatarError: () => dispatch(uploadAvatarError())
+    onUpdateAvatar: (imageWorkspaceUrl: string) => dispatch(profileUpdateAction({picture: imageWorkspaceUrl}, true))
   })
 )(UserPage);
 

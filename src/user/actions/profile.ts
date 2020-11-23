@@ -48,7 +48,7 @@ export function profileUpdateAction(updatedProfileValues: IUpdatableProfileValue
       if (updateAvatar) {
         return updatedProfileValues.picture === ""
           ? I18n.t("ProfileDeleteAvatarError")
-          : I18n.t("ProfileChangeAvatarErrorUploaded")
+          : I18n.t("ProfileChangeAvatarErrorAssign")
       } else {
         return I18n.t("ProfileChangeError");
       }
