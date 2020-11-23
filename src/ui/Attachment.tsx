@@ -360,10 +360,12 @@ class Attachment extends React.PureComponent<
     if (att.filename) {
       return att.filename;
     } else {
-      return resHeaders['Content-Disposition']
-      ? (resHeaders['Content-Disposition'] as string).replace(/.*filename="(.*)"/, '$1')
-      : resHeaders['Content-Type']
-      ? `${attachmentId}.${Mime.getExtension((resHeaders['Content-Type'] as string))}`
+      const contentDisposition = resHeaders['Content-Disposition'] || resHeaders['content-disposition'];
+      const contentType = resHeaders['Content-Type'] || resHeaders['content-type'];
+      return contentDisposition
+      ? (contentDisposition as string).replace(/.*filename="(.*)"/, '$1')
+      : contentType
+      ? `${attachmentId}.${Mime.getExtension((contentType as string))}`
       : undefined;
     }
   }
