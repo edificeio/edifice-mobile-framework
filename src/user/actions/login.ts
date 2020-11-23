@@ -137,11 +137,11 @@ export function loginAction(
       }
 
       // === 3: check user validity
-      // if (!userinfo2.hasApp) {
-      //   const err = new Error("[loginAction]: User's structure is not premium.");
-      //   (err as any).type = LoginFlowErrorType.NOT_PREMIUM;
-      //   throw err;
-      // }
+      if (!userinfo2.hasApp) {
+        const err = new Error("[loginAction]: User's structure is not premium.");
+        (err as any).type = LoginFlowErrorType.NOT_PREMIUM;
+        throw err;
+      }
 
       // === 4: Gather another user information
       let userdata: any, userPublicInfo: any;
