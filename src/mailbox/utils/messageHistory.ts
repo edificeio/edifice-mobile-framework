@@ -13,6 +13,27 @@ export const separateMessageHistory = (messageBody: string) => {
     .replace(/.length - 1 && receiver.displayName">,/g, '.length - 1 && receiver.displayName">')
     .replace(/.length - 1">,/g, '.length - 1">');
   const messageHtml = messageBody && messageBody.replace(historyRegex, "");
-  
+
   return { messageHtml, historyHtml };
+}
+
+export const separateHistoryElements = (historyBody: string) => {
+  let historyElements: string[] = [];
+  let historyToCheck = historyBody;
+  const historyMessageRegex = /^(<p[^>]*?>&nbsp;<\/p>)(.*?)(<p[^>]*?>&nbsp;<\/p>.*)$/s
+  for (let i = 0; i < 5; i++) {
+    const historyMessageMatch = historyToCheck && historyToCheck.match(historyMessageRegex);
+    const historyMessageElement = historyMessageMatch &&  historyMessageMatch[2];
+    const remainingHistory = historyMessageMatch &&  historyMessageMatch[3];
+    if (historyMessageMatch)  {
+      historyElements.push(historyMessageElement);
+      historyToCheck = remainingHistory;
+      i === 4 && historyElements.push(historyToCheck.replace(/<p[^>]*?>&nbsp;<\/p>/g, "<p>&nbsp;</p><br><br>"));
+    } else {
+      historyElements.push(historyToCheck);
+      break;
+    }
+  }
+  
+  return historyElements;
 }

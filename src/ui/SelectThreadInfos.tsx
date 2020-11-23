@@ -11,7 +11,7 @@ import { removeAccents } from "../utils/string";
 import { IConversationMessage } from "../mailbox/reducers";
 import { MessageBubble } from "../mailbox/components/ThreadMessage";
 import { TextBold } from "./text";
-import { separateMessageHistory } from "../mailbox/utils/messageHistory";
+import { separateMessageHistory, separateHistoryElements } from "../mailbox/utils/messageHistory";
 
 export const UserLabel = style.text({
   color: CommonStyles.primary,
@@ -84,8 +84,9 @@ export default class SelectThreadInfos extends React.Component<
     const { onUnpickUser, pickedUsers, subject, message, type } = this.props;
     const { showHistory } = this.state;
     const separatedBody = message && separateMessageHistory(message.body);
-    const historyHtml = separatedBody && separatedBody.historyHtml;
     const messageHtml = separatedBody && separatedBody.messageHtml;
+    const historyHtml = separatedBody && separatedBody.historyHtml;
+    const separatedHistoryHtml = historyHtml && separateHistoryElements(historyHtml);
     let { searchText, subjectText } = this.state;
     subjectText = subjectText ?? subject;
     let index = 0;
@@ -183,7 +184,7 @@ export default class SelectThreadInfos extends React.Component<
                             >
                               <MessageBubble
                                 contentHtml={messageHtml}
-                                historyHtml={historyHtml}
+                                historyHtml={separatedHistoryHtml}
                                 onShowHistory={() => this.setState({ showHistory: !showHistory })}
                                 showHistory={showHistory}
                                 canScroll

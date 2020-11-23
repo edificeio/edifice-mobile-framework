@@ -14,7 +14,7 @@ import { getSessionInfo } from "../../App";
 import { Trackers } from "../../infra/tracker";
 import { Icon } from "../../ui/icons/Icon";
 import { A } from "../../ui/Typography";
-import { separateMessageHistory } from "../utils/messageHistory";
+import { separateMessageHistory, separateHistoryElements } from "../utils/messageHistory";
 
 export const MessageBubble = ({ 
     contentHtml,
@@ -29,7 +29,7 @@ export const MessageBubble = ({
   }:
   {
     contentHtml: string,
-    historyHtml?: string,
+    historyHtml?: string[] | string,
     onShowHistory?: () => void,
     showHistory?: boolean,
     hasAttachments?: boolean,
@@ -81,7 +81,7 @@ export const MessageBubble = ({
     />
     {historyHtml
       ? <TouchableOpacity
-          style={{ flexDirection: "row", alignItems: "center", marginTop: 20 }}
+          style={{ flexDirection: "row", alignItems: "center", marginTop: 30 }}
           onPress={onShowHistory}
         >
           <Icon
@@ -96,11 +96,17 @@ export const MessageBubble = ({
       : null
     }
     {showHistory
-      ? <HtmlContentView
-          html={historyHtml}
-          emptyMessage={htmlEmptyMessage}
-          opts={htmlOpts}
-        />
+      ? typeof historyHtml === "string"
+        ? <HtmlContentView
+            html={historyHtml}
+            emptyMessage={htmlEmptyMessage}
+            opts={htmlOpts}
+          />
+        : <IndentedHistory
+            historyHtml={historyHtml}
+            htmlEmptyMessage={htmlEmptyMessage}
+            htmlOpts={htmlOpts}
+          />
       : null
     }
   </View>;
@@ -117,6 +123,31 @@ export const MessageBubble = ({
         {content}
       </View>
 };
+
+const IndentedHistory = ({historyHtml, htmlEmptyMessage, htmlOpts}) => {
+    let accumulatedHistory: JSX.Element | null = null;
+    historyHtml.reverse().forEach((message, index) => {
+      accumulatedHistory =
+        <View
+          style={{
+            borderLeftWidth: 1,
+            borderLeftColor: CommonStyles.missingGrey,
+            paddingLeft: 12,
+            marginLeft: 5,
+            marginTop: index === historyHtml.length-1 ? 20 : 40
+          }}
+        >
+          <HtmlContentView
+            html={message}
+            emptyMessage={htmlEmptyMessage}
+            opts={htmlOpts}
+          />
+          {accumulatedHistory}
+        </View>
+    });
+
+    return accumulatedHistory;
+}
 
 const MessageStatus = ({ status, date }) => {
   if (status === undefined || status === ConversationMessageStatus.sent)
@@ -177,8 +208,9 @@ export default class ThreadMessage extends React.PureComponent<
     } = this.props;
     const { showHistory } = this.state;
     const separatedBody = separateMessageHistory(body);
-    const historyHtml = id === threadId ? separatedBody.historyHtml : undefined;
     const messageHtml = separatedBody.messageHtml;
+    const historyHtml = id === threadId ? separatedBody.historyHtml : undefined;
+    const separatedHistoryHtml = historyHtml && separateHistoryElements(historyHtml);
     const hasAttachments = attachments && attachments.length > 0;
     const isMine = from === getSessionInfo().userId;
     // medium-text is used to write previous sender
@@ -225,7 +257,7 @@ export default class ThreadMessage extends React.PureComponent<
           {body
             ? <MessageBubble
                 contentHtml={messageHtml}
-                historyHtml={historyHtml}
+                historyHtml={separatedHistoryHtml}
                 onShowHistory={() => this.setState({ showHistory: !showHistory })}
                 showHistory={showHistory}
                 hasAttachments={hasAttachments}

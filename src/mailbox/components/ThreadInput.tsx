@@ -21,7 +21,7 @@ import { MessageBubble } from "./ThreadMessage";
 import { Text } from "../../ui/text";
 import { NavigationScreenProp, NavigationState } from "react-navigation";
 import { IAttachment } from "../actions/messages";
-import { separateMessageHistory } from "../utils/messageHistory";
+import { separateMessageHistory, separateHistoryElements } from "../utils/messageHistory";
 import { Trackers } from "../../infra/tracker";
 import { createThread } from "../actions/createThread";
 import conversationThreadSelected from "../actions/threadSelected";
@@ -261,8 +261,9 @@ class ThreadInput extends React.PureComponent<
     const lastMessageMine = lastMessage && lastMessage.from === getSessionInfo().userId;
     const attachmentsAdded = attachments.length > 0;
     const separatedBody = backMessage && separateMessageHistory(backMessage.body);
-    const historyHtml = separatedBody && separatedBody.historyHtml;
     const messageHtml = separatedBody && separatedBody.messageHtml;
+    const historyHtml = separatedBody && separatedBody.historyHtml;
+    const separatedHistoryHtml = historyHtml && separateHistoryElements(historyHtml);
     const receiversIds = lastMessage
       ? ThreadInput.findReceivers2(lastMessage)
       : thread
@@ -430,7 +431,7 @@ class ThreadInput extends React.PureComponent<
           ? <MessageBubble
             canScroll
             contentHtml={messageHtml}
-            historyHtml={historyHtml}
+            historyHtml={separatedHistoryHtml}
             onShowHistory={() => this.setState({ showHistory: !showHistory })}
             showHistory={showHistory}
             containerStyle={{ marginBottom: 0, marginTop: 0 }}
