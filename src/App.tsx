@@ -53,6 +53,9 @@ import { createMainStore } from "./AppStore";
 import { IUserAuthState } from "./user/reducers/auth";
 import { IUserInfoState } from "./user/state/info";
 
+// App Conf
+import "./infra/appConf";
+
 // Disable Yellow Box on release builds.
 if (__DEV__) {
   // tslint:disable-next-line:no-console
