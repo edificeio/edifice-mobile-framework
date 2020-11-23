@@ -1,16 +1,15 @@
 /**
  * Information about a post. Displayed just before a notification in timeline.
  */
-import I18n from "i18n-js";
-
 import * as React from "react";
 import { Text } from "react-native";
+import I18n from "i18n-js";
+import moment from "moment";
 
 import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
 import { CenterPanel, Header, LeftPanel } from "../../ui/ContainerContent";
 import { Heavy, Light } from "../../ui/Typography";
 import { CommonStyles } from "../../styles/common/styles";
-import { getTimeToStr } from "../../utils/date";
 import { getSessionInfo } from "../../App";
 import { TextLight, TextColor } from "../../ui/text";
 
@@ -48,8 +47,7 @@ export default ({
             fontSize: 14
           }}
         >
-          {/* FIXME: Use moment.js instead of this */}
-          {getTimeToStr(date)}
+          {moment(date).fromNow()}
         </Text>
       </CenterPanel>
     </Header>

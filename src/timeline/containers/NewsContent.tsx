@@ -32,7 +32,6 @@ import { getSessionInfo } from "../../App";
 import { schoolbooks } from "../actions/dataTypes";
 import { fetchBlogCommentListAction, dataActions } from "../actions/commentList";
 import { getBlogCommentListState, IBlogComment, IBlogCommentList } from "../state/commentList";
-import { getTimeToStr } from "../../utils/date";
 import { TextPreview } from "../../ui/TextPreview";
 import withViewTracking from "../../infra/tracker/withViewTracking";
 import { Trackers } from "../../infra/tracker";
