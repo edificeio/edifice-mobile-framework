@@ -11,6 +11,8 @@ import userConfig from "../config";
 
 export interface IForgotModel {
   login: string;
+  firstName?: string | null;
+  structureId?: string | null;
 }
 
 export interface IForgotSubmitPayload extends IForgotModel {
@@ -43,34 +45,43 @@ function actionCreateForgotRequest(userLogin: string) {
 }
 
 function actionCreateForgotReceive(
-  result: { error: string } | { status: string }
+  result: { error?: string, status?: string, structures?: Array<any>, ok: boolean | undefined }
 ) {
   return { type: actionTypeForgetReceive, result };
 }
 
 // THUNKS -----------------------------------------------------------------------------------------
 
-export function action_forgotSubmit(userLogin: string) {
+export function action_forgotSubmit(userInfo: IForgotModel, forgotId?: boolean) {
   return async dispatch => {
     try {
-      // console.log("action_forgotSubmit");
-      dispatch(actionCreateForgotRequest(userLogin));
+      dispatch(actionCreateForgotRequest(userInfo.login));
 
-      const res = await fetch(
-        `${(Conf.currentPlatform as any).url}/auth/forgot-password`,
-        {
-          body: JSON.stringify({
-            login: userLogin,
+      const payLoad = forgotId
+        ? {
+            mail: userInfo.login,
+            firstName: userInfo.firstName,
+            structureId: userInfo.structureId,
             service: "mail"
-          }),
+          }
+        : {
+            login: userInfo.login,
+            service: "mail"
+          };
+      const res = await fetch(
+        `${(Conf.currentPlatform as any).url}/auth/forgot-${forgotId ? "id" : "password"}`,
+        {
+          body: JSON.stringify(payLoad),
           method: "POST"
         }
       );
       const resJson = await res.json();
-      // console.log("resJson", resJson);
-      dispatch(actionCreateForgotReceive(resJson));
+      const resStatus = await res.status;
+      const ok = 200 <= resStatus  && resStatus < 300
+      const response = { ...resJson, ok }
+      dispatch(actionCreateForgotReceive(response));
     } catch (err) {
-      dispatch(actionCreateForgotReceive({ error: "" }));
+      dispatch(actionCreateForgotReceive({ error: "", ok: false}));
       // tslint:disable-next-line:no-console
       console.warn(err);
     }
@@ -79,7 +90,6 @@ export function action_forgotSubmit(userLogin: string) {
 
 export function action_forgotReset() {
   return async dispatch => {
-    // console.log("action_forgotReset");
-    dispatch(actionCreateForgotReceive({ status: "" }));
+    dispatch(actionCreateForgotReceive({ status: "", ok: false}));
   };
 }

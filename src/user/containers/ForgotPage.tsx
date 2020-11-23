@@ -1,4 +1,3 @@
-import * as React from "react";
 import { connect } from "react-redux";
 import {
   ForgotPage,
@@ -21,8 +20,8 @@ const mapStateToProps: (state: any) => IForgotPageDataProps = state => {
 const mapDispatchToProps: (dispatch) => IForgotPageEventProps = dispatch => {
   return {
     dispatch,
-    onSubmit(model) {
-      return dispatch(action_forgotSubmit(model.login));
+    onSubmit(model, forgotId) {
+      return dispatch(action_forgotSubmit(model, forgotId));
     },
     onReset() {
       return dispatch(action_forgotReset());
@@ -30,9 +29,9 @@ const mapDispatchToProps: (dispatch) => IForgotPageEventProps = dispatch => {
   };
 };
 
-const ConnectedForgatPage = connect(
+const ConnectedForgotPage = connect(
   mapStateToProps,
   mapDispatchToProps
 )(ForgotPage);
 
-export default withViewTracking('auth/forgot')(ConnectedForgatPage);
+export default withViewTracking('auth/forgot')(ConnectedForgotPage);

@@ -7,28 +7,37 @@ import {
   TextInput,
   View,
   SafeAreaView,
-  ScrollView
+  ScrollView,
+  TouchableOpacity
 } from "react-native";
+import {Picker} from '@react-native-community/picker';
+
 import Conf from "../../../ode-framework-conf";
 import { navigate } from "../../navigation/helpers/navHelper";
-import { FlatButton } from "../../ui";
+import { FlatButton, Icon } from "../../ui";
 import BottomSwitcher from "../../ui/BottomSwitcher";
 import { TextInputLine } from "../../ui/forms/TextInputLine";
 import { Text, TextH1 } from "../../ui/text";
 import { ErrorMessage, InfoMessage, TextColor } from "../../ui/Typography";
 import { IForgotModel } from "../actions/forgot";
+import { CommonStyles } from "../../styles/common/styles";
 
 // TYPES ---------------------------------------------------------------------------
 
-export type IForgotPageState = IForgotModel & {
-  typing: boolean;
+export type IForgotPageState = {
+  login: string;
+  firstName: string | null;
+  structureName: string | null;
+  showStructurePicker: boolean;
+  editing: boolean;
+  structures: Array<any>
 };
 export interface IForgotPageDataProps {
   fetching: boolean;
-  result: { error: string } | { status: string };
+  result: { error?: string, status?: string, structures?: Array<any>, ok: boolean | undefined };
 }
 export interface IForgotPageEventProps {
-  onSubmit(model: IForgotModel): Promise<void>;
+  onSubmit(model: IForgotModel, forgotId?: boolean): Promise<void>;
   onReset(): Promise<void>;
 }
 export type IForgotPageProps = IForgotPageDataProps &
@@ -43,11 +52,21 @@ export class ForgotPage extends React.PureComponent<
   // fully controller component
   public state: IForgotPageState = {
     login: "",
-    typing: false
+    firstName: null,
+    structureName: null,
+    showStructurePicker: false,
+    editing: false,
+    structures: []
   };
   private handleSubmit = async () => {
-    this.props.onSubmit({ ...this.state });
-    this.setState({ typing: false });
+    const { navigation } = this.props;
+    const { login, firstName, structureName, structures } = this.state;
+    const forgotId = navigation.getParam("forgotId");
+    const selectedStructure = structures && structures.find(structure => structure.structureName === structureName);
+    const structureId = selectedStructure && selectedStructure.structureId;
+
+    this.props.onSubmit({ login, firstName, structureId }, forgotId);
+    this.setState({ editing: false });
   };
 
   // Refs
@@ -62,26 +81,39 @@ export class ForgotPage extends React.PureComponent<
       payload => {
         this.setState({
           login: "",
-          typing: false
+          editing: false,
+          firstName: null,
+          structureName: null,
+          showStructurePicker: false,
+          structures: []
         });
         this.props.onReset();
       }
     );
   }
 
-  public render() {
-    const { login, typing } = this.state;
-    const { fetching, result } = this.props;
+  public componentDidUpdate(prevProps) {
+    const { result } = this.props
+    if (result?.structures && !prevProps.result?.structures) {
+      this.setState({structures: result?.structures })
+    }
+  }
 
+  public render() {
+    const { fetching, result, navigation } = this.props;
+    const { editing, login, firstName, structureName, showStructurePicker, structures } = this.state;
+    const forgotId = navigation.getParam("forgotId");
+    const hasStructures = structures.length > 0;
     const isError = result.hasOwnProperty("error");
     const errorMsg = isError ? (result as { error: string }).error : null;
-    const errorText = errorMsg
-      ? I18n.t("forgot-" + errorMsg.replace(/\./g, "-"))
-      : "common-ErrorUnknown";
-
-    const isSuccess =
-      result.hasOwnProperty("status") &&
-      (result as { status: string }).status === "ok";
+    const errorText = hasStructures
+      ? I18n.t("forgot-several-emails")
+      : errorMsg ? I18n.t(`forgot-${errorMsg.replace(/\./g, "-")}${forgotId ? "-id" : ""}`)
+      : I18n.t("common-ErrorUnknown");
+    const isSuccess = !result.hasOwnProperty("error")
+      && !result.hasOwnProperty("structures")
+      && result.hasOwnProperty("ok")
+      && (result as { ok: boolean }).ok === true;
 
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
@@ -95,23 +127,31 @@ export class ForgotPage extends React.PureComponent<
                 <FormContainer>
                   <LogoWrapper>
                     <TextH1 color={TextColor.Light}>
-                      {I18n.t("forgot-password")}
+                      {I18n.t(`forgot-${forgotId ? "id" : "password"}`)}
                     </TextH1>
+                    <Text color={TextColor.Light}>
+                      {I18n.t(`forgot-${forgotId ? "id" : "password"}-instructions`)}
+                    </Text>
                   </LogoWrapper>
-                  <TextInputLine
-                    inputRef={this.setInputLoginRef}
-                    placeholder={I18n.t("Login")}
-                    onChange={({ nativeEvent: { eventCount, target, text } }) => {
-                      this.setState({
-                        login: text,
-                        typing: true
-                      });
-                    }}
-                    value={login}
-                    hasError={isError && !typing}
-                    keyboardType="email-address"
-                  />
-                  {isError && errorText && !this.state.typing ? (
+                  {!isSuccess
+                    ? <TextInputLine
+                        inputRef={this.setInputLoginRef}
+                        placeholder={I18n.t(forgotId ? "Email" : "Login")}
+                        onChange={({ nativeEvent: { text } }) => {
+                          this.setState({
+                            login: text,
+                            editing: true
+                          });
+                        }}
+                        value={login}
+                        hasError={isError && !editing && !(hasStructures && errorMsg)}
+                        keyboardType={forgotId ? "email-address" : undefined}
+                        editable={!hasStructures}
+                        inputStyle={hasStructures && {color: CommonStyles.placeholderColor, fontWeight: "bold"}}
+                      />
+                    : null
+                  }
+                  {(hasStructures && !isSuccess) || (isError && !editing) ? (
                     <ErrorMessage>{errorText}</ErrorMessage>
                   ) : null}
                   {isSuccess ? (
@@ -120,27 +160,93 @@ export class ForgotPage extends React.PureComponent<
                         height: 38
                       }}
                     >
-                      {this.state.typing
+                      {editing
                         ? ""
                         : isSuccess && I18n.t("forgot-success")}
                     </InfoMessage>
                   ) : null}
+                  {forgotId && hasStructures && !isSuccess
+                    ? <>
+                        <TextInputLine
+                          inputRef={this.setInputLoginRef}
+                          placeholder={I18n.t("Firstname")}
+                          value={firstName}
+                          hasError={isError && !editing}
+                          onChange={({ nativeEvent: { text } }) => {
+                            this.setState({
+                              firstName: text,
+                              editing: true
+                            });
+                          }}
+                        />
+                        <View
+                          style={{ 
+                            alignSelf: "stretch", 
+                            flex: 0, 
+                            flexDirection: "row", 
+                            alignItems: "center", 
+                            justifyContent: "space-between",
+                            paddingRight: 10,
+                            backgroundColor: structureName ? CommonStyles.primary : undefined,
+                            borderBottomWidth: (isError && !editing) || showStructurePicker ? 2 : 0.9,
+                            borderBottomColor: isError && !editing
+                            ? CommonStyles.errorColor 
+                            : showStructurePicker
+                            ? CommonStyles.iconColorOn
+                            : CommonStyles.entryfieldBorder
+                          }}
+                        >
+                          <TextInputLine
+                            editable={false}
+                            hasError={false}
+                            inputRef={this.setInputLoginRef}
+                            placeholder={I18n.t("School")}
+                            value={structureName}
+                            style={{ borderBottomWidth: undefined, borderBottomColor: undefined }}
+                            inputStyle={{color: "white"}}
+                          />
+                          <Icon
+                            name="arrow_down"
+                            color={structureName ? "white" : "black"}
+                            style={[{marginTop: 10}, showStructurePicker && {transform: [{ rotate: "180deg" }]}]}
+                          />
+                          <TouchableOpacity
+                            style={{height: "100%", width: "100%", position: "absolute"}}
+                            onPress={() => this.setState({showStructurePicker: !showStructurePicker})}
+                          />
+                        </View>
+                        {showStructurePicker
+                          ? <Picker
+                              selectedValue={structureName}
+                              style={{width: "100%", borderWidth: 1, borderColor: CommonStyles.entryfieldBorder, borderTopWidth: 0}}
+                              onValueChange={itemValue => this.setState({structureName: itemValue, editing: true})}
+                            >
+                              <Picker.Item label="" value={null}/>
+                              {structures && structures.map(structure => <Picker.Item label={structure.structureName} value={structure.structureName}/>)}
+                            </Picker>
+                          : null
+                        }
+                      </>
+                    : null
+                  }
                   <View
                     style={{
                       alignItems: "center",
                       flexGrow: 2,
                       justifyContent: "flex-start",
-                      marginTop:
-                        (isError || isSuccess) && !this.state.typing ? 10 : 30
+                      marginTop: (isError || isSuccess) && !editing ? 10 : 30
                     }}
                   >
-                    {!isSuccess || typing ? (
+                    {!isSuccess || editing ? (
                       <FlatButton
                         onPress={() => this.handleSubmit()}
-                        disabled={!login}
+                        disabled={forgotId && hasStructures ? !firstName || !structureName || !login : !login}
                         title={I18n.t("forgot-submit")}
                         loading={fetching}
                       />
+                    ) : null}
+                    {hasStructures && errorMsg ? (
+                      <ErrorMessage>{I18n.t("forgot-several-emails-no-match")}</ErrorMessage>
                     ) : null}
                     <Text
                       color={TextColor.Light}
@@ -157,7 +263,7 @@ export class ForgotPage extends React.PureComponent<
               </FormWrapper>
               {Conf.platforms && Object.keys(Conf.platforms).length > 1 ?
                 <BottomSwitcher onPress={() => this.handleBackToPlatformSelector()}>
-                  {Conf.currentPlatform.displayName}{" "}
+                  {(Conf.currentPlatform as any).displayName}{" "}
                 </BottomSwitcher> : null}
             </ScrollView>
           </KeyboardAvoidingView>

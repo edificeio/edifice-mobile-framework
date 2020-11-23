@@ -243,10 +243,19 @@ export class LoginPage extends React.Component<
                   color={TextColor.Light}
                   style={{ textDecorationLine: "underline", marginTop: 48 }}
                   onPress={() => {
-                    navigate("LoginForgot");
+                    navigate("Forgot", {forgotId: false});
                   }}
                 >
                   {I18n.t("forgot-password")}
+                </Text>
+                <Text
+                  color={TextColor.Light}
+                  style={{ textDecorationLine: "underline", marginTop: 20 }}
+                  onPress={() => {
+                    navigate("Forgot", {forgotId: true});
+                  }}
+                >
+                  {I18n.t("forgot-id")}
                 </Text>
                 {(Conf.currentPlatform as any).federation && <FederationTextComponent
                   style={{

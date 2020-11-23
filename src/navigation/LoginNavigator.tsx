@@ -1,4 +1,3 @@
-import * as React from "react";
 import { createStackNavigator } from "react-navigation-stack";
 
 import LoginPage from "../user/containers/LoginPage";
@@ -21,7 +20,7 @@ export default createStackNavigator({
   PlatformSelect: { screen: PlatformSelectPage },
   LoginHome: { screen: LoginPage },
   LoginActivation: { screen: ActivationPage },
-  LoginForgot: { screen: ForgotPage },
+  Forgot: { screen: ForgotPage },
   FederatedAccount: { screen: FederatedAccountPage }
 }, {
     initialRouteName: Conf.platforms && Object.keys(Conf.platforms).length > 1 ? 'PlatformSelect' : 'LoginHome',

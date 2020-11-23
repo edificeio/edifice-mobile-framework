@@ -5,14 +5,14 @@ import { createEndSessionActionType } from "../../infra/redux/reducerFactory";
 
 export interface IUserForgotState {
   fetching: boolean;
-  result: { error: string } | { status: string };
+  result: { error?: string, status?: string, structures?: Array<any>, ok: boolean | undefined };
 }
 
 // THE REDUCER ------------------------------------------------------------------------------------
 
 export const stateDefault: IUserForgotState = {
   fetching: false,
-  result: { status: "" }
+  result: { status: "", ok: undefined }
 };
 
 const authReducer = (
