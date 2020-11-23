@@ -22,6 +22,7 @@ export enum OAuthErrorType {
   INVALID_GRANT = 'invalid_grant',
   BAD_CREDENTIALS = 'bad_credentials',
   BLOCKED_USER = 'blocked_user',
+  TOO_MANY_TRIES =  'too_many_tries',
   PLATFORM_UNAVAILABLE = 'platform_unavailable',
   TOO_LOAD = 'too_load',
   UNKNOWN_DENIED = 'unknown_denied',
@@ -119,6 +120,8 @@ export class OAuth2RessourceOwnerPasswordClient {
           err.type = OAuthErrorType.BLOCKED_USER;
         } else if (bodyOrType.error_description === 'auth.error.global') {
           err.type = OAuthErrorType.PLATFORM_UNAVAILABLE;
+        } else if (bodyOrType.error_description === 'auth.error.ban') {
+          err.type = OAuthErrorType.TOO_MANY_TRIES;
         } else {
           err.type = OAuthErrorType.UNKNOWN_DENIED;
         }
