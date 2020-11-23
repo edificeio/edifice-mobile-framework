@@ -2,7 +2,7 @@ import I18n from "i18n-js";
 import userConfig from "../config";
 import { Dispatch, AnyAction } from "redux";
 import Conf from "../../../ode-framework-conf";
-import { signedFetch, signedFetchJson } from "../../infra/fetchWithCache";
+import { signedFetchJson } from "../../infra/fetchWithCache";
 import { notifierShowAction } from "../../infra/notifier/actions";
 import { ThunkDispatch } from "redux-thunk";
 import { Trackers } from "../../infra/tracker";
@@ -15,6 +15,8 @@ export interface IUpdatableProfileValues {
   homePhone?: string,
   mobile?: string,
   loginAlias?: string;
+  picture?: string;
+  photo?: string;
 }
 
 // ACTION TYPES
@@ -38,8 +40,10 @@ export const profileUpdateErrorAction = profileUpdateActionBuilder(actionTypePro
 
 // THUNKS
 
-export function profileUpdateAction(updatedProfileValues: IUpdatableProfileValues) {
+export function profileUpdateAction(updatedProfileValues: IUpdatableProfileValues, updateAvatar: boolean) {
   return async (dispatch: Dispatch & ThunkDispatch<any, void, AnyAction>, getState: () => any) => {
+    const notifierId = `profile${updateAvatar ? "One" : "Two"}`;
+    
     if (!Conf.currentPlatform) throw new Error("must specify a platform");
     for (const index in updatedProfileValues) {
       if (updatedProfileValues.hasOwnProperty(index)) {
@@ -53,7 +57,7 @@ export function profileUpdateAction(updatedProfileValues: IUpdatableProfileValue
     try {
       const userId = getState().user.info.id;
       const reponse = await signedFetchJson(
-        `${Conf.currentPlatform.url}/directory/user/${userId}`,
+        `${Conf.currentPlatform.url}/directory/user${updateAvatar ? "book" : ""}/${userId}`,
         {
           method: "PUT",
           body: JSON.stringify(updatedProfileValues)
@@ -62,9 +66,9 @@ export function profileUpdateAction(updatedProfileValues: IUpdatableProfileValue
       if ((reponse as any)['error']) {
         throw new Error((reponse as any)['error']);
       }
-      dispatch(profileUpdateSuccessAction(updatedProfileValues));
+      dispatch(profileUpdateSuccessAction(updateAvatar ? {photo: updatedProfileValues.picture} : updatedProfileValues));
       dispatch(notifierShowAction({
-        id: "profile",
+        id: notifierId,
         text: I18n.t("ProfileChangeSuccess"),
         icon: 'checked',
         type: 'success'
@@ -76,7 +80,7 @@ export function profileUpdateAction(updatedProfileValues: IUpdatableProfileValue
 
       if ((e as Error).message.match(/loginAlias/)) {
         dispatch(notifierShowAction({
-          id: "profile",
+          id: notifierId,
           text: I18n.t("ProfileChangeLoginError"),
           icon: 'close',
           type: 'error'
@@ -84,7 +88,7 @@ export function profileUpdateAction(updatedProfileValues: IUpdatableProfileValue
         Trackers.trackEvent("Profile", "UPDATE ERROR", "ProfileChangeLoginError");
       } else {
         dispatch(notifierShowAction({
-          id: "profile",
+          id: notifierId,
           text: I18n.t("ProfileChangeError"),
           icon: 'close',
           type: 'error'

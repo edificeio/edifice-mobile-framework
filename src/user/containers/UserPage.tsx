@@ -1,6 +1,8 @@
 import * as React from "react";
+import { Alert } from "react-native";
 import I18n from "i18n-js";
 import { connect } from "react-redux";
+import DeviceInfo from 'react-native-device-info';
 
 import { logout } from "../actions/login";
 import { ButtonsOkCancel } from "../../ui";
@@ -19,13 +21,20 @@ import {
 } from "../../ui/Modal";
 import { Label, } from "../../ui/Typography";
 
-import DeviceInfo from 'react-native-device-info';
 import { getSessionInfo } from "../../App";
 import { UserCard } from "../components/UserCard";
 import { NavigationScreenProp } from "react-navigation";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { Dispatch } from "redux";
 import withViewTracking from "../../infra/tracker/withViewTracking";
+import { profileUpdateAction } from "../actions/profile";
+import pickFile from "../../infra/actions/pickFile";
+import { ContentUri } from "../../types/contentUri";
+import { uploadDocument, formatResults } from "../../workspace/actions/helpers/documents";
+import { signURISource } from "../../infra/oauth";
+import Conf from "../../../ode-framework-conf";
+import Notifier from "../../infra/notifier/container";
+import { IUserInfoState } from "../state/info";
 
 export const UserPageNavigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) =>
   standardNavScreenOptions(
@@ -40,12 +49,16 @@ export const UserPageNavigationOptions = ({ navigation }: { navigation: Navigati
 export class UserPage extends React.PureComponent<
   {
     onLogout: () => Promise<void>;
+    onUploadAvatar: (avatar: ContentUri[]) => Promise<void>;
+    onUpdateAvatar: (uploadedAvatarUrl: string) => Promise<void>;
+    userinfo: IUserInfoState;
     navigation: any;
   },
-  { showDisconnect: boolean }
+  { showDisconnect: boolean, updatingAvatar: boolean }
 > {
   public state = {
-    showDisconnect: false
+    showDisconnect: false,
+    updatingAvatar: false
   };
 
   public disconnect() {
@@ -74,17 +87,52 @@ export class UserPage extends React.PureComponent<
 
   public render() {
     //avoid setstate on modalbox when unmounted
-    const { showDisconnect } = this.state;
+    const { onUploadAvatar, onUpdateAvatar, userinfo } = this.props;
+    const { showDisconnect, updatingAvatar } = this.state;
     return (
       <PageContainer>
-        <ConnectionTrackingBar />
+        <ConnectionTrackingBar/>
+        <Notifier id="profileOne" />
         {showDisconnect && (
           <ModalBox backdropOpacity={0.5} isVisible={showDisconnect}>
             {this.disconnectBox()}
           </ModalBox>
         )}
         <UserCard
-          id={getSessionInfo().userId!}
+          canEdit
+          hasAvatar={userinfo.photo !== ""}
+          updatingAvatar={updatingAvatar}
+          onChangeAvatar={async () => {
+            try {
+              const selectedImage = await pickFile(true);
+              this.setState({ updatingAvatar: true })
+              const response = await onUploadAvatar([selectedImage]);
+
+              const data = response.map(item => JSON.parse(item));
+              const formattedData = formatResults(data);
+              const uploadedAvatar = Object.values(formattedData)[0];
+              const uploadedAvatarUrl = uploadedAvatar.url;
+              await onUpdateAvatar(uploadedAvatarUrl);
+            } catch(err) {
+              err.message !== "Cancelled" && Alert.alert(I18n.t("ProfileChangeAvatarError"));
+            } finally {
+              this.setState({updatingAvatar: false});
+            }}
+          }
+          onDeleteAvatar={async () => {
+            try {
+              this.setState({updatingAvatar: true})
+              await onUpdateAvatar("")
+            } catch(err) {
+              Alert.alert(I18n.t("ProfileDeleteAvatarError"));
+            } finally {
+              this.setState({updatingAvatar: false});
+            }
+          }}
+          id={
+            userinfo.photo && signURISource(`${(Conf.currentPlatform as any).url}${userinfo.photo}`)
+            || getSessionInfo().userId!
+          }
           displayName={getSessionInfo().displayName!}
           type={getSessionInfo().type!}
           touchable={true}
@@ -141,7 +189,9 @@ const UserPageConnected = connect(
     return ret;
   },
   (dispatch: Dispatch) => ({
-    onLogout: () => dispatch<any>(logout())
+    onLogout: () => dispatch<any>(logout()),
+    onUploadAvatar: (avatar: ContentUri[]) => uploadDocument(dispatch, avatar),
+    onUpdateAvatar: (imageWorkspaceUrl: string) => dispatch(profileUpdateAction({picture: imageWorkspaceUrl}, true))
   })
 )(UserPage);
 

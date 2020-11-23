@@ -85,7 +85,7 @@ export class ProfilePage extends React.PureComponent<
     return (
       <PageContainer>
         <ConnectionTrackingBar />
-        <Notifier id="profile" />
+        <Notifier id="profileTwo" />
         <KeyboardAvoidingView
           style={{ flex: 1, backgroundColor: "#ffffff" }}
           behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -93,7 +93,7 @@ export class ProfilePage extends React.PureComponent<
         >
           <ScrollView alwaysBounceVertical={false}>
             <SafeAreaView>
-
+              
               <UserCard
                 id={this.props.userinfo.id!}
                 displayName={this.props.userinfo.displayName!}
