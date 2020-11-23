@@ -24,6 +24,7 @@
     "auth-error-unknown_response": "Impossible de s'identifier. Mauvaise réponse serveur ({{errorcode}}). Veuillez réessayer ou contacter le support.",
     "auth-error-network_error": "Impossible de s'identifier, réessayez ou vérifiez votre connexion internet.",
     "auth-error-parse_error": "Impossible de s'identifier. Mauvaise réponse serveur ({{errorcode}}). Veuillez réessayer ou contacter le support.",
+    "auth-error-pre_deleted": "Votre compte est en pré-suppression. Vous pouvez seulement vous connecter via un navigateur web à l'adresse {{currentplatform}} pour récupérer vos contenus.",
     "auth-error-bad_response": "Impossible de s'identifier. Mauvaise réponse serveur ({{errorcode}}). Veuillez réessayer ou contacter le support.",
     "auth-error-not_initilized": "Impossible de s'identifier ({{errorcode}}). Veuillez réessayer ou contacter le support.",
     "auth-error-runtime_error": "Impossible de s'identifier ({{errorcode}}). Veuillez réessayer ou contacter le support.",

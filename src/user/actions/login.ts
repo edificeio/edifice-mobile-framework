@@ -27,7 +27,8 @@ import { Trackers } from "../../infra/tracker";
 enum LoginFlowErrorType {
   RUNTIME_ERROR = 'runtime_error',
   FIREBASE_ERROR = 'firebase_error',
-  NOT_PREMIUM = 'not_premium'
+  NOT_PREMIUM = 'not_premium',
+  PRE_DELETED = 'pre_deleted'
 }
 export type LoginErrorType = OAuthErrorType | LoginFlowErrorType;
 
@@ -137,7 +138,11 @@ export function loginAction(
       }
 
       // === 3: check user validity
-      if (!userinfo2.hasApp) {
+      if (userinfo2.deletePending) {
+        const err = new Error("[loginAction]: User is predeleted.");
+        (err as any).type = LoginFlowErrorType.PRE_DELETED;
+        throw err;
+      } else if (!userinfo2.hasApp) {
         const err = new Error("[loginAction]: User's structure is not premium.");
         (err as any).type = LoginFlowErrorType.NOT_PREMIUM;
         throw err;

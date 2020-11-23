@@ -197,7 +197,7 @@ export class LoginPage extends React.Component<
               hasError={(error && !this.state.typing) as boolean}
             />
             <ErrorMessage>
-              {this.state.typing ? "" : error && I18n.t('auth-error-' + error, { version: DeviceInfo.getVersion(), errorcode: error })}
+              {this.state.typing ? "" : error && I18n.t('auth-error-' + error, { version: DeviceInfo.getVersion(), errorcode: error, currentplatform: (Conf.currentPlatform as any).url })}
             </ErrorMessage>
 
             <View
@@ -208,7 +208,7 @@ export class LoginPage extends React.Component<
                 marginTop: error && !this.state.typing ? 10 : 30
               }}
             >
-              {error === "not_premium" && !this.state.typing ?
+              {(error === "not_premium" || error === "pre_deleted") && !this.state.typing ?
               <FlatButton
                 onPress={() => this.handleGoToWeb()}
                 disabled={false}
