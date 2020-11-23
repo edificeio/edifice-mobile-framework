@@ -44,10 +44,6 @@ interface ITimelineProps {
   onMount: () => void;
 }
 
-interface ITimelineState {
-  initialFetch: boolean;
-}
-
 // tslint:disable-next-line:max-classes-per-file
 class Timeline extends React.Component<ITimelineProps, ITimelineState> {
 
@@ -61,10 +57,6 @@ class Timeline extends React.Component<ITimelineProps, ITimelineState> {
     this.props.navigation.setParams({
       onCreatePost: this.handleCreatePost.bind(this)
     });
-  }
-
-  public state = {
-    initialFetch: true
   }
 
   public componentDidUpdate(prevProps: any) {
@@ -128,7 +120,7 @@ class Timeline extends React.Component<ITimelineProps, ITimelineState> {
 
   public shouldComponentUpdate(nextProps) {
     if (nextProps.news !== this.props.news) return true;
-    if(nextProps.flashMessages !== this.props.flashMessages) return true;
+    if (nextProps.flashMessages !== this.props.flashMessages) return true;
     return false;
   }
 
@@ -202,8 +194,7 @@ class Timeline extends React.Component<ITimelineProps, ITimelineState> {
   }
 
   public render() {
-    const { fetchFailed, availableApps, navigation, authorizedActions, publishableBlogs, flashMessages } = this.props;
-    const { initialFetch } = this.state;
+    const { fetchFailed, availableApps, navigation, authorizedActions, publishableBlogs, flashMessages, isFetching } = this.props;
     const canCreateBlog = authorizedActions && authorizedActions.some(action => action.displayName === "blog.create");
     let buttonMenuItems = [];
     if (publishableBlogs.length > 0 || canCreateBlog) {
@@ -229,6 +220,7 @@ class Timeline extends React.Component<ITimelineProps, ITimelineState> {
     }
     const flashMessagesData = flashMessages && flashMessages.data && flashMessages.data.map(flashMessage => ({ ...flashMessage, type: "FLASHMESSAGE"}));
     const timelineData = flashMessagesData ? flashMessagesData.concat(news) : news;
+    const isEmpty = timelineData && !timelineData.length;
 
     return (
       <PageContainer>
@@ -256,7 +248,7 @@ class Timeline extends React.Component<ITimelineProps, ITimelineState> {
         </Header>
         <ConnectionTrackingBar />
         <Notifier id="timeline" style={{ marginRight: 40 }} />
-        {initialFetch ? this.renderLoading() : this.renderList(timelineData as Array<IFlashMessageModel | INewsModel>)}
+        {isFetching && isEmpty ? this.renderLoading() : this.renderList(timelineData as Array<IFlashMessageModel | INewsModel>)}
         {buttonMenuItems.length > 0 ?
           <TempFloatingAction
             iconName="new_post"
