@@ -7,8 +7,8 @@ export default createSessionReducer(initialState, {
     const new_state = { ...state };
     new_state.lateness = action.data.lateness;
     new_state.departure = action.data.departure;
-    new_state.justified = action.data.justified;
-    new_state.unjustified = action.data.unjustified;
+    new_state.regularized = action.data.regularized;
+    new_state.unregularized = action.data.unregularized;
     new_state.isPristine = false;
     return new_state;
   },

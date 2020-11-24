@@ -6,8 +6,9 @@ import { Text, NestedText, TextBold, NestedTextBold } from "../../../ui/text";
 import { BottomColoredItem } from "../../viesco/components/Item";
 
 const colors = {
-  unjustified: "#E61610",
-  justified: "#FA8A85",
+  no_reason: "#E61610",
+  unregularized: "#FA8A85",
+  regularized: "#72bb53",
   lateness: "#9C29B7",
   departure: "#28A1AC",
   forgotNotebook: "#B0EAD5",
@@ -90,7 +91,7 @@ const PresenceCard: React.FunctionComponent<PresenceCardProps> = ({
   );
 };
 
-export const UnjustifiedCard = ({ elements }) => {
+export const NoReasonCard = ({ elements }) => {
   const renderItem = event => (
     <Text>
       <NestedTextBold> {event.start_date.format("DD/MM/YY")} - </NestedTextBold>
@@ -99,15 +100,15 @@ export const UnjustifiedCard = ({ elements }) => {
   );
   return (
     <PresenceCard
-      color={colors.unjustified}
-      title={I18n.t("viesco-history-unjustified")}
+      color={colors.no_reason}
+      title={I18n.t("viesco-history-noreason")}
       renderItem={renderItem}
       elements={elements}
     />
   );
 };
 
-export const JustifiedCard = ({ elements }) => {
+export const UnregularizedCard = ({ elements }) => {
   const renderItem = event => (
     <Text>
       <NestedTextBold> {event.start_date.format("DD/MM/YY")} - </NestedTextBold>
@@ -116,8 +117,25 @@ export const JustifiedCard = ({ elements }) => {
   );
   return (
     <PresenceCard
-      color={colors.justified}
-      title={I18n.t("viesco-history-justified")}
+      color={colors.unregularized}
+      title={I18n.t("viesco-history-unregularized")}
+      renderItem={renderItem}
+      elements={elements}
+    />
+  );
+};
+
+export const RegularizedCard = ({ elements }) => {
+  const renderItem = event => (
+    <Text>
+      <NestedTextBold> {event.start_date.format("DD/MM/YY")} - </NestedTextBold>
+      {event.start_date.format("H:mm")} - {event.end_date.format("H:mm")}
+    </Text>
+  );
+  return (
+    <PresenceCard
+      color={colors.regularized}
+      title={I18n.t("viesco-history-regularized")}
       renderItem={renderItem}
       elements={elements}
     />

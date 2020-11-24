@@ -8,13 +8,14 @@ import { Loading } from "../../../ui";
 import Dropdown from "../../../ui/Dropdown";
 import ChildPicker from "../../viesco/containers/ChildPicker";
 import {
-  UnjustifiedCard,
-  JustifiedCard,
+  UnregularizedCard,
+  RegularizedCard,
   LatenessCard,
   DepartureCard,
   ForgotNotebookCard,
   PunishmentCard,
   IncidentCard,
+  NoReasonCard,
 } from "./PresenceCard";
 
 type HistoryProps = {
@@ -52,8 +53,9 @@ class History extends React.PureComponent<HistoryProps> {
             <Loading />
           ) : (
             <>
-              <UnjustifiedCard elements={events.unjustified} />
-              <JustifiedCard elements={events.justified} />
+              <NoReasonCard elements={events.no_reason} />
+              <UnregularizedCard elements={events.unregularized} />
+              <RegularizedCard elements={events.regularized} />
               <LatenessCard elements={events.lateness} />
               <DepartureCard elements={events.departure} />
               <ForgotNotebookCard elements={events.notebooks} />

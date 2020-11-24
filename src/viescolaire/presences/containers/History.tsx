@@ -42,8 +42,9 @@ interface HistoryState {
   };
   periods: any[];
   events: {
-    justified: any[];
-    unjustified: any[];
+    regularized: any[];
+    no_reason: any[];
+    unregularized: any[];
     lateness: any[];
     departure: any[];
     incidents: any[];
@@ -136,18 +137,18 @@ class History extends React.PureComponent<HistoryProps, HistoryState> {
       ) {
         const { events } = this.props;
         const displayEvents = {
-          justified: [],
-          unjustified: [],
+          regularized: [],
+          unregularized: [],
           lateness: [],
           departure: [],
           incidents: [],
           punishments: [],
           notebooks: [],
         };
-        displayEvents.justified = events.justified.filter(
+        displayEvents.regularized = events.regularized.filter(
           e => e.start_date.isAfter(start_period) && e.start_date.isBefore(end_period)
         );
-        displayEvents.unjustified = events.unjustified.filter(
+        displayEvents.unregularized = events.unregularized.filter(
           e => e.start_date.isAfter(start_period) && e.start_date.isBefore(end_period)
         );
         displayEvents.departure = events.departure.filter(

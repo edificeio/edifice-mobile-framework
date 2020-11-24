@@ -52,8 +52,9 @@ const historyPrefix = viescoConfig.createActionType("HISTORY");
 export const initialState = {
   lateness: [],
   departure: [],
-  justified: [],
-  unjustified: [],
+  no_reason: [],
+  regularized: [],
+  unregularized: [],
   notebooks: [],
   punishments: [],
   incidents: [],

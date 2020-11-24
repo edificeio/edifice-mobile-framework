@@ -33,6 +33,7 @@ export type IHistoryEventBackend = {
 export type IHistoryEventsListBackend = {
   all: {
     DEPARTURE: IHistoryEventBackend[];
+    NO_REASON: IHistoryEventBackend[];
     REGULARIZED: IHistoryEventBackend[];
     LATENESS: IHistoryEventBackend[];
     UNREGULARIZED: IHistoryEventBackend[];
@@ -94,14 +95,16 @@ const allEventsAdapter: (
 ) => {
   lateness: IHistoryEventsList;
   departure: IHistoryEventsList;
-  justified: IHistoryEventsList;
-  unjustified: IHistoryEventsList;
+  regularized: IHistoryEventsList;
+  unregularized: IHistoryEventsList;
+  no_reason: IHistoryEventsList;
 } = data => {
   return {
     lateness: data.all.LATENESS.map(e => historyEventAdapter(e)),
     departure: data.all.DEPARTURE.map(e => historyEventAdapter(e)),
-    justified: data.all.REGULARIZED.map(e => historyEventAdapter(e)),
-    unjustified: data.all.UNREGULARIZED.map(e => historyEventAdapter(e)),
+    regularized: data.all.REGULARIZED.map(e => historyEventAdapter(e)),
+    unregularized: data.all.UNREGULARIZED.map(e => historyEventAdapter(e)),
+    no_reason: data.all.NO_REASON.map(e => historyEventAdapter(e)),
   };
 };
 
@@ -275,7 +278,7 @@ export const eventsService = {
     const startDateString = startDate.format("YYYY-MM-DD");
     const endDateString = endDate.format("YYYY-MM-DD");
     const result = await fetchJSONWithCache(
-      `/presences/students/${studentId}/events?structure_id=${structureId}&start_at=${startDateString}&end_at=${endDateString}&type=UNREGULARIZED&type=REGULARIZED&type=LATENESS&type=DEPARTURE`
+      `/presences/students/${studentId}/events?structure_id=${structureId}&start_at=${startDateString}&end_at=${endDateString}&type=NO_REASON&type=UNREGULARIZED&type=REGULARIZED&type=LATENESS&type=DEPARTURE`
     );
     return allEventsAdapter(result);
   },
