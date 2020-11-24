@@ -33,9 +33,9 @@ export type IHistoryEventBackend = {
 export type IHistoryEventsListBackend = {
   all: {
     DEPARTURE: IHistoryEventBackend[];
-    JUSTIFIED: IHistoryEventBackend[];
+    REGULARIZED: IHistoryEventBackend[];
     LATENESS: IHistoryEventBackend[];
-    UNJUSTIFIED: IHistoryEventBackend[];
+    UNREGULARIZED: IHistoryEventBackend[];
   };
 };
 
@@ -100,8 +100,8 @@ const allEventsAdapter: (
   return {
     lateness: data.all.LATENESS.map(e => historyEventAdapter(e)),
     departure: data.all.DEPARTURE.map(e => historyEventAdapter(e)),
-    justified: data.all.JUSTIFIED.map(e => historyEventAdapter(e)),
-    unjustified: data.all.UNJUSTIFIED.map(e => historyEventAdapter(e)),
+    justified: data.all.REGULARIZED.map(e => historyEventAdapter(e)),
+    unjustified: data.all.UNREGULARIZED.map(e => historyEventAdapter(e)),
   };
 };
 
@@ -275,7 +275,7 @@ export const eventsService = {
     const startDateString = startDate.format("YYYY-MM-DD");
     const endDateString = endDate.format("YYYY-MM-DD");
     const result = await fetchJSONWithCache(
-      `/presences/students/${studentId}/events?structure_id=${structureId}&start_at=${startDateString}&end_at=${endDateString}&type=UNJUSTIFIED&type=JUSTIFIED&type=LATENESS&type=DEPARTURE`
+      `/presences/students/${studentId}/events?structure_id=${structureId}&start_at=${startDateString}&end_at=${endDateString}&type=UNREGULARIZED&type=REGULARIZED&type=LATENESS&type=DEPARTURE`
     );
     return allEventsAdapter(result);
   },
