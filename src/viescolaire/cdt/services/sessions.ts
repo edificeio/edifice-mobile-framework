@@ -24,6 +24,12 @@ export type ISessionListBackend = {
   start_time: string;
   structure_id: string;
   subject_id: string;
+  subject: {
+    id: string;
+    externalId: string;
+    name: string;
+    rank?: number;
+  };
   teacher_id: string;
   title: string;
   type_id: number;
@@ -36,6 +42,7 @@ const sessionListAdapter: (data: ISessionListBackend) => ISessionList = data => 
     id: item.id,
     date: moment(item.date),
     subject_id: item.subject_id,
+    subject: item.subject,
     start_time: item.start_time,
     teacher_id: item.teacher_id,
     description: item.description,

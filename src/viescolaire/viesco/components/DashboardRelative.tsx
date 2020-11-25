@@ -10,7 +10,7 @@ import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
 import { EmptyScreen } from "../../../ui/EmptyScreen";
 import { Text, TextBold } from "../../../ui/text";
 import { HomeworkItem } from "../../cdt/components/Items";
-import { isHomeworkDone, getSubjectName, homeworkDetailsAdapter } from "../../utils/cdt";
+import { isHomeworkDone, homeworkDetailsAdapter } from "../../utils/cdt";
 import ChildPicker from "../containers/ChildPicker";
 
 const styles = StyleSheet.create({
@@ -137,7 +137,7 @@ export default class Dashboard extends React.PureComponent<DashboardProps> {
           <HomeworkItem
             disabled
             checked={isHomeworkDone(homework)}
-            title={getSubjectName(homework.subject_id, this.props.subjects.data)}
+            title={homework.subject.name}
             subtitle={homework.type}
             onPress={() =>
               this.props.navigation.navigate(
@@ -145,7 +145,7 @@ export default class Dashboard extends React.PureComponent<DashboardProps> {
                 {},
                 NavigationActions.navigate({
                   routeName: "HomeworkPage",
-                  params: homeworkDetailsAdapter(homework, this.props.subjects.data),
+                  params: homeworkDetailsAdapter(homework),
                 })
               )
             }

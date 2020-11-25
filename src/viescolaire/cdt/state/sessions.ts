@@ -9,6 +9,12 @@ export interface ISession {
   id: number;
   date: moment.Moment;
   subject_id: string;
+  subject: {
+    id: string;
+    externalId: string;
+    name: string;
+    rank?: number;
+  };
   start_time: string;
   teacher_id: string;
   description: string;

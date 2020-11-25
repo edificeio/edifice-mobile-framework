@@ -8,7 +8,7 @@ import { Icon } from "../../../ui";
 import { EmptyScreen } from "../../../ui/EmptyScreen";
 import { TextBold } from "../../../ui/text";
 import { HomeworkItem } from "../../cdt/components/Items";
-import { isHomeworkDone, homeworkDetailsAdapter, getSubjectName } from "../../utils/cdt";
+import { isHomeworkDone, homeworkDetailsAdapter } from "../../utils/cdt";
 
 const styles = StyleSheet.create({
   dashboardPart: { paddingVertical: 8, paddingHorizontal: 15 },
@@ -145,7 +145,7 @@ export default class Dashboard extends React.PureComponent<any> {
                   <HomeworkItem
                     hideCheckbox={false}
                     checked={isHomeworkDone(homework)}
-                    title={getSubjectName(homework.subject_id, this.props.subjects.data)}
+                    title={homework.subject.name}
                     subtitle={homework.type}
                     onChange={() => {
                       this.props.updateHomeworkProgress(homework.id, !isHomeworkDone(homework));
@@ -156,7 +156,7 @@ export default class Dashboard extends React.PureComponent<any> {
                         {},
                         NavigationActions.navigate({
                           routeName: "HomeworkPage",
-                          params: homeworkDetailsAdapter(homework, this.props.subjects.data),
+                          params: homeworkDetailsAdapter(homework),
                         })
                       )
                     }

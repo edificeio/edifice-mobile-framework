@@ -9,13 +9,7 @@ import { PageContainer } from "../../../ui/ContainerContent";
 import DateTimePicker from "../../../ui/DateTimePicker";
 import { EmptyScreen } from "../../../ui/EmptyScreen";
 import { Text, TextBold } from "../../../ui/text";
-import {
-  isHomeworkDone,
-  getSubjectName,
-  homeworkDetailsAdapter,
-  sessionDetailsAdapter,
-  getTeacherName,
-} from "../../utils/cdt";
+import { isHomeworkDone, homeworkDetailsAdapter, sessionDetailsAdapter, getTeacherName } from "../../utils/cdt";
 import ChildPicker from "../../viesco/containers/ChildPicker";
 import { HomeworkItem, SessionItem } from "./Items";
 
@@ -43,7 +37,6 @@ type HomeworkListProps = {
   homeworks: any;
   sessions: any;
   personnel: any;
-  subjects: any;
   isFetchingHomework: boolean;
   isFetchingSession: boolean;
   onRefreshHomeworks: any;
@@ -154,10 +147,7 @@ export default (props: HomeworkListProps) => {
             onRefreshHomeworks={onRefreshHomeworks}
             homeworkList={props.homeworks}
             onHomeworkStatusUpdate={homework => props.updateHomeworkProgress(homework.id, !isHomeworkDone(homework))}
-            onHomeworkTap={homework =>
-              props.navigation.navigate("HomeworkPage", homeworkDetailsAdapter(homework, props.subjects))
-            }
-            subjectList={props.subjects}
+            onHomeworkTap={homework => props.navigation.navigate("HomeworkPage", homeworkDetailsAdapter(homework))}
           />
         ) : (
           <SessionList
@@ -165,9 +155,8 @@ export default (props: HomeworkListProps) => {
             onRefreshSessions={onRefreshSessions}
             sessionList={props.sessions}
             onSessionTap={session =>
-              props.navigation.navigate("SessionPage", sessionDetailsAdapter(session, props.subjects, props.personnel))
+              props.navigation.navigate("SessionPage", sessionDetailsAdapter(session, props.personnel))
             }
-            subjectList={props.subjects}
             personnelList={props.personnel}
           />
         )}
@@ -191,7 +180,6 @@ const HomeworkList = ({
   homeworkList,
   onHomeworkTap,
   onHomeworkStatusUpdate,
-  subjectList,
 }) => {
   React.useEffect(() => {
     if (Object.keys(homeworkList).length === 0) onRefreshHomeworks();
@@ -219,7 +207,7 @@ const HomeworkList = ({
               onPress={() => onHomeworkTap(homework)}
               disabled={getSessionInfo().type !== "Student"}
               checked={isHomeworkDone(homework)}
-              title={getSubjectName(homework.subject_id, subjectList)}
+              title={homework.subject.name}
               subtitle={homework.type}
               onChange={() => onHomeworkStatusUpdate(homework)}
             />
@@ -230,7 +218,7 @@ const HomeworkList = ({
   );
 };
 
-const SessionList = ({ isFetching, onRefreshSessions, sessionList, onSessionTap, subjectList, personnelList }) => {
+const SessionList = ({ isFetching, onRefreshSessions, sessionList, onSessionTap, personnelList }) => {
   React.useEffect(() => {
     if (sessionList.length === 0) onRefreshSessions();
   }, []);
@@ -250,7 +238,7 @@ const SessionList = ({ isFetching, onRefreshSessions, sessionList, onSessionTap,
             ) : null}
             <SessionItem
               onPress={() => onSessionTap(session)}
-              matiere={getSubjectName(session.subject_id, subjectList)}
+              matiere={session.subject.name}
               author={getTeacherName(session.teacher_id, personnelList)}
             />
           </View>

@@ -12,7 +12,6 @@ import { INavigationProps } from "../../../types";
 import { HeaderBackAction } from "../../../ui/headers/NewHeader";
 import { getSelectedChild, getSelectedChildStructure } from "../../viesco/state/children";
 import { getPersonnelListState } from "../../viesco/state/personnel";
-import { getSubjectsListState } from "../../viesco/state/subjects";
 import { fetchChildHomeworkAction, fetchHomeworkListAction, updateHomeworkProgressAction } from "../actions/homeworks";
 import { fetchChildSessionAction, fetchSessionListAction } from "../actions/sessions";
 import HomeworkList from "../components/HomeworkList";
@@ -23,7 +22,6 @@ type HomeworkListProps = {
   homeworks: any;
   sessions: any;
   personnel: any;
-  subjects: any;
   childId: string;
   structureId: string;
   fetchHomeworks: any;
@@ -67,7 +65,6 @@ class HomeworkListRelativeContainer extends React.PureComponent<HomeworkListProp
       <HomeworkList
         navigation={this.props.navigation}
         personnel={this.props.personnel}
-        subjects={this.props.subjects}
         isFetchingHomework={this.props.isFetchingHomework}
         isFetchingSession={this.props.isFetchingSession}
         updateHomeworkProgress={this.props.updateHomeworkProgress}
@@ -84,16 +81,14 @@ class HomeworkListRelativeContainer extends React.PureComponent<HomeworkListProp
 const mapStateToProps: (state: any) => any = state => {
   const homeworksState = getHomeworksListState(state);
   const sessionsState = getSessionsListState(state);
-  const subjectsState = getSubjectsListState(state);
   const personnelState = getPersonnelListState(state);
 
   return {
     homeworks: homeworksState.data,
     sessions: sessionsState.data,
-    subjects: subjectsState.data,
     personnel: personnelState.data,
-    isFetchingHomework: homeworksState.isFetching || subjectsState.isFetching || personnelState.isFetching,
-    isFetchingSession: sessionsState.isFetching || subjectsState.isFetching || personnelState.isFetching,
+    isFetchingHomework: homeworksState.isFetching || personnelState.isFetching,
+    isFetchingSession: sessionsState.isFetching || personnelState.isFetching,
     childId: getSelectedChild(state).id,
     structureId:
       getSessionInfo().type === "Student"

@@ -17,6 +17,12 @@ export interface IHomework {
     user_id: string;
   };
   subject_id: string;
+  subject: {
+    id: string;
+    externalId: string;
+    name: string;
+    rank?: number;
+  };
   type: string;
   description: string;
   created_date: moment.Moment;

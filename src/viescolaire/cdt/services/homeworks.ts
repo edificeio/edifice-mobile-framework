@@ -27,6 +27,12 @@ export type IHomeworkListBackend = {
   session_id: string;
   structure_id: string;
   subject_id: string;
+  subject: {
+    id: string;
+    externalId: string;
+    name: string;
+    rank?: number;
+  };
   teacher_id: string;
   type: {
     id: number;
@@ -47,6 +53,7 @@ const homeworkListAdapter: (data: IHomeworkListBackend) => IHomeworkList = data 
       due_date: moment(item.due_date),
       type: item.type.label,
       subject_id: item.subject_id,
+      subject: item.subject,
       progress: item.progress,
       description: item.description,
       created_date: moment(item.created),
