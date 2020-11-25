@@ -126,7 +126,7 @@ export default class StudentRow extends React.PureComponent<StudentRowProps, Stu
           <Text style={style.studentName}>{student.name}</Text>
           <View style={style.iconsView}>
             {student.last_course_absent && (
-              <Icon style={{ transform: [{ rotateY: "180deg" }] }} color="red" size={20} name="refresh1" />
+              <Icon style={{ transform: [{ rotateY: "180deg" }] }} color="red" size={20} name="refresh" />
             )}
             {student.forgottenNotebook && <Icon color="#b0ead5" size={20} name="bookmark_outline" />}
           </View>
