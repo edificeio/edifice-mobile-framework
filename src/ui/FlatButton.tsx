@@ -44,8 +44,8 @@ export const FlatButton = ({
   }
 
   return (
-    <ValidStyle onPress={() => onPress()} disabled={disabled}>
-      <ButtonStyleComponent disabled={disabled} style={customButtonStyle}>
+    <ValidStyle disabled={disabled}>
+      <ButtonStyleComponent onPress={() => onPress()} disabled={disabled} style={customButtonStyle}>
         <TextStyleComponent disabled={disabled} style={customTextStyle}>
           {leftName.length > 0 && <Icon name={leftName} />}
           {whiteSpace}
@@ -69,7 +69,7 @@ const ValidStyle = (props: RowProperties) => (
   />
 );
 
-const ButtonStyleComponent = style.view(
+const ButtonStyleComponent = style.touchableOpacity(
   {
     borderRadius: 38 * 0.5,
     paddingHorizontal: 36,
