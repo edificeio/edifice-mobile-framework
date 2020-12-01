@@ -259,7 +259,7 @@ export function sendMessage(data: IConversationMessage, sentAttachments?: IAttac
       };
       if (!Conf.currentPlatform) throw new Error("must specify a platform");
       const response = await signedFetch(
-        `${(Conf.currentPlatform as any).url}${mailboxConfig.appInfo.prefix}/send?${id}${replyTo}`,
+        `${(Conf.currentPlatform as any).url}/conversation/send?${id}${replyTo}`,
         {
           body: JSON.stringify(requestbody),
           headers: {

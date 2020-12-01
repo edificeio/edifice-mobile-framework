@@ -26,7 +26,6 @@ import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
 import ThreadMessage from "../components/ThreadMessage";
 import Conf from "../../../ode-framework-conf";
-import conversationConfig from "../config"
 
 // Type definitions
 import { IConversationMessage } from "../actions/sendMessage";
@@ -146,7 +145,7 @@ export class ThreadPage extends React.PureComponent<
         ...message,
         attachments: message.attachments && message.attachments.map(att => ({
           ...att,
-          url: `${(Conf.currentPlatform as any).url}${conversationConfig.appInfo.prefix}/message/${
+          url: `${(Conf.currentPlatform as any).url}/conversation/message/${
             message.id
           }/attachment/${att.id}`,
         }))
