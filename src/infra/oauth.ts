@@ -76,6 +76,7 @@ export class OAuth2RessourceOwnerPasswordClient {
   private token: IOAuthToken | null = null; // Current active token information
   private clientInfo: OAuthClientInfo | null = null; // Current connected client information
   private accessTokenUri: string = ""; // Uri to get or refresh the token
+  private uniqueSessionIdentifier: string | undefined;
 
   /**
    * Inialize a oAuth connection. DOES NOT get token.
@@ -281,6 +282,7 @@ export class OAuth2RessourceOwnerPasswordClient {
       };
       // 4: Save token if asked
       saveToken && await this.saveToken();
+      this.generateUniqueSesionIdentifier();
       return this.token!;
     } catch (err) {
       // tslint:disable-next-line:no-console
@@ -308,6 +310,7 @@ export class OAuth2RessourceOwnerPasswordClient {
         ...storedToken,
         expires_at: new Date(storedToken.expires_at)
       };
+      this.generateUniqueSesionIdentifier();
       return this.token!;
     } catch (err) {
       console.warn("[oAuth] loadToken: ", err);
@@ -369,6 +372,7 @@ export class OAuth2RessourceOwnerPasswordClient {
       };
       // Save token
       await this.saveToken();
+      this.generateUniqueSesionIdentifier();
       return this.token!;
     } catch (err) {
       // tslint:disable-next-line:no-console
@@ -423,6 +427,17 @@ export class OAuth2RessourceOwnerPasswordClient {
       console.warn("[oAuth] eraseToken: ", err);
       throw err;
     }
+  }
+
+  /**
+   * Get unique identifier from token (the key is refreshed only when the token is modified).
+   */
+  public getUniqueSessionIdentifier() {
+    return this.uniqueSessionIdentifier || this.generateUniqueSesionIdentifier();
+  }
+  public generateUniqueSesionIdentifier() {
+    this.uniqueSessionIdentifier = Math.random().toString(36).substring(7);
+    return this.uniqueSessionIdentifier;
   }
 }
 

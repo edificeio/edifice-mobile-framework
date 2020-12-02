@@ -30,7 +30,7 @@ import { profileUpdateAction } from "../actions/profile";
 import pickFile from "../../infra/actions/pickFile";
 import { ContentUri } from "../../types/contentUri";
 import { uploadDocument, formatResults } from "../../workspace/actions/helpers/documents";
-import { signURISource } from "../../infra/oauth";
+import { OAuth2RessourceOwnerPasswordClient, signURISource } from "../../infra/oauth";
 import Conf from "../../../ode-framework-conf";
 import Notifier from "../../infra/notifier/container";
 import { IUserInfoState } from "../state/info";
@@ -116,6 +116,13 @@ export class UserPage extends React.PureComponent<
     //avoid setstate on modalbox when unmounted
     const { onUploadAvatar, onUpdateAvatar, onPickImageError, onUploadAvatarError, userinfo } = this.props;
     const { showDisconnect, updatingAvatar } = this.state;
+    const signedURISource = userinfo.photo && signURISource(`${(Conf.currentPlatform as any).url}${userinfo.photo}`)
+    //FIXME (Hack): we need to add a variable param to force the call on Android for each session
+    //(otherwise, a previously-loaded image is retrieved from cache)
+    const sourceWithParam = {
+      ...signedURISource,
+      uri: `${signedURISource && signedURISource.uri}?uti=${OAuth2RessourceOwnerPasswordClient.connection?.getUniqueSessionIdentifier()}`
+    }
 
     return (
       <PageContainer>
@@ -159,9 +166,7 @@ export class UserPage extends React.PureComponent<
               this.setState({updatingAvatar: false});
             }
           }}
-          id={userinfo.photo 
-            && signURISource(`${(Conf.currentPlatform as any).url}${userinfo.photo}`)
-          }
+          id={sourceWithParam}
           displayName={getSessionInfo().displayName!}
           type={getSessionInfo().type!}
           touchable={true}
