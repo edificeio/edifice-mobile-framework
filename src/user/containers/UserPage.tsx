@@ -117,9 +117,9 @@ export class UserPage extends React.PureComponent<
     const { onUploadAvatar, onUpdateAvatar, onPickImageError, onUploadAvatarError, userinfo } = this.props;
     const { showDisconnect, updatingAvatar } = this.state;
     const signedURISource = userinfo.photo && signURISource(`${(Conf.currentPlatform as any).url}${userinfo.photo}`)
-    //FIXME (Hack): we need to add a variable param to force the call on Android for each session
-    //(otherwise, a previously-loaded image is retrieved from cache)
-    const sourceWithParam = {
+    // FIXME (Hack): we need to add a variable param to force the call on Android for each session
+    // (otherwise, a previously-loaded image is retrieved from cache)
+    const sourceWithParam = signedURISource && {
       ...signedURISource,
       uri: `${signedURISource && signedURISource.uri}?uti=${OAuth2RessourceOwnerPasswordClient.connection?.getUniqueSessionIdentifier()}`
     }
