@@ -4,6 +4,7 @@ import mailboxConf from "../config";
 import { fetchJSONWithCache } from "../../infra/fetchWithCache";
 import conversationThreadSelected from "./threadSelected";
 import { getSessionInfo } from "../../App";
+import generateUuid from "../../utils/uuid";
 import { Trackers } from "../../infra/tracker";
 
 export const actionTypeThreadCreated = mailboxConf.createActionType(
@@ -25,7 +26,7 @@ export function createThread(pickedUsers: any[], threadSubject: string) {
         u.isGroup
       ]).concat([[getSessionInfo().userId, getSessionInfo().displayName]]),
       from: getSessionInfo().userId,
-      id: "temp",
+      id: "tmp-" + generateUuid(),
       messages: [],
       subject,
       to: pickedUsers.map((u: any) => u.id || u.userId),
