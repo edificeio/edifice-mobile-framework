@@ -42,6 +42,7 @@ export class FlashNews extends React.PureComponent<IFlashNewsProps, INewsState> 
     return contents && contentsLanguages.length > 0
       ? <ArticleContainer style={{ width: "100%", opacity: measuredText ? 1 : 0 }}>
           <TouchCard
+            activeOpacity={1}
             onLayout={e => {
               if (!measuredText) {
                 const flashMessageHeight = e.nativeEvent.layout.height;
@@ -49,19 +50,18 @@ export class FlashNews extends React.PureComponent<IFlashNewsProps, INewsState> 
                 this.setState({ longText, measuredText: true });
               }
             }}
-            activeOpacity={1}
             style={{ 
               width: "100%",
-              backgroundColor: CommonStyles.secondary,
-              height: longText && !isExtended ? 155 : undefined,
               overflow: "hidden",
-              position: measuredText ? "relative" : "absolute"
+              position: measuredText ? "relative" : "absolute",
+              backgroundColor: CommonStyles.secondary,
             }}
           >
             <HtmlContentView
+              key={`${longText && !isExtended}`}
               html={flashMessageHtml}
               opts={{
-                globalTextStyle: {color: "#FFFFFF", paddingRight: 10},
+                globalTextStyle: {color: "#FFFFFF", paddingRight: 10, height: longText && !isExtended ? 120 : undefined},
                 textColor: false,
                 images: false,
                 iframes: false,
@@ -76,20 +76,13 @@ export class FlashNews extends React.PureComponent<IFlashNewsProps, INewsState> 
             </View>
             {longText && !isExtended
               ? <TouchableOpacity
-                  style={{
-                    backgroundColor: "#FFF",
-                    alignSelf: "flex-end",
-                    position: "absolute",
-                    bottom: 3,
-                    right: 6,
-                    paddingHorizontal: 5,
-                    borderRadius: 5
-                  }}
+                  style={{ alignSelf: "flex-end", marginRight: 6 }}
                   onPress={() => this.setState({isExtended: true})}
                 >
                   <Text
                     style={{ 
-                      color: CommonStyles.secondary,
+                      color: "#FFF",
+                      textDecorationLine: "underline",
                       fontWeight: "bold",
                       fontStyle: "italic"
                     }}

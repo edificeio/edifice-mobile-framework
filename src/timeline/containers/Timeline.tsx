@@ -224,7 +224,7 @@ class Timeline extends React.Component<ITimelineProps, ITimelineState> {
 
     return (
       <PageContainer>
-        <Header>
+        <Header customStyle={{marginBottom: 20}}>
           <HeaderAction
             onPress={() => {
               navigation.navigate("filterTimeline");

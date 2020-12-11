@@ -6,7 +6,7 @@ export const TouchCard = style(TouchableOpacity)({
   backgroundColor: "#FFFFFF",
   paddingHorizontal: 16,
   paddingVertical: 12,
-  borderRadius: 10,
+  borderRadius: 15,
   borderBottomColor: CommonStyles.borderBottomItem,
   shadowColor: "#000",
   shadowOffset: { width: 0, height: 1 },

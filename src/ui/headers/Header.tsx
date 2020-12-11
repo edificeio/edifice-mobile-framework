@@ -1,6 +1,6 @@
 import style from "glamorous-native";
 import * as React from "react";
-import { Platform, ViewStyle, SafeAreaView } from "react-native";
+import { Platform, ViewStyle, SafeAreaView, StyleProp } from "react-native";
 import { connect } from "react-redux";
 
 import { Icon } from "..";
@@ -38,19 +38,25 @@ export const HeaderComponent = ({
   connectionTracker,
   children,
   color,
+  customStyle,
   onLayout
 }: {
   connectionTracker: any;
   children: any;
   color?: string;
+  customStyle?: StyleProp<ViewStyle>;
   onLayout?: () => void;
 }) => (
   <HeaderStyle
     onLayout={() => onLayout && onLayout()}
-    style={{
-      elevation: connectionTracker.visible ? 0 : 5,
-      backgroundColor: color ? color : CommonStyles.mainColorTheme,
-    }}>
+    style={[
+      {
+        elevation: connectionTracker.visible ? 0 : 5,
+        backgroundColor: color ? color : CommonStyles.mainColorTheme
+      },
+      customStyle
+    ]}
+  >
     {children}
   </HeaderStyle>
 );
