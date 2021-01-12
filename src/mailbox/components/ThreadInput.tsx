@@ -465,6 +465,7 @@ class ThreadInput extends React.PureComponent<
           }}
           isContainerHalfScreen={isHalfScreen}
           attachmentsHeightHalfScreen={attachmentsHeightHalfScreen}
+          notifierId={`thread-${thread?.id}`}
         />
       </SafeAreaView>
     );

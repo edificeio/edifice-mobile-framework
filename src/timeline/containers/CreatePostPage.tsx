@@ -25,6 +25,7 @@ import { FilterId } from "../../workspace/types";
 import { resourceHasRight } from "../../utils/resourceRights";
 import withViewTracking from "../../infra/tracker/withViewTracking";
 import { AttachmentPicker } from "../../ui/AttachmentPicker";
+import Notifier from "../../infra/notifier/container";
 
 export interface ICreatePostDataProps {
   user: IUserInfoState;
@@ -73,6 +74,7 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
 
     return (
       <PageContainer style={{ flex: 1 }}>
+        <Notifier id="createPost"/>
         <KeyboardAvoidingView
           enabled
           behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -186,6 +188,7 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
                   onAttachmentRemoved={imagesToSend => {
                     this.setState({ images: imagesToSend });
                   }}
+                  notifierId="createPost"
                 />
               </View>
             </TouchableWithoutFeedback>

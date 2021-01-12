@@ -27,7 +27,7 @@ import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOpti
 import { Dispatch } from "redux";
 import withViewTracking from "../../infra/tracker/withViewTracking";
 import { profileUpdateAction } from "../actions/profile";
-import pickFile from "../../infra/actions/pickFile";
+import pickFile, { pickFileError } from "../../infra/actions/pickFile";
 import { ContentUri } from "../../types/contentUri";
 import { uploadDocument, formatResults } from "../../workspace/actions/helpers/documents";
 import { OAuth2RessourceOwnerPasswordClient, signURISource } from "../../infra/oauth";
@@ -45,18 +45,6 @@ export const UserPageNavigationOptions = ({ navigation }: { navigation: Navigati
     },
     navigation
   );
-
-  const pickImageError = () => {
-    return (dispatch) => {
-      dispatch(notifierShowAction({
-        id: "profileOne",
-        text: I18n.t("common-ErrorStorageAccess"),
-        icon: 'close',
-        type: 'error'
-      }));
-      Trackers.trackEvent("Profile", "UPDATE ERROR", "AvatarChangeError");
-    }
-  }
 
   const uploadAvatarError = () => {
     return (dispatch) => {
@@ -76,7 +64,7 @@ export class UserPage extends React.PureComponent<
     onLogout: () => Promise<void>;
     onUploadAvatar: (avatar: ContentUri[]) => Promise<void>;
     onUpdateAvatar: (uploadedAvatarUrl: string) => Promise<void>;
-    onPickImageError: () => void;
+    onPickFileError: (notifierId: string) => void;
     onUploadAvatarError: () => void;
     userinfo: IUserInfoState;
     navigation: any;
@@ -114,7 +102,7 @@ export class UserPage extends React.PureComponent<
 
   public render() {
     //avoid setstate on modalbox when unmounted
-    const { onUploadAvatar, onUpdateAvatar, onPickImageError, onUploadAvatarError, userinfo } = this.props;
+    const { onUploadAvatar, onUpdateAvatar, onPickFileError, onUploadAvatarError, userinfo } = this.props;
     const { showDisconnect, updatingAvatar } = this.state;
     const signedURISource = userinfo.photo && signURISource(`${(Conf.currentPlatform as any).url}${userinfo.photo}`)
     // FIXME (Hack): we need to add a variable param to force the call on Android for each session
@@ -150,7 +138,7 @@ export class UserPage extends React.PureComponent<
               await onUpdateAvatar(uploadedAvatarUrl);
             } catch (err) {
               if (err.message === "Error picking image") {
-                onPickImageError();
+                onPickFileError("profileOne");
               } else if (!(err instanceof Error)) {
                 onUploadAvatarError();
               }
@@ -224,7 +212,7 @@ const UserPageConnected = connect(
   },
   (dispatch: Dispatch) => ({
     onLogout: () => dispatch<any>(logout()),
-    onPickImageError: () => dispatch(pickImageError()),
+    onPickFileError: (notifierId: string) => dispatch(pickFileError(notifierId)),
     onUploadAvatarError: () => dispatch(uploadAvatarError()),
     onUploadAvatar: (avatar: ContentUri[]) => uploadDocument(dispatch, avatar),
     onUpdateAvatar: (imageWorkspaceUrl: string) => dispatch(profileUpdateAction({picture: imageWorkspaceUrl}, true))

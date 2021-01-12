@@ -1,26 +1,35 @@
 import * as React from "react";
+import { connect } from "react-redux";
+import { Dispatch } from "redux";
+
 import { AttachmentGroup } from "./AttachmentGroup";
 import { AttachmentGroupImages } from "./AttachmentGroupImages";
 import { ContentUri } from "../types/contentUri";
 import { Trackers } from "../infra/tracker";
 import { ILocalAttachment } from "./Attachment";
-import pickFile from "../infra/actions/pickFile";
+import pickFile, { pickFileError } from "../infra/actions/pickFile";
 
-export class AttachmentPicker extends React.PureComponent<
+class AttachmentPicker_Unconnected extends React.PureComponent<
   {
     attachments: ContentUri[] | ILocalAttachment[];
     onAttachmentSelected: (selectedAtt) => void;
     onAttachmentRemoved: (selectedAtt) => void;
+    onPickFileError: (notifierId: string) => void;
     onlyImages?: boolean;
     isContainerHalfScreen?: boolean;
     attachmentsHeightHalfScreen?: number;
+    notifierId: string;
   }
 > {
   public onPickAttachment() {
-    const { onlyImages, onAttachmentSelected } = this.props;
+    const { onlyImages, onAttachmentSelected, onPickFileError, notifierId } = this.props;
     pickFile(onlyImages)
       .then(selectedAtt => onAttachmentSelected(selectedAtt))  
-      .catch(err => console.log(err))
+      .catch(err => {
+        if (err.message === "Error picking image" || err.message === "Error picking document") {
+          onPickFileError(notifierId);
+        } 
+      })
   }
 
   public onRemoveAttachment(index) {
@@ -51,3 +60,13 @@ export class AttachmentPicker extends React.PureComponent<
       : null 
   }
 }
+
+
+export const AttachmentPicker = connect(
+  null,
+  (dispatch: Dispatch) => ({
+    onPickFileError: (notifierId: string) => dispatch(pickFileError(notifierId))
+  }),
+  null,
+  { forwardRef: true }
+)(AttachmentPicker_Unconnected);

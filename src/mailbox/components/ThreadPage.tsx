@@ -26,6 +26,8 @@ import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
 import ThreadMessage from "../components/ThreadMessage";
 import Conf from "../../../ode-framework-conf";
+import conversationConfig from "../config"
+import Notifier from "../../infra/notifier/container";
 
 // Type definitions
 import { IConversationMessage } from "../actions/sendMessage";
@@ -165,6 +167,7 @@ export class ThreadPage extends React.PureComponent<
           {threadInfo.isFetchingFirst
             ? <Loading />
             : <View style={{flex: 1}}>
+                <Notifier id={`thread-${threadInfo?.id}`}/>
                 {isDimmed
                   ? <View
                       style={{

@@ -17,6 +17,7 @@ import withMenuWrapper from "../utils/withMenuWrapper";
 import withNavigationWrapper from "../utils/withNavigationWrapper";
 import withUploadErrorWrapper from "../utils/withUploadErrorWrapper";
 import withUploadWrapper from "../utils/withUploadWrapper";
+import Notifier from "../../infra/notifier/container";
 
 const styles = StyleSheet.create({
   separator: {
@@ -82,6 +83,7 @@ export class Items extends React.Component<IDispatchProps & IItemsProps & ISelec
 
     return (
       <PageContainer>
+        <Notifier id="workspace"/>
         <FlatList
           contentContainerStyle={{ backgroundColor: CommonStyles.lightGrey, flexGrow: 1 }}
           data={itemsArray}

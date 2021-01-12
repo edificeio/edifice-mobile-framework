@@ -86,7 +86,7 @@ class Notifier extends React.Component<
   public measureText = (evt: LayoutEvent) => {
     const textBlockHeight = evt.nativeEvent.lines[0].height * evt.nativeEvent.lines.length;
     evt.nativeEvent.lines.length > 1
-    ? this.setState({ measuredText: true, longText: true, notifierHeight: textBlockHeight })
+    ? this.setState({ measuredText: true, longText: true, notifierHeight: textBlockHeight + 30 })
     : this.setState({ measuredText: true, longText: false, notifierHeight: 40 })
   }
 
@@ -136,10 +136,12 @@ class Notifier extends React.Component<
                   style={{
                     flex: 1,
                     color: "#FFFFFF",
-                    textAlign: "center",
+                    textAlign: longText ? "left" : "center",
                     alignSelf: "center",
                     height,
-                    marginLeft
+                    marginLeft,
+                    paddingTop: longText ? 15 : undefined,
+                    paddingBottom: longText ? 15 : undefined
                   }}
                 >
                   {text}
