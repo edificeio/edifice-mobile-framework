@@ -386,6 +386,7 @@
     "zimbra-empty-mailbox": "Aucun message pour le moment",
     "zimbra-send-mail": "Message envoyé",
     "zimbra-attachment-error": "Echec de l'ajout de la pièce jointe",
+    "zimbra-send-attachment-progress": "Veuillez attendre l'ajout complet de la pièce jointe",
     "zimbra-missing-receiver": "Ce message doit contenir au moins un destinataire",
     "zimbra-message-deleted": "Message supprimé",
     "zimbra-message-moved": "Message déplacé",

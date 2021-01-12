@@ -55,6 +55,7 @@ interface ICreateMailEventProps {
 interface ICreateMailOtherProps {
   isFetching: boolean;
   mail: IMail;
+  uploadProgress: number;
 }
 
 type NewMailContainerProps = ICreateMailEventProps & ICreateMailOtherProps & INavigationProps;
@@ -181,6 +182,13 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           containerStyle: { width: "95%", backgroundColor: "black" },
         });
         return;
+      } else if (this.props.uploadProgress > 0 && this.props.uploadProgress < 100) {
+        Toast.show(I18n.t("zimbra-send-attachment-progress"), {
+          position: Toast.position.BOTTOM,
+          mask: false,
+          containerStyle: { width: "95%", backgroundColor: "black" },
+        });
+        return;
       }
 
       try {
@@ -210,6 +218,14 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       this.props.navigation.goBack();
     },
     getGoBack: () => {
+      if (this.props.uploadProgress > 0 && this.props.uploadProgress < 100) {
+        Toast.show(I18n.t("zimbra-send-attachment-progress"), {
+          position: Toast.position.BOTTOM,
+          mask: false,
+          containerStyle: { width: "95%", backgroundColor: "black" },
+        });
+        return;
+      }
       this.saveDraft();
 
       const navParams = this.props.navigation.state;
@@ -405,6 +421,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
             : this.state.mail.attachments
         }
         onAttachmentChange={attachments => this.setState(prevState => ({ mail: { ...prevState.mail, attachments } }))}
+        onAttachmentDelete={attachmentId => this.props.deleteAttachment(this.state.id, attachmentId)}
         prevBody={this.state.prevBody}
       />
     );
@@ -417,6 +434,7 @@ const mapStateToProps = (state: any) => {
   return {
     mail: data,
     isFetching,
+    uploadProgress: [state.progress.value],
   };
 };
 

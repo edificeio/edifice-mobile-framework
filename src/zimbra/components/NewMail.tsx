@@ -15,6 +15,13 @@ import SearchUserMail from "./SearchUserMail";
 
 type HeadersProps = { to: ISearchUsers; cc: ISearchUsers; bcc: ISearchUsers; subject: string };
 
+type IAttachment = {
+  id?: string;
+  filename: string;
+  contentType: string;
+  size?: number;
+};
+
 interface NewMailComponentProps {
   isFetching: boolean;
   headers: HeadersProps;
@@ -22,8 +29,9 @@ interface NewMailComponentProps {
   onHeaderChange: (header: Headers) => void;
   body: string;
   onBodyChange: (body: string) => void;
-  attachments: any[];
-  onAttachmentChange: (attachments: any[]) => void;
+  attachments: IAttachment[];
+  onAttachmentChange: (attachments: IAttachment[]) => void;
+  onAttachmentDelete: (attachmentId: string) => void;
   prevBody: any;
 }
 
@@ -52,6 +60,7 @@ export default ({
   onBodyChange,
   attachments,
   onAttachmentChange,
+  onAttachmentDelete,
   prevBody,
 }: NewMailComponentProps) => {
   return (
@@ -66,6 +75,7 @@ export default ({
             style={{ zIndex: 2 }}
             attachments={attachments}
             onChange={onAttachmentChange}
+            onDelete={onAttachmentDelete}
             onSave={onDraftSave}
           />
           <Body style={{ zIndex: 1 }} value={body} onChange={onBodyChange} onSave={onDraftSave} />
@@ -192,9 +202,10 @@ const Headers = ({ style, headers, onChange, onSave }) => {
   );
 };
 
-const Attachments = ({ style, attachments, onChange, onSave }) => {
+const Attachments = ({ style, attachments, onChange, onDelete, onSave }) => {
   const removeAttachment = id => {
     const newAttachments = attachments.filter(item => item.id !== id);
+    onDelete(id);
     onChange(newAttachments);
   };
 
