@@ -117,15 +117,27 @@ export default class Dashboard extends React.PureComponent<DashboardProps> {
   }
 
   private renderHomework(homeworks) {
-    const tomorrowHomeworks = Object.values(homeworks.data).filter(hmk =>
-      hmk.due_date.isSame(moment().add(1, "day"), "day")
-    );
+    let homeworksByDate = {};
+    Object.values(homeworks.data).forEach(hm => {
+      const key = moment(hm.due_date).format("YYYY-MM-DD");
+      if (typeof homeworksByDate[key] === "undefined") homeworksByDate[key] = [];
+      homeworksByDate[key].push(hm);
+    });
+
+    const tomorrowDate = moment().add(1, "day");
+
+    homeworksByDate = Object.keys(homeworksByDate)
+      .sort()
+      .slice(0, 5)
+      .reduce(function(memo, current) {
+        memo[current] = homeworksByDate[current];
+        return memo;
+      }, {});
+
     return (
       <View style={styles.dashboardPart}>
         <TextBold style={styles.title}>{I18n.t("viesco-homework")}</TextBold>
-        <Text style={styles.subtitle}>{I18n.t("viesco-homework-fortomorrow")}</Text>
-        {homeworks.isFetching && <Loading />}
-        {tomorrowHomeworks.length === 0 && !homeworks.isFetching && (
+        {Object.values(homeworks.data).length === 0 && (
           <EmptyScreen
             imageSrc={require("../../../../assets/images/empty-screen/empty-homework.png")}
             imgWidth={64}
@@ -133,23 +145,36 @@ export default class Dashboard extends React.PureComponent<DashboardProps> {
             title={I18n.t("viesco-homework-EmptyScreenText")}
           />
         )}
-        {tomorrowHomeworks.map(homework => (
-          <HomeworkItem
-            disabled
-            checked={isHomeworkDone(homework)}
-            title={homework.subject.name}
-            subtitle={homework.type}
-            onPress={() =>
-              this.props.navigation.navigate(
-                "cdt",
-                {},
-                NavigationActions.navigate({
-                  routeName: "HomeworkPage",
-                  params: homeworkDetailsAdapter(homework),
-                })
-              )
-            }
-          />
+        {Object.keys(homeworksByDate).map(date => (
+          <>
+            {moment(date).isAfter(moment()) && (
+              <>
+                <Text style={styles.subtitle}>
+                  {moment(date).isSame(tomorrowDate, "day")
+                    ? I18n.t("viesco-homework-fortomorrow")
+                    : `${I18n.t("viesco-homework-fordate")} ${moment(date).format("DD/MM/YYYY")}`}
+                </Text>
+                {homeworksByDate[date].map(homework => (
+                  <HomeworkItem
+                    disabled
+                    checked={isHomeworkDone(homework)}
+                    title={homework.subject.name}
+                    subtitle={homework.type}
+                    onPress={() =>
+                      this.props.navigation.navigate(
+                        "cdt",
+                        {},
+                        NavigationActions.navigate({
+                          routeName: "HomeworkPage",
+                          params: homeworkDetailsAdapter(homework),
+                        })
+                      )
+                    }
+                  />
+                ))}
+              </>
+            )}
+          </>
         ))}
       </View>
     );

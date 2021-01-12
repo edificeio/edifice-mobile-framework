@@ -35,7 +35,7 @@ class Dashboard extends React.PureComponent<{
         .add(1, "day")
         .format("YYYY-MM-DD"),
       moment()
-        .add(1, "day")
+        .add(1, "month")
         .format("YYYY-MM-DD")
     );
   }
@@ -54,7 +54,7 @@ class Dashboard extends React.PureComponent<{
           .add(1, "day")
           .format("YYYY-MM-DD"),
         moment()
-          .add(1, "day")
+          .add(1, "month")
           .format("YYYY-MM-DD")
       );
     }
