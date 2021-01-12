@@ -14,7 +14,7 @@ const attachmentStyle = {
 
 const Attachment = ({ uploadSuccess, uploadProgress, fileType, fileName, onRemove }) => {
   return (
-    <TouchableOpacity style={attachmentStyle} onPress={onRemove}>
+    <View style={attachmentStyle}>
       <View
         style={[
           StyleSheet.absoluteFill,
@@ -27,8 +27,10 @@ const Attachment = ({ uploadSuccess, uploadProgress, fileType, fileName, onRemov
       />
       <Icon size={25} style={{ margin: 10 }} color={CommonStyles.primary} name={getFileIcon(fileType)} />
       <Text style={{ flex: 1, color: CommonStyles.primary }}>{fileName}</Text>
-      <Icon name="close" style={{ margin: 10 }} color="red" />
-    </TouchableOpacity>
+      <TouchableOpacity onPress={onRemove}>
+        <Icon name="close" style={{ margin: 10 }} color="red"/>
+      </TouchableOpacity>
+    </View>
   );
 };
 
