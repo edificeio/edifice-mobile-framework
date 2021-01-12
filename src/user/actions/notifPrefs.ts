@@ -111,7 +111,7 @@ export const includeNotifKeys = [
 export const includeNotifKeysByApp = [
   {
     appName: "messagerie",
-    notifKeys: ["messagerie.send-message"]
+    notifKeys: ["push.notif.new.message", "messagerie.send-message"],
   },
   {
     appName: "schoolbook",
