@@ -12,6 +12,7 @@ import { Text } from "../../ui/Typography";
 import { ISearchUsers } from "../service/newMail";
 import Attachment from "./Attachment";
 import SearchUserMail from "./SearchUserMail";
+import Notifier from "../../infra/notifier/container";
 
 type HeadersProps = { to: ISearchUsers; cc: ISearchUsers; bcc: ISearchUsers; subject: string };
 
@@ -66,6 +67,7 @@ export default ({
   return (
     <PageContainer>
       <ConnectionTrackingBar />
+      <Notifier id="zimbra" />
       {isFetching ? (
         <Loading />
       ) : (

@@ -6,10 +6,10 @@ import { View } from "react-native";
 import Toast from "react-native-tiny-toast";
 import { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+import { bindActionCreators, Dispatch } from "redux";
 
 import { getSessionInfo } from "../../App";
-import pickFile from "../../infra/actions/pickFile";
+import pickFile, { pickFileError } from "../../infra/actions/pickFile";
 import withViewTracking from "../../infra/tracker/withViewTracking";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { CommonStyles } from "../../styles/common/styles";
@@ -46,6 +46,7 @@ interface ICreateMailEventProps {
   makeDraft: (mailDatas: object, inReplyTo: string, isForward: boolean) => void;
   updateDraft: (mailId: string, mailDatas: object) => void;
   trashMessage: (mailId: string[]) => void;
+  onPickFileError: (notifierId: string) => void;
   addAttachment: (draftId: string, files: any) => void;
   deleteAttachment: (draftId: string, attachmentId: string) => void;
   fetchMailContent: (mailId: string) => void;
@@ -153,26 +154,16 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
   };
 
   navigationHeaderFunction = {
-    getAskForAttachment: async () => {
-      const file = await pickFile();
-      const fileState = {
-        contentType: file.mime,
-        filename: file.name,
-      };
-      this.setState({ tempAttachment: fileState });
-
-      try {
-        const newAttachments = await this.props.addAttachment(this.state.id, file);
-        this.setState(prevState => ({
-          mail: { ...prevState.mail, attachments: newAttachments },
-          tempAttachment: null,
-        }));
-      } catch (e) {
-        Toast.show(I18n.t("zimbra-attachment-error"), {
-          position: Toast.position.BOTTOM,
+    getAskForAttachment: (dispatch: Dispatch) => {
+      pickFile()
+        .then(contentUri => {
+          this.getAttachmentData(contentUri);
+        })
+        .catch(err => {
+          if (err.message === "Error picking image" || err.message === "Error picking document") {
+            this.props.onPickFileError("zimbra");
+          }
         });
-        this.setState({ tempAttachment: null });
-      }
     },
     getSendDraft: async () => {
       if (this.state.mail.to.length === 0) {
@@ -382,6 +373,27 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     );
   };
 
+  getAttachmentData = async file => {
+    const fileState = {
+      contentType: file.mime,
+      filename: file.name,
+    };
+    this.setState({ tempAttachment: fileState });
+
+    try {
+      const newAttachments = await this.props.addAttachment(this.state.id, file);
+      this.setState(prevState => ({
+        mail: { ...prevState.mail, attachments: newAttachments },
+        tempAttachment: null,
+      }));
+    } catch (e) {
+      Toast.show(I18n.t("zimbra-attachment-error"), {
+        position: Toast.position.BOTTOM,
+      });
+      this.setState({ tempAttachment: null });
+    }
+  };
+
   forwardDraft = async () => {
     try {
       this.props.forwardMail(this.state.id, this.state.replyTo);
@@ -446,6 +458,7 @@ const mapDispatchToProps = (dispatch: any) => {
       makeDraft: makeDraftMailAction,
       updateDraft: updateDraftMailAction,
       trashMessage: trashMailsAction,
+      onPickFileError: (notifierId: string) => dispatch(pickFileError(notifierId)),
       addAttachment: addAttachmentAction,
       deleteAttachment: deleteAttachmentAction,
       clearContent: clearMailContentAction,
