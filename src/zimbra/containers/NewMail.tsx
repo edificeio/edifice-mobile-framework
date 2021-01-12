@@ -322,7 +322,15 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         };
       }
       case DraftType.DRAFT: {
-        const prevbody = "<br><br>" + this.props.mail.body.split("<br><br>").slice(1).join("<br><br>");
+        let prevbody = "";
+        if (this.props.mail.body.length > 0) {
+          prevbody +=
+            "<br><br>" +
+            this.props.mail.body
+              .split("<br><br>")
+              .slice(1)
+              .join("<br><br>");
+        }
         const current_body = this.props.mail.body.split("<br><br>")[0];
 
         return {
