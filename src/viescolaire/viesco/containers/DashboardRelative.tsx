@@ -16,6 +16,7 @@ import { getSubjectsListState } from "../state/subjects";
 class Dashboard extends React.PureComponent<{
   homeworks: any;
   evaluations: any[];
+  hasRightToCreateAbsence: boolean;
   structureId: string;
   childId: string;
   getSubjects: any;
@@ -73,6 +74,10 @@ const mapStateToProps: (state: any) => any = state => {
   const subjects = getSubjectsListState(state);
   const structureId = getSelectedChildStructure(state)?.id;
 
+  const authorizedActions = state.user.info.authorizedActions;
+  const hasRightToCreateAbsence =
+    authorizedActions && authorizedActions.some(action => action.displayName === "presences.absence.statements.create");
+
   const evaluations = [
     { subject: "Mathématiques", date: "23/03/2020", note: "15/20" },
     { subject: "Histoire-Géographie", date: "25/03/2020", note: "10/20" },
@@ -82,6 +87,7 @@ const mapStateToProps: (state: any) => any = state => {
   return {
     homeworks,
     evaluations,
+    hasRightToCreateAbsence,
     structureId,
     childId,
     subjects,

@@ -5,7 +5,7 @@ import { View, StyleSheet, ScrollView } from "react-native";
 import { NavigationActions } from "react-navigation";
 
 import { INavigationProps } from "../../../types";
-import { Icon, Loading } from "../../../ui";
+import { Icon } from "../../../ui";
 import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
 import { EmptyScreen } from "../../../ui/EmptyScreen";
 import { Text, TextBold } from "../../../ui/text";
@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
 type DashboardProps = {
   homeworks: any[];
   evaluations: any[];
+  hasRightToCreateAbsence: boolean;
 } & INavigationProps;
 
 interface IIconButtonProps {
@@ -201,16 +202,18 @@ export default class Dashboard extends React.PureComponent<DashboardProps> {
   }
 
   public render() {
-    const { homeworks, evaluations } = this.props;
+    const { homeworks, evaluations, hasRightToCreateAbsence } = this.props;
 
     return (
       <View style={{ flex: 1 }}>
         <ChildPicker>
-          <TouchableOpacity
-            onPress={() => this.props.navigation.navigate("Declaration")}
-            style={styles.declareAbsenceButton}>
-            <TextBold style={{ color: "#FFFFFF" }}>{I18n.t("viesco-declareAbsence")}</TextBold>
-          </TouchableOpacity>
+          {hasRightToCreateAbsence && (
+            <TouchableOpacity
+              onPress={() => this.props.navigation.navigate("Declaration")}
+              style={styles.declareAbsenceButton}>
+              <TextBold style={{ color: "#FFFFFF" }}>{I18n.t("viesco-declareAbsence")}</TextBold>
+            </TouchableOpacity>
+          )}
         </ChildPicker>
 
         <ScrollView>
