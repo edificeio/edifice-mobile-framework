@@ -6,16 +6,19 @@ import { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
+import pickFile, { pickFileError } from "../../../infra/actions/pickFile";
 import withViewTracking from "../../../infra/tracker/withViewTracking";
 import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
 import { INavigationProps } from "../../../types";
 import { HeaderBackAction } from "../../../ui/headers/NewHeader";
 import { getSelectedChild } from "../../viesco/state/children";
-import { declareAbsenceAction } from "../actions/declaration";
+import { declareAbsenceAction, declareAbsenceWithFileAction } from "../actions/declaration";
 import DeclarationComponent from "../components/Declaration";
 
 type DeclarationProps = {
   declareAbsenceAction: (startDate: moment.Moment, endDate: moment.Moment, comment: string) => void;
+  declareAbsenceWithFileAction: (startDate: moment.Moment, endDate: moment.Moment, comment: string, file: any) => void;
+  onPickFileError: (notifierId: string) => void;
   childName: string;
 } & INavigationProps;
 
@@ -23,6 +26,8 @@ type DeclarationState = {
   startDate: moment.Moment;
   endDate: moment.Moment;
   comment: string;
+  tempAttachment?: any;
+  attachment?: any;
 };
 
 class Declaration extends React.PureComponent<DeclarationProps, DeclarationState> {
@@ -68,10 +73,23 @@ class Declaration extends React.PureComponent<DeclarationProps, DeclarationState
     });
   };
 
-  submitForm = async () => {
-    const { startDate, endDate, comment } = this.state;
+  pickAttachment = () => {
+    pickFile()
+      .then(contentUri => {
+        this.setState({ attachment: contentUri });
+      })
+      .catch(err => {
+        if (err.message === "Error picking image" || err.message === "Error picking document") {
+          this.props.onPickFileError("viesco");
+        }
+      });
+  };
 
-    await this.props.declareAbsenceAction(startDate, endDate, comment);
+  submitForm = async () => {
+    const { startDate, endDate, comment, attachment } = this.state;
+
+    if (attachment) await this.props.declareAbsenceWithFileAction(startDate, endDate, comment, attachment);
+    else await this.props.declareAbsenceAction(startDate, endDate, comment);
     this.props.navigation.goBack();
   };
 
@@ -90,6 +108,8 @@ class Declaration extends React.PureComponent<DeclarationProps, DeclarationState
         updateEndDate={this.updateEndDate}
         updateStartDate={this.updateStartDate}
         updateComment={this.updateComment}
+        pickAttachment={this.pickAttachment}
+        removeAttachment={() => this.setState({ attachment: null })}
         submit={this.submitForm}
       />
     );
@@ -105,7 +125,14 @@ const mapStateToProps = (state: any) => {
 };
 
 const mapDispatchToProps = (dispatch: any) => {
-  return bindActionCreators({ declareAbsenceAction }, dispatch);
+  return bindActionCreators(
+    {
+      declareAbsenceAction,
+      declareAbsenceWithFileAction,
+      onPickFileError: (notifierId: string) => dispatch(pickFileError(notifierId)),
+    },
+    dispatch
+  );
 };
 
 export default withViewTracking("viesco/absence")(connect(mapStateToProps, mapDispatchToProps)(Declaration));

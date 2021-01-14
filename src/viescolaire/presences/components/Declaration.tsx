@@ -1,10 +1,11 @@
 import I18n from "i18n-js";
 import moment from "moment";
 import * as React from "react";
-import { View, StyleSheet, SafeAreaView, KeyboardAvoidingView, Keyboard, Platform } from "react-native";
+import { View, StyleSheet, SafeAreaView, KeyboardAvoidingView, Platform } from "react-native";
 import { TextInput, ScrollView } from "react-native-gesture-handler";
 
 import { CommonStyles } from "../../../styles/common/styles";
+import { Icon } from "../../../ui";
 import { DialogButtonOk } from "../../../ui/ConfirmDialog";
 import ConnectionTrackingBar from "../../../ui/ConnectionTrackingBar";
 import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
@@ -18,6 +19,9 @@ type DeclarationProps = {
   updateEndDate: any;
   comment: string;
   updateComment: any;
+  attachment: any;
+  pickAttachment: () => void;
+  removeAttachment: () => void;
   submit: () => void;
   validate: () => boolean;
 };
@@ -30,6 +34,22 @@ enum SwitchState {
 type DeclarationState = {
   switchState: SwitchState;
 };
+
+interface IIconButtonProps {
+  icon: string;
+  color: string;
+  text: string;
+  onPress: () => void;
+}
+
+const IconButton = ({ icon, color, text, onPress }: IIconButtonProps) => (
+  <View style={styles.gridButtonContainer}>
+    <TouchableOpacity onPress={onPress} style={[styles.gridButton, { backgroundColor: color }]}>
+      <Icon size={20} color="black" name={icon} />
+      <Text style={styles.gridButtonText}>{text}</Text>
+    </TouchableOpacity>
+  </View>
+);
 
 export default class AbsenceDeclaration extends React.PureComponent<DeclarationProps, DeclarationState> {
   constructor(props) {
@@ -55,7 +75,16 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
   }
 
   public render() {
-    const { startDate, updateStartDate, endDate, updateEndDate, comment, updateComment, submit } = this.props;
+    const {
+      startDate,
+      updateStartDate,
+      endDate,
+      updateEndDate,
+      comment,
+      updateComment,
+      attachment,
+      submit,
+    } = this.props;
 
     const RightSwitchComponent = () => (
       <TouchableOpacity
@@ -143,6 +172,16 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
       </>
     );
 
+    const RenderAttachment = () => (
+      <View style={styles.attachment}>
+        <Icon size={20} style={{ margin: 10 }} color={CommonStyles.primary} name="attachment" />
+        <Text style={{ flex: 1, color: CommonStyles.primary }}>{this.props.attachment.name}</Text>
+        <TouchableOpacity onPress={() => this.props.removeAttachment()}>
+          <Icon name="close" style={{ margin: 10 }} color="red" />
+        </TouchableOpacity>
+      </View>
+    );
+
     return (
       <SafeAreaView>
         <ConnectionTrackingBar />
@@ -171,7 +210,14 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
                 underlineColorAndroid="lightgrey"
                 onChangeText={updateComment}
               />
+              <IconButton
+                onPress={() => this.props.pickAttachment()}
+                text={I18n.t("viesco-attachment")}
+                color="white"
+                icon="attachment"
+              />
             </View>
+            {attachment && <RenderAttachment />}
 
             <DialogButtonOk
               style={{ alignSelf: "center" }}
@@ -236,6 +282,29 @@ const styles = StyleSheet.create({
   inputContainer: {
     backgroundColor: "white",
     flexDirection: "column",
-    padding: 25,
+    paddingHorizontal: 25,
+    paddingTop: 25,
+  },
+  gridButtonContainer: {
+    width: "50%",
+    paddingBottom: 6,
+  },
+  gridButton: {
+    borderRadius: 5,
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 8,
+  },
+  gridButtonText: {
+    color: "black",
+    flex: 1,
+    textAlign: "center",
+  },
+  attachment: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 5,
+    marginLeft: 20,
   },
 });

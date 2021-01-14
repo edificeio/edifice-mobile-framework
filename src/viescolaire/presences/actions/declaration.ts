@@ -1,9 +1,10 @@
-import { Dispatch } from "redux";
 import moment from "moment";
-import { declarationActionsTypes } from "../state/declaration";
-import { absenceDeclarationService } from "../services/declaration";
-import { getSelectedChild, getSelectedChildStructure } from "../../viesco/state/children";
+import { Dispatch } from "redux";
+
 import { Trackers } from "../../../infra/tracker";
+import { getSelectedChild, getSelectedChildStructure } from "../../viesco/state/children";
+import { absenceDeclarationService } from "../services/declaration";
+import { declarationActionsTypes } from "../state/declaration";
 
 export const declarationActions = {
   isPosting: () => ({ type: declarationActionsTypes.isPosting }),
@@ -16,7 +17,7 @@ export function declareAbsenceAction(startDate: moment.Moment, endDate: moment.M
     const state = getState();
     try {
       dispatch(declarationActions.isPosting());
-      const data = await absenceDeclarationService.post(
+      await absenceDeclarationService.post(
         startDate,
         endDate,
         getSelectedChild(state).id,
@@ -24,7 +25,33 @@ export function declareAbsenceAction(startDate: moment.Moment, endDate: moment.M
         comment
       );
       dispatch(declarationActions.posted());
-      Trackers.trackEvent("viesco", "DECLARE ABSENCE")
+      Trackers.trackEvent("viesco", "DECLARE ABSENCE");
+    } catch (errmsg) {
+      dispatch(declarationActions.error(errmsg));
+    }
+  };
+}
+
+export function declareAbsenceWithFileAction(
+  startDate: moment.Moment,
+  endDate: moment.Moment,
+  comment: string,
+  file: { mime: string; name: string; uri: string }
+) {
+  return async (dispatch: Dispatch, getState: any) => {
+    const state = getState();
+    try {
+      dispatch(declarationActions.isPosting());
+      await absenceDeclarationService.postWithFile(
+        startDate,
+        endDate,
+        getSelectedChild(state).id,
+        getSelectedChildStructure(state)!.id,
+        comment,
+        file
+      );
+      dispatch(declarationActions.posted());
+      Trackers.trackEvent("viesco", "DECLARE ABSENCE");
     } catch (errmsg) {
       dispatch(declarationActions.error(errmsg));
     }
