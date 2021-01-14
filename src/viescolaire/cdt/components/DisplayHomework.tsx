@@ -30,6 +30,9 @@ export default class DisplayHomework extends React.PureComponent<
 
   public render() {
     const { homework } = this.state;
+    const htmlOpts = {
+      selectable: true,
+    };
     return (
       <PageContainer>
         <ScrollView>
@@ -50,7 +53,7 @@ export default class DisplayHomework extends React.PureComponent<
             <Text style={style.subtitle}>
               {I18n.t("viesco-homework-fordate")} {moment(homework.due_date).format("Do MMMM YYYY")}
             </Text>
-            {homework.description ? <HtmlContentView html={homework.description} /> : null}
+            {homework.description ? <HtmlContentView html={homework.description} opts={htmlOpts} /> : null}
           </View>
         </ScrollView>
       </PageContainer>

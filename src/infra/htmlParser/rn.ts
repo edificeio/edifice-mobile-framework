@@ -155,7 +155,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
   };
 
   protected didParse = (render: JSX.Element | INugget[]) => {
-    const output = (renderNuggets(render, {
+    const output = (renderNuggets(render, this.opts.selectable, {
       [HtmlParserNuggetTypes.Text]: {
         all: this.opts.globalTextStyle,
         ...(Object.keys(this.opts.linkTextStyle).length

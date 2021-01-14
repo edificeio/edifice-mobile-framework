@@ -99,6 +99,7 @@ export interface IVideoNugget extends INugget {
  */
 export function renderNuggets(
   nuggets,
+  selectable,
   globalStyles: {
     [HtmlParserNuggetTypes.Text]: {
       all?: TextStyle;
@@ -127,7 +128,8 @@ export function renderNuggets(
             index,
             style,
             globalStyles[HtmlParserNuggetTypes.Text],
-            false
+            false,
+            selectable,
           );
         } else if (nugget.type === HtmlParserNuggetTypes.Images) {
           return renderParseImages(nugget, index, {
@@ -177,7 +179,8 @@ function renderParseText(
     [HtmlParserJsxTextVariant.Underline]?: TextStyle;
     [HtmlParserJsxTextVariant.Link]?: TextStyle;
   },
-  nested: boolean = false
+  nested: boolean = false,
+  selectable: boolean = false
 ): JSX.Element {
   // -1 - Default opts
   textStyles = {
@@ -211,7 +214,7 @@ function renderParseText(
     case HtmlParserJsxTextVariant.None:
       const TextComp = nested ? NestedText : Text;
       return (
-        <TextComp key={key} style={{ ...style, ...textStyles.all }}>
+        <TextComp key={key} selectable={selectable} style={{ ...style, ...textStyles.all }}>
           {children}
         </TextComp>
       );
@@ -220,6 +223,7 @@ function renderParseText(
       return (
         <BoldTextComp
           key={key}
+          selectable={selectable}
           style={{ ...style, ...textStyles[HtmlParserJsxTextVariant.Bold] }}
         >
           {children}
@@ -230,6 +234,7 @@ function renderParseText(
       return (
         <ItalicTextComp
           key={key}
+          selectable={selectable}
           style={{ ...style, ...textStyles[HtmlParserJsxTextVariant.Italic] }}
         >
           {children}
@@ -240,6 +245,7 @@ function renderParseText(
       return (
         <UnderlineTextComp
           key={key}
+          selectable={selectable}
           style={{
             ...style,
             ...textStyles[HtmlParserJsxTextVariant.Underline],
@@ -254,6 +260,7 @@ function renderParseText(
       return (
         <LinkTextComp
           key={key}
+          selectable={selectable}
           onPress={() => {
             // console.log("touched", (nugget as ILinkTextNugget).url);
             (nugget as ILinkTextNugget).url && Linking.openURL((nugget as ILinkTextNugget).url);
@@ -271,6 +278,7 @@ function renderParseText(
       return (
         <ColorTextComp
           key={key}
+          selectable={selectable}
           style={{
             ...style,
             color: (nugget as IColorTextNugget).color
@@ -284,6 +292,7 @@ function renderParseText(
       return (
         <BgColorTextComp
           key={key}
+          selectable={selectable}
           style={{
             ...style,
             backgroundColor: (nugget as IColorTextNugget).color

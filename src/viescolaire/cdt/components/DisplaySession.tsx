@@ -32,6 +32,9 @@ export default class DisplayHomework extends React.PureComponent<
 
   public render() {
     const { session } = this.state;
+    const htmlOpts = {
+      selectable: true,
+    };
     return (
       <PageContainer>
         <ScrollView>
@@ -46,7 +49,7 @@ export default class DisplayHomework extends React.PureComponent<
           <View style={[style.sessionPart]}>
             <Text style={style.pageTitle}>{I18n.t("viesco-session")}</Text>
             <TextBold style={style.title}>{session.title}</TextBold>
-            {session.description ? <HtmlContentView html={session.description} /> : null}
+            {session.description ? <HtmlContentView html={session.description} opts={htmlOpts} /> : null}
           </View>
         </ScrollView>
       </PageContainer>
