@@ -68,11 +68,11 @@ export const parseAttrs = input => {
       throw new Error("Attribute values should be quoted");
     }
 
-    const endQuote = input.indexOf(startQuote, position);
+    let endQuote = input.indexOf(startQuote, position);
 
     if (endQuote === -1) {
       // throw new Error("Unclosed attribute value");
-      position = endQuote + 1;
+      endQuote = end;
     }
 
     const attrValue = input.slice(position, endQuote);
