@@ -37,8 +37,6 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
 	<key>NSAppleMusicUsageDescription</key>
 	<string>$(PRODUCT_NAME) would like access to your media library</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
@@ -93,6 +91,7 @@
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>
+		<string>fetch</string>
 		<string>remote-notification</string>
 	</array>
 	<key>UILaunchStoryboardName</key>

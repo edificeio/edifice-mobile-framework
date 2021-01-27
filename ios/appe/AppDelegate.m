@@ -14,10 +14,6 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 
-#import <Firebase.h>
-#import <RNFirebaseMessaging.h>
-#import <RNFirebaseNotifications.h>
-
 #import <RNCPushNotificationIOS.h>
 
 #import <React/RCTLinkingManager.h>
@@ -26,6 +22,9 @@
 #import <AppCenterReactNative.h>
 #import <AppCenterReactNativeAnalytics.h>
 #import <AppCenterReactNativeCrashes.h>
+
+// React Native Firebase - Manual instalation steps - @see https://rnfirebase.io/#configure-firebase-with-ios-credentials
+#import <Firebase.h>
 
 @implementation AppDelegate
 
@@ -47,14 +46,15 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
 
-  // React Native Firebase (see https://rnfirebase.io/docs/v5.x.x/installation/ios)
-  [FIRApp configure];
-  [RNFirebaseNotifications configure];
-
   // AppCenter (see https://docs.microsoft.com/en-us/appcenter/sdk/getting-started/react-native)
   [AppCenterReactNative register];
   [AppCenterReactNativeAnalytics registerWithInitiallyEnabled:true];
   [AppCenterReactNativeCrashes registerWithAutomaticProcessing];
+
+  // React Native Firebase - Manual instalation steps - @see https://rnfirebase.io/#configure-firebase-with-ios-credentials
+  if ([FIRApp defaultApp] == nil) {
+    [FIRApp configure];
+  }
 
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
@@ -79,36 +79,6 @@
 #else
   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
-}
-
-// Required to register for notifications
-- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings
-{
-  [RNCPushNotificationIOS didRegisterUserNotificationSettings:notificationSettings];
-  [[RNFirebaseMessaging instance] didRegisterUserNotificationSettings:notificationSettings];
-}
-// Required for the register event.
-- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
-{
-  [RNCPushNotificationIOS didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
-}
-// Required for the notification event. You must call the completion handler after handling the remote notification.
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
-fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
-{
-  [RNCPushNotificationIOS didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
-  [[RNFirebaseNotifications instance] didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
-}
-// Required for the registrationError event.
-- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
-{
-  [RNCPushNotificationIOS didFailToRegisterForRemoteNotificationsWithError:error];
-}
-// Required for the localNotification event.
-- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification
-{
-  [RNCPushNotificationIOS didReceiveLocalNotification:notification];
-  [[RNFirebaseNotifications instance] didReceiveLocalNotification:notification];
 }
 
 @end

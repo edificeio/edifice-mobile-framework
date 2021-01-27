@@ -9,10 +9,6 @@
 
 # Add any project specific keep options here:
 
-# React Native Firebase (see https://rnfirebase.io/docs/v5.x.x/installation/android)
--keep class io.invertase.firebase.** { *; }
--dontwarn io.invertase.firebase.**
-
 # React Native Fast Image (see https://github.com/DylanVann/react-native-fast-image#are-you-using-proguard)
 -keep public class com.dylanvann.fastimage.* {*;}
 -keep public class com.dylanvann.fastimage.** {*;}

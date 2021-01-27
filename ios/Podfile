@@ -3,10 +3,6 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 
 target 'appe' do
 
-  # React Native Firebase
-  pod 'Firebase/Core', '~> 6.3.0'
-  pod 'Firebase/Messaging', '~> 6.3.0'
-
   # React
   pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"
   pod 'FBReactNativeSpec', :path => "../node_modules/react-native/Libraries/FBReactNativeSpec"
@@ -45,21 +41,11 @@ target 'appe' do
   pod 'RNCPushNotificationIOS', :path => '../node_modules/@react-native-community/push-notification-ios'
 
   pod 'RNDateTimePicker', :path => '../node_modules/@react-native-community/datetimepicker'
- 
+
   target 'appeTests' do
     inherit! :search_paths
     # Pods for testing
   end
 
   use_native_modules!
-end
-
-target 'appe-tvOS' do
-  # Pods for appe-tvOS
-
-  target 'appe-tvOSTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-
 end

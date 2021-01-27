@@ -8,14 +8,13 @@ import {
   OAuthErrorType
 } from "../../infra/oauth";
 import { navigate } from "../../navigation/helpers/navHelper";
+import messaging from '@react-native-firebase/messaging';
 
 // Legacy imports
 import { Platform } from "react-native";
-import firebase from "react-native-firebase";
 import Conf from "../../../ode-framework-conf";
 import { userService } from "../service";
 import { initActivationAccount as initActivationAccountAction } from "./activation";
-import PushNotificationIOS from "@react-native-community/push-notification-ios";
 import { clearTimeline } from "../../timeline/actions/clearTimeline";
 import { createEndSessionAction } from "../../infra/redux/reducerFactory";
 import { ThunkDispatch } from "redux-thunk";
@@ -168,33 +167,14 @@ export function loginAction(
       }
 
       // === 4: Get firebase device token and store it in the backend
-      let hasPermission;
       try {
-        if (
-          !checkingIOSPermissions &&
-          Platform.OS === "ios" &&
-          PushNotificationIOS
-        ) {
-          checkingIOSPermissions = true;
-          PushNotificationIOS.checkPermissions(async (permissions: any) => { // ToDo : which type is that ?
-            if (!permissions.alert || !permissions.badge || !permissions.sound) {
-              await PushNotificationIOS.requestPermissions();
-            }
-            checkingIOSPermissions = false;
-          });
-        }
-        hasPermission = await firebase.messaging().hasPermission();
-        if (hasPermission) {
+        const authorizationStatus = await messaging().requestPermission();
+        if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED) {
           await userService.registerFCMToken();
         } else {
-          try {
-            // console.log("asking for perms...");
-            await firebase.messaging().requestPermission();
-            await userService.registerFCMToken();
-          } catch (e) {
-            // console.log("Hasnt got permission to register the device token");
-          }
+          console.warn("[login] Push-notifications unauthorized by the user.")
         }
+
       } catch (err) {
         console.warn('[login] firebase registering failed');
         throw createLoginError(LoginFlowErrorType.FIREBASE_ERROR, '', '', err);

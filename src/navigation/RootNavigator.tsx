@@ -11,7 +11,6 @@ import { connect } from "react-redux";
 
 // ODE framework modules
 import { IAppModule } from "../infra/moduleTool/types";
-import pushNotifications from "../pushNotifications";
 
 // Other functional modules
 import TimelineNavigator from "../timeline/TimelineNavigator";
@@ -82,31 +81,12 @@ function getMainNavContainer(appsInfo: any[]) {
 interface MainNavigatorHOCProps {
   appsInfo: any[];
   apps: string[];
-  notification: Notification;
   dispatch: any;
 }
 
 class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
   public shouldComponentUpdate(nextProps: Partial<MainNavigatorHOCProps>) {
-    return this.props.notification !== nextProps.notification || !compareArrays(this.props.apps, nextProps.apps!);
-  }
-
-  public componentDidMount() {
-    this.componentDidUpdate();
-  }
-
-  private static lastOpenNotifData: string;
-
-  public componentDidUpdate() {
-    // this.props.notification && console.log("CHECK routing notif data");
-    if (this.props.notification && this.props.notification.data.params !== MainNavigatorHOC.lastOpenNotifData) {
-      MainNavigatorHOC.lastOpenNotifData = this.props.notification.data.params;
-      const data = JSON.parse(this.props.notification.data.params);
-      // console.log("Routing from notif data", data);
-      pushNotifications(this.props.dispatch)(data, this.props.apps);
-    } else {
-      this.props.notification && console.log("Notif data already handled:", MainNavigatorHOC.lastOpenNotifData);
-    }
+    return !compareArrays(this.props.apps, nextProps.apps!);
   }
 
   public render() {
@@ -149,8 +129,7 @@ class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
 
 const mapStateToProps = ({ user }) => ({
   apps: ["user", "myapps", ...user.auth.apps],
-  appsInfo: [{name:"user"}, {name:"myapps"}, ...user.auth.appsInfo],
-  notification: user.auth.notification,
+  appsInfo: [{name:"user"}, {name:"myapps"}, ...user.auth.appsInfo]
 });
 
 export const MainNavigator = connect(mapStateToProps, null)(withLinkingAppWrapper(MainNavigatorHOC));

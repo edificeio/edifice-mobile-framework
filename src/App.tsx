@@ -11,13 +11,6 @@ import 'ts-polyfill/lib/es2019-object';
 // Redux
 import { Provider, connect } from "react-redux";
 
-// Firebase
-import firebase from "react-native-firebase";
-import {
-  Notification,
-  NotificationOpen
-} from "react-native-firebase/notifications";
-
 // JS
 import Conf from "../ode-framework-conf";
 
@@ -37,6 +30,8 @@ import AppScreen from "./AppScreen";
 import { CommonStyles } from './styles/common/styles';
 import SplashScreen from "react-native-splash-screen";
 
+import messaging from '@react-native-firebase/messaging';
+
 // Functionnal modules // THIS IS UGLY. it is a workaround for include matomo tracking.
 require("./mailbox");
 require("./zimbra");
@@ -55,6 +50,7 @@ import { IUserInfoState } from "./user/state/info";
 
 // App Conf
 import "./infra/appConf";
+import { AppPushNotificationHandlerComponent } from "./pushNotifications";
 
 // Disable Yellow Box on release builds.
 if (__DEV__) {
@@ -77,7 +73,9 @@ class AppStoreUnconnected extends React.Component<
             backgroundColor={CommonStyles.statusBarColor}
             barStyle="light-content"
           />
-          <AppScreen />
+          <AppPushNotificationHandlerComponent>
+            <AppScreen />
+          </AppPushNotificationHandlerComponent>
         </View>
       </Provider>
     );
@@ -115,39 +113,11 @@ class AppStoreUnconnected extends React.Component<
   }
 
   public async componentDidUpdate(prevProps: any) {
-    const loggedIn = (this.props as any).loggedIn
-
-    if (loggedIn && loggedIn !== prevProps.loggedIn) {
-      // push notif subscription
-      if (!AppStoreUnconnected.initialNotifRouted) {
-        const notificationOpen: NotificationOpen = await firebase
-          .notifications()
-          .getInitialNotification();
-        if (notificationOpen) {
-          // console.log("on notif (LAUNCH):", notificationOpen);
-          this.handleNotification(notificationOpen);
-        }
-      }
-
-      //TODO unsubscribe on unmount=>leak
-      if (!this.notificationOpenedListener)
-        this.notificationOpenedListener = firebase
-          .notifications()
-          .onNotificationOpened((notificationOpen: NotificationOpen) => {
-            // console.log("on notif (REBACK):", notificationOpen);
-            AppStoreUnconnected.initialNotifRouted = true;
-            return this.handleNotification(notificationOpen);
-          });
-
-      AppStoreUnconnected.initialNotifRouted = false;
-
-      if (!this.onTokenRefreshListener)
-        this.onTokenRefreshListener = firebase
-          .messaging()
-          .onTokenRefresh(fcmToken => {
-            this.handleFCMTokenModified(fcmToken);
-          });
-    }
+    if (!this.onTokenRefreshListener)
+      this.onTokenRefreshListener = messaging()
+        .onTokenRefresh(fcmToken => {
+          this.handleFCMTokenModified(fcmToken);
+        });
   }
 
   private async startupLogin() {
@@ -180,24 +150,6 @@ class AppStoreUnconnected extends React.Component<
     }
   }
 
-  private static initialNotifRouted: boolean = false;
-  private static lastNotificationHandeld = undefined;
-
-  private handleNotification = (notificationOpen: NotificationOpen) => {
-    // AppStoreUnconnected.initialNotifRouted = true;
-    // console.log("got notification !");
-    // Get the action triggered by the notification being opened
-    const action = notificationOpen.action;
-    // Get information about the notification that was opened
-    const notification: Notification = notificationOpen.notification;
-    // console.log("got notification !!", notification);
-    this.props.store.dispatch({
-      notification,
-      type: "NOTIFICATION_OPEN"
-    });
-    SplashScreen.hide();
-  };
-
   private handleFCMTokenModified = (fcmToken: any) => {
     this.props.store.dispatch(refreshToken(fcmToken));
   };
@@ -220,7 +172,6 @@ const getStore = () => {
 
 const mapStateToProps = (state: any) => ({
   currentPlatformId: state.user.auth.platformId,
-  loggedIn: state.user.auth.loggedIn,
   store: getStore(),
 });
 

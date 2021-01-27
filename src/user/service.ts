@@ -1,4 +1,3 @@
-import firebase from "react-native-firebase";
 import {
     signedFetch
 } from "../infra/fetchWithCache";
@@ -7,6 +6,7 @@ import Conf from "../../ode-framework-conf";
 import { AsyncStorage, Platform } from "react-native";
 import DeviceInfo from 'react-native-device-info';
 import AppLink from 'react-native-app-link';
+import messaging from '@react-native-firebase/messaging';
 
 //https://stackoverflow.com/questions/6832596/how-to-compare-software-version-number-using-js-only-number
 function _compareVersion(version1: string, version2: string) {
@@ -42,9 +42,6 @@ class UserService {
     lastRegisteredToken: string;
     pendingRegistration: "initial" | "delayed" | "registered" = "initial";
     constructor() {
-        firebase.messaging().onTokenRefresh(token => {
-
-        })
         Connection.onEachNetworkBack(async () => {
             if (this.pendingRegistration == "delayed") {
                 await this.registerFCMToken();
@@ -98,10 +95,10 @@ class UserService {
         await AsyncStorage.setItem(UserService.FCM_TOKEN_TODELETE_KEY, json)
         ////console.log("removed token to delete queue : ", token, json)
     }
-    async unregisterFCMToken(token = null) {
+    async unregisterFCMToken(token: string | null = null) {
         try {
             if (!token) {
-                token = await firebase.messaging().getToken();
+                token = await messaging().getToken();
             }
             ////console.log("unregistering token : ", token);
             const deleteTokenResponse = await signedFetch(
@@ -123,12 +120,12 @@ class UserService {
             }
         }
     }
-    async registerFCMToken(token = null) {
+    async registerFCMToken(token: string | null = null) {
         // ////console.log(token);
         try {
             this.pendingRegistration = "initial";
             if (!token) {
-                token = await firebase.messaging().getToken();
+                token = await messaging().getToken();
             }
             this.lastRegisteredToken = token;
             ////console.log("registering token : ", token);

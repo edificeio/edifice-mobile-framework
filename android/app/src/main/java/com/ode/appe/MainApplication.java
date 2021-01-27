@@ -10,10 +10,6 @@ import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-// React Native Firebase modules (needs to be linked manually)
-import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
-import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
-
 import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {
@@ -28,8 +24,6 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       @SuppressWarnings("UnnecessaryLocalVariable")
       List<ReactPackage> packages = new PackageList(this).getPackages();
-      packages.add(new RNFirebaseMessagingPackage());
-      packages.add(new RNFirebaseNotificationsPackage());
       packages.add(new BridgePackage());
       return packages;
     }
