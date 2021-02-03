@@ -5,23 +5,24 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
 import withViewTracking from "../../infra/tracker/withViewTracking";
-import { fetchCountAction } from "../actions/count";
+import { fetchInitAction } from "../actions/initMails";
 import { fetchMailListAction, fetchMailListFromFolderAction } from "../actions/mailList";
 import MailList from "../components/MailList";
-import { getFolderListState } from "../state/folders";
+import { getInitMailListState, IFolder } from "../state/initMails";
 import { getMailListState } from "../state/mailList";
+import { IInit } from "./DrawerMenu";
 
 // ------------------------------------------------------------------------------------------------
 
 type MailListContainerProps = {
   navigation: NavigationDrawerProp<any>;
+  fetchInit: () => IInit;
   fetchMailList: (page: number, key: string) => any;
-  fetchCount: (ids: string[]) => any;
   fetchMailFromFolder: (folderName: string, page: number) => any;
   isPristine: boolean;
   isFetching: boolean;
   notifications: any;
-  folders: any;
+  folders: IFolder[];
   isFocused: boolean;
 };
 
@@ -101,7 +102,7 @@ const mapStateToProps: (state: any) => any = state => {
     }
   }
 
-  const folders = getFolderListState(state);
+  const folders = getInitMailListState(state).data.folders;
 
   // Format props
   return {
@@ -119,7 +120,7 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
     {
       fetchMailList: fetchMailListAction,
       fetchMailFromFolder: fetchMailListFromFolderAction,
-      fetchCount: fetchCountAction,
+      fetchInit: fetchInitAction,
     },
     dispatch
   );

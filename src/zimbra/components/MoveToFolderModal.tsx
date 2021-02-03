@@ -8,10 +8,11 @@ import { Icon } from "../../ui";
 import { DialogButtonCancel, DialogButtonOk } from "../../ui/ConfirmDialog";
 import { ModalBox, ModalContent } from "../../ui/Modal";
 import { Text } from "../../ui/Typography";
+import { IFolder } from "../state/initMails";
 
 type MoveToFolderModalProps = {
   show: boolean;
-  folders: any;
+  folders: IFolder[];
   selectedFolder: string | null;
   closeModal: () => any;
   confirm: () => any;
@@ -60,8 +61,8 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
               <Text style={{ fontSize: 18 }}>{I18n.t("zimbra-directories")}</Text>
             </View>
             <ScrollView style={{ height: "33%" }}>
-              {folders.data.map(f => (
-                <>{this.renderOption(f.id, f.name, "folder")}</>
+              {folders.map(f => (
+                <>{this.renderOption(f.id, f.folderName, "folder")}</>
               ))}
             </ScrollView>
             <View style={{ flexDirection: "row-reverse", padding: 20, paddingBottom: 10 }}>

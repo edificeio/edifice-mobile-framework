@@ -4,10 +4,10 @@ import { bindActionCreators } from "redux";
 
 import { moveMailsToFolderAction, moveMailsToInboxAction } from "../actions/mail";
 import MoveToFolderModalComponent from "../components/MoveToFolderModal";
-import { getFolderListState } from "../state/folders";
+import { getInitMailListState, IFolder } from "../state/initMails";
 
 type MoveToFolderModalProps = {
-  folders: any;
+  folders: IFolder[];
   show: boolean;
   mail: any;
   closeModal: () => any;
@@ -58,7 +58,7 @@ class MoveToFolderModal extends React.Component<MoveToFolderModalProps, MoveToFo
 
 const mapStateToProps = (state: any) => {
   return {
-    folders: getFolderListState(state),
+    folders: getInitMailListState(state).data.folders,
   };
 };
 

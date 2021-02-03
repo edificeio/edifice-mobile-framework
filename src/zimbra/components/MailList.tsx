@@ -11,6 +11,7 @@ import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { EmptyScreen } from "../../ui/EmptyScreen";
 import { SingleAvatar } from "../../ui/avatars/SingleAvatar";
 import { Text, TextBold } from "../../ui/text";
+import { IInit } from "../containers/DrawerMenu";
 import { DraftType } from "../containers/NewMail";
 import { IMail } from "../state/mailContent";
 
@@ -18,9 +19,9 @@ type MailListProps = {
   notifications: any;
   isFetching: boolean;
   firstFetch: boolean;
+  fetchInit: () => IInit;
   fetchCompleted: () => any;
   fetchMails: (page: number) => any;
-  fetchCount: (ids: string[]) => any;
   folders: any;
   isTrashed: boolean;
   fetchRequested: boolean;
@@ -89,7 +90,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
         mailId: mailInfos.id,
         onGoBack: () => {
           this.refreshMailList();
-          this.props.fetchCount(this.props.folders.data.map(f => f.id));
+          this.props.fetchInit();
         },
       });
     } else {
@@ -98,7 +99,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
         subject: mailInfos.subject,
         onGoBack: () => {
           this.refreshMailList();
-          this.props.fetchCount(this.props.folders.data.map(f => f.id));
+          this.props.fetchInit();
         },
         isTrashed: this.props.isTrashed,
       });

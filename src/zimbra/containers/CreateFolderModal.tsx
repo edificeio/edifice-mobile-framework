@@ -10,6 +10,7 @@ import { DialogButtonOk, DialogButtonCancel } from "../../ui/ConfirmDialog";
 import { ModalBox, ModalContent, ModalContentBlock } from "../../ui/Modal";
 import { TextBold } from "../../ui/Typography";
 import { postFolderAction } from "../actions/folders";
+import { fetchInitAction } from "../actions/initMails";
 
 class CreateFolderModal extends React.PureComponent<any, any> {
   constructor(props) {
@@ -27,6 +28,7 @@ class CreateFolderModal extends React.PureComponent<any, any> {
 
   onConfirm = () => {
     this.props.createFolder(this.state.name);
+    this.props.fetchInit();
     this.props.onClose();
     Toast.show(I18n.t("zimbra-create-directory-confirm"), {
       position: Toast.position.BOTTOM,
@@ -71,6 +73,7 @@ const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators(
     {
       createFolder: postFolderAction,
+      fetchInit: fetchInitAction,
     },
     dispatch
   );

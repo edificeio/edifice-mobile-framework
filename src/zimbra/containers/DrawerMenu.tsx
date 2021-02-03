@@ -3,59 +3,66 @@ import { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import { fetchCountAction } from "../actions/count";
-import { fetchFoldersAction } from "../actions/folders";
-import { fetchQuotaAction } from "../actions/quota";
-import DrawerMenu from "../components/DrawerMenu";
-import { getCountListState } from "../state/count";
-import { getFolderListState } from "../state/folders";
-import { getQuotaState } from "../state/quota";
 import withViewTracking from "../../infra/tracker/withViewTracking";
+import { fetchInitAction } from "../actions/initMails";
+import DrawerMenu from "../components/DrawerMenu";
+import { getInitMailListState, IInitMail, IFolder, IQuota } from "../state/initMails";
+
+export type IInit = {
+  data: IInitMail;
+  isPristine: boolean;
+  isFetching: boolean;
+  error: any;
+};
 
 type DrawerMenuProps = {
-  fetchFolders: () => any;
-  fetchQuota: () => any;
-  fetchCounts: (ids: string[]) => any;
+  fetchInit: () => IInit;
   activeItemKey: string;
   items: any[];
-  folders: any;
-  quota: any;
-  count: any;
+  init: IInit;
   descriptors: any[];
   navigation: NavigationScreenProp<any>;
 };
 
-export class DrawerMenuContainer extends React.Component<DrawerMenuProps> {
+type DrawerMenuState = {
+  folders: IFolder[];
+  quota: IQuota;
+};
+
+export class DrawerMenuContainer extends React.Component<DrawerMenuProps, DrawerMenuState> {
+  constructor(props) {
+    super(props);
+    this.state = {
+      folders: [{ id: "", folderName: "", path: "", unread: 0, count: 0, folders: [] }],
+      quota: { storage: 0, quota: "" },
+    };
+  }
   componentDidMount() {
-    this.props.fetchFolders();
-    this.props.fetchQuota();
+    this.props.fetchInit();
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.folders.isFetching && !this.props.folders.isFetching) {
-      this.props.fetchCounts(this.props.folders.data.map(f => f.id));
+    if (prevProps.init.isFetching && !this.props.init.isFetching && this.props.init !== undefined) {
+      this.setState({ folders: this.props.init.data.folders });
+      this.setState({ quota: this.props.init.data.quota });
     }
   }
 
   render() {
-    return <DrawerMenu {...this.props} />;
+    return <DrawerMenu {...this.props} {...this.state} />;
   }
 }
 
 const mapStateToProps = (state: any) => {
   return {
-    folders: getFolderListState(state),
-    quota: getQuotaState(state),
-    count: getCountListState(state),
+    init: getInitMailListState(state),
   };
 };
 
 const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators(
     {
-      fetchFolders: fetchFoldersAction,
-      fetchQuota: fetchQuotaAction,
-      fetchCounts: fetchCountAction,
+      fetchInit: fetchInitAction,
     },
     dispatch
   );
