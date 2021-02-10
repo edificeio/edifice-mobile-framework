@@ -1,9 +1,11 @@
 import I18n from "i18n-js";
 import * as React from "react";
+import { View } from "react-native";
 import { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
+import withViewTracking from "../../../infra/tracker/withViewTracking";
 import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
 import { HeaderBackAction } from "../../../ui/headers/NewHeader";
 import { postAbsentEvent, deleteEvent, validateRegisterAction } from "../actions/events";
@@ -11,8 +13,6 @@ import { fetchClassesCallAction } from "../actions/teacherClassesCall";
 import TeacherCallSheet from "../components/TeacherCallSheet";
 import { getClassesCallListState } from "../state/teacherClassesCall";
 import { getCoursesListState } from "../state/teacherCourses";
-import { View } from "react-native";
-import withViewTracking from "../../../infra/tracker/withViewTracking";
 
 class CallSheet extends React.PureComponent<any> {
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<any> }) => {
@@ -20,7 +20,7 @@ class CallSheet extends React.PureComponent<any> {
       {
         title: I18n.t("viesco-register"),
         headerLeft: <HeaderBackAction navigation={navigation} />,
-        headerRight: <View/>,
+        headerRight: <View />,
         headerStyle: {
           backgroundColor: "#ffb600",
         },

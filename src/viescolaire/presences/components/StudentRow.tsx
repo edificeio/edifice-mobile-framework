@@ -2,40 +2,24 @@ import * as React from "react";
 import { View, StyleSheet } from "react-native";
 import Swipeable from "react-native-swipeable";
 
+import { CommonStyles } from "../../../styles/common/styles";
 import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
 import { Icon } from "../../../ui/icons/Icon";
 import { Text } from "../../../ui/text";
 
-const style = StyleSheet.create({
-  studentsList: {
-    justifyContent: "flex-start",
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 5,
-    elevation: 2,
-    paddingRight: 10,
-    paddingVertical: 5,
-    backgroundColor: "#FFF",
-    flexWrap: "wrap",
-  },
-  tick: {
-    borderStyle: "solid",
-    height: 45,
-    borderRadius: 100,
-    width: 45,
-    marginLeft: 10,
-  },
-  alignRightContainer: { flexGrow: 1, flexDirection: "row-reverse" },
-  dash: { height: 10, width: 30, borderRadius: 10 },
-  swipeButtons: { flexDirection: "row-reverse", flexGrow: 1 },
-  swipeButton: { width: 60, alignItems: "center", justifyContent: "center" },
-  studentName: { marginLeft: 10, marginVertical: 15 },
-  iconsView: { flexDirection: "row", marginLeft: 5 },
-  grey: { backgroundColor: "lightgrey" },
-  red: { backgroundColor: "red" },
-  blue: { backgroundColor: "#24a1ac" },
-  purple: { backgroundColor: "#9c2cb4" },
-});
+type Student = {
+  birth_date: string;
+  day_history: any[];
+  events: any[];
+  exempted: boolean;
+  exemption_attendance: boolean;
+  forgotten_notebook: boolean;
+  group: string;
+  group_name: string;
+  id: string;
+  last_course_absent: boolean;
+  name: string;
+};
 
 type StudentRowState = {
   absentEvent: any;
@@ -44,15 +28,14 @@ type StudentRowState = {
 };
 
 type StudentRowProps = {
-  student: any;
-  lateCallback: any;
-  leavingCallback: any;
-  checkAbsent: any;
-  uncheckAbsent: any;
+  student: Student;
+  lateCallback: (event: any) => any;
+  leavingCallback: (event: any) => any;
+  checkAbsent: () => void;
+  uncheckAbsent: (event: any) => any;
 };
 
 export default class StudentRow extends React.PureComponent<StudentRowProps, StudentRowState> {
-
   swipeableRef = null;
 
   constructor(props) {
@@ -74,7 +57,11 @@ export default class StudentRow extends React.PureComponent<StudentRowProps, Stu
   }
 
   getCheckColor = () => {
-    return this.state.absentEvent !== undefined ? style.red : style.grey;
+    return this.props.student.exempted && !this.props.student.exemption_attendance
+      ? style.grey
+      : this.state.absentEvent !== undefined
+      ? style.red
+      : style.lightGrey;
   };
 
   swipeButtons = (callBack1, callBack2) => [
@@ -95,6 +82,7 @@ export default class StudentRow extends React.PureComponent<StudentRowProps, Stu
   handleCheck = () => {
     const { checkAbsent, uncheckAbsent } = this.props;
     const { absentEvent } = this.state;
+    if (this.props.student.exempted && !this.props.student.exemption_attendance) return;
     if (absentEvent === undefined) {
       checkAbsent();
     } else {
@@ -128,7 +116,7 @@ export default class StudentRow extends React.PureComponent<StudentRowProps, Stu
             {student.last_course_absent && (
               <Icon style={{ transform: [{ rotateY: "180deg" }] }} color="red" size={20} name="refresh" />
             )}
-            {student.forgottenNotebook && <Icon color="#b0ead5" size={20} name="bookmark_outline" />}
+            {student.forgotten_notebook && <Icon color="#b0ead5" size={20} name="bookmark_outline" />}
           </View>
           <View style={style.alignRightContainer}>
             {absentEvent !== undefined && <View style={[style.dash, style.red]} />}
@@ -148,3 +136,35 @@ export default class StudentRow extends React.PureComponent<StudentRowProps, Stu
     );
   }
 }
+
+const style = StyleSheet.create({
+  studentsList: {
+    justifyContent: "flex-start",
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 5,
+    elevation: 2,
+    paddingRight: 10,
+    paddingVertical: 5,
+    backgroundColor: "#FFF",
+    flexWrap: "wrap",
+  },
+  tick: {
+    borderStyle: "solid",
+    height: 45,
+    borderRadius: 100,
+    width: 45,
+    marginLeft: 10,
+  },
+  alignRightContainer: { flexGrow: 1, flexDirection: "row-reverse" },
+  dash: { height: 10, width: 30, borderRadius: 10 },
+  swipeButtons: { flexDirection: "row-reverse", flexGrow: 1 },
+  swipeButton: { width: 60, alignItems: "center", justifyContent: "center" },
+  studentName: { marginLeft: 10, marginVertical: 15 },
+  iconsView: { flexDirection: "row", marginLeft: 5 },
+  grey: { backgroundColor: "grey" },
+  lightGrey: { backgroundColor: "lightgrey" },
+  red: { backgroundColor: CommonStyles.themeOpenEnt.red },
+  blue: { backgroundColor: CommonStyles.themeOpenEnt.cyan },
+  purple: { backgroundColor: CommonStyles.themeOpenEnt.purple },
+});

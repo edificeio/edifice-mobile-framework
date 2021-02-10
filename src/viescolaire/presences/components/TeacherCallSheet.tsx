@@ -9,6 +9,8 @@ import { PageContainer } from "../../../ui/ContainerContent";
 import { Text, TextBold } from "../../../ui/Typography";
 import { Icon } from "../../../ui/icons/Icon";
 import { LeftColoredItem } from "../../viesco/components/Item";
+import { ICourse } from "../containers/TeacherCallList";
+import { IClassesCall } from "../state/TeacherClassesCall";
 import StudentRow from "./StudentRow";
 
 const style = StyleSheet.create({
@@ -21,7 +23,15 @@ const style = StyleSheet.create({
   topItem: { justifyContent: "flex-end", flexDirection: "row" },
 });
 
-export default class CallSheet extends React.PureComponent<any, any> {
+type MoveToFolderModalState = {
+  refreshing: boolean;
+  callData: IClassesCall;
+  fetching: boolean;
+  course: ICourse;
+  isScrolling: boolean;
+};
+
+export default class CallSheet extends React.PureComponent<any, MoveToFolderModalState> {
   constructor(props) {
     super(props);
 

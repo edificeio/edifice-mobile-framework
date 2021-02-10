@@ -24,6 +24,7 @@ export type IClassesCallListBackend = {
     group_name: string;
     last_course_absent: boolean;
     exempted: boolean;
+    exemption_attendance: boolean;
     forgotten_notebook: boolean;
     day_history: Array<{
       name: string;
