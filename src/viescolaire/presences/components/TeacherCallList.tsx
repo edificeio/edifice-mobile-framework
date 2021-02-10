@@ -6,10 +6,11 @@ import RNCarousel, { Pagination } from "react-native-snap-carousel";
 
 import { Loading } from "../../../ui";
 import { TextBold } from "../../../ui/Typography";
+import { ICourses } from "../state/teacherCourses";
 import CourseComponent from "./CourseComponent";
 
 interface ICallListProps {
-  courseList: any[];
+  courseList: ICourses[];
   onCoursePress: (course: any) => void;
   isFetching: boolean;
 }
@@ -40,8 +41,8 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
 
   private Carousel = () => {
     const getCourseCallItem = item => {
-      const isCourseNow = moment().isBetween(moment(item.startDate), moment(item.endDate));
-      const isCourseEditable = !moment(item.startDate).isAfter(moment());
+      const isCourseNow = moment().isBetween(moment(item.startDate).subtract(15, "minutes"), moment(item.endDate));
+      const isCourseEditable = !moment(item.startDate).subtract(15, "minutes").isAfter(moment());
 
       return (
         <CourseComponent
@@ -96,7 +97,7 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
         <View style={{ flex: 1, justifyContent: "space-evenly" }}>
           {isFetching ? (
             <Loading />
-          ) : courseList.length == 0 ? (
+          ) : courseList.length === 0 ? (
             <>
               <View style={[styles.noCallChip, { backgroundColor: "#E61610" }]} />
               <TextBold style={styles.noCallText}>{I18n.t("viesco-no-register-today")}</TextBold>

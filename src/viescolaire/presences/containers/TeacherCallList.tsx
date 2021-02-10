@@ -10,10 +10,17 @@ import { fetchCoursesRegisterAction } from "../actions/teacherCourseRegister";
 import { fetchCoursesAction } from "../actions/teacherCourses";
 import TeacherCallListComponent from "../components/TeacherCallList";
 import { getCoursesRegisterState } from "../state/teacherCourseRegister";
-import { getCoursesListState } from "../state/teacherCourses";
+import { getCoursesListState, ICourses } from "../state/teacherCourses";
+
+export type ICourse = {
+  id: string;
+  classroom: string;
+  grade: string;
+  registerId: string;
+};
 
 type ICallListContainerProps = {
-  courses: any[];
+  courses: ICourses[];
   registerId: string;
   teacherId: string;
   structureId: string;
@@ -44,7 +51,7 @@ class TeacherCallList extends React.PureComponent<ICallListContainerProps> {
       classroom: course.roomLabels,
       grade: course.classes,
       registerId: course.registerId,
-    };
+    } as ICourse;
 
     if (course.registerId === null) {
       const courseData = JSON.stringify({
