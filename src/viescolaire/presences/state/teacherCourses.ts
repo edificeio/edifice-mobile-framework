@@ -8,12 +8,12 @@ import viescoConfig from "../../config";
 export interface ICourses {
   id: string;
   subjectId: string;
-  classes: string;
+  classes: string[];
   structureId: string;
   startDate: moment.Moment;
   endDate: moment.Moment;
-  roomLabels: string;
-  groups: string;
+  roomLabels: string[];
+  groups: string[];
   registerId: string;
 }
 

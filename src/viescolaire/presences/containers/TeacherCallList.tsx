@@ -45,11 +45,11 @@ class TeacherCallList extends React.PureComponent<ICallListContainerProps> {
     this.props.fetchCourses(this.props.teacherId, this.props.structureId, today, today);
   };
 
-  openCall = course => {
+  openCall = (course: ICourses) => {
     let courseRegisterInfos = {
       id: course.id,
-      classroom: course.roomLabels,
-      grade: course.classes,
+      classroom: course.roomLabels[0],
+      grade: course.classes[0] !== undefined ? course.classes[0] : course.groups[0],
       registerId: course.registerId,
     } as ICourse;
 
@@ -61,7 +61,7 @@ class TeacherCallList extends React.PureComponent<ICallListContainerProps> {
         end_date: moment(course.endDate).format("YYYY-MM-DD HH:mm:ss"),
         subject_id: course.subjectId,
         groups: course.groups,
-        classes: course.classes,
+        classes: course.classes[0] !== undefined ? course.classes[0] : course.groups[0],
         split_slot: true,
       });
 

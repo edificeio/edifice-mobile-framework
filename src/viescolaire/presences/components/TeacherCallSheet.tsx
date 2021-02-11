@@ -139,11 +139,13 @@ export default class CallSheet extends React.PureComponent<any, MoveToFolderModa
           <Text>
             {moment(this.state.callData.start_date).format("LT")} - {moment(this.state.callData.end_date).format("LT")}
           </Text>
-          <Text>
-            &emsp;
-            <Icon name="pin_drop" size={18} />
-            {I18n.t("viesco-room")} {this.state.course.classroom}
-          </Text>
+          {this.state.course.classroom !== "" && (
+            <Text>
+              &emsp;
+              <Icon name="pin_drop" size={18} />
+              {I18n.t("viesco-room")} {this.state.course.classroom}
+            </Text>
+          )}
           <TextBold>&emsp;{this.state.course.grade}</TextBold>
         </LeftColoredItem>
       </View>

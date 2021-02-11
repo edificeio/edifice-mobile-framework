@@ -6,6 +6,7 @@ import { ImageBackground, View, Text, StyleSheet } from "react-native";
 import { Icon } from "../../../ui";
 import { TextBold } from "../../../ui/Typography";
 import { BottomColoredItem } from "../../viesco/components/Item";
+import { ICourses } from "../state/teacherCourses";
 
 const styles = StyleSheet.create({
   itemContainer: { flex: 1, padding: 0 },
@@ -21,7 +22,17 @@ const styles = StyleSheet.create({
   itemContent: { flex: 1, padding: 15, justifyContent: "space-evenly" },
 });
 
-export default ({ item, onPress, isCourseNow, isCourseEditable }) => (
+export default ({
+  item,
+  onPress,
+  isCourseNow,
+  isCourseEditable,
+}: {
+  item: ICourses;
+  onPress: () => any;
+  isCourseNow: boolean;
+  isCourseEditable: boolean;
+}) => (
   <BottomColoredItem
     shadow={isCourseNow}
     disabled={!isCourseEditable}
@@ -40,15 +51,16 @@ export default ({ item, onPress, isCourseNow, isCourseEditable }) => (
             {moment(item.startDate).format("LT")} - {moment(item.endDate).format("LT")}
           </Text>
         </View>
+        <TextBold style={{ fontSize: 20 }}>{item.classes[0] !== undefined ? item.classes : item.groups}</TextBold>
 
-        <TextBold style={{ fontSize: 20 }}>{item.classes}</TextBold>
-
-        <View style={{ flexDirection: "row" }}>
-          <Icon style={{ marginRight: 10 }} size={20} name="pin_drop" />
-          <Text>
-            {I18n.t("viesco-room")} {item.roomLabels}
-          </Text>
-        </View>
+        {item.roomLabels[0] !== "" && (
+          <View style={{ flexDirection: "row" }}>
+            <Icon style={{ marginRight: 10 }} size={20} name="pin_drop" />
+            <Text>
+              {I18n.t("viesco-room")} {item.roomLabels}
+            </Text>
+          </View>
+        )}
       </View>
     </ImageBackground>
   </BottomColoredItem>

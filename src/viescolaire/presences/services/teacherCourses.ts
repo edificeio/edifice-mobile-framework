@@ -6,12 +6,12 @@ import { ICoursesList, ICoursesRegister } from "../state/teacherCourses";
 export type ICoursesListBackend = Array <{
   id: string;
   subjectId: string;
-  classes: string;
+  classes: string[];
   structureId: string;
   startDate:  string;
   endDate:  string;
-  roomLabels: string;
-  groups: string;
+  roomLabels: string[];
+  groups: string[];
   registerId: string;
 }>
 
