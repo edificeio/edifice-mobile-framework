@@ -42,7 +42,7 @@ export class DrawerMenuContainer extends React.Component<DrawerMenuProps, Drawer
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.init.isFetching && !this.props.init.isFetching && this.props.init !== undefined) {
+    if (prevProps.init.isFetching && !this.props.init.isFetching) {
       this.setState({ folders: this.props.init.data.folders });
       this.setState({ quota: this.props.init.data.quota });
     }

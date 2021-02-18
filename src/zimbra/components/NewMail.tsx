@@ -92,7 +92,6 @@ const HeaderUsers = ({
   style,
   title,
   onChange,
-  onSave,
   value,
   children,
 }: React.PropsWithChildren<{ style?: ViewStyle; title: string; onChange; onSave; forUsers?: boolean; value: any }>) => {

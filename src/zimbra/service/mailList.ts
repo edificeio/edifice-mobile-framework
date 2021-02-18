@@ -1,7 +1,7 @@
 import moment from "moment";
 
-import { fetchJSONWithCache } from "../../infra/fetchWithCache";
-import { IMailList } from "../state/mailList";
+import {fetchJSONWithCache} from "../../infra/fetchWithCache";
+import {IMailList} from "../state/mailList";
 
 // Data type of what is given by the backend.
 export type IMailListBackend = {
@@ -64,12 +64,7 @@ export const mailListService = {
         return [];
     }
   },
-  post: async (apps: string[]) => {
-    const data = await fetchJSONWithCache(``);
-    return data;
-  },
   getFromFolder: async (folderLocation: string, page: number = 0) => {
-    const data = mailListAdapter(await fetchJSONWithCache(`/zimbra/list?folder=/Inbox/${folderLocation}&page=${page}`));
-    return data;
+    return mailListAdapter(await fetchJSONWithCache(`/zimbra/list?folder=/Inbox/${folderLocation}&page=${page}`));
   },
 };

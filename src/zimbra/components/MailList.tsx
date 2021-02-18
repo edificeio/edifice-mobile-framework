@@ -177,13 +177,23 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
 
   public render() {
     const { isFetching, firstFetch } = this.props;
+    const uniqueId = [];
+    const uniqueMails = this.state.mails.filter((mail: IMail) => {
+      console.log(mail.systemFolder);
+      // @ts-ignore
+      if (uniqueId.indexOf(mail.id) == -1) {
+        // @ts-ignore
+        uniqueId.push(mail.id);
+        return true;
+      }
+    });
     return (
       <PageContainer>
         <FlatList
           contentContainerStyle={{ flexGrow: 1 }}
-          data={this.state.mails.length > 0 ? this.state.mails : []}
+          data={uniqueMails.length > 0 ? uniqueMails : []}
           renderItem={({ item }) => this.renderMailItemInfos(item)}
-          extraData={this.state.mails}
+          extraData={uniqueMails}
           keyExtractor={(item: IMail) => item.id}
           refreshControl={
             <RefreshControl refreshing={isFetching && !firstFetch} onRefresh={() => this.refreshMailList()} />

@@ -48,7 +48,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
     this.setState({ fetchRequested: true });
     const key = this.props.navigation.getParam("key");
     const folderName = this.props.navigation.getParam("folderName");
-    if (!folderName || folderName === undefined) this.props.fetchMailList(page, key);
+    if (!folderName) this.props.fetchMailList(page, key);
     else this.props.fetchMailFromFolder(folderName, page);
   };
 
