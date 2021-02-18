@@ -61,7 +61,7 @@ class TeacherCallList extends React.PureComponent<ICallListContainerProps> {
         end_date: moment(course.endDate).format("YYYY-MM-DD HH:mm:ss"),
         subject_id: course.subjectId,
         groups: course.groups,
-        classes: course.classes[0] !== undefined ? course.classes[0] : course.groups[0],
+        classes: course.classes !== undefined ? course.classes : course.groups,
         split_slot: true,
       });
 
