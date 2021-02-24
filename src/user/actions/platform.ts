@@ -3,7 +3,7 @@ import userConfig from "../config";
 
 import { OAuth2RessourceOwnerPasswordClient, scopes } from "../../infra/oauth";
 
-import { AsyncStorage } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { navigate } from "../../navigation/helpers/navHelper";
 import { Trackers } from "../../infra/tracker";
 

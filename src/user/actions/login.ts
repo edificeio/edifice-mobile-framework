@@ -115,6 +115,7 @@ export function loginAction(
       // === 2: Gather logged user information
       let userinfo2;
       try {
+        console.log("fetch userinfo 2");
         userinfo2 = await fetchJSONWithCache("/auth/oauth2/userinfo", {
           headers: {
             Accept: "application/json;version=2.0"
@@ -132,7 +133,7 @@ export function loginAction(
           userinfo2.apps.push("Workspace");
         if (userinfo2.apps.includes("Actualites")) userinfo2.apps.push("News");
       } catch (err) {
-        console.warn('[login] userinfo fetch failed');
+        console.warn('[login] userinfo fetch failed', err);
         throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err);
       }
 

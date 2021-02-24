@@ -3,7 +3,8 @@ import {
 } from "../infra/fetchWithCache";
 import { Connection } from "../infra/Connection";
 import Conf from "../../ode-framework-conf";
-import { AsyncStorage, Platform } from "react-native";
+import { Platform } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import DeviceInfo from 'react-native-device-info';
 import AppLink from 'react-native-app-link';
 import messaging from '@react-native-firebase/messaging';

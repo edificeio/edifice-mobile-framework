@@ -1,4 +1,4 @@
-import { AsyncStorage } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Conf from "../../ode-framework-conf";
 import { navigate } from "../navigation/helpers/navHelper";
@@ -83,36 +83,55 @@ export async function fetchWithCache(
   getBody = (r: Response) => r.text(),
   getCacheResult = (cr: any) => new Response(...cr)
 ) {
-  if (!platform) throw new Error("must specify a platform");
-  // TODO bugfix : cache key must depends on userID and platformID.
-  const cacheKey = CACHE_KEY_PREFIX + path;
-  const dataFromCache = await AsyncStorage.getItem(cacheKey); // TODO : optimization  - get dataFrmCache only when needed.
-  if (Connection.isOnline && (forceSync || !dataFromCache)) {
-    const response =
-      path.indexOf((Conf.currentPlatform as any).url) === -1
-        ? await signedFetch(`${platform}${path}`, init)
-        : await signedFetch(`${path}`, init);
-    // console.log("fetchWithCache", path, response);
-    // TODO: check if response is OK
-    const cacheResponse = {
-      body: await getBody(response.clone()),
-      init: {
-        headers: response.headers,
-        status: response.status,
-        statusText: response.statusText
-      }
-    };
-    await AsyncStorage.setItem(cacheKey, JSON.stringify(cacheResponse));
-    const ret = await getBody(response);
-    return ret;
-  }
+  try {
+    if (!platform) throw new Error("must specify a platform");
+    // TODO bugfix : cache key must depends on userID and platformID.
+    const cacheKey = CACHE_KEY_PREFIX + path;
+    console.log("cacheKey", cacheKey);
+    const dataFromCache = await AsyncStorage.getItem(cacheKey); // TODO : optimization  - get dataFrmCache only when needed.
+    console.log("dataFromCache", dataFromCache);
+    if (Connection.isOnline && (forceSync || !dataFromCache)) {
+      let response =
+        path.indexOf((Conf.currentPlatform as any).url) === -1
+          ? await signedFetch(`${platform}${path}`, init)
+          : await signedFetch(`${path}`, init);
+      const r2 = response.clone();
+      const resJson = response;
+      console.log("resJson", resJson, await resJson.json());
+      const resText = response.clone();
+      console.log("resText", resText, await resText.text());
+      response = r2;
+      // console.log("fetchWithCache path & response", path, response);
 
-  if (dataFromCache) {
-    const cacheResponse = JSON.parse(dataFromCache);
-    return getCacheResult(cacheResponse);
-  }
+      // TODO: check if response is OK
+      const cacheResponse = {
+        body: await getBody(response.clone()),
+        init: {
+          headers: response.headers,
+          status: response.status,
+          statusText: response.statusText
+        }
+      };
+      console.log("cacheResponse", cacheResponse);
+      await AsyncStorage.setItem(cacheKey, JSON.stringify(cacheResponse));
+      console.log("async storage set item");
+      const ret = await getBody(response);
+      console.log("ret", ret);
+      return ret;
+    }
 
-  return null;
+    if (dataFromCache) {
+      console.log("has dataFromCache", dataFromCache);
+      const cacheResponse = JSON.parse(dataFromCache);
+      console.log("cacheResponse", cacheResponse);
+      return getCacheResult(cacheResponse);
+    }
+
+    return null;
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
 }
 
 /**

@@ -4,7 +4,8 @@
 
 import { encode as btoa } from "base-64";
 import querystring from "querystring";
-import { AsyncStorage, ImageURISource } from "react-native";
+import { ImageURISource } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Conf from "../../ode-framework-conf";
 
 export interface IOAuthToken {

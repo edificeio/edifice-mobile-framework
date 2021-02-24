@@ -4,7 +4,7 @@
  */
 import homeworkConfig from "../config";
 
-import { AsyncStorage } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Action } from "redux";
 import { fetchHomeworkTasks } from "./tasks";
 import { Trackers } from "../../infra/tracker";
