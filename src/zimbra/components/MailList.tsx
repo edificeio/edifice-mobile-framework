@@ -179,7 +179,6 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     const { isFetching, firstFetch } = this.props;
     const uniqueId = [];
     const uniqueMails = this.state.mails.filter((mail: IMail) => {
-      console.log(mail.systemFolder);
       // @ts-ignore
       if (uniqueId.indexOf(mail.id) == -1) {
         // @ts-ignore
