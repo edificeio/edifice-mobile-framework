@@ -29,8 +29,6 @@ export function postFolderAction(name: string, parentId: string) {
     try {
       await foldersService.post(name, parentId);
       dispatch(dataActions.request());
-      const data = await foldersService.get();
-      dispatch(dataActions.receipt(data));
     } catch (errmsg) {
       dispatch(dataActions.error(errmsg));
     }

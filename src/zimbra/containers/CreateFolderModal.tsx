@@ -27,8 +27,8 @@ class CreateFolderModal extends React.PureComponent<any, any> {
     });
   };
 
-  onConfirm = () => {
-    this.props.createFolder(this.state.name);
+  onConfirm = async () => {
+    await this.props.createFolder(this.state.name);
     this.props.fetchInit();
     this.props.onClose();
     Toast.show(I18n.t("zimbra-create-directory-confirm"), {
