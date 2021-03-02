@@ -230,19 +230,22 @@ const SessionList = ({ isFetching, onRefreshSessions, sessionList, onSessionTap,
       {sessionList.length === 0 ? (
         <EmptyComponent title={I18n.t("viesco-session-EmptyScreenText")} />
       ) : (
-        sessionList.map((session, index, list) => (
-          <View>
-            {index === 0 ||
-            moment(session.date).format("DD/MM/YY") !== moment(list[index - 1].date).format("DD/MM/YY") ? (
-              <TextBold>{moment(session.date).format("DD/MM/YY")}</TextBold>
-            ) : null}
-            <SessionItem
-              onPress={() => onSessionTap(session)}
-              matiere={session.subject.name}
-              author={getTeacherName(session.teacher_id, personnelList)}
-            />
-          </View>
-        ))
+        sessionList.map(
+          (session, index, list) =>
+            session.description !== "" && (
+              <View>
+                {index === 0 ||
+                moment(session.date).format("DD/MM/YY") !== moment(list[index - 1].date).format("DD/MM/YY") ? (
+                  <TextBold>{moment(session.date).format("DD/MM/YY")}</TextBold>
+                ) : null}
+                <SessionItem
+                  onPress={() => onSessionTap(session)}
+                  matiere={session.subject.name}
+                  author={getTeacherName(session.teacher_id, personnelList)}
+                />
+              </View>
+            )
+        )
       )}
     </ScrollView>
   );
