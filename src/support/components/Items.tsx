@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TextInput, TouchableOpacity, View, ViewStyle } from "react-native";
 
 import { CommonStyles } from "../../styles/common/styles";
 import { Icon } from "../../ui";
@@ -57,6 +57,14 @@ export const CategoryPicker = ({ list, onFieldChange }: { list: IApp[]; onFieldC
 };
 
 export const FormInputs = ({ onChange }: React.PropsWithChildren<{ onChange }>) => {
+  const textInputStyle = {
+    flex: 1,
+    marginLeft: 10,
+    height: 40,
+    color: CommonStyles.textColor,
+    borderBottomColor: "#EEEEEE",
+    borderBottomWidth: 2,
+  } as ViewStyle;
   const textUpdateTimeout = React.useRef();
   const [currentValue, updateCurrentValue] = React.useState<string>();
   const notFirstRender = React.useRef(false);
@@ -75,7 +83,7 @@ export const FormInputs = ({ onChange }: React.PropsWithChildren<{ onChange }>) 
     };
   }, [currentValue]);
 
-  return <TextInput numberOfLines={1} onChangeText={text => updateCurrentValue(text)} />;
+  return <TextInput style={textInputStyle} numberOfLines={1} onChangeText={text => updateCurrentValue(text)} />;
 };
 
 export const IconButton = ({ icon, color, onPress }) => {
