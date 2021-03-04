@@ -13,7 +13,7 @@ import { InfoBubble } from "../../../components/infoBubble";
 import { FlatButton } from "../../../../ui";
 import { Card } from "../../../components/card";
 import Conf from "../../../../../ode-framework-conf";
-import { FakeHeader, HeaderAction, HeaderRow, HeaderTitle } from "../../../components/header";
+import { FakeHeader, HeaderAction, HeaderLeft, HeaderRow, HeaderTitle } from "../../../components/header";
 import theme from "../../../theme";
 
 // TYPES ==========================================================================================
@@ -59,7 +59,9 @@ export class TimelineWebViewScreen extends React.PureComponent<
     return (
       <FakeHeader>
         <HeaderRow>
-          <HeaderAction iconName="back" onPress={() => navigation.goBack()}/>
+          <HeaderLeft>
+            <HeaderAction iconName="back" onPress={() => navigation.goBack()}/>
+          </HeaderLeft>
           <HeaderTitle>{I18n.t("timeline.webViewScreen.title")}</HeaderTitle>
         </HeaderRow>
       </FakeHeader>
