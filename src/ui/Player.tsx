@@ -4,23 +4,25 @@
 
 import I18n from "i18n-js";
 import * as React from "react";
-import { View, ViewStyle, Dimensions, TouchableOpacity, Platform } from "react-native";
+import { View, ViewStyle, Dimensions, TouchableOpacity, Platform, Image, ImageURISource } from "react-native";
 import VideoPlayer from "react-native-video";
 import VideoPlayerAndroid from "react-native-video-player";
-import { signURISource } from "../infra/oauth";
 import { TextItalic } from "./text";
 import { Loading } from "./Loading";
+import { MediaAction } from "./MediaAction";
 
 export interface IPlayerProps {
-  source: string;
-  type: string;
+  type: "audio" | "video";
+  source: ImageURISource;
+  posterSource?: ImageURISource;
+  ratio?: number;
   style?: ViewStyle;
 }
 
 interface IPlayerState {
+  loadMedia: boolean;
   loaded: boolean;
   error: boolean;
-  videoRatio: number;
 }
 
 // tslint:disable-next-line:max-classes-per-file
@@ -29,38 +31,103 @@ export default class Player extends React.Component<
   IPlayerState
 > {
   public state = {
+    loadMedia: false,
     loaded: false,
-    error: false,
-    videoRatio: 0
+    error: false
   };
 
   public render() {
-    const { source, type, style } = this.props;
-    const { error, videoRatio, loaded } = this.state;
+    const { type, source, posterSource, ratio, style } = this.props;
+    const { loadMedia, loaded, error } = this.state;
     const { height } = Dimensions.get("window");
+    const thirdOfScreenHeight = 0.33 * height;
+    const isAudio = type === "audio";
+    const isVideo = type === "video";
     const playerStyle = {
       width: "100%",
       maxHeight: "100%",
-      aspectRatio: type === "video"
-        ? videoRatio ? videoRatio : 16/9
-        : type === "audio"
+      aspectRatio: isVideo
+        ? ratio || 16/9
+        : isAudio
         ? 9/2
         : undefined,
-      borderRadius: type=== "audio" ? 12 : undefined,
-    }
-    const onLoad = res => {
-      const { width, height } = res.naturalSize;
-      const videoRatio = height !== 0 ? width / height : 0;
-      this.setState({ videoRatio, loaded: true });
-    }
-    const onError = err => {
-      console.log("video error:", err);
-      this.setState({ error: true });
+      borderRadius: isAudio ? 12 : undefined
     }
 
-    if (!source) {
-      this.setState({ error: true });
-      return null;
+    const getPlayer = () => {
+      return (
+        <>
+          {!loaded
+            ? <View style={{ position: "absolute" }}>
+                <Loading/>
+              </View>
+            : null
+          }
+          {error
+            ? <TextItalic>{I18n.t(`${type || "media"}NotAvailable`)}</TextItalic>
+            : <TouchableOpacity activeOpacity={1}>
+                {Platform.select({
+                  ios: 
+                    <VideoPlayer
+                      source={source}
+                      onLoad={() => this.setState({ loaded: true })}
+                      onError={() => this.setState({ error: true, loaded: true })}
+                      controls
+                      style={playerStyle}
+                    />,
+                  android: 
+                    <VideoPlayerAndroid
+                      video={source}
+                      onLoad={() => this.setState({ loaded: true })}
+                      onError={() => this.setState({ error: true, loaded: true })}
+                      autoplay
+                      disableFullscreen={isAudio}
+                      loaded={loaded}
+                      type={type}
+                      style={{...playerStyle, alignSelf: "center", backgroundColor: loaded ? "#000" : undefined}}
+                      customStyles={isAudio ? {controls: {backgroundColor: undefined}} : undefined}
+                    />,
+                  default: null
+                })}
+              </TouchableOpacity>
+          }
+        </>
+      )
+    }
+
+    const getPreview = () => {
+      return !source || !type
+        ? <TextItalic>{I18n.t(`${type || "media"}NotAvailable`)}</TextItalic>
+        : <>
+            {isVideo
+              ? <Image
+                  source={posterSource || {}}
+                  style={playerStyle}
+                  resizeMode="contain"
+                />
+              : null
+            }
+            <TouchableOpacity
+              onPress={() => this.setState({loadMedia: true})}
+              style={{ position: "absolute" }}
+            >
+              <MediaAction
+                iconName="play"
+                customIconSize={30}
+                action={() => this.setState({loadMedia: true})}
+                customStyle={{
+                  height: 70,
+                  width: 70,
+                  borderRadius: 35,
+                  position: "relative",
+                  top: undefined,
+                  right: undefined,
+                  paddingLeft: 4,
+                  backgroundColor: "rgba(63,63,63,0.8)"
+                }}
+              />
+            </TouchableOpacity>
+          </>
     }
 
     return (
@@ -68,44 +135,13 @@ export default class Player extends React.Component<
         style={{
           justifyContent: "center",
           alignItems: "center",
-          height: type === "video" ? 0.33 * height : type === "audio" ? 84 : undefined,
+          height: !type || (isVideo && !source) ? thirdOfScreenHeight : isAudio ? 84 : undefined,
+          maxHeight: isVideo ? thirdOfScreenHeight : undefined,
+          backgroundColor: "#000",
           ...style
         }}
       >
-        {!loaded
-        ? <View style={{ position: "absolute" }}>
-            <Loading/>
-          </View>
-        : null
-        }
-        {error
-        ? <TextItalic>{I18n.t(`${type}NotAvailable`)}</TextItalic>
-        : <TouchableOpacity activeOpacity={1}>
-            {Platform.select({
-              ios: 
-                <VideoPlayer
-                  source={signURISource(source)}
-                  onLoad={onLoad}
-                  onError={onError}
-                  paused
-                  controls
-                  style={playerStyle}
-                />,
-              android: 
-                <VideoPlayerAndroid
-                  video={signURISource(source)}
-                  onLoad={onLoad}
-                  onError={onError}
-                  disableFullscreen={type === "audio"}
-                  loaded={loaded}
-                  type={type}
-                  style={{...playerStyle, alignSelf: "center", backgroundColor: loaded ? "black" : undefined}}
-                  customStyles={type === "audio" ? {controls: {backgroundColor: undefined}} : undefined}
-                />,
-              default: null
-            })}
-          </TouchableOpacity>
-        }
+        {loadMedia ? getPlayer() : getPreview()}
       </View>
     );
   }

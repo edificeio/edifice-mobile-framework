@@ -3,7 +3,7 @@ import I18n from "i18n-js";
 import Conf from "../../../ode-framework-conf";
 import { Connection } from "../../infra/Connection";
 import { fetchJSONWithCache } from "../../infra/fetchWithCache";
-import { signURISource, signURISourceArray } from "../../infra/oauth";
+import { signURISource, signURISourceArray, transformedSrc } from "../../infra/oauth";
 import { IMediaModel } from "../reducer";
 import { getSessionInfo } from "../../App";
 
@@ -87,21 +87,15 @@ export const loadSchoolbooks = (): Promise<any[]> => {
   });
 };
 
-const transformedSrc = (src: string) => {
-  return src.startsWith("//")
-    ? `https:${src}`
-    : src.startsWith("/")
-    ? `${(Conf.currentPlatform as any).url}${src}`
-    : src
-}
-
 const transformedMedia = (media: IMediaModel[]) => {
   return media.map(mediaItem => {
     const transformedMediaItem = {
       type: mediaItem.type,
       src: mediaItem.type === "image"
       ? {src: signURISource(transformedSrc(mediaItem.src as string))}
-      : transformedSrc(mediaItem.src as string)
+      : signURISource(transformedSrc(mediaItem.src as string)),
+      posterSource: mediaItem.posterSource ? signURISource(transformedSrc(mediaItem.posterSource as string)) : undefined,
+      ratio: mediaItem.ratio
     };
     if (mediaItem.name) transformedMediaItem.name = mediaItem.name;
     return transformedMediaItem;
