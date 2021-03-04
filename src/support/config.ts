@@ -9,5 +9,5 @@ export default new FunctionalModuleConfig({
   apiName: "Support",
   iconColor: "#46bfaf",
   group: true,
-  hasRight: apps => true,
+  hasRight: apps => apps.some(app => app.address && app.address.toUpperCase().includes("SUPPORT")),
 });
