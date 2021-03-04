@@ -14,17 +14,19 @@ export type IAttachment = {
 
 export const supportService = {
   createTicket: async (ticket: ITicket) => {
-    ticket["category"] = "/" + ticket.category;
+    if(!ticket["category"].startsWith("/")){
+      ticket["category"] = "/" + ticket.category;
+    }
     if (ticket.attachments !== undefined && ticket.attachments.length > 0) {
       ticket.attachments.map(att => {
         return delete att["contentType"];
       });
     } else delete ticket.attachments;
-
     const response = await fetchJSONWithCache(`${(Conf.currentPlatform as any).url}/support/ticket`, {
       method: "POST",
       body: JSON.stringify(ticket),
     });
+
     return response;
   },
   addAttachment: async (file: any, handleProgession) => {

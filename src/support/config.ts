@@ -10,5 +10,5 @@ export default new FunctionalModuleConfig({
   apiName: "Support",
   iconColor: CommonStyles.themeOpenEnt.green,
   group: true,
-  hasRight: apps => apps.some(app => app.address && app.address.toUpperCase().includes("SUPPORT")),
+  hasRight: apps => apps.some(app => app.name && app.name.toUpperCase().includes("SUPPORT")),
 });
