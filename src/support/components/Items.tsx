@@ -88,9 +88,9 @@ export const FormInputs = ({ fieldName, onChange, setResetter }: {
   }, [currentValue]);
 
   return fieldName === "subject" ? (
-    <TextInput style={textInputStyle} numberOfLines={1} onChangeText={text => updateCurrentValue(text)} />
+    <TextInput style={textInputStyle} numberOfLines={1} value={currentValue} onChangeText={text => updateCurrentValue(text)} />
   ) : (
-    <TextInput style={textInputStyle} multiline onChangeText={text => updateCurrentValue(text)} />
+    <TextInput style={textInputStyle} multiline value={currentValue} onChangeText={text => updateCurrentValue(text)} />
   );
 };
 

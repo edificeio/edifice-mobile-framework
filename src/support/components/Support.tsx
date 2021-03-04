@@ -67,8 +67,7 @@ export default class Support extends React.PureComponent<SupportProps, any> {
 
   sendTicket = () => {
     this.props.sendTicket()
-      this.reset.forEach(reset =>   
-        reset());
+    this.reset.forEach(reset => reset());
   }
 
   renderFormSelect = (fieldTranslation, fieldName, list) => {
