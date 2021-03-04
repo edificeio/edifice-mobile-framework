@@ -4,6 +4,7 @@ import { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
+import { getSessionInfo } from "../../App";
 import withViewTracking from "../../infra/tracker/withViewTracking";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { createTicketAction } from "../actions/support";
@@ -35,7 +36,13 @@ class SupportContainer extends React.PureComponent<any, any> {
     return (
       <Support
         {...this.props}
-        onFieldChange={field => this.setState(prevState => ({ ticket: { ...prevState.ticket, ...field } }))}
+        onFieldChange={field =>  this.setState(prevState => ({ ticket: { ...prevState.ticket, ...field } }))}
+        onCategoriesChange={category =>
+          this.setState(prevState => ({ ticket: { ...prevState.ticket.category, category } }))
+        }
+        onEstablishmentsChange={establishment =>
+          this.setState(prevState => ({ ticket: { ...prevState.ticket.establishment, establishment } }))
+        }
       />
     );
   }
@@ -44,7 +51,13 @@ class SupportContainer extends React.PureComponent<any, any> {
 // ------------------------------------------------------------------------------------------------
 
 const mapStateToProps: (state: any) => any = state => {
-  return {};
+  const categories = getSessionInfo().apps;
+  //const establishments = getSessionInfo().schools;
+  const establishments = getSessionInfo().apps;
+  return {
+    categories,
+    establishments,
+  };
 };
 
 // ------------------------------------------------------------------------------------------------

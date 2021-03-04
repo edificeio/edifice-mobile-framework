@@ -8,40 +8,58 @@ import { PageContainer } from "../../ui/ContainerContent";
 import { FormInputs, IconButton, ListPicker } from "./Items";
 
 type SupportProps = {
+  ticket: any;
+  categories: string[];
+  establishments: any;
   onFieldChange: (ticket) => void;
+  onCategoriesChange: (category) => void;
+  onEstablishmentsChange: (establishments) => void;
   createTicket: () => void;
 };
 
-export default class Support extends React.PureComponent<any, any> {
-  renderForm = () => {
+export default class Support extends React.PureComponent<SupportProps, any> {
+  componentDidMount() {
+    const { categories, establishments } = this.props;
+    if (categories !== undefined && categories.length > 0) this.props.onCategoriesChange(this.props.categories[0]);
+    if (establishments !== undefined && establishments.length > 0)
+      this.props.onEstablishmentsChange(this.props.establishments[0]);
+  }
+
+  renderFormInput = (fieldTranslation, fieldName) => {
     const { onFieldChange, ticket } = this.props;
     return (
+      <>
+        <View style={styles.lineSeparator} />
+        <Text style={styles.textTicketFields}>
+          <Text style={{ color: "red" }}>* </Text>
+          {I18n.t(fieldTranslation)}
+        </Text>
+        <FormInputs onChange={field => onFieldChange({ ...ticket, [fieldName]: field })} />
+      </>
+    );
+  };
+
+  renderFormSelect = (fieldTranslation, fieldName, list) => {
+    const { onFieldChange, ticket } = this.props;
+    return (
+      <>
+        <View style={styles.lineSeparator} />
+        <View style={styles.containerFieldsSelect}>
+          <Text style={styles.textTicketFields}>{I18n.t(fieldTranslation)}</Text>
+          <ListPicker list={list} onFieldChange={field => onFieldChange({ ...ticket, [fieldName]: field })} />
+        </View>
+      </>
+    );
+  };
+
+  renderForm = () => {
+    const { categories, establishments } = this.props;
+    return (
       <View>
-        <View style={styles.lineSeparator} />
-        <View style={styles.containerFieldsSelect}>
-          <Text style={styles.textTicketFields}>{I18n.t("support-ticket-category")}</Text>
-          <ListPicker ticket={ticket} onFieldChange={onFieldChange} />
-        </View>
-
-        <View style={styles.lineSeparator} />
-        <View style={styles.containerFieldsSelect}>
-          <Text style={styles.textTicketFields}>{I18n.t("support-ticket-establishment")}</Text>
-          <ListPicker ticket={ticket} onFieldChange={onFieldChange} />
-        </View>
-
-        <View style={styles.lineSeparator} />
-        <Text style={styles.textTicketFields}>
-          <Text style={{ color: "red" }}>* </Text>
-          {I18n.t("support-ticket-subject")}
-        </Text>
-        <FormInputs onChange={subject => onFieldChange({ ...ticket, subject })} />
-
-        <View style={styles.lineSeparator} />
-        <Text style={styles.textTicketFields}>
-          <Text style={{ color: "red" }}>* </Text>
-          {I18n.t("support-ticket-description")}
-        </Text>
-        <FormInputs onChange={description => onFieldChange({ ...ticket, description })} />
+        {this.renderFormSelect("support-ticket-category", "category", categories)}
+        {this.renderFormSelect("support-ticket-establishment", "establishment", establishments)}
+        {this.renderFormInput("support-ticket-subject", "subject")}
+        {this.renderFormInput("support-ticket-description", "description")}
       </View>
     );
   };
@@ -55,9 +73,7 @@ export default class Support extends React.PureComponent<any, any> {
         </View>
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
           <Text style={styles.textMobileOnly}>{I18n.t("support-mobile-only")}</Text>
-
           {this.renderForm()}
-
           <View style={{ height: 65 }} />
           <TouchableOpacity onPress={() => true} style={styles.buttonTicketRegister}>
             <Text style={styles.textButtonTicketRegister}>{I18n.t("support-ticket-register").toUpperCase()}</Text>

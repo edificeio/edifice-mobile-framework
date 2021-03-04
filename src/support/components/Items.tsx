@@ -6,11 +6,9 @@ import { CommonStyles } from "../../styles/common/styles";
 import { Icon } from "../../ui";
 import { ModalBox, ModalContent, ModalContentBlock } from "../../ui/Modal";
 
-const list = ["zimbra", "cdt", "user", "toto", "superduperlongnameinordertotestifitisfunctional", "zimbra", "cdt", "user", "toto", "superduperlongnameinordertotestifitisfunctional", "zimbra", "cdt", "user", "toto", "superduperlongnameinordertotestifitisfunctional"];
-
-const ListPickerModal = ({ list, isVisible, onChange }) => {
+const ListPickerModal = ({ list, isVisible, onChange, toggleVisible }) => {
   return (
-    <ModalBox isVisible={isVisible}>
+    <ModalBox isVisible={isVisible} onDismiss={() => toggleVisible(false)}>
       <ModalContent style={{ alignItems: "flex-start" }}>
         <ModalContentBlock>
           <ScrollView>
@@ -31,12 +29,13 @@ const ListPickerModal = ({ list, isVisible, onChange }) => {
 
 // EXPORTED COMPONENTS
 
-export const ListPicker = ({ ticket, onFieldChange }) => {
+export const ListPicker = ({ list, onFieldChange }) => {
   const [isVisible, toggleVisible] = React.useState(false);
-  const [currentValue, updateCurrentValue] = React.useState<string>();
+  const [currentValue, updateCurrentValue] =
+    list.length > 0 ? React.useState<string>(list[0]) : React.useState<string>();
   function onChange(value) {
     updateCurrentValue(value);
-    onFieldChange({ ...ticket, value });
+    onFieldChange(value);
     toggleVisible(false);
   }
   return (
@@ -58,7 +57,7 @@ export const ListPicker = ({ ticket, onFieldChange }) => {
           </View>
         </TouchableOpacity>
       )}
-      <ListPickerModal list={list} isVisible={isVisible} onChange={onChange} />
+      <ListPickerModal list={list} isVisible={isVisible} onChange={onChange} toggleVisible={toggleVisible} />
     </View>
   );
 };
