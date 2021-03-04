@@ -9,3 +9,25 @@ export const removeAccents = (str: string) => {
   const combiningChars = /[\u0300-\u036F]/g;
   return unorm.nfd(str).replace(combiningChars, "");
 };
+
+/**
+ * Returns a converted string from camelCase (or UppercasedCamelCase) to snake_case.
+ * @param camelCase
+ */
+export function toSnakeCase(camelCase: string) {
+  const upperChars = camelCase.match(/([A-Z])/g);
+  if (!upperChars) {
+    return camelCase;
+  }
+
+  let str = camelCase;
+  for (let i = 0, n = upperChars.length; i < n; i++) {
+    str = str.replace(new RegExp(upperChars[i]), "_" + upperChars[i].toLowerCase());
+  }
+
+  if (str.slice(0, 1) === "_") {
+    str = str.slice(1);
+  }
+
+  return str;
+}
