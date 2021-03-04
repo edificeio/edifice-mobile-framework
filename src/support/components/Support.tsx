@@ -16,6 +16,7 @@ import { PageContainer } from "../../ui/ContainerContent";
 import { IApp, IEstablishment, ITicket } from "../containers/Support";
 import Attachment from "./Attachment";
 import { CategoryPicker, EstablishmentPicker, FormInputs, IconButton } from "./Items";
+import Toast from "react-native-tiny-toast";
 
 type SupportProps = {
   ticket: ITicket;
@@ -26,13 +27,14 @@ type SupportProps = {
   sendTicket: (reset: (() => void)[]) => void;
   categoryList: IApp[];
   establishmentList: IEstablishment[];
+  hasRightToCreateTicket: boolean;
 };
 
 export default class Support extends React.PureComponent<SupportProps, any> {
   reset: (() => void)[] = [];
 
   componentDidMount() {
-    const { categoryList, establishmentList, ticket, onFieldChange } = this.props;
+    const { categoryList, establishmentList, ticket, onFieldChange, hasRightToCreateTicket } = this.props;
     if (
       categoryList !== undefined &&
       categoryList.length > 0 &&
@@ -77,6 +79,14 @@ export default class Support extends React.PureComponent<SupportProps, any> {
     this.props.sendTicket(this.reset)
   }
 
+  hasNoRight = () => {
+    Toast.show(I18n.t("support-ticket-error-has-no-right"), {
+      position: Toast.position.BOTTOM,
+      mask: false,
+      containerStyle: { width: "95%", backgroundColor: "black" },
+    });
+  }
+
   renderFormSelect = (fieldTranslation, fieldName, list) => {
     const { onFieldChange, ticket } = this.props;
     return (
@@ -96,15 +106,16 @@ export default class Support extends React.PureComponent<SupportProps, any> {
   };
 
   renderForm = () => {
-    const { categoryList, establishmentList } = this.props;
+    const { categoryList, establishmentList, hasRightToCreateTicket } = this.props;
     return (
-        <View>
-          {this.renderFormSelect("support-ticket-category", "category", categoryList)}
-          {this.renderFormSelect("support-ticket-establishment", "school_id", establishmentList)}
-          {this.renderFormInput("support-ticket-subject", "subject")}
-          {this.renderFormInput("support-ticket-description", "description")}
-        </View>
-    );
+        // @ts-ignore
+        <View onTouchStart={ !hasRightToCreateTicket && (() => this.hasNoRight())}>
+            {this.renderFormSelect("support-ticket-category", "category", categoryList)}
+            {this.renderFormSelect("support-ticket-establishment", "school_id", establishmentList)}
+            {this.renderFormInput("support-ticket-subject", "subject")}
+            {this.renderFormInput("support-ticket-description", "description")}
+          </View>
+      );
   };
 
   public render() {
@@ -112,7 +123,8 @@ export default class Support extends React.PureComponent<SupportProps, any> {
       <PageContainer>
         <View style={styles.containerTitle}>
           <Text style={styles.textTitle}>{I18n.t("support-report-incident")}</Text>
-          <IconButton icon="attachment" color="white" onPress={() => this.props.uploadAttachment()} />
+          <IconButton icon="attachment" color={this.props.hasRightToCreateTicket ? "white" : CommonStyles.fadColor}
+                      onPress={this.props.hasRightToCreateTicket ? () => this.props.uploadAttachment() : () => this.hasNoRight()} />
         </View>
         <KeyboardAvoidingView enabled={Platform.OS === "ios"} behavior="position" keyboardVerticalOffset={80} style={{overflow:'hidden'}}>
           <ScrollView bounces={false} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="never"
@@ -121,7 +133,8 @@ export default class Support extends React.PureComponent<SupportProps, any> {
             {this.renderForm()}
             {this.props.attachments && this.props.attachments.length > 0 && this.renderAttachments()}
             <View style={{ height: 65 }} />
-            <TouchableOpacity onPress={this.sendTicket} style={styles.buttonTicketRegister}>
+            <TouchableOpacity onPress={this.props.hasRightToCreateTicket ? this.sendTicket : this.hasNoRight}
+                              style={this.props.hasRightToCreateTicket ? styles.buttonTicketRegister : styles.buttonTicketRegisterDisabled}>
               <Text style={styles.textButtonTicketRegister}>{I18n.t("support-ticket-register").toUpperCase()}</Text>
             </TouchableOpacity>
           </ScrollView>
@@ -172,6 +185,16 @@ const styles = StyleSheet.create({
     bottom: 10,
     width: "98%",
     backgroundColor: CommonStyles.secondary,
+    borderRadius: 5,
+    marginTop: 45,
+    padding: 12,
+  },
+  buttonTicketRegisterDisabled: {
+    position: "absolute",
+    alignSelf: "center",
+    bottom: 10,
+    width: "98%",
+    backgroundColor: CommonStyles.fadColor,
     borderRadius: 5,
     marginTop: 45,
     padding: 12,

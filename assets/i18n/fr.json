@@ -406,6 +406,7 @@
     "support-ticket-error-form-subject-empty": "Le champs 'Sujet' doit être renseigné",
     "support-ticket-error-form-subject-size": "Le champs 'Sujet' est trop long",
     "support-ticket-error-form-description-empty": "Le champs 'Description' doit être renseigné",
+    "support-ticket-error-has-no-right": "Vous n'avez pas le droit de créer un ticket",
     "support-ticket-success-id": "Demande N°",
     "support-ticket-success-info": " créée avec succès. Retrouvez le suivi sur la version web du module Aide et support.",
     "support-ticket-failure": "Echec. La création de la demande a échoué.",

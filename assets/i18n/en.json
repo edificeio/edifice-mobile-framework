@@ -401,6 +401,7 @@
   "support-ticket-error-form-subject-empty": "The 'Subject' field must be completed",
   "support-ticket-error-form-subject-size": "The 'Subject' field is too long",
   "support-ticket-error-form-description-empty": "The 'Description' field must be completed",
+  "support-ticket-error-has-no-right": "You haven't the right to create a ticket",
   "support-ticket-success-id": "Request N°",
   "support-ticket-success-info": " created successfully. Find the follow-up on the web version of the Help and Support module.",
   "support-ticket-failure": "Failure. The creation of the request failed.",
