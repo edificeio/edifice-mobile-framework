@@ -1,11 +1,11 @@
 import { createStackNavigator } from "react-navigation-stack";
 
-import BlogScreen from "./screens/BlogScreen";
+import BlogDetailsScreen from "./screens/BlogDetailsScreen";
 
-export default createStackNavigator(
+export default () => createStackNavigator(
     {
-        "blog": {
-            screen: BlogScreen
+        "blog/details": {
+            screen: BlogDetailsScreen
         },
     }
 );

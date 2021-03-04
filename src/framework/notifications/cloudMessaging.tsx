@@ -45,7 +45,7 @@ const fallbackHandleNotificationAction: NotifHandlerThunkAction = n => async (di
 	});
 	return {
 		managed: true,
-		trackInfo: { action: "Browser", name: notifPathBegin }
+		trackInfo: { action: "Browser" }
 	};
 }
 
