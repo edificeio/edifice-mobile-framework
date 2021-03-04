@@ -1,14 +1,14 @@
-import { combineReducers } from "redux";
+import { CombinedState, combineReducers } from "redux";
 import { INotificationFilter } from "./notifFilters";
 import notifTypes, { INotifTypes_State } from "./notifTypes";
 import notifFilters, { INotifFilters_State } from "./notifFilters";
 
 // State
 
-export interface INotifDefinitions_State {
+export type INotifDefinitions_State = CombinedState<{
     notifTypes: INotifTypes_State,
     notifFilters: INotifFilters_State
-}
+}>
 
 // Reducer
 
