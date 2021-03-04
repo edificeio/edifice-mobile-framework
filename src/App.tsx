@@ -52,7 +52,7 @@ import { IUserInfoState } from "./user/state/info";
 
 // App Conf
 import "./infra/appConf";
-import { AppPushNotificationHandlerComponent } from "./pushNotifications";
+import { AppPushNotificationHandlerComponent } from "./framework/notifications/cloudMessaging";
 
 // Disable Yellow Box on release builds.
 if (__DEV__) {
