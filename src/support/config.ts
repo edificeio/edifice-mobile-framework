@@ -1,4 +1,5 @@
 import FunctionalModuleConfig from "../infra/moduleTool";
+import { CommonStyles } from "../styles/common/styles";
 
 // tslint:disable:object-literal-sort-keys
 
@@ -7,7 +8,7 @@ export default new FunctionalModuleConfig({
   displayName: "support",
   iconName: "help-circled",
   apiName: "Support",
-  iconColor: "#46bfaf",
+  iconColor: CommonStyles.themeOpenEnt.green,
   group: true,
   hasRight: apps => apps.some(app => app.address && app.address.toUpperCase().includes("SUPPORT")),
 });

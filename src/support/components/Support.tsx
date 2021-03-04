@@ -5,17 +5,12 @@ import { ScrollView } from "react-native-gesture-handler";
 
 import { CommonStyles } from "../../styles/common/styles";
 import { PageContainer } from "../../ui/ContainerContent";
+import { ITicket } from "../containers/Support";
 import Attachment from "./Attachment";
 import { FormInputs, IconButton, ListPicker } from "./Items";
 
 type SupportProps = {
-  ticket: {
-    category: string;
-    establishment: string;
-    subject: string;
-    description: string;
-    attachments: { id: string; filename: string; contentType: string }[];
-  };
+  ticket: ITicket;
   attachments: any;
   onFieldChange: (ticket) => void;
   uploadAttachment: () => void;

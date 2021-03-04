@@ -3,11 +3,13 @@ import RNFB from "rn-fetch-blob";
 import Conf from "../../../ode-framework-conf";
 import { fetchJSONWithCache } from "../../infra/fetchWithCache";
 import { getAuthHeader } from "../../infra/oauth";
+import { ITicket } from "../containers/Support";
 
 export const supportService = {
-  createTicket: async () => {
-    await fetchJSONWithCache(`/support/ticket`, {
+  createTicket: async (ticket: ITicket) => {
+    return await fetchJSONWithCache(`/support/ticket`, {
       method: "POST",
+      body: JSON.stringify(ticket),
     });
   },
   addAttachment: async (file: any, handleProgession) => {

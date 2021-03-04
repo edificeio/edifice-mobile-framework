@@ -12,20 +12,22 @@ import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOpti
 import { createTicketAction, addAttachmentAction, deleteAttachmentAction } from "../actions/support";
 import Support from "../components/Support";
 
+export type ITicket = {
+  category: string;
+    establishment: string;
+    subject: string;
+    description: string;
+    attachments: any[];
+};
+
 type SupportProps = {
-  createTicket: (ticket) => void;
+  createTicket: (ticket: ITicket) => void;
   addAttachment: (attachment: object) => void;
   deleteAttachment: (attachmentId: string) => void;
 };
 
 type SupportState = {
-  ticket: {
-    category: string;
-    establishment: string;
-    subject: string;
-    description: string;
-    attachments: any[];
-  };
+  ticket: ITicket;
   tempAttachment?: any;
 };
 
