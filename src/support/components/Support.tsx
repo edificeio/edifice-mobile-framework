@@ -29,11 +29,11 @@ export default class Support extends React.PureComponent<SupportProps, any> {
       establishmentList !== undefined &&
       establishmentList.length > 0
     )
-      onFieldChange({ ...ticket, category: categoryList[0].displayName, establishment: establishmentList[0].id });
+      onFieldChange({ ...ticket, category: categoryList[0].displayName, school_id: establishmentList[0].id });
     else {
       if (categoryList !== undefined && categoryList.length > 0) onFieldChange({ ...ticket, category: categoryList[0].displayName });
       if (establishmentList !== undefined && establishmentList.length > 0)
-        onFieldChange({ ...ticket, establishment: establishmentList[0].id });
+        onFieldChange({ ...ticket, school_id: establishmentList[0].id });
     }
   }
 
@@ -73,11 +73,8 @@ export default class Support extends React.PureComponent<SupportProps, any> {
           {fieldName === "category" && (
             <CategoryPicker list={list} onFieldChange={field => onFieldChange({ ...ticket, category: field })} />
           )}
-          {fieldName === "establishment" && (
-            <EstablishmentPicker
-              list={list}
-              onFieldChange={field => onFieldChange({ ...ticket, establishment: field })}
-            />
+          {fieldName === "school_id" && (
+            <EstablishmentPicker list={list} onFieldChange={field => onFieldChange({ ...ticket, school_id: field })} />
           )}
         </View>
       </>
@@ -89,7 +86,7 @@ export default class Support extends React.PureComponent<SupportProps, any> {
     return (
       <View>
         {this.renderFormSelect("support-ticket-category", "category", categoryList)}
-        {this.renderFormSelect("support-ticket-establishment", "establishment", establishmentList)}
+        {this.renderFormSelect("support-ticket-establishment", "school_id", establishmentList)}
         {this.renderFormInput("support-ticket-subject", "subject")}
         {this.renderFormInput("support-ticket-description", "description")}
       </View>

@@ -1,14 +1,12 @@
 import { Dispatch } from "redux";
 
 import { progressAction, progressEndAction, progressInitAction } from "../../infra/actions/progress";
-import { Trackers } from "../../infra/tracker";
 import { ITicket } from "../containers/Support";
 import { supportService } from "../service/support";
 
 export function createTicketAction(ticket: ITicket) {
   return async (dispatch: Dispatch) => {
-    Trackers.trackEvent("Support", "SEND");
-    await supportService.createTicket(ticket);
+    return await supportService.createTicket(ticket);
   };
 }
 

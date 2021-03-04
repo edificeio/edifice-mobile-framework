@@ -14,7 +14,7 @@ import Support from "../components/Support";
 
 export type ITicket = {
   category: string;
-    establishment: string;
+    school_id: string;
     subject: string;
     description: string;
     attachments: any[];
@@ -62,7 +62,7 @@ class SupportContainer extends React.PureComponent<SupportProps, SupportState> {
     this.state = {
       ticket: {
         category: "",
-        establishment: "",
+        school_id: "",
         subject: "",
         description: "",
         attachments: [],
@@ -132,6 +132,7 @@ class SupportContainer extends React.PureComponent<SupportProps, SupportState> {
     } else {
       try {
         const ticketNb = this.props.createTicket(this.state.ticket);
+        console.log("ticket Print: ", this.state.ticket);
 
         Toast.show(I18n.t("support-ticket-success-id") + ticketNb + I18n.t("support-ticket-success-info"), {
           position: Toast.position.BOTTOM,
