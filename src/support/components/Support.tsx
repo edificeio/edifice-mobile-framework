@@ -1,6 +1,6 @@
 import I18n from "i18n-js";
 import * as React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
 import { CommonStyles } from "../../styles/common/styles";
@@ -21,15 +21,15 @@ type SupportProps = {
 };
 
 export default class Support extends React.PureComponent<SupportProps, any> {
-  reset: (() => void)[] = new Array();
+  reset: (() => void)[] = [];
 
   componentDidMount() {
     const { categoryList, establishmentList, ticket, onFieldChange } = this.props;
     if (
-      categoryList !== undefined &&
-      categoryList.length > 0 &&
-      establishmentList !== undefined &&
-      establishmentList.length > 0
+        categoryList !== undefined &&
+        categoryList.length > 0 &&
+        establishmentList !== undefined &&
+        establishmentList.length > 0
     )
       onFieldChange({ ...ticket, category: categoryList[0].displayName, school_id: establishmentList[0].id });
     else {
@@ -41,27 +41,27 @@ export default class Support extends React.PureComponent<SupportProps, any> {
 
   renderAttachments = () => {
     return this.props.attachments.map(att => (
-      <Attachment
-        id={att.id || att.filename}
-        uploadSuccess={!!att.id}
-        fileType={att.contentType}
-        fileName={att.name}
-        onRemove={() => this.props.removeAttachment(att.id)}
-      />
+        <Attachment
+            id={att.id || att.filename}
+            uploadSuccess={!!att.id}
+            fileType={att.contentType}
+            fileName={att.name}
+            onRemove={() => this.props.removeAttachment(att.id)}
+        />
     ));
   };
 
   renderFormInput = (fieldTranslation, fieldName) => {
     const { onFieldChange, ticket } = this.props;
     return (
-      <>
-        <View style={styles.lineSeparator} />
-        <Text style={styles.textTicketFields}>
-          <Text style={{ color: "red" }}>* </Text>
-          {I18n.t(fieldTranslation)}
-        </Text>
-        <FormInputs fieldName={fieldName} setResetter={resetter => this.reset.push(resetter)} onChange={field => onFieldChange({ ...ticket, [fieldName]: field })} />
-      </>
+        <>
+          <View style={styles.lineSeparator} />
+          <Text style={styles.textTicketFields}>
+            <Text style={{ color: "red" }}>* </Text>
+            {I18n.t(fieldTranslation)}
+          </Text>
+          <FormInputs fieldName={fieldName} setResetter={resetter => this.reset.push(resetter)} onChange={field => onFieldChange({ ...ticket, [fieldName]: field })} />
+        </>
     );
   };
 
@@ -73,50 +73,53 @@ export default class Support extends React.PureComponent<SupportProps, any> {
   renderFormSelect = (fieldTranslation, fieldName, list) => {
     const { onFieldChange, ticket } = this.props;
     return (
-      <>
-        <View style={styles.lineSeparator} />
-        <View style={styles.containerFieldsSelect}>
-          <Text style={styles.textTicketFields}>{I18n.t(fieldTranslation)}</Text>
-          {fieldName === "category" && (
-            <CategoryPicker list={list} onFieldChange={field => onFieldChange({ ...ticket, category: field })} />
-          )}
-          {fieldName === "school_id" && (
-            <EstablishmentPicker list={list} onFieldChange={field => onFieldChange({ ...ticket, school_id: field })} />
-          )}
-        </View>
-      </>
+        <>
+          <View style={styles.lineSeparator} />
+          <View style={styles.containerFieldsSelect}>
+            <Text style={styles.textTicketFields}>{I18n.t(fieldTranslation)}</Text>
+            {fieldName === "category" && (
+                <CategoryPicker list={list} onFieldChange={field => onFieldChange({ ...ticket, category: field })} />
+            )}
+            {fieldName === "school_id" && (
+                <EstablishmentPicker list={list} onFieldChange={field => onFieldChange({ ...ticket, school_id: field })} />
+            )}
+          </View>
+        </>
     );
   };
 
   renderForm = () => {
     const { categoryList, establishmentList } = this.props;
     return (
-      <View>
-        {this.renderFormSelect("support-ticket-category", "category", categoryList)}
-        {this.renderFormSelect("support-ticket-establishment", "school_id", establishmentList)}
-        {this.renderFormInput("support-ticket-subject", "subject")}
-        {this.renderFormInput("support-ticket-description", "description")}
-      </View>
+        <View>
+          {this.renderFormSelect("support-ticket-category", "category", categoryList)}
+          {this.renderFormSelect("support-ticket-establishment", "school_id", establishmentList)}
+          {this.renderFormInput("support-ticket-subject", "subject")}
+          {this.renderFormInput("support-ticket-description", "description")}
+        </View>
     );
   };
 
   public render() {
     return (
-      <PageContainer>
-        <View style={styles.containerTitle}>
-          <Text style={styles.textTitle}>{I18n.t("support-report-incident")}</Text>
-          <IconButton icon="attachment" color="white" onPress={() => this.props.uploadAttachment()} />
-        </View>
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-          <Text style={styles.textMobileOnly}>{I18n.t("support-mobile-only")}</Text>
-          {this.renderForm()}
-          {this.props.attachments && this.props.attachments.length > 0 && this.renderAttachments()}
-          <View style={{ height: 65 }} />
-          <TouchableOpacity onPress={this.sendTicket} style={styles.buttonTicketRegister}>
-            <Text style={styles.textButtonTicketRegister}>{I18n.t("support-ticket-register").toUpperCase()}</Text>
-          </TouchableOpacity>
-        </ScrollView>
-      </PageContainer>
+        <PageContainer>
+          <View style={styles.containerTitle}>
+            <Text style={styles.textTitle}>{I18n.t("support-report-incident")}</Text>
+            <IconButton icon="attachment" color="white" onPress={() => this.props.uploadAttachment()} />
+          </View>
+          <KeyboardAvoidingView enabled={Platform.OS === "ios"} behavior="position" keyboardVerticalOffset={80} style={{overflow:'hidden'}}>
+            <ScrollView bounces={false} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="never"
+                        contentContainerStyle={{ flexGrow: 1 }}>
+              <Text style={styles.textMobileOnly}>{I18n.t("support-mobile-only")}</Text>
+              {this.renderForm()}
+              {this.props.attachments && this.props.attachments.length > 0 && this.renderAttachments()}
+              <View style={{ height: 65 }} />
+              <TouchableOpacity onPress={this.sendTicket} style={styles.buttonTicketRegister}>
+                <Text style={styles.textButtonTicketRegister}>{I18n.t("support-ticket-register").toUpperCase()}</Text>
+              </TouchableOpacity>
+            </ScrollView>
+          </KeyboardAvoidingView>
+        </PageContainer>
     );
   }
 }
