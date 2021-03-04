@@ -21,6 +21,8 @@ type SupportProps = {
 };
 
 export default class Support extends React.PureComponent<SupportProps, any> {
+  reset: (() => void)[] = new Array();
+
   componentDidMount() {
     const { categoryList, establishmentList, ticket, onFieldChange } = this.props;
     if (
@@ -58,10 +60,16 @@ export default class Support extends React.PureComponent<SupportProps, any> {
           <Text style={{ color: "red" }}>* </Text>
           {I18n.t(fieldTranslation)}
         </Text>
-        <FormInputs fieldName={fieldName} onChange={field => onFieldChange({ ...ticket, [fieldName]: field })} />
+        <FormInputs fieldName={fieldName} setResetter={resetter => this.reset.push(resetter)} onChange={field => onFieldChange({ ...ticket, [fieldName]: field })} />
       </>
     );
   };
+
+  sendTicket = () => {
+    this.props.sendTicket()
+      this.reset.forEach(reset =>   
+        reset());
+  }
 
   renderFormSelect = (fieldTranslation, fieldName, list) => {
     const { onFieldChange, ticket } = this.props;
@@ -103,9 +111,9 @@ export default class Support extends React.PureComponent<SupportProps, any> {
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
           <Text style={styles.textMobileOnly}>{I18n.t("support-mobile-only")}</Text>
           {this.renderForm()}
-          {this.props.attachments.length > 0 && this.renderAttachments()}
+          {this.props.attachments && this.props.attachments.length > 0 && this.renderAttachments()}
           <View style={{ height: 65 }} />
-          <TouchableOpacity onPress={() => this.props.sendTicket()} style={styles.buttonTicketRegister}>
+          <TouchableOpacity onPress={this.sendTicket} style={styles.buttonTicketRegister}>
             <Text style={styles.textButtonTicketRegister}>{I18n.t("support-ticket-register").toUpperCase()}</Text>
           </TouchableOpacity>
         </ScrollView>

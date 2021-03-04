@@ -143,6 +143,7 @@ class SupportContainer extends React.PureComponent<ISupportProps, ISupportState>
           mask: false,
           containerStyle: { width: "95%", backgroundColor: "black" },
         });
+        this.setState(prevState => ({ ticket: { ...prevState.ticket, subject: "", description: "", attachments: [] }, tempAttachment: null }));
       } catch (e) {
         Toast.show(I18n.t("support-ticket-failure"), {
           position: Toast.position.BOTTOM,

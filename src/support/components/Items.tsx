@@ -56,7 +56,11 @@ export const CategoryPicker = ({ list, onFieldChange }: { list: IApp[]; onFieldC
   );
 };
 
-export const FormInputs = ({ fieldName, onChange }: { fieldName: string; onChange: (field: string) => void }) => {
+export const FormInputs = ({ fieldName, onChange, setResetter }: {
+  fieldName: string;
+  onChange: (field: string) => void;
+  setResetter: (resetter: () => void) => void;
+}) => {
   const textInputStyle = {
     flex: 1,
     marginHorizontal: 10,
@@ -65,8 +69,9 @@ export const FormInputs = ({ fieldName, onChange }: { fieldName: string; onChang
     borderBottomWidth: 2,
   } as ViewStyle;
   const textUpdateTimeout = React.useRef();
-  const [currentValue, updateCurrentValue] = React.useState<string>();
+  const [currentValue, updateCurrentValue] = React.useState<string>("");
   const notFirstRender = React.useRef(false);
+  setResetter(() => updateCurrentValue(""));
 
   React.useEffect(() => {
     if (!notFirstRender.current) {
@@ -75,7 +80,7 @@ export const FormInputs = ({ fieldName, onChange }: { fieldName: string; onChang
       return;
     }
     window.clearTimeout(textUpdateTimeout.current);
-    textUpdateTimeout.current = window.setTimeout(() => onChange(currentValue), 500);
+    textUpdateTimeout.current = window.setTimeout(() => onChange(currentValue), 100);
 
     return () => {
       window.clearTimeout(textUpdateTimeout.current);
