@@ -83,7 +83,7 @@ interface IHeaderActionCustomProps extends IHeaderActionCommonProps {
     customComponent?: JSX.Element;
 }
 
-const HeaderActionText = styled(Text)({
+const HeaderActionText = styled(TextInverse)({
     paddingHorizontal: 18,
     justifyContent: "center",
     alignItems: "center"
