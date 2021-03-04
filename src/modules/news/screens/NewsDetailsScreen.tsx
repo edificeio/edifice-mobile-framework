@@ -4,7 +4,7 @@ import { ThunkDispatch } from "redux-thunk";
 import { connect } from "react-redux";
 
 import type { IGlobalState } from "../../../AppStore";
-import type { IBlog_State } from "../reducer";
+import type { INews_State } from "../reducer";
 
 import moduleConfig from "../moduleConfig";
 import withViewTracking from "../../../framework/tracker/withViewTracking";
@@ -14,33 +14,33 @@ import { IResourceUriNotification, ITimelineNotification } from "../../../framew
 
 // TYPES ==========================================================================================
 
-export interface IBlogDetailsScreenDataProps {
+export interface INewsDetailsScreenDataProps {
     // Add data props here
 };
-export interface IBlogDetailsScreenEventProps {
+export interface INewsDetailsScreenEventProps {
     // Add event-props here
 };
-export interface IBlogDetailsScreenNavParams {
+export interface INewsDetailsScreenNavParams {
     notification: ITimelineNotification & IResourceUriNotification;
 };
-export type IBlogDetailsScreenProps = IBlogDetailsScreenDataProps
-    & IBlogDetailsScreenEventProps
-    & NavigationInjectedProps<Partial<IBlogDetailsScreenNavParams>>;
+export type INewsDetailsScreenProps = INewsDetailsScreenDataProps
+    & INewsDetailsScreenEventProps
+    & NavigationInjectedProps<Partial<INewsDetailsScreenNavParams>>;
 
-export interface IBlogDetailsScreenState {
+export interface INewsDetailsScreenState {
     // Add local state here
 };
 
 // COMPONENT ======================================================================================
 
-export class BlogDetailsScreen extends React.PureComponent<
-    IBlogDetailsScreenProps,
-    IBlogDetailsScreenState
+export class NewsDetailsScreen extends React.PureComponent<
+    INewsDetailsScreenProps,
+    INewsDetailsScreenState
     > {
 
     // DECLARATIONS =================================================================================
 
-    state: IBlogDetailsScreenState = {
+    state: INewsDetailsScreenState = {
         // Add local state default values here
     }
 
@@ -49,7 +49,7 @@ export class BlogDetailsScreen extends React.PureComponent<
     render() {
         return <>
             <PageView>
-                <Text>BlogDetails content</Text>
+                <Text>NewsDetails content</Text>
                 <Text>{this.props.navigation.getParam('notification')?.id}</Text>
             </PageView>
         </>;
@@ -57,7 +57,7 @@ export class BlogDetailsScreen extends React.PureComponent<
 
     // LIFECYCLE ====================================================================================
 
-    constructor(props: IBlogDetailsScreenProps) {
+    constructor(props: INewsDetailsScreenProps) {
         super(props);
     }
 
@@ -78,17 +78,17 @@ export class BlogDetailsScreen extends React.PureComponent<
 
 // MAPPING ========================================================================================
 
-const mapStateToProps: (s: IGlobalState) => IBlogDetailsScreenDataProps = (s) => {
-    let ts = moduleConfig.getState(s) as IBlog_State;
+const mapStateToProps: (s: IGlobalState) => INewsDetailsScreenDataProps = (s) => {
+    let ts = moduleConfig.getState(s) as INews_State;
     return {
         // Add data props here
     };
 };
 
-const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => IBlogDetailsScreenEventProps
+const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => INewsDetailsScreenEventProps
     = (dispatch, getState) => ({
         // Add event props here
     })
 
-const BlogDetailsScreen_Connected = connect(mapStateToProps, mapDispatchToProps)(BlogDetailsScreen);
-export default withViewTracking("blog")(BlogDetailsScreen_Connected);
+const NewsDetailsScreen_Connected = connect(mapStateToProps, mapDispatchToProps)(NewsDetailsScreen);
+export default withViewTracking("news")(NewsDetailsScreen_Connected);
