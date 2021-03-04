@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, TextInput, TouchableOpacity, View, ViewStyle } from "react-native";
+import {StyleSheet, TextInput, TouchableOpacity, View, ViewStyle} from "react-native";
 
 import { CommonStyles } from "../../styles/common/styles";
 import { Icon } from "../../ui";

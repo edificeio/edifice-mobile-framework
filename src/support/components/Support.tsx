@@ -149,18 +149,18 @@ export default class Support extends React.PureComponent<SupportProps, any> {
           <IconButton icon="attachment" color={this.props.hasRightToCreateTicket ? "white" : CommonStyles.fadColor}
                       onPress={this.props.hasRightToCreateTicket ? () => this.props.uploadAttachment() : () => this.hasNoRight()} />
         </View>
-        <KeyboardAvoidingView enabled behavior="position" keyboardVerticalOffset={Platform.OS === "ios" ? 80 : -150}
+        <KeyboardAvoidingView enabled behavior="position" keyboardVerticalOffset={Platform.OS === "ios" ? 80 : -120}
                               style={styles.overflowHidden}>
           <ScrollView keyboardShouldPersistTaps="never"
                       contentContainerStyle={{ flexGrow: 1 }}>
             <Text style={styles.textMobileOnly}>{I18n.t("support-mobile-only")}</Text>
             {this.renderForm()}
             {this.props.attachments && this.props.attachments.length > 0 && this.renderAttachments()}
-            <View style={{ height: 35 }} />
-            {this.renderAndroidRegisterButton()}
+            <View style={Platform.OS === "android" ? { height: 200 } : null} />
           </ScrollView>
         </KeyboardAvoidingView>
         {this.renderIOSRegisterButton()}
+        {this.renderAndroidRegisterButton()}
       </PageContainer>
     );
   }
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
   },
   buttonTicketRegister: {
     alignSelf: "center",
-    bottom: 65,
+    bottom: 139,
     width: "98%",
     backgroundColor: CommonStyles.secondary,
     borderRadius: 5,
@@ -211,9 +211,8 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   buttonTicketRegisterDisabled: {
-    position: "absolute",
     alignSelf: "center",
-    bottom: 10,
+    bottom: 139,
     width: "98%",
     backgroundColor: CommonStyles.fadColor,
     borderRadius: 5,
