@@ -12,7 +12,7 @@ import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 
 const PageView_StyleComponent = styled.View({
     flex: 1,
-    backgroundColor: theme.color.pageBackground
+    backgroundColor: theme.color.background.page
 });
 
 export const PageView = (props: React.PropsWithChildren<ViewProps>) => <PageView_StyleComponent>
