@@ -22,7 +22,7 @@ const { View, FlatList } = style;
 import styles from "../../styles";
 
 import { Loading } from "../../ui";
-import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
+import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
 import ThreadMessage from "../components/ThreadMessage";
 import Conf from "../../../ode-framework-conf";
@@ -121,7 +121,7 @@ export class ThreadPage extends React.PureComponent<
 
     return (
       <PageContainer>
-        <ConnectionTrackingBar />
+        <DEPRECATED_ConnectionTrackingBar />
         {pageContent}
       </PageContainer>
     );

@@ -26,7 +26,7 @@ import { RefreshControl } from "react-native";
 import { ListItem, PageContainer } from "../../ui/ContainerContent";
 
 import { Loading } from "../../ui";
-import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
+import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { EmptyScreen } from "../../ui/EmptyScreen";
 import { Checkbox } from "../../ui/forms/Checkbox";
 import { TextBold } from "../../ui/text";
@@ -87,7 +87,7 @@ export class HomeworkFilterPage extends React.PureComponent<
 
     return (
       <PageContainer>
-        <ConnectionTrackingBar />
+        <DEPRECATED_ConnectionTrackingBar />
         {pageContent}
       </PageContainer>
     );

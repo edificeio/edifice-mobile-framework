@@ -1,7 +1,7 @@
 import I18n from "i18n-js";
 import * as React from "react";
 import { PageContainer } from "../../ui/ContainerContent";
-import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
+import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { ScrollView, SafeAreaView, View } from "react-native";
 import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { NavigationScreenProp } from "react-navigation";
@@ -33,7 +33,7 @@ export class RelativesPage extends React.PureComponent<IRelativesPageProps>{
 
   render() {
     return <PageContainer>
-      <ConnectionTrackingBar/>
+      <DEPRECATED_ConnectionTrackingBar/>
       <ScrollView alwaysBounceVertical={false}>
         <View style={{marginTop: 40}}></View>
         <SafeAreaView>

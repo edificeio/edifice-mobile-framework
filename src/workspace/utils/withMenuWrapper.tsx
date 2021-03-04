@@ -13,7 +13,7 @@ import { IItem } from "../types";
 import { IItems } from "../reducers/select";
 import { ITreeItem } from "../actions/helpers/formatListFolders";
 import { nbItems } from "./index";
-import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
+import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { ProgressBar } from "../../ui";
 import { Header } from "../../ui/headers/Header";
 
@@ -131,7 +131,7 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
               selected={selectedArrayItems}
             />
           </Header>
-          <ConnectionTrackingBar/>
+          <DEPRECATED_ConnectionTrackingBar/>
           <ProgressBar />
           {dialogVisible && (
             <ConfirmDialog

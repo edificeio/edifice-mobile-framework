@@ -23,7 +23,7 @@ const { FlatList } = style;
 import styles from "../../styles";
 
 import { Loading } from "../../ui";
-import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
+import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer, ListItem } from "./NewContainerContent";
 import { EmptyScreen } from "../../ui/EmptyScreen";
 import { TextBright } from "../../ui/Typography";
@@ -100,7 +100,7 @@ INotificationListPageProps,
 
     return (
       <PageContainer>
-        <ConnectionTrackingBar />
+        <DEPRECATED_ConnectionTrackingBar />
         {pageContent}
       </PageContainer>
     );
