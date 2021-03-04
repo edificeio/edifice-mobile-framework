@@ -75,8 +75,7 @@ export interface IActionMap {
 export interface IModuleDeclaration<Name extends string, State, ActionMap extends IActionMap> {
   config: IModuleConfig<Name>,
   mainComp: React.ComponentClass | React.FunctionComponent,
-  reducer: Reducer<State>,
-  actions: ActionMap
+  reducer: Reducer<State>
 }
 export interface IModule<Name extends string, State, ActionMap extends IActionMap> extends IModuleDeclaration<Name, State, ActionMap> {
   route: any,
@@ -90,13 +89,11 @@ export class Module<Name extends string, State, ActionMap extends IActionMap>
   config: IModuleConfig<Name>;
   mainComp: React.ComponentClass | React.FunctionComponent;
   reducer: Reducer<State>;
-  actions: ActionMap;
   route: any;
   constructor(moduleDeclaration: IModuleDeclaration<Name, State, ActionMap>) {
     this.config = moduleDeclaration.config;
     this.mainComp = moduleDeclaration.mainComp;
     this.reducer = moduleDeclaration.reducer;
-    this.actions = moduleDeclaration.actions;
     this.route = this.createModuleRoute();
   }
 
