@@ -12,7 +12,7 @@ import { FormInputs, IconButton, ListPicker } from "./Items";
 type SupportProps = {
   ticket: ITicket;
   attachments: any;
-  onFieldChange: (ticket) => void;
+  onFieldChange: (ticket: ITicket) => void;
   uploadAttachment: () => void;
   removeAttachment: (attachmentId: string) => void;
   sendTicket: () => void;
@@ -23,9 +23,13 @@ type SupportProps = {
 export default class Support extends React.PureComponent<SupportProps, any> {
   componentDidMount() {
     const { categories, establishments, ticket, onFieldChange } = this.props;
-    if (categories !== undefined && categories.length > 0) onFieldChange({ ...ticket, category: categories[0] });
-    if (establishments !== undefined && establishments.length > 0)
-      onFieldChange({ ...ticket, establishment: establishments[0] });
+    if (categories !== undefined && categories.length > 0 && establishments !== undefined && establishments.length > 0)
+      onFieldChange({ ...ticket, category: categories[0], establishment: establishments[0] });
+    else {
+      if (categories !== undefined && categories.length > 0) onFieldChange({ ...ticket, category: categories[0] });
+      if (establishments !== undefined && establishments.length > 0)
+        onFieldChange({ ...ticket, establishment: establishments[0] });
+    }
   }
 
   renderAttachments = () => {
@@ -134,12 +138,6 @@ const styles = StyleSheet.create({
     borderColor: CommonStyles.extraLightGrey,
     borderBottomWidth: 1,
     borderRadius: 1,
-  },
-  textInputStyle: {
-    width: "100%",
-    color: CommonStyles.textColor,
-    borderBottomColor: "#EEEEEE",
-    borderBottomWidth: 2,
   },
   buttonTicketRegister: {
     position: "absolute",

@@ -29,8 +29,14 @@ export const ListPicker = ({ list, onFieldChange }) => {
 export const FormInputs = ({ onChange }: React.PropsWithChildren<{ onChange }>) => {
   const textUpdateTimeout = React.useRef();
   const [currentValue, updateCurrentValue] = React.useState<string>();
+  const notFirstRender = React.useRef(false);
 
   React.useEffect(() => {
+    if (!notFirstRender.current) {
+      // avoid onChange when useState initialize
+      notFirstRender.current = true;
+      return;
+    }
     window.clearTimeout(textUpdateTimeout.current);
     textUpdateTimeout.current = window.setTimeout(() => onChange(currentValue), 500);
 
