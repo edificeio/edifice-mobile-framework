@@ -46,7 +46,7 @@ export type IApp = {
   prefix: string;
 };
 
-type SupportProps = {
+type ISupportProps = {
   navigation: NavigationScreenProp<{}>;
   categoryList: IApp[];
   establishmentsList: IEstablishment[];
@@ -55,12 +55,12 @@ type SupportProps = {
   deleteAttachment: (attachmentId: string) => void;
 };
 
-type SupportState = {
+type ISupportState = {
   ticket: ITicket;
   tempAttachment?: any;
 };
 
-class SupportContainer extends React.PureComponent<SupportProps, SupportState> {
+class SupportContainer extends React.PureComponent<ISupportProps, ISupportState> {
   constructor(props) {
     super(props);
     this.state = {
@@ -137,8 +137,9 @@ class SupportContainer extends React.PureComponent<SupportProps, SupportState> {
       try {
         const response = await this.props.createTicket(this.state.ticket);
 
-        Toast.show(I18n.t("support-ticket-success-id") + response.id + I18n.t("support-ticket-success-info"), {
+        Toast.showSuccess(I18n.t("support-ticket-success-id") + response.id + I18n.t("support-ticket-success-info"), {
           position: Toast.position.BOTTOM,
+          duration: 5000,
           mask: false,
           containerStyle: { width: "95%", backgroundColor: "black" },
         });
