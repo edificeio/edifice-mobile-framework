@@ -4,7 +4,7 @@ import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 import { CommonStyles } from "../../styles/common/styles";
 import { Icon } from "../../ui";
 import Dropdown from "../../ui/Dropdown";
-import { IEstablishment } from "../containers/Support";
+import { IApp, IEstablishment } from "../containers/Support";
 
 export const EstablishmentPicker = ({
   list,
@@ -34,19 +34,20 @@ export const EstablishmentPicker = ({
   );
 };
 
-export const ListPicker = ({ list, onFieldChange }: { list: string[]; onFieldChange: (field: string) => void }) => {
+export const CategoryPicker = ({ list, onFieldChange }: { list: IApp[]; onFieldChange: (field: string) => void }) => {
   const [currentValue, updateCurrentValue] =
-    list.length > 0 ? React.useState<string>(list[0]) : React.useState<string>();
+    list.length > 0 ? React.useState<string>(list[0].displayName) : React.useState<string>();
   return (
     <View style={{ flex: 1 }}>
       <Dropdown
         style={styles.dropdown}
-        data={list}
+        data={list.map(x => x.displayName)}
         value={currentValue}
-        onSelect={(elem: string) => {
-          if (elem !== currentValue) {
-            updateCurrentValue(elem);
-            onFieldChange(elem);
+        onSelect={(key: string) => {
+          const elem = list.find(item => item.displayName === key);
+          if (elem !== undefined && elem.displayName !== currentValue) {
+            updateCurrentValue(elem.displayName);
+            onFieldChange(elem.address);
           }
         }}
         renderItem={(item: string) => item}

@@ -25,7 +25,18 @@ export type IEstablishment = {
   name: string;
 };
 
+export type IApp = {
+  name: string;
+  address: string;
+  icon: string;
+  target: any;
+  displayName: string;
+  display: boolean;
+  prefix: string;
+};
+
 type SupportProps = {
+  categoryList: IApp[];
   establishmentsList: IEstablishment[];
   createTicket: (ticket: ITicket) => void;
   addAttachment: (attachment: object) => void;
@@ -159,10 +170,10 @@ class SupportContainer extends React.PureComponent<SupportProps, SupportState> {
 // ------------------------------------------------------------------------------------------------
 
 const mapStateToProps: (state: any) => any = state => {
-  const categories = getSessionInfo().apps;
+  const categoryList = getSessionInfo().appsInfo;
   const establishmentList = getSessionInfo().schools;
   return {
-    categories,
+    categoryList,
     establishmentList,
   };
 };
