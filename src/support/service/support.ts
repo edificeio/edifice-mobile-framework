@@ -5,12 +5,31 @@ import { fetchJSONWithCache } from "../../infra/fetchWithCache";
 import { getAuthHeader } from "../../infra/oauth";
 import { ITicket } from "../containers/Support";
 
+export type IAttachment = {
+  id: string;
+  name: string;
+  contentType: string;
+  size: number;
+};
+
 export const supportService = {
   createTicket: async (ticket: ITicket) => {
-    return await fetchJSONWithCache(`/support/ticket`, {
+    ticket["category"] = "/" + ticket.category;
+    if (ticket.attachments !== undefined && ticket.attachments.length > 0) {
+      ticket.attachments.map((att) => {
+        return delete att["contentType"];
+      });
+    } else delete ticket.attachments;
+
+    const response = await fetchJSONWithCache(`/support/ticket`, {
       method: "POST",
+      headers: {
+        ...getAuthHeader(),
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(ticket),
     });
+    return response.id;
   },
   addAttachment: async (file: any, handleProgession) => {
     const url = `${(Conf.currentPlatform as any).url}/workspace/document?protected=true&application=media-library`;
@@ -23,10 +42,11 @@ export const supportService = {
       .then(response => {
         if (response && response.respInfo.status >= 200 && response.respInfo.status < 300) {
           const parsedResponse = JSON.parse(response.data);
-          let uploadedFile = {
+          let uploadedFile: IAttachment = {
             id: parsedResponse._id,
-            filename: parsedResponse.name,
+            name: parsedResponse.name,
             contentType: parsedResponse.metadata["content-type"],
+            size: parsedResponse.metadata.size,
           };
           return Promise.resolve(uploadedFile);
         } else {

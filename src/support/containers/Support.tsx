@@ -12,12 +12,19 @@ import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOpti
 import { createTicketAction, addAttachmentAction, deleteAttachmentAction } from "../actions/support";
 import Support from "../components/Support";
 
+export type INewAttachment = {
+  contentType?: string;
+  name?: string;
+  id?: string;
+  size?: number;
+};
+
 export type ITicket = {
   category: string;
     school_id: string;
     subject: string;
     description: string;
-    attachments: any[];
+    attachments?: any[];
 };
 
 export type IEstablishment = {
@@ -39,7 +46,7 @@ type SupportProps = {
   categoryList: IApp[];
   establishmentsList: IEstablishment[];
   createTicket: (ticket: ITicket) => void;
-  addAttachment: (attachment: object) => void;
+  addAttachment: (attachment: object) => INewAttachment;
   deleteAttachment: (attachmentId: string) => void;
 };
 
@@ -90,7 +97,7 @@ class SupportContainer extends React.PureComponent<SupportProps, SupportState> {
     };
     this.setState({ tempAttachment: fileState });
     try {
-      const newAttachment = await this.props.addAttachment(file);
+      const newAttachment: INewAttachment = await this.props.addAttachment(file);
       let joinedAttachments = this.state.ticket.attachments.concat(newAttachment);
       this.setState(prevState => ({
         ticket: { ...prevState.ticket, attachments: joinedAttachments },
@@ -132,7 +139,6 @@ class SupportContainer extends React.PureComponent<SupportProps, SupportState> {
     } else {
       try {
         const ticketNb = this.props.createTicket(this.state.ticket);
-        console.log("ticket Print: ", this.state.ticket);
 
         Toast.show(I18n.t("support-ticket-success-id") + ticketNb + I18n.t("support-ticket-success-info"), {
           position: Toast.position.BOTTOM,

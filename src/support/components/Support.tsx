@@ -40,10 +40,10 @@ export default class Support extends React.PureComponent<SupportProps, any> {
   renderAttachments = () => {
     return this.props.attachments.map(att => (
       <Attachment
-        id={att.id || att.filename}
+        id={att.id || att.name}
         uploadSuccess={!!att.id}
         fileType={att.contentType}
-        fileName={att.filename}
+        fileName={att.name}
         onRemove={() => this.props.removeAttachment(att.id)}
       />
     ));
