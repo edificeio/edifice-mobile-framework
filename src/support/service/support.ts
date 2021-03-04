@@ -14,9 +14,6 @@ export type IAttachment = {
 
 export const supportService = {
   createTicket: async (ticket: ITicket) => {
-    if(!ticket["category"].startsWith("/")){
-      ticket["category"] = "/" + ticket.category;
-    }
     if (ticket.attachments !== undefined && ticket.attachments.length > 0) {
       ticket.attachments.map(att => {
         return delete att["contentType"];
