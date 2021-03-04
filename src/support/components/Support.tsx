@@ -118,6 +118,29 @@ export default class Support extends React.PureComponent<SupportProps, any> {
       );
   };
 
+  renderAndroidRegisterButton = () => {
+    if(Platform.OS === "android") {
+      return (
+          <TouchableOpacity onPress={this.props.hasRightToCreateTicket ? this.sendTicket : this.hasNoRight}
+                            style={this.props.hasRightToCreateTicket ? styles.buttonTicketRegister : styles.buttonTicketRegisterDisabled}>
+            <Text style={styles.textButtonTicketRegister}>{I18n.t("support-ticket-register").toUpperCase()}</Text>
+          </TouchableOpacity>
+      );
+    }
+  };
+
+  renderIOSRegisterButton = () => {
+    if(Platform.OS === "ios") {
+      return (
+          <TouchableOpacity onPress={this.props.hasRightToCreateTicket ? this.sendTicket : this.hasNoRight}
+                            style={this.props.hasRightToCreateTicket ? [styles.buttonTicketRegister,{position:"absolute", bottom:10}] :
+                                [styles.buttonTicketRegisterDisabled,{position:"absolute", bottom:10}] }>
+            <Text style={styles.textButtonTicketRegister}>{I18n.t("support-ticket-register").toUpperCase()}</Text>
+          </TouchableOpacity>
+      );
+    }
+  };
+
   public render() {
     return (
       <PageContainer>
@@ -126,19 +149,18 @@ export default class Support extends React.PureComponent<SupportProps, any> {
           <IconButton icon="attachment" color={this.props.hasRightToCreateTicket ? "white" : CommonStyles.fadColor}
                       onPress={this.props.hasRightToCreateTicket ? () => this.props.uploadAttachment() : () => this.hasNoRight()} />
         </View>
-        <KeyboardAvoidingView enabled={Platform.OS === "ios"} behavior="position" keyboardVerticalOffset={80} style={{overflow:'hidden'}}>
-          <ScrollView bounces={false} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="never"
+        <KeyboardAvoidingView enabled behavior="position" keyboardVerticalOffset={Platform.OS === "ios" ? 80 : -150}
+                              style={styles.overflowHidden}>
+          <ScrollView keyboardShouldPersistTaps="never"
                       contentContainerStyle={{ flexGrow: 1 }}>
             <Text style={styles.textMobileOnly}>{I18n.t("support-mobile-only")}</Text>
             {this.renderForm()}
             {this.props.attachments && this.props.attachments.length > 0 && this.renderAttachments()}
-            <View style={{ height: 65 }} />
-            <TouchableOpacity onPress={this.props.hasRightToCreateTicket ? this.sendTicket : this.hasNoRight}
-                              style={this.props.hasRightToCreateTicket ? styles.buttonTicketRegister : styles.buttonTicketRegisterDisabled}>
-              <Text style={styles.textButtonTicketRegister}>{I18n.t("support-ticket-register").toUpperCase()}</Text>
-            </TouchableOpacity>
+            <View style={{ height: 35 }} />
+            {this.renderAndroidRegisterButton()}
           </ScrollView>
         </KeyboardAvoidingView>
+        {this.renderIOSRegisterButton()}
       </PageContainer>
     );
   }
@@ -180,9 +202,8 @@ const styles = StyleSheet.create({
     borderRadius: 1,
   },
   buttonTicketRegister: {
-    position: "absolute",
     alignSelf: "center",
-    bottom: 10,
+    bottom: 65,
     width: "98%",
     backgroundColor: CommonStyles.secondary,
     borderRadius: 5,
@@ -202,5 +223,8 @@ const styles = StyleSheet.create({
   textButtonTicketRegister: {
     color: "white",
     textAlign: "center",
+  },
+  overflowHidden: {
+    overflow: "hidden"
   },
 });

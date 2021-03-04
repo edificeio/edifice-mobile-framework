@@ -68,6 +68,9 @@ export const FormInputs = ({ fieldName, onChange, setResetter }: {
     borderBottomColor: "#EEEEEE",
     borderBottomWidth: 2,
   } as ViewStyle;
+  const textInputMultiline = {
+    maxHeight: 115
+  } as ViewStyle;
   const textUpdateTimeout = React.useRef();
   const [currentValue, updateCurrentValue] = React.useState<string>("");
   const notFirstRender = React.useRef(false);
@@ -90,7 +93,7 @@ export const FormInputs = ({ fieldName, onChange, setResetter }: {
   return fieldName === "subject" ? (
     <TextInput style={textInputStyle} numberOfLines={1} value={currentValue} onChangeText={text => updateCurrentValue(text)} />
   ) : (
-    <TextInput style={textInputStyle} multiline value={currentValue} onChangeText={text => updateCurrentValue(text)} />
+    <TextInput style={[textInputStyle, textInputMultiline]} multiline value={currentValue} onChangeText={text => updateCurrentValue(text)} />
   );
 };
 
