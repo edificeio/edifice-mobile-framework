@@ -1,63 +1,27 @@
 import * as React from "react";
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 
 import { CommonStyles } from "../../styles/common/styles";
 import { Icon } from "../../ui";
-import { ModalBox, ModalContent, ModalContentBlock } from "../../ui/Modal";
-
-const ListPickerModal = ({ list, isVisible, onChange, toggleVisible }) => {
-  return (
-    <ModalBox isVisible={isVisible} onDismiss={() => toggleVisible(false)}>
-      <ModalContent style={{ alignItems: "flex-start" }}>
-        <ModalContentBlock>
-          <ScrollView>
-            {list.map((elem, index) => (
-              <TouchableOpacity onPress={() => onChange(elem)}>
-                <Text style={styles.textElem} numberOfLines={1}>
-                  {elem}
-                </Text>
-                {index < list.length - 1 && <View style={styles.lineSeparator} />}
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </ModalContentBlock>
-      </ModalContent>
-    </ModalBox>
-  );
-};
-
-// EXPORTED COMPONENTS
+import Dropdown from "../../ui/Dropdown";
 
 export const ListPicker = ({ list, onFieldChange }) => {
-  const [isVisible, toggleVisible] = React.useState(false);
   const [currentValue, updateCurrentValue] =
     list.length > 0 ? React.useState<string>(list[0]) : React.useState<string>();
-  function onChange(value) {
-    updateCurrentValue(value);
-    onFieldChange(value);
-    toggleVisible(false);
-  }
   return (
     <View style={{ flex: 1 }}>
-      {list.length > 0 && (
-        <TouchableOpacity style={styles.select} onPress={() => toggleVisible(!isVisible)}>
-          <View
-            style={{
-              flex: 1,
-              alignItems: "flex-end",
-              flexDirection: "row",
-              justifyContent: "flex-end",
-              marginRight: 5,
-            }}>
-            <Text style={{ marginRight: 20 }} numberOfLines={1}>
-              {currentValue}
-            </Text>
-            <Icon size={15} color={CommonStyles.grey} name="arrow_down" />
-          </View>
-        </TouchableOpacity>
-      )}
-      <ListPickerModal list={list} isVisible={isVisible} onChange={onChange} toggleVisible={toggleVisible} />
+      <Dropdown
+        style={styles.dropdown}
+        data={list}
+        value={currentValue}
+        onSelect={(elem: string) => {
+          if (elem !== currentValue) {
+            updateCurrentValue(elem);
+            onFieldChange(elem);
+          }
+        }}
+        renderItem={(item: string) => item}
+      />
     </View>
   );
 };
@@ -87,19 +51,11 @@ export const IconButton = ({ icon, color, onPress }) => {
 };
 
 const styles = StyleSheet.create({
-  select: {
-    minWidth: "60%",
-    minHeight: 30,
-    paddingTop: 10,
-  },
-  textElem: {
-    fontSize: 16,
-    marginVertical: 15,
-  },
-  lineSeparator: {
-    width: "100%",
-    borderColor: CommonStyles.grey,
-    borderBottomWidth: 1,
-    borderRadius: 1,
+  dropdown: {
+    backgroundColor: "transparent",
+    borderRadius: 0,
+    borderWidth: 0,
+    borderBottomWidth: 2,
+    borderBottomColor: CommonStyles.grey,
   },
 });

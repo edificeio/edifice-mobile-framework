@@ -8,21 +8,25 @@ import { PageContainer } from "../../ui/ContainerContent";
 import { FormInputs, IconButton, ListPicker } from "./Items";
 
 type SupportProps = {
-  ticket: any;
+  ticket: {
+    category: string;
+    establishment: string;
+    subject: string;
+    description: string;
+    attachments: [];
+  };
   categories: string[];
-  establishments: any;
+  establishments: string[];
   onFieldChange: (ticket) => void;
-  onCategoriesChange: (category) => void;
-  onEstablishmentsChange: (establishments) => void;
-  createTicket: () => void;
+  sendTicket: () => void;
 };
 
 export default class Support extends React.PureComponent<SupportProps, any> {
   componentDidMount() {
-    const { categories, establishments } = this.props;
-    if (categories !== undefined && categories.length > 0) this.props.onCategoriesChange(this.props.categories[0]);
+    const { categories, establishments, ticket, onFieldChange } = this.props;
+    if (categories !== undefined && categories.length > 0) onFieldChange({ ...ticket, category: categories[0] });
     if (establishments !== undefined && establishments.length > 0)
-      this.props.onEstablishmentsChange(this.props.establishments[0]);
+      onFieldChange({ ...ticket, establishment: establishments[0] });
   }
 
   renderFormInput = (fieldTranslation, fieldName) => {
@@ -75,7 +79,7 @@ export default class Support extends React.PureComponent<SupportProps, any> {
           <Text style={styles.textMobileOnly}>{I18n.t("support-mobile-only")}</Text>
           {this.renderForm()}
           <View style={{ height: 65 }} />
-          <TouchableOpacity onPress={() => true} style={styles.buttonTicketRegister}>
+          <TouchableOpacity onPress={() => this.props.sendTicket()} style={styles.buttonTicketRegister}>
             <Text style={styles.textButtonTicketRegister}>{I18n.t("support-ticket-register").toUpperCase()}</Text>
           </TouchableOpacity>
         </ScrollView>
