@@ -7,7 +7,7 @@ export default new FunctionalModuleConfig({
   displayName: "support",
   iconName: "help-circled",
   apiName: "Support",
-  iconColor: "#e21d3a",
+  iconColor: "#46bfaf",
   group: true,
   hasRight: apps => true,
 });
