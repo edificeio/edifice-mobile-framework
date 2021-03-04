@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { NavigationInjectedProps } from "react-navigation";
 import { connect } from "react-redux";
 
-import { IResourceUriNotification } from "../reducer/notifications";
+import { IResourceUriNotification } from "../../../notifications";
 import { Text } from "../../../components/text";
 import withViewTracking from "../../../tracker/withViewTracking";
 
