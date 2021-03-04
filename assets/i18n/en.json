@@ -1,10 +1,12 @@
 {
+  "common": {
+    "apply": "Apply"
+  },
   "timeline": {
     "emptyScreenText": "All quiet on the Western front. Are you familiar with the saying \"the calm before the storm\"?",
     "emptyScreenTitle": "No sightings yet. Is there anybody out there?",
     "filtersScreen": {
       "all": "All",
-      "apply": "Apply",
       "title": "Notifications",
       "filters": {
         "ARCHIVE": "My Data",
