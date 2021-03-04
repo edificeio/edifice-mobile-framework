@@ -394,6 +394,7 @@
     "zimbra-missing-receiver": "Ce message doit contenir au moins un destinataire",
     "zimbra-message-deleted": "Message supprimé",
     "zimbra-message-moved": "Message déplacé",
+    "support": "Aide et support",
 
     "profileTypes": {
       "Guest": "Invité",

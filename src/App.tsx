@@ -41,6 +41,7 @@ require("./homework");
 require("./workspace");
 require("./viescolaire");
 require("./myAppMenu");
+require("./support");
 require("./user");
 
 // Store
