@@ -5,9 +5,9 @@ import { ScrollView } from "react-native-gesture-handler";
 
 import { CommonStyles } from "../../styles/common/styles";
 import { PageContainer } from "../../ui/ContainerContent";
-import { ITicket } from "../containers/Support";
+import { IEstablishment, ITicket } from "../containers/Support";
 import Attachment from "./Attachment";
-import { FormInputs, IconButton, ListPicker } from "./Items";
+import { EstablishmentPicker, FormInputs, IconButton, ListPicker } from "./Items";
 
 type SupportProps = {
   ticket: ITicket;
@@ -17,18 +17,23 @@ type SupportProps = {
   removeAttachment: (attachmentId: string) => void;
   sendTicket: () => void;
   categories: string[];
-  establishments: string[];
+  establishmentList: IEstablishment[];
 };
 
 export default class Support extends React.PureComponent<SupportProps, any> {
   componentDidMount() {
-    const { categories, establishments, ticket, onFieldChange } = this.props;
-    if (categories !== undefined && categories.length > 0 && establishments !== undefined && establishments.length > 0)
-      onFieldChange({ ...ticket, category: categories[0], establishment: establishments[0] });
+    const { categories, establishmentList, ticket, onFieldChange } = this.props;
+    if (
+      categories !== undefined &&
+      categories.length > 0 &&
+      establishmentList !== undefined &&
+      establishmentList.length > 0
+    )
+      onFieldChange({ ...ticket, category: categories[0], establishment: establishmentList[0].id });
     else {
       if (categories !== undefined && categories.length > 0) onFieldChange({ ...ticket, category: categories[0] });
-      if (establishments !== undefined && establishments.length > 0)
-        onFieldChange({ ...ticket, establishment: establishments[0] });
+      if (establishmentList !== undefined && establishmentList.length > 0)
+        onFieldChange({ ...ticket, establishment: establishmentList[0].id });
     }
   }
 
@@ -65,18 +70,25 @@ export default class Support extends React.PureComponent<SupportProps, any> {
         <View style={styles.lineSeparator} />
         <View style={styles.containerFieldsSelect}>
           <Text style={styles.textTicketFields}>{I18n.t(fieldTranslation)}</Text>
-          <ListPicker list={list} onFieldChange={field => onFieldChange({ ...ticket, [fieldName]: field })} />
+          {fieldName === "establishment" ? (
+            <EstablishmentPicker
+              list={list}
+              onFieldChange={field => onFieldChange({ ...ticket, establishment: field })}
+            />
+          ) : (
+            <ListPicker list={list} onFieldChange={field => onFieldChange({ ...ticket, [fieldName]: field })} />
+          )}
         </View>
       </>
     );
   };
 
   renderForm = () => {
-    const { categories, establishments } = this.props;
+    const { categories, establishmentList } = this.props;
     return (
       <View>
         {this.renderFormSelect("support-ticket-category", "category", categories)}
-        {this.renderFormSelect("support-ticket-establishment", "establishment", establishments)}
+        {this.renderFormSelect("support-ticket-establishment", "establishment", establishmentList)}
         {this.renderFormInput("support-ticket-subject", "subject")}
         {this.renderFormInput("support-ticket-description", "description")}
       </View>

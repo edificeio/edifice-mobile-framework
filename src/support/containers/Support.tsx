@@ -20,7 +20,13 @@ export type ITicket = {
     attachments: any[];
 };
 
+export type IEstablishment = {
+  id: string;
+  name: string;
+};
+
 type SupportProps = {
+  establishmentsList: IEstablishment[];
   createTicket: (ticket: ITicket) => void;
   addAttachment: (attachment: object) => void;
   deleteAttachment: (attachmentId: string) => void;
@@ -154,12 +160,10 @@ class SupportContainer extends React.PureComponent<SupportProps, SupportState> {
 
 const mapStateToProps: (state: any) => any = state => {
   const categories = getSessionInfo().apps;
-  const establishmentsList = getSessionInfo().schools;
-  let establishments: string[] = [];
-  Object.entries(establishmentsList).map(([key, value]) => establishments.push(value.name));
+  const establishmentList = getSessionInfo().schools;
   return {
     categories,
-    establishments,
+    establishmentList,
   };
 };
 

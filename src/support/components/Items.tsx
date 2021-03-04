@@ -4,8 +4,37 @@ import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 import { CommonStyles } from "../../styles/common/styles";
 import { Icon } from "../../ui";
 import Dropdown from "../../ui/Dropdown";
+import { IEstablishment } from "../containers/Support";
 
-export const ListPicker = ({ list, onFieldChange }) => {
+export const EstablishmentPicker = ({
+  list,
+  onFieldChange,
+}: {
+  list: IEstablishment[];
+  onFieldChange: (field: string) => void;
+}) => {
+  const [currentValue, updateCurrentValue] =
+    list.length > 0 ? React.useState<string>(list[0].name) : React.useState<string>();
+  return (
+    <View style={{ flex: 1 }}>
+      <Dropdown
+        style={styles.dropdown}
+        data={list.map(x => x.name)}
+        value={currentValue}
+        onSelect={(key: string) => {
+          const elem = list.find(item => item.name === key);
+          if (elem !== undefined && elem.name !== currentValue) {
+            updateCurrentValue(elem.name);
+            onFieldChange(elem.id);
+          }
+        }}
+        renderItem={(item: string) => item}
+      />
+    </View>
+  );
+};
+
+export const ListPicker = ({ list, onFieldChange }: { list: string[]; onFieldChange: (field: string) => void }) => {
   const [currentValue, updateCurrentValue] =
     list.length > 0 ? React.useState<string>(list[0]) : React.useState<string>();
   return (
