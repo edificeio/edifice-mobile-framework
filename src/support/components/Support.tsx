@@ -5,6 +5,7 @@ import { ScrollView } from "react-native-gesture-handler";
 
 import { CommonStyles } from "../../styles/common/styles";
 import { PageContainer } from "../../ui/ContainerContent";
+import Attachment from "./Attachment";
 import { FormInputs, IconButton, ListPicker } from "./Items";
 
 type SupportProps = {
@@ -13,12 +14,15 @@ type SupportProps = {
     establishment: string;
     subject: string;
     description: string;
-    attachments: object[];
+    attachments: { id: string; filename: string; contentType: string }[];
   };
+  attachments: any;
+  onFieldChange: (ticket) => void;
+  uploadAttachment: () => void;
+  removeAttachment: (attachmentId: string) => void;
+  sendTicket: () => void;
   categories: string[];
   establishments: string[];
-  onFieldChange: (ticket) => void;
-  sendTicket: () => void;
 };
 
 export default class Support extends React.PureComponent<SupportProps, any> {
@@ -28,6 +32,18 @@ export default class Support extends React.PureComponent<SupportProps, any> {
     if (establishments !== undefined && establishments.length > 0)
       onFieldChange({ ...ticket, establishment: establishments[0] });
   }
+
+  renderAttachments = () => {
+    return this.props.attachments.map(att => (
+      <Attachment
+        id={att.id || att.filename}
+        uploadSuccess={!!att.id}
+        fileType={att.contentType}
+        fileName={att.filename}
+        onRemove={() => this.props.removeAttachment(att.id)}
+      />
+    ));
+  };
 
   renderFormInput = (fieldTranslation, fieldName) => {
     const { onFieldChange, ticket } = this.props;
@@ -73,11 +89,12 @@ export default class Support extends React.PureComponent<SupportProps, any> {
       <PageContainer>
         <View style={styles.containerTitle}>
           <Text style={styles.textTitle}>{I18n.t("support-report-incident")}</Text>
-          <IconButton icon="attachment" color="white" onPress={() => true} />
+          <IconButton icon="attachment" color="white" onPress={() => this.props.uploadAttachment()} />
         </View>
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
           <Text style={styles.textMobileOnly}>{I18n.t("support-mobile-only")}</Text>
           {this.renderForm()}
+          {this.props.attachments.length > 0 && this.renderAttachments()}
           <View style={{ height: 65 }} />
           <TouchableOpacity onPress={() => this.props.sendTicket()} style={styles.buttonTicketRegister}>
             <Text style={styles.textButtonTicketRegister}>{I18n.t("support-ticket-register").toUpperCase()}</Text>

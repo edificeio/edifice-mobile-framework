@@ -6,13 +6,16 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
 import { getSessionInfo } from "../../App";
+import pickFile from "../../infra/actions/pickFile";
 import withViewTracking from "../../infra/tracker/withViewTracking";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
-import { createTicketAction } from "../actions/support";
+import { createTicketAction, addAttachmentAction, deleteAttachmentAction } from "../actions/support";
 import Support from "../components/Support";
 
 type SupportProps = {
   createTicket: (ticket) => void;
+  addAttachment: (attachment: object) => void;
+  deleteAttachment: (attachmentId: string) => void;
 };
 
 type SupportState = {
@@ -21,8 +24,9 @@ type SupportState = {
     establishment: string;
     subject: string;
     description: string;
-    attachments: object[];
+    attachments: any[];
   };
+  tempAttachment?: any;
 };
 
 class SupportContainer extends React.PureComponent<SupportProps, SupportState> {
@@ -44,18 +48,42 @@ class SupportContainer extends React.PureComponent<SupportProps, SupportState> {
         description: "",
         attachments: [],
       },
+      tempAttachment: null,
     };
   }
 
-  addAttachment = () => {
+  removeAttachment = (attachmentId: string) => {
+    this.props.deleteAttachment(attachmentId);
+    let attachmentRemoved = this.state.ticket.attachments.find(key => key.id === attachmentId);
+    let attachmentList = [...this.state.ticket.attachments];
+    let index = attachmentList.indexOf(attachmentRemoved);
+    if (index !== -1) {
+      attachmentList.splice(index, 1);
+      this.setState(prevState => ({ ticket: { ...prevState.ticket, attachments: attachmentList } }));
+    }
+  };
+
+  uploadAttachment = async () => {
+    const file = await pickFile();
+    const fileState = {
+      contentType: file.mime,
+      filename: file.name,
+    };
+    this.setState({ tempAttachment: fileState });
     try {
-      //this.props.uploadAttachment();
+      const newAttachment = await this.props.addAttachment(file);
+      let joinedAttachments = this.state.ticket.attachments.concat(newAttachment);
+      this.setState(prevState => ({
+        ticket: { ...prevState.ticket, attachments: joinedAttachments },
+        tempAttachment: null,
+      }));
     } catch (e) {
       Toast.show(I18n.t("support-attachment-error"), {
         position: Toast.position.BOTTOM,
         mask: false,
         containerStyle: { width: "95%", backgroundColor: "black" },
       });
+      this.setState({ tempAttachment: fileState });
     }
   };
 
@@ -75,7 +103,6 @@ class SupportContainer extends React.PureComponent<SupportProps, SupportState> {
   };
 
   sendTicket = () => {
-    const { ticket } = this.state;
     const error = this.checkTicket();
     if (error) {
       Toast.show(I18n.t(error), {
@@ -85,7 +112,7 @@ class SupportContainer extends React.PureComponent<SupportProps, SupportState> {
       });
     } else {
       try {
-        const ticketNb = this.props.createTicket(ticket);
+        const ticketNb = this.props.createTicket(this.state.ticket);
 
         Toast.show(I18n.t("support-ticket-success-id") + ticketNb + I18n.t("support-ticket-success-info"), {
           position: Toast.position.BOTTOM,
@@ -106,7 +133,15 @@ class SupportContainer extends React.PureComponent<SupportProps, SupportState> {
     return (
       <Support
         {...this.props}
+        ticket={this.state.ticket}
+        attachments={
+          this.state.tempAttachment
+            ? [...this.state.ticket.attachments, this.state.tempAttachment]
+            : this.state.ticket.attachments
+        }
         onFieldChange={field => this.setState(prevState => ({ ticket: { ...prevState.ticket, ...field } }))}
+        uploadAttachment={this.uploadAttachment}
+        removeAttachment={this.removeAttachment}
         sendTicket={this.sendTicket}
       />
     );
@@ -132,6 +167,8 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
   return bindActionCreators(
     {
       createTicket: createTicketAction,
+      addAttachment: addAttachmentAction,
+      deleteAttachment: deleteAttachmentAction,
     },
     dispatch
   );
