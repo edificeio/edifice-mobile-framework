@@ -125,7 +125,7 @@ class SupportContainer extends React.PureComponent<ISupportProps, ISupportState>
     return result;
   };
 
-  sendTicket = async () => {
+  sendTicket = async (reset: (() => void)[]) => {
     const error = this.checkTicket();
     if (error) {
       Toast.show(I18n.t(error), {
@@ -144,6 +144,7 @@ class SupportContainer extends React.PureComponent<ISupportProps, ISupportState>
           containerStyle: { width: "95%", backgroundColor: "black" },
         });
         this.setState(prevState => ({ ticket: { ...prevState.ticket, subject: "", description: "", attachments: [] }, tempAttachment: null }));
+        reset.forEach(reset => reset());
       } catch (e) {
         Toast.show(I18n.t("support-ticket-failure"), {
           position: Toast.position.BOTTOM,

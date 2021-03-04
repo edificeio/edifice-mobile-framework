@@ -15,7 +15,7 @@ type SupportProps = {
   onFieldChange: (ticket: ITicket) => void;
   uploadAttachment: () => void;
   removeAttachment: (attachmentId: string) => void;
-  sendTicket: () => void;
+  sendTicket: (reset: (() => void)[]) => void;
   categoryList: IApp[];
   establishmentList: IEstablishment[];
 };
@@ -66,8 +66,7 @@ export default class Support extends React.PureComponent<SupportProps, any> {
   };
 
   sendTicket = () => {
-    this.props.sendTicket()
-    this.reset.forEach(reset => reset());
+    this.props.sendTicket(this.reset)
   }
 
   renderFormSelect = (fieldTranslation, fieldName, list) => {
