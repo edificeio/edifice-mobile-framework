@@ -131,8 +131,8 @@ android {
         applicationId APPID
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 01040400
-        versionName "1.4.4-SNAPSHOT"
+        versionCode 01040401
+        versionName "1.4.4"
         resValue "string", "app_name", "${APPNAME}"
         manifestPlaceholders = [ applicationName: APPNAME ]
         multiDexEnabled true // MultiDex is needed to handle the tons of React Native modules, see https://developer.android.com/studio/build/multidex
