@@ -56,11 +56,10 @@ export const CategoryPicker = ({ list, onFieldChange }: { list: IApp[]; onFieldC
   );
 };
 
-export const FormInputs = ({ onChange }: React.PropsWithChildren<{ onChange }>) => {
+export const FormInputs = ({ fieldName, onChange }: { fieldName: string; onChange: (field: string) => void }) => {
   const textInputStyle = {
     flex: 1,
-    marginLeft: 10,
-    height: 40,
+    marginHorizontal: 10,
     color: CommonStyles.textColor,
     borderBottomColor: "#EEEEEE",
     borderBottomWidth: 2,
@@ -83,7 +82,11 @@ export const FormInputs = ({ onChange }: React.PropsWithChildren<{ onChange }>) 
     };
   }, [currentValue]);
 
-  return <TextInput style={textInputStyle} numberOfLines={1} onChangeText={text => updateCurrentValue(text)} />;
+  return fieldName === "subject" ? (
+    <TextInput style={textInputStyle} numberOfLines={1} onChangeText={text => updateCurrentValue(text)} />
+  ) : (
+    <TextInput style={textInputStyle} multiline onChangeText={text => updateCurrentValue(text)} />
+  );
 };
 
 export const IconButton = ({ icon, color, onPress }) => {

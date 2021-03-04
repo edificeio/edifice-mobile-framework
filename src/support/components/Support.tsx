@@ -58,7 +58,7 @@ export default class Support extends React.PureComponent<SupportProps, any> {
           <Text style={{ color: "red" }}>* </Text>
           {I18n.t(fieldTranslation)}
         </Text>
-        <FormInputs onChange={field => onFieldChange({ ...ticket, [fieldName]: field })} />
+        <FormInputs fieldName={fieldName} onChange={field => onFieldChange({ ...ticket, [fieldName]: field })} />
       </>
     );
   };
