@@ -4,7 +4,7 @@ import I18n from "i18n-js";
 import { ThunkDispatch } from "redux-thunk";
 import { connect } from "react-redux";
 import { FlatList } from "react-native-gesture-handler";
-import { RefreshControl } from "react-native";
+import { RefreshControl, View } from "react-native";
 
 import type { IGlobalState } from "../../../../AppStore";
 import type { ITimeline_State } from "../reducer";
@@ -23,12 +23,16 @@ import { EmptyScreen } from "../../../components/emptyScreen";
 import { PageView } from "../../../components/page";
 import { ITimelineNotification, IResourceUriNotification, isResourceUriNotification, IAbstractNotification, getAsResourceUriNotification } from "../../../notifications";
 import { handleNotificationAction, NotifHandlerThunkAction } from "../../../notifications/routing";
+import { getTimelineWorkflows } from "../timelineModules";
+import { getUserSession, IUserSession } from "../../../session";
+import PopupMenu from "../../../../framework/components/popupMenu";
 
 // TYPES ==========================================================================================
 
 export interface ITimelineScreenDataProps {
   flashMessages: IFlashMessages_State;
   notifications: INotifications_State;
+  session: IUserSession;
 };
 export interface ITimelineScreenEventProps {
   handleInitTimeline(): Promise<void>,
@@ -69,12 +73,15 @@ export class TimelineScreen extends React.PureComponent<
     loadingState: TimelineLoadingState.PRISTINE
   }
 
+  popupMenuRef = React.createRef<PopupMenu>();
+
   // RENDER =======================================================================================
 
   render() {
     return <>
       {this.renderHeader()}
       <PageView>
+        {this.renderHeaderButton()}
         {[TimelineLoadingState.PRISTINE, TimelineLoadingState.INIT].includes(this.state.loadingState)
           ? <LoadingIndicator />
           : this.props.notifications.error && !this.props.notifications.lastSuccess
@@ -98,6 +105,12 @@ export class TimelineScreen extends React.PureComponent<
         </HeaderRow>
       </FakeHeader>
     )
+  }
+
+  renderHeaderButton() {
+    const workflows = getTimelineWorkflows(this.props.session);
+    if (!workflows || !workflows.length) return null;
+    return <PopupMenu iconName="new_post" options={workflows} ref={this.popupMenuRef}/>
   }
 
   renderError() {
@@ -128,6 +141,9 @@ export class TimelineScreen extends React.PureComponent<
         ListFooterComponent={
           this.state.loadingState === TimelineLoadingState.DONE && this.props.notifications.isFetching
             ? <LoadingIndicator /> : null
+        }
+        ListHeaderComponent={
+          getTimelineWorkflows(this.props.session).length ? <View style={{height: 12}} /> : null
         }
         onEndReached={() => this.doNextPage()}
         onEndReachedThreshold={0.5}
@@ -181,6 +197,9 @@ export class TimelineScreen extends React.PureComponent<
     if (isFocused !== prevProps.isFocused && reloadWithNewSettings) {
       this.doInit();
       navigation.setParams({reloadWithNewSettings: undefined});
+    }
+    if (isFocused !== prevProps.isFocused) {
+      this.popupMenuRef.current?.doReset();
     }
   }
 
@@ -240,7 +259,8 @@ const mapStateToProps: (s: IGlobalState) => ITimelineScreenDataProps = (s) => {
   let ts = moduleConfig.getState(s) as ITimeline_State;
   return {
     flashMessages: ts.flashMessages,
-    notifications: ts.notifications
+    notifications: ts.notifications,
+    session: getUserSession(s)
   };
 };
 
