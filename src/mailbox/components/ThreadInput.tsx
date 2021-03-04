@@ -69,6 +69,7 @@ class ThreadInput extends React.PureComponent<
       conversation: IConversationThread | IConversationMessage
     ) => void;
     onDimBackground: (dim: boolean) => void;
+    onSelectMessage?: (message: IConversationMessage | undefined) => void;
     backMessage?: IConversationMessage;
     sendingType: string;
     messageDraft?: string;
@@ -225,6 +226,7 @@ class ThreadInput extends React.PureComponent<
 
   public focus() {
     this.setState({ selected: Selected.keyboard });
+    this.props.onSelectMessage && this.props.onSelectMessage(undefined);
   }
 
   public blur() {
@@ -348,6 +350,7 @@ class ThreadInput extends React.PureComponent<
           <TouchableOpacity
             style={{ alignItems: 'center', flex: 1, padding: 12 }}
             onPress={() => {
+              this.props.onSelectMessage && this.props.onSelectMessage(undefined);
               this.setState({ showReplyHelperIfAvailable: false });
               Trackers.trackEvent("Conversation", "REPLY TO ALL");
             }}>
