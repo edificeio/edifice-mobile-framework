@@ -8,18 +8,14 @@ import { ModalBox, ModalContent, ModalContentBlock } from "../../ui/Modal";
 
 const list = ["zimbra", "cdt", "user", "toto", "superduperlongnameinordertotestifitisfunctional", "zimbra", "cdt", "user", "toto", "superduperlongnameinordertotestifitisfunctional", "zimbra", "cdt", "user", "toto", "superduperlongnameinordertotestifitisfunctional"];
 
-const ListPickerModal = ({ list, selected, isVisible, toggleVisible }) => {
+const ListPickerModal = ({ list, isVisible, onChange }) => {
   return (
     <ModalBox isVisible={isVisible}>
       <ModalContent style={{ alignItems: "flex-start" }}>
         <ModalContentBlock>
           <ScrollView>
             {list.map((elem, index) => (
-              <TouchableOpacity
-                onPress={() => {
-                  selected = elem;
-                  toggleVisible(false);
-                }}>
+              <TouchableOpacity onPress={() => onChange(elem)}>
                 <Text style={styles.textElem} numberOfLines={1}>
                   {elem}
                 </Text>
@@ -35,17 +31,34 @@ const ListPickerModal = ({ list, selected, isVisible, toggleVisible }) => {
 
 // EXPORTED COMPONENTS
 
-export const ListPicker = () => {
+export const ListPicker = ({ ticket, onFieldChange }) => {
   const [isVisible, toggleVisible] = React.useState(false);
-  let selected = "";
+  const [currentValue, updateCurrentValue] = React.useState<string>();
+  function onChange(value) {
+    updateCurrentValue(value);
+    onFieldChange({ ...ticket, value });
+    toggleVisible(false);
+  }
   return (
-    <View style={{ flex: 1, alignItems: "flex-end" }}>
+    <View style={{ flex: 1 }}>
       {list.length > 0 && (
         <TouchableOpacity style={styles.select} onPress={() => toggleVisible(!isVisible)}>
-          <Text numberOfLines={1}>{selected}</Text>
+          <View
+            style={{
+              flex: 1,
+              alignItems: "flex-end",
+              flexDirection: "row",
+              justifyContent: "flex-end",
+              marginRight: 5,
+            }}>
+            <Text style={{ marginRight: 20 }} numberOfLines={1}>
+              {currentValue}
+            </Text>
+            <Icon size={15} color={CommonStyles.grey} name="arrow_down" />
+          </View>
         </TouchableOpacity>
       )}
-      <ListPickerModal list={list} selected={selected} isVisible={isVisible} toggleVisible={toggleVisible} />
+      <ListPickerModal list={list} isVisible={isVisible} onChange={onChange} />
     </View>
   );
 };

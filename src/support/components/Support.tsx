@@ -20,13 +20,13 @@ export default class Support extends React.PureComponent<any, any> {
         <View style={styles.lineSeparator} />
         <View style={styles.containerFieldsSelect}>
           <Text style={styles.textTicketFields}>{I18n.t("support-ticket-category")}</Text>
-          <ListPicker />
+          <ListPicker ticket={ticket} onFieldChange={onFieldChange} />
         </View>
 
         <View style={styles.lineSeparator} />
         <View style={styles.containerFieldsSelect}>
           <Text style={styles.textTicketFields}>{I18n.t("support-ticket-establishment")}</Text>
-          <ListPicker />
+          <ListPicker ticket={ticket} onFieldChange={onFieldChange} />
         </View>
 
         <View style={styles.lineSeparator} />
@@ -45,6 +45,7 @@ export default class Support extends React.PureComponent<any, any> {
       </View>
     );
   };
+
   public render() {
     return (
       <PageContainer>
