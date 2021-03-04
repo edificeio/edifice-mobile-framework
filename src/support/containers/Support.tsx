@@ -21,7 +21,7 @@ type SupportState = {
     establishment: string;
     subject: string;
     description: string;
-    attachments: [];
+    attachments: object[];
   };
 };
 
@@ -47,22 +47,59 @@ class SupportContainer extends React.PureComponent<SupportProps, SupportState> {
     };
   }
 
-  sendTicket = () => {
-    const { ticket } = this.state;
-    if (ticket && (ticket.subject === undefined || ticket.subject === "")) {
-      Toast.show(I18n.t("support-ticket-error-form-subject"), {
-        position: Toast.position.BOTTOM,
-        mask: false,
-        containerStyle: { width: "95%", backgroundColor: "black" },
-      });
-    } else if (ticket && (ticket.description === undefined || ticket.description === "")) {
-      Toast.show(I18n.t("support-ticket-error-form-description"), {
+  addAttachment = () => {
+    try {
+      //this.props.uploadAttachment();
+    } catch (e) {
+      Toast.show(I18n.t("support-attachment-error"), {
         position: Toast.position.BOTTOM,
         mask: false,
         containerStyle: { width: "95%", backgroundColor: "black" },
       });
     }
-    //this.props.createTicket(ticket);
+  };
+
+  checkTicket = () => {
+    const { ticket } = this.state;
+    let result;
+    if (!ticket.subject) {
+      result = "support-ticket-error-form-subject-empty";
+    } else if (ticket.subject.length > 255) {
+      result = "support-ticket-error-form-subject-size";
+    } else if (!ticket.description) {
+      result = "support-ticket-error-form-description-empty";
+    } else {
+      result = false;
+    }
+    return result;
+  };
+
+  sendTicket = () => {
+    const { ticket } = this.state;
+    const error = this.checkTicket();
+    if (error) {
+      Toast.show(I18n.t(error), {
+        position: Toast.position.BOTTOM,
+        mask: false,
+        containerStyle: { width: "95%", backgroundColor: "black" },
+      });
+    } else {
+      try {
+        const ticketNb = this.props.createTicket(ticket);
+
+        Toast.show(I18n.t("support-ticket-success-id") + ticketNb + I18n.t("support-ticket-success-info"), {
+          position: Toast.position.BOTTOM,
+          mask: false,
+          containerStyle: { width: "95%", backgroundColor: "black" },
+        });
+      } catch (e) {
+        Toast.show(I18n.t("support-ticket-failure"), {
+          position: Toast.position.BOTTOM,
+          mask: false,
+          containerStyle: { width: "95%", backgroundColor: "black" },
+        });
+      }
+    }
   };
 
   public render() {

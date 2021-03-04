@@ -13,7 +13,7 @@ type SupportProps = {
     establishment: string;
     subject: string;
     description: string;
-    attachments: [];
+    attachments: object[];
   };
   categories: string[];
   establishments: string[];
