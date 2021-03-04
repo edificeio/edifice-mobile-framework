@@ -5,8 +5,11 @@ import I18n from "i18n-js";
 import { PageContainer } from "../../../../ui/ContainerContent";
 import { FakeHeader, HeaderAction, HeaderIcon, HeaderRow, HeaderTitle } from "../../../components/header";
 import { Text } from "../../../components/text";
-import { ITimelineState } from "../state";
-import { Dispatch } from "redux";
+import { loadNotificationsAction } from "../actions";
+import { ThunkDispatch } from "redux-thunk";
+import { connect } from "react-redux";
+import withViewTracking from "../../../tracker/withViewTracking";
+import { ITimelineState } from "../reducer";
 
 export interface ITimelineScreenDataProps { };
 export interface ITimelineScreenEventProps {
@@ -22,7 +25,7 @@ export interface ITimelineScreenState {
   loadingState: TimelineLoadingState;
 };
 
-export default class TimelineScreen extends React.PureComponent<
+export class TimelineScreen extends React.PureComponent<
   ITimelineScreenProps,
   ITimelineScreenState
   > {
@@ -57,16 +60,15 @@ export default class TimelineScreen extends React.PureComponent<
 
   constructor(props: ITimelineScreenProps) {
     super(props);
-    try {
-      props.handleInitTimeline();
-    } catch (e) {
-
-    }
+    props.handleInitTimeline();
   }
 }
 
 const mapStateToProps = (state: ITimelineState) => ({});
 
-const mapDispatchToProps = (dispatch: Dispatch, getState: () => ITimelineState) => ({
-  handleInitTimeline: () => {  }
+const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, any>, getState: () => ITimelineState) => ({
+  handleInitTimeline: () => { dispatch(loadNotificationsAction()) }
 })
+
+const TimelineScreen_Connected = connect(mapStateToProps, mapDispatchToProps)(TimelineScreen);
+export default withViewTracking("timeline")(TimelineScreen_Connected);
