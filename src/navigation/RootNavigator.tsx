@@ -26,7 +26,7 @@ import NavigationService from "./NavigationService";
 // Components
 import Carousel from "../ui/Carousel";
 import { IFrame } from "../ui/IFrame";
-import { getAvailableModules, getModuleRoutes, getModulesByFilter, IEntcoreApp, ModuleGroup } from "../framework/moduleTool";
+import { getAvailableModules, getModuleRoutes, getModulesByFilter, IEntcoreApp, getRegisteredTabModules, getModuleRoutesByArray } from "../framework/moduleTool";
 import AllModules from "../framework/app/AllModules";
 import { Notification } from "react-native-firebase/notifications";
 
@@ -57,12 +57,9 @@ function getMainRoutes(appsInfo: any[]) {
 
 /** Returns every route that are to be displayed in tab navigation.*/
 function getTabRoutes(appsInfo: IEntcoreApp[]): NavigationRouteConfigMap<any, any> {
-  const modules = getModulesByFilter(
-    getAvailableModules(AllModules, appsInfo),
-    m => m.config.group === ModuleGroup.TAB_MODULE
-  );
+  const modules = getRegisteredTabModules();
   console.log("getTabRoutes", modules);
-  return getModuleRoutes(modules);
+  return getModuleRoutesByArray(modules);
 }
 
 /**
