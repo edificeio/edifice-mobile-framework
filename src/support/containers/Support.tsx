@@ -8,7 +8,11 @@ import { bindActionCreators } from "redux";
 import { getSessionInfo } from "../../App";
 import pickFile from "../../infra/actions/pickFile";
 import withViewTracking from "../../infra/tracker/withViewTracking";
-import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
+import { CommonStyles } from "../../styles/common/styles";
+import { PageContainer } from "../../ui/ContainerContent";
+import { Text } from "../../ui/Typography";
+import { Header } from "../../ui/headers/Header";
+import { HeaderBackAction } from "../../ui/headers/NewHeader";
 import { createTicketAction, addAttachmentAction, deleteAttachmentAction } from "../actions/support";
 import Support from "../components/Support";
 
@@ -43,6 +47,7 @@ export type IApp = {
 };
 
 type SupportProps = {
+  navigation: NavigationScreenProp<{}>;
   categoryList: IApp[];
   establishmentsList: IEstablishment[];
   createTicket: (ticket: ITicket) => any;
@@ -56,14 +61,6 @@ type SupportState = {
 };
 
 class SupportContainer extends React.PureComponent<SupportProps, SupportState> {
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<any> }) =>
-    standardNavScreenOptions(
-      {
-        title: I18n.t("support"),
-      },
-      navigation
-    );
-
   constructor(props) {
     super(props);
     this.state = {
@@ -157,19 +154,39 @@ class SupportContainer extends React.PureComponent<SupportProps, SupportState> {
 
   public render() {
     return (
-      <Support
-        {...this.props}
-        ticket={this.state.ticket}
-        attachments={
-          this.state.tempAttachment
-            ? [...this.state.ticket.attachments, this.state.tempAttachment]
-            : this.state.ticket.attachments
-        }
-        onFieldChange={field => this.setState(prevState => ({ ticket: { ...prevState.ticket, ...field } }))}
-        uploadAttachment={this.uploadAttachment}
-        removeAttachment={this.removeAttachment}
-        sendTicket={this.sendTicket}
-      />
+      <PageContainer>
+        <Header>
+          <HeaderBackAction navigation={this.props.navigation} />
+          <Text
+            numberOfLines={1}
+            style={{
+              alignSelf: "center",
+              paddingRight: 10,
+              marginRight: 50,
+              color: "white",
+              fontFamily: CommonStyles.primaryFontFamily,
+              fontSize: 16,
+              fontWeight: "400",
+              textAlign: "center",
+              flex: 1,
+            }}>
+            {I18n.t("support")}
+          </Text>
+        </Header>
+        <Support
+          {...this.props}
+          ticket={this.state.ticket}
+          attachments={
+            this.state.tempAttachment
+              ? [...this.state.ticket.attachments, this.state.tempAttachment]
+              : this.state.ticket.attachments
+          }
+          onFieldChange={field => this.setState(prevState => ({ ticket: { ...prevState.ticket, ...field } }))}
+          uploadAttachment={this.uploadAttachment}
+          removeAttachment={this.removeAttachment}
+          sendTicket={this.sendTicket}
+        />
+      </PageContainer>
     );
   }
 }
