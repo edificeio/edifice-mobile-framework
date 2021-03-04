@@ -173,7 +173,7 @@ export class NewsDetailsScreen extends React.PureComponent<
                       if (supported) {
                         Linking.openURL(url);
                       } else {
-                        console.warn("[timeline] Don't know how to open URI: ", url);
+                        console.warn("[news] Don't know how to open URI: ", url);
                       }
                     });
                     Trackers.trackEvent("News", "GO TO", "View in Browser");

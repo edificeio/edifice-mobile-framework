@@ -62,6 +62,20 @@
       "title": "Choisir un blog"
     }
   },
+  "schoolbook": {
+    "schoolbookWordDetailsScreen": {
+      "acknowledge": "Confirmer la lecture",
+      "alreadyConfirmed": "Vous avez confirmé la lecture de ce mot",
+      "backWithoutAck": "Quitter",
+      "backWithoutAckConfirm": "Souhaitez-vous quitter cet écran sans confirmer la lecture du mot ?",
+      "mustRead": "Un parent doit lire ce mot !",
+      "readBy": "Lu par",
+      "readBySeparator": ", ",
+      "readByNumberRelative": "Lu par {{nb}} parent",
+      "readByNumberRelatives": "Lu par {{nb}} parents",
+      "title": "Carnet de liaison"
+    }
+  },
     "Activate": "Activer votre compte",
     "activation-cancelLoad": "Annuler",
     "activation-cgu": "En activant votre compte, vous acceptez les conditions générales d'utilisation",
