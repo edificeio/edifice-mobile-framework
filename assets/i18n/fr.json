@@ -169,6 +169,8 @@
     "forgot-success": "Courriel envoyé.",
     "homework-emptyScreenText": "Bientôt, vous pourrez consulter toutes les activités à faire sur ce cahier de textes numérique. Génial, non ?",
     "homework-emptyScreenTitle": "Pas encore d’activité à l’horizon…",
+    "homework-previousSee": "Afficher les activités précédentes",
+    "homework-previousNoMore": "Vous n'avez plus d'anciennes activités",
     "homework-select": "Vos cahiers de textes",
     "homework-task-empty-title": "Cahier de textes",
     "Homework": "Cahier de textes",
