@@ -3,5 +3,6 @@
  */
 
 export default [
+    // require("../modules/dummy").default,
     require("../modules/timelinev2").default
 ];
