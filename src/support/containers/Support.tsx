@@ -45,7 +45,7 @@ export type IApp = {
 type SupportProps = {
   categoryList: IApp[];
   establishmentsList: IEstablishment[];
-  createTicket: (ticket: ITicket) => void;
+  createTicket: (ticket: ITicket) => any;
   addAttachment: (attachment: object) => INewAttachment;
   deleteAttachment: (attachmentId: string) => void;
 };
@@ -128,7 +128,7 @@ class SupportContainer extends React.PureComponent<SupportProps, SupportState> {
     return result;
   };
 
-  sendTicket = () => {
+  sendTicket = async () => {
     const error = this.checkTicket();
     if (error) {
       Toast.show(I18n.t(error), {
@@ -138,9 +138,9 @@ class SupportContainer extends React.PureComponent<SupportProps, SupportState> {
       });
     } else {
       try {
-        const ticketNb = this.props.createTicket(this.state.ticket);
+        const response = await this.props.createTicket(this.state.ticket);
 
-        Toast.show(I18n.t("support-ticket-success-id") + ticketNb + I18n.t("support-ticket-success-info"), {
+        Toast.show(I18n.t("support-ticket-success-id") + response.id + I18n.t("support-ticket-success-info"), {
           position: Toast.position.BOTTOM,
           mask: false,
           containerStyle: { width: "95%", backgroundColor: "black" },

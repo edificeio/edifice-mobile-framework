@@ -16,20 +16,16 @@ export const supportService = {
   createTicket: async (ticket: ITicket) => {
     ticket["category"] = "/" + ticket.category;
     if (ticket.attachments !== undefined && ticket.attachments.length > 0) {
-      ticket.attachments.map((att) => {
+      ticket.attachments.map(att => {
         return delete att["contentType"];
       });
     } else delete ticket.attachments;
 
-    const response = await fetchJSONWithCache(`/support/ticket`, {
+    const response = await fetchJSONWithCache(`${(Conf.currentPlatform as any).url}/support/ticket`, {
       method: "POST",
-      headers: {
-        ...getAuthHeader(),
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify(ticket),
     });
-    return response.id;
+    return response;
   },
   addAttachment: async (file: any, handleProgession) => {
     const url = `${(Conf.currentPlatform as any).url}/workspace/document?protected=true&application=media-library`;

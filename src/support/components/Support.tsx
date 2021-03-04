@@ -40,7 +40,7 @@ export default class Support extends React.PureComponent<SupportProps, any> {
   renderAttachments = () => {
     return this.props.attachments.map(att => (
       <Attachment
-        id={att.id || att.name}
+        id={att.id || att.filename}
         uploadSuccess={!!att.id}
         fileType={att.contentType}
         fileName={att.name}
