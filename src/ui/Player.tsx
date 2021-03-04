@@ -58,39 +58,36 @@ export default class Player extends React.Component<
       return (
         <>
           {!loaded
-            ? <View style={{ position: "absolute" }}>
-                <Loading/>
-              </View>
-            : null
+            ? <Loading customStyle={{ position: "absolute" }}/>
+            : error
+            ? <TextItalic style={{ position: "absolute" }}>{I18n.t(`${type || "media"}NotAvailable`)}</TextItalic>
+            :  null
           }
-          {error
-            ? <TextItalic>{I18n.t(`${type || "media"}NotAvailable`)}</TextItalic>
-            : <TouchableOpacity activeOpacity={1}>
-                {Platform.select({
-                  ios: 
-                    <VideoPlayer
-                      source={source}
-                      onLoad={() => this.setState({ loaded: true })}
-                      onError={() => this.setState({ error: true, loaded: true })}
-                      controls
-                      style={playerStyle}
-                    />,
-                  android: 
-                    <VideoPlayerAndroid
-                      video={source}
-                      onLoad={() => this.setState({ loaded: true })}
-                      onError={() => this.setState({ error: true, loaded: true })}
-                      autoplay
-                      disableFullscreen={isAudio}
-                      loaded={loaded}
-                      type={type}
-                      style={{...playerStyle, alignSelf: "center", backgroundColor: loaded ? "#000" : undefined}}
-                      customStyles={isAudio ? {controls: {backgroundColor: undefined}} : undefined}
-                    />,
-                  default: null
-                })}
-              </TouchableOpacity>
-          }
+          <TouchableOpacity activeOpacity={1}>
+            {Platform.select({
+              ios: 
+                <VideoPlayer
+                  source={source}
+                  onLoad={() => this.setState({ loaded: true })}
+                  onError={() => this.setState({ error: true, loaded: true })}
+                  controls
+                  style={playerStyle}
+                />,
+              android: 
+                <VideoPlayerAndroid
+                  video={source}
+                  onLoad={() => this.setState({ loaded: true })}
+                  onError={() => this.setState({ error: true, loaded: true })}
+                  autoplay
+                  disableFullscreen={isAudio}
+                  loaded={loaded}
+                  type={type}
+                  style={{...playerStyle, alignSelf: "center", backgroundColor: loaded ? "#000" : undefined}}
+                  customStyles={isAudio ? {controls: {backgroundColor: undefined}} : undefined}
+                />,
+              default: null
+            })}
+          </TouchableOpacity>
         </>
       )
     }
