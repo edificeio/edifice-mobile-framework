@@ -56,6 +56,12 @@
       "title": "Redirection web"
     }
   },
+  "blog": {
+    "resourceName" : "Billet de blog",
+    "blogSelectScreen": {
+      "title": "Choisir un blog"
+    }
+  },
     "Activate": "Activer votre compte",
     "activation-cancelLoad": "Annuler",
     "activation-cgu": "En activant votre compte, vous acceptez les conditions générales d'utilisation",

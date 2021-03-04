@@ -22,12 +22,19 @@ export const getUserType = (type: string) => {
     }
 }
 
+export interface IUserAuthorizedAction{
+    name: string;
+    displayName: string;
+    type: "SECURED_ACTION_WORKFLOW" // ToDo add other types here
+}
+
 export interface IUserDefinition {
     login: string,
     id: string,
     displayName: string,
     type: UserType,
-    entcoreApps: IEntcoreApp[]
+    entcoreApps: IEntcoreApp[],
+    authorizedActions: IUserAuthorizedAction[]
 }
 
 export interface IUserSession {
@@ -44,6 +51,7 @@ export const getUserSession = (state: any) => ({
         id: state.user.info.id,
         displayName: state.user.info.displayName,
         type: getUserType(state.user.info.type),
-        entcoreApps: state.user.auth.appsInfo
+        entcoreApps: state.user.auth.appsInfo,
+        authorizedActions: state.user.info.authorizedActions
     }
 }) as IUserSession;
