@@ -1,19 +1,17 @@
 import * as React from "react";
-import { View, Linking } from "react-native";
+import { View, Linking, Text } from "react-native";
 import { NavigationInjectedProps } from "react-navigation";
 import { connect } from "react-redux";
 import I18n from "i18n-js";
 
 import { IResourceUriNotification, ITimelineNotification } from "../../../notifications";
-import { Text } from "../../../components/text";
 import withViewTracking from "../../../tracker/withViewTracking";
 import NotificationTopInfo from "../components/NotificationTopInfo";
 import { PageView } from "../../../components/page";
 import { InfoBubble } from "../../../components/infoBubble";
 import { FlatButton } from "../../../../ui";
-import { Card } from "../../../components/card";
 import Conf from "../../../../../ode-framework-conf";
-import { FakeHeader, HeaderAction, HeaderLeft, HeaderRow, HeaderTitle } from "../../../components/header";
+import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from "../../../components/header";
 import theme from "../../../theme";
 
 // TYPES ==========================================================================================
@@ -38,9 +36,6 @@ export class TimelineWebViewScreen extends React.PureComponent<
 
   // DECLARATIONS =================================================================================
 
-  static navigationOptions = {
-    header: () => null, // Header is included in screen
-  }
 
   // RENDER =======================================================================================
   render() {
@@ -62,16 +57,23 @@ export class TimelineWebViewScreen extends React.PureComponent<
           <HeaderLeft>
             <HeaderAction iconName="back" onPress={() => navigation.goBack()}/>
           </HeaderLeft>
-          <HeaderTitle>{I18n.t("timeline.webViewScreen.title")}</HeaderTitle>
+          <HeaderCenter>
+            <HeaderTitle>{I18n.t("timeline.webViewScreen.title")}</HeaderTitle>
+          </HeaderCenter>
         </HeaderRow>
       </FakeHeader>
     );
   }
 
+  renderError() {
+    return <Text>{"Error"}</Text> // ToDo: great error screen here
+  }
+
   renderRedirection() {
     const notification = this.props.navigation.getParam("notification");
+    if (!notification) return this.renderError();
     return (
-      <Card>
+      <View style={{flex: 1, paddingVertical: 12, paddingHorizontal: 16, backgroundColor: theme.color.background.card}}>
         <InfoBubble
           infoText={I18n.t("timeline.webViewScreen.infoBubbleText")}
           infoBubbleType="regular"
@@ -81,7 +83,7 @@ export class TimelineWebViewScreen extends React.PureComponent<
         <NotificationTopInfo notification={notification}/>
         <View style={{marginVertical: 10}}>
           <FlatButton
-            title={I18n.t("timeline.webViewScreen.openInBrowser")}
+            title={I18n.t("common.openInBrowser")}
             customButtonStyle={{backgroundColor: theme.color.tertiary.light}}
             customTextStyle={{color: theme.color.secondary.regular}}
             onPress={() => {
@@ -101,7 +103,7 @@ export class TimelineWebViewScreen extends React.PureComponent<
             }}
           />
         </View>
-      </Card>
+      </View>
     );
   }
 

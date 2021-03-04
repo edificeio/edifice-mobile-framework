@@ -25,5 +25,9 @@ export default () => createStackNavigator(
             screen: FiltersScreen
         },
         ...getTimelineRoutes()
+    },
+    {
+        // Note: In Timeline module, there is NO native header. Only FakeHeaders allowed.
+        headerMode: "none"
     }
 );

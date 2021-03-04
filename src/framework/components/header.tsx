@@ -47,6 +47,12 @@ export const HeaderRight = styled(HeaderRow)({
     alignItems:  "stretch",
     zIndex: 1
 })
+export const HeaderCenter = styled.View({
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    minHeight: HeaderMinHeight
+});
 
 const iconSpecificSizes = {
     close: 16
@@ -128,19 +134,13 @@ export const HeaderAction = (props: IHeaderActionGenericProps | IHeaderActionCus
     </ActionComponent>
 }
 
-const HeaderTitleView = styled.View({
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    minHeight: HeaderMinHeight
-});
-const HeaderTitleText = styled(TextInverse)({
+export const HeaderTitle = styled(TextInverse)({
     textAlign: "center",
     textAlignVertical: "center",
     fontWeight: FontWeight.Bold,
     fontSize: rem(16/14)
-})
-
-export const HeaderTitle = (props: React.PropsWithChildren<TextProps>) => <HeaderTitleView>
-    <HeaderTitleText {...props}></HeaderTitleText>
-</HeaderTitleView>;
+});
+export const HeaderSubtitle = styled(HeaderTitle)({
+    fontWeight: FontWeight.Normal,
+    fontSize: rem(14/14)
+});
