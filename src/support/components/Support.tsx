@@ -1,25 +1,50 @@
 import I18n from "i18n-js";
 import * as React from "react";
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
 import { CommonStyles } from "../../styles/common/styles";
-import { Icon } from "../../ui";
 import { PageContainer } from "../../ui/ContainerContent";
+import { FormInputs, IconButton, ListPicker } from "./Items";
 
 type SupportProps = {
+  onFieldChange: (ticket) => void;
   createTicket: () => void;
 };
 
-const IconButton = ({ icon, color, onPress }) => {
-  return (
-    <TouchableOpacity onPress={onPress}>
-      <Icon size={30} color={color} name={icon} />
-    </TouchableOpacity>
-  );
-};
-
 export default class Support extends React.PureComponent<any, any> {
+  renderForm = () => {
+    const { onFieldChange, ticket } = this.props;
+    return (
+      <View>
+        <View style={styles.lineSeparator} />
+        <View style={styles.containerFieldsSelect}>
+          <Text style={styles.textTicketFields}>{I18n.t("support-ticket-category")}</Text>
+          <ListPicker />
+        </View>
+
+        <View style={styles.lineSeparator} />
+        <View style={styles.containerFieldsSelect}>
+          <Text style={styles.textTicketFields}>{I18n.t("support-ticket-establishment")}</Text>
+          <ListPicker />
+        </View>
+
+        <View style={styles.lineSeparator} />
+        <Text style={styles.textTicketFields}>
+          <Text style={{ color: "red" }}>* </Text>
+          {I18n.t("support-ticket-subject")}
+        </Text>
+        <FormInputs onChange={subject => onFieldChange({ ...ticket, subject })} />
+
+        <View style={styles.lineSeparator} />
+        <Text style={styles.textTicketFields}>
+          <Text style={{ color: "red" }}>* </Text>
+          {I18n.t("support-ticket-description")}
+        </Text>
+        <FormInputs onChange={description => onFieldChange({ ...ticket, description })} />
+      </View>
+    );
+  };
   public render() {
     return (
       <PageContainer>
@@ -30,25 +55,7 @@ export default class Support extends React.PureComponent<any, any> {
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
           <Text style={styles.textMobileOnly}>{I18n.t("support-mobile-only")}</Text>
 
-          <View style={styles.lineSeparator} />
-          <Text style={styles.textTicketFields}>{I18n.t("support-ticket-category")}</Text>
-
-          <View style={styles.lineSeparator} />
-          <Text style={styles.textTicketFields}>{I18n.t("support-ticket-establishment")}</Text>
-
-          <View style={styles.lineSeparator} />
-          <Text style={styles.textTicketFields}>
-            <Text style={{ color: "red" }}>* </Text>
-            {I18n.t("support-ticket-subject")}
-          </Text>
-          <TextInput numberOfLines={1} />
-
-          <View style={styles.lineSeparator} />
-          <Text style={styles.textTicketFields}>
-            <Text style={{ color: "red" }}>* </Text>
-            {I18n.t("support-ticket-description")}
-          </Text>
-          <TextInput numberOfLines={1} />
+          {this.renderForm()}
 
           <View style={{ height: 65 }} />
           <TouchableOpacity onPress={() => true} style={styles.buttonTicketRegister}>
@@ -77,7 +84,13 @@ const styles = StyleSheet.create({
     fontSize: 15,
     padding: 10,
   },
+  containerFieldsSelect: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginRight: 10,
+  },
   textTicketFields: {
+    width: "50%",
     fontSize: 15,
     fontWeight: "bold",
     padding: 10,

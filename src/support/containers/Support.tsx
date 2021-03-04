@@ -18,8 +18,26 @@ class SupportContainer extends React.PureComponent<any, any> {
       navigation
     );
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      ticket: {
+        category: "",
+        establishment: "",
+        subject: "",
+        description: "",
+        attachments: [],
+      },
+    };
+  }
+
   public render() {
-    return <Support {...this.props} />;
+    return (
+      <Support
+        {...this.props}
+        onFieldChange={field => this.setState(prevState => ({ ticket: { ...prevState.ticket, ...field } }))}
+      />
+    );
   }
 }
 
