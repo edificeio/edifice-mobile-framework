@@ -20,7 +20,7 @@ import { INotifFilterSettings } from "../reducer/notifSettings/notifFilterSettin
 
 // TYPES ==========================================================================================
 
-export interface ITimelineFiltersScreenDataProps { 
+export interface ITimelineFiltersScreenDataProps {
   notifFilterSettings: INotifFilterSettings;
   notifFilters: INotificationFilter[];
 };
@@ -47,7 +47,7 @@ export class TimelineFiltersScreen extends React.PureComponent<
   }
 
   state: ITimelineFiltersScreenState = {
-    selectedFilters: this.props.notifFilterSettings
+    selectedFilters: { ...this.props.notifFilterSettings }
   }
 
   // RENDER =======================================================================================
@@ -113,7 +113,7 @@ export class TimelineFiltersScreen extends React.PureComponent<
               }
             />
         }
-        renderItem={({ item }) => this.renderFilterItem(item as any)}
+        renderItem={({ item }) => this.renderFilterItem(item)}
       />
     );
   }
