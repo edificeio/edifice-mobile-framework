@@ -288,7 +288,9 @@ export default class Calendar extends React.PureComponent<CalendarProps, Calenda
     const { numberOfHours, renderElement, renderHalf, slotHeight, hideSlots } = this.props;
     const { organizedColumns, hours } = this.state;
     return (
-      <ScrollView contentContainerStyle={{ height: numberOfHours! * slotHeight! }}>
+      <ScrollView
+        contentContainerStyle={{ height: numberOfHours! * slotHeight! }}
+        showsHorizontalScrollIndicator={false}>
         <SafeAreaView style={styles.columnContainer}>
           {hours.map((hour, i) => (
             <Text style={[styles.slotDisplay, { top: slotHeight! * i }]}>{hour.format("HH:mm")}</Text>
@@ -310,7 +312,9 @@ export default class Calendar extends React.PureComponent<CalendarProps, Calenda
     const { slots, renderElement, renderHalf, slotHeight, hideSlots } = this.props;
     const { organizedColumns } = this.state;
     return (
-      <ScrollView contentContainerStyle={{ height: slots!.length * slotHeight! }}>
+      <ScrollView
+        contentContainerStyle={{ height: slots!.length * slotHeight! }}
+        showsHorizontalScrollIndicator={false}>
         <SafeAreaView style={styles.columnContainer}>
           {slots!.map((slot, i) => (
             <Text style={[styles.slotDisplay, { top: slotHeight! * i }]}>{moment(slot.startHour).format("LT")}</Text>

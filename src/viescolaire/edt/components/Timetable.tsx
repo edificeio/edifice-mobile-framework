@@ -1,12 +1,11 @@
 import I18n from "i18n-js";
 import moment from "moment";
 import React from "react";
-import { RefreshControl, View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 
 import { getSessionInfo } from "../../../App";
-import { Icon } from "../../../ui";
+import { Icon, Loading } from "../../../ui";
 import Calendar from "../../../ui/Calendar";
-import { PageContainer } from "../../../ui/ContainerContent";
 import DateTimePicker from "../../../ui/DateTimePicker";
 import { TextBold } from "../../../ui/Typography";
 import ChildPicker from "../../viesco/containers/ChildPicker";
@@ -79,33 +78,33 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
   public render() {
     const { startDate, selectedDate, courses, teachers, slots, updateSelectedDate } = this.props;
     return (
-      <PageContainer>
-        <RefreshControl style={{ flexDirection: "column-reverse" }} refreshing={courses.isFetching}>
-          <View style={style.refreshContainer}>
-            {getSessionInfo().type === "Relative" && <ChildPicker />}
-            <View style={style.weekPickerView}>
-              <Text>{I18n.t("viesco-edt-week-of")}</Text>
-              <View>
-                <DateTimePicker value={startDate} mode="date" onChange={updateSelectedDate} color="#162EAE" />
-              </View>
-            </View>
-            <View style={style.calendarContainer}>
-              <Calendar
-                startDate={startDate}
-                data={adaptCourses(courses.data, teachers.data)}
-                renderElement={getSessionInfo().type === "Teacher" ? this.renderTeacherCourse : this.renderChildCourse}
-                renderHalf={this.renderHalf}
-                numberOfDays={6}
-                slotHeight={70}
-                mainColor="#162EAE"
-                slots={slots.data}
-                initialSelectedDate={selectedDate}
-                hideSlots
-              />
-            </View>
+      <View style={style.refreshContainer}>
+        {getSessionInfo().type === "Relative" && <ChildPicker />}
+        <View style={style.weekPickerView}>
+          <Text>{I18n.t("viesco-edt-week-of")}</Text>
+          <View>
+            <DateTimePicker value={startDate} mode="date" onChange={updateSelectedDate} color="#162EAE" />
           </View>
-        </RefreshControl>
-      </PageContainer>
+        </View>
+        {courses.isFetching || courses.isPristine ? (
+          <Loading />
+        ) : (
+          <View style={style.calendarContainer}>
+            <Calendar
+              startDate={startDate}
+              data={adaptCourses(courses.data, teachers.data)}
+              renderElement={getSessionInfo().type === "Teacher" ? this.renderTeacherCourse : this.renderChildCourse}
+              renderHalf={this.renderHalf}
+              numberOfDays={6}
+              slotHeight={70}
+              mainColor="#162EAE"
+              slots={slots.data}
+              initialSelectedDate={selectedDate}
+              hideSlots
+            />
+          </View>
+        )}
+      </View>
     );
   }
 }
