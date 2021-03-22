@@ -27,12 +27,13 @@ const IconButton = ({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "white",
     padding: 8,
   };
 
   return (
-    <TouchableOpacity onPress={onPress} style={[containerStyle, { backgroundColor: color }, style]}>
-      <Icon size={20} color="#2BAB6F" name={icon} />
+    <TouchableOpacity onPress={onPress} style={[containerStyle, style]}>
+      <Icon size={20} color={color} name={icon} />
       <Text style={{ marginHorizontal: 5 }}>{text}</Text>
     </TouchableOpacity>
   );
@@ -46,6 +47,7 @@ type DateTimePickerProps = {
   renderDate?: (time: moment.Moment) => React.ReactElement;
   onChange: any;
   style?: ViewStyle;
+  color?: string;
 };
 
 const DateTimePickerIOS = ({
@@ -56,6 +58,7 @@ const DateTimePickerIOS = ({
   maximumDate,
   style,
   onChange,
+  color = "#2BAB6F",
 }: DateTimePickerProps) => {
   const [visible, toggleModal] = useState(false);
   const [selectedTime, changeTime] = useState(value);
@@ -71,7 +74,7 @@ const DateTimePickerIOS = ({
           style={style}
           onPress={() => toggleModal(true)}
           text={selectedTime.format("DD/MM/YY")}
-          color="white"
+          color={color}
           icon="date_range"
         />
       )}
@@ -125,6 +128,7 @@ const DateTimePickerAndroid = ({
   style,
   maximumDate,
   onChange,
+  color = "#2BAB6F",
 }: DateTimePickerProps) => {
   const [visible, toggleModal] = useState(false);
   const [selectedTime, changeTime] = useState(value);
@@ -139,7 +143,7 @@ const DateTimePickerAndroid = ({
           style={style}
           onPress={() => toggleModal(true)}
           text={selectedTime.format("DD/MM/YY")}
-          color="white"
+          color={color}
           icon="date_range"
         />
       )}

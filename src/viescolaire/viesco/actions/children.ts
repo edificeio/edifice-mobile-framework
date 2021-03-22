@@ -2,6 +2,8 @@ import { Dispatch } from "redux";
 
 import { dataActions as homeworkActions } from "../../cdt/actions/homeworks";
 import { dataActions as sessionActions } from "../../cdt/actions/sessions";
+import { dataActions as edtCoursesActions } from "../../edt/actions/courses";
+import { dataActions as slotsActions } from "../../edt/actions/slots";
 import { studentEventsActions as historyActions } from "../../presences/actions/events";
 import { periodsDataActions as periodActions, yearDataActions as yearActions } from "../../viesco/actions/periods";
 import { dataActions as teacherActions } from "../../viesco/actions/personnel";
@@ -23,6 +25,8 @@ export function selectChildAction(child: string) {
     dispatch(historyActions.clear());
     dispatch(periodActions.clear());
     dispatch(yearActions.clear());
+    dispatch(slotsActions.clear());
+    dispatch(edtCoursesActions.clear());
     dispatch(selectChild(child));
   };
 }

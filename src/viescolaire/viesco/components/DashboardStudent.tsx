@@ -80,8 +80,7 @@ export default class Dashboard extends React.PureComponent<any> {
           icon="access_time"
         />
         <IconButton
-          disabled
-          onPress={() => true}
+          onPress={() => this.props.navigation.navigate("Timetable")}
           text={I18n.t("viesco-timetable")}
           color="#162EAE"
           icon="calendar_today"

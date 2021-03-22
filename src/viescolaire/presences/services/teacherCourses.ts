@@ -53,7 +53,6 @@ export type ICoursesRegisterBackend = {
 
 const coursesRegisterAdapter: (data: ICoursesRegisterBackend) => ICoursesRegister = data => {
   let result = {} as ICoursesRegister;
-  console.log("dataCOURSES: ", data);
   if (!data) return result;
   result = {
     id: data.id,
