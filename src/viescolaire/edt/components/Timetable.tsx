@@ -45,8 +45,13 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
     const className = course.classes.length > 0 ? course.classes[0] : course.groups[0];
     return (
       <View style={style.courseView}>
-        <View style={style.infoView}>
-          <TextBold style={{ fontSize: 20 }}>{className}</TextBold>
+        <View style={style.subjectView}>
+          <View style={style.infoView}>
+            <TextBold style={{ fontSize: 20 }}>{className}</TextBold>
+          </View>
+          <View style={style.infoView}>
+            <Text numberOfLines={1}>{course.subject.name}</Text>
+          </View>
         </View>
         {course.roomLabels && course.roomLabels.length > 0 && course.roomLabels[0].length > 0 && (
           <View style={style.roomView}>
