@@ -27,7 +27,7 @@ export type TimetableProps = {
   subjects: any;
   teachers: any;
   slots: any;
-  structureId: any;
+  structureId: string;
   childId: string;
   childClasses: string;
   group: string;
@@ -165,7 +165,7 @@ const mapStateToProps = (state: any): any => {
         ? getSessionInfo().administrativeStructures[0].id || getSessionInfo().structures[0]
         : getSessionInfo().type === "Relative"
         ? getSelectedChildStructure(state).id
-        : { id: getSelectedStructure(state) },
+        : getSelectedStructure(state),
     childId,
     childClasses,
     group,
