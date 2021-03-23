@@ -27,7 +27,7 @@ export type TimetableProps = {
   subjects: any;
   teachers: any;
   slots: any;
-  structure: any;
+  structureId: any;
   childId: string;
   childClasses: string;
   group: string;
@@ -73,17 +73,17 @@ class TimetableContainer extends React.PureComponent<TimetableProps, TimetableSt
 
   fetchCourses = () => {
     const { startDate } = this.state;
-    const { fetchTeacherCourses, fetchChildCourses, structure, group, teacherId } = this.props;
+    const { fetchTeacherCourses, fetchChildCourses, structureId, group, teacherId } = this.props;
     if (getSessionInfo().type === "Teacher")
-      fetchTeacherCourses(structure.id, startDate, startDate.clone().endOf("week"), teacherId);
-    else fetchChildCourses(structure.id, startDate, startDate.clone().endOf("week"), group);
+      fetchTeacherCourses(structureId, startDate, startDate.clone().endOf("week"), teacherId);
+    else fetchChildCourses(structureId, startDate, startDate.clone().endOf("week"), group);
   };
 
   initComponent = async () => {
-    const { structure, childId, childClasses } = this.props;
+    const { structureId, childId, childClasses } = this.props;
     await this.props.fetchChildGroups(childClasses, childId);
     this.fetchCourses();
-    this.props.fetchSlots(structure.id);
+    this.props.fetchSlots(structureId);
   };
 
   componentDidMount() {
@@ -92,7 +92,7 @@ class TimetableContainer extends React.PureComponent<TimetableProps, TimetableSt
 
   componentDidUpdate(prevProps, prevState) {
     const { startDate, selectedDate } = this.state;
-    const { structure, childId, group, fetchSlots } = this.props;
+    const { structureId, childId, group, fetchSlots } = this.props;
 
     // on selectedChild change
     if (prevProps.childId !== childId) this.initComponent();
@@ -104,13 +104,13 @@ class TimetableContainer extends React.PureComponent<TimetableProps, TimetableSt
     // on week, structure, group change
     if (
       !prevState.startDate.isSame(startDate, "day") ||
-      structure.id !== prevProps.structure.id ||
+      structureId !== prevProps.structureId ||
       group.length !== prevProps.group.length
     )
       this.fetchCourses();
 
     // on structure change
-    if (structure.id !== prevProps.structure.id) fetchSlots(structure.id);
+    if (structureId !== prevProps.structureId) fetchSlots(structureId);
   }
 
   updateSelectedDate = (newDate: moment.Moment) => {
@@ -133,12 +133,18 @@ class TimetableContainer extends React.PureComponent<TimetableProps, TimetableSt
 }
 
 const mapStateToProps = (state: any): any => {
-  let childId: string = "";
+  let childId: string | undefined = "";
   let childClasses: string = "";
   let group = [] as string[];
+  // get groups and childClasses
   if (getSessionInfo().type === "Student") {
-    group.push(getSessionInfo().realClassesNames[0]);
-    getSessionInfo().functionalGroups?.forEach(item => group.push(item.name));
+    childId = getSessionInfo().userId;
+    childClasses = getSessionInfo().classes[0];
+    const childGroups = getGroupsListState(state).data;
+    if (childGroups !== undefined && childGroups[0] !== undefined) {
+      if (childGroups[0].nameClass !== undefined) group.push(childGroups[0].nameClass);
+      childGroups[0]?.nameGroups?.forEach(item => group.push(item));
+    }
   } else if (getSessionInfo().type === "Relative") {
     childId = getSelectedChild(state)?.id;
     childClasses = getSessionInfo().classes[getSessionInfo().childrenIds.findIndex(i => i === childId)];
@@ -154,9 +160,9 @@ const mapStateToProps = (state: any): any => {
     subjects: getSubjectsListState(state),
     teachers: getPersonnelListState(state),
     slots: getSlotsListState(state),
-    structure:
+    structureId:
       getSessionInfo().type === "Student"
-        ? getSessionInfo().administrativeStructures[0]
+        ? getSessionInfo().administrativeStructures[0].id || getSessionInfo().structures[0]
         : getSessionInfo().type === "Relative"
         ? getSelectedChildStructure(state)
         : { id: getSelectedStructure(state) },
