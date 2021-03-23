@@ -81,11 +81,12 @@ export default class Calendar extends React.PureComponent<CalendarProps, Calenda
   constructor(props) {
     super(props);
     const { data, startDate, numberOfDays, startTime, numberOfHours, initialSelectedDate } = this.props;
+    let selectedDate = initialSelectedDate ? initialSelectedDate : this.props.startDate.clone();
     this.state = {
-      selectedDate: initialSelectedDate ? initialSelectedDate : this.props.startDate.clone(),
-      organizedColumns: this.organizeColumns(data.filter(d => startDate.isSame(d.startDate, "day"))),
+      selectedDate,
+      organizedColumns: this.organizeColumns(data.filter(d => selectedDate.isSame(d.startDate, "day"))),
       week: this.getDaysArray(startDate, numberOfDays),
-      day: initialSelectedDate ? initialSelectedDate : this.props.startDate.clone(),
+      day: selectedDate,
       hours: this.getHoursArray(startTime, numberOfHours),
     };
   }
