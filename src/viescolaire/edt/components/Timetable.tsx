@@ -26,7 +26,7 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
     return (
       <View style={style.courseView}>
         <View style={style.subjectView}>
-          <TextBold numberOfLines={1}>{course.subject?.name}</TextBold>
+          <TextBold numberOfLines={1}>{course.subject?.name || course.exceptionnal}</TextBold>
           <Text numberOfLines={1}>{course.teacher}</Text>
         </View>
         {course.roomLabels && course.roomLabels.length > 0 && course.roomLabels[0].length > 0 && (
@@ -50,7 +50,7 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
             <TextBold style={{ fontSize: 20 }}>{className}</TextBold>
           </View>
           <View style={style.infoView}>
-            <Text numberOfLines={1}>{course.subject.name}</Text>
+            <Text numberOfLines={1}>{course.subject?.name || course.exceptionnal}</Text>
           </View>
         </View>
         {course.roomLabels && course.roomLabels.length > 0 && course.roomLabels[0].length > 0 && (
@@ -67,7 +67,7 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
     return (
       <View style={style.courseView}>
         <View style={style.subjectView}>
-          <TextBold numberOfLines={1}>{course.subject?.name}</TextBold>
+          <TextBold numberOfLines={1}>{course.subject?.name || course.exceptionnal}</TextBold>
           <Text numberOfLines={1}>{course.teacher}</Text>
           {course.roomLabels && course.roomLabels.length > 0 && course.roomLabels[0].length > 0 && (
             <View style={{ flexDirection: "row" }}>

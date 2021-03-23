@@ -13,6 +13,7 @@ export interface ICourse {
   teacherIds: string[];
   classes: string[];
   groups: string[];
+  exceptionnal: string;
   subject: {
     code: string;
     externalId: string;

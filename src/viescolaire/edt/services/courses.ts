@@ -10,6 +10,7 @@ export type ICourseListBackend = {
   roomLabels: string[];
   startCourse: string;
   endCourse: string;
+  exceptionnal: string;
   subjectId: string;
   subject: {
     code: string;
@@ -24,6 +25,7 @@ const coursesListAdapter = (data: ICourseListBackend): ICourseList => {
   return data.map(course => ({
     teacherIds: course.teacherIds,
     roomLabels: course.roomLabels,
+    exceptionnal: course.exceptionnal,
     subjectId: course.subjectId,
     subject: course.subject,
     classes: course.classes,
