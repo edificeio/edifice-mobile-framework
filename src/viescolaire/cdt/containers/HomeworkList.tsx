@@ -92,7 +92,7 @@ const mapStateToProps: (state: any) => any = state => {
     childId: getSelectedChild(state).id,
     structureId:
       getSessionInfo().type === "Student"
-        ? getSessionInfo().administrativeStructures[0].id
+        ? getSessionInfo().administrativeStructures[0].id || getSessionInfo().structures[0]
         : getSelectedChildStructure(state)?.id,
   };
 };

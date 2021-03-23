@@ -208,7 +208,9 @@ const mapStateToProps = (state: any) => {
       ? getSessionInfo().classes[0]
       : getSessionInfo().classes[getSessionInfo().childrenIds.findIndex(i => i === childId)];
   const structureId =
-    type === "Student" ? getSessionInfo().administrativeStructures[0].id : getSelectedChildStructure(state)?.id;
+    type === "Student"
+      ? getSessionInfo().administrativeStructures[0].id || getSessionInfo().structures[0]
+      : getSelectedChildStructure(state)?.id;
   const isFetchingData = events.isFetching || periods.isFetching || year.isFetching;
   const isPristineData = events.isPristine || periods.isPristine || year.isPristine;
   return {
