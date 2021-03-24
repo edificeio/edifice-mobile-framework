@@ -64,8 +64,16 @@ const TopDay = ({ day, onPress, color = "#000", selected = false }) => {
   );
 };
 
+const EmptySlot = ({ height, top }) => {
+  return (
+    <View style={[styles.slot, { top: top, height: height }]}>
+      <View style={styles.lineSeparator} />
+    </View>
+  );
+};
+
 const Slot = ({ height, top }) => {
-  return <View style={[styles.slot, { top: top, height: height }]} />;
+  return <View style={[styles.slot, { top: top, height: height, backgroundColor: "#FFF" }]} />;
 };
 
 /* CALENDAR COMPONENT  */
@@ -296,6 +304,7 @@ export default class Calendar extends React.PureComponent<CalendarProps, Calenda
           {hours.map((hour, i) => (
             <Text style={[styles.slotDisplay, { top: slotHeight! * i }]}>{hour.format("HH:mm")}</Text>
           ))}
+          {hours!.map((hour, i) => <EmptySlot height={slotHeight!} top={slotHeight! * i} />)}
           {hideSlots || hours.map((hour, i) => <Slot height={slotHeight!} top={slotHeight! * i} />)}
           {organizedColumns[0].map(d => this.renderElementContainerWithoutSlots(d, hours[0], renderElement))}
           {organizedColumns[1].map(d =>
@@ -320,6 +329,7 @@ export default class Calendar extends React.PureComponent<CalendarProps, Calenda
           {slots!.map((slot, i) => (
             <Text style={[styles.slotDisplay, { top: slotHeight! * i }]}>{moment(slot.startHour).format("LT")}</Text>
           ))}
+          {slots!.map((slot, i) => <EmptySlot height={slotHeight!} top={slotHeight! * i} />)}
           {hideSlots || slots!.map((slot, i) => <Slot height={slotHeight!} top={slotHeight! * i} />)}
           {organizedColumns[0].map(d => this.renderElementContainerWhithSlots(d, renderElement))}
           {organizedColumns[1].map(d =>
@@ -392,11 +402,18 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: "15%",
     width: "85%",
-    backgroundColor: "#FFF",
     borderRadius: 10,
     borderBottomColor: "rgba(0, 0, 0, 0)",
     borderBottomWidth: 2,
     borderStyle: "solid",
+  },
+  lineSeparator: {
+    top: "50%",
+    width: "100%",
+    borderColor: CommonStyles.missingGrey,
+    borderStyle: "dashed",
+    borderBottomWidth: 1,
+    borderRadius: 1,
   },
   elementContainer: {
     position: "absolute",
