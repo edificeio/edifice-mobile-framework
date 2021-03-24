@@ -44,148 +44,96 @@
       "WORKSPACE": "Espace documentaire"
     },
     "notifType": {
-      "userbook": {
-        "userbook_motto": "Changement de devise",
-        "userbook_mood": "Changement d'humeur",
-        "delete-email": "Suppression d'un email invalide (hard-bounce)"
-      },
-      "schoolbook": {
-        "response": "Suivi d'un mot",
-        "acknowledge": "Confirmer de lecture d'un mot",
-        "modifyresponse": "Modification d'une réponse",
-        "word-resend": "Rappel de lecture",
-        "word-shared": "Partage d'un mot",
-        "publish": "Envoi d'un mot"
-      },
-      "rbs": {
-        "periodic-booking-updated": "Mise à jour d'une réservation périodique",
-        "booking-updated": "Mise à jour d'une réservation",
-        "periodic-booking-deleted": "Suppression d'une réservation périodique",
-        "booking-created": "Création d'une réservation",
-        "resource-unavailable": "Indisponibilité d'une ressource",
-        "booking-deleted": "Suppression d'une réservation",
-        "booking-refused": "Refus d'une réservation",
-        "periodic-booking-created": "Création d'une réservation périodique",
-        "booking-validated": "Validation d'une réservation",
-        "resource-available": "Disponibilité d'une ressource"
-      },
-      "community": {
-        "share": "Partage d'une communauté"
-      },
-      "exercizer": {
-        "unassigncopy": "Retrait de copie",
-        "assigntraining": "Assignation de sujet d'entraînement",
-        "correctcopy": "Correction de copie",
-        "assigncopy": "Assignation de copie",
-        "share": "Partage de sujet",
-        "submithomework": "Rendu de devoir",
-        "modifydue": "Modification de la date de fin d'un sujet",
-        "submitcopy": "Rendu de copie",
-        "modifybegin": "Modification de la date de début d'un sujet",
-        "considersubmitted": "Copie considérée rendue",
-        "homeworkreminder": "Rappel automatique",
-        "modifyperiod": "Modification de la période de distribution d'un sujet",
-        "correcthomework": "Correction de devoir"
-      },
-      "wiki": {
-        "shared": "Partage d'un Wiki",
-        "comment-added": "Ajout de commentaire dans un Wiki",
-        "page-created": "Nouvelle page dans un Wiki"
-      },
-      "news": {
-        "info-shared": "Partage d'une actualité",
-        "news-comment": "Commentaire d'une actualité",
-        "thread-shared": "Partage d'un fil d'actualités",
-        "news-unpublished": "Dépublication d'une actualité",
-        "news-published": "Publication d'une actualité",
-        "news-unsubmitted": "Annulation d'une demande de validation d'une actualité",
-        "news-submitted": "Demande de validation d'une actualité",
-        "news-update": "Mise à jour d'une actualité"
-      },
-      "workspace": {
-        "share-folder": "Partage d'un dossier",
-        "contrib-folder": "Contribution dans un dossier",
-        "comment-folder": "Ajout de commentaire sur un dossier",
-        "storage": "Espace de stockage bientôt plein",
-        "share": "Partage d'un fichier",
-        "contrib-version": "Ajout d'une version à un document",
-        "comment": "Ajout de commentaire sur un fichier"
-      },
-      "calendar": {
-        "create": "Création d'un événement",
-        "share": "Partage d'un agenda",
-        "update": "Mise à jour d'un événement"
-      },
-      "support": {
-        "ticket-created": "Création d'une demande de support",
-        "bugtracker-issue-updated": "Mise à jour d'une demande escaladée",
-        "bugtracker-issue-closed": "Fermeture d'une demande escaladée",
-        "ticket-updated": "Mise à jour d'une demande de support",
-        "bugtracker-issue-resolved": "Résolution d'une demande escaladée"
-      },
-      "homeworks": {
-        "share": "Partage d'un cahier de textes",
-        "entries": {
-          "modified": "Mise à jour du cahier de textes"
-        }
-      },
-      "scrapbook": {
-        "share": "Partage d'un cahier multimédia",
-        "modified": "Modification d'un cahier multimédia"
-      },
-      "messagerie": {
-        "storage": "Espace de stockage bientôt plein",
-        "send-message": "Réception d'un message"
-      },
-      "forum": {
-        "category-shared": "Partage de catégorie",
-        "subject-updated": "Modification d'une discussion dans le forum",
-        "message-created": "Nouveau message dans le forum",
-        "subject-created": "Nouvelle discussion de forum",
-        "message-updated": "Modification d'un message dans le forum"
-      },
-      "blog": {
-        "share": "Partage d'un blog",
-        "submit-post": "Soumission d'un billet de blog",
-        "publish-post": "Publication d'un billet de blog",
-        "publish-comment": "Commentaire d'un billet de blog"
-      },
-      "rack": {
-        "rack-post": "Dépôt de document dans un casier",
-        "storage": "Espace de stockage bientôt plein"
-      },
-      "timelinegenerator": {
-        "share": "Partage d'une frise chronologique"
-      },
-      "timeline": {
-        "send-flash-message-mail": "Publication d'un nouveau message flash",
-        "send-flash-message-push": "Publication d'un nouveau message flash",
-        "notify-report": "Signalement d'une notification"
-      },
-      "collaborativewall": {
-        "share": "Partage de mur collaboratif"
-      },
-      "collaborativeeditor": {
-        "share": "Partage d'un Pad",
-        "unused": "Pad non modifié"
-      },
-      "poll": {
-        "share": "Partage d'un sondage"
-      },
-      "archive": {
-        "archives_error": "Erreur lors de la création de l'archive",
-        "archives_ok": "Création de l'archive terminée"
-      },
-      "sharebigfiles": {
-        "delete": "Suppression d'un fichier dans Poste-fichiers",
-        "share": "Partage d'un fichier dans Poste-fichiers"
-      },
-      "pages": {
-        "shared": "Partage d'une Page"
-      },
-      "mindmap": {
-        "share": "Partage de carte mentale"
-      }
+      "archive.archives_error": "Erreur lors de la création de l'archive",
+      "archive.archives_ok": "Création de l'archive terminée",
+      "blog.publish-comment": "Commentaire d'un billet de blog",
+      "blog.publish-post": "Publication d'un billet de blog",
+      "blog.share": "Partage d'un blog",
+      "blog.submit-post": "Soumission d'un billet de blog",
+      "calendar.create": "Création d'un événement",
+      "calendar.share": "Partage d'un agenda",
+      "calendar.update": "Mise à jour d'un événement",
+      "collaborativeeditor.share": "Partage d'un Pad",
+      "collaborativeeditor.unused": "Pad non modifié",
+      "collaborativewall.share": "Partage de mur collaboratif",
+      "community.share": "Partage d'une communauté",
+      "exercizer.assigncopy": "Assignation de copie",
+      "exercizer.assigntraining": "Assignation de sujet d'entraînement",
+      "exercizer.considersubmitted": "Copie considérée rendue",
+      "exercizer.correctcopy": "Correction de copie",
+      "exercizer.correcthomework": "Correction de devoir",
+      "exercizer.homeworkreminder": "Rappel automatique",
+      "exercizer.modifybegin": "Modification de la date de début d'un sujet",
+      "exercizer.modifydue": "Modification de la date de fin d'un sujet",
+      "exercizer.modifyperiod": "Modification de la période de distribution d'un sujet",
+      "exercizer.share": "Partage de sujet",
+      "exercizer.submitcopy": "Rendu de copie",
+      "exercizer.submithomework": "Rendu de devoir",
+      "exercizer.unassigncopy": "Retrait de copie",
+      "forum.category-shared": "Partage de catégorie",
+      "forum.message-created": "Nouveau message dans le forum",
+      "forum.message-updated": "Modification d'un message dans le forum",
+      "forum.subject-created": "Nouvelle discussion de forum",
+      "forum.subject-updated": "Modification d'une discussion dans le forum",
+      "homeworks.entries.modified": "Mise à jour du cahier de textes",
+      "homeworks.share": "Partage d'un cahier de textes",
+      "messagerie.send-message": "Réception d'un message",
+      "messagerie.storage": "Espace de stockage bientôt plein",
+      "mindmap.share": "Partage de carte mentale",
+      "news.info-shared": "Partage d'une actualité",
+      "news.news-comment": "Commentaire d'une actualité",
+      "news.news-published": "Publication d'une actualité",
+      "news.news-submitted": "Demande de validation d'une actualité",
+      "news.news-unpublished": "Dépublication d'une actualité",
+      "news.news-unsubmitted": "Annulation d'une demande de validation d'une actualité",
+      "news.news-update": "Mise à jour d'une actualité",
+      "news.thread-shared": "Partage d'un fil d'actualités",
+      "pages.shared": "Partage d'une Page",
+      "poll.share": "Partage d'un sondage",
+      "rack.rack-post": "Dépôt de document dans un casier",
+      "rack.storage": "Espace de stockage bientôt plein",
+      "rbs.booking-created": "Création d'une réservation",
+      "rbs.booking-deleted": "Suppression d'une réservation",
+      "rbs.booking-refused": "Refus d'une réservation",
+      "rbs.booking-updated": "Mise à jour d'une réservation",
+      "rbs.booking-validated": "Validation d'une réservation",
+      "rbs.periodic-booking-created": "Création d'une réservation périodique",
+      "rbs.periodic-booking-deleted": "Suppression d'une réservation périodique",
+      "rbs.periodic-booking-updated": "Mise à jour d'une réservation périodique",
+      "rbs.resource-available": "Disponibilité d'une ressource",
+      "rbs.resource-unavailable": "Indisponibilité d'une ressource",
+      "schoolbook.acknowledge": "Confirmer de lecture d'un mot",
+      "schoolbook.modifyresponse": "Modification d'une réponse",
+      "schoolbook.publish": "Envoi d'un mot",
+      "schoolbook.response": "Suivi d'un mot",
+      "schoolbook.word-resend": "Rappel de lecture",
+      "schoolbook.word-shared": "Partage d'un mot",
+      "scrapbook.modified": "Modification d'un cahier multimédia",
+      "scrapbook.share": "Partage d'un cahier multimédia",
+      "sharebigfiles.delete": "Suppression d'un fichier dans Poste-fichiers",
+      "sharebigfiles.share": "Partage d'un fichier dans Poste-fichiers",
+      "support.bugtracker-issue-closed": "Fermeture d'une demande escaladée",
+      "support.bugtracker-issue-resolved": "Résolution d'une demande escaladée",
+      "support.bugtracker-issue-updated": "Mise à jour d'une demande escaladée",
+      "support.ticket-created": "Création d'une demande de support",
+      "support.ticket-updated": "Mise à jour d'une demande de support",
+      "timeline.notify-report": "Signalement d'une notification",
+      "timeline.send-flash-message-mail": "Publication d'un nouveau message flash",
+      "timeline.send-flash-message-push": "Publication d'un nouveau message flash",
+      "timelinegenerator.share": "Partage d'une frise chronologique",
+      "userbook.delete-email": "Suppression d'un email invalide (hard-bounce)",
+      "userbook.userbook_mood": "Changement d'humeur",
+      "userbook.userbook_motto": "Changement de devise",
+      "wiki.comment-added": "Ajout de commentaire dans un Wiki",
+      "wiki.page-created": "Nouvelle page dans un Wiki",
+      "wiki.shared": "Partage d'un Wiki",
+      "workspace.comment-folder": "Ajout de commentaire sur un dossier",
+      "workspace.comment": "Ajout de commentaire sur un fichier",
+      "workspace.contrib-folder": "Contribution dans un dossier",
+      "workspace.contrib-version": "Ajout d'une version à un document",
+      "workspace.share-folder": "Partage d'un dossier",
+      "workspace.share": "Partage d'un fichier",
+      "workspace.storage": "Espace de stockage bientôt plein"
     },
     "filtersScreen": {
       "title": "Notifications"
