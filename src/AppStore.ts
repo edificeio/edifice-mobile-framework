@@ -10,7 +10,7 @@ import notifiers from "./infra/notifier/reducer";
 import connectionTracker from "./infra/reducers/connectionTracker";
 import ui from "./infra/reducers/ui";
 import progress from "./infra/reducers/progress";
-import timeline from "./timeline/reducer";
+// import timeline from "./timeline/reducer";
 
 declare var window: any;
 
@@ -32,7 +32,7 @@ export function createMainStore() {
 
   const rootReducer = combineReducers({
     ...reducers,
-    timeline // TODO put this in module definitions
+    // timeline // TODO put this in module definitions
   });
 
   const enhancer = applyMiddleware(thunkMiddleware);
