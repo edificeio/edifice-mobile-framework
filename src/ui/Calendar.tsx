@@ -189,6 +189,7 @@ export default class Calendar extends React.PureComponent<CalendarProps, Calenda
         : side === "r"
         ? styles.elementContainerRight
         : styles.elementContainerLeft;
+
     return (
       <View
         style={[
@@ -411,16 +412,15 @@ const styles = StyleSheet.create({
     top: "50%",
     width: "100%",
     borderColor: CommonStyles.missingGrey,
-    borderStyle: "dashed",
-    borderBottomWidth: 1,
+    borderStyle: "dotted",
+    borderWidth: 1,
     borderRadius: 1,
   },
   elementContainer: {
     position: "absolute",
     borderStyle: "solid",
     borderRadius: 10,
-    borderBottomColor: "rgba(0, 0, 0, 0)",
-    borderBottomWidth: 2,
+    borderColor: "rgba(0, 0, 0, 0)",
     overflow: "hidden",
   },
   elementContainerFull: {
