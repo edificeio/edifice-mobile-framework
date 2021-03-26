@@ -11,6 +11,7 @@ import { EmptyScreen } from "../../../ui/EmptyScreen";
 import { Text, TextBold } from "../../../ui/text";
 import { isHomeworkDone, homeworkDetailsAdapter, sessionDetailsAdapter, getTeacherName } from "../../utils/cdt";
 import ChildPicker from "../../viesco/containers/ChildPicker";
+import { ISession } from "../state/sessions";
 import { HomeworkItem, SessionItem } from "./Items";
 
 const style = StyleSheet.create({
@@ -35,7 +36,7 @@ enum SwitchState {
 type HomeworkListProps = {
   updateHomeworkProgress?: any;
   homeworks: any;
-  sessions: any;
+  sessions: ISession[];
   personnel: any;
   isFetchingHomework: boolean;
   isFetchingSession: boolean;
@@ -232,7 +233,7 @@ const SessionList = ({ isFetching, onRefreshSessions, sessionList, onSessionTap,
       ) : (
         sessionList.map(
           (session, index, list) =>
-            session.description !== "" && (
+            !hasEmptyDescription(session) && (
               <View>
                 {index === 0 ||
                 moment(session.date).format("DD/MM/YY") !== moment(list[index - 1].date).format("DD/MM/YY") ? (
@@ -249,4 +250,15 @@ const SessionList = ({ isFetching, onRefreshSessions, sessionList, onSessionTap,
       )}
     </ScrollView>
   );
+};
+
+const hasEmptyDescription = (session: ISession) => {
+  // recupere html's description tag and search "body" tag
+  const regexp = /<(\w+)>[^<]+<\/\1>|[^<>]+/g;
+  const htmlTags = session.description.match(regexp) as string[];
+  if (!htmlTags) return true;
+  const index = htmlTags.findIndex(item => item === "body") as number;
+
+  if (session.description === "" || index === -1 || htmlTags[index + 1] === "/body") return true;
+  return false;
 };
