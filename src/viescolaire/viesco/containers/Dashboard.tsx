@@ -6,6 +6,7 @@ import { getSessionInfo } from "../../../App";
 import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
 import ConnectionTrackingBar from "../../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../../ui/ContainerContent";
+import DashboardEmpty from "./DashboardEmpty";
 import DashboardRelative from "./DashboardRelative";
 import DashboardStudent from "./DashboardStudent";
 import DashboardTeacher from "./DashboardTeacher";
@@ -27,6 +28,8 @@ export default class Dashboard extends React.PureComponent<{ navigation: { navig
         return DashboardStudent;
       case "Relative":
         return DashboardRelative;
+      default:
+        return DashboardEmpty;
     }
   };
 
