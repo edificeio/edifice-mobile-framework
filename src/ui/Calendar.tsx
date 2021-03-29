@@ -200,7 +200,6 @@ export default class Calendar extends React.PureComponent<CalendarProps, Calenda
             height,
             borderWidth,
             borderColor,
-            borderBottomColor: borderColor || styles.elementContainer.borderBottomColor,
           },
         ]}>
         {renderFunction()}
@@ -291,7 +290,7 @@ export default class Calendar extends React.PureComponent<CalendarProps, Calenda
     const borderWidth = displayedStart.isBefore(moment()) && displayedEnd.isAfter(moment()) ? 2 : 0;
     const borderColor = displayedStart.isBefore(moment()) && displayedEnd.isAfter(moment()) ? mainColor : undefined;
 
-    return this.renderElementContainer(top, height, borderWidth, borderColor, () => renderElement(elem), side);
+    return this.renderElementContainer(top, height - 5, borderWidth, borderColor, () => renderElement(elem), side);
   };
 
   renderScrollViewWithoutSlots = (): JSX.Element => {
@@ -330,8 +329,8 @@ export default class Calendar extends React.PureComponent<CalendarProps, Calenda
           {slots!.map((slot, i) => (
             <Text style={[styles.slotDisplay, { top: slotHeight! * i }]}>{moment(slot.startHour).format("LT")}</Text>
           ))}
-          {slots!.map((slot, i) => <EmptySlot height={slotHeight!} top={slotHeight! * i} />)}
-          {hideSlots || slots!.map((slot, i) => <Slot height={slotHeight!} top={slotHeight! * i} />)}
+          {slots!.map((slot, i) => <EmptySlot height={slotHeight! - 5} top={slotHeight! * i} />)}
+          {hideSlots || slots!.map((slot, i) => <Slot height={slotHeight! - 5} top={slotHeight! * i} />)}
           {organizedColumns[0].map(d => this.renderElementContainerWhithSlots(d, renderElement))}
           {organizedColumns[1].map(d =>
             this.renderElementContainerWhithSlots(d, renderHalf ? renderHalf : renderElement, "l")
@@ -409,7 +408,7 @@ const styles = StyleSheet.create({
     borderStyle: "solid",
   },
   lineSeparator: {
-    top: "50%",
+    top: 10,
     width: "100%",
     borderColor: CommonStyles.missingGrey,
     borderStyle: "dotted",

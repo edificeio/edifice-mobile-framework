@@ -253,7 +253,7 @@ const SessionList = ({ isFetching, onRefreshSessions, sessionList, onSessionTap,
 };
 
 const hasEmptyDescription = (session: ISession) => {
-  // recupere html's description tag and search "body" tag
+  // retrieve html description tag and search "body" tag
   const regexp = /<(\w+)>[^<]+<\/\1>|[^<>]+/g;
   const htmlTags = session.description.match(regexp) as string[];
   if (!htmlTags) return true;
