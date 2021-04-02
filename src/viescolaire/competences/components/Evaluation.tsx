@@ -1,17 +1,53 @@
 import I18n from "i18n-js";
-import moment from "moment";
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
 
+import { Loading } from "../../../ui";
 import { PageContainer } from "../../../ui/ContainerContent";
 import Dropdown from "../../../ui/Dropdown";
 import { EmptyScreen } from "../../../ui/EmptyScreen";
 import { Text, TextBold } from "../../../ui/text";
 import ChildPicker from "../../viesco/containers/ChildPicker";
-import { IPeriod } from "../../viesco/state/periods";
+import { IPeriodsList } from "../../viesco/state/periods";
+import { ISubjectListState } from "../../viesco/state/subjects";
+import { IDevoirListState } from "../state/devoirs";
+import { IMoyenneListState } from "../state/moyennes";
 import { GradesDevoirs, GradesDevoirsMoyennes } from "./Item";
 
-export default class Competences extends React.PureComponent<any, any> {
+// eslint-disable-next-line flowtype/no-types-missing-file-annotation
+export type ICompetencesProps = {
+  devoirsList: IDevoirListState;
+  devoirsMoyennesList: IMoyenneListState;
+  subjects: ISubjectListState;
+  userType: string;
+  periods: IPeriodsList;
+  groupId: string;
+  structureId: string;
+  childId: string;
+  getDevoirs: (structureId: string, studentId: string, period?: string, matiere?: string) => void;
+  getDevoirsMoyennes: (structureId: string, studentId: string, period?: string) => void;
+  getPeriods: (structureId: string, groupId: string) => void;
+};
+
+enum ScreenDisplay {
+  DASHBOARD,
+  PERIOD,
+  DISCIPLINE,
+}
+
+type ISelectedPeriod = { type: string; value: string | undefined };
+
+type ICompetencesState = {
+  devoirs: any;
+  fetching: boolean;
+  subjectsList: any;
+  screenDisplay: ScreenDisplay;
+  selectedDiscipline: string;
+  selectedPeriod: ISelectedPeriod;
+  disciplineId: string;
+};
+
+export default class Competences extends React.PureComponent<ICompetencesProps, ICompetencesState> {
   constructor(props) {
     super(props);
 
@@ -20,70 +56,71 @@ export default class Competences extends React.PureComponent<any, any> {
       devoirs: devoirsList.data,
       fetching: devoirsList.isFetching || devoirsMoyennesList.isFetching,
       subjectsList: this.props.subjects.data,
-      screenDisplay: "dashboard",
-      selectedDiscipline: "Disciplines",
-      selectedPeriod: "Période",
+      screenDisplay: ScreenDisplay.DASHBOARD,
+      selectedDiscipline: I18n.t("viesco-competences-disciplines"),
+      selectedPeriod: { type: I18n.t("viesco-competences-period"), value: undefined },
       disciplineId: "",
-      startDate: moment(),
-      endDate: moment(),
     };
   }
 
   componentDidMount() {
-    this.props.getDevoirs();
-    this.props.getPeriods(this.props.structureId, this.props.groupId);
-    this.props.getYear();
+    const { structureId, childId, groupId } = this.props;
+    this.props.getDevoirs(structureId, childId);
+    this.props.getPeriods(structureId, groupId);
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  // Update when changing child with relative account
+  componentWillUpdate(nextProps) {
+    const { structureId, childId } = this.props;
+    const { selectedPeriod } = this.state;
+
+    if (this.props.childId !== nextProps.childId && this.state.screenDisplay === ScreenDisplay.PERIOD)
+      this.props.getDevoirsMoyennes(structureId, childId, selectedPeriod.value!);
+    else if (this.props.childId !== nextProps.childId)
+      this.props.getDevoirs(structureId, childId, selectedPeriod.value, this.state.disciplineId!);
+  }
+
+  // Update devoirsList after new fetch
+  componentDidUpdate(prevProps) {
     const { devoirsList, devoirsMoyennesList } = this.props;
-    const fetching = devoirsList.isFetching || devoirsMoyennesList;
-    if (prevProps.devoirsList !== this.state.devoirs && this.state.screenDisplay !== "period") {
-      this.setState({
-        devoirs: devoirsList.data,
-        fetching,
-      });
-    } else if (prevProps.devoirsMoyennesList !== this.state.devoirs && this.state.screenDisplay === "period") {
-      this.setState({
-        devoirs: devoirsMoyennesList.data,
-        fetching,
-      });
+    const { devoirs, screenDisplay } = this.state;
+
+    const fetching = devoirsList.isFetching || devoirsMoyennesList.isFetching;
+    if (prevProps.devoirsList !== devoirs && screenDisplay !== ScreenDisplay.PERIOD) {
+      this.setState({ devoirs: devoirsList.data, fetching });
+    } else if (prevProps.devoirsMoyennesList !== devoirs && screenDisplay === ScreenDisplay.PERIOD) {
+      this.setState({ devoirs: devoirsMoyennesList.data, fetching });
     }
   }
 
   screenRenderOpt = () => {
-    if (this.state.selectedPeriod !== "Période" && this.state.selectedDiscipline === "Disciplines") {
-      this.setState({ screenDisplay: "period" });
-    } else if (this.state.selectedDiscipline !== "Disciplines") {
-      this.setState({ screenDisplay: "discipline" });
-    } else {
-      this.setState({ screenDisplay: "dashboard" });
-    }
-  };
+    const { selectedPeriod, selectedDiscipline } = this.state;
 
-  renderOption = item => {
-    if (item === parseInt(item, 10)) {
-      return I18n.t("viesco-trimester") + " " + item;
-    } else if (item === "Période") {
-      return "Période";
+    if (
+      selectedPeriod.type !== I18n.t("viesco-competences-period") &&
+      selectedDiscipline === I18n.t("viesco-competences-disciplines")
+    ) {
+      this.setState({ screenDisplay: ScreenDisplay.PERIOD });
+    } else if (selectedDiscipline !== I18n.t("viesco-competences-disciplines")) {
+      this.setState({ screenDisplay: ScreenDisplay.DISCIPLINE });
     } else {
-      return I18n.t("viesco-year");
+      this.setState({ screenDisplay: ScreenDisplay.DASHBOARD });
     }
   };
 
   private renderDevoirsByPeriod() {
+    const { devoirsMoyennesList } = this.props;
+    const { devoirs, selectedPeriod } = this.state;
     return (
       <View style={{ height: "78%" }}>
-        {this.state.devoirs !== undefined &&
-        this.state.devoirs.length > 0 &&
-        this.props.devoirsMoyennesList.data === this.state.devoirs ? (
-          <View style={{ flex: 1 }}>
-            <View style={{ flexDirection: "row" }}>
-              <TextBold style={{ marginBottom: 10 }}>{this.renderOption(this.state.selectedPeriod)}</TextBold>
-              <Text>- {I18n.t("viesco-average").toUpperCase()}</Text>
-            </View>
-            <GradesDevoirsMoyennes devoirs={this.state.devoirs} />
-          </View>
+        <View style={{ flexDirection: "row" }}>
+          <TextBold style={{ marginBottom: 10 }}>{selectedPeriod.type}</TextBold>
+          <Text>- {I18n.t("viesco-average").toUpperCase()}</Text>
+        </View>
+        {devoirsMoyennesList.isFetching ? (
+          <Loading />
+        ) : devoirs !== undefined && devoirs.length > 0 && devoirs === devoirsMoyennesList.data ? (
+          <GradesDevoirsMoyennes devoirs={devoirs} />
         ) : (
           <EmptyScreen
             imageSrc={require("../../../../assets/images/empty-screen/empty-evaluations.png")}
@@ -97,18 +134,22 @@ export default class Competences extends React.PureComponent<any, any> {
   }
 
   private renderDevoirsList() {
+    const { devoirsList } = this.props;
+    const { devoirs, selectedPeriod, selectedDiscipline, screenDisplay } = this.state;
     return (
       <View style={{ height: "78%" }}>
-        {this.state.screenDisplay === "dashboard" && this.props.devoirsList.data === this.state.devoirs ? (
+        {screenDisplay === ScreenDisplay.DASHBOARD ? (
           <TextBold style={{ marginBottom: 10 }}>{I18n.t("viesco-last-grades")}</TextBold>
         ) : (
           <View style={{ flexDirection: "row" }}>
-            <TextBold style={{ marginBottom: 10 }}>{this.state.selectedDiscipline}&ensp;</TextBold>
-            <Text style={{ color: "#AFAFAF" }}>{this.renderOption(this.state.selectedPeriod)}</Text>
+            <TextBold style={{ marginBottom: 10 }}>{selectedDiscipline}&ensp;</TextBold>
+            <Text style={{ color: "#AFAFAF" }}>{selectedPeriod.type}</Text>
           </View>
         )}
-        {this.state.devoirs !== undefined && this.state.devoirs.length > 0 ? (
-          <GradesDevoirs devoirs={this.state.devoirs} />
+        {devoirsList.isFetching ? (
+          <Loading />
+        ) : devoirs !== undefined && devoirs.length > 0 && devoirs === devoirsList.data ? (
+          <GradesDevoirs devoirs={devoirs} />
         ) : (
           <EmptyScreen
             imageSrc={require("../../../../assets/images/empty-screen/empty-evaluations.png")}
@@ -122,75 +163,73 @@ export default class Competences extends React.PureComponent<any, any> {
   }
 
   private initDevoirsByDisciplines(discipline) {
-    let subjectId = "";
-    if (discipline !== "Disciplines") {
-      subjectId = this.state.subjectsList.find(item => item.subjectLabel === discipline).subjectId;
+    const { structureId, childId } = this.props;
+    const { subjectsList, selectedPeriod } = this.state;
 
-      if (this.state.selectedPeriod !== "Période") {
-        this.props.getDevoirs(subjectId, this.state.startDate, this.state.endDate);
+    let subjectId = "";
+    if (discipline !== I18n.t("viesco-competences-disciplines")) {
+      subjectId = subjectsList.find(item => item.subjectLabel === discipline).subjectId;
+
+      if (selectedPeriod.type !== I18n.t("viesco-competences-period")) {
+        this.props.getDevoirs(structureId, childId, selectedPeriod.value!, subjectId);
       } else {
-        this.props.getDevoirs(subjectId);
+        this.props.getDevoirs(structureId, childId, selectedPeriod.value!, subjectId);
       }
-    }
+    } else this.props.getDevoirs(structureId, childId);
     this.setState({ selectedDiscipline: discipline, disciplineId: subjectId }, this.screenRenderOpt);
   }
 
-  private initPeriodsDates(period) {
-    const { periods, year } = this.props;
-    if (period === "Période") {
-      this.setState({ startDate: moment() });
-      this.setState({ endDate: moment() });
-    } else if (period === year.data) {
-      this.setState({ startDate: period.start_date });
-      this.setState({ endDate: period.end_date });
-    } else {
-      const trimester = periods.data.find(order => period);
-      this.setState({ startDate: trimester.start_date });
-      this.setState({ endDate: trimester.end_date });
-    }
-  }
+  private initDevoirsByPeriods(period: ISelectedPeriod) {
+    const { structureId, childId } = this.props;
+    const { disciplineId } = this.state;
 
-  private initDevoirsByPeriods(period) {
-    this.initPeriodsDates(period);
-    if (this.state.disciplineId === "") {
-      this.props.getDevoirsMoyennes(this.state.startDate, this.state.endDate);
+    if (disciplineId === "") {
+      this.props.getDevoirsMoyennes(structureId, childId, period.value!);
     } else {
-      this.props.getDevoirs(this.state.disciplineId, this.state.startDate, this.state.endDate);
+      this.props.getDevoirs(structureId, childId, period.value!, disciplineId);
     }
     this.setState({ selectedPeriod: period }, this.screenRenderOpt);
   }
 
   private displayDisciplinesDropdown() {
     let disciplines = this.state.subjectsList.map(({ subjectLabel }) => subjectLabel);
-    disciplines.unshift("Disciplines");
+    disciplines.unshift(I18n.t("viesco-competences-disciplines"));
 
     return (
       // TODO adapt to new Dropdown
-      // <Dropdown
-      //   data={Object.values(disciplines)}
-      //   value={this.state.selectedDiscipline}
-      //   onSelect={(discipline: string) => this.initDevoirsByDisciplines(discipline)}
-      //   renderItem={(item: string) => item}
-      // />
-      <View />
+      <Dropdown
+        data={Object.values(disciplines)}
+        value={this.state.selectedDiscipline}
+        onSelect={(discipline: string) => this.initDevoirsByDisciplines(discipline)}
+        renderItem={(item: string) => item}
+      />
     );
   }
 
   private displayPeriodsDropdown() {
-    const { periods, year } = this.props;
-    let periodsList = ["Période"];
-    periods.data.map(({ order }) => periodsList.push(order));
-    periodsList.push(year.data);
+    const { selectedPeriod } = this.state;
+    let periodsList = [{ type: I18n.t("viesco-competences-period"), value: undefined }] as ISelectedPeriod[];
+    this.props.periods.map(({ order, type }) =>
+      periodsList.push({
+        type: `${I18n.t("viesco-competences-period-" + type) + " " + order}`,
+        value: order.toString(),
+      })
+    );
+    periodsList.push({ type: I18n.t("viesco-year"), value: undefined });
 
     return (
       // TODO adapt to new Dropdown
-      // <Dropdown
-      //   data={Object.values(periodsList)}
-      //   value={this.state.selectedPeriod}
-      //   onSelect={(period: string) => this.initDevoirsByPeriods(period)}
-      //   renderItem={(item: IPeriod) => this.renderOption(item)}
-      // />
-      <View />
+      <Dropdown
+        data={periodsList.map(x => x.type)}
+        value={selectedPeriod.type}
+        onSelect={(key: string) => {
+          const elem = periodsList.find(item => item.type === key);
+          if (elem !== undefined && elem.type !== selectedPeriod.type) {
+            this.initDevoirsByPeriods(elem);
+          }
+        }}
+        renderItem={(item: string) => item}
+      />
     );
   }
 
@@ -201,10 +240,10 @@ export default class Competences extends React.PureComponent<any, any> {
         <View style={styles.dashboardPart}>
           <Text style={styles.subtitle}>{I18n.t("viesco-report-card")}</Text>
           <View style={styles.containerDropdowns}>
-            {this.displayDisciplinesDropdown()}
             {this.displayPeriodsDropdown()}
+            {this.displayDisciplinesDropdown()}
           </View>
-          {this.state.screenDisplay === "period" ? this.renderDevoirsByPeriod() : this.renderDevoirsList()}
+          {this.state.screenDisplay === ScreenDisplay.PERIOD ? this.renderDevoirsByPeriod() : this.renderDevoirsList()}
         </View>
       </PageContainer>
     );
@@ -213,10 +252,10 @@ export default class Competences extends React.PureComponent<any, any> {
 
 const styles = StyleSheet.create({
   subtitle: { color: "#AFAFAF", paddingVertical: 8 },
-  dashboardPart: { paddingVertical: 8, paddingHorizontal: 15 },
+  dashboardPart: { paddingVertical: 8, paddingHorizontal: 15, flex: 1 },
   containerDropdowns: {
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
     alignItems: "center",
     marginTop: 10,
     paddingBottom: 10,

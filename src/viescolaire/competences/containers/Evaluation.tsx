@@ -1,5 +1,6 @@
 import I18n from "i18n-js";
 import * as React from "react";
+import { View } from "react-native";
 import { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -8,16 +9,15 @@ import { getSessionInfo } from "../../../App";
 import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
 import { PageContainer } from "../../../ui/ContainerContent";
 import { HeaderBackAction } from "../../../ui/headers/NewHeader";
-import { fetchPeriodsListAction, fetchYearAction } from "../../viesco/actions/periods";
+import { fetchPeriodsListAction } from "../../viesco/actions/periods";
 import { getSelectedChild, getSelectedChildStructure } from "../../viesco/state/children";
-import { getPeriodsListState, getYearState } from "../../viesco/state/periods";
+import { getPeriodsListState } from "../../viesco/state/periods";
 import { getSubjectsListState } from "../../viesco/state/subjects";
 import { fetchDevoirListAction } from "../actions/devoirs";
 import { fetchDevoirMoyennesListAction } from "../actions/moyennes";
 import Competences from "../components/Evaluation";
 import { getDevoirListState } from "../state/devoirs";
 import { getMoyenneListState } from "../state/moyennes";
-import { View } from "react-native";
 
 export class Evaluation extends React.PureComponent<{ navigation: { navigate } }, any> {
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<any> }) => {
@@ -25,7 +25,7 @@ export class Evaluation extends React.PureComponent<{ navigation: { navigate } }
       {
         title: I18n.t("viesco-tests"),
         headerLeft: <HeaderBackAction navigation={navigation} />,
-        headerRight: <View/>,
+        headerRight: <View />,
         headerStyle: {
           backgroundColor: "#F95303",
         },
@@ -45,7 +45,7 @@ export class Evaluation extends React.PureComponent<{ navigation: { navigate } }
 
 const mapStateToProps: (state: any) => any = state => {
   const userType = getSessionInfo().type;
-  const childId = userType === "Student" ? getSessionInfo().id : getSelectedChild(state).id;
+  const childId = userType === "Student" ? getSessionInfo().userId : getSelectedChild(state)?.id;
   const groupId =
     userType === "Student"
       ? getSessionInfo().classes[0]
@@ -59,10 +59,10 @@ const mapStateToProps: (state: any) => any = state => {
     devoirsMoyennesList: getMoyenneListState(state),
     subjects: getSubjectsListState(state),
     userType,
-    periods: getPeriodsListState(state),
-    year: getYearState(state),
+    periods: getPeriodsListState(state).data,
     groupId,
     structureId,
+    childId,
   };
 };
 
@@ -72,7 +72,6 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
       getDevoirs: fetchDevoirListAction,
       getDevoirsMoyennes: fetchDevoirMoyennesListAction,
       getPeriods: fetchPeriodsListAction,
-      getYear: fetchYearAction,
     },
     dispatch
   );

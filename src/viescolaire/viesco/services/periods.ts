@@ -7,6 +7,7 @@ export type IPeriodsBackend = {
   timestamp_dt: string;
   timestamp_fn: string;
   ordre: number;
+  type: number;
 }[];
 
 export type IYearBackend = {
@@ -19,6 +20,7 @@ const periodsListAdapter: (data: IPeriodsBackend) => IPeriodsList = data => {
     start_date: moment(p.timestamp_dt),
     end_date: moment(p.timestamp_fn),
     order: p.ordre,
+    type: p.type,
   }));
 };
 

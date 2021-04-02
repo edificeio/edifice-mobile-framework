@@ -1,16 +1,25 @@
-import moment from "moment";
-
 import { createAsyncActionTypes, AsyncState } from "../../../infra/redux/async2";
 import viescoConfig from "../../config";
 
 // THE MODEL --------------------------------------------------------------------------------------
 
 export interface IDevoir {
-  id: string;
-  date: moment.Moment;
-  subject: string;
+  teacher: string;
+  date: string;
+  title: string;
   matiere: string;
-  note: number
+  diviseur: number;
+  coefficient: string;
+  note: string;
+  moyenne: string;
+  competences: {
+    nom: string;
+    id: number;
+    id_devoir: number;
+    id_eleve: string;
+    id_competence: number;
+    evaluation: number;
+  }[];
 }
 
 export type IDevoirList = IDevoir[];

@@ -5,10 +5,16 @@ import viescoConfig from "../../config";
 
 export interface IMoyenne {
   matiere: string;
-  note: number;
-  total: number;
+  matiere_coeff: number;
+  matiere_rank: number;
   teacher: string;
-  moySousMatiere: { matiere: string; note: number; total: number }[];
+  moyenne: string;
+  devoirs: {
+    note: string;
+    diviseur: number;
+    name: string;
+    coefficient: number;
+  }[];
 }
 
 export type IMoyenneList = IMoyenne[];

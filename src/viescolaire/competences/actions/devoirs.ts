@@ -15,12 +15,12 @@ export const dataActions = createAsyncActionCreators<IDevoirList>(actionTypes);
 
 // THUNKS -----------------------------------------------------------------------------------------
 
-export function fetchDevoirListAction() {
+export function fetchDevoirListAction(structureId: string, eleve: string, periods?: string, matiere?: string) {
   return async (dispatch: Dispatch) => {
     try {
       dispatch(dataActions.clear());
       dispatch(dataActions.request());
-      const data = await devoirListService.get();
+      const data = await devoirListService.get(structureId, eleve, periods!, matiere!);
       dispatch(dataActions.receipt(data));
     } catch (errmsg) {
       dispatch(dataActions.error(errmsg));
