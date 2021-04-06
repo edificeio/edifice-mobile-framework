@@ -11,7 +11,7 @@ import { Icon, Loading } from "../../ui";
 import { HeaderBackAction, HeaderAction } from "../../ui/headers/NewHeader";
 import { GridAvatars } from "../../ui/avatars/GridAvatars";
 import { TextBold, TextLight } from "../../ui/text";
-import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
+import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { A } from "../../ui/Typography";
 import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { PageContainer } from "../../myAppMenu/components/NewContainerContent";
@@ -83,7 +83,7 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
         >
           <ScrollView alwaysBounceVertical={false} contentContainerStyle={{ flexGrow: 1 }}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} style={{ height: '100%' }}>
-              <ConnectionTrackingBar />
+              <DEPRECATED_ConnectionTrackingBar />
               <View
                 style={{
                   paddingHorizontal: 20,

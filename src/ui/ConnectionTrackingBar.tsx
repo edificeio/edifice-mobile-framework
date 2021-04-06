@@ -32,7 +32,7 @@ const container = {
   backgroundColor: "#FFFFFF"
 };
 
-export class ConnectionTrackingBar extends React.Component<
+export class DEPRECATED_ConnectionTrackingBar extends React.Component<
   {
     connected: boolean;
     watch: () => void;
@@ -167,4 +167,4 @@ export default connect(
     watch: () => watchConnection(dispatch)(),
     check: () => checkConnection(dispatch)()
   })
-)(ConnectionTrackingBar);
+)(DEPRECATED_ConnectionTrackingBar);

@@ -4,7 +4,7 @@ import thunkMiddleware from "redux-thunk";
 import moduleDefinitions from "./AppModules";
 import { getReducersFromModuleDefinitions } from "./infra/moduleTool";
 import { getModuleReducers } from "./framework/moduleTool";
-import AllModules from "./AllModules";
+import AllModules from "./framework/app/AllModules";
 
 import notifiers from "./infra/notifier/reducer";
 import connectionTracker from "./infra/reducers/connectionTracker";

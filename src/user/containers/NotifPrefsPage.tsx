@@ -18,7 +18,7 @@ import { Back } from "../../ui/headers/Back";
 import { Header, HeaderIcon, Title } from "../../ui/headers/Header";
 
 import { Loading } from "../../ui";
-import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
+import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
 import { H4 } from "../../ui/Typography";
 import { NotifPrefLine } from "../components/NotifPrefLine";
@@ -166,7 +166,7 @@ export class NotifPrefsPage extends React.PureComponent<
 
     return (
       <PageContainer>
-        <ConnectionTrackingBar />
+        <DEPRECATED_ConnectionTrackingBar />
         <ScrollView>
           <H4>{I18n.t("directory-notificationsTitle")}</H4>
           {notifPrefsLines
