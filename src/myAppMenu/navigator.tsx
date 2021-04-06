@@ -5,10 +5,8 @@ import I18n from "i18n-js";
 
 import { IAppModule } from "../infra/moduleTool/types";
 import { getRoutes, getModules } from "../navigation/helpers/navBuilder";
-import { standardNavScreenOptions, alternativeNavScreenOptions } from "../navigation/helpers/navScreenOptions";
-import { HeaderAction, HeaderBackAction } from "../ui/headers/NewHeader";
+import { standardNavScreenOptions } from "../navigation/helpers/navScreenOptions";
 import MyAppGrid from "./components/MyAppGrid";
-import NotificationListPage from "./containers/NotificationListPage";
 
 const MyAppGridContainer = (modules: IAppModule[]) => createStackNavigator({
   myAppsGrid: {
@@ -17,11 +15,6 @@ const MyAppGridContainer = (modules: IAppModule[]) => createStackNavigator({
       standardNavScreenOptions(
         {
           title: I18n.t("MyApplications"),
-          headerRight: <HeaderAction
-            onPress={() => { navigation.navigate('notifications') }}
-            name="icon-notif-on"
-            iconSize={24}
-          />,
           headerLeftContainerStyle: {
             alignItems: "flex-start"
           },
@@ -34,17 +27,6 @@ const MyAppGridContainer = (modules: IAppModule[]) => createStackNavigator({
         },
         navigation
       ),
-  },
-  notifications: {
-    screen: NotificationListPage,
-    navigationOptions: ({ navigation }: { navigation: NavigationScreenProp<{}> }) =>
-    alternativeNavScreenOptions(
-      {
-        title: I18n.t("Notifications"),
-        headerLeft: <HeaderBackAction navigation={navigation} />,
-      },
-      navigation
-    ),
   }
 });
 
