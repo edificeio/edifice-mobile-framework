@@ -2,13 +2,13 @@ import * as React from "react";
 import { View, Image, Dimensions, TouchableOpacity, ImageSourcePropType, ViewStyle } from "react-native";
 import I18n from "i18n-js";
 
-import { Toggle } from "../../ui/forms/Toggle";
 import { IconButton } from "../../ui/IconButton";
 import { getItemJson, setItemJson, removeItemJson } from "../storage";
 import theme from "../theme";
 import { Card, InfoCard } from "./card";
 import { FlatButton } from "../../ui";
 import { Text, TextBold } from "./text";
+import { Toggle } from "./toggle";
 
 export interface IInfoBubbleProps {
   infoText: string;
@@ -115,8 +115,7 @@ export class InfoBubble extends React.PureComponent<IInfoBubbleProps, IInfoBubbl
           <Text style={{marginRight: 10, fontSize: 12}}>{I18n.t("common.infoBubble-doNotShow")}</Text>
           <Toggle
             checked={acknowledgeToggle}
-            onCheck={() => this.doAcknowledge(true)}
-            onUncheck={() => this.doAcknowledge(false)}
+            onCheckChange={() => this.doAcknowledge(!acknowledgeToggle)}
           />
         </View>
       </InfoCard> 
