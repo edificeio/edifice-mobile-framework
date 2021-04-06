@@ -1,12 +1,14 @@
-import { Action } from "redux";
+import { Action, AnyAction } from "redux";
 import { AsyncState, createAsyncActionCreators, createAsyncActionTypes, createSessionAsyncReducer } from "../../../../redux/async";
+import { IReducerActionsHandlerMap } from "../../../../redux/reducerFactory";
 import moduleConfig from "../../moduleConfig";
 
 // State
 
 export interface INotifFilterSettings { [type: string]: boolean; }
 
-export type INotifFilterSettings_State = AsyncState<INotifFilterSettings>;
+export type INotifFilterSettings_State_Data = INotifFilterSettings;
+export type INotifFilterSettings_State = AsyncState<INotifFilterSettings_State_Data>;
 
 // Reducer
 
@@ -27,15 +29,15 @@ export const actions = {
     setError: (selectedFilters: INotifFilterSettings) => ({ type: actionTypes.setError, selectedFilters })
 };
 
-const actionsHandlerMap = {
+const actionsHandlerMap: IReducerActionsHandlerMap<INotifFilterSettings_State_Data> = {
     [actionTypes.put]: (s, a) => {
         const action = a as Action & { data: INotifFilterSettings };
-        return { ...s, ...a.data };
+        return { ...s, ...action.data };
     },
     [actionTypes.setRequest]: s => s,
     [actionTypes.setReceipt]: (s, a) => {
-        const action = a as Action & { data: INotifFilterSettings };
-        return { ...s, ...a.selectedFilters };
+        const action = a as Action & { selectedFilters: INotifFilterSettings };
+        return { ...s, ...action.selectedFilters };
     },
     [actionTypes.setError]: s => s
 }
