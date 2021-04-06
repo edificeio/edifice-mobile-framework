@@ -1,6 +1,6 @@
 import I18n from "i18n-js";
 import * as React from "react";
-import { FlatList, Text } from "react-native";
+import { FlatList, Text, TouchableOpacity } from "react-native";
 import { NavigationInjectedProps } from "react-navigation";
 import { connect } from "react-redux";
 import { ThunkDispatch } from "redux-thunk";
@@ -94,26 +94,23 @@ export class TimelineFiltersScreen extends React.PureComponent<
         data={notifFilters}
         ListHeaderComponent={notifFilters.length < 2
           ? null
-          : <ListItem
-              leftElement={
-                <Text style={{color: theme.color.text.heavy}}>
-                  {I18n.t("common.all")}
-                </Text>
-              }
-              rightElement={
-                <Checkbox
-                  customCheckboxColor={!someNotSet ? theme.color.text.light : undefined}
-                  customContainerStyle={{backgroundColor: theme.color.background.card, borderColor: theme.color.text.light, borderWidth: 2}}
-                  checked={!someNotSet}
-                  onPress={() => {
-                    let updatedSelectedFilters = selectedFilters;
-                    const selectedFiltersKeys = Object.keys(selectedFilters);
-                    selectedFiltersKeys.forEach(element => updatedSelectedFilters[element] = someNotSet);
-                    this.setState({selectedFilters: {...updatedSelectedFilters}});
-                  }}
-                />
-              }
-            />
+          : <TouchableOpacity onPress={() => this.doToggleAllFilters()}>
+              <ListItem
+                  leftElement={
+                    <Text style={{color: theme.color.text.heavy}}>
+                      {I18n.t("common.all")}
+                    </Text>
+                  }
+                  rightElement={
+                    <Checkbox
+                      customCheckboxColor={!someNotSet ? theme.color.text.light : undefined}
+                      customContainerStyle={{backgroundColor: theme.color.background.card, borderColor: theme.color.text.light, borderWidth: 2}}
+                      checked={!someNotSet}
+                      onPress={() => this.doToggleAllFilters()}
+                    />
+                  }
+              />
+            </TouchableOpacity>
         }
         renderItem={({ item }) => this.renderFilterItem(item)}
       />
@@ -123,27 +120,43 @@ export class TimelineFiltersScreen extends React.PureComponent<
   renderFilterItem(item: INotificationFilter) {
     const { selectedFilters } = this.state
     return (
-      <ListItem
-        leftElement={
-          <Text style={{color: theme.color.text.heavy}}>
-            {I18n.t(item.i18n)}
-          </Text>
-        }
-        rightElement={
-          <Checkbox
-            checked={selectedFilters[item.type]}
-            onPress={() => this.setState({
-              selectedFilters: {...selectedFilters, [item.type]: !selectedFilters[item.type]}
-            })}
-          />
-        }
-      />
+      <TouchableOpacity onPress={() => this.doToggleFilter(item)}>
+        <ListItem
+          leftElement={
+            <Text style={{color: theme.color.text.heavy}}>
+              {I18n.t(item.i18n)}
+            </Text>
+          }
+          rightElement={
+            <Checkbox
+              checked={selectedFilters[item.type]}
+              onPress={() => this.doToggleFilter(item)}
+            />
+          }
+        />
+      </TouchableOpacity>
     );
   }
 
   // LIFECYCLE ====================================================================================
 
   // METHODS ======================================================================================
+
+  doToggleFilter(item: INotificationFilter) {
+    const { selectedFilters } = this.state;
+    this.setState({
+      selectedFilters: {...selectedFilters, [item.type]: !selectedFilters[item.type]}
+    })
+  }
+
+  doToggleAllFilters() {
+    const { selectedFilters } = this.state;
+    const someNotSet = Object.values(selectedFilters).some(value => !value);
+    const selectedFiltersKeys = Object.keys(selectedFilters);
+    let updatedSelectedFilters = selectedFilters;
+    selectedFiltersKeys.forEach(element => updatedSelectedFilters[element] = someNotSet);
+    this.setState({selectedFilters: {...updatedSelectedFilters}});
+  }
 
   async doSetFilters(selectedFilters: INotifFilterSettings) {
     const { handleSetFilters, navigation } = this.props;
