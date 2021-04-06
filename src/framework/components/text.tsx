@@ -44,6 +44,14 @@ export const TextColor: {[k in 'Action' | 'Error' | 'Warning' | 'Inverse' | 'Lig
  */
 export const rem = (ratio: number) => fontSize * ratio;
 
+export enum FontSize { // in rem
+    Tiny = rem(10 / 14),
+    Small = rem(12 / 14),
+    Normal = rem(1),
+    Big = rem(16 / 14),
+    Huge = rem(2)
+}
+
 export const Text = styled.Text({
     fontFamily, fontSize, lineHeight, color: TextColor.Normal
 })

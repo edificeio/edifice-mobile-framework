@@ -1,6 +1,6 @@
 import { createStackNavigator } from "react-navigation-stack";
 
-import NotifPrefsPage, {
+import {
   NotifPrefsPageNavigationOptions
 } from "./containers/NotifPrefsPage";
 import UserPage, { UserPageNavigationOptions } from "./containers/UserPage";
@@ -9,6 +9,7 @@ import ChangePasswordPage from "./containers/ChangePasswordPage";
 import StructuresPage from "./containers/StructuresPage";
 import RelativesPage from "./containers/RelativesPage";
 import ChildrenPage from "./containers/ChildrenPage";
+import PushNotifsSettingsScreen from "./containers/PushNotifsSettingsScreen";
 
 export default createStackNavigator({
   Profile: {
@@ -18,7 +19,7 @@ export default createStackNavigator({
 
   NotifPrefs: {
     navigationOptions: NotifPrefsPageNavigationOptions,
-    screen: NotifPrefsPage
+    screen: PushNotifsSettingsScreen
   },
 
   MyProfile: {

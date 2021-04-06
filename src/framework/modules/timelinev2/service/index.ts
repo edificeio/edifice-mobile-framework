@@ -4,11 +4,14 @@
 
 import queryString from "query-string";
 
-import { fetchJSONWithCache } from "../../../../infra/fetchWithCache";
+import { fetchJSONWithCache, signedFetch, signedFetchJson } from "../../../../infra/fetchWithCache";
 import { IUserSession } from "../../../session"
 import { IEntcoreNotificationType } from "../reducer/notifDefinitions/notifTypes";
 import { IEntcoreTimelineNotification, ITimelineNotification, notificationAdapter } from "../../../notifications";
 import { IEntcoreFlashMessage } from "../reducer/flashMessages";
+import { IPushNotifsSettings_State_Data } from "../reducer/notifSettings/pushNotifsSettings";
+import deepmerge from "deepmerge";
+import { legacyAppConf } from "../../../appConf";
 
 // Notifications
 
@@ -49,5 +52,66 @@ export const flashMessagesService = {
     dismiss: async (session: IUserSession, flashMessageId: number) => {
         const api = `/timeline/flashmsg/${flashMessageId}/markasread`;
         return fetchJSONWithCache(api, { method: "PUT" }) as any;
+    }
+}
+
+// Push-notifs preferences
+
+export interface IEntcoreTimelinePreference {
+    preference: string;
+}
+export interface IEntcoreTimelinePreferenceContent {
+    config: {
+        [notifKey: string]: {
+            defaultFrequency: string,
+            type?: string,
+            'event-type'?: string,
+            'app-name'?: string,
+            'app-address'?: string,
+            key?: string,
+            'push-notif'?: boolean,
+            restriction?: string
+        }
+    },
+    page: number,
+    type: string[]
+}
+
+export const pushNotifsService = {
+    _getPrefs: async (session: IUserSession) => {
+        const api = '/userbook/preference/timeline';
+        const response = await fetchJSONWithCache(api) as IEntcoreTimelinePreference;
+        const prefs = JSON.parse(response.preference) as IEntcoreTimelinePreferenceContent;
+        return prefs;
+    },
+    _getConfig: async (session: IUserSession) => {
+        const prefs = await pushNotifsService._getPrefs(session);
+        return prefs.config;
+    },
+    list: async (session: IUserSession) => {
+        const notifsPrefs = Object.fromEntries(Object.entries(await pushNotifsService._getConfig(session))
+            .filter(([k, v]) => v.hasOwnProperty("push-notif") && v["push-notif"] !== undefined)
+            .map(([k, v]) => [k, v["push-notif"]!])
+            );
+        return notifsPrefs;
+    },
+    set: async (session: IUserSession, changes: IPushNotifsSettings_State_Data) => {
+        const api = '/userbook/preference/timeline';
+        const method = 'PUT';
+        const notifPrefsUpdated = Object.fromEntries(Object.entries(changes).map(([k, v]) => [k, {'push-notif': v}]));
+        console.log('notifPrefsUpdated', notifPrefsUpdated);
+        const prefsOriginal = await pushNotifsService._getPrefs(session);
+        const notifPrefsOriginal = prefsOriginal.config;
+        console.log('notifPrefsOriginal', notifPrefsOriginal);
+        const notifPrefs = deepmerge(notifPrefsOriginal, notifPrefsUpdated);
+        const prefsUpdated = {config: notifPrefs};
+        console.log('prefsUpdated', prefsUpdated);
+        const payload = {...prefsOriginal, ...prefsUpdated};
+        console.log('payload', payload);
+        const responseJson = await signedFetchJson(`${legacyAppConf.currentPlatform!.url}${api}`, {
+            method,
+            body: JSON.stringify(payload)
+        });
+        return responseJson;
     }
 }

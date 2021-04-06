@@ -97,7 +97,7 @@ export class TimelineFiltersScreen extends React.PureComponent<
           : <ListItem
               leftElement={
                 <Text style={{color: theme.color.text.heavy}}>
-                  {I18n.t("timeline.filtersScreen.all")}
+                  {I18n.t("common.all")}
                 </Text>
               }
               rightElement={
