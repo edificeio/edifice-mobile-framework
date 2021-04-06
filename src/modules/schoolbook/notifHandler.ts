@@ -10,7 +10,7 @@ import { mainNavNavigate } from "../../navigation/helpers/navHelper";
 export interface ISchoolbookNotification extends ITimelineNotification, IResourceUriNotification {}
 
 const handleSchoolbookNotificationAction: NotifHandlerThunkAction = notification => async (dispatch, getState) => {
-	mainNavNavigate('schoolbook/details', {
+	mainNavNavigate('SchoolbookWordDetailsScreenRouter', {
 		notification
 	});
 	return {
