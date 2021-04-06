@@ -26,7 +26,8 @@ export interface ITheme {
         text: {
             regular: ColorValue,
             heavy: ColorValue,
-            light: ColorValue
+            light: ColorValue,
+            inverse: ColorValue
         }
         success: ColorValue,
         failure: ColorValue,
@@ -64,7 +65,8 @@ export const defaultTheme: ITheme = {
         text: {
             regular: '#414355',
             heavy: '#1f2029',
-            light: '#858Fa9'
+            light: '#858Fa9',
+            inverse: '#ffffff'
         },
         success: '#19ca72',
         failure: '#e04b35',
