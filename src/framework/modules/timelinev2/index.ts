@@ -6,7 +6,7 @@ import reducer from './reducer';
 
 export default registerTabModule(
     new Module({
-        config, mainComp, reducer, actions: {}
+        config, mainComp, reducer
     }),
     0
 );
