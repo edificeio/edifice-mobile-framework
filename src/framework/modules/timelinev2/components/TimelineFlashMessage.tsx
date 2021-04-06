@@ -6,15 +6,13 @@ import { CommonStyles } from "../../../../styles/common/styles";
 import { TouchCard } from "../../../../ui/Card";
 import { ArticleContainer } from "../../../../ui/ContainerContent";
 import { Icon } from "../../../../ui/icons/Icon";
-// import { ITimelineFlashMessageModel } from "../reducer";
+import { IEntcoreFlashMessage } from "../reducer/flashMessages";
 import { HtmlContentView } from "../../../../ui/HtmlContentView";
+import theme from "../../../theme";
 
-// interface ITimelineFlashMessageProps extends ITimelineFlashMessageModel {
-//   onPress?: () => void;
-// }
-// TODO: fix import
 interface ITimelineFlashMessageProps {
-  onPress?: () => void;
+  flashMessage: IEntcoreFlashMessage;
+  flashMessageAction: () => void;
 }
 
 interface ITimelineFlashMessageState {
@@ -30,14 +28,10 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
     isExtended: false
   };
 
-  dismiss() {
-    const { onPress } = this.props;
-    onPress && onPress();
-  }
-
   public render() {
-    const { contents } = this.props;
+    const { flashMessage, flashMessageAction } = this.props;
     const { isExtended, longText, measuredText } = this.state;
+    const contents = flashMessage && flashMessage.contents;
     const appLanguage = I18n.currentLocale();
     const contentsHasAppLanguage = contents && contents.hasOwnProperty(appLanguage);
     const contentsLanguages = contents && Object.keys(contents);
@@ -58,14 +52,14 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
               width: "100%",
               overflow: "hidden",
               position: measuredText ? "relative" : "absolute",
-              backgroundColor: CommonStyles.secondary,
+              backgroundColor: theme.color.primary.regular,
             }}
           >
             <HtmlContentView
               key={`${longText && !isExtended}`}
               html={flashMessageHtml}
               opts={{
-                globalTextStyle: {color: "#FFFFFF", paddingRight: 10, height: longText && !isExtended ? 120 : undefined},
+                globalTextStyle: {color: theme.color.cardBackground, paddingRight: 10, height: longText && !isExtended ? 120 : undefined},
                 textColor: false,
                 images: false,
                 iframes: false,
@@ -73,11 +67,12 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
                 video: false,
               }}
             />
-            <View style={{position: "absolute", right: 6, top: 6}}>
-              <TouchableOpacity onPress={() => this.dismiss()}>
-                <Icon size={16} color="#ffffff" name="close" />
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity
+              style={{position: "absolute", right: 10, top: 10}}
+              onPress={flashMessageAction}
+            >
+              <Icon color={theme.color.cardBackground} name="close" />
+            </TouchableOpacity>
             {longText && !isExtended
               ? <TouchableOpacity
                   style={{ alignSelf: "flex-end", marginRight: 6 }}
@@ -85,7 +80,7 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
                 >
                   <Text
                     style={{ 
-                      color: "#FFF",
+                      color: theme.color.cardBackground,
                       textDecorationLine: "underline",
                       fontWeight: "bold",
                       fontStyle: "italic"
