@@ -6,7 +6,27 @@ import moment from "moment";
 import { IResourceUriCaptureFunction } from "../../../framework/notifications";
 import { IUserSession } from "../../../framework/session";
 import { fetchJSONWithCache } from "../../../infra/fetchWithCache";
-import { IBlogPost, IBlogPostComments } from "../reducer";
+import { IBlog, IBlogList, IBlogPost, IBlogPostComments } from "../reducer";
+
+export interface IEntcoreBlog {
+  _id: string;
+  visibility: string;
+  title: string;
+  thumbnail?: string;
+  trashed?: boolean;
+  'comment-type': string;
+  'publish-type': string;
+  description?: string;
+  created: { $date: number };
+  modified: { $date: number };
+  author: { userId: string; username: string; login: string; };
+  shared?: Array<{
+    [key: string]: boolean | string | undefined,
+  } & {
+    [key in 'userId' | 'groupId']: string
+  }>;
+}
+export type IEntcoreBlogList = IEntcoreBlog[];
 
 export interface IEntcoreBlogPostComment {
   author: {
@@ -36,6 +56,28 @@ export interface IEntcoreBlogPost {
   title: string;
   views: number;
   _id: string;
+}
+
+export const blogAdapter = (blog: IEntcoreBlog) => {
+  const ret = {
+    id: blog._id,
+    visibility: blog.visibility,
+    title: blog.title,
+    thumbnail: blog.thumbnail,
+    trashed: blog.trashed,
+    'comment-type': blog["comment-type"],
+    'publish-type': blog["publish-type"],
+    description: blog.description,
+    created: moment(blog.created.$date),
+    modified: moment(blog.modified.$date),
+    author: {
+      login: blog.author.login,
+      userId: blog.author.userId,
+      username: blog.author.username,
+    },
+    shared: blog.shared
+  };
+  return ret as IBlog;
 }
 
 export const blogPostCommentsAdapter = (blogPostComments: IEntcoreBlogPostComments) => {
@@ -94,5 +136,10 @@ export const blogService = {
       // Run the adapter for the received blog post comments
       return blogPostCommentsAdapter(entcoreBlogPostComments) as IBlogPostComments;
     }
+  },
+  list: async (session: IUserSession) => {
+    const api = `/blog/list/all`;
+    const entcoreBlogList = await fetchJSONWithCache(api) as IEntcoreBlogList;
+    return entcoreBlogList.map(b => blogAdapter(b)) as IBlogList;
   }
 }

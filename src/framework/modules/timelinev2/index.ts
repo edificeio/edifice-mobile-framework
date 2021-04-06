@@ -11,9 +11,3 @@ export default registerTabModule(
     }),
     0
 );
-
-registerTimelineWorkflow(session => ({
-    icon: 'new_post',
-    i18n: 'common.apply',
-    goTo: { routeName: 'timeline/filters' }
-}));
