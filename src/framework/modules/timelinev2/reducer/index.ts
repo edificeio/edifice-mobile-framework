@@ -28,6 +28,8 @@ export default combineReducers({
   flashMessages
 });
 
+// Getters
+
 export const getNotifFiltersWithSetting = (state: ITimeline_State) =>
   state.notifDefinitions.notifFilters.map(e => ({
     ...e,
