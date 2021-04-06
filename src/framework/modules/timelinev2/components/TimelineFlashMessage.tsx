@@ -2,7 +2,6 @@ import * as React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import I18n from "i18n-js";
 
-import { CommonStyles } from "../../../../styles/common/styles";
 import { TouchCard } from "../../../../ui/Card";
 import { ArticleContainer } from "../../../../ui/ContainerContent";
 import { Icon } from "../../../../ui/icons/Icon";
