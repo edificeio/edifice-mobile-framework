@@ -171,8 +171,7 @@ export class TimelineScreen extends React.PureComponent<
 
   // LIFECYCLE ====================================================================================
 
-  constructor(props: ITimelineScreenProps) {
-    super(props);
+  componentDidMount() {
     this.doInit();
   }
 
