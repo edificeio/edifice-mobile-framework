@@ -4,7 +4,7 @@ import I18n from "i18n-js";
 
 import { Loading } from ".";
 import { mainNavNavigate } from "../navigation/helpers/navHelper";
-import { FullScreenAction } from "./FullScreenAction";
+import { MediaAction } from "./MediaAction";
 import { hasNotch } from "react-native-device-info";
 import { iosStatusBarHeight } from "./headers/Header";
 import { Italic } from "./Typography";
@@ -106,7 +106,7 @@ export class IFrame extends React.Component<
           }
         </TouchableOpacity>
         {fullScreenSource
-          ? <FullScreenAction
+          ? <MediaAction
               iconName="fullscreen-off"
               action={() => navigation.goBack()}
               customStyle={{backgroundColor: "rgba(63,63,63,0.8)", top: Platform.OS === "ios" ? hasNotch() ? iosStatusBarHeight + 30 : 25 : 0}}
@@ -124,7 +124,7 @@ export class IFrame extends React.Component<
                 alignItems: "center"
               }}
             >
-              <FullScreenAction
+              <MediaAction
                 iconName="fullscreen-on"
                 action={() => mainNavNavigate("iframeModal", {source})}
                 customStyle={{height: 70, width: 70, borderRadius: 35, position: "relative", top: undefined, right: undefined, backgroundColor: "rgba(63,63,63,0.8)"}}

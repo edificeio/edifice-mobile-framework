@@ -23,7 +23,7 @@ import TouchableOpacity from "./CustomTouchableOpacity";
 import ImageOptional from "./ImageOptional";
 import { A, Italic } from "./Typography";
 import withViewTracking from "../infra/tracker/withViewTracking";
-import { FullScreenAction } from "./FullScreenAction";
+import { MediaAction } from "./MediaAction";
 
 const UnavailableImage = () => (
   <View
@@ -398,7 +398,7 @@ class Carousel extends React.Component<
             this.lastOffsetY = 0;
           }}
         />
-        <FullScreenAction iconName="close" action={() => navigation.goBack()}/>
+        <MediaAction iconName="close" action={() => navigation.goBack()}/>
       </View>
     );
   }

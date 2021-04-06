@@ -4,7 +4,7 @@ import { hasNotch } from "react-native-device-info";
 import { iosStatusBarHeight } from "./headers/Header";
 import { Icon } from ".";
 
-interface FullScreenActionProps {
+interface MediaActionProps {
   iconName: string;
   action: () => void;
   customStyle?: object;
@@ -12,7 +12,7 @@ interface FullScreenActionProps {
   customIconColor?: number;
 }
 
-export const FullScreenAction = ({ iconName, action, customStyle, customIconSize, customIconColor }: FullScreenActionProps) => (
+export const MediaAction = ({ iconName, action, customStyle, customIconSize, customIconColor }: MediaActionProps) => (
   <TouchableOpacity
     onPress={action}
     style={[{

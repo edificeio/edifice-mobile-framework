@@ -471,6 +471,18 @@ export const scopes = `
 // You can copy the string directly in the "scope" field in a browser. Keep this indentation intact.
 
 /**
+ * Transforms a source to ensure it can be used.
+ * @param src
+ */
+export function transformedSrc(src: string) {
+  return src.startsWith("//")
+    ? `https:${src}`
+    : src.startsWith("/")
+    ? `${(Conf.currentPlatform as any).url}${src}`
+    : src
+}
+
+/**
  * Returns if the given url need to be signed.
  * An url must be signed if it point to the current platform.
  * If the url contains a protocol identifier, it noot be signed.
