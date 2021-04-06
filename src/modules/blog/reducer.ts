@@ -2,15 +2,15 @@
  * Dummy Reducer
  */
 
-import { createSessionReducer } from "../../../framework/redux/reducerFactory";
+import { createSessionReducer } from "../../framework/redux/reducerFactory";
 
 // State
 
-export interface IDummy_State {}
+export interface IBlog_State {}
 
 // Reducer
 
-const initialState: IDummy_State = {};
+const initialState: IBlog_State = {};
 
 export default createSessionReducer(initialState, {
     // Add reducer functions here or use reducer tools
