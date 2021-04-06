@@ -27,8 +27,8 @@ export interface IHomeworkDayCheckpointProps {
 const homeworkDayCheckpointStyle = {
   alignItems: "center",
   flexDirection: "row",
-  marginTop: 15,
   backgroundColor: CommonStyles.lightGrey,
+  marginTop: 15
 };
 
 export const HomeworkDayCheckpoint = ({
