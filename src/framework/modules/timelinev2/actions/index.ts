@@ -39,16 +39,13 @@ export const startLoadNotificationsAction = () => async (dispatch: ThunkDispatch
     const session = getUserSession(getState());
     const state = await dispatch(_prepareNotificationsAction()) as unknown as ITimeline_State; // TS BUG: await is needed here
     if (state.notifications.isFetching) return;
-    console.log("state", state);
 
     // Load notifications page 0 & flash messages (after reset)
     dispatch(notificationsActions.request());
     dispatch(flashMessagesActions.request());
 
     const page = 0;
-    console.log("state.notifSettings.notifFilterSettings.data", state.notifSettings.notifFilterSettings.data);
     const filters = Object.keys(state.notifSettings.notifFilterSettings.data).filter(filter => state.notifSettings.notifFilterSettings.data[filter]);
-    console.log("filters", filters);
     const [notifications, flashMessages] = await Promise.all([
       notificationsService.page(session, page, filters),
       flashMessagesService.list(session)
@@ -76,13 +73,10 @@ export const loadNotificationsPageAction = (page?: number) => async (dispatch: T
     let state = await dispatch(_prepareNotificationsAction()) as unknown as ITimeline_State; // TS BUG: await is needed here
     page = page || state.notifications.nextPage;
     if (state.notifications.isFetching) return;
-    console.log("state", state);
 
     // Load notifications at the specified page, no reset
     dispatch(notificationsActions.request());
-    console.log("state.notifSettings.notifFilterSettings.data", state.notifSettings.notifFilterSettings.data);
     const filters = Object.keys(state.notifSettings.notifFilterSettings.data).filter(filter => state.notifSettings.notifFilterSettings.data[filter]);
-    console.log("filters", filters);
     const notifications = await notificationsService.page(session, page, filters);
     dispatch(notificationsActions.receipt(notifications, page));
     // Returns true if there is more pages to load
