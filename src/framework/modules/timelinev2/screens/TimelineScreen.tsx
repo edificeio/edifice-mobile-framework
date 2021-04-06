@@ -33,7 +33,7 @@ export enum TimelineLoadingState {
   PRISTINE, INIT, REFRESH, DONE
 }
 export interface ITimelineScreenState {
-  loadingState: TimelineLoadingState;
+  loadingState: TimelineLoadingState; // Holds the initial loading state. further oage loading is handled by async.isFetching
 };
 
 export enum ITimelineItemType {
@@ -69,7 +69,7 @@ export class TimelineScreen extends React.PureComponent<
       <PageContainer>
         {[TimelineLoadingState.PRISTINE, TimelineLoadingState.INIT].includes(this.state.loadingState)
           ? <LoadingIndicator />
-          : this.props.notifications.error
+          : this.props.notifications.error && !this.props.notifications.lastSuccess
             ? this.renderError()
             : this.renderList()
         }
@@ -107,9 +107,13 @@ export class TimelineScreen extends React.PureComponent<
       ListEmptyComponent={this.renderEmpty}
       refreshControl={
         <RefreshControl
-          refreshing={this.props.notifications.isFetching}
+          refreshing={[TimelineLoadingState.REFRESH, TimelineLoadingState.INIT].includes(this.state.loadingState)}
           onRefresh={() => this.doRefresh()}
         />
+      }
+      ListFooterComponent={
+        this.state.loadingState === TimelineLoadingState.DONE && this.props.notifications.isFetching
+         ? <LoadingIndicator/> : null
       }
       onEndReached={() => this.doNextPage()}
       onEndReachedThreshold={0.5}

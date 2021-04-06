@@ -82,5 +82,6 @@ export const loadNotificationsPageAction = (page?: number) => async (dispatch: T
   } catch (e) {
     // ToDo: Error handling
     console.warn(`[${moduleConfig.name}] loadNotificationsPageAction failed`, e);
+    dispatch(notificationsActions.error(e));
   }
 };
