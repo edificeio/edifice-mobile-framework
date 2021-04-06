@@ -1,8 +1,9 @@
 import { createModuleConfig } from "../../moduleTool";
+import { ITimelineState } from "./state";
 
 // tslint:disable:object-literal-sort-keys
 
-export default createModuleConfig({
+export default createModuleConfig<"timelinev2", ITimelineState>({
     name: "timelinev2",
     displayName: "timeline.tabName",
     iconName: "nouveautes",
