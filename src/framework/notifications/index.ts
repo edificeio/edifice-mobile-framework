@@ -86,6 +86,10 @@ export interface IMedia {
     name?: string;
 }
 
+export interface IResourceUriCaptureFunction<IdsList extends {[someId: string]: string}> {
+    (url: string): Partial<IdsList>
+}
+
 // Getters
 
 export const isSenderNotification = (n: IAbstractNotification) => !!(n as ITimelineNotification & Partial<ISenderNotification>).sender;

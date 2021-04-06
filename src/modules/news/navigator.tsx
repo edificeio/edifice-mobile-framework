@@ -7,5 +7,8 @@ export default () => createStackNavigator(
         "news/details": {
             screen: NewsDetailsScreen
         },
+    },
+    {
+        headerMode: "none"
     }
 );

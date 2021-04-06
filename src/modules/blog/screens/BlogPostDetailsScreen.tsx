@@ -7,7 +7,7 @@ import I18n from "i18n-js";
 import moment from "moment";
 
 import type { IGlobalState } from "../../../AppStore";
-import type { INews, INewsComment } from "../reducer";
+import type { IBlogPost, IBlogPostComment, IBlogPostWithComments } from "../reducer";
 
 import moduleConfig from "../moduleConfig";
 import withViewTracking from "../../../framework/tracker/withViewTracking";
@@ -15,7 +15,7 @@ import { PageView } from "../../../framework/components/page";
 import { IResourceUriNotification, ITimelineNotification } from "../../../framework/notifications";
 import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderSubtitle, HeaderTitle } from "../../../framework/components/header";
 import NotificationTopInfo from "../../../framework/modules/timelinev2/components/NotificationTopInfo";
-import { getNewsDetailsAction } from "../actions";
+import { getBlogPostDetailsAction } from "../actions";
 import { Trackers } from "../../../framework/tracker";
 import { TextPreview } from "../../../ui/TextPreview";
 import { CommonStyles } from "../../../styles/common/styles";
@@ -28,45 +28,44 @@ import { ListItem } from "../../../framework/components/listItem";
 import { TextSemiBold, TextLight } from "../../../framework/components/text";
 import theme from "../../../framework/theme";
 import { FlatButton } from "../../../ui";
-import { newsUriCaptureFunction } from "../service";
-
+import { blogUriCaptureFunction } from "../service";
 
 // TYPES ==========================================================================================
 
-export interface INewsDetailsScreenDataProps {
+export interface IBlogPostDetailsScreenDataProps {
   // Add data props here
 };
-export interface INewsDetailsScreenEventProps {
-  handleGetNewsDetails(newsId: { threadId: string, infoId: string }): Promise<INews | undefined>;
+export interface IBlogPostDetailsScreenEventProps {
+  handleGetBlogPostDetails(blogPostIds: { blogId: string, postId: string }): Promise<IBlogPostWithComments | undefined>;
 };
-export interface INewsDetailsScreenNavParams {
+export interface IBlogPostDetailsScreenNavParams {
   notification: ITimelineNotification & IResourceUriNotification;
 };
-export type INewsDetailsScreenProps = INewsDetailsScreenDataProps
-  & INewsDetailsScreenEventProps
-  & NavigationInjectedProps<Partial<INewsDetailsScreenNavParams>>;
+export type IBlogPostDetailsScreenProps = IBlogPostDetailsScreenDataProps
+  & IBlogPostDetailsScreenEventProps
+  & NavigationInjectedProps<Partial<IBlogPostDetailsScreenNavParams>>;
 
-export enum NewsDetailsLoadingState {
+export enum BlogPostDetailsLoadingState {
   PRISTINE, INIT, REFRESH, DONE
 }
-export interface INewsDetailsScreenState {
-  loadingState: NewsDetailsLoadingState;
-  newsData: INews | undefined;
+export interface IBlogPostDetailsScreenState {
+  loadingState: BlogPostDetailsLoadingState;
+  blogPostData: IBlogPostWithComments | undefined;
   errorState: boolean;
 };
 
 // COMPONENT ======================================================================================
 
-export class NewsDetailsScreen extends React.PureComponent<
-    INewsDetailsScreenProps,
-    INewsDetailsScreenState
-    > {
+export class BlogPostDetailsScreen extends React.PureComponent<
+  IBlogPostDetailsScreenProps,
+  IBlogPostDetailsScreenState
+  > {
 
   // DECLARATIONS =================================================================================
 
-  state: INewsDetailsScreenState = {
-    loadingState: NewsDetailsLoadingState.PRISTINE,
-    newsData: undefined,
+  state: IBlogPostDetailsScreenState = {
+    loadingState: BlogPostDetailsLoadingState.PRISTINE,
+    blogPostData: undefined,
     errorState: false,
   }
 
@@ -78,7 +77,7 @@ export class NewsDetailsScreen extends React.PureComponent<
       <>
         {this.renderHeader()}
         <PageView>
-          {[NewsDetailsLoadingState.PRISTINE, NewsDetailsLoadingState.INIT].includes(loadingState)
+          {[BlogPostDetailsLoadingState.PRISTINE, BlogPostDetailsLoadingState.INIT].includes(loadingState)
           ? <LoadingIndicator />
           : errorState
             ? this.renderError()
@@ -91,7 +90,7 @@ export class NewsDetailsScreen extends React.PureComponent<
 
   renderHeader() {
     const { navigation } = this.props;
-    const { newsData } = this.state;
+    const { blogPostData } = this.state;
     return (
       <FakeHeader>
         <HeaderRow>
@@ -99,12 +98,12 @@ export class NewsDetailsScreen extends React.PureComponent<
             <HeaderAction iconName="back" onPress={() => navigation.navigate("timeline")}/>
           </HeaderLeft>
           <HeaderCenter>
-            {newsData?.title
+            {blogPostData?.title
               ? <>
-                  <HeaderTitle>{newsData?.title}</HeaderTitle>
-                  <HeaderSubtitle>{I18n.t("timeline.newsDetailsScreen.title")}</HeaderSubtitle>
+                  <HeaderTitle>{blogPostData?.title}</HeaderTitle>
+                  <HeaderSubtitle>{I18n.t("timeline.blogPostDetailsScreen.title")}</HeaderSubtitle>
                 </>
-              : <HeaderTitle>{I18n.t("timeline.newsDetailsScreen.title")}</HeaderTitle>
+              : <HeaderTitle>{I18n.t("timeline.blogPostDetailsScreen.title")}</HeaderTitle>
             }
           </HeaderCenter>
         </HeaderRow>
@@ -117,18 +116,18 @@ export class NewsDetailsScreen extends React.PureComponent<
   }
 
   renderContent() {
-    const { loadingState, newsData } = this.state;
-    const newsComments = newsData?.comments;
+    const { loadingState, blogPostData } = this.state;
+    const blogPostComments = blogPostData?.comments;
     return (
       <FlatList
-        data={newsComments}
-        renderItem={({ item }: { item: INewsComment }) => this.renderComment(item)}
-        keyExtractor={(item: INewsComment) => item._id.toString()}
-        ListHeaderComponent={this.renderNewsDetails()}
+        data={blogPostComments}
+        renderItem={({ item }: { item: IBlogPostComment }) => this.renderComment(item)}
+        keyExtractor={(item: IBlogPostComment) => item.id.toString()}
+        ListHeaderComponent={this.renderBlogPostDetails()}
         contentContainerStyle={{ flexGrow: 1, paddingVertical: 12, backgroundColor: theme.color.background.card }}
         refreshControl={
           <RefreshControl
-            refreshing={[NewsDetailsLoadingState.REFRESH, NewsDetailsLoadingState.INIT].includes(loadingState)}
+            refreshing={[BlogPostDetailsLoadingState.REFRESH, BlogPostDetailsLoadingState.INIT].includes(loadingState)}
             onRefresh={() => this.doRefresh()}
           />
         }
@@ -136,25 +135,25 @@ export class NewsDetailsScreen extends React.PureComponent<
     );
   }
 
-  renderNewsDetails() {
+  renderBlogPostDetails() {
     const { navigation } = this.props;
-    const { newsData } = this.state;
+    const { blogPostData } = this.state;
     const notification = navigation.getParam("notification");
     const resourceUri = notification?.resource.uri;
-    const newsContent = newsData?.content;
-    const newsComments = newsData?.comments;
-    const hasComments = newsComments && newsComments.length > 0;
+    const blogPostContent = blogPostData?.content;
+    const blogPostComments = blogPostData?.comments;
+    const hasComments = blogPostComments && blogPostComments.length > 0;
     if (!notification) return this.renderError();
     return (
       <View>
         <View style={{ paddingHorizontal: 16 }}>
           <NotificationTopInfo notification={notification}/>
           <HtmlContentView
-            html={newsContent}
-            onDownload={() => Trackers.trackEvent("News", "DOWNLOAD ATTACHMENT", "Read mode")}
-            onError={() => Trackers.trackEvent("News", "DOWNLOAD ATTACHMENT ERROR", "Read mode")}
-            onDownloadAll={() => Trackers.trackEvent("News", "DOWNLOAD ALL ATTACHMENTS", "Read mode")}
-            onOpen={() => Trackers.trackEvent("News", "OPEN ATTACHMENT", "Read mode")}
+            html={blogPostContent}
+            onDownload={() => Trackers.trackEvent("Blog", "DOWNLOAD ATTACHMENT", "Read mode")}
+            onError={() => Trackers.trackEvent("Blog", "DOWNLOAD ATTACHMENT ERROR", "Read mode")}
+            onDownloadAll={() => Trackers.trackEvent("Blog", "DOWNLOAD ALL ATTACHMENTS", "Read mode")}
+            onOpen={() => Trackers.trackEvent("Blog", "OPEN ATTACHMENT", "Read mode")}
           />
           {resourceUri
             ? <View style={{ marginTop: 10 }}>
@@ -176,7 +175,7 @@ export class NewsDetailsScreen extends React.PureComponent<
                         console.warn("[timeline] Don't know how to open URI: ", url);
                       }
                     });
-                    Trackers.trackEvent("News", "GO TO", "View in Browser");
+                    Trackers.trackEvent("Blog", "GO TO", "View in Browser");
                   }}
                 />
               </View>
@@ -206,7 +205,7 @@ export class NewsDetailsScreen extends React.PureComponent<
               }
               rightElement={
                 <TextLight>
-                  {newsComments!.length} {I18n.t(`common.comment${newsComments!.length > 1 ? "s" : ""}`)}
+                  {blogPostComments!.length} {I18n.t(`common.comment${blogPostComments!.length > 1 ? "s" : ""}`)}
                 </TextLight>
               }
             />
@@ -216,13 +215,13 @@ export class NewsDetailsScreen extends React.PureComponent<
     );
   }
 
-  renderComment(newsComment: INewsComment) {
+  renderComment(blogPostComment: IBlogPostComment) {
     return (
       <ListItem
         style={{ justifyContent: "flex-start", backgroundColor: theme.color.secondary.extraLight }}
         leftElement={
           <GridAvatars
-            users={[newsComment.owner || require("../../../../assets/images/resource-avatar.png")]}
+            users={[blogPostComment.author.userId || require("../../../../assets/images/resource-avatar.png")]}
             fallback={require("../../../../assets/images/resource-avatar.png")}
           />
         }
@@ -233,14 +232,14 @@ export class NewsDetailsScreen extends React.PureComponent<
                 numberOfLines={2}
                 style={{ fontSize: 12, marginRight: 5, maxWidth: "70%" }}
               >
-                {newsComment.username}
+                {blogPostComment.author.username}
               </TextSemiBold>
               <TextLight style={{ fontSize: 10 }}>
-                {moment(newsComment.created).fromNow()}
+                {moment(blogPostComment.created).fromNow()}
               </TextLight>
             </View>
             <TextPreview
-              textContent={newsComment.comment}
+              textContent={blogPostComment.comment}
               numberOfLines={5}
               textStyle={{
                 color: CommonStyles.textColor,
@@ -264,44 +263,44 @@ export class NewsDetailsScreen extends React.PureComponent<
   }
 
   // METHODS ======================================================================================
-  
+
   async doInit() {
     try {
-      this.setState({ loadingState: NewsDetailsLoadingState.INIT });
-      await this.doGetNewsDetails();
+      this.setState({ loadingState: BlogPostDetailsLoadingState.INIT });
+      await this.doGetBlogPostDetails();
     } finally {
-      this.setState({ loadingState: NewsDetailsLoadingState.DONE });
+      this.setState({ loadingState: BlogPostDetailsLoadingState.DONE });
     }
   }
 
   async doRefresh() {
     try {
-      this.setState({ loadingState: NewsDetailsLoadingState.REFRESH });
-      await this.doGetNewsDetails();
+      this.setState({ loadingState: BlogPostDetailsLoadingState.REFRESH });
+      await this.doGetBlogPostDetails();
     } finally {
-      this.setState({ loadingState: NewsDetailsLoadingState.DONE });
+      this.setState({ loadingState: BlogPostDetailsLoadingState.DONE });
     }
   }
 
-  async doGetNewsDetails() {
+  async doGetBlogPostDetails() {
     try {
-      const { navigation, handleGetNewsDetails } = this.props;
+      const { navigation, handleGetBlogPostDetails } = this.props;
       const notification = navigation.getParam("notification");
       const resourceUri = notification?.resource.uri;
       if (!resourceUri) {
-        throw new Error("[doGetNewsDetails] failed to call api (resourceUri is undefined)");
+        throw new Error("[doGetBlogPostDetails] failed to call api (resourceUri is undefined)");
       }
-      const newsId = newsUriCaptureFunction(resourceUri);
-      const { threadId, infoId} = newsId;
-      if (!threadId || !infoId) {
-        throw new Error(`[doGetNewsDetails] failed to capture resourceUri "${resourceUri}": ${{threadId, infoId}}`);
+      const blogPostId = blogUriCaptureFunction(resourceUri);
+      const { blogId, postId } = blogPostId;
+      if (!blogId || !postId) {
+        throw new Error(`[doGetBlogPostDetails] failed to capture resourceUri "${resourceUri}": ${{blogId, postId}}`);
       }
-      const newsData = await handleGetNewsDetails(newsId as Required<typeof newsId>);
-      this.setState({newsData});
+      const blogPostData = await handleGetBlogPostDetails(blogPostId as Required<typeof blogPostId>);
+      this.setState({blogPostData});
     } catch (e) {
       // ToDo: Error handling
       this.setState({ errorState: true });
-      console.warn(`[${moduleConfig.name}] doGetNewsDetails failed`, e);
+      console.warn(`[${moduleConfig.name}] doGetBlogPostDetails failed`, e);
     }
   }
 }
@@ -312,11 +311,11 @@ export class NewsDetailsScreen extends React.PureComponent<
 
 // MAPPING ========================================================================================
 
-const mapStateToProps: (s: IGlobalState) => INewsDetailsScreenDataProps = (s) => ({});
+const mapStateToProps: (s: IGlobalState) => IBlogPostDetailsScreenDataProps = (s) => ({});
 
-const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => INewsDetailsScreenEventProps = (dispatch, getState) => ({
-  handleGetNewsDetails: async (newsId: { threadId: string, infoId: string }) => { return await dispatch(getNewsDetailsAction(newsId)) as unknown as INews | undefined; } // TS BUG: dispatch mishandled
+const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => IBlogPostDetailsScreenEventProps = (dispatch, getState) => ({
+  handleGetBlogPostDetails: async (blogPostId: { blogId: string, postId: string }) => { return await dispatch(getBlogPostDetailsAction(blogPostId)) as unknown as IBlogPostWithComments | undefined; } // TS BUG: dispatch mishandled
 })
 
-const NewsDetailsScreen_Connected = connect(mapStateToProps, mapDispatchToProps)(NewsDetailsScreen);
-export default withViewTracking("news/details")(NewsDetailsScreen_Connected);
+const BlogPostDetailsScreen_Connected = connect(mapStateToProps, mapDispatchToProps)(BlogPostDetailsScreen);
+export default withViewTracking("blog/details")(BlogPostDetailsScreen_Connected);
