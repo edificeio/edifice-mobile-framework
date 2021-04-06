@@ -5,6 +5,7 @@
 
 import Matomo from "react-native-matomo-sdk";
 import Analytics from 'appcenter-analytics';
+import AppCenter from 'appcenter';
 import Conf from "../../../ode-framework-conf";
 import { IMatomoTrackerOptions, IAppCenterTrackerOptions, IEntcoreTrackerOptions } from "./config";
 import { signRequest } from "../../infra/oauth";
@@ -146,7 +147,8 @@ export class AppCenterTracker extends Tracker<IAppCenterTrackerOptions> {
     async setUserId(id: string) {
         await super.setUserId(id);
         if (!this.isReady) return;
-        this.currentDimensions['userId'] = id;
+        // this.currentDimensions['userId'] = id;
+        AppCenter.setUserId(id);
     }
 
     async setCustomDimension(id: number, value: string) {
