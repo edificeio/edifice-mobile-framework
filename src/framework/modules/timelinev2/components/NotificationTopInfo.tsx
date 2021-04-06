@@ -11,10 +11,10 @@ import { BadgeAvatar } from "../../../../ui/BadgeAvatar";
 import { HtmlContentView } from "../../../../ui/HtmlContentView";
 import { getSessionInfo } from "../../../../App";
 import { APPBADGES } from "../appBadges";
-import { INotification } from "../reducer/notifications";
+import { ITimelineNotification } from "../../../notifications";
 import theme from "../../../theme";
 
-export default ({notification}: {notification: INotification}) => {
+export default ({ notification }: { notification: ITimelineNotification}) => {
   const message = notification && notification.message;
   const type = notification && notification.type;
   const date = notification && notification.date;
