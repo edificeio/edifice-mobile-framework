@@ -10,6 +10,8 @@ import * as notifDefinitionsStateHandler from "../reducer/notifDefinitions";
 import * as notifSettingsStateHandler from "../reducer/notifSettings";
 import { loadNotificationsDefinitionsAction } from "./notifDefinitions";
 import { loadNotificationsSettingsAction } from "./notifSettings";
+import { actions as notificationsActions } from "../reducer/notifications";
+import { notificationsService } from "../service";
 
 export const loadNotificationsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   try {
@@ -25,9 +27,16 @@ export const loadNotificationsAction = () => async (dispatch: ThunkDispatch<any,
     if (!notifSettingsStateHandler.getAreNotificationFilterSettingsLoaded(state.notifSettings)) {
       await dispatch(loadNotificationsSettingsAction());
     }
+    // state = moduleConfig.getState(getState());
 
     // 3 - Load notifications
-    
+    dispatch(notificationsActions.request());
+    const page = state.notifications.nextPage;
+    console.log("state.notifSettings.notifFilterSettings.data", state.notifSettings.notifFilterSettings.data);
+    const filters = Object.keys(state.notifSettings.notifFilterSettings.data).filter(filter => state.notifSettings.notifFilterSettings.data[filter]);
+    console.log("filters", filters);
+    const notifications = await notificationsService.page(session, page, filters);
+    dispatch(notificationsActions.receipt(notifications, page));
 
   } catch (e) {
     console.warn(`[${moduleConfig.name}] loadNotificationsAction failed`, e);

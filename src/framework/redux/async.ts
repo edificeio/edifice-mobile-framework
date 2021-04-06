@@ -46,7 +46,7 @@ export interface AsyncState<DataType> {
   error?: Error;
 }
 
-function createInitialState<DataType>(initialState: DataType) {
+export function createInitialAsyncState<DataType>(initialState: DataType) {
   return ({
     data: initialState,
     isPristine: true,
@@ -73,7 +73,7 @@ function _createAsyncReducer<DataType>(
   createReducerFunction: <StateType>(initialState: StateType, reducerActionsHandlerMap: IReducerActionsHandlerMap<StateType>, ...args: any[]) => Reducer<StateType, AnyAction>,
   createReducerFunctionAdditionalArgs: any[] = []
 ): Reducer<AsyncState<DataType>> {
-  const asyncInitialState = createInitialState(initialState);
+  const asyncInitialState = createInitialAsyncState(initialState);
   const dataReducer = createReducer(initialState, reducerActionsHandlerMap);
   const asyncReducer = createReducerFunction<AsyncState<DataType>>(asyncInitialState, {
     [actionTypes.request]: (state, action) => ({
