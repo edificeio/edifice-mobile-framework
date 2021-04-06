@@ -10,6 +10,7 @@ import * as RNLocalize from "react-native-localize";
 import { I18nManager } from "react-native";
 import moment from "moment";
 import deepmerge from "deepmerge";
+import { unflatten } from 'flat';
 
 // Built-in translations
 const builtInTranslations = {
@@ -27,6 +28,8 @@ const overrideTranslations = {
 const finaleTranslations = Object.fromEntries(Object.keys(builtInTranslations).map(
     k => [k, deepmerge<object>(builtInTranslations[k], overrideTranslations[k])]
 ));
+const unflattenedTranslations = unflatten(finaleTranslations);
+console.log(unflattenedTranslations);
 
 // Moment.js translations
 import "moment/locale/fr";
@@ -37,7 +40,7 @@ import "moment/locale/es";
 export const initI18n = () => {
     I18n.fallbacks = true;
     I18n.defaultLocale = "en";
-    I18n.translations = finaleTranslations;
+    I18n.translations = unflattenedTranslations;
     const res =
         RNLocalize.findBestAvailableLanguage(Object.keys(I18n.translations)) as {
             languageTag: string;
