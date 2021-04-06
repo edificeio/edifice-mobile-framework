@@ -14,7 +14,7 @@ import { connect } from "react-redux";
 import { IAppModule } from "../infra/moduleTool/types";
 
 // Other functional modules
-import TimelineNavigator from "../timeline/TimelineNavigator";
+// import TimelineNavigator from "../timeline/TimelineNavigator";
 
 // Screens
 import { createMainTabNavigator, createMainTabNavOption } from "./helpers/mainTabNavigator";
@@ -44,11 +44,11 @@ function getMainRoutes(appsInfo: any[]) {
     return !!mod.config.hasRight && mod.config.hasRight(appsInfo) && !mod.config.group;
   };
   return {
-    timeline: {
-      screen: TimelineNavigator,
+    // timeline: {
+    //   screen: TimelineNavigator,
 
-      navigationOptions: () => createMainTabNavOption(I18n.t("News"), "nouveautes"),
-    },
+    //   navigationOptions: () => createMainTabNavOption(I18n.t("News"), "nouveautes"),
+    // },
     ...getRoutes(getModules(filter), appsInfo),
   };
 }
