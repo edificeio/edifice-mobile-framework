@@ -23,13 +23,13 @@ export const Checkbox = ({
         borderRadius: 14,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: checked ? theme.color.secondary.regular : theme.color.cardBackground,
-        borderColor: checked ? theme.color.secondary.regular : theme.color.checkboxBorder,
+        backgroundColor: checked ? theme.color.secondary.regular : theme.color.text.inverse,
+        borderColor: checked ? theme.color.secondary.regular : theme.color.text.light,
         borderWidth: checked ? 0 : 2,  
       },
       customContainerStyle
     ]}
   >
-    <Icon size={15} name="checked" color={customCheckboxColor || theme.color.cardBackground}/>
+    <Icon size={15} name="checked" color={customCheckboxColor || theme.color.text.inverse}/>
   </TouchableOpacity>
 );
