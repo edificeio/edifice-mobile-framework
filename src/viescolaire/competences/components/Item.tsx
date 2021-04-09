@@ -1,3 +1,4 @@
+import I18n from "i18n-js";
 import * as React from "react";
 import { useState } from "react";
 import { View, StyleSheet } from "react-native";
@@ -9,29 +10,40 @@ import { ModalContent, ModalContentBlock, ModalContentText, ModalBox } from "../
 import { TextBold, Text } from "../../../ui/text";
 import { LeftColoredItem } from "../../viesco/components/Item";
 
-const getColorFromNote = (note, moy) => {
-  if (!moy) {
-    moy = 10;
+const getColorfromCompetence = (evaluation: number) => {
+  switch (evaluation) {
+    case 0:
+      return "#555555";
+    case 1:
+      return "#E13A3A";
+    case 2:
+      return "#FF8500";
+    case 3:
+      return "#ECBE30";
+    case 4:
+      return "#46BFAF";
+    default:
+      return "#FFFFFF";
   }
-  if (note < moy) {
-    return "#E61610";
-  } else if (note >= moy && note < moy + 2) {
-    return "#FA9701";
-  } else {
+};
+
+const getColorFromNote = (note: number, moy: number, diviseur: number) => {
+  if (note === diviseur || note > moy) {
     return "#46BFAF";
+  } else if (note === moy) {
+    return "#FA9701";
+  } else if (note < moy) {
+    return "#E61610";
   }
 };
 
 const CompetenceRoundModal = competences => {
   return (
     <View>
-      {competences.map(competence => (
-        <ModalContentBlock>
-          <ModalContentText style={{ fontWeight: "bold" }}>{competence.nom}</ModalContentText>
-          <ModalContentText>{competence.label}</ModalContentText>
-          <ModalContentText style={[styleConstant.round, { backgroundColor: getColorFromNote(competence.note, 2) }]}>
-            {" "}
-          </ModalContentText>
+      {competences.map((competence, index) => (
+        <ModalContentBlock style={{ flexDirection: "row", justifyContent: "space-around" }} key={index}>
+          <Text>{competence.nom}</Text>
+          <View style={[styleConstant.round, { backgroundColor: getColorfromCompetence(competence.evaluation) }]} />
         </ModalContentBlock>
       ))}
     </View>
@@ -59,7 +71,7 @@ const CompetenceRound = ({ competences, stateFullRound }) => {
                 onValid={() => {
                   toggleVisible(false);
                 }}
-                title="FERMER"
+                title={I18n.t("viesco-close").toUpperCase()}
               />
             </ModalContentBlock>
           </ModalContent>
@@ -75,16 +87,23 @@ const ColoredSquare = ({
   moy,
   diviseur,
   hideScore,
+  backgroundColor,
 }: {
   note: string;
-  coeff: string;
-  moy: string;
-  diviseur: number;
-  hideScore: boolean;
+  coeff?: string;
+  moy?: string;
+  diviseur?: number;
+  hideScore?: boolean;
+  backgroundColor?: string;
 }) => (
-  <View style={[styleConstant.coloredSquare, { backgroundColor: getColorFromNote(note, moy) }]}>
+  <View
+    style={[
+      styleConstant.coloredSquare,
+      { backgroundColor: backgroundColor ? backgroundColor : CommonStyles.primary },
+    ]}>
     <Text style={{ alignSelf: "center", color: "white", marginVertical: 8 }}>
-      <TextBold style={{ fontSize: 20, color: "white" }}>{note}</TextBold>{!hideScore && `/ ${diviseur}`}
+      <TextBold style={{ fontSize: 20, color: "white" }}>{parseFloat(note).toFixed(1)}</TextBold>
+      {!hideScore && `/ ${diviseur}`}
     </Text>
     {coeff && <Text style={styleConstant.coloredSquareText}>coeff : {coeff}</Text>}
     {moy && <Text style={styleConstant.coloredSquareText}>moy : {moy}</Text>}
@@ -96,7 +115,7 @@ const ColoredSquare = ({
 export const MoyItem = ({ note, moy, subMoy }) => {
   const [opened, setOpen] = useState(false);
   return (
-    <LeftColoredItem onPress={() => setOpen(!opened)} color={getColorFromNote(note, moy)}>
+    <LeftColoredItem onPress={() => setOpen(!opened)} color={getColorFromNote(parseFloat(note), parseFloat(moy))}>
       <ColoredSquare note={note} />
       {opened && (
         <View>
@@ -108,10 +127,6 @@ export const MoyItem = ({ note, moy, subMoy }) => {
     </LeftColoredItem>
   );
 };
-
-export const DevoirItem = ({ devoirs }) => {};
-
-export const MatiereDevoirItem = ({ devoirs }) => {};
 
 export const DenseDevoirList = ({ devoirs }) => (
   <LeftColoredItem style={{ padding: 0 }} color="#E61610">
@@ -138,22 +153,20 @@ export const DenseDevoirList = ({ devoirs }) => (
 export const GradesDevoirsMoyennes = ({ devoirs }) => (
   <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
     {devoirs.map((devoir, index) => (
-      <LeftColoredItem color={getColorFromNote(devoir.moyenne, 10)} key={index}>
+      <LeftColoredItem color={CommonStyles.primary} key={index}>
         <View style={styleConstant.devoirsList}>
           <View style={{ padding: 8 }}>
             <TextBold>{devoir.matiere.toUpperCase()}</TextBold>
             <Text>{devoir.teacher.toUpperCase()}</Text>
           </View>
-          <ColoredSquare hideScore note={Number.parseFloat(devoir.moyenne).toFixed(1)} />
+          <ColoredSquare hideScore note={devoir.moyenne} />
         </View>
         {devoir.devoirs !== undefined
           ? devoir.devoirs.length > 0 &&
             devoir.devoirs.map((course, index) => (
               <View style={styleConstant.subMatieres} key={index}>
                 <Text style={{ textTransform: "uppercase" }}>{course.name}</Text>
-                <Text style={{ color: getColorFromNote(course.note, course.diviseur / 2) }}>
-                  {Number.parseFloat(course.note).toFixed(1)}
-                </Text>
+                <Text style={{ color: CommonStyles.primary }}>{parseFloat(course.note).toFixed(1)}</Text>
               </View>
             ))
           : null}
@@ -162,7 +175,7 @@ export const GradesDevoirsMoyennes = ({ devoirs }) => (
   </ScrollView>
 );
 
-export const GradesDevoirs = ({ devoirs }) => (
+export const GradesDevoirs = ({ devoirs, hasCompetences }: { devoirs: any; hasCompetences: boolean }) => (
   <ScrollView>
     {devoirs.map((devoir, index) => (
       <View style={styleConstant.devoirsList} key={index}>
@@ -173,9 +186,9 @@ export const GradesDevoirs = ({ devoirs }) => (
           <Text>{devoir.date}</Text>
         </View>
         <View style={styleConstant.competencesList}>
-          {devoir.note !== undefined ? (
+          {devoir.note !== undefined && devoir.note !== "NN" ? (
             <>
-              {devoir.competences !== undefined && (
+              {hasCompetences && devoir.competences !== undefined && (
                 <CompetenceRound stateFullRound="center" competences={devoir.competences} />
               )}
               <ColoredSquare
@@ -183,9 +196,11 @@ export const GradesDevoirs = ({ devoirs }) => (
                 coeff={devoir.coefficient}
                 moy={devoir.moyenne}
                 diviseur={devoir.diviseur}
+                backgroundColor={getColorFromNote(parseFloat(devoir.note), parseFloat(devoir.moyenne), devoir.diviseur)}
               />
             </>
           ) : (
+            hasCompetences &&
             devoir.competences !== undefined && (
               <CompetenceRound stateFullRound="flex-end" competences={devoir.competences} />
             )
@@ -214,6 +229,7 @@ const styleConstant = StyleSheet.create({
     justifyContent: "flex-end",
   },
   coloredSquare: {
+    backgroundColor: CommonStyles.primary,
     borderRadius: 5,
     padding: 10,
     minWidth: "25%",

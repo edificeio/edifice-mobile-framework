@@ -106,7 +106,6 @@ export default class Dashboard extends React.PureComponent<DashboardProps> {
           icon="checkbox-multiple-marked"
         />
         <IconButton
-          disabled
           onPress={() => this.props.navigation.navigate("EvaluationList")}
           text={I18n.t("viesco-tests")}
           color="#F95303"
