@@ -72,7 +72,7 @@ export interface IEntcoreTimelinePreferenceContent {
             'push-notif'?: boolean,
             restriction?: string
         }
-    },
+    } | undefined,
     page: number,
     type: string[]
 }
@@ -86,7 +86,7 @@ export const pushNotifsService = {
     },
     _getConfig: async (session: IUserSession) => {
         const prefs = await pushNotifsService._getPrefs(session);
-        return prefs.config;
+        return prefs.config ?? {};
     },
     list: async (session: IUserSession) => {
         const notifsPrefs = Object.fromEntries(Object.entries(await pushNotifsService._getConfig(session))
@@ -101,7 +101,7 @@ export const pushNotifsService = {
         const notifPrefsUpdated = Object.fromEntries(Object.entries(changes).map(([k, v]) => [k, {'push-notif': v}]));
         console.log('notifPrefsUpdated', notifPrefsUpdated);
         const prefsOriginal = await pushNotifsService._getPrefs(session);
-        const notifPrefsOriginal = prefsOriginal.config;
+        const notifPrefsOriginal = prefsOriginal.config ?? {};
         console.log('notifPrefsOriginal', notifPrefsOriginal);
         const notifPrefs = deepmerge(notifPrefsOriginal, notifPrefsUpdated);
         const prefsUpdated = {config: notifPrefs};
