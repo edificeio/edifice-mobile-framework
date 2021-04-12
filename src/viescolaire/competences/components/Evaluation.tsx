@@ -10,8 +10,7 @@ import { EmptyScreen } from "../../../ui/EmptyScreen";
 import { Text, TextBold } from "../../../ui/text";
 import ChildPicker from "../../viesco/containers/ChildPicker";
 import { IPeriodsList } from "../../viesco/state/periods";
-import { ISubjectListState } from "../../viesco/state/subjects";
-import { devoirListService } from "../services/devoirs";
+import { ISubjectList, ISubjectListState } from "../../viesco/state/subjects";
 import { IDevoirListState } from "../state/devoirs";
 import { IMoyenneListState } from "../state/moyennes";
 import { GradesDevoirs, GradesDevoirsMoyennes } from "./Item";
@@ -42,7 +41,7 @@ type ISelectedPeriod = { type: string; value: string | undefined };
 type ICompetencesState = {
   devoirs: any;
   fetching: boolean;
-  subjectsList: any;
+  subjectsList: ISubjectList;
   screenDisplay: ScreenDisplay;
   selectedDiscipline: string;
   selectedPeriod: ISelectedPeriod;
@@ -125,7 +124,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
         </View>
         {devoirsMoyennesList.isFetching ? (
           <Loading />
-        ) : devoirs !== undefined && devoirs.length > 0 && devoirs === devoirsMoyennesList.data ? (
+        ) : devoirs !== undefined && devoirs.length > 0 ? (
           <GradesDevoirsMoyennes devoirs={devoirs} />
         ) : (
           <EmptyScreen
@@ -155,7 +154,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
         {devoirsList.isFetching ? (
           <Loading />
         ) : devoirs !== undefined && devoirs.length > 0 && devoirs === devoirsList.data ? (
-          <GradesDevoirs devoirs={devoirs} hasCompetences={!!selectedDiscipline} />
+          <GradesDevoirs devoirs={devoirs} hasCompetences={selectedDiscipline} />
         ) : (
           <EmptyScreen
             imageSrc={require("../../../../assets/images/empty-screen/empty-evaluations.png")}
@@ -174,10 +173,9 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
 
     let subjectId = "";
     if (discipline !== I18n.t("viesco-competences-disciplines")) {
-      subjectId = subjectsList.find(item => item.subjectLabel === discipline).subjectId;
+      subjectId = subjectsList.find(item => item.subjectLabel === discipline)!.subjectId;
       this.props.getDevoirs(structureId, childId, selectedPeriod.value!, subjectId);
     } else this.props.getDevoirs(structureId, childId);
-    this.setState({ selectedDiscipline: discipline, disciplineId: subjectId }, this.screenRenderOpt);
   }
 
   private initDevoirsByPeriods(period: ISelectedPeriod) {

@@ -6,9 +6,11 @@ import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 
 import { CommonStyles } from "../../../styles/common/styles";
 import { ButtonsOkOnly } from "../../../ui/ButtonsOkCancel";
-import { ModalContent, ModalContentBlock, ModalContentText, ModalBox } from "../../../ui/Modal";
+import { ModalContent, ModalContentBlock, ModalBox } from "../../../ui/Modal";
 import { TextBold, Text } from "../../../ui/text";
 import { LeftColoredItem } from "../../viesco/components/Item";
+import { IDevoir } from "../state/devoirs";
+import { IMoyenneList } from "../state/moyennes";
 
 const getColorfromCompetence = (evaluation: number) => {
   switch (evaluation) {
@@ -110,23 +112,59 @@ const ColoredSquare = ({
   </View>
 );
 
-// EXPORTED COMPONENTS
+const GradesDevoirsResume = ({ devoir }: { devoir: IDevoir }) => (
+  <View style={{ padding: 8, maxWidth: "50%" }}>
+    <TextBold numberOfLines={1}>{devoir.matiere.toUpperCase()}</TextBold>
+    <Text numberOfLines={1}>{devoir.teacher.toUpperCase()}</Text>
+    <Text numberOfLines={1}>{devoir.title}</Text>
+    <Text>{devoir.date}</Text>
+  </View>
+);
 
-export const MoyItem = ({ note, moy, subMoy }) => {
-  const [opened, setOpen] = useState(false);
-  return (
-    <LeftColoredItem onPress={() => setOpen(!opened)} color={getColorFromNote(parseFloat(note), parseFloat(moy))}>
-      <ColoredSquare note={note} />
-      {opened && (
-        <View>
-          {subMoy.map(item => (
-            <Text>{item}</Text>
-          ))}
-        </View>
+const GradesDevoirsDiscipline = ({ devoir, index }: { devoir: IDevoir; index: number }) => (
+  <View style={styleConstant.devoirsList} key={index}>
+    <GradesDevoirsResume devoir={devoir} />
+    <View style={styleConstant.competencesList}>
+      {devoir.note && devoir.note !== "NN" && (
+        <ColoredSquare
+          note={devoir.note}
+          coeff={devoir.coefficient}
+          moy={devoir.moyenne}
+          diviseur={devoir.diviseur}
+          backgroundColor={getColorFromNote(parseFloat(devoir.note), parseFloat(devoir.moyenne), devoir.diviseur)}
+        />
       )}
-    </LeftColoredItem>
-  );
-};
+    </View>
+  </View>
+);
+
+const GradesDevoirsDashboard = ({ devoir, index }: { devoir: IDevoir; index: number }) => (
+  <View style={styleConstant.devoirsList} key={index}>
+    <GradesDevoirsResume devoir={devoir} />
+    <View style={styleConstant.competencesList}>
+      {devoir.note !== undefined && devoir.note !== "NN" ? (
+        <>
+          {devoir.competences !== undefined && (
+            <CompetenceRound stateFullRound="center" competences={devoir.competences} />
+          )}
+          <ColoredSquare
+            note={devoir.note}
+            coeff={devoir.coefficient}
+            moy={devoir.moyenne}
+            diviseur={devoir.diviseur}
+            backgroundColor={getColorFromNote(parseFloat(devoir.note), parseFloat(devoir.moyenne), devoir.diviseur)}
+          />
+        </>
+      ) : (
+        devoir.competences !== undefined && (
+          <CompetenceRound stateFullRound="flex-end" competences={devoir.competences} />
+        )
+      )}
+    </View>
+  </View>
+);
+
+// EXPORTED COMPONENTS
 
 export const DenseDevoirList = ({ devoirs }) => (
   <LeftColoredItem style={{ padding: 0 }} color="#E61610">
@@ -150,7 +188,7 @@ export const DenseDevoirList = ({ devoirs }) => (
   </LeftColoredItem>
 );
 
-export const GradesDevoirsMoyennes = ({ devoirs }) => (
+export const GradesDevoirsMoyennes = ({ devoirs }: { devoirs: IMoyenneList }) => (
   <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
     {devoirs.map((devoir, index) => (
       <LeftColoredItem color={CommonStyles.primary} key={index}>
@@ -175,39 +213,15 @@ export const GradesDevoirsMoyennes = ({ devoirs }) => (
   </ScrollView>
 );
 
-export const GradesDevoirs = ({ devoirs, hasCompetences }: { devoirs: any; hasCompetences: boolean }) => (
+export const GradesDevoirs = ({ devoirs, hasCompetences }: { devoirs: IDevoir[]; hasCompetences: string }) => (
   <ScrollView>
-    {devoirs.map((devoir, index) => (
-      <View style={styleConstant.devoirsList} key={index}>
-        <View style={{ padding: 8, maxWidth: "50%" }}>
-          <TextBold numberOfLines={1}>{devoir.matiere.toUpperCase()}</TextBold>
-          <Text numberOfLines={1}>{devoir.teacher.toUpperCase()}</Text>
-          <Text numberOfLines={1}>{devoir.title}</Text>
-          <Text>{devoir.date}</Text>
-        </View>
-        <View style={styleConstant.competencesList}>
-          {devoir.note !== undefined && devoir.note !== "NN" ? (
-            <>
-              {hasCompetences && devoir.competences !== undefined && (
-                <CompetenceRound stateFullRound="center" competences={devoir.competences} />
-              )}
-              <ColoredSquare
-                note={devoir.note}
-                coeff={devoir.coefficient}
-                moy={devoir.moyenne}
-                diviseur={devoir.diviseur}
-                backgroundColor={getColorFromNote(parseFloat(devoir.note), parseFloat(devoir.moyenne), devoir.diviseur)}
-              />
-            </>
-          ) : (
-            hasCompetences &&
-            devoir.competences !== undefined && (
-              <CompetenceRound stateFullRound="flex-end" competences={devoir.competences} />
-            )
-          )}
-        </View>
-      </View>
-    ))}
+    {devoirs.map((devoir, index) =>
+      hasCompetences && hasCompetences === "Disciplines" ? (
+        <GradesDevoirsDashboard devoir={devoir} key={index} />
+      ) : (
+        devoir.note && devoir.note !== "NN" && <GradesDevoirsDiscipline devoir={devoir} index={index} />
+      )
+    )}
   </ScrollView>
 );
 
