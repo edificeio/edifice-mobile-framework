@@ -40,7 +40,6 @@ type ISelectedPeriod = { type: string; value: string | undefined };
 
 type ICompetencesState = {
   devoirs: any;
-  fetching: boolean;
   subjectsList: ISubjectList;
   screenDisplay: ScreenDisplay;
   selectedDiscipline: string;
@@ -55,7 +54,6 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     const { devoirsList, devoirsMoyennesList } = this.props;
     this.state = {
       devoirs: devoirsList.data.sort((a, b) => moment(b.date, "DD/MM/YYYY").diff(moment(a.date, "DD/MM/YYYY"))),
-      fetching: devoirsList.isFetching || devoirsMoyennesList.isFetching,
       subjectsList: this.props.subjects.data,
       screenDisplay: ScreenDisplay.DASHBOARD,
       selectedDiscipline: I18n.t("viesco-competences-disciplines"),
@@ -89,12 +87,15 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     const { devoirsList, devoirsMoyennesList } = this.props;
     const { devoirs, screenDisplay } = this.state;
 
-    const fetching = devoirsList.isFetching || devoirsMoyennesList.isFetching;
-    if (prevProps.devoirsList !== devoirs && screenDisplay !== ScreenDisplay.PERIOD) {
+    if (prevProps.devoirsList !== devoirs && screenDisplay !== ScreenDisplay.PERIOD && !devoirsList.isFetching) {
       const list = devoirsList.data.sort((a, b) => moment(b.date, "DD/MM/YYYY").diff(moment(a.date, "DD/MM/YYYY")));
-      this.setState({ devoirs: list, fetching });
-    } else if (prevProps.devoirsMoyennesList !== devoirs && screenDisplay === ScreenDisplay.PERIOD) {
-      this.setState({ devoirs: devoirsMoyennesList.data, fetching });
+      this.setState({ devoirs: list });
+    } else if (
+      prevProps.devoirsMoyennesList !== devoirs &&
+      screenDisplay === ScreenDisplay.PERIOD &&
+      !devoirsMoyennesList.isFetching
+    ) {
+      this.setState({ devoirs: devoirsMoyennesList.data });
     }
   }
 
@@ -176,6 +177,10 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
       subjectId = subjectsList.find(item => item.subjectLabel === discipline)!.subjectId;
       this.props.getDevoirs(structureId, childId, selectedPeriod.value!, subjectId);
     } else this.props.getDevoirs(structureId, childId);
+
+    if (selectedPeriod.type === I18n.t("viesco-competences-period"))
+      this.setState({ selectedPeriod: { type: I18n.t("viesco-year"), value: undefined } });
+    this.setState({ selectedDiscipline: discipline, disciplineId: subjectId }, this.screenRenderOpt);
   }
 
   private initDevoirsByPeriods(period: ISelectedPeriod) {

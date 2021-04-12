@@ -217,7 +217,7 @@ export const GradesDevoirs = ({ devoirs, hasCompetences }: { devoirs: IDevoir[];
   <ScrollView>
     {devoirs.map((devoir, index) =>
       hasCompetences && hasCompetences === "Disciplines" ? (
-        <GradesDevoirsDashboard devoir={devoir} key={index} />
+        <GradesDevoirsDashboard devoir={devoir} index={index} />
       ) : (
         devoir.note && devoir.note !== "NN" && <GradesDevoirsDiscipline devoir={devoir} index={index} />
       )
@@ -257,6 +257,7 @@ const styleConstant = StyleSheet.create({
     minWidth: 60,
     minHeight: 60,
     marginLeft: 20,
+    backgroundColor: "white",
   },
   competenceRoundText: {
     paddingTop: 25,
