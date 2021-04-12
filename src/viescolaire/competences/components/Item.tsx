@@ -121,7 +121,7 @@ const GradesDevoirsResume = ({ devoir }: { devoir: IDevoir }) => (
   </View>
 );
 
-const GradesDevoirsDiscipline = ({ devoir, index }: { devoir: IDevoir; index: number }) => (
+const GradesDevoirsDiscipline = ({ devoir, index, color }: { devoir: IDevoir; index: number; color?: boolean }) => (
   <View style={styleConstant.devoirsList} key={index}>
     <GradesDevoirsResume devoir={devoir} />
     <View style={styleConstant.competencesList}>
@@ -131,14 +131,18 @@ const GradesDevoirsDiscipline = ({ devoir, index }: { devoir: IDevoir; index: nu
           coeff={devoir.coefficient}
           moy={devoir.moyenne}
           diviseur={devoir.diviseur}
-          backgroundColor={getColorFromNote(parseFloat(devoir.note), parseFloat(devoir.moyenne), devoir.diviseur)}
+          backgroundColor={
+            color
+              ? getColorFromNote(parseFloat(devoir.note), parseFloat(devoir.moyenne), devoir.diviseur)
+              : CommonStyles.primary
+          }
         />
       )}
     </View>
   </View>
 );
 
-const GradesDevoirsDashboard = ({ devoir, index }: { devoir: IDevoir; index: number }) => (
+const GradesDevoirsDashboard = ({ devoir, index, color }: { devoir: IDevoir; index: number; color?: boolean }) => (
   <View style={styleConstant.devoirsList} key={index}>
     <GradesDevoirsResume devoir={devoir} />
     <View style={styleConstant.competencesList}>
@@ -152,7 +156,11 @@ const GradesDevoirsDashboard = ({ devoir, index }: { devoir: IDevoir; index: num
             coeff={devoir.coefficient}
             moy={devoir.moyenne}
             diviseur={devoir.diviseur}
-            backgroundColor={getColorFromNote(parseFloat(devoir.note), parseFloat(devoir.moyenne), devoir.diviseur)}
+            backgroundColor={
+              color
+                ? getColorFromNote(parseFloat(devoir.note), parseFloat(devoir.moyenne), devoir.diviseur)
+                : CommonStyles.primary
+            }
           />
         </>
       ) : (
@@ -193,9 +201,9 @@ export const GradesDevoirsMoyennes = ({ devoirs }: { devoirs: IMoyenneList }) =>
     {devoirs.map((devoir, index) => (
       <LeftColoredItem color={CommonStyles.primary} key={index}>
         <View style={styleConstant.devoirsList}>
-          <View style={{ padding: 8 }}>
-            <TextBold>{devoir.matiere.toUpperCase()}</TextBold>
-            <Text>{devoir.teacher.toUpperCase()}</Text>
+          <View style={{ padding: 8, maxWidth: "75%" }}>
+            <TextBold numberOfLines={1}>{devoir.matiere.toUpperCase()}</TextBold>
+            <Text numberOfLines={1}>{devoir.teacher.toUpperCase()}</Text>
           </View>
           <ColoredSquare hideScore note={devoir.moyenne} />
         </View>
@@ -203,7 +211,7 @@ export const GradesDevoirsMoyennes = ({ devoirs }: { devoirs: IMoyenneList }) =>
           ? devoir.devoirs.length > 0 &&
             devoir.devoirs.map((course, index) => (
               <View style={styleConstant.subMatieres} key={index}>
-                <Text style={{ textTransform: "uppercase" }}>{course.name}</Text>
+                <Text style={{ maxWidth: "90%" }} numberOfLines={1}>{course.name.toUpperCase()}</Text>
                 <Text style={{ color: CommonStyles.primary }}>{parseFloat(course.note).toFixed(1)}</Text>
               </View>
             ))
@@ -213,13 +221,21 @@ export const GradesDevoirsMoyennes = ({ devoirs }: { devoirs: IMoyenneList }) =>
   </ScrollView>
 );
 
-export const GradesDevoirs = ({ devoirs, hasCompetences }: { devoirs: IDevoir[]; hasCompetences: string }) => (
+export const GradesDevoirs = ({
+  devoirs,
+  hasCompetences,
+  color,
+}: {
+  devoirs: IDevoir[];
+  hasCompetences: string;
+  color?: boolean;
+}) => (
   <ScrollView>
     {devoirs.map((devoir, index) =>
       hasCompetences && hasCompetences === "Disciplines" ? (
-        <GradesDevoirsDashboard devoir={devoir} index={index} />
+        <GradesDevoirsDashboard devoir={devoir} index={index} color={color} />
       ) : (
-        devoir.note && devoir.note !== "NN" && <GradesDevoirsDiscipline devoir={devoir} index={index} />
+        devoir.note && devoir.note !== "NN" && <GradesDevoirsDiscipline devoir={devoir} index={index} color={color} />
       )
     )}
   </ScrollView>

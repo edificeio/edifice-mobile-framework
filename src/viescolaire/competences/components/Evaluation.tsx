@@ -1,7 +1,7 @@
 import I18n from "i18n-js";
 import moment from "moment";
 import * as React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Switch } from "react-native";
 
 import { Loading } from "../../../ui";
 import { PageContainer } from "../../../ui/ContainerContent";
@@ -30,6 +30,11 @@ export type ICompetencesProps = {
   getPeriods: (structureId: string, groupId: string) => void;
 };
 
+enum SwitchState {
+  DEFAULT,
+  COLOR,
+}
+
 enum ScreenDisplay {
   DASHBOARD,
   PERIOD,
@@ -42,6 +47,7 @@ type ICompetencesState = {
   devoirs: any;
   subjectsList: ISubjectList;
   screenDisplay: ScreenDisplay;
+  switchValue: SwitchState;
   selectedDiscipline: string;
   selectedPeriod: ISelectedPeriod;
   disciplineId: string;
@@ -51,11 +57,12 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
   constructor(props) {
     super(props);
 
-    const { devoirsList, devoirsMoyennesList } = this.props;
+    const { devoirsList } = this.props;
     this.state = {
       devoirs: devoirsList.data.sort((a, b) => moment(b.date, "DD/MM/YYYY").diff(moment(a.date, "DD/MM/YYYY"))),
       subjectsList: this.props.subjects.data,
       screenDisplay: ScreenDisplay.DASHBOARD,
+      switchValue: SwitchState.DEFAULT,
       selectedDiscipline: I18n.t("viesco-competences-disciplines"),
       selectedPeriod: { type: I18n.t("viesco-competences-period"), value: undefined },
       disciplineId: "",
@@ -120,8 +127,8 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     return (
       <View style={{ height: "78%" }}>
         <View style={{ flexDirection: "row" }}>
-          <TextBold style={{ marginBottom: 10 }}>{selectedPeriod.type}</TextBold>
-          <Text>- {I18n.t("viesco-average").toUpperCase()}</Text>
+          <TextBold style={{ marginBottom: 10, paddingTop: 3 }}>{selectedPeriod.type}</TextBold>
+          <Text style={{ paddingTop: 3 }}> - {I18n.t("viesco-average").toUpperCase()}</Text>
         </View>
         {devoirsMoyennesList.isFetching ? (
           <Loading />
@@ -139,23 +146,47 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     );
   }
 
-  private renderDevoirsList() {
-    const { devoirsList } = this.props;
-    const { devoirs, selectedPeriod, selectedDiscipline, screenDisplay } = this.state;
+  private renderHeaderDevoirsList = () => {
+    const { selectedPeriod, selectedDiscipline, screenDisplay, switchValue } = this.state;
     return (
-      <View style={{ height: "78%" }}>
+      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         {screenDisplay === ScreenDisplay.DASHBOARD ? (
-          <TextBold style={{ marginBottom: 10 }}>{I18n.t("viesco-last-grades")}</TextBold>
+          <TextBold style={{ marginBottom: 10, paddingTop: 3 }}>{I18n.t("viesco-last-grades")}</TextBold>
         ) : (
           <View style={{ flexDirection: "row" }}>
-            <TextBold style={{ marginBottom: 10 }}>{selectedDiscipline}&ensp;</TextBold>
-            <Text style={{ color: "#AFAFAF" }}>{selectedPeriod.type}</Text>
+            <TextBold style={{ marginBottom: 10, paddingTop: 3 }}>{selectedDiscipline}&ensp;</TextBold>
+            <Text style={{ color: "#AFAFAF", paddingTop: 3 }}>{selectedPeriod.type}</Text>
           </View>
         )}
+        <View style={{ marginBottom: 10, flexDirection: "row" }}>
+          <Text style={{ paddingTop: 3 }}>{I18n.t("viesco-colors")}</Text>
+          <Switch
+            onValueChange={() => {
+              let newValue = SwitchState.DEFAULT;
+              if (switchValue === SwitchState.DEFAULT) newValue = SwitchState.COLOR;
+              this.setState({ switchValue: newValue });
+            }}
+            value={switchValue === SwitchState.COLOR}
+          />
+        </View>
+      </View>
+    );
+  };
+
+  private renderDevoirsList() {
+    const { devoirsList } = this.props;
+    const { devoirs, selectedDiscipline, switchValue } = this.state;
+    return (
+      <View style={{ height: "78%" }}>
+        {this.renderHeaderDevoirsList()}
         {devoirsList.isFetching ? (
           <Loading />
         ) : devoirs !== undefined && devoirs.length > 0 && devoirs === devoirsList.data ? (
-          <GradesDevoirs devoirs={devoirs} hasCompetences={selectedDiscipline} />
+          <GradesDevoirs
+            devoirs={devoirs}
+            hasCompetences={selectedDiscipline}
+            color={switchValue !== SwitchState.DEFAULT}
+          />
         ) : (
           <EmptyScreen
             imageSrc={require("../../../../assets/images/empty-screen/empty-evaluations.png")}
