@@ -54,6 +54,7 @@ export interface IHtmlParserRNOptions extends IHtmlParserAbstractOptions {
   iframes?: boolean;
   audio?: boolean;
   video?: boolean;
+  ignoreLineBreaks?: boolean;
   globalTextStyle?: TextStyle;
   linkTextStyle?: TextStyle;
 }
@@ -74,7 +75,8 @@ export default class HtmlParserRN extends HtmlParserAbstract<
     images: true,
     linkTextStyle: {},
     textColor: true,
-    textFormatting: true
+    textFormatting: true,
+    ignoreLineBreaks: false
   };
 
   /**
@@ -261,16 +263,41 @@ export default class HtmlParserRN extends HtmlParserAbstract<
   protected parseText(text: string): void {
     if (!text) return; // Don't deal with empty texts (often caused by strange ZWSP chars)
 
+    //// REVIEWER, BE VERY INDLUGENT WITH THIS FUNC
+    //// It is so mindblowing 🤯🤯🤯
+    //// You can't handle this
+    //// Even me can't handle this
+
     text = text.replace(/[\r\n\x0B\x0C\u0085\u2028\u2029]+/g, " "); // replace new lines by spaces (like in html)
 
+    console.log(`rn text "${text}"`);
+    console.log("hastoinsertSpace", this.hasToInsertSpace);
+    if (text.startsWith('.') || text.startsWith(',')) this.hasToInsertSpace = false; //// YEAH MADAFAKA this is the most ugly code i've never wrote !
     const leftTrimmedText = text.trimLeft();
-    if (text !== leftTrimmedText) {
-      text = leftTrimmedText;
-      // console.log(`encourtered space at left of :`, text);
-      if (!this.firstWord) {
-        this.hasToInsertSpace = true;
-      }
+    text = leftTrimmedText !== text //// Ternary del muerte ☠
+      ? `${this.hasToInsertSpace ? ' '
+      : ' '}${leftTrimmedText.length
+        ? leftTrimmedText : this.hasToInsertSpace
+          ? ''
+          : ' '}`
+        : `${this.hasToInsertSpace
+          ? ' '
+          : ''}${leftTrimmedText}`;
+
+    //// All the algorithm is to conditionning this member
+    //// Are you scared of this ?
+    this.hasToInsertSpace = false;
+    //// Because I am. 😱
+
+    console.log(`rn after lefttrim "${text}"`, this.hasToInsertSpace);
+
+    const rightTrimmedText = text.trimRight();
+    if (text !== rightTrimmedText) {
+      console.log("trimmed right");
+      text = rightTrimmedText;
+      !this.firstWord && (this.hasToInsertSpace = true);
     }
+    console.log(`rn after righttrim "${text}"`, this.hasToInsertSpace);
 
     if (this.hasToInsertBullet) {
       text = this.hasToInsertBullet + text;
@@ -279,29 +306,22 @@ export default class HtmlParserRN extends HtmlParserAbstract<
 
     if (this.lineBreaksToInsert) {
       // console.log(`encourtered line break`);
-      if (!this.firstWord) {
+      if (!this.opts.ignoreLineBreaks && !this.firstWord) {
         // Insert the new line only if we have some text nuggets before the current text nugget.
         text = "\n".repeat(this.lineBreaksToInsert) + text;
+        this.hasToInsertSpace = false;
       }
       this.lineBreaksToInsert = 0;
-    } else if (this.hasToInsertSpace) {
-      text = " " + text;
-      this.hasToInsertSpace = false;
     }
-    if (/\S/.test(text)) {
-      // console.log(`encourtered text :`, text);
 
-      const rightTrimmedText = text.trimRight();
-      if (text !== rightTrimmedText) {
-        text = rightTrimmedText;
-        // console.log(`encourtered space at right of :`, text);
-        this.hasToInsertSpace = true;
-      }
-
+    if (text.length) {
+      console.log(`interted text : "${text}"`);
       this.insertNewTextNugget(text);
-      this.currentImageNugget = null; // Text breaks image groups (spaces don't count)
-      this.firstWord = false;
-      this.currentDivIsEmpty = false;
+      if (/\S/.test(text)) {
+        this.currentImageNugget = undefined; // Text breaks image groups (spaces don't count)
+        this.firstWord = false;
+        this.currentDivIsEmpty = false;
+      }
     }
   }
 
