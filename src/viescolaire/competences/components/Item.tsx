@@ -9,7 +9,7 @@ import { ButtonsOkOnly } from "../../../ui/ButtonsOkCancel";
 import { ModalContent, ModalContentBlock, ModalBox } from "../../../ui/Modal";
 import { TextBold, Text } from "../../../ui/text";
 import { LeftColoredItem } from "../../viesco/components/Item";
-import { IDevoir } from "../state/devoirs";
+import { IDevoir, IDevoirList } from "../state/devoirs";
 import { IMoyenneList } from "../state/moyennes";
 
 const getColorfromCompetence = (evaluation: number) => {
@@ -121,57 +121,6 @@ const GradesDevoirsResume = ({ devoir }: { devoir: IDevoir }) => (
   </View>
 );
 
-const GradesDevoirsDiscipline = ({ devoir, index, color }: { devoir: IDevoir; index: number; color?: boolean }) => (
-  <View style={styleConstant.devoirsList} key={index}>
-    <GradesDevoirsResume devoir={devoir} />
-    <View style={styleConstant.competencesList}>
-      {devoir.note && devoir.note !== "NN" && (
-        <ColoredSquare
-          note={devoir.note}
-          coeff={devoir.coefficient}
-          moy={devoir.moyenne}
-          diviseur={devoir.diviseur}
-          backgroundColor={
-            color
-              ? getColorFromNote(parseFloat(devoir.note), parseFloat(devoir.moyenne), devoir.diviseur)
-              : CommonStyles.primary
-          }
-        />
-      )}
-    </View>
-  </View>
-);
-
-const GradesDevoirsDashboard = ({ devoir, index, color }: { devoir: IDevoir; index: number; color?: boolean }) => (
-  <View style={styleConstant.devoirsList} key={index}>
-    <GradesDevoirsResume devoir={devoir} />
-    <View style={styleConstant.competencesList}>
-      {devoir.note !== undefined && devoir.note !== "NN" ? (
-        <>
-          {devoir.competences !== undefined && (
-            <CompetenceRound stateFullRound="center" competences={devoir.competences} />
-          )}
-          <ColoredSquare
-            note={devoir.note}
-            coeff={devoir.coefficient}
-            moy={devoir.moyenne}
-            diviseur={devoir.diviseur}
-            backgroundColor={
-              color
-                ? getColorFromNote(parseFloat(devoir.note), parseFloat(devoir.moyenne), devoir.diviseur)
-                : CommonStyles.primary
-            }
-          />
-        </>
-      ) : (
-        devoir.competences !== undefined && (
-          <CompetenceRound stateFullRound="flex-end" competences={devoir.competences} />
-        )
-      )}
-    </View>
-  </View>
-);
-
 // EXPORTED COMPONENTS
 
 export const DenseDevoirList = ({ devoirs }) => (
@@ -211,7 +160,7 @@ export const GradesDevoirsMoyennes = ({ devoirs }: { devoirs: IMoyenneList }) =>
           ? devoir.devoirs.length > 0 &&
             devoir.devoirs.map((course, index) => (
               <View style={styleConstant.subMatieres} key={index}>
-                <Text style={{ maxWidth: "90%" }} numberOfLines={1}>{course.name.toUpperCase()}</Text>
+                <Text style={{ maxWidth: "85%" }} numberOfLines={1}>{course.name.toUpperCase()}</Text>
                 <Text style={{ color: CommonStyles.primary }}>{parseFloat(course.note).toFixed(1)}</Text>
               </View>
             ))
@@ -221,23 +170,37 @@ export const GradesDevoirsMoyennes = ({ devoirs }: { devoirs: IMoyenneList }) =>
   </ScrollView>
 );
 
-export const GradesDevoirs = ({
-  devoirs,
-  hasCompetences,
-  color,
-}: {
-  devoirs: IDevoir[];
-  hasCompetences: string;
-  color?: boolean;
-}) => (
+export const GradesDevoirs = ({ devoirs, color }: { devoirs: IDevoirList; color?: boolean }) => (
   <ScrollView>
-    {devoirs.map((devoir, index) =>
-      hasCompetences && hasCompetences === "Disciplines" ? (
-        <GradesDevoirsDashboard devoir={devoir} index={index} color={color} />
-      ) : (
-        devoir.note && devoir.note !== "NN" && <GradesDevoirsDiscipline devoir={devoir} index={index} color={color} />
-      )
-    )}
+    {devoirs.map((devoir, index) => (
+      <View style={styleConstant.devoirsList} key={index}>
+        <GradesDevoirsResume devoir={devoir} />
+        <View style={styleConstant.competencesList}>
+          {devoir.note !== undefined && devoir.note !== "NN" ? (
+            <>
+              {devoir.competences !== undefined && (
+                <CompetenceRound stateFullRound="center" competences={devoir.competences} />
+              )}
+              <ColoredSquare
+                note={devoir.note}
+                coeff={devoir.coefficient}
+                moy={devoir.moyenne}
+                diviseur={devoir.diviseur}
+                backgroundColor={
+                  color
+                    ? getColorFromNote(parseFloat(devoir.note), parseFloat(devoir.moyenne), devoir.diviseur)
+                    : CommonStyles.primary
+                }
+              />
+            </>
+          ) : (
+            devoir.competences !== undefined && (
+              <CompetenceRound stateFullRound="flex-end" competences={devoir.competences} />
+            )
+          )}
+        </View>
+      </View>
+    ))}
   </ScrollView>
 );
 

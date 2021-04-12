@@ -162,9 +162,9 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
           <Text style={{ paddingTop: 3 }}>{I18n.t("viesco-colors")}</Text>
           <Switch
             onValueChange={() => {
-              let newValue = SwitchState.DEFAULT;
-              if (switchValue === SwitchState.DEFAULT) newValue = SwitchState.COLOR;
-              this.setState({ switchValue: newValue });
+              this.setState({
+                switchValue: switchValue === SwitchState.DEFAULT ? SwitchState.COLOR : SwitchState.DEFAULT,
+              });
             }}
             value={switchValue === SwitchState.COLOR}
           />
@@ -175,18 +175,14 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
 
   private renderDevoirsList() {
     const { devoirsList } = this.props;
-    const { devoirs, selectedDiscipline, switchValue } = this.state;
+    const { devoirs, switchValue } = this.state;
     return (
       <View style={{ height: "78%" }}>
         {this.renderHeaderDevoirsList()}
         {devoirsList.isFetching ? (
           <Loading />
         ) : devoirs !== undefined && devoirs.length > 0 && devoirs === devoirsList.data ? (
-          <GradesDevoirs
-            devoirs={devoirs}
-            hasCompetences={selectedDiscipline}
-            color={switchValue !== SwitchState.DEFAULT}
-          />
+          <GradesDevoirs devoirs={devoirs} color={switchValue !== SwitchState.DEFAULT} />
         ) : (
           <EmptyScreen
             imageSrc={require("../../../../assets/images/empty-screen/empty-evaluations.png")}
