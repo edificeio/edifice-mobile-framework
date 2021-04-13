@@ -3,10 +3,14 @@
     "apply": "Appliquer",
     "comment": "Commentaire",
     "comments": "Commentaires",
-    "error": "Oups... Une erreur est survenue. Veuillez réessayer plus tard.",
+    "error": {
+      "title": "Oups...",
+      "text": "Une erreur est survenue. Veuillez réessayer plus tard."
+    },
     "errorLoadingResource": "Cette ressource est inaccessible.",
     "infoBubble-doNotShow": "Ne plus afficher ce message",
     "infoBubble-understood": "J'ai compris",
+    "ok": "OK",
     "openInBrowser": "Ouvrir dans le navigateur",
     "readMore": "lire plus",
     "all": "Tous"
@@ -191,6 +195,14 @@
       "readByNumberRelative": "Lu par {{nb}} parent",
       "readByNumberRelatives": "Lu par {{nb}} parents",
       "title": "Carnet de liaison"
+    }
+  },
+  "mailbox": {
+    "alert": {
+      "deletedThread": {
+        "title": "Lecture impossible",
+        "text": "Votre conversation a été supprimée. Nous ne pouvons pas vous restituer l'histoire de la conversation."
+      }
     }
   },
     "Activate": "Activer votre compte",

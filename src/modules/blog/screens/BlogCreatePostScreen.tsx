@@ -322,7 +322,7 @@ export class BlogCreatePostScreen extends React.PureComponent<
       const { dispatch } = this.props;
       dispatch(notifierShowAction({
         id: "blog/create",
-        text: I18n.t("common.error"),
+        text: `${I18n.t("common.error.title")} ${I18n.t("common.error.text")}`,
         icon: "close",
         type: "error"
       }));
