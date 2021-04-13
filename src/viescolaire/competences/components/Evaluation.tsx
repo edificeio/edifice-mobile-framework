@@ -13,7 +13,7 @@ import { IPeriodsList } from "../../viesco/state/periods";
 import { ISubjectList, ISubjectListState } from "../../viesco/state/subjects";
 import { IDevoirListState } from "../state/devoirs";
 import { IMoyenneListState } from "../state/moyennes";
-import { GradesDevoirs, GradesDevoirsMoyennes, platformSpecificSwitch } from "./Item";
+import { GradesDevoirs, GradesDevoirsMoyennes } from "./Item";
 
 // eslint-disable-next-line flowtype/no-types-missing-file-annotation
 export type ICompetencesProps = {
@@ -148,7 +148,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
 
   private renderHeaderDevoirsList = () => {
     const { selectedPeriod, selectedDiscipline, screenDisplay, switchValue } = this.state;
-    let newProps = platformSpecificSwitch(switchValue === SwitchState.DEFAULT);
+    let value = (switchValue === SwitchState.DEFAULT) as boolean;
     return (
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         {screenDisplay === ScreenDisplay.DASHBOARD ? (
@@ -162,13 +162,15 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
         <View style={{ marginBottom: 10, flexDirection: "row", alignItems: "center" }}>
           <Text>{I18n.t("viesco-colors")}</Text>
           <Switch
+            trackColor={{ false: "#D1D1D1", true: "#A1DED5" }}
+            thumbColor={value ? "#EFEFEF" : "#46BFAF"}
+            ios_backgroundColor={value ? "#DDDDDD" : "#46BFAF"}
             onValueChange={() => {
               this.setState({
-                switchValue: switchValue === SwitchState.DEFAULT ? SwitchState.COLOR : SwitchState.DEFAULT,
+                switchValue: value ? SwitchState.COLOR : SwitchState.DEFAULT,
               });
             }}
-            value={switchValue === SwitchState.COLOR}
-            {...newProps}
+            value={!value}
           />
         </View>
       </View>

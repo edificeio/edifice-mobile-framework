@@ -132,17 +132,15 @@ export const DenseDevoirList = ({ devoirs }: { devoirs: IDevoirList }) => (
               </TextBold>
               <Text>/{devoir.diviseur}</Text>
             </>
-          ) : (
+          ) : devoir.competences.length ? (
             <View
               style={[
                 styleConstant.dash,
-                {
-                  backgroundColor: devoir.competences[0]
-                    ? getColorfromCompetence(devoir.competences[0].evaluation)
-                    : "#FFF",
-                },
+                { backgroundColor: getColorfromCompetence(devoir.competences[0].evaluation) },
               ]}
             />
+          ) : (
+            <TextBold style={{ flexGrow: 1, textAlign: "right", fontSize: 18 }}>{devoir.note}</TextBold>
           )}
         </View>
         {index !== devoirs.length - 1 && (
@@ -206,40 +204,18 @@ export const GradesDevoirs = ({ devoirs, color }: { devoirs: IDevoirList; color?
                 }
               />
             </>
+          ) : devoir.competences !== undefined && devoir.competences.length ? (
+            <CompetenceRound stateFullRound="flex-end" competences={devoir.competences} />
           ) : (
-            devoir.competences !== undefined && (
-              <CompetenceRound stateFullRound="flex-end" competences={devoir.competences} />
-            )
+            <View style={[styleConstant.coloredSquare, { justifyContent: "center" }]}>
+              <TextBold style={{ alignSelf: "center", fontSize: 20, color: "white" }}>{devoir.note}</TextBold>
+            </View>
           )}
         </View>
       </View>
     ))}
   </ScrollView>
 );
-
-export const platformSpecificSwitch = (value: boolean) => {
-  let newProps = {};
-  switch (Platform.OS) {
-    default:
-    case "android": {
-      newProps = {
-        trackColor: { false: "#D1D1D1", true: "#A1DED5" },
-        thumbColor: value ? "#EFEFEF" : "#46BFAF",
-        ...newProps,
-      };
-      break;
-    }
-    case "ios": {
-      newProps = {
-        trackColor: { false: "#EFEFEF", true: "#A1DED5" },
-        ios_backgroundColor: value ? "#DDDDDD" : "#46BFAF",
-        ...newProps,
-      };
-      break;
-    }
-  }
-  return newProps;
-};
 
 // STYLE
 
