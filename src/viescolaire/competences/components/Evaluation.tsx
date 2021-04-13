@@ -13,7 +13,7 @@ import { IPeriodsList } from "../../viesco/state/periods";
 import { ISubjectList, ISubjectListState } from "../../viesco/state/subjects";
 import { IDevoirListState } from "../state/devoirs";
 import { IMoyenneListState } from "../state/moyennes";
-import { GradesDevoirs, GradesDevoirsMoyennes } from "./Item";
+import { GradesDevoirs, GradesDevoirsMoyennes, platformSpecificSwitch } from "./Item";
 
 // eslint-disable-next-line flowtype/no-types-missing-file-annotation
 export type ICompetencesProps = {
@@ -127,8 +127,8 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     return (
       <View style={{ height: "78%" }}>
         <View style={{ flexDirection: "row" }}>
-          <TextBold style={{ marginBottom: 10, paddingTop: 3 }}>{selectedPeriod.type}</TextBold>
-          <Text style={{ paddingTop: 3 }}> - {I18n.t("viesco-average").toUpperCase()}</Text>
+          <TextBold style={{ marginBottom: 10 }}>{selectedPeriod.type}</TextBold>
+          <Text> - {I18n.t("viesco-average").toUpperCase()}</Text>
         </View>
         {devoirsMoyennesList.isFetching ? (
           <Loading />
@@ -148,18 +148,19 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
 
   private renderHeaderDevoirsList = () => {
     const { selectedPeriod, selectedDiscipline, screenDisplay, switchValue } = this.state;
+    let newProps = platformSpecificSwitch(switchValue === SwitchState.DEFAULT);
     return (
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         {screenDisplay === ScreenDisplay.DASHBOARD ? (
-          <TextBold style={{ marginBottom: 10, paddingTop: 3 }}>{I18n.t("viesco-last-grades")}</TextBold>
+          <TextBold style={{ marginBottom: 10 }}>{I18n.t("viesco-last-grades")}</TextBold>
         ) : (
           <View style={{ flexDirection: "row" }}>
-            <TextBold style={{ marginBottom: 10, paddingTop: 3 }}>{selectedDiscipline}&ensp;</TextBold>
-            <Text style={{ color: "#AFAFAF", paddingTop: 3 }}>{selectedPeriod.type}</Text>
+            <TextBold style={{ marginBottom: 10 }}>{selectedDiscipline}&ensp;</TextBold>
+            <Text style={{ color: "#AFAFAF" }}>{selectedPeriod.type}</Text>
           </View>
         )}
-        <View style={{ marginBottom: 10, flexDirection: "row" }}>
-          <Text style={{ paddingTop: 3 }}>{I18n.t("viesco-colors")}</Text>
+        <View style={{ marginBottom: 10, flexDirection: "row", alignItems: "center" }}>
+          <Text>{I18n.t("viesco-colors")}</Text>
           <Switch
             onValueChange={() => {
               this.setState({
@@ -167,6 +168,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
               });
             }}
             value={switchValue === SwitchState.COLOR}
+            {...newProps}
           />
         </View>
       </View>
@@ -223,7 +225,9 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
   }
 
   private displayDisciplinesDropdown() {
-    let disciplines = this.state.subjectsList.map(({ subjectLabel }) => subjectLabel);
+    let disciplines = this.state.subjectsList
+      .map(({ subjectLabel }) => subjectLabel)
+      .sort((a, b) => String(a.toLocaleLowerCase() ?? "").localeCompare(b.toLocaleLowerCase() ?? ""));
     disciplines.unshift(I18n.t("viesco-competences-disciplines"));
 
     return (

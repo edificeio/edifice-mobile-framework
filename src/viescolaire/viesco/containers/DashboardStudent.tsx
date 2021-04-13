@@ -5,20 +5,24 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
 import { getSessionInfo } from "../../../App";
+import withViewTracking from "../../../infra/tracker/withViewTracking";
 import { fetchHomeworkListAction, updateHomeworkProgressAction } from "../../cdt/actions/homeworks";
 import { getHomeworksListState } from "../../cdt/state/homeworks";
+import { fetchDevoirListAction } from "../../competences/actions/devoirs";
+import { getDevoirListState } from "../../competences/state/devoirs";
 import { fetchPersonnelListAction } from "../actions/personnel";
 import { fetchSubjectListAction } from "../actions/subjects";
 import DashboardComponent from "../components/DashboardStudent";
 import { getSubjectsListState } from "../state/subjects";
-import withViewTracking from "../../../infra/tracker/withViewTracking";
 
 class Dashboard extends React.PureComponent<{
   homeworks: any[];
   structureId: string;
-  getSubjects: any;
-  getTeachers: any;
-  getHomeworks: any;
+  childId: string;
+  getSubjects: (structureId: string) => any;
+  getTeachers: (structureId: string) => any;
+  getHomeworks: (structureId: string, startDate: string, endDate: string) => any;
+  getDevoirs: (structureId: string, childId: string) => void;
   navigation: NavigationScreenProp<any>;
 }> {
   constructor(props) {
@@ -39,9 +43,10 @@ class Dashboard extends React.PureComponent<{
   }
 
   public componentDidMount() {
-    const { structureId } = this.props;
+    const { structureId, childId } = this.props;
     this.props.getSubjects(structureId);
     this.props.getTeachers(structureId);
+    this.props.getDevoirs(structureId, childId);
   }
 
   public render() {
@@ -55,11 +60,15 @@ const mapStateToProps: (state: any) => any = state => {
   const homeworks = getHomeworksListState(state);
   const subjects = getSubjectsListState(state);
   const structureId = getSessionInfo().administrativeStructures[0].id || getSessionInfo().structures[0];
+  const childId = getSessionInfo().userId;
+  const evaluations = getDevoirListState(state);
 
   return {
     homeworks,
     subjects,
     structureId,
+    childId,
+    evaluations,
   };
 };
 
@@ -70,6 +79,7 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
       getTeachers: fetchPersonnelListAction,
       getHomeworks: fetchHomeworkListAction,
       updateHomeworkProgress: updateHomeworkProgressAction,
+      getDevoirs: fetchDevoirListAction,
     },
     dispatch
   );

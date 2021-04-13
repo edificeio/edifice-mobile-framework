@@ -4,10 +4,12 @@ import * as React from "react";
 import { Text, View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { NavigationActions } from "react-navigation";
 
-import { Icon } from "../../../ui";
+import { Icon, Loading } from "../../../ui";
 import { EmptyScreen } from "../../../ui/EmptyScreen";
 import { TextBold } from "../../../ui/text";
 import { HomeworkItem } from "../../cdt/components/Items";
+import { DenseDevoirList } from "../../competences/components/Item";
+import { IDevoirListState } from "../../competences/state/devoirs";
 import { isHomeworkDone, homeworkDetailsAdapter } from "../../utils/cdt";
 
 const styles = StyleSheet.create({
@@ -168,28 +170,35 @@ export default class Dashboard extends React.PureComponent<any> {
     );
   }
 
-  private renderEvaluations(evaluations) {
+  private renderEvaluations(evaluations: IDevoirListState) {
+    const evaluationList = evaluations.data
+      .sort((a, b) => moment(b.date, "DD/MM/YYYY").diff(moment(a.date, "DD/MM/YYYY")))
+      .slice(0, 5);
     return (
       <View style={styles.dashboardPart}>
         <TextBold style={styles.title}>{I18n.t("viesco-lasteval")}</TextBold>
-        <EmptyScreen
-          imageSrc={require("../../../../assets/images/empty-screen/empty-evaluations.png")}
-          imgWidth={64}
-          imgHeight={64}
-          title={I18n.t("viesco-eval-EmptyScreenText")}
-        />
+        {evaluations && evaluations.data && evaluationList !== undefined ? (
+          <DenseDevoirList devoirs={evaluationList} />
+        ) : (
+          <EmptyScreen
+            imageSrc={require("../../../../assets/images/empty-screen/empty-evaluations.png")}
+            imgWidth={64}
+            imgHeight={64}
+            title={I18n.t("viesco-eval-EmptyScreenText")}
+          />
+        )}
       </View>
     );
   }
 
   public render() {
-    const { homeworks } = this.props;
+    const { homeworks, evaluations } = this.props;
     return (
-      <View>
+      <View style={{ flex: 1 }}>
         {this.renderNavigationGrid()}
         <ScrollView>
           {this.renderHomework(homeworks.data)}
-          {this.renderEvaluations({})}
+          {evaluations.isFetching ? <Loading /> : this.renderEvaluations(evaluations)}
         </ScrollView>
       </View>
     );

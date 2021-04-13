@@ -10,6 +10,8 @@ import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
 import { EmptyScreen } from "../../../ui/EmptyScreen";
 import { Text, TextBold } from "../../../ui/text";
 import { HomeworkItem } from "../../cdt/components/Items";
+import { DenseDevoirList } from "../../competences/components/Item";
+import { IDevoirListState } from "../../competences/state/devoirs";
 import { isHomeworkDone, homeworkDetailsAdapter } from "../../utils/cdt";
 import ChildPicker from "../containers/ChildPicker";
 
@@ -179,22 +181,23 @@ export default class Dashboard extends React.PureComponent<DashboardProps> {
     );
   }
 
-  private renderLastEval(evaluations) {
-    // return (
-    //   <View style={styles.dashboardPart}>
-    //     <TextBold style={styles.title}>{I18n.t("viesco-lasteval")}</TextBold>
-    //     <DenseDevoirList devoirs={evaluations} />
-    //   </View>
-    // );
+  private renderLastEval(evaluations: IDevoirListState) {
+    const evaluationList = evaluations.data
+      .sort((a, b) => moment(b.date, "DD/MM/YYYY").diff(moment(a.date, "DD/MM/YYYY")))
+      .slice(0, 5);
     return (
       <View style={styles.dashboardPart}>
         <TextBold style={styles.title}>{I18n.t("viesco-lasteval")}</TextBold>
-        <EmptyScreen
-          imageSrc={require("../../../../assets/images/empty-screen/empty-evaluations.png")}
-          imgWidth={64}
-          imgHeight={64}
-          title={I18n.t("viesco-eval-EmptyScreenText")}
-        />
+        {evaluations && evaluations.data ? (
+          <DenseDevoirList devoirs={evaluationList} />
+        ) : (
+          <EmptyScreen
+            imageSrc={require("../../../../assets/images/empty-screen/empty-evaluations.png")}
+            imgWidth={64}
+            imgHeight={64}
+            title={I18n.t("viesco-eval-EmptyScreenText")}
+          />
+        )}
       </View>
     );
   }

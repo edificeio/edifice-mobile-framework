@@ -1,7 +1,7 @@
 import I18n from "i18n-js";
 import * as React from "react";
 import { useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Platform } from "react-native";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 
 import { CommonStyles } from "../../../styles/common/styles";
@@ -13,20 +13,9 @@ import { IDevoir, IDevoirList } from "../state/devoirs";
 import { IMoyenneList } from "../state/moyennes";
 
 const getColorfromCompetence = (evaluation: number) => {
-  switch (evaluation) {
-    case 0:
-      return "#555555";
-    case 1:
-      return "#E13A3A";
-    case 2:
-      return "#FF8500";
-    case 3:
-      return "#ECBE30";
-    case 4:
-      return "#46BFAF";
-    default:
-      return "#FFFFFF";
-  }
+  let mapColors = ["#555555", "#E13A3A", "#FF8500", "#ECBE30", "#46BFAF"] as string[];
+  if (evaluation >= 0 && evaluation <= 4) return mapColors[evaluation];
+  return "#DDDDDD";
 };
 
 const getColorFromNote = (note: number, moy: number, diviseur: number) => {
@@ -123,14 +112,38 @@ const GradesDevoirsResume = ({ devoir }: { devoir: IDevoir }) => (
 
 // EXPORTED COMPONENTS
 
-export const DenseDevoirList = ({ devoirs }) => (
-  <LeftColoredItem style={{ padding: 0 }} color="#E61610">
+export const DenseDevoirList = ({ devoirs }: { devoirs: IDevoirList }) => (
+  <LeftColoredItem style={{ padding: 0 }} color="#F95303">
     {devoirs.map((devoir, index) => (
-      <View>
-        <View style={{ flexDirection: "row", padding: 8 }}>
-          <TextBold>{devoir.subject}        </TextBold>
-          <Text>{devoir.date}</Text>
-          <Text style={{ flexGrow: 1, textAlign: "right" }}>{devoir.note}</Text>
+      <View key={index}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between", padding: 8 }}>
+          <View style={{ flexDirection: "row", maxWidth: "58%" }}>
+            <TextBold style={{ marginRight: 30 }} numberOfLines={1}>
+              {devoir.title}
+            </TextBold>
+            <Text>{devoir.date}</Text>
+          </View>
+          {devoir.note && devoir.note !== "NN" ? (
+            <>
+              <TextBold style={{ flexGrow: 1, textAlign: "right", fontSize: 18 }}>
+                {parseFloat(devoir.note)
+                  .toFixed(1)
+                  .replace(/\./g, ",")}
+              </TextBold>
+              <Text>/{devoir.diviseur}</Text>
+            </>
+          ) : (
+            <View
+              style={[
+                styleConstant.dash,
+                {
+                  backgroundColor: devoir.competences[0]
+                    ? getColorfromCompetence(devoir.competences[0].evaluation)
+                    : "#FFF",
+                },
+              ]}
+            />
+          )}
         </View>
         {index !== devoirs.length - 1 && (
           <View
@@ -171,7 +184,7 @@ export const GradesDevoirsMoyennes = ({ devoirs }: { devoirs: IMoyenneList }) =>
 );
 
 export const GradesDevoirs = ({ devoirs, color }: { devoirs: IDevoirList; color?: boolean }) => (
-  <ScrollView>
+  <ScrollView showsVerticalScrollIndicator={false}>
     {devoirs.map((devoir, index) => (
       <View style={styleConstant.devoirsList} key={index}>
         <GradesDevoirsResume devoir={devoir} />
@@ -204,9 +217,34 @@ export const GradesDevoirs = ({ devoirs, color }: { devoirs: IDevoirList; color?
   </ScrollView>
 );
 
+export const platformSpecificSwitch = (value: boolean) => {
+  let newProps = {};
+  switch (Platform.OS) {
+    default:
+    case "android": {
+      newProps = {
+        trackColor: { false: "#D1D1D1", true: "#A1DED5" },
+        thumbColor: value ? "#EFEFEF" : "#46BFAF",
+        ...newProps,
+      };
+      break;
+    }
+    case "ios": {
+      newProps = {
+        trackColor: { false: "#EFEFEF", true: "#A1DED5" },
+        ios_backgroundColor: value ? "#DDDDDD" : "#46BFAF",
+        ...newProps,
+      };
+      break;
+    }
+  }
+  return newProps;
+};
+
 // STYLE
 
 const styleConstant = StyleSheet.create({
+  dash: { height: 15, width: 30, borderRadius: 10, marginTop: 2 },
   container: { borderRadius: 5 },
   coloredSquareText: { color: "white" },
   devoirsList: {

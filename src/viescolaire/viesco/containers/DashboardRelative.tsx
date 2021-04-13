@@ -7,6 +7,8 @@ import { bindActionCreators } from "redux";
 import withViewTracking from "../../../infra/tracker/withViewTracking";
 import { fetchChildHomeworkAction } from "../../cdt/actions/homeworks";
 import { getHomeworksListState } from "../../cdt/state/homeworks";
+import { fetchDevoirListAction } from "../../competences/actions/devoirs";
+import { getDevoirListState, IDevoirListState } from "../../competences/state/devoirs";
 import { fetchPersonnelListAction } from "../actions/personnel";
 import { fetchSubjectListAction } from "../actions/subjects";
 import DashboardComponent from "../components/DashboardRelative";
@@ -15,13 +17,14 @@ import { getSubjectsListState } from "../state/subjects";
 
 class Dashboard extends React.PureComponent<{
   homeworks: any;
-  evaluations: any[];
+  evaluations: IDevoirListState;
   hasRightToCreateAbsence: boolean;
   structureId: string;
   childId: string;
-  getSubjects: any;
-  getHomeworks: any;
-  getTeachers: any;
+  getSubjects: (structureId: string) => void;
+  getHomeworks: (childId: string, structureId: string, startDate: string, endDate: string) => void;
+  getDevoirs: (structureId: string, childId: string) => void;
+  getTeachers: (structureId: string) => void;
   navigation: NavigationScreenProp<any>;
   isFocused: boolean;
 }> {
@@ -39,6 +42,7 @@ class Dashboard extends React.PureComponent<{
         .add(1, "month")
         .format("YYYY-MM-DD")
     );
+    this.props.getDevoirs(structureId, childId);
   }
 
   public componentDidUpdate(prevProps) {
@@ -46,6 +50,7 @@ class Dashboard extends React.PureComponent<{
     if (prevProps.childId !== childId) {
       this.props.getSubjects(this.props.structureId);
       this.props.getTeachers(this.props.structureId);
+      this.props.getDevoirs(structureId, childId);
     }
     if (isFocused && (prevProps.isFocused !== isFocused || prevProps.childId !== childId)) {
       this.props.getHomeworks(
@@ -73,16 +78,11 @@ const mapStateToProps: (state: any) => any = state => {
   const homeworks = getHomeworksListState(state);
   const subjects = getSubjectsListState(state);
   const structureId = getSelectedChildStructure(state)?.id;
+  const evaluations = getDevoirListState(state);
 
   const authorizedActions = state.user.info.authorizedActions;
   const hasRightToCreateAbsence =
     authorizedActions && authorizedActions.some(action => action.displayName === "presences.absence.statements.create");
-
-  const evaluations = [
-    { subject: "Mathématiques", date: "23/03/2020", note: "15/20" },
-    { subject: "Histoire-Géographie", date: "25/03/2020", note: "10/20" },
-    { subject: "Mathématiques", date: "18/03/2020", note: "11/20" },
-  ];
 
   return {
     homeworks,
@@ -100,6 +100,7 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
       getSubjects: fetchSubjectListAction,
       getTeachers: fetchPersonnelListAction,
       getHomeworks: fetchChildHomeworkAction,
+      getDevoirs: fetchDevoirListAction,
     },
     dispatch
   );
