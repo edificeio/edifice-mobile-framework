@@ -93,6 +93,7 @@ export class HtmlParserAbstract<RenderType> {
 
   public parse(html: string): RenderType {
     try {
+      // console.log("html before fix:", html);
       html = this.beforeParseAbstract(html);
       this.html = html;
       // console.log("html before parse:", this.html);
@@ -232,6 +233,8 @@ export class HtmlParserAbstract<RenderType> {
     if (this.opts.preventZWSP) html = html.replace(/\u200B/g, "");
     if (this.opts.fixVoidTags) html = autoCloseVoidTags(html);
     if (this.opts.emptyDiv2Br) html = html.replace(/<div[^>]*><\/div>/g, "<br/>");
+    html = html.replace(/\n\u0020+/g, '\n'); // unindent (brealing space only)
+    html = html.replace(/\u0020{2,}/g, ' '); // collapse breaking spaces
     html = "<html>" + html + "</html>"; // html code MUST have a root element. // TODO : use a boolean to know of the <html> tag is already present.
     if (this.beforeParse) html = this.beforeParse(html);
     return html;
