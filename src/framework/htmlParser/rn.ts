@@ -293,7 +293,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
 
     const rightTrimmedText = text.trimRight();
     if (text !== rightTrimmedText) {
-      console.log("trimmed right");
+      // console.log("trimmed right");
       text = rightTrimmedText;
       !this.firstWord && (this.hasToInsertSpace = true);
     }
