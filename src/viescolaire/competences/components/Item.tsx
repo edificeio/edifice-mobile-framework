@@ -14,7 +14,7 @@ import { IMoyenneList } from "../state/moyennes";
 
 const getColorfromCompetence = (evaluation: number) => {
   let mapColors = ["#555555", "#E13A3A", "#FF8500", "#ECBE30", "#46BFAF"] as string[];
-  if (evaluation >= 0 && evaluation <= 4) return mapColors[evaluation];
+  if (evaluation >= 0 && evaluation <= mapColors.length) return mapColors[evaluation];
   return "#DDDDDD";
 };
 

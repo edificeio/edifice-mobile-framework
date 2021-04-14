@@ -125,7 +125,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     const { devoirsMoyennesList } = this.props;
     const { devoirs, selectedPeriod } = this.state;
     return (
-      <View style={{ height: "78%" }}>
+      <View style={{ flex: 1 }}>
         <View style={{ flexDirection: "row" }}>
           <TextBold style={{ marginBottom: 10 }}>{selectedPeriod.type}</TextBold>
           <Text> - {I18n.t("viesco-average").toUpperCase()}</Text>
@@ -160,7 +160,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
           </View>
         )}
         <View style={{ marginBottom: 10, flexDirection: "row", alignItems: "center" }}>
-          <Text>{I18n.t("viesco-colors")}</Text>
+          <Text>{I18n.t("viesco-colors")}&ensp;</Text>
           <Switch
             trackColor={{ false: "#D1D1D1", true: "#A1DED5" }}
             thumbColor={value ? "#EFEFEF" : "#46BFAF"}
@@ -181,7 +181,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     const { devoirsList } = this.props;
     const { devoirs, switchValue } = this.state;
     return (
-      <View style={{ height: "78%" }}>
+      <View style={{ flex: 1 }}>
         {this.renderHeaderDevoirsList()}
         {devoirsList.isFetching ? (
           <Loading />
