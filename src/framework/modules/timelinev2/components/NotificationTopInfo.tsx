@@ -5,17 +5,19 @@ import * as React from "react";
 import { Text } from "react-native";
 import I18n from "i18n-js";
 import moment from "moment";
+import { connect } from "react-redux";
 
 import { CenterPanel, Header, LeftPanel } from "../../../../ui/ContainerContent";
 import { BadgeAvatar } from "../../../../ui/BadgeAvatar";
 import { HtmlContentView } from "../../../../ui/HtmlContentView";
-import { getSessionInfo } from "../../../../App";
 import { APPBADGES } from "../appBadges";
 import { ITimelineNotification } from "../../../notifications";
 import theme from "../../../theme";
 import { FontWeight } from "../../../components/text";
+import { getUserSession, IUserSession } from "../../../session";
+import { IGlobalState } from "../../../../AppStore";
 
-export default ({ notification }: { notification: ITimelineNotification}) => {
+const NotificationTopInfo = ({ notification, session }: { notification: ITimelineNotification, session: IUserSession}) => {
   const message = notification && notification.message;
   const type = notification && notification.type;
   const date = notification && notification.date;
@@ -24,7 +26,7 @@ export default ({ notification }: { notification: ITimelineNotification}) => {
 
   let formattedMessage = message;
   if (message) {
-    const isSenderMe = sender && sender.id === getSessionInfo().userId;
+    const isSenderMe = sender && sender.id === session.user.id;
     if (resource && resource.name) formattedMessage = formattedMessage.replace(resource.name, ` ${resource.name} `);
     if (sender && sender.displayName) formattedMessage = formattedMessage.replace(/<br.*?>/, "").replace(sender.displayName, `${sender.displayName} `);
     if (isSenderMe) formattedMessage = formattedMessage.replace(sender && sender.displayName, `${sender.displayName} ${I18n.t("me-indicator")} `);
@@ -70,3 +72,11 @@ export default ({ notification }: { notification: ITimelineNotification}) => {
     </Header>
   );
 }
+
+const mapStateToProps: (s: IGlobalState) => ({ session: IUserSession }) = (s) => {
+  return {
+    session: getUserSession(s)
+  }
+};
+
+export default connect(mapStateToProps)(NotificationTopInfo);
