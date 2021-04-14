@@ -29,17 +29,19 @@ const getColorFromNote = (note: number, moy: number, diviseur: number) => {
 };
 
 const CompetenceRoundModal = competences => {
-  return (
-    <View>
-      {competences.map((competence, index) => (
-        <ModalContentBlock style={{ flexDirection: "row", justifyContent: "space-around" }} key={index}>
-          <Text>{competence.nom}</Text>
-          <View style={[styleConstant.round, { backgroundColor: getColorfromCompetence(competence.evaluation) }]} />
-        </ModalContentBlock>
-      ))}
-    </View>
-  );
-}
+  return competences.map((competence, index) => (
+    <ModalContentBlock
+      style={{
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}
+      key={index}>
+      <Text>{competence.nom}</Text>
+      <View style={[styleConstant.round, { backgroundColor: getColorfromCompetence(competence.evaluation) }]} />
+    </ModalContentBlock>
+  ));
+};
 
 const CompetenceRound = ({ competences, stateFullRound }) => {
   const [isVisible, toggleVisible] = useState(false);
@@ -58,12 +60,7 @@ const CompetenceRound = ({ competences, stateFullRound }) => {
           <ModalContent>
             {CompetenceRoundModal(competences)}
             <ModalContentBlock>
-              <ButtonsOkOnly
-                onValid={() => {
-                  toggleVisible(false);
-                }}
-                title={I18n.t("viesco-close").toUpperCase()}
-              />
+              <ButtonsOkOnly onValid={() => toggleVisible(false)} title={I18n.t("viesco-close").toUpperCase()} />
             </ModalContentBlock>
           </ModalContent>
         </ModalBox>
@@ -258,10 +255,10 @@ const styleConstant = StyleSheet.create({
     fontSize: 20,
   },
   round: {
-    height: 30,
-    width: 30,
+    marginLeft: 5,
+    height: 25,
+    width: 25,
     borderRadius: 15,
-    alignSelf: "flex-end",
   },
   subMatieres: {
     flexDirection: "row",
