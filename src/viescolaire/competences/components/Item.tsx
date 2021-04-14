@@ -166,12 +166,25 @@ export const GradesDevoirsMoyennes = ({ devoirs }: { devoirs: IMoyenneList }) =>
         </View>
         {devoir.devoirs !== undefined
           ? devoir.devoirs.length > 0 &&
-            devoir.devoirs.map((course, index) => (
-              <View style={styleConstant.subMatieres} key={index}>
-                <Text style={{ maxWidth: "85%" }} numberOfLines={1}>{course.name.toUpperCase()}</Text>
-                <Text style={{ color: CommonStyles.primary }}>{parseFloat(course.note).toFixed(1)}</Text>
-              </View>
-            ))
+            devoir.devoirs.map(
+              (course, index) =>
+                course.is_evaluated && (
+                  <View style={styleConstant.subMatieres} key={index}>
+                    <Text style={{ maxWidth: "80%" }} numberOfLines={1}>
+                      {course.name.toUpperCase()}
+                    </Text>
+                    {course.note ? (
+                      <Text style={{ color: CommonStyles.primary }}>
+                        {course.note}/{course.diviseur}
+                      </Text>
+                    ) : (
+                      course.libelle_court && (
+                        <Text style={{ color: CommonStyles.primary }}>{course.libelle_court}</Text>
+                      )
+                    )}
+                  </View>
+                )
+            )
           : null}
       </LeftColoredItem>
     ))}

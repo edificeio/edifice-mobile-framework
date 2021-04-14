@@ -14,6 +14,8 @@ export interface IMoyenne {
     diviseur: number;
     name: string;
     coefficient: number;
+    is_evaluated: boolean;
+    libelle_court: string;
   }[];
 }
 
