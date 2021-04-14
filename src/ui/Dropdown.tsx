@@ -71,11 +71,11 @@ const DropdownIOS = ({
       <TouchableWithoutFeedback
         style={[selectedStyle, { padding: 10, flexDirection: "row", alignItems: "center" }, style]}
         onPress={() => toggleModal(true)}>
-        <TextBold style={{ flex: 1 }}>
+        <TextBold style={{ flex: 1 }} numberOfLines={1}>
           {placeholder
             ? placeholder
             : value
-            ? getItemRenderer(data.find(item => getItemKeyExtractor(item) == value))
+            ? getItemRenderer(data.find(item => getItemKeyExtractor(item) === value))
             : " "}
         </TextBold>
         <Icon size={20} name="arrow_down" />

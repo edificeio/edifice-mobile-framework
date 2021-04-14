@@ -126,8 +126,10 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     const { devoirs, selectedPeriod } = this.state;
     return (
       <View style={{ flex: 1 }}>
-        <View style={{ flexDirection: "row" }}>
-          <TextBold style={{ marginBottom: 10 }}>{selectedPeriod.type}</TextBold>
+        <View style={{ flexDirection: "row", maxWidth: "50%" }}>
+          <TextBold style={{ marginBottom: 10 }} numberOfLines={1}>
+            {selectedPeriod.type}
+          </TextBold>
           <Text> - {I18n.t("viesco-average").toUpperCase()}</Text>
         </View>
         {devoirsMoyennesList.isFetching ? (
@@ -152,10 +154,10 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     return (
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         {screenDisplay === ScreenDisplay.DASHBOARD ? (
-          <TextBold style={{ marginBottom: 10 }}>{I18n.t("viesco-last-grades")}</TextBold>
+          <TextBold style={{ marginBottom: 10, maxWidth: "50%" }} numberOfLines={1}>{I18n.t("viesco-last-grades")}</TextBold>
         ) : (
-          <View style={{ flexDirection: "row" }}>
-            <TextBold style={{ marginBottom: 10 }}>{selectedDiscipline}&ensp;</TextBold>
+          <View style={{ flexDirection: "row", maxWidth: "50%", marginBottom: 10 }}>
+            <TextBold numberOfLines={1}>{selectedDiscipline}&ensp;</TextBold>
             <Text style={{ color: "#AFAFAF" }}>{selectedPeriod.type}</Text>
           </View>
         )}
@@ -255,6 +257,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
 
     return (
       <Dropdown
+        style={{ marginRight: 5 }}
         data={periodsList.map(x => x.type)}
         value={selectedPeriod.type}
         onSelect={(key: string) => {
@@ -292,8 +295,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 10,
-    paddingBottom: 10,
-    marginHorizontal: 10,
+    marginVertical: 10,
+    marginHorizontal: 5,
   },
 });
