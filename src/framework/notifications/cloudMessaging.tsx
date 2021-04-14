@@ -13,6 +13,7 @@ import { handleNotificationAction, NotifHandlerThunkAction } from "./routing";
 import { getAsResourceUriNotification, IEntcoreTimelineNotification, ITimelineNotification, notificationAdapter } from '.';
 import { legacyAppConf } from '../appConf';
 import { Linking } from 'react-native';
+import { startLoadNotificationsAction } from '../modules/timelinev2/actions';
 
 export async function requestUserPermission() {
 	const authorizationStatus = await messaging().requestPermission();
@@ -85,6 +86,7 @@ const _AppPushNotificationHandlerComponent: FunctionComponent<{ isLoggedIn: bool
 			} as IEntcoreTimelineNotification;
 			const n = notificationAdapter(notificationData);
 
+			props.dispatch(startLoadNotificationsAction()); // Lasy-load, no need to await here.
 			props.dispatch(handleNotificationAction(n, fallbackHandleNotificationAction, "Push Notification"))
 			setNotification(undefined);
 		}
