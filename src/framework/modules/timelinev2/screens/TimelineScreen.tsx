@@ -22,7 +22,7 @@ import { TimelineFlashMessage } from "../components/TimelineFlashMessage";
 import { EmptyScreen } from "../../../components/emptyScreen";
 import { PageView } from "../../../components/page";
 import { ITimelineNotification, IResourceUriNotification, isResourceUriNotification, IAbstractNotification, getAsResourceUriNotification } from "../../../notifications";
-import { handleNotificationAction, NotifHandlerThunkAction } from "../../../notifications/routing";
+import { defaultNotificationActionStack, handleNotificationAction, NotifHandlerThunkAction } from "../../../notifications/routing";
 import { getTimelineWorkflows } from "../timelineModules";
 import { getUserSession, IUserSession } from "../../../session";
 import PopupMenu from "../../../../framework/components/popupMenu";
@@ -235,7 +235,7 @@ export class TimelineScreen extends React.PureComponent<
       isResourceUriNotification(n) && this.props.navigation.navigate('timeline/goto', {
         notification: n as IResourceUriNotification
       })
-      return { managed: true };
+      return { managed: 1 };
     };
     this.props.handleOpenNotification && this.props.handleOpenNotification(n, fallbackHandleNotificationAction);
   }
@@ -271,8 +271,8 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () 
     handleInitTimeline: async () => { await dispatch(startLoadNotificationsAction()) },
     handleNextPage: async () => { return await (dispatch(loadNotificationsPageAction()) as unknown as Promise<boolean>); }, // TS BUG: await is needed here and type is correct
     handleDismissFlashMessage: async (flashMessageId: number) => { await dispatch(dismissFlashMessageAction(flashMessageId)); },
-    handleOpenNotification: async (n: IAbstractNotification, fallback: NotifHandlerThunkAction) => {
-      dispatch(handleNotificationAction(n, fallback, "Timeline Notification"))
+    handleOpenNotification: async (n: IAbstractNotification) => {
+      dispatch(handleNotificationAction(n, defaultNotificationActionStack, "Timeline Notification"))
     }
   })
 

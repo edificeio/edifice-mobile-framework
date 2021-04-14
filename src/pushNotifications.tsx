@@ -28,13 +28,13 @@ export async function requestUserPermission() {
   }
 }
 
-export const handleNotificationAction = (data: NotificationData, apps: string[], doTrack: false | string = "Push Notification") =>
+export const handleNotificationAction = (data: NotificationData, apps: string[], trackType: false | string = "Push Notification") =>
   async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     // function for calling handlerfactory
     let manageCount = 0;
     const call = async (notifHandlerFactory: NotificationHandlerFactory<any, any, any>) => {
       try {
-        const managed = await notifHandlerFactory(dispatch)(data, apps, doTrack);
+        const managed = await notifHandlerFactory(dispatch, getState)(data, apps, trackType);
         if (managed) {
           manageCount++;
         }
@@ -59,7 +59,7 @@ export const handleNotificationAction = (data: NotificationData, apps: string[],
       const url = normalizeUrl(`${(Conf.currentPlatform as any).url}/${data.resourceUri}`)
       console.log("data", data.resourceUri.split('/'));
       const notifPathBegin = '/' + data.resourceUri.replace(/^\/+/g, '').split('/')[0];
-      doTrack && Trackers.trackEvent(doTrack, "Browser", notifPathBegin);
+      trackType && Trackers.trackEvent(trackType, "Browser", notifPathBegin);
       Linking.canOpenURL(url).then(supported => {
         if (supported) {
           Linking.openURL(url);

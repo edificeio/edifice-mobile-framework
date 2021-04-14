@@ -14,7 +14,7 @@ const handleBlogNotificationAction: NotifHandlerThunkAction = notification => as
 		notification
 	});
 	return {
-		managed: true,
+		managed: 1,
 		trackInfo: { action: "Blog", name: `${notification.type}.${notification["event-type"]}` }
 	}
 }
