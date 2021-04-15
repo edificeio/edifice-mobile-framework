@@ -75,11 +75,13 @@ export default class PopupMenu extends React.PureComponent<IPopupMenuProps, IPop
 	}
 
 	render() {
+		const { iconName } = this.props;
+		const { active } = this.state;
 		return (
 			<>
 				<ButtonIcon
-					name={this.props.iconName}
-					onPress={() => this.setState({ active: !this.state.active })}
+					name={active ? "close" : iconName}
+					onPress={() => this.setState({ active: !active })}
 					style={{
 						position:"absolute",
 						zIndex: 100,
@@ -87,7 +89,7 @@ export default class PopupMenu extends React.PureComponent<IPopupMenuProps, IPop
 						top: Platform.select({ "android": 14, "ios": hasNotch() ? 61 : 34 })
 					}}
 				/>
-				{this.state.active
+				{active
 					?
 						<>
 							{this.renderOverlay()}
@@ -108,6 +110,7 @@ export default class PopupMenu extends React.PureComponent<IPopupMenuProps, IPop
 	}
 
 	renderOptions() {
+		const { options } = this.props;
 		const Menu = styled.FlatList({
 			position: "absolute",
 			zIndex: 100,
@@ -116,7 +119,7 @@ export default class PopupMenu extends React.PureComponent<IPopupMenuProps, IPop
 			overflow: "visible",
 		})
 		return <Menu
-			data={this.props.options}
+			data={options}
 			renderItem={({ item }) => this.renderAction(item as { icon: string; i18n: string; goTo: NavigationNavigateActionPayload })}
 			contentContainerStyle={{
 				borderRadius: 4,
