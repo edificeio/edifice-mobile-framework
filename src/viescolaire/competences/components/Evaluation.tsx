@@ -204,6 +204,8 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
   private initDevoirsByDisciplines(discipline) {
     const { structureId, childId } = this.props;
     const { subjectsList, selectedPeriod } = this.state;
+    if (selectedPeriod.type === I18n.t("viesco-competences-period"))
+      this.setState({ selectedPeriod: { type: I18n.t("viesco-year"), value: undefined } });
 
     let subjectId = "";
     if (discipline !== I18n.t("viesco-competences-disciplines")) {
@@ -211,8 +213,6 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
       this.props.getDevoirs(structureId, childId, selectedPeriod.value!, subjectId);
     } else this.props.getDevoirs(structureId, childId);
 
-    if (selectedPeriod.type === I18n.t("viesco-competences-period"))
-      this.setState({ selectedPeriod: { type: I18n.t("viesco-year"), value: undefined } });
     this.setState({ selectedDiscipline: discipline, disciplineId: subjectId }, this.screenRenderOpt);
   }
 
@@ -247,10 +247,10 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
   private displayPeriodsDropdown() {
     const { selectedPeriod } = this.state;
     let periodsList = [{ type: I18n.t("viesco-competences-period"), value: undefined }] as ISelectedPeriod[];
-    this.props.periods.map(({ order, type }) =>
+    this.props.periods.map(({ order, type, id_type }) =>
       periodsList.push({
         type: `${I18n.t("viesco-competences-period-" + type) + " " + order}`,
-        value: order.toString(),
+        value: id_type.toString(),
       })
     );
     periodsList.push({ type: I18n.t("viesco-year"), value: undefined });
