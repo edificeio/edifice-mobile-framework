@@ -8,7 +8,9 @@ import { getSessionInfo } from "../../../App";
 import withViewTracking from "../../../infra/tracker/withViewTracking";
 import { fetchHomeworkListAction, updateHomeworkProgressAction } from "../../cdt/actions/homeworks";
 import { getHomeworksListState } from "../../cdt/state/homeworks";
+import { fetchLevelsAction } from "../../competences/actions/competencesLevels";
 import { fetchDevoirListAction } from "../../competences/actions/devoirs";
+import { getLevelsListState, ILevelsList } from "../../competences/state/competencesLevels";
 import { getDevoirListState } from "../../competences/state/devoirs";
 import { fetchPersonnelListAction } from "../actions/personnel";
 import { fetchSubjectListAction } from "../actions/subjects";
@@ -19,10 +21,12 @@ class Dashboard extends React.PureComponent<{
   homeworks: any[];
   structureId: string;
   childId: string;
+  levels: ILevelsList;
   getSubjects: (structureId: string) => any;
   getTeachers: (structureId: string) => any;
   getHomeworks: (structureId: string, startDate: string, endDate: string) => any;
   getDevoirs: (structureId: string, childId: string) => void;
+  getLevels: (structureId: string) => void;
   navigation: NavigationScreenProp<any>;
 }> {
   constructor(props) {
@@ -47,6 +51,7 @@ class Dashboard extends React.PureComponent<{
     this.props.getSubjects(structureId);
     this.props.getTeachers(structureId);
     this.props.getDevoirs(structureId, childId);
+    this.props.getLevels(structureId);
   }
 
   public render() {
@@ -62,6 +67,7 @@ const mapStateToProps: (state: any) => any = state => {
   const structureId = getSessionInfo().administrativeStructures[0].id || getSessionInfo().structures[0];
   const childId = getSessionInfo().userId;
   const evaluations = getDevoirListState(state);
+  const levels = getLevelsListState(state).data;
 
   return {
     homeworks,
@@ -69,6 +75,7 @@ const mapStateToProps: (state: any) => any = state => {
     structureId,
     childId,
     evaluations,
+    levels,
   };
 };
 
@@ -80,6 +87,7 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
       getHomeworks: fetchHomeworkListAction,
       updateHomeworkProgress: updateHomeworkProgressAction,
       getDevoirs: fetchDevoirListAction,
+      getLevels: fetchLevelsAction,
     },
     dispatch
   );

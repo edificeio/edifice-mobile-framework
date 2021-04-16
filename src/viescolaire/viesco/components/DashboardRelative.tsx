@@ -11,6 +11,7 @@ import { EmptyScreen } from "../../../ui/EmptyScreen";
 import { Text, TextBold } from "../../../ui/text";
 import { HomeworkItem } from "../../cdt/components/Items";
 import { DenseDevoirList } from "../../competences/components/Item";
+import { ILevelsList } from "../../competences/state/competencesLevels";
 import { IDevoirListState } from "../../competences/state/devoirs";
 import { isHomeworkDone, homeworkDetailsAdapter } from "../../utils/cdt";
 import ChildPicker from "../containers/ChildPicker";
@@ -50,7 +51,8 @@ const styles = StyleSheet.create({
 
 type DashboardProps = {
   homeworks: any[];
-  evaluations: any[];
+  evaluations: IDevoirListState;
+  levels: ILevelsList;
   hasRightToCreateAbsence: boolean;
 } & INavigationProps;
 
@@ -181,7 +183,7 @@ export default class Dashboard extends React.PureComponent<DashboardProps> {
     );
   }
 
-  private renderLastEval(evaluations: IDevoirListState) {
+  private renderLastEval(evaluations: IDevoirListState, levels: ILevelsList) {
     const evaluationList = evaluations.data
       .sort((a, b) => moment(b.date, "DD/MM/YYYY").diff(moment(a.date, "DD/MM/YYYY")))
       .slice(0, 5);
@@ -189,7 +191,7 @@ export default class Dashboard extends React.PureComponent<DashboardProps> {
       <View style={styles.dashboardPart}>
         <TextBold style={styles.title}>{I18n.t("viesco-lasteval")}</TextBold>
         {evaluations && evaluations.data ? (
-          <DenseDevoirList devoirs={evaluationList} />
+          <DenseDevoirList devoirs={evaluationList} levels={levels} />
         ) : (
           <EmptyScreen
             imageSrc={require("../../../../assets/images/empty-screen/empty-evaluations.png")}
@@ -203,7 +205,7 @@ export default class Dashboard extends React.PureComponent<DashboardProps> {
   }
 
   public render() {
-    const { homeworks, evaluations, hasRightToCreateAbsence } = this.props;
+    const { homeworks, evaluations, hasRightToCreateAbsence, levels } = this.props;
 
     return (
       <View style={{ flex: 1 }}>
@@ -220,7 +222,7 @@ export default class Dashboard extends React.PureComponent<DashboardProps> {
         <ScrollView>
           {this.renderNavigationGrid()}
           {this.renderHomework(homeworks)}
-          {this.renderLastEval(evaluations)}
+          {this.renderLastEval(evaluations, levels)}
         </ScrollView>
       </View>
     );

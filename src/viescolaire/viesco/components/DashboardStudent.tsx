@@ -9,6 +9,7 @@ import { EmptyScreen } from "../../../ui/EmptyScreen";
 import { TextBold } from "../../../ui/text";
 import { HomeworkItem } from "../../cdt/components/Items";
 import { DenseDevoirList } from "../../competences/components/Item";
+import { ILevelsList } from "../../competences/state/competencesLevels";
 import { IDevoirListState } from "../../competences/state/devoirs";
 import { isHomeworkDone, homeworkDetailsAdapter } from "../../utils/cdt";
 
@@ -170,7 +171,7 @@ export default class Dashboard extends React.PureComponent<any> {
     );
   }
 
-  private renderEvaluations(evaluations: IDevoirListState) {
+  private renderEvaluations(evaluations: IDevoirListState, levels: ILevelsList) {
     const evaluationList = evaluations.data
       .sort((a, b) => moment(b.date, "DD/MM/YYYY").diff(moment(a.date, "DD/MM/YYYY")))
       .slice(0, 5);
@@ -178,7 +179,7 @@ export default class Dashboard extends React.PureComponent<any> {
       <View style={styles.dashboardPart}>
         <TextBold style={styles.title}>{I18n.t("viesco-lasteval")}</TextBold>
         {evaluations && evaluations.data && evaluationList !== undefined ? (
-          <DenseDevoirList devoirs={evaluationList} />
+          <DenseDevoirList devoirs={evaluationList} levels={levels} />
         ) : (
           <EmptyScreen
             imageSrc={require("../../../../assets/images/empty-screen/empty-evaluations.png")}
@@ -192,13 +193,13 @@ export default class Dashboard extends React.PureComponent<any> {
   }
 
   public render() {
-    const { homeworks, evaluations } = this.props;
+    const { homeworks, evaluations, levels } = this.props;
     return (
       <View style={{ flex: 1 }}>
         {this.renderNavigationGrid()}
         <ScrollView>
           {this.renderHomework(homeworks.data)}
-          {evaluations.isFetching ? <Loading /> : this.renderEvaluations(evaluations)}
+          {evaluations.isFetching ? <Loading /> : this.renderEvaluations(evaluations, levels)}
         </ScrollView>
       </View>
     );

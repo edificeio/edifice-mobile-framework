@@ -9,12 +9,18 @@ import { ButtonsOkOnly } from "../../../ui/ButtonsOkCancel";
 import { ModalContent, ModalContentBlock, ModalBox } from "../../../ui/Modal";
 import { TextBold, Text } from "../../../ui/text";
 import { LeftColoredItem } from "../../viesco/components/Item";
+import { ILevelsList } from "../state/competencesLevels";
 import { IDevoir, IDevoirList } from "../state/devoirs";
 import { IMoyenneList } from "../state/moyennes";
 
-const getColorfromCompetence = (evaluation: number) => {
-  let mapColors = ["#555555", "#E13A3A", "#FF8500", "#ECBE30", "#46BFAF"] as string[];
-  if (evaluation >= 0 && evaluation <= mapColors.length) return mapColors[evaluation];
+const getColorfromCompetence = (evaluation: number, levels: ILevelsList) => {
+  let cycleLevels = levels.filter(obj => {
+    return obj.cycle === "Cycle 3";
+  });
+  if (evaluation >= 0 && evaluation <= cycleLevels.length) {
+    let color = cycleLevels[evaluation].couleur;
+    return color ? color : cycleLevels[evaluation].default;
+  }
   return "#DDDDDD";
 };
 
@@ -28,7 +34,7 @@ const getColorFromNote = (note: number, moy: number, diviseur: number) => {
   }
 };
 
-const CompetenceRoundModal = competences => {
+const CompetenceRoundModal = (competences: any, levels: ILevelsList) => {
   return competences.map((competence, index) => (
     <ModalContentBlock
       style={{
@@ -38,7 +44,7 @@ const CompetenceRoundModal = competences => {
       }}
       key={index}>
       <Text>{competence.nom}</Text>
-      <View style={[styleConstant.round, { backgroundColor: getColorfromCompetence(competence.evaluation) }]} />
+      <View style={[styleConstant.round, { backgroundColor: getColorfromCompetence(competence.evaluation, levels) }]} />
     </ModalContentBlock>
   ));
 };
@@ -47,10 +53,12 @@ const CompetenceRound = ({
   competences,
   stateFullRound,
   size,
+  levels,
 }: {
   competences: any;
   stateFullRound: FlexAlignType;
   size: number;
+  levels: ILevelsList;
 }) => {
   const [isVisible, toggleVisible] = useState(false);
   return (
@@ -66,7 +74,7 @@ const CompetenceRound = ({
       {isVisible && (
         <ModalBox isVisible={isVisible}>
           <ModalContent>
-            {CompetenceRoundModal(competences)}
+            {CompetenceRoundModal(competences, levels)}
             <ModalContentBlock>
               <ButtonsOkOnly onValid={() => toggleVisible(false)} title={I18n.t("viesco-close").toUpperCase()} />
             </ModalContentBlock>
@@ -117,36 +125,39 @@ const GradesDevoirsResume = ({ devoir }: { devoir: IDevoir }) => (
 
 // EXPORTED COMPONENTS
 
-export const DenseDevoirList = ({ devoirs }: { devoirs: IDevoirList }) =>
-  devoirs.map((devoir, index) => (
-    <LeftColoredItem shadow color="#F95303" key={index}>
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <View style={{ flexDirection: "row", maxWidth: "58%", padding: 8 }}>
-          <TextBold style={{ marginRight: 30 }} numberOfLines={1}>
-            {devoir.title}
-          </TextBold>
-          <Text>{devoir.date}</Text>
-        </View>
-        {devoir.competences.length ? (
-          <CompetenceRound stateFullRound="flex-end" competences={devoir.competences} size={35} />
-        ) : (
-          devoir.note === "NN" && (
-            <TextBold style={{ flexGrow: 1, textAlign: "right", fontSize: 18, paddingTop: 8 }}>{devoir.note}</TextBold>
-          )
-        )}
-        {devoir.note && devoir.note !== "NN" && (
-          <>
-            <TextBold style={{ flexGrow: 1, textAlign: "right", fontSize: 18, paddingTop: 8 }}>
-              {parseFloat(devoir.note)
-                .toFixed(1)
-                .replace(/\./g, ",")}
+export const DenseDevoirList = ({ devoirs, levels }: { devoirs: IDevoirList; levels: ILevelsList }) => (
+  <>
+    {devoirs.map((devoir, index) => (
+      <LeftColoredItem shadow color="#F95303" key={index}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <View style={{ flexDirection: "row", maxWidth: "58%", padding: 8 }}>
+            <TextBold style={{ marginRight: 30 }} numberOfLines={1}>
+              {devoir.title}
             </TextBold>
-            <Text style={{ paddingTop: 8 }}>/{devoir.diviseur}</Text>
-          </>
-        )}
-      </View>
-    </LeftColoredItem>
-  ));
+            <Text>{devoir.date}</Text>
+          </View>
+          {devoir.competences.length ? (
+            <CompetenceRound stateFullRound="flex-end" competences={devoir.competences} size={35} levels={levels} />
+          ) : (
+            devoir.note === "NN" && (
+              <TextBold style={{ flexGrow: 1, textAlign: "right", fontSize: 18, paddingTop: 8 }}>{devoir.note}</TextBold>
+            )
+          )}
+          {devoir.note && devoir.note !== "NN" && (
+            <>
+              <TextBold style={{ flexGrow: 1, textAlign: "right", fontSize: 18, paddingTop: 8 }}>
+                {parseFloat(devoir.note)
+                  .toFixed(1)
+                  .replace(/\./g, ",")}
+              </TextBold>
+              <Text style={{ paddingTop: 8 }}>/{devoir.diviseur}</Text>
+            </>
+          )}
+        </View>
+      </LeftColoredItem>
+    ))}
+  </>
+);
 
 export const GradesDevoirsMoyennes = ({ devoirs }: { devoirs: IMoyenneList }) => (
   <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -186,7 +197,15 @@ export const GradesDevoirsMoyennes = ({ devoirs }: { devoirs: IMoyenneList }) =>
   </ScrollView>
 );
 
-export const GradesDevoirs = ({ devoirs, color }: { devoirs: IDevoirList; color?: boolean }) => (
+export const GradesDevoirs = ({
+  devoirs,
+  levels,
+  color,
+}: {
+  devoirs: IDevoirList;
+  levels: ILevelsList;
+  color?: boolean;
+}) => (
   <ScrollView showsVerticalScrollIndicator={false}>
     {devoirs.map((devoir, index) => (
       <View style={styleConstant.devoirsList} key={index}>
@@ -195,7 +214,7 @@ export const GradesDevoirs = ({ devoirs, color }: { devoirs: IDevoirList; color?
           {devoir.note !== undefined && devoir.note !== "NN" ? (
             <>
               {devoir.competences !== undefined && (
-                <CompetenceRound stateFullRound="center" competences={devoir.competences} size={60} />
+                <CompetenceRound stateFullRound="center" competences={devoir.competences} size={60} levels={levels} />
               )}
               <ColoredSquare
                 note={devoir.note}
@@ -210,7 +229,7 @@ export const GradesDevoirs = ({ devoirs, color }: { devoirs: IDevoirList; color?
               />
             </>
           ) : devoir.competences !== undefined && devoir.competences.length ? (
-            <CompetenceRound stateFullRound="flex-end" competences={devoir.competences} size={60} />
+            <CompetenceRound stateFullRound="flex-end" competences={devoir.competences} size={60} levels={levels} />
           ) : (
             <View style={[styleConstant.coloredSquare, { justifyContent: "center" }]}>
               <TextBold style={{ alignSelf: "center", fontSize: 20, color: "white" }}>{devoir.note}</TextBold>

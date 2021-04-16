@@ -7,7 +7,9 @@ import { bindActionCreators } from "redux";
 import withViewTracking from "../../../infra/tracker/withViewTracking";
 import { fetchChildHomeworkAction } from "../../cdt/actions/homeworks";
 import { getHomeworksListState } from "../../cdt/state/homeworks";
+import { fetchLevelsAction } from "../../competences/actions/competencesLevels";
 import { fetchDevoirListAction } from "../../competences/actions/devoirs";
+import { getLevelsListState, ILevelsList } from "../../competences/state/competencesLevels";
 import { getDevoirListState, IDevoirListState } from "../../competences/state/devoirs";
 import { fetchPersonnelListAction } from "../actions/personnel";
 import { fetchSubjectListAction } from "../actions/subjects";
@@ -21,10 +23,12 @@ class Dashboard extends React.PureComponent<{
   hasRightToCreateAbsence: boolean;
   structureId: string;
   childId: string;
+  levels: ILevelsList;
   getSubjects: (structureId: string) => void;
   getHomeworks: (childId: string, structureId: string, startDate: string, endDate: string) => void;
   getDevoirs: (structureId: string, childId: string) => void;
   getTeachers: (structureId: string) => void;
+  getLevels: (structureId: string) => void;
   navigation: NavigationScreenProp<any>;
   isFocused: boolean;
 }> {
@@ -43,6 +47,7 @@ class Dashboard extends React.PureComponent<{
         .format("YYYY-MM-DD")
     );
     this.props.getDevoirs(structureId, childId);
+    this.props.getLevels(structureId);
   }
 
   public componentDidUpdate(prevProps) {
@@ -51,6 +56,7 @@ class Dashboard extends React.PureComponent<{
       this.props.getSubjects(this.props.structureId);
       this.props.getTeachers(this.props.structureId);
       this.props.getDevoirs(structureId, childId);
+      this.props.getLevels(structureId);
     }
     if (isFocused && (prevProps.isFocused !== isFocused || prevProps.childId !== childId)) {
       this.props.getHomeworks(
@@ -79,6 +85,7 @@ const mapStateToProps: (state: any) => any = state => {
   const subjects = getSubjectsListState(state);
   const structureId = getSelectedChildStructure(state)?.id;
   const evaluations = getDevoirListState(state);
+  const levels = getLevelsListState(state).data;
 
   const authorizedActions = state.user.info.authorizedActions;
   const hasRightToCreateAbsence =
@@ -91,6 +98,7 @@ const mapStateToProps: (state: any) => any = state => {
     structureId,
     childId,
     subjects,
+    levels,
   };
 };
 
@@ -101,6 +109,7 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
       getTeachers: fetchPersonnelListAction,
       getHomeworks: fetchChildHomeworkAction,
       getDevoirs: fetchDevoirListAction,
+      getLevels: fetchLevelsAction,
     },
     dispatch
   );

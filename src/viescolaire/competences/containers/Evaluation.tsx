@@ -13,9 +13,11 @@ import { fetchPeriodsListAction } from "../../viesco/actions/periods";
 import { getSelectedChild, getSelectedChildStructure } from "../../viesco/state/children";
 import { getPeriodsListState } from "../../viesco/state/periods";
 import { getSubjectsListState } from "../../viesco/state/subjects";
+import { fetchLevelsAction } from "../actions/competencesLevels";
 import { fetchDevoirListAction } from "../actions/devoirs";
 import { fetchDevoirMoyennesListAction } from "../actions/moyennes";
 import Competences from "../components/Evaluation";
+import { getLevelsListState } from "../state/competencesLevels";
 import { getDevoirListState } from "../state/devoirs";
 import { getMoyenneListState } from "../state/moyennes";
 
@@ -57,6 +59,7 @@ const mapStateToProps: (state: any) => any = state => {
   return {
     devoirsList: getDevoirListState(state),
     devoirsMoyennesList: getMoyenneListState(state),
+    levels: getLevelsListState(state).data,
     subjects: getSubjectsListState(state),
     userType,
     periods: getPeriodsListState(state).data,
@@ -72,6 +75,7 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
       getDevoirs: fetchDevoirListAction,
       getDevoirsMoyennes: fetchDevoirMoyennesListAction,
       getPeriods: fetchPeriodsListAction,
+      getLevels: fetchLevelsAction,
     },
     dispatch
   );

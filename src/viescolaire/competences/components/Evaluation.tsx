@@ -11,6 +11,7 @@ import { Text, TextBold } from "../../../ui/text";
 import ChildPicker from "../../viesco/containers/ChildPicker";
 import { IPeriodsList } from "../../viesco/state/periods";
 import { ISubjectList, ISubjectListState } from "../../viesco/state/subjects";
+import { ILevelsList } from "../state/competencesLevels";
 import { IDevoirListState } from "../state/devoirs";
 import { IMoyenneListState } from "../state/moyennes";
 import { GradesDevoirs, GradesDevoirsMoyennes } from "./Item";
@@ -19,6 +20,7 @@ import { GradesDevoirs, GradesDevoirsMoyennes } from "./Item";
 export type ICompetencesProps = {
   devoirsList: IDevoirListState;
   devoirsMoyennesList: IMoyenneListState;
+  levels: ILevelsList;
   subjects: ISubjectListState;
   userType: string;
   periods: IPeriodsList;
@@ -28,6 +30,7 @@ export type ICompetencesProps = {
   getDevoirs: (structureId: string, studentId: string, period?: string, matiere?: string) => void;
   getDevoirsMoyennes: (structureId: string, studentId: string, period?: string) => void;
   getPeriods: (structureId: string, groupId: string) => void;
+  getLevels: (structureIs: string) => void;
 };
 
 enum SwitchState {
@@ -73,6 +76,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     const { structureId, childId, groupId } = this.props;
     this.props.getDevoirs(structureId, childId);
     this.props.getPeriods(structureId, groupId);
+    this.props.getLevels(structureId);
   }
 
   // Update when changing child with relative account
@@ -83,9 +87,11 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     if (this.props.childId !== nextProps.childId && this.state.screenDisplay === ScreenDisplay.PERIOD) {
       this.props.getDevoirsMoyennes(structureId, childId, selectedPeriod.value!);
       this.props.getPeriods(structureId, groupId);
+      this.props.getLevels(structureId);
     } else if (this.props.childId !== nextProps.childId) {
       this.props.getDevoirs(structureId, childId, selectedPeriod.value, this.state.disciplineId!);
       this.props.getPeriods(structureId, groupId);
+      this.props.getLevels(structureId);
     }
   }
 
@@ -180,7 +186,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
   };
 
   private renderDevoirsList() {
-    const { devoirsList } = this.props;
+    const { devoirsList, levels } = this.props;
     const { devoirs, switchValue } = this.state;
     return (
       <View style={{ flex: 1 }}>
@@ -188,7 +194,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
         {devoirsList.isFetching ? (
           <Loading />
         ) : devoirs !== undefined && devoirs.length > 0 && devoirs === devoirsList.data ? (
-          <GradesDevoirs devoirs={devoirs} color={switchValue !== SwitchState.DEFAULT} />
+          <GradesDevoirs devoirs={devoirs} color={switchValue !== SwitchState.DEFAULT} levels={levels} />
         ) : (
           <EmptyScreen
             imageSrc={require("../../../../assets/images/empty-screen/empty-evaluations.png")}
