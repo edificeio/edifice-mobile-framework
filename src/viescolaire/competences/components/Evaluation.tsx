@@ -161,7 +161,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
             <Text style={{ color: "#AFAFAF" }}>{selectedPeriod.type}</Text>
           </View>
         )}
-        <View style={{ marginBottom: 10, flexDirection: "row", alignItems: "center" }}>
+        <View style={{ marginVertical: 10, flexDirection: "row", alignItems: "center" }}>
           <Text>{I18n.t("viesco-colors")}&ensp;</Text>
           <Switch
             trackColor={{ false: "#D1D1D1", true: "#A1DED5" }}

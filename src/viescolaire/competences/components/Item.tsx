@@ -1,7 +1,7 @@
 import I18n from "i18n-js";
 import * as React from "react";
 import { useState } from "react";
-import { View, StyleSheet, Platform } from "react-native";
+import { View, StyleSheet, FlexAlignType } from "react-native";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 
 import { CommonStyles } from "../../../styles/common/styles";
@@ -43,13 +43,21 @@ const CompetenceRoundModal = competences => {
   ));
 };
 
-const CompetenceRound = ({ competences, stateFullRound }) => {
+const CompetenceRound = ({
+  competences,
+  stateFullRound,
+  size,
+}: {
+  competences: any;
+  stateFullRound: FlexAlignType;
+  size: number;
+}) => {
   const [isVisible, toggleVisible] = useState(false);
   return (
     <View style={[styleConstant.competenceRoundContainer, { alignItems: stateFullRound }]}>
       {competences.length > 0 && (
         <TouchableOpacity
-          style={[styleConstant.competenceRound, styleConstant.shadow]}
+          style={[styleConstant.competenceRound, styleConstant.shadow, { minHeight: size, minWidth: size }]}
           onPress={() => toggleVisible(!isVisible)}>
           <TextBold style={styleConstant.competenceRoundText}>C</TextBold>
         </TouchableOpacity>
@@ -109,49 +117,36 @@ const GradesDevoirsResume = ({ devoir }: { devoir: IDevoir }) => (
 
 // EXPORTED COMPONENTS
 
-export const DenseDevoirList = ({ devoirs }: { devoirs: IDevoirList }) => (
-  <LeftColoredItem style={{ padding: 0 }} color="#F95303">
-    {devoirs.map((devoir, index) => (
-      <View key={index}>
-        <View style={{ flexDirection: "row", justifyContent: "space-between", padding: 8 }}>
-          <View style={{ flexDirection: "row", maxWidth: "58%" }}>
-            <TextBold style={{ marginRight: 30 }} numberOfLines={1}>
-              {devoir.title}
-            </TextBold>
-            <Text>{devoir.date}</Text>
-          </View>
-          {devoir.note && devoir.note !== "NN" ? (
-            <>
-              <TextBold style={{ flexGrow: 1, textAlign: "right", fontSize: 18 }}>
-                {parseFloat(devoir.note)
-                  .toFixed(1)
-                  .replace(/\./g, ",")}
-              </TextBold>
-              <Text>/{devoir.diviseur}</Text>
-            </>
-          ) : devoir.competences.length ? (
-            <View
-              style={[
-                styleConstant.dash,
-                { backgroundColor: getColorfromCompetence(devoir.competences[0].evaluation) },
-              ]}
-            />
-          ) : (
-            <TextBold style={{ flexGrow: 1, textAlign: "right", fontSize: 18 }}>{devoir.note}</TextBold>
-          )}
+export const DenseDevoirList = ({ devoirs }: { devoirs: IDevoirList }) =>
+  devoirs.map((devoir, index) => (
+    <LeftColoredItem shadow color="#F95303" key={index}>
+      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+        <View style={{ flexDirection: "row", maxWidth: "58%", padding: 8 }}>
+          <TextBold style={{ marginRight: 30 }} numberOfLines={1}>
+            {devoir.title}
+          </TextBold>
+          <Text>{devoir.date}</Text>
         </View>
-        {index !== devoirs.length - 1 && (
-          <View
-            style={{
-              borderBottomColor: CommonStyles.borderColorLighter,
-              borderBottomWidth: StyleSheet.hairlineWidth,
-            }}
-          />
+        {devoir.competences.length ? (
+          <CompetenceRound stateFullRound="flex-end" competences={devoir.competences} size={35} />
+        ) : (
+          devoir.note === "NN" && (
+            <TextBold style={{ flexGrow: 1, textAlign: "right", fontSize: 18, paddingTop: 8 }}>{devoir.note}</TextBold>
+          )
+        )}
+        {devoir.note && devoir.note !== "NN" && (
+          <>
+            <TextBold style={{ flexGrow: 1, textAlign: "right", fontSize: 18, paddingTop: 8 }}>
+              {parseFloat(devoir.note)
+                .toFixed(1)
+                .replace(/\./g, ",")}
+            </TextBold>
+            <Text style={{ paddingTop: 8 }}>/{devoir.diviseur}</Text>
+          </>
         )}
       </View>
-    ))}
-  </LeftColoredItem>
-);
+    </LeftColoredItem>
+  ));
 
 export const GradesDevoirsMoyennes = ({ devoirs }: { devoirs: IMoyenneList }) => (
   <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -200,7 +195,7 @@ export const GradesDevoirs = ({ devoirs, color }: { devoirs: IDevoirList; color?
           {devoir.note !== undefined && devoir.note !== "NN" ? (
             <>
               {devoir.competences !== undefined && (
-                <CompetenceRound stateFullRound="center" competences={devoir.competences} />
+                <CompetenceRound stateFullRound="center" competences={devoir.competences} size={60} />
               )}
               <ColoredSquare
                 note={devoir.note}
@@ -215,7 +210,7 @@ export const GradesDevoirs = ({ devoirs, color }: { devoirs: IDevoirList; color?
               />
             </>
           ) : devoir.competences !== undefined && devoir.competences.length ? (
-            <CompetenceRound stateFullRound="flex-end" competences={devoir.competences} />
+            <CompetenceRound stateFullRound="flex-end" competences={devoir.competences} size={60} />
           ) : (
             <View style={[styleConstant.coloredSquare, { justifyContent: "center" }]}>
               <TextBold style={{ alignSelf: "center", fontSize: 20, color: "white" }}>{devoir.note}</TextBold>
@@ -261,9 +256,10 @@ const styleConstant = StyleSheet.create({
     minHeight: 60,
     marginLeft: 20,
     backgroundColor: "white",
+    justifyContent: "center",
   },
   competenceRoundText: {
-    paddingTop: 25,
+    paddingTop: 5,
     textAlign: "center",
     fontSize: 20,
   },

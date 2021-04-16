@@ -44,7 +44,7 @@ export const devoirListService = {
   get: async (idEtablissement: string, idEleve: string, idPeriode?: string, idMatiere?: string) => {
     let urlParameters = "" as string;
     if (idPeriode) urlParameters = `&idPeriode=${idPeriode}`;
-    if (idMatiere) urlParameters = `&idMatiere=${idMatiere}`;
+    if (idMatiere) urlParameters += `&idMatiere=${idMatiere}`;
     const devoirs = await fetchJSONWithCache(
       `/competences/devoirs/eleve?${querystring.stringify({
         idEtablissement,
