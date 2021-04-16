@@ -23,7 +23,7 @@ export const loadNotificationFiltersSettingsAction = () => async (dispatch: Thun
         // 2 - Load notif settings from Async Storage
         const asyncStorageKey = `${moduleConfig.name}.notifFilterSettings`;
         let settings: INotifFilterSettings = await getItemJson(asyncStorageKey) || {};
-        const defaults = Object.fromEntries(state.notifDefinitions.notifFilters.map(v => [v.type, true]));
+        const defaults = Object.fromEntries(state.notifDefinitions.notifFilters.map(v => [v.type, v.type === "MESSAGERIE" ? false : true])); // TODO: beautify 
         settings = {...defaults, ...settings};
 
         // 3 - Save loaded notif settings for persistency
