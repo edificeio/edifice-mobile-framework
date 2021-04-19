@@ -1,6 +1,6 @@
 import { Platform, ActionSheetIOS } from "react-native";
 import DocumentPicker from "react-native-document-picker";
-import ImagePicker, { ImagePickerPermissionDeniedOptions } from "react-native-image-picker";
+import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import Permissions, { PERMISSIONS } from "react-native-permissions";
 import I18n from "i18n-js";
 import { ContentUri } from "../../workspace/types";
@@ -18,7 +18,7 @@ type PhotoCaptions = {
   cancelButtonTitle: string;
   takePhotoButtonTitle: string;
   chooseFromLibraryButtonTitle: string;
-  permissionDenied: ImagePickerPermissionDeniedOptions;
+  permissionDenied: any;
 };
 
 const captions: Captions = {
@@ -74,15 +74,17 @@ const pickIOS: FilePickerPromise = (resolve, reject) => {
 };
 
 const pickImage: FilePickerPromise = (resolve, reject) => {
-  ImagePicker.showImagePicker(transformCaptions(photoCaptions), result => {
-    if (result.didCancel) {
-      reject(new Error("Cancelled picking image"));
-    } else if (result.error) {
-      reject(new Error("Error picking image"));
-    } else {
-      const { uri, fileName, type } = result;
-      const realURI = Platform.select({ android: uri, ios: uri.split("file://")[1] });
-      resolve({ mime: type, name: fileName || uri.split("tmp/")[1], uri: realURI });
+  console.log(launchImageLibrary);
+  launchImageLibrary({
+    mediaType: 'photo'
+  }, res => {
+    if (res.didCancel) reject(new Error("Cancelled picking image"));
+    else if (res.errorCode) reject(new Error("Error picking image"));
+    else {
+      const { uri, fileName, type } = res;
+      if (!uri || !type) reject(new Error("Error picking image"));
+      const realURI = Platform.select({ android: uri, ios: uri!.split("file://")[1] })!;
+      resolve({ mime: type!, name: fileName || uri!.split("tmp/")[1], uri: realURI, path: realURI }); // WHat's the difference between uri and path ?
     }
   });
 };
