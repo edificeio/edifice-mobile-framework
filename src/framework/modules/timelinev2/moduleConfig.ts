@@ -1,4 +1,4 @@
-import { createModuleConfig } from "../../moduleTool";
+import { createModuleConfig } from "../../util/moduleTool";
 import { ITimeline_State } from "./reducer";
 
 export default createModuleConfig<"timelinev2", ITimeline_State>({

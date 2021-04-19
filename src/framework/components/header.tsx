@@ -8,7 +8,7 @@ import { ViewProps, View, TextProps, TouchableOpacity, ViewStyle } from "react-n
 import styled from '@emotion/native'
 import { SafeAreaView } from "react-native";
 
-import theme from "../theme";
+import theme from "../util/theme";
 import { Icon } from "./icon";
 import { FontWeight, rem, TextInverse } from "./text";
 

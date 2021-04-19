@@ -16,7 +16,7 @@
 
 import { AllHtmlEntities } from "html-entities";
 import Saxophone from "saxophone";
-import { parseAttrs } from "../../utils/attrs";
+import { parseAttrs } from "../../../utils/attrs";
 
 const entitiesTransformer = new AllHtmlEntities();
 

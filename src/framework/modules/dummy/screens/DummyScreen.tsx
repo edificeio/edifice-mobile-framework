@@ -7,7 +7,7 @@ import type { IGlobalState } from "../../../../AppStore";
 import type { IDummy_State } from "../reducer";
 
 import moduleConfig from "../moduleConfig";
-import withViewTracking from "../../../tracker/withViewTracking";
+import withViewTracking from "../../../util/tracker/withViewTracking";
 import { Text } from "../../../components/text";
 import { PageView } from "../../../components/page";
 

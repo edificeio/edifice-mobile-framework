@@ -26,7 +26,7 @@ import NavigationService from "./NavigationService";
 // Components
 import Carousel from "../ui/Carousel";
 import { IFrame } from "../ui/IFrame";
-import { IEntcoreApp, getRegisteredTabModules, getModuleRoutesByArray } from "../framework/moduleTool";
+import { IEntcoreApp, getRegisteredTabModules, getModuleRoutesByArray } from "../framework/util/moduleTool";
 
 /**
  * MAIN NAVIGATOR

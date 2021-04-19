@@ -108,9 +108,9 @@ export const handleNotificationAction = (notification: IAbstractNotification, ac
 
 // LEGACY ZONE ====================================================================================
 
-import legacyModuleDefinitions from "../../AppModules";
+import legacyModuleDefinitions from "../../../AppModules";
 import { getAsResourceUriNotification, IAbstractNotification } from ".";
-import { mainNavNavigate } from "../../navigation/helpers/navHelper";
+import { mainNavNavigate } from "../../../navigation/helpers/navHelper";
 
 export interface NotificationData {
 	resourceUri: string

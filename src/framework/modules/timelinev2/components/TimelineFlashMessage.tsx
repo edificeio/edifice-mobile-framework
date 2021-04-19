@@ -7,7 +7,7 @@ import { ArticleContainer } from "../../../../ui/ContainerContent";
 import { Icon } from "../../../../ui/icons/Icon";
 import { IEntcoreFlashMessage } from "../reducer/flashMessages";
 import { HtmlContentView } from "../../../../ui/HtmlContentView";
-import theme from "../../../theme";
+import theme from "../../../util/theme";
 
 interface ITimelineFlashMessageProps {
   flashMessage: IEntcoreFlashMessage;

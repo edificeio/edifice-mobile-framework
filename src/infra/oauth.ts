@@ -8,7 +8,7 @@ import { ImageURISource } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Conf from "../../ode-framework-conf";
 import AllModulesConfigs from "../framework/app/AllModulesConfigs";
-import { getAvailableModulesConfigs, getModulesScope } from "../framework/moduleTool";
+import { getAvailableModulesConfigs, getModulesScope } from "../framework/util/moduleTool";
 
 export interface IOAuthToken {
   access_token: string;

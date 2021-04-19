@@ -105,7 +105,7 @@ const computeAppConf = (conf: ILegacyAppConf) => ({
 } as IAppConf)
 
 const loadConf = () => {
-    const conf = require('../../ode-framework-conf').default as IAppConf | ILegacyAppConf;
+    const conf = require('../../../ode-framework-conf').default as IAppConf | ILegacyAppConf;
     const ret = {};
     if ((conf as IAppConf).confVersion && (conf as IAppConf).confVersion === 2) {
         ret['appConf'] = conf;

@@ -5,7 +5,7 @@
 
 import * as React from "react";
 import { View, ActivityIndicator, ViewStyle, ColorValue } from "react-native";
-import theme from "../theme";
+import theme from "../util/theme";
 
 interface LoadingProps {
     small?: boolean;
