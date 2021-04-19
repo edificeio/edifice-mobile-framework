@@ -106,7 +106,7 @@ const ColoredSquare = ({
       { backgroundColor: backgroundColor ? backgroundColor : CommonStyles.primary },
     ]}>
     <Text style={{ alignSelf: "center", color: "white", marginVertical: 8 }}>
-      <TextBold style={{ fontSize: 20, color: "white" }}>{parseFloat(note).toFixed(1)}</TextBold>
+      <TextBold style={{ fontSize: 20, color: "white" }}>{note}</TextBold>
       {!hideScore && `/ ${diviseur}`}
     </Text>
     {coeff && <Text style={styleConstant.coloredSquareText}>coeff : {coeff}</Text>}
@@ -146,9 +146,7 @@ export const DenseDevoirList = ({ devoirs, levels }: { devoirs: IDevoirList; lev
           {devoir.note && devoir.note !== "NN" && (
             <>
               <TextBold style={{ flexGrow: 1, textAlign: "right", fontSize: 18, paddingTop: 8 }}>
-                {parseFloat(devoir.note)
-                  .toFixed(1)
-                  .replace(/\./g, ",")}
+                {devoir.note.replace(/\./g, ",")}
               </TextBold>
               <Text style={{ paddingTop: 8 }}>/{devoir.diviseur}</Text>
             </>

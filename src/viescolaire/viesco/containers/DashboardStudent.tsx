@@ -31,7 +31,7 @@ class Dashboard extends React.PureComponent<{
 }> {
   constructor(props) {
     super(props);
-    const { structureId, getHomeworks } = props;
+    const { structureId, getHomeworks, childId } = props;
     this.state = {
       // fetching next month homeworks only, when screen is focused
       focusListener: this.props.navigation.addListener("willFocus", () => {
@@ -42,15 +42,15 @@ class Dashboard extends React.PureComponent<{
             .add(1, "month")
             .format("YYYY-MM-DD")
         );
+        this.props.getDevoirs(structureId, childId);
       }),
     };
   }
 
   public componentDidMount() {
-    const { structureId, childId } = this.props;
+    const { structureId } = this.props;
     this.props.getSubjects(structureId);
     this.props.getTeachers(structureId);
-    this.props.getDevoirs(structureId, childId);
     this.props.getLevels(structureId);
   }
 

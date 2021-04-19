@@ -55,7 +55,6 @@ class Dashboard extends React.PureComponent<{
     if (prevProps.childId !== childId) {
       this.props.getSubjects(this.props.structureId);
       this.props.getTeachers(this.props.structureId);
-      this.props.getDevoirs(structureId, childId);
       this.props.getLevels(structureId);
     }
     if (isFocused && (prevProps.isFocused !== isFocused || prevProps.childId !== childId)) {
@@ -69,6 +68,7 @@ class Dashboard extends React.PureComponent<{
           .add(1, "month")
           .format("YYYY-MM-DD")
       );
+      this.props.getDevoirs(structureId, childId);
     }
   }
 
