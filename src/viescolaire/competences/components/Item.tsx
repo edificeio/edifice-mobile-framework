@@ -38,12 +38,15 @@ const CompetenceRoundModal = (competences: any, levels: ILevelsList) => {
   return competences.map((competence, index) => (
     <ModalContentBlock
       style={{
+        width: "100%",
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
+        marginBottom: 10,
+        padding: 10,
       }}
       key={index}>
-      <Text>{competence.nom}</Text>
+      <Text style={{ width: "85%" }}>{competence.nom}</Text>
       <View style={[styleConstant.round, { backgroundColor: getColorfromCompetence(competence.evaluation, levels) }]} />
     </ModalContentBlock>
   ));
