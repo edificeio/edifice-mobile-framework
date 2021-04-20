@@ -21,12 +21,20 @@ export const publishBlogResourceRight =  "org.entcore.blog.controllers.BlogContr
 export const addBlogFolderResourceRight =  "org.entcore.blog.controllers.FoldersController|add";
 
 export const getBlogPostRight = (blog: IBlog, session: IUserSession) => {
-    if (resourceHasRight(blog, publishBlogPostResourceRight, session) || blog["publish-type"] === "IMMEDIATE") {
-        return publishBlogPostResourceRight;
-    } else if (!resourceHasRight(blog, publishBlogPostResourceRight, session) && blog["publish-type"] === "RESTRAINT") {
-        return submitBlogPostResourceRight;
-    } else if (resourceHasRight(blog, createBlogPostResourceRight, session)) {
-        return createBlogPostResourceRight;
+    const hasPublishRight = resourceHasRight(blog, publishBlogPostResourceRight, session);
+    const hasSubmitRight = resourceHasRight(blog, submitBlogPostResourceRight, session);
+    const hasCreateRight = resourceHasRight(blog, createBlogPostResourceRight, session);
+    const isPublishTypeImmediate = blog["publish-type"] === "IMMEDIATE";
+    const isPublishTypeRestraint = blog["publish-type"] === "RESTRAINT";
+
+    if (hasPublishRight) {
+        return { actionRight: publishBlogPostResourceRight, displayRight: publishBlogPostResourceRight };
+    } else if (hasSubmitRight && isPublishTypeImmediate) {
+        return { actionRight: submitBlogPostResourceRight, displayRight: publishBlogPostResourceRight };
+    } else if (hasSubmitRight && isPublishTypeRestraint) {
+        return { actionRight: submitBlogPostResourceRight, displayRight: submitBlogPostResourceRight };
+    } else if (hasCreateRight) {
+        return { actionRight: createBlogPostResourceRight, displayRight: createBlogPostResourceRight };
     } else return undefined;
 }
 
