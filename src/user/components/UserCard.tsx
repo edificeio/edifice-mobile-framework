@@ -1,4 +1,4 @@
-import { TouchableOpacity, View } from "react-native";
+import { View } from "react-native";
 import * as React from "react";
 import I18n from "i18n-js";
 import { Avatar, Size } from "../../ui/avatars/Avatar";
@@ -7,6 +7,8 @@ import { Icon } from "../../ui/icons/Icon";
 import { CommonStyles } from "../../styles/common/styles";
 import { IconButton } from "../../ui/IconButton";
 import { Loading } from "../../ui/Loading";
+import { ImagePicked, ImagePicker } from "../../infra/imagePicker";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 export interface IUserCardProps {
   touchable?: boolean;
@@ -16,7 +18,7 @@ export interface IUserCardProps {
   canEdit: boolean;
   hasAvatar: boolean;
   updatingAvatar: boolean;
-  onChangeAvatar?: () => void;
+  onChangeAvatar?: (image: ImagePicked) => void;
   onDeleteAvatar?: () => void;
   onPress?: () => void;
 }
@@ -31,8 +33,8 @@ export const UserCard = ({
   updatingAvatar,
   onChangeAvatar,
   onDeleteAvatar,
-  onPress = () => {}
-} : IUserCardProps) => {
+  onPress = () => { }
+}: IUserCardProps) => {
   const WrapperComponent = touchable ? TouchableOpacity : View;
 
   const renderUserType = (type: "Student" | "Relative" | "Teacher" | "Personnel") => <View style={{
@@ -43,12 +45,12 @@ export const UserCard = ({
       width: 6, height: 6, borderRadius: 3, marginRight: 4,
       backgroundColor: CommonStyles.profileTypes[type] || CommonStyles.lightGrey
     }}
-    key={type}></View>
+      key={type}></View>
     <Text color={TextColor.Light} fontSize={12}>{I18n.t(`profileTypes.${type}`)}</Text>
   </View>;
 
-  const renderActions = (hasAvatar: boolean, onChangeAvatar, onDeleteAvatar) =>
-    <View 
+  const renderActions = (hasAvatar: boolean, onChangeAvatar: (image: ImagePicked) => void, onDeleteAvatar) =>
+    <View
       style={{
         position: "absolute",
         bottom: 0,
@@ -59,31 +61,40 @@ export const UserCard = ({
       }}
     >
       {hasAvatar
-        ? <TouchableOpacity
-            onPress={() => updatingAvatar ? null : onChangeAvatar()}
-            activeOpacity={updatingAvatar ? 1 : 0}
-          >
-            <IconButton
-              disabled={updatingAvatar}
-              iconName="pencil"
-              iconColor={CommonStyles.white}
-              iconSize={15}
-              buttonStyle={{backgroundColor: CommonStyles.primary}}
-            />
-          </TouchableOpacity>
-        : <View style={{height: 30, width: 30}}/>
+        ? <ImagePicker callback={image => updatingAvatar ? null : onChangeAvatar(image)}
+          activeOpacity={updatingAvatar ? 1 : 0}
+        >
+          <IconButton
+            disabled={updatingAvatar}
+            iconName="pencil"
+            iconColor={CommonStyles.white}
+            iconSize={15}
+            buttonStyle={{ backgroundColor: CommonStyles.primary }}
+          />
+        </ImagePicker>
+        : <View style={{ height: 30, width: 30 }} />
       }
-      <TouchableOpacity
-        onPress={() => updatingAvatar ? null : hasAvatar ? onDeleteAvatar() : onChangeAvatar()}
+      {hasAvatar ? <TouchableOpacity
+        onPress={() => updatingAvatar ? null : onDeleteAvatar()}
         activeOpacity={updatingAvatar ? 1 : 0}
       >
         <IconButton
           disabled={updatingAvatar}
-          iconName={hasAvatar ? "trash" : "camera-on"}
+          iconName="trash"
           iconColor={CommonStyles.white}
-          buttonStyle={{backgroundColor: CommonStyles.primary}}
+          buttonStyle={{ backgroundColor: CommonStyles.primary }}
         />
-      </TouchableOpacity>
+      </TouchableOpacity> : <ImagePicker callback={image => updatingAvatar ? null : onChangeAvatar(image)}
+        activeOpacity={updatingAvatar ? 1 : 0}
+      >
+        <IconButton
+          disabled={updatingAvatar}
+          iconName="camera-on"
+          iconColor={CommonStyles.white}
+          iconSize={15}
+          buttonStyle={{ backgroundColor: CommonStyles.primary }}
+        />
+      </ImagePicker>}
     </View>;
 
   return <WrapperComponent
@@ -100,17 +111,17 @@ export const UserCard = ({
       borderColor: "#ddd"
     }}
     onPress={onPress}>
-    <View style={{padding: 10, alignItems: "center", justifyContent: "center"}}>
+    <View style={{ padding: 10, alignItems: "center", justifyContent: "center" }}>
       <Avatar sourceOrId={id} size={Size.verylarge} decorate />
       {canEdit ? renderActions(hasAvatar, onChangeAvatar, onDeleteAvatar) : null}
-      {updatingAvatar ? <Loading customColor="white" customStyle={{ position: "absolute", paddingTop: 6, paddingLeft: 3 }}/> : null}
+      {updatingAvatar ? <Loading customColor="white" customStyle={{ position: "absolute", paddingTop: 6, paddingLeft: 3 }} /> : null}
     </View>
     <View
       style={{
         flexGrow: 0,
         flexShrink: 1,
         marginRight: "auto",
-        paddingLeft: 15, 
+        paddingLeft: 15,
       }}
     >
       <TextBold>
@@ -122,6 +133,6 @@ export const UserCard = ({
       name="arrow_down"
       color={"#868CA0"}
       style={{ transform: [{ rotate: "270deg" }] }}
-    /> : undefined }
+    /> : undefined}
   </WrapperComponent>;
 };

@@ -36,6 +36,7 @@ import Notifier from "../../infra/notifier/container";
 import { IUserInfoState } from "../state/info";
 import { notifierShowAction } from "../../infra/notifier/actions";
 import { Trackers } from "../../infra/tracker";
+import { ImagePicked } from "../../infra/imagePicker";
 
 export const UserPageNavigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) =>
   standardNavScreenOptions(
@@ -125,11 +126,17 @@ export class UserPage extends React.PureComponent<
           canEdit
           hasAvatar={userinfo.photo !== ""}
           updatingAvatar={updatingAvatar}
-          onChangeAvatar={async () => {
+          onChangeAvatar={async (image: ImagePicked) => {
             try {
-              const selectedImage = await pickFile(true);
+              const convertedImage: ContentUri = {
+                mime: image.type,
+                name: image.fileName,
+                uri: image.uri,
+                path: image.uri
+              };
+              // console.log("convertedImage", convertedImage);
               this.setState({ updatingAvatar: true })
-              const response = await onUploadAvatar([selectedImage]);
+              const response = await onUploadAvatar([convertedImage]);
 
               const data = response.map(item => JSON.parse(item));
               const formattedData = formatResults(data);
