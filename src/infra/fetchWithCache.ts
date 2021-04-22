@@ -87,9 +87,9 @@ export async function fetchWithCache(
     if (!platform) throw new Error("must specify a platform");
     // TODO bugfix : cache key must depends on userID and platformID.
     const cacheKey = CACHE_KEY_PREFIX + path;
-    console.log("cacheKey", cacheKey);
+    // console.log("cacheKey", cacheKey);
     const dataFromCache = await AsyncStorage.getItem(cacheKey); // TODO : optimization  - get dataFrmCache only when needed.
-    console.log("dataFromCache", dataFromCache);
+    // console.log("dataFromCache", dataFromCache);
     if (Connection.isOnline && (forceSync || !dataFromCache)) {
       let response =
         path.indexOf((Conf.currentPlatform as any).url) === -1
@@ -97,9 +97,9 @@ export async function fetchWithCache(
           : await signedFetch(`${path}`, init);
       const r2 = response.clone();
       const resJson = response;
-      console.log("resJson", resJson, await resJson.json());
+      // console.log("resJson", resJson, await resJson.json());
       const resText = response.clone();
-      console.log("resText", resText, await resText.text());
+      // console.log("resText", resText, await resText.text());
       response = r2;
       // console.log("fetchWithCache path & response", path, response);
 
@@ -112,18 +112,18 @@ export async function fetchWithCache(
           statusText: response.statusText
         }
       };
-      console.log("cacheResponse", cacheResponse);
+      // console.log("cacheResponse", cacheResponse);
       await AsyncStorage.setItem(cacheKey, JSON.stringify(cacheResponse));
-      console.log("async storage set item");
+      // console.log("async storage set item");
       const ret = await getBody(response);
-      console.log("ret", ret);
+      // console.log("ret", ret);
       return ret;
     }
 
     if (dataFromCache) {
-      console.log("has dataFromCache", dataFromCache);
+      // console.log("has dataFromCache", dataFromCache);
       const cacheResponse = JSON.parse(dataFromCache);
-      console.log("cacheResponse", cacheResponse);
+      // console.log("cacheResponse", cacheResponse);
       return getCacheResult(cacheResponse);
     }
 
