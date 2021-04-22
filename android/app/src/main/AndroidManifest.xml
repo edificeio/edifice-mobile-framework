@@ -2,7 +2,7 @@
           package="com.ode.appe">
 
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <!-- <uses-permission android:name="android.permission.CAMERA"/> No need with react-native-image-picker. See documentation at https://github.com/react-native-image-picker/react-native-image-picker#android -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>

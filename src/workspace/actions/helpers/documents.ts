@@ -150,16 +150,26 @@ export const uploadDocument = (dispatch: any, content: ContentUri[], parentId?: 
 
   const url = `${Conf.currentPlatform.url}/workspace/document?${parentIdParam}${protectedParam}quality=1&thumbnail=120x120&thumbnail=100x100&thumbnail=290x290&thumbnail=381x381&thumbnail=1600x0`;
 
+  // console.log("upload document", content);
+
   dispatch(progressInitAction());
+
+  // console.log(content.map((item, index) => ({ name: `document${index}`, type: item.mime, filename: item.name, data: RNFB.wrap(decodeURIComponent(item.uri)) })));
 
   const response = content.map((item, index) =>
     RNFB.fetch("POST", url, headers, [
-      { name: `document${index}`, type: item.mime, filename: item.name, data: RNFB.wrap(item.uri) },
+      {
+        name: `document${index}`, type: item.mime, filename: item.name, data: RNFB.wrap(decodeURIComponent(
+          Platform.OS === 'ios' ? item.uri.replace('file://', '') : item.uri
+        ))
+      },
     ])
       .uploadProgress({ interval: 100 }, (written, total) => {
+        // console.log("progress");
         dispatch(progressAction((written / total) * 100));
       })
       .then(response => {
+        // console.log("upload done");
         dispatch(progressAction(100));
         dispatch(progressEndAction());
 
@@ -169,6 +179,7 @@ export const uploadDocument = (dispatch: any, content: ContentUri[], parentId?: 
           return Promise.reject(response.data);
         }
       })
+      .catch(e => console.warn("error uoloading", e))
   );
 
   return Promise.all(response);

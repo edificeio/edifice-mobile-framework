@@ -26,6 +26,8 @@ import { resourceHasRight } from "../../utils/resourceRights";
 import withViewTracking from "../../infra/tracker/withViewTracking";
 import { AttachmentPicker } from "../../ui/AttachmentPicker";
 import Notifier from "../../infra/notifier/container";
+import { ImagePicked, ImagePicker } from "../../infra/imagePicker";
+import { ImagePickerResponse } from "react-native-image-picker";
 
 export interface ICreatePostDataProps {
   user: IUserInfoState;
@@ -45,7 +47,7 @@ export interface ICreatePostOtherProps {
 export interface ICreatePostState {
   title: string;
   content: string;
-  images: ContentUri[];
+  images: ImagePicked[];
 }
 
 export type ICreatePostPageProps = ICreatePostDataProps & ICreatePostEventProps & ICreatePostOtherProps;
@@ -74,7 +76,7 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
 
     return (
       <PageContainer style={{ flex: 1 }}>
-        <Notifier id="createPost"/>
+        <Notifier id="createPost" />
         <KeyboardAvoidingView
           enabled
           behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -167,24 +169,26 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
                   justifyContent: "center",
                 }}
               >
-                <TouchableOpacity
-                  style={{ alignItems: "center", justifyContent: "center", flexDirection: imagesAdded ? "row" : "column", marginVertical: 10 }}
-                  onPress={() => this.attachmentPickerRef.onPickAttachment()}
-                >
-                  <A style={{ marginRight: imagesAdded ? 5 : 0 }}>{I18n.t('createPost-create-mediaField')}</A>
-                  <Icon
-                    name="camera-on"
-                    size={imagesAdded ? 15 : 22}
-                    color={CommonStyles.actionColor}
-                  />
-                </TouchableOpacity>
+                <ImagePicker callback={(image) => {
+                  console.log("image", image);
+                  this.setState({ images: [...images, image] })
+                }}>
+                  <View
+                    style={{ alignItems: "center", justifyContent: "center", flexDirection: imagesAdded ? "row" : "column", marginVertical: 10 }}
+                    // onPress={() => this.attachmentPickerRef.onPickAttachment()}
+                  >
+                    <A style={{ marginRight: imagesAdded ? 5 : 0 }}>{I18n.t('createPost-create-mediaField')}</A>
+                    <Icon
+                      name="camera-on"
+                      size={imagesAdded ? 15 : 22}
+                      color={CommonStyles.actionColor}
+                    />
+                  </View>
+                </ImagePicker>
                 <AttachmentPicker
                   ref={r => (this.attachmentPickerRef = r)}
                   onlyImages
                   attachments={images}
-                  onAttachmentSelected={selectedImage => {
-                    this.setState({ images: [...images, selectedImage] })
-                  }}
                   onAttachmentRemoved={imagesToSend => {
                     this.setState({ images: imagesToSend });
                   }}
@@ -212,7 +216,13 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
     let uploadedPostDocuments = undefined;
     if (images.length > 0) {
       navigation.setParams({ uploadingPostDocuments: true })
-      uploadedPostDocuments = await onUploadPostDocuments(images)
+      const convertedImages: ContentUri[] = images.map(i => ({
+        mime: i.type,
+        name: i.fileName,
+        uri: i.uri,
+        path: i.uri
+      }));
+      uploadedPostDocuments = await onUploadPostDocuments(convertedImages)
     }
 
     onPublishPost(
@@ -252,10 +262,10 @@ CreatePostPageOK.navigationOptions = ({ navigation }: { navigation: NavigationSc
       headerLeft: <HeaderBackAction navigation={navigation} />,
       headerRight: navigation.getParam('uploadingPostDocuments')
         ? <Loading
-            small
-            customColor={CommonStyles.lightGrey}
-            customStyle={{ paddingHorizontal: 18 }}
-          />
+          small
+          customColor={CommonStyles.lightGrey}
+          customStyle={{ paddingHorizontal: 18 }}
+        />
         : <HeaderAction
           navigation={navigation}
           title={navigation.getParam('blog') && navigation.getParam('userinfo')
