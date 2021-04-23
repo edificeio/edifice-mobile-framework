@@ -63,6 +63,7 @@ export const UserCard = ({
       {hasAvatar
         ? <ImagePicker callback={image => updatingAvatar ? null : onChangeAvatar(image)}
           activeOpacity={updatingAvatar ? 1 : 0}
+          options={{ cameraType: 'front'}}
         >
           <IconButton
             disabled={updatingAvatar}
@@ -86,6 +87,7 @@ export const UserCard = ({
         />
       </TouchableOpacity> : <ImagePicker callback={image => updatingAvatar ? null : onChangeAvatar(image)}
         activeOpacity={updatingAvatar ? 1 : 0}
+        options={{ cameraType: 'front' }}
       >
         <IconButton
           disabled={updatingAvatar}
