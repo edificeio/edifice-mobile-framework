@@ -65,7 +65,7 @@ export class ImagePicker extends React.PureComponent<{
                 </ModalContentBlock>)}
             </ModalContent>
             </ModalBox>
-            <TouchableOpacity {...props} onPress={(event: GestureResponderEvent) => {
+            <TouchableOpacity {...props} disallowInterruption={true} onPress={(event: GestureResponderEvent) => {
                 this.setState({ showModal: true }); props.onPress && props.onPress(event)
             }}>{this.props.children}</TouchableOpacity>
         </>;

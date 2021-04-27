@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { View, TouchableOpacity as RNTouchableOpacity } from "react-native";
 import * as React from "react";
 import I18n from "i18n-js";
 import { Avatar, Size } from "../../ui/avatars/Avatar";
@@ -35,7 +35,7 @@ export const UserCard = ({
   onDeleteAvatar,
   onPress = () => { }
 }: IUserCardProps) => {
-  const WrapperComponent = touchable ? TouchableOpacity : View;
+  const WrapperComponent = touchable ? RNTouchableOpacity : View;
 
   const renderUserType = (type: "Student" | "Relative" | "Teacher" | "Personnel") => <View style={{
     flexDirection: "row",
@@ -75,7 +75,7 @@ export const UserCard = ({
         </ImagePicker>
         : <View style={{ height: 30, width: 30 }} />
       }
-      {hasAvatar ? <TouchableOpacity
+      {hasAvatar ? <TouchableOpacity disallowInterruption={true}
         onPress={() => updatingAvatar ? null : onDeleteAvatar()}
         activeOpacity={updatingAvatar ? 1 : 0}
       >
