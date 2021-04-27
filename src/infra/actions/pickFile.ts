@@ -1,4 +1,5 @@
 import { Platform, ActionSheetIOS } from "react-native";
+import RNFetchBlob from 'rn-fetch-blob';
 import DocumentPicker from "react-native-document-picker";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import Permissions, { PERMISSIONS } from "react-native-permissions";
@@ -105,7 +106,15 @@ const pickDocumentAction = (onlyImages?: boolean) => async (resolve, reject) => 
     type: [onlyImages ? DocumentPicker.types.images : DocumentPicker.types.allFiles],
   });
   const { uri, type, name } = result;
-  const realURI = Platform.select({ android: uri, ios: decodeURI(uri).split("file://")[1] });
+  // Need to manage some Android docs specifically
+  let deviceURI = uri;
+  if ((Platform.OS === 'android')
+    && (uri.includes('content://com.google') || uri.includes('content://com.android'))) {
+    const stat = await RNFetchBlob.fs.stat(uri);
+    deviceURI = stat.path;
+  }
+  // Device os dependant URI
+  const realURI = Platform.select({ android: deviceURI, ios: decodeURI(deviceURI).split("file://")[1] });
   resolve({ mime: type, name: name, uri: realURI });
 }
 

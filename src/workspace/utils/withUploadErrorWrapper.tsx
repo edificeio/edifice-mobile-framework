@@ -49,8 +49,10 @@ function withUploadErrorWrapper<T extends object>(
 
 const mapStateToProps = (state: any) => {
   const error = state.workspace.items.error;
-  const visible = !!error && error.type === actionTypesUpload.fetchError && error.errmsg.includes("file.too.large");
-
+  const visible = !!error
+    && error.type === actionTypesUpload.fetchError
+    && (typeof error.errmsg === 'string')
+    && error.errmsg.includes("file.too.large");
   return {
     visible,
   };
