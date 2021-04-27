@@ -54,7 +54,7 @@
     "react-native-action-sheet": "^2.2.0",
     "react-native-app-link": "1.0.0",
     "react-native-device-info": "^8.0.8",
-    "react-native-document-picker": "~3.2.4",
+    "react-native-document-picker": "^5.0.3",
     "react-native-fast-image": "^7.0.2",
     "react-native-file-share-intent": "github:opendigitaleducation/react-native-file-share-intent",
     "react-native-fs": "~2.15.3",
