@@ -5,6 +5,7 @@ import { View } from "react-native";
 import {
   createAppContainer,
   createSwitchNavigator,
+  NavigationRouteConfigMap,
 } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 import { connect } from "react-redux";
@@ -25,6 +26,9 @@ import NavigationService from "./NavigationService";
 // Components
 import Carousel from "../ui/Carousel";
 import { IFrame } from "../ui/IFrame";
+import { getAvailableModules, getModuleRoutes, getModulesByFilter, IEntcoreApp, ModuleGroup } from "../framework/moduleTool";
+import AllModules from "../AllModules";
+import { Notification } from "react-native-firebase/notifications";
 
 /**
  * MAIN NAVIGATOR
@@ -39,7 +43,7 @@ import { IFrame } from "../ui/IFrame";
 function getMainRoutes(appsInfo: any[]) {
   const filter = (mod: IAppModule) => {
     console.log("mod", mod);
-    return mod.config.hasRight(appsInfo) && !mod.config.group;
+    return !!mod.config.hasRight && mod.config.hasRight(appsInfo) && !mod.config.group;
   };
   return {
     timeline: {
@@ -51,12 +55,25 @@ function getMainRoutes(appsInfo: any[]) {
   };
 }
 
+/** Returns every route that are to be displayed in tab navigation.*/
+function getTabRoutes(appsInfo: IEntcoreApp[]): NavigationRouteConfigMap<any, any> {
+  const modules = getModulesByFilter(
+    getAvailableModules(AllModules, appsInfo),
+    m => m.config.group === ModuleGroup.TAB_MODULE
+  );
+  console.log("getTabRoutes", modules);
+  return getModuleRoutes(modules);
+}
+
 /**
  * Build a tab navigator with given functional modules (they need to be declared in AppModules.ts).
  * @param apps Allowed functional module names to be displayed.
  */
 function getMainNavigator(appsInfo: any[]) {
-  const mainTabNavigator = createMainTabNavigator(getMainRoutes(appsInfo));
+  const mainTabNavigator = createMainTabNavigator({
+    ...getTabRoutes(appsInfo),
+    ...getMainRoutes(appsInfo)
+  });
   const RootStack = createStackNavigator({
     mainTabNavigator,
     carouselModal: {
