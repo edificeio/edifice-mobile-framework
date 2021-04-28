@@ -14,7 +14,7 @@
  */
 
 import * as React from "react";
-import { Dimensions, Image, ImageSourcePropType, View } from "react-native";
+import { Dimensions, Image, ImageSourcePropType, ViewStyle } from "react-native";
 import { PageContainer } from "./ContainerContent";
 import { H1, Quote } from "./Typography";
 import { FlatButton } from "./FlatButton";
@@ -28,7 +28,8 @@ export const EmptyScreen = ({
   imgHeight,
   scale,
   buttonText,
-  buttonAction
+  buttonAction,
+  customStyle
 }: {
   imageSrc?: ImageSourcePropType;
   // svgXmlData?: string;
@@ -39,18 +40,22 @@ export const EmptyScreen = ({
   scale?: number;
   buttonText?: string;
   buttonAction?: () => void;
+  customStyle?: ViewStyle;
 }) => {
-  const { width, height } = Dimensions.get("window");
+  const { width } = Dimensions.get("window");
   const ratio = imgWidth / imgHeight;
   scale = scale || 0.6;
 
   return (
     <PageContainer
-      style={{
-        alignItems: "center",
-        flex: 1,
-        justifyContent: "center"
-      }}
+      style={[
+        {
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center"
+        },
+        customStyle
+      ]}
     >
       <H1 style={{ textAlign: "center", width: "80%" }}>{title}</H1>
 

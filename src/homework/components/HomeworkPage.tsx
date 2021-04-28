@@ -26,10 +26,10 @@ import ViewOverflow from "react-native-view-overflow";
 import moment from "moment";
 
 // Components
-import { RefreshControl, SectionList } from "react-native";
+import { RefreshControl, SectionList, Text } from "react-native";
 const { View } = style;
 
-import { Loading } from "../../ui";
+import { FlatButton, Loading } from "../../ui";
 import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
 import { EmptyScreen } from "../../ui/EmptyScreen";
@@ -39,7 +39,7 @@ import HomeworkDayCheckpoint from "./HomeworkDayCheckpoint";
 import HomeworkCard from "./HomeworkCard";
 
 // Type definitions
-import { IHomeworkTask, IHomeworkTasks } from "../reducers/tasks";
+import { IHomeworkTask } from "../reducers/tasks";
 import { IHomeworkDiary } from "../reducers/diaryList";
 
 // Misc
@@ -74,6 +74,7 @@ export interface IHomeworkPageOtherProps {
 
 interface IHomeworkPageState {
   fetching: boolean;
+  pastDateLimit: moment.Moment;
 }
 
 export type IHomeworkPageProps = IHomeworkPageDataProps &
@@ -84,36 +85,28 @@ export type IHomeworkPageProps = IHomeworkPageDataProps &
 // Main component ---------------------------------------------------------------------------------
 
 export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
-  private flatList: FlatList<
-    IHomeworkTasks
-  >; /* TS-ISSUE : FlatList is declared in glamorous */ // react-native FlatList component ref
-
-  private setFlatListRef: any; // FlatList setter, executed when this component is mounted.
-
   constructor(props) {
     super(props);
-
-    // Refs init
-    this.flatList = null;
-    this.setFlatListRef = element => {
-      this.flatList = element;
-    };
   }
   public state={
-    fetching: false
+    fetching: false,
+    pastDateLimit: today()
   }
 
   getDerivedStateFromProps(nextProps: any, prevState: any) {
-    if(nextProps.isFetching !== prevState.fetching){
+    if (nextProps.isFetching !== prevState.fetching) {
       return { fetching: nextProps.isFetching};
-   }
-   else return null;
+   } else return null;
   }
 
   componentDidUpdate(prevProps: any) {
-    const { isFetching } = this.props
-    if(prevProps.isFetching !== isFetching){
+    const { isFetching, diaryId } = this.props;
+    
+    if (prevProps.isFetching !== isFetching) {
       this.setState({ fetching: isFetching });
+    }
+    if (prevProps.diaryId !== diaryId) {
+      this.setState({ pastDateLimit: today() })
     }
   }
 
@@ -142,72 +135,107 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
       onSelect,
       onScrollBeginDrag
     } = this.props;
-    const { fetching } = this.state
-
-    const isEmpty = tasksByDay && tasksByDay.length === 0;
+    const { fetching, pastDateLimit } = this.state
     const data = tasksByDay ? tasksByDay.map(day => ({
       title: day.date,
       data: day.tasks.map(task => ({
         ...task,
         date: day.date
       }))
-    })) : []
+    })) : [];
+    const pastHomework = data.filter(item => item.title.isBefore(today(), "day"));
+    const remainingPastHomework = pastHomework.filter(item => item.title.isBefore(pastDateLimit, "day"));
+    const displayedPastHomework = pastHomework.filter(item => item.title.isBetween(pastDateLimit, today(), "day", "[)"));
+    const futureHomework = data.filter(item => item.title.isSameOrAfter(today(), "day"));
+    const displayedHomework = [...displayedPastHomework, ...futureHomework];
+    const hasPastHomeWork = pastHomework.length > 0;
+    const noRemainingPastHomework = remainingPastHomework.length === 0;
+    const noFutureHomeworkHiddenPast = futureHomework.length === 0 && pastDateLimit.isSame(today(), "day");
 
     return (
-      <View style={{ flex: 1 }}>
-        {!isEmpty ?
-          <>
-            <HomeworkTimeline />
-            <View style={{ backgroundColor: CommonStyles.lightGrey, height: 15, width: "100%", position: "absolute", top: 0, zIndex: 1, marginLeft: 50 }} />
-          </>
-          : null
+      <View style={{ flex: 1 }}> 
+        {noFutureHomeworkHiddenPast
+          ? null
+          : <>
+              <HomeworkTimeline />
+              <View 
+                style={{ 
+                  backgroundColor: CommonStyles.lightGrey,
+                  height: 15,
+                  marginLeft: 50,
+                  width: "100%",
+                  position: "absolute",
+                  zIndex: 1,
+                  top: 0
+                }}
+              />
+            </>
         }
         <SectionList
-          contentContainerStyle={isEmpty ? { flex: 1 } : null}
-          ref={this.setFlatListRef}
-          sections={data}
-          CellRendererComponent={
-            ViewOverflow
-          } /* TS-ISSUE : CellRendererComponent is an official FlatList prop */
-          renderItem={({ item }) => (
-              <HomeworkCard
+          contentContainerStyle={noFutureHomeworkHiddenPast ? { flex: 1 } : null}
+          sections={displayedHomework}
+          CellRendererComponent={ViewOverflow} /* TS-ISSUE : CellRendererComponent is an official FlatList prop */
+          stickySectionHeadersEnabled
+          renderSectionHeader={({ section: { title } }) => (
+            <HomeworkDayCheckpoint
+              nb={title.date()}
+              text={title.format("dddd D MMMM YYYY")}
+              active={title.isSame(today(), "day")}
+            />
+          )}
+          renderItem={({ item, index }) => (
+            <HomeworkCard
+              key={item.id}
               title={item.title}
               content={item.content}
-              key={item.id}
               onPress={() => {
                 onSelect!(diaryId!, item.date, item.id);
                 navigation!.navigate("HomeworkTask", { "title": item.title });
               }}
             />
           )}
-          renderSectionHeader={({ section: { title } }) => (
-            <HomeworkDayCheckpoint
-              nb={title.date()}
-              text={title.format("dddd D MMMM")}
-              active={title.isSame(today(), "day")}
-            />
-          )}
           keyExtractor={item => item.id}
-          ListFooterComponent={() => !isEmpty ? <View height={15} /> : null}
           refreshControl={
             <RefreshControl
               refreshing={fetching}
               onRefresh={() => {
-                this.setState({ fetching: true })
-                onRefresh(diaryId)
+                this.setState({ fetching: true });
+                onRefresh(diaryId);
               }}
             />
           }
           onScrollBeginDrag={() => onScrollBeginDrag()}
-          stickySectionHeadersEnabled
-          ListEmptyComponent={
-            <EmptyScreen
-              imageSrc={require("../../../assets/images/empty-screen/homework.png")}
-              imgWidth={265.98}
-              imgHeight={279.97}
-              text={I18n.t("homework-emptyScreenText")}
-              title={I18n.t("homework-emptyScreenTitle")}
-            />
+          ListHeaderComponent={hasPastHomeWork
+            ? <View style={{height: 45, justifyContent: "center", alignItems: "center", marginTop: 15}}>
+                {noRemainingPastHomework
+                  ? <Text style={{fontStyle: "italic", color: CommonStyles.grey}}>
+                      {I18n.t("homework-previousNoMore")}
+                    </Text>
+                  : <FlatButton
+                      loading={false}
+                      title={I18n.t("homework-previousSee")}
+                      onPress={() => {
+                        const newestRemainingPastHW = remainingPastHomework[remainingPastHomework.length-1];
+                        const newestRemainingPastHWDate = newestRemainingPastHW.title;
+                        const newestRemainingPastHWWeekStart = moment(newestRemainingPastHWDate).startOf("isoWeek");
+                        this.setState({pastDateLimit: newestRemainingPastHWWeekStart});
+                      }}
+                    />
+                }
+              </View>
+            : null 
+          }
+          ListFooterComponent={noFutureHomeworkHiddenPast ? null : <View style={{height: 15}}/>}
+          ListEmptyComponent={noFutureHomeworkHiddenPast
+            ? <EmptyScreen
+                imageSrc={require("../../../assets/images/empty-screen/homework.png")}
+                imgWidth={265.98}
+                imgHeight={279.97}
+                text={I18n.t("homework-emptyScreenText")}
+                title={I18n.t("homework-emptyScreenTitle")}
+                customStyle={{ marginBottom: hasPastHomeWork ? 60 : 0 }}
+              />
+            : null
           }
         />
       </View>
