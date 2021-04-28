@@ -23,7 +23,9 @@ export interface ITimelineWebViewScreenEventProps { };
 export interface ITimelineWebViewScreenNavParams {
   notification: ITimelineNotification & IResourceUriNotification;
 };
-export type ITimelineWebViewScreenProps = ITimelineWebViewScreenDataProps & ITimelineWebViewScreenEventProps & NavigationInjectedProps<Partial<ITimelineWebViewScreenNavParams>>;
+export type ITimelineWebViewScreenProps = ITimelineWebViewScreenDataProps
+  & ITimelineWebViewScreenEventProps
+  & NavigationInjectedProps<Partial<ITimelineWebViewScreenNavParams>>;
 
 export interface ITimelineWebViewScreenState { };
 
