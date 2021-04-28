@@ -12,10 +12,11 @@ import type { ITimeline_State } from "../reducer";
 import { PageContainer } from "../../../../ui/ContainerContent";
 import { FakeHeader, HeaderAction, HeaderIcon, HeaderRow, HeaderTitle } from "../../../components/header";
 import { Text } from "../../../components/text";
-import { loadNotificationsPageAction, startLoadNotificationsAction } from "../actions";
+import { dismissFlashMessageAction, loadNotificationsPageAction, startLoadNotificationsAction } from "../actions";
 import withViewTracking from "../../../tracker/withViewTracking";
 import moduleConfig from "../moduleConfig";
 import { INotification, INotifications_State, IResourceUriNotification, isResourceUriNotification } from "../reducer/notifications";
+import { IEntcoreFlashMessage, IFlashMessages_State } from "../reducer/flashMessages";
 import { LoadingIndicator } from "../../../components/loading";
 import { TimelineNotification } from "../components/TimelineNotification";
 import { TimelineFlashMessage } from "../components/TimelineFlashMessage";
@@ -23,11 +24,13 @@ import { TimelineFlashMessage } from "../components/TimelineFlashMessage";
 // TYPES ==========================================================================================
 
 export interface ITimelineScreenDataProps {
+  flashMessages: IFlashMessages_State;
   notifications: INotifications_State;
 };
 export interface ITimelineScreenEventProps {
   handleInitTimeline(): Promise<void>,
-  handleNextPage(): Promise<boolean> // return true if page if there is more pages to load
+  handleNextPage(): Promise<boolean>, // return true if page if there is more pages to load
+  handleDismissFlashMessage(flashMessageId: number): Promise<void>
 };
 export type ITimelineScreenProps = ITimelineScreenDataProps & ITimelineScreenEventProps & NavigationInjectedProps;
 
@@ -43,7 +46,7 @@ export enum ITimelineItemType {
 }
 export interface ITimelineItem {
   type: ITimelineItemType,
-  data: INotification // ToDo: Add flash message type here
+  data: INotification | IEntcoreFlashMessage
 }
 
 // COMPONENT ======================================================================================
@@ -80,14 +83,15 @@ export class TimelineScreen extends React.PureComponent<
   }
 
   renderHeader() {
-    const { navigation } = this.props;
-    return <FakeHeader>
-      <HeaderRow>
-        <HeaderAction iconName="filter" onPress={() => { this.goToFilters(); }} />
-        <HeaderTitle>{I18n.t("timeline.appName")}</HeaderTitle>
-        <HeaderIcon name={null} />
-      </HeaderRow>
-    </FakeHeader>
+    return (
+      <FakeHeader>
+        <HeaderRow>
+          <HeaderAction iconName="filter" onPress={() => { this.goToFilters(); }} />
+          <HeaderTitle>{I18n.t("timeline.appName")}</HeaderTitle>
+          <HeaderIcon name={null} />
+        </HeaderRow>
+      </FakeHeader>
+    )
   }
 
   renderError() {
@@ -96,14 +100,14 @@ export class TimelineScreen extends React.PureComponent<
   }
 
   renderList() {
-    const items = getTimelineItems(this.props.notifications);
+    const items = getTimelineItems(this.props.flashMessages, this.props.notifications);
     return <FlatList
       // data
       data={items}
       keyExtractor={n => n.data.id.toString()}
       renderItem={({ item }) => item.type === ITimelineItemType.NOTIFICATION
         ? this.renderNotificationItem(item.data as INotification)
-        : this.renderFlashMessageItem(item.data) as IFlashMessage} //TODO: add type
+        : this.renderFlashMessageItem(item.data as IEntcoreFlashMessage)}
       // pagination
       ListEmptyComponent={this.renderEmpty}
       refreshControl={
@@ -128,7 +132,7 @@ export class TimelineScreen extends React.PureComponent<
   renderNotificationItem(notification: INotification) {
     return (
       <TimelineNotification
-        {...notification}
+        notification={notification}
         notificationAction={
           isResourceUriNotification(notification)
             ? () => this.doOpenNotification(notification)
@@ -138,8 +142,13 @@ export class TimelineScreen extends React.PureComponent<
     )
   }
 
-  renderFlashMessageItem(flashMessage: any) { // ToDo type and code + copy "timelineData" logic from Timeline.tsx
-    return <TimelineFlashMessage {...flashMessage}/>
+  renderFlashMessageItem(flashMessage: IEntcoreFlashMessage) {
+    return (
+      <TimelineFlashMessage
+        flashMessage={flashMessage}
+        flashMessageAction={() => this.doDismissFlashMessage(flashMessage.id)}
+      />
+    )
   }
 
   // LIFECYCLE ====================================================================================
@@ -180,15 +189,19 @@ export class TimelineScreen extends React.PureComponent<
     })
   }
 
+  async doDismissFlashMessage(flashMessageId: number) {
+    await this.props.handleDismissFlashMessage(flashMessageId);
+  }
+
   goToFilters() { this.props.navigation.navigate('timeline/filters'); }
 }
 
 // UTILS ==========================================================================================
 
-const getTimelineItems = (notifications: INotifications_State /* add flash messages param here */) =>
+const getTimelineItems = (flashMessages: IFlashMessages_State, notifications: INotifications_State) =>
 ([
+  ...flashMessages.data.map(fm => ({ type: ITimelineItemType.FLASHMSG, data: fm })),
   ...notifications.data.map(n => ({ type: ITimelineItemType.NOTIFICATION, data: n })),
-  // ToDo: add array map for flash msgs
 ]);
 
 // MAPPING ========================================================================================
@@ -196,6 +209,7 @@ const getTimelineItems = (notifications: INotifications_State /* add flash messa
 const mapStateToProps: (s: IGlobalState) => ITimelineScreenDataProps = (s) => {
   let ts = moduleConfig.getState(s) as ITimeline_State;
   return {
+    flashMessages: ts.flashMessages,
     notifications: ts.notifications
   };
 };
@@ -203,7 +217,8 @@ const mapStateToProps: (s: IGlobalState) => ITimelineScreenDataProps = (s) => {
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => ITimelineScreenEventProps
   = (dispatch, getState) => ({
     handleInitTimeline: async () => { await dispatch(startLoadNotificationsAction()) },
-    handleNextPage: async () => { await dispatch(loadNotificationsPageAction()); } // TS BUG: await is needed here and type is correct
+    handleNextPage: async () => { await dispatch(loadNotificationsPageAction()); }, // TS BUG: await is needed here and type is correct
+    handleDismissFlashMessage: async (flashMessageId: number) => { await dispatch(dismissFlashMessageAction(flashMessageId)); }
   })
 
 const TimelineScreen_Connected = connect(mapStateToProps, mapDispatchToProps)(TimelineScreen);
