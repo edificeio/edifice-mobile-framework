@@ -10,9 +10,9 @@ import I18n from "i18n-js";
 import * as React from "react";
 import { View, ViewProps } from "react-native";
 
-import { Loading, Icon } from ".";
+import { Loading } from ".";
 import { fetchJSONWithCache } from "../infra/fetchWithCache";
-import HtmlParserRN, { IHtmlParserRNOptions } from "../infra/htmlParser/rn";
+import HtmlParserRN, { IHtmlParserRNOptions } from "../framework/htmlParser/rn";
 import { Italic } from "./Typography";
 import { IRemoteAttachment } from "./Attachment";
 import Conf from "../../ode-framework-conf";

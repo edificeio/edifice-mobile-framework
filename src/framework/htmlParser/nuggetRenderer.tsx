@@ -25,7 +25,7 @@ import {
   TextLink
 } from "../../ui/text";
 import { IFrame } from "../../ui/IFrame";
-import { DEPRECATED_signImagesUrls, DEPRECATED_signImageURISource } from "../oauth";
+import { DEPRECATED_signImagesUrls, DEPRECATED_signImageURISource } from "../../infra/oauth";
 
 export enum HtmlParserJsxTextVariant {
   None = 0,
@@ -57,7 +57,7 @@ export interface ITextNugget extends INugget {
 }
 
 export interface ILinkTextNugget extends ITextNugget {
-  url: string;
+  url: string | null;
 }
 
 export interface IColorTextNugget extends ITextNugget {
@@ -250,14 +250,19 @@ function renderParseText(
         </UnderlineTextComp>
       );
     case HtmlParserJsxTextVariant.Link:
-      const LinkTextComp = nested ? NestedTextLink : TextLink;
+      const LinkTextComp = (nugget as ILinkTextNugget).url
+        ? nested ? NestedTextLink : TextLink
+        : nested ? NestedText : Text;
+        console.log("rendering", nugget);
       return (
         <LinkTextComp
           key={key}
-          onPress={() => {
-            // console.log("touched", (nugget as ILinkTextNugget).url);
-            (nugget as ILinkTextNugget).url && Linking.openURL((nugget as ILinkTextNugget).url);
-          }}
+          {...((nugget as ILinkTextNugget).url ? {
+            onPress: () => {
+              // console.log("touched", (nugget as ILinkTextNugget).url);
+              (nugget as ILinkTextNugget).url && Linking.openURL((nugget as ILinkTextNugget).url);
+            }
+          }: {})}
           style={{
             ...style,
             ...textStyles[HtmlParserJsxTextVariant.Link]

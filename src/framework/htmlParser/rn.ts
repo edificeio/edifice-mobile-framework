@@ -447,7 +447,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
    * @param tag sax.Tag
    */
   protected parseOpenLinkTag(tag: ISaxTagOpen): void {
-    if (!this.opts.hyperlinks) return;
+    // if (!this.opts.hyperlinks) return;
     // console.log("encourtered OPEN link");
     let cleanUrl = tag.attrs.href;
     if (cleanUrl && cleanUrl.startsWith("/")) {
@@ -460,7 +460,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
       children: [],
       parent: null,
       type: HtmlParserNuggetTypes.Text,
-      url: cleanUrl,
+      url: this.opts.hyperlinks ? cleanUrl : null,
       variant: HtmlParserJsxTextVariant.Link
     };
     this.insertNewTextNugget(nugget);
@@ -505,7 +505,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
    * Parse a closing <a> tag.
    */
   protected parseCloseLinkTag(): void {
-    if (!this.opts.hyperlinks) return;
+    // if (!this.opts.hyperlinks) return;
     // console.log("encourtered CLOSE link");
     this.closeCurrentTextNugget();
     this.currentLink = null;
