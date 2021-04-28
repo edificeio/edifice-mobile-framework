@@ -21,6 +21,7 @@ import { Text, TextH1 } from "../../ui/text";
 import { ErrorMessage, InfoMessage, TextColor } from "../../ui/Typography";
 import { IForgotModel } from "../actions/forgot";
 import { CommonStyles } from "../../styles/common/styles";
+import { ValidatorBuilder } from '../../utils/form';
 
 // TYPES ---------------------------------------------------------------------------
 
@@ -75,6 +76,9 @@ export class ForgotPage extends React.PureComponent<
 
   private didFocusSubscription;
 
+  // Email ValidatorBuilder
+  private emailValidator = new ValidatorBuilder().withRequired(true).withEmail().build<string>();
+
   public UNSAFE_componentWillMount() {
     this.didFocusSubscription = this.props.navigation.addListener(
       "didFocus",
@@ -114,6 +118,10 @@ export class ForgotPage extends React.PureComponent<
       && !result.hasOwnProperty("structures")
       && result.hasOwnProperty("ok")
       && (result as { ok: boolean }).ok === true;
+    const isValidEmail = this.emailValidator.isValid(login);
+    const canSubmit = forgotId && hasStructures
+      ? !firstName || !structureName || !login
+      : !login || (forgotId && !isValidEmail) || (isError && !editing);
 
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
@@ -147,7 +155,10 @@ export class ForgotPage extends React.PureComponent<
                         hasError={isError && !editing && !(hasStructures && errorMsg)}
                         keyboardType={forgotId ? "email-address" : undefined}
                         editable={!hasStructures}
-                        inputStyle={hasStructures && {color: CommonStyles.placeholderColor, fontWeight: "bold"}}
+                      inputStyle={hasStructures && { color: CommonStyles.placeholderColor, fontWeight: "bold" }}
+                      returnKeyLabel={I18n.t("forgot-submit")}
+                      returnKeyType='done'
+                      onSubmitEditing={() => this.handleSubmit()}
                       />
                     : null
                   }
@@ -240,7 +251,7 @@ export class ForgotPage extends React.PureComponent<
                     {!isSuccess || editing ? (
                       <FlatButton
                         onPress={() => this.handleSubmit()}
-                        disabled={forgotId && hasStructures ? !firstName || !structureName || !login : !login}
+                        disabled={canSubmit}
                         title={I18n.t("forgot-submit")}
                         loading={fetching}
                       />
