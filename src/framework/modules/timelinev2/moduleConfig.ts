@@ -4,7 +4,7 @@ import { createModuleConfig } from "../../moduleTool";
 
 export default createModuleConfig({
     name: "timelinev2",
-    displayName: "timeline-tabname",
+    displayName: "timeline.tabName",
     iconName: "nouveautes",
     matchEntcoreApp: entcoreApp => entcoreApp.prefix === '/timeline', // No app-address for Timeline
     entcoreScope: ['timeline']
