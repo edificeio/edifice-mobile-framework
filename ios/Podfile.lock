@@ -270,8 +270,8 @@ PODS:
   - React-jsinspector (0.61.5)
   - react-native-document-picker (3.2.4):
     - React
-  - react-native-image-picker (1.0.1):
-    - React
+  - react-native-image-picker (3.3.2):
+    - React-Core
   - react-native-matomo-sdk (0.4.0):
     - MatomoTracker (~> 7)
     - React (~> 0.60)
@@ -335,8 +335,8 @@ PODS:
     - React
   - RNDateTimePicker (2.6.2):
     - React
-  - RNDeviceInfo (5.6.5):
-    - React
+  - RNDeviceInfo (8.0.8):
+    - React-Core
   - RNFastImage (7.0.2):
     - React
     - SDWebImage (~> 5.0)
@@ -605,7 +605,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: d5525f9ed5f782fdbacb64b9b01a43a9323d2386
   React-jsinspector: fa0ecc501688c3c4c34f28834a76302233e29dc0
   react-native-document-picker: c36bf5f067a581657ecaf7124dcd921a8be19061
-  react-native-image-picker: 4ffb12aa6e9a09ac5ada77a8deaf3a3f6495aa34
+  react-native-image-picker: b42940647478bf106ad3c491d6f5d9d40916d865
   react-native-matomo-sdk: 1dd9511387c2f96401dc6ba9a6476d0660021c91
   react-native-netinfo: 8d8db463bcc5db66a8ac5c48a7d86beb3b92f61a
   react-native-safe-area-context: 86612d2c9a9e94e288319262d10b5f93f0b395f5
@@ -628,7 +628,7 @@ SPEC CHECKSUMS:
   RNCPicker: 914b557e20b3b8317b084aca9ff4b4edb95f61e4
   RNCPushNotificationIOS: f688c6d6158cf8ef93e72868e0bfdf27d3bbc568
   RNDateTimePicker: dc9dab744823a2c734dbc7362cdf57a3adba3c43
-  RNDeviceInfo: e841619c3dac5495a095c5455473579ff04908d4
+  RNDeviceInfo: 41a8c8a41ae0e70d85cbe652cd5318150cb2cc40
   RNFastImage: 9b0c22643872bb7494c8d87bbbb66cc4c0d9e7a2
   RNFBApp: 02bde3edecf2e9694b908a5d3504e03449980f20
   RNFBMessaging: 1823217d31e942531cc3f51fb5367dcbc69c1e10
