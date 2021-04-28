@@ -9,7 +9,6 @@ import { RefreshControl } from "react-native";
 import type { IGlobalState } from "../../../../AppStore";
 import type { ITimeline_State } from "../reducer";
 
-import { PageContainer } from "../../../../ui/ContainerContent";
 import { FakeHeader, HeaderAction, HeaderIcon, HeaderRow, HeaderTitle } from "../../../components/header";
 import { Text } from "../../../components/text";
 import { dismissFlashMessageAction, loadNotificationsPageAction, startLoadNotificationsAction } from "../actions";
@@ -20,6 +19,8 @@ import { IEntcoreFlashMessage, IFlashMessages_State } from "../reducer/flashMess
 import { LoadingIndicator } from "../../../components/loading";
 import { TimelineNotification } from "../components/TimelineNotification";
 import { TimelineFlashMessage } from "../components/TimelineFlashMessage";
+import { EmptyScreen } from "../../../components/emptyScreen";
+import { PageView } from "../../../components/page";
 import { INotification, IResourceUriNotification, isResourceUriNotification } from "../../../notifications";
 
 // TYPES ==========================================================================================
@@ -75,14 +76,14 @@ export class TimelineScreen extends React.PureComponent<
   render() {
     return <>
       {this.renderHeader()}
-      <PageContainer>
+      <PageView>
         {[TimelineLoadingState.PRISTINE, TimelineLoadingState.INIT].includes(this.state.loadingState)
           ? <LoadingIndicator />
           : this.props.notifications.error && !this.props.notifications.lastSuccess
             ? this.renderError()
             : this.renderList()
         }
-      </PageContainer>
+      </PageView>
     </>;
   }
 
@@ -105,11 +106,13 @@ export class TimelineScreen extends React.PureComponent<
 
   renderList() {
     const items = getTimelineItems(this.props.flashMessages, this.props.notifications);
+    const isEmpty = items && items.length === 0;
     return (
       <FlatList
         // data
         data={items}
         keyExtractor={n => n.data.id.toString()}
+        contentContainerStyle={isEmpty ? { flex: 1 } : null}
         renderItem={({ item }) => item.type === ITimelineItemType.NOTIFICATION
           ? this.renderNotificationItem(item.data as INotification)
           : this.renderFlashMessageItem(item.data as IEntcoreFlashMessage)}
@@ -132,7 +135,15 @@ export class TimelineScreen extends React.PureComponent<
   }
 
   renderEmpty() {
-    return <Text>Empty.</Text> // ToDo: great empty screen here
+    return (
+      <EmptyScreen
+        imageSrc={require("../../../../../assets/images/empty-screen/timeline.png")}
+        imgWidth={407}
+        imgHeight={319}
+        title={I18n.t("timeline.emptyScreenTitle")}
+        text={I18n.t("timeline.emptyScreenText")}
+      />
+    );
   }
 
   renderNotificationItem(notification: INotification) {

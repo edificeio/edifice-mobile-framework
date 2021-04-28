@@ -71,9 +71,9 @@ export class TimelineFiltersScreen extends React.PureComponent<
       <FakeHeader>
         <HeaderRow>
           <HeaderAction iconName="back" onPress={() => navigation.goBack()}/>
-          <HeaderTitle>{I18n.t("timeline.FiltersScreen.title")}</HeaderTitle>
+          <HeaderTitle>{I18n.t("timeline.filtersScreen.title")}</HeaderTitle>
           <HeaderAction
-            text={I18n.t("timeline.FiltersScreen.apply")}
+            text={I18n.t("timeline.filtersScreen.apply")}
             disabled={noneSet}
             onPress={() => this.doSetFilters(selectedFilters)}
           />
@@ -95,7 +95,7 @@ export class TimelineFiltersScreen extends React.PureComponent<
           : <ListItem
               leftElement={
                 <Text style={{color: theme.color.text.heavy}}>
-                  {I18n.t("timeline.FiltersScreen.all")}
+                  {I18n.t("timeline.filtersScreen.all")}
                 </Text>
               }
               rightElement={
