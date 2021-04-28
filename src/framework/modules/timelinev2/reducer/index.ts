@@ -1,12 +1,15 @@
 import { combineReducers } from "redux";
-import { AsyncState } from "../../../redux/async";
 
-import notifTypes, { INotifTypesState } from "./notifTypes";
+import notifDefinitions, { INotifDefinitions_State } from "./notifDefinitions";
+
+// State
+
+export interface ITimeline_State {
+  notifDefinitions: INotifDefinitions_State;
+}
+
+// Reducer
 
 export default combineReducers({
-  notifTypes
+  notifDefinitions
 });
-
-export interface ITimelineState {
-  notifTypes: AsyncState<INotifTypesState>;
-}
