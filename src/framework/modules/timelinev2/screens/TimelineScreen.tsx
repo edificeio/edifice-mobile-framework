@@ -21,7 +21,7 @@ import { TimelineNotification } from "../components/TimelineNotification";
 import { TimelineFlashMessage } from "../components/TimelineFlashMessage";
 import { EmptyScreen } from "../../../components/emptyScreen";
 import { PageView } from "../../../components/page";
-import { ITimelineNotification, IResourceUriNotification, isResourceUriNotification, IAbstractNotification } from "../../../notifications";
+import { ITimelineNotification, IResourceUriNotification, isResourceUriNotification, IAbstractNotification, getAsResourceUriNotification } from "../../../notifications";
 import { handleNotificationAction, NotifHandlerThunkAction } from "../../../notifications/routing";
 
 // TYPES ==========================================================================================
@@ -34,7 +34,7 @@ export interface ITimelineScreenEventProps {
   handleInitTimeline(): Promise<void>,
   handleNextPage(): Promise<boolean>, // return true if page if there is more pages to load
   handleDismissFlashMessage(flashMessageId: number): Promise<void>
-  handleOpenNotification(n: ITimelineNotification, fallback: NotifHandlerThunkAction): Promise<void>
+  handleOpenNotification(n: IAbstractNotification, fallback: NotifHandlerThunkAction): Promise<void>
 };
 export type ITimelineScreenProps = ITimelineScreenDataProps
   & ITimelineScreenEventProps
@@ -154,7 +154,7 @@ export class TimelineScreen extends React.PureComponent<
         notification={notification}
         notificationAction={
           isResourceUriNotification(notification)
-            ? () => this.doOpenNotification(notification)
+            ? () => this.doOpenNotification(notification as ITimelineNotification & IResourceUriNotification)
             : undefined
         }
       />
@@ -211,7 +211,7 @@ export class TimelineScreen extends React.PureComponent<
       await this.props.handleNextPage();
   }
 
-  async doOpenNotification(n: ITimelineNotification) {
+  async doOpenNotification(n: IResourceUriNotification) {
     const fallbackHandleNotificationAction: NotifHandlerThunkAction = n => async (dispatch, getState) => {
       isResourceUriNotification(n) && this.props.navigation.navigate('timeline/goto', {
         notification: n as IResourceUriNotification
@@ -251,7 +251,7 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () 
     handleInitTimeline: async () => { await dispatch(startLoadNotificationsAction()) },
     handleNextPage: async () => { return await (dispatch(loadNotificationsPageAction()) as unknown as Promise<boolean>); }, // TS BUG: await is needed here and type is correct
     handleDismissFlashMessage: async (flashMessageId: number) => { await dispatch(dismissFlashMessageAction(flashMessageId)); },
-    handleOpenNotification: async (n: ITimelineNotification, fallback: NotifHandlerThunkAction) => {
+    handleOpenNotification: async (n: IAbstractNotification, fallback: NotifHandlerThunkAction) => {
       dispatch(handleNotificationAction(n, fallback, "Timeline Notification"))
     }
   })
