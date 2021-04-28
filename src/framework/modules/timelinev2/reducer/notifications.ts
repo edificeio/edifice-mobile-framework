@@ -93,16 +93,16 @@ export default createSessionAsyncPagedReducer(initialState, actionTypes, pageSiz
 
 // Getters
 
-const isSenderNotification = (n: INotification) => !!(n as INotification & Partial<ISenderNotification>).sender;
-const getAsSenderNotification = (n: INotification) => isSenderNotification(n) && n as ISenderNotification;
+export const isSenderNotification = (n: INotification) => !!(n as INotification & Partial<ISenderNotification>).sender;
+export const getAsSenderNotification = (n: INotification) => isSenderNotification(n) && n as ISenderNotification;
 
-const isResourceUriNotification = (n: INotification) => !!(n as INotification & Partial<IResourceUriNotification>).resource;
-const getAsResourceUriNotification = (n: INotification) => isResourceUriNotification(n) && n as IResourceUriNotification;
+export const isResourceUriNotification = (n: INotification) => !!(n as INotification & Partial<IResourceUriNotification>).resource;
+export const getAsResourceUriNotification = (n: INotification) => isResourceUriNotification(n) && n as IResourceUriNotification;
 
-const isNamedResourceNotification = (n: INotification) => !!(n as INotification & Partial<INamedResourceNotification>).resource?.name;
-const getAsNamedResourceNotification = (n: INotification) => isNamedResourceNotification(n) && n as INamedResourceNotification;
+export const isNamedResourceNotification = (n: INotification) => !!(n as INotification & Partial<INamedResourceNotification>).resource?.name;
+export const getAsNamedResourceNotification = (n: INotification) => isNamedResourceNotification(n) && n as INamedResourceNotification;
 
-const isEnrichedNotification = (n: INotification) => !!(n as INotification & Partial<IEnrichedNotification>).preview;
-const getAsEnrichedNotification = (n: INotification) => isEnrichedNotification(n) && n as IEnrichedNotification;
+export const isEnrichedNotification = (n: INotification) => !!(n as INotification & Partial<IEnrichedNotification>).preview;
+export const getAsEnrichedNotification = (n: INotification) => isEnrichedNotification(n) && n as IEnrichedNotification;
 
-const isMyNotification = (n: ISenderNotification, u: IUserSession) => n.sender.id === u.user.id;
+export const isMyNotification = (n: ISenderNotification, u: IUserSession) => n.sender.id === u.user.id;
