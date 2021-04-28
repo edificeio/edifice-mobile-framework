@@ -183,7 +183,8 @@ export class BlogCreatePostScreen extends React.PureComponent<
             backgroundColor: theme.color.background.card,
             borderColor: theme.color.inputBorder,
             borderWidth: 1,
-            borderRadius: 5
+            borderRadius: 5,
+            color: theme.color.text.regular,
           }}
         />
         <TextBold style={{ marginBottom: 10 }}>{I18n.t("blog.blogCreatePostScreen.postContent")}</TextBold>
@@ -199,6 +200,7 @@ export class BlogCreatePostScreen extends React.PureComponent<
             borderWidth: 1,
             borderRadius: 5,
             height: 140,
+            color: theme.color.text.regular,
           }}
           textAlignVertical="top"
           multiline
