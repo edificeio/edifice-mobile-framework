@@ -2,14 +2,13 @@ import { Dispatch } from "redux";
 import { getUserSession } from "../../../session";
 import moduleConfig from "../moduleConfig";
 import { registeredNotificationsService } from "../service";
-import { actionTypes as notifTypesActionTypes, INotificationType } from "../reducer/notifTypes";
+import { actionTypes as notifTypesActionTypes, INotifTypesState } from "../reducer/notifTypes";
 import { createAsyncActionCreators } from "../../../redux/async";
 
-export const notifTypesAsyncActions = createAsyncActionCreators<INotificationType[]>(notifTypesActionTypes);
+export const notifTypesAsyncActions = createAsyncActionCreators<INotifTypesState>(notifTypesActionTypes);
 
 export const loadNotificationsTypesAction = () => async (dispatch: Dispatch, getState: () => any) => {
     try {
-        console.log("begin loadNotificationsTypesAction");
         dispatch(notifTypesAsyncActions.request());
         const session = getUserSession(getState());
         const notificationTypes = await registeredNotificationsService.list(session);
