@@ -110,7 +110,7 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
               </Text>
               : null
             }
-            {this.getMediaPreview()}
+            {/* {this.getMediaPreview()} */}
           </View>
           {this.hasAdditionalContent()
             ? <>
