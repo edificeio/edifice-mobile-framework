@@ -4,11 +4,13 @@
 
 import { Moment } from "moment";
 import { createSessionReducer } from "../../framework/redux/reducerFactory";
+import { resourceRightFilter } from "../../framework/resourceRights";
+import { IUserSession } from "../../framework/session";
+import { createBlogPostResourceRight } from "./rights";
 
 // Types
 
 export interface IBlogPostWithComments extends IBlogPost { comments: IBlogPostComments }
-
 
 export interface IBlog {
     id: string;
@@ -73,3 +75,12 @@ export default createSessionReducer(initialState, {
 });
 
 // Getters
+
+export const getPublishableBlogs = (session: IUserSession, blogs: IBlogList) => {
+    const publishableBlogs = (resourceRightFilter(
+        blogs,
+        createBlogPostResourceRight,
+        session) as IBlogList)
+        .filter((blog: IBlog) => !blog.trashed && blog.shared && blog.shared.length > 0);
+    return publishableBlogs;
+}

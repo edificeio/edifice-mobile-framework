@@ -3,9 +3,10 @@
  */
 
 import moment from "moment";
+import { legacyAppConf } from "../../../framework/appConf";
 import { IResourceUriCaptureFunction } from "../../../framework/notifications";
 import { IUserSession } from "../../../framework/session";
-import { fetchJSONWithCache } from "../../../infra/fetchWithCache";
+import { fetchJSONWithCache, signedFetchJson } from "../../../infra/fetchWithCache";
 import { IBlog, IBlogList, IBlogPost, IBlogPostComments } from "../reducer";
 
 export interface IEntcoreBlog {
@@ -28,6 +29,35 @@ export interface IEntcoreBlog {
 }
 export type IEntcoreBlogList = IEntcoreBlog[];
 
+interface _IEntcoreBlogPostBase {
+  author: {
+    login: string;
+    userId: string;
+    username: string;
+  };
+  content: string;
+  created: {$date: number};
+  modified: {$date: number};
+  state: string;
+  title: string;
+  views: number;
+  _id: string;
+}
+
+export interface IEntcoreBlogPost extends _IEntcoreBlogPostBase {
+  firstPublishDate: {$date: number};
+}
+
+export interface IEntcoreCreatedBlogPost extends _IEntcoreBlogPostBase {
+  comments: any[];
+  blog: {
+    $ref: string;
+    $id: string;
+  };
+  sorted: {$date: number};
+  contentPlain: string;
+}
+
 export interface IEntcoreBlogPostComment {
   author: {
     login: string;
@@ -41,22 +71,6 @@ export interface IEntcoreBlogPostComment {
 }
 
 export type IEntcoreBlogPostComments = IEntcoreBlogPostComment[];
-
-export interface IEntcoreBlogPost {
-  author: {
-    login: string;
-    userId: string;
-    username: string;
-  }
-  content: string;
-  created: {$date: number};
-  firstPublishDate: {$date: number};
-  modified: {$date: number};
-  state: string;
-  title: string;
-  views: number;
-  _id: string;
-}
 
 export const blogAdapter = (blog: IEntcoreBlog) => {
   const ret = {
@@ -80,11 +94,6 @@ export const blogAdapter = (blog: IEntcoreBlog) => {
   return ret as IBlog;
 }
 
-export const blogPostCommentsAdapter = (blogPostComments: IEntcoreBlogPostComments) => {
-  const ret = blogPostComments.map(blogPostComment => ({...blogPostComment, created: moment(blogPostComment.created.$date)}));
-  return ret as IBlogPostComments;
-}
-
 export const blogPostAdapter = (blogPost: IEntcoreBlogPost) => {
   const ret = {
     author: {
@@ -102,6 +111,11 @@ export const blogPostAdapter = (blogPost: IEntcoreBlogPost) => {
     _id: blogPost._id,
   };
   return ret as IBlogPost;
+}
+
+export const blogPostCommentsAdapter = (blogPostComments: IEntcoreBlogPostComments) => {
+  const ret = blogPostComments.map(blogPostComment => ({...blogPostComment, created: moment(blogPostComment.created.$date)}));
+  return ret as IBlogPostComments;
 }
 
 export const blogUriCaptureFunction: IResourceUriCaptureFunction<{ blogId: string, postId: string }> = url => {
@@ -126,6 +140,19 @@ export const blogService = {
       const entcoreBlogPost = await fetchJSONWithCache(api) as IEntcoreBlogPost;
       // Run the adapter for the received blog post
       return blogPostAdapter(entcoreBlogPost) as IBlogPost;
+    },
+    create: async (session: IUserSession, blogId: string, postTitle: string, postContentHtml: string) => {
+      const api = `/blog/post/${blogId}`;
+      const body = JSON.stringify({ title: postTitle, content: postContentHtml});
+      return signedFetchJson(`${legacyAppConf.currentPlatform!.url}${api}`, { method: "POST", body}) as Promise<IEntcoreCreatedBlogPost>;
+    },
+    submit: async (session: IUserSession, blogId: string, postId: string) => {
+      const api = `/blog/post/submit/${blogId}/${postId}`;
+      return signedFetchJson(`${legacyAppConf.currentPlatform!.url}${api}`, { method: "PUT" }) as Promise<{number: number}>;
+    },
+    publish: async (session: IUserSession, blogId: string, postId: string) => {
+      const api = `/blog/post/publish/${blogId}/${postId}`;
+      return signedFetchJson(`${legacyAppConf.currentPlatform!.url}${api}`, { method: "PUT" }) as Promise<{number: number}>;
     }
   },
   comments: {

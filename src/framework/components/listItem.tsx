@@ -7,8 +7,8 @@ export const ListItem = ({
   rightElement,
   style
 }: {
-  leftElement: JSX.Element;
-  rightElement: JSX.Element;
+  leftElement?: JSX.Element | null;
+  rightElement?: JSX.Element | null;
   style?: ViewStyle;
 }) => {
   return (
@@ -26,8 +26,8 @@ export const ListItem = ({
         style
       ]}
     >
-      {leftElement}
-      {rightElement}
+      {leftElement || null}
+      {rightElement || null}
     </View>
   );
 }
