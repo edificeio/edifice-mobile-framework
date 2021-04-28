@@ -115,7 +115,7 @@ const HeaderActionText = styled(TextInverse)({
 export const HeaderAction = (props: IHeaderActionGenericProps | IHeaderActionCustomProps) => {
     const ActionComponent: React.ComponentClass<ViewProps> = props.disabled ? View : TouchableOpacity;
     return <ActionComponent
-        {...props.disabled ? {} : { onPress: props.onPress }}
+        {...props.disabled ? { onPress: props.onPress && props.onPress() } : {}}
         style={{ flex: 0, justifyContent: "center", ...(props.disabled ? { opacity: 0.7 } : {}), ...props.style }}
     >
         {(props as IHeaderActionCustomProps).customComponent
