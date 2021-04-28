@@ -210,7 +210,7 @@ export class TimelineScreen extends React.PureComponent<
   }
 
   async doOpenNotification(n: INotification) {
-    isResourceUriNotification(n) && this.props.navigation.navigate('timeline/goto', {
+    this.props.navigation.navigate('timeline/goto', {
       notification: n as IResourceUriNotification
     })
   }
