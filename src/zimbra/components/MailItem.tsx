@@ -54,7 +54,7 @@ export default ({
           <style.View />
         )}
       </CenterPanel>
-      <RightPanel>
+      <RightPanel style={{width: undefined}}>
         <DateView date={date} strong={unread > 0} />
       </RightPanel>
     </ListItem>

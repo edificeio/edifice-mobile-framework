@@ -1,10 +1,11 @@
 import style from "glamorous-native";
 import * as React from "react";
+import moment from "moment";
 import {CommonStyles} from "../styles/common/styles";
-import {getTimeToShortStr, getTimeToStr } from "../utils/date";
 import {Paragraph} from "./Typography";
 import {layoutSize} from "../styles/common/layoutSize";
 import {ViewStyle} from "react-native";
+import { displayPastDate } from "../framework/util/date";
 
 const ViewDate = style.view({
         alignItems: "center",
@@ -15,10 +16,7 @@ const ViewDate = style.view({
     })
 )
 
-// FIXME: Use moment.js instead of this
-export const DateView = ({date = 0, min = false, strong = false, short = true}) => {
-    const strDate = short ? getTimeToShortStr(date) : getTimeToStr(date);
-
+export const DateView = ({date, min = false, strong = false}) => {
     return (
         <ViewDate min={min}>
             <Paragraph
@@ -28,7 +26,7 @@ export const DateView = ({date = 0, min = false, strong = false, short = true}) 
                     color: strong ? CommonStyles.textColor : CommonStyles.lightTextColor,
                 }}
             >
-                {strDate}
+                {displayPastDate(moment(date))}
             </Paragraph>
         </ViewDate>
     );

@@ -18,6 +18,6 @@ export default () => (
             <Text>Card and TouchCard (with custom margin)</Text>
         </MarginTouchCard>
         <Badge content={33}/>
-        <DateView date={Date.now()} short={false}/>
+        <DateView date={Date.now()}/>
     </View>
 );
