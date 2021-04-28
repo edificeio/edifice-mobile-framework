@@ -16,6 +16,7 @@ import theme from "../../../util/theme";
 import { FontWeight } from "../../../components/text";
 import { getUserSession, IUserSession } from "../../../util/session";
 import { IGlobalState } from "../../../../AppStore";
+import { displayPastDate } from "../../../util/date";
 
 const NotificationTopInfo = ({ notification, session }: { notification: ITimelineNotification, session: IUserSession}) => {
   const message = notification && notification.message;
@@ -30,7 +31,7 @@ const NotificationTopInfo = ({ notification, session }: { notification: ITimelin
     if (resource && resource.name) formattedMessage = formattedMessage.replace(resource.name, ` ${resource.name} `);
     if (sender && sender.displayName) formattedMessage = formattedMessage.replace(/<br.*?>/, "").replace(sender.displayName, `${sender.displayName} `);
     if (isSenderMe) formattedMessage = formattedMessage.replace(sender && sender.displayName, `${sender.displayName} ${I18n.t("me-indicator")} `);
-  }
+  } 
 
   return (
     <Header>
@@ -66,7 +67,7 @@ const NotificationTopInfo = ({ notification, session }: { notification: ITimelin
           }}
         />
         <Text style={{ color: theme.color.text.light, fontSize: 12 }}>
-          {moment(date).fromNow()}
+          {displayPastDate(moment(date))}
         </Text>
       </CenterPanel>
     </Header>
