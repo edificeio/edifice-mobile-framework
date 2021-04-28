@@ -42,8 +42,10 @@ interface IModuleConfigBase<Name extends string> {
   [k: string]: any;
 }
 
-export interface IModuleConfig<Name extends string> extends IModuleConfigBase<Name> {
+export interface IModuleConfig<Name extends string, State> extends IModuleConfigBase<Name> {
   matchEntcoreApp: ((entcoreApp: IEntcoreApp) => boolean); // Function that tell if the module can be accessible by the user. If stirng is provided, compare to prefix.
+  getState: (globalState: any) => State;
+  namespaceActionType: (actionType: string) => string;
 }
 
 export interface IModuleConfigDeclaration<Name extends string> extends Partial<IModuleConfigBase<Name>> {
@@ -51,7 +53,7 @@ export interface IModuleConfigDeclaration<Name extends string> extends Partial<I
   matchEntcoreApp?: string | ((entcoreApp: IEntcoreApp) => boolean);
 };
 
-export const createModuleConfig: <Name extends string>(opts: IModuleConfigDeclaration<Name>) => IModuleConfig<Name> = opts => {
+export const createModuleConfig: <Name extends string, State>(opts: IModuleConfigDeclaration<Name>) => IModuleConfig<Name, State> = opts => {
   const ret = {
     name: opts.name,
     iconName: opts.iconName || opts.name,
@@ -65,7 +67,10 @@ export const createModuleConfig: <Name extends string>(opts: IModuleConfigDeclar
     reducerName: opts.reducerName || opts.name
   };
   const otherOpts = Object.fromEntries(Object.entries(opts).filter(([k, v]) => !ret.hasOwnProperty(k)));
-  return { ...ret, ...otherOpts };
+  return { ...ret, ...otherOpts,
+    getState: globalState => globalState[ret.reducerName],
+    namespaceActionType: actionType => ret.actionTypesPrefix + actionType
+  };
 }
 
 export interface IActionMap {
@@ -73,7 +78,7 @@ export interface IActionMap {
 }
 
 export interface IModuleDeclaration<Name extends string, State, ActionMap extends IActionMap> {
-  config: IModuleConfig<Name>,
+  config: IModuleConfig<Name, State>,
   mainComp: React.ComponentClass | React.FunctionComponent,
   reducer: Reducer<State>
 }
@@ -86,7 +91,7 @@ export interface IModule<Name extends string, State, ActionMap extends IActionMa
  */
 export class Module<Name extends string, State, ActionMap extends IActionMap>
   implements IModule<Name, State, ActionMap> {
-  config: IModuleConfig<Name>;
+  config: IModuleConfig<Name, State>;
   mainComp: React.ComponentClass | React.FunctionComponent;
   reducer: Reducer<State>;
   route: any;
@@ -107,7 +112,7 @@ export class Module<Name extends string, State, ActionMap extends IActionMap>
 
 export type AnyModule = IModule<string, any, IActionMap>;
 export interface ModuleMap { [key: string]: IModule<typeof key, unknown, IActionMap> }
-export interface ModuleConfigMap { [key: string]: IModuleConfig<typeof key> }
+export interface ModuleConfigMap { [key: string]: IModuleConfig<typeof key, any> }
 
 export const loadModuleMap: (modules: Array<IModule<string, unknown, IActionMap>>)
   => ModuleMap
