@@ -3,9 +3,9 @@
  */
 
 import moment from "moment";
-import { legacyAppConf } from "../../../framework/appConf";
-import { IResourceUriCaptureFunction } from "../../../framework/notifications";
-import { IUserSession } from "../../../framework/session";
+import { legacyAppConf } from "../../../framework/util/appConf";
+import { IResourceUriCaptureFunction } from "../../../framework/util/notifications";
+import { IUserSession } from "../../../framework/util/session";
 import { fetchJSONWithCache, signedFetchJson } from "../../../infra/fetchWithCache";
 import { IBlog, IBlogList, IBlogPost, IBlogPostComments } from "../reducer";
 

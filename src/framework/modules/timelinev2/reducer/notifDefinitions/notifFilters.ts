@@ -3,7 +3,7 @@
 // State definition
 
 import { Action } from "redux";
-import { createSessionReducer } from "../../../../redux/reducerFactory";
+import { createSessionReducer } from "../../../../util/redux/reducerFactory";
 import moduleConfig from "../../moduleConfig";
 
 export interface INotificationFilter {

@@ -3,8 +3,8 @@
  */
 
 import { registerTimelineWorkflow } from "../../framework/modules/timelinev2/timelineModules";
-import { resourceHasRight } from "../../framework/resourceRights";
-import { IUserSession } from "../../framework/session";
+import { resourceHasRight } from "../../framework/util/resourceRights";
+import { IUserSession } from "../../framework/util/session";
 import { IBlog } from "./reducer";
 
 export const createBlogPostResourceRight = "org-entcore-blog-controllers-PostController|create"

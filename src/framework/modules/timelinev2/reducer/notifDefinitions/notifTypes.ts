@@ -1,4 +1,4 @@
-import { AsyncState, createAsyncActionCreators, createAsyncActionTypes, createSessionAsyncReducer } from "../../../../redux/async";
+import { AsyncState, createAsyncActionCreators, createAsyncActionTypes, createSessionAsyncReducer } from "../../../../util/redux/async";
 import moduleConfig from "../../moduleConfig";
 
 // State definition

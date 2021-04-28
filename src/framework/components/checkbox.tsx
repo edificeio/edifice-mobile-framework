@@ -1,6 +1,6 @@
 import * as React from "react";
 import { ColorValue, TouchableOpacity, ViewStyle } from "react-native";
-import theme from "../theme";
+import theme from "../util/theme";
 import { Icon } from "./icon";
 
 export const Checkbox = ({

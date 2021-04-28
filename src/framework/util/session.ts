@@ -3,9 +3,9 @@
  * TEMPORARY MODULE : In waiting to a proper session management (auth module), this compatibility module exposes IUserSession getter from global redux state
  */
 
-import { IPlatformConf } from "../infra/appConf";
-import Conf from "../../ode-framework-conf";
-import { OAuth2RessourceOwnerPasswordClient } from "../infra/oauth";
+import { IPlatformConf } from "../../infra/appConf";
+import Conf from "../../../ode-framework-conf";
+import { OAuth2RessourceOwnerPasswordClient } from "../../infra/oauth";
 import { IEntcoreApp } from "./moduleTool";
 
 export enum UserType {

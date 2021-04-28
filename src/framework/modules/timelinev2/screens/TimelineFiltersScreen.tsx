@@ -9,9 +9,9 @@ import { PageContainer } from "../../../../ui/ContainerContent";
 import { Checkbox } from "../../../components/checkbox";
 import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRight, HeaderRow, HeaderTitle } from "../../../components/header";
 import { ListItem } from "../../../components/listItem";
-import theme from "../../../theme";
+import theme from "../../../util/theme";
 
-import withViewTracking from "../../../tracker/withViewTracking";
+import withViewTracking from "../../../util/tracker/withViewTracking";
 import { setFiltersAction } from "../actions/notifSettings";
 import moduleConfig from "../moduleConfig";
 import { ITimeline_State } from "../reducer";

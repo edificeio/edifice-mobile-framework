@@ -3,7 +3,7 @@
  */
 
 import { mainNavNavigate } from "../../../navigation/helpers/navHelper";
-import { NotifHandlerThunkAction, registerNotifHandlers } from "../../notifications/routing";
+import { NotifHandlerThunkAction, registerNotifHandlers } from "../../util/notifications/routing";
 
 const handleFlashMsgNotificationAction: NotifHandlerThunkAction = notification => async (dispatch, getState) => {
 	mainNavNavigate('timeline', {

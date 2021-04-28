@@ -3,8 +3,8 @@
  */
 
 import moment from "moment";
-import { IResourceUriCaptureFunction } from "../../../framework/notifications";
-import { IUserSession } from "../../../framework/session";
+import { IResourceUriCaptureFunction } from "../../../framework/util/notifications";
+import { IUserSession } from "../../../framework/util/session";
 import { fetchJSONWithCache } from "../../../infra/fetchWithCache";
 import { INews, RightOwner } from "../reducer";
 

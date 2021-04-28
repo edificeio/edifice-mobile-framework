@@ -11,7 +11,7 @@ import styled from '@emotion/native'
 import I18n from "i18n-js";
 
 import { Icon } from "../../framework/components/icon";
-import theme from "../../framework/theme";
+import theme from "../util/theme";
 import { mainNavNavigate } from "../../navigation/helpers/navHelper";
 import { Text } from "./text";
 

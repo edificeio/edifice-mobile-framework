@@ -6,9 +6,9 @@
 import Matomo from "react-native-matomo-sdk";
 import Analytics from 'appcenter-analytics';
 import AppCenter from 'appcenter';
-import Conf from "../../../ode-framework-conf";
+import Conf from "../../../../ode-framework-conf";
 import { IMatomoTrackerOptions, IAppCenterTrackerOptions, IEntcoreTrackerOptions } from "./config";
-import { signRequest } from "../../infra/oauth";
+import { signRequest } from "../../../infra/oauth";
 
 export abstract class Tracker<OptionsType> {
     constructor(opts: OptionsType) { }

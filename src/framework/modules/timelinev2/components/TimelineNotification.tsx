@@ -6,12 +6,12 @@ import Images from "../../../../ui/Images";
 import NotificationTopInfo from "./NotificationTopInfo";
 import Player from "../../../../ui/Player";
 import { IFrame } from "../../../../ui/IFrame";
-import { ITimelineNotification, IMedia } from "../../../notifications";
+import { ITimelineNotification, IMedia } from "../../../util/notifications";
 import { AttachmentGroup } from "../../../../ui/AttachmentGroup";
 import { IRemoteAttachment } from "../../../../ui/Attachment";
 import { Icon } from "../../../../ui/icons/Icon";
 import { signURISource, transformedSrc } from "../../../../infra/oauth";
-import theme from "../../../theme";
+import theme from "../../../util/theme";
 import { TouchCard } from "../../../components/card";
 
 interface ITimelineNotificationProps {

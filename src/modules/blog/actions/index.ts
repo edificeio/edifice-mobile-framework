@@ -3,7 +3,7 @@
  */
 
 import { ThunkDispatch } from "redux-thunk";
-import { getUserSession } from "../../../framework/session";
+import { getUserSession } from "../../../framework/util/session";
 import { IItems, IFile } from "../../../workspace/types";
 import moduleConfig from "../moduleConfig";
 import { getPublishableBlogs, IBlog } from "../reducer";

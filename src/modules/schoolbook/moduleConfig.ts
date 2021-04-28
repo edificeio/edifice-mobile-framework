@@ -1,4 +1,4 @@
-import { createModuleConfig } from "../../framework/moduleTool";
+import { createModuleConfig } from "../../framework/util/moduleTool";
 import { ISchoolbook_State } from "./reducer";
 
 export default createModuleConfig<"schoolbook", ISchoolbook_State>({

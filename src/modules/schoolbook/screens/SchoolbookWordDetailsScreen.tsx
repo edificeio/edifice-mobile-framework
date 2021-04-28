@@ -8,24 +8,24 @@ import I18n from "i18n-js";
 import type { IGlobalState } from "../../../AppStore";
 
 import moduleConfig from "../moduleConfig";
-import withViewTracking from "../../../framework/tracker/withViewTracking";
+import withViewTracking from "../../../framework/util/tracker/withViewTracking";
 import { PageView } from "../../../framework/components/page";
-import { IResourceUriNotification, ITimelineNotification } from "../../../framework/notifications";
+import { IResourceUriNotification, ITimelineNotification } from "../../../framework/util/notifications";
 import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderSubtitle, HeaderTitle } from "../../../framework/components/header";
 import NotificationTopInfo from "../../../framework/modules/timelinev2/components/NotificationTopInfo";
-import { Trackers } from "../../../framework/tracker";
+import { Trackers } from "../../../framework/util/tracker";
 import Conf from "../../../../ode-framework-conf";
 import { HtmlContentView } from "../../../ui/HtmlContentView";
 import { LoadingIndicator } from "../../../framework/components/loading";
 import { TextItalic } from "../../../framework/components/text";
-import theme from "../../../framework/theme";
+import theme from "../../../framework/util/theme";
 import { ButtonsOkCancel, FlatButton } from "../../../ui";
 import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from "../../../ui/Modal";
 import { Icon } from "../../../framework/components/icon";
 import { getSchoolbookWordDetailsAction, acknowledgeSchoolbookWordAction } from "../actions";
 import { schoolbookUriCaptureFunction } from "../service";
 import { getAcknowledgeNamesForChild, getAcknowledgeNumber, getIsWordAcknowledgedForParent, getUnacknowledgedChildrenIdsForParent, ISchoolbookWordReport } from "../reducer";
-import { getUserSession, IUserSession, UserType } from "../../../framework/session";
+import { getUserSession, IUserSession, UserType } from "../../../framework/util/session";
 import { createStackNavigator } from "react-navigation-stack";
 
 // TYPES ==========================================================================================

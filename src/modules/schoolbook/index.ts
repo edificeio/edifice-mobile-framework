@@ -1,4 +1,4 @@
-import { Module } from "../../framework/moduleTool";
+import { Module } from "../../framework/util/moduleTool";
 
 import config from './moduleConfig';
 import getMainComp from './navigator';

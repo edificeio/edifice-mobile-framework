@@ -1,5 +1,5 @@
 import { Dispatch } from "redux";
-import { getUserSession } from "../../../session";
+import { getUserSession } from "../../../util/session";
 import moduleConfig from "../moduleConfig";
 import { registeredNotificationsService } from "../service";
 import { actions as notifTypesAsyncActions } from "../reducer/notifDefinitions/notifTypes";

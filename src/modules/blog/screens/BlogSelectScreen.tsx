@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import I18n from "i18n-js";
 
 import moduleConfig from "../moduleConfig";
-import withViewTracking from "../../../framework/tracker/withViewTracking";
+import withViewTracking from "../../../framework/util/tracker/withViewTracking";
 import { PageView } from "../../../framework/components/page";
 import { LoadingIndicator } from "../../../framework/components/loading";
 import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from "../../../framework/components/header";
@@ -14,10 +14,10 @@ import { TextLight, TextSemiBold } from "../../../framework/components/text";
 import { IGlobalState } from "../../../AppStore";
 import { getPublishableBlogListAction } from "../actions";
 import { IBlog, IBlogList } from "../reducer";
-import theme from "../../../framework/theme";
+import theme from "../../../framework/util/theme";
 import { ListItem } from "../../../framework/components/listItem";
 import { GridAvatars } from "../../../ui/avatars/GridAvatars";
-import { legacyAppConf } from "../../../framework/appConf";
+import { legacyAppConf } from "../../../framework/util/appConf";
 import { getAuthHeader } from "../../../infra/oauth";
 import { Icon } from "../../../framework/components/icon";
 
