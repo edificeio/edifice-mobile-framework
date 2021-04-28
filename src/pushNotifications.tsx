@@ -117,8 +117,4 @@ const mapStateToProps: (s: any) => any = (s) => {
   };
 };
 
-const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => ({
-  dispatch
-});
-
 export const AppPushNotificationHandlerComponent = connect(mapStateToProps)(_AppPushNotificationHandlerComponent);

@@ -3,17 +3,15 @@
  * Types and tools for managing Notification data
  */
 
-import { Moment } from "moment";
+import moment, { Moment } from "moment";
 import { ImageURISource } from "react-native";
 import { IUserSession } from "../session";
 
 // Types
 
-export interface IEntcoreNotification {
-    _id: string;
+export interface IEntcoreAbstractNotification {
     type: string;
     "event-type": string;
-    recipients?: Array<{ userId: string, unread: boolean }>,
     resource?: string;
     "sub-resource"?: string;
     sender?: string;
@@ -24,6 +22,11 @@ export interface IEntcoreNotification {
         username?: string;
         [key: string]: any;
     };
+}
+
+export interface IEntcoreTimelineNotification extends IEntcoreAbstractNotification {
+    _id: string;
+    recipients?: Array<{ userId: string, unread: boolean }>,
     date: { $date: string };
     message: string;
     preview?: {
@@ -37,23 +40,26 @@ export interface IEntcoreNotification {
     }
 }
 
-export interface INotification {
-    id: string;             // Notification unique ID
-    date: Moment;           // Date of emission
+export interface IAbstractNotification {
     type: string;           // Type referring notifDefinitions
     "event-type": string;   // Custom event-type, in sense of a subtype
-    message: string;        // Non-enriched content
-    backupData: IEntcoreNotification;   // Original notification data as is
+    backupData: IEntcoreTimelineNotification;   // Original notification data as is
 }
 
-export interface ISenderNotification extends INotification {
+export interface ITimelineNotification extends IAbstractNotification{
+    id: string;             // Notification unique ID
+    date: Moment;           // Date of emission
+    message: string;        // Non-enriched content
+}
+
+export interface ISenderNotification extends IAbstractNotification {
     sender: {              // Sender information
         id: string;
         displayName: string;
     }
 }
 
-export interface IResourceUriNotification extends INotification {
+export interface IResourceUriNotification extends IAbstractNotification {
     resource: {
         uri: string;
     }
@@ -66,7 +72,7 @@ export interface INamedResourceNotification extends IResourceUriNotification {
     }
 }
 
-export interface IEnrichedNotification extends INotification {
+export interface IEnrichedNotification extends ITimelineNotification {
     preview: {
         text: string;
         media: IMedia[];
@@ -82,16 +88,62 @@ export interface IMedia {
 
 // Getters
 
-export const isSenderNotification = (n: INotification) => !!(n as INotification & Partial<ISenderNotification>).sender;
-export const getAsSenderNotification = (n: INotification) => isSenderNotification(n) ? n as ISenderNotification : undefined;
+export const isSenderNotification = (n: IAbstractNotification) => !!(n as ITimelineNotification & Partial<ISenderNotification>).sender;
+export const getAsSenderNotification = (n: IAbstractNotification) => isSenderNotification(n) ? n as ISenderNotification : undefined;
 
-export const isResourceUriNotification = (n: INotification) => !!(n as INotification & Partial<IResourceUriNotification>).resource;
-export const getAsResourceUriNotification = (n: INotification) => isResourceUriNotification(n) ? n as IResourceUriNotification : undefined;
+export const isResourceUriNotification = (n: IAbstractNotification) => !!(n as ITimelineNotification & Partial<IResourceUriNotification>).resource;
+export const getAsResourceUriNotification = (n: IAbstractNotification) => isResourceUriNotification(n) ? n as IResourceUriNotification : undefined;
 
-export const isNamedResourceNotification = (n: INotification) => !!(n as INotification & Partial<INamedResourceNotification>).resource?.name;
-export const getAsNamedResourceNotification = (n: INotification) => isNamedResourceNotification(n) ? n as INamedResourceNotification : undefined;
+export const isNamedResourceNotification = (n: IAbstractNotification) => !!(n as ITimelineNotification & Partial<INamedResourceNotification>).resource?.name;
+export const getAsNamedResourceNotification = (n: IAbstractNotification) => isNamedResourceNotification(n) ? n as INamedResourceNotification : undefined;
 
-export const isEnrichedNotification = (n: INotification) => !!(n as INotification & Partial<IEnrichedNotification>).preview;
-export const getAsEnrichedNotification = (n: INotification) => isEnrichedNotification(n) ? n as IEnrichedNotification : undefined;
+export const isEnrichedNotification = (n: ITimelineNotification) => !!(n as ITimelineNotification & Partial<IEnrichedNotification>).preview;
+export const getAsEnrichedNotification = (n: ITimelineNotification) => isEnrichedNotification(n) ? n as IEnrichedNotification : undefined;
 
 export const isMyNotification = (n: ISenderNotification, u: IUserSession) => n.sender.id === u.user.id;
+
+// Adapter
+
+export const notificationAdapter = (n: IEntcoreAbstractNotification) => {
+    const ret = {
+        type: n.type,
+        "event-type": n["event-type"],
+        backupData: n
+    };
+    if ((n as IEntcoreTimelineNotification)._id) {
+        (ret as ITimelineNotification).id = (n as IEntcoreTimelineNotification)._id
+    }
+    if ((n as IEntcoreTimelineNotification).date) {
+        (ret as ITimelineNotification).date = moment((n as IEntcoreTimelineNotification).date.$date)
+    }
+    if ((n as IEntcoreTimelineNotification).message) {
+        (ret as ITimelineNotification).message = (n as IEntcoreTimelineNotification).message
+    }
+    if (n.sender && n.params.username) {
+        (ret as ISenderNotification).sender = {
+            id: n.sender,
+            displayName: n.params.username!
+        }
+    }
+    if (n.params.resourceUri) {
+        (ret as IResourceUriNotification).resource = {
+            uri: n.params.resourceUri!
+        }
+    }
+    if (n.params.resourceUri && n.resource && n.params.resourceName) {
+        (ret as INamedResourceNotification).resource = {
+            uri: n.params.resourceUri!,
+            id: n.resource,
+            name: n.params.resourceName!
+        }
+    }
+    if ((n as IEntcoreTimelineNotification).preview) {
+        (ret as IEnrichedNotification).preview = {
+            text: (n as IEntcoreTimelineNotification).preview!.text,
+            images: (n as IEntcoreTimelineNotification).preview!.images,
+            media: (n as IEntcoreTimelineNotification).preview!.medias
+        }
+    }
+    // ToDo Modules this with registered modules map
+    return ret as IAbstractNotification;
+}
