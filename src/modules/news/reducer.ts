@@ -1,16 +1,16 @@
 /**
- * Blog Reducer
+ * News Reducer
  */
 
 import { createSessionReducer } from "../../framework/redux/reducerFactory";
 
 // State
 
-export interface IBlog_State {}
+export interface INews_State {}
 
 // Reducer
 
-const initialState: IBlog_State = {};
+const initialState: INews_State = {};
 
 export default createSessionReducer(initialState, {
     // Add reducer functions here or use reducer tools
