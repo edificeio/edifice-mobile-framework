@@ -15,7 +15,6 @@ import { IGlobalState } from "../../../AppStore";
 import { IBlog } from "../reducer";
 import theme from "../../../framework/util/theme";
 import { Icon } from "../../../framework/components/icon";
-import { resourceHasRight } from "../../../framework/util/resourceRights";
 import { getUserSession, IUserSession } from "../../../framework/util/session";
 import { Trackers } from "../../../framework/util/tracker";
 import { startLoadNotificationsAction } from "../../../framework/modules/timelinev2/actions";
@@ -106,11 +105,12 @@ export class BlogCreatePostScreen extends React.PureComponent<
     const { title, content, sendLoadingState } = this.state;
     const blog = navigation.getParam("blog");
     const blogPostRight = blog && session && getBlogPostRight(blog, session);
-    const actionText = blogPostRight && {
+    const blogPostDisplayRight = blogPostRight && blogPostRight.displayRight;
+    const actionText = blogPostDisplayRight && {
       [createBlogPostResourceRight]: I18n.t("blog.blogCreatePostScreen.createAction"),
       [submitBlogPostResourceRight]: I18n.t("blog.blogCreatePostScreen.submitAction"),
       [publishBlogPostResourceRight]: I18n.t("blog.blogCreatePostScreen.publishAction")
-    }[blogPostRight];
+    }[blogPostDisplayRight];
     return (
       <FakeHeader>
         <HeaderRow>
@@ -271,11 +271,11 @@ export class BlogCreatePostScreen extends React.PureComponent<
       } = this.props;
       const { title, content, images } = this.state;
       const blog = navigation.getParam("blog");
-      const blogId = blog?.id;
+      const blogId = blog && blog.id;
       if (!blog || !blogId) {
         throw new Error("[doSendPost] failed to retrieve blog information");
       }
-      const blogPostRight = getBlogPostRight(blog, session);
+      const blogPostRight = blog && session && getBlogPostRight(blog, session);
       if (!blogPostRight) {
         throw new Error("[doSendPost] user has no post rights for this blog");
       }
@@ -295,17 +295,18 @@ export class BlogCreatePostScreen extends React.PureComponent<
       );
 
       // Track action, load/navigate to timeline and display notifier
+      const blogPostDisplayRight = blogPostRight.displayRight;
       const trackerEvent = {
         [createBlogPostResourceRight]: "CREATE",
         [submitBlogPostResourceRight]: "SUBMIT",
         [publishBlogPostResourceRight]: "PUBLISH"
-      }[blogPostRight];
+      }[blogPostDisplayRight];
       const trackerEventText = trackerEvent === "CREATE" ? "CREATE" : `CREATE ${trackerEvent}`;
       const notifierSuccessText = {
         [createBlogPostResourceRight]: I18n.t("blog.blogCreatePostScreen.createSuccess"),
         [submitBlogPostResourceRight]: I18n.t("blog.blogCreatePostScreen.submitSuccess"),
         [publishBlogPostResourceRight]: I18n.t("blog.blogCreatePostScreen.publishSuccess")
-      }[blogPostRight];
+      }[blogPostDisplayRight];
       
       Trackers.trackEvent("Timeline", trackerEventText, "BlogPost");
       await handleInitTimeline();
