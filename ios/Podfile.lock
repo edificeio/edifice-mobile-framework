@@ -272,8 +272,8 @@ PODS:
   - React-jsinspector (0.61.5)
   - react-native-document-picker (3.2.4):
     - React
-  - react-native-image-picker (3.3.2):
-    - React-Core
+  - react-native-image-picker (1.0.1):
+    - React
   - react-native-matomo-sdk (0.4.0):
     - MatomoTracker (~> 7)
     - React (~> 0.60)
@@ -574,11 +574,11 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  AppCenter: cd53e3ed3563cc720bcb806c9731a12389b40d44
+  AppCenter: 8832b158d17e54845c3b88a91076218f0b07174d
   appcenter-analytics: aa074250b2cb182d6f7d67d9c236dd4606673ab5
   appcenter-core: c97920e79eba2321a262d3733cb2a6f1097db539
   appcenter-crashes: 804ae51c5d1742ce20fdb6a68b3d06208a404ad5
-  AppCenterReactNativeShared: 2d5a53b6cbd2fe7f63f0033e9f0a40757a4eacf5
+  AppCenterReactNativeShared: e1db64e8c65dfdca495efd1a1f77892cbc21342b
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   DoubleConversion: 5805e889d232975c086db112ece9ed034df7a0b2
   FBLazyVector: aaeaf388755e4f29cd74acbc9e3b8da6d807c37f
