@@ -58,7 +58,7 @@ export default ({ notification }: { notification: ITimelineNotification}) => {
               fontWeight: "400"
             },
             linkTextStyle: {
-              fontWeight: FontWeight.Bold,
+              fontWeight: FontWeight.SemiBold,
               color: theme.color.text.heavy
             }
           }}
