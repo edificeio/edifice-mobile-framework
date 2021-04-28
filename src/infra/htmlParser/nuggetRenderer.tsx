@@ -25,7 +25,7 @@ import {
   TextLink
 } from "../../ui/text";
 import { IFrame } from "../../ui/IFrame";
-import { DEPRECATED_signImagesUrls, DEPRECATED_signImageURISource } from "../oauth";
+import { DEPRECATED_signImagesUrls, DEPRECATED_signImageURISource, signURISource, transformedSrc } from "../oauth";
 
 export enum HtmlParserJsxTextVariant {
   None = 0,
@@ -89,6 +89,8 @@ export interface IAudioNugget extends INugget {
 
 export interface IVideoNugget extends INugget {
   src: string;
+  posterSource: string;
+  ratio: number;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -374,7 +376,11 @@ function renderParseAudio(
 ): JSX.Element {
   return (
     <View key={key}>
-      <Player type="audio" source={nugget.src} style={style} />
+      <Player
+        type="audio"
+        source={signURISource(transformedSrc(nugget.src as string))}
+        style={style}
+      />
     </View>
   );
 }
@@ -392,7 +398,13 @@ function renderParseVideo(
 ): JSX.Element {
   return (
     <View key={key}>
-      <Player type="video" source={nugget.src} style={style} />
+      <Player
+        type="video"
+        source={signURISource(transformedSrc(nugget.src as string))}
+        posterSource={nugget.posterSource ? signURISource(transformedSrc(nugget.posterSource as string)) : undefined}
+        ratio={nugget.ratio}
+        style={style}
+      />
     </View>
   );
 }
