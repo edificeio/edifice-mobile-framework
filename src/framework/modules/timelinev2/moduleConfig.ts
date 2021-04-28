@@ -1,8 +1,6 @@
 import { createModuleConfig } from "../../moduleTool";
 import { ITimeline_State } from "./reducer";
 
-// tslint:disable:object-literal-sort-keys
-
 export default createModuleConfig<"timelinev2", ITimeline_State>({
     name: "timelinev2",
     displayName: "timeline.tabName",
