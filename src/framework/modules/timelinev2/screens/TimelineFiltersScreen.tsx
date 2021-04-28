@@ -7,7 +7,7 @@ import { ThunkDispatch } from "redux-thunk";
 import { IGlobalState } from "../../../../AppStore";
 import { PageContainer } from "../../../../ui/ContainerContent";
 import { Checkbox } from "../../../components/checkbox";
-import { FakeHeader, HeaderAction, HeaderLeft, HeaderRight, HeaderRow, HeaderTitle } from "../../../components/header";
+import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRight, HeaderRow, HeaderTitle } from "../../../components/header";
 import { ListItem } from "../../../components/listItem";
 import theme from "../../../theme";
 
@@ -42,10 +42,6 @@ export class TimelineFiltersScreen extends React.PureComponent<
 
   // DECLARATIONS =================================================================================
 
-  static navigationOptions = {
-    header: () => null, // Header is included in screen
-  }
-
   state: ITimelineFiltersScreenState = {
     selectedFilters: { ...this.props.notifFilterSettings }
   }
@@ -73,7 +69,9 @@ export class TimelineFiltersScreen extends React.PureComponent<
           <HeaderLeft>
             <HeaderAction iconName="back" onPress={() => navigation.goBack()}/>
           </HeaderLeft>
-          <HeaderTitle>{I18n.t("timeline.filtersScreen.title")}</HeaderTitle>
+          <HeaderCenter>
+            <HeaderTitle>{I18n.t("timeline.filtersScreen.title")}</HeaderTitle>
+          </HeaderCenter>
           <HeaderRight>
             <HeaderAction
               text={I18n.t("common.apply")}

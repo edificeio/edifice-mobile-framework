@@ -58,6 +58,15 @@ export const NestedTextBold = styled.Text({
     color: TextColor.Heavy
 })
 
+export const TextSemiBold = styled(Text)({
+    fontWeight: FontWeight.SemiBold,
+    color: TextColor.Normal
+})
+export const NestedTextSemiBold = styled.Text({
+    fontWeight: FontWeight.SemiBold,
+    color: TextColor.Normal
+})
+
 export const TextItalic = styled(Text)({
     fontStyle: 'italic'
 })
@@ -85,4 +94,8 @@ export const H1 = styled(Text)({
     fontWeight: FontWeight.SemiBold,
     color: theme.color.secondary.regular,
     fontSize: 18,
+})
+
+export const TextAction = styled(Text)({
+    color: TextColor.Action,
 })
