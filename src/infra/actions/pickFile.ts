@@ -1,5 +1,5 @@
 import { Platform, ActionSheetIOS } from "react-native";
-import RNFetchBlob from 'rn-fetch-blob';
+import ActionSheet from 'react-native-action-sheet';
 import DocumentPicker from "react-native-document-picker";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import Permissions, { PERMISSIONS } from "react-native-permissions";
@@ -44,9 +44,7 @@ const photoCaptions: PhotoCaptions = {
 
 type FilePickerPromise = (resolve: (payload: ContentUri) => void, reject: (error: Error) => void) => void;
 
-const pick = (onlyImages?: boolean) => {
-  return new Promise(onlyImages ? pickImage : (Platform.OS === "ios" ? pickIOS : pickDocument()));
-};
+const pick = (onlyImages?: boolean) => new Promise(onlyImages ? pickImage : pickFile);
 
 const transformCaptions: (captions: any) => {} = captions => {
   let result = {};
@@ -63,15 +61,19 @@ const transformCaptions: (captions: any) => {} = captions => {
   return result;
 };
 
-const pickIOS: FilePickerPromise = (resolve, reject) => {
-  const { image, document, cancel, title } = transformCaptions(captions);
+const pickFile: FilePickerPromise = (resolve, reject) => {
+  const { title, image, document, cancel } = transformCaptions(captions);
   const options = [image, document, cancel];
-  const handlers = [pickImage, pickDocument(), () => pickClosed];
   const cancelButtonIndex = options.indexOf(cancel);
+  const elements = { title, options, cancelButtonIndex };
+  const handlers = [pickImage, pickDocument(), () => pickClosed];
+  const onPressAction = buttonIndex => typeof buttonIndex === "number" ? handlers[buttonIndex](resolve, reject) : null;
 
-  ActionSheetIOS.showActionSheetWithOptions({ options, cancelButtonIndex, title }, buttonIndex => {
-    handlers[buttonIndex](resolve, reject);
-  });
+  if (Platform.OS === "ios") {
+    ActionSheetIOS.showActionSheetWithOptions(elements, buttonIndex => onPressAction(buttonIndex))
+  } else if (Platform.OS === "android") {
+    ActionSheet.showActionSheetWithOptions(elements, buttonIndex => onPressAction(buttonIndex))
+  }
 };
 
 const pickImage: FilePickerPromise = (resolve, reject) => {
