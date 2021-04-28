@@ -4,15 +4,16 @@
  */
 
 import * as React from "react";
-import { ColorValue, ViewStyle } from "react-native";
+import { ColorValue, ViewStyle, Platform } from "react-native";
+import { hasNotch } from "react-native-device-info";
 import { NavigationNavigateActionPayload } from "react-navigation";
 import styled from '@emotion/native'
+import I18n from "i18n-js";
 
 import { Icon } from "../../framework/components/icon";
 import theme from "../../framework/theme";
 import { mainNavNavigate } from "../../navigation/helpers/navHelper";
 import { Text } from "./text";
-import I18n from "i18n-js";
 
 export interface IPopupMenuProps {
 	iconName: string;
@@ -74,19 +75,28 @@ export default class PopupMenu extends React.PureComponent<IPopupMenuProps, IPop
 	}
 
 	render() {
-		return <>
-			<ButtonIcon name={this.props.iconName} onPress={() => {
-				this.setState({ active: !this.state.active })
-			}}
-				style={{
-					position: "absolute",
-					right: 20, top: -38, zIndex: 100
-				}} />
-			{this.state.active ? <>
-				{this.renderOverlay()}
-				{this.renderOptions()}
-			</> : null}
-		</>;
+		return (
+			<>
+				<ButtonIcon
+					name={this.props.iconName}
+					onPress={() => this.setState({ active: !this.state.active })}
+					style={{
+						position:"absolute",
+						zIndex: 100,
+						right: 20,
+						top: Platform.select({ "android": 14, "ios": hasNotch() ? 61 : 34 })
+					}}
+				/>
+				{this.state.active
+					?
+						<>
+							{this.renderOverlay()}
+							{this.renderOptions()}
+						</>
+					: 	null
+				}
+			</>
+		);
 	}
 
 	renderOverlay() {
@@ -99,8 +109,10 @@ export default class PopupMenu extends React.PureComponent<IPopupMenuProps, IPop
 
 	renderOptions() {
 		const Menu = styled.FlatList({
-			position: "absolute", zIndex: 100,
-			right: 20, top: 18,
+			position: "absolute",
+			zIndex: 100,
+			right: 20,
+			top: Platform.select({ "android": 70, "ios": hasNotch() ? 117 : 90 }),
 			overflow: "visible",
 		})
 		return <Menu
