@@ -118,7 +118,7 @@ const ColoredSquare = ({
 );
 
 const GradesDevoirsResume = ({ devoir }: { devoir: IDevoir }) => (
-  <View style={{ padding: 8, maxWidth: "50%" }}>
+  <View style={{ padding: 8, maxWidth: "52%" }}>
     <TextBold numberOfLines={1}>{devoir.matiere.toUpperCase()}</TextBold>
     <Text numberOfLines={1}>{devoir.teacher.toUpperCase()}</Text>
     <Text numberOfLines={1}>{devoir.title}</Text>
@@ -135,7 +135,7 @@ export const DenseDevoirList = ({ devoirs, levels }: { devoirs: IDevoirList; lev
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <View style={{ flexDirection: "row", maxWidth: "58%", padding: 8 }}>
             <TextBold style={{ marginRight: 30 }} numberOfLines={1}>
-              {devoir.title}
+              {devoir.matiere}
             </TextBold>
             <Text>{devoir.date}</Text>
           </View>
@@ -259,12 +259,13 @@ const styleConstant = StyleSheet.create({
   competencesList: {
     flexDirection: "row",
     justifyContent: "flex-end",
+    maxWidth: "50%",
   },
   coloredSquare: {
     backgroundColor: CommonStyles.primary,
     borderRadius: 5,
     padding: 10,
-    minWidth: "25%",
+    minWidth: "29%",
   },
   competenceRoundContainer: {
     width: "25%",
