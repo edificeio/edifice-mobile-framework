@@ -3,6 +3,11 @@
     "apply": "Appliquer",
     "comment": "Commentaire",
     "comments": "Commentaires",
+    "date": {
+      "invalid": "",
+      "now": "maintenant",
+      "yesterday": "hier"
+    },
     "error": {
       "text": "Une erreur est survenue. Veuillez réessayer plus tard.",
       "title": "Oups..."
