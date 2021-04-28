@@ -204,7 +204,8 @@ export default class ThreadMessage extends React.PureComponent<
       from = "",
       status,
       id,
-      threadId
+      threadId,
+      displayNames
     } = this.props;
     const { showHistory } = this.state;
     const separatedBody = separateMessageHistory(body);
@@ -221,15 +222,16 @@ export default class ThreadMessage extends React.PureComponent<
     }
 
     const getSenderText = (displayNames: Array<[string, string, boolean]>, from: string) => {
-      if (displayNames) {
+      if (isMine) {
+        return getSessionInfo().displayName;
+      } else if (displayNames) {
         const res = displayNames.find(el => el && el[0] === from);
         if (res) {
           return res[1];
         } else return I18n.t("unknown-user");
-      }
-      return I18n.t("unknown-user");
+      } else return I18n.t("unknown-user");
     }
-    const senderText = getSenderText(this.props.displayNames, from);
+    const senderText = getSenderText(displayNames, from);
 
     return (
       <MessageBlock style={{
