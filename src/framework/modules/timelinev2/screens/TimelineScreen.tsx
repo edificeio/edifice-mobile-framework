@@ -15,11 +15,12 @@ import { Text } from "../../../components/text";
 import { dismissFlashMessageAction, loadNotificationsPageAction, startLoadNotificationsAction } from "../actions";
 import withViewTracking from "../../../tracker/withViewTracking";
 import moduleConfig from "../moduleConfig";
-import { INotification, INotifications_State, IResourceUriNotification, isResourceUriNotification } from "../reducer/notifications";
+import { INotifications_State } from "../reducer/notifications";
 import { IEntcoreFlashMessage, IFlashMessages_State } from "../reducer/flashMessages";
 import { LoadingIndicator } from "../../../components/loading";
 import { TimelineNotification } from "../components/TimelineNotification";
 import { TimelineFlashMessage } from "../components/TimelineFlashMessage";
+import { INotification, IResourceUriNotification, isResourceUriNotification } from "../../../notifications";
 
 // TYPES ==========================================================================================
 
