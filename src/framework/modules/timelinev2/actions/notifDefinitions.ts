@@ -2,7 +2,7 @@ import { Dispatch } from "redux";
 import { getUserSession } from "../../../session";
 import moduleConfig from "../moduleConfig";
 import { registeredNotificationsService } from "../service";
-import { actions as notifTypesAsyncActions } from "../reducer/notifDefinitions/notifTypes"
+import { actions as notifTypesAsyncActions } from "../reducer/notifDefinitions/notifTypes";
 import { actions as notifFiltersActions } from "../reducer/notifDefinitions/notifFilters";
 import type { ITimeline_State } from "../reducer";
 import { computeNotificationFilterList } from "../reducer/notifDefinitions";
