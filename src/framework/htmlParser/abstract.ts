@@ -196,9 +196,11 @@ export class HtmlParserAbstract<RenderType> {
     if (this.isIgnoring) return;
     if (!text.contents) return;
     // console.log(`encountered text : "${text.contents}" at deepness ${this.currentDeepnessLevel}`);
-    if (!text.contents.match(/\S/)) return; // Filter whitespace-only text.
+    // if (!text.contents.match(/\S/)) return; // Filter whitespace-only text.
     if (this.opts.parseEntities)
+      // console.log("decoded html entities pre", text.contents);
       text.contents = entitiesTransformer.decode(text.contents);
+      // console.log(`decoded html entities : "${text.contents}"`);
     if (this.onText) this.onText(text);
   }
 
