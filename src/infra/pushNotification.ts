@@ -6,7 +6,7 @@ export interface NotificationData{
     resourceUri:string
 }
 export interface NotificationHandler{
-    (notificationData:NotificationData,apps:string[], doTrack: string | false ):Promise<boolean>
+    (notificationData:NotificationData,apps:string[], trackCategory: string | false ):Promise<boolean>
 }
 export interface NotificationHandlerFactory<S,E,A extends Action>{
     (dispatch:ThunkDispatch<S,E,A>, getState: () => S): NotificationHandler;

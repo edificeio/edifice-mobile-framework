@@ -14,7 +14,7 @@ const handleSchoolbookNotificationAction: NotifHandlerThunkAction = notification
 		notification
 	});
 	return {
-		managed: true,
+		managed: 1,
 		trackInfo: { action: "Schoolbook", name: `${notification.type}.${notification["event-type"]}` }
 	}
 }

@@ -5,7 +5,7 @@ import { NotificationHandlerFactory } from "../infra/pushNotification";
 import { Trackers } from "../infra/tracker";
 
 //TODO add types args
-const homeworksNotificationHandlerFactory:NotificationHandlerFactory<any,any,any> = dispatch => async (notificationData, apps, doTrack) => {
+const homeworksNotificationHandlerFactory:NotificationHandlerFactory<any,any,any> = dispatch => async (notificationData, apps, trackCategory) => {
   if (!notificationData.resourceUri.startsWith("/homeworks")) {
     return false;
   }
@@ -53,7 +53,7 @@ const homeworksNotificationHandlerFactory:NotificationHandlerFactory<any,any,any
   }
   */
 
-  doTrack && Trackers.trackEvent(doTrack, "Homework", "/homeworks");
+  trackCategory && Trackers.trackEvent(trackCategory, "Homework", "/homeworks");
 
  return true;
 };
