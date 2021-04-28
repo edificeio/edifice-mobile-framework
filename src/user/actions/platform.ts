@@ -1,7 +1,7 @@
 import Conf from "../../../ode-framework-conf";
 import userConfig from "../config";
 
-import { OAuth2RessourceOwnerPasswordClient, scopes } from "../../infra/oauth";
+import { createAppScopesLegacy, OAuth2RessourceOwnerPasswordClient } from "../../infra/oauth";
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { navigate } from "../../navigation/helpers/navHelper";
@@ -34,7 +34,7 @@ export function selectPlatform(platformId: string, redirect: boolean = false, do
       `${Conf.currentPlatform.url}/auth/oauth2/token`,
       Conf.currentPlatform.appOAuthId,
       Conf.currentPlatform.appOAuthSecret,
-      scopes
+      createAppScopesLegacy()
     );
 
     // === 4 - Saves the selected platform in Async Storage

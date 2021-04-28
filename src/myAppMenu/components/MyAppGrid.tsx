@@ -7,7 +7,7 @@ import { PageContainer } from "../../ui/ContainerContent";
 import { EmptyScreen } from "../../ui/EmptyScreen";
 
 import MyAppItem from "./MyAppItem";
-import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
+import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { IAppModule } from "../../infra/moduleTool/types";
 import { View, ScrollView, Linking, Platform } from "react-native";
 import withViewTracking from "../../infra/tracker/withViewTracking";
@@ -89,7 +89,7 @@ class MyAppGrid extends React.PureComponent<{ navigation : NavigationScreenProp<
 
     return (
       <PageContainer>
-        <ConnectionTrackingBar />
+        <DEPRECATED_ConnectionTrackingBar />
         {pageContent}
       </PageContainer>
     );

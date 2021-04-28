@@ -27,7 +27,7 @@ import NavigationService from "./NavigationService";
 import Carousel from "../ui/Carousel";
 import { IFrame } from "../ui/IFrame";
 import { getAvailableModules, getModuleRoutes, getModulesByFilter, IEntcoreApp, ModuleGroup } from "../framework/moduleTool";
-import AllModules from "../AllModules";
+import AllModules from "../framework/app/AllModules";
 import { Notification } from "react-native-firebase/notifications";
 
 /**

@@ -11,7 +11,7 @@ import { PasswordInputLine } from "../../ui/forms/PasswordInputLine";
 import { ErrorMessage } from "../../ui/Typography";
 import { FlatButton } from "../../ui/FlatButton";
 import { getSessionInfo } from "../../App";
-import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
+import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { Dispatch } from "redux";
 import { NoTouchableContainer } from "../../ui/ButtonLine";
 import { Text } from "../../ui/text";
@@ -168,7 +168,7 @@ export class ChangePasswordPage extends React.PureComponent<
 
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
-        <ConnectionTrackingBar/>
+        <DEPRECATED_ConnectionTrackingBar/>
         <FormPage>
           <KeyboardAvoidingView
             style={{ flex: 1, backgroundColor: "#ffffff" }}

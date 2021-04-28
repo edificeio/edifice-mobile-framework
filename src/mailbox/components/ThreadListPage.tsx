@@ -27,7 +27,7 @@ const { FlatList } = style;
 import styles from "../../styles";
 
 import { Icon, Loading, ButtonsOkCancel } from "../../ui";
-import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
+import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { EmptyScreen } from "../../ui/EmptyScreen";
@@ -114,7 +114,7 @@ export class ThreadListPage extends React.PureComponent<
     return (
       // <PageContainer>
       <>
-        <ConnectionTrackingBar />
+        <DEPRECATED_ConnectionTrackingBar />
         <ModalBox backdropOpacity={0.5} isVisible={this.state.showDeleteModal}>
           {this.renderDeleteModal(this.state.swipedThreadId)}
         </ModalBox>
