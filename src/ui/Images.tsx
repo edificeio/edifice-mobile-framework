@@ -119,7 +119,7 @@ class Images extends React.Component<
       return breakpoints.find(b => pixelWidth < b) || breakpoints[breakpoints.length-1];
     }
     const getImageSource = (imageSrc, isFullWidth?: boolean) => {
-      const newUri = imageSrc.uri?.split("?")[0] + `?thumbnail=${getThumbnailWidth(isFullWidth)}x0`;
+      const newUri = imageSrc && imageSrc.uri.split("?")[0] + `?thumbnail=${getThumbnailWidth(isFullWidth)}x0`;
       return { ...imageSrc, uri: newUri };
     }
 

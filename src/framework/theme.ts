@@ -31,6 +31,15 @@ export interface ITheme {
         success: ColorValue,
         failure: ColorValue,
         warning: ColorValue
+    },
+    themeOpenEnt: {
+        cyan: ColorValue,
+        green: ColorValue,
+        yellow: ColorValue,
+        red: ColorValue,
+        pink: ColorValue,
+        purple: ColorValue,
+        indigo: ColorValue,
     }
 }
 
@@ -60,6 +69,15 @@ export const defaultTheme: ITheme = {
         success: '#19ca72',
         failure: '#e04b35',
         warning: '#ffb000'
+    },
+    themeOpenEnt: {
+        cyan: '#4bafd5',
+        green: '#46bfaf',
+        yellow: '#ecbe30',
+        red: '#e13a3a',
+        pink: '#b930a2',
+        purple: '#763294',
+        indigo: '#1a22a2'
     }
 }
 
