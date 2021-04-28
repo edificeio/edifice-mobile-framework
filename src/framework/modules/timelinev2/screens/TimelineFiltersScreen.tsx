@@ -102,8 +102,8 @@ export class TimelineFiltersScreen extends React.PureComponent<
               }
               rightElement={
                 <Checkbox
-                  customCheckboxColor={!someNotSet ? theme.color.checkboxBorder : undefined}
-                  customContainerStyle={{backgroundColor: theme.color.cardBackground, borderColor: theme.color.checkboxBorder, borderWidth: 2}}
+                  customCheckboxColor={!someNotSet ? theme.color.text.light : undefined}
+                  customContainerStyle={{backgroundColor: theme.color.background.card, borderColor: theme.color.text.light, borderWidth: 2}}
                   checked={!someNotSet}
                   onPress={() => {
                     let updatedSelectedFilters = selectedFilters;
