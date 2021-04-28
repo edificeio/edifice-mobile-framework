@@ -9,7 +9,7 @@ import { ITimeline_State } from "../reducer";
 import * as notifDefinitionsStateHandler from "../reducer/notifDefinitions";
 import * as notifSettingsStateHandler from "../reducer/notifSettings";
 import { loadNotificationsDefinitionsAction } from "./notifDefinitions";
-import { loadNotificationsSettingsAction } from "./notifSettings";
+import { loadNotificationFiltersSettingsAction } from "./notifSettings";
 import { actions as notificationsActions } from "../reducer/notifications";
 import { actions as flashMessagesActions } from "../reducer/flashMessages";
 import { flashMessagesService, notificationsService } from "../service";
@@ -25,7 +25,7 @@ const _prepareNotificationsAction = () => async (dispatch: ThunkDispatch<any, an
 
   // 2 - Load notification settings if necessary
   if (!notifSettingsStateHandler.getAreNotificationFilterSettingsLoaded(state.notifSettings)) {
-    await dispatch(loadNotificationsSettingsAction());
+    await dispatch(loadNotificationFiltersSettingsAction());
     state = moduleConfig.getState(getState());
   }
   return state;

@@ -19,7 +19,7 @@ export const ListItem = ({
           flexDirection: "row",
           justifyContent: "space-between",
           alignItems: "center",
-          padding: 10,
+          padding: 12,
           borderBottomWidth: 0.25,
           borderBottomColor: theme.color.listItemBorder
         },
