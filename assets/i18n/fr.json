@@ -4,8 +4,8 @@
     "comment": "Commentaire",
     "comments": "Commentaires",
     "error": {
-      "title": "Oups...",
-      "text": "Une erreur est survenue. Veuillez réessayer plus tard."
+      "text": "Une erreur est survenue. Veuillez réessayer plus tard.",
+      "title": "Oups..."
     },
     "errorLoadingResource": "Cette ressource est inaccessible.",
     "infoBubble-doNotShow": "Ne plus afficher ce message",
@@ -200,8 +200,8 @@
   "mailbox": {
     "alert": {
       "deletedThread": {
-        "title": "Lecture impossible",
-        "text": "Votre conversation a été supprimée. Nous ne pouvons pas vous restituer l'historique de la conversation."
+        "text": "Votre conversation a été supprimée. Nous ne pouvons pas vous restituer l'historique de la conversation.",
+        "title": "Lecture impossible"
       }
     }
   },

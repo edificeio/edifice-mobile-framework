@@ -3,12 +3,20 @@
     "apply": "Apply",
     "comment": "Comment",
     "comments": "Comments",
+    "error": {
+      "text": "An error occurred. Please try again later.",
+      "title": "Whoops..."
+    },
     "errorLoadingResource": "This content is inaccessible.",
+    "infoBubble-doNotShow": "Do not show this message",
+    "infoBubble-understood": "Understood",
     "ok": "OK",
+    "openInBrowser": "Open in browser",
     "readMore": "read more",
     "all": "All"
   },
   "timeline": {
+    "appName": "Newsfeed",
     "tabName": "News",
     "emptyScreenText": "All quiet on the Western front. Are you familiar with the saying \"the calm before the storm\"?",
     "emptyScreenTitle": "No sightings yet. Is there anybody out there?",
@@ -141,20 +149,28 @@
       "title": "News"
     },
     "webViewScreen": {
+      "infoBubbleText": "To view and edit certain content, you will be redirected to your smartphone's browser.",
+      "title": "Browser redirection"
     }
   },
   "user": {
     "pushNotifsSettingsScreen": {
       "countOutOfTotal": {
+        "one": "({{count}} activated out of {{total}})",
+        "other": "({{count}} activated out of {{total}})"
       }
     }
   },
   "blog": {
     "resourceName": "Blog post",
     "blogSelectScreen": {
+      "sharedToNbPerson": "Shared with {{nb}} person",
+      "sharedToNbPersons": "Shared with {{nb}} people",
+      "title": "Choose a blog"
     },
     "blogCreatePostScreen": {
       "createAction": "Save",
+      "createSuccess": "Your post was saved.",
       "postContent": "Post content",
       "postContentPlaceholder": "Write a message...",
       "postMedia": "Add photos to your post",
@@ -163,6 +179,7 @@
       "publishAction": "Publish",
       "publishSuccess": "Your post was published.",
       "submitAction": "Send",
+      "submitSuccess": "Your post was sent. It will be published after the blog manager approves it.",
       "title": "New post"
     }
   },
@@ -175,12 +192,16 @@
       "mustRead": "A parent must read this message!",
       "readBy": "Read by",
       "readBySeparator": ", ",
+      "readByNumberRelative": "Read by {{nb}} parent",
+      "readByNumberRelatives": "Read by {{nb}} parents",
       "title": "Schoolbook"
     }
   },
   "mailbox": {
     "alert": {
       "deletedThread": {
+        "text": "Your conversation was deleted. We cannot restore your conversation history.",
+        "title": "Deleted thread"
       }
     }
   },
@@ -238,6 +259,9 @@
   "common-disconnected": "Not connected to the Internet",
   "common-ErrorLoadingResource": "This content is inaccessible.",
   "common-ErrorStorageAccess": "An error occurred when adding the document. The application does not have access to your device’s data storage. Please check your security settings before trying again.",
+  "common-ErrorStorageAccessAlertText": "An error occurred when adding the document. The application does not have access to your device's storage. You can edit your authorization rules in the application's settings.",
+  "common-ErrorStorageAccessAlertTitle": "Storage permission needed",
+  "common-ErrorStorageAccessAlertRetry": "Settings",
   "common-ErrorNetwork": "Network errors",
   "common-ErrorUnknown": "Error",
   "common-InvalidDate": "Invalid date",
@@ -353,6 +377,8 @@
   "forgot-success": "Email sent",
   "homework-emptyScreenText": "Soon, you'll be able to see all the activities you need to do in this digital notebook. Cool, huh?",
   "homework-emptyScreenTitle": "No activities yet...",
+  "homework-previousSee": "Show previous activities",
+  "homework-previousNoMore": "You don't have any more previous activities.",
   "homework-select": "My homework notebooks",
   "homework-task-empty-title": "Homework",
   "Homework": "Homework",
@@ -366,6 +392,7 @@
   "LoginWeb": "Log in from the web",
   "LVS": "LVS",
   "me-indicator": "(me)",
+  "mediaNotAvailable": "Media not available",
   "modify": "Modify",
   "move": "Move",
   "move-documents": "Move documents to",
@@ -373,6 +400,7 @@
   "myapp-accessWeb": "Access the web version",
   "myapp-emptyScreenText": "It looks like you do not have access to any apps...",
   "myapp-emptyScreenTitle": "No apps!",
+  "myapp-infoBubbleText": "With {{appName}}, you will receive all your notifications in the News tab. When you click on specific activities, you will be redirected to the online version of your virtual learning environment.\n\nTo view and edit certain content, you will be redirected to your phone’s browser.", 
   "myapp-infoBubbleTitle": "Where are the other applications?",
   "MyApplications": "My apps",
   "MyAccount": "My account",
@@ -468,9 +496,10 @@
   "unknown-user": "Unknown user",
   "version-number": "Version",
   "videoNotAvailable": "Video player not available",
-  "viesco":"Vie Scolaire",
-  "viesco-lasteval":"Dernières évaluations",
-  "viesco-declareAbsence":"Déclarer absence",
+  "viesco": "Student Services",
+  "viesco-empty-screen": "Only families and teachers are allowed access to Student Services from the mobile application",
+  "viesco-lasteval": "Latest evaluations",
+  "viesco-declareAbsence": "Report absence",
   "viesco-homework": "Homework",
   "viesco-homework-home": "Homework",
   "viesco-homework-fordate": "For",
@@ -521,6 +550,8 @@
   "viesco-several-days": "Several days",
   "viesco-absence-declaration": "Absence declaration",
   "viesco-absence-motive": "Absence motive",
+  "viesco-attachment": "Supporting document",
+  "viesco-edt-week-of": "Week of",
   "welcome": "Welcome",
   "workspace": "Workspace",
   "workspace-uploadSuccessful": "The document has been successfully imported",
@@ -562,10 +593,11 @@
   "zimbra-empty-mailbox": "No message for now",
   "zimbra-send-mail": "Message sent",
   "zimbra-attachment-error": "Attachment upload failure",
+  "zimbra-send-attachment-progress": "Please wait until the attachment has been added",
   "zimbra-missing-receiver": "This message must contain at least one recipient",
   "zimbra-message-deleted": "Message deleted",
   "zimbra-message-moved": "Message moved",
-  "support": "Assistance ENT",
+  "support": "VLE Assistance",
   "support-report-incident": "Report an incident",
   "support-mobile-only": "Only for incidents encountered on the mobile application.",
   "support-ticket-category": "Category",
