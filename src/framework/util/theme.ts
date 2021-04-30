@@ -62,7 +62,7 @@ export interface ITheme {
 
 export const defaultTheme: ITheme = {
     color: {
-        listItemBorder: '#606060',
+        listItemBorder: '#dddddd',
         inputBorder: '#dddddd',
         shadowColor: '#000000',
         background: {
