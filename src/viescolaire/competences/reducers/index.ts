@@ -1,9 +1,10 @@
 import { combineReducers } from "redux";
 
-import devoirsList from "./devoirs";
-import moyennesList from "./moyennes";
 import levels from "./competencesLevels";
+import devoirsList from "./devoirs";
+import matieres from "./matieres";
+import moyennesList from "./moyennes";
 
-const combinedReducer = combineReducers({ devoirsList, moyennesList, levels });
+const combinedReducer = combineReducers({ devoirsList, moyennesList, levels, matieres });
 
 export default combinedReducer;

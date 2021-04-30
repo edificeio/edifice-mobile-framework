@@ -12,13 +12,14 @@ import { HeaderBackAction } from "../../../ui/headers/NewHeader";
 import { fetchPeriodsListAction } from "../../viesco/actions/periods";
 import { getSelectedChild, getSelectedChildStructure } from "../../viesco/state/children";
 import { getPeriodsListState } from "../../viesco/state/periods";
-import { getSubjectsListState } from "../../viesco/state/subjects";
 import { fetchLevelsAction } from "../actions/competencesLevels";
 import { fetchDevoirListAction } from "../actions/devoirs";
+import { fetchMatieresAction } from "../actions/matieres";
 import { fetchDevoirMoyennesListAction } from "../actions/moyennes";
 import Competences from "../components/Evaluation";
 import { getLevelsListState } from "../state/competencesLevels";
 import { getDevoirListState } from "../state/devoirs";
+import { getMatiereListState } from "../state/matieres";
 import { getMoyenneListState } from "../state/moyennes";
 
 export class Evaluation extends React.PureComponent<{ navigation: { navigate } }, any> {
@@ -60,7 +61,7 @@ const mapStateToProps: (state: any) => any = state => {
     devoirsList: getDevoirListState(state),
     devoirsMoyennesList: getMoyenneListState(state),
     levels: getLevelsListState(state).data,
-    subjects: getSubjectsListState(state),
+    subjects: getMatiereListState(state).data,
     userType,
     periods: getPeriodsListState(state).data,
     groupId,
@@ -76,6 +77,7 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
       getDevoirsMoyennes: fetchDevoirMoyennesListAction,
       getPeriods: fetchPeriodsListAction,
       getLevels: fetchLevelsAction,
+      getSubjects: fetchMatieresAction,
     },
     dispatch
   );

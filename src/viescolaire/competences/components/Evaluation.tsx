@@ -10,9 +10,9 @@ import { EmptyScreen } from "../../../ui/EmptyScreen";
 import { Text, TextBold } from "../../../ui/text";
 import ChildPicker from "../../viesco/containers/ChildPicker";
 import { IPeriodsList } from "../../viesco/state/periods";
-import { ISubjectList, ISubjectListState } from "../../viesco/state/subjects";
 import { ILevelsList } from "../state/competencesLevels";
 import { IDevoirListState } from "../state/devoirs";
+import { IMatiereList } from "../state/matieres";
 import { IMoyenneListState } from "../state/moyennes";
 import { GradesDevoirs, GradesDevoirsMoyennes } from "./Item";
 
@@ -21,7 +21,7 @@ export type ICompetencesProps = {
   devoirsList: IDevoirListState;
   devoirsMoyennesList: IMoyenneListState;
   levels: ILevelsList;
-  subjects: ISubjectListState;
+  subjects: IMatiereList;
   userType: string;
   periods: IPeriodsList;
   groupId: string;
@@ -31,6 +31,7 @@ export type ICompetencesProps = {
   getDevoirsMoyennes: (structureId: string, studentId: string, period?: string) => void;
   getPeriods: (structureId: string, groupId: string) => void;
   getLevels: (structureIs: string) => void;
+  getSubjects: (studentId: string) => void;
 };
 
 enum SwitchState {
@@ -48,7 +49,6 @@ type ISelectedPeriod = { type: string; value: string | undefined };
 
 type ICompetencesState = {
   devoirs: any;
-  subjectsList: ISubjectList;
   screenDisplay: ScreenDisplay;
   switchValue: SwitchState;
   currentPeriod: ISelectedPeriod;
@@ -64,7 +64,6 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     const { devoirsList } = this.props;
     this.state = {
       devoirs: devoirsList.data.sort((a, b) => moment(b.date, "DD/MM/YYYY").diff(moment(a.date, "DD/MM/YYYY"))),
-      subjectsList: this.props.subjects.data,
       screenDisplay: ScreenDisplay.DASHBOARD,
       switchValue: SwitchState.DEFAULT,
       currentPeriod: { type: I18n.t("viesco-competences-period"), value: undefined },
@@ -79,6 +78,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     this.props.getDevoirs(structureId, childId);
     this.props.getPeriods(structureId, groupId);
     this.props.getLevels(structureId);
+    this.props.getSubjects(childId);
   }
 
   // Update when changing child with relative account
@@ -90,11 +90,13 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
       this.props.getDevoirsMoyennes(structureId, childId, selectedPeriod.value!);
       this.props.getPeriods(structureId, groupId);
       this.props.getLevels(structureId);
+      this.props.getSubjects(childId);
       this.setCurrentPeriod();
     } else if (childId !== nextProps.childId) {
       this.props.getDevoirs(structureId, childId, selectedPeriod.value, this.state.disciplineId!);
       this.props.getPeriods(structureId, groupId);
       this.props.getLevels(structureId);
+      this.props.getSubjects(childId);
     }
   }
 
@@ -227,15 +229,15 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
   }
 
   private initDevoirsByDisciplines(discipline) {
-    const { structureId, childId } = this.props;
-    const { subjectsList, selectedPeriod, currentPeriod } = this.state;
+    const { structureId, childId, subjects } = this.props;
+    const { selectedPeriod, currentPeriod } = this.state;
     if (selectedPeriod.type === I18n.t("viesco-competences-period")) {
       this.setState({ selectedPeriod: currentPeriod });
     }
 
     let subjectId = "";
     if (discipline !== I18n.t("viesco-competences-disciplines")) {
-      subjectId = subjectsList.find(item => item.subjectLabel === discipline)!.subjectId;
+      subjectId = subjects.find(item => item.name === discipline)!.id;
       this.props.getDevoirs(structureId, childId, selectedPeriod.value!, subjectId);
     } else this.props.getDevoirs(structureId, childId);
 
@@ -255,8 +257,8 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
   }
 
   private displayDisciplinesDropdown() {
-    let disciplines = this.state.subjectsList
-      .map(({ subjectLabel }) => subjectLabel)
+    let disciplines = this.props.subjects
+      .map(({ name }) => name)
       .sort((a, b) => String(a.toLocaleLowerCase() ?? "").localeCompare(b.toLocaleLowerCase() ?? ""));
     disciplines.unshift(I18n.t("viesco-competences-disciplines"));
 
