@@ -65,7 +65,11 @@ const CompetenceRound = ({
 }) => {
   const [isVisible, toggleVisible] = useState(false);
   return (
-    <View style={[styleConstant.competenceRoundContainer, { alignItems: stateFullRound }]}>
+    <View
+      style={[
+        styleConstant.competenceRoundContainer,
+        { alignItems: stateFullRound, width: stateFullRound === "flex-end" ? "auto" : "25%" },
+      ]}>
       {competences.length > 0 && (
         <TouchableOpacity
           style={[styleConstant.competenceRound, styleConstant.shadow, { minHeight: size, minWidth: size }]}
@@ -133,8 +137,8 @@ export const DenseDevoirList = ({ devoirs, levels }: { devoirs: IDevoirList; lev
     {devoirs.map((devoir, index) => (
       <LeftColoredItem shadow color="#F95303" key={index}>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <View style={{ flexDirection: "row", maxWidth: "58%", padding: 8 }}>
-            <TextBold style={{ marginRight: 30 }} numberOfLines={1}>
+          <View style={{ flexDirection: "row", width: "75%", padding: 8, justifyContent: "space-between" }}>
+            <TextBold style={{ maxWidth: "70%", paddingRight: 10 }} numberOfLines={1}>
               {devoir.matiere}
             </TextBold>
             <Text>{devoir.date}</Text>
@@ -275,7 +279,6 @@ const styleConstant = StyleSheet.create({
     borderRadius: 45,
     minWidth: 60,
     minHeight: 60,
-    marginLeft: 20,
     backgroundColor: "white",
     justifyContent: "center",
   },
