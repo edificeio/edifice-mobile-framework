@@ -1,5 +1,6 @@
 // require the module
-
+import { Platform, ActionSheetIOS } from "react-native";
+import RNFetchBlob from 'rn-fetch-blob';
 import { asyncActionTypes } from "../../infra/redux/async";
 import config from "../config";
 import { formatResults, uploadDocument } from "./helpers/documents";
@@ -50,6 +51,16 @@ export function uploadAction(parentId: string, uriContent: ContentUri[] | Conten
   return async (dispatch: any) => {
     try {
       const content = Array.isArray(uriContent) ? uriContent : [uriContent];
+      // Need to manage some Android docs specifically
+      for (const contentURI of content) {
+        let deviceURI = contentURI.uri;
+        if ((Platform.OS === 'android')
+          && (deviceURI.includes('content://com.google') || deviceURI.includes('content://com.android'))) {
+          const stat = await RNFetchBlob.fs.stat(deviceURI);
+          deviceURI = stat.path;
+        }
+        contentURI.uri = deviceURI;
+      }
       dispatch(uploadRequested(parentId));
       const response = await uploadDocument(dispatch, content, parentId);
       const data = response.map(item => JSON.parse(item));
