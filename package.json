@@ -57,7 +57,6 @@
     "react-native-document-picker": "^5.0.3",
     "react-native-fast-image": "^7.0.2",
     "react-native-file-share-intent": "github:opendigitaleducation/react-native-file-share-intent",
-    "react-native-fs": "~2.15.3",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-global-props": "github:opendigitaleducation/react-native-global-props",
     "react-native-grid-list": "~1.1.0",
