@@ -272,7 +272,7 @@ PODS:
   - React-jsinspector (0.61.5)
   - react-native-document-picker (5.0.3):
     - React-Core
-  - react-native-image-picker (3.5.0):
+  - react-native-image-picker (3.3.2):
     - React-Core
   - react-native-matomo-sdk (0.4.0):
     - MatomoTracker (~> 7)
@@ -352,8 +352,6 @@ PODS:
     - RNFBApp
   - RNFileShareIntent (1.1.2):
     - React
-  - RNFS (2.15.3):
-    - React
   - RNGestureHandler (1.10.3):
     - React-Core
   - RNLocalize (1.1.4):
@@ -428,7 +426,6 @@ DEPENDENCIES:
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
   - RNFileShareIntent (from `../node_modules/react-native-file-share-intent`)
-  - RNFS (from `../node_modules/react-native-fs`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNLocalize (from `../node_modules/react-native-localize`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
@@ -552,8 +549,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/messaging"
   RNFileShareIntent:
     :path: "../node_modules/react-native-file-share-intent"
-  RNFS:
-    :path: "../node_modules/react-native-fs"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNLocalize:
@@ -606,8 +601,8 @@ SPEC CHECKSUMS:
   React-jsi: cb2cd74d7ccf4cffb071a46833613edc79cdf8f7
   React-jsiexecutor: d5525f9ed5f782fdbacb64b9b01a43a9323d2386
   React-jsinspector: fa0ecc501688c3c4c34f28834a76302233e29dc0
-  react-native-document-picker: d2b8fa4d9b268a316515b1f631236f7a87813df6
-  react-native-image-picker: 189e8d3653b00442cb790bce09a283edaf8e02b6
+  react-native-document-picker: 2e6ecd112c48215e36431734d902f35201ffab0a
+  react-native-image-picker: b42940647478bf106ad3c491d6f5d9d40916d865
   react-native-matomo-sdk: 1dd9511387c2f96401dc6ba9a6476d0660021c91
   react-native-netinfo: 8d8db463bcc5db66a8ac5c48a7d86beb3b92f61a
   react-native-safe-area-context: f0906bf8bc9835ac9a9d3f97e8bde2a997d8da79
@@ -626,7 +621,7 @@ SPEC CHECKSUMS:
   ReactCommon: 198c7c8d3591f975e5431bec1b0b3b581aa1c5dd
   rn-fetch-blob: f065bb7ab7fb48dd002629f8bdcb0336602d3cba
   RNCAsyncStorage: 9924d6b4affe9081f08073f354ec6b09c839ff31
-  RNCMaskedView: f5c7d14d6847b7b44853f7acb6284c1da30a3459
+  RNCMaskedView: 5a8ec07677aa885546a0d98da336457e2bea557f
   RNCPicker: 914b557e20b3b8317b084aca9ff4b4edb95f61e4
   RNCPushNotificationIOS: f688c6d6158cf8ef93e72868e0bfdf27d3bbc568
   RNDateTimePicker: dc9dab744823a2c734dbc7362cdf57a3adba3c43
@@ -635,7 +630,6 @@ SPEC CHECKSUMS:
   RNFBApp: 02bde3edecf2e9694b908a5d3504e03449980f20
   RNFBMessaging: 1823217d31e942531cc3f51fb5367dcbc69c1e10
   RNFileShareIntent: 94f0be5c8b791dc42bcf07793fa6f2dbfcc2cb5a
-  RNFS: cf1bd19f8bf3c1400f8d3ececbe84e42aa29d2e7
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNLocalize: a91e036a6abc46e656a989456701182e0e228c7a
   RNPermissions: 8afd37dbc1be65748363c6a90caffd1806567651
