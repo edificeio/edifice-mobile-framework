@@ -1,5 +1,6 @@
 // require the module
-
+import  {  Platform } from 'react-native';
+import getPath from '@flyerhq/react-native-android-uri-path'
 import { asyncActionTypes } from "../../infra/redux/async";
 import config from "../config";
 import { formatResults, uploadDocument } from "./helpers/documents";
@@ -50,6 +51,11 @@ export function uploadAction(parentId: string, uriContent: ContentUri[] | Conten
   return async (dispatch: any) => {
     try {
       const content = Array.isArray(uriContent) ? uriContent : [uriContent];
+      if (Platform.OS === "android") {
+        for (uriContent of content) {
+          uriContent.uri = getPath(uriContent.uri);
+        }
+      }
       dispatch(uploadRequested(parentId));
       const response = await uploadDocument(dispatch, content, parentId);
       const data = response.map(item => JSON.parse(item));
