@@ -84,7 +84,7 @@ class TimetableContainer extends React.PureComponent<TimetableProps, TimetableSt
 
   initComponent = async () => {
     const { structureId, childId, childClasses } = this.props;
-    await this.props.fetchChildInfos();
+    if (getSessionInfo().type === "Relative") await this.props.fetchChildInfos();
     await this.props.fetchChildGroups(childClasses, childId);
     this.fetchCourses();
     this.props.fetchSlots(structureId);
@@ -148,7 +148,7 @@ const mapStateToProps = (state: any): any => {
     if (childGroups !== undefined && childGroups[0] !== undefined) {
       if (childGroups[0].nameClass !== undefined) group.push(childGroups[0].nameClass);
       childGroups[0]?.nameGroups?.forEach(item => group.push(item));
-    }
+    } else group.push(getSessionInfo().realClassesNames[0]);
   } else if (getSessionInfo().type === "Relative") {
     childId = getSelectedChild(state)?.id;
     childClasses = getUserChildrenState(state).data!.find(child => childId === child.id)?.idClasses!;
