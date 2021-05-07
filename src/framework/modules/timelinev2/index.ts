@@ -1,15 +1,13 @@
-import { Module, registerTabModule } from "../../util/moduleTool";
+import { tabModules, NavigableModule } from "../../util/moduleTool";
 
 import config from './moduleConfig';
-import getMainComp from './navigator';
+import getRoot from './navigator';
 import reducer from './reducer';
 
 import setUpNotifHandlers from './notifHandler';
 
-export default registerTabModule(
-    new Module({
-        config, getMainComp, reducer
-    }),
+export default tabModules.register(
+    new NavigableModule({ config, getRoot, reducer }),
     0
 );
 
