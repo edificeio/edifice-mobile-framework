@@ -1,4 +1,5 @@
 import I18n from "i18n-js";
+import moment from "moment";
 import * as React from "react";
 import { useState } from "react";
 import { View, StyleSheet, FlexAlignType } from "react-native";
@@ -126,7 +127,7 @@ const GradesDevoirsResume = ({ devoir }: { devoir: IDevoir }) => (
     <TextBold numberOfLines={1}>{devoir.matiere.toUpperCase()}</TextBold>
     <Text numberOfLines={1}>{devoir.teacher.toUpperCase()}</Text>
     <Text numberOfLines={1}>{devoir.title}</Text>
-    <Text>{devoir.date}</Text>
+    <Text>{moment(devoir.date).format("L")}</Text>
   </View>
 );
 
@@ -141,7 +142,7 @@ export const DenseDevoirList = ({ devoirs, levels }: { devoirs: IDevoirList; lev
             <TextBold style={{ maxWidth: "70%", paddingRight: 10 }} numberOfLines={1}>
               {devoir.matiere}
             </TextBold>
-            <Text>{devoir.date}</Text>
+            <Text>{moment(devoir.date).format("L")}</Text>
           </View>
           {devoir.competences.length ? (
             <CompetenceRound stateFullRound="flex-end" competences={devoir.competences} size={35} levels={levels} />

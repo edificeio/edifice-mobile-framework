@@ -1,4 +1,5 @@
 /* eslint-disable flowtype/no-types-missing-file-annotation */
+import moment from "moment";
 import querystring from "querystring";
 
 import { fetchJSONWithCache } from "../../../infra/fetchWithCache";
@@ -6,7 +7,7 @@ import { IDevoirList } from "../state/devoirs";
 
 export type IDevoirListBackend = {
   teacher: string;
-  date: string;
+  date: moment.Moment;
   title: string;
   matiere: string;
   diviseur: number;

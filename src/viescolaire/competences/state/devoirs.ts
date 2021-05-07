@@ -1,3 +1,5 @@
+import moment from "moment";
+
 import { createAsyncActionTypes, AsyncState } from "../../../infra/redux/async2";
 import viescoConfig from "../../config";
 
@@ -5,7 +7,7 @@ import viescoConfig from "../../config";
 
 export interface IDevoir {
   teacher: string;
-  date: string;
+  date: moment.Moment;
   title: string;
   matiere: string;
   diviseur: number;
