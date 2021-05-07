@@ -172,9 +172,7 @@ export default class Dashboard extends React.PureComponent<any> {
   }
 
   private renderEvaluations(evaluations: IDevoirListState, levels: ILevelsList) {
-    const evaluationList = evaluations.data
-      .sort((a, b) => moment(b.date, "DD/MM/YYYY").diff(moment(a.date, "DD/MM/YYYY")))
-      .slice(0, 5);
+    const evaluationList = evaluations.data.sort((a, b) => moment(b.date).diff(moment(a.date))).slice(0, 5);
     return (
       <View style={styles.dashboardPart}>
         <TextBold style={styles.title}>{I18n.t("viesco-lasteval")}</TextBold>
