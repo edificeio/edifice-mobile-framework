@@ -114,7 +114,7 @@ const ColoredSquare = ({
       { backgroundColor: backgroundColor ? backgroundColor : CommonStyles.primary },
     ]}>
     <Text style={{ alignSelf: "center", color: "white", marginVertical: 8 }}>
-      <TextBold style={{ fontSize: 20, color: "white" }}>{note}</TextBold>
+      <TextBold style={{ fontSize: 20, color: "white" }}>{+parseFloat(Number(note).toFixed(2))}</TextBold>
       {!hideScore && `/ ${diviseur}`}
     </Text>
     {coeff && <Text style={styleConstant.coloredSquareText}>coeff : {coeff}</Text>}

@@ -171,8 +171,21 @@ export default class Dashboard extends React.PureComponent<any> {
     );
   }
 
+  // Get the 5 last added evaluations
+  //Sort evaluations by dates, then by alphabetical order then by notes
+  getSortedEvaluationList = (evaluations: IDevoirListState) => {
+    return evaluations.data
+      .sort(
+        (a, b) =>
+          moment(b.date).diff(moment(a.date)) ||
+          String(a.matiere.toLocaleLowerCase() ?? "").localeCompare(b.matiere.toLocaleLowerCase() ?? "") ||
+          Number(a.note) - Number(b.note)
+      )
+      .slice(0, 5);
+  };
+
   private renderEvaluations(evaluations: IDevoirListState, levels: ILevelsList) {
-    const evaluationList = evaluations.data.sort((a, b) => moment(b.date).diff(moment(a.date))).slice(0, 5);
+    const evaluationList = this.getSortedEvaluationList(evaluations);
     return (
       <View style={styles.dashboardPart}>
         <TextBold style={styles.title}>{I18n.t("viesco-lasteval")}</TextBold>
