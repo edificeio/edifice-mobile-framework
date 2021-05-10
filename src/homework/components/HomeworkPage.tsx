@@ -40,7 +40,7 @@ import HomeworkCard from "./HomeworkCard";
 
 // Type definitions
 import { IHomeworkTask } from "../reducers/tasks";
-import { IHomeworkDiary } from "../reducers/diaryList";
+import { IHomeworkDiary, IHomeworkDiaryList } from "../reducers/diaryList";
 
 // Misc
 import today from "../../utils/today";
@@ -53,7 +53,8 @@ export interface IHomeworkPageDataProps {
   isFetching?: boolean;
   diaryId?: string;
   didInvalidate?: boolean;
-  diaryInformation?: IHomeworkDiary
+  diaryListData?: IHomeworkDiaryList;
+  diaryInformation?: IHomeworkDiary;
   tasksByDay?: Array<{
     id: string;
     date: moment.Moment;
