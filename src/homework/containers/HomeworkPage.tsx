@@ -1,5 +1,4 @@
 import * as React from "react";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { connect } from "react-redux";
 import {
   HomeworkPage,
@@ -15,8 +14,7 @@ import {
 import { homeworkTaskSelected } from "../actions/selectedTask";
 import { fetchHomeworkTasks } from "../actions/tasks";
 
-import homeworkDiarySelected from "../actions/selectedDiary";
-import { NavigationScreenProp } from "react-navigation";
+import { NavigationScreenProp, NavigationFocusInjectedProps } from "react-navigation";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderAction, HeaderBackAction } from "../../ui/headers/NewHeader";
 import withViewTracking from "../../infra/tracker/withViewTracking";
@@ -26,7 +24,8 @@ const mapStateToProps: (state: any) => IHomeworkPageDataProps = state => {
   const localState = state.homework;
   const selectedDiaryId = localState.selectedDiary;
   const currentDiaryTasks = localState.tasks[selectedDiaryId];
-  const diaryInformation = localState.diaryList.data[selectedDiaryId];
+  const diaryListData = localState.diaryList.data;
+  const diaryInformation = diaryListData[selectedDiaryId];
   if (!selectedDiaryId || !currentDiaryTasks)
     if (localState.diaryList.didInvalidate)
       return {
@@ -66,7 +65,8 @@ const mapStateToProps: (state: any) => IHomeworkPageDataProps = state => {
     isFetching,
     lastUpdated,
     tasksByDay,
-    diaryInformation,
+    diaryListData,
+    diaryInformation
   };
 };
 
@@ -86,20 +86,23 @@ const mapDispatchToProps: (
 };
 
 class HomeworkPageContainer extends React.PureComponent<
-  IHomeworkPageProps & { dispatch: any },
+  IHomeworkPageProps & NavigationFocusInjectedProps & { dispatch: any },
   {}
 > {
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
-    const diaryTitle = navigation.getParam("diaryTitle")
+    const diaryTitle = navigation.getParam("diaryTitle");
+    const hasMultipleDiaries = navigation.getParam("hasMultipleDiaries");
 
     return standardNavScreenOptions(
       {
         title: diaryTitle || I18n.t("Homework"),
         headerLeft: <HeaderBackAction navigation={navigation} />,
-        headerRight: <HeaderAction
-          name="filter"
-          onPress={() => navigation.navigate("HomeworkFilter")}
-        />
+        headerRight: hasMultipleDiaries
+          ? <HeaderAction
+              name="filter"
+              onPress={() => navigation.navigate("HomeworkFilter")}
+            />
+          : null
       },
       navigation
     );
@@ -114,20 +117,19 @@ class HomeworkPageContainer extends React.PureComponent<
   }
 
   public async componentDidMount() {
-    await this.loadSelectedDiary();
-    this.props.dispatch(fetchHomeworkDiaryList());
+    const { dispatch } = this.props;
+    dispatch(fetchHomeworkDiaryList());
   }
 
-  public componentDidUpdate() {
-    const { diaryInformation, navigation } = this.props
-    if (diaryInformation && navigation && diaryInformation.title && diaryInformation.title !== navigation.getParam("diaryTitle")) {
-      navigation.setParams({diaryTitle: diaryInformation.title })
+  public componentDidUpdate(prevProps: IHomeworkPageProps) {
+    const { diaryListData, diaryInformation, navigation } = this.props
+    if (diaryInformation !== prevProps.diaryInformation) {
+      navigation.setParams({ diaryTitle: diaryInformation?.title })
     }
-  }
-
-  private async loadSelectedDiary() {
-    const selectedId = await AsyncStorage.getItem("diary-selected");
-    if (selectedId) this.props.dispatch(homeworkDiarySelected(selectedId));
+    if (diaryListData !== prevProps.diaryListData) {
+      const hasMultipleDiaries = diaryListData && Object.keys(diaryListData).length > 1;
+      navigation.setParams({ hasMultipleDiaries });
+    }
   }
 }
 
