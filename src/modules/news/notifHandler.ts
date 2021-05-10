@@ -10,7 +10,7 @@ import { mainNavNavigate } from "../../navigation/helpers/navHelper";
 export interface INewsNotification extends ITimelineNotification, IResourceUriNotification {}
 
 const handleBlogNotificationAction: NotifHandlerThunkAction = notification => async (dispatch, getState) => {
-	mainNavNavigate('news/details', {
+	mainNavNavigate('timeline/news/details', {
 		notification
 	});
 	return {
