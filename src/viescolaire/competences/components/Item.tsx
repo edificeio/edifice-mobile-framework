@@ -139,7 +139,7 @@ export const DenseDevoirList = ({ devoirs, levels }: { devoirs: IDevoirList; lev
       <LeftColoredItem shadow color="#F95303" key={index}>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <View style={{ flexDirection: "row", width: "75%", padding: 8, justifyContent: "space-between" }}>
-            <TextBold style={{ maxWidth: "70%", paddingRight: 10 }} numberOfLines={1}>
+            <TextBold style={{ maxWidth: "65%", paddingRight: 10 }} numberOfLines={1}>
               {devoir.matiere}
             </TextBold>
             <Text>{moment(devoir.date).format("L")}</Text>

@@ -179,30 +179,30 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     const { selectedPeriod, selectedDiscipline, screenDisplay, switchValue } = this.state;
     let value = (switchValue === SwitchState.DEFAULT) as boolean;
     return (
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        {screenDisplay === ScreenDisplay.DASHBOARD ? (
-          <TextBold style={{ marginBottom: 10, maxWidth: "50%" }} numberOfLines={1}>{I18n.t("viesco-last-grades")}</TextBold>
-        ) : (
-          <View style={{ flexDirection: "row", maxWidth: "50%", marginBottom: 10 }}>
-            <TextBold numberOfLines={1}>{selectedDiscipline}&ensp;</TextBold>
+      <>
+        {screenDisplay === ScreenDisplay.DISCIPLINE && <TextBold numberOfLines={1}>{selectedDiscipline}</TextBold>}
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          {screenDisplay === ScreenDisplay.DASHBOARD ? (
+            <TextBold style={{ marginBottom: 10, maxWidth: "50%" }} numberOfLines={1}>{I18n.t("viesco-last-grades")}</TextBold>
+          ) : (
             <Text style={{ color: "#AFAFAF" }}>{selectedPeriod.type}</Text>
+          )}
+          <View style={{ marginBottom: 10, flexDirection: "row", alignItems: "center" }}>
+            <Text>{I18n.t("viesco-colors")}&ensp;</Text>
+            <Switch
+              trackColor={{ false: "#D1D1D1", true: "#A1DED5" }}
+              thumbColor={value ? "#EFEFEF" : "#46BFAF"}
+              ios_backgroundColor={value ? "#DDDDDD" : "#46BFAF"}
+              onValueChange={() => {
+                this.setState({
+                  switchValue: value ? SwitchState.COLOR : SwitchState.DEFAULT,
+                });
+              }}
+              value={!value}
+            />
           </View>
-        )}
-        <View style={{ marginVertical: 10, flexDirection: "row", alignItems: "center" }}>
-          <Text>{I18n.t("viesco-colors")}&ensp;</Text>
-          <Switch
-            trackColor={{ false: "#D1D1D1", true: "#A1DED5" }}
-            thumbColor={value ? "#EFEFEF" : "#46BFAF"}
-            ios_backgroundColor={value ? "#DDDDDD" : "#46BFAF"}
-            onValueChange={() => {
-              this.setState({
-                switchValue: value ? SwitchState.COLOR : SwitchState.DEFAULT,
-              });
-            }}
-            value={!value}
-          />
         </View>
-      </View>
+      </>
     );
   };
 
