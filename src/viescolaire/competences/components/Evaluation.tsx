@@ -231,14 +231,14 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
   private initDevoirsByDisciplines(discipline) {
     const { structureId, childId, subjects } = this.props;
     const { selectedPeriod, currentPeriod } = this.state;
-    if (selectedPeriod.type === I18n.t("viesco-competences-period")) {
-      this.setState({ selectedPeriod: currentPeriod });
-    }
 
     let subjectId = "";
     if (discipline !== I18n.t("viesco-competences-disciplines")) {
       subjectId = subjects.find(item => item.name === discipline)!.id;
-      this.props.getDevoirs(structureId, childId, selectedPeriod.value!, subjectId);
+      if (selectedPeriod.type === I18n.t("viesco-competences-period")) {
+        this.setState({ selectedPeriod: currentPeriod });
+        this.props.getDevoirs(structureId, childId, currentPeriod.value!, subjectId);
+      } else this.props.getDevoirs(structureId, childId, selectedPeriod.value!, subjectId);
     } else this.props.getDevoirs(structureId, childId);
 
     this.setState({ selectedDiscipline: discipline, disciplineId: subjectId }, this.screenRenderOpt);
