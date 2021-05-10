@@ -1,9 +1,10 @@
 // RN Imports
 import * as React from "react";
 import { initI18n } from "./framework/util/i18n";
-import { StatusBar, View, AppState, AppStateStatus } from "react-native";
+import { AppState, AppStateStatus, StatusBar, View } from "react-native";
 import * as RNLocalize from "react-native-localize";
 import "react-native-gesture-handler";
+import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
 
 // Polyfills
 import 'ts-polyfill/lib/es2019-object';
@@ -69,17 +70,20 @@ class AppStoreUnconnected extends React.Component<
 
   public render() {
     return (
-      <Provider store={this.props.store}>
-        <View style={{ flex: 1 }}>
-          <StatusBar
-            backgroundColor={CommonStyles.statusBarColor}
-            barStyle="light-content"
-          />
-          <AppPushNotificationHandlerComponent>
-            <AppScreen />
-          </AppPushNotificationHandlerComponent>
-        </View>
-      </Provider>
+      <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+        <Provider store={this.props.store}>
+          <View style={{ flex: 1 }}>
+            <StatusBar
+              backgroundColor={CommonStyles.statusBarColor}
+              barStyle="light-content"
+            />
+            <AppPushNotificationHandlerComponent>
+              <AppScreen />
+            </AppPushNotificationHandlerComponent>
+          </View>
+        </Provider>
+      </SafeAreaProvider>
+      
     );
   }
 
