@@ -21,7 +21,7 @@ import style from "glamorous-native";
 import I18n from "i18n-js";
 import * as React from "react";
 const { FlatList, View } = style;
-import { RefreshControl } from "react-native";
+import { Linking, RefreshControl } from "react-native";
 
 import { ListItem, PageContainer } from "../../ui/ContainerContent";
 
@@ -30,6 +30,8 @@ import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { EmptyScreen } from "../../ui/EmptyScreen";
 import { Checkbox } from "../../ui/forms/Checkbox";
 import { TextBold } from "../../ui/text";
+import { Trackers } from "../../framework/util/tracker";
+import Conf from "../../../ode-framework-conf";
 
 // Main component ---------------------------------------------------------------------------------
 
@@ -145,8 +147,25 @@ export class HomeworkFilterPage extends React.PureComponent<
             imageSrc={require("../../../assets/images/empty-screen/homework.png")}
             imgWidth={265.98}
             imgHeight={279.97}
-            text={I18n.t("homework-emptyScreenText")}
-            title={I18n.t("homework-emptyScreenTitle")}
+            text={I18n.t("homework-diaries-emptyScreenText")}
+            title={I18n.t("homework-diaries-emptyScreenTitle")}
+            buttonText={I18n.t("homework-createDiary")}
+            buttonAction={() => {
+              //TODO: create generic function inside oauth (use in myapps, etc.)
+              if (!Conf.currentPlatform) {
+                console.warn("Must have a platform selected to redirect the user");
+                return null;
+              }
+              const url = `${(Conf.currentPlatform as any).url}/homeworks`;
+              Linking.canOpenURL(url).then(supported => {
+                if (supported) {
+                  Linking.openURL(url);
+                } else {
+                  console.warn("[homework] Don't know how to open URI: ", url);
+                }
+              });
+              Trackers.trackEvent("Homework", "GO TO", "Create in Browser");
+            }}
           />        
         }
       />
