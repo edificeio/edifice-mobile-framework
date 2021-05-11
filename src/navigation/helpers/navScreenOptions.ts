@@ -31,6 +31,9 @@ export const standardNavScreenOptions = (props, { state }) => {
             textAlign: "center",
             ...(props.headerTitleStyle || {})
         },
+        headerTitleContainerStyle: {
+        left: 0
+      },
     };
 };
 
