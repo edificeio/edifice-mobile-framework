@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import I18n from "i18n-js";
 import moment from "moment";
 import * as React from "react";
@@ -79,6 +80,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     this.props.getPeriods(structureId, groupId);
     this.props.getLevels(structureId);
     this.props.getSubjects(childId);
+    this.getSwitchDefaultPosition();
   }
 
   // Update when changing child with relative account
@@ -117,6 +119,17 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
       this.setState({ devoirs: devoirsMoyennesList.data });
     }
   }
+
+  getSwitchDefaultPosition = async () => {
+    let value = false as boolean;
+    let object = await AsyncStorage.getItem("competences-switch-color");
+    if (object) value = JSON.parse(object);
+    this.setState({ switchValue: value ? SwitchState.COLOR : SwitchState.DEFAULT });
+  };
+
+  setSwitchDefaultPosition = async (value: boolean) => {
+    await AsyncStorage.setItem("competences-switch-color", JSON.stringify(value));
+  };
 
   setCurrentPeriod = () => {
     let current = { type: I18n.t("viesco-competences-period"), value: undefined } as ISelectedPeriod;
@@ -194,9 +207,8 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
               thumbColor={value ? "#EFEFEF" : "#46BFAF"}
               ios_backgroundColor={value ? "#DDDDDD" : "#46BFAF"}
               onValueChange={() => {
-                this.setState({
-                  switchValue: value ? SwitchState.COLOR : SwitchState.DEFAULT,
-                });
+                this.setState({ switchValue: value ? SwitchState.COLOR : SwitchState.DEFAULT });
+                this.setSwitchDefaultPosition(value);
               }}
               value={!value}
             />
