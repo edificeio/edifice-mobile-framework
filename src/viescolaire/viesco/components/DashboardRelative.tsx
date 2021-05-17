@@ -5,7 +5,7 @@ import { View, StyleSheet, ScrollView } from "react-native";
 import { NavigationActions } from "react-navigation";
 
 import { INavigationProps } from "../../../types";
-import { Icon } from "../../../ui";
+import { Icon, Loading } from "../../../ui";
 import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
 import { EmptyScreen } from "../../../ui/EmptyScreen";
 import { Text, TextBold } from "../../../ui/text";
@@ -233,7 +233,7 @@ export default class Dashboard extends React.PureComponent<DashboardProps> {
         <ScrollView>
           {this.renderNavigationGrid()}
           {this.renderHomework(homeworks)}
-          {this.renderLastEval(evaluations, levels)}
+          {evaluations.isFetching ? <Loading /> : this.renderLastEval(evaluations, levels)}
         </ScrollView>
       </View>
     );
