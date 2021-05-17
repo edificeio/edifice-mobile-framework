@@ -8,6 +8,8 @@ import { actions as notifFilterSettingsActions, INotifFilterSettings } from "../
 import { actions as pushNotifsSettingsActions, IPushNotifsSettings } from "../reducer/notifSettings/pushNotifsSettings"
 import { getItemJson, setItemJson, removeItemJson } from "../../../util/storage";
 import { pushNotifsService } from "../service";
+import { notifierShowAction } from "../../../util/notifier/actions";
+import I18n from "i18n-js";
 
 export const loadNotificationFiltersSettingsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
@@ -73,7 +75,7 @@ export const loadPushNotifsSettingsAction = () => async (dispatch: ThunkDispatch
         state = moduleConfig.getState(getState());
 
         // 2 - Load notif settings from API
-        const pushNotifsSettings = await pushNotifsService.list(session);
+        let pushNotifsSettings = await pushNotifsService.list(session);
         dispatch(pushNotifsSettingsActions.receipt(pushNotifsSettings));
     } catch (e) {
         // ToDo: Error handling
@@ -93,5 +95,10 @@ export const updatePushNotifsSettingsAction = (changes: IPushNotifsSettings) => 
         // ToDo: Error handling
         console.warn(`[${moduleConfig.name}] updatePushNotifsSettingsAction failed`, e);
         dispatch(pushNotifsSettingsActions.setError(e));
+        dispatch(notifierShowAction({
+            type: 'error',
+            id: 'timeline/push-notifications',
+            text: I18n.t('common.error.text')
+        }));
     }
 }

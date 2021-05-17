@@ -82,11 +82,12 @@ export const pushNotifsService = {
         const api = '/userbook/preference/timeline';
         const response = await fetchJSONWithCache(api) as IEntcoreTimelinePreference;
         const prefs = JSON.parse(response.preference) as IEntcoreTimelinePreferenceContent;
+        // console.log("prefs loaded before parse", prefs);
         return prefs;
     },
     _getConfig: async (session: IUserSession) => {
         const prefs = await pushNotifsService._getPrefs(session);
-        return prefs.config ?? {};
+        return prefs?.config ?? {};
     },
     list: async (session: IUserSession) => {
         const notifsPrefs = Object.fromEntries(Object.entries(await pushNotifsService._getConfig(session))
@@ -99,15 +100,15 @@ export const pushNotifsService = {
         const api = '/userbook/preference/timeline';
         const method = 'PUT';
         const notifPrefsUpdated = Object.fromEntries(Object.entries(changes).map(([k, v]) => [k, {'push-notif': v}]));
-        console.log('notifPrefsUpdated', notifPrefsUpdated);
+        // console.log('updates push-notif prefs', notifPrefsUpdated);
         const prefsOriginal = await pushNotifsService._getPrefs(session);
         const notifPrefsOriginal = prefsOriginal.config ?? {};
-        console.log('notifPrefsOriginal', notifPrefsOriginal);
+        // console.log('current push-notif prefs', notifPrefsOriginal);
         const notifPrefs = deepmerge(notifPrefsOriginal, notifPrefsUpdated);
         const prefsUpdated = {config: notifPrefs};
-        console.log('prefsUpdated', prefsUpdated);
+        // console.log('new notif prefs', prefsUpdated);
         const payload = {...prefsOriginal, ...prefsUpdated};
-        console.log('payload', payload);
+        // console.log('payload', payload);
         const responseJson = await signedFetchJson(`${legacyAppConf.currentPlatform!.url}${api}`, {
             method,
             body: JSON.stringify(payload)
