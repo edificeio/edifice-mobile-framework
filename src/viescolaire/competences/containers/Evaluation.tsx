@@ -57,6 +57,7 @@ const mapStateToProps: (state: any) => any = state => {
     userType === "Student"
       ? getSessionInfo().administrativeStructures[0].id || getSessionInfo().structures[0]
       : getSelectedChildStructure(state)?.id;
+
   return {
     devoirsList: getDevoirListState(state),
     devoirsMoyennesList: getMoyenneListState(state),

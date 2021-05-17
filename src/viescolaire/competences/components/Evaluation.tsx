@@ -85,20 +85,20 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
 
   // Update when changing child with relative account
   componentWillUpdate(nextProps) {
-    const { structureId, childId, groupId } = this.props;
+    const { childId } = this.props;
     const { screenDisplay, selectedPeriod } = this.state;
 
     if (childId !== nextProps.childId && screenDisplay === ScreenDisplay.PERIOD) {
-      this.props.getDevoirsMoyennes(structureId, childId, selectedPeriod.value!);
-      this.props.getPeriods(structureId, groupId);
-      this.props.getLevels(structureId);
-      this.props.getSubjects(childId);
+      this.props.getDevoirsMoyennes(nextProps.structureId, nextProps.childId, selectedPeriod.value!);
+      this.props.getPeriods(nextProps.structureId, nextProps.groupId);
+      this.props.getLevels(nextProps.structureId);
+      this.props.getSubjects(nextProps.childId);
       this.setCurrentPeriod();
     } else if (childId !== nextProps.childId) {
-      this.props.getDevoirs(structureId, childId, selectedPeriod.value, this.state.disciplineId!);
-      this.props.getPeriods(structureId, groupId);
-      this.props.getLevels(structureId);
-      this.props.getSubjects(childId);
+      this.props.getDevoirs(nextProps.structureId, nextProps.childId, selectedPeriod.value, this.state.disciplineId!);
+      this.props.getPeriods(nextProps.structureId, nextProps.groupId);
+      this.props.getLevels(nextProps.structureId);
+      this.props.getSubjects(nextProps.childId);
     }
   }
 
