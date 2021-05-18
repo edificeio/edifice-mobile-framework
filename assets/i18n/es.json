@@ -140,7 +140,7 @@
       "workspace.storage": "Espacio de almacenamiento casi lleno."
     },
     "filtersScreen": {
-      "title": "Notificaciones"
+      "title": "Filtro de noticias"
     },
     "blogPostDetailsScreen": {
       "title": "Blog"
@@ -340,7 +340,7 @@
   "delete-confirm": "Eliminar permanentemente:",
   "directory-childrenTitle": "Niños",
   "directory-disconnectButton": "Desconectarse",
-  "directory-notificationsTitle": "Notificaciones",
+  "directory-notificationsTitle": "Notificaciones push",
   "directory-relativesTitle": "Padre(s)",
   "directory-structuresTitle": "Establecimiento(s)",
   "DisplayName": "Nombre mostrado",
