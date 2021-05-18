@@ -164,6 +164,9 @@
   "blog": {
     "resourceName" : "Entrada de blog",
     "blogSelectScreen": {
+      "blog-emptyScreenButton": "Crear un blog",
+      "blog-emptyScreenText": "No ha compartido ningún blog. Para publicar una entrada, primero debe crear un blog y compartirlo desde la versión web de su espacio digital.",
+      "blog-emptyScreenTitle": "Está todo muy tranquilo aquí...",
       "sharedToNbPerson": "Compartido con {{nb}} persona",
       "sharedToNbPersons": "Compartido con {{nb}} personas",
       "title": "Seleccionar un blog"
