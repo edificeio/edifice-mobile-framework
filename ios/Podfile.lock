@@ -270,7 +270,7 @@ PODS:
     - React-cxxreact (= 0.61.5)
     - React-jsi (= 0.61.5)
   - React-jsinspector (0.61.5)
-  - react-native-document-picker (5.0.3):
+  - react-native-document-picker (5.0.4):
     - React-Core
   - react-native-image-picker (3.6.0):
     - React-Core
@@ -288,7 +288,7 @@ PODS:
     - react-native-video/Video (= 5.1.1)
   - react-native-video/Video (5.1.1):
     - React-Core
-  - react-native-webview (10.10.2):
+  - react-native-webview (11.4.5):
     - React-Core
   - React-RCTActionSheet (0.61.5):
     - React-Core/RCTActionSheetHeaders (= 0.61.5)
@@ -601,14 +601,14 @@ SPEC CHECKSUMS:
   React-jsi: cb2cd74d7ccf4cffb071a46833613edc79cdf8f7
   React-jsiexecutor: d5525f9ed5f782fdbacb64b9b01a43a9323d2386
   React-jsinspector: fa0ecc501688c3c4c34f28834a76302233e29dc0
-  react-native-document-picker: d2b8fa4d9b268a316515b1f631236f7a87813df6
+  react-native-document-picker: 3690b7d064a1153d4d572ab6a045fdd130cbf14c
   react-native-image-picker: 25f5fe3a3a9c4297e0b7a5a16566c5609632856d
   react-native-matomo-sdk: 1dd9511387c2f96401dc6ba9a6476d0660021c91
   react-native-netinfo: 8d8db463bcc5db66a8ac5c48a7d86beb3b92f61a
   react-native-safe-area-context: e471852c5ed67eea4b10c5d9d43c1cebae3b231d
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-video: 1574074179ecaf6a9dd067116c8f31bf9fec15c8
-  react-native-webview: ef8d30ecc5baf6bf7821690180c2f9bf2bdf00c0
+  react-native-webview: 2d2c011fdaf199da7892dd1a9d3e5a287a492409
   React-RCTActionSheet: 600b4d10e3aea0913b5a92256d2719c0cdd26d76
   React-RCTAnimation: 791a87558389c80908ed06cc5dfc5e7920dfa360
   React-RCTBlob: d89293cc0236d9cb0933d85e430b0bbe81ad1d72
