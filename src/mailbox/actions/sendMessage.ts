@@ -32,7 +32,7 @@ export interface IConversationMessage {
   unread: boolean; // Self-explaining
   rownum: number; // number of the message in the thread (starting from 1 from the newest to the latest).
   status: ConversationMessageStatus; // sending status of the message
-  attachments: Array<IAttachment>;
+  attachments: Array<IRemoteAttachment>;
 }
 
 export type IConversationMessageList = IArrayById<IConversationMessage>;

@@ -28,6 +28,7 @@ import conversationThreadSelected from "../actions/threadSelected";
 import { IUser } from "../../user/reducers";
 import { pickUser, clearPickedUsers } from "../actions/pickUser";
 import { selectSubject, clearSubject } from "../actions/selectSubject";
+import { FilePicker } from "../../infra/filePicker";
 
 // TODO : Debt : Needs to be refactored.
 
@@ -86,7 +87,7 @@ class ThreadInput extends React.PureComponent<
     showReplyHelperIfAvailable: boolean;
     showHistory: boolean;
   }
-  > {
+> {
   private input: any;
   public attachmentPickerRef: any;
 
@@ -140,7 +141,7 @@ class ThreadInput extends React.PureComponent<
           subjectPrefix = I18n.t("conversation-subjectTransferPrefix");
           return subject.includes(subjectPrefix) ? subject : subjectPrefix + " " + subject;
         } else if (sendingType === "new") {
-          return subject;   
+          return subject;
         }
       }
     }
@@ -185,7 +186,7 @@ class ThreadInput extends React.PureComponent<
         <em class="medium-importance"><em> ${message && getRecepientDisplayNames(message, true) || ""}</em>
         </em>
       </p>`;
-      
+
     let body = textMessage ? `<div>${textMessage.replace(/\n/g, '<br>')}</div>` : '';
     if (backMessage) {
       if (sendingType === 'reply') body = `${body}${getReplyTemplate(backMessage)}<br><blockquote>${backMessage.body ? backMessage.body : ''}</blockquote>`;
@@ -264,7 +265,7 @@ class ThreadInput extends React.PureComponent<
     attachmentsAdded ? onDimBackground(true) : onDimBackground(false);
   }
 
-  componentDidMount()  {
+  componentDidMount() {
     const { messageDraft, navigation } = this.props;
     messageDraft ? this.setState({ textMessage: messageDraft }) : null;
     navigation?.getParam("hideReplyHelper") ? this.setState({ showReplyHelperIfAvailable: false }) : null;
@@ -282,8 +283,8 @@ class ThreadInput extends React.PureComponent<
     const receiversIds = lastMessage
       ? ThreadInput.findReceivers2(lastMessage)
       : thread
-      ? ThreadInput.findReceivers2(thread)
-      : [];
+        ? ThreadInput.findReceivers2(thread)
+        : [];
     const receiverNames = lastMessage
       ? lastMessage.displayNames
         .filter(dN => receiversIds.indexOf(dN[0]) > -1)
@@ -308,7 +309,7 @@ class ThreadInput extends React.PureComponent<
               if (lastMessage) {
                 clearPickedUsers();
                 clearSubject();
-              
+
                 let subject: string | undefined = undefined;
                 if (lastMessage.subject) {
                   subject = lastMessage.subject.startsWith("Re: ") ? lastMessage.subject : "Re: " + lastMessage.subject;
@@ -331,12 +332,12 @@ class ThreadInput extends React.PureComponent<
               }
             }}>
             <Icon name="profile-on" size={24} color={CommonStyles.actionColor} style={{ marginBottom: 6 }} />
-            <Text color={CommonStyles.actionColor} style={{textAlign: "center"}}>
+            <Text color={CommonStyles.actionColor} style={{ textAlign: "center" }}>
               {I18n.t("conversation-reply-to-name-action", {
                 name: (() => {
                   const receiver = lastMessage && lastMessage.displayNames.find(dn => dn[0] === lastMessage.from);
                   return receiver ? receiver[1] : "";
-                  })()
+                })()
               })}
             </Text>
           </TouchableOpacity>
@@ -365,12 +366,12 @@ class ThreadInput extends React.PureComponent<
         maxHeight: "75%"
       }}>
         {receiverNames && receiverNames.length > 0
-        ? <ThreadInputReceivers
+          ? <ThreadInputReceivers
             show
             names={receiverNames}
             onPress={() => {
               if (threadInfo) {
-                const allIds =  ThreadInput.findReceivers2(threadInfo);
+                const allIds = ThreadInput.findReceivers2(threadInfo);
                 const receivers: IUser[] = allIds ? (allIds as string[]).map(uid => ({
                   userId: uid,
                   displayName: (() => {
@@ -393,11 +394,11 @@ class ThreadInput extends React.PureComponent<
               Trackers.trackEvent("Conversation", "CHANGE RECEIVERS");
             }}
           />
-        : null
+          : null
         }
         <ContainerFooterBar>
-          <View style={{flexDirection: "row", paddingVertical: 10}}>
-            <View style={{flex: 3, paddingHorizontal: 8, justifyContent: "center"}}>
+          <View style={{ flexDirection: "row", paddingVertical: 10 }}>
+            <View style={{ flex: 3, paddingHorizontal: 8, justifyContent: "center" }}>
               {displayPlaceholder &&
                 this.props.emptyThread &&
                 this.renderInput(
@@ -413,33 +414,44 @@ class ThreadInput extends React.PureComponent<
                 )
               }
             </View>
-            <View style={{flex: 1, flexDirection: "row", justifyContent: "space-evenly", alignItems: "flex-end"}}>
-            <TouchableOpacity onPress={() => this.attachmentPickerRef.onPickAttachment()}>
-              <IconButton
-                iconName="attached"
-                iconStyle={{transform: [{ rotate: "270deg" }]}}
-                iconSize={20}
-                iconColor={CommonStyles.primary}
-                buttonStyle={{ borderColor: CommonStyles.primary, borderWidth: 1, backgroundColor: undefined, height: 34, width: 34, borderRadius: 17 }}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              disabled={!(textMessage || attachmentsAdded)}
-              onPress={() => textMessage || attachmentsAdded ? this.onValid() : null}
-            >
-              {sending
-                ? <Loading
+            <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-evenly", alignItems: "flex-end" }}>
+              <FilePicker
+                callback={file => {
+                  const attachment: ILocalAttachment = {
+                    name: file.fileName,
+                    uri: file.uri,
+                    mime: file.type
+                  }
+                  this.setState({ attachments: [...attachments, attachment] });
+                  Trackers.trackEvent("Conversation", "ADD ATTACHMENT");
+                }}
+              // onPress={() => this.attachmentPickerRef.onPickAttachment()}
+              >
+                <IconButton
+                  iconName="attached"
+                  iconStyle={{ transform: [{ rotate: "270deg" }] }}
+                  iconSize={20}
+                  iconColor={CommonStyles.primary}
+                  buttonStyle={{ borderColor: CommonStyles.primary, borderWidth: 1, backgroundColor: undefined, height: 34, width: 34, borderRadius: 17 }}
+                />
+              </FilePicker>
+              <TouchableOpacity
+                disabled={!(textMessage || attachmentsAdded)}
+                onPress={() => textMessage || attachmentsAdded ? this.onValid() : null}
+              >
+                {sending
+                  ? <Loading
                     small
-                    customStyle={{height: 34, width: 34, alignItems: 'center', justifyContent: 'center'}}
+                    customStyle={{ height: 34, width: 34, alignItems: 'center', justifyContent: 'center' }}
                   />
-                : <IconButton
+                  : <IconButton
                     iconName="send_icon"
                     iconSize={20}
-                    buttonStyle={{height: 34, width: 34, borderRadius: 17}}
+                    buttonStyle={{ height: 34, width: 34, borderRadius: 17 }}
                     disabled={!(textMessage || attachmentsAdded)}
                   />
-              }
-            </TouchableOpacity>
+                }
+              </TouchableOpacity>
             </View>
           </View>
         </ContainerFooterBar>
