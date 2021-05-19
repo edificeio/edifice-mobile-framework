@@ -166,6 +166,13 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
             menuItems={popupMenuItems}
             onEvent={this.handleEvent.bind(this)}
             selected={selectedArrayItems}
+            eventHandleData={{
+              dispatch,
+              filterId,
+              navigation,
+              parentId: navigation.getParam("parentId"),
+              selected: selectedItems,
+            }}
           />
         </View>
       );
