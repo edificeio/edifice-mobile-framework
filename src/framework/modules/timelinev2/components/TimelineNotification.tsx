@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Text, Image, ImageURISource, View } from "react-native";
+import { Text, View } from "react-native";
 
 import { ArticleContainer } from "../../../../ui/ContainerContent";
 import Images from "../../../../ui/Images";
@@ -32,39 +32,61 @@ export class TimelineNotification extends React.PureComponent<ITimelineNotificat
     }
   }
 
+  renderPreviewAttachements(media) {
+    let mediaAttachments: IMedia[] = [];
+    for (const mediaItem of media) {
+      if (mediaAttachments.length === 4 || mediaItem.type !== "attachment") break;
+      mediaAttachments.push(mediaItem);
+    }
+    const attachments = mediaAttachments.map(mediaAtt => ({ url: transformedSrc(mediaAtt.src as string), displayName: mediaAtt.name }));
+    return (
+      <AttachmentGroup
+        attachments={attachments as Array<IRemoteAttachment>}
+        containerStyle={{ flex: 1 }}
+      />
+    )
+  }
+
+  renderPreviewAudioVideo(media) {
+    return (
+      <Player
+        type={media.type}
+        source={signURISource(transformedSrc(media.src))}
+        posterSource={media.posterSource ? signURISource(transformedSrc(media.posterSource as string)) : undefined}
+        ratio={media.ratio}
+      />
+    )
+  }
+
+  renderPreviewIframe(media) {
+    return (
+      <IFrame
+        source={media.src as string}
+      />
+    )
+  }
+
+  renderPreviewImage(media) {
+    let images: IMedia[] = [];
+    for (const mediaItem of media) {
+      if (mediaItem.type !== "image") break;
+      images.push(mediaItem);
+    }
+    const imageSrcs = images.map(image => ({src: signURISource(transformedSrc(image.src as string))}));
+    return <Images images={imageSrcs}/>
+  }
+
   renderPreviewMedia(preview) {
     const { media } = preview;
     const firstMedia = media && media[0];
-    if (firstMedia) {
-      if (firstMedia.type === "attachment") {
-        let mediaAttachments: IMedia[] = [];
-        for (const mediaItem of media) {
-          if (mediaAttachments.length === 4 || mediaItem.type !== "attachment") break;
-          mediaAttachments.push(mediaItem);
-        }
-        const attachments = mediaAttachments.map(mediaAtt => ({url: transformedSrc(mediaAtt.src as string), displayName: mediaAtt.name}));
-        return <AttachmentGroup attachments={attachments as Array<IRemoteAttachment>} containerStyle={{ flex: 1 }}/>
-      } else if (firstMedia.type === "image") {
-        let images: IMedia[] = [];
-        for (const mediaItem of media) {
-          if (mediaItem.type !== "image") break;
-          images.push(mediaItem);
-        }
-        const imageSrcs = images.map(image => ({src: signURISource(transformedSrc(image.src as string))}));
-        return <Images images={imageSrcs}/>
-      } else if (firstMedia.type === "video" || firstMedia.type === "audio") {
-        return (
-          <Player
-            type={firstMedia.type}
-            source={signURISource(transformedSrc(firstMedia.src))}
-            posterSource={firstMedia.posterSource ? signURISource(transformedSrc(firstMedia.posterSource as string)) : undefined}
-            ratio={firstMedia.ratio}
-          />
-        )
-      } else if (firstMedia.type === "iframe") {
-        return <IFrame source={firstMedia.src as string} />
-      }
-    }
+    const components = {
+      "attachment": () => this.renderPreviewAttachements(media),
+      "audio": () => this.renderPreviewAudioVideo(firstMedia),
+      "iframe": () => this.renderPreviewIframe(firstMedia),
+      "image": () => this.renderPreviewImage(media),
+      "video": () => this.renderPreviewAudioVideo(firstMedia),
+    };
+    return firstMedia && components[firstMedia.type]?.();
   }
 
   renderContent() {
