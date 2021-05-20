@@ -42,11 +42,11 @@ export class AttachmentGroupImages extends React.PureComponent<
               >
                 <Image
                   source={{ uri: item.uri }}
-                  style={{ width: 110, height: 110 }}
+                  style={{ width: 110, height: 110, borderRadius: 3 }}
                   resizeMode="cover"
                 />
               </TouchableOpacity>
-              <View style={{ position: "absolute", left: 85, top: -7 }}>
+              <View style={{ position: "absolute", left: 85, top: -7, elevation: 10}}>
                 <TouchableOpacity
                   onPress={() => onRemove(index)}
                   style={{
