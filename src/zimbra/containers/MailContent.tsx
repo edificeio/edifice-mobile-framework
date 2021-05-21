@@ -1,5 +1,6 @@
 import I18n from "i18n-js";
 import * as React from "react";
+import { Platform } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Toast from "react-native-tiny-toast";
 import { NavigationScreenProp, NavigationActions } from "react-navigation";
@@ -116,7 +117,10 @@ class MailContentContainer extends React.PureComponent<any, any> {
       <>
         <PageContainer>
           <HeaderComponent>
-            <HeaderAction onPress={this.goBack} name="back" />
+            <HeaderAction
+              onPress={this.goBack}
+              name={(Platform.OS === "ios") ? "chevron-left1" : "back"}
+            />
             <Text
               style={{
                 alignSelf: "center",

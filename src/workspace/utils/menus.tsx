@@ -1,12 +1,11 @@
 import I18n from "i18n-js";
+import { Platform } from "react-native";
 import { copyDocuments, moveDocuments } from "./copypast";
 import { downloadAction } from "../actions/download";
 import { createFolderAction } from "../actions/create";
 import { deleteAction, trashAction } from "../actions/delete";
-import { pickFile } from "./pickFile";
 import { renameAction } from "../actions/rename";
 import { restoreAction } from "../actions/restore";
-import { Platform } from "react-native";
 import { FilePicker } from "../../infra/filePicker";
 import * as React from "react";
 import { uploadAction } from "../actions/upload";
@@ -34,7 +33,7 @@ export const addMenu = () => {
 
 export const backMenu = () => ({
   text: "Back",
-  icon: "chevron-left1",
+  icon: (Platform.OS === "ios") ? "chevron-left1" : "back",
   id: "back",
   onEvent: () => null,
 });
