@@ -176,7 +176,7 @@ class ThreadPageContainer extends React.PureComponent<
       return alternativeNavScreenOptions({
         headerLeft: 
           <HeaderAction
-            name="back"
+            name={(Platform.OS === "ios") ? "chevron-left1" : "back"}
             onPress={() => {
               threadId.startsWith("tmp-")
                 ? navigation.dispatch(NavigationActions.back())
@@ -340,7 +340,8 @@ export const CenterPanel = style.view({
   justifyContent: "center",
   paddingVertical: 5,
   height: 56,
-  flex: 1,
+  marginRight: 40,
+  marginLeft: Platform.select({ ios: -40, android: 52 })
 });
 
 export const LittleTitle = (style.text as any)(
