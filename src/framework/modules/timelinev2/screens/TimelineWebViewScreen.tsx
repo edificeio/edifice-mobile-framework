@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, Linking, Text } from "react-native";
+import { Linking, Platform, Text, View } from "react-native";
 import { NavigationInjectedProps } from "react-navigation";
 import { connect } from "react-redux";
 import I18n from "i18n-js";
@@ -55,7 +55,10 @@ export class TimelineWebViewScreen extends React.PureComponent<
       <FakeHeader>
         <HeaderRow>
           <HeaderLeft>
-            <HeaderAction iconName="back" onPress={() => navigation.goBack()}/>
+            <HeaderAction
+              iconName={(Platform.OS === "ios") ? "chevron-left1" : "back"}
+              onPress={() => navigation.goBack()}
+           />
           </HeaderLeft>
           <HeaderCenter>
             <HeaderTitle>{I18n.t("timeline.webViewScreen.title")}</HeaderTitle>
