@@ -2,7 +2,7 @@ import { AllHtmlEntities } from "html-entities";
 import I18n from "i18n-js";
 import moment from "moment";
 import React from "react";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import Toast from "react-native-tiny-toast";
 import { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
@@ -87,7 +87,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         headerLeft: () => {
           const goBack = navigation.getParam("getGoBack", navigation.goBack);
 
-          return <HeaderAction onPress={() => goBack()} name="back" />;
+          return <HeaderAction onPress={() => goBack()} name={(Platform.OS === "ios") ? "chevron-left1" : "back"} />;
         },
         headerRight: () => {
           const askForAttachment = navigation.getParam("getAskForAttachment");
