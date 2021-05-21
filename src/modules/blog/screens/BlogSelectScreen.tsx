@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, FlatList, TouchableOpacity, RefreshControl } from "react-native";
+import { FlatList, Platform, RefreshControl, TouchableOpacity, View } from "react-native";
 import { NavigationInjectedProps } from "react-navigation";
 import { ThunkDispatch } from "redux-thunk";
 import { connect } from "react-redux";
@@ -85,7 +85,10 @@ export class BlogSelectScreen extends React.PureComponent<
       <FakeHeader>
         <HeaderRow>
           <HeaderLeft>
-            <HeaderAction iconName="back" onPress={() => navigation.navigate("timeline")} />
+            <HeaderAction
+              iconName={(Platform.OS === "ios") ? "chevron-left1" : "back"}
+              onPress={() => navigation.navigate("timeline")}
+            />
           </HeaderLeft>
           <HeaderCenter>
             <HeaderTitle>{I18n.t("blog.blogSelectScreen.title")}</HeaderTitle>

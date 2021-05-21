@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, ScrollView, RefreshControl, Linking } from "react-native";
+import { Linking, Platform, RefreshControl, ScrollView, View } from "react-native";
 import { NavigationInjectedProps, NavigationActions, NavigationStateRoute, StackActions } from "react-navigation";
 import { ThunkDispatch } from "redux-thunk";
 import { connect } from "react-redux";
@@ -115,7 +115,10 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
       <FakeHeader>
         <HeaderRow>
           <HeaderLeft>
-            <HeaderAction iconName="back" onPress={() => navigation.navigate("timeline")} />
+            <HeaderAction
+              iconName={(Platform.OS === "ios") ? "chevron-left1" : "back"}
+              onPress={() => navigation.navigate("timeline")}
+            />
           </HeaderLeft>
           <HeaderCenter>
             {schoolbookWordData?.word?.title
