@@ -1,10 +1,12 @@
 {
+  "common": {
+    "apply": "Aplicar"
+  },
   "timeline": {
     "emptyScreenText": "Está todo muy tranquilo. ¿Conoce la expresión \"la calma antes de la tormenta\"?",
     "emptyScreenTitle": "No se ve ni un alma. ¿Hay alguien?",
     "filtersScreen": {
       "all": "Todo",
-      "apply": "Aplicar",
       "title": "Notificaciones",
       "filters": {
         "ARCHIVE": "Mis datos",

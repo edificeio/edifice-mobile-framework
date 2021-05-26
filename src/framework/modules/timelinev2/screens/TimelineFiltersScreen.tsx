@@ -7,7 +7,7 @@ import { ThunkDispatch } from "redux-thunk";
 import { IGlobalState } from "../../../../AppStore";
 import { PageContainer } from "../../../../ui/ContainerContent";
 import { Checkbox } from "../../../components/checkbox";
-import { FakeHeader, HeaderAction, HeaderRow, HeaderTitle } from "../../../components/header";
+import { FakeHeader, HeaderAction, HeaderLeft, HeaderRight, HeaderRow, HeaderTitle } from "../../../components/header";
 import { ListItem } from "../../../components/listItem";
 import theme from "../../../theme";
 
@@ -70,13 +70,17 @@ export class TimelineFiltersScreen extends React.PureComponent<
     return (
       <FakeHeader>
         <HeaderRow>
-          <HeaderAction iconName="back" onPress={() => navigation.goBack()}/>
+          <HeaderLeft>
+            <HeaderAction iconName="back" onPress={() => navigation.goBack()}/>
+          </HeaderLeft>
           <HeaderTitle>{I18n.t("timeline.filtersScreen.title")}</HeaderTitle>
-          <HeaderAction
-            text={I18n.t("timeline.filtersScreen.apply")}
-            disabled={noneSet}
-            onPress={() => this.doSetFilters(selectedFilters)}
-          />
+          <HeaderRight>
+            <HeaderAction
+              text={I18n.t("common.apply")}
+              disabled={noneSet}
+              onPress={() => this.doSetFilters(selectedFilters)}
+            />
+          </HeaderRight>
         </HeaderRow>
       </FakeHeader>
     );

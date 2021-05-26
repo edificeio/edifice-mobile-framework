@@ -9,7 +9,7 @@ import { RefreshControl } from "react-native";
 import type { IGlobalState } from "../../../../AppStore";
 import type { ITimeline_State } from "../reducer";
 
-import { FakeHeader, HeaderAction, HeaderIcon, HeaderRow, HeaderTitle } from "../../../components/header";
+import { FakeHeader, HeaderAction, HeaderIcon, HeaderLeft, HeaderRow, HeaderTitle } from "../../../components/header";
 import { Text } from "../../../components/text";
 import { dismissFlashMessageAction, loadNotificationsPageAction, startLoadNotificationsAction } from "../actions";
 import withViewTracking from "../../../tracker/withViewTracking";
@@ -93,9 +93,10 @@ export class TimelineScreen extends React.PureComponent<
     return (
       <FakeHeader>
         <HeaderRow>
-          <HeaderAction iconName="filter" onPress={() => { this.goToFilters(); }} />
+          <HeaderLeft>
+            <HeaderAction iconName="filter" onPress={() => { this.goToFilters(); }} />
+          </HeaderLeft>
           <HeaderTitle>{I18n.t("timeline.appName")}</HeaderTitle>
-          <HeaderIcon name={null} />
         </HeaderRow>
       </FakeHeader>
     )
