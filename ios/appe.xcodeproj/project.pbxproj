@@ -34,6 +34,7 @@
 		74B6EE4F22E5EADB00658D15 /* OpenSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 74B6EE4022E5EADB00658D15 /* OpenSans-Regular.ttf */; };
 		74B6EE5022E5EADB00658D15 /* OpenSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 74B6EE4022E5EADB00658D15 /* OpenSans-Regular.ttf */; };
 		8145E137368CFDBB151EF431 /* libPods-appeTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B67E681EF74A1A9713AE2891 /* libPods-appeTests.a */; };
+		F0625946264574A4001AE555 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F062593E26454B14001AE555 /* InfoPlist.strings */; };
 		F313A3B02C1DD5E7D4836B61 /* libPods-appe.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 611EEA89A9B54F0CB20EFC25 /* libPods-appe.a */; };
 /* End PBXBuildFile section */
 
@@ -101,6 +102,9 @@
 		E9DB4A5878894D4D95E43062 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
+		F062593D26454B14001AE555 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		F062593F26454B17001AE555 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		F062594026454B18001AE555 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F28C73F7943D4452B9C00D32 /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
 		FEE18F2835C642DFB7917DEA /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -153,6 +157,7 @@
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
+				F062593E26454B14001AE555 /* InfoPlist.strings */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				74660EAD247BE64C00F74D20 /* DummySwiftFile.swift */,
 				74660EAB247BE64B00F74D20 /* appe-Bridging-Header.h */,
@@ -380,6 +385,7 @@
 				74B6EE4722E5EADB00658D15 /* OpenSans-SemiBoldItalic.ttf in Resources */,
 				74264ABB22DF7D6500A0E2A6 /* icomoon.ttf in Resources */,
 				74B6EE4922E5EADB00658D15 /* OpenSans-Italic.ttf in Resources */,
+				F0625946264574A4001AE555 /* InfoPlist.strings in Resources */,
 				74B6EE4B22E5EADB00658D15 /* OpenSans-bold.ttf in Resources */,
 				74B6EE4322E5EADB00658D15 /* OpenSans-LightItalic.ttf in Resources */,
 				741ACC0D23B632380075BCE4 /* AppCenter-Config.plist in Resources */,
@@ -561,6 +567,20 @@
 			targetProxy = 00E356F41AD99517003FC87E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		F062593E26454B14001AE555 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F062593D26454B14001AE555 /* en */,
+				F062593F26454B17001AE555 /* fr */,
+				F062594026454B18001AE555 /* es */,
+			);
+			name = InfoPlist.strings;
+			path = appe;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
