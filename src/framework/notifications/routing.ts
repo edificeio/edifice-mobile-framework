@@ -82,7 +82,7 @@ export interface NotificationHandler {
 	(notificationData: NotificationData, apps: string[], doTrack: string | false): Promise<boolean>
 }
 export interface NotificationHandlerFactory<S, E, A extends Action> {
-	(dispatch: ThunkDispatch<S, E, A>): NotificationHandler;
+	(dispatch: ThunkDispatch<S, E, A>, getState: () => S): NotificationHandler;
 }
 
 export const legacyHandleNotificationAction = (data: NotificationData, apps: string[], doTrack: false | string = "Push Notification") =>
@@ -91,7 +91,7 @@ export const legacyHandleNotificationAction = (data: NotificationData, apps: str
 		let manageCount = 0;
 		const call = async (notifHandlerFactory: NotificationHandlerFactory<any, any, any>) => {
 			try {
-				const managed = await notifHandlerFactory(dispatch)(data, apps, doTrack);
+				const managed = await notifHandlerFactory(dispatch, getState)(data, apps, doTrack);
 				if (managed) {
 					manageCount++;
 				}

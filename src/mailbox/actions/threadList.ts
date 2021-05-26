@@ -199,6 +199,14 @@ export function fetchConversationThreadList(page: number = 0) {
         `/conversation/threads/list?page=${page}`,
         conversationThreadListAdapter
       );
+      // A thread's messages might already be loaded after opening a timeline notification,
+      // so we need to make sure the data (which might include the thread) doesn't delete them
+      const dataIds = data.ids;
+      const threadListinfoById = threadListinfo.data.byId;
+      const threadListinfoByIdKeys =  threadListinfoById && Object.keys(threadListinfoById);
+      const idsAlreadyLoaded = dataIds && threadListinfoByIdKeys && dataIds.filter(id => threadListinfoByIdKeys.includes(id));
+      idsAlreadyLoaded && idsAlreadyLoaded.forEach(e => data.byId[e].messages = threadListinfoById[e].messages);
+
       dispatch(conversationThreadListReceived(page, data)); // threads with message ids
     } catch (errmsg) {
       dispatch(conversationThreadListFetchError(errmsg));
@@ -232,6 +240,7 @@ export function fetchConversationThreadAllMessages(threadId: string) {
         `/conversation/thread/messages/${threadId}`,
         conversationOrderedMessagesAdapter
       );
+      if (data.length === 0) throw new Error("Thread deleted");
 
       // Extract messageIds list and contents
       const messages: IConversationMessageList = {};
@@ -264,8 +273,10 @@ export function fetchConversationThreadAllMessages(threadId: string) {
       // dispatch
       dispatch(conversationMessagesReceived(messages)); // message contents
       dispatch(conversationThreadInserted(threadListData)); // thread infos
+      return data;
     } catch (errmsg) {
       dispatch(conversationMessagesFetchError(errmsg));
+      return errmsg;
     }
   };
 }
