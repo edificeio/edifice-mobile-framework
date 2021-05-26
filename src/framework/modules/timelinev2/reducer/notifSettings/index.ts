@@ -18,4 +18,4 @@ export default combineReducers({
 
 // Getters
 
-
+export const getAreNotificationFilterSettingsLoaded = (state: INotifSettings_State) => state.notifFilterSettings.lastSuccess;
