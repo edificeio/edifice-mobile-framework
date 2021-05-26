@@ -153,7 +153,7 @@ export class BlogSelectScreen extends React.PureComponent<
     const { navigation } = this.props;
     const blogShareNumber = blog.shared?.length;
     return (
-      <TouchableOpacity onPress={() => navigation.navigate("blog/create", { blog })}>
+      <TouchableOpacity onPress={() => navigation.navigate("timeline/blog/create", { blog })}>
         <ListItem
           leftElement={
             <View style={{flex: 1, flexDirection: "row", alignItems: "center"}}>
