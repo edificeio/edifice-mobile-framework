@@ -170,7 +170,8 @@ export class TimelineScreen extends React.PureComponent<
   }
 
   async doNextPage() {
-    await this.props.handleNextPage();
+    if (!this.props.notifications.endReached)
+      await this.props.handleNextPage();
   }
 
   async doOpenNotification(n: INotification) {
