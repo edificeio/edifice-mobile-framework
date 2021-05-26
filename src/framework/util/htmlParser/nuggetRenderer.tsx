@@ -11,8 +11,8 @@ import {
   View,
   ViewStyle
 } from "react-native";
-import Player from "../../ui/Player";
-import Images from "../../ui/Images";
+import Player from "../../../ui/Player";
+import Images from "../../../ui/Images";
 import {
   NestedText,
   NestedTextBold,
@@ -23,9 +23,9 @@ import {
   TextColor,
   TextItalic,
   TextLink
-} from "../../ui/text";
-import { IFrame } from "../../ui/IFrame";
-import { DEPRECATED_signImagesUrls, DEPRECATED_signImageURISource } from "../../infra/oauth";
+} from "../../../ui/text";
+import { IFrame } from "../../../ui/IFrame";
+import { DEPRECATED_signImagesUrls, DEPRECATED_signImageURISource } from "../../../infra/oauth";
 
 export enum HtmlParserJsxTextVariant {
   None = 0,

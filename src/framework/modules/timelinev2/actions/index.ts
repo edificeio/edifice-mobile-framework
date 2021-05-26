@@ -3,7 +3,7 @@
  */
 
 import { ThunkDispatch } from "redux-thunk";
-import { getUserSession } from "../../../session";
+import { getUserSession } from "../../../util/session";
 import moduleConfig from "../moduleConfig";
 import { ITimeline_State } from "../reducer";
 import * as notifDefinitionsStateHandler from "../reducer/notifDefinitions";

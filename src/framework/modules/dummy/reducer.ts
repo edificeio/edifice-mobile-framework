@@ -2,7 +2,7 @@
  * Dummy Reducer
  */
 
-import { createSessionReducer } from "../../../framework/redux/reducerFactory";
+import { createSessionReducer } from "../../util/redux/reducerFactory";
 
 // State
 

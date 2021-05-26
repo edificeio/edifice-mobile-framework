@@ -5,8 +5,8 @@
 import I18n from "i18n-js";
 import { NavigationNavigateActionPayload } from "react-navigation";
 
-import { createGetRegisteredModules, createRegisterModule, IRegisteredModule } from "../../moduleTool";
-import { IUserSession } from "../../session";
+import { createGetRegisteredModules, createRegisterModule, IRegisteredModule } from "../../util/moduleTool";
+import { IUserSession } from "../../util/session";
 
 const registeredTimelineModules: IRegisteredModule[] = [];
 export const getRegisteredTimelineModules = createGetRegisteredModules(registeredTimelineModules);

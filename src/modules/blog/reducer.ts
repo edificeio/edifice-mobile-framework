@@ -3,9 +3,9 @@
  */
 
 import { Moment } from "moment";
-import { createSessionReducer } from "../../framework/redux/reducerFactory";
-import { resourceRightFilter } from "../../framework/resourceRights";
-import { IUserSession } from "../../framework/session";
+import { createSessionReducer } from "../../framework/util/redux/reducerFactory";
+import { resourceRightFilter } from "../../framework/util/resourceRights";
+import { IUserSession } from "../../framework/util/session";
 import { createBlogPostResourceRight } from "./rights";
 
 // Types

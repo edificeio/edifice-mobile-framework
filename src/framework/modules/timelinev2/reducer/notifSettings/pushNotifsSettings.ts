@@ -1,7 +1,7 @@
 import moment from "moment";
 import { Action, AnyAction } from "redux";
-import { AsyncState, createAsyncActionCreators, createAsyncActionTypes, createSessionAsyncReducer } from "../../../../redux/async";
-import { IReducerActionsHandlerMap } from "../../../../redux/reducerFactory";
+import { AsyncState, createAsyncActionCreators, createAsyncActionTypes, createSessionAsyncReducer } from "../../../../util/redux/async";
+import { IReducerActionsHandlerMap } from "../../../../util/redux/reducerFactory";
 import moduleConfig from "../../moduleConfig";
 
 // State

@@ -10,13 +10,13 @@ import type { IGlobalState } from "../../../AppStore";
 import type { IBlogPostComment, IBlogPostWithComments } from "../reducer";
 
 import moduleConfig from "../moduleConfig";
-import withViewTracking from "../../../framework/tracker/withViewTracking";
+import withViewTracking from "../../../framework/util/tracker/withViewTracking";
 import { PageView } from "../../../framework/components/page";
-import { IResourceUriNotification, ITimelineNotification } from "../../../framework/notifications";
+import { IResourceUriNotification, ITimelineNotification } from "../../../framework/util/notifications";
 import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderSubtitle, HeaderTitle } from "../../../framework/components/header";
 import NotificationTopInfo from "../../../framework/modules/timelinev2/components/NotificationTopInfo";
 import { getBlogPostDetailsAction } from "../actions";
-import { Trackers } from "../../../framework/tracker";
+import { Trackers } from "../../../framework/util/tracker";
 import { TextPreview } from "../../../ui/TextPreview";
 import { CommonStyles } from "../../../styles/common/styles";
 import Conf from "../../../../ode-framework-conf";
@@ -26,7 +26,7 @@ import { Icon } from "../../../framework/components/icon";
 import { LoadingIndicator } from "../../../framework/components/loading";
 import { ListItem } from "../../../framework/components/listItem";
 import { TextSemiBold, TextLight } from "../../../framework/components/text";
-import theme from "../../../framework/theme";
+import theme from "../../../framework/util/theme";
 import { FlatButton } from "../../../ui";
 import { blogUriCaptureFunction } from "../service";
 

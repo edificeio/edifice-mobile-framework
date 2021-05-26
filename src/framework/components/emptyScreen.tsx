@@ -8,7 +8,7 @@
 import * as React from "react";
 import { Dimensions, Image, ImageSourcePropType, ViewStyle, View, Text } from "react-native";
 import { FlatButton } from "../../ui/FlatButton";
-import theme from "../theme";
+import theme from "../util/theme";
 import { PageView } from "./page";
 import { H1 } from "./text";
 

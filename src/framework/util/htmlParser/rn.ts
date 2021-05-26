@@ -23,7 +23,7 @@
  */
 
 import { Dimensions, TextStyle } from "react-native";
-import Conf from "../../../ode-framework-conf";
+import Conf from "../../../../ode-framework-conf";
 import {
   HtmlParserAbstract,
   IHtmlParserAbstractOptions,

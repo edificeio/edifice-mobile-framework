@@ -1,6 +1,6 @@
 // RN Imports
 import * as React from "react";
-import { initI18n } from "./framework/i18n";
+import { initI18n } from "./framework/util/i18n";
 import { StatusBar, View, AppState, AppStateStatus } from "react-native";
 import * as RNLocalize from "react-native-localize";
 import "react-native-gesture-handler";
@@ -52,7 +52,7 @@ import { IUserInfoState } from "./user/state/info";
 
 // App Conf
 import "./infra/appConf";
-import { AppPushNotificationHandlerComponent } from "./framework/notifications/cloudMessaging";
+import { AppPushNotificationHandlerComponent } from "./framework/util/notifications/cloudMessaging";
 
 // Disable Yellow Box on release builds.
 if (__DEV__) {

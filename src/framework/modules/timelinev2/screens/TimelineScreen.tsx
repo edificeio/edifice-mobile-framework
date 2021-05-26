@@ -12,7 +12,7 @@ import type { ITimeline_State } from "../reducer";
 import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from "../../../components/header";
 import { Text } from "../../../components/text";
 import { dismissFlashMessageAction, loadNotificationsPageAction, startLoadNotificationsAction } from "../actions";
-import withViewTracking from "../../../tracker/withViewTracking";
+import withViewTracking from "../../../util/tracker/withViewTracking";
 import moduleConfig from "../moduleConfig";
 import { INotifications_State } from "../reducer/notifications";
 import { IEntcoreFlashMessage, IFlashMessages_State } from "../reducer/flashMessages";
@@ -21,10 +21,10 @@ import { TimelineNotification } from "../components/TimelineNotification";
 import { TimelineFlashMessage } from "../components/TimelineFlashMessage";
 import { EmptyScreen } from "../../../components/emptyScreen";
 import { PageView } from "../../../components/page";
-import { ITimelineNotification, IResourceUriNotification, isResourceUriNotification, IAbstractNotification, getAsResourceUriNotification } from "../../../notifications";
-import { defaultNotificationActionStack, handleNotificationAction, NotifHandlerThunkAction } from "../../../notifications/routing";
+import { ITimelineNotification, IResourceUriNotification, isResourceUriNotification, IAbstractNotification, getAsResourceUriNotification } from "../../../util/notifications";
+import { defaultNotificationActionStack, handleNotificationAction, NotifHandlerThunkAction } from "../../../util/notifications/routing";
 import { getTimelineWorkflows } from "../timelineModules";
-import { getUserSession, IUserSession } from "../../../session";
+import { getUserSession, IUserSession } from "../../../util/session";
 import PopupMenu from "../../../../framework/components/popupMenu";
 
 // TYPES ==========================================================================================
