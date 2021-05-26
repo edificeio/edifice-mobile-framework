@@ -10,7 +10,9 @@ import { createEndSessionActionType } from "../infra/redux/reducerFactory";
 
 export interface IMediaModel {
   type: "image" | "video" | "audio" | "iframe" | "attachment";
-  src: string | { src: ImageURISource; alt: string;};
+  src: ImageURISource | { src: ImageURISource; alt: string;};
+  posterSource?: ImageURISource;
+  ratio?: number;
   name?: string;
 }
 

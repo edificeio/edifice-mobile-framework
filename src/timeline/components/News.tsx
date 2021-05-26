@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, ImageURISource } from "react-native";
 import I18n from "i18n-js";
 
 import { CommonStyles } from "../../styles/common/styles";
@@ -61,7 +61,14 @@ export class News extends React.PureComponent<INewsProps, INewsState> {
           />
         )
       } else if (firstItem.type === "video" || firstItem.type === "audio") {
-        return <Player type={firstItem.type} source={firstItem.src as string}/>
+        return (
+          <Player
+            type={firstItem.type}
+            source={firstItem.src as ImageURISource}
+            posterSource={firstItem.posterSource}
+            ratio={firstItem.ratio}
+          />
+        )
       } else if (firstItem.type === "iframe") {
         return <IFrame source={firstItem.src as string} />
       }
