@@ -28,7 +28,21 @@ export const loadNotificationsSettingsAction = () => async (dispatch: ThunkDispa
         await setItemJson(asyncStorageKey, settings);
         dispatch(notifFilterSettingsActions.receipt(settings));
     } catch (e) {
-        console.warn(`[${moduleConfig.name}] loadNotificationsDefinitionsAction failed`, e);
+        // ToDo: Error handling
+        console.warn(`[${moduleConfig.name}] loadNotificationsSettingsAction failed`, e);
         dispatch(notifFilterSettingsActions.error(e));
+    }
+}
+
+export const setFiltersAction = (selectedFilters: INotifFilterSettings) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+    try {
+        const asyncStorageKey = `${moduleConfig.name}.notifFilterSettings`;
+        dispatch(notifFilterSettingsActions.setRequest(selectedFilters));
+        await setItemJson(asyncStorageKey, selectedFilters);
+        dispatch(notifFilterSettingsActions.setReceipt(selectedFilters));
+    } catch (e) {
+        // ToDo: Error handling
+        console.warn(`[${moduleConfig.name}] setFilterAction failed`, e);
+        dispatch(notifFilterSettingsActions.setError(selectedFilters));
     }
 }

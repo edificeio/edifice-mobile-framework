@@ -1,5 +1,5 @@
 import * as React from "react";
-import { NavigationInjectedProps } from "react-navigation";
+import { NavigationInjectedProps, NavigationFocusInjectedProps, withNavigationFocus } from "react-navigation";
 import I18n from "i18n-js";
 import { ThunkDispatch } from "redux-thunk";
 import { connect } from "react-redux";
@@ -32,13 +32,16 @@ export interface ITimelineScreenEventProps {
   handleNextPage(): Promise<boolean>, // return true if page if there is more pages to load
   handleDismissFlashMessage(flashMessageId: number): Promise<void>
 };
-export type ITimelineScreenProps = ITimelineScreenDataProps & ITimelineScreenEventProps & NavigationInjectedProps;
+export type ITimelineScreenProps = ITimelineScreenDataProps
+  & ITimelineScreenEventProps
+  & NavigationInjectedProps
+  & NavigationFocusInjectedProps;
 
 export enum TimelineLoadingState {
   PRISTINE, INIT, REFRESH, DONE
 }
 export interface ITimelineScreenState {
-  loadingState: TimelineLoadingState; // Holds the initial loading state. further oage loading is handled by async.isFetching
+  loadingState: TimelineLoadingState; // Holds the initial loading state. further page loading is handled by async.isFetching
 };
 
 export enum ITimelineItemType {
@@ -101,28 +104,30 @@ export class TimelineScreen extends React.PureComponent<
 
   renderList() {
     const items = getTimelineItems(this.props.flashMessages, this.props.notifications);
-    return <FlatList
-      // data
-      data={items}
-      keyExtractor={n => n.data.id.toString()}
-      renderItem={({ item }) => item.type === ITimelineItemType.NOTIFICATION
-        ? this.renderNotificationItem(item.data as INotification)
-        : this.renderFlashMessageItem(item.data as IEntcoreFlashMessage)}
-      // pagination
-      ListEmptyComponent={this.renderEmpty}
-      refreshControl={
-        <RefreshControl
-          refreshing={[TimelineLoadingState.REFRESH, TimelineLoadingState.INIT].includes(this.state.loadingState)}
-          onRefresh={() => this.doRefresh()}
-        />
-      }
-      ListFooterComponent={
-        this.state.loadingState === TimelineLoadingState.DONE && this.props.notifications.isFetching
-          ? <LoadingIndicator /> : null
-      }
-      onEndReached={() => this.doNextPage()}
-      onEndReachedThreshold={0.5}
-    />;
+    return (
+      <FlatList
+        // data
+        data={items}
+        keyExtractor={n => n.data.id.toString()}
+        renderItem={({ item }) => item.type === ITimelineItemType.NOTIFICATION
+          ? this.renderNotificationItem(item.data as INotification)
+          : this.renderFlashMessageItem(item.data as IEntcoreFlashMessage)}
+        // pagination
+        ListEmptyComponent={this.renderEmpty}
+        refreshControl={
+          <RefreshControl
+            refreshing={[TimelineLoadingState.REFRESH, TimelineLoadingState.INIT].includes(this.state.loadingState)}
+            onRefresh={() => this.doRefresh()}
+          />
+        }
+        ListFooterComponent={
+          this.state.loadingState === TimelineLoadingState.DONE && this.props.notifications.isFetching
+            ? <LoadingIndicator /> : null
+        }
+        onEndReached={() => this.doNextPage()}
+        onEndReachedThreshold={0.5}
+      />
+    );
   }
 
   renderEmpty() {
@@ -156,6 +161,15 @@ export class TimelineScreen extends React.PureComponent<
   constructor(props: ITimelineScreenProps) {
     super(props);
     this.doInit();
+  }
+
+  componentDidUpdate(prevProps) {
+    const { navigation, isFocused } = this.props;
+    const reloadWithNewSettings = navigation.getParam("reloadWithNewSettings");
+    if (isFocused !== prevProps.isFocused && reloadWithNewSettings) {
+      this.doInit();
+      navigation.setParams({reloadWithNewSettings: undefined});
+    }
   }
 
   // METHODS ======================================================================================
@@ -221,5 +235,6 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () 
     handleDismissFlashMessage: async (flashMessageId: number) => { await dispatch(dismissFlashMessageAction(flashMessageId)); }
   })
 
-const TimelineScreen_Connected = connect(mapStateToProps, mapDispatchToProps)(TimelineScreen);
+const TimelineScreen_withNavigationFocus = withNavigationFocus(TimelineScreen);
+const TimelineScreen_Connected = connect(mapStateToProps, mapDispatchToProps)(TimelineScreen_withNavigationFocus);
 export default withViewTracking("timeline")(TimelineScreen_Connected);

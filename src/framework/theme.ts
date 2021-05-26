@@ -3,7 +3,7 @@
  */
 
 import deepmerge from "deepmerge";
-import { ColorValue } from "react-native";
+import { ColorSchemeName, ColorValue } from "react-native";
 
 import customTheme from "../conf/CustomTheme";
 
@@ -11,6 +11,8 @@ export interface ITheme {
     color: {
         pageBackground: ColorValue,
         cardBackground: ColorValue,
+        checkboxBorder: ColorValue,
+        listItemBorder: ColorValue,
         primary: {
             regular: ColorValue,
             subleShadow: ColorValue,
@@ -50,6 +52,8 @@ export const defaultTheme: ITheme = {
     color: {
         pageBackground: 'rgb(248,248,250)',
         cardBackground: '#fff',
+        checkboxBorder: '#7a7a7a',
+        listItemBorder: '#606060',
         primary: {
             regular: '#ff8000',
             subleShadow: 'magenta',
