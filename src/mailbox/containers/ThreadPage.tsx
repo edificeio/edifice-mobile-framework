@@ -1,6 +1,6 @@
 import * as React from "react";
-import { View, Text, Platform } from "react-native";
-import { NavigationScreenProp, NavigationActions} from "react-navigation";
+import { View, Platform , TouchableWithoutFeedback } from "react-native";
+import { NavigationScreenProp, NavigationActions, withNavigationFocus} from "react-navigation";
 import { connect } from "react-redux";
 import I18n from "i18n-js";
 import style from "glamorous-native";
@@ -291,6 +291,8 @@ class ThreadPageContainer extends React.PureComponent<
         subject: this.props.subject,
         pickedUsers: this.props.pickedUsers
       });
+    } else if (prevProps.isFocused !== this.props.isFocused) {
+      this.props.navigation?.setParams({ selectedMessage: undefined });
     }
   }
 
@@ -307,15 +309,21 @@ class ThreadPageContainer extends React.PureComponent<
     const sendingType = this.props.navigation?.getParam('type', 'new');
     const messageDraft = this.props.navigation?.getParam('draft');
     return (
-      <ThreadPage
-        {...this.props}
-        onSelectMessage={message => {
-          this.props.navigation?.setParams({ selectedMessage: message });
-        }}
-        backMessage={backMessage}
-        sendingType={sendingType}
-        messageDraft={messageDraft}
-      />
+      <TouchableWithoutFeedback
+        onPress={() => this.props.navigation?.setParams({ selectedMessage: undefined })}
+      >
+        <View style={{flex: 1}}>
+          <ThreadPage
+            {...this.props}
+            onSelectMessage={message => {
+              this.props.navigation?.setParams({ selectedMessage: message });
+            }}
+            backMessage={backMessage}
+            sendingType={sendingType}
+            messageDraft={messageDraft}
+          />
+        </View>
+      </TouchableWithoutFeedback>
     );
   }
 }
@@ -323,7 +331,7 @@ class ThreadPageContainer extends React.PureComponent<
 const ThreadPageContainerConnected = connect(
   mapStateToProps,
   mapDispatchToProps
-)(ThreadPageContainer);
+)(withNavigationFocus(ThreadPageContainer));
 
 export default withViewTracking("conversation/thread")(ThreadPageContainerConnected);
 
