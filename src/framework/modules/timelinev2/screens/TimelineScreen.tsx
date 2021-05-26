@@ -81,7 +81,7 @@ export class TimelineScreen extends React.PureComponent<
     const { navigation } = this.props;
     return <FakeHeader>
       <HeaderRow>
-        <HeaderAction iconName="filter" />
+        <HeaderAction iconName="filter" onPress={() => { this.goToFilters(); }} />
         <HeaderTitle>{I18n.t("timeline.appName")}</HeaderTitle>
         <HeaderIcon name={null} />
       </HeaderRow>
@@ -126,7 +126,7 @@ export class TimelineScreen extends React.PureComponent<
   renderNotificationItem(n: INotification) {
     const compInst = <Text>{n.message}</Text>;
     return isResourceUriNotification(n)
-      ? <TouchableOpacity onPress={e => {this.doOpenNotification(n)}} >{compInst}</TouchableOpacity>
+      ? <TouchableOpacity onPress={e => { this.doOpenNotification(n) }} >{compInst}</TouchableOpacity>
       : <View>{compInst}</View>;
   }
 
@@ -169,6 +169,8 @@ export class TimelineScreen extends React.PureComponent<
       notification: n as IResourceUriNotification
     })
   }
+
+  goToFilters() { this.props.navigation.navigate('timeline/filters'); }
 }
 
 // UTILS ==========================================================================================
