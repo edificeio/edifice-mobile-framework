@@ -4,7 +4,7 @@ import TimelineScreen from "./screens/Timeline";
 
 export default createStackNavigator(
     {
-        home: {
+        "timeline": {
             screen: TimelineScreen
         }
     }
