@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Text, Image, ImageURISource } from "react-native";
+import { Text, Image, ImageURISource, View } from "react-native";
 
 import { ArticleContainer } from "../../../../ui/ContainerContent";
 import Images from "../../../../ui/Images";
@@ -101,17 +101,20 @@ export class TimelineNotification extends React.PureComponent<ITimelineNotificat
         <TouchCard
           activeOpacity={!notificationAction ? 1 : undefined}
           onPress={notificationAction}
+          style={{width: "100%"}}
         >
-          <NotificationTopInfo notification={notification} />
+          <View style={{ width: "100%", flexDirection: "row" }}>
+            <NotificationTopInfo notification={notification}/>
+            {notificationAction
+              ? <Icon
+                  name="arrow_right"
+                  color={theme.color.secondary.regular}
+                  style={{ marginTop: 7, right: 7 }}
+                />
+              : null
+            }
+          </View>
           {this.renderContent()}
-          {notificationAction
-            ? <Icon
-                name="arrow_down"
-                color={theme.color.secondary.regular}
-                style={{ position: "absolute", right: 10, top: 10, transform: [{ rotate: "270deg" }]}}
-              />
-            : null
-          }
         </TouchCard>
       </ArticleContainer>
     );
