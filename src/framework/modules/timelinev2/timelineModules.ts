@@ -5,12 +5,10 @@
 import I18n from "i18n-js";
 import { NavigationNavigateActionPayload } from "react-navigation";
 
-import { createGetRegisteredModules, createRegisterModule, IRegisteredModule } from "../../util/moduleTool";
+import { AnyNavigableModule, createModuleSubscription } from "../../util/moduleTool";
 import { IUserSession } from "../../util/session";
 
-const registeredTimelineModules: IRegisteredModule[] = [];
-export const getRegisteredTimelineModules = createGetRegisteredModules(registeredTimelineModules);
-export const registerTimelineModule = createRegisterModule(registeredTimelineModules);
+export const timelineModules = createModuleSubscription<AnyNavigableModule>();
 
 export interface ITimelineWorkflowDefinition {
     (session: IUserSession): undefined | false | { icon: string; i18n: string; goTo: NavigationNavigateActionPayload };

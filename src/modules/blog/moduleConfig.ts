@@ -1,9 +1,10 @@
-import { createModuleConfig } from "../../framework/util/moduleTool";
+import { createNavigableModuleConfig } from "../../framework/util/moduleTool";
 import { IBlog_State } from "./reducer";
 
-export default createModuleConfig<"blog", IBlog_State>({
+export default createNavigableModuleConfig<"blog", IBlog_State>({
     name: "blog",
     displayName: "blog.tabName",
     matchEntcoreApp: "/blog",
-    entcoreScope: ['blog']
+    entcoreScope: ['blog'],
+
 });
