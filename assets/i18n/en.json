@@ -1,6 +1,7 @@
 {
   "common": {
-    "apply": "Apply"
+    "apply": "Apply",
+    "readMore": "read more"
   },
   "timeline": {
     "emptyScreenText": "All quiet on the Western front. Are you familiar with the saying \"the calm before the storm\"?",
@@ -35,6 +36,9 @@
         "WIKI": "Wiki",
         "WORKSPACE": "Filespace"
       }
+    },
+    "newsDetailsScreen": {
+      "title": "News"
     }
   },
   "Activate": "Activate account",
