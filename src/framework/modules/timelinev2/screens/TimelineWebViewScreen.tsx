@@ -6,21 +6,23 @@ import { connect } from "react-redux";
 import { IResourceUriNotification } from "../reducer/notifications";
 import { Text } from "../../../components/text";
 import withViewTracking from "../../../tracker/withViewTracking";
-import { INotifFilterSettings } from "../reducer/notifSettings/notifFilterSettings";
 
 // TYPES ==========================================================================================
 
-export interface IFiltersScreenDataProps { };
-export interface IFiltersScreenEventProps { };
-export type IFiltersScreenProps = IFiltersScreenDataProps & IFiltersScreenEventProps & NavigationInjectedProps;
+export interface ITimelineWebViewScreenDataProps { };
+export interface ITimelineWebViewScreenEventProps { };
+export interface ITimelineWebViewScreenNavParams {
+  notification: IResourceUriNotification;
+};
+export type ITimelineWebViewScreenProps = ITimelineWebViewScreenDataProps & ITimelineWebViewScreenEventProps & NavigationInjectedProps<Partial<ITimelineWebViewScreenNavParams>>;
 
-export interface IFiltersScreenState { };
+export interface ITimelineWebViewScreenState { };
 
 // COMPONENT ======================================================================================
 
-export class FiltersScreen extends React.PureComponent<
-  IFiltersScreenProps,
-  IFiltersScreenState
+export class TimelineWebViewScreen extends React.PureComponent<
+  ITimelineWebViewScreenProps,
+  ITimelineWebViewScreenState
   > {
 
   // DECLARATIONS =================================================================================
@@ -29,16 +31,10 @@ export class FiltersScreen extends React.PureComponent<
 
   render() {
     return <View>
-      
+      <Text>Trux</Text>
+      <Text>{this.props.navigation.getParam('notification')?.resource.uri}</Text>
+      <Text>{this.props.navigation.getParam('notification')?.message}</Text>
     </View>;
-  }
-
-  renderList() {
-
-  }
-
-  renderListItem(item: INotifFilterSettings) {
-    
   }
 
   // LIFECYCLE ====================================================================================
@@ -50,5 +46,5 @@ export class FiltersScreen extends React.PureComponent<
 
 // MAPPING ========================================================================================
 
-const FiltersScreen_Connected = connect(() => ({}), () => ({}))(FiltersScreen);
-export default withViewTracking("timeline/filters")(FiltersScreen_Connected);
+const TimelineWebViewScreen_Connected = connect(() => ({}), () => ({}))(TimelineWebViewScreen);
+export default withViewTracking("timeline/goto")(TimelineWebViewScreen_Connected);
