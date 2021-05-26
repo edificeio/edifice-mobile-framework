@@ -216,7 +216,6 @@
   },
   "Activate": "Activar mi cuenta",
   "activation-cancelLoad": "Cancelar",
-  "activation-cgu": "Al activar su cuenta, usted acepta los términos y condiciones de uso",
   "activation-errorLoading": "Error de red.",
   "activation-errorSubmit": "Error de red.",
   "activation-retryLoad": "Vuelva a intentarlo",
