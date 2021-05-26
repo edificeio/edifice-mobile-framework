@@ -10,6 +10,7 @@ import customTheme from "../conf/CustomTheme";
 export interface ITheme {
     color: {
         listItemBorder: ColorValue,
+        inputBorder: ColorValue,
         shadowColor: ColorValue,
         background: {
             card: ColorValue,
@@ -62,6 +63,7 @@ export interface ITheme {
 export const defaultTheme: ITheme = {
     color: {
         listItemBorder: '#606060',
+        inputBorder: '#dddddd',
         shadowColor: '#000000',
         background: {
             card: '#fff',

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, FlatList, RefreshControl, Linking } from "react-native";
+import { View, FlatList, TouchableOpacity, RefreshControl } from "react-native";
 import { NavigationInjectedProps } from "react-navigation";
 import { ThunkDispatch } from "redux-thunk";
 import { connect } from "react-redux";
@@ -10,143 +10,193 @@ import withViewTracking from "../../../framework/tracker/withViewTracking";
 import { PageView } from "../../../framework/components/page";
 import { LoadingIndicator } from "../../../framework/components/loading";
 import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from "../../../framework/components/header";
-import { TextSemiBold } from "../../../framework/components/text";
+import { TextLight, TextSemiBold } from "../../../framework/components/text";
 import { IGlobalState } from "../../../AppStore";
+import { getPublishableBlogListAction } from "../actions";
+import { IBlog, IBlogList } from "../reducer";
+import theme from "../../../framework/theme";
+import { ListItem } from "../../../framework/components/listItem";
+import { GridAvatars } from "../../../ui/avatars/GridAvatars";
+import { legacyAppConf } from "../../../framework/appConf";
+import { getAuthHeader } from "../../../infra/oauth";
+import { Icon } from "../../../framework/components/icon";
 
 // TYPES ==========================================================================================
 
 export interface IBlogSelectScreenDataProps {
-    // Add data props here
+  // Add data props here
 };
 export interface IBlogSelectScreenEventProps {
-    // Add eventprops here
+  handleGetPublishableBlogList(): Promise<IBlogList | undefined>;
 };
 export interface IBlogSelectScreenNavParams {
-    // Add nav params here
+  // Add nav params here
 };
 export type IBlogSelectScreenProps = IBlogSelectScreenDataProps
-    & IBlogSelectScreenEventProps
-    & NavigationInjectedProps<Partial<IBlogSelectScreenNavParams>>;
+  & IBlogSelectScreenEventProps
+  & NavigationInjectedProps<Partial<IBlogSelectScreenNavParams>>;
 
 export enum BlogSelectLoadingState {
-    PRISTINE, INIT, REFRESH, DONE
+  PRISTINE, INIT, REFRESH, DONE
 }
 export interface IBlogSelectScreenState {
-    loadingState: BlogSelectLoadingState;
-    // blogs: IBlogPostWithComments | undefined;
-    errorState: boolean;
+  loadingState: BlogSelectLoadingState;
+  blogsData: IBlogList | undefined;
+  errorState: boolean;
 };
 
 // COMPONENT ======================================================================================
 
-export class BlogselectScreen extends React.PureComponent<
-    IBlogSelectScreenProps,
-    IBlogSelectScreenState
-    > {
+export class BlogSelectScreen extends React.PureComponent<
+  IBlogSelectScreenProps,
+  IBlogSelectScreenState
+> {
 
-    // DECLARATIONS =================================================================================
+  // DECLARATIONS =================================================================================
 
-    state: IBlogSelectScreenState = {
-        loadingState: BlogSelectLoadingState.PRISTINE,
-        // blogPostData: undefined,
-        errorState: false,
-    }
+  state: IBlogSelectScreenState = {
+    loadingState: BlogSelectLoadingState.PRISTINE,
+    blogsData: undefined,
+    errorState: false,
+  }
 
-    // RENDER =======================================================================================
+  // RENDER =======================================================================================
 
-    render() {
-        const { loadingState, errorState } = this.state;
-        return (
-            <>
-                {this.renderHeader()}
-                <PageView>
-                    {[BlogSelectLoadingState.PRISTINE, BlogSelectLoadingState.INIT].includes(loadingState)
-                        ? <LoadingIndicator />
-                        : errorState
-                            ? this.renderError()
-                            : this.renderList()
-                    }
-                </PageView>
-            </>
-        );
-    }
+  render() {
+    const { loadingState, errorState } = this.state;
+    return (
+      <>
+        {this.renderHeader()}
+        <PageView>
+            {[BlogSelectLoadingState.PRISTINE, BlogSelectLoadingState.INIT].includes(loadingState)
+              ? <LoadingIndicator />
+              : errorState
+                ? this.renderError()
+                : this.renderList()
+            }
+        </PageView>
+      </>
+    );
+  }
 
-    renderHeader() {
-        const { navigation } = this.props;
-        // const { blogPostData } = this.state;
-        return (
-            <FakeHeader>
-                <HeaderRow>
-                    <HeaderLeft>
-                        <HeaderAction iconName="back" onPress={() => navigation.navigate("timeline")} />
-                    </HeaderLeft>
-                    <HeaderCenter>
-                        <HeaderTitle>{I18n.t("blog.blogSelectScreen.title")}</HeaderTitle>
-                    </HeaderCenter>
-                </HeaderRow>
-            </FakeHeader>
-        )
-    }
+  renderHeader() {
+    const { navigation } = this.props;
+    return (
+      <FakeHeader>
+        <HeaderRow>
+          <HeaderLeft>
+            <HeaderAction iconName="back" onPress={() => navigation.navigate("timeline")} />
+          </HeaderLeft>
+          <HeaderCenter>
+            <HeaderTitle>{I18n.t("blog.blogSelectScreen.title")}</HeaderTitle>
+          </HeaderCenter>
+        </HeaderRow>
+      </FakeHeader>
+    )
+  }
 
-    renderError() {
-        return <TextSemiBold>{"Error"}</TextSemiBold> // ToDo: great error screen here
-    }
+  renderError() {
+    return <TextSemiBold>{"Error"}</TextSemiBold> // ToDo: great error screen here
+  }
 
-    renderList() {
-        const { loadingState } = this.state;
-        return (
-            // <FlatList
-            //     data={blogPostComments}
-            //     renderItem={({ item }: { item: IBlogPostComment }) => this.renderComment(item)}
-            //     keyExtractor={(item: IBlogPostComment) => item.id.toString()}
-            //     ListHeaderComponent={this.renderBlogPostDetails()}
-            //     contentContainerStyle={{ flexGrow: 1, paddingVertical: 12, backgroundColor: theme.color.background.card }}
-            //     refreshControl={
-            //         <RefreshControl
-            //             refreshing={[BlogPostDetailsLoadingState.REFRESH, BlogPostDetailsLoadingState.INIT].includes(loadingState)}
-            //             onRefresh={() => this.doRefresh()}
-            //         />
-            //     }
-            // />
-            null
-        );
-    }
-
-    // LIFECYCLE ====================================================================================
-
-    componentDidMount() {
-        this.doInit();
-    }
-
-    // METHODS ======================================================================================
-
-    async doInit() {
-        try {
-            this.setState({ loadingState: BlogSelectLoadingState.INIT });
-            await this.doGetBlogList();
-        } finally {
-            this.setState({ loadingState: BlogSelectLoadingState.DONE });
+  renderList() {
+    const { loadingState, blogsData } = this.state;
+    return (
+      <FlatList
+        data={blogsData}
+        renderItem={({ item }: { item: IBlog }) => this.renderBlog(item)}
+        keyExtractor={(item: IBlog) => item.id.toString()}
+        contentContainerStyle={{ flexGrow: 1, paddingVertical: 12, backgroundColor: theme.color.background.card }}
+        refreshControl={
+          <RefreshControl
+            refreshing={[BlogSelectLoadingState.REFRESH, BlogSelectLoadingState.INIT].includes(loadingState)}
+            onRefresh={() => this.doRefresh()}
+          />
         }
-    }
+      />
+    );
+  }
 
-    async doRefresh() {
-        try {
-            this.setState({ loadingState: BlogSelectLoadingState.REFRESH });
-            await this.doGetBlogList();
-        } finally {
-            this.setState({ loadingState: BlogSelectLoadingState.DONE });
-        }
-    }
+  renderBlog(blog: IBlog) {
+    const { navigation } = this.props;
+    const blogShareNumber = blog.shared?.length;
+    return (
+      <TouchableOpacity onPress={() => navigation.navigate("blog/create", { blog })}>
+        <ListItem
+          leftElement={
+            <View style={{flex: 1, flexDirection: "row", alignItems: "center"}}>
+              <GridAvatars
+                users={[blog.thumbnail
+                    ? { headers: getAuthHeader(), uri: legacyAppConf.currentPlatform!.url + blog.thumbnail }
+                    : require("../../../../assets/images/resource-avatar.png")
+                ]}
+                fallback={require("../../../../assets/images/resource-avatar.png")}
+              />
+              <View style={{flex: 1, marginLeft: 10}}>
+                <TextSemiBold numberOfLines={1}>
+                  {blog.title}
+                </TextSemiBold>
+                <TextLight style={{fontSize: 12, marginTop: 8}}>
+                  {I18n.t(
+                    `blog.blogSelectScreen.sharedToNbPerson${blogShareNumber === 1 ? "" : "s"}`,
+                    {nb: blogShareNumber || 0}
+                  )}
+                </TextLight>
+              </View>
+            </View>
+          }
+          rightElement={
+            <Icon
+              name="arrow_down"
+              color={"#868CA0"}
+              style={{ transform: [{ rotate: "270deg" }] }}
+            />
+          }
+        />
+      </TouchableOpacity>
+    );
+  }
 
-    async doGetBlogList() {
-        try {
-            const { navigation } = this.props;
-        } catch (e) {
-            // ToDo: Error handling
-            this.setState({ errorState: true });
-            console.warn(`[${moduleConfig.name}] doGetBlogList failed`, e);
-        }
+  // LIFECYCLE ====================================================================================
+
+  componentDidMount() {
+    this.doInit();
+  }
+
+  // METHODS ======================================================================================
+
+  async doInit() {
+    try {
+      this.setState({ loadingState: BlogSelectLoadingState.INIT });
+      await this.doGetPublishableBlogList();
+    } finally {
+      this.setState({ loadingState: BlogSelectLoadingState.DONE });
     }
+  }
+
+  async doRefresh() {
+    try {
+      this.setState({ loadingState: BlogSelectLoadingState.REFRESH });
+      await this.doGetPublishableBlogList();
+    } finally {
+      this.setState({ loadingState: BlogSelectLoadingState.DONE });
+    }
+  }
+
+  async doGetPublishableBlogList() {
+    try {
+      const { handleGetPublishableBlogList } = this.props;
+      const blogsData = await handleGetPublishableBlogList();
+      if (!blogsData) {
+        throw new Error("[doGetPublishableBlogList] failed to retrieve the publishable blog list");
+      }
+      this.setState({ blogsData });
+    } catch (e) {
+      // ToDo: Error handling
+      this.setState({ errorState: true });
+      console.warn(`[${moduleConfig.name}] doGetPublishableBlogList failed`, e);
+    }
+  }
 }
 
 // UTILS ==========================================================================================
@@ -158,8 +208,11 @@ export class BlogselectScreen extends React.PureComponent<
 const mapStateToProps: (s: IGlobalState) => IBlogSelectScreenDataProps = (s) => ({});
 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => IBlogSelectScreenEventProps = (dispatch, getState) => ({
-
+  handleGetPublishableBlogList: async () => {
+    const blogs = await dispatch(getPublishableBlogListAction()) as unknown as IBlogList;
+    return blogs;
+  }
 })
 
-const BlogSelectScreen_Connected = connect(mapStateToProps, mapDispatchToProps)(BlogselectScreen);
+const BlogSelectScreen_Connected = connect(mapStateToProps, mapDispatchToProps)(BlogSelectScreen);
 export default withViewTracking("blog/select")(BlogSelectScreen_Connected);
