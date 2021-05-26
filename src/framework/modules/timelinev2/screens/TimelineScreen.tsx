@@ -82,8 +82,8 @@ export class TimelineScreen extends React.PureComponent<
     const routeName = navigation.state.routeName;
     return <>
       {this.renderHeader()}
+      {this.renderHeaderButton()}
       <PageView path={routeName}>
-        {this.renderHeaderButton()}
         {[TimelineLoadingState.PRISTINE, TimelineLoadingState.INIT].includes(this.state.loadingState)
           ? <LoadingIndicator />
           : this.props.notifications.error && !this.props.notifications.lastSuccess
