@@ -9,6 +9,7 @@ import { blogService } from "../service";
 
 /**
  * Fetch the details of a given blog post.
+ * Info: no reducer is used in this action.
  */
 export const getBlogPostDetailsAction = (blogPostId: { blogId: string, postId: string }) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   try {
@@ -29,3 +30,18 @@ export const getBlogPostDetailsAction = (blogPostId: { blogId: string, postId: s
     console.warn(`[${moduleConfig.name}] getBlogPostDetailsAction failed`, e);
   }
 };
+
+/**
+ * Fetch the user's blog list.
+ * Info: no reducer is used in this action.
+ */
+export const getBlogListAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  try {
+    const session = getUserSession(getState());
+    const blogs = await blogService.list(session);
+    return blogs;
+  } catch (e) {
+    // ToDo: Error handling
+    console.warn(`[${moduleConfig.name}] getBlogListAction failed`, e);
+  }
+}

@@ -9,11 +9,32 @@ import { createSessionReducer } from "../../framework/redux/reducerFactory";
 
 export interface IBlogPostWithComments extends IBlogPost { comments: IBlogPostComments }
 
+
+export interface IBlog {
+    id: string;
+    visibility: string;
+    title: string;
+    thumbnail?: string;
+    trashed?: boolean;
+    'comment-type': string;
+    'publish-type': string;
+    description?: string;
+    created: Moment;
+    modified: Moment;
+    author: { userId: string; username: string; login: string; }
+    shared?: Array<{
+        [key: string]: boolean | string | undefined,
+    } & {
+            [key in 'userId' | 'groupId']: string
+        }>;
+}
+export type IBlogList = IBlog[];
+
 export interface IBlogPostComment {
     author: {
-      login: string;
-      userId: string;
-      username: string;
+        login: string;
+        userId: string;
+        username: string;
     }
     comment: string;
     created: Moment;
@@ -41,7 +62,7 @@ export interface IBlogPost {
 
 // State
 
-export interface IBlog_State {};
+export interface IBlog_State { };
 
 // Reducer
 

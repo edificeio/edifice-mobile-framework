@@ -108,7 +108,7 @@ export default class PopupMenu extends React.PureComponent<IPopupMenuProps, IPop
 			renderItem={({ item }) => this.renderAction(item as { icon: string; i18n: string; goTo: NavigationNavigateActionPayload })}
 			contentContainerStyle={{
 				borderRadius: 4,
-				backgroundColor: theme.color.cardBackground,
+				backgroundColor: theme.color.background.card,
 				width: 200,
 				overflow: "visible",
 				...getMenuShadow()
