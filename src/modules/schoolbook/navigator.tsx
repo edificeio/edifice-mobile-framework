@@ -1,11 +1,14 @@
 import { createStackNavigator } from "react-navigation-stack";
 
-import SchoolbookDetailsScreen from "./screens/SchoolbookDetailsScreen";
+import { SchoolbookWordDetailsScreenRouter } from "./screens/SchoolbookWordDetailsScreen";
 
 export default () => createStackNavigator(
     {
         "schoolbook/details": {
-            screen: SchoolbookDetailsScreen
+            screen: SchoolbookWordDetailsScreenRouter
         },
+    },
+    {
+        headerMode: "none"
     }
 );

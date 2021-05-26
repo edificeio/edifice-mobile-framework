@@ -77,6 +77,7 @@ export function loginAction(
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
       // === 0: Init login
+      console.log("0: Init login");
       try {
         if (!Conf.currentPlatform) throw new Error("[login] Must specify a platform");
         if (!OAuth2RessourceOwnerPasswordClient.connection)
@@ -89,6 +90,7 @@ export function loginAction(
       }
 
       // === 1: Get oAuth token from somewhere (server or local storage)
+      console.log("1: Get oAuth token from somewhere (server or local storage)");
       try {
         if (credentials) {
           await OAuth2RessourceOwnerPasswordClient.connection.getNewToken(
@@ -115,7 +117,7 @@ export function loginAction(
       // === 2: Gather logged user information
       let userinfo2;
       try {
-        console.log("fetch userinfo 2");
+        console.log("2: Gather logged user information");
         userinfo2 = await fetchJSONWithCache("/auth/oauth2/userinfo", {
           headers: {
             Accept: "application/json;version=2.0"
@@ -138,6 +140,7 @@ export function loginAction(
       }
 
       // === 3: check user validity
+      console.log("3: check user validity");
       if (userinfo2.deletePending) {
         const err = new Error("[loginAction]: User is predeleted.");
         (err as any).type = LoginFlowErrorType.PRE_DELETED;
@@ -149,6 +152,7 @@ export function loginAction(
       }
 
       // === 4: Gather another user information
+      console.log("4: Gather another user information");
       let userdata: any, userPublicInfo: any;
       try {
         userdata = await fetchJSONWithCache(
@@ -167,7 +171,8 @@ export function loginAction(
         throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err);
       }
 
-      // === 4: Get firebase device token and store it in the backend
+      // === 5: Get firebase device token and store it in the backend
+      console.log("5: Get firebase device token and store it in the backend");
       try {
         const authorizationStatus = await messaging().requestPermission();
         if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED) {
@@ -181,7 +186,8 @@ export function loginAction(
         throw createLoginError(LoginFlowErrorType.FIREBASE_ERROR, '', '', err);
       }
 
-      // === 5: validate login
+      // === 6: validate login
+      console.log("6: validate login");
       try {
         dispatch({
           type: actionTypeLoggedIn,
@@ -195,7 +201,8 @@ export function loginAction(
         throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err);
       }
 
-      // === 6: Tracking reporting (only on success)
+      // === 7: Tracking reporting (only on success)
+      console.log("7: Tracking reporting (only on success)");
 
       // ToDo
       await Promise.all([
@@ -213,7 +220,8 @@ export function loginAction(
       if (credentials) await Trackers.trackEvent('Auth', 'LOGIN'); // Track manual login (with credentials)
       else await Trackers.trackEvent('Auth', 'RESTORE'); // track separately auto login (with stored token)
 
-      // === 7: navigate back to the main screen
+      // === 8: navigate back to the main screen
+      console.log("8: navigate back to the main screen");
       navigate("Main");
     } catch (err) {
       // In case of error...
