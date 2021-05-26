@@ -270,8 +270,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
 
     text = text.replace(/[\r\n\x0B\x0C\u0085\u2028\u2029]+/g, " "); // replace new lines by spaces (like in html)
 
-    // console.log(`rn text "${text}"`);
-    // console.log("hastoinsertSpace", this.hasToInsertSpace);
+    // console.log(`parse text "${text}"`, this.hasToInsertSpace);
     if (text.startsWith('.') || text.startsWith(',')) this.hasToInsertSpace = false; //// YEAH MADAFAKA this is the most ugly code i've never wrote !
     const leftTrimmedText = text.trimLeft();
     text = leftTrimmedText !== text //// Ternary del muerte ☠
@@ -290,6 +289,9 @@ export default class HtmlParserRN extends HtmlParserAbstract<
     //// Because I am. 😱
 
     // console.log(`rn after lefttrim "${text}"`, this.hasToInsertSpace);
+    if (/\S/.test(text)) {
+      this.firstWord = false;
+    }
 
     const rightTrimmedText = text.trimRight();
     if (text !== rightTrimmedText) {
@@ -315,11 +317,10 @@ export default class HtmlParserRN extends HtmlParserAbstract<
     }
 
     if (text.length) {
-      // console.log(`interted text : "${text}"`);
+      // console.log(`interted text : "${text}"`, this.hasToInsertSpace);
       this.insertNewTextNugget(text);
       if (/\S/.test(text)) {
         this.currentImageNugget = undefined; // Text breaks image groups (spaces don't count)
-        this.firstWord = false;
         this.currentDivIsEmpty = false;
       }
     }
