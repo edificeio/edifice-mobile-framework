@@ -6,6 +6,8 @@
     "activation-errorSubmit": "Nous n'avons pas pu activer votre compte. Veuillez réessayer ultérieurement.",
     "activation-retryLoad": "Réessayer",
     "Actualites": "Actualités",
+    "timeline-tabname": "Nouveautés",
+    "timeline-appname": "Fil de nouveautés",
     "add-file": "Ajouter un fichier",
     "agoHours": "il y a {{hours}} h",
     "agoMinutes": "il y a {{minutes}} min",
