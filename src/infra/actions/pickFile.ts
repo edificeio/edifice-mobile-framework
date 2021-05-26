@@ -1,5 +1,6 @@
 import { Platform, ActionSheetIOS } from "react-native";
 import ActionSheet from 'react-native-action-sheet';
+import RNFetchBlob from 'rn-fetch-blob';
 import DocumentPicker from "react-native-document-picker";
 import { launchImageLibrary } from "react-native-image-picker";
 import Permissions, { PERMISSIONS } from "react-native-permissions";
