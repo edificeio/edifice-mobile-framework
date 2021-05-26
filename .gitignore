@@ -6,7 +6,6 @@
 #
 build/
 ios/Pods/
-ios/Podfile.lock
 *.pbxuser
 !default.pbxuser
 *.mode1v3
@@ -42,7 +41,6 @@ android/app/src/main/assets/index.android.bundle
 node_modules/
 npm-debug.log
 yarn-error.log
-package-lock.json
 
 # BUCK
 buck-out/
