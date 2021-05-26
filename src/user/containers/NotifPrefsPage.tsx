@@ -9,7 +9,7 @@ import { connect } from "react-redux";
 import {
   action_toggleNotifPrefsByApp,
   includeNotifKeys,
-  loadNotificationPrefs,
+  DEPRECATED_loadNotificationPrefs,
   setNotificationPref
 } from "../../user/actions/notifPrefs";
 
@@ -27,6 +27,7 @@ import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenO
 import { HeaderBackAction } from "../../ui/headers/NewHeader";
 import withViewTracking from "../../infra/tracker/withViewTracking";
 import { Trackers } from "../../infra/tracker";
+import { loadPushNotifsSettingsAction } from "../../framework/modules/timelinev2/actions/notifSettings";
 
 // Type definitions
 
@@ -206,7 +207,10 @@ const NotifPrefsPageConnected = connect(
     };
   },
   dispatch => ({
-    onInit: () => dispatch(loadNotificationPrefs() as any),
+    onInit: () => {
+      dispatch(DEPRECATED_loadNotificationPrefs() as any); // Legacy
+      return dispatch(loadPushNotifsSettingsAction());
+    },
     onTogglePref: (notification, pref, notificationPrefs) =>
       dispatch(action_toggleNotifPrefsByApp(
         notification,
