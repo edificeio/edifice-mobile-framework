@@ -16,7 +16,8 @@ import {
   NB_THREADS_PER_PAGE,
   actionTypeThreadResetRequested,
   actionTypeThreadResetReceived,
-  actionTypeThreadDeleted
+  actionTypeThreadDeleted,
+  actionTypeThreadInserted
 } from "../actions/threadList";
 import { actionTypeMessageSendRequested, actionTypeMessageSent } from "../actions/sendMessage";
 import { actionTypeThreadCreated } from "../actions/createThread";
@@ -227,6 +228,14 @@ const conversationThreadListReducer = (
         byId,
         ids: state.ids.filter(v => v !== action.threadId)
       };
+    case actionTypeThreadInserted:
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          [action.data.id]: action.data
+        }
+      }
     // Session flush forward-compatibility.
     case createEndSessionActionType():
       return stateDefault;
