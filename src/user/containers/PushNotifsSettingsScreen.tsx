@@ -157,7 +157,7 @@ export class PushNotifsSettingsScreen extends React.PureComponent<
 		const areAllChecked = Object.values(items).every(v => v);
 		console.log("areAllChecked", areAllChecked);
 		return <FlatList
-			data={Object.entries(items)}
+			data={Object.entries(items).sort((a, b) => I18n.t(`timeline.notifType.${a[0]}`).localeCompare(I18n.t(`timeline.notifType.${b[0]}`)))}
 			keyExtractor={(item: [string, boolean]) => item[0]}
 			renderItem={({ item }: { item: [string, boolean] }) => this.renderSubItem(item)}
 			ListEmptyComponent={this.renderError}
