@@ -76,11 +76,12 @@ export const getPublishableBlogListAction = () => async (dispatch: ThunkDispatch
     if (!postId) {
       throw new Error("[sendBlogPostAction] failed to access id of created post");
     }
+    const blogPostActionRight = blogPostRight.actionRight;
     const shareAction = {
       [createBlogPostResourceRight]: undefined,
       [submitBlogPostResourceRight]: () => dispatch(submitBlogPostAction(blogId, postId)) as unknown as Promise<string>,
       [publishBlogPostResourceRight]: () => dispatch(publishBlogPostAction(blogId, postId)) as unknown as Promise<string>
-    }[blogPostRight];
+    }[blogPostActionRight];
     shareAction && await shareAction();
   } catch (e) {
     // ToDo: Error handling
