@@ -1,10 +1,9 @@
 import style from "glamorous-native";
 import I18n from "i18n-js";
 import * as React from "react";
-import { Alert, KeyboardAvoidingView, Linking, Platform, SafeAreaView, ScrollView } from "react-native";
+import { Alert, KeyboardAvoidingView, Linking, Platform, SafeAreaView, ScrollView, TouchableOpacity, View } from "react-native";
 import Conf from "../../../ode-framework-conf";
 import { navigate } from "../../navigation/helpers/navHelper";
-import { CommonStyles } from "../../styles/common/styles";
 import { FlatButton, Loading } from "../../ui";
 import BottomSwitcher from "../../ui/BottomSwitcher";
 import { ErrorMessage } from "../../ui/Typography";
@@ -19,6 +18,8 @@ import {
   InputPhone,
   ValueChangeArgs
 } from "./ActivationForm";
+import { Checkbox } from "../../framework/components/checkbox";
+import { Text, TextAction } from "../../framework/components/text";
 
 // TYPES ---------------------------------------------------------------------------
 
@@ -26,6 +27,7 @@ type IFields = "login" | "password" | "confirm" | "phone" | "email";
 
 export interface IActivationPageState extends IActivationModel {
   typing: boolean;
+  isCGUAccepted: boolean;
 }
 export interface IActivationPageDataProps extends IActivationModel {
   passwordRegex: string;
@@ -51,7 +53,8 @@ export class ActivationPage extends React.PureComponent<
   // fully controller component
   public state: IActivationPageState = {
     ...this.props,
-    typing: false
+    typing: false,
+    isCGUAccepted: false
   };
   private handleActivation = async () => {
     this.props.onSubmit({ ...this.state });
@@ -103,7 +106,7 @@ export class ActivationPage extends React.PureComponent<
   }
 
   public render() {
-    const { login, password, confirm, email, phone, typing } = this.state;
+    const { login, password, confirm, email, phone, isCGUAccepted, typing } = this.state;
     const { externalError, contextState, submitState } = this.props;
     if (
       contextState == ContextState.Loading ||
@@ -115,7 +118,7 @@ export class ActivationPage extends React.PureComponent<
       ...this.props,
       password: () => password
     });
-    const isNotValid = !formModel.validate({ ...this.state });
+    const isNotValid = !isCGUAccepted || !formModel.validate({ ...this.state });
     const errorKey = formModel.firstErrorKey({ ...this.state });
     const errorText = errorKey ? I18n.t(errorKey) : externalError;
     const hasErrorKey = !!errorText;
@@ -159,6 +162,24 @@ export class ActivationPage extends React.PureComponent<
                       form={formModel}
                       onChange={this.onChange("phone")}
                     />
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        alignSelf: "stretch",
+                        marginTop: 30
+                      }}
+                    >
+                      <Checkbox
+                        checked={isCGUAccepted}
+                        onPress={() => this.setState({isCGUAccepted: !isCGUAccepted})}
+                        customContainerStyle={{marginRight: 5}}
+                      />
+                      <Text>{I18n.t("activation-cgu-accept")}</Text>
+                      <TouchableOpacity onPress={this.handleOpenCGU}>
+                        <TextAction>{I18n.t("activation-cgu")}</TextAction>
+                      </TouchableOpacity>
+                    </View>
                     <ErrorMessage>
                       {" "}
                       {hasErrorKey && !typing ? errorText : ""}{" "}
@@ -171,9 +192,6 @@ export class ActivationPage extends React.PureComponent<
                         loading={isSubmitLoading}
                       />
                     </ButtonWrapper>
-                    <CGULink onPress={this.handleOpenCGU}>
-                      <CGUText>{I18n.t("activation-cgu")}</CGUText>
-                    </CGULink>
                   </FormContainer>
                 </FormWrapper>
               </FormTouchable>
@@ -223,15 +241,3 @@ const ButtonWrapper = style.view(
     marginTop: error && !typing ? 10 : 10
   })
 );
-
-const CGULink = style.touchableOpacity({});
-
-const CGUText = style.text({
-  color: CommonStyles.lightTextColor,
-  fontFamily: CommonStyles.primaryFontFamily,
-  fontSize: 14,
-  marginTop: 18,
-  marginBottom: 8,
-  textAlign: "center",
-  textDecorationLine: "underline"
-});
