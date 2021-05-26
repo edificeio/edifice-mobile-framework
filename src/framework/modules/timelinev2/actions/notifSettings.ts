@@ -6,13 +6,14 @@ import * as notifDefinitionsStateHandler from "../reducer/notifDefinitions";
 import { loadNotificationsDefinitionsAction } from "./notifDefinitions";
 import { actions as notifFilterSettingsActions, INotifFilterSettings } from "../reducer/notifSettings/notifFilterSettings"
 import { actions as pushNotifsSettingsActions, IPushNotifsSettings } from "../reducer/notifSettings/pushNotifsSettings"
-import { getItemJson, setItemJson } from "../../../util/storage";
+import { getItemJson, setItemJson, removeItemJson } from "../../../util/storage";
 import { pushNotifsService } from "../service";
 
 export const loadNotificationFiltersSettingsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
         dispatch(notifFilterSettingsActions.request());
         const session = getUserSession(getState());
+        const userId = session.user.id;
         // 1 - Load notification definitions if necessary
         let state = moduleConfig.getState(getState()) as ITimeline_State;
         if (!notifDefinitionsStateHandler.getAreNotificationDefinitionsLoaded(state.notifDefinitions)) {
@@ -21,8 +22,17 @@ export const loadNotificationFiltersSettingsAction = () => async (dispatch: Thun
         state = moduleConfig.getState(getState());
 
         // 2 - Load notif settings from Async Storage
-        const asyncStorageKey = `${moduleConfig.name}.notifFilterSettings`;
-        let settings: INotifFilterSettings = await getItemJson(asyncStorageKey) || {};
+        const asyncStorageKey = `${moduleConfig.name}.notifFilterSettings.${userId}`;
+        let settings: INotifFilterSettings | undefined = await getItemJson(asyncStorageKey);
+        if (!settings) {
+            // On first app launch, migrate old data (if exists) to new user-aware format
+            const oldAsyncStorageKey = `${moduleConfig.name}.notifFilterSettings`;
+            const settingsToMigrate: INotifFilterSettings | undefined = await getItemJson(oldAsyncStorageKey);
+            if (settingsToMigrate) {
+                await removeItemJson(oldAsyncStorageKey);
+                settings = settingsToMigrate;
+            } else settings = {};
+        }
         const defaults = Object.fromEntries(state.notifDefinitions.notifFilters.map(v => [v.type, v.type === "MESSAGERIE" ? false : true])); // TODO: beautify 
         settings = {...defaults, ...settings};
 
@@ -38,7 +48,9 @@ export const loadNotificationFiltersSettingsAction = () => async (dispatch: Thun
 
 export const setFiltersAction = (selectedFilters: INotifFilterSettings) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
-        const asyncStorageKey = `${moduleConfig.name}.notifFilterSettings`;
+        const session = getUserSession(getState());
+        const userId = session.user.id;
+        const asyncStorageKey = `${moduleConfig.name}.notifFilterSettings.${userId}`;
         dispatch(notifFilterSettingsActions.setRequest(selectedFilters));
         await setItemJson(asyncStorageKey, selectedFilters);
         dispatch(notifFilterSettingsActions.setReceipt(selectedFilters));
