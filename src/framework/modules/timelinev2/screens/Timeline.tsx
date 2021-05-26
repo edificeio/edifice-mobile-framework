@@ -5,13 +5,22 @@ import I18n from "i18n-js";
 import { PageContainer } from "../../../../ui/ContainerContent";
 import { FakeHeader, HeaderAction, HeaderIcon, HeaderRow, HeaderTitle } from "../../../components/header";
 import { Text } from "../../../components/text";
-import deviceInfoModule from "react-native-device-info";
+import { ITimelineState } from "../state";
+import { Dispatch } from "redux";
 
 export interface ITimelineScreenDataProps { };
-export interface ITimelineScreenEventProps { };
+export interface ITimelineScreenEventProps {
+  handleInitTimeline(): void,
+  handleFetchPage(page: number): boolean
+};
 export type ITimelineScreenProps = ITimelineScreenDataProps & ITimelineScreenEventProps & NavigationInjectedProps;
 
-export interface ITimelineScreenState { };
+export enum TimelineLoadingState {
+  PRISTINE, INIT, REfRESH, DONE
+}
+export interface ITimelineScreenState {
+  loadingState: TimelineLoadingState;
+};
 
 export default class TimelineScreen extends React.PureComponent<
   ITimelineScreenProps,
@@ -20,6 +29,10 @@ export default class TimelineScreen extends React.PureComponent<
 
   static navigationOptions = {
     header: () => null, // Header is included in screen
+  }
+
+  state: ITimelineScreenState = {
+    loadingState: TimelineLoadingState.PRISTINE
   }
 
   render() {
@@ -42,4 +55,18 @@ export default class TimelineScreen extends React.PureComponent<
     </FakeHeader>
   }
 
+  constructor(props: ITimelineScreenProps) {
+    super(props);
+    try {
+      props.handleInitTimeline();
+    } catch (e) {
+
+    }
+  }
 }
+
+const mapStateToProps = (state: ITimelineState) => ({});
+
+const mapDispatchToProps = (dispatch: Dispatch, getState: () => ITimelineState) => ({
+  handleInitTimeline: () => {  }
+})
