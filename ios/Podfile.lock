@@ -270,8 +270,8 @@ PODS:
     - React-cxxreact (= 0.61.5)
     - React-jsi (= 0.61.5)
   - React-jsinspector (0.61.5)
-  - react-native-document-picker (3.2.4):
-    - React
+  - react-native-document-picker (5.0.3):
+    - React-Core
   - react-native-image-picker (3.3.4):
     - React-Core
   - react-native-matomo-sdk (0.4.0):
@@ -606,13 +606,13 @@ SPEC CHECKSUMS:
   React-jsi: cb2cd74d7ccf4cffb071a46833613edc79cdf8f7
   React-jsiexecutor: d5525f9ed5f782fdbacb64b9b01a43a9323d2386
   React-jsinspector: fa0ecc501688c3c4c34f28834a76302233e29dc0
-  react-native-document-picker: c36bf5f067a581657ecaf7124dcd921a8be19061
-  react-native-image-picker: 4436d2ae609d1fc5b6426133755fc8d468347b61
+  react-native-document-picker: 2e6ecd112c48215e36431734d902f35201ffab0a
+  react-native-image-picker: 32fbfa63b6eff82b13b037022dc1d25005290e36
   react-native-matomo-sdk: 1dd9511387c2f96401dc6ba9a6476d0660021c91
   react-native-netinfo: 8d8db463bcc5db66a8ac5c48a7d86beb3b92f61a
-  react-native-safe-area-context: e471852c5ed67eea4b10c5d9d43c1cebae3b231d
+  react-native-safe-area-context: f0906bf8bc9835ac9a9d3f97e8bde2a997d8da79
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
-  react-native-video: 1574074179ecaf6a9dd067116c8f31bf9fec15c8
+  react-native-video: 0bb76b6d6b77da3009611586c7dbf817b947f30e
   react-native-webview: ef8d30ecc5baf6bf7821690180c2f9bf2bdf00c0
   React-RCTActionSheet: 600b4d10e3aea0913b5a92256d2719c0cdd26d76
   React-RCTAnimation: 791a87558389c80908ed06cc5dfc5e7920dfa360
@@ -625,12 +625,12 @@ SPEC CHECKSUMS:
   React-RCTVibration: a49a1f42bf8f5acf1c3e297097517c6b3af377ad
   ReactCommon: 198c7c8d3591f975e5431bec1b0b3b581aa1c5dd
   rn-fetch-blob: f065bb7ab7fb48dd002629f8bdcb0336602d3cba
-  RNCAsyncStorage: b17c417b356114699a486715adfa5829a5d6d8b9
-  RNCMaskedView: f127cd9652acfa31b91dcff613e07ba18b774db6
+  RNCAsyncStorage: f47a7e8f927f7c9da947491fc55752eb9ce17f2d
+  RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNCPicker: 914b557e20b3b8317b084aca9ff4b4edb95f61e4
   RNCPushNotificationIOS: f688c6d6158cf8ef93e72868e0bfdf27d3bbc568
   RNDateTimePicker: dc9dab744823a2c734dbc7362cdf57a3adba3c43
-  RNDeviceInfo: 4f480456c7ac8c9919448375399c1a6f14479549
+  RNDeviceInfo: 3266783bcb6aa4b0c785d6080a407f8a5fc68326
   RNFastImage: 9b0c22643872bb7494c8d87bbbb66cc4c0d9e7a2
   RNFBApp: 02bde3edecf2e9694b908a5d3504e03449980f20
   RNFBMessaging: 1823217d31e942531cc3f51fb5367dcbc69c1e10
