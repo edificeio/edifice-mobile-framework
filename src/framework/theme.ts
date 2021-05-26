@@ -9,16 +9,18 @@ import customTheme from "../conf/CustomTheme";
 
 export interface ITheme {
     color: {
-        cardBackground: ColorValue,
-        checkboxBorder: ColorValue,
         listItemBorder: ColorValue,
-        pageBackground: ColorValue,
         shadowColor: ColorValue,
+        background: {
+            card: ColorValue,
+            page: ColorValue
+        },
         primary: {
             regular: ColorValue,
             subleShadow: ColorValue,
             shadow: ColorValue,
             light: ColorValue
+            extraLight: ColorValue
         },
         secondary: {
             regular: ColorValue,
@@ -32,6 +34,7 @@ export interface ITheme {
             subtleShadow: ColorValue,
             shadow: ColorValue,
             light: ColorValue
+            extraLight: ColorValue
         },
         text: {
             regular: ColorValue,
@@ -58,16 +61,18 @@ export interface ITheme {
 
 export const defaultTheme: ITheme = {
     color: {
-        cardBackground: '#fff',
-        checkboxBorder: '#7a7a7a',
         listItemBorder: '#606060',
-        pageBackground: '#f8f8fa',
         shadowColor: '#000000',
+        background: {
+            card: '#fff',
+            page: '#f8f8fa'
+        },
         primary: {
             regular: '#ff8000',
             subleShadow: 'magenta',
             shadow: 'magenta',
-            light: 'magenta'
+            light: 'magenta',
+            extraLight: '#magenta'
         },
         secondary: {
             regular: '#2a9cc8',
@@ -80,7 +85,8 @@ export const defaultTheme: ITheme = {
             regular: '#868ca0',
             subtleShadow: 'magenta',
             shadow: 'magenta',
-            light: '#f8f8fa'
+            light: '#f8f8fa',
+            extraLight: '#magenta'
         },
         text: {
             regular: '#414355',

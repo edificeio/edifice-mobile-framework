@@ -58,7 +58,7 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
               key={`${longText && !isExtended}`}
               html={flashMessageHtml}
               opts={{
-                globalTextStyle: {color: theme.color.cardBackground, paddingRight: 10, height: longText && !isExtended ? 120 : undefined},
+                globalTextStyle: {color: theme.color.text.inverse, paddingRight: 10, height: longText && !isExtended ? 120 : undefined},
                 textColor: false,
                 images: false,
                 iframes: false,
@@ -70,7 +70,7 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
               style={{position: "absolute", right: 10, top: 10}}
               onPress={flashMessageAction}
             >
-              <Icon color={theme.color.cardBackground} name="close" />
+              <Icon color={theme.color.text.inverse} name="close" />
             </TouchableOpacity>
             {longText && !isExtended
               ? <TouchableOpacity
@@ -79,7 +79,7 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
                 >
                   <Text
                     style={{ 
-                      color: theme.color.cardBackground,
+                      color: theme.color.text.inverse,
                       textDecorationLine: "underline",
                       fontWeight: "bold",
                       fontStyle: "italic"

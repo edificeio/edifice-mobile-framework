@@ -33,7 +33,7 @@ export const TextColor: {[k in 'Action' | 'Error' | 'Warning' | 'Inverse' | 'Lig
     Action: theme.color.secondary.regular,
     Error: theme.color.failure,
     Warning: theme.color.warning,
-    Inverse: theme.color.cardBackground,
+    Inverse: theme.color.text.inverse,
     Light: theme.color.text.light,
     Heavy: theme.color.text.heavy,
     Normal: theme.color.text.regular

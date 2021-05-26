@@ -3,7 +3,7 @@ import theme from '../theme';
 import { ViewStyle } from "react-native";
 
 const cardStyle: ViewStyle = {
-  backgroundColor: theme.color.cardBackground,
+  backgroundColor: theme.color.background.card,
   paddingHorizontal: 16,
   paddingVertical: 12,
   borderRadius: 15
