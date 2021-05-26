@@ -10,33 +10,37 @@ import moduleConfig from "../moduleConfig";
 import withViewTracking from "../../../framework/tracker/withViewTracking";
 import { Text } from "../../../framework/components/text";
 import { PageView } from "../../../framework/components/page";
+import { IResourceUriNotification, ITimelineNotification } from "../../../framework/notifications";
 
 // TYPES ==========================================================================================
 
-export interface IDummyScreenDataProps {
+export interface IBlogDetailsScreenDataProps {
     // Add data props here
 };
-export interface IDummyScreenEventProps {
+export interface IBlogDetailsScreenEventProps {
     // Add event-props here
 };
-export type IDummyScreenProps = IDummyScreenDataProps
-    & IDummyScreenEventProps
-    & NavigationInjectedProps;
+export interface IBlogDetailsScreenNavParams {
+    notification: ITimelineNotification & IResourceUriNotification;
+};
+export type IBlogDetailsScreenProps = IBlogDetailsScreenDataProps
+    & IBlogDetailsScreenEventProps
+    & NavigationInjectedProps<Partial<IBlogDetailsScreenNavParams>>;
 
-export interface IDummyScreenState {
+export interface IBlogDetailsScreenState {
     // Add local state here
 };
 
 // COMPONENT ======================================================================================
 
-export class DummyScreen extends React.PureComponent<
-    IDummyScreenProps,
-    IDummyScreenState
+export class BlogDetailsScreen extends React.PureComponent<
+    IBlogDetailsScreenProps,
+    IBlogDetailsScreenState
     > {
 
     // DECLARATIONS =================================================================================
 
-    state: IDummyScreenState = {
+    state: IBlogDetailsScreenState = {
         // Add local state default values here
     }
 
@@ -45,14 +49,15 @@ export class DummyScreen extends React.PureComponent<
     render() {
         return <>
             <PageView>
-                <Text>DummyScreen content</Text>
+                <Text>BlogDetails content</Text>
+                <Text>{this.props.navigation.getParam('notification')?.id}</Text>
             </PageView>
         </>;
     }
 
     // LIFECYCLE ====================================================================================
 
-    constructor(props: IDummyScreenProps) {
+    constructor(props: IBlogDetailsScreenProps) {
         super(props);
     }
 
@@ -73,17 +78,17 @@ export class DummyScreen extends React.PureComponent<
 
 // MAPPING ========================================================================================
 
-const mapStateToProps: (s: IGlobalState) => IDummyScreenDataProps = (s) => {
+const mapStateToProps: (s: IGlobalState) => IBlogDetailsScreenDataProps = (s) => {
     let ts = moduleConfig.getState(s) as IBlog_State;
     return {
         // Add data props here
     };
 };
 
-const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => IDummyScreenEventProps
+const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => IBlogDetailsScreenEventProps
     = (dispatch, getState) => ({
         // Add event props here
     })
 
-const DummyScreen_Connected = connect(mapStateToProps, mapDispatchToProps)(DummyScreen);
+const DummyScreen_Connected = connect(mapStateToProps, mapDispatchToProps)(BlogDetailsScreen);
 export default withViewTracking("dummy")(DummyScreen_Connected);

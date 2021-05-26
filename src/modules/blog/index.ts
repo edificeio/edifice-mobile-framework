@@ -1,12 +1,15 @@
 import { Module } from "../../framework/moduleTool";
 
 import config from './moduleConfig';
-import mainComp from './navigator';
+import getMainComp from './navigator';
 import reducer from './reducer';
+import setUpNotifHandlers from './notifHandler';
+import { registerTimelineModule } from "../../framework/modules/timelinev2/timelineModules";
 
-export default (
+export default registerTimelineModule(
     new Module({
-        config, mainComp, reducer
-    }),
-    0
+        config, getMainComp, reducer
+    })
 );
+
+setUpNotifHandlers();
