@@ -8,7 +8,7 @@ import { NavigationScreenProp, NavigationState, NavigationEventSubscription } fr
 import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderBackAction } from "../../ui/headers/NewHeader";
 import { PageContainer } from "../../ui/ContainerContent";
-import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
+import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { FlatList } from "react-native-gesture-handler";
 import { ListItem, LeftPanel, CenterPanel, RightPanel } from "../../myAppMenu/components/NewContainerContent";
 import { GridAvatars } from "../../ui/avatars/GridAvatars";
@@ -68,7 +68,7 @@ export class ContentSelectorPage_Unconnected extends React.PureComponent<IConten
   render() {
     const isEmpty = this.props.blogs && this.props.blogs.length === 0;
     return <PageContainer>
-      <ConnectionTrackingBar />
+      <DEPRECATED_ConnectionTrackingBar />
 
       <FlatList
         data={this.props.blogs || []}

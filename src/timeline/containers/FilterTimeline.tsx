@@ -3,7 +3,7 @@ import I18n from "i18n-js";
 import { connect } from "react-redux";
 import { pickFilters, setFilters } from "../actions/pickFilter";
 import { PageContainer, ListItem } from "../../ui/ContainerContent";
-import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
+import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { Heavy } from "../../ui/Typography";
 import { Checkbox } from "../../ui/forms/Checkbox";
 import { NavigationScreenProp, NavigationState, NavigationParams } from "react-navigation";
@@ -72,7 +72,7 @@ export class FilterTimeline extends React.Component<FilterTimelineProps> {
 
     return (
       <PageContainer>
-        <ConnectionTrackingBar />
+        <DEPRECATED_ConnectionTrackingBar />
         <ListItem
           style={{ justifyContent: "space-between" }}
           onPress={() => this.checkAllApps(!this.allAppsChecked)}

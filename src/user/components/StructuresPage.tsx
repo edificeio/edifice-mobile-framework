@@ -1,7 +1,7 @@
 import I18n from "i18n-js";
 import * as React from "react";
 import { PageContainer } from "../../ui/ContainerContent";
-import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
+import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { ScrollView, SafeAreaView, View } from "react-native";
 import { Text, TextColor, NestedText } from "../../ui/text";
 import { ContainerView, ContainerSpacer } from "../../ui/ButtonLine";
@@ -37,7 +37,7 @@ export class StructuresPage extends React.PureComponent<IStructuresPageProps>{
 
   render() {
     return <PageContainer>
-      <ConnectionTrackingBar/>
+      <DEPRECATED_ConnectionTrackingBar/>
       <ScrollView alwaysBounceVertical={false}>
         <SafeAreaView>
           <H4>{I18n.t("structuresTitle")}</H4>

@@ -18,7 +18,7 @@ import DeviceInfo from 'react-native-device-info';
 
 // Components
 import { FlatButton } from "../../ui";
-import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
+import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { TextInputLine } from "../../ui/forms/TextInputLine";
 import { ErrorMessage } from "../../ui/Typography";
 
@@ -135,7 +135,7 @@ export class LoginPage extends React.Component<
           style={{ flex: 1, backgroundColor: "#ffffff" }}
           behavior={Platform.OS === "ios" ? "padding" : undefined}
         >
-          <ConnectionTrackingBar style={{ position: "absolute" }} />
+          <DEPRECATED_ConnectionTrackingBar style={{ position: "absolute" }} />
           <VersionModal
             mandatory={versionMandatory}
             version={version}

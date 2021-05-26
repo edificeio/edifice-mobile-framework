@@ -5,7 +5,7 @@ import { FlatList, RefreshControl, View, Text } from "react-native";
 import { connect } from "react-redux";
 
 import { FlatButton, Loading } from "../../ui";
-import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
+import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
 import { EmptyScreen } from "../../ui/EmptyScreen";
 import { ErrorMessage } from "../../ui/Typography";
@@ -246,7 +246,7 @@ class Timeline extends React.Component<ITimelineProps, ITimelineState> {
           </Text>
           <View style={{ width: 60 }}/>
         </Header>
-        <ConnectionTrackingBar />
+        <DEPRECATED_ConnectionTrackingBar />
         <Notifier id="timeline" style={{ marginRight: 40 }} />
         {isFetching && isEmpty ? this.renderLoading() : this.renderList(timelineData as Array<IFlashMessageModel | INewsModel>)}
         {buttonMenuItems.length > 0 ?

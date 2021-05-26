@@ -1,7 +1,7 @@
 import I18n from "i18n-js";
 import * as React from "react";
 import { PageContainer } from "../../ui/ContainerContent";
-import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
+import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { ScrollView, SafeAreaView, View } from "react-native";
 import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { NavigationScreenProp } from "react-navigation";
@@ -37,7 +37,7 @@ export class ChildrenPage extends React.PureComponent<IChildrenPageProps>{
 
   render() {
     return <PageContainer>
-      <ConnectionTrackingBar/>
+      <DEPRECATED_ConnectionTrackingBar/>
       <ScrollView alwaysBounceVertical={false}>
         <SafeAreaView>
           {this.props.schools ? this.props.schools.map(school => {

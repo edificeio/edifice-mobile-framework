@@ -9,6 +9,7 @@ import { Reducer, AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
 import { createMainTabNavOption } from "../navigation/helpers/mainTabNavigator";
 import I18n from "i18n-js";
+import { IAppConf, IPlatformConf } from "../infra/appConf";
 
 /**
  * Describes an app asit lives in Entcore, on the platform.
@@ -86,7 +87,7 @@ export interface IActionMap {
 
 export interface IModuleDeclaration<Name extends string, State, ActionMap extends IActionMap> {
   config: IModuleConfig<Name>,
-  mainComp: React.ComponentClass,
+  mainComp: React.ComponentClass | React.FunctionComponent,
   reducer: Reducer<State>,
   actions: ActionMap
 }
@@ -100,7 +101,7 @@ export interface IModule<Name extends string, State, ActionMap extends IActionMa
 export class Module<Name extends string, State, ActionMap extends IActionMap>
   implements IModule<Name, State, ActionMap> {
   config: IModuleConfig<Name>;
-  mainComp: React.ComponentClass;
+  mainComp: React.ComponentClass | React.FunctionComponent;
   reducer: Reducer<State>;
   actions: ActionMap;
   route: any;
@@ -172,4 +173,12 @@ export const getModulesByFilter: (modules: ModuleMap, filterFunc: ((m: IModule<s
 
 export const getAvailableModules: (modules: ModuleMap, availableApps: IEntcoreApp[]) => ModuleMap = (modules, availableApps) => {
   return Object.fromEntries(Object.entries(modules).filter(([k, v]) => availableApps.find(app => v.config.matchEntcoreApp(app))));
+}
+
+export const getAvailableModulesConfigs: (moduleConfigs: ModuleConfigMap, availableApps: IEntcoreApp[]) => ModuleConfigMap = (moduleConfigs, availableApps) => {
+  return Object.fromEntries(Object.entries(moduleConfigs).filter(([k, v]) => availableApps.find(app => v.matchEntcoreApp(app))));
+}
+
+export const getModulesScope: (moduleConfigs: ModuleConfigMap) => string[] = moduleConfigs => {
+  return [...new Set(Object.values(moduleConfigs).map(c  => c.entcoreScope).flat())];
 }
