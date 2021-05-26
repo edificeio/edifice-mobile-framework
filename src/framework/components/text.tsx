@@ -5,9 +5,8 @@
  * Don't forget to use <NestedText> instead of <Text> for nested text styles.
  */
 
-import styled from "@emotion/native";
-import * as React from "react";
 import { ColorValue, Text as RNText, TextProps as RNTextProps, TextProps, TextStyle as RNTextStyle } from "react-native";
+import styled from "@emotion/native";
 import theme from "../theme";
 
 /**
@@ -80,4 +79,10 @@ export const TextInverse = styled(Text)({
 })
 export const NestedTextInverse = styled.Text({
     color: TextColor.Inverse
+})
+
+export const H1 = styled(Text)({
+    fontWeight: FontWeight.SemiBold,
+    color: theme.color.secondary.regular,
+    fontSize: 18,
 })
