@@ -29,7 +29,7 @@ import moment from "moment";
 import { RefreshControl, SectionList, Text } from "react-native";
 const { View } = style;
 
-import { Loading } from "../../ui";
+import { FlatButton, Loading } from "../../ui";
 import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
 import { EmptyScreen } from "../../ui/EmptyScreen";

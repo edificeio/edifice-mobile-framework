@@ -3,8 +3,8 @@ import { NavigationInjectedProps } from "react-navigation";
 import I18n from "i18n-js";
 import { ThunkDispatch } from "redux-thunk";
 import { connect } from "react-redux";
-import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
-import { RefreshControl, View } from "react-native";
+import { FlatList } from "react-native-gesture-handler";
+import { RefreshControl } from "react-native";
 
 import type { IGlobalState } from "../../../../AppStore";
 import type { ITimeline_State } from "../reducer";
@@ -17,6 +17,8 @@ import withViewTracking from "../../../tracker/withViewTracking";
 import moduleConfig from "../moduleConfig";
 import { INotification, INotifications_State, IResourceUriNotification, isResourceUriNotification } from "../reducer/notifications";
 import { LoadingIndicator } from "../../../components/loading";
+import { TimelineNotification } from "../components/TimelineNotification";
+import { TimelineFlashMessage } from "../components/TimelineFlashMessage";
 
 // TYPES ==========================================================================================
 
@@ -99,9 +101,9 @@ export class TimelineScreen extends React.PureComponent<
       // data
       data={items}
       keyExtractor={n => n.data.id.toString()}
-      renderItem={({ item, index }) => item.type === ITimelineItemType.NOTIFICATION
+      renderItem={({ item }) => item.type === ITimelineItemType.NOTIFICATION
         ? this.renderNotificationItem(item.data as INotification)
-        : /*this.renderFlashMsgItem(item.data) as IFlashMessage*/ null}
+        : this.renderFlashMessageItem(item.data) as IFlashMessage} //TODO: add type
       // pagination
       ListEmptyComponent={this.renderEmpty}
       refreshControl={
@@ -123,14 +125,21 @@ export class TimelineScreen extends React.PureComponent<
     return <Text>Empty.</Text> // ToDo: great empty screen here
   }
 
-  renderNotificationItem(n: INotification) {
-    const compInst = <Text>{n.message}</Text>;
-    return isResourceUriNotification(n)
-      ? <TouchableOpacity onPress={e => { this.doOpenNotification(n) }} >{compInst}</TouchableOpacity>
-      : <View>{compInst}</View>;
+  renderNotificationItem(notification: INotification) {
+    return (
+      <TimelineNotification
+        {...notification}
+        notificationAction={
+          isResourceUriNotification(notification)
+            ? () => this.doOpenNotification(notification)
+            : undefined
+        }
+      />
+    )
   }
 
-  renderFlashMsgItem(fm: any) { // ToDo type and code
+  renderFlashMessageItem(flashMessage: any) { // ToDo type and code + copy "timelineData" logic from Timeline.tsx
+    return <TimelineFlashMessage {...flashMessage}/>
   }
 
   // LIFECYCLE ====================================================================================
