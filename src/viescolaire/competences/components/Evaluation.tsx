@@ -15,6 +15,7 @@ import { ILevelsList } from "../state/competencesLevels";
 import { IDevoirListState } from "../state/devoirs";
 import { IMatiereList } from "../state/matieres";
 import { IMoyenneListState } from "../state/moyennes";
+import { IServiceList } from "../state/servicesMatieres";
 import { GradesDevoirs, GradesDevoirsMoyennes } from "./Item";
 
 // eslint-disable-next-line flowtype/no-types-missing-file-annotation
@@ -23,16 +24,20 @@ export type ICompetencesProps = {
   devoirsMoyennesList: IMoyenneListState;
   levels: ILevelsList;
   subjects: IMatiereList;
+  serviceList: IServiceList;
   userType: string;
   periods: IPeriodsList;
   groupId: string;
+  groups: any;
   structureId: string;
   childId: string;
+  childClasses: string;
   getDevoirs: (structureId: string, studentId: string, period?: string, matiere?: string) => void;
   getDevoirsMoyennes: (structureId: string, studentId: string, period?: string) => void;
   getPeriods: (structureId: string, groupId: string) => void;
   getLevels: (structureIs: string) => void;
-  getSubjects: (studentId: string) => void;
+  getSubjects: (structureId: string) => void;
+  getServiceList: (structureId: string) => void;
 };
 
 enum SwitchState {
@@ -50,6 +55,7 @@ type ISelectedPeriod = { type: string; value: string | undefined };
 
 type ICompetencesState = {
   devoirs: any;
+  disciplineList: any;
   screenDisplay: ScreenDisplay;
   switchValue: SwitchState;
   currentPeriod: ISelectedPeriod;
@@ -65,6 +71,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     const { devoirsList } = this.props;
     this.state = {
       devoirs: devoirsList.data.sort((a, b) => moment(b.date, "DD/MM/YYYY").diff(moment(a.date, "DD/MM/YYYY"))),
+      disciplineList: [],
       screenDisplay: ScreenDisplay.DASHBOARD,
       switchValue: SwitchState.DEFAULT,
       currentPeriod: { type: I18n.t("viesco-competences-period"), value: undefined },
@@ -75,11 +82,6 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
   }
 
   componentDidMount() {
-    const { structureId, childId, groupId } = this.props;
-    this.props.getDevoirs(structureId, childId);
-    this.props.getPeriods(structureId, groupId);
-    this.props.getLevels(structureId);
-    this.props.getSubjects(childId);
     this.getSwitchDefaultPosition();
   }
 
@@ -88,25 +90,33 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     const { childId } = this.props;
     const { screenDisplay, selectedPeriod } = this.state;
 
-    if (childId !== nextProps.childId && screenDisplay === ScreenDisplay.PERIOD) {
-      this.props.getDevoirsMoyennes(nextProps.structureId, nextProps.childId, selectedPeriod.value!);
-      this.props.getPeriods(nextProps.structureId, nextProps.groupId);
-      this.props.getLevels(nextProps.structureId);
-      this.props.getSubjects(nextProps.childId);
-      this.setCurrentPeriod();
-    } else if (childId !== nextProps.childId) {
+    if (childId !== nextProps.childId) {
+      if (screenDisplay === ScreenDisplay.PERIOD) {
+        this.props.getDevoirsMoyennes(nextProps.structureId, nextProps.childId, selectedPeriod.value!);
+        this.setCurrentPeriod();
+      } else {
+        this.props.getDevoirs(nextProps.structureId, nextProps.childId, selectedPeriod.value, this.state.disciplineId!);
+      }
       this.props.getDevoirs(nextProps.structureId, nextProps.childId, selectedPeriod.value, this.state.disciplineId!);
       this.props.getPeriods(nextProps.structureId, nextProps.groupId);
       this.props.getLevels(nextProps.structureId);
-      this.props.getSubjects(nextProps.childId);
+      this.props.getSubjects(nextProps.structureId);
+      this.props.getServiceList(nextProps.structureId);
     }
   }
 
   componentDidUpdate(prevProps) {
-    const { devoirsList, devoirsMoyennesList, periods } = this.props;
+    const { devoirsList, devoirsMoyennesList, periods, serviceList, subjects, groups } = this.props;
     const { devoirs, screenDisplay } = this.state;
 
     if (periods !== prevProps.periods) this.setCurrentPeriod();
+    if (
+      (groups !== prevProps.groups || serviceList !== prevProps.serviceList || subjects !== prevProps.subjects) &&
+      groups &&
+      groups.length > 0
+    ) {
+      this.setDisciplinesList();
+    }
     // Update devoirsList after new fetch
     if (prevProps.devoirsList !== devoirs && screenDisplay !== ScreenDisplay.PERIOD && !devoirsList.isFetching) {
       const list = devoirsList.data.sort((a, b) => moment(b.date, "DD/MM/YYYY").diff(moment(a.date, "DD/MM/YYYY")));
@@ -119,6 +129,24 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
       this.setState({ devoirs: devoirsMoyennesList.data });
     }
   }
+
+  // filter services on student groupId and get only evaluable disciplines
+  setDisciplinesList = () => {
+    const { serviceList, subjects, groups } = this.props;
+
+    let studentGroups = groups[0].idGroups;
+    studentGroups.push(groups[0].idClass);
+    let studentDisciplineList = serviceList.filter(service => {
+      let matiere = service.id_groups.find(id_group => studentGroups.includes(id_group!)) && service.evaluable;
+      if (matiere && matiere !== undefined) return matiere;
+    });
+
+    let disciplines = subjects.filter(subject => {
+      let matiere = studentDisciplineList.find(elem => elem.id_matiere === subject.id);
+      if (matiere && matiere !== undefined) return matiere;
+    });
+    this.setState({ disciplineList: disciplines });
+  };
 
   getSwitchDefaultPosition = async () => {
     let value = false as boolean;
@@ -269,7 +297,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
   }
 
   private displayDisciplinesDropdown() {
-    let disciplines = this.props.subjects
+    let disciplines = this.state.disciplineList
       .map(({ name }) => name)
       .sort((a, b) => String(a.toLocaleLowerCase() ?? "").localeCompare(b.toLocaleLowerCase() ?? ""));
     disciplines.unshift(I18n.t("viesco-competences-disciplines"));
