@@ -4,7 +4,7 @@
 
 import { fetchJSONWithCache } from "../../../../infra/fetchWithCache";
 import { IUserSession } from "../../../session"
-import { IEntcoreNotificationType } from "../reducer/notifTypes";
+import { IEntcoreNotificationType } from "../reducer/notifDefinitions/notifTypes";
 
 export const registeredNotificationsService = {
     list: async (session: IUserSession) => {
