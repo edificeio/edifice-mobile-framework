@@ -30,7 +30,6 @@ export class GridAvatars extends React.Component<IAvatarsProps> {
 
 const Container = style.view({
 	alignItems: "center",
-	flex: 1,
 	flexDirection: "row",
 	flexWrap: "nowrap",
 	justifyContent: "center",

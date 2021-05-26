@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Text, Image, ImageURISource } from "react-native";
 
-import { TouchCard } from "../../../../ui/Card";
 import { ArticleContainer } from "../../../../ui/ContainerContent";
 import Images from "../../../../ui/Images";
 import NotificationTopInfo from "./NotificationTopInfo";
@@ -13,6 +12,7 @@ import { IRemoteAttachment } from "../../../../ui/Attachment";
 import { Icon } from "../../../../ui/icons/Icon";
 import { signURISource, transformedSrc } from "../../../../infra/oauth";
 import theme from "../../../theme";
+import { TouchCard } from "../../../components/card";
 
 interface ITimelineNotificationProps {
   notification: INotification;

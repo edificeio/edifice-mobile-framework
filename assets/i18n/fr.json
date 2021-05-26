@@ -1,4 +1,8 @@
 {
+  "common": {
+    "infoBubble-doNotShow": "Ne plus afficher ce message",
+    "infoBubble-understood": "J'ai compris"
+  },
   "timeline": {
     "appName": "Fil de nouveautés",
     "tabName": "Nouveautés",
@@ -35,6 +39,11 @@
         "WIKI": "Wiki",
         "WORKSPACE": "Espace documentaire"
       }
+    },
+    "webViewScreen": {
+      "infoBubbleText": "Pour consulter et modifier certains contenus, vous serez redirigé vers le navigateur web de votre smartphone.",
+      "openInBrowser": "Ouvrir dans le navigateur",
+      "title": "Redirection web"
     }
   },
     "Activate": "Activer votre compte",

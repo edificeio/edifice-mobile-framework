@@ -23,3 +23,12 @@ export const setItemJson = async <T>(k: string, data: T) => {
         else throw new Error(`[Storage] setItemJson: failed to write key "${k}"`);
     }
 }
+
+export const removeItemJson = async <T>(k: string) => {
+    try {
+        return AsyncStorage.removeItem(k);
+    } catch (e) {
+        if (e instanceof Error) throw new Error(`[Storage] removeItemJson: failed to remove key "${k}": ${(e as Error).message}`);
+        else throw new Error(`[Storage] removeItemJson: failed to remove key "${k}"`);
+    }
+}
