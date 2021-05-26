@@ -49,7 +49,7 @@ export default class TimelineScreen extends React.PureComponent<
     return <FakeHeader>
       <HeaderRow>
         <HeaderAction iconName="filter"/>
-        <HeaderTitle>{I18n.t("timeline-appname")}</HeaderTitle>
+        <HeaderTitle>{I18n.t("timeline.appName")}</HeaderTitle>
         <HeaderIcon name={null}/>
       </HeaderRow>
     </FakeHeader>
