@@ -288,11 +288,14 @@ export class BlogCreatePostScreen extends React.PureComponent<
         uploadedPostImages = await handleUploadPostImages(images);
       }
 
+      // Translate entered content to httml
+      const htmlContent = content.replace(/\n/g, '<br>');
+
       // Create and submit/publish post
       await handleSendBlogPost(
         blog,
         title,
-        content,
+        htmlContent,
         uploadedPostImages
       );
 
