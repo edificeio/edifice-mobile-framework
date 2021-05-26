@@ -253,7 +253,7 @@ function renderParseText(
       const LinkTextComp = (nugget as ILinkTextNugget).url
         ? nested ? NestedTextLink : TextLink
         : nested ? NestedText : Text;
-        console.log("rendering", nugget);
+        // console.log("rendering", nugget);
       return (
         <LinkTextComp
           key={key}
