@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, FlatList, TouchableOpacity, RefreshControl } from "react-native";
+import { View, FlatList, TouchableOpacity, RefreshControl, Linking } from "react-native";
 import { NavigationInjectedProps } from "react-navigation";
 import { ThunkDispatch } from "redux-thunk";
 import { connect } from "react-redux";
@@ -20,6 +20,8 @@ import { GridAvatars } from "../../../ui/avatars/GridAvatars";
 import { legacyAppConf } from "../../../framework/util/appConf";
 import { getAuthHeader } from "../../../infra/oauth";
 import { Icon } from "../../../framework/components/icon";
+import { EmptyScreen } from "../../../framework/components/emptyScreen";
+import Conf from "../../../../ode-framework-conf";
 
 // TYPES ==========================================================================================
 
@@ -101,18 +103,48 @@ export class BlogSelectScreen extends React.PureComponent<
 
   renderList() {
     const { loadingState, blogsData } = this.state;
+    const isEmpty = blogsData?.length === 0;
     return (
       <FlatList
         data={blogsData}
         renderItem={({ item }: { item: IBlog }) => this.renderBlog(item)}
         keyExtractor={(item: IBlog) => item.id.toString()}
-        contentContainerStyle={{ flexGrow: 1, paddingVertical: 12, backgroundColor: theme.color.background.card }}
+        contentContainerStyle={{ flexGrow: 1, paddingVertical: isEmpty ? undefined : 12, backgroundColor: theme.color.background.card }}
+        ListEmptyComponent={this.renderEmpty}
         refreshControl={
           <RefreshControl
             refreshing={[BlogSelectLoadingState.REFRESH, BlogSelectLoadingState.INIT].includes(loadingState)}
             onRefresh={() => this.doRefresh()}
           />
         }
+      />
+    );
+  }
+
+  renderEmpty() {
+    return (
+      <EmptyScreen
+        imageSrc={require("../../../../assets/images/empty-screen/blog.png")}
+        imgWidth={265.98}
+        imgHeight={279.97}
+        title={I18n.t("blog.blogSelectScreen.emptyScreenTitle")}
+        text={I18n.t("blog.blogSelectScreen.emptyScreenText")}
+        buttonText={I18n.t("blog.blogSelectScreen.emptyScreenButton")}
+        buttonAction={() => {
+          //TODO: create generic function inside oauth (use in myapps, etc.)
+          if (!Conf.currentPlatform) {
+            console.warn("Must have a platform selected to redirect the user");
+            return null;
+          }
+          const url = `${(Conf.currentPlatform as any).url}/blog`
+          Linking.canOpenURL(url).then(supported => {
+            if (supported) {
+              Linking.openURL(url);
+            } else {
+              console.warn("[timeline] Don't know how to open URI: ", url);
+            }
+          });
+        }}
       />
     );
   }
