@@ -185,11 +185,13 @@ export class LoginPage extends React.Component<
               inputRef={this.setInputLoginRef}
               placeholder={I18n.t("Login")}
               onChangeText={(login: string) =>
-                this.setState({ login: login.trim(), typing: true })
+                this.setState({ login: login.trim().toLowerCase(), typing: true })
               }
               value={login}
               hasError={(error && !typing) as boolean}
               keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
             />
             <PasswordInputLine
               inputRef={this.setInputPasswordRef}
