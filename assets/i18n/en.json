@@ -207,7 +207,6 @@
   },
   "Activate": "Activate account",
   "activation-cancelLoad": "Cancel",
-  "activation-cgu": "By activating your account, you accept the terms and conditions of use",
   "activation-errorLoading": "Network errors.",
   "activation-errorSubmit": "Network errors.",
   "activation-retryLoad": "Try again",
