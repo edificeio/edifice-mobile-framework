@@ -24,13 +24,11 @@ export const notificationsService = {
         const url = '/timeline/lastNotifications';
         const query = {
             page,
-            type: filters,
-            both: 1
+            type: filters
         };
         const api = queryString.stringifyUrl({ url, query });
-        console.log("api", api);
         const headers = {
-            // Accept: "application/json;version=2.0"
+            Accept: "application/json;version=3.0"
         }
         const entcoreNotifications = await fetchJSONWithCache(api, { headers }) as {results: IEntcoreTimelineNotification[], status: string, number: number};
         if (entcoreNotifications.status !== "ok") {
