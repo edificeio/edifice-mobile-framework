@@ -9,10 +9,8 @@ import { ThunkDispatch } from "redux-thunk";
 import messaging, { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 import SplashScreen from "react-native-splash-screen";
 
-import { handleNotificationAction, NotifHandlerThunkAction } from "./routing";
-import { getAsResourceUriNotification, IEntcoreTimelineNotification, ITimelineNotification, notificationAdapter } from '.';
-import { legacyAppConf } from '../appConf';
-import { Linking } from 'react-native';
+import { defaultNotificationActionStack, handleNotificationAction } from "./routing";
+import { IEntcoreTimelineNotification, notificationAdapter } from '.';
 import { startLoadNotificationsAction } from '../modules/timelinev2/actions';
 
 export async function requestUserPermission() {
@@ -21,33 +19,6 @@ export async function requestUserPermission() {
 	if (authorizationStatus) {
 		console.log('Permission status:', authorizationStatus);
 	}
-}
-
-const fallbackHandleNotificationAction: NotifHandlerThunkAction = n => async (dispatch, getState) => {
-	if (!legacyAppConf.currentPlatform)
-		throw new Error("[cloudMessaging] Must have a platform selected to redirect the user");
-
-	const notifWithUri = getAsResourceUriNotification(n);
-	if (!notifWithUri) {
-		console.log(`[cloudMessaging] notification ${n.type}.${n["event-type"]} has no resource uri.`);
-		return {
-			managed: false,
-		};
-	}
-	const url = `${legacyAppConf.currentPlatform.url}${notifWithUri.resource.uri}`;
-	const notifPathBegin = '/' + notifWithUri.resource.uri.replace(/^\/+/g, '').split('/')[0];
-	console.log("[cloudMessaging] Redirect to ", url);
-	Linking.canOpenURL(url).then(supported => {
-		if (supported) {
-			Linking.openURL(url);
-		} else {
-			console.warn("[cloudMessaging] Don't know how to open URL: ", url);
-		}
-	});
-	return {
-		managed: true,
-		trackInfo: { action: "Browser" }
-	};
 }
 
 const _AppPushNotificationHandlerComponent: FunctionComponent<{ isLoggedIn: boolean, apps: string[], dispatch: ThunkDispatch<any, any, any> }> = (props) => {
@@ -87,7 +58,7 @@ const _AppPushNotificationHandlerComponent: FunctionComponent<{ isLoggedIn: bool
 			const n = notificationAdapter(notificationData);
 
 			props.dispatch(startLoadNotificationsAction()); // Lasy-load, no need to await here.
-			props.dispatch(handleNotificationAction(n, fallbackHandleNotificationAction, "Push Notification"))
+			props.dispatch(handleNotificationAction(n, defaultNotificationActionStack, "Push Notification"))
 			setNotification(undefined);
 		}
 		SplashScreen.hide();

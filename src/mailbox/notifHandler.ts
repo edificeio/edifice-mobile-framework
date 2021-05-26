@@ -19,7 +19,7 @@ import { AsyncState } from "../infra/redux/async2";
 import { IConversationThreadList } from "./reducers/threadList";
 
 //TODO add types args
-const mailboxNotifHandlerFactory: NotificationHandlerFactory<any,any,any> = (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => async (notificationData, apps, doTrack) => {
+const mailboxNotifHandlerFactory: NotificationHandlerFactory<any,any,any> = (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => async (notificationData, apps, trackCategory) => {
   if (!notificationData.resourceUri.startsWith("/conversation")) {
     return false;
   }
@@ -69,7 +69,7 @@ const mailboxNotifHandlerFactory: NotificationHandlerFactory<any,any,any> = (dis
     );
   }
   const notifPathBegin = '/' + notificationData.resourceUri.replace(/^\/+/g, '').split('/')[0];
-  doTrack && Trackers.trackEvent(doTrack, "Conversation", notifPathBegin);
+  trackCategory && Trackers.trackEvent(trackCategory, "Conversation", notifPathBegin);
   return true;
 };
 export default mailboxNotifHandlerFactory;
