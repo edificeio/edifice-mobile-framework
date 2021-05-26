@@ -3,7 +3,7 @@
  */
 
 import { ThunkDispatch } from "redux-thunk";
-import { getUserSession, IUserSession } from "../../../session";
+import { getUserSession } from "../../../session";
 import moduleConfig from "../moduleConfig";
 import { ITimeline_State } from "../reducer";
 import * as notifDefinitionsStateHandler from "../reducer/notifDefinitions";
@@ -11,7 +11,8 @@ import * as notifSettingsStateHandler from "../reducer/notifSettings";
 import { loadNotificationsDefinitionsAction } from "./notifDefinitions";
 import { loadNotificationsSettingsAction } from "./notifSettings";
 import { actions as notificationsActions } from "../reducer/notifications";
-import { notificationsService } from "../service";
+import { actions as flashMessagesActions } from "../reducer/flashMessages";
+import { flashMessagesService, notificationsService } from "../service";
 
 const _prepareNotificationsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   // const session = getUserSession(getState());
@@ -31,7 +32,7 @@ const _prepareNotificationsAction = () => async (dispatch: ThunkDispatch<any, an
 }
 
 /**
- * Clear the timeline and fetch the first page. If the fetch fail, data is not cleared.
+ * Clear the timeline and fetch the first page. If the fetch fails, data is not cleared.
  */
 export const startLoadNotificationsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   try {
@@ -40,15 +41,23 @@ export const startLoadNotificationsAction = () => async (dispatch: ThunkDispatch
     if (state.notifications.isFetching) return;
     console.log("state", state);
 
-    // Load notifications page 0 after reset
+    // Load notifications page 0 & flash messages (after reset)
     dispatch(notificationsActions.request());
+    dispatch(flashMessagesActions.request());
+
     const page = 0;
     console.log("state.notifSettings.notifFilterSettings.data", state.notifSettings.notifFilterSettings.data);
     const filters = Object.keys(state.notifSettings.notifFilterSettings.data).filter(filter => state.notifSettings.notifFilterSettings.data[filter]);
     console.log("filters", filters);
-    const notifications = await notificationsService.page(session, page, filters);
+    const [notifications, flashMessages] = await Promise.all([
+      notificationsService.page(session, page, filters),
+      flashMessagesService.list(session)
+    ])
+
     dispatch(notificationsActions.clear());
+    dispatch(flashMessagesActions.clear());
     dispatch(notificationsActions.receipt(notifications, page));
+    dispatch(flashMessagesActions.receipt(flashMessages));
   } catch (e) {
     // ToDo: Error handling
     console.warn(`[${moduleConfig.name}] loadNotificationsAction failed`, e);
@@ -56,7 +65,7 @@ export const startLoadNotificationsAction = () => async (dispatch: ThunkDispatch
 };
 
 /**
- * Fetch a specific page of notifgications and add it to the notifications data.
+ * Fetch a specific page of notifications and add it to the notifications data.
  * Use this to load automatically the next page by call the action without provideing the `page` parameter.
  * @param page page number to load. Data of this page will be replaced by the new one. If no page specified, load the next page automatically.
  * @returns true if there is more pages to load, false if data end is reached.
@@ -83,5 +92,23 @@ export const loadNotificationsPageAction = (page?: number) => async (dispatch: T
     // ToDo: Error handling
     console.warn(`[${moduleConfig.name}] loadNotificationsPageAction failed`, e);
     dispatch(notificationsActions.error(e));
+  }
+};
+
+/**
+ * Dismiss a given flash message by marking it as read.
+ */
+export const dismissFlashMessageAction = (flashMessageId: number) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  try {
+    const session = getUserSession(getState());
+
+    // Dismiss flash message
+    dispatch(flashMessagesActions.dismissRequest(flashMessageId));
+    await flashMessagesService.dismiss(session, flashMessageId);
+    dispatch(flashMessagesActions.dismissReceipt(flashMessageId));
+  } catch (e) {
+    // ToDo: Error handling (notifier: "votre action n'a pas été correctement exécutée (problème de connexion)")
+    console.warn(`[${moduleConfig.name}] dismissFlashMessageAction failed`, e);
+    dispatch(flashMessagesActions.dismissError(flashMessageId));
   }
 };

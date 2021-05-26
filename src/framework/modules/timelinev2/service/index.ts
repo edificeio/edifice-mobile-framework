@@ -9,6 +9,9 @@ import { fetchJSONWithCache } from "../../../../infra/fetchWithCache";
 import { IUserSession } from "../../../session"
 import { IEntcoreNotificationType } from "../reducer/notifDefinitions/notifTypes";
 import { IEnrichedNotification, IEntcoreNotification, INotification, IResourceUriNotification, INamedResourceNotification, ISenderNotification } from "../reducer/notifications";
+import { IEntcoreFlashMessage } from "../reducer/flashMessages";
+
+// Notifications
 
 export const registeredNotificationsService = {
     list: async (session: IUserSession) => {
@@ -74,5 +77,18 @@ export const notificationsService = {
         }
         // Run the notification adapter for each received notification
         return entcoreNotifications.results.map(n => notificationAdapter(n));
+    }
+}
+
+// Flash Messages
+
+export const flashMessagesService = {
+    list: async (session: IUserSession) => {
+        const api = '/timeline/flashmsg/listuser';
+        return fetchJSONWithCache(api) as Promise<IEntcoreFlashMessage[]>;
+    },
+    dismiss: async (session: IUserSession, flashMessageId: number) => {
+        const api = `/timeline/flashmsg/${flashMessageId}/markasread`;
+        return fetchJSONWithCache(api, { method: "PUT" }) as any;
     }
 }
