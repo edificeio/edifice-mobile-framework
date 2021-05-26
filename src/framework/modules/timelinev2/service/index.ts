@@ -8,7 +8,7 @@ import queryString from "query-string";
 import { fetchJSONWithCache } from "../../../../infra/fetchWithCache";
 import { IUserSession } from "../../../session"
 import { IEntcoreNotificationType } from "../reducer/notifDefinitions/notifTypes";
-import { IEnrichedNotification, IEntcoreNotification, INotification, IResourceNotification, ISentNotification } from "../reducer/notifications";
+import { IEnrichedNotification, IEntcoreNotification, INotification, IResourceUriNotification, INamedResourceNotification, ISenderNotification } from "../reducer/notifications";
 
 export const registeredNotificationsService = {
     list: async (session: IUserSession) => {
@@ -17,26 +17,31 @@ export const registeredNotificationsService = {
     }
 }
 
-export const notificationAdapter = (n: IEntcoreNotification, session: IUserSession) => {
+export const notificationAdapter = (n: IEntcoreNotification) => {
     const ret = {
         id: n._id,
         date: moment(n.date.$date),
         type: n.type,
         "event-type": n["event-type"],
         message: n.message,
-        unread: n.recipients && n.recipients.find(usr => usr.userId === session.user.id)?.unread // WARNING! n.recipients not always defined (BLO/PULISH-POST for example)
+        backupData: n
     } as INotification as unknown;
-    if (n.sender) {
-        (ret as ISentNotification).sender = {
+    if (n.sender && n.params.username) {
+        (ret as ISenderNotification).sender = {
             id: n.sender,
-            displayName: n.params.username! // WARNING! Assuming n.params.username IS defined when n.sender is. Maybe a false assumption.
+            displayName: n.params.username!
         }
     }
-    if (n.resource) {
-        (ret as IResourceNotification).resource = {
+    if (n.params.resourceUri) {
+        (ret as IResourceUriNotification).resource = {
+            uri: n.params.resourceUri!
+        }
+    }
+    if (n.params.resourceUri && n.resource && n.params.resourceName) {
+        (ret as INamedResourceNotification).resource = {
+            uri: n.params.resourceUri!,
             id: n.resource,
-            uri: n.params.resourceUri!, // WARNING! Assuming n.params.resourceUri IS defined when n.resource is. Maybe a false assumption.
-            name: n.params.resourceName! // WARNING! Assuming n.params.resourceName IS defined when n.resource is. Maybe a false assumption.
+            name: n.params.resourceName!
         }
     }
     if (n.preview) {
@@ -61,13 +66,13 @@ export const notificationsService = {
         const api = queryString.stringifyUrl({ url, query });
         console.log("api", api);
         const headers = {
-            Accept: "application/json;version=2.0"
+            // Accept: "application/json;version=2.0"
         }
         const entcoreNotifications = await fetchJSONWithCache(api, { headers }) as {results: IEntcoreNotification[], status: string, number: number};
         if (entcoreNotifications.status !== "ok") {
             throw new Error("[notificationsService.page] got status not ok from " + api);
         }
         // Run the notification adapter for each received notification
-        return entcoreNotifications.results.map(n => notificationAdapter(n, session));
+        return entcoreNotifications.results.map(n => notificationAdapter(n));
     }
 }

@@ -51,3 +51,5 @@ export function createMainStore() {
 
   return store;
 }
+
+export type IGlobalState = any; // Todo: Make any TS logic that can get composed state from module definitions IF POSSIBLE

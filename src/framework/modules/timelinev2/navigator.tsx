@@ -1,6 +1,6 @@
 import { createStackNavigator } from "react-navigation-stack";
 
-import TimelineScreen from "./screens/Timeline";
+import TimelineScreen from "./screens/TimelineScreen";
 
 export default createStackNavigator(
     {
