@@ -7,13 +7,28 @@ import { pickFile } from "./pickFile";
 import { renameAction } from "../actions/rename";
 import { restoreAction } from "../actions/restore";
 import { Platform } from "react-native";
+import { FilePicker } from "../../infra/filePicker";
+import * as React from "react";
+import { uploadAction } from "../actions/upload";
+import { ContentUri } from "../types";
 
 export const addMenu = () => {
   return {
     text: I18n.t("add-file"),
     icon: "file-plus",
     id: "addDocument",
-    onEvent: ({ dispatch, parentId }: any) => pickFile({ dispatch, parentId }),
+    // onEvent: ({ dispatch, parentId }: any) => pickFile({ dispatch, parentId }),
+    wrapper: ({ children, dispatch, parentId}) => <FilePicker
+      callback={file => {
+        const convertedFile: ContentUri = {
+          mime: file.type,
+          name: file.fileName,
+          uri: file.uri,
+          path: file.uri
+        };
+        dispatch(uploadAction(parentId, convertedFile));
+      }}
+    >{children}</FilePicker>
   };
 };
 

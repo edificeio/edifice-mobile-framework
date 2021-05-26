@@ -37,4 +37,5 @@ export type IFloatingProps = {
   iconSize?: number,
   menuItems?: IMenuItem[];
   onEvent: (event: IEvent) => void;
+  eventHandleData: any;
 };
