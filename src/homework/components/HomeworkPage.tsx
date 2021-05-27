@@ -26,7 +26,7 @@ import ViewOverflow from "react-native-view-overflow";
 import moment from "moment";
 
 // Components
-import { RefreshControl, SectionList, Text } from "react-native";
+import { Linking, RefreshControl, SectionList, Text } from "react-native";
 const { View } = style;
 
 import { FlatButton, Loading } from "../../ui";
@@ -40,12 +40,14 @@ import HomeworkCard from "./HomeworkCard";
 
 // Type definitions
 import { IHomeworkTask } from "../reducers/tasks";
-import { IHomeworkDiary } from "../reducers/diaryList";
+import { IHomeworkDiary, IHomeworkDiaryList } from "../reducers/diaryList";
 
 // Misc
 import today from "../../utils/today";
 import { NavigationScreenProp } from "react-navigation";
 import { CommonStyles } from "../../styles/common/styles";
+import Conf from "../../../ode-framework-conf";
+import { Trackers } from "../../framework/util/tracker";
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -53,7 +55,8 @@ export interface IHomeworkPageDataProps {
   isFetching?: boolean;
   diaryId?: string;
   didInvalidate?: boolean;
-  diaryInformation?: IHomeworkDiary
+  diaryListData?: IHomeworkDiaryList;
+  diaryInformation?: IHomeworkDiary;
   tasksByDay?: Array<{
     id: string;
     date: moment.Moment;
@@ -128,6 +131,7 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
 
   private renderList() {
     const {
+      diaryListData,
       diaryId,
       tasksByDay,
       navigation,
@@ -136,6 +140,7 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
       onScrollBeginDrag
     } = this.props;
     const { fetching, pastDateLimit } = this.state
+    const hasNoDiaries = !diaryListData || diaryListData && Object.keys(diaryListData).length === 0;
     const data = tasksByDay ? tasksByDay.map(day => ({
       title: day.date,
       data: day.tasks.map(task => ({
@@ -172,6 +177,7 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
             </>
         }
         <SectionList
+          scrollEnabled={!hasNoDiaries}
           contentContainerStyle={noFutureHomeworkHiddenPast ? { flex: 1 } : null}
           sections={displayedHomework}
           CellRendererComponent={ViewOverflow} /* TS-ISSUE : CellRendererComponent is an official FlatList prop */
@@ -231,8 +237,25 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
                 imageSrc={require("../../../assets/images/empty-screen/homework.png")}
                 imgWidth={265.98}
                 imgHeight={279.97}
-                text={I18n.t("homework-emptyScreenText")}
-                title={I18n.t("homework-emptyScreenTitle")}
+                text={I18n.t(`homework-${hasNoDiaries ? "diaries" : "tasks"}-emptyScreenText`)}
+                title={I18n.t(`homework-${hasNoDiaries ? "diaries" : "tasks"}-emptyScreenTitle`)}
+                buttonText={hasNoDiaries ? I18n.t("homework-createDiary") : undefined}
+                buttonAction={() => {
+                  //TODO: create generic function inside oauth (use in myapps, etc.)
+                  if (!Conf.currentPlatform) {
+                    console.warn("Must have a platform selected to redirect the user");
+                    return null;
+                  }
+                  const url = `${(Conf.currentPlatform as any).url}/homeworks`;
+                  Linking.canOpenURL(url).then(supported => {
+                    if (supported) {
+                      Linking.openURL(url);
+                    } else {
+                      console.warn("[homework] Don't know how to open URI: ", url);
+                    }
+                  });
+                  Trackers.trackEvent("Homework", "GO TO", "Create in Browser");
+                }}
                 customStyle={{ marginBottom: hasPastHomeWork ? 60 : 0 }}
               />
             : null

@@ -1,5 +1,5 @@
 import * as React from "react";
-
+import { Platform } from "react-native";
 import { Icon } from "..";
 import { CommonStyles } from "../../styles/common/styles";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
@@ -47,7 +47,11 @@ export const HeaderBackAction = ({
 }: {
   navigation: NavigationScreenProp<{}>, style?: ViewStyle
 }) => (
-    <HeaderAction onPress={() => navigation.dispatch(NavigationActions.back())} name={"back"} style={style} />
+  <HeaderAction
+    onPress={() => navigation.dispatch(NavigationActions.back())}
+    name={(Platform.OS === "ios") ? "chevron-left1" : "back"}
+    style={style}
+  />
 )
 
 // HEADER TEXTS

@@ -1,4 +1,5 @@
 import I18n from "i18n-js";
+import { Platform } from "react-native";
 import { copyDocuments, moveDocuments } from "./copypast";
 import { downloadAction } from "../actions/download";
 import { createFolderAction } from "../actions/create";
@@ -6,35 +7,19 @@ import { deleteAction, trashAction } from "../actions/delete";
 import { pickFile } from "./pickFile";
 import { renameAction } from "../actions/rename";
 import { restoreAction } from "../actions/restore";
-import { Platform } from "react-native";
-import { FilePicker } from "../../infra/filePicker";
-import * as React from "react";
-import { uploadAction } from "../actions/upload";
-import { ContentUri } from "../types";
 
 export const addMenu = () => {
   return {
     text: I18n.t("add-file"),
     icon: "file-plus",
     id: "addDocument",
-    // onEvent: ({ dispatch, parentId }: any) => pickFile({ dispatch, parentId }),
-    wrapper: ({ children, dispatch, parentId}) => <FilePicker
-      callback={file => {
-        const convertedFile: ContentUri = {
-          mime: file.type,
-          name: file.fileName,
-          uri: file.uri,
-          path: file.uri
-        };
-        dispatch(uploadAction(parentId, convertedFile));
-      }}
-    >{children}</FilePicker>
+    onEvent: ({ dispatch, parentId }: any) => pickFile({ dispatch, parentId }),
   };
 };
 
 export const backMenu = () => ({
   text: "Back",
-  icon: "chevron-left1",
+  icon: (Platform.OS === "ios") ? "chevron-left1" : "back",
   id: "back",
   onEvent: () => null,
 });

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, FlatList, RefreshControl, Linking } from "react-native";
+import { FlatList, Linking, Platform, RefreshControl, View } from "react-native";
 import { NavigationInjectedProps } from "react-navigation";
 import { ThunkDispatch } from "redux-thunk";
 import { connect } from "react-redux";
@@ -96,7 +96,10 @@ export class NewsDetailsScreen extends React.PureComponent<
       <FakeHeader>
         <HeaderRow>
           <HeaderLeft>
-            <HeaderAction iconName="back" onPress={() => navigation.navigate("timeline")}/>
+            <HeaderAction
+              iconName={(Platform.OS === "ios") ? "chevron-left1" : "back"}
+              onPress={() => navigation.navigate("timeline")}
+            />
           </HeaderLeft>
           <HeaderCenter>
             {newsData?.title
