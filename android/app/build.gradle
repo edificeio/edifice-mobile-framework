@@ -1,4 +1,4 @@
-project.ext.react = [entryFile: "index.js", enableHermes: false]
+project.ext.react = [enableHermes: false]
 
 import com.android.build.OutputFile
 
@@ -64,7 +64,7 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     // Hermes Debugger Management
     if (project.ext.react.get("enableHermes", false)) {
-        def hermesPath = "../../node_modules/hermes-engine/android/";
+        def hermesPath = "../../node_modules/hermes-engine/android/"
         debugImplementation files(hermesPath + "hermes-debug.aar")
         releaseImplementation files(hermesPath + "hermes-release.aar")
     } else {
@@ -91,7 +91,7 @@ dependencies {
     debugImplementation ("com.facebook.flipper:flipper-leakcanary-plugin:${flipperVersion}") {
         exclude group:'com.facebook.flipper'
     }
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.3'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
     debugImplementation 'com.facebook.soloader:soloader:0.10.1'
     releaseImplementation ("com.facebook.flipper:flipper-noop:${flipperVersion}")
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
