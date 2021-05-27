@@ -110,11 +110,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     const { devoirs, screenDisplay } = this.state;
 
     if (periods !== prevProps.periods) this.setCurrentPeriod();
-    if (
-      (groups !== prevProps.groups || serviceList !== prevProps.serviceList || subjects !== prevProps.subjects) &&
-      groups &&
-      groups.length > 0
-    ) {
+    if (groups !== prevProps.groups || serviceList !== prevProps.serviceList || subjects !== prevProps.subjects) {
       this.setDisciplinesList();
     }
     // Update devoirsList after new fetch
@@ -134,18 +130,23 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
   setDisciplinesList = () => {
     const { serviceList, subjects, groups } = this.props;
 
-    let studentGroups = groups[0].idGroups;
-    studentGroups.push(groups[0].idClass);
-    let studentDisciplineList = serviceList.filter(service => {
-      let matiere = service.id_groups.find(id_group => studentGroups.includes(id_group!)) && service.evaluable;
-      if (matiere && matiere !== undefined) return matiere;
-    });
+    let studentGroups = [] as string[];
+    if (groups && groups.length > 0) {
+      studentGroups = [...groups[0].idGroups];
+    }
+    studentGroups.push(this.props.childClasses);
+    if (studentGroups && studentGroups.length > 0) {
+      let studentDisciplineList = serviceList.filter(service => {
+        let matiere = service.id_groups.find(id_group => studentGroups.includes(id_group)) && service.evaluable;
+        if (matiere && matiere !== undefined) return matiere;
+      });
 
-    let disciplines = subjects.filter(subject => {
-      let matiere = studentDisciplineList.find(elem => elem.id_matiere === subject.id);
-      if (matiere && matiere !== undefined) return matiere;
-    });
-    this.setState({ disciplineList: disciplines });
+      let disciplines = subjects.filter(subject => {
+        let matiere = studentDisciplineList.find(elem => elem.id_matiere === subject.id);
+        if (matiere && matiere !== undefined) return matiere;
+      });
+      this.setState({ disciplineList: disciplines });
+    }
   };
 
   getSwitchDefaultPosition = async () => {
