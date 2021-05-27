@@ -18,7 +18,7 @@ target 'appe' do
   pod 'FlipperKit/FlipperKitUserDefaultsPlugin', flipperkit_version, :configuration => 'Debug'
 
   # Other needed pods
-  pod 'MatomoTracker'
+  pod 'MatomoTracker', '~> 7.4'
 
   target 'appeTests' do
     inherit! :complete
