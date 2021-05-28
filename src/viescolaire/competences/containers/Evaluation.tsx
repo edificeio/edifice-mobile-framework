@@ -71,18 +71,19 @@ export class Evaluation extends React.PureComponent<CompetencesProps, any> {
   componentDidMount = async () => {
     const { structureId, childId, childClasses } = this.props;
     this.props.getDevoirs(structureId, childId);
-    this.props.getPeriods(structureId, childClasses);
     this.props.getLevels(structureId);
     this.props.getSubjects(structureId);
     this.props.getServiceList(structureId);
     if (getSessionInfo().type === "Relative") await this.props.fetchChildInfos();
+    this.props.getPeriods(structureId, childClasses);
     this.props.fetchChildGroups(childClasses, childId);
   };
 
   componentDidUpdate = async (prevProps) => {
-    const { childId, childClasses } = this.props;
+    const { structureId, childId, childClasses } = this.props;
     if (prevProps.childId !== childId || prevProps.childClasses !== childClasses) {
       if (getSessionInfo().type === "Relative") await this.props.fetchChildInfos();
+      this.props.getPeriods(structureId, childClasses);
       this.props.fetchChildGroups(childClasses, childId);
     }
   };
