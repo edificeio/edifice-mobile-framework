@@ -27,7 +27,6 @@ export type ICompetencesProps = {
   serviceList: IServiceList;
   userType: string;
   periods: IPeriodsList;
-  groupId: string;
   groups: any;
   structureId: string;
   childId: string;
@@ -98,7 +97,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
         this.props.getDevoirs(nextProps.structureId, nextProps.childId, selectedPeriod.value, this.state.disciplineId!);
       }
       this.props.getDevoirs(nextProps.structureId, nextProps.childId, selectedPeriod.value, this.state.disciplineId!);
-      this.props.getPeriods(nextProps.structureId, nextProps.groupId);
+      this.props.getPeriods(nextProps.structureId, nextProps.childClasses);
       this.props.getLevels(nextProps.structureId);
       this.props.getSubjects(nextProps.structureId);
       this.props.getServiceList(nextProps.structureId);
@@ -138,12 +137,12 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     if (studentGroups && studentGroups.length > 0) {
       let studentDisciplineList = serviceList.filter(service => {
         let matiere = service.id_groups.find(id_group => studentGroups.includes(id_group)) && service.evaluable;
-        if (matiere && matiere !== undefined) return matiere;
+        if (matiere) return matiere;
       });
 
       let disciplines = subjects.filter(subject => {
         let matiere = studentDisciplineList.find(elem => elem.id_matiere === subject.id);
-        if (matiere && matiere !== undefined) return matiere;
+        if (matiere) return matiere;
       });
       this.setState({ disciplineList: disciplines });
     }

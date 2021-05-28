@@ -39,7 +39,6 @@ export type CompetencesProps = {
   serviceList: IServiceList;
   userType: string;
   periods: IPeriodsList;
-  groupId: string;
   groups: string[];
   childClasses: string;
   structureId: string;
@@ -70,9 +69,9 @@ export class Evaluation extends React.PureComponent<CompetencesProps, any> {
   };
 
   componentDidMount = async () => {
-    const { structureId, childId, groupId, childClasses } = this.props;
+    const { structureId, childId, childClasses } = this.props;
     this.props.getDevoirs(structureId, childId);
-    this.props.getPeriods(structureId, groupId);
+    this.props.getPeriods(structureId, childClasses);
     this.props.getLevels(structureId);
     this.props.getSubjects(structureId);
     this.props.getServiceList(structureId);
@@ -100,10 +99,6 @@ export class Evaluation extends React.PureComponent<CompetencesProps, any> {
 const mapStateToProps: (state: any) => any = state => {
   const userType = getSessionInfo().type;
   const childId = userType === "Student" ? getSessionInfo().userId : getSelectedChild(state)?.id;
-  const groupId =
-    userType === "Student"
-      ? getSessionInfo().classes[0]
-      : getSessionInfo().classes[getSessionInfo().childrenIds.findIndex(i => i === childId)];
   const structureId =
     userType === "Student"
       ? getSessionInfo().administrativeStructures[0].id || getSessionInfo().structures[0]
@@ -132,7 +127,6 @@ const mapStateToProps: (state: any) => any = state => {
     subjects: getStructureMatiereListState(state).data,
     userType,
     periods: getPeriodsListState(state).data,
-    groupId,
     groups: getGroupsListState(state).data,
     structureId,
     childId,
