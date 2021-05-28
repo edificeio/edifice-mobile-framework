@@ -6,22 +6,11 @@ import viescoConfig from "../../config";
 // THE MODEL --------------------------------------------------------------------------------------
 
 export interface IDevoir {
-  teacher: string;
+  id: string;
   date: moment.Moment;
-  title: string;
+  subject: string;
   matiere: string;
-  diviseur: number;
-  coefficient: string;
-  note: string;
-  moyenne: string;
-  competences: {
-    nom: string;
-    id: number;
-    id_devoir: number;
-    id_eleve: string;
-    id_competence: number;
-    evaluation: number;
-  }[];
+  note: number
 }
 
 export type IDevoirList = IDevoir[];

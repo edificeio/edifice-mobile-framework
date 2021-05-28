@@ -3,31 +3,31 @@ import { createStackNavigator } from "react-navigation-stack";
 import TimelineScreen from "./screens/TimelineScreen";
 import WebViewScreen from "./screens/TimelineWebViewScreen";
 import FiltersScreen from "./screens/TimelineFiltersScreen";
-import { timelineSubModules } from "./timelineModules";
-import { RouteMap } from "../../util/moduleTool";
-import moduleConfig from "./moduleConfig";
+import { getRegisteredTimelineModules } from "./timelineModules";
+import { getModuleRoutesByArray } from "../../util/moduleTool";
+import { NavigationRouteConfigMap } from "react-navigation";
 
-const namespaceTimelineSubModules = (rmap: RouteMap) => Object.fromEntries(Object.entries(rmap).map(
-    ([k, v]) => [`${moduleConfig.routeName}/${k}`, v]
-));
+/** Returns every route that are to be displayed in tab navigation.*/
+function getTimelineRoutes(): NavigationRouteConfigMap<any, any> {
+    const modules = getRegisteredTimelineModules();
+    return getModuleRoutesByArray(modules);
+}
 
-export default () => {
-    console.log("timeline routes", namespaceTimelineSubModules(timelineSubModules.get()));
-    return createStackNavigator(
+export default () => createStackNavigator(
     {
-        [`${moduleConfig.routeName}`]: {
+        "timeline": {
             screen: TimelineScreen
         },
-        [`${moduleConfig.routeName}/goto`]: {
+        "timeline/goto": {
             screen: WebViewScreen
         },
-        [`${moduleConfig.routeName}/filters`]: {
+        "timeline/filters": {
             screen: FiltersScreen
         },
-        ...namespaceTimelineSubModules(timelineSubModules.get())
+        ...getTimelineRoutes()
     },
     {
         // Note: In Timeline module, there is NO native header. Only FakeHeaders allowed.
         headerMode: "none"
     }
-)};
+);

@@ -4,30 +4,26 @@ import { Icon } from "..";
 import { IEventProps, EVENT_TYPE } from "../../types";
 import { IMenuItem } from "../types";
 import { layoutSize } from "../../styles/common/layoutSize";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import { Text } from "../text";
 
-const Item = ({ onEvent, item, eventHandleData }: IEventProps & any) => {
+const Item = ({ onEvent, item }: IEventProps & any) => {
   const { icon, text } = item as IMenuItem;
 
-  const view = <View
-    style={style.touchPanel}>
-    <LeftIconPanel style={style.leftPanel}>
-      <Icon color="#000000" size={layoutSize.LAYOUT_28} name={icon} />
-    </LeftIconPanel>
-    <CenterPanel style={style.centerPanel}>
-      <Text numberOfLines={1} style={style.fileName}>
-        {text}
-      </Text>
-    </CenterPanel>
-  </View>
-
-  if (item.wrapper) {
-    const ItemWrapper = item.wrapper;
-    return <ItemWrapper {...eventHandleData} >{view}</ItemWrapper>;
-  } else {
-    return <TouchableOpacity onPress={() => onEvent({ type: EVENT_TYPE.MENU_SELECT, id: item.id, item })}>{view}</TouchableOpacity>
-  }
+  return (
+    <TouchableOpacity
+      style={style.touchPanel}
+      onPress={() => onEvent({ type: EVENT_TYPE.MENU_SELECT, id: item.id, item })}>
+      <LeftIconPanel style={style.leftPanel}>
+        <Icon color="#000000" size={layoutSize.LAYOUT_28} name={icon} />
+      </LeftIconPanel>
+      <CenterPanel style={style.centerPanel}>
+        <Text numberOfLines={1} style={style.fileName}>
+          {text}
+        </Text>
+      </CenterPanel>
+    </TouchableOpacity>
+  );
 };
 
 export default Item;

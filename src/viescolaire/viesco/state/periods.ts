@@ -9,8 +9,6 @@ export interface IPeriod {
   start_date: moment.Moment;
   end_date: moment.Moment;
   order: number;
-  type: number;
-  id_type: number;
 }
 
 export interface IYear {

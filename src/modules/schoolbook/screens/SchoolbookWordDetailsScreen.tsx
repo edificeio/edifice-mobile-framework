@@ -450,11 +450,11 @@ const defaultGetStateForAction = SchoolbookWordDetailsScreenRouter.router.getSta
 
 SchoolbookWordDetailsScreenRouter.router.getStateForAction = (action, state: NavigationStateRoute<any>) => {
   if (
-    state?.routeName === 'timeline/schoolbook/details'
+    state?.routeName === 'schoolbook/details'
     && (
       (
         action.type === NavigationActions.NAVIGATE
-        && state?.routeName === 'timeline/schoolbook/details'
+        && state?.routeName === 'schoolbook/details'
         && action.routeName === 'timeline'
       )
       || action.type === NavigationActions.BACK

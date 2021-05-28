@@ -71,7 +71,7 @@ class FloatingAction extends Component<IFloatingProps & ISelected, IState> {
         data={menuItems}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         keyExtractor={(item: IMenuItem) => item.id}
-        renderItem={({ item }) => <FloatingActionItem eventHandleData={this.props.eventHandleData} item={item} onEvent={this.handleEvent.bind(this)} />}
+        renderItem={({ item }) => <FloatingActionItem item={item} onEvent={this.handleEvent.bind(this)} />}
       />
     );
   }

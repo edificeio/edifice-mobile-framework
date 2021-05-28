@@ -1,5 +1,4 @@
 import moment from "moment";
-import { Platform } from "react-native";
 
 import generateUuid from "../../utils/uuid";
 import Conf from "../../../ode-framework-conf";
@@ -11,7 +10,6 @@ import { conversationThreadSelected } from "./threadSelected";
 import { IAttachment } from "./messages";
 import { Trackers } from "../../infra/tracker";
 import { ILocalAttachment, IRemoteAttachment } from "../../ui/Attachment";
-import { Alert } from "react-native";
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -34,7 +32,7 @@ export interface IConversationMessage {
   unread: boolean; // Self-explaining
   rownum: number; // number of the message in the thread (starting from 1 from the newest to the latest).
   status: ConversationMessageStatus; // sending status of the message
-  attachments: Array<IRemoteAttachment>;
+  attachments: Array<IAttachment>;
 }
 
 export type IConversationMessageList = IArrayById<IConversationMessage>;
@@ -149,6 +147,7 @@ export function sendAttachments(attachments: ILocalAttachment[], messageId: stri
       data: fulldata,
       type: actionTypeAttachmentsSendRequested
     });
+
     try {
       if (!Conf.currentPlatform) throw new Error("must specify a platform");
       const remoteAttachments = attachments.filter(att => att.hasOwnProperty("id"));
@@ -157,7 +156,7 @@ export function sendAttachments(attachments: ILocalAttachment[], messageId: stri
         const attachment = att as ILocalAttachment;
         let formData = new FormData();
         formData.append("file", {
-          uri: ((Platform.OS === "android") ? "file://" : "") + attachment.uri,
+          uri: attachment.uri,
           type: attachment.mime,
           name: attachment.name
         } as any);

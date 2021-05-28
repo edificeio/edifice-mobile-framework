@@ -2,12 +2,11 @@
  * Every module config is imported here.
  */
 
-
+import { loadModuleConfigMap } from "../util/moduleTool";
 import BuiltInModuleConfigs from "../modules/BuiltInModuleConfigs";
 import IncludedModuleConfigs from "../../conf/IncludedModuleConfigs";
-import { createModuleConfigMap } from "../util/moduleTool";
 
-export default createModuleConfigMap([
+export default loadModuleConfigMap([
     ...BuiltInModuleConfigs,
     ...IncludedModuleConfigs || []
 ]);

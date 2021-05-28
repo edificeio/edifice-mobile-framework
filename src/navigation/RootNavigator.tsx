@@ -26,7 +26,7 @@ import NavigationService from "./NavigationService";
 // Components
 import Carousel from "../ui/Carousel";
 import { IFrame } from "../ui/IFrame";
-import { IEntcoreApp, tabModules, getModuleRoutes, getAvailableModules, AnyNavigableModule } from "../framework/util/moduleTool";
+import { IEntcoreApp, getRegisteredTabModules, getModuleRoutesByArray } from "../framework/util/moduleTool";
 
 /**
  * MAIN NAVIGATOR
@@ -55,8 +55,8 @@ function getMainRoutes(appsInfo: any[]) {
 
 /** Returns every route that are to be displayed in tab navigation.*/
 function getTabRoutes(appsInfo: IEntcoreApp[]): NavigationRouteConfigMap<any, any> {
-  const modules = getAvailableModules(tabModules.get(), appsInfo);
-  return getModuleRoutes(modules);
+  const modules = getRegisteredTabModules();
+  return getModuleRoutesByArray(modules);
 }
 
 /**

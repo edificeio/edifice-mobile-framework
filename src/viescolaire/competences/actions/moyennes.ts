@@ -10,12 +10,12 @@ export const dataActions = createAsyncActionCreators<IMoyenneList>(actionTypes);
 
 // THUNKS -----------------------------------------------------------------------------------------
 
-export function fetchDevoirMoyennesListAction(structureId: string, studentId: string, periodId?: string) {
+export function fetchDevoirMoyennesListAction() {
   return async (dispatch: Dispatch) => {
     try {
       dispatch(dataActions.clear());
       dispatch(dataActions.request());
-      const data = await moyenneListService.get(structureId, studentId, periodId);
+      const data = await moyenneListService.get();
       dispatch(dataActions.receipt(data));
     } catch (errmsg) {
       dispatch(dataActions.error(errmsg));

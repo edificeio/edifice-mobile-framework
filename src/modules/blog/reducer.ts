@@ -81,6 +81,6 @@ export const getPublishableBlogs = (session: IUserSession, blogs: IBlogList) => 
         blogs,
         createBlogPostResourceRight,
         session) as IBlogList)
-        .filter((blog: IBlog) => !blog.trashed);
+        .filter((blog: IBlog) => !blog.trashed && blog.shared && blog.shared.length > 0);
     return publishableBlogs;
 }

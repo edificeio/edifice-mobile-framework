@@ -3,20 +3,14 @@
  */
 
 import I18n from "i18n-js";
-import type { NavigationNavigateActionPayload } from "react-navigation";
-import type { RouteMap } from "../../util/moduleTool";
+import { NavigationNavigateActionPayload } from "react-navigation";
 
-import { createCustomSubscription } from "../../util/moduleTool";
+import { createGetRegisteredModules, createRegisterModule, IRegisteredModule } from "../../util/moduleTool";
 import { IUserSession } from "../../util/session";
 
-// Timeline module subscription ===================================================================
-
-// export const timelineModules = createModuleSubscription<AnyNavigableModule>();
-export const timelineSubModules = createCustomSubscription<
-    RouteMap, RouteMap
->(subs => subs.reduce((acc, s) => ({ ...acc, ...s }), {}));
-
-// Timeline workflow ==============================================================================
+const registeredTimelineModules: IRegisteredModule[] = [];
+export const getRegisteredTimelineModules = createGetRegisteredModules(registeredTimelineModules);
+export const registerTimelineModule = createRegisterModule(registeredTimelineModules);
 
 export interface ITimelineWorkflowDefinition {
     (session: IUserSession): undefined | false | { icon: string; i18n: string; goTo: NavigationNavigateActionPayload };

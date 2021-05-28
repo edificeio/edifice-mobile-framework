@@ -57,6 +57,6 @@ export default () => registerTimelineWorkflow(session => {
     return wk.blog.create && {
         icon: 'bullhorn',
         i18n: 'blog.resourceName',
-        goTo: { routeName: 'timeline/blog/select' }
+        goTo: { routeName: 'blog/select' }
     }
 });
