@@ -6,7 +6,7 @@ import { ModalBox, ModalContent, ModalContentBlock } from "../ui/Modal";
 import { ButtonTextIcon } from "../ui";
 import { GestureResponderEvent, Platform, TouchableOpacityProps } from "react-native";
 import DocumentPicker, { DocumentPickerOptions, DocumentPickerResponse, DocumentType, PlatformTypes } from "react-native-document-picker";
-import RNFetchBlob from "rn-fetch-blob";
+import getPath from '@flyerhq/react-native-android-uri-path'
 
 export type ImagePicked = Required<Pick<ImagePickerResponse, 'uri' | 'type' | 'fileName' | 'fileSize' | 'base64' | 'width' | 'height'>>;
 export type DocumentPicked = Required<Pick<DocumentPickerResponse, 'uri' | 'type'>> & { fileName: string, fileSize: number };
@@ -31,13 +31,10 @@ export class FilePicker extends React.PureComponent<{
 
         const documentCallback = async (file: DocumentPickerResponse) => {
             !file.copyError && file.uri
-            if ((Platform.OS === 'android')
-                && (file.uri.includes('content://com.google') || file.uri.includes('content://com.android'))) {
-                const stat = await RNFetchBlob.fs.stat(file.uri);
-                file.uri = stat.path;
-            } else if (Platform.OS === 'ios') {
-                file.uri = decodeURI(file.uri).split("file://")[1]
-            }
+            file.uri = Platform.select({
+                android: getPath(file.uri),
+                ios: decodeURI(file.uri).split("file://")[1],
+            });
             const { name, size, ...fileResolved } = file;
             callback({ ...fileResolved, fileName: file.name, fileSize: file.size });
             this.setState({ showModal: false });
