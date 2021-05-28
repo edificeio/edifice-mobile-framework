@@ -22,6 +22,7 @@
   "dependencies": {
     "@emotion/native": "^11.0.0",
     "@emotion/react": "^11.0.0",
+    "@flyerhq/react-native-android-uri-path": "^2.1.0",
     "@react-native-async-storage/async-storage": "^1.14.1",
     "@react-native-community/cli": "^3.1.0",
     "@react-native-community/datetimepicker": "^2.4.2",
