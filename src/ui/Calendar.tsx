@@ -131,7 +131,7 @@ export default class Calendar extends React.PureComponent<CalendarProps, Calenda
     });
   };
 
-  organizeColumns = (dayData: BasicElement[]): [BasicElement[], BasicElement[], BasicElement[]] => {
+  organizeColumns = (dayData: any[]): [BasicElement[], BasicElement[], BasicElement[]] => {
     const columns: [BasicElement[], BasicElement[], BasicElement[]] = [[], [], []];
     const elementsColumns: number[] = [];
 
@@ -141,18 +141,36 @@ export default class Calendar extends React.PureComponent<CalendarProps, Calenda
     // placing each event in its column: 0 => full width, 1 => half left, 2 => half right
     dayData.forEach(d => {
       let col = 0;
+      // event m starts before d
       const iEndInMiddle = dayData.findIndex(m => m.endDate.isAfter(d.startDate) && m.startDate.isBefore(d.startDate));
       if (iEndInMiddle > -1) {
         col = (elementsColumns[iEndInMiddle] % 2) + 1;
       }
+      // event m starts after d
       const iStartInMiddle = dayData.findIndex(
         m => m.startDate.isAfter(d.startDate) && m.startDate.isBefore(d.endDate)
       );
       if (iStartInMiddle > -1 && col === 0) {
         col = 1;
       }
-      columns[col].push(d);
-      elementsColumns.push(col);
+      // event m start at the same time as d and ends before or after d
+      const iStartSameEndMiddle = dayData.findIndex(
+        m =>
+          JSON.stringify(m) !== JSON.stringify(d) &&
+          m.startDate.isSame(d.startDate) &&
+          (m.endDate.isBefore(d.endDate) || m.endDate.isAfter(d.endDate))
+      );
+      // event m starts and ends at the same time as d
+      const isSameTime = dayData.findIndex(
+        m => JSON.stringify(m) !== JSON.stringify(d) && m.startDate.isSame(d.startDate) && m.endDate.isSame(d.endDate)
+      );
+      if ((isSameTime > -1 || iStartSameEndMiddle > -1) && col === 0) {
+        col = (elementsColumns[elementsColumns.length - 1] % 2) + 1;
+      }
+      if (!isNaN(col)) {
+        columns[col].push(d);
+        elementsColumns.push(col);
+      }
     });
     return columns;
   };

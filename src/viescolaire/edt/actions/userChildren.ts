@@ -1,21 +1,20 @@
 import { Dispatch } from "redux";
 
 import { createAsyncActionCreators } from "../../../infra/redux/async2";
-import { moyenneListService } from "../services/moyennes";
-import { actionTypes, IMoyenneList } from "../state/moyennes";
+import { userChildrenService } from "../services/userChildren";
+import { IUserChildren, actionTypes } from "../state/userChildren";
 
 // ACTION LIST ------------------------------------------------------------------------------------
 
-export const dataActions = createAsyncActionCreators<IMoyenneList>(actionTypes);
+export const dataActions = createAsyncActionCreators<IUserChildren>(actionTypes);
 
 // THUNKS -----------------------------------------------------------------------------------------
 
-export function fetchDevoirMoyennesListAction(structureId: string, studentId: string, periodId?: string) {
+export function fetchUserChildrenAction() {
   return async (dispatch: Dispatch) => {
     try {
-      dispatch(dataActions.clear());
       dispatch(dataActions.request());
-      const data = await moyenneListService.get(structureId, studentId, periodId);
+      const data = await userChildrenService.get();
       dispatch(dataActions.receipt(data));
     } catch (errmsg) {
       dispatch(dataActions.error(errmsg));

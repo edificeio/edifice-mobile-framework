@@ -4,10 +4,13 @@ import * as React from "react";
 import { Text, View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { NavigationActions } from "react-navigation";
 
-import { Icon } from "../../../ui";
+import { Icon, Loading } from "../../../ui";
 import { EmptyScreen } from "../../../ui/EmptyScreen";
 import { TextBold } from "../../../ui/text";
 import { HomeworkItem } from "../../cdt/components/Items";
+import { DenseDevoirList } from "../../competences/components/Item";
+import { ILevelsList } from "../../competences/state/competencesLevels";
+import { IDevoirListState } from "../../competences/state/devoirs";
 import { isHomeworkDone, homeworkDetailsAdapter } from "../../utils/cdt";
 
 const styles = StyleSheet.create({
@@ -92,7 +95,6 @@ export default class Dashboard extends React.PureComponent<any> {
           icon="checkbox-multiple-marked"
         />
         <IconButton
-          disabled
           onPress={() => this.props.navigation.navigate("EvaluationList")}
           text={I18n.t("viesco-tests")}
           color="#F95303"
@@ -169,28 +171,46 @@ export default class Dashboard extends React.PureComponent<any> {
     );
   }
 
-  private renderEvaluations(evaluations) {
+  // Get the 5 last added evaluations
+  //Sort evaluations by dates, then by alphabetical order then by notes
+  getSortedEvaluationList = (evaluations: IDevoirListState) => {
+    return evaluations.data
+      .sort(
+        (a, b) =>
+          moment(b.date).diff(moment(a.date)) ||
+          String(a.matiere.toLocaleLowerCase() ?? "").localeCompare(b.matiere.toLocaleLowerCase() ?? "") ||
+          Number(a.note) - Number(b.note)
+      )
+      .slice(0, 5);
+  };
+
+  private renderEvaluations(evaluations: IDevoirListState, levels: ILevelsList) {
+    const evaluationList = this.getSortedEvaluationList(evaluations);
     return (
       <View style={styles.dashboardPart}>
         <TextBold style={styles.title}>{I18n.t("viesco-lasteval")}</TextBold>
-        <EmptyScreen
-          imageSrc={require("../../../../assets/images/empty-screen/empty-evaluations.png")}
-          imgWidth={64}
-          imgHeight={64}
-          title={I18n.t("viesco-eval-EmptyScreenText")}
-        />
+        {evaluations && evaluations.data && evaluationList !== undefined ? (
+          <DenseDevoirList devoirs={evaluationList} levels={levels} />
+        ) : (
+          <EmptyScreen
+            imageSrc={require("../../../../assets/images/empty-screen/empty-evaluations.png")}
+            imgWidth={64}
+            imgHeight={64}
+            title={I18n.t("viesco-eval-EmptyScreenText")}
+          />
+        )}
       </View>
     );
   }
 
   public render() {
-    const { homeworks } = this.props;
+    const { homeworks, evaluations, levels } = this.props;
     return (
-      <View>
+      <View style={{ flex: 1 }}>
         {this.renderNavigationGrid()}
         <ScrollView>
           {this.renderHomework(homeworks.data)}
-          {this.renderEvaluations({})}
+          {evaluations.isFetching ? <Loading /> : this.renderEvaluations(evaluations, levels)}
         </ScrollView>
       </View>
     );
