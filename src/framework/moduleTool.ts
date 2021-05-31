@@ -5,8 +5,7 @@
 
 import { toSnakeCase } from "../utils/string";
 import * as React from "react";
-import { Reducer, AnyAction } from "redux";
-import { ThunkAction } from "redux-thunk";
+import { Reducer } from "redux";
 import { createMainTabNavOption } from "../navigation/helpers/mainTabNavigator";
 import I18n from "i18n-js";
 import { NavigationRouteConfig } from "react-navigation";
@@ -73,33 +72,35 @@ export const createModuleConfig: <Name extends string, State>(opts: IModuleConfi
   };
 }
 
-export interface IActionMap {
-  [key: string]: ThunkAction<any, any, any, any> | AnyAction | IActionMap
-}
-
-export interface IModuleDeclaration<Name extends string, State, ActionMap extends IActionMap> {
+export interface IModuleDeclaration<Name extends string, State> {
   config: IModuleConfig<Name, State>,
-  mainComp: React.ComponentClass | React.FunctionComponent,
+  getMainComp: () => (React.ComponentClass | React.FunctionComponent),
   reducer: Reducer<State>
 }
-export interface IModule<Name extends string, State, ActionMap extends IActionMap> extends IModuleDeclaration<Name, State, ActionMap> {
+export interface IModule<Name extends string, State> extends IModuleDeclaration<Name, State> {
   route: any,
+  mainComp: React.ComponentClass | React.FunctionComponent | undefined
 }
 
 /**
  * Use this class constructor to init a module from its definition.
  */
-export class Module<Name extends string, State, ActionMap extends IActionMap>
-  implements IModule<Name, State, ActionMap> {
+export class Module<Name extends string, State>
+  implements IModule<Name, State> {
   config: IModuleConfig<Name, State>;
-  mainComp: React.ComponentClass | React.FunctionComponent;
+  getMainComp: () => (React.ComponentClass | React.FunctionComponent);
   reducer: Reducer<State>;
   route: any;
-  constructor(moduleDeclaration: IModuleDeclaration<Name, State, ActionMap>) {
+  mainComp: React.ComponentClass | React.FunctionComponent | undefined;
+  constructor(moduleDeclaration: IModuleDeclaration<Name, State>) {
     this.config = moduleDeclaration.config;
-    this.mainComp = moduleDeclaration.mainComp;
+    this.getMainComp = moduleDeclaration.getMainComp;
     this.reducer = moduleDeclaration.reducer;
-    this.route = this.createModuleRoute();
+  }
+
+  initModule() {
+    if (!this.mainComp) this.mainComp = this.getMainComp();
+    if (!this.route) this.route = this.createModuleRoute();
   }
 
   createModuleRoute() {
@@ -110,11 +111,11 @@ export class Module<Name extends string, State, ActionMap extends IActionMap>
   }
 }
 
-export type AnyModule = IModule<string, any, IActionMap>;
-export interface ModuleMap { [key: string]: IModule<typeof key, unknown, IActionMap> }
+export type AnyModule = Module<string, any>;
+export interface ModuleMap { [key: string]: IModule<typeof key, unknown> }
 export interface ModuleConfigMap { [key: string]: IModuleConfig<typeof key, any> }
 
-export const loadModuleMap: (modules: Array<IModule<string, unknown, IActionMap>>)
+export const loadModuleMap: (modules: Array<Module<string, unknown>>)
   => ModuleMap
   = modules => {
     const ret = {};
@@ -123,15 +124,16 @@ export const loadModuleMap: (modules: Array<IModule<string, unknown, IActionMap>
         console.warn(`[ModuleTool] Duplicate module identifier "${m.config.name}".`);
       }
       ret[m.config.name] = m;
+      m.initModule();
     }
     return ret;
   }
 
-export const loadModuleConfigMap: (modules: Array<IModuleConfigDeclaration<string>>)
+export const loadModuleConfigMap: (moduleConfigs: Array<IModuleConfigDeclaration<string>>)
   => ModuleConfigMap
-  = modules => {
+  = moduleConfigs => {
     const ret = {};
-    for (const c of modules) {
+    for (const c of moduleConfigs) {
       if (ret.hasOwnProperty(c.name)) {
         console.warn(`[ModuleTool] Duplicate module config identifier "${c.name}".`);
       }
@@ -157,7 +159,7 @@ export const getModuleRoutesByArray: (modules: AnyModule[]) => { [key: string]: 
 }
 
 /** Get ModuleMap by filtering a given ModuleMap */
-export const getModulesByFilter: (modules: ModuleMap, filterFunc: ((m: IModule<string, unknown, IActionMap>) => boolean)) => ModuleMap = (modules, filterFunc) => {
+export const getModulesByFilter: (modules: ModuleMap, filterFunc: ((m: IModule<string, unknown>) => boolean)) => ModuleMap = (modules, filterFunc) => {
   return Object.fromEntries(Object.entries(modules).filter(([k, v]) => filterFunc(v)));
 }
 
@@ -176,17 +178,24 @@ export const getModulesScope: (moduleConfigs: ModuleConfigMap) => string[] = mod
   return [...new Set(Object.values(moduleConfigs).map(c  => c.entcoreScope).flat())];
 }
 
-export type IRegisteredModule = AnyModule & { order: number }
+export type IRegisteredModule = {
+  order: number;
+  module: AnyModule;
+}
 
 /**
  * Create a registeredModules functions to get and register.
  * Use this in your module to create submodules.
  * @param registeredModules
  */
-export const createGetRegisteredModules = (registeredModules: IRegisteredModule[]) => () => registeredModules.sort((a, b) => a.order - b.order);
+export const createGetRegisteredModules = (registeredModules: IRegisteredModule[]) => () => {
+  registeredModules.forEach(m => m.module.initModule());
+  return registeredModules.sort((a, b) => a.order - b.order).map(m => m.module);
+}
 export const createRegisterModule = (registeredModules: IRegisteredModule[]) =>
   (module: AnyModule, order?: number) => {
-    registeredModules.push({ ...module, order: order || 0 });
+    console.log("[ModuleTool] Register module", module.config.name, "in moduleMap");
+    registeredModules.push({ module, order: order || 0 });
     return module;
   }
 
