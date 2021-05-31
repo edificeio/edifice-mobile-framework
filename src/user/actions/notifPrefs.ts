@@ -10,7 +10,7 @@ export const actionTypeSetNotifPrefs = userConfig.createActionType(
   "NOTIFICATIONS_PREFS_SET"
 );
 
-export function loadNotificationPrefs() {
+export function DEPRECATED_loadNotificationPrefs() {
   return async (dispatch: any, getState: any) => {
     // 1 : Get user's timeline preferences
 

@@ -22,11 +22,11 @@ export const actionTypes = {
     setError: moduleConfig.namespaceActionType("NOTIFICATION_FILTERS_SET_ERROR")
 };
 export const actions = {
-    ...createAsyncActionCreators<INotifFilterSettings>(actionTypes),
+    ...createAsyncActionCreators<INotifFilterSettings_State_Data>(actionTypes),
     put: (data: INotifFilterSettings) => ({ type: actionTypes.put, data }),
-    setRequest: (selectedFilters: INotifFilterSettings) => ({ type: actionTypes.setRequest, selectedFilters }),
-    setReceipt: (selectedFilters: INotifFilterSettings) => ({ type: actionTypes.setReceipt, selectedFilters }),
-    setError: (selectedFilters: INotifFilterSettings) => ({ type: actionTypes.setError, selectedFilters })
+    setRequest: (selectedFilters: INotifFilterSettings_State_Data) => ({ type: actionTypes.setRequest, selectedFilters }),
+    setReceipt: (selectedFilters: INotifFilterSettings_State_Data) => ({ type: actionTypes.setReceipt, selectedFilters }),
+    setError: (selectedFilters: INotifFilterSettings_State_Data) => ({ type: actionTypes.setError, selectedFilters })
 };
 
 const actionsHandlerMap: IReducerActionsHandlerMap<INotifFilterSettings_State_Data> = {
@@ -36,7 +36,7 @@ const actionsHandlerMap: IReducerActionsHandlerMap<INotifFilterSettings_State_Da
     },
     [actionTypes.setRequest]: s => s,
     [actionTypes.setReceipt]: (s, a) => {
-        const action = a as Action & { selectedFilters: INotifFilterSettings };
+        const action = a as Action & { selectedFilters: INotifFilterSettings_State_Data };
         return { ...s, ...action.selectedFilters };
     },
     [actionTypes.setError]: s => s

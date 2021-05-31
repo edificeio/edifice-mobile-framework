@@ -8,43 +8,187 @@
     "infoBubble-doNotShow": "Ne plus afficher ce message",
     "infoBubble-understood": "J'ai compris",
     "openInBrowser": "Ouvrir dans le navigateur",
-    "readMore": "lire plus"
+    "readMore": "lire plus",
+    "all": "Tous"
   },
   "timeline": {
     "appName": "Fil de nouveautés",
     "tabName": "Nouveautés",
     "emptyScreenText": "C’est calme ici... Vous connaissez l’expression \"le calme avant la tempête\" ?",
     "emptyScreenTitle": "C’est désert... Il y a quelqu’un ?",
-    "filtersScreen": {
-      "all": "Tous",
-      "title": "Notifications",
-      "filters": {
-        "ARCHIVE": "Mes données",
-        "BLOG": "Blog",
-        "CALENDAR": "Agenda",
-        "COLLABORATIVEEDITOR": "Pad",
-        "COLLABORATIVEWALL": "Mur Collaboratif",
-        "COMMUNITY": "Communautés",
-        "EXERCIZER": "Exercices",
-        "FORUM": "Forum",
-        "HOMEWORKS": "Cahier de textes",
-        "MESSAGERIE": "Messagerie",
-        "MINDMAP": "Carte mentale",
-        "NEWS": "Actualités",
-        "PAGES": "Pages",
-        "POLL": "Sondage",
-        "RACK": "Casier",
-        "RBS": "Réservation de ressources",
-        "SCHOOLBOOK": "Carnet de liaison",
-        "SCRAPBOOK": "Cahier multimédia",
-        "SHAREBIGFILES": "Poste-fichiers",
-        "SUPPORT": "Assistance ENT",
-        "TIMELINE": "Humeurs et devises",
-        "TIMELINEGENERATOR": "Frise chronologique",
-        "USERBOOK": "Humeurs et devises",
-        "WIKI": "Wiki",
-        "WORKSPACE": "Espace documentaire"
+    "appType": {
+      "ARCHIVE": "Mes données",
+      "BLOG": "Blog",
+      "CALENDAR": "Agenda",
+      "COLLABORATIVEEDITOR": "Pad",
+      "COLLABORATIVEWALL": "Mur Collaboratif",
+      "COMMUNITY": "Communautés",
+      "EXERCIZER": "Exercices",
+      "FORUM": "Forum",
+      "HOMEWORKS": "Cahier de textes",
+      "MESSAGERIE": "Messagerie",
+      "MINDMAP": "Carte mentale",
+      "NEWS": "Actualités",
+      "PAGES": "Pages",
+      "POLL": "Sondage",
+      "RACK": "Casier",
+      "RBS": "Réservation de ressources",
+      "SCHOOLBOOK": "Carnet de liaison",
+      "SCRAPBOOK": "Cahier multimédia",
+      "SHAREBIGFILES": "Poste-fichiers",
+      "SUPPORT": "Assistance ENT",
+      "TIMELINE": "Humeurs et devises",
+      "TIMELINEGENERATOR": "Frise chronologique",
+      "USERBOOK": "Humeurs et devises",
+      "WIKI": "Wiki",
+      "WORKSPACE": "Espace documentaire"
+    },
+    "notifType": {
+      "userbook": {
+        "userbook_motto": "Changement de devise",
+        "userbook_mood": "Changement d'humeur",
+        "delete-email": "Suppression d'un email invalide (hard-bounce)"
+      },
+      "schoolbook": {
+        "response": "Suivi d'un mot",
+        "acknowledge": "Confirmer de lecture d'un mot",
+        "modifyresponse": "Modification d'une réponse",
+        "word-resend": "Rappel de lecture",
+        "word-shared": "Partage d'un mot",
+        "publish": "Envoi d'un mot"
+      },
+      "rbs": {
+        "periodic-booking-updated": "Mise à jour d'une réservation périodique",
+        "booking-updated": "Mise à jour d'une réservation",
+        "periodic-booking-deleted": "Suppression d'une réservation périodique",
+        "booking-created": "Création d'une réservation",
+        "resource-unavailable": "Indisponibilité d'une ressource",
+        "booking-deleted": "Suppression d'une réservation",
+        "booking-refused": "Refus d'une réservation",
+        "periodic-booking-created": "Création d'une réservation périodique",
+        "booking-validated": "Validation d'une réservation",
+        "resource-available": "Disponibilité d'une ressource"
+      },
+      "community": {
+        "share": "Partage d'une communauté"
+      },
+      "exercizer": {
+        "unassigncopy": "Retrait de copie",
+        "assigntraining": "Assignation de sujet d'entraînement",
+        "correctcopy": "Correction de copie",
+        "assigncopy": "Assignation de copie",
+        "share": "Partage de sujet",
+        "submithomework": "Rendu de devoir",
+        "modifydue": "Modification de la date de fin d'un sujet",
+        "submitcopy": "Rendu de copie",
+        "modifybegin": "Modification de la date de début d'un sujet",
+        "considersubmitted": "Copie considérée rendue",
+        "homeworkreminder": "Rappel automatique",
+        "modifyperiod": "Modification de la période de distribution d'un sujet",
+        "correcthomework": "Correction de devoir"
+      },
+      "wiki": {
+        "shared": "Partage d'un Wiki",
+        "comment-added": "Ajout de commentaire dans un Wiki",
+        "page-created": "Nouvelle page dans un Wiki"
+      },
+      "news": {
+        "info-shared": "Partage d'une actualité",
+        "news-comment": "Commentaire d'une actualité",
+        "thread-shared": "Partage d'un fil d'actualités",
+        "news-unpublished": "Dépublication d'une actualité",
+        "news-published": "Publication d'une actualité",
+        "news-unsubmitted": "Annulation d'une demande de validation d'une actualité",
+        "news-submitted": "Demande de validation d'une actualité",
+        "news-update": "Mise à jour d'une actualité"
+      },
+      "workspace": {
+        "share-folder": "Partage d'un dossier",
+        "contrib-folder": "Contribution dans un dossier",
+        "comment-folder": "Ajout de commentaire sur un dossier",
+        "storage": "Espace de stockage bientôt plein",
+        "share": "Partage d'un fichier",
+        "contrib-version": "Ajout d'une version à un document",
+        "comment": "Ajout de commentaire sur un fichier"
+      },
+      "calendar": {
+        "create": "Création d'un événement",
+        "share": "Partage d'un agenda",
+        "update": "Mise à jour d'un événement"
+      },
+      "support": {
+        "ticket-created": "Création d'une demande de support",
+        "bugtracker-issue-updated": "Mise à jour d'une demande escaladée",
+        "bugtracker-issue-closed": "Fermeture d'une demande escaladée",
+        "ticket-updated": "Mise à jour d'une demande de support",
+        "bugtracker-issue-resolved": "Résolution d'une demande escaladée"
+      },
+      "homeworks": {
+        "share": "Partage d'un cahier de textes",
+        "entries": {
+          "modified": "Mise à jour du cahier de textes"
+        }
+      },
+      "scrapbook": {
+        "share": "Partage d'un cahier multimédia",
+        "modified": "Modification d'un cahier multimédia"
+      },
+      "messagerie": {
+        "storage": "Espace de stockage bientôt plein",
+        "send-message": "Réception d'un message"
+      },
+      "forum": {
+        "category-shared": "Partage de catégorie",
+        "subject-updated": "Modification d'une discussion dans le forum",
+        "message-created": "Nouveau message dans le forum",
+        "subject-created": "Nouvelle discussion de forum",
+        "message-updated": "Modification d'un message dans le forum"
+      },
+      "blog": {
+        "share": "Partage d'un blog",
+        "submit-post": "Soumission d'un billet de blog",
+        "publish-post": "Publication d'un billet de blog",
+        "publish-comment": "Commentaire d'un billet de blog"
+      },
+      "rack": {
+        "rack-post": "Dépôt de document dans un casier",
+        "storage": "Espace de stockage bientôt plein"
+      },
+      "timelinegenerator": {
+        "share": "Partage d'une frise chronologique"
+      },
+      "timeline": {
+        "send-flash-message-mail": "Publication d'un nouveau message flash",
+        "send-flash-message-push": "Publication d'un nouveau message flash",
+        "notify-report": "Signalement d'une notification"
+      },
+      "collaborativewall": {
+        "share": "Partage de mur collaboratif"
+      },
+      "collaborativeeditor": {
+        "share": "Partage d'un Pad",
+        "unused": "Pad non modifié"
+      },
+      "poll": {
+        "share": "Partage d'un sondage"
+      },
+      "archive": {
+        "archives_error": "Erreur lors de la création de l'archive",
+        "archives_ok": "Création de l'archive terminée"
+      },
+      "sharebigfiles": {
+        "delete": "Suppression d'un fichier dans Poste-fichiers",
+        "share": "Partage d'un fichier dans Poste-fichiers"
+      },
+      "pages": {
+        "shared": "Partage d'une Page"
+      },
+      "mindmap": {
+        "share": "Partage de carte mentale"
       }
+    },
+    "filtersScreen": {
+      "title": "Notifications"
     },
     "blogPostDetailsScreen": {
       "title": "Blog"
@@ -55,6 +199,14 @@
     "webViewScreen": {
       "infoBubbleText": "Pour consulter et modifier certains contenus, vous serez redirigé vers le navigateur web de votre smartphone.",
       "title": "Redirection web"
+    }
+  },
+  "user": {
+    "pushNotifsSettingsScreen": {
+      "countOutOfTotal": {
+        "one": "({{count}} activée sur {{total}})",
+        "other": "({{count}} activées sur {{total}})"
+      }
     }
   },
   "blog": {

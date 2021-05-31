@@ -6,5 +6,5 @@ export default createModuleConfig<"timelinev2", ITimeline_State>({
     displayName: "timeline.tabName",
     iconName: "nouveautes",
     matchEntcoreApp: entcoreApp => entcoreApp.prefix === '/timeline', // No app-address for Timeline, we use prefix instead
-    entcoreScope: ['timeline']
+    entcoreScope: ['timeline', 'userbook']
 });
