@@ -9,6 +9,8 @@ import { Reducer } from "redux";
 import { createMainTabNavOption } from "../../navigation/helpers/mainTabNavigator";
 import I18n from "i18n-js";
 import { NavigationRouteConfig } from "react-navigation";
+import type { NavigationParams, NavigationRoute, NavigationRouteConfigMap } from "react-navigation";
+import type { StackNavigationOptions, StackNavigationProp } from "react-navigation-stack/lib/typescript/src/vendor/types";
 
 // Module Config ==================================================================================
 
@@ -193,6 +195,8 @@ export class NavigableModule
 
 export type AnyNavigableModule = NavigableModule<string, any, React.ComponentClass | React.FunctionComponent>;
 
+export type RouteMap = NavigationRouteConfigMap<StackNavigationOptions, StackNavigationProp<NavigationRoute<NavigationParams>, NavigationParams>, unknown>;
+
 // Module Map =====================================================================================
 
 export interface ModuleConfigMap { [key: string]: IModuleConfig<typeof key, unknown> }
@@ -265,11 +269,25 @@ export const getModuleRoutes = (modules: AnyNavigableModule[]) => {
  * Use this in your module to create register effects.
  * @param registeredModules
  */
-export const createCustomSubscription = <Sub>(transform?: (subs: Sub[]) => Sub[]) => {
-  const subs = [] as Array<Sub>;
+export const createCustomSubscription = <Sub, SubTransformed = Sub[]>(transform?: (subs: Sub[]) => SubTransformed) => {
+  const subs = [] as Sub[];
   return {
-    register: (s: Sub) => { subs.push(s); return s;},
-    get: () => transform ? transform(subs) : subs
+    register: (s: Sub) => { subs.push(s); return s; },
+    registerAll: (s: Sub[]) => { subs.push(...s); return s; },
+    get: () => (transform ? transform(subs) : subs) as SubTransformed
+  };
+};
+
+/**
+ * Create a custom subscription functions to get and register.
+ * Use this in your module to create register effects.
+ * @param registeredModules
+ */
+export const createCustomOrderedSubscription = <Sub>() => {
+  const subs = [] as Array<{ s: Sub, order: number }>;
+  return {
+    register: (s: Sub, order: number) => { subs.push({s, order}); return s; },
+    get: () => subs.sort((a, b) => a.order - b.order).map(s => s.s)
   };
 };
 
