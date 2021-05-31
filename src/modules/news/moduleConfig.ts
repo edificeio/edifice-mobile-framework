@@ -5,5 +5,5 @@ export default createNavigableModuleConfig<"news", INews_State>({
     name: "news",
     displayName: "news.tabName",
     matchEntcoreApp: "/actualites",
-    entcoreScope: ['blog']
+    entcoreScope: ['actualites']
 });
