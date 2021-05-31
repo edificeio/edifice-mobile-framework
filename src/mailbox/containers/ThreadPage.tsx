@@ -243,7 +243,7 @@ class ThreadPageContainer extends React.PureComponent<
   }
 
   static renderThreadHeader(threadInfo: IConversationThread, navigation: NavigationScreenProp<{}>) {
-    const receiversText = threadInfo.to.length > 1
+    const receiversText = (threadInfo && (threadInfo.to.length > 1))
       ? I18n.t("conversation-receivers", { count: threadInfo.to.length })
       : I18n.t("conversation-receiver");
 

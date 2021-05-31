@@ -62,8 +62,10 @@ const conversationThreadListReducer = (
       // action contains, `data: IConversationMessage`
       // console.log("reducer: (messages) send message error", action);
       const result3 = { ...state };
-      result3[action.data.oldId].to = action.data.to;
-      result3[action.data.oldId].status = ConversationMessageStatus.failed;
+      if (action.data) {
+        result3[action.data.oldId].to = action.data.to;
+        result3[action.data.oldId].status = ConversationMessageStatus.failed;
+      }
       return result3;
     // Session flush forward-compatibility.
     case createEndSessionActionType():
