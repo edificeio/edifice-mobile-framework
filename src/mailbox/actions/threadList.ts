@@ -9,9 +9,11 @@ import conversationConfig from "../config";
 import {
   IConversationMessageList
 } from "./sendMessage";
-import { IConversationThreadList } from "../reducers/threadList";
+import { IConversationThread, IConversationThreadList } from "../reducers/threadList";
 import {
+  conversationMessagesFetchError,
   conversationMessagesReceived,
+  conversationMessagesRequested,
   conversationOrderedMessagesAdapter,
 } from "./messages";
 
@@ -161,6 +163,12 @@ export function conversationThreadDeleted(threadId: string) {
   return { type: actionTypeThreadDeleted, threadId };
 }
 
+export const actionTypeThreadInserted =
+  conversationConfig.createActionType("THREAD") + "_INSERTED";
+export function conversationThreadInserted(threadInfos: IConversationThread) {
+  return {type: actionTypeThreadInserted, data: threadInfos }
+}
+
 // THUNKS -----------------------------------------------------------------------------------------
 
 /**
@@ -210,6 +218,54 @@ export function resetConversationThreadList() {
     } catch (errmsg) {
       console.warn(errmsg);
       dispatch(conversationThreadListFetchError(errmsg));
+    }
+  };
+}
+
+export function fetchConversationThreadAllMessages(threadId: string) {
+  return async (dispatch, getState) => {
+    try {
+      dispatch(conversationMessagesRequested());
+
+      // Fetch data
+      const data = await asyncGetJson(
+        `/conversation/thread/messages/${threadId}`,
+        conversationOrderedMessagesAdapter
+      );
+
+      // Extract messageIds list and contents
+      const messages: IConversationMessageList = {};
+      for (const message of data) {
+        messages[message.id] = message;
+      }
+      const messageIds = data.map(message => message.id);
+      const firstMessage = data && data[0];
+      const subject = firstMessage?.subject;
+      const date = firstMessage?.date;
+      const displayNames = firstMessage?.displayNames;
+      const to = firstMessage?.to;
+      const cc = firstMessage?.cc;
+      const from = firstMessage?.from;
+      const threadListData = {
+        id: threadId,
+        subject,
+        date,
+        displayNames,
+        unread: 0,
+        to,
+        cc,
+        from,
+        messages: [...messageIds],
+        isFetchingOlder: false,
+        isFetchingNewer: false,
+        isFetchingFirst: false
+      } as IConversationThread;
+
+      // dispatch
+      dispatch(conversationMessagesReceived(messages)); // message contents
+      dispatch(conversationThreadInserted(threadListData)); // thread infos
+    } catch (errmsg) {
+      dispatch(conversationMessagesFetchError(errmsg));
     }
   };
 }
