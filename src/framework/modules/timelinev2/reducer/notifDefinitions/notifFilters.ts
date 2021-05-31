@@ -14,6 +14,8 @@ export interface INotificationFilter {
   i18n: string;
 }
 
+export type INotifFilters_State = INotificationFilter[];
+
 // Reducer
 
 const initialState: INotificationFilter[] = [];
@@ -27,8 +29,6 @@ export const actions = {
   init: (filters: INotificationFilter[]) => ({ type: actionTypes.init, filters }),
   clear: () => ({ type: actionTypes.init }),
 }
-
-export type INotifFilters_State = INotificationFilter[];
 
 export default createSessionReducer(initialState, {
   [actionTypes.init]: (s, a) => {

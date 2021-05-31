@@ -1,11 +1,10 @@
-
-// State
-
 import { Moment } from "moment";
 import { ImageURISource } from "react-native";
 import { AsyncPagedState, createAsyncPagedActionCreators, createAsyncPagedActionTypes, createSessionAsyncPagedReducer } from "../../../redux/asyncPaged";
 import { IUserSession } from "../../../session";
 import moduleConfig from "../moduleConfig";
+
+// State
 
 export interface IEntcoreNotification {
     _id: string;
