@@ -315,14 +315,14 @@ export function logout() {
 
       clearTimeline(dispatch)(); // ToDo: this is ugly. Timeline should be cleared when logout.
 
-      // // === 1: End user session
+      // === 1: Nav back on the login screen
+      navigate("LoginHome");
+
+      // === 2: End user session
       await dispatch(endSessionAction())
       await clearRequestsCache();
       dispatch(createEndSessionAction());
       Trackers.trackEvent('Auth', 'LOGOUT');
-
-      // === 2: Nav back on the login screen
-      navigate("LoginHome");
     } catch (err) {
       console.warn(err);
       navigate("LoginHome");
