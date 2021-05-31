@@ -34,7 +34,8 @@ export interface IUserDefinition {
     displayName: string,
     type: UserType,
     entcoreApps: IEntcoreApp[],
-    authorizedActions: IUserAuthorizedAction[]
+    authorizedActions: IUserAuthorizedAction[],
+    groupsIds: string[]
 }
 
 export interface IUserSession {
@@ -52,6 +53,7 @@ export const getUserSession = (state: any) => ({
         displayName: state.user.info.displayName,
         type: getUserType(state.user.info.type),
         entcoreApps: state.user.auth.appsInfo,
-        authorizedActions: state.user.info.authorizedActions
+        authorizedActions: state.user.info.authorizedActions,
+        groupsIds: state.user.info.groupsIds
     }
 }) as IUserSession;

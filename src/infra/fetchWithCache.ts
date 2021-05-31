@@ -48,7 +48,7 @@ export async function signedFetch(
  * @param url url including platform
  * @param init request options
  */
-export async function signedFetchJson(url: string | Request, init?: any): Promise<Response> {
+export async function signedFetchJson(url: string | Request, init?: any): Promise<unknown> {
   try {
     const response = await signedFetch(url, init);
     // console.log(response);
