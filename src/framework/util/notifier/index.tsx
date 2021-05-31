@@ -3,9 +3,9 @@ import * as React from "react";
 import { Animated, ActivityIndicator, View, Text, Platform, LayoutEvent } from "react-native";
 import { connect } from "react-redux";
 import { AnimatedValue } from "react-navigation";
-import { CommonStyles } from "../../styles/common/styles";
-import { Icon } from "../../ui/icons/Icon";
-import TouchableOpacity from "../../ui/CustomTouchableOpacity";
+import { CommonStyles } from "../../../styles/common/styles";
+import { Icon } from "../../../ui/icons/Icon";
+import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
 import { NotifierState } from "./reducer";
 
 const NotifierWrapper = style(TouchableOpacity)({

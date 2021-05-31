@@ -3,7 +3,7 @@
  */
 
 import { ThunkDispatch } from "redux-thunk";
-import { getUserSession } from "../../../framework/session";
+import { getUserSession } from "../../../framework/util/session";
 import moduleConfig from "../moduleConfig";
 import { getUnacknowledgedChildrenIdsForParent, ISchoolbookWordReport } from "../reducer";
 import { schoolbookService } from "../service";

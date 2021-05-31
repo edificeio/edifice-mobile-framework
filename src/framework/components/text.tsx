@@ -7,7 +7,7 @@
 
 import { ColorValue, Text as RNText, TextProps as RNTextProps, TextProps, TextStyle as RNTextStyle } from "react-native";
 import styled from "@emotion/native";
-import theme from "../theme";
+import theme from "../util/theme";
 
 /**
  * Font weights defined in this font family

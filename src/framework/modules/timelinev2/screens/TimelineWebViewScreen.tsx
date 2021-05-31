@@ -4,15 +4,15 @@ import { NavigationInjectedProps } from "react-navigation";
 import { connect } from "react-redux";
 import I18n from "i18n-js";
 
-import { IResourceUriNotification, ITimelineNotification } from "../../../notifications";
-import withViewTracking from "../../../tracker/withViewTracking";
+import { IResourceUriNotification, ITimelineNotification } from "../../../util/notifications";
+import withViewTracking from "../../../util/tracker/withViewTracking";
 import NotificationTopInfo from "../components/NotificationTopInfo";
 import { PageView } from "../../../components/page";
 import { InfoBubble } from "../../../components/infoBubble";
 import { FlatButton } from "../../../../ui";
 import Conf from "../../../../../ode-framework-conf";
 import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from "../../../components/header";
-import theme from "../../../theme";
+import theme from "../../../util/theme";
 
 // TYPES ==========================================================================================
 

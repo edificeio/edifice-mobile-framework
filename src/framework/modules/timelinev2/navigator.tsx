@@ -4,7 +4,7 @@ import TimelineScreen from "./screens/TimelineScreen";
 import WebViewScreen from "./screens/TimelineWebViewScreen";
 import FiltersScreen from "./screens/TimelineFiltersScreen";
 import { getRegisteredTimelineModules } from "./timelineModules";
-import { getModuleRoutesByArray } from "../../moduleTool";
+import { getModuleRoutesByArray } from "../../util/moduleTool";
 import { NavigationRouteConfigMap } from "react-navigation";
 
 /** Returns every route that are to be displayed in tab navigation.*/

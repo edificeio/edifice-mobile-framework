@@ -2,9 +2,9 @@
  * News notif handler
  */
 
-import type { IResourceUriNotification, ITimelineNotification } from "../../framework/notifications";
+import type { IResourceUriNotification, ITimelineNotification } from "../../framework/util/notifications";
 
-import { NotifHandlerThunkAction, registerNotifHandlers } from "../../framework/notifications/routing";
+import { NotifHandlerThunkAction, registerNotifHandlers } from "../../framework/util/notifications/routing";
 import { mainNavNavigate } from "../../navigation/helpers/navHelper";
 
 export interface INewsNotification extends ITimelineNotification, IResourceUriNotification {}

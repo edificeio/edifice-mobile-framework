@@ -3,7 +3,7 @@
  */
 
 import { Moment } from "moment";
-import { createSessionReducer } from "../../framework/redux/reducerFactory";
+import { createSessionReducer } from "../../framework/util/redux/reducerFactory";
 
 // Types
 

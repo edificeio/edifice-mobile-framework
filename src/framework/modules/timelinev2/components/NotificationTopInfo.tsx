@@ -11,10 +11,10 @@ import { CenterPanel, Header, LeftPanel } from "../../../../ui/ContainerContent"
 import { BadgeAvatar } from "../../../../ui/BadgeAvatar";
 import { HtmlContentView } from "../../../../ui/HtmlContentView";
 import { APPBADGES } from "../appBadges";
-import { ITimelineNotification } from "../../../notifications";
-import theme from "../../../theme";
+import { ITimelineNotification } from "../../../util/notifications";
+import theme from "../../../util/theme";
 import { FontWeight } from "../../../components/text";
-import { getUserSession, IUserSession } from "../../../session";
+import { getUserSession, IUserSession } from "../../../util/session";
 import { IGlobalState } from "../../../../AppStore";
 
 const NotificationTopInfo = ({ notification, session }: { notification: ITimelineNotification, session: IUserSession}) => {

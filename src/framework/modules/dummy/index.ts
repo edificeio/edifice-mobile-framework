@@ -1,4 +1,4 @@
-import { Module, registerTabModule } from "../../moduleTool";
+import { Module, registerTabModule } from "../../util/moduleTool";
 
 import config from './moduleConfig';
 import getMainComp from './navigator';

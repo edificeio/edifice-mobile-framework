@@ -3,10 +3,10 @@
  * Everything for managing and declaring modules
  */
 
-import { toSnakeCase } from "../utils/string";
+import { toSnakeCase } from "../../utils/string";
 import * as React from "react";
 import { Reducer } from "redux";
-import { createMainTabNavOption } from "../navigation/helpers/mainTabNavigator";
+import { createMainTabNavOption } from "../../navigation/helpers/mainTabNavigator";
 import I18n from "i18n-js";
 import { NavigationRouteConfig } from "react-navigation";
 

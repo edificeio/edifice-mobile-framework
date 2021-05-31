@@ -3,8 +3,8 @@ import { View, Image, Dimensions, TouchableOpacity, ImageSourcePropType, ViewSty
 import I18n from "i18n-js";
 
 import { IconButton } from "../../ui/IconButton";
-import { getItemJson, setItemJson, removeItemJson } from "../storage";
-import theme from "../theme";
+import { getItemJson, setItemJson, removeItemJson } from "../util/storage";
+import theme from "../util/theme";
 import { Card, InfoCard } from "./card";
 import { FlatButton } from "../../ui";
 import { Text, TextBold } from "./text";
