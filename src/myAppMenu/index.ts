@@ -1,14 +1,13 @@
 import myAppConfig from "./config";
 
 import mainComp from "./navigator";
-import mainReducer from "./reducers";
 import { registerModule } from "../AppModules";
 
 // Main component
 export const root = mainComp;
 
 // Reducer
-export const reducer = mainReducer;
+const reducer = () => null;
 
 // Route
 export const getRoute = myAppConfig.createFunctionRoute(root);
