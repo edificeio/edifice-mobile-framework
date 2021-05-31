@@ -3,7 +3,7 @@
  */
 
 import deepmerge from "deepmerge";
-import { ColorSchemeName, ColorValue } from "react-native";
+import { ColorValue } from "react-native";
 
 import customTheme from "../conf/CustomTheme";
 
