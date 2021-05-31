@@ -13,6 +13,7 @@ import { getSessionInfo } from "../../../../App";
 import { APPBADGES } from "../appBadges";
 import { ITimelineNotification } from "../../../notifications";
 import theme from "../../../theme";
+import { FontWeight } from "../../../components/text";
 
 export default ({ notification }: { notification: ITimelineNotification}) => {
   const message = notification && notification.message;
@@ -55,6 +56,10 @@ export default ({ notification }: { notification: ITimelineNotification}) => {
               fontSize: 12,
               fontWeight: "400"
             },
+            linkTextStyle: {
+              fontWeight: FontWeight.Bold,
+              color: theme.color.text.heavy
+            }
           }}
         />
         <Text style={{ color: theme.color.text.light, fontSize: 12 }}>
