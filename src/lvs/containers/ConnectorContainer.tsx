@@ -10,7 +10,7 @@ import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOpti
 
 import { AppTitle, Header, HeaderIcon } from "../../ui/headers/Header";
 import { PageContainer } from "../../ui/ContainerContent";
-import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
+import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { Back } from "../../ui/headers/Back";
 
 import ConnectorView from "../components/ConnectorView";
@@ -65,7 +65,7 @@ class ConnectorContainer extends React.PureComponent<IConnectorContainerProps> {
   public render() {
     return (
       <PageContainer>
-        <ConnectionTrackingBar />
+        <DEPRECATED_ConnectionTrackingBar />
         <ConnectorView
           openConnector={() =>
             this.props.openConnector(this.props.connectorAddress, () => this.props.navigation.goBack(null))

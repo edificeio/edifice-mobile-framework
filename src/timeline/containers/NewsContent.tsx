@@ -12,7 +12,7 @@ import { signedFetch, fetchJSONWithCache } from "../../infra/fetchWithCache";
 import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { CommonStyles } from "../../styles/common/styles";
 import { ButtonsOkCancel, FlatButton, Icon, Loading } from "../../ui";
-import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
+import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { ArticleContainer, PageContainer } from "../../ui/ContainerContent";
 import { GridAvatars } from "../../ui/avatars/GridAvatars";
 import { ResourceTitle } from "../../ui/headers/ResourceTitle";
@@ -234,7 +234,7 @@ INewsContentPageProps,
 
     return (
       <PageContainer>
-        <ConnectionTrackingBar />
+        <DEPRECATED_ConnectionTrackingBar />
         {isParent && schoolbookData ? (
           <ModalBox
             backdropOpacity={0.5}

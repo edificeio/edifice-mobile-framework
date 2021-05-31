@@ -7,5 +7,6 @@ export default createModuleConfig({
     displayName: "Timeline",
     iconName: "nouveautes",
     matchEntcoreApp: "/timeline",
-    group: ModuleGroup.TAB_MODULE
+    group: ModuleGroup.TAB_MODULE,
+    entcoreScope: ['timeline']
 });

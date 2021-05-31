@@ -29,8 +29,8 @@ import moment from "moment";
 import { RefreshControl, SectionList, Text } from "react-native";
 const { View } = style;
 
-import { FlatButton, Loading } from "../../ui";
-import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
+import { Loading } from "../../ui";
+import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
 import { EmptyScreen } from "../../ui/EmptyScreen";
 
@@ -120,7 +120,7 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
 
     return (
       <PageContainer>
-        <ConnectionTrackingBar />
+        <DEPRECATED_ConnectionTrackingBar />
         {pageContent}
       </PageContainer>
     );

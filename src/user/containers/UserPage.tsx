@@ -10,7 +10,7 @@ import {
   ContainerSpacer,
   ContainerView
 } from "../../ui/ButtonLine";
-import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
+import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
 import {
   ModalBox,
@@ -115,7 +115,7 @@ export class UserPage extends React.PureComponent<
 
     return (
       <PageContainer>
-        <ConnectionTrackingBar/>
+        <DEPRECATED_ConnectionTrackingBar/>
         <Notifier id="profileOne"/>
         {showDisconnect && (
           <ModalBox backdropOpacity={0.5} isVisible={showDisconnect}>

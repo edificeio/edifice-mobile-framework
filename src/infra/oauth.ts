@@ -7,6 +7,8 @@ import querystring from "querystring";
 import { ImageURISource } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Conf from "../../ode-framework-conf";
+import AllModulesConfigs from "../framework/app/AllModulesConfigs";
+import { getAvailableModulesConfigs, getModulesScope } from "../framework/moduleTool";
 
 export interface IOAuthToken {
   access_token: string;
@@ -469,6 +471,9 @@ export const scopes = `
  support
 `.split("\n "); // Here the space after "\n" is important, they represent the indentation & the space between the words when "\n" is removed.
 // You can copy the string directly in the "scope" field in a browser. Keep this indentation intact.
+
+export const createAppScopes = () => getModulesScope(AllModulesConfigs);
+export const createAppScopesLegacy = () => [...new Set([...createAppScopes(), ...scopes])];
 
 /**
  * Transforms a source to ensure it can be used.

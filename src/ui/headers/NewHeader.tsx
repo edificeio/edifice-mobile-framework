@@ -62,7 +62,7 @@ const HeaderActionText = (props: { [prop: string]: any }) => <View style={{
 
 // HEADER ACTION
 export class HeaderAction extends React.PureComponent<{
-  customComponent: JSX.Element;
+  customComponent?: JSX.Element;
   name?: string;
   hidden?: boolean;
   iconSize?: number;
@@ -79,7 +79,7 @@ export class HeaderAction extends React.PureComponent<{
       onPress={() => !disabled && onPress && onPress()}
       style={{ ...(disabled ? { opacity: 0.7 } : {}),  ...style }}
     >
-      {customComponent}
+      {customComponent || null}
       {name ? <HeaderIcon name={name} hidden={hidden} iconSize={iconSize} primary={primary} /> : undefined}
       {title ? <HeaderActionText>{title}</HeaderActionText> : undefined}
     </ActionComponent>;

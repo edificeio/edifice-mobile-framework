@@ -7,7 +7,7 @@ import {
   ContainerTextInput,
   ButtonLine
 } from "../../ui/ButtonLine";
-import ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
+import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
 
 import { View, ScrollView, SafeAreaView, KeyboardAvoidingView, Platform, KeyboardTypeOptions, Alert } from "react-native";
@@ -86,7 +86,7 @@ export class ProfilePage extends React.PureComponent<
     const isEditMode = this.props.navigation.getParam("edit", false);
     return (
       <PageContainer>
-        <ConnectionTrackingBar />
+        <DEPRECATED_ConnectionTrackingBar />
         <Notifier id="profileTwo" />
         <KeyboardAvoidingView
           style={{ flex: 1, backgroundColor: "#ffffff" }}
