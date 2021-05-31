@@ -71,7 +71,7 @@ export const createModuleConfig: <Name extends string>(opts: IModuleConfigDeclar
     group: opts.group || ModuleGroup.NO_GROUP,
     order: opts.order || 0,
     matchEntcoreApp: (typeof opts.matchEntcoreApp === 'string'
-      ? ((entcoreApp: IEntcoreApp) => entcoreApp.prefix === opts.matchEntcoreApp)
+      ? ((entcoreApp: IEntcoreApp) => entcoreApp.address === opts.matchEntcoreApp)
       : opts.matchEntcoreApp) || (() => true),
     entcoreScope: opts.entcoreScope || [],
     actionTypesPrefix: opts.actionTypesPrefix || toSnakeCase(opts.name).toUpperCase() + "_",

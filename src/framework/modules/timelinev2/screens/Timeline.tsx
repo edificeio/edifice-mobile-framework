@@ -5,6 +5,7 @@ import I18n from "i18n-js";
 import { PageContainer } from "../../../../ui/ContainerContent";
 import { FakeHeader, HeaderAction, HeaderIcon, HeaderRow, HeaderTitle } from "../../../components/header";
 import { Text } from "../../../components/text";
+import deviceInfoModule from "react-native-device-info";
 
 export interface ITimelineScreenDataProps { };
 export interface ITimelineScreenEventProps { };
@@ -18,7 +19,7 @@ export default class TimelineScreen extends React.PureComponent<
   > {
 
   static navigationOptions = {
-    header: () => null // Header is included in screen
+    header: () => null, // Header is included in screen
   }
 
   render() {
@@ -35,7 +36,7 @@ export default class TimelineScreen extends React.PureComponent<
     return <FakeHeader>
       <HeaderRow>
         <HeaderAction iconName="filter"/>
-        <HeaderTitle>News</HeaderTitle>
+        <HeaderTitle>{I18n.t("timeline-appname")}</HeaderTitle>
         <HeaderIcon name={null}/>
       </HeaderRow>
     </FakeHeader>
