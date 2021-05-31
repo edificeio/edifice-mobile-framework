@@ -140,7 +140,7 @@
       "workspace.storage": "Storage space almost full"
     },
     "filtersScreen": {
-      "title": "Notifications"
+      "title": "News to display"
     },
     "blogPostDetailsScreen": {
       "title": "Blog"
@@ -341,7 +341,7 @@
   "delete-confirm": "Permanently delete:",
   "directory-childrenTitle": "Child(ren)",
   "directory-disconnectButton": "Log out",
-  "directory-notificationsTitle": "Notifications",
+  "directory-notificationsTitle": "Mobile notifications",
   "directory-relativesTitle": "Parent(s)",
   "directory-structuresTitle": "School(s) and class(es)",
   "DisplayName": "Name shown",
