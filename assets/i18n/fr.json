@@ -201,7 +201,7 @@
     "alert": {
       "deletedThread": {
         "title": "Lecture impossible",
-        "text": "Votre conversation a été supprimée. Nous ne pouvons pas vous restituer l'histoire de la conversation."
+        "text": "Votre conversation a été supprimée. Nous ne pouvons pas vous restituer l'historique de la conversation."
       }
     }
   },
