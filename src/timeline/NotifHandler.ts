@@ -45,7 +45,7 @@ const openNotif = {
   }
 };
 //TODO types args
-const timelineNotifHandlerFactory:NotificationHandlerFactory<any,any,any> = dispatch => async (notificationData, legalapps, doTrack) => {
+const timelineNotifHandlerFactory:NotificationHandlerFactory<any,any,any> = dispatch => async (notificationData, legalapps, trackCategory) => {
   for (const path in openNotif) {
     if (notificationData.resourceUri.startsWith(path)) {
       // console.log("before await schoolbooks");
@@ -73,7 +73,7 @@ const timelineNotifHandlerFactory:NotificationHandlerFactory<any,any,any> = disp
       }
 
       const notifPathBegin = '/' + notificationData.resourceUri.replace(/^\/+/g, '').split('/')[0];
-      doTrack && Trackers.trackEvent(doTrack, "Timeline", notifPathBegin);
+      trackCategory && Trackers.trackEvent(trackCategory, "Timeline", notifPathBegin);
 
       return true;
     }

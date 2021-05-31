@@ -10,13 +10,16 @@ import { Trackers } from "../tracker";
 
 // Module Map
 
+export interface INotifHandlerTrackInfo {
+	action: string, value?: number
+}
 export interface INotifHandlerReturnType {
-	managed: boolean;
-	trackInfo?: { action: string, value?: number }
+	managed: number;
+	trackInfo?: INotifHandlerTrackInfo
 }
 
 export type NotifHandlerThunk = ThunkAction<Promise<INotifHandlerReturnType>, any, void, AnyAction>;
-export type NotifHandlerThunkAction = (notification: IAbstractNotification) => NotifHandlerThunk;
+export type NotifHandlerThunkAction = (notification: IAbstractNotification, trackCategory: false | string) => NotifHandlerThunk;
 
 export interface INotifHandlerDefinition {
 	type: string;
@@ -36,62 +39,96 @@ export const getRegisteredNotifHandlers = () => registeredNotifHandlers;
 
 // Notif Handler Action
 
-export const handleNotificationAction = (notification: IAbstractNotification, fallbackAction: NotifHandlerThunkAction, doTrack: false | string = false) =>
+const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
+	moduleRedirection: (n, trackCategory) => async (dispatch, getState) => {
+		const rets = await Promise.all(registeredNotifHandlers.map(async def => {
+			if (n.type !== def.type) return false;
+			if (def["event-type"] && n["event-type"] !== def["event-type"]) return false;
+			const thunkAction = def.notifHandlerAction(n, trackCategory);
+			const ret = await (dispatch(thunkAction) as unknown as Promise<INotifHandlerReturnType>); // TS BUG ThunkDispatch is treated like a regular Dispatch
+			trackCategory && ret.trackInfo && Trackers.trackEvent(trackCategory, ret.trackInfo.action, `${n.type}.${n["event-type"]}`, ret.trackInfo.value);
+			return ret;
+		}));
+		return {
+			managed: rets.reduce((total, ret) => total + (ret ? ret.managed : 0), 0)
+		};
+	},
+
+	legacyRedirection: (n, trackCategory) => async (dispatch, getState) => {
+		const legacyThunkAction = legacyHandleNotificationAction(
+			n.backupData.params as unknown as NotificationData,
+			getState().user?.auth?.apps
+		) as ThunkAction<Promise<number>, any, any, AnyAction>;
+		// No tracking here, they're defined in legacyActions themselves.
+		return {
+			managed: await (dispatch(legacyThunkAction) as unknown as Promise<number>)
+		}
+	},
+
+	webRedirection: (n, trackCategory) => async (dispatch, getState) => {
+		const notifWithUri = getAsResourceUriNotification(n);
+		if (!notifWithUri) {
+			console.log(`[cloudMessaging] notification ${n.type}.${n["event-type"]} has no resource uri.`);
+			return { managed: 0 };
+		}
+		trackCategory && Trackers.trackEvent(trackCategory, 'Browser', `${n.type}.${n["event-type"]}`);
+		mainNavNavigate('timeline/goto', {
+			notification: notifWithUri
+		})
+		return { managed: 1 };
+	},
+
+	timelineRedirection: (n, trackCategory) => async (dispatch, getState) => {
+		trackCategory && Trackers.trackEvent(trackCategory, 'Timeline', `${n.type}.${n["event-type"]}`);
+		mainNavNavigate('timeline', {
+			notification: n
+		});
+		return { managed: 1 };
+
+	}
+}
+
+export const defaultNotificationActionStack = [
+	defaultNotificationActions.moduleRedirection,
+	defaultNotificationActions.legacyRedirection,
+	defaultNotificationActions.webRedirection,
+	defaultNotificationActions.timelineRedirection,
+];
+
+export const handleNotificationAction = (notification: IAbstractNotification, actionStack: NotifHandlerThunkAction[], trackCategory: false | string = false) =>
 	async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
 		let manageCount = 0;
-
-		// First, iterate over registered notifHandlers to manage notig
-		await Promise.all(registeredNotifHandlers.map(async def => {
-			if (notification.type !== def.type) return false;
-			if (def["event-type"] && notification["event-type"] !== def["event-type"]) return false;
-			const thunkAction = def.notifHandlerAction(notification);
-			const ret = await (dispatch(thunkAction) as unknown as Promise<INotifHandlerReturnType>); // TS BUG ThunkDispatch is treated like a regular Dispatch
-			if (ret.managed) {
-				++manageCount;
-				ret.trackInfo && doTrack && Trackers.trackEvent(doTrack, ret.trackInfo.action, `${notification.type}.${notification["event-type"]}`, ret.trackInfo.value);
-			}
-		}));
-
-		// Then, dispatch the legacy notification handler
-		if (!manageCount){
-			const legacyThunkAction = legacyHandleNotificationAction(
-				notification.backupData.params as unknown as NotificationData,
-				getState().user?.auth?.apps
-			) as ThunkAction<Promise<number>, any, any, AnyAction>;
-			manageCount += await (dispatch(legacyThunkAction) as unknown as Promise<number>);
-		}
-
-		// Finally, if notification is not managed, redirect to the web if possible
-		if (!manageCount) {
-			const ret = await (dispatch(fallbackAction(notification)) as unknown as Promise<INotifHandlerReturnType>);
-			if (ret.managed) {
-				ret.trackInfo && doTrack && Trackers.trackEvent(doTrack, ret.trackInfo.action, `${notification.type}.${notification["event-type"]}`, ret.trackInfo.value);
-			}
+		for (const action of actionStack) {
+			if (manageCount) return;
+			const ret = await dispatch(action(notification, trackCategory)) as unknown as INotifHandlerReturnType;
+			manageCount += ret.managed;
+			ret.trackInfo && trackCategory && Trackers.trackEvent(trackCategory, ret.trackInfo.action, 'Post-routing', ret.trackInfo.value);
 		}
 	}
 
 // LEGACY ZONE ====================================================================================
 
 import legacyModuleDefinitions from "../../AppModules";
-import { IAbstractNotification } from ".";
+import { getAsResourceUriNotification, IAbstractNotification } from ".";
+import { mainNavNavigate } from "../../navigation/helpers/navHelper";
 
 export interface NotificationData {
 	resourceUri: string
 }
 export interface NotificationHandler {
-	(notificationData: NotificationData, apps: string[], doTrack: string | false): Promise<boolean>
+	(notificationData: NotificationData, apps: string[], trackCategory: string | false): Promise<boolean>
 }
 export interface NotificationHandlerFactory<S, E, A extends Action> {
 	(dispatch: ThunkDispatch<S, E, A>, getState: () => S): NotificationHandler;
 }
 
-export const legacyHandleNotificationAction = (data: NotificationData, apps: string[], doTrack: false | string = "Push Notification") =>
+export const legacyHandleNotificationAction = (data: NotificationData, apps: string[], trackCategory: false | string = "Push Notification") =>
 	async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
 		// function for calling handlerfactory
 		let manageCount = 0;
 		const call = async (notifHandlerFactory: NotificationHandlerFactory<any, any, any>) => {
 			try {
-				const managed = await notifHandlerFactory(dispatch, getState)(data, apps, doTrack);
+				const managed = await notifHandlerFactory(dispatch, getState)(data, apps, trackCategory);
 				if (managed) {
 					manageCount++;
 				}

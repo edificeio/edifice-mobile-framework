@@ -5,7 +5,7 @@ import { NotificationHandlerFactory } from "../infra/pushNotification";
 import { FilterId, IFile } from "./types";
 import { Trackers } from "../infra/tracker";
 
-const notifHandlerFactory: NotificationHandlerFactory<any, any, any> = () => async (notificationData, apps, doTrack) => {
+const notifHandlerFactory: NotificationHandlerFactory<any, any, any> = () => async (notificationData, apps, trackCategory) => {
   if (!notificationData.resourceUri.startsWith("/workspace")) {
     return false;
   }
@@ -49,7 +49,7 @@ const notifHandlerFactory: NotificationHandlerFactory<any, any, any> = () => asy
     });
   }
 
-  doTrack && Trackers.trackEvent(doTrack, "Workspace", "/workspace");
+  trackCategory && Trackers.trackEvent(trackCategory, "Workspace", "/workspace");
 
   return true;
 };
