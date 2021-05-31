@@ -3,6 +3,8 @@ import { NavigationInjectedProps } from "react-navigation";
 import I18n from "i18n-js";
 import { ThunkDispatch } from "redux-thunk";
 import { connect } from "react-redux";
+import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
+import { RefreshControl, View } from "react-native";
 
 import type { IGlobalState } from "../../../../AppStore";
 import type { ITimeline_State } from "../reducer";
@@ -13,10 +15,8 @@ import { Text } from "../../../components/text";
 import { loadNotificationsPageAction, startLoadNotificationsAction } from "../actions";
 import withViewTracking from "../../../tracker/withViewTracking";
 import moduleConfig from "../moduleConfig";
-import { INotification, INotifications_State } from "../reducer/notifications";
+import { INotification, INotifications_State, IResourceUriNotification, isResourceUriNotification } from "../reducer/notifications";
 import { LoadingIndicator } from "../../../components/loading";
-import { FlatList } from "react-native-gesture-handler";
-import { RefreshControl } from "react-native";
 
 // TYPES ==========================================================================================
 
@@ -51,7 +51,7 @@ export class TimelineScreen extends React.PureComponent<
   ITimelineScreenState
   > {
 
-  // DECLARATIONS ===================================================================================
+  // DECLARATIONS =================================================================================
 
   static navigationOptions = {
     header: () => null, // Header is included in screen
@@ -61,7 +61,7 @@ export class TimelineScreen extends React.PureComponent<
     loadingState: TimelineLoadingState.PRISTINE
   }
 
-  // RENDER =========================================================================================
+  // RENDER =======================================================================================
 
   render() {
     return <>
@@ -90,12 +90,11 @@ export class TimelineScreen extends React.PureComponent<
 
   renderError() {
     return <Text>{`Error: ${this.props.notifications.error?.name}
-    ${this.props.notifications.error?.name}`}</Text>
+    ${this.props.notifications.error?.name}`}</Text> // ToDo: great error screen here
   }
 
   renderList() {
     const items = getTimelineItems(this.props.notifications);
-    console.log("items:", items);
     return <FlatList
       // data
       data={items}
@@ -121,25 +120,27 @@ export class TimelineScreen extends React.PureComponent<
   }
 
   renderEmpty() {
-    return <Text>Empty.</Text>
+    return <Text>Empty.</Text> // ToDo: great empty screen here
   }
 
   renderNotificationItem(n: INotification) {
-    console.log("render notif", n);
-    return <Text>{n.message}</Text>
+    const compInst = <Text>{n.message}</Text>;
+    return isResourceUriNotification(n)
+      ? <TouchableOpacity onPress={e => {this.doOpenNotification(n)}} >{compInst}</TouchableOpacity>
+      : <View>{compInst}</View>;
   }
 
   renderFlashMsgItem(fm: any) { // ToDo type and code
   }
 
-  // LIFECYCLE ======================================================================================
+  // LIFECYCLE ====================================================================================
 
   constructor(props: ITimelineScreenProps) {
     super(props);
     this.doInit();
   }
 
-  // METHODS ========================================================================================
+  // METHODS ======================================================================================
 
   async doInit() {
     try {
@@ -161,6 +162,12 @@ export class TimelineScreen extends React.PureComponent<
 
   async doNextPage() {
     await this.props.handleNextPage();
+  }
+
+  async doOpenNotification(n: INotification) {
+    isResourceUriNotification(n) && this.props.navigation.navigate('timeline/goto', {
+      notification: n as IResourceUriNotification
+    })
   }
 }
 
