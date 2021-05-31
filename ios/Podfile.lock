@@ -327,9 +327,9 @@ PODS:
     - ReactCommon/jscallinvoker (= 0.61.5)
   - rn-fetch-blob (0.12.0):
     - React-Core
-  - RNCAsyncStorage (1.15.4):
+  - RNCAsyncStorage (1.15.3):
     - React-Core
-  - RNCMaskedView (0.1.11):
+  - RNCMaskedView (0.1.10):
     - React
   - RNCPicker (1.8.1):
     - React-Core
@@ -610,9 +610,9 @@ SPEC CHECKSUMS:
   react-native-image-picker: 189e8d3653b00442cb790bce09a283edaf8e02b6
   react-native-matomo-sdk: 1dd9511387c2f96401dc6ba9a6476d0660021c91
   react-native-netinfo: 8d8db463bcc5db66a8ac5c48a7d86beb3b92f61a
-  react-native-safe-area-context: e471852c5ed67eea4b10c5d9d43c1cebae3b231d
+  react-native-safe-area-context: f0906bf8bc9835ac9a9d3f97e8bde2a997d8da79
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
-  react-native-video: 1574074179ecaf6a9dd067116c8f31bf9fec15c8
+  react-native-video: 0bb76b6d6b77da3009611586c7dbf817b947f30e
   react-native-webview: ef8d30ecc5baf6bf7821690180c2f9bf2bdf00c0
   React-RCTActionSheet: 600b4d10e3aea0913b5a92256d2719c0cdd26d76
   React-RCTAnimation: 791a87558389c80908ed06cc5dfc5e7920dfa360
@@ -625,12 +625,12 @@ SPEC CHECKSUMS:
   React-RCTVibration: a49a1f42bf8f5acf1c3e297097517c6b3af377ad
   ReactCommon: 198c7c8d3591f975e5431bec1b0b3b581aa1c5dd
   rn-fetch-blob: f065bb7ab7fb48dd002629f8bdcb0336602d3cba
-  RNCAsyncStorage: b17c417b356114699a486715adfa5829a5d6d8b9
-  RNCMaskedView: f127cd9652acfa31b91dcff613e07ba18b774db6
+  RNCAsyncStorage: 9924d6b4affe9081f08073f354ec6b09c839ff31
+  RNCMaskedView: f5c7d14d6847b7b44853f7acb6284c1da30a3459
   RNCPicker: 914b557e20b3b8317b084aca9ff4b4edb95f61e4
   RNCPushNotificationIOS: f688c6d6158cf8ef93e72868e0bfdf27d3bbc568
   RNDateTimePicker: dc9dab744823a2c734dbc7362cdf57a3adba3c43
-  RNDeviceInfo: 4f480456c7ac8c9919448375399c1a6f14479549
+  RNDeviceInfo: 3266783bcb6aa4b0c785d6080a407f8a5fc68326
   RNFastImage: 9b0c22643872bb7494c8d87bbbb66cc4c0d9e7a2
   RNFBApp: 02bde3edecf2e9694b908a5d3504e03449980f20
   RNFBMessaging: 1823217d31e942531cc3f51fb5367dcbc69c1e10
