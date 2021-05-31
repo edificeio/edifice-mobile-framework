@@ -22,17 +22,7 @@ const handleSchoolbookNotificationAction: NotifHandlerThunkAction = notification
 export default () => registerNotifHandlers([
 	{
 		type: 'SCHOOLBOOK',
-		"event-type": 'PUBLISH',
-		notifHandlerAction: handleSchoolbookNotificationAction
-	},
-	{
-		type: 'SCHOOLBOOK',
-		"event-type": 'WORD-SHARED',
-		notifHandlerAction: handleSchoolbookNotificationAction
-	},
-	{
-		type: 'SCHOOLBOOK',
-		"event-type": 'ACKNOWLEDGE',
+		"event-type": ['PUBLISH', 'WORD-SHARED', 'WORD-RESEND', 'ACKNOWLEDGE', 'RESPONSE', 'MODIFYRESPONSE'],
 		notifHandlerAction: handleSchoolbookNotificationAction
 	}
 ]);
