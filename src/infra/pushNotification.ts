@@ -9,5 +9,5 @@ export interface NotificationHandler{
     (notificationData:NotificationData,apps:string[], doTrack: string | false ):Promise<boolean>
 }
 export interface NotificationHandlerFactory<S,E,A extends Action>{
-    (dispatch:ThunkDispatch<S,E,A>): NotificationHandler;
+    (dispatch:ThunkDispatch<S,E,A>, getState: () => S): NotificationHandler;
 }
