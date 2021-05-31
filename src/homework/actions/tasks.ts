@@ -65,7 +65,6 @@ const homeworkTasksAdapter: (
   for (const itemday of dataDays) {
     if (itemday.entries.length === 0) continue; // If no tasks this day we skip it.
     const date = moment(itemday.date);
-    if (date.isBefore(today(), "day")) continue; // ignore all days before today
     // each homeworkDay must have an id based on the date.
     const dateId = date.format("YYYY-MM-DD");
     // Now we generate the current homeworkDay (empty for the moment)
