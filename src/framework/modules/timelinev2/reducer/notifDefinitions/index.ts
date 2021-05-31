@@ -31,7 +31,7 @@ export const computeNotificationFilterList = (state: INotifDefinitions_State) =>
                     "app-name": v["app-name"],
                     "app-address": v["app-address"],
                     "push-notif": acc[v.type] && acc[v.type]["push-notif"] || v["push-notif"],
-                    i18n: `timeline.notifType.${v.type}`
+                    i18n: `timeline.notifFilter.${v.type}`
                 } as INotificationFilter)
             }
             return acc;

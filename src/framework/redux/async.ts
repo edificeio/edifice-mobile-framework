@@ -7,7 +7,7 @@ import createReducer, { IReducerActionsHandlerMap, createSessionReducer } from "
 export type AsyncActionTypeKey = 'request' | 'receipt' | 'error' | 'clear';
 export type AsyncActionTypes = { [key in AsyncActionTypeKey]: string };
 
-const asyncActionTypeSuffixes: AsyncActionTypes = {
+export const asyncActionTypeSuffixes: AsyncActionTypes = {
   'request': '_REQUEST',
   'receipt': '_RECEIPT',
   'error': '_ERROR',
