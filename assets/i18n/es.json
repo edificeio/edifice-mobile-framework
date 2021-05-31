@@ -1,4 +1,38 @@
 {
+  "timeline": {
+    "FiltersScreen": {
+      "all": "Todo",
+      "apply": "Aplicar",
+      "title": "Notificaciones"
+    },
+    "notifFilter": {
+      "ARCHIVE": "Mis datos",
+      "BLOG": "Blog",
+      "CALENDAR": "Agenda",
+      "COLLABORATIVEEDITOR": "Pad",
+      "COLLABORATIVEWALL": "Muro de colaboración",
+      "COMMUNITY": "Comunidades",
+      "EXERCIZER": "Ejercicios",
+      "FORUM": "Foro",
+      "HOMEWORKS": "Cuaderno semanal",
+      "MESSAGERIE": "Correo electrónico",
+      "MINDMAP": "Mapa mental",
+      "NEWS": "Noticias",
+      "PAGES": "Páginas",
+      "POLL": "Sondeo",
+      "RACK": "Casillero",
+      "RBS": "Reserva de recursos",
+      "SCHOOLBOOK": "Cuaderno de correspondencia",
+      "SCRAPBOOK": "Cuaderno multimedia",
+      "SHAREBIGFILES": "Envío de archivos pesados",
+      "SUPPORT": "Asistencia",
+      "TIMELINE": "Suministro de noticias",
+      "TIMELINEGENERATOR": "Barra cronológica",
+      "USERBOOK": "Humores y lemas",
+      "WIKI": "Wiki",
+      "WORKSPACE": "Espacio documental"
+    }
+  },
   "Activate": "Activar mi cuenta",
   "activation-cancelLoad": "Cancelar",
   "activation-cgu": "Al activar su cuenta, usted acepta los términos y condiciones de uso",

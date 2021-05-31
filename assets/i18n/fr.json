@@ -1,7 +1,39 @@
 {
   "timeline": {
     "tabName": "Nouveautés",
-    "appName": "Fil de nouveautés"
+    "appName": "Fil de nouveautés",
+    "FiltersScreen": {
+      "all": "Tous",
+      "apply": "Appliquer",
+      "title": "Notifications"
+    },
+    "notifFilter": {
+      "ARCHIVE": "Mes données",
+      "BLOG": "Blog",
+      "CALENDAR": "Agenda",
+      "COLLABORATIVEEDITOR": "Pad",
+      "COLLABORATIVEWALL": "Mur Collaboratif",
+      "COMMUNITY": "Communautés",
+      "EXERCIZER": "Exercices",
+      "FORUM": "Forum",
+      "HOMEWORKS": "Cahier de textes",
+      "MESSAGERIE": "Messagerie",
+      "MINDMAP": "Carte mentale",
+      "NEWS": "Actualités",
+      "PAGES": "Pages",
+      "POLL": "Sondage",
+      "RACK": "Casier",
+      "RBS": "Réservation de ressources",
+      "SCHOOLBOOK": "Carnet de liaison",
+      "SCRAPBOOK": "Cahier multimédia",
+      "SHAREBIGFILES": "Poste-fichiers",
+      "SUPPORT": "Assistance ENT",
+      "TIMELINE": "Fil de nouveautés",
+      "TIMELINEGENERATOR": "Frise chronologique",
+      "USERBOOK": "Humeurs et devises",
+      "WIKI": "Wiki",
+      "WORKSPACE": "Espace documentaire"
+    }
   },
     "Activate": "Activer votre compte",
     "activation-cancelLoad": "Annuler",
