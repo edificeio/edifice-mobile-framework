@@ -21,7 +21,7 @@ import { TimelineNotification } from "../components/TimelineNotification";
 import { TimelineFlashMessage } from "../components/TimelineFlashMessage";
 import { EmptyScreen } from "../../../components/emptyScreen";
 import { PageView } from "../../../components/page";
-import { INotification, IResourceUriNotification, isResourceUriNotification } from "../../../notifications";
+import { ITimelineNotification, IResourceUriNotification, isResourceUriNotification, IAbstractNotification } from "../../../notifications";
 
 // TYPES ==========================================================================================
 
@@ -51,7 +51,7 @@ export enum ITimelineItemType {
 }
 export interface ITimelineItem {
   type: ITimelineItemType,
-  data: INotification | IEntcoreFlashMessage
+  data: ITimelineNotification | IEntcoreFlashMessage
 }
 
 // COMPONENT ======================================================================================
@@ -114,7 +114,7 @@ export class TimelineScreen extends React.PureComponent<
         keyExtractor={n => n.data.id.toString()}
         contentContainerStyle={isEmpty ? { flex: 1 } : null}
         renderItem={({ item }) => item.type === ITimelineItemType.NOTIFICATION
-          ? this.renderNotificationItem(item.data as INotification)
+          ? this.renderNotificationItem(item.data as ITimelineNotification)
           : this.renderFlashMessageItem(item.data as IEntcoreFlashMessage)}
         // pagination
         ListEmptyComponent={this.renderEmpty}
@@ -146,7 +146,7 @@ export class TimelineScreen extends React.PureComponent<
     );
   }
 
-  renderNotificationItem(notification: INotification) {
+  renderNotificationItem(notification: ITimelineNotification) {
     return (
       <TimelineNotification
         notification={notification}
@@ -209,8 +209,8 @@ export class TimelineScreen extends React.PureComponent<
       await this.props.handleNextPage();
   }
 
-  async doOpenNotification(n: INotification) {
-    this.props.navigation.navigate('timeline/goto', {
+  async doOpenNotification(n: IAbstractNotification) {
+    isResourceUriNotification(n) && this.props.navigation.navigate('timeline/goto', {
       notification: n as IResourceUriNotification
     })
   }
@@ -243,7 +243,7 @@ const mapStateToProps: (s: IGlobalState) => ITimelineScreenDataProps = (s) => {
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => ITimelineScreenEventProps
   = (dispatch, getState) => ({
     handleInitTimeline: async () => { await dispatch(startLoadNotificationsAction()) },
-    handleNextPage: async () => { await dispatch(loadNotificationsPageAction()); }, // TS BUG: await is needed here and type is correct
+    handleNextPage: async () => { return await (dispatch(loadNotificationsPageAction()) as unknown as Promise<boolean>); }, // TS BUG: await is needed here and type is correct
     handleDismissFlashMessage: async (flashMessageId: number) => { await dispatch(dismissFlashMessageAction(flashMessageId)); }
   })
 

@@ -4,7 +4,8 @@ import { NavigationInjectedProps } from "react-navigation";
 import { connect } from "react-redux";
 import I18n from "i18n-js";
 
-import { IResourceUriNotification } from "../../../notifications";
+import { IResourceUriNotification, ITimelineNotification } from "../../../notifications";
+import { Text } from "../../../components/text";
 import withViewTracking from "../../../tracker/withViewTracking";
 import NotificationTopInfo from "../components/NotificationTopInfo";
 import { PageView } from "../../../components/page";
@@ -20,7 +21,7 @@ import theme from "../../../theme";
 export interface ITimelineWebViewScreenDataProps { };
 export interface ITimelineWebViewScreenEventProps { };
 export interface ITimelineWebViewScreenNavParams {
-  notification: IResourceUriNotification;
+  notification: ITimelineNotification & IResourceUriNotification;
 };
 export type ITimelineWebViewScreenProps = ITimelineWebViewScreenDataProps & ITimelineWebViewScreenEventProps & NavigationInjectedProps<Partial<ITimelineWebViewScreenNavParams>>;
 
