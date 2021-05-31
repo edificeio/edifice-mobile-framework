@@ -164,6 +164,9 @@
   "blog": {
     "resourceName" : "Billet de blog",
     "blogSelectScreen": {
+      "emptyScreenButton": "Créer un Blog",
+      "emptyScreenText": "Vous n'avez aucun Blog partagé. Pour publier un billet, vous devez d'abord créer un Blog et le partager depuis la version web de votre espace numérique.",
+      "emptyScreenTitle": "C'est un peu calme ici...",
       "sharedToNbPerson": "Partagé à {{nb}} personne",
       "sharedToNbPersons": "Partagé à {{nb}} personnes",
       "title": "Choisir un blog"

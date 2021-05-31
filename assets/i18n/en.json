@@ -164,6 +164,9 @@
   "blog": {
     "resourceName": "Blog post",
     "blogSelectScreen": {
+      "emptyScreenButton": "Create a blog",
+      "emptyScreenText": "You don’t have any shared blogs. To publish a post, you’ll need to first create a blog and share it from the web version of your virtual learning environment.",
+      "emptyScreenTitle": "It’s a bit quiet around here...",
       "sharedToNbPerson": "Shared with {{nb}} person",
       "sharedToNbPersons": "Shared with {{nb}} people",
       "title": "Choose a blog"
