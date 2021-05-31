@@ -45,9 +45,15 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
 			if (n.type !== def.type) return false;
 			if (def["event-type"] && n["event-type"] !== def["event-type"]) return false;
 			const thunkAction = def.notifHandlerAction(n, trackCategory);
-			const ret = await (dispatch(thunkAction) as unknown as Promise<INotifHandlerReturnType>); // TS BUG ThunkDispatch is treated like a regular Dispatch
-			trackCategory && ret.trackInfo && Trackers.trackEvent(trackCategory, ret.trackInfo.action, `${n.type}.${n["event-type"]}`, ret.trackInfo.value);
-			return ret;
+			// const ret = await (dispatch(thunkAction) as unknown as Promise<INotifHandlerReturnType>); // TS BUG ThunkDispatch is treated like a regular Dispatch
+			// trackCategory && ret.trackInfo && Trackers.trackEvent(trackCategory, ret.trackInfo.action, `${n.type}.${n["event-type"]}`, ret.trackInfo.value);
+			// return ret;
+			/**/// #44727 tmp fix. Copied from timelineRedirection.
+			/**/	mainNavNavigate('timeline', {
+			/**/		notification: n
+			/**/	});
+			/**/	return { managed: 1 };
+			/**///
 		}));
 		return {
 			managed: rets.reduce((total, ret) => total + (ret ? ret.managed : 0), 0)
