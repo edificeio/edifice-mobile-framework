@@ -5,7 +5,7 @@ export default createNavigableModuleConfig<"timelinev2", ITimeline_State>({
     name: "timelinev2",
     displayName: "timeline.tabName",
     iconName: "nouveautes",
-    matchEntcoreApp: entcoreApp => entcoreApp.prefix === '/timeline', // No app-address for Timeline, we use prefix instead
+    matchEntcoreApp: entcoreApp => true, // The timeline is always displayed
     entcoreScope: ['timeline', 'userbook'],
     routeName: 'timeline'
 });
