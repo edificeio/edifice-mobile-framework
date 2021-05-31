@@ -7,7 +7,7 @@ import I18n from "i18n-js";
 import moment from "moment";
 
 import type { IGlobalState } from "../../../AppStore";
-import type { IBlogPost, IBlogPostComment, IBlogPostWithComments } from "../reducer";
+import type { IBlogPostComment, IBlogPostWithComments } from "../reducer";
 
 import moduleConfig from "../moduleConfig";
 import withViewTracking from "../../../framework/tracker/withViewTracking";
@@ -36,7 +36,7 @@ export interface IBlogPostDetailsScreenDataProps {
   // Add data props here
 };
 export interface IBlogPostDetailsScreenEventProps {
-  handleGetBlogPostDetails(blogPostIds: { blogId: string, postId: string }): Promise<IBlogPostWithComments | undefined>;
+  handleGetBlogPostDetails(blogPostId: { blogId: string, postId: string }): Promise<IBlogPostWithComments | undefined>;
 };
 export interface IBlogPostDetailsScreenNavParams {
   notification: ITimelineNotification & IResourceUriNotification;
@@ -172,7 +172,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<
                       if (supported) {
                         Linking.openURL(url);
                       } else {
-                        console.warn("[timeline] Don't know how to open URI: ", url);
+                        console.warn("[blog] Don't know how to open URI: ", url);
                       }
                     });
                     Trackers.trackEvent("Blog", "GO TO", "View in Browser");
