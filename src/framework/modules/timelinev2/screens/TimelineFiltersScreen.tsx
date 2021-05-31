@@ -79,7 +79,7 @@ export class TimelineFiltersScreen extends React.PureComponent<
           />
         </HeaderRow>
       </FakeHeader>
-    )
+    );
   }
 
   renderList() {

@@ -14,8 +14,8 @@ import withViewTracking from "../../infra/tracker/withViewTracking";
 import { NavigationScreenProp, NavigationState } from "react-navigation";
 import { FlatButton } from "../../ui/FlatButton";
 import { CommonStyles } from "../../styles/common/styles";
-import { InfoBubble } from "../../ui/InfoBubble";
 import Conf from "../../../ode-framework-conf";
+import { InfoBubble } from "../../framework/components/infoBubble";
 
 class MyAppGrid extends React.PureComponent<{ navigation : NavigationScreenProp<NavigationState>}, {}> {
   private renderGrid(modules: IAppModule[]) {
@@ -58,6 +58,8 @@ class MyAppGrid extends React.PureComponent<{ navigation : NavigationScreenProp<
               infoText={I18n.t("myapp-infoBubbleText", {appName: DeviceInfo.getApplicationName()})}
               infoTitle={I18n.t("myapp-infoBubbleTitle")}
               infoImage={require("../../../assets/images/my-apps-infobubble.png")}
+              infoBubbleType="floating"
+              infoBubbleId="myAppsScreen.redirect"
             />
           </View>
         </View>
