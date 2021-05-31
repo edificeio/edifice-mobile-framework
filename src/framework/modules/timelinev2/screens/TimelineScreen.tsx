@@ -51,7 +51,7 @@ export class TimelineScreen extends React.PureComponent<
   ITimelineScreenState
   > {
 
-// DECLARATIONS ===================================================================================
+  // DECLARATIONS ===================================================================================
 
   static navigationOptions = {
     header: () => null, // Header is included in screen
@@ -61,7 +61,7 @@ export class TimelineScreen extends React.PureComponent<
     loadingState: TimelineLoadingState.PRISTINE
   }
 
-// RENDER =========================================================================================
+  // RENDER =========================================================================================
 
   render() {
     return <>
@@ -81,9 +81,9 @@ export class TimelineScreen extends React.PureComponent<
     const { navigation } = this.props;
     return <FakeHeader>
       <HeaderRow>
-        <HeaderAction iconName="filter"/>
+        <HeaderAction iconName="filter" />
         <HeaderTitle>{I18n.t("timeline.appName")}</HeaderTitle>
-        <HeaderIcon name={null}/>
+        <HeaderIcon name={null} />
       </HeaderRow>
     </FakeHeader>
   }
@@ -100,7 +100,7 @@ export class TimelineScreen extends React.PureComponent<
       // data
       data={items}
       keyExtractor={n => n.data.id.toString()}
-      renderItem={({item, index}) => item.type === ITimelineItemType.NOTIFICATION
+      renderItem={({ item, index }) => item.type === ITimelineItemType.NOTIFICATION
         ? this.renderNotificationItem(item.data as INotification)
         : /*this.renderFlashMsgItem(item.data) as IFlashMessage*/ null}
       // pagination
@@ -113,7 +113,7 @@ export class TimelineScreen extends React.PureComponent<
       }
       ListFooterComponent={
         this.state.loadingState === TimelineLoadingState.DONE && this.props.notifications.isFetching
-         ? <LoadingIndicator/> : null
+          ? <LoadingIndicator /> : null
       }
       onEndReached={() => this.doNextPage()}
       onEndReachedThreshold={0.5}
@@ -132,14 +132,14 @@ export class TimelineScreen extends React.PureComponent<
   renderFlashMsgItem(fm: any) { // ToDo type and code
   }
 
-// LIFECYCLE ======================================================================================
+  // LIFECYCLE ======================================================================================
 
   constructor(props: ITimelineScreenProps) {
     super(props);
     this.doInit();
   }
 
-// METHODS ========================================================================================
+  // METHODS ========================================================================================
 
   async doInit() {
     try {
@@ -167,10 +167,10 @@ export class TimelineScreen extends React.PureComponent<
 // UTILS ==========================================================================================
 
 const getTimelineItems = (notifications: INotifications_State /* add flash messages param here */) =>
-  ([
+([
   ...notifications.data.map(n => ({ type: ITimelineItemType.NOTIFICATION, data: n })),
   // ToDo: add array map for flash msgs
-  ]);
+]);
 
 // MAPPING ========================================================================================
 
@@ -183,9 +183,9 @@ const mapStateToProps: (s: IGlobalState) => ITimelineScreenDataProps = (s) => {
 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => ITimelineScreenEventProps
   = (dispatch, getState) => ({
-  handleInitTimeline: async () => { await dispatch(startLoadNotificationsAction()) },
-  handleNextPage: async () => { await dispatch(loadNotificationsPageAction()); }
-})
+    handleInitTimeline: async () => { await dispatch(startLoadNotificationsAction()) },
+    handleNextPage: async () => { await dispatch(loadNotificationsPageAction()); } // TS BUG: await is needed here and type is correct
+  })
 
 const TimelineScreen_Connected = connect(mapStateToProps, mapDispatchToProps)(TimelineScreen);
 export default withViewTracking("timeline")(TimelineScreen_Connected);
