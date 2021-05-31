@@ -10,7 +10,7 @@ import { SafeAreaView } from "react-native";
 
 import theme from "../theme";
 import { Icon } from "./icon";
-import { FontWeight, rem, Text, TextInverse } from "./text";
+import { FontWeight, rem, TextInverse } from "./text";
 
 const HeaderMinHeight = 52;
 
@@ -29,6 +29,23 @@ export const FakeHeader = (props: React.PropsWithChildren<ViewProps>) => <FakeHe
 export const HeaderRow = styled.View({
     minHeight: HeaderMinHeight,
     flexDirection: "row", alignItems: "center"
+})
+
+export const HeaderLeft = styled(HeaderRow)({
+    position: "absolute",
+    left: 0,
+    height: "100%",
+    flexDirection: "row",
+    alignItems: "stretch",
+    zIndex:1
+})
+export const HeaderRight = styled(HeaderRow)({
+    position: "absolute",
+    right: 0,
+    height: "100%",
+    flexDirection: "row",
+    alignItems:  "stretch",
+    zIndex: 1
 })
 
 const iconSpecificSizes = {
@@ -93,7 +110,7 @@ export const HeaderAction = (props: IHeaderActionGenericProps | IHeaderActionCus
     const ActionComponent: React.ComponentClass<ViewProps> = props.disabled ? View : TouchableOpacity;
     return <ActionComponent
         {...props.disabled ? {} : { onPress: props.onPress }}
-        style={{ flex: 0, ...(props.disabled ? { opacity: 0.7 } : {}), ...props.style }}
+        style={{ flex: 0, justifyContent: "center", ...(props.disabled ? { opacity: 0.7 } : {}), ...props.style }}
     >
         {(props as IHeaderActionCustomProps).customComponent
             ? (props as IHeaderActionCustomProps).customComponent
