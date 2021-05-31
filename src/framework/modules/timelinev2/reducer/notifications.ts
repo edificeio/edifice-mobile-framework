@@ -4,6 +4,7 @@
 import { Moment } from "moment";
 import { ImageURISource } from "react-native";
 import { AsyncPagedState, createAsyncPagedActionCreators, createAsyncPagedActionTypes, createSessionAsyncPagedReducer } from "../../../redux/asyncPaged";
+import { IUserSession } from "../../../session";
 import moduleConfig from "../moduleConfig";
 
 export interface IEntcoreNotification {
@@ -36,33 +37,30 @@ export interface IEntcoreNotification {
 
 export interface INotification {
     id: string;             // Notification unique ID
-    date: Moment;           // date of emission
+    date: Moment;           // Date of emission
     type: string;           // Type referring notifDefinitions
     "event-type": string;   // Custom event-type, in sense of a subtype
     message: string;        // Non-enriched content
-    unread: boolean;        // Is notification unread. Always true for opened push-notifications.
+    backupData: IEntcoreNotification;   // Original notification data as is
 }
 
-export interface ISentNotification extends INotification {
+export interface ISenderNotification extends INotification {
     sender: {              // Sender information
         id: string;
         displayName: string;
     }
 }
 
-export interface IResourceNotification extends INotification {
+export interface IResourceUriNotification extends INotification {
     resource: {
-        id: string;
-        name: string;
         uri: string;
     }
 }
 
-export interface ISubResourceNotification extends IResourceNotification {
-    "sub-resource": {
+export interface INamedResourceNotification extends IResourceUriNotification {
+    resource: IResourceUriNotification["resource"] & {
         id: string;
         name: string;
-        uri: string;
     }
 }
 
@@ -94,3 +92,17 @@ export const actions = createAsyncPagedActionCreators<INotifications_State_Data>
 export default createSessionAsyncPagedReducer(initialState, actionTypes, pageSize);
 
 // Getters
+
+const isSenderNotification = (n: INotification) => !!(n as INotification & Partial<ISenderNotification>).sender;
+const getAsSenderNotification = (n: INotification) => isSenderNotification(n) && n as ISenderNotification;
+
+const isResourceUriNotification = (n: INotification) => !!(n as INotification & Partial<IResourceUriNotification>).resource;
+const getAsResourceUriNotification = (n: INotification) => isResourceUriNotification(n) && n as IResourceUriNotification;
+
+const isNamedResourceNotification = (n: INotification) => !!(n as INotification & Partial<INamedResourceNotification>).resource?.name;
+const getAsNamedResourceNotification = (n: INotification) => isNamedResourceNotification(n) && n as INamedResourceNotification;
+
+const isEnrichedNotification = (n: INotification) => !!(n as INotification & Partial<IEnrichedNotification>).preview;
+const getAsEnrichedNotification = (n: INotification) => isEnrichedNotification(n) && n as IEnrichedNotification;
+
+const isMyNotification = (n: ISenderNotification, u: IUserSession) => n.sender.id === u.user.id;
