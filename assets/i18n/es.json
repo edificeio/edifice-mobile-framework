@@ -1,6 +1,7 @@
 {
   "common": {
-    "apply": "Aplicar"
+    "apply": "Aplicar",
+    "readMore": "leer más"
   },
   "timeline": {
     "emptyScreenText": "Está todo muy tranquilo. ¿Conoce la expresión \"la calma antes de la tormenta\"?",
@@ -35,6 +36,9 @@
         "WIKI": "Wiki",
         "WORKSPACE": "Espacio documental"
       }
+    },
+    "newsDetailsScreen": {
+      "title": "Noticias"
     }
   },
   "Activate": "Activar mi cuenta",

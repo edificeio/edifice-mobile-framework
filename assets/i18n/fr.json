@@ -1,8 +1,13 @@
 {
   "common": {
     "apply": "Appliquer",
+    "comment": "Commentaire",
+    "comments": "Commentaires",
+    "errorLoadingResource": "Cette ressource est inaccessible.",
     "infoBubble-doNotShow": "Ne plus afficher ce message",
-    "infoBubble-understood": "J'ai compris"
+    "infoBubble-understood": "J'ai compris",
+    "openInBrowser": "Ouvrir dans le navigateur",
+    "readMore": "lire plus"
   },
   "timeline": {
     "appName": "Fil de nouveautés",
@@ -40,9 +45,14 @@
         "WORKSPACE": "Espace documentaire"
       }
     },
+    "blogPostDetailsScreen": {
+      "title": "Blog"
+    },
+    "newsDetailsScreen": {
+      "title": "Actualités"
+    },
     "webViewScreen": {
       "infoBubbleText": "Pour consulter et modifier certains contenus, vous serez redirigé vers le navigateur web de votre smartphone.",
-      "openInBrowser": "Ouvrir dans le navigateur",
       "title": "Redirection web"
     }
   },

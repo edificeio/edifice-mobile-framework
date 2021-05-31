@@ -1,11 +1,14 @@
 import { createStackNavigator } from "react-navigation-stack";
 
-import BlogDetailsScreen from "./screens/BlogDetailsScreen";
+import BlogPostDetailsScreen from "./screens/BlogPostDetailsScreen";
 
 export default () => createStackNavigator(
     {
         "blog/details": {
-            screen: BlogDetailsScreen
+            screen: BlogPostDetailsScreen
         },
+    },
+    {
+        headerMode: "none"
     }
 );
