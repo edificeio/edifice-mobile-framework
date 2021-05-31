@@ -1,5 +1,6 @@
 import * as React from "react";
 import { View, ViewStyle } from "react-native";
+import { CommonStyles } from "../../styles/common/styles";
 import theme from "../util/theme";
 
 export const ListItem = ({
@@ -20,7 +21,7 @@ export const ListItem = ({
           justifyContent: "space-between",
           alignItems: "center",
           padding: 12,
-          borderBottomWidth: 0.25,
+          borderBottomWidth: 1,
           borderBottomColor: theme.color.listItemBorder
         },
         style
