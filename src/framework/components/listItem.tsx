@@ -15,7 +15,7 @@ export const ListItem = ({
     <View
       style={[
         {
-          backgroundColor: theme.color.cardBackground,
+          backgroundColor: theme.color.background.card,
           flexDirection: "row",
           justifyContent: "space-between",
           alignItems: "center",
