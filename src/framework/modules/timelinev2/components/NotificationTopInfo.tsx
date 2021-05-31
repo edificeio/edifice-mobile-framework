@@ -51,6 +51,7 @@ export default ({ notification }: { notification: ITimelineNotification}) => {
             video: false,
             iframes: false,
             images: false,
+            ignoreLineBreaks: true,
             globalTextStyle: {
               color: theme.color.text.regular,
               fontSize: 12,
