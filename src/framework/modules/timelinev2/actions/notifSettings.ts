@@ -35,7 +35,7 @@ export const loadNotificationFiltersSettingsAction = () => async (dispatch: Thun
                 settings = settingsToMigrate;
             } else settings = {};
         }
-        const defaults = Object.fromEntries(state.notifDefinitions.notifFilters.map(v => [v.type, v.type === "MESSAGERIE" ? false : true])); // TODO: beautify 
+        const defaults = Object.fromEntries(state.notifDefinitions.notifFilters.data.map(v => [v.type, v.type === "MESSAGERIE" ? false : true])); // TODO: beautify 
         settings = {...defaults, ...settings};
 
         // 3 - Save loaded notif settings for persistency

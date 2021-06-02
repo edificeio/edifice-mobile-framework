@@ -1,7 +1,8 @@
 import { CombinedState, combineReducers } from "redux";
 import { INotificationFilter } from "./notifFilters";
-import notifTypes, { INotifTypes_State } from "./notifTypes";
+import notifTypes, { IEntcoreNotificationType, INotifTypes_State } from "./notifTypes";
 import notifFilters, { INotifFilters_State } from "./notifFilters";
+import { IEntcoreApp } from "../../../../util/moduleTool";
 
 // State
 
@@ -21,18 +22,27 @@ export default combineReducers({
 
 export const getAreNotificationDefinitionsLoaded = (state: INotifDefinitions_State) => state.notifTypes.lastSuccess;
 
-export const computeNotificationFilterList = (state: INotifDefinitions_State) => Object.values(
-    state.notifTypes.data.reduce(
-        (acc: { [type: string]: INotificationFilter }, v) => {
-            acc = {
-                ...acc,
-                [v.type]: ({
-                    type: v.type,
-                    "app-name": v["app-name"],
-                    "app-address": v["app-address"],
-                    "push-notif": acc[v.type] && acc[v.type]["push-notif"] || v["push-notif"],
-                    i18n: `timeline.appType.${v.type}`
-                } as INotificationFilter)
-            }
-            return acc;
-        }, {}));
+/**
+ * Compute and populate all notification filters that exists in given notif definitions.
+ */
+export const computeNotificationFilterList = (filters: string[], notifTypes: IEntcoreNotificationType[]) => {
+    const getFilterDetail = (filter: string, notifTypes: IEntcoreNotificationType[]) => {
+        const matchingNotifType = notifTypes.find(nt => nt.type === filter);
+        return matchingNotifType ? {
+            type: filter,
+            "app-name": matchingNotifType["app-name"],
+            "app-address": matchingNotifType["app-address"],
+            i18n: `timeline.appType.${filter}`
+        } : undefined;
+    }
+    return filters.reduce<INotificationFilter[]>((acc, cur) => {
+        const filterDetail = getFilterDetail(cur, notifTypes);
+        return filterDetail ? [...acc, filterDetail] : acc;
+    }, []);
+}
+
+/**
+ * Filter a notificationFilterList with authorized entcore apps
+ */
+export const getAuthorizedNotificationFilterList = (notifFilters: INotificationFilter[], entcoreApps: IEntcoreApp[]) =>
+    notifFilters.filter(nf => entcoreApps.find(ea => ea.name === nf["app-name"]));

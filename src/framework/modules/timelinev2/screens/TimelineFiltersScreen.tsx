@@ -174,7 +174,7 @@ const mapStateToProps: (s: IGlobalState) => ITimelineFiltersScreenDataProps = (s
   let ts = moduleConfig.getState(s) as ITimeline_State;
   return {
     notifFilterSettings: ts.notifSettings.notifFilterSettings.data,
-    notifFilters: ts.notifDefinitions.notifFilters.sort((a,b) => I18n.t(a.i18n).localeCompare(I18n.t(b.i18n), I18n.locale))
+    notifFilters: ts.notifDefinitions.notifFilters.data.sort((a,b) => I18n.t(a.i18n).localeCompare(I18n.t(b.i18n), I18n.locale))
   };
 };
 

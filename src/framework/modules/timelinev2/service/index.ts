@@ -22,6 +22,13 @@ export const registeredNotificationsService = {
     }
 }
 
+export const notifFiltersService = {
+    list: async (session: IUserSession) => {
+        const api = '/timeline/types';
+        return fetchJSONWithCache(api) as Promise<string[]>;
+    }
+}
+
 export const notificationsService = {
     page: async (session: IUserSession, page: number, filters: string[]) => {
         const url = '/timeline/lastNotifications';

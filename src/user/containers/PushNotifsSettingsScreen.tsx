@@ -98,7 +98,7 @@ export class PushNotifsSettingsScreen extends React.PureComponent<
 		// console.log("entcoreApps", this.props.session.user.entcoreApps);
 		// console.log("timeline filters", this.props.timelineState.notifDefinitions.notifFilters);
 		items = Object.fromEntries(Object.entries(items).filter(item => {
-			const notifFilter = this.props.timelineState.notifDefinitions.notifFilters.find(tf => tf.type === item[0]);
+			const notifFilter = this.props.timelineState.notifDefinitions.notifFilters.data.find(tf => tf.type === item[0]);
 			return this.props.session.user.entcoreApps.find(app => !app.name || app.name === notifFilter?.["app-name"]);
 		}))
 		return <FlatList
