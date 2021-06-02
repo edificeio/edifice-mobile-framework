@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, ScrollView, TouchableOpacity, TouchableWithoutFeedback, Keyboard, TextInput, KeyboardAvoidingView, Platform } from "react-native";
+import { View, ScrollView, TouchableWithoutFeedback, Keyboard, TextInput, KeyboardAvoidingView, Platform } from "react-native";
 import { NavigationInjectedProps } from "react-navigation";
 import { ThunkDispatch } from "redux-thunk";
 import { connect } from "react-redux";
@@ -27,6 +27,8 @@ import { sendBlogPostAction } from "../actions";
 import { notifierShowAction } from "../../../framework/util/notifier/actions";
 import { hasNotch } from "react-native-device-info";
 import { createBlogPostResourceRight, getBlogPostRight, publishBlogPostResourceRight, submitBlogPostResourceRight } from "../rights";
+import { ImagePicked, ImagePicker } from "../../../infra/imagePicker";
+import Notifier from "../../../framework/util/notifier";
 
 // TYPES ==========================================================================================
 
@@ -34,7 +36,7 @@ export interface IBlogCreatePostScreenDataProps {
   session: IUserSession;
 };
 export interface IBlogCreatePostScreenEventProps {
-  handleUploadPostImages(images: ContentUri[]): Promise<IItems<IFile>>;
+  handleUploadPostImages(images: ImagePicked[]): Promise<IItems<IFile>>;
   handleSendBlogPost(blog: IBlog, title: string, content: string, uploadedPostImages?: IItems<IFile>): Promise<string | undefined>;
   handleInitTimeline(): Promise<void>;
   dispatch: ThunkDispatch<any, any, any>;
@@ -50,7 +52,7 @@ export interface IBlogCreatePostScreenState {
   sendLoadingState: boolean;
   title: string;
   content: string;
-  images: ContentUri[];
+  images: ImagePicked[];
 };
 
 // COMPONENT ======================================================================================
@@ -80,6 +82,7 @@ export class BlogCreatePostScreen extends React.PureComponent<
       <>
         {this.renderHeader()}
         <PageView path={routeName}>
+          <Notifier id="createPost" />
           <KeyboardAvoidingView
             enabled
             behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -123,15 +126,15 @@ export class BlogCreatePostScreen extends React.PureComponent<
           <HeaderRight>
             {sendLoadingState
               ? <LoadingIndicator
-                  small
-                  customColor={theme.color.tertiary.light}
-                  customStyle={{justifyContent: "center", paddingHorizontal: 18}}
-                />
+                small
+                customColor={theme.color.tertiary.light}
+                customStyle={{ justifyContent: "center", paddingHorizontal: 18 }}
+              />
               : <HeaderAction
-                  text={actionText}
-                  disabled={title.length === 0 || content.length === 0}
-                  onPress={() => this.doSend()}
-                />
+                text={actionText}
+                disabled={title.length === 0 || content.length === 0}
+                onPress={() => this.doSend()}
+              />
             }
           </HeaderRight>
         </HeaderRow>
@@ -145,7 +148,7 @@ export class BlogCreatePostScreen extends React.PureComponent<
 
   renderContent() {
     return (
-      <> 
+      <>
         {this.renderBlogInfos()}
         {this.renderPostInfos()}
         {this.renderPostMedia()}
@@ -158,9 +161,9 @@ export class BlogCreatePostScreen extends React.PureComponent<
     const { id, displayName } = session.user;
     const blog = navigation.getParam("blog");
     return (
-      <View style={{ marginBottom: 20, flexDirection: "row", alignItems: "center"}}>
-        <GridAvatars users={[id]}/>
-        <View style={{ flex: 1, justifyContent: "center", marginLeft: 6}}>
+      <View style={{ marginBottom: 20, flexDirection: "row", alignItems: "center" }}>
+        <GridAvatars users={[id]} />
+        <View style={{ flex: 1, justifyContent: "center", marginLeft: 6 }}>
           <TextBold>{displayName}</TextBold>
           <TextLight>{blog?.title}</TextLight>
         </View>
@@ -222,24 +225,26 @@ export class BlogCreatePostScreen extends React.PureComponent<
           borderRadius: 5
         }}
       >
-        <TouchableOpacity
-          style={{ alignItems: "center", justifyContent: "center", flexDirection: imagesAdded ? "row" : "column", marginVertical: 10 }}
-          onPress={() => this.attachmentPickerRef.onPickAttachment()}
-        >
-          <TextAction style={{ marginRight: imagesAdded ? 5 : 0 }}>
-            {I18n.t("blog.blogCreatePostScreen.postMedia")}
-          </TextAction>
-          <Icon
-            name="camera-on"
-            size={imagesAdded ? 15 : 22}
-            color={theme.color.secondary.regular}
-          />
-        </TouchableOpacity>
+        <ImagePicker callback={(image) => {
+          console.log("image", image);
+          this.setState({ images: [...images, image] })
+        }}>
+          <View
+            style={{ alignItems: "center", justifyContent: "center", flexDirection: imagesAdded ? "row" : "column", marginVertical: 10 }}
+          // onPress={() => this.attachmentPickerRef.onPickAttachment()}
+          >
+            <TextAction style={{ marginRight: imagesAdded ? 5 : 0 }}>{I18n.t('createPost-create-mediaField')}</TextAction>
+            <Icon
+              name="camera-on"
+              size={imagesAdded ? 15 : 22}
+              color={theme.color.secondary.regular}
+            />
+          </View>
+        </ImagePicker>
         <AttachmentPicker
           ref={r => (this.attachmentPickerRef = r)}
           onlyImages
           attachments={images}
-          onAttachmentSelected={selectedImage => this.setState({ images: [...images, selectedImage] })}
           onAttachmentRemoved={imagesToSend => this.setState({ images: imagesToSend })}
           notifierId="createBlogPost"
         />
@@ -263,7 +268,7 @@ export class BlogCreatePostScreen extends React.PureComponent<
 
   async doSendPost() {
     try {
-      const { 
+      const {
         navigation,
         session,
         handleUploadPostImages,
@@ -312,7 +317,7 @@ export class BlogCreatePostScreen extends React.PureComponent<
         [submitBlogPostResourceRight]: I18n.t("blog.blogCreatePostScreen.submitSuccess"),
         [publishBlogPostResourceRight]: I18n.t("blog.blogCreatePostScreen.publishSuccess")
       }[blogPostDisplayRight];
-      
+
       Trackers.trackEvent("Timeline", trackerEventText, "BlogPost");
       await handleInitTimeline();
       navigation.navigate("timeline");
@@ -350,8 +355,15 @@ const mapStateToProps: (s: IGlobalState) => IBlogCreatePostScreenDataProps = (s)
 };
 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => IBlogCreatePostScreenEventProps = (dispatch, getState) => ({
-  handleUploadPostImages: async (images: ContentUri[]) => {
-    const uploadedPostImages = await uploadDocument(dispatch, images, FilterId.protected);
+  handleUploadPostImages: async (images: ImagePicked[]) => {
+    // ToDo: use the future file upload module here
+    const convertedImages: ContentUri[] = images.map(i => ({
+      mime: i.type,
+      name: i.fileName,
+      uri: i.uri,
+      path: i.uri
+    }));
+    const uploadedPostImages = await uploadDocument(dispatch, convertedImages, FilterId.protected);
     const parsedPostImages: unknown[] = uploadedPostImages.map(uploadedImage => JSON.parse(uploadedImage));
     const formattedPostImages = formatResults(parsedPostImages);
     return formattedPostImages as IItems<IFile>;
