@@ -118,7 +118,7 @@ export class BlogCreatePostScreen extends React.PureComponent<
       <FakeHeader>
         <HeaderRow>
           <HeaderLeft>
-            <HeaderAction iconName="back" onPress={() => navigation.navigate("blog/select")} />
+            <HeaderAction iconName="back" onPress={() => navigation.goBack()} />
           </HeaderLeft>
           <HeaderCenter>
             <HeaderTitle>{I18n.t("blog.blogCreatePostScreen.title")}</HeaderTitle>
