@@ -81,6 +81,9 @@ class AppStoreUnconnected extends React.Component<{ currentPlatformId: string; s
   }
 
   public async componentDidMount() {
+    // force i18n strings initialization
+    initI18n();
+
     // Event handlers
     RNLocalize.addEventListener("change", this.handleLocalizationChange);
     AppState.addEventListener("change", this.handleAppStateChange);
