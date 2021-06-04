@@ -1,6 +1,7 @@
 {
   "common": {
     "apply": "Aplicar",
+    "cguPath": "/assets/cgu/ODE_Terms_of_use_20210324.pdf",
     "comment": "Comentario",
     "comments": "Comentarios",
     "error": {
