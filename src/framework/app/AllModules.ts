@@ -2,11 +2,12 @@
  * Every module is imported here.
  */
 
-import { loadModuleMap } from "../util/moduleTool"
+import { createModuleMap, initModules } from "../util/moduleTool"
 import BuiltInModules from "../modules/BuiltInModules";
 import IncludedModules from "../../conf/IncludedModules";
 
-export default loadModuleMap([
+// console.log("AllModules.tsx initModules");
+export default createModuleMap(initModules([
     ...BuiltInModules,
     ...IncludedModules || []
-]);
+]));

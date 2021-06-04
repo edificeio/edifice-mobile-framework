@@ -36,7 +36,7 @@ export default combineReducers({
 // Getters
 
 export const getNotifFiltersWithSetting = (state: ITimeline_State) =>
-  state.notifDefinitions.notifFilters.map(e => ({
+  state.notifDefinitions.notifFilters.data.map(e => ({
     ...e,
     setting: state.notifSettings.notifFilterSettings.data[e.type]
   })) as INotificationFilterWithSetting[];

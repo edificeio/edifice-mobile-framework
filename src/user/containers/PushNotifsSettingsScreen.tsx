@@ -23,11 +23,13 @@ import withViewTracking from "../../framework/util/tracker/withViewTracking";
 import { SafeAreaView, View } from "react-native";
 import { Toggle } from "../../framework/components/toggle";
 import I18n from "i18n-js";
+import { getUserSession, IUserSession } from "../../framework/util/session";
 
 // TYPES ==========================================================================================
 
 export interface IPushNotifsSettingsScreenDataProps {
 	timelineState: ITimeline_State;
+	session: IUserSession;
 };
 
 export interface IPushNotifsSettingsScreenEventProps {
@@ -72,7 +74,7 @@ export class PushNotifsSettingsScreen extends React.PureComponent<
 	render() {
 		const settings = this.props.timelineState.notifSettings.pushNotifsSettings;
 		return <>
-			<PageView>
+			<PageView path='timeline/push-notifications'>
 				{[PushNotifsSettingsLoadingState.PRISTINE, PushNotifsSettingsLoadingState.INIT].includes(this.state.loadingState)
 					? <LoadingIndicator />
 					: settings.error && !settings.lastSuccess
@@ -86,12 +88,19 @@ export class PushNotifsSettingsScreen extends React.PureComponent<
 	}
 
 	renderMainList() {
-		console.log("=== renderMainList")
+		// console.log("=== renderMainList")
 		const settings = getPushNotifsSettingsByType(this.props.timelineState);
-		console.log("settings", settings);
+		// console.log("settings", settings);
 		const defaults = getDefaultPushNotifsSettingsByType(this.props.timelineState);
-		console.log("defaults", defaults);
-		const items = deepmerge<IPushNotifsSettingsByType>(defaults, settings);
+		// console.log("defaults", defaults);
+		let items = deepmerge<IPushNotifsSettingsByType>(defaults, settings);
+		// console.log("items", items);
+		// console.log("entcoreApps", this.props.session.user.entcoreApps);
+		// console.log("timeline filters", this.props.timelineState.notifDefinitions.notifFilters);
+		items = Object.fromEntries(Object.entries(items).filter(item => {
+			const notifFilter = this.props.timelineState.notifDefinitions.notifFilters.data.find(tf => tf.type === item[0]);
+			return this.props.session.user.entcoreApps.find(app => !app.name || app.name === notifFilter?.["app-name"]);
+		}))
 		return <FlatList
 			data={Object.entries(items).sort((a, b) => I18n.t(`timeline.appType.${a[0]}`).localeCompare(I18n.t(`timeline.appType.${b[0]}`)))}
 			keyExtractor={(item: [string, IPushNotifsSettings]) => item[0]}
@@ -260,8 +269,10 @@ export class PushNotifsSettingsScreen extends React.PureComponent<
 
 const mapStateToProps: (s: IGlobalState) => IPushNotifsSettingsScreenDataProps = (s) => {
 	const timelineState = timelineModuleConfig.getState(s) as ITimeline_State;
+	const session = getUserSession(s);
 	return {
-		timelineState
+		timelineState,
+		session
 	};
 };
 

@@ -45,7 +45,9 @@ export const startLoadNotificationsAction = () => async (dispatch: ThunkDispatch
     dispatch(flashMessagesActions.request());
 
     const page = 0;
-    const filters = Object.keys(state.notifSettings.notifFilterSettings.data).filter(filter => state.notifSettings.notifFilterSettings.data[filter]);
+    const filters = Object.keys(state.notifSettings.notifFilterSettings.data)
+      .filter(filter => state.notifSettings.notifFilterSettings.data[filter])
+      .filter(filter => state.notifDefinitions.notifFilters.data.find(nf => nf.type === filter)); // whitelist only authorized filters after settings application
     const [notifications, flashMessages] = await Promise.all([
       notificationsService.page(session, page, filters),
       flashMessagesService.list(session)

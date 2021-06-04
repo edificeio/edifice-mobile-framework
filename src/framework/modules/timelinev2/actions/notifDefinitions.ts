@@ -1,25 +1,35 @@
 import { Dispatch } from "redux";
 import { getUserSession } from "../../../util/session";
 import moduleConfig from "../moduleConfig";
-import { registeredNotificationsService } from "../service";
+import { notifFiltersService, registeredNotificationsService } from "../service";
 import { actions as notifTypesAsyncActions } from "../reducer/notifDefinitions/notifTypes";
-import { actions as notifFiltersActions } from "../reducer/notifDefinitions/notifFilters";
+import { actions as notifFiltersAsyncActions } from "../reducer/notifDefinitions/notifFilters";
 import type { ITimeline_State } from "../reducer";
-import { computeNotificationFilterList } from "../reducer/notifDefinitions";
+import { computeNotificationFilterList, getAuthorizedNotificationFilterList } from "../reducer/notifDefinitions";
 
 export const loadNotificationsDefinitionsAction = () => async (dispatch: Dispatch, getState: () => any) => {
     try {
-        // 1. Notif Types from entcore
-        dispatch(notifTypesAsyncActions.request());
         const session = getUserSession(getState());
-        const notificationTypes = await registeredNotificationsService.list(session);
-        dispatch(notifTypesAsyncActions.receipt(notificationTypes));
-        // 2. Computed Notif Filters
-        let state = (moduleConfig.getState(getState()) as ITimeline_State).notifDefinitions;
-        const notifFilters = computeNotificationFilterList(state);
-        dispatch(notifFiltersActions.init(notifFilters));
+        // 1. Fetch notif filters from backend
+        dispatch(notifFiltersAsyncActions.request());
+        const filters = await notifFiltersService.list(session);
+        // 1a. Fetch notif types from backend
+        try {
+            dispatch(notifTypesAsyncActions.request());
+            var notificationTypes = await registeredNotificationsService.list(session);
+            dispatch(notifTypesAsyncActions.receipt(notificationTypes));
+        } catch (e) {
+            dispatch(notifTypesAsyncActions.error(e));
+            throw e;
+        }
+        // 1b. Filter notif filters (That sounds odd...) + get app info
+        let detailedFilters = computeNotificationFilterList(filters, notificationTypes);
+        // 1c. Keep only userauthorized filters
+        detailedFilters = getAuthorizedNotificationFilterList(detailedFilters, session.user.entcoreApps);
+        // 2. Validate data
+        dispatch(notifFiltersAsyncActions.receipt(detailedFilters));
     } catch (e) {
         console.warn(`[${moduleConfig.name}] loadNotificationsDefinitionsAction failed`, e);
-        dispatch(notifTypesAsyncActions.error(e));
+        dispatch(notifFiltersAsyncActions.error(e));
     }
 }

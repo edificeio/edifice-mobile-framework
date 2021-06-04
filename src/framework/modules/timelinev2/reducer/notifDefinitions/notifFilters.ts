@@ -1,39 +1,23 @@
-
-
 // State definition
 
-import { Action } from "redux";
-import { createSessionReducer } from "../../../../util/redux/reducerFactory";
+import { AsyncState, createAsyncActionCreators, createAsyncActionTypes, createSessionAsyncReducer } from "../../../../util/redux/async";
 import moduleConfig from "../../moduleConfig";
 
 export interface INotificationFilter {
   type: string;
   "app-name": string | null;
   "app-address": string | null;
-  "push-notif": boolean;
   i18n: string;
 }
 
-export type INotifFilters_State = INotificationFilter[];
+export type INotifFilters_State_Data = INotificationFilter[];
+export type INotifFilters_State = AsyncState<INotifFilters_State_Data>;
 
 // Reducer
 
-const initialState: INotificationFilter[] = [];
+const initialState: INotifFilters_State_Data = [];
 
-export const actionTypes = {
-  init: moduleConfig.namespaceActionType("NOTIFICATION_FILTERS_INIT"),
-  clear: moduleConfig.namespaceActionType("NOTIFICATION_FILTERS_CLEAR"),
-}
+export const actionTypes = createAsyncActionTypes(moduleConfig.namespaceActionType("NOTIFICATION_FILTERS"));
+export const actions = createAsyncActionCreators<INotifFilters_State_Data>(actionTypes);
 
-export const actions = {
-  init: (filters: INotificationFilter[]) => ({ type: actionTypes.init, filters }),
-  clear: () => ({ type: actionTypes.init }),
-}
-
-export default createSessionReducer(initialState, {
-  [actionTypes.init]: (s, a) => {
-    const action = a as Action & { filters: INotificationFilter[] }
-    return action.filters;
-  },
-  [actionTypes.clear]: (s, a) => initialState
-});
+export default createSessionAsyncReducer(initialState, actionTypes);

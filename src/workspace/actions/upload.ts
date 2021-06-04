@@ -4,9 +4,8 @@ import RNFetchBlob from 'rn-fetch-blob';
 import { asyncActionTypes } from "../../infra/redux/async";
 import config from "../config";
 import { formatResults, uploadDocument } from "./helpers/documents";
-import { ContentUri, IItem } from "../types";
+import { ContentUri } from "../types";
 import { Trackers } from "../../infra/tracker";
-import { getExtension } from "../../infra/actions/downloadHelper";
 
 // ACTION UPLOAD ------------------------------------------------------------------------------------
 

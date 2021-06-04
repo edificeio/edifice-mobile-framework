@@ -23,7 +23,7 @@ export type NotifHandlerThunkAction = (notification: IAbstractNotification, trac
 
 export interface INotifHandlerDefinition {
 	type: string;
-	"event-type"?: string;
+	"event-type"?: string | string[];
 	notifHandlerAction: NotifHandlerThunkAction
 };
 
@@ -43,11 +43,23 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
 	moduleRedirection: (n, trackCategory) => async (dispatch, getState) => {
 		const rets = await Promise.all(registeredNotifHandlers.map(async def => {
 			if (n.type !== def.type) return false;
-			if (def["event-type"] && n["event-type"] !== def["event-type"]) return false;
-			const thunkAction = def.notifHandlerAction(n, trackCategory);
-			const ret = await (dispatch(thunkAction) as unknown as Promise<INotifHandlerReturnType>); // TS BUG ThunkDispatch is treated like a regular Dispatch
-			trackCategory && ret.trackInfo && Trackers.trackEvent(trackCategory, ret.trackInfo.action, `${n.type}.${n["event-type"]}`, ret.trackInfo.value);
-			return ret;
+			const eventTypeArray = typeof def["event-type"] === 'string'
+				? [def["event-type"]]
+				: def["event-type"];
+			if (eventTypeArray !== undefined && !eventTypeArray.includes(n["event-type"])) return false;
+			if ((n as ITimelineNotification).message && (n as ITimelineNotification).date && (n as ITimelineNotification).id) { /**/// #44727 tmp fix. Copied from timelineRedirection.
+				const thunkAction = def.notifHandlerAction(n, trackCategory);
+				const ret = await (dispatch(thunkAction) as unknown as Promise<INotifHandlerReturnType>); // TS BUG ThunkDispatch is treated like a regular Dispatch
+				trackCategory && ret.trackInfo && Trackers.trackEvent(trackCategory, ret.trackInfo.action, `${n.type}.${n["event-type"]}`, ret.trackInfo.value);
+				return ret;
+			} else {
+				/**/// #44727 tmp fix. Copied from timelineRedirection.
+				/**/	mainNavNavigate('timeline', {
+				/**/		notification: n
+				/**/	});
+				/**/	return { managed: 1 };
+				/**///
+			}
 		}));
 		return {
 			managed: rets.reduce((total, ret) => total + (ret ? ret.managed : 0), 0)
@@ -109,7 +121,7 @@ export const handleNotificationAction = (notification: IAbstractNotification, ac
 // LEGACY ZONE ====================================================================================
 
 import legacyModuleDefinitions from "../../../AppModules";
-import { getAsResourceUriNotification, IAbstractNotification } from ".";
+import { getAsResourceUriNotification, IAbstractNotification, ITimelineNotification } from ".";
 import { mainNavNavigate } from "../../../navigation/helpers/navHelper";
 
 export interface NotificationData {
