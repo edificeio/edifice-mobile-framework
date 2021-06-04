@@ -66,8 +66,10 @@ export const schoolbookWordReportAdapter = (schoolbookWordReport: IEntcoreSchool
 
 export const schoolbookUriCaptureFunction: IResourceUriCaptureFunction<{ wordId: string }> = url => {
   const wordIdRegex = /^\/schoolbook.+\/word\/(\d+)/;
+  const reportIdRegex = /^\/schoolbook.+\/report\/(\d+)/;
+  const wordIdMatch = url.match(wordIdRegex);
   return {
-    wordId: url.match(wordIdRegex)?.[1]
+    wordId: wordIdMatch && wordIdMatch[1] || url.match(reportIdRegex)?.[1]
   }
 }
 
