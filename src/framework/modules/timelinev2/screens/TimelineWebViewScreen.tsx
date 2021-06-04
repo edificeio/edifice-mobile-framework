@@ -117,4 +117,4 @@ export class TimelineWebViewScreen extends React.PureComponent<
 // MAPPING ========================================================================================
 
 const TimelineWebViewScreen_Connected = connect(() => ({}), () => ({}))(TimelineWebViewScreen);
-export default withViewTracking("timeline/goto")(TimelineWebViewScreen_Connected);
+export default TimelineWebViewScreen_Connected;

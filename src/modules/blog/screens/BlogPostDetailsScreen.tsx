@@ -318,4 +318,4 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () 
 })
 
 const BlogPostDetailsScreen_Connected = connect(mapStateToProps, mapDispatchToProps)(BlogPostDetailsScreen);
-export default withViewTracking("blog/details")(BlogPostDetailsScreen_Connected);
+export default BlogPostDetailsScreen_Connected;

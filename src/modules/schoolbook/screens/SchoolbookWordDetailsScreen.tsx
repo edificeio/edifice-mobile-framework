@@ -427,7 +427,7 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () 
 })
 
 const SchoolbookWordDetailsScreen_Connected = connect(mapStateToProps, mapDispatchToProps)(SchoolbookWordDetailsScreen);
-const SchoolbookWordDetailsScreen_Managed = withViewTracking("schoolbook/details")(SchoolbookWordDetailsScreen_Connected);
+const SchoolbookWordDetailsScreen_Managed = withViewTracking("schoolbook/details")(SchoolbookWordDetailsScreen_Connected); // ToDo: better manage THIS view tracking
 
 // ROUTER =========================================================================================
 

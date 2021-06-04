@@ -247,4 +247,4 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () 
 })
 
 const BlogSelectScreen_Connected = connect(mapStateToProps, mapDispatchToProps)(BlogSelectScreen);
-export default withViewTracking("blog/select")(BlogSelectScreen_Connected);
+export default BlogSelectScreen_Connected;

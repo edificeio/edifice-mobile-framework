@@ -1,10 +1,11 @@
 import { createStackNavigator } from "react-navigation-stack";
+import { addViewTrackingToStackRoutes } from "../../framework/util/tracker/withViewTracking";
 import moduleConfig from "./moduleConfig";
 
 import { SchoolbookWordDetailsScreenRouter } from "./screens/SchoolbookWordDetailsScreen";
 
 export const timelineRoutes = {
-    [`${moduleConfig.routeName}/details`]: {
+    [`${moduleConfig.routeName}/details`]: { // This one does not use addViewTrackingToStackRoutes. That is self-managed
         screen: SchoolbookWordDetailsScreenRouter
     },
 }

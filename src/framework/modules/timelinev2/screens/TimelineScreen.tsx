@@ -278,4 +278,4 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () 
 
 const TimelineScreen_withNavigationFocus = withNavigationFocus(TimelineScreen);
 const TimelineScreen_Connected = connect(mapStateToProps, mapDispatchToProps)(TimelineScreen_withNavigationFocus);
-export default withViewTracking("timeline")(TimelineScreen_Connected);
+export default TimelineScreen_Connected;
