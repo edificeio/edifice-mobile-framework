@@ -497,7 +497,7 @@ PODS:
     - React
   - RNGestureHandler (1.10.3):
     - React-Core
-  - RNLocalize (2.1.0):
+  - RNLocalize (2.1.1):
     - React-Core
   - RNPermissions (3.0.4):
     - React-Core
@@ -884,7 +884,7 @@ SPEC CHECKSUMS:
   RNFBMessaging: ba11538f4d76a5ef89dc8c97dad04fbf2fa6ebef
   RNFileShareIntent: 94f0be5c8b791dc42bcf07793fa6f2dbfcc2cb5a
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
-  RNLocalize: ff053575acafb6ae18284974469bdf04fcaf6514
+  RNLocalize: b9a5d22c7e4ecb5db604861f1b1fff6013e03340
   RNPermissions: 75128bfb4c4ef92f572a8efdb8adfbfab75e8ed0
   RNReanimated: 9c13c86454bfd54dab7505c1a054470bfecd2563
   RNScreens: bf59f17fbf001f1025243eeed5f19419d3c11ef2
