@@ -70,7 +70,9 @@ export class ActivationPage extends React.PureComponent<
     };
   };
   private handleOpenCGU = () => {
-    const url = Conf.currentPlatform.cgu;
+    const platform = Conf.currentPlatform.url;
+    const path = I18n.t("common.cguPath");
+    const url = `${platform}${path}`;
     Linking.canOpenURL(url).then(supported => {
       if (supported) {
         Linking.openURL(url);
