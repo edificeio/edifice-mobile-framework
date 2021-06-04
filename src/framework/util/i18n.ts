@@ -39,8 +39,8 @@ import "moment/locale/es";
 let initDone = false;
 
 // Translation setup
-export const initI18n = () => {
-  if (initDone) return;
+export const initI18n = (force = false) => {
+  if (initDone && !force) return;
   initDone = true;
   I18n.fallbacks = true;
   I18n.defaultLocale = "en";

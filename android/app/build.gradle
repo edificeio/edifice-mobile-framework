@@ -19,8 +19,8 @@ android {
         applicationId APPID
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1050018
-        versionName "1.5.0-RC.8"
+        versionCode 1050201
+        versionName "1.5.2-indev.1"
         resValue "string", "app_name", "${APPNAME}"
         manifestPlaceholders = [ applicationName: APPNAME ]
         multiDexEnabled true // MultiDex is needed to handle the tons of React Native modules, see https://developer.android.com/studio/build/multidex
@@ -74,7 +74,7 @@ dependencies {
     def playServicesVersion='17+'
     implementation ("com.google.android.gms:play-services-base:${playServicesVersion}")
     // React Native
-    def reactNativeVersion='0.64+'
+    def reactNativeVersion='0.64.2'
     implementation ("com.facebook.react:react-native:${reactNativeVersion}")
     // Flipper
     def flipperVersion='0.87.0'

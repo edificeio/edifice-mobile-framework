@@ -55,6 +55,9 @@ import { IUserInfoState } from "./user/state/info";
 import "./infra/appConf";
 import { AppPushNotificationHandlerComponent } from "./framework/util/notifications/cloudMessaging";
 
+// force i18n strings initialization
+initI18n();
+
 // Disable Yellow Box on release builds.
 if (__DEV__) {
   // tslint:disable-next-line:no-console
@@ -81,9 +84,6 @@ class AppStoreUnconnected extends React.Component<{ currentPlatformId: string; s
   }
 
   public async componentDidMount() {
-    // force i18n strings initialization
-    initI18n();
-
     // Event handlers
     RNLocalize.addEventListener("change", this.handleLocalizationChange);
     AppState.addEventListener("change", this.handleAppStateChange);
@@ -115,7 +115,7 @@ class AppStoreUnconnected extends React.Component<{ currentPlatformId: string; s
 
   public async componentDidUpdate(prevProps: any) {
     if (!this.onTokenRefreshListener)
-      this.onTokenRefreshListener = messaging().onTokenRefresh(fcmToken => {
+      this.onTokenRefreshListener = messaging().onTokenRefresh((fcmToken) => {
         this.handleFCMTokenModified(fcmToken);
       });
   }
