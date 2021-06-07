@@ -1,5 +1,5 @@
 import { Platform, ActionSheetIOS } from "react-native";
-import ActionSheet from 'react-native-action-sheet';
+import ActionSheet from "react-native-action-sheet";
 import DocumentPicker from "react-native-document-picker";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import Permissions, { PERMISSIONS } from "react-native-permissions";
@@ -38,8 +38,8 @@ const photoCaptions: PhotoCaptions = {
     title: "common-ErrorStorageAccessAlertTitle",
     text: "common-ErrorStorageAccessAlertText",
     reTryTitle: "common-ErrorStorageAccessAlertRetry",
-    okTitle: "common-ok"
-  }
+    okTitle: "common-ok",
+  },
 };
 
 type FilePickerPromise = (resolve: (payload: ContentUri) => void, reject: (error: Error) => void) => void;
@@ -67,41 +67,50 @@ const pickFile: FilePickerPromise = (resolve, reject) => {
   const cancelButtonIndex = options.indexOf(cancel);
   const elements = { title, options, cancelButtonIndex };
   const handlers = [pickImage, pickDocument(), () => pickClosed];
-  const onPressAction = buttonIndex => typeof buttonIndex === "number" ? handlers[buttonIndex](resolve, reject) : null;
-
-  if (Platform.OS === "ios") {
+  const onPressAction = buttonIndex =>
+    typeof buttonIndex === "number" ? handlers[buttonIndex](resolve, reject) : null;
+  Platform.select({
+    ios: ActionSheetIOS,
+    default: ActionSheet,
+  }).showActionSheetWithOptions(elements, buttonIndex => onPressAction(buttonIndex));
+  /*if (Platform.OS === "ios") {
     ActionSheetIOS.showActionSheetWithOptions(elements, buttonIndex => onPressAction(buttonIndex))
   } else if (Platform.OS === "android") {
     ActionSheet.showActionSheetWithOptions(elements, buttonIndex => onPressAction(buttonIndex))
-  }
+  }*/
 };
 
 const pickImage: FilePickerPromise = (resolve, reject) => {
   console.log(launchImageLibrary);
-  launchImageLibrary({
-    mediaType: 'photo'
-  }, res => {
-    if (res.didCancel) reject(new Error("Cancelled picking image"));
-    else if (res.errorCode) reject(new Error("Error picking image"));
-    else {
-      const { uri, fileName, type } = res;
-      if (!uri || !type) reject(new Error("Error picking image"));
-      const realURI = Platform.select({ android: uri, ios: uri!.split("file://")[1] })!;
-      resolve({ mime: type!, name: fileName || uri!.split("tmp/")[1], uri: realURI, path: realURI }); // WHat's the difference between uri and path ?
+  launchImageLibrary(
+    {
+      mediaType: "photo",
+    },
+    res => {
+      if (res.didCancel) reject(new Error("Cancelled picking image"));
+      else if (res.errorCode) reject(new Error("Error picking image"));
+      else {
+        const { uri, fileName, type } = res;
+        if (!uri || !type) reject(new Error("Error picking image"));
+        const realURI = Platform.select({ android: uri, ios: uri!.split("file://")[1] })!;
+        resolve({ mime: type!, name: fileName || uri!.split("tmp/")[1], uri: realURI, path: realURI }); // WHat's the difference between uri and path ?
+      }
     }
-  });
+  );
 };
 
 export const pickFileError = (notifierId: string) => {
-  return (dispatch) => {
-    dispatch(notifierShowAction({
-      id: notifierId,
-      text: I18n.t("common-ErrorStorageAccess"),
-      icon: 'close',
-      type: 'error'
-    }));
-  }
-}
+  return dispatch => {
+    dispatch(
+      notifierShowAction({
+        id: notifierId,
+        text: I18n.t("common-ErrorStorageAccess"),
+        icon: "close",
+        type: "error",
+      })
+    );
+  };
+};
 
 const pickDocumentAction = (onlyImages?: boolean) => async (resolve, reject) => {
   const result = await DocumentPicker.pick({
@@ -110,19 +119,19 @@ const pickDocumentAction = (onlyImages?: boolean) => async (resolve, reject) => 
   const { uri, type, name } = result;
   // Need to manage some Android docs specifically
   let deviceURI = uri;
-  if ((Platform.OS === 'android')
-    && (uri.includes('content://com.google') || uri.includes('content://com.android'))) {
+  if (Platform.OS === "android" && (uri.includes("content://com.google") || uri.includes("content://com.android"))) {
     const stat = await RNFetchBlob.fs.stat(uri);
     deviceURI = stat.path;
   }
   // Device os dependant URI
   const realURI = Platform.select({ android: deviceURI, ios: decodeURI(deviceURI).split("file://")[1] });
   resolve({ mime: type, name: name, uri: realURI });
-}
+};
 
 const pickDocument = (onlyImages?: boolean) => async (resolve, reject) => {
   try {
-    const permissionStored = Platform.OS === "android" && await Permissions.check(PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE);
+    const permissionStored =
+      Platform.OS === "android" && (await Permissions.check(PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE));
     if (permissionStored === "denied") {
       const permissionRes = await Permissions.request(PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE);
       if (permissionRes === "denied") {
@@ -133,7 +142,7 @@ const pickDocument = (onlyImages?: boolean) => async (resolve, reject) => {
     } else {
       pickDocumentAction(onlyImages)(resolve, reject);
     }
-  } catch(err) {
+  } catch (err) {
     if (err.message !== "User canceled document picker") {
       reject(new Error("Error picking document"));
     }

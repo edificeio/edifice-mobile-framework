@@ -123,7 +123,7 @@ PODS:
     - FlipperKit/Core
     - FlipperKit/FlipperKitNetworkPlugin
   - glog (0.3.5)
-  - GoogleDataTransport (9.0.0):
+  - GoogleDataTransport (9.0.1):
     - GoogleUtilities/Environment (~> 7.2)
     - nanopb (~> 2.30908.0)
     - PromisesObjC (~> 1.2)
@@ -533,7 +533,7 @@ PODS:
   - RNScreens (3.3.0):
     - React-Core
     - React-RCTImage
-  - RNShare (6.2.0):
+  - RNShare (6.2.1):
     - React-Core
   - RNTextSize (4.0.0-rc.1):
     - React
@@ -826,7 +826,7 @@ SPEC CHECKSUMS:
   Flipper-RSocket: 127954abe8b162fcaf68d2134d34dc2bd7076154
   FlipperKit: 651f50a42eb95c01b3e89a60996dd6aded529eeb
   glog: 73c2498ac6884b13ede40eda8228cb1eee9d9d62
-  GoogleDataTransport: 11e3a5f2c190327df1a4a5d7e7ae3d4d5b9c9e4c
+  GoogleDataTransport: 04c3e9a480bbcaa2ec3f5d27f1cdeb6a92f20c8d
   GoogleUtilities: f8a43108b38a68eebe8b3540e1f4f2d28843ce20
   hermes-engine: 7d97ba46a1e29bacf3e3c61ecb2804a5ddd02d4f
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
@@ -888,7 +888,7 @@ SPEC CHECKSUMS:
   RNPermissions: 75128bfb4c4ef92f572a8efdb8adfbfab75e8ed0
   RNReanimated: 9c13c86454bfd54dab7505c1a054470bfecd2563
   RNScreens: bf59f17fbf001f1025243eeed5f19419d3c11ef2
-  RNShare: 32ded9b8603fddf8f8eed42014e7ea7a4b0b8bf0
+  RNShare: 5ac8f6532ca4cd80fc71caef1cfbba1854a6a045
   RNTextSize: 91955a6ea2adda9dc7802ce472b7a4dc717686f6
   RNVectorIcons: 31cebfcf94e8cf8686eb5303ae0357da64d7a5a4
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
