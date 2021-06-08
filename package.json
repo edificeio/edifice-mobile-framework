@@ -24,7 +24,7 @@
     "@emotion/react": "11.0.0",
     "@flyerhq/react-native-android-uri-path": "2.1.0",
     "@react-native-async-storage/async-storage": "1.15.5",
-    "@react-native-community/cli": "5.0.1-alpha.2",
+    "@react-native-community/cli": "5.0.1",
     "@react-native-community/datetimepicker": "3.5.2",
     "@react-native-community/masked-view": "0.1.11",
     "@react-native-community/netinfo": "6.0.0",
