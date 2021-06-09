@@ -5,7 +5,7 @@ import { ISupport_State } from "./reducer";
 export default createNavigableModuleConfig<"support", ISupport_State>({
   name: "support",
   displayName: "support",
-  matchEntcoreApp: entcoreApp => entcoreApp.name.includes("SUPPORT"),
+  matchEntcoreApp: entcoreApp => entcoreApp.name.toUpperCase().includes("SUPPORT"),
   entcoreScope: ['support'],
   iconName: "help-circled",
   group: true,
