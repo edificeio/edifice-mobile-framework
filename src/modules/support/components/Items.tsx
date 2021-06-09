@@ -1,9 +1,9 @@
 import * as React from "react";
-import {StyleSheet, TextInput, TouchableOpacity, View, ViewStyle} from "react-native";
+import { StyleSheet, TextInput, TouchableOpacity, View, ViewStyle } from "react-native";
 
-import { CommonStyles } from "../../styles/common/styles";
-import { Icon } from "../../ui";
-import Dropdown from "../../ui/Dropdown";
+import { CommonStyles } from "../../../styles/common/styles";
+import { Icon } from "../../../ui";
+import Dropdown from "../../../ui/Dropdown";
 import { IApp, IEstablishment } from "../containers/Support";
 
 export const EstablishmentPicker = ({
@@ -91,9 +91,19 @@ export const FormInputs = ({ fieldName, onChange, setResetter }: {
   }, [currentValue]);
 
   return fieldName === "subject" ? (
-    <TextInput style={textInputStyle} numberOfLines={1} value={currentValue} onChangeText={text => updateCurrentValue(text)} />
+    <TextInput
+      style={textInputStyle}
+      numberOfLines={1}
+      value={currentValue}
+      onChangeText={text => updateCurrentValue(text)}
+    />
   ) : (
-    <TextInput style={[textInputStyle, textInputMultiline]} multiline value={currentValue} onChangeText={text => updateCurrentValue(text)} />
+    <TextInput
+      style={[textInputStyle, textInputMultiline]}
+      multiline
+      value={currentValue}
+      onChangeText={text => updateCurrentValue(text)}
+    />
   );
 };
 

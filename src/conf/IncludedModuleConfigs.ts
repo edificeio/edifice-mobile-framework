@@ -5,4 +5,5 @@ export default [
     require("../modules/schoolbook/moduleConfig").default,
     require("../modules/viescolaire/moduleConfig").default,
     require("../modules/zimbra/moduleConfig").default,
+    require("../modules/support/moduleConfig").default,
 ];

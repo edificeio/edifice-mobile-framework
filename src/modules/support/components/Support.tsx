@@ -10,13 +10,13 @@ import {
   View
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import Toast from "react-native-tiny-toast";
 
-import { CommonStyles } from "../../styles/common/styles";
-import { PageContainer } from "../../ui/ContainerContent";
+import { CommonStyles } from "../../../styles/common/styles";
+import { PageContainer } from "../../../ui/ContainerContent";
 import { IApp, IEstablishment, ITicket } from "../containers/Support";
 import Attachment from "./Attachment";
 import { CategoryPicker, EstablishmentPicker, FormInputs, IconButton } from "./Items";
-import Toast from "react-native-tiny-toast";
 
 type SupportProps = {
   ticket: ITicket;
@@ -34,7 +34,7 @@ export default class Support extends React.PureComponent<SupportProps, any> {
   reset: (() => void)[] = [];
 
   componentDidMount() {
-    const { categoryList, establishmentList, ticket, onFieldChange, hasRightToCreateTicket } = this.props;
+    const { categoryList, establishmentList, ticket, onFieldChange } = this.props;
     if (
       categoryList !== undefined &&
       categoryList.length > 0 &&
@@ -70,7 +70,11 @@ export default class Support extends React.PureComponent<SupportProps, any> {
           <Text style={{ color: "red" }}>* </Text>
           {I18n.t(fieldTranslation)}
         </Text>
-        <FormInputs fieldName={fieldName} setResetter={resetter => this.reset.push(resetter)} onChange={field => onFieldChange({ ...ticket, [fieldName]: field })} />
+        <FormInputs
+          fieldName={fieldName}
+          setResetter={resetter => this.reset.push(resetter)}
+          onChange={field => onFieldChange({ ...ticket, [fieldName]: field })}
+        />
       </>
     );
   };
@@ -108,35 +112,40 @@ export default class Support extends React.PureComponent<SupportProps, any> {
   renderForm = () => {
     const { categoryList, establishmentList, hasRightToCreateTicket } = this.props;
     return (
-        // @ts-ignore
-        <View onTouchStart={ !hasRightToCreateTicket && (() => this.hasNoRight())}>
-            {this.renderFormSelect("support-ticket-category", "category", categoryList)}
-            {this.renderFormSelect("support-ticket-establishment", "school_id", establishmentList)}
-            {this.renderFormInput("support-ticket-subject", "subject")}
-            {this.renderFormInput("support-ticket-description", "description")}
-          </View>
-      );
+      // @ts-ignore
+      <View onTouchStart={!hasRightToCreateTicket && (() => this.hasNoRight())}>
+        {this.renderFormSelect("support-ticket-category", "category", categoryList)}
+        {this.renderFormSelect("support-ticket-establishment", "school_id", establishmentList)}
+        {this.renderFormInput("support-ticket-subject", "subject")}
+        {this.renderFormInput("support-ticket-description", "description")}
+      </View>
+    );
   };
 
   renderAndroidRegisterButton = () => {
-    if(Platform.OS === "android") {
+    if (Platform.OS === "android") {
       return (
-          <TouchableOpacity onPress={this.props.hasRightToCreateTicket ? this.sendTicket : this.hasNoRight}
-                            style={this.props.hasRightToCreateTicket ? styles.buttonTicketRegister : styles.buttonTicketRegisterDisabled}>
-            <Text style={styles.textButtonTicketRegister}>{I18n.t("support-ticket-register").toUpperCase()}</Text>
-          </TouchableOpacity>
+        <TouchableOpacity
+          onPress={this.props.hasRightToCreateTicket ? this.sendTicket : this.hasNoRight}
+          style={this.props.hasRightToCreateTicket ? styles.buttonTicketRegister : styles.buttonTicketRegisterDisabled}>
+          <Text style={styles.textButtonTicketRegister}>{I18n.t("support-ticket-register").toUpperCase()}</Text>
+        </TouchableOpacity>
       );
     }
   };
 
   renderIOSRegisterButton = () => {
-    if(Platform.OS === "ios") {
+    if (Platform.OS === "ios") {
       return (
-          <TouchableOpacity onPress={this.props.hasRightToCreateTicket ? this.sendTicket : this.hasNoRight}
-                            style={this.props.hasRightToCreateTicket ? [styles.buttonTicketRegister,{position:"absolute", bottom:10}] :
-                                [styles.buttonTicketRegisterDisabled,{position:"absolute", bottom:10}] }>
-            <Text style={styles.textButtonTicketRegister}>{I18n.t("support-ticket-register").toUpperCase()}</Text>
-          </TouchableOpacity>
+        <TouchableOpacity
+          onPress={this.props.hasRightToCreateTicket ? this.sendTicket : this.hasNoRight}
+          style={
+            this.props.hasRightToCreateTicket
+              ? [styles.buttonTicketRegister, { position: "absolute", bottom: 10 }]
+              : [styles.buttonTicketRegisterDisabled, { position: "absolute", bottom: 10 }]
+          }>
+          <Text style={styles.textButtonTicketRegister}>{I18n.t("support-ticket-register").toUpperCase()}</Text>
+        </TouchableOpacity>
       );
     }
   };
@@ -146,13 +155,17 @@ export default class Support extends React.PureComponent<SupportProps, any> {
       <PageContainer>
         <View style={styles.containerTitle}>
           <Text style={styles.textTitle}>{I18n.t("support-report-incident")}</Text>
-          <IconButton icon="attachment" color={this.props.hasRightToCreateTicket ? "white" : CommonStyles.fadColor}
-                      onPress={this.props.hasRightToCreateTicket ? () => this.props.uploadAttachment() : () => this.hasNoRight()} />
+          <IconButton
+            icon="attachment"
+            color={this.props.hasRightToCreateTicket ? "white" : CommonStyles.fadColor}
+            onPress={this.props.hasRightToCreateTicket ? () => this.props.uploadAttachment() : () => this.hasNoRight()} />
         </View>
-        <KeyboardAvoidingView enabled behavior="position" keyboardVerticalOffset={Platform.OS === "ios" ? 80 : -120}
-                              style={styles.overflowHidden}>
-          <ScrollView keyboardShouldPersistTaps="never"
-                      contentContainerStyle={{ flexGrow: 1 }}>
+        <KeyboardAvoidingView
+          enabled
+          behavior="position"
+          keyboardVerticalOffset={Platform.OS === "ios" ? 80 : -120}
+          style={styles.overflowHidden}>
+          <ScrollView keyboardShouldPersistTaps="never" contentContainerStyle={{ flexGrow: 1 }}>
             <Text style={styles.textMobileOnly}>{I18n.t("support-mobile-only")}</Text>
             {this.renderForm()}
             {this.props.attachments && this.props.attachments.length > 0 && this.renderAttachments()}
@@ -224,6 +237,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   overflowHidden: {
-    overflow: "hidden"
+    overflow: "hidden",
   },
 });

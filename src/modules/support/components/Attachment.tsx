@@ -2,8 +2,8 @@ import * as React from "react";
 import { StyleSheet, Text, TouchableOpacity, View, ViewStyle } from "react-native";
 import { connect } from "react-redux";
 
-import { CommonStyles } from "../../styles/common/styles";
-import { Icon } from "../../ui";
+import { CommonStyles } from "../../../styles/common/styles";
+import { Icon } from "../../../ui";
 import { getFileIcon } from "../utils/fileIcon";
 
 const attachmentStyle = {

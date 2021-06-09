@@ -1,6 +1,6 @@
 import { Dispatch } from "redux";
 
-import { progressAction, progressEndAction, progressInitAction } from "../../infra/actions/progress";
+import { progressAction, progressEndAction, progressInitAction } from "../../../infra/actions/progress";
 import { ITicket } from "../containers/Support";
 import { supportService } from "../service/support";
 

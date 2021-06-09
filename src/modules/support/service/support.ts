@@ -1,8 +1,8 @@
 import RNFB from "rn-fetch-blob";
 
-import Conf from "../../../ode-framework-conf";
-import { fetchJSONWithCache } from "../../infra/fetchWithCache";
-import { getAuthHeader } from "../../infra/oauth";
+import Conf from "../../../../ode-framework-conf";
+import { fetchJSONWithCache } from "../../../infra/fetchWithCache";
+import { getAuthHeader } from "../../../infra/oauth";
 import { ITicket } from "../containers/Support";
 
 export type IAttachment = {

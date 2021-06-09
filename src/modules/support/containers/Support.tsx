@@ -4,13 +4,13 @@ import Toast from "react-native-tiny-toast";
 import { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import pickFile from "../../infra/actions/pickFile";
-import withViewTracking from "../../infra/tracker/withViewTracking";
-import { CommonStyles } from "../../styles/common/styles";
-import { PageContainer } from "../../ui/ContainerContent";
-import { Text } from "../../ui/Typography";
-import { Header } from "../../ui/headers/Header";
-import { HeaderBackAction } from "../../ui/headers/NewHeader";
+import pickFile from "../../../infra/actions/pickFile";
+import withViewTracking from "../../../infra/tracker/withViewTracking";
+import { CommonStyles } from "../../../styles/common/styles";
+import { PageContainer } from "../../../ui/ContainerContent";
+import { Text } from "../../../ui/Typography";
+import { Header } from "../../../ui/headers/Header";
+import { HeaderBackAction } from "../../../ui/headers/NewHeader";
 import { createTicketAction, addAttachmentAction, deleteAttachmentAction } from "../actions/support";
 import Support from "../components/Support";
 
@@ -199,7 +199,8 @@ const mapStateToProps: (state: any) => any = state => {
   const establishmentList = state.user.info.schools;
   const authorizedActions = state.user.info.authorizedActions;
   const hasRightToCreateTicket =
-      authorizedActions && authorizedActions.some(action => action.displayName === "support.ticket.create");
+    authorizedActions && authorizedActions.some(action => action.displayName === "support.ticket.create");
+
   return {
     categoryList,
     establishmentList,
