@@ -5,9 +5,9 @@ import { ISupport_State } from "./reducer";
 export default createNavigableModuleConfig<"support", ISupport_State>({
   name: "support",
   displayName: "support",
-  //apiName: "Support",
   matchEntcoreApp: entcoreApp => entcoreApp.name.includes("SUPPORT"),
   entcoreScope: ['support'],
   iconName: "help-circled",
-  //iconColor: CommonStyles.themeOpenEnt.green,
+  group: true,
+  iconColor: CommonStyles.themeOpenEnt.green,
 });
