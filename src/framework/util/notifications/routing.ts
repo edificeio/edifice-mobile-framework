@@ -54,9 +54,10 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
 				return ret;
 			} else {
 				/**/// #44727 tmp fix. Copied from timelineRedirection.
+				/**/    trackCategory && Trackers.trackEvent(trackCategory, 'Timeline', `${n.type}.${n["event-type"]}`);
 				/**/	mainNavNavigate('timeline', {
 				/**/		notification: n
-				/**/	});
+				/**/    });
 				/**/	return { managed: 1 };
 				/**///
 			}
@@ -83,11 +84,21 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
 			console.log(`[cloudMessaging] notification ${n.type}.${n["event-type"]} has no resource uri.`);
 			return { managed: 0 };
 		}
-		trackCategory && Trackers.trackEvent(trackCategory, 'Browser', `${n.type}.${n["event-type"]}`);
-		mainNavNavigate('timeline/goto', {
-			notification: notifWithUri
-		})
-		return { managed: 1 };
+		if ((n as ITimelineNotification).message && (n as ITimelineNotification).date && (n as ITimelineNotification).id) { /**/// #44727 tmp fix. Copied from timelineRedirection.
+			trackCategory && Trackers.trackEvent(trackCategory, 'Browser', `${n.type}.${n["event-type"]}`);
+			mainNavNavigate('timeline/goto', {
+				notification: notifWithUri
+			})
+			return { managed: 1 };
+		} else {
+			/**/// #44727 tmp fix. Copied from timelineRedirection.
+			/**/    trackCategory && Trackers.trackEvent(trackCategory, 'Timeline', `${n.type}.${n["event-type"]}`);
+			/**/	mainNavNavigate('timeline', {
+			/**/		notification: n
+			/**/    });
+			/**/	return { managed: 1 };
+			/**///
+		}
 	},
 
 	timelineRedirection: (n, trackCategory) => async (dispatch, getState) => {
