@@ -4,7 +4,7 @@ import { IZimbra_State } from "./reducer";
 export default createNavigableModuleConfig<"zimbra", IZimbra_State>({
   name: "zimbra",
   displayName: "Conversation",
-  matchEntcoreApp: "/zimbra",
+  matchEntcoreApp: "/zimbra/zimbra",
   entcoreScope: ['zimbra'],
   iconName: "mail",
   apiName: "Zimbra",
