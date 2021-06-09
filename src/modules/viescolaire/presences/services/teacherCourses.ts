@@ -36,7 +36,7 @@ const coursesAdapter: (data: ICoursesListBackend) => ICoursesList = data => {
 export const coursesService = {
   get: async (teacher: string, structure: string, start: string, end: string) => {
     return coursesAdapter(
-        await fetchJSONWithCache(`/presences/courses?teacher=${teacher}&structure=${structure}&start=${start}&end=${end}`)
+        await fetchJSONWithCache(`/presences/courses?teacher=${teacher}&structure=${structure}&start=${start}&end=${end}&forgotten_registers=true`)
     );
   }
 }
