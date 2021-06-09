@@ -1,5 +1,5 @@
 // require the module
-import  {  Platform } from 'react-native';
+import { Platform } from 'react-native';
 import getPath from '@flyerhq/react-native-android-uri-path'
 import { asyncActionTypes } from "../../infra/redux/async";
 import config from "../config";
