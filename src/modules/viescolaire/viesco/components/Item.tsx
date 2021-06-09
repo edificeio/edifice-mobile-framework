@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, StyleSheet, ViewStyle, StyleProp } from "react-native";
+import { StyleSheet, ViewStyle, StyleProp } from "react-native";
 
 import { CommonStyles } from "../../../../styles/common/styles";
 import TouchableOpacity from "../../../../ui/CustomTouchableOpacity";

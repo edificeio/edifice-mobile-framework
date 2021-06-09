@@ -1,7 +1,6 @@
-import moment from "moment";
-
 import { fetchJSONWithCache } from "../../../../infra/fetchWithCache";
 import { ISlotList } from "../state/slots";
+import moment from "moment";
 
 export type ISlotListBackend = {
   startHour: string;

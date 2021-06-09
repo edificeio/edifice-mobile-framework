@@ -1,37 +1,91 @@
 import I18n from "i18n-js";
 import * as React from "react";
+import { View } from "react-native";
 import { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
 import { getSessionInfo } from "../../../../App";
 import { standardNavScreenOptions } from "../../../../navigation/helpers/navScreenOptions";
+import { INavigationProps } from "../../../../types";
 import { PageContainer } from "../../../../ui/ContainerContent";
 import { HeaderBackAction } from "../../../../ui/headers/NewHeader";
-import { fetchPeriodsListAction, fetchYearAction } from "../../viesco/actions/periods";
+import { fetchUserChildrenAction } from "../../edt/actions/userChildren";
+import { getUserChildrenState } from "../../edt/state/userChildren";
+import { fetchGroupListAction } from "../../viesco/actions/group";
+import { fetchPeriodsListAction } from "../../viesco/actions/periods";
 import { getSelectedChild, getSelectedChildStructure } from "../../viesco/state/children";
-import { getPeriodsListState, getYearState } from "../../viesco/state/periods";
-import { getSubjectsListState } from "../../viesco/state/subjects";
+import { getGroupsListState } from "../../viesco/state/group";
+import { getPeriodsListState, IPeriodsList } from "../../viesco/state/periods";
+import { fetchLevelsAction } from "../actions/competencesLevels";
 import { fetchDevoirListAction } from "../actions/devoirs";
 import { fetchDevoirMoyennesListAction } from "../actions/moyennes";
+import { fetchServicesMatieresAction } from "../actions/servicesMatieres";
+import { fetchStructureMatieresAction } from "../actions/structureMatieres";
 import Competences from "../components/Evaluation";
-import { getDevoirListState } from "../state/devoirs";
-import { getMoyenneListState } from "../state/moyennes";
-import { View } from "react-native";
+import { getLevelsListState, ILevelsList } from "../state/competencesLevels";
+import { getDevoirListState, IDevoirListState } from "../state/devoirs";
+import { IMatiereList } from "../state/matieres";
+import { getMoyenneListState, IMoyenneListState } from "../state/moyennes";
+import { getServiceListState, IServiceList } from "../state/servicesMatieres";
+import { getStructureMatiereListState } from "../state/structureMatieres";
 
-export class Evaluation extends React.PureComponent<{ navigation: { navigate } }, any> {
+// eslint-disable-next-line flowtype/no-types-missing-file-annotation
+export type CompetencesProps = {
+  devoirsList: IDevoirListState;
+  devoirsMoyennesList: IMoyenneListState;
+  levels: ILevelsList;
+  subjects: IMatiereList;
+  serviceList: IServiceList;
+  userType: string;
+  periods: IPeriodsList;
+  groups: string[];
+  childClasses: string;
+  structureId: string;
+  childId: string;
+  fetchChildInfos: () => void;
+  fetchChildGroups: (classes: string, student: string) => any;
+  getDevoirs: (structureId: string, studentId: string, period?: string, matiere?: string) => void;
+  getDevoirsMoyennes: (structureId: string, studentId: string, period?: string) => void;
+  getPeriods: (structureId: string, groupId: string) => void;
+  getLevels: (structureIs: string) => void;
+  getSubjects: (structureId: string) => void;
+  getServiceList: (structureId: string) => void;
+} & INavigationProps;
+
+export class Evaluation extends React.PureComponent<CompetencesProps, any> {
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<any> }) => {
     return standardNavScreenOptions(
       {
         title: I18n.t("viesco-tests"),
         headerLeft: <HeaderBackAction navigation={navigation} />,
-        headerRight: <View/>,
+        headerRight: <View />,
         headerStyle: {
           backgroundColor: "#F95303",
         },
       },
       navigation
     );
+  };
+
+  componentDidMount = async () => {
+    const { structureId, childId, childClasses } = this.props;
+    this.props.getDevoirs(structureId, childId);
+    this.props.getLevels(structureId);
+    this.props.getSubjects(structureId);
+    this.props.getServiceList(structureId);
+    if (getSessionInfo().type === "Relative") await this.props.fetchChildInfos();
+    this.props.getPeriods(structureId, childClasses);
+    this.props.fetchChildGroups(childClasses, childId);
+  };
+
+  componentDidUpdate = async (prevProps) => {
+    const { structureId, childId, childClasses } = this.props;
+    if (prevProps.childId !== childId || prevProps.childClasses !== childClasses) {
+      if (getSessionInfo().type === "Relative") await this.props.fetchChildInfos();
+      this.props.getPeriods(structureId, childClasses);
+      this.props.fetchChildGroups(childClasses, childId);
+    }
   };
 
   public render() {
@@ -45,34 +99,54 @@ export class Evaluation extends React.PureComponent<{ navigation: { navigate } }
 
 const mapStateToProps: (state: any) => any = state => {
   const userType = getSessionInfo().type;
-  const childId = userType === "Student" ? getSessionInfo().id : getSelectedChild(state).id;
-  const groupId =
-    userType === "Student"
-      ? getSessionInfo().classes[0]
-      : getSessionInfo().classes[getSessionInfo().childrenIds.findIndex(i => i === childId)];
+  const childId = userType === "Student" ? getSessionInfo().userId : getSelectedChild(state)?.id;
   const structureId =
     userType === "Student"
       ? getSessionInfo().administrativeStructures[0].id || getSessionInfo().structures[0]
       : getSelectedChildStructure(state)?.id;
+
+  // get groups and childClasses
+  let childClasses: string = "";
+  let groups = [] as string[];
+  const childGroups = getGroupsListState(state).data;
+  if (getSessionInfo().type === "Student") {
+    childClasses = getSessionInfo().classes[0];
+  } else {
+    childClasses = getUserChildrenState(state).data!.find(child => childId === child.id)?.idClasses!;
+  }
+  if (childGroups !== undefined && childGroups[0] !== undefined) {
+    if (childGroups[0].nameClass !== undefined) groups.push(childGroups[0].nameClass);
+    childGroups[0]?.nameGroups?.forEach(item => groups.push(item));
+  } else if (getSessionInfo().type === "Student") {
+    groups.push(getSessionInfo().realClassesNames[0]);
+  }
+
   return {
     devoirsList: getDevoirListState(state),
     devoirsMoyennesList: getMoyenneListState(state),
-    subjects: getSubjectsListState(state),
+    levels: getLevelsListState(state).data,
+    subjects: getStructureMatiereListState(state).data,
     userType,
-    periods: getPeriodsListState(state),
-    year: getYearState(state),
-    groupId,
+    periods: getPeriodsListState(state).data,
+    groups: getGroupsListState(state).data,
     structureId,
+    childId,
+    childClasses,
+    serviceList: getServiceListState(state).data,
   };
 };
 
 const mapDispatchToProps: (dispatch: any) => any = dispatch => {
   return bindActionCreators(
     {
+      fetchChildInfos: fetchUserChildrenAction,
+      fetchChildGroups: fetchGroupListAction,
       getDevoirs: fetchDevoirListAction,
       getDevoirsMoyennes: fetchDevoirMoyennesListAction,
       getPeriods: fetchPeriodsListAction,
-      getYear: fetchYearAction,
+      getLevels: fetchLevelsAction,
+      getSubjects: fetchStructureMatieresAction,
+      getServiceList: fetchServicesMatieresAction,
     },
     dispatch
   );

@@ -1,8 +1,7 @@
-import moment from "moment";
 import querystring from "querystring";
-
 import { fetchJSONWithCache } from "../../../../infra/fetchWithCache";
 import { ICourseList } from "../state/courses";
+import moment from "moment";
 
 export type ICourseListBackend = {
   classes: string[];

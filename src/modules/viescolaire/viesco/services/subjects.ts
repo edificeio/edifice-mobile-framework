@@ -1,5 +1,5 @@
-import { ISubjectList } from "../state/subjects";
 import { fetchJSONWithCache } from "../../../../infra/fetchWithCache";
+import { ISubjectList } from "../state/subjects";
 
 // Data type of what is given by the backend.
 export type ISubjectListBackend = Array<{
@@ -21,8 +21,8 @@ const subjectListAdapter: (data: ISubjectListBackend) => ISubjectList = data => 
 
 export const subjectListService = {
   get: async (structureId: string) => {
-    const subjects : Array<any> = await fetchJSONWithCache(`/directory/timetable/subjects/${structureId}`);
-    const data : ISubjectList = subjectListAdapter(subjects);
+    const subjects: any[] = await fetchJSONWithCache(`/directory/timetable/subjects/${structureId}`);
+    const data: ISubjectList = subjectListAdapter(subjects);
 
     return data;
   },

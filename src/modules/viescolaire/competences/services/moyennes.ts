@@ -1,64 +1,51 @@
 /* eslint-disable flowtype/no-types-missing-file-annotation */
+import querystring from "querystring";
+
 import { fetchJSONWithCache } from "../../../../infra/fetchWithCache";
 import { IMoyenneList } from "../state/moyennes";
 
 export type IMoyenneListBackend = {
-  number: string;
-  results: {
-    matiere: string;
-    note: number;
-    total: number;
-    teacher: string;
-    moySousMatiere?: { matiere: string; note: number; total: number }[];
+  matiere: string;
+  matiere_coeff: number;
+  matiere_rank: number;
+  teacher: string;
+  moyenne: string;
+  devoirs: {
+    note: string;
+    diviseur: number;
+    name: string;
+    coefficient: number;
+    is_evaluated: boolean;
+    libelle_court: string;
   }[];
-  status: string;
 };
 
 const moyenneListAdapter: (data: IMoyenneListBackend) => IMoyenneList = data => {
   let result = [] as IMoyenneList;
   if (!data) return result;
-  result = data.results.map(item => ({
-    matiere: item.matiere,
-    note: item.note,
-    total: item.total,
-    teacher: item.teacher,
-    moySousMatiere: item.hasOwnProperty("moySousMatiere") ? item.moySousMatiere : [],
-  }));
+  Object.values(data).map(item => {
+    result.push({
+      matiere: item.matiere,
+      matiere_coeff: item.matiere_coeff,
+      matiere_rank: item.matiere_rank,
+      teacher: item.teacher,
+      moyenne: item.moyenne,
+      devoirs: item.devoirs,
+    });
+  });
   return result;
 };
 
 export const moyenneListService = {
-  get: async () => {
-    const rawData = {
-      number: "1",
-      results: [
-        {
-          teacher: "Korosensei",
-          matiere: "Mathématiques",
-          note: 15,
-          total: 20,
-        },
-        {
-          teacher: "Korosensei",
-          matiere: "Histoire-Géographie",
-          note: 10,
-          total: 20,
-          moySousMatiere: [
-            { matiere: "Geographie", note: 5, total: 20 },
-            { matiere: "Histoire", note: 15, total: 20 },
-          ],
-        },
-        {
-          teacher: "Korosensei",
-          matiere: "Mathématiques",
-          note: 18,
-          total: 20,
-        },
-      ],
-      status: "OK",
-    };
-    // const data = notificationListAdapter(await fetchJSONWithCache(`/timeline/lastNotifications?page=0${appParams}`));
-    const data = moyenneListAdapter(rawData);
-    return data;
+  get: async (idEtablissement: string, idEleve: string, idPeriode?: string) => {
+    let urlParameters = "" as string;
+    if (idPeriode) urlParameters = `&idPeriode=${idPeriode}`;
+    const devoirs = await fetchJSONWithCache(
+      `/competences/devoirs/notes?${querystring.stringify({
+        idEtablissement,
+        idEleve,
+      })}${urlParameters}`
+    );
+    return moyenneListAdapter(devoirs);
   },
 };

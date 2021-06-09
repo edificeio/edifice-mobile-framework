@@ -45,7 +45,7 @@ export const getSelectedChildStructure = (globalState: any) => {
     school =>
       infos.childrenStructure?.find(school =>
         school.children.some(child => child.id === getSelectedChild(globalState).id)
-      )?.structureName == school.name
+      )?.structureName === school.name
   );
 };
 
