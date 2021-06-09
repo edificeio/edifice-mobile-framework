@@ -5,15 +5,15 @@
 
 import { Linking } from "react-native";
 
-import lvsConfig from "../config";
-import { signedFetchJson } from "../../infra/fetchWithCache";
+import lvsConfig from "../moduleConfig";
+import { signedFetchJson } from "../../../infra/fetchWithCache";
 
 // ACTION LIST ------------------------------------------------------------------------------------
 
 export const actionTypes = {
-  connecting: lvsConfig.createActionType("CONNECTOR") + "_CONNECTING",
-  connected: lvsConfig.createActionType("CONNECTOR") + "_CONNECTED",
-  error: lvsConfig.createActionType("CONNECTOR") + "_ERROR",
+  connecting: lvsConfig.namespaceActionType("CONNECTOR") + "_CONNECTING",
+  connected: lvsConfig.namespaceActionType("CONNECTOR") + "_CONNECTED",
+  error: lvsConfig.namespaceActionType("CONNECTOR") + "_ERROR",
 };
 
 // ACTION CREATORS --------------------------------------------------------------------------------

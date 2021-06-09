@@ -6,4 +6,5 @@ export default [
     require("../modules/viescolaire/moduleConfig").default,
     require("../modules/zimbra/moduleConfig").default,
     require("../modules/support/moduleConfig").default,
+    require("../modules/lvs/moduleConfig").default,
 ];

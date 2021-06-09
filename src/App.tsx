@@ -37,7 +37,7 @@ import messaging from '@react-native-firebase/messaging';
 require("./mailbox");
 //require("./zimbra");
 require("./pronote");
-require("./lvs");
+//require("./lvs");
 require("./homework");
 require("./workspace");
 //require("./viescolaire");
