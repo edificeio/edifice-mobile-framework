@@ -49,6 +49,6 @@ export const relativeEventsActionsTypes = {
 };
 
 export const getNotificationEvents = (globalState: any) =>
-  viescoConfig.getLocalState(globalState).presences.notification as INotifiationChildren[];
+  viescoConfig.getState(globalState).presences.notification as INotifiationChildren[];
 
 export const actionTypes = createAsyncActionTypes(notificationPrefix);

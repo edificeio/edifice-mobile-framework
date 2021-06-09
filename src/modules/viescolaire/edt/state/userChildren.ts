@@ -22,7 +22,7 @@ export type IUserChildrenState = AsyncState<IUserChildren>;
 export const initialState: IUserChildren = [];
 
 export const getUserChildrenState = (globalState: any) =>
-  viescoConfig.getLocalState(globalState).edt.userChildren as IUserChildrenState;
+  viescoConfig.getState(globalState).edt.userChildren as IUserChildrenState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 

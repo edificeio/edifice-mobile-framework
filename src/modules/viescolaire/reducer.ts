@@ -18,7 +18,9 @@ import { IStructureMatiereListState } from "./competences/state/structureMatiere
 import edt from "./edt/reducers";
 import { ICourseListState } from "./edt/state/courses";
 import { ISlotListState } from "./edt/state/slots";
+import { IUserChildrenState } from "./edt/state/userChildren";
 import presences from "./presences/reducers";
+import { INotifiationChildren } from "./presences/state/eventsNotification";
 import { IClassesCallListState } from "./presences/state/teacherClassesCall";
 import { ICoursesRegisterInfosState } from "./presences/state/teacherCourseRegister";
 import { ICoursesListState } from "./presences/state/teacherCourses";
@@ -47,12 +49,14 @@ export interface IViesco_State {
   edt: {
     coursesList: ICourseListState;
     slotsList: ISlotListState;
+    userChildren: IUserChildrenState;
   };
   presences: {
     coursesList: ICoursesListState;
     callList: IClassesCallListState;
     coursesRegister: ICoursesRegisterInfosState;
     history: any;
+    notification: INotifiationChildren[];
   };
   competences: {
     levels: ILevelsListState;
