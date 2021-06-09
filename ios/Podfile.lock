@@ -17,6 +17,8 @@ PODS:
     - AppCenter/Core
   - AppCenterReactNativeShared (4.1.0):
     - AppCenter/Core (= 4.1.1)
+  - BNFMatomo (0.2.0):
+    - React
   - boost-for-react-native (1.63.0)
   - CocoaAsyncSocket (7.6.5)
   - ComponentKit (0.30):
@@ -387,9 +389,6 @@ PODS:
     - React-Core
   - react-native-image-picker (4.0.3):
     - React-Core
-  - react-native-matomo-sdk (0.4.0):
-    - MatomoTracker (~> 7)
-    - React (~> 0.60)
   - react-native-netinfo (6.0.0):
     - React-Core
   - react-native-safe-area-context (3.2.0):
@@ -553,6 +552,7 @@ DEPENDENCIES:
   - appcenter-analytics (from `../node_modules/appcenter-analytics/ios`)
   - appcenter-core (from `../node_modules/appcenter/ios`)
   - appcenter-crashes (from `../node_modules/appcenter-crashes/ios`)
+  - BNFMatomo (from `../node_modules/react-native-matomo`)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
@@ -601,7 +601,6 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-document-picker (from `../node_modules/react-native-document-picker`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
-  - react-native-matomo-sdk (from `../node_modules/react-native-matomo-sdk`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
@@ -680,6 +679,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/appcenter/ios"
   appcenter-crashes:
     :path: "../node_modules/appcenter-crashes/ios"
+  BNFMatomo:
+    :path: "../node_modules/react-native-matomo"
   DoubleConversion:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
   FBLazyVector:
@@ -724,8 +725,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-document-picker"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
-  react-native-matomo-sdk:
-    :path: "../node_modules/react-native-matomo-sdk"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
   react-native-safe-area-context:
@@ -807,6 +806,7 @@ SPEC CHECKSUMS:
   appcenter-core: c97920e79eba2321a262d3733cb2a6f1097db539
   appcenter-crashes: 804ae51c5d1742ce20fdb6a68b3d06208a404ad5
   AppCenterReactNativeShared: 2d5a53b6cbd2fe7f63f0033e9f0a40757a4eacf5
+  BNFMatomo: 660cce94ccf919e3fd4b782eaf6bcee0f434f009
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   ComponentKit: c34da1ab3515cf18db68a4ba22c6599568d1de74
@@ -853,7 +853,6 @@ SPEC CHECKSUMS:
   React-jsinspector: cc614ec18a9ca96fd275100c16d74d62ee11f0ae
   react-native-document-picker: 3690b7d064a1153d4d572ab6a045fdd130cbf14c
   react-native-image-picker: 4089335b89b625d4e34d53fb249c48a7a791b3ea
-  react-native-matomo-sdk: 1dd9511387c2f96401dc6ba9a6476d0660021c91
   react-native-netinfo: 34f4d7a42f49157f3b45c14217d256bce7dc9682
   react-native-safe-area-context: e471852c5ed67eea4b10c5d9d43c1cebae3b231d
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
@@ -896,6 +895,6 @@ SPEC CHECKSUMS:
   Yoga: 575c581c63e0d35c9a83f4b46d01d63abc1100ac
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 89e2546ddeaabe038b27ea871dbece4b48ad81eb
+PODFILE CHECKSUM: d16eb18a546108967ebe25be2aede044dc9920b2
 
 COCOAPODS: 1.10.1

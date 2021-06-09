@@ -1,4 +1,4 @@
-project.ext.react = [enableHermes: false]
+project.ext.react = [enableHermes: true]
 
 import com.android.build.OutputFile
 
@@ -95,8 +95,8 @@ dependencies {
     debugImplementation 'com.facebook.soloader:soloader:0.10.1'
     releaseImplementation ("com.facebook.flipper:flipper-noop:${flipperVersion}")
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
-    // React Native Modules
-    implementation project(':react-native-action-sheet')
+    // non autolinked packages
+    implementation project(':react-native-matomo')
     // Jackson to put headers to a fullscreen video
     implementation "com.fasterxml.jackson.core:jackson-core:2.11.1"
     implementation "com.fasterxml.jackson.core:jackson-databind:2.11.1"

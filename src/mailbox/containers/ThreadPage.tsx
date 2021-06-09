@@ -1,22 +1,14 @@
 import * as React from "react";
-import { View, Platform , TouchableWithoutFeedback } from "react-native";
-import { NavigationScreenProp, NavigationActions, withNavigationFocus} from "react-navigation";
+import { View, Platform, TouchableWithoutFeedback } from "react-native";
+import { NavigationScreenProp, NavigationActions, withNavigationFocus } from "react-navigation";
 import { connect } from "react-redux";
 import I18n from "i18n-js";
 import style from "glamorous-native";
 
-import { 
-  IThreadPageDataProps,
-  IThreadPageEventProps,
-  IThreadPageProps,
-  ThreadPage
-} from "../components/ThreadPage";
+import { IThreadPageDataProps, IThreadPageEventProps, IThreadPageProps, ThreadPage } from "../components/ThreadPage";
 import conversationConfig from "../config";
 
-import {
-  fetchConversationThreadNewerMessages,
-  fetchConversationThreadOlderMessages
-} from "../actions/threadList";
+import { fetchConversationThreadNewerMessages, fetchConversationThreadOlderMessages } from "../actions/threadList";
 import { createActionReceiversDisplay, createActionThreadReceiversDisplay } from "../actions/displayReceivers";
 import { IConversationMessage, IConversationThread, IConversationMessageList } from "../reducers";
 import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
@@ -33,17 +25,14 @@ import mailboxConfig from "../config";
 import { pickUser, clearPickedUsers } from "../actions/pickUser";
 import { IUser } from "../../user/reducers";
 
-const mapStateToProps: (state: any) => IThreadPageDataProps = state => {
+const mapStateToProps: (state: any) => IThreadPageDataProps = (state) => {
   // Extract data from state
   const localState: IConversationMessageList = state[conversationConfig.reducerName].messages;
   const selectedThreadId: string = state[conversationConfig.reducerName].threadSelected;
   const selectedThread: IConversationThread =
-    state[conversationConfig.reducerName].threadList.data.byId[
-    selectedThreadId
-    ];
-  const messages: IConversationMessage[] = selectedThread && selectedThread.messages.map(
-    messageId => localState.data[messageId]
-  );
+    state[conversationConfig.reducerName].threadList.data.byId[selectedThreadId];
+  const messages: IConversationMessage[] =
+    selectedThread && selectedThread.messages.map((messageId) => localState.data[messageId]);
   const headerHeight = state.ui.headerHeight; // TODO: Ugly.
   const subjectState = state[mailboxConfig.reducerName].subject;
   const usersState = state[mailboxConfig.reducerName].users;
@@ -58,13 +47,11 @@ const mapStateToProps: (state: any) => IThreadPageDataProps = state => {
     threadId: selectedThreadId,
     threadInfo: selectedThread,
     subject: subjectState,
-    pickedUsers: usersState.picked
+    pickedUsers: usersState.picked,
   };
 };
 
-const mapDispatchToProps: (
-  dispatch: any
-) => IThreadPageEventProps = dispatch => {
+const mapDispatchToProps: (dispatch: any) => IThreadPageEventProps = (dispatch) => {
   return {
     dispatch,
     onGetNewer: async (threadId: string) => {
@@ -78,21 +65,21 @@ const mapDispatchToProps: (
       return;
     },
     onTapReceivers: (message: IConversationMessage) => {
-      dispatch(createActionReceiversDisplay(message))
+      dispatch(createActionReceiversDisplay(message));
       return;
     },
     onTapReceiversFromThread: (thread: IConversationThread) => {
-      dispatch(createActionThreadReceiversDisplay(thread))
+      dispatch(createActionThreadReceiversDisplay(thread));
       return;
     },
     onSelectThread: (threadId: string) => {
-      dispatch(conversationThreadSelected(threadId))
+      dispatch(conversationThreadSelected(threadId));
       return;
     },
     createAndSelectThread: (pickedUsers: any[], threadSubject: string) => {
-      const newConversation = dispatch(createThread(pickedUsers, threadSubject))
-      dispatch(conversationThreadSelected(newConversation.id))
-      return newConversation
+      const newConversation = dispatch(createThread(pickedUsers, threadSubject));
+      dispatch(conversationThreadSelected(newConversation.id));
+      return newConversation;
     },
     selectSubject: (subject: string) => selectSubject(dispatch)(subject),
     pickUser: (user: any) => pickUser(dispatch)(user),
@@ -102,10 +89,9 @@ const mapDispatchToProps: (
 };
 
 class ThreadPageContainer extends React.PureComponent<
-  IThreadPageProps & { dispatch: any }, 
+  IThreadPageProps & { dispatch: any },
   { selectedMessage?: IConversationMessage }
-  > {
-
+> {
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
     const threadInfo = navigation.getParam("threadInfo");
     const threadId = navigation.getParam("threadId");
@@ -118,134 +104,173 @@ class ThreadPageContainer extends React.PureComponent<
     const clearSubject = navigation.getParam("clearSubject");
 
     if (selectedMessage) {
-      return alternativeNavScreenOptions({
-        headerLeft: <HeaderAction name="close" onPress={() => {
-          navigation?.setParams({ selectedMessage: undefined });
-        }}/>,
-        headerRight: <View style={{ flexDirection: "row" }}>
-          <HeaderAction title={I18n.t("conversation-reply")} onPress={() => {
-            //NOTE: previous behavior that allows to go on the thread-creation-page
-            // navigation.navigate('newThread', {
-            //   type: 'reply',
-            //   message: selectedMessage,
-            //   parentThread: threadInfo
-            // })
-            // Trackers.trackEvent("Conversation", "REPLY TO MESSAGE");
-            if (selectedMessage) {
-              clearPickedUsers();
-              clearSubject();
-              
-              let subject: string | undefined = undefined;
-              if (selectedMessage.subject) {
-                subject = selectedMessage.subject.startsWith("Re: ") ? selectedMessage.subject : "Re: " + selectedMessage.subject;
-              }
-              subject && selectSubject && selectSubject(subject);
-
-              const allIds = [selectedMessage.from];
-              const receivers: IUser[] = allIds ? (allIds as string[]).map(uid => ({
-                userId: uid,
-                displayName: (() => {
-                  const dn: [string, string, boolean] | undefined = selectedMessage.displayNames ? (selectedMessage.displayNames as Array<[string, string, boolean]>).find(e => e[0] === uid) : undefined;
-                  return dn ? dn[1] : undefined;
-                })()
-              })).filter(e => e.displayName) as IUser[] : [];
-              receivers.forEach(receiver => pickUser(receiver));
-
-              const replyThreadInfo = createAndSelectThread(receivers, subject);
-              navigation.push("thread", { threadInfo: replyThreadInfo, message: selectedMessage, type: 'reply', parentThread: threadInfo });
-              Trackers.trackEvent("Conversation", "REPLY TO MESSAGE");
-            }
-          }}/>
-          <HeaderAction title={I18n.t("conversation-transfer")} onPress={() => {
-            clearPickedUsers();
-            clearSubject();
-            navigation.navigate('newThread', {
-              type: 'transfer',
-              message: selectedMessage,
-              parentThread: threadInfo
-            })
-            Trackers.trackEvent("Conversation", "TRANSFER MESSAGE");
-          }}/>
-        </View>,
-        headerStyle: {
-          backgroundColor: CommonStyles.orangeColorTheme
-        },
-        headerTitle: null
-      }, navigation);
-    } else {
-      return alternativeNavScreenOptions({
-        headerLeft: 
-          <HeaderAction
-            name={(Platform.OS === "ios") ? "chevron-left1" : "back"}
-            onPress={() => {
-              threadId.startsWith("tmp-")
-                ? navigation.dispatch(NavigationActions.back())
-                : navigation.popToTop();
-            }}
-          />,
-        headerRight:
-          <View style={{flexDirection: "row", alignItems: "center"}}>
-            <View style={{ width: 1, height: "60%", backgroundColor: "#FFF" }} />
+      return alternativeNavScreenOptions(
+        {
+          headerLeft: (
             <HeaderAction
-              customComponent={
-                <View 
-                  style={{ 
-                    alignItems: "center",
-                    justifyContent: "center",
-                    width: 100,
-                    height: "100%"
-                  }}
-                >
-                  <IconButton
-                    iconName="informations"
-                    iconSize={16}
-                    buttonStyle={{ height: 18, width: 18, borderRadius: undefined, backgroundColor: undefined }}
-                  />
-                  <LittleTitle smallSize italic>
-                    {I18n.t("seeDetails")}
-                  </LittleTitle>
-                </View>
-              }
+              name="close"
               onPress={() => {
-                //TODO move orchestration to thunk
-                onTapReceivers && onTapReceivers(threadInfo);
-                navigation.navigate("listReceivers");
+                navigation?.setParams({ selectedMessage: undefined });
               }}
+            />
+          ),
+          headerRight: (
+            <View style={{ flexDirection: "row" }}>
+              <HeaderAction
+                title={I18n.t("conversation-reply")}
+                onPress={() => {
+                  //NOTE: previous behavior that allows to go on the thread-creation-page
+                  // navigation.navigate('newThread', {
+                  //   type: 'reply',
+                  //   message: selectedMessage,
+                  //   parentThread: threadInfo
+                  // })
+                  // Trackers.trackEvent("Conversation", "REPLY TO MESSAGE");
+                  if (selectedMessage) {
+                    clearPickedUsers();
+                    clearSubject();
+
+                    let subject: string | undefined = undefined;
+                    if (selectedMessage.subject) {
+                      subject = selectedMessage.subject.startsWith("Re: ")
+                        ? selectedMessage.subject
+                        : "Re: " + selectedMessage.subject;
+                    }
+                    subject && selectSubject && selectSubject(subject);
+
+                    const allIds = [selectedMessage.from];
+                    const receivers: IUser[] = allIds
+                      ? ((allIds as string[])
+                          .map((uid) => ({
+                            userId: uid,
+                            displayName: (() => {
+                              const dn: [string, string, boolean] | undefined = selectedMessage.displayNames
+                                ? (selectedMessage.displayNames as Array<[string, string, boolean]>).find(
+                                    (e) => e[0] === uid
+                                  )
+                                : undefined;
+                              return dn ? dn[1] : undefined;
+                            })(),
+                          }))
+                          .filter((e) => e.displayName) as IUser[])
+                      : [];
+                    receivers.forEach((receiver) => pickUser(receiver));
+
+                    const replyThreadInfo = createAndSelectThread(receivers, subject);
+                    navigation.push("thread", {
+                      threadInfo: replyThreadInfo,
+                      message: selectedMessage,
+                      type: "reply",
+                      parentThread: threadInfo,
+                    });
+                    Trackers.trackEvent("Conversation", "REPLY TO MESSAGE");
+                  }
+                }}
               />
-          </View>,
-        headerTitle: threadInfo
-          ? ThreadPageContainer.renderThreadHeader(threadInfo, navigation)
-          : <LittleTitle smallSize>{I18n.t("loading")}</LittleTitle>,
-        headerStyle: {
-          height: deviceInfoModule.hasNotch() ? 100 : 56
+              <HeaderAction
+                title={I18n.t("conversation-transfer")}
+                onPress={() => {
+                  clearPickedUsers();
+                  clearSubject();
+                  navigation.navigate("newThread", {
+                    type: "transfer",
+                    message: selectedMessage,
+                    parentThread: threadInfo,
+                  });
+                  Trackers.trackEvent("Conversation", "TRANSFER MESSAGE");
+                }}
+              />
+            </View>
+          ),
+          headerStyle: {
+            backgroundColor: CommonStyles.orangeColorTheme,
+          },
+          headerTitle: null,
         },
-        headerLeftContainerStyle: {
-          alignItems: "flex-start"
+        navigation
+      );
+    } else {
+      return alternativeNavScreenOptions(
+        {
+          headerLeft: (
+            <HeaderAction
+              name={Platform.OS === "ios" ? "chevron-left1" : "back"}
+              onPress={() => {
+                threadId.startsWith("tmp-") ? navigation.dispatch(NavigationActions.back()) : navigation.popToTop();
+              }}
+            />
+          ),
+          headerRight: (
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <View style={{ width: 1, height: "60%", backgroundColor: "#FFF" }} />
+              <HeaderAction
+                customComponent={
+                  <View
+                    style={{
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: 100,
+                      height: "100%",
+                    }}>
+                    <IconButton
+                      iconName="informations"
+                      iconSize={16}
+                      buttonStyle={{ height: 18, width: 18, borderRadius: undefined, backgroundColor: undefined }}
+                    />
+                    <LittleTitle smallSize italic>
+                      {I18n.t("seeDetails")}
+                    </LittleTitle>
+                  </View>
+                }
+                onPress={() => {
+                  //TODO move orchestration to thunk
+                  onTapReceivers && onTapReceivers(threadInfo);
+                  navigation.navigate("listReceivers");
+                }}
+              />
+            </View>
+          ),
+          headerTitle: threadInfo ? (
+            ThreadPageContainer.renderThreadHeader(threadInfo, navigation)
+          ) : (
+            <LittleTitle smallSize>{I18n.t("loading")}</LittleTitle>
+          ),
+          headerStyle: {
+            height: deviceInfoModule.hasNotch() ? 100 : 56,
+          },
+          headerLeftContainerStyle: {
+            alignItems: "flex-start",
+          },
+          headerRightContainerStyle: {
+            alignItems: "flex-start",
+          },
+          headerTitleContainerStyle: {
+            alignItems: "flex-start",
+            justifyContent: "flex-start",
+            flex: 1,
+            textAlign: "left",
+            ...Platform.select({
+              ios: {
+                width: "100%",
+                marginRight: 112,
+              },
+              android: {
+                left: 60,
+                right: 112,
+              },
+            }),
+          },
         },
-        headerRightContainerStyle: {
-          alignItems: "flex-start"
-        },
-        headerTitleContainerStyle: {
-          alignItems: "flex-start",
-          justifyContent: "flex-start",
-          flex: 1,
-          textAlign: "left",
-          ...Platform.select({
-            ios: {
-              width: "100%",
-              marginRight: 112
-          }, android: {
-              left: 60, right: 112
-          }})
-        }
-      }, navigation);
+        navigation
+      );
     }
-  }
+  };
 
   static renderThreadHeader(threadInfo: IConversationThread, navigation: NavigationScreenProp<{}>) {
-    const receiversText = (threadInfo && (threadInfo.to.length > 1))
-      ? I18n.t("conversation-receivers", { count: threadInfo.to.length })
-      : I18n.t("conversation-receiver");
+    const receiversText =
+      threadInfo && threadInfo.to.length > 1
+        ? I18n.t("conversation-receivers", { count: threadInfo.to.length })
+        : I18n.t("conversation-receiver");
 
     return (
       <CenterPanel>
@@ -256,7 +281,7 @@ class ThreadPageContainer extends React.PureComponent<
           {receiversText}
         </LittleTitle>
       </CenterPanel>
-    )
+    );
   }
 
   constructor(props: IThreadPageProps) {
@@ -272,7 +297,7 @@ class ThreadPageContainer extends React.PureComponent<
       clearPickedUsers: this.props.clearPickedUsers,
       clearSubject: this.props.clearSubject,
       subject: this.props.subject,
-      pickedUsers: this.props.pickedUsers
+      pickedUsers: this.props.pickedUsers,
     });
   }
 
@@ -289,7 +314,7 @@ class ThreadPageContainer extends React.PureComponent<
         clearPickedUsers: this.props.clearPickedUsers,
         clearSubject: this.props.clearSubject,
         subject: this.props.subject,
-        pickedUsers: this.props.pickedUsers
+        pickedUsers: this.props.pickedUsers,
       });
     } else if (prevProps.isFocused !== this.props.isFocused) {
       this.props.navigation?.setParams({ selectedMessage: undefined });
@@ -299,23 +324,21 @@ class ThreadPageContainer extends React.PureComponent<
   componentWillUnmount() {
     const { navigation } = this.props;
     const onSelectThread = navigation?.getParam("onSelectThread");
-    const parentThread = navigation?.getParam('parentThread');
+    const parentThread = navigation?.getParam("parentThread");
     const parentThreadId = parentThread && parentThread.id;
     parentThreadId && onSelectThread(parentThreadId);
   }
-  
+
   public render() {
-    const backMessage = this.props.navigation?.getParam('message');
-    const sendingType = this.props.navigation?.getParam('type', 'new');
-    const messageDraft = this.props.navigation?.getParam('draft');
+    const backMessage = this.props.navigation?.getParam("message");
+    const sendingType = this.props.navigation?.getParam("type", "new");
+    const messageDraft = this.props.navigation?.getParam("draft");
     return (
-      <TouchableWithoutFeedback
-        onPress={() => this.props.navigation?.setParams({ selectedMessage: undefined })}
-      >
-        <View style={{flex: 1}}>
+      <TouchableWithoutFeedback onPress={() => this.props.navigation?.setParams({ selectedMessage: undefined })}>
+        <View style={{ flex: 1 }}>
           <ThreadPage
             {...this.props}
-            onSelectMessage={message => {
+            onSelectMessage={(message) => {
               this.props.navigation?.setParams({ selectedMessage: message });
             }}
             backMessage={backMessage}
@@ -341,7 +364,7 @@ export const CenterPanel = style.view({
   paddingVertical: 5,
   height: 56,
   marginRight: 40,
-  marginLeft: Platform.select({ ios: -40, android: 52 })
+  marginLeft: Platform.select({ ios: -28, android: 52 }),
 });
 
 export const LittleTitle = (style.text as any)(
@@ -349,7 +372,7 @@ export const LittleTitle = (style.text as any)(
     color: "white",
     fontFamily: CommonStyles.primaryFontFamily,
   },
-  ({ smallSize = false, italic = false, bold = false }: { smallSize: boolean, italic: boolean, bold: boolean }) => ({
+  ({ smallSize = false, italic = false, bold = false }: { smallSize: boolean; italic: boolean; bold: boolean }) => ({
     fontSize: smallSize ? 12 : 16,
     fontStyle: italic ? "italic" : "normal",
     fontWeight: bold ? "bold" : "400",
