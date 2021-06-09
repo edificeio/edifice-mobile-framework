@@ -4,7 +4,7 @@
  */
 
 import * as React from "react";
-import { ViewProps, View, TextProps, TouchableOpacity, ViewStyle } from "react-native";
+import { ViewProps, View, TouchableOpacity, ViewStyle } from "react-native";
 import styled from '@emotion/native'
 import { SafeAreaView } from "react-native";
 
