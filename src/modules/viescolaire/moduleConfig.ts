@@ -10,6 +10,5 @@ export default createModuleConfig<"viescolaire", IViesco_State>({
   matchEntcoreApp: "/viescolaire",
   entcoreScope: ['viescolaire'],
   iconName: "school",
-  reducerName: "viesco",
   //hasRight: apps => ViescoApps.every(viescoApp => apps.map(app => app.name.toUpperCase()).includes(viescoApp)),
 });
