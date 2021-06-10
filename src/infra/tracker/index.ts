@@ -115,7 +115,7 @@ export class AppCenterTracker extends Tracker<IAppCenterTrackerOptions> {
       ...this.currentDimensions,
     })
       .then(() => console.log("[AppCenter] Event tracked", category, action, name, value))
-      .catch((error) => console.warn("[AppCenter] Failed to track event", error, category, action, name, value));
+      .catch(error => console.warn("[AppCenter] Failed to track event", error, category, action, name, value));
   }
 
   async trackView(path: string[]) {
@@ -123,7 +123,7 @@ export class AppCenterTracker extends Tracker<IAppCenterTrackerOptions> {
     if (!this.isReady) return;
     return Analytics.trackEvent(`View ${path.join("/")}`)
       .then(() => console.log("[AppCenter] View tracked", ...path))
-      .catch((error) => console.warn("[AppCenter] Failed to track view", error, ...path));
+      .catch(error => console.warn("[AppCenter] Failed to track view", error, ...path));
   }
 
   async setUserId(id: string) {
@@ -179,12 +179,11 @@ export class EntcoreTracker extends Tracker<IEntcoreTrackerOptions> {
   async trackView(path: string[]) {
     await super.trackView(path);
     if (!this.isReady) return;
-    const moduleName = (
-      path[0] === "timeline"
-        ? ["blog", "news", "schoolbook"].includes(path[2]?.toLowerCase())
-          ? path[2]
-          : "timeline"
-        : path[0]
+    const moduleName = (path[0] === "timeline"
+      ? ["blog", "news", "schoolbook"].includes(path[2]?.toLowerCase())
+        ? path[2]
+        : "timeline"
+      : path[0]
     ).toLowerCase();
     const moduleAccessMap = {
       blog: "Blog",
@@ -222,28 +221,28 @@ export class TrackerSet extends Tracker<{}> {
     this._trackers.push(t);
   }
   async init() {
-    await Promise.all(this._trackers.map((t) => t.init()));
+    await Promise.all(this._trackers.map(t => t.init()));
   }
   async trackEvent(category: string, action: string, name?: string, value?: number) {
-    await Promise.all(this._trackers.map((t) => t.trackEvent(category, action, name, value)));
+    await Promise.all(this._trackers.map(t => t.trackEvent(category, action, name, value)));
   }
   async trackView(path: string[]) {
-    await Promise.all(this._trackers.map((t) => t.trackView(path)));
+    await Promise.all(this._trackers.map(t => t.trackView(path)));
   }
   async test() {
-    await Promise.all(this._trackers.map((t) => t.test()));
+    await Promise.all(this._trackers.map(t => t.test()));
   }
   async setUserId(id: string) {
-    await Promise.all(this._trackers.map((t) => t.setUserId(id)));
+    await Promise.all(this._trackers.map(t => t.setUserId(id)));
   }
   async setCustomDimension(id: number, value: string) {
-    await Promise.all(this._trackers.map((t) => t.setCustomDimension(id, value)));
+    await Promise.all(this._trackers.map(t => t.setCustomDimension(id, value)));
   }
   get isReady() {
-    return this._trackers.every((t) => t.isReady);
+    return this._trackers.every(t => t.isReady);
   }
   get isUserReady() {
-    return this._trackers.every((t) => t.isUserReady);
+    return this._trackers.every(t => t.isUserReady);
   }
 }
 
