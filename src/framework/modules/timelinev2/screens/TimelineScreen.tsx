@@ -4,7 +4,7 @@ import I18n from "i18n-js";
 import { ThunkDispatch } from "redux-thunk";
 import { connect } from "react-redux";
 import { FlatList } from "react-native-gesture-handler";
-import { RefreshControl, View } from "react-native";
+import { Alert, RefreshControl, View } from "react-native";
 
 import type { IGlobalState } from "../../../../AppStore";
 import type { ITimeline_State } from "../reducer";
@@ -99,7 +99,10 @@ export class TimelineScreen extends React.PureComponent<
       <FakeHeader>
         <HeaderRow>
           <HeaderLeft>
-            <HeaderAction iconName="filter" onPress={() => { this.goToFilters(); }} />
+            <HeaderAction
+              iconName="filter"
+              onPress={() => this.goToFilters()}
+            />
           </HeaderLeft>
           <HeaderCenter>
             <HeaderTitle>{I18n.t("timeline.appName")}</HeaderTitle>
@@ -244,7 +247,9 @@ export class TimelineScreen extends React.PureComponent<
     await this.props.handleDismissFlashMessage(flashMessageId);
   }
 
-  goToFilters() { this.props.navigation.navigate('timeline/filters'); }
+  goToFilters() {
+    this.props.navigation.navigate('timeline/filters');
+  }
 }
 
 // UTILS ==========================================================================================
