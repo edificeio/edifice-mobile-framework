@@ -71,7 +71,7 @@ dependencies {
         implementation 'org.webkit:android-jsc:+'
     }
     // Google services
-    def playServicesVersion='17+'
+    def playServicesVersion='17.6.0'
     implementation ("com.google.android.gms:play-services-base:${playServicesVersion}")
     // React Native
     def reactNativeVersion='0.64.2'

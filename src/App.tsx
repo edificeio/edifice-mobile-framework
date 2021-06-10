@@ -1,39 +1,29 @@
-// RN Imports
+import messaging from "@react-native-firebase/messaging";
 import * as React from "react";
-import { initI18n } from "./framework/util/i18n";
 import { AppState, AppStateStatus, StatusBar, View } from "react-native";
 import * as RNLocalize from "react-native-localize";
-import "react-native-gesture-handler";
-import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
-
-// Polyfills
-import 'ts-polyfill/lib/es2019-object';
-
-// Redux
+import { SafeAreaProvider, initialWindowMetrics } from "react-native-safe-area-context";
+import SplashScreen from "react-native-splash-screen";
 import { Provider, connect } from "react-redux";
+import "react-native-gesture-handler";
+import "ts-polyfill/lib/es2019-object";
 
-// JS
 import Conf from "../ode-framework-conf";
-
-// ODE Mobile Framework Modules
-import { Trackers } from './infra/tracker';
-
-// ODE Mobile Framework Redux
+import AppScreen from "./AppScreen";
+import { createMainStore } from "./AppStore";
+import { initI18n } from "./framework/util/i18n";
+import { AppPushNotificationHandlerComponent } from "./framework/util/notifications/cloudMessaging";
+import { Trackers } from "./infra/tracker";
+import { CommonStyles } from "./styles/common/styles";
 import { refreshToken } from "./user/actions/login";
 import { loadCurrentPlatform, selectPlatform } from "./user/actions/platform";
-import { isInActivatingMode } from "./user/selectors";
 import { checkVersionThenLogin } from "./user/actions/version";
+import { IUserAuthState } from "./user/reducers/auth";
+import { isInActivatingMode } from "./user/selectors";
+import { IUserInfoState } from "./user/state/info";
+import "./infra/appConf";
 
-// Main Screen
-import AppScreen from "./AppScreen";
-
-// Style
-import { CommonStyles } from './styles/common/styles';
-import SplashScreen from "react-native-splash-screen";
-
-import messaging from '@react-native-firebase/messaging';
-
-// Functionnal modules // THIS IS UGLY. it is a workaround for include matomo tracking.
+// Functionnal modules / / THIS IS UGLY.it is a workaround for include matomo tracking.
 // require("./timelinev2");
 require("./mailbox");
 require("./zimbra");
@@ -46,14 +36,8 @@ require("./myAppMenu");
 //require("./support");
 require("./user");
 
-// Store
-import { createMainStore } from "./AppStore";
-import { IUserAuthState } from "./user/reducers/auth";
-import { IUserInfoState } from "./user/state/info";
-
-// App Conf
-import "./infra/appConf";
-import { AppPushNotificationHandlerComponent } from "./framework/util/notifications/cloudMessaging";
+// i18n initializattion
+initI18n();
 
 // Disable Yellow Box on release builds.
 if (__DEV__) {
@@ -61,10 +45,7 @@ if (__DEV__) {
   console.disableYellowBox = true;
 }
 
-class AppStoreUnconnected extends React.Component<
-  { currentPlatformId: string; store: any },
-  {}
-  > {
+class AppStoreUnconnected extends React.Component<{ currentPlatformId: string; store: any }, object> {
   private notificationOpenedListener?: () => void;
   private onTokenRefreshListener?: () => void;
 
@@ -73,29 +54,24 @@ class AppStoreUnconnected extends React.Component<
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
         <Provider store={this.props.store}>
           <View style={{ flex: 1 }}>
-            <StatusBar
-              backgroundColor={CommonStyles.statusBarColor}
-              barStyle="light-content"
-            />
+            <StatusBar backgroundColor={CommonStyles.statusBarColor} barStyle="light-content" />
             <AppPushNotificationHandlerComponent>
               <AppScreen />
             </AppPushNotificationHandlerComponent>
           </View>
         </Provider>
       </SafeAreaProvider>
-      
     );
   }
 
   public async componentDidMount() {
-
     // Event handlers
-    RNLocalize.addEventListener('change', this.handleLocalizationChange);
-    AppState.addEventListener('change', this.handleAppStateChange);
+    RNLocalize.addEventListener("change", this.handleLocalizationChange);
+    AppState.addEventListener("change", this.handleAppStateChange);
 
     // Tracking
     await Trackers.init();
-    Trackers.trackEvent('Application', 'STARTUP');
+    Trackers.trackEvent("Application", "STARTUP");
     // await Trackers.test();
 
     // console.log("APP did mount");
@@ -115,15 +91,14 @@ class AppStoreUnconnected extends React.Component<
     }
     SplashScreen.hide();
 
-    this.handleAppStateChange('active'); // Call this manually after Tracker is set up
+    this.handleAppStateChange("active"); // Call this manually after Tracker is set up
   }
 
   public async componentDidUpdate(prevProps: any) {
     if (!this.onTokenRefreshListener)
-      this.onTokenRefreshListener = messaging()
-        .onTokenRefresh(fcmToken => {
-          this.handleFCMTokenModified(fcmToken);
-        });
+      this.onTokenRefreshListener = messaging().onTokenRefresh((fcmToken) => {
+        this.handleFCMTokenModified(fcmToken);
+      });
   }
 
   private async startupLogin() {
@@ -137,24 +112,24 @@ class AppStoreUnconnected extends React.Component<
 
   public componentWillUnmount() {
     RNLocalize.removeEventListener("change", this.handleLocalizationChange);
-    AppState.removeEventListener('change', this.handleAppStateChange);
+    AppState.removeEventListener("change", this.handleAppStateChange);
     if (this.notificationOpenedListener) this.notificationOpenedListener();
     if (this.onTokenRefreshListener) this.onTokenRefreshListener();
   }
 
   private handleLocalizationChange = () => {
-    initI18n()
+    initI18n();
     this.forceUpdate();
   };
 
   private handleAppStateChange = (nextAppState: AppStateStatus) => {
-    if (nextAppState === 'active') {
-      console.log('[App State] now in active mode');
-      Trackers.trackEvent('Application', 'DISPLAY');
-    } else if (nextAppState === 'background') {
-      console.log('[App State] now in background mode');
+    if (nextAppState === "active") {
+      console.log("[App State] now in active mode");
+      Trackers.trackEvent("Application", "DISPLAY");
+    } else if (nextAppState === "background") {
+      console.log("[App State] now in background mode");
     }
-  }
+  };
 
   private handleFCMTokenModified = (fcmToken: any) => {
     this.props.store.dispatch(refreshToken(fcmToken));
@@ -171,10 +146,10 @@ function connectWithStore(store: any, WrappedComponent: any, ...args: [any?, any
 const theStore: any = { store: undefined };
 const getStore = () => {
   // console.log("get the store", theStore.store);
-  if (theStore.store == undefined) theStore.store = createMainStore();
+  if (theStore.store === undefined) theStore.store = createMainStore();
   // console.log("the store is", theStore.store);
   return theStore.store;
-}
+};
 
 const mapStateToProps = (state: any) => ({
   currentPlatformId: state.user.auth.platformId,
@@ -182,15 +157,12 @@ const mapStateToProps = (state: any) => ({
 });
 
 export const AppStore = () => {
-  return connectWithStore(
-    getStore(),
-    AppStoreUnconnected,
-    mapStateToProps
-  )
+  return connectWithStore(getStore(), AppStoreUnconnected, mapStateToProps);
 };
 
 export default AppStore();
 
-export const getSessionInfo = () => ({
-  ...(getStore().getState() as any).user.info
-}) as IUserInfoState & IUserAuthState;
+export const getSessionInfo = () =>
+  ({
+    ...(getStore().getState() as any).user.info,
+  } as IUserInfoState & IUserAuthState);
