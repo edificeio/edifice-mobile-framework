@@ -152,6 +152,11 @@
     "webViewScreen": {
       "infoBubbleText": "To view and edit certain content, you will be redirected to your smartphone's browser.",
       "title": "Browser redirection"
+    },
+    "PushNotifsSettingsScreen": {
+      "appType-override": {
+        "TIMELINE": "Flash message"
+      }
     }
   },
   "user": {

@@ -322,4 +322,4 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () 
 })
 
 const NewsDetailsScreen_Connected = connect(mapStateToProps, mapDispatchToProps)(NewsDetailsScreen);
-export default withViewTracking("news/details")(NewsDetailsScreen_Connected);
+export default NewsDetailsScreen_Connected;

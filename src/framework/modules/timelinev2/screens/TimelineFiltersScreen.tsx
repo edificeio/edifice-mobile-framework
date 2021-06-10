@@ -187,4 +187,4 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () 
   })
 
 const TimelineFiltersScreen_Connected = connect(mapStateToProps, mapDispatchToProps)(TimelineFiltersScreen);
-export default withViewTracking("timeline/filters")(TimelineFiltersScreen_Connected);
+export default TimelineFiltersScreen_Connected;

@@ -15,7 +15,8 @@ import * as React from "react";
 import hoistNonReactStatics from 'hoist-non-react-statics';
 
 import { Trackers } from ".";
-import { NavigationScreenProp, NavigationState } from "react-navigation";
+import { NavigationComponent, NavigationRouteConfigMap, NavigationScreenProp, NavigationState } from "react-navigation";
+import { StackNavigationOptions, StackNavigationProp } from "react-navigation-stack/lib/typescript/src/vendor/types";
 
 function getDisplayName(WrappedComponent: React.ComponentClass<any>) {
   return WrappedComponent.displayName || WrappedComponent.name || 'Component';
@@ -70,3 +71,15 @@ export default function withViewTracking<
   };
 
 }
+
+export const addViewTrackingToStackRoutes =
+  (routeConfigMap: {
+    [routeName: string]: {
+      screen: React.ComponentClass<
+        { navigation: NavigationScreenProp<NavigationState> },
+        unknown
+      >}} ) =>
+  Object.fromEntries(Object.entries(routeConfigMap).map(([routeName, route]) => [routeName, {
+    ...route,
+    screen: withViewTracking(routeName)(route.screen)
+  }]));

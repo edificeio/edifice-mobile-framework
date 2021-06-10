@@ -8,7 +8,7 @@ import { mainNavNavigate } from "../navigation/helpers/navHelper";
 const zimbraNotifHandlerFactory: NotificationHandlerFactory<any, any, any> = dispatch => async (
   notificationData,
   apps,
-  trackCategory
+  doTrack
 ) => {
   if (!notificationData.resourceUri.includes("/zimbra")) {
     return false;
@@ -31,7 +31,7 @@ const zimbraNotifHandlerFactory: NotificationHandlerFactory<any, any, any> = dis
   }
   const notifPathBegin = "/" + notificationData.resourceUri.replace(/^\/+/g, "").split("/")[0];
   console.log(notifPathBegin);
-  trackCategory && Trackers.trackEvent(trackCategory, "Zimbra", notifPathBegin);
+  doTrack && Trackers.trackEvent(doTrack, "Zimbra", notifPathBegin);
   return true;
 };
 

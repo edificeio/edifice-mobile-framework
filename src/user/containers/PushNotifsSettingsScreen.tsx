@@ -102,7 +102,7 @@ export class PushNotifsSettingsScreen extends React.PureComponent<
 			return this.props.session.user.entcoreApps.find(app => !app.name || app.name === notifFilter?.["app-name"]);
 		}))
 		return <FlatList
-			data={Object.entries(items).sort((a, b) => I18n.t(`timeline.appType.${a[0]}`).localeCompare(I18n.t(`timeline.appType.${b[0]}`)))}
+			data={Object.entries(items).sort((a, b) => translateMainItem(a).localeCompare(translateMainItem(b)))}
 			keyExtractor={(item: [string, IPushNotifsSettings]) => item[0]}
 			renderItem={({ item }: { item: [string, IPushNotifsSettings] }) => this.renderMainItem(item)}
 			ListEmptyComponent={this.renderError}
@@ -131,7 +131,7 @@ export class PushNotifsSettingsScreen extends React.PureComponent<
 		>
 			<ListItem
 				leftElement={
-					<Text>{I18n.t(`timeline.appType.${type}`)}</Text>
+					<Text>{translateMainItem(item)}</Text>
 				}
 				rightElement={
 					<View style={{flexDirection: 'row'}}>
@@ -264,6 +264,14 @@ export class PushNotifsSettingsScreen extends React.PureComponent<
 }
 
 // UTILS ==========================================================================================
+
+const translateMainItem = (item: [string, IPushNotifsSettings]) => {
+	const backupMissingTranslation = I18n.missingTranslation;
+	I18n.missingTranslation = function (scope, options) { return undefined; }
+	const t = I18n.t(`timeline.PushNotifsSettingsScreen.appType-override.${item[0]}`);
+	I18n.missingTranslation = backupMissingTranslation;
+	return t || I18n.t(`timeline.appType.${item[0]}`);
+}
 
 // MAPPING ========================================================================================
 

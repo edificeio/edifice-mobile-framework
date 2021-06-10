@@ -1,8 +1,9 @@
 import { Platform, ActionSheetIOS } from "react-native";
 import ActionSheet from "react-native-action-sheet";
 import DocumentPicker from "react-native-document-picker";
-import { launchCamera, launchImageLibrary } from "react-native-image-picker";
+import { launchImageLibrary } from "react-native-image-picker";
 import Permissions, { PERMISSIONS } from "react-native-permissions";
+import getPath from "@flyerhq/react-native-android-uri-path";
 import I18n from "i18n-js";
 import { ContentUri } from "../../workspace/types";
 import { notifierShowAction } from "../notifier/actions";
@@ -69,15 +70,12 @@ const pickFile: FilePickerPromise = (resolve, reject) => {
   const handlers = [pickImage, pickDocument(), () => pickClosed];
   const onPressAction = buttonIndex =>
     typeof buttonIndex === "number" ? handlers[buttonIndex](resolve, reject) : null;
-  Platform.select({
-    ios: ActionSheetIOS,
-    default: ActionSheet,
-  }).showActionSheetWithOptions(elements, buttonIndex => onPressAction(buttonIndex));
-  /*if (Platform.OS === "ios") {
-    ActionSheetIOS.showActionSheetWithOptions(elements, buttonIndex => onPressAction(buttonIndex))
+
+  if (Platform.OS === "ios") {
+    ActionSheetIOS.showActionSheetWithOptions(elements, buttonIndex => onPressAction(buttonIndex));
   } else if (Platform.OS === "android") {
-    ActionSheet.showActionSheetWithOptions(elements, buttonIndex => onPressAction(buttonIndex))
-  }*/
+    ActionSheet.showActionSheetWithOptions(elements, buttonIndex => onPressAction(buttonIndex));
+  }
 };
 
 const pickImage: FilePickerPromise = (resolve, reject) => {
@@ -92,7 +90,10 @@ const pickImage: FilePickerPromise = (resolve, reject) => {
       else {
         const { uri, fileName, type } = res;
         if (!uri || !type) reject(new Error("Error picking image"));
-        const realURI = Platform.select({ android: uri, ios: uri!.split("file://")[1] })!;
+        const realURI = Platform.select({
+          android: uri,
+          default: uri!.indexOf("file://") > -1 ? uri!.split("file://")[1] : uri,
+        })!;
         resolve({ mime: type!, name: fileName || uri!.split("tmp/")[1], uri: realURI, path: realURI }); // WHat's the difference between uri and path ?
       }
     }
@@ -117,14 +118,10 @@ const pickDocumentAction = (onlyImages?: boolean) => async (resolve, reject) => 
     type: [onlyImages ? DocumentPicker.types.images : DocumentPicker.types.allFiles],
   });
   const { uri, type, name } = result;
-  // Need to manage some Android docs specifically
-  let deviceURI = uri;
-  if (Platform.OS === "android" && (uri.includes("content://com.google") || uri.includes("content://com.android"))) {
-    const stat = await RNFetchBlob.fs.stat(uri);
-    deviceURI = stat.path;
-  }
-  // Device os dependant URI
-  const realURI = Platform.select({ android: deviceURI, ios: decodeURI(deviceURI).split("file://")[1] });
+  const realURI = Platform.select({
+    android: getPath(uri),
+    default: decodeURI(uri.indexOf("file://") > -1 ? uri.split("file://")[1] : uri),
+  });
   resolve({ mime: type, name: name, uri: realURI });
 };
 

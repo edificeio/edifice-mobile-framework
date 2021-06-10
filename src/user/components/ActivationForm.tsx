@@ -4,6 +4,7 @@ import { TextInputLine } from "../../ui/forms/TextInputLine";
 import { TextInput } from "react-native";
 import { IActivationModel } from "../actions/activation";
 import { ValueChangeArgs, ValidatorBuilder, ValueChange, ValueGetter } from "../../utils/form";
+import theme from "../../framework/util/theme";
 export { ValueChangeArgs }
 //
 // Form model: describe fields and validations for each field
@@ -80,6 +81,8 @@ export function InputLogin(props: { login: string, form: ActivationFormModel, on
         onChangeText={validator.changeCallback(props.onChange)}
         value={props.login}
         hasError={props.form.showLoginError(props.login)}
+        editable={false}
+        inputStyle={{color: theme.color.text.light}}
     />
 }
 export function InputPassword(props: { password: string, form: ActivationFormModel, onChange: ValueChange<string> }) {

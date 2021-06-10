@@ -5,7 +5,7 @@
  * Don't forget to use <NestedText> instead of <Text> for nested text styles.
  */
 
-import { ColorValue, Text as RNText, TextProps as RNTextProps, TextProps, TextStyle as RNTextStyle } from "react-native";
+import { ColorValue, Text as RNText } from "react-native";
 import styled from "@emotion/native";
 import theme from "../util/theme";
 

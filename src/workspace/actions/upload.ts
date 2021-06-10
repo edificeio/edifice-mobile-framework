@@ -1,6 +1,6 @@
 // require the module
-import { Platform, ActionSheetIOS } from "react-native";
-import RNFetchBlob from 'rn-fetch-blob';
+import { Platform } from "react-native";
+import getPath from "@flyerhq/react-native-android-uri-path";
 import { asyncActionTypes } from "../../infra/redux/async";
 import config from "../config";
 import { formatResults, uploadDocument } from "./helpers/documents";
@@ -50,21 +50,19 @@ export function uploadAction(parentId: string, uriContent: ContentUri[] | Conten
   return async (dispatch: any) => {
     try {
       const content = Array.isArray(uriContent) ? uriContent : [uriContent];
-      // Need to manage some Android docs specifically
-      for (const contentURI of content) {
-        let deviceURI = contentURI.uri;
-        if ((Platform.OS === 'android')
-          && (deviceURI.includes('content://com.google') || deviceURI.includes('content://com.android'))) {
-          const stat = await RNFetchBlob.fs.stat(deviceURI);
-          deviceURI = stat.path;
-        }
-        contentURI.uri = deviceURI;
+      for (uriContent of content) {
+        uriContent.uri = Platform.select({
+          android: getPath(uriContent.uri),
+          default: decodeURI(
+            uriContent.uri.indexOf("file://") > -1 ? uriContent.uri.split("file://")[1] : uriContent.uri
+          ),
+        });
       }
       dispatch(uploadRequested(parentId));
       const response = await uploadDocument(dispatch, content, parentId);
       const data = response.map(item => JSON.parse(item));
       dispatch(uploadReceived(parentId, formatResults(data)));
-      doTrack && Trackers.trackEvent("Workspace", 'UPLOAD');
+      doTrack && Trackers.trackEvent("Workspace", "UPLOAD");
     } catch (ex) {
       console.log(ex);
       dispatch(uploadError(parentId, ex));

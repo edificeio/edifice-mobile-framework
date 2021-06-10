@@ -4,8 +4,9 @@ import BlogPostDetailsScreen from "./screens/BlogPostDetailsScreen";
 import BlogSelectScreen from "./screens/BlogSelectScreen";
 import BlogCreatePostScreen from "./screens/BlogCreatePostScreen";
 import moduleConfig from "./moduleConfig";
+import { addViewTrackingToStackRoutes } from "../../framework/util/tracker/withViewTracking";
 
-export const timelineRoutes = {
+export const timelineRoutes = addViewTrackingToStackRoutes({
     [`${moduleConfig.routeName}/details`]: {
         screen: BlogPostDetailsScreen
     },
@@ -15,7 +16,7 @@ export const timelineRoutes = {
     [`${moduleConfig.routeName}/create`]: {
         screen: BlogCreatePostScreen
     }
-};
+});
 
 export default () => createStackNavigator(
     {

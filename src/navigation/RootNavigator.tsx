@@ -1,5 +1,4 @@
 // NPM modules
-import I18n from "i18n-js";
 import * as React from "react";
 import { View } from "react-native";
 import {
@@ -17,7 +16,7 @@ import { IAppModule } from "../infra/moduleTool/types";
 // import TimelineNavigator from "../timeline/TimelineNavigator";
 
 // Screens
-import { createMainTabNavigator, createMainTabNavOption } from "./helpers/mainTabNavigator";
+import { createMainTabNavigator } from "./helpers/mainTabNavigator";
 import { getRoutes, getModules } from "./helpers/navBuilder";
 import LoginNavigator from "./LoginNavigator";
 import withLinkingAppWrapper from "../infra/wrapper/withLinkingAppWrapper";

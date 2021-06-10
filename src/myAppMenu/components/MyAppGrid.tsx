@@ -16,13 +16,23 @@ import { FlatButton } from "../../ui/FlatButton";
 import { CommonStyles } from "../../styles/common/styles";
 import Conf from "../../../ode-framework-conf";
 import { InfoBubble } from "../../framework/components/infoBubble";
+import { Module } from "../../framework/util/moduleTool";
 
-class MyAppGrid extends React.PureComponent<{ navigation : NavigationScreenProp<NavigationState>}, {}> {
-  private renderGrid(modules: IAppModule[]) {
+class MyAppGrid extends React.PureComponent<{ navigation: NavigationScreenProp<NavigationState> }, {}> {
+  renderModulesList = (modules: IAppModule[], newModules?: Module[]) => {
     return (
-      <ScrollView contentContainerStyle={{justifyContent: "space-between", flexGrow: 1}} >
-        <View style={{flexDirection: "row", flexWrap: "wrap"}}>
-          {modules.map(item => (
+      <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+        {modules.map(item => (
+          <MyAppItem
+            key={item.config.name}
+            displayName={I18n.t(item.config.displayName)}
+            iconColor={item.config.iconColor}
+            iconName={item.config.iconName}
+            onPress={() => this.props.navigation.navigate(item.config.name)}
+          />
+        ))}
+        {newModules &&
+          newModules.map(item => (
             <MyAppItem
               key={item.config.name}
               displayName={I18n.t(item.config.displayName)}
@@ -31,7 +41,14 @@ class MyAppGrid extends React.PureComponent<{ navigation : NavigationScreenProp<
               onPress={() => this.props.navigation.navigate(item.config.name)}
             />
           ))}
-        </View>
+      </View>
+    );
+  };
+
+  private renderGrid(modules: IAppModule[], newModules?: Module[]) {
+    return (
+      <ScrollView contentContainerStyle={{justifyContent: "space-between", flexGrow: 1}} >
+        {this.renderModulesList(modules, newModules)}
         <View style={{justifyContent: "center", height: 80}}>
           <View style={{height: Platform.OS === "android" ? 40 : undefined}}>
             <FlatButton
@@ -81,12 +98,12 @@ class MyAppGrid extends React.PureComponent<{ navigation : NavigationScreenProp<
 
   public render() {
     let pageContent = null;
-    const { modules } = this.props;
+    const { modules, newModules } = this.props;
 
     if (modules.length == 0) {
       pageContent = this.renderEmpty();
     } else {
-      pageContent = this.renderGrid(modules);
+      pageContent = this.renderGrid(modules, newModules);
     }
 
     return (
