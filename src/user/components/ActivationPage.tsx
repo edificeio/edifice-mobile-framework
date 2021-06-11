@@ -20,6 +20,7 @@ import {
 } from "./ActivationForm";
 import { Checkbox } from "../../framework/components/checkbox";
 import { Text, TextAction } from "../../framework/components/text";
+import { Trackers } from "../../framework/util/tracker";
 
 // TYPES ---------------------------------------------------------------------------
 
@@ -71,15 +72,9 @@ export class ActivationPage extends React.PureComponent<
   };
   private handleOpenCGU = () => {
     const platform = Conf.currentPlatform.url;
-    const path = I18n.t("common.cguPath");
+    const path = I18n.t("common.url.cgu");
     const url = `${platform}${path}`;
-    Linking.canOpenURL(url).then(supported => {
-      if (supported) {
-        Linking.openURL(url);
-      } else {
-        console.log("Don't know how to open URI: ", url);
-      }
-    });
+    Trackers.trackEvent("Auth", "READ NOTICE", "cgu");
   };
 
   public componentDidMount() {

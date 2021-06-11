@@ -193,6 +193,11 @@ export class UserPage extends React.PureComponent<
           onPress={() => this.props.navigation.navigate("NotifPrefs")}
         />
         <ContainerSpacer />
+        <ButtonLine
+          title={"directory-legalNoticeTitle"}
+          onPress={() => this.props.navigation.navigate("LegalNotice")}
+        />
+        <ContainerSpacer />
         <ContainerView>
           <Label>
             {I18n.t("version-number")} {DeviceInfo.getVersion()}
