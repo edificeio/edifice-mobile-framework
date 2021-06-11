@@ -1,6 +1,6 @@
 {
   "name": "appe",
-  "version": "1.5.1-indev.2",
+  "version": "1.5.1-alpha.3",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -25,8 +25,6 @@
     "@emotion/react": "^11.0.0",
     "@flyerhq/react-native-android-uri-path": "^2.0.1",
     "@react-native-async-storage/async-storage": "^1.14.1",
-    "@emotion/native": "^11.0.0",
-    "@emotion/react": "^11.0.0",
     "@react-native-community/cli": "^3.1.0",
     "@react-native-community/datetimepicker": "^2.4.2",
     "@react-native-community/masked-view": "^0.1.10",
@@ -65,6 +63,7 @@
     "react-native-grid-list": "~1.1.0",
     "react-native-image-picker": "^3.3.2",
     "react-native-localize": "1.1.4",
+    "react-native-material-backdrop-modal": "^1.6.3",
     "react-native-matomo-sdk": "^0.4.0",
     "react-native-modal": "11.1.0",
     "react-native-permissions": "~2.0.3",
