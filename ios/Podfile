@@ -1,4 +1,4 @@
-platform :ios, '11.0'
+platform :ios, '10.0'
 
 source 'https://github.com/CocoaPods/Specs.git'
 
@@ -42,10 +42,6 @@ target 'appe' do
 
   # Other needed pods
   pod 'MatomoTracker', '~> 7.4'
-
-  target 'appeTests' do
-    inherit! :complete
-  end
 
   post_install do |installer|
     flipper_post_install(installer)
