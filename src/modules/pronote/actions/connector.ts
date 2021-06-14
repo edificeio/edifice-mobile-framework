@@ -5,15 +5,15 @@
 
 import { Linking } from "react-native";
 
-import pronoteConfig from "../config";
-import { signedFetch } from "../../infra/fetchWithCache";
+import { signedFetch } from "../../../infra/fetchWithCache";
+import pronoteConfig from "../moduleConfig";
 
 // ACTION LIST ------------------------------------------------------------------------------------
 
 export const actionTypes = {
-  connecting: pronoteConfig.createActionType("CONNECTOR") + "_CONNECTING",
-  connected: pronoteConfig.createActionType("CONNECTOR") + "_CONNECTED",
-  error: pronoteConfig.createActionType("CONNECTOR") + "_ERROR",
+  connecting: pronoteConfig.namespaceActionType("CONNECTOR") + "_CONNECTING",
+  connected: pronoteConfig.namespaceActionType("CONNECTOR") + "_CONNECTED",
+  error: pronoteConfig.namespaceActionType("CONNECTOR") + "_ERROR",
 };
 
 // ACTION CREATORS --------------------------------------------------------------------------------

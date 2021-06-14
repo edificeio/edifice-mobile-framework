@@ -1,22 +1,22 @@
+import I18n from "i18n-js";
 import * as React from "react";
 import { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
-import I18n from "i18n-js";
 
-import Conf from "../../../ode-framework-conf";
-import connectorConfig from "../config";
-import userConfig from "../../user/config";
-import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
+import Conf from "../../../../ode-framework-conf";
+import connectorConfig from "../moduleConfig";
+import userConfig from "../../../user/config";
+import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
 
-import { AppTitle, Header, HeaderIcon } from "../../ui/headers/Header";
-import { PageContainer } from "../../ui/ContainerContent";
-import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
-import { Back } from "../../ui/headers/Back";
+import { AppTitle, Header, HeaderIcon } from "../../../ui/headers/Header";
+import { PageContainer } from "../../../ui/ContainerContent";
+import DEPRECATED_ConnectionTrackingBar from "../../../ui/ConnectionTrackingBar";
+import { Back } from "../../../ui/headers/Back";
 
 import ConnectorView from "../components/ConnectorView";
 import { openConnector } from "../actions/connector";
 import { bindActionCreators } from "redux";
-import withViewTracking from "../../infra/tracker/withViewTracking";
+import withViewTracking from "../../../infra/tracker/withViewTracking";
 
 interface IApplicationBackend {
   name: string;
@@ -111,7 +111,7 @@ const getConnectorAddress: (appAddress: string, userType: string) => string = (a
 }
 
 const mapStateToProps: (state: any) => IConnectorContainerDataProps = state => {
-  const connectorState = connectorConfig.getLocalState(state);
+  const connectorState = connectorConfig.getState(state);
   const authState = userConfig.getLocalState(state).auth;
   const infoState = userConfig.getLocalState(state).info;
   return {

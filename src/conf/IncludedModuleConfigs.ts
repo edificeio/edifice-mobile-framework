@@ -7,4 +7,5 @@ export default [
     require("../modules/zimbra/moduleConfig").default,
     require("../modules/support/moduleConfig").default,
     require("../modules/lvs/moduleConfig").default,
+    require("../modules/pronote/moduleConfig").default,
 ];
