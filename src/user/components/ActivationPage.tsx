@@ -1,7 +1,7 @@
 import style from "glamorous-native";
 import I18n from "i18n-js";
 import * as React from "react";
-import { Alert, KeyboardAvoidingView, Linking, Platform, SafeAreaView, ScrollView, TouchableOpacity, View } from "react-native";
+import { Alert, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, TouchableOpacity, View } from "react-native";
 import Conf from "../../../ode-framework-conf";
 import { navigate } from "../../navigation/helpers/navHelper";
 import { FlatButton, Loading } from "../../ui";
@@ -21,6 +21,9 @@ import {
 import { Checkbox } from "../../framework/components/checkbox";
 import { Text, TextAction } from "../../framework/components/text";
 import { Trackers } from "../../framework/util/tracker";
+import { BackdropModal } from "../../framework/components/backdropModal";
+import { SafeWebView } from "../../ui/Webview";
+import theme from "../../framework/util/theme";
 
 // TYPES ---------------------------------------------------------------------------
 
@@ -29,6 +32,7 @@ type IFields = "login" | "password" | "confirm" | "phone" | "email";
 export interface IActivationPageState extends IActivationModel {
   typing: boolean;
   isCGUAccepted: boolean;
+  isModalVisible: boolean;
 }
 export interface IActivationPageDataProps extends IActivationModel {
   passwordRegex: string;
@@ -55,7 +59,8 @@ export class ActivationPage extends React.PureComponent<
   public state: IActivationPageState = {
     ...this.props,
     typing: false,
-    isCGUAccepted: false
+    isCGUAccepted: false,
+    isModalVisible: false
   };
   private handleActivation = async () => {
     this.props.onSubmit({ ...this.state });
@@ -71,9 +76,7 @@ export class ActivationPage extends React.PureComponent<
     };
   };
   private handleOpenCGU = () => {
-    const platform = Conf.currentPlatform.url;
-    const path = I18n.t("common.url.cgu");
-    const url = `${platform}${path}`;
+    this.setState({isModalVisible: true});
     Trackers.trackEvent("Auth", "READ NOTICE", "cgu");
   };
 
@@ -103,7 +106,7 @@ export class ActivationPage extends React.PureComponent<
   }
 
   public render() {
-    const { login, password, confirm, email, phone, isCGUAccepted, typing } = this.state;
+    const { login, password, confirm, email, phone, isCGUAccepted, isModalVisible, typing } = this.state;
     const { externalError, contextState, submitState } = this.props;
     if (
       contextState == ContextState.Loading ||
@@ -120,6 +123,10 @@ export class ActivationPage extends React.PureComponent<
     const errorText = errorKey ? I18n.t(errorKey) : externalError;
     const hasErrorKey = !!errorText;
     const isSubmitLoading = submitState == SubmitState.Loading;
+    const platform = Conf.currentPlatform.url;
+    const path = I18n.t("common.url.cgu");
+    const cguUrl = `${platform}${path}`;
+
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
         <FormPage>
@@ -199,6 +206,12 @@ export class ActivationPage extends React.PureComponent<
             </BottomSwitcher> : null}
           </KeyboardAvoidingView>
         </FormPage>
+        <BackdropModal
+          content={<SafeWebView source={{uri: cguUrl}} style={{backgroundColor: theme.color.tertiary.light}}/>}
+          visible={isModalVisible}
+          handleOpen={() => this.setState({isModalVisible: true})}
+          handleClose={() => this.setState({isModalVisible: false})}
+        />
       </SafeAreaView>
     );
   }

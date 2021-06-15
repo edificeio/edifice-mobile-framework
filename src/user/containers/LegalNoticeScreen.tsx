@@ -1,8 +1,7 @@
 import I18n from "i18n-js";
 import * as React from "react";
-import { Platform, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
-import WebView from "react-native-webview";
-import Backdrop from "react-native-material-backdrop-modal";
+import { Platform, TouchableOpacity } from "react-native";
+import { NavigationInjectedProps } from "react-navigation";
 
 import { Icon } from "../../framework/components/icon";
 import { ListItem } from "../../framework/components/listItem";
@@ -13,73 +12,56 @@ import Conf from "../../../ode-framework-conf";
 import withViewTracking from "../../framework/util/tracker/withViewTracking";
 import { Trackers } from "../../infra/tracker";
 import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from "../../framework/components/header";
+import { SafeWebView } from "../../ui/Webview";
+import { BackdropModal } from "../../framework/components/backdropModal";
 
 // TYPES ==========================================================================================
 
+export interface ILegalNoticeScreenState {
+  legalUrl: string;
+};
+
 // COMPONENT ======================================================================================
-class LegalNoticeScreen extends React.PureComponent {
+class LegalNoticeScreen extends React.PureComponent<
+  NavigationInjectedProps<{}>,
+  ILegalNoticeScreenState
+> {
 
 	// DECLARATIONS ===================================================================================
 
-  state = {
-    modalVisible: false,
-    url: undefined
+  state: ILegalNoticeScreenState = {
+    legalUrl: ""
   }
 
   // RENDER =========================================================================================
 
   render () {
     const { navigation } = this.props;
-    const { modalVisible, url } = this.state;
+    const { legalUrl } = this.state;
     const legalItems = ["cgu", "personalDataProtection", "cookies"];
     return (
-      <>
-        <PageView>
-          {modalVisible
-            ? <TouchableWithoutFeedback
-                onPress={() => this.setState({modalVisible: false})}
-              >
-                <View
-                  style={{
-                    position: "absolute",
-                    zIndex: 1,
-                    backgroundColor: "grey",
-                    opacity: 0.8,
-                    top: 0, bottom: 0, left: 0, right: 0
-                  }}
-                />
-              </TouchableWithoutFeedback>
-            : null
-          }
-          <FakeHeader>
-            <HeaderRow>
-              <HeaderLeft>
-                <HeaderAction
-                  iconName={(Platform.OS === "ios") ? "chevron-left1" : "back"}
-                  onPress={() => navigation.goBack()}
-                />
-              </HeaderLeft>
-              <HeaderCenter>
-                <HeaderTitle>{I18n.t("directory-legalNoticeTitle")}</HeaderTitle>
-              </HeaderCenter>
-            </HeaderRow>
-          </FakeHeader>
-          {legalItems.map(legalItem => this.renderLegalItem(legalItem))}
-        </PageView>
-        <Backdrop
-          focused={modalVisible}
-          backdropStyle={{top: 100}}
-          icon={
-            <TouchableOpacity
-              onPress={() => this.setState({modalVisible: false})}
-            >
-              <Icon name="arrow_down" />
-            </TouchableOpacity>
-          }
-        >
-          <WebView source={{uri: url}}/>
-        </Backdrop>
-      </>
+      <PageView>
+        <FakeHeader>
+          <HeaderRow>
+            <HeaderLeft>
+              <HeaderAction
+                iconName={(Platform.OS === "ios") ? "chevron-left1" : "back"}
+                onPress={() => navigation.goBack()}
+              />
+            </HeaderLeft>
+            <HeaderCenter>
+              <HeaderTitle>{I18n.t("directory-legalNoticeTitle")}</HeaderTitle>
+            </HeaderCenter>
+          </HeaderRow>
+        </FakeHeader>
+        {legalItems.map(legalItem => this.renderLegalItem(legalItem))}
+        <BackdropModal
+          content={<SafeWebView source={{uri: legalUrl}} style={{backgroundColor: theme.color.tertiary.light}}/>}
+          visible={!!legalUrl}
+          handleOpen={() => this.setState({legalUrl})}
+          handleClose={() => this.setState({legalUrl: ""})}
+        />
+      </PageView>
     );
   }
 
@@ -109,8 +91,8 @@ class LegalNoticeScreen extends React.PureComponent {
   handleOpenLegalItem = (legalItem: string) => {
     const platform = Conf.currentPlatform.url;
     const path = I18n.t(`common.url.${legalItem}`);
-    const url = `${platform}${path}`;
-    this.setState({modalVisible: true, url})
+    const legalUrl = `${platform}${path}`;
+    this.setState({legalUrl});
     Trackers.trackEvent("Profile", "READ NOTICE", legalItem);
   };
 
@@ -119,4 +101,4 @@ class LegalNoticeScreen extends React.PureComponent {
   // MAPPING ========================================================================================
 }
 
-export default withViewTracking("user/LegalNotice")(LegalNoticeScreen);
+export default withViewTracking("user/legalNotice")(LegalNoticeScreen);
