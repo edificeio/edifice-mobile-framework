@@ -25,7 +25,8 @@ export default createStackNavigator({
 
   LegalNotice: {
     navigationOptions: {
-      header: null,
+      // Note: a FakeHeader is used inside LegalNoticeScreen, so that it doesn't limite the backdrop shadow
+      header: () => null,
     },
     screen: LegalNoticeScreen
   },
