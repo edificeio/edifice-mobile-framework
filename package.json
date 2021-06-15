@@ -8,7 +8,7 @@
     "appcenter:build:android": "react-native bundle --platform android --dev false --entry-file 'index.js' --bundle-output 'android/app/src/main/assets/index.android.bundle' --assets-dest 'android/app/build/generated/res/react/release'",
     "appcenter:build:ios": "cd ios && pod install --repo-update && cd ../ && react-native bundle --platform ios --dev false --entry-file 'index.js' --bundle-output 'ios/appe/main.jsbundle' --assets-dest './ios'",
     "appcenter:config": "node ode-plugin.js override switch --to=$APPCENTER_TO --dontrestore --acceptall --uri=$APPCENTER_URI --branch=$APPCENTER_CONF_BRANCH --username=$APPCENTER_USERNAME --password=$APPCENTER_PWD",
-    "clean": "rm -r -f ./android/app/build && rm -r -f node_modules && rm -f package-lock.json && rm -f yarn.lock && rm -rf /tmp/metro-bundler-cache-* && rm -rf /tmp/haste-map-react-native-packager-* && npm install && cd android && ./gradlew clean && cd .. ",
+    "clean": "rm -r -f ./android/build && rm -r -f ./android/app/build && rm -r -f ./ios/pods && rm -f ./ios/Podfile.lock && rm -r -f node_modules && rm -f package-lock.json && npm install && cd android && ./gradlew clean && cd ../ios && pod install && cd ..",
     "devices": "adb devices",
     "emulator": "emulator -avd emulator",
     "ios": "react-native run-ios",
