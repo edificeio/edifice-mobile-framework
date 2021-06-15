@@ -98,19 +98,19 @@
 		13B07FAE1A68108700A75B9A /* appe */ = {
 			isa = PBXGroup;
 			children = (
-				745D891922DE0F770038F1FA /* appe.entitlements */,
-				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
-				74660EAB247BE64B00F74D20 /* appe-Bridging-Header.h */,
-				74660EAC247BE64B00F74D20 /* appeTests-Bridging-Header.h */,
-				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
-				13B07FB01A68108700A75B9A /* AppDelegate.m */,
-				13B07FB71A68108700A75B9A /* main.m */,
 				741ACC0C23B632380075BCE4 /* AppCenter-Config.plist */,
+				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
+				13B07FB01A68108700A75B9A /* AppDelegate.m */,
+				74660EAB247BE64B00F74D20 /* appe-Bridging-Header.h */,
+				745D891922DE0F770038F1FA /* appe.entitlements */,
+				74660EAC247BE64B00F74D20 /* appeTests-Bridging-Header.h */,
+				7404C07322E8B012008546A8 /* Assets.xcassets */,
+				74660EAD247BE64C00F74D20 /* DummySwiftFile.swift */,
 				745D891422DE014D0038F1FA /* GoogleService-Info.plist */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
-				74660EAD247BE64C00F74D20 /* DummySwiftFile.swift */,
-				7404C07322E8B012008546A8 /* Assets.xcassets */,
 				F062593E26454B14001AE555 /* InfoPlist.strings */,
+				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
+				13B07FB71A68108700A75B9A /* main.m */,
 			);
 			name = appe;
 			sourceTree = "<group>";
