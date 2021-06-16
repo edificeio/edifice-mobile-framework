@@ -12,30 +12,33 @@ import theme from "../../framework/util/theme";
 import Conf from "../../../ode-framework-conf";
 import withViewTracking from "../../framework/util/tracker/withViewTracking";
 import { Trackers } from "../../infra/tracker";
-import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from "../../framework/components/header";
+import {
+  FakeHeader,
+  HeaderAction,
+  HeaderCenter,
+  HeaderLeft,
+  HeaderRow,
+  HeaderTitle,
+} from "../../framework/components/header";
 import { BackdropModal } from "../../framework/components/backdropModal";
 
 // TYPES ==========================================================================================
 
 export interface ILegalNoticeScreenState {
   legalUrl: string;
-};
+}
 
 // COMPONENT ======================================================================================
-class LegalNoticeScreen extends React.PureComponent<
-  NavigationInjectedProps<{}>,
-  ILegalNoticeScreenState
-> {
-
-	// DECLARATIONS ===================================================================================
+class LegalNoticeScreen extends React.PureComponent<NavigationInjectedProps<{}>, ILegalNoticeScreenState> {
+  // DECLARATIONS ===================================================================================
 
   state: ILegalNoticeScreenState = {
-    legalUrl: ""
-  }
+    legalUrl: "",
+  };
 
   // RENDER =========================================================================================
 
-  render () {
+  render() {
     const { navigation } = this.props;
     const { legalUrl } = this.state;
     const legalItems = ["cgu", "personalDataProtection", "cookies"];
@@ -45,7 +48,7 @@ class LegalNoticeScreen extends React.PureComponent<
           <HeaderRow>
             <HeaderLeft>
               <HeaderAction
-                iconName={(Platform.OS === "ios") ? "chevron-left1" : "back"}
+                iconName={Platform.OS === "ios" ? "chevron-left1" : "back"}
                 onPress={() => navigation.goBack()}
               />
             </HeaderLeft>
@@ -56,15 +59,12 @@ class LegalNoticeScreen extends React.PureComponent<
         </FakeHeader>
         {legalItems.map(legalItem => this.renderLegalItem(legalItem))}
         <BackdropModal
-          content={
-            <Pdf
-              source={{uri: legalUrl}}
-              style={{flex: 1, backgroundColor: theme.color.tertiary.light}}
-            />
-          }
+          content={<Pdf source={{ uri: legalUrl }} style={{ flex: 1, backgroundColor: theme.color.tertiary.light }} />}
+          contentMustScroll
+          contentStyle={{ height: "90%" }}
+          handleClose={() => this.setState({ legalUrl: "" })}
+          handleOpen={() => this.setState({ legalUrl })}
           visible={!!legalUrl}
-          handleOpen={() => this.setState({legalUrl})}
-          handleClose={() => this.setState({legalUrl: ""})}
         />
       </PageView>
     );
@@ -74,9 +74,7 @@ class LegalNoticeScreen extends React.PureComponent<
     return (
       <TouchableOpacity onPress={() => this.handleOpenLegalItem(legalItem)}>
         <ListItem
-          leftElement={
-            <Text>{I18n.t(`user.legalNoticeScreen.${legalItem}`)}</Text>
-          }
+          leftElement={<Text>{I18n.t(`user.legalNoticeScreen.${legalItem}`)}</Text>}
           rightElement={
             <Icon
               name="arrow_down"
@@ -97,7 +95,7 @@ class LegalNoticeScreen extends React.PureComponent<
     const platform = Conf.currentPlatform.url;
     const path = I18n.t(`common.url.${legalItem}`);
     const legalUrl = `${platform}${path}`;
-    this.setState({legalUrl});
+    this.setState({ legalUrl });
     Trackers.trackEvent("Profile", "READ NOTICE", legalItem);
   };
 
