@@ -2,6 +2,8 @@ import style from "glamorous-native";
 import I18n from "i18n-js";
 import * as React from "react";
 import { Alert, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, TouchableOpacity, View } from "react-native";
+import Pdf from "react-native-pdf";
+
 import Conf from "../../../ode-framework-conf";
 import { navigate } from "../../navigation/helpers/navHelper";
 import { FlatButton, Loading } from "../../ui";
@@ -22,7 +24,6 @@ import { Checkbox } from "../../framework/components/checkbox";
 import { Text, TextAction } from "../../framework/components/text";
 import { Trackers } from "../../framework/util/tracker";
 import { BackdropModal } from "../../framework/components/backdropModal";
-import { SafeWebView } from "../../ui/Webview";
 import theme from "../../framework/util/theme";
 
 // TYPES ---------------------------------------------------------------------------
@@ -207,7 +208,12 @@ export class ActivationPage extends React.PureComponent<
           </KeyboardAvoidingView>
         </FormPage>
         <BackdropModal
-          content={<SafeWebView source={{uri: cguUrl}} style={{backgroundColor: theme.color.tertiary.light}}/>}
+          content={
+            <Pdf
+              source={{uri: cguUrl}}
+              style={{flex: 1, backgroundColor: theme.color.tertiary.light}}
+            />
+          }
           visible={isModalVisible}
           handleOpen={() => this.setState({isModalVisible: true})}
           handleClose={() => this.setState({isModalVisible: false})}
