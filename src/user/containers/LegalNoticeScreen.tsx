@@ -2,6 +2,7 @@ import I18n from "i18n-js";
 import * as React from "react";
 import { Platform, TouchableOpacity } from "react-native";
 import { NavigationInjectedProps } from "react-navigation";
+import Pdf from "react-native-pdf";
 
 import { Icon } from "../../framework/components/icon";
 import { ListItem } from "../../framework/components/listItem";
@@ -12,7 +13,6 @@ import Conf from "../../../ode-framework-conf";
 import withViewTracking from "../../framework/util/tracker/withViewTracking";
 import { Trackers } from "../../infra/tracker";
 import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from "../../framework/components/header";
-import { SafeWebView } from "../../ui/Webview";
 import { BackdropModal } from "../../framework/components/backdropModal";
 
 // TYPES ==========================================================================================
@@ -56,7 +56,12 @@ class LegalNoticeScreen extends React.PureComponent<
         </FakeHeader>
         {legalItems.map(legalItem => this.renderLegalItem(legalItem))}
         <BackdropModal
-          content={<SafeWebView source={{uri: legalUrl}} style={{backgroundColor: theme.color.tertiary.light}}/>}
+          content={
+            <Pdf
+              source={{uri: legalUrl}}
+              style={{flex: 1, backgroundColor: theme.color.tertiary.light}}
+            />
+          }
           visible={!!legalUrl}
           handleOpen={() => this.setState({legalUrl})}
           handleClose={() => this.setState({legalUrl: ""})}
