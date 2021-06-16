@@ -1,25 +1,19 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import {
-  activationAccount,
-  cancelActivationAccount,
-  initActivationAccount
-} from "../actions/activation";
+
+import withViewTracking from "../../infra/tracker/withViewTracking";
+import { activationAccount, cancelActivationAccount, initActivationAccount } from "../actions/activation";
 import {
   ActivationPage,
   IActivationPageDataProps,
   IActivationPageEventProps,
-  IActivationPageProps
+  IActivationPageProps,
 } from "../components/ActivationPage";
 import userConfig from "../config";
 import { IActivationState } from "../reducers/activation";
-import withViewTracking from "../../infra/tracker/withViewTracking";
 
-const mapStateToProps: (
-  state: any
-) => IActivationPageDataProps & { version: number } = state => {
-  const activationState: IActivationState =
-    state[userConfig.reducerName].activation;
+const mapStateToProps: (state: any) => IActivationPageDataProps & { version: number } = state => {
+  const activationState: IActivationState = state[userConfig.reducerName].activation;
   return {
     activationCode: activationState.userinfo.activationCode,
     confirm: activationState.submitted.confirm,
@@ -33,13 +27,11 @@ const mapStateToProps: (
     phone: activationState.submitted.phone,
     phoneRequired: activationState.context.mandatory.phone,
     submitState: activationState.submitState,
-    version: new Date().getTime()
+    version: new Date().getTime(),
   };
 };
 
-const mapDispatchToProps: (
-  dispatch
-) => IActivationPageEventProps = dispatch => {
+const mapDispatchToProps: (dispatch) => IActivationPageEventProps = dispatch => {
   return {
     dispatch,
     onSubmit(model) {
@@ -50,7 +42,7 @@ const mapDispatchToProps: (
     },
     onRetryLoad(arg) {
       dispatch(initActivationAccount(arg, false));
-    }
+    },
   };
 };
 class ActivationPageContainer extends React.PureComponent<
@@ -63,9 +55,6 @@ class ActivationPageContainer extends React.PureComponent<
   }
 }
 
-const ConnectedActivationPage = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ActivationPageContainer);
+const ConnectedActivationPage = connect(mapStateToProps, mapDispatchToProps)(ActivationPageContainer);
 
-export default withViewTracking('auth/activation')(ConnectedActivationPage);
+export default withViewTracking("auth/activation")(ConnectedActivationPage);

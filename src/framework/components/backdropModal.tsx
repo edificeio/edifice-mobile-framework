@@ -1,52 +1,60 @@
 import * as React from "react";
-import { View } from "react-native";
-import { Backdrop } from "react-native-backdrop";
+import { TouchableWithoutFeedback, View } from "react-native";
+import Modal from "react-native-modal";
+
 import theme from "../util/theme";
 
 export interface IBackdropModalProps {
   content: JSX.Element;
-  visible: boolean;
-  handleOpen: () => void;
+  contentStyle: object;
   handleClose: () => void;
+  handleOpen: () => void;
+  hasScrollingContent: boolean;
+  visible: boolean;
 }
 
-export const BackdropModal = ({content, visible, handleOpen, handleClose}: IBackdropModalProps) => (
-  <Backdrop
-    visible={visible}
-    handleOpen={handleOpen}
-    handleClose={handleClose}
-    swipeConfig={{
-      velocityThreshold: 0.3,
-      directionalOffsetThreshold: 80,
+export const BackdropModal = ({
+  content,
+  contentStyle,
+  handleOpen,
+  handleClose,
+  hasScrollingContent,
+  visible,
+}: IBackdropModalProps) => (
+  <Modal
+    backdropOpacity={0.5}
+    coverScreen
+    isVisible={visible}
+    onBackdropPress={handleClose}
+    onSwipeComplete={handleClose}
+    onSwipeStart={handleOpen}
+    propagateSwipe={hasScrollingContent}
+    style={{
+      justifyContent: "flex-end",
+      margin: 0,
     }}
-    animationConfig={{
-      speed: 14,
-      bounciness: 4,
-    }}
-    containerStyle={{height: "90%"}}
-    overlayColor="rgba(0,0,0,0.5)"
-    header={
+    swipeDirection={["down"]}
+    useNativeDriverForBackdrop>
+    <View style={[{}, contentStyle]}>
       <View
         style={{
-          height: 40,
           borderTopLeftRadius: 20,
           borderTopRightRadius: 20,
+          height: 40,
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: theme.color.tertiary.light
-        }}
-      >
+          backgroundColor: theme.color.tertiary.light,
+        }}>
         <View
           style={{
             width: 50,
             height: 5,
             borderRadius: 5,
-            backgroundColor: theme.color.tertiary.regular
+            backgroundColor: theme.color.tertiary.regular,
           }}
         />
       </View>
-    }
-  >
-    {content}
-  </Backdrop>
+      {hasScrollingContent ? <TouchableWithoutFeedback>{content}</TouchableWithoutFeedback> : content}
+    </View>
+  </Modal>
 );
