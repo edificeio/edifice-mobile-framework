@@ -270,7 +270,7 @@ PODS:
     - React-cxxreact (= 0.61.5)
     - React-jsi (= 0.61.5)
   - React-jsinspector (0.61.5)
-  - react-native-document-picker (5.1.0):
+  - react-native-document-picker (5.2.0):
     - React-Core
   - react-native-image-picker (3.8.1):
     - React-Core
@@ -601,7 +601,7 @@ SPEC CHECKSUMS:
   React-jsi: cb2cd74d7ccf4cffb071a46833613edc79cdf8f7
   React-jsiexecutor: d5525f9ed5f782fdbacb64b9b01a43a9323d2386
   React-jsinspector: fa0ecc501688c3c4c34f28834a76302233e29dc0
-  react-native-document-picker: 0e3602a4064da040321bafad6848d8b0edcb1d55
+  react-native-document-picker: aa3fd58d5fcc1fdbf6939510b9407d16377f5832
   react-native-image-picker: 5a7dd93d4f9dd0d910da5dde3707fd96f70d03b3
   react-native-matomo-sdk: 1dd9511387c2f96401dc6ba9a6476d0660021c91
   react-native-netinfo: 8d8db463bcc5db66a8ac5c48a7d86beb3b92f61a
@@ -642,6 +642,6 @@ SPEC CHECKSUMS:
   SDWebImageWebPCoder: 947093edd1349d820c40afbd9f42acb6cdecd987
   Yoga: f2a7cd4280bfe2cca5a7aed98ba0eb3d1310f18b
 
-PODFILE CHECKSUM: b13f2a50d272c375efa021961ca722f540f34408
+PODFILE CHECKSUM: ec6635d29c77a461df61f7cf9cb8e1751b1fa3c7
 
 COCOAPODS: 1.10.1
