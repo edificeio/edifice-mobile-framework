@@ -29,7 +29,6 @@ export function selectPlatform(platformId: string, redirect: boolean = false, do
     Conf.currentPlatform = Conf.platforms[platformId];
 
     // === 3 - Instantiate the oAuth client
-
     OAuth2RessourceOwnerPasswordClient.connection = new OAuth2RessourceOwnerPasswordClient(
       `${Conf.currentPlatform.url}/auth/oauth2/token`,
       Conf.currentPlatform.appOAuthId,
@@ -37,26 +36,22 @@ export function selectPlatform(platformId: string, redirect: boolean = false, do
       createAppScopesLegacy()
     );
 
-    // === 4 - Saves the selected platform in Async Storage
-    await AsyncStorage.setItem(PLATFORM_STORAGE_KEY, platformId);
-
-    // === 5 - Dispatch the new selected platform in Redux Store
+    // === 4 - Dispatch the new selected platform in Redux Store
     dispatch({
       platformId,
       type: actionTypePlatformSelect
     });
 
-    // === 6 - Track event
-
+    // === 5 - Track event
     doTrack && Trackers.trackEvent('Connection', 'SELECT PLATFORM', (Conf.currentPlatform as any).url.replace(/(^\w+:|^)\/\//, ''));
 
     // === End
-    if (redirect) navigate("LoginHome");
+    if (redirect) navigate("LoginHome", { platformId });
   };
 }
 
 /**
- * Read ans select the platform stored in AsyncStorage.
+ * Read and select the platform stored in AsyncStorage.
  */
 export function loadCurrentPlatform() {
   return async (dispatch, getState) => {
