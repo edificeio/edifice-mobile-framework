@@ -19,7 +19,12 @@
     "ok": "OK",
     "openInBrowser": "Ouvrir dans le navigateur",
     "readMore": "lire plus",
-    "all": "Tous"
+    "all": "Tous",
+    "url": {
+      "cgu": "/assets/cgu/ODE_CGU_20210401.pdf",
+      "cookies": "/assets/cgu/notice_cookies_2021-06.pdf",
+      "personalDataProtection": "/assets/cgu/ODE_Charte_de_confidentialite_20200401.pdf"
+    }
   },
   "timeline": {
     "appName": "Fil de nouveautés",
@@ -165,6 +170,11 @@
     }
   },
   "user": {
+    "legalNoticeScreen": {
+      "cgu": "CGU",
+      "cookies": "Notice cookies",
+      "personalDataProtection": "Charte de protection des données personnelles"
+    },
     "pushNotifsSettingsScreen": {
       "countOutOfTotal": {
         "one": "({{count}} activée sur {{total}})",
@@ -355,6 +365,7 @@
     "delete-confirm": "Supprimer définitivement :",
     "directory-childrenTitle": "Enfants(s)",
     "directory-disconnectButton": "Se déconnecter",
+    "directory-legalNoticeTitle": "Mentions légales",
     "directory-notificationsTitle": "Notifications mobile",
     "directory-relativesTitle": "Parent(s)",
     "directory-structuresTitle": "Établissement(s) et classe(s)",

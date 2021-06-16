@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 import DeviceInfo from 'react-native-device-info';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Components
 import { FlatButton } from "../../ui";
@@ -31,6 +32,7 @@ import { CommonStyles } from "../../styles/common/styles";
 import BottomSwitcher from "../../ui/BottomSwitcher";
 import { PasswordInputLine } from "../../ui/forms/PasswordInputLine";
 import { Text, TextColor, TextBold } from "../../ui/text";
+import { PLATFORM_STORAGE_KEY } from "../actions/platform";
 import {
   checkVersionThenLogin,
   IVersionContext,
@@ -287,11 +289,15 @@ export class LoginPage extends React.Component<
   // Event handlers
 
   protected async handleLogin() {
+    const { navigation } = this.props;
+    const platformId = navigation.getParam("platformId");
     await this.props.onLogin(
       this.state.login || this.props.auth.login, // ToDo: fix this TS issue
       this.state.password,
       this.state.rememberMe
     );
+    // Saves the platform the user logged into (in Async Storage)
+    await AsyncStorage.setItem(PLATFORM_STORAGE_KEY, platformId);
     this.setState({ typing: false });
   }
 

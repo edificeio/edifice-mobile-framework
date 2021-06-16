@@ -1,7 +1,9 @@
 import style from "glamorous-native";
 import I18n from "i18n-js";
 import * as React from "react";
-import { Alert, KeyboardAvoidingView, Linking, Platform, SafeAreaView, ScrollView, TouchableOpacity, View } from "react-native";
+import { Alert, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, TouchableOpacity, View } from "react-native";
+import Pdf from "react-native-pdf";
+
 import Conf from "../../../ode-framework-conf";
 import { navigate } from "../../navigation/helpers/navHelper";
 import { FlatButton, Loading } from "../../ui";
@@ -16,10 +18,13 @@ import {
   InputPassword,
   InputPasswordConfirm,
   InputPhone,
-  ValueChangeArgs
+  ValueChangeArgs,
 } from "./ActivationForm";
 import { Checkbox } from "../../framework/components/checkbox";
 import { Text, TextAction } from "../../framework/components/text";
+import { Trackers } from "../../framework/util/tracker";
+import { BackdropModal } from "../../framework/components/backdropModal";
+import theme from "../../framework/util/theme";
 
 // TYPES ---------------------------------------------------------------------------
 
@@ -28,6 +33,7 @@ type IFields = "login" | "password" | "confirm" | "phone" | "email";
 export interface IActivationPageState extends IActivationModel {
   typing: boolean;
   isCGUAccepted: boolean;
+  isModalVisible: boolean;
 }
 export interface IActivationPageDataProps extends IActivationModel {
   passwordRegex: string;
@@ -42,19 +48,16 @@ export interface IActivationPageEventProps {
   onRetryLoad: (args: IActivationUserInfo) => void;
   onCancelLoad: () => void;
 }
-export type IActivationPageProps = IActivationPageDataProps &
-  IActivationPageEventProps;
+export type IActivationPageProps = IActivationPageDataProps & IActivationPageEventProps;
 // Activation Page Component -------------------------------------------------------------
 
-export class ActivationPage extends React.PureComponent<
-  IActivationPageProps,
-  IActivationPageState
-  > {
+export class ActivationPage extends React.PureComponent<IActivationPageProps, IActivationPageState> {
   // fully controller component
   public state: IActivationPageState = {
     ...this.props,
     typing: false,
-    isCGUAccepted: false
+    isCGUAccepted: false,
+    isModalVisible: false,
   };
   private handleActivation = async () => {
     this.props.onSubmit({ ...this.state });
@@ -64,22 +67,14 @@ export class ActivationPage extends React.PureComponent<
     return (valueChange: ValueChangeArgs<string>) => {
       const newState: Partial<IActivationPageState> = {
         [key]: valueChange.value,
-        typing: true
+        typing: true,
       };
       this.setState(newState as any);
     };
   };
   private handleOpenCGU = () => {
-    const platform = Conf.currentPlatform.url;
-    const path = I18n.t("common.cguPath");
-    const url = `${platform}${path}`;
-    Linking.canOpenURL(url).then(supported => {
-      if (supported) {
-        Linking.openURL(url);
-      } else {
-        console.log("Don't know how to open URI: ", url);
-      }
-    });
+    this.setState({ isModalVisible: true });
+    Trackers.trackEvent("Auth", "READ NOTICE", "cgu");
   };
 
   public componentDidMount() {
@@ -91,47 +86,47 @@ export class ActivationPage extends React.PureComponent<
           onPress() {
             props.onRetryLoad({
               activationCode: props.activationCode,
-              login: props.login
+              login: props.login,
             });
           },
-          style: "default"
+          style: "default",
         },
         {
           text: I18n.t("activation-cancelLoad"),
           onPress() {
             props.onCancelLoad();
           },
-          style: "cancel"
-        }
+          style: "cancel",
+        },
       ]);
     }
   }
 
   public render() {
-    const { login, password, confirm, email, phone, isCGUAccepted, typing } = this.state;
+    const { login, password, confirm, email, phone, isCGUAccepted, isModalVisible, typing } = this.state;
     const { externalError, contextState, submitState } = this.props;
-    if (
-      contextState == ContextState.Loading ||
-      contextState == ContextState.Failed
-    ) {
+    if (contextState == ContextState.Loading || contextState == ContextState.Failed) {
       return <Loading />;
     }
     const formModel = new ActivationFormModel({
       ...this.props,
-      password: () => password
+      password: () => password,
     });
     const isNotValid = !isCGUAccepted || !formModel.validate({ ...this.state });
     const errorKey = formModel.firstErrorKey({ ...this.state });
     const errorText = errorKey ? I18n.t(errorKey) : externalError;
     const hasErrorKey = !!errorText;
     const isSubmitLoading = submitState == SubmitState.Loading;
+    const platform = Conf.currentPlatform.url;
+    const path = I18n.t("common.url.cgu");
+    const cguUrl = `${platform}${path}`;
+
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
         <FormPage>
           <KeyboardAvoidingView
             style={{ flex: 1, backgroundColor: "#ffffff" }}
-            behavior={Platform.OS === "ios" ? "padding" : undefined}
-          >
+            behavior={Platform.OS === "ios" ? "padding" : undefined}>
             <ScrollView alwaysBounceVertical={false} contentContainerStyle={{ flexGrow: 1 }}>
               <FormTouchable onPress={() => formModel.blur()}>
                 <FormWrapper>
@@ -139,53 +134,29 @@ export class ActivationPage extends React.PureComponent<
                     <LogoWrapper>
                       <Logo source={Conf.currentPlatform.logo} />
                     </LogoWrapper>
-                    <InputLogin
-                      login={login}
-                      form={formModel}
-                      onChange={this.onChange("login")}
-                    />
-                    <InputPassword
-                      password={password}
-                      form={formModel}
-                      onChange={this.onChange("password")}
-                    />
-                    <InputPasswordConfirm
-                      confirm={confirm}
-                      form={formModel}
-                      onChange={this.onChange("confirm")}
-                    />
-                    <InputEmail
-                      email={email}
-                      form={formModel}
-                      onChange={this.onChange("email")}
-                    />
-                    <InputPhone
-                      phone={phone}
-                      form={formModel}
-                      onChange={this.onChange("phone")}
-                    />
+                    <InputLogin login={login} form={formModel} onChange={this.onChange("login")} />
+                    <InputPassword password={password} form={formModel} onChange={this.onChange("password")} />
+                    <InputPasswordConfirm confirm={confirm} form={formModel} onChange={this.onChange("confirm")} />
+                    <InputEmail email={email} form={formModel} onChange={this.onChange("email")} />
+                    <InputPhone phone={phone} form={formModel} onChange={this.onChange("phone")} />
                     <View
                       style={{
                         flexDirection: "row",
                         alignItems: "center",
                         alignSelf: "stretch",
-                        marginTop: 30
-                      }}
-                    >
+                        marginTop: 30,
+                      }}>
                       <Checkbox
                         checked={isCGUAccepted}
-                        onPress={() => this.setState({isCGUAccepted: !isCGUAccepted})}
-                        customContainerStyle={{marginRight: 5}}
+                        onPress={() => this.setState({ isCGUAccepted: !isCGUAccepted })}
+                        customContainerStyle={{ marginRight: 5 }}
                       />
                       <Text>{I18n.t("activation-cgu-accept")}</Text>
                       <TouchableOpacity onPress={this.handleOpenCGU}>
                         <TextAction>{I18n.t("activation-cgu")}</TextAction>
                       </TouchableOpacity>
                     </View>
-                    <ErrorMessage>
-                      {" "}
-                      {hasErrorKey && !typing ? errorText : ""}{" "}
-                    </ErrorMessage>
+                    <ErrorMessage> {hasErrorKey && !typing ? errorText : ""} </ErrorMessage>
                     <ButtonWrapper error={hasErrorKey} typing={typing}>
                       <FlatButton
                         onPress={() => this.handleActivation()}
@@ -198,12 +169,21 @@ export class ActivationPage extends React.PureComponent<
                 </FormWrapper>
               </FormTouchable>
             </ScrollView>
-            {Conf.platforms && Object.keys(Conf.platforms).length > 1 ?
-            <BottomSwitcher onPress={() => this.handleBackToPlatformSelector()}>
-              {Conf.currentPlatform.displayName}{" "}
-            </BottomSwitcher> : null}
+            {Conf.platforms && Object.keys(Conf.platforms).length > 1 ? (
+              <BottomSwitcher onPress={() => this.handleBackToPlatformSelector()}>
+                {Conf.currentPlatform.displayName}{" "}
+              </BottomSwitcher>
+            ) : null}
           </KeyboardAvoidingView>
         </FormPage>
+        <BackdropModal
+          content={<Pdf source={{ uri: cguUrl }} style={{ flex: 1, backgroundColor: theme.color.tertiary.light }} />}
+          contentMustScroll
+          contentStyle={{ height: "90%" }}
+          handleClose={() => this.setState({ isModalVisible: false })}
+          handleOpen={() => this.setState({ isModalVisible: true })}
+          visible={isModalVisible}
+        />
       </SafeAreaView>
     );
   }
@@ -215,7 +195,7 @@ export class ActivationPage extends React.PureComponent<
 
 const FormPage = style.view({
   backgroundColor: "#ffffff",
-  flex: 1
+  flex: 1,
 });
 const FormTouchable = style.touchableWithoutFeedback({ flex: 1 });
 const FormWrapper = style.view({ flex: 1 });
@@ -225,21 +205,21 @@ const FormContainer = style.view({
   flexDirection: "column",
   justifyContent: "center",
   padding: 40,
-  paddingTop: 60
+  paddingTop: 60,
 });
 const LogoWrapper = style.view({
   flexGrow: 2,
   alignItems: "center",
-  justifyContent: "center"
+  justifyContent: "center",
 });
 const Logo = style.image({ height: 50, width: 200, resizeMode: "contain" });
 const ButtonWrapper = style.view(
   {
     alignItems: "center",
     flexGrow: 2,
-    justifyContent: "flex-start"
+    justifyContent: "flex-start",
   },
   ({ error, typing }) => ({
-    marginTop: error && !typing ? 10 : 10
+    marginTop: error && !typing ? 10 : 10,
   })
 );

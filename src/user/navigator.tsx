@@ -10,6 +10,7 @@ import StructuresPage from "./containers/StructuresPage";
 import RelativesPage from "./containers/RelativesPage";
 import ChildrenPage from "./containers/ChildrenPage";
 import PushNotifsSettingsScreen from "./containers/PushNotifsSettingsScreen";
+import LegalNoticeScreen from "./containers/LegalNoticeScreen";
 
 export default createStackNavigator({
   Profile: {
@@ -20,6 +21,14 @@ export default createStackNavigator({
   NotifPrefs: {
     navigationOptions: NotifPrefsPageNavigationOptions,
     screen: PushNotifsSettingsScreen
+  },
+
+  LegalNotice: {
+    navigationOptions: {
+      // Note: a FakeHeader is used inside LegalNoticeScreen, so that it doesn't limite the backdrop shadow
+      header: () => null,
+    },
+    screen: LegalNoticeScreen
   },
 
   MyProfile: {
