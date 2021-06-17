@@ -6,19 +6,19 @@ import theme from "../util/theme";
 
 export interface IBackdropModalProps {
   content: JSX.Element;
-  contentMustScroll: boolean;
   contentStyle: object;
   handleClose: () => void;
   handleOpen: () => void;
+  propagateSwipe: boolean;
   visible: boolean;
 }
 
 export const BackdropModal = ({
   content,
-  contentMustScroll,
   contentStyle,
   handleOpen,
   handleClose,
+  propagateSwipe,
   visible,
 }: IBackdropModalProps) => (
   <Modal
@@ -28,7 +28,7 @@ export const BackdropModal = ({
     onBackdropPress={handleClose}
     onSwipeComplete={handleClose}
     onSwipeStart={handleOpen}
-    propagateSwipe={contentMustScroll}
+    propagateSwipe={propagateSwipe}
     style={{
       justifyContent: "flex-end",
       margin: 0,
@@ -54,7 +54,7 @@ export const BackdropModal = ({
           }}
         />
       </View>
-      {contentMustScroll ? <TouchableWithoutFeedback>{content}</TouchableWithoutFeedback> : content}
+      {propagateSwipe ? <TouchableWithoutFeedback>{content}</TouchableWithoutFeedback> : content}
     </View>
   </Modal>
 );
