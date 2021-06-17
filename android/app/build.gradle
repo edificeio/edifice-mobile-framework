@@ -137,14 +137,6 @@ android {
         manifestPlaceholders = [ applicationName: APPNAME ]
         multiDexEnabled true // MultiDex is needed to handle the tons of React Native modules, see https://developer.android.com/studio/build/multidex
     }
-    packagingOptions {
-        pickFirst 'lib/x86/libc++_shared.so'
-        pickFirst 'lib/x86_64/libjsc.so'
-        pickFirst 'lib/arm64-v8a/libjsc.so'
-        pickFirst 'lib/arm64-v8a/libc++_shared.so'
-        pickFirst 'lib/x86_64/libc++_shared.so'
-        pickFirst 'lib/armeabi-v7a/libc++_shared.so'
-    }
     splits {
         abi {
             reset()
