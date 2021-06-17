@@ -2,16 +2,9 @@ import I18n from "i18n-js";
 import * as React from "react";
 import { Platform, TouchableOpacity } from "react-native";
 import { NavigationInjectedProps } from "react-navigation";
-import Pdf from "react-native-pdf";
 
-import { Icon } from "../../framework/components/icon";
-import { ListItem } from "../../framework/components/listItem";
-import { PageView } from "../../framework/components/page";
-import { Text } from "../../framework/components/text";
-import theme from "../../framework/util/theme";
 import Conf from "../../../ode-framework-conf";
-import withViewTracking from "../../framework/util/tracker/withViewTracking";
-import { Trackers } from "../../infra/tracker";
+import { BackdropPdfReader } from "../../framework/components/backdropPdfReader";
 import {
   FakeHeader,
   HeaderAction,
@@ -20,7 +13,14 @@ import {
   HeaderRow,
   HeaderTitle,
 } from "../../framework/components/header";
-import { BackdropModal } from "../../framework/components/backdropModal";
+import { Icon } from "../../framework/components/icon";
+import { ListItem } from "../../framework/components/listItem";
+import { PageView } from "../../framework/components/page";
+import { Text } from "../../framework/components/text";
+import theme from "../../framework/util/theme";
+import withViewTracking from "../../framework/util/tracker/withViewTracking";
+import { Trackers } from "../../infra/tracker";
+import { CommonStyles } from "../../styles/common/styles";
 
 // TYPES ==========================================================================================
 
@@ -58,12 +58,10 @@ class LegalNoticeScreen extends React.PureComponent<NavigationInjectedProps<{}>,
           </HeaderRow>
         </FakeHeader>
         {legalItems.map(legalItem => this.renderLegalItem(legalItem))}
-        <BackdropModal
-          content={<Pdf source={{ uri: legalUrl }} style={{ flex: 1, backgroundColor: theme.color.tertiary.light }} />}
-          contentMustScroll
-          contentStyle={{ height: "90%" }}
+        <BackdropPdfReader
           handleClose={() => this.setState({ legalUrl: "" })}
           handleOpen={() => this.setState({ legalUrl })}
+          uri={legalUrl}
           visible={!!legalUrl}
         />
       </PageView>

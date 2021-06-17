@@ -2,15 +2,18 @@ import style from "glamorous-native";
 import I18n from "i18n-js";
 import * as React from "react";
 import { Alert, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, TouchableOpacity, View } from "react-native";
-import Pdf from "react-native-pdf";
 
 import Conf from "../../../ode-framework-conf";
+import { BackdropPdfReader } from "../../framework/components/backdropPdfReader";
+import { Checkbox } from "../../framework/components/checkbox";
+import { Text, TextAction } from "../../framework/components/text";
+import { Trackers } from "../../framework/util/tracker";
 import { navigate } from "../../navigation/helpers/navHelper";
 import { FlatButton, Loading } from "../../ui";
 import BottomSwitcher from "../../ui/BottomSwitcher";
 import { ErrorMessage } from "../../ui/Typography";
-import { IActivationModel, IActivationUserInfo } from "../actions/activation";
 import { ContextState, SubmitState } from "../../utils/SubmitState";
+import { IActivationModel, IActivationUserInfo } from "../actions/activation";
 import {
   ActivationFormModel,
   InputEmail,
@@ -20,11 +23,6 @@ import {
   InputPhone,
   ValueChangeArgs,
 } from "./ActivationForm";
-import { Checkbox } from "../../framework/components/checkbox";
-import { Text, TextAction } from "../../framework/components/text";
-import { Trackers } from "../../framework/util/tracker";
-import { BackdropModal } from "../../framework/components/backdropModal";
-import theme from "../../framework/util/theme";
 
 // TYPES ---------------------------------------------------------------------------
 
@@ -176,12 +174,10 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
             ) : null}
           </KeyboardAvoidingView>
         </FormPage>
-        <BackdropModal
-          content={<Pdf source={{ uri: cguUrl }} style={{ flex: 1, backgroundColor: theme.color.tertiary.light }} />}
-          contentMustScroll
-          contentStyle={{ height: "90%" }}
+        <BackdropPdfReader
           handleClose={() => this.setState({ isModalVisible: false })}
           handleOpen={() => this.setState({ isModalVisible: true })}
+          uri={cguUrl}
           visible={isModalVisible}
         />
       </SafeAreaView>
