@@ -20,9 +20,10 @@
     "readMore": "lire plus",
     "all": "Tous",
     "url": {
-      "cgu": "/assets/cgu/ODE_CGU_20210401.pdf",
-      "cookies": "/assets/cgu/notice_cookies_2021-06.pdf",
-      "personalDataProtection": "/assets/cgu/ODE_Charte_de_confidentialite_20200401.pdf"
+      "cgu": "/assets/cgu/ODE_CGU.pdf",
+      "cookies": "/assets/cgu/notice_cookies.pdf",
+      "personalDataProtection": "/assets/cgu/ODE_Charte_de_confidentialite.pdf",
+      "userCharter": "/assets/cgu/ODE_Charte_d_utilisation.pdf"
     }
   },
   "timeline": {
@@ -173,7 +174,8 @@
     "legalNoticeScreen": {
       "cgu": "CGU",
       "cookies": "Notice cookies",
-      "personalDataProtection": "Charte de protection des données personnelles"
+      "personalDataProtection": "Charte de protection des données personnelles",
+      "userCharter": "Charte d'utilisation"
     },
     "pushNotifsSettingsScreen": {
       "countOutOfTotal": {

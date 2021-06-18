@@ -41,7 +41,7 @@ class LegalNoticeScreen extends React.PureComponent<NavigationInjectedProps<{}>,
   render() {
     const { navigation } = this.props;
     const { legalUrl } = this.state;
-    const legalItems = ["cgu", "personalDataProtection", "cookies"];
+    const legalItems = ["userCharter", "cgu", "personalDataProtection", "cookies"];
     return (
       <PageView>
         <FakeHeader>

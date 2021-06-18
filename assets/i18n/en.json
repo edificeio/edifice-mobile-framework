@@ -15,9 +15,10 @@
     "readMore": "read more",
     "all": "All",
     "url": {
-      "cgu": "/assets/cgu/ODE_Terms_of_use_20210324.pdf",
-      "cookies": "/assets/cgu/notice_cookies_2021-06_EN.pdf",
-      "personalDataProtection": "/assets/cgu/ODE_Privacy_Policy_20210324.pdf"
+      "cgu": "/assets/cgu/ODE_Terms_of_use.pdf",
+      "cookies": "/assets/cgu/notice_cookies_EN.pdf",
+      "personalDataProtection": "/assets/cgu/ODE_Privacy_Policy.pdf",
+      "userCharter": "/assets/cgu/ODE_User_Charter.pdf"
     }
   },
   "timeline": {
