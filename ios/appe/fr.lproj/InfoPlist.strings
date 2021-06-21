@@ -1,12 +1,3 @@
-"NSAppleMusicUsageDescription"="$(PRODUCT_NAME) souhaite accéder à votre bibliothèque multimédia.";
-"NSBluetoothAlwaysUsageDescription"="$(PRODUCT_NAME) souhaite utiliser votre Bluetooth.";
-"NSBluetoothPeripheralUsageDescription"="$(PRODUCT_NAME) nécessite le Bluetooth pour se connecter à notre appareil.";
-"NSCalendarsUsageDescription"="$(PRODUCT_NAME) souhaite accéder à votre calendrier.";
-"NSCameraUsageDescription"="$(PRODUCT_NAME) souhaite accéder à votre appareil photo pour envoyer des photos à votre réseau éducatif.";
-"NSLocationAlwaysUsageDescription"="$(PRODUCT_NAME) souhaite accéder à votre position.";
-"NSLocationWhenInUseUsageDescription"="$(PRODUCT_NAME) souhaite accéder à votre position.";
-"NSMicrophoneUsageDescription"="$(PRODUCT_NAME) souhaite accéder à votre micro.";
-"NSMotionUsageDescription"="$(PRODUCT_NAME) souhaite accéder à la détection de mouvement.";
-"NSPhotoLibraryAddUsageDescription"="$(PRODUCT_NAME) souhaite pouvoir sauvegarder des photos dans votre téléphone.";
-"NSPhotoLibraryUsageDescription"="$(PRODUCT_NAME) souhaite accéder à vos photos pour pouvoir les partager à votre réseau éducatif.";
-"NSSpeechRecognitionUsageDescription"="$(PRODUCT_NAME) souhaite accéder à la reconnaissance vocale.";
+"NSCameraUsageDescription"="L'apareil photo sera utilisé pour envoyer des photos à votre réseau éducatif et pour choisir votre photo de profil.";
+"NSPhotoLibraryUsageDescription"="La galerie photos sera utilisée pour envoyer des photos à votre réseau éducatif et pour choisir votre photo de profil.";
+"NSPhotoLibraryAddUsageDescription"="La galerie photos sera utilisée pour envoyer des photos à votre réseau éducatif et pour choisir votre photo de profil.";

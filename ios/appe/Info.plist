@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>en</string>
+	<string>fr_FR</string>
 	<key>CFBundleDisplayName</key>
 	<string>app-e-dev-default</string>
 	<key>CFBundleExecutable</key>
@@ -37,30 +37,12 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>NSAppleMusicUsageDescription</key>
-	<string>$(PRODUCT_NAME) would like access to your media library</string>
-	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>$(PRODUCT_NAME) would like to use bluetooth connection</string>
-	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>$(PRODUCT_NAME) requires Bluetooth to connect to our hardware.</string>
-	<key>NSCalendarsUsageDescription</key>
-	<string>$(PRODUCT_NAME) would like access to your calendars</string>
 	<key>NSCameraUsageDescription</key>
-	<string>$(PRODUCT_NAME) would like to use your camera to send photos to your educational network.</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>$(PRODUCT_NAME) would like to be access to your location</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>$(PRODUCT_NAME) would like to be access to your location</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>$(PRODUCT_NAME) would like to use your microphone (for videos)</string>
-	<key>NSMotionUsageDescription</key>
-	<string>$(PRODUCT_NAME) would like to be access to your motion use</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>$(PRODUCT_NAME) would like to save photos to your photo gallery</string>
+	<string>L&apos;apareil photo sera utilisé pour envoyer des photos à votre réseau éducatif et pour choisir votre photo de profil</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>$(PRODUCT_NAME) would like access to your photo gallery to send photos to your educational network.</string>
-	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>$(PRODUCT_NAME) would like to use speech recognition</string>
+	<string>La galerie photos sera utilisée pour envoyer des photos à votre réseau éducatif et pour choisir votre photo de profil.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>La galerie photos sera utilisée pour envoyer des photos à votre réseau éducatif et pour choisir votre photo de profil.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>icomoon.ttf</string>
