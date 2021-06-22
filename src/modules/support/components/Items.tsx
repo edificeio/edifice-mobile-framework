@@ -36,17 +36,17 @@ export const EstablishmentPicker = ({
 
 export const CategoryPicker = ({ list, onFieldChange }: { list: IApp[]; onFieldChange: (field: string) => void }) => {
   const [currentValue, updateCurrentValue] =
-    list.length > 0 ? React.useState<string>(list[0].name) : React.useState<string>();
+    list.length > 0 ? React.useState<string>(list[0].displayName) : React.useState<string>();
   return (
     <View style={{ flex: 1 }}>
       <Dropdown
         style={styles.dropdown}
-        data={list.map(x => x.name)}
+        data={list.map(x => x.displayName)}
         value={currentValue}
         onSelect={(key: string) => {
-          const elem = list.find(item => item.name === key);
-          if (elem !== undefined && elem.name !== currentValue) {
-            updateCurrentValue(elem.name);
+          const elem = list.find(item => item.displayName === key);
+          if (elem !== undefined && elem.displayName !== currentValue) {
+            updateCurrentValue(elem.displayName);
             onFieldChange(elem.address);
           }
         }}

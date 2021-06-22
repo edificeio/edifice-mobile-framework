@@ -666,6 +666,24 @@
     "support-ticket-success-id": "Demande N°",
     "support-ticket-success-info": " créée avec succès. Retrouvez le suivi sur la version web du module Aide et support.",
     "support-ticket-failure": "Echec. La création de la demande a échoué.",
+    "modules-names": {
+      "actualites": "Actualités",
+      "collaborativeeditor": "Pad",
+      "sharebigfiles": "Téléchargement de fichier lourd",
+      "rbs": "Réservation de ressources",
+      "timelinegenerator": "Frise chronologique",
+      "mindmap": "Carte mentale",
+      "wiki": "Wiki",
+      "collaborativewall": "Mur collaboratif",
+      "poll": "Sondages",
+      "calendar": "Agenda",
+      "support": "Aide et support",
+      "forum": "Forum",
+      "blog": "Blog",
+      "workspaceworkspace": "Espace documentaire",
+      "community": "Communautés",
+      "other" : "Autre"
+    },
 
     "profileTypes": {
       "Guest": "Invité",
