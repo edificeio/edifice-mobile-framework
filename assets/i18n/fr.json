@@ -177,6 +177,18 @@
       "personalDataProtection": "Charte de protection des données personnelles",
       "userCharter": "Charte d'utilisation"
     },
+    "onboardingScreen": {
+      "appName": "",
+      "discover": "Découvrir",
+      "discoverLink": "https://opendigitaleducation.com/index.php?lang=fr",
+      "onboarding": {
+        "0": "Bienvenue sur votre application mobile, l'extension de votre espace numérique !",
+        "1": "Soyez notifié en temps réel des dernières nouveautés.",
+        "2": "Communiquez plus facilement à l'aide de la Messagerie.",
+        "3": "Chargez ou téléchargez vos documents dans l'Espace documentaire."
+      },
+      "joinMyNetwork": "Rejoindre mon réseau"
+    },
     "pushNotifsSettingsScreen": {
       "countOutOfTotal": {
         "one": "({{count}} activée sur {{total}})",

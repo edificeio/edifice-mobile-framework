@@ -1,10 +1,11 @@
 // RN Imports
 import * as React from "react";
+import I18n from "i18n-js";
 import { initI18n } from "./framework/util/i18n";
 import { AppState, AppStateStatus, StatusBar, View } from "react-native";
 import * as RNLocalize from "react-native-localize";
 import "react-native-gesture-handler";
-import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
+import { SafeAreaProvider, initialWindowMetrics } from "react-native-safe-area-context";
 
 // Polyfills
 import 'ts-polyfill/lib/es2019-object';
@@ -54,6 +55,9 @@ import { IUserInfoState } from "./user/state/info";
 // App Conf
 import "./infra/appConf";
 import { AppPushNotificationHandlerComponent } from "./framework/util/notifications/cloudMessaging";
+import { reset } from "./navigation/helpers/navHelper";
+import { getLoginStackToDisplay } from "./navigation/LoginNavigator";
+import { OAuth2RessourceOwnerPasswordClient } from "./infra/oauth";
 
 // Disable Yellow Box on release builds.
 if (__DEV__) {
@@ -62,11 +66,15 @@ if (__DEV__) {
 }
 
 class AppStoreUnconnected extends React.Component<
-  { currentPlatformId: string; store: any },
-  {}
+  { store: any },
+  { autoLogin: boolean }
   > {
   private notificationOpenedListener?: () => void;
   private onTokenRefreshListener?: () => void;
+
+  state = {
+    autoLogin: false
+  }
 
   public render() {
     return (
@@ -98,36 +106,43 @@ class AppStoreUnconnected extends React.Component<
     Trackers.trackEvent('Application', 'STARTUP');
     // await Trackers.test();
 
-    // console.log("APP did mount");
-    if (!this.props.currentPlatformId) {
-      // If only one platform in conf => auto-select it.
-      if (Conf.platforms && Object.keys(Conf.platforms).length === 1) {
-        await this.props.store.dispatch(selectPlatform(Object.keys(Conf.platforms)[0]));
-        await this.startupLogin();
+    // If only one platform in conf => auto-select it.
+    let platformId;
+    if (Conf.platforms && Object.keys(Conf.platforms).length === 1) {
+      const onboardingTexts = I18n.t("user.onboardingScreen.onboarding");
+      const hasOnboardingTexts = onboardingTexts && onboardingTexts.length;
+      if (hasOnboardingTexts) {
+        platformId = await this.props.store.dispatch(loadCurrentPlatform());
       } else {
-        // console.log("awaiting get platform id");
-        const loadedPlatformId = await this.props.store.dispatch(loadCurrentPlatform());
-        if (loadedPlatformId) await this.startupLogin();
+        platformId = Object.keys(Conf.platforms)[0];
+        this.props.store.dispatch(selectPlatform(platformId));
       }
+    } else {
+      platformId = await this.props.store.dispatch(loadCurrentPlatform());
     }
-    if (this.props.currentPlatformId) {
-      await this.startupLogin();
+    const connectionToken = await OAuth2RessourceOwnerPasswordClient.connection?.loadToken();
+    if (platformId && connectionToken) {
+      this.setState({autoLogin: true});
+    } else {
+      reset(getLoginStackToDisplay(platformId));
+      SplashScreen.hide();
     }
-    SplashScreen.hide();
 
     this.handleAppStateChange('active'); // Call this manually after Tracker is set up
   }
 
-  public async componentDidUpdate(prevProps: any) {
+  public async componentDidUpdate(prevProps: any, prevState: any) {
     if (!this.onTokenRefreshListener)
       this.onTokenRefreshListener = messaging()
         .onTokenRefresh(fcmToken => {
           this.handleFCMTokenModified(fcmToken);
         });
+    if (this.state.autoLogin && !prevState.autoLogin) {
+      await this.startupLogin();
+    }
   }
 
   private async startupLogin() {
-    // console.log("startup login");
     //IF WE ARE NOT IN ACTIVATION MODE => TRY TO LOGIN => ELSE STAY ON ACTIVATION PAGE
     if (!isInActivatingMode(this.props.store.getState())) {
       // Auto Login if possible
@@ -177,7 +192,6 @@ const getStore = () => {
 }
 
 const mapStateToProps = (state: any) => ({
-  currentPlatformId: state.user.auth.platformId,
   store: getStore(),
 });
 

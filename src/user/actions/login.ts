@@ -4,14 +4,12 @@ import {
 } from "../../infra/fetchWithCache";
 import {
   OAuth2RessourceOwnerPasswordClient,
-  OAuthError,
   OAuthErrorType
 } from "../../infra/oauth";
-import { navigate } from "../../navigation/helpers/navHelper";
+import { navigate, reset } from "../../navigation/helpers/navHelper";
 import messaging from '@react-native-firebase/messaging';
 
 // Legacy imports
-import { Platform } from "react-native";
 import Conf from "../../../ode-framework-conf";
 import { userService } from "../service";
 import { initActivationAccount as initActivationAccountAction } from "./activation";
@@ -20,6 +18,10 @@ import { createEndSessionAction } from "../../infra/redux/reducerFactory";
 import { ThunkDispatch } from "redux-thunk";
 import { actionTypeRequestLogin, actionTypeLoggedIn, actionTypeLoginError, actionTypeLoggedOut } from "./actionTypes/login";
 import { Trackers } from "../../infra/tracker";
+import { getLoginStackToDisplay } from "../../navigation/LoginNavigator";
+import { PLATFORM_STORAGE_KEY } from "./platform";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import SplashScreen from "react-native-splash-screen";
 
 // TYPES ------------------------------------------------------------------------------------------------
 
@@ -105,7 +107,8 @@ export function loginAction(
           if (!OAuth2RessourceOwnerPasswordClient.connection.hasToken) {
             // No token, redirect to login page without error.
             dispatch(endSessionAction());
-            navigate("LoginHome");
+            const platformId = await AsyncStorage.getItem(PLATFORM_STORAGE_KEY);
+            reset(getLoginStackToDisplay(platformId));
             return;
           }
         }
@@ -288,6 +291,8 @@ export function loginAction(
 
       // === 4: Redirect if asked
       if (redirectOnError) navigate("LoginHome");
+    } finally {
+      SplashScreen.hide();
     }
   };
 }
@@ -315,8 +320,9 @@ export function logout() {
 
       clearTimeline(dispatch)(); // ToDo: this is ugly. Timeline should be cleared when logout.
 
-      // === 1: Nav back on the login screen
-      navigate("LoginHome");
+      // === 1: Nav back on the login stack
+      const platformId = await AsyncStorage.getItem(PLATFORM_STORAGE_KEY);
+      reset(getLoginStackToDisplay(platformId));
 
       // === 2: End user session
       await dispatch(endSessionAction())
@@ -325,7 +331,8 @@ export function logout() {
       Trackers.trackEvent('Auth', 'LOGOUT');
     } catch (err) {
       console.warn(err);
-      navigate("LoginHome");
+      const platformId = await AsyncStorage.getItem(PLATFORM_STORAGE_KEY);
+      reset(getLoginStackToDisplay(platformId));
     }
   };
 }
