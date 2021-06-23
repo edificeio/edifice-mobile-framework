@@ -376,7 +376,7 @@ PODS:
   - React-jsinspector (0.64.2)
   - react-native-document-picker (5.2.0):
     - React-Core
-  - react-native-image-picker (4.0.3):
+  - react-native-image-picker (4.0.4):
     - React-Core
   - react-native-netinfo (6.0.0):
     - React-Core
@@ -523,11 +523,13 @@ PODS:
     - React-RCTVibration
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNScreens (3.3.0):
+  - RNScreens (3.4.0):
     - React-Core
     - React-RCTImage
   - RNShare (6.2.1):
     - React-Core
+  - RNSVG (12.1.1):
+    - React
   - RNTextSize (4.0.0-rc.1):
     - React
   - RNVectorIcons (8.1.0):
@@ -631,6 +633,7 @@ DEPENDENCIES:
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNShare (from `../node_modules/react-native-share`)
+  - RNSVG (from `../node_modules/react-native-svg`)
   - RNTextSize (from `../node_modules/react-native-text-size/ios`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -793,6 +796,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-screens"
   RNShare:
     :path: "../node_modules/react-native-share"
+  RNSVG:
+    :path: "../node_modules/react-native-svg"
   RNTextSize:
     :path: "../node_modules/react-native-text-size/ios"
   RNVectorIcons:
@@ -851,7 +856,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 80c46bd381fd06e418e0d4f53672dc1d1945c4c3
   React-jsinspector: cc614ec18a9ca96fd275100c16d74d62ee11f0ae
   react-native-document-picker: aa3fd58d5fcc1fdbf6939510b9407d16377f5832
-  react-native-image-picker: 4089335b89b625d4e34d53fb249c48a7a791b3ea
+  react-native-image-picker: 8d96c42425d3f143af7dd41dbbb4887b2c3ac851
   react-native-netinfo: 34f4d7a42f49157f3b45c14217d256bce7dc9682
   react-native-pdf: ef641e79a6d550cfabe5d7ec1916799726514c43
   react-native-progress-bar-android: ce95a69f11ac580799021633071368d08aaf9ad8
@@ -887,8 +892,9 @@ SPEC CHECKSUMS:
   RNLocalize: b9a5d22c7e4ecb5db604861f1b1fff6013e03340
   RNPermissions: 75128bfb4c4ef92f572a8efdb8adfbfab75e8ed0
   RNReanimated: 9c13c86454bfd54dab7505c1a054470bfecd2563
-  RNScreens: bf59f17fbf001f1025243eeed5f19419d3c11ef2
+  RNScreens: 21b73c94c9117e1110a79ee0ee80c93ccefed8ce
   RNShare: 5ac8f6532ca4cd80fc71caef1cfbba1854a6a045
+  RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f
   RNTextSize: 91955a6ea2adda9dc7802ce472b7a4dc717686f6
   RNVectorIcons: 31cebfcf94e8cf8686eb5303ae0357da64d7a5a4
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
@@ -896,6 +902,6 @@ SPEC CHECKSUMS:
   Yoga: 575c581c63e0d35c9a83f4b46d01d63abc1100ac
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 9222efa7f70bb43d84f6099dd6cd5d7dff2f642c
+PODFILE CHECKSUM: d738fbe0ba8d55c756b9d23866435201b7b7173f
 
 COCOAPODS: 1.10.1

@@ -14,7 +14,6 @@ target 'appe' do
   flipperkit_version = '0.87'
   use_flipper!({ 'Flipper' => flipperkit_version, 'Flipper-Folly' => '2.5.3', 'Flipper-RSocket' => '1.3.1'})
   pod 'FlipperKit/FlipperKitLayoutPlugin', flipperkit_version, :configuration => 'Debug'
-  #pod 'FlipperKit/FlipperKitLayoutComponentKitSupport', flipperkit_version, :configuration => 'Debug'
   pod 'FlipperKit/SKIOSNetworkPlugin', flipperkit_version, :configuration => 'Debug'
   pod 'FlipperKit/FlipperKitUserDefaultsPlugin', flipperkit_version, :configuration => 'Debug'
 

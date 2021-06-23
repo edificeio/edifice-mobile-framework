@@ -268,7 +268,6 @@
 			knownRegions = (
 				English,
 				en,
-				Base,
 				fr,
 				es,
 			);
