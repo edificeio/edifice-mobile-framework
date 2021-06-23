@@ -286,18 +286,23 @@ export class LoginPage extends React.Component<
     );
   }
 
+  // Lifecycle
+
+  async componentDidUpdate() {
+    // On successful login, save the platformId in Async Storage
+    const { navigation, auth: { loggedIn } } = this.props;
+    const platformId = navigation.getParam("platformId") || this.props.auth.platformId;
+    loggedIn && await AsyncStorage.setItem(PLATFORM_STORAGE_KEY, platformId);
+  }
+
   // Event handlers
 
   protected async handleLogin() {
-    const { navigation } = this.props;
-    const platformId = navigation.getParam("platformId");
     await this.props.onLogin(
       this.state.login || this.props.auth.login, // ToDo: fix this TS issue
       this.state.password,
       this.state.rememberMe
     );
-    // Saves the platform the user logged into (in Async Storage)
-    await AsyncStorage.setItem(PLATFORM_STORAGE_KEY, platformId);
     this.setState({ typing: false });
   }
 

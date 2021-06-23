@@ -165,6 +165,18 @@
     }
   },
   "user": {
+    "onboardingScreen": {
+      "appName": "",
+      "discover": "...",
+      "discoverLink": "https://opendigitaleducation.com",
+      "onboarding": {
+        "0": "...",
+        "1": "...",
+        "2": "...",
+        "3": "..."
+      },
+      "joinMyNetwork": "..."
+    },
     "pushNotifsSettingsScreen": {
       "countOutOfTotal": {
         "one": "({{count}} activated out of {{total}})",
