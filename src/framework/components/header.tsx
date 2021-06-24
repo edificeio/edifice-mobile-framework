@@ -5,7 +5,7 @@
 
 import styled from "@emotion/native";
 import * as React from "react";
-import { SafeAreaView, TouchableOpacity, View, ViewProps, ViewStyle } from "react-native";
+import { ViewProps, View, TouchableOpacity, ViewStyle, SafeAreaView } from "react-native";
 
 import theme from "../util/theme";
 import { Icon } from "./icon";

@@ -18,9 +18,11 @@ import { getSelectedStructure } from "../../viesco/state/structure";
 import { getSubjectsListState } from "../../viesco/state/subjects";
 import { fetchCourseListAction, fetchCourseListFromTeacherAction } from "../actions/courses";
 import { fetchSlotListAction } from "../actions/slots";
+import { fetchUserChildrenAction } from "../actions/userChildren";
 import Timetable from "../components/Timetable";
 import { getCoursesListState } from "../state/courses";
 import { getSlotsListState } from "../state/slots";
+import { getUserChildrenState } from "../state/userChildren";
 
 export type TimetableProps = {
   courses: any;
@@ -32,6 +34,7 @@ export type TimetableProps = {
   childClasses: string;
   group: string;
   teacherId: string;
+  fetchChildInfos: () => void;
   fetchChildGroups: (classes: string, student: string) => any;
   fetchChildCourses: (structureId: string, startDate: moment.Moment, endDate: moment.Moment, group: string) => any;
   fetchTeacherCourses: (
@@ -81,6 +84,7 @@ class TimetableContainer extends React.PureComponent<TimetableProps, TimetableSt
 
   initComponent = async () => {
     const { structureId, childId, childClasses } = this.props;
+    if (getSessionInfo().type === "Relative") await this.props.fetchChildInfos();
     await this.props.fetchChildGroups(childClasses, childId);
     this.fetchCourses();
     this.props.fetchSlots(structureId);
@@ -92,10 +96,10 @@ class TimetableContainer extends React.PureComponent<TimetableProps, TimetableSt
 
   componentDidUpdate(prevProps, prevState) {
     const { startDate, selectedDate } = this.state;
-    const { structureId, childId, group, fetchSlots } = this.props;
+    const { structureId, childId, childClasses, group, fetchSlots } = this.props;
 
     // on selectedChild change
-    if (prevProps.childId !== childId) this.initComponent();
+    if (prevProps.childId !== childId || prevProps.childClasses !== childClasses) this.initComponent();
 
     // on selected date change
     if (!prevState.selectedDate.isSame(selectedDate, "day"))
@@ -144,10 +148,10 @@ const mapStateToProps = (state: any): any => {
     if (childGroups !== undefined && childGroups[0] !== undefined) {
       if (childGroups[0].nameClass !== undefined) group.push(childGroups[0].nameClass);
       childGroups[0]?.nameGroups?.forEach(item => group.push(item));
-    }
+    } else group.push(getSessionInfo().realClassesNames[0]);
   } else if (getSessionInfo().type === "Relative") {
     childId = getSelectedChild(state)?.id;
-    childClasses = getSessionInfo().classes[getSessionInfo().childrenIds.findIndex(i => i === childId)];
+    childClasses = getUserChildrenState(state).data!.find(child => childId === child.id)?.idClasses!;
     const childGroups = getGroupsListState(state);
     if (childGroups !== undefined && childGroups.data[0] !== undefined) {
       if (childGroups.data[0].nameClass !== undefined) group.push(childGroups.data[0].nameClass);
@@ -176,6 +180,7 @@ const mapStateToProps = (state: any): any => {
 const mapDispatchToProps = (dispatch: any): any =>
   bindActionCreators(
     {
+      fetchChildInfos: fetchUserChildrenAction,
       fetchChildGroups: fetchGroupListAction,
       fetchChildCourses: fetchCourseListAction,
       fetchTeacherCourses: fetchCourseListFromTeacherAction,

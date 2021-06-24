@@ -8,11 +8,22 @@ import { BackdropModal } from "./backdropModal";
 export interface IBackdropPdfReaderProps {
   handleClose: () => void;
   handleOpen: () => void;
+  headerColor?: colorValue;
+  indicatorColor?: colorValue;
+  title?: string;
   uri: string;
   visible: boolean;
 }
 
-export const BackdropPdfReader = ({ handleOpen, handleClose, uri, visible }: IBackdropPdfReaderProps) => (
+export const BackdropPdfReader = ({
+  handleOpen,
+  handleClose,
+  headerColor,
+  indicatorColor,
+  title,
+  uri,
+  visible,
+}: IBackdropPdfReaderProps) => (
   <BackdropModal
     content={
       <Pdf
@@ -27,7 +38,10 @@ export const BackdropPdfReader = ({ handleOpen, handleClose, uri, visible }: IBa
     contentStyle={{ height: "90%" }}
     handleClose={handleClose}
     handleOpen={handleOpen}
+    headerColor={headerColor}
+    indicatorColor={indicatorColor}
     propagateSwipe
+    title={title}
     visible={visible}
   />
 );

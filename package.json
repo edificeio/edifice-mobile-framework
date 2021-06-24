@@ -1,6 +1,6 @@
 {
   "name": "appe",
-  "version": "1.5.2-indev.2",
+  "version": "1.5.2-indev.3",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -74,6 +74,7 @@
     "react-native-snap-carousel": "3.9.1",
     "react-native-splash-screen": "3.2.0",
     "react-native-svg": "12.1.1",
+    "react-native-svg-transformer": "0.14.3",
     "react-native-swipeable": "0.6.0",
     "react-native-swiper": "1.6.0",
     "react-native-text-size": "4.0.0-rc.1",

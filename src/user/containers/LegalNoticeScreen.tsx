@@ -25,6 +25,7 @@ import { CommonStyles } from "../../styles/common/styles";
 // TYPES ==========================================================================================
 
 export interface ILegalNoticeScreenState {
+  legalTitle: string;
   legalUrl: string;
 }
 
@@ -33,6 +34,7 @@ class LegalNoticeScreen extends React.PureComponent<NavigationInjectedProps<{}>,
   // DECLARATIONS ===================================================================================
 
   state: ILegalNoticeScreenState = {
+    legalTitle: "",
     legalUrl: "",
   };
 
@@ -40,8 +42,8 @@ class LegalNoticeScreen extends React.PureComponent<NavigationInjectedProps<{}>,
 
   render() {
     const { navigation } = this.props;
-    const { legalUrl } = this.state;
-    const legalItems = ["cgu", "personalDataProtection", "cookies"];
+    const { legalTitle, legalUrl } = this.state;
+    const legalItems = ["userCharter", "cgu", "personalDataProtection", "cookies"];
     return (
       <PageView>
         <FakeHeader>
@@ -59,8 +61,9 @@ class LegalNoticeScreen extends React.PureComponent<NavigationInjectedProps<{}>,
         </FakeHeader>
         {legalItems.map(legalItem => this.renderLegalItem(legalItem))}
         <BackdropPdfReader
-          handleClose={() => this.setState({ legalUrl: "" })}
-          handleOpen={() => this.setState({ legalUrl })}
+          handleClose={() => this.setState({ legalTitle: "", legalUrl: "" })}
+          handleOpen={() => this.setState({ legalTitle, legalUrl })}
+          title={legalTitle}
           uri={legalUrl}
           visible={!!legalUrl}
         />
@@ -93,7 +96,8 @@ class LegalNoticeScreen extends React.PureComponent<NavigationInjectedProps<{}>,
     const platform = Conf.currentPlatform.url;
     const path = I18n.t(`common.url.${legalItem}`);
     const legalUrl = `${platform}${path}`;
-    this.setState({ legalUrl });
+    const legalTitle = I18n.t(`user.legalNoticeScreen.${legalItem}`);
+    this.setState({ legalUrl, legalTitle });
     Trackers.trackEvent("Profile", "READ NOTICE", legalItem);
   };
 

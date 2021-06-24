@@ -1,7 +1,6 @@
 {
   "common": {
     "apply": "Appliquer",
-    "cguPath": "/assets/cgu/ODE_CGU_20210401.pdf",
     "comment": "Commentaire",
     "comments": "Commentaires",
     "date": {
@@ -21,9 +20,10 @@
     "readMore": "lire plus",
     "all": "Tous",
     "url": {
-      "cgu": "/assets/cgu/ODE_CGU_20210401.pdf",
-      "cookies": "/assets/cgu/notice_cookies_2021-06.pdf",
-      "personalDataProtection": "/assets/cgu/ODE_Charte_de_confidentialite_20200401.pdf"
+      "cgu": "/assets/cgu/ODE_CGU.pdf",
+      "cookies": "/assets/cgu/notice_cookies.pdf",
+      "personalDataProtection": "/assets/cgu/ODE_Charte_de_confidentialite.pdf",
+      "userCharter": "/assets/cgu/ODE_Charte_d_utilisation.pdf"
     }
   },
   "timeline": {
@@ -173,7 +173,20 @@
     "legalNoticeScreen": {
       "cgu": "CGU",
       "cookies": "Notice cookies",
-      "personalDataProtection": "Charte de protection des données personnelles"
+      "personalDataProtection": "Charte de protection des données personnelles",
+      "userCharter": "Charte d'utilisation"
+    },
+    "onboardingScreen": {
+      "appName": "",
+      "discover": "Découvrir",
+      "discoverLink": "https://opendigitaleducation.com/index.php?lang=fr",
+      "onboarding": {
+        "0": "Bienvenue sur votre application mobile, l'extension de votre espace numérique !",
+        "1": "Soyez notifié en temps réel des dernières nouveautés.",
+        "2": "Communiquez plus facilement à l'aide de la Messagerie.",
+        "3": "Chargez ou téléchargez vos documents dans l'Espace documentaire."
+      },
+      "joinMyNetwork": "Rejoindre mon réseau"
     },
     "pushNotifsSettingsScreen": {
       "countOutOfTotal": {
@@ -526,6 +539,8 @@
     "version-number": "Version",
     "videoNotAvailable": "Lecteur vidéo non disponible",
     "viesco":"Vie Scolaire",
+    "viesco-close": "Fermer",
+    "viesco-colors": "Couleurs",
     "viesco-empty-screen":"La vie scolaire sur l'application mobile est réservée aux familles et aux enseignants",
     "viesco-lasteval":"Dernières évaluations",
     "viesco-declareAbsence":"Déclarer absence",
@@ -581,6 +596,10 @@
     "viesco-absence-motive": "Motif de l'absence",
     "viesco-attachment": "Pièce justificative",
     "viesco-edt-week-of": "Semaine du",
+    "viesco-competences-period": "Période",
+    "viesco-competences-disciplines": "Disciplines",
+    "viesco-competences-period-2": "Semestre",
+    "viesco-competences-period-3": "Trimestre",
     "welcome": "Bienvenue",
     "workspace": "Espace documentaire",
     "workspace-uploadSuccessful": "Le document a bien été importé",
