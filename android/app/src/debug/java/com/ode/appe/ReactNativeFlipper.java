@@ -9,9 +9,6 @@ import com.facebook.flipper.plugins.databases.DatabasesFlipperPlugin;
 import com.facebook.flipper.plugins.fresco.FrescoFlipperPlugin;
 import com.facebook.flipper.plugins.inspector.DescriptorMapping;
 import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin;
-import com.facebook.flipper.plugins.leakcanary.LeakCanaryFlipperPlugin;
-import com.facebook.flipper.plugins.leakcanary.RecordLeakService;
-import com.facebook.flipper.plugins.navigation.NavigationFlipperPlugin;
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor;
 import com.facebook.flipper.plugins.network.NetworkFlipperPlugin;
 import com.facebook.flipper.plugins.react.ReactFlipperPlugin;
@@ -19,56 +16,51 @@ import com.facebook.flipper.plugins.sharedpreferences.SharedPreferencesFlipperPl
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.modules.network.NetworkingModule;
-import com.squareup.leakcanary.LeakCanary;
-import com.squareup.leakcanary.RefWatcher;
-
 import okhttp3.OkHttpClient;
 
 public class ReactNativeFlipper {
-  public static void initializeFlipper(Context context, ReactInstanceManager reactInstanceManager) {
-    if (FlipperUtils.shouldEnableFlipper(context)) {
-      final FlipperClient client = AndroidFlipperClient.getInstance(context);
-      client.addPlugin(new InspectorFlipperPlugin(context, DescriptorMapping.withDefaults()));
-      client.addPlugin(new ReactFlipperPlugin());
-      client.addPlugin(new DatabasesFlipperPlugin(context));
-      client.addPlugin(new SharedPreferencesFlipperPlugin(context));
-      client.addPlugin(CrashReporterPlugin.getInstance());
-      client.addPlugin(NavigationFlipperPlugin.getInstance());
-      client.addPlugin(new LeakCanaryFlipperPlugin());
-      RefWatcher refWatcher = LeakCanary.refWatcher(context)
-        .listenerServiceClass(RecordLeakService.class)
-        .buildAndInstall();
-      NetworkFlipperPlugin networkFlipperPlugin = new NetworkFlipperPlugin();
-      NetworkingModule.setCustomClientBuilder(
-          new NetworkingModule.CustomClientBuilder() {
-            @Override
-            public void apply(OkHttpClient.Builder builder) {
-              builder.addNetworkInterceptor(new FlipperOkhttpInterceptor(networkFlipperPlugin));
-            }
-          });
-      client.addPlugin(networkFlipperPlugin);
-      client.start();
-      // Fresco Plugin needs to ensure that ImagePipelineFactory is initialized
-      // Hence we run if after all native modules have been initialized
-      ReactContext reactContext = reactInstanceManager.getCurrentReactContext();
-      if (reactContext == null) {
-        reactInstanceManager.addReactInstanceEventListener(
-            new ReactInstanceManager.ReactInstanceEventListener() {
-              @Override
-              public void onReactContextInitialized(ReactContext reactContext) {
-                reactInstanceManager.removeReactInstanceEventListener(this);
-                reactContext.runOnNativeModulesQueueThread(
-                    new Runnable() {
-                      @Override
-                      public void run() {
-                        client.addPlugin(new FrescoFlipperPlugin());
-                      }
+    public static void initializeFlipper(Context context, ReactInstanceManager reactInstanceManager) {
+        if (FlipperUtils.shouldEnableFlipper(context)) {
+            final FlipperClient client = AndroidFlipperClient.getInstance(context);
+
+            client.addPlugin(new InspectorFlipperPlugin(context, DescriptorMapping.withDefaults()));
+            client.addPlugin(new ReactFlipperPlugin());
+            client.addPlugin(new DatabasesFlipperPlugin(context));
+            client.addPlugin(new SharedPreferencesFlipperPlugin(context));
+            client.addPlugin(CrashReporterPlugin.getInstance());
+
+            NetworkFlipperPlugin networkFlipperPlugin = new NetworkFlipperPlugin();
+            NetworkingModule.setCustomClientBuilder(
+                    new NetworkingModule.CustomClientBuilder() {
+                        @Override
+                        public void apply(OkHttpClient.Builder builder) {
+                            builder.addNetworkInterceptor(new FlipperOkhttpInterceptor(networkFlipperPlugin));
+                        }
                     });
-              }
-            });
-      } else {
-        client.addPlugin(new FrescoFlipperPlugin());
-      }
+            client.addPlugin(networkFlipperPlugin);
+            client.start();
+
+            // Fresco Plugin needs to ensure that ImagePipelineFactory is initialized
+            // Hence we run if after all native modules have been initialized
+            ReactContext reactContext = reactInstanceManager.getCurrentReactContext();
+            if (reactContext == null) {
+                reactInstanceManager.addReactInstanceEventListener(
+                        new ReactInstanceManager.ReactInstanceEventListener() {
+                            @Override
+                            public void onReactContextInitialized(ReactContext reactContext) {
+                                reactInstanceManager.removeReactInstanceEventListener(this);
+                                reactContext.runOnNativeModulesQueueThread(
+                                        new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                client.addPlugin(new FrescoFlipperPlugin());
+                                            }
+                                        });
+                            }
+                        });
+            } else {
+                client.addPlugin(new FrescoFlipperPlugin());
+            }
+        }
     }
-  }
 }

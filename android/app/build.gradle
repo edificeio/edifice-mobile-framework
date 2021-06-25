@@ -3,8 +3,8 @@ apply plugin: "com.android.application"
 import com.android.build.OutputFile
 
 project.ext.react = [
-    entryFile: "index.js",
-    enableHermes: false,
+        enableHermes: true,
+        entryFile: "index.js",
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
@@ -29,7 +29,7 @@ android {
         versionName "1.5.2-indev.3"
         resValue "string", "app_name", "${APPNAME}"
         manifestPlaceholders = [ applicationName: APPNAME ]
-        multiDexEnabled true
+        // multiDexEnabled true
     }
     splits {
         abi {
@@ -40,9 +40,12 @@ android {
         }
     }
      buildTypes {
-        /*debug {
-        }*/
+        debug {
+        }
         release {
+            minifyEnabled enableProguardInReleaseBuilds
+            // proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            // signingConfig signingConfigs.debug
         }
     }
     // applicationVariants are e.g. debug, release
@@ -50,6 +53,7 @@ android {
         variant.outputs.each { output ->
             // For each separate APK per architecture, set a unique version code as described here:
             // https://developer.android.com/studio/build/configure-apk-splits.html
+            // Example: versionCode 1 will generate 1001 for armeabi-v7a, 1002 for x86, etc.
             def versionCodes = ["armeabi-v7a": 1, "x86": 2, "arm64-v8a": 3, "x86_64": 4]
             def abi = output.getFilter(OutputFile.ABI)
             if (abi != null) {  // null for the universal-debug, universal-release variants
@@ -71,6 +75,21 @@ android {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
+    // react-native
+    //noinspection GradleDynamicVersion
+    implementation "com.facebook.react:react-native:+"
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+    // Flipper
+    debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
+        exclude group:'com.facebook.fbjni'
+    }
+    debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
+        exclude group:'com.facebook.flipper'
+        exclude group:'com.squareup.okhttp3', module:'okhttp'
+    }
+    debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}") {
+        exclude group:'com.facebook.flipper'
+    }
     // Hermes debugger
     if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";
@@ -79,31 +98,10 @@ dependencies {
     } else {
         implementation jscFlavor
     }
-    // react-native
-    implementation "com.facebook.react:react-native:0.64.2"
-    // Flipper
-    debugImplementation("com.facebook.flipper:flipper:${rootProject.ext.flipperVersion}") {
-        exclude group:'com.facebook.fbjni'
-    }
-    debugImplementation("com.facebook.flipper:flipper-network-plugin:${rootProject.ext.flipperVersion}") {
-        exclude group:'com.facebook.flipper'
-        exclude group:'com.squareup.okhttp3', module:'okhttp'
-    }
-    debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${rootProject.ext.flipperVersion}") {
-        exclude group:'com.facebook.flipper'
-    }
-    debugImplementation ("com.facebook.flipper:flipper-leakcanary-plugin:${rootProject.ext.flipperVersion}") {
-        exclude group:'com.facebook.flipper'
-    }
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.3'
-    debugImplementation 'com.facebook.soloader:soloader:0.10.1'
-    releaseImplementation ("com.facebook.flipper:flipper-noop:${flipperVersion}")
-    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
     // react-native packages
-    implementation project(':react-native-action-sheet')
-    implementation project(':react-native-matomo')
+    //implementation project(':react-native-action-sheet')
+    //implementation project(':react-native-matomo')
     // Others
-    // implementation "androidx.swipeRefreshlayout:swiperefreshlayout:1.1.0"
     implementation "com.fasterxml.jackson.core:jackson-core:2.11.1"
     implementation "com.fasterxml.jackson.core:jackson-databind:2.11.1"
     implementation "com.google.android.gms:play-services-base:17.6.0"
