@@ -2,17 +2,16 @@ package com.ode.appe;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
-
-import com.facebook.react.BuildConfig;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.actionsheet.ActionSheetPackage;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
-
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+
 import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {
@@ -26,34 +25,14 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       @SuppressWarnings("UnnecessaryLocalVariable")
       List<ReactPackage> packages = new PackageList(this).getPackages();
-      // Packages that cannot be autolinked yet can be added manually here, for example:
-      // packages.add(new MyReactNativePackage());
       return packages;
     }
+
     @Override
     protected String getJSMainModuleName() {
       return "index";
     }
   };
-
-  private void initializeFlipper(MainApplication application, ReactInstanceManager reactInstanceManager) {
-    String flipperClass = "com.ode.appe.ReactNativeFlipper";
-    if ((flipperClass != null) && (0 != (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE))) {
-      try {
-        Class.forName(flipperClass)
-                .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)
-                .invoke(null, application, reactInstanceManager);
-      } catch (ClassNotFoundException e) {
-        e.printStackTrace();
-      } catch (NoSuchMethodException e) {
-        e.printStackTrace();
-      } catch (IllegalAccessException e) {
-        e.printStackTrace();
-      } catch (InvocationTargetException e) {
-        e.printStackTrace();
-      }
-    }
-  }
 
   @Override
   public ReactNativeHost getReactNativeHost() {
@@ -64,7 +43,26 @@ public class MainApplication extends Application implements ReactApplication {
   public void onCreate() {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
-    this.initializeFlipper(this,getReactNativeHost().getReactInstanceManager());
+    MainApplication.initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+  }
+
+  private static void initializeFlipper(Context context, ReactInstanceManager reactInstanceManager) {
+    if (BuildConfig.DEBUG) {
+      try {
+        Class<?> aClass = Class.forName("com.rndiffapp.ReactNativeFlipper");
+        aClass
+                .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)
+                .invoke(null, context, reactInstanceManager);
+      } catch (ClassNotFoundException e) {
+        e.printStackTrace();
+      } catch (NoSuchMethodException e) {
+        e.printStackTrace();
+      } catch (IllegalAccessException e) {
+        e.printStackTrace();
+      } catch (InvocationTargetException e) {
+        e.printStackTrace();
+      }
+    }
   }
 
 }
