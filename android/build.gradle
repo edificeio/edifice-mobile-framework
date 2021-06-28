@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        buildToolsVersion = "29.0.3"
+        buildToolsVersion = "30.0.3"
         compileSdkVersion = 29
         minSdkVersion = 21
         ndkVersion = "20.1.5948944"
@@ -25,4 +25,20 @@ allprojects {
         jcenter()
         maven { url 'https://www.jitpack.io' }
     }
+}
+
+subprojects {
+    afterEvaluate {project ->
+        if (project.hasProperty("android")) {
+            android {
+                buildToolsVersion rootProject.ext.buildToolsVersion
+                compileSdkVersion rootProject.ext.compileSdkVersion
+                ndkVersion rootProject.ext.ndkVersion
+            }
+        }
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
 }
