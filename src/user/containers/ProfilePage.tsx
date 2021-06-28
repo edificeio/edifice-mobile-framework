@@ -1,16 +1,19 @@
 import * as React from "react";
 import I18n from "i18n-js";
 import { connect } from "react-redux";
-import {
-  ContainerView,
-  ContainerLabel,
-  ContainerTextInput,
-  ButtonLine
-} from "../../ui/ButtonLine";
+import { ContainerView, ContainerLabel, ContainerTextInput, ButtonLine } from "../../ui/ButtonLine";
 import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../ui/ContainerContent";
 
-import { View, ScrollView, SafeAreaView, KeyboardAvoidingView, Platform, KeyboardTypeOptions, Alert } from "react-native";
+import {
+  View,
+  ScrollView,
+  SafeAreaView,
+  KeyboardAvoidingView,
+  Platform,
+  KeyboardTypeOptions,
+  Alert,
+} from "react-native";
 import { IUserInfoState } from "../state/info";
 import { IUserAuthState } from "../reducers/auth";
 import { Label } from "../../ui/Typography";
@@ -25,7 +28,7 @@ import { ThunkDispatch } from "redux-thunk";
 import Notifier from "../../infra/notifier/container";
 import { changePasswordResetAction } from "../actions/changePassword";
 import { getSessionInfo } from "../../App";
-import { ValidatorBuilder } from "../../utils/form"
+import { ValidatorBuilder } from "../../utils/form";
 import withViewTracking from "../../infra/tracker/withViewTracking";
 import { signURISource } from "../../infra/oauth";
 import Conf from "../../../ode-framework-conf";
@@ -47,19 +50,15 @@ export interface IProfilePageOtherProps {
 export type IProfilePageProps = IProfilePageDataProps & IProfilePageEventProps & IProfilePageOtherProps;
 
 export type IProfilePageState = IUpdatableProfileValues & {
-  emailValid?: boolean,
-  homePhoneValid?: boolean,
-  mobileValid?: boolean,
-  loginAliasValid?: boolean,
-}
+  emailValid?: boolean;
+  homePhoneValid?: boolean;
+  mobileValid?: boolean;
+  loginAliasValid?: boolean;
+};
 
 // tslint:disable-next-line:max-classes-per-file
-export class ProfilePage extends React.PureComponent<
-  IProfilePageProps,
-  IProfilePageState
-  > {
-
-  defaultState: (force?: boolean) => IProfilePageState = (force) => ({
+export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfilePageState> {
+  defaultState: (force?: boolean) => IProfilePageState = force => ({
     displayName: this.props.userinfo.displayName,
     email: this.props.userinfo.email,
     homePhone: this.props.userinfo.homePhone,
@@ -68,8 +67,8 @@ export class ProfilePage extends React.PureComponent<
     homePhoneValid: true,
     mobileValid: true,
     loginAlias: this.props.userinfo.loginAlias,
-    loginAliasValid: true
-  })
+    loginAliasValid: true,
+  });
 
   state = this.defaultState();
 
@@ -77,7 +76,7 @@ export class ProfilePage extends React.PureComponent<
     super.setState(newState);
     setTimeout(() => {
       this.props.navigation.setParams({
-        updatedProfileValues: { ...this.state }
+        updatedProfileValues: { ...this.state },
       });
     });
   }
@@ -91,105 +90,124 @@ export class ProfilePage extends React.PureComponent<
         <KeyboardAvoidingView
           style={{ flex: 1, backgroundColor: "#ffffff" }}
           behavior={Platform.OS === "ios" ? "padding" : undefined}
-          keyboardVerticalOffset={Platform.select({ ios: 100, android: undefined })}
-        >
+          keyboardVerticalOffset={Platform.select({ ios: 100, android: undefined })}>
           <ScrollView alwaysBounceVertical={false}>
             <SafeAreaView>
-              
               <UserCard
-                id={this.props.userinfo.photo 
-                  && signURISource(`${(Conf.currentPlatform as any).url}${this.props.userinfo.photo}`)
+                id={
+                  this.props.userinfo.photo &&
+                  signURISource(`${(Conf.currentPlatform as any).url}${this.props.userinfo.photo}`)
                 }
                 displayName={this.props.userinfo.displayName!}
-                type={this.props.userinfo.type! as "Student" | "Relative" | "Teacher" | "Personnel" | ("Student" | "Relative" | "Teacher" | "Personnel")[]}
+                type={
+                  this.props.userinfo.type! as
+                    | "Student"
+                    | "Relative"
+                    | "Teacher"
+                    | "Personnel"
+                    | ("Student" | "Relative" | "Teacher" | "Personnel")[]
+                }
               />
 
               {this.renderItem({
                 title: I18n.t("Login"),
-                getter: () => isEditMode ? this.state.loginAlias : this.state.loginAlias || this.props.userinfo.login,
+                getter: () => (isEditMode ? this.state.loginAlias : this.state.loginAlias || this.props.userinfo.login),
                 editable: true,
-                setter: (loginAlias) => this.setState({ loginAlias }),
+                setter: loginAlias => this.setState({ loginAlias }),
                 validator: { key: "loginAliasValid", regex: /^[0-9a-z\-\.]+$/ },
-                placeholder: this.props.userinfo.login
+                placeholder: this.props.userinfo.login,
               })}
 
-              {!this.props.userinfo.federated ?
+              {!this.props.userinfo.federated ? (
                 <View {...(isEditMode ? { style: { opacity: 0.33 } } : {})}>
                   <ContainerLabel>{I18n.t("Password")}</ContainerLabel>
-                  <ButtonLine title="PasswordChange" disabled={isEditMode} onPress={() => {
-                    this.props.dispatch(changePasswordResetAction());
-                    this.props.navigation.navigate("ChangePassword");
-                  }} />
-                </View> :
-                null
-              }
+                  <ButtonLine
+                    title="PasswordChange"
+                    disabled={isEditMode}
+                    onPress={() => {
+                      this.props.dispatch(changePasswordResetAction());
+                      this.props.navigation.navigate("ChangePassword");
+                    }}
+                  />
+                </View>
+              ) : null}
 
               {this.renderItem({
                 title: I18n.t("Firstname"),
-                getter: () => this.props.userinfo.firstName
+                getter: () => this.props.userinfo.firstName,
               })}
 
               {this.renderItem({
                 title: I18n.t("Lastname"),
-                getter: () => this.props.userinfo.lastName
+                getter: () => this.props.userinfo.lastName,
               })}
 
               {this.renderItem({
                 title: I18n.t("DisplayName"),
                 getter: () => this.state.displayName,
                 editable: this.props.userinfo.type !== "Relative",
-                setter: (displayName) => this.setState({ displayName })
+                setter: displayName => this.setState({ displayName }),
               })}
 
               {this.renderItem({
                 title: I18n.t("EmailAddress"),
                 getter: () => this.state.email,
                 editable: true,
-                setter: (email) => this.setState({ email }),
+                setter: email => this.setState({ email }),
                 keyboardType: "email-address",
-                validator: { key: "emailValid", regex: ValidatorBuilder.MAIL_REGEX }
+                validator: { key: "emailValid", regex: ValidatorBuilder.MAIL_REGEX },
               })}
 
               {this.renderItem({
                 title: I18n.t("Phone"),
                 getter: () => this.state.homePhone,
                 editable: true,
-                setter: (homePhone) => this.setState({ homePhone }),
+                setter: homePhone => this.setState({ homePhone }),
                 keyboardType: "phone-pad",
-                validator: { key: "homePhoneValid", regex: ValidatorBuilder.PHONE_REGEX }
+                validator: { key: "homePhoneValid", regex: ValidatorBuilder.PHONE_REGEX },
               })}
 
               {this.renderItem({
                 title: I18n.t("CellPhone"),
                 getter: () => this.state.mobile,
                 editable: true,
-                setter: (mobile) => this.setState({ mobile }),
+                setter: mobile => this.setState({ mobile }),
                 keyboardType: "phone-pad",
-                validator: { key: "mobileValid", regex: ValidatorBuilder.PHONE_REGEX }
+                validator: { key: "mobileValid", regex: ValidatorBuilder.PHONE_REGEX },
               })}
 
               {this.renderItem({
                 title: I18n.t("Birthdate"),
-                getter: () => this.props.userinfo.birthDate!.format('L') === "Invalid date" ? I18n.t("common-InvalidDate") : this.props.userinfo.birthDate!.format('L')
+                getter: () =>
+                  this.props.userinfo.birthDate!.format("L") === "Invalid date"
+                    ? I18n.t("common-InvalidDate")
+                    : this.props.userinfo.birthDate!.format("L"),
               })}
-
             </SafeAreaView>
-
           </ScrollView>
         </KeyboardAvoidingView>
       </PageContainer>
     );
   }
 
-  private renderItem({ title, getter, editable = false, setter, keyboardType, validator, placeholder, placeholderTextColor }: {
-    title: string,
-    getter: () => string | undefined,
-    editable?: boolean,
-    setter?: (val: any) => void,
-    keyboardType?: KeyboardTypeOptions,
-    validator?: { key: keyof IProfilePageState, regex: RegExp },
-    placeholder?: string,
-    placeholderTextColor?: string
+  private renderItem({
+    title,
+    getter,
+    editable = false,
+    setter,
+    keyboardType,
+    validator,
+    placeholder,
+    placeholderTextColor,
+  }: {
+    title: string;
+    getter: () => string | undefined;
+    editable?: boolean;
+    setter?: (val: any) => void;
+    keyboardType?: KeyboardTypeOptions;
+    validator?: { key: keyof IProfilePageState; regex: RegExp };
+    placeholder?: string;
+    placeholderTextColor?: string;
   }) {
     const isEditMode = this.props.navigation.getParam("edit", false);
     const label = <ContainerLabel>{title}</ContainerLabel>;
@@ -200,28 +218,45 @@ export class ProfilePage extends React.PureComponent<
     }
 
     if (isEditMode) {
-      box = editable ?
+      box = editable ? (
         <ContainerTextInput
-          onChangeText={(text) => {
-            validator && this.setState({ [validator.key]: validator.regex.test(text) })
+          onChangeText={text => {
+            validator && this.setState({ [validator.key]: validator.regex.test(text) });
             setter!(text);
           }}
           {...(keyboardType ? { keyboardType } : {})}
           {...(placeholder ? { placeholder } : {})}
-          {...(placeholderTextColor ? { placeholderTextColor } : {})}
-        >
-          <Label style={{
-            color: validator ? this.state[validator.key] ? CommonStyles.textColor : CommonStyles.errorColor : CommonStyles.textColor
-          }}
-          >{getter()}</Label>
+          {...(placeholderTextColor ? { placeholderTextColor } : {})}>
+          <Label
+            style={{
+              color: validator
+                ? this.state[validator.key]
+                  ? CommonStyles.textColor
+                  : CommonStyles.errorColor
+                : CommonStyles.textColor,
+            }}>
+            {getter()}
+          </Label>
         </ContainerTextInput>
-        :
-        <ContainerView><Label>{getter()}</Label></ContainerView>;
+      ) : (
+        <ContainerView>
+          <Label>{getter()}</Label>
+        </ContainerView>
+      );
     } else {
-      box = <ContainerView><Label>{getter()}</Label></ContainerView>;
+      box = (
+        <ContainerView>
+          <Label>{getter()}</Label>
+        </ContainerView>
+      );
     }
 
-    return <View {...(isEditMode && !editable ? { style: { opacity: 0.33 } } : {})}>{label}{box}</View>
+    return (
+      <View {...(isEditMode && !editable ? { style: { opacity: 0.33 } } : {})}>
+        {label}
+        {box}
+      </View>
+    );
   }
 }
 
@@ -233,36 +268,34 @@ export class ProfilePageContainer extends React.PureComponent<IProfilePageProps>
       return standardNavScreenOptions(
         {
           title: I18n.t("MyProfile"),
-          headerLeft: <HeaderAction
-            onPress={() => {
-              navigation.setParams(
-                { "edit": false }
-              );
-              navigation.getParam("onCancel") && navigation.getParam("onCancel")();
-            }}
-            title={I18n.t("Cancel")}
-          />,
-          headerRight: canEdit ? <HeaderAction
-            onPress={() => {
-              const values = navigation.getParam("updatedProfileValues") as IProfilePageState;
-              if (values) {
-                if (values.loginAliasValid && values.emailValid && values.homePhoneValid && values.mobileValid) {
-                  navigation.setParams(
-                    { "edit": false }
-                  );
-                  navigation.getParam("onSave") &&
-                  navigation.getParam("onSave")(navigation.getParam("updatedProfileValues"));
+          headerLeft: (
+            <HeaderAction
+              onPress={() => {
+                navigation.setParams({ edit: false });
+                navigation.getParam("onCancel") && navigation.getParam("onCancel")();
+              }}
+              title={I18n.t("Cancel")}
+            />
+          ),
+          headerRight: canEdit ? (
+            <HeaderAction
+              onPress={() => {
+                const values = navigation.getParam("updatedProfileValues") as IProfilePageState;
+                if (values) {
+                  if (values.loginAliasValid && values.emailValid && values.homePhoneValid && values.mobileValid) {
+                    navigation.setParams({ edit: false });
+                    navigation.getParam("onSave") &&
+                      navigation.getParam("onSave")(navigation.getParam("updatedProfileValues"));
+                  } else {
+                    Alert.alert(I18n.t("ProfileInvalidInformation"));
+                  }
                 } else {
-                  Alert.alert(I18n.t("ProfileInvalidInformation"));
+                  navigation.setParams({ edit: false });
                 }
-              } else {
-                navigation.setParams(
-                  { "edit": false }
-                );
-              }
-            }}
-            title={I18n.t("Save")}
-          /> : null,
+              }}
+              title={I18n.t("Save")}
+            />
+          ) : null,
         },
         navigation
       );
@@ -271,12 +304,9 @@ export class ProfilePageContainer extends React.PureComponent<IProfilePageProps>
         {
           title: I18n.t("MyProfile"),
           headerLeft: <HeaderBackAction navigation={navigation} />,
-          headerRight: canEdit ? <HeaderAction
-            onPress={() => navigation.setParams(
-              { "edit": true }
-            )}
-            title={I18n.t("Edit")}
-          /> : null,
+          headerRight: canEdit ? (
+            <HeaderAction onPress={() => navigation.setParams({ edit: true })} title={I18n.t("Edit")} />
+          ) : null,
         },
         navigation
       );
@@ -284,7 +314,7 @@ export class ProfilePageContainer extends React.PureComponent<IProfilePageProps>
   };
 
   render() {
-    return <ProfilePage {...this.props} key={this.props.userinfo.forceRefreshKey} />
+    return <ProfilePage {...this.props} key={this.props.userinfo.forceRefreshKey} />;
   }
 
   constructor(props: IProfilePageProps) {
@@ -292,7 +322,9 @@ export class ProfilePageContainer extends React.PureComponent<IProfilePageProps>
     // Header events setup
     this.props.navigation.setParams({
       onSave: this.props.onSave,
-      onCancel: () => { this.props.dispatch(profileUpdateErrorAction({})) }
+      onCancel: () => {
+        this.props.dispatch(profileUpdateErrorAction({}));
+      },
     });
   }
 }
@@ -301,16 +333,16 @@ const ProfilePageConnected = connect(
   (state: any) => {
     const ret = {
       userauth: state.user.auth,
-      userinfo: state.user.info
-    }
+      userinfo: state.user.info,
+    };
     return ret;
   },
   (dispatch: ThunkDispatch<any, void, AnyAction>) => ({
     onSave(updatedProfileValues: IUpdatableProfileValues) {
       dispatch(profileUpdateAction(updatedProfileValues));
     },
-    dispatch
+    dispatch,
   })
 )(ProfilePageContainer);
 
-export default withViewTracking('user/profile')(ProfilePageConnected);
+export default withViewTracking("user/profile")(ProfilePageConnected);
