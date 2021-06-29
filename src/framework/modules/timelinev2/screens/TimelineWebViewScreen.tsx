@@ -16,35 +16,31 @@ import theme from "../../../util/theme";
 
 // TYPES ==========================================================================================
 
-export interface ITimelineWebViewScreenDataProps { };
-export interface ITimelineWebViewScreenEventProps { };
+export interface ITimelineWebViewScreenDataProps {}
+export interface ITimelineWebViewScreenEventProps {}
 export interface ITimelineWebViewScreenNavParams {
   notification: ITimelineNotification & IResourceUriNotification;
-};
-export type ITimelineWebViewScreenProps = ITimelineWebViewScreenDataProps
-  & ITimelineWebViewScreenEventProps
-  & NavigationInjectedProps<Partial<ITimelineWebViewScreenNavParams>>;
+}
+export type ITimelineWebViewScreenProps = ITimelineWebViewScreenDataProps &
+  ITimelineWebViewScreenEventProps &
+  NavigationInjectedProps<Partial<ITimelineWebViewScreenNavParams>>;
 
-export interface ITimelineWebViewScreenState { };
+export interface ITimelineWebViewScreenState {}
 
 // COMPONENT ======================================================================================
 
 export class TimelineWebViewScreen extends React.PureComponent<
   ITimelineWebViewScreenProps,
   ITimelineWebViewScreenState
-  > {
-
+> {
   // DECLARATIONS =================================================================================
-
 
   // RENDER =======================================================================================
   render() {
     return (
       <>
         {this.renderHeader()}
-        <PageView>
-          {this.renderRedirection()}
-        </PageView>
+        <PageView>{this.renderRedirection()}</PageView>
       </>
     );
   }
@@ -56,9 +52,10 @@ export class TimelineWebViewScreen extends React.PureComponent<
         <HeaderRow>
           <HeaderLeft>
             <HeaderAction
-              iconName={(Platform.OS === "ios") ? "chevron-left1" : "back"}
+              iconName={Platform.OS === "ios" ? "chevron-left1" : "back"}
+              iconSize={24}
               onPress={() => navigation.goBack()}
-           />
+            />
           </HeaderLeft>
           <HeaderCenter>
             <HeaderTitle>{I18n.t("timeline.webViewScreen.title")}</HeaderTitle>
@@ -69,33 +66,34 @@ export class TimelineWebViewScreen extends React.PureComponent<
   }
 
   renderError() {
-    return <Text>{"Error"}</Text> // ToDo: great error screen here
+    return <Text>{"Error"}</Text>; // ToDo: great error screen here
   }
 
   renderRedirection() {
     const notification = this.props.navigation.getParam("notification");
     if (!notification) return this.renderError();
     return (
-      <View style={{flex: 1, paddingVertical: 12, paddingHorizontal: 16, backgroundColor: theme.color.background.card}}>
+      <View
+        style={{ flex: 1, paddingVertical: 12, paddingHorizontal: 16, backgroundColor: theme.color.background.card }}>
         <InfoBubble
           infoText={I18n.t("timeline.webViewScreen.infoBubbleText")}
           infoBubbleType="regular"
           infoBubbleId="webViewScreen.redirect"
-          style={{marginBottom: 20}}
+          style={{ marginBottom: 20 }}
         />
-        <NotificationTopInfo notification={notification}/>
-        <View style={{marginVertical: 10}}>
+        <NotificationTopInfo notification={notification} />
+        <View style={{ marginVertical: 10 }}>
           <FlatButton
             title={I18n.t("common.openInBrowser")}
-            customButtonStyle={{backgroundColor: theme.color.tertiary.light}}
-            customTextStyle={{color: theme.color.secondary.regular}}
+            customButtonStyle={{ backgroundColor: theme.color.tertiary.light }}
+            customTextStyle={{ color: theme.color.secondary.regular }}
             onPress={() => {
               //TODO: create generic function inside oauth (use in myapps, etc.)
               if (!Conf.currentPlatform) {
                 console.warn("Must have a platform selected to redirect the user");
                 return null;
               }
-              const url = `${(Conf.currentPlatform as any).url}${notification?.resource.uri}`
+              const url = `${(Conf.currentPlatform as any).url}${notification?.resource.uri}`;
               Linking.canOpenURL(url).then(supported => {
                 if (supported) {
                   Linking.openURL(url);
@@ -119,5 +117,8 @@ export class TimelineWebViewScreen extends React.PureComponent<
 
 // MAPPING ========================================================================================
 
-const TimelineWebViewScreen_Connected = connect(() => ({}), () => ({}))(TimelineWebViewScreen);
+const TimelineWebViewScreen_Connected = connect(
+  () => ({}),
+  () => ({})
+)(TimelineWebViewScreen);
 export default TimelineWebViewScreen_Connected;
