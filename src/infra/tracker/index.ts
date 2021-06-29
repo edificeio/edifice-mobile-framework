@@ -3,14 +3,15 @@
  * Collect data throught Matomo and AppCenter.
  */
 
-import Matomo from "react-native-matomo";
-import Analytics from "appcenter-analytics";
-import Conf from "../../../ode-framework-conf";
-import { IMatomoTrackerOptions, ITrackerOptions, IAppCenterTrackerOptions, IEntcoreTrackerOptions } from "./config";
-import { signRequest } from "../oauth";
+import AppCenter from 'appcenter';
+import Analytics from 'appcenter-analytics';
+import Matomo from 'react-native-matomo';
+
+import Conf from '../../../ode-framework-conf';
+import { signRequest } from '../oauth';
+import { IMatomoTrackerOptions, IAppCenterTrackerOptions, IEntcoreTrackerOptions } from './config';
 
 export abstract class Tracker<OptionsType> {
-  constructor(opts: OptionsType) {}
   async init() {}
 
   async trackEvent(category: string, action: string, name?: string, value?: number) {}
@@ -18,19 +19,19 @@ export abstract class Tracker<OptionsType> {
   async trackView(path: string[]) {}
 
   async test() {
-    console.log("[Tracker] Tracker testing");
-    return this.trackEvent("Tracker", "Test", "Event test", 1);
+    console.log('[Tracker] Tracker testing');
+    return this.trackEvent('Tracker', 'Test', 'Event test', 1);
   }
 
   async setUserId(id: string) {
     if (!this.isReady) {
-      console.log("[Tracker] Setting user ID");
+      console.log('[Tracker] Setting user ID');
     }
   }
 
   async setCustomDimension(id: number, value: string) {
     if (!this.isReady) {
-      console.log("[Tracker] Setting custom dimension", id);
+      console.log('[Tracker] Setting custom dimension', id);
     }
   }
 
@@ -56,9 +57,9 @@ export class MatomoTracker extends Tracker<IMatomoTrackerOptions> {
     try {
       await Matomo.initTracker(this.opts.url, this.opts.siteId);
       this._isReady = true;
-      console.log("[Matomo] Tracker successfully initilized");
+      console.log('[Matomo] Tracker successfully initilized');
     } catch (e) {
-      console.warn("[Matomo] Failed to initialize Matomo", e);
+      console.warn('[Matomo] Failed to initialize Matomo', e);
     }
   }
 
@@ -71,7 +72,7 @@ export class MatomoTracker extends Tracker<IMatomoTrackerOptions> {
   async trackView(path: string[]) {
     await super.trackView(path);
     if (!this.isReady) return;
-    const viewPath = path.toString().replaceAll(",", "/");
+    const viewPath = path.toString().replaceAll(',', '/');
     return Matomo.trackScreen(viewPath, null);
   }
 
@@ -95,15 +96,16 @@ export class MatomoTracker extends Tracker<IMatomoTrackerOptions> {
 export const DefaultMatomoTracker = new MatomoTracker(Conf.matomo);
 
 export class AppCenterTracker extends Tracker<IAppCenterTrackerOptions> {
-  currentDimensions: {} = {};
-
-  constructor(opts: IAppCenterTrackerOptions) {
+  opts: IAppCenterTrackerOptions;
+  currentDimensions: object = {};
+  constructor(opts: IMatomoTrackerOptions) {
     super(opts);
+    this.opts = opts;
   }
 
   async init() {
     await super.init();
-    console.log("[AppCenter] Tracker successfully initilized");
+    console.log('[AppCenter] Tracker successfully initilized');
   }
 
   async trackEvent(category: string, action: string, name?: string, value?: number) {
@@ -114,22 +116,23 @@ export class AppCenterTracker extends Tracker<IAppCenterTrackerOptions> {
       ...(value ? { value: value.toString() } : {}),
       ...this.currentDimensions,
     })
-      .then(() => console.log("[AppCenter] Event tracked", category, action, name, value))
-      .catch(error => console.warn("[AppCenter] Failed to track event", error, category, action, name, value));
+      .then(() => console.log('[AppCenter] Event tracked', category, action, name, value))
+      .catch(error => console.warn('[AppCenter] Failed to track event', error, category, action, name, value));
   }
 
   async trackView(path: string[]) {
     await super.trackView(path);
     if (!this.isReady) return;
-    return Analytics.trackEvent(`View ${path.join("/")}`)
-      .then(() => console.log("[AppCenter] View tracked", ...path))
-      .catch(error => console.warn("[AppCenter] Failed to track view", error, ...path));
+    return Analytics.trackEvent(`View ${path.join('/')}`)
+      .then(() => console.log('[AppCenter] View tracked', ...path))
+      .catch(error => console.warn('[AppCenter] Failed to track view', error, ...path));
   }
 
   async setUserId(id: string) {
     await super.setUserId(id);
     if (!this.isReady) return;
-    this.currentDimensions["userId"] = id;
+    this.currentDimensions['userId'] = id;
+    AppCenter.setUserId(id);
   }
 
   async setCustomDimension(id: number, value: string) {
@@ -151,10 +154,6 @@ export class EntcoreTracker extends Tracker<IEntcoreTrackerOptions> {
   errorCount: number = 0;
   lastModulename: string | undefined = undefined;
 
-  constructor(opts: IAppCenterTrackerOptions) {
-    super(opts);
-  }
-
   async sendReportQueue() {
     if (this.sending) return; // Once at a time
     this.sending = true;
@@ -165,9 +164,9 @@ export class EntcoreTracker extends Tracker<IEntcoreTrackerOptions> {
         if (res.ok) {
           this.reportQueue.shift();
           this.errorCount = 0;
-          console.log("[EntcoreTracker] View tracked " + (await req?.text()));
+          console.log('[EntcoreTracker] View tracked ' + (await req?.text()));
         } else {
-          throw new Error("[EntcoreTracker] Report failed. " + (await req?.text()));
+          throw new Error('[EntcoreTracker] Report failed. ' + (await req?.text()));
         }
       } catch (e) {
         if (++this.errorCount >= 3) this.sending = false;
@@ -179,29 +178,29 @@ export class EntcoreTracker extends Tracker<IEntcoreTrackerOptions> {
   async trackView(path: string[]) {
     await super.trackView(path);
     if (!this.isReady) return;
-    const moduleName = (path[0] === "timeline"
-      ? ["blog", "news", "schoolbook"].includes(path[2]?.toLowerCase())
+    const moduleName = (path[0] === 'timeline'
+      ? ['blog', 'news', 'schoolbook'].includes(path[2]?.toLowerCase())
         ? path[2]
-        : "timeline"
+        : 'timeline'
       : path[0]
     ).toLowerCase();
     const moduleAccessMap = {
-      blog: "Blog",
-      news: "Actualites",
-      schoolbook: "SchoolBook",
-      homework: "Homeworks",
-      workspace: "Worksapce",
-      conversation: "Conversation",
-      user: "MyAccount",
-      zimbra: "Zimbra",
-      viesco: "Presences",
+      blog: 'Blog',
+      news: 'Actualites',
+      schoolbook: 'SchoolBook',
+      homework: 'Homeworks',
+      workspace: 'Worksapce',
+      conversation: 'Conversation',
+      user: 'MyAccount',
+      zimbra: 'Zimbra',
+      viesco: 'Presences',
     };
     if (this.lastModulename !== moduleName && moduleAccessMap.hasOwnProperty(moduleName)) {
       this.reportQueue.push(
         new Request(`${Conf.currentPlatform.url}/infra/event/mobile/store`, {
-          method: "POST",
+          method: 'POST',
           body: JSON.stringify({ module: moduleAccessMap[moduleName] }),
-        })
+        }),
       );
       this.lastModulename = moduleName;
     }
