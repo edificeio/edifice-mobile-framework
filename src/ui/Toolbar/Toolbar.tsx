@@ -1,6 +1,5 @@
 import React, { PureComponent } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
-import { Header } from "react-navigation-stack";
 import { DEVICE_WIDTH, layoutSize } from "../../styles/common/layoutSize";
 import { IFloatingProps, IMenuItem } from "../types";
 import { IItem, INavigationProps } from "../../workspace/types";
@@ -52,8 +51,8 @@ class Toolbar extends PureComponent<INavigationProps & IFloatingProps & ISelecte
             backgroundColor: selected && selected.length ? CommonStyles.orangeColorTheme : undefined,
           }}
           data={firstItems}
-          horizontal
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
+          scrollEnabled={false}
+          ItemSeparatorComponent={() => <View />}
           keyExtractor={(item: IMenuItem) => item.id}
           renderItem={({ item }) => (
             <Item item={item} navigation={navigation} selected={selected} onEvent={onEvent ? onEvent : () => null} />
@@ -66,8 +65,8 @@ class Toolbar extends PureComponent<INavigationProps & IFloatingProps & ISelecte
               backgroundColor: selected && selected.length ? CommonStyles.orangeColorTheme : undefined,
             }}
             data={[titleItem!]}
-            horizontal
-            ItemSeparatorComponent={() => <View style={styles.separator} />}
+            scrollEnabled={false}
+            ItemSeparatorComponent={() => <View />}
             keyExtractor={(item: IMenuItem) => item.id}
             renderItem={({ item }) => <Item item={item} navigation={navigation} />}
           />
@@ -79,8 +78,8 @@ class Toolbar extends PureComponent<INavigationProps & IFloatingProps & ISelecte
             width: selected && selected.length ? DEVICE_WIDTH() - layoutSize.LAYOUT_70 : layoutSize.LAYOUT_70,
           }}
           data={lastItems}
-          horizontal
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
+          scrollEnabled={false}
+          ItemSeparatorComponent={() => <View />}
           keyExtractor={(item: IMenuItem) => item.id}
           renderItem={({ item }) => (
             <Item
@@ -104,19 +103,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     height: 56,
     justifyContent: "flex-start",
-  },
-  lastActions: {
-    alignItems: "center",
-    height: 56,
-    justifyContent: "flex-end",
-    paddingRight: layoutSize.LAYOUT_16,
+    flexDirection: "row",
   },
   middleActions: {
     alignItems: "center",
     height: 56,
     justifyContent: "space-between",
   },
-  separator: {},
+  lastActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    height: 56,
+    justifyContent: "flex-end",
+    paddingRight: layoutSize.LAYOUT_16,
+  },
 });
 
 export default Toolbar;
