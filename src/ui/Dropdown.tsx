@@ -1,14 +1,14 @@
-import { Picker } from "@react-native-community/picker";
-import I18n from "i18n-js";
-import * as React from "react";
-import { useState } from "react";
-import { View, ViewStyle, Platform } from "react-native";
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { Picker } from '@react-native-picker/picker';
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { useState } from 'react';
+import { View, ViewStyle, Platform } from 'react-native';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
-import { Icon, ButtonsOkCancel } from ".";
-import { CommonStyles } from "../styles/common/styles";
-import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from "./Modal";
-import { TextBold } from "./text";
+import { Icon, ButtonsOkCancel } from '.';
+import { CommonStyles } from '../styles/common/styles';
+import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from './Modal';
+import { TextBold } from './text';
 
 interface IDropdownProps {
   style?: ViewStyle;
@@ -25,8 +25,8 @@ const selectedStyle = {
   borderRadius: 5,
   borderColor: CommonStyles.grey,
   borderWidth: 2,
-  borderStyle: "solid",
-  backgroundColor: "white",
+  borderStyle: 'solid',
+  backgroundColor: 'white',
 } as ViewStyle;
 
 const DropdownAndroid = ({ title, style, data, value, onSelect, renderItem, keyExtractor }: IDropdownProps) => {
@@ -50,16 +50,7 @@ const DropdownAndroid = ({ title, style, data, value, onSelect, renderItem, keyE
   );
 };
 
-const DropdownIOS = ({
-  title,
-  renderItem,
-  keyExtractor,
-  style,
-  data,
-  placeholder,
-  value,
-  onSelect,
-}: IDropdownProps) => {
+const DropdownIOS = ({ title, renderItem, keyExtractor, style, data, placeholder, value, onSelect }: IDropdownProps) => {
   const getItemRenderer = renderItem ? renderItem : item => item.toString();
   const getItemKeyExtractor = keyExtractor ? keyExtractor : item => item.toString();
 
@@ -69,14 +60,10 @@ const DropdownIOS = ({
   return (
     <View style={{ flex: 1 }}>
       <TouchableWithoutFeedback
-        style={[selectedStyle, { padding: 10, flexDirection: "row", alignItems: "center" }, style]}
+        style={[selectedStyle, { padding: 10, flexDirection: 'row', alignItems: 'center' }, style]}
         onPress={() => toggleModal(true)}>
         <TextBold style={{ flex: 1 }} numberOfLines={1}>
-          {placeholder
-            ? placeholder
-            : value
-            ? getItemRenderer(data.find(item => getItemKeyExtractor(item) === value))
-            : " "}
+          {placeholder ? placeholder : value ? getItemRenderer(data.find(item => getItemKeyExtractor(item) === value)) : ' '}
         </TextBold>
         <Icon size={20} name="arrow_down" />
       </TouchableWithoutFeedback>
@@ -87,7 +74,7 @@ const DropdownIOS = ({
               <ModalContentText>{title}</ModalContentText>
             </ModalContentBlock>
           )}
-          <View style={{ width: "100%", marginBottom: 35, paddingHorizontal: 20 }}>
+          <View style={{ width: '100%', marginBottom: 35, paddingHorizontal: 20 }}>
             <Picker selectedValue={selected} onValueChange={(value, label) => selectValue(value as string)}>
               {data.map(item => (
                 <Picker.Item label={getItemRenderer(item)} value={getItemKeyExtractor(item)} />
@@ -103,7 +90,7 @@ const DropdownIOS = ({
                 toggleModal(false);
                 onSelect(selected);
               }}
-              title={I18n.t("common-ok")}
+              title={I18n.t('common-ok')}
             />
           </ModalContentBlock>
         </ModalContent>
@@ -114,7 +101,7 @@ const DropdownIOS = ({
 
 export default (props: IDropdownProps) => {
   switch (Platform.OS) {
-    case "ios": {
+    case 'ios': {
       return <DropdownIOS {...props} />;
     }
     default: {

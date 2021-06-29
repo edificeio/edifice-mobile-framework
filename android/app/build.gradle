@@ -25,8 +25,8 @@ android {
         applicationId APPID
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1050204
-        versionName "1.5.2-indev.4"
+        versionCode 1050205
+        versionName "1.5.2-alpha.1"
         resValue "string", "app_name", "${APPNAME}"
         manifestPlaceholders = [ applicationName: APPNAME ]
         // multiDexEnabled true
@@ -73,7 +73,7 @@ android {
     }
     dexOptions {
         incremental true
-        javaMaxHeapSize "2048M"
+        javaMaxHeapSize "4G"
     }
 }
 
