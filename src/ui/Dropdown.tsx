@@ -1,4 +1,4 @@
-import { Picker } from "@react-native-picker/picker";
+import { Picker } from "@react-native-community/picker";
 import I18n from "i18n-js";
 import * as React from "react";
 import { useState } from "react";
@@ -30,8 +30,8 @@ const selectedStyle = {
 } as ViewStyle;
 
 const DropdownAndroid = ({ title, style, data, value, onSelect, renderItem, keyExtractor }: IDropdownProps) => {
-  const getItemRenderer = renderItem ? renderItem : (item) => item.toString();
-  const getItemKeyExtractor = keyExtractor ? keyExtractor : (item) => item.toString();
+  const getItemRenderer = renderItem ? renderItem : item => item.toString();
+  const getItemKeyExtractor = keyExtractor ? keyExtractor : item => item.toString();
 
   return (
     <View style={[selectedStyle, { flex: 1 }, style]}>
@@ -42,7 +42,7 @@ const DropdownAndroid = ({ title, style, data, value, onSelect, renderItem, keyE
         prompt={title}
         selectedValue={value}
         onValueChange={(key, value) => onSelect(key as string)}>
-        {data.map((item) => (
+        {data.map(item => (
           <Picker.Item label={getItemRenderer(item)} value={getItemKeyExtractor(item)} />
         ))}
       </Picker>
@@ -60,8 +60,8 @@ const DropdownIOS = ({
   value,
   onSelect,
 }: IDropdownProps) => {
-  const getItemRenderer = renderItem ? renderItem : (item) => item.toString();
-  const getItemKeyExtractor = keyExtractor ? keyExtractor : (item) => item.toString();
+  const getItemRenderer = renderItem ? renderItem : item => item.toString();
+  const getItemKeyExtractor = keyExtractor ? keyExtractor : item => item.toString();
 
   const [visible, toggleModal] = useState(false);
   const [selected, selectValue] = useState(value);
@@ -71,11 +71,11 @@ const DropdownIOS = ({
       <TouchableWithoutFeedback
         style={[selectedStyle, { padding: 10, flexDirection: "row", alignItems: "center" }, style]}
         onPress={() => toggleModal(true)}>
-        <TextBold style={{ flex: 1 }}>
+        <TextBold style={{ flex: 1 }} numberOfLines={1}>
           {placeholder
             ? placeholder
             : value
-            ? getItemRenderer(data.find((item) => getItemKeyExtractor(item) == value))
+            ? getItemRenderer(data.find(item => getItemKeyExtractor(item) === value))
             : " "}
         </TextBold>
         <Icon size={20} name="arrow_down" />
@@ -89,7 +89,7 @@ const DropdownIOS = ({
           )}
           <View style={{ width: "100%", marginBottom: 35, paddingHorizontal: 20 }}>
             <Picker selectedValue={selected} onValueChange={(value, label) => selectValue(value as string)}>
-              {data.map((item) => (
+              {data.map(item => (
                 <Picker.Item label={getItemRenderer(item)} value={getItemKeyExtractor(item)} />
               ))}
             </Picker>

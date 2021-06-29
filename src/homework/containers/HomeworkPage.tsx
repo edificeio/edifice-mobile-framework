@@ -4,13 +4,11 @@ import {
   HomeworkPage,
   IHomeworkPageDataProps,
   IHomeworkPageEventProps,
-  IHomeworkPageProps
+  IHomeworkPageProps,
 } from "../components/HomeworkPage";
 import I18n from "i18n-js";
 
-import {
-  fetchHomeworkDiaryList
-} from "../actions/diaryList";
+import { fetchHomeworkDiaryList } from "../actions/diaryList";
 import { homeworkTaskSelected } from "../actions/selectedTask";
 import { fetchHomeworkTasks } from "../actions/tasks";
 
@@ -35,7 +33,7 @@ const mapStateToProps: (state: any) => IHomeworkPageDataProps = state => {
         didInvalidate: true,
         isFetching: true,
         lastUpdated: undefined,
-        tasksByDay: undefined
+        tasksByDay: undefined,
       };
     else {
       return {
@@ -44,7 +42,7 @@ const mapStateToProps: (state: any) => IHomeworkPageDataProps = state => {
         didInvalidate: true,
         isFetching: false,
         lastUpdated: undefined,
-        tasksByDay: undefined
+        tasksByDay: undefined,
       };
     }
   const { didInvalidate, isFetching, lastUpdated } = currentDiaryTasks;
@@ -55,7 +53,7 @@ const mapStateToProps: (state: any) => IHomeworkPageDataProps = state => {
     id: diaryId,
     tasks: currentDiaryTasks.data.byId[diaryId].tasks.ids.map(
       taskId => currentDiaryTasks.data.byId[diaryId].tasks.byId[taskId]
-    )
+    ),
   }));
 
   // Format props
@@ -66,13 +64,11 @@ const mapStateToProps: (state: any) => IHomeworkPageDataProps = state => {
     lastUpdated,
     tasksByDay,
     diaryListData,
-    diaryInformation
+    diaryInformation,
   };
 };
 
-const mapDispatchToProps: (
-  dispatch: any
-) => IHomeworkPageEventProps = dispatch => {
+const mapDispatchToProps: (dispatch: any) => IHomeworkPageEventProps = dispatch => {
   return {
     dispatch,
     onRefresh: diaryId => {
@@ -81,7 +77,7 @@ const mapDispatchToProps: (
     onScrollBeginDrag: () => {},
     onSelect: (diaryId, date, itemId) => {
       dispatch(homeworkTaskSelected(diaryId, date, itemId));
-    }
+    },
   };
 };
 
@@ -97,16 +93,13 @@ class HomeworkPageContainer extends React.PureComponent<
       {
         title: diaryTitle || I18n.t("Homework"),
         headerLeft: <HeaderBackAction navigation={navigation} />,
-        headerRight: hasMultipleDiaries
-          ? <HeaderAction
-              name="filter"
-              onPress={() => navigation.navigate("HomeworkFilter")}
-            />
-          : null
+        headerRight: hasMultipleDiaries ? (
+          <HeaderAction name="filter" onPress={() => navigation.navigate("HomeworkFilter")} />
+        ) : null,
       },
       navigation
     );
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -122,9 +115,9 @@ class HomeworkPageContainer extends React.PureComponent<
   }
 
   public componentDidUpdate(prevProps: IHomeworkPageProps) {
-    const { diaryListData, diaryInformation, navigation } = this.props
+    const { diaryListData, diaryInformation, navigation } = this.props;
     if (diaryInformation !== prevProps.diaryInformation) {
-      navigation.setParams({ diaryTitle: diaryInformation?.title })
+      navigation.setParams({ diaryTitle: diaryInformation?.title });
     }
     if (diaryListData !== prevProps.diaryListData) {
       const hasMultipleDiaries = diaryListData && Object.keys(diaryListData).length > 1;
@@ -133,9 +126,6 @@ class HomeworkPageContainer extends React.PureComponent<
   }
 }
 
-const HomeworkPageContainerConnected = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(HomeworkPageContainer);
+const HomeworkPageContainerConnected = connect(mapStateToProps, mapDispatchToProps)(HomeworkPageContainer);
 
 export default withViewTracking("homework")(HomeworkPageContainerConnected);

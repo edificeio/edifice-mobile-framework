@@ -1,4 +1,3 @@
-import { Picker } from "@react-native-picker/picker";
 import style from "glamorous-native";
 import I18n from "i18n-js";
 import * as React from "react";
@@ -9,8 +8,9 @@ import {
   View,
   SafeAreaView,
   ScrollView,
-  TouchableOpacity,
+  TouchableOpacity
 } from "react-native";
+import {Picker} from '@react-native-community/picker';
 
 import Conf from "../../../ode-framework-conf";
 import { navigate } from "../../navigation/helpers/navHelper";
@@ -21,7 +21,7 @@ import { Text, TextH1 } from "../../ui/text";
 import { ErrorMessage, InfoMessage, TextColor } from "../../ui/Typography";
 import { IForgotModel } from "../actions/forgot";
 import { CommonStyles } from "../../styles/common/styles";
-import { ValidatorBuilder } from "../../utils/form";
+import { ValidatorBuilder } from '../../utils/form';
 
 // TYPES ---------------------------------------------------------------------------
 
@@ -31,21 +31,25 @@ export type IForgotPageState = {
   structureName: string | null;
   showStructurePicker: boolean;
   editing: boolean;
-  structures: Array<any>;
+  structures: Array<any>
 };
 export interface IForgotPageDataProps {
   fetching: boolean;
-  result: { error?: string; status?: string; structures?: Array<any>; ok: boolean | undefined };
+  result: { error?: string, status?: string, structures?: Array<any>, ok: boolean | undefined };
 }
 export interface IForgotPageEventProps {
   onSubmit(model: IForgotModel, forgotId?: boolean): Promise<void>;
   onReset(): Promise<void>;
 }
-export type IForgotPageProps = IForgotPageDataProps & IForgotPageEventProps & { navigation: any };
+export type IForgotPageProps = IForgotPageDataProps &
+  IForgotPageEventProps & { navigation: any };
 
 // Forgot Page Component -------------------------------------------------------------
 
-export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPageState> {
+export class ForgotPage extends React.PureComponent<
+  IForgotPageProps,
+  IForgotPageState
+  > {
   // fully controller component
   public state: IForgotPageState = {
     login: "",
@@ -53,13 +57,13 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
     structureName: null,
     showStructurePicker: false,
     editing: false,
-    structures: [],
+    structures: []
   };
   private handleSubmit = async () => {
     const { navigation } = this.props;
     const { login, firstName, structureName, structures } = this.state;
     const forgotId = navigation.getParam("forgotId");
-    const selectedStructure = structures && structures.find((structure) => structure.structureName === structureName);
+    const selectedStructure = structures && structures.find(structure => structure.structureName === structureName);
     const structureId = selectedStructure && selectedStructure.structureId;
 
     this.props.onSubmit({ login, firstName, structureId }, forgotId);
@@ -68,7 +72,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
 
   // Refs
   private inputLogin: TextInput = null;
-  private setInputLoginRef = (el) => (this.inputLogin = el);
+  private setInputLoginRef = el => (this.inputLogin = el);
 
   private didFocusSubscription;
 
@@ -76,23 +80,26 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
   private emailValidator = new ValidatorBuilder().withRequired(true).withEmail().build<string>();
 
   public UNSAFE_componentWillMount() {
-    this.didFocusSubscription = this.props.navigation.addListener("didFocus", (payload) => {
-      this.setState({
-        login: "",
-        editing: false,
-        firstName: null,
-        structureName: null,
-        showStructurePicker: false,
-        structures: [],
-      });
-      this.props.onReset();
-    });
+    this.didFocusSubscription = this.props.navigation.addListener(
+      "didFocus",
+      payload => {
+        this.setState({
+          login: "",
+          editing: false,
+          firstName: null,
+          structureName: null,
+          showStructurePicker: false,
+          structures: []
+        });
+        this.props.onReset();
+      }
+    );
   }
 
   public componentDidUpdate(prevProps) {
-    const { result } = this.props;
+    const { result } = this.props
     if (result?.structures && !prevProps.result?.structures) {
-      this.setState({ structures: result?.structures });
+      this.setState({structures: result?.structures })
     }
   }
 
@@ -105,140 +112,142 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
     const errorMsg = isError ? (result as { error: string }).error : null;
     const errorText = hasStructures
       ? I18n.t("forgot-several-emails")
-      : errorMsg
-      ? I18n.t(`forgot-${errorMsg.replace(/\./g, "-")}${forgotId ? "-id" : ""}`)
+      : errorMsg ? I18n.t(`forgot-${errorMsg.replace(/\./g, "-")}${forgotId ? "-id" : ""}`)
       : I18n.t("common-ErrorUnknown");
-    const isSuccess =
-      !result.hasOwnProperty("error") &&
-      !result.hasOwnProperty("structures") &&
-      result.hasOwnProperty("ok") &&
-      (result as { ok: boolean }).ok === true;
+    const isSuccess = !result.hasOwnProperty("error")
+      && !result.hasOwnProperty("structures")
+      && result.hasOwnProperty("ok")
+      && (result as { ok: boolean }).ok === true;
     const isValidEmail = this.emailValidator.isValid(login);
-    const canSubmit =
-      forgotId && hasStructures
-        ? !firstName || !structureName || !login
-        : !login || (forgotId && !isValidEmail) || (isError && !editing);
+    const canSubmit = forgotId && hasStructures
+      ? !firstName || !structureName || !login
+      : !login || (forgotId && !isValidEmail) || (isError && !editing);
 
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
         <FormPage>
           <KeyboardAvoidingView
             style={{ flex: 1, backgroundColor: "#ffffff" }}
-            behavior={Platform.OS === "ios" ? "padding" : undefined}>
+            behavior={Platform.OS === "ios" ? "padding" : undefined}
+          >
             <ScrollView alwaysBounceVertical={false} contentContainerStyle={{ flexGrow: 1 }}>
               <FormWrapper>
                 <FormContainer>
                   <LogoWrapper>
-                    <TextH1 color={TextColor.Light}>{I18n.t(`forgot-${forgotId ? "id" : "password"}`)}</TextH1>
-                    <Text color={TextColor.Light}>{I18n.t(`forgot-${forgotId ? "id" : "password"}-instructions`)}</Text>
+                    <TextH1 color={TextColor.Light}>
+                      {I18n.t(`forgot-${forgotId ? "id" : "password"}`)}
+                    </TextH1>
+                    <Text color={TextColor.Light}>
+                      {I18n.t(`forgot-${forgotId ? "id" : "password"}-instructions`)}
+                    </Text>
                   </LogoWrapper>
-                  {!isSuccess ? (
-                    <TextInputLine
-                      inputRef={this.setInputLoginRef}
-                      placeholder={I18n.t(forgotId ? "Email" : "Login")}
-                      onChange={({ nativeEvent: { text } }) => {
-                        this.setState({
-                          login: text,
-                          editing: true,
-                        });
-                      }}
-                      value={login}
-                      hasError={isError && !editing && !(hasStructures && errorMsg)}
-                      keyboardType={forgotId ? "email-address" : undefined}
-                      editable={!hasStructures}
+                  {!isSuccess
+                    ? <TextInputLine
+                        inputRef={this.setInputLoginRef}
+                        placeholder={I18n.t(forgotId ? "Email" : "Login")}
+                        onChange={({ nativeEvent: { text } }) => {
+                          this.setState({
+                            login: text,
+                            editing: true
+                          });
+                        }}
+                        value={login}
+                        hasError={isError && !editing && !(hasStructures && errorMsg)}
+                        keyboardType={forgotId ? "email-address" : undefined}
+                        editable={!hasStructures}
                       inputStyle={hasStructures && { color: CommonStyles.placeholderColor, fontWeight: "bold" }}
                       returnKeyLabel={I18n.t("forgot-submit")}
-                      returnKeyType="done"
+                      returnKeyType='done'
                       onSubmitEditing={() => this.handleSubmit()}
-                    />
-                  ) : null}
+                      />
+                    : null
+                  }
                   {(hasStructures && !isSuccess) || (isError && !editing) ? (
                     <ErrorMessage>{errorText}</ErrorMessage>
                   ) : null}
                   {isSuccess ? (
                     <InfoMessage
                       style={{
-                        height: 38,
-                      }}>
-                      {editing ? "" : isSuccess && I18n.t("forgot-success")}
+                        height: 38
+                      }}
+                    >
+                      {editing
+                        ? ""
+                        : isSuccess && I18n.t("forgot-success")}
                     </InfoMessage>
                   ) : null}
-                  {forgotId && hasStructures && !isSuccess ? (
-                    <>
-                      <TextInputLine
-                        inputRef={this.setInputLoginRef}
-                        placeholder={I18n.t("Firstname")}
-                        value={firstName}
-                        hasError={isError && !editing}
-                        onChange={({ nativeEvent: { text } }) => {
-                          this.setState({
-                            firstName: text,
-                            editing: true,
-                          });
-                        }}
-                      />
-                      <View
-                        style={{
-                          alignSelf: "stretch",
-                          flex: 0,
-                          flexDirection: "row",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          paddingRight: 10,
-                          backgroundColor: structureName ? CommonStyles.primary : undefined,
-                          borderBottomWidth: (isError && !editing) || showStructurePicker ? 2 : 0.9,
-                          borderBottomColor:
-                            isError && !editing
-                              ? CommonStyles.errorColor
-                              : showStructurePicker
-                              ? CommonStyles.iconColorOn
-                              : CommonStyles.entryfieldBorder,
-                        }}>
+                  {forgotId && hasStructures && !isSuccess
+                    ? <>
                         <TextInputLine
-                          editable={false}
-                          hasError={false}
                           inputRef={this.setInputLoginRef}
-                          placeholder={I18n.t("School")}
-                          value={structureName}
-                          style={{ borderBottomWidth: undefined, borderBottomColor: undefined }}
-                          inputStyle={{ color: "white" }}
-                        />
-                        <Icon
-                          name="arrow_down"
-                          color={structureName ? "white" : "black"}
-                          style={[{ marginTop: 10 }, showStructurePicker && { transform: [{ rotate: "180deg" }] }]}
-                        />
-                        <TouchableOpacity
-                          style={{ height: "100%", width: "100%", position: "absolute" }}
-                          onPress={() => this.setState({ showStructurePicker: !showStructurePicker })}
-                        />
-                      </View>
-                      {showStructurePicker ? (
-                        <Picker
-                          selectedValue={structureName}
-                          style={{
-                            width: "100%",
-                            borderWidth: 1,
-                            borderColor: CommonStyles.entryfieldBorder,
-                            borderTopWidth: 0,
+                          placeholder={I18n.t("Firstname")}
+                          value={firstName}
+                          hasError={isError && !editing}
+                          onChange={({ nativeEvent: { text } }) => {
+                            this.setState({
+                              firstName: text,
+                              editing: true
+                            });
                           }}
-                          onValueChange={(itemValue) => this.setState({ structureName: itemValue, editing: true })}>
-                          <Picker.Item label="" value={null} />
-                          {structures &&
-                            structures.map((structure) => (
-                              <Picker.Item label={structure.structureName} value={structure.structureName} />
-                            ))}
-                        </Picker>
-                      ) : null}
-                    </>
-                  ) : null}
+                        />
+                        <View
+                          style={{ 
+                            alignSelf: "stretch", 
+                            flex: 0, 
+                            flexDirection: "row", 
+                            alignItems: "center", 
+                            justifyContent: "space-between",
+                            paddingRight: 10,
+                            backgroundColor: structureName ? CommonStyles.primary : undefined,
+                            borderBottomWidth: (isError && !editing) || showStructurePicker ? 2 : 0.9,
+                            borderBottomColor: isError && !editing
+                            ? CommonStyles.errorColor 
+                            : showStructurePicker
+                            ? CommonStyles.iconColorOn
+                            : CommonStyles.entryfieldBorder
+                          }}
+                        >
+                          <TextInputLine
+                            editable={false}
+                            hasError={false}
+                            inputRef={this.setInputLoginRef}
+                            placeholder={I18n.t("School")}
+                            value={structureName}
+                            style={{ borderBottomWidth: undefined, borderBottomColor: undefined }}
+                            inputStyle={{color: "white"}}
+                          />
+                          <Icon
+                            name="arrow_down"
+                            color={structureName ? "white" : "black"}
+                            style={[{marginTop: 10}, showStructurePicker && {transform: [{ rotate: "180deg" }]}]}
+                          />
+                          <TouchableOpacity
+                            style={{height: "100%", width: "100%", position: "absolute"}}
+                            onPress={() => this.setState({showStructurePicker: !showStructurePicker})}
+                          />
+                        </View>
+                        {showStructurePicker
+                          ? <Picker
+                              selectedValue={structureName}
+                              style={{width: "100%", borderWidth: 1, borderColor: CommonStyles.entryfieldBorder, borderTopWidth: 0}}
+                              onValueChange={itemValue => this.setState({structureName: itemValue, editing: true})}
+                            >
+                              <Picker.Item label="" value={null}/>
+                              {structures && structures.map(structure => <Picker.Item label={structure.structureName} value={structure.structureName}/>)}
+                            </Picker>
+                          : null
+                        }
+                      </>
+                    : null
+                  }
                   <View
                     style={{
                       alignItems: "center",
                       flexGrow: 2,
                       justifyContent: "flex-start",
-                      marginTop: (isError || isSuccess) && !editing ? 10 : 30,
-                    }}>
+                      marginTop: (isError || isSuccess) && !editing ? 10 : 30
+                    }}
+                  >
                     {!isSuccess || editing ? (
                       <FlatButton
                         onPress={() => this.handleSubmit()}
@@ -256,17 +265,17 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
                       onPress={() => {
                         this.props.onReset();
                         navigate("LoginHome");
-                      }}>
+                      }}
+                    >
                       {I18n.t("login-back")}
                     </Text>
                   </View>
                 </FormContainer>
               </FormWrapper>
-              {Conf.platforms && Object.keys(Conf.platforms).length > 1 ? (
+              {Conf.platforms && Object.keys(Conf.platforms).length > 1 ?
                 <BottomSwitcher onPress={() => this.handleBackToPlatformSelector()}>
                   {(Conf.currentPlatform as any).displayName}{" "}
-                </BottomSwitcher>
-              ) : null}
+                </BottomSwitcher> : null}
             </ScrollView>
           </KeyboardAvoidingView>
         </FormPage>
@@ -281,7 +290,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotPag
 
 const FormPage = style.view({
   backgroundColor: "#ffffff",
-  flex: 1,
+  flex: 1
 });
 const FormWrapper = style.view({ flex: 1 });
 const FormContainer = style.view({
@@ -290,10 +299,10 @@ const FormContainer = style.view({
   flexDirection: "column",
   justifyContent: "center",
   padding: 40,
-  paddingTop: 60,
+  paddingTop: 60
 });
 const LogoWrapper = style.view({
   flexGrow: 2,
   alignItems: "center",
-  justifyContent: "center",
+  justifyContent: "center"
 });

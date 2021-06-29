@@ -117,10 +117,7 @@ class MailContentContainer extends React.PureComponent<any, any> {
       <>
         <PageContainer>
           <HeaderComponent>
-            <HeaderAction
-              onPress={this.goBack}
-              name={(Platform.OS === "ios") ? "chevron-left1" : "back"}
-            />
+            <HeaderAction onPress={this.goBack} name={Platform.OS === "ios" ? "chevron-left1" : "back"} iconSize={24} />
             <Text
               style={{
                 alignSelf: "center",

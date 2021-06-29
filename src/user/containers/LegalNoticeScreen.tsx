@@ -51,6 +51,7 @@ class LegalNoticeScreen extends React.PureComponent<NavigationInjectedProps<{}>,
             <HeaderLeft>
               <HeaderAction
                 iconName={Platform.OS === "ios" ? "chevron-left1" : "back"}
+                iconSize={24}
                 onPress={() => navigation.goBack()}
               />
             </HeaderLeft>

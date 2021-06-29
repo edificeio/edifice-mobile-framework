@@ -53,24 +53,21 @@ export function selectPlatform(platformId: string, redirect: boolean = false, do
 /**
  * Read and select the platform stored in AsyncStorage.
  */
-export function loadCurrentPlatform() {
-  return async (dispatch, getState) => {
-    const platformId = await AsyncStorage.getItem(PLATFORM_STORAGE_KEY);
-    // console.log("platformId", platformId);
-    if (platformId) {
-      if (!Conf.platforms.hasOwnProperty(platformId)) {
-        navigate("PlatformSelect");
-        throw new Error(
-          `Error: LOADED platform "${platformId}" doesn't exists.`
-        );
+  export function loadCurrentPlatform() {
+    return async (dispatch, getState) => {
+      const platformId = await AsyncStorage.getItem(PLATFORM_STORAGE_KEY);
+      if (platformId) {
+        if (!Conf.platforms.hasOwnProperty(platformId))
+          throw new Error(
+            `Error: LOADED platform "${platformId}" doesn't exists.`
+          );
+        else dispatch(selectPlatform(platformId));
+        return platformId;
+      } else {
+        return platformId;
       }
-      dispatch(selectPlatform(platformId));
-    } else {
-      navigate("PlatformSelect");
-    }
-    return platformId;
-  };
-}
+    };
+  }
 
 /**
  * Goes to the platform selector page
