@@ -7,7 +7,15 @@ import { ThunkDispatch } from "redux-thunk";
 import { IGlobalState } from "../../../../AppStore";
 import { PageContainer } from "../../../../ui/ContainerContent";
 import { Checkbox } from "../../../components/checkbox";
-import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRight, HeaderRow, HeaderTitle } from "../../../components/header";
+import {
+  FakeHeader,
+  HeaderAction,
+  HeaderCenter,
+  HeaderLeft,
+  HeaderRight,
+  HeaderRow,
+  HeaderTitle,
+} from "../../../components/header";
 import { ListItem } from "../../../components/listItem";
 import theme from "../../../util/theme";
 
@@ -23,28 +31,29 @@ import { INotifFilterSettings } from "../reducer/notifSettings/notifFilterSettin
 export interface ITimelineFiltersScreenDataProps {
   notifFilterSettings: INotifFilterSettings;
   notifFilters: INotificationFilter[];
-};
+}
 export interface ITimelineFiltersScreenEventProps {
   handleSetFilters(selectedFilters: INotifFilterSettings): Promise<void>;
-};
-export type ITimelineFiltersScreenProps = ITimelineFiltersScreenDataProps & ITimelineFiltersScreenEventProps & NavigationInjectedProps;
+}
+export type ITimelineFiltersScreenProps = ITimelineFiltersScreenDataProps &
+  ITimelineFiltersScreenEventProps &
+  NavigationInjectedProps;
 
-export interface ITimelineFiltersScreenState { 
-  selectedFilters: INotifFilterSettings
-};
+export interface ITimelineFiltersScreenState {
+  selectedFilters: INotifFilterSettings;
+}
 
 // COMPONENT ======================================================================================
 
 export class TimelineFiltersScreen extends React.PureComponent<
   ITimelineFiltersScreenProps,
   ITimelineFiltersScreenState
-  > {
-
+> {
   // DECLARATIONS =================================================================================
 
   state: ITimelineFiltersScreenState = {
-    selectedFilters: { ...this.props.notifFilterSettings }
-  }
+    selectedFilters: { ...this.props.notifFilterSettings },
+  };
 
   // RENDER =======================================================================================
 
@@ -52,9 +61,7 @@ export class TimelineFiltersScreen extends React.PureComponent<
     return (
       <>
         {this.renderHeader()}
-        <PageContainer>
-          {this.renderList()}
-        </PageContainer>
+        <PageContainer>{this.renderList()}</PageContainer>
       </>
     );
   }
@@ -68,7 +75,8 @@ export class TimelineFiltersScreen extends React.PureComponent<
         <HeaderRow>
           <HeaderLeft>
             <HeaderAction
-              iconName={(Platform.OS === "ios") ? "chevron-left1" : "back"}
+              iconName={Platform.OS === "ios" ? "chevron-left1" : "back"}
+              iconSize={24}
               onPress={() => navigation.goBack()}
             />
           </HeaderLeft>
@@ -95,25 +103,26 @@ export class TimelineFiltersScreen extends React.PureComponent<
       <FlatList
         // data
         data={notifFilters}
-        ListHeaderComponent={notifFilters.length < 2
-          ? null
-          : <TouchableOpacity onPress={() => this.doToggleAllFilters()}>
+        ListHeaderComponent={
+          notifFilters.length < 2 ? null : (
+            <TouchableOpacity onPress={() => this.doToggleAllFilters()}>
               <ListItem
-                  leftElement={
-                    <Text style={{color: theme.color.text.heavy}}>
-                      {I18n.t("common.all")}
-                    </Text>
-                  }
-                  rightElement={
-                    <Checkbox
-                      customCheckboxColor={!someNotSet ? theme.color.text.light : undefined}
-                      customContainerStyle={{backgroundColor: theme.color.background.card, borderColor: theme.color.text.light, borderWidth: 2}}
-                      checked={!someNotSet}
-                      onPress={() => this.doToggleAllFilters()}
-                    />
-                  }
+                leftElement={<Text style={{ color: theme.color.text.heavy }}>{I18n.t("common.all")}</Text>}
+                rightElement={
+                  <Checkbox
+                    customCheckboxColor={!someNotSet ? theme.color.text.light : undefined}
+                    customContainerStyle={{
+                      backgroundColor: theme.color.background.card,
+                      borderColor: theme.color.text.light,
+                      borderWidth: 2,
+                    }}
+                    checked={!someNotSet}
+                    onPress={() => this.doToggleAllFilters()}
+                  />
+                }
               />
             </TouchableOpacity>
+          )
         }
         renderItem={({ item }) => this.renderFilterItem(item)}
       />
@@ -121,21 +130,12 @@ export class TimelineFiltersScreen extends React.PureComponent<
   }
 
   renderFilterItem(item: INotificationFilter) {
-    const { selectedFilters } = this.state
+    const { selectedFilters } = this.state;
     return (
       <TouchableOpacity onPress={() => this.doToggleFilter(item)}>
         <ListItem
-          leftElement={
-            <Text style={{color: theme.color.text.heavy}}>
-              {I18n.t(item.i18n)}
-            </Text>
-          }
-          rightElement={
-            <Checkbox
-              checked={selectedFilters[item.type]}
-              onPress={() => this.doToggleFilter(item)}
-            />
-          }
+          leftElement={<Text style={{ color: theme.color.text.heavy }}>{I18n.t(item.i18n)}</Text>}
+          rightElement={<Checkbox checked={selectedFilters[item.type]} onPress={() => this.doToggleFilter(item)} />}
         />
       </TouchableOpacity>
     );
@@ -148,8 +148,8 @@ export class TimelineFiltersScreen extends React.PureComponent<
   doToggleFilter(item: INotificationFilter) {
     const { selectedFilters } = this.state;
     this.setState({
-      selectedFilters: {...selectedFilters, [item.type]: !selectedFilters[item.type]}
-    })
+      selectedFilters: { ...selectedFilters, [item.type]: !selectedFilters[item.type] },
+    });
   }
 
   doToggleAllFilters() {
@@ -157,34 +157,39 @@ export class TimelineFiltersScreen extends React.PureComponent<
     const someNotSet = Object.values(selectedFilters).some(value => !value);
     const selectedFiltersKeys = Object.keys(selectedFilters);
     let updatedSelectedFilters = selectedFilters;
-    selectedFiltersKeys.forEach(element => updatedSelectedFilters[element] = someNotSet);
-    this.setState({selectedFilters: {...updatedSelectedFilters}});
+    selectedFiltersKeys.forEach(element => (updatedSelectedFilters[element] = someNotSet));
+    this.setState({ selectedFilters: { ...updatedSelectedFilters } });
   }
 
   async doSetFilters(selectedFilters: INotifFilterSettings) {
     const { handleSetFilters, navigation } = this.props;
     await handleSetFilters(selectedFilters);
-    navigation.navigate("timeline", {reloadWithNewSettings: true});
+    navigation.navigate("timeline", { reloadWithNewSettings: true });
   }
-
 }
 
 // UTILS ==========================================================================================
 
 // MAPPING ========================================================================================
 
-const mapStateToProps: (s: IGlobalState) => ITimelineFiltersScreenDataProps = (s) => {
+const mapStateToProps: (s: IGlobalState) => ITimelineFiltersScreenDataProps = s => {
   let ts = moduleConfig.getState(s) as ITimeline_State;
   return {
     notifFilterSettings: ts.notifSettings.notifFilterSettings.data,
-    notifFilters: ts.notifDefinitions.notifFilters.data.sort((a,b) => I18n.t(a.i18n).localeCompare(I18n.t(b.i18n), I18n.locale))
+    notifFilters: ts.notifDefinitions.notifFilters.data.sort((a, b) =>
+      I18n.t(a.i18n).localeCompare(I18n.t(b.i18n), I18n.locale)
+    ),
   };
 };
 
-const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => ITimelineFiltersScreenEventProps
-  = (dispatch, getState) => ({
-    handleSetFilters: async (selectedFilters: INotifFilterSettings) => { await dispatch(setFiltersAction(selectedFilters)); }
-  })
+const mapDispatchToProps: (
+  dispatch: ThunkDispatch<any, any, any>,
+  getState: () => IGlobalState
+) => ITimelineFiltersScreenEventProps = (dispatch, getState) => ({
+  handleSetFilters: async (selectedFilters: INotifFilterSettings) => {
+    await dispatch(setFiltersAction(selectedFilters));
+  },
+});
 
 const TimelineFiltersScreen_Connected = connect(mapStateToProps, mapDispatchToProps)(TimelineFiltersScreen);
 export default TimelineFiltersScreen_Connected;

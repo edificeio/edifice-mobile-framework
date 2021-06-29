@@ -9,7 +9,14 @@ import moduleConfig from "../moduleConfig";
 import withViewTracking from "../../../framework/util/tracker/withViewTracking";
 import { PageView } from "../../../framework/components/page";
 import { LoadingIndicator } from "../../../framework/components/loading";
-import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from "../../../framework/components/header";
+import {
+  FakeHeader,
+  HeaderAction,
+  HeaderCenter,
+  HeaderLeft,
+  HeaderRow,
+  HeaderTitle,
+} from "../../../framework/components/header";
 import { TextLight, TextSemiBold } from "../../../framework/components/text";
 import { IGlobalState } from "../../../AppStore";
 import { getPublishableBlogListAction } from "../actions";
@@ -27,40 +34,39 @@ import Conf from "../../../../ode-framework-conf";
 
 export interface IBlogSelectScreenDataProps {
   // Add data props here
-};
+}
 export interface IBlogSelectScreenEventProps {
   handleGetPublishableBlogList(): Promise<IBlogList | undefined>;
-};
+}
 export interface IBlogSelectScreenNavParams {
   // Add nav params here
-};
-export type IBlogSelectScreenProps = IBlogSelectScreenDataProps
-  & IBlogSelectScreenEventProps
-  & NavigationInjectedProps<Partial<IBlogSelectScreenNavParams>>;
+}
+export type IBlogSelectScreenProps = IBlogSelectScreenDataProps &
+  IBlogSelectScreenEventProps &
+  NavigationInjectedProps<Partial<IBlogSelectScreenNavParams>>;
 
 export enum BlogSelectLoadingState {
-  PRISTINE, INIT, REFRESH, DONE
+  PRISTINE,
+  INIT,
+  REFRESH,
+  DONE,
 }
 export interface IBlogSelectScreenState {
   loadingState: BlogSelectLoadingState;
   blogsData: IBlogList | undefined;
   errorState: boolean;
-};
+}
 
 // COMPONENT ======================================================================================
 
-export class BlogSelectScreen extends React.PureComponent<
-  IBlogSelectScreenProps,
-  IBlogSelectScreenState
-> {
-
+export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps, IBlogSelectScreenState> {
   // DECLARATIONS =================================================================================
 
   state: IBlogSelectScreenState = {
     loadingState: BlogSelectLoadingState.PRISTINE,
     blogsData: undefined,
     errorState: false,
-  }
+  };
 
   // RENDER =======================================================================================
 
@@ -70,12 +76,13 @@ export class BlogSelectScreen extends React.PureComponent<
       <>
         {this.renderHeader()}
         <PageView>
-            {[BlogSelectLoadingState.PRISTINE, BlogSelectLoadingState.INIT].includes(loadingState)
-              ? <LoadingIndicator />
-              : errorState
-                ? this.renderError()
-                : this.renderList()
-            }
+          {[BlogSelectLoadingState.PRISTINE, BlogSelectLoadingState.INIT].includes(loadingState) ? (
+            <LoadingIndicator />
+          ) : errorState ? (
+            this.renderError()
+          ) : (
+            this.renderList()
+          )}
         </PageView>
       </>
     );
@@ -88,7 +95,8 @@ export class BlogSelectScreen extends React.PureComponent<
         <HeaderRow>
           <HeaderLeft>
             <HeaderAction
-              iconName={(Platform.OS === "ios") ? "chevron-left1" : "back"}
+              iconName={Platform.OS === "ios" ? "chevron-left1" : "back"}
+              iconSize={24}
               onPress={() => navigation.navigate("timeline")}
             />
           </HeaderLeft>
@@ -97,11 +105,11 @@ export class BlogSelectScreen extends React.PureComponent<
           </HeaderCenter>
         </HeaderRow>
       </FakeHeader>
-    )
+    );
   }
 
   renderError() {
-    return <TextSemiBold>{"Error"}</TextSemiBold> // ToDo: great error screen here
+    return <TextSemiBold>{"Error"}</TextSemiBold>; // ToDo: great error screen here
   }
 
   renderList() {
@@ -112,7 +120,11 @@ export class BlogSelectScreen extends React.PureComponent<
         data={blogsData}
         renderItem={({ item }: { item: IBlog }) => this.renderBlog(item)}
         keyExtractor={(item: IBlog) => item.id.toString()}
-        contentContainerStyle={{ flexGrow: 1, paddingVertical: isEmpty ? undefined : 12, backgroundColor: theme.color.background.card }}
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingVertical: isEmpty ? undefined : 12,
+          backgroundColor: theme.color.background.card,
+        }}
         ListEmptyComponent={this.renderEmpty}
         refreshControl={
           <RefreshControl
@@ -139,7 +151,7 @@ export class BlogSelectScreen extends React.PureComponent<
             console.warn("Must have a platform selected to redirect the user");
             return null;
           }
-          const url = `${(Conf.currentPlatform as any).url}/blog`
+          const url = `${(Conf.currentPlatform as any).url}/blog`;
           Linking.canOpenURL(url).then(supported => {
             if (supported) {
               Linking.openURL(url);
@@ -159,34 +171,26 @@ export class BlogSelectScreen extends React.PureComponent<
       <TouchableOpacity onPress={() => navigation.navigate("timeline/blog/create", { blog })}>
         <ListItem
           leftElement={
-            <View style={{flex: 1, flexDirection: "row", alignItems: "center"}}>
+            <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
               <GridAvatars
-                users={[blog.thumbnail
+                users={[
+                  blog.thumbnail
                     ? { headers: getAuthHeader(), uri: legacyAppConf.currentPlatform!.url + blog.thumbnail }
-                    : require("../../../../assets/images/resource-avatar.png")
+                    : require("../../../../assets/images/resource-avatar.png"),
                 ]}
                 fallback={require("../../../../assets/images/resource-avatar.png")}
               />
-              <View style={{flex: 1, marginLeft: 10}}>
-                <TextSemiBold numberOfLines={1}>
-                  {blog.title}
-                </TextSemiBold>
-                <TextLight style={{fontSize: 12, marginTop: 8}}>
-                  {I18n.t(
-                    `blog.blogSelectScreen.sharedToNbPerson${blogShareNumber === 1 ? "" : "s"}`,
-                    {nb: blogShareNumber || 0}
-                  )}
+              <View style={{ flex: 1, marginLeft: 10 }}>
+                <TextSemiBold numberOfLines={1}>{blog.title}</TextSemiBold>
+                <TextLight style={{ fontSize: 12, marginTop: 8 }}>
+                  {I18n.t(`blog.blogSelectScreen.sharedToNbPerson${blogShareNumber === 1 ? "" : "s"}`, {
+                    nb: blogShareNumber || 0,
+                  })}
                 </TextLight>
               </View>
             </View>
           }
-          rightElement={
-            <Icon
-              name="arrow_down"
-              color={"#868CA0"}
-              style={{ transform: [{ rotate: "270deg" }] }}
-            />
-          }
+          rightElement={<Icon name="arrow_down" color={"#868CA0"} style={{ transform: [{ rotate: "270deg" }] }} />}
         />
       </TouchableOpacity>
     );
@@ -240,14 +244,17 @@ export class BlogSelectScreen extends React.PureComponent<
 
 // MAPPING ========================================================================================
 
-const mapStateToProps: (s: IGlobalState) => IBlogSelectScreenDataProps = (s) => ({});
+const mapStateToProps: (s: IGlobalState) => IBlogSelectScreenDataProps = s => ({});
 
-const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => IBlogSelectScreenEventProps = (dispatch, getState) => ({
+const mapDispatchToProps: (
+  dispatch: ThunkDispatch<any, any, any>,
+  getState: () => IGlobalState
+) => IBlogSelectScreenEventProps = (dispatch, getState) => ({
   handleGetPublishableBlogList: async () => {
-    const blogs = await dispatch(getPublishableBlogListAction()) as unknown as IBlogList;
+    const blogs = ((await dispatch(getPublishableBlogListAction())) as unknown) as IBlogList;
     return blogs;
-  }
-})
+  },
+});
 
 const BlogSelectScreen_Connected = connect(mapStateToProps, mapDispatchToProps)(BlogSelectScreen);
 export default BlogSelectScreen_Connected;

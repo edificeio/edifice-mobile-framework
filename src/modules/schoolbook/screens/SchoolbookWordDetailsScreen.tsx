@@ -117,6 +117,7 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
           <HeaderLeft>
             <HeaderAction
               iconName={(Platform.OS === "ios") ? "chevron-left1" : "back"}
+              iconSize={24}
               onPress={() => navigation.navigate("timeline")}
             />
           </HeaderLeft>

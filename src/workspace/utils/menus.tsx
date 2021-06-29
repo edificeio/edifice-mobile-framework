@@ -17,23 +17,26 @@ export const addMenu = () => {
     icon: "file-plus",
     id: "addDocument",
     // onEvent: ({ dispatch, parentId }: any) => pickFile({ dispatch, parentId }),
-    wrapper: ({ children, dispatch, parentId}) => <FilePicker
-      callback={file => {
-        const convertedFile: ContentUri = {
-          mime: file.type,
-          name: file.fileName,
-          uri: file.uri,
-          path: file.uri
-        };
-        dispatch(uploadAction(parentId, convertedFile));
-      }}
-    >{children}</FilePicker>
+    wrapper: ({ children, dispatch, parentId }) => (
+      <FilePicker
+        callback={file => {
+          const convertedFile: ContentUri = {
+            mime: file.type,
+            name: file.fileName,
+            uri: file.uri,
+            path: file.uri,
+          };
+          dispatch(uploadAction(parentId, convertedFile));
+        }}>
+        {children}
+      </FilePicker>
+    ),
   };
 };
 
 export const backMenu = () => ({
   text: "Back",
-  icon: (Platform.OS === "ios") ? "chevron-left1" : "back",
+  icon: Platform.OS === "ios" ? "chevron-left1" : "back",
   id: "back",
   onEvent: () => null,
 });

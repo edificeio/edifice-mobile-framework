@@ -1,5 +1,13 @@
 import * as React from "react";
-import { View, ScrollView, TouchableWithoutFeedback, Keyboard, TextInput, KeyboardAvoidingView, Platform } from "react-native";
+import {
+  View,
+  ScrollView,
+  TouchableWithoutFeedback,
+  Keyboard,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import { NavigationInjectedProps } from "react-navigation";
 import { ThunkDispatch } from "redux-thunk";
 import { connect } from "react-redux";
@@ -9,7 +17,15 @@ import moduleConfig from "../moduleConfig";
 import withViewTracking from "../../../framework/util/tracker/withViewTracking";
 import { PageView } from "../../../framework/components/page";
 import { LoadingIndicator } from "../../../framework/components/loading";
-import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRight, HeaderRow, HeaderTitle } from "../../../framework/components/header";
+import {
+  FakeHeader,
+  HeaderAction,
+  HeaderCenter,
+  HeaderLeft,
+  HeaderRight,
+  HeaderRow,
+  HeaderTitle,
+} from "../../../framework/components/header";
 import { TextBold, TextSemiBold, TextLight, TextAction } from "../../../framework/components/text";
 import { IGlobalState } from "../../../AppStore";
 import { IBlog } from "../reducer";
@@ -26,7 +42,12 @@ import { GridAvatars } from "../../../ui/avatars/GridAvatars";
 import { sendBlogPostAction } from "../actions";
 import { notifierShowAction } from "../../../framework/util/notifier/actions";
 import { hasNotch } from "react-native-device-info";
-import { createBlogPostResourceRight, getBlogPostRight, publishBlogPostResourceRight, submitBlogPostResourceRight } from "../rights";
+import {
+  createBlogPostResourceRight,
+  getBlogPostRight,
+  publishBlogPostResourceRight,
+  submitBlogPostResourceRight,
+} from "../rights";
 import { ImagePicked, ImagePicker } from "../../../infra/imagePicker";
 import Notifier from "../../../framework/util/notifier";
 
@@ -34,42 +55,43 @@ import Notifier from "../../../framework/util/notifier";
 
 export interface IBlogCreatePostScreenDataProps {
   session: IUserSession;
-};
+}
 export interface IBlogCreatePostScreenEventProps {
   handleUploadPostImages(images: ImagePicked[]): Promise<IItems<IFile>>;
-  handleSendBlogPost(blog: IBlog, title: string, content: string, uploadedPostImages?: IItems<IFile>): Promise<string | undefined>;
+  handleSendBlogPost(
+    blog: IBlog,
+    title: string,
+    content: string,
+    uploadedPostImages?: IItems<IFile>
+  ): Promise<string | undefined>;
   handleInitTimeline(): Promise<void>;
   dispatch: ThunkDispatch<any, any, any>;
-};
+}
 export interface IBlogCreatePostScreenNavParams {
   blog: IBlog;
-};
-export type IBlogCreatePostScreenProps = IBlogCreatePostScreenDataProps
-  & IBlogCreatePostScreenEventProps
-  & NavigationInjectedProps<Partial<IBlogCreatePostScreenNavParams>>;
+}
+export type IBlogCreatePostScreenProps = IBlogCreatePostScreenDataProps &
+  IBlogCreatePostScreenEventProps &
+  NavigationInjectedProps<Partial<IBlogCreatePostScreenNavParams>>;
 
 export interface IBlogCreatePostScreenState {
   sendLoadingState: boolean;
   title: string;
   content: string;
   images: ImagePicked[];
-};
+}
 
 // COMPONENT ======================================================================================
 
-export class BlogCreatePostScreen extends React.PureComponent<
-  IBlogCreatePostScreenProps,
-  IBlogCreatePostScreenState
-> {
-
+export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScreenProps, IBlogCreatePostScreenState> {
   // DECLARATIONS =================================================================================
 
   state: IBlogCreatePostScreenState = {
     sendLoadingState: false,
     title: "",
     content: "",
-    images: []
-  }
+    images: [],
+  };
 
   attachmentPickerRef: any;
 
@@ -86,16 +108,12 @@ export class BlogCreatePostScreen extends React.PureComponent<
           <KeyboardAvoidingView
             enabled
             behavior={Platform.OS === "ios" ? "padding" : undefined}
-            keyboardVerticalOffset={Platform.OS === "ios" ? hasNotch() ? 100 : 76 : undefined} // 🍔 Big-(M)Hack of the death : On iOS KeyboardAvoidingView not working properly.
-            style={{ flex: 1 }}
-          >
+            keyboardVerticalOffset={Platform.OS === "ios" ? (hasNotch() ? 100 : 76) : undefined} // 🍔 Big-(M)Hack of the death : On iOS KeyboardAvoidingView not working properly.
+            style={{ flex: 1 }}>
             <ScrollView
               alwaysBounceVertical={false}
-              contentContainerStyle={{ flexGrow: 1, paddingVertical: 12, paddingHorizontal: 16 }}
-            >
-              <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                {this.renderContent()}
-              </TouchableWithoutFeedback>
+              contentContainerStyle={{ flexGrow: 1, paddingVertical: 12, paddingHorizontal: 16 }}>
+              <TouchableWithoutFeedback onPress={Keyboard.dismiss}>{this.renderContent()}</TouchableWithoutFeedback>
             </ScrollView>
           </KeyboardAvoidingView>
         </PageView>
@@ -109,17 +127,20 @@ export class BlogCreatePostScreen extends React.PureComponent<
     const blog = navigation.getParam("blog");
     const blogPostRight = blog && session && getBlogPostRight(blog, session);
     const blogPostDisplayRight = blogPostRight && blogPostRight.displayRight;
-    const actionText = blogPostDisplayRight && {
-      [createBlogPostResourceRight]: I18n.t("blog.blogCreatePostScreen.createAction"),
-      [submitBlogPostResourceRight]: I18n.t("blog.blogCreatePostScreen.submitAction"),
-      [publishBlogPostResourceRight]: I18n.t("blog.blogCreatePostScreen.publishAction")
-    }[blogPostDisplayRight];
+    const actionText =
+      blogPostDisplayRight &&
+      {
+        [createBlogPostResourceRight]: I18n.t("blog.blogCreatePostScreen.createAction"),
+        [submitBlogPostResourceRight]: I18n.t("blog.blogCreatePostScreen.submitAction"),
+        [publishBlogPostResourceRight]: I18n.t("blog.blogCreatePostScreen.publishAction"),
+      }[blogPostDisplayRight];
     return (
       <FakeHeader>
         <HeaderRow>
           <HeaderLeft>
             <HeaderAction
-              iconName={(Platform.OS === "ios") ? "chevron-left1" : "back"}
+              iconName={Platform.OS === "ios" ? "chevron-left1" : "back"}
+              iconSize={24}
               onPress={() => navigation.navigate("blog/select")}
             />
           </HeaderLeft>
@@ -127,26 +148,27 @@ export class BlogCreatePostScreen extends React.PureComponent<
             <HeaderTitle>{I18n.t("blog.blogCreatePostScreen.title")}</HeaderTitle>
           </HeaderCenter>
           <HeaderRight>
-            {sendLoadingState
-              ? <LoadingIndicator
+            {sendLoadingState ? (
+              <LoadingIndicator
                 small
                 customColor={theme.color.tertiary.light}
                 customStyle={{ justifyContent: "center", paddingHorizontal: 18 }}
               />
-              : <HeaderAction
+            ) : (
+              <HeaderAction
                 text={actionText}
                 disabled={title.length === 0 || content.length === 0}
                 onPress={() => this.doSend()}
               />
-            }
+            )}
           </HeaderRight>
         </HeaderRow>
       </FakeHeader>
-    )
+    );
   }
 
   renderError() {
-    return <TextSemiBold>{"Error"}</TextSemiBold> // ToDo: great error screen here
+    return <TextSemiBold>{"Error"}</TextSemiBold>; // ToDo: great error screen here
   }
 
   renderContent() {
@@ -225,23 +247,26 @@ export class BlogCreatePostScreen extends React.PureComponent<
           backgroundColor: theme.color.background.card,
           borderColor: theme.color.inputBorder,
           borderWidth: 1,
-          borderRadius: 5
-        }}
-      >
-        <ImagePicker callback={(image) => {
-          console.log("image", image);
-          this.setState({ images: [...images, image] })
+          borderRadius: 5,
         }}>
+        <ImagePicker
+          callback={image => {
+            console.log("image", image);
+            this.setState({ images: [...images, image] });
+          }}>
           <View
-            style={{ alignItems: "center", justifyContent: "center", flexDirection: imagesAdded ? "row" : "column", marginVertical: 10 }}
-          // onPress={() => this.attachmentPickerRef.onPickAttachment()}
+            style={{
+              alignItems: "center",
+              justifyContent: "center",
+              flexDirection: imagesAdded ? "row" : "column",
+              marginVertical: 10,
+            }}
+            // onPress={() => this.attachmentPickerRef.onPickAttachment()}
           >
-            <TextAction style={{ marginRight: imagesAdded ? 5 : 0 }}>{I18n.t('createPost-create-mediaField')}</TextAction>
-            <Icon
-              name="camera-on"
-              size={imagesAdded ? 15 : 22}
-              color={theme.color.secondary.regular}
-            />
+            <TextAction style={{ marginRight: imagesAdded ? 5 : 0 }}>
+              {I18n.t("createPost-create-mediaField")}
+            </TextAction>
+            <Icon name="camera-on" size={imagesAdded ? 15 : 22} color={theme.color.secondary.regular} />
           </View>
         </ImagePicker>
         <AttachmentPicker
@@ -256,7 +281,6 @@ export class BlogCreatePostScreen extends React.PureComponent<
   }
 
   // LIFECYCLE ====================================================================================
-
 
   // METHODS ======================================================================================
 
@@ -277,7 +301,7 @@ export class BlogCreatePostScreen extends React.PureComponent<
         handleUploadPostImages,
         handleSendBlogPost,
         handleInitTimeline,
-        dispatch
+        dispatch,
       } = this.props;
       const { title, content, images } = this.state;
       const blog = navigation.getParam("blog");
@@ -297,49 +321,48 @@ export class BlogCreatePostScreen extends React.PureComponent<
       }
 
       // Translate entered content to httml
-      const htmlContent = content.replace(/\n/g, '<br>');
+      const htmlContent = content.replace(/\n/g, "<br>");
 
       // Create and submit/publish post
-      await handleSendBlogPost(
-        blog,
-        title,
-        htmlContent,
-        uploadedPostImages
-      );
+      await handleSendBlogPost(blog, title, htmlContent, uploadedPostImages);
 
       // Track action, load/navigate to timeline and display notifier
       const blogPostDisplayRight = blogPostRight.displayRight;
       const trackerEvent = {
         [createBlogPostResourceRight]: "CREATE",
         [submitBlogPostResourceRight]: "SUBMIT",
-        [publishBlogPostResourceRight]: "PUBLISH"
+        [publishBlogPostResourceRight]: "PUBLISH",
       }[blogPostDisplayRight];
       const trackerEventText = trackerEvent === "CREATE" ? "CREATE" : `CREATE ${trackerEvent}`;
       const notifierSuccessText = {
         [createBlogPostResourceRight]: I18n.t("blog.blogCreatePostScreen.createSuccess"),
         [submitBlogPostResourceRight]: I18n.t("blog.blogCreatePostScreen.submitSuccess"),
-        [publishBlogPostResourceRight]: I18n.t("blog.blogCreatePostScreen.publishSuccess")
+        [publishBlogPostResourceRight]: I18n.t("blog.blogCreatePostScreen.publishSuccess"),
       }[blogPostDisplayRight];
 
       Trackers.trackEvent("Timeline", trackerEventText, "BlogPost");
       await handleInitTimeline();
       navigation.navigate("timeline");
-      dispatch(notifierShowAction({
-        id: "timeline",
-        text: notifierSuccessText,
-        icon: "checked",
-        type: "success",
-        duration: 8000
-      }));
+      dispatch(
+        notifierShowAction({
+          id: "timeline",
+          text: notifierSuccessText,
+          icon: "checked",
+          type: "success",
+          duration: 8000,
+        })
+      );
     } catch (e) {
       // ToDo: Error handling
       const { dispatch } = this.props;
-      dispatch(notifierShowAction({
-        id: "blog/create",
-        text: `${I18n.t("common.error.title")} ${I18n.t("common.error.text")}`,
-        icon: "close",
-        type: "error"
-      }));
+      dispatch(
+        notifierShowAction({
+          id: "blog/create",
+          text: `${I18n.t("common.error.title")} ${I18n.t("common.error.text")}`,
+          icon: "close",
+          type: "error",
+        })
+      );
       console.warn(`[${moduleConfig.name}] doSendPost failed`, e);
     }
   }
@@ -351,20 +374,23 @@ export class BlogCreatePostScreen extends React.PureComponent<
 
 // MAPPING ========================================================================================
 
-const mapStateToProps: (s: IGlobalState) => IBlogCreatePostScreenDataProps = (s) => {
+const mapStateToProps: (s: IGlobalState) => IBlogCreatePostScreenDataProps = s => {
   return {
-    session: getUserSession(s)
+    session: getUserSession(s),
   };
 };
 
-const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => IBlogCreatePostScreenEventProps = (dispatch, getState) => ({
+const mapDispatchToProps: (
+  dispatch: ThunkDispatch<any, any, any>,
+  getState: () => IGlobalState
+) => IBlogCreatePostScreenEventProps = (dispatch, getState) => ({
   handleUploadPostImages: async (images: ImagePicked[]) => {
     // ToDo: use the future file upload module here
     const convertedImages: ContentUri[] = images.map(i => ({
       mime: i.type,
       name: i.fileName,
       uri: i.uri,
-      path: i.uri
+      path: i.uri,
     }));
     const uploadedPostImages = await uploadDocument(dispatch, convertedImages, FilterId.protected);
     const parsedPostImages: unknown[] = uploadedPostImages.map(uploadedImage => JSON.parse(uploadedImage));
@@ -372,11 +398,15 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () 
     return formattedPostImages as IItems<IFile>;
   },
   handleSendBlogPost: async (blog: IBlog, title: string, content: string, uploadedPostImages?: IItems<IFile>) => {
-    return await dispatch(sendBlogPostAction(blog, title, content, uploadedPostImages)) as unknown as string | undefined;
+    return ((await dispatch(sendBlogPostAction(blog, title, content, uploadedPostImages))) as unknown) as
+      | string
+      | undefined;
   },
-  handleInitTimeline: async () => { await dispatch(startLoadNotificationsAction()); },
-  dispatch
-})
+  handleInitTimeline: async () => {
+    await dispatch(startLoadNotificationsAction());
+  },
+  dispatch,
+});
 
 const BlogCreatePostScreen_Connected = connect(mapStateToProps, mapDispatchToProps)(BlogCreatePostScreen);
 export default BlogCreatePostScreen_Connected;

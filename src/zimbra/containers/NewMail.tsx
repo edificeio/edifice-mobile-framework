@@ -28,7 +28,7 @@ import {
 import NewMailComponent from "../components/NewMail";
 import { ISearchUsers } from "../service/newMail";
 import { getMailContentState, IMail } from "../state/mailContent";
-import {Trackers} from "../../infra/tracker";
+import { Trackers } from "../../infra/tracker";
 
 const entitiesTransformer = new AllHtmlEntities();
 
@@ -87,7 +87,13 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         headerLeft: () => {
           const goBack = navigation.getParam("getGoBack", navigation.goBack);
 
-          return <HeaderAction onPress={() => goBack()} name={(Platform.OS === "ios") ? "chevron-left1" : "back"} />;
+          return (
+            <HeaderAction
+              onPress={() => goBack()}
+              name={Platform.OS === "ios" ? "chevron-left1" : "back"}
+              iconSize={24}
+            />
+          );
         },
         headerRight: () => {
           const askForAttachment = navigation.getParam("getAskForAttachment");
@@ -128,10 +134,10 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       this.props.fetchMailContent(this.props.navigation.getParam("mailId"));
     }
     const draftType = this.props.navigation.getParam("type");
-    if (draftType === DraftType.REPLY){
+    if (draftType === DraftType.REPLY) {
       Trackers.trackEvent("Zimbra", "REPLY TO ONE");
     }
-    if(draftType === DraftType.REPLY_ALL){
+    if (draftType === DraftType.REPLY_ALL) {
       Trackers.trackEvent("Zimbra", "REPLY TO ALL");
     }
     if (draftType !== DraftType.DRAFT) {

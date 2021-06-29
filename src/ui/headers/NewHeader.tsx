@@ -17,7 +17,7 @@ const HeaderIconStyle: ViewStyle = {
 };
 
 const iconsDeltaSizes = {
-  close: 16
+  close: 16,
 };
 
 export interface IHeaderIconProps {
@@ -30,9 +30,18 @@ export const HeaderIcon = ({ name, hidden, iconSize, primary }: IHeaderIconProps
   <View
     style={[
       HeaderIconStyle,
-      primary && {backgroundColor: CommonStyles.secondary, borderRadius: 30, height: 50, width: 50, marginTop: 20, marginRight: 20, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 4}
-    ]}
-  >
+      primary && {
+        backgroundColor: CommonStyles.secondary,
+        borderRadius: 30,
+        height: 50,
+        width: 50,
+        marginTop: 20,
+        marginRight: 20,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+      },
+    ]}>
     <Icon
       size={iconSize || (iconsDeltaSizes as { [key: string]: number })[name] || 20}
       name={name}
@@ -43,26 +52,32 @@ export const HeaderIcon = ({ name, hidden, iconSize, primary }: IHeaderIconProps
 
 // Use this in place React Navigation Back implementation.
 export const HeaderBackAction = ({
-  navigation, style
+  navigation,
+  style,
 }: {
-  navigation: NavigationScreenProp<{}>, style?: ViewStyle
+  navigation: NavigationScreenProp<{}>;
+  style?: ViewStyle;
 }) => (
   <HeaderAction
     onPress={() => navigation.dispatch(NavigationActions.back())}
-    name={(Platform.OS === "ios") ? "chevron-left1" : "back"}
+    name={Platform.OS === "ios" ? "chevron-left1" : "back"}
+    iconSize={24}
     style={style}
   />
-)
+);
 
 // HEADER TEXTS
-const HeaderActionText = (props: { [prop: string]: any }) => <View style={{
-  paddingHorizontal: 18,
-  height: 56,
-  justifyContent: "center",
-  alignItems: "center"
-}}>
-  <Text style={{ color: "white" }} {...props} />
-</View>;
+const HeaderActionText = (props: { [prop: string]: any }) => (
+  <View
+    style={{
+      paddingHorizontal: 18,
+      height: 56,
+      justifyContent: "center",
+      alignItems: "center",
+    }}>
+    <Text style={{ color: "white" }} {...props} />
+  </View>
+);
 
 // HEADER ACTION
 export class HeaderAction extends React.PureComponent<{
@@ -70,22 +85,23 @@ export class HeaderAction extends React.PureComponent<{
   name?: string;
   hidden?: boolean;
   iconSize?: number;
-  title?: string,
-  style?: ViewStyle
-  onPress?: () => void,
-  disabled?: boolean,
-  primary?: boolean
+  title?: string;
+  style?: ViewStyle;
+  onPress?: () => void;
+  disabled?: boolean;
+  primary?: boolean;
 }> {
   render() {
     const { customComponent, name, hidden, onPress, iconSize, title, style, disabled = false, primary } = this.props;
     const ActionComponent = disabled ? View : TouchableOpacity;
-    return <ActionComponent
-      onPress={() => !disabled && onPress && onPress()}
-      style={{ ...(disabled ? { opacity: 0.7 } : {}),  ...style }}
-    >
-      {customComponent || null}
-      {name ? <HeaderIcon name={name} hidden={hidden} iconSize={iconSize} primary={primary} /> : undefined}
-      {title ? <HeaderActionText>{title}</HeaderActionText> : undefined}
-    </ActionComponent>;
+    return (
+      <ActionComponent
+        onPress={() => !disabled && onPress && onPress()}
+        style={{ ...(disabled ? { opacity: 0.7 } : {}), ...style }}>
+        {customComponent || null}
+        {name ? <HeaderIcon name={name} hidden={hidden} iconSize={iconSize} primary={primary} /> : undefined}
+        {title ? <HeaderActionText>{title}</HeaderActionText> : undefined}
+      </ActionComponent>
+    );
   }
 }
