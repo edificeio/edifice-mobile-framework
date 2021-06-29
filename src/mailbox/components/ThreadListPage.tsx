@@ -198,7 +198,7 @@ export class ThreadListPage extends React.PureComponent<
         <ButtonsOkCancel
           onCancel={() => {
             this.setState({ showDeleteModal: false });
-            this.swipeRef.recenter();
+            if (this.swipeRef) this.swipeRef.recenter();
           }}
           onValid={() => this.handleDeleteThread(threadId)}
           title={I18n.t("delete")}
@@ -244,7 +244,7 @@ export class ThreadListPage extends React.PureComponent<
 
   public handleDeleteThread(threadId) {
     const { onDeleteThread } = this.props;
-    this.swipeRef.recenter();
+    if (this.swipeRef) this.swipeRef.recenter();
     onDeleteThread(threadId);
     this.setState({
       showDeleteModal: false,
