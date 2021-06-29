@@ -16,4 +16,5 @@ export default createNavigableModuleConfig<"lvs", IConnectorState>({
   matchEntcoreApp: entcoreApp => hasConnectorModule(entcoreApp),
   entcoreScope: ['lvs'],
   iconName: "lvs",
+  iconColor: "#299cc8",
 });
