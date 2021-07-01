@@ -1,28 +1,28 @@
-import * as React from "react";
-import I18n from "i18n-js";
+import * as React from 'react';
+import I18n from 'i18n-js';
 import {
   CameraOptions,
   ImageLibraryOptions,
   ImagePickerResponse,
   launchCamera,
   launchImageLibrary,
-} from "react-native-image-picker";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { ModalBox, ModalContent, ModalContentBlock } from "../ui/Modal";
-import { ButtonTextIcon } from "../ui";
-import { GestureResponderEvent, Platform, TouchableOpacityProps } from "react-native";
+} from 'react-native-image-picker';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { ModalBox, ModalContent, ModalContentBlock } from '../ui/Modal';
+import { ButtonTextIcon } from '../ui';
+import { GestureResponderEvent, Platform, TouchableOpacityProps } from 'react-native';
 import DocumentPicker, {
   DocumentPickerOptions,
   DocumentPickerResponse,
   DocumentType,
   PlatformTypes,
-} from "react-native-document-picker";
-import getPath from "@flyerhq/react-native-android-uri-path";
+} from 'react-native-document-picker';
+import getPath from '@flyerhq/react-native-android-uri-path';
 
 export type ImagePicked = Required<
-  Pick<ImagePickerResponse, "uri" | "type" | "fileName" | "fileSize" | "base64" | "width" | "height">
+  Pick<ImagePickerResponse, 'uri' | 'type' | 'fileName' | 'fileSize' | 'base64' | 'width' | 'height'>
 >;
-export type DocumentPicked = Required<Pick<DocumentPickerResponse, "uri" | "type">> & {
+export type DocumentPicked = Required<Pick<DocumentPickerResponse, 'uri' | 'type'>> & {
   fileName: string;
   fileSize: number;
 };
@@ -42,8 +42,13 @@ export class FilePicker extends React.PureComponent<
     const { callback, options, ...props } = this.props;
 
     const imageCallback = (image: ImagePickerResponse) => {
-      // console.log("picker returns", image);
-      !image.didCancel && !image.errorCode && !image.errorMessage && image.uri && callback(image as ImagePicked);
+      !image.didCancel &&
+        !image.errorCode &&
+        !image.errorMessage &&
+        image.assets &&
+        image.assets.length > 0 &&
+        image.assets[0].uri &&
+        callback(image.assets[0] as ImagePicked);
       this.setState({ showModal: false });
     };
 
@@ -51,7 +56,7 @@ export class FilePicker extends React.PureComponent<
       !file.copyError && file.uri;
       file.uri = Platform.select({
         android: getPath(file.uri),
-        default: decodeURI(file.uri.indexOf("file://") > -1 ? file.uri.split("file://")[1] : file.uri),
+        default: decodeURI(file.uri.indexOf('file://') > -1 ? file.uri.split('file://')[1] : file.uri),
       });
       const { name, size, ...fileResolved } = file;
       callback({ ...fileResolved, fileName: file.name, fileSize: file.size });
@@ -60,34 +65,34 @@ export class FilePicker extends React.PureComponent<
 
     const menuActions = [
       {
-        id: "camera",
-        title: I18n.t("common-photoPicker-take"),
+        id: 'camera',
+        title: I18n.t('common-photoPicker-take'),
         action: () => {
           launchCamera(
             {
               ...options,
-              mediaType: "photo",
+              mediaType: 'photo',
             },
-            imageCallback
+            imageCallback,
           );
         },
       },
       {
-        id: "gallery",
-        title: I18n.t("common-photoPicker-pick"),
+        id: 'gallery',
+        title: I18n.t('common-photoPicker-pick'),
         action: () => {
           launchImageLibrary(
             {
               ...this.props.options,
-              mediaType: "photo",
+              mediaType: 'photo',
             },
-            imageCallback
+            imageCallback,
           );
         },
       },
       {
-        id: "document",
-        title: I18n.t("common-picker-document"),
+        id: 'document',
+        title: I18n.t('common-picker-document'),
         action: () => {
           DocumentPicker.pick({
             type: DocumentPicker.types.allFiles as
@@ -98,8 +103,8 @@ export class FilePicker extends React.PureComponent<
         },
       },
       {
-        id: "cancel",
-        title: I18n.t("Cancel"),
+        id: 'cancel',
+        title: I18n.t('Cancel'),
         action: () => {
           this.setState({ showModal: false });
         },
