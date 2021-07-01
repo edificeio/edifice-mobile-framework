@@ -9,35 +9,45 @@ import com.facebook.flipper.plugins.databases.DatabasesFlipperPlugin;
 import com.facebook.flipper.plugins.fresco.FrescoFlipperPlugin;
 import com.facebook.flipper.plugins.inspector.DescriptorMapping;
 import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin;
+import com.facebook.flipper.plugins.leakcanary.LeakCanaryFlipperPlugin;
+import com.facebook.flipper.plugins.leakcanary.RecordLeakService;
+import com.facebook.flipper.plugins.navigation.NavigationFlipperPlugin;
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor;
 import com.facebook.flipper.plugins.network.NetworkFlipperPlugin;
 import com.facebook.flipper.plugins.react.ReactFlipperPlugin;
+import com.facebook.flipper.plugins.sandbox.SandboxFlipperPlugin;
+import com.facebook.flipper.plugins.sandbox.SandboxFlipperPluginStrategy;
 import com.facebook.flipper.plugins.sharedpreferences.SharedPreferencesFlipperPlugin;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.modules.network.NetworkingModule;
-import okhttp3.OkHttpClient;
+import com.squareup.leakcanary.LeakCanary;
+import com.squareup.leakcanary.RefWatcher;
 
 public class ReactNativeFlipper {
+
     public static void initializeFlipper(Context context, ReactInstanceManager reactInstanceManager) {
+
         if (FlipperUtils.shouldEnableFlipper(context)) {
+
             final FlipperClient client = AndroidFlipperClient.getInstance(context);
 
-            client.addPlugin(new InspectorFlipperPlugin(context, DescriptorMapping.withDefaults()));
-            client.addPlugin(new ReactFlipperPlugin());
-            client.addPlugin(new DatabasesFlipperPlugin(context));
+            final RefWatcher refWatcher = LeakCanary.refWatcher(context)
+                    .listenerServiceClass(RecordLeakService.class)
+                    .buildAndInstall();
+
             client.addPlugin(new SharedPreferencesFlipperPlugin(context));
             client.addPlugin(CrashReporterPlugin.getInstance());
-
+            client.addPlugin(new DatabasesFlipperPlugin(context));
+            client.addPlugin(new InspectorFlipperPlugin(context, DescriptorMapping.withDefaults()));
+            client.addPlugin(new LeakCanaryFlipperPlugin());
+            client.addPlugin(NavigationFlipperPlugin.getInstance());
+            client.addPlugin(new ReactFlipperPlugin());
+            client.addPlugin(new SharedPreferencesFlipperPlugin(context, "appe"));
             NetworkFlipperPlugin networkFlipperPlugin = new NetworkFlipperPlugin();
-            NetworkingModule.setCustomClientBuilder(
-                    new NetworkingModule.CustomClientBuilder() {
-                        @Override
-                        public void apply(OkHttpClient.Builder builder) {
-                            builder.addNetworkInterceptor(new FlipperOkhttpInterceptor(networkFlipperPlugin));
-                        }
-                    });
+            NetworkingModule.setCustomClientBuilder(builder -> builder.addNetworkInterceptor(new FlipperOkhttpInterceptor(networkFlipperPlugin)));
             client.addPlugin(networkFlipperPlugin);
+
             client.start();
 
             // Fresco Plugin needs to ensure that ImagePipelineFactory is initialized
@@ -61,6 +71,9 @@ public class ReactNativeFlipper {
             } else {
                 client.addPlugin(new FrescoFlipperPlugin());
             }
+
         }
+
     }
+
 }

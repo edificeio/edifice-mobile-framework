@@ -40,7 +40,7 @@ target 'appe' do
   #pod 'Permission-SpeechRecognition', :path => "#{permissions_path}/SpeechRecognition"
   #pod 'Permission-StoreKit', :path => "#{permissions_path}/StoreKit"
 
-  # Other needed pods
+  # Native pods
   pod 'MatomoTracker', '~> 7.4'
 
   post_install do |installer|
