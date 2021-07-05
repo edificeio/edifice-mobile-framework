@@ -177,6 +177,7 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
         <BackdropPdfReader
           handleClose={() => this.setState({ isModalVisible: false })}
           handleOpen={() => this.setState({ isModalVisible: true })}
+          title={I18n.t("activation-cgu")}
           uri={cguUrl}
           visible={isModalVisible}
         />

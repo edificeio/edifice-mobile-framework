@@ -22,7 +22,7 @@ const containerBar: ViewStyle = {
   flexDirection: "row",
   flexWrap: "wrap",
   justifyContent: "flex-start",
-  paddingTop: Platform.OS === "ios" ? iosStatusBarHeight : 0
+  paddingTop: Platform.OS === "ios" ? iosStatusBarHeight : 0,
 };
 
 const HeaderStyle = style(SafeAreaView)({
@@ -31,7 +31,7 @@ const HeaderStyle = style(SafeAreaView)({
   alignItems: "center",
   backgroundColor: CommonStyles.mainColorTheme,
   paddingTop: Platform.OS === "ios" ? iosStatusBarHeight : 0,
-  height: Platform.OS === "ios" ? hasNotch() ? 100 : 76 : undefined
+  height: Platform.select({ ios: hasNotch() ? 100 : 76, default: 56 }),
 });
 
 export const HeaderComponent = ({
@@ -39,7 +39,7 @@ export const HeaderComponent = ({
   children,
   color,
   customStyle,
-  onLayout
+  onLayout,
 }: {
   connectionTracker: any;
   children: any;
@@ -52,17 +52,16 @@ export const HeaderComponent = ({
     style={[
       {
         elevation: connectionTracker.visible ? 0 : 5,
-        backgroundColor: color ? color : CommonStyles.mainColorTheme
+        backgroundColor: color ? color : CommonStyles.mainColorTheme,
       },
-      customStyle
-    ]}
-  >
+      customStyle,
+    ]}>
     {children}
   </HeaderStyle>
 );
 
 export const Header = connect((state: any) => ({
-  connectionTracker: state.connectionTracker
+  connectionTracker: state.connectionTracker,
 }))(HeaderComponent);
 
 export const sensitiveStylePanel: ViewStyle = {
@@ -71,46 +70,39 @@ export const sensitiveStylePanel: ViewStyle = {
   justifyContent: "center",
   paddingLeft: 18,
   paddingRight: 18,
-  width: 60
+  width: 60,
 };
 
 const iconsDeltaSizes = {
-  close: 16
+  close: 16,
 };
 
 export const HeaderIcon = ({
   name,
   hidden,
   onPress,
-  iconSize
+  iconSize,
 }: {
   name: string;
   hidden?: boolean;
   onPress?: () => void;
   iconSize?: number;
 }) => (
-  <TouchableOpacity
-    style={sensitiveStylePanel}
-    onPress={() => onPress && onPress()}
-  >
-    <Icon
-      size={iconSize || iconsDeltaSizes[name] || 20}
-      name={name}
-      color={hidden ? "transparent" : "#FFFFFF"}
-    />
+  <TouchableOpacity style={sensitiveStylePanel} onPress={() => onPress && onPress()}>
+    <Icon size={iconSize || iconsDeltaSizes[name] || 20} name={name} color={hidden ? "transparent" : "#FFFFFF"} />
   </TouchableOpacity>
 );
 
 export const TouchableEndBarPanel = style(TouchableOpacity)({
   ...sensitiveStylePanel,
-  alignSelf: "flex-end"
+  alignSelf: "flex-end",
 });
 
 export const CenterPanel = style(TouchableOpacity)({
   alignItems: "center",
   flex: 1,
   height: 56,
-  justifyContent: "center"
+  justifyContent: "center",
 });
 
 export const AppTitle = style.text({
@@ -121,7 +113,7 @@ export const AppTitle = style.text({
   flex: 1,
   textAlign: "center",
   height: 56,
-  lineHeight: 56
+  lineHeight: 56,
 });
 
 export const HeaderAction = style.text(
@@ -133,10 +125,10 @@ export const HeaderAction = style.text(
     textAlign: "right",
     paddingRight: 20,
     height: 56,
-    lineHeight: 56
+    lineHeight: 56,
   },
   ({ disabled }: { disabled?: boolean }) => ({
-    opacity: disabled ? 0.7 : 1
+    opacity: disabled ? 0.7 : 1,
   })
 );
 
@@ -146,10 +138,10 @@ export const Title = style.text(
     fontFamily: CommonStyles.primaryFontFamily,
     fontWeight: "400",
     textAlign: "left",
-    textAlignVertical: "center"
+    textAlignVertical: "center",
   },
   ({ smallSize = false }) => ({
-    fontSize: smallSize ? 12 : 16
+    fontSize: smallSize ? 12 : 16,
   })
 );
 
@@ -158,5 +150,5 @@ export const SubTitle = style.text({
   fontFamily: CommonStyles.primaryFontFamily,
   fontWeight: "400",
   fontSize: 12,
-  opacity: 0.7
+  opacity: 0.7,
 });

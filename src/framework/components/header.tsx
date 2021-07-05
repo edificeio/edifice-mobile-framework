@@ -5,7 +5,8 @@
 
 import styled from "@emotion/native";
 import * as React from "react";
-import { ViewProps, View, TouchableOpacity, ViewStyle, SafeAreaView } from "react-native";
+import { Platform, SafeAreaView, TouchableOpacity, View, ViewProps, ViewStyle } from "react-native";
+import { hasNotch } from "react-native-device-info";
 
 import theme from "../util/theme";
 import { Icon } from "./icon";
@@ -19,6 +20,7 @@ const FakeHeader_StyleComponent = styled.View({
   flex: 0,
   backgroundColor: theme.color.secondary.regular,
   elevation: 5,
+  height: Platform.select({ ios: hasNotch() ? 100 : 76, default: 56 }),
 });
 
 export const FakeHeader = (props: React.PropsWithChildren<ViewProps>) => (

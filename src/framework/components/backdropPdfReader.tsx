@@ -6,7 +6,7 @@ import I18n from "i18n-js";
 import { CommonStyles } from "../../styles/common/styles";
 import theme from "../util/theme";
 import { BackdropModal } from "./backdropModal";
-import { Text, TextSemiBold } from "../../framework/components/text";
+import { Text, TextBold } from "../../framework/components/text";
 
 import EmptyPdf from "ode-images/empty-screen/empty-pdf.svg";
 
@@ -42,8 +42,8 @@ export class BackdropPdfReader extends React.PureComponent<IBackdropPdfReaderPro
         content={error
           ? <View style={{ flex: 1, backgroundColor: theme.color.tertiary.light, alignItems: "center" }}>
               <EmptyPdf style={{ aspectRatio: 1, maxHeight: "40%", maxWidth: "70%", marginBottom: 30, marginTop: "10%" }}/> 
-              <TextSemiBold style={{ fontSize: 18, marginBottom: 20 }}>{I18n.t("common.error.title")}</TextSemiBold>
-              <Text>{I18n.t("common.error.pdf.text")}</Text>
+              <TextBold style={{ fontSize: 18, marginBottom: 20 }}>{I18n.t("common.error.title")}</TextBold>
+              <Text style={{ textAlign: "center" }}>{I18n.t("common.error.pdf.text")}</Text>
             </View>
           : <Pdf
               activityIndicatorProps={{

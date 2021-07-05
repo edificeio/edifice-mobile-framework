@@ -1,4 +1,5 @@
 import { CommonStyles } from "../../styles/common/styles";
+import { Platform } from "react-native";
 import deviceInfoModule from "react-native-device-info";
 
 /**
@@ -17,9 +18,7 @@ export const standardNavScreenOptions = (props, { state }) => {
     headerStyle: {
       backgroundColor: CommonStyles.mainColorTheme,
       elevation: 5,
-      shadowOpacity: 0.3,
-      shadowRadius: 4,
-      height: deviceInfoModule.hasNotch() ? 100 : 56,
+      height: Platform.select({ ios: deviceInfoModule.hasNotch() ? 100 : 76, default: 56 }),
       ...(props.headerStyle || {}),
     },
     headerTitleStyle: {
