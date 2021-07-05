@@ -42,6 +42,7 @@ import VersionModal from "../components/VersionModal";
 import { getAuthState } from "../selectors";
 import withViewTracking from "../../infra/tracker/withViewTracking";
 import { Toggle } from "../../ui/forms/Toggle";
+import theme from "../../framework/util/theme";
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -175,12 +176,32 @@ export class LoginPage extends React.Component<
   protected renderForm() {
     const { loggingIn, loggedIn, error } = this.props.auth;
     const { login, password, typing, rememberMe } = this.state;
-
     const FederationTextComponent = error ? TextBold : Text;
+    const isSommeNumerique = (Conf.currentPlatform as any).displayName === "Somme numérique";
 
     return (
       <View style={{ flex: 1 }}>
         <ScrollView keyboardShouldPersistTaps={"handled"} alwaysBounceVertical={false} contentContainerStyle={{ flexGrow: 1 }}>
+          {/* Temporary banner displayed for Somme Numérique */}
+          {isSommeNumerique
+            ? <View
+                style={{
+                  backgroundColor: "#FCEEEA",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  padding: 5,
+                  borderColor: theme.color.failure,
+                  borderWidth: 1,
+                  borderRadius: 15,
+                  width: "90%",
+                  alignSelf: "center",
+                  position: "absolute"
+                }}
+              >
+                <TextBold style={{ textAlign: "center", color: theme.color.failure }}>{I18n.t("common.sommeNumeriqueAlert_temp")}</TextBold>
+              </View>
+            : null
+          }
           <FormContainer>
             {this.renderLogo()}
             <TextInputLine
