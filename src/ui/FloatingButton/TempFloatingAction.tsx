@@ -51,7 +51,14 @@ class TempFloatingAction extends Component<IFloatingProps & ISelected, IState> {
     const noMenuItems = !menuItems || menuItems.length === 0;
     const displayedIconName = this.state.active && !noMenuItems ? "close" : iconName;
 
-    return <ButtonIcon size={iconSize} style={styles.button} name={displayedIconName} onPress={noMenuItems ? this.handleEvent.bind(this) : this.animateButton} />;
+    return (
+      <ButtonIcon
+        size={iconSize}
+        style={styles.button}
+        name={displayedIconName}
+        onPress={noMenuItems ? this.handleEvent.bind(this) : this.animateButton}
+      />
+    );
   }
 
   renderActions() {
@@ -117,19 +124,20 @@ const styles = StyleSheet.create({
     top: 81,
     width: layoutSize.LAYOUT_200,
     zIndex: 10,
-    ...getMenuShadow()
+    ...getMenuShadow(),
   },
   button: {
     position: "absolute",
     right: 20,
-    top: Platform.OS === "ios" ? hasNotch() ? iosStatusBarHeight + 44 : 44 : 22,
+    // top: Platform.OS === "ios" ? (hasNotch() ? iosStatusBarHeight + 44 : 44) : 22,
+    top: Platform.select({ android: 14, ios: hasNotch() ? 61 : 34 }),
   },
   overlayActions: {
     bottom: 0,
     left: 0,
     position: "absolute",
     right: 0,
-    top: Platform.OS === "ios" ? hasNotch() ? iosStatusBarHeight + 20 : iosStatusBarHeight : -3,
+    top: Platform.OS === "ios" ? (hasNotch() ? iosStatusBarHeight + 20 : iosStatusBarHeight) : -3,
   },
   separator: {
     borderBottomColor: CommonStyles.borderColorVeryLighter,

@@ -237,7 +237,7 @@ class ThreadPageContainer extends React.PureComponent<
             <LittleTitle smallSize>{I18n.t("loading")}</LittleTitle>
           ),
           headerStyle: {
-            height: deviceInfoModule.hasNotch() ? 100 : 56,
+            height: Platform.select({ ios: deviceInfoModule.hasNotch() ? 100 : 76, default: 56 }),
           },
           headerLeftContainerStyle: {
             alignItems: "flex-start",
