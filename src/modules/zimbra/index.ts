@@ -9,4 +9,4 @@ export default tabModules.register(
   0
 );
 
-//setUpNotifHandlers();
+setUpNotifHandlers();

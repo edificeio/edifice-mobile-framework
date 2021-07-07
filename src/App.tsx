@@ -37,8 +37,8 @@ import messaging from '@react-native-firebase/messaging';
 // Functionnal modules // THIS IS UGLY. it is a workaround for include matomo tracking.
 // require("./timelinev2");
 require("./mailbox");
-require("./zimbra");
-require("./pronote");
+//require("./zimbra");
+//require("./pronote");
 //require("./lvs");
 require("./homework");
 require("./workspace");
