@@ -9,6 +9,14 @@ import { HtmlContentView } from "../../../../ui/HtmlContentView";
 import { Text, TextBold } from "../../../../ui/text";
 import { LeftColoredItem } from "../../viesco/components/Item";
 
+type homework = {
+  subject: string;
+  description: string;
+  due_date: moment.Moment;
+  type: string;
+  created_date: moment.Moment;
+};
+
 const style = StyleSheet.create({
   homeworkPart: { paddingVertical: 8, paddingHorizontal: 15 },
   title: { fontSize: 18 },
@@ -18,7 +26,7 @@ const style = StyleSheet.create({
 
 export default class DisplayHomework extends React.PureComponent<
   { getfunction: any; navigation: any },
-  { homework: any }
+  { homework: homework }
 > {
   constructor(props) {
     super(props);

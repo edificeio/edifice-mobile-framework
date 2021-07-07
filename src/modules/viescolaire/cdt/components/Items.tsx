@@ -16,11 +16,10 @@ export const HomeworkItem = ({ onPress, title, subtitle, checked, disabled, onCh
 );
 
 export const SessionItem = ({ onPress, matiere, author }: any) => (
-  <LeftColoredItem shadow onPress={onPress} style={{ alignItems: "center", flexDirection: "row" }} color={"#2bab6f"}>
+  <LeftColoredItem shadow onPress={onPress} style={{ alignItems: "center", flexDirection: "row" }} color="#2bab6f">
     <View style={{ flex: 1, justifyContent: "space-evenly" }}>
       <TextBold style={{ textTransform: "uppercase" }}>{matiere}</TextBold>
       <Text style={{ color: "#AFAFAF" }}>{author}</Text>
     </View>
   </LeftColoredItem>
 );
-

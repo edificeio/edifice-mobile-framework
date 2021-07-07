@@ -15,6 +15,7 @@ export interface ISession {
     name: string;
     rank?: number;
   };
+  exceptional_label: string;
   start_time: string;
   teacher_id: string;
   description: string;

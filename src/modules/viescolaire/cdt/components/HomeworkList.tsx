@@ -208,7 +208,7 @@ const HomeworkList = ({
               onPress={() => onHomeworkTap(homework)}
               disabled={getSessionInfo().type !== "Student"}
               checked={isHomeworkDone(homework)}
-              title={homework.subject.name}
+              title={homework.subject_id !== "exceptional" ? homework.subject.name : homework.exceptional_label}
               subtitle={homework.type}
               onChange={() => onHomeworkStatusUpdate(homework)}
             />
@@ -241,7 +241,7 @@ const SessionList = ({ isFetching, onRefreshSessions, sessionList, onSessionTap,
                 ) : null}
                 <SessionItem
                   onPress={() => onSessionTap(session)}
-                  matiere={session.subject.name}
+                  matiere={session.subject_id !== "exceptional" ? session.subject.name : session.exceptional_label}
                   author={getTeacherName(session.teacher_id, personnelList)}
                 />
               </View>
