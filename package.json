@@ -156,6 +156,7 @@
     "appname": "app-e-dev-default",
     "properties": {
       "ios": "ios/appe/Info.plist",
+      "pbxproj": "ios/appe.xcodeproj/project.pbxproj",
       "android": "android/gradle.properties"
     },
     "overrides": [
