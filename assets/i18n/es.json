@@ -4,7 +4,15 @@
     "apply": "Aplicar",
     "comment": "Comentario",
     "comments": "Comentarios",
+    "date": {
+      "invalid": "",
+      "now": "ahora",
+      "yesterday": "ayer"
+    },
     "error": {
+      "pdf": {
+        "text": "Parece ser que el contenido ha desaparecido.\nSi el problema persiste, contacte con el equipo de asistencia."
+      },
       "text": "Ha ocurrido un error. Vuelva a intentarlo más tarde.",
       "title": "Ups..."
     },
@@ -167,17 +175,23 @@
     }
   },
   "user": {
+    "legalNoticeScreen": {
+      "cgu": "CGU",
+      "cookies": "Aviso de cookies",
+      "personalDataProtection": "Política de protección de datos personales",
+      "userCharter": "Política de uso"
+    },
     "onboardingScreen": {
       "appName": "",
-      "discover": "...",
+      "discover": "Descubrir",
       "discoverLink": "https://opendigitaleducation.com/index.php?lang=es",
       "onboarding": {
-        "0": "...",
-        "1": "...",
-        "2": "...",
-        "3": "..."
+        "0": "¡Bienvenido a la aplicación móvil, la extensión de su espacio digital!",
+        "1": "Reciba notificaciones en tiempo real de las últimas novedades.",
+        "2": "Comuníquese más fácilmente mediante la aplicación Correo electrónico.",
+        "3": "Cargue o descargue sus documentos en el espacio documental."
       },
-      "joinMyNetwork": "..."
+      "joinMyNetwork": "Acceder a mi red"
     },
     "pushNotifsSettingsScreen": {
       "countOutOfTotal": {
@@ -235,6 +249,8 @@
   },
   "Activate": "Activar mi cuenta",
   "activation-cancelLoad": "Cancelar",
+  "activation-cgu": "Condiciones generales de uso",
+  "activation-cgu-accept": "Acepto las ",
   "activation-errorLoading": "Error de red.",
   "activation-errorSubmit": "Error de red.",
   "activation-retryLoad": "Vuelva a intentarlo",
@@ -367,6 +383,7 @@
   "delete-confirm": "Eliminar permanentemente:",
   "directory-childrenTitle": "Niños",
   "directory-disconnectButton": "Desconectarse",
+  "directory-legalNoticeTitle": "Notas legales",
   "directory-notificationsTitle": "Notificaciones push",
   "directory-relativesTitle": "Padre(s)",
   "directory-structuresTitle": "Establecimiento(s)",
@@ -401,6 +418,7 @@
   "forgot-password-instructions": "Escriba su nombre de usuario para recibir su contraseña.",
   "forgot-submit": "Enviar",
   "forgot-success": "Correo electrónico enviado",
+  "homework-createDiary": "Crear un cuaderno semanal",
   "homework-diaries-emptyScreenText": "Gracias a la aplicación Cuaderno semanal, ya no hay más excusas para los niños despistados. ¡Anote todas las actividades, compártalas con los niños, los padres y así todo el mundo está al corriente!",
   "homework-diaries-emptyScreenTitle": "Es hora de crear un Cuaderno semanal digital.",
   "homework-tasks-emptyScreenText": "Pronto podrá consultar todas las actividades por hacer en el cuaderno semanal. ¿Está genial, verdad?",

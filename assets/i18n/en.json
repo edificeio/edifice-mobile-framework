@@ -4,7 +4,15 @@
     "apply": "Apply",
     "comment": "Comment",
     "comments": "Comments",
+    "date": {
+      "invalid": "",
+      "now": "now",
+      "yesterday": "yesterday"
+    },
     "error": {
+      "pdf": {
+        "text": "It looks like the contents have disappeared.\nIf the problem continues, contact the help desk."
+      },
       "text": "An error occurred. Please try again later.",
       "title": "Whoops..."
     },
@@ -167,17 +175,23 @@
     }
   },
   "user": {
+    "legalNoticeScreen": {
+      "cgu": "TOS",
+      "cookies": "Cookies Notice",
+      "personalDataProtection": "Personal Data Protection Agreement",
+      "userCharter": "User Agreement"
+    },
     "onboardingScreen": {
       "appName": "",
-      "discover": "...",
+      "discover": "Learn more",
       "discoverLink": "https://opendigitaleducation.com",
       "onboarding": {
-        "0": "...",
-        "1": "...",
-        "2": "...",
-        "3": "..."
+        "0": "Welcome to your mobile app, which works as an extension of your virtual learning environment!",
+        "1": "Get real-time notifications of the latest news.",
+        "2": "Communicate more easily with Mailbox.",
+        "3": "Upload or download your documents to Filespace."
       },
-      "joinMyNetwork": "..."
+      "joinMyNetwork": "Join my network"
     },
     "pushNotifsSettingsScreen": {
       "countOutOfTotal": {
@@ -235,6 +249,8 @@
   },
   "Activate": "Activate account",
   "activation-cancelLoad": "Cancel",
+  "activation-cgu": "Terms of Service",
+  "activation-cgu-accept": "I accept the ",
   "activation-errorLoading": "Network errors.",
   "activation-errorSubmit": "Network errors.",
   "activation-retryLoad": "Try again",
@@ -368,6 +384,7 @@
   "delete-confirm": "Permanently delete:",
   "directory-childrenTitle": "Child(ren)",
   "directory-disconnectButton": "Log out",
+  "directory-legalNoticeTitle": "Legal Notice",
   "directory-notificationsTitle": "Mobile notifications",
   "directory-relativesTitle": "Parent(s)",
   "directory-structuresTitle": "School(s) and class(es)",
@@ -402,6 +419,7 @@
   "forgot-several-emails-no-match": "This information does not match the email address that was provided.",
   "forgot-submit": "Send",
   "forgot-success": "Email sent",
+  "homework-createDiary": "Create a homebook notebook",
   "homework-diaries-emptyScreenText": "With the Homework Notebook app, absent-minded students no longer have any excuse. Write down all of the class's assignments, share them with your students and their parents, and everyone will stay up to date!",
   "homework-diaries-emptyScreenTitle": "Time to create a digital homework notebook.",
   "homework-tasks-emptyScreenText": "Soon, you'll be able to see all the activities you need to do in this digital notebook. Cool, huh?",
