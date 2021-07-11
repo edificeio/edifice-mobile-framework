@@ -188,7 +188,7 @@ async function _updateAppIds(ode) {
   //update ios project
   const pbxprojPath = path.resolve(__dirname, ode['properties']['pbxproj']);
   let pbxproj = await readFile(pbxprojPath, { encoding: 'utf-8' });
-  pbxproj = pbxproj.replace(/(PRODUCT_BUNDLE_IDENTIFIER = ")(.*)(";)/g, '$1' + appidIOS + '$3');
+  pbxproj = pbxproj.replace(/(PRODUCT_BUNDLE_IDENTIFIER = \")(.*)(\";)/g, '$1' + appidIOS + '$3');
   await writeFile(pbxprojPath, pbxproj);
 }
 function _overrideFileListAbsolute(name) {
