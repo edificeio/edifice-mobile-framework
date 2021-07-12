@@ -30,6 +30,9 @@
       "userCharter": "/assets/cgu/ODE_User_Charter.pdf"
     }
   },
+  "conversation": {
+    "tabName": "Mailbox"
+  },
   "timeline": {
     "appName": "Newsfeed",
     "tabName": "News",

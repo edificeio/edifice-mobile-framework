@@ -30,6 +30,9 @@
       "userCharter": "/assets/cgu/ODE_Charte_d_utilisation.pdf"
     }
   },
+  "conversation": {
+    "tabName": "Messagerie"
+  },
   "timeline": {
     "appName": "Fil de nouveautés",
     "tabName": "Nouveautés",
