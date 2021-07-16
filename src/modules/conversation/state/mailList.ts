@@ -10,19 +10,20 @@ export interface IMail {
   id: string;
   date: moment.Moment;
   subject: string;
-  parent_id: string;
-  thread_id: string;
   state: string;
   unread: boolean;
   response: boolean;
   hasAttachment: boolean;
-  systemFolder: string;
   to: [];
   cc: [];
-  bcc: [];
   displayNames: [];
-  attachments: [];
   from: string;
+  fromName: null;
+  toName: null;
+  ccName: null;
+  cci: [];
+  cciName:[];
+  count: number;
 }
 
 export type IMailList = IMail[];

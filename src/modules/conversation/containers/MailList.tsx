@@ -18,7 +18,7 @@ type MailListContainerProps = {
   navigation: NavigationDrawerProp<any>;
   fetchInit: () => IInit;
   fetchMailList: (page: number, key: string) => any;
-  fetchMailFromFolder: (folderName: string, page: number) => any;
+  fetchMailFromFolder: (folderId: string, page: number) => any;
   isPristine: boolean;
   isFetching: boolean;
   notifications: any;
@@ -48,8 +48,9 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
     this.setState({ fetchRequested: true });
     const key = this.props.navigation.getParam("key");
     const folderName = this.props.navigation.getParam("folderName");
+    const folderId = this.props.navigation.getParam("folderId");
     if (!folderName) this.props.fetchMailList(page, key);
-    else this.props.fetchMailFromFolder(folderName, page);
+    else this.props.fetchMailFromFolder(folderId, page);
   };
 
   fetchCompleted = () => {
