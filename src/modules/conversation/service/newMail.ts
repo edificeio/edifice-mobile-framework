@@ -27,7 +27,7 @@ export type ISearchUsersGroups = {
 
 export const newMailService = {
   searchUsers: async search => {
-    return await fetchJSONWithCache(`/zimbra/visible?search=${search}`);
+    return await fetchJSONWithCache(`/conversation/visible?search=${search}`);
   },
   sendMail: async (mailDatas, draftId, inReplyTo) => {
     const params = {
