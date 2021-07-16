@@ -22,11 +22,11 @@ export function fetchMailListAction(page: number, folderName: string) {
   };
 }
 
-export function fetchMailListFromFolderAction(folderLocation: string, page: number) {
+export function fetchMailListFromFolderAction(folderId: string, page: number) {
   return async (dispatch: Dispatch) => {
     try {
       dispatch(dataActions.request());
-      const data = await mailListService.getFromFolder(folderLocation, page);
+      const data = await mailListService.getFromFolder(folderId, page);
       dispatch(dataActions.receipt(data));
     } catch (errmsg) {
       dispatch(dataActions.error(errmsg));
