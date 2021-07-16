@@ -8,14 +8,13 @@ import { Icon } from "../../../ui";
 import { PageContainer } from "../../../ui/ContainerContent";
 import { Text } from "../../../ui/Typography";
 import CreateFolderModal from "../containers/CreateFolderModal";
-import { IFolder, IQuota } from "../state/initMails";
+import { IFolder } from "../state/initMails";
 import DrawerOption from "./DrawerOption";
 
 type DrawerMenuProps = {
   activeItemKey: string;
   items: any[];
   folders: IFolder[];
-  quota: IQuota;
   descriptors: any[];
   navigation: NavigationDrawerProp<any>;
 };
@@ -63,31 +62,6 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
     return { id: "", folderName: "", path: "", unread: 0, count: 0, folders: [] };
   };
 
-  renderStorage = () => {
-    let quota = Number(this.props.quota.quota) / (1024 * 1024);
-    let storage = this.props.quota.storage / (1024 * 1024);
-    let unit = "Mo";
-
-    if (quota > 2000) {
-      quota = Math.round((quota / 1024) * 10) / 10;
-      storage = Math.round((storage / 1024) * 10) / 10;
-      unit = "Go";
-    } else {
-      quota = Math.round(quota);
-      storage = Math.round(storage);
-    }
-    const storagePercent = (storage / Number(quota)) * 100;
-    return (
-      <View style={style.loadBar}>
-        <View style={[style.loadBarPercent, { width: `${storagePercent}%` }]}>
-          <Text style={{ textAlign: "center", color: "white" }}>
-            {storage}&ensp;{unit}
-          </Text>
-        </View>
-      </View>
-    );
-  };
-
   renderDrawerFolders = () => {
     const { navigation } = this.props;
     const currentFolder = this.getCurrentFolder(this.props.navigation.state);
@@ -103,7 +77,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
               iconName="folder"
               label={folder.folderName}
               navigate={() => {
-                navigation.navigate("folder", { key: folder.folderName, folderName: folder.folderName });
+                navigation.navigate("folder", { key: folder.folderName, folderName: folder.folderName, folderId: folder.id });
                 navigation.closeDrawer();
               }}
               count={folder.unread}
@@ -174,10 +148,6 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
               {I18n.t("zimbra-create-directory")}
             </Text>
           </TouchableOpacity>
-          <View style={style.labelContainer}>
-            <Text style={[style.labelText, { justifyContent: "center" }]}>{I18n.t("zimbra-storage")}</Text>
-          </View>
-          {this.renderStorage()}
         </View>
         <CreateFolderModal show={this.state.showFolderCreationModal} onClose={this.onFolderCreationModalClose} />
       </PageContainer>

@@ -96,7 +96,7 @@ export default class DrawerNavigatorWrapper extends React.Component<any, any> {
             {title}
           </Text>
         </HeaderComponent>
-        <DrawerNavigatorComponent navigation={navigation} />
+        {/* <DrawerNavigatorComponent navigation={navigation} /> */}
         <TempFloatingAction
           iconName="new_message"
           onEvent={() => {

@@ -4,41 +4,35 @@ import { IInitMail } from "../state/initMails";
 // Data type of what is given by the backend.
 // eslint-disable-next-line flowtype/no-types-missing-file-annotation
 export type IInitMailListBackend = {
-  quota: {
-    storage: number;
-    quota: string;
-  };
-  signature: {
-    prefered: boolean;
-    id: string;
-    content: string;
-  };
-  folders: [
-    {
-      id: string;
-      folderName: string;
-      path: string;
-      unread: number;
-      count: number;
-      folders: [];
-    }
-  ];
-};
+  id: string;
+  name: string;
+  parent_id: string;
+  user_id: string;
+  depth: number;
+  trashed: boolean;
+}[];
 
-const initMailListAdapter: (data: IInitMailListBackend) => IInitMail = data => {
+const initMailListAdapter: (rootFoldersList: IInitMailListBackend) => IInitMail = rootFoldersList => {
   let result = {} as IInitMail;
-  if (!data) return result;
+  if (!rootFoldersList) return result;
+  const folders = rootFoldersList.map(rootFolder => ({
+    id: rootFolder.id,
+    folderName: rootFolder.name,
+    path: "",
+    unread: 0,
+    count: 0,
+    folders: []
+  }));
+
   result = {
-    quota: data.quota,
-    signature: data.signature,
-    folders: data.folders,
+    folders
   };
   return result;
 };
 
 export const initMailService = {
   get: async () => {
-    const data = await fetchJSONWithCache(`/zimbra/zimbra/json`);
-    return initMailListAdapter(data);
+    const rootFoldersList = await fetchJSONWithCache(`/conversation/folders/list`);
+    return initMailListAdapter(rootFoldersList);
   },
 };
