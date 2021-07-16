@@ -6,7 +6,7 @@ import { bindActionCreators } from "redux";
 import withViewTracking from "../../../infra/tracker/withViewTracking";
 import { fetchInitAction } from "../actions/initMails";
 import DrawerMenu from "../components/DrawerMenu";
-import { getInitMailListState, IInitMail, IFolder, IQuota } from "../state/initMails";
+import { getInitMailListState, IInitMail, IFolder } from "../state/initMails";
 
 export type IInit = {
   data: IInitMail;
@@ -26,7 +26,6 @@ type DrawerMenuProps = {
 
 type DrawerMenuState = {
   folders: IFolder[];
-  quota: IQuota;
 };
 
 export class DrawerMenuContainer extends React.Component<DrawerMenuProps, DrawerMenuState> {
@@ -34,7 +33,6 @@ export class DrawerMenuContainer extends React.Component<DrawerMenuProps, Drawer
     super(props);
     this.state = {
       folders: [{ id: "", folderName: "", path: "", unread: 0, count: 0, folders: [] }],
-      quota: { storage: 0, quota: "" },
     };
   }
   componentDidMount() {
@@ -44,7 +42,6 @@ export class DrawerMenuContainer extends React.Component<DrawerMenuProps, Drawer
   componentDidUpdate(prevProps) {
     if (prevProps.init.isFetching && !this.props.init.isFetching) {
       this.setState({ folders: this.props.init.data.folders });
-      this.setState({ quota: this.props.init.data.quota });
     }
   }
 

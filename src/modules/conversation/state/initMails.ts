@@ -13,33 +13,13 @@ export type IFolder = {
   folders: any[];
 };
 
-export type IQuota = {
-  storage: number;
-  quota: string;
-};
-
 export interface IInitMail {
-  quota: IQuota;
-  signature: {
-    prefered: boolean;
-    id: string;
-    content: string;
-  };
   folders: IFolder[];
 }
 
 // THE STATE --------------------------------------------------------------------------------------
 
 export const initialState: IInitMail = {
-  quota: {
-    storage: 0,
-    quota: "",
-  },
-  signature: {
-    prefered: false,
-    id: "",
-    content: "",
-  },
   folders: [
     {
       id: "",
