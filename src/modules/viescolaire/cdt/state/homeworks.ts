@@ -16,6 +16,7 @@ export interface IHomework {
     state_label: string;
     user_id: string;
   };
+  exceptional_label: string;
   subject_id: string;
   subject: {
     id: string;

@@ -8,7 +8,7 @@ export const isHomeworkDone = homework => homework.progress !== null && homework
 
 export const homeworkDetailsAdapter = homework => {
   return {
-    subject: homework.subject.name,
+    subject: homework.subject_id !== "exceptional" ? homework.subject.name : homework.exceptional_label,
     description: homework.description,
     due_date: homework.due_date,
     type: homework.type,
@@ -18,7 +18,7 @@ export const homeworkDetailsAdapter = homework => {
 
 export const sessionDetailsAdapter = (session, teachersList) => {
   return {
-    subject: session.subject.name,
+    subject: session.subject_id !== "exceptional" ? session.subject.name : session.exceptional_label,
     date: session.date,
     teacher: getTeacherName(session.teacher_id, teachersList),
     description: session.description,

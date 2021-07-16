@@ -26,6 +26,7 @@ export type IHomeworkListBackend = {
   publish_date: string;
   session_id: string;
   structure_id: string;
+  exceptional_label: string;
   subject_id: string;
   subject: {
     id: string;
@@ -54,6 +55,7 @@ const homeworkListAdapter: (data: IHomeworkListBackend) => IHomeworkList = data 
       type: item.type.label,
       subject_id: item.subject_id,
       subject: item.subject,
+      exceptional_label: item.exceptional_label,
       progress: item.progress,
       description: item.description,
       created_date: moment(item.created),

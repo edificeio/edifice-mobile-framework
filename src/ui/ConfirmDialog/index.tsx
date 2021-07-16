@@ -11,6 +11,7 @@ import DialogInput from "./input";
 import DialogSelect from "./select";
 import DialogTitle from "./title";
 import { ITreeItem } from "../../workspace/actions/helpers/formatListFolders";
+import I18n from "i18n-js";
 
 type IProps = {
   filterId: string;
@@ -104,7 +105,7 @@ export class ConfirmDialog extends React.Component<IProps, IState> {
             onPress={(id, isParentOfSelection) =>
               this.setState({
                 valueSelect: id && id.length ? id : "owner",
-                disabled: isParentOfSelection
+                disabled: title !== I18n.t("copy-documents") ? isParentOfSelection : false,
               })
             }
           />

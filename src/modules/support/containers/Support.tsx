@@ -195,8 +195,27 @@ class SupportContainer extends React.PureComponent<ISupportProps, ISupportState>
 // ------------------------------------------------------------------------------------------------
 
 const mapStateToProps: (state: any) => any = state => {
-  const categoryList = state.user.info.appsInfo;
-  const establishmentList = state.user.info.schools;
+  const categoryOther: any = { address: "modules-names.other" };
+  categoryOther.name = I18n.t(categoryOther.address);
+  let categoryList = state.user.info.appsInfo
+    .filter(function(app) {
+      return app.address && app.name && app.address.length > 0 && app.name.length > 0;
+    })
+    .map(function(app) {
+      let translation = I18n.t("modules-names." + app.displayName.toLowerCase());
+      if (translation.substring(0, 9) !== "[missing ") {
+        app.name = translation;
+      } else {
+        if (/^[A-Z]/.test(app.displayName)) app.name = app.displayName;
+      }
+      return app;
+    });
+  categoryList.push(categoryOther);
+  categoryList.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+
+  const establishmentList = state.user.info.schools.sort((a, b) =>
+    a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+  );
   const authorizedActions = state.user.info.authorizedActions;
   const hasRightToCreateTicket =
     authorizedActions && authorizedActions.some(action => action.displayName === "support.ticket.create");

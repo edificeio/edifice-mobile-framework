@@ -10,6 +10,14 @@ import { HtmlContentView } from "../../../../ui/HtmlContentView";
 import { Text, TextBold } from "../../../../ui/text";
 import { LeftColoredItem } from "../../viesco/components/Item";
 
+type session = {
+  subject: string;
+  date: moment.Moment;
+  teacher: string;
+  description: string;
+  title: string;
+};
+
 const style = StyleSheet.create({
   sessionPart: { paddingVertical: 8, paddingHorizontal: 15 },
   pageTitle: { color: "#AFAFAF", textTransform: "uppercase" },
@@ -20,7 +28,7 @@ const style = StyleSheet.create({
 
 export default class DisplayHomework extends React.PureComponent<
   { getfunction: any; navigation: any },
-  { session: any }
+  { session: session }
 > {
   constructor(props) {
     super(props);

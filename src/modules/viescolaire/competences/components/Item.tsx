@@ -39,7 +39,7 @@ const CompetenceRoundModal = (competences: any, levels: ILevelsList) => {
   return competences.map((competence, index) => (
     <ModalContentBlock
       style={{
-        width: "100%",
+        width: "92%",
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
@@ -82,7 +82,12 @@ const CompetenceRound = ({
       {isVisible && (
         <ModalBox isVisible={isVisible}>
           <ModalContent>
-            {CompetenceRoundModal(competences, levels)}
+            <ScrollView
+              style={{ width: "100%" }}
+              contentContainerStyle={{ marginLeft: -20, marginRight: 20 }}
+              showsVerticalScrollIndicator={false}>
+              {CompetenceRoundModal(competences, levels)}
+            </ScrollView>
             <ModalContentBlock>
               <ButtonsOkOnly onValid={() => toggleVisible(false)} title={I18n.t("viesco-close").toUpperCase()} />
             </ModalContentBlock>

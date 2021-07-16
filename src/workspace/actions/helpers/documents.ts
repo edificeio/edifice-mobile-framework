@@ -5,13 +5,14 @@
 
 import RNFB from "rn-fetch-blob";
 import moment from "moment";
-import { Platform, ToastAndroid } from "react-native";
+import { Platform } from "react-native";
 import I18n from "i18n-js";
 import { IFile, ContentUri, IFolder, IItems, IItem, FilterId } from "../../types";
 import { filters } from "../../types/filters/helpers/filters";
 import Conf from "../../../../ode-framework-conf";
-import { OAuth2RessourceOwnerPasswordClient, getDummySignedRequest, getAuthHeader } from "../../../infra/oauth";
+import { getAuthHeader } from "../../../infra/oauth";
 import { progressAction, progressEndAction, progressInitAction } from "../../../infra/actions/progress";
+import Toast from "react-native-tiny-toast";
 
 export type IDocumentArray = any[];
 
@@ -179,7 +180,16 @@ export const uploadDocument = (dispatch: any, content: ContentUri[], parentId?: 
           return Promise.reject(response.data);
         }
       })
-      .catch(e => console.warn("error uoloading", e))
+      .catch(e => {
+        console.warn("error uploading: ", e);
+        if (e === `{"error":"file.too.large"}`) {
+          Toast.show(I18n.t("workspace-quota-overflowText"), {
+            position: Toast.position.BOTTOM,
+            mask: false,
+            containerStyle: { width: "95%", backgroundColor: "black" },
+          });
+        };
+      })
   );
 
   return Promise.all(response);

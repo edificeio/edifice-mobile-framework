@@ -22,13 +22,12 @@ import OnboardingFour from "ode-images/onboarding/onboarding_4.svg";
 // TYPES ==========================================================================================
 
 interface IOnboardingScreenProps extends NavigationInjectedProps<{}> {
-  dispatch : ThunkDispatch<any, any, any>
+  dispatch: ThunkDispatch<any, any, any>;
 }
 
 // COMPONENT ======================================================================================
 
 class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
-
   // DECLARATIONS ===================================================================================
 
   // RENDER =========================================================================================
@@ -37,19 +36,15 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
     const { navigation, dispatch } = this.props;
     // For some reason, SVGs with an odd height don't render correctly on Android;
     // if that's the case, we add 1 to resolve the issue.
-    const { width, height } = Dimensions.get("window")
-    const svgWidth = width * 0.8;
-    const svgHeight = height * 0.3;
-    const isSvgHeightPair = Math.floor(svgHeight) % 2 === 0;
-    const adaptedSvgHeight = isSvgHeightPair ? svgHeight : svgHeight + 1;
-    const imageStyle = { width: svgWidth, height: adaptedSvgHeight, marginBottom: 30 };
-
+    const { width } = Dimensions.get("window");
+    const svgSize = width * 0.8;
+    const imageStyle = { width: svgSize, height: svgSize, maxHeight: "60%", maxWidth: "80%", marginBottom: 30 };
     const onboardingTexts = I18n.t("user.onboardingScreen.onboarding");
     const onboardingImages = [
-      <OnboardingOne style={imageStyle}/>,
-      <OnboardingTwo style={imageStyle}/>,
-      <OnboardingThree style={imageStyle}/>,
-      <OnboardingFour style={imageStyle}/>
+      <OnboardingOne style={imageStyle} />,
+      <OnboardingTwo style={imageStyle} />,
+      <OnboardingThree style={imageStyle} />,
+      <OnboardingFour style={imageStyle} />,
     ];
 
     return (
@@ -58,8 +53,7 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
           flex: 1,
           backgroundColor: theme.color.background.page,
           paddingVertical: 20,
-        }}
-      >
+        }}>
         <View style={{ flex: 4 }}>
           <H1
             style={{
@@ -68,8 +62,7 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
               fontSize: 24,
               height: 80,
               lineHeight: undefined,
-            }}
-          >
+            }}>
             {I18n.t("user.onboardingScreen.appName").toUpperCase()}
           </H1>
           <Swiper
@@ -88,30 +81,39 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
               height: 16,
               borderRadius: 8,
               backgroundColor: theme.color.secondary.regular,
-            }}
-          >
-            {(onboardingTexts as unknown as string[]).map((onboardingText, index) => (
-                <View style={{ justifyContent: "space-around", alignItems: "center", alignSelf: "center", height: "85%", width: "80%" }}>
-                  {onboardingImages[index]}
-                  <TextSemiBold style={{ textAlign: "center", height: "20%", fontSize: 18 }}>
-                    {onboardingTexts[index]}
-                  </TextSemiBold>
-                </View>
-              )
-            )}
+            }}>
+            {((onboardingTexts as unknown) as string[]).map((onboardingText, index) => (
+              <View
+                style={{
+                  justifyContent: "space-around",
+                  alignItems: "center",
+                  alignSelf: "center",
+                  height: "85%",
+                  width: "80%",
+                }}>
+                {onboardingImages[index]}
+                <TextSemiBold style={{ textAlign: "center", height: "20%", fontSize: 18 }}>
+                  {onboardingTexts[index]}
+                </TextSemiBold>
+              </View>
+            ))}
           </Swiper>
         </View>
         <View style={{ flex: 1, justifyContent: "center" }}>
           <View style={{ height: 90, justifyContent: "space-between" }}>
             <FlatButton
               title={I18n.t("user.onboardingScreen.joinMyNetwork")}
-              customButtonStyle={{ backgroundColor: theme.color.secondary.regular, width: 230, alignItems: "center" }}
+              customButtonStyle={{
+                backgroundColor: theme.color.secondary.regular,
+                width: 230,
+                alignItems: "center",
+              }}
               onPress={() => {
                 const hasMultiplePlatforms = Conf.platforms && Object.keys(Conf.platforms).length > 1;
                 if (!hasMultiplePlatforms) {
                   dispatch(selectPlatform(Object.keys(Conf.platforms)[0]));
                 }
-                navigation.navigate(hasMultiplePlatforms ? "PlatformSelect" : "LoginHome")
+                navigation.navigate(hasMultiplePlatforms ? "PlatformSelect" : "LoginHome");
               }}
             />
             <FlatButton

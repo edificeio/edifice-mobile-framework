@@ -14,6 +14,7 @@ export type ISessionListBackend = {
   date: string;
   description: string;
   end_time: string;
+  exceptional_label: string;
   homeworks: IHomeworkListBackend;
   id: number;
   is_empty: boolean;
@@ -43,6 +44,7 @@ const sessionListAdapter: (data: ISessionListBackend) => ISessionList = data => 
     date: moment(item.date),
     subject_id: item.subject_id,
     subject: item.subject,
+    exceptional_label: item.exceptional_label,
     start_time: item.start_time,
     teacher_id: item.teacher_id,
     description: item.description,
