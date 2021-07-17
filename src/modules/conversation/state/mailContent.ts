@@ -16,14 +16,19 @@ export interface IMail {
   cc: [];
   bcc: [];
   displayNames: [];
-  hasAttachment: boolean;
   attachments: [];
   subject: string;
   body: string;
-  response: boolean;
   systemFolder: string;
   parent_id: string;
   thread_id: string;
+  fromName: string;
+  toName: string;
+  ccName: string;
+  language: string;
+  text_searchable: string;
+  cci: [];
+  cciName: string
 }
 
 export type IMailContent = IMail[];
