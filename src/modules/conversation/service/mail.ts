@@ -22,9 +22,10 @@ export const mailService = {
     });
   },
   deleteMails: async (mailIds: string[]) => {
-    const idsString = mailIds.reduce((s, id) => s + "id=" + id + "&", "");
-    await fetchJSONWithCache(`/zimbra/delete?${idsString}`, {
-      method: "delete",
+    const mailIdsData = {id: mailIds};
+    await fetchJSONWithCache(`/conversation/delete`, {
+      method: "put",
+      body: JSON.stringify(mailIdsData)
     });
   },
   moveMailsToFolder: async (mailIds: string[], folderId: string) => {
