@@ -9,9 +9,10 @@ export const mailService = {
     });
   },
   trashMails: async (mailIds: string[]) => {
-    const idsString = mailIds.reduce((s, id) => s + "id=" + id + "&", "");
-    await fetchJSONWithCache(`/zimbra/trash?${idsString}`, {
+    const mailIdsData = {id: mailIds};
+    await fetchJSONWithCache(`/conversation/trash`, {
       method: "put",
+      body: JSON.stringify(mailIdsData)
     });
   },
   restoreMails: async (mailIds: string[]) => {
