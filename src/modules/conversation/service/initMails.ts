@@ -21,7 +21,12 @@ const initMailListAdapter: (rootFoldersList: IInitMailListBackend) => IInitMail 
     path: "",
     unread: 0,
     count: 0,
-    folders: []
+    folders: [],
+    // Extra data
+    parent_id: rootFolder.parent_id,
+    user_id: rootFolder.user_id,
+    depth: rootFolder.depth,
+    trashed: rootFolder.trashed,
   }));
 
   result = {
