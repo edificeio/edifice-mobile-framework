@@ -80,12 +80,14 @@ class MailContentContainer extends React.PureComponent<any, any> {
     });
   };
 
-  markAsRead = () => {
-    this.props.toggleRead([this.props.mail.id], false);
-    this.showMenu();
+  markAsRead = async () => {
+    await this.props.toggleRead([this.props.mail.id], false);
+    this.goBack();
   }
 
-  move = () => this.props.moveToInbox([this.props.mail.id]);
+  move = () => {
+    this.props.moveToInbox([this.props.mail.id]);
+  }
 
   delete = async () => {
     const { navigation } = this.props;
