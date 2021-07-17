@@ -31,7 +31,7 @@ export const foldersService = {
       name,
     } as any;
     if (parentId) body.parentId = parentId;
-    await fetchJSONWithCache(`/zimbra/folder`, {
+    await fetchJSONWithCache(`/conversation/folder`, {
       method: "post",
       body: JSON.stringify(body),
     });
