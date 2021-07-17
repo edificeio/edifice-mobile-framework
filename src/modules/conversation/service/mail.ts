@@ -2,9 +2,10 @@ import { fetchJSONWithCache } from "../../../infra/fetchWithCache";
 
 export const mailService = {
   toggleRead: async (mailIds: string[], read: boolean) => {
-    const idsString = mailIds.reduce((s, id) => s + "id=" + id + "&", "");
-    await fetchJSONWithCache(`/zimbra/toggleUnread?${idsString}unread=${(!read).toString()}`, {
+    const mailIdsData = {id: mailIds, unread: !read};
+    await fetchJSONWithCache(`/conversation/toggleUnread`, {
       method: "post",
+      body: JSON.stringify(mailIdsData)
     });
   },
   trashMails: async (mailIds: string[]) => {
