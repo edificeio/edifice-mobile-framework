@@ -96,7 +96,7 @@ export default class MailContent extends React.PureComponent<any, any> {
                 <GetTopBarColor senderId={this.props.mail.from} receiverId={this.props.mail.to[0]} />
               )}
               {this.props.mail.id && this.mailHeader()}
-              {this.props.mail.hasAttachment && (
+              {this.props.mail.attachments && this.props.mail.attachments.length > 0 && (
                 <RenderPJs attachments={this.props.mail.attachments} mailId={this.props.mail.id} />
               )}
               {this.props.mail.body !== undefined && this.mailContent()}

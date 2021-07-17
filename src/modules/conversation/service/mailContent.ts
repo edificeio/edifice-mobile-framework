@@ -9,20 +9,22 @@ export type IMailContentBackend = {
   id: string;
   date: string;
   state: string;
-  unread: boolean;
   from: string;
   to: [];
   cc: [];
-  bcc: [];
   displayNames: [];
-  hasAttachment: boolean;
   attachments: [];
   subject: string;
   body: string;
-  response: boolean;
-  systemFolder: string;
   parent_id: string;
   thread_id: string;
+  fromName: string;
+  toName: string;
+  ccName: string;
+  language: string;
+  text_searchable: string;
+  cci: [];
+  cciName: string;
 };
 
 const mailContentAdapter: (data: IMailContentBackend) => IMail = data => {
@@ -32,20 +34,26 @@ const mailContentAdapter: (data: IMailContentBackend) => IMail = data => {
     id: data.id,
     date: moment(data.date),
     state: data.state,
-    unread: data.unread,
+    unread: false,
     from: data.from,
     to: data.to,
     cc: data.cc,
-    bcc: data.bcc,
+    bcc: [],
     displayNames: data.displayNames,
-    hasAttachment: data.hasAttachment,
     attachments: data.attachments,
     subject: data.subject,
     body: data.body,
-    response: data.response,
-    systemFolder: data.systemFolder,
+    systemFolder: "",
     parent_id: data.parent_id,
     thread_id: data.thread_id,
+    // Extra data
+    fromName: data.fromName,
+    toName: data.toName,
+    ccName: data.ccName,
+    language: data.language,
+    text_searchable: data.text_searchable,
+    cci: data.cci,
+    cciName: data.cciName
   };
   return result;
 };
@@ -69,7 +77,7 @@ const userInfosAdapter: (data: IUserInfosBackend) => IUserInfosBackend = data =>
 
 export const mailContentService = {
   get: async mailId => {
-    const data = mailContentAdapter(await fetchJSONWithCache(`/zimbra/message/${mailId}`));
+    const data = mailContentAdapter(await fetchJSONWithCache(`/conversation/message/${mailId}`));
     return data;
   },
   getUserInfos: async userId => {
