@@ -142,7 +142,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
         <View style={style.drawerBottom}>
           <TouchableOpacity
             onPress={this.onFolderCreationModalShow}
-            style={[style.labelContainer, { marginBottom: 2 }]}>
+            style={[style.labelContainer]}>
             <Icon size={22} name="create_new_folder" />
             <Text style={[style.labelText, { justifyContent: "center", marginBottom: 2 }]}>
               {I18n.t("zimbra-create-directory")}
@@ -169,15 +169,6 @@ const style = StyleSheet.create({
   },
   container: {
     backgroundColor: "#FFF",
-  },
-  loadBar: {
-    backgroundColor: "lightgrey",
-    width: "100%",
-    height: 20,
-  },
-  loadBarPercent: {
-    backgroundColor: "#444",
-    height: "100%",
   },
   drawerBottom: {
     flexGrow: 1,

@@ -40,6 +40,8 @@ const mailListAdapter: (data: IMailListBackend) => IMailList = data => {
     cc: item.cc,
     displayNames: item.displayNames,
     from: item.from,
+    systemFolder: "",
+    // Extra data
     fromName: item.fromName,
     toName: item.toName,
     ccName: item.ccName,

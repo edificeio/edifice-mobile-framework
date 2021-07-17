@@ -18,6 +18,8 @@ export interface IMail {
   cc: [];
   displayNames: [];
   from: string;
+  systemFolder: string;
+  // Extra data
   fromName: null;
   toName: null;
   ccName: null;

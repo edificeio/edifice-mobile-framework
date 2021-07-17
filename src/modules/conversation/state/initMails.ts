@@ -11,6 +11,11 @@ export type IFolder = {
   unread: number;
   count: number;
   folders: any[];
+  // Extra data
+  parent_id: string;
+  user_id: string;
+  depth: number;
+  trashed: boolean;
 };
 
 export interface IInitMail {
@@ -28,6 +33,10 @@ export const initialState: IInitMail = {
       unread: 0,
       count: 0,
       folders: [],
+      parent_id: "",
+      user_id: "",
+      depth: 0,
+      trashed: false,
     },
   ],
 };
