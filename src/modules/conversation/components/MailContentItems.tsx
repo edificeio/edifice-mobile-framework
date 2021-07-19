@@ -161,7 +161,7 @@ export const RenderPJs = ({ attachments, mailId }) => {
           onPress={() => {
             downloadFile({
               filename: item.filename,
-              url: `/zimbra/message/${mailId}/attachment/${item.id}`,
+              url: `/conversation/message/${mailId}/attachment/${item.id}`,
               size: item.size,
               id: item.id,
               name: item.filename,
