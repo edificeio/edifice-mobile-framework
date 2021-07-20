@@ -104,6 +104,6 @@ export const newMailService = {
     }
   },
   deleteAttachment: async (draftId: string, attachmentId: string) => {
-    return await fetchJSONWithCache(`/zimbra/message/${draftId}/attachment/${attachmentId}`, { method: "DELETE" });
+    return await fetchJSONWithCache(`/conversation/message/${draftId}/attachment/${attachmentId}`, { method: "DELETE" });
   },
 };
