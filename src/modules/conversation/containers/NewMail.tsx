@@ -56,7 +56,6 @@ interface ICreateMailEventProps {
 interface ICreateMailOtherProps {
   isFetching: boolean;
   mail: IMail;
-  uploadProgress: number;
 }
 
 type NewMailContainerProps = ICreateMailEventProps & ICreateMailOtherProps & INavigationProps;
@@ -73,7 +72,7 @@ interface ICreateMailState {
 type newMail = {
   to: ISearchUsers;
   cc: ISearchUsers;
-  bcc: ISearchUsers;
+  cci: ISearchUsers;
   subject: string;
   body: string;
   attachments: any[];
@@ -116,7 +115,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     super(props);
 
     this.state = {
-      mail: { to: [], cc: [], bcc: [], subject: "", body: "", attachments: [] },
+      mail: { to: [], cc: [], cci: [], subject: "", body: "", attachments: [] },
       prevBody: "",
     };
   }
@@ -173,7 +172,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           containerStyle: { width: "95%", backgroundColor: "black" },
         });
         return;
-      } else if (this.props.uploadProgress > 0 && this.props.uploadProgress < 100) {
+      } else if (this.state.tempAttachment && this.state.tempAttachment !== null) {
         Toast.show(I18n.t("zimbra-send-attachment-progress"), {
           position: Toast.position.BOTTOM,
           mask: false,
@@ -209,7 +208,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       this.props.navigation.goBack();
     },
     getGoBack: () => {
-      if (this.props.uploadProgress > 0 && this.props.uploadProgress < 100) {
+      if (this.state.tempAttachment && this.state.tempAttachment !== null) {
         Toast.show(I18n.t("zimbra-send-attachment-progress"), {
           position: Toast.position.BOTTOM,
           mask: false,
@@ -345,7 +344,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           mail: {
             to: this.props.mail.to.map(getUser),
             cc: this.props.mail.cc.map(getUser),
-            cci: this.props.mail.bcc.map(getUser),
+            cci: this.props.mail.cci.map(getUser),
             subject: this.props.mail.subject,
             body: current_body,
             attachments: this.props.mail.attachments,
@@ -357,16 +356,19 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
 
   getMailData = () => {
     let { mail, prevBody } = this.state;
+    // Note: attachments can't be included in the body of the "send" and "draft" calls;
+    // they are sent in a separate call.
+    const { attachments, ...mailWithoutAttachments } = mail;
     const regexp = /(\r\n|\n|\r)/gm;
 
-    mail.body = mail.body.replace(regexp, "<br>");
+    mailWithoutAttachments.body = mailWithoutAttachments.body.replace(regexp, "<br>");
     if (prevBody === undefined) {
       prevBody = "";
     }
 
     return Object.fromEntries(
-      Object.entries(mail).map(([key, value]) => {
-        if (key === "to" || key === "cc" || key === "bcc") return [key, value.map(user => user.id)];
+      Object.entries(mailWithoutAttachments).map(([key, value]) => {
+        if (key === "to" || key === "cc" || key === "cci") return [key, value.map(user => user.id)];
         else if (key === "body") return [key, value + prevBody];
         else return [key, value];
       })
@@ -446,7 +448,6 @@ const mapStateToProps = (state: any) => {
   return {
     mail: data,
     isFetching,
-    uploadProgress: [state.progress.value],
   };
 };
 

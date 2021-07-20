@@ -14,7 +14,7 @@ import { ISearchUsers } from "../service/newMail";
 import Attachment from "./Attachment";
 import SearchUserMail from "./SearchUserMail";
 
-type HeadersProps = { to: ISearchUsers; cc: ISearchUsers; bcc: ISearchUsers; subject: string };
+type HeadersProps = { to: ISearchUsers; cc: ISearchUsers; cci: ISearchUsers; subject: string };
 
 type IAttachment = {
   id?: string;
@@ -161,7 +161,7 @@ const HeaderSubject = ({
 
 const Headers = ({ style, headers, onChange, onSave }) => {
   const [showExtraFields, toggleExtraFields] = React.useState(false);
-  const { to, cc, bcc, subject } = headers;
+  const { to, cc, cci, subject } = headers;
 
   return (
     <View style={[styles.mailPart, style]}>
@@ -187,8 +187,8 @@ const Headers = ({ style, headers, onChange, onSave }) => {
           <HeaderUsers
             style={{ zIndex: 2 }}
             title={I18n.t("zimbra-bcc")}
-            value={bcc}
-            onChange={bcc => onChange({ ...headers, bcc })}
+            value={cci}
+            onChange={cci => onChange({ ...headers, cci })}
             onSave={() => onSave()}
           />
         </>

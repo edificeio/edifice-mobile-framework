@@ -14,7 +14,7 @@ export interface IMail {
   from: string;
   to: [];
   cc: [];
-  bcc: [];
+  cci: [];
   displayNames: [];
   attachments: [];
   subject: string;
@@ -27,7 +27,6 @@ export interface IMail {
   ccName: string;
   language: string;
   text_searchable: string;
-  cci: [];
   cciName: string
 }
 
