@@ -1,7 +1,6 @@
 import { Dispatch } from "redux";
 
 import { Trackers } from "../../../infra/tracker";
-import { progressAction, progressEndAction, progressInitAction } from "../../../infra/actions/progress";
 import { newMailService } from "../service/newMail";
 
 export function sendMailAction(mailDatas, draftId: string, InReplyTo: string) {
@@ -30,7 +29,7 @@ export function makeDraftMailAction(mailDatas, inReplyTo: string, isForward: boo
     Trackers.trackEvent("Zimbra", "CREATED");
     if (inReplyTo) Trackers.trackEvent("Zimbra", "REPLY TO MESSAGE");
     if (isForward) Trackers.trackEvent("Zimbra", "TRANSFER MESSAGE");
-    return await newMailService.makeDraftMail(mailDatas, inReplyTo, isForward);
+    return await newMailService.makeDraftMail(mailDatas, inReplyTo);
   };
 }
 
@@ -43,14 +42,10 @@ export function updateDraftMailAction(mailId: string, mailDatas) {
 export function addAttachmentAction(mailId: string, attachment: any) {
   return async (dispatch: Dispatch) => {
     try {
-      dispatch(progressInitAction());
-      const handleProgress = progress => dispatch(progressAction(progress));
-      const newAttachments = await newMailService.addAttachment(mailId, attachment, handleProgress);
-      dispatch(progressEndAction());
-      return newAttachments;
+      const newAttachment = await newMailService.addAttachment(mailId, attachment);
+      return newAttachment;
     } catch (errmsg) {
       console.log("ERROR uploading attachment", errmsg);
-      dispatch(progressEndAction());
       throw errmsg;
     }
   };

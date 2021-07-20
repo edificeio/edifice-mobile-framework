@@ -38,7 +38,7 @@ const mailContentAdapter: (data: IMailContentBackend) => IMail = data => {
     from: data.from,
     to: data.to,
     cc: data.cc,
-    bcc: [],
+    cci: data.cci,
     displayNames: data.displayNames,
     attachments: data.attachments,
     subject: data.subject,
@@ -52,7 +52,6 @@ const mailContentAdapter: (data: IMailContentBackend) => IMail = data => {
     ccName: data.ccName,
     language: data.language,
     text_searchable: data.text_searchable,
-    cci: data.cci,
     cciName: data.cciName
   };
   return result;

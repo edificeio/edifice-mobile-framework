@@ -1,8 +1,7 @@
-import RNFB from "rn-fetch-blob";
+import { Platform } from "react-native";
 
 import Conf from "../../../../ode-framework-conf";
-import { fetchJSONWithCache } from "../../../infra/fetchWithCache";
-import { getAuthHeader } from "../../../infra/oauth";
+import { fetchJSONWithCache, signedFetch } from "../../../infra/fetchWithCache";
 
 export type IUser = {
   id: string;
@@ -40,7 +39,7 @@ export const newMailService = {
       .map(([key, value]) => `${key}=${value}`)
       .join("&");
 
-    await fetchJSONWithCache(`/zimbra/send${paramsUrl?.length > 0 ? "?" + paramsUrl : ""}`, {
+      await fetchJSONWithCache(`/conversation/send${paramsUrl?.length > 0 ? "?" + paramsUrl : ""}`, {
       method: "POST",
       body: JSON.stringify(mailDatas),
     });
@@ -50,10 +49,9 @@ export const newMailService = {
       method: "PUT",
     });
   },
-  makeDraftMail: async (mailDatas, inReplyTo, isForward) => {
+  makeDraftMail: async (mailDatas, inReplyTo) => {
     const params = {
-      "In-Reply-To": inReplyTo,
-      reply: isForward ? "F" : null,
+      "In-Reply-To": inReplyTo
     };
 
     const paramsUrl = Object.entries(params)
@@ -61,38 +59,49 @@ export const newMailService = {
       .map(([key, value]) => `${key}=${value}`)
       .join("&");
 
-    const response = await fetchJSONWithCache(`/zimbra/draft${paramsUrl?.length > 0 ? "?" + paramsUrl : ""}`, {
+      const response = await fetchJSONWithCache(`/conversation/draft${paramsUrl?.length > 0 ? "?" + paramsUrl : ""}`, {
       method: "POST",
       body: JSON.stringify(mailDatas),
     });
     return response.id;
   },
   updateDraftMail: async (mailId, mailDatas) => {
-    await fetchJSONWithCache(`/zimbra/draft/${mailId}`, { method: "PUT", body: JSON.stringify(mailDatas) });
+    await fetchJSONWithCache(`/conversation/draft/${mailId}`, { method: "PUT", body: JSON.stringify(mailDatas) });
   },
-  addAttachment: async (draftId: string, file: any, handleProgession) => {
-    const url = `${Conf.currentPlatform.url}/zimbra/message/${draftId}/attachment`;
-    const fileObject = RNFB.wrap(file.uri);
+  addAttachment: async (draftId: string, file: any) => {
+    const formData = new FormData();
+    formData.append("file", {
+      uri: ((Platform.OS === "android") ? "file://" : "") + file.uri,
+      type: file.mime,
+      name: file.name
+    });
 
-    return RNFB.fetch(
-      "POST",
-      url,
+    const response = await signedFetch(
+      `${(Conf.currentPlatform as any).url}/conversation/message/${draftId}/attachment`,
       {
-        ...getAuthHeader(),
-        "Content-Disposition": `attachment; filename="${encodeURIComponent(file.name)}"`,
-      },
-      fileObject
-    )
-      .uploadProgress({ interval: 100 }, (written, total) => handleProgession((written / total) * 100))
-      .then(response => {
-        if (response && response.respInfo.status >= 200 && response.respInfo.status < 300) {
-          console.log("Attachment upload successful", response.data);
-          return Promise.resolve(JSON.parse(response.data).attachments);
-        } else {
-          console.log("Attachment upload failed", response.data);
-          return Promise.reject(response.data);
-        }
-      });
+        body: formData,
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "multipart/form-data"
+        },
+        method: "POST"
+      }
+    );
+    const parsedResponse = await response.json();
+    const sentAttachmentId = parsedResponse.id;
+    const sentAttachment = {
+      id: sentAttachmentId,
+      filename: file.name,
+      contentType: file.mime,
+    };
+
+    if (response && response.status >= 200 && response.status < 300) {
+      console.log("Attachment upload successful", sentAttachment);
+      return Promise.resolve([sentAttachment]);
+    } else {
+      console.log("Attachment upload failed", response);
+      return Promise.reject(response);
+    }
   },
   deleteAttachment: async (draftId: string, attachmentId: string) => {
     return await fetchJSONWithCache(`/zimbra/message/${draftId}/attachment/${attachmentId}`, { method: "DELETE" });
