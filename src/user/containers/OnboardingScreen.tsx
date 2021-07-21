@@ -38,7 +38,7 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
     // if that's the case, we add 1 to resolve the issue.
     const { width } = Dimensions.get("window");
     const svgSize = width * 0.8;
-    const imageStyle = { width: svgSize, height: svgSize, maxHeight: "60%", maxWidth: "80%", marginBottom: 30 };
+    const imageStyle = { width: svgSize, height: svgSize, maxHeight: "60%", maxWidth: "80%", marginTop: 4, marginBottom: 30 };
     const onboardingTexts = I18n.t("user.onboardingScreen.onboarding");
     const onboardingImages = [
       <OnboardingOne style={imageStyle} />,
@@ -92,7 +92,7 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
                   width: "80%",
                 }}>
                 {onboardingImages[index]}
-                <TextSemiBold style={{ textAlign: "center", height: "20%", fontSize: 18 }}>
+                <TextSemiBold style={{ textAlign: "center", fontSize: 18 }}>
                   {onboardingTexts[index]}
                 </TextSemiBold>
               </View>
