@@ -6,7 +6,7 @@ import { View, StyleSheet } from "react-native";
 
 import { downloadFile } from "../../../infra/actions/downloadHelper";
 import { Icon } from "../../../ui";
-import { BadgeAvatar } from "../../../ui/BadgeAvatar";
+import { GridAvatars } from "../../../ui/avatars/GridAvatars";
 import { ButtonIcon } from "../../../ui/ButtonIconText";
 import { Header, CenterPanel, LeftPanel } from "../../../ui/ContainerContent";
 import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
@@ -74,18 +74,17 @@ export const HeaderMail = ({ mailInfos }) => {
     <View style={styles.containerMail}>
       <Header>
         <LeftPanel style={{ justifyContent: "flex-start" }}>
-          <BadgeAvatar
-            avatars={
+          <GridAvatars
+            users={
               inOutboxOrDraft
                 ? findReceiversAvatars(mailInfos.to, mailInfos.from, mailInfos.cc, mailInfos.displayNames)
                 : findSenderAvatar(mailInfos.from, mailInfos.displayNames)
             }
-            badgeContent={mailInfos.unread}
           />
         </LeftPanel>
 
         <CenterPanel style={{ marginRight: 0, paddingRight: 0 }}>
-          <Author nb={mailInfos.unread} numberOfLines={1}>
+          <Author numberOfLines={1}>
             {inOutboxOrDraft
               ? findReceivers2(mailInfos.to, mailInfos.from, mailInfos.cc)
                   .map(r => {
