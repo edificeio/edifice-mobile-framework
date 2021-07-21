@@ -141,7 +141,7 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
             <HeaderAction
               iconName={Platform.OS === "ios" ? "chevron-left1" : "back"}
               iconSize={24}
-              onPress={() => navigation.navigate("blog/select")}
+              onPress={() => navigation.goBack()}
             />
           </HeaderLeft>
           <HeaderCenter>
