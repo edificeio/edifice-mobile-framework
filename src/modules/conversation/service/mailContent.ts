@@ -12,6 +12,7 @@ export type IMailContentBackend = {
   from: string;
   to: [];
   cc: [];
+  cci: [];
   displayNames: [];
   attachments: [];
   subject: string;
@@ -23,7 +24,6 @@ export type IMailContentBackend = {
   ccName: string;
   language: string;
   text_searchable: string;
-  cci: [];
   cciName: string;
 };
 
@@ -34,7 +34,6 @@ const mailContentAdapter: (data: IMailContentBackend) => IMail = data => {
     id: data.id,
     date: moment(data.date),
     state: data.state,
-    unread: false,
     from: data.from,
     to: data.to,
     cc: data.cc,

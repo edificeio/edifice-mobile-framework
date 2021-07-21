@@ -10,7 +10,6 @@ export interface IMail {
   id: string;
   date: moment.Moment;
   state: string;
-  unread: boolean;
   from: string;
   to: [];
   cc: [];
