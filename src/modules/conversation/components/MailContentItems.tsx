@@ -33,19 +33,19 @@ const SendersDetails = ({ receivers, cc, displayNames, inInbox, sender }) => {
     <View>
       {inInbox || (
         <View style={{ flexDirection: "row" }}>
-          <Text style={styles.greyColor}>{I18n.t("zimbra-from-prefix")}</Text>
+          <Text style={styles.greyColor}>{I18n.t("conversation.fromPrefix")}</Text>
           <User userId={sender} userName={displayNames.find(item => item[0] === sender)[1]} />
         </View>
       )}
       <View style={{ flexDirection: "row" }}>
-        <Text style={styles.greyColor}>{I18n.t("zimbra-to-prefix")}</Text>
+        <Text style={styles.greyColor}>{I18n.t("conversation.toPrefix")}</Text>
         {receivers.map(receiver => (
           <User userId={receiver} userName={displayNames.find(item => item[0] === receiver)[1]} />
         ))}
       </View>
       {cc && (
         <View style={{ flexDirection: "row" }}>
-          <Text style={styles.greyColor}>{I18n.t("zimbra-receiversCC")}</Text>
+          <Text style={styles.greyColor}>{I18n.t("conversation.receiversCC")}</Text>
           {cc.map(person => (
             <User userId={person} userName={displayNames.find(item => item[0] === person)[1]} />
           ))}
@@ -96,7 +96,7 @@ export const HeaderMail = ({ mailInfos }) => {
           </Author>
           <IconButton
             onPress={() => toggleVisible(!isVisible)}
-            text={I18n.t("zimbra-see_detail")}
+            text={I18n.t("conversation.seeDetail")}
             color="#2A9CC8"
             icon={isVisible ? "keyboard_arrow_up" : "keyboard_arrow_down"}
           />
@@ -120,7 +120,7 @@ export const HeaderMail = ({ mailInfos }) => {
 
       {mailInfos.subject && mailInfos.subject.length ? (
         <View style={{ flexDirection: "row" }}>
-          <Text style={styles.greyColor}>{I18n.t("zimbra-subject")} : </Text>
+          <Text style={styles.greyColor}>{I18n.t("conversation.subject")} : </Text>
           <TextBold> {mailInfos.subject}</TextBold>
         </View>
       ) : (

@@ -45,16 +45,16 @@ export default class DrawerNavigatorWrapper extends React.Component<any, any> {
     if (params !== undefined && params.folderName !== undefined) return params.folderName;
     switch (key) {
       case "sendMessages":
-        return I18n.t("zimbra-outbox");
+        return I18n.t("conversation.outbox");
       case "drafts":
-        return I18n.t("zimbra-drafts");
+        return I18n.t("conversation.drafts");
       case "trash":
-        return I18n.t("zimbra-trash");
+        return I18n.t("conversation.trash");
       case "spams":
-        return I18n.t("zimbra-spams");
+        return I18n.t("conversation.spams");
       default:
       case "inbox":
-        return I18n.t("zimbra-inbox");
+        return I18n.t("conversation.inbox");
     }
   };
 
