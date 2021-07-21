@@ -31,7 +31,7 @@ class CreateFolderModal extends React.PureComponent<any, any> {
     await this.props.createFolder(this.state.name);
     this.props.fetchInit();
     this.props.onClose();
-    Toast.show(I18n.t("zimbra-create-directory-confirm"), {
+    Toast.show(I18n.t("conversation.createDirectoryConfirm"), {
       position: Toast.position.BOTTOM,
       mask: false,
       containerStyle: { width: "95%", backgroundColor: "black" },
@@ -49,21 +49,21 @@ class CreateFolderModal extends React.PureComponent<any, any> {
         <ModalBox isVisible={show} backdropOpacity={0.5}>
           <ModalContent style={{ width: 350 }}>
             <ModalContentBlock>
-              <TextBold>{I18n.t("zimbra-create-directory")}</TextBold>
+              <TextBold>{I18n.t("conversation.createDirectory")}</TextBold>
             </ModalContentBlock>
 
             <View style={{ width: "100%", marginBottom: 35, paddingHorizontal: 20 }}>
               <TextInput
                   value={name}
                   onChangeText={this.onNameChange}
-                  placeholder={I18n.t("zimbra-directory-name")}
+                  placeholder={I18n.t("conversation.directoryName")}
                   underlineColorAndroid="grey"
                   style={textInputStyle}
               />
             </View>
             <ModalContentBlock style={{ flexDirection: "row" }}>
               <DialogButtonCancel onPress={this.props.onClose} />
-              <DialogButtonOk disabled={!this.state.name} label={I18n.t("zimbra-create")} onPress={this.onConfirm} />
+              <DialogButtonOk disabled={!this.state.name} label={I18n.t("conversation.create")} onPress={this.onConfirm} />
             </ModalContentBlock>
           </ModalContent>
         </ModalBox>

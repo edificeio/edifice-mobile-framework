@@ -110,7 +110,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     let contact = ["", ""];
     if (mailInfos.systemFolder === "INBOX") contact = mailInfos.displayNames.find(item => item[0] === mailInfos.from);
     else contact = mailInfos.displayNames.find(item => item[0] === mailInfos.to[0]);
-    if (contact === undefined) contact = ["", I18n.t("zimbra-unknown")];
+    if (contact === undefined) contact = ["", I18n.t("conversation.unknown")];
     return (
       <TouchableOpacity
         onPress={() => {
@@ -214,7 +214,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
                   imageSrc={require("../../../../assets/images/empty-screen/empty-mailBox.png")}
                   imgWidth={265.98}
                   imgHeight={279.97}
-                  title={I18n.t("zimbra-empty-mailbox")}
+                  title={I18n.t("conversation.emptyMailbox")}
                 />
               </View>
             )

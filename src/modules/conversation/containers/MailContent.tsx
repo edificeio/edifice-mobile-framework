@@ -73,7 +73,7 @@ class MailContentContainer extends React.PureComponent<any, any> {
     const { navigation } = this.props;
     navigation.state.params.onGoBack();
     navigation.navigate("inbox", { key: "inbox", folderName: undefined });
-    Toast.show(I18n.t("zimbra-message-moved"), {
+    Toast.show(I18n.t("conversation.messageMoved"), {
       position: Toast.position.BOTTOM,
       mask: false,
       containerStyle: { width: "95%", backgroundColor: "black" },
@@ -95,7 +95,7 @@ class MailContentContainer extends React.PureComponent<any, any> {
     if (isTrashed) await this.props.deleteMails([this.props.mail.id]);
     else await this.props.trashMails([this.props.mail.id]);
     this.goBack();
-    Toast.show(I18n.t("zimbra-message-deleted"), {
+    Toast.show(I18n.t("conversation.messageDeleted"), {
       position: Toast.position.BOTTOM,
       mask: false,
       containerStyle: { width: "95%", backgroundColor: "black" },
@@ -112,10 +112,10 @@ class MailContentContainer extends React.PureComponent<any, any> {
     const { navigation, mail } = this.props;
     const { showMenu, showModal } = this.state;
     const menuData = [
-      { text: I18n.t("zimbra-mark-unread"), icon: "email", onPress: this.markAsRead },
-      { text: I18n.t("zimbra-move"), icon: "unarchive", onPress: this.showModal },
-      // { text: I18n.t("zimbra-download-all"), icon: "download", onPress: () => {} },
-      { text: I18n.t("zimbra-delete"), icon: "delete", onPress: this.delete },
+      { text: I18n.t("conversation.markUnread"), icon: "email", onPress: this.markAsRead },
+      { text: I18n.t("conversation.move"), icon: "unarchive", onPress: this.showModal },
+      // { text: I18n.t("conversation.downloadAll"), icon: "download", onPress: () => {} },
+      { text: I18n.t("conversation.delete"), icon: "delete", onPress: this.delete },
     ];
     return (
       <>

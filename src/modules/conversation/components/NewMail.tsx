@@ -170,7 +170,7 @@ const Headers = ({ style, headers, onChange, onSave }) => {
         value={to}
         onChange={to => onChange({ ...headers, to })}
         onSave={() => onSave()}
-        title={I18n.t("zimbra-to")}>
+        title={I18n.t("conversation.to")}>
         <TouchableOpacity onPress={() => toggleExtraFields(!showExtraFields)}>
           <Icon name={showExtraFields ? "keyboard_arrow_up" : "keyboard_arrow_down"} size={28} />
         </TouchableOpacity>
@@ -179,14 +179,14 @@ const Headers = ({ style, headers, onChange, onSave }) => {
         <>
           <HeaderUsers
             style={{ zIndex: 3 }}
-            title={I18n.t("zimbra-cc")}
+            title={I18n.t("conversation.cc")}
             value={cc}
             onChange={cc => onChange({ ...headers, cc })}
             onSave={() => onSave()}
           />
           <HeaderUsers
             style={{ zIndex: 2 }}
-            title={I18n.t("zimbra-bcc")}
+            title={I18n.t("conversation.bcc")}
             value={cci}
             onChange={cci => onChange({ ...headers, cci })}
             onSave={() => onSave()}
@@ -194,7 +194,7 @@ const Headers = ({ style, headers, onChange, onSave }) => {
         </>
       )}
       <HeaderSubject
-        title={I18n.t("zimbra-subject")}
+        title={I18n.t("conversation.subject")}
         value={subject}
         onChange={subject => onChange({ ...headers, subject })}
         onSave={() => onSave()}
@@ -243,7 +243,7 @@ const Body = ({ style, value, onChange, onSave }) => {
   return (
     <View style={[styles.mailPart, style, { flexGrow: 1 }]}>
       <TextInput
-        placeholder={I18n.t("zimbra-type-message")}
+        placeholder={I18n.t("conversation.typeMessage")}
         textAlignVertical="top"
         multiline
         scrollEnabled={false}

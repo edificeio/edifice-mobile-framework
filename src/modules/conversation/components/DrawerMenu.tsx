@@ -94,33 +94,33 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
         <DrawerOption
           selected={this.isCurrentScreen("inbox")}
           iconName="inbox"
-          label={I18n.t("zimbra-inbox")}
+          label={I18n.t("conversation.inbox")}
           navigate={() => navigation.navigate("inbox", { key: "inbox", folderName: undefined })}
           count={this.findFolder("Inbox").unread}
         />
         <DrawerOption
           selected={this.isCurrentScreen("sendMessages")}
           iconName="send"
-          label={I18n.t("zimbra-outbox")}
+          label={I18n.t("conversation.outbox")}
           navigate={() => navigation.navigate("sendMessages", { key: "sendMessages", folderName: undefined })}
         />
         <DrawerOption
           selected={this.isCurrentScreen("drafts")}
           iconName="insert_drive_file"
-          label={I18n.t("zimbra-drafts")}
+          label={I18n.t("conversation.drafts")}
           navigate={() => navigation.navigate("drafts", { key: "drafts", folderName: undefined })}
           count={this.findFolder("Drafts").count}
         />
         <DrawerOption
           selected={this.isCurrentScreen("trash")}
           iconName="delete"
-          label={I18n.t("zimbra-trash")}
+          label={I18n.t("conversation.trash")}
           navigate={() => navigation.navigate("trash", { key: "trash", folderName: undefined })}
         />
         <DrawerOption
           selected={this.isCurrentScreen("spams")}
           iconName="delete_sweep"
-          label={I18n.t("zimbra-spams")}
+          label={I18n.t("conversation.spams")}
           navigate={() => navigation.navigate("spams", { key: "spams", folderName: undefined })}
           count={this.findFolder("Junk").unread}
         />
@@ -132,11 +132,11 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
     return (
       <PageContainer style={style.container}>
         <View style={style.labelContainer}>
-          <Text style={style.labelText}>{I18n.t("zimbra-messages")}</Text>
+          <Text style={style.labelText}>{I18n.t("conversation.messages")}</Text>
         </View>
         {this.renderDrawerMessages()}
         <View style={style.labelContainer}>
-          <Text style={style.labelText}>{I18n.t("zimbra-directories")}</Text>
+          <Text style={style.labelText}>{I18n.t("conversation.directories")}</Text>
         </View>
         {this.renderDrawerFolders()}
         <View style={style.drawerBottom}>
@@ -145,7 +145,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
             style={[style.labelContainer]}>
             <Icon size={22} name="create_new_folder" />
             <Text style={[style.labelText, { justifyContent: "center", marginBottom: 2 }]}>
-              {I18n.t("zimbra-create-directory")}
+              {I18n.t("conversation.createDirectory")}
             </Text>
           </TouchableOpacity>
         </View>

@@ -166,14 +166,14 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     },
     getSendDraft: async () => {
       if (this.state.mail.to.length === 0) {
-        Toast.show(I18n.t("zimbra-missing-receiver"), {
+        Toast.show(I18n.t("conversation.missingReceiver"), {
           position: Toast.position.BOTTOM,
           mask: false,
           containerStyle: { width: "95%", backgroundColor: "black" },
         });
         return;
       } else if (this.state.tempAttachment && this.state.tempAttachment !== null) {
-        Toast.show(I18n.t("zimbra-send-attachment-progress"), {
+        Toast.show(I18n.t("conversation.sendAttachmentProgress"), {
           position: Toast.position.BOTTOM,
           mask: false,
           containerStyle: { width: "95%", backgroundColor: "black" },
@@ -186,7 +186,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         if (mail.attachments && mail.attachments.length !== 0) Trackers.trackEvent("Zimbra", "SEND ATTACHMENTS");
         this.props.sendMail(this.getMailData(), this.state.id, this.state.replyTo);
 
-        Toast.show(I18n.t("zimbra-send-mail"), {
+        Toast.show(I18n.t("conversation.sendMail"), {
           position: Toast.position.BOTTOM,
           mask: false,
           containerStyle: { width: "95%", backgroundColor: "black" },
@@ -209,7 +209,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     },
     getGoBack: () => {
       if (this.state.tempAttachment && this.state.tempAttachment !== null) {
-        Toast.show(I18n.t("zimbra-send-attachment-progress"), {
+        Toast.show(I18n.t("conversation.sendAttachmentProgress"), {
           position: Toast.position.BOTTOM,
           mask: false,
           containerStyle: { width: "95%", backgroundColor: "black" },
@@ -299,7 +299,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           prevBody: getPrevBody(),
           mail: {
             to: [this.props.mail.from].map(getUser),
-            subject: I18n.t("zimbra-reply-subject") + this.props.mail.subject,
+            subject: I18n.t("conversation.replySubject") + this.props.mail.subject,
           },
         };
       }
@@ -312,7 +312,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
               .filter((user, index, array) => array.indexOf(user) === index)
               .map(getUser),
             cc: this.props.mail.cc.filter(id => id !== this.props.mail.from).map(getUser),
-            subject: I18n.t("zimbra-reply-subject") + this.props.mail.subject,
+            subject: I18n.t("conversation.replySubject") + this.props.mail.subject,
           },
         };
       }
@@ -321,7 +321,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           replyTo: this.props.mail.id,
           prevBody: getPrevBody(),
           mail: {
-            subject: I18n.t("zimbra-forward-subject") + this.props.mail.subject,
+            subject: I18n.t("conversation.forwardSubject") + this.props.mail.subject,
             body: "",
             attachments: this.props.mail.attachments,
           },
@@ -389,7 +389,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         tempAttachment: null,
       }));
     } catch (e) {
-      Toast.show(I18n.t("zimbra-attachment-error"), {
+      Toast.show(I18n.t("conversation.attachmentError"), {
         position: Toast.position.BOTTOM,
       });
       this.setState({ tempAttachment: null });
