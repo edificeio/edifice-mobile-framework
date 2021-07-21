@@ -45,7 +45,7 @@ export const newMailService = {
     });
   },
   forwardMail: async (draftId, forwardFrom) => {
-    await fetchJSONWithCache(`/zimbra/message/${draftId}/forward/${forwardFrom}`, {
+    await fetchJSONWithCache(`/conversation/message/${draftId}/forward/${forwardFrom}`, {
       method: "PUT",
     });
   },
