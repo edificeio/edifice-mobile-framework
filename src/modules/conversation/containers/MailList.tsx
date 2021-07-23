@@ -129,7 +129,7 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
 
 // ------------------------------------------------------------------------------------------------
 
-const viewsToTrack = ["inbox", "sendMessages", "drafts", "spams"];
+const viewsToTrack = ["inbox", "sendMessages", "drafts"];
 
 const MailListContainerConnected = connect(mapStateToProps, mapDispatchToProps)(withNavigationFocus(MailListContainer));
 
