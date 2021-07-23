@@ -97,7 +97,7 @@ export const newMailService = {
 
     if (response && response.status >= 200 && response.status < 300) {
       console.log("Attachment upload successful", sentAttachment);
-      return Promise.resolve([sentAttachment]);
+      return Promise.resolve(sentAttachment);
     } else {
       console.log("Attachment upload failed", response);
       return Promise.reject(response);
