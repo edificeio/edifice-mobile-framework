@@ -383,9 +383,9 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     this.setState({ tempAttachment: fileState });
 
     try {
-      const newAttachments = await this.props.addAttachment(this.state.id, file);
+      const newAttachment = await this.props.addAttachment(this.state.id, file);
       this.setState(prevState => ({
-        mail: { ...prevState.mail, attachments: newAttachments },
+        mail: { ...prevState.mail, attachments: [...prevState.mail.attachments, newAttachment] },
         tempAttachment: null,
       }));
     } catch (e) {
