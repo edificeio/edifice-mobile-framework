@@ -376,6 +376,8 @@ PODS:
   - React-jsinspector (0.64.2)
   - react-native-document-picker (5.2.0):
     - React-Core
+  - react-native-flipper (0.96.1):
+    - React-Core
   - react-native-image-picker (4.0.4):
     - React-Core
   - react-native-netinfo (6.0.0):
@@ -494,7 +496,7 @@ PODS:
     - React-Core
   - RNPermissions (3.0.4):
     - React-Core
-  - RNReanimated (2.2.0):
+  - RNReanimated (2.1.0):
     - DoubleConversion
     - FBLazyVector
     - FBReactNativeSpec
@@ -595,6 +597,7 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-document-picker (from `../node_modules/react-native-document-picker`)
+  - react-native-flipper (from `../node_modules/react-native-flipper`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-pdf (from `../node_modules/react-native-pdf`)
@@ -720,6 +723,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   react-native-document-picker:
     :path: "../node_modules/react-native-document-picker"
+  react-native-flipper:
+    :path: "../node_modules/react-native-flipper"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
   react-native-netinfo:
@@ -814,7 +819,7 @@ SPEC CHECKSUMS:
   BNFMatomo: 660cce94ccf919e3fd4b782eaf6bcee0f434f009
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
-  DoubleConversion: cf9b38bf0b2d048436d9a82ad2abe1404f11e7de
+  DoubleConversion: 5805e889d232975c086db112ece9ed034df7a0b2
   FBLazyVector: e686045572151edef46010a6f819ade377dfeb4b
   FBReactNativeSpec: 637a2e5e29fce8045bf4a63e488e9cca54ef0229
   Firebase: 73c3e3b216ec1ecbc54d2ffdd4670c65c749edb1
@@ -829,7 +834,7 @@ SPEC CHECKSUMS:
   Flipper-PeerTalk: 116d8f857dc6ef55c7a5a75ea3ceaafe878aadc9
   Flipper-RSocket: 127954abe8b162fcaf68d2134d34dc2bd7076154
   FlipperKit: 651f50a42eb95c01b3e89a60996dd6aded529eeb
-  glog: 73c2498ac6884b13ede40eda8228cb1eee9d9d62
+  glog: 1f3da668190260b06b429bb211bfbee5cd790c28
   GoogleDataTransport: 04c3e9a480bbcaa2ec3f5d27f1cdeb6a92f20c8d
   GoogleUtilities: 45dbb24a7f351d69d0a601482b39ad6c32e30dab
   hermes-engine: 7d97ba46a1e29bacf3e3c61ecb2804a5ddd02d4f
@@ -856,6 +861,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 80c46bd381fd06e418e0d4f53672dc1d1945c4c3
   React-jsinspector: cc614ec18a9ca96fd275100c16d74d62ee11f0ae
   react-native-document-picker: aa3fd58d5fcc1fdbf6939510b9407d16377f5832
+  react-native-flipper: a5b02e319fab599965d522d79aa34dc865a07d16
   react-native-image-picker: 8d96c42425d3f143af7dd41dbbb4887b2c3ac851
   react-native-netinfo: 34f4d7a42f49157f3b45c14217d256bce7dc9682
   react-native-pdf: ef641e79a6d550cfabe5d7ec1916799726514c43
@@ -891,7 +897,7 @@ SPEC CHECKSUMS:
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNLocalize: b9a5d22c7e4ecb5db604861f1b1fff6013e03340
   RNPermissions: 75128bfb4c4ef92f572a8efdb8adfbfab75e8ed0
-  RNReanimated: 9c13c86454bfd54dab7505c1a054470bfecd2563
+  RNReanimated: b8c8004b43446e3c2709fe64b2b41072f87428ad
   RNScreens: 21b73c94c9117e1110a79ee0ee80c93ccefed8ce
   RNShare: 5ac8f6532ca4cd80fc71caef1cfbba1854a6a045
   RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f

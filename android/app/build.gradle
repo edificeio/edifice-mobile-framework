@@ -25,8 +25,8 @@ android {
         applicationId APPID
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1060001
-        versionName "1.6.0-indev.1"
+        versionCode 1060002
+        versionName "1.6.0-alpha.1"
         resValue "string", "app_name", "${APPNAME}"
         manifestPlaceholders = [ applicationName: APPNAME ]
         // multiDexEnabled true
