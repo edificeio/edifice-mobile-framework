@@ -8,7 +8,6 @@ import { IFolderListState } from "./state/folders";
 import { IInitMailState } from "./state/initMails";
 import { IMailContentState } from "./state/mailContent";
 import { IMailListState } from "./state/mailList";
-import { IQuotaState } from "./state/quota";
 import { ISignatureState } from "./state/signature";
 
 // State
@@ -19,6 +18,5 @@ export interface IZimbra_State {
   init: IInitMailState;
   mailContent: IMailContentState;
   mailList: IMailListState;
-  quota: IQuotaState;
   signature: ISignatureState;
 }

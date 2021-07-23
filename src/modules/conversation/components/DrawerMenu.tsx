@@ -117,13 +117,6 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
           label={I18n.t("conversation.trash")}
           navigate={() => navigation.navigate("trash", { key: "trash", folderName: undefined })}
         />
-        <DrawerOption
-          selected={this.isCurrentScreen("spams")}
-          iconName="delete_sweep"
-          label={I18n.t("conversation.spams")}
-          navigate={() => navigation.navigate("spams", { key: "spams", folderName: undefined })}
-          count={this.findFolder("Junk").unread}
-        />
       </View>
     );
   };

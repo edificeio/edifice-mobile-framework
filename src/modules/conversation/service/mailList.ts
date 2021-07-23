@@ -63,8 +63,6 @@ export const mailListService = {
         return mailListAdapter(await fetchJSONWithCache(`/conversation/list/drafts?page=${page}&unread=false`));
       case "trash":
         return mailListAdapter(await fetchJSONWithCache(`/conversation/list/trash?page=${page}&unread=false`));
-      case "spams":
-        return mailListAdapter(await fetchJSONWithCache(`/conversation/list/spam?page=${page}&unread=false`));
       default:
         return [];
     }

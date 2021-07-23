@@ -37,7 +37,7 @@ export const foldersService = {
     });
   },
   count: async (folderIds: string[]) => {
-    const ids = folderIds.concat(["INBOX", "SPAMS", "DRAFTS"]);
+    const ids = folderIds.concat(["INBOX", "DRAFTS"]);
     const promises: Promise<any>[] = [];
     ids.forEach(id => {
       promises.push(fetchJSONWithCache(`/zimbra/count/${id}?unread=${id === "DRAFTS" ? "false" : "true"}`));

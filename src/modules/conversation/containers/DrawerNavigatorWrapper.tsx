@@ -20,7 +20,6 @@ const DrawerNavigatorComponent = createDrawerNavigator(
     sendMessages: MailList,
     drafts: MailList,
     trash: MailList,
-    spams: MailList,
     folder: MailList,
   },
   {
@@ -50,8 +49,6 @@ export default class DrawerNavigatorWrapper extends React.Component<any, any> {
         return I18n.t("conversation.drafts");
       case "trash":
         return I18n.t("conversation.trash");
-      case "spams":
-        return I18n.t("conversation.spams");
       default:
       case "inbox":
         return I18n.t("conversation.inbox");
