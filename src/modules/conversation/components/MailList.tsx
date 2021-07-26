@@ -206,7 +206,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
               this.onChangePage();
             }
           }}
-          ListFooterComponent={isFetching ? <Loading /> : null}
+          ListFooterComponent={isFetching && !firstFetch ? <Loading /> : null}
           ListEmptyComponent={
             isFetching && firstFetch ? (
               <Loading />
