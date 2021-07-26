@@ -95,6 +95,9 @@ export class ConfirmDialog extends React.Component<IProps, IState> {
         </>
       );
     } else if (selectDestination) {
+      if (this.state.disabled !== false && title === I18n.t("copy-documents")) {
+        this.setState({ disabled: false });
+      }
       return (
         <View>
           <DialogTitle>{title}</DialogTitle>
