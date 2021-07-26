@@ -14,6 +14,7 @@ import { Text, TextBold } from "../../../ui/text";
 import { getFileIcon } from "../utils/fileIcon";
 import { getUserColor, getProfileColor } from "../utils/userColor";
 import { findReceivers2, findReceiversAvatars, Author, findSenderAvatar } from "./MailItem";
+import { displayPastDate } from "../../../framework/util/date";
 
 const User = ({ userId, userName }) => {
   const [dotColor, setDotColor] = React.useState(getProfileColor("Guest"));
@@ -102,9 +103,9 @@ export const HeaderMail = ({ mailInfos }) => {
           />
         </CenterPanel>
         {!isVisible ? (
-          <Text>{moment(mailInfos.date).format("LL - LT")}</Text>
+          <Text>{displayPastDate(moment(mailInfos.date))}</Text>
         ) : (
-          <Text>{moment(mailInfos.date).format("dddd LL")}</Text>
+          <Text>{displayPastDate(moment(mailInfos.date), true)}</Text>
         )}
       </Header>
 

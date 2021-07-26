@@ -3,12 +3,19 @@ import moment, { Moment } from "moment";
 
 moment.relativeTimeThreshold("m", 60);
 
-export const displayPastDate = (pastDate: Moment) => {
+export const displayPastDate = (pastDate: Moment, longFormat?: boolean) => {
+  const now = moment();
+
   if (!pastDate || !pastDate.isValid()) {
     return I18n.t("common.date.invalid");
   }
+
+  if (longFormat) {
+    if (/*less than 2d*/ pastDate.isSameOrAfter(now.clone().subtract(2, "day").startOf("day"))) {
+      return pastDate.format("LL - H:m");
+    } else return pastDate.format("dddd LL");
+  }
   
-  const now = moment();
   if (/*less than 1min*/ pastDate.isAfter(now.clone().subtract(1, "minute"))) {
     return I18n.t("common.date.now"); 
   } else if (/*less than 3h*/ pastDate.isSameOrAfter(now.clone().subtract(3, "hour"))) {
