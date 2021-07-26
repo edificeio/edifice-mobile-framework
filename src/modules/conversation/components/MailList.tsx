@@ -14,6 +14,7 @@ import { Text, TextBold } from "../../../ui/text";
 import { IInit } from "../containers/DrawerMenu";
 import { DraftType } from "../containers/NewMail";
 import { IMail } from "../state/mailContent";
+import { displayPastDate } from "../../../framework/util/date";
 
 type MailListProps = {
   notifications: any;
@@ -136,7 +137,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
                     {contact[1]}
                   </Text>
                 ))}
-              <Text style={styles.greyColor}>{moment(mailInfos.date).format("dddd LL")}</Text>
+              <Text style={styles.greyColor}>{displayPastDate(moment(mailInfos.date))}</Text>
             </View>
             <View style={styles.mailInfos}>
               <Text style={{ flex: 1, color: "#AFAFAF" }} numberOfLines={1}>
