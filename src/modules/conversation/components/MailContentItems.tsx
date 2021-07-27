@@ -29,7 +29,7 @@ const User = ({ userId, userName }) => {
   );
 };
 
-const SendersDetails = ({ receivers, cc, displayNames, inInbox, sender }) => {
+const SendersDetails = ({ receivers, cc, cci, displayNames, inInbox, sender }) => {
   return (
     <View>
       {inInbox || (
@@ -40,16 +40,30 @@ const SendersDetails = ({ receivers, cc, displayNames, inInbox, sender }) => {
       )}
       <View style={{ flexDirection: "row" }}>
         <Text style={styles.greyColor}>{I18n.t("conversation.toPrefix")}</Text>
-        {receivers.map(receiver => (
-          <User userId={receiver} userName={displayNames.find(item => item[0] === receiver)[1]} />
-        ))}
-      </View>
-      {cc && (
-        <View style={{ flexDirection: "row" }}>
-          <Text style={styles.greyColor}>{I18n.t("conversation.receiversCC")}</Text>
-          {cc.map(person => (
-            <User userId={person} userName={displayNames.find(item => item[0] === person)[1]} />
+        <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+          {receivers.map(receiver => (
+            <User userId={receiver} userName={displayNames.find(item => item[0] === receiver)[1]} />
           ))}
+        </View>
+      </View>
+      {cc && cc.length > 0 && (
+        <View style={{ flexDirection: "row" }}>
+          <Text style={styles.greyColor}>{I18n.t("conversation.ccPrefix")}</Text>
+          <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+            {cc.map(person => (
+              <User userId={person} userName={displayNames.find(item => item[0] === person)[1]} />
+            ))}
+          </View>
+        </View>
+      )}
+      {cci && cci.length > 0 && (
+        <View style={{ flexDirection: "row" }}>
+          <Text style={styles.greyColor}>{I18n.t("conversation.bccPrefix")}</Text>
+          <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+            {cci.map(person => (
+              <User userId={person} userName={displayNames.find(item => item[0] === person)[1]} />
+            ))}
+          </View>
         </View>
       )}
     </View>
@@ -113,6 +127,7 @@ export const HeaderMail = ({ mailInfos }) => {
         <SendersDetails
           receivers={mailInfos.to}
           cc={mailInfos.cc}
+          cci={mailInfos.cci}
           displayNames={mailInfos.displayNames}
           inInbox={inInbox}
           sender={mailInfos.from}

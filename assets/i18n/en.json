@@ -33,7 +33,9 @@
   "conversation": {
     "attachmentError": "Attachment upload failure",
     "bcc": "Bcc",
+    "bccPrefix": "Bcc :",
     "cc": "Cc",
+    "ccPrefix": "Cc :",
     "create": "Create",
     "createDirectory": "Create directory",
     "createDirectoryConfirm": "Directory created",
@@ -56,7 +58,6 @@
     "moveTo": "Move to",
     "newMessage": "New message",
     "outbox": "Outbox",
-    "receiversCC": "Copy:",
     "reply": "Reply",
     "replySubject": "RE: ",
     "replyAll": "Reply All",

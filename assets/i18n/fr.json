@@ -33,7 +33,9 @@
   "conversation": {
     "attachmentError": "Echec de l'ajout de la pièce jointe",
     "bcc": "Cci",
+    "bccPrefix": "Cci :",
     "cc": "Cc",
+    "ccPrefix": "Cc :",
     "create": "Créer",
     "createDirectory": "Créer un dossier",
     "createDirectoryConfirm": "Dossier créé",
@@ -56,7 +58,6 @@
     "moveTo": "Déplacer vers",
     "newMessage": "Nouveau message",
     "outbox": "Messages envoyés",
-    "receiversCC": "Copie :",
     "reply": "Répondre",
     "replySubject": "RE : ",
     "replyAll": "Répondre à tous",
