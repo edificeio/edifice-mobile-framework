@@ -18,9 +18,9 @@ export interface IMail {
   attachments: [];
   subject: string;
   body: string;
-  systemFolder: string;
   parent_id: string;
   thread_id: string;
+  // Extra data
   fromName: string;
   toName: string;
   ccName: string;
