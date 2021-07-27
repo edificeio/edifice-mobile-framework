@@ -86,7 +86,7 @@ class TimetableContainer extends React.PureComponent<TimetableProps, TimetableSt
     const { structureId, childId, childClasses, group } = this.props;
     if (getSessionInfo().type === "Relative") await this.props.fetchChildInfos();
     await this.props.fetchChildGroups(childClasses, childId);
-    if (group && group.length > 0) this.fetchCourses();
+    if (getSessionInfo().type === "Teacher" || (group && group.length > 0)) this.fetchCourses();
     this.props.fetchSlots(structureId);
   };
 
