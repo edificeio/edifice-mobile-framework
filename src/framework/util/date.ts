@@ -12,7 +12,7 @@ export const displayPastDate = (pastDate: Moment, longFormat?: boolean) => {
 
   if (longFormat) {
     if (/*less than 2d*/ pastDate.isSameOrAfter(now.clone().subtract(2, "day").startOf("day"))) {
-      return pastDate.format("LL - H:m");
+      return pastDate.format("LL - H:mm");
     } else return pastDate.format("dddd LL");
   }
   
