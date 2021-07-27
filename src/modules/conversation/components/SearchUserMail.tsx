@@ -7,7 +7,7 @@ import { Text } from "../../../ui/text";
 import { newMailService } from "../service/newMail";
 import { getProfileColor } from "../utils/userColor";
 
-const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange }) => {
+const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, autoFocus }) => {
   const [search, updateSearch] = React.useState("");
   const [foundUsersOrGroups, updateFoundUsersOrGroups] = React.useState([]);
   const searchTimeout = React.useRef();
@@ -44,23 +44,22 @@ const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange }) => {
   return (
     <View style={{ overflow: "visible", marginHorizontal: 5, flex: 1 }}>
       <SelectedList selectedUsersOrGroups={selectedUsersOrGroups} onItemClick={removeUser} />
-      <Input value={search} onChangeText={updateSearch} onSubmit={() => addUser({ displayName: search, id: search })} />
+      <Input autoFocus={autoFocus} value={search} onChangeText={updateSearch} onSubmit={() => addUser({ displayName: search, id: search })} />
       <FoundList foundUserOrGroup={foundUsersOrGroups} addUser={addUser} />
     </View>
   );
 };
 
-const Input = ({ value, onChangeText, onSubmit }) => {
+const Input = ({ value, onChangeText, onSubmit, autoFocus }) => {
   const textInputStyle = {
     flex: 1,
     height: 40,
     color: CommonStyles.textColor,
-    borderBottomColor: "#EEEEEE",
-    borderBottomWidth: 2,
   } as ViewStyle;
 
   return (
     <TextInput
+      autoFocus={autoFocus}
       autoCorrect={false}
       autoCapitalize="none"
       style={textInputStyle}

@@ -3,7 +3,7 @@ import React from "react";
 import { ScrollView, View, StyleSheet, TextInput, ViewStyle } from "react-native";
 
 import Notifier from "../../../infra/notifier/container";
-import { CommonStyles, IOSShadowStyle } from "../../../styles/common/styles";
+import { CommonStyles } from "../../../styles/common/styles";
 import { Icon, Loading } from "../../../ui";
 import ConnectionTrackingBar from "../../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../../ui/ContainerContent";
@@ -40,8 +40,6 @@ const styles = StyleSheet.create({
   mailPart: {
     padding: 5,
     backgroundColor: "white",
-    elevation: CommonStyles.elevation,
-    ...IOSShadowStyle,
   },
   lineSeparator: {
     marginLeft: 15,
@@ -94,18 +92,20 @@ const HeaderUsers = ({
   onChange,
   value,
   children,
-}: React.PropsWithChildren<{ style?: ViewStyle; title: string; onChange; onSave; forUsers?: boolean; value: any }>) => {
+  autoFocus
+}: React.PropsWithChildren<{ autoFocus?: boolean, style?: ViewStyle; title: string; onChange; onSave; forUsers?: boolean; value: any }>) => {
   const headerStyle = {
     flexDirection: "row",
     alignItems: "center",
-    marginVertical: 5,
     paddingHorizontal: 10,
+    borderBottomColor: "#EEEEEE",
+    borderBottomWidth: 2,
   } as ViewStyle;
 
   return (
     <View style={[headerStyle, style]}>
       <Text style={{ color: CommonStyles.lightTextColor }}>{title} : </Text>
-      <SearchUserMail selectedUsersOrGroups={value} onChange={val => onChange(val)} />
+      <SearchUserMail selectedUsersOrGroups={value} onChange={val => onChange(val)} autoFocus={autoFocus} />
       {children}
     </View>
   );
@@ -121,16 +121,15 @@ const HeaderSubject = ({
   const headerStyle = {
     flexDirection: "row",
     alignItems: "center",
-    marginVertical: 5,
     paddingHorizontal: 10,
+    borderBottomColor: "#EEEEEE",
+    borderBottomWidth: 2,
   } as ViewStyle;
 
   const inputStyle = {
     flex: 1,
     height: 40,
     color: CommonStyles.textColor,
-    borderBottomColor: "#EEEEEE",
-    borderBottomWidth: 2,
   } as ViewStyle;
 
   const textUpdateTimeout = React.useRef();
@@ -166,6 +165,7 @@ const Headers = ({ style, headers, onChange, onSave }) => {
   return (
     <View style={[styles.mailPart, style]}>
       <HeaderUsers
+        autoFocus
         style={{ zIndex: 4 }}
         value={to}
         onChange={to => onChange({ ...headers, to })}

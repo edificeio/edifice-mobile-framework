@@ -82,7 +82,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
     return standardNavScreenOptions(
       {
-        title: null,
+        title: I18n.t("conversation.newMessage"),
         headerLeft: () => {
           const goBack = navigation.getParam("getGoBack", navigation.goBack);
 
@@ -96,15 +96,15 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           return (
             <View style={{ flexDirection: "row" }}>
               {askForAttachment && (
-                <HeaderAction style={{ alignSelf: "flex-end" }} onPress={askForAttachment} name="attachment" />
+                <HeaderAction style={{ width: 40, alignItems: "center" }} onPress={askForAttachment} name="attachment" />
               )}
-              {sendDraft && <HeaderAction style={{ alignSelf: "flex-end" }} onPress={sendDraft} name="outbox" />}
-              {deleteDraft && <HeaderAction style={{ alignSelf: "flex-end" }} onPress={deleteDraft} name="delete" />}
+              {sendDraft && <HeaderAction style={{ width: 40, alignItems: "center" }} onPress={sendDraft} name="outbox" />}
+              {deleteDraft && <HeaderAction style={{ width: 40, alignItems: "center" }} onPress={deleteDraft} name="delete" />}
             </View>
           );
         },
         headerStyle: {
-          backgroundColor: CommonStyles.secondary,
+          backgroundColor: CommonStyles.primary,
         },
       },
       navigation
