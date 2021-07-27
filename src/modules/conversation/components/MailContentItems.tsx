@@ -81,17 +81,17 @@ const IconButton = ({ icon, color, text, onPress }) => {
 
 // EXPORTED COMPONENTS
 
-export const HeaderMail = ({ mailInfos }) => {
+export const HeaderMail = ({ mailInfos, currentFolder }) => {
   const [isVisible, toggleVisible] = React.useState(false);
-  const inInbox = mailInfos.systemFolder === "INBOX";
-  const inOutboxOrDraft = mailInfos.systemFolder === "OUTBOX" || mailInfos.systemFolder === "DRAFT";
+  const isFolderInbox = currentFolder === "inbox";
+  const isFolderOutboxOrDraft = currentFolder === "sendMessages" || currentFolder === "drafts";
   return (
     <View style={styles.containerMail}>
       <Header>
         <LeftPanel style={{ justifyContent: "flex-start" }}>
           <GridAvatars
             users={
-              inOutboxOrDraft
+              isFolderOutboxOrDraft
                 ? findReceiversAvatars(mailInfos.to, mailInfos.from, mailInfos.cc, mailInfos.displayNames)
                 : findSenderAvatar(mailInfos.from, mailInfos.displayNames)
             }
@@ -100,7 +100,7 @@ export const HeaderMail = ({ mailInfos }) => {
 
         <CenterPanel style={{ marginRight: 0, paddingRight: 0 }}>
           <Author numberOfLines={1}>
-            {inOutboxOrDraft
+            {isFolderOutboxOrDraft
               ? findReceivers2(mailInfos.to, mailInfos.from, mailInfos.cc)
                   .map(r => {
                     const u = mailInfos.displayNames.find(dn => dn[0] === r);
@@ -129,7 +129,7 @@ export const HeaderMail = ({ mailInfos }) => {
           cc={mailInfos.cc}
           cci={mailInfos.cci}
           displayNames={mailInfos.displayNames}
-          inInbox={inInbox}
+          inInbox={isFolderInbox}
           sender={mailInfos.from}
         />
       )}

@@ -77,9 +77,10 @@ export default class MailContent extends React.PureComponent<any, any> {
   }
 
   private mailHeader() {
+    const currentFolder = this.props.navigation.getParam("currentFolder");
     return (
       <View>
-        <HeaderMail mailInfos={this.props.mail} />
+        <HeaderMail mailInfos={this.props.mail} currentFolder={currentFolder} />
       </View>
     );
   }

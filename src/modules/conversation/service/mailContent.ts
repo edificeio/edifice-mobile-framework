@@ -42,7 +42,6 @@ const mailContentAdapter: (data: IMailContentBackend) => IMail = data => {
     attachments: data.attachments,
     subject: data.subject,
     body: data.body,
-    systemFolder: "",
     parent_id: data.parent_id,
     thread_id: data.thread_id,
     // Extra data

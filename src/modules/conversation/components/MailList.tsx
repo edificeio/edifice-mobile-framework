@@ -9,12 +9,13 @@ import { Icon, Loading } from "../../../ui";
 import { Header, LeftPanel, CenterPanel, PageContainer } from "../../../ui/ContainerContent";
 import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
 import { EmptyScreen } from "../../../ui/EmptyScreen";
-import { SingleAvatar } from "../../../ui/avatars/SingleAvatar";
+import { GridAvatars } from "../../../ui/avatars/GridAvatars";
 import { Text, TextBold } from "../../../ui/text";
 import { IInit } from "../containers/DrawerMenu";
 import { DraftType } from "../containers/NewMail";
 import { IMail } from "../state/mailContent";
 import { displayPastDate } from "../../../framework/util/date";
+import { findReceiversAvatars, findSenderAvatar } from "./MailItem";
 
 type MailListProps = {
   notifications: any;
@@ -85,7 +86,11 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
   };
 
   renderMailContent = mailInfos => {
-    if (mailInfos.state === "DRAFT" && mailInfos.systemFolder === "DRAFT") {
+    const navigationKey = this.props.navigation.getParam("key");
+    const isFolderDrafts = navigationKey === "drafts";
+    const isStateDraft = mailInfos.state === "DRAFT";
+
+    if (isStateDraft && isFolderDrafts) {
       this.props.navigation.navigate("newMail", {
         type: DraftType.DRAFT,
         mailId: mailInfos.id,
@@ -98,6 +103,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
       this.props.navigation.navigate("mailDetail", {
         mailId: mailInfos.id,
         subject: mailInfos.subject,
+        currentFolder: navigationKey || "inbox",
         onGoBack: () => {
           this.refreshMailList();
           this.props.fetchInit();
@@ -108,8 +114,12 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
   };
 
   private renderMailItemInfos(mailInfos) {
+    const navigationKey = this.props.navigation.getParam("key");
+    const isFolderInbox = navigationKey === "inbox" || !navigationKey;
+    const isFolderOutbox = navigationKey === "sendMessages";
+
     let contact = ["", ""];
-    if (mailInfos.systemFolder === "INBOX") contact = mailInfos.displayNames.find(item => item[0] === mailInfos.from);
+    if (isFolderInbox) contact = mailInfos.displayNames.find(item => item[0] === mailInfos.from);
     else contact = mailInfos.displayNames.find(item => item[0] === mailInfos.to[0]);
     if (contact === undefined) contact = ["", I18n.t("conversation.unknown")];
     return (
@@ -123,7 +133,13 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
           style={[styles.containerMail, this.containerStyle(mailInfos.isChecked), this.hasShadow(mailInfos.unread)]}>
           <LeftPanel>
             {mailInfos.unread && <Icon name="mail" size={18} color="#FC8500" />}
-            <SingleAvatar userId={mailInfos.from} />
+            <GridAvatars
+              users={
+                isFolderOutbox
+                  ? findReceiversAvatars(mailInfos.to, mailInfos.from, mailInfos.cc, mailInfos.displayNames)
+                  : findSenderAvatar(mailInfos.from, mailInfos.displayNames)
+              }
+            />
           </LeftPanel>
           <CenterPanel>
             <View style={styles.mailInfos}>
