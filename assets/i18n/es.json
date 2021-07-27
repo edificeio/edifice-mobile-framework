@@ -33,7 +33,9 @@
   "conversation": {
     "attachmentError": "Error al agregar el archivo adjunto",
     "bcc": "CCO",
+    "bccPrefix": "CCO :",
     "cc": "CC",
+    "ccPrefix": "CC :",
     "create": "Crear",
     "createDirectory": "Crear una carpeta",
     "createDirectoryConfirm": "Carpeta creada",
@@ -56,7 +58,6 @@
     "moveTo": "Mover a",
     "newMessage": "Nuevo mensaje",
     "outbox": "Mensajes enviados",
-    "receiversCC": "Copia:",
     "reply": "Responder",
     "replySubject": "RE:",
     "replyAll": "Responder a todos",
