@@ -54,6 +54,7 @@
     "missingReceiver": "Este mensaje debe contener al menos un destinatario",
     "move": "Mover",
     "moveTo": "Mover a",
+    "newMessage": "Nuevo mensaje",
     "outbox": "Mensajes enviados",
     "receiversCC": "Copia:",
     "reply": "Responder",
