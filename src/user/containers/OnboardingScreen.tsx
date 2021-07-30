@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, Linking, Dimensions } from "react-native";
+import { View, Linking, Dimensions, Platform } from "react-native";
 import { connect } from "react-redux";
 import { ThunkDispatch } from "redux-thunk";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -34,8 +34,9 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
 
   render() {
     const { navigation, dispatch } = this.props;
-    // For some reason, SVGs with an odd height don't render correctly on Android;
-    // if that's the case, we add 1 to resolve the issue.
+    const isPlatformIos = Platform.OS === "ios";
+    const appName = I18n.t("user.onboardingScreen.appName");
+    const isOneOrNeo = appName.includes("ONE Pocket") || appName.includes("NEO Pocket");
     const { width } = Dimensions.get("window");
     const svgSize = width * 0.8;
     const imageStyle = { width: svgSize, height: svgSize, maxHeight: "60%", maxWidth: "80%", marginTop: 4, marginBottom: 30 };
@@ -116,28 +117,33 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
                 navigation.navigate(hasMultiplePlatforms ? "PlatformSelect" : "LoginHome");
               }}
             />
-            <FlatButton
-              title={I18n.t("user.onboardingScreen.discover")}
-              customTextStyle={{ color: theme.color.secondary.regular }}
-              customButtonStyle={{
-                backgroundColor: theme.color.background.page,
-                borderColor: theme.color.secondary.regular,
-                borderWidth: 1,
-                width: 230,
-                alignItems: "center",
-              }}
-              onPress={() => {
-                //TODO: create generic function inside oauth
-                const url = I18n.t("user.onboardingScreen.discoverLink");
-                Linking.canOpenURL(url).then(supported => {
-                  if (supported) {
-                    Linking.openURL(url);
-                  } else {
-                    console.warn("[onboarding] Don't know how to open URI: ", url);
-                  }
-                });
-              }}
-            />
+            {/* Note: This button has to be hidden on iOs (only for ONE/NEO), since Apple doesn't approve
+            when the url directs the user to external mechanisms for purchase and subscription to the app. */}
+            {isPlatformIos && isOneOrNeo
+              ? null
+              : <FlatButton
+                  title={I18n.t("user.onboardingScreen.discover")}
+                  customTextStyle={{ color: theme.color.secondary.regular }}
+                  customButtonStyle={{
+                    backgroundColor: theme.color.background.page,
+                    borderColor: theme.color.secondary.regular,
+                    borderWidth: 1,
+                    width: 230,
+                    alignItems: "center",
+                  }}
+                  onPress={() => {
+                    //TODO: create generic function inside oauth
+                    const url = I18n.t("user.onboardingScreen.discoverLink");
+                    Linking.canOpenURL(url).then(supported => {
+                      if (supported) {
+                        Linking.openURL(url);
+                      } else {
+                        console.warn("[onboarding] Don't know how to open URI: ", url);
+                      }
+                    });
+                  }}
+                />
+            }
           </View>
         </View>
       </SafeAreaView>
