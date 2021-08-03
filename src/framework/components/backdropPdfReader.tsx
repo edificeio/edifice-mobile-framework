@@ -1,14 +1,11 @@
 import * as React from "react";
-import { View, ColorValue } from "react-native";
+import { ColorValue } from "react-native";
 import Pdf from "react-native-pdf";
-import I18n from "i18n-js";
 
 import { CommonStyles } from "../../styles/common/styles";
 import theme from "../util/theme";
 import { BackdropModal } from "./backdropModal";
-import { Text, TextBold } from "../../framework/components/text";
-
-import EmptyPdf from "ode-images/empty-screen/empty-pdf.svg";
+import { EmptyContentScreen } from "./emptyContentScreen";
 
 export interface IBackdropPdfReaderProps {
   handleClose: () => void;
@@ -40,11 +37,7 @@ export class BackdropPdfReader extends React.PureComponent<IBackdropPdfReaderPro
     return (
       <BackdropModal
         content={error
-          ? <View style={{ flex: 1, backgroundColor: theme.color.tertiary.light, alignItems: "center" }}>
-              <EmptyPdf style={{ aspectRatio: 1, maxHeight: "40%", maxWidth: "70%", marginBottom: 30, marginTop: "10%" }}/> 
-              <TextBold style={{ fontSize: 18, marginBottom: 20 }}>{I18n.t("common.error.title")}</TextBold>
-              <Text style={{ textAlign: "center" }}>{I18n.t("common.error.pdf.text")}</Text>
-            </View>
+          ? <EmptyContentScreen />
           : <Pdf
               activityIndicatorProps={{
                 color: theme.color.tertiary.regular,

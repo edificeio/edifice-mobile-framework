@@ -10,7 +10,7 @@
       "yesterday": "ayer"
     },
     "error": {
-      "pdf": {
+      "content": {
         "text": "Parece ser que el contenido ha desaparecido.\nSi el problema persiste, contacte con el equipo de asistencia."
       },
       "text": "Ha ocurrido un error. Vuelva a intentarlo más tarde.",
