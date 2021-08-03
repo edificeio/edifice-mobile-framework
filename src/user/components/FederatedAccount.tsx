@@ -3,7 +3,8 @@ import I18n from "i18n-js";
 import * as React from "react";
 import {
   View,
-  SafeAreaView
+  SafeAreaView,
+  ScrollView
 } from "react-native";
 import Conf from "../../../ode-framework-conf";
 import { navigate } from "../../navigation/helpers/navHelper";
@@ -25,7 +26,7 @@ export type IFederatedAccountPageProps =
 export class FederatedAccountPage extends React.PureComponent<
   IFederatedAccountPageProps,
   {}
-  > {
+> {
 
   public render() {
     const { onLink } = this.props;
@@ -34,39 +35,44 @@ export class FederatedAccountPage extends React.PureComponent<
       <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
         <FormPage>
           <FormWrapper>
-            <FormContainer>
-              <LogoWrapper>
-                <Logo source={Conf.currentPlatform.logo} />
-              </LogoWrapper>
-              <TextLightItalic>{I18n.t("federatedAccount-instructions")}</TextLightItalic>
-              <View
-                style={{
-                  alignItems: "center",
-                  flexGrow: 2,
-                  justifyContent: "flex-start",
-                  marginTop: 48
-                }}
-              >
-                <FlatButton
-                  onPress={() => onLink()}
-                  title={I18n.t("federatedAccount-openLink")}
-                />
-                <Text
-                  color={TextColor.Light}
-                  style={{ textDecorationLine: "underline", marginTop: 48 }}
-                  onPress={() => {
-                    navigate("LoginHome");
+            <ScrollView alwaysBounceVertical={false} contentContainerStyle={{ flex: 1, justifyContent: "center" }}>
+              <FormContainer>
+                <LogoWrapper>
+                  <Logo source={Conf.currentPlatform.logo} />
+                </LogoWrapper>
+                <View style={{ flexGrow: 4, justifyContent: "flex-start" }}>
+                  <TextLightItalic>{I18n.t("federatedAccount-instructions")}</TextLightItalic>
+                  <TextLightItalic style={{ marginLeft: 25, marginTop: 20 }}>{I18n.t("federatedAccount-instructions-details")}</TextLightItalic>
+                </View>
+                <View
+                  style={{
+                    alignItems: "center",
+                    flexGrow: 1,
+                    justifyContent: "center",
+                    marginTop: 40
                   }}
                 >
-                  {I18n.t("login-back")}
-                </Text>
-              </View>
-            </FormContainer>
+                  <FlatButton
+                    onPress={() => onLink()}
+                    title={I18n.t("federatedAccount-openLink")}
+                  />
+                  <Text
+                    color={TextColor.Light}
+                    style={{ textDecorationLine: "underline", marginTop: 20 }}
+                    onPress={() => {
+                      navigate("LoginHome");
+                    }}
+                  >
+                    {I18n.t("login-back")}
+                  </Text>
+                </View>
+              </FormContainer>
+            </ScrollView>
           </FormWrapper>
           {Conf.platforms && Object.keys(Conf.platforms).length > 1 ?
-          <BottomSwitcher onPress={() => this.handleBackToPlatformSelector()}>
-            {Conf.currentPlatform.displayName}{" "}
-          </BottomSwitcher> : null}
+            <BottomSwitcher onPress={() => this.handleBackToPlatformSelector()}>
+              {Conf.currentPlatform.displayName}{" "}
+            </BottomSwitcher> : null}
         </FormPage>
       </SafeAreaView>
     );
@@ -83,16 +89,15 @@ const FormPage = style.view({
 });
 const FormWrapper = style.view({ flex: 1 });
 const FormContainer = style.view({
-  alignItems: "center",
-  flex: 1,
-  flexDirection: "column",
-  justifyContent: "center",
+  height: "100%",
+  margin: 0,
   padding: 40,
-  paddingTop: 60
+  paddingVertical: 20
 });
 const LogoWrapper = style.view({
   flexGrow: 2,
   alignItems: "center",
-  justifyContent: "center"
+  justifyContent: "center",
+  marginBottom: 20
 });
 const Logo = style.image({ height: 50, width: 200, resizeMode: "contain" });
