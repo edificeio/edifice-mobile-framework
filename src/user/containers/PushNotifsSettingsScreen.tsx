@@ -24,6 +24,7 @@ import { SafeAreaView, View } from "react-native";
 import { Toggle } from "../../framework/components/toggle";
 import I18n from "i18n-js";
 import { getUserSession, IUserSession } from "../../framework/util/session";
+import { EmptyContentScreen } from "../../framework/components/emptyContentScreen";
 
 // TYPES ==========================================================================================
 
@@ -101,11 +102,14 @@ export class PushNotifsSettingsScreen extends React.PureComponent<
 			const notifFilter = this.props.timelineState.notifDefinitions.notifFilters.data.find(tf => tf.type === item[0]);
 			return this.props.session.user.entcoreApps.find(app => !app.name || app.name === notifFilter?.["app-name"]);
 		}))
+		const mainListData = Object.entries(items) && Object.entries(items).length > 0
+			? Object.entries(items).sort((a, b) => translateMainItem(a).localeCompare(translateMainItem(b)))
+			: [];
 		return <FlatList
-			data={Object.entries(items).sort((a, b) => translateMainItem(a).localeCompare(translateMainItem(b)))}
+			data={mainListData}
 			keyExtractor={(item: [string, IPushNotifsSettings]) => item[0]}
 			renderItem={({ item }: { item: [string, IPushNotifsSettings] }) => this.renderMainItem(item)}
-			ListEmptyComponent={this.renderError}
+			ListEmptyComponent={<EmptyContentScreen />}
 			alwaysBounceVertical={false}
 			ListFooterComponent={<SafeAreaView></SafeAreaView>}
 		/>
@@ -165,11 +169,14 @@ export class PushNotifsSettingsScreen extends React.PureComponent<
 		items = deepmerge<IPushNotifsSettings>(items, pendingForType);
 		const areAllChecked = Object.values(items).every(v => v);
 		console.log("areAllChecked", areAllChecked);
+		const subListData = Object.entries(items) && Object.entries(items).length > 0
+			? Object.entries(items).sort((a, b) => I18n.t(`timeline.notifType.${a[0]}`).localeCompare(I18n.t(`timeline.notifType.${b[0]}`)))
+			: [];
 		return <FlatList
-			data={Object.entries(items).sort((a, b) => I18n.t(`timeline.notifType.${a[0]}`).localeCompare(I18n.t(`timeline.notifType.${b[0]}`)))}
+			data={subListData}
 			keyExtractor={(item: [string, boolean]) => item[0]}
 			renderItem={({ item }: { item: [string, boolean] }) => this.renderSubItem(item)}
-			ListEmptyComponent={this.renderError}
+			ListEmptyComponent={<EmptyContentScreen />}
 			alwaysBounceVertical={false}
 			ListFooterComponent={<SafeAreaView></SafeAreaView>}
 			ListHeaderComponent={<ListItem

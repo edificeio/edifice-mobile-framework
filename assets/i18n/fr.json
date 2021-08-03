@@ -10,7 +10,7 @@
       "yesterday": "hier"
     },
     "error": {
-      "pdf": {
+      "content": {
         "text": "Il semblerait que le contenu se soit envolé.\nSi le problème persiste, contactez l'assistance."
       },
       "text": "Une erreur est survenue. Veuillez réessayer plus tard.",
