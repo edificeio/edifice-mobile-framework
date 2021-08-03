@@ -3,7 +3,7 @@ import { NavigationInjectedProps, NavigationFocusInjectedProps, withNavigationFo
 import I18n from "i18n-js";
 import { ThunkDispatch } from "redux-thunk";
 import { connect } from "react-redux";
-import { FlatList } from "react-native-gesture-handler";
+import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import { Alert, RefreshControl, View } from "react-native";
 
 import type { IGlobalState } from "../../../../AppStore";
@@ -26,6 +26,8 @@ import { defaultNotificationActionStack, handleNotificationAction, NotifHandlerT
 import { getTimelineWorkflows } from "../timelineModules";
 import { getUserSession, IUserSession } from "../../../util/session";
 import PopupMenu from "../../../../framework/components/popupMenu";
+import { IDistantFile, LocalFile } from "../../../util/file";
+import workspaceService from "../../../services/workspace";
 
 // TYPES ==========================================================================================
 
@@ -65,7 +67,7 @@ export interface ITimelineItem {
 export class TimelineScreen extends React.PureComponent<
   ITimelineScreenProps,
   ITimelineScreenState
-  > {
+> {
 
   // DECLARATIONS =================================================================================
 
@@ -77,12 +79,78 @@ export class TimelineScreen extends React.PureComponent<
 
   // RENDER =======================================================================================
 
+  upload = async (files: LocalFile[]) => {
+    try {
+      const file = await workspaceService.uploadFiles(this.props.session, files, {}, {
+        onBegin: r => console.log("onBegin", r),
+        onProgress: r => console.log("onProgress", r)
+      });
+      console.log("uploaded", file);
+    } catch (e) {
+      console.warn(e);
+    }
+  }
+
+  download = async (file: IDistantFile) => {
+    try {
+      const f = await workspaceService.downloadFile(this.props.session, file, {}, {
+        onBegin: r => console.log("onBegin", r),
+        onProgress: r => console.log("onProgress", r)
+      });
+      console.log("downloaded", f);
+      f.open();
+    } catch (e) {
+      console.warn(e);
+    }
+  }
+
   render() {
     const { navigation } = this.props;
     const routeName = navigation.state.routeName;
     return <>
       {this.renderHeader()}
       {this.renderHeaderButton()}
+
+      <TouchableOpacity
+        onPress={async () => await this.upload(await LocalFile.pick({
+          source: 'documents',
+        }))}
+      ><Text>Pick Single Document</Text></TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={async () => await this.upload(await LocalFile.pick({
+          source: 'documents',
+          multiple: true
+        }))}
+      ><Text>Pick Multiple Documents</Text></TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={async () => await this.upload(await LocalFile.pick({
+          source: 'galery',
+        }))}
+      ><Text>Pick Single Image</Text></TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={async () => await this.upload(await LocalFile.pick({
+          source: 'galery',
+          multiple: true
+        }))}
+      ><Text>Pick Multiple Images</Text></TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={async () => await this.upload(await LocalFile.pick({
+          source: 'camera'
+        }))}
+      ><Text>Pick Camera</Text></TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={async () => await this.download({
+          filename: 'grogu.png',
+          filetype: 'image/png',
+          url: '/workspace/document/cdf3cf44-93ac-4944-8e1f-390862b57fe8'
+        })}
+      ><Text>Download image</Text></TouchableOpacity>
+
       <PageView path={routeName}>
         {[TimelineLoadingState.PRISTINE, TimelineLoadingState.INIT].includes(this.state.loadingState)
           ? <LoadingIndicator />
@@ -115,7 +183,7 @@ export class TimelineScreen extends React.PureComponent<
   renderHeaderButton() {
     const workflows = getTimelineWorkflows(this.props.session);
     if (!workflows || !workflows.length) return null;
-    return <PopupMenu iconName="new_post" options={workflows} ref={this.popupMenuRef}/>
+    return <PopupMenu iconName="new_post" options={workflows} ref={this.popupMenuRef} />
   }
 
   renderError() {
@@ -148,7 +216,7 @@ export class TimelineScreen extends React.PureComponent<
             ? <LoadingIndicator /> : null
         }
         ListHeaderComponent={
-          getTimelineWorkflows(this.props.session).length ? <View style={{height: 12}} /> : null
+          getTimelineWorkflows(this.props.session).length ? <View style={{ height: 12 }} /> : null
         }
         onEndReached={() => this.doNextPage()}
         onEndReachedThreshold={0.5}
@@ -201,7 +269,7 @@ export class TimelineScreen extends React.PureComponent<
     const reloadWithNewSettings = navigation.getParam("reloadWithNewSettings");
     if (isFocused !== prevProps.isFocused && reloadWithNewSettings) {
       this.doInit();
-      navigation.setParams({reloadWithNewSettings: undefined});
+      navigation.setParams({ reloadWithNewSettings: undefined });
     }
     if (isFocused !== prevProps.isFocused) {
       this.popupMenuRef.current?.doReset();

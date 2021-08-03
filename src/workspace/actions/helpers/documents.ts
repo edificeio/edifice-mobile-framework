@@ -145,18 +145,19 @@ function formatFolderResult(item: IBackendFolder): IFolder {
 export const uploadDocument = (dispatch: any, content: ContentUri[], parentId?: string) => {
   const signedHeaders = getAuthHeader();
   const headers = { ...signedHeaders, "Content-Type": "multipart/form-data" };
+  console.log("cgi headers", headers);
 
   const parentIdParam = !!parentId && !Object.keys(FilterId).includes(parentId) ? `parentId=${parentId}&` : "";
   const protectedParam = parentId === FilterId.protected ? "protected=true&application=media-library&" : "";
 
   const url = `${Conf.currentPlatform.url}/workspace/document?${parentIdParam}${protectedParam}quality=1&thumbnail=120x120&thumbnail=100x100&thumbnail=290x290&thumbnail=381x381&thumbnail=1600x0`;
 
-  // console.log("upload document", content);
+  console.log("upload document", content, url);
 
   dispatch(progressInitAction());
 
   // console.log(content.map((item, index) => ({ name: `document${index}`, type: item.mime, filename: item.name, data: RNFB.wrap(decodeURIComponent(item.uri)) })));
-
+  console.log("cgi content", content);
   const response = content.map((item, index) =>
     RNFB.fetch("POST", url, headers, [
       {
