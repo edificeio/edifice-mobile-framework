@@ -8,6 +8,7 @@ import { Icon } from "../../../ui";
 import { PageContainer } from "../../../ui/ContainerContent";
 import { Text } from "../../../ui/Typography";
 import CreateFolderModal from "../containers/CreateFolderModal";
+import { ICountMailboxes } from "../state/count";
 import { IFolder } from "../state/initMails";
 import DrawerOption from "./DrawerOption";
 
@@ -15,6 +16,7 @@ type DrawerMenuProps = {
   activeItemKey: string;
   items: any[];
   folders: IFolder[];
+  mailboxesCount: ICountMailboxes;
   descriptors: any[];
   navigation: NavigationDrawerProp<any>;
 };
@@ -54,41 +56,29 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
     return folderState.params.folderName;
   };
 
-  findFolder = (folderName: string) => {
-    if (this.props.folders !== undefined && this.props.folders.length > 0) {
-      const folderInfos = this.props.folders.find(item => item.folderName === folderName);
-      if (folderInfos !== undefined) return folderInfos;
-    }
-    return { id: "", folderName: "", path: "", unread: 0, count: 0, folders: [] };
-  };
-
   renderDrawerFolders = () => {
-    const { navigation } = this.props;
-    const currentFolder = this.getCurrentFolder(this.props.navigation.state);
-    const inboxFolder: IFolder = this.findFolder("Inbox");
+    const { navigation, folders } = this.props;
+    const currentFolder = this.getCurrentFolder(navigation.state);
     return (
       <ScrollView>
-        {inboxFolder !== undefined &&
-          inboxFolder.folders !== undefined &&
-          inboxFolder.folders.length > 0 &&
-          inboxFolder.folders.map(folder => (
-            <DrawerOption
-              selected={folder.folderName === currentFolder}
-              iconName="folder"
-              label={folder.folderName}
-              navigate={() => {
-                navigation.navigate("folder", { key: folder.folderName, folderName: folder.folderName, folderId: folder.id });
-                navigation.closeDrawer();
-              }}
-              count={folder.unread}
-            />
-          ))}
+        {folders && folders.length > 0 && folders.map(folder => (
+          <DrawerOption
+            selected={folder.folderName === currentFolder}
+            iconName="folder"
+            label={folder.folderName}
+            navigate={() => {
+              navigation.navigate("folder", { key: folder.folderName, folderName: folder.folderName, folderId: folder.id });
+              navigation.closeDrawer();
+            }}
+            count={folder.unread}
+          />
+        ))}
       </ScrollView>
     );
   };
 
   renderDrawerMessages = () => {
-    const { navigation } = this.props;
+    const { navigation, mailboxesCount } = this.props;
     return (
       <View>
         <DrawerOption
@@ -96,7 +86,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
           iconName="inbox"
           label={I18n.t("conversation.inbox")}
           navigate={() => navigation.navigate("inbox", { key: "inbox", folderName: undefined })}
-          count={this.findFolder("Inbox").unread}
+          count={mailboxesCount.INBOX}
         />
         <DrawerOption
           selected={this.isCurrentScreen("sendMessages")}
@@ -109,7 +99,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
           iconName="insert_drive_file"
           label={I18n.t("conversation.drafts")}
           navigate={() => navigation.navigate("drafts", { key: "drafts", folderName: undefined })}
-          count={this.findFolder("Drafts").count}
+          count={mailboxesCount.DRAFT}
         />
         <DrawerOption
           selected={this.isCurrentScreen("trash")}

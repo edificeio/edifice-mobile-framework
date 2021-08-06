@@ -4,8 +4,10 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
 import withViewTracking from "../../../infra/tracker/withViewTracking";
+import { fetchCountAction } from "../actions/count";
 import { fetchInitAction } from "../actions/initMails";
 import DrawerMenu from "../components/DrawerMenu";
+import { getCountListState, ICountMailboxes } from "../state/count";
 import { getInitMailListState, IInitMail, IFolder } from "../state/initMails";
 
 export type IInit = {
@@ -15,16 +17,26 @@ export type IInit = {
   error: any;
 };
 
+export type ICount = {
+  data: ICountMailboxes;
+  isPristine: boolean;
+  isFetching: boolean;
+  error: any;
+};
+
 type DrawerMenuProps = {
   fetchInit: () => IInit;
+  fetchCount: () => ICount;
+  init: IInit;
+  count: ICount;
   activeItemKey: string;
   items: any[];
-  init: IInit;
   descriptors: any[];
   navigation: NavigationScreenProp<any>;
 };
 
 type DrawerMenuState = {
+  mailboxesCount: ICountMailboxes;
   folders: IFolder[];
 };
 
@@ -32,16 +44,33 @@ export class DrawerMenuContainer extends React.Component<DrawerMenuProps, Drawer
   constructor(props) {
     super(props);
     this.state = {
-      folders: [{ id: "", folderName: "", path: "", unread: 0, count: 0, folders: [] }],
+      mailboxesCount: {},
+      folders: [{ 
+        id: "",
+        folderName: "",
+        unread: 0,
+        folders: [],
+        parent_id: "",
+        user_id: "",
+        depth: 0,
+        trashed: false,
+        skip_uniq: false
+      }],
     };
   }
   componentDidMount() {
-    this.props.fetchInit();
+    const { fetchInit, fetchCount } = this.props;
+    fetchInit();
+    fetchCount();
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.init.isFetching && !this.props.init.isFetching) {
-      this.setState({ folders: this.props.init.data.folders });
+    const { init, count } = this.props;
+    if (prevProps.init.isFetching && !init.isFetching) {
+      this.setState({ folders: init.data.folders });
+    }
+    if (prevProps.count.isFetching && !count.isFetching) {
+      this.setState({ mailboxesCount: count.data });
     }
   }
 
@@ -53,6 +82,7 @@ export class DrawerMenuContainer extends React.Component<DrawerMenuProps, Drawer
 const mapStateToProps = (state: any) => {
   return {
     init: getInitMailListState(state),
+    count: getCountListState(state),
   };
 };
 
@@ -60,6 +90,7 @@ const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators(
     {
       fetchInit: fetchInitAction,
+      fetchCount: fetchCountAction
     },
     dispatch
   );

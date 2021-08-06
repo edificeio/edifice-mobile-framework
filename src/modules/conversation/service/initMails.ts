@@ -6,10 +6,12 @@ import { IInitMail } from "../state/initMails";
 export type IInitMailListBackend = {
   id: string;
   name: string;
+  nbUnread: number;
   parent_id: string;
   user_id: string;
   depth: number;
   trashed: boolean;
+  skip_uniq: boolean;
 }[];
 
 const initMailListAdapter: (rootFoldersList: IInitMailListBackend) => IInitMail = rootFoldersList => {
@@ -18,15 +20,14 @@ const initMailListAdapter: (rootFoldersList: IInitMailListBackend) => IInitMail 
   const folders = rootFoldersList.map(rootFolder => ({
     id: rootFolder.id,
     folderName: rootFolder.name,
-    path: "",
-    unread: 0,
-    count: 0,
+    unread: rootFolder.nbUnread,
     folders: [],
     // Extra data
     parent_id: rootFolder.parent_id,
     user_id: rootFolder.user_id,
     depth: rootFolder.depth,
     trashed: rootFolder.trashed,
+    skip_uniq: rootFolder.skip_uniq
   }));
 
   result = {
@@ -37,7 +38,7 @@ const initMailListAdapter: (rootFoldersList: IInitMailListBackend) => IInitMail 
 
 export const initMailService = {
   get: async () => {
-    const rootFoldersList = await fetchJSONWithCache(`/conversation/folders/list`);
+    const rootFoldersList = await fetchJSONWithCache(`/conversation/userfolders/list?unread=true`);
     return initMailListAdapter(rootFoldersList);
   },
 };

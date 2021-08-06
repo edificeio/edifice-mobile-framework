@@ -7,15 +7,14 @@ import mailConfig from "../moduleConfig";
 export type IFolder = {
   id: string;
   folderName: string;
-  path: string;
   unread: number;
-  count: number;
   folders: any[];
   // Extra data
   parent_id: string;
   user_id: string;
   depth: number;
   trashed: boolean;
+  skip_uniq: boolean;
 };
 
 export interface IInitMail {
@@ -29,14 +28,13 @@ export const initialState: IInitMail = {
     {
       id: "",
       folderName: "",
-      path: "",
       unread: 0,
-      count: 0,
       folders: [],
       parent_id: "",
       user_id: "",
       depth: 0,
       trashed: false,
+      skip_uniq: false
     },
   ],
 };

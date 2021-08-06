@@ -1,17 +1,16 @@
 import { Dispatch } from "redux";
 
 import { createAsyncActionCreators } from "../../../infra/redux/async2";
-import { Trackers } from "../../../infra/tracker";
 import { foldersService } from "../service/folders";
-import { ICount, actionTypes } from "../state/count";
+import { ICountMailboxes, actionTypes } from "../state/count";
 
-export const dataActions = createAsyncActionCreators<ICount>(actionTypes);
+export const dataActions = createAsyncActionCreators<ICountMailboxes>(actionTypes);
 
-export function fetchCountAction(folderIds: string[]) {
+export function fetchCountAction() {
   return async (dispatch: Dispatch) => {
     try {
       dispatch(dataActions.request());
-      const data = await foldersService.count(folderIds);
+      const data = await foldersService.count();
       dispatch(dataActions.receipt(data));
     } catch (errmsg) {
       dispatch(dataActions.error(errmsg));

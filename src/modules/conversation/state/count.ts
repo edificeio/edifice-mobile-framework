@@ -3,13 +3,13 @@ import folderConfig from "../moduleConfig";
 
 // THE MODEL --------------------------------------------------------------------------------------
 
-export interface ICount {
+export interface ICountMailboxes {
   [name: string]: number;
 }
 
 // THE STATE --------------------------------------------------------------------------------------
 
-export type ICountListState = AsyncState<ICount>;
+export type ICountListState = AsyncState<ICountMailboxes>;
 
 export const initialState = {};
 
