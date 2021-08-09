@@ -53,7 +53,7 @@
     "querystring": "0.2.0",
     "react": "~16.9.0",
     "react-lifecycles-compat": "^3.0.4",
-    "react-native": "~0.61.5",
+    "react-native": "~0.62.3",
     "react-native-action-sheet": "^2.2.0",
     "react-native-app-link": "1.0.0",
     "react-native-backdrop": "^2.1.2",
