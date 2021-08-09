@@ -29,14 +29,15 @@ export const mailService = {
     });
   },
   moveMailsToFolder: async (mailIds: string[], folderId: string) => {
-    const idsString = mailIds.reduce((s, id) => s + "id=" + id + "&", "");
-    await fetchJSONWithCache(`/zimbra/move/userfolder/${folderId}?${idsString}`, {
+    const mailIdsData = {id: mailIds};
+    await fetchJSONWithCache(`/conversation/move/userfolder/${folderId}`, {
       method: "put",
+      body: JSON.stringify(mailIdsData)
     });
   },
   moveMailsToInbox: async (mailIds: string[]) => {
     const idsString = mailIds.reduce((s, id) => s + "id=" + id + "&", "");
-    await fetchJSONWithCache(`/zimbra/move/root?${idsString}`, {
+    await fetchJSONWithCache(`/conversation/move/root?${idsString}`, {
       method: "put",
     });
   },
