@@ -10,7 +10,7 @@
       "yesterday": "ayer"
     },
     "error": {
-      "pdf": {
+      "content": {
         "text": "Parece ser que el contenido ha desaparecido.\nSi el problema persiste, contacte con el equipo de asistencia."
       },
       "text": "Ha ocurrido un error. Vuelva a intentarlo más tarde.",
@@ -401,8 +401,9 @@
   "Edit": "Modificar",
   "Email": "Correo electrónico",
   "EmailAddress": "Correo electrónico",
-  "federatedAccount-instructions": "Si utiliza una cuenta federada para conectarse a su red social colaborativa, tiene que generar una contraseña temporal desde la página Mi Cuenta.\n\nEsto es necesario solo cuando inicia sesión por primera vez en la aplicación móvil.\n\nPara acceder a la página Mi cuenta, conectese desde su navegador web haciendo clic en el botón aquí abajo.",
-  "federatedAccount-link": "Autenticación para cuentas federadas",
+  "federatedAccount-instructions": "Si su institución le ha comunicado que use su cuenta académica o una cuenta de servicio de matrícula (EduConnect, SAPIA, ARENA u otra), las informaciones de conexión para la aplicación móvil se pueden encontrar en la versión web de la plataforma.",
+  "federatedAccount-instructions-details": "• Conéctese a su red educativa desde su navegador web haciendo clic en el botón de abajo\n\n• Accede a la página \"Mi cuenta\"\n\n• Recupere el nombre de usuario y generar una contraseña temporal\n\n• Regrese a la aplicación móvil y use sus credenciales en la pantalla de inicio de sesión",
+  "federatedAccount-link": "Conexión para las cuentas académicas y cuentas de servicio de matrícula (EduConnect, SAPIA, ARENA,...)",
   "federatedAccount-openLink": "Acceder a Mi Cuenta",
   "files.too.large": "No hay suficiente espacio para guardar los archivos",
   "Firstname": "Nombre",

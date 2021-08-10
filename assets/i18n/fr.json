@@ -10,7 +10,7 @@
       "yesterday": "hier"
     },
     "error": {
-      "pdf": {
+      "content": {
         "text": "Il semblerait que le contenu se soit envolé.\nSi le problème persiste, contactez l'assistance."
       },
       "text": "Une erreur est survenue. Veuillez réessayer plus tard.",
@@ -401,8 +401,9 @@
     "Edit": "Modifier",
     "Email": "Courriel",
     "EmailAddress": "Adresse courriel",
-    "federatedAccount-instructions": "Si vous utilisez un compte académique ou un compte de services de scolarité ATEN pour vous connecter à votre réseau social éducatif, vous devez générer un mot de passe temporaire depuis la page Mon Compte.\n\nCette opération est nécessaire seulement lors de votre première connexion sur l'application mobile.\n\nPour accéder à la page Mon Compte, connectez-vous depuis votre navigateur web en cliquant sur le bouton ci-dessous.",
-    "federatedAccount-link": "Connexion pour les comptes académiques et les comptes des services scolarité ATEN (Élèves et parents)",
+    "federatedAccount-instructions": "Si votre établissement vous a indiqué d'utiliser votre compte académique ou un compte de service de scolarité (EduConnect, SAPIA, ARENA ou autre), les identifiants de connexion de l'application mobile se trouvent sur la version web de votre réseau éducatif.",
+    "federatedAccount-instructions-details": "• Connectez-vous sur votre réseau éducatif depuis votre navigateur web en cliquant sur le bouton ci-dessous\n\n• Accédez à la page \"Mon Compte\"\n\n• Récupérez l'identifiant et générez un mot de passe temporaire\n\n• Revenez sur l'application mobile et utilisez vos identifiants sur l'écran de connexion",
+    "federatedAccount-link": "Connexion pour les comptes académiques et les comptes des services scolarité (EduConnect, SAPIA, ARENA, ...)",
     "federatedAccount-openLink": "Accéder à Mon Compte",
     "files.too.large": "Espace insuffisant pour sauvegarder les fichiers",
     "Firstname": "Prénom",
