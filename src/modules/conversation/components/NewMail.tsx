@@ -1,6 +1,6 @@
 import I18n from "i18n-js";
 import React from "react";
-import { ScrollView, View, StyleSheet, TextInput, ViewStyle } from "react-native";
+import { ScrollView, View, StyleSheet, TextInput, ViewStyle, SafeAreaView } from "react-native";
 
 import Notifier from "../../../infra/notifier/container";
 import { CommonStyles } from "../../../styles/common/styles";
@@ -70,7 +70,8 @@ export default ({
         <Loading />
       ) : (
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} bounces={false} keyboardShouldPersistTaps="never">
-          <Headers style={{ zIndex: 3 }} headers={headers} onChange={onHeaderChange} onSave={onDraftSave} />
+          <SafeAreaView style={{ flex: 1 }}>
+          <Headers style={{ zIndex: 3 }} headers={headers} onChange={onHeaderChange} />
           <Attachments
             style={{ zIndex: 2 }}
             attachments={attachments}
@@ -78,8 +79,9 @@ export default ({
             onDelete={onAttachmentDelete}
             onSave={onDraftSave}
           />
-          <Body style={{ zIndex: 1 }} value={body} onChange={onBodyChange} onSave={onDraftSave} />
+          <Body style={{ zIndex: 1 }} value={body} onChange={onBodyChange} />
           {!!prevBody && <PrevBody prevBody={prevBody} />}
+          </SafeAreaView>
         </ScrollView>
       )}
     </PageContainer>
@@ -93,7 +95,7 @@ const HeaderUsers = ({
   value,
   children,
   autoFocus
-}: React.PropsWithChildren<{ autoFocus?: boolean, style?: ViewStyle; title: string; onChange; onSave; forUsers?: boolean; value: any }>) => {
+}: React.PropsWithChildren<{ autoFocus?: boolean, style?: ViewStyle; title: string; onChange; forUsers?: boolean; value: any }>) => {
   const headerStyle = {
     flexDirection: "row",
     alignItems: "center",
@@ -115,9 +117,8 @@ const HeaderSubject = ({
   style,
   title,
   onChange,
-  onSave,
   value,
-}: React.PropsWithChildren<{ style?: ViewStyle; title: string; onChange; onSave; forUsers?: boolean; value: any }>) => {
+}: React.PropsWithChildren<{ style?: ViewStyle; title: string; onChange; forUsers?: boolean; value: any }>) => {
   const headerStyle = {
     flexDirection: "row",
     alignItems: "center",
@@ -152,13 +153,12 @@ const HeaderSubject = ({
         defaultValue={value}
         numberOfLines={1}
         onChangeText={text => updateCurrentValue(text)}
-        onEndEditing={() => onSave()}
       />
     </View>
   );
 };
 
-const Headers = ({ style, headers, onChange, onSave }) => {
+const Headers = ({ style, headers, onChange }) => {
   const [showExtraFields, toggleExtraFields] = React.useState(false);
   const { to, cc, cci, subject } = headers;
 
@@ -169,7 +169,6 @@ const Headers = ({ style, headers, onChange, onSave }) => {
         style={{ zIndex: 4 }}
         value={to}
         onChange={to => onChange({ ...headers, to })}
-        onSave={() => onSave()}
         title={I18n.t("conversation.to")}>
         <TouchableOpacity onPress={() => toggleExtraFields(!showExtraFields)}>
           <Icon name={showExtraFields ? "keyboard_arrow_up" : "keyboard_arrow_down"} size={28} />
@@ -182,14 +181,12 @@ const Headers = ({ style, headers, onChange, onSave }) => {
             title={I18n.t("conversation.cc")}
             value={cc}
             onChange={cc => onChange({ ...headers, cc })}
-            onSave={() => onSave()}
           />
           <HeaderUsers
             style={{ zIndex: 2 }}
             title={I18n.t("conversation.bcc")}
             value={cci}
             onChange={cci => onChange({ ...headers, cci })}
-            onSave={() => onSave()}
           />
         </>
       )}
@@ -197,7 +194,6 @@ const Headers = ({ style, headers, onChange, onSave }) => {
         title={I18n.t("conversation.subject")}
         value={subject}
         onChange={subject => onChange({ ...headers, subject })}
-        onSave={() => onSave()}
       />
     </View>
   );
@@ -227,7 +223,7 @@ const Attachments = ({ style, attachments, onChange, onDelete, onSave }) => {
   );
 };
 
-const Body = ({ style, value, onChange, onSave }) => {
+const Body = ({ style, value, onChange }) => {
   const textUpdateTimeout = React.useRef();
   const [currentValue, updateCurrentValue] = React.useState(value);
 
@@ -250,7 +246,6 @@ const Body = ({ style, value, onChange, onSave }) => {
         style={{ flexGrow: 1 }}
         defaultValue={value}
         onChangeText={text => updateCurrentValue(text)}
-        onEndEditing={() => onSave()}
       />
     </View>
   );

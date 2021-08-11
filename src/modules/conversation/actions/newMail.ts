@@ -3,7 +3,7 @@ import { Dispatch } from "redux";
 import { Trackers } from "../../../infra/tracker";
 import { newMailService } from "../service/newMail";
 
-export function sendMailAction(mailDatas, draftId: string, InReplyTo: string) {
+export function sendMailAction(mailDatas, draftId: string | undefined, InReplyTo: string) {
   return async () => {
     Trackers.trackEvent("Zimbra", "SEND");
     try {
