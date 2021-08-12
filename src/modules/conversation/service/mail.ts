@@ -16,9 +16,10 @@ export const mailService = {
     });
   },
   restoreMails: async (mailIds: string[]) => {
-    const idsString = mailIds.reduce((s, id) => s + "id=" + id + "&", "");
-    await fetchJSONWithCache(`/zimbra/restore?${idsString}`, {
+    const mailIdsData = {id: mailIds};
+    await fetchJSONWithCache(`/conversation/restore`, {
       method: "put",
+      body: JSON.stringify(mailIdsData)
     });
   },
   deleteMails: async (mailIds: string[]) => {

@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import { moveMailsToFolderAction, moveMailsToInboxAction } from "../actions/mail";
+import { moveMailsToFolderAction, moveMailsToInboxAction, restoreMailsAction } from "../actions/mail";
 import MoveToFolderModalComponent from "../components/MoveToFolderModal";
 import { getInitMailListState, IFolder } from "../state/initMails";
 
@@ -10,9 +10,11 @@ type MoveToFolderModalProps = {
   folders: IFolder[];
   show: boolean;
   mail: any;
+  currentFolder: string;
   closeModal: () => any;
   moveToFolder: (ids: string[], folder: string) => any;
   moveToInbox: (ids: string[]) => any;
+  restore: (ids: string[]) => any;
   successCallback: () => any;
 };
 
@@ -35,11 +37,12 @@ class MoveToFolderModal extends React.Component<MoveToFolderModalProps, MoveToFo
   };
 
   confirm = async () => {
-    const { moveToFolder, moveToInbox, mail, successCallback } = this.props;
+    const { currentFolder, moveToFolder, moveToInbox, restore, mail, successCallback, closeModal } = this.props;
     const { selectedFolder } = this.state;
-    this.props.closeModal();
+    closeModal();
     if (!selectedFolder) return;
-    else if (selectedFolder === "inbox") await moveToInbox([mail.id]);
+    if (currentFolder === "trash") await restore([mail.id]);
+    if (selectedFolder === "inbox") await moveToInbox([mail.id]);
     else await moveToFolder([mail.id], selectedFolder);
     successCallback();
   };
@@ -67,6 +70,7 @@ const mapDispatchToProps = (dispatch: any) => {
     {
       moveToFolder: moveMailsToFolderAction,
       moveToInbox: moveMailsToInboxAction,
+      restore: restoreMailsAction
     },
     dispatch
   );

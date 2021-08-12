@@ -13,6 +13,7 @@ import { IFolder } from "../state/initMails";
 type MoveToFolderModalProps = {
   show: boolean;
   folders: IFolder[];
+  currentFolder: string;
   selectedFolder: string | null;
   closeModal: () => any;
   confirm: () => any;
@@ -52,33 +53,41 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
   };
 
   public render() {
-    const { show, folders, closeModal, confirm } = this.props;
+    const { show, folders, closeModal, confirm, currentFolder } = this.props;
+    const isCurrentFolderInbox = currentFolder === "inbox";
+    const isCurrentFolderTrash = currentFolder === "trash";
+    const foldersWithoutCurrent = folders.filter(folder => folder.folderName !== currentFolder);
+    const isMoveImpossible = isCurrentFolderInbox && folders && folders.length === 0;
+    const modalTitle = isMoveImpossible
+      ? "conversation.moveImpossible"
+      : `conversation.${isCurrentFolderTrash ? "restore" : "move"}To`;
     return (
       <ModalBox isVisible={show}>
         <ModalContent>
           <View style={style.containerView}>
             <View style={{ alignSelf: "baseline", paddingBottom: 8, paddingHorizontal: 12 }}>
-              <Text style={{ fontSize: 18 }}>{I18n.t("conversation.moveTo")}</Text>
+              <Text style={{ fontSize: 18 }}>{I18n.t(modalTitle)}</Text>
             </View>
-            <View style={{ backgroundColor: "#eef7fb", width: "100%", padding: 4 }}>
-              <Text style={{ fontSize: 18 }}>{I18n.t("conversation.messages")}</Text>
-            </View>
-            {this.renderOption("inbox", I18n.t("conversation.inbox"), "inbox")}
-            {this.renderOption(this.findMainFolderId("Sent"), I18n.t("conversation.outbox"), "send")}
-            {this.renderOption(this.findMainFolderId("Drafts"), I18n.t("conversation.drafts"), "insert_drive_file")}
-            {this.renderOption(this.findMainFolderId("Trash"), I18n.t("conversation.trash"), "delete")}
-            {folders !== undefined && folders.length > 0 && (
+            {!isCurrentFolderInbox && (
+              <>
+                <View style={{ backgroundColor: "#eef7fb", width: "100%", padding: 4 }}>
+                  <Text style={{ fontSize: 18 }}>{I18n.t("conversation.messages")}</Text>
+                </View>
+                {this.renderOption("inbox", I18n.t("conversation.inbox"), "inbox")}
+              </>
+            )}
+            {foldersWithoutCurrent && foldersWithoutCurrent.length > 0 && (
               <View>
                 <View style={{ backgroundColor: "lightblue", width: "100%", padding: 4 }}>
                   <Text style={{ fontSize: 18 }}>{I18n.t("conversation.directories")}</Text>
                 </View>
                 <ScrollView style={{ height: "33%" }}>
-                  {folders.map(f => this.renderOption(f.id, f.folderName, "folder"))}
-              </ScrollView>
+                  {foldersWithoutCurrent.map(f => this.renderOption(f.id, f.folderName, "folder"))}
+                </ScrollView>
               </View>
             )}
             <View style={{ flexDirection: "row-reverse", padding: 20, paddingBottom: 10 }}>
-              <DialogButtonOk label={I18n.t("conversation.move")} onPress={confirm} />
+              <DialogButtonOk disabled={isMoveImpossible} label={I18n.t(`conversation.${isCurrentFolderTrash ? "restore" : "move"}`)} onPress={confirm} />
               <DialogButtonCancel onPress={() => closeModal()} />
             </View>
           </View>

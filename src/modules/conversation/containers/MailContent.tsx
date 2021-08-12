@@ -111,12 +111,17 @@ class MailContentContainer extends React.PureComponent<any, any> {
   public render() {
     const { navigation, mail } = this.props;
     const { showMenu, showModal } = this.state;
-    const menuData = [
+    const currentFolder = navigation.getParam("currentFolder");
+    const isCurrentFolderTrash = currentFolder === "trash";
+    const isCurrentFolderSentOrDrafts = currentFolder === "sendMessages" || currentFolder === "drafts";
+    let menuData = [
       { text: I18n.t("conversation.markUnread"), icon: "email", onPress: this.markAsRead },
-      { text: I18n.t("conversation.move"), icon: "unarchive", onPress: this.showModal },
+      { text: I18n.t(`conversation.${isCurrentFolderTrash ? "restore" : "move"}`), icon: "unarchive", onPress: this.showModal },
       // { text: I18n.t("conversation.downloadAll"), icon: "download", onPress: () => {} },
       { text: I18n.t("conversation.delete"), icon: "delete", onPress: this.delete },
     ];
+    isCurrentFolderSentOrDrafts && menuData.splice(1,1);
+
     return (
       <>
         <PageContainer>
@@ -140,7 +145,7 @@ class MailContentContainer extends React.PureComponent<any, any> {
           </HeaderComponent>
           <MailContent {...this.props} delete={this.delete} />
         </PageContainer>
-        <MoveModal mail={mail} show={showModal} closeModal={this.closeModal} successCallback={this.mailMoved} />
+        <MoveModal currentFolder={currentFolder} mail={mail} show={showModal} closeModal={this.closeModal} successCallback={this.mailMoved} />
         <MailContentMenu onClickOutside={this.showMenu} show={showMenu} data={menuData} />
       </>
     );
