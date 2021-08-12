@@ -256,8 +256,8 @@ export class TimelineScreen extends React.PureComponent<
 
 const getTimelineItems = (flashMessages: IFlashMessages_State, notifications: INotifications_State) =>
 ([
-  ...flashMessages.data.map(fm => ({ type: ITimelineItemType.FLASHMSG, data: fm })),
-  ...notifications.data.map(n => ({ type: ITimelineItemType.NOTIFICATION, data: n })),
+  ...flashMessages && flashMessages.data && flashMessages.data.map(fm => ({ type: ITimelineItemType.FLASHMSG, data: fm })),
+  ...notifications && notifications.data && notifications.data.map(n => ({ type: ITimelineItemType.NOTIFICATION, data: n })),
 ]);
 
 // MAPPING ========================================================================================
