@@ -49,13 +49,13 @@ export class LocalFile implements UploadFileItem {
         let pickedFiles: Array<DocumentPickerResponse | Asset> = [];
         if (opts.source === 'documents') {
             if (opts.multiple) {
-                console.log("Document multiple picker")
+                // console.log("Document multiple picker")
                 pickedFiles = await DocumentPicker.pickMultiple({
                     type: LocalFile._getDocumentPickerTypeArg(opts.type),
                     mode: 'open'
                 });
             } else {
-                console.log("Document single picker")
+                // console.log("Document single picker")
                 pickedFiles = [await DocumentPicker.pick({
                     type: LocalFile._getDocumentPickerTypeArg(opts.type),
                     mode: 'open'
@@ -71,13 +71,13 @@ export class LocalFile implements UploadFileItem {
                     };
                 };
                 if (opts.multiple) {
-                    console.log("Galery multiple picker")
+                    // console.log("Galery multiple picker")
                     launchImageLibrary({
                         mediaType: LocalFile._getImagePickerTypeArg(opts.type),
                         selectionLimit: 0
                     }, callback);
                 } else {
-                    console.log("Galery single picker")
+                    // console.log("Galery single picker")
                     launchImageLibrary({
                         mediaType: LocalFile._getImagePickerTypeArg(opts.type),
                     }, callback);
@@ -92,7 +92,7 @@ export class LocalFile implements UploadFileItem {
                         resolve();
                     };
                 };
-                console.log("Camera (single) picker")
+                // console.log("Camera (single) picker")
                 launchCamera({
                     mediaType: LocalFile._getImagePickerTypeArg(opts.type),
                     saveToPhotos: false
@@ -103,7 +103,7 @@ export class LocalFile implements UploadFileItem {
 
         // format pickedFiles data
         const res: LocalFile[] = pickedFiles.map(f => new LocalFile(f, { _needIOSReleaseSecureAccess: opts.source === 'documents' }));
-        console.log("res picked files", res);
+        // console.log("res picked files", res);
         return res;
     }
 
@@ -143,7 +143,7 @@ export class LocalFile implements UploadFileItem {
     }) || url;
 
     open () {
-        console.log("openning", this._filepathNative);
+        // console.log("openning", this._filepathNative);
         FileViewer.open(this._filepathNative, {
             showOpenWithDialog: true,
             showAppsSuggestions: true

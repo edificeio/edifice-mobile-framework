@@ -14,7 +14,6 @@ import { connect } from "react-redux";
 import I18n from "i18n-js";
 
 import moduleConfig from "../moduleConfig";
-import withViewTracking from "../../../framework/util/tracker/withViewTracking";
 import { PageView } from "../../../framework/components/page";
 import { LoadingIndicator } from "../../../framework/components/loading";
 import {
@@ -34,12 +33,9 @@ import { Icon } from "../../../framework/components/icon";
 import { getUserSession, IUserSession } from "../../../framework/util/session";
 import { Trackers } from "../../../framework/util/tracker";
 import { startLoadNotificationsAction } from "../../../framework/modules/timelinev2/actions";
-import { ContentUri } from "../../../types/contentUri";
-import { uploadDocument, formatResults } from "../../../workspace/actions/helpers/documents";
-import { FilterId, IItems, IFile } from "../../../workspace/types";
 import { AttachmentPicker } from "../../../ui/AttachmentPicker";
 import { GridAvatars } from "../../../ui/avatars/GridAvatars";
-import { sendBlogPostAction } from "../actions";
+import { sendBlogPostAction, uploadBlogPostImagesAction } from "../actions";
 import { notifierShowAction } from "../../../framework/util/notifier/actions";
 import { hasNotch } from "react-native-device-info";
 import {
@@ -48,8 +44,10 @@ import {
   publishBlogPostResourceRight,
   submitBlogPostResourceRight,
 } from "../rights";
-import { ImagePicked, ImagePicker } from "../../../infra/imagePicker";
+import { ImagePicked, imagePickedToLocalFile, ImagePicker } from "../../../infra/imagePicker";
 import Notifier from "../../../framework/util/notifier";
+import { SyncedFile } from "../../../framework/util/file";
+import { ILocalAttachment } from "../../../ui/Attachment";
 
 // TYPES ==========================================================================================
 
@@ -57,12 +55,12 @@ export interface IBlogCreatePostScreenDataProps {
   session: IUserSession;
 }
 export interface IBlogCreatePostScreenEventProps {
-  handleUploadPostImages(images: ImagePicked[]): Promise<IItems<IFile>>;
+  handleUploadPostImages(images: ImagePicked[]): Promise<SyncedFile[]>;
   handleSendBlogPost(
     blog: IBlog,
     title: string,
     content: string,
-    uploadedPostImages?: IItems<IFile>
+    uploadedPostImages?: SyncedFile[]
   ): Promise<string | undefined>;
   handleInitTimeline(): Promise<void>;
   dispatch: ThunkDispatch<any, any, any>;
@@ -272,7 +270,12 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
         <AttachmentPicker
           ref={r => (this.attachmentPickerRef = r)}
           onlyImages
-          attachments={images}
+          attachments={images.map(img => ({
+            mime: img.type,
+            name: img.fileName,
+            uri: img.uri
+          } as ILocalAttachment))}
+          onAttachmentSelected={() => {}}
           onAttachmentRemoved={imagesToSend => this.setState({ images: imagesToSend })}
           notifierId="createBlogPost"
         />
@@ -315,7 +318,7 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
       }
 
       // Upload post images (if added)
-      let uploadedPostImages: undefined | IItems<IFile>;
+      let uploadedPostImages: undefined | SyncedFile[];
       if (images.length > 0) {
         uploadedPostImages = await handleUploadPostImages(images);
       }
@@ -381,23 +384,13 @@ const mapStateToProps: (s: IGlobalState) => IBlogCreatePostScreenDataProps = s =
 };
 
 const mapDispatchToProps: (
-  dispatch: ThunkDispatch<any, any, any>,
-  getState: () => IGlobalState
-) => IBlogCreatePostScreenEventProps = (dispatch, getState) => ({
+  dispatch: ThunkDispatch<any, any, any>
+) => IBlogCreatePostScreenEventProps = (dispatch) => ({
   handleUploadPostImages: async (images: ImagePicked[]) => {
-    // ToDo: use the future file upload module here
-    const convertedImages: ContentUri[] = images.map(i => ({
-      mime: i.type,
-      name: i.fileName,
-      uri: i.uri,
-      path: i.uri,
-    }));
-    const uploadedPostImages = await uploadDocument(dispatch, convertedImages, FilterId.protected);
-    const parsedPostImages: unknown[] = uploadedPostImages.map(uploadedImage => JSON.parse(uploadedImage));
-    const formattedPostImages = formatResults(parsedPostImages);
-    return formattedPostImages as IItems<IFile>;
+    const localFiles = images.map(img => imagePickedToLocalFile(img));
+    return dispatch(uploadBlogPostImagesAction(localFiles)) as unknown as Promise<SyncedFile[]>;
   },
-  handleSendBlogPost: async (blog: IBlog, title: string, content: string, uploadedPostImages?: IItems<IFile>) => {
+  handleSendBlogPost: async (blog: IBlog, title: string, content: string, uploadedPostImages?: SyncedFile[]) => {
     return ((await dispatch(sendBlogPostAction(blog, title, content, uploadedPostImages))) as unknown) as
       | string
       | undefined;

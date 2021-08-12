@@ -3,8 +3,9 @@
  */
 
 import { ThunkDispatch } from "redux-thunk";
+import workspaceService from "../../../framework/services/workspace";
+import { IDistantFile, LocalFile } from "../../../framework/util/file";
 import { getUserSession } from "../../../framework/util/session";
-import { IItems, IFile } from "../../../workspace/types";
 import moduleConfig from "../moduleConfig";
 import { getPublishableBlogs, IBlog } from "../reducer";
 import { createBlogPostResourceRight, getBlogPostRight, publishBlogPostResourceRight, submitBlogPostResourceRight } from "../rights";
@@ -51,11 +52,20 @@ export const getPublishableBlogListAction = () => async (dispatch: ThunkDispatch
   }
 }
 
+export const uploadBlogPostImagesAction = (images: LocalFile[]) =>
+  async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+    const session = getUserSession(getState());
+    const syncFiles = await workspaceService.uploadFiles(session, images, {
+      parent: 'protected'
+    });
+    return syncFiles;
+  }
+
 /**
  * Create and submit/publish a post for a given blog.
  * Info: no reducer is used in this action.
  */
- export const sendBlogPostAction = (blog: IBlog, postTitle: string, postContent: string, uploadedPostImages?: IItems<IFile>) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+ export const sendBlogPostAction = (blog: IBlog, postTitle: string, postContent: string, uploadedPostImages?: IDistantFile[]) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   try {
     const session = getUserSession(getState());
     const blogId = blog.id;
@@ -93,7 +103,7 @@ export const getPublishableBlogListAction = () => async (dispatch: ThunkDispatch
  * Create a post for a given blog.
  * Info: no reducer is used in this action.
  */
- export const createBlogPostAction = (blogId: string, postTitle: string, postContent: string, uploadedPostImages?: IItems<IFile>) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+ export const createBlogPostAction = (blogId: string, postTitle: string, postContent: string, uploadedPostImages?: IDistantFile[]) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   try {
     const session = getUserSession(getState());
 

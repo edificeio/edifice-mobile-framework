@@ -5,6 +5,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { ModalBox, ModalContent, ModalContentBlock } from "../ui/Modal";
 import { ButtonTextIcon } from "../ui";
 import type { GestureResponderEvent, TouchableOpacityProps } from "react-native";
+import { LocalFile } from "../framework/util/file";
 
 export type ImagePicked = Required<Pick<ImagePickerResponse, 'uri' | 'type' | 'fileName' | 'fileSize' | 'base64' | 'width' | 'height'>>;
 
@@ -73,3 +74,10 @@ export class ImagePicker extends React.PureComponent<{
         </>;
     }
 }
+
+export const imagePickedToLocalFile = (img: ImagePicked) => new LocalFile({
+    name: img.fileName as string,
+    filename: img.fileName as string,
+    filepath: img.uri as string,
+    filetype: img.type as string
+}, {_needIOSReleaseSecureAccess: false});

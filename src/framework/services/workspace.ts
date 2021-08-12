@@ -70,7 +70,7 @@ const workspaceService = {
                         filesize: resfile['metadata']?.['size'],
                         filename: resfile['name'] || file.filename
                     };
-                    console.log(df);
+                    // console.log(df);
                     return new SyncedFile(file, df);
                 }
                 else throw new Error('Upload failed: server error ' + JSON.stringify(res));
