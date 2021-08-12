@@ -3,9 +3,9 @@ import { TextInput, View, ViewStyle, Dimensions } from "react-native";
 import { TouchableOpacity, FlatList } from "react-native-gesture-handler";
 
 import { CommonStyles, IOSShadowStyle } from "../../../styles/common/styles";
+import { SingleAvatar } from "../../../ui/avatars/SingleAvatar";
 import { Text } from "../../../ui/text";
 import { newMailService } from "../service/newMail";
-import { getProfileColor } from "../utils/userColor";
 
 const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, autoFocus }) => {
   const [search, updateSearch] = React.useState("");
@@ -42,11 +42,11 @@ const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, autoFocus }) => {
   };
 
   return (
-    <View style={{ overflow: "visible", marginHorizontal: 5, flex: 1 }}>
-      <SelectedList selectedUsersOrGroups={selectedUsersOrGroups} onItemClick={removeUser} />
-      <Input autoFocus={autoFocus} value={search} onChangeText={updateSearch} onSubmit={() => addUser({ displayName: search, id: search })} />
-      <FoundList foundUserOrGroup={foundUsersOrGroups} addUser={addUser} />
-    </View>
+      <View style={{ overflow: "visible", marginHorizontal: 5, flex: 1 }}>
+        <SelectedList selectedUsersOrGroups={selectedUsersOrGroups} onItemClick={removeUser} />
+        <Input autoFocus={autoFocus} value={search} onChangeText={updateSearch} onSubmit={() => addUser({ displayName: search, id: search })} />
+        <FoundList foundUserOrGroup={foundUsersOrGroups} addUser={addUser} />
+      </View>
   );
 };
 
@@ -84,23 +84,13 @@ const FoundList = ({ foundUserOrGroup, addUser }) => {
     ...IOSShadowStyle,
   } as ViewStyle;
 
-  const FoundUserOrGroup = ({ profile, displayName, onPress }) => {
-    const [color, setColor] = React.useState(CommonStyles.lightGrey);
-    React.useEffect(() => {
-      setColor(getProfileColor(profile));
-    }, [profile]);
-
+  const FoundUserOrGroup = ({ id, displayName, onPress }) => {
     return (
       <TouchableOpacity
         style={{ flexDirection: "row", alignItems: "center", marginVertical: 5, marginLeft: 10 }}
         onPress={onPress}>
-        <Text numberOfLines={1} lineHeight={30} ellipsizeMode="tail">
-          <Text
-            style={{
-              color,
-            }}>
-            {"\u25CF "}
-          </Text>
+        <SingleAvatar userId={id} />
+        <Text numberOfLines={1} lineHeight={30} ellipsizeMode="tail" style={{ flex: 1, marginLeft: 10 }}>
           {displayName}
         </Text>
       </TouchableOpacity>
@@ -109,12 +99,12 @@ const FoundList = ({ foundUserOrGroup, addUser }) => {
 
   return foundUserOrGroup.length > 0 ? (
     <View>
-      <FlatList
+    <FlatList
         style={absoluteListStyle}
         data={foundUserOrGroup}
         renderItem={({ item }) => (
           <FoundUserOrGroup
-            profile={item.profile}
+            id={item.id}
             displayName={item.name || item.displayName}
             onPress={() => addUser(item)}
           />
