@@ -16,6 +16,7 @@ import { DraftType } from "../containers/NewMail";
 import { IMail } from "../state/mailContent";
 import { displayPastDate } from "../../../framework/util/date";
 import { findReceiversAvatars, findSenderAvatar } from "./MailItem";
+import theme from "../../../framework/util/theme";
 
 type MailListProps = {
   notifications: any;
@@ -117,6 +118,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     const navigationKey = this.props.navigation.getParam("key");
     const isFolderInbox = navigationKey === "inbox" || !navigationKey;
     const isFolderOutbox = navigationKey === "sendMessages";
+    const isFolderDrafts = navigationKey === "drafts";
 
     let contact = ["", ""];
     if (isFolderInbox) contact = mailInfos.displayNames.find(item => item[0] === mailInfos.from);
@@ -145,11 +147,17 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
             <View style={styles.mailInfos}>
               {contact &&
                 (mailInfos.unread ? (
-                  <TextBold style={styles.mailInfoSender} numberOfLines={1}>
+                  <TextBold
+                    numberOfLines={1}
+                    style={{ flex: 1, color: isFolderDrafts ? theme.color.failure : undefined }}
+                  >
                     {contact[1]}
                   </TextBold>
                 ) : (
-                  <Text style={styles.mailInfoSender} numberOfLines={1}>
+                  <Text
+                    numberOfLines={1}
+                    style={{ flex: 1, color: isFolderDrafts ? theme.color.failure : undefined }}
+                  >
                     {contact[1]}
                   </Text>
                 ))}
@@ -259,7 +267,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "flex-end",
   },
-  mailInfoSender: { flex: 1 },
   greyColor: { color: "#AFAFAF" },
   shadow: {
     elevation: 4,
