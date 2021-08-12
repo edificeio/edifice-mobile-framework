@@ -1,7 +1,7 @@
 import I18n from "i18n-js";
 import { Platform } from "react-native";
 import { copyDocuments, moveDocuments } from "./copypast";
-import { downloadAction } from "../actions/download";
+import { newDownloadAction } from "../actions/download";
 import { createFolderAction } from "../actions/create";
 import { deleteAction, trashAction } from "../actions/delete";
 import { renameAction } from "../actions/rename";
@@ -84,7 +84,7 @@ export const downloadMenu = () => ({
     title: I18n.t("download-documents"),
     okLabel: I18n.t("download"),
   },
-  onEvent: ({ dispatch, parentId, selected }) => dispatch(downloadAction(parentId, selected)),
+  onEvent: ({ dispatch, parentId, selected }) => dispatch(newDownloadAction(parentId, selected)),
 });
 
 export const restoreMenu = () => ({
