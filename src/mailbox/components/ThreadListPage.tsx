@@ -14,34 +14,29 @@
 // Imports ----------------------------------------------------------------------------------------
 
 // Libraries
-import style from "glamorous-native";
-import * as React from "react";
-import I18n from "i18n-js";
-import Swipeable from "react-native-swipeable";
+import style from 'glamorous-native';
+import * as React from 'react';
+import I18n from 'i18n-js';
+import Swipeable from 'react-native-swipeable';
 
-import moment from "moment";
+import moment from 'moment';
 
 // Components
-import { RefreshControl } from "react-native";
+import { RefreshControl } from 'react-native';
 const { FlatList } = style;
-import styles from "../../styles";
+import styles from '../../styles';
 
-import { Icon, Loading, ButtonsOkCancel } from "../../ui";
-import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
-import { PageContainer } from "../../ui/ContainerContent";
-import TouchableOpacity from "../../ui/CustomTouchableOpacity";
-import { EmptyScreen } from "../../ui/EmptyScreen";
-import ThreadItem from "../components/ThreadItem";
+import { Icon, Loading, ButtonsOkCancel } from '../../ui';
+import DEPRECATED_ConnectionTrackingBar from '../../ui/ConnectionTrackingBar';
+import { PageContainer } from '../../ui/ContainerContent';
+import TouchableOpacity from '../../ui/CustomTouchableOpacity';
+import { EmptyScreen } from '../../ui/EmptyScreen';
+import ThreadItem from '../components/ThreadItem';
 
 // Type definitions
 
-import { IConversationThread } from "../reducers/threadList";
-import {
-  ModalContent,
-  ModalBox,
-  ModalContentBlock,
-  ModalContentText
-} from "../../ui/Modal";
+import { IConversationThread } from '../reducers/threadList';
+import { ModalContent, ModalBox, ModalContentBlock, ModalContentText } from '../../ui/Modal';
 
 // Misc
 
@@ -70,15 +65,13 @@ export interface IThreadListPageOtherProps {
   onRefresh?: () => void;
 }
 
-export type IThreadListPageProps = IThreadListPageDataProps &
-  IThreadListPageEventProps &
-  IThreadListPageOtherProps;
+export type IThreadListPageProps = IThreadListPageDataProps & IThreadListPageEventProps & IThreadListPageOtherProps;
 
 const RightButton = style(TouchableOpacity)({
-  backgroundColor: "#EC5D61",
+  backgroundColor: '#EC5D61',
   flex: 1,
-  justifyContent: "center",
-  paddingLeft: 34
+  justifyContent: 'center',
+  paddingLeft: 34,
 });
 
 // Main component ---------------------------------------------------------------------------------
@@ -98,7 +91,7 @@ export class ThreadListPage extends React.PureComponent<
     this.state = {
       isSwiping: false,
       showDeleteModal: false,
-      swipedThreadId: null
+      swipedThreadId: null,
     };
   }
 
@@ -107,9 +100,7 @@ export class ThreadListPage extends React.PureComponent<
   public render() {
     const { isFetching, isRefreshing, threads } = this.props;
     const isEmpty = threads && threads.length === 0;
-    const pageContent = isEmpty && (isFetching || isRefreshing)
-      ? this.renderLoading()
-      : this.renderThreadList();
+    const pageContent = isEmpty && (isFetching || isRefreshing) ? this.renderLoading() : this.renderThreadList();
 
     return (
       // <PageContainer>
@@ -148,21 +139,19 @@ export class ThreadListPage extends React.PureComponent<
           onNextPage();
         }}
         onEndReachedThreshold={0.1}
-        renderItem={({ item }: { item: IConversationThread }) =>
-          this.renderThreadItem(item)
-        }
+        renderItem={({ item }: { item: IConversationThread }) => this.renderThreadItem(item)}
         keyExtractor={(item: IConversationThread) => item.id}
         style={styles.grid}
-        keyboardShouldPersistTaps={"always"}
+        keyboardShouldPersistTaps={'always'}
         scrollEnabled={!isSwiping}
         ListFooterComponent={isFetching ? this.renderLoading() : null}
-        ListEmptyComponent= {
+        ListEmptyComponent={
           <EmptyScreen
-            imageSrc={require("../../../assets/images/empty-screen/conversations.png")}
+            imageSrc={require('../../../assets/images/empty-screen/conversations.png')}
             imgWidth={571}
             imgHeight={261}
-            text={I18n.t("conversation-emptyScreenText")}
-            title={I18n.t("conversation-emptyScreenTitle")}
+            text={I18n.t('conversation-emptyScreenText')}
+            title={I18n.t('conversation-emptyScreenTitle')}
             scale={0.76}
           />
         }
@@ -176,12 +165,11 @@ export class ThreadListPage extends React.PureComponent<
         onPress={() =>
           this.setState({
             showDeleteModal: true,
-            swipedThreadId: threadId
+            swipedThreadId: threadId,
           })
-        }
-      >
+        }>
         <Icon size={18} color="#ffffff" name="trash" />
-      </RightButton>
+      </RightButton>,
     ];
   }
 
@@ -189,9 +177,9 @@ export class ThreadListPage extends React.PureComponent<
     <ModalContent>
       <ModalContentBlock>
         <ModalContentText>
-          {I18n.t("common-confirm")}
-          {"\n"}
-          {I18n.t("conversation-deleteThread")}
+          {I18n.t('common-confirm')}
+          {'\n'}
+          {I18n.t('conversation-deleteThread')}
         </ModalContentText>
       </ModalContentBlock>
       <ModalContentBlock>
@@ -201,7 +189,7 @@ export class ThreadListPage extends React.PureComponent<
             if (this.swipeRef) this.swipeRef.recenter();
           }}
           onValid={() => this.handleDeleteThread(threadId)}
-          title={I18n.t("delete")}
+          title={I18n.t('delete')}
         />
       </ModalContentBlock>
     </ModalContent>
@@ -218,12 +206,8 @@ export class ThreadListPage extends React.PureComponent<
           if (this.swipeRef) this.swipeRef.recenter();
           this.setState({ isSwiping: true });
         }}
-        onSwipeRelease={() => this.setState({ isSwiping: false })}
-      >
-        <ThreadItem
-          {...thread}
-          onPress={e => this.handleOpenThread(thread.id)}
-        />
+        onSwipeRelease={() => this.setState({ isSwiping: false })}>
+        <ThreadItem {...thread} onPress={e => this.handleOpenThread(thread.id)} />
       </Swipeable>
     );
   }
@@ -239,7 +223,7 @@ export class ThreadListPage extends React.PureComponent<
 
     if (!threadInfo) return;
     onOpenThread && onOpenThread(threadId);
-    navigation.navigate("thread", { threadInfo });
+    navigation.navigate('thread', { threadInfo });
   }
 
   public handleDeleteThread(threadId) {
@@ -248,7 +232,7 @@ export class ThreadListPage extends React.PureComponent<
     onDeleteThread(threadId);
     this.setState({
       showDeleteModal: false,
-      swipedThreadId: null
+      swipedThreadId: null,
     });
   }
 }
