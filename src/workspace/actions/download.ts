@@ -6,7 +6,7 @@ import { downloadFiles, getExtension } from "../../infra/actions/downloadHelper"
 import { ThunkDispatch } from "redux-thunk";
 import workspaceService from "../../framework/services/workspace";
 import { getUserSession } from "../../framework/util/session";
-import { IDistantFile } from "../../framework/util/file";
+import { IDistantFile, SyncedFile } from "../../framework/util/file";
 import { Trackers } from "../../framework/util/tracker";
 
 export const actionTypesDownload = asyncActionTypes(config.createActionType("/workspace/download"));
@@ -18,7 +18,7 @@ export function downloadAction(parentId: string, selected: IItems<IFile>) {
   });
 }
 
-const convertIFileToIDistantFile = (file: IFile) => {
+export const convertIFileToIDistantFile = (file: IFile) => {
   return {
     url: file.url,
     filename: file.name,
@@ -27,7 +27,10 @@ const convertIFileToIDistantFile = (file: IFile) => {
   } as IDistantFile;
 }
 
-export const newDownloadAction = (parentId: string, selected: IItems<IFile>) =>
+export const newDownloadThenOpenAction = (parentId: string, selected: IItems<IFile>) =>
+  newDownloadAction(parentId, selected, f => f.open());
+
+export const newDownloadAction = (parentId: string, selected: IItems<IFile>, callback: (f: SyncedFile) => void) =>
   async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     console.log("WILL DISPATCH NEW DOWNLOAD FILE");
     return dispatch(asyncActionRawFactory(actionTypesDownload, { parentId }, async () => {
@@ -38,12 +41,12 @@ export const newDownloadAction = (parentId: string, selected: IItems<IFile>) =>
         } else {
           Trackers.trackEvent("Workspace", "DOWNLOAD", getExtension(sel.filename));
         }
-        workspaceService.downloadFile(
+        return workspaceService.downloadFile(
           getUserSession(getState()),
           convertIFileToIDistantFile(sel),
           {},
           {}
-        ).then(f => f.open())
+        ).then(callback)
       });
     }));
   }
