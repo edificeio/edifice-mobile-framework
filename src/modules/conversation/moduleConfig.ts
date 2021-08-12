@@ -6,5 +6,5 @@ export default createNavigableModuleConfig<"conversation", IZimbra_State>({
   displayName: "conversation.tabName",
   matchEntcoreApp: "/conversation/conversation",
   entcoreScope: ['conversation', 'userbook'],
-  iconName: "mail",
+  iconName: "messagerie",
 });
