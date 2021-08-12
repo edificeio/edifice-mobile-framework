@@ -116,12 +116,14 @@ export class FilePicker extends React.PureComponent<
         <ModalBox backdropOpacity={0.5} isVisible={this.state.showModal}>
           <ModalContent>
             {menuActions.map(a => (
-              <ModalContentBlock>
+              <ModalContentBlock style={{ marginBottom: 20 }}>
                 <ButtonTextIcon
+                  style={{ height: 50 }}
                   title={a.title}
                   onPress={() => {
                     a.action();
-                  }}></ButtonTextIcon>
+                  }}
+                />
               </ModalContentBlock>
             ))}
           </ModalContent>
