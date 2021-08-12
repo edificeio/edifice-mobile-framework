@@ -27,9 +27,7 @@ import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOpti
 import { Dispatch } from "redux";
 import withViewTracking from "../../infra/tracker/withViewTracking";
 import { profileUpdateAction } from "../actions/profile";
-import pickFile, { pickFileError } from "../../infra/actions/pickFile";
-import { ContentUri } from "../../types/contentUri";
-import { uploadDocument, formatResults } from "../../workspace/actions/helpers/documents";
+import { pickFileError } from "../../infra/actions/pickFile";
 import { OAuth2RessourceOwnerPasswordClient, signURISource } from "../../infra/oauth";
 import Conf from "../../../ode-framework-conf";
 import Notifier from "../../infra/notifier/container";
@@ -37,6 +35,11 @@ import { IUserInfoState } from "../state/info";
 import { notifierShowAction } from "../../infra/notifier/actions";
 import { Trackers } from "../../infra/tracker";
 import { ImagePicked } from "../../infra/imagePicker";
+import { LocalFile, SyncedFile } from "../../framework/util/file";
+import workspaceService from "../../framework/services/workspace";
+import { IGlobalState } from "../../AppStore";
+import { getUserSession } from "../../framework/util/session";
+import { ThunkDispatch } from "redux-thunk";
 
 export const UserPageNavigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) =>
   standardNavScreenOptions(
@@ -63,7 +66,7 @@ export const UserPageNavigationOptions = ({ navigation }: { navigation: Navigati
 export class UserPage extends React.PureComponent<
   {
     onLogout: () => Promise<void>;
-    onUploadAvatar: (avatar: ContentUri[]) => Promise<void>;
+    onUploadAvatar: (avatar: LocalFile) => Promise<SyncedFile>;
     onUpdateAvatar: (uploadedAvatarUrl: string) => Promise<void>;
     onPickFileError: (notifierId: string) => void;
     onUploadAvatarError: () => void;
@@ -128,22 +131,18 @@ export class UserPage extends React.PureComponent<
           updatingAvatar={updatingAvatar}
           onChangeAvatar={async (image: ImagePicked) => {
             try {
-              const convertedImage: ContentUri = {
-                mime: image.type,
-                name: image.fileName,
-                uri: image.uri,
-                path: image.uri
-              };
-              // console.log("convertedImage", convertedImage);
-              this.setState({ updatingAvatar: true })
-              const response = await onUploadAvatar([convertedImage]);
+              const lc = new LocalFile({
+                filename: image.fileName as string,
+                filepath: image.uri as string,
+                filetype: image.type as string,
+                name: image.fileName as string
+              }, { _needIOSReleaseSecureAccess: false });
 
-              const data = response.map(item => JSON.parse(item));
-              const formattedData = formatResults(data);
-              const uploadedAvatar = Object.values(formattedData)[0];
-              const uploadedAvatarUrl = uploadedAvatar.url;
-              await onUpdateAvatar(uploadedAvatarUrl);
+              this.setState({ updatingAvatar: true });
+              const sc = await onUploadAvatar(lc);
+              await onUpdateAvatar(sc.url);
             } catch (err) {
+              console.warn(err);
               if (err.message === "Error picking image") {
                 onPickFileError("profileOne");
               } else if (!(err instanceof Error)) {
@@ -215,6 +214,14 @@ export class UserPage extends React.PureComponent<
   }
 }
 
+const uploadAvatarAction = (avatar: LocalFile) =>
+  (dispatch: Dispatch, getState: () => IGlobalState) => {
+    const session = getUserSession(getState());
+    return workspaceService.uploadFile(
+      session,
+      avatar, {});
+  }
+
 const UserPageConnected = connect(
   (state: any) => {
     const ret = {
@@ -222,12 +229,12 @@ const UserPageConnected = connect(
     }
     return ret;
   },
-  (dispatch: Dispatch) => ({
+  (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState ) => ({
     onLogout: () => dispatch<any>(logout()),
     onPickFileError: (notifierId: string) => dispatch(pickFileError(notifierId)),
     onUploadAvatarError: () => dispatch(uploadAvatarError()),
-    onUploadAvatar: (avatar: ContentUri[]) => uploadDocument(dispatch, avatar),
-    onUpdateAvatar: (imageWorkspaceUrl: string) => dispatch(profileUpdateAction({picture: imageWorkspaceUrl}, true))
+    onUploadAvatar: (avatar: LocalFile) => dispatch(uploadAvatarAction(avatar)),
+    onUpdateAvatar: (imageWorkspaceUrl: string) => dispatch(profileUpdateAction({picture: imageWorkspaceUrl}, true)) as unknown as Promise<void>
   })
 )(UserPage);
 

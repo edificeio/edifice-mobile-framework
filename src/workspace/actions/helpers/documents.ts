@@ -159,9 +159,10 @@ export const uploadDocumentAction = (content: ContentUri[], parentId?: string) =
           dispatch(progressAction((res.totalBytesSent / res.totalBytesExpectedToSend) * 100));
         })
       });
-      return await Promise.all(jobs.map(j => j.promise)).then(files => {
+      return Promise.all(jobs.map(j => j.promise)).then(files => {
         dispatch(progressAction(100));
         dispatch(progressEndAction());
+        return files;
       });
     } catch (e) {
       console.warn("error uploading: ", e);

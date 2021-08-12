@@ -33,9 +33,11 @@ export class ImagePicker extends React.PureComponent<{
         }];
 
         const realCallback = (image: ImagePickerResponse) => {
-            // console.log("picker returns", image);
-            !image.didCancel && !image.errorCode && !image.errorMessage && image.uri && callback(image as ImagePicked);
-            this.setState({ showModal: false })
+            if (!image.didCancel && !image.errorCode && !image.errorMessage) {
+                const img = image.assets?.[0];
+                img?.uri && callback(img as ImagePicked);
+                this.setState({ showModal: false })
+            }
         };
 
         const actions = {
