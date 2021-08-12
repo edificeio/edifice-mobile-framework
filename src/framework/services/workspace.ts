@@ -2,6 +2,12 @@
  * API Consumer for Backend Workspace application
  */
 
+/**
+ * TODO :
+ * - separate fileTransferService and workspaceService
+ * - make standard thunks for upload/download + thunk builder
+ */
+
 import queryString from "query-string";
 import RNFS, { DownloadBeginCallbackResult, DownloadProgressCallbackResult, UploadBeginCallbackResult, UploadProgressCallbackResult, UploadResult } from "react-native-fs";
 import { getAuthHeader } from "../../infra/oauth";
@@ -35,7 +41,6 @@ const getImplicitUploadParams = (params: IUploadParams) => {
 const getThumbnailUploadParams = () => {
     return {
         quality: '1',
-        // thumbnail: '120x120',
         thumbnail: ['100x100', '120x120', '290x290', '381x381', '1600x0'],
     };
 };
@@ -49,7 +54,7 @@ const workspaceService = {
             query: { ...params, ...getImplicitUploadParams(params), ...getThumbnailUploadParams() },
         });
         const job = RNFS.uploadFiles({
-            files: [file],
+            files: [{ ...file, name: file.filename }], // 'name' field is mandatory but have no utility
             toUrl: url,
             method: 'POST',
             headers: { ...getAuthHeader() },
@@ -124,7 +129,6 @@ const workspaceService = {
             promise: job.promise.then(res => {
                 if (res.statusCode !== 200) throw new Error("Download failed: server error " + JSON.stringify(res));
                 const lc = new LocalFile({
-                    name: file.filename!,
                     filename: file.filename!,
                     filepath: 'file://' + downloadDest,
                     filetype: file.filetype || 'application/octet-stream'

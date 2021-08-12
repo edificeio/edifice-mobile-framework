@@ -76,7 +76,6 @@ export class ImagePicker extends React.PureComponent<{
 }
 
 export const imagePickedToLocalFile = (img: ImagePicked) => new LocalFile({
-    name: img.fileName as string,
     filename: img.fileName as string,
     filepath: img.uri as string,
     filetype: img.type as string

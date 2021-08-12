@@ -135,7 +135,6 @@ export class UserPage extends React.PureComponent<
                 filename: image.fileName as string,
                 filepath: image.uri as string,
                 filetype: image.type as string,
-                name: image.fileName as string
               }, { _needIOSReleaseSecureAccess: false });
 
               this.setState({ updatingAvatar: true });

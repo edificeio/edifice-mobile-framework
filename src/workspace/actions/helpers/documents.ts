@@ -149,7 +149,6 @@ export const uploadDocumentAction = (content: ContentUri[], parentId?: string) =
         filepath: c.uri,
         filename: c.name,
         filetype: c.mime,
-        name: c.name
       }, { _needIOSReleaseSecureAccess: false }))
       const jobs = workspaceService.startUploadFiles(getUserSession(getState()), lcs, { parent: parentId as IUploadParams['parent'] }, {
         onBegin: (res => {

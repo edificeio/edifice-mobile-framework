@@ -17,8 +17,10 @@ namespace LocalFile {
         multiple?: boolean, // Useless for source = 'camera'
         type?: IPickOptionsType | IPickOptionsType[]
     }
+
+    export type CustomUploadFileItem = Omit<UploadFileItem, 'name'>;
 }
-export class LocalFile implements UploadFileItem {
+export class LocalFile implements LocalFile.CustomUploadFileItem {
 
     static _getDocumentPickerTypeArg<OS extends keyof PlatformTypes>(type: LocalFile.IPickOptionsType | LocalFile.IPickOptionsType[] | undefined)
         : Array<PlatformTypes[OS][keyof PlatformTypes[OS]]> {
@@ -107,7 +109,6 @@ export class LocalFile implements UploadFileItem {
         return res;
     }
 
-    name: string;
     filename: string;
     filepath: string;
     _filepathNative: string;
@@ -115,16 +116,15 @@ export class LocalFile implements UploadFileItem {
     nativeInfo?: DocumentPickerResponse | Asset;
     _needIOSReleaseSecureAccess?: boolean;
 
-    constructor(file: DocumentPickerResponse | Asset | UploadFileItem, opts: {
+    constructor(file: DocumentPickerResponse | Asset | LocalFile.CustomUploadFileItem, opts: {
         _needIOSReleaseSecureAccess: boolean
     }) {
         this._needIOSReleaseSecureAccess = opts._needIOSReleaseSecureAccess
-        this.name = (file as DocumentPickerResponse).name || (file as Asset).fileName!
-        this.filename = (file as UploadFileItem).filename || this.name;
-        this._filepathNative = (file as UploadFileItem).filepath || (file as DocumentPickerResponse | Asset).uri!
+        this.filename = (file as LocalFile.CustomUploadFileItem).filename;
+        this._filepathNative = (file as LocalFile.CustomUploadFileItem).filepath || (file as DocumentPickerResponse | Asset).uri!
         this.filepath = LocalFile.formatUrlForUpload(this._filepathNative);
-        this.filetype = (file as UploadFileItem).filetype || (file as DocumentPickerResponse | Asset).type!;
-        if ((file as UploadFileItem).filepath) { this.nativeInfo = file as DocumentPickerResponse | Asset; }
+        this.filetype = (file as LocalFile.CustomUploadFileItem).filetype || (file as DocumentPickerResponse | Asset).type!;
+        if ((file as LocalFile.CustomUploadFileItem).filepath) { this.nativeInfo = file as DocumentPickerResponse | Asset; }
     }
 
     releaseIfNeeded = () => {
@@ -165,7 +165,6 @@ export interface IDistantFile {
 }
 
 export class SyncedFile implements LocalFile, IDistantFile {
-    name: string;
     filename: string;
     filepath: string;
     _filepathNative: string;
@@ -176,7 +175,7 @@ export class SyncedFile implements LocalFile, IDistantFile {
     filesize?: number;
 
     constructor (localFile: LocalFile, distantFile: IDistantFile) {
-        this.name = this.filename = localFile.name;
+        this.filename = localFile.filename;
         this.filepath = localFile.filepath;
         this._filepathNative = localFile._filepathNative;
         this.url = distantFile.url;
