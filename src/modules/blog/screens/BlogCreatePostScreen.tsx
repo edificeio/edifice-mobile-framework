@@ -46,7 +46,7 @@ import {
 } from "../rights";
 import { ImagePicked, imagePickedToLocalFile, ImagePicker } from "../../../infra/imagePicker";
 import Notifier from "../../../framework/util/notifier";
-import { SyncedFile } from "../../../framework/util/file";
+import { SyncedFile } from "../../../framework/util/fileHandler";
 import { ILocalAttachment } from "../../../ui/Attachment";
 
 // TYPES ==========================================================================================

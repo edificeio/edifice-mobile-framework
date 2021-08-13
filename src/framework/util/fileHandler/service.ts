@@ -8,15 +8,17 @@
  * - make standard thunks for upload/download + thunk builder
  */
 
-import queryString from "query-string";
 import RNFS, { DownloadBeginCallbackResult, DownloadProgressCallbackResult, UploadBeginCallbackResult, UploadProgressCallbackResult, UploadResult } from "react-native-fs";
-import { getAuthHeader } from "../../infra/oauth";
-import { legacyAppConf } from "../util/appConf";
-import { IDistantFile, LocalFile, SyncedFile } from "../util/file";
-import { IUserSession } from '../util/session';
+import { getAuthHeader } from "../../../infra/oauth";
+import { legacyAppConf } from "../appConf";
+import { IDistantFile, LocalFile, SyncedFile } from ".";
+import { IUserSession } from '../session';
 
-export interface IUploadParams {
-    parent?: 'owner' | 'shared' | 'protected' | 'root' | 'trash';
+export interface IUploadCommonParams {
+    headers?: { [key: string]: string }
+}
+export interface IUploadParams extends IUploadCommonParams {
+    url: string;
 }
 
 export interface IUploadCallbaks {
@@ -24,9 +26,8 @@ export interface IUploadCallbaks {
     onProgress?: (Response: UploadProgressCallbackResult) => void;
 }
 
-
 export interface IDownloadParams {
-    useDownloadManagerAndroid?: boolean;
+    useDownloadManagerAndroid?: boolean; // ToDo: implement this
 }
 
 export interface IDownloadCallbaks {
@@ -34,47 +35,28 @@ export interface IDownloadCallbaks {
     onProgress?: (Response: DownloadProgressCallbackResult) => void;
 }
 
-const getImplicitUploadParams = (params: IUploadParams) => {
-    return params.parent === 'protected' ? { protected: 'true', application: 'media-library' } : {};
-};
-
-const getThumbnailUploadParams = () => {
-    return {
-        quality: '1',
-        thumbnail: ['100x100', '120x120', '290x290', '381x381', '1600x0'],
-    };
-};
-
-const workspaceService = {
+const fileTransferService = {
     /** Upload files to user's workspace. For message a attachments, please use uploadAttachment */
-    startUploadFile: (session: IUserSession, file: LocalFile, params: IUploadParams, callbacks?: IUploadCallbaks) => {
-        const api = legacyAppConf.currentPlatform!.url + '/workspace/document';
-        const url = queryString.stringifyUrl({
-            url: api,
-            query: { ...params, ...getImplicitUploadParams(params), ...getThumbnailUploadParams() },
-        });
+    startUploadFile: (session: IUserSession, file: LocalFile, params: IUploadParams, adapter: (data: any) => IDistantFile , callbacks?: IUploadCallbaks) => {
+        const url = legacyAppConf.currentPlatform!.url + params.url;
+        console.log("upload to", url);
         const job = RNFS.uploadFiles({
             files: [{ ...file, name: file.filename }], // 'name' field is mandatory but have no utility
             toUrl: url,
             method: 'POST',
-            headers: { ...getAuthHeader() },
+            headers: { ...getAuthHeader(), ...params.headers },
             begin: callbacks?.onBegin,
             progress: callbacks?.onProgress,
         });
-        // console.log("job", job.jobId);
+        console.log("job", job.jobId);
 
         const newJob = {
             jobId: job.jobId,
             promise: job.promise.then(res => {
                 const statusCode = res.statusCode || 0;
                 if (statusCode >= 200 && statusCode < 300) {
-                    const resfile = JSON.parse(res.body);
-                    const df: IDistantFile = {
-                        ...file,
-                        url: `/workspace/document/${resfile['_id']}`,
-                        filesize: resfile['metadata']?.['size'],
-                        filename: resfile['name'] || file.filename
-                    };
+                    // console.log("body", res.body);
+                    const df = adapter(res.body);
                     // console.log(df);
                     return new SyncedFile(file, df);
                 }
@@ -87,9 +69,9 @@ const workspaceService = {
         return newJob;
     },
 
-    uploadFile: (session: IUserSession, file: LocalFile, params: IUploadParams, callbacks?: IUploadCallbaks) => {
+    uploadFile: (session: IUserSession, file: LocalFile, params: IUploadParams, adapter: (data: any) => IDistantFile, callbacks?: IUploadCallbaks) => {
         try {
-            const job = workspaceService.startUploadFile(session, file, params, callbacks);
+            const job = fileTransferService.startUploadFile(session, file, params, adapter, callbacks);
             return job.promise;
         } catch (e) {
             console.warn("Upload error", e);
@@ -97,12 +79,12 @@ const workspaceService = {
         }
     },
 
-    startUploadFiles: (session: IUserSession, files: LocalFile[], params: IUploadParams, callbacks?: IUploadCallbaks) => {
-        return files.map(f => workspaceService.startUploadFile(session, f, params, callbacks));
+    startUploadFiles: (session: IUserSession, files: LocalFile[], params: IUploadParams, adapter: (data: any) => IDistantFile, callbacks?: IUploadCallbaks) => {
+        return files.map(f => fileTransferService.startUploadFile(session, f, params, adapter, callbacks));
     },
 
-    uploadFiles: (session: IUserSession, files: LocalFile[], params: IUploadParams, callbacks?: IUploadCallbaks) => {
-        return Promise.all(workspaceService.startUploadFiles(session, files, params, callbacks).map(j => j.promise));
+    uploadFiles: (session: IUserSession, files: LocalFile[], params: IUploadParams, adapter: (data: any) => IDistantFile, callbacks?: IUploadCallbaks) => {
+        return Promise.all(fileTransferService.startUploadFiles(session, files, params, adapter, callbacks).map(j => j.promise));
     },
 
     startDownloadFile: (session: IUserSession, file: IDistantFile, params: IDownloadCallbaks, callbacks?: IDownloadCallbaks) => {
@@ -146,7 +128,7 @@ const workspaceService = {
 
     downloadFile: async (session: IUserSession, file: IDistantFile, params: IDownloadCallbaks, callbacks?: IDownloadCallbaks) => {
         try {
-            const job = workspaceService.startDownloadFile(session, file, params, callbacks);
+            const job = fileTransferService.startDownloadFile(session, file, params, callbacks);
             return await job.promise;
         } catch (e) {
             console.warn("Download error", e);
@@ -155,12 +137,12 @@ const workspaceService = {
     },
 
     startDownloadFiles: (session: IUserSession, files: IDistantFile[], params: IDownloadCallbaks, callbacks?: IDownloadCallbaks) => {
-        return files.map(f => workspaceService.startDownloadFile(session, f, params, callbacks));
+        return files.map(f => fileTransferService.startDownloadFile(session, f, params, callbacks));
     },
 
     downloadFiles: (session: IUserSession, files: IDistantFile[], params: IDownloadCallbaks, callbacks?: IDownloadCallbaks) => {
-        return Promise.all(workspaceService.startDownloadFiles(session, files, params, callbacks).map(j => j.promise));
+        return Promise.all(fileTransferService.startDownloadFiles(session, files, params, callbacks).map(j => j.promise));
     },
 }
 
-export default workspaceService;
+export default fileTransferService;

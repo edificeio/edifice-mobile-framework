@@ -5,7 +5,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { ModalBox, ModalContent, ModalContentBlock } from "../ui/Modal";
 import { ButtonTextIcon } from "../ui";
 import type { GestureResponderEvent, TouchableOpacityProps } from "react-native";
-import { LocalFile } from "../framework/util/file";
+import { LocalFile } from "../framework/util/fileHandler";
 
 export type ImagePicked = Required<Pick<ImagePickerResponse, 'uri' | 'type' | 'fileName' | 'fileSize' | 'base64' | 'width' | 'height'>>;
 

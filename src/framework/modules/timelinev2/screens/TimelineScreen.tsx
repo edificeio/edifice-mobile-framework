@@ -26,8 +26,8 @@ import { defaultNotificationActionStack, handleNotificationAction, NotifHandlerT
 import { getTimelineWorkflows } from "../timelineModules";
 import { getUserSession, IUserSession } from "../../../util/session";
 import PopupMenu from "../../../../framework/components/popupMenu";
-import { IDistantFile, LocalFile } from "../../../util/file";
-import workspaceService from "../../../services/workspace";
+import { IDistantFile, LocalFile } from "../../../util/fileHandler";
+import workspaceService from "../../workspace/service";
 
 // TYPES ==========================================================================================
 

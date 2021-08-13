@@ -3,8 +3,8 @@
  */
 
 import { ThunkDispatch } from "redux-thunk";
-import workspaceService from "../../../framework/services/workspace";
-import { IDistantFile, LocalFile } from "../../../framework/util/file";
+import workspaceService from "../../../framework/modules/workspace/service";
+import { IDistantFile, LocalFile } from "../../../framework/util/fileHandler";
 import { getUserSession } from "../../../framework/util/session";
 import moduleConfig from "../moduleConfig";
 import { getPublishableBlogs, IBlog } from "../reducer";

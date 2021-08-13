@@ -9,9 +9,9 @@ import { IFile, ContentUri, IFolder, IItems, IItem, FilterId } from "../../types
 import { filters } from "../../types/filters/helpers/filters";
 import { progressAction, progressEndAction, progressInitAction } from "../../../infra/actions/progress";
 import Toast from "react-native-tiny-toast";
-import workspaceService, { IUploadParams } from "../../../framework/services/workspace";
+import workspaceService, { IWorkspaceUploadParams } from "../../../framework/modules/workspace/service";
 import { ThunkDispatch } from "redux-thunk";
-import { LocalFile } from "../../../framework/util/file";
+import { LocalFile } from "../../../framework/util/fileHandler";
 import { getUserSession } from "../../../framework/util/session";
 
 export type IDocumentArray = any[];
@@ -150,7 +150,7 @@ export const uploadDocumentAction = (content: ContentUri[], parentId?: string) =
         filename: c.name,
         filetype: c.mime,
       }, { _needIOSReleaseSecureAccess: false }))
-      const jobs = workspaceService.startUploadFiles(getUserSession(getState()), lcs, { parent: parentId as IUploadParams['parent'] }, {
+      const jobs = workspaceService.startUploadFiles(getUserSession(getState()), lcs, { parent: parentId as IWorkspaceUploadParams['parent'] }, {
         onBegin: (res => {
           dispatch(progressInitAction());
         }),

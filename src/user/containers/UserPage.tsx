@@ -35,8 +35,8 @@ import { IUserInfoState } from "../state/info";
 import { notifierShowAction } from "../../infra/notifier/actions";
 import { Trackers } from "../../infra/tracker";
 import { ImagePicked } from "../../infra/imagePicker";
-import { LocalFile, SyncedFile } from "../../framework/util/file";
-import workspaceService from "../../framework/services/workspace";
+import { LocalFile, SyncedFile } from "../../framework/util/fileHandler";
+import workspaceService from "../../framework/modules/workspace/service";
 import { IGlobalState } from "../../AppStore";
 import { getUserSession } from "../../framework/util/session";
 import { ThunkDispatch } from "redux-thunk";
@@ -214,11 +214,14 @@ export class UserPage extends React.PureComponent<
 }
 
 const uploadAvatarAction = (avatar: LocalFile) =>
-  (dispatch: Dispatch, getState: () => IGlobalState) => {
+  async (dispatch: Dispatch, getState: () => IGlobalState) => {
     const session = getUserSession(getState());
-    return workspaceService.uploadFile(
+    console.log("will upp");
+    const upped = await workspaceService.uploadFile(
       session,
       avatar, {});
+      console.log("upped", upped);
+      return upped;
   }
 
 const UserPageConnected = connect(

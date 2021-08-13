@@ -4,9 +4,9 @@ import { asyncActionRawFactory } from "../../infra/actions/asyncActionFactory";
 import { IFile, IItems } from "../types";
 import { downloadFiles, getExtension } from "../../infra/actions/downloadHelper";
 import { ThunkDispatch } from "redux-thunk";
-import workspaceService from "../../framework/services/workspace";
+import workspaceService from "../../framework/modules/workspace/service";
 import { getUserSession } from "../../framework/util/session";
-import { IDistantFile, SyncedFile } from "../../framework/util/file";
+import { IDistantFile, SyncedFile } from "../../framework/util/fileHandler";
 import { Trackers } from "../../framework/util/tracker";
 
 export const actionTypesDownload = asyncActionTypes(config.createActionType("/workspace/download"));
