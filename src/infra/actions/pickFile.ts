@@ -79,7 +79,7 @@ const pickFile: FilePickerPromise = (resolve, reject) => {
 };
 
 const pickImage: FilePickerPromise = (resolve, reject) => {
-  console.log(launchImageLibrary);
+  // console.log(launchImageLibrary);
   launchImageLibrary(
     {
       mediaType: "photo",
@@ -88,7 +88,7 @@ const pickImage: FilePickerPromise = (resolve, reject) => {
       if (res.didCancel) reject(new Error("Cancelled picking image"));
       else if (res.errorCode) reject(new Error("Error picking image"));
       else {
-        const { uri, fileName, type } = res;
+        const { uri, fileName, type } = res.assets![0];
         if (!uri || !type) reject(new Error("Error picking image"));
         const realURI = Platform.select({
           android: uri,

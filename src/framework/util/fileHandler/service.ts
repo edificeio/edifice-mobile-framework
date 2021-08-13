@@ -16,6 +16,7 @@ import { IUserSession } from '../session';
 
 export interface IUploadCommonParams {
     headers?: { [key: string]: string }
+    binaryStreamOnly?: boolean;
 }
 export interface IUploadParams extends IUploadCommonParams {
     url: string;
@@ -39,16 +40,17 @@ const fileTransferService = {
     /** Upload files to user's workspace. For message a attachments, please use uploadAttachment */
     startUploadFile: (session: IUserSession, file: LocalFile, params: IUploadParams, adapter: (data: any) => IDistantFile , callbacks?: IUploadCallbaks) => {
         const url = legacyAppConf.currentPlatform!.url + params.url;
-        console.log("upload to", url);
+        // console.log("upload to", url);
         const job = RNFS.uploadFiles({
             files: [{ ...file, name: file.filename }], // 'name' field is mandatory but have no utility
             toUrl: url,
             method: 'POST',
             headers: { ...getAuthHeader(), ...params.headers },
+            binaryStreamOnly: params.binaryStreamOnly,
             begin: callbacks?.onBegin,
             progress: callbacks?.onProgress,
         });
-        console.log("job", job.jobId);
+        // console.log("job", job.jobId);
 
         const newJob = {
             jobId: job.jobId,

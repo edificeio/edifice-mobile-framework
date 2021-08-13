@@ -3,6 +3,8 @@ import { Dispatch } from "redux";
 import { Trackers } from "../../../infra/tracker";
 import { progressAction, progressEndAction, progressInitAction } from "../../../infra/actions/progress";
 import { newMailService } from "../service/newMail";
+import { getUserSession } from "../../../framework/util/session";
+import { IGlobalState } from "../../../AppStore";
 
 export function sendMailAction(mailDatas, draftId: string, InReplyTo: string) {
   return async () => {
@@ -41,15 +43,18 @@ export function updateDraftMailAction(mailId: string, mailDatas) {
 }
 
 export function addAttachmentAction(mailId: string, attachment: any) {
-  return async (dispatch: Dispatch) => {
+  return async (dispatch: Dispatch, getState: () => IGlobalState) => {
     try {
       dispatch(progressInitAction());
       const handleProgress = progress => dispatch(progressAction(progress));
-      const newAttachments = await newMailService.addAttachment(mailId, attachment, handleProgress);
+      const session = getUserSession(getState());
+      // console.log("will upload attachment with service", attachment);
+      const newAttachments = await newMailService.addAttachment(session, mailId, attachment, handleProgress);
+      // console.log("addAttachmentAction services returned", newAttachments);
       dispatch(progressEndAction());
       return newAttachments;
     } catch (errmsg) {
-      console.log("ERROR uploading attachment", errmsg);
+      // console.log("ERROR uploading attachment", errmsg);
       dispatch(progressEndAction());
       throw errmsg;
     }

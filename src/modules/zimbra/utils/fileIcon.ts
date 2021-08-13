@@ -2,6 +2,7 @@ export const getFileIcon = (type: string) => {
   switch (type) {
     case "image/png":
     case "image/jpeg":
+    case "image/jpg":
     case "image/gif":
       return "picture";
     case "audio/mpeg":

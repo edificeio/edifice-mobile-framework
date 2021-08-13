@@ -3,6 +3,7 @@ import I18n from "i18n-js";
 import moment from "moment";
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
+import { IDistantFile } from "../../../framework/util/file";
 
 import { downloadFile } from "../../../infra/actions/downloadHelper";
 import { Icon } from "../../../ui";
@@ -151,7 +152,7 @@ export const FooterButton = ({ icon, text, onPress }) => {
   );
 };
 
-export const RenderPJs = ({ attachments, mailId }) => {
+export const RenderPJs = ({ attachments, mailId }: {attachments: IDistantFile[], mailId: string}) => {
   const [isVisible, toggleVisible] = React.useState(false);
   const displayedAttachments = isVisible ? attachments : attachments.slice(0, 1);
   return (

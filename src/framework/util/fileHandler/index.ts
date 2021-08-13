@@ -181,6 +181,8 @@ export class SyncedFile implements LocalFile, IDistantFile {
         this.url = distantFile.url;
         this.filetype = localFile.filetype;
         this.filesize = distantFile.filesize;
+        const { url, filesize, filetype, filename, ...additionalFields} = distantFile;
+        Object.assign(this, additionalFields);
     }
 
     releaseIfNeeded = LocalFile.prototype.releaseIfNeeded;
