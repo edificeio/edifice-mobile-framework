@@ -1,6 +1,6 @@
 {
   "name": "appe",
-  "version": "1.6.0-indev.3",
+  "version": "1.6.0-alpha.3",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
