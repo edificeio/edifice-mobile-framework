@@ -10,6 +10,7 @@ import moduleConfig from "../moduleConfig";
 import { getPublishableBlogs, IBlog } from "../reducer";
 import { createBlogPostResourceRight, getBlogPostRight, publishBlogPostResourceRight, submitBlogPostResourceRight } from "../rights";
 import { blogService } from "../service";
+import workspaceFileTransferActions from "../../../framework/modules/workspace/actions/fileTransfer";
 
 /**
  * Fetch the details of a given blog post.
@@ -54,11 +55,11 @@ export const getPublishableBlogListAction = () => async (dispatch: ThunkDispatch
 
 export const uploadBlogPostImagesAction = (images: LocalFile[]) =>
   async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    const session = getUserSession(getState());
-    const syncFiles = await workspaceService.uploadFiles(session, images, {
-      parent: 'protected'
-    });
-    return syncFiles;
+    return dispatch(workspaceFileTransferActions.uploadFilesAction(
+      images, {
+        parent: 'protected'
+      }
+    ));
   }
 
 /**
