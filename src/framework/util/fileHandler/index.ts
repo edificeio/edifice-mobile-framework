@@ -1,5 +1,5 @@
 /**
- * Global File Manager
+ * File Manager
  */
 
 import { Platform } from "react-native";
@@ -20,6 +20,10 @@ namespace LocalFile {
 
     export type CustomUploadFileItem = Omit<UploadFileItem, 'name'>;
 }
+
+/**
+ * Represent a file that exists on the user's device.
+ */
 export class LocalFile implements LocalFile.CustomUploadFileItem {
 
     static _getDocumentPickerTypeArg<OS extends keyof PlatformTypes>(type: LocalFile.IPickOptionsType | LocalFile.IPickOptionsType[] | undefined)
@@ -47,6 +51,9 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
         else return 'mixed';
     }
 
+    /**
+     * Pick a file from the user's device storage.
+     */
     static async pick(opts: LocalFile.IPickOptions) {
         let pickedFiles: Array<DocumentPickerResponse | Asset> = [];
         if (opts.source === 'documents') {
@@ -109,12 +116,12 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
         return res;
     }
 
-    filename: string;
-    filepath: string;
-    _filepathNative: string;
-    filetype: string;
-    nativeInfo?: DocumentPickerResponse | Asset;
-    _needIOSReleaseSecureAccess?: boolean;
+    filename: string;           // Name of the file including extension
+    filepath: string;           // Absolute url to the file on the device, starting by '/'
+    _filepathNative: string;    // Absolute url to the file on the device, including 'file://' protocol.
+    filetype: string;           // Mime type of the file
+    nativeInfo?: DocumentPickerResponse | Asset;    // Backup of the full information given by react-native-fs
+    _needIOSReleaseSecureAccess?: boolean;          // Recommended by react-native-fs. A LocalFile created with pick() must be free when it's no more used.
 
     constructor(file: DocumentPickerResponse | Asset | LocalFile.CustomUploadFileItem, opts: {
         _needIOSReleaseSecureAccess: boolean
@@ -127,6 +134,10 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
         if ((file as LocalFile.CustomUploadFileItem).filepath) { this.nativeInfo = file as DocumentPickerResponse | Asset; }
     }
 
+    /**
+     * Recommended by react-native-fs. Call this function when the LocalFile is not useful anymore.
+     * (BtW, you must call this manually because TS does not offer destructors for his objects)
+     */
     releaseIfNeeded = () => {
         this._needIOSReleaseSecureAccess && DocumentPicker.releaseSecureAccess([this._filepathNative]);
         this._needIOSReleaseSecureAccess = false;
@@ -136,12 +147,16 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
         files.forEach(f => { f.releaseIfNeeded() });
     }
 
+    /** Functions to parse URLs. You shouldn't have to use them manually. */
     static removeProtocol = (url: string) => url.replace(/^\w*?:\/\/(.+)/, "$1");
     static formatUrlForUpload = (url: string) => Platform.select({
         ios: decodeURI(LocalFile.removeProtocol(url)),
         default: decodeURI(LocalFile.removeProtocol(getPath(url)))
     }) || url;
 
+    /**
+     * Opens the file with the native device's reader.
+     */
     open () {
         // console.log("openning", this._filepathNative);
         FileViewer.open(this._filepathNative, {
@@ -157,6 +172,10 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
 
 }
 
+/**
+ * Represent a file that exists onto the server.
+ * Additional information other than url is not mandatory, but recommended.
+ */
 export interface IDistantFile {
     url: string;
     filename?: string;
@@ -164,6 +183,9 @@ export interface IDistantFile {
     filesize?: number;
 }
 
+/**
+ * A SyncedFile is both a LocalFile and a DistantFile. This class wraps up functionality of these two entities.
+ */
 export class SyncedFile implements LocalFile, IDistantFile {
     filename: string;
     filepath: string;

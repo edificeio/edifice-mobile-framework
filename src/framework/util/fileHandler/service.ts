@@ -37,7 +37,7 @@ export interface IDownloadCallbaks {
 }
 
 const fileTransferService = {
-    /** Upload files to user's workspace. For message a attachments, please use uploadAttachment */
+    /** Upload a file to the given url. This function returns more information than `uploadFile` to better handle file suring upload. */
     startUploadFile: (session: IUserSession, file: LocalFile, params: IUploadParams, adapter: (data: any) => IDistantFile , callbacks?: IUploadCallbaks) => {
         const url = legacyAppConf.currentPlatform!.url + params.url;
         // console.log("upload to", url);
@@ -71,6 +71,7 @@ const fileTransferService = {
         return newJob;
     },
 
+    /** Upload a file to the given url. */
     uploadFile: (session: IUserSession, file: LocalFile, params: IUploadParams, adapter: (data: any) => IDistantFile, callbacks?: IUploadCallbaks) => {
         try {
             const job = fileTransferService.startUploadFile(session, file, params, adapter, callbacks);
@@ -89,6 +90,7 @@ const fileTransferService = {
         return Promise.all(fileTransferService.startUploadFiles(session, files, params, adapter, callbacks).map(j => j.promise));
     },
 
+    /** Download a file that exists in the server. This function returns more information than `downloadFile` to better handle file suring download. */
     startDownloadFile: (session: IUserSession, file: IDistantFile, params: IDownloadCallbaks, callbacks?: IDownloadCallbaks) => {
         file.filename = file.filename || file.url.split('/').pop();
         const downloadDest = `${RNFS.DocumentDirectoryPath}/${file.filename}`;
@@ -128,6 +130,7 @@ const fileTransferService = {
         return newJob;
     },
 
+    /** Download a file that exists in the server. */
     downloadFile: async (session: IUserSession, file: IDistantFile, params: IDownloadCallbaks, callbacks?: IDownloadCallbaks) => {
         try {
             const job = fileTransferService.startDownloadFile(session, file, params, callbacks);
