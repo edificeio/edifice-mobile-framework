@@ -115,7 +115,7 @@ class MailContentContainer extends React.PureComponent<any, any> {
     const isCurrentFolderTrash = currentFolder === "trash";
     const isCurrentFolderSentOrDrafts = currentFolder === "sendMessages" || currentFolder === "drafts";
     let menuData = [
-      { text: I18n.t("conversation.markUnread"), icon: "email", onPress: this.markAsRead },
+      { text: I18n.t("conversation.markUnread"), icon: "eye", onPress: this.markAsRead },
       { text: I18n.t(`conversation.${isCurrentFolderTrash ? "restore" : "move"}`), icon: "unarchive", onPress: this.showModal },
       // { text: I18n.t("conversation.downloadAll"), icon: "download", onPress: () => {} },
       { text: I18n.t("conversation.delete"), icon: "delete", onPress: this.delete },

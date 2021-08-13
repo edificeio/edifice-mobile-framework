@@ -8,6 +8,7 @@ import { CommonStyles } from "../../../styles/common/styles";
 import { Icon } from "../../../ui";
 import { Text } from "../../../ui/Typography";
 import { iosStatusBarHeight } from "../../../ui/headers/Header";
+import theme from "../../../framework/util/theme";
 
 type MailContentMenuProps = {
   data: {
@@ -28,14 +29,17 @@ export default class MailContentMenu extends React.PureComponent<MailContentMenu
           <FlatList
             style={style.actions}
             data={data}
-            renderItem={({ item }) => (
-              <TouchableOpacity onPress={item.onPress}>
-                <View style={{ flexDirection: "row", alignItems: "center", padding: 15 }}>
-                  <Icon name={item.icon} size={22} style={{ marginRight: 10 }} />
-                  <Text>{item.text}</Text>
-                </View>
-              </TouchableOpacity>
-            )}
+            renderItem={({ item }) => {
+              const itemColor = item.icon === "delete" ? theme.color.failure : undefined;
+              return (
+                <TouchableOpacity onPress={item.onPress}>
+                  <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", padding: 15 }}>
+                    <Text style={{ color: itemColor }}>{item.text}</Text>
+                    <Icon name={item.icon} size={22} style={{ marginLeft: 10, color: itemColor }} />
+                  </View>
+                </TouchableOpacity>
+              );
+            }}
             refreshing={false}
             ItemSeparatorComponent={() => <View style={style.separator} />}
           />
@@ -49,10 +53,11 @@ const style = StyleSheet.create({
   actions: {
     backgroundColor: "#ffffff",
     position: "absolute",
-    right: 0,
+    right: 4,
     top: Header.HEIGHT,
     zIndex: 10,
-    borderRadius: 4,
+    borderRadius: 15,
+    borderWidth: 0.2,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,

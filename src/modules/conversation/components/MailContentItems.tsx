@@ -7,7 +7,6 @@ import { View, StyleSheet } from "react-native";
 import { downloadFile } from "../../../infra/actions/downloadHelper";
 import { Icon } from "../../../ui";
 import { GridAvatars } from "../../../ui/avatars/GridAvatars";
-import { ButtonIcon } from "../../../ui/ButtonIconText";
 import { Header, CenterPanel, LeftPanel } from "../../../ui/ContainerContent";
 import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
 import { Text, TextBold } from "../../../ui/text";
@@ -15,6 +14,7 @@ import { getFileIcon } from "../utils/fileIcon";
 import { getUserColor, getProfileColor } from "../utils/userColor";
 import { findReceivers2, findReceiversAvatars, Author, findSenderAvatar } from "./MailItem";
 import { displayPastDate } from "../../../framework/util/date";
+import theme from "../../../framework/util/theme";
 
 const User = ({ userId, userName }) => {
   const [dotColor, setDotColor] = React.useState(getProfileColor("Guest"));
@@ -148,21 +148,17 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
 
 export const FooterButton = ({ icon, text, onPress }) => {
   return (
-    <View
+    <TouchableOpacity
+      onPress={onPress}
       style={{
         alignItems: "center",
         justifyContent: "space-evenly",
         marginBottom: 10,
-      }}>
-      <ButtonIcon
-        name={icon}
-        onPress={onPress}
-        style={[{ backgroundColor: "white" }, styles.shadow]}
-        color="black"
-        colorText="#F4F7F9"
-      />
-      <Text>{text}</Text>
-    </View>
+      }}
+    >
+      <Icon name={icon} size={25} style={{ color: theme.color.tertiary.regular }} />
+      <Text style={{ color: theme.color.tertiary.regular }}>{text}</Text>
+    </TouchableOpacity>
   );
 };
 
@@ -241,12 +237,4 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   greyColor: { color: "#AFAFAF" },
-  shadow: {
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.8,
-    marginBottom: 10,
-  },
 });

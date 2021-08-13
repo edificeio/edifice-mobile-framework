@@ -45,7 +45,6 @@ export default class MailContent extends React.PureComponent<any, any> {
             })
           }
         />
-        <FooterButton icon="delete" text={I18n.t("conversation.delete")} onPress={this.props.delete} />
       </View>
     );
   }
@@ -112,14 +111,6 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
     backgroundColor: "#FFF",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 5,
-    },
-    shadowOpacity: 0.34,
-    shadowRadius: 6.27,
-    elevation: 10,
   },
   containerFooter: {
     flexDirection: "row",
