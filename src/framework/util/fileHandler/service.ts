@@ -40,9 +40,9 @@ const fileTransferService = {
     /** Upload a file to the given url. This function returns more information than `uploadFile` to better handle file suring upload. */
     startUploadFile: (session: IUserSession, file: LocalFile, params: IUploadParams, adapter: (data: any) => IDistantFile , callbacks?: IUploadCallbaks) => {
         const url = legacyAppConf.currentPlatform!.url + params.url;
-        // console.log("upload to", url);
+        // console.log("upload to", url, file);
         const job = RNFS.uploadFiles({
-            files: [{ ...file, name: file.filename }], // 'name' field is mandatory but have no utility
+            files: [{ ...file, name: 'file' }],
             toUrl: url,
             method: 'POST',
             headers: { ...getAuthHeader(), ...params.headers },

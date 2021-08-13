@@ -108,11 +108,11 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
                 }, callback);
             });
         }
-        // console.log(pickedFiles);
+        // console.log("picked files", pickedFiles);
 
         // format pickedFiles data
         const res: LocalFile[] = pickedFiles.map(f => new LocalFile(f, { _needIOSReleaseSecureAccess: opts.source === 'documents' }));
-        // console.log("res picked files", res);
+        // console.log("picked files (converted)", res);
         return res;
     }
 
@@ -127,7 +127,10 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
         _needIOSReleaseSecureAccess: boolean
     }) {
         this._needIOSReleaseSecureAccess = opts._needIOSReleaseSecureAccess
-        this.filename = (file as LocalFile.CustomUploadFileItem).filename;
+        this.filename =
+            (file as LocalFile.CustomUploadFileItem).filename
+            || (file as DocumentPickerResponse).name
+            || (file as Asset).fileName!;
         this._filepathNative = (file as LocalFile.CustomUploadFileItem).filepath || (file as DocumentPickerResponse | Asset).uri!
         this.filepath = LocalFile.formatUrlForUpload(this._filepathNative);
         this.filetype = (file as LocalFile.CustomUploadFileItem).filetype || (file as DocumentPickerResponse | Asset).type!;
