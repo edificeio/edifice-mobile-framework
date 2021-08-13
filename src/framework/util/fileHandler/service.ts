@@ -113,7 +113,7 @@ const fileTransferService = {
         const newJob = {
             jobId: job.jobId,
             promise: job.promise.then(res => {
-                if (res.statusCode !== 200) throw new Error("Download failed: server error " + JSON.stringify(res));
+                if (res.statusCode < 200 || res.statusCode > 299 ) throw new Error("Download failed: server error " + JSON.stringify(res));
                 const lc = new LocalFile({
                     filename: file.filename!,
                     filepath: 'file://' + downloadDest,

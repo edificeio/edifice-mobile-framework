@@ -4,10 +4,10 @@ import { asyncActionRawFactory } from "../../infra/actions/asyncActionFactory";
 import { IFile, IItems } from "../types";
 import { downloadFiles, getExtension } from "../../infra/actions/downloadHelper";
 import { ThunkDispatch } from "redux-thunk";
-import workspaceService from "../../framework/modules/workspace/service";
 import { getUserSession } from "../../framework/util/session";
 import { IDistantFile, SyncedFile } from "../../framework/util/fileHandler";
 import { Trackers } from "../../framework/util/tracker";
+import fileTransferService from "../../framework/util/fileHandler/service";
 
 export const actionTypesDownload = asyncActionTypes(config.createActionType("/workspace/download"));
 
@@ -41,10 +41,9 @@ export const newDownloadAction = (parentId: string, selected: IItems<IFile>, cal
         } else {
           Trackers.trackEvent("Workspace", "DOWNLOAD", getExtension(sel.filename));
         }
-        return workspaceService.downloadFile(
+        return fileTransferService.downloadFile(
           getUserSession(getState()),
           convertIFileToIDistantFile(sel),
-          {},
           {}
         ).then(callback)
       });
