@@ -28,6 +28,8 @@ import { getUserSession, IUserSession } from "../../../util/session";
 import PopupMenu from "../../../../framework/components/popupMenu";
 import { IDistantFile, LocalFile } from "../../../util/fileHandler";
 import workspaceService from "../../workspace/service";
+import workspaceFileTransferActions from "../../workspace/actions/fileTransfer";
+import fileTransferService from "../../../util/fileHandler/service";
 
 // TYPES ==========================================================================================
 
@@ -41,6 +43,7 @@ export interface ITimelineScreenEventProps {
   handleNextPage(): Promise<boolean>, // return true if page if there is more pages to load
   handleDismissFlashMessage(flashMessageId: number): Promise<void>
   handleOpenNotification(n: IAbstractNotification, fallback: NotifHandlerThunkAction): Promise<void>
+  dispatch: ThunkDispatch<any, any, any>
 };
 export type ITimelineScreenProps = ITimelineScreenDataProps
   & ITimelineScreenEventProps
@@ -93,7 +96,7 @@ export class TimelineScreen extends React.PureComponent<
 
   download = async (file: IDistantFile) => {
     try {
-      const f = await workspaceService.downloadFile(this.props.session, file, {}, {
+      const f = await fileTransferService.downloadFile(this.props.session, file, {}, {
         onBegin: r => console.log("onBegin", r),
         onProgress: r => console.log("onProgress", r)
       });
@@ -150,6 +153,19 @@ export class TimelineScreen extends React.PureComponent<
           url: '/workspace/document/cdf3cf44-93ac-4944-8e1f-390862b57fe8'
         })}
       ><Text>Download image</Text></TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={async () => {
+          const lfs = await LocalFile.pick({
+            source: 'galery', multiple: true
+          });
+          this.props.dispatch(workspaceFileTransferActions.uploadFilesAction(lfs, {}, {
+            onProgress: (res => {
+              console.log(res);
+            })
+          }));
+        }}
+      ><Text>Super bouton</Text></TouchableOpacity>
 
       <PageView path={routeName}>
         {[TimelineLoadingState.PRISTINE, TimelineLoadingState.INIT].includes(this.state.loadingState)
@@ -341,6 +357,7 @@ const mapStateToProps: (s: IGlobalState) => ITimelineScreenDataProps = (s) => {
 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => ITimelineScreenEventProps
   = (dispatch, getState) => ({
+    dispatch,
     handleInitTimeline: async () => { await dispatch(startLoadNotificationsAction()) },
     handleNextPage: async () => { return await (dispatch(loadNotificationsPageAction()) as unknown as Promise<boolean>); }, // TS BUG: await is needed here and type is correct
     handleDismissFlashMessage: async (flashMessageId: number) => { await dispatch(dismissFlashMessageAction(flashMessageId)); },
