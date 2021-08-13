@@ -1,17 +1,17 @@
-import moment from "moment";
-import { Platform } from "react-native";
+import moment from 'moment';
+import { Platform } from 'react-native';
 
-import generateUuid from "../../utils/uuid";
-import Conf from "../../../ode-framework-conf";
-import { signedFetch } from "../../infra/fetchWithCache";
-import mailboxConfig from "../config";
-import { IArrayById } from "../../infra/collections";
-import { getSessionInfo } from "../../App";
-import { conversationThreadSelected } from "./threadSelected";
-import { IAttachment } from "./messages";
-import { Trackers } from "../../infra/tracker";
-import { ILocalAttachment, IRemoteAttachment } from "../../ui/Attachment";
-import { Alert } from "react-native";
+import generateUuid from '../../utils/uuid';
+import Conf from '../../../ode-framework-conf';
+import { signedFetch } from '../../infra/fetchWithCache';
+import mailboxConfig from '../config';
+import { IArrayById } from '../../infra/collections';
+import { getSessionInfo } from '../../App';
+import { conversationThreadSelected } from './threadSelected';
+import { IAttachment } from './messages';
+import { Trackers } from '../../infra/tracker';
+import { ILocalAttachment, IRemoteAttachment } from '../../ui/Attachment';
+import { Alert } from 'react-native';
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -43,23 +43,21 @@ export type IConversationMessageNativeArray = IConversationMessage[]; // Used wh
 export enum ConversationMessageStatus {
   sent,
   sending,
-  failed
+  failed,
 }
 
-
 //--------------------------------------------------------------
-export const actionTypeDraftCreateRequested = mailboxConfig.createActionType("DRAFT_REQUESTED");
-export const actionTypeDraftCreated = mailboxConfig.createActionType("DRAFT_OK");
-export const actionTypeDraftCreateError = mailboxConfig.createActionType("DRAFT_FAILURE");
+export const actionTypeDraftCreateRequested = mailboxConfig.createActionType('DRAFT_REQUESTED');
+export const actionTypeDraftCreated = mailboxConfig.createActionType('DRAFT_OK');
+export const actionTypeDraftCreateError = mailboxConfig.createActionType('DRAFT_FAILURE');
 
-export const actionTypeAttachmentsSendRequested = mailboxConfig.createActionType("ATTACHMENTS_SEND_REQUESTED");
-export const actionTypeAttachmentsSent = mailboxConfig.createActionType("ATTACHMENTS_SEND_OK");
-export const actionTypeAttachmentsSendError = mailboxConfig.createActionType("ATTACHMENTS_SEND_FAILURE");
+export const actionTypeAttachmentsSendRequested = mailboxConfig.createActionType('ATTACHMENTS_SEND_REQUESTED');
+export const actionTypeAttachmentsSent = mailboxConfig.createActionType('ATTACHMENTS_SEND_OK');
+export const actionTypeAttachmentsSendError = mailboxConfig.createActionType('ATTACHMENTS_SEND_FAILURE');
 
-export const actionTypeMessageSendRequested = mailboxConfig.createActionType("SEND_REQUESTED");
-export const actionTypeMessageSent = mailboxConfig.createActionType("SEND_OK");
-export const actionTypeMessageSendError = mailboxConfig.createActionType("SEND_FAILURE");
-
+export const actionTypeMessageSendRequested = mailboxConfig.createActionType('SEND_REQUESTED');
+export const actionTypeMessageSent = mailboxConfig.createActionType('SEND_OK');
+export const actionTypeMessageSendError = mailboxConfig.createActionType('SEND_FAILURE');
 
 export function createDraft(data: IConversationMessage) {
   return async dispatch => {
@@ -69,15 +67,15 @@ export function createDraft(data: IConversationMessage) {
       date: moment(),
       from: getSessionInfo().userId,
       id: newuuid,
-      status: ConversationMessageStatus.sending
+      status: ConversationMessageStatus.sending,
     };
     dispatch({
       data: fulldata,
-      type: actionTypeDraftCreateRequested
+      type: actionTypeDraftCreateRequested,
     });
 
     try {
-      let replyTo = "";
+      let replyTo = '';
       if (fulldata.parentId) {
         replyTo = `In-Reply-To=${fulldata.parentId}`;
       }
@@ -85,20 +83,17 @@ export function createDraft(data: IConversationMessage) {
         body: fulldata.body,
         cc: fulldata.cc,
         subject: fulldata.subject,
-        to: fulldata.to
+        to: fulldata.to,
       };
-      if (!Conf.currentPlatform) throw new Error("must specify a platform");
-      const response = await signedFetch(
-        `${(Conf.currentPlatform as any).url}/conversation/draft?${replyTo}`,
-        {
-          body: JSON.stringify(requestbody),
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json"
-          },
-          method: "POST"
-        }
-      );
+      if (!Conf.currentPlatform) throw new Error('must specify a platform');
+      const response = await signedFetch(`${(Conf.currentPlatform as any).url}/conversation/draft?${replyTo}`, {
+        body: JSON.stringify(requestbody),
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+      });
       const json = await response.json();
       const messageId = json.id;
 
@@ -110,14 +105,14 @@ export function createDraft(data: IConversationMessage) {
         oldId: newuuid,
         parentId: fulldata.parentId,
         oldThreadId: fulldata.threadId,
-        threadId: json.thread_id || (fulldata.threadId.startsWith("tmp-") ? json.id : fulldata.threadId)
+        threadId: json.thread_id || (fulldata?.threadId?.startsWith('tmp-') ? json.id : fulldata.threadId),
       };
       dispatch({
         data: fulldata2,
-        type: actionTypeDraftCreated
+        type: actionTypeDraftCreated,
       });
-      fulldata2.oldThreadId !==fulldata2.threadId && dispatch(conversationThreadSelected(fulldata2.threadId));
-      return messageId
+      fulldata2.oldThreadId !== fulldata2.threadId && dispatch(conversationThreadSelected(fulldata2.threadId));
+      return messageId;
     } catch (e) {
       // tslint:disable-next-line:no-console
       console.warn(e);
@@ -128,9 +123,9 @@ export function createDraft(data: IConversationMessage) {
           conversation: data.parentId,
           date: Date.now(),
           from: getSessionInfo().userId,
-          threadId: data.threadId
+          threadId: data.threadId,
         },
-        type: actionTypeDraftCreateError
+        type: actionTypeDraftCreateError,
       });
     }
   };
@@ -143,37 +138,36 @@ export function sendAttachments(attachments: ILocalAttachment[], messageId: stri
       messageId,
       date: moment(),
       from: getSessionInfo().userId,
-      status: ConversationMessageStatus.sending
+      status: ConversationMessageStatus.sending,
     };
     dispatch({
       data: fulldata,
-      type: actionTypeAttachmentsSendRequested
+      type: actionTypeAttachmentsSendRequested,
     });
     try {
-      if (!Conf.currentPlatform) throw new Error("must specify a platform");
-      const remoteAttachments = attachments.filter(att => att.hasOwnProperty("id"));
-      const attachmentUploads = attachments.map((att: ILocalAttachment | IRemoteAttachment) => {
-        if (att.hasOwnProperty("id")) return;
-        const attachment = att as ILocalAttachment;
-        let formData = new FormData();
-        formData.append("file", {
-          uri: ((Platform.OS === "android") ? "file://" : "") + attachment.uri,
-          type: attachment.mime,
-          name: attachment.name
-        } as any);
-        console.log("formdata:", formData);
-        return signedFetch(
-          `${(Conf.currentPlatform as any).url}/conversation/message/${messageId}/attachment`,
-          {
+      if (!Conf.currentPlatform) throw new Error('must specify a platform');
+      const remoteAttachments = attachments.filter(att => att.hasOwnProperty('id'));
+      const attachmentUploads = attachments
+        .map((att: ILocalAttachment | IRemoteAttachment) => {
+          if (att.hasOwnProperty('id')) return;
+          const attachment = att as ILocalAttachment;
+          let formData = new FormData();
+          formData.append('file', {
+            uri: (Platform.OS === 'android' ? 'file://' : '') + attachment.uri,
+            type: attachment.mime,
+            name: attachment.name,
+          } as any);
+          console.log('formdata:', formData);
+          return signedFetch(`${(Conf.currentPlatform as any).url}/conversation/message/${messageId}/attachment`, {
             body: formData,
             headers: {
-              Accept: "application/json",
-              "Content-Type": "multipart/form-data"
+              Accept: 'application/json',
+              'Content-Type': 'multipart/form-data',
             },
-            method: "POST"
-          }
-        )
-      }).filter(e => e !== undefined);
+            method: 'POST',
+          });
+        })
+        .filter(e => e !== undefined);
       // console.log("remote attachments:", remoteAttachments);
       // console.log("local attachments:", attachmentUploads);
       // console.log("back message:", backMessage);
@@ -181,15 +175,17 @@ export function sendAttachments(attachments: ILocalAttachment[], messageId: stri
         const transferResponse = await signedFetch(
           `${(Conf.currentPlatform as any).url}/conversation/message/${messageId}/forward/${backMessage.id}`,
           {
-            method: "PUT"
-          }
-        )
+            method: 'PUT',
+          },
+        );
       }
       const responses = await Promise.all(attachmentUploads);
-      const sentAttachmentIds = await Promise.all(responses.map(async res => {
-        const parsedRes = await res.json();
-        return parsedRes.id;
-      }));
+      const sentAttachmentIds = await Promise.all(
+        responses.map(async res => {
+          const parsedRes = await res.json();
+          return parsedRes.id;
+        }),
+      );
       const sentAttachments = sentAttachmentIds.map((sentAttachmentId, index) => ({
         id: sentAttachmentId,
         filename: attachments[index].name,
@@ -200,13 +196,13 @@ export function sendAttachments(attachments: ILocalAttachment[], messageId: stri
         ...fulldata,
         date: moment(),
         from: getSessionInfo().userId,
-        sentAttachments: [...remoteAttachments, ...sentAttachments]
+        sentAttachments: [...remoteAttachments, ...sentAttachments],
       };
       dispatch({
         data: fulldata2,
-        type: actionTypeAttachmentsSent
+        type: actionTypeAttachmentsSent,
       });
-      Trackers.trackEvent("Conversation", "SEND ATTACHMENTS", "", attachments.length);
+      Trackers.trackEvent('Conversation', 'SEND ATTACHMENTS', '', attachments.length);
       // console.log("sent Attchments in sendMEssage.tsx", fulldata2.sentAttachments);
       return fulldata2.sentAttachments;
     } catch (e) {
@@ -219,7 +215,7 @@ export function sendAttachments(attachments: ILocalAttachment[], messageId: stri
           date: Date.now(),
           from: getSessionInfo().userId,
         },
-        type: actionTypeAttachmentsSendError
+        type: actionTypeAttachmentsSendError,
       });
     }
   };
@@ -235,20 +231,20 @@ export function sendMessage(data: IConversationMessage, sentAttachments?: IAttac
       date: moment(),
       from: getSessionInfo().userId,
       id: newuuid,
-      status: ConversationMessageStatus.sending
+      status: ConversationMessageStatus.sending,
     };
     // console.log("fuldata 1", fulldata);
     dispatch({
       data: fulldata,
-      type: actionTypeMessageSendRequested
+      type: actionTypeMessageSendRequested,
     });
 
     try {
-      let replyTo = "";
+      let replyTo = '';
       if (fulldata.parentId) {
         replyTo = `In-Reply-To=${fulldata.parentId}`;
       }
-      let id ="";
+      let id = '';
       if (messageId) {
         id = `id=${messageId}&`;
       }
@@ -256,20 +252,17 @@ export function sendMessage(data: IConversationMessage, sentAttachments?: IAttac
         body: fulldata.body,
         cc: fulldata.cc,
         subject: fulldata.subject,
-        to: fulldata.to
+        to: fulldata.to,
       };
-      if (!Conf.currentPlatform) throw new Error("must specify a platform");
-      const response = await signedFetch(
-        `${(Conf.currentPlatform as any).url}/conversation/send?${id}${replyTo}`,
-        {
-          body: JSON.stringify(requestbody),
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json"
-          },
-          method: "POST"
-        }
-      );
+      if (!Conf.currentPlatform) throw new Error('must specify a platform');
+      const response = await signedFetch(`${(Conf.currentPlatform as any).url}/conversation/send?${id}${replyTo}`, {
+        body: JSON.stringify(requestbody),
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+      });
       const json = await response.json();
 
       const fulldata2 = {
@@ -280,15 +273,15 @@ export function sendMessage(data: IConversationMessage, sentAttachments?: IAttac
         oldId: newuuid,
         parentId: fulldata.parentId,
         oldThreadId: fulldata.threadId,
-        threadId: json.thread_id || (fulldata.threadId.startsWith("tmp-") ? json.id : fulldata.threadId)
+        threadId: json.thread_id || (fulldata?.threadId?.startsWith('tmp-') ? json.id : fulldata.threadId),
       };
       dispatch({
         data: fulldata2,
-        type: actionTypeMessageSent
+        type: actionTypeMessageSent,
       });
-      fulldata2.oldThreadId !==fulldata2.threadId && dispatch(conversationThreadSelected(fulldata2.threadId));
+      fulldata2.oldThreadId !== fulldata2.threadId && dispatch(conversationThreadSelected(fulldata2.threadId));
       // console.log("fulldata", fulldata2);
-      Trackers.trackEvent("Conversation", "SEND");
+      Trackers.trackEvent('Conversation', 'SEND');
       return fulldata2.attachments;
     } catch (e) {
       // tslint:disable-next-line:no-console
@@ -300,9 +293,9 @@ export function sendMessage(data: IConversationMessage, sentAttachments?: IAttac
           conversation: data.parentId,
           date: Date.now(),
           from: getSessionInfo().userId,
-          threadId: data.threadId
+          threadId: data.threadId,
         },
-        type: actionTypeMessageSendError
+        type: actionTypeMessageSendError,
       });
     }
   };
