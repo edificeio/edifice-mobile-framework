@@ -8,5 +8,4 @@ export default [
     require("../modules/support").default,
     require("../modules/lvs").default,
     require("../modules/pronote").default,
-    require("../modules/conversation").default,
 ];
