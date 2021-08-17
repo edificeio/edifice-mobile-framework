@@ -1,8 +1,8 @@
-import RNFB from "rn-fetch-blob";
+import fileHandlerService from '../../../framework/util/fileHandler/service';
 
-import Conf from "../../../../ode-framework-conf";
-import { fetchJSONWithCache } from "../../../infra/fetchWithCache";
-import { getAuthHeader } from "../../../infra/oauth";
+import { LocalFile } from '../../../framework/util/fileHandler';
+import { IUserSession } from '../../../framework/util/session';
+import { fetchJSONWithCache } from '../../../infra/fetchWithCache';
 
 export type IUser = {
   id: string;
@@ -25,6 +25,16 @@ export type ISearchUsersGroups = {
   users: ISearchUsers;
 };
 
+const formatMailDatas = mailDatas => ({
+  ...mailDatas,
+  attachments: mailDatas.attachments.map(att => ({
+    contentType: att.filetype,
+    filename: att.filename,
+    size: att.filesize,
+    id: att.id,
+  })),
+});
+
 export const newMailService = {
   searchUsers: async search => {
     return await fetchJSONWithCache(`/zimbra/visible?search=${search}`);
@@ -32,69 +42,79 @@ export const newMailService = {
   sendMail: async (mailDatas, draftId, inReplyTo) => {
     const params = {
       id: draftId,
-      "In-Reply-To": inReplyTo,
+      'In-Reply-To': inReplyTo,
     };
 
     const paramsUrl = Object.entries(params)
       .filter(([key, value]) => !!value)
       .map(([key, value]) => `${key}=${value}`)
-      .join("&");
+      .join('&');
 
-    await fetchJSONWithCache(`/zimbra/send${paramsUrl?.length > 0 ? "?" + paramsUrl : ""}`, {
-      method: "POST",
-      body: JSON.stringify(mailDatas),
+    await fetchJSONWithCache(`/zimbra/send${paramsUrl?.length > 0 ? '?' + paramsUrl : ''}`, {
+      method: 'POST',
+      body: JSON.stringify(formatMailDatas(mailDatas)),
     });
   },
   forwardMail: async (draftId, forwardFrom) => {
     await fetchJSONWithCache(`/zimbra/message/${draftId}/forward/${forwardFrom}`, {
-      method: "PUT",
+      method: 'PUT',
     });
   },
   makeDraftMail: async (mailDatas, inReplyTo, isForward) => {
     const params = {
-      "In-Reply-To": inReplyTo,
-      reply: isForward ? "F" : null,
+      'In-Reply-To': inReplyTo,
+      reply: isForward ? 'F' : null,
     };
 
     const paramsUrl = Object.entries(params)
       .filter(([key, value]) => !!value)
       .map(([key, value]) => `${key}=${value}`)
-      .join("&");
+      .join('&');
 
-    const response = await fetchJSONWithCache(`/zimbra/draft${paramsUrl?.length > 0 ? "?" + paramsUrl : ""}`, {
-      method: "POST",
-      body: JSON.stringify(mailDatas),
+    const response = await fetchJSONWithCache(`/zimbra/draft${paramsUrl?.length > 0 ? '?' + paramsUrl : ''}`, {
+      method: 'POST',
+      body: JSON.stringify(formatMailDatas(mailDatas)),
     });
     return response.id;
   },
   updateDraftMail: async (mailId, mailDatas) => {
-    await fetchJSONWithCache(`/zimbra/draft/${mailId}`, { method: "PUT", body: JSON.stringify(mailDatas) });
+    await fetchJSONWithCache(`/zimbra/draft/${mailId}`, { method: 'PUT', body: JSON.stringify(formatMailDatas(mailDatas)) });
   },
-  addAttachment: async (draftId: string, file: any, handleProgession) => {
-    const url = `${Conf.currentPlatform.url}/zimbra/message/${draftId}/attachment`;
-    const fileObject = RNFB.wrap(file.uri);
-
-    return RNFB.fetch(
-      "POST",
-      url,
+  addAttachment: async (session: IUserSession, draftId: string, file: LocalFile, handleProgession) => {
+    const url = `/zimbra/message/${draftId}/attachment`;
+    let dataJson;
+    // console.log("DATA TO BE UPLOADED", file);
+    const ret = await fileHandlerService.uploadFile(
+      session,
+      file,
       {
-        ...getAuthHeader(),
-        "Content-Disposition": `attachment; filename="${encodeURIComponent(file.name)}"`,
+        url,
+        headers: {
+          'Content-Disposition': `attachment; filename="${encodeURIComponent(file.filename)}"`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        binaryStreamOnly: true,
       },
-      fileObject
-    )
-      .uploadProgress({ interval: 100 }, (written, total) => handleProgession((written / total) * 100))
-      .then(response => {
-        if (response && response.respInfo.status >= 200 && response.respInfo.status < 300) {
-          console.log("Attachment upload successful", response.data);
-          return Promise.resolve(JSON.parse(response.data).attachments);
-        } else {
-          console.log("Attachment upload failed", response.data);
-          return Promise.reject(response.data);
-        }
-      });
+      data => {
+        dataJson = JSON.parse(data).attachments as Array<{
+          contentType: string;
+          filename: string;
+          id: string;
+          size: number;
+        }>;
+        // console.log("upload returned", dataJson)
+        return dataJson as any; // YES IT IZ A BAD PRAKTICE.
+        // This API is fucked up : every attachment id changes when a new attachement is uplaoded.
+        // We'll need to manuelly restore attachments data outside this function
+      },
+      {
+        onProgress: res => handleProgession((res.totalBytesSent / res.totalBytesExpectedToSend) * 100),
+      },
+    );
+    // console.log("service is to be returning", dataJson);
+    return dataJson;
   },
   deleteAttachment: async (draftId: string, attachmentId: string) => {
-    return await fetchJSONWithCache(`/zimbra/message/${draftId}/attachment/${attachmentId}`, { method: "DELETE" });
+    return await fetchJSONWithCache(`/zimbra/message/${draftId}/attachment/${attachmentId}`, { method: 'DELETE' });
   },
 };

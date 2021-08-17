@@ -11,7 +11,6 @@ import { conversationThreadSelected } from './threadSelected';
 import { IAttachment } from './messages';
 import { Trackers } from '../../infra/tracker';
 import { ILocalAttachment, IRemoteAttachment } from '../../ui/Attachment';
-import { Alert } from 'react-native';
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -105,7 +104,7 @@ export function createDraft(data: IConversationMessage) {
         oldId: newuuid,
         parentId: fulldata.parentId,
         oldThreadId: fulldata.threadId,
-        threadId: json.thread_id || (fulldata?.threadId?.startsWith('tmp-') ? json.id : fulldata.threadId),
+        threadId: json.thread_id || (fulldata.threadId.startsWith('tmp-') ? json.id : fulldata.threadId),
       };
       dispatch({
         data: fulldata2,
@@ -273,7 +272,7 @@ export function sendMessage(data: IConversationMessage, sentAttachments?: IAttac
         oldId: newuuid,
         parentId: fulldata.parentId,
         oldThreadId: fulldata.threadId,
-        threadId: json.thread_id || (fulldata?.threadId?.startsWith('tmp-') ? json.id : fulldata.threadId),
+        threadId: json.thread_id || (fulldata.threadId.startsWith('tmp-') ? json.id : fulldata.threadId),
       };
       dispatch({
         data: fulldata2,

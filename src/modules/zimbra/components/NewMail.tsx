@@ -205,10 +205,13 @@ const Headers = ({ style, headers, onChange, onSave }) => {
 
 const Attachments = ({ style, attachments, onChange, onDelete, onSave }) => {
   const removeAttachment = id => {
+    // console.log("delete", id, attachments);
     const newAttachments = attachments.filter(item => item.id !== id);
     onDelete(id);
     onChange(newAttachments);
   };
+
+  // console.log("render attachments", attachments);
 
   return attachments.length === 0 ? (
     <View />
@@ -216,9 +219,8 @@ const Attachments = ({ style, attachments, onChange, onDelete, onSave }) => {
     <View style={[styles.mailPart, style, { padding: 0 }]}>
       {attachments.map(att => (
         <Attachment
-          id={att.id || att.filename}
-          uploadSuccess={!!att.id && onSave()}
-          fileType={att.contentType}
+          uploadSuccess={!!att.url && onSave()}
+          fileType={att.filetype}
           fileName={att.filename}
           onRemove={() => removeAttachment(att.id)}
         />

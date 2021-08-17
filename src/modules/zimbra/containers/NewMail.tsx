@@ -9,12 +9,14 @@ import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
 
 import { getSessionInfo } from "../../../App";
+import { IDistantFile, LocalFile, SyncedFile } from "../../../framework/util/fileHandler";
 import pickFile, { pickFileError } from "../../../infra/actions/pickFile";
 import {Trackers} from "../../../infra/tracker";
 import withViewTracking from "../../../infra/tracker/withViewTracking";
 import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
 import { CommonStyles } from "../../../styles/common/styles";
 import { INavigationProps } from "../../../types";
+import { contentUriToLocalFile } from "../../../types/contentUri";
 import { HeaderAction } from "../../../ui/headers/NewHeader";
 import { trashMailsAction } from "../actions/mail";
 import { fetchMailContentAction, clearMailContentAction } from "../actions/mailContent";
@@ -47,7 +49,7 @@ interface ICreateMailEventProps {
   updateDraft: (mailId: string, mailDatas: object) => void;
   trashMessage: (mailId: string[]) => void;
   onPickFileError: (notifierId: string) => void;
-  addAttachment: (draftId: string, files: any) => void;
+  addAttachment: (draftId: string, files: LocalFile) => Promise<any[]>;
   deleteAttachment: (draftId: string, attachmentId: string) => void;
   fetchMailContent: (mailId: string) => void;
   clearContent: () => void;
@@ -76,7 +78,7 @@ type newMail = {
   bcc: ISearchUsers;
   subject: string;
   body: string;
-  attachments: any[];
+  attachments: IDistantFile[];
 };
 
 class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreateMailState> {
@@ -155,9 +157,11 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
 
   navigationHeaderFunction = {
     getAskForAttachment: (dispatch: Dispatch) => {
+      console.log("will pick file");
       pickFile()
         .then(contentUri => {
-          this.getAttachmentData(contentUri);
+          console.log("picked", contentUri);
+          this.getAttachmentData(contentUriToLocalFile(contentUri));
         })
         .catch(err => {
           if (err.message === "Error picking image" || err.message === "Error picking document") {
@@ -373,17 +377,26 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     );
   };
 
-  getAttachmentData = async file => {
-    const fileState = {
-      contentType: file.mime,
-      filename: file.name,
-    };
-    this.setState({ tempAttachment: fileState });
+  getAttachmentData = async (file: LocalFile) => {
+    this.setState({ tempAttachment: file });
 
     try {
-      const newAttachments = await this.props.addAttachment(this.state.id, file);
+      console.log("added new attachment", file);
+      const newAttachments = await this.props.addAttachment(this.state.id!, file) as [];
+      console.log("getAttachmentData -> newAttachments", newAttachments);
+      const formattedNewAttachments = newAttachments.map((att: any)=> {
+        console.log("format attachment", att);
+        return {
+          filename: att.filename,
+          filetype: att.contentType,
+          id: att.id,
+          filesize: att.size,
+          url: undefined
+        } as IDistantFile;
+      });
       this.setState(prevState => ({
-        mail: { ...prevState.mail, attachments: newAttachments },
+        // ToDo recompute all attachments ids here
+        mail: { ...prevState.mail, attachments: formattedNewAttachments },
         tempAttachment: null,
       }));
     } catch (e) {
@@ -418,6 +431,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
   public render() {
     const { isPrefilling, mail } = this.state;
     const { attachments, body, ...headers } = mail;
+    console.log("NewMail attachments", attachments);
 
     return (
       <NewMailComponent
@@ -432,7 +446,10 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
             ? [...this.state.mail.attachments, this.state.tempAttachment]
             : this.state.mail.attachments
         }
-        onAttachmentChange={attachments => this.setState(prevState => ({ mail: { ...prevState.mail, attachments } }))}
+        onAttachmentChange={attachments => {
+          console.log("onAttachmentChange", attachments);
+          return this.setState(prevState => ({ mail: { ...prevState.mail, attachments } }));
+        }}
         onAttachmentDelete={attachmentId => this.props.deleteAttachment(this.state.id, attachmentId)}
         prevBody={this.state.prevBody}
       />

@@ -1,8 +1,9 @@
-import { Dispatch } from "redux";
+import { Dispatch } from 'redux';
 
-import { progressAction, progressEndAction, progressInitAction } from "../../../infra/actions/progress";
-import { ITicket } from "../containers/Support";
-import { supportService } from "../service/support";
+import { IUserSession } from '../../../framework/util/session';
+import { progressAction, progressEndAction, progressInitAction } from '../../../infra/actions/progress';
+import { ITicket } from '../containers/Support';
+import { supportService } from '../service/support';
 
 export function createTicketAction(ticket: ITicket) {
   return async (dispatch: Dispatch) => {
@@ -10,16 +11,16 @@ export function createTicketAction(ticket: ITicket) {
   };
 }
 
-export function addAttachmentAction(file: any) {
+export function addAttachmentAction(file: any, session: IUserSession) {
   return async (dispatch: Dispatch) => {
     try {
       dispatch(progressInitAction());
       const handleProgress = progress => dispatch(progressAction(progress));
-      const newAttachments = await supportService.addAttachment(file, handleProgress);
+      const newAttachments = await supportService.addAttachment(file, handleProgress, session);
       dispatch(progressEndAction());
       return newAttachments;
     } catch (errmsg) {
-      console.error("ERROR uploading attachment", errmsg);
+      console.error('ERROR uploading attachment', errmsg);
       dispatch(progressEndAction());
       throw errmsg;
     }

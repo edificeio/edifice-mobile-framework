@@ -3,7 +3,7 @@ import { Platform } from "react-native";
 import getPath from "@flyerhq/react-native-android-uri-path";
 import { asyncActionTypes } from "../../infra/redux/async";
 import config from "../config";
-import { formatResults, uploadDocument } from "./helpers/documents";
+import { formatResults, uploadDocumentAction } from "./helpers/documents";
 import { ContentUri } from "../types";
 import { Trackers } from "../../infra/tracker";
 
@@ -59,7 +59,7 @@ export function uploadAction(parentId: string, uriContent: ContentUri[] | Conten
         });
       }
       dispatch(uploadRequested(parentId));
-      const response = await uploadDocument(dispatch, content, parentId);
+      const response = await dispatch(uploadDocumentAction(content, parentId));
       const data = response.map(item => JSON.parse(item));
       dispatch(uploadReceived(parentId, formatResults(data)));
       doTrack && Trackers.trackEvent("Workspace", "UPLOAD");
