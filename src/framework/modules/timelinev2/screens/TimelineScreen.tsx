@@ -129,7 +129,7 @@ export class TimelineScreen extends React.PureComponent<
       <FlatList
         // data
         data={items}
-        keyExtractor={n => n.data.id.toString()}
+        keyExtractor={n => n?.data?.id?.toString()}
         contentContainerStyle={isEmpty ? { flex: 1 } : null}
         renderItem={({ item }) => item.type === ITimelineItemType.NOTIFICATION
           ? this.renderNotificationItem(item.data as ITimelineNotification)
