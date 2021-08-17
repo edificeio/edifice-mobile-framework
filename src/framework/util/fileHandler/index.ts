@@ -181,6 +181,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
  */
 export interface IDistantFile {
     url: string;
+    fileid?: string;
     filename?: string;
     filetype?: string;
     filesize?: number;
@@ -190,6 +191,7 @@ export interface IDistantFile {
  * A SyncedFile is both a LocalFile and a DistantFile. This class wraps up functionality of these two entities.
  */
 export class SyncedFile implements LocalFile, IDistantFile {
+    fileid?: string;
     filename: string;
     filepath: string;
     _filepathNative: string;
@@ -199,7 +201,8 @@ export class SyncedFile implements LocalFile, IDistantFile {
     url: string;
     filesize?: number;
 
-    constructor (localFile: LocalFile, distantFile: IDistantFile) {
+    constructor(localFile: LocalFile, distantFile: IDistantFile) {
+        this.fileid = distantFile.fileid;
         this.filename = localFile.filename;
         this.filepath = localFile.filepath;
         this._filepathNative = localFile._filepathNative;

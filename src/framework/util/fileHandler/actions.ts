@@ -3,6 +3,7 @@
  */
 
 import { ThunkDispatch } from "redux-thunk";
+
 import type { IDistantFile, LocalFile } from ".";
 import { getUserSession } from "../session";
 import fileTransferService, { IDownloadCallbaks, IUploadCallbaks, IUploadParams } from "./service";

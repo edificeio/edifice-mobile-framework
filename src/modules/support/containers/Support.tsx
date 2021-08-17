@@ -1,18 +1,21 @@
-import I18n from "i18n-js";
-import * as React from "react";
-import Toast from "react-native-tiny-toast";
-import { NavigationScreenProp } from "react-navigation";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import pickFile from "../../../infra/actions/pickFile";
-import withViewTracking from "../../../infra/tracker/withViewTracking";
-import { CommonStyles } from "../../../styles/common/styles";
-import { PageContainer } from "../../../ui/ContainerContent";
-import { Text } from "../../../ui/Typography";
-import { Header } from "../../../ui/headers/Header";
-import { HeaderBackAction } from "../../../ui/headers/NewHeader";
-import { createTicketAction, addAttachmentAction, deleteAttachmentAction } from "../actions/support";
-import Support from "../components/Support";
+import I18n from 'i18n-js';
+import * as React from 'react';
+import Toast from 'react-native-tiny-toast';
+import { NavigationScreenProp } from 'react-navigation';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+
+import workspaceService from '../../../framework/modules/workspace/service';
+import { IUserSession } from '../../../framework/util/session';
+import pickFile from '../../../infra/actions/pickFile';
+import withViewTracking from '../../../infra/tracker/withViewTracking';
+import { CommonStyles } from '../../../styles/common/styles';
+import { PageContainer } from '../../../ui/ContainerContent';
+import { Text } from '../../../ui/Typography';
+import { Header } from '../../../ui/headers/Header';
+import { HeaderBackAction } from '../../../ui/headers/NewHeader';
+import { createTicketAction, addAttachmentAction, deleteAttachmentAction } from '../actions/support';
+import Support from '../components/Support';
 
 export type INewAttachment = {
   contentType?: string;
@@ -23,10 +26,10 @@ export type INewAttachment = {
 
 export type ITicket = {
   category: string;
-    school_id: string;
-    subject: string;
-    description: string;
-    attachments?: any[];
+  school_id: string;
+  subject: string;
+  description: string;
+  attachments?: any[];
 };
 
 export type IEstablishment = {
@@ -48,8 +51,9 @@ type ISupportProps = {
   navigation: NavigationScreenProp<{}>;
   categoryList: IApp[];
   establishmentsList: IEstablishment[];
+  session: IUserSession;
   createTicket: (ticket: ITicket) => any;
-  addAttachment: (attachment: object) => INewAttachment;
+  addAttachment: (attachment: object, session: IUserSession) => INewAttachment;
   deleteAttachment: (attachmentId: string) => void;
 };
 
@@ -63,10 +67,10 @@ class SupportContainer extends React.PureComponent<ISupportProps, ISupportState>
     super(props);
     this.state = {
       ticket: {
-        category: "",
-        school_id: "",
-        subject: "",
-        description: "",
+        category: '',
+        school_id: '',
+        subject: '',
+        description: '',
         attachments: [],
       },
       tempAttachment: null,
@@ -87,22 +91,22 @@ class SupportContainer extends React.PureComponent<ISupportProps, ISupportState>
   uploadAttachment = async () => {
     const file = await pickFile();
     const fileState = {
-      contentType: file.mime,
-      filename: file.name,
+      contentType: file.filetype,
+      filename: file.filename,
     };
     this.setState({ tempAttachment: fileState });
     try {
-      const newAttachment: INewAttachment = await this.props.addAttachment(file);
+      const newAttachment: INewAttachment = await this.props.addAttachment(file, this.props.session);
       let joinedAttachments = this.state.ticket.attachments.concat(newAttachment);
       this.setState(prevState => ({
         ticket: { ...prevState.ticket, attachments: joinedAttachments },
         tempAttachment: null,
       }));
     } catch (e) {
-      Toast.show(I18n.t("support-attachment-error"), {
+      Toast.show(I18n.t('support-attachment-error'), {
         position: Toast.position.BOTTOM,
         mask: false,
-        containerStyle: { width: "95%", backgroundColor: "black" },
+        containerStyle: { width: '95%', backgroundColor: 'black' },
       });
       this.setState({ tempAttachment: fileState });
     }
@@ -112,11 +116,11 @@ class SupportContainer extends React.PureComponent<ISupportProps, ISupportState>
     const { ticket } = this.state;
     let result;
     if (!ticket.subject) {
-      result = "support-ticket-error-form-subject-empty";
+      result = 'support-ticket-error-form-subject-empty';
     } else if (ticket.subject.length > 255) {
-      result = "support-ticket-error-form-subject-size";
+      result = 'support-ticket-error-form-subject-size';
     } else if (!ticket.description) {
-      result = "support-ticket-error-form-description-empty";
+      result = 'support-ticket-error-form-description-empty';
     } else {
       result = false;
     }
@@ -129,25 +133,28 @@ class SupportContainer extends React.PureComponent<ISupportProps, ISupportState>
       Toast.show(I18n.t(error), {
         position: Toast.position.BOTTOM,
         mask: false,
-        containerStyle: { width: "95%", backgroundColor: "black" },
+        containerStyle: { width: '95%', backgroundColor: 'black' },
       });
     } else {
       try {
         const response = await this.props.createTicket(this.state.ticket);
 
-        Toast.showSuccess(I18n.t("support-ticket-success-id") + response.id + I18n.t("support-ticket-success-info"), {
+        Toast.showSuccess(I18n.t('support-ticket-success-id') + response.id + I18n.t('support-ticket-success-info'), {
           position: Toast.position.BOTTOM,
           duration: 5000,
           mask: false,
-          containerStyle: { width: "95%", backgroundColor: "black" },
+          containerStyle: { width: '95%', backgroundColor: 'black' },
         });
-        this.setState(prevState => ({ ticket: { ...prevState.ticket, subject: "", description: "", attachments: [] }, tempAttachment: null }));
+        this.setState(prevState => ({
+          ticket: { ...prevState.ticket, subject: '', description: '', attachments: [] },
+          tempAttachment: null,
+        }));
         reset.forEach(reset => reset());
       } catch (e) {
-        Toast.show(I18n.t("support-ticket-failure"), {
+        Toast.show(I18n.t('support-ticket-failure'), {
           position: Toast.position.BOTTOM,
           mask: false,
-          containerStyle: { width: "95%", backgroundColor: "black" },
+          containerStyle: { width: '95%', backgroundColor: 'black' },
         });
       }
     }
@@ -161,17 +168,17 @@ class SupportContainer extends React.PureComponent<ISupportProps, ISupportState>
           <Text
             numberOfLines={1}
             style={{
-              alignSelf: "center",
+              alignSelf: 'center',
               paddingRight: 10,
               marginRight: 50,
-              color: "white",
+              color: 'white',
               fontFamily: CommonStyles.primaryFontFamily,
               fontSize: 16,
-              fontWeight: "400",
-              textAlign: "center",
+              fontWeight: '400',
+              textAlign: 'center',
               flex: 1,
             }}>
-            {I18n.t("support")}
+            {I18n.t('support')}
           </Text>
         </Header>
         <Support
@@ -195,15 +202,15 @@ class SupportContainer extends React.PureComponent<ISupportProps, ISupportState>
 // ------------------------------------------------------------------------------------------------
 
 const mapStateToProps: (state: any) => any = state => {
-  const categoryOther: any = { address: "modules-names.other" };
+  const categoryOther: any = { address: 'modules-names.other' };
   categoryOther.name = I18n.t(categoryOther.address);
   let categoryList = state.user.info.appsInfo
     .filter(function(app) {
       return app.address && app.name && app.address.length > 0 && app.name.length > 0;
     })
     .map(function(app) {
-      let translation = I18n.t("modules-names." + app.displayName.toLowerCase());
-      if (translation.substring(0, 9) !== "[missing ") {
+      let translation = I18n.t('modules-names.' + app.displayName.toLowerCase());
+      if (translation.substring(0, 9) !== '[missing ') {
         app.name = translation;
       } else {
         if (/^[A-Z]/.test(app.displayName)) app.name = app.displayName;
@@ -213,12 +220,12 @@ const mapStateToProps: (state: any) => any = state => {
   categoryList.push(categoryOther);
   categoryList.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
 
-  const establishmentList = state.user.info.schools.sort((a, b) =>
-    a.name.toLowerCase().localeCompare(b.name.toLowerCase())
-  );
+  const establishmentList = state.user.info.schools.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
   const authorizedActions = state.user.info.authorizedActions;
   const hasRightToCreateTicket =
-    authorizedActions && authorizedActions.some(action => action.displayName === "support.ticket.create");
+    authorizedActions && authorizedActions.some(action => action.displayName === 'support.ticket.create');
+
+  const session = state.session;
 
   return {
     categoryList,
@@ -236,10 +243,10 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
       addAttachment: addAttachmentAction,
       deleteAttachment: deleteAttachmentAction,
     },
-    dispatch
+    dispatch,
   );
 };
 
 // ------------------------------------------------------------------------------------------------
 
-export default withViewTracking("support/Support")(connect(mapStateToProps, mapDispatchToProps)(SupportContainer));
+export default withViewTracking('support/Support')(connect(mapStateToProps, mapDispatchToProps)(SupportContainer));

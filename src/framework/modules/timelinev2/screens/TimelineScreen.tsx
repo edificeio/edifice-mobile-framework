@@ -1,35 +1,29 @@
-import * as React from "react";
-import { NavigationInjectedProps, NavigationFocusInjectedProps, withNavigationFocus } from "react-navigation";
 import I18n from "i18n-js";
-import { ThunkDispatch } from "redux-thunk";
+import * as React from "react";
+import { RefreshControl, View } from "react-native";
+import { FlatList } from "react-native-gesture-handler";
+import { NavigationInjectedProps, NavigationFocusInjectedProps, withNavigationFocus } from "react-navigation";
 import { connect } from "react-redux";
-import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
-import { Alert, RefreshControl, View } from "react-native";
+import { ThunkDispatch } from "redux-thunk";
 
 import type { IGlobalState } from "../../../../AppStore";
-import type { ITimeline_State } from "../reducer";
-
-import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from "../../../components/header";
-import { Text } from "../../../components/text";
-import { dismissFlashMessageAction, loadNotificationsPageAction, startLoadNotificationsAction } from "../actions";
-import withViewTracking from "../../../util/tracker/withViewTracking";
-import moduleConfig from "../moduleConfig";
-import { INotifications_State } from "../reducer/notifications";
-import { IEntcoreFlashMessage, IFlashMessages_State } from "../reducer/flashMessages";
-import { LoadingIndicator } from "../../../components/loading";
-import { TimelineNotification } from "../components/TimelineNotification";
-import { TimelineFlashMessage } from "../components/TimelineFlashMessage";
+import PopupMenu from "../../../../framework/components/popupMenu";
 import { EmptyScreen } from "../../../components/emptyScreen";
+import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from "../../../components/header";
+import { LoadingIndicator } from "../../../components/loading";
 import { PageView } from "../../../components/page";
+import { Text } from "../../../components/text";
 import { ITimelineNotification, IResourceUriNotification, isResourceUriNotification, IAbstractNotification, getAsResourceUriNotification } from "../../../util/notifications";
 import { defaultNotificationActionStack, handleNotificationAction, NotifHandlerThunkAction } from "../../../util/notifications/routing";
-import { getTimelineWorkflows } from "../timelineModules";
 import { getUserSession, IUserSession } from "../../../util/session";
-import PopupMenu from "../../../../framework/components/popupMenu";
-import { IDistantFile, LocalFile } from "../../../util/fileHandler";
-import workspaceService from "../../workspace/service";
-import workspaceFileTransferActions from "../../workspace/actions/fileTransfer";
-import fileTransferService from "../../../util/fileHandler/service";
+import { dismissFlashMessageAction, loadNotificationsPageAction, startLoadNotificationsAction } from "../actions";
+import { TimelineFlashMessage } from "../components/TimelineFlashMessage";
+import { TimelineNotification } from "../components/TimelineNotification";
+import moduleConfig from "../moduleConfig";
+import type { ITimeline_State } from "../reducer";
+import { IEntcoreFlashMessage, IFlashMessages_State } from "../reducer/flashMessages";
+import { INotifications_State } from "../reducer/notifications";
+import { getTimelineWorkflows } from "../timelineModules";
 
 // TYPES ==========================================================================================
 
@@ -39,11 +33,11 @@ export interface ITimelineScreenDataProps {
   session: IUserSession;
 };
 export interface ITimelineScreenEventProps {
+  dispatch: ThunkDispatch<any, any, any>
   handleInitTimeline(): Promise<void>,
   handleNextPage(): Promise<boolean>, // return true if page if there is more pages to load
   handleDismissFlashMessage(flashMessageId: number): Promise<void>
   handleOpenNotification(n: IAbstractNotification, fallback: NotifHandlerThunkAction): Promise<void>
-  dispatch: ThunkDispatch<any, any, any>
 };
 export type ITimelineScreenProps = ITimelineScreenDataProps
   & ITimelineScreenEventProps
@@ -82,91 +76,12 @@ export class TimelineScreen extends React.PureComponent<
 
   // RENDER =======================================================================================
 
-  upload = async (files: LocalFile[]) => {
-    try {
-      const file = await workspaceService.uploadFiles(this.props.session, files, {}, {
-        onBegin: r => console.log("onBegin", r),
-        onProgress: r => console.log("onProgress", r)
-      });
-      console.log("uploaded", file);
-    } catch (e) {
-      console.warn(e);
-    }
-  }
-
-  download = async (file: IDistantFile) => {
-    try {
-      const f = await fileTransferService.downloadFile(this.props.session, file, {}, {
-        onBegin: r => console.log("onBegin", r),
-        onProgress: r => console.log("onProgress", r)
-      });
-      console.log("downloaded", f);
-      f.open();
-    } catch (e) {
-      console.warn(e);
-    }
-  }
-
   render() {
     const { navigation } = this.props;
     const routeName = navigation.state.routeName;
     return <>
       {this.renderHeader()}
       {this.renderHeaderButton()}
-
-      <TouchableOpacity
-        onPress={async () => await this.upload(await LocalFile.pick({
-          source: 'documents',
-        }))}
-      ><Text>Pick Single Document</Text></TouchableOpacity>
-
-      <TouchableOpacity
-        onPress={async () => await this.upload(await LocalFile.pick({
-          source: 'documents',
-          multiple: true
-        }))}
-      ><Text>Pick Multiple Documents</Text></TouchableOpacity>
-
-      <TouchableOpacity
-        onPress={async () => await this.upload(await LocalFile.pick({
-          source: 'galery',
-        }))}
-      ><Text>Pick Single Image</Text></TouchableOpacity>
-
-      <TouchableOpacity
-        onPress={async () => await this.upload(await LocalFile.pick({
-          source: 'galery',
-          multiple: true
-        }))}
-      ><Text>Pick Multiple Images</Text></TouchableOpacity>
-
-      <TouchableOpacity
-        onPress={async () => await this.upload(await LocalFile.pick({
-          source: 'camera'
-        }))}
-      ><Text>Pick Camera</Text></TouchableOpacity>
-
-      <TouchableOpacity
-        onPress={async () => await this.download({
-          filename: 'grogu.png',
-          filetype: 'image/png',
-          url: '/workspace/document/cdf3cf44-93ac-4944-8e1f-390862b57fe8'
-        })}
-      ><Text>Download image</Text></TouchableOpacity>
-
-      <TouchableOpacity
-        onPress={async () => {
-          const lfs = await LocalFile.pick({
-            source: 'galery', multiple: true
-          });
-          this.props.dispatch(workspaceFileTransferActions.uploadFilesAction(lfs, {}, {
-            onProgress: (res => {
-              console.log(res);
-            })
-          }));
-        }}
-      ><Text>Super bouton</Text></TouchableOpacity>
-
       <PageView path={routeName}>
         {[TimelineLoadingState.PRISTINE, TimelineLoadingState.INIT].includes(this.state.loadingState)
           ? <LoadingIndicator />
