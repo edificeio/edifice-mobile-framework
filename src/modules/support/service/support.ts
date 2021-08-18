@@ -38,40 +38,6 @@ export const supportService = {
     } catch (error) {
       return Promise.reject(error);
     }
-    /*try {
-      const response = await fileTransfer.startUploadFileAction(
-        file,
-        { parent: 'protected' },
-        {
-          onProgress: progress => handleProgession((progress.totalBytesSent / progress.totalBytesExpectedToSend) * 100),
-        },
-      );
-      // const parsedResponse = JSON.parse(response); //.body???;
-      
-    } catch (error) {
-      return Promise.reject(error);
-    }*/
-    /*  
-    const url = `${(Conf.currentPlatform as any).url}/workspace/document?protected=true&application=media-library`;
-    const headers = { ...getAuthHeader(), 'Content-Type': 'multipart/form-data' };
-
-    return RNFB.fetch('POST', url, headers, [{ name: file.name, type: file.mime, filename: file.name, data: RNFB.wrap(file.uri) }])
-      .uploadProgress({ interval: 100 }, (written, total) => handleProgession((written / total) * 100))
-      .then(response => {
-        if (response && response.respInfo.status >= 200 && response.respInfo.status < 300) {
-          const parsedResponse = JSON.parse(response.data);
-          let uploadedFile: IAttachment = {
-            id: parsedResponse._id,
-            name: parsedResponse.name,
-            contentType: parsedResponse.metadata['content-type'],
-            size: parsedResponse.metadata.size,
-          };
-          return Promise.resolve(uploadedFile);
-        } else {
-          console.error('Attachment upload failed', response.data);
-          return Promise.reject(response.data);
-        }
-      });*/
   },
   deleteAttachment: async (attachmentId: string) => {
     let attachmentArray = [] as string[];
