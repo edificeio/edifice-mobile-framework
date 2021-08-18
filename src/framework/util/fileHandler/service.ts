@@ -21,7 +21,6 @@ import { legacyAppConf } from '../appConf';
 import { IUserSession } from '../session';
 
 export interface IUploadCommonParams {
-  fields?: { [key: string]: string };
   headers?: { [key: string]: string };
   binaryStreamOnly?: boolean;
 }
@@ -59,7 +58,6 @@ const fileTransferService = {
       toUrl: url,
       method: 'POST',
       headers: { ...getAuthHeader(), ...params.headers },
-      fields: { ...params.fields },
       binaryStreamOnly: params.binaryStreamOnly,
       begin: callbacks?.onBegin,
       progress: callbacks?.onProgress,
