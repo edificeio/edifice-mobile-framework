@@ -22,6 +22,7 @@
 		74B6EE4B22E5EADB00658D15 /* OpenSans-bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 74B6EE3E22E5EADB00658D15 /* OpenSans-bold.ttf */; };
 		74B6EE4D22E5EADB00658D15 /* OpenSans-light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 74B6EE3F22E5EADB00658D15 /* OpenSans-light.ttf */; };
 		74B6EE4F22E5EADB00658D15 /* OpenSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 74B6EE4022E5EADB00658D15 /* OpenSans-Regular.ttf */; };
+		F000939826CFA6F600BDA5D3 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = F000939726CFA6F600BDA5D3 /* LaunchScreen.xib */; };
 		F0625946264574A4001AE555 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F062593E26454B14001AE555 /* InfoPlist.strings */; };
 		F313A3B02C1DD5E7D4836B61 /* libPods-appe.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 611EEA89A9B54F0CB20EFC25 /* libPods-appe.a */; };
 /* End PBXBuildFile section */
@@ -76,6 +77,7 @@
 		E9DB4A5878894D4D95E43062 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
+		F000939726CFA6F600BDA5D3 /* LaunchScreen.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
 		F062593D26454B14001AE555 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F062593F26454B17001AE555 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F062594026454B18001AE555 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -147,6 +149,7 @@
 				34F4D45216F04992B5D0F27A /* Octicons.ttf */,
 				E9DB4A5878894D4D95E43062 /* SimpleLineIcons.ttf */,
 				C5549FEC949B4E6A8AB9969A /* Zocial.ttf */,
+				F000939726CFA6F600BDA5D3 /* LaunchScreen.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -178,11 +181,11 @@
 			isa = PBXGroup;
 			children = (
 				13B07FAE1A68108700A75B9A /* appe */,
+				74264AB722DF7D2E00A0E2A6 /* Resources */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				A1567E90EE2E6859F48B30B6 /* Pods */,
 				83CBBA001A601CBA00E9B192 /* Products */,
-				74264AB722DF7D2E00A0E2A6 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -296,6 +299,7 @@
 				74B6EE4D22E5EADB00658D15 /* OpenSans-light.ttf in Resources */,
 				7404C07422E8B012008546A8 /* Assets.xcassets in Resources */,
 				745D891522DE014D0038F1FA /* GoogleService-Info.plist in Resources */,
+				F000939826CFA6F600BDA5D3 /* LaunchScreen.xib in Resources */,
 				74B6EE4122E5EADB00658D15 /* OpenSans-semibold.ttf in Resources */,
 				74B6EE4522E5EADB00658D15 /* OpenSans-BoldItalic.ttf in Resources */,
 				74B6EE4F22E5EADB00658D15 /* OpenSans-Regular.ttf in Resources */,
