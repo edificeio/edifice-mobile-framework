@@ -63,7 +63,7 @@ export class ImagePicker extends React.PureComponent<{
             <ModalBox backdropOpacity={0.5} isVisible={this.state.showModal}><ModalContent>
                 {menuActions.map(a => <ModalContentBlock style={{ marginBottom: 20 }}>
                     <ButtonTextIcon
-                        style={{ height: 50 }}
+                        style={{ height: 75, width: 250 }}
                         title={a.title}
                         onPress={() => {
                           actions[a.id]();
