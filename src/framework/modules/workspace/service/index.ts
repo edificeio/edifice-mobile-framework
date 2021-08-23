@@ -7,12 +7,20 @@ import queryString from 'query-string';
 import { LocalFile } from '../../../util/fileHandler';
 import fileTransferService, { IUploadCallbaks, IUploadCommonParams } from '../../../util/fileHandler/service';
 import { IUserSession } from '../../../util/session';
+
+const implicitWorkspaceUploadParams = {
+  owner: {},
+  protected: { protected: 'true', application: 'media-library' },
+  root: {},
+  shared: {},
+  trash: {},
+};
 export interface IWorkspaceUploadParams extends IUploadCommonParams {
-  parent?: 'owner' | 'shared' | 'protected' | 'root' | 'trash';
+  parent?: keyof implicitWorkspaceUploadParams | string;
 }
 
 const getImplicitWorkspaceUploadParams = (params: IWorkspaceUploadParams) => {
-  return params.parent === 'protected' ? { protected: 'true', application: 'media-library' } : {};
+  return !params?.parent ? {} : implicitWorkspaceUploadParams[params.parent] || { parentId: params.parent };
 };
 
 const getThumbnailWorkspaceUploadParams = () => {
