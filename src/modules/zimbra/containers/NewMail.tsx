@@ -161,7 +161,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       pickFile()
         .then(contentUri => {
           console.log("picked", contentUri);
-          this.getAttachmentData(contentUriToLocalFile(contentUri));
+          this.getAttachmentData(contentUri);
         })
         .catch(err => {
           if (err.message === "Error picking image" || err.message === "Error picking document") {
