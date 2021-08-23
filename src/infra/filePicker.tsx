@@ -118,7 +118,8 @@ export class FilePicker extends React.PureComponent<
             {menuActions.map(a => (
               <ModalContentBlock style={{ marginBottom: 20 }}>
                 <ButtonTextIcon
-                  style={{ height: 75, width: 250 }}
+                  style={{ width: 250 }}
+                  textStyle={{ fontSize: 18, padding: 15, marginTop: -10 }}
                   title={a.title}
                   onPress={() => {
                     a.action();

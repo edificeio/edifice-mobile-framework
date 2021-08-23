@@ -9,11 +9,11 @@ import fileTransferService, { IUploadCallbaks, IUploadCommonParams } from '../..
 import { IUserSession } from '../../../util/session';
 
 const implicitWorkspaceUploadParams = {
-  owner: {},
+  owner: {}, // Exists BackEnd side but not useed yet!
   protected: { protected: 'true', application: 'media-library' },
-  root: {},
-  shared: {},
-  trash: {},
+  root: {}, // Exists BackEnd side but not useed yet! // Exists BackEnd side but not useed yet!
+  shared: {}, // Exists BackEnd side but not useed yet!
+  trash: {}, // Exists BackEnd side but not useed yet!
 };
 export interface IWorkspaceUploadParams extends IUploadCommonParams {
   parent?: keyof implicitWorkspaceUploadParams | string;
