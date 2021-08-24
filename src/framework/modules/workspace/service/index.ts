@@ -16,7 +16,7 @@ const implicitWorkspaceUploadParams = {
   trash: {}, // Exists BackEnd side but not useed yet!
 };
 export interface IWorkspaceUploadParams extends IUploadCommonParams {
-  parent?: keyof implicitWorkspaceUploadParams | string;
+  parent?: keyof typeof implicitWorkspaceUploadParams | string;
 }
 
 const getImplicitWorkspaceUploadParams = (params: IWorkspaceUploadParams) => {
