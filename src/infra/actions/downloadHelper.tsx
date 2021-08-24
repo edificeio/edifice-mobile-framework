@@ -14,6 +14,7 @@ export const downloadFiles = (downloadable: Array<IFile>, withManager = true) =>
 export const downloadFile = (downloadable: IFile, withManager = true) => {
   if (downloadable?.url?.startsWith('/zimbra')) {
     Trackers.trackEvent('Zimbra', 'DOWNLOAD ATTACHMENT');
+    console.log("downloadable", downloadable);
     if (Platform.OS === 'ios') {
       startDownload(downloadable, withManager, false).then(res => openDownloadedFile(res.path()));
     } else {
