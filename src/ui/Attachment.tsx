@@ -257,7 +257,9 @@ class Attachment extends React.PureComponent<
                 ? ' ' + I18n.t('download-open')
                 : downloadState === DownloadState.Error
                   ? ' ' + I18n.t('tryagain')
-                  : null}
+                  : ((this.props.attachment as IRemoteAttachment).size
+                    ? `${Filesize((this.props.attachment as IRemoteAttachment).size!, { round: 1 })}`
+                    : "")}
             </Text>
             {editMode ? (
               <RNGHTouchableOpacity onPress={() => onRemove && onRemove()}>
