@@ -3,6 +3,7 @@
  */
 
 import queryString from 'query-string';
+import { signedFetchJson2 } from '../../../../infra/fetchWithCache';
 
 import { LocalFile } from '../../../util/fileHandler';
 import fileTransferService, { IUploadCallbaks, IUploadCommonParams } from '../../../util/fileHandler/service';
@@ -15,8 +16,10 @@ const implicitWorkspaceUploadParams = {
   shared: {}, // Exists BackEnd side but not useed yet!
   trash: {}, // Exists BackEnd side but not useed yet!
 };
+
+export type WorkspaceParentItem = keyof typeof implicitWorkspaceUploadParams | string;
 export interface IWorkspaceUploadParams extends IUploadCommonParams {
-  parent?: keyof typeof implicitWorkspaceUploadParams | string;
+  parent?: WorkspaceParentItem;
 }
 
 const getImplicitWorkspaceUploadParams = (params: IWorkspaceUploadParams) => {
@@ -57,6 +60,22 @@ export interface IWorkspaceUploadResultBackend {
   shared: unknown[];
 }
 
+export interface IWorkspaceCreateFolderResultBackend {
+  name: string;
+  application: string;
+  shared: unknown[];
+  inheritedShares: unknown[];
+  isShared: boolean;
+  ancestors: unknown[];
+  created: string;
+  modified: string;
+  owner: string;
+  ownerName: string;
+  nameSearch: string;
+  eType: "folder";
+  _id: string;
+}
+
 const workspaceService = {
   /** Upload files to user's personal workspace. */
   startUploadFile: (session: IUserSession, file: LocalFile, params: IWorkspaceUploadParams, callbacks?: IUploadCallbaks) => {
@@ -92,6 +111,20 @@ const workspaceService = {
   uploadFiles: (session: IUserSession, files: LocalFile[], params: IWorkspaceUploadParams, callbacks?: IUploadCallbaks) => {
     return Promise.all(workspaceService.startUploadFiles(session, files, params, callbacks).map(j => j.promise));
   },
+
+  createFolder: (session: IUserSession, name: string, parentFolderId?: string) => {
+    const api = '/workspace/folder';
+    const method = 'POST';
+    const body = queryString.stringify({
+      name,
+      externalId: "",
+      ...(parentFolderId ? { parentFolderId } : {})
+    });
+    const headers = {
+      "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+    };
+    return signedFetchJson2(api, { method, body, headers }) as Promise<IWorkspaceCreateFolderResultBackend>;
+  }
 };
 
 export default workspaceService;

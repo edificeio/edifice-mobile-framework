@@ -2,7 +2,7 @@ import I18n from "i18n-js";
 import { Platform } from "react-native";
 import { copyDocuments, moveDocuments } from "./copypast";
 import { newDownloadThenOpenAction } from "../actions/download";
-import { createFolderAction } from "../actions/create";
+import { createFolderAction } from "../../framework/modules/workspace/actions/folder";
 import { deleteAction, trashAction } from "../actions/delete";
 import { renameAction } from "../actions/rename";
 import { restoreAction } from "../actions/restore";
@@ -10,6 +10,7 @@ import { FilePicker } from "../../infra/filePicker";
 import * as React from "react";
 import { uploadAction } from "../actions/upload";
 import { ContentUri } from "../types";
+import { Trackers } from "../../framework/util/tracker";
 
 export const addMenu = () => {
   return {
@@ -50,7 +51,12 @@ export const createMenu = () => ({
     input: true,
     okLabel: I18n.t("create"),
   },
-  onEvent: ({ dispatch, parentId, value }) => dispatch(createFolderAction(parentId, value)),
+  onEvent: ({ dispatch, parentId, value }) => {
+    Trackers.trackEvent("Workspace", "CREATE", "Folder");
+    parentId === 'owner'
+      ? dispatch(createFolderAction(value))
+      : dispatch(createFolderAction(value, parentId));
+  }
 });
 
 export const trashMenu = () => ({

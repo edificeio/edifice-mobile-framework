@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Conf from '../../ode-framework-conf';
+import { legacyAppConf } from '../framework/util/appConf';
 import { navigate } from '../navigation/helpers/navHelper';
 import { Connection } from './Connection';
 import { OAuth2RessourceOwnerPasswordClient } from './oauth';
@@ -55,6 +56,10 @@ export async function signedFetchJson(url: string | Request, init?: any): Promis
     // console.warn("failed fetch json with token: ", err);
     throw err;
   }
+}
+
+export async function signedFetchJson2(url: string | Request, init?: any): Promise<unknown> {
+  return signedFetchJson(legacyAppConf.currentPlatform?.url! + url, init);
 }
 
 const CACHE_KEY_PREFIX = 'request-';
