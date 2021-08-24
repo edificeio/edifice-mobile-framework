@@ -15,6 +15,12 @@ import { notifierShowAction } from '../infra/notifier/actions';
 import Notifier from '../infra/notifier/container';
 import { IconButton } from './IconButton';
 import { mainNavNavigate } from '../navigation/helpers/navHelper';
+import { IDistantFile, LocalFile, SyncedFile } from '../framework/util/fileHandler';
+import fileTransferService from '../framework/util/fileHandler/service';
+import { ThunkDispatch } from 'redux-thunk';
+import { IGlobalState } from '../AppStore';
+import { getUserSession } from '../framework/util/session';
+import { legacyAppConf } from '../framework/util/appConf';
 
 export interface IRemoteAttachment {
   charset?: string;
@@ -45,28 +51,28 @@ const attachmentIconsByFileExt: Array<{
   exts: string[];
   icon: string;
 }> = [
-  {
-    exts: ['doc', 'docx'],
-    icon: 'file-word',
-  },
-  { exts: ['xls', 'xlsx'], icon: 'file-excel' },
-  {
-    exts: ['ppt', 'pptx'],
-    icon: 'file-powerpoint',
-  },
-  {
-    exts: ['pdf'],
-    icon: 'file-pdf',
-  },
-  {
-    exts: ['zip', 'rar', '7z'],
-    icon: 'file-archive',
-  },
-  {
-    exts: ['png', 'jpg', 'jpeg', 'gif', 'tif', 'tiff', 'bmp', 'heif', 'heic'],
-    icon: 'picture',
-  },
-];
+    {
+      exts: ['doc', 'docx'],
+      icon: 'file-word',
+    },
+    { exts: ['xls', 'xlsx'], icon: 'file-excel' },
+    {
+      exts: ['ppt', 'pptx'],
+      icon: 'file-powerpoint',
+    },
+    {
+      exts: ['pdf'],
+      icon: 'file-pdf',
+    },
+    {
+      exts: ['zip', 'rar', '7z'],
+      icon: 'file-archive',
+    },
+    {
+      exts: ['png', 'jpg', 'jpeg', 'gif', 'tif', 'tiff', 'bmp', 'heif', 'heic'],
+      icon: 'picture',
+    },
+  ];
 const defaultAttachmentIcon = 'attached';
 const getAttachmentTypeByExt = (filename: string) => {
   // from https://stackoverflow.com/a/12900504/6111343
@@ -82,7 +88,12 @@ const getAttachmentTypeByExt = (filename: string) => {
 
   return icon;
 };
-const openFile = (notifierId: string, filePath?: string) => {
+const openFile = (notifierId: string, file?: SyncedFile) => {
+  return (dispatch) => {
+    if (file) {
+      file.open();
+    }
+  }
   /*return (dispatch) => {
     if (filePath) {
       if (Platform.OS === "ios") {
@@ -131,16 +142,17 @@ class Attachment extends React.PureComponent<
     style: ViewStyle;
     editMode?: boolean;
     onRemove?: () => void;
-    onOpenFile: (notifierId: string, filePath?: string) => void;
+    onOpenFile: (notifierId: string, file?: LocalFile) => void;
     onDownload?: () => void;
     onError?: () => void;
     onOpen?: () => void;
+    dispatch: ThunkDispatch<any, any, any>
   },
   {
     downloadState: DownloadState;
     progress: number; // From 0 to 1
-    showModal: boolean;
     downloadedFile?: string;
+    newDownloadedFile?: SyncedFile;
   }
 > {
   get attId() {
@@ -154,8 +166,7 @@ class Attachment extends React.PureComponent<
     super(props);
     this.state = {
       downloadState: DownloadState.Idle,
-      progress: 0,
-      showModal: false,
+      progress: 0
     };
   }
 
@@ -205,9 +216,9 @@ class Attachment extends React.PureComponent<
                 size={16}
                 name={getAttachmentTypeByExt(
                   (editMode && (att as ILocalAttachment).name) ||
-                    (att as IRemoteAttachment).filename ||
-                    (att as IRemoteAttachment).displayName ||
-                    '',
+                  (att as IRemoteAttachment).filename ||
+                  (att as IRemoteAttachment).displayName ||
+                  '',
                 )}
                 style={{ flex: 0, marginRight: 8 }}
               />
@@ -245,8 +256,8 @@ class Attachment extends React.PureComponent<
               {downloadState === DownloadState.Success
                 ? ' ' + I18n.t('download-open')
                 : downloadState === DownloadState.Error
-                ? ' ' + I18n.t('tryagain')
-                : null}
+                  ? ' ' + I18n.t('tryagain')
+                  : null}
             </Text>
             {editMode ? (
               <RNGHTouchableOpacity onPress={() => onRemove && onRemove()}>
@@ -255,49 +266,26 @@ class Attachment extends React.PureComponent<
             ) : null}
           </View>
         </RNGHTouchableOpacity>
-        {this.renderModal()}
       </View>
-    );
-  }
-
-  public renderModal() {
-    const { attachment: att } = this.props;
-    const { showModal } = this.state;
-
-    return (
-      <ModalBox backdropOpacity={0.5} isVisible={showModal}>
-        <ModalContent>
-          <ModalContentBlock>
-            <ModalContentText>
-              {I18n.t('download-confirm', {
-                name: (att as IRemoteAttachment).filename || (att as IRemoteAttachment).displayName || I18n.t('download-untitled'),
-                size: (att as IRemoteAttachment).size ? ` (${Filesize((att as IRemoteAttachment).size, { round: 1 })})` : '',
-              })}
-            </ModalContentText>
-          </ModalContentBlock>
-          <ModalContentBlock>
-            <ButtonsOkCancel
-              onCancel={() => this.setState({ showModal: false })}
-              onValid={() => this.startDownload(att as IRemoteAttachment).catch(err => console.log(err))}
-              title={I18n.t('download')}
-            />
-          </ModalContentBlock>
-        </ModalContent>
-      </ModalBox>
     );
   }
 
   public async onPressAttachment(notifierId: string) {
     const { onOpenFile, onOpen, attachment, editMode } = this.props;
-    const { downloadState, downloadedFile } = this.state;
+    const { downloadState, newDownloadedFile } = this.state;
     const fileType = editMode
       ? (attachment as ILocalAttachment).mime
-      : (attachment as IRemoteAttachment).contentType || (downloadedFile && getAttachmentTypeByExt(downloadedFile));
-    const filePath = editMode ? (attachment as ILocalAttachment).uri : downloadedFile;
+      : (attachment as IRemoteAttachment).contentType || (newDownloadedFile && getAttachmentTypeByExt(newDownloadedFile.filename));
+    const toLocalFile = (att: ILocalAttachment) => new LocalFile({
+      filename: att.name,
+      filetype: att.mime,
+      filepath: att.uri
+    }, {_needIOSReleaseSecureAccess: false}) as LocalFile
+    const file = editMode ? toLocalFile(attachment as ILocalAttachment) : newDownloadedFile;
     const carouselImage =
       Platform.OS === 'android'
-        ? [{ src: { uri: 'file://' + filePath }, alt: 'image' }]
-        : [{ src: { uri: filePath }, alt: 'image' }];
+        ? [{ src: { uri: 'file://' + file?.filepath }, alt: 'image' }]
+        : [{ src: { uri: file?.filepath }, alt: 'image' }];
 
     if (!this.attId) {
       return undefined;
@@ -308,32 +296,71 @@ class Attachment extends React.PureComponent<
       onOpen && onOpen();
       (fileType && fileType.startsWith('image')) || fileType === 'picture'
         ? mainNavNavigate('carouselModal', { images: carouselImage })
-        : onOpenFile(notifierId, filePath);
-    } else if (downloadState === DownloadState.Idle) {
-      this.setState({ showModal: true });
-    } else if (downloadState === DownloadState.Error) {
+        : onOpenFile(notifierId, file);
+    } else {
       this.startDownload(attachment as IRemoteAttachment).catch(err => console.log(err));
     }
   }
 
-  public getOriginalName(res: FetchBlobResponse, att: IRemoteAttachment) {
-    const resHeaders = res.info().headers;
-    const attachmentId = this.attId;
+  // public getOriginalName(res: FetchBlobResponse, att: IRemoteAttachment) {
+  //   const resHeaders = res.info().headers;
+  //   const attachmentId = this.attId;
 
-    if (att.filename) {
-      return att.filename;
-    } else {
-      const contentDisposition = resHeaders['Content-Disposition'] || resHeaders['content-disposition'];
-      const contentType = resHeaders['Content-Type'] || resHeaders['content-type'];
-      return contentDisposition
-        ? (contentDisposition as string).replace(/.*filename="(.*)"/, '$1')
-        : contentType
-        ? `${attachmentId}.${Mime.getExtension(contentType as string)}`
-        : undefined;
-    }
-  }
+  //   if (att.filename) {
+  //     return att.filename;
+  //   } else {
+  //     const contentDisposition = resHeaders['Content-Disposition'] || resHeaders['content-disposition'];
+  //     const contentType = resHeaders['Content-Type'] || resHeaders['content-type'];
+  //     return contentDisposition
+  //       ? (contentDisposition as string).replace(/.*filename="(.*)"/, '$1')
+  //       : contentType
+  //         ? `${attachmentId}.${Mime.getExtension(contentType as string)}`
+  //         : undefined;
+  //   }
+  // }
 
   public async startDownload(att: IRemoteAttachment) {
+    // console.log("att", att);
+    const df: IDistantFile = {
+      ...att,
+      filetype: att.contentType,
+      fileid: att.id,
+      filesize: att.size,
+      filename: att.filename,
+      url: att.url.replace(legacyAppConf.currentPlatform?.url!, '')
+    };
+
+    this.setState({
+      downloadState: DownloadState.Downloading,
+    });
+    const downloadAction = (att: IDistantFile) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => {
+      const session = getUserSession(getState());
+      // console.log("action att", att);
+      fileTransferService.downloadFile(session, att, {}, {
+        onProgress: res => {
+          this.setState({
+            progress: res.bytesWritten / res.contentLength,
+          });
+        }
+      }).then(lf => {
+        this.setState({ newDownloadedFile: lf });
+        this.props.onDownload && this.props.onDownload();
+        this.setState({
+          downloadState: DownloadState.Success,
+          progress: 1,
+        });
+      })
+        .catch(e => {
+          console.log(e);
+          this.props.onError && this.props.onError();
+          this.setState({
+            downloadState: DownloadState.Error,
+            progress: 0,
+          });
+        });
+    };
+    this.props.dispatch(downloadAction(df));
+
     /*if (att.url) {
       if (Platform.OS === 'android') {
         const permissionRes = await Permissions.request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
@@ -415,5 +442,6 @@ class Attachment extends React.PureComponent<
 }
 
 export default connect(null, dispatch => ({
-  onOpenFile: (notifierId, filePath) => dispatch(openFile(notifierId, filePath)),
+  onOpenFile: (notifierId: string, file: LocalFile) => dispatch(openFile(notifierId, file)),
+  dispatch
 }))(Attachment);

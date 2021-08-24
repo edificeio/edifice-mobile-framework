@@ -70,7 +70,7 @@ export class AttachmentGroup extends React.PureComponent<
                   style={{ flex: 0, marginRight: 8, transform: [{ rotate: "270deg" }] }}
                 />
               </View>
-              {attachments.length > 1
+              {/* {attachments.length > 1
               ? <RNGHTouchableOpacity
                   onPress={() => {
                     this.setState({ downloadAll: true });
@@ -80,12 +80,12 @@ export class AttachmentGroup extends React.PureComponent<
                   <A style={{ fontSize: 12 }}>{I18n.t("download-all")}</A>
               </RNGHTouchableOpacity>
               : null
-              }
+              } */}
             </BubbleStyle>
         }
         <BubbleStyle
           style={{
-            flex: 0,
+            flex: 0, 
             paddingVertical: 2,
             marginTop: 0,
             marginBottom: 0,
