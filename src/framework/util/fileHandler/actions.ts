@@ -6,7 +6,7 @@ import { ThunkDispatch } from "redux-thunk";
 
 import type { IDistantFile, LocalFile } from ".";
 import { getUserSession } from "../session";
-import fileTransferService, { IDownloadCallbaks, IUploadCallbaks, IUploadParams } from "./service";
+import fileTransferService, { IDownloadCallbaks, IDownloadParams, IUploadCallbaks, IUploadParams } from "./service";
 
 export const startUploadFileAction =
     (file: LocalFile, params: IUploadParams, adapter: (data: any) => IDistantFile, callbacks?: IUploadCallbaks) =>
@@ -37,28 +37,28 @@ export const uploadFilesAction =
         }
 
 export const startDownloadFileAction =
-    (file: IDistantFile, params: IDownloadCallbaks, callbacks?: IDownloadCallbaks) =>
+    (file: IDistantFile, params: IDownloadParams, callbacks?: IDownloadCallbaks) =>
         (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
             const session = getUserSession(getState());
             return fileTransferService.startDownloadFile(session, file, params, callbacks);
         }
 
 export const startDownloadFilesAction =
-    (files: IDistantFile[], params: IDownloadCallbaks, callbacks?: IDownloadCallbaks) =>
+    (files: IDistantFile[], params: IDownloadParams, callbacks?: IDownloadCallbaks) =>
         (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
             const session = getUserSession(getState());
             return fileTransferService.startDownloadFiles(session, files, params, callbacks);
         }
 
 export const downloadFileAction =
-    (file: IDistantFile, params: IDownloadCallbaks, callbacks?: IDownloadCallbaks) =>
+    (file: IDistantFile, params: IDownloadParams, callbacks?: IDownloadCallbaks) =>
         (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
             const session = getUserSession(getState());
             return fileTransferService.downloadFile(session, file, params, callbacks);
         }
 
 export const downloadFilesAction =
-    (files: IDistantFile[], params: IDownloadCallbaks, callbacks?: IDownloadCallbaks) =>
+    (files: IDistantFile[], params: IDownloadParams, callbacks?: IDownloadCallbaks) =>
         (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
             const session = getUserSession(getState());
             return fileTransferService.downloadFiles(session, files, params, callbacks);

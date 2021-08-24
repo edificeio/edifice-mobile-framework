@@ -124,7 +124,7 @@ const fileTransferService = {
   },
 
   /** Download a file that exists in the server. This function returns more information than `downloadFile` to better handle file suring download. */
-  startDownloadFile: (session: IUserSession, file: IDistantFile, params: IDownloadCallbaks, callbacks?: IDownloadCallbaks) => {
+  startDownloadFile: (session: IUserSession, file: IDistantFile, params: IDownloadParams, callbacks?: IDownloadCallbaks) => {
     file.filename = file.filename || file.url.split('/').pop();
     const downloadDest = `${RNFS.DocumentDirectoryPath}/${file.filename}`;
     const downloadUrl = `${legacyAppConf.currentPlatform?.url}${file.url}`;
@@ -169,7 +169,7 @@ const fileTransferService = {
   },
 
   /** Download a file that exists in the server. */
-  downloadFile: async (session: IUserSession, file: IDistantFile, params: IDownloadCallbaks, callbacks?: IDownloadCallbaks) => {
+  downloadFile: async (session: IUserSession, file: IDistantFile, params: IDownloadParams, callbacks?: IDownloadCallbaks) => {
     try {
       const job = fileTransferService.startDownloadFile(session, file, params, callbacks);
       return await job.promise;
@@ -179,11 +179,11 @@ const fileTransferService = {
     }
   },
 
-  startDownloadFiles: (session: IUserSession, files: IDistantFile[], params: IDownloadCallbaks, callbacks?: IDownloadCallbaks) => {
+  startDownloadFiles: (session: IUserSession, files: IDistantFile[], params: IDownloadParams, callbacks?: IDownloadCallbaks) => {
     return files.map(f => fileTransferService.startDownloadFile(session, f, params, callbacks));
   },
 
-  downloadFiles: (session: IUserSession, files: IDistantFile[], params: IDownloadCallbaks, callbacks?: IDownloadCallbaks) => {
+  downloadFiles: (session: IUserSession, files: IDistantFile[], params: IDownloadParams, callbacks?: IDownloadCallbaks) => {
     return Promise.all(fileTransferService.startDownloadFiles(session, files, params, callbacks).map(j => j.promise));
   },
 };
