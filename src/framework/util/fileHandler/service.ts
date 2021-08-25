@@ -8,6 +8,7 @@
  * - make standard thunks for upload/download + thunk builder
  */
 
+import { resolvePreset } from '@babel/core';
 import RNFS, {
   DownloadBeginCallbackResult,
   DownloadProgressCallbackResult,
@@ -65,7 +66,6 @@ const fileTransferService = {
       progress: callbacks?.onProgress,
     });
     // console.log("job", job.jobId);
-
     const newJob = {
       jobId: job.jobId,
       promise: job.promise
@@ -124,14 +124,36 @@ const fileTransferService = {
   },
 
   /** Download a file that exists in the server. This function returns more information than `downloadFile` to better handle file suring download. */
-  startDownloadFile: (session: IUserSession, file: IDistantFile, params: IDownloadParams, callbacks?: IDownloadCallbaks) => {
+  startDownloadFile: async (session: IUserSession, file: IDistantFile, params: IDownloadParams, callbacks?: IDownloadCallbaks) => {
     file.filename = file.filename || file.url.split('/').pop();
-    const downloadDest = `${RNFS.DocumentDirectoryPath}/${file.filename}`;
+    const folderDest = `${RNFS.DocumentDirectoryPath}${file.url}`;
+    const downloadDest = `${folderDest}/${file.filename}`;
     const downloadUrl = `${legacyAppConf.currentPlatform?.url}${file.url}`;
-    const headers = {
-      ...getAuthHeader(),
-    };
-    // console.log("from", downloadUrl, "to", downloadDest);
+    const headers = { ...getAuthHeader() };
+    const localFile = new LocalFile(
+      {
+        filename: file.filename!,
+        filepath: 'file://' + downloadDest,
+        filetype: file.filetype || 'application/octet-stream',
+      },
+      {
+        _needIOSReleaseSecureAccess: false,
+      },
+    );
+    // Create destination folder if needed
+    // RNFS Automatically creates parents and does not throw if already exists (works like Linux mkdir -p)
+    RNFS.mkdir(folderDest, { NSURLIsExcludedFromBackupKey: true });
+    // Return directly if file is already downloaded
+    const exists = await RNFS.exists(downloadDest);
+    if (exists) {
+      return {
+        jobid: 0,
+        promise: new Promise(resolve => {
+          resolve(new SyncedFile(localFile, file));
+        }),
+      };
+    }
+    // Ottherwise, download it
     const job = RNFS.downloadFile({
       fromUrl: downloadUrl,
       toFile: downloadDest,
@@ -148,17 +170,7 @@ const fileTransferService = {
       promise: job.promise
         .then(res => {
           if (res.statusCode < 200 || res.statusCode > 299) throw new Error('Download failed: server error ' + JSON.stringify(res));
-          const lc = new LocalFile(
-            {
-              filename: file.filename!,
-              filepath: 'file://' + downloadDest,
-              filetype: file.filetype || 'application/octet-stream',
-            },
-            {
-              _needIOSReleaseSecureAccess: false,
-            },
-          );
-          return new SyncedFile(lc, file);
+          return new SyncedFile(localFile, file);
         })
         .catch(e => {
           console.warn('Download error', e);
@@ -171,8 +183,8 @@ const fileTransferService = {
   /** Download a file that exists in the server. */
   downloadFile: async (session: IUserSession, file: IDistantFile, params: IDownloadParams, callbacks?: IDownloadCallbaks) => {
     try {
-      const job = fileTransferService.startDownloadFile(session, file, params, callbacks);
-      return await job.promise;
+      const job = await fileTransferService.startDownloadFile(session, file, params, callbacks);
+      return job.promise;
     } catch (e) {
       console.warn('Download error', e);
       throw e;
