@@ -2,7 +2,7 @@ import I18n from "i18n-js";
 import { Platform } from "react-native";
 import { copyDocuments, moveDocuments } from "./copypast";
 import { newDownloadThenOpenAction } from "../actions/download";
-import { createFolderAction } from "../../framework/modules/workspace/actions/folder";
+// import { createFolderAction } from "../../framework/modules/workspace/actions/folder";
 import { deleteAction, trashAction } from "../actions/delete";
 import { renameAction } from "../actions/rename";
 import { restoreAction } from "../actions/restore";
@@ -11,6 +11,7 @@ import * as React from "react";
 import { uploadAction } from "../actions/upload";
 import { ContentUri } from "../types";
 import { Trackers } from "../../framework/util/tracker";
+import { createFolderAction } from "../actions/create";
 
 export const addMenu = () => {
   return {
