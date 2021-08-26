@@ -150,7 +150,7 @@
     "cacheDirectory": ".jest/cache"
   },
   "ode": {
-    "appid": "com.ode.appe",
+    "appid": "com.ode.mobile",
     "appname": "app-e-dev-default",
     "properties": {
       "ios": "ios/appe/Info.plist",
