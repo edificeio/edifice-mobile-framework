@@ -69,7 +69,7 @@
     "react-native-matomo": "git+https://github.com/BonifyByForteil/react-native-matomo.git",
     "react-native-modal": "12.0.1",
     "react-native-pdf": "6.3.0",
-    "react-native-permissions": "3.0.4",
+    "react-native-permissions": "3.0.5",
     "react-native-reanimated": "2.1.0",
     "react-native-safe-area-context": "3.2.0",
     "react-native-safe-area-view": "2.0.0",
