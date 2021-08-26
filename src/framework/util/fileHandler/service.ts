@@ -143,7 +143,7 @@ const fileTransferService = {
     );
 
     // Assert Permission
-    assertPermissions('documents.write');
+    await assertPermissions('documents.write');
 
     // Create destination folder if needed
     // RNFS Automatically creates parents and does not throw if already exists (works like Linux mkdir -p)

@@ -18,6 +18,7 @@ import DocumentPicker, {
   PlatformTypes,
 } from 'react-native-document-picker';
 import getPath from '@flyerhq/react-native-android-uri-path';
+import { assertPermissions } from '../framework/util/permissions';
 
 export type ImagePicked = Required<
   Pick<ImagePickerResponse, 'uri' | 'type' | 'fileName' | 'fileSize' | 'base64' | 'width' | 'height'>
@@ -42,6 +43,7 @@ export class FilePicker extends React.PureComponent<
     const { callback, options, ...props } = this.props;
 
     const imageCallback = (image: ImagePickerResponse) => {
+      // console.log("image", image);
       !image.didCancel &&
         !image.errorCode &&
         !image.errorMessage &&
@@ -67,7 +69,9 @@ export class FilePicker extends React.PureComponent<
       {
         id: 'camera',
         title: I18n.t('common-photoPicker-take'),
-        action: () => {
+        action: async () => {
+          // console.log("menu select camera");
+          await assertPermissions("camera");
           launchCamera(
             {
               ...options,
@@ -80,7 +84,8 @@ export class FilePicker extends React.PureComponent<
       {
         id: 'gallery',
         title: I18n.t('common-photoPicker-pick'),
-        action: () => {
+        action: async () => {
+          await assertPermissions("galery.read");
           launchImageLibrary(
             {
               ...this.props.options,
@@ -93,7 +98,8 @@ export class FilePicker extends React.PureComponent<
       {
         id: 'document',
         title: I18n.t('common-picker-document'),
-        action: () => {
+        action: async () => {
+          await assertPermissions("documents.read");
           DocumentPicker.pick({
             type: DocumentPicker.types.allFiles as
               | Array<PlatformTypes[keyof PlatformTypes][keyof PlatformTypes[keyof PlatformTypes]]>
@@ -122,6 +128,7 @@ export class FilePicker extends React.PureComponent<
                   textStyle={{ fontSize: 18, padding: 15, marginTop: -10 }}
                   title={a.title}
                   onPress={() => {
+                    // console.log("clicked", a.id);
                     a.action();
                   }}
                 />

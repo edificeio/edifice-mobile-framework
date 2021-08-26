@@ -59,7 +59,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
         let pickedFiles: Array<DocumentPickerResponse | Asset> = [];
         if (opts.source === 'documents') {
             // Assert permission
-            assertPermissions('documents.read');
+            await assertPermissions('documents.read');
             // Pick files
             if (opts.multiple) {
                 // console.log("Document multiple picker")
@@ -76,7 +76,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
             }
         } else if (opts.source === 'galery') {
             // Assert permission
-            assertPermissions('galery.read');
+            await assertPermissions('galery.read');
             // Pick files
             await new Promise<void>((resolve, reject) => {
                 const callback = (res: ImagePickerResponse) => {
@@ -100,7 +100,9 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
                 }
             });
         } else /* if (opts.source === 'camera') */ {
-            assertPermissions('camera');
+            // console.log("pick camera initied");
+            await assertPermissions('camera');
+            // console.log("pick camera has permission");
             // Pick files
             await new Promise<void>((resolve, reject) => {
                 const callback = (res: ImagePickerResponse) => {
