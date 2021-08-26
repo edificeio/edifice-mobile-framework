@@ -8,7 +8,6 @@
  * - make standard thunks for upload/download + thunk builder
  */
 
-import { resolvePreset } from '@babel/core';
 import RNFS, {
   DownloadBeginCallbackResult,
   DownloadProgressCallbackResult,
@@ -19,6 +18,7 @@ import RNFS, {
 import { IDistantFile, LocalFile, SyncedFile } from '.';
 import { getAuthHeader } from '../../../infra/oauth';
 import { legacyAppConf } from '../appConf';
+import { assertPermissions } from '../permissions';
 import { IUserSession } from '../session';
 
 export interface IUploadCommonParams {
@@ -29,6 +29,7 @@ export interface IUploadCommonParams {
 export interface IUploadParams extends IUploadCommonParams {
   url: string;
 }
+
 
 export interface IUploadCallbaks {
   onBegin?: (response: UploadBeginCallbackResult) => void;
@@ -140,18 +141,23 @@ const fileTransferService = {
         _needIOSReleaseSecureAccess: false,
       },
     );
+
+    // Assert Permission
+    assertPermissions('documents.write');
+
     // Create destination folder if needed
     // RNFS Automatically creates parents and does not throw if already exists (works like Linux mkdir -p)
     RNFS.mkdir(folderDest, { NSURLIsExcludedFromBackupKey: true });
     // Return directly if file is already downloaded
     const exists = await RNFS.exists(downloadDest);
     if (exists) {
-      return {
-        jobid: 0,
-        promise: new Promise(resolve => {
-          resolve(new SyncedFile(localFile, file));
-        }),
-      };
+      return new Promise<{
+        jobId: number;
+        promise: Promise<SyncedFile>;
+      }>(resolve => resolve({
+        jobId: 0,
+        promise: new Promise(resolve => resolve(new SyncedFile(localFile, file))),
+      }));
     }
     // Ottherwise, download it
     const job = RNFS.downloadFile({
@@ -196,7 +202,7 @@ const fileTransferService = {
   },
 
   downloadFiles: (session: IUserSession, files: IDistantFile[], params: IDownloadParams, callbacks?: IDownloadCallbaks) => {
-    return Promise.all(fileTransferService.startDownloadFiles(session, files, params, callbacks).map(j => j.promise));
+    return Promise.all(fileTransferService.startDownloadFiles(session, files, params, callbacks).map(async j => (await j).promise));
   },
 };
 

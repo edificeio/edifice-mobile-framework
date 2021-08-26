@@ -8,6 +8,7 @@ import { Asset, ImagePickerResponse, launchCamera, launchImageLibrary, MediaType
 import type { UploadFileItem } from "react-native-fs";
 import FileViewer from 'react-native-file-viewer';
 import getPath from "@flyerhq/react-native-android-uri-path";
+import { assertPermissions } from "../permissions";
 
 namespace LocalFile {
 
@@ -57,6 +58,9 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
     static async pick(opts: LocalFile.IPickOptions) {
         let pickedFiles: Array<DocumentPickerResponse | Asset> = [];
         if (opts.source === 'documents') {
+            // Assert permission
+            assertPermissions('documents.read');
+            // Pick files
             if (opts.multiple) {
                 // console.log("Document multiple picker")
                 pickedFiles = await DocumentPicker.pickMultiple({
@@ -71,6 +75,9 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
                 })];
             }
         } else if (opts.source === 'galery') {
+            // Assert permission
+            assertPermissions('galery.read');
+            // Pick files
             await new Promise<void>((resolve, reject) => {
                 const callback = (res: ImagePickerResponse) => {
                     if (!res.assets || res.didCancel || res.errorCode) reject(res);
@@ -93,6 +100,8 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
                 }
             });
         } else /* if (opts.source === 'camera') */ {
+            assertPermissions('camera');
+            // Pick files
             await new Promise<void>((resolve, reject) => {
                 const callback = (res: ImagePickerResponse) => {
                     if (!res.assets || res.didCancel || res.errorCode) reject(res);

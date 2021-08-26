@@ -155,15 +155,15 @@ PODS:
   - nanopb/decode (2.30908.0)
   - nanopb/encode (2.30908.0)
   - OpenSSL-Universal (1.1.180)
-  - Permission-Camera (3.0.4):
+  - Permission-Camera (3.0.5):
     - RNPermissions
-  - Permission-MediaLibrary (3.0.4):
+  - Permission-MediaLibrary (3.0.5):
     - RNPermissions
-  - Permission-Notifications (3.0.4):
+  - Permission-Notifications (3.0.5):
     - RNPermissions
-  - Permission-PhotoLibrary (3.0.4):
+  - Permission-PhotoLibrary (3.0.5):
     - RNPermissions
-  - Permission-PhotoLibraryAddOnly (3.0.4):
+  - Permission-PhotoLibraryAddOnly (3.0.5):
     - RNPermissions
   - PromisesObjC (2.0.0)
   - RCT-Folly (2020.01.13.00):
@@ -498,7 +498,7 @@ PODS:
     - React-Core
   - RNLocalize (2.1.1):
     - React-Core
-  - RNPermissions (3.0.4):
+  - RNPermissions (3.0.5):
     - React-Core
   - RNReanimated (2.1.0):
     - DoubleConversion
@@ -831,7 +831,7 @@ SPEC CHECKSUMS:
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DoubleConversion: cf9b38bf0b2d048436d9a82ad2abe1404f11e7de
   FBLazyVector: e686045572151edef46010a6f819ade377dfeb4b
-  FBReactNativeSpec: a1ccbbd96f056762836ef699749c908097fd34b9
+  FBReactNativeSpec: 28e9e003f7dc705f7674007e3fb3fb1a4d1114a4
   Firebase: 73c3e3b216ec1ecbc54d2ffdd4670c65c749edb1
   FirebaseCore: 3f09591d51292843e2a46f18358d60bf4e996255
   FirebaseCoreDiagnostics: 7bf55d386f9fc690d971b70a582142321a390eb8
@@ -853,11 +853,11 @@ SPEC CHECKSUMS:
   MatomoTracker: 24a846c9d3aa76933183fe9d47fd62c9efa863fb
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   OpenSSL-Universal: 1aa4f6a6ee7256b83db99ec1ccdaa80d10f9af9b
-  Permission-Camera: ffd449756840ddc0f6294e95d688fecaadfe238c
-  Permission-MediaLibrary: 3ceaf0254478b574932737536833c01b8496376e
-  Permission-Notifications: 0fe099b4cc307db3bdc8b63fe288015c1c0a549a
-  Permission-PhotoLibrary: ab3b6b959e615aa10e3638218a50d135250638ff
-  Permission-PhotoLibraryAddOnly: f0cb589f9700d08edf0d969dc6844cdd5f1a7c1b
+  Permission-Camera: 24c37a846ff69e0eb7fd4264346550850d5b707a
+  Permission-MediaLibrary: 01085a7e58d0ffc5a6ecba2ba7874404e8ac10db
+  Permission-Notifications: 2662b6885535a98892b8e48da04b74fc898d70f8
+  Permission-PhotoLibrary: 48e58291bd650b4f197cf542dad53f41dea4e84f
+  Permission-PhotoLibraryAddOnly: 90b427e4a2acd37d1128618704b53364d73826c2
   PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
   RCT-Folly: ec7a233ccc97cc556cf7237f0db1ff65b986f27c
   RCTRequired: 6d3e854f0e7260a648badd0d44fc364bc9da9728
@@ -908,7 +908,7 @@ SPEC CHECKSUMS:
   RNFS: 3ab21fa6c56d65566d1fb26c2228e2b6132e5e32
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNLocalize: b9a5d22c7e4ecb5db604861f1b1fff6013e03340
-  RNPermissions: 75128bfb4c4ef92f572a8efdb8adfbfab75e8ed0
+  RNPermissions: 3e5bb8afd93c787681bbacbf54d586a6272ecc92
   RNReanimated: b8c8004b43446e3c2709fe64b2b41072f87428ad
   RNScreens: 21b73c94c9117e1110a79ee0ee80c93ccefed8ce
   RNShare: 5ac8f6532ca4cd80fc71caef1cfbba1854a6a045
