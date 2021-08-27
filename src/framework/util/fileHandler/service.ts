@@ -30,7 +30,6 @@ export interface IUploadParams extends IUploadCommonParams {
   url: string;
 }
 
-
 export interface IUploadCallbaks {
   onBegin?: (response: UploadBeginCallbackResult) => void;
   onProgress?: (Response: UploadProgressCallbackResult) => void;
@@ -135,47 +134,59 @@ const fileTransferService = {
       {
         filename: file.filename!,
         filepath: 'file://' + downloadDest,
-        filetype: file.filetype /* || 'application/octet-stream' */,
+        filetype: file.filetype || 'application/octet-stream',
       },
       {
         _needIOSReleaseSecureAccess: false,
       },
     );
-
-    // Assert Permission
-    await assertPermissions('documents.write');
-
-    // Create destination folder if needed
-    // RNFS Automatically creates parents and does not throw if already exists (works like Linux mkdir -p)
-    RNFS.mkdir(folderDest, { NSURLIsExcludedFromBackupKey: true });
-    // Return directly if file is already downloaded
-    const exists = await RNFS.exists(downloadDest);
+    // If destination folder exists, return first (and only!) file
+    const exists = await RNFS.exists(folderDest);
     if (exists) {
+      const files = await RNFS.readDir(folderDest);
+      if (files.length !== 1) throw new Error('Malformed documents folder ');
+      localFile.setPath(files[0].path);
       return new Promise<{
         jobId: number;
         promise: Promise<SyncedFile>;
-      }>(resolve => resolve({
-        jobId: 0,
-        promise: new Promise(resolve => resolve(new SyncedFile(localFile, file))),
-      }));
+      }>(resolve =>
+        resolve({
+          jobId: 0,
+          promise: new Promise(resolve => resolve(new SyncedFile(localFile, file))),
+        }),
+      );
     }
-    // Ottherwise, download it
+    // Assert Permission
+    await assertPermissions('documents.write');
+    // Create destination folder if needed
+    // RNFS Automatically creates parents and does not throw if already exists (works like Linux mkdir -p)
+    RNFS.mkdir(folderDest, { NSURLIsExcludedFromBackupKey: true });
+    // Download file now!
     const job = RNFS.downloadFile({
       fromUrl: downloadUrl,
       toFile: downloadDest,
       headers,
       begin: res => {
+        const type = res?.headers['Content-Type'];
         if (res.contentLength) file.filesize = res.contentLength;
+        if (!file.filetype && type?.length) localFile.filetype = type;
         callbacks?.onBegin?.(res);
       },
       progress: callbacks?.onProgress,
     });
-    // console.log("job", job.jobId);
     const newJob = {
       jobId: job.jobId,
       promise: job.promise
         .then(res => {
           if (res.statusCode < 200 || res.statusCode > 299) throw new Error('Download failed: server error ' + JSON.stringify(res));
+          // rename local file if file name has no extension and file type is known
+          if (localFile.filename.indexOf('.') === -1 && localFile.filetype.indexOf('/') !== -1) {
+            const ext = localFile.filetype.split('/').pop()!;
+            const toMove = localFile.filepath;
+            localFile.setExtension(ext);
+            RNFS.moveFile(toMove, localFile.filepath);
+          }
+          // return
           return new SyncedFile(localFile, file);
         })
         .catch(e => {

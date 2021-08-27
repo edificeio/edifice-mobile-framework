@@ -9,7 +9,6 @@ import type { UploadFileItem } from "react-native-fs";
 import FileViewer from 'react-native-file-viewer';
 import getPath from "@flyerhq/react-native-android-uri-path";
 import { assertPermissions } from "../permissions";
-import RNFetchBlob from "rn-fetch-blob";
 
 namespace LocalFile {
 
@@ -149,6 +148,17 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
         if ((file as LocalFile.CustomUploadFileItem).filepath) { this.nativeInfo = file as DocumentPickerResponse | Asset; }
     }
 
+    setExtension(ext: string) {
+        this.filename += `.${ext}`;
+        this.setPath(`${this.filepath}.${ext}`);
+    }
+
+    setPath(path: string) {
+        this.filename = path.split('/').pop()!;
+        this.filepath = path;
+        this._filepathNative = path;
+    }
+
     /**
      * Recommended by react-native-fs. Call this function when the LocalFile is not useful anymore.
      * (BtW, you must call this manually because TS does not offer destructors for his objects)
@@ -172,22 +182,16 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
     /**
      * Opens the file with the native device's reader.
      */
-    open () {
-        console.log("openning native", this._filepathNative);
-        RNFetchBlob.ios.openDocument(this._filepathNative);
-        console.log("openning", this.filepath);
-        RNFetchBlob.ios.openDocument(this.filepath);
-
-
-        // FileViewer.open(this._filepathNative, {
-        //     showOpenWithDialog: true,
-        //     showAppsSuggestions: true
-        // })
-        // .then(() => {})
-        // .catch(error => {
-        //     console.warn("Error opening file", error);
-        //     throw error;
-        // });
+    open() {
+        FileViewer.open(this._filepathNative, {
+            showOpenWithDialog: true,
+            showAppsSuggestions: true
+        })
+        .then(() => {})
+        .catch(error => {
+            console.warn("Error opening file", error);
+            throw error;
+        });
     }
 
 }
