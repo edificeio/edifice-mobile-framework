@@ -279,11 +279,13 @@ class Attachment extends React.PureComponent<
       ? (attachment as ILocalAttachment).mime
       : (attachment as IRemoteAttachment).contentType || (newDownloadedFile && getAttachmentTypeByExt(newDownloadedFile.filename));
     const toLocalFile = (att: ILocalAttachment) => new LocalFile({
-      filename: att.name,
+      filename: att['displayName'] || att.name,
       filetype: att.mime,
       filepath: att.uri
     }, {_needIOSReleaseSecureAccess: false}) as LocalFile
+    console.log("att original", attachment);
     const file = editMode ? toLocalFile(attachment as ILocalAttachment) : newDownloadedFile;
+    console.log("file", file);
     const carouselImage =
       Platform.OS === 'android'
         ? [{ src: { uri: 'file://' + file?.filepath }, alt: 'image' }]
@@ -328,7 +330,7 @@ class Attachment extends React.PureComponent<
       filetype: att.contentType,
       fileid: att.id,
       filesize: att.size,
-      filename: att.filename,
+      filename: att.filename || att.displayName,
       url: att.url.replace(legacyAppConf.currentPlatform?.url!, '')
     };
 
@@ -337,6 +339,7 @@ class Attachment extends React.PureComponent<
     });
     const downloadAction = (att: IDistantFile) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => {
       const session = getUserSession(getState());
+      console.log("att", att);
       // console.log("action att", att);
       fileTransferService.downloadFile(session, att, {}, {
         onProgress: res => {
@@ -345,7 +348,9 @@ class Attachment extends React.PureComponent<
           });
         }
       }).then(lf => {
+        console.log("lf downlaod", lf);
         this.setState({ newDownloadedFile: lf });
+        console.log("lf", lf);
         this.props.onDownload && this.props.onDownload();
         this.setState({
           downloadState: DownloadState.Success,

@@ -135,7 +135,7 @@ const fileTransferService = {
       {
         filename: file.filename!,
         filepath: 'file://' + downloadDest,
-        filetype: file.filetype || 'application/octet-stream',
+        filetype: file.filetype /* || 'application/octet-stream' */,
       },
       {
         _needIOSReleaseSecureAccess: false,
