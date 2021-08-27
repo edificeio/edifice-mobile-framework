@@ -51,28 +51,28 @@ const attachmentIconsByFileExt: Array<{
   exts: string[];
   icon: string;
 }> = [
-    {
-      exts: ['doc', 'docx'],
-      icon: 'file-word',
-    },
-    { exts: ['xls', 'xlsx'], icon: 'file-excel' },
-    {
-      exts: ['ppt', 'pptx'],
-      icon: 'file-powerpoint',
-    },
-    {
-      exts: ['pdf'],
-      icon: 'file-pdf',
-    },
-    {
-      exts: ['zip', 'rar', '7z'],
-      icon: 'file-archive',
-    },
-    {
-      exts: ['png', 'jpg', 'jpeg', 'gif', 'tif', 'tiff', 'bmp', 'heif', 'heic'],
-      icon: 'picture',
-    },
-  ];
+  {
+    exts: ['doc', 'docx'],
+    icon: 'file-word',
+  },
+  { exts: ['xls', 'xlsx'], icon: 'file-excel' },
+  {
+    exts: ['ppt', 'pptx'],
+    icon: 'file-powerpoint',
+  },
+  {
+    exts: ['pdf'],
+    icon: 'file-pdf',
+  },
+  {
+    exts: ['zip', 'rar', '7z'],
+    icon: 'file-archive',
+  },
+  {
+    exts: ['png', 'jpg', 'jpeg', 'gif', 'tif', 'tiff', 'bmp', 'heif', 'heic'],
+    icon: 'picture',
+  },
+];
 const defaultAttachmentIcon = 'attached';
 const getAttachmentTypeByExt = (filename: string) => {
   // from https://stackoverflow.com/a/12900504/6111343
@@ -88,53 +88,14 @@ const getAttachmentTypeByExt = (filename: string) => {
 
   return icon;
 };
+
 const openFile = (notifierId: string, file?: SyncedFile) => {
-  return (dispatch) => {
+  return dispatch => {
     if (file) {
       file.open();
     }
-  }
-  /*return (dispatch) => {
-    if (filePath) {
-      if (Platform.OS === "ios") {
-        (RNFetchBlob.ios.openDocument(filePath) as unknown as Promise<any>) // TS declaration for RNFetchBlob iOS is incomplete
-          .catch(error => {
-            dispatch(notifierShowAction({
-              id: notifierId,
-              text: I18n.t(error.message.includes("not supported")
-                ? "download-error-unsupportedFileType"
-                : "download-error-generic"
-              ),
-              type: 'warning'
-            }));
-          })
-      } else if (Platform.OS === "android") {
-        RNFetchBlob.android.actionViewIntent(filePath, Mime.getType(filePath) || "text/plain")
-        // FIXME: implement catch (does not work on android, for now)
-          // .catch(error => {
-          //   dispatch(notifierShowAction({
-          //     id: notifierId,
-          //     text: I18n.t(error.message.includes("not supported")
-          //       ? "download-error-unsupportedFileType"
-          //       : "download-error-generic"
-          //     ),
-          //     type: 'warning'
-          //   }));
-          // })
-      } else {
-        // tslint:disable-next-line:no-console
-        console.warn("Cannot handle file for devices other than ios/android.");
-      }
-    } else {
-      dispatch(notifierShowAction({
-        id: notifierId,
-        text: I18n.t("download-error-generic"),
-        type: 'warning',
-      }));
-    }
-  }*/
+  };
 };
-
 class Attachment extends React.PureComponent<
   {
     attachment: IRemoteAttachment | ILocalAttachment;
@@ -146,7 +107,7 @@ class Attachment extends React.PureComponent<
     onDownload?: () => void;
     onError?: () => void;
     onOpen?: () => void;
-    dispatch: ThunkDispatch<any, any, any>
+    dispatch: ThunkDispatch<any, any, any>;
   },
   {
     downloadState: DownloadState;
@@ -166,7 +127,7 @@ class Attachment extends React.PureComponent<
     super(props);
     this.state = {
       downloadState: DownloadState.Idle,
-      progress: 0
+      progress: 0,
     };
   }
 
@@ -216,9 +177,9 @@ class Attachment extends React.PureComponent<
                 size={16}
                 name={getAttachmentTypeByExt(
                   (editMode && (att as ILocalAttachment).name) ||
-                  (att as IRemoteAttachment).filename ||
-                  (att as IRemoteAttachment).displayName ||
-                  '',
+                    (att as IRemoteAttachment).filename ||
+                    (att as IRemoteAttachment).displayName ||
+                    '',
                 )}
                 style={{ flex: 0, marginRight: 8 }}
               />
@@ -256,10 +217,10 @@ class Attachment extends React.PureComponent<
               {downloadState === DownloadState.Success
                 ? ' ' + I18n.t('download-open')
                 : downloadState === DownloadState.Error
-                  ? ' ' + I18n.t('tryagain')
-                  : ((this.props.attachment as IRemoteAttachment).size
-                    ? `${Filesize((this.props.attachment as IRemoteAttachment).size!, { round: 1 })}`
-                    : "")}
+                ? ' ' + I18n.t('tryagain')
+                : (this.props.attachment as IRemoteAttachment).size
+                ? `${Filesize((this.props.attachment as IRemoteAttachment).size!, { round: 1 })}`
+                : ''}
             </Text>
             {editMode ? (
               <RNGHTouchableOpacity onPress={() => onRemove && onRemove()}>
@@ -278,11 +239,15 @@ class Attachment extends React.PureComponent<
     const fileType = editMode
       ? (attachment as ILocalAttachment).mime
       : (attachment as IRemoteAttachment).contentType || (newDownloadedFile && getAttachmentTypeByExt(newDownloadedFile.filename));
-    const toLocalFile = (att: ILocalAttachment) => new LocalFile({
-      filename: att.name,
-      filetype: att.mime,
-      filepath: att.uri
-    }, {_needIOSReleaseSecureAccess: false}) as LocalFile
+    const toLocalFile = (att: ILocalAttachment) =>
+      new LocalFile(
+        {
+          filename: att['displayName'] || att.name,
+          filetype: att.mime,
+          filepath: att.uri,
+        },
+        { _needIOSReleaseSecureAccess: false },
+      ) as LocalFile;
     const file = editMode ? toLocalFile(attachment as ILocalAttachment) : newDownloadedFile;
     const carouselImage =
       Platform.OS === 'android'
@@ -304,32 +269,14 @@ class Attachment extends React.PureComponent<
     }
   }
 
-  // public getOriginalName(res: FetchBlobResponse, att: IRemoteAttachment) {
-  //   const resHeaders = res.info().headers;
-  //   const attachmentId = this.attId;
-
-  //   if (att.filename) {
-  //     return att.filename;
-  //   } else {
-  //     const contentDisposition = resHeaders['Content-Disposition'] || resHeaders['content-disposition'];
-  //     const contentType = resHeaders['Content-Type'] || resHeaders['content-type'];
-  //     return contentDisposition
-  //       ? (contentDisposition as string).replace(/.*filename="(.*)"/, '$1')
-  //       : contentType
-  //         ? `${attachmentId}.${Mime.getExtension(contentType as string)}`
-  //         : undefined;
-  //   }
-  // }
-
   public async startDownload(att: IRemoteAttachment) {
-    // console.log("att", att);
     const df: IDistantFile = {
       ...att,
       filetype: att.contentType,
       fileid: att.id,
       filesize: att.size,
-      filename: att.filename,
-      url: att.url.replace(legacyAppConf.currentPlatform?.url!, '')
+      filename: att.filename || att.displayName,
+      url: att.url.replace(legacyAppConf.currentPlatform?.url!, ''),
     };
 
     this.setState({
@@ -337,21 +284,27 @@ class Attachment extends React.PureComponent<
     });
     const downloadAction = (att: IDistantFile) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => {
       const session = getUserSession(getState());
-      // console.log("action att", att);
-      fileTransferService.downloadFile(session, att, {}, {
-        onProgress: res => {
+      fileTransferService
+        .downloadFile(
+          session,
+          att,
+          {},
+          {
+            onProgress: res => {
+              this.setState({
+                progress: res.bytesWritten / res.contentLength,
+              });
+            },
+          },
+        )
+        .then(lf => {
+          this.setState({ newDownloadedFile: lf });
+          this.props.onDownload && this.props.onDownload();
           this.setState({
-            progress: res.bytesWritten / res.contentLength,
+            downloadState: DownloadState.Success,
+            progress: 1,
           });
-        }
-      }).then(lf => {
-        this.setState({ newDownloadedFile: lf });
-        this.props.onDownload && this.props.onDownload();
-        this.setState({
-          downloadState: DownloadState.Success,
-          progress: 1,
-        });
-      })
+        })
         .catch(e => {
           console.log(e);
           this.props.onError && this.props.onError();
@@ -362,88 +315,10 @@ class Attachment extends React.PureComponent<
         });
     };
     this.props.dispatch(downloadAction(df));
-
-    /*if (att.url) {
-      if (Platform.OS === 'android') {
-        const permissionRes = await Permissions.request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
-        if (permissionRes !== 'granted') throw new Error(`Permission ${permissionRes} to write external storage`);
-      }
-
-      this.setState({
-        downloadState: DownloadState.Downloading,
-        showModal: false,
-      });
-
-      let fetchPromise;
-
-      if (Platform.OS !== 'ios' && Platform.OS !== 'android') {
-        // tslint:disable-next-line:no-console
-        console.warn('Cannot handle file for devices other than ios/android.');
-      } else {
-        fetchPromise = RNFetchBlob.config({
-          fileCache: true,
-        })
-          .fetch('GET', att.url, getAuthHeader())
-          .progress((received, total) => {
-            const fileSize = att.size || total;
-            this.setState({
-              progress: received / fileSize,
-            });
-            // TODO: wait for RNFetchBlob tu accept this PR (https://github.com/joltup/rn-fetch-blob/pull/558),
-            // which solves an issue (https://github.com/joltup/rn-fetch-blob/issues/275) that prevents several
-            // progress bars from being displayed in parallel (iOs-only)
-          })
-          .then(res => {
-            // the temp file path
-            const originalName = this.getOriginalName(res, att);
-            const formattedOriginalName = originalName && originalName.replace(/\//g, '_');
-            const baseDir = dirs.DocumentDir;
-            const newpath = `${baseDir}/${formattedOriginalName}`;
-            if (!originalName) throw new Error("file can't be saved (unknown name and extension)");
-
-            RNFetchBlob.fs.exists(newpath).then(exists => {
-              exists
-                ? RNFetchBlob.fs
-                    .unlink(newpath)
-                    .then(() => RNFetchBlob.fs.mv(res.path(), newpath))
-                    .then(() => this.setState({ downloadedFile: newpath }))
-                    .catch(errorMessage => console.log(errorMessage))
-                : RNFetchBlob.fs
-                    .mv(res.path(), newpath)
-                    .then(() => this.setState({ downloadedFile: newpath }))
-                    .catch(errorMessage => console.log(errorMessage));
-            });
-
-            this.props.onDownload && this.props.onDownload();
-          })
-          .catch(errorMessage => {
-            // error handling
-            console.log(errorMessage);
-            this.props.onError && this.props.onError();
-          });
-      }
-
-      fetchPromise &&
-        fetchPromise
-          .then(res => {
-            this.setState({
-              downloadState: DownloadState.Success,
-              progress: 1,
-            });
-          })
-          .catch((errorMessage, statusCode) => {
-            // error handling
-            console.log('Error downloading', statusCode, errorMessage);
-            this.setState({
-              downloadState: DownloadState.Error,
-              progress: 0,
-            });
-          });
-    }*/
   }
 }
 
 export default connect(null, dispatch => ({
   onOpenFile: (notifierId: string, file: LocalFile) => dispatch(openFile(notifierId, file)),
-  dispatch
+  dispatch,
 }))(Attachment);

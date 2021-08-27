@@ -62,13 +62,11 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
             await assertPermissions('documents.read');
             // Pick files
             if (opts.multiple) {
-                // console.log("Document multiple picker")
                 pickedFiles = await DocumentPicker.pickMultiple({
                     type: LocalFile._getDocumentPickerTypeArg(opts.type),
                     mode: 'open'
                 });
             } else {
-                // console.log("Document single picker")
                 pickedFiles = [await DocumentPicker.pick({
                     type: LocalFile._getDocumentPickerTypeArg(opts.type),
                     mode: 'open'
@@ -87,22 +85,18 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
                     };
                 };
                 if (opts.multiple) {
-                    // console.log("Galery multiple picker")
                     launchImageLibrary({
                         mediaType: LocalFile._getImagePickerTypeArg(opts.type),
                         selectionLimit: 0
                     }, callback);
                 } else {
-                    // console.log("Galery single picker")
                     launchImageLibrary({
                         mediaType: LocalFile._getImagePickerTypeArg(opts.type),
                     }, callback);
                 }
             });
         } else /* if (opts.source === 'camera') */ {
-            // console.log("pick camera initied");
             await assertPermissions('camera');
-            // console.log("pick camera has permission");
             // Pick files
             await new Promise<void>((resolve, reject) => {
                 const callback = (res: ImagePickerResponse) => {
@@ -112,18 +106,15 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
                         resolve();
                     };
                 };
-                // console.log("Camera (single) picker")
                 launchCamera({
                     mediaType: LocalFile._getImagePickerTypeArg(opts.type),
                     saveToPhotos: false
                 }, callback);
             });
         }
-        // console.log("picked files", pickedFiles);
 
         // format pickedFiles data
         const res: LocalFile[] = pickedFiles.map(f => new LocalFile(f, { _needIOSReleaseSecureAccess: opts.source === 'documents' }));
-        // console.log("picked files (converted)", res);
         return res;
     }
 
@@ -146,6 +137,17 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
         this.filepath = LocalFile.formatUrlForUpload(this._filepathNative);
         this.filetype = (file as LocalFile.CustomUploadFileItem).filetype || (file as DocumentPickerResponse | Asset).type!;
         if ((file as LocalFile.CustomUploadFileItem).filepath) { this.nativeInfo = file as DocumentPickerResponse | Asset; }
+    }
+
+    setExtension(ext: string) {
+        this.filename += `.${ext}`;
+        this.setPath(`${this.filepath}.${ext}`);
+    }
+
+    setPath(path: string) {
+        this.filename = path.split('/').pop()!;
+        this.filepath = path;
+        this._filepathNative = path;
     }
 
     /**
@@ -171,8 +173,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
     /**
      * Opens the file with the native device's reader.
      */
-    open () {
-        // console.log("openning", this._filepathNative);
+    open() {
         FileViewer.open(this._filepathNative, {
             showOpenWithDialog: true,
             showAppsSuggestions: true
