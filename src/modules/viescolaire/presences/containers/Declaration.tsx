@@ -2,11 +2,14 @@ import I18n from "i18n-js";
 import moment from "moment";
 import * as React from "react";
 import { View } from "react-native";
+import { Asset } from "react-native-image-picker";
 import { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
+import { LocalFile } from "../../../../framework/util/fileHandler";
 
 import pickFile, { pickFileError } from "../../../../infra/actions/pickFile";
+import { DocumentPicked, ImagePicked } from "../../../../infra/filePicker";
 import withViewTracking from "../../../../infra/tracker/withViewTracking";
 import { standardNavScreenOptions } from "../../../../navigation/helpers/navScreenOptions";
 import { INavigationProps } from "../../../../types";
@@ -17,7 +20,7 @@ import DeclarationComponent from "../components/Declaration";
 
 type DeclarationProps = {
   declareAbsenceAction: (startDate: moment.Moment, endDate: moment.Moment, comment: string) => void;
-  declareAbsenceWithFileAction: (startDate: moment.Moment, endDate: moment.Moment, comment: string, file: any) => void;
+  declareAbsenceWithFileAction: (startDate: moment.Moment, endDate: moment.Moment, comment: string, file: LocalFile) => void;
   onPickFileError: (notifierId: string) => void;
   childName: string;
 } & INavigationProps;
@@ -27,7 +30,7 @@ type DeclarationState = {
   endDate: moment.Moment;
   comment: string;
   tempAttachment?: any;
-  attachment?: any;
+  attachment?: LocalFile | null;
 };
 
 class Declaration extends React.PureComponent<DeclarationProps, DeclarationState> {
@@ -85,10 +88,18 @@ class Declaration extends React.PureComponent<DeclarationProps, DeclarationState
       });
   };
 
+  onPickAttachment = (att: ImagePicked | DocumentPicked) => {
+    this.setState({
+      attachment: new LocalFile(att as Asset | DocumentPicked, {_needIOSReleaseSecureAccess: false})
+    });
+  }
+
   submitForm = async () => {
     const { startDate, endDate, comment, attachment } = this.state;
 
-    if (attachment) await this.props.declareAbsenceWithFileAction(startDate, endDate, comment, attachment);
+    if (attachment) {
+      await this.props.declareAbsenceWithFileAction(startDate, endDate, comment, attachment);
+    }
     else await this.props.declareAbsenceAction(startDate, endDate, comment);
     this.props.navigation.goBack();
   };
@@ -109,6 +120,7 @@ class Declaration extends React.PureComponent<DeclarationProps, DeclarationState
         updateStartDate={this.updateStartDate}
         updateComment={this.updateComment}
         pickAttachment={this.pickAttachment}
+        onPickAttachment={this.onPickAttachment}
         removeAttachment={() => this.setState({ attachment: null })}
         submit={this.submitForm}
       />
