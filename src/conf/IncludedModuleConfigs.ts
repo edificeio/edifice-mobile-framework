@@ -1,5 +1,6 @@
 export default [
     // Add module configs below
+    require("../modules/conversation/moduleConfig").default,
     require("../modules/blog/moduleConfig").default,
     require("../modules/news/moduleConfig").default,
     require("../modules/schoolbook/moduleConfig").default,
