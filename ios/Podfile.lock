@@ -39,16 +39,16 @@ PODS:
     - FirebaseCoreDiagnostics (~> 8.0)
     - GoogleUtilities/Environment (~> 7.4)
     - GoogleUtilities/Logger (~> 7.4)
-  - FirebaseCoreDiagnostics (8.2.0):
+  - FirebaseCoreDiagnostics (8.6.0):
     - GoogleDataTransport (~> 9.0)
     - GoogleUtilities/Environment (~> 7.4)
     - GoogleUtilities/Logger (~> 7.4)
     - nanopb (~> 2.30908.0)
-  - FirebaseInstallations (8.2.0):
+  - FirebaseInstallations (8.6.0):
     - FirebaseCore (~> 8.0)
     - GoogleUtilities/Environment (~> 7.4)
     - GoogleUtilities/UserDefaults (~> 7.4)
-    - PromisesObjC (~> 1.2)
+    - PromisesObjC (< 3.0, >= 1.2)
   - FirebaseMessaging (8.0.0):
     - FirebaseCore (~> 8.0)
     - FirebaseInstallations (~> 8.0)
@@ -114,26 +114,26 @@ PODS:
     - FlipperKit/Core
     - FlipperKit/FlipperKitNetworkPlugin
   - glog (0.3.5)
-  - GoogleDataTransport (9.0.1):
+  - GoogleDataTransport (9.1.0):
     - GoogleUtilities/Environment (~> 7.2)
     - nanopb (~> 2.30908.0)
-    - PromisesObjC (~> 1.2)
-  - GoogleUtilities/AppDelegateSwizzler (7.4.3):
+    - PromisesObjC (< 3.0, >= 1.2)
+  - GoogleUtilities/AppDelegateSwizzler (7.5.1):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
     - GoogleUtilities/Network
-  - GoogleUtilities/Environment (7.4.3):
-    - PromisesObjC (~> 1.2)
-  - GoogleUtilities/Logger (7.4.3):
+  - GoogleUtilities/Environment (7.5.1):
+    - PromisesObjC (< 3.0, >= 1.2)
+  - GoogleUtilities/Logger (7.5.1):
     - GoogleUtilities/Environment
-  - GoogleUtilities/Network (7.4.3):
+  - GoogleUtilities/Network (7.5.1):
     - GoogleUtilities/Logger
     - "GoogleUtilities/NSData+zlib"
     - GoogleUtilities/Reachability
-  - "GoogleUtilities/NSData+zlib (7.4.3)"
-  - GoogleUtilities/Reachability (7.4.3):
+  - "GoogleUtilities/NSData+zlib (7.5.1)"
+  - GoogleUtilities/Reachability (7.5.1):
     - GoogleUtilities/Logger
-  - GoogleUtilities/UserDefaults (7.4.3):
+  - GoogleUtilities/UserDefaults (7.5.1):
     - GoogleUtilities/Logger
   - hermes-engine (0.7.2)
   - libevent (2.1.12)
@@ -155,17 +155,17 @@ PODS:
   - nanopb/decode (2.30908.0)
   - nanopb/encode (2.30908.0)
   - OpenSSL-Universal (1.1.180)
-  - Permission-Camera (3.0.4):
+  - Permission-Camera (3.0.5):
     - RNPermissions
-  - Permission-MediaLibrary (3.0.4):
+  - Permission-MediaLibrary (3.0.5):
     - RNPermissions
-  - Permission-Notifications (3.0.4):
+  - Permission-Notifications (3.0.5):
     - RNPermissions
-  - Permission-PhotoLibrary (3.0.4):
+  - Permission-PhotoLibrary (3.0.5):
     - RNPermissions
-  - Permission-PhotoLibraryAddOnly (3.0.4):
+  - Permission-PhotoLibraryAddOnly (3.0.5):
     - RNPermissions
-  - PromisesObjC (1.2.12)
+  - PromisesObjC (2.0.0)
   - RCT-Folly (2020.01.13.00):
     - boost-for-react-native
     - DoubleConversion
@@ -378,7 +378,7 @@ PODS:
     - React-Core
   - react-native-flipper (0.96.1):
     - React-Core
-  - react-native-image-picker (4.0.4):
+  - react-native-image-picker (4.0.6):
     - React-Core
   - react-native-netinfo (6.0.0):
     - React-Core
@@ -490,11 +490,15 @@ PODS:
     - RNFBApp
   - RNFileShareIntent (1.1.2):
     - React
+  - RNFileViewer (2.1.4):
+    - React-Core
+  - RNFS (2.18.0):
+    - React
   - RNGestureHandler (1.10.3):
     - React-Core
   - RNLocalize (2.1.1):
     - React-Core
-  - RNPermissions (3.0.4):
+  - RNPermissions (3.0.5):
     - React-Core
   - RNReanimated (2.1.0):
     - DoubleConversion
@@ -630,6 +634,8 @@ DEPENDENCIES:
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
   - RNFileShareIntent (from `../node_modules/react-native-file-share-intent`)
+  - RNFileViewer (from `../node_modules/react-native-file-viewer`)
+  - RNFS (from `../node_modules/react-native-fs`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNLocalize (from `../node_modules/react-native-localize`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
@@ -789,6 +795,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/messaging"
   RNFileShareIntent:
     :path: "../node_modules/react-native-file-share-intent"
+  RNFileViewer:
+    :path: "../node_modules/react-native-file-viewer"
+  RNFS:
+    :path: "../node_modules/react-native-fs"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNLocalize:
@@ -821,11 +831,11 @@ SPEC CHECKSUMS:
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DoubleConversion: cf9b38bf0b2d048436d9a82ad2abe1404f11e7de
   FBLazyVector: e686045572151edef46010a6f819ade377dfeb4b
-  FBReactNativeSpec: 637a2e5e29fce8045bf4a63e488e9cca54ef0229
+  FBReactNativeSpec: df476947de933a2aea804af162effc82b4566803
   Firebase: 73c3e3b216ec1ecbc54d2ffdd4670c65c749edb1
   FirebaseCore: 3f09591d51292843e2a46f18358d60bf4e996255
-  FirebaseCoreDiagnostics: 61384f54989065b15c36b5922b65112e86811d3c
-  FirebaseInstallations: 9394ea09e242bf0816e95ac30e56a9214cc86ced
+  FirebaseCoreDiagnostics: 3721920bde3a9a6d5aa093c1d25e9d3e47f694af
+  FirebaseInstallations: 0ede6ffcd215b8f93c19d9b06c1c54e2d4107e98
   FirebaseMessaging: 1a33b4af3c8042ed6ddacb6c031894af2064bfab
   Flipper: 1bd2db48dcc31e4b167b9a33ec1df01c2ded4893
   Flipper-DoubleConversion: 38631e41ef4f9b12861c67d17cb5518d06badc41
@@ -835,20 +845,20 @@ SPEC CHECKSUMS:
   Flipper-RSocket: 127954abe8b162fcaf68d2134d34dc2bd7076154
   FlipperKit: 651f50a42eb95c01b3e89a60996dd6aded529eeb
   glog: 73c2498ac6884b13ede40eda8228cb1eee9d9d62
-  GoogleDataTransport: 04c3e9a480bbcaa2ec3f5d27f1cdeb6a92f20c8d
-  GoogleUtilities: 45dbb24a7f351d69d0a601482b39ad6c32e30dab
+  GoogleDataTransport: 85fd18ff3019bb85d3f2c551d04c481dedf71fc9
+  GoogleUtilities: 3df19e3c24f7bbc291d8b5809aa6b0d41e642437
   hermes-engine: 7d97ba46a1e29bacf3e3c61ecb2804a5ddd02d4f
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   libwebp: e90b9c01d99205d03b6bb8f2c8c415e5a4ef66f0
   MatomoTracker: 24a846c9d3aa76933183fe9d47fd62c9efa863fb
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   OpenSSL-Universal: 1aa4f6a6ee7256b83db99ec1ccdaa80d10f9af9b
-  Permission-Camera: ffd449756840ddc0f6294e95d688fecaadfe238c
-  Permission-MediaLibrary: 3ceaf0254478b574932737536833c01b8496376e
-  Permission-Notifications: 0fe099b4cc307db3bdc8b63fe288015c1c0a549a
-  Permission-PhotoLibrary: ab3b6b959e615aa10e3638218a50d135250638ff
-  Permission-PhotoLibraryAddOnly: f0cb589f9700d08edf0d969dc6844cdd5f1a7c1b
-  PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
+  Permission-Camera: 24c37a846ff69e0eb7fd4264346550850d5b707a
+  Permission-MediaLibrary: 01085a7e58d0ffc5a6ecba2ba7874404e8ac10db
+  Permission-Notifications: 2662b6885535a98892b8e48da04b74fc898d70f8
+  Permission-PhotoLibrary: 48e58291bd650b4f197cf542dad53f41dea4e84f
+  Permission-PhotoLibraryAddOnly: 90b427e4a2acd37d1128618704b53364d73826c2
+  PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
   RCT-Folly: ec7a233ccc97cc556cf7237f0db1ff65b986f27c
   RCTRequired: 6d3e854f0e7260a648badd0d44fc364bc9da9728
   RCTTypeSafety: c1f31d19349c6b53085766359caac425926fafaa
@@ -862,7 +872,7 @@ SPEC CHECKSUMS:
   React-jsinspector: cc614ec18a9ca96fd275100c16d74d62ee11f0ae
   react-native-document-picker: aa3fd58d5fcc1fdbf6939510b9407d16377f5832
   react-native-flipper: a5b02e319fab599965d522d79aa34dc865a07d16
-  react-native-image-picker: 8d96c42425d3f143af7dd41dbbb4887b2c3ac851
+  react-native-image-picker: 7bda3c7297c3ea16f4f504ad6174aa7e548192ef
   react-native-netinfo: 34f4d7a42f49157f3b45c14217d256bce7dc9682
   react-native-pdf: ef641e79a6d550cfabe5d7ec1916799726514c43
   react-native-progress-bar-android: ce95a69f11ac580799021633071368d08aaf9ad8
@@ -894,9 +904,11 @@ SPEC CHECKSUMS:
   RNFBApp: cc2ff3f925840c53f0117d92e0f5e269b356d0f7
   RNFBMessaging: ba11538f4d76a5ef89dc8c97dad04fbf2fa6ebef
   RNFileShareIntent: 94f0be5c8b791dc42bcf07793fa6f2dbfcc2cb5a
+  RNFileViewer: 83cc066ad795b1f986791d03b56fe0ee14b6a69f
+  RNFS: 3ab21fa6c56d65566d1fb26c2228e2b6132e5e32
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNLocalize: b9a5d22c7e4ecb5db604861f1b1fff6013e03340
-  RNPermissions: 75128bfb4c4ef92f572a8efdb8adfbfab75e8ed0
+  RNPermissions: 3e5bb8afd93c787681bbacbf54d586a6272ecc92
   RNReanimated: b8c8004b43446e3c2709fe64b2b41072f87428ad
   RNScreens: 21b73c94c9117e1110a79ee0ee80c93ccefed8ce
   RNShare: 5ac8f6532ca4cd80fc71caef1cfbba1854a6a045
@@ -910,4 +922,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 771a9fb18d3f2b4d4e8e30f1de02b2661673834b
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.10.2
