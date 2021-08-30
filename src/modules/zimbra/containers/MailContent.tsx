@@ -20,6 +20,7 @@ import MailContent from "../components/MailContent";
 import MailContentMenu from "../components/MailContentMenu";
 import MoveModal from "../containers/MoveToFolderModal";
 import { getMailContentState } from "../state/mailContent";
+import { downloadAttachmentAction } from "../actions/download";
 
 class MailContentContainer extends React.PureComponent<any, any> {
   constructor(props) {
@@ -159,6 +160,7 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
       toggleRead: toggleReadAction,
       trashMails: trashMailsAction,
       deleteMails: deleteMailsAction,
+      downloadAttachment: downloadAttachmentAction,
     },
     dispatch
   );

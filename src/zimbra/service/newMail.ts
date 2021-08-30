@@ -1,8 +1,4 @@
-import fileHandlerService from '../../../framework/util/fileHandler/service';
-
-import { LocalFile } from '../../../framework/util/fileHandler';
-import { IUserSession } from '../../../framework/util/session';
-import { fetchJSONWithCache } from '../../../infra/fetchWithCache';
+import fileHandlerService from '../../framework/util/fileHandler/service';
 
 export type IUser = {
   id: string;
@@ -25,16 +21,6 @@ export type ISearchUsersGroups = {
   users: ISearchUsers;
 };
 
-const formatMailDatas = mailDatas => ({
-  ...mailDatas,
-  attachments: mailDatas.attachments.map(att => ({
-    contentType: att.filetype,
-    filename: att.filename,
-    size: att.filesize,
-    id: att.id,
-  })),
-});
-
 export const newMailService = {
   searchUsers: async search => {
     return await fetchJSONWithCache(`/zimbra/visible?search=${search}`);
@@ -52,7 +38,7 @@ export const newMailService = {
 
     await fetchJSONWithCache(`/zimbra/send${paramsUrl?.length > 0 ? '?' + paramsUrl : ''}`, {
       method: 'POST',
-      body: JSON.stringify(formatMailDatas(mailDatas)),
+      body: JSON.stringify(mailDatas),
     });
   },
   forwardMail: async (draftId, forwardFrom) => {
@@ -73,14 +59,14 @@ export const newMailService = {
 
     const response = await fetchJSONWithCache(`/zimbra/draft${paramsUrl?.length > 0 ? '?' + paramsUrl : ''}`, {
       method: 'POST',
-      body: JSON.stringify(formatMailDatas(mailDatas)),
+      body: JSON.stringify(mailDatas),
     });
     return response.id;
   },
   updateDraftMail: async (mailId, mailDatas) => {
-    await fetchJSONWithCache(`/zimbra/draft/${mailId}`, { method: 'PUT', body: JSON.stringify(formatMailDatas(mailDatas)) });
+    await fetchJSONWithCache(`/zimbra/draft/${mailId}`, { method: 'PUT', body: JSON.stringify(mailDatas) });
   },
-  addAttachment: async (session: IUserSession, draftId: string, file: LocalFile, handleProgession) => {
+  addAttachment: async (draftId: string, file: any, handleProgession) => {
     const url = `/zimbra/message/${draftId}/attachment`;
     let dataJson;
     // console.log("DATA TO BE UPLOADED", file);

@@ -1,19 +1,23 @@
-import { mainNavNavigate } from "../navigation/helpers/navHelper";
-import { fetchHomeworkDiaryList } from "./actions/diaryList";
-import homeworkDiarySelected from "./actions/selectedDiary";
-import { NotificationHandlerFactory } from "../infra/pushNotification";
-import { Trackers } from "../infra/tracker";
+import { mainNavNavigate } from '../navigation/helpers/navHelper';
+import { fetchHomeworkDiaryList } from './actions/diaryList';
+import homeworkDiarySelected from './actions/selectedDiary';
+import { NotificationHandlerFactory } from '../infra/pushNotification';
+import { Trackers } from '../infra/tracker';
 
 //TODO add types args
-const homeworksNotificationHandlerFactory:NotificationHandlerFactory<any,any,any> = dispatch => async (notificationData, apps, trackCategory) => {
-  if (!notificationData.resourceUri.startsWith("/homeworks")) {
+const homeworksNotificationHandlerFactory: NotificationHandlerFactory<any, any, any> = dispatch => async (
+  notificationData,
+  apps,
+  trackCategory,
+) => {
+  if (!notificationData?.resourceUri?.startsWith('/homeworks')) {
     return false;
   }
   // console.log("notifData", notificationData);
 
   await dispatch(fetchHomeworkDiaryList());
 
-  const split = notificationData.resourceUri.split("/");
+  const split = notificationData.resourceUri.split('/');
   const diaryId = split[split.length - 1];
 
   // console.log("diaryId", diaryId);
@@ -21,7 +25,7 @@ const homeworksNotificationHandlerFactory:NotificationHandlerFactory<any,any,any
   dispatch(homeworkDiarySelected(diaryId));
 
   // console.log("go to homework");
-  mainNavNavigate("Homework");
+  mainNavNavigate('Homework');
 
   /*
   const split = notificationData.resourceUri.split("/");
@@ -53,8 +57,8 @@ const homeworksNotificationHandlerFactory:NotificationHandlerFactory<any,any,any
   }
   */
 
-  trackCategory && Trackers.trackEvent(trackCategory, "Homework", "/homeworks");
+  trackCategory && Trackers.trackEvent(trackCategory, 'Homework', '/homeworks');
 
- return true;
+  return true;
 };
 export default homeworksNotificationHandlerFactory;

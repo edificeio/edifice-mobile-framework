@@ -1,9 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import Conf from "../../ode-framework-conf";
-import { navigate } from "../navigation/helpers/navHelper";
-import { Connection } from "./Connection";
-import { OAuth2RessourceOwnerPasswordClient } from "./oauth";
+import Conf from '../../ode-framework-conf';
+import { legacyAppConf } from '../framework/util/appConf';
+import { navigate } from '../navigation/helpers/navHelper';
+import { Connection } from './Connection';
+import { OAuth2RessourceOwnerPasswordClient } from './oauth';
 
 // This log doesn't mean anything since Conf is dynamic
 // tslint:disable-next-line:no-console
@@ -14,20 +15,16 @@ import { OAuth2RessourceOwnerPasswordClient } from "./oauth";
  * @param requestInfo url including platform
  * @param init request options
  */
-export async function signedFetch(
-  requestInfo: RequestInfo,
-  init?: RequestInit
-): Promise<Response> {
+export async function signedFetch(requestInfo: RequestInfo, init?: RequestInit): Promise<Response> {
   try {
-    if (!OAuth2RessourceOwnerPasswordClient.connection)
-      throw new Error("no active oauth connection");
+    if (!OAuth2RessourceOwnerPasswordClient.connection) throw new Error('no active oauth connection');
     if (OAuth2RessourceOwnerPasswordClient.connection.getIsTokenExpired()) {
       // tslint:disable-next-line:no-console
       // console.log("Token expired. Refreshing...");
       try {
         await OAuth2RessourceOwnerPasswordClient.connection.refreshToken();
       } catch (err) {
-        navigate("LoginHome");
+        navigate('LoginHome');
       }
     }
     // tslint:disable-next-line:no-console
@@ -37,7 +34,7 @@ export async function signedFetch(
     return fetch(req);
   } catch (err) {
     // tslint:disable-next-line:no-console
-    console.warn("Failed fetch with token: ", err);
+    console.warn('Failed fetch with token: ', err);
     throw err;
   }
 }
@@ -48,7 +45,7 @@ export async function signedFetch(
  * @param url url including platform
  * @param init request options
  */
-export async function signedFetchJson(url: string | Request, init?: any): Promise<unknown> {
+export async function signedFetchJson(url: string | Request, init?: RequestInit): Promise<unknown> {
   try {
     const response = await signedFetch(url, init);
     // console.log(response);
@@ -61,7 +58,11 @@ export async function signedFetchJson(url: string | Request, init?: any): Promis
   }
 }
 
-const CACHE_KEY_PREFIX = "request-";
+export async function signedFetchJson2(url: string | Request, init?: any): Promise<unknown> {
+  return signedFetchJson(legacyAppConf.currentPlatform?.url! + url, init);
+}
+
+const CACHE_KEY_PREFIX = 'request-';
 
 /**
  * Perform a fetch operation usign the standard fetch api, with cache management.
@@ -81,10 +82,10 @@ export async function fetchWithCache(
   forceSync: boolean = true,
   platform: string = (Conf.currentPlatform as any).url,
   getBody = (r: Response) => r.text(),
-  getCacheResult = (cr: any) => new Response(...cr)
+  getCacheResult = (cr: any) => new Response(...cr),
 ) {
   try {
-    if (!platform) throw new Error("must specify a platform");
+    if (!platform) throw new Error('must specify a platform');
     // TODO bugfix : cache key must depends on userID and platformID.
     const cacheKey = CACHE_KEY_PREFIX + path;
     // console.log("cacheKey", cacheKey);
@@ -109,8 +110,8 @@ export async function fetchWithCache(
         init: {
           headers: response.headers,
           status: response.status,
-          statusText: response.statusText
-        }
+          statusText: response.statusText,
+        },
       };
       // console.log("cacheResponse", cacheResponse);
       await AsyncStorage.setItem(cacheKey, JSON.stringify(cacheResponse));
@@ -147,7 +148,7 @@ export async function fetchJSONWithCache(
   path: string,
   init: any = {},
   forceSync: boolean = true,
-  platform: string = (Conf.currentPlatform as any).url
+  platform: string = (Conf.currentPlatform as any).url,
 ) {
   return fetchWithCache(
     path,
@@ -155,7 +156,7 @@ export async function fetchJSONWithCache(
     forceSync,
     platform,
     r => r.json(),
-    cr => cr.body
+    cr => cr.body,
   ) as Promise<any>;
 }
 
@@ -163,9 +164,7 @@ export async function fetchJSONWithCache(
  * Erase from AsyncStorage all data that keeps requests cache.
  */
 export async function clearRequestsCache() {
-  const keys = (await AsyncStorage.getAllKeys()).filter(str =>
-    str.startsWith(CACHE_KEY_PREFIX)
-  );
+  const keys = (await AsyncStorage.getAllKeys()).filter(str => str.startsWith(CACHE_KEY_PREFIX));
   // console.log("keys to clear:", keys);
   await AsyncStorage.multiRemove(keys);
 }

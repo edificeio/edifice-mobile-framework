@@ -1,10 +1,10 @@
-import { PermissionsAndroid, Platform } from 'react-native';
 import Mime from 'mime';
+import { PermissionsAndroid, Platform } from 'react-native';
 import Permissions from 'react-native-permissions';
-import RNFetchBlob, { FetchBlobResponse } from 'rn-fetch-blob';
+
 import Conf from '../../../ode-framework-conf';
-import { getAuthHeader } from '../oauth';
 import { IFile } from '../../workspace/types';
+import { getAuthHeader } from '../oauth';
 import { Trackers } from '../tracker';
 
 export const downloadFiles = (downloadable: Array<IFile>, withManager = true) => {
@@ -14,6 +14,7 @@ export const downloadFiles = (downloadable: Array<IFile>, withManager = true) =>
 export const downloadFile = (downloadable: IFile, withManager = true) => {
   if (downloadable?.url?.startsWith('/zimbra')) {
     Trackers.trackEvent('Zimbra', 'DOWNLOAD ATTACHMENT');
+    console.log("downloadable", downloadable);
     if (Platform.OS === 'ios') {
       startDownload(downloadable, withManager, false).then(res => openDownloadedFile(res.path()));
     } else {
@@ -28,12 +29,9 @@ export const downloadFile = (downloadable: IFile, withManager = true) => {
   }
 };
 
-export const startDownload = async (
-  downloadable: IFile,
-  withManager = true,
-  doTrack: boolean = true,
-): Promise<FetchBlobResponse> => {
-  let path = (await getDirName()) + '/' + downloadable.filename;
+export const startDownload = async (downloadable: IFile, withManager = true, doTrack: boolean = true): Promise<any> => {
+  return null;
+  /*let path = (await getDirName()) + '/' + downloadable.filename;
 
   const config =
     Platform.OS === 'android'
@@ -52,7 +50,7 @@ export const startDownload = async (
 
   doTrack && Trackers.trackEvent('Workspace', 'DOWNLOAD', getExtension(downloadable.filename));
 
-  return RNFetchBlob.config(config).fetch('GET', (Conf.currentPlatform as any).url + downloadable.url, getAuthHeader());
+  return RNFetchBlob.config(config).fetch('GET', (Conf.currentPlatform as any).url + downloadable.url, getAuthHeader());*/
 };
 
 export const openPreview = async (downloadable: IFile) => {
@@ -61,28 +59,31 @@ export const openPreview = async (downloadable: IFile) => {
   openDownloadedFile(res.path());
 };
 
-export const downloadOnCache = async (downloadable: IFile): Promise<FetchBlobResponse> => {
-  return await RNFetchBlob.config({
+export const downloadOnCache = async (downloadable: IFile): Promise<any> => {
+  return null;
+  /*return await RNFetchBlob.config({
     fileCache: true,
     appendExt: getExtension(downloadable.filename),
-  }).fetch('GET', (Conf.currentPlatform as any).url + downloadable.url, getAuthHeader());
+  }).fetch('GET', (Conf.currentPlatform as any).url + downloadable.url, getAuthHeader());*/
 };
 
 export const openDownloadedFile = (filepath: string): void => {
+  /*
   if (Platform.OS === 'ios') RNFetchBlob.ios.openDocument(filepath);
   else if (Platform.OS === 'android') {
     RNFetchBlob.android.actionViewIntent(filepath, Mime.getType(filepath) || 'text/html');
   } else console.warn('Cannot handle file for devices other than ios/android.');
+  */
 };
 
 export const getDirName = async (): Promise<string> => {
-  if (Platform.OS === 'android') {
+  /*if (Platform.OS === 'android') {
     await Permissions.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE);
     return RNFetchBlob.fs.dirs.DownloadDir;
   } else if (Platform.OS === 'ios') {
     return RNFetchBlob.fs.dirs.DocumentDir;
   }
-  console.warn('Cannot handle file for devices other than ios/android.');
+  console.warn('Cannot handle file for devices other than ios/android.');*/
   return '';
 };
 

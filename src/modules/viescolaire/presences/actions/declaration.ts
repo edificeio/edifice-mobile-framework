@@ -1,5 +1,7 @@
 import moment from "moment";
 import { Dispatch } from "redux";
+import { LocalFile } from "../../../../framework/util/fileHandler";
+import { getUserSession } from "../../../../framework/util/session";
 
 import { Trackers } from "../../../../infra/tracker";
 import { getSelectedChild, getSelectedChildStructure } from "../../viesco/state/children";
@@ -36,7 +38,7 @@ export function declareAbsenceWithFileAction(
   startDate: moment.Moment,
   endDate: moment.Moment,
   comment: string,
-  file: { mime: string; name: string; uri: string }
+  file: LocalFile
 ) {
   return async (dispatch: Dispatch, getState: any) => {
     const state = getState();
@@ -48,7 +50,8 @@ export function declareAbsenceWithFileAction(
         getSelectedChild(state).id,
         getSelectedChildStructure(state)!.id,
         comment,
-        file
+        file,
+        getUserSession(state)
       );
       dispatch(declarationActions.posted());
       Trackers.trackEvent("viesco", "DECLARE ABSENCE");

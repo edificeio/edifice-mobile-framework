@@ -2,13 +2,13 @@
  * OAuth2 client for Ressource Owner Password Grant type flow.
  */
 
-import { encode as btoa } from "base-64";
-import querystring from "querystring";
-import { ImageURISource } from "react-native";
+import { encode as btoa } from 'base-64';
+import querystring from 'querystring';
+import { ImageURISource } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Conf from "../../ode-framework-conf";
-import AllModulesConfigs from "../framework/app/AllModulesConfigs";
-import { getModulesScope } from "../framework/util/moduleTool";
+import Conf from '../../ode-framework-conf';
+import AllModulesConfigs from '../framework/app/AllModulesConfigs';
+import { getModulesScope } from '../framework/util/moduleTool';
 
 export interface IOAuthToken {
   access_token: string;
@@ -25,7 +25,7 @@ export enum OAuthErrorType {
   INVALID_GRANT = 'invalid_grant',
   BAD_CREDENTIALS = 'bad_credentials',
   BLOCKED_USER = 'blocked_user',
-  TOO_MANY_TRIES =  'too_many_tries',
+  TOO_MANY_TRIES = 'too_many_tries',
   PLATFORM_UNAVAILABLE = 'platform_unavailable',
   TOO_LOAD = 'too_load',
   UNKNOWN_DENIED = 'unknown_denied',
@@ -35,17 +35,16 @@ export enum OAuthErrorType {
   PARSE_ERROR = 'parse_error',
   BAD_RESPONSE = 'bad_response',
   // Not initialized
-  NOT_INITIALIZED = 'not_initilized'
+  NOT_INITIALIZED = 'not_initilized',
 }
 export interface OAuthErrorDetails {
-  type: OAuthErrorType,
+  type: OAuthErrorType;
   error?: string;
   description?: string;
 }
 export type OAuthError = Error & OAuthErrorDetails;
 
-export const sanitizeScope = (scopes: string[]) =>
-  Array.isArray(scopes) ? scopes.join(" ").trim() : scopes || "";
+export const sanitizeScope = (scopes: string[]) => (Array.isArray(scopes) ? scopes.join(' ').trim() : scopes || '');
 
 export class OAuthClientInfo {
   clientId: string;
@@ -58,7 +57,9 @@ export class OAuthClientInfo {
     this.scope = scope;
   }
 
-  get scopeString(): string { return sanitizeScope(this.scope); }
+  get scopeString(): string {
+    return sanitizeScope(this.scope);
+  }
 }
 
 export class OAuth2RessourceOwnerPasswordClient {
@@ -67,8 +68,8 @@ export class OAuth2RessourceOwnerPasswordClient {
    */
   private static DEFAULT_HEADERS = {
     // tslint:disable-next-line:prettier
-    Accept: "application/json, application/x-www-form-urlencoded",
-    "Content-Type": "application/x-www-form-urlencoded"
+    Accept: 'application/json, application/x-www-form-urlencoded',
+    'Content-Type': 'application/x-www-form-urlencoded',
   };
 
   /**
@@ -78,7 +79,7 @@ export class OAuth2RessourceOwnerPasswordClient {
 
   private token: IOAuthToken | null = null; // Current active token information
   private clientInfo: OAuthClientInfo | null = null; // Current connected client information
-  private accessTokenUri: string = ""; // Uri to get or refresh the token
+  private accessTokenUri: string = ''; // Uri to get or refresh the token
   private uniqueSessionIdentifier: string | undefined;
 
   /**
@@ -90,12 +91,7 @@ export class OAuth2RessourceOwnerPasswordClient {
    * @param clientSecret
    * @param scope Array of scopes names. Will be automatically flattened into a string, don't worry about that.
    */
-  public constructor(
-    accessTokenUri: string,
-    clientId: string,
-    clientSecret: string,
-    scope: string[]
-  ) {
+  public constructor(accessTokenUri: string, clientId: string, clientSecret: string, scope: string[]) {
     this.accessTokenUri = accessTokenUri;
     this.clientInfo = new OAuthClientInfo(clientId, clientSecret, scope);
   }
@@ -105,11 +101,21 @@ export class OAuth2RessourceOwnerPasswordClient {
    * Use this returns always an error.
    * @param data
    */
-  private createAuthError(body: { error: string, error_description?: string }): OAuthError;
-  private createAuthError<T extends object>(type: OAuthErrorType, error: string, description?: string, additionalData?: T): OAuthError & T;
-  private createAuthError<T extends object>(bodyOrType: { error: string, error_description?: string } | OAuthErrorType, error?: string, description?: string, additionalData?: T): OAuthError & T {
-    let err: OAuthError = new Error("EAUTH: returned error") as any;
-    err.name = "EAUTH";
+  private createAuthError(body: { error: string; error_description?: string }): OAuthError;
+  private createAuthError<T extends object>(
+    type: OAuthErrorType,
+    error: string,
+    description?: string,
+    additionalData?: T,
+  ): OAuthError & T;
+  private createAuthError<T extends object>(
+    bodyOrType: { error: string; error_description?: string } | OAuthErrorType,
+    error?: string,
+    description?: string,
+    additionalData?: T,
+  ): OAuthError & T {
+    let err: OAuthError = new Error('EAUTH: returned error') as any;
+    err.name = 'EAUTH';
     if (bodyOrType && typeof bodyOrType === 'object' && bodyOrType.hasOwnProperty('error')) {
       // create from body
       Object.assign(err, bodyOrType);
@@ -131,12 +137,12 @@ export class OAuth2RessourceOwnerPasswordClient {
         }
       } else if (bodyOrType.error === 'quota_overflow') {
         err.type = OAuthErrorType.TOO_LOAD;
-      }else {
+      } else {
         err.type = OAuthErrorType.UNKNOWN_RESPONSE;
       }
     } else if (bodyOrType && typeof bodyOrType === 'object' && error) {
       // create from type
-      err.type = bodyOrType as unknown as OAuthErrorType;
+      err.type = (bodyOrType as unknown) as OAuthErrorType;
       err.error = error;
       err.description = description;
       additionalData && Object.assign(err, additionalData);
@@ -155,10 +161,10 @@ export class OAuth2RessourceOwnerPasswordClient {
     try {
       return await response.json();
     } catch (e) {
-      const err: OAuthError = new Error("EAUTH: invalid Json oauth response") as any;
+      const err: OAuthError = new Error('EAUTH: invalid Json oauth response') as any;
       err.name = 'EAUTH';
       err.type = OAuthErrorType.UNKNOWN_RESPONSE;
-      err.description = "Body is not JSON data."
+      err.description = 'Body is not JSON data.';
       throw err as OAuthError;
     }
   }
@@ -167,7 +173,7 @@ export class OAuth2RessourceOwnerPasswordClient {
    * Create basic auth header.
    */
   private createAuthHeader(clientId: string, clientSecret: string): string {
-    return "Basic " + btoa(clientId || "" + ":" + clientSecret || "");
+    return 'Basic ' + btoa(clientId || '' + ':' + clientSecret || '');
   }
 
   /**
@@ -176,7 +182,7 @@ export class OAuth2RessourceOwnerPasswordClient {
    */
   public signRequest(requestInfo: RequestInfo, init?: RequestInit) {
     if (!this.hasToken) {
-      throw new Error("EAUTH: Unable to sign request without active access token.");
+      throw new Error('EAUTH: Unable to sign request without active access token.');
     }
     if (this.token!.token_type.toLowerCase() === 'bearer') {
       // console.log("token:", this.token.access_token);
@@ -184,12 +190,12 @@ export class OAuth2RessourceOwnerPasswordClient {
         ...init,
         headers: {
           ...init?.headers,
-          Authorization: "Bearer " + this.token!.access_token
-        }
+          Authorization: 'Bearer ' + this.token!.access_token,
+        },
       });
       return req;
     } else {
-      throw new Error("EAUTH: Only Bearer token type supported. Given " + this.token!.token_type);
+      throw new Error('EAUTH: Only Bearer token type supported. Given ' + this.token!.token_type);
     }
   }
 
@@ -205,7 +211,7 @@ export class OAuth2RessourceOwnerPasswordClient {
     const query = querystring.stringify(options.query);
     if (query) {
       // 1.1: Append url query with the given one
-      url += (url.indexOf("?") === -1 ? "?" : "&") + query;
+      url += (url.indexOf('?') === -1 ? '?' : '&') + query;
     }
     // 2: Send request
     let response: Response;
@@ -213,11 +219,10 @@ export class OAuth2RessourceOwnerPasswordClient {
       response = await fetch(url, {
         body,
         headers: options.headers,
-        method: options.method
+        method: options.method,
       });
     } catch (err) {
-      if (err instanceof Error)
-        (err as OAuthError).type = OAuthErrorType.NETWORK_ERROR;
+      if (err instanceof Error) (err as OAuthError).type = OAuthErrorType.NETWORK_ERROR;
       throw err;
     }
     // 3: Check HTTP Status
@@ -230,8 +235,7 @@ export class OAuth2RessourceOwnerPasswordClient {
     try {
       data = await this.parseResponseJSON(response);
     } catch (err) {
-      if (err instanceof Error)
-        (err as OAuthError).type = OAuthErrorType.PARSE_ERROR;
+      if (err instanceof Error) (err as OAuthError).type = OAuthErrorType.PARSE_ERROR;
       throw err;
     }
     // 5: Check if response is error
@@ -246,11 +250,7 @@ export class OAuth2RessourceOwnerPasswordClient {
   /**
    * Get a fresh new access token with owner credentials
    */
-  public async getNewToken(
-    username: string,
-    password: string,
-    saveToken: boolean = true
-  ): Promise<IOAuthToken> {
+  public async getNewToken(username: string, password: string, saveToken: boolean = true): Promise<IOAuthToken> {
     if (!this.clientInfo) {
       throw this.createAuthError(OAuthErrorType.NOT_INITIALIZED, 'no client info provided');
     }
@@ -258,14 +258,14 @@ export class OAuth2RessourceOwnerPasswordClient {
     const body = {
       client_id: this.clientInfo.clientId,
       client_secret: this.clientInfo.clientSecret,
-      grant_type: "password",
+      grant_type: 'password',
       scope: this.clientInfo.scopeString,
       username,
       password,
     };
     const headers = {
       ...OAuth2RessourceOwnerPasswordClient.DEFAULT_HEADERS,
-      Authorization: this.createAuthHeader(this.clientInfo.clientId, this.clientInfo.clientSecret)
+      Authorization: this.createAuthHeader(this.clientInfo.clientId, this.clientInfo.clientSecret),
     };
 
     try {
@@ -273,24 +273,24 @@ export class OAuth2RessourceOwnerPasswordClient {
       const data = await this.request(this.accessTokenUri, {
         body,
         headers,
-        method: "POST"
+        method: 'POST',
       });
       // 3: Build token from data
       if (!data.hasOwnProperty('access_token')) {
-        throw this.createAuthError(OAuthErrorType.BAD_RESPONSE, 'no access_token returned', '', {data});
+        throw this.createAuthError(OAuthErrorType.BAD_RESPONSE, 'no access_token returned', '', { data });
       }
       this.token = {
         ...data,
-        expires_at: OAuth2RessourceOwnerPasswordClient.getExpirationDate(data.expires_in)
+        expires_at: OAuth2RessourceOwnerPasswordClient.getExpirationDate(data.expires_in),
       };
       // 4: Save token if asked
-      saveToken && await this.saveToken();
+      saveToken && (await this.saveToken());
       this.generateUniqueSesionIdentifier();
       return this.token!;
     } catch (err) {
       // tslint:disable-next-line:no-console
-      console.warn("Get token failed: ", err);
-      (err as Error).name = "[oAuth] getToken failed: " + err.name;
+      console.warn('Get token failed: ', err);
+      (err as Error).name = '[oAuth] getToken failed: ' + err.name;
       throw err;
     }
   }
@@ -300,23 +300,23 @@ export class OAuth2RessourceOwnerPasswordClient {
    */
   public async loadToken(): Promise<IOAuthToken | undefined> {
     try {
-      const rawStoredToken = await AsyncStorage.getItem("token");
+      const rawStoredToken = await AsyncStorage.getItem('token');
       if (!rawStoredToken) {
         return undefined;
       }
       const storedToken = JSON.parse(rawStoredToken);
       if (!storedToken) {
-        const err = new Error("[oAuth] loadToken: Unable to parse stored token");
+        const err = new Error('[oAuth] loadToken: Unable to parse stored token');
         throw err;
       }
       this.token = {
         ...storedToken,
-        expires_at: new Date(storedToken.expires_at)
+        expires_at: new Date(storedToken.expires_at),
       };
       this.generateUniqueSesionIdentifier();
       return this.token!;
     } catch (err) {
-      console.warn("[oAuth] loadToken: ", err);
+      console.warn('[oAuth] loadToken: ', err);
       throw err;
     }
   }
@@ -326,10 +326,10 @@ export class OAuth2RessourceOwnerPasswordClient {
    */
   public async saveToken() {
     try {
-      await AsyncStorage.setItem("token", JSON.stringify(this.token));
+      await AsyncStorage.setItem('token', JSON.stringify(this.token));
     } catch (err) {
       // tslint:disable-next-line:no-console
-      console.warn("[oAuth] saveToken: ", err);
+      console.warn('[oAuth] saveToken: ', err);
       throw err;
     }
   }
@@ -341,20 +341,19 @@ export class OAuth2RessourceOwnerPasswordClient {
     if (!this.clientInfo) {
       throw this.createAuthError(OAuthErrorType.NOT_INITIALIZED, 'no client info provided');
     }
-    if (!this.token || !this.token.refresh_token)
-      throw new Error("[oAuth] refreshToken: No refresh token provided.");
+    if (!this.token || !this.token.refresh_token) throw new Error('[oAuth] refreshToken: No refresh token provided.');
 
     // 1: Build request
     const body = {
       client_id: this.clientInfo.clientId,
       client_secret: this.clientInfo.clientSecret,
-      grant_type: "refresh_token",
+      grant_type: 'refresh_token',
       refresh_token: this.token.refresh_token,
-      scope: this.clientInfo.scopeString
+      scope: this.clientInfo.scopeString,
     };
     const headers = {
       ...OAuth2RessourceOwnerPasswordClient.DEFAULT_HEADERS,
-      Authorization: this.createAuthHeader(this.clientInfo.clientId, this.clientInfo.clientSecret)
+      Authorization: this.createAuthHeader(this.clientInfo.clientId, this.clientInfo.clientSecret),
     };
 
     try {
@@ -362,7 +361,7 @@ export class OAuth2RessourceOwnerPasswordClient {
       const data = await this.request(this.accessTokenUri, {
         body,
         headers,
-        method: "POST"
+        method: 'POST',
       });
       if (!data.hasOwnProperty('access_token')) {
         throw this.createAuthError(OAuthErrorType.BAD_RESPONSE, 'no access_token returned', '', { data });
@@ -371,7 +370,7 @@ export class OAuth2RessourceOwnerPasswordClient {
       this.token = {
         ...this.token,
         ...data,
-        expires_at: OAuth2RessourceOwnerPasswordClient.getExpirationDate(data.expires_in)
+        expires_at: OAuth2RessourceOwnerPasswordClient.getExpirationDate(data.expires_in),
       };
       // Save token
       await this.saveToken();
@@ -379,7 +378,7 @@ export class OAuth2RessourceOwnerPasswordClient {
       return this.token!;
     } catch (err) {
       // tslint:disable-next-line:no-console
-      console.warn("[oAuth] refreshToken: ", err);
+      console.warn('[oAuth] refreshToken: ', err);
       throw err;
     }
   }
@@ -423,11 +422,11 @@ export class OAuth2RessourceOwnerPasswordClient {
    */
   public async eraseToken() {
     try {
-      await AsyncStorage.removeItem("token");
+      await AsyncStorage.removeItem('token');
       this.token = null;
     } catch (err) {
       // tslint:disable-next-line:no-console
-      console.warn("[oAuth] eraseToken: ", err);
+      console.warn('[oAuth] eraseToken: ', err);
       throw err;
     }
   }
@@ -439,7 +438,9 @@ export class OAuth2RessourceOwnerPasswordClient {
     return this.uniqueSessionIdentifier || this.generateUniqueSesionIdentifier();
   }
   public generateUniqueSesionIdentifier() {
-    this.uniqueSessionIdentifier = Math.random().toString(36).substring(7);
+    this.uniqueSessionIdentifier = Math.random()
+      .toString(36)
+      .substring(7);
     return this.uniqueSessionIdentifier;
   }
 }
@@ -467,7 +468,7 @@ export const scopes = `infra
  diary
  viescolaire
  edt
- support`.split("\n "); // Here the space after "\n" is important, they represent the indentation & the space between the words when "\n" is removed.
+ support`.split('\n '); // Here the space after "\n" is important, they represent the indentation & the space between the words when "\n" is removed.
 // You can copy the string directly in the "scope" field in a browser. Keep this indentation intact.
 export const createAppScopes = () => getModulesScope(AllModulesConfigs);
 export const createAppScopesLegacy = () => [...new Set([...createAppScopes(), ...scopes])];
@@ -477,11 +478,7 @@ export const createAppScopesLegacy = () => [...new Set([...createAppScopes(), ..
  * @param src
  */
 export function transformedSrc(src: string) {
-  return src.startsWith("//")
-    ? `https:${src}`
-    : src.startsWith("/")
-    ? `${(Conf.currentPlatform as any).url}${src}`
-    : src
+  return src.startsWith('//') ? `https:${src}` : src.startsWith('/') ? `${(Conf.currentPlatform as any).url}${src}` : src;
 }
 
 /**
@@ -491,26 +488,22 @@ export function transformedSrc(src: string) {
  * @param absoluteUrl
  */
 export function getIsUrlSignable(absoluteUrl: string): boolean {
-  return (
-    absoluteUrl.indexOf("://") === -1 ||
-    absoluteUrl.indexOf((Conf.currentPlatform as any).url) !== -1
-  );
+  return absoluteUrl.indexOf('://') === -1 || absoluteUrl.indexOf((Conf.currentPlatform as any).url) !== -1;
 }
 
 /**
  * Returns an empty signed request, just to get the authorisation header.
  */
 export function getDummySignedRequest() {
-  if (!OAuth2RessourceOwnerPasswordClient.connection)
-    throw new Error('[oAuth] getDummySignedRequest: no token');
+  if (!OAuth2RessourceOwnerPasswordClient.connection) throw new Error('[oAuth] getDummySignedRequest: no token');
   return OAuth2RessourceOwnerPasswordClient.connection.signRequest('<dummy request>');
 }
 /**
  * Returns an headers object containing only the authorisation header.
  */
-export function getAuthHeader(): { Authorization : string } {
+export function getAuthHeader(): { Authorization: string } {
   const ret = { Authorization: getDummySignedRequest().headers.get('Authorization') };
-  if (!ret.Authorization) throw new Error("[oAuth] getAuthHeader: empty auth header");
+  if (!ret.Authorization) throw new Error('[oAuth] getAuthHeader: empty auth header');
   return ret as { Authorization: string };
 }
 
@@ -518,17 +511,13 @@ export function getAuthHeader(): { Authorization : string } {
  * Returns a signed request from an url or a request
  */
 export function signRequest(requestInfo: RequestInfo): RequestInfo {
-  if (!OAuth2RessourceOwnerPasswordClient.connection)
-    throw new Error('[oAuth] signRequest: no token');
+  if (!OAuth2RessourceOwnerPasswordClient.connection) throw new Error('[oAuth] signRequest: no token');
 
   if (requestInfo instanceof Request) {
-    return getIsUrlSignable(requestInfo.url) ?
-      OAuth2RessourceOwnerPasswordClient.connection.signRequest(requestInfo) :
-      requestInfo;
-  } else { /* requestInfo is string */
-    return getIsUrlSignable(requestInfo) ?
-      OAuth2RessourceOwnerPasswordClient.connection.signRequest(requestInfo) :
-      requestInfo;
+    return getIsUrlSignable(requestInfo.url) ? OAuth2RessourceOwnerPasswordClient.connection.signRequest(requestInfo) : requestInfo;
+  } else {
+    /* requestInfo is string */
+    return getIsUrlSignable(requestInfo) ? OAuth2RessourceOwnerPasswordClient.connection.signRequest(requestInfo) : requestInfo;
   }
 }
 
@@ -536,17 +525,17 @@ export function signRequest(requestInfo: RequestInfo): RequestInfo {
  * Returns a signed URISource from a url or an imageURISource.
  */
 export function signURISource(URISource: ImageURISource | string): ImageURISource {
-  if (!OAuth2RessourceOwnerPasswordClient.connection)
-    throw new Error('[oAuth] signURISource: no token');
+  if (!OAuth2RessourceOwnerPasswordClient.connection) throw new Error('[oAuth] signURISource: no token');
 
   if (typeof URISource === 'object') {
     if (!URISource.uri) throw new Error('[oAuth] signURISource: no uri');
     if (getIsUrlSignable(URISource.uri)) {
-      return {...URISource, headers: {...URISource.headers, ...getAuthHeader()}};
+      return { ...URISource, headers: { ...URISource.headers, ...getAuthHeader() } };
     } else {
       return URISource;
     }
-  } else { /* URISource is string */
+  } else {
+    /* URISource is string */
     if (getIsUrlSignable(URISource)) {
       return { uri: URISource, headers: getAuthHeader() };
     } else {
@@ -559,10 +548,10 @@ export function signURISource(URISource: ImageURISource | string): ImageURISourc
  * Returns a signed URISource from a url or an imageURISource for all items in the given array.
  * @param images
  */
-export function signURISourceArray(URISources: Array<{ src: ImageURISource | string; alt: string }>): Array<{ src: ImageURISource | string; alt: string }> {
-  return URISources.map(
-    URISource => ({ ...URISource, src: signURISource(URISource.src) })
-  );
+export function signURISourceArray(
+  URISources: Array<{ src: ImageURISource | string; alt: string }>,
+): Array<{ src: ImageURISource | string; alt: string }> {
+  return URISources.map(URISource => ({ ...URISource, src: signURISource(URISource.src) }));
 }
 
 // ============ DEPRECATED SECTION ============= //
@@ -571,11 +560,11 @@ export function signURISourceArray(URISources: Array<{ src: ImageURISource | str
  * Returns a image array with signed url requests.
  */
 export function DEPRECATED_signImagesUrls(
-  images: Array<{ src: string; alt: string }>
+  images: Array<{ src: string; alt: string }>,
 ): Array<{ src: ImageURISource; alt: string }> {
   return images.map(v => ({
     ...v,
-    src: DEPRECATED_signImageURISource(v.src)
+    src: DEPRECATED_signImageURISource(v.src),
   }));
 }
 
@@ -584,14 +573,10 @@ export function DEPRECATED_signImagesUrls(
  * This function skip the signing if url points to an another web domain.
  */
 export function DEPRECATED_signImageURISource(url: string): ImageURISource {
-  if (!OAuth2RessourceOwnerPasswordClient.connection)
-    throw new Error('[oAuth] signUrl: no token')
+  if (!OAuth2RessourceOwnerPasswordClient.connection) throw new Error('[oAuth] signUrl: no token');
   // console.log(url);
   // If there is a protocol AND url doen't contain plateform url, doesn't sign it.
-  if (
-    url.indexOf("://") !== -1 &&
-    url.indexOf((Conf.currentPlatform as any).url) === -1
-  ) {
+  if (url.indexOf('://') !== -1 && url.indexOf((Conf.currentPlatform as any).url) === -1) {
     // console.log("external image, not sign");
     return { uri: url };
   }
@@ -599,7 +584,6 @@ export function DEPRECATED_signImageURISource(url: string): ImageURISource {
   return {
     method: 'GET',
     uri: url,
-    headers: getAuthHeader()
-  }
+    headers: getAuthHeader(),
+  };
 }
-

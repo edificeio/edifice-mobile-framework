@@ -22,14 +22,9 @@
  * - `linkTextStyle` (TextStyle) additional style applied to text links.
  */
 
-import { Dimensions, TextStyle } from "react-native";
-import Conf from "../../../ode-framework-conf";
-import {
-  HtmlParserAbstract,
-  IHtmlParserAbstractOptions,
-  ISaxTagClose,
-  ISaxTagOpen
-} from "./abstract";
+import { Dimensions, TextStyle } from 'react-native';
+import Conf from '../../../ode-framework-conf';
+import { HtmlParserAbstract, IHtmlParserAbstractOptions, ISaxTagClose, ISaxTagOpen } from './abstract';
 import {
   HtmlParserJsxTextVariant,
   HtmlParserNuggetTypes,
@@ -43,8 +38,8 @@ import {
   ILinkTextNugget,
   INugget,
   ITextNugget,
-  renderNuggets
-} from "./nuggetRenderer";
+  renderNuggets,
+} from './nuggetRenderer';
 
 export interface IHtmlParserRNOptions extends IHtmlParserAbstractOptions {
   textFormatting?: boolean;
@@ -58,9 +53,7 @@ export interface IHtmlParserRNOptions extends IHtmlParserAbstractOptions {
   linkTextStyle?: TextStyle;
 }
 
-export default class HtmlParserRN extends HtmlParserAbstract<
-  JSX.Element | INugget[]
-> {
+export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugget[]> {
   /**
    * Default options values
    */
@@ -74,7 +67,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
     images: true,
     linkTextStyle: {},
     textColor: true,
-    textFormatting: true
+    textFormatting: true,
   };
 
   /**
@@ -148,7 +141,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
       children: [],
       parent: null,
       type: HtmlParserNuggetTypes.Text,
-      variant: HtmlParserJsxTextVariant.None
+      variant: HtmlParserJsxTextVariant.None,
     };
     this.insertNewTextNugget(allTextWrapper);
     return html;
@@ -158,14 +151,12 @@ export default class HtmlParserRN extends HtmlParserAbstract<
     const output = (renderNuggets(render, this.opts.selectable, {
       [HtmlParserNuggetTypes.Text]: {
         all: this.opts.globalTextStyle,
-        ...(Object.keys(this.opts.linkTextStyle).length
-          ? { [HtmlParserJsxTextVariant.Link]: this.opts.linkTextStyle }
-          : null)
+        ...(Object.keys(this.opts.linkTextStyle).length ? { [HtmlParserJsxTextVariant.Link]: this.opts.linkTextStyle } : null),
       },
       [HtmlParserNuggetTypes.Images]: {},
       [HtmlParserNuggetTypes.Iframe]: {},
       [HtmlParserNuggetTypes.Audio]: {},
-      [HtmlParserNuggetTypes.Video]: {}
+      [HtmlParserNuggetTypes.Video]: {},
     }) as any) as JSX.Element;
     return output;
   };
@@ -175,46 +166,46 @@ export default class HtmlParserRN extends HtmlParserAbstract<
 
   protected onTagOpen = (tag: ISaxTagOpen) => {
     switch (tag.name) {
-      case "div":
+      case 'div':
         this.currentDivIsEmpty = true;
-      case "p":
+      case 'p':
         this.lineBreaksToInsert = this.lineBreaksToInsert || 1;
         break;
-      case "br":
+      case 'br':
         this.lineBreaksToInsert += 1;
         break;
-      case "li": {
-        this.hasToInsertBullet = " - "; // This is the symbol used as a list bullet
+      case 'li': {
+        this.hasToInsertBullet = ' - '; // This is the symbol used as a list bullet
         this.lineBreaksToInsert = this.lineBreaksToInsert || 1;
         break;
       }
-      case "img":
+      case 'img':
         this.parseImgTag(tag);
         break;
-      case "iframe":
+      case 'iframe':
         this.parseIframeTag(tag);
         break;
-      case "a":
+      case 'a':
         this.parseOpenLinkTag(tag);
         break;
-      case "b":
-      case "strong":
+      case 'b':
+      case 'strong':
         this.parseOpenBoldTag(tag);
         break;
-      case "i":
-      case "em":
+      case 'i':
+      case 'em':
         this.parseOpenItalicTag(tag);
         break;
-      case "u":
+      case 'u':
         this.parseOpenUnderlineTag(tag);
         break;
-      case "span":
+      case 'span':
         this.parseOpenSpanTag(tag);
         break;
-      case "audio":
+      case 'audio':
         this.parseAudioTag(tag);
         break;
-      case "video":
+      case 'video':
         this.parseVideoTag(tag);
         break;
     }
@@ -223,26 +214,26 @@ export default class HtmlParserRN extends HtmlParserAbstract<
   protected onTagClose = (tag: ISaxTagClose) => {
     switch (tag.name) {
       // after these html tags we have to jump to a new line
-      case "div":
+      case 'div':
         if (this.currentDivIsEmpty) ++this.lineBreaksToInsert;
-      case "p":
+      case 'p':
         this.lineBreaksToInsert = this.lineBreaksToInsert || 1;
         break;
-      case "a":
+      case 'a':
         this.parseCloseLinkTag();
         break;
-      case "b":
-      case "strong":
+      case 'b':
+      case 'strong':
         this.parseCloseBoldTag();
         break;
-      case "i":
-      case "em":
+      case 'i':
+      case 'em':
         this.parseCloseItalicTag();
         break;
-      case "u":
+      case 'u':
         this.parseCloseUnderlineTag();
         break;
-      case "span":
+      case 'span':
         this.parseCloseSpanTag();
         break;
     }
@@ -261,7 +252,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
   protected parseText(text: string): void {
     if (!text) return; // Don't deal with empty texts (often caused by strange ZWSP chars)
 
-    text = text.replace(/[\r\n\x0B\x0C\u0085\u2028\u2029]+/g, " "); // replace new lines by spaces (like in html)
+    text = text.replace(/[\r\n\x0B\x0C\u0085\u2028\u2029]+/g, ' '); // replace new lines by spaces (like in html)
 
     const leftTrimmedText = text.trimLeft();
     if (text !== leftTrimmedText) {
@@ -281,11 +272,11 @@ export default class HtmlParserRN extends HtmlParserAbstract<
       // console.log(`encourtered line break`);
       if (!this.firstWord) {
         // Insert the new line only if we have some text nuggets before the current text nugget.
-        text = "\n".repeat(this.lineBreaksToInsert) + text;
+        text = '\n'.repeat(this.lineBreaksToInsert) + text;
       }
       this.lineBreaksToInsert = 0;
     } else if (this.hasToInsertSpace) {
-      text = " " + text;
+      text = ' ' + text;
       this.hasToInsertSpace = false;
     }
     if (/\S/.test(text)) {
@@ -311,7 +302,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
    */
   protected parseOpenSpanTag(tag: ISaxTagOpen): void {
     let nbComputedNuggets = 0;
-    const tagStyles = tag.attrs.style ? tag.attrs.style.split(";") : [];
+    const tagStyles = tag.attrs.style ? tag.attrs.style.split(';') : [];
     for (let tagStyle of tagStyles) {
       // console.log(`tagstyle: "${tagStyle}"`);
       tagStyle = tagStyle.trim();
@@ -381,7 +372,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
       children: [],
       parent: null,
       type: HtmlParserNuggetTypes.Text,
-      variant: HtmlParserJsxTextVariant.Bold
+      variant: HtmlParserJsxTextVariant.Bold,
     });
   }
 
@@ -405,7 +396,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
       children: [],
       parent: null,
       type: HtmlParserNuggetTypes.Text,
-      variant: HtmlParserJsxTextVariant.Italic
+      variant: HtmlParserJsxTextVariant.Italic,
     });
   }
 
@@ -429,7 +420,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
       children: [],
       parent: null,
       type: HtmlParserNuggetTypes.Text,
-      variant: HtmlParserJsxTextVariant.Underline
+      variant: HtmlParserJsxTextVariant.Underline,
     });
   }
 
@@ -450,9 +441,9 @@ export default class HtmlParserRN extends HtmlParserAbstract<
     if (!this.opts.hyperlinks) return;
     // console.log("encourtered OPEN link");
     let cleanUrl = tag.attrs.href;
-    if (cleanUrl && cleanUrl.startsWith("/")) {
+    if (cleanUrl && cleanUrl.startsWith('/')) {
       // Absolute url. We must add the platform domain name manually.
-      if (!Conf.currentPlatform) throw new Error("must specify a platform");
+      if (!Conf.currentPlatform) throw new Error('must specify a platform');
       cleanUrl = Conf.currentPlatform.url + cleanUrl;
     }
 
@@ -461,7 +452,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
       parent: null,
       type: HtmlParserNuggetTypes.Text,
       url: cleanUrl,
-      variant: HtmlParserJsxTextVariant.Link
+      variant: HtmlParserJsxTextVariant.Link,
     };
     this.insertNewTextNugget(nugget);
     this.currentLink = cleanUrl;
@@ -479,7 +470,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
       color,
       parent: null,
       type: HtmlParserNuggetTypes.Text,
-      variant: HtmlParserJsxTextVariant.BgColor
+      variant: HtmlParserJsxTextVariant.BgColor,
     };
     this.insertNewTextNugget(nugget);
   }
@@ -496,7 +487,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
       color,
       parent: null,
       type: HtmlParserNuggetTypes.Text,
-      variant: HtmlParserJsxTextVariant.Color
+      variant: HtmlParserJsxTextVariant.Color,
     };
     this.insertNewTextNugget(nugget);
   }
@@ -532,25 +523,25 @@ export default class HtmlParserRN extends HtmlParserAbstract<
       const emoji: IInlineImageNugget = {
         alt: tag.attrs.alt,
         src: Conf.currentPlatform.url + tag.attrs.src,
-        type: HtmlParserNuggetTypes.InlineImage
+        type: HtmlParserNuggetTypes.InlineImage,
       };
       this.insertInlineImageNugget(emoji);
     } else {
       // B - 1 - Build image object representation
       let src = tag.attrs.src;
-      if (src.indexOf("file://") === -1) {
+      if (src.indexOf('file://') === -1) {
         // TODO : Better parse image url and detect cases
-        if (src.indexOf("://") === -1) {
-          if (!Conf.currentPlatform) throw new Error("must specify a platform");
+        if (src.indexOf('://') === -1) {
+          if (!Conf.currentPlatform) throw new Error('must specify a platform');
           src = Conf.currentPlatform.url + src;
         }
-        const split = src.split("?");
+        const split = src.split('?');
         src = split[0];
       }
       const img: IImageComponentAttributes = {
         alt: tag.attrs.alt,
         linkTo: this.currentLink,
-        src
+        src,
       };
       // B - 2 - Detect if we have an active image group
       if (this.currentImageNugget) {
@@ -558,7 +549,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
       } else {
         this.currentImageNugget = {
           images: [img],
-          type: HtmlParserNuggetTypes.Images
+          type: HtmlParserNuggetTypes.Images,
         };
         this.insertTopLevelNugget(this.currentImageNugget);
       }
@@ -576,10 +567,10 @@ export default class HtmlParserRN extends HtmlParserAbstract<
     // console.log(`encourtered iframe : "${tag.attributes}"`);
     // 1 - Build iframe ojbect representation
     let src = tag.attrs.src;
-    src = src.startsWith("//") ? "https:" + src : src; // (url starting by "//" won't work in <SafeWebView>, manually add "https" if needed)
+    src = src.startsWith('//') ? 'https:' + src : src; // (url starting by "//" won't work in <SafeWebView>, manually add "https" if needed)
     const iframeNugget: IIframeNugget = {
       src,
-      type: HtmlParserNuggetTypes.Iframe
+      type: HtmlParserNuggetTypes.Iframe,
     };
     this.insertTopLevelNugget(iframeNugget);
     this.currentImageNugget = null; // Iframes breaks image groups
@@ -594,16 +585,16 @@ export default class HtmlParserRN extends HtmlParserAbstract<
   protected parseAudioTag(tag: ISaxTagOpen): void {
     if (!this.opts.audio) return;
     let src = tag.attrs.src;
-    if (src.indexOf("file://") === -1) {
+    if (src.indexOf('file://') === -1) {
       // TODO : Better parse audio url and detect cases
-      if (src.indexOf("://") === -1) {
-        if (!Conf.currentPlatform) throw new Error("must specify a platform");
+      if (src.indexOf('://') === -1) {
+        if (!Conf.currentPlatform) throw new Error('must specify a platform');
         src = Conf.currentPlatform.url + src;
       }
     }
     const audioNugget: IAudioNugget = {
       src,
-      type: HtmlParserNuggetTypes.Audio
+      type: HtmlParserNuggetTypes.Audio,
     };
     this.insertTopLevelNugget(audioNugget);
     this.currentImageNugget = null; // Audio breaks image groups
@@ -618,16 +609,16 @@ export default class HtmlParserRN extends HtmlParserAbstract<
   protected parseVideoTag(tag: ISaxTagOpen): void {
     if (!this.opts.video) return;
     let src = tag.attrs.src;
-    if (src.indexOf("file://") === -1) {
+    if (src.indexOf('file://') === -1) {
       // TODO : Better parse video url and detect cases
-      if (src.indexOf("://") === -1) {
-        if (!Conf.currentPlatform) throw new Error("must specify a platform");
+      if (src.indexOf('://') === -1) {
+        if (!Conf.currentPlatform) throw new Error('must specify a platform');
         src = Conf.currentPlatform.url + src;
       }
     }
     const videoNugget: IVideoNugget = {
       src,
-      type: HtmlParserNuggetTypes.Video
+      type: HtmlParserNuggetTypes.Video,
     };
     this.insertTopLevelNugget(videoNugget);
     this.currentImageNugget = null; // Video breaks image groups
@@ -648,7 +639,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
     if (this.currentTextNugget) {
       // If we're already in a text nugget, append the given one as a child.
       this.currentTextNugget.children.push(nugget);
-      if (typeof nugget === "object") {
+      if (typeof nugget === 'object') {
         // And go into a deeper text level if given nugget is stylized (it's a ITextNugget, not a string)
         (nugget as ITextNugget).parent = this.currentTextNugget;
       }
@@ -656,18 +647,18 @@ export default class HtmlParserRN extends HtmlParserAbstract<
       // If we're on the top-level of nugget tree, we need a ITextNugget.
       // Converts a classic string into a ITextNugget if necessary and put at the end of the rendered tree.
 
-      if (typeof nugget === "string") {
+      if (typeof nugget === 'string') {
         nugget = {
           children: [nugget],
           parent: null,
           type: HtmlParserNuggetTypes.Text,
-          variant: HtmlParserJsxTextVariant.None
+          variant: HtmlParserJsxTextVariant.None,
         };
       }
       (this.render as INugget[]).push(nugget);
     }
     // Finally, if we've a given stylized ITextNugget, we need to confirm that we dig in a deeper level of text nuggets.
-    if (typeof nugget === "object") {
+    if (typeof nugget === 'object') {
       this.currentTextNugget = nugget;
     }
   }
@@ -685,7 +676,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
     );*/
 
     if (this.hasToInsertSpace) {
-      this.insertNewTextNugget(" ");
+      this.insertNewTextNugget(' ');
       this.hasToInsertSpace = false;
     }
 
@@ -698,7 +689,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
         children: [nugget],
         parent: null,
         type: HtmlParserNuggetTypes.Text,
-        variant: HtmlParserJsxTextVariant.None
+        variant: HtmlParserJsxTextVariant.None,
       };
       (this.render as INugget[]).push(textNugget);
       this.currentTextNugget = textNugget;
@@ -750,23 +741,18 @@ export default class HtmlParserRN extends HtmlParserAbstract<
         "cloning from deepest current texte nugget",
         this.currentTextNugget
       );*/
-      for (
-        let cloningNugget = this.currentTextNugget;
-        cloningNugget !== null;
-        cloningNugget = cloningNugget.parent
-      ) {
+      for (let cloningNugget = this.currentTextNugget; cloningNugget !== null; cloningNugget = cloningNugget.parent) {
         // We create each time a new textNugget including the previous one as the only child
         // console.log("clonining", cloningNugget);
         textNuggetsHierarchy = {
           children: textNuggetsHierarchy !== null ? [textNuggetsHierarchy] : [],
           parent: null,
           type: HtmlParserNuggetTypes.Text,
-          variant: cloningNugget.variant
+          variant: cloningNugget.variant,
         };
         // We update the only child to store its new parent (if there is a child)
         if (textNuggetsHierarchy.children.length > 0) {
-          (textNuggetsHierarchy
-            .children[0] as ITextNugget).parent = textNuggetsHierarchy;
+          (textNuggetsHierarchy.children[0] as ITextNugget).parent = textNuggetsHierarchy;
         } else {
           // Or we save the deepest text nugget to restore it after
           deepestTextNugget = textNuggetsHierarchy;

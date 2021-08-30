@@ -1,6 +1,7 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.ode.appe">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.ode.appe"> <!-- Caution : com.ode.appe refers here to the source code package. It needs to be moved to ode.com.mobile -->
     <uses-permission android:name="android.permission.INTERNET"/>
-    <!-- <uses-permission android:name="android.permission.CAMERA"/> No need with react-native-image-picker. See documentation at https://github.com/react-native-image-picker/react-native-image-picker#android -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
@@ -10,8 +11,7 @@
             android:label="@string/app_name"
             android:icon="@drawable/icon"
             android:allowBackup="false"
-            android:theme="@style/AppTheme"
-            android:requestLegacyExternalStorage="true">
+            android:theme="@style/AppTheme">
         <activity
                 android:name=".SplashActivity"
                 android:theme="@style/SplashScreenTheme"
@@ -49,4 +49,10 @@
             </intent-filter>
         </activity>
     </application>
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:mimeType="*/*" />
+        </intent>
+    </queries>
 </manifest>

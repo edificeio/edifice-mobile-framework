@@ -76,7 +76,7 @@
   //
   // Show SplashScreen
   //
-  [RNSplashScreen show];
+  [RNSplashScreen showSplash:@"LaunchScreen" inRootView:rootView];
   
   return YES;
   

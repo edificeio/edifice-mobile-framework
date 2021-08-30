@@ -5,6 +5,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { ModalBox, ModalContent, ModalContentBlock } from "../ui/Modal";
 import { ButtonTextIcon } from "../ui";
 import type { GestureResponderEvent, TouchableOpacityProps } from "react-native";
+import { LocalFile } from "../framework/util/fileHandler";
 
 export type ImagePicked = Required<Pick<ImagePickerResponse, 'uri' | 'type' | 'fileName' | 'fileSize' | 'base64' | 'width' | 'height'>>;
 
@@ -33,9 +34,11 @@ export class ImagePicker extends React.PureComponent<{
         }];
 
         const realCallback = (image: ImagePickerResponse) => {
-            // console.log("picker returns", image);
-            !image.didCancel && !image.errorCode && !image.errorMessage && image.uri && callback(image as ImagePicked);
-            this.setState({ showModal: false })
+            if (!image.didCancel && !image.errorCode && !image.errorMessage) {
+                const img = image.assets?.[0];
+                img?.uri && callback(img as ImagePicked);
+                this.setState({ showModal: false })
+            }
         };
 
         const actions = {
@@ -60,7 +63,8 @@ export class ImagePicker extends React.PureComponent<{
             <ModalBox backdropOpacity={0.5} isVisible={this.state.showModal}><ModalContent>
                 {menuActions.map(a => <ModalContentBlock style={{ marginBottom: 20 }}>
                     <ButtonTextIcon
-                        style={{ height: 50 }}
+                        style={{ width: 250 }}
+                        textStyle={{ fontSize: 18, padding: 15, marginTop: -10 }}
                         title={a.title}
                         onPress={() => {
                           actions[a.id]();
@@ -75,3 +79,9 @@ export class ImagePicker extends React.PureComponent<{
         </>;
     }
 }
+
+export const imagePickedToLocalFile = (img: ImagePicked) => new LocalFile({
+    filename: img.fileName as string,
+    filepath: img.uri as string,
+    filetype: img.type as string
+}, {_needIOSReleaseSecureAccess: false});
