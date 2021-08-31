@@ -46,12 +46,13 @@ export interface IDownloadCallbaks {
 
 const fileTransferService = {
   /** Upload a file to the given url. This function returns more information than `uploadFile` to better handle file suring upload. */
-  startUploadFile: (
+  startUploadFile: <SyncedFileType extends SyncedFile<any> = SyncedFile<any>>(
     session: IUserSession,
     file: LocalFile,
     params: IUploadParams,
-    adapter: (data: any) => IDistantFile,
+    adapter: (data: any) => SyncedFileType['df'],
     callbacks?: IUploadCallbaks,
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
   ) => {
     const url = legacyAppConf.currentPlatform!.url + params.url;
     const job = RNFS.uploadFiles({
@@ -71,7 +72,8 @@ const fileTransferService = {
           const statusCode = res.statusCode || 0;
           if (statusCode >= 200 && statusCode < 300) {
             const df = adapter(res.body);
-            return new SyncedFile(file, df);
+            const sfclass = (syncedFileClass ?? SyncedFile) as new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType;
+            return new sfclass(file, df) as SyncedFileType;
           } else throw new Error('Upload failed: server error ' + JSON.stringify(res));
         })
         .catch(e => {
@@ -83,15 +85,16 @@ const fileTransferService = {
   },
 
   /** Upload a file to the given url. */
-  uploadFile: (
+  uploadFile: <SyncedFileType extends SyncedFile<any> = SyncedFile<any>>(
     session: IUserSession,
     file: LocalFile,
     params: IUploadParams,
-    adapter: (data: any) => IDistantFile,
+    adapter: (data: any) => SyncedFileType['df'],
     callbacks?: IUploadCallbaks,
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
   ) => {
     try {
-      const job = fileTransferService.startUploadFile(session, file, params, adapter, callbacks);
+      const job = fileTransferService.startUploadFile(session, file, params, adapter, callbacks, syncedFileClass);
       return job.promise;
     } catch (e) {
       console.warn('Upload error', e);
@@ -99,24 +102,26 @@ const fileTransferService = {
     }
   },
 
-  startUploadFiles: (
+  startUploadFiles: <SyncedFileType extends SyncedFile<any> = SyncedFile<any>>(
     session: IUserSession,
     files: LocalFile[],
     params: IUploadParams,
-    adapter: (data: any) => IDistantFile,
+    adapter: (data: any) => SyncedFileType['df'],
     callbacks?: IUploadCallbaks,
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
   ) => {
-    return files.map(f => fileTransferService.startUploadFile(session, f, params, adapter, callbacks));
+    return files.map(f => fileTransferService.startUploadFile(session, f, params, adapter, callbacks, syncedFileClass));
   },
 
-  uploadFiles: (
+  uploadFiles: <SyncedFileType extends SyncedFile<any> = SyncedFile<any>>(
     session: IUserSession,
     files: LocalFile[],
     params: IUploadParams,
-    adapter: (data: any) => IDistantFile,
+    adapter: (data: any) => SyncedFileType['df'],
     callbacks?: IUploadCallbaks,
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
   ) => {
-    return Promise.all(fileTransferService.startUploadFiles(session, files, params, adapter, callbacks).map(j => j.promise));
+    return Promise.all(fileTransferService.startUploadFiles(session, files, params, adapter, callbacks, syncedFileClass).map(j => j.promise));
   },
 
   /** Download a file that exists in the server. This function returns more information than `downloadFile` to better handle file suring download. */

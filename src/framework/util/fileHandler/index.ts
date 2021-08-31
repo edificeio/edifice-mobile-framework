@@ -193,38 +193,43 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
  */
 export interface IDistantFile {
     url: string;
-    fileid?: string;
     filename?: string;
     filetype?: string;
     filesize?: number;
+}
+export interface IDistantFileWithId extends IDistantFile {
+    fileid: string;
 }
 
 /**
  * A SyncedFile is both a LocalFile and a DistantFile. This class wraps up functionality of these two entities.
  */
-export class SyncedFile implements LocalFile, IDistantFile {
-    fileid?: string;
-    filename: string;
-    filepath: string;
-    _filepathNative: string;
-    filetype: string;
-    nativeInfo?: DocumentPickerResponse | Asset;
-    _needIOSReleaseSecureAccess?: boolean;
-    url: string;
-    filesize?: number;
+export class SyncedFile<DFType extends IDistantFile = IDistantFile> implements LocalFile, IDistantFile {
 
-    constructor(localFile: LocalFile, distantFile: IDistantFile) {
-        this.fileid = distantFile.fileid;
-        this.filename = localFile.filename;
-        this.filepath = localFile.filepath;
-        this._filepathNative = localFile._filepathNative;
-        this.url = distantFile.url;
-        this.filetype = localFile.filetype;
-        this.filesize = distantFile.filesize;
-        const { url, filesize, filetype, filename, ...additionalFields} = distantFile;
-        Object.assign(this, additionalFields);
+    df: DFType;
+    lf: LocalFile;
+
+    constructor(localFile: LocalFile, distantFile: DFType) {
+        this.df = distantFile;
+        this.lf = localFile;
     }
+
+    get url() { return this.df.url }
+    get filename() { return this.df.filename ?? this.lf.filename }
+    get filepath() { return this.lf.filepath }
+    get filesize() { return this.df.filesize }
+    get filetype() { return this.df.filetype ?? this.lf.filetype }
+    get _filepathNative() { return this.lf._filepathNative }
 
     releaseIfNeeded = LocalFile.prototype.releaseIfNeeded;
     open = LocalFile.prototype.open;
+    setExtension = LocalFile.prototype.setExtension;
+    setPath = LocalFile.prototype.setPath;
+}
+
+export class SyncedFileWithId extends SyncedFile<IDistantFileWithId> {
+    constructor(localFile: LocalFile, distantFile: IDistantFileWithId) {
+        super(localFile, distantFile);
+    }
+    get fileid() { return (this.df as IDistantFileWithId).fileid }
 }
