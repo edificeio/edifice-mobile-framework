@@ -4,12 +4,12 @@
 
 import { ThunkDispatch } from "redux-thunk";
 
-import type { IDistantFile, LocalFile, SyncedFile } from ".";
+import type { IAnyDistantFile, IDistantFile, LocalFile, SyncedFile } from ".";
 import { getUserSession } from "../session";
 import fileTransferService, { IDownloadCallbaks, IDownloadParams, IUploadCallbaks, IUploadParams } from "./service";
 
 export const startUploadFileAction =
-    <SyncedFileType extends SyncedFile<any> = SyncedFile<any>>(
+    <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
         file: LocalFile,
         params: IUploadParams,
         adapter: (data: any) => SyncedFileType['df'],
@@ -22,7 +22,7 @@ export const startUploadFileAction =
         }
 
 export const startUploadFilesAction =
-    <SyncedFileType extends SyncedFile<any> = SyncedFile<any>>(
+    <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
         files: LocalFile[],
         params: IUploadParams,
         adapter: (data: any) => SyncedFileType['df'],
@@ -35,7 +35,7 @@ export const startUploadFilesAction =
         }
 
 export const uploadFileAction =
-    <SyncedFileType extends SyncedFile<any> = SyncedFile<any>>(
+    <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
         file: LocalFile,
         params: IUploadParams,
         adapter: (data: any) => SyncedFileType['df'],
@@ -48,7 +48,7 @@ export const uploadFileAction =
         }
 
 export const uploadFilesAction =
-    <SyncedFileType extends SyncedFile<any> = SyncedFile<any>>(
+    <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
         files: LocalFile[],
         params: IUploadParams,
         adapter: (data: any) => SyncedFileType['df'],
@@ -61,7 +61,7 @@ export const uploadFilesAction =
         }
 
 export const startDownloadFileAction =
-    <SyncedFileType extends SyncedFile<any> = SyncedFile<any>>(
+    <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
         file: IDistantFile,
         params: IDownloadParams,
         callbacks?: IDownloadCallbaks,
@@ -73,7 +73,7 @@ export const startDownloadFileAction =
         }
 
 export const startDownloadFilesAction =
-    <SyncedFileType extends SyncedFile<any> = SyncedFile<any>>(
+    <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
         files: IDistantFile[],
         params: IDownloadParams,
         callbacks?: IDownloadCallbaks,
@@ -85,7 +85,7 @@ export const startDownloadFilesAction =
         }
 
 export const downloadFileAction =
-    <SyncedFileType extends SyncedFile<any> = SyncedFile<any>>(
+    <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
         file: IDistantFile,
         params: IDownloadParams,
         callbacks?: IDownloadCallbaks,
@@ -97,7 +97,7 @@ export const downloadFileAction =
         }
 
 export const downloadFilesAction =
-    <SyncedFileType extends SyncedFile<any> = SyncedFile<any>>(
+    <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
         files: IDistantFile[],
         params: IDownloadParams,
         callbacks?: IDownloadCallbaks,

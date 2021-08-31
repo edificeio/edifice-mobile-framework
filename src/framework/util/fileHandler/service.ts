@@ -15,7 +15,7 @@ import RNFS, {
   UploadProgressCallbackResult,
 } from 'react-native-fs';
 
-import { IDistantFile, LocalFile, SyncedFile } from '.';
+import { IAnyDistantFile, IDistantFile, LocalFile, SyncedFile } from '.';
 import { getAuthHeader } from '../../../infra/oauth';
 import { legacyAppConf } from '../appConf';
 import { assertPermissions } from '../permissions';
@@ -46,7 +46,7 @@ export interface IDownloadCallbaks {
 
 const fileTransferService = {
   /** Upload a file to the given url. This function returns more information than `uploadFile` to better handle file suring upload. */
-  startUploadFile: <SyncedFileType extends SyncedFile<any> = SyncedFile<any>>(
+  startUploadFile: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
     session: IUserSession,
     file: LocalFile,
     params: IUploadParams,
@@ -85,7 +85,7 @@ const fileTransferService = {
   },
 
   /** Upload a file to the given url. */
-  uploadFile: <SyncedFileType extends SyncedFile<any> = SyncedFile<any>>(
+  uploadFile: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
     session: IUserSession,
     file: LocalFile,
     params: IUploadParams,
@@ -102,7 +102,7 @@ const fileTransferService = {
     }
   },
 
-  startUploadFiles: <SyncedFileType extends SyncedFile<any> = SyncedFile<any>>(
+  startUploadFiles: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
     session: IUserSession,
     files: LocalFile[],
     params: IUploadParams,
@@ -113,7 +113,7 @@ const fileTransferService = {
     return files.map(f => fileTransferService.startUploadFile(session, f, params, adapter, callbacks, syncedFileClass));
   },
 
-  uploadFiles: <SyncedFileType extends SyncedFile<any> = SyncedFile<any>>(
+  uploadFiles: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
     session: IUserSession,
     files: LocalFile[],
     params: IUploadParams,
@@ -125,7 +125,7 @@ const fileTransferService = {
   },
 
   /** Download a file that exists in the server. This function returns more information than `downloadFile` to better handle file suring download. */
-  startDownloadFile: async <SyncedFileType extends SyncedFile<any> = SyncedFile<any>>(
+  startDownloadFile: async <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
     session: IUserSession,
     file: IDistantFile,
     params: IDownloadParams,
@@ -206,7 +206,7 @@ const fileTransferService = {
   },
 
   /** Download a file that exists in the server. */
-  downloadFile: async <SyncedFileType extends SyncedFile<any> = SyncedFile<any>>(
+  downloadFile: async <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
     session: IUserSession,
     file: IDistantFile,
     params: IDownloadParams,
@@ -222,7 +222,7 @@ const fileTransferService = {
     }
   },
 
-  startDownloadFiles: <SyncedFileType extends SyncedFile<any> = SyncedFile<any>>(
+  startDownloadFiles: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
     session: IUserSession,
     files: IDistantFile[],
     params: IDownloadParams,
@@ -232,7 +232,7 @@ const fileTransferService = {
     return files.map(f => fileTransferService.startDownloadFile(session, f, params, callbacks, syncedFileClass));
   },
 
-  downloadFiles: <SyncedFileType extends SyncedFile<any> = SyncedFile<any>>(
+  downloadFiles: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
     session: IUserSession,
     files: IDistantFile[],
     params: IDownloadParams,

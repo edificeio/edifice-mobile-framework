@@ -200,6 +200,9 @@ export interface IDistantFile {
 export interface IDistantFileWithId extends IDistantFile {
     id: string;
 }
+export interface IAnyDistantFile extends IDistantFile {
+    [key: string]: any
+}
 
 /**
  * A SyncedFile is both a LocalFile and a DistantFile. This class wraps up functionality of these two entities.
