@@ -97,9 +97,7 @@ class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: b
     // Tracking
     await Trackers.init();
     Trackers.trackEvent('Application', 'STARTUP');
-    Trackers.setCustomDimension(4 /* App Name */, DeviceInfo.getBundleId());
-    alert(DeviceInfo.getBundleId());
-    // await Trackers.test();
+    Trackers.setCustomDimension(4 /* App Name */, DeviceInfo.getApplicationName());
 
     // If only one platform in conf => auto-select it.
     let platformId;
