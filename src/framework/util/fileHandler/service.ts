@@ -125,7 +125,14 @@ const fileTransferService = {
   },
 
   /** Download a file that exists in the server. This function returns more information than `downloadFile` to better handle file suring download. */
-  startDownloadFile: async (session: IUserSession, file: IDistantFile, params: IDownloadParams, callbacks?: IDownloadCallbaks) => {
+  startDownloadFile: async <SyncedFileType extends SyncedFile<any> = SyncedFile<any>>(
+    session: IUserSession,
+    file: IDistantFile,
+    params: IDownloadParams,
+    callbacks?: IDownloadCallbaks,
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
+  ) => {
+    const sfclass = (syncedFileClass ?? SyncedFile) as new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType;
     file.filename = file.filename || file.url.split('/').pop();
     const folderDest = `${RNFS.DocumentDirectoryPath}${file.url}`;
     const downloadDest = `${folderDest}/${file.filename}`;
@@ -149,11 +156,11 @@ const fileTransferService = {
       localFile.setPath(files[0].path);
       return new Promise<{
         jobId: number;
-        promise: Promise<SyncedFile>;
+        promise: Promise<SyncedFileType>;
       }>(resolve =>
         resolve({
           jobId: 0,
-          promise: new Promise(resolve => resolve(new SyncedFile(localFile, file))),
+          promise: new Promise(resolve => resolve(new sfclass(localFile, file))),
         }),
       );
     }
@@ -188,7 +195,7 @@ const fileTransferService = {
             RNFS.moveFile(toMove, localFile.filepath);
           }
           // return
-          return new SyncedFile(localFile, file);
+          return new sfclass(localFile, file);
         })
         .catch(e => {
           console.warn('Download error', e);
@@ -199,9 +206,15 @@ const fileTransferService = {
   },
 
   /** Download a file that exists in the server. */
-  downloadFile: async (session: IUserSession, file: IDistantFile, params: IDownloadParams, callbacks?: IDownloadCallbaks) => {
+  downloadFile: async <SyncedFileType extends SyncedFile<any> = SyncedFile<any>>(
+    session: IUserSession,
+    file: IDistantFile,
+    params: IDownloadParams,
+    callbacks?: IDownloadCallbaks,
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
+  ) => {
     try {
-      const job = await fileTransferService.startDownloadFile(session, file, params, callbacks);
+      const job = await fileTransferService.startDownloadFile(session, file, params, callbacks, syncedFileClass);
       return job.promise;
     } catch (e) {
       console.warn('Download error', e);
@@ -209,12 +222,24 @@ const fileTransferService = {
     }
   },
 
-  startDownloadFiles: (session: IUserSession, files: IDistantFile[], params: IDownloadParams, callbacks?: IDownloadCallbaks) => {
-    return files.map(f => fileTransferService.startDownloadFile(session, f, params, callbacks));
+  startDownloadFiles: <SyncedFileType extends SyncedFile<any> = SyncedFile<any>>(
+    session: IUserSession,
+    files: IDistantFile[],
+    params: IDownloadParams,
+    callbacks?: IDownloadCallbaks,
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
+    ) => {
+    return files.map(f => fileTransferService.startDownloadFile(session, f, params, callbacks, syncedFileClass));
   },
 
-  downloadFiles: (session: IUserSession, files: IDistantFile[], params: IDownloadParams, callbacks?: IDownloadCallbaks) => {
-    return Promise.all(fileTransferService.startDownloadFiles(session, files, params, callbacks).map(async j => (await j).promise));
+  downloadFiles: <SyncedFileType extends SyncedFile<any> = SyncedFile<any>>(
+    session: IUserSession,
+    files: IDistantFile[],
+    params: IDownloadParams,
+    callbacks?: IDownloadCallbaks,
+    syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
+    ) => {
+    return Promise.all(fileTransferService.startDownloadFiles(session, files, params, callbacks, syncedFileClass).map(async j => (await j).promise));
   },
 };
 

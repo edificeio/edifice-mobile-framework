@@ -3,11 +3,9 @@ import I18n from "i18n-js";
 import moment from "moment";
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
-import { IDistantFile } from "../../../framework/util/fileHandler";
+import { IDistantFile, IDistantFileWithId } from "../../../framework/util/fileHandler";
 import { Trackers } from "../../../framework/util/tracker";
 
-import { downloadFile } from "../../../infra/actions/downloadHelper";
-import { contentUriToLocalFile } from "../../../types/contentUri";
 import { Icon } from "../../../ui";
 import { BadgeAvatar } from "../../../ui/BadgeAvatar";
 import { ButtonIcon } from "../../../ui/ButtonIconText";
@@ -163,8 +161,8 @@ export const RenderPJs = ({ attachments, mailId, onDownload }: {attachments: IDi
         <TouchableOpacity
           onPress={() => {
             Trackers.trackEvent('Zimbra', 'DOWNLOAD ATTACHMENT');
-            const df: IDistantFile = {
-              fileid: item.id,
+            const df: IDistantFileWithId = {
+              id: item.id,
               filename: item.filename,
               url: `/zimbra/message/${mailId}/attachment/${item.id}`,
               filesize: item.size,

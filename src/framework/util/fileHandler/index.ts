@@ -198,7 +198,7 @@ export interface IDistantFile {
     filesize?: number;
 }
 export interface IDistantFileWithId extends IDistantFile {
-    fileid: string;
+    id: string;
 }
 
 /**
@@ -231,5 +231,5 @@ export class SyncedFileWithId extends SyncedFile<IDistantFileWithId> {
     constructor(localFile: LocalFile, distantFile: IDistantFileWithId) {
         super(localFile, distantFile);
     }
-    get fileid() { return (this.df as IDistantFileWithId).fileid }
+    get id() { return (this.df as IDistantFileWithId).id }
 }

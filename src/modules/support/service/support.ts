@@ -30,7 +30,7 @@ export const supportService = {
         },
       );
       return Promise.resolve({
-        id: distantFile.fileid,
+        id: distantFile.id,
         name: distantFile.filename,
         contentType: distantFile.filetype,
         size: distantFile.filesize,

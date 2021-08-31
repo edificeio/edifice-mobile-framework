@@ -5,7 +5,7 @@
 import queryString from 'query-string';
 import { signedFetchJson2 } from '../../../../infra/fetchWithCache';
 
-import { LocalFile } from '../../../util/fileHandler';
+import { LocalFile, SyncedFileWithId } from '../../../util/fileHandler';
 import fileTransferService, { IUploadCallbaks, IUploadCommonParams } from '../../../util/fileHandler/service';
 import { IUserSession } from '../../../util/session';
 
@@ -91,13 +91,13 @@ const workspaceService = {
       const id = datajson['_id'];
       return {
         ...file,
-        fileid: id,
+        id: id,
         url: `/workspace/document/${id}`,
         filesize: datajson['metadata']?.['size'],
         filename: datajson['name'] || file.filename,
       };
     };
-    return fileTransferService.startUploadFile(session, file, { ...params, url }, adapter, callbacks);
+    return fileTransferService.startUploadFile<SyncedFileWithId>(session, file, { ...params, url }, adapter, callbacks);
   },
 
   uploadFile: (session: IUserSession, file: LocalFile, params: IWorkspaceUploadParams, callbacks?: IUploadCallbaks) => {

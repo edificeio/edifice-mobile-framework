@@ -4,7 +4,6 @@ import moment from "moment";
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
 
-import { downloadFile } from "../../../infra/actions/downloadHelper";
 import { Icon } from "../../../ui";
 import { GridAvatars } from "../../../ui/avatars/GridAvatars";
 import { Header, CenterPanel, LeftPanel } from "../../../ui/ContainerContent";
@@ -15,6 +14,9 @@ import { getUserColor, getProfileColor } from "../utils/userColor";
 import { findReceivers2, findReceiversAvatars, Author, findSenderAvatar } from "./MailItem";
 import { displayPastDate } from "../../../framework/util/date";
 import theme from "../../../framework/util/theme";
+import { IDistantFileWithId, SyncedFileWithId } from "../../../framework/util/fileHandler";
+import { ThunkDispatch } from "redux-thunk";
+import { downloadFileAction } from "../../../framework/util/fileHandler/actions";
 
 const User = ({ userId, userName }) => {
   const [dotColor, setDotColor] = React.useState(getProfileColor("Guest"));
@@ -162,22 +164,26 @@ export const FooterButton = ({ icon, text, onPress }) => {
   );
 };
 
-export const RenderPJs = ({ attachments, mailId }) => {
+export const RenderPJs = ({ attachments, mailId, dispatch }: { attachments: any[], mailId: string, dispatch: ThunkDispatch<any, any, any> }) => {
   const [isVisible, toggleVisible] = React.useState(false);
   const displayedAttachments = isVisible ? attachments : attachments.slice(0, 1);
+  // console.log("PJS", attachments);
   return (
     <View style={[styles.containerMail, { flexDirection: "column" }]}>
       {displayedAttachments.map((item, index) => (
         <TouchableOpacity
-          onPress={() => {
-            downloadFile({
-              filename: item.filename,
+          onPress={async () => {
+            const df: IDistantFileWithId = {
               url: `/conversation/message/${mailId}/attachment/${item.id}`,
-              size: item.size,
               id: item.id,
-              name: item.filename,
-              parentId: "",
-            });
+              filename: item.filename,
+              filesize: item.size,
+              filetype: item.contentType,
+            }
+            // console.log("df", df, dispatch);
+            const sf = (await dispatch(downloadFileAction<SyncedFileWithId>(df, {}))) as unknown as SyncedFileWithId;
+            // console.log("sf", sf);
+            await sf.open();
           }}>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <Icon size={25} color="#2A9CC8" name={getFileIcon(item.contentType)} />

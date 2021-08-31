@@ -15,7 +15,7 @@ import { notifierShowAction } from '../infra/notifier/actions';
 import Notifier from '../infra/notifier/container';
 import { IconButton } from './IconButton';
 import { mainNavNavigate } from '../navigation/helpers/navHelper';
-import { IDistantFile, LocalFile, SyncedFile } from '../framework/util/fileHandler';
+import { IDistantFile, IDistantFileWithId, LocalFile, SyncedFile } from '../framework/util/fileHandler';
 import fileTransferService from '../framework/util/fileHandler/service';
 import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '../AppStore';
@@ -270,10 +270,10 @@ class Attachment extends React.PureComponent<
   }
 
   public async startDownload(att: IRemoteAttachment) {
-    const df: IDistantFile = {
+    const df: IDistantFileWithId = {
       ...att,
       filetype: att.contentType,
-      fileid: att.id,
+      id: att.id!,
       filesize: att.size,
       filename: att.filename || att.displayName,
       url: att.url.replace(legacyAppConf.currentPlatform?.url!, ''),

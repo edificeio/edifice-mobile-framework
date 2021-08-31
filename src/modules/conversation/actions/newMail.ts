@@ -2,6 +2,11 @@ import { Dispatch } from "redux";
 
 import { Trackers } from "../../../infra/tracker";
 import { newMailService } from "../service/newMail";
+import { getUserSession } from "../../../framework/util/session";
+import { IGlobalState } from "../../../AppStore";
+import { LocalFile } from "../../../framework/util/fileHandler";
+import { IUploadCallbaks } from "../../../framework/util/fileHandler/service";
+
 
 export function sendMailAction(mailDatas, draftId: string | undefined, InReplyTo: string) {
   return async () => {
@@ -39,13 +44,15 @@ export function updateDraftMailAction(mailId: string, mailDatas) {
   };
 }
 
-export function addAttachmentAction(mailId: string, attachment: any) {
-  return async (dispatch: Dispatch) => {
+export function addAttachmentAction(mailId: string, attachment: LocalFile, callbacks?: IUploadCallbaks ) {
+  return async (dispatch: Dispatch, getState: () => IGlobalState) => {
     try {
-      const newAttachment = await newMailService.addAttachment(mailId, attachment);
+      const session = getUserSession(getState());
+      const newAttachment = await newMailService.addAttachment(session, mailId, attachment, callbacks);
+      // console.log("service returned", newAttachment);
       return newAttachment;
     } catch (errmsg) {
-      console.log("ERROR uploading attachment", errmsg);
+      console.warn("ERROR uploading attachment", errmsg);
       throw errmsg;
     }
   };

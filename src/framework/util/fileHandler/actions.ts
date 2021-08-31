@@ -4,62 +4,106 @@
 
 import { ThunkDispatch } from "redux-thunk";
 
-import type { IDistantFile, LocalFile } from ".";
+import type { IDistantFile, LocalFile, SyncedFile } from ".";
 import { getUserSession } from "../session";
 import fileTransferService, { IDownloadCallbaks, IDownloadParams, IUploadCallbaks, IUploadParams } from "./service";
 
 export const startUploadFileAction =
-    (file: LocalFile, params: IUploadParams, adapter: (data: any) => IDistantFile, callbacks?: IUploadCallbaks) =>
+    <SyncedFileType extends SyncedFile<any> = SyncedFile<any>>(
+        file: LocalFile,
+        params: IUploadParams,
+        adapter: (data: any) => SyncedFileType['df'],
+        callbacks?: IUploadCallbaks,
+        syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
+    ) =>
         (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
             const session = getUserSession(getState());
-            return fileTransferService.startUploadFile(session, file, params, adapter, callbacks);
+            return fileTransferService.startUploadFile(session, file, params, adapter, callbacks, syncedFileClass);
         }
 
 export const startUploadFilesAction =
-    (files: LocalFile[], params: IUploadParams, adapter: (data: any) => IDistantFile, callbacks?: IUploadCallbaks) =>
+    <SyncedFileType extends SyncedFile<any> = SyncedFile<any>>(
+        files: LocalFile[],
+        params: IUploadParams,
+        adapter: (data: any) => SyncedFileType['df'],
+        callbacks?: IUploadCallbaks,
+        syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
+    ) =>
         (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
             const session = getUserSession(getState());
-            return fileTransferService.startUploadFiles(session, files, params, adapter, callbacks);
+            return fileTransferService.startUploadFiles(session, files, params, adapter, callbacks, syncedFileClass);
         }
 
 export const uploadFileAction =
-    (file: LocalFile, params: IUploadParams, adapter: (data: any) => IDistantFile, callbacks?: IUploadCallbaks) =>
+    <SyncedFileType extends SyncedFile<any> = SyncedFile<any>>(
+        file: LocalFile,
+        params: IUploadParams,
+        adapter: (data: any) => SyncedFileType['df'],
+        callbacks?: IUploadCallbaks,
+        syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
+    ) =>
         (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
             const session = getUserSession(getState());
-            return fileTransferService.uploadFile(session, file, params, adapter, callbacks);
+            return fileTransferService.uploadFile(session, file, params, adapter, callbacks, syncedFileClass);
         }
 
 export const uploadFilesAction =
-    (files: LocalFile[], params: IUploadParams, adapter: (data: any) => IDistantFile, callbacks?: IUploadCallbaks) =>
+    <SyncedFileType extends SyncedFile<any> = SyncedFile<any>>(
+        files: LocalFile[],
+        params: IUploadParams,
+        adapter: (data: any) => SyncedFileType['df'],
+        callbacks?: IUploadCallbaks,
+        syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
+    ) =>
         (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
             const session = getUserSession(getState());
-            return fileTransferService.uploadFiles(session, files, params, adapter, callbacks);
+            return fileTransferService.uploadFiles(session, files, params, adapter, callbacks, syncedFileClass);
         }
 
 export const startDownloadFileAction =
-    (file: IDistantFile, params: IDownloadParams, callbacks?: IDownloadCallbaks) =>
+    <SyncedFileType extends SyncedFile<any> = SyncedFile<any>>(
+        file: IDistantFile,
+        params: IDownloadParams,
+        callbacks?: IDownloadCallbaks,
+        syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
+    ) =>
         (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
             const session = getUserSession(getState());
-            return fileTransferService.startDownloadFile(session, file, params, callbacks);
+            return fileTransferService.startDownloadFile(session, file, params, callbacks, syncedFileClass);
         }
 
 export const startDownloadFilesAction =
-    (files: IDistantFile[], params: IDownloadParams, callbacks?: IDownloadCallbaks) =>
+    <SyncedFileType extends SyncedFile<any> = SyncedFile<any>>(
+        files: IDistantFile[],
+        params: IDownloadParams,
+        callbacks?: IDownloadCallbaks,
+        syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
+    ) =>
         (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
             const session = getUserSession(getState());
-            return fileTransferService.startDownloadFiles(session, files, params, callbacks);
+            return fileTransferService.startDownloadFiles(session, files, params, callbacks, syncedFileClass);
         }
 
 export const downloadFileAction =
-    (file: IDistantFile, params: IDownloadParams, callbacks?: IDownloadCallbaks) =>
+    <SyncedFileType extends SyncedFile<any> = SyncedFile<any>>(
+        file: IDistantFile,
+        params: IDownloadParams,
+        callbacks?: IDownloadCallbaks,
+        syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
+    ) =>
         (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
             const session = getUserSession(getState());
-            return fileTransferService.downloadFile(session, file, params, callbacks);
+            return fileTransferService.downloadFile(session, file, params, callbacks, syncedFileClass);
         }
 
 export const downloadFilesAction =
-    (files: IDistantFile[], params: IDownloadParams, callbacks?: IDownloadCallbaks) =>
+    <SyncedFileType extends SyncedFile<any> = SyncedFile<any>>(
+        files: IDistantFile[],
+        params: IDownloadParams,
+        callbacks?: IDownloadCallbaks,
+        syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
+    ) =>
         (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
             const session = getUserSession(getState());
-            return fileTransferService.downloadFiles(session, files, params, callbacks);
+            return fileTransferService.downloadFiles(session, files, params, callbacks, syncedFileClass);
         }

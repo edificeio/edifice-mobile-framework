@@ -1,6 +1,7 @@
 import I18n from "i18n-js";
 import React from "react";
 import { ScrollView, View, StyleSheet, TextInput, ViewStyle, SafeAreaView } from "react-native";
+import { IDistantFileWithId } from "../../../framework/util/fileHandler";
 
 import Notifier from "../../../infra/notifier/container";
 import { CommonStyles } from "../../../styles/common/styles";
@@ -30,7 +31,7 @@ interface NewMailComponentProps {
   onHeaderChange: (header: Headers) => void;
   body: string;
   onBodyChange: (body: string) => void;
-  attachments: IAttachment[];
+  attachments: IDistantFileWithId[];
   onAttachmentChange: (attachments: IAttachment[]) => void;
   onAttachmentDelete: (attachmentId: string) => void;
   prevBody: any;
@@ -199,7 +200,7 @@ const Headers = ({ style, headers, onChange }) => {
   );
 };
 
-const Attachments = ({ style, attachments, onChange, onDelete, onSave }) => {
+const Attachments = ({ style, attachments, onChange, onDelete, onSave }: { style, attachments: IDistantFileWithId[], onChange, onDelete, onSave }) => {
   const removeAttachment = id => {
     const newAttachments = attachments.filter(item => item.id !== id);
     onDelete(id);
@@ -210,11 +211,11 @@ const Attachments = ({ style, attachments, onChange, onDelete, onSave }) => {
     <View />
   ) : (
     <View style={[styles.mailPart, style, { padding: 0 }]}>
-      {attachments.map(att => (
+      {attachments.map((att) => (
         <Attachment
           id={att.id || att.filename}
           uploadSuccess={!!att.id && onSave()}
-          fileType={att.contentType}
+          fileType={att.filetype}
           fileName={att.filename}
           onRemove={() => removeAttachment(att.id)}
         />

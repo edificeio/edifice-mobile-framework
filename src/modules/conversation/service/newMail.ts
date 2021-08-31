@@ -1,7 +1,7 @@
-import { Platform } from "react-native";
-
-import Conf from "../../../../ode-framework-conf";
-import { fetchJSONWithCache, signedFetch } from "../../../infra/fetchWithCache";
+import { IUserSession } from "../../../framework/util/session";
+import { fetchJSONWithCache } from "../../../infra/fetchWithCache";
+import fileHandlerService, { IUploadCallbaks } from "../../../framework/util/fileHandler/service";
+import { LocalFile, SyncedFileWithId } from "../../../framework/util/fileHandler";
 
 export type IUser = {
   id: string;
@@ -24,11 +24,25 @@ export type ISearchUsersGroups = {
   users: ISearchUsers;
 };
 
+const formatMailDatas = (mailDatas) => {
+  console.log("mailDatas", mailDatas);
+  return {
+    ...mailDatas,
+    attachments: mailDatas.attachments?.map(att => ({
+      contentType: att.filetype,
+      filename: att.filename,
+      size: att.filesize,
+      id: att.id
+    }))
+  };
+};
+
 export const newMailService = {
   searchUsers: async search => {
     return await fetchJSONWithCache(`/conversation/visible?search=${search}`);
   },
   sendMail: async (mailDatas, draftId, inReplyTo) => {
+    // console.log("sendMail", mailDatas, draftId, inReplyTo);
     const params = {
       id: draftId,
       "In-Reply-To": inReplyTo,
@@ -39,9 +53,11 @@ export const newMailService = {
       .map(([key, value]) => `${key}=${value}`)
       .join("&");
 
-      await fetchJSONWithCache(`/conversation/send${paramsUrl?.length > 0 ? "?" + paramsUrl : ""}`, {
+    // console.log("paramsUrl", paramsUrl);
+
+    await fetchJSONWithCache(`/conversation/send${paramsUrl?.length > 0 ? "?" + paramsUrl : ""}`, {
       method: "POST",
-      body: JSON.stringify(mailDatas),
+      body: JSON.stringify(formatMailDatas(mailDatas)),
     });
   },
   forwardMail: async (draftId, forwardFrom) => {
@@ -59,49 +75,32 @@ export const newMailService = {
       .map(([key, value]) => `${key}=${value}`)
       .join("&");
 
-      const response = await fetchJSONWithCache(`/conversation/draft${paramsUrl?.length > 0 ? "?" + paramsUrl : ""}`, {
+    const response = await fetchJSONWithCache(`/conversation/draft${paramsUrl?.length > 0 ? "?" + paramsUrl : ""}`, {
       method: "POST",
-      body: JSON.stringify(mailDatas),
+      body: JSON.stringify(formatMailDatas(mailDatas)),
     });
     return response.id;
   },
   updateDraftMail: async (mailId, mailDatas) => {
-    await fetchJSONWithCache(`/conversation/draft/${mailId}`, { method: "PUT", body: JSON.stringify(mailDatas) });
+    // console.log("updateDraftMail", mailId, mailDatas);
+    await fetchJSONWithCache(`/conversation/draft/${mailId}`, { method: "PUT", body: JSON.stringify(formatMailDatas(mailDatas)) });
   },
-  addAttachment: async (draftId: string, file: any) => {
-    const formData = new FormData();
-    formData.append("file", {
-      uri: ((Platform.OS === "android") ? "file://" : "") + file.uri,
-      type: file.mime,
-      name: file.name
-    });
-
-    const response = await signedFetch(
-      `${(Conf.currentPlatform as any).url}/conversation/message/${draftId}/attachment`,
-      {
-        body: formData,
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "multipart/form-data"
-        },
-        method: "POST"
-      }
-    );
-    const parsedResponse = await response.json();
-    const sentAttachmentId = parsedResponse.id;
-    const sentAttachment = {
-      id: sentAttachmentId,
-      filename: file.name,
-      contentType: file.mime,
-    };
-
-    if (response && response.status >= 200 && response.status < 300) {
-      console.log("Attachment upload successful", sentAttachment);
-      return Promise.resolve(sentAttachment);
-    } else {
-      console.log("Attachment upload failed", response);
-      return Promise.reject(response);
-    }
+  addAttachment: async (session: IUserSession, draftId: string, file: LocalFile, callbacks?: IUploadCallbaks) => {
+    const url = `/conversation/message/${draftId}/attachment`;
+    // console.log("DATA TO BE UPLOADED", file);
+    return await fileHandlerService.uploadFile<SyncedFileWithId>(session, file, {
+      url,
+      headers: {
+        Accept: "application/json"
+      },
+    }, data => {
+      // console.log("data got from backend after upload", data);
+      const json = JSON.parse(data) as { id: string };
+      return {
+        url: `/conversation/message/${draftId}/attachment/${json.id}`,
+        id: json.id
+      };
+    }, callbacks, SyncedFileWithId);
   },
   deleteAttachment: async (draftId: string, attachmentId: string) => {
     return await fetchJSONWithCache(`/conversation/message/${draftId}/attachment/${attachmentId}`, { method: "DELETE" });

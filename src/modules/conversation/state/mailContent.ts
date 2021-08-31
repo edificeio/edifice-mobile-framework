@@ -1,5 +1,6 @@
 /* eslint-disable flowtype/no-types-missing-file-annotation */
 import moment from "moment";
+import { IDistantFile } from "../../../framework/util/fileHandler";
 
 import { createAsyncActionTypes, AsyncState } from "../../../infra/redux/async2";
 import mailConfig from "../moduleConfig";
@@ -15,7 +16,7 @@ export interface IMail {
   cc: [];
   cci: [];
   displayNames: [];
-  attachments: [];
+  attachments: IDistantFile[];
   subject: string;
   body: string;
   parent_id: string;

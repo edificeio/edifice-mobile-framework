@@ -122,6 +122,8 @@ class MailContentContainer extends React.PureComponent<any, any> {
     ];
     isCurrentFolderSentOrDrafts && menuData.splice(1, 1);
 
+    // console.log("Container MailContent mail prop", mail);
+
     return (
       <>
         <PageContainer>
@@ -143,7 +145,7 @@ class MailContentContainer extends React.PureComponent<any, any> {
               <Icon name="more_vert" size={24} color="white" style={{ marginRight: 10 }} />
             </TouchableOpacity>
           </HeaderComponent>
-          <MailContent {...this.props} delete={this.delete} />
+          <MailContent {...this.props} delete={this.delete} dispatch={this.props.dispatch} />
         </PageContainer>
         <MoveModal
           currentFolder={currentFolder}
@@ -169,15 +171,15 @@ const mapStateToProps: (state: any) => any = state => {
 };
 
 const mapDispatchToProps: (dispatch: any) => any = dispatch => {
-  return bindActionCreators(
+  return {...bindActionCreators(
     {
       fetchMailContentAction,
       toggleRead: toggleReadAction,
       trashMails: trashMailsAction,
       deleteMails: deleteMailsAction,
     },
-    dispatch,
-  );
+    dispatch
+  ), dispatch};
 };
 
 export default withViewTracking('zimbra/MailContent')(connect(mapStateToProps, mapDispatchToProps)(MailContentContainer));

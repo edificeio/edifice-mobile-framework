@@ -9,6 +9,8 @@ import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
 
 import { getSessionInfo } from "../../../App";
+import { IDistantFile, LocalFile, SyncedFileWithId } from "../../../framework/util/fileHandler";
+
 import pickFile, { pickFileError } from "../../../infra/actions/pickFile";
 import {Trackers} from "../../../infra/tracker";
 import withViewTracking from "../../../infra/tracker/withViewTracking";
@@ -48,7 +50,7 @@ interface ICreateMailEventProps {
   trashMessage: (mailId: string[]) => void;
   deleteMessage: (mailId: string[]) => void;
   onPickFileError: (notifierId: string) => void;
-  addAttachment: (draftId: string, files: any) => void;
+  addAttachment: (draftId: string, files: LocalFile) => Promise<SyncedFileWithId>;
   deleteAttachment: (draftId: string, attachmentId: string) => void;
   fetchMailContent: (mailId: string) => void;
   clearContent: () => void;
@@ -76,7 +78,7 @@ type newMail = {
   cci: ISearchUsers;
   subject: string;
   body: string;
-  attachments: any[];
+  attachments: IDistantFile[];
 };
 
 class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreateMailState> {
@@ -142,7 +144,9 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
   };
 
   componentDidUpdate = async (prevProps: NewMailContainerProps, prevState) => {
+    // console.log("new state", this.state);
     if (prevProps.mail !== this.props.mail) {
+      // console.log("mail changed");
       const { mail, ...rest } = this.getPrefilledMail();
       this.setState(prevState => ({
         ...prevState,
@@ -157,8 +161,8 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
   navigationHeaderFunction = {
     getAskForAttachment: (dispatch: Dispatch) => {
       pickFile()
-        .then(contentUri => {
-          this.getAttachmentData(contentUri);
+        .then(file => {
+          this.getAttachmentData(file);
         })
         .catch(err => {
           if (err.message === "Error picking image" || err.message === "Error picking document") {
@@ -185,14 +189,12 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
 
       try {
         const { navigation, sendMail } = this.props;
+        // console.log("WILL SEND MAIL", this.state);
         const { mail, id, replyTo } = this.state;
         const draftType = navigation.getParam("type");
-        const isReplyOrForward = draftType === DraftType.REPLY
-          || draftType === DraftType.REPLY_ALL
-          || draftType === DraftType.FORWARD;
 
         if (mail.attachments && mail.attachments.length !== 0) Trackers.trackEvent("Zimbra", "SEND ATTACHMENTS");
-        sendMail(this.getMailData(), isReplyOrForward ? undefined : id, replyTo);
+        sendMail(this.getMailData(), id, replyTo);
 
         Toast.show(I18n.t("conversation.sendMail"), {
           position: Toast.position.BOTTOM,
@@ -428,21 +430,20 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     );
   };
 
-  getAttachmentData = async file => {
-    const fileState = {
-      contentType: file.mime,
-      filename: file.name,
-    };
-    this.setState({ tempAttachment: fileState });
+  getAttachmentData = async (file: LocalFile) => {
+    // console.log("picked file", file);
+    this.setState({ tempAttachment: file });
 
     try {
       await this.saveDraft();
-      const newAttachment = await this.props.addAttachment(this.state.id, file);
+      // console.log("state", this.state);
+      const newAttachment = await this.props.addAttachment(this.state.id!, file);
       this.setState(prevState => ({
         mail: { ...prevState.mail, attachments: [...prevState.mail.attachments, newAttachment] },
         tempAttachment: null,
       }));
     } catch (e) {
+      console.warn(e);
       Toast.show(I18n.t("conversation.attachmentError"), {
         position: Toast.position.BOTTOM,
       });
@@ -471,6 +472,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       this.setState({ id: idDraft });
       if (isForward) this.forwardDraft();
     } else {
+      // console.log("save draft", this.getMailData());
       this.props.updateDraft(this.state.id, this.getMailData());
     }
   };
