@@ -6,6 +6,7 @@ import { Alert, AppState, AppStateStatus, StatusBar, View } from 'react-native';
 import * as RNLocalize from 'react-native-localize';
 import 'react-native-gesture-handler';
 import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
+import DeviceInfo from 'react-native-device-info';
 
 // Polyfills
 import 'ts-polyfill/lib/es2019-object';
@@ -15,7 +16,6 @@ import { Provider, connect } from 'react-redux';
 
 // JS
 import Conf from '../ode-framework-conf';
-import { name as appName } from '../app.json';
 
 // ODE Mobile Framework Modules
 import { Trackers } from './infra/tracker';
@@ -97,7 +97,8 @@ class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: b
     // Tracking
     await Trackers.init();
     Trackers.trackEvent('Application', 'STARTUP');
-    Trackers.setCustomDimension(4 /* App Name */, appName);
+    Trackers.setCustomDimension(4 /* App Name */, DeviceInfo.getBundleId());
+    alert(DeviceInfo.getBundleId());
     // await Trackers.test();
 
     // If only one platform in conf => auto-select it.
