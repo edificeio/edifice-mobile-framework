@@ -65,9 +65,14 @@ export interface IResourceUriNotification extends IAbstractNotification {
     }
 }
 
-export interface INamedResourceNotification extends IResourceUriNotification {
+export interface IResourceIdNotification extends IResourceUriNotification {
     resource: IResourceUriNotification["resource"] & {
         id: string;
+    }
+}
+
+export interface INamedResourceNotification extends IResourceIdNotification {
+    resource: IResourceIdNotification["resource"] & {
         name: string;
     }
 }
@@ -132,6 +137,12 @@ export const notificationAdapter = (n: IEntcoreAbstractNotification) => {
     if (n.params.resourceUri) {
         (ret as IResourceUriNotification).resource = {
             uri: n.params.resourceUri!
+        }
+    }
+    if (n.params.resourceUri && n.resource) {
+        (ret as IResourceIdNotification).resource = {
+            uri: n.params.resourceUri!,
+            id: n.resource,
         }
     }
     if (n.params.resourceUri && n.resource && n.params.resourceName) {

@@ -72,7 +72,7 @@ class MailContentContainer extends React.PureComponent<any, any> {
 
   mailMoved = () => {
     const { navigation } = this.props;
-    navigation.state.params.onGoBack();
+    navigation.state.params.onGoBack?.();
     navigation.navigate("inbox", { key: "inbox", folderName: undefined });
     Toast.show(I18n.t("zimbra-message-moved"), {
       position: Toast.position.BOTTOM,
@@ -100,7 +100,7 @@ class MailContentContainer extends React.PureComponent<any, any> {
 
   goBack = () => {
     const { navigation } = this.props;
-    navigation.state.params.onGoBack();
+    navigation.state.params.onGoBack?.();
     navigation.dispatch(NavigationActions.back());
   };
 

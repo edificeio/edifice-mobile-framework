@@ -10,6 +10,7 @@ import { bindActionCreators, Dispatch } from "redux";
 
 import { getSessionInfo } from "../../../App";
 import { IDistantFile, LocalFile, SyncedFileWithId } from "../../../framework/util/fileHandler";
+import { IUploadCallbaks } from "../../../framework/util/fileHandler/service";
 
 import pickFile, { pickFileError } from "../../../infra/actions/pickFile";
 import {Trackers} from "../../../infra/tracker";
@@ -50,7 +51,7 @@ interface ICreateMailEventProps {
   trashMessage: (mailId: string[]) => void;
   deleteMessage: (mailId: string[]) => void;
   onPickFileError: (notifierId: string) => void;
-  addAttachment: (draftId: string, files: LocalFile) => Promise<SyncedFileWithId>;
+  addAttachment: (draftId: string, files: LocalFile, callbacks?: IUploadCallbaks) => () => Promise<SyncedFileWithId>;
   deleteAttachment: (draftId: string, attachmentId: string) => void;
   fetchMailContent: (mailId: string) => void;
   clearContent: () => void;
@@ -536,4 +537,4 @@ const mapDispatchToProps = (dispatch: any) => {
   );
 };
 
-export default withViewTracking("zimbra/NewMessage")(connect(mapStateToProps, mapDispatchToProps)(NewMailContainer));
+export default connect(mapStateToProps, mapDispatchToProps)(NewMailContainer);

@@ -47,7 +47,7 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
 				? [def["event-type"]]
 				: def["event-type"];
 			if (eventTypeArray !== undefined && !eventTypeArray.includes(n["event-type"])) return false;
-			if ((n as ITimelineNotification).message && (n as ITimelineNotification).date && (n as ITimelineNotification).id) { /**/// #44727 tmp fix. Copied from timelineRedirection.
+			if ((n.type === "MESSAGERIE") || (n as ITimelineNotification).message && (n as ITimelineNotification).date && (n as ITimelineNotification).id) { /**/// #44727 tmp fix. Copied from timelineRedirection.
 				const thunkAction = def.notifHandlerAction(n, trackCategory);
 				const ret = await (dispatch(thunkAction) as unknown as Promise<INotifHandlerReturnType>); // TS BUG ThunkDispatch is treated like a regular Dispatch
 				trackCategory && ret.trackInfo && Trackers.trackEvent(trackCategory, ret.trackInfo.action, `${n.type}.${n["event-type"]}`, ret.trackInfo.value);
@@ -121,6 +121,7 @@ export const defaultNotificationActionStack = [
 export const handleNotificationAction = (notification: IAbstractNotification, actionStack: NotifHandlerThunkAction[], trackCategory: false | string = false) =>
 	async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
 		let manageCount = 0;
+		// console.log("notification", notification);
 		for (const action of actionStack) {
 			if (manageCount) return;
 			const ret = await dispatch(action(notification, trackCategory)) as unknown as INotifHandlerReturnType;

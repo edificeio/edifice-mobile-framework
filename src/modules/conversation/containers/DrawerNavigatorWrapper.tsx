@@ -1,6 +1,6 @@
 import I18n from "i18n-js";
 import React from "react";
-import { NavigationState } from "react-navigation";
+import { NavigationScreenProp, NavigationState } from "react-navigation";
 import { createDrawerNavigator, NavigationDrawerProp } from "react-navigation-drawer";
 
 import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
@@ -13,6 +13,7 @@ import { HeaderAction } from "../../../ui/headers/NewHeader";
 import DrawerMenuContainer from "./DrawerMenu";
 import MailList from "./MailList";
 import { DraftType } from "./NewMail";
+import moduleConfig from "../moduleConfig";
 
 const DrawerNavigatorComponent = createDrawerNavigator(
   {
@@ -28,7 +29,7 @@ const DrawerNavigatorComponent = createDrawerNavigator(
   }
 );
 
-export default class DrawerNavigatorWrapper extends React.Component<any, any> {
+export default class DrawerNavigatorWrapper extends React.Component<{ navigation: NavigationScreenProp<NavigationState> }, any> {
   static router = DrawerNavigatorComponent.router;
   static navigationOptions = ({ navigation }: { navigation: NavigationDrawerProp<any> }) => {
     return standardNavScreenOptions(
@@ -97,7 +98,7 @@ export default class DrawerNavigatorWrapper extends React.Component<any, any> {
         <TempFloatingAction
           iconName="new_message"
           onEvent={() => {
-            this.props.navigation.navigate("newMail", {
+            this.props.navigation.navigate(`${moduleConfig.routeName}/new`, {
               type: DraftType.NEW,
               mailId: undefined,
               currentFolder: this.getActiveRouteState(navigation.state).key,

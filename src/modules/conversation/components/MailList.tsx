@@ -17,6 +17,7 @@ import { IMail } from "../state/mailContent";
 import { displayPastDate } from "../../../framework/util/date";
 import { findReceiversAvatars, findSenderAvatar } from "./MailItem";
 import theme from "../../../framework/util/theme";
+import moduleConfig from "../moduleConfig";
 
 type MailListProps = {
   notifications: any;
@@ -92,7 +93,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     const isStateDraft = mailInfos.state === "DRAFT";
 
     if (isStateDraft && isFolderDrafts) {
-      this.props.navigation.navigate("newMail", {
+      this.props.navigation.navigate(`${moduleConfig.routeName}/new`, {
         type: DraftType.DRAFT,
         mailId: mailInfos.id,
         onGoBack: () => {
@@ -101,7 +102,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
         },
       });
     } else {
-      this.props.navigation.navigate("mailDetail", {
+      this.props.navigation.navigate(`${moduleConfig.routeName}/mail`, {
         mailId: mailInfos.id,
         subject: mailInfos.subject,
         currentFolder: navigationKey || "inbox",

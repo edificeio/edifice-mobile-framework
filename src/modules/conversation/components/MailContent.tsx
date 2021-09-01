@@ -6,6 +6,7 @@ import { Loading } from "../../../ui";
 import { PageContainer } from "../../../ui/ContainerContent";
 import { HtmlContentView } from "../../../ui/HtmlContentView";
 import { DraftType } from "../containers/NewMail";
+import moduleConfig from "../moduleConfig";
 import { RenderPJs, HeaderMail, FooterButton } from "./MailContentItems";
 
 export default class MailContent extends React.PureComponent<any, any> {
@@ -16,7 +17,7 @@ export default class MailContent extends React.PureComponent<any, any> {
           icon="reply"
           text={I18n.t("conversation.reply")}
           onPress={() =>
-            this.props.navigation.navigate("newMail", {
+            this.props.navigation.navigate(`${moduleConfig.routeName}/new`, {
               type: DraftType.REPLY,
               mailId: this.props.mail.id,
               onGoBack: this.props.navigation.state.params.onGoBack,
@@ -27,7 +28,7 @@ export default class MailContent extends React.PureComponent<any, any> {
           icon="reply_all"
           text={I18n.t("conversation.replyAll")}
           onPress={() =>
-            this.props.navigation.navigate("newMail", {
+            this.props.navigation.navigate(`${moduleConfig.routeName}/new`, {
               type: DraftType.REPLY_ALL,
               mailId: this.props.mail.id,
               onGoBack: this.props.navigation.state.params.onGoBack,
@@ -38,7 +39,7 @@ export default class MailContent extends React.PureComponent<any, any> {
           icon="forward"
           text={I18n.t("conversation.forward")}
           onPress={() =>
-            this.props.navigation.navigate("newMail", {
+            this.props.navigation.navigate(`${moduleConfig.routeName}/new`, {
               type: DraftType.FORWARD,
               mailId: this.props.mail.id,
               onGoBack: this.props.navigation.state.params.onGoBack,

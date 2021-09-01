@@ -26,6 +26,7 @@ import NavigationService from "./NavigationService";
 import Carousel from "../ui/Carousel";
 import { IFrame } from "../ui/IFrame";
 import { IEntcoreApp, tabModules, getModuleRoutes, getAvailableModules } from "../framework/util/moduleTool";
+import { AppPushNotificationHandlerComponent } from "../framework/util/notifications/cloudMessaging";
 
 /**
  * MAIN NAVIGATOR
@@ -104,23 +105,25 @@ class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
     const MainNavigationContainer = getMainNavContainer(appsInfo);
 
     return (
-      <MainNavigationContainer
-        {...forwardProps}
-        onNavigationStateChange={(prevState: any, currentState: any, action: any) => {
-          // console.log("main nav state change :", prevState, currentState, action);
-          // Track if tab has changed
-          // console.log("On nav state changed : ", prevState, currentState, action)
-          if (action.type !== "Navigation/NAVIGATE") return;
-          const prevIndex = prevState.index;
-          const currentIndex = currentState.index;
-          if (prevIndex === currentIndex) return;
-          const currentTabRouteName = currentState.routes[currentIndex].routeName;
-          if (currentTabRouteName) { /* ToDo: Track event here */ }
-        }}
-        ref={nav => {
-          NavigationService.setTopLevelNavigator(nav);
-        }}
-      />
+      <AppPushNotificationHandlerComponent>
+        <MainNavigationContainer
+          {...forwardProps}
+          onNavigationStateChange={(prevState: any, currentState: any, action: any) => {
+            // console.log("main nav state change :", prevState, currentState, action);
+            // Track if tab has changed
+            // console.log("On nav state changed : ", prevState, currentState, action)
+            if (action.type !== "Navigation/NAVIGATE") return;
+            const prevIndex = prevState.index;
+            const currentIndex = currentState.index;
+            if (prevIndex === currentIndex) return;
+            const currentTabRouteName = currentState.routes[currentIndex].routeName;
+            if (currentTabRouteName) { /* ToDo: Track event here */ }
+          }}
+          ref={nav => {
+            NavigationService.setTopLevelNavigator(nav);
+          }}
+        />
+      </AppPushNotificationHandlerComponent>
     );
   }
   /* CAUTION :

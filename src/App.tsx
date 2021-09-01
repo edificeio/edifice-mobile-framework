@@ -80,9 +80,7 @@ class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: b
         <Provider store={this.props.store}>
           <View style={{ flex: 1 }}>
             <StatusBar backgroundColor={CommonStyles.statusBarColor} barStyle="light-content" />
-            <AppPushNotificationHandlerComponent>
-              <AppScreen />
-            </AppPushNotificationHandlerComponent>
+            <AppScreen />
           </View>
         </Provider>
       </SafeAreaProvider>

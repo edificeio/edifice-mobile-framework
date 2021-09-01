@@ -96,4 +96,4 @@ const mapDispatchToProps = (dispatch: any) => {
   );
 };
 
-export default withViewTracking("zimbra/folders")(connect(mapStateToProps, mapDispatchToProps)(DrawerMenuContainer));
+export default connect(mapStateToProps, mapDispatchToProps)(DrawerMenuContainer);
