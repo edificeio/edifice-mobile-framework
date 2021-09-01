@@ -1,33 +1,33 @@
-import * as React from "react";
-import I18n from "i18n-js";
-import { connect } from "react-redux";
-import { NavigationScreenProp, NavigationState } from "react-navigation";
-import { hasNotch } from "react-native-device-info";
-import { ThunkDispatch } from "redux-thunk";
-import { TextInput, TouchableWithoutFeedback, TouchableOpacity } from "react-native-gesture-handler";
-import { View, ScrollView, KeyboardAvoidingView, Platform, Keyboard } from "react-native";
+import * as React from 'react';
+import I18n from 'i18n-js';
+import { connect } from 'react-redux';
+import { NavigationScreenProp, NavigationState } from 'react-navigation';
+import { hasNotch } from 'react-native-device-info';
+import { ThunkDispatch } from 'redux-thunk';
+import { TextInput, TouchableWithoutFeedback, TouchableOpacity } from 'react-native-gesture-handler';
+import { View, ScrollView, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 
-import { Icon, Loading } from "../../ui";
-import { HeaderBackAction, HeaderAction } from "../../ui/headers/NewHeader";
-import { GridAvatars } from "../../ui/avatars/GridAvatars";
-import { TextBold, TextLight } from "../../ui/text";
-import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
-import { A } from "../../ui/Typography";
-import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
-import { PageContainer } from "../../myAppMenu/components/NewContainerContent";
-import { IBlog } from "../state/publishableBlogs";
-import { IUserInfoState } from "../../user/state/info";
-import { CommonStyles } from "../../styles/common/styles";
-import { publishBlogPostAction } from "../actions/publish";
-import { ContentUri } from "../../types/contentUri";
-import { uploadDocument, formatResults } from "../../workspace/actions/helpers/documents";
-import { FilterId } from "../../workspace/types";
-import { resourceHasRight } from "../../utils/resourceRights";
-import withViewTracking from "../../infra/tracker/withViewTracking";
-import { AttachmentPicker } from "../../ui/AttachmentPicker";
-import Notifier from "../../infra/notifier/container";
-import { ImagePicked, ImagePicker } from "../../infra/imagePicker";
-import { ImagePickerResponse } from "react-native-image-picker";
+import { Icon, Loading } from '../../ui';
+import { HeaderBackAction, HeaderAction } from '../../ui/headers/NewHeader';
+import { GridAvatars } from '../../ui/avatars/GridAvatars';
+import { TextBold, TextLight } from '../../ui/text';
+import DEPRECATED_ConnectionTrackingBar from '../../ui/ConnectionTrackingBar';
+import { A } from '../../ui/Typography';
+import { alternativeNavScreenOptions } from '../../navigation/helpers/navScreenOptions';
+import { PageContainer } from '../../myAppMenu/components/NewContainerContent';
+import { IBlog } from '../state/publishableBlogs';
+import { IUserInfoState } from '../../user/state/info';
+import { CommonStyles } from '../../styles/common/styles';
+import { publishBlogPostAction } from '../actions/publish';
+import { ContentUri } from '../../types/contentUri';
+import { uploadDocument, formatResults } from '../../workspace/actions/helpers/documents';
+import { FilterId } from '../../workspace/types';
+import { resourceHasRight } from '../../utils/resourceRights';
+import withViewTracking from '../../infra/tracker/withViewTracking';
+import { AttachmentPicker } from '../../ui/AttachmentPicker';
+import Notifier from '../../infra/notifier/container';
+import { ImagePicked, ImagePicker } from '../../infra/imagePicker';
+import { ImagePickerResponse } from 'react-native-image-picker';
 
 export interface ICreatePostDataProps {
   user: IUserInfoState;
@@ -53,18 +53,17 @@ export interface ICreatePostState {
 export type ICreatePostPageProps = ICreatePostDataProps & ICreatePostEventProps & ICreatePostOtherProps;
 
 export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostPageProps, ICreatePostState> {
-
   constructor(props: ICreatePostPageProps) {
     super(props);
     this.state = {
-      title: "",
-      content: "",
+      title: '',
+      content: '',
       images: [],
-    }
+    };
     this.props.navigation.setParams({
       onPublishPost: this.handlePublishPost.bind(this),
-      'userinfo': this.props.user
-    })
+      userinfo: this.props.user,
+    });
   }
 
   public attachmentPickerRef: any;
@@ -79,10 +78,9 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
         <Notifier id="createPost" />
         <KeyboardAvoidingView
           enabled
-          behavior={Platform.OS === "ios" ? "padding" : undefined}
-          keyboardVerticalOffset={Platform.OS === "ios" ? hasNotch() ? 100 : 76 : undefined} // 🍔 Big-(M)Hack of the death : On iOS KeyboardAvoidingView not working properly.
-          style={{ flex: 1 }}
-        >
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? (hasNotch() ? 100 : 76) : undefined} // 🍔 Big-(M)Hack of the death : On iOS KeyboardAvoidingView not working properly.
+          style={{ flex: 1 }}>
           <ScrollView alwaysBounceVertical={false} contentContainerStyle={{ flexGrow: 1 }}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} style={{ height: '100%' }}>
               <DEPRECATED_ConnectionTrackingBar />
@@ -90,24 +88,25 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
                 style={{
                   paddingHorizontal: 20,
                   paddingVertical: 20,
-                  flexDirection: "row",
-                  justifyContent: "center",
-                }}
-              >
-                <View style={{
-                  justifyContent: "center",
-                  width: 45,
-                  height: 45
+                  flexDirection: 'row',
+                  justifyContent: 'center',
                 }}>
+                <View
+                  style={{
+                    justifyContent: 'center',
+                    width: 45,
+                    height: 45,
+                  }}>
                   <GridAvatars users={[user.id!]} />
                 </View>
-                <View style={{
-                  alignItems: "flex-start",
-                  flex: 1,
-                  justifyContent: "center",
-                  marginHorizontal: 6,
-                  padding: 2
-                }}>
+                <View
+                  style={{
+                    alignItems: 'flex-start',
+                    flex: 1,
+                    justifyContent: 'center',
+                    marginHorizontal: 6,
+                    padding: 2,
+                  }}>
                   <TextBold>{user.displayName}</TextBold>
                   <TextLight numberOfLines={1}>{(navigation.getParam('blog') as IBlog)?.title}</TextLight>
                 </View>
@@ -120,16 +119,17 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
                 value={title}
                 onChangeText={text => {
                   this.setState({ title: text });
-                  navigation.setParams({ title: text })
+                  navigation.setParams({ title: text });
                 }}
                 style={{
                   marginHorizontal: 20,
-                  marginTop: 10, marginBottom: 20,
+                  marginTop: 10,
+                  marginBottom: 20,
                   padding: 10,
                   backgroundColor: CommonStyles.tabBottomColor,
                   borderColor: CommonStyles.borderBottomItem,
                   borderWidth: 1,
-                  borderRadius: 5
+                  borderRadius: 5,
                 }}
               />
 
@@ -152,7 +152,7 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
                 value={content}
                 onChangeText={text => {
                   this.setState({ content: text });
-                  navigation.setParams({ content: text })
+                  navigation.setParams({ content: text });
                 }}
               />
 
@@ -166,23 +166,26 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
                   borderColor: CommonStyles.borderBottomItem,
                   borderWidth: 1,
                   borderRadius: 5,
-                  justifyContent: "center",
-                }}
-              >
-                <ImagePicker callback={(image) => {
-                  console.log("image", image);
-                  this.setState({ images: [...images, image] })
+                  justifyContent: 'center',
                 }}>
+                <ImagePicker
+                  callback={image => {
+                    console.log('image', image);
+                    this.setState({ images: [...images, image] });
+                  }}>
                   <View
-                    style={{ alignItems: "center", justifyContent: "center", flexDirection: imagesAdded ? "row" : "column", marginVertical: 10 }}
+                    style={{
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexDirection: imagesAdded ? 'row' : 'column',
+                      marginVertical: 10,
+                    }}
                     // onPress={() => this.attachmentPickerRef.onPickAttachment()}
                   >
-                    <A style={{ marginRight: imagesAdded ? 5 : 0 }}>{I18n.t('createPost-create-mediaField')}</A>
-                    <Icon
-                      name="camera-on"
-                      size={imagesAdded ? 15 : 22}
-                      color={CommonStyles.actionColor}
-                    />
+                    <A style={{ backgroundColor: 'red', flex: 1, marginRight: imagesAdded ? 5 : 0 }}>
+                      {I18n.t('createPost-create-mediaField')}
+                    </A>
+                    <Icon name="camera-on" size={imagesAdded ? 15 : 22} color={CommonStyles.actionColor} />
                   </View>
                 </ImagePicker>
                 <AttachmentPicker
@@ -199,13 +202,13 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
           </ScrollView>
         </KeyboardAvoidingView>
       </PageContainer>
-    )
+    );
   }
 
   componentDidUpdate(prevProps: ICreatePostPageProps) {
     const { publishing, navigation, user } = this.props;
     if (prevProps.publishing !== publishing) {
-      navigation.setParams({ 'publishing': publishing });
+      navigation.setParams({ publishing: publishing });
     }
   }
 
@@ -215,22 +218,17 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
 
     let uploadedPostDocuments = undefined;
     if (images.length > 0) {
-      navigation.setParams({ uploadingPostDocuments: true })
+      navigation.setParams({ uploadingPostDocuments: true });
       const convertedImages: ContentUri[] = images.map(i => ({
         mime: i.type,
         name: i.fileName,
         uri: i.uri,
-        path: i.uri
+        path: i.uri,
       }));
-      uploadedPostDocuments = await onUploadPostDocuments(convertedImages)
+      uploadedPostDocuments = await onUploadPostDocuments(convertedImages);
     }
 
-    onPublishPost(
-      navigation.getParam('blog') as IBlog,
-      title,
-      content,
-      uploadedPostDocuments
-    );
+    onPublishPost(navigation.getParam('blog') as IBlog, title, content, uploadedPostDocuments);
   }
 }
 
@@ -250,41 +248,45 @@ const CreatePostPage = connect(
     onPublishPost: (blog: IBlog, title: string, content: string, uploadedPostDocuments?: object) => {
       dispatch(publishBlogPostAction(blog, title, content, uploadedPostDocuments));
     },
-  })
+  }),
 )(CreatePostPage_Unconnected);
 
-const CreatePostPageOK = withViewTracking("timeline/create/blog/content")(CreatePostPage);
+const CreatePostPageOK = withViewTracking('timeline/create/blog/content')(CreatePostPage);
 
 CreatePostPageOK.navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<NavigationState> }) => {
   return alternativeNavScreenOptions(
     {
-      title: I18n.t(`createPost-newPost-${navigation.getParam("postType")}`),
+      title: I18n.t(`createPost-newPost-${navigation.getParam('postType')}`),
       headerLeft: <HeaderBackAction navigation={navigation} />,
-      headerRight: navigation.getParam('uploadingPostDocuments')
-        ? <Loading
-          small
-          customColor={CommonStyles.lightGrey}
-          customStyle={{ paddingHorizontal: 18 }}
-        />
-        : <HeaderAction
+      headerRight: navigation.getParam('uploadingPostDocuments') ? (
+        <Loading small customColor={CommonStyles.lightGrey} customStyle={{ paddingHorizontal: 18 }} />
+      ) : (
+        <HeaderAction
           navigation={navigation}
-          title={navigation.getParam('blog') && navigation.getParam('userinfo')
-            ? (navigation.getParam('blog') as IBlog)['publish-type']
-              ? (navigation.getParam('blog') as IBlog)['publish-type'] === 'IMMEDIATE'
-                || (resourceHasRight(navigation.getParam('blog') as IBlog, 'org-entcore-blog-controllers-PostController|submit', navigation.getParam('userinfo')))
-                ? I18n.t('createPost-publishAction')
-                : I18n.t('createPost-submitAction')
+          title={
+            navigation.getParam('blog') && navigation.getParam('userinfo')
+              ? (navigation.getParam('blog') as IBlog)['publish-type']
+                ? (navigation.getParam('blog') as IBlog)['publish-type'] === 'IMMEDIATE' ||
+                  resourceHasRight(
+                    navigation.getParam('blog') as IBlog,
+                    'org-entcore-blog-controllers-PostController|submit',
+                    navigation.getParam('userinfo'),
+                  )
+                  ? I18n.t('createPost-publishAction')
+                  : I18n.t('createPost-submitAction')
+                : ''
               : ''
-            : ''}
+          }
           onPress={() => navigation.getParam('onPublishPost') && navigation.getParam('onPublishPost')()}
           disabled={
-            navigation.getParam('publishing', false)
-            || navigation.getParam('title', '').length === 0
-            || navigation.getParam('content', '').length === 0
+            navigation.getParam('publishing', false) ||
+            navigation.getParam('title', '').length === 0 ||
+            navigation.getParam('content', '').length === 0
           }
         />
+      ),
     },
-    navigation
+    navigation,
   );
 };
 

@@ -1,11 +1,13 @@
-import * as React from "react";
 import I18n from "i18n-js";
-import { CameraOptions, ImageLibraryOptions, ImagePickerResponse, launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { ModalBox, ModalContent, ModalContentBlock } from "../ui/Modal";
-import { ButtonTextIcon } from "../ui";
+import * as React from "react";
 import type { GestureResponderEvent, TouchableOpacityProps } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { CameraOptions, ImageLibraryOptions, ImagePickerResponse, launchCamera, launchImageLibrary } from 'react-native-image-picker';
+
 import { LocalFile } from "../framework/util/fileHandler";
+import { assertPermissions } from "../framework/util/permissions"
+import { ButtonTextIcon } from "../ui";
+import { ModalBox, ModalContent, ModalContentBlock } from "../ui/Modal";
 
 export type ImagePicked = Required<Pick<ImagePickerResponse, 'uri' | 'type' | 'fileName' | 'fileSize' | 'base64' | 'width' | 'height'>>;
 
@@ -42,17 +44,18 @@ export class ImagePicker extends React.PureComponent<{
         };
 
         const actions = {
-            'camera': () => {
-                launchCamera({
-                    ...options,
-                    mediaType: 'photo',
-                }, realCallback);
+            'camera': async () => {
+                try {
+                    await assertPermissions('camera');
+                    launchCamera({ ...options, mediaType: 'photo' }, realCallback);
+                } catch (error) { console.error(error); }
             },
-            'gallery': () => {
-                launchImageLibrary({
-                    ...this.props.options,
-                    mediaType: 'photo'
-                }, realCallback);
+            'gallery': async () => {
+                try {
+                    await assertPermissions('galery.read');
+                    launchImageLibrary({ ...this.props.options, mediaType: 'photo' }, realCallback);
+                } catch (error) { console.error(error); }
+                
             },
             'cancel': () => {
                 this.setState({ showModal: false });
