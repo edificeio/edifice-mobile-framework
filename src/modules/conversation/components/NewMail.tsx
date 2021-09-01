@@ -228,6 +228,14 @@ const Body = ({ style, value, onChange }) => {
   const textUpdateTimeout = React.useRef();
   const [currentValue, updateCurrentValue] = React.useState(value);
 
+  const br2nl = (text: string) => {
+    return text?.replace(/<br\/?>/gm, "\n")
+      .replace(/<div>\s*?<\/div>/gm, "\n");
+  }
+  const nl2br = (text: string) => {
+    return text?.replace(/\n/gm, "<br>");
+  }
+
   React.useEffect(() => {
     window.clearTimeout(textUpdateTimeout.current);
     textUpdateTimeout.current = window.setTimeout(() => onChange(currentValue), 500);
@@ -246,7 +254,8 @@ const Body = ({ style, value, onChange }) => {
         scrollEnabled={false}
         style={{ flexGrow: 1 }}
         defaultValue={value}
-        onChangeText={text => updateCurrentValue(text)}
+        value={br2nl(currentValue)}
+        onChangeText={text => updateCurrentValue(nl2br(text))}
       />
     </View>
   );

@@ -416,7 +416,13 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     const { attachments, ...mailWithoutAttachments } = mail;
     const regexp = /(\r\n|\n|\r)/gm;
 
-    mailWithoutAttachments.body = mailWithoutAttachments.body.replace(regexp, "<br>");
+    const addWrapperIfNeeded = (text: string) => {
+      if (!/<div class="ng-scope mobile-application-wrapper">/.test(text)) {
+        return `<div class="ng-scope mobile-application-wrapper">${text}</div>`;
+      } else return text;
+    }
+
+    mailWithoutAttachments.body = addWrapperIfNeeded(mailWithoutAttachments.body.replace(regexp, "<br>"));
     if (prevBody === undefined) {
       prevBody = "";
     }
