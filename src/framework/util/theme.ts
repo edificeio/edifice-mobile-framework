@@ -30,7 +30,7 @@ export interface ITheme {
             light: ColorValue,
             extraLight: ColorValue
         },
-        tertiary : {
+        neutral : {
             regular: ColorValue,
             subtleShadow: ColorValue,
             shadow: ColorValue,
@@ -74,7 +74,7 @@ export const defaultTheme: ITheme = {
             subleShadow: 'magenta',
             shadow: 'magenta',
             light: 'magenta',
-            extraLight: '#magenta'
+            extraLight: 'magenta'
         },
         secondary: {
             regular: '#2a9cc8',
@@ -83,12 +83,12 @@ export const defaultTheme: ITheme = {
             light: '#d7eaf4',
             extraLight: '#eef3f8'
         },
-        tertiary : {
+        neutral : {
             regular: '#868ca0',
             subtleShadow: 'magenta',
             shadow: 'magenta',
             light: '#f8f8fa',
-            extraLight: '#magenta'
+            extraLight: '#f8f8fa'
         },
         text: {
             regular: '#414355',

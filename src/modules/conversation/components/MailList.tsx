@@ -18,6 +18,8 @@ import { displayPastDate } from "../../../framework/util/date";
 import { findReceiversAvatars, findSenderAvatar } from "./MailItem";
 import theme from "../../../framework/util/theme";
 import moduleConfig from "../moduleConfig";
+import { ListItem } from "../../../framework/components/listItem";
+import { FontSize, LineHeight, TextLight, TextSemiBold } from "../../../framework/components/text";
 
 type MailListProps = {
   notifications: any;
@@ -79,10 +81,6 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     }
   }
 
-  hasShadow = isShadow => {
-    return isShadow ? styles.shadow : null;
-  };
-
   containerStyle = isChecked => {
     return !isChecked ? null : styles.containerMailSelected;
   };
@@ -129,59 +127,71 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     const isFolderOutbox = navigationKey === "sendMessages";
     const isFolderDrafts = navigationKey === "drafts";
 
-    let contact = ["", ""];
-    if (isFolderInbox) contact = mailInfos.displayNames.find(item => item[0] === mailInfos.from);
-    else contact = mailInfos.displayNames.find(item => item[0] === mailInfos.to[0]);
-    if (contact === undefined) contact = ["", I18n.t("conversation.unknown")];
+    console.log("mailinfos", mailInfos);
+
+    let contacts = [] as Array<[string | undefined, string]>
+    if (!isFolderOutbox && !isFolderDrafts) {
+      contacts = [mailInfos.displayNames.find(item => item[0] === mailInfos.from)];
+    } else {
+      contacts = mailInfos.displayNames.filter(dn => mailInfos.to.includes(dn[0]));
+    }
+    if (contacts.length === 0) contacts = [[undefined, I18n.t("conversation.emptyTo")]];
     return (
       <TouchableOpacity
         onPress={() => {
           this.renderMailContent(mailInfos);
         }}
-        // onLongPress={() => this.selectItem(mailInfos)}
       >
-        <Header
-          style={[styles.containerMail, this.containerStyle(mailInfos.isChecked), this.hasShadow(mailInfos.unread)]}>
-          <LeftPanel>
-            {mailInfos.unread && <Icon name="mail" size={18} color="#FC8500" />}
-            <GridAvatars
-              users={
-                isFolderOutbox
-                  ? findReceiversAvatars(mailInfos.to, mailInfos.from, mailInfos.cc, mailInfos.displayNames)
-                  : findSenderAvatar(mailInfos.from, mailInfos.displayNames)
-              }
-            />
-          </LeftPanel>
-          <CenterPanel>
-            <View style={styles.mailInfos}>
-              {contact &&
-                (mailInfos.unread ? (
-                  <TextBold
+        <ListItem
+          style={mailInfos.unread ? styles.containerMailUnread : styles.containerMailRead}
+          leftElement={<GridAvatars
+            users={contacts.map(c => c[0]!)}
+          />}
+          rightElement={<View style={styles.mailInfos}>
+            {/* Contact name */}
+            <View style={{flex: 1, flexDirection: 'row'}}>
+              {(() => {
+                const TextContactComponent = mailInfos.unread ? TextBold : TextSemiBold;
+                const textContactPrefixColor = mailInfos.unread ? theme.color.text.regular : theme.color.text.light;
+                return <>
+                  {isFolderOutbox || isFolderDrafts ? <Text style={{ color: textContactPrefixColor }}>{I18n.t('conversation.toPrefix') + ' '}</Text> : null}
+                  <TextContactComponent
                     numberOfLines={1}
-                    style={{ flex: 1, color: isFolderDrafts ? theme.color.failure : undefined }}
-                  >
-                    {contact[1]}
-                  </TextBold>
-                ) : (
-                  <Text
-                    numberOfLines={1}
-                    style={{ flex: 1, color: isFolderDrafts ? theme.color.failure : undefined }}
-                  >
-                    {contact[1]}
-                  </Text>
-                ))}
-              <Text style={styles.greyColor}>{displayPastDate(moment(mailInfos.date))}</Text>
+                    style={{ color: isFolderDrafts ? theme.color.failure : undefined, flex: 1 }}
+                  >{contacts.map(c => c[1]).join(', ')}</TextContactComponent>
+                </>
+              })()}
+              {/* Date */}
+              <Text style={styles.mailDate} numberOfLines={1}>{displayPastDate(moment(mailInfos.date))}</Text>
             </View>
-            <View style={styles.mailInfos}>
-              <Text style={{ flex: 1, color: "#AFAFAF" }} numberOfLines={1}>
-                {mailInfos.subject}
-              </Text>
+            <View style={{ flex: 1, flexDirection: 'row' }}>
+              {/* Mail subjet & content */}
+              <View style={{ flex: 1 }}>{
+                (() => {
+                  const TextSubjectComponent = mailInfos.unread ? TextSemiBold : Text;
+                  const textSubjectColor = mailInfos.unread ? theme.color.text.heavy : theme.color.text.regular;
+                  // const TextBodyComponent = mailInfos.unread ? TextSemiBold : Text;
+                  // const textBodyColor = mailInfos.unread ? theme.color.text.regular : theme.color.text.light;
+                  return <>
+                    <TextSubjectComponent style={{ marginTop: 4, flex: 1, color: textSubjectColor, fontSize: FontSize.Small, lineHeight: LineHeight.Small }} numberOfLines={1}>
+                      {mailInfos.subject}
+                    </TextSubjectComponent>
+                    {/* <TextBodyComponent style={{ flex: 1, color: textBodyColor, fontSize: FontSize.Small, lineHeight: LineHeight.Small }} numberOfLines={1}>
+                      Lorem ipsum dolor et sit amet idfjh kdflkdfnk jdsn knsd kjb dkjndflvknfkjsdn fksj ksjdfn vksjv kjdq bvd
+                    </TextBodyComponent> */}
+                  </>
+                })()
+              }
+              </View>
+              {/* Mail attachment indicator */}
               {mailInfos.hasAttachment && (
-                <Icon style={{ alignSelf: "flex-end" }} name="attached" size={18} color="black" />
+                <View style={styles.mailIndicator}>
+                  <Icon name="attachment" size={16} color={theme.color.text.regular} />
+                </View>
               )}
             </View>
-          </CenterPanel>
-        </Header>
+          </View>}
+          />
       </TouchableOpacity>
     );
   }
@@ -261,27 +271,29 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
 }
 
 const styles = StyleSheet.create({
-  containerMail: {
-    marginTop: 5,
-    marginHorizontal: 8,
-    maxWidth: Dimensions.get("window").width - 16,
-    padding: 10,
-    backgroundColor: "white",
+  containerMailRead: {
+    paddingVertical: 18
   },
-  containerMailSelected: {
-    backgroundColor: "#C5E6F2",
+  containerMailUnread: {
+    backgroundColor: theme.color.secondary.light,
+    paddingVertical: 18
   },
   mailInfos: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "flex-end",
+    paddingLeft: 12,
+    flex: 1
   },
-  greyColor: { color: "#AFAFAF" },
-  shadow: {
-    elevation: 4,
-    shadowColor: CommonStyles.shadowColor,
-    shadowOffset: CommonStyles.shadowOffset,
-    shadowOpacity: CommonStyles.shadowOpacity,
-    shadowRadius: CommonStyles.shadowRadius,
+  mailDate: {
+    minWidth: 66,
+    textAlign: 'center',
+    alignItems: 'center',
+    justifyContent: 'flex-end'
   },
+  mailIndicator: {
+    flexDirection: 'row',
+    textAlign: 'center',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+     paddingTop: 2,
+    paddingHorizontal: 12
+  }
 });

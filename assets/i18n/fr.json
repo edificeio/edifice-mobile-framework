@@ -199,6 +199,7 @@
     "moveImpossible": "Impossible de déplacer l'email. Créez d'abord un dossier personnalisé.",
     "moveTo": "Déplacer vers",
     "newMessage": "Nouveau message",
+    "emptyTo": "(Sans destinataire)",
     "outbox": "Messages envoyés",
     "reply": "Répondre",
     "replyAll": "Répondre à tous",

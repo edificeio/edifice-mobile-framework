@@ -85,7 +85,7 @@ export class TimelineWebViewScreen extends React.PureComponent<
         <View style={{ marginVertical: 10 }}>
           <FlatButton
             title={I18n.t("common.openInBrowser")}
-            customButtonStyle={{ backgroundColor: theme.color.tertiary.light }}
+            customButtonStyle={{ backgroundColor: theme.color.neutral.extraLight }}
             customTextStyle={{ color: theme.color.secondary.regular }}
             onPress={() => {
               //TODO: create generic function inside oauth (use in myapps, etc.)

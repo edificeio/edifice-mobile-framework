@@ -11,6 +11,6 @@ export const Toggle = ({ checked, onCheckChange }: IToggleProps) => (
   <Switch
     value={checked}
     onValueChange={() => onCheckChange && onCheckChange()}
-    trackColor={{ false: theme.color.tertiary.light, true: theme.color.secondary.regular }}
+    trackColor={{ false: theme.color.neutral.extraLight, true: theme.color.secondary.regular }}
   />
 );

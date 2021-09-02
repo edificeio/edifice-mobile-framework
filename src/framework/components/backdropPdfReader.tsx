@@ -40,11 +40,11 @@ export class BackdropPdfReader extends React.PureComponent<IBackdropPdfReaderPro
           ? <EmptyContentScreen />
           : <Pdf
               activityIndicatorProps={{
-                color: theme.color.tertiary.regular,
+                color: theme.color.neutral.regular,
                 progressTintColor: CommonStyles.mainColorTheme,
               }}
               source={{ cache: true, uri }}
-              style={{ flex: 1, backgroundColor: theme.color.tertiary.light }}
+              style={{ flex: 1, backgroundColor: theme.color.neutral.extraLight }}
               onError={err => {
                 // Note: when the backdrop is dimissed, the "uri" prop becomes undefined and onError activates;
                 // therefore, we only use setState if the modal is displayed (the "visible" prop is true).

@@ -136,7 +136,7 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
             {sendLoadingState ? (
               <LoadingIndicator
                 small
-                customColor={theme.color.tertiary.light}
+                customColor={theme.color.neutral.extraLight}
                 customStyle={{ justifyContent: 'center', paddingHorizontal: 18 }}
               />
             ) : (

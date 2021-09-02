@@ -51,6 +51,13 @@ export enum FontSize { // in rem
     Big = rem(16 / 14),
     Huge = rem(2)
 }
+export enum LineHeight {
+    Tiny = rem((20 / 14) * (10 / 14)),
+    Small = rem((20 / 14) * (12 / 14)),
+    Normal = rem((20 / 14) * 1),
+    Big = rem((20 / 14) * (16 / 14)),
+    Huge = rem((20 / 14) * 2)
+}
 
 export const Text = styled.Text({
     fontFamily, fontSize, lineHeight, color: TextColor.Normal

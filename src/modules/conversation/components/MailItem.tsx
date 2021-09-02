@@ -72,8 +72,8 @@ export const findReceivers2 = (to, from, cc) => {
   return [...receiversSet];
 };
 
-export const findReceiversAvatars = (to, from, cc, displayNames) => {
-  const receiversIds: string[] = findReceivers2(to, from, cc);
+export const findReceiversAvatars = (to, cc, displayNames) => {
+  const receiversIds: string[] = findReceivers2(to, undefined, cc);
   return receiversIds.map((receiverId: string) => {
     const foundDisplayName = displayNames.find(displayName => displayName[0] === receiverId);
     return foundDisplayName ? { id: receiverId, isGroup: foundDisplayName[2] } : {};

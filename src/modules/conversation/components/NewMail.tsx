@@ -226,7 +226,10 @@ const Attachments = ({ style, attachments, onChange, onDelete, onSave }: { style
 
 const Body = ({ style, value, onChange }) => {
   const textUpdateTimeout = React.useRef();
-  const [currentValue, updateCurrentValue] = React.useState(value);
+  const removeWrapper = (text: string) => {
+    return text.replace(/^<div class="ng-scope mobile-application-wrapper">(.*)/, '$1').replace(/(.*)<\/div>$/, '$1');
+  }
+  const [currentValue, updateCurrentValue] = React.useState(removeWrapper(value));
 
   const br2nl = (text: string) => {
     return text?.replace(/<br\/?>/gm, "\n")

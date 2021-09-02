@@ -158,8 +158,8 @@ export const FooterButton = ({ icon, text, onPress }) => {
         marginBottom: 10,
       }}
     >
-      <Icon name={icon} size={25} style={{ color: theme.color.tertiary.regular }} />
-      <Text style={{ color: theme.color.tertiary.regular }}>{text}</Text>
+      <Icon name={icon} size={25} style={{ color: theme.color.neutral.regular }} />
+      <Text style={{ color: theme.color.neutral.regular }}>{text}</Text>
     </TouchableOpacity>
   );
 };
