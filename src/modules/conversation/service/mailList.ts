@@ -1,7 +1,7 @@
-import moment from "moment";
+import moment from 'moment';
 
-import {fetchJSONWithCache} from "../../../infra/fetchWithCache";
-import {IMailList} from "../state/mailList";
+import { fetchJSONWithCache } from '../../../infra/fetchWithCache';
+import { IMailList } from '../state/mailList';
 
 // Data type of what is given by the backend.
 export type IMailListBackend = {
@@ -20,10 +20,9 @@ export type IMailListBackend = {
   toName: null;
   ccName: null;
   cci: [];
-  cciName:[];
+  cciName: [];
   count: number;
 }[];
-
 
 const mailListAdapter: (data: IMailListBackend) => IMailList = data => {
   let result = [] as IMailList;
@@ -46,25 +45,22 @@ const mailListAdapter: (data: IMailListBackend) => IMailList = data => {
     ccName: item.ccName,
     cci: item.cci,
     cciName: item.cciName,
-    count: item.count
+    count: item.count,
   }));
   return result;
 };
 
 export const mailListService = {
-  get: async (page, folder = "inbox") => {
-    switch (folder) {
-      case "inbox":
-        return mailListAdapter(await fetchJSONWithCache(`/conversation/list/inbox?page=${page}&unread=false`));
-      case "sendMessages":
-        return mailListAdapter(await fetchJSONWithCache(`/conversation/list/outbox?page=${page}&unread=false`));
-      case "drafts":
-        return mailListAdapter(await fetchJSONWithCache(`/conversation/list/drafts?page=${page}&unread=false`));
-      case "trash":
-        return mailListAdapter(await fetchJSONWithCache(`/conversation/list/trash?page=${page}&unread=false`));
-      default:
-        return [];
-    }
+  get: async (page, folder = 'inbox') => {
+    const realFolder = {
+      drafts: 'draft',
+      inbox: 'inbox',
+      sendMessages: 'outbox',
+      trash: 'trash',
+    }[folder];
+    return (
+      (realFolder && mailListAdapter(await fetchJSONWithCache(`/conversation/list/${realFolder}?page=${page}&unread=false`))) || []
+    );
   },
   getFromFolder: async (folderId: string, page: number = 1) => {
     return mailListAdapter(await fetchJSONWithCache(`/conversation/list/${folderId}?restrain=&page=${page}&unread=false`));
