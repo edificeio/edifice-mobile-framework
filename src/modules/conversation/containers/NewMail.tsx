@@ -254,7 +254,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       } else if (!isDraftEmpty && !isSavedDraft) {
         Alert.alert(I18n.t('conversation.saveDraftTitle'), I18n.t('conversation.saveDraftMessage'), [
           {
-            text: I18n.t('common.cancel'),
+            text: I18n.t("conversation.delete"),
             onPress: async () => {
               if ((isNewDraft && id) || (!isNewDraft && id && id !== mailId)) {
                 await trashMessage([id]);
