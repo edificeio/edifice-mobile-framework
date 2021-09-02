@@ -38,6 +38,8 @@ type MailListState = {
   nextPageCallable: boolean;
 };
 
+let lastFolderCache = '';
+
 export default class MailList extends React.PureComponent<MailListProps, MailListState> {
   constructor(props) {
     super(props);
@@ -64,7 +66,13 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
       !isFetching &&
       this.props.fetchRequested
     ) {
-      const { mails } = this.state;
+      let { mails } = this.state;
+      if (lastFolderCache && this.props.navigation.state?.params?.key !== lastFolderCache) {
+        // THIS IS A BIG HACK BECAUSE DATA FLOW IS TOTALLY FUCKED UP IN THIS MODULE !!!!!!!! 🤬🤬🤬
+        // So we force here mail state flush when folder has changed.
+        mails = [];
+      }
+      lastFolderCache = this.props.navigation.state?.params?.key;
       const joinedList = mails.concat(this.props.notifications);
       this.setState({ mails: joinedList });
       fetchCompleted();
