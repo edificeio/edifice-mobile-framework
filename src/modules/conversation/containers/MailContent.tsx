@@ -83,7 +83,7 @@ class MailContentContainer extends React.PureComponent<{
   mailMoved = () => {
     const { navigation } = this.props;
     navigation.state.params?.onGoBack();
-    navigation.navigate('inbox', { key: 'inbox', folderName: undefined });
+    this.goBack();
     Toast.show(I18n.t('conversation.messageMoved'), {
       position: Toast.position.BOTTOM,
       mask: false,
