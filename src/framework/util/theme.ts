@@ -43,6 +43,7 @@ export interface ITheme {
             light: ColorValue,
             inverse: ColorValue
         }
+        info: ColorValue,
         success: ColorValue,
         failure: ColorValue,
         warning: ColorValue
@@ -96,9 +97,10 @@ export const defaultTheme: ITheme = {
             light: '#858Fa9',
             inverse: '#ffffff'
         },
-        success: '#19ca72',
-        failure: '#e04b35',
-        warning: '#ffb000'
+        info: '#4bafd5',
+        success: '#7dbf85',
+        failure: '#e13a3a',
+        warning: '#f59700'
     },
     themeOpenEnt: {
         cyan: '#4bafd5',
