@@ -126,6 +126,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     const isFolderInbox = navigationKey === "inbox" || !navigationKey;
     const isFolderOutbox = navigationKey === "sendMessages";
     const isFolderDrafts = navigationKey === "drafts";
+    const isMailUnread = mailInfos.unread && !isFolderDrafts && !isFolderOutbox;
 
     console.log("mailinfos", mailInfos);
 
@@ -143,7 +144,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
         }}
       >
         <ListItem
-          style={mailInfos.unread ? styles.containerMailUnread : styles.containerMailRead}
+          style={isMailUnread ? styles.containerMailUnread : styles.containerMailRead}
           leftElement={<GridAvatars
             users={contacts.map(c => c[0]!)}
           />}
@@ -151,13 +152,13 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
             {/* Contact name */}
             <View style={{flex: 1, flexDirection: 'row'}}>
               {(() => {
-                const TextContactComponent = mailInfos.unread ? TextBold : TextSemiBold;
-                const textContactPrefixColor = mailInfos.unread ? theme.color.text.regular : theme.color.text.light;
+                const TextContactComponent = isMailUnread ? TextBold : TextSemiBold;
+                const textContactPrefixColor = isMailUnread ? theme.color.text.regular : theme.color.text.light;
                 return <>
                   {isFolderOutbox || isFolderDrafts ? <Text style={{ color: textContactPrefixColor }}>{I18n.t('conversation.toPrefix') + ' '}</Text> : null}
                   <TextContactComponent
                     numberOfLines={1}
-                    style={{ color: isFolderDrafts ? theme.color.failure : undefined, flex: 1 }}
+                    style={{ color: isFolderDrafts ? theme.color.warning : undefined, flex: 1 }}
                   >{contacts.map(c => c[1]).join(', ')}</TextContactComponent>
                 </>
               })()}
@@ -168,10 +169,10 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
               {/* Mail subjet & content */}
               <View style={{ flex: 1 }}>{
                 (() => {
-                  const TextSubjectComponent = mailInfos.unread ? TextSemiBold : Text;
-                  const textSubjectColor = mailInfos.unread ? theme.color.text.heavy : theme.color.text.regular;
-                  // const TextBodyComponent = mailInfos.unread ? TextSemiBold : Text;
-                  // const textBodyColor = mailInfos.unread ? theme.color.text.regular : theme.color.text.light;
+                  const TextSubjectComponent = isMailUnread ? TextSemiBold : Text;
+                  const textSubjectColor = isMailUnread ? theme.color.text.heavy : theme.color.text.regular;
+                  // const TextBodyComponent = isMailUnread ? TextSemiBold : Text;
+                  // const textBodyColor = isMailUnread ? theme.color.text.regular : theme.color.text.light;
                   return <>
                     <TextSubjectComponent style={{ marginTop: 4, flex: 1, color: textSubjectColor, fontSize: FontSize.Small, lineHeight: LineHeight.Small }} numberOfLines={1}>
                       {mailInfos.subject}
