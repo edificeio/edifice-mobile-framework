@@ -1,6 +1,5 @@
 import * as React from "react";
 import { View, ViewStyle } from "react-native";
-import { CommonStyles } from "../../styles/common/styles";
 import theme from "../util/theme";
 
 export const ListItem = ({

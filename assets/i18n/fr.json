@@ -214,6 +214,7 @@
     "subject": "Objet",
     "tabName": "Messagerie",
     "to": "À",
+    "toMore": " et {{count}} de plus",
     "toPrefix": "À :",
     "trash": "Corbeille",
     "typeMessage": "Écrire un message...",

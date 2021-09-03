@@ -1,12 +1,11 @@
 import I18n from "i18n-js";
 import moment from "moment";
 import * as React from "react";
-import { View, StyleSheet, RefreshControl, Dimensions, FlatList } from "react-native";
+import { View, StyleSheet, RefreshControl, FlatList } from "react-native";
 import { NavigationDrawerProp } from "react-navigation-drawer";
 
-import { CommonStyles } from "../../../styles/common/styles";
 import { Icon, Loading } from "../../../ui";
-import { Header, LeftPanel, CenterPanel, PageContainer } from "../../../ui/ContainerContent";
+import { PageContainer } from "../../../ui/ContainerContent";
 import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
 import { EmptyScreen } from "../../../ui/EmptyScreen";
 import { GridAvatars } from "../../../ui/avatars/GridAvatars";
@@ -15,11 +14,10 @@ import { IInit } from "../containers/DrawerMenu";
 import { DraftType } from "../containers/NewMail";
 import { IMail } from "../state/mailContent";
 import { displayPastDate } from "../../../framework/util/date";
-import { findReceiversAvatars, findSenderAvatar } from "./MailItem";
 import theme from "../../../framework/util/theme";
 import moduleConfig from "../moduleConfig";
 import { ListItem } from "../../../framework/components/listItem";
-import { FontSize, LineHeight, TextLight, TextSemiBold } from "../../../framework/components/text";
+import { FontSize, LineHeight, TextSemiBold } from "../../../framework/components/text";
 
 type MailListProps = {
   notifications: any;
@@ -81,10 +79,6 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     }
   }
 
-  containerStyle = isChecked => {
-    return !isChecked ? null : styles.containerMailSelected;
-  };
-
   selectItem = mailInfos => {
     mailInfos.isChecked = !mailInfos.isChecked;
 
@@ -128,7 +122,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     const isFolderDrafts = navigationKey === "drafts";
     const isMailUnread = mailInfos.unread && !isFolderDrafts && !isFolderOutbox;
 
-    console.log("mailinfos", mailInfos);
+    // console.log("mailinfos", mailInfos);
 
     let contacts = [] as Array<[string | undefined, string]>
     if (!isFolderOutbox && !isFolderDrafts) {

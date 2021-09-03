@@ -5,22 +5,30 @@ import Toast from 'react-native-tiny-toast';
 import { NavigationScreenProp, NavigationActions, NavigationState } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { Viewport } from '@skele/components'
 
-import withViewTracking from '../../../infra/tracker/withViewTracking';
 import { standardNavScreenOptions } from '../../../navigation/helpers/navScreenOptions';
 import { CommonStyles } from '../../../styles/common/styles';
 import { Icon } from '../../../ui';
-import { PageContainer } from '../../../ui/ContainerContent';
-import { Text } from '../../../ui/Typography';
 import { Header as HeaderComponent } from '../../../ui/headers/Header';
 import { HeaderAction } from '../../../ui/headers/NewHeader';
 import { toggleReadAction, trashMailsAction, deleteMailsAction } from '../actions/mail';
 import { fetchMailContentAction } from '../actions/mailContent';
-import MailContent from '../components/MailContent';
 import MailContentMenu from '../components/MailContentMenu';
 import MoveModal from '../containers/MoveToFolderModal';
 import { getMailContentState } from '../state/mailContent';
 import { ThunkDispatch } from 'redux-thunk';
+import theme from '../../../framework/util/theme';
+
+import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
+import { FontSize, Text, TextSemiBold } from "../../../framework/components/text";
+
+import { Loading } from "../../../ui";
+import { PageContainer } from "../../../ui/ContainerContent";
+import { HtmlContentView } from "../../../ui/HtmlContentView";
+import { DraftType } from "../containers/NewMail";
+import moduleConfig from "../moduleConfig";
+import { RenderPJs, HeaderMail, FooterButton } from "../components/MailContentItems";
 
 class MailContentContainer extends React.PureComponent<{
   navigation: NavigationScreenProp<NavigationState>,
@@ -33,6 +41,7 @@ class MailContentContainer extends React.PureComponent<{
   isFetching: boolean,
   mail: any
 }, any> {
+  _subjectRef?: React.Ref<any> = undefined;
   constructor(props) {
     super(props);
 
@@ -40,6 +49,7 @@ class MailContentContainer extends React.PureComponent<{
       mailId: this.props.navigation.state.params?.mailId,
       showMenu: false,
       showModal: false,
+      showHeaderSubject: false
     };
   }
   public componentDidMount() {
@@ -139,6 +149,7 @@ class MailContentContainer extends React.PureComponent<{
     isCurrentFolderSentOrDrafts && menuData.splice(1, 1);
 
     // console.log("Container MailContent mail prop", mail, navigation.state.params);
+    const ViewportAwareSubject = Viewport.Aware(View)
 
     return (
       <>
@@ -146,6 +157,7 @@ class MailContentContainer extends React.PureComponent<{
           <HeaderComponent>
             <HeaderAction onPress={this.goBack} name="back" />
             <Text
+              numberOfLines={1}
               style={{
                 alignSelf: 'center',
                 color: 'white',
@@ -155,13 +167,40 @@ class MailContentContainer extends React.PureComponent<{
                 textAlign: 'center',
                 flex: 1,
               }}>
-              {mail.subject}
+              {this.state.showHeaderSubject ? mail.subject : ''}
             </Text>
             <TouchableOpacity onPress={this.showMenu}>
               <Icon name="more_vert" size={24} color="white" style={{ marginRight: 10 }} />
             </TouchableOpacity>
           </HeaderComponent>
-          <MailContent {...this.props} delete={this.delete} dispatch={this.props.dispatch} />
+
+          <PageContainer style={{ backgroundColor: theme.color.background.card }}>
+            {this.props.isFetching ? (
+              <Loading />
+            ) : (
+              <>
+                <Viewport.Tracker>
+                  <ScrollView style={{ flex: 1 }} scrollEventThrottle={16}>
+                    {this.props.mail.id && this.mailHeader()}
+                    <ViewportAwareSubject
+                      style={{ marginHorizontal: 12 }}
+                      onViewportEnter={() => this.updateVisible(true)}
+                      onViewportLeave={() => this.updateVisible(false)}
+                      innerRef={ref => (this._subjectRef = ref)}>
+                      <TextSemiBold
+                        style={{ fontSize: FontSize.Big }}
+                      >
+                        {this.props.mail.subject}
+                      </TextSemiBold>
+                    </ViewportAwareSubject>
+                    {this.props.mail.body !== undefined && this.mailContent()}
+                  </ScrollView>
+                </Viewport.Tracker>
+                {this.mailFooter()}
+              </>
+            )}
+          </PageContainer>
+
         </PageContainer>
         <MoveModal
           currentFolder={currentFolder}
@@ -173,6 +212,71 @@ class MailContentContainer extends React.PureComponent<{
         <MailContentMenu onClickOutside={this.showMenu} show={showMenu} data={menuData} />
       </>
     );
+  }
+
+  private mailFooter() {
+    return (
+      <SafeAreaView style={styles.footerAreaView}>
+        <View style={styles.containerFooter}>
+          <FooterButton
+            icon="reply"
+            text={I18n.t("conversation.reply")}
+            onPress={() =>
+              this.props.navigation.navigate(`${moduleConfig.routeName}/new`, {
+                type: DraftType.REPLY,
+                mailId: this.props.mail.id,
+                onGoBack: this.props.navigation.state.params.onGoBack,
+              })
+            }
+          />
+          <FooterButton
+            icon="reply_all"
+            text={I18n.t("conversation.replyAll")}
+            onPress={() =>
+              this.props.navigation.navigate(`${moduleConfig.routeName}/new`, {
+                type: DraftType.REPLY_ALL,
+                mailId: this.props.mail.id,
+                onGoBack: this.props.navigation.state.params.onGoBack,
+              })
+            }
+          />
+          <FooterButton
+            icon="forward"
+            text={I18n.t("conversation.forward")}
+            onPress={() =>
+              this.props.navigation.navigate(`${moduleConfig.routeName}/new`, {
+                type: DraftType.FORWARD,
+                mailId: this.props.mail.id,
+                onGoBack: this.props.navigation.state.params.onGoBack,
+              })
+            }
+          />
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  private updateVisible(isVisible: boolean) {
+    // console.log("updateVisible", isVisible);
+    if (this.state.showHeaderSubject && isVisible) this.setState({ showHeaderSubject: false })
+    else if (!this.state.showHeaderSubject && !isVisible) this.setState({ showHeaderSubject: true })
+  }
+
+  private mailContent() {
+    return (
+      <View style={{ flexGrow: 1, padding: 12, backgroundColor: theme.color.background.card }}>
+        {this.props.mail.body !== undefined && <HtmlContentView html={this.props.mail.body} />}
+        <View style={{ marginTop: 20 }} />
+        {this.props.mail.attachments && this.props.mail.attachments.length > 0 && (
+          <RenderPJs attachments={this.props.mail.attachments} mailId={this.props.mail.id} dispatch={this.props.dispatch} />
+        )}
+      </View>
+    );
+  }
+
+  private mailHeader() {
+    const currentFolder = this.props.navigation.getParam("currentFolder");
+    return <HeaderMail mailInfos={this.props.mail} currentFolder={currentFolder} />
   }
 }
 
@@ -187,15 +291,41 @@ const mapStateToProps: (state: any) => any = state => {
 };
 
 const mapDispatchToProps: (dispatch: any) => any = dispatch => {
-  return {...bindActionCreators(
-    {
-      fetchMailContentAction,
-      toggleRead: toggleReadAction,
-      trashMails: trashMailsAction,
-      deleteMails: deleteMailsAction,
-    },
-    dispatch
-  ), dispatch};
+  return {
+    ...bindActionCreators(
+      {
+        fetchMailContentAction,
+        toggleRead: toggleReadAction,
+        trashMails: trashMailsAction,
+        deleteMails: deleteMailsAction,
+      },
+      dispatch
+    ), dispatch
+  };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MailContentContainer);
+
+const styles = StyleSheet.create({
+  topBar: {
+    width: "100%",
+    height: 12,
+  },
+  shadowContainer: {
+    flexGrow: 1,
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    backgroundColor: "#FFF",
+  },
+  footerAreaView: {
+    backgroundColor: theme.color.background.card,
+    borderTopColor: theme.color.listItemBorder,
+    borderTopWidth: 1,
+  },
+  containerFooter: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    paddingTop: 16
+  },
+});
