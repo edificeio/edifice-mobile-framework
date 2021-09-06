@@ -5,7 +5,7 @@ import { IEventProps, EVENT_TYPE } from "../../types";
 import { IMenuItem } from "../types";
 import { layoutSize } from "../../styles/common/layoutSize";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { Text } from "../text";
+import { Text } from "../../framework/components/text";
 
 const Item = ({ onEvent, item, eventHandleData }: IEventProps & any) => {
   const { icon, text } = item as IMenuItem;

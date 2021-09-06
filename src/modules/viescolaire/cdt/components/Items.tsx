@@ -2,7 +2,7 @@ import * as React from "react";
 import { View } from "react-native";
 
 import { SquareCheckbox } from "../../../../ui/forms/Checkbox";
-import { TextBold, Text } from "../../../../ui/text";
+import { TextBold, Text } from "../../../../framework/components/text";
 import { LeftColoredItem } from "../../viesco/components/Item";
 
 export const HomeworkItem = ({ onPress, title, subtitle, checked, disabled, onChange, hideCheckbox }: any) => (

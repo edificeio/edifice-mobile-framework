@@ -6,7 +6,7 @@ import { View, StyleSheet, ScrollView } from "react-native";
 import { Icon } from "../../../../ui";
 import { PageContainer } from "../../../../ui/ContainerContent";
 import { HtmlContentView } from "../../../../ui/HtmlContentView";
-import { Text, TextBold } from "../../../../ui/text";
+import { Text, TextBold } from "../../../../framework/components/text";
 import { LeftColoredItem } from "../../viesco/components/Item";
 
 type homework = {

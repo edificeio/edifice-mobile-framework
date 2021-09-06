@@ -10,7 +10,7 @@ import { hasNotch } from "react-native-device-info";
 
 import theme from "../util/theme";
 import { Icon } from "./icon";
-import { FontWeight, rem, TextInverse } from "./text";
+import { FontWeightIOS, rem, TextInverse } from "./text";
 
 const HeaderMinHeight = 52;
 
@@ -149,10 +149,10 @@ export const HeaderAction = (props: IHeaderActionGenericProps | IHeaderActionCus
 export const HeaderTitle = styled(TextInverse)({
   textAlign: "center",
   textAlignVertical: "center",
-  fontWeight: FontWeight.Bold,
+  fontWeight: FontWeightIOS.Bold,
   fontSize: rem(16 / 14),
 });
 export const HeaderSubtitle = styled(HeaderTitle)({
-  fontWeight: FontWeight.Normal,
+  fontWeight: FontWeightIOS.Normal,
   fontSize: rem(14 / 14),
 });

@@ -7,7 +7,7 @@ import * as React from "react";
 import { View, ViewStyle, Dimensions, TouchableOpacity, Platform, Image, ImageURISource } from "react-native";
 import VideoPlayer from "react-native-video";
 import VideoPlayerAndroid from "react-native-video-player";
-import { TextItalic } from "./text";
+import { TextItalic } from "../framework/components/text";
 import { Loading } from "./Loading";
 import { MediaAction } from "./MediaAction";
 

@@ -9,7 +9,7 @@ import { PageContainer } from "../../../ui/ContainerContent";
 import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
 import { EmptyScreen } from "../../../ui/EmptyScreen";
 import { GridAvatars } from "../../../ui/avatars/GridAvatars";
-import { Text, TextBold } from "../../../ui/text";
+import { Text, TextBold, TextColorStyle } from "../../../framework/components/text";
 import { IInit } from "../containers/DrawerMenu";
 import { DraftType } from "../containers/NewMail";
 import { IMail } from "../state/mailContent";
@@ -17,7 +17,7 @@ import { displayPastDate } from "../../../framework/util/date";
 import theme from "../../../framework/util/theme";
 import moduleConfig from "../moduleConfig";
 import { ListItem } from "../../../framework/components/listItem";
-import { FontSize, LineHeight, TextSemiBold } from "../../../framework/components/text";
+import { TextSemiBold, TextSizeStyle } from "../../../framework/components/text";
 
 type MailListProps = {
   notifications: any;
@@ -152,7 +152,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
                   {isFolderOutbox || isFolderDrafts ? <Text style={{ color: textContactPrefixColor }}>{I18n.t('conversation.toPrefix') + ' '}</Text> : null}
                   <TextContactComponent
                     numberOfLines={1}
-                    style={{ color: isFolderDrafts ? theme.color.warning : undefined, flex: 1 }}
+                    style={{ ...(isFolderDrafts ? TextColorStyle.Warning : {}), flex: 1 }}
                   >{contacts.map(c => c[1]).join(', ')}</TextContactComponent>
                 </>
               })()}
@@ -168,7 +168,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
                   // const TextBodyComponent = isMailUnread ? TextSemiBold : Text;
                   // const textBodyColor = isMailUnread ? theme.color.text.regular : theme.color.text.light;
                   return <>
-                    <TextSubjectComponent style={{ marginTop: 4, flex: 1, color: textSubjectColor, fontSize: FontSize.Small, lineHeight: LineHeight.Small }} numberOfLines={1}>
+                    <TextSubjectComponent style={{ marginTop: 4, flex: 1, color: textSubjectColor, ...TextSizeStyle.Small }} numberOfLines={1}>
                       {mailInfos.subject}
                     </TextSubjectComponent>
                     {/* <TextBodyComponent style={{ flex: 1, color: textBodyColor, fontSize: FontSize.Small, lineHeight: LineHeight.Small }} numberOfLines={1}>

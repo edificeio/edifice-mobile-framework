@@ -15,7 +15,7 @@ import * as React from "react";
 import HtmlToText from "../../infra/htmlConverter/text";
 import { CommonStyles } from "../../styles/common/styles";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
-import { Text } from "../../ui/text";
+import { Text } from "../../framework/components/text";
 import { A } from "../../ui/Typography";
 
 export interface IHomeworkCardProps {

@@ -13,7 +13,8 @@ import style from "glamorous-native";
 import * as React from "react";
 const { View } = style;
 import { CommonStyles } from "../../styles/common/styles";
-import { Text, TextColor } from "../../ui/text";
+import { Text } from "../../framework/components/text";
+import theme from "../../framework/util/theme";
 
 export interface IHomeworkCircleNumberProps {
   style?: any;
@@ -51,7 +52,7 @@ export const HomeworkCircleNumber = ({
 
   return (
     <View style={[homeworkCircleNumberStyle, backgroundStyle, style]}>
-      <Text color={active ? TextColor.Inverse : TextColor.Light} fontSize={12}>
+      <Text color={active ? theme.color.text.inverse : theme.color.text.light} fontSize={12}>
         {nb}
       </Text>
     </View>

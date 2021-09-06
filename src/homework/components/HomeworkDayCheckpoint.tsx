@@ -12,7 +12,8 @@
 import style from "glamorous-native";
 import * as React from "react";
 const { View } = style;
-import { Text, TextColor } from "../../ui/text";
+import { Text } from "../../framework/components/text";
+import theme from "../../framework/util/theme";
 import { CommonStyles } from "../../styles/common/styles";
 
 import HomeworkCircleNumber from "./HomeworkCircleNumber";
@@ -42,7 +43,7 @@ export const HomeworkDayCheckpoint = ({
     <View 
       style={{ flex: 1, paddingBottom: 15, marginBottom: -15, paddingLeft: 5, marginLeft: -5, backgroundColor: CommonStyles.lightGrey}}
     >
-      <Text color={TextColor.Light} fontSize={12}>
+      <Text color={theme.color.text.light} fontSize={12}>
         {text.toUpperCase()}
       </Text>
     </View>

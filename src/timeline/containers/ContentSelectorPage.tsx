@@ -12,7 +12,6 @@ import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { FlatList } from "react-native-gesture-handler";
 import { ListItem, LeftPanel, CenterPanel, RightPanel } from "../../myAppMenu/components/NewContainerContent";
 import { GridAvatars } from "../../ui/avatars/GridAvatars";
-import { FontWeight } from "../../ui/text";
 import { CommonStyles } from "../../styles/common/styles";
 import { Icon } from "../../ui/icons/Icon";
 import CustomTouchableOpacity from "../../ui/CustomTouchableOpacity";
@@ -25,8 +24,8 @@ import { getAuthHeader } from "../../infra/oauth";
 import { fetchPublishableBlogsAction } from "../actions/publish";
 import { Loading } from "../../ui/Loading";
 import { EmptyScreen } from "../../ui/EmptyScreen";
-import { traceProps } from "../../utils/debugPropTrace";
 import withViewTracking from "../../infra/tracker/withViewTracking";
+import { FontStyle } from "../../framework/components/text";
 
 export interface IContentSelectorPageDataProps {
   blogs: IBlogList;
@@ -161,7 +160,7 @@ const BlogTitle = style.text(
     color: CommonStyles.textColor,
     fontFamily: CommonStyles.primaryFontFamily,
     fontSize: 14,
-    fontWeight: FontWeight.SemiBold
+    ...FontStyle.SemiBold
   }
 );
 
@@ -169,7 +168,7 @@ export const Content = style.text({
   color: CommonStyles.iconColorOff,
   fontFamily: CommonStyles.primaryFontFamily,
   fontSize: 12,
-  fontWeight: FontWeight.Light,
+  ...FontStyle.Light,
   marginTop: 10
 });
 

@@ -8,7 +8,7 @@ import { INavigationProps } from "../../../../types";
 import { Icon, Loading } from "../../../../ui";
 import TouchableOpacity from "../../../../ui/CustomTouchableOpacity";
 import { EmptyScreen } from "../../../../ui/EmptyScreen";
-import { Text, TextBold } from "../../../../ui/text";
+import { Text, TextBold } from "../../../../framework/components/text";
 import { HomeworkItem } from "../../cdt/components/Items";
 import { DenseDevoirList } from "../../competences/components/Item";
 import { ILevelsList } from "../../competences/state/competencesLevels";

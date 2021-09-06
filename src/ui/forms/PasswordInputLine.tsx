@@ -1,7 +1,7 @@
 import * as React from "react";
 import { View, TouchableOpacity, Platform } from "react-native";
 import { TextInputLine, TextInputLineProps } from "./TextInputLine";
-import { TextColor } from "../text";
+import { TextColorStyle } from "../../framework/components/text";
 import { Icon } from "..";
 
 export class PasswordInputLine extends React.Component<
@@ -47,7 +47,7 @@ export class PasswordInputLine extends React.Component<
               position: "absolute",
               right: 8,
             }}>
-            <Icon name={this.state.hide ? iconShow : iconHide} size={16} color={TextColor.Normal} />
+            <Icon name={this.state.hide ? iconShow : iconHide} size={16} style={{ ...TextColorStyle.Normal }} />
           </TouchableOpacity>
         ) : null}
       </View>

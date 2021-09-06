@@ -21,7 +21,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import theme from '../../../framework/util/theme';
 
 import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
-import { FontSize, Text, TextSemiBold } from "../../../framework/components/text";
+import { Text, TextSemiBold, TextSizeStyle } from "../../../framework/components/text";
 
 import { Loading } from "../../../ui";
 import { PageContainer } from "../../../ui/ContainerContent";
@@ -188,7 +188,7 @@ class MailContentContainer extends React.PureComponent<{
                       onViewportLeave={() => this.updateVisible(false)}
                       innerRef={ref => (this._subjectRef = ref)}>
                       <TextSemiBold
-                        style={{ fontSize: FontSize.Big }}
+                        style={{ ...TextSizeStyle.Big }}
                       >
                         {this.props.mail.subject}
                       </TextSemiBold>

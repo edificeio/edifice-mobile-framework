@@ -5,112 +5,137 @@
  * Don't forget to use <NestedText> instead of <Text> for nested text styles.
  */
 
-import { ColorValue, Text as RNText } from "react-native";
+import { Platform, Text as RNText, TextStyle } from "react-native";
 import styled from "@emotion/native";
 import theme from "../util/theme";
 
+console.log("test font begin")
+
 /**
- * Font weights defined in this font family
+ * Base font properties
  */
-export enum FontWeight {
-    Normal = "400",
-    Light = "200",
-    SemiBold = "600",
-    Bold = "700",
+const fontFamilyIOS = "Open Sans";
+const fontFamilyPrefixAndroid = "opensans_";
+const baseFontSize = 14;
+const baseLineHeight = 20;
+
+/**
+ * Font variations
+ */
+export const FontWeightIOS = {
+    Normal: "400",
+    Light: "300",
+    SemiBold: "600",
+    Bold: "700",
 }
 
-/**
- * Main font properties of Pocket
- */
-export const fontFamily = "OpenSans-Regular";
-export const fontSize = 14;
-export const lineHeight = 20;
+type FontStyleKey = 'Regular' | 'Italic' | 'Bold' | 'BoldItalic' | 'SemiBold' | 'SemiBoldItalic' | 'Light' | 'LightItalic';
+export const FontStyle = Platform.select({
+    ios: {
+        Regular: { fontFamily: fontFamilyIOS },
+        Italic: { fontFamily: fontFamilyIOS, fontStyle: "italic" },
+        Bold: { fontFamily: fontFamilyIOS, fontWeight: FontWeightIOS.Bold },
+        BoldItalic: { fontFamily: fontFamilyIOS, fontWeight: FontWeightIOS.Bold, fontStyle: "italic" },
+        SemiBold: { fontFamily: fontFamilyIOS, fontWeight: FontWeightIOS.SemiBold },
+        SemiBoldItalic: { fontFamily: fontFamilyIOS, fontWeight: FontWeightIOS.SemiBold, fontStyle: "italic" },
+        Light: { fontFamily: fontFamilyIOS, fontWeight: FontWeightIOS.Light },
+        LightItalic: { fontFamily: fontFamilyIOS, fontWeight: FontWeightIOS.Light, fontStyle: "italic" },
+    },
+    android: {
+        Regular: { fontFamily: fontFamilyPrefixAndroid + "regular" },
+        Italic: { fontFamily: fontFamilyPrefixAndroid + "italic" },
+        Bold: { fontFamily: fontFamilyPrefixAndroid + "bold" },
+        BoldItalic: { fontFamily: fontFamilyPrefixAndroid + "bolditalic" },
+        SemiBold: { fontFamily: fontFamilyPrefixAndroid + "semibold" },
+        SemiBoldItalic: { fontFamily: fontFamilyPrefixAndroid + "semibolditalic" },
+        Light: { fontFamily: fontFamilyPrefixAndroid + "light" },
+        LightItalic: { fontFamily: fontFamilyPrefixAndroid + "lightitalic" },
+    }
+})! as { [key in FontStyleKey]: TextStyle };
+
+type TextColorStyleKey = 'Action' | 'Error' | 'Warning' | 'Inverse' | 'Light' | 'Heavy' | 'Normal';
+export const TextColorStyle = {
+    Action: { color: theme.color.secondary.regular },
+    Error: { color: theme.color.failure },
+    Warning: { color: theme.color.warning },
+    Inverse: { color: theme.color.text.inverse },
+    Light: { color: theme.color.text.light },
+    Heavy: { color: theme.color.text.heavy },
+    Normal: { color: theme.color.text.regular }
+} as { [key in TextColorStyleKey]: TextStyle };
+
+export const rem = (value: number) => baseFontSize * value;
+export const remlh = (value: number) => baseLineHeight * value;
+export const remStyle = (value: number) => ({ fontSize: rem(value), lineHeight: remlh(value) });
+type TextSizeStyleKey = 'Tiny' | 'Small' | 'Normal' | 'Big' | 'Huge';
+export const TextSizeStyle = {
+    Tiny: remStyle(10 / 14),
+    Small: remStyle(12 / 14),
+    Normal: remStyle(1),
+    Big: remStyle(16 / 14),
+    Huge: remStyle(2),
+} as { [key in TextSizeStyleKey]: TextStyle };
 
 /**
- * Main text colors
+ * Font components
  */
-export const TextColor: {[k in 'Action' | 'Error' | 'Warning' | 'Inverse' | 'Light' | 'Heavy' | 'Normal']: ColorValue} = {
-    Action: theme.color.secondary.regular,
-    Error: theme.color.failure,
-    Warning: theme.color.warning,
-    Inverse: theme.color.text.inverse,
-    Light: theme.color.text.light,
-    Heavy: theme.color.text.heavy,
-    Normal: theme.color.text.regular
-};
-
-/**
- * Compute font size
- */
-export const rem = (ratio: number) => fontSize * ratio;
-
-export enum FontSize { // in rem
-    Tiny = rem(10 / 14),
-    Small = rem(12 / 14),
-    Normal = rem(1),
-    Big = rem(16 / 14),
-    Huge = rem(2)
-}
-export enum LineHeight {
-    Tiny = rem((20 / 14) * (10 / 14)),
-    Small = rem((20 / 14) * (12 / 14)),
-    Normal = rem((20 / 14) * 1),
-    Big = rem((20 / 14) * (16 / 14)),
-    Huge = rem((20 / 14) * 2)
-}
 
 export const Text = styled.Text({
-    fontFamily, fontSize, lineHeight, color: TextColor.Normal
-})
+    ...FontStyle.Regular, ...TextSizeStyle.Normal, ...TextColorStyle.Normal
+});
 export const NestedText = RNText;
 
 export const TextBold = styled(Text)({
-    fontWeight: FontWeight.Bold,
-    color: TextColor.Heavy
-})
+    ...FontStyle.Bold, ...TextColorStyle.Heavy
+});
 export const NestedTextBold = styled.Text({
-    fontWeight: FontWeight.Bold,
-    color: TextColor.Heavy
+    ...FontStyle.Bold, ...TextColorStyle.Heavy
 })
 
 export const TextSemiBold = styled(Text)({
-    fontWeight: FontWeight.SemiBold,
-    color: TextColor.Normal
+    ...FontStyle.SemiBold, ...TextColorStyle.Normal
 })
 export const NestedTextSemiBold = styled.Text({
-    fontWeight: FontWeight.SemiBold,
-    color: TextColor.Normal
+    ...FontStyle.SemiBold, ...TextColorStyle.Normal
 })
 
 export const TextItalic = styled(Text)({
-    fontStyle: 'italic'
+    ...FontStyle.Italic
 })
 export const NestedTextItalic = styled.Text({
-    fontStyle: 'italic'
+    ...FontStyle.Italic
 })
 
 export const TextLight = styled(Text)({
-    fontWeight: FontWeight.Light,
-    color: TextColor.Light
+    ...FontStyle.Light, ...TextColorStyle.Light
 })
 export const NestedTextLight = styled.Text({
-    fontWeight: FontWeight.Light,
-    color: TextColor.Light
+    ...FontStyle.Light, ...TextColorStyle.Light
+})
+
+export const TextLightItalic = styled(TextLight)({
+    ...FontStyle.LightItalic
+})
+export const NestedTextLightItalic = styled(NestedTextLight)({
+    ...FontStyle.LightItalic
 })
 
 export const TextInverse = styled(Text)({
-    color: TextColor.Inverse
+    ...TextColorStyle.Inverse
 })
 export const NestedTextInverse = styled.Text({
-    color: TextColor.Inverse
+    ...TextColorStyle.Inverse
 })
 
 export const H1 = styled(Text)({
-    fontWeight: FontWeight.SemiBold,
-    color: theme.color.secondary.regular,
+    ...FontStyle.SemiBold,
+    ...TextColorStyle.Normal,
     fontSize: 18,
 })
 
 export const TextAction = styled(Text)({
-    color: TextColor.Action,
+    ...TextColorStyle.Action,
+})
+export const NestedTextAction = styled.Text({
+    ...TextColorStyle.Action,
 })

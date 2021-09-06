@@ -12,7 +12,7 @@ import { Icon } from "../../framework/components/icon";
 import { ListItem } from "../../framework/components/listItem";
 import { LoadingIndicator } from "../../framework/components/loading";
 import { PageView } from "../../framework/components/page";
-import { FontSize, Text, TextAction, TextLight } from "../../framework/components/text";
+import { Text, TextAction, TextSizeStyle } from "../../framework/components/text";
 import { getDefaultPushNotifsSettingsByType, getPushNotifsSettingsByType, IPushNotifsSettingsByType, ITimeline_State } from "../../framework/modules/timelinev2/reducer";
 import { IPushNotifsSettings } from "../../framework/modules/timelinev2/reducer/notifSettings/pushNotifsSettings";
 import theme from "../../framework/util/theme";
@@ -139,7 +139,7 @@ export class PushNotifsSettingsScreen extends React.PureComponent<
 				}
 				rightElement={
 					<View style={{flexDirection: 'row'}}>
-						<TextAction style={{ fontSize: FontSize.Small }}>{I18n.t(
+						<TextAction style={{ ...TextSizeStyle.Small }}>{I18n.t(
 							`user.pushNotifsSettingsScreen.countOutOfTotal`, {
 							count: totalOn,
 							total

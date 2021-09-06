@@ -4,7 +4,7 @@ import { TouchableOpacity, FlatList } from "react-native-gesture-handler";
 
 import { CommonStyles, IOSShadowStyle } from "../../../styles/common/styles";
 import { SingleAvatar } from "../../../ui/avatars/SingleAvatar";
-import { Text } from "../../../ui/text";
+import { Text } from "../../../framework/components/text";
 import { newMailService } from "../service/newMail";
 
 const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, autoFocus }) => {

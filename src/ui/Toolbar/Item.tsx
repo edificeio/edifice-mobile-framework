@@ -3,7 +3,7 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 import I18n from "i18n-js";
 import { EVENT_TYPE } from "../../types";
 import { DEVICE_WIDTH, layoutSize } from "../../styles/common/layoutSize";
-import { Text } from "../text";
+import { Text } from "../../framework/components/text";
 import { CommonStyles } from "../../styles/common/styles";
 import { Icon } from "..";
 

@@ -8,7 +8,7 @@ import { INavigationProps } from "../../../../types";
 import { PageContainer } from "../../../../ui/ContainerContent";
 import DateTimePicker from "../../../../ui/DateTimePicker";
 import { EmptyScreen } from "../../../../ui/EmptyScreen";
-import { Text, TextBold } from "../../../../ui/text";
+import { Text, TextBold } from "../../../../framework/components/text";
 import { isHomeworkDone, homeworkDetailsAdapter, sessionDetailsAdapter, getTeacherName } from "../../utils/cdt";
 import ChildPicker from "../../viesco/containers/ChildPicker";
 import { ISession } from "../state/sessions";

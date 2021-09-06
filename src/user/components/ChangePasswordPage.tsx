@@ -14,7 +14,7 @@ import { getSessionInfo } from "../../App";
 import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { Dispatch } from "redux";
 import { NoTouchableContainer } from "../../ui/ButtonLine";
-import { Text } from "../../ui/text";
+import { Text } from "../../framework/components/text";
 
 // TYPES ------------------------------------------------------------------------------------------
 

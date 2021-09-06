@@ -5,7 +5,7 @@ import Swipeable from "react-native-swipeable";
 import { CommonStyles } from "../../../../styles/common/styles";
 import TouchableOpacity from "../../../../ui/CustomTouchableOpacity";
 import { Icon } from "../../../../ui/icons/Icon";
-import { Text } from "../../../../ui/text";
+import { Text } from "../../../../framework/components/text";
 
 type Student = {
   birth_date: string;

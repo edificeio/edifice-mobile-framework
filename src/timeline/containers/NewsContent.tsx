@@ -25,7 +25,7 @@ import {
 } from "../../ui/Modal";
 import { A, Italic, TextBright } from "../../ui/Typography";
 import { HeaderBackAction } from "../../ui/headers/NewHeader";
-import { FontWeight } from "../../ui/text";
+import { FontStyle } from "../../framework/components/text";
 import NewsTopInfo from "../components/NewsTopInfo";
 import { ListItem, LeftPanel, CenterPanel } from "../../myAppMenu/components/NewContainerContent";
 import { getSessionInfo } from "../../App";
@@ -651,7 +651,7 @@ const CommentAuthor = style.text(
     color: CommonStyles.textColor,
     fontFamily: CommonStyles.primaryFontFamily,
     fontSize: 12,
-    fontWeight: FontWeight.SemiBold,
+    ...FontStyle.SemiBold,
     marginRight: 5,
   }
 );
@@ -661,7 +661,7 @@ const CommentDate = style.text(
     color: CommonStyles.lightTextColor,
     fontFamily: CommonStyles.primaryFontFamily,
     fontSize: 10,
-    fontWeight: FontWeight.Light,
+    ...FontStyle.Light,
   }
 );
 

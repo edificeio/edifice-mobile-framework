@@ -10,7 +10,7 @@ import { CenterPanel, Header, LeftPanel } from "../../ui/ContainerContent";
 import { Light } from "../../ui/Typography";
 import { CommonStyles } from "../../styles/common/styles";
 import { getSessionInfo } from "../../App";
-import { TextColor } from "../../ui/text";
+import { TextColorStyle } from "../../framework/components/text";
 import { BadgeAvatar } from "../../ui/BadgeAvatar";
 import { HtmlContentView } from "../../ui/HtmlContentView";
 
@@ -64,7 +64,7 @@ export default ({
           {sender && sender.displayName}
           {" "}
           {sender && sender.id === getSessionInfo().userId
-            ? <Text style={{color: TextColor.Light}}>{I18n.t("me-indicator")}</Text>
+            ? <Text style={{...TextColorStyle.Light}}>{I18n.t("me-indicator")}</Text>
             : null
           }
         </Light>
@@ -86,7 +86,7 @@ export default ({
             },
           }}
         />
-        <Text style={{ color: TextColor.Light, fontSize: 12}}>
+        <Text style={{ ...TextColorStyle.Light, fontSize: 12}}>
           {moment(date).fromNow()}
         </Text>
       </CenterPanel>

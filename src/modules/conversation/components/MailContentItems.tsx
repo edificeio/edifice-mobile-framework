@@ -14,7 +14,7 @@ import { IDistantFileWithId, SyncedFileWithId } from "../../../framework/util/fi
 import { ThunkDispatch } from "redux-thunk";
 import { downloadFileAction } from "../../../framework/util/fileHandler/actions";
 import { ListItem } from "../../../framework/components/listItem";
-import { FontSize, LineHeight, NestedText, Text, TextSemiBold } from "../../../framework/components/text";
+import { NestedText, Text, TextColorStyle, TextSemiBold, TextSizeStyle } from "../../../framework/components/text";
 
 const User = ({ userId, userName }) => {
   const [dotColor, setDotColor] = React.useState(getProfileColor("Guest"));
@@ -24,7 +24,7 @@ const User = ({ userId, userName }) => {
   return (
     <View style={{ flexDirection: "row", marginLeft: 4, alignItems: 'baseline' }} key={userId}>
       <View style={[styles.dotReceiverColor, { backgroundColor: dotColor }]} />
-      <Text style={{ fontSize: FontSize.Small, lineHeight: LineHeight.Small }}>{userName}</Text>
+      <Text style={{ ...TextSizeStyle.Small }}>{userName}</Text>
     </View>
   );
 };
@@ -132,7 +132,7 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
                   sender={mailInfos.from}
                 />
               ) :
-                <Text style={{ marginTop: 4, flex: 0, color: theme.color.text.regular, fontSize: FontSize.Small, lineHeight: LineHeight.Small }} numberOfLines={1}>
+                <Text style={{ marginTop: 4, flex: 0, ...TextColorStyle.Normal, ...TextSizeStyle.Small }} numberOfLines={1}>
                   <NestedText style={{ color: styles.greyColor.color }}>{I18n.t('conversation.toPrefix') + ' '}</NestedText>
                   <NestedText style={{ color: theme.color.secondary.regular }}>
                     {contactTo[1]}
@@ -247,8 +247,7 @@ const styles = StyleSheet.create({
   },
   greyColor: {
     color: "#AFAFAF",
-    fontSize: FontSize.Small,
-    lineHeight: LineHeight.Small
+    ...TextSizeStyle.Small
   },
   mailInfos: {
     paddingLeft: 12,

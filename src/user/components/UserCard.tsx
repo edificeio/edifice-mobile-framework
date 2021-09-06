@@ -2,7 +2,7 @@ import { View, TouchableOpacity as RNTouchableOpacity } from "react-native";
 import * as React from "react";
 import I18n from "i18n-js";
 import { Avatar, Size } from "../../ui/avatars/Avatar";
-import { Text, TextBold, TextColor } from "../../ui/text";
+import { Text, TextBold, TextColorStyle, TextSizeStyle } from "../../framework/components/text";
 import { Icon } from "../../ui/icons/Icon";
 import { CommonStyles } from "../../styles/common/styles";
 import { IconButton } from "../../ui/IconButton";
@@ -46,7 +46,7 @@ export const UserCard = ({
       backgroundColor: CommonStyles.profileTypes[type] || CommonStyles.lightGrey
     }}
       key={type}></View>
-    <Text color={TextColor.Light} fontSize={12}>{I18n.t(`profileTypes.${type}`)}</Text>
+    <Text style={{ ...TextColorStyle.Light, ...TextSizeStyle.Small }}>{I18n.t(`profileTypes.${type}`)}</Text>
   </View>;
 
   const renderActions = (hasAvatar: boolean, onChangeAvatar: (image: ImagePicked) => void, onDeleteAvatar) =>

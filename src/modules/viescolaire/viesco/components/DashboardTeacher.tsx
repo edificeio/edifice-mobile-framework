@@ -6,7 +6,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { CommonStyles } from "../../../../styles/common/styles";
 import ConnectionTrackingBar from "../../../../ui/ConnectionTrackingBar";
 import { PageContainer } from "../../../../ui/ContainerContent";
-import { Text } from "../../../../ui/text";
+import { Text } from "../../../../framework/components/text";
 import CallList from "../../presences/containers/TeacherCallList";
 import { BottomColoredItem } from "../components/Item";
 import StructurePicker from "../containers/StructurePicker";

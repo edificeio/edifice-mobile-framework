@@ -31,7 +31,7 @@ import { navigate } from "../../navigation/helpers/navHelper";
 import { CommonStyles } from "../../styles/common/styles";
 import BottomSwitcher from "../../ui/BottomSwitcher";
 import { PasswordInputLine } from "../../ui/forms/PasswordInputLine";
-import { Text, TextColor, TextBold } from "../../ui/text";
+import { Text, TextBold, TextColorStyle, TextSizeStyle } from "../../framework/components/text";
 import { PLATFORM_STORAGE_KEY } from "../actions/platform";
 import {
   checkVersionThenLogin,
@@ -226,7 +226,7 @@ export class LoginPage extends React.Component<
               hasError={(error && !typing) as boolean}
             />
             <View style={{ flexDirection: "row", alignSelf: "flex-end", marginTop: 20 }}>
-              <Text style={{ marginRight: 10, color: TextColor.Normal, fontSize: 12 }}>{I18n.t("RememberMe")}</Text>
+              <Text style={{ marginRight: 10, ...TextColorStyle.Normal, ...TextSizeStyle.Small }}>{I18n.t("RememberMe")}</Text>
               <Toggle
                 checked={rememberMe}
                 onCheck={() => this.setState({ rememberMe: true })}
@@ -265,8 +265,7 @@ export class LoginPage extends React.Component<
                 }}
               >
                 <Text
-                  color={TextColor.Light}
-                  style={{ textDecorationLine: "underline", marginTop: 48 }}
+                  style={{ textDecorationLine: "underline", marginTop: 48, ...TextColorStyle.Light }}
                   onPress={() => {
                     navigate("Forgot", {forgotId: false});
                   }}
@@ -274,8 +273,7 @@ export class LoginPage extends React.Component<
                   {I18n.t("forgot-password")}
                 </Text>
                 <Text
-                  color={TextColor.Light}
-                  style={{ textDecorationLine: "underline", marginTop: 20 }}
+                  style={{ textDecorationLine: "underline", marginTop: 20, ...TextColorStyle.Light }}
                   onPress={() => {
                     navigate("Forgot", {forgotId: true});
                   }}
@@ -287,7 +285,7 @@ export class LoginPage extends React.Component<
                     textDecorationLine: "underline",
                     marginTop: 48,
                     textAlign: "center",
-                    color: error ? CommonStyles.profileTypes.Student : TextColor.Light
+                    color: error ? CommonStyles.profileTypes.Student : theme.color.text.light
                   }}
                   onPress={() => {
                     navigate("FederatedAccount");

@@ -6,7 +6,7 @@ import { NavigationActions } from "react-navigation";
 
 import { Icon, Loading } from "../../../../ui";
 import { EmptyScreen } from "../../../../ui/EmptyScreen";
-import { TextBold } from "../../../../ui/text";
+import { TextBold } from "../../../../framework/components/text";
 import { HomeworkItem } from "../../cdt/components/Items";
 import { DenseDevoirList } from "../../competences/components/Item";
 import { ILevelsList } from "../../competences/state/competencesLevels";

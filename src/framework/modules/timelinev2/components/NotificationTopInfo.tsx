@@ -13,7 +13,7 @@ import { HtmlContentView } from "../../../../ui/HtmlContentView";
 import { APPBADGES } from "../appBadges";
 import { ITimelineNotification } from "../../../util/notifications";
 import theme from "../../../util/theme";
-import { FontWeight } from "../../../components/text";
+import { FontStyle } from "../../../components/text";
 import { getUserSession, IUserSession } from "../../../util/session";
 import { IGlobalState } from "../../../../AppStore";
 import { displayPastDate } from "../../../util/date";
@@ -61,7 +61,7 @@ const NotificationTopInfo = ({ notification, session }: { notification: ITimelin
               fontWeight: "400"
             },
             linkTextStyle: {
-              fontWeight: FontWeight.SemiBold,
+              ...FontStyle.SemiBold,
               color: theme.color.text.heavy
             }
           }}

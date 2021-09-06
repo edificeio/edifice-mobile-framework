@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 
 import { Icon } from "../../ui";
-import { TextH1, TextColor } from "../../ui/text";
+import { H1, TextColorStyle } from "../../framework/components/text";
 import { TouchCard } from "../../ui/Card";
 import { checkHasIcon } from "../../ui/icons/Icon";
 import { layoutSize} from "../../styles/common/layoutSize";
@@ -20,7 +20,7 @@ const MyAppItemStyle = StyleSheet.create({
     justifyContent: "space-evenly",
   },
   textStyle: {
-    color: TextColor.Normal,
+    ...TextColorStyle.Normal,
     fontSize: layoutSize.LAYOUT_14,
     textAlign:"center",
     marginBottom: 0,
@@ -46,7 +46,7 @@ export default (props: IMyAppItem) => {
           size={layoutSize.LAYOUT_50}
           name={checkHasIcon(props.iconName) ? props.iconName : props.iconName + "-on"}
         />
-        <TextH1 style={MyAppItemStyle.textStyle}>{props.displayName}</TextH1>
+        <H1 style={MyAppItemStyle.textStyle}>{props.displayName}</H1>
       </TouchCard>
       </View>
   );

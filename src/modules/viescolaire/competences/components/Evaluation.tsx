@@ -8,7 +8,7 @@ import { Loading } from "../../../../ui";
 import { PageContainer } from "../../../../ui/ContainerContent";
 import Dropdown from "../../../../ui/Dropdown";
 import { EmptyScreen } from "../../../../ui/EmptyScreen";
-import { Text, TextBold } from "../../../../ui/text";
+import { Text, TextBold } from "../../../../framework/components/text";
 import ChildPicker from "../../viesco/containers/ChildPicker";
 import { IPeriodsList } from "../../viesco/state/periods";
 import { ILevelsList } from "../state/competencesLevels";

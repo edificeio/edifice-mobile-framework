@@ -7,7 +7,7 @@ import { View, Platform, ViewStyle } from "react-native";
 import { Icon, ButtonsOkCancel } from ".";
 import TouchableOpacity from "./CustomTouchableOpacity";
 import { ModalContent, ModalBox, ModalContentBlock, ModalContentText } from "./Modal";
-import { Text } from "./text";
+import { Text } from "../framework/components/text";
 
 const IconButton = ({
   icon,

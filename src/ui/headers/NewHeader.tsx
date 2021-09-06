@@ -5,7 +5,7 @@ import { CommonStyles } from "../../styles/common/styles";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { NavigationScreenProp, NavigationActions } from "react-navigation";
 import { ViewStyle, View } from "react-native";
-import { Text } from "../text";
+import { Text } from "../../framework/components/text";
 
 // HEADER ICON
 const HeaderIconStyle: ViewStyle = {

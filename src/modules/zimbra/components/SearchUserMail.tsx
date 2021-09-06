@@ -3,7 +3,7 @@ import { TextInput, View, ViewStyle, Dimensions } from "react-native";
 import { TouchableOpacity, FlatList } from "react-native-gesture-handler";
 
 import { CommonStyles, IOSShadowStyle } from "../../../styles/common/styles";
-import { Text } from "../../../ui/text";
+import { Text } from "../../../framework/components/text";
 import { newMailService } from "../service/newMail";
 import { getProfileColor } from "../utils/userColor";
 

@@ -10,7 +10,7 @@ import { Header, LeftPanel, CenterPanel, PageContainer } from "../../../ui/Conta
 import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
 import { EmptyScreen } from "../../../ui/EmptyScreen";
 import { SingleAvatar } from "../../../ui/avatars/SingleAvatar";
-import { Text, TextBold } from "../../../ui/text";
+import { Text, TextBold } from "../../../framework/components/text";
 import { IInit } from "../containers/DrawerMenu";
 import { DraftType } from "../containers/NewMail";
 import { IMail } from "../state/mailContent";

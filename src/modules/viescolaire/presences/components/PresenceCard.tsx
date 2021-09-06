@@ -2,7 +2,7 @@ import I18n from "i18n-js";
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 
-import { Text, NestedText, TextBold, NestedTextBold } from "../../../../ui/text";
+import { Text, NestedText, TextBold, NestedTextBold } from "../../../../framework/components/text";
 import { BottomColoredItem } from "../../viesco/components/Item";
 
 const colors = {

@@ -4,7 +4,7 @@ import { View, StyleSheet } from "react-native";
 
 import ButtonOk from "../../../../ui/ConfirmDialog/buttonOk";
 import { ModalBox } from "../../../../ui/Modal";
-import { Text } from "../../../../ui/text";
+import { Text } from "../../../../framework/components/text";
 
 export default class NotificationsModal extends React.PureComponent<
   { modal: boolean; onClose?: any; data: any },

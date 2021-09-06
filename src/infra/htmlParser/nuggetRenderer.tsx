@@ -17,13 +17,13 @@ import {
   NestedText,
   NestedTextBold,
   NestedTextItalic,
-  NestedTextLink,
+  NestedTextAction,
   Text,
   TextBold,
-  TextColor,
   TextItalic,
-  TextLink
-} from "../../ui/text";
+  TextAction,
+  TextColorStyle
+} from "../../framework/components/text";
 import { IFrame } from "../../ui/IFrame";
 import { DEPRECATED_signImagesUrls, DEPRECATED_signImageURISource, signURISource, transformedSrc } from "../oauth";
 
@@ -186,7 +186,7 @@ function renderParseText(
 ): JSX.Element {
   // -1 - Default opts
   textStyles = {
-    [HtmlParserJsxTextVariant.Link]: { color: TextColor.Action },
+    [HtmlParserJsxTextVariant.Link]: { ...TextColorStyle.Action },
     ...textStyles
   };
   // console.log("textStyles", textStyles);
@@ -258,7 +258,7 @@ function renderParseText(
         </UnderlineTextComp>
       );
     case HtmlParserJsxTextVariant.Link:
-      const LinkTextComp = nested ? NestedTextLink : TextLink;
+      const LinkTextComp = nested ? NestedTextAction : TextAction;
       return (
         <LinkTextComp
           key={key}

@@ -10,7 +10,7 @@ import { View, ScrollView, KeyboardAvoidingView, Platform, Keyboard } from 'reac
 import { Icon, Loading } from '../../ui';
 import { HeaderBackAction, HeaderAction } from '../../ui/headers/NewHeader';
 import { GridAvatars } from '../../ui/avatars/GridAvatars';
-import { TextBold, TextLight } from '../../ui/text';
+import { TextBold, TextLight } from '../../framework/components/text';
 import DEPRECATED_ConnectionTrackingBar from '../../ui/ConnectionTrackingBar';
 import { A } from '../../ui/Typography';
 import { alternativeNavScreenOptions } from '../../navigation/helpers/navScreenOptions';

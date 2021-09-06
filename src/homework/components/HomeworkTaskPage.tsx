@@ -16,7 +16,7 @@ import { PageContainer } from "../../ui/ContainerContent";
 import { Moment } from "moment";
 
 import { HtmlContentView } from "../../ui/HtmlContentView";
-import { Text } from "../../ui/text";
+import { Text } from "../../framework/components/text";
 import { NavigationScreenProp } from "react-navigation";
 import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderBackAction } from "../../ui/headers/NewHeader";

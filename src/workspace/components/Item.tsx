@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 import I18n from "i18n-js";
 import { IEventProps, EVENT_TYPE } from "../types";
 
-import { Text, NestedText } from "../../ui/text";
+import { Text, NestedText } from "../../framework/components/text";
 import { CenterPanel, LeftIconPanel, LeftSmallIconPanel, ListItem } from "../../ui/ContainerContent";
 import { DateView } from "../../ui/DateView";
 import { renderIcon, renderSmallIcon } from "../utils/image";

@@ -7,7 +7,7 @@ import { CommonStyles } from "../../../styles/common/styles";
 import { BadgeAvatar } from "../../../ui/BadgeAvatar";
 import { CenterPanel, Content, LeftPanel, ListItem, RightPanel } from "../../../ui/ContainerContent";
 import { DateView } from "../../../ui/DateView";
-import { FontWeight } from "../../../ui/text";
+import { FontStyle } from "../../../framework/components/text";
 
 //TODO extract mail-specific field in order to make this component dumb
 
@@ -59,7 +59,7 @@ export const Author = style.text(
     fontSize: 14,
   },
   ({ nb }) => ({
-    fontWeight: nb > 0 ? FontWeight.SemiBold : FontWeight.Normal,
+    ...(nb > 0 ? FontStyle.SemiBold : FontStyle.Regular)
   })
 );
 

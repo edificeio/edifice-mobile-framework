@@ -8,7 +8,7 @@ import { CommonStyles } from "../../../styles/common/styles";
 import { Icon } from "../../../ui";
 import { Text } from "../../../ui/Typography";
 import { iosStatusBarHeight } from "../../../ui/headers/Header";
-import theme from "../../../framework/util/theme";
+import { TextColorStyle } from "../../../framework/components/text";
 
 type MailContentMenuProps = {
   data: {
@@ -30,12 +30,12 @@ export default class MailContentMenu extends React.PureComponent<MailContentMenu
             style={style.actions}
             data={data}
             renderItem={({ item }) => {
-              const itemColor = item.icon === "delete" ? theme.color.failure : undefined;
+              const itemColorStyle = item.icon === "delete" ? TextColorStyle.Error : {};
               return (
                 <TouchableOpacity onPress={item.onPress}>
                   <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", padding: 15 }}>
-                    <Text style={{ color: itemColor }}>{item.text}</Text>
-                    <Icon name={item.icon} size={22} style={{ marginLeft: 10, color: itemColor }} />
+                    <Text style={{ ...itemColorStyle }}>{item.text}</Text>
+                    <Icon name={item.icon} size={22} style={{ marginLeft: 10, ...itemColorStyle }} />
                   </View>
                 </TouchableOpacity>
               );
@@ -65,7 +65,6 @@ const style = StyleSheet.create({
     },
     shadowOpacity: 0.37,
     shadowRadius: 7.49,
-    elevation: 12,
   },
   overlayActions: {
     bottom: 0,

@@ -29,7 +29,7 @@ import { Loading } from "../../ui";
 import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { EmptyScreen } from "../../ui/EmptyScreen";
 import { Checkbox } from "../../ui/forms/Checkbox";
-import { TextBold } from "../../ui/text";
+import { TextBold } from "../../framework/components/text";
 import { Trackers } from "../../framework/util/tracker";
 import Conf from "../../../ode-framework-conf";
 

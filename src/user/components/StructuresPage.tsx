@@ -3,7 +3,7 @@ import * as React from "react";
 import { PageContainer } from "../../ui/ContainerContent";
 import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { ScrollView, SafeAreaView, View } from "react-native";
-import { Text, TextColor, NestedText } from "../../ui/text";
+import { Text, NestedText, TextColorStyle } from "../../framework/components/text";
 import { ContainerView, ContainerSpacer } from "../../ui/ButtonLine";
 import { CommonStyles } from "../../styles/common/styles";
 import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
@@ -43,7 +43,7 @@ export class StructuresPage extends React.PureComponent<IStructuresPageProps>{
           <H4>{I18n.t("structuresTitle")}</H4>
           {this.props.schools ? this.props.schools.map(school => <View key={school.id}>
             <ContainerView>
-              <Text color={TextColor.Light}>{school.name}</Text>
+              <Text style={{ ...TextColorStyle.Light }}>{school.name}</Text>
             </ContainerView>
             <View style={{
               marginLeft: 40,

@@ -4,8 +4,8 @@ import { StyleSheet } from "react-native";
 import { CommonStyles } from "../styles/common/styles";
 import { Icon } from "./icons/Icon";
 import { layoutSize } from "../styles/common/layoutSize";
-import { TextBold15 } from "./text";
 import FloatingAction from "./FloatingButton/FloatingAction";
+import { TextBold } from "../framework/components/text";
 
 export interface ButtonTextIconProps {
   onPress: () => any;
@@ -44,7 +44,7 @@ export const ButtonIconText = ({ style, children, colorText, ...rest }: ButtonTe
   return (
     <Container>
       <ButtonIcon {...rest} style={[styles.button, style]} />
-      <TextBold15 color={colorText}>{children}</TextBold15>
+      <TextBold style={{ color: colorText, fontSize: 15}}>{children}</TextBold>
     </Container>
   );
 };

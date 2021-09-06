@@ -38,7 +38,7 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>L&apos;appareil photo sera utilisé pour envoyer des photos à votre réseau éducatif et pour choisir votre photo de profil.</string>
+	<string>L'appareil photo sera utilisé pour envoyer des photos à votre réseau éducatif et pour choisir votre photo de profil.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>La galerie photos sera utilisée pour envoyer des photos à votre réseau éducatif et pour choisir votre photo de profil.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -46,30 +46,14 @@
 	<key>UIAppFonts</key>
 	<array>
 		<string>icomoon.ttf</string>
-		<string>OpenSans-bold.ttf</string>
+		<string>OpenSans-Bold.ttf</string>
 		<string>OpenSans-BoldItalic.ttf</string>
 		<string>OpenSans-Italic.ttf</string>
-		<string>OpenSans-light.ttf</string>
+		<string>OpenSans-Light.ttf</string>
 		<string>OpenSans-LightItalic.ttf</string>
 		<string>OpenSans-Regular.ttf</string>
-		<string>OpenSans-semibold.ttf</string>
+		<string>OpenSans-SemiBold.ttf</string>
 		<string>OpenSans-SemiBoldItalic.ttf</string>
-		<string>AntDesign.ttf</string>
-		<string>Entypo.ttf</string>
-		<string>EvilIcons.ttf</string>
-		<string>Feather.ttf</string>
-		<string>FontAwesome.ttf</string>
-		<string>FontAwesome5_Brands.ttf</string>
-		<string>FontAwesome5_Regular.ttf</string>
-		<string>FontAwesome5_Solid.ttf</string>
-		<string>Fontisto.ttf</string>
-		<string>Foundation.ttf</string>
-		<string>Ionicons.ttf</string>
-		<string>MaterialCommunityIcons.ttf</string>
-		<string>MaterialIcons.ttf</string>
-		<string>Octicons.ttf</string>
-		<string>SimpleLineIcons.ttf</string>
-		<string>Zocial.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

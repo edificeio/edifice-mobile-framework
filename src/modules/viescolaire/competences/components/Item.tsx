@@ -8,7 +8,7 @@ import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { CommonStyles } from '../../../../styles/common/styles';
 import { ButtonsOkOnly } from '../../../../ui/ButtonsOkCancel';
 import { ModalContent, ModalContentBlock, ModalBox } from '../../../../ui/Modal';
-import { TextBold, Text } from '../../../../ui/text';
+import { TextBold, Text } from '../../../../framework/components/text';
 import { LeftColoredItem } from '../../viesco/components/Item';
 import { ILevelsList } from '../state/competencesLevels';
 import { IDevoir, IDevoirList } from '../state/devoirs';

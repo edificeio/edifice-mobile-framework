@@ -10,7 +10,7 @@ import Conf from "../../../ode-framework-conf";
 import { navigate } from "../../navigation/helpers/navHelper";
 import { FlatButton } from "../../ui";
 import BottomSwitcher from "../../ui/BottomSwitcher";
-import { Text, TextLightItalic } from "../../ui/text";
+import { Text, TextLightItalic } from "../../framework/components/text";
 import { TextColor } from "../../ui/Typography";
 
 // TYPES ---------------------------------------------------------------------------
