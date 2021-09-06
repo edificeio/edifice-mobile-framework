@@ -38,7 +38,7 @@ export const createMainTabNavigator = (
 
 export const createMainTabNavOption = (title: string, iconName: string) => ({
   tabBarIcon: ({ focused }) => (
-    <IconOnOff name={iconName} focused={focused} style={{ marginTop: -6 }} />
+    <IconOnOff size={24} name={iconName} focused={focused} style={{ marginTop: -6 }} />
   ),
   tabBarLabel: ({ focused }) => (
     <MainTabNavigationLabel focused={focused}>{title}</MainTabNavigationLabel>
@@ -49,7 +49,7 @@ const MainTabNavigationLabel = style.text(
   {
     alignSelf: "center",
     fontFamily: CommonStyles.primaryFontFamily,
-    fontSize: 12,
+    fontSize: 10,
     marginBottom: 4,
     marginTop: -12
   },

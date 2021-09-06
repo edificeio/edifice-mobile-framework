@@ -174,7 +174,7 @@ class MailContentContainer extends React.PureComponent<{
             </TouchableOpacity>
           </HeaderComponent>
 
-          <PageContainer style={{ backgroundColor: theme.color.background.card }}>
+          <PageContainer style={{ backgroundColor: theme.color.background.page }}>
             {this.props.isFetching ? (
               <Loading />
             ) : (
@@ -183,7 +183,7 @@ class MailContentContainer extends React.PureComponent<{
                   <ScrollView style={{ flex: 1 }} scrollEventThrottle={16}>
                     {this.props.mail.id && this.mailHeader()}
                     <ViewportAwareSubject
-                      style={{ marginHorizontal: 12 }}
+                        style={{ marginHorizontal: 12, backgroundColor: theme.color.background.card }}
                       onViewportEnter={() => this.updateVisible(true)}
                       onViewportLeave={() => this.updateVisible(false)}
                       innerRef={ref => (this._subjectRef = ref)}>
@@ -326,6 +326,7 @@ const styles = StyleSheet.create({
   containerFooter: {
     flexDirection: "row",
     justifyContent: "space-around",
-    paddingTop: 16
+    alignItems: "center",
+    height: 56
   },
 });

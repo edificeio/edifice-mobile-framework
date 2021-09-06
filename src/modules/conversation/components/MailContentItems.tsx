@@ -161,8 +161,8 @@ export const FooterButton = ({ icon, text, onPress }) => {
         justifyContent: "space-evenly"
       }}
     >
-      <Icon name={icon} size={25} style={{ color: theme.color.neutral.regular }} />
-      <Text style={{ color: theme.color.neutral.regular }}>{text}</Text>
+      <Icon name={icon} size={24} style={{ color: theme.color.neutral.regular }} />
+      <Text style={{ color: theme.color.neutral.regular, ...TextSizeStyle.Tiny }}>{text}</Text>
     </TouchableOpacity>
   );
 };
