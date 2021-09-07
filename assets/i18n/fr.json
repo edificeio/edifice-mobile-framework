@@ -119,6 +119,7 @@
     "cancel": "Annuler",
     "comment": "Commentaire",
     "comments": "Commentaires",
+    "continue": "Continuer",
     "date": {
       "invalid": "",
       "now": "maintenant",
@@ -136,6 +137,7 @@
     "infoBubble-understood": "J'ai compris",
     "ok": "OK",
     "openInBrowser": "Ouvrir dans le navigateur",
+    "quit": "Quitter",
     "readMore": "lire plus",
     "save": "Enregistrer",
     "sommeNumeriqueAlert_temp": "La plateforme \"Somme Numérique\" ne sera plus disponible à partir de la rentrée 2021. Il faudra utiliser l'accès \"ENT Hauts-de-France\" dans la liste des réseaux sociaux éducatifs.",
@@ -186,6 +188,7 @@
     "downloadAll": "Télécharger pièces jointes",
     "drafts": "Brouillons",
     "emptyMailbox": "Aucun message pour le moment",
+    "emptyTo": "(Sans destinataire)",
     "forward": "Transférer",
     "forwardSubject": "TR : ",
     "fromPrefix": "De :",
@@ -199,7 +202,6 @@
     "moveImpossible": "Impossible de déplacer l'email. Créez d'abord un dossier personnalisé.",
     "moveTo": "Déplacer vers",
     "newMessage": "Nouveau message",
-    "emptyTo": "(Sans destinataire)",
     "outbox": "Messages envoyés",
     "reply": "Répondre",
     "replyAll": "Répondre à tous",
@@ -218,7 +220,8 @@
     "toPrefix": "À :",
     "trash": "Corbeille",
     "typeMessage": "Écrire un message...",
-    "unknown": "Inconnu"
+    "unknown": "Inconnu",
+    "warning.webDraft": "Le brouillon a été initié sur le web. En continuant sur mobile, l'expérience sera dégradée. Nous vous conseillons de continuer votre message sur le web. Souhaitez-vous quand même continuer ?"
   },
   "conversation-chatPlaceholder": "Ecrivez un message...",
   "conversation-datePrefix": "Date :",

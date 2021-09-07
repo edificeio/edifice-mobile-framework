@@ -293,7 +293,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     const getDisplayName = id => this.props.mail.displayNames.find(([userId]) => userId === id)[1];
     const getUser = id => ({ id, displayName: getDisplayName(id) });
 
-    const deleteHtmlContent = function(text) {
+    const deleteHtmlContent = function (text) {
       const regexp = /<(\S+)[^>]*>(.*)<\/\1>/gs;
 
       if (regexp.test(text)) {
@@ -395,13 +395,13 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         let prevbody = '';
         if (this.props.mail.body.length > 0) {
           prevbody +=
-            '<br><br>' +
+            '<hr class="ng-scope">' +
             this.props.mail.body
-              .split('<br><br>')
+              .split('<hr class="ng-scope">')
               .slice(1)
-              .join('<br><br>');
+              .join('<hr class="ng-scope">');
         }
-        const current_body = this.props.mail.body.split('<br><br>')[0];
+        const current_body = this.props.mail.body.split('<hr class="ng-scope">')[0];
 
         return {
           prevBody: prevbody,
@@ -427,8 +427,8 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
 
     const addWrapperIfNeeded = (text: string) => {
       if (!/<div class="ng-scope mobile-application-wrapper">/.test(text)) {
-        return `<div class="ng-scope mobile-application-wrapper">${text}</div>`;
-      } else return text;
+        return `<div class="ng-scope mobile-application-wrapper"><div>${text}</div></div>`;
+      } else return `<div>${text}</div>`;
     };
 
     mailWithoutAttachments.body = addWrapperIfNeeded(mailWithoutAttachments.body.replace(regexp, '<br>'));

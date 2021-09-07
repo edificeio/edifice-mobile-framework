@@ -31,10 +31,9 @@ export class HtmlConverterText extends HtmlConverter {
         switch (tagName) {
           // after these html tags we have to jump to a new line
           case "div":
-          case "br":
           case "p":
-          case "img":
           case "iframe":
+            // console.log("NEW LINE");
             this.newLine = true;
         }
         return tagName;
@@ -43,9 +42,21 @@ export class HtmlConverterText extends HtmlConverter {
       onerror: (err: Error) => commonParsingEventHandlers.onerror(err),
       onopentag: (tag: saxophone.Tag) => {
         tag = commonParsingEventHandlers.onopentag(tag);
+        switch (tag.name) {
+          // after these html tags we have to jump to a new line
+          case "p":
+          case "img":
+          case "hr":
+            // console.log("NEW LINE");
+            this.newLine = true;
+            break;
+          case "br":
+            this._render += this.ignoreLineBreaks ? " " : "\n";
+        }
         return tag;
       },
       ontext: (text: string) => {
+        // console.log("TEXT", text);
         text = commonParsingEventHandlers.ontext(text);
         if (!text) return "";
         if (this.newLine) {

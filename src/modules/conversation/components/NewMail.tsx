@@ -14,6 +14,7 @@ import { Text } from "../../../ui/Typography";
 import { ISearchUsers } from "../service/newMail";
 import Attachment from "./Attachment";
 import SearchUserMail from "./SearchUserMail";
+import HtmlToText from "../../../infra/htmlConverter/text";
 
 type HeadersProps = { to: ISearchUsers; cc: ISearchUsers; cci: ISearchUsers; subject: string };
 
@@ -228,11 +229,9 @@ const Attachments = ({ style, attachments, onChange, onDelete, onSave }: { style
 
 const Body = ({ style, value, onChange, autofocus }) => {
   const textUpdateTimeout = React.useRef();
-  const removeWrapper = (text: string) => {
-    return text.replace(/^<div class="ng-scope mobile-application-wrapper">(.*)/, '$1').replace(/(.*)<\/div>$/, '$1');
-  }
-  const [currentValue, updateCurrentValue] = React.useState(removeWrapper(value));
-
+  // const removeWrapper = (text: string) => {
+  //   return text.replace(/^<div class="ng-scope mobile-application-wrapper">(.*)/, '$1').replace(/(.*)<\/div>$/, '$1');
+  // }
   const br2nl = (text: string) => {
     return text?.replace(/<br\/?>/gm, "\n")
       .replace(/<div>\s*?<\/div>/gm, "\n");
@@ -240,6 +239,9 @@ const Body = ({ style, value, onChange, autofocus }) => {
   const nl2br = (text: string) => {
     return text?.replace(/\n/gm, "<br>");
   }
+  // console.log("value", nl2br(value));
+  const valueFormated = HtmlToText(nl2br(value), false).render;
+  const [currentValue, updateCurrentValue] = React.useState(valueFormated);
 
   React.useEffect(() => {
     window.clearTimeout(textUpdateTimeout.current);
