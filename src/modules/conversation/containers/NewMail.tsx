@@ -71,6 +71,7 @@ interface ICreateMailState {
   isPrefilling?: boolean;
   prevBody?: string;
   replyTo?: string;
+  webDraftWarning: boolean;
 }
 
 type newMail = {
@@ -125,6 +126,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     this.state = {
       mail: { to: [], cc: [], cci: [], subject: '', body: '', attachments: [] },
       prevBody: '',
+      webDraftWarning: false
     };
   }
 
@@ -159,6 +161,34 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       }));
     } else if (this.props.navigation.getParam('mailId') !== undefined && this.state.id === undefined)
       this.setState({ id: this.props.navigation.getParam('mailId') });
+
+    // Check if html tags are present in body
+    if (this.props.navigation.getParam('type', DraftType.NEW) === DraftType.DRAFT && !this.state.webDraftWarning) {
+      const removeWrapper = (text: string) => {
+        return text.replace(/^<div class="ng-scope mobile-application-wrapper">(.*)/, '$1').replace(/(.*)<\/div>$/, '$1');
+      }
+      let checkBody = removeWrapper(this.props.mail.body);
+      checkBody = checkBody.split('<hr class="ng-scope">')[0];
+      checkBody = checkBody.replace(/<\/?(div|br)\/?>/g, '');
+      console.log("checkBody", checkBody);
+      if (/<(\"[^\"]*\"|'[^']*'|[^'\">])*>/.test(checkBody)) {
+        this.setState({ webDraftWarning: true });
+        Alert.alert(I18n.t('conversation.warning.webDraft.title'), I18n.t('conversation.warning.webDraft.text'), [
+          {
+            text: I18n.t("common.quit"),
+            onPress: async () => {
+              this.props.navigation.goBack();
+            },
+            style: 'cancel',
+          },
+          {
+            text: I18n.t('common.continue'),
+            onPress: async () => { },
+            style: 'default',
+          },
+        ]);
+      }
+    }
   };
 
   navigationHeaderFunction = {

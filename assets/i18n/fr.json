@@ -221,7 +221,10 @@
     "trash": "Corbeille",
     "typeMessage": "Écrire un message...",
     "unknown": "Inconnu",
-    "warning.webDraft": "Le brouillon a été initié sur le web. En continuant sur mobile, l'expérience sera dégradée. Nous vous conseillons de continuer votre message sur le web. Souhaitez-vous quand même continuer ?"
+    "warning.webDraft": {
+      "title": "Brouillon incompatible",
+      "text": "Le brouillon a été initié depuis un ordinateur. En continuant sur l'application mobile, l'expérience sera dégradée. Souhaitez-vous continuer ?"
+    }
   },
   "conversation-chatPlaceholder": "Ecrivez un message...",
   "conversation-datePrefix": "Date :",
