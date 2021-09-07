@@ -35,6 +35,7 @@ interface NewMailComponentProps {
   onAttachmentChange: (attachments: IAttachment[]) => void;
   onAttachmentDelete: (attachmentId: string) => void;
   prevBody: any;
+  isReplyDraft: boolean;
 }
 
 const styles = StyleSheet.create({
@@ -62,6 +63,7 @@ export default ({
   onAttachmentChange,
   onAttachmentDelete,
   prevBody,
+  isReplyDraft
 }: NewMailComponentProps) => {
   return (
     <PageContainer>
@@ -72,7 +74,7 @@ export default ({
       ) : (
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} bounces={false} keyboardShouldPersistTaps="never">
           <SafeAreaView style={{ flex: 1 }}>
-          <Headers style={{ zIndex: 3 }} headers={headers} onChange={onHeaderChange} />
+          <Headers style={{ zIndex: 3 }} headers={headers} onChange={onHeaderChange} autofocus={!isReplyDraft} />
           <Attachments
             style={{ zIndex: 2 }}
             attachments={attachments}
@@ -80,7 +82,7 @@ export default ({
             onDelete={onAttachmentDelete}
             onSave={onDraftSave}
           />
-          <Body style={{ zIndex: 1 }} value={body} onChange={onBodyChange} />
+          <Body style={{ zIndex: 1 }} value={body} onChange={onBodyChange} autofocus={isReplyDraft} />
           {!!prevBody && <PrevBody prevBody={prevBody} />}
           </SafeAreaView>
         </ScrollView>
@@ -159,14 +161,14 @@ const HeaderSubject = ({
   );
 };
 
-const Headers = ({ style, headers, onChange }) => {
+const Headers = ({ style, headers, onChange, autofocus }) => {
   const [showExtraFields, toggleExtraFields] = React.useState(false);
   const { to, cc, cci, subject } = headers;
 
   return (
     <View style={[styles.mailPart, style]}>
       <HeaderUsers
-        autoFocus
+        autoFocus={autofocus}
         style={{ zIndex: 4 }}
         value={to}
         onChange={to => onChange({ ...headers, to })}
@@ -224,7 +226,7 @@ const Attachments = ({ style, attachments, onChange, onDelete, onSave }: { style
   );
 };
 
-const Body = ({ style, value, onChange }) => {
+const Body = ({ style, value, onChange, autofocus }) => {
   const textUpdateTimeout = React.useRef();
   const removeWrapper = (text: string) => {
     return text.replace(/^<div class="ng-scope mobile-application-wrapper">(.*)/, '$1').replace(/(.*)<\/div>$/, '$1');
@@ -251,6 +253,7 @@ const Body = ({ style, value, onChange }) => {
   return (
     <View style={[styles.mailPart, style, { flexGrow: 1 }]}>
       <TextInput
+        autoFocus={autofocus}
         placeholder={I18n.t("conversation.typeMessage")}
         textAlignVertical="top"
         multiline

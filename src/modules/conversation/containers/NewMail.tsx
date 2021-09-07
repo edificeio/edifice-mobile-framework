@@ -493,7 +493,10 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
   };
 
   public render() {
+    const { navigation } = this.props;
     const { isPrefilling, mail } = this.state;
+    const draftType = navigation.getParam('type');
+    const isReplyDraft = draftType === DraftType.REPLY || draftType === DraftType.REPLY_ALL; // true: body.
     const { attachments, body, ...headers } = mail;
 
     return (
@@ -510,6 +513,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         onAttachmentChange={attachments => this.setState(prevState => ({ mail: { ...prevState.mail, attachments } }))}
         onAttachmentDelete={attachmentId => this.props.deleteAttachment(this.state.id, attachmentId)}
         prevBody={this.state.prevBody}
+        isReplyDraft={isReplyDraft}
       />
     );
   }
