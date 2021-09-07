@@ -181,7 +181,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
               {/* Mail attachment indicator */}
               {mailInfos.hasAttachment && (
                 <View style={styles.mailIndicator}>
-                  <Icon name="attachment" size={16} color={theme.color.text.regular} />
+                  <Icon name="attachment" size={16} color={theme.color.text.light} />
                 </View>
               )}
             </View>
@@ -278,17 +278,17 @@ const styles = StyleSheet.create({
     flex: 1
   },
   mailDate: {
-    minWidth: 66,
-    textAlign: 'center',
+    textAlign: 'right',
     alignItems: 'center',
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
+    ...TextColorStyle.Light
   },
   mailIndicator: {
     flexDirection: 'row',
     textAlign: 'center',
     alignItems: 'center',
     justifyContent: 'flex-end',
-     paddingTop: 2,
-    paddingHorizontal: 12
+    paddingTop: 2,
+    paddingLeft: 12,
   }
 });

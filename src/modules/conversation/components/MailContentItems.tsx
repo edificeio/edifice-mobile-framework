@@ -255,10 +255,10 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start'
   },
   mailDate: {
-    minWidth: 66,
-    textAlign: 'center',
+    textAlign: 'right',
     alignItems: 'center',
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
+    ...TextColorStyle.Light
   },
   mailIndicator: {
     flexDirection: 'row',
