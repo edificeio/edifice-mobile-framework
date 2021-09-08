@@ -1,8 +1,9 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
-import { View, StyleSheet, useWindowDimensions } from 'react-native';
+import { View, StyleSheet, useWindowDimensions, FlatList } from 'react-native';
 import RNCarousel, { Pagination } from 'react-native-snap-carousel';
+import Swiper from "react-native-swiper";
 
 import { Loading } from '../../../../ui';
 import { TextBold } from '../../../../ui/Typography';
@@ -37,6 +38,22 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
     return courseIndexNow !== -1 ? courseIndexNow : 0;
   }
 
+  private setCarouselDotStyle = () => {
+    return (
+      <View
+        style={{
+          backgroundColor: 'rgba(0,0,0,.1)',
+          width: 10,
+          height: 10,
+          borderRadius: 4,
+          marginHorizontal: 10,
+          marginTop: 3,
+          marginBottom: 3,
+        }}
+      />
+    );
+  };
+
   private Carousel = () => {
     const getCourseCallItem = item => {
       const isCourseNow = moment().isBetween(moment(item.startDate).subtract(15, 'minutes'), moment(item.endDate));
@@ -59,25 +76,16 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
     return (
       <>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <RNCarousel
-            useScrollView
-            data={courseList}
-            onLayout={() => setTimeout(() => this.carouselRef && this.carouselRef.snapToItem(this.state.currentIndex), 500)}
-            renderItem={({ item }) => getCourseCallItem(item)}
-            sliderWidth={useWindowDimensions().width}
-            itemWidth={useWindowDimensions().width * 0.8}
-            containerCustomStyle={{ height: 500 }}
-            onBeforeSnapToItem={index => this.setState({ currentIndex: index })}
-            inactiveSlideScale={0.7}
-            ref={r => (this.carouselRef = r)}
-          />
+          <Swiper
+            horizontal
+            index={this.state.currentIndex}
+            paginationStyle={{ position: 'absolute', bottom: -50 }}
+            dot={this.setCarouselDotStyle()}
+            activeDotStyle={styles.carouselActiveDot}>
+            {courseList.map(item => getCourseCallItem(item))}
+          </Swiper>
         </View>
-        <Pagination
-          dotsLength={courseList.length}
-          activeDotIndex={this.state.currentIndex}
-          dotStyle={styles.carouselDot}
-          inactiveDotStyle={styles.carouselInactiveDot}
-        />
+        <View style={{ height: 80 }} />
       </>
     );
   };
@@ -124,14 +132,10 @@ const styles = StyleSheet.create({
     width: 60,
     borderRadius: 10,
   },
-  carouselDot: {
+  carouselActiveDot: {
     width: 20,
     height: 20,
     borderRadius: 10,
     backgroundColor: '#FFB600',
-  },
-  carouselInactiveDot: {
-    borderRadius: 10,
-    backgroundColor: 'grey',
   },
 });
