@@ -11,21 +11,17 @@ export type FoldersBackend = {
   id: string;
 }[];
 
-const foldersAdapter: (data: FoldersBackend) => IFolderList = data => {
-  return data.map(folder => ({
-    parent_id: folder.parent_id,
-    trashed: folder.trashed,
-    depth: folder.depth,
-    name: folder.name,
-    id: folder.id,
-  }));
-};
+// const foldersAdapter: (data: FoldersBackend) => IFolderList = data => {
+//   return data.map(folder => ({
+//     parent_id: folder.parent_id,
+//     trashed: folder.trashed,
+//     depth: folder.depth,
+//     name: folder.name,
+//     id: folder.id,
+//   }));
+// };
 
 export const foldersService = {
-  get: async () => {
-    const folders = await fetchJSONWithCache(`/zimbra/folders/list`);
-    return foldersAdapter(folders);
-  },
   post: async (name: string, parentId: string | null = null) => {
     const body = {
       name,

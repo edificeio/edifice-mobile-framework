@@ -10,7 +10,7 @@ const handleConversationNotificationAction: NotifHandlerThunkAction = notificati
   });
   return {
     managed: 1,
-    trackInfo: { action: "Zimbra", name: `${notification.type}.${notification["event-type"]}` },
+    trackInfo: { action: "Conversation", name: `${notification.type}.${notification["event-type"]}` },
   };
 };
 

@@ -9,7 +9,6 @@ export interface ISignature {
     signature: string;
   };
   id: string;
-  zimbraENTSignatureExists: boolean;
 }
 
 // THE STATE --------------------------------------------------------------------------------------
@@ -22,7 +21,6 @@ export const initialState: ISignature = {
     signature: "",
   },
   id: "",
-  zimbraENTSignatureExists: false,
 };
 
 export const getSignatureState = (globalState: any) =>

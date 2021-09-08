@@ -69,7 +69,7 @@ export default ({
   return (
     <PageContainer>
       <ConnectionTrackingBar />
-      <Notifier id="zimbra" />
+      <Notifier id="conversation" />
       {isFetching ? (
         <Loading />
       ) : (

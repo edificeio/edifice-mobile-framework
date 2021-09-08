@@ -135,10 +135,10 @@ const MailListContainerConnected = connect(mapStateToProps, mapDispatchToProps)(
 
 export default withViewTracking((props: MailListContainerProps) => {
   const currentFolder = props.navigation.getParam("key");
-  if (currentFolder === undefined) return `zimbra/inbox`;
+  if (currentFolder === undefined) return `conversation/inbox`;
   let toTrack = "";
   viewsToTrack.map(viewName => {
-    if (viewName === currentFolder) toTrack = `zimbra/${currentFolder}`;
+    if (viewName === currentFolder) toTrack = `conversation/${currentFolder}`;
   });
   return toTrack;
 })(MailListContainerConnected);

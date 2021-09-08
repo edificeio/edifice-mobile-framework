@@ -10,7 +10,7 @@ import { IUploadCallbaks } from "../../../framework/util/fileHandler/service";
 
 export function sendMailAction(mailDatas, draftId: string | undefined, InReplyTo: string) {
   return async () => {
-    Trackers.trackEvent("Zimbra", "SEND");
+    Trackers.trackEvent("Conversation", "SEND");
     try {
       await newMailService.sendMail(mailDatas, draftId, InReplyTo);
     } catch (errmsg) {
@@ -31,9 +31,9 @@ export function forwardMailAction(draftId: string, forwardFrom: string) {
 
 export function makeDraftMailAction(mailDatas, inReplyTo: string, isForward: boolean) {
   return async (dispatch: Dispatch) => {
-    Trackers.trackEvent("Zimbra", "CREATED");
-    if (inReplyTo) Trackers.trackEvent("Zimbra", "REPLY TO MESSAGE");
-    if (isForward) Trackers.trackEvent("Zimbra", "TRANSFER MESSAGE");
+    Trackers.trackEvent("Conversation", "CREATED");
+    if (inReplyTo) Trackers.trackEvent("Conversation", "REPLY TO MESSAGE");
+    if (isForward) Trackers.trackEvent("Conversation", "TRANSFER MESSAGE");
     return await newMailService.makeDraftMail(mailDatas, inReplyTo);
   };
 }

@@ -1,5 +1,5 @@
 /**
- * Zimbra Reducer
+ * Conversation Reducer
  */
 
 /* eslint-disable flowtype/no-types-missing-file-annotation */
@@ -12,7 +12,7 @@ import { ISignatureState } from "./state/signature";
 
 // State
 
-export interface IZimbra_State {
+export interface IConversation_State {
   count: ICountListState;
   folders: IFolderListState;
   init: IInitMailState;
