@@ -17,7 +17,10 @@
     "private-key": "cd android/app && rm -f release.keystore && keytool -genkey -v -keystore release.keystore -alias android -keyalg RSA -keysize 2048 -validity 10000",
     "start": "react-native start",
     "test": "jest",
-    "tsc": "tsc -p tsconfig.json --watch"
+    "tsc": "tsc -p tsconfig.json --watch",
+    "prepare-alpha": "node prepare-build alpha",
+    "prepare-rc": "node prepare-build.json rc",
+    "prepare-version": "func() { node prepare-version \"$1\" \"$2\" \"$3\"; }; func"
   },
   "dependencies": {
     "@emotion/native": "11.0.0",
