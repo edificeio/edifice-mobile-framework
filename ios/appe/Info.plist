@@ -21,9 +21,9 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1060008</string>
+	<string>1060009</string>
 	<key>BundleVersionType</key>
-	<string>RC.3</string>
+	<string>RC.4</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
