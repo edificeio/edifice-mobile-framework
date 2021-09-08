@@ -111,7 +111,7 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
               return <>
                 <TextContactComponent
                   numberOfLines={1} style={{ flex: 1 }}
-                >{[{ id: mailContacts.from[0], isGroup: mailContacts.from[2] }]}</TextContactComponent>
+                >{mailContacts.from[1]}</TextContactComponent>
               </>
             })()}
             {/* Date */}
@@ -130,7 +130,7 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
                 <Text style={{ marginTop: 4, flex: 0, ...TextColorStyle.Normal, ...TextSizeStyle.Small }} numberOfLines={1}>
                   <NestedText style={{ color: styles.greyColor.color }}>{I18n.t('conversation.toPrefix') + ' '}</NestedText>
                   <NestedText style={{ color: theme.color.secondary.regular }}>
-                    {mailContacts.to.map(to => ({id: to[0], isGroup: to[2]}))}
+                    {mailContacts.to[0][1]}
                     {contactsToMore > 0 ? I18n.t('conversation.toMore', { count: contactsToMore }) : null}
                   </NestedText>
                 </Text>
