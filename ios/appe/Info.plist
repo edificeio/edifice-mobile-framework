@@ -14,12 +14,14 @@
 	<string>6.0</string>
 	<key>CFBundleName</key>
 	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.6.0-RC.2</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
+	<string>1.6.0</string>
+	<key>BundleVersionType</key>
+	<string>RC.2</string>
 	<key>CFBundleVersion</key>
 	<string>1060007</string>
 	<key>LSRequiresIPhoneOS</key>
@@ -38,7 +40,7 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>L'appareil photo sera utilisé pour envoyer des photos à votre réseau éducatif et pour choisir votre photo de profil.</string>
+	<string>L&apos;appareil photo sera utilisé pour envoyer des photos à votre réseau éducatif et pour choisir votre photo de profil.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>La galerie photos sera utilisée pour envoyer des photos à votre réseau éducatif et pour choisir votre photo de profil.</string>
 	<key>NSPhotoLibraryUsageDescription</key>

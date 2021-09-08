@@ -26,10 +26,11 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1060007
-        versionName "1.6.0-RC.2"
-        resValue "string", "app_name", "${APPNAME}"
+        versionName "1.6.0"
+        buildConfigField "String", "BundleVersionType", "\"RC.2\""
         manifestPlaceholders = [ applicationName: APPNAME ]
-        // multiDexEnabled true
+        resValue "string", "app_name", "${APPNAME}"
+        
     }
     splits {
         abi {
