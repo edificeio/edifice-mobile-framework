@@ -11,7 +11,7 @@ enum UserRole {
 
 export const getUserColor = async (userId: string) => {
   try {
-    const { result } = await mailContentService.getUserInfos(userId);
+    const { result } = userId ? await mailContentService.getUserInfos(userId) : { result: [{ id: '', displayNames: '', type: ['']}] };
     return getProfileColor(result?.[0].type[0]);
   } catch (err) {
     return getProfileColor();

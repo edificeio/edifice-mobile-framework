@@ -18,6 +18,7 @@ import theme from "../../../framework/util/theme";
 import moduleConfig from "../moduleConfig";
 import { ListItem } from "../../../framework/components/listItem";
 import { TextSemiBold, TextSizeStyle } from "../../../framework/components/text";
+import { getMailPeople } from "../utils/mailInfos";
 
 type MailListProps = {
   notifications: any;
@@ -124,13 +125,13 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
 
     // console.log("mailinfos", mailInfos);
 
-    let contacts = [] as Array<[string | undefined, string]>
-    if (!isFolderOutbox && !isFolderDrafts) {
-      contacts = [mailInfos.displayNames.find(item => item[0] === mailInfos.from)];
-    } else {
-      contacts = mailInfos.displayNames.filter(dn => mailInfos.to.includes(dn[0]));
-    }
-    if (contacts.length === 0) contacts = [[undefined, I18n.t("conversation.emptyTo")]];
+    const mailContacts = getMailPeople(mailInfos);
+    let contacts = !isFolderOutbox && !isFolderDrafts
+      ? [mailContacts.from]
+      : mailContacts.to
+
+    if (contacts.length === 0) contacts = [[undefined, I18n.t("conversation.emptyTo"), false]];
+
     return (
       <TouchableOpacity
         onPress={() => {

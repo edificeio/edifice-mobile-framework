@@ -15,6 +15,7 @@ import { ThunkDispatch } from "redux-thunk";
 import { downloadFileAction } from "../../../framework/util/fileHandler/actions";
 import { ListItem } from "../../../framework/components/listItem";
 import { NestedText, Text, TextColorStyle, TextSemiBold, TextSizeStyle } from "../../../framework/components/text";
+import { getMailPeople } from "../utils/mailInfos";
 
 const User = ({ userId, userName }) => {
   const [dotColor, setDotColor] = React.useState(getProfileColor("Guest"));
@@ -29,39 +30,41 @@ const User = ({ userId, userName }) => {
   );
 };
 
-const SendersDetails = ({ receivers, cc, cci, displayNames, inInbox, sender }) => {
+const SendersDetails = ({ mailInfos, inInbox }) => {
+  const contacts = getMailPeople(mailInfos);
+
   return (
     <View style={{ marginTop: 4 }}>
       {inInbox || (
         <View style={{ flexDirection: "row" }}>
           <Text style={styles.greyColor}>{I18n.t("conversation.fromPrefix")}</Text>
-          <User userId={sender} userName={displayNames.find(item => item[0] === sender)[1]} />
+          <User userId={contacts.from[0]} userName={contacts.from[1]} />
         </View>
       )}
       <View style={{ flexDirection: "row" }}>
         <Text style={styles.greyColor}>{I18n.t("conversation.toPrefix")}</Text>
         <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-          {receivers.map(receiver => (
-            <User userId={receiver} userName={displayNames.find(item => item[0] === receiver)[1]} />
+          {contacts.to.map(person => (
+            <User userId={person[0]} userName={person[1]} />
           ))}
         </View>
       </View>
-      {cc && cc.length > 0 && (
+      {contacts.cc && contacts.cc.length > 0 && (
         <View style={{ flexDirection: "row" }}>
           <Text style={styles.greyColor}>{I18n.t("conversation.ccPrefix")}</Text>
           <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-            {cc.map(person => (
-              <User userId={person} userName={displayNames.find(item => item[0] === person)[1]} />
+            {contacts.cc.map(person => (
+              <User userId={person[0]} userName={person[1]} />
             ))}
           </View>
         </View>
       )}
-      {cci && cci.length > 0 && (
+      {contacts.cci && contacts.cci.length > 0 && (
         <View style={{ flexDirection: "row" }}>
           <Text style={styles.greyColor}>{I18n.t("conversation.bccPrefix")}</Text>
           <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-            {cci.map(person => (
-              <User userId={person} userName={displayNames.find(item => item[0] === person)[1]} />
+            {contacts.cc.map(person => (
+              <User userId={person[0]} userName={person[1]} />
             ))}
           </View>
         </View>
@@ -85,13 +88,9 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
   const [isVisible, toggleVisible] = React.useState(false);
   const isFolderInbox = currentFolder === "inbox";
 
-  let contacts = mailInfos.displayNames.filter(dn => mailInfos.to.includes(dn[0])) as Array<[string | undefined, string]>;
-  if (contacts.length === 0) contacts = [[undefined, I18n.t("conversation.emptyTo")]];
-  let contactFrom = mailInfos.displayNames.find(item => item[0] === mailInfos.from) as [string, string];
-  let contactTo = contacts[0];
-  let contactsToMore = contacts.length - 1;
-
-  // console.log("mail infos in header", mailInfos);
+  const mailContacts = getMailPeople(mailInfos);
+  if (mailContacts.to.length === 0) mailContacts.to = [[undefined, I18n.t("conversation.emptyTo"), false]];
+  const contactsToMore = mailContacts.to.length - 1;
 
   return <TouchableOpacity
     onPress={() => toggleVisible(!isVisible)}
@@ -100,7 +99,7 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
       style={{ paddingVertical: 18, borderBottomWidth: 0 }}
 
       leftElement={<View style={{ alignSelf: 'flex-start' }}><GridAvatars
-        users={[contactFrom[0]]}
+        users={[{id: mailContacts.from[0], isGroup: mailContacts.from[2]}]}
       /></View>}
 
       rightElement={<View style={styles.mailInfos}>
@@ -112,7 +111,7 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
               return <>
                 <TextContactComponent
                   numberOfLines={1} style={{ flex: 1 }}
-                >{contactFrom[1]}</TextContactComponent>
+                >{[{ id: mailContacts.from[0], isGroup: mailContacts.from[2] }]}</TextContactComponent>
               </>
             })()}
             {/* Date */}
@@ -124,18 +123,14 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
             {(() => {
               return isVisible ? (
                 <SendersDetails
-                  receivers={mailInfos.to}
-                  cc={mailInfos.cc}
-                  cci={mailInfos.cci}
-                  displayNames={mailInfos.displayNames}
+                  mailInfos={mailInfos}
                   inInbox={isFolderInbox}
-                  sender={mailInfos.from}
                 />
               ) :
                 <Text style={{ marginTop: 4, flex: 0, ...TextColorStyle.Normal, ...TextSizeStyle.Small }} numberOfLines={1}>
                   <NestedText style={{ color: styles.greyColor.color }}>{I18n.t('conversation.toPrefix') + ' '}</NestedText>
                   <NestedText style={{ color: theme.color.secondary.regular }}>
-                    {contactTo[1]}
+                    {mailContacts.to.map(to => ({id: to[0], isGroup: to[2]}))}
                     {contactsToMore > 0 ? I18n.t('conversation.toMore', { count: contactsToMore }) : null}
                   </NestedText>
                 </Text>

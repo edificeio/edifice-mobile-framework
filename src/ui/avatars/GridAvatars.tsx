@@ -5,7 +5,7 @@ import { ImageURISource } from "react-native";
 
 export interface IAvatarsProps {
 	users: string[] | Array<{
-		id: string;
+		id?: string;
 		isGroup: boolean;
 	}>;
 	fallback?: ImageURISource;
