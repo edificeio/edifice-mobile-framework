@@ -14,7 +14,6 @@ import { IUploadCallbaks } from '../../../framework/util/fileHandler/service';
 
 import pickFile, { pickFileError } from '../../../infra/actions/pickFile';
 import { Trackers } from '../../../infra/tracker';
-import withViewTracking from '../../../infra/tracker/withViewTracking';
 import { standardNavScreenOptions } from '../../../navigation/helpers/navScreenOptions';
 import { CommonStyles } from '../../../styles/common/styles';
 import { INavigationProps } from '../../../types';
@@ -138,10 +137,10 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     }
     const draftType = this.props.navigation.getParam('type');
     if (draftType === DraftType.REPLY) {
-      Trackers.trackEvent('Zimbra', 'REPLY TO ONE');
+      Trackers.trackEvent('Conversation', 'REPLY TO ONE');
     }
     if (draftType === DraftType.REPLY_ALL) {
-      Trackers.trackEvent('Zimbra', 'REPLY TO ALL');
+      Trackers.trackEvent('Conversation', 'REPLY TO ALL');
     }
     if (draftType !== DraftType.DRAFT) {
       this.setState({ id: undefined });
@@ -199,7 +198,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         })
         .catch(err => {
           if (err.message === 'Error picking image' || err.message === 'Error picking document') {
-            this.props.onPickFileError('zimbra');
+            this.props.onPickFileError('conversation');
           }
         });
     },
@@ -226,7 +225,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         const { mail, id, replyTo } = this.state;
         const draftType = navigation.getParam('type');
 
-        if (mail.attachments && mail.attachments.length !== 0) Trackers.trackEvent('Zimbra', 'SEND ATTACHMENTS');
+        if (mail.attachments && mail.attachments.length !== 0) Trackers.trackEvent('Conversation', 'SEND ATTACHMENTS');
         sendMail(this.getMailData(), id, replyTo);
 
         Toast.show(I18n.t('conversation.sendMail'), {
