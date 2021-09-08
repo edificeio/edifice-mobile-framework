@@ -1,36 +1,37 @@
-import * as React from 'react';
 import I18n from 'i18n-js';
-import { connect } from 'react-redux';
+import * as React from 'react';
+import RNConfigReader from 'react-native-config-reader';
 import DeviceInfo from 'react-native-device-info';
+import getValue from 'react-native-get-values';
+import { NavigationScreenProp } from 'react-navigation';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 
-import { logout } from '../actions/login';
+import Conf from '../../../ode-framework-conf';
+import { getSessionInfo } from '../../App';
+import { IGlobalState } from '../../AppStore';
+import workspaceService from '../../framework/modules/workspace/service';
+import { LocalFile, SyncedFile } from '../../framework/util/fileHandler';
+import { getUserSession } from '../../framework/util/session';
+import { pickFileError } from '../../infra/actions/pickFile';
+import { ImagePicked } from '../../infra/imagePicker';
+import { notifierShowAction } from '../../infra/notifier/actions';
+import Notifier from '../../infra/notifier/container';
+import { OAuth2RessourceOwnerPasswordClient, signURISource } from '../../infra/oauth';
+import { Trackers } from '../../infra/tracker';
+import withViewTracking from '../../infra/tracker/withViewTracking';
+import { standardNavScreenOptions } from '../../navigation/helpers/navScreenOptions';
 import { ButtonsOkCancel } from '../../ui';
 import { ButtonLine, ContainerSpacer, ContainerView } from '../../ui/ButtonLine';
 import DEPRECATED_ConnectionTrackingBar from '../../ui/ConnectionTrackingBar';
 import { PageContainer } from '../../ui/ContainerContent';
 import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from '../../ui/Modal';
 import { Label } from '../../ui/Typography';
-
-import { getSessionInfo } from '../../App';
-import { UserCard } from '../components/UserCard';
-import { NavigationScreenProp } from 'react-navigation';
-import { standardNavScreenOptions } from '../../navigation/helpers/navScreenOptions';
-import { Dispatch } from 'redux';
-import withViewTracking from '../../infra/tracker/withViewTracking';
+import { logout } from '../actions/login';
 import { profileUpdateAction } from '../actions/profile';
-import { pickFileError } from '../../infra/actions/pickFile';
-import { OAuth2RessourceOwnerPasswordClient, signURISource } from '../../infra/oauth';
-import Conf from '../../../ode-framework-conf';
-import Notifier from '../../infra/notifier/container';
+import { UserCard } from '../components/UserCard';
 import { IUserInfoState } from '../state/info';
-import { notifierShowAction } from '../../infra/notifier/actions';
-import { Trackers } from '../../infra/tracker';
-import { ImagePicked } from '../../infra/imagePicker';
-import { LocalFile, SyncedFile } from '../../framework/util/fileHandler';
-import workspaceService from '../../framework/modules/workspace/service';
-import { IGlobalState } from '../../AppStore';
-import { getUserSession } from '../../framework/util/session';
-import { ThunkDispatch } from 'redux-thunk';
 
 export const UserPageNavigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) =>
   standardNavScreenOptions(
@@ -66,11 +67,18 @@ export class UserPage extends React.PureComponent<
     userinfo: IUserInfoState;
     navigation: any;
   },
-  { showDisconnect: boolean; updatingAvatar: boolean }
+  {
+    showDisconnect: boolean;
+    showVersionType: boolean;
+    updatingAvatar: boolean;
+    versionType: string;
+  }
 > {
   public state = {
     showDisconnect: false,
+    showVersionType: false,
     updatingAvatar: false,
+    versionType: RNConfigReader.BundleVersionType,
   };
 
   public disconnect() {
@@ -100,7 +108,7 @@ export class UserPage extends React.PureComponent<
   public render() {
     //avoid setstate on modalbox when unmounted
     const { onUploadAvatar, onUpdateAvatar, onPickFileError, onUploadAvatarError, userinfo } = this.props;
-    const { showDisconnect, updatingAvatar } = this.state;
+    const { showDisconnect, showVersionType, versionType, updatingAvatar } = this.state;
     const signedURISource = userinfo.photo && signURISource(`${(Conf.currentPlatform as any).url}${userinfo.photo}`);
     // FIXME (Hack): we need to add a variable param to force the call on Android for each session
     // (otherwise, a previously-loaded image is retrieved from cache)
@@ -181,8 +189,9 @@ export class UserPage extends React.PureComponent<
         <ButtonLine title={'directory-legalNoticeTitle'} onPress={() => this.props.navigation.navigate('LegalNotice')} />
         <ContainerSpacer />
         <ContainerView>
-          <Label>
+          <Label onLongPress={() => this.setState({ showVersionType: !showVersionType })}>
             {I18n.t('version-number')} {DeviceInfo.getVersion()}
+            {showVersionType ? `-${versionType}` : ''}
           </Label>
         </ContainerView>
         <ContainerSpacer />
