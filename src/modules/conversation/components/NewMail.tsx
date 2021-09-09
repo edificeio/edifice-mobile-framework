@@ -1,6 +1,6 @@
 import I18n from "i18n-js";
 import React from "react";
-import { ScrollView, View, StyleSheet, TextInput, ViewStyle, SafeAreaView } from "react-native";
+import { ScrollView, View, StyleSheet, TextInput, ViewStyle, SafeAreaView, KeyboardAvoidingView, Platform, KeyboardAvoidingViewProps } from "react-native";
 import { IDistantFileWithId } from "../../../framework/util/fileHandler";
 
 import Notifier from "../../../infra/notifier/container";
@@ -15,6 +15,8 @@ import { ISearchUsers } from "../service/newMail";
 import Attachment from "./Attachment";
 import SearchUserMail from "./SearchUserMail";
 import HtmlToText from "../../../infra/htmlConverter/text";
+import { hasNotch } from "react-native-device-info";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type HeadersProps = { to: ISearchUsers; cc: ISearchUsers; cci: ISearchUsers; subject: string };
 
@@ -43,14 +45,7 @@ const styles = StyleSheet.create({
   mailPart: {
     padding: 5,
     backgroundColor: "white",
-  },
-  lineSeparator: {
-    marginLeft: 15,
-    width: "50%",
-    borderStyle: "dashed",
-    borderBottomWidth: 1,
-    borderRadius: 1,
-  },
+  }
 });
 
 export default ({
@@ -66,6 +61,10 @@ export default ({
   prevBody,
   isReplyDraft
 }: NewMailComponentProps) => {
+  const keyboardAvoidingViewBehavior = Platform.select({ ios: 'padding', android: undefined }) as KeyboardAvoidingViewProps['behavior'];
+  // const insets = useSafeAreaInsets();                            // Note : this commented code is the theory
+  // const keyboardAvoidingViewVerticalOffset = insets.top + 56;    // But Practice >> Theory. Here, magic values ont the next ligne give better results.
+  const keyboardAvoidingViewVerticalOffset = hasNotch() ? 100 : 76; // Those are "magic" values found by try&error. Seems to be fine on every phone.
   return (
     <PageContainer>
       <ConnectionTrackingBar />
@@ -73,22 +72,28 @@ export default ({
       {isFetching ? (
         <Loading />
       ) : (
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }} bounces={false} keyboardShouldPersistTaps="never">
-          <SafeAreaView style={{ flex: 1 }}>
-          <Headers style={{ zIndex: 3 }} headers={headers} onChange={onHeaderChange} autofocus={!isReplyDraft} />
-          <Attachments
-            style={{ zIndex: 2 }}
-            attachments={attachments}
-            onChange={onAttachmentChange}
-            onDelete={onAttachmentDelete}
-            onSave={onDraftSave}
-          />
-          <Body style={{ zIndex: 1 }} value={body} onChange={onBodyChange} autofocus={isReplyDraft} />
-          {!!prevBody && <PrevBody prevBody={prevBody} />}
-          </SafeAreaView>
-        </ScrollView>
+        <View style={{ flex: 1 }}>
+            <KeyboardAvoidingView behavior={keyboardAvoidingViewBehavior} keyboardVerticalOffset={keyboardAvoidingViewVerticalOffset} style={{ height: '100%' }}>
+            <ScrollView contentContainerStyle={{ flexGrow: 1 }} alwaysBounceVertical={false} keyboardShouldPersistTaps="never">
+              <SafeAreaView style={{ flexGrow: 1 }}>
+
+                <Headers style={{ zIndex: 3 }} headers={headers} onChange={onHeaderChange} autofocus={!isReplyDraft} />
+                <Attachments
+                  style={{ zIndex: 2 }}
+                  attachments={attachments}
+                  onChange={onAttachmentChange}
+                  onDelete={onAttachmentDelete}
+                  onSave={onDraftSave}
+                />
+                <Body style={{ zIndex: 1 }} value={body} onChange={onBodyChange} autofocus={isReplyDraft} />
+                {!!prevBody && <PrevBody prevBody={prevBody} />}
+
+              </SafeAreaView>
+            </ScrollView>
+          </KeyboardAvoidingView>
+        </View >
       )}
-    </PageContainer>
+    </PageContainer >
   );
 };
 
@@ -272,7 +277,6 @@ const Body = ({ style, value, onChange, autofocus }) => {
 const PrevBody = ({ prevBody }) => {
   return (
     <View style={[styles.mailPart, { flexGrow: 1 }]}>
-      <View style={styles.lineSeparator} />
       <HtmlContentView html={prevBody} />
     </View>
   );
