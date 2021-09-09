@@ -18,9 +18,9 @@
     "start": "react-native start",
     "test": "jest",
     "tsc": "tsc -p tsconfig.json --watch",
-    "prepare-alpha": "node prepare-build alpha",
-    "prepare-rc": "node prepare-build.json rc",
-    "prepare-version": "func() { node prepare-version \"$1\" \"$2\" \"$3\"; }; func"
+    "prepare-alpha": "node prepare-build.js alpha",
+    "prepare-rc": "node prepare-build.js rc",
+    "prepare-version": "func() { node prepare-version.js \"$1\" \"$2\" \"$3\"; }; func"
   },
   "dependencies": {
     "@emotion/native": "11.0.0",
