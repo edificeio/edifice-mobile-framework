@@ -3,6 +3,8 @@ import moment from "moment";
 import * as React from "react";
 import { View, StyleSheet, SafeAreaView, KeyboardAvoidingView, Platform } from "react-native";
 import { TextInput, ScrollView } from "react-native-gesture-handler";
+import { LocalFile } from "../../../../framework/util/fileHandler";
+import { DocumentPicked, FilePicker, ImagePicked } from "../../../../infra/filePicker";
 
 import { CommonStyles } from "../../../../styles/common/styles";
 import { Icon } from "../../../../ui";
@@ -19,8 +21,9 @@ type DeclarationProps = {
   updateEndDate: any;
   comment: string;
   updateComment: any;
-  attachment: any;
+  attachment: LocalFile;
   pickAttachment: () => void;
+  onPickAttachment: (att: ImagePicked | DocumentPicked) => void;
   removeAttachment: () => void;
   submit: () => void;
   validate: () => boolean;
@@ -175,7 +178,7 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
     const RenderAttachment = () => (
       <View style={styles.attachment}>
         <Icon size={20} style={{ margin: 10 }} color={CommonStyles.primary} name="attachment" />
-        <Text style={{ flex: 1, color: CommonStyles.primary }}>{this.props.attachment.name}</Text>
+        <Text style={{ flex: 1, color: CommonStyles.primary }}>{this.props.attachment.filename}</Text>
         <TouchableOpacity onPress={() => this.props.removeAttachment()}>
           <Icon name="close" style={{ margin: 10 }} color="red" />
         </TouchableOpacity>
@@ -210,12 +213,15 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
                 underlineColorAndroid="lightgrey"
                 onChangeText={updateComment}
               />
-              <IconButton
-                onPress={() => this.props.pickAttachment()}
-                text={I18n.t("viesco-attachment")}
-                color="white"
-                icon="attachment"
-              />
+              <FilePicker
+                callback={(att) => this.props.onPickAttachment(att)}
+              >
+                <IconButton
+                  onPress={() => { }}
+                  text={I18n.t("viesco-attachment")}
+                  color="white"
+                  icon="attachment"
+                /></FilePicker>
             </View>
             {attachment && <RenderAttachment />}
 

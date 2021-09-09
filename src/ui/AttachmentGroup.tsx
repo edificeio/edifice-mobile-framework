@@ -85,7 +85,7 @@ export class AttachmentGroup extends React.PureComponent<
         }
         <BubbleStyle
           style={{
-            flex: 0,
+            flex: 0, 
             paddingVertical: 2,
             marginTop: 0,
             marginBottom: 0,

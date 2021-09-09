@@ -1,23 +1,23 @@
-import I18n from "i18n-js";
-import moment from "moment";
-import * as React from "react";
-import { View } from "react-native";
-import Toast from "react-native-tiny-toast";
-import { NavigationScreenProp } from "react-navigation";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+import I18n from 'i18n-js';
+import moment from 'moment';
+import * as React from 'react';
+import { View } from 'react-native';
+import Toast from 'react-native-tiny-toast';
+import { NavigationScreenProp } from 'react-navigation';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-import { getSessionInfo } from "../../../../App";
-import withViewTracking from "../../../../infra/tracker/withViewTracking";
-import { standardNavScreenOptions } from "../../../../navigation/helpers/navScreenOptions";
-import { PageContainer } from "../../../../ui/ContainerContent";
-import { HeaderBackAction } from "../../../../ui/headers/NewHeader";
-import { fetchPeriodsListAction, fetchYearAction } from "../../viesco/actions/periods";
-import { getSelectedChild, getSelectedChildStructure } from "../../viesco/state/children";
-import { getPeriodsListState, getYearState } from "../../viesco/state/periods";
-import { getStudentEvents } from "../actions/events";
-import HistoryComponent from "../components/History";
-import { getHistoryEvents } from "../state/events";
+import { getSessionInfo } from '../../../../App';
+import withViewTracking from '../../../../infra/tracker/withViewTracking';
+import { standardNavScreenOptions } from '../../../../navigation/helpers/navScreenOptions';
+import { PageContainer } from '../../../../ui/ContainerContent';
+import { HeaderBackAction } from '../../../../ui/headers/NewHeader';
+import { fetchPeriodsListAction, fetchYearAction } from '../../viesco/actions/periods';
+import { getSelectedChild, getSelectedChildStructure } from '../../viesco/state/children';
+import { getPeriodsListState, getYearState } from '../../viesco/state/periods';
+import { getStudentEvents } from '../actions/events';
+import HistoryComponent from '../components/History';
+import { getHistoryEvents } from '../state/events';
 
 interface HistoryProps {
   navigation: NavigationScreenProp<any>;
@@ -57,14 +57,14 @@ class History extends React.PureComponent<HistoryProps, HistoryState> {
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
     return standardNavScreenOptions(
       {
-        title: I18n.t("viesco-history"),
+        title: I18n.t('viesco-history'),
         headerLeft: <HeaderBackAction navigation={navigation} />,
         headerRight: <View />,
         headerStyle: {
-          backgroundColor: "#FCB602",
+          backgroundColor: '#FCB602',
         },
       },
-      navigation
+      navigation,
     );
   };
 
@@ -119,21 +119,21 @@ class History extends React.PureComponent<HistoryProps, HistoryState> {
 
     // on error
     if (prevProps.events.error !== events.error)
-      Toast.show(I18n.t("viesco-history-load-error"),{
+      Toast.show(I18n.t('viesco-history-load-error'), {
         position: Toast.position.CENTER,
-        containerStyle:{ padding: 30, backgroundColor: "#8a0000" },
+        containerStyle: { padding: 30, backgroundColor: '#8a0000' },
         textStyle: {},
       });
 
     if (this.state.period !== undefined) {
       const { start_date, end_date } = this.state.period;
-      const start_period = start_date.clone().subtract(1, "d");
-      const end_period = end_date.clone().add(1, "d");
+      const start_period = start_date.clone().subtract(1, 'd');
+      const end_period = end_date.clone().add(1, 'd');
       if (
         prevState.period === undefined ||
         (!this.props.events.isPristine && prevProps.events.isPristine) ||
-        !start_date.isSame(prevState.period.start_date, "d") ||
-        !end_date.isSame(prevState.period.end_date, "d")
+        !start_date.isSame(prevState.period.start_date, 'd') ||
+        !end_date.isSame(prevState.period.end_date, 'd')
       ) {
         const { events } = this.props;
         const displayEvents = {
@@ -145,26 +145,22 @@ class History extends React.PureComponent<HistoryProps, HistoryState> {
           punishments: [],
           notebooks: [],
         };
-        displayEvents.regularized = events.regularized.filter(
-          e => e.start_date.isAfter(start_period) && e.start_date.isBefore(end_period)
+        displayEvents.regularized = events?.regularized?.filter(
+          e => e.start_date.isAfter(start_period) && e.start_date.isBefore(end_period),
         );
-        displayEvents.unregularized = events.unregularized.filter(
-          e => e.start_date.isAfter(start_period) && e.start_date.isBefore(end_period)
+        displayEvents.unregularized = events?.unregularized?.filter(
+          e => e.start_date.isAfter(start_period) && e.start_date.isBefore(end_period),
         );
-        displayEvents.departure = events.departure.filter(
-          e => e.start_date.isAfter(start_period) && e.start_date.isBefore(end_period)
+        displayEvents.departure = events?.departure?.filter(
+          e => e.start_date.isAfter(start_period) && e.start_date.isBefore(end_period),
         );
-        displayEvents.lateness = events.lateness.filter(
-          e => e.start_date.isAfter(start_period) && e.start_date.isBefore(end_period)
+        displayEvents.lateness = events?.lateness?.filter(
+          e => e.start_date.isAfter(start_period) && e.start_date.isBefore(end_period),
         );
-        displayEvents.notebooks = events.notebooks.filter(
-          e => e.date.isAfter(start_period) && e.date.isBefore(end_period)
-        );
-        displayEvents.incidents = events.incidents.filter(
-          e => e.date.isAfter(start_period) && e.date.isBefore(end_period)
-        );
-        displayEvents.punishments = events.punishments.filter(
-          e => e.start_date.isAfter(start_period) && e.start_date.isBefore(end_period)
+        displayEvents.notebooks = events?.notebooks?.filter(e => e.date.isAfter(start_period) && e.date.isBefore(end_period));
+        displayEvents.incidents = events?.incidents?.filter(e => e.date.isAfter(start_period) && e.date.isBefore(end_period));
+        displayEvents.punishments = events?.punishments?.filter(
+          e => e.start_date.isAfter(start_period) && e.start_date.isBefore(end_period),
         );
         this.setState({
           events: displayEvents,
@@ -202,13 +198,13 @@ const mapStateToProps = (state: any) => {
   const periods = getPeriodsListState(state);
   const year = getYearState(state);
   const type = getSessionInfo().type;
-  const childId = type === "Student" ? getSessionInfo().id : getSelectedChild(state).id;
+  const childId = type === 'Student' ? getSessionInfo().id : getSelectedChild(state).id;
   const groupId =
-    type === "Student"
+    type === 'Student'
       ? getSessionInfo().classes[0]
       : getSessionInfo().classes[getSessionInfo().childrenIds.findIndex(i => i === childId)];
   const structureId =
-    type === "Student"
+    type === 'Student'
       ? getSessionInfo().administrativeStructures[0].id || getSessionInfo().structures[0]
       : getSelectedChildStructure(state)?.id;
   const isFetchingData = events.isFetching || periods.isFetching || year.isFetching;
@@ -232,7 +228,7 @@ const mapDispatchToProps = (dispatch: any) =>
       getPeriods: fetchPeriodsListAction,
       getYear: fetchYearAction,
     },
-    dispatch
+    dispatch,
   );
 
-export default withViewTracking("viesco/history")(connect(mapStateToProps, mapDispatchToProps)(History));
+export default withViewTracking('viesco/history')(connect(mapStateToProps, mapDispatchToProps)(History));

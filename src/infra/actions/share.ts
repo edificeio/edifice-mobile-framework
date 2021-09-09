@@ -3,6 +3,8 @@ import {startDownload, getExtension} from "./downloadHelper";
 import {IFile} from "../../workspace/types/states";
 import {Platform} from "react-native";
 import { Trackers } from "../tracker";
+import { ThunkDispatch } from "redux-thunk";
+import { newDownloadAction } from "../../workspace/actions/download";
 
 export const share = async (downloadable: IFile) => {
   const res = await startDownload( downloadable, false, false)
@@ -17,3 +19,14 @@ export const share = async (downloadable: IFile) => {
 
   Trackers.trackEvent("Workspace", "SHARE TO", getExtension(downloadable.filename));
 };
+
+export const shareAction = (downloadable: IFile) =>
+  async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+    dispatch(newDownloadAction('', { item: downloadable }, async file => {
+      await Share.open({
+        type: file.filetype || 'text/html',
+        url: Platform.OS === 'android' ? 'file://' + file.filepath : file.filepath,
+        showAppsToView: true
+      })
+    }))
+  }

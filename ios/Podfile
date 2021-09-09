@@ -1,73 +1,51 @@
 platform :ios, '10.0'
+
+source 'https://github.com/CocoaPods/Specs.git'
+
+require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
 target 'appe' do
 
-  # React
-  pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"
-  pod 'FBReactNativeSpec', :path => "../node_modules/react-native/Libraries/FBReactNativeSpec"
-  pod 'RCTRequired', :path => "../node_modules/react-native/Libraries/RCTRequired"
-  pod 'RCTTypeSafety', :path => "../node_modules/react-native/Libraries/TypeSafety"
+  config = use_native_modules!
+  use_react_native!(:path => config["reactNativePath"],:hermes_enabled => true)
 
-  pod 'React', :path => '../node_modules/react-native/'
-  pod 'React-Core', :path => '../node_modules/react-native/'
-  pod 'React-CoreModules', :path => '../node_modules/react-native/React/CoreModules'
-  pod 'React-Core/DevSupport', :path => '../node_modules/react-native/'
-  pod 'React-RCTActionSheet', :path => '../node_modules/react-native/Libraries/ActionSheetIOS'
-  pod 'React-RCTAnimation', :path => '../node_modules/react-native/Libraries/NativeAnimation'
-  pod 'React-RCTBlob', :path => '../node_modules/react-native/Libraries/Blob'
-  pod 'React-RCTImage', :path => '../node_modules/react-native/Libraries/Image'
-  pod 'React-RCTLinking', :path => '../node_modules/react-native/Libraries/LinkingIOS'
-  pod 'React-RCTNetwork', :path => '../node_modules/react-native/Libraries/Network'
-  pod 'React-RCTSettings', :path => '../node_modules/react-native/Libraries/Settings'
-  pod 'React-RCTText', :path => '../node_modules/react-native/Libraries/Text'
-  pod 'React-RCTVibration', :path => '../node_modules/react-native/Libraries/Vibration'
-  pod 'React-Core/RCTWebSocket', :path => '../node_modules/react-native/'
+  # Flipper
+  flipperkit_version = '0.87'
+  use_flipper!({ 'Flipper' => flipperkit_version, 'Flipper-Folly' => '2.5.3', 'Flipper-RSocket' => '1.3.1'})
+  pod 'FlipperKit/FlipperKitLayoutPlugin', flipperkit_version, :configuration => 'Debug'
+  pod 'FlipperKit/SKIOSNetworkPlugin', flipperkit_version, :configuration => 'Debug'
+  pod 'FlipperKit/FlipperKitUserDefaultsPlugin', flipperkit_version, :configuration => 'Debug'
 
-  pod 'React-cxxreact', :path => '../node_modules/react-native/ReactCommon/cxxreact'
-  pod 'React-jsi', :path => '../node_modules/react-native/ReactCommon/jsi'
-  pod 'React-jsiexecutor', :path => '../node_modules/react-native/ReactCommon/jsiexecutor'
-  pod 'React-jsinspector', :path => '../node_modules/react-native/ReactCommon/jsinspector'
-  pod 'ReactCommon/jscallinvoker', :path => "../node_modules/react-native/ReactCommon"
-  pod 'ReactCommon/turbomodule/core', :path => "../node_modules/react-native/ReactCommon"
-  pod 'Yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
+  # react-native-permissions
+  # @see: https://github.com/zoontek/react-native-permissions#ios
+  permissions_path = '../node_modules/react-native-permissions/ios'
+  #pod 'Permission-AppTrackingTransparency', :path => "#{permissions_path}/AppTrackingTransparency"
+  #pod 'Permission-BluetoothPeripheral', :path => "#{permissions_path}/BluetoothPeripheral"
+  #pod 'Permission-Calendars', :path => "#{permissions_path}/Calendars"
+  pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
+  #pod 'Permission-Contacts', :path => "#{permissions_path}/Contacts"
+  #pod 'Permission-FaceID', :path => "#{permissions_path}/FaceID"
+  #pod 'Permission-LocationAccuracy', :path => "#{permissions_path}/LocationAccuracy"
+  #pod 'Permission-LocationAlways', :path => "#{permissions_path}/LocationAlways"
+  #pod 'Permission-LocationWhenInUse', :path => "#{permissions_path}/LocationWhenInUse"
+  #pod 'Permission-MediaLibrary', :path => "#{permissions_path}/MediaLibrary"
+  #pod 'Permission-Microphone', :path => "#{permissions_path}/Microphone"
+  #pod 'Permission-Motion', :path => "#{permissions_path}/Motion"
+  pod 'Permission-Notifications', :path => "#{permissions_path}/Notifications"
+  pod 'Permission-PhotoLibrary', :path => "#{permissions_path}/PhotoLibrary"
+  pod 'Permission-PhotoLibraryAddOnly', :path => "#{permissions_path}/PhotoLibraryAddOnly"
+  #pod 'Permission-Reminders', :path => "#{permissions_path}/Reminders"
+  #pod 'Permission-Siri', :path => "#{permissions_path}/Siri"
+  #pod 'Permission-SpeechRecognition', :path => "#{permissions_path}/SpeechRecognition"
+  #pod 'Permission-StoreKit', :path => "#{permissions_path}/StoreKit"
 
-  # External pods for React
-  pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
-  pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
-  pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
-
-
-  pod 'RNCPushNotificationIOS', :path => '../node_modules/@react-native-community/push-notification-ios'
-
-  pod 'RNDateTimePicker', :path => '../node_modules/@react-native-community/datetimepicker'
-
-  target 'appeTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-
-  use_native_modules!
+  # Native pods
+  pod 'MatomoTracker', '~> 7.4'
 
   post_install do |installer|
-    ## Fix for XCode 12.5
-    find_and_replace("../node_modules/react-native/React/CxxBridge/RCTCxxBridge.mm",
-    "_initializeModules:(NSArray<id<RCTBridgeModule>> *)modules", "_initializeModules:(NSArray<Class> *)modules")
-    find_and_replace("../node_modules/react-native/ReactCommon/turbomodule/core/platform/ios/RCTTurboModuleManager.mm",
-      "RCTBridgeModuleNameForClass(module))", "RCTBridgeModuleNameForClass([module class]))")
+    #flipper_post_install(installer)
+    react_native_post_install(installer)
   end
-  
-end
 
-def find_and_replace(dir, findstr, replacestr)
-  Dir[dir].each do |name|
-      text = File.read(name)
-      replace = text.gsub(findstr,replacestr)
-      if text != replace
-          puts "Fix: " + name
-          File.open(name, "w") { |file| file.puts replace }
-          STDOUT.flush
-      end
-  end
-  Dir[dir + '*/'].each(&method(:find_and_replace))
 end

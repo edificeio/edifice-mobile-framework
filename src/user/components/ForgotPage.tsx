@@ -10,7 +10,7 @@ import {
   ScrollView,
   TouchableOpacity
 } from "react-native";
-import {Picker} from '@react-native-community/picker';
+import {Picker} from '@react-native-picker/picker';
 
 import Conf from "../../../ode-framework-conf";
 import { navigate } from "../../navigation/helpers/navHelper";

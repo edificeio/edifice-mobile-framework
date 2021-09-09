@@ -1,13 +1,13 @@
-import I18n from "i18n-js";
-import moment from "moment";
-import React from "react";
-import { View, StyleSheet, useWindowDimensions } from "react-native";
-import RNCarousel, { Pagination } from "react-native-snap-carousel";
+import I18n from 'i18n-js';
+import moment from 'moment';
+import React from 'react';
+import { View, StyleSheet, useWindowDimensions } from 'react-native';
+import RNCarousel, { Pagination } from 'react-native-snap-carousel';
 
-import { Loading } from "../../../../ui";
-import { TextBold } from "../../../../ui/Typography";
-import { ICourses } from "../state/teacherCourses";
-import CourseComponent from "./CourseComponent";
+import { Loading } from '../../../../ui';
+import { TextBold } from '../../../../ui/Typography';
+import { ICourses } from '../state/teacherCourses';
+import CourseComponent from './CourseComponent';
 
 interface ICallListProps {
   courseList: ICourses[];
@@ -33,16 +33,16 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
   }
 
   private getCurrentCourseIndex(courseList) {
-    const courseIndexNow = courseList.findIndex(course =>
-      moment().isBetween(moment(course.startDate), moment(course.endDate))
-    );
+    const courseIndexNow = courseList.findIndex(course => moment().isBetween(moment(course.startDate), moment(course.endDate)));
     return courseIndexNow !== -1 ? courseIndexNow : 0;
   }
 
   private Carousel = () => {
     const getCourseCallItem = item => {
-      const isCourseNow = moment().isBetween(moment(item.startDate).subtract(15, "minutes"), moment(item.endDate));
-      const isCourseEditable = !moment(item.startDate).subtract(15, "minutes").isAfter(moment());
+      const isCourseNow = moment().isBetween(moment(item.startDate).subtract(15, 'minutes'), moment(item.endDate));
+      const isCourseEditable = !moment(item.startDate)
+        .subtract(15, 'minutes')
+        .isAfter(moment());
 
       return (
         <CourseComponent
@@ -58,11 +58,11 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
 
     return (
       <>
-        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <RNCarousel
             useScrollView
             data={courseList}
-            onLayout={() => setTimeout(() => this.carouselRef.snapToItem(this.state.currentIndex), 500)}
+            onLayout={() => setTimeout(() => this.carouselRef && this.carouselRef.snapToItem(this.state.currentIndex), 500)}
             renderItem={({ item }) => getCourseCallItem(item)}
             sliderWidth={useWindowDimensions().width}
             itemWidth={useWindowDimensions().width * 0.8}
@@ -92,16 +92,16 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
           flex: 1,
         }}>
         <TextBold style={{ fontSize: 15, marginBottom: 30 }}>
-          {I18n.t("viesco-register-date")} {moment().format("DD MMMM YYYY")}
+          {I18n.t('viesco-register-date')} {moment().format('DD MMMM YYYY')}
         </TextBold>
-        <View style={{ flex: 1, justifyContent: "space-evenly" }}>
+        <View style={{ flex: 1, justifyContent: 'space-evenly' }}>
           {isFetching ? (
             <Loading />
           ) : courseList.length === 0 ? (
             <>
-              <View style={[styles.noCallChip, { backgroundColor: "#E61610" }]} />
-              <TextBold style={styles.noCallText}>{I18n.t("viesco-no-register-today")}</TextBold>
-              <View style={[styles.noCallChip, { backgroundColor: "#FFB600" }]} />
+              <View style={[styles.noCallChip, { backgroundColor: '#E61610' }]} />
+              <TextBold style={styles.noCallText}>{I18n.t('viesco-no-register-today')}</TextBold>
+              <View style={[styles.noCallChip, { backgroundColor: '#FFB600' }]} />
             </>
           ) : (
             <this.Carousel />
@@ -114,12 +114,12 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
 
 const styles = StyleSheet.create({
   noCallText: {
-    alignSelf: "center",
+    alignSelf: 'center',
     fontSize: 15,
-    color: "grey",
+    color: 'grey',
   },
   noCallChip: {
-    alignSelf: "center",
+    alignSelf: 'center',
     height: 18,
     width: 60,
     borderRadius: 10,
@@ -128,10 +128,10 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: "#FFB600",
+    backgroundColor: '#FFB600',
   },
   carouselInactiveDot: {
     borderRadius: 10,
-    backgroundColor: "grey",
+    backgroundColor: 'grey',
   },
 });

@@ -1,35 +1,34 @@
 import * as React from "react";
-import { Platform } from "react-native";
 import { EVENT_TYPE, IDetailsProps, IFile } from "../types";
 import { ItemDetails } from "../components";
-import { openPreview, downloadFile } from "../../infra/actions/downloadHelper";
-import { share } from "../../infra/actions/share";
+import { shareAction } from "../../infra/actions/share";
 import withMenuWrapper from "../utils/withMenuWrapper";
+import { newDownloadThenOpenAction } from "../actions/download";
+import { connect } from "react-redux";
 
 class Details extends React.PureComponent<IDetailsProps> {
   public handleEvent({ type, item }) {
     switch (type) {
       case EVENT_TYPE.DOWNLOAD: {
-        downloadFile(item as IFile);
+        console.log(this.props);
+        this.props.dispatch(newDownloadThenOpenAction('', {item: item as IFile} ))
         return;
       }
       case EVENT_TYPE.PREVIEW: {
-        if (Platform.OS === "ios")
-          downloadFile(item as IFile);
-        else
-          openPreview(item as IFile);
+        console.log(this.props);
+        this.props.dispatch(newDownloadThenOpenAction('', { item: item as IFile }))
         return;
       }
       case EVENT_TYPE.SHARE: {
-        share(item as IFile);
+        this.props.dispatch(shareAction(item as IFile));
       }
     }
   }
 
   public render() {
     const item = this.props.navigation.getParam("item");
-    return <ItemDetails item={item} onEvent={this.handleEvent} />;
+    return <ItemDetails item={item} onEvent={this.handleEvent.bind(this)} />;
   }
 }
 
-export default withMenuWrapper(Details);
+export default withMenuWrapper(connect(() => {}, (dispatch) => ({dispatch}))(Details));

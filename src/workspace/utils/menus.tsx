@@ -1,8 +1,8 @@
 import I18n from "i18n-js";
 import { Platform } from "react-native";
 import { copyDocuments, moveDocuments } from "./copypast";
-import { downloadAction } from "../actions/download";
-import { createFolderAction } from "../actions/create";
+import { newDownloadThenOpenAction } from "../actions/download";
+// import { createFolderAction } from "../../framework/modules/workspace/actions/folder";
 import { deleteAction, trashAction } from "../actions/delete";
 import { renameAction } from "../actions/rename";
 import { restoreAction } from "../actions/restore";
@@ -10,6 +10,8 @@ import { FilePicker } from "../../infra/filePicker";
 import * as React from "react";
 import { uploadAction } from "../actions/upload";
 import { ContentUri } from "../types";
+import { Trackers } from "../../framework/util/tracker";
+import { createFolderAction } from "../actions/create";
 
 export const addMenu = () => {
   return {
@@ -50,7 +52,12 @@ export const createMenu = () => ({
     input: true,
     okLabel: I18n.t("create"),
   },
-  onEvent: ({ dispatch, parentId, value }) => dispatch(createFolderAction(parentId, value)),
+  onEvent: ({ dispatch, parentId, value }) => {
+    Trackers.trackEvent("Workspace", "CREATE", "Folder");
+    parentId === 'owner'
+      ? dispatch(createFolderAction(value))
+      : dispatch(createFolderAction(value, parentId));
+  }
 });
 
 export const trashMenu = () => ({
@@ -79,12 +86,12 @@ export const downloadMenu = () => ({
   text: I18n.t("download"),
   icon: "download",
   id: "download",
-  options: { onlyFiles: true, monoselection: Platform.OS === "ios" },
+  options: { onlyFiles: true, monoselection: true },
   dialog: {
     title: I18n.t("download-documents"),
     okLabel: I18n.t("download"),
   },
-  onEvent: ({ dispatch, parentId, selected }) => dispatch(downloadAction(parentId, selected)),
+  onEvent: ({ dispatch, parentId, selected }) => dispatch(newDownloadThenOpenAction(parentId, selected)),
 });
 
 export const restoreMenu = () => ({

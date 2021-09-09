@@ -1,15 +1,13 @@
 package com.ode.appe;
 
-import com.facebook.react.ReactActivity;
-import android.os.Bundle;
 import android.content.Intent;
+import android.os.Bundle;
 
-// React Navigation deps
+import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
 import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
 
-// react-native-splash-screen
 import org.devio.rn.splashscreen.SplashScreen;
 
 public class MainActivity extends ReactActivity {

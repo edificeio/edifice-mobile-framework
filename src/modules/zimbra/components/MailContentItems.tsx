@@ -3,8 +3,11 @@ import I18n from "i18n-js";
 import moment from "moment";
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
+import { IDistantFile } from "../../../framework/util/fileHandler";
+import { Trackers } from "../../../framework/util/tracker";
 
 import { downloadFile } from "../../../infra/actions/downloadHelper";
+import { contentUriToLocalFile } from "../../../types/contentUri";
 import { Icon } from "../../../ui";
 import { BadgeAvatar } from "../../../ui/BadgeAvatar";
 import { ButtonIcon } from "../../../ui/ButtonIconText";
@@ -151,22 +154,24 @@ export const FooterButton = ({ icon, text, onPress }) => {
   );
 };
 
-export const RenderPJs = ({ attachments, mailId }) => {
+export const RenderPJs = ({ attachments, mailId, onDownload }: {attachments: IDistantFile[], mailId: string, onDownload: (att: IDistantFile) => void}) => {
   const [isVisible, toggleVisible] = React.useState(false);
-  const displayedAttachments = isVisible ? attachments : attachments.slice(0, 1);
+  const displayedAttachments = isVisible ? attachments : attachments.slice(0, 1) as any;
   return (
     <View style={[styles.containerMail, { flexDirection: "column" }]}>
       {displayedAttachments.map((item, index) => (
         <TouchableOpacity
           onPress={() => {
-            downloadFile({
+            Trackers.trackEvent('Zimbra', 'DOWNLOAD ATTACHMENT');
+            const df: IDistantFile = {
+              fileid: item.id,
               filename: item.filename,
               url: `/zimbra/message/${mailId}/attachment/${item.id}`,
-              size: item.size,
-              id: item.id,
-              name: item.filename,
-              parentId: "",
-            });
+              filesize: item.size,
+              filetype: item.contentType
+            }
+            // console.log(df);
+            onDownload(df);
           }}>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <Icon size={25} color="#2A9CC8" name={getFileIcon(item.contentType)} />

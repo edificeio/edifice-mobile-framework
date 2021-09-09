@@ -143,14 +143,14 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
               visible={this.state.dialogVisible}
               onValid={(param: IEvent) => {
                 this.setState({ dialogVisible: false });
-                selectedMenuItem.onEvent({
+                requestAnimationFrame(() => selectedMenuItem.onEvent({
                   dispatch,
                   filterId,
                   navigation,
                   parentId,
                   selected: selectedItems,
                   ...param,
-                });
+                }));
               }}
               onCancel={() => this.setState({ dialogVisible: false })}
             />
@@ -189,4 +189,4 @@ const mapStateToProps = (state: any) => {
 };
 
 export default (wrappedComponent: React.ComponentType<any>): React.ComponentType<any> =>
-  connect(mapStateToProps)(withMenuWrapper(wrappedComponent));
+  connect(mapStateToProps, (dispatch) => ({dispatch}))(withMenuWrapper(wrappedComponent));
