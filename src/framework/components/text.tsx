@@ -72,7 +72,7 @@ export const TextSizeStyle = {
     Tiny: remStyle(10 / 14),
     Small: remStyle(12 / 14),
     Normal: remStyle(1),
-    Big: remStyle(16 / 14),
+    Big: remStyle(20 / 14),
     Huge: remStyle(2),
 } as { [key in TextSizeStyleKey]: TextStyle };
 
