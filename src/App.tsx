@@ -2,7 +2,7 @@
 import * as React from 'react';
 import I18n from 'i18n-js';
 import { initI18n } from './framework/util/i18n';
-import { Alert, AppState, AppStateStatus, StatusBar, View } from 'react-native';
+import { AppState, AppStateStatus, StatusBar, View } from 'react-native';
 import * as RNLocalize from 'react-native-localize';
 import 'react-native-gesture-handler';
 import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
@@ -16,7 +16,6 @@ import { Provider, connect } from 'react-redux';
 
 // JS
 import Conf from '../ode-framework-conf';
-import { name as appName } from '../app.json';
 
 // ODE Mobile Framework Modules
 import { Trackers } from './infra/tracker';
@@ -55,7 +54,6 @@ import { IUserInfoState } from './user/state/info';
 
 // App Conf
 import './infra/appConf';
-import { AppPushNotificationHandlerComponent } from './framework/util/notifications/cloudMessaging';
 import { reset } from './navigation/helpers/navHelper';
 import { getLoginStackToDisplay } from './navigation/LoginNavigator';
 import { OAuth2RessourceOwnerPasswordClient } from './infra/oauth';
@@ -95,7 +93,7 @@ class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: b
     // Tracking
     await Trackers.init();
     Trackers.trackEvent('Application', 'STARTUP');
-    Trackers.setCustomDimension(4 /* App Name */, appName);
+    Trackers.setCustomDimension(4 /* App Name */, DeviceInfo.getApplicationName());
 
     // If only one platform in conf => auto-select it.
     let platformId;
