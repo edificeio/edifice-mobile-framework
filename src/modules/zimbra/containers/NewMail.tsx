@@ -439,7 +439,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         headers={headers}
         onDraftSave={this.saveDraft}
         onHeaderChange={headers => this.setState(prevState => ({ mail: { ...prevState.mail, ...headers } }))}
-        body={this.state.mail.body.replace(/<br>/gs, "\n")}
+        body={this.state.mail.body.replace(/<br>|<br \/>/gs, "\n")}
         onBodyChange={body => this.setState(prevState => ({ mail: { ...prevState.mail, body } }))}
         attachments={
           this.state.tempAttachment
