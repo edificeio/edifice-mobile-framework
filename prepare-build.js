@@ -144,7 +144,7 @@ try {
 try {
   gradleContent = gradleContent
     .replace(/(versionCode )(.*)/, '$1' + buildNumber)
-    .replace(/(versionName )(.*)/, '$1' + versionNumber)
+    .replace(/(versionName ")(.*)(")/, '$1' + versionNumber + '$3')
     .replace(/(buildConfigField "String", "BundleVersionType", "\\")(.*)(\\"")/, '$1' + buildType + '$3');
 } catch (error) {
   console.error('!!! Unable to update build.gradle !!!');
