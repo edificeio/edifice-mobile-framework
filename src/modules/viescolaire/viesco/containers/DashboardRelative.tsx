@@ -11,6 +11,7 @@ import { fetchLevelsAction } from "../../competences/actions/competencesLevels";
 import { fetchDevoirListAction } from "../../competences/actions/devoirs";
 import { getLevelsListState, ILevelsList } from "../../competences/state/competencesLevels";
 import { getDevoirListState, IDevoirListState } from "../../competences/state/devoirs";
+import { fetchChildrenGroupsAction } from "../actions/childrenGroups";
 import { fetchPersonnelListAction } from "../actions/personnel";
 import { fetchSubjectListAction } from "../actions/subjects";
 import DashboardComponent from "../components/DashboardRelative";
@@ -29,6 +30,7 @@ class Dashboard extends React.PureComponent<{
   getDevoirs: (structureId: string, childId: string) => void;
   getTeachers: (structureId: string) => void;
   getLevels: (structureId: string) => void;
+  getChildrenGroups: (structureId: string) => void;
   navigation: NavigationScreenProp<any>;
   isFocused: boolean;
 }> {
@@ -48,6 +50,7 @@ class Dashboard extends React.PureComponent<{
     );
     this.props.getDevoirs(structureId, childId);
     this.props.getLevels(structureId);
+    this.props.getChildrenGroups(structureId);
   }
 
   public componentDidUpdate(prevProps) {
@@ -56,6 +59,7 @@ class Dashboard extends React.PureComponent<{
       this.props.getSubjects(this.props.structureId);
       this.props.getTeachers(this.props.structureId);
       this.props.getLevels(structureId);
+      this.props.getChildrenGroups(structureId);
     }
     if (isFocused && (prevProps.isFocused !== isFocused || prevProps.childId !== childId)) {
       this.props.getHomeworks(
@@ -110,6 +114,7 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
       getHomeworks: fetchChildHomeworkAction,
       getDevoirs: fetchDevoirListAction,
       getLevels: fetchLevelsAction,
+      getChildrenGroups: fetchChildrenGroupsAction,
     },
     dispatch
   );

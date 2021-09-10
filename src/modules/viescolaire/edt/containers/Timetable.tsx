@@ -12,6 +12,7 @@ import { INavigationProps } from "../../../../types";
 import { HeaderBackAction } from "../../../../ui/headers/NewHeader";
 import { fetchGroupListAction } from "../../viesco/actions/group";
 import { getSelectedChildStructure, getSelectedChild } from "../../viesco/state/children";
+import { getChildrenGroupsState } from "../../viesco/state/childrenGroups";
 import { getGroupsListState } from "../../viesco/state/group";
 import { getPersonnelListState } from "../../viesco/state/personnel";
 import { getSelectedStructure } from "../../viesco/state/structure";
@@ -136,6 +137,12 @@ class TimetableContainer extends React.PureComponent<TimetableProps, TimetableSt
   }
 }
 
+// if no groups are found, then take className
+const filterGroups = (childClasses, initialGroups) => {
+  let group = initialGroups.find(item => item.id === childClasses);
+  return group && group.name !== undefined ? group.name : "";
+};
+
 const mapStateToProps = (state: any): any => {
   let childId: string | undefined = "";
   let childClasses: string = "";
@@ -156,6 +163,9 @@ const mapStateToProps = (state: any): any => {
     if (childGroups !== undefined && childGroups.data[0] !== undefined) {
       if (childGroups.data[0].nameClass !== undefined) group.push(childGroups.data[0].nameClass);
       childGroups?.data[0]?.nameGroups?.forEach(item => group.push(item));
+    } else {
+      let initialGroups = getChildrenGroupsState(state).data;
+      group.push(filterGroups(childClasses, initialGroups));
     }
   }
 

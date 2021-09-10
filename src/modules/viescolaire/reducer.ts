@@ -25,6 +25,7 @@ import { IClassesCallListState } from "./presences/state/teacherClassesCall";
 import { ICoursesRegisterInfosState } from "./presences/state/teacherCourseRegister";
 import { ICoursesListState } from "./presences/state/teacherCourses";
 import viesco from "./viesco/reducers";
+import { IChildrenGroupsState } from "./viesco/state/childrenGroups";
 import { IGroupListState } from "./viesco/state/group";
 import { IPeriodsListState, IYearState } from "./viesco/state/periods";
 import { IPersonnelListState } from "./viesco/state/personnel";
@@ -41,6 +42,7 @@ export interface IViesco_State {
     periods: IPeriodsListState;
     year: IYearState;
     group: IGroupListState;
+    childrenGroups: IChildrenGroupsState;
   };
   cdt: {
     homeworksList: IHomeworkListState;
