@@ -25,7 +25,7 @@ export type ISearchUsersGroups = {
 };
 
 const formatMailDatas = (mailDatas) => {
-  console.log("mailDatas", mailDatas);
+  // console.log("[conversation] mailDatas", mailDatas);
   return {
     ...mailDatas,
     attachments: mailDatas.attachments?.map(att => ({

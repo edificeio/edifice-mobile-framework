@@ -145,12 +145,13 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     if (draftType !== DraftType.DRAFT) {
       this.setState({ id: undefined });
     }
+    this.props.clearContent();
   };
 
   componentDidUpdate = async (prevProps: NewMailContainerProps, prevState) => {
     // console.log("new state", this.state);
     if (prevProps.mail !== this.props.mail) {
-      // console.log("mail changed");
+      // console.log("[conversation] mail changed");
       const { mail, ...rest } = this.getPrefilledMail();
       this.setState(prevState => ({
         ...prevState,
@@ -169,7 +170,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       let checkBody = removeWrapper(this.props.mail.body);
       checkBody = checkBody.split('<hr class="ng-scope">')[0];
       checkBody = checkBody.replace(/<\/?(div|br)\/?>/g, '');
-      console.log("checkBody", checkBody);
+      // console.log("[conversation] checkBody", checkBody);
       if (/<(\"[^\"]*\"|'[^']*'|[^'\">])*>/.test(checkBody)) {
         this.setState({ webDraftWarning: true });
         Alert.alert(I18n.t('conversation.warning.webDraft.title'), I18n.t('conversation.warning.webDraft.text'), [
@@ -516,7 +517,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       this.setState({ id: idDraft });
       if (isForward) this.forwardDraft();
     } else {
-      // console.log("save draft", this.getMailData());
+      // console.log("[conversation] save draft", this.getMailData());
       this.props.updateDraft(this.state.id, this.getMailData());
     }
   };
