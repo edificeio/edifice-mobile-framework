@@ -64,16 +64,26 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
   };
 
   renderHalf = course => {
+    const className = course.classes.length > 0 ? course.classes[0] : course.groups[0];
     return (
       <View style={style.courseView}>
-        <View style={style.subjectView}>
-          <TextBold numberOfLines={1}>{course.subject?.name || course.exceptionnal}</TextBold>
-          <Text numberOfLines={1}>{course.teacher}</Text>
-          {course.roomLabels && course.roomLabels.length > 0 && course.roomLabels[0].length > 0 && (
-            <View style={{ flexDirection: "row" }}>
-              <Icon name="pin_drop" size={16} />
-              <Text>&ensp;{I18n.t("viesco-room")}&nbsp;{course.roomLabels && course.roomLabels[0]}</Text>
+        <View>
+          {getSessionInfo().type === "Teacher" ? (
+            <View style={style.infoView}>
+              <TextBold style={{ fontSize: 20 }}>{className}</TextBold>
+              <TextBold numberOfLines={1}>{course.subject?.name || course.exceptionnal}</TextBold>
             </View>
+          ) : (
+            <>
+              <TextBold numberOfLines={1}>{course.subject?.name || course.exceptionnal}</TextBold>
+              <Text numberOfLines={1}>{course.teacher}</Text>
+              {course.roomLabels && course.roomLabels.length > 0 && course.roomLabels[0].length > 0 && (
+                <View style={{ flexDirection: "row" }}>
+                  <Icon name="pin_drop" size={16} />
+                  <Text>&ensp;{I18n.t("viesco-room")}&nbsp;{course.roomLabels && course.roomLabels[0]}</Text>
+                </View>
+              )}
+            </>
           )}
         </View>
       </View>

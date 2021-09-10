@@ -164,11 +164,14 @@ export default class Calendar extends React.PureComponent<CalendarProps, Calenda
       const isSameTime = dayData.findIndex(
         m => JSON.stringify(m) !== JSON.stringify(d) && m.startDate.isSame(d.startDate) && m.endDate.isSame(d.endDate)
       );
+
       if ((isSameTime > -1 || iStartSameEndMiddle > -1) && col === 0) {
-        col = (elementsColumns[elementsColumns.length - 1] % 2) + 1;
+        if (elementsColumns.length > 0) {
+          col = (elementsColumns[elementsColumns.length - 1] % 2) + 1;
+        } else col = 1;
       }
       if (!isNaN(col)) {
-        columns[col].push(d);
+        if (d.color !== "") columns[col].push(d);
         elementsColumns.push(col);
       }
     });
