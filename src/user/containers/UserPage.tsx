@@ -188,6 +188,11 @@ export class UserPage extends React.PureComponent<
         <ContainerSpacer />
         <ButtonLine title={'directory-legalNoticeTitle'} onPress={() => this.props.navigation.navigate('LegalNotice')} />
         <ContainerSpacer />
+        {/* <ButtonLine
+          title={"directory-legalNoticeTitle"}
+          onPress={() => this.props.navigation.navigate("LegalNotice")}
+        />
+        <ContainerSpacer /> */}
         <ContainerView>
           <Label onLongPress={() => this.setState({ showVersionType: !showVersionType })}>
             {I18n.t('version-number')} {DeviceInfo.getVersion()}
