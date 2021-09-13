@@ -220,7 +220,11 @@ export const GradesDevoirs = ({ devoirs, levels, color }: { devoirs: IDevoirList
                 diviseur={devoir.diviseur}
                 backgroundColor={
                   color
-                    ? getColorFromNote(parseFloat(devoir.note), parseFloat(devoir.moyenne), devoir.diviseur)
+                    ? getColorFromNote(
+                        parseFloat(devoir.note.replace(/\./g, ",").replace(",", ".")),
+                        parseFloat(devoir.moyenne.replace(/\./g, ",").replace(",", ".")),
+                        devoir.diviseur
+                      )
                     : CommonStyles.primary
                 }
               />

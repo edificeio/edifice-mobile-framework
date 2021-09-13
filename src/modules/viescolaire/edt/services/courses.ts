@@ -19,6 +19,7 @@ export type ICourseListBackend = {
     name: string;
     rank: number;
   };
+  color: string;
 }[];
 
 const coursesListAdapter = (data: ICourseListBackend): ICourseList => {
@@ -32,6 +33,7 @@ const coursesListAdapter = (data: ICourseListBackend): ICourseList => {
     groups: course.groups,
     startDate: moment(course.startCourse),
     endDate: moment(course.endCourse),
+    color: course.color,
   }));
 };
 

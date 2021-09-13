@@ -21,6 +21,7 @@ export interface ICourse {
     name: string;
     rank: number;
   };
+  color: string;
 }
 
 export type ICourseList = ICourse[];
