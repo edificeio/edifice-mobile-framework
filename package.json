@@ -20,6 +20,9 @@
     "tsc": "tsc -p tsconfig.json --watch",
     "prepare-alpha": "node prepare-build.js alpha",
     "prepare-rc": "node prepare-build.js rc",
+    "prepare-major": "node prepare-version.js major",
+    "prepare-minor": "node prepare-version.js minor",
+    "prepare-rev": "node prepare-version.js rev",
     "prepare-version": "func() { node prepare-version.js \"$1\" \"$2\" \"$3\"; }; func"
   },
   "dependencies": {

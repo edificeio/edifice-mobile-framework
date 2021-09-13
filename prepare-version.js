@@ -4,7 +4,7 @@
 // Prepare sources for new version
 //
 // Args:
-//  - major minor rev specify new version number
+//  - major minor rev specify new version number || major|minor|rev 
 //
 
 const execSync = require('child_process').execSync;
@@ -19,19 +19,12 @@ const versionFile = './version.json';
 // Check arguments
 //
 
-let versionComponents = process.argv.slice(2);
+const versionComponents = process.argv.slice(2);
 
-if (versionComponents.length !== 3) {
-  console.error('!!! Arguments should be major + minor + rev !!!');
+if (((versionComponents.length !== 1)) || (versionComponents.length !== 3)) {
+  console.error('!!! Arguments should be major + minor + rev || major|minor|rev !!!');
   process.exit(1);
 }
-
-const major = parseInt(versionComponents[0], 10);
-const minor = parseInt(versionComponents[1], 10);
-const rev = parseInt(versionComponents[2], 10);
-const versionNumber = `${major}.${minor}.${rev}`;
-
-console.info(`==> Will prepare version ${versionNumber}`);
 
 //
 // Read version.json
@@ -53,8 +46,31 @@ try {
 
 let buildNumber = null;
 let fullVersion = null;
+let versionNumber = null;
 
 try {
+  let major = versionContent.major;
+  let minor = versionContent.minor;
+  let rev = versionContent.rev;
+  switch (versionComponents[0]) {
+    case 'major':
+      major = versionContent.major + 1;
+      minor = 0;
+      rev = 0;
+      break;
+    case 'minor':
+      minor = versionContent.minor + 1;
+      rev = 0;
+      break;
+    case 'rev':
+      rev = versionContent.rev + 1;
+      break;
+    default:
+      major = parseInt(versionComponents[0], 10);
+      minor = parseInt(versionComponents[1], 10);
+      rev = parseInt(versionComponents[2], 10);
+  }
+  versionNumber = `${major}.${minor}.${rev}`;
   versionContent.major = major;
   versionContent.minor = minor;
   versionContent.rev = rev;
