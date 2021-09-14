@@ -71,7 +71,7 @@ const style = StyleSheet.create({
     left: 0,
     position: "absolute",
     right: 0,
-    top: Platform.OS === "ios" ? (hasNotch() ? iosStatusBarHeight + 20 : iosStatusBarHeight) : -3,
+    top: Platform.OS === "ios" ? (hasNotch() ? iosStatusBarHeight + 10 : iosStatusBarHeight) : -3,
   },
   separator: {
     borderBottomColor: CommonStyles.borderColorVeryLighter,

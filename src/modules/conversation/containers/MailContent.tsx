@@ -146,7 +146,8 @@ class MailContentContainer extends React.PureComponent<{
       // { text: I18n.t("conversation.downloadAll"), icon: "download", onPress: () => {} },
       { text: I18n.t('conversation.delete'), icon: 'delete', onPress: this.delete },
     ];
-    isCurrentFolderSentOrDrafts && menuData.splice(1, 1);
+    isCurrentFolderTrash && menuData.splice(0, 1);
+    isCurrentFolderSentOrDrafts && menuData.splice(0, 2);
 
     // console.log("Container MailContent mail prop", mail, navigation.state.params);
     const ViewportAwareSubject = Viewport.Aware(View)
