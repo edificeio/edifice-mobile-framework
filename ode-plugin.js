@@ -162,6 +162,7 @@ async function _updateAppIds(ode) {
   const appidAndroid = ode['appidAndroid'] || appid;
   const appidIOS = ode['appidIOS'] || appid;
   const appname = ode['appname'];
+  const override = ode['current'];
   const gradlePropertiesPath = path.resolve(__dirname, ode['properties']['android']);
   let gradleProperties = await readFile(gradlePropertiesPath, { encoding: 'utf-8' });
   // from https://stackoverflow.com/a/21014576/6111343
@@ -175,7 +176,8 @@ async function _updateAppIds(ode) {
   };
   gradleProperties = gradleProperties
     .replace(/(APPID=)(.*)/, '$1' + appidAndroid)
-    .replace(/(APPNAME=)(.*)/, '$1' + toUnicode(appname));
+    .replace(/(APPNAME=)(.*)/, '$1' + toUnicode(appname))
+    .replace(/(APPOVERRIDE=)(.*)/, '$1' + override);
   await writeFile(gradlePropertiesPath, gradleProperties);
   //update info.plist
   const infoPlistPath = path.resolve(__dirname, ode['properties']['ios']);
@@ -183,7 +185,8 @@ async function _updateAppIds(ode) {
   const appnameIOS = appname.replace(' ', '&#x2007;'); //https://stackoverflow.com/questions/46337691/bundle-display-name-missing-space-characters
   infoPlist = infoPlist
     .replace(/(<key>CFBundleIdentifier<\/key>\s*<string>)(.*)(<\/string>)/, '$1' + appidIOS + '$3')
-    .replace(/(<key>CFBundleDisplayName<\/key>\s*<string>)(.*)(<\/string>)/, '$1' + appnameIOS + '$3');
+    .replace(/(<key>CFBundleDisplayName<\/key>\s*<string>)(.*)(<\/string>)/, '$1' + appnameIOS + '$3')
+    .replace(/(<key>BundleVersionOverride<\/key>\s*<string>)(.*)(<\/string>)/, '$1' + override + '$3');
   await writeFile(infoPlistPath, infoPlist);
   //update ios project
   const pbxprojPath = path.resolve(__dirname, ode['properties']['pbxproj']);

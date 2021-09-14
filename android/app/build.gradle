@@ -27,6 +27,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1060010
         versionName "1.6.0"
+        buildConfigField "String", "BundleVersionOverride", "\"${APPOVERRIDE}\""
         buildConfigField "String", "BundleVersionType", "\"rc.5\""
         manifestPlaceholders = [ applicationName: APPNAME ]
         resValue "string", "app_name", "${APPNAME}"

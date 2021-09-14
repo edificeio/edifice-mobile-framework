@@ -2,7 +2,6 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import RNConfigReader from 'react-native-config-reader';
 import DeviceInfo from 'react-native-device-info';
-import getValue from 'react-native-get-values';
 import { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
@@ -71,6 +70,7 @@ export class UserPage extends React.PureComponent<
     showDisconnect: boolean;
     showVersionType: boolean;
     updatingAvatar: boolean;
+    versionOverride: string;
     versionType: string;
   }
 > {
@@ -78,6 +78,7 @@ export class UserPage extends React.PureComponent<
     showDisconnect: false,
     showVersionType: false,
     updatingAvatar: false,
+    versionOverride: RNConfigReader.BundleVersionOverride,
     versionType: RNConfigReader.BundleVersionType,
   };
 
@@ -108,7 +109,7 @@ export class UserPage extends React.PureComponent<
   public render() {
     //avoid setstate on modalbox when unmounted
     const { onUploadAvatar, onUpdateAvatar, onPickFileError, onUploadAvatarError, userinfo } = this.props;
-    const { showDisconnect, showVersionType, versionType, updatingAvatar } = this.state;
+    const { showDisconnect, showVersionType, versionOverride, versionType, updatingAvatar } = this.state;
     const signedURISource = userinfo.photo && signURISource(`${(Conf.currentPlatform as any).url}${userinfo.photo}`);
     // FIXME (Hack): we need to add a variable param to force the call on Android for each session
     // (otherwise, a previously-loaded image is retrieved from cache)
@@ -196,7 +197,7 @@ export class UserPage extends React.PureComponent<
         <ContainerView>
           <Label onLongPress={() => this.setState({ showVersionType: !showVersionType })}>
             {I18n.t('version-number')} {DeviceInfo.getVersion()}
-            {showVersionType ? `-${versionType}` : ''}
+            {showVersionType ? `-${versionType}-${versionOverride}` : ''}
           </Label>
         </ContainerView>
         <ContainerSpacer />

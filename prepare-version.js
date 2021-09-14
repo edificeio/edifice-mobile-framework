@@ -4,7 +4,7 @@
 // Prepare sources for new version
 //
 // Args:
-//  - major minor rev specify new version number || major|minor|rev 
+//  - major minor rev specify new version number || major|minor|rev
 //
 
 const execSync = require('child_process').execSync;
@@ -21,7 +21,7 @@ const versionFile = './version.json';
 
 const versionComponents = process.argv.slice(2);
 
-if (((versionComponents.length !== 1)) || (versionComponents.length !== 3)) {
+if (versionComponents.length !== 1 || versionComponents.length !== 3) {
   console.error('!!! Arguments should be major + minor + rev || major|minor|rev !!!');
   process.exit(1);
 }
@@ -45,6 +45,7 @@ try {
 //
 
 let buildNumber = null;
+let buildType = '';
 let fullVersion = null;
 let versionNumber = null;
 
