@@ -27,10 +27,14 @@ export function postFolderAction(name: string, parentId: string) {
   return async (dispatch: Dispatch) => {
     Trackers.trackEvent("Conversation", "CREATE FOLDER");
     try {
-      await foldersService.post(name, parentId);
       dispatch(dataActions.request());
+      const res = await foldersService.post(name, parentId);
+      if (res.error) {
+        throw new Error(res.error);
+      }
     } catch (errmsg) {
       dispatch(dataActions.error(errmsg));
+      throw errmsg;
     }
   };
 }
