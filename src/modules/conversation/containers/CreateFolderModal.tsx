@@ -28,15 +28,27 @@ class CreateFolderModal extends React.PureComponent<any, any> {
   };
 
   onConfirm = async () => {
-    await this.props.createFolder(this.state.name);
-    this.props.fetchInit();
-    this.props.onClose();
-    Toast.show(I18n.t("conversation.createDirectoryConfirm"), {
-      position: Toast.position.BOTTOM,
-      mask: false,
-      containerStyle: { width: "95%", backgroundColor: "black" },
-    });
-    this.setState({ name: "" });
+    const { createFolder, fetchInit, onClose } = this.props;
+    const { name } = this.state;
+    try {
+      await createFolder(name);
+      fetchInit();
+      onClose();
+      Toast.show(I18n.t("conversation.createDirectoryConfirm"), {
+        position: Toast.position.BOTTOM,
+        mask: false,
+        containerStyle: { width: "95%", backgroundColor: "black" },
+      });
+    } catch (error) {
+      const folderAlreadyExists = (error as Error).message === "conversation.error.duplicate.folder";
+      Toast.show(I18n.t(folderAlreadyExists ? "conversation.createDirectoryError.folderExists" : "common.error.text"), {
+        position: Toast.position.BOTTOM,
+        mask: false,
+        containerStyle: { width: "95%", backgroundColor: "black" },
+      });
+    } finally {
+      this.setState({ name: "" });
+    }
   };
 
   public render() {

@@ -27,10 +27,11 @@ export const foldersService = {
       name,
     } as any;
     if (parentId) body.parentId = parentId;
-    await fetchJSONWithCache(`/conversation/folder`, {
+    const response = await fetchJSONWithCache(`/conversation/folder`, {
       method: "post",
       body: JSON.stringify(body),
     });
+    return response;
   },
   count: async () => {
     const ids = ["INBOX", "DRAFT"];

@@ -182,6 +182,9 @@
     "create": "Créer",
     "createDirectory": "Créer un dossier",
     "createDirectoryConfirm": "Dossier créé",
+    "createDirectoryError": {
+      "folderExists": "Ce dossier existe déjà"
+    },
     "delete": "Supprimer",
     "directories": "Dossiers",
     "directoryName": "Nom du dossier",

@@ -182,6 +182,9 @@
     "create": "Crear",
     "createDirectory": "Crear una carpeta",
     "createDirectoryConfirm": "Carpeta creada",
+    "createDirectoryError": {
+      "folderExists": "Esta carpeta ya existe"
+    },
     "delete": "Eliminar",
     "directories": "Carpetas",
     "directoryName": "Nombre de la carpeta",
