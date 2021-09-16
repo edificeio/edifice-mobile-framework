@@ -369,7 +369,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         to +
         '</em>';
 
-      if (this.props.mail.cc.length > 0) {
+      if (this.props.mail.cc?.length > 0) {
         const cc = getUserArrayToString(this.props.mail.cc);
 
         header += `<br><span class="medium-importance" translate="" key="transfer.cc">
@@ -423,7 +423,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       }
       case DraftType.DRAFT: {
         let prevbody = '';
-        if (this.props.mail.body.length > 0) {
+        if (this.props.mail.body?.length > 0) {
           prevbody +=
             '<hr class="ng-scope">' +
             this.props.mail.body
