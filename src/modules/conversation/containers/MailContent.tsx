@@ -59,6 +59,7 @@ class MailContentContainer extends React.PureComponent<{
   public componentDidUpdate() {
     if (this.props.navigation.state.params?.mailId !== this.state.mailId) {
       this.props.fetchMailContentAction(this.props.navigation.state.params?.mailId);
+      this.setState({ mailId: this.props.navigation.state.params?.mailId})
     }
   }
 
