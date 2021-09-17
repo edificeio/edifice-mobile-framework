@@ -159,7 +159,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         mail: { ...prevState.mail, ...mail },
         isPrefilling: false,
       }));
-    } else if (this.props.navigation.getParam('mailId') !== undefined && this.state.id === undefined)
+    } else if (this.props.navigation.getParam('mailId') !== undefined && this.state.id === undefined && this.props.navigation.getParam('type') == DraftType.DRAFT)
       this.setState({ id: this.props.navigation.getParam('mailId') });
 
     // Check if html tags are present in body
