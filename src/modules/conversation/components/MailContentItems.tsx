@@ -63,7 +63,7 @@ const SendersDetails = ({ mailInfos, inInbox }) => {
         <View style={{ flexDirection: "row" }}>
           <Text style={styles.greyColor}>{I18n.t("conversation.bccPrefix")}</Text>
           <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-            {contacts.cc.map(person => (
+            {contacts.cci.map(person => (
               <User userId={person[0]} userName={person[1]} />
             ))}
           </View>
