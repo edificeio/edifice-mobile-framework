@@ -197,6 +197,7 @@
     "forwardSubject": "TR : ",
     "fromPrefix": "De :",
     "inbox": "Boîte de réception",
+    "markRead": "Marquer comme lu",
     "markUnread": "Marquer comme non lu",
     "messageDeleted": "Message supprimé",
     "messageMoved": "Message déplacé",

@@ -1,24 +1,18 @@
-import I18n from "i18n-js";
-import moment from "moment";
 import * as React from "react";
-import { View, StyleSheet, RefreshControl, FlatList } from "react-native";
+import I18n from "i18n-js";
+import { View, RefreshControl, FlatList } from "react-native";
 import { NavigationDrawerProp } from "react-navigation-drawer";
+import Toast from "react-native-tiny-toast";
 
-import { Icon, Loading } from "../../../ui";
+import { Loading } from "../../../ui";
 import { PageContainer } from "../../../ui/ContainerContent";
-import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
 import { EmptyScreen } from "../../../ui/EmptyScreen";
-import { GridAvatars } from "../../../ui/avatars/GridAvatars";
-import { Text, TextBold, TextColorStyle } from "../../../framework/components/text";
 import { IInit } from "../containers/DrawerMenu";
 import { DraftType } from "../containers/NewMail";
+import MoveModal from '../containers/MoveToFolderModal';
 import { IMail } from "../state/mailContent";
-import { displayPastDate } from "../../../framework/util/date";
-import theme from "../../../framework/util/theme";
 import moduleConfig from "../moduleConfig";
-import { ListItem } from "../../../framework/components/listItem";
-import { TextSemiBold, TextSizeStyle } from "../../../framework/components/text";
-import { getMailPeople } from "../utils/mailInfos";
+import MailListItem from "./MailListItem";
 
 type MailListProps = {
   notifications: any;
@@ -27,6 +21,9 @@ type MailListProps = {
   fetchInit: () => IInit;
   fetchCompleted: () => any;
   fetchMails: (page: number) => any;
+  trashMails: (mailIds: string[]) => void;
+  deleteMails: (mailIds: string[]) => void;
+  toggleRead: (mailIds: string[], read: boolean) => void;
   folders: any;
   isTrashed: boolean;
   fetchRequested: boolean;
@@ -37,11 +34,16 @@ type MailListState = {
   indexPage: number;
   mails: any;
   nextPageCallable: boolean;
+  showModal: boolean;
+  selectedMail: IMail | undefined;
+  isRefreshing: boolean;
 };
 
 let lastFolderCache = '';
 
 export default class MailList extends React.PureComponent<MailListProps, MailListState> {
+  swipeableRef = null;
+
   constructor(props) {
     super(props);
 
@@ -50,6 +52,9 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
       indexPage: 0,
       mails: notifications,
       nextPageCallable: false,
+      showModal: false,
+      selectedMail: undefined,
+      isRefreshing: false
     };
   }
 
@@ -116,80 +121,43 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     }
   };
 
-  private renderMailItemInfos(mailInfos) {
-    const navigationKey = this.props.navigation.getParam("key");
-    const isFolderInbox = navigationKey === "inbox" || !navigationKey;
-    const isFolderOutbox = navigationKey === "sendMessages";
-    const isFolderDrafts = navigationKey === "drafts";
-    const isMailUnread = mailInfos.unread && !isFolderDrafts && !isFolderOutbox;
+  mailRestored = async () => {
+    const { fetchInit } = this.props;
+    await this.refreshMailList();
+    await fetchInit();
+    Toast.show(I18n.t('conversation.messageMoved'), {
+      position: Toast.position.BOTTOM,
+      mask: false,
+      containerStyle: { width: '95%', backgroundColor: 'black' },
+    });
+  };
 
-    // console.log("mailinfos", mailInfos);
+  toggleRead = async (unread: boolean, mailId: string) => {
+    const { toggleRead, fetchInit } = this.props;
+    try {
+      await toggleRead([mailId], unread);
+      this.refreshMailList();
+      fetchInit();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-    const mailContacts = getMailPeople(mailInfos);
-    let contacts = !isFolderOutbox && !isFolderDrafts
-      ? [mailContacts.from]
-      : mailContacts.to
-
-    if (contacts.length === 0) contacts = [[undefined, I18n.t("conversation.emptyTo"), false]];
-
-    return (
-      <TouchableOpacity
-        onPress={() => {
-          this.renderMailContent(mailInfos);
-        }}
-      >
-        <ListItem
-          style={isMailUnread ? styles.containerMailUnread : styles.containerMailRead}
-          leftElement={<GridAvatars
-            users={contacts.map(c => c[0]!)}
-          />}
-          rightElement={<View style={styles.mailInfos}>
-            {/* Contact name */}
-            <View style={{flex: 1, flexDirection: 'row'}}>
-              {(() => {
-                const TextContactComponent = isMailUnread ? TextBold : TextSemiBold;
-                const textContactPrefixColor = isMailUnread ? theme.color.text.regular : theme.color.text.light;
-                return <>
-                  {isFolderOutbox || isFolderDrafts ? <Text style={{ color: textContactPrefixColor }}>{I18n.t('conversation.toPrefix') + ' '}</Text> : null}
-                  <TextContactComponent
-                    numberOfLines={1}
-                    style={{ ...(isFolderDrafts ? TextColorStyle.Warning : {}), flex: 1 }}
-                  >{contacts.map(c => c[1]).join(', ')}</TextContactComponent>
-                </>
-              })()}
-              {/* Date */}
-              <Text style={styles.mailDate} numberOfLines={1}>{displayPastDate(moment(mailInfos.date))}</Text>
-            </View>
-            <View style={{ flex: 1, flexDirection: 'row' }}>
-              {/* Mail subjet & content */}
-              <View style={{ flex: 1 }}>{
-                (() => {
-                  const TextSubjectComponent = isMailUnread ? TextSemiBold : Text;
-                  const textSubjectColor = isMailUnread ? theme.color.text.heavy : theme.color.text.regular;
-                  // const TextBodyComponent = isMailUnread ? TextSemiBold : Text;
-                  // const textBodyColor = isMailUnread ? theme.color.text.regular : theme.color.text.light;
-                  return <>
-                    <TextSubjectComponent style={{ marginTop: 4, flex: 1, color: textSubjectColor, ...TextSizeStyle.Small }} numberOfLines={1}>
-                      {mailInfos.subject}
-                    </TextSubjectComponent>
-                    {/* <TextBodyComponent style={{ flex: 1, color: textBodyColor, fontSize: FontSize.Small, lineHeight: LineHeight.Small }} numberOfLines={1}>
-                      Lorem ipsum dolor et sit amet idfjh kdflkdfnk jdsn knsd kjb dkjndflvknfkjsdn fksj ksjdfn vksjv kjdq bvd
-                    </TextBodyComponent> */}
-                  </>
-                })()
-              }
-              </View>
-              {/* Mail attachment indicator */}
-              {mailInfos.hasAttachment && (
-                <View style={styles.mailIndicator}>
-                  <Icon name="attachment" size={16} color={theme.color.text.light} />
-                </View>
-              )}
-            </View>
-          </View>}
-          />
-      </TouchableOpacity>
-    );
+  delete = async (mailId: string) => {
+    const { isTrashed, deleteMails, trashMails, fetchInit } = this.props;
+    try {
+      if (isTrashed) await deleteMails([mailId]);
+      else await trashMails([mailId]);
+      await this.refreshMailList();
+      await fetchInit();
+      Toast.show(I18n.t('conversation.messageDeleted'), {
+        position: Toast.position.BOTTOM,
+        mask: false,
+        containerStyle: { width: '95%', backgroundColor: 'black' },
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   onChangePage = () => {
@@ -216,7 +184,9 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
   };
 
   public render() {
-    const { isFetching, firstFetch } = this.props;
+    const { isFetching, firstFetch, navigation } = this.props;
+    const { showModal, selectedMail, isRefreshing } = this.state;
+    const navigationKey = navigation.getParam("key");
     const uniqueId = [];
     const uniqueMails = this.state.mails.filter((mail: IMail) => {
       // @ts-ignore
@@ -227,71 +197,74 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
       }
     });
     return (
-      <PageContainer>
-        <FlatList
-          contentContainerStyle={{ flexGrow: 1 }}
-          data={uniqueMails.length > 0 ? uniqueMails : []}
-          renderItem={({ item }) => this.renderMailItemInfos(item)}
-          extraData={uniqueMails}
-          keyExtractor={(item: IMail) => item.id}
-          refreshControl={
-            <RefreshControl refreshing={isFetching && !firstFetch} onRefresh={() => this.refreshMailList()} />
-          }
-          onEndReachedThreshold={0.001}
-          onScrollBeginDrag={() => this.setState({ nextPageCallable: true })}
-          onEndReached={() => {
-            if (this.state.nextPageCallable) {
-              this.setState({ nextPageCallable: false });
-              this.onChangePage();
-            }
-          }}
-          ListFooterComponent={isFetching && !firstFetch ? <Loading /> : null}
-          ListEmptyComponent={
-            isFetching && firstFetch ? (
-              <Loading />
-            ) : (
-              <View style={{ flex: 1 }}>
-                <EmptyScreen
-                  imageSrc={require('../../../../assets/images/empty-screen/conversations.png')}
-                  imgWidth={571}
-                  imgHeight={261}
-                  text={I18n.t('conversation.emptyScreenText')}
-                  title={I18n.t('conversation.emptyScreenTitle')}
-                  scale={0.76}
+      <>
+        <PageContainer>
+          <FlatList
+            contentContainerStyle={{ flexGrow: 1 }}
+            data={uniqueMails.length > 0 ? uniqueMails : []}
+            renderItem={({ item }) => {
+              const isFolderOutbox = navigationKey === "sendMessages";
+              const isFolderDrafts = navigationKey === "drafts";
+              const isMailUnread = item.unread && !isFolderDrafts && !isFolderOutbox;
+              const mailId = item.id;
+              return (
+                <MailListItem
+                  {...this.props}
+                  mailInfos={item}
+                  renderMailContent={() => this.renderMailContent(item)}
+                  deleteMail={() => this.delete(mailId)}
+                  toggleRead={() => this.toggleRead(isMailUnread, mailId)}
+                  restoreMail={() => this.setState({ showModal: true, selectedMail: item })}
                 />
-              </View>
-            )
-          }
+              );
+            }}
+            extraData={uniqueMails}
+            keyExtractor={(item: IMail) => item.id}
+            refreshControl={
+              <RefreshControl
+                refreshing={isRefreshing}
+                onRefresh={async () => {
+                  this.setState({isRefreshing: true});
+                  await this.refreshMailList();
+                  this.setState({isRefreshing: false});
+                }}
+              />
+            }
+            onEndReachedThreshold={0.001}
+            onScrollBeginDrag={() => this.setState({ nextPageCallable: true })}
+            onEndReached={() => {
+              if (this.state.nextPageCallable) {
+                this.setState({ nextPageCallable: false });
+                this.onChangePage();
+              }
+            }}
+            ListFooterComponent={isFetching && !firstFetch ? <Loading /> : null}
+            ListEmptyComponent={
+              isFetching && firstFetch ? (
+                <Loading />
+              ) : (
+                <View style={{ flex: 1 }}>
+                  <EmptyScreen
+                    imageSrc={require('../../../../assets/images/empty-screen/conversations.png')}
+                    imgWidth={571}
+                    imgHeight={261}
+                    text={I18n.t('conversation.emptyScreenText')}
+                    title={I18n.t('conversation.emptyScreenTitle')}
+                    scale={0.76}
+                  />
+                </View>
+              )
+            }
+          />
+        </PageContainer>
+        <MoveModal
+          currentFolder={navigationKey}
+          mail={selectedMail}
+          show={showModal}
+          closeModal={() => this.setState({ showModal: false })}
+          successCallback={this.mailRestored}
         />
-      </PageContainer>
+      </>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  containerMailRead: {
-    paddingVertical: 18
-  },
-  containerMailUnread: {
-    backgroundColor: theme.color.secondary.light,
-    paddingVertical: 18
-  },
-  mailInfos: {
-    paddingLeft: 12,
-    flex: 1
-  },
-  mailDate: {
-    textAlign: 'right',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    ...TextColorStyle.Light
-  },
-  mailIndicator: {
-    flexDirection: 'row',
-    textAlign: 'center',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    paddingTop: 2,
-    paddingLeft: 12,
-  }
-});

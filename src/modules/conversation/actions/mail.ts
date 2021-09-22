@@ -22,7 +22,11 @@ export function restoreMailsAction(mailIds: string[]) {
 
 export function deleteMailsAction(mailIds: string[]) {
   return async (dispatch: Dispatch) => {
-    await mailService.deleteMails(mailIds);
+    try {
+      await mailService.deleteMails(mailIds);
+    } catch (errmsg) {
+      console.error(errmsg)
+    }
   };
 }
 

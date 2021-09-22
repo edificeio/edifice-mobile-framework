@@ -197,6 +197,7 @@
     "forwardSubject": "RV:",
     "fromPrefix": "De:",
     "inbox": "Bandeja de entrada",
+    "markRead": "Marcar como leído",
     "markUnread": "Marcar como no leído",
     "messageDeleted": "Mensaje eliminado",
     "messageMoved": "Mensaje movido",

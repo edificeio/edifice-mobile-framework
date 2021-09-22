@@ -197,6 +197,7 @@
     "forwardSubject": "FWD: ",
     "fromPrefix": "From :",
     "inbox": "Inbox",
+    "markRead": "Mark as read",
     "markUnread": "Mark as unread",
     "messageDeleted": "Message deleted",
     "messageMoved": "Message moved",
