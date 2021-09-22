@@ -4,7 +4,6 @@ import { NavigationDrawerProp } from "react-navigation-drawer";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import withViewTracking from "../../../framework/util/tracker/withViewTracking";
 import { fetchInitAction } from "../actions/initMails";
 import { fetchMailListAction, fetchMailListFromFolderAction } from "../actions/mailList";
 import MailList from "../components/MailList";
@@ -129,16 +128,6 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
 
 // ------------------------------------------------------------------------------------------------
 
-const viewsToTrack = ["inbox", "sendMessages", "drafts"];
-
 const MailListContainerConnected = connect(mapStateToProps, mapDispatchToProps)(withNavigationFocus(MailListContainer));
 
-export default withViewTracking((props: MailListContainerProps) => {
-  const currentFolder = props.navigation.getParam("key");
-  if (currentFolder === undefined) return `conversation/inbox`;
-  let toTrack = "";
-  viewsToTrack.map(viewName => {
-    if (viewName === currentFolder) toTrack = `conversation/${currentFolder}`;
-  });
-  return toTrack;
-})(MailListContainerConnected);
+export default MailListContainerConnected;

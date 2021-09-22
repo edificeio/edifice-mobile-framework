@@ -1,6 +1,5 @@
 import { Dispatch } from "redux";
 
-import { Trackers } from "../../../framework/util/tracker";
 import { newMailService } from "../service/newMail";
 import { getUserSession } from "../../../framework/util/session";
 import { IGlobalState } from "../../../AppStore";
@@ -10,7 +9,6 @@ import { IUploadCallbaks } from "../../../framework/util/fileHandler/service";
 
 export function sendMailAction(mailDatas, draftId: string | undefined, InReplyTo: string) {
   return async () => {
-    Trackers.trackEvent("Conversation", "SEND");
     try {
       await newMailService.sendMail(mailDatas, draftId, InReplyTo);
     } catch (errmsg) {
@@ -31,9 +29,6 @@ export function forwardMailAction(draftId: string, forwardFrom: string) {
 
 export function makeDraftMailAction(mailDatas, inReplyTo: string, isForward: boolean) {
   return async (dispatch: Dispatch) => {
-    Trackers.trackEvent("Conversation", "CREATED");
-    if (inReplyTo) Trackers.trackEvent("Conversation", "REPLY TO MESSAGE");
-    if (isForward) Trackers.trackEvent("Conversation", "TRANSFER MESSAGE");
     return await newMailService.makeDraftMail(mailDatas, inReplyTo);
   };
 }

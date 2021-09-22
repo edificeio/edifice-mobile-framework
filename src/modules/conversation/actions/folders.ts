@@ -1,7 +1,6 @@
 import { Dispatch } from "redux";
 
 import { createAsyncActionCreators } from "../../../infra/redux/async2";
-import { Trackers } from "../../../framework/util/tracker";
 import { foldersService } from "../service/folders";
 import { actionTypes, IFolderList } from "../state/folders";
 
@@ -25,7 +24,6 @@ export const dataActions = createAsyncActionCreators<IFolderList>(actionTypes);
 
 export function postFolderAction(name: string, parentId: string) {
   return async (dispatch: Dispatch) => {
-    Trackers.trackEvent("Conversation", "CREATE FOLDER");
     try {
       dispatch(dataActions.request());
       const res = await foldersService.post(name, parentId);
