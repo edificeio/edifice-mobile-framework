@@ -215,6 +215,8 @@ export class LoginPage extends React.Component<
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
+              style={{ height: 50 }}
+              inputStyle={{ height: 50, fontSize: 16 }}
             />
             <PasswordInputLine
               inputRef={this.setInputPasswordRef}
@@ -224,6 +226,8 @@ export class LoginPage extends React.Component<
               }
               value={password}
               hasError={(error && !typing) as boolean}
+              style={{ height: 50 }}
+              inputStyle={{ height: 50, fontSize: 16 }}
             />
             <View style={{ flexDirection: "row", alignSelf: "flex-end", marginTop: 20 }}>
               <Text style={{ marginRight: 10, ...TextColorStyle.Normal, ...TextSizeStyle.Small }}>{I18n.t("RememberMe")}</Text>
