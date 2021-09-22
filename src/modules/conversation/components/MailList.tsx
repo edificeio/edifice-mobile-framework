@@ -144,13 +144,16 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
   };
 
   delete = async (mailId: string) => {
-    const { isTrashed, deleteMails, trashMails, fetchInit } = this.props;
+    const { navigation, isTrashed, deleteMails, trashMails, fetchInit } = this.props;
+    const navigationKey = navigation.getParam("key");
+    const isFolderDrafts = navigationKey === "drafts";
+    const isTrashedOrDraft = isTrashed || isFolderDrafts;
     try {
       if (isTrashed) await deleteMails([mailId]);
       else await trashMails([mailId]);
       await this.refreshMailList();
       await fetchInit();
-      Toast.show(I18n.t('conversation.messageDeleted'), {
+      Toast.show(I18n.t(`conversation.message${isTrashedOrDraft ? "Deleted" : "Trashed"}`), {
         position: Toast.position.BOTTOM,
         mask: false,
         containerStyle: { width: '95%', backgroundColor: 'black' },

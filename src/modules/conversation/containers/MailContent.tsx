@@ -113,7 +113,10 @@ class MailContentContainer extends React.PureComponent<{
 
   delete = async () => {
     const { deleteMails, navigation, trashMails, mail } = this.props;
+    const currentFolder = navigation.getParam('currentFolder');
+    const isCurrentFolderDrafts = currentFolder === 'drafts';
     const isTrashed = navigation.getParam('isTrashed');
+    const isTrashedOrDrafts = isTrashed || isCurrentFolderDrafts;
     try {
       if (isTrashed) await deleteMails([mail.id]);
       else await trashMails([mail.id]);
@@ -121,7 +124,7 @@ class MailContentContainer extends React.PureComponent<{
       console.error(error);
     } finally {
       this.goBack();
-      Toast.show(I18n.t('conversation.messageDeleted'), {
+      Toast.show(I18n.t(`conversation.message${isTrashedOrDrafts ? "Deleted" : "Trashed"}`), {
         position: Toast.position.BOTTOM,
         mask: false,
         containerStyle: { width: '95%', backgroundColor: 'black' },

@@ -201,6 +201,7 @@
     "markUnread": "Marquer comme non lu",
     "messageDeleted": "Message supprimé",
     "messageMoved": "Message déplacé",
+    "messageTrashed": "Message mis à la corbeille",
     "messages": "Messages",
     "missingReceiver": "Ce message doit contenir au moins un destinataire",
     "move": "Déplacer",
