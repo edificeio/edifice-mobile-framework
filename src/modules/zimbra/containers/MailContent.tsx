@@ -6,7 +6,7 @@ import { NavigationScreenProp, NavigationActions } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import withViewTracking from "../../../infra/tracker/withViewTracking";
+import withViewTracking from "../../../framework/util/tracker/withViewTracking";
 import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
 import { CommonStyles } from "../../../styles/common/styles";
 import { Icon } from "../../../ui";

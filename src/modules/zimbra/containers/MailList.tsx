@@ -4,7 +4,7 @@ import { NavigationDrawerProp } from "react-navigation-drawer";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import withViewTracking from "../../../infra/tracker/withViewTracking";
+import withViewTracking from "../../../framework/util/tracker/withViewTracking";
 import { fetchInitAction } from "../actions/initMails";
 import { fetchMailListAction, fetchMailListFromFolderAction } from "../actions/mailList";
 import MailList from "../components/MailList";

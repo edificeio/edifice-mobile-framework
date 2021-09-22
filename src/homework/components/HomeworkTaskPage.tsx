@@ -20,7 +20,7 @@ import { Text } from "../../framework/components/text";
 import { NavigationScreenProp } from "react-navigation";
 import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderBackAction } from "../../ui/headers/NewHeader";
-import { Trackers } from "../../infra/tracker";
+import { Trackers } from "../../framework/util/tracker";
 
 // Main component ---------------------------------------------------------------------------------
 

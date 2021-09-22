@@ -1,6 +1,6 @@
 import { Dispatch } from "redux";
 
-import { Trackers } from "../../../infra/tracker";
+import { Trackers } from "../../../framework/util/tracker";
 import { newMailService } from "../service/newMail";
 import { getUserSession } from "../../../framework/util/session";
 import { IGlobalState } from "../../../AppStore";

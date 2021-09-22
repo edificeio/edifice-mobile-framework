@@ -2,7 +2,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import withViewTracking from "../../../../infra/tracker/withViewTracking";
+import withViewTracking from "../../../../framework/util/tracker/withViewTracking";
 import DashboardComponent from "../components/DashboardTeacher";
 
 class Dashboard extends React.PureComponent<any> {

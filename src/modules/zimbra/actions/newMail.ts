@@ -1,6 +1,6 @@
 import { Dispatch } from "redux";
 
-import { Trackers } from "../../../infra/tracker";
+import { Trackers } from "../../../framework/util/tracker";
 import { progressAction, progressEndAction, progressInitAction } from "../../../infra/actions/progress";
 import { newMailService } from "../service/newMail";
 import { getUserSession } from "../../../framework/util/session";

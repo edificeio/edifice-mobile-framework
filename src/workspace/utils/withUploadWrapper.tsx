@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { setInOwnerWorkspace } from "../../navigation/NavigationService";
 import { contentUriAction } from "../actions/contentUri";
 import { uploadAction } from "../actions/upload";
-import { Trackers } from "../../infra/tracker";
+import { Trackers } from "../../framework/util/tracker";
 
 export interface IProps {
   navigation: any;

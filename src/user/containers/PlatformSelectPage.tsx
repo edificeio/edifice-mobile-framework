@@ -14,7 +14,7 @@ import Conf from "../../../ode-framework-conf";
 import { CommonStyles } from "../../styles/common/styles";
 import { selectPlatform } from "../actions/platform";
 import { IUserAuthState } from "../reducers/auth";
-import withViewTracking from "../../infra/tracker/withViewTracking";
+import withViewTracking from "../../framework/util/tracker/withViewTracking";
 
 // Props definition -------------------------------------------------------------------------------
 

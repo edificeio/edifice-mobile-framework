@@ -2,7 +2,7 @@ import Share from "react-native-share";
 import {startDownload, getExtension} from "./downloadHelper";
 import {IFile} from "../../workspace/types/states";
 import {Platform} from "react-native";
-import { Trackers } from "../tracker";
+import { Trackers } from "../../framework/util/tracker";
 import { ThunkDispatch } from "redux-thunk";
 import { newDownloadAction } from "../../workspace/actions/download";
 

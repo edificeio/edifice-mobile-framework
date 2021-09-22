@@ -22,7 +22,7 @@ import { CommonStyles } from "../styles/common/styles";
 import TouchableOpacity from "./CustomTouchableOpacity";
 import ImageOptional from "./ImageOptional";
 import { A, Italic } from "./Typography";
-import withViewTracking from "../infra/tracker/withViewTracking";
+import withViewTracking from "../framework/util/tracker/withViewTracking";
 import { MediaAction } from "./MediaAction";
 
 const UnavailableImage = () => (

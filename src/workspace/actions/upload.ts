@@ -5,7 +5,7 @@ import { asyncActionTypes } from "../../infra/redux/async";
 import config from "../config";
 import { formatResults, uploadDocumentAction } from "./helpers/documents";
 import { ContentUri } from "../types";
-import { Trackers } from "../../infra/tracker";
+import { Trackers } from "../../framework/util/tracker";
 
 // ACTION UPLOAD ------------------------------------------------------------------------------------
 

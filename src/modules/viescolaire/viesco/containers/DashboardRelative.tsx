@@ -4,7 +4,7 @@ import { NavigationScreenProp, withNavigationFocus } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import withViewTracking from "../../../../infra/tracker/withViewTracking";
+import withViewTracking from "../../../../framework/util/tracker/withViewTracking";
 import { fetchChildHomeworkAction } from "../../cdt/actions/homeworks";
 import { getHomeworksListState } from "../../cdt/state/homeworks";
 import { fetchLevelsAction } from "../../competences/actions/competencesLevels";

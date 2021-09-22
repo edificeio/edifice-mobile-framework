@@ -40,7 +40,7 @@ import {
 } from "../actions/version";
 import VersionModal from "../components/VersionModal";
 import { getAuthState } from "../selectors";
-import withViewTracking from "../../infra/tracker/withViewTracking";
+import withViewTracking from "../../framework/util/tracker/withViewTracking";
 import { Toggle } from "../../ui/forms/Toggle";
 import theme from "../../framework/util/theme";
 

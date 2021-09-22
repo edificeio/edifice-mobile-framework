@@ -13,7 +13,7 @@ import { IDistantFile, LocalFile, SyncedFileWithId } from '../../../framework/ut
 import { IUploadCallbaks } from '../../../framework/util/fileHandler/service';
 
 import pickFile, { pickFileError } from '../../../infra/actions/pickFile';
-import { Trackers } from '../../../infra/tracker';
+import { Trackers } from '../../../framework/util/tracker';
 import { standardNavScreenOptions } from '../../../navigation/helpers/navScreenOptions';
 import { CommonStyles } from '../../../styles/common/styles';
 import { INavigationProps } from '../../../types';

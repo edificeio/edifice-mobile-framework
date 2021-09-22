@@ -22,7 +22,7 @@ import { CommonStyles } from "../../styles/common/styles";
 import { TempFloatingAction } from "../../ui/FloatingButton";
 import { Header } from "../../ui/headers/Header";
 import { IBlogList } from "../state/publishableBlogs";
-import withViewTracking from "../../infra/tracker/withViewTracking";
+import withViewTracking from "../../framework/util/tracker/withViewTracking";
 import { fetchFlashMessagesAction, markFlashMessageAsReadAction } from "../actions/flashList";
 
 interface ITimelineProps {

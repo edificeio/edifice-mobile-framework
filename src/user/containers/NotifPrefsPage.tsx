@@ -25,8 +25,8 @@ import { NotifPrefLine } from "../components/NotifPrefLine";
 import { NavigationScreenProp } from "react-navigation";
 import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderBackAction } from "../../ui/headers/NewHeader";
-import withViewTracking from "../../infra/tracker/withViewTracking";
-import { Trackers } from "../../infra/tracker";
+import withViewTracking from "../../framework/util/tracker/withViewTracking";
+import { Trackers } from "../../framework/util/tracker";
 import { loadPushNotifsSettingsAction } from "../../framework/modules/timelinev2/actions/notifSettings";
 
 // Type definitions

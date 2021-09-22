@@ -6,8 +6,8 @@ import {
 } from "../components/FederatedAccount";
 import { Linking } from "react-native";
 import Conf from "../../../ode-framework-conf";
-import withViewTracking from "../../infra/tracker/withViewTracking";
-import { Trackers } from "../../infra/tracker";
+import withViewTracking from "../../framework/util/tracker/withViewTracking";
+import { Trackers } from "../../framework/util/tracker";
 
 const mapDispatchToProps: (dispatch) => IFederatedAccountPageEventProps = dispatch => {
   return {

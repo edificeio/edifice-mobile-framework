@@ -1,6 +1,6 @@
 import { storeFilters } from "./storedFilters";
 import { listTimeline } from "./list";
-import { Trackers } from "../../infra/tracker";
+import { Trackers } from "../../framework/util/tracker";
 
 export const pickFilters = dispatch => selectedApps => {
   dispatch({

@@ -33,8 +33,8 @@ import { schoolbooks } from "../actions/dataTypes";
 import { fetchBlogCommentListAction, dataActions } from "../actions/commentList";
 import { getBlogCommentListState, IBlogComment, IBlogCommentList } from "../state/commentList";
 import { TextPreview } from "../../ui/TextPreview";
-import withViewTracking from "../../infra/tracker/withViewTracking";
-import { Trackers } from "../../infra/tracker";
+import withViewTracking from "../../framework/util/tracker/withViewTracking";
+import { Trackers } from "../../framework/util/tracker";
 
 interface INewsContentPageState {
   isAck: boolean;

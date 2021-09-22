@@ -10,7 +10,7 @@ import { LocalFile } from "../../../../framework/util/fileHandler";
 
 import pickFile, { pickFileError } from "../../../../infra/actions/pickFile";
 import { DocumentPicked, ImagePicked } from "../../../../infra/filePicker";
-import withViewTracking from "../../../../infra/tracker/withViewTracking";
+import withViewTracking from "../../../../framework/util/tracker/withViewTracking";
 import { standardNavScreenOptions } from "../../../../navigation/helpers/navScreenOptions";
 import { INavigationProps } from "../../../../types";
 import { HeaderBackAction } from "../../../../ui/headers/NewHeader";

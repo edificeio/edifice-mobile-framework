@@ -5,7 +5,7 @@ import { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import withViewTracking from "../../../../infra/tracker/withViewTracking";
+import withViewTracking from "../../../../framework/util/tracker/withViewTracking";
 import { standardNavScreenOptions } from "../../../../navigation/helpers/navScreenOptions";
 import { HeaderBackAction } from "../../../../ui/headers/NewHeader";
 import { postAbsentEvent, deleteEvent, validateRegisterAction } from "../actions/events";

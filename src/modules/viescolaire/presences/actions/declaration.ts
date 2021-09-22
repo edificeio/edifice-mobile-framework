@@ -3,7 +3,7 @@ import { Dispatch } from "redux";
 import { LocalFile } from "../../../../framework/util/fileHandler";
 import { getUserSession } from "../../../../framework/util/session";
 
-import { Trackers } from "../../../../infra/tracker";
+import { Trackers } from "../../../../framework/util/tracker";
 import { getSelectedChild, getSelectedChildStructure } from "../../viesco/state/children";
 import { absenceDeclarationService } from "../services/declaration";
 import { declarationActionsTypes } from "../state/declaration";

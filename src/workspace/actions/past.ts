@@ -4,7 +4,7 @@ import { asyncActionFactory } from "../../infra/actions/asyncActionFactory";
 import { formatResults } from "./helpers/documents";
 import { IItem, IItems } from "../types";
 import { IId } from "../../types";
-import { Trackers } from "../../infra/tracker";
+import { Trackers } from "../../framework/util/tracker";
 
 const WORKSPACE_PAST = "/workspace/documents/copy";
 

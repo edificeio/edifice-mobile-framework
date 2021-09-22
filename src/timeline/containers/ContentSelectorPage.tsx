@@ -24,7 +24,7 @@ import { getAuthHeader } from "../../infra/oauth";
 import { fetchPublishableBlogsAction } from "../actions/publish";
 import { Loading } from "../../ui/Loading";
 import { EmptyScreen } from "../../ui/EmptyScreen";
-import withViewTracking from "../../infra/tracker/withViewTracking";
+import withViewTracking from "../../framework/util/tracker/withViewTracking";
 import { FontStyle } from "../../framework/components/text";
 
 export interface IContentSelectorPageDataProps {

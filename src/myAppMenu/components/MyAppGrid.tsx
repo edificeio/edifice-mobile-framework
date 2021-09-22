@@ -10,7 +10,7 @@ import MyAppItem from "./MyAppItem";
 import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { IAppModule } from "../../infra/moduleTool/types";
 import { View, ScrollView, Linking, Platform } from "react-native";
-import withViewTracking from "../../infra/tracker/withViewTracking";
+import withViewTracking from "../../framework/util/tracker/withViewTracking";
 import { NavigationScreenProp, NavigationState } from "react-navigation";
 import { FlatButton } from "../../ui/FlatButton";
 import { CommonStyles } from "../../styles/common/styles";

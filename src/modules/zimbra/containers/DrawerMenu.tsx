@@ -3,7 +3,7 @@ import { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import withViewTracking from "../../../infra/tracker/withViewTracking";
+import withViewTracking from "../../../framework/util/tracker/withViewTracking";
 import { fetchInitAction } from "../actions/initMails";
 import DrawerMenu from "../components/DrawerMenu";
 import { getInitMailListState, IInitMail, IFolder, IQuota } from "../state/initMails";

@@ -10,7 +10,7 @@ import { NavigationScreenProp, NavigationState, NavigationParams } from "react-n
 import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderAction } from "../../ui/headers/NewHeader";
 import { Dispatch } from "redux";
-import withViewTracking from "../../infra/tracker/withViewTracking";
+import withViewTracking from "../../framework/util/tracker/withViewTracking";
 
 export interface FilterTimelineProps {
   selectedApps: string[];

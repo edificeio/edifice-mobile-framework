@@ -1,7 +1,7 @@
 import { Dispatch } from "redux";
 
 import { createAsyncActionCreators } from "../../../infra/redux/async2";
-import { Trackers } from "../../../infra/tracker";
+import { Trackers } from "../../../framework/util/tracker";
 import { foldersService } from "../service/folders";
 import { actionTypes, IFolderList } from "../state/folders";
 
