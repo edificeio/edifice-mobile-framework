@@ -85,3 +85,7 @@ ios/appe/main.jsbundle
 # Metals (scala)
 .metals
 
+# Lockfiles
+package-lock.json
+jetificableGroups.json
+ios/Podfile.lock
