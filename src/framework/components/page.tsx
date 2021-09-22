@@ -4,12 +4,13 @@
  */
 
 import * as React from "react";
-import { ViewProps } from "react-native";
+import { KeyboardAvoidingView, KeyboardAvoidingViewProps, Platform, SafeAreaView, ScrollView, View, ViewProps } from "react-native";
 import styled from '@emotion/native'
 
 import theme from "../util/theme";
 import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import Notifier from "../util/notifier";
+import { hasNotch } from "react-native-device-info";
 
 const PageView_StyleComponent = styled.View({
     flex: 1,
@@ -21,3 +22,22 @@ export const PageView = (props: React.PropsWithChildren<ViewProps & { path?: str
     {props.path ? <Notifier id={props.path} /> : null}
     {props.children}
 </PageView_StyleComponent>
+
+export const KeyboardPageView =
+    (props: React.PropsWithChildren<ViewProps & { path?: string, scrollable?: boolean }>) => {
+        const keyboardAvoidingViewBehavior = Platform.select({ ios: 'padding', android: undefined }) as KeyboardAvoidingViewProps['behavior'];
+        // const insets = useSafeAreaInsets();                            // Note : this commented code is the theory
+        // const keyboardAvoidingViewVerticalOffset = insets.top + 56;    // But Practice >> Theory. Here, magic values ont the next ligne give better results.
+        const keyboardAvoidingViewVerticalOffset = hasNotch() ? 100 : 76; // Those are "magic" values found by try&error. Seems to be fine on every phone.
+        const {children, ...pageProps} = props;
+        const InnerViewComponent = props.scrollable ? ScrollView : View;
+        return <PageView {...pageProps}>
+            <KeyboardAvoidingView behavior={keyboardAvoidingViewBehavior} keyboardVerticalOffset={keyboardAvoidingViewVerticalOffset} style={{ height: '100%' }}>
+                <InnerViewComponent contentContainerStyle={{ flexGrow: 1 }} alwaysBounceVertical={false} keyboardShouldPersistTaps="never">
+                    <SafeAreaView style={{ flexGrow: 1 }}>
+                        {children}
+                    </SafeAreaView>
+                </InnerViewComponent>
+            </KeyboardAvoidingView>
+        </PageView>
+    }

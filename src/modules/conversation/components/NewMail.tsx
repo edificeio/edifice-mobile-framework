@@ -1,22 +1,20 @@
 import I18n from "i18n-js";
-import React from "react";
+import React, { ReactChild, ReactElement } from "react";
 import { ScrollView, View, StyleSheet, TextInput, ViewStyle, SafeAreaView, KeyboardAvoidingView, Platform, KeyboardAvoidingViewProps } from "react-native";
 import { IDistantFileWithId } from "../../../framework/util/fileHandler";
 
-import Notifier from "../../../infra/notifier/container";
 import { CommonStyles } from "../../../styles/common/styles";
 import { Icon, Loading } from "../../../ui";
-import ConnectionTrackingBar from "../../../ui/ConnectionTrackingBar";
-import { PageContainer } from "../../../ui/ContainerContent";
 import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
 import { HtmlContentView } from "../../../ui/HtmlContentView";
 import { Text } from "../../../ui/Typography";
-import { ISearchUsers } from "../service/newMail";
+import { ISearchUsers, IUser, newMailService } from "../service/newMail";
 import Attachment from "./Attachment";
-import SearchUserMail from "./SearchUserMail";
+import SearchUserMail, { FoundList, Input, SelectedList } from "./SearchUserMail";
 import HtmlToText from "../../../infra/htmlConverter/text";
+import { KeyboardPageView, PageView } from "../../../framework/components/page";
+import theme from "../../../framework/util/theme";
 import { hasNotch } from "react-native-device-info";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type HeadersProps = { to: ISearchUsers; cc: ISearchUsers; cci: ISearchUsers; subject: string };
 
@@ -31,7 +29,7 @@ interface NewMailComponentProps {
   isFetching: boolean;
   headers: HeadersProps;
   onDraftSave: () => void;
-  onHeaderChange: (header: Headers) => void;
+  onHeaderChange: (header: HeadersProps) => void;
   body: string;
   onBodyChange: (body: string) => void;
   attachments: IDistantFileWithId[];
@@ -48,54 +46,227 @@ const styles = StyleSheet.create({
   }
 });
 
-export default ({
-  isFetching,
-  headers,
-  onDraftSave,
-  onHeaderChange,
-  body,
-  onBodyChange,
-  attachments,
-  onAttachmentChange,
-  onAttachmentDelete,
-  prevBody,
-  isReplyDraft
-}: NewMailComponentProps) => {
+export default (props: NewMailComponentProps) => {
+  const [showExtraFields, toggleExtraFields] = React.useState(false);
+  const [isSearchingUsers, toggleIsSearchingUsers] = React.useState({ to: false, cc: false, cci: false });
+  const setIsSearchingUsers = (val: { [i in 'to' | 'cc' | 'cci']?: boolean }) => {
+    toggleIsSearchingUsers({ ...isSearchingUsers, ...val });
+  }
+  const isSearchingUsersFinal = Object.values(isSearchingUsers).includes(true);
+  // console.log("render components", isSearchingUsers);
+
   const keyboardAvoidingViewBehavior = Platform.select({ ios: 'padding', android: undefined }) as KeyboardAvoidingViewProps['behavior'];
   // const insets = useSafeAreaInsets();                            // Note : this commented code is the theory
   // const keyboardAvoidingViewVerticalOffset = insets.top + 56;    // But Practice >> Theory. Here, magic values ont the next ligne give better results.
   const keyboardAvoidingViewVerticalOffset = hasNotch() ? 100 : 76; // Those are "magic" values found by try&error. Seems to be fine on every phone.
-  return (
-    <PageContainer>
-      <ConnectionTrackingBar />
-      <Notifier id="conversation" />
-      {isFetching ? (
-        <Loading />
-      ) : (
-        <View style={{ flex: 1 }}>
-            <KeyboardAvoidingView behavior={keyboardAvoidingViewBehavior} keyboardVerticalOffset={keyboardAvoidingViewVerticalOffset} style={{ height: '100%' }}>
-            <ScrollView contentContainerStyle={{ flexGrow: 1 }} alwaysBounceVertical={false} keyboardShouldPersistTaps="never">
-              <SafeAreaView style={{ flexGrow: 1 }}>
-
-                <Headers style={{ zIndex: 3 }} headers={headers} onChange={onHeaderChange} autofocus={!isReplyDraft} />
-                <Attachments
-                  style={{ zIndex: 2 }}
-                  attachments={attachments}
-                  onChange={onAttachmentChange}
-                  onDelete={onAttachmentDelete}
-                  onSave={onDraftSave}
-                />
-                <Body style={{ zIndex: 1 }} value={body} onChange={onBodyChange} autofocus={isReplyDraft} />
-                {!!prevBody && <PrevBody prevBody={prevBody} />}
-
-              </SafeAreaView>
-            </ScrollView>
-          </KeyboardAvoidingView>
-        </View >
-      )}
-    </PageContainer >
-  );
+  return <PageView path="conversation">
+    <KeyboardAvoidingView behavior={keyboardAvoidingViewBehavior} keyboardVerticalOffset={keyboardAvoidingViewVerticalOffset}
+      style={{ height: '100%' }}>
+      <ScrollView
+        contentContainerStyle={isSearchingUsersFinal ? {
+          flexGrow: 0, flexBasis: "100%"
+        } : {
+          flexGrow: 1
+        }}
+        alwaysBounceVertical={false}
+        keyboardShouldPersistTaps="never"
+        {...(isSearchingUsers ? {
+          style: {
+            flexBasis: "100%", flexGrow: 0, flexShrink: 0, maxHeight: "100%"
+          }
+        } : {})}
+      >
+        <View style={{ flexGrow: 1 }}
+        >
+          {props.isFetching ? <Loading /> : <Fields
+            {...props}
+            showExtraFields={showExtraFields}
+            toggleExtraFields={toggleExtraFields}
+            setIsSearchingUsers={setIsSearchingUsers}
+          />}
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  </PageView>
 };
+
+const Fields = ({
+  headers,
+  onHeaderChange,
+  showExtraFields,
+  toggleExtraFields,
+  setIsSearchingUsers,
+  attachments,
+  onAttachmentChange,
+  onAttachmentDelete,
+  onDraftSave,
+  prevBody,
+  isReplyDraft,
+  body,
+  onBodyChange
+}: {
+  headers: HeadersProps,
+  onHeaderChange: (header: HeadersProps) => void,
+  showExtraFields: boolean,
+  toggleExtraFields: (val: boolean) => void,
+  setIsSearchingUsers: (val: { [i in 'to' | 'cc' | 'cci']?: boolean }) => void,
+  attachments: IDistantFileWithId[];
+  onAttachmentChange: (attachments: IAttachment[]) => void;
+  onAttachmentDelete: (attachmentId: string) => void;
+  onDraftSave: () => void;
+  prevBody: any;
+  isReplyDraft: boolean;
+  body: string;
+  onBodyChange: (body: string) => void;
+}) => {
+  // console.log("render fields");
+  const commonFields = (<SafeAreaView style={{ flex: 1, backgroundColor: theme.color.background.card }}>
+    <HeaderSubject
+      title={I18n.t("conversation.subject")}
+      value={headers.subject}
+      onChange={subject => onHeaderChange({ ...headers, subject })}
+      key="subject"
+    />
+    <Attachments
+      style={{ zIndex: 2 }}
+      attachments={attachments}
+      onChange={onAttachmentChange}
+      onDelete={onAttachmentDelete}
+      onSave={onDraftSave}
+      key="attachments"
+    />
+    <Body style={{ zIndex: 1 }} value={body} onChange={onBodyChange} autofocus={isReplyDraft} key="body" />
+    {!!prevBody && <PrevBody prevBody={prevBody} key="prevBody" />}
+  </SafeAreaView>);
+
+  return <MailContactField autoFocus={true} value={headers.to}
+    onChange={to => onHeaderChange({ ...headers, to })}
+    rightComponent={<TouchableOpacity style={{ paddingVertical: 6 }} onPress={() => toggleExtraFields(!showExtraFields)}>
+      <Icon name={showExtraFields ? "keyboard_arrow_up" : "keyboard_arrow_down"} size={28} />
+    </TouchableOpacity>}
+    title={I18n.t("conversation.to")}
+    key="to"
+    onOpenSearch={(v) => setIsSearchingUsers({ to: v })}>
+    {showExtraFields
+      ? <MailContactField title={I18n.t("conversation.cc")}
+        value={headers.cc}
+        onChange={cc => onHeaderChange({ ...headers, cc })}
+        key="cc"
+        onOpenSearch={(v) => setIsSearchingUsers({ cc: v })}>
+        <MailContactField title={I18n.t("conversation.bcc")}
+          value={headers.cci}
+          onChange={cci => onHeaderChange({ ...headers, cci })}
+          key="cci"
+          onOpenSearch={(v) => setIsSearchingUsers({ cci: v })}>
+          {commonFields}
+        </MailContactField>
+      </MailContactField>
+      : commonFields
+    }
+  </MailContactField>
+
+};
+
+const MailContactField = ({ style, title, value, onChange, children, autoFocus, rightComponent, onOpenSearch }: {
+  style?: ViewStyle,
+  title: string,
+  value?: IUser[],
+  onChange?: (value: IUser[]) => void,
+  children?: ReactChild,
+  autoFocus?: boolean,
+  rightComponent?: ReactElement,
+  onOpenSearch?: (searchIsOpen: boolean) => void;
+}) => {
+  const selectedUsersOrGroups = value || [];
+  const [search, updateSearch] = React.useState("");
+  const [foundUsersOrGroups, updateFoundUsersOrGroups] = React.useState([]);
+  const searchTimeout = React.useRef();
+
+  const filterUsersOrGroups = found => selectedUsersOrGroups.every(selected => selected.id !== found.id);
+  // React.useEffect(() => {
+  //   if (search.length >= 3) {
+  //     updateFoundUsersOrGroups([]);
+  //     console.log("openOpenSearch", true);
+  //     onOpenSearch?.(true);
+  //     window.clearTimeout(searchTimeout.current);
+  //     searchTimeout.current = window.setTimeout(() => {
+  //       newMailService.searchUsers(search).then(({ groups, users }) => {
+  //         const filteredUsers = users.filter(filterUsersOrGroups);
+  //         const filteredGroups = groups.filter(filterUsersOrGroups);
+  //         updateFoundUsersOrGroups([...filteredUsers, ...filteredGroups]);
+  //       });
+  //     }, 500);
+  //   }
+
+  //   return () => {
+  //     updateFoundUsersOrGroups([]);
+  //     onOpenSearch?.(false);
+  //     console.log("openOpenSearch", false);
+  //     window.clearTimeout(searchTimeout.current);
+  //   };
+  // }, [search]);
+
+  const removeUser = (id: string) => onChange?.(selectedUsersOrGroups.filter(user => user.id !== id));
+  const addUser = userOrGroup => {
+    onChange?.([
+      ...selectedUsersOrGroups,
+      { displayName: userOrGroup.name || userOrGroup.displayName, id: userOrGroup.id } as IUser,
+    ]);
+    onUserType("");
+  };
+
+  const onUserType = (s: string) => {
+    updateSearch(s);
+    if (s.length >= 3) {
+      updateFoundUsersOrGroups([]);
+      // console.log("openOpenSearch", true);
+      onOpenSearch?.(true);
+      window.clearTimeout(searchTimeout.current);
+      searchTimeout.current = window.setTimeout(() => {
+        newMailService.searchUsers(search).then(({ groups, users }) => {
+          const filteredUsers = users.filter(filterUsersOrGroups);
+          const filteredGroups = groups.filter(filterUsersOrGroups);
+          updateFoundUsersOrGroups([...filteredUsers, ...filteredGroups]);
+        });
+      }, 500);
+    } else {
+      updateFoundUsersOrGroups([]);
+      onOpenSearch?.(false);
+      // console.log("openOpenSearch", false);
+      window.clearTimeout(searchTimeout.current);
+    }
+  }
+
+  const inputStyle = {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    paddingHorizontal: 10,
+    borderBottomColor: "#EEEEEE",
+    borderBottomWidth: 2,
+    backgroundColor: theme.color.background.card,
+    flex: 0
+  } as ViewStyle;
+  return <View style={{ flexGrow: 1 }}>
+    <View style={{ flex: 0, alignItems: "stretch" }}>
+      <View style={[inputStyle, style]}>
+        <Text style={{ color: CommonStyles.lightTextColor, paddingVertical: 10 }}>{title} : </Text>
+        <View style={{ overflow: "visible", marginHorizontal: 5, flex: 1 }}>
+          <SelectedList selectedUsersOrGroups={selectedUsersOrGroups} onItemClick={removeUser} />
+          <Input autoFocus={autoFocus} value={search} onChangeText={onUserType} onSubmit={() => addUser({ displayName: search, id: search })} />
+        </View>
+        {rightComponent}
+      </View>
+    </View>
+    <View style={{ flexGrow: 1 }}>
+      {foundUsersOrGroups.length ? <FoundList foundUserOrGroup={foundUsersOrGroups} addUser={addUser} /> : children}
+    </View>
+
+  </View>
+}
+
+
+
+
 
 const HeaderUsers = ({
   style,
@@ -134,6 +305,7 @@ const HeaderSubject = ({
     paddingHorizontal: 10,
     borderBottomColor: "#EEEEEE",
     borderBottomWidth: 2,
+    backgroundColor: theme.color.background.card
   } as ViewStyle;
 
   const inputStyle = {
