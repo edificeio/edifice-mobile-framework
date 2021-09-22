@@ -41,6 +41,7 @@ class CreateFolderModal extends React.PureComponent<any, any> {
       });
     } catch (error) {
       const folderAlreadyExists = (error as Error).message === "conversation.error.duplicate.folder";
+      onClose();
       Toast.show(I18n.t(folderAlreadyExists ? "conversation.createDirectoryError.folderExists" : "common.error.text"), {
         position: Toast.position.BOTTOM,
         mask: false,
