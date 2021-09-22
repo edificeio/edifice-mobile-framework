@@ -277,7 +277,7 @@ index 0000000..efd876f
 Binary files /dev/null and b/node_modules/react-native-gesture-handler/android/build/.transforms/f7e826b96411d8156fb8594e94262c4f/debug/com/swmansion/gesturehandler/GestureHandler$1.dex differ
 diff --git a/node_modules/react-native-gesture-handler/android/build/.transforms/f7e826b96411d8156fb8594e94262c4f/debug/com/swmansion/gesturehandler/GestureHandler.dex b/node_modules/react-native-gesture-handler/android/build/.transforms/f7e826b96411d8156fb8594e94262c4f/debug/com/swmansion/gesturehandler/GestureHandler.dex
 new file mode 100644
-index 0000000..36cb90b
+index 0000000..b396bbd
 Binary files /dev/null and b/node_modules/react-native-gesture-handler/android/build/.transforms/f7e826b96411d8156fb8594e94262c4f/debug/com/swmansion/gesturehandler/GestureHandler.dex differ
 diff --git a/node_modules/react-native-gesture-handler/android/build/.transforms/f7e826b96411d8156fb8594e94262c4f/debug/com/swmansion/gesturehandler/GestureHandlerInteractionController.dex b/node_modules/react-native-gesture-handler/android/build/.transforms/f7e826b96411d8156fb8594e94262c4f/debug/com/swmansion/gesturehandler/GestureHandlerInteractionController.dex
 new file mode 100644
@@ -289,7 +289,7 @@ index 0000000..b564c68
 Binary files /dev/null and b/node_modules/react-native-gesture-handler/android/build/.transforms/f7e826b96411d8156fb8594e94262c4f/debug/com/swmansion/gesturehandler/GestureHandlerOrchestrator$1.dex differ
 diff --git a/node_modules/react-native-gesture-handler/android/build/.transforms/f7e826b96411d8156fb8594e94262c4f/debug/com/swmansion/gesturehandler/GestureHandlerOrchestrator.dex b/node_modules/react-native-gesture-handler/android/build/.transforms/f7e826b96411d8156fb8594e94262c4f/debug/com/swmansion/gesturehandler/GestureHandlerOrchestrator.dex
 new file mode 100644
-index 0000000..d66b62c
+index 0000000..6df69fe
 Binary files /dev/null and b/node_modules/react-native-gesture-handler/android/build/.transforms/f7e826b96411d8156fb8594e94262c4f/debug/com/swmansion/gesturehandler/GestureHandlerOrchestrator.dex differ
 diff --git a/node_modules/react-native-gesture-handler/android/build/.transforms/f7e826b96411d8156fb8594e94262c4f/debug/com/swmansion/gesturehandler/GestureHandlerRegistry.dex b/node_modules/react-native-gesture-handler/android/build/.transforms/f7e826b96411d8156fb8594e94262c4f/debug/com/swmansion/gesturehandler/GestureHandlerRegistry.dex
 new file mode 100644
@@ -564,7 +564,7 @@ index 0000000..9e26dfe
 \ No newline at end of file
 diff --git a/node_modules/react-native-gesture-handler/android/build/intermediates/compile_library_classes_jar/debug/classes.jar b/node_modules/react-native-gesture-handler/android/build/intermediates/compile_library_classes_jar/debug/classes.jar
 new file mode 100644
-index 0000000..b2799ab
+index 0000000..dbfab89
 Binary files /dev/null and b/node_modules/react-native-gesture-handler/android/build/intermediates/compile_library_classes_jar/debug/classes.jar differ
 diff --git a/node_modules/react-native-gesture-handler/android/build/intermediates/compile_r_class_jar/debug/R.jar b/node_modules/react-native-gesture-handler/android/build/intermediates/compile_r_class_jar/debug/R.jar
 new file mode 100644
@@ -2430,7 +2430,7 @@ index 0000000..c2e193c
 Binary files /dev/null and b/node_modules/react-native-gesture-handler/android/build/intermediates/javac/debug/classes/com/swmansion/gesturehandler/GestureHandler$1.class differ
 diff --git a/node_modules/react-native-gesture-handler/android/build/intermediates/javac/debug/classes/com/swmansion/gesturehandler/GestureHandler.class b/node_modules/react-native-gesture-handler/android/build/intermediates/javac/debug/classes/com/swmansion/gesturehandler/GestureHandler.class
 new file mode 100644
-index 0000000..4ce182f
+index 0000000..96dadf3
 Binary files /dev/null and b/node_modules/react-native-gesture-handler/android/build/intermediates/javac/debug/classes/com/swmansion/gesturehandler/GestureHandler.class differ
 diff --git a/node_modules/react-native-gesture-handler/android/build/intermediates/javac/debug/classes/com/swmansion/gesturehandler/GestureHandlerInteractionController.class b/node_modules/react-native-gesture-handler/android/build/intermediates/javac/debug/classes/com/swmansion/gesturehandler/GestureHandlerInteractionController.class
 new file mode 100644
@@ -2442,7 +2442,7 @@ index 0000000..343466c
 Binary files /dev/null and b/node_modules/react-native-gesture-handler/android/build/intermediates/javac/debug/classes/com/swmansion/gesturehandler/GestureHandlerOrchestrator$1.class differ
 diff --git a/node_modules/react-native-gesture-handler/android/build/intermediates/javac/debug/classes/com/swmansion/gesturehandler/GestureHandlerOrchestrator.class b/node_modules/react-native-gesture-handler/android/build/intermediates/javac/debug/classes/com/swmansion/gesturehandler/GestureHandlerOrchestrator.class
 new file mode 100644
-index 0000000..00efb6f
+index 0000000..1a8b6bd
 Binary files /dev/null and b/node_modules/react-native-gesture-handler/android/build/intermediates/javac/debug/classes/com/swmansion/gesturehandler/GestureHandlerOrchestrator.class differ
 diff --git a/node_modules/react-native-gesture-handler/android/build/intermediates/javac/debug/classes/com/swmansion/gesturehandler/GestureHandlerRegistry.class b/node_modules/react-native-gesture-handler/android/build/intermediates/javac/debug/classes/com/swmansion/gesturehandler/GestureHandlerRegistry.class
 new file mode 100644
@@ -2734,7 +2734,7 @@ index 0000000..c2e193c
 Binary files /dev/null and b/node_modules/react-native-gesture-handler/android/build/intermediates/runtime_library_classes_dir/debug/com/swmansion/gesturehandler/GestureHandler$1.class differ
 diff --git a/node_modules/react-native-gesture-handler/android/build/intermediates/runtime_library_classes_dir/debug/com/swmansion/gesturehandler/GestureHandler.class b/node_modules/react-native-gesture-handler/android/build/intermediates/runtime_library_classes_dir/debug/com/swmansion/gesturehandler/GestureHandler.class
 new file mode 100644
-index 0000000..4ce182f
+index 0000000..96dadf3
 Binary files /dev/null and b/node_modules/react-native-gesture-handler/android/build/intermediates/runtime_library_classes_dir/debug/com/swmansion/gesturehandler/GestureHandler.class differ
 diff --git a/node_modules/react-native-gesture-handler/android/build/intermediates/runtime_library_classes_dir/debug/com/swmansion/gesturehandler/GestureHandlerInteractionController.class b/node_modules/react-native-gesture-handler/android/build/intermediates/runtime_library_classes_dir/debug/com/swmansion/gesturehandler/GestureHandlerInteractionController.class
 new file mode 100644
@@ -2746,7 +2746,7 @@ index 0000000..343466c
 Binary files /dev/null and b/node_modules/react-native-gesture-handler/android/build/intermediates/runtime_library_classes_dir/debug/com/swmansion/gesturehandler/GestureHandlerOrchestrator$1.class differ
 diff --git a/node_modules/react-native-gesture-handler/android/build/intermediates/runtime_library_classes_dir/debug/com/swmansion/gesturehandler/GestureHandlerOrchestrator.class b/node_modules/react-native-gesture-handler/android/build/intermediates/runtime_library_classes_dir/debug/com/swmansion/gesturehandler/GestureHandlerOrchestrator.class
 new file mode 100644
-index 0000000..00efb6f
+index 0000000..1a8b6bd
 Binary files /dev/null and b/node_modules/react-native-gesture-handler/android/build/intermediates/runtime_library_classes_dir/debug/com/swmansion/gesturehandler/GestureHandlerOrchestrator.class differ
 diff --git a/node_modules/react-native-gesture-handler/android/build/intermediates/runtime_library_classes_dir/debug/com/swmansion/gesturehandler/GestureHandlerRegistry.class b/node_modules/react-native-gesture-handler/android/build/intermediates/runtime_library_classes_dir/debug/com/swmansion/gesturehandler/GestureHandlerRegistry.class
 new file mode 100644
@@ -4298,7 +4298,7 @@ index 0000000..07a7b86
 +		INJECTED from /Volumes/gdz-ssd/OpenDigitalEducation/repositories/ode-mobile-framework.161/node_modules/react-native-gesture-handler/android/src/main/AndroidManifest.xml
 diff --git a/node_modules/react-native-gesture-handler/android/build/tmp/compileDebugJavaWithJavac/source-classes-mapping.txt b/node_modules/react-native-gesture-handler/android/build/tmp/compileDebugJavaWithJavac/source-classes-mapping.txt
 new file mode 100644
-index 0000000..632a572
+index 0000000..a121932
 --- /dev/null
 +++ b/node_modules/react-native-gesture-handler/android/build/tmp/compileDebugJavaWithJavac/source-classes-mapping.txt
 @@ -0,0 +1,92 @@
@@ -4329,19 +4329,28 @@ index 0000000..632a572
 +com/swmansion/gesturehandler/RotationGestureHandler.java
 + com.swmansion.gesturehandler.RotationGestureHandler
 + com.swmansion.gesturehandler.RotationGestureHandler$1
-+com/swmansion/gesturehandler/react/RNGestureHandlerRootInterface.java
-+ com.swmansion.gesturehandler.react.RNGestureHandlerRootInterface
++com/swmansion/gesturehandler/react/RNGestureHandlerRootView.java
++ com.swmansion.gesturehandler.react.RNGestureHandlerRootView
 +com/swmansion/gesturehandler/BaseGestureHandlerInteractionController.java
 + com.swmansion.gesturehandler.BaseGestureHandlerInteractionController
-+com/swmansion/gesturehandler/react/RNGestureHandlerEvent.java
-+ com.swmansion.gesturehandler.react.RNGestureHandlerEvent
++com/swmansion/gesturehandler/react/RNGestureHandlerModule.java
++ com.swmansion.gesturehandler.react.RNGestureHandlerModule
++ com.swmansion.gesturehandler.react.RNGestureHandlerModule$1
++ com.swmansion.gesturehandler.react.RNGestureHandlerModule$2
++ com.swmansion.gesturehandler.react.RNGestureHandlerModule$FlingGestureHandlerFactory
++ com.swmansion.gesturehandler.react.RNGestureHandlerModule$HandlerFactory
++ com.swmansion.gesturehandler.react.RNGestureHandlerModule$LongPressGestureHandlerFactory
++ com.swmansion.gesturehandler.react.RNGestureHandlerModule$NativeViewGestureHandlerFactory
++ com.swmansion.gesturehandler.react.RNGestureHandlerModule$PanGestureHandlerFactory
++ com.swmansion.gesturehandler.react.RNGestureHandlerModule$PinchGestureHandlerFactory
++ com.swmansion.gesturehandler.react.RNGestureHandlerModule$RotationGestureHandlerFactory
++ com.swmansion.gesturehandler.react.RNGestureHandlerModule$TapGestureHandlerFactory
 +com/swmansion/gesturehandler/GestureHandlerInteractionController.java
 + com.swmansion.gesturehandler.GestureHandlerInteractionController
 +com/swmansion/gesturehandler/react/BuildConfig.java
 + com.swmansion.gesturehandler.react.BuildConfig
-+com/swmansion/gesturehandler/react/RNViewConfigurationHelper.java
-+ com.swmansion.gesturehandler.react.RNViewConfigurationHelper
-+ com.swmansion.gesturehandler.react.RNViewConfigurationHelper$1
++com/swmansion/gesturehandler/react/RNGestureHandlerEnabledRootView.java
++ com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView
 +com/swmansion/gesturehandler/OnTouchEventListener.java
 + com.swmansion.gesturehandler.OnTouchEventListener
 +com/facebook/react/views/modal/RNGHModalUtils.java
@@ -4354,9 +4363,8 @@ index 0000000..632a572
 + com.swmansion.gesturehandler.react.RNGestureHandlerRootHelper
 + com.swmansion.gesturehandler.react.RNGestureHandlerRootHelper$1
 + com.swmansion.gesturehandler.react.RNGestureHandlerRootHelper$RootViewGestureHandler
-+com/swmansion/gesturehandler/GestureHandler.java
-+ com.swmansion.gesturehandler.GestureHandler
-+ com.swmansion.gesturehandler.GestureHandler$1
++com/swmansion/gesturehandler/PanGestureHandler.java
++ com.swmansion.gesturehandler.PanGestureHandler
 +com/swmansion/gesturehandler/LongPressGestureHandler.java
 + com.swmansion.gesturehandler.LongPressGestureHandler
 + com.swmansion.gesturehandler.LongPressGestureHandler$1
@@ -4376,26 +4384,30 @@ index 0000000..632a572
 +com/swmansion/gesturehandler/RotationGestureDetector.java
 + com.swmansion.gesturehandler.RotationGestureDetector
 + com.swmansion.gesturehandler.RotationGestureDetector$OnRotationGestureListener
-+com/swmansion/gesturehandler/react/RNGestureHandlerRootView.java
-+ com.swmansion.gesturehandler.react.RNGestureHandlerRootView
-+com/swmansion/gesturehandler/react/RNGestureHandlerModule.java
-+ com.swmansion.gesturehandler.react.RNGestureHandlerModule
-+ com.swmansion.gesturehandler.react.RNGestureHandlerModule$1
-+ com.swmansion.gesturehandler.react.RNGestureHandlerModule$2
-+ com.swmansion.gesturehandler.react.RNGestureHandlerModule$FlingGestureHandlerFactory
-+ com.swmansion.gesturehandler.react.RNGestureHandlerModule$HandlerFactory
-+ com.swmansion.gesturehandler.react.RNGestureHandlerModule$LongPressGestureHandlerFactory
-+ com.swmansion.gesturehandler.react.RNGestureHandlerModule$NativeViewGestureHandlerFactory
-+ com.swmansion.gesturehandler.react.RNGestureHandlerModule$PanGestureHandlerFactory
-+ com.swmansion.gesturehandler.react.RNGestureHandlerModule$PinchGestureHandlerFactory
-+ com.swmansion.gesturehandler.react.RNGestureHandlerModule$RotationGestureHandlerFactory
-+ com.swmansion.gesturehandler.react.RNGestureHandlerModule$TapGestureHandlerFactory
-+com/swmansion/gesturehandler/PanGestureHandler.java
-+ com.swmansion.gesturehandler.PanGestureHandler
-+com/swmansion/gesturehandler/react/RNGestureHandlerEnabledRootView.java
-+ com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView
++com/swmansion/gesturehandler/react/RNViewConfigurationHelper.java
++ com.swmansion.gesturehandler.react.RNViewConfigurationHelper
++ com.swmansion.gesturehandler.react.RNViewConfigurationHelper$1
++com/swmansion/gesturehandler/GestureHandler.java
++ com.swmansion.gesturehandler.GestureHandler
++ com.swmansion.gesturehandler.GestureHandler$1
++com/swmansion/gesturehandler/react/RNGestureHandlerEvent.java
++ com.swmansion.gesturehandler.react.RNGestureHandlerEvent
++com/swmansion/gesturehandler/react/RNGestureHandlerRootInterface.java
++ com.swmansion.gesturehandler.react.RNGestureHandlerRootInterface
+diff --git a/node_modules/react-native-gesture-handler/android/lib/src/main/java/com/swmansion/gesturehandler/GestureHandler.java b/node_modules/react-native-gesture-handler/android/lib/src/main/java/com/swmansion/gesturehandler/GestureHandler.java
+index 50e3558..9227693 100644
+--- a/node_modules/react-native-gesture-handler/android/lib/src/main/java/com/swmansion/gesturehandler/GestureHandler.java
++++ b/node_modules/react-native-gesture-handler/android/lib/src/main/java/com/swmansion/gesturehandler/GestureHandler.java
+@@ -281,6 +281,7 @@ public class GestureHandler<T extends GestureHandler> {
+         count++;
+       }
+     }
++    if (count == 0) return event; // Avoid crash in MotionEvent.obtain when count = 0
+     MotionEvent result = MotionEvent.obtain(
+             event.getDownTime(),
+             event.getEventTime(),
 diff --git a/node_modules/react-native-gesture-handler/android/lib/src/main/java/com/swmansion/gesturehandler/GestureHandlerOrchestrator.java b/node_modules/react-native-gesture-handler/android/lib/src/main/java/com/swmansion/gesturehandler/GestureHandlerOrchestrator.java
-index f08713b..66c0bc2 100644
+index f08713b..e61e4cb 100644
 --- a/node_modules/react-native-gesture-handler/android/lib/src/main/java/com/swmansion/gesturehandler/GestureHandlerOrchestrator.java
 +++ b/node_modules/react-native-gesture-handler/android/lib/src/main/java/com/swmansion/gesturehandler/GestureHandlerOrchestrator.java
 @@ -382,8 +382,9 @@ public class GestureHandlerOrchestrator {
@@ -4404,8 +4416,8 @@ index f08713b..66c0bc2 100644
      boolean found = false;
 -    if (handlers != null) {
 -      for (int i = 0, size = handlers.size(); i < size; i++) {
-+    int size = handlers.size();
-+    if ((handlers != null) && (size > 0))  {
++    int size = (handlers == null) ? 0 : handlers.size();
++    if (size > 0)  {
 +      for (int i = 0; i < size; i++) {
          GestureHandler handler = handlers.get(i);
          if (handler.isEnabled() && handler.isWithinBounds(view, coords[0], coords[1])) {
