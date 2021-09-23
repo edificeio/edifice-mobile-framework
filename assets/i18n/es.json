@@ -204,7 +204,6 @@
     "messages": "Mensajes",
     "missingReceiver": "Este mensaje debe contener al menos un destinatario",
     "move": "Mover",
-    "moveImpossible": "No es posible mover el correo electrónico. Primero debe crear una carpeta personalizada.",
     "moveTo": "Mover a",
     "newMessage": "Nuevo mensaje",
     "outbox": "Mensajes enviados",

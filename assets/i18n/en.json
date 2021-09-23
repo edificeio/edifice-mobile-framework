@@ -204,7 +204,6 @@
     "messages": "Messages",
     "missingReceiver": "This message must contain at least one recipient",
     "move": "Move",
-    "moveImpossible": "Email cannot be moved. Please create a personalized folder first.",
     "moveTo": "Move to",
     "newMessage": "New message",
     "outbox": "Outbox",

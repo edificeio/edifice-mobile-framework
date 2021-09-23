@@ -1,21 +1,23 @@
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, ViewStyle, TextStyle } from "react-native";
 import I18n from "i18n-js";
 import { layoutSize } from "../../styles/common/layoutSize";
 
 type IProps = {
   onPress: (any) => void;
+  style?: ViewStyle;
+  textStyle?: TextStyle;
 };
 
 export default class DialogButton extends React.PureComponent<IProps> {
   static displayName = "DialogButton";
 
   render() {
-    const { onPress } = this.props;
+    const { onPress, style, textStyle } = this.props;
 
     return (
-      <TouchableOpacity style={styles.button} onPress={onPress}>
-        <Text style={styles.text}>{I18n.t("Cancel")}</Text>
+      <TouchableOpacity style={[styles.button, style]} onPress={onPress}>
+        <Text style={[styles.text, textStyle]}>{I18n.t("Cancel")}</Text>
       </TouchableOpacity>
     );
   }

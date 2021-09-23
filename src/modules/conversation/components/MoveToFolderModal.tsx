@@ -1,14 +1,13 @@
-import I18n from "i18n-js";
 import * as React from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import { View } from "react-native";
+import I18n from "i18n-js";
+import DropDownPicker from "react-native-dropdown-picker";
 
-import { CommonStyles } from "../../../styles/common/styles";
-import { Icon } from "../../../ui";
 import { DialogButtonCancel, DialogButtonOk } from "../../../ui/ConfirmDialog";
 import { ModalBox, ModalContent } from "../../../ui/Modal";
-import { Text } from "../../../ui/Typography";
 import { IFolder } from "../state/initMails";
+import theme from "../../../framework/util/theme";
+import { TextBold, TextSemiBold } from "../../../framework/components/text";
 
 type MoveToFolderModalProps = {
   show: boolean;
@@ -20,109 +19,90 @@ type MoveToFolderModalProps = {
   selectFolder: (id: string) => any;
 };
 
-export default class MoveToFolderModal extends React.Component<MoveToFolderModalProps> {
-  private renderOption = (id, displayName, iconName) => {
-    const { selectedFolder, selectFolder } = this.props;
-    const selected = selectedFolder === id;
-    const touchableStyle = selected ? [style.opacity, style.selectedItem] : style.opacity;
-    const textStyle = selected ? { color: "white", fontSize: 18 } : { fontSize: 18 };
-    const iconStyle = selected ? { color: "white", margin: 10 } : { margin: 10 };
-    return (
-      <>
-        <TouchableOpacity
-          onPress={() => {
-            selectFolder(id);
-          }}
-          style={touchableStyle}>
-          <View style={style.rowView}>
-            <Icon name={iconName} size={20} style={iconStyle} />
-            <Text numberOfLines={1} style={textStyle}>
-              {displayName}
-            </Text>
-          </View>
-        </TouchableOpacity>
-        <View style={style.separator} />
-      </>
-    );
-  };
+type MoveToFolderModalState = {
+  openDropdown: boolean;
+};
 
-  public findMainFolderId= (name: string) => {
-    const folderInfos = this.props.folders.find(item => item.folderName === name);
-    if (folderInfos) return folderInfos.id;
-    else return ;
-  };
+export default class MoveToFolderModal extends React.Component<MoveToFolderModalProps, MoveToFolderModalState> {
+  constructor(props) {
+    super(props);
+    this.state = {
+      openDropdown: false
+    };
+  }
 
   public render() {
-    const { show, folders, closeModal, confirm, currentFolder } = this.props;
+    const { show, folders, closeModal, confirm, currentFolder, selectFolder, selectedFolder } = this.props;
+    const { openDropdown } = this.state;
     const isCurrentFolderInbox = currentFolder === "inbox";
     const isCurrentFolderTrash = currentFolder === "trash";
-    const foldersWithoutCurrent = folders.filter(folder => folder.folderName !== currentFolder);
-    const isMoveImpossible = isCurrentFolderInbox && folders && folders.length === 0;
-    const modalTitle = isMoveImpossible
-      ? "conversation.moveImpossible"
-      : `conversation.${isCurrentFolderTrash ? "restore" : "move"}To`;
+    const modalTitle = `conversation.${isCurrentFolderTrash ? "restore" : "move"}To`;
+    const foldersWithoutCurrent = folders && folders.filter(folder => folder.folderName !== currentFolder);
+    let options: any = [];
+    !isCurrentFolderInbox && options.push({ label: I18n.t("conversation.inbox"), value: "inbox" });
+    foldersWithoutCurrent && foldersWithoutCurrent.length > 0 && foldersWithoutCurrent
+      .map(folder => ({ label: folder.folderName, value: folder.id }))
+      .forEach(folder => options.push(folder));
+    const isMoveImpossible = options.length === 0;
+
     return (
       <ModalBox isVisible={show}>
-        <ModalContent>
-          <View style={style.containerView}>
-            <View style={{ alignSelf: "baseline", paddingBottom: 8, paddingHorizontal: 12 }}>
-              <Text style={{ fontSize: 18 }}>{I18n.t(modalTitle)}</Text>
-            </View>
-            {!isCurrentFolderInbox && (
-              <>
-                <View style={{ backgroundColor: "#eef7fb", width: "100%", padding: 4 }}>
-                  <Text style={{ fontSize: 18 }}>{I18n.t("conversation.messages")}</Text>
-                </View>
-                {this.renderOption("inbox", I18n.t("conversation.inbox"), "inbox")}
-              </>
-            )}
-            {foldersWithoutCurrent && foldersWithoutCurrent.length > 0 && (
-              <View>
-                <View style={{ backgroundColor: "lightblue", width: "100%", padding: 4 }}>
-                  <Text style={{ fontSize: 18 }}>{I18n.t("conversation.directories")}</Text>
-                </View>
-                <ScrollView style={{ height: "33%" }}>
-                  {foldersWithoutCurrent.map(f => this.renderOption(f.id, f.folderName, "folder"))}
-                </ScrollView>
-              </View>
-            )}
-            <View style={{ flexDirection: "row-reverse", padding: 20, paddingBottom: 10 }}>
-              <DialogButtonOk disabled={isMoveImpossible} label={I18n.t(`conversation.${isCurrentFolderTrash ? "restore" : "move"}`)} onPress={confirm} />
-              <DialogButtonCancel onPress={() => closeModal()} />
-            </View>
+        <ModalContent
+          style={{
+            height: 250,
+            padding: 20,
+            paddingTop: undefined,
+            width: undefined,
+            justifyContent: "space-between",
+          }}
+        >
+          <TextBold>{I18n.t(modalTitle)}</TextBold>
+          {isMoveImpossible
+            ? <TextSemiBold>{I18n.t("conversation.moveImpossible")}</TextSemiBold>
+            : <DropDownPicker
+                open={openDropdown}
+                items={options}
+                value={selectedFolder}
+                setOpen={() => this.setState({openDropdown: !openDropdown})}
+                setValue={callback => selectFolder(callback(selectedFolder))}
+                placeholder={I18n.t("conversation.moveSelect")}
+                placeholderStyle={{ color: theme.color.neutral.regular }}
+                textStyle={{ color: theme.color.secondary.regular, fontWeight: "bold" }}
+                style={{ borderColor: theme.color.secondary.regular, borderWidth: 1 }}
+              />
+          }
+          <View style={{ flexDirection: "row" }}>
+            <DialogButtonCancel
+              onPress={() => {
+                selectFolder("");
+                closeModal();
+              }}
+              style={{ 
+                backgroundColor: theme.color.background.card,
+                borderColor: theme.color.secondary.regular,
+                borderWidth: 1,
+                borderRadius: 20,
+                width: 150
+              }}
+              textStyle={{ color: theme.color.secondary.regular, fontWeight: "bold" }}
+            />
+            <DialogButtonOk
+              onPress={() => {
+                selectFolder("");
+                confirm();
+              }}
+              style={{ 
+                backgroundColor: isMoveImpossible || !selectedFolder ? theme.color.neutral.regular : theme.color.secondary.regular,
+                borderRadius: 20,
+                width: 150
+              }}
+              textStyle={{ fontWeight: "bold" }}
+              disabled={isMoveImpossible || !selectedFolder}
+              label={I18n.t(`conversation.${isCurrentFolderTrash ? "restore" : "move"}`)}
+            />
           </View>
         </ModalContent>
       </ModalBox>
     );
   }
 }
-
-const style = StyleSheet.create({
-  containerView: {
-    flexGrow: 1,
-    width: "100%",
-    marginTop: -25,
-  },
-  rowView: {
-    alignItems: "center",
-    flexDirection: "row",
-    flexGrow: 1,
-    overflow: "hidden",
-    paddingRight: 90,
-  },
-  separator: {
-    borderBottomColor: CommonStyles.borderColorVeryLighter,
-    borderBottomWidth: 4,
-    width: "100%",
-  },
-  opacity: {
-    flexDirection: "row",
-    paddingHorizontal: 5,
-  },
-  selectedItem: {
-    backgroundColor: "#fc8500",
-  },
-  itemTextSelected: {
-    color: "white",
-  },
-});

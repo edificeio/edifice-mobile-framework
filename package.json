@@ -64,6 +64,7 @@
     "react-native-config-reader": "4.1.0",
     "react-native-device-info": "8.3.3",
     "react-native-document-picker": "5.2.0",
+    "react-native-dropdown-picker": "^5.1.27",
     "react-native-fast-image": "8.3.4",
     "react-native-file-share-intent": "github:opendigitaleducation/react-native-file-share-intent",
     "react-native-file-viewer": "2.1.4",
