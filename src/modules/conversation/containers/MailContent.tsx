@@ -231,6 +231,7 @@ class MailContentContainer extends React.PureComponent<{
                 type: DraftType.REPLY,
                 mailId: this.props.mail.id,
                 onGoBack: this.props.navigation.state.params.onGoBack,
+                currentFolder: this.props.navigation.getParam('currentFolder')
               })
             }
           />
@@ -242,6 +243,7 @@ class MailContentContainer extends React.PureComponent<{
                 type: DraftType.REPLY_ALL,
                 mailId: this.props.mail.id,
                 onGoBack: this.props.navigation.state.params.onGoBack,
+                currentFolder: this.props.navigation.getParam('currentFolder')
               })
             }
           />

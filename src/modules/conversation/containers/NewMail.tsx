@@ -388,7 +388,9 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           replyTo: this.props.mail.id,
           prevBody: getPrevBody(),
           mail: {
-            to: [this.props.mail.from].map(getUser),
+            to: this.props.navigation.getParam("currentFolder") === "sendMessages"
+              ? this.props.mail.to.map(getUser)
+              : [this.props.mail.from].map(getUser),
             subject: I18n.t('conversation.replySubject') + this.props.mail.subject,
           },
         };
@@ -398,9 +400,11 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           replyTo: this.props.mail.id,
           prevBody: getPrevBody(),
           mail: {
-            to: [this.props.mail.from, ...this.props.mail.to.filter(user => user !== getSessionInfo().userId)]
-              .filter((user, index, array) => array.indexOf(user) === index)
-              .map(getUser),
+            to: this.props.navigation.getParam("currentFolder") === "sendMessages"
+              ? this.props.mail.to.map(getUser)
+              : [this.props.mail.from, ...this.props.mail.to.filter(user => user !== getSessionInfo().userId)]
+                  .filter((user, index, array) => array.indexOf(user) === index)
+                  .map(getUser),
             cc: this.props.mail.cc.filter(id => id !== this.props.mail.from).map(getUser),
             subject: I18n.t('conversation.replySubject') + this.props.mail.subject,
           },
