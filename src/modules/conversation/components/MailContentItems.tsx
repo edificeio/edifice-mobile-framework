@@ -98,11 +98,13 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
   ><ListItem
       style={{ paddingVertical: 18, borderBottomWidth: 0 }}
 
-      leftElement={<View style={{ alignSelf: 'flex-start' }}><GridAvatars
+      leftElement={<View style={{ alignSelf: 'flex-start', marginTop: 20 }}><GridAvatars
         users={[{id: mailContacts.from[0], isGroup: mailContacts.from[2]}]}
       /></View>}
 
       rightElement={<View style={styles.mailInfos}>
+        {/* Date */}
+        <Text style={styles.mailDate} numberOfLines={1}>{displayPastDate(moment(mailInfos.date), true)}</Text>
         <View style={{ flex: 0 }}>
           {/* Contact name */}
           <View style={{ flex: 0, flexDirection: 'row' }}>
@@ -114,8 +116,6 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
                 >{mailContacts.from[1]}</TextContactComponent>
               </>
             })()}
-            {/* Date */}
-            <Text style={styles.mailDate} numberOfLines={1}>{displayPastDate(moment(mailInfos.date), isVisible)}</Text>
           </View>
         </View>
         <View style={{ flex: 0, flexDirection: 'row' }}>
