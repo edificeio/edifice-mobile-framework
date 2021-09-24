@@ -37,6 +37,8 @@ type MailListState = {
   showModal: boolean;
   selectedMail: IMail | undefined;
   isRefreshing: boolean;
+  isSwipingMail: boolean;
+  currentlySwipedMail: boolean;
 };
 
 let lastFolderCache = '';
@@ -55,6 +57,8 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
       showModal: false,
       selectedMail: undefined,
       isRefreshing: false,
+      isSwipingMail: false,
+      currentlySwipedMail: false
     };
   }
 
@@ -188,8 +192,8 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
 
   public render() {
     const { isFetching, firstFetch, navigation } = this.props;
-    const { showModal, selectedMail, isRefreshing } = this.state;
-    const navigationKey = navigation.getParam('key');
+    const { showModal, selectedMail, isRefreshing, isSwipingMail, currentlySwipedMail } = this.state;
+    const navigationKey = navigation.getParam("key");
     const uniqueId = [];
     const uniqueMails =
       this.state.mails?.filter((mail: IMail) => {
@@ -204,6 +208,8 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
       <>
         <PageContainer>
           <FlatList
+            scrollEnabled={!isSwipingMail}
+            onMomentumScrollBegin={() => this.setState({ currentlySwipedMail: false })}
             contentContainerStyle={{ flexGrow: 1 }}
             data={uniqueMails.length > 0 ? uniqueMails : []}
             renderItem={({ item }) => {
@@ -219,6 +225,10 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
                   deleteMail={() => this.delete(mailId)}
                   toggleRead={() => this.toggleRead(isMailUnread, mailId)}
                   restoreMail={() => this.setState({ showModal: true, selectedMail: item })}
+                  onSwipeStart={() => this.setState({ isSwipingMail: true, currentlySwipedMail: false })}
+                  onSwipeRelease={() => this.setState({ isSwipingMail: false })}
+                  onButtonsOpenRelease={() => this.setState({ currentlySwipedMail: true })}
+                  currentlySwipedMail={currentlySwipedMail}
                 />
               );
             }}
@@ -260,7 +270,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
               )
             }
           />
-        </PageContainer>
+        </PageContainer> 
         <MoveModal
           currentFolder={navigationKey}
           mail={selectedMail}
