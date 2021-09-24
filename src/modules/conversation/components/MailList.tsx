@@ -1,18 +1,18 @@
-import * as React from "react";
-import I18n from "i18n-js";
-import { View, RefreshControl, FlatList } from "react-native";
-import { NavigationDrawerProp } from "react-navigation-drawer";
-import Toast from "react-native-tiny-toast";
+import * as React from 'react';
+import I18n from 'i18n-js';
+import { View, RefreshControl, FlatList } from 'react-native';
+import { NavigationDrawerProp } from 'react-navigation-drawer';
+import Toast from 'react-native-tiny-toast';
 
-import { Loading } from "../../../ui";
-import { PageContainer } from "../../../ui/ContainerContent";
-import { EmptyScreen } from "../../../ui/EmptyScreen";
-import { IInit } from "../containers/DrawerMenu";
-import { DraftType } from "../containers/NewMail";
+import { Loading } from '../../../ui';
+import { PageContainer } from '../../../ui/ContainerContent';
+import { EmptyScreen } from '../../../ui/EmptyScreen';
+import { IInit } from '../containers/DrawerMenu';
+import { DraftType } from '../containers/NewMail';
 import MoveModal from '../containers/MoveToFolderModal';
-import { IMail } from "../state/mailContent";
-import moduleConfig from "../moduleConfig";
-import MailListItem from "./MailListItem";
+import { IMail } from '../state/mailContent';
+import moduleConfig from '../moduleConfig';
+import MailListItem from './MailListItem';
 
 type MailListProps = {
   notifications: any;
@@ -54,7 +54,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
       nextPageCallable: false,
       showModal: false,
       selectedMail: undefined,
-      isRefreshing: false
+      isRefreshing: false,
     };
   }
 
@@ -94,9 +94,9 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
   };
 
   renderMailContent = mailInfos => {
-    const navigationKey = this.props.navigation.getParam("key");
-    const isFolderDrafts = navigationKey === "drafts";
-    const isStateDraft = mailInfos.state === "DRAFT";
+    const navigationKey = this.props.navigation.getParam('key');
+    const isFolderDrafts = navigationKey === 'drafts';
+    const isStateDraft = mailInfos.state === 'DRAFT';
 
     if (isStateDraft && isFolderDrafts) {
       this.props.navigation.navigate(`${moduleConfig.routeName}/new`, {
@@ -111,7 +111,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
       this.props.navigation.navigate(`${moduleConfig.routeName}/mail`, {
         mailId: mailInfos.id,
         subject: mailInfos.subject,
-        currentFolder: navigationKey || "inbox",
+        currentFolder: navigationKey || 'inbox',
         onGoBack: () => {
           this.refreshMailList();
           this.props.fetchInit();
@@ -145,15 +145,15 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
 
   delete = async (mailId: string) => {
     const { navigation, isTrashed, deleteMails, trashMails, fetchInit } = this.props;
-    const navigationKey = navigation.getParam("key");
-    const isFolderDrafts = navigationKey === "drafts";
+    const navigationKey = navigation.getParam('key');
+    const isFolderDrafts = navigationKey === 'drafts';
     const isTrashedOrDraft = isTrashed || isFolderDrafts;
     try {
       if (isTrashed) await deleteMails([mailId]);
       else await trashMails([mailId]);
       await this.refreshMailList();
       await fetchInit();
-      Toast.show(I18n.t(`conversation.message${isTrashedOrDraft ? "Deleted" : "Trashed"}`), {
+      Toast.show(I18n.t(`conversation.message${isTrashedOrDraft ? 'Deleted' : 'Trashed'}`), {
         position: Toast.position.BOTTOM,
         mask: false,
         containerStyle: { width: '95%', backgroundColor: 'black' },
@@ -161,7 +161,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 
   onChangePage = () => {
     if (!this.props.isFetching && this.props.notifications !== undefined) {
@@ -178,27 +178,28 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
   };
 
   toggleUnread = () => {
-    let toggleListIds = "";
+    let toggleListIds = '';
     for (let i = 0; i < this.state.mails.length - 1; i++) {
-      if (this.state.mails[i].isChecked) toggleListIds = toggleListIds.concat("id=", this.state.mails[i].id, "&");
+      if (this.state.mails[i].isChecked) toggleListIds = toggleListIds.concat('id=', this.state.mails[i].id, '&');
     }
-    if (toggleListIds === "") return;
+    if (toggleListIds === '') return;
     toggleListIds = toggleListIds.slice(0, -1);
   };
 
   public render() {
     const { isFetching, firstFetch, navigation } = this.props;
     const { showModal, selectedMail, isRefreshing } = this.state;
-    const navigationKey = navigation.getParam("key");
+    const navigationKey = navigation.getParam('key');
     const uniqueId = [];
-    const uniqueMails = this.state.mails.filter((mail: IMail) => {
-      // @ts-ignore
-      if (uniqueId.indexOf(mail.id) == -1) {
+    const uniqueMails =
+      this.state.mails?.filter((mail: IMail) => {
         // @ts-ignore
-        uniqueId.push(mail.id);
-        return true;
-      }
-    });
+        if (uniqueId.indexOf(mail.id) == -1) {
+          // @ts-ignore
+          uniqueId.push(mail.id);
+          return true;
+        }
+      }) || [];
     return (
       <>
         <PageContainer>
@@ -206,8 +207,8 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
             contentContainerStyle={{ flexGrow: 1 }}
             data={uniqueMails.length > 0 ? uniqueMails : []}
             renderItem={({ item }) => {
-              const isFolderOutbox = navigationKey === "sendMessages";
-              const isFolderDrafts = navigationKey === "drafts";
+              const isFolderOutbox = navigationKey === 'sendMessages';
+              const isFolderDrafts = navigationKey === 'drafts';
               const isMailUnread = item.unread && !isFolderDrafts && !isFolderOutbox;
               const mailId = item.id;
               return (
@@ -227,9 +228,9 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
               <RefreshControl
                 refreshing={isRefreshing}
                 onRefresh={async () => {
-                  this.setState({isRefreshing: true});
+                  this.setState({ isRefreshing: true });
                   await this.refreshMailList();
-                  this.setState({isRefreshing: false});
+                  this.setState({ isRefreshing: false });
                 }}
               />
             }
