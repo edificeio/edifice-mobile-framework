@@ -113,22 +113,26 @@ class MailContentContainer extends React.PureComponent<{
 
   delete = async () => {
     const { deleteMails, navigation, trashMails, mail } = this.props;
+    const mailId = mail.id;
     const currentFolder = navigation.getParam('currentFolder');
-    const isCurrentFolderDrafts = currentFolder === 'drafts';
+    const isFolderDrafts = currentFolder === 'drafts';
     const isTrashed = navigation.getParam('isTrashed');
-    const isTrashedOrDrafts = isTrashed || isCurrentFolderDrafts;
+    const isTrashedOrDrafts = isTrashed || isFolderDrafts;
     try {
-      if (isTrashed) await deleteMails([mail.id]);
-      else await trashMails([mail.id]);
-    } catch (error) {
-      console.error(error);
-    } finally {
+      if (isTrashed) {
+        await deleteMails([mailId]);
+      } else if (isFolderDrafts) {
+        await trashMails([mailId]);
+        await deleteMails([mailId]);
+      } else await trashMails([mailId]);
       this.goBack();
       Toast.show(I18n.t(`conversation.message${isTrashedOrDrafts ? "Deleted" : "Trashed"}`), {
         position: Toast.position.BOTTOM,
         mask: false,
         containerStyle: { width: '95%', backgroundColor: 'black' },
       });
+    } catch (error) {
+      console.error(error);
     }
   };
 

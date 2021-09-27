@@ -153,8 +153,12 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     const isFolderDrafts = navigationKey === 'drafts';
     const isTrashedOrDraft = isTrashed || isFolderDrafts;
     try {
-      if (isTrashed) await deleteMails([mailId]);
-      else await trashMails([mailId]);
+      if (isTrashed) {
+        await deleteMails([mailId]);
+      } else if (isFolderDrafts) {
+        await trashMails([mailId]);
+        await deleteMails([mailId]);
+      } else await trashMails([mailId]);
       await this.refreshMailList();
       await fetchInit();
       Toast.show(I18n.t(`conversation.message${isTrashedOrDraft ? 'Deleted' : 'Trashed'}`), {
@@ -230,7 +234,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
                   onButtonsOpenRelease={() => this.setState({ currentlySwipedMail: true })}
                   currentlySwipedMail={currentlySwipedMail}
                 />
-              );
+              )
             }}
             extraData={uniqueMails}
             keyExtractor={(item: IMail) => item.id}
@@ -244,14 +248,6 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
                 }}
               />
             }
-            onEndReachedThreshold={0.001}
-            onScrollBeginDrag={() => this.setState({ nextPageCallable: true })}
-            onEndReached={() => {
-              if (this.state.nextPageCallable) {
-                this.setState({ nextPageCallable: false });
-                this.onChangePage();
-              }
-            }}
             ListFooterComponent={isFetching && !firstFetch ? <Loading /> : null}
             ListEmptyComponent={
               isFetching && firstFetch ? (

@@ -10,7 +10,11 @@ export function toggleReadAction(mailIds: string[], read: boolean) {
 
 export function trashMailsAction(mailIds: string[]) {
   return async (dispatch: Dispatch) => {
-    await mailService.trashMails(mailIds);
+    try {
+      await mailService.trashMails(mailIds);
+    } catch (errmsg) {
+      console.error(errmsg)
+    }
   };
 }
 
