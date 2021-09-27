@@ -54,7 +54,7 @@ try {
   if (['alpha', 'rc'].includes(buildType)) {
     versionContent.build += 1;
     versionContent[buildType] += 1;
-    buildType = `-${buildType}.${versionContent[buildType]}`;
+    buildType = `${buildType}.${versionContent[buildType]}`;
   } else {
     switch (buildType) {
       case 'major':
@@ -78,12 +78,13 @@ try {
   const minor = versionContent.minor;
   const rev = versionContent.rev;
   const build = versionContent.build;
+  const type = buildType.length ? `-${buildType}` : '';
   // eslint-disable-next-line prettier/prettier
   buildNumber = `${major}${minor.toString().padStart(2, '0')}${rev.toString().padStart(2, '0')}${build
     .toString()
     .padStart(2, '0')}`;
   versionNumber = `${major}.${minor}.${rev}`;
-  fullVersion = `${versionNumber}${buildType}(${buildNumber})`;
+  fullVersion = `${versionNumber}${type}(${buildNumber})`;
   console.info(`==> Version will be ${fullVersion})`);
 } catch (error) {
   console.error('!!! Unable to compute build number !!!');
