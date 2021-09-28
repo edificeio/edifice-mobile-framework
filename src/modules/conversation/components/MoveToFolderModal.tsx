@@ -46,7 +46,13 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
     const isMoveImpossible = options.length === 0;
 
     return (
-      <ModalBox isVisible={show}>
+      <ModalBox
+        isVisible={show}
+        onBackdropPress={() => {
+          selectFolder("");
+          closeModal();
+        }}
+      >
         <ModalContent
           style={{
             height: 250,
