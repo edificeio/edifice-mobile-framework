@@ -60,7 +60,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
     const { navigation, folders } = this.props;
     const currentFolder = this.getCurrentFolder(navigation.state);
     return (
-      <ScrollView>
+      <ScrollView enabled={folders && folders.length > 0} style={{ marginTop: 15 }}>
         {folders && folders.length > 0 && folders.map(folder => (
           <DrawerOption
             selected={folder.folderName === currentFolder}
@@ -73,6 +73,15 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
             count={folder.unread}
           />
         ))}
+        <TouchableOpacity
+          onPress={this.onFolderCreationModalShow}
+          style={style.createFolderContainer}
+        >
+          <Icon size={22} name="create_new_folder" />
+          <Text style={style.createFolderText}>
+            {I18n.t("conversation.createDirectory")}
+          </Text>
+        </TouchableOpacity>
       </ScrollView>
     );
   };
@@ -114,24 +123,8 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
   render() {
     return (
       <PageContainer style={style.container}>
-        <View style={style.labelContainer}>
-          <Text style={style.labelText}>{I18n.t("conversation.messages")}</Text>
-        </View>
         {this.renderDrawerMessages()}
-        <View style={style.labelContainer}>
-          <Text style={style.labelText}>{I18n.t("conversation.directories")}</Text>
-        </View>
         {this.renderDrawerFolders()}
-        <View style={style.drawerBottom}>
-          <TouchableOpacity
-            onPress={this.onFolderCreationModalShow}
-            style={[style.labelContainer]}>
-            <Icon size={22} name="create_new_folder" />
-            <Text style={[style.labelText, { justifyContent: "center", marginBottom: 2 }]}>
-              {I18n.t("conversation.createDirectory")}
-            </Text>
-          </TouchableOpacity>
-        </View>
         <CreateFolderModal show={this.state.showFolderCreationModal} onClose={this.onFolderCreationModalClose} />
       </PageContainer>
     );
@@ -139,16 +132,17 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
 }
 
 const style = StyleSheet.create({
-  labelContainer: {
-    backgroundColor: "#eef7fb",
-    paddingHorizontal: 5,
-    paddingVertical: 10,
+  createFolderContainer: {
+    paddingHorizontal: 14,
+    paddingTop: 11,
     flexDirection: "row",
     alignItems: "center",
   },
-  labelText: {
+  createFolderText: {
     fontSize: 18,
     paddingLeft: 10,
+    marginBottom: 2,
+    fontStyle: "italic"
   },
   container: {
     backgroundColor: "#FFF",
