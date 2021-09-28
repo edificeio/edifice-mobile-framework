@@ -3,16 +3,19 @@ import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
 import { Alert, View } from 'react-native';
+import { Asset } from 'react-native-image-picker';
 import Toast from 'react-native-tiny-toast';
 import { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 
 import { getSessionInfo } from '../../../App';
+import { HeaderIcon } from '../../../framework/components/header';
 import { IDistantFile, LocalFile, SyncedFileWithId } from '../../../framework/util/fileHandler';
 import { IUploadCallbaks } from '../../../framework/util/fileHandler/service';
 
 import pickFile, { pickFileError } from '../../../infra/actions/pickFile';
+import { DocumentPicked, FilePicker, ImagePicked } from '../../../infra/filePicker';
 import { standardNavScreenOptions } from '../../../navigation/helpers/navScreenOptions';
 import { CommonStyles } from '../../../styles/common/styles';
 import { INavigationProps } from '../../../types';
@@ -92,7 +95,8 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           return <HeaderAction onPress={() => goBack()} name="back" />;
         },
         headerRight: () => {
-          const askForAttachment = navigation.getParam('getAskForAttachment');
+          // const askForAttachment = navigation.getParam('getAskForAttachment');
+          const addGivenAttachment = navigation.getParam('addGivenAttachment');
           const sendDraft = navigation.getParam('getSendDraft');
           const deleteDraft = navigation.getParam('getDeleteDraft');
           const draftType = navigation.getParam('type');
@@ -100,8 +104,11 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
 
           return (
             <View style={{ flexDirection: 'row' }}>
-              {askForAttachment && (
-                <HeaderAction style={{ width: 40, alignItems: 'center' }} onPress={askForAttachment} name="attachment" />
+              {addGivenAttachment && (
+                // <HeaderAction style={{ width: 40, alignItems: 'center' }} onPress={askForAttachment} name="attachment" />
+                <FilePicker callback={addGivenAttachment} >
+                  <HeaderIcon name="attachment"/>
+                </FilePicker>
               )}
               {sendDraft && <HeaderAction style={{ width: 40, alignItems: 'center' }} onPress={sendDraft} name="outbox" />}
               {deleteDraft && isSavedDraft && (
@@ -189,16 +196,25 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
   };
 
   navigationHeaderFunction = {
-    getAskForAttachment: (dispatch: Dispatch) => {
-      pickFile()
-        .then(file => {
-          this.getAttachmentData(file);
-        })
-        .catch(err => {
-          if (err.message === 'Error picking image' || err.message === 'Error picking document') {
-            this.props.onPickFileError('conversation');
-          }
-        });
+    // getAskForAttachment: (dispatch: Dispatch) => {
+    //   pickFile()
+    //     .then(file => {
+    //       this.getAttachmentData(file);
+    //     })
+    //     .catch(err => {
+    //       if (err.message === 'Error picking image' || err.message === 'Error picking document') {
+    //         this.props.onPickFileError('conversation');
+    //       }
+    //     });
+    // },
+    addGivenAttachment: (file: Asset | DocumentPicked) => {
+      try {
+        this.getAttachmentData(new LocalFile(file, {_needIOSReleaseSecureAccess: false}));
+      } catch (err) {
+        if (err.message === 'Error picking image' || err.message === 'Error picking document') {
+          this.props.onPickFileError('conversation');
+        }
+      }
     },
     getSendDraft: async () => {
       if (this.state.mail.to.length === 0) {
