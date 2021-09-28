@@ -25,6 +25,8 @@ export interface IEntcoreApp {
   displayName: string;
   display: boolean;
   prefix?: string; // Note : Connectors haven't a prefix, Applications do.
+  casType?: string;
+  isExternal?: boolean;
 }
 
 interface IModuleConfigBase<Name extends string> {
