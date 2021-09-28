@@ -10,11 +10,7 @@ export function toggleReadAction(mailIds: string[], read: boolean) {
 
 export function trashMailsAction(mailIds: string[]) {
   return async (dispatch: Dispatch) => {
-    try {
-      await mailService.trashMails(mailIds);
-    } catch (errmsg) {
-      console.error(errmsg)
-    }
+    await mailService.trashMails(mailIds);
   };
 }
 
@@ -24,13 +20,30 @@ export function restoreMailsAction(mailIds: string[]) {
   };
 }
 
+export function restoreMailsToInboxAction(mailIds: string[]) {
+  return async (dispatch: Dispatch) => {
+    await mailService.restoreMails(mailIds);
+    await mailService.moveMailsToInbox(mailIds);
+  };
+}
+
+export function restoreMailsToFolderAction(mailIds: string[], folderId: string) {
+  return async (dispatch: Dispatch) => {
+    await mailService.restoreMails(mailIds);
+    await mailService.moveMailsToFolder(mailIds, folderId);
+  };
+}
+
 export function deleteMailsAction(mailIds: string[]) {
   return async (dispatch: Dispatch) => {
-    try {
-      await mailService.deleteMails(mailIds);
-    } catch (errmsg) {
-      console.error(errmsg)
-    }
+    await mailService.deleteMails(mailIds);
+  };
+}
+
+export function deleteDraftsAction(mailIds: string[]) {
+  return async (dispatch: Dispatch) => {
+    await mailService.trashMails(mailIds);
+    await mailService.deleteMails(mailIds);
   };
 }
 

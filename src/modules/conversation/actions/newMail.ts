@@ -9,11 +9,7 @@ import { IUploadCallbaks } from "../../../framework/util/fileHandler/service";
 
 export function sendMailAction(mailDatas, draftId: string | undefined, InReplyTo: string) {
   return async () => {
-    try {
-      await newMailService.sendMail(mailDatas, draftId, InReplyTo);
-    } catch (errmsg) {
-      console.error("ERROR new mail: ", errmsg);
-    }
+    return await newMailService.sendMail(mailDatas, draftId, InReplyTo);
   };
 }
 

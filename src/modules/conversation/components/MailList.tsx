@@ -22,8 +22,13 @@ type MailListProps = {
   fetchCompleted: () => any;
   fetchMails: (page: number) => any;
   trashMails: (mailIds: string[]) => void;
+  deleteDrafts: (mailIds: string[]) => void;
   deleteMails: (mailIds: string[]) => void;
   toggleRead: (mailIds: string[], read: boolean) => void;
+  moveToFolder: (mailIds: string[], folderId: string) => void,
+  moveToInbox: (mailIds: string[]) => void,
+  restoreToFolder: (mailIds: string[], folderId: string) => void,
+  restoreToInbox: (mailIds: string[]) => void,
   folders: any;
   isTrashed: boolean;
   fetchRequested: boolean;
@@ -148,7 +153,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
   };
 
   delete = async (mailId: string) => {
-    const { navigation, isTrashed, deleteMails, trashMails, fetchInit } = this.props;
+    const { navigation, isTrashed, deleteMails, deleteDrafts, trashMails, fetchInit } = this.props;
     const navigationKey = navigation.getParam('key');
     const isFolderDrafts = navigationKey === 'drafts';
     const isTrashedOrDraft = isTrashed || isFolderDrafts;
@@ -156,8 +161,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
       if (isTrashed) {
         await deleteMails([mailId]);
       } else if (isFolderDrafts) {
-        await trashMails([mailId]);
-        await deleteMails([mailId]);
+        await deleteDrafts([mailId]);
       } else await trashMails([mailId]);
       await this.refreshMailList();
       await fetchInit();
@@ -273,6 +277,10 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
           show={showModal}
           closeModal={() => this.setState({ showModal: false })}
           successCallback={this.mailRestored}
+          moveToFolder={this.props.moveToFolder}
+          moveToInbox={this.props.moveToInbox}
+          restoreToFolder={this.props.restoreToFolder}
+          restoreToInbox={this.props.restoreToInbox}
         />
       </>
     );

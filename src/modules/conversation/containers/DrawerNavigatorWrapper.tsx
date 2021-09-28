@@ -14,6 +14,7 @@ import DrawerMenuContainer from "./DrawerMenu";
 import MailList from "./MailList";
 import { DraftType } from "./NewMail";
 import moduleConfig from "../moduleConfig";
+import { Trackers } from "../../../framework/util/tracker";
 
 const DrawerNavigatorComponent = createDrawerNavigator(
   {
@@ -98,6 +99,7 @@ export default class DrawerNavigatorWrapper extends React.Component<{ navigation
         <TempFloatingAction
           iconName="new_message"
           onEvent={() => {
+            Trackers.trackEventOfModule(moduleConfig, "Ecrire un mail", "Nouveau mail");
             this.props.navigation.navigate(`${moduleConfig.routeName}/new`, {
               type: DraftType.NEW,
               mailId: undefined,

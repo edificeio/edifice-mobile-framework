@@ -3,13 +3,18 @@
  * Collect data throught Matomo and AppCenter.
  */
 
-import AppCenter, { CustomProperties } from 'appcenter';
+import AppCenter from 'appcenter';
 import Analytics from 'appcenter-analytics';
 import Matomo from 'react-native-matomo';
 
 import Conf from '../../../../ode-framework-conf';
 import { signRequest } from '../../../infra/oauth';
 import { legacyAppConf } from '../appConf';
+import { IAnyNavigableModuleConfig, IAnyModuleConfig } from '../moduleTool';
+
+export type TrackEventArgs = [string, string, string?, number?];
+export type TrackEventOfModuleArgs = [IAnyModuleConfig, string, string?, number?];
+export type DoTrackArg = undefined | TrackEventOfModuleArgs;
 
 export abstract class AbstractTracker<OptionsType> {
   debugName: string;
@@ -29,7 +34,7 @@ export abstract class AbstractTracker<OptionsType> {
     try {
       await this._init();
       this._isReady = true;
-      console.log(`[Tracker ${this.debugName}] Tracker successfully initilized`)
+      console.log(`[Tracker ${this.debugName}] Tracker successfully initilized`);
     } catch (e) {
       this._isReady = false;
       console.warn(`[Tracker ${this.debugName}] Error during tracker initialization`, e);
@@ -42,9 +47,9 @@ export abstract class AbstractTracker<OptionsType> {
     try {
       if (!this.isReady) { throw new Error ('Tracker is not initialized') }
       const ret = await this._setUserId(id);
-      ret && console.log(`[Tracker ${this.debugName}] Setting user ID`, id);
+      ret && console.log(`    Tracker ${this.debugName}: Setting user ID`, id);
     } catch (e) {
-      console.warn(`[Tracker ${this.debugName}] Error while setting user ID`, id, e);
+      console.warn(`    Tracker ${this.debugName}: Error while setting user ID`, id, e);
     }
   }
 
@@ -54,9 +59,9 @@ export abstract class AbstractTracker<OptionsType> {
     try {
       if (!this.isReady) { throw new Error('Tracker is not initialized') }
       const ret = await this._setCustomDimension(id, name, value);
-      ret && console.log(`[Tracker ${this.debugName}] Setting custom dimension`, id, name, value);
+      ret && console.log(`    Tracker ${this.debugName}: Setting custom dimension`, id, '|', name, '|', value);
     } catch (e) {
-      console.warn(`[Tracker ${this.debugName}] Error while setting custom dimension`, id, name, value, e);
+      console.warn(`    Tracker ${this.debugName}: Error while setting custom dimension`, id, '|', name, '|', value, e);
     }
   }
 
@@ -66,10 +71,13 @@ export abstract class AbstractTracker<OptionsType> {
     try {
       if (!this.isReady) { throw new Error('Tracker is not initialized') }
       const ret = await this._trackEvent(category, action, name, value);
-      ret && console.log(`[Tracker ${this.debugName}] Track event`, category, action, name, value);
+      ret && console.log(`    Tracker ${this.debugName}: Track event`, category, '|', action, '|', name, '|', value);
     } catch (e) {
-      console.warn(`[Tracker ${this.debugName}] Error while tracking event`, category, action, name, value, e);
+      console.warn(`    Tracker ${this.debugName}: Error while tracking event`, category, '|', action, '|', name, '|', value, e);
     }
+  }
+  async trackEventOfModule(moduleConfig: IAnyNavigableModuleConfig, action: string, name?: string, value?: number) {
+    await this.trackEvent(moduleConfig.trackingName, action, name, value);
   }
 
   // Track view procedure. Override _trackView() function to create custom trackers.
@@ -78,10 +86,13 @@ export abstract class AbstractTracker<OptionsType> {
     try {
       if (!this.isReady) { throw new Error('Tracker is not initialized') }
       const ret = await this._trackView(path);
-      ret && console.log(`[Tracker ${this.debugName}] Track view`, path.join('/'));
+      ret && console.log(`    Tracker ${this.debugName}: Track view`, ret === true ? path.join('/') : ret);
     } catch (e) {
-      console.warn(`[Tracker ${this.debugName}] Error while tracking view`, path, e);
+      console.warn(`    Tracker ${this.debugName}: Error while tracking view`, path, e);
     }
+  }
+  async trackViewOfModule(moduleConfig: IAnyNavigableModuleConfig, path: string[]) {
+    await this._trackView([moduleConfig.routeName, ...path]);
   }
 }
 
@@ -160,7 +171,7 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
           this.errorCount = 0;
           // console.log('[EntcoreTracker] View tracked ' + (await req?.text()));
         } else {
-          throw new Error('[EntcoreTracker] Report failed. ' + (await req?.text()));
+          throw new Error('    [EntcoreTracker] Report failed. ' + (await req?.text()));
         }
       } catch (e) {
         if (++this.errorCount >= 3) this.sending = false;
@@ -208,7 +219,7 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
         }),
       );
       this.lastModulename = moduleName;
-      willLog = true;
+      willLog = moduleAccessMap[moduleName];
     }
     this.sendReportQueue();
     return willLog;
@@ -227,15 +238,25 @@ export class ConcreteTrackerSet {
     await Promise.all(this._trackers.map(t => t.init()));
   }
   async trackEvent(category: string, action: string, name?: string, value?: number) {
+    console.log(`[Trackers] Track event`, category, '|', action, '|', name, '|', value);
     await Promise.all(this._trackers.map(t => t.trackEvent(category, action, name, value)));
   }
+  async trackEventOfModule(moduleConfig: IAnyModuleConfig, action: string, name?: string, value?: number) {
+    await this.trackEvent(moduleConfig.trackingName, action, name, value);
+  }
   async trackView(path: string[]) {
+    console.log(`[Trackers] Track view`, path.join('/'))
     await Promise.all(this._trackers.map(t => t.trackView(path)));
   }
+  async trackViewOfModule(moduleConfig: IAnyNavigableModuleConfig, path: string[]) {
+    await this.trackView([moduleConfig.routeName, ...path]);
+  }
   async setUserId(id: string) {
+    console.log(`[Trackers] Setting user ID`, id);
     await Promise.all(this._trackers.map(t => t.setUserId(id)));
   }
   async setCustomDimension(id: number, name: string, value: string) {
+    console.log(`[Trackers] Setting custom dimension`, id, '|', name, '|', value);
     await Promise.all(this._trackers.map(t => t.setCustomDimension(id, name, value)));
   }
   get isReady() {

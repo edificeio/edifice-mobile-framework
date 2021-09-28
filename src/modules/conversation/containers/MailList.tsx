@@ -3,14 +3,17 @@ import { withNavigationFocus } from "react-navigation";
 import { NavigationDrawerProp } from "react-navigation-drawer";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
+import withViewTracking from "../../../framework/util/tracker/withViewTracking";
 
 import { fetchInitAction } from "../actions/initMails";
-import { deleteMailsAction, toggleReadAction, trashMailsAction } from "../actions/mail";
+import { deleteDraftsAction, deleteMailsAction, moveMailsToFolderAction, moveMailsToInboxAction, restoreMailsToFolderAction, restoreMailsToInboxAction, toggleReadAction, trashMailsAction } from "../actions/mail";
 import { fetchMailListAction, fetchMailListFromFolderAction } from "../actions/mailList";
 import MailList from "../components/MailList";
 import { getInitMailListState, IFolder } from "../state/initMails";
 import { getMailListState } from "../state/mailList";
 import { IInit } from "./DrawerMenu";
+import moduleConfig from "../moduleConfig";
+import { tryAction } from "../../../framework/util/redux/actions";
 
 // ------------------------------------------------------------------------------------------------
 
@@ -20,8 +23,13 @@ type MailListContainerProps = {
   fetchMailList: (page: number, key: string) => any;
   fetchMailFromFolder: (folderId: string, page: number) => any;
   trashMails: (mailIds: string[]) => void,
+  deleteDrafts: (mailIds: string[]) => void,
   deleteMails: (mailIds: string[]) => void,
   toggleRead: (mailIds: string[], read: boolean) => void,
+  moveToFolder: (mailIds: string[], folderId: string) => void,
+  moveToInbox: (mailIds: string[]) => void,
+  restoreToFolder: (mailIds: string[], folderId: string) => void,
+  restoreToInbox: (mailIds: string[]) => void,
   isPristine: boolean;
   isFetching: boolean;
   notifications: any;
@@ -125,9 +133,14 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
       fetchMailList: fetchMailListAction,
       fetchMailFromFolder: fetchMailListFromFolderAction,
       fetchInit: fetchInitAction,
-      trashMails: trashMailsAction,
-      deleteMails: deleteMailsAction,
-      toggleRead: toggleReadAction,
+      trashMails: tryAction(trashMailsAction, [moduleConfig, "Supprimer", "Inbox/Dossier/Outbox - Balayage - Mettre à la corbeille"]),
+      deleteDrafts: tryAction(deleteDraftsAction, [moduleConfig, "Supprimer", "Brouillons - Balayage - Supprimer définitivement"]),
+      deleteMails: tryAction(deleteMailsAction, [moduleConfig, "Supprimer", "Corbeille - Balayage - Supprimer définitivement"]),
+      toggleRead: tryAction(toggleReadAction, (mailsIds, read) => [moduleConfig, "Marquer lu/non-lu", `Inbox/Dossier - Balayage - Marquer ${read ? 'lu' : 'non-lu'}`]),
+      moveToFolder: tryAction(moveMailsToFolderAction, [moduleConfig, "Déplacer", "Inbox/Dossier - Balayage - Déplacer"]),
+      moveToInbox: tryAction(moveMailsToInboxAction, [moduleConfig, "Déplacer", "Inbox/Dossier - Balayage - Déplacer"]),
+      restoreToFolder: tryAction(restoreMailsToFolderAction, [moduleConfig, "Restaurer", "Corbeille - Balayage - Restaurer"]),
+      restoreToInbox: tryAction(restoreMailsToInboxAction, [moduleConfig, "Restaurer", "Corbeille - Balayage - Restaurer"])
     },
     dispatch
   );
@@ -136,5 +149,19 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
 // ------------------------------------------------------------------------------------------------
 
 const MailListContainerConnected = connect(mapStateToProps, mapDispatchToProps)(withNavigationFocus(MailListContainer));
+const MailListContainerConnectedWithTracking = withViewTracking(props => {
+  const key = props.navigation?.getParam('key');
+  const getValue = () => {
+    switch (key) {
+      case 'inbox': case undefined: return 'inbox';
+      case 'sendMessages': return 'outbox';
+      case 'drafts': return 'drafts';
+      case 'trash': return 'trash';
+      default: return 'folder';
+    }
+  };
+  return [moduleConfig.routeName, getValue()];
 
-export default MailListContainerConnected;
+})(MailListContainerConnected);
+
+export default MailListContainerConnectedWithTracking;

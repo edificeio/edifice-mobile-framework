@@ -7,4 +7,5 @@ export default createNavigableModuleConfig<"conversation", IConversation_State>(
   matchEntcoreApp: "/conversation/conversation",
   entcoreScope: ['conversation', 'userbook'],
   iconName: "messagerie",
+  trackingName: "Messagerie"
 });

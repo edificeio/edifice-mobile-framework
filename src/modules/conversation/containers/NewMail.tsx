@@ -13,6 +13,9 @@ import { getSessionInfo } from '../../../App';
 import { HeaderIcon } from '../../../framework/components/header';
 import { IDistantFile, LocalFile, SyncedFileWithId } from '../../../framework/util/fileHandler';
 import { IUploadCallbaks } from '../../../framework/util/fileHandler/service';
+import { tryAction } from '../../../framework/util/redux/actions';
+import { Trackers } from '../../../framework/util/tracker';
+import withViewTracking from '../../../framework/util/tracker/withViewTracking';
 
 import pickFile, { pickFileError } from '../../../infra/actions/pickFile';
 import { DocumentPicked, FilePicker, ImagePicked } from '../../../infra/filePicker';
@@ -31,6 +34,7 @@ import {
   forwardMailAction,
 } from '../actions/newMail';
 import NewMailComponent from '../components/NewMail';
+import moduleConfig from '../moduleConfig';
 import { ISearchUsers } from '../service/newMail';
 import { getMailContentState, IMail } from '../state/mailContent';
 
@@ -207,13 +211,19 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     //       }
     //     });
     // },
-    addGivenAttachment: (file: Asset | DocumentPicked) => {
+    addGivenAttachment: async (file: Asset | DocumentPicked, sourceType: string) => {
+      // console.log("sourceType", sourceType);
+      const actionName = "Rédaction mail - Insérer - Pièce jointe - " + ({
+        camera: "Caméra",
+        gallery: "Galerie",
+        document: "Document"
+      }[sourceType] ?? "Source inconnue");
       try {
-        this.getAttachmentData(new LocalFile(file, {_needIOSReleaseSecureAccess: false}));
+        await this.getAttachmentData(new LocalFile(file, {_needIOSReleaseSecureAccess: false}));
+        Trackers.trackEventOfModule(moduleConfig, "Ajouter une pièce jointe", actionName + " - Succès");
       } catch (err) {
-        if (err.message === 'Error picking image' || err.message === 'Error picking document') {
-          this.props.onPickFileError('conversation');
-        }
+        this.props.onPickFileError('conversation');
+        Trackers.trackEventOfModule(moduleConfig, "Ajouter une pièce jointe", actionName + " - Échec");
       }
     },
     getSendDraft: async () => {
@@ -298,11 +308,16 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           {
             text: I18n.t("conversation.delete"),
             onPress: async () => {
-              if ((isNewDraft && id) || (!isNewDraft && id && id !== mailId)) {
-                await trashMessage([id]);
-                deleteMessage([id]);
+              try {
+                if ((isNewDraft && id) || (!isNewDraft && id && id !== mailId)) {
+                  await trashMessage([id]);
+                  await deleteMessage([id]);
+                }
+                onGoBack && onGoBack();
+                Trackers.trackEventOfModule(moduleConfig, "Ecrire un mail", "Rédaction mail - Sortir - Effacer le brouillon - Succès");
+              } catch (err) {
+                Trackers.trackEventOfModule(moduleConfig, "Ecrire un mail", "Rédaction mail - Sortir - Effacer le brouillon - Échec");
               }
-              onGoBack && onGoBack();
               navigation.goBack();
             },
             style: 'destructive',
@@ -310,8 +325,13 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           {
             text: I18n.t('common.save'),
             onPress: async () => {
-              await this.saveDraft();
-              onGoBack && onGoBack();
+              try {
+                await this.saveDraft();
+                onGoBack && onGoBack();
+                Trackers.trackEventOfModule(moduleConfig, "Ecrire un mail", "Rédaction mail - Sortir - Sauvegarder le brouillon - Succès");
+              } catch (err) {
+                Trackers.trackEventOfModule(moduleConfig, "Ecrire un mail", "Rédaction mail - Sortir - Sauvegarder le brouillon - Échec");
+              }
               navigation.goBack();
             },
             style: 'default',
@@ -509,6 +529,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         position: Toast.position.BOTTOM,
       });
       this.setState({ tempAttachment: null });
+      throw e;
     }
   };
 
@@ -577,7 +598,7 @@ const mapStateToProps = (state: any) => {
 const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators(
     {
-      sendMail: sendMailAction,
+      sendMail: tryAction(sendMailAction, [moduleConfig, "Envoyer un mail", `Rédaction mail - Envoyer`]),
       forwardMail: forwardMailAction,
       makeDraft: makeDraftMailAction,
       updateDraft: updateDraftMailAction,
@@ -593,4 +614,6 @@ const mapDispatchToProps = (dispatch: any) => {
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(NewMailContainer);
+const NewMailContainerConnected = connect(mapStateToProps, mapDispatchToProps)(NewMailContainer)
+
+export default withViewTracking([moduleConfig.routeName, 'editor'])(NewMailContainerConnected)

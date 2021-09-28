@@ -1,6 +1,8 @@
 import { Dispatch } from "redux";
+import { Trackers } from "../../../framework/util/tracker";
 
 import { createAsyncActionCreators } from "../../../infra/redux/async2";
+import moduleConfig from "../moduleConfig";
 import { foldersService } from "../service/folders";
 import { actionTypes, IFolderList } from "../state/folders";
 
@@ -30,8 +32,10 @@ export function postFolderAction(name: string, parentId: string) {
       if (res.error) {
         throw new Error(res.error);
       }
+      Trackers.trackEventOfModule(moduleConfig, 'Créer un dossier personnalisé', 'Dossiers - Créer - Succès');
     } catch (errmsg) {
-      dispatch(dataActions.error(errmsg));
+      dispatch(dataActions.error(errmsg as Error));
+      Trackers.trackEventOfModule(moduleConfig, 'Créer un dossier personnalisé', 'Dossiers - Créer - Échec'); // ToDo : give error code as value
       throw errmsg;
     }
   };
