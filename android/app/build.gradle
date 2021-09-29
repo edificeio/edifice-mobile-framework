@@ -7,7 +7,13 @@ project.ext.react = [
     enableHermes: true,
 ]
 
+project.ext.vectoricons = [
+    iconFontNames: [ 'MaterialIcons.ttf' ]
+]
+
 apply from: "../../node_modules/react-native/react.gradle"
+
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 
 def enableSeparateBuildPerCPUArchitecture = false
 def enableProguardInReleaseBuilds = false

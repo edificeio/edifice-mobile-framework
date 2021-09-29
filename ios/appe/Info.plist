@@ -50,6 +50,7 @@
 	<key>UIAppFonts</key>
 	<array>
 		<string>icomoon.ttf</string>
+		<string>MaterialIcons.ttf</string>
 		<string>OpenSans-Bold.ttf</string>
 		<string>OpenSans-BoldItalic.ttf</string>
 		<string>OpenSans-Italic.ttf</string>
