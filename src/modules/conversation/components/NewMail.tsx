@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   KeyboardAvoidingViewProps,
+  Keyboard
 } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
 
@@ -58,12 +59,23 @@ const styles = StyleSheet.create({
 
 export default (props: NewMailComponentProps) => {
   const [showExtraFields, toggleExtraFields] = React.useState(false);
+  const [keyboardStatus, setKeyboardStatus] = React.useState(0); // State used just to force-update the component whenever it changes
   const [isSearchingUsers, toggleIsSearchingUsers] = React.useState({ to: false, cc: false, cci: false });
   const setIsSearchingUsers = (val: { [i in 'to' | 'cc' | 'cci']?: boolean }) => {
     toggleIsSearchingUsers({ ...isSearchingUsers, ...val });
   };
   const isSearchingUsersFinal = Object.values(isSearchingUsers).includes(true);
   // console.log("render components", isSearchingUsers);
+
+  React.useEffect(() => {
+    const showSubscription = Keyboard.addListener("keyboardWillChangeFrame", () => {
+      setKeyboardStatus(new Date().getTime());
+    });
+
+    return () => {
+      showSubscription.remove();
+    };
+  }, []);
 
   const keyboardAvoidingViewBehavior = Platform.select({
     ios: 'padding',
