@@ -174,6 +174,7 @@
   "common-picker-title": "Selecciona tipo de documento",
   "connector-connectFailed": "No se puede abrir el vínculo !",
   "conversation": {
+    "appName": "Correo",
     "attachmentError": "Error al agregar el archivo adjunto",
     "bcc": "CCO",
     "bccPrefix": "CCO :",
@@ -206,7 +207,6 @@
     "move": "Mover",
     "moveTo": "Mover a",
     "newMessage": "Nuevo mensaje",
-    "outbox": "Mensajes enviados",
     "reply": "Responder",
     "replyAll": "Responder a todos",
     "replySubject": "RE:",
@@ -217,6 +217,7 @@
     "seeDetail": "Ver detalles",
     "sendAttachmentProgress": "Espere a que se agregue el archivo adjunto completo",
     "sendMail": "Mensaje enviado",
+    "sendMessages": "Mensajes enviados",
     "subject": "Objeto",
     "tabName": "Correo",
     "to": "A",

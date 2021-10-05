@@ -47,14 +47,14 @@ class TempFloatingAction extends Component<IFloatingProps & ISelected, IState> {
   };
 
   renderMainButton() {
-    const { menuItems, iconName, iconSize } = this.props;
+    const { menuItems, iconName, iconSize, buttonStyle } = this.props;
     const noMenuItems = !menuItems || menuItems.length === 0;
     const displayedIconName = this.state.active && !noMenuItems ? "close" : iconName;
 
     return (
       <ButtonIcon
         size={iconSize}
-        style={styles.button}
+        style={[styles.button, buttonStyle]}
         name={displayedIconName}
         onPress={noMenuItems ? this.handleEvent.bind(this) : this.animateButton}
       />

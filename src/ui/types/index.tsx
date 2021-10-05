@@ -1,4 +1,5 @@
-import { EVENT_TYPE, IId, IEventProps } from "../../types";
+import { ViewStyle } from "react-native";
+import { EVENT_TYPE, IId } from "../../types";
 
 import { IEvent } from "../../types/ievents";
 import {IItems} from "../../workspace/reducers/select";
@@ -38,4 +39,5 @@ export type IFloatingProps = {
   menuItems?: IMenuItem[];
   onEvent: (event: IEvent) => void;
   eventHandleData: any;
+  buttonStyle?: ViewStyle;
 };

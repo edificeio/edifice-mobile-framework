@@ -1,24 +1,47 @@
 import * as React from "react";
-import { withNavigationFocus } from "react-navigation";
-import { NavigationDrawerProp } from "react-navigation-drawer";
+import { NavigationScreenProp, withNavigationFocus } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import withViewTracking from "../../../framework/util/tracker/withViewTracking";
-
+import { fetchCountAction } from "../actions/count";
 import { fetchInitAction } from "../actions/initMails";
-import { deleteDraftsAction, deleteMailsAction, moveMailsToFolderAction, moveMailsToInboxAction, restoreMailsToFolderAction, restoreMailsToInboxAction, toggleReadAction, trashMailsAction } from "../actions/mail";
+import { 
+  deleteDraftsAction,
+  deleteMailsAction,
+  moveMailsToFolderAction,
+  moveMailsToInboxAction,
+  restoreMailsToFolderAction,
+  restoreMailsToInboxAction,
+  toggleReadAction,
+  trashMailsAction
+} from "../actions/mail";
 import { fetchMailListAction, fetchMailListFromFolderAction } from "../actions/mailList";
 import MailList from "../components/MailList";
-import { getInitMailListState, IFolder } from "../state/initMails";
+import { getCountListState, ICountMailboxes } from "../state/count";
+import { getInitMailListState, IFolder, IInitMail } from "../state/initMails";
 import { getMailListState } from "../state/mailList";
-import { IInit } from "./DrawerMenu";
 import moduleConfig from "../moduleConfig";
 import { tryAction } from "../../../framework/util/redux/actions";
+import withViewTracking from "../../../framework/util/tracker/withViewTracking";
+import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
 
 // ------------------------------------------------------------------------------------------------
 
+export type IInit = {
+  data: IInitMail;
+  isPristine: boolean;
+  isFetching: boolean;
+  error: any;
+};
+
+export type ICount = {
+  data: ICountMailboxes;
+  isPristine: boolean;
+  isFetching: boolean;
+  error: any;
+};
+
 type MailListContainerProps = {
-  navigation: NavigationDrawerProp<any>;
+  navigation: NavigationScreenProp<any>;
   fetchInit: () => IInit;
   fetchMailList: (page: number, key: string) => any;
   fetchMailFromFolder: (folderId: string, page: number) => any;
@@ -35,15 +58,31 @@ type MailListContainerProps = {
   notifications: any;
   folders: IFolder[];
   isFocused: boolean;
+  fetchCount: () => ICount;
+  init: IInit;
+  count: ICount;
+  items: any[];
+  descriptors: any[];
 };
 
 type MailListContainerState = {
   unsubscribe: any;
   fetchRequested: boolean;
   firstFetch: boolean;
+  mailboxesCount: ICountMailboxes;
+  folders: IFolder[];
 };
 
 class MailListContainer extends React.PureComponent<MailListContainerProps, MailListContainerState> {
+  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<any> }) => {
+    return standardNavScreenOptions(
+      {
+        header: null,
+      },
+      navigation
+    );
+  };
+
   constructor(props) {
     super(props);
 
@@ -53,15 +92,28 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
       }),
       fetchRequested: false,
       firstFetch: false,
+      mailboxesCount: {},
+      folders: [{ 
+        id: "",
+        folderName: "",
+        unread: 0,
+        folders: [],
+        parent_id: "",
+        user_id: "",
+        depth: 0,
+        trashed: false,
+        skip_uniq: false
+      }],
     };
   }
+
   private fetchMails = (page = 0) => {
+    const { navigation, fetchMailList, fetchMailFromFolder } = this.props;
+    const key = navigation.getParam("key");
+    const folderName = navigation.getParam("folderName");
+    const folderId = navigation.getParam("folderId");
     this.setState({ fetchRequested: true });
-    const key = this.props.navigation.getParam("key");
-    const folderName = this.props.navigation.getParam("folderName");
-    const folderId = this.props.navigation.getParam("folderId");
-    if (!folderName) this.props.fetchMailList(page, key);
-    else this.props.fetchMailFromFolder(folderId, page);
+    folderName ? fetchMailFromFolder(folderId, page) : fetchMailList(page, key);
   };
 
   fetchCompleted = () => {
@@ -69,30 +121,46 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
   };
 
   public componentDidMount() {
-    if (this.props.navigation.getParam("key") === undefined) this.setState({ firstFetch: true });
+    const { fetchInit, fetchCount, navigation } = this.props;
+    fetchInit();
+    fetchCount();
+    if (navigation.getParam("key") === undefined) {
+      this.setState({ firstFetch: true });
+      navigation.setParams({ key: "inbox", folderName: undefined, folderId: undefined })
+    }
     this.fetchMails();
   }
 
   componentDidUpdate(prevProps) {
-    if (!this.props.isFetching && this.state.firstFetch) this.setState({ firstFetch: false });
-    const folderName = this.props.navigation.getParam("folderName");
+    const { navigation, init, count, isFetching, isFocused } = this.props;
+    const { firstFetch, fetchRequested } = this.state;
+    if (prevProps.init.isFetching && !init.isFetching) {
+      this.setState({ folders: init.data.folders });
+    }
+    if (prevProps.count.isFetching && !count.isFetching) {
+      this.setState({ mailboxesCount: count.data });
+    }
+    if (!isFetching && firstFetch) this.setState({ firstFetch: false });
+    const folderName = navigation.getParam("folderName");
     if (
-      !this.state.fetchRequested &&
+      !fetchRequested &&
       (folderName !== prevProps.navigation.getParam("folderName") ||
-        (this.props.isFocused && prevProps.isFocused !== this.props.isFocused))
+        (isFocused && prevProps.isFocused !== isFocused))
     ) {
       this.fetchMails();
     }
   }
 
   componentWillUnmount() {
-    this.state.unsubscribe();
+    const { unsubscribe } = this.state;
+    unsubscribe();
   }
 
   public render() {
     return (
       <MailList
         {...this.props}
+        {...this.state}
         fetchMails={this.fetchMails}
         isTrashed={this.props.navigation.getParam("key") === "trash"}
         firstFetch={this.state.firstFetch}
@@ -115,6 +183,8 @@ const mapStateToProps: (state: any) => any = state => {
   }
 
   const folders = getInitMailListState(state).data.folders;
+  const init = getInitMailListState(state);
+  const count = getCountListState(state);
 
   // Format props
   return {
@@ -122,6 +192,8 @@ const mapStateToProps: (state: any) => any = state => {
     isFetching,
     notifications: data,
     folders,
+    init,
+    count,
   };
 };
 
@@ -133,6 +205,7 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
       fetchMailList: fetchMailListAction,
       fetchMailFromFolder: fetchMailListFromFolderAction,
       fetchInit: fetchInitAction,
+      fetchCount: fetchCountAction,
       trashMails: tryAction(trashMailsAction, [moduleConfig, "Supprimer", "Inbox/Dossier/Outbox - Balayage - Mettre à la corbeille"]),
       deleteDrafts: tryAction(deleteDraftsAction, [moduleConfig, "Supprimer", "Brouillons - Balayage - Supprimer définitivement"]),
       deleteMails: tryAction(deleteMailsAction, [moduleConfig, "Supprimer", "Corbeille - Balayage - Supprimer définitivement"]),
