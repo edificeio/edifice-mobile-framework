@@ -8,7 +8,7 @@ import { CommonStyles } from "../../styles/common/styles";
 import { IDispatchProps } from "../../types";
 import { ISelectedProps } from "../../types/ievents";
 import { PageContainer } from "../../ui/ContainerContent";
-import { removeAccents } from "../../utils/string";
+import { removeAccents } from "../../framework/util/string";
 import { listAction } from "../actions/list";
 import { Item } from "../components";
 import { FilterId, IItem, IItemsProps, IState } from "../types";

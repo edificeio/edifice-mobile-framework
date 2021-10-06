@@ -15,7 +15,7 @@ import { hasNotch } from 'react-native-device-info';
 
 import { CommonStyles } from '../../../styles/common/styles';
 import TouchableOpacity from '../../../ui/CustomTouchableOpacity';
-import { removeAccents } from '../../../utils/string';
+import { removeAccents } from '../../../framework/util/string';
 import { IUser } from '../service/newMail';
 
 const styles = StyleSheet.create({

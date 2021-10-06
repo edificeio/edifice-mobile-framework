@@ -33,10 +33,12 @@ import {
   deleteAttachmentAction,
   forwardMailAction,
 } from '../actions/newMail';
+import { fetchVisiblesAction } from '../actions/visibles';
 import NewMailComponent from '../components/NewMail';
 import moduleConfig from '../moduleConfig';
 import { ISearchUsers } from '../service/newMail';
 import { getMailContentState, IMail } from '../state/mailContent';
+import { IVisiblesState } from '../state/visibles';
 
 const entitiesTransformer = new AllHtmlEntities();
 
@@ -49,6 +51,7 @@ export enum DraftType {
 }
 
 interface ICreateMailEventProps {
+  setup: () => void;
   sendMail: (mailDatas: object, draftId: string | undefined, inReplyTo: string) => void;
   forwardMail: (draftId: string, inReplyTo: string) => void;
   makeDraft: (mailDatas: object, inReplyTo: string, isForward: boolean) => void;
@@ -154,6 +157,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       this.setState({ id: undefined });
     }
     this.props.clearContent();
+    this.props.setup();
   };
 
   componentDidUpdate = async (prevProps: NewMailContainerProps, prevState) => {
@@ -588,7 +592,6 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
 
 const mapStateToProps = (state: any) => {
   const { isFetching, data } = getMailContentState(state);
-
   return {
     mail: data,
     isFetching,
@@ -598,6 +601,7 @@ const mapStateToProps = (state: any) => {
 const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators(
     {
+      setup: fetchVisiblesAction,
       sendMail: tryAction(sendMailAction, [moduleConfig, "Envoyer un mail", `Rédaction mail - Envoyer`]),
       forwardMail: forwardMailAction,
       makeDraft: makeDraftMailAction,

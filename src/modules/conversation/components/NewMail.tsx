@@ -13,6 +13,7 @@ import {
   Keyboard
 } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
+import { connect } from 'react-redux';
 
 import { PageView } from '../../../framework/components/page';
 import { IDistantFileWithId } from '../../../framework/util/fileHandler';
@@ -23,7 +24,9 @@ import { Icon, Loading } from '../../../ui';
 import TouchableOpacity from '../../../ui/CustomTouchableOpacity';
 import { HtmlContentView } from '../../../ui/HtmlContentView';
 import { Text } from '../../../ui/Typography';
+import moduleConfig from '../moduleConfig';
 import { ISearchUsers, IUser, newMailService } from '../service/newMail';
+import { IVisibleGroup, IVisibles, IVisiblesState, IVisibleUser, searchVisibles } from '../state/visibles';
 import Attachment from './Attachment';
 import SearchUserMail, { FoundList, Input, SelectedList } from './SearchUserMail';
 
@@ -218,7 +221,9 @@ const Fields = ({
   );
 };
 
-const MailContactField = ({
+const MailContactField = connect(state => ({
+  visibles: state[moduleConfig.reducerName].visibles as IVisiblesState
+}))(({
   style,
   title,
   value,
@@ -227,6 +232,7 @@ const MailContactField = ({
   autoFocus,
   rightComponent,
   onOpenSearch,
+  visibles
 }: {
   style?: ViewStyle;
   title: string;
@@ -236,11 +242,22 @@ const MailContactField = ({
   autoFocus?: boolean;
   rightComponent?: ReactElement;
   onOpenSearch?: (searchIsOpen: boolean) => void;
+  visibles: IVisiblesState
 }) => {
   const selectedUsersOrGroups = value || [];
   const [search, updateSearch] = React.useState('');
-  const [foundUsersOrGroups, updateFoundUsersOrGroups] = React.useState([]);
+  const previousVisibles = React.useRef<IVisiblesState>();
+  const [foundUsersOrGroups, updateFoundUsersOrGroups] = React.useState<Array<IVisibleUser | IVisibleGroup>>([]);
   const searchTimeout = React.useRef();
+
+  // Update search results whenever visibles are loaded
+  React.useEffect(() => {
+    // console.log("useEffet", previousVisibles.current?.lastSuccess?.toString(), visibles.lastSuccess?.toString());
+    previousVisibles.current = visibles;
+    if (previousVisibles.current.lastSuccess && visibles.lastSuccess && !previousVisibles.current.lastSuccess.isSame(visibles.lastSuccess)) {
+      onUserType(search);
+    }
+  });
 
   const filterUsersOrGroups = found => selectedUsersOrGroups.every(selected => selected.id !== found.id);
   // React.useEffect(() => {
@@ -281,13 +298,16 @@ const MailContactField = ({
       updateFoundUsersOrGroups([]);
       // console.log("openOpenSearch", true);
       onOpenSearch?.(true);
-      window.clearTimeout(searchTimeout.current);
+      searchTimeout.current && window.clearTimeout(searchTimeout.current);
       searchTimeout.current = window.setTimeout(() => {
-        newMailService.searchUsers(search).then(({ groups, users }) => {
-          const filteredUsers = users.filter(filterUsersOrGroups);
-          const filteredGroups = groups.filter(filterUsersOrGroups);
-          updateFoundUsersOrGroups([...filteredUsers, ...filteredGroups]);
-        });
+        // This commented area is the old searching method that query the backend
+        // newMailService.searchUsers(search).then(({ groups, users }) => {
+        //   const filteredUsers = users.filter(filterUsersOrGroups);
+        //   const filteredGroups = groups.filter(filterUsersOrGroups);
+        //   updateFoundUsersOrGroups([...filteredUsers, ...filteredGroups]);
+        // });
+        const searchResults = visibles.lastSuccess ? searchVisibles(visibles.data, s) : [];
+        updateFoundUsersOrGroups(searchResults);
       }, 500);
     } else {
       updateFoundUsersOrGroups([]);
@@ -328,7 +348,7 @@ const MailContactField = ({
       </View>
     </View>
   );
-};
+});
 
 const HeaderUsers = ({
   style,
