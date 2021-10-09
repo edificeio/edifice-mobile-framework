@@ -2,7 +2,7 @@ import * as React from "react";
 import { View, TextInput, StyleProp, TextInputProps, ViewStyle } from "react-native";
 import { TextField } from "react-native-material-textfield";
 import PasswordInputText from "react-native-hide-show-password-input";
-import { CommonStyles } from "../../styles/common/styles";
+import theme from "../../framework/util/theme";
 
 export type TextInputLineProps = {
   hasError: boolean;
@@ -53,8 +53,8 @@ export class TextInputLine extends React.Component<
       innerRef: r => inputRef(r),
       onBlur: () => onBlur && onBlur(),
       onFocus: () => onFocus && onFocus(),
-      placeholderTextColor: placeholderTextColor || CommonStyles.placeholderColor,
-      textColor: textColor || CommonStyles.textInputColor,
+      placeholderTextColor: placeholderTextColor || theme.color.text.light,
+      textColor: textColor || theme.color.text.regular,
       underlineColorAndroid: "transparent",
       autoCapitalize: "none",
       containerStyle: style,
@@ -62,8 +62,9 @@ export class TextInputLine extends React.Component<
       fontSize: fontSize || 16,
       lineWidth: hasError ? 2 : 1,
       activeLineWidth: 2,
-      baseColor: hasError ? CommonStyles.errorColor : CommonStyles.entryfieldBorder,
-      tintColor: hasError ? CommonStyles.errorColor : CommonStyles.iconColorOn,
+      baseColor: hasError ? theme.color.failure : theme.color.inputBorder,
+      tintColor: hasError ? theme.color.failure : theme.color.secondary.regular,
+      iconColor: theme.color.text.light,
       label: ""
     }
     
