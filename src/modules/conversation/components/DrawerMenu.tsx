@@ -33,6 +33,7 @@ type DrawerMenuProps = {
 type DrawerMenuState = {
   showFolderCreationModal: boolean;
   showList: boolean;
+  isTogglingList: boolean;
   drawerMenuTotalHeight: number;
   animatedHeight: Animated.Value;
   animatedOpacity: Animated.Value;
@@ -44,6 +45,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
     this.state = {
       showFolderCreationModal: false,
       showList: false,
+      isTogglingList: false,
       drawerMenuTotalHeight: 45,
       animatedHeight : new Animated.Value(45),
       animatedOpacity : new Animated.Value(0)
@@ -91,11 +93,16 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
 
   onListToggle = () => {
     const { showList } = this.state;
+    this.setState({ isTogglingList: true })
     this.onDrawerHeightToggle();
     this.onBackdropToggle();
     setTimeout(
       () => { this.setState({ showList: !showList }) },
       showList ? 400 : 0
+    );
+    setTimeout(
+      () => { this.setState({ isTogglingList: false }) },
+      400
     );
   };
 
@@ -123,7 +130,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
 
   renderDrawerFolders = () => {
     const { navigation, folders } = this.props;
-    const { showList } = this.state;
+    const { showList, isTogglingList } = this.state;
     const displayedFolders = showList
       ? folders
       : folders && folders.filter(folder => this.isCurrentScreen(folder.folderName));
@@ -132,6 +139,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
         {displayedFolders && displayedFolders.length > 0 && displayedFolders.map(displayedFolder => (
           <View style={style.drawerOptionContainer}>
             <DrawerOption
+              disabled={isTogglingList}
               selected={this.isCurrentScreen(displayedFolder.folderName)}
               iconName="folder"
               label={displayedFolder.folderName}
@@ -174,7 +182,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
 
   renderDrawerMailboxes = () => {
     const { navigation, mailboxesCount } = this.props;
-    const { showList } = this.state;
+    const { showList, isTogglingList } = this.state;
     const mailboxes = [
       {name: "inbox", icon: "messagerie-on"},
       {name: "sendMessages", icon: "send" },
@@ -188,6 +196,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
       <>
         {displayedMailboxes && displayedMailboxes.length > 0 && displayedMailboxes.map(displayedMailbox => (
           <DrawerOption
+            disabled={isTogglingList}
             selected={this.isCurrentScreen(displayedMailbox.name)}
             iconName={displayedMailbox.icon}
             label={I18n.t(`conversation.${displayedMailbox.name}`).toUpperCase()}

@@ -9,16 +9,17 @@ type DrawerOptionProps = {
   count?: number;
   selected: boolean;
   iconName: string;
+  disabled?: boolean;
   navigate: () => any;
 };
 
 export default class DrawerOption extends React.PureComponent<DrawerOptionProps> {
   public render() {
-    const { label, selected, iconName, count, navigate } = this.props;
+    const { label, selected, iconName, count, navigate, disabled } = this.props;
     const countString = count ? ` (${count})` : "";
     const optionLabel = label + countString;
     return (
-      <TouchableOpacity style={style.itemContainer} onPress={navigate}>
+      <TouchableOpacity style={style.itemContainer} onPress={navigate} disabled={disabled}>
         <Icon size={25} name={iconName} color={selected ? theme.color.primary.regular : undefined} />
         <TextBold
           numberOfLines={1}
