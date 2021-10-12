@@ -145,14 +145,13 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
               label={displayedFolder.folderName}
               count={displayedFolder.unread}
               navigate={() => {
-                if (showList && !this.isCurrentScreen(displayedFolder.folderName)) {
+                this.onListToggle();
+                if (!this.isCurrentScreen(displayedFolder.folderName) && !isTogglingList) {
                   navigation.setParams({ 
                     key: displayedFolder.folderName,
                     folderName: displayedFolder.folderName,
                     folderId: displayedFolder.id 
                   });
-                } else {
-                  this.onListToggle();
                 }
               }}
             />
@@ -201,13 +200,12 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
             iconName={displayedMailbox.icon}
             label={I18n.t(`conversation.${displayedMailbox.name}`).toUpperCase()}
             navigate={() => {
-              if (showList && !this.isCurrentScreen(displayedMailbox.name)) {
+              this.onListToggle();
+              if (!this.isCurrentScreen(displayedMailbox.name) && !isTogglingList) {
                 navigation.setParams({ 
                   key: displayedMailbox.name,
                   folderName: undefined
                 });
-              } else {
-                this.onListToggle();
               }
             }}
             count={displayedMailbox.name === "inbox"
