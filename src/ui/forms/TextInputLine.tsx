@@ -1,8 +1,8 @@
-import * as React from "react";
-import { View, TextInput, StyleProp, TextInputProps, ViewStyle } from "react-native";
-import { TextField } from "react-native-material-textfield";
-import PasswordInputText from "react-native-hide-show-password-input";
-import theme from "../../framework/util/theme";
+import * as React from 'react';
+import { View, TextInput, StyleProp, TextInputProps, ViewStyle } from 'react-native';
+import { TextField } from 'react-native-material-textfield';
+import PasswordInputText from 'react-native-hide-show-password-input';
+import theme from '../../framework/util/theme';
 
 export type TextInputLineProps = {
   hasError: boolean;
@@ -33,9 +33,8 @@ export class TextInputLine extends React.Component<
     textColor?: string;
   } & TextInputProps
 > {
-
   public render() {
-    const { 
+    const {
       hasError,
       style,
       inputStyle,
@@ -45,7 +44,7 @@ export class TextInputLine extends React.Component<
       onBlur,
       onFocus,
       placeholderTextColor,
-      textColor
+      textColor,
     } = this.props;
 
     const inputProps = {
@@ -55,8 +54,8 @@ export class TextInputLine extends React.Component<
       onFocus: () => onFocus && onFocus(),
       placeholderTextColor: placeholderTextColor || theme.color.text.light,
       textColor: textColor || theme.color.text.regular,
-      underlineColorAndroid: "transparent",
-      autoCapitalize: "none",
+      underlineColorAndroid: 'transparent',
+      autoCapitalize: 'none',
       containerStyle: style,
       inputContainerStyle: inputStyle,
       fontSize: fontSize || 16,
@@ -65,12 +64,13 @@ export class TextInputLine extends React.Component<
       baseColor: hasError ? theme.color.failure : theme.color.inputBorder,
       tintColor: hasError ? theme.color.failure : theme.color.secondary.regular,
       iconColor: theme.color.text.light,
-      label: ""
-    }
-    
+      label: '',
+      invertVisibilityIcon: true,
+    };
+    const TextComponent = isPasswordField ? PasswordInputText : TextField;
     return (
-      <View style={{ alignSelf: "stretch", }}>
-        {isPasswordField ? <PasswordInputText {...inputProps} /> : <TextField {...inputProps} />}
+      <View style={{ alignSelf: 'stretch' }}>
+        <TextComponent {...inputProps} />
       </View>
     );
   }
