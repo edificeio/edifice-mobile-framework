@@ -51,8 +51,8 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
   }
 
   componentDidUpdate(prevProps) {
-    const { folders } = this.props;
-    if (folders.length - 1 === prevProps.folders.length) {
+    const { folders, firstFetch } = this.props;
+    if (!firstFetch && folders.length - 1 === prevProps.folders.length) {
       this.onDrawerHeightToggle(true);
     }
   }
