@@ -250,7 +250,10 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
     return (
       <View style={style.container}>
         <Animated.View style={[style.animatedContainer, animatedContainerHeight, expandedAnimatedContainer]}> 
-          <View style={style.selectDirectoryContainer}>
+          <TouchableOpacity
+            onPress={() => this.onListToggle()}
+            style={style.selectDirectoryContainer}
+          >
             <Icon
               size={12}
               name={"arrow_down"}
@@ -263,7 +266,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
                 </TextBold>
               : null
             }
-          </View>
+          </TouchableOpacity>
           <ScrollView
             style={{ marginLeft: showList ? 20 : 8 }}
             scrollEnabled={drawerMenuTotalHeight >= drawerMaxHeight}
