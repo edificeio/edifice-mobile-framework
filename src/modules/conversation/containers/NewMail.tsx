@@ -269,22 +269,25 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       }
     },
     getDeleteDraft: async () => {
-      if (this.state.id) {
+      const { trashMessage, deleteMessage, navigation } = this.props;
+      const { id } = this.state;
+      if (id) {
         try {
-          await this.props.trashMessage([this.state.id]);
+          await trashMessage([id]);
+          await deleteMessage([id]);
+          navigation.goBack();
+          Trackers.trackEventOfModule(moduleConfig, "Supprimer", "Rédaction mail - Supprimer le brouillon - Succès");
+          Toast.show(I18n.t("conversation.messageDeleted"), {
+            position: Toast.position.BOTTOM,
+            mask: false,
+            containerStyle: { width: '95%', backgroundColor: 'black' },
+          });
         } catch (error) {
           console.error(error);
-        } finally {
-          const navParams = this.props.navigation.state;
-          if (navParams.params && navParams.params.onGoBack) navParams.params.onGoBack();
-          try {
-            await this.props.deleteMessage([this.state.id]);
-          } catch (error) {
-            console.error(error);
-          }
+          Trackers.trackEventOfModule(moduleConfig, "Supprimer", "Rédaction mail - Supprimer le brouillon - Échec");
         }
       }
-      this.props.navigation.goBack();
+      navigation.goBack();
     },
     getGoBack: async () => {
       const { navigation, trashMessage, deleteMessage } = this.props;
