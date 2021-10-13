@@ -14,6 +14,7 @@ import { NavigationScreenProp } from "react-navigation";
 import { hasNotch } from "react-native-device-info";
 import I18n from "i18n-js";
 
+import { ANIMATION_DURATION_BASE } from "../../../framework/components/constants";
 import theme from "../../../framework/util/theme";
 import { Icon } from "../../../ui";
 import { TextSemiBold, TextBold } from "../../../ui/Typography";
@@ -79,7 +80,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
     this.setState({ drawerMenuTotalHeight });
     Animated.timing(animatedHeight, {
       toValue : showList && !wasFolderCreated ? menuItemHeight : drawerMenuTotalHeight,
-      timing : 400
+      timing : ANIMATION_DURATION_BASE
     }).start();
   }
 
@@ -87,7 +88,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
     const { animatedOpacity, showList } = this.state;
     Animated.timing(animatedOpacity, {
       toValue : showList ? 0 : 0.6,
-      timing : 400
+      timing : ANIMATION_DURATION_BASE
     }).start();
   }
 
@@ -98,11 +99,11 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
     this.onBackdropToggle();
     setTimeout(
       () => { this.setState({ showList: !showList }) },
-      showList ? 400 : 0
+      showList ? ANIMATION_DURATION_BASE : 0
     );
     setTimeout(
       () => { this.setState({ isTogglingList: false }) },
-      400
+      ANIMATION_DURATION_BASE
     );
   };
 
@@ -146,12 +147,15 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
               count={displayedFolder.unread}
               navigate={() => {
                 this.onListToggle();
-                if (!this.isCurrentScreen(displayedFolder.folderName) && !isTogglingList) {
-                  navigation.setParams({ 
-                    key: displayedFolder.folderName,
-                    folderName: displayedFolder.folderName,
-                    folderId: displayedFolder.id 
-                  });
+                if (!this.isCurrentScreen(displayedFolder.folderName)) {
+                  setTimeout(
+                    () => navigation.setParams({ 
+                      key: displayedFolder.folderName,
+                      folderName: displayedFolder.folderName,
+                      folderId: displayedFolder.id 
+                    }),
+                    ANIMATION_DURATION_BASE + 100
+                  );
                 }
               }}
             />
@@ -201,11 +205,14 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
             label={I18n.t(`conversation.${displayedMailbox.name}`).toUpperCase()}
             navigate={() => {
               this.onListToggle();
-              if (!this.isCurrentScreen(displayedMailbox.name) && !isTogglingList) {
-                navigation.setParams({ 
-                  key: displayedMailbox.name,
-                  folderName: undefined
-                });
+              if (!this.isCurrentScreen(displayedMailbox.name)) {
+                setTimeout(
+                  () => navigation.setParams({ 
+                    key: displayedMailbox.name,
+                    folderName: undefined
+                  }),
+                  ANIMATION_DURATION_BASE + 100
+                );
               }
             }}
             count={displayedMailbox.name === "inbox"
@@ -273,14 +280,14 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
             {this.renderDrawerMailboxes()}
             {this.renderDrawerFolders()}
           </ScrollView>
-          <CreateFolderModal
-            show={showFolderCreationModal}
-            onClose={this.onFolderCreationModalClose}
-          />
         </Animated.View>
         <TouchableWithoutFeedback onPress={() => this.onListToggle()}>
           <Animated.View style={[style.backdrop, backdropDisplay]} />
         </TouchableWithoutFeedback>
+        <CreateFolderModal
+          show={showFolderCreationModal}
+          onClose={this.onFolderCreationModalClose}
+        />
       </View>
     );
   }
