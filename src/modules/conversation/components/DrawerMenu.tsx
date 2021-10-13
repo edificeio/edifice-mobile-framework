@@ -227,7 +227,14 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
   };
 
   render() {
-    const { showList, showFolderCreationModal, animatedOpacity, animatedHeight, drawerMenuTotalHeight } = this.state;
+    const { 
+      showList,
+      showFolderCreationModal,
+      animatedOpacity,
+      animatedHeight,
+      drawerMenuTotalHeight,
+      isTogglingList
+    } = this.state;
 
     const navHeight = Platform.OS === "ios" ? hasNotch() ? 40 : 20 : 0;
     const headerHeight = Platform.select({ ios: hasNotch() ? 100 : 76, default: 56 });
@@ -256,8 +263,9 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
       <View style={style.container}>
         <Animated.View style={[style.animatedContainer, animatedContainerHeight, expandedAnimatedContainer]}> 
           <TouchableOpacity
-            onPress={() => this.onListToggle()}
             style={style.selectDirectoryContainer}
+            onPress={() => this.onListToggle()}
+            disabled={isTogglingList}
           >
             <Icon
               size={12}
@@ -273,7 +281,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
             }
           </TouchableOpacity>
           <ScrollView
-            style={{ marginLeft: showList ? 20 : 8 }}
+            style={{ marginLeft: showList ? 20 : undefined }}
             scrollEnabled={drawerMenuTotalHeight >= drawerMaxHeight}
             showsVerticalScrollIndicator={showList}
           >
@@ -329,6 +337,7 @@ const style = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "center",
+    paddingRight: 8
   },
   selectDirectoryText: {
     color: theme.color.primary.regular,
