@@ -91,7 +91,7 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
 
   const mailContacts = getMailPeople(mailInfos);
   if (mailContacts.to.length === 0) mailContacts.to = [[undefined, I18n.t("conversation.emptyTo"), false]];
-  const contactsToMore = mailContacts.to.length - 1;
+  const contactsToMore = mailContacts.to.length + mailContacts.cc.length + mailContacts.cci.length - 1;
 
   return <TouchableOpacity
     onPress={() => toggleVisible(!isVisible)}
