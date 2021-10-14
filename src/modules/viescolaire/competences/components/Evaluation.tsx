@@ -12,7 +12,7 @@ import { Text, TextBold } from "../../../../framework/components/text";
 import ChildPicker from "../../viesco/containers/ChildPicker";
 import { IPeriodsList } from "../../viesco/state/periods";
 import { ILevelsList } from "../state/competencesLevels";
-import { IDevoirListState } from "../state/devoirs";
+import { IDevoirsMatieresState } from "../state/devoirs";
 import { IMatiereList } from "../state/matieres";
 import { IMoyenneListState } from "../state/moyennes";
 import { IServiceList } from "../state/servicesMatieres";
@@ -20,7 +20,7 @@ import { GradesDevoirs, GradesDevoirsMoyennes } from "./Item";
 
 // eslint-disable-next-line flowtype/no-types-missing-file-annotation
 export type ICompetencesProps = {
-  devoirsList: IDevoirListState;
+  devoirsList: IDevoirsMatieresState;
   devoirsMoyennesList: IMoyenneListState;
   levels: ILevelsList;
   subjects: IMatiereList;
@@ -69,7 +69,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
 
     const { devoirsList } = this.props;
     this.state = {
-      devoirs: devoirsList.data.sort((a, b) => moment(b.date, "DD/MM/YYYY").diff(moment(a.date, "DD/MM/YYYY"))),
+      devoirs: devoirsList.data.devoirs.sort((a, b) => moment(b.date, "DD/MM/YYYY").diff(moment(a.date, "DD/MM/YYYY"))),
       disciplineList: [],
       screenDisplay: ScreenDisplay.DASHBOARD,
       switchValue: SwitchState.DEFAULT,
@@ -113,8 +113,8 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
       this.setDisciplinesList();
     }
     // Update devoirsList after new fetch
-    if (prevProps.devoirsList !== devoirs && screenDisplay !== ScreenDisplay.PERIOD && !devoirsList.isFetching) {
-      const list = devoirsList.data.sort((a, b) => moment(b.date, "DD/MM/YYYY").diff(moment(a.date, "DD/MM/YYYY")));
+    if (prevProps.devoirsList !== devoirs && screenDisplay !== ScreenDisplay.PERIOD && devoirsList && !devoirsList.isFetching) {
+      const list = devoirsList.data.devoirs.sort((a, b) => moment(b.date, "DD/MM/YYYY").diff(moment(a.date, "DD/MM/YYYY")));
       this.setState({ devoirs: list });
     } else if (
       prevProps.devoirsMoyennesList !== devoirs &&
@@ -252,9 +252,9 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     return (
       <View style={{ flex: 1 }}>
         {this.renderHeaderDevoirsList()}
-        {devoirsList.isFetching ? (
+        {devoirsList && devoirsList.isFetching ? (
           <Loading />
-        ) : devoirs !== undefined && devoirs.length > 0 && devoirs === devoirsList.data ? (
+        ) : devoirs !== undefined && devoirs.length > 0 && devoirs === devoirsList.data.devoirs ? (
           <GradesDevoirs devoirs={devoirs} color={switchValue !== SwitchState.DEFAULT} levels={levels} />
         ) : (
           <EmptyScreen

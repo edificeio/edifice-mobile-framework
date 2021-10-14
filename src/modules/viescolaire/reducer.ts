@@ -10,7 +10,7 @@ import { IHomeworkListState } from "./cdt/state/homeworks";
 import { ISessionListState } from "./cdt/state/sessions";
 import competences from "./competences/reducers";
 import { ILevelsListState } from "./competences/state/competencesLevels";
-import { IDevoirListState } from "./competences/state/devoirs";
+import { IDevoirsMatieresState } from "./competences/state/devoirs";
 import { IMatiereListState } from "./competences/state/matieres";
 import { IMoyenneListState } from "./competences/state/moyennes";
 import { IServiceListState } from "./competences/state/servicesMatieres";
@@ -66,7 +66,7 @@ export interface IViesco_State {
   };
   competences: {
     levels: ILevelsListState;
-    devoirsList: IDevoirListState;
+    devoirsMatieres: IDevoirsMatieresState;
     matieres: IMatiereListState;
     moyennesList: IMoyenneListState;
     serviceList: IServiceListState;

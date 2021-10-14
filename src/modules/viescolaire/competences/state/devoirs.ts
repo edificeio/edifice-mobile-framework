@@ -5,6 +5,12 @@ import viescoConfig from "../../moduleConfig";
 
 // THE MODEL --------------------------------------------------------------------------------------
 
+export interface IMatiere {
+  id: string;
+  externalId: string;
+  name: string;
+}
+
 export interface IDevoir {
   teacher: string;
   date: moment.Moment;
@@ -26,15 +32,25 @@ export interface IDevoir {
 
 export type IDevoirList = IDevoir[];
 
+export type IMatiereList = IMatiere[];
+
+export interface IDevoirsMatieres {
+  devoirs: IDevoirList;
+  matieres: IMatiereList;
+}
+
 // THE STATE --------------------------------------------------------------------------------------
 
-export type IDevoirListState = AsyncState<IDevoirList>;
+export type IDevoirsMatieresState = AsyncState<IDevoirsMatieres>;
 
-export const initialState: IDevoirList = [];
+export const initialState: IDevoirsMatieres = {
+  devoirs: [],
+  matieres: [],
+};
 
 export const getDevoirListState = (globalState: any) =>
-  viescoConfig.getState(globalState).competences.devoirsList as IDevoirListState;
+  viescoConfig.getState(globalState).competences.devoirsMatieres as IDevoirsMatieresState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const actionTypes = createAsyncActionTypes(viescoConfig.namespaceActionType("COMPETENCES_DEVOIR_LIST"));
+export const actionTypes = createAsyncActionTypes(viescoConfig.namespaceActionType("COMPETENCES_DEVOIR_MATIERES"));

@@ -3,7 +3,7 @@ import moment from "moment";
 import querystring from "querystring";
 
 import { fetchJSONWithCache } from "../../../../infra/fetchWithCache";
-import { IDevoirList } from "../state/devoirs";
+import { IDevoirsMatieres } from "../state/devoirs";
 
 export type IDevoirListBackend = {
   teacher: string;
@@ -24,21 +24,38 @@ export type IDevoirListBackend = {
   }[];
 }[];
 
-const devoirListAdapter: (data: IDevoirListBackend) => IDevoirList = data => {
-  let result = [] as IDevoirList;
+export type IMatiereListBackend = {
+  id: string;
+  externalId: string;
+  name: string;
+}[];
+
+export type IDevoirsMatieresBackend = {
+  devoirs: IDevoirListBackend;
+  matieres: IMatiereListBackend;
+};
+
+const devoirsMatieresAdapter: (data: IDevoirsMatieresBackend) => IDevoirsMatieres = data => {
+  let result = {} as IDevoirsMatieres;
   if (!data) return result;
-  result = data.map(item => ({
-    teacher: item.teacher,
-    date: item.date,
-    title: item.title,
-    matiere: item.matiere,
-    diviseur: item.diviseur,
-    coefficient: item.coefficient,
-    note: item.note,
-    moyenne: item.moyenne,
-    competences: item.competences,
-  }));
-  return result;
+  return {
+    devoirs: data.devoirs.map(item => ({
+      teacher: item.teacher,
+      date: item.date,
+      title: item.title,
+      matiere: item.matiere,
+      diviseur: item.diviseur,
+      coefficient: item.coefficient,
+      note: item.note,
+      moyenne: item.moyenne,
+      competences: item.competences,
+    })),
+    matieres: data.matieres.map(item => ({
+      id: item.id,
+      externalId: item.externalId,
+      name: item.name,
+    })),
+  };
 };
 
 export const devoirListService = {
@@ -50,8 +67,8 @@ export const devoirListService = {
       `/competences/devoirs/eleve?${querystring.stringify({
         idEtablissement,
         idEleve,
-      })}${urlParameters}`
+      })}${urlParameters}`,
     );
-    return devoirListAdapter(devoirs);
+    return devoirsMatieresAdapter(devoirs);
   },
 };

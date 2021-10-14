@@ -10,7 +10,7 @@ import { getHomeworksListState } from "../../cdt/state/homeworks";
 import { fetchLevelsAction } from "../../competences/actions/competencesLevels";
 import { fetchDevoirListAction } from "../../competences/actions/devoirs";
 import { getLevelsListState, ILevelsList } from "../../competences/state/competencesLevels";
-import { getDevoirListState, IDevoirListState } from "../../competences/state/devoirs";
+import { getDevoirListState, IDevoirsMatieresState } from "../../competences/state/devoirs";
 import { fetchChildrenGroupsAction } from "../actions/childrenGroups";
 import { fetchPersonnelListAction } from "../actions/personnel";
 import { fetchSubjectListAction } from "../actions/subjects";
@@ -20,7 +20,7 @@ import { getSubjectsListState } from "../state/subjects";
 
 class Dashboard extends React.PureComponent<{
   homeworks: any;
-  evaluations: IDevoirListState;
+  evaluations: IDevoirsMatieresState;
   hasRightToCreateAbsence: boolean;
   structureId: string;
   childId: string;

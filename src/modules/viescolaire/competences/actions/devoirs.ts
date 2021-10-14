@@ -7,11 +7,11 @@ import { Dispatch } from "redux";
 
 import { createAsyncActionCreators } from "../../../../infra/redux/async2";
 import { devoirListService } from "../services/devoirs";
-import { actionTypes, IDevoirList } from "../state/devoirs";
+import { actionTypes, IDevoirsMatieres } from "../state/devoirs";
 
 // ACTION LIST ------------------------------------------------------------------------------------
 
-export const dataActions = createAsyncActionCreators<IDevoirList>(actionTypes);
+export const dataActions = createAsyncActionCreators<IDevoirsMatieres>(actionTypes);
 
 // THUNKS -----------------------------------------------------------------------------------------
 

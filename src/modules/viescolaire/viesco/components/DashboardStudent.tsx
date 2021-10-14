@@ -10,7 +10,7 @@ import { TextBold } from "../../../../framework/components/text";
 import { HomeworkItem } from "../../cdt/components/Items";
 import { DenseDevoirList } from "../../competences/components/Item";
 import { ILevelsList } from "../../competences/state/competencesLevels";
-import { IDevoirListState } from "../../competences/state/devoirs";
+import { IDevoirsMatieresState } from "../../competences/state/devoirs";
 import { isHomeworkDone, homeworkDetailsAdapter } from "../../utils/cdt";
 
 const styles = StyleSheet.create({
@@ -173,8 +173,8 @@ export default class Dashboard extends React.PureComponent<any> {
 
   // Get the 5 last added evaluations
   //Sort evaluations by dates, then by alphabetical order then by notes
-  getSortedEvaluationList = (evaluations: IDevoirListState) => {
-    return evaluations.data
+  getSortedEvaluationList = (evaluations: IDevoirsMatieresState) => {
+    return evaluations.data.devoirs
       .sort(
         (a, b) =>
           moment(b.date).diff(moment(a.date)) ||
@@ -184,12 +184,12 @@ export default class Dashboard extends React.PureComponent<any> {
       .slice(0, 5);
   };
 
-  private renderEvaluations(evaluations: IDevoirListState, levels: ILevelsList) {
+  private renderEvaluations(evaluations: IDevoirsMatieresState, levels: ILevelsList) {
     const evaluationList = this.getSortedEvaluationList(evaluations);
     return (
       <View style={styles.dashboardPart}>
         <TextBold style={styles.title}>{I18n.t("viesco-lasteval")}</TextBold>
-        {evaluations && evaluations.data && evaluationList !== undefined ? (
+        {evaluations && evaluations.data.devoirs && evaluationList !== undefined ? (
           <DenseDevoirList devoirs={evaluationList} levels={levels} />
         ) : (
           <EmptyScreen

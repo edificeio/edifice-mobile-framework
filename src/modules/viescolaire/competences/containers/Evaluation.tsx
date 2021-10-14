@@ -24,7 +24,7 @@ import { fetchServicesMatieresAction } from "../actions/servicesMatieres";
 import { fetchStructureMatieresAction } from "../actions/structureMatieres";
 import Competences from "../components/Evaluation";
 import { getLevelsListState, ILevelsList } from "../state/competencesLevels";
-import { getDevoirListState, IDevoirListState } from "../state/devoirs";
+import { getDevoirListState, IDevoirsMatieresState } from "../state/devoirs";
 import { IMatiereList } from "../state/matieres";
 import { getMoyenneListState, IMoyenneListState } from "../state/moyennes";
 import { getServiceListState, IServiceList } from "../state/servicesMatieres";
@@ -32,7 +32,7 @@ import { getStructureMatiereListState } from "../state/structureMatieres";
 
 // eslint-disable-next-line flowtype/no-types-missing-file-annotation
 export type CompetencesProps = {
-  devoirsList: IDevoirListState;
+  devoirsList: IDevoirsMatieresState;
   devoirsMoyennesList: IMoyenneListState;
   levels: ILevelsList;
   subjects: IMatiereList;
