@@ -11,10 +11,7 @@ import { ISessionListState } from "./cdt/state/sessions";
 import competences from "./competences/reducers";
 import { ILevelsListState } from "./competences/state/competencesLevels";
 import { IDevoirsMatieresState } from "./competences/state/devoirs";
-import { IMatiereListState } from "./competences/state/matieres";
 import { IMoyenneListState } from "./competences/state/moyennes";
-import { IServiceListState } from "./competences/state/servicesMatieres";
-import { IStructureMatiereListState } from "./competences/state/structureMatieres";
 import edt from "./edt/reducers";
 import { ICourseListState } from "./edt/state/courses";
 import { ISlotListState } from "./edt/state/slots";
@@ -67,10 +64,7 @@ export interface IViesco_State {
   competences: {
     levels: ILevelsListState;
     devoirsMatieres: IDevoirsMatieresState;
-    matieres: IMatiereListState;
     moyennesList: IMoyenneListState;
-    serviceList: IServiceListState;
-    structureMatiereList: IStructureMatiereListState;
   };
 }
 
