@@ -306,7 +306,7 @@ const MailContactField = connect(state => ({
         //   const filteredGroups = groups.filter(filterUsersOrGroups);
         //   updateFoundUsersOrGroups([...filteredUsers, ...filteredGroups]);
         // });
-        const searchResults = visibles.lastSuccess ? searchVisibles(visibles.data, s) : [];
+        const searchResults = visibles.lastSuccess ? searchVisibles(visibles.data, s, value) : [];
         updateFoundUsersOrGroups(searchResults);
       }, 500);
     } else {
