@@ -231,9 +231,9 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
         <PageContainer>
           <FakeHeader>
             <HeaderRow>
-              <HeaderLeft>
+              {/* <HeaderLeft> // TODO: add action for searching messages 
                 <HeaderAction name="search"/>
-              </HeaderLeft>
+              </HeaderLeft> */}
               <HeaderCenter>
                 <HeaderTitle>{I18n.t("conversation.appName")}</HeaderTitle>
               </HeaderCenter>
