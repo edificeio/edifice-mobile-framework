@@ -56,7 +56,15 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
     if (!firstFetch && folders.length - 1 === prevProps.folders.length) {
       this.getDrawerHeightAnimation(true).start();
     }
-  }
+  };
+
+  getDrawerOpacityAnimation = () => {
+    const { showList, animatedOpacity } = this.state;
+    return Animated.timing(animatedOpacity, {
+      toValue : showList ? 0 : 0.6,
+      ...ANIMATION_CONFIGURATIONS_FADE
+    });
+  };
 
   getDrawerHeightAnimation = (wasFolderCreated?: boolean) => {
     const { folders } = this.props;
@@ -79,26 +87,21 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
       toValue : showList && !wasFolderCreated ? menuItemHeight : drawerMenuTotalHeight,
       ...ANIMATION_CONFIGURATIONS_SIZE
     });
-  }
+  };
 
   onDrawerToggle = (callback?: Function) => {
-    const { animatedOpacity, showList } = this.state;
+    const { showList } = this.state;
 
-    this.setState({ isTogglingList: true });
-    !showList && this.setState({ showList: true });
+    this.setState({ isTogglingList: true, showList: true });
     Animated.parallel([
-      Animated.timing(animatedOpacity, {
-        toValue : showList ? 0 : 0.6,
-        ...ANIMATION_CONFIGURATIONS_FADE
-      }),
+      this.getDrawerOpacityAnimation(),
       this.getDrawerHeightAnimation()
     ]).start(() => {
-      showList && this.setState({ showList: false });
-      this.setState({ isTogglingList: false });
-      callback && callback();
+      this.setState({ isTogglingList: false, showList: !showList });
+      // Note: the setTimeout is used to smooth the animation
+      setTimeout(() => callback && callback(), 0);
     });
-    
-  }
+  };
 
   onFolderCreationModalShow = () => {
     this.setState({
@@ -249,6 +252,9 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
 
     return (
       <View style={style.container}>
+        <TouchableWithoutFeedback onPress={() => this.onDrawerToggle()}>
+          <Animated.View style={[style.backdrop, backdropDisplay]} />
+        </TouchableWithoutFeedback>
         <Animated.View style={[style.animatedContainer, animatedContainerHeight, expandedAnimatedContainer]}> 
           <TouchableOpacity
             style={style.selectDirectoryContainer}
@@ -270,17 +276,14 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
           </TouchableOpacity>
           <ScrollView
             style={{ marginLeft: showList ? 20 : undefined }}
-            alwaysBounceVertical={false}
             showsVerticalScrollIndicator={false}
+            alwaysBounceVertical={false}
             scrollEnabled={showList}
           >
             {this.renderDrawerMailboxes()}
             {this.renderDrawerFolders()}
           </ScrollView>
         </Animated.View>
-        <TouchableWithoutFeedback onPress={() => this.onDrawerToggle()}>
-          <Animated.View style={[style.backdrop, backdropDisplay]} />
-        </TouchableWithoutFeedback>
         <CreateFolderModal
           show={showFolderCreationModal}
           onClose={this.onFolderCreationModalClose}
@@ -294,13 +297,11 @@ const style = StyleSheet.create({
   container: {
     width: "100%",
     position: "absolute",
-    zIndex: 1,
   },
   animatedContainer: {
     backgroundColor: theme.color.background.card,
     paddingHorizontal: 20,
     position: "absolute",
-    zIndex: 1,
     width: "100%",
     flexDirection: "row",
     borderBottomWidth: 1,

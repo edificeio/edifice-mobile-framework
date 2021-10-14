@@ -252,7 +252,6 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
             }}
           />
           <View style={{ flex: 1 }}>
-            <DrawerMenu {...this.props} {...this.state} />
             <FlatList
               scrollEnabled={!isSwipingMail}
               onMomentumScrollBegin={() => this.setState({ currentlySwipedMail: false })}
@@ -309,6 +308,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
                 )
               }
             />
+            <DrawerMenu {...this.props} {...this.state} />
           </View>
         </PageContainer> 
         <MoveModal

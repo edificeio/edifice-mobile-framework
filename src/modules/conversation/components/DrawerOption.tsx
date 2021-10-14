@@ -23,7 +23,7 @@ export default class DrawerOption extends React.PureComponent<DrawerOptionProps>
         <Icon size={25} name={iconName} color={selected ? theme.color.primary.regular : undefined} />
         <TextBold
           numberOfLines={1}
-          style={[style.itemText, { color: selected ? theme.color.primary.regular : undefined }]}
+          style={[style.itemText, selected ? { color: theme.color.primary.regular } : {}]}
         >
           {optionLabel}
         </TextBold>
@@ -39,6 +39,7 @@ const style = StyleSheet.create({
     alignItems: "center",
   },
   itemText: {
+    flex: 1,
     marginLeft: 15,
     fontSize: 14,
     overflow: "hidden",
