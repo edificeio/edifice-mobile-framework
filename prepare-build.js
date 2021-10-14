@@ -231,9 +231,9 @@ try {
 //
 try {
   execSync(`git add ${gradleFile}`);
-  execSync(`git add ${packageFile}`);
   execSync(`git add ${plistFile}`);
   execSync(`git add ${versionFile}`);
+  if (['major', 'minor', 'rev'].includes(buildType)) execSync(`git add ${packageFile}`);
   execSync(`git commit -m "release: ${fullVersion}"`);
   execSync('git push');
 } catch (error) {
