@@ -154,7 +154,7 @@ const mapStateToProps: (state: any) => any = state => {
 };
 
 const mapDispatchToProps: (dispatch: any) => any = dispatch => {
-  return bindActionCreators(
+  return {...bindActionCreators(
     {
       fetchMailContentAction,
       toggleRead: toggleReadAction,
@@ -163,7 +163,7 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
       downloadAttachment: downloadAttachmentAction,
     },
     dispatch
-  );
+  ), dispatch};
 };
 
 export default withViewTracking("zimbra/MailContent")(

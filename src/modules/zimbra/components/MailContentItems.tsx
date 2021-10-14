@@ -2,8 +2,8 @@ import style from "glamorous-native";
 import I18n from "i18n-js";
 import moment from "moment";
 import * as React from "react";
-import { View, StyleSheet } from "react-native";
-import { IDistantFile, IDistantFileWithId } from "../../../framework/util/fileHandler";
+import { View, StyleSheet, Platform } from "react-native";
+import { IDistantFile, IDistantFileWithId, SyncedFileWithId } from "../../../framework/util/fileHandler";
 import { Trackers } from "../../../framework/util/tracker";
 
 import { Icon } from "../../../ui";
@@ -15,6 +15,9 @@ import { Text, TextBold } from "../../../framework/components/text";
 import { getFileIcon } from "../utils/fileIcon";
 import { getUserColor, getProfileColor } from "../utils/userColor";
 import { findReceivers2, findReceiversAvatars, Author, findSenderAvatar } from "./MailItem";
+import Toast from "react-native-tiny-toast";
+import { downloadFileAction } from "../../../framework/util/fileHandler/actions";
+import { ThunkDispatch } from "redux-thunk";
 
 const User = ({ userId, userName }) => {
   const [dotColor, setDotColor] = React.useState(getProfileColor("Guest"));
@@ -89,11 +92,11 @@ export const HeaderMail = ({ mailInfos }) => {
           <Author nb={mailInfos.unread} numberOfLines={1}>
             {inOutboxOrDraft
               ? findReceivers2(mailInfos.to, mailInfos.from, mailInfos.cc)
-                  .map(r => {
-                    const u = mailInfos.displayNames.find(dn => dn[0] === r);
-                    return u ? u[1] : I18n.t("unknown-user");
-                  })
-                  .join(", ")
+                .map(r => {
+                  const u = mailInfos.displayNames.find(dn => dn[0] === r);
+                  return u ? u[1] : I18n.t("unknown-user");
+                })
+                .join(", ")
               : mailInfos.displayNames.find(dn => dn[0] === mailInfos.from)[1]}
           </Author>
           <IconButton
@@ -152,43 +155,58 @@ export const FooterButton = ({ icon, text, onPress }) => {
   );
 };
 
-export const RenderPJs = ({ attachments, mailId, onDownload }: {attachments: IDistantFile[], mailId: string, onDownload: (att: IDistantFile) => void}) => {
+export const RenderPJs = ({ attachments, mailId, onDownload, dispatch }: { attachments: IDistantFile[], mailId: string, onDownload: (att: IDistantFile) => void, dispatch: ThunkDispatch<any, any, any> }) => {
   const [isVisible, toggleVisible] = React.useState(false);
   const displayedAttachments = isVisible ? attachments : attachments.slice(0, 1) as any;
   return (
     <View style={[styles.containerMail, { flexDirection: "column" }]}>
-      {displayedAttachments.map((item, index) => (
-        <TouchableOpacity
-          onPress={() => {
-            Trackers.trackEvent('Zimbra', 'DOWNLOAD ATTACHMENT');
-            const df: IDistantFileWithId = {
-              id: item.id,
-              filename: item.filename,
-              url: `/zimbra/message/${mailId}/attachment/${item.id}`,
-              filesize: item.size,
-              filetype: item.contentType
-            }
-            // console.log(df);
-            onDownload(df);
-          }}>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Icon size={25} color="#2A9CC8" name={getFileIcon(item.contentType)} />
-            <Text style={styles.gridButtonTextPJnames} key={item.id}>
-              {item.filename}
-            </Text>
-            {index === 0 && (
-              <TouchableOpacity onPress={() => toggleVisible(!isVisible)} style={{ padding: 5 }}>
-                {attachments.length > 1 && (
-                  <Text style={styles.gridButtonTextPJnb}>
-                    {isVisible ? "-" : "+"}
-                    {attachments.length - 1}
-                  </Text>
-                )}
-              </TouchableOpacity>
-            )}
-          </View>
-        </TouchableOpacity>
-      ))}
+      {displayedAttachments.map((item, index) => {
+        const df: IDistantFileWithId = {
+          url: `/conversation/message/${mailId}/attachment/${item.id}`,
+          id: item.id,
+          filename: item.filename,
+          filesize: item.size,
+          filetype: item.contentType,
+        }
+        return (
+          <TouchableOpacity
+            onPress={() => {
+              Trackers.trackEvent('Zimbra', 'DOWNLOAD ATTACHMENT');
+              // console.log(df);
+              onDownload(df);
+            }}>
+            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
+              <Icon size={25} color="#2A9CC8" name={getFileIcon(item.contentType)} />
+              <Text style={styles.gridButtonTextPJnames} key={item.id} numberOfLines={1} ellipsizeMode="middle">
+                {item.filename}
+              </Text>
+              {index === 0 && (
+                <TouchableOpacity onPress={() => toggleVisible(!isVisible)} style={{ padding: 5 }}>
+                  {attachments.length > 1 && (
+                    <Text style={styles.gridButtonTextPJnb}>
+                      {isVisible ? "-" : "+"}
+                      {attachments.length - 1}
+                    </Text>
+                  )}
+                </TouchableOpacity>
+              )}
+              {Platform.OS !== "ios" ? <TouchableOpacity onPress={async () => {
+                try {
+                  const sf = (await dispatch(downloadFileAction<SyncedFileWithId>(df, {}))) as unknown as SyncedFileWithId;
+                  await sf.mirrorToDownloadFolder();
+                  Toast.showSuccess(I18n.t("download-success-name", { name: sf.filename }));
+                } catch (e) {
+                  console.log(e);
+                  Toast.show(I18n.t("download-error-generic"));
+                }
+              }}
+                style={{ paddingHorizontal: 12, flex: 0 }}>
+                <Icon name="download" size={18} color="#2A9CC8" />
+              </TouchableOpacity> : null}
+            </View>
+          </TouchableOpacity>
+        )
+      })}
     </View>
   );
 };
@@ -219,7 +237,7 @@ const styles = StyleSheet.create({
   gridButtonTextPJnames: {
     color: "#2A9CC8",
     marginLeft: 5,
-    flexGrow: 1,
+    paddingHorizontal: 24
   },
   dotReceiverColor: {
     width: 8,

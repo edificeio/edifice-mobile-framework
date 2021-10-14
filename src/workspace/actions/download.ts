@@ -8,6 +8,8 @@ import { getUserSession } from "../../framework/util/session";
 import { IDistantFile, SyncedFile } from "../../framework/util/fileHandler";
 import { Trackers } from "../../framework/util/tracker";
 import fileTransferService from "../../framework/util/fileHandler/service";
+import Toast from "react-native-tiny-toast";
+import I18n from "i18n-js";
 
 export const actionTypesDownload = asyncActionTypes(config.createActionType("/workspace/download"));
 
@@ -32,9 +34,9 @@ export const newDownloadThenOpenAction = (parentId: string, selected: IItems<IFi
 
 export const newDownloadAction = (parentId: string, selected: IItems<IFile>, callback: (f: SyncedFile) => void) =>
   async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    console.log("WILL DISPATCH NEW DOWNLOAD FILE");
+    // console.log("WILL DISPATCH NEW DOWNLOAD FILE");
     return dispatch(asyncActionRawFactory(actionTypesDownload, { parentId }, async () => {
-      console.log("NEW DOWNLOAD FILE");
+      // console.log("NEW DOWNLOAD FILE");
       return Object.values(selected).map(sel => {
         if (sel.url.startsWith("/zimbra")) {
           Trackers.trackEvent("Zimbra", "DOWNLOAD ATTACHMENT");
@@ -48,4 +50,16 @@ export const newDownloadAction = (parentId: string, selected: IItems<IFile>, cal
         ).then(callback)
       });
     }));
+  }
+
+export const downloadAndSaveAction = (downloadable: IFile) =>
+  async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+    try {
+      dispatch(newDownloadAction('', { item: downloadable }, async file => {
+        await file.mirrorToDownloadFolder();
+      }));
+      Toast.showSuccess(I18n.t("download-success-name", { name: downloadable.filename }));
+    } catch (e) {
+      Toast.show(I18n.t("download-error-generic"));
+    }
   }

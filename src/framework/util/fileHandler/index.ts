@@ -5,10 +5,11 @@
 import { Platform } from "react-native";
 import DocumentPicker, { DocumentPickerResponse, PlatformTypes } from "react-native-document-picker";
 import { Asset, ImagePickerResponse, launchCamera, launchImageLibrary, MediaType } from 'react-native-image-picker';
-import type { UploadFileItem } from "react-native-fs";
+import { copyFile, DownloadDirectoryPath, exists, mkdir, stat, UploadFileItem } from "react-native-fs";
 import FileViewer from 'react-native-file-viewer';
 import getPath from "@flyerhq/react-native-android-uri-path";
 import { assertPermissions } from "../permissions";
+import { getApplicationName } from "react-native-device-info";
 
 namespace LocalFile {
 
@@ -178,11 +179,26 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
             showOpenWithDialog: true,
             showAppsSuggestions: true
         })
-        .then(() => {})
-        .catch(error => {
-            console.warn("Error opening file", error);
-            throw error;
-        });
+            .then(() => { })
+            .catch(error => {
+                console.warn("Error opening file", error);
+                throw error;
+            });
+    }
+
+    /**
+     * Copy file into user downloads folder
+     */
+    async mirrorToDownloadFolder() {
+        await assertPermissions('documents.write');
+        const destFolder = DownloadDirectoryPath;
+        const destPath = destFolder + '/' + this.filename;
+        console.log("destPath", destPath);
+        copyFile(this.filepath, destPath).then(() => { })
+            .catch(error => {
+                console.warn("Error copying file", error);
+                throw error;
+            });
     }
 
 }
@@ -228,6 +244,7 @@ export class SyncedFile<DFType extends IDistantFile = IDistantFile> implements L
     open = LocalFile.prototype.open;
     setExtension = LocalFile.prototype.setExtension;
     setPath = LocalFile.prototype.setPath;
+    mirrorToDownloadFolder = LocalFile.prototype.mirrorToDownloadFolder;
 }
 
 export class SyncedFileWithId extends SyncedFile<IDistantFileWithId> {

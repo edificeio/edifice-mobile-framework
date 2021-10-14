@@ -97,7 +97,7 @@ export default class MailContent extends React.PureComponent<any, any> {
               )}
               {this.props.mail.id && this.mailHeader()}
               {this.props.mail.hasAttachment && (
-                  <RenderPJs attachments={this.props.mail.attachments} mailId={this.props.mail.id} onDownload={this.props.downloadAttachment} />
+                  <RenderPJs attachments={this.props.mail.attachments} mailId={this.props.mail.id} onDownload={this.props.downloadAttachment} dispatch={this.props.dispatch} />
               )}
               {this.props.mail.body !== undefined && this.mailContent()}
               {this.mailFooter()}

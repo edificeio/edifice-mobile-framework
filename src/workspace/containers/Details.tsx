@@ -3,7 +3,7 @@ import { EVENT_TYPE, IDetailsProps, IFile } from "../types";
 import { ItemDetails } from "../components";
 import { shareAction } from "../../infra/actions/share";
 import withMenuWrapper from "../utils/withMenuWrapper";
-import { newDownloadThenOpenAction } from "../actions/download";
+import { downloadAndSaveAction, newDownloadThenOpenAction } from "../actions/download";
 import { connect } from "react-redux";
 
 class Details extends React.PureComponent<IDetailsProps> {
@@ -11,7 +11,7 @@ class Details extends React.PureComponent<IDetailsProps> {
     switch (type) {
       case EVENT_TYPE.DOWNLOAD: {
         console.log(this.props);
-        this.props.dispatch(newDownloadThenOpenAction('', {item: item as IFile} ))
+        this.props.dispatch(downloadAndSaveAction(item as IFile));
         return;
       }
       case EVENT_TYPE.PREVIEW: {
