@@ -1,7 +1,6 @@
 import I18n from "i18n-js";
 import * as React from "react";
-import { RefreshControl, View } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
+import { FlatList, RefreshControl, View } from "react-native";
 import { NavigationInjectedProps, NavigationFocusInjectedProps, withNavigationFocus } from "react-navigation";
 import { connect } from "react-redux";
 import { ThunkDispatch } from "redux-thunk";
