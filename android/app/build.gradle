@@ -20,6 +20,17 @@ def enableProguardInReleaseBuilds = true
 def jscFlavor = 'org.webkit:android-jsc:+'
 def enableHermes = project.ext.react.get("enableHermes", false);
 
+// Run packager
+
+def runTasks = gradle.startParameter.taskNames
+
+if ('assembleDebug' in runTasks) {
+    exec {
+        workingDir '../..'
+        commandLine 'watchman watch-del-all && react-native start --reset-cache'
+    }
+}
+
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     ndkVersion rootProject.ext.ndkVersion
