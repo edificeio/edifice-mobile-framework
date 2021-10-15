@@ -3,9 +3,9 @@
   "version": "1.6.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
+    "android": "react-native start --reset-cache  && react-native run-android",
     "clean": "rm -r -f ./android/build && rm -r -f ./android/app/build && rm -r -f ./ios/build && rm -r -f ./ios/pods && rm -f ./ios/Podfile.lock && rm -r -f node_modules && rm -f package-lock.json && npm cache clean --force && npm install && cd android && ./gradlew clean && cd ../ios && pod install --repo-update && cd ..",
-    "ios": "react-native run-ios",
+    "ios": "react-native start --reset-cache && react-native run-ios",
     "lint": "eslint .",
     "postinstall": "npx react-native-jetifier; npx patch-package",
     "private-key": "cd android/app && rm -f release.keystore && keytool -genkey -v -keystore release.keystore -alias android -keyalg RSA -keysize 2048 -validity 10000",
