@@ -230,12 +230,9 @@ try {
 // Commit && Push changes
 //
 try {
-  execSync(`git add ${gradleFile}`);
-  execSync(`git add ${plistFile}`);
-  execSync(`git add ${versionFile}`);
-  if (['major', 'minor', 'rev'].includes(buildType)) execSync(`git add ${packageFile}`);
-  execSync(`git commit -m "release: ${fullVersion}"`);
-  execSync('git push');
+  execSync(`git add -A`);
+  // execSync(`git commit -m "release: ${fullVersion}"`);
+  // execSync('git push');
 } catch (error) {
   console.error('!!! Unable to commit && push changes !!!');
   console.log(error);
