@@ -290,7 +290,6 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
                   }}
                 />
               }
-              ListFooterComponent={isFetching && !firstFetch ? <Loading /> : null}
               ListEmptyComponent={
                 isFetching && firstFetch ? (
                   <Loading />
