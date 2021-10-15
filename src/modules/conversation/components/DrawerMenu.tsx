@@ -35,6 +35,7 @@ type DrawerMenuState = {
   showFolderCreationModal: boolean;
   showList: boolean;
   isTogglingList: boolean;
+  drawerHeight: number;
   animatedHeight: Animated.Value;
   animatedOpacity: Animated.Value;
 };
@@ -46,6 +47,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
       showFolderCreationModal: false,
       showList: false,
       isTogglingList: false,
+      drawerHeight : 45,
       animatedHeight : new Animated.Value(45),
       animatedOpacity : new Animated.Value(0)
     };
@@ -82,9 +84,11 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
       + createFolderContainerHeight
       + selectDirectoryContainerHeight
       + verticalPadding;
-    
+    const newHeightValue = showList && !wasFolderCreated ? menuItemHeight : drawerMenuTotalHeight;
+
+    this.setState({ drawerHeight: newHeightValue });
     return Animated.timing(animatedHeight, {
-      toValue : showList && !wasFolderCreated ? menuItemHeight : drawerMenuTotalHeight,
+      toValue : newHeightValue,
       ...ANIMATION_CONFIGURATIONS_SIZE
     });
   };
@@ -224,7 +228,8 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
       showFolderCreationModal,
       animatedOpacity,
       animatedHeight,
-      isTogglingList
+      isTogglingList,
+      drawerHeight
     } = this.state;
 
     const navHeight = Platform.OS === "ios" ? hasNotch() ? 40 : 20 : 0;
@@ -232,12 +237,13 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
     const tabbarHeight = 56;
     const screenHeight = Dimensions.get("window").height;
     const drawerMaxHeight = screenHeight - headerHeight - navHeight - tabbarHeight;
-
+    const isDrawerMaximallyExpanded = drawerHeight >= drawerMaxHeight;
+    
     const animatedContainerHeight = { height: animatedHeight, maxHeight: drawerMaxHeight };
     const expandedAnimatedContainer: ViewStyle = showList 
       ? {
-          borderBottomLeftRadius: 20,
-          borderBottomRightRadius: 20,
+          borderBottomLeftRadius: isDrawerMaximallyExpanded ? undefined : 20,
+          borderBottomRightRadius: isDrawerMaximallyExpanded ? undefined : 20,
           paddingTop: 10,
           flexDirection: "column",
           borderBottomWidth: undefined,
