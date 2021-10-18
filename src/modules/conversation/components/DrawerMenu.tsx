@@ -206,7 +206,8 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
                 if (!this.isCurrentScreen(displayedMailbox.name)) {
                   navigation.setParams({ 
                     key: displayedMailbox.name,
-                    folderName: undefined
+                    folderName: undefined,
+                    folderId: undefined
                   })
                 }
               })

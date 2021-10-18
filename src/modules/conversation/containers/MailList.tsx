@@ -112,6 +112,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
     const key = navigation.getParam("key");
     const folderName = navigation.getParam("folderName");
     const folderId = navigation.getParam("folderId");
+
     this.setState({ fetchRequested: true });
     folderName ? fetchMailFromFolder(folderId, page) : fetchMailList(page, key);
   };
@@ -122,6 +123,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
 
   public componentDidMount() {
     const { fetchInit, fetchCount, navigation } = this.props;
+    
     fetchInit();
     fetchCount();
     if (navigation.getParam("key") === undefined) {
@@ -134,6 +136,8 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
   componentDidUpdate(prevProps) {
     const { navigation, init, count, isFetching, isFocused } = this.props;
     const { firstFetch, fetchRequested } = this.state;
+    const key = navigation.getParam("key");
+
     if (prevProps.init.isFetching && !init.isFetching) {
       this.setState({ folders: init.data.folders });
     }
@@ -141,10 +145,9 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
       this.setState({ mailboxesCount: count.data });
     }
     if (!isFetching && firstFetch) this.setState({ firstFetch: false });
-    const folderName = navigation.getParam("folderName");
     if (
       !fetchRequested &&
-      (folderName !== prevProps.navigation.getParam("folderName") ||
+      (key !== prevProps.navigation.getParam("key") ||
         (isFocused && prevProps.isFocused !== isFocused))
     ) {
       this.fetchMails();
