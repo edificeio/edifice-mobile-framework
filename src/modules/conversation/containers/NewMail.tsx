@@ -448,7 +448,8 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
               : [this.props.mail.from, ...this.props.mail.to.filter(user => user !== getSessionInfo().userId)]
                   .filter((user, index, array) => array.indexOf(user) === index)
                   .map(getUser),
-            cc: this.props.mail.cc.filter(id => id !== this.props.mail.from).map(getUser),
+            cc: this.props.mail.cc?.filter(id => id !== this.props.mail.from).map(getUser),
+            cci: this.props.mail.cci?.filter(id => id !== this.props.mail.from).map(getUser),
             subject: I18n.t('conversation.replySubject') + this.props.mail.subject,
           },
         };
