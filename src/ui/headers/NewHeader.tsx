@@ -6,12 +6,13 @@ import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { NavigationScreenProp, NavigationActions } from "react-navigation";
 import { ViewStyle, View } from "react-native";
 import { Text } from "../../framework/components/text";
+import { UI_SIZES } from "../../framework/components/constants";
 
 // HEADER ICON
 const HeaderIconStyle: ViewStyle = {
   alignItems: "center",
   justifyContent: "center",
-  height: 56,
+  height: UI_SIZES.headerHeight,
   width: 60,
   flex: 0,
 };
@@ -71,7 +72,7 @@ const HeaderActionText = (props: { [prop: string]: any }) => (
   <View
     style={{
       paddingHorizontal: 18,
-      height: 56,
+      height: UI_SIZES.headerHeight,
       justifyContent: "center",
       alignItems: "center",
     }}>

@@ -32,6 +32,7 @@ import { RenderPJs, HeaderMail, FooterButton } from "../components/MailContentIt
 import withViewTracking from '../../../framework/util/tracker/withViewTracking';
 import { Trackers } from '../../../framework/util/tracker';
 import { tryAction } from '../../../framework/util/redux/actions';
+import { UI_SIZES } from '../../../framework/components/constants';
 
 class MailContentContainer extends React.PureComponent<{
   navigation: NavigationScreenProp<NavigationState>,
@@ -364,6 +365,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    height: 56
+    height: UI_SIZES.headerHeight
   },
 });

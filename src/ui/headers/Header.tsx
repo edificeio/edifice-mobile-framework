@@ -7,6 +7,7 @@ import { Icon } from "..";
 import { CommonStyles } from "../../styles/common/styles";
 import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { hasNotch } from "react-native-device-info";
+import { UI_SIZES } from "../../framework/components/constants";
 
 /**
  * DEPRECATED
@@ -31,7 +32,7 @@ const HeaderStyle = style(SafeAreaView)({
   alignItems: "center",
   backgroundColor: CommonStyles.mainColorTheme,
   paddingTop: Platform.OS === "ios" ? iosStatusBarHeight : 0,
-  height: Platform.select({ ios: hasNotch() ? 100 : 76, default: 56 }),
+  height: Platform.select({ ios: hasNotch() ? 100 : 76, default: UI_SIZES.headerHeight }),
 });
 
 export const HeaderComponent = ({
@@ -66,7 +67,7 @@ export const Header = connect((state: any) => ({
 
 export const sensitiveStylePanel: ViewStyle = {
   alignItems: "center",
-  height: 56,
+  height: UI_SIZES.headerHeight,
   justifyContent: "center",
   paddingLeft: 18,
   paddingRight: 18,
@@ -101,7 +102,7 @@ export const TouchableEndBarPanel = style(TouchableOpacity)({
 export const CenterPanel = style(TouchableOpacity)({
   alignItems: "center",
   flex: 1,
-  height: 56,
+  height: UI_SIZES.headerHeight,
   justifyContent: "center",
 });
 
@@ -112,8 +113,8 @@ export const AppTitle = style.text({
   fontSize: 16,
   flex: 1,
   textAlign: "center",
-  height: 56,
-  lineHeight: 56,
+  height: UI_SIZES.headerHeight,
+  lineHeight: UI_SIZES.headerHeight,
 });
 
 export const HeaderAction = style.text(
@@ -124,8 +125,8 @@ export const HeaderAction = style.text(
     flex: 1,
     textAlign: "right",
     paddingRight: 20,
-    height: 56,
-    lineHeight: 56,
+    height: UI_SIZES.headerHeight,
+    lineHeight: UI_SIZES.headerHeight,
   },
   ({ disabled }: { disabled?: boolean }) => ({
     opacity: disabled ? 0.7 : 1,

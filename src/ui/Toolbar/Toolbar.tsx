@@ -5,6 +5,7 @@ import { IFloatingProps, IMenuItem } from "../types";
 import { IItem, INavigationProps } from "../../workspace/types";
 import Item from "./Item";
 import { CommonStyles } from "../../styles/common/styles";
+import { UI_SIZES } from "../../framework/components/constants";
 
 export type ISelected = {
   selected?: IItem[];
@@ -101,19 +102,19 @@ interface IState {}
 const styles = StyleSheet.create({
   firstActions: {
     alignItems: "center",
-    height: 56,
+    height: UI_SIZES.headerHeight,
     justifyContent: "flex-start",
     flexDirection: "row",
   },
   middleActions: {
     alignItems: "center",
-    height: 56,
+    height: UI_SIZES.headerHeight,
     justifyContent: "space-between",
   },
   lastActions: {
     flexDirection: "row",
     alignItems: "center",
-    height: 56,
+    height: UI_SIZES.headerHeight,
     justifyContent: "flex-end",
     paddingRight: layoutSize.LAYOUT_16,
   },

@@ -14,7 +14,7 @@ import { NavigationScreenProp } from "react-navigation";
 import { hasNotch } from "react-native-device-info";
 import I18n from "i18n-js";
 
-import { ANIMATION_CONFIGURATIONS_FADE, ANIMATION_CONFIGURATIONS_SIZE } from "../../../framework/components/constants";
+import { ANIMATION_CONFIGURATIONS_FADE, ANIMATION_CONFIGURATIONS_SIZE, UI_SIZES } from "../../../framework/components/constants";
 import theme from "../../../framework/util/theme";
 import { Icon } from "../../../ui";
 import { TextSemiBold, TextBold } from "../../../ui/Typography";
@@ -233,8 +233,8 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
     } = this.state;
 
     const navHeight = Platform.OS === "ios" ? hasNotch() ? 40 : 20 : 0;
-    const headerHeight = Platform.select({ ios: hasNotch() ? 100 : 76, default: 56 });
-    const tabbarHeight = 56;
+    const headerHeight = Platform.select({ ios: hasNotch() ? 100 : 76, default: UI_SIZES.headerHeight });
+    const tabbarHeight = UI_SIZES.tabsHeight;
     const screenHeight = Dimensions.get("window").height;
     const drawerMaxHeight = screenHeight - headerHeight - navHeight - tabbarHeight;
     const isDrawerMaximallyExpanded = drawerHeight >= drawerMaxHeight;

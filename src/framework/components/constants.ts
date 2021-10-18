@@ -7,3 +7,8 @@ export const ANIMATION_CONFIGURATIONS_SIZE = {
     duration: 300,
     useNativeDriver: false, 
 };
+
+export const UI_SIZES = {
+    headerHeight: 56,
+    tabsHeight: 56,
+}

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { TouchableOpacity } from "react-native";
 import { Icon } from ".";
+import { UI_SIZES } from "../framework/components/constants";
 import { CommonStyles } from "../styles/common/styles";
 import { Label } from "./Typography";
 
@@ -18,7 +19,7 @@ const BottomSwitcher: React.StatelessComponent<
       backgroundColor: "#F8F8FA",
       borderTopColor: "#DCDDE0",
       borderTopWidth: 1,
-      height: 56,
+      height: UI_SIZES.tabsHeight,
       justifyContent: "center",
       width: "100%"
     }}
