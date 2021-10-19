@@ -10,6 +10,14 @@ import { DraftType } from "../containers/NewMail";
 import { getUserColor } from "../utils/userColor";
 import { RenderPJs, HeaderMail, FooterButton } from "./MailContentItems";
 
+type MailContentProps = {
+  navigation: any;
+  mail: any;
+  isFetching: boolean;
+  restore: (mailIds: string[]) => void;
+  delete: (mailIds: string[]) => void;
+};
+
 const GetTopBarColor = ({ senderId, receiverId }) => {
   const userId = getSessionInfo().userId === senderId ? receiverId : senderId;
   const [color, setColor] = React.useState<string>();
@@ -17,7 +25,16 @@ const GetTopBarColor = ({ senderId, receiverId }) => {
   return color ? <View style={[styles.topBar, { backgroundColor: color }]} /> : <View />;
 };
 
-export default class MailContent extends React.PureComponent<any, any> {
+export default class MailContent extends React.PureComponent<MailContentProps, any> {
+  private mailFooterTrash() {
+    return (
+      <View style={styles.containerFooter}>
+        <FooterButton icon="delete-restore" text={I18n.t("zimbra-restore")} onPress={this.props.restore} />
+        <FooterButton icon="delete" text={I18n.t("zimbra-delete")} onPress={this.props.delete} />
+      </View>
+    );
+  }
+
   private mailFooter() {
     return (
       <View style={styles.containerFooter}>
@@ -85,6 +102,7 @@ export default class MailContent extends React.PureComponent<any, any> {
   }
 
   public render() {
+    const { navigation } = this.props;
     return (
       <PageContainer>
         <SafeAreaView style={{ flex: 1 }}>
@@ -100,7 +118,9 @@ export default class MailContent extends React.PureComponent<any, any> {
                   <RenderPJs attachments={this.props.mail.attachments} mailId={this.props.mail.id} onDownload={this.props.downloadAttachment} dispatch={this.props.dispatch} />
               )}
               {this.props.mail.body !== undefined && this.mailContent()}
-              {this.mailFooter()}
+              {navigation.getParam("isTrashed") || navigation.state.routeName === "trash"
+                ? this.mailFooterTrash()
+                : this.mailFooter()}
             </View>
           )}
         </SafeAreaView>

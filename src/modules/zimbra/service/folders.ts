@@ -1,8 +1,18 @@
 import { fetchJSONWithCache } from "../../../infra/fetchWithCache";
 import { ICount } from "../state/count";
 import { IFolderList } from "../state/folders";
+import { IFolder } from "../state/rootFolders";
 
 // Data type of what is given by the backend.
+export type RootFoldersBackend = {
+  id: string;
+  folderName: string;
+  path: string;
+  unread: number;
+  count: number;
+  folders: [];
+}[];
+
 export type FoldersBackend = {
   parent_id: string;
   trashed: boolean;
@@ -10,6 +20,17 @@ export type FoldersBackend = {
   name: string;
   id: string;
 }[];
+
+const rootFoldersAdapter: (data: RootFoldersBackend) => IFolder[] = data => {
+  return data.map(folder => ({
+    id: folder.id,
+    folderName: folder.folderName,
+    path: folder.path,
+    unread: folder.unread,
+    count: folder.count,
+    folders: folder.folders,
+  }))
+};
 
 const foldersAdapter: (data: FoldersBackend) => IFolderList = data => {
   return data.map(folder => ({
@@ -25,6 +46,10 @@ export const foldersService = {
   get: async () => {
     const folders = await fetchJSONWithCache(`/zimbra/folders/list`);
     return foldersAdapter(folders);
+  },
+  getRootFolders: async () => {
+    const rootFolders = await fetchJSONWithCache(`/zimbra/root-folder`);
+    return rootFoldersAdapter(rootFolders);
   },
   post: async (name: string, parentId: string | null = null) => {
     const body = {

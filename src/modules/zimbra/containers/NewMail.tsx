@@ -18,7 +18,7 @@ import { CommonStyles } from "../../../styles/common/styles";
 import { INavigationProps } from "../../../types";
 import { contentUriToLocalFile } from "../../../types/contentUri";
 import { HeaderAction } from "../../../ui/headers/NewHeader";
-import { trashMailsAction } from "../actions/mail";
+import { deleteMailsAction, trashMailsAction } from "../actions/mail";
 import { fetchMailContentAction, clearMailContentAction } from "../actions/mailContent";
 import {
   sendMailAction,
@@ -28,6 +28,7 @@ import {
   deleteAttachmentAction,
   forwardMailAction,
 } from "../actions/newMail";
+import { ModalPermanentDelete } from "../components/DeleteMailsModal";
 import NewMailComponent from "../components/NewMail";
 import { ISearchUsers } from "../service/newMail";
 import { getMailContentState, IMail } from "../state/mailContent";
@@ -48,6 +49,7 @@ interface ICreateMailEventProps {
   makeDraft: (mailDatas: object, inReplyTo: string, isForward: boolean) => void;
   updateDraft: (mailId: string, mailDatas: object) => void;
   trashMessage: (mailId: string[]) => void;
+  deleteMessage: (mailIds: string[]) => any;
   onPickFileError: (notifierId: string) => void;
   addAttachment: (draftId: string, files: LocalFile) => Promise<any[]>;
   deleteAttachment: (draftId: string, attachmentId: string) => void;
@@ -70,6 +72,7 @@ interface ICreateMailState {
   isPrefilling?: boolean;
   prevBody?: string;
   replyTo?: string;
+  deleteModal: { isShown: boolean; mailsIds: string[] };
 }
 
 type newMail = {
@@ -120,6 +123,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     this.state = {
       mail: { to: [], cc: [], bcc: [], subject: "", body: "", attachments: [] },
       prevBody: "",
+      deleteModal: { isShown: false, mailsIds: [] },
     };
   }
 
@@ -206,11 +210,16 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     },
     getDeleteDraft: () => {
       if (this.state.id) {
-        this.props.trashMessage([this.state.id]);
+        if (this.props.navigation.state.params?.isTrashed) {
+          let draftId = this.state.id;
+          this.setState({ deleteModal: { isShown: true, mailsIds: [draftId] } });
+        } else {
+          this.props.trashMessage([this.state.id]);
+          this.actionsDeleteSuccess();
+        }
         const navParams = this.props.navigation.state;
         if (navParams.params && navParams.params.onGoBack) navParams.params.onGoBack();
       }
-      this.props.navigation.goBack();
     },
     getGoBack: () => {
       if (this.props.uploadProgress > 0 && this.props.uploadProgress < 100) {
@@ -407,6 +416,23 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     }
   };
 
+  actionsDeleteSuccess = async () => {
+    const { navigation } = this.props;
+    if (navigation.state.params?.isTrashed) {
+      await this.props.deleteMessage([this.state.id]);
+    }
+    if (this.state.deleteModal.isShown) {
+      this.setState({ deleteModal: { isShown: false, mailsIds: [] } });
+    }
+
+    this.props.navigation.goBack();
+    Toast.show(I18n.t("zimbra-message-deleted"), {
+      position: Toast.position.BOTTOM,
+      mask: false,
+      containerStyle: { width: "95%", backgroundColor: "black" },
+    });
+  };
+
   forwardDraft = async () => {
     try {
       this.props.forwardMail(this.state.id, this.state.replyTo);
@@ -428,31 +454,41 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     }
   };
 
+  public closeDeleteModal = () => this.setState({ deleteModal: { isShown: false, mailsIds: [] } });
+
   public render() {
     const { isPrefilling, mail } = this.state;
     const { attachments, body, ...headers } = mail;
     console.log("NewMail attachments", attachments);
 
     return (
-      <NewMailComponent
-        isFetching={this.props.isFetching || !!isPrefilling}
-        headers={headers}
-        onDraftSave={this.saveDraft}
-        onHeaderChange={headers => this.setState(prevState => ({ mail: { ...prevState.mail, ...headers } }))}
-        body={this.state.mail.body.replace(/<br>|<br \/>/gs, "\n")}
-        onBodyChange={body => this.setState(prevState => ({ mail: { ...prevState.mail, body } }))}
-        attachments={
-          this.state.tempAttachment
-            ? [...this.state.mail.attachments, this.state.tempAttachment]
-            : this.state.mail.attachments
-        }
-        onAttachmentChange={attachments => {
-          console.log("onAttachmentChange", attachments);
-          return this.setState(prevState => ({ mail: { ...prevState.mail, attachments } }));
-        }}
-        onAttachmentDelete={attachmentId => this.props.deleteAttachment(this.state.id, attachmentId)}
-        prevBody={this.state.prevBody}
-      />
+      <>
+        <NewMailComponent
+          isFetching={this.props.isFetching || !!isPrefilling}
+          headers={headers}
+          onDraftSave={this.saveDraft}
+          onHeaderChange={headers => this.setState(prevState => ({ mail: { ...prevState.mail, ...headers } }))}
+          body={this.state.mail.body.replace(/<br>/gs, "\n")}
+          onBodyChange={body => this.setState(prevState => ({ mail: { ...prevState.mail, body } }))}
+          attachments={
+            this.state.tempAttachment
+              ? [...this.state.mail.attachments, this.state.tempAttachment]
+              : this.state.mail.attachments
+          }
+          onAttachmentChange={attachments => {
+            console.log("onAttachmentChange", attachments);
+            return this.setState(prevState => ({ mail: { ...prevState.mail, attachments } }));
+          }}
+          onAttachmentDelete={attachmentId => this.props.deleteAttachment(this.state.id, attachmentId)}
+          prevBody={this.state.prevBody}
+        />
+
+        <ModalPermanentDelete
+          deleteModal={this.state.deleteModal}
+          closeModal={this.closeDeleteModal}
+          actionsDeleteSuccess={this.actionsDeleteSuccess}
+        />
+      </>
     );
   }
 }
@@ -475,6 +511,7 @@ const mapDispatchToProps = (dispatch: any) => {
       makeDraft: makeDraftMailAction,
       updateDraft: updateDraftMailAction,
       trashMessage: trashMailsAction,
+      deleteMessage: deleteMailsAction,
       onPickFileError: (notifierId: string) => dispatch(pickFileError(notifierId)),
       addAttachment: addAttachmentAction,
       deleteAttachment: deleteAttachmentAction,

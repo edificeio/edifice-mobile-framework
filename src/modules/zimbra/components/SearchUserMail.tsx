@@ -20,7 +20,9 @@ const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange }) => {
       searchTimeout.current = window.setTimeout(() => {
         newMailService.searchUsers(search).then(({ groups, users }) => {
           const filteredUsers = users.filter(filterUsersOrGroups);
-          const filteredGroups = groups.filter(filterUsersOrGroups);
+          const filteredGroups = groups
+            .filter(filterUsersOrGroups)
+            .filter(group => group.name.toLocaleLowerCase().includes(search.toLocaleLowerCase()));
           updateFoundUsersOrGroups([...filteredUsers, ...filteredGroups]);
         });
       }, 500);

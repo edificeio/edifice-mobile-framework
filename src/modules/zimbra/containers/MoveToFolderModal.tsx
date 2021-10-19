@@ -37,10 +37,15 @@ class MoveToFolderModal extends React.Component<MoveToFolderModalProps, MoveToFo
   confirm = async () => {
     const { moveToFolder, moveToInbox, mail, successCallback } = this.props;
     const { selectedFolder } = this.state;
-    this.props.closeModal();
+    await this.props.closeModal();
+
+    let mailsIds = [] as any;
+    if (Array.isArray(mail)) mail.map(mailInfos => mailsIds.push(mailInfos.id));
+    else mailsIds.push(mail.id);
+
     if (!selectedFolder) return;
-    else if (selectedFolder === "inbox") await moveToInbox([mail.id]);
-    else await moveToFolder([mail.id], selectedFolder);
+    else if (selectedFolder === "inbox") await moveToInbox(mailsIds);
+    else await moveToFolder(mailsIds, selectedFolder);
     successCallback();
   };
 

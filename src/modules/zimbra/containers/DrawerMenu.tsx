@@ -4,9 +4,18 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
 import withViewTracking from "../../../framework/util/tracker/withViewTracking";
+import { fetchRootFoldersAction } from "../actions/folders";
 import { fetchInitAction } from "../actions/initMails";
 import DrawerMenu from "../components/DrawerMenu";
+import { getRootFolderListState, IRootFolderList } from "../state/rootFolders";
 import { getInitMailListState, IInitMail, IFolder, IQuota } from "../state/initMails";
+
+export type IRootFolders = {
+  data: IRootFolderList;
+  isPristine: boolean;
+  isFetching: boolean;
+  error: any;
+};
 
 export type IInit = {
   data: IInitMail;
@@ -16,16 +25,18 @@ export type IInit = {
 };
 
 type DrawerMenuProps = {
-  fetchInit: () => IInit;
+  fetchInit: () => void;
+  fetchRootFolders: () => void;
   activeItemKey: string;
   items: any[];
   init: IInit;
   descriptors: any[];
+  rootFolders: IRootFolders;
   navigation: NavigationScreenProp<any>;
 };
 
 type DrawerMenuState = {
-  folders: IFolder[];
+  folders: IRootFolderList;
   quota: IQuota;
 };
 
@@ -39,12 +50,18 @@ export class DrawerMenuContainer extends React.Component<DrawerMenuProps, Drawer
   }
   componentDidMount() {
     this.props.fetchInit();
+    this.props.fetchRootFolders();
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.init.isFetching && !this.props.init.isFetching) {
-      this.setState({ folders: this.props.init.data.folders });
       this.setState({ quota: this.props.init.data.quota });
+    }
+    if (
+      (prevProps.rootFolders.isFetching && !this.props.rootFolders.isFetching) ||
+      this.props.rootFolders.data !== this.state.folders
+    ) {
+      this.setState({ folders: this.props.rootFolders.data });
     }
   }
 
@@ -56,6 +73,7 @@ export class DrawerMenuContainer extends React.Component<DrawerMenuProps, Drawer
 const mapStateToProps = (state: any) => {
   return {
     init: getInitMailListState(state),
+    rootFolders: getRootFolderListState(state),
   };
 };
 
@@ -63,6 +81,7 @@ const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators(
     {
       fetchInit: fetchInitAction,
+      fetchRootFolders: fetchRootFoldersAction,
     },
     dispatch
   );

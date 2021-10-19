@@ -14,22 +14,42 @@ import { PageContainer } from "../../../ui/ContainerContent";
 import { Text } from "../../../ui/Typography";
 import { Header as HeaderComponent } from "../../../ui/headers/Header";
 import { HeaderAction } from "../../../ui/headers/NewHeader";
-import { toggleReadAction, trashMailsAction, deleteMailsAction } from "../actions/mail";
+import { toggleReadAction, trashMailsAction, deleteMailsAction, restoreMailsAction } from "../actions/mail";
 import { fetchMailContentAction } from "../actions/mailContent";
+import { ModalPermanentDelete } from "../components/DeleteMailsModal";
 import MailContent from "../components/MailContent";
 import MailContentMenu from "../components/MailContentMenu";
 import MoveModal from "../containers/MoveToFolderModal";
 import { getMailContentState } from "../state/mailContent";
 import { downloadAttachmentAction } from "../actions/download";
 
-class MailContentContainer extends React.PureComponent<any, any> {
+type MailContentContainerProps = {
+  navigation: any;
+  mail: any;
+  fetchMailContentAction: (mailId: string) => void;
+  moveToInbox: (mailIds: string[]) => void;
+  toggleRead: (mailIds: string[], read: boolean) => void;
+  trashMails: (mailIds: string[]) => void;
+  restoreMails: (mailIds: string[]) => void;
+  deleteMails: (mailIds: string[]) => void;
+};
+
+type MailContentContainerState = {
+  mailId: string;
+  showMenu: boolean;
+  showMoveModal: boolean;
+  deleteModal: { isShown: boolean; mailsIds: string[] };
+};
+
+class MailContentContainer extends React.PureComponent<MailContentContainerProps, MailContentContainerState> {
   constructor(props) {
     super(props);
 
     this.state = {
       mailId: this.props.navigation.state.params.mailId,
       showMenu: false,
-      showModal: false,
+      showMoveModal: false,
+      deleteModal: { isShown: false, mailsIds: [] },
     };
   }
   public componentDidMount() {
@@ -37,7 +57,7 @@ class MailContentContainer extends React.PureComponent<any, any> {
   }
 
   public componentDidUpdate() {
-    if (this.props.navigation.state.params.mailId !== this.state.mailId) {
+    if (this.props.navigation.state.params.mailId !== this.state.mailId && !this.state.showMoveModal) {
       this.props.fetchMailContentAction(this.props.navigation.state.params.mailId);
     }
   }
@@ -58,17 +78,9 @@ class MailContentContainer extends React.PureComponent<any, any> {
     });
   };
 
-  public showModal = () => {
-    this.setState({
-      showModal: true,
-    });
-  };
+  public showMoveModal = () => this.setState({ showMoveModal: true });
 
-  public closeModal = () => {
-    this.setState({
-      showModal: false,
-    });
-  };
+  public closeMoveModal = () => this.setState({ showMoveModal: false });
 
   mailMoved = () => {
     const { navigation } = this.props;
@@ -81,17 +93,47 @@ class MailContentContainer extends React.PureComponent<any, any> {
     });
   };
 
-  markAsRead = () => this.props.toggleRead([this.props.mail.id], false);
+  markAsRead = () => {
+    this.props.toggleRead([this.props.mail.id], false);
+    this.goBack();
+  };
 
   move = () => this.props.moveToInbox([this.props.mail.id]);
+
+  actionsDeleteSuccess = async () => {
+    const { navigation } = this.props;
+    if (navigation.getParam("isTrashed") || navigation.state.routeName === "trash") {
+      await this.props.deleteMails([this.props.mail.id]);
+    }
+    if (this.state.deleteModal.isShown) {
+      this.setState({ deleteModal: { isShown: false, mailsIds: [] } });
+    }
+
+    this.goBack();
+    Toast.show(I18n.t("zimbra-message-deleted"), {
+      position: Toast.position.BOTTOM,
+      mask: false,
+      containerStyle: { width: "95%", backgroundColor: "black" },
+    });
+  };
+
+  public closeDeleteModal = () => this.setState({ deleteModal: { isShown: false, mailsIds: [] } });
 
   delete = async () => {
     const { navigation } = this.props;
     const isTrashed = navigation.getParam("isTrashed");
-    if (isTrashed) await this.props.deleteMails([this.props.mail.id]);
-    else await this.props.trashMails([this.props.mail.id]);
+    if (isTrashed) {
+      await this.setState({ deleteModal: { isShown: true, mailsIds: [this.props.mail.id] } });
+    } else {
+      await this.props.trashMails([this.props.mail.id]);
+      this.actionsDeleteSuccess();
+    }
+  };
+
+  restore = async () => {
+    await this.props.restoreMails([this.props.mail.id]);
     this.goBack();
-    Toast.show(I18n.t("zimbra-message-deleted"), {
+    Toast.show(I18n.t("zimbra-message-restored"), {
       position: Toast.position.BOTTOM,
       mask: false,
       containerStyle: { width: "95%", backgroundColor: "black" },
@@ -104,15 +146,33 @@ class MailContentContainer extends React.PureComponent<any, any> {
     navigation.dispatch(NavigationActions.back());
   };
 
-  public render() {
-    const { navigation, mail } = this.props;
-    const { showMenu, showModal } = this.state;
-    const menuData = [
+  setMenuData = () => {
+    const { navigation } = this.props;
+    let menuData = [
       { text: I18n.t("zimbra-mark-unread"), icon: "email", onPress: this.markAsRead },
-      { text: I18n.t("zimbra-move"), icon: "unarchive", onPress: this.showModal },
+      { text: I18n.t("zimbra-move"), icon: "unarchive", onPress: this.showMoveModal },
       // { text: I18n.t("zimbra-download-all"), icon: "download", onPress: () => {} },
       { text: I18n.t("zimbra-delete"), icon: "delete", onPress: this.delete },
     ];
+    if (navigation.getParam("isSended") || navigation.state.routeName === "sendMessages") {
+      menuData = [
+        { text: I18n.t("zimbra-mark-unread"), icon: "email", onPress: this.markAsRead },
+        { text: I18n.t("zimbra-delete"), icon: "delete", onPress: this.delete },
+      ];
+    }
+    if (navigation.getParam("isTrashed") || navigation.state.routeName === "trash") {
+      menuData = [
+        { text: I18n.t("zimbra-restore"), icon: "delete-restore", onPress: this.restore },
+        { text: I18n.t("zimbra-delete"), icon: "delete", onPress: this.delete },
+      ];
+    }
+    return menuData;
+  };
+
+  public render() {
+    const { navigation, mail } = this.props;
+    const { showMenu, showMoveModal } = this.state;
+    let menuData = this.setMenuData();
     return (
       <>
         <PageContainer>
@@ -134,10 +194,16 @@ class MailContentContainer extends React.PureComponent<any, any> {
               <Icon name="more_vert" size={24} color="white" style={{ marginRight: 10 }} />
             </TouchableOpacity>
           </HeaderComponent>
-          <MailContent {...this.props} delete={this.delete} />
+          <MailContent {...this.props} delete={this.delete} restore={this.restore} />
         </PageContainer>
-        <MoveModal mail={mail} show={showModal} closeModal={this.closeModal} successCallback={this.mailMoved} />
+
+        <MoveModal mail={mail} show={showMoveModal} closeModal={this.closeMoveModal} successCallback={this.mailMoved} />
         <MailContentMenu onClickOutside={this.showMenu} show={showMenu} data={menuData} />
+        <ModalPermanentDelete
+          deleteModal={this.state.deleteModal}
+          closeModal={this.closeDeleteModal}
+          actionsDeleteSuccess={this.actionsDeleteSuccess}
+        />
       </>
     );
   }
@@ -161,6 +227,7 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
       trashMails: trashMailsAction,
       deleteMails: deleteMailsAction,
       downloadAttachment: downloadAttachmentAction,
+      restoreMails: restoreMailsAction,
     },
     dispatch
   ), dispatch};

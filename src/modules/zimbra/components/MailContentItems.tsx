@@ -13,14 +13,14 @@ import { Header, CenterPanel, LeftPanel } from "../../../ui/ContainerContent";
 import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
 import { Text, TextBold } from "../../../framework/components/text";
 import { getFileIcon } from "../utils/fileIcon";
-import { getUserColor, getProfileColor } from "../utils/userColor";
+import { getUserColor } from "../utils/userColor";
 import { findReceivers2, findReceiversAvatars, Author, findSenderAvatar } from "./MailItem";
 import Toast from "react-native-tiny-toast";
 import { downloadFileAction } from "../../../framework/util/fileHandler/actions";
 import { ThunkDispatch } from "redux-thunk";
 
-const User = ({ userId, userName }) => {
-  const [dotColor, setDotColor] = React.useState(getProfileColor("Guest"));
+const User = ({ userId, userName }: { userId: string; userName: string }) => {
+  const [dotColor, setDotColor] = React.useState("white");
 
   getUserColor(userId).then(setDotColor);
 

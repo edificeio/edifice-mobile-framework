@@ -1,6 +1,6 @@
 import I18n from "i18n-js";
 import * as React from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
 import { CommonStyles } from "../../../styles/common/styles";
@@ -56,29 +56,31 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
     const inboxSubFolder = folders.find(item => item.folderName === "Inbox");
     return (
       <ModalBox isVisible={show}>
-        <ModalContent>
+        <ModalContent style={{ width: Dimensions.get("window").width - 80 }}>
           <View style={style.containerView}>
             <View style={{ alignSelf: "baseline", paddingBottom: 8, paddingHorizontal: 12 }}>
               <Text style={{ fontSize: 18 }}>{I18n.t("zimbra-move-to")}</Text>
             </View>
-            <View style={{ backgroundColor: "#eef7fb", width: "100%", padding: 4 }}>
-              <Text style={{ fontSize: 18 }}>{I18n.t("zimbra-messages")}</Text>
-            </View>
-            {this.renderOption("inbox", I18n.t("zimbra-inbox"), "inbox")}
-            {this.renderOption(this.findMainFolderId("Sent"), I18n.t("zimbra-outbox"), "send")}
-            {this.renderOption(this.findMainFolderId("Drafts"), I18n.t("zimbra-drafts"), "insert_drive_file")}
-            {this.renderOption(this.findMainFolderId("Trash"), I18n.t("zimbra-trash"), "delete")}
-            {this.renderOption(this.findMainFolderId("Junk"), I18n.t("zimbra-spams"), "delete_sweep")}
-            {inboxSubFolder !== undefined && inboxSubFolder.folders !== undefined && inboxSubFolder.folders.length > 0 && (
-              <View>
-                <View style={{ backgroundColor: "lightblue", width: "100%", padding: 4 }}>
-                  <Text style={{ fontSize: 18 }}>{I18n.t("zimbra-directories")}</Text>
-                </View>
-                <ScrollView style={{ height: "33%" }}>
-                  {inboxSubFolder.folders.map(f => this.renderOption(f.id, f.folderName, "folder"))}
-              </ScrollView>
+            <ScrollView style={{ flexGrow: 1, height: Dimensions.get("window").width }}>
+              <View style={{ backgroundColor: "#eef7fb", width: "100%", padding: 4 }}>
+                <Text style={{ fontSize: 18 }}>{I18n.t("zimbra-messages")}</Text>
               </View>
-            )}
+              {this.renderOption("inbox", I18n.t("zimbra-inbox"), "inbox")}
+              {this.renderOption(this.findMainFolderId("Sent"), I18n.t("zimbra-outbox"), "send")}
+              {this.renderOption(this.findMainFolderId("Drafts"), I18n.t("zimbra-drafts"), "insert_drive_file")}
+              {this.renderOption(this.findMainFolderId("Trash"), I18n.t("zimbra-trash"), "delete")}
+              {this.renderOption(this.findMainFolderId("Junk"), I18n.t("zimbra-spams"), "delete_sweep")}
+              {inboxSubFolder !== undefined &&
+                inboxSubFolder.folders !== undefined &&
+                inboxSubFolder.folders.length > 0 && (
+                  <View>
+                    <View style={{ backgroundColor: "lightblue", width: "100%", padding: 4 }}>
+                      <Text style={{ fontSize: 18 }}>{I18n.t("zimbra-directories")}</Text>
+                    </View>
+                    <View>{inboxSubFolder.folders.map(f => this.renderOption(f.id, f.folderName, "folder"))}</View>
+                  </View>
+                )}
+            </ScrollView>
             <View style={{ flexDirection: "row-reverse", padding: 20, paddingBottom: 10 }}>
               <DialogButtonOk label={I18n.t("zimbra-move")} onPress={confirm} />
               <DialogButtonCancel onPress={() => closeModal()} />

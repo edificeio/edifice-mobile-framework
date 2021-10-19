@@ -14,6 +14,12 @@ export function trashMailsAction(mailIds: string[]) {
   };
 }
 
+export function restoreMailsAction(mailIds: string[]) {
+  return async (dispatch: Dispatch) => {
+    await mailService.restoreMails(mailIds);
+  };
+}
+
 export function deleteMailsAction(mailIds: string[]) {
   return async (dispatch: Dispatch) => {
     await mailService.deleteMails(mailIds);
