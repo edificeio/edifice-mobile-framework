@@ -95,13 +95,16 @@ export const FoundList = ({ foundUserOrGroup, addUser }) => {
 
   return foundUserOrGroup.length > 0 ? (
     <FlatList
+      keyboardShouldPersistTaps="handled"
+      keyboardDismissMode="on-drag"
+      removeClippedSubviews={true}
       contentContainerStyle={{
         paddingBottom: insets.bottom,
       }}
       style={absoluteListStyle}
       data={foundUserOrGroup}
       renderItem={({ item }) => (
-        <FoundUserOrGroup id={item.id} displayName={item.name || item.displayName} onPress={() => addUser(item)} />
+        <FoundUserOrGroup id={item.id} displayName={item.name || item.displayName} onPress={() => {addUser(item)}} />
       )}
     />
   ) : (

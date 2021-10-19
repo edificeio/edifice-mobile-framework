@@ -71,7 +71,7 @@ export default (props: NewMailComponentProps) => {
   // console.log("render components", isSearchingUsers);
 
   React.useEffect(() => {
-    const showSubscription = Keyboard.addListener("keyboardWillChangeFrame", () => {
+    const showSubscription = Keyboard.addListener("keyboardWillHide", () => {
       setKeyboardStatus(new Date().getTime());
     });
 
@@ -106,6 +106,7 @@ export default (props: NewMailComponentProps) => {
           }
           alwaysBounceVertical={false}
           keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
           {...(isSearchingUsers
             ? {
                 style: {
@@ -163,7 +164,6 @@ const Fields = ({
   body: string;
   onBodyChange: (body: string) => void;
 }) => {
-  // console.log("render fields");
   const commonFields = (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.color.background.card }}>
       <HeaderSubject
