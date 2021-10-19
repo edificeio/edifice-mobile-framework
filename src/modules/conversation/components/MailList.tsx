@@ -54,7 +54,7 @@ type MailListState = {
 let lastFolderCache = '';
 
 export default class MailList extends React.PureComponent<MailListProps, MailListState> {
-  swipeableRef = null;
+  flatListRef = null;
 
   constructor(props) {
     super(props);
@@ -73,8 +73,8 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
   }
 
   componentDidUpdate(prevProps) {
-    const { notifications, isFetching, fetchCompleted } = this.props;
-    if (this.state.indexPage === 0 && !isFetching && prevProps.isFetching && this.props.fetchRequested) {
+    const { notifications, isFetching, fetchCompleted, fetchRequested, navigation } = this.props;
+    if (this.state.indexPage === 0 && !isFetching && prevProps.isFetching && fetchRequested) {
       this.setState({ mails: notifications });
       fetchCompleted();
     }
@@ -84,18 +84,22 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
       this.state.indexPage > 0 &&
       prevProps.isFetching &&
       !isFetching &&
-      this.props.fetchRequested
+      fetchRequested
     ) {
       let { mails } = this.state;
-      if (lastFolderCache && this.props.navigation.state?.params?.key !== lastFolderCache) {
+      if (lastFolderCache && navigation.state?.params?.key !== lastFolderCache) {
         // THIS IS A BIG HACK BECAUSE DATA FLOW IS TOTALLY FUCKED UP IN THIS MODULE !!!!!!!! 🤬🤬🤬
         // So we force here mail state flush when folder has changed.
         mails = [];
       }
-      lastFolderCache = this.props.navigation.state?.params?.key;
-      const joinedList = mails.concat(this.props.notifications);
+      lastFolderCache = navigation.state?.params?.key;
+      const joinedList = mails.concat(notifications);
       this.setState({ mails: joinedList });
       fetchCompleted();
+    }
+
+    if (prevProps.fetchRequested && !fetchRequested) {
+      this.flatListRef && this.flatListRef.scrollToOffset({ offset: 0, animated: false });
     }
   }
 
@@ -253,6 +257,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
           />
           <View style={{ flex: 1 }}>
             <FlatList
+              ref={ref => this.flatListRef = ref}
               scrollEnabled={!isSwipingMail}
               onMomentumScrollBegin={() => this.setState({ currentlySwipedMail: false })}
               style={{ marginTop: 45 }}
