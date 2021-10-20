@@ -38,6 +38,8 @@ type DrawerMenuState = {
 };
 
 export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, DrawerMenuState> {
+  scrollViewRef = null;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -99,6 +101,9 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
       this.getDrawerHeightAnimation()
     ]).start(() => {
       this.setState({ isTogglingList: false, showList: !showList });
+      if (showList) {
+        this.scrollViewRef && this.scrollViewRef.scrollTo({ y: 0, animated: false });
+      }
       // Note: the setTimeout is used to smooth the animation
       setTimeout(() => callback && callback(), 0);
     });
@@ -275,6 +280,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
             }
           </TouchableOpacity>
           <ScrollView
+            ref={ref => this.scrollViewRef = ref}
             style={{ marginLeft: showList ? 20 : undefined }}
             showsVerticalScrollIndicator={false}
             alwaysBounceVertical={false}
