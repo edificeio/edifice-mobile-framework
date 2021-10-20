@@ -4,14 +4,11 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Dimensions,
-  Platform,
   Animated,
   TouchableWithoutFeedback,
   ViewStyle
 } from "react-native";
 import { NavigationScreenProp } from "react-navigation";
-import { hasNotch } from "react-native-device-info";
 import I18n from "i18n-js";
 
 import { ANIMATION_CONFIGURATIONS_FADE, ANIMATION_CONFIGURATIONS_SIZE, UI_SIZES } from "../../../framework/components/constants";
@@ -233,11 +230,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
       drawerHeight
     } = this.state;
 
-    const navHeight = Platform.OS === "ios" ? hasNotch() ? 40 : 20 : 0;
-    const headerHeight = Platform.select({ ios: hasNotch() ? 100 : 76, default: UI_SIZES.headerHeight });
-    const tabbarHeight = UI_SIZES.tabsHeight;
-    const screenHeight = Dimensions.get("window").height;
-    const drawerMaxHeight = screenHeight - headerHeight - navHeight - tabbarHeight;
+    const drawerMaxHeight = UI_SIZES.getViewHeight();
     const isDrawerMaximallyExpanded = drawerHeight >= drawerMaxHeight;
     
     const animatedContainerHeight = { height: animatedHeight, maxHeight: drawerMaxHeight };
@@ -254,7 +247,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
 
     const backdropDisplay = { 
       opacity : animatedOpacity,
-      height: showList ? screenHeight : 0
+      height: showList ? UI_SIZES.screenHeight : 0
     };
 
     return (
