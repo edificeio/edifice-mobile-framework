@@ -55,6 +55,8 @@ class CreateFolderModal extends React.PureComponent<CreateFolderModalProps, Crea
     const { show } = this.props;
     const textInputStyle = {
       color: CommonStyles.textColor,
+      borderBottomWidth: 0.5,
+      borderColor: "lightgrey",
     } as ViewStyle;
     return (
       <ModalBox isVisible={show} backdropOpacity={0.5}>
@@ -68,7 +70,6 @@ class CreateFolderModal extends React.PureComponent<CreateFolderModalProps, Crea
               value={name}
               onChangeText={this.onNameChange}
               placeholder={I18n.t("zimbra-directory-name")}
-              underlineColorAndroid="grey"
               style={textInputStyle}
             />
           </View>

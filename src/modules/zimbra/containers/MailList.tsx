@@ -23,14 +23,24 @@ import {
   trashMailsAction,
 } from "../actions/mail";
 import { fetchMailListAction, fetchMailListFromFolderAction } from "../actions/mailList";
-import { ModalPermanentDelete } from "../components/DeleteMailsModal";
+import { fetchQuotaAction } from "../actions/quota";
 import MailList from "../components/MailList";
+import { ModalPermanentDelete } from "../components/Modals/DeleteMailsModal";
 import MoveModal from "../containers/MoveToFolderModal";
 import { getInitMailListState, IFolder } from "../state/initMails";
 import { getMailListState, IMail } from "../state/mailList";
+import { getQuotaState, IQuota } from "../state/quota";
 import { IInit } from "./DrawerMenu";
+import { ModalStorageWarning } from "../components/Modals/QuotaModal";
 
 // ------------------------------------------------------------------------------------------------
+
+export interface IStorage {
+  data: IQuota;
+  isFetching: boolean;
+  isPristine: boolean;
+  error: any;
+}
 
 type MailListContainerProps = {
   navigation: NavigationDrawerProp<any>;
@@ -42,11 +52,13 @@ type MailListContainerProps = {
   trashMails: (mailIds: string[]) => void;
   restoreMails: (mailIds: string[]) => void;
   deleteMails: (mailIds: string[]) => void;
+  fetchStorage: () => void;
   isPristine: boolean;
   isFetching: boolean;
   notifications: any;
   folders: IFolder[];
   isFocused: boolean;
+  storage: IStorage;
   //props from search component
   isSearch: boolean;
   searchString: string;
@@ -61,6 +73,7 @@ type MailListContainerState = {
   isShownMoveModal: boolean;
   isHeaderSelectVisible: boolean;
   deleteModal: { isShown: boolean; mailsIds: string[] };
+  isShownStorageWarning: boolean;
 };
 
 class MailListContainer extends React.PureComponent<MailListContainerProps, MailListContainerState> {
@@ -77,12 +90,13 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
       isShownMoveModal: false,
       isHeaderSelectVisible: false,
       deleteModal: { isShown: false, mailsIds: [] },
+      isShownStorageWarning: false,
     };
   }
 
   setMails = mailList => this.setState({ mails: mailList });
 
-  private fetchMails = (page = 0) => {
+  private fetchMails = (page = 0, isRefreshStorage: boolean = false) => {
     const { isSearch, searchString } = this.props;
     let isSearchValid = (isSearch && searchString !== "" && searchString.length >= 3) as boolean;
 
@@ -96,6 +110,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
       if (!folderName) this.props.fetchMailList(page, key);
       else this.props.fetchMailFromFolder(folderName, page);
     }
+    if (isRefreshStorage) this.props.fetchStorage();
   };
 
   fetchCompleted = () => {
@@ -104,19 +119,30 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
 
   public componentDidMount() {
     if (this.props.navigation.getParam("key") === undefined) this.setState({ firstFetch: true });
-    this.fetchMails();
+    this.fetchMails(0, true);
   }
 
   componentDidUpdate(prevProps) {
     if (!this.props.isFetching && this.state.firstFetch) this.setState({ firstFetch: false });
     const folderName = this.props.navigation.getParam("folderName");
+
     if (
-      !this.state.fetchRequested &&
-      (folderName !== prevProps.navigation.getParam("folderName") ||
-        (this.props.isFocused && prevProps.isFocused !== this.props.isFocused) ||
-        this.props.searchString !== prevProps.searchString)
+      this.props.isFocused &&
+      (!prevProps.isFocused ||
+        (!this.state.fetchRequested &&
+          (folderName !== prevProps.navigation.getParam("folderName") ||
+            this.props.searchString !== prevProps.searchString)))
     ) {
       this.fetchMails();
+    }
+
+    if (
+      (this.props.isFocused && prevProps.isFocused !== this.props.isFocused) ||
+      (prevProps.storage.isFetching !== this.props.storage.isFetching &&
+        !this.props.storage.isFetching &&
+        this.props.storage.data)
+    ) {
+      this.setState({ isShownStorageWarning: true });
     }
   }
 
@@ -129,6 +155,19 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
     if (this.props.isSearch) this.props.setSearchHeaderVisibility(false);
     this.props.navigation.setParams({ selectedMails: false });
     if (!goBack) this.fetchMails(0);
+  };
+
+  isStorageFull = () => {
+    const { storage } = this.props;
+
+    if (
+      this.state.isShownStorageWarning &&
+      Number(storage.data.quota) > 0 &&
+      storage.data.storage >= Number(storage.data.quota)
+    ) {
+      return true;
+    }
+    return false;
   };
 
   // -- LONG PRESS ACTIONS AND HEADER --------------------------------------------------------------
@@ -245,7 +284,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
     return (
       <>
         <HeaderComponent color={CommonStyles.secondary}>
-          <HeaderAction onPress={() => this.onUnselectListMails(true)} name="chevron-left1" />
+          <HeaderAction onPress={() => this.onUnselectListMails()} name="chevron-left1" />
           <Text style={{ color: "white", fontSize: 16, fontWeight: "400" }}>{this.getListSelectedMails().length}</Text>
           <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-end" }}>
             <TouchableOpacity onPress={() => this.restoreSelectedMails()}>
@@ -327,6 +366,13 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
             goBack={this.onGoBack}
           />
         </PageContainer>
+
+        {this.isStorageFull() && (
+          <ModalStorageWarning
+            isVisible={this.state.isShownStorageWarning}
+            closeModal={() => this.setState({ isShownStorageWarning: false })}
+          />
+        )}
       </>
     );
   }
@@ -344,6 +390,7 @@ const mapStateToProps: (state: any) => any = state => {
   }
 
   const folders = getInitMailListState(state).data.folders;
+  const storage = getQuotaState(state);
 
   // Format props
   return {
@@ -351,6 +398,7 @@ const mapStateToProps: (state: any) => any = state => {
     isFetching,
     notifications: data,
     folders,
+    storage,
   };
 };
 
@@ -367,6 +415,7 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
       trashMails: trashMailsAction,
       restoreMails: restoreMailsAction,
       deleteMails: deleteMailsAction,
+      fetchStorage: fetchQuotaAction,
     },
     dispatch
   );

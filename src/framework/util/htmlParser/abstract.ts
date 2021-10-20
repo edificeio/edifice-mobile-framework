@@ -21,6 +21,7 @@ import { parseAttrs } from "../../../utils/attrs";
 const entitiesTransformer = new AllHtmlEntities();
 
 export interface IHtmlParserAbstractOptions {
+  selectable?: boolean;
   ignoreClass?: string[];
   preventZWSP?: boolean;
   emptyDiv2Br?: boolean;
@@ -52,7 +53,8 @@ export class HtmlParserAbstract<RenderType> {
     fixVoidTags: true,
     ignoreClass: [],
     parseEntities: true,
-    preventZWSP: true
+    preventZWSP: true,
+    selectable: false,
   };
 
   /**

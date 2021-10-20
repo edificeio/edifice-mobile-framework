@@ -3,11 +3,12 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
 import { putSignatureAction } from "../actions/signature";
-import SignatureModalComponent from "../components/SignatureModal";
-import { getSignatureState } from "../state/signature";
+import SignatureModalComponent from "../components/Modals/SignatureModal";
+import { getSignatureState, ISignature } from "../state/signature";
 
 type SignatureModalProps = {
   signature: string;
+  signatureData: ISignature;
   show: boolean;
   closeModal: () => any;
   putSignature: (signatureData: string, isGlobalSignature: boolean) => any;
@@ -17,18 +18,31 @@ type SignatureModalProps = {
 type MoveToFolderModalState = {
   signature: string;
   isGlobalSignature: boolean;
+  isUpdated: boolean;
 };
 
 class SignatureModal extends React.Component<SignatureModalProps, MoveToFolderModalState> {
   constructor(props) {
     super(props);
 
-    const { signature } = this.props;
+    const { preference } = this.props.signatureData;
+    let signatureCheck = false;
+    if (preference !== undefined) {
+      if (typeof preference === "object") signatureCheck = preference.useSignature;
+      else signatureCheck = JSON.parse(preference).useSignature;
+    }
+
     this.state = {
-      signature: signature,
-      isGlobalSignature: false,
+      signature: this.props.signature,
+      isGlobalSignature: signatureCheck,
+      isUpdated: false,
     };
   }
+
+  componentDidUpdate = () => {
+    if (!this.state.isUpdated && this.props.signature !== this.state.signature)
+      this.setState({ isUpdated: true, signature: this.props.signature });
+  };
 
   setSignature = (text: string) => {
     this.setState({ signature: text });
@@ -43,13 +57,12 @@ class SignatureModal extends React.Component<SignatureModalProps, MoveToFolderMo
     this.setState({ isGlobalSignature: !isGlobalSignature });
   };
 
-  confirm = () => {
+  confirm = async () => {
     const { putSignature, successCallback } = this.props;
     const { signature, isGlobalSignature } = this.state;
     this.props.closeModal();
 
-    if (!signature) return;
-    else putSignature(signature, isGlobalSignature);
+    await putSignature(signature, isGlobalSignature);
     successCallback();
   };
 

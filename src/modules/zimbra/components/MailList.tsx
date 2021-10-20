@@ -23,7 +23,7 @@ type MailListProps = {
   firstFetch: boolean;
   fetchInit: () => IInit;
   fetchCompleted: () => void;
-  fetchMails: (page: number) => void;
+  fetchMails: (page: number, isRefreshStorage?: boolean) => void;
   selectMails: () => void;
   goBack: () => void;
   folders: any;
@@ -121,6 +121,13 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     }
   };
 
+  renderDateFormat = (mailDate: moment.Moment) => {
+    if (mailDate.year() < moment().year()) {
+      return mailDate.calendar();
+    }
+    return mailDate.format("D MMM");
+  };
+
   private renderMailItemInfos(mailInfos) {
     let contact = ["", ""];
     if (mailInfos.systemFolder === "INBOX") contact = mailInfos.displayNames.find(item => item[0] === mailInfos.from);
@@ -152,7 +159,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
                     {contact[1]}
                   </Text>
                 ))}
-              <Text style={styles.greyColor}>{moment(mailInfos.date).format("dddd LL")}</Text>
+              <Text style={styles.greyColor}>{this.renderDateFormat(moment(mailInfos.date))}</Text>
             </View>
             <View style={styles.mailInfos}>
               <Text style={{ flex: 1, color: "#AFAFAF" }} numberOfLines={1}>
@@ -177,8 +184,8 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     }
   };
 
-  refreshMailList = () => {
-    this.props.fetchMails(0);
+  refreshMailList = (isRefreshStorage: boolean = false) => {
+    this.props.fetchMails(0, isRefreshStorage);
     this.setState({ indexPage: 0 });
     this.props.goBack();
   };
@@ -188,7 +195,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     const uniqueId = [];
     const uniqueMails = this.state.mails.filter((mail: IMail) => {
       // @ts-ignore
-      if (uniqueId.indexOf(mail.id) == -1) {
+      if (uniqueId.indexOf(mail.id) === -1) {
         // @ts-ignore
         uniqueId.push(mail.id);
         return true;
@@ -203,7 +210,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
           extraData={uniqueMails}
           keyExtractor={(item: IMail) => item.id}
           refreshControl={
-            <RefreshControl refreshing={isFetching && !firstFetch} onRefresh={() => this.refreshMailList()} />
+            <RefreshControl refreshing={isFetching && !firstFetch} onRefresh={() => this.refreshMailList(true)} />
           }
           onEndReachedThreshold={0.001}
           onScrollBeginDrag={() => this.setState({ nextPageCallable: true })}

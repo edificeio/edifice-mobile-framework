@@ -3,12 +3,12 @@ import * as React from "react";
 import { View, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
-import { CommonStyles } from "../../../styles/common/styles";
-import { Icon } from "../../../ui";
-import { DialogButtonCancel, DialogButtonOk } from "../../../ui/ConfirmDialog";
-import { ModalBox, ModalContent } from "../../../ui/Modal";
-import { Text } from "../../../ui/Typography";
-import { IFolder } from "../state/initMails";
+import { CommonStyles } from "../../../../styles/common/styles";
+import { Icon } from "../../../../ui";
+import { DialogButtonCancel, DialogButtonOk } from "../../../../ui/ConfirmDialog";
+import { ModalBox, ModalContent } from "../../../../ui/Modal";
+import { Text } from "../../../../ui/Typography";
+import { IFolder } from "../../state/initMails";
 
 type MoveToFolderModalProps = {
   show: boolean;

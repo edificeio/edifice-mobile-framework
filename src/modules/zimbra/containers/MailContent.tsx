@@ -14,24 +14,29 @@ import { PageContainer } from "../../../ui/ContainerContent";
 import { Text } from "../../../ui/Typography";
 import { Header as HeaderComponent } from "../../../ui/headers/Header";
 import { HeaderAction } from "../../../ui/headers/NewHeader";
+import { downloadAttachmentAction } from "../actions/download";
 import { toggleReadAction, trashMailsAction, deleteMailsAction, restoreMailsAction } from "../actions/mail";
 import { fetchMailContentAction } from "../actions/mailContent";
-import { ModalPermanentDelete } from "../components/DeleteMailsModal";
+import { fetchQuotaAction } from "../actions/quota";
 import MailContent from "../components/MailContent";
 import MailContentMenu from "../components/MailContentMenu";
+import { ModalPermanentDelete } from "../components/Modals/DeleteMailsModal";
+import { ModalStorageWarning } from "../components/Modals/QuotaModal";
 import MoveModal from "../containers/MoveToFolderModal";
 import { getMailContentState } from "../state/mailContent";
-import { downloadAttachmentAction } from "../actions/download";
+import { getQuotaState, IQuota } from "../state/quota";
 
 type MailContentContainerProps = {
   navigation: any;
   mail: any;
+  storage: IQuota;
   fetchMailContentAction: (mailId: string) => void;
   moveToInbox: (mailIds: string[]) => void;
   toggleRead: (mailIds: string[], read: boolean) => void;
   trashMails: (mailIds: string[]) => void;
   restoreMails: (mailIds: string[]) => void;
   deleteMails: (mailIds: string[]) => void;
+  fetchStorage: () => void;
 };
 
 type MailContentContainerState = {
@@ -39,6 +44,7 @@ type MailContentContainerState = {
   showMenu: boolean;
   showMoveModal: boolean;
   deleteModal: { isShown: boolean; mailsIds: string[] };
+  isShownStorageWarning: boolean;
 };
 
 class MailContentContainer extends React.PureComponent<MailContentContainerProps, MailContentContainerState> {
@@ -50,10 +56,12 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
       showMenu: false,
       showMoveModal: false,
       deleteModal: { isShown: false, mailsIds: [] },
+      isShownStorageWarning: false,
     };
   }
   public componentDidMount() {
     this.props.fetchMailContentAction(this.props.navigation.state.params.mailId);
+    this.props.fetchStorage();
   }
 
   public componentDidUpdate() {
@@ -140,10 +148,29 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
     });
   };
 
+  restore = async () => {
+    await this.props.restoreMails([this.props.mail.id]);
+    this.goBack();
+    Toast.show(I18n.t("zimbra-message-restored"), {
+      position: Toast.position.BOTTOM,
+      mask: false,
+      containerStyle: { width: "95%", backgroundColor: "black" },
+    });
+  };
+
   goBack = () => {
     const { navigation } = this.props;
     navigation.state.params.onGoBack?.();
     navigation.dispatch(NavigationActions.back());
+  };
+
+  checkStorage = () => {
+    const { storage } = this.props;
+    if (Number(storage.quota) > 0 && storage.storage >= Number(storage.quota)) {
+      this.setState({ isShownStorageWarning: true });
+      return false;
+    }
+    return true;
   };
 
   setMenuData = () => {
@@ -194,7 +221,7 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
               <Icon name="more_vert" size={24} color="white" style={{ marginRight: 10 }} />
             </TouchableOpacity>
           </HeaderComponent>
-          <MailContent {...this.props} delete={this.delete} restore={this.restore} />
+          <MailContent {...this.props} delete={this.delete} restore={this.restore} checkStorage={this.checkStorage} />
         </PageContainer>
 
         <MoveModal mail={mail} show={showMoveModal} closeModal={this.closeMoveModal} successCallback={this.mailMoved} />
@@ -203,6 +230,10 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
           deleteModal={this.state.deleteModal}
           closeModal={this.closeDeleteModal}
           actionsDeleteSuccess={this.actionsDeleteSuccess}
+        />
+        <ModalStorageWarning
+          isVisible={this.state.isShownStorageWarning}
+          closeModal={() => this.setState({ isShownStorageWarning: false })}
         />
       </>
     );
@@ -216,6 +247,7 @@ const mapStateToProps: (state: any) => any = state => {
     isPristine,
     isFetching,
     mail: data,
+    storage: getQuotaState(state).data,
   };
 };
 
@@ -223,6 +255,7 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
   return {...bindActionCreators(
     {
       fetchMailContentAction,
+      fetchStorage: fetchQuotaAction,
       toggleRead: toggleReadAction,
       trashMails: trashMailsAction,
       deleteMails: deleteMailsAction,

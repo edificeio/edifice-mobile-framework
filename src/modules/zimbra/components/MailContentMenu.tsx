@@ -17,17 +17,18 @@ type MailContentMenuProps = {
   }[];
   onClickOutside: () => any;
   show: boolean;
+  newMailStyle?;
 };
 export default class MailContentMenu extends React.PureComponent<MailContentMenuProps> {
   public render() {
-    const { onClickOutside, show, data } = this.props;
+    const { onClickOutside, show, data, newMailStyle } = this.props;
     if (!show) return <></>;
     return (
-      <View style={style.overlayActions}>
+      <View style={[style.overlayActions, newMailStyle]}>
         <View style={style.shadow}>
           <TouchableWithoutFeedback style={{ width: "100%", height: "100%" }} onPress={onClickOutside}>
             <FlatList
-              style={style.actions}
+              style={[style.actions, newMailStyle]}
               data={data}
               renderItem={({ item }) => (
                 <TouchableOpacity onPress={item.onPress}>

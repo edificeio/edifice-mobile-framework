@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
 import { moveMailsToFolderAction, moveMailsToInboxAction } from "../actions/mail";
-import MoveToFolderModalComponent from "../components/MoveToFolderModal";
+import MoveToFolderModalComponent from "../components/Modals/MoveToFolderModal";
 import { getInitMailListState, IFolder } from "../state/initMails";
 
 type MoveToFolderModalProps = {

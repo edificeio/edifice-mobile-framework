@@ -8,7 +8,7 @@ import { PageContainer } from "../../../ui/ContainerContent";
 import { HtmlContentView } from "../../../ui/HtmlContentView";
 import { DraftType } from "../containers/NewMail";
 import { getUserColor } from "../utils/userColor";
-import { RenderPJs, HeaderMail, FooterButton } from "./MailContentItems";
+import { RenderPJs, HeaderMail, FooterButton, HeaderMailDetails } from "./MailContentItems";
 
 type MailContentProps = {
   navigation: any;
@@ -16,6 +16,7 @@ type MailContentProps = {
   isFetching: boolean;
   restore: (mailIds: string[]) => void;
   delete: (mailIds: string[]) => void;
+  checkStorage: () => boolean;
 };
 
 const GetTopBarColor = ({ senderId, receiverId }) => {
@@ -26,6 +27,14 @@ const GetTopBarColor = ({ senderId, receiverId }) => {
 };
 
 export default class MailContent extends React.PureComponent<MailContentProps, any> {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      detailsVisible: false,
+    };
+  }
+
   private mailFooterTrash() {
     return (
       <View style={styles.containerFooter}>
@@ -36,12 +45,14 @@ export default class MailContent extends React.PureComponent<MailContentProps, a
   }
 
   private mailFooter() {
+    const { checkStorage } = this.props;
     return (
       <View style={styles.containerFooter}>
         <FooterButton
           icon="reply"
           text={I18n.t("zimbra-reply")}
           onPress={() =>
+            checkStorage() &&
             this.props.navigation.navigate("newMail", {
               type: DraftType.REPLY,
               mailId: this.props.mail.id,
@@ -53,6 +64,7 @@ export default class MailContent extends React.PureComponent<MailContentProps, a
           icon="reply_all"
           text={I18n.t("zimbra-replyAll")}
           onPress={() =>
+            checkStorage() &&
             this.props.navigation.navigate("newMail", {
               type: DraftType.REPLY_ALL,
               mailId: this.props.mail.id,
@@ -64,6 +76,7 @@ export default class MailContent extends React.PureComponent<MailContentProps, a
           icon="forward"
           text={I18n.t("zimbra-forward")}
           onPress={() =>
+            checkStorage() &&
             this.props.navigation.navigate("newMail", {
               type: DraftType.FORWARD,
               mailId: this.props.mail.id,
@@ -77,6 +90,10 @@ export default class MailContent extends React.PureComponent<MailContentProps, a
   }
 
   private mailContent() {
+    const { mail } = this.props;
+    const htmlOpts = {
+      selectable: true,
+    };
     return (
       <View style={styles.shadowContainer}>
         <View style={{ height: 115 }} />
@@ -86,17 +103,17 @@ export default class MailContent extends React.PureComponent<MailContentProps, a
             contentContainerStyle={{
               padding: 10,
             }}>
-            <HtmlContentView html={this.props.mail.body} />
+            {mail.body ? <HtmlContentView html={mail.body} opts={htmlOpts} /> : null}
           </ScrollView>
         </View>
       </View>
     );
   }
 
-  private mailHeader() {
+  private mailHeader(setDetailsVisibility: (v: boolean) => void) {
     return (
       <View>
-        <HeaderMail mailInfos={this.props.mail} />
+        <HeaderMail mailInfos={this.props.mail} setDetailsVisibility={setDetailsVisibility} />
       </View>
     );
   }
@@ -113,7 +130,10 @@ export default class MailContent extends React.PureComponent<MailContentProps, a
               {this.props.mail.id && (
                 <GetTopBarColor senderId={this.props.mail.from} receiverId={this.props.mail.to[0]} />
               )}
-              {this.props.mail.id && this.mailHeader()}
+              {this.props.mail.id &&
+                this.mailHeader(v => {
+                  this.setState({ detailsVisible: v });
+                })}
               {this.props.mail.hasAttachment && (
                   <RenderPJs attachments={this.props.mail.attachments} mailId={this.props.mail.id} onDownload={this.props.downloadAttachment} dispatch={this.props.dispatch} />
               )}
@@ -121,6 +141,14 @@ export default class MailContent extends React.PureComponent<MailContentProps, a
               {navigation.getParam("isTrashed") || navigation.state.routeName === "trash"
                 ? this.mailFooterTrash()
                 : this.mailFooter()}
+              {this.state.detailsVisible && (
+                <HeaderMailDetails
+                  mailInfos={this.props.mail}
+                  setDetailsVisibility={v => {
+                    this.setState({ detailsVisible: v });
+                  }}
+                />
+              )}
             </View>
           )}
         </SafeAreaView>
@@ -139,6 +167,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginBottom: 0,
     flexDirection: "column-reverse",
+    backgroundColor: "white",
   },
   scrollContainer: {
     flexGrow: 1,

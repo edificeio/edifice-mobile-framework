@@ -1,13 +1,15 @@
+import I18n from "i18n-js";
 import * as React from "react";
-import { TextInput, View, ViewStyle, Dimensions } from "react-native";
+import { TextInput, View, ViewStyle, Dimensions, Platform } from "react-native";
 import { TouchableOpacity, FlatList } from "react-native-gesture-handler";
+import Toast from 'react-native-tiny-toast';
 
-import { CommonStyles, IOSShadowStyle } from "../../../styles/common/styles";
 import { Text } from "../../../framework/components/text";
+import { CommonStyles, IOSShadowStyle } from "../../../styles/common/styles";
 import { newMailService } from "../service/newMail";
 import { getProfileColor } from "../utils/userColor";
 
-const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange }) => {
+const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, hasRightToSendExternalMails }) => {
   const [search, updateSearch] = React.useState("");
   const [foundUsersOrGroups, updateFoundUsersOrGroups] = React.useState([]);
   const searchTimeout = React.useRef();
@@ -42,17 +44,40 @@ const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange }) => {
     ]);
     updateSearch("");
   };
+  const hasAtChar = search.includes("@") as boolean;
+
+  const inputValidateAction = (onBlur: boolean = false) => {
+    if (!onBlur && !hasAtChar) {
+      addUser({ displayName: search, id: search });
+    } else if (hasRightToSendExternalMails) {
+      hasAtChar && addUser({ displayName: search, id: search });
+    } else {
+      if (search !== '') {
+        updateSearch('');
+        Toast.show(I18n.t("zimbra-external-mail-right-error"), {
+          position: Platform.OS === 'ios' ? Toast.position.CENTER : Toast.position.BOTTOM,
+          mask: false,
+          containerStyle: { width: "95%", backgroundColor: "black" },
+        });
+      }
+    }
+  };
 
   return (
     <View style={{ overflow: "visible", marginHorizontal: 5, flex: 1 }}>
       <SelectedList selectedUsersOrGroups={selectedUsersOrGroups} onItemClick={removeUser} />
-      <Input value={search} onChangeText={updateSearch} onSubmit={() => addUser({ displayName: search, id: search })} />
+      <Input
+        value={search}
+        onChangeText={updateSearch}
+        onSubmit={() => inputValidateAction()}
+        onBlur={() => inputValidateAction(true)}
+      />
       <FoundList foundUserOrGroup={foundUsersOrGroups} addUser={addUser} />
     </View>
   );
 };
 
-const Input = ({ value, onChangeText, onSubmit }) => {
+const Input = ({ value, onChangeText, onSubmit, onBlur }) => {
   const textInputStyle = {
     flex: 1,
     height: 40,
@@ -69,6 +94,7 @@ const Input = ({ value, onChangeText, onSubmit }) => {
       value={value}
       onChangeText={onChangeText}
       onSubmitEditing={onSubmit}
+      onBlur={onBlur}
     />
   );
 };

@@ -57,6 +57,7 @@ export interface IHtmlParserRNOptions extends IHtmlParserAbstractOptions {
   ignoreLineBreaks?: boolean;
   globalTextStyle?: TextStyle;
   linkTextStyle?: TextStyle;
+  selectable?: boolean;
 }
 
 export default class HtmlParserRN extends HtmlParserAbstract<
@@ -76,7 +77,8 @@ export default class HtmlParserRN extends HtmlParserAbstract<
     linkTextStyle: {},
     textColor: true,
     textFormatting: true,
-    ignoreLineBreaks: false
+    ignoreLineBreaks: false,
+    selectable: false,
   };
 
   /**
@@ -157,7 +159,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<
   };
 
   protected didParse = (render: JSX.Element | INugget[]) => {
-    const output = (renderNuggets(render, {
+    const output = (renderNuggets(render, this.opts.selectable, {
       [HtmlParserNuggetTypes.Text]: {
         all: this.opts.globalTextStyle,
         ...(Object.keys(this.opts.linkTextStyle).length
