@@ -71,9 +71,11 @@ export default (props: NewMailComponentProps) => {
   // console.log("render components", isSearchingUsers);
 
   React.useEffect(() => {
-    const showSubscription = Keyboard.addListener("keyboardWillHide", () => {
-      setKeyboardStatus(new Date().getTime());
-    });
+    const showSubscription = Keyboard.addListener(
+      Platform.select({ ios: "keyboardWillHide", android: "keyboardDidHide" })!,
+      () => {
+        setKeyboardStatus(new Date().getTime());
+      });
 
     return () => {
       showSubscription.remove();
@@ -97,25 +99,25 @@ export default (props: NewMailComponentProps) => {
           contentContainerStyle={
             isSearchingUsersFinal
               ? {
-                  flexGrow: 0,
-                  flexBasis: '100%',
-                }
+                flexGrow: 0,
+                flexBasis: '100%',
+              }
               : {
-                  flexGrow: 1,
-                }
+                flexGrow: 1,
+              }
           }
           alwaysBounceVertical={false}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="on-drag"
           {...(isSearchingUsers
             ? {
-                style: {
-                  flexBasis: '100%',
-                  flexGrow: 0,
-                  flexShrink: 0,
-                  maxHeight: '100%',
-                },
-              }
+              style: {
+                flexBasis: '100%',
+                flexGrow: 0,
+                flexShrink: 0,
+                maxHeight: '100%',
+              },
+            }
             : {})}>
           <View style={{ flexGrow: 1 }}>
             {props.isFetching ? (
@@ -251,7 +253,7 @@ const MailContactField = connect(state => ({
   const previousVisibles = React.useRef<IVisiblesState>();
   const [foundUsersOrGroups, updateFoundUsersOrGroups] = React.useState<Array<IVisibleUser | IVisibleGroup>>([]);
   const searchTimeout = React.useRef();
-  const inputRef: {current : TextInput | undefined} = {current: undefined};
+  const inputRef: { current: TextInput | undefined } = { current: undefined };
 
   // Update search results whenever visibles are loaded
   React.useEffect(() => {
