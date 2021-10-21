@@ -54,7 +54,7 @@ export const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, autoFocus }
   );
 };
 
-export const Input = ({ value, onChangeText, onSubmit, autoFocus }) => {
+export const Input = ({ value, onChangeText, onSubmit, autoFocus, inputRef, key }) => {
   const textInputStyle = {
     flex: 0,
     height: 40,
@@ -63,6 +63,8 @@ export const Input = ({ value, onChangeText, onSubmit, autoFocus }) => {
 
   return (
     <TextInput
+      key={key}
+      ref={ref => { if (ref) { inputRef.current = ref; }}}
       autoFocus={autoFocus}
       autoCorrect={false}
       autoCapitalize="none"

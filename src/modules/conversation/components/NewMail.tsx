@@ -232,7 +232,8 @@ const MailContactField = connect(state => ({
   autoFocus,
   rightComponent,
   onOpenSearch,
-  visibles
+  visibles,
+  key
 }: {
   style?: ViewStyle;
   title: string;
@@ -242,13 +243,15 @@ const MailContactField = connect(state => ({
   autoFocus?: boolean;
   rightComponent?: ReactElement;
   onOpenSearch?: (searchIsOpen: boolean) => void;
-  visibles: IVisiblesState
+  visibles: IVisiblesState,
+  key: React.Key
 }) => {
   const selectedUsersOrGroups = value || [];
   const [search, updateSearch] = React.useState('');
   const previousVisibles = React.useRef<IVisiblesState>();
   const [foundUsersOrGroups, updateFoundUsersOrGroups] = React.useState<Array<IVisibleUser | IVisibleGroup>>([]);
   const searchTimeout = React.useRef();
+  const inputRef: {current : TextInput | undefined} = {current: undefined};
 
   // Update search results whenever visibles are loaded
   React.useEffect(() => {
@@ -290,6 +293,7 @@ const MailContactField = connect(state => ({
       { displayName: userOrGroup.name || userOrGroup.displayName, id: userOrGroup.id } as IUser,
     ]);
     onUserType('');
+    inputRef.current?.focus();
   };
 
   const onUserType = (s: string) => {
@@ -334,10 +338,12 @@ const MailContactField = connect(state => ({
           <View style={{ overflow: 'visible', marginHorizontal: 5, flex: 1 }}>
             <SelectedList selectedUsersOrGroups={selectedUsersOrGroups} onItemClick={removeUser} />
             <Input
+              inputRef={inputRef}
               autoFocus={autoFocus}
               value={search}
               onChangeText={onUserType}
               onSubmit={() => addUser({ displayName: search, id: search })}
+              key={key}
             />
           </View>
           {rightComponent}
