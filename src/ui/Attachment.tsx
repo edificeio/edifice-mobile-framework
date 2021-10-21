@@ -97,13 +97,15 @@ const openFile = (notifierId: string, file?: SyncedFile) => {
     }
   };
 };
-const downloadFile = (notifierId: string, file?: SyncedFile) => {
+let lastToast = undefined;
+const downloadFile = (notifierId: string, file?: SyncedFile, toastMessage?: string) => {
   return dispatch => {
     if (file) {
       try {
         // console.log('DOWNLOAD FILE', file);
         file.mirrorToDownloadFolder();
-        Toast.showSuccess(I18n.t("download-success-name", { name: file.filename }));
+        Toast.hide(lastToast);
+        lastToast = Toast.showSuccess(toastMessage ?? I18n.t("download-success-name", { name: file.filename }));
       } catch (e) {
         Toast.show(I18n.t("download-error-generic"));
       }
@@ -118,7 +120,7 @@ class Attachment extends React.PureComponent<
     editMode?: boolean;
     onRemove?: () => void;
     onOpenFile: (notifierId: string, file?: LocalFile) => void;
-    onDownloadFile: (notifierId: string, file?: LocalFile) => void;
+    onDownloadFile: (notifierId: string, file?: LocalFile, toastMessage?: string) => void;
     onDownload?: () => void;
     onError?: () => void;
     onOpen?: () => void;
@@ -146,12 +148,19 @@ class Attachment extends React.PureComponent<
     };
   }
 
-  public componentDidUpdate(prevProps: any) {
+  public async componentDidUpdate(prevProps: any) {
     const { starDownload, attachment } = this.props;
     const { downloadState } = this.state;
     const canDownload = this.attId && downloadState !== DownloadState.Success && downloadState !== DownloadState.Downloading;
+    const notifierId = `attachment/${this.attId}`;
     if (prevProps.starDownload !== starDownload) {
-      canDownload && this.startDownload(attachment as IRemoteAttachment).catch(err => console.log(err));
+      canDownload && await this.startDownload(this.props.attachment as IRemoteAttachment, (lf => {
+        requestAnimationFrame(() => {
+          // console.log("lf", lf);
+          this.props.onDownloadFile && this.props.onDownloadFile(notifierId, lf, I18n.t('download-success-all'))
+        });
+      })).catch(err => console.log(err));
+      // canDownload && this.startDownload(attachment as IRemoteAttachment).catch(err => console.log(err));
     }
   }
 
@@ -161,12 +170,12 @@ class Attachment extends React.PureComponent<
     const notifierId = `attachment/${this.attId}`;
 
     return (
-      <View style={{...style}}>
+      <View style={{ ...style }}>
         <Notifier id={notifierId} />
         <View style={{
           flexDirection: 'row', alignItems: "center", height: 30
         }}>
-          <Pressable style={{flexDirection: 'row', flex: 1}}
+          <Pressable style={{ flexDirection: 'row', flex: 1 }}
             onPress={() => this.onPressAttachment(notifierId)}>
             <View>
               {downloadState === DownloadState.Downloading ? (
@@ -328,6 +337,6 @@ class Attachment extends React.PureComponent<
 
 export default connect(null, dispatch => ({
   onOpenFile: (notifierId: string, file: LocalFile) => dispatch(openFile(notifierId, file)),
-  onDownloadFile: (notifierId: string, file: LocalFile) => dispatch(downloadFile(notifierId, file)),
+  onDownloadFile: (notifierId: string, file: LocalFile, toastMessage?: string) => dispatch(downloadFile(notifierId, file, toastMessage)),
   dispatch,
 }))(Attachment);

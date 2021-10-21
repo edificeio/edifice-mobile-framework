@@ -36,29 +36,34 @@ export const newDownloadAction = (parentId: string, selected: IItems<IFile>, cal
   async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     // console.log("WILL DISPATCH NEW DOWNLOAD FILE");
     return dispatch(asyncActionRawFactory(actionTypesDownload, { parentId }, async () => {
-      // console.log("NEW DOWNLOAD FILE");
+      // console.log("NEW DOWNLOAD FILE", selected.item);
       return Object.values(selected).map(sel => {
         if (sel.url.startsWith("/zimbra")) {
           Trackers.trackEvent("Zimbra", "DOWNLOAD ATTACHMENT");
         } else {
           Trackers.trackEvent("Workspace", "DOWNLOAD", getExtension(sel.filename));
         }
+        // console.log("Will download", convertIFileToIDistantFile(sel));
         return fileTransferService.downloadFile(
           getUserSession(getState()),
           convertIFileToIDistantFile(sel),
-          {}
+          {}, {
+            onProgress: (res => console.log('progress', res.bytesWritten / res.contentLength))
+          }
         ).then(callback)
       });
     }));
   }
 
-export const downloadAndSaveAction = (downloadable: IFile) =>
+export const downloadAndSaveAction = (downloadable: IItems<IFile>) =>
   async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
-      dispatch(newDownloadAction('', { item: downloadable }, async file => {
+      // console.log("downloadAndSaveAction", downloadable);
+      dispatch(newDownloadAction('', downloadable, async file => {
         await file.mirrorToDownloadFolder();
+        // console.log('downloadable', downloadable, file);
+        Toast.showSuccess(I18n.t("download-success-name", { name: file.filename }));
       }));
-      Toast.showSuccess(I18n.t("download-success-name", { name: downloadable.filename }));
     } catch (e) {
       Toast.show(I18n.t("download-error-generic"));
     }

@@ -193,7 +193,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
         await assertPermissions('documents.write');
         const destFolder = DownloadDirectoryPath;
         const destPath = destFolder + '/' + this.filename;
-        console.log("destPath", destPath);
+        // console.log("destPath", destPath);
         copyFile(this.filepath, destPath).then(() => { })
             .catch(error => {
                 console.warn("Error copying file", error);
@@ -240,11 +240,11 @@ export class SyncedFile<DFType extends IDistantFile = IDistantFile> implements L
     get filetype() { return this.df.filetype ?? this.lf.filetype }
     get _filepathNative() { return this.lf._filepathNative }
 
-    releaseIfNeeded = LocalFile.prototype.releaseIfNeeded;
-    open = LocalFile.prototype.open;
-    setExtension = LocalFile.prototype.setExtension;
-    setPath = LocalFile.prototype.setPath;
-    mirrorToDownloadFolder = LocalFile.prototype.mirrorToDownloadFolder;
+    releaseIfNeeded = () => LocalFile.prototype.releaseIfNeeded.call(this.lf);
+    open = () => LocalFile.prototype.open.call(this.lf);
+    setExtension = (ext: string) => LocalFile.prototype.setExtension.call(this.lf, ext);
+    setPath = (path: string) =>  LocalFile.prototype.setPath.call(this.lf, path);
+    mirrorToDownloadFolder = () => LocalFile.prototype.mirrorToDownloadFolder.call(this.lf);
 }
 
 export class SyncedFileWithId extends SyncedFile<IDistantFileWithId> {

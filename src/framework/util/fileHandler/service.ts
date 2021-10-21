@@ -8,6 +8,7 @@
  * - make standard thunks for upload/download + thunk builder
  */
 
+import mime from 'mime';
 import RNFS, {
   DownloadBeginCallbackResult,
   DownloadProgressCallbackResult,
@@ -189,10 +190,14 @@ const fileTransferService = {
           if (res.statusCode < 200 || res.statusCode > 299) throw new Error('Download failed: server error ' + JSON.stringify(res));
           // rename local file if file name has no extension and file type is known
           if (localFile.filename.indexOf('.') === -1 && localFile.filetype.indexOf('/') !== -1) {
-            const ext = localFile.filetype.split('/').pop()!;
+            // const ext = localFile.filetype.split('/').pop()!;
+            const ext = mime.getExtension(localFile.filetype);
+            // console.log("EXT", ext, localFile.filetype);
             const toMove = localFile.filepath;
-            localFile.setExtension(ext);
-            RNFS.moveFile(toMove, localFile.filepath);
+            if (ext) {
+              localFile.setExtension(ext);
+              RNFS.moveFile(toMove, localFile.filepath);
+            }
           }
           // return
           return new sfclass(localFile, file);
@@ -228,7 +233,7 @@ const fileTransferService = {
     params: IDownloadParams,
     callbacks?: IDownloadCallbaks,
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
-    ) => {
+  ) => {
     return files.map(f => fileTransferService.startDownloadFile(session, f, params, callbacks, syncedFileClass));
   },
 
@@ -238,7 +243,7 @@ const fileTransferService = {
     params: IDownloadParams,
     callbacks?: IDownloadCallbaks,
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
-    ) => {
+  ) => {
     return Promise.all(fileTransferService.startDownloadFiles(session, files, params, callbacks, syncedFileClass).map(async j => (await j).promise));
   },
 };

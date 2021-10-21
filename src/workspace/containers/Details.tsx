@@ -11,7 +11,7 @@ class Details extends React.PureComponent<IDetailsProps> {
     switch (type) {
       case EVENT_TYPE.DOWNLOAD: {
         console.log(this.props);
-        this.props.dispatch(downloadAndSaveAction(item as IFile));
+        this.props.dispatch(downloadAndSaveAction({ item: item as IFile }));
         return;
       }
       case EVENT_TYPE.PREVIEW: {
