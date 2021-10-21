@@ -78,6 +78,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
 
   componentDidUpdate(prevProps) {
     const { notifications, isFetching, fetchCompleted, fetchRequested, navigation } = this.props;
+    const key = navigation.getParam("key");
 
     if (this.state.indexPage === 0 && !isFetching && prevProps.isFetching && fetchRequested) {
       this.setState({ mails: notifications });
@@ -103,7 +104,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
       fetchCompleted();
     }
 
-    if (prevProps.fetchRequested && !fetchRequested) {
+    if (key !== prevProps.navigation.getParam("key")) {
       this.flatListRef && this.flatListRef.scrollToOffset({ offset: 0, animated: false });
     }
   }
