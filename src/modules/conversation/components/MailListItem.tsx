@@ -26,7 +26,6 @@ type MailListItemProps = {
   onSwipeRelease: (ref: React.Ref<Swipeable>) => any;
   onSwipeTriggerOpen: (ref: React.Ref<Swipeable>) => any;
   onSwipeRecenter: (mailId: string) => any;
-  onButtonsOpenRelease: () => void;
 };
 
 export default class MailListItem extends React.PureComponent<MailListItemProps>{
@@ -79,13 +78,13 @@ export default class MailListItem extends React.PureComponent<MailListItemProps>
       deleteMail,
       onSwipeTriggerOpen,
       onSwipeRecenter,
-      onButtonsOpenRelease,
       onSwipeStart,
       onSwipeRelease
     } = this.props;
     const navigationKey = navigation.getParam("key");
     const isFolderOutbox = navigationKey === "sendMessages";
     const isFolderDrafts = navigationKey === "drafts";
+    const mailId = mailInfos.id;
     const isMailUnread = mailInfos.unread && !isFolderDrafts && !isFolderOutbox;
     const mailContacts = getMailPeople(mailInfos);
     const {
@@ -98,26 +97,25 @@ export default class MailListItem extends React.PureComponent<MailListItemProps>
       ? [mailContacts.from]
       : mailContacts.to
     if (contacts.length === 0) contacts = [[undefined, I18n.t("conversation.emptyTo"), false]];
+
     return (
       <Swipeable
         onRef={ref => this.swipeableRef = ref}
         leftButtonWidth={140}
         rightButtonWidth={140}
-        onSwipeStart={(event, gestureState) => onSwipeStart(this.swipeableRef, this.props.mailInfos.id)}
+        onSwipeStart={() => onSwipeStart(this.swipeableRef, mailId)}
         onSwipeRelease={() => onSwipeRelease(this.swipeableRef)}
         onLeftButtonsActivate={() => onSwipeTriggerOpen(this.swipeableRef)}
         onRightButtonsActivate={() => onSwipeTriggerOpen(this.swipeableRef)}
-        onLeftButtonsDeactivate={() => onSwipeRecenter(this.props.mailInfos.id)}
-        onRightButtonsDeactivate={() => onSwipeRecenter(this.props.mailInfos.id)}
-        onRightButtonsOpenRelease={onButtonsOpenRelease}
-        onLeftButtonsOpenRelease={onButtonsOpenRelease}
+        onLeftButtonsDeactivate={() => onSwipeRecenter(mailId)}
+        onRightButtonsDeactivate={() => onSwipeRecenter(mailId)}
         leftButtons={isFolderOutbox || isFolderDrafts
           ? undefined
           : this.swipeButtons(
             { backgroundColor: leftActionColor, justifyContent: "flex-end" },
             () => {
               this.swipeableRef?.recenter(); // ToDo
-              onSwipeRecenter(this.props.mailInfos.id);
+              onSwipeRecenter(mailId);
               leftAction();
             },
             leftActionIcon,
@@ -128,7 +126,7 @@ export default class MailListItem extends React.PureComponent<MailListItemProps>
           { backgroundColor: theme.color.failure },
           () => {
             this.swipeableRef?.recenter(); // ToDo
-            onSwipeRecenter(this.props.mailInfos.id);
+            onSwipeRecenter(mailId);
             deleteMail();
           },
           "trash",

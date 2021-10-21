@@ -1,7 +1,7 @@
 import * as React from 'react';
 import I18n from 'i18n-js';
-import { View, RefreshControl, FlatList, TouchableWithoutFeedback } from 'react-native';
-import { NavigationScreenProp, NavigationState } from 'react-navigation';
+import { View, RefreshControl, FlatList } from 'react-native';
+import { NavigationState, NavigationFocusInjectedProps, NavigationInjectedProps } from 'react-navigation';
 import Toast from 'react-native-tiny-toast';
 
 import { Loading } from '../../../ui';
@@ -20,10 +20,16 @@ import { IInit } from '../containers/MailList';
 import { FakeHeader, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '../../../framework/components/header';
 import { Swipeable } from 'react-native-gesture-handler';
 
-type MailListProps = {
+interface IMailListDataProps {
   notifications: any;
   isFetching: boolean;
   firstFetch: boolean;
+  folders: any;
+  isTrashed: boolean;
+  fetchRequested: boolean;
+}
+
+interface IMailListEventProps {
   fetchInit: () => IInit;
   fetchCompleted: () => any;
   fetchMails: (page: number) => any;
@@ -31,15 +37,16 @@ type MailListProps = {
   deleteDrafts: (mailIds: string[]) => void;
   deleteMails: (mailIds: string[]) => void;
   toggleRead: (mailIds: string[], read: boolean) => void;
-  moveToFolder: (mailIds: string[], folderId: string) => void,
-  moveToInbox: (mailIds: string[]) => void,
-  restoreToFolder: (mailIds: string[], folderId: string) => void,
-  restoreToInbox: (mailIds: string[]) => void,
-  folders: any;
-  isTrashed: boolean;
-  fetchRequested: boolean;
-  navigation: NavigationScreenProp<any>;
-};
+  moveToFolder: (mailIds: string[], folderId: string) => void;
+  moveToInbox: (mailIds: string[]) => void;
+  restoreToFolder: (mailIds: string[], folderId: string) => void;
+  restoreToInbox: (mailIds: string[]) => void;
+}
+
+type MailListProps = IMailListDataProps
+  & IMailListEventProps
+  & NavigationInjectedProps
+  & NavigationFocusInjectedProps;
 
 type MailListState = {
   indexPage: number;
@@ -71,7 +78,8 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
   }
 
   componentDidUpdate(prevProps) {
-    const { notifications, isFetching, fetchCompleted, fetchRequested, navigation } = this.props;
+    const { notifications, isFetching, fetchCompleted, fetchRequested, navigation, isFocused } = this.props;
+
     if (this.state.indexPage === 0 && !isFetching && prevProps.isFetching && fetchRequested) {
       this.setState({ mails: notifications });
       fetchCompleted();
@@ -99,7 +107,20 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     if (prevProps.fetchRequested && !fetchRequested) {
       this.flatListRef && this.flatListRef.scrollToOffset({ offset: 0, animated: false });
     }
+
+    if (isFocused !== prevProps.isFocused) {
+      this.unswipeAllSwipeables();
+    }
   }
+
+  unswipeAllSwipeables = (filter?: (id, ref) => boolean) => {
+    Object.entries(this.activeSwipeableRefs).forEach(([id, ref]) => {
+      if ((filter ?? (() => true))(id, ref)) {
+        ref?.recenter();
+        delete this.activeSwipeableRefs[id];
+      }
+    });
+  };
 
   selectItem = mailInfos => {
     mailInfos.isChecked = !mailInfos.isChecked;
@@ -229,15 +250,6 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
         }
       }) || [];
 
-    const unswipeAllSwipeables = (filter?: (id, ref) => boolean) => {
-      Object.entries(this.activeSwipeableRefs).forEach(([id, ref]) => {
-        if ((filter ?? (() => true))(id, ref)) {
-          ref?.recenter();
-          delete this.activeSwipeableRefs[id];
-        }
-      });
-    };
-
     return (
       <>
         <PageContainer>
@@ -269,7 +281,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
               style={{ marginTop: 45 }}
               contentContainerStyle={{ flexGrow: 1 }}
               data={uniqueMails.length > 0 ? uniqueMails : []}
-              onScrollBeginDrag={() => unswipeAllSwipeables()}
+              onScrollBeginDrag={() => this.unswipeAllSwipeables()}
               renderItem={({ item }) => {
                 const isFolderOutbox = navigationKey === 'sendMessages';
                 const isFolderDrafts = navigationKey === 'drafts';
@@ -284,14 +296,14 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
                     toggleRead={() => this.toggleRead(isMailUnread, mailId)}
                     restoreMail={() => this.setState({ showModal: true, selectedMail: item })}
                     onSwipeTriggerOpen={(ref) => {
-                      unswipeAllSwipeables();
+                      this.unswipeAllSwipeables();
                       this.activeSwipeableRefs[mailId] = ref;
                     }}
                     onSwipeStart={(ref, id) => {
                       this.flatListRef?.setNativeProps({
                         scrollEnabled: false
                       });
-                      unswipeAllSwipeables((id2, ref) => id !== id2);
+                      this.unswipeAllSwipeables((id2) => id !== id2);
                     }
                     }
                     onSwipeRelease={() => {
@@ -300,7 +312,6 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
                       })
                     }}
                     onSwipeRecenter={(id) => { delete this.activeSwipeableRefs[id]; }}
-                    onButtonsOpenRelease={() => { }}
                   />
                 )
               }}
