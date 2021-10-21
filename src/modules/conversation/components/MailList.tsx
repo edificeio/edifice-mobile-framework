@@ -233,7 +233,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
 
   public render() {
     const { isFetching, firstFetch, navigation } = this.props;
-    const { showModal, selectedMail, isRefreshing } = this.state;
+    const { showModal, selectedMail, isRefreshing, nextPageCallable } = this.state;
     const navigationKey = navigation.getParam("key");
     const uniqueId = [];
     const uniqueMails =
@@ -277,7 +277,10 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
               style={{ marginTop: 45 }}
               contentContainerStyle={{ flexGrow: 1 }}
               data={uniqueMails.length > 0 ? uniqueMails : []}
-              onScrollBeginDrag={() => this.unswipeAllSwipeables()}
+              onScrollBeginDrag={() => {
+                this.unswipeAllSwipeables();
+                this.setState({ nextPageCallable: true });
+              }}
               renderItem={({ item }) => {
                 const isFolderOutbox = navigationKey === 'sendMessages';
                 const isFolderDrafts = navigationKey === 'drafts';
@@ -327,6 +330,13 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
                   }}
                 />
               }
+              onEndReachedThreshold={0.5}
+              onEndReached={() => {
+                if (nextPageCallable) {
+                  this.setState({ nextPageCallable: false });
+                  this.onChangePage();
+                }
+              }}
               ListEmptyComponent={
                 isFetching && firstFetch ? (
                   <Loading />
