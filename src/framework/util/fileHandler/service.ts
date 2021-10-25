@@ -189,7 +189,7 @@ const fileTransferService = {
         .then(res => {
           if (res.statusCode < 200 || res.statusCode > 299) throw new Error('Download failed: server error ' + JSON.stringify(res));
           // rename local file if file name has no extension and file type is known
-          if (localFile.filename.indexOf('.') === -1 && localFile.filetype.indexOf('/') !== -1) {
+          if (localFile.filename.indexOf('.') === -1) {
             // const ext = localFile.filetype.split('/').pop()!;
             const ext = mime.getExtension(localFile.filetype);
             // console.log("EXT", ext, localFile.filetype);
