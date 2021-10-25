@@ -9,7 +9,7 @@ import { copyFile, DownloadDirectoryPath, exists, mkdir, stat, UploadFileItem } 
 import FileViewer from 'react-native-file-viewer';
 import getPath from "@flyerhq/react-native-android-uri-path";
 import { assertPermissions } from "../permissions";
-import { getApplicationName } from "react-native-device-info";
+import moment from "moment";
 
 namespace LocalFile {
 
@@ -192,8 +192,14 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
     async mirrorToDownloadFolder() {
         await assertPermissions('documents.write');
         const destFolder = DownloadDirectoryPath;
-        const destPath = destFolder + '/' + this.filename;
-        // console.log("destPath", destPath);
+        let destPath = `${destFolder}/${this.filename}`;
+        // console.log("destPath", destPath, await exists(destPath));
+        if (await exists(destPath)) {
+            const splitFilename = this.filename.split('.');
+            const ext = splitFilename.pop();
+            destPath = `${destFolder}/${splitFilename.join('.')}-${moment().format('YYYYMMDD-HHmmss')}.${ext}`;
+        }
+        // console.log("final destPath", destPath);
         copyFile(this.filepath, destPath).then(() => { })
             .catch(error => {
                 console.warn("Error copying file", error);
