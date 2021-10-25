@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, TextInput, StyleProp, TextInputProps, ViewStyle } from 'react-native';
+import { Platform, View, TextInput, StyleProp, TextInputProps, ViewStyle } from 'react-native';
 import { TextField } from 'react-native-material-textfield';
 import PasswordInputText from 'react-native-hide-show-password-input';
 import theme from '../../framework/util/theme';
@@ -65,6 +65,7 @@ export class TextInputLine extends React.Component<
       tintColor: hasError ? theme.color.failure : theme.color.secondary.regular,
       iconColor: theme.color.text.light,
       label: '',
+      iconSize: 25,
       invertVisibilityIcon: true,
     };
     const TextComponent = isPasswordField ? PasswordInputText : TextField;
