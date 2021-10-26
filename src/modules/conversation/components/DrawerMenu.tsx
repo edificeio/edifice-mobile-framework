@@ -11,7 +11,7 @@ import {
 import { NavigationScreenProp } from "react-navigation";
 import I18n from "i18n-js";
 
-import { 
+import {
   ANIMATION_CONFIGURATIONS_FADE,
   ANIMATION_CONFIGURATIONS_SIZE,
   UI_SIZES
@@ -50,9 +50,9 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
       showFolderCreationModal: false,
       showList: false,
       isTogglingDrawer: false,
-      drawerHeight : 45,
-      animatedHeight : new Animated.Value(45),
-      animatedOpacity : new Animated.Value(0)
+      drawerHeight: 45,
+      animatedHeight: new Animated.Value(45),
+      animatedOpacity: new Animated.Value(0)
     };
   }
 
@@ -69,7 +69,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
   getDrawerOpacityAnimation = () => {
     const { showList, animatedOpacity } = this.state;
     return Animated.timing(animatedOpacity, {
-      toValue : showList ? 0 : 0.6,
+      toValue: showList ? 0 : 0.6,
       ...ANIMATION_CONFIGURATIONS_FADE
     });
   };
@@ -94,7 +94,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
 
     this.setState({ drawerHeight: newHeightValue });
     return Animated.timing(animatedHeight, {
-      toValue : newHeightValue,
+      toValue: newHeightValue,
       ...ANIMATION_CONFIGURATIONS_SIZE
     });
   };
@@ -154,11 +154,11 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
               navigate={() => {
                 const callback = this.isCurrentScreen(displayedFolder.folderName)
                   ? undefined
-                  : () => navigation.setParams({ 
-                      key: displayedFolder.folderName,
-                      folderName: displayedFolder.folderName,
-                      folderId: displayedFolder.id 
-                    });
+                  : () => navigation.setParams({
+                    key: displayedFolder.folderName,
+                    folderName: displayedFolder.folderName,
+                    folderId: displayedFolder.id
+                  });
                 this.onDrawerToggle(callback);
               }}
             />
@@ -172,14 +172,14 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
         ))}
         {showList
           ? <TouchableOpacity
-              onPress={this.onFolderCreationModalShow}
-              style={style.createFolderContainer}
-            >
-              <Icon size={25} name="create_new_folder" />
-              <TextSemiBold style={style.createFolderText}>
-                {I18n.t("conversation.createDirectory")}
-              </TextSemiBold>
-            </TouchableOpacity>
+            onPress={this.onFolderCreationModalShow}
+            style={style.createFolderContainer}
+          >
+            <Icon size={25} name="create_new_folder" color={theme.color.text.heavy} />
+            <TextSemiBold style={style.createFolderText}>
+              {I18n.t("conversation.createDirectory")}
+            </TextSemiBold>
+          </TouchableOpacity>
           : null
         }
       </>
@@ -190,10 +190,10 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
     const { navigation, mailboxesCount } = this.props;
     const { showList, isTogglingDrawer } = this.state;
     const mailboxes = [
-      {name: "inbox", icon: "messagerie-on"},
-      {name: "sendMessages", icon: "send" },
-      {name: "drafts", icon: "pencil"},
-      {name: "trash", icon: "delete"}
+      { name: "inbox", icon: "messagerie-on" },
+      { name: "sendMessages", icon: "send" },
+      { name: "drafts", icon: "pencil" },
+      { name: "trash", icon: "delete" }
     ];
     const displayedMailboxes = showList
       ? mailboxes
@@ -209,17 +209,17 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
             navigate={() => {
               const callback = this.isCurrentScreen(displayedMailbox.name)
                 ? undefined
-                : () => navigation.setParams({ 
-                    key: displayedMailbox.name,
-                    folderName: undefined,
-                    folderId: undefined
-                  });
+                : () => navigation.setParams({
+                  key: displayedMailbox.name,
+                  folderName: undefined,
+                  folderId: undefined
+                });
               this.onDrawerToggle(callback);
             }}
             count={displayedMailbox.name === "inbox"
               ? mailboxesCount.INBOX
               : displayedMailbox.name === "drafts"
-              ? mailboxesCount.DRAFT : undefined
+                ? mailboxesCount.DRAFT : undefined
             }
           />
         ))}
@@ -228,7 +228,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
   };
 
   render() {
-    const { 
+    const {
       showList,
       showFolderCreationModal,
       animatedOpacity,
@@ -239,21 +239,21 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
 
     const drawerMaxHeight = UI_SIZES.getViewHeight();
     const isDrawerMaximallyExpanded = drawerHeight >= drawerMaxHeight;
-    
+
     const animatedContainerHeight = { height: animatedHeight, maxHeight: drawerMaxHeight };
-    const expandedAnimatedContainer: ViewStyle = showList 
+    const expandedAnimatedContainer: ViewStyle = showList
       ? {
-          borderBottomLeftRadius: isDrawerMaximallyExpanded ? undefined : 20,
-          borderBottomRightRadius: isDrawerMaximallyExpanded ? undefined : 20,
-          paddingTop: 10,
-          flexDirection: "column",
-          borderBottomWidth: undefined,
-          borderBottomColor: undefined,
-        }
+        borderBottomLeftRadius: isDrawerMaximallyExpanded ? undefined : 20,
+        borderBottomRightRadius: isDrawerMaximallyExpanded ? undefined : 20,
+        paddingTop: 10,
+        flexDirection: "column",
+        borderBottomWidth: undefined,
+        borderBottomColor: undefined,
+      }
       : {};
 
-    const backdropDisplay = { 
-      opacity : animatedOpacity,
+    const backdropDisplay = {
+      opacity: animatedOpacity,
       height: isTogglingDrawer || showList ? drawerMaxHeight : 0
     };
 
@@ -267,7 +267,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
             }
           </Animated.View>
         </TouchableWithoutFeedback>
-        <Animated.View style={[style.animatedContainer, animatedContainerHeight, expandedAnimatedContainer]}> 
+        <Animated.View style={[style.animatedContainer, animatedContainerHeight, expandedAnimatedContainer]}>
           <TouchableOpacity
             style={style.selectDirectoryContainer}
             onPress={() => this.onDrawerToggle()}
@@ -277,12 +277,12 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
               size={12}
               name={"arrow_down"}
               color={theme.color.primary.regular}
-              style={showList && {transform: [{ rotate: "180deg" }]}}
+              style={showList && { transform: [{ rotate: "180deg" }] }}
             />
-            {showList 
+            {showList
               ? <TextBold style={style.selectDirectoryText}>
-                  {I18n.t("conversation.selectDirectory")}
-                </TextBold>
+                {I18n.t("conversation.selectDirectory")}
+              </TextBold>
               : null
             }
           </TouchableOpacity>
@@ -348,6 +348,6 @@ const style = StyleSheet.create({
     marginLeft: 10,
   },
   backdrop: {
-    backgroundColor : "#000000",
+    backgroundColor: "#000000",
   },
 });

@@ -20,7 +20,7 @@ export default class DrawerOption extends React.PureComponent<DrawerOptionProps>
     const optionLabel = label + countString;
     return (
       <TouchableOpacity style={style.itemContainer} onPress={navigate} disabled={disabled}>
-        <Icon size={25} name={iconName} color={selected ? theme.color.primary.regular : undefined} />
+        <Icon size={25} name={iconName} color={selected ? theme.color.primary.regular : theme.color.text.heavy} />
         <TextBold
           numberOfLines={1}
           style={[style.itemText, selected ? { color: theme.color.primary.regular } : {}]}
