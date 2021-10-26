@@ -31,7 +31,11 @@ type MailListItemProps = {
 export default class MailListItem extends React.PureComponent<MailListItemProps>{
   swipeableRef: InstanceType<Swipeable> | null = null;
 
-  componentDidUpdate() {}
+  shouldComponentUpdate(nextProps) {
+    const { isFetching } = this.props;
+    if (!nextProps.isFetching && isFetching) return true;
+    return false;
+  }
 
   getLeftButtonProperties(currentFolder: string, unread: boolean) {
     const { toggleRead, restoreMail } = this.props;
