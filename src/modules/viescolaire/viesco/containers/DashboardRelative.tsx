@@ -116,7 +116,7 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
       getLevels: fetchLevelsAction,
       getChildrenGroups: fetchChildrenGroupsAction,
     },
-    dispatch
+    dispatch,
   );
 };
 

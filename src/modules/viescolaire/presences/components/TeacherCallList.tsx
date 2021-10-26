@@ -1,9 +1,8 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
-import { View, StyleSheet, useWindowDimensions, FlatList } from 'react-native';
-import RNCarousel, { Pagination } from 'react-native-snap-carousel';
-import Swiper from "react-native-swiper";
+import { View, StyleSheet } from 'react-native';
+import Swiper from 'react-native-swiper';
 
 import { Loading } from '../../../../ui';
 import { TextBold } from '../../../../ui/Typography';
@@ -12,8 +11,8 @@ import CourseComponent from './CourseComponent';
 
 interface ICallListProps {
   courseList: ICourses[];
-  onCoursePress: (course: any) => void;
   isFetching: boolean;
+  onCoursePress: (course: any) => void;
 }
 
 interface ICallListState {
@@ -25,7 +24,14 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
 
   constructor(props) {
     super(props);
-    this.state = { currentIndex: this.getCurrentCourseIndex(props.courseList) };
+
+    this.state = {
+      currentIndex: this.getCurrentCourseIndex(props.courseList),
+    };
+  }
+
+  componentDidMount() {
+    setInterval(() => this.setState({ currentIndex: this.getCurrentCourseIndex(this.props.courseList) }), 300000);
   }
 
   componentWillUpdate(nextProps) {
@@ -99,7 +105,7 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
           paddingHorizontal: 27,
           flex: 1,
         }}>
-        <TextBold style={{ fontSize: 15, marginBottom: 30 }}>
+        <TextBold style={{ fontSize: 15, marginBottom: 10 }}>
           {I18n.t('viesco-register-date')} {moment().format('DD MMMM YYYY')}
         </TextBold>
         <View style={{ flex: 1, justifyContent: 'space-evenly' }}>
