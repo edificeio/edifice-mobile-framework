@@ -21,16 +21,16 @@ import { ISlotListState } from "./edt/state/slots";
 import { IUserChildrenState } from "./edt/state/userChildren";
 import presences from "./presences/reducers";
 import { INotifiationChildren } from "./presences/state/eventsNotification";
+import { IMultipleSlotsState } from "./presences/state/multipleSlots";
+import { IRegisterPreferencesState } from "./presences/state/registerPreferences";
 import { IClassesCallListState } from "./presences/state/teacherClassesCall";
 import { ICoursesRegisterInfosState } from "./presences/state/teacherCourseRegister";
 import { ICoursesListState } from "./presences/state/teacherCourses";
 import viesco from "./viesco/reducers";
 import { IChildrenGroupsState } from "./viesco/state/childrenGroups";
 import { IGroupListState } from "./viesco/state/group";
-import { IMultipleSlotsState } from "./viesco/state/multipleSlots";
 import { IPeriodsListState, IYearState } from "./viesco/state/periods";
 import { IPersonnelListState } from "./viesco/state/personnel";
-import { IRegisterPreferencesState } from "./viesco/state/registerPreferences";
 import { ISubjectListState } from "./viesco/state/subjects";
 
 // State
@@ -45,8 +45,6 @@ export interface IViesco_State {
     year: IYearState;
     group: IGroupListState;
     childrenGroups: IChildrenGroupsState;
-    multipleSlots: IMultipleSlotsState;
-    registerPreferences: IRegisterPreferencesState;
   };
   cdt: {
     homeworksList: IHomeworkListState;
@@ -63,6 +61,8 @@ export interface IViesco_State {
     coursesRegister: ICoursesRegisterInfosState;
     history: any;
     notification: INotifiationChildren[];
+    multipleSlots: IMultipleSlotsState;
+    registerPreferences: IRegisterPreferencesState;
   };
   competences: {
     levels: ILevelsListState;

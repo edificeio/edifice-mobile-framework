@@ -1,5 +1,5 @@
 import { fetchJSONWithCache } from "../../../../infra/fetchWithCache";
-import { IRegisterPreferences } from "../../viesco/state/registerPreferences";
+import { IRegisterPreferences } from "../state/registerPreferences";
 
 export type IRegisterPreferencesBackend = {
   preference: string;

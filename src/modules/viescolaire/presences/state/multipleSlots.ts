@@ -17,7 +17,7 @@ export const initialState: IMultipleSlots = {
 };
 
 export const getMultipleSlotsState = (globalState: any) =>
-  viescoConfig.getState(globalState).viesco.multipleSlots as IMultipleSlotsState;
+  viescoConfig.getState(globalState).presences.multipleSlots as IMultipleSlotsState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 

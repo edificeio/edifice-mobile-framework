@@ -16,7 +16,7 @@ export const initialState: IRegisterPreferences = {
 };
 
 export const getRegisterPreferencesState = (globalState: any) =>
-  viescoConfig.getState(globalState).viesco.registerPreferences as IRegisterPreferencesState;
+  viescoConfig.getState(globalState).presences.registerPreferences as IRegisterPreferencesState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 

@@ -1,4 +1,3 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import moment from "moment";
 import * as React from "react";
 import { NavigationFocusInjectedProps } from "react-navigation";
@@ -7,12 +6,14 @@ import { bindActionCreators } from "redux";
 
 import { getSessionInfo } from "../../../../App";
 import { INavigationProps } from "../../../../types";
-import { IMultipleSlotsState } from "../../viesco/state/multipleSlots";
-import { IRegisterPreferencesState } from "../../viesco/state/registerPreferences";
 import { getSelectedStructure } from "../../viesco/state/structure";
+import { fetchMultipleSlotsAction } from "../actions/multipleSlots";
+import { fetchRegiterPreferencesAction } from "../actions/registerPreferences";
 import { fetchCoursesRegisterAction } from "../actions/teacherCourseRegister";
 import { fetchCoursesAction } from "../actions/teacherCourses";
 import TeacherCallListComponent from "../components/TeacherCallList";
+import { getMultipleSlotsState, IMultipleSlotsState } from "../state/multipleSlots";
+import { getRegisterPreferencesState, IRegisterPreferencesState } from "../state/registerPreferences";
 import { getCoursesRegisterState } from "../state/teacherCourseRegister";
 import { getCoursesListState, ICourses } from "../state/teacherCourses";
 
@@ -36,6 +37,8 @@ type ICallListContainerProps = {
   isFetching: boolean;
   multipleSlots: IMultipleSlotsState;
   registerPreferences: IRegisterPreferencesState;
+  getMultipleSlots: (structureId: string) => void;
+  getRegisterPreferences: () => void;
   fetchCourses: (teacherId: string, structureId: string, startDate: string, endDate: string, multipleSlot?: boolean) => void;
   fetchRegisterId: (any: any) => void;
 } & INavigationProps &
@@ -43,12 +46,20 @@ type ICallListContainerProps = {
 
 class TeacherCallList extends React.PureComponent<ICallListContainerProps> {
   componentDidMount() {
+    this.props.getMultipleSlots(this.props.structureId);
+    this.props.getRegisterPreferences();
     this.fetchTodayCourses();
   }
 
   componentDidUpdate(prevProps) {
-    const { isFocused, structureId } = this.props;
-    if (isFocused && (prevProps.isFocused !== isFocused || prevProps.structureId !== structureId)) {
+    const { isFocused, structureId, multipleSlots, registerPreferences } = this.props;
+
+    if (
+      (isFocused && prevProps.isFocused !== isFocused) ||
+      prevProps.structureId !== structureId ||
+      prevProps.multipleSlots.data !== multipleSlots.data ||
+      prevProps.registerPreferences.data !== registerPreferences.data
+    ) {
       this.fetchTodayCourses();
     }
   }
@@ -58,9 +69,10 @@ class TeacherCallList extends React.PureComponent<ICallListContainerProps> {
     if (
       this.props.multipleSlots &&
       this.props.multipleSlots.data.allow_multiple_slots &&
-      this.props.registerPreferences
+      this.props.registerPreferences &&
+      this.props.registerPreferences.data.preference
     ) {
-      multipleSlot = this.props.registerPreferences.data.preference.includes('\"multipleSlot\":true');
+      multipleSlot = JSON.parse(this.props.registerPreferences.data.preference).multipleSlot;
     }
 
     const today = moment().format("YYYY-MM-DD");
@@ -113,12 +125,18 @@ const mapStateToProps: (state: any) => any = state => {
     teacherId: getSessionInfo().id,
     structureId: getSelectedStructure(state),
     isFetching: coursesData.isFetching || registerData.isFetching,
+    multipleSlots: getMultipleSlotsState(state),
+    registerPreferences: getRegisterPreferencesState(state),
   };
 };
 
 const mapDispatchToProps: (dispatch: any) => any = dispatch => {
   return bindActionCreators(
-    { fetchCourses: fetchCoursesAction, fetchRegisterId: fetchCoursesRegisterAction },
+    {
+      fetchCourses: fetchCoursesAction,
+      fetchRegisterId: fetchCoursesRegisterAction,
+      getMultipleSlots: fetchMultipleSlotsAction,
+      getRegisterPreferences: fetchRegiterPreferencesAction, },
     dispatch
   );
 };
