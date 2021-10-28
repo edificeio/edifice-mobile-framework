@@ -656,6 +656,12 @@
     "webViewScreen": {
       "infoBubbleText": "Pour consulter et modifier certains contenus, vous serez redirigé vers le navigateur web de votre smartphone.",
       "title": "Redirection web"
+    },
+    "reportAction": {
+      "button": "Signaler",
+      "title": "Vous allez signaler une notification",
+      "description": "L’heure et l’origine de ce signalement seront enregistrées ainsi que votre identité et transmises à la direction de l'établissement. Etes vous sûr(e) de vouloir signaler ce contenu ?",
+      "submit": "Signaler la notification inappropriée"
     }
   },
   "timeline-allFilter": "Tous",

@@ -19,6 +19,7 @@ export interface IPopupMenuProps {
 	iconName: string;
 	active?: boolean;
 	options: Array<{ icon: string; i18n: string; goTo: NavigationNavigateActionPayload }>
+	onPress?: () => void;
 }
 
 interface IPopupMenuState {
@@ -81,7 +82,10 @@ export default class PopupMenu extends React.PureComponent<IPopupMenuProps, IPop
 			<>
 				<ButtonIcon
 					name={active ? "close" : iconName}
-					onPress={() => this.setState({ active: !active })}
+					onPress={() => {
+						this.setState({ active: !active });
+						this.props.onPress?.();
+					}}
 					style={{
 						position:"absolute",
 						zIndex: 100,

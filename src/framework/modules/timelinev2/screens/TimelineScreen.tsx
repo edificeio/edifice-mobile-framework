@@ -1,7 +1,7 @@
 import I18n from "i18n-js";
 import * as React from "react";
-import { FlatList, RefreshControl, View } from "react-native";
-import { NavigationInjectedProps, NavigationFocusInjectedProps, withNavigationFocus } from "react-navigation";
+import { Alert, FlatList, RefreshControl, TouchableOpacity, View } from "react-native";
+import { NavigationInjectedProps, NavigationFocusInjectedProps, withNavigationFocus, NavigationEvents } from "react-navigation";
 import { connect } from "react-redux";
 import { ThunkDispatch } from "redux-thunk";
 
@@ -23,6 +23,11 @@ import type { ITimeline_State } from "../reducer";
 import { IEntcoreFlashMessage, IFlashMessages_State } from "../reducer/flashMessages";
 import { INotifications_State } from "../reducer/notifications";
 import { getTimelineWorkflows } from "../timelineModules";
+import SwipeableList, { SwipeableList as SwipeableListHandle } from "../components/swipeableList";
+import { Icon } from "../../../components/icon";
+import theme from "../../../util/theme";
+import { notificationsService } from "../service";
+import { getTimelineWorkflowInformation } from "../rights";
 
 // TYPES ==========================================================================================
 
@@ -72,6 +77,8 @@ export class TimelineScreen extends React.PureComponent<
   }
 
   popupMenuRef = React.createRef<PopupMenu>();
+  listRef = React.createRef<SwipeableListHandle<ITimelineItem>>();
+  rights = getTimelineWorkflowInformation(this.props.session);
 
   // RENDER =======================================================================================
 
@@ -113,7 +120,9 @@ export class TimelineScreen extends React.PureComponent<
   renderHeaderButton() {
     const workflows = getTimelineWorkflows(this.props.session);
     if (!workflows || !workflows.length) return null;
-    return <PopupMenu iconName="new_post" options={workflows} ref={this.popupMenuRef} />
+    return <PopupMenu iconName="new_post" options={workflows} ref={this.popupMenuRef} onPress={() => {
+      this.listRef.current?.unswipeAll();
+    }} />
   }
 
   renderError() {
@@ -124,8 +133,29 @@ export class TimelineScreen extends React.PureComponent<
   renderList() {
     const items = getTimelineItems(this.props.flashMessages, this.props.notifications);
     const isEmpty = items && items.length === 0;
+
+    const renderSwipeButton = (action, actionIcon, actionText) => [
+      <View style={{ height: "100%", justifyContent: 'center' }}>
+        <TouchableOpacity
+          onPress={action}
+        >
+          <View style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 12,
+            width: 140
+          }}>
+            <Icon name={actionIcon} size={16} color={theme.color.warning} />
+            <Text style={{ color: theme.color.warning, marginLeft: 10 }}>{actionText}</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+    ];
+
     return (
-      <FlatList
+      <SwipeableList
+        ref={this.listRef}
         // data
         data={items}
         keyExtractor={n => n?.data?.id?.toString()}
@@ -150,6 +180,20 @@ export class TimelineScreen extends React.PureComponent<
         }
         onEndReached={() => this.doNextPage()}
         onEndReachedThreshold={0.5}
+        // Swipeable props
+        rightButtonWidth={140}
+        itemSwipeableProps={({ item }) => {
+          return ({
+            rightButtons: this.rights.notification.report ? [renderSwipeButton(
+              async () => {
+                await this.doReportConfirm(item.data as ITimelineNotification);
+                this.listRef.current?.unswipeAll();
+              }, 'warning', I18n.t('timeline.reportAction.button')
+            )] : undefined,
+            // onSwipeStart: () => { console.log("top onSwipeStart", item.data.id) },
+            // onSwipeRelease: () => { console.log("top onSwipeRelease", item.data.id) }
+          });
+        }}
       />
     );
   }
@@ -246,7 +290,38 @@ export class TimelineScreen extends React.PureComponent<
   }
 
   goToFilters() {
+    this.listRef.current?.unswipeAll();
     this.props.navigation.navigate('timeline/filters');
+  }
+
+  doReportConfirm(notif: ITimelineNotification) {
+    return new Promise<boolean>((resolve, reject) => {
+      if (!this.rights.notification.report) reject(this.rights.notification.report);
+      Alert.alert(
+        I18n.t('timeline.reportAction.title'),
+        I18n.t('timeline.reportAction.description'),
+        [
+          {
+            text: I18n.t('timeline.reportAction.submit'),
+            onPress: async () => {
+              try {
+                await notificationsService.report(this.props.session, notif.id);
+                resolve(true);
+              } catch (e) {
+                Alert.alert(I18n.t('common.error.text'));
+                reject(e);
+              }
+            },
+            style: "destructive",
+          },
+          {
+            text: I18n.t('common.cancel'),
+            onPress: () => { resolve(false) },
+            style: "cancel",
+          }
+        ]
+      );
+    });
   }
 }
 
@@ -257,7 +332,7 @@ const getTimelineItems = (flashMessages: IFlashMessages_State, notifications: IN
   const notifs = (notifications && notifications.data) ? notifications.data : [];
   return ([
     ...msgs.map(fm => ({ type: ITimelineItemType.FLASHMSG, data: fm })),
-     ...notifs.map(n => ({ type: ITimelineItemType.NOTIFICATION, data: n })),
+    ...notifs.map(n => ({ type: ITimelineItemType.NOTIFICATION, data: n })),
   ]);
 }
 
