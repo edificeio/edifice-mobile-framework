@@ -69,6 +69,7 @@ type MailListContainerState = {
   unsubscribe: any;
   fetchRequested: boolean;
   firstFetch: boolean;
+  isChangingFolder: boolean;
   mailboxesCount: ICountMailboxes;
   folders: IFolder[];
 };
@@ -92,6 +93,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
       }),
       fetchRequested: false,
       firstFetch: false,
+      isChangingFolder: false,
       mailboxesCount: {},
       folders: [{ 
         id: "",
@@ -135,7 +137,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
 
   componentDidUpdate(prevProps) {
     const { navigation, init, count, isFetching, isFocused } = this.props;
-    const { firstFetch, fetchRequested } = this.state;
+    const { firstFetch, fetchRequested, isChangingFolder } = this.state;
     const key = navigation.getParam("key");
 
     if (prevProps.init.isFetching && !init.isFetching) {
@@ -145,6 +147,8 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
       this.setState({ mailboxesCount: count.data });
     }
     if (!isFetching && firstFetch) this.setState({ firstFetch: false });
+    if (key !== prevProps.navigation.getParam("key")) this.setState({ isChangingFolder: true });
+    if (isChangingFolder && !isFetching && prevProps.isFetching) this.setState({ isChangingFolder: false });
     if (
       !fetchRequested &&
       (key !== prevProps.navigation.getParam("key") ||
