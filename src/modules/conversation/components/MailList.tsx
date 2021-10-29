@@ -19,6 +19,7 @@ import { Trackers } from '../../../framework/util/tracker';
 import { IInit } from '../containers/MailList';
 import { FakeHeader, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '../../../framework/components/header';
 import { Swipeable } from 'react-native-gesture-handler';
+import { LoadingIndicator } from '../../../framework/components/loading';
 
 interface IMailListDataProps {
   notifications: any;
@@ -54,6 +55,7 @@ type MailListState = {
   showModal: boolean;
   selectedMail: IMail | undefined;
   isRefreshing: boolean;
+  isChangingPage: boolean;
 };
 
 let lastFolderCache = '';
@@ -73,12 +75,13 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
       showModal: false,
       selectedMail: undefined,
       isRefreshing: false,
+      isChangingPage: false
     };
   }
 
   componentDidUpdate(prevProps) {
     const { notifications, isFetching, fetchCompleted, fetchRequested, navigation, isChangingFolder } = this.props;
-    const key = navigation.getParam("key");
+    const { isChangingPage } = this.state;
 
     if (this.state.indexPage === 0 && !isFetching && prevProps.isFetching && fetchRequested) {
       this.setState({ mails: notifications });
@@ -106,6 +109,10 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
 
     if (!isChangingFolder && prevProps.isChangingFolder) {
       this.flatListRef && this.flatListRef.scrollToOffset({ offset: 0, animated: false });
+    }
+
+    if (isChangingPage && !isFetching && prevProps.isFetching) {
+      this.setState({ isChangingPage: false });
     }
   }
 
@@ -233,7 +240,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
 
   public render() {
     const { isFetching, firstFetch, navigation } = this.props;
-    const { showModal, selectedMail, isRefreshing, nextPageCallable } = this.state;
+    const { showModal, selectedMail, isRefreshing, nextPageCallable, isChangingPage } = this.state;
     const navigationKey = navigation.getParam("key");
     const uniqueId = [];
     const uniqueMails =
@@ -333,10 +340,11 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
               onEndReachedThreshold={0.5}
               onEndReached={() => {
                 if (nextPageCallable) {
-                  this.setState({ nextPageCallable: false });
+                  this.setState({ nextPageCallable: false, isChangingPage: true });
                   this.onChangePage();
                 }
               }}
+              ListFooterComponent={isChangingPage ? <LoadingIndicator /> : null}
               ListEmptyComponent={
                 isFetching && firstFetch ? (
                   <Loading />
