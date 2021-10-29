@@ -13,6 +13,8 @@ interface ICallListProps {
   courseList: ICourses[];
   isFetching: boolean;
   onCoursePress: (course: any) => void;
+  navigation: any;
+  isFocused: boolean;
 }
 
 interface ICallListState {
@@ -31,7 +33,14 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
   }
 
   componentDidMount() {
-    setInterval(() => this.setState({ currentIndex: this.getCurrentCourseIndex(this.props.courseList) }), 300000);
+    // refresh every 3.5 minutes
+    this.interval = setInterval(() => {
+      if (this.props.isFocused) {
+        this.setState({ currentIndex: this.getCurrentCourseIndex(this.props.courseList) });
+      } else {
+        clearInterval(this.interval);
+      }
+    }, 210000);
   }
 
   componentWillUpdate(nextProps) {
@@ -39,8 +48,14 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
       this.setState({ currentIndex: this.getCurrentCourseIndex(nextProps.courseList) });
   }
 
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
   private getCurrentCourseIndex(courseList) {
-    const courseIndexNow = courseList.findIndex(course => moment().isBetween(moment(course.startDate), moment(course.endDate)));
+    const courseIndexNow = courseList.findIndex(course =>
+      moment().isBetween(moment(course.startDate).subtract(1, 'minutes'), moment(course.endDate)),
+    );
     return courseIndexNow !== -1 ? courseIndexNow : 0;
   }
 
@@ -83,6 +98,7 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
       <>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <Swiper
+            automaticallyAdjustContentInsets
             horizontal
             index={this.state.currentIndex}
             paginationStyle={{ position: 'absolute', bottom: -50 }}

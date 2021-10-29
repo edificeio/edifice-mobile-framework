@@ -1,5 +1,6 @@
 import moment from "moment";
 import * as React from "react";
+import { AppState, AppStateStatus } from "react-native";
 import { NavigationFocusInjectedProps } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -49,6 +50,7 @@ class TeacherCallList extends React.PureComponent<ICallListContainerProps> {
     this.props.getMultipleSlots(this.props.structureId);
     this.props.getRegisterPreferences();
     this.fetchTodayCourses();
+    AppState.addEventListener('change', this.handleAppStateChange);
   }
 
   componentDidUpdate(prevProps) {
@@ -62,6 +64,16 @@ class TeacherCallList extends React.PureComponent<ICallListContainerProps> {
     ) {
       this.fetchTodayCourses();
     }
+  }
+
+  private handleAppStateChange = (nextAppState: AppStateStatus) => {
+    if (nextAppState === 'active') {
+      this.fetchTodayCourses();
+    }
+  };
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this.handleAppStateChange);
   }
 
   fetchTodayCourses = () => {
@@ -108,6 +120,7 @@ class TeacherCallList extends React.PureComponent<ICallListContainerProps> {
   render() {
     return (
       <TeacherCallListComponent
+        {...this.props}
         onCoursePress={this.openCall}
         courseList={this.props.courses}
         isFetching={this.props.isFetching}

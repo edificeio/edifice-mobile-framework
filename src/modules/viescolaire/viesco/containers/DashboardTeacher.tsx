@@ -1,4 +1,5 @@
 import * as React from "react";
+import { withNavigationFocus } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
@@ -21,9 +22,7 @@ const mapStateToProps: (state: any) => any = state => {
 };
 
 const mapDispatchToProps: (dispatch: any) => any = dispatch => {
-  return bindActionCreators(
-    {}, dispatch,
-  );
+  return bindActionCreators({}, dispatch);
 };
 
-export default withViewTracking("viesco")(connect(mapStateToProps, mapDispatchToProps)(Dashboard));
+export default withViewTracking("viesco")(connect(mapStateToProps, mapDispatchToProps)(withNavigationFocus(Dashboard)));
