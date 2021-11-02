@@ -47,8 +47,8 @@ type ICallListContainerProps = {
 
 class TeacherCallList extends React.PureComponent<ICallListContainerProps> {
   componentDidMount() {
-    this.props.getMultipleSlots(this.props.structureId);
-    this.props.getRegisterPreferences();
+    this.props.getMultipleSlots(this.props.structureId); // get multipleSlot preference set on web
+    this.props.getRegisterPreferences(); // get CPE multipleSlot preference
     this.fetchTodayCourses();
     AppState.addEventListener('change', this.handleAppStateChange);
   }
@@ -68,6 +68,8 @@ class TeacherCallList extends React.PureComponent<ICallListContainerProps> {
 
   private handleAppStateChange = (nextAppState: AppStateStatus) => {
     if (nextAppState === 'active') {
+      this.props.getRegisterPreferences();
+      this.props.getMultipleSlots(this.props.structureId);
       this.fetchTodayCourses();
     }
   };
