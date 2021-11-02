@@ -661,7 +661,8 @@
       "button": "Signaler",
       "title": "Vous allez signaler une notification",
       "description": "L’heure et l’origine de ce signalement seront enregistrées ainsi que votre identité et transmises à la direction de l'établissement. Etes vous sûr(e) de vouloir signaler ce contenu ?",
-      "submit": "Signaler la notification inappropriée"
+      "submit": "Signaler la notification inappropriée",
+      "success": "La notification a bien été signalée."
     }
   },
   "timeline-allFilter": "Tous",

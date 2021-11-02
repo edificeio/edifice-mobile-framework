@@ -28,6 +28,7 @@ import { Icon } from "../../../components/icon";
 import theme from "../../../util/theme";
 import { notificationsService } from "../service";
 import { getTimelineWorkflowInformation } from "../rights";
+import Toast from "react-native-tiny-toast";
 
 // TYPES ==========================================================================================
 
@@ -307,6 +308,7 @@ export class TimelineScreen extends React.PureComponent<
               try {
                 await notificationsService.report(this.props.session, notif.id);
                 resolve(true);
+                Toast.showSuccess(I18n.t('timeline.reportAction.success'));
               } catch (e) {
                 Alert.alert(I18n.t('common.error.text'));
                 reject(e);
