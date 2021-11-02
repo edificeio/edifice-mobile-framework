@@ -35,9 +35,11 @@ export const Item = ({ onEvent, item, selected }: IEventProps & any) => {
     <ListItem
       onLongPress={() => onEvent({ type: EVENT_TYPE.LONG_SELECT, id: item.id, item })}
       onPress={() => {
+        const previewEvent = { type: EVENT_TYPE.PREVIEW, item };
+        const selectEvent = { type: EVENT_TYPE.SELECT, id: item.id, item };
         const eventInfos = Platform.select({ 
-          ios: { type: EVENT_TYPE.PREVIEW, item },
-          default: { type: EVENT_TYPE.SELECT, id: item.id, item }
+          ios: isFolder ? selectEvent : previewEvent,
+          default: selectEvent
         });
         onEvent(eventInfos);
       }}
