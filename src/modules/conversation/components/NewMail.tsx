@@ -522,6 +522,7 @@ const Body = ({ style, value, onChange, autofocus }) => {
   // console.log("value", nl2br(value));
   const valueFormated = HtmlToText(nl2br(value), false).render;
   const [currentValue, updateCurrentValue] = React.useState(valueFormated);
+  const [keyboardStatus, setKeyboardStatus] = React.useState(0); // State used just to force-update the component whenever it changes
 
   React.useEffect(() => {
     window.clearTimeout(textUpdateTimeout.current);
@@ -531,6 +532,18 @@ const Body = ({ style, value, onChange, autofocus }) => {
       window.clearTimeout(textUpdateTimeout.current);
     };
   }, [currentValue]);
+
+  React.useEffect(() => {
+    const showSubscription = Keyboard.addListener(
+      Platform.select({ ios: "keyboardWillHide", android: "keyboardDidHide" })!,
+      () => {
+        setKeyboardStatus(new Date().getTime());
+      });
+
+    return () => {
+      showSubscription.remove();
+    };
+  }, []);
 
   return (
     <View style={[styles.mailPart, style, { flexGrow: 1 }]}>
@@ -544,6 +557,7 @@ const Body = ({ style, value, onChange, autofocus }) => {
         defaultValue={value}
         value={br2nl(currentValue)}
         onChangeText={text => updateCurrentValue(nl2br(text))}
+        key={keyboardStatus}
       />
     </View>
   );
