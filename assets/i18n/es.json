@@ -656,6 +656,13 @@
     "webViewScreen": {
       "infoBubbleText": "Para ver y modificar cierto contenido, será redirigido al navegador web de su teléfono inteligente.",
       "title": "Redireccionamiento web"
+    },
+    "reportAction": {
+      "button": "Informar",
+      "title": "Informará de una notificación",
+      "description": "La hora y el origen de este informe se registrará junto con su identidad y se remitirá a la dirección de la escuela. ¿Seguro que quieres denunciar este contenido?",
+      "submit": "Informar de una notificación inapropiada",
+      "success": "Se ha informado de la notificación."
     }
   },
   "timeline-allFilter": "Todo",

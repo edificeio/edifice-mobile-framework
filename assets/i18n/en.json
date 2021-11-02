@@ -656,6 +656,13 @@
     "webViewScreen": {
       "infoBubbleText": "To view and edit certain content, you will be redirected to your smartphone's browser.",
       "title": "Browser redirection"
+    },
+    "reportAction": {
+      "button": "Report",
+      "title": "You will report a notification",
+      "description": "The time and origin of this report will be recorded along with your identity and forwarded to the school management. Are you sure you want to report this content?",
+      "submit": "Report inappropriate notification",
+      "success": "The notification has been reported."
     }
   },
   "timeline-allFilter": "All",
