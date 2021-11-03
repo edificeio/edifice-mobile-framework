@@ -25,7 +25,7 @@ import {
   TextAction
 } from "../../../framework/components/text";
 import { IFrame } from "../../../ui/IFrame";
-import { DEPRECATED_signImagesUrls, DEPRECATED_signImageURISource } from "../../../infra/oauth";
+import { DEPRECATED_signImagesUrls, DEPRECATED_signImageURISource, signURISource, transformedSrc } from "../../../infra/oauth";
 
 export enum HtmlParserJsxTextVariant {
   None = 0,
@@ -379,7 +379,11 @@ function renderParseAudio(
 ): JSX.Element {
   return (
     <View key={key}>
-      <Player type="audio" source={nugget.src} style={style} />
+      <Player
+        type="audio"
+        source={signURISource(transformedSrc(nugget.src))}
+        style={style}
+      />
     </View>
   );
 }
@@ -397,7 +401,11 @@ function renderParseVideo(
 ): JSX.Element {
   return (
     <View key={key}>
-      <Player type="video" source={nugget.src} style={style} />
+      <Player
+        type="video"
+        source={signURISource(transformedSrc(nugget.src))}
+        style={style}
+      />
     </View>
   );
 }
