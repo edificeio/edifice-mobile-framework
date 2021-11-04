@@ -18,16 +18,19 @@ import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenO
 import { NavigationScreenProp } from "react-navigation";
 import { HeaderBackAction } from "../../ui/headers/NewHeader";
 import withViewTracking from "../../framework/util/tracker/withViewTracking";
+import { getUserSession } from "../../framework/util/session";
 
 const mapStateToProps: (state: any) => IHomeworkFilterPageDataProps = state => {
   // Extract data from state
+  const session = getUserSession(state);
   const localState = state.homework;
   const homeworkDiaryList = localState.diaryList;
   if (!homeworkDiaryList.data)
     return {
       diaryList: [],
       isFetching: homeworkDiaryList.isFetching,
-      selectedDiaryId: localState.selected
+      selectedDiaryId: localState.selected,
+      session
     };
   const flatHomeworkDiaryList = Object.getOwnPropertyNames(
     homeworkDiaryList.data
@@ -43,7 +46,8 @@ const mapStateToProps: (state: any) => IHomeworkFilterPageDataProps = state => {
     diaryList: flatHomeworkDiaryList,
     didInvalidate,
     isFetching,
-    selectedDiaryId: localState.selectedDiary
+    selectedDiaryId: localState.selectedDiary,
+    session
   };
 };
 
