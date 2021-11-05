@@ -38,7 +38,7 @@ export type IDevoirsMatieresBackend = {
 const devoirsMatieresAdapter: (data: IDevoirsMatieresBackend) => IDevoirsMatieres = data => {
   let result = {} as IDevoirsMatieres;
   if (!data) return result;
-  return {
+  result = {
     devoirs: data.devoirs.map(item => ({
       teacher: item.teacher,
       date: item.date,
@@ -50,17 +50,20 @@ const devoirsMatieresAdapter: (data: IDevoirsMatieresBackend) => IDevoirsMatiere
       moyenne: item.moyenne,
       competences: item.competences,
     })),
-    matieres: data.matieres.map(item => ({
-      id: item.id,
-      externalId: item.externalId,
-      name: item.name,
-    })),
+    matieres: data.matieres
+      ? data.matieres.map(item => ({
+          id: item.id,
+          externalId: item.externalId,
+          name: item.name,
+        }))
+      : [],
   };
+  return result;
 };
 
 export const devoirListService = {
   get: async (idEtablissement: string, idEleve: string, idPeriode?: string, idMatiere?: string) => {
-    let urlParameters = "" as string;
+    let urlParameters = '' as string;
     if (idPeriode) urlParameters = `&idPeriode=${idPeriode}`;
     if (idMatiere) urlParameters += `&idMatiere=${idMatiere}`;
     const devoirs = await fetchJSONWithCache(

@@ -101,7 +101,10 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     const { devoirs, screenDisplay } = this.state;
 
     if (periods !== prevProps.periods) this.setCurrentPeriod();
-    if (groups !== prevProps.groups || devoirsList.data.matieres !== prevProps.devoirsList.data.matieres) {
+    if (
+      groups !== prevProps.groups ||
+      (devoirsList.data.matieres !== prevProps.devoirsList.data.matieres && devoirsList.data.matieres.length > 0)
+    ) {
       this.setState({ disciplineList: devoirsList.data.matieres });
     }
     // Update devoirsList after new fetch
@@ -238,26 +241,28 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
   }
 
   private initDevoirsByDisciplines(discipline) {
-    const { structureId, childId, devoirsList } = this.props;
-    const { selectedPeriod, currentPeriod } = this.state;
+    const { structureId, childId } = this.props;
+    const { selectedPeriod, currentPeriod, disciplineList } = this.state;
 
     let subjectId = "";
     if (discipline !== I18n.t("viesco-competences-disciplines")) {
-      subjectId = devoirsList.data.matieres.find(item => item.name === discipline)!.id;
+      subjectId = this.state.disciplineList.find(item => item.name === discipline)!.id;
       if (selectedPeriod.type === I18n.t("viesco-competences-period")) {
         this.setState({ selectedPeriod: currentPeriod });
         this.props.getDevoirs(structureId, childId, currentPeriod.value!, subjectId);
       } else this.props.getDevoirs(structureId, childId, selectedPeriod.value!, subjectId);
     } else this.props.getDevoirs(structureId, childId);
 
-    this.setState({ selectedDiscipline: discipline, disciplineId: subjectId }, this.screenRenderOpt);
+    if (disciplineList.length > 1) {
+      this.setState({ selectedDiscipline: discipline, disciplineId: subjectId }, this.screenRenderOpt);
+    }
   }
 
   private initDevoirsByPeriods(period: ISelectedPeriod) {
     const { structureId, childId } = this.props;
-    const { disciplineId } = this.state;
+    const { disciplineId, selectedDiscipline } = this.state;
 
-    if (disciplineId === "") {
+    if (disciplineId === "" || selectedDiscipline !== I18n.t("viesco-competences-disciplines")) {
       this.props.getDevoirsMoyennes(structureId, childId, period.value!);
     } else {
       this.props.getDevoirs(structureId, childId, period.value!, disciplineId);
@@ -288,7 +293,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
       periodsList.push({
         type: `${I18n.t("viesco-competences-period-" + type) + " " + order}`,
         value: id_type.toString(),
-      })
+      }),
     );
     periodsList.push({ type: I18n.t("viesco-year"), value: undefined });
 
