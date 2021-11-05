@@ -63,7 +63,7 @@ class TimetableContainer extends React.PureComponent<TimetableProps, TimetableSt
           backgroundColor: "#162EAE",
         },
       },
-      navigation
+      navigation,
     );
   };
 
@@ -153,16 +153,20 @@ const mapStateToProps = (state: any): any => {
     childClasses = getSessionInfo().classes[0];
     const childGroups = getGroupsListState(state).data;
     if (childGroups !== undefined && childGroups[0] !== undefined) {
-      if (childGroups[0].nameClass !== undefined) group.push(childGroups[0].nameClass);
-      childGroups[0]?.nameGroups?.forEach(item => group.push(item));
+      childGroups.forEach(groupsStructures => {
+        if (groupsStructures.nameClass !== undefined) group.push(groupsStructures.nameClass);
+        groupsStructures?.nameGroups?.forEach(item => group.push(item));
+      });
     } else group.push(getSessionInfo().realClassesNames[0]);
   } else if (getSessionInfo().type === "Relative") {
     childId = getSelectedChild(state)?.id;
     childClasses = getUserChildrenState(state).data!.find(child => childId === child.id)?.idClasses!;
     const childGroups = getGroupsListState(state);
     if (childGroups !== undefined && childGroups.data[0] !== undefined) {
-      if (childGroups.data[0].nameClass !== undefined) group.push(childGroups.data[0].nameClass);
-      childGroups?.data[0]?.nameGroups?.forEach(item => group.push(item));
+      childGroups.data.forEach(groupsStructures => {
+        if (groupsStructures.nameClass !== undefined) group.push(groupsStructures.nameClass);
+        groupsStructures?.nameGroups?.forEach(item => group.push(item));
+      });
     } else {
       let initialGroups = getChildrenGroupsState(state).data;
       group.push(filterGroups(childClasses, initialGroups));
@@ -196,7 +200,7 @@ const mapDispatchToProps = (dispatch: any): any =>
       fetchTeacherCourses: fetchCourseListFromTeacherAction,
       fetchSlots: fetchSlotListAction,
     },
-    dispatch
+    dispatch,
   );
 
 export default connect(mapStateToProps, mapDispatchToProps)(TimetableContainer);
