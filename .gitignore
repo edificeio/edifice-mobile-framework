@@ -95,3 +95,5 @@ package-lock.json
 jetificableGroups.json
 ios/Podfile.lock
 Gemfile.lock
+yarn.lock
+
