@@ -86,10 +86,11 @@ export class AttachmentGroup extends React.PureComponent<
         <BubbleStyle
           style={{
             flex: 0, 
-            paddingVertical: 2,
+            paddingVertical: undefined,
             marginTop: 0,
             marginBottom: 0,
             maxHeight: editMode ? 150 : undefined,
+            paddingHorizontal: undefined,
           }}
         >
           <SafeAreaView>
@@ -105,10 +106,12 @@ export class AttachmentGroup extends React.PureComponent<
                     onDownload={onDownload}
                     onError={onError}
                     onOpen={onOpen}
-                    style={{marginTop: index === 0 ? 0 : 2}}
+                    style={{ 
+                      paddingHorizontal: 16,
+                      backgroundColor: index % 2 ? CommonStyles.primaryLight : undefined
+                    }}
                     editMode={editMode && !item.hasOwnProperty("id")}
                     onRemove={() => onRemove && onRemove(index)}
-                    
                   />
                 </View>
               }
