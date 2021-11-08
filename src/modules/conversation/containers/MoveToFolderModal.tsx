@@ -1,9 +1,11 @@
 import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
+import { tryAction } from "../../../framework/util/redux/actions";
 
-import { moveMailsToFolderAction, moveMailsToInboxAction, restoreMailsAction } from "../actions/mail";
+import { moveMailsToFolderAction, moveMailsToInboxAction, restoreMailsAction, restoreMailsToFolderAction, restoreMailsToInboxAction } from "../actions/mail";
 import MoveToFolderModalComponent from "../components/MoveToFolderModal";
+import moduleConfig from "../moduleConfig";
 import { getInitMailListState, IFolder } from "../state/initMails";
 
 type MoveToFolderModalProps = {
@@ -14,7 +16,8 @@ type MoveToFolderModalProps = {
   closeModal: () => any;
   moveToFolder: (ids: string[], folder: string) => any;
   moveToInbox: (ids: string[]) => any;
-  restore: (ids: string[]) => any;
+  restoreToFolder: (ids: string[], folder: string) => any;
+  restoreToInbox: (ids: string[]) => any;
   successCallback: () => any;
 };
 
@@ -37,13 +40,17 @@ class MoveToFolderModal extends React.Component<MoveToFolderModalProps, MoveToFo
   };
 
   confirm = async () => {
-    const { currentFolder, moveToFolder, moveToInbox, restore, mail, successCallback, closeModal } = this.props;
+    const { currentFolder, moveToFolder, moveToInbox, restoreToInbox, restoreToFolder, mail, successCallback, closeModal } = this.props;
     const { selectedFolder } = this.state;
     closeModal();
     if (!selectedFolder) return;
-    if (currentFolder === "trash") await restore([mail.id]);
-    if (selectedFolder === "inbox") await moveToInbox([mail.id]);
-    else await moveToFolder([mail.id], selectedFolder);
+    if (currentFolder === "trash") {
+      if (selectedFolder === "inbox") await restoreToInbox([mail.id]);
+      else await restoreToFolder([mail.id], selectedFolder);
+    } else {
+      if (selectedFolder === "inbox") await moveToInbox([mail.id]);
+      else await moveToFolder([mail.id], selectedFolder);
+    }
     successCallback();
   };
 
@@ -67,11 +74,7 @@ const mapStateToProps = (state: any) => {
 
 const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators(
-    {
-      moveToFolder: moveMailsToFolderAction,
-      moveToInbox: moveMailsToInboxAction,
-      restore: restoreMailsAction
-    },
+    {},
     dispatch
   );
 };

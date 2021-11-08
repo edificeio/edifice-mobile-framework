@@ -9,6 +9,8 @@ import { Icon } from "../../../ui";
 import { Text } from "../../../ui/Typography";
 import { iosStatusBarHeight } from "../../../ui/headers/Header";
 import { TextColorStyle } from "../../../framework/components/text";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { UI_SIZES } from "../../../framework/components/constants";
 
 type MailContentMenuProps = {
   data: {
@@ -22,9 +24,9 @@ type MailContentMenuProps = {
 export default class MailContentMenu extends React.PureComponent<MailContentMenuProps> {
   public render() {
     const { onClickOutside, show, data } = this.props;
-    if (!show) return <></>;
-    return (
-      <View style={style.overlayActions}>
+    const RenderComp = () => {
+      const insets = useSafeAreaInsets();
+      return <View style={[style.overlayActions, { top: UI_SIZES.headerHeight + insets.top }]}>
         <TouchableWithoutFeedback style={{ width: "100%", height: "100%" }} onPress={onClickOutside}>
           <FlatList
             style={style.actions}
@@ -45,7 +47,9 @@ export default class MailContentMenu extends React.PureComponent<MailContentMenu
           />
         </TouchableWithoutFeedback>
       </View>
-    );
+    }
+    if (!show) return <></>;
+    return <RenderComp/>;
   }
 }
 
@@ -54,7 +58,7 @@ const style = StyleSheet.create({
     backgroundColor: "#ffffff",
     position: "absolute",
     right: 4,
-    top: Header.HEIGHT,
+    top: 0,
     zIndex: 10,
     borderRadius: 15,
     borderWidth: 0.2,
@@ -71,7 +75,7 @@ const style = StyleSheet.create({
     left: 0,
     position: "absolute",
     right: 0,
-    top: Platform.OS === "ios" ? (hasNotch() ? iosStatusBarHeight + 10 : iosStatusBarHeight) : -3,
+    top: 0,
   },
   separator: {
     borderBottomColor: CommonStyles.borderColorVeryLighter,

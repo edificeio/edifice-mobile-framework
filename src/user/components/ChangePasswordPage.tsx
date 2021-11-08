@@ -7,7 +7,7 @@ import { ContextState, SubmitState } from "../../utils/SubmitState";
 import { ValueChangeArgs, ValidatorBuilder, ValueGetter, ValueChange } from "../../utils/form";
 import { Alert, TextInput, SafeAreaView, KeyboardAvoidingView, Platform } from "react-native";
 import { Loading } from "../../ui/Loading";
-import { PasswordInputLine } from "../../ui/forms/PasswordInputLine";
+import { TextInputLine } from "../../ui/forms/TextInputLine";
 import { ErrorMessage } from "../../ui/Typography";
 import { FlatButton } from "../../ui/FlatButton";
 import { getSessionInfo } from "../../App";
@@ -177,21 +177,21 @@ export class ChangePasswordPage extends React.PureComponent<
             <FormTouchable onPress={() => formModel.blur()}>
               <FormWrapper>
                 <FormContainer>
-                  <NoTouchableContainer style={{ paddingHorizontal: 20 }}><Text>{I18n.t("PasswordOld")}</Text></NoTouchableContainer>
+                  <NoTouchableContainer><Text>{I18n.t("PasswordOld")}</Text></NoTouchableContainer>
                   <OldPasswordField
                     oldPassword={oldPassword}
                     form={formModel}
                     onChange={this.onChange("oldPassword")}
                   />
                   <MiniSpacer/>
-                  <NoTouchableContainer style={{ paddingHorizontal: 20 }}><Text>{I18n.t("PasswordNew")}</Text></NoTouchableContainer>
+                  <NoTouchableContainer><Text>{I18n.t("PasswordNew")}</Text></NoTouchableContainer>
                   <NewPasswordField
                     newPassword={newPassword}
                     form={formModel}
                     onChange={this.onChange("newPassword")}
                   />
                   <MiniSpacer/>
-                  <NoTouchableContainer style={{ paddingHorizontal: 20 }}><Text>{I18n.t("PasswordNewConfirm")}</Text></NoTouchableContainer>
+                  <NoTouchableContainer><Text>{I18n.t("PasswordNewConfirm")}</Text></NoTouchableContainer>
                   <PasswordConfirmField
                     confirm={confirm}
                     form={formModel}
@@ -225,40 +225,40 @@ function OldPasswordField(
   props: { oldPassword: string, form: ChangePasswordFormModel, onChange: ValueChange<string> }
 ) {
   const validator = props.form.oldPassword;
-  return <PasswordInputLine
-    style={{ marginHorizontal: 40, marginTop: -15 }}
-    inputRef={(ref) => props.form.inputOldPassword = ref}
-    placeholder="●●●●●●●"
-    onChangeText={validator.changeCallback(props.onChange)}
-    value={props.oldPassword}
-    hasError={props.form.showOldPasswordError(props.oldPassword)}
-  />
+  return <TextInputLine
+          isPasswordField
+          inputRef={(ref) => props.form.inputOldPassword = ref}
+          placeholder="●●●●●●●"
+          onChangeText={validator.changeCallback(props.onChange)}
+          value={props.oldPassword}
+          hasError={props.form.showOldPasswordError(props.oldPassword)}
+        />
 }
 function NewPasswordField(
   props: { newPassword: string, form: ChangePasswordFormModel, onChange: ValueChange<string> }
 ) {
   const validator = props.form.newPassword;
-  return <PasswordInputLine
-    style={{ marginHorizontal: 40, marginTop: -15 }}
-    inputRef={(ref) => props.form.inputNewPassword = ref}
-    placeholder="●●●●●●●●●"
-    onChangeText={validator.changeCallback(props.onChange)}
-    value={props.newPassword}
-    hasError={props.form.showNewPasswordError(props.newPassword)}
-  />
+  return <TextInputLine
+          isPasswordField
+          inputRef={(ref) => props.form.inputNewPassword = ref}
+          placeholder="●●●●●●●●●"
+          onChangeText={validator.changeCallback(props.onChange)}
+          value={props.newPassword}
+          hasError={props.form.showNewPasswordError(props.newPassword)}
+        />
 }
 function PasswordConfirmField(
   props: { confirm: string, form: ChangePasswordFormModel, onChange: ValueChange<string> }
 ) {
   const validator = props.form.confirm;
-  return <PasswordInputLine
-    style={{ marginHorizontal: 40, marginTop: -15 }}
-    inputRef={(ref) => props.form.inputPasswordConfirm = ref}
-    placeholder="●●●●●●●●●"
-    onChangeText={validator.changeCallback(props.onChange)}
-    value={props.confirm}
-    hasError={props.form.showPasswordConfirmError(props.confirm)}
-  />
+  return <TextInputLine
+          isPasswordField
+          inputRef={(ref) => props.form.inputPasswordConfirm = ref}
+          placeholder="●●●●●●●●●"
+          onChangeText={validator.changeCallback(props.onChange)}
+          value={props.confirm}
+          hasError={props.form.showPasswordConfirmError(props.confirm)}
+        />
 }
 
 const FormPage = style.view({
@@ -272,8 +272,8 @@ const FormContainer = style.view({
   flex: 1,
   flexDirection: "column",
   justifyContent: "flex-start",
-  padding: 0,
-  paddingTop: 30
+  paddingTop: 30,
+  paddingHorizontal: 30
 });
 const ButtonWrapper = style.view(
   {

@@ -11,7 +11,7 @@ import Conf from "../../../ode-framework-conf";
 import { notifierShowAction } from "../../infra/notifier/actions";
 import { ThunkDispatch } from "redux-thunk";
 import I18n from "i18n-js";
-import { Trackers } from "../../infra/tracker";
+import { Trackers } from "../../framework/util/tracker";
 
 export const publishableBlogsActions = createAsyncActionCreators<IBlog[]>(publishableBlogsActionTypes);
 export const fetchPublishableBlogsAction = (optional: boolean = false) =>

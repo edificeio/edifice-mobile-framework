@@ -3,7 +3,7 @@ import Conf from '../../ode-framework-conf';
 import { mainNavNavigate } from '../navigation/helpers/navHelper';
 import { NotificationHandlerFactory } from '../infra/pushNotification';
 import { FilterId, IFile } from './types';
-import { Trackers } from '../infra/tracker';
+import { Trackers } from '../framework/util/tracker';
 
 const notifHandlerFactory: NotificationHandlerFactory<any, any, any> = () => async (notificationData, apps, trackCategory) => {
   if (!notificationData?.resourceUri?.startsWith('/workspace')) {

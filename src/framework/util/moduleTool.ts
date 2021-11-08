@@ -3,7 +3,7 @@
  * Everything for managing and declaring modules
  */
 
-import { toSnakeCase } from "../../utils/string";
+import { toSnakeCase } from "./string";
 import * as React from "react";
 import { Reducer } from "redux";
 import { createMainTabNavOption } from "../../navigation/helpers/mainTabNavigator";
@@ -25,6 +25,8 @@ export interface IEntcoreApp {
   displayName: string;
   display: boolean;
   prefix?: string; // Note : Connectors haven't a prefix, Applications do.
+  casType?: string;
+  isExternal?: boolean;
 }
 
 interface IModuleConfigBase<Name extends string> {
@@ -38,6 +40,7 @@ interface IModuleConfigBase<Name extends string> {
   // Module computed information
   actionTypesPrefix: string; // Uppercase prefix used for action types. Computed from `name` if not specified.
   reducerName: string;       // Name of the reducer. Computed from `name` if not specified.
+  trackingName: string;      // Name used for tracking category. Computed from `name` if not specified.
 
   // Additional keys
   [k: string]: any;
@@ -75,7 +78,8 @@ export const createModuleConfig: <Name extends string, State>(opts: IModuleConfi
       : opts.matchEntcoreApp) || (() => true),
     entcoreScope: opts.entcoreScope || [],
     actionTypesPrefix: opts.actionTypesPrefix || toSnakeCase(opts.name).toUpperCase() + "_",
-    reducerName: opts.reducerName || opts.name
+    reducerName: opts.reducerName || opts.name,
+    trackingName: opts.trackingName || (opts.name[0].toUpperCase() + opts.name.slice(1))
   };
   const otherOpts = Object.fromEntries(Object.entries(opts).filter(([k, v]) => !ret.hasOwnProperty(k)));
   return {
@@ -161,6 +165,8 @@ export const createNavigableModuleConfig =
 export interface INavigableModuleDeclaration<Name extends string, State, Root> extends IModuleDeclaration<Name, State, Root> {
   config: INavigableModuleConfig<Name, State>
 };
+
+export type IAnyNavigableModuleConfig = INavigableModuleConfig<string, any>;
 
 export class NavigableModule
   <Name extends string, State, Root extends React.ComponentClass | React.FunctionComponent>

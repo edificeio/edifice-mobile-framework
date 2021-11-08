@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
 import { getSessionInfo } from "../../../../App";
-import withViewTracking from "../../../../infra/tracker/withViewTracking";
+import withViewTracking from "../../../../framework/util/tracker/withViewTracking";
 import { fetchHomeworkListAction, updateHomeworkProgressAction } from "../../cdt/actions/homeworks";
 import { getHomeworksListState } from "../../cdt/state/homeworks";
 import { fetchLevelsAction } from "../../competences/actions/competencesLevels";

@@ -4,7 +4,6 @@ import {
 } from "../../infra/fetchWithCache";
 import { preference, savePreference } from "../../infra/Me";
 import userConfig from "../config";
-import { Trackers } from "../../infra/tracker";
 
 export const actionTypeSetNotifPrefs = userConfig.createActionType(
   "NOTIFICATIONS_PREFS_SET"

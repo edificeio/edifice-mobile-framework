@@ -1,16 +1,27 @@
 import moment from "moment";
 import * as React from "react";
+import { AppState, AppStateStatus } from "react-native";
+import { NavigationFocusInjectedProps } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
 import { getSessionInfo } from "../../../../App";
 import { INavigationProps } from "../../../../types";
 import { getSelectedStructure } from "../../viesco/state/structure";
+import { fetchMultipleSlotsAction } from "../actions/multipleSlots";
+import { fetchRegiterPreferencesAction } from "../actions/registerPreferences";
 import { fetchCoursesRegisterAction } from "../actions/teacherCourseRegister";
 import { fetchCoursesAction } from "../actions/teacherCourses";
 import TeacherCallListComponent from "../components/TeacherCallList";
+import { getMultipleSlotsState, IMultipleSlotsState } from "../state/multipleSlots";
+import { getRegisterPreferencesState, IRegisterPreferencesState } from "../state/registerPreferences";
 import { getCoursesRegisterState } from "../state/teacherCourseRegister";
 import { getCoursesListState, ICourses } from "../state/teacherCourses";
+
+export enum SwitchState {
+  DEFAULT,
+  COLOR,
+}
 
 export type ICourse = {
   id: string;
@@ -25,24 +36,59 @@ type ICallListContainerProps = {
   teacherId: string;
   structureId: string;
   isFetching: boolean;
-  fetchCourses: (teacherId: string, structureId: string, startDate: string, endDate: string) => void;
+  multipleSlots: IMultipleSlotsState;
+  registerPreferences: IRegisterPreferencesState;
+  getMultipleSlots: (structureId: string) => void;
+  getRegisterPreferences: () => void;
+  fetchCourses: (teacherId: string, structureId: string, startDate: string, endDate: string, multipleSlot?: boolean) => void;
   fetchRegisterId: (any: any) => void;
-} & INavigationProps;
+} & INavigationProps &
+  NavigationFocusInjectedProps;
 
 class TeacherCallList extends React.PureComponent<ICallListContainerProps> {
   componentDidMount() {
+    this.props.getMultipleSlots(this.props.structureId);
+    this.props.getRegisterPreferences();
     this.fetchTodayCourses();
+    AppState.addEventListener('change', this.handleAppStateChange);
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.structureId !== this.props.structureId) {
+    const { isFocused, structureId, multipleSlots, registerPreferences } = this.props;
+
+    if (
+      (isFocused && prevProps.isFocused !== isFocused) ||
+      prevProps.structureId !== structureId ||
+      prevProps.multipleSlots.data !== multipleSlots.data ||
+      prevProps.registerPreferences.data !== registerPreferences.data
+    ) {
       this.fetchTodayCourses();
     }
   }
 
+  private handleAppStateChange = (nextAppState: AppStateStatus) => {
+    if (nextAppState === 'active') {
+      this.fetchTodayCourses();
+    }
+  };
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this.handleAppStateChange);
+  }
+
   fetchTodayCourses = () => {
+    let multipleSlot = true as boolean;
+    if (
+      this.props.multipleSlots &&
+      this.props.multipleSlots.data.allow_multiple_slots &&
+      this.props.registerPreferences &&
+      this.props.registerPreferences.data.preference
+    ) {
+      multipleSlot = JSON.parse(this.props.registerPreferences.data.preference).multipleSlot;
+    }
+
     const today = moment().format("YYYY-MM-DD");
-    this.props.fetchCourses(this.props.teacherId, this.props.structureId, today, today);
+    this.props.fetchCourses(this.props.teacherId, this.props.structureId, today, today, multipleSlot);
   };
 
   openCall = (course: ICourses) => {
@@ -74,6 +120,7 @@ class TeacherCallList extends React.PureComponent<ICallListContainerProps> {
   render() {
     return (
       <TeacherCallListComponent
+        {...this.props}
         onCoursePress={this.openCall}
         courseList={this.props.courses}
         isFetching={this.props.isFetching}
@@ -91,12 +138,18 @@ const mapStateToProps: (state: any) => any = state => {
     teacherId: getSessionInfo().id,
     structureId: getSelectedStructure(state),
     isFetching: coursesData.isFetching || registerData.isFetching,
+    multipleSlots: getMultipleSlotsState(state),
+    registerPreferences: getRegisterPreferencesState(state),
   };
 };
 
 const mapDispatchToProps: (dispatch: any) => any = dispatch => {
   return bindActionCreators(
-    { fetchCourses: fetchCoursesAction, fetchRegisterId: fetchCoursesRegisterAction },
+    {
+      fetchCourses: fetchCoursesAction,
+      fetchRegisterId: fetchCoursesRegisterAction,
+      getMultipleSlots: fetchMultipleSlotsAction,
+      getRegisterPreferences: fetchRegiterPreferencesAction, },
     dispatch
   );
 };

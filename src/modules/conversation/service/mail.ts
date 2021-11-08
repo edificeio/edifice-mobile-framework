@@ -1,4 +1,4 @@
-import { fetchJSONWithCache } from "../../../infra/fetchWithCache";
+import { fetchJSONWithCache, fetchWithCache } from "../../../infra/fetchWithCache";
 
 export const mailService = {
   toggleRead: async (mailIds: string[], read: boolean) => {
@@ -24,7 +24,7 @@ export const mailService = {
   },
   deleteMails: async (mailIds: string[]) => {
     const mailIdsData = {id: mailIds};
-    await fetchJSONWithCache(`/conversation/delete`, {
+    await fetchWithCache(`/conversation/delete`, { // Not JSON return in this case by the backend : the intended response is empty.
       method: "put",
       body: JSON.stringify(mailIdsData)
     });

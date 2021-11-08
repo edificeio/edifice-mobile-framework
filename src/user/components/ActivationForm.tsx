@@ -82,29 +82,29 @@ export function InputLogin(props: { login: string, form: ActivationFormModel, on
         value={props.login}
         hasError={props.form.showLoginError(props.login)}
         editable={false}
-        inputStyle={{color: theme.color.text.light}}
+        textColor={theme.color.text.light}
     />
 }
 export function InputPassword(props: { password: string, form: ActivationFormModel, onChange: ValueChange<string> }) {
     const validator = props.form.password;
     return <TextInputLine
+        isPasswordField
         inputRef={(ref) => props.form.inputPassword = ref}
         placeholder={I18n.t("Password")}
         onChangeText={validator.changeCallback(props.onChange)}
         value={props.password}
         hasError={props.form.showPasswordError(props.password)}
-        secureTextEntry={true}
     />
 }
 export function InputPasswordConfirm(props: { confirm: string, form: ActivationFormModel, onChange: ValueChange<string> }) {
     const validator = props.form.confirm;
     return <TextInputLine
+        isPasswordField
         inputRef={(ref) => props.form.inputConfirm = ref}
         placeholder={I18n.t("PasswordConfirm")}
         onChangeText={validator.changeCallback(props.onChange)}
         value={props.confirm}
         hasError={props.form.showConfirmError(props.confirm)}
-        secureTextEntry={true}
     />
 }
 export function InputEmail(props: { email: string, form: ActivationFormModel, onChange: ValueChange<string> }) {

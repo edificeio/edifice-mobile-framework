@@ -1,3 +1,4 @@
+import querystring from "querystring";
 import moment from "moment";
 
 import { fetchJSONWithCache } from "../../../../infra/fetchWithCache";
@@ -14,6 +15,7 @@ export type ICoursesListBackend = Array <{
   roomLabels: string[];
   groups: string[];
   registerId: string;
+  splitSlot: boolean;
 }>
 
 const coursesAdapter: (data: ICoursesListBackend) => ICoursesList = data => {
@@ -29,17 +31,27 @@ const coursesAdapter: (data: ICoursesListBackend) => ICoursesList = data => {
     roomLabels: item.roomLabels,
     groups: item.groups,
     registerId: item.registerId,
+    splitSlot: item.splitSlot,
   }));
   return result;
 };
 
 export const coursesService = {
-  get: async (teacher: string, structure: string, start: string, end: string) => {
+  get: async (teacher: string, structure: string, start: string, end: string, multiple_slot?: boolean) => {
     return coursesAdapter(
-        await fetchJSONWithCache(`/presences/courses?teacher=${teacher}&structure=${structure}&start=${start}&end=${end}&forgotten_registers=true`)
+      await fetchJSONWithCache(
+        `/presences/courses?${querystring.stringify({
+          teacher,
+          structure,
+          start,
+          end,
+          forgotten_registers: false,
+          multiple_slot,
+        })}`,
+      ),
     );
-  }
-}
+  },
+};
 
 export type ICoursesRegisterBackend = {
   id: string;

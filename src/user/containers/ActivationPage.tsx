@@ -1,7 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 
-import withViewTracking from "../../infra/tracker/withViewTracking";
+import withViewTracking from "../../framework/util/tracker/withViewTracking";
 import { activationAccount, cancelActivationAccount, initActivationAccount } from "../actions/activation";
 import {
   ActivationPage,

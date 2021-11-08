@@ -1,4 +1,4 @@
-import { createSessionAsyncReducer } from "../../infra/redux/async2";
+import { createSessionAsyncReducer } from "../../../infra/redux/async2";
 import { initialState, actionTypes } from "../state/signature";
 
 // THE REDUCER ------------------------------------------------------------------------------------

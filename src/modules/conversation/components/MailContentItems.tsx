@@ -1,7 +1,7 @@
 import I18n from "i18n-js";
 import moment from "moment";
 import * as React from "react";
-import { View, StyleSheet, TouchableWithoutFeedback } from "react-native";
+import { View, StyleSheet, TouchableWithoutFeedback, Platform } from "react-native";
 
 import { Icon } from "../../../ui";
 import { GridAvatars } from "../../../ui/avatars/GridAvatars";
@@ -16,6 +16,7 @@ import { downloadFileAction } from "../../../framework/util/fileHandler/actions"
 import { ListItem } from "../../../framework/components/listItem";
 import { NestedText, Text, TextColorStyle, TextSemiBold, TextSizeStyle } from "../../../framework/components/text";
 import { getMailPeople } from "../utils/mailInfos";
+import Toast from "react-native-tiny-toast";
 
 const User = ({ userId, userName }) => {
   const [dotColor, setDotColor] = React.useState(getProfileColor("Guest"));
@@ -90,7 +91,7 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
 
   const mailContacts = getMailPeople(mailInfos);
   if (mailContacts.to.length === 0) mailContacts.to = [[undefined, I18n.t("conversation.emptyTo"), false]];
-  const contactsToMore = mailContacts.to.length - 1;
+  const contactsToMore = mailContacts.to.length + mailContacts.cc.length + mailContacts.cci.length - 1;
 
   return <TouchableOpacity
     onPress={() => toggleVisible(!isVisible)}
@@ -98,11 +99,13 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
   ><ListItem
       style={{ paddingVertical: 18, borderBottomWidth: 0 }}
 
-      leftElement={<View style={{ alignSelf: 'flex-start' }}><GridAvatars
-        users={[{id: mailContacts.from[0], isGroup: mailContacts.from[2]}]}
+      leftElement={<View style={{ alignSelf: 'flex-start', marginTop: 20 }}><GridAvatars
+        users={[{ id: mailContacts.from[0], isGroup: mailContacts.from[2] }]}
       /></View>}
 
       rightElement={<View style={styles.mailInfos}>
+        {/* Date */}
+        <Text style={styles.mailDate} numberOfLines={1}>{displayPastDate(moment(mailInfos.date), true)}</Text>
         <View style={{ flex: 0 }}>
           {/* Contact name */}
           <View style={{ flex: 0, flexDirection: 'row' }}>
@@ -114,8 +117,6 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
                 >{mailContacts.from[1]}</TextContactComponent>
               </>
             })()}
-            {/* Date */}
-            <Text style={styles.mailDate} numberOfLines={1}>{displayPastDate(moment(mailInfos.date), isVisible)}</Text>
           </View>
         </View>
         <View style={{ flex: 0, flexDirection: 'row' }}>
@@ -168,40 +169,54 @@ export const RenderPJs = ({ attachments, mailId, dispatch }: { attachments: any[
   // console.log("PJS", attachments);
   return (
     <View style={[styles.containerMail, { flexDirection: "column", flex: 0 }]}>
-      {displayedAttachments.map((item, index) => (
-        <TouchableOpacity
-          style={{ flex: 0 }}
-          onPress={async () => {
-            const df: IDistantFileWithId = {
-              url: `/conversation/message/${mailId}/attachment/${item.id}`,
-              id: item.id,
-              filename: item.filename,
-              filesize: item.size,
-              filetype: item.contentType,
-            }
-            // console.log("df", df, dispatch);
-            const sf = (await dispatch(downloadFileAction<SyncedFileWithId>(df, {}))) as unknown as SyncedFileWithId;
-            // console.log("sf", sf);
-            await sf.open();
-          }}>
-          <View style={{ flexDirection: "row", flex: 0, alignItems: "center", borderRadius: 6 }}>
-            <Icon size={24} color="#2A9CC8" name={getFileIcon(item.contentType)} style={{ flex: 0 }}/>
-            <Text style={styles.gridButtonTextPJnames} key={item.id} numberOfLines={1} ellipsizeMode="middle">
-              {item.filename}
-            </Text>
-            {index === 0 && (
-              <TouchableOpacity onPress={() => toggleVisible(!isVisible)} style={{ padding: 5, flex: 0 }}>
-                {attachments.length > 1 && (
-                  <Text style={styles.gridButtonTextPJnb}>
-                    {isVisible ? "-" : "+"}
-                    {attachments.length - 1}
-                  </Text>
-                )}
-              </TouchableOpacity>
-            )}
-          </View>
-        </TouchableOpacity>
-      ))}
+      {displayedAttachments.map((item, index) => {
+        const df: IDistantFileWithId = {
+          url: `/conversation/message/${mailId}/attachment/${item.id}`,
+          id: item.id,
+          filename: item.filename,
+          filesize: item.size,
+          filetype: item.contentType,
+        }
+        return (
+          <TouchableOpacity
+            style={{ flex: 0 }}
+            onPress={async () => {
+              // console.log("df", df, dispatch);
+              const sf = (await dispatch(downloadFileAction<SyncedFileWithId>(df, {}))) as unknown as SyncedFileWithId;
+              // console.log("sf", sf);
+              await sf.open();
+            }}>
+            <View style={{ flexDirection: "row", flex: 0, alignItems: "center", borderRadius: 6 }}>
+              <Icon size={24} color="#2A9CC8" name={getFileIcon(item.contentType)} style={{ flex: 0 }} />
+              <Text style={styles.gridButtonTextPJnames} key={item.id} numberOfLines={1} ellipsizeMode="middle">
+                {item.filename}
+              </Text>
+              {index === 0 && (
+                <TouchableOpacity onPress={() => toggleVisible(!isVisible)} style={{ padding: 5, flex: 0 }}>
+                  {attachments.length > 1 && (
+                    <Text style={styles.gridButtonTextPJnb}>
+                      {isVisible ? "-" : "+"}
+                      {attachments.length - 1}
+                    </Text>
+                  )}
+                </TouchableOpacity>
+              )}
+              {Platform.OS !== "ios" ? <TouchableOpacity onPress={async () => {
+                try {
+                  const sf = (await dispatch(downloadFileAction<SyncedFileWithId>(df, {}))) as unknown as SyncedFileWithId;
+                  await sf.mirrorToDownloadFolder();
+                  Toast.showSuccess(I18n.t("download-success-name", { name: sf.filename }));
+                } catch (e) {
+                  Toast.show(I18n.t("download-error-generic"));
+                }
+              }}
+                style={{ paddingHorizontal: 12 }}>
+                <Icon name="download" size={18} color="#2A9CC8" />
+              </TouchableOpacity> : null}
+            </View>
+          </TouchableOpacity>
+        )
+      })}
     </View>
   );
 };
@@ -231,7 +246,7 @@ const styles = StyleSheet.create({
   gridButtonTextPJnames: {
     color: "#2A9CC8",
     marginLeft: 5,
-    flexShrink: 1,
+    flex: 1,
   },
   dotReceiverColor: {
     width: 8,

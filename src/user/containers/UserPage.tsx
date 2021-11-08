@@ -1,5 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
+import { ScrollView } from 'react-native';
 import RNConfigReader from 'react-native-config-reader';
 import DeviceInfo from 'react-native-device-info';
 import { NavigationScreenProp } from 'react-navigation';
@@ -18,8 +19,8 @@ import { ImagePicked } from '../../infra/imagePicker';
 import { notifierShowAction } from '../../infra/notifier/actions';
 import Notifier from '../../infra/notifier/container';
 import { OAuth2RessourceOwnerPasswordClient, signURISource } from '../../infra/oauth';
-import { Trackers } from '../../infra/tracker';
-import withViewTracking from '../../infra/tracker/withViewTracking';
+import { Trackers } from '../../framework/util/tracker';
+import withViewTracking from '../../framework/util/tracker/withViewTracking';
 import { standardNavScreenOptions } from '../../navigation/helpers/navScreenOptions';
 import { ButtonsOkCancel } from '../../ui';
 import { ButtonLine, ContainerSpacer, ContainerView } from '../../ui/ButtonLine';
@@ -121,92 +122,94 @@ export class UserPage extends React.PureComponent<
 
     return (
       <PageContainer>
-        <DEPRECATED_ConnectionTrackingBar />
-        <Notifier id="profileOne" />
-        {showDisconnect && (
-          <ModalBox backdropOpacity={0.5} isVisible={showDisconnect}>
-            {this.disconnectBox()}
-          </ModalBox>
-        )}
-        <UserCard
-          canEdit
-          hasAvatar={userinfo.photo !== ''}
-          updatingAvatar={updatingAvatar}
-          onChangeAvatar={async (image: ImagePicked) => {
-            try {
-              const lc = new LocalFile(
-                {
-                  filename: image.fileName as string,
-                  filepath: image.uri as string,
-                  filetype: image.type as string,
-                },
-                { _needIOSReleaseSecureAccess: false },
-              );
+        <ScrollView style={{ flex: 1 }} showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
+          <DEPRECATED_ConnectionTrackingBar />
+          <Notifier id="profileOne" />
+          {showDisconnect && (
+            <ModalBox backdropOpacity={0.5} isVisible={showDisconnect}>
+              {this.disconnectBox()}
+            </ModalBox>
+          )}
+          <UserCard
+            canEdit
+            hasAvatar={userinfo.photo !== ''}
+            updatingAvatar={updatingAvatar}
+            onChangeAvatar={async (image: ImagePicked) => {
+              try {
+                const lc = new LocalFile(
+                  {
+                    filename: image.fileName as string,
+                    filepath: image.uri as string,
+                    filetype: image.type as string,
+                  },
+                  { _needIOSReleaseSecureAccess: false },
+                );
 
-              this.setState({ updatingAvatar: true });
-              const sc = await onUploadAvatar(lc);
-              await onUpdateAvatar(sc.url);
-            } catch (err) {
-              console.warn(err);
-              if (err.message === 'Error picking image') {
-                onPickFileError('profileOne');
-              } else if (!(err instanceof Error)) {
-                onUploadAvatarError();
+                this.setState({ updatingAvatar: true });
+                const sc = await onUploadAvatar(lc);
+                await onUpdateAvatar(sc.url);
+              } catch (err) {
+                console.warn(err);
+                if (err.message === 'Error picking image') {
+                  onPickFileError('profileOne');
+                } else if (!(err instanceof Error)) {
+                  onUploadAvatarError();
+                }
+              } finally {
+                this.setState({ updatingAvatar: false });
               }
-            } finally {
-              this.setState({ updatingAvatar: false });
-            }
-          }}
-          onDeleteAvatar={async () => {
-            try {
-              this.setState({ updatingAvatar: true });
-              await onUpdateAvatar('');
-            } finally {
-              this.setState({ updatingAvatar: false });
-            }
-          }}
-          id={sourceWithParam}
-          displayName={getSessionInfo().displayName!}
-          type={getSessionInfo().type!}
-          touchable={true}
-          onPress={() => this.props.navigation.navigate('MyProfile')}
-        />
-        <ContainerSpacer />
-        <ButtonLine title={'directory-structuresTitle'} onPress={() => this.props.navigation.navigate('Structures')} />
-        <ContainerSpacer />
-        {getSessionInfo().type === 'Student' ? (
-          <>
-            <ButtonLine title={'directory-relativesTitle'} onPress={() => this.props.navigation.navigate('Relatives')} />
-            <ContainerSpacer />
-          </>
-        ) : getSessionInfo().type === 'Relative' ? (
-          <>
-            <ButtonLine title={'directory-childrenTitle'} onPress={() => this.props.navigation.navigate('Children')} />
-            <ContainerSpacer />
-          </>
-        ) : null}
-        <ButtonLine title={'directory-notificationsTitle'} onPress={() => this.props.navigation.navigate('NotifPrefs')} />
-        <ContainerSpacer />
-        <ButtonLine title={'directory-legalNoticeTitle'} onPress={() => this.props.navigation.navigate('LegalNotice')} />
-        <ContainerSpacer />
-        {/* <ButtonLine
+            }}
+            onDeleteAvatar={async () => {
+              try {
+                this.setState({ updatingAvatar: true });
+                await onUpdateAvatar('');
+              } finally {
+                this.setState({ updatingAvatar: false });
+              }
+            }}
+            id={sourceWithParam}
+            displayName={getSessionInfo().displayName!}
+            type={getSessionInfo().type!}
+            touchable={true}
+            onPress={() => this.props.navigation.navigate('MyProfile')}
+          />
+          <ContainerSpacer />
+          <ButtonLine title={'directory-structuresTitle'} onPress={() => this.props.navigation.navigate('Structures')} />
+          <ContainerSpacer />
+          {getSessionInfo().type === 'Student' ? (
+            <>
+              <ButtonLine title={'directory-relativesTitle'} onPress={() => this.props.navigation.navigate('Relatives')} />
+              <ContainerSpacer />
+            </>
+          ) : getSessionInfo().type === 'Relative' ? (
+            <>
+              <ButtonLine title={'directory-childrenTitle'} onPress={() => this.props.navigation.navigate('Children')} />
+              <ContainerSpacer />
+            </>
+          ) : null}
+          <ButtonLine title={'directory-notificationsTitle'} onPress={() => this.props.navigation.navigate('NotifPrefs')} />
+          <ContainerSpacer />
+          <ButtonLine title={'directory-legalNoticeTitle'} onPress={() => this.props.navigation.navigate('LegalNotice')} />
+          <ContainerSpacer />
+          {/* <ButtonLine
           title={"directory-legalNoticeTitle"}
           onPress={() => this.props.navigation.navigate("LegalNotice")}
         />
         <ContainerSpacer /> */}
-        <ContainerView>
-          <Label onLongPress={() => this.setState({ showVersionType: !showVersionType })}>
-            {I18n.t('version-number')} {DeviceInfo.getVersion()}
-            {showVersionType ? `-${versionType}-${versionOverride}` : ''}
-          </Label>
-        </ContainerView>
-        <ContainerSpacer />
-        <ButtonLine
-          title={'directory-disconnectButton'}
-          hideIcon={true}
-          color={'#F64D68'}
-          onPress={() => this.setState({ showDisconnect: true })}
-        />
+          <ContainerView>
+            <Label onLongPress={() => this.setState({ showVersionType: !showVersionType })}>
+              {I18n.t('version-number')} {DeviceInfo.getVersion()}
+              {showVersionType ? `-${versionType}-${versionOverride}` : ''}
+            </Label>
+          </ContainerView>
+          <ContainerSpacer />
+          <ButtonLine
+            title={'directory-disconnectButton'}
+            hideIcon={true}
+            color={'#F64D68'}
+            onPress={() => this.setState({ showDisconnect: true })}
+          />
+        </ScrollView>
       </PageContainer>
     );
   }

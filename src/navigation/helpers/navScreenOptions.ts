@@ -1,6 +1,7 @@
 import { CommonStyles } from "../../styles/common/styles";
 import { Platform } from "react-native";
 import deviceInfoModule from "react-native-device-info";
+import { UI_SIZES } from "../../framework/components/constants";
 
 /**
  * Options for a header with centered title
@@ -18,7 +19,7 @@ export const standardNavScreenOptions = (props, { state }) => {
     headerStyle: {
       backgroundColor: CommonStyles.mainColorTheme,
       elevation: 5,
-      height: Platform.select({ ios: deviceInfoModule.hasNotch() ? 100 : 76, default: 56 }),
+      height: Platform.select({ ios: deviceInfoModule.hasNotch() ? 100 : 76, default: UI_SIZES.headerHeight }),
       ...(props.headerStyle || {}),
     },
     headerTitleStyle: {

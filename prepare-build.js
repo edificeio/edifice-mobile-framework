@@ -5,12 +5,14 @@
 //
 // Args:
 //  - alpha|rc to prepare build number for alpha || rc
+//  - major|minor|rev to prepare build number for new major || minor || rev version
 //
 
 const execSync = require('child_process').execSync;
 const fs = require('fs');
 
 const gradleFile = 'android/app/build.gradle';
+const packageFile = './package.json';
 const plistFile = 'ios/appe/Info.plist';
 const versionFile = './version.json';
 
@@ -19,8 +21,8 @@ const versionFile = './version.json';
 //
 
 let buildType = process.argv.slice(2)[0];
-if (!['alpha', 'rc'].includes(buildType)) {
-  console.error('!!! Argument should be "alpha" or "rc" !!!');
+if (!['alpha', 'rc', 'major', 'minor', 'rev'].includes(buildType)) {
+  console.error('!!! Argument should be "alpha", "rc", "major", "minor" or "rev" !!!');
   process.exit(1);
 }
 
@@ -49,19 +51,40 @@ let fullVersion = null;
 let versionNumber = null;
 
 try {
-  versionContent.build += 1;
-  versionContent[buildType] += 1;
-  buildType += `.${versionContent[buildType]}`;
+  if (['alpha', 'rc'].includes(buildType)) {
+    versionContent.build += 1;
+    versionContent[buildType] += 1;
+    buildType = `${buildType}.${versionContent[buildType]}`;
+  } else {
+    switch (buildType) {
+      case 'major':
+        versionContent.major += 1;
+        versionContent.minor = 0;
+        versionContent.rev = 0;
+        break;
+      case 'minor':
+        versionContent.minor += 1;
+        versionContent.rev = 0;
+        break;
+      default:
+        versionContent.rev += 1;
+    }
+    versionContent.alpha = 0;
+    versionContent.build = 0;
+    versionContent.rc = 0;
+    buildType = '';
+  }
   const major = versionContent.major;
   const minor = versionContent.minor;
   const rev = versionContent.rev;
   const build = versionContent.build;
+  const type = buildType.length ? `-${buildType}` : '';
   // eslint-disable-next-line prettier/prettier
   buildNumber = `${major}${minor.toString().padStart(2, '0')}${rev.toString().padStart(2, '0')}${build
     .toString()
     .padStart(2, '0')}`;
   versionNumber = `${major}.${minor}.${rev}`;
-  fullVersion = `${versionNumber}-${buildType} (${buildNumber})`;
+  fullVersion = `${versionNumber}${type}(${buildNumber})`;
   console.info(`==> Version will be ${fullVersion})`);
 } catch (error) {
   console.error('!!! Unable to compute build number !!!');
@@ -165,13 +188,50 @@ try {
 }
 
 //
+// Read package.json
+//
+
+let packageContent = null;
+
+try {
+  packageContent = JSON.parse(fs.readFileSync(packageFile, 'utf-8'));
+} catch (error) {
+  console.error('!!! Unable to read package.json !!!');
+  console.log(error);
+  process.exit(11);
+}
+
+//
+// Change version in package.json
+//
+
+try {
+  packageContent.version = versionNumber;
+} catch (error) {
+  console.error('!!! Unable to update package.json !!!');
+  console.log(error);
+  process.exit(12);
+}
+
+//
+// Write new content to version.json
+//
+
+try {
+  fs.writeFileSync(packageFile, JSON.stringify(packageContent, null, 2), 'utf-8');
+  console.info('==> package.json file updated');
+} catch (error) {
+  console.error('!!! Unable to write package.json !!!');
+  console.log(error);
+  process.exit(13);
+}
+
+//
 // Commit && Push changes
 //
 try {
-  execSync(`git add ${gradleFile}`);
-  execSync(`git add ${plistFile}`);
-  execSync(`git add ${versionFile}`);
-  execSync(`git commit "-m release: ${fullVersion}"`);
+  execSync(`git add -A`);
+  execSync(`git commit -m "release: ${fullVersion}"`);
   execSync('git push');
 } catch (error) {
   console.error('!!! Unable to commit && push changes !!!');

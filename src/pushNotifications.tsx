@@ -3,7 +3,7 @@ import moduleDefinitions from "./AppModules";
 import { NotificationData, NotificationHandlerFactory } from "./infra/pushNotification";
 import timelineHandlerFactory from "./timeline/NotifHandler";
 import { Linking } from "react-native";
-import { Trackers } from "./infra/tracker";
+import { Trackers } from "./framework/util/tracker";
 import React, { useState, useEffect, FunctionComponent } from 'react';
 import { connect } from "react-redux";
 

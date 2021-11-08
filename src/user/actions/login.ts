@@ -17,7 +17,7 @@ import { clearTimeline } from "../../timeline/actions/clearTimeline";
 import { createEndSessionAction } from "../../infra/redux/reducerFactory";
 import { ThunkDispatch } from "redux-thunk";
 import { actionTypeRequestLogin, actionTypeLoggedIn, actionTypeLoginError, actionTypeLoggedOut } from "./actionTypes/login";
-import { Trackers } from "../../infra/tracker";
+import { Trackers } from "../../framework/util/tracker";
 import { getLoginStackToDisplay } from "../../navigation/LoginNavigator";
 import { PLATFORM_STORAGE_KEY } from "./platform";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -210,15 +210,15 @@ export function loginAction(
       // ToDo
       await Promise.all([
         Trackers.setUserId(userinfo2.userId),
-        Trackers.setCustomDimension(1 /* Profile */, userinfo2.type),
-        Trackers.setCustomDimension(2 /* School */,
+        Trackers.setCustomDimension(1, "Profile", userinfo2.type),
+        Trackers.setCustomDimension(2, "School",
           userinfo2.administrativeStructures && userinfo2.administrativeStructures.length
             ? userinfo2.administrativeStructures[0].id
             : userinfo2.structures && userinfo2.structures.length
               ? userinfo2.structures[0]
               : 'no structure'
         ),
-        Trackers.setCustomDimension(3 /* Project */, (Conf.currentPlatform as any).url.replace(/(^\w+:|^)\/\//, '')) // remove protocol
+        Trackers.setCustomDimension(3, "Project", (Conf.currentPlatform as any).url.replace(/(^\w+:|^)\/\//, '')) // remove protocol
       ]);
       if (credentials) await Trackers.trackEvent('Auth', 'LOGIN'); // Track manual login (with credentials)
       else await Trackers.trackEvent('Auth', 'RESTORE'); // track separately auto login (with stored token)

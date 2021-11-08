@@ -2,6 +2,7 @@ import style from "glamorous-native";
 import * as React from "react";
 import { NavigationState, NavigationScreenProp } from "react-navigation";
 import { createBottomTabNavigator } from "react-navigation-tabs";
+import { UI_SIZES } from "../../framework/components/constants";
 
 import { CommonStyles } from "../../styles/common/styles";
 import { IconOnOff } from "../../ui";
@@ -27,7 +28,7 @@ export const createMainTabNavigator = (
         borderTopColor: CommonStyles.borderColorLighter,
         borderTopWidth: 1,
         elevation: 1,
-        height: 56
+        height: UI_SIZES.headerHeight
       },
       tabStyle: {
         flexDirection: "column",

@@ -4,9 +4,11 @@
 
 import deepmerge from "deepmerge";
 import * as React from "react";
+import { Platform, SafeAreaView, View } from "react-native";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import { NavigationInjectedProps, StackActions } from "react-navigation";
 import { connect } from "react-redux";
+
 import { IGlobalState } from "../../AppStore";
 import { Icon } from "../../framework/components/icon";
 import { ListItem } from "../../framework/components/listItem";
@@ -14,17 +16,18 @@ import { LoadingIndicator } from "../../framework/components/loading";
 import { PageView } from "../../framework/components/page";
 import { Text, TextAction, TextSizeStyle } from "../../framework/components/text";
 import { getDefaultPushNotifsSettingsByType, getPushNotifsSettingsByType, IPushNotifsSettingsByType, ITimeline_State } from "../../framework/modules/timelinev2/reducer";
-import { IPushNotifsSettings } from "../../framework/modules/timelinev2/reducer/notifSettings/pushNotifsSettings";
+import pushNotifsSettings, { IPushNotifsSettings } from "../../framework/modules/timelinev2/reducer/notifSettings/pushNotifsSettings";
 import theme from "../../framework/util/theme";
 import timelineModuleConfig from "../../framework/modules/timelinev2/moduleConfig";
 import { ThunkDispatch } from "redux-thunk";
 import { loadPushNotifsSettingsAction, updatePushNotifsSettingsAction } from "../../framework/modules/timelinev2/actions/notifSettings";
 import withViewTracking from "../../framework/util/tracker/withViewTracking";
-import { SafeAreaView, View } from "react-native";
 import { Toggle } from "../../framework/components/toggle";
 import I18n from "i18n-js";
 import { getUserSession, IUserSession } from "../../framework/util/session";
 import { EmptyContentScreen } from "../../framework/components/emptyContentScreen";
+import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from "../../framework/components/header";
+import Notifier from "../../framework/util/notifier";
 
 // TYPES ==========================================================================================
 
@@ -47,7 +50,7 @@ export type IPushNotifsSettingsScreenProps = IPushNotifsSettingsScreenDataProps
 	& NavigationInjectedProps<Partial<IPushNotifsSettingsScreenNavigationParams>>;
 
 export enum PushNotifsSettingsLoadingState {
-	PRISTINE, INIT, DONE
+	PRISTINE, INIT, DONE, UPDATE
 }
 
 export interface IPushNotifsSettingsScreenState {
@@ -73,14 +76,46 @@ export class PushNotifsSettingsScreen extends React.PureComponent<
 	// RENDER =======================================================================================
 
 	render() {
-		const settings = this.props.timelineState.notifSettings.pushNotifsSettings;
+		const { navigation, timelineState, handleUpdatePushNotifSettings } = this.props;
+		const { loadingState, pendingPrefsChanges } = this.state;
+		const settings = timelineState.notifSettings.pushNotifsSettings;
+		const hasPendingPrefsChanges = Object.keys(pendingPrefsChanges).length > 0;
 		return <>
-			<PageView path='timeline/push-notifications'>
-				{[PushNotifsSettingsLoadingState.PRISTINE, PushNotifsSettingsLoadingState.INIT].includes(this.state.loadingState)
+			<PageView>
+				<FakeHeader>
+					<HeaderRow>
+						<HeaderLeft>
+							{[PushNotifsSettingsLoadingState.UPDATE].includes(loadingState)
+								? 	<LoadingIndicator
+										small
+										customColor={theme.color.neutral.extraLight}
+										customStyle={{ justifyContent: "center", paddingHorizontal: 22 }}
+									/>
+								: 	<HeaderAction
+										iconName={Platform.OS === "ios" ? "chevron-left1" : "back"}
+										iconSize={24}
+										onPress={async () => {
+											if (hasPendingPrefsChanges) {
+												this.setState({ loadingState: PushNotifsSettingsLoadingState.UPDATE });
+												await handleUpdatePushNotifSettings(pendingPrefsChanges);
+												this.setState({ pendingPrefsChanges: {}, loadingState: PushNotifsSettingsLoadingState.DONE });
+											}
+											navigation.goBack()
+										}}
+									/>
+							}
+						</HeaderLeft>
+						<HeaderCenter>
+							<HeaderTitle>{I18n.t("directory-notificationsTitle")}</HeaderTitle>
+						</HeaderCenter>
+					</HeaderRow>
+				</FakeHeader>
+				<Notifier id='timeline/push-notifications' />
+				{[PushNotifsSettingsLoadingState.PRISTINE, PushNotifsSettingsLoadingState.INIT].includes(loadingState)
 					? <LoadingIndicator />
 					: settings.error && !settings.lastSuccess
 						? this.renderError()
-						: this.props.navigation.getParam('type')
+						: navigation.getParam('type')
 							? this.renderSubList()
 							: this.renderMainList()
 				}
@@ -248,9 +283,7 @@ export class PushNotifsSettingsScreen extends React.PureComponent<
 				...this.state.pendingPrefsChanges,
 				[item[0]]: item[1]
 			}
-		})
-		await this.props.handleUpdatePushNotifSettings({ [item[0]]: item[1] });
-		this.setState({ pendingPrefsChanges: {} });
+		}) 
 	}
 
 	async doTogglePushNotifSettingForAppType(type: string, value: boolean) {
@@ -264,8 +297,6 @@ export class PushNotifsSettingsScreen extends React.PureComponent<
 				...itemsWithNewValue
 			}
 		})
-		await this.props.handleUpdatePushNotifSettings(itemsWithNewValue);
-		this.setState({ pendingPrefsChanges: {} });
 	}
 
 }

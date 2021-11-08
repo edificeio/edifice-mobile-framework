@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from 'react';
 import {
   TextInput,
   KeyboardAvoidingView,
@@ -10,27 +10,27 @@ import {
   View,
   Text,
   StyleSheet,
-} from "react-native";
-import { hasNotch } from "react-native-device-info";
+} from 'react-native';
+import { hasNotch } from 'react-native-device-info';
 
-import { CommonStyles } from "../../../styles/common/styles";
-import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
-import { removeAccents } from "../../../utils/string";
-import { IUser } from "../service/newMail";
+import { CommonStyles } from '../../../styles/common/styles';
+import TouchableOpacity from '../../../ui/CustomTouchableOpacity';
+import { removeAccents } from '../../../framework/util/string';
+import { IUser } from '../service/newMail';
 
 const styles = StyleSheet.create({
-  userLabel: { color: CommonStyles.primary, textAlignVertical: "center" },
+  userLabel: { color: CommonStyles.primary, textAlignVertical: 'center' },
   scrollField: { maxHeight: 181, flexGrow: 0 },
   fieldContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    backgroundColor: "#FFFFFF",
-    alignItems: "center",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
     paddingVertical: 10,
     paddingHorizontal: 17,
   },
   fieldName: {
-    textAlignVertical: "center",
+    textAlignVertical: 'center',
     marginRight: 5,
     marginVertical: 5,
     marginHorizontal: 3,
@@ -40,11 +40,11 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 40,
     color: CommonStyles.textColor,
-    borderBottomColor: "#EEEEEE",
+    borderBottomColor: '#EEEEEE',
     borderBottomWidth: 2,
   },
   shadow: {
-    backgroundColor: "white",
+    backgroundColor: 'white',
     elevation: 4,
     shadowColor: CommonStyles.shadowColor,
     shadowOffset: CommonStyles.shadowOffset,
@@ -55,32 +55,32 @@ const styles = StyleSheet.create({
 
 export const rolesDotColor = role => {
   switch (role) {
-    case "Student":
+    case 'Student':
       return CommonStyles.profileTypes.Student;
-    case "Relative":
+    case 'Relative':
       return CommonStyles.profileTypes.Relative;
-    case "Teacher":
+    case 'Teacher':
       return CommonStyles.profileTypes.Teacher;
-    case "Personel":
+    case 'Personel':
       return CommonStyles.profileTypes.Personnel;
-    case "PrincTeacherGroup":
-      return "#8C939E";
-    case "Guest":
+    case 'PrincTeacherGroup':
+      return '#8C939E';
+    case 'Guest':
       return CommonStyles.profileTypes.Guest;
     default:
-      return "white";
+      return 'white';
   }
 };
 
 const UserLine = ({ id, displayName, name, checked, onPick, onUnpick, isGroup, profile }) => (
   <TouchableOpacity onPress={() => (!checked ? onPick() : onUnpick())}>
-    <Text style={{ flexDirection: "row", alignItems: "center", height: 40, marginLeft: 10 }} numberOfLines={1}>
+    <Text style={{ flexDirection: 'row', alignItems: 'center', height: 40, marginLeft: 10 }} numberOfLines={1}>
       <Text
         style={{
           color: rolesDotColor(profile),
           fontSize: 20,
         }}>
-        {"\u25CF "}
+        {'\u25CF '}
       </Text>
       {name || displayName}
     </Text>
@@ -97,7 +97,7 @@ export function UserList(props: {
   return (
     <FlatList
       keyboardShouldPersistTaps="always"
-      style={[styles.shadow, { flex: 1, borderTopColor: "#EEEEEE", borderTopWidth: 1 }]}
+      style={[styles.shadow, { flex: 1, borderTopColor: '#EEEEEE', borderTopWidth: 1 }]}
       data={props.users}
       keyExtractor={(user: IUser) => user.id} //increment in next line
       renderItem={user => (
@@ -117,7 +117,7 @@ export default class SelectMailInfos extends React.Component<
   { remainingUsers; pickedUsers; onPickUser; onUnpickUser; onHandleInputChange; inputName },
   { searchText: string; subjectText: string; max: number }
 > {
-  state = { searchText: "", subjectText: "", max: 20 };
+  state = { searchText: '', subjectText: '', max: 20 };
   input: any;
 
   public inputRef: any;
@@ -126,8 +126,7 @@ export default class SelectMailInfos extends React.Component<
     (visible.name &&
       removeAccents(visible.name.toLowerCase()).indexOf(removeAccents(this.state.searchText.toLowerCase())) !== -1) ||
     (visible.displayName &&
-      removeAccents(visible.displayName.toLowerCase()).indexOf(removeAccents(this.state.searchText.toLowerCase())) !==
-        -1);
+      removeAccents(visible.displayName.toLowerCase()).indexOf(removeAccents(this.state.searchText.toLowerCase())) !== -1);
 
   public expand() {
     const { max } = this.state;
@@ -136,19 +135,19 @@ export default class SelectMailInfos extends React.Component<
 
   get usersArray(): IUser[] {
     const { remainingUsers } = this.props;
-    return [...remainingUsers.filter(v => this.state.searchText && this.isMatch(v)).slice(0, this.state.max)];
+    return [...remainingUsers?.filter(v => this.state.searchText && this.isMatch(v)).slice(0, this.state.max)];
   }
 
   public pickUser = (user: IUser) => {
     const { onPickUser } = this.props;
     onPickUser(user);
-    this.setState({ searchText: "" });
+    this.setState({ searchText: '' });
   };
 
   public addExternalUser = (user: string) => {
     const { onPickUser } = this.props;
-    if (user !== "" && user !== " ") onPickUser(user);
-    this.setState({ searchText: "" });
+    if (user !== '' && user !== ' ') onPickUser(user);
+    this.setState({ searchText: '' });
   };
 
   public render() {
@@ -160,28 +159,28 @@ export default class SelectMailInfos extends React.Component<
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <KeyboardAvoidingView
             enabled
-            behavior={Platform.OS === "ios" ? "padding" : undefined}
-            keyboardVerticalOffset={Platform.OS === "ios" ? (hasNotch() ? 100 : 76) : undefined}>
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            keyboardVerticalOffset={Platform.OS === 'ios' ? (hasNotch() ? 100 : 76) : undefined}>
             <ScrollView
               alwaysBounceVertical={false}
-              style={[styles.scrollField, { backgroundColor: "#FFFFFF" }]}
+              style={[styles.scrollField, { backgroundColor: '#FFFFFF' }]}
               ref={r => (this.inputRef = (r as any)?.innerComponent)}>
               <View style={styles.fieldContainer}>
                 {pickedUsers &&
                   pickedUsers.length > 0 &&
                   pickedUsers.map(p => (
                     <TouchableOpacity
-                      key={"Touchable_" + index++}
+                      key={'Touchable_' + index++}
                       onPress={() => onUnpickUser(p)}
                       style={{
                         backgroundColor: CommonStyles.primaryLight,
                         borderRadius: 3,
                         padding: 5,
-                        maxWidth: "100%",
+                        maxWidth: '100%',
                         marginHorizontal: 3,
                         marginVertical: 5,
                       }}>
-                      {typeof p === "string" ? (
+                      {typeof p === 'string' ? (
                         <Text style={styles.userLabel} numberOfLines={2}>
                           {p}
                         </Text>
@@ -201,9 +200,7 @@ export default class SelectMailInfos extends React.Component<
                     this.setState({ searchText: text });
                   }}
                   onKeyPress={({ nativeEvent }) => {
-                    searchText.length === 0 &&
-                      nativeEvent.key === "Backspace" &&
-                      onUnpickUser(pickedUsers[pickedUsers.length - 1]);
+                    searchText.length === 0 && nativeEvent.key === 'Backspace' && onUnpickUser(pickedUsers[pickedUsers.length - 1]);
                   }}
                   onSubmitEditing={e => this.addExternalUser(e.nativeEvent.text)}
                 />

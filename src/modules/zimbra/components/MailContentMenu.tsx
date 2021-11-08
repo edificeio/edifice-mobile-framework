@@ -17,29 +17,32 @@ type MailContentMenuProps = {
   }[];
   onClickOutside: () => any;
   show: boolean;
+  newMailStyle?;
 };
 export default class MailContentMenu extends React.PureComponent<MailContentMenuProps> {
   public render() {
-    const { onClickOutside, show, data } = this.props;
+    const { onClickOutside, show, data, newMailStyle } = this.props;
     if (!show) return <></>;
     return (
-      <View style={style.overlayActions}>
-        <TouchableWithoutFeedback style={{ width: "100%", height: "100%" }} onPress={onClickOutside}>
-          <FlatList
-            style={style.actions}
-            data={data}
-            renderItem={({ item }) => (
-              <TouchableOpacity onPress={item.onPress}>
-                <View style={{ flexDirection: "row", alignItems: "center", padding: 15 }}>
-                  <Icon name={item.icon} size={22} style={{ marginRight: 10 }} />
-                  <Text>{item.text}</Text>
-                </View>
-              </TouchableOpacity>
-            )}
-            refreshing={false}
-            ItemSeparatorComponent={() => <View style={style.separator} />}
-          />
-        </TouchableWithoutFeedback>
+      <View style={[style.overlayActions, newMailStyle]}>
+        <View style={style.shadow}>
+          <TouchableWithoutFeedback style={{ width: "100%", height: "100%" }} onPress={onClickOutside}>
+            <FlatList
+              style={[style.actions, newMailStyle]}
+              data={data}
+              renderItem={({ item }) => (
+                <TouchableOpacity onPress={item.onPress}>
+                  <View style={{ flexDirection: "row", alignItems: "center", padding: 15 }}>
+                    <Icon name={item.icon} size={22} style={{ marginRight: 10 }} />
+                    <Text>{item.text}</Text>
+                  </View>
+                </TouchableOpacity>
+              )}
+              refreshing={false}
+              ItemSeparatorComponent={() => <View style={style.separator} />}
+            />
+          </TouchableWithoutFeedback>
+        </View>
       </View>
     );
   }
@@ -50,9 +53,11 @@ const style = StyleSheet.create({
     backgroundColor: "#ffffff",
     position: "absolute",
     right: 0,
-    top: Header.HEIGHT,
+    top: 60,
     zIndex: 10,
     borderRadius: 4,
+  },
+  shadow: {
     shadowColor: "#000",
     shadowOffset: {
       width: 0,

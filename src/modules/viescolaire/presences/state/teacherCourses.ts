@@ -15,6 +15,7 @@ export interface ICourses {
   roomLabels: string[];
   groups: string[];
   registerId: string;
+  splitSlot: boolean;
 }
 
 export type ICoursesList = ICourses[];

@@ -11,14 +11,14 @@ import { bindActionCreators, Dispatch } from "redux";
 import { getSessionInfo } from "../../../App";
 import { IDistantFile, LocalFile, SyncedFile } from "../../../framework/util/fileHandler";
 import pickFile, { pickFileError } from "../../../infra/actions/pickFile";
-import {Trackers} from "../../../infra/tracker";
-import withViewTracking from "../../../infra/tracker/withViewTracking";
+import {Trackers} from "../../../framework/util/tracker";
+import withViewTracking from "../../../framework/util/tracker/withViewTracking";
 import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
 import { CommonStyles } from "../../../styles/common/styles";
 import { INavigationProps } from "../../../types";
 import { contentUriToLocalFile } from "../../../types/contentUri";
 import { HeaderAction } from "../../../ui/headers/NewHeader";
-import { trashMailsAction } from "../actions/mail";
+import { deleteMailsAction, trashMailsAction } from "../actions/mail";
 import { fetchMailContentAction, clearMailContentAction } from "../actions/mailContent";
 import {
   sendMailAction,
@@ -28,9 +28,14 @@ import {
   deleteAttachmentAction,
   forwardMailAction,
 } from "../actions/newMail";
+import { getSignatureAction } from "../actions/signature";
+import { ModalPermanentDelete } from "../components/Modals/DeleteMailsModal";
+import MailContentMenu from "../components/MailContentMenu";
 import NewMailComponent from "../components/NewMail";
 import { ISearchUsers } from "../service/newMail";
 import { getMailContentState, IMail } from "../state/mailContent";
+import { getSignatureState, ISignature } from "../state/signature";
+import SignatureModal from "./SignatureModal";
 
 const entitiesTransformer = new AllHtmlEntities();
 
@@ -42,23 +47,34 @@ export enum DraftType {
   FORWARD,
 }
 
+type ISignatureMail = {
+  data: ISignature;
+  isFetching: boolean;
+  isPristine: boolean;
+  error: any;
+};
+
 interface ICreateMailEventProps {
   sendMail: (mailDatas: object, draftId: string, inReplyTo: string) => void;
   forwardMail: (draftId: string, inReplyTo: string) => void;
   makeDraft: (mailDatas: object, inReplyTo: string, isForward: boolean) => void;
   updateDraft: (mailId: string, mailDatas: object) => void;
   trashMessage: (mailId: string[]) => void;
+  deleteMessage: (mailIds: string[]) => any;
   onPickFileError: (notifierId: string) => void;
   addAttachment: (draftId: string, files: LocalFile) => Promise<any[]>;
   deleteAttachment: (draftId: string, attachmentId: string) => void;
   fetchMailContent: (mailId: string) => void;
   clearContent: () => void;
+  getSignature: () => any;
 }
 
 interface ICreateMailOtherProps {
   isFetching: boolean;
   mail: IMail;
   uploadProgress: number;
+  signatureMail: ISignatureMail;
+  hasRightToSendExternalMails: boolean;
 }
 
 type NewMailContainerProps = ICreateMailEventProps & ICreateMailOtherProps & INavigationProps;
@@ -70,6 +86,11 @@ interface ICreateMailState {
   isPrefilling?: boolean;
   prevBody?: string;
   replyTo?: string;
+  deleteModal: { isShown: boolean; mailsIds: string[] };
+  isShownHeaderMenu: boolean;
+  signature: { text: string, useGlobal: boolean};
+  isShownSignatureModal: boolean;
+  isNewSignature: boolean;
 }
 
 type newMail = {
@@ -94,7 +115,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         headerRight: () => {
           const askForAttachment = navigation.getParam("getAskForAttachment");
           const sendDraft = navigation.getParam("getSendDraft");
-          const deleteDraft = navigation.getParam("getDeleteDraft");
+          const showMenu = navigation.getParam("showHeaderMenu");
 
           return (
             <View style={{ flexDirection: "row" }}>
@@ -102,7 +123,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
                 <HeaderAction style={{ alignSelf: "flex-end" }} onPress={askForAttachment} name="attachment" />
               )}
               {sendDraft && <HeaderAction style={{ alignSelf: "flex-end" }} onPress={sendDraft} name="outbox" />}
-              {deleteDraft && <HeaderAction style={{ alignSelf: "flex-end" }} onPress={deleteDraft} name="delete" />}
+              {showMenu && <HeaderAction style={{ alignSelf: "flex-end" }} onPress={showMenu} name="more_vert" />}
             </View>
           );
         },
@@ -120,6 +141,11 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     this.state = {
       mail: { to: [], cc: [], bcc: [], subject: "", body: "", attachments: [] },
       prevBody: "",
+      deleteModal: { isShown: false, mailsIds: [] },
+      isShownHeaderMenu: false,
+      signature: { text: "", useGlobal: false },
+      isShownSignatureModal: false,
+      isNewSignature: false,
     };
   }
 
@@ -140,9 +166,11 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       this.setState({ id: undefined });
       this.saveDraft();
     }
+    this.setSignatureState(true);
   };
 
-  componentDidUpdate = async (prevProps: NewMailContainerProps, prevState) => {
+  componentDidUpdate = async (prevProps: NewMailContainerProps, prevState: ICreateMailState) => {
+    const { signatureMail } = this.props;
     if (prevProps.mail !== this.props.mail) {
       const { mail, ...rest } = this.getPrefilledMail();
       this.setState(prevState => ({
@@ -151,8 +179,12 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         mail: { ...prevState.mail, ...mail },
         isPrefilling: false,
       }));
-    } else if (this.props.navigation.getParam("mailId") !== undefined && this.state.id === undefined)
+    } else if (this.props.navigation.getParam("mailId") !== undefined && this.state.id === undefined) {
       this.setState({ id: this.props.navigation.getParam("mailId") });
+    }
+    if (prevProps.signatureMail.isFetching !== signatureMail.isFetching && !signatureMail.isFetching) {
+      this.setSignatureState();
+    }
   };
 
   navigationHeaderFunction = {
@@ -206,11 +238,20 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     },
     getDeleteDraft: () => {
       if (this.state.id) {
-        this.props.trashMessage([this.state.id]);
+        if (this.props.navigation.state.params?.isTrashed) {
+          let draftId = this.state.id;
+          this.setState({ deleteModal: { isShown: true, mailsIds: [draftId] } });
+        } else {
+          this.props.trashMessage([this.state.id]);
+          this.actionsDeleteSuccess();
+        }
         const navParams = this.props.navigation.state;
         if (navParams.params && navParams.params.onGoBack) navParams.params.onGoBack();
       }
-      this.props.navigation.goBack();
+    },
+    showHeaderMenu: () => {
+      const { isShownHeaderMenu } = this.state;
+      this.setState({ isShownHeaderMenu: !isShownHeaderMenu });
     },
     getGoBack: () => {
       if (this.props.uploadProgress > 0 && this.props.uploadProgress < 100) {
@@ -342,7 +383,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
               .slice(1)
               .join("<br><br>");
         }
-        const current_body = this.props.mail.body.split("<br><br>")[0];
+        let current_body = this.props.mail.body.split("<br><br>")[0];
 
         return {
           prevBody: prevbody,
@@ -371,7 +412,15 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     return Object.fromEntries(
       Object.entries(mail).map(([key, value]) => {
         if (key === "to" || key === "cc" || key === "bcc") return [key, value.map(user => user.id)];
-        else if (key === "body") return [key, value + prevBody];
+        else if (key === "body") {
+          if (this.state.signature.text !== "") {
+            let sign = "<div class=\"signature new-signature ng-scope\">" + this.state.signature.text + "</div>\n\n";
+            return [key, value + sign + prevBody];
+          }
+          else {
+            return [key, value + prevBody];
+          }
+        }
         else return [key, value];
       })
     );
@@ -407,6 +456,23 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     }
   };
 
+  actionsDeleteSuccess = async () => {
+    const { navigation } = this.props;
+    if (navigation.state.params?.isTrashed) {
+      await this.props.deleteMessage([this.state.id]);
+    }
+    if (this.state.deleteModal.isShown) {
+      this.setState({ deleteModal: { isShown: false, mailsIds: [] } });
+    }
+
+    this.props.navigation.goBack();
+    Toast.show(I18n.t("zimbra-message-deleted"), {
+      position: Toast.position.BOTTOM,
+      mask: false,
+      containerStyle: { width: "95%", backgroundColor: "black" },
+    });
+  };
+
   forwardDraft = async () => {
     try {
       this.props.forwardMail(this.state.id, this.state.replyTo);
@@ -428,31 +494,90 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     }
   };
 
+  // HEADER, MENU, COMPONENT AND SIGNATURE -------------------------
+
+  setSignatureState = async (isSettingNewSignature: boolean = false, isFirstSet: boolean = false) => {
+    let { signatureMail } = this.props;
+    if (isFirstSet) {
+      this.setState({ isNewSignature: true })
+    }
+    if (isSettingNewSignature) {
+      signatureMail = await this.props.getSignature();
+    }
+
+    if (signatureMail !== undefined) {
+      let signatureText = "" as string;
+      let isGlobal = false as boolean;
+      const signaturePref = signatureMail.data.preference;
+      if (signaturePref !== undefined) {
+        if (typeof signaturePref === "object") {
+            signatureText = signaturePref.signature;
+            isGlobal = signaturePref.useSignature
+          } else {
+            signatureText = JSON.parse(signaturePref).signature;
+            isGlobal = JSON.parse(signaturePref).useSignature;
+          }
+        this.setState({ signature: { text: signatureText, useGlobal: isGlobal }});
+      }
+    }
+  };
+
+  public showSignatureModal = () => this.setState({ isShownSignatureModal: true });
+
+  public closeSignatureModal = () => this.setState({ isShownSignatureModal: false });
+
+  public closeDeleteModal = () => this.setState({ deleteModal: { isShown: false, mailsIds: [] } });
+
   public render() {
-    const { isPrefilling, mail } = this.state;
+    const { isPrefilling, mail, isShownSignatureModal, signature } = this.state;
     const { attachments, body, ...headers } = mail;
-    console.log("NewMail attachments", attachments);
+    const showMenu = this.props.navigation.getParam("showHeaderMenu");
+    const deleteDraft = this.props.navigation.getParam("getDeleteDraft");
+    const menuData = [
+      { text: I18n.t("zimbra-signature-add"), icon: "pencil", onPress: this.showSignatureModal },
+      { text: I18n.t("zimbra-delete"), icon: "delete", onPress: deleteDraft },
+    ];
+    console.log("isSet>NewSignature: ", this.state.isNewSignature);
 
     return (
-      <NewMailComponent
-        isFetching={this.props.isFetching || !!isPrefilling}
-        headers={headers}
-        onDraftSave={this.saveDraft}
-        onHeaderChange={headers => this.setState(prevState => ({ mail: { ...prevState.mail, ...headers } }))}
-        body={this.state.mail.body.replace(/<br>|<br \/>/gs, "\n")}
-        onBodyChange={body => this.setState(prevState => ({ mail: { ...prevState.mail, body } }))}
-        attachments={
-          this.state.tempAttachment
-            ? [...this.state.mail.attachments, this.state.tempAttachment]
-            : this.state.mail.attachments
-        }
-        onAttachmentChange={attachments => {
-          console.log("onAttachmentChange", attachments);
-          return this.setState(prevState => ({ mail: { ...prevState.mail, attachments } }));
-        }}
-        onAttachmentDelete={attachmentId => this.props.deleteAttachment(this.state.id, attachmentId)}
-        prevBody={this.state.prevBody}
-      />
+      <>
+        <NewMailComponent
+          isFetching={this.props.isFetching || !!isPrefilling}
+          headers={headers}
+          onDraftSave={this.saveDraft}
+          onHeaderChange={headers => this.setState(prevState => ({ mail: { ...prevState.mail, ...headers } }))}
+          body={this.state.mail.body.replace(/<br>/gs, "\n")}
+          onBodyChange={body => this.setState(prevState => ({ mail: { ...prevState.mail, body } }))}
+          attachments={
+            this.state.tempAttachment
+              ? [...this.state.mail.attachments, this.state.tempAttachment]
+              : this.state.mail.attachments
+          }
+          onAttachmentChange={attachments => {
+            console.log("onAttachmentChange", attachments);
+            return this.setState(prevState => ({ mail: { ...prevState.mail, attachments } }));
+          }}
+          onAttachmentDelete={attachmentId => this.props.deleteAttachment(this.state.id, attachmentId)}
+          prevBody={this.state.prevBody}
+          signature={signature}
+          isNewSignature={this.state.isNewSignature}
+          hasRightToSendExternalMails={this.props.hasRightToSendExternalMails}
+        />
+
+        <MailContentMenu newMailStyle={{top: 0}} onClickOutside={showMenu} show={this.state.isShownHeaderMenu} data={menuData} />
+        <ModalPermanentDelete
+          deleteModal={this.state.deleteModal}
+          closeModal={this.closeDeleteModal}
+          actionsDeleteSuccess={this.actionsDeleteSuccess}
+        />
+        <SignatureModal
+          signature={signature.text}
+          signatureData={this.props.signatureMail.data}
+          show={isShownSignatureModal}
+          closeModal={this.closeSignatureModal}
+          successCallback={() => this.setSignatureState(true, true)}
+        />
+      </>
     );
   }
 }
@@ -460,10 +585,16 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
 const mapStateToProps = (state: any) => {
   const { isFetching, data } = getMailContentState(state);
 
+  const authorizedActions = state.user.info.authorizedActions;
+  const hasRightToSendExternalMails =
+    authorizedActions && authorizedActions.some(action => action.name === "fr.openent.zimbra.controllers.ZimbraController|zimbraOutside");
+
   return {
     mail: data,
     isFetching,
     uploadProgress: [state.progress.value],
+    signatureMail: getSignatureState(state),
+    hasRightToSendExternalMails,
   };
 };
 
@@ -475,11 +606,13 @@ const mapDispatchToProps = (dispatch: any) => {
       makeDraft: makeDraftMailAction,
       updateDraft: updateDraftMailAction,
       trashMessage: trashMailsAction,
+      deleteMessage: deleteMailsAction,
       onPickFileError: (notifierId: string) => dispatch(pickFileError(notifierId)),
       addAttachment: addAttachmentAction,
       deleteAttachment: deleteAttachmentAction,
       clearContent: clearMailContentAction,
       fetchMailContent: fetchMailContentAction,
+      getSignature: getSignatureAction,
     },
     dispatch
   );

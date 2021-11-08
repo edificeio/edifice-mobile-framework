@@ -5,7 +5,7 @@ import Permissions from 'react-native-permissions';
 import Conf from '../../../ode-framework-conf';
 import { IFile } from '../../workspace/types';
 import { getAuthHeader } from '../oauth';
-import { Trackers } from '../tracker';
+import { Trackers } from '../../framework/util/tracker';
 
 export const downloadFiles = (downloadable: Array<IFile>, withManager = true) => {
   downloadable.map(document => downloadFile(document, withManager));

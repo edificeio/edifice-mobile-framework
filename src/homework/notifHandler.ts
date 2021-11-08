@@ -2,7 +2,7 @@ import { mainNavNavigate } from '../navigation/helpers/navHelper';
 import { fetchHomeworkDiaryList } from './actions/diaryList';
 import homeworkDiarySelected from './actions/selectedDiary';
 import { NotificationHandlerFactory } from '../infra/pushNotification';
-import { Trackers } from '../infra/tracker';
+import { Trackers } from '../framework/util/tracker';
 
 //TODO add types args
 const homeworksNotificationHandlerFactory: NotificationHandlerFactory<any, any, any> = dispatch => async (

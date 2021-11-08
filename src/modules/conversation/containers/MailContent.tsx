@@ -12,7 +12,7 @@ import { CommonStyles } from '../../../styles/common/styles';
 import { Icon } from '../../../ui';
 import { Header as HeaderComponent } from '../../../ui/headers/Header';
 import { HeaderAction } from '../../../ui/headers/NewHeader';
-import { toggleReadAction, trashMailsAction, deleteMailsAction } from '../actions/mail';
+import { toggleReadAction, trashMailsAction, deleteMailsAction, moveMailsToFolderAction, moveMailsToInboxAction, restoreMailsToFolderAction, restoreMailsToInboxAction } from '../actions/mail';
 import { fetchMailContentAction } from '../actions/mailContent';
 import MailContentMenu from '../components/MailContentMenu';
 import MoveModal from '../containers/MoveToFolderModal';
@@ -29,6 +29,10 @@ import { HtmlContentView } from "../../../ui/HtmlContentView";
 import { DraftType } from "../containers/NewMail";
 import moduleConfig from "../moduleConfig";
 import { RenderPJs, HeaderMail, FooterButton } from "../components/MailContentItems";
+import withViewTracking from '../../../framework/util/tracker/withViewTracking';
+import { Trackers } from '../../../framework/util/tracker';
+import { tryAction } from '../../../framework/util/redux/actions';
+import { UI_SIZES } from '../../../framework/components/constants';
 
 class MailContentContainer extends React.PureComponent<{
   navigation: NavigationScreenProp<NavigationState>,
@@ -36,6 +40,10 @@ class MailContentContainer extends React.PureComponent<{
   toggleRead: (mailIds: string[], read: boolean) => void,
   trashMails: (mailIds: string[]) => void,
   deleteMails: (mailIds: string[]) => void,
+  moveToFolder: (mailIds: string[], folderId: string) => void,
+  moveToInbox: (mailIds: string[]) => void,
+  restoreToFolder: (mailIds: string[], folderId: string) => void,
+  restoreToInbox: (mailIds: string[]) => void,
   dispatch: ThunkDispatch<any, any, any>,
   isPristine: boolean,
   isFetching: boolean,
@@ -113,19 +121,26 @@ class MailContentContainer extends React.PureComponent<{
 
   delete = async () => {
     const { deleteMails, navigation, trashMails, mail } = this.props;
+    const mailId = mail.id;
+    const currentFolder = navigation.getParam('currentFolder');
+    const isFolderDrafts = currentFolder === 'drafts';
     const isTrashed = navigation.getParam('isTrashed');
+    const isTrashedOrDrafts = isTrashed || isFolderDrafts;
     try {
-      if (isTrashed) await deleteMails([mail.id]);
-      else await trashMails([mail.id]);
-    } catch (error) {
-      console.error(error);
-    } finally {
+      if (isTrashed) {
+        await deleteMails([mailId]);
+      } else if (isFolderDrafts) {
+        await trashMails([mailId]);
+        await deleteMails([mailId]);
+      } else await trashMails([mailId]);
       this.goBack();
-      Toast.show(I18n.t('conversation.messageDeleted'), {
+      Toast.show(I18n.t(`conversation.message${isTrashedOrDrafts ? "Deleted" : "Trashed"}`), {
         position: Toast.position.BOTTOM,
         mask: false,
         containerStyle: { width: '95%', backgroundColor: 'black' },
       });
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -210,6 +225,10 @@ class MailContentContainer extends React.PureComponent<{
           show={showModal}
           closeModal={this.closeModal}
           successCallback={this.mailMoved}
+          moveToFolder={this.props.moveToFolder}
+          moveToInbox={this.props.moveToInbox}
+          restoreToFolder={this.props.restoreToFolder}
+          restoreToInbox={this.props.restoreToInbox}
         />
         <MailContentMenu onClickOutside={this.showMenu} show={showMenu} data={menuData} />
       </>
@@ -223,35 +242,46 @@ class MailContentContainer extends React.PureComponent<{
           <FooterButton
             icon="reply"
             text={I18n.t("conversation.reply")}
-            onPress={() =>
+            onPress={() => {
+              this.props.navigation.getParam('currentFolder') === 'sendMessages'
+                ? Trackers.trackEventOfModule(moduleConfig, "Ecrire un mail", "Outbox - Mail - Répondre")
+                : Trackers.trackEventOfModule(moduleConfig, "Ecrire un mail", "Inbox/Dossier/Corbeille - Mail - Répondre");
               this.props.navigation.navigate(`${moduleConfig.routeName}/new`, {
                 type: DraftType.REPLY,
                 mailId: this.props.mail.id,
                 onGoBack: this.props.navigation.state.params.onGoBack,
+                currentFolder: this.props.navigation.getParam('currentFolder')
               })
-            }
+            }}
           />
           <FooterButton
             icon="reply_all"
             text={I18n.t("conversation.replyAll")}
-            onPress={() =>
+            onPress={() => {
+              this.props.navigation.getParam('currentFolder') === 'sendMessages'
+                ? Trackers.trackEventOfModule(moduleConfig, "Ecrire un mail", "Outbox - Mail - Répondre à tous")
+                : Trackers.trackEventOfModule(moduleConfig, "Ecrire un mail", "Inbox/Dossier/Corbeille - Mail - Répondre à tous");
               this.props.navigation.navigate(`${moduleConfig.routeName}/new`, {
                 type: DraftType.REPLY_ALL,
                 mailId: this.props.mail.id,
                 onGoBack: this.props.navigation.state.params.onGoBack,
+                currentFolder: this.props.navigation.getParam('currentFolder')
               })
-            }
+            }}
           />
           <FooterButton
             icon="forward"
             text={I18n.t("conversation.forward")}
-            onPress={() =>
+            onPress={() => {
+              this.props.navigation.getParam('currentFolder') === 'sendMessages'
+                ? Trackers.trackEventOfModule(moduleConfig, "Ecrire un mail", "Outbox - Mail - Transférer")
+                : Trackers.trackEventOfModule(moduleConfig, "Ecrire un mail", "Inbox/Dossier/Corbeille - Mail - Transférer");
               this.props.navigation.navigate(`${moduleConfig.routeName}/new`, {
                 type: DraftType.FORWARD,
                 mailId: this.props.mail.id,
                 onGoBack: this.props.navigation.state.params.onGoBack,
               })
-            }
+            }}
           />
         </View>
       </SafeAreaView>
@@ -297,16 +327,22 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
     ...bindActionCreators(
       {
         fetchMailContentAction,
-        toggleRead: toggleReadAction,
-        trashMails: trashMailsAction,
-        deleteMails: deleteMailsAction,
+        toggleRead: tryAction(toggleReadAction, (mailIds, read) => ([moduleConfig, "Marquer lu/non-lu", `Mail - Options - Marquer ${read ? 'lu' : 'non-lu'}`])),
+        trashMails: tryAction(trashMailsAction, [moduleConfig, "Supprimer", `Mail - Options - Mettre à la corbeille`]),
+        deleteMails: tryAction(deleteMailsAction, [moduleConfig, "Supprimer", `Mail - Options - Supprimer définitivement`]),
+        moveToFolder: tryAction(moveMailsToFolderAction, [moduleConfig, "Déplacer", "Inbox/Dossier - Mail - Options - Déplacer"]),
+        moveToInbox: tryAction(moveMailsToInboxAction, [moduleConfig, "Déplacer", "Inbox/Dossier - Mail - Options - Déplacer"]),
+        restoreToFolder: tryAction(restoreMailsToFolderAction, [moduleConfig, "Restaurer", "Corbeille - Mail - Options - Restaurer"]),
+        restoreToInbox: tryAction(restoreMailsToInboxAction, [moduleConfig, "Restaurer", "Corbeille - Mail - Options - Restaurer"])
       },
       dispatch
     ), dispatch
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(MailContentContainer);
+const MailContentContainerConnected = connect(mapStateToProps, mapDispatchToProps)(MailContentContainer)
+
+export default withViewTracking([moduleConfig.routeName, 'mail'])(MailContentContainerConnected);
 
 const styles = StyleSheet.create({
   topBar: {
@@ -329,6 +365,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    height: 56
+    height: UI_SIZES.headerHeight
   },
 });

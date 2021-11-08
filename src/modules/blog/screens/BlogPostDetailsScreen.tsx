@@ -129,6 +129,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<
         keyExtractor={(item: IBlogPostComment) => item.id.toString()}
         ListHeaderComponent={this.renderBlogPostDetails()}
         contentContainerStyle={{ flexGrow: 1, paddingVertical: 12, backgroundColor: theme.color.background.card }}
+        scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
         refreshControl={
           <RefreshControl
             refreshing={[BlogPostDetailsLoadingState.REFRESH, BlogPostDetailsLoadingState.INIT].includes(loadingState)}

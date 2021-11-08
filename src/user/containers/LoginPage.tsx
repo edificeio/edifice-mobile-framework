@@ -30,7 +30,6 @@ import Conf from "../../../ode-framework-conf";
 import { navigate } from "../../navigation/helpers/navHelper";
 import { CommonStyles } from "../../styles/common/styles";
 import BottomSwitcher from "../../ui/BottomSwitcher";
-import { PasswordInputLine } from "../../ui/forms/PasswordInputLine";
 import { Text, TextBold, TextColorStyle, TextSizeStyle } from "../../framework/components/text";
 import { PLATFORM_STORAGE_KEY } from "../actions/platform";
 import {
@@ -40,7 +39,7 @@ import {
 } from "../actions/version";
 import VersionModal from "../components/VersionModal";
 import { getAuthState } from "../selectors";
-import withViewTracking from "../../infra/tracker/withViewTracking";
+import withViewTracking from "../../framework/util/tracker/withViewTracking";
 import { Toggle } from "../../ui/forms/Toggle";
 import theme from "../../framework/util/theme";
 
@@ -216,7 +215,8 @@ export class LoginPage extends React.Component<
               autoCapitalize="none"
               autoCorrect={false}
             />
-            <PasswordInputLine
+            <TextInputLine
+              isPasswordField
               inputRef={this.setInputPasswordRef}
               placeholder={I18n.t("Password")}
               onChangeText={(password: string) =>
@@ -242,7 +242,7 @@ export class LoginPage extends React.Component<
                 alignItems: "center",
                 flexGrow: 2,
                 justifyContent: "flex-start",
-                marginTop: error && !typing ? 10 : 30
+                marginTop: error && !typing ? 10 : 20
               }}
             >
               {(error === "not_premium" || error === "pre_deleted") && !this.state.typing ?

@@ -5,7 +5,7 @@ import { IId } from "../../types";
 import { IItems } from "../../types/iid";
 import { IItem } from "../types";
 import { formatResults } from "./helpers/documents";
-import { Trackers } from "../../infra/tracker";
+import { Trackers } from "../../framework/util/tracker";
 
 const WORKSPACE_RESTORE = "/workspace/documents/restore";
 

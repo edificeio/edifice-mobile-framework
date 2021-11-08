@@ -1,9 +1,8 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
-import { View, StyleSheet, useWindowDimensions, FlatList } from 'react-native';
-import RNCarousel, { Pagination } from 'react-native-snap-carousel';
-import Swiper from "react-native-swiper";
+import { View, StyleSheet } from 'react-native';
+import Swiper from 'react-native-swiper';
 
 import { Loading } from '../../../../ui';
 import { TextBold } from '../../../../ui/Typography';
@@ -12,8 +11,10 @@ import CourseComponent from './CourseComponent';
 
 interface ICallListProps {
   courseList: ICourses[];
-  onCoursePress: (course: any) => void;
   isFetching: boolean;
+  onCoursePress: (course: any) => void;
+  navigation: any;
+  isFocused: boolean;
 }
 
 interface ICallListState {
@@ -25,7 +26,21 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
 
   constructor(props) {
     super(props);
-    this.state = { currentIndex: this.getCurrentCourseIndex(props.courseList) };
+
+    this.state = {
+      currentIndex: this.getCurrentCourseIndex(props.courseList),
+    };
+  }
+
+  componentDidMount() {
+    // refresh every 3.5 minutes
+    this.interval = setInterval(() => {
+      if (this.props.isFocused) {
+        this.setState({ currentIndex: this.getCurrentCourseIndex(this.props.courseList) });
+      } else {
+        clearInterval(this.interval);
+      }
+    }, 210000);
   }
 
   componentWillUpdate(nextProps) {
@@ -33,8 +48,14 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
       this.setState({ currentIndex: this.getCurrentCourseIndex(nextProps.courseList) });
   }
 
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
   private getCurrentCourseIndex(courseList) {
-    const courseIndexNow = courseList.findIndex(course => moment().isBetween(moment(course.startDate), moment(course.endDate)));
+    const courseIndexNow = courseList.findIndex(course =>
+      moment().isBetween(moment(course.startDate).subtract(1, 'minutes'), moment(course.endDate)),
+    );
     return courseIndexNow !== -1 ? courseIndexNow : 0;
   }
 
@@ -77,6 +98,7 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
       <>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <Swiper
+            automaticallyAdjustContentInsets
             horizontal
             index={this.state.currentIndex}
             paginationStyle={{ position: 'absolute', bottom: -50 }}
@@ -99,7 +121,7 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
           paddingHorizontal: 27,
           flex: 1,
         }}>
-        <TextBold style={{ fontSize: 15, marginBottom: 30 }}>
+        <TextBold style={{ fontSize: 15, marginBottom: 10 }}>
           {I18n.t('viesco-register-date')} {moment().format('DD MMMM YYYY')}
         </TextBold>
         <View style={{ flex: 1, justifyContent: 'space-evenly' }}>

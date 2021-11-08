@@ -9,19 +9,20 @@ import { PageContainer } from "../../../ui/ContainerContent";
 import { Text } from "../../../ui/Typography";
 import CreateFolderModal from "../containers/CreateFolderModal";
 import { IFolder, IQuota } from "../state/initMails";
+import { IRootFolderList } from "../state/rootFolders";
 import DrawerOption from "./DrawerOption";
 
 type DrawerMenuProps = {
   activeItemKey: string;
   items: any[];
-  folders: IFolder[];
+  folders: IRootFolderList;
   quota: IQuota;
   descriptors: any[];
   navigation: NavigationDrawerProp<any>;
 };
 
 type DrawerMenuState = {
-  showFolderCreationModal: any;
+  showFolderCreationModal: boolean;
 };
 
 export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, DrawerMenuState> {
@@ -64,19 +65,27 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
   };
 
   renderStorage = () => {
-    let quota = Number(this.props.quota.quota) / (1024 * 1024);
-    let storage = this.props.quota.storage / (1024 * 1024);
-    let unit = "Mo";
+    let quota = 0 as number;
+    let storage = 0 as number;
+    let unit = "Mo" as string;
+    let storagePercent = 20 as number;
+    if (Number(this.props.quota.quota) > 0) {
+      quota = Number(this.props.quota.quota) / (1024 * 1024);
+      storage = this.props.quota.storage / (1024 * 1024);
 
-    if (quota > 2000) {
-      quota = Math.round((quota / 1024) * 10) / 10;
-      storage = Math.round((storage / 1024) * 10) / 10;
-      unit = "Go";
+      if (quota > 2000) {
+        quota = Math.round((quota / 1024) * 10) / 10;
+        storage = Math.round((storage / 1024) * 10) / 10;
+        unit = "Go";
+      } else {
+        quota = Math.round(quota);
+        storage = Math.round(storage);
+      }
+      storagePercent = (storage / quota) * 100;
     } else {
-      quota = Math.round(quota);
-      storage = Math.round(storage);
+      storage = Math.round(this.props.quota.storage / (1024 * 1024));
     }
-    const storagePercent = (storage / Number(quota)) * 100;
+
     return (
       <View style={style.loadBar}>
         <View style={[style.loadBarPercent, { width: `${storagePercent}%` }]}>
@@ -93,7 +102,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
     const currentFolder = this.getCurrentFolder(this.props.navigation.state);
     const inboxFolder: IFolder = this.findFolder("Inbox");
     return (
-      <ScrollView>
+      <View>
         {inboxFolder !== undefined &&
           inboxFolder.folders !== undefined &&
           inboxFolder.folders.length > 0 &&
@@ -109,7 +118,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
               count={folder.unread}
             />
           ))}
-      </ScrollView>
+      </View>
     );
   };
 
@@ -157,23 +166,27 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
   render() {
     return (
       <PageContainer style={style.container}>
-        <View style={style.labelContainer}>
-          <Text style={style.labelText}>{I18n.t("zimbra-messages")}</Text>
-        </View>
-        {this.renderDrawerMessages()}
-        <View style={style.labelContainer}>
-          <Text style={style.labelText}>{I18n.t("zimbra-directories")}</Text>
-        </View>
-        {this.renderDrawerFolders()}
+        <ScrollView>
+          <View style={style.labelContainer}>
+            <Text style={style.labelText}>{I18n.t("zimbra-messages")}</Text>
+          </View>
+          {this.renderDrawerMessages()}
+          <View style={style.labelContainer}>
+            <Text style={style.labelText}>{I18n.t("zimbra-directories")}</Text>
+          </View>
+          {this.renderDrawerFolders()}
+          <View style={style.drawerBottom}>
+            <TouchableOpacity
+              onPress={this.onFolderCreationModalShow}
+              style={[style.labelContainer, { marginBottom: 2 }]}>
+              <Icon size={22} name="create_new_folder" />
+              <Text style={[style.labelText, { justifyContent: "center", marginBottom: 2 }]}>
+                {I18n.t("zimbra-create-directory")}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
         <View style={style.drawerBottom}>
-          <TouchableOpacity
-            onPress={this.onFolderCreationModalShow}
-            style={[style.labelContainer, { marginBottom: 2 }]}>
-            <Icon size={22} name="create_new_folder" />
-            <Text style={[style.labelText, { justifyContent: "center", marginBottom: 2 }]}>
-              {I18n.t("zimbra-create-directory")}
-            </Text>
-          </TouchableOpacity>
           <View style={style.labelContainer}>
             <Text style={[style.labelText, { justifyContent: "center" }]}>{I18n.t("zimbra-storage")}</Text>
           </View>

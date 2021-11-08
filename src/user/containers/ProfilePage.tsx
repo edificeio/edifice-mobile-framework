@@ -29,7 +29,7 @@ import Notifier from "../../infra/notifier/container";
 import { changePasswordResetAction } from "../actions/changePassword";
 import { getSessionInfo } from "../../App";
 import { ValidatorBuilder } from "../../utils/form";
-import withViewTracking from "../../infra/tracker/withViewTracking";
+import withViewTracking from "../../framework/util/tracker/withViewTracking";
 import { signURISource } from "../../infra/oauth";
 import Conf from "../../../ode-framework-conf";
 

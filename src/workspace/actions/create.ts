@@ -6,7 +6,6 @@ import { formatResults, IBackendFolder } from "./helpers/documents";
 import { IGlobalState } from "../../AppStore";
 import workspaceService from "../../framework/modules/workspace/service";
 import { getUserSession } from "../../framework/util/session";
-// import { Trackers } from "../../infra/tracker";
 import { listAction } from "../actions/list";
 import { ThunkDispatch } from "redux-thunk";
 import { FilterId } from "../types";

@@ -4,7 +4,7 @@ import { asyncActionFactory } from "../../infra/actions/asyncActionFactory";
 import { IItems } from "../reducers/select";
 import { IItem } from "../types/states";
 import { formatResults } from "./helpers/documents";
-import { Trackers } from "../../infra/tracker";
+import { Trackers } from "../../framework/util/tracker";
 
 const WORKSPACE_TRASH = "/workspace/documents/trash";
 const WORKSPACE_DELETE = "/workspace/documents";

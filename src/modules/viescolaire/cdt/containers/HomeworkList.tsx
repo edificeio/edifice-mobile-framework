@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
 import { getSessionInfo } from "../../../../App";
-import withViewTracking from "../../../../infra/tracker/withViewTracking";
+import withViewTracking from "../../../../framework/util/tracker/withViewTracking";
 import { standardNavScreenOptions } from "../../../../navigation/helpers/navScreenOptions";
 import { INavigationProps } from "../../../../types";
 import { HeaderBackAction } from "../../../../ui/headers/NewHeader";

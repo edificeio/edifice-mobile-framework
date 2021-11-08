@@ -1,13 +1,16 @@
 import { Dispatch } from "redux";
 
 import { createAsyncActionCreators } from "../../../infra/redux/async2";
-import { Trackers } from "../../../infra/tracker";
+import { Trackers } from "../../../framework/util/tracker";
 import { foldersService } from "../service/folders";
 import { actionTypes, IFolderList } from "../state/folders";
+import { IFolder } from "../state/initMails";
+import { actionTypesRootFolders } from "../state/rootFolders";
 
 // ACTION LIST ------------------------------------------------------------------------------------
 
 export const dataActions = createAsyncActionCreators<IFolderList>(actionTypes);
+export const dataActionsRootFolders = createAsyncActionCreators<IFolder[]>(actionTypesRootFolders);
 
 // THUNKS -----------------------------------------------------------------------------------------
 
@@ -29,6 +32,18 @@ export function postFolderAction(name: string, parentId: string) {
     try {
       await foldersService.post(name, parentId);
       dispatch(dataActions.request());
+    } catch (errmsg) {
+      dispatch(dataActions.error(errmsg));
+    }
+  };
+}
+
+export function fetchRootFoldersAction() {
+  return async (dispatch: Dispatch) => {
+    try {
+      dispatch(dataActions.request());
+      const data = await foldersService.getRootFolders();
+      dispatch(dataActionsRootFolders.receipt(data));
     } catch (errmsg) {
       dispatch(dataActions.error(errmsg));
     }

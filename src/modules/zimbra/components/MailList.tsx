@@ -17,14 +17,20 @@ import { IMail } from "../state/mailContent";
 
 type MailListProps = {
   notifications: any;
+  mails: any;
+  setMails: (mails: any) => void;
   isFetching: boolean;
   firstFetch: boolean;
   fetchInit: () => IInit;
-  fetchCompleted: () => any;
-  fetchMails: (page: number) => any;
+  fetchCompleted: () => void;
+  fetchMails: (page: number, isRefreshStorage?: boolean) => void;
+  selectMails: () => void;
+  goBack: () => void;
   folders: any;
   isTrashed: boolean;
+  isSended: boolean;
   fetchRequested: boolean;
+  isHeaderSelectVisible: boolean;
   navigation: NavigationDrawerProp<any>;
 };
 
@@ -44,11 +50,13 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
       mails: notifications,
       nextPageCallable: false,
     };
+    this.props.setMails(notifications);
   }
 
   componentDidUpdate(prevProps) {
     const { notifications, isFetching, fetchCompleted } = this.props;
     if (this.state.indexPage === 0 && !isFetching && prevProps.isFetching && this.props.fetchRequested) {
+      this.props.setMails(notifications);
       this.setState({ mails: notifications });
       fetchCompleted();
     }
@@ -62,6 +70,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     ) {
       const { mails } = this.state;
       const joinedList = mails.concat(this.props.notifications);
+      this.props.setMails(joinedList);
       this.setState({ mails: joinedList });
       fetchCompleted();
     }
@@ -78,9 +87,13 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
   selectItem = mailInfos => {
     mailInfos.isChecked = !mailInfos.isChecked;
 
-    const { mails } = this.state;
-    let indexMail = mails.findIndex(item => item.id === mailInfos.id);
-    this.setState(prevState => ({ mails: { ...prevState.mails, [prevState.mails[indexMail]]: mailInfos } }));
+    let indexMail = this.state.mails.findIndex(item => item.id === mailInfos.id);
+    let newList = Object.assign([], this.state.mails);
+    newList[indexMail] = mailInfos;
+
+    this.props.setMails(newList);
+    this.setState({ mails: newList });
+    this.props.selectMails();
   };
 
   renderMailContent = mailInfos => {
@@ -88,6 +101,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
       this.props.navigation.navigate("newMail", {
         type: DraftType.DRAFT,
         mailId: mailInfos.id,
+        isTrashed: this.props.isTrashed,
         onGoBack: () => {
           this.refreshMailList();
           this.props.fetchInit();
@@ -102,8 +116,16 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
           this.props.fetchInit();
         },
         isTrashed: this.props.isTrashed,
+        isSended: this.props.isSended,
       });
     }
+  };
+
+  renderDateFormat = (mailDate: moment.Moment) => {
+    if (mailDate.year() < moment().year()) {
+      return mailDate.calendar();
+    }
+    return mailDate.format("D MMM");
   };
 
   private renderMailItemInfos(mailInfos) {
@@ -114,10 +136,11 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     return (
       <TouchableOpacity
         onPress={() => {
-          this.renderMailContent(mailInfos);
+          if (!this.props.isHeaderSelectVisible) {
+            this.renderMailContent(mailInfos);
+          } else this.selectItem(mailInfos);
         }}
-        // onLongPress={() => this.selectItem(mailInfos)}
-      >
+        onLongPress={() => this.selectItem(mailInfos)}>
         <Header
           style={[styles.containerMail, this.containerStyle(mailInfos.isChecked), this.hasShadow(mailInfos.unread)]}>
           <LeftPanel>
@@ -136,7 +159,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
                     {contact[1]}
                   </Text>
                 ))}
-              <Text style={styles.greyColor}>{moment(mailInfos.date).format("dddd LL")}</Text>
+              <Text style={styles.greyColor}>{this.renderDateFormat(moment(mailInfos.date))}</Text>
             </View>
             <View style={styles.mailInfos}>
               <Text style={{ flex: 1, color: "#AFAFAF" }} numberOfLines={1}>
@@ -161,18 +184,10 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     }
   };
 
-  refreshMailList = () => {
-    this.props.fetchMails(0);
+  refreshMailList = (isRefreshStorage: boolean = false) => {
+    this.props.fetchMails(0, isRefreshStorage);
     this.setState({ indexPage: 0 });
-  };
-
-  toggleUnread = () => {
-    let toggleListIds = "";
-    for (let i = 0; i < this.state.mails.length - 1; i++) {
-      if (this.state.mails[i].isChecked) toggleListIds = toggleListIds.concat("id=", this.state.mails[i].id, "&");
-    }
-    if (toggleListIds === "") return;
-    toggleListIds = toggleListIds.slice(0, -1);
+    this.props.goBack();
   };
 
   public render() {
@@ -180,7 +195,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     const uniqueId = [];
     const uniqueMails = this.state.mails.filter((mail: IMail) => {
       // @ts-ignore
-      if (uniqueId.indexOf(mail.id) == -1) {
+      if (uniqueId.indexOf(mail.id) === -1) {
         // @ts-ignore
         uniqueId.push(mail.id);
         return true;
@@ -195,7 +210,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
           extraData={uniqueMails}
           keyExtractor={(item: IMail) => item.id}
           refreshControl={
-            <RefreshControl refreshing={isFetching && !firstFetch} onRefresh={() => this.refreshMailList()} />
+            <RefreshControl refreshing={isFetching && !firstFetch} onRefresh={() => this.refreshMailList(true)} />
           }
           onEndReachedThreshold={0.001}
           onScrollBeginDrag={() => this.setState({ nextPageCallable: true })}

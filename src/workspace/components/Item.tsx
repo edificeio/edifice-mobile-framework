@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Platform } from "react-native";
 import I18n from "i18n-js";
 import { IEventProps, EVENT_TYPE } from "../types";
 
@@ -34,7 +34,15 @@ export const Item = ({ onEvent, item, selected }: IEventProps & any) => {
   return (
     <ListItem
       onLongPress={() => onEvent({ type: EVENT_TYPE.LONG_SELECT, id: item.id, item })}
-      onPress={() => onEvent({ type: EVENT_TYPE.SELECT, id: item.id, item })}
+      onPress={() => {
+        const previewEvent = { type: EVENT_TYPE.PREVIEW, item };
+        const selectEvent = { type: EVENT_TYPE.SELECT, id: item.id, item };
+        const eventInfos = Platform.select({ 
+          ios: isFolder ? selectEvent : previewEvent,
+          default: selectEvent
+        });
+        onEvent(eventInfos);
+      }}
       style={{ backgroundColor: selected ? "#2A9CC825" : "#fff", margin: 0 }}
       borderBottomWidth={0}>
       <LeftIconPanel>{renderIcon(id, isFolder, name, contentType)}</LeftIconPanel>

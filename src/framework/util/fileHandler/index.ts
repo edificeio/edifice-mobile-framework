@@ -5,10 +5,11 @@
 import { Platform } from "react-native";
 import DocumentPicker, { DocumentPickerResponse, PlatformTypes } from "react-native-document-picker";
 import { Asset, ImagePickerResponse, launchCamera, launchImageLibrary, MediaType } from 'react-native-image-picker';
-import type { UploadFileItem } from "react-native-fs";
+import { copyFile, DownloadDirectoryPath, exists, mkdir, stat, UploadFileItem } from "react-native-fs";
 import FileViewer from 'react-native-file-viewer';
 import getPath from "@flyerhq/react-native-android-uri-path";
 import { assertPermissions } from "../permissions";
+import moment from "moment";
 
 namespace LocalFile {
 
@@ -178,11 +179,32 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
             showOpenWithDialog: true,
             showAppsSuggestions: true
         })
-        .then(() => {})
-        .catch(error => {
-            console.warn("Error opening file", error);
-            throw error;
-        });
+            .then(() => { })
+            .catch(error => {
+                console.warn("Error opening file", error);
+                throw error;
+            });
+    }
+
+    /**
+     * Copy file into user downloads folder
+     */
+    async mirrorToDownloadFolder() {
+        await assertPermissions('documents.write');
+        const destFolder = DownloadDirectoryPath;
+        let destPath = `${destFolder}/${this.filename}`;
+        // console.log("destPath", destPath, await exists(destPath));
+        if (await exists(destPath)) {
+            const splitFilename = this.filename.split('.');
+            const ext = splitFilename.pop();
+            destPath = `${destFolder}/${splitFilename.join('.')}-${moment().format('YYYYMMDD-HHmmss')}.${ext}`;
+        }
+        // console.log("final destPath", destPath);
+        copyFile(this.filepath, destPath).then(() => { })
+            .catch(error => {
+                console.warn("Error copying file", error);
+                throw error;
+            });
     }
 
 }
@@ -224,10 +246,11 @@ export class SyncedFile<DFType extends IDistantFile = IDistantFile> implements L
     get filetype() { return this.df.filetype ?? this.lf.filetype }
     get _filepathNative() { return this.lf._filepathNative }
 
-    releaseIfNeeded = LocalFile.prototype.releaseIfNeeded;
-    open = LocalFile.prototype.open;
-    setExtension = LocalFile.prototype.setExtension;
-    setPath = LocalFile.prototype.setPath;
+    releaseIfNeeded = () => LocalFile.prototype.releaseIfNeeded.call(this.lf);
+    open = () => LocalFile.prototype.open.call(this.lf);
+    setExtension = (ext: string) => LocalFile.prototype.setExtension.call(this.lf, ext);
+    setPath = (path: string) =>  LocalFile.prototype.setPath.call(this.lf, path);
+    mirrorToDownloadFolder = () => LocalFile.prototype.mirrorToDownloadFolder.call(this.lf);
 }
 
 export class SyncedFileWithId extends SyncedFile<IDistantFileWithId> {

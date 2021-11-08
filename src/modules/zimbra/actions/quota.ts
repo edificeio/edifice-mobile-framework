@@ -1,7 +1,6 @@
 import { Dispatch } from "redux";
 
 import { createAsyncActionCreators } from "../../../infra/redux/async2";
-import { Trackers } from "../../../infra/tracker";
 import { quotaService } from "../service/quota";
 import { IQuota, actionTypes } from "../state/quota";
 

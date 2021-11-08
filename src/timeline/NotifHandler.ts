@@ -3,7 +3,7 @@ import { listTimeline } from './actions/list';
 import { storedFilters } from './actions/storedFilters';
 import { loadSchoolbooks, resetLoadingState } from './actions/dataTypes';
 import { NotificationHandlerFactory } from '../infra/pushNotification';
-import { Trackers } from '../infra/tracker';
+import { Trackers } from '../framework/util/tracker';
 
 const openNotif = {
   '/schoolbook': async (data, latestNews) => {

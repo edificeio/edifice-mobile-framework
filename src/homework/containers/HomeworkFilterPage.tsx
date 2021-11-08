@@ -17,7 +17,7 @@ import { homeworkDiarySelected } from "../actions/selectedDiary";
 import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { NavigationScreenProp } from "react-navigation";
 import { HeaderBackAction } from "../../ui/headers/NewHeader";
-import withViewTracking from "../../infra/tracker/withViewTracking";
+import withViewTracking from "../../framework/util/tracker/withViewTracking";
 
 const mapStateToProps: (state: any) => IHomeworkFilterPageDataProps = state => {
   // Extract data from state

@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
 import { moveMailsToFolderAction, moveMailsToInboxAction } from "../actions/mail";
-import MoveToFolderModalComponent from "../components/MoveToFolderModal";
+import MoveToFolderModalComponent from "../components/Modals/MoveToFolderModal";
 import { getInitMailListState, IFolder } from "../state/initMails";
 
 type MoveToFolderModalProps = {
@@ -37,10 +37,15 @@ class MoveToFolderModal extends React.Component<MoveToFolderModalProps, MoveToFo
   confirm = async () => {
     const { moveToFolder, moveToInbox, mail, successCallback } = this.props;
     const { selectedFolder } = this.state;
-    this.props.closeModal();
+    await this.props.closeModal();
+
+    let mailsIds = [] as any;
+    if (Array.isArray(mail)) mail.map(mailInfos => mailsIds.push(mailInfos.id));
+    else mailsIds.push(mail.id);
+
     if (!selectedFolder) return;
-    else if (selectedFolder === "inbox") await moveToInbox([mail.id]);
-    else await moveToFolder([mail.id], selectedFolder);
+    else if (selectedFolder === "inbox") await moveToInbox(mailsIds);
+    else await moveToFolder(mailsIds, selectedFolder);
     successCallback();
   };
 

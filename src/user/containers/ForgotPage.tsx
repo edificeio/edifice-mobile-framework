@@ -7,7 +7,7 @@ import {
 import userConfig from "../config";
 import { action_forgotSubmit, action_forgotReset } from "../actions/forgot";
 import { IUserForgotState } from "../reducers/forgot";
-import withViewTracking from "../../infra/tracker/withViewTracking";
+import withViewTracking from "../../framework/util/tracker/withViewTracking";
 
 const mapStateToProps: (state: any) => IForgotPageDataProps = state => {
   const forgotState: IUserForgotState = state[userConfig.reducerName].forgot;

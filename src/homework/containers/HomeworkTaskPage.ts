@@ -3,7 +3,7 @@ import {
   HomeworkTaskPage,
   IHomeworkTaskPageDataProps
 } from "../components/HomeworkTaskPage";
-import withViewTracking from "../../infra/tracker/withViewTracking";
+import withViewTracking from "../../framework/util/tracker/withViewTracking";
 
 const mapStateToProps: (state: any) => IHomeworkTaskPageDataProps = state => {
   // Extract data from state

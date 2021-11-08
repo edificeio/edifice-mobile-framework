@@ -6,7 +6,7 @@ import { asyncActionFactory } from "../../infra/actions/asyncActionFactory";
 import { formatResults } from "./helpers/documents";
 import { IItem } from "../types";
 import { IItems } from "../reducers/select";
-import { Trackers } from "../../infra/tracker";
+import { Trackers } from "../../framework/util/tracker";
 import { getExtension } from "../../infra/actions/downloadHelper";
 
 const WORKSPACE_RENAME = "/workspace/rename";

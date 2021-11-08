@@ -7,12 +7,29 @@ project.ext.react = [
     enableHermes: true,
 ]
 
+project.ext.vectoricons = [
+    iconFontNames: [ 'MaterialIcons.ttf' ]
+]
+
 apply from: "../../node_modules/react-native/react.gradle"
 
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
+
 def enableSeparateBuildPerCPUArchitecture = false
-def enableProguardInReleaseBuilds = false
+def enableProguardInReleaseBuilds = true
 def jscFlavor = 'org.webkit:android-jsc:+'
 def enableHermes = project.ext.react.get("enableHermes", false);
+
+// Run packager
+
+def runTasks = gradle.startParameter.taskNames
+
+if ('assembleDebug' in runTasks) {
+    exec {
+        workingDir '../..'
+        commandLine 'watchman watch-del-all && react-native start --reset-cache'
+    }
+}
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -25,13 +42,12 @@ android {
         applicationId APPID
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1060014
-        versionName "1.6.0"
+        versionCode 1060109
+        versionName "1.6.1"
         buildConfigField "String", "BundleVersionOverride", "\"${APPOVERRIDE}\""
-        buildConfigField "String", "BundleVersionType", "\"rc.8\""
+        buildConfigField "String", "BundleVersionType", "\"rc.5\""
         manifestPlaceholders = [ applicationName: APPNAME ]
         resValue "string", "app_name", "${APPNAME}"
-        
     }
     splits {
         abi {
@@ -41,6 +57,14 @@ android {
             include "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
         }
     }
+    signingConfigs {
+        release {
+            storeFile file(System.getenv("ANDROID_KEYSTORE_FILE"))
+            storePassword System.getenv("ANDROID_KEYSTORE_PWD")
+            keyAlias System.getenv("ANDROID_KEYSTORE_ALIAS")
+            keyPassword System.getenv("ANDROID_KEYSTORE_PWD")
+        }
+    }
     buildTypes {
         debug {
             // signingConfig signingConfigs.debug
@@ -48,7 +72,7 @@ android {
         release {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-            // signingConfig signingConfigs.release
+            signingConfig signingConfigs.release
         }
     }
     // applicationVariants are e.g. debug, release

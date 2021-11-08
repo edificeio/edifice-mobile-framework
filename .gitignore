@@ -1,6 +1,7 @@
 # OSX
 #
 .DS_Store
+**/.DS_Store
 
 # Xcode
 #
@@ -84,4 +85,15 @@ ios/appe/main.jsbundle
 
 # Metals (scala)
 .metals
+
+# Fastlane
+fastlane
+Gemfile
+
+# Lockfiles
+package-lock.json
+jetificableGroups.json
+ios/Podfile.lock
+Gemfile.lock
+yarn.lock
 

@@ -5,7 +5,7 @@ import Conf from "../../../ode-framework-conf";
 import { signedFetchJson } from "../../infra/fetchWithCache";
 import { notifierShowAction } from "../../infra/notifier/actions";
 import { ThunkDispatch } from "redux-thunk";
-import { Trackers } from "../../infra/tracker";
+import { Trackers } from "../../framework/util/tracker";
 
 // TYPES
 

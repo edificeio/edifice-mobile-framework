@@ -5,7 +5,7 @@ import { createAppScopesLegacy, OAuth2RessourceOwnerPasswordClient } from "../..
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { navigate } from "../../navigation/helpers/navHelper";
-import { Trackers } from "../../infra/tracker";
+import { Trackers } from "../../framework/util/tracker";
 
 export const PLATFORM_STORAGE_KEY = "currentPlatform";
 

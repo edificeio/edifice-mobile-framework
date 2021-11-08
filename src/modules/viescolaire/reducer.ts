@@ -21,6 +21,8 @@ import { ISlotListState } from "./edt/state/slots";
 import { IUserChildrenState } from "./edt/state/userChildren";
 import presences from "./presences/reducers";
 import { INotifiationChildren } from "./presences/state/eventsNotification";
+import { IMultipleSlotsState } from "./presences/state/multipleSlots";
+import { IRegisterPreferencesState } from "./presences/state/registerPreferences";
 import { IClassesCallListState } from "./presences/state/teacherClassesCall";
 import { ICoursesRegisterInfosState } from "./presences/state/teacherCourseRegister";
 import { ICoursesListState } from "./presences/state/teacherCourses";
@@ -59,6 +61,8 @@ export interface IViesco_State {
     coursesRegister: ICoursesRegisterInfosState;
     history: any;
     notification: INotifiationChildren[];
+    multipleSlots: IMultipleSlotsState;
+    registerPreferences: IRegisterPreferencesState;
   };
   competences: {
     levels: ILevelsListState;

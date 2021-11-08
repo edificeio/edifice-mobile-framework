@@ -9,6 +9,7 @@ import { Platform, SafeAreaView, TouchableOpacity, View, ViewProps, ViewStyle } 
 import { hasNotch } from "react-native-device-info";
 
 import theme from "../util/theme";
+import { UI_SIZES } from "./constants";
 import { Icon } from "./icon";
 import { FontWeightIOS, rem, TextInverse } from "./text";
 
@@ -20,7 +21,7 @@ const FakeHeader_StyleComponent = styled.View({
   flex: 0,
   backgroundColor: theme.color.secondary.regular,
   elevation: 5,
-  height: Platform.select({ ios: hasNotch() ? 100 : 76, default: 56 }),
+  height: Platform.select({ ios: hasNotch() ? 100 : 76, default: UI_SIZES.headerHeight }),
 });
 
 export const FakeHeader = (props: React.PropsWithChildren<ViewProps>) => (

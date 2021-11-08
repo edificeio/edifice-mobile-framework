@@ -3,7 +3,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import withViewTracking from "../../../../infra/tracker/withViewTracking";
+import withViewTracking from "../../../../framework/util/tracker/withViewTracking";
 import { PageContainer } from "../../../../ui/ContainerContent";
 import { EmptyScreen } from "../../../../ui/EmptyScreen";
 

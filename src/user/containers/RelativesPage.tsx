@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import { RelativesPage } from "../components/RelativesPage";
-import withViewTracking from "../../infra/tracker/withViewTracking";
+import withViewTracking from "../../framework/util/tracker/withViewTracking";
 
 const RelativesPageConnected = connect(
     (state: any) => ({

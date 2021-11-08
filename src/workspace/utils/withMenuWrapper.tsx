@@ -3,13 +3,14 @@ import { View } from "react-native";
 import { connect } from "react-redux";
 import { EVENT_TYPE, IEvent } from "../../types/ievents";
 import { FilterId } from "../types/filters";
+import { newDownloadThenOpenAction } from "../actions/download";
 import { selectAction, selectClearAction } from "../actions/select";
 import { IMenuItem, initialMenuItem } from "../../ui/types";
 import { FloatingAction } from "../../ui/FloatingButton";
 import { ToolbarAction } from "../../ui/Toolbar";
 import { listFoldersAction } from "../actions/listFolders";
 import { ConfirmDialog } from "../../ui/ConfirmDialog";
-import { IItem } from "../types";
+import { IFile, IItem } from "../types";
 import { IItems } from "../reducers/select";
 import { ITreeItem } from "../actions/helpers/formatListFolders";
 import { nbItems } from "./index";
@@ -77,6 +78,10 @@ function withMenuWrapper<T extends IProps>(WrappedComponent: React.ComponentType
           }
           return;
 
+        case EVENT_TYPE.PREVIEW:
+          dispatch(newDownloadThenOpenAction('', { item: item as IFile }))
+          return;
+        
         case EVENT_TYPE.LONG_SELECT:
           const filterId = navigation.getParam("filter");
           if (filterId != "root") dispatch(selectAction(item));

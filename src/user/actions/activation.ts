@@ -11,7 +11,7 @@ import userConfig from "../config";
 import { actionTypeLoginCancel } from "./actionTypes/login";
 import { loginAction } from './login';
 import { IActivationContext } from "../../utils/SubmitState";
-import { Trackers } from "../../infra/tracker";
+import { Trackers } from "../../framework/util/tracker";
 
 // TYPES ------------------------------------------------------------------------------------------------
 

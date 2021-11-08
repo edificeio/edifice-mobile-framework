@@ -48,23 +48,25 @@ const mailListAdapter: (data: IMailListBackend) => IMailList = data => {
 };
 
 export const mailListService = {
-  get: async (page, folder = "inbox") => {
+  get: async (page: number, folder: string = "inbox", searchText: string) => {
+    let searchParam = searchText === "" ? "" : "&search=" + searchText as string;
     switch (folder) {
       case "inbox":
-        return mailListAdapter(await fetchJSONWithCache(`/zimbra/list?folder=/Inbox&page=${page}&unread=false`));
+        return mailListAdapter(await fetchJSONWithCache(`/zimbra/list?folder=/Inbox&page=${page}&unread=false${searchParam}`));
       case "sendMessages":
-        return mailListAdapter(await fetchJSONWithCache(`/zimbra/list?folder=/Sent&page=${page}&unread=false`));
+        return mailListAdapter(await fetchJSONWithCache(`/zimbra/list?folder=/Sent&page=${page}&unread=false${searchParam}`));
       case "drafts":
-        return mailListAdapter(await fetchJSONWithCache(`/zimbra/list?folder=/Drafts&page=${page}&unread=false`));
+        return mailListAdapter(await fetchJSONWithCache(`/zimbra/list?folder=/Drafts&page=${page}&unread=false${searchParam}`));
       case "trash":
-        return mailListAdapter(await fetchJSONWithCache(`/zimbra/list?folder=/Trash&page=${page}&unread=false`));
+        return mailListAdapter(await fetchJSONWithCache(`/zimbra/list?folder=/Trash&page=${page}&unread=false${searchParam}`));
       case "spams":
-        return mailListAdapter(await fetchJSONWithCache(`/zimbra/list?folder=/Junk&page=${page}&unread=false`));
+        return mailListAdapter(await fetchJSONWithCache(`/zimbra/list?folder=/Junk&page=${page}&unread=false${searchParam}`));
       default:
         return [];
     }
   },
-  getFromFolder: async (folderLocation: string, page: number = 1) => {
-    return mailListAdapter(await fetchJSONWithCache(`/zimbra/list?folder=/Inbox/${folderLocation}&page=${page}`));
+  getFromFolder: async (folderLocation: string, page: number = 1, searchText: string) => {
+    let searchParam = searchText === "" ? "" : "&search=" + searchText as string;
+    return mailListAdapter(await fetchJSONWithCache(`/zimbra/list?folder=/Inbox/${folderLocation}&page=${page}${searchParam}`));
   },
 };

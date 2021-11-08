@@ -34,7 +34,6 @@ export const NoTouchableContainer = style.view({
   flexDirection: "row",
   height: 46,
   justifyContent: "flex-start",
-  paddingHorizontal: 15,
   alignSelf: "stretch",
 });
 

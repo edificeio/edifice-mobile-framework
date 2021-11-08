@@ -5,7 +5,7 @@ import { Dispatch } from "redux";
 import { AttachmentGroup } from "./AttachmentGroup";
 import { AttachmentGroupImages } from "./AttachmentGroupImages";
 import { ContentUri } from "../types/contentUri";
-import { Trackers } from "../infra/tracker";
+import { Trackers } from "../framework/util/tracker";
 import { ILocalAttachment } from "./Attachment";
 import pickFile, { pickFileError } from "../infra/actions/pickFile";
 

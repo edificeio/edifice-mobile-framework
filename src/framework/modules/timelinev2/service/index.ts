@@ -40,12 +40,17 @@ export const notificationsService = {
         const headers = {
             Accept: "application/json;version=3.0"
         }
-        const entcoreNotifications = await fetchJSONWithCache(api, { headers }) as {results: IEntcoreTimelineNotification[], status: string, number: number};
+        const entcoreNotifications = await fetchJSONWithCache(api, { headers }) as { results: IEntcoreTimelineNotification[], status: string, number: number };
         if (entcoreNotifications.status !== "ok") {
             throw new Error("[notificationsService.page] got status not ok from " + api);
         }
         // Run the notification adapter for each received notification
         return entcoreNotifications.results.map(n => notificationAdapter(n) as ITimelineNotification);
+    },
+    report: async (session: IUserSession, id: string) => {
+        const api = `${legacyAppConf.currentPlatform?.url!}/timeline/${id}/report`;
+        const method = 'PUT';
+        return signedFetchJson(api, { method });
     }
 }
 
@@ -100,21 +105,21 @@ export const pushNotifsService = {
         const notifsPrefs = Object.fromEntries(Object.entries(await pushNotifsService._getConfig(session))
             .filter(([k, v]) => v.hasOwnProperty("push-notif") && v["push-notif"] !== undefined)
             .map(([k, v]) => [k, v["push-notif"]!])
-            );
+        );
         return notifsPrefs;
     },
     set: async (session: IUserSession, changes: IPushNotifsSettings_State_Data) => {
         const api = '/userbook/preference/timeline';
         const method = 'PUT';
-        const notifPrefsUpdated = Object.fromEntries(Object.entries(changes).map(([k, v]) => [k, {'push-notif': v}]));
+        const notifPrefsUpdated = Object.fromEntries(Object.entries(changes).map(([k, v]) => [k, { 'push-notif': v }]));
         // console.log('updates push-notif prefs', notifPrefsUpdated);
         const prefsOriginal = await pushNotifsService._getPrefs(session);
         const notifPrefsOriginal = prefsOriginal.config ?? {};
         // console.log('current push-notif prefs', notifPrefsOriginal);
         const notifPrefs = deepmerge(notifPrefsOriginal, notifPrefsUpdated);
-        const prefsUpdated = {config: notifPrefs};
+        const prefsUpdated = { config: notifPrefs };
         // console.log('new notif prefs', prefsUpdated);
-        const payload = {...prefsOriginal, ...prefsUpdated};
+        const payload = { ...prefsOriginal, ...prefsUpdated };
         // console.log('payload', payload);
         const responseJson = await signedFetchJson(`${legacyAppConf.currentPlatform!.url}${api}`, {
             method,

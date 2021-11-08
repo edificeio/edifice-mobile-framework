@@ -1,30 +1,8 @@
-import * as React from "react";
-import style from "glamorous-native";
-import { StyleProp, TextInput, TextInputProps, TextStyle, View } from "react-native";
-import { CommonStyles } from "../../styles/common/styles";
-
-const TextInputContainer = style.view(
-  {
-    height: 40,
-    paddingTop: 4,
-    flex: 1,
-  },
-  ({ hasError, focus }) => ({
-    borderBottomColor: hasError
-      ? CommonStyles.errorColor
-      : focus
-      ? CommonStyles.iconColorOn
-      : CommonStyles.entryfieldBorder,
-    borderBottomWidth: focus || hasError ? 2 : 1,
-  })
-);
-
-const Input = style.textInput({
-  color: CommonStyles.textInputColor,
-  fontFamily: CommonStyles.primaryFontFamily,
-  fontSize: 14,
-  height: 40,
-});
+import * as React from 'react';
+import { Platform, View, TextInput, StyleProp, TextInputProps, ViewStyle } from 'react-native';
+import { TextField } from 'react-native-material-textfield';
+import PasswordInputText from 'react-native-hide-show-password-input';
+import theme from '../../framework/util/theme';
 
 export type TextInputLineProps = {
   hasError: boolean;
@@ -32,7 +10,12 @@ export type TextInputLineProps = {
   onBlur?: () => void;
   placeholder: string;
   inputRef: (ref: TextInput) => void;
-  secureTextEntry?: boolean;
+  style?: StyleProp<ViewStyle>;
+  inputStyle?: StyleProp<ViewStyle>;
+  fontSize?: number;
+  isPasswordField?: boolean;
+  placeholderTextColor?: string;
+  textColor?: string;
 } & TextInputProps;
 
 export class TextInputLine extends React.Component<
@@ -42,46 +25,53 @@ export class TextInputLine extends React.Component<
     onBlur?: () => void;
     placeholder: string;
     inputRef: (ref: TextInput) => void;
-    secureTextEntry?: boolean;
-    inputStyle?: StyleProp<TextStyle>;
-  } & TextInputProps,
-  { isFocused: boolean }
+    style?: StyleProp<ViewStyle>;
+    inputStyle?: StyleProp<ViewStyle>;
+    fontSize?: number;
+    isPasswordField?: boolean;
+    placeholderTextColor?: string;
+    textColor?: string;
+  } & TextInputProps
 > {
-  state = {
-    isFocused: false,
-  };
-
-  onBlur() {
-    this.setState({
-      isFocused: false,
-    });
-    this.props.onBlur && this.props.onBlur();
-  }
-
-  onFocus() {
-    this.setState({
-      isFocused: true,
-    });
-    this.props.onFocus && this.props.onFocus();
-  }
-
   public render() {
-    const { hasError } = this.props;
+    const {
+      hasError,
+      style,
+      inputStyle,
+      inputRef,
+      fontSize,
+      isPasswordField,
+      onBlur,
+      onFocus,
+      placeholderTextColor,
+      textColor,
+    } = this.props;
 
+    const inputProps = {
+      ...this.props,
+      innerRef: r => inputRef(r),
+      onBlur: () => onBlur && onBlur(),
+      onFocus: () => onFocus && onFocus(),
+      placeholderTextColor: placeholderTextColor || theme.color.text.light,
+      textColor: textColor || theme.color.text.regular,
+      underlineColorAndroid: 'transparent',
+      autoCapitalize: 'none',
+      containerStyle: style,
+      inputContainerStyle: inputStyle,
+      fontSize: fontSize || 16,
+      lineWidth: hasError ? 2 : 1,
+      activeLineWidth: 2,
+      baseColor: hasError ? theme.color.failure : theme.color.inputBorder,
+      tintColor: hasError ? theme.color.failure : theme.color.secondary.regular,
+      iconColor: theme.color.text.light,
+      label: '',
+      iconSize: 25,
+      invertVisibilityIcon: true,
+    };
+    const TextComponent = isPasswordField ? PasswordInputText : TextField;
     return (
-      <View style={{ alignSelf: "stretch", flex: 0 }}>
-        <TextInputContainer hasError={hasError} focus={this.state.isFocused} style={this.props.style}>
-          <Input
-            innerRef={r => this.props.inputRef(r)}
-            onBlur={() => this.onBlur()}
-            onFocus={() => this.onFocus()}
-            placeholderTextColor={CommonStyles.placeholderColor}
-            underlineColorAndroid="transparent"
-            autoCapitalize="none"
-            {...this.props}
-            style={this.props.inputStyle}
-          />
-        </TextInputContainer>
+      <View style={{ alignSelf: 'stretch' }}>
+        <TextComponent {...inputProps} />
       </View>
     );
   }

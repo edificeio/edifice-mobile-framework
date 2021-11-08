@@ -9,145 +9,151 @@ import Matomo from 'react-native-matomo';
 
 import Conf from '../../../../ode-framework-conf';
 import { signRequest } from '../../../infra/oauth';
-import { IMatomoTrackerOptions, IAppCenterTrackerOptions, IEntcoreTrackerOptions } from './config';
+import { legacyAppConf } from '../appConf';
+import { IAnyNavigableModuleConfig, IAnyModuleConfig } from '../moduleTool';
 
-export abstract class Tracker<OptionsType> {
-  async init() {}
+export type TrackEventArgs = [string, string, string?, number?];
+export type TrackEventOfModuleArgs = [IAnyModuleConfig, string, string?, number?];
+export type DoTrackArg = undefined | TrackEventOfModuleArgs;
 
-  async trackEvent(category: string, action: string, name?: string, value?: number) {}
-
-  async trackView(path: string[]) {}
-
-  async test() {
-    console.log('[Tracker] Tracker testing');
-    return this.trackEvent('Tracker', 'Test', 'Event test', 1);
-  }
-
-  async setUserId(id: string) {
-    if (!this.isReady) {
-      console.log('[Tracker] Setting user ID');
-    }
-  }
-
-  async setCustomDimension(id: number, value: string) {
-    if (!this.isReady) {
-      console.log('[Tracker] Setting custom dimension', id);
-    }
-  }
-
-  get isReady(): boolean {
-    return false;
-  }
-  get isUserReady(): boolean {
-    return false;
-  }
-}
-
-export class MatomoTracker extends Tracker<IMatomoTrackerOptions> {
-  opts: IMatomoTrackerOptions;
-  private _isReady = false;
-  constructor(opts: IMatomoTrackerOptions) {
-    super(opts);
+export abstract class AbstractTracker<OptionsType> {
+  debugName: string;
+  opts: OptionsType;
+  protected _isReady: boolean;
+  constructor(debugName: string, opts: OptionsType){
+    this.debugName = debugName;
     this.opts = opts;
+    this._isReady = false;
   }
 
+  get isReady() { return this._isReady }
+
+  // Init procedure. Override _init() function to create custom trackers.
+  protected async _init() {}
   async init() {
-    await super.init();
     try {
-      await Matomo.initTracker(this.opts.url, this.opts.siteId);
+      await this._init();
       this._isReady = true;
-      console.log('[Matomo] Tracker successfully initilized');
+      console.log(`[Tracker ${this.debugName}] Tracker successfully initilized`);
     } catch (e) {
-      console.warn('[Matomo] Failed to initialize Matomo', e);
+      this._isReady = false;
+      console.warn(`[Tracker ${this.debugName}] Error during tracker initialization`, e);
     }
   }
 
-  async trackEvent(category: string, action: string, name?: string, value?: number) {
-    await super.trackEvent(category, action, name, value);
-    if (!this.isReady) return;
-    return Matomo.trackEvent(category, action, name, value);
-  }
-
-  async trackView(path: string[]) {
-    await super.trackView(path);
-    if (!this.isReady) return;
-    const viewPath = path.toString().replaceAll(',', '/');
-    return Matomo.trackScreen(viewPath, null);
-  }
-
+  // UserID procedure. Override _setUserId() function to create custom trackers.
+  protected async _setUserId(id: string): Promise<boolean> { throw "not implemented" }
   async setUserId(id: string) {
-    await super.setUserId(id);
-    if (!this.isReady) return;
-    return Matomo.setUserId(id);
+    try {
+      if (!this.isReady) { throw new Error ('Tracker is not initialized') }
+      const ret = await this._setUserId(id);
+      ret && console.log(`    Tracker ${this.debugName}: Setting user ID`, id);
+    } catch (e) {
+      console.warn(`    Tracker ${this.debugName}: Error while setting user ID`, id, e);
+    }
   }
 
-  async setCustomDimension(id: number, value: string) {
-    await super.setCustomDimension(id, value);
-    if (!this.isReady) return;
-    return Matomo.setCustomDimension(id, value);
+  // Custom dimension procedure. Override _setCustomDimension() function to create custom trackers.
+  protected async _setCustomDimension(id: number, name: string, value: string): Promise<boolean> { throw "not implemented" }
+  async setCustomDimension(id: number, name: string, value: string) {
+    try {
+      if (!this.isReady) { throw new Error('Tracker is not initialized') }
+      const ret = await this._setCustomDimension(id, name, value);
+      ret && console.log(`    Tracker ${this.debugName}: Setting custom dimension`, id, '|', name, '|', value);
+    } catch (e) {
+      console.warn(`    Tracker ${this.debugName}: Error while setting custom dimension`, id, '|', name, '|', value, e);
+    }
   }
 
-  get isReady(): boolean {
-    return this._isReady;
+  // Track event procedure. Override _trackEvent() function to create custom trackers.
+  protected async _trackEvent(category: string, action: string, name?: string, value?: number): Promise<boolean> { throw "not implemented" }
+  async trackEvent(category: string, action: string, name?: string, value?: number) {
+    try {
+      if (!this.isReady) { throw new Error('Tracker is not initialized') }
+      const ret = await this._trackEvent(category, action, name, value);
+      ret && console.log(`    Tracker ${this.debugName}: Track event`, category, '|', action, '|', name, '|', value);
+    } catch (e) {
+      console.warn(`    Tracker ${this.debugName}: Error while tracking event`, category, '|', action, '|', name, '|', value, e);
+    }
+  }
+  async trackEventOfModule(moduleConfig: IAnyNavigableModuleConfig, action: string, name?: string, value?: number) {
+    await this.trackEvent(moduleConfig.trackingName, action, name, value);
+  }
+
+  // Track view procedure. Override _trackView() function to create custom trackers.
+  protected async _trackView(path: string[]): Promise<boolean> { throw "not implemented" }
+  async trackView(path: string[]) {
+    try {
+      if (!this.isReady) { throw new Error('Tracker is not initialized') }
+      const ret = await this._trackView(path);
+      ret && console.log(`    Tracker ${this.debugName}: Track view`, ret === true ? path.join('/') : ret);
+    } catch (e) {
+      console.warn(`    Tracker ${this.debugName}: Error while tracking view`, path, e);
+    }
+  }
+  async trackViewOfModule(moduleConfig: IAnyNavigableModuleConfig, path: string[]) {
+    await this._trackView([moduleConfig.routeName, ...path]);
   }
 }
 
-export const DefaultMatomoTracker = new MatomoTracker(Conf.matomo);
+export interface IMatomoTrackerOptions {
+  url: string;
+  siteId: number;
+}
 
-export class AppCenterTracker extends Tracker<IAppCenterTrackerOptions> {
-  opts: IAppCenterTrackerOptions;
-  currentDimensions: object = {};
-  constructor(opts: IMatomoTrackerOptions) {
-    super(opts);
-    this.opts = opts;
+export class ConcreteMatomoTracker extends AbstractTracker<IMatomoTrackerOptions> {
+  async _init() {
+    return Matomo.initTracker(this.opts.url, this.opts.siteId);
   }
-
-  async init() {
-    await super.init();
-    console.log('[AppCenter] Tracker successfully initilized');
+  async _setUserId(id: string) {
+    await Matomo.setUserId(id);
+    return true;
   }
-
-  async trackEvent(category: string, action: string, name?: string, value?: number) {
-    await super.trackEvent(category, action, name, value);
-    if (!this.isReady) return;
-    return Analytics.trackEvent(`${category} ${action}`, {
-      ...(name ? { name } : {}),
-      ...(value ? { value: value.toString() } : {}),
-      ...this.currentDimensions,
-    })
-      .then(() => console.log('[AppCenter] Event tracked', category, action, name, value))
-      .catch(error => console.warn('[AppCenter] Failed to track event', error, category, action, name, value));
+  async _setCustomDimension(id: number, value: string) {
+    await Matomo.setCustomDimension(id, value);
+    return true;
   }
-
-  async trackView(path: string[]) {
-    await super.trackView(path);
-    if (!this.isReady) return;
-    return Analytics.trackEvent(`View ${path.join('/')}`)
-      .then(() => console.log('[AppCenter] View tracked', ...path))
-      .catch(error => console.warn('[AppCenter] Failed to track view', error, ...path));
+  async _trackEvent(category: string, action: string, name?: string, value?: number) {
+    await Matomo.trackEvent(category, action, name, value);
+    return true;
   }
-
-  async setUserId(id: string) {
-    await super.setUserId(id);
-    if (!this.isReady) return;
-    this.currentDimensions['userId'] = id;
-    AppCenter.setUserId(id);
-  }
-
-  async setCustomDimension(id: number, value: string) {
-    await super.setCustomDimension(id, value);
-    if (!this.isReady) return;
-    this.currentDimensions[id] = value;
-  }
-
-  get isReady(): boolean {
+  async _trackView(path: string[]) {
+    const viewPath = path.join('/');
+    await Matomo.trackScreen(viewPath, null);
     return true;
   }
 }
 
-export const DefaultAppCenterTracker = new AppCenterTracker({});
+export class ConcreteAppCenterTracker extends AbstractTracker<undefined> {
+  protected _properties = {};
+  async _init() {
+    // Nothing to do, configuration comes from native appcenter config files
+  }
+  async _setUserId(id: string) {
+    await AppCenter.setUserId(id); return true;
+  }
+  async _setCustomDimension(id: number, name: string, value: string) {
+    this._properties[name] = value;
+    return true;
+  }
+  async _trackEvent(category: string, action: string, name?: string, value?: number) {
+    await Analytics.trackEvent(`${category} ${action} ${name} ${value}`, {
+      category,
+      action,
+      ...(name ? { name } : {}),
+      ...(value ? { value: value.toString() } : {}),
+      ...this._properties
+    });
+    return true;
+  }
+  async _trackView(path: string[]) {
+    const viewPath = path.join('/');
+    await Analytics.trackEvent(`View ${viewPath}`);
+    return true;
+  }
+}
 
-export class EntcoreTracker extends Tracker<IEntcoreTrackerOptions> {
+export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
   reportQueue: Request[] = [];
   sending: boolean = false;
   errorCount: number = 0;
@@ -163,9 +169,9 @@ export class EntcoreTracker extends Tracker<IEntcoreTrackerOptions> {
         if (res.ok) {
           this.reportQueue.shift();
           this.errorCount = 0;
-          console.log('[EntcoreTracker] View tracked ' + (await req?.text()));
+          // console.log('[EntcoreTracker] View tracked ' + (await req?.text()));
         } else {
-          throw new Error('[EntcoreTracker] Report failed. ' + (await req?.text()));
+          throw new Error('    [EntcoreTracker] Report failed. ' + (await req?.text()));
         }
       } catch (e) {
         if (++this.errorCount >= 3) this.sending = false;
@@ -174,9 +180,19 @@ export class EntcoreTracker extends Tracker<IEntcoreTrackerOptions> {
     this.sending = false;
   }
 
-  async trackView(path: string[]) {
-    await super.trackView(path);
-    if (!this.isReady) return;
+  async _init() {
+    // Nothing to do, configuration comes oauth connection
+  }
+  async _setUserId(id: string) {
+    return false; // Nothing here
+  }
+  async _setCustomDimension(id: number, name: string, value: string) {
+    return false; // Nothing here
+  }
+  async _trackEvent(category: string, action: string, name?: string, value?: number) {
+    return false; // Nothing here
+  }
+  async _trackView(path: string[]) {
     const moduleName = (path[0] === 'timeline'
       ? ['blog', 'news', 'schoolbook'].includes(path[2]?.toLowerCase())
         ? path[2]
@@ -194,6 +210,7 @@ export class EntcoreTracker extends Tracker<IEntcoreTrackerOptions> {
       zimbra: 'Zimbra',
       viesco: 'Presences',
     };
+    let willLog = false;
     if (this.lastModulename !== moduleName && moduleAccessMap.hasOwnProperty(moduleName)) {
       this.reportQueue.push(
         new Request(`${(Conf.currentPlatform as any).url}/infra/event/mobile/store`, {
@@ -202,49 +219,53 @@ export class EntcoreTracker extends Tracker<IEntcoreTrackerOptions> {
         }),
       );
       this.lastModulename = moduleName;
+      willLog = moduleAccessMap[moduleName];
     }
     this.sendReportQueue();
-  }
-
-  get isReady(): boolean {
-    return true;
+    return willLog;
   }
 }
 
-export const DefaultEntcoreTracker = new EntcoreTracker({});
-
-export class TrackerSet extends Tracker<{}> {
-  private _trackers: Array<Tracker<any>> = [];
-  addTracker(t: Tracker<any>) {
+export class ConcreteTrackerSet {
+  private _trackers: Array<AbstractTracker<any>> = [];
+  constructor(...trackers: Array<AbstractTracker<any>>) {
+    this._trackers = trackers;
+  }
+  addTracker(t: AbstractTracker<any>) {
     this._trackers.push(t);
   }
   async init() {
     await Promise.all(this._trackers.map(t => t.init()));
   }
   async trackEvent(category: string, action: string, name?: string, value?: number) {
+    console.log(`[Trackers] Track event`, category, '|', action, '|', name, '|', value);
     await Promise.all(this._trackers.map(t => t.trackEvent(category, action, name, value)));
   }
+  async trackEventOfModule(moduleConfig: IAnyModuleConfig, action: string, name?: string, value?: number) {
+    await this.trackEvent(moduleConfig.trackingName, action, name, value);
+  }
   async trackView(path: string[]) {
+    console.log(`[Trackers] Track view`, path.join('/'))
     await Promise.all(this._trackers.map(t => t.trackView(path)));
   }
-  async test() {
-    await Promise.all(this._trackers.map(t => t.test()));
+  async trackViewOfModule(moduleConfig: IAnyNavigableModuleConfig, path: string[]) {
+    await this.trackView([moduleConfig.routeName, ...path]);
   }
   async setUserId(id: string) {
+    console.log(`[Trackers] Setting user ID`, id);
     await Promise.all(this._trackers.map(t => t.setUserId(id)));
   }
-  async setCustomDimension(id: number, value: string) {
-    await Promise.all(this._trackers.map(t => t.setCustomDimension(id, value)));
+  async setCustomDimension(id: number, name: string, value: string) {
+    console.log(`[Trackers] Setting custom dimension`, id, '|', name, '|', value);
+    await Promise.all(this._trackers.map(t => t.setCustomDimension(id, name, value)));
   }
   get isReady() {
     return this._trackers.every(t => t.isReady);
   }
-  get isUserReady() {
-    return this._trackers.every(t => t.isUserReady);
-  }
 }
 
-export const Trackers = new TrackerSet({});
-Trackers.addTracker(DefaultMatomoTracker);
-Trackers.addTracker(DefaultAppCenterTracker);
-Trackers.addTracker(DefaultEntcoreTracker);
+export const Trackers = new ConcreteTrackerSet(
+  new ConcreteMatomoTracker('Matomo', legacyAppConf.matomo),
+  new ConcreteAppCenterTracker('AppCenter', undefined),
+  new ConcreteEntcoreTracker('Entcore', undefined)
+);

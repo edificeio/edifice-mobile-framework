@@ -19,7 +19,7 @@ import { PageView } from "../../framework/components/page";
 import { Text } from "../../framework/components/text";
 import theme from "../../framework/util/theme";
 import withViewTracking from "../../framework/util/tracker/withViewTracking";
-import { Trackers } from "../../infra/tracker";
+import { Trackers } from "../../framework/util/tracker";
 import { CommonStyles } from "../../styles/common/styles";
 
 // TYPES ==========================================================================================

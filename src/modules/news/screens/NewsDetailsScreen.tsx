@@ -130,6 +130,7 @@ export class NewsDetailsScreen extends React.PureComponent<
         keyExtractor={(item: INewsComment) => item._id.toString()}
         ListHeaderComponent={this.renderNewsDetails()}
         contentContainerStyle={{ flexGrow: 1, paddingVertical: 12, backgroundColor: theme.color.background.card }}
+        scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
         refreshControl={
           <RefreshControl
             refreshing={[NewsDetailsLoadingState.REFRESH, NewsDetailsLoadingState.INIT].includes(loadingState)}

@@ -1,8 +1,8 @@
 import { Dispatch } from "redux";
 
 import { createAsyncActionCreators } from "../../../infra/redux/async2";
-import { ISignature, actionTypes } from "../state/signature";
 import { signatureService } from "../service/signature";
+import { ISignature, actionTypes } from "../state/signature";
 
 // ACTION LIST ------------------------------------------------------------------------------------
 
@@ -24,12 +24,6 @@ export function getSignatureAction() {
 
 export function putSignatureAction(signatureData: string, isGlobalSignature: boolean) {
   return async (dispatch: Dispatch) => {
-    try {
-      dispatch(dataActions.request());
-      const data = await signatureService.putSignature(signatureData, isGlobalSignature);
-      dispatch(dataActions.receipt(data));
-    } catch (errmsg) {
-      dispatch(dataActions.error(errmsg));
-    }
+    await signatureService.putSignature(signatureData, isGlobalSignature);
   };
 }

@@ -10,11 +10,11 @@ export const dataActions = createAsyncActionCreators<IMailList>(actionTypes);
 
 // THUNKS -----------------------------------------------------------------------------------------
 
-export function fetchMailListAction(page: number, folderName: string) {
+export function fetchMailListAction(page: number, folderName: string, searchText: string = "") {
   return async (dispatch: Dispatch) => {
     try {
       dispatch(dataActions.request());
-      const data = await mailListService.get(page, folderName);
+      const data = await mailListService.get(page, folderName, searchText);
       dispatch(dataActions.receipt(data));
     } catch (errmsg) {
       dispatch(dataActions.error(errmsg));
@@ -22,11 +22,11 @@ export function fetchMailListAction(page: number, folderName: string) {
   };
 }
 
-export function fetchMailListFromFolderAction(folderLocation: string, page: number) {
+export function fetchMailListFromFolderAction(folderLocation: string, page: number, searchText: string = "") {
   return async (dispatch: Dispatch) => {
     try {
       dispatch(dataActions.request());
-      const data = await mailListService.getFromFolder(folderLocation, page);
+      const data = await mailListService.getFromFolder(folderLocation, page, searchText);
       dispatch(dataActions.receipt(data));
     } catch (errmsg) {
       dispatch(dataActions.error(errmsg));

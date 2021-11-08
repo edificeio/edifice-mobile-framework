@@ -4,7 +4,7 @@ import { CommonStyles } from "../styles/common/styles";
 import { IconButton } from "./IconButton";
 import { mainNavNavigate } from "../navigation/helpers/navHelper";
 import { ContentUri } from "../types/contentUri";
-import { Trackers } from "../infra/tracker";
+import { Trackers } from "../framework/util/tracker";
 
 export class AttachmentGroupImages extends React.PureComponent<
   {

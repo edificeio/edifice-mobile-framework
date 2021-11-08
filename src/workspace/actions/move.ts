@@ -5,7 +5,7 @@ import { formatResults } from "./helpers/documents";
 import { FilterId, IItem, IItems } from "../types";
 import { IId } from "../../types";
 import { actionTypesList, getDocuments, getFolders } from "./list";
-import { Trackers } from "../../infra/tracker";
+import { Trackers } from "../../framework/util/tracker";
 
 const WORKSPACE_MOVE = "/workspace/documents/move";
 

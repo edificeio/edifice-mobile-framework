@@ -154,6 +154,7 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
             paddingBottom: isRelative ? 80 : undefined,
             backgroundColor: theme.color.background.card
           }}
+          scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
           refreshControl={
             <RefreshControl
               refreshing={[SchoolbookWordDetailsLoadingState.REFRESH, SchoolbookWordDetailsLoadingState.INIT].includes(loadingState)}

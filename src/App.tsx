@@ -18,7 +18,7 @@ import { Provider, connect } from 'react-redux';
 import Conf from '../ode-framework-conf';
 
 // ODE Mobile Framework Modules
-import { Trackers } from './infra/tracker';
+import { Trackers } from './framework/util/tracker';
 
 // ODE Mobile Framework Redux
 import { refreshToken } from './user/actions/login';
@@ -93,7 +93,7 @@ class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: b
     // Tracking
     await Trackers.init();
     Trackers.trackEvent('Application', 'STARTUP');
-    Trackers.setCustomDimension(4 /* App Name */, DeviceInfo.getApplicationName());
+    Trackers.setCustomDimension(4, "App Name", DeviceInfo.getApplicationName());
 
     // If only one platform in conf => auto-select it.
     let platformId;

@@ -122,7 +122,7 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
         keyExtractor={(item: IBlog) => item.id.toString()}
         contentContainerStyle={{
           flexGrow: 1,
-          paddingVertical: isEmpty ? undefined : 12,
+          paddingBottom: isEmpty ? undefined : 12,
           backgroundColor: theme.color.background.card,
         }}
         ListEmptyComponent={this.renderEmpty}

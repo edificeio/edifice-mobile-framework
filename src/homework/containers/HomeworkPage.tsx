@@ -15,7 +15,7 @@ import { fetchHomeworkTasks } from "../actions/tasks";
 import { NavigationScreenProp, NavigationFocusInjectedProps } from "react-navigation";
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderAction, HeaderBackAction } from "../../ui/headers/NewHeader";
-import withViewTracking from "../../infra/tracker/withViewTracking";
+import withViewTracking from "../../framework/util/tracker/withViewTracking";
 
 const mapStateToProps: (state: any) => IHomeworkPageDataProps = state => {
   // Extract data from state

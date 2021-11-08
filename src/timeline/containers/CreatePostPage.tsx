@@ -23,7 +23,7 @@ import { ContentUri } from '../../types/contentUri';
 import { uploadDocument, formatResults } from '../../workspace/actions/helpers/documents';
 import { FilterId } from '../../workspace/types';
 import { resourceHasRight } from '../../utils/resourceRights';
-import withViewTracking from '../../infra/tracker/withViewTracking';
+import withViewTracking from '../../framework/util/tracker/withViewTracking';
 import { AttachmentPicker } from '../../ui/AttachmentPicker';
 import Notifier from '../../infra/notifier/container';
 import { ImagePicked, ImagePicker } from '../../infra/imagePicker';

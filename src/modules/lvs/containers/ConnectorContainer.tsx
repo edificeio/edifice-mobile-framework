@@ -16,7 +16,7 @@ import { Back } from "../../../ui/headers/Back";
 import ConnectorView from "../components/ConnectorView";
 import { openConnector } from "../actions/connector";
 import { bindActionCreators } from "redux";
-import withViewTracking from "../../../infra/tracker/withViewTracking";
+import withViewTracking from "../../../framework/util/tracker/withViewTracking";
 
 interface IApplicationBackend {
   name: string;

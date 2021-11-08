@@ -20,8 +20,29 @@ export function restoreMailsAction(mailIds: string[]) {
   };
 }
 
+export function restoreMailsToInboxAction(mailIds: string[]) {
+  return async (dispatch: Dispatch) => {
+    await mailService.restoreMails(mailIds);
+    await mailService.moveMailsToInbox(mailIds);
+  };
+}
+
+export function restoreMailsToFolderAction(mailIds: string[], folderId: string) {
+  return async (dispatch: Dispatch) => {
+    await mailService.restoreMails(mailIds);
+    await mailService.moveMailsToFolder(mailIds, folderId);
+  };
+}
+
 export function deleteMailsAction(mailIds: string[]) {
   return async (dispatch: Dispatch) => {
+    await mailService.deleteMails(mailIds);
+  };
+}
+
+export function deleteDraftsAction(mailIds: string[]) {
+  return async (dispatch: Dispatch) => {
+    await mailService.trashMails(mailIds);
     await mailService.deleteMails(mailIds);
   };
 }

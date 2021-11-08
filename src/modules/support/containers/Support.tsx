@@ -8,7 +8,7 @@ import { bindActionCreators } from 'redux';
 import workspaceService from '../../../framework/modules/workspace/service';
 import { IUserSession } from '../../../framework/util/session';
 import pickFile from '../../../infra/actions/pickFile';
-import withViewTracking from '../../../infra/tracker/withViewTracking';
+import withViewTracking from '../../../framework/util/tracker/withViewTracking';
 import { CommonStyles } from '../../../styles/common/styles';
 import { PageContainer } from '../../../ui/ContainerContent';
 import { Text } from '../../../ui/Typography';
