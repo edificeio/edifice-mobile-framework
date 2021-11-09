@@ -2,7 +2,7 @@ import { AllHtmlEntities } from 'html-entities';
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
-import { Alert, View } from 'react-native';
+import { View, Alert, Keyboard } from 'react-native';
 import { Asset } from 'react-native-image-picker';
 import Toast from 'react-native-tiny-toast';
 import { NavigationScreenProp } from 'react-navigation';
@@ -232,6 +232,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     },
     getSendDraft: async () => {
       if (this.state.mail.to.length === 0) {
+        Keyboard.dismiss();
         Toast.show(I18n.t('conversation.missingReceiver'), {
           position: Toast.position.BOTTOM,
           mask: false,
@@ -239,6 +240,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         });
         return;
       } else if (this.state.tempAttachment && this.state.tempAttachment !== null) {
+        Keyboard.dismiss();
         Toast.show(I18n.t('conversation.sendAttachmentProgress'), {
           position: Toast.position.BOTTOM,
           mask: false,
@@ -304,6 +306,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         to.length === 0 && cc.length === 0 && cci.length === 0 && subject === '' && body === '' && attachments.length === 0;
 
       if (isUploadingAttachment) {
+        Keyboard.dismiss();
         Toast.show(I18n.t('conversation.sendAttachmentProgress'), {
           position: Toast.position.BOTTOM,
           mask: false,
@@ -533,6 +536,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       }));
     } catch (e) {
       console.warn(e);
+      Keyboard.dismiss();
       Toast.show(I18n.t('conversation.attachmentError'), {
         position: Toast.position.BOTTOM,
       });
