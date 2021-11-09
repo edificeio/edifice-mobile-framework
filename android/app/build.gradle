@@ -3,7 +3,7 @@ apply plugin: "com.android.application"
 import com.android.build.OutputFile
 
 project.ext.react = [
-    bundleCommand: "ram-bundle",
+    // bundleCommand: "ram-bundle",
     enableHermes: true,
     entryFile: "index.js",
 ]
