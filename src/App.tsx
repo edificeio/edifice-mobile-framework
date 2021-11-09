@@ -7,6 +7,7 @@ import * as RNLocalize from 'react-native-localize';
 import 'react-native-gesture-handler';
 import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
 import DeviceInfo from 'react-native-device-info';
+import { enableScreens } from 'react-native-screens';
 
 // Polyfills
 import 'ts-polyfill/lib/es2019-object';
@@ -86,6 +87,9 @@ class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: b
   }
 
   public async componentDidMount() {
+    // Enable react-native-screens
+    enableScreens();
+
     // Event handlers
     RNLocalize.addEventListener('change', this.handleLocalizationChange);
     AppState.addEventListener('change', this.handleAppStateChange);
@@ -93,7 +97,7 @@ class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: b
     // Tracking
     await Trackers.init();
     Trackers.trackEvent('Application', 'STARTUP');
-    Trackers.setCustomDimension(4, "App Name", DeviceInfo.getApplicationName());
+    Trackers.setCustomDimension(4, 'App Name', DeviceInfo.getApplicationName());
 
     // If only one platform in conf => auto-select it.
     let platformId;
