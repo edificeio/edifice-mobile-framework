@@ -43,10 +43,10 @@ android {
         applicationId APPID
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1060200
+        versionCode 1060201
         versionName "1.6.2"
         buildConfigField "String", "BundleVersionOverride", "\"${APPOVERRIDE}\""
-        buildConfigField "String", "BundleVersionType", "\"\""
+        buildConfigField "String", "BundleVersionType", "\"alpha.1\""
         manifestPlaceholders = [ applicationName: APPNAME ]
         resValue "string", "app_name", "${APPNAME}"
     }
