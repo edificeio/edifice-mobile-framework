@@ -146,6 +146,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
         {displayedFolders && displayedFolders.length > 0 && displayedFolders.map(displayedFolder => (
           <View style={style.drawerOptionContainer}>
             <DrawerOption
+              containerStyle={{ paddingHorizontal: showList ? 40 : undefined }}
               disabled={isTogglingDrawer}
               selected={this.isCurrentScreen(displayedFolder.folderName)}
               iconName="folder"
@@ -202,6 +203,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
       <>
         {displayedMailboxes && displayedMailboxes.length > 0 && displayedMailboxes.map(displayedMailbox => (
           <DrawerOption
+            containerStyle={{ paddingHorizontal: showList ? 40 : undefined }}
             disabled={isTogglingDrawer}
             selected={this.isCurrentScreen(displayedMailbox.name)}
             iconName={displayedMailbox.icon}
@@ -245,7 +247,6 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
       ? {
         borderBottomLeftRadius: isDrawerMaximallyExpanded ? undefined : 20,
         borderBottomRightRadius: isDrawerMaximallyExpanded ? undefined : 20,
-        paddingTop: 10,
         flexDirection: "column",
         borderBottomWidth: undefined,
         borderBottomColor: undefined,
@@ -288,7 +289,6 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
           </TouchableOpacity>
           <ScrollView
             ref={ref => this.scrollViewRef = ref}
-            style={{ marginLeft: showList ? 20 : undefined }}
             showsVerticalScrollIndicator={false}
             alwaysBounceVertical={false}
             scrollEnabled={showList}
@@ -313,7 +313,6 @@ const style = StyleSheet.create({
   },
   animatedContainer: {
     backgroundColor: theme.color.background.card,
-    paddingHorizontal: 20,
     position: "absolute",
     width: "100%",
     flexDirection: "row",
@@ -322,6 +321,7 @@ const style = StyleSheet.create({
   },
   createFolderContainer: {
     paddingVertical: 10,
+    paddingHorizontal: 40,
     flexDirection: "row",
     alignItems: "center",
   },
@@ -341,6 +341,8 @@ const style = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
     paddingRight: 8,
+    paddingLeft: 20,
+    height: 45,
   },
   selectDirectoryText: {
     color: theme.color.primary.regular,
