@@ -83,13 +83,11 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
     const foldersNumber = folders && folders.length;
     const foldersHeight = foldersNumber ? menuItemHeight * foldersNumber : 0;
     const createFolderContainerHeight = menuItemHeight;
-    const selectDirectoryContainerHeight = 20;
-    const verticalPadding = 10;
-    const drawerMenuTotalHeight = mailboxesHeight
+    const selectDirectoryContainerHeight = menuItemHeight;
+    const drawerMenuTotalHeight = selectDirectoryContainerHeight
+      + mailboxesHeight
       + foldersHeight
       + createFolderContainerHeight
-      + selectDirectoryContainerHeight
-      + verticalPadding;
     const newHeightValue = showList && !wasFolderCreated ? menuItemHeight : drawerMenuTotalHeight;
 
     this.setState({ drawerHeight: newHeightValue });
