@@ -172,7 +172,9 @@ class Attachment extends React.PureComponent<
     return (
       <View style={{ ...style }}>
         <Notifier id={notifierId} />
-        <View style={{ flexDirection: "row", alignItems: "center", height: 30 }}>
+        <View style={{
+          flexDirection: 'row', alignItems: "center", height: 30
+        }}>
           <Pressable style={{ flexDirection: 'row', flex: 1 }}
             onPress={() => this.onPressAttachment(notifierId)}>
             <View>
@@ -196,44 +198,38 @@ class Attachment extends React.PureComponent<
                 />
               )}
             </View>
-            <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between" }}>
-              <View style={{ flexDirection: "row", flex: 3 }}>
-                {downloadState === DownloadState.Error
-                  ? <Text ellipsizeMode="middle" numberOfLines={1} style={{ color: CommonStyles.errorColor, flex: 1 }}>
-                      {I18n.t('download-error') + ' '}
-                    </Text>
-                  : null
-                }
-                <Text
-                  ellipsizeMode="middle"
-                  numberOfLines={1}
-                  style={{
-                    flex: 4,
-                    textDecorationColor: downloadState === DownloadState.Success ? CommonStyles.textColor : CommonStyles.lightTextColor,
-                    color: downloadState === DownloadState.Success ? CommonStyles.textColor : CommonStyles.lightTextColor,
-                    textDecorationLine: 'underline',
-                    textDecorationStyle: 'solid',
-                  }}
-                >
+            <View style={{ flex: 1, flexDirection: 'row' }}>
+              {downloadState === DownloadState.Error ? (
+                <Text style={{ color: CommonStyles.errorColor }}>{I18n.t('download-error') + ' '}</Text>
+              ) : null}
+              <Text style={{ flex: 1 }}
+                ellipsizeMode="middle" numberOfLines={1}>
+                <Text style={{
+                  textDecorationColor: downloadState === DownloadState.Success ? CommonStyles.textColor : CommonStyles.lightTextColor,
+                  color: downloadState === DownloadState.Success ? CommonStyles.textColor : CommonStyles.lightTextColor,
+                  textDecorationLine: 'underline',
+                  textDecorationStyle: 'solid'
+                }}>
                   {(editMode && (att as ILocalAttachment).name) ||
                     (att as IRemoteAttachment).filename ||
                     (att as IRemoteAttachment).displayName ||
                     I18n.t('download-untitled')}
                   {!this.attId && I18n.t('download-invalidUrl')}
                 </Text>
-              </View>
-              <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-end" }}>
-                <Text ellipsizeMode="middle" numberOfLines={1} style={{ color: CommonStyles.lightTextColor }}>
+                <Text
+                  style={{
+                    color: CommonStyles.lightTextColor,
+                    flex: 0,
+                  }}>
                   {downloadState === DownloadState.Success
                     ? ' ' + I18n.t('download-open')
                     : downloadState === DownloadState.Error
                       ? ' ' + I18n.t('tryagain')
                       : (this.props.attachment as IRemoteAttachment).size
                         ? `${Filesize((this.props.attachment as IRemoteAttachment).size!, { round: 1 })}`
-                        : ''
-                  }
+                        : ''}
                 </Text>
-              </View>
+              </Text>
             </View>
           </Pressable>
           {Platform.OS !== "ios" ? <View>
