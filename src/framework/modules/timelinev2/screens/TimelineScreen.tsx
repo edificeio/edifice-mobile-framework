@@ -23,7 +23,7 @@ import type { ITimeline_State } from "../reducer";
 import { IEntcoreFlashMessage, IFlashMessages_State } from "../reducer/flashMessages";
 import { INotifications_State } from "../reducer/notifications";
 import { getTimelineWorkflows } from "../timelineModules";
-import SwipeableList, { SwipeableList as SwipeableListHandle } from "../components/swipeableList";
+import SwipeableList, { SwipeableList as SwipeableListHandle } from "../../../components/swipeableList";
 import { Icon } from "../../../components/icon";
 import theme from "../../../util/theme";
 import { notificationsService } from "../service";
@@ -122,7 +122,7 @@ export class TimelineScreen extends React.PureComponent<
     const workflows = getTimelineWorkflows(this.props.session);
     if (!workflows || !workflows.length) return null;
     return <PopupMenu iconName="new_post" options={workflows} ref={this.popupMenuRef} onPress={() => {
-      this.listRef.current?.unswipeAll();
+      this.listRef.current?.recenter();
     }} />
   }
 
@@ -188,7 +188,7 @@ export class TimelineScreen extends React.PureComponent<
             rightButtons: this.rights.notification.report ? [renderSwipeButton(
               async () => {
                 await this.doReportConfirm(item.data as ITimelineNotification);
-                this.listRef.current?.unswipeAll();
+                this.listRef.current?.recenter();
               }, 'warning', I18n.t('timeline.reportAction.button')
             )] : undefined,
             // onSwipeStart: () => { console.log("top onSwipeStart", item.data.id) },
@@ -291,7 +291,7 @@ export class TimelineScreen extends React.PureComponent<
   }
 
   goToFilters() {
-    this.listRef.current?.unswipeAll();
+    this.listRef.current?.recenter();
     this.props.navigation.navigate('timeline/filters');
   }
 

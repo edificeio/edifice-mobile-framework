@@ -1,5 +1,32 @@
 /**
- * A list of swipeable elements
+ * Renders a FlatList with swipeable elements.
+ * Gestures are recognized to automatically unswipe the selected elements whe other touches are involved.
+ * Based on npm mobile `react-native-swipeable`
+ *
+ * Usage :
+ * - Same props as FlatList
+ * - Same props as Swipeable (common Swipeable props for all list items)
+ * - additional `itemSwipeableProps`, works like `renderItem` prop and returns specific Swipeable props for of each list item.
+ *
+ * Don't forget to store the Ref of the list. Call `listRef.recenter()` to recenter any swiped element.
+ *
+ * Example :
+ * const listRef = React.createRef<SwipeableListHandle<IItemType>>();
+ * <SwipeableList
+ *     ref={listRef}
+ *     data={data}
+ *     rightButtonWidth={140} // Common prop applied to each swipeable list item
+ *     itemSwipeableProps={({ item, index, separators }) => ({
+ *         rightButtons: [
+ *             <Pressable
+ *                 onPress={() => {
+ *                     doSomething(item);
+ *                     listRef.current?.recenter(); // Call this to recenter item after activate swipe button
+ *                 }}
+ *             >{item.text}</Pressable>, ...
+ *         ]
+ *     })}
+ * />
  */
 
 import * as React from "react";
@@ -22,7 +49,7 @@ export interface SwipeableListProps<ItemT>
 }
 
 export interface SwipeableList<ItemT> extends FlatList<ItemT> {
-    unswipeAll: (filter?: (index: string, ref: React.Ref<Swipeable>) => boolean) => void
+    recenter: (filter?: (index: string, ref: React.Ref<Swipeable>) => boolean) => void
 }
 
 const getTouchableViewStyle = (active: boolean) => ({
@@ -92,7 +119,7 @@ export default React.forwardRef(<ItemT extends any>( // need to write "extends" 
         }
     };
 
-    const unswipeAll = (filter?: (index: string, ref: React.Ref<Swipeable>) => boolean) => {
+    const recenter = (filter?: (index: string, ref: React.Ref<Swipeable>) => boolean) => {
         Object.entries(activeSwipablesRefs).forEach(([index, ref]) => {
             if ((filter ?? (() => true))(index, ref)) {
                 (ref as null | React.MutableRefObject<Swipeable>)?.current?.recenter();
@@ -105,7 +132,7 @@ export default React.forwardRef(<ItemT extends any>( // need to write "extends" 
     };
 
     React.useImperativeHandle(ref, () => ({
-        unswipeAll
+        recenter
     }) as SwipeableList<ItemT>);
 
     return <FlatList
@@ -130,7 +157,7 @@ export default React.forwardRef(<ItemT extends any>( // need to write "extends" 
                         // console.log("init", index, ref);
                     },
                     on: (index, ref) => {
-                        unswipeAll((index2, ref2) => index !== index2);
+                        recenter((index2, ref2) => index !== index2);
                         activeSwipablesRefs[index] = ref;
                         Object.values(allSwipeablesRefs).forEach(({ swip, view }) => {
                             (view as null | React.MutableRefObject<View>)?.current?.setNativeProps({ style: getTouchableViewStyle(false) });
@@ -138,7 +165,7 @@ export default React.forwardRef(<ItemT extends any>( // need to write "extends" 
                         // console.log("on", index, ref);
                     },
                     off: (index, ref) => {
-                        if (!ref) { unswipeAll(); }
+                        if (!ref) { recenter(); }
                         else {
                             delete activeSwipablesRefs[index];
                             // console.log("off", index, ref);
@@ -153,7 +180,7 @@ export default React.forwardRef(<ItemT extends any>( // need to write "extends" 
             />;
         }}
         onScrollBeginDrag={(e) => {
-            unswipeAll();
+            recenter();
             Object.values(allSwipeablesRefs).forEach(({ swip, view }) => {
                 (view as null | React.MutableRefObject<View>)?.current?.setNativeProps({ style: getTouchableViewStyle(true) });
             })
