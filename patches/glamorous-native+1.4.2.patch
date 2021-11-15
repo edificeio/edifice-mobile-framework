@@ -1,0 +1,114 @@
+diff --git a/node_modules/glamorous-native/src/__tests__/glamorous.test.js b/node_modules/glamorous-native/src/__tests__/glamorous.test.js
+index 94ec180..e8faf3e 100644
+--- a/node_modules/glamorous-native/src/__tests__/glamorous.test.js
++++ b/node_modules/glamorous-native/src/__tests__/glamorous.test.js
+@@ -2,7 +2,6 @@ import React from 'react'
+ import {
+   FlatList,
+   Image,
+-  ListView,
+   ScrollView,
+   SectionList,
+   Text,
+@@ -85,7 +84,6 @@ describe('rootEl', () => {
+ describe('default components', () => {
+   expect(shallow(<glamorous.FlatList />).find(FlatList)).toBeDefined()
+   expect(shallow(<glamorous.Image />).find(Image)).toBeDefined()
+-  expect(shallow(<glamorous.ListView />).find(ListView)).toBeDefined()
+   expect(shallow(<glamorous.ScrollView />).find(ScrollView)).toBeDefined()
+   expect(shallow(<glamorous.SectionList />).find(SectionList)).toBeDefined()
+   expect(shallow(<glamorous.Text />).find(Text)).toBeDefined()
+diff --git a/node_modules/glamorous-native/src/index.js b/node_modules/glamorous-native/src/index.js
+index 58089e0..19f0d9e 100644
+--- a/node_modules/glamorous-native/src/index.js
++++ b/node_modules/glamorous-native/src/index.js
+@@ -35,7 +35,6 @@ function camelCase(tagName) {
+ 
+ // @TODO: automate the named exports
+ export const Image = glamorous.Image
+-export const ListView = glamorous.ListView
+ export const ScrollView = glamorous.ScrollView
+ export const Text = glamorous.Text
+ export const TextInput = glamorous.TextInput
+diff --git a/node_modules/glamorous-native/src/is-style-prop.js b/node_modules/glamorous-native/src/is-style-prop.js
+index 6cfeb0c..ff43f0e 100644
+--- a/node_modules/glamorous-native/src/is-style-prop.js
++++ b/node_modules/glamorous-native/src/is-style-prop.js
+@@ -2,7 +2,6 @@ import {
+   Animated,
+   FlatList,
+   Image,
+-  ListView,
+   ScrollView,
+   SectionList,
+   Text,
+@@ -21,7 +20,6 @@ const viewStyleComponents = [
+   Animated.ScrollView,
+   FlatList,
+   Image,
+-  ListView,
+   ScrollView,
+   SectionList,
+   Text,
+diff --git a/node_modules/glamorous-native/src/react-native-elements.js b/node_modules/glamorous-native/src/react-native-elements.js
+index 8c62e10..b3872c8 100644
+--- a/node_modules/glamorous-native/src/react-native-elements.js
++++ b/node_modules/glamorous-native/src/react-native-elements.js
+@@ -1,7 +1,6 @@
+ import {
+   FlatList,
+   Image,
+-  ListView,
+   ScrollView,
+   SectionList,
+   Text,
+@@ -16,7 +15,6 @@ import {
+ 
+ export const ReactNativeElementMap = {
+   Image,
+-  ListView,
+   ScrollView,
+   Text,
+   TextInput,
+diff --git a/node_modules/glamorous-native/typings/built-in-component-factories.d.ts b/node_modules/glamorous-native/typings/built-in-component-factories.d.ts
+index 791b3e1..d32b6bb 100644
+--- a/node_modules/glamorous-native/typings/built-in-component-factories.d.ts
++++ b/node_modules/glamorous-native/typings/built-in-component-factories.d.ts
+@@ -7,7 +7,6 @@ import {
+   ImageStyle,
+   TextInputProperties,
+   ImageProperties,
+-  ListViewProperties,
+   ScrollViewProps,
+   TextProperties,
+   TouchableHighlightProperties,
+@@ -25,7 +24,6 @@ export type NativeGlamorousComponentFactory<
+ 
+ export interface NativeComponentFactory {
+   image: NativeGlamorousComponentFactory<ImageProperties, ImageStyle>
+-  listView: NativeGlamorousComponentFactory<ListViewProperties, ViewStyle>
+   scrollView: NativeGlamorousComponentFactory<ScrollViewProps, ViewStyle>
+   text: NativeGlamorousComponentFactory<TextProperties, TextStyle>
+   textInput: NativeGlamorousComponentFactory<TextInputProperties, TextStyle>
+diff --git a/node_modules/glamorous-native/typings/built-in-glamorous-components.d.ts b/node_modules/glamorous-native/typings/built-in-glamorous-components.d.ts
+index 145f51f..ad3d6f9 100644
+--- a/node_modules/glamorous-native/typings/built-in-glamorous-components.d.ts
++++ b/node_modules/glamorous-native/typings/built-in-glamorous-components.d.ts
+@@ -7,7 +7,6 @@ import {
+   ImageStyle,
+   TextInputProperties,
+   ImageProperties,
+-  ListViewProperties,
+   ScrollViewProps,
+   TextProperties,
+   TouchableHighlightProperties,
+@@ -22,9 +21,6 @@ export interface NativeComponent {
+   Image: React.StatelessComponent<
+     ImageProperties & ExtraGlamorousProps & ImageStyle
+   >
+-  ListView: React.StatelessComponent<
+-    ListViewProperties & ExtraGlamorousProps & ViewStyle
+-  >
+   ScrollView: React.StatelessComponent<
+     ScrollViewProps & ExtraGlamorousProps & ViewStyle
+   >
