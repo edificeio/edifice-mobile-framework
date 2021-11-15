@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { TextInput, View, ViewStyle } from 'react-native';
-import { TouchableOpacity, FlatList } from 'react-native-gesture-handler';
+import { TextInput, View, ViewStyle, TouchableOpacity, FlatList } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { CommonStyles, IOSShadowStyle } from '../../../styles/common/styles';
 import { SingleAvatar } from '../../../ui/avatars/SingleAvatar';
 import { Text } from '../../../framework/components/text';
 import { newMailService } from '../service/newMail';
 import theme from '../../../framework/util/theme';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Icon } from '../../../framework/components/icon';
 
 export const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, autoFocus }) => {
   const [search, updateSearch] = React.useState('');
@@ -124,6 +124,8 @@ export const SelectedList = ({ selectedUsersOrGroups, onItemClick }) => {
       padding: 5,
       margin: 2,
       flex: 0,
+      flexDirection: "row",
+      alignItems: "center",
     } as ViewStyle;
 
     const userLabel = { color: CommonStyles.primary, textAlignVertical: 'center' } as ViewStyle;
@@ -131,6 +133,7 @@ export const SelectedList = ({ selectedUsersOrGroups, onItemClick }) => {
     return (
       <TouchableOpacity onPress={onClick} style={itemStyle}>
         <Text style={userLabel}>{displayName}</Text>
+        <Icon name="close" size={12} color={CommonStyles.primary} style={{paddingTop: 1, marginLeft: 5}} />
       </TouchableOpacity>
     );
   };

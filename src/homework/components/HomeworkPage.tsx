@@ -41,6 +41,7 @@ import HomeworkCard from "./HomeworkCard";
 // Type definitions
 import { IHomeworkTask } from "../reducers/tasks";
 import { IHomeworkDiary, IHomeworkDiaryList } from "../reducers/diaryList";
+import { IUserSession } from "../../framework/util/session";
 
 // Misc
 import today from "../../utils/today";
@@ -48,6 +49,7 @@ import { NavigationScreenProp } from "react-navigation";
 import { CommonStyles } from "../../styles/common/styles";
 import Conf from "../../../ode-framework-conf";
 import { Trackers } from "../../framework/util/tracker";
+import { getHomeworkWorkflowInformation } from "../rights";
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -62,6 +64,7 @@ export interface IHomeworkPageDataProps {
     date: moment.Moment;
     tasks: IHomeworkTask[];
   }>;
+  session: IUserSession;
 }
 
 export interface IHomeworkPageEventProps {
@@ -137,7 +140,8 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
       navigation,
       onRefresh,
       onSelect,
-      onScrollBeginDrag
+      onScrollBeginDrag,
+      session
     } = this.props;
     const { fetching, pastDateLimit } = this.state
     const hasNoDiaries = !diaryListData || diaryListData && Object.keys(diaryListData).length === 0;
@@ -156,6 +160,8 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
     const hasPastHomeWork = pastHomework.length > 0;
     const noRemainingPastHomework = remainingPastHomework.length === 0;
     const noFutureHomeworkHiddenPast = futureHomework.length === 0 && pastDateLimit.isSame(today(), "day");
+    const homeworkWorkflowInformation = getHomeworkWorkflowInformation(session);
+    const hasCreateHomeworkResourceRight = homeworkWorkflowInformation && homeworkWorkflowInformation.create;
 
     return (
       <View style={{ flex: 1 }}> 
@@ -238,8 +244,8 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
                 imgWidth={265.98}
                 imgHeight={279.97}
                 text={I18n.t(`homework-${hasNoDiaries ? "diaries" : "tasks"}-emptyScreenText`)}
-                title={I18n.t(`homework-${hasNoDiaries ? "diaries" : "tasks"}-emptyScreenTitle`)}
-                buttonText={hasNoDiaries ? I18n.t("homework-createDiary") : undefined}
+                title={I18n.t(`homework-${hasNoDiaries ? hasCreateHomeworkResourceRight ? "diaries" : "diaries-noCreationRight" : "tasks"}-emptyScreenTitle`)}
+                buttonText={hasNoDiaries && hasCreateHomeworkResourceRight ? I18n.t("homework-createDiary") : undefined}
                 buttonAction={() => {
                   //TODO: create generic function inside oauth (use in myapps, etc.)
                   if (!Conf.currentPlatform) {

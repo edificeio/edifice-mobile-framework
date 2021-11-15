@@ -3,8 +3,9 @@ apply plugin: "com.android.application"
 import com.android.build.OutputFile
 
 project.ext.react = [
-    entryFile: "index.js",
+    // bundleCommand: "ram-bundle",
     enableHermes: true,
+    entryFile: "index.js",
 ]
 
 project.ext.vectoricons = [
@@ -42,10 +43,10 @@ android {
         applicationId APPID
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1060110
-        versionName "1.6.1"
+        versionCode 1060203
+        versionName "1.6.2"
         buildConfigField "String", "BundleVersionOverride", "\"${APPOVERRIDE}\""
-        buildConfigField "String", "BundleVersionType", "\"rc.6\""
+        buildConfigField "String", "BundleVersionType", "\"rc.2\""
         manifestPlaceholders = [ applicationName: APPNAME ]
         resValue "string", "app_name", "${APPNAME}"
     }

@@ -23,6 +23,18 @@ export enum SwitchState {
   COLOR,
 }
 
+export type ICourseData = {
+  classes: string[];
+  course_id: string;
+  structure_id: string;
+  start_date: string;
+  end_date: string;
+  subject_id: string;
+  teacherIds: string[];
+  groups: string[];
+  split_slot: boolean;
+};
+
 export type ICourse = {
   id: string;
   classroom: string;
@@ -36,10 +48,10 @@ type ICallListContainerProps = {
   teacherId: string;
   structureId: string;
   isFetching: boolean;
-  multipleSlots: IMultipleSlotsState;
-  registerPreferences: IRegisterPreferencesState;
-  getMultipleSlots: (structureId: string) => void;
-  getRegisterPreferences: () => void;
+  multipleSlots: IMultipleSlotsState; // multipleSlot preference set on web
+  registerPreferences: IRegisterPreferencesState; // CPE multipleSlot preference
+  getMultipleSlots: (structureId: string) => void; // get multipleSlot preference set on web
+  getRegisterPreferences: () => void; // get CPE multipleSlot preference
   fetchCourses: (teacherId: string, structureId: string, startDate: string, endDate: string, multipleSlot?: boolean) => void;
   fetchRegisterId: (any: any) => void;
 } & INavigationProps &
@@ -68,6 +80,8 @@ class TeacherCallList extends React.PureComponent<ICallListContainerProps> {
 
   private handleAppStateChange = (nextAppState: AppStateStatus) => {
     if (nextAppState === 'active') {
+      this.props.getRegisterPreferences();
+      this.props.getMultipleSlots(this.props.structureId);
       this.fetchTodayCourses();
     }
   };
@@ -100,7 +114,7 @@ class TeacherCallList extends React.PureComponent<ICallListContainerProps> {
     } as ICourse;
 
     if (course.registerId === null) {
-      const courseData = JSON.stringify({
+      const rawCourseData = {
         course_id: course.id,
         structure_id: course.structureId,
         start_date: moment(course.startDate).format("YYYY-MM-DD HH:mm:ss"),
@@ -108,8 +122,10 @@ class TeacherCallList extends React.PureComponent<ICallListContainerProps> {
         subject_id: course.subjectId,
         groups: course.groups,
         classes: course.classes !== undefined ? course.classes : course.groups,
-        split_slot: true,
-      });
+        teacherIds: [this.props.teacherId],
+        split_slot: this.props.multipleSlots.data.allow_multiple_slots,
+      } as ICourseData;
+      const courseData = JSON.stringify(rawCourseData) as string;
 
       this.props.fetchRegisterId(courseData);
     }

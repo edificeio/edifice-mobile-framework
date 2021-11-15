@@ -202,11 +202,11 @@
     "markUnread": "Mark as unread",
     "messageDeleted": "Message deleted",
     "messageMoved": "Message moved",
-    "messageTrashed": "Message trashed",
+    "messageTrashed": "Message deleted",
     "messages": "Messages",
     "missingReceiver": "This message must contain at least one recipient",
     "move": "Move",
-    "moveImpossible": "Unable to move your email. You must first create a custom folder from the folders screen.",
+    "moveImpossible": "Your email cannot be moved. You must first create a customized folder from the folder screen.",
     "moveSelect": "Select a folder",
     "moveTo": "Move to",
     "newMessage": "New message",
@@ -218,7 +218,7 @@
     "saveDraftMessage": "Would you like to save your message as a draft and finish it later?",
     "saveDraftTitle": "Draft",
     "seeDetail": "See details",
-    "selectDirectory": "Select a folder",
+    "selectDirectory": "Select folder",
     "sendAttachmentProgress": "Please wait until the attachment has been added",
     "sendMail": "Message sent",
     "sendMessages": "Outbox",
@@ -231,8 +231,8 @@
     "typeMessage": "Type a message...",
     "unknown": "Unknown",
     "warning.webDraft": {
-      "text": "The draft was initiated from a computer. Continuing on the mobile application will degrade the experience. Would you like to continue?",
-      "title": "Incompatible draft"
+      "text": "This draft was created on a computer. If you switch to the mobile app, your experience will not be optimal. Are you sure you want to continue?",
+      "title": "Draft incompatible"
     }
   },
   "conversation-chatPlaceholder": "Write a message...",
@@ -377,7 +377,6 @@
   "forgot-several-emails-no-match": "This information does not match the email address that was provided.",
   "forgot-submit": "Send",
   "forgot-success": "Email sent",
-  "homework-createDiary": "Create a homebook notebook",
   "homework-diaries-emptyScreenText": "With the Homework Notebook app, absent-minded students no longer have any excuse. Write down all of the class's assignments, share them with your students and their parents, and everyone will stay up to date!",
   "homework-diaries-emptyScreenTitle": "Time to create a digital homework notebook.",
   "homework-previousNoMore": "You don't have any more previous activities.",

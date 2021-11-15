@@ -128,6 +128,7 @@ export default (props: NewMailComponentProps) => {
                 showExtraFields={showExtraFields}
                 toggleExtraFields={toggleExtraFields}
                 setIsSearchingUsers={setIsSearchingUsers}
+                isSearchingUsersFinal={isSearchingUsersFinal}
               />
             )}
           </View>
@@ -143,6 +144,7 @@ const Fields = ({
   showExtraFields,
   toggleExtraFields,
   setIsSearchingUsers,
+  isSearchingUsersFinal,
   attachments,
   onAttachmentChange,
   onAttachmentDelete,
@@ -157,6 +159,7 @@ const Fields = ({
   showExtraFields: boolean;
   toggleExtraFields: (val: boolean) => void;
   setIsSearchingUsers: (val: { [i in 'to' | 'cc' | 'cci']?: boolean }) => void;
+  isSearchingUsersFinal: boolean;
   attachments: IDistantFileWithId[];
   onAttachmentChange: (attachments: IAttachment[]) => void;
   onAttachmentDelete: (attachmentId: string) => void;
@@ -192,10 +195,11 @@ const Fields = ({
       autoFocus={true}
       value={headers.to}
       onChange={to => onHeaderChange({ ...headers, to })}
-      rightComponent={
-        <TouchableOpacity style={{ paddingVertical: 6 }} onPress={() => toggleExtraFields(!showExtraFields)}>
-          <Icon name={showExtraFields ? 'keyboard_arrow_up' : 'keyboard_arrow_down'} size={28} />
-        </TouchableOpacity>
+      rightComponent={isSearchingUsersFinal
+        ? undefined
+        : <TouchableOpacity style={{ paddingVertical: 6 }} onPress={() => toggleExtraFields(!showExtraFields)}>
+            <Icon name={showExtraFields ? 'keyboard_arrow_up' : 'keyboard_arrow_down'} size={28} />
+          </TouchableOpacity>
       }
       title={I18n.t('conversation.to')}
       key="to"

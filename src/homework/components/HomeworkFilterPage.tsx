@@ -32,6 +32,8 @@ import { Checkbox } from "../../ui/forms/Checkbox";
 import { TextBold } from "../../framework/components/text";
 import { Trackers } from "../../framework/util/tracker";
 import Conf from "../../../ode-framework-conf";
+import { getHomeworkWorkflowInformation } from "../rights";
+import { IUserSession } from "../../framework/util/session";
 
 // Main component ---------------------------------------------------------------------------------
 
@@ -53,6 +55,7 @@ export interface IHomeworkFilterPageEventProps {
 
 export interface IHomeworkFilterPageOtherProps {
   navigation?: any;
+  session: IUserSession;
 }
 
 export type IHomeworkFilterPageProps = IHomeworkFilterPageDataProps &
@@ -96,8 +99,10 @@ export class HomeworkFilterPage extends React.PureComponent<
   }
 
   private renderList() {
-    const { diaryList, selectedDiaryId, isFetching, onRefresh } = this.props;
+    const { diaryList, selectedDiaryId, isFetching, onRefresh, session } = this.props;
     const isEmpty = diaryList && diaryList.length === 0;
+    const homeworkWorkflowInformation = getHomeworkWorkflowInformation(session);
+    const hasCreateHomeworkResourceRight = homeworkWorkflowInformation && homeworkWorkflowInformation.create;
     return (
       <FlatList
         contentContainerStyle={isEmpty ? { flex: 1 } : null}
@@ -148,8 +153,8 @@ export class HomeworkFilterPage extends React.PureComponent<
             imgWidth={265.98}
             imgHeight={279.97}
             text={I18n.t("homework-diaries-emptyScreenText")}
-            title={I18n.t("homework-diaries-emptyScreenTitle")}
-            buttonText={I18n.t("homework-createDiary")}
+            title={I18n.t(`homework-${hasCreateHomeworkResourceRight ? "diaries" : "diaries-noCreationRight"}-emptyScreenTitle`)}
+            buttonText={hasCreateHomeworkResourceRight ? I18n.t("homework-createDiary") : undefined}
             buttonAction={() => {
               //TODO: create generic function inside oauth (use in myapps, etc.)
               if (!Conf.currentPlatform) {

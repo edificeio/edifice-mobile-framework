@@ -50,7 +50,7 @@ export const coursesService = {
       `/viescolaire/common/courses/${structureId}/${startDateString}/${endDateString}?${querystring.stringify({
         group: groups,
         union: true,
-      })}`
+      })}`,
     );
     return coursesListAdapter(courses);
   },
@@ -66,7 +66,7 @@ export const coursesService = {
       `/viescolaire/common/courses/${structureId}/${startDateString}/${endDateString}?${querystring.stringify({
         teacherId,
         union: true,
-      })}`
+      })}`,
     );
     return coursesListAdapter(courses);
   },

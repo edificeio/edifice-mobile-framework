@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
 import theme from "../../../framework/util/theme";
 import { Icon } from "../../../ui";
 import { TextBold } from "../../../ui/Typography";
@@ -9,17 +9,18 @@ type DrawerOptionProps = {
   count?: number;
   selected: boolean;
   iconName: string;
-  disabled?: boolean;
   navigate: () => any;
+  disabled?: boolean;
+  containerStyle?: ViewStyle;
 };
 
 export default class DrawerOption extends React.PureComponent<DrawerOptionProps> {
   public render() {
-    const { label, selected, iconName, count, navigate, disabled } = this.props;
+    const { label, selected, iconName, count, navigate, disabled, containerStyle } = this.props;
     const countString = count ? ` (${count})` : "";
     const optionLabel = label + countString;
     return (
-      <TouchableOpacity style={style.itemContainer} onPress={navigate} disabled={disabled}>
+      <TouchableOpacity style={[style.itemContainer, containerStyle]} onPress={navigate} disabled={disabled}>
         <Icon size={25} name={iconName} color={selected ? theme.color.primary.regular : theme.color.text.heavy} />
         <TextBold
           numberOfLines={1}

@@ -16,9 +16,11 @@ import { NavigationScreenProp, NavigationFocusInjectedProps } from "react-naviga
 import { standardNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { HeaderAction, HeaderBackAction } from "../../ui/headers/NewHeader";
 import withViewTracking from "../../framework/util/tracker/withViewTracking";
+import { getUserSession } from "../../framework/util/session";
 
 const mapStateToProps: (state: any) => IHomeworkPageDataProps = state => {
   // Extract data from state
+  const session = getUserSession(state);
   const localState = state.homework;
   const selectedDiaryId = localState.selectedDiary;
   const currentDiaryTasks = localState.tasks[selectedDiaryId];
@@ -34,15 +36,17 @@ const mapStateToProps: (state: any) => IHomeworkPageDataProps = state => {
         isFetching: true,
         lastUpdated: undefined,
         tasksByDay: undefined,
+        session
       };
     else {
       return {
-        /* Here is an mepty screen displayer */
+        /* Here is an empty screen displayer */
         diaryId: undefined,
         didInvalidate: true,
         isFetching: false,
         lastUpdated: undefined,
         tasksByDay: undefined,
+        session
       };
     }
   const { didInvalidate, isFetching, lastUpdated } = currentDiaryTasks;
@@ -65,6 +69,7 @@ const mapStateToProps: (state: any) => IHomeworkPageDataProps = state => {
     tasksByDay,
     diaryListData,
     diaryInformation,
+    session
   };
 };
 
