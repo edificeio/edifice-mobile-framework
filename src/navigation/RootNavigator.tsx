@@ -1,32 +1,28 @@
 // NPM modules
-import * as React from "react";
-import { View } from "react-native";
-import {
-  createAppContainer,
-  createSwitchNavigator,
-  NavigationRouteConfigMap,
-} from "react-navigation";
-import { createStackNavigator } from "react-navigation-stack";
-import { connect } from "react-redux";
+import * as React from 'react';
+import { View } from 'react-native';
+import { createAppContainer, createSwitchNavigator, NavigationRouteConfigMap } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
+import { connect } from 'react-redux';
 
 // ODE framework modules
-import { IAppModule } from "../infra/moduleTool/types";
+import { IAppModule } from '../infra/moduleTool/types';
 
 // Other functional modules
 // import TimelineNavigator from "../timeline/TimelineNavigator";
 
 // Screens
-import { createMainTabNavigator } from "./helpers/mainTabNavigator";
-import { getRoutes, getModules } from "./helpers/navBuilder";
-import LoginNavigator from "./LoginNavigator";
-import withLinkingAppWrapper from "../infra/wrapper/withLinkingAppWrapper";
-import NavigationService from "./NavigationService";
+import { createMainTabNavigator } from './helpers/mainTabNavigator';
+import { getRoutes, getModules } from './helpers/navBuilder';
+import LoginNavigator from './LoginNavigator';
+import withLinkingAppWrapper from '../infra/wrapper/withLinkingAppWrapper';
+import NavigationService from './NavigationService';
 
 // Components
-import Carousel from "../ui/Carousel";
-import { IFrame } from "../ui/IFrame";
-import { IEntcoreApp, tabModules, getModuleRoutes, getAvailableModules } from "../framework/util/moduleTool";
-import { AppPushNotificationHandlerComponent } from "../framework/util/notifications/cloudMessaging";
+import Carousel from '../ui/Carousel';
+import { IFrame } from '../ui/IFrame';
+import { IEntcoreApp, tabModules, getModuleRoutes, getAvailableModules } from '../framework/util/moduleTool';
+import { AppPushNotificationHandlerComponent } from '../framework/util/notifications/cloudMessaging';
 
 /**
  * MAIN NAVIGATOR
@@ -40,7 +36,7 @@ import { AppPushNotificationHandlerComponent } from "../framework/util/notificat
  */
 function getMainRoutes(appsInfo: any[]) {
   const filter = (mod: IAppModule) => {
-    console.log("mod", mod);
+    console.log('mod', mod);
     return !!mod.config.hasRight && mod.config.hasRight(appsInfo) && !mod.config.group;
   };
   return {
@@ -66,20 +62,23 @@ function getTabRoutes(appsInfo: IEntcoreApp[]): NavigationRouteConfigMap<any, an
 function getMainNavigator(appsInfo: any[]) {
   const mainTabNavigator = createMainTabNavigator({
     ...getTabRoutes(appsInfo),
-    ...getMainRoutes(appsInfo)
+    ...getMainRoutes(appsInfo),
   });
-  const RootStack = createStackNavigator({
-    mainTabNavigator,
-    carouselModal: {
-      screen: Carousel,
+  const RootStack = createStackNavigator(
+    {
+      mainTabNavigator,
+      carouselModal: {
+        screen: Carousel,
+      },
+      iframeModal: {
+        screen: IFrame,
+      },
     },
-    iframeModal: {
-      screen: IFrame
-    }
-  }, {
-    mode: 'modal',
-    headerMode: 'none',
-  })
+    {
+      mode: 'modal',
+      headerMode: 'none',
+    },
+  );
 
   return RootStack;
 }
@@ -112,12 +111,14 @@ class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
             // console.log("main nav state change :", prevState, currentState, action);
             // Track if tab has changed
             // console.log("On nav state changed : ", prevState, currentState, action)
-            if (action.type !== "Navigation/NAVIGATE") return;
+            if (action.type !== 'Navigation/NAVIGATE') return;
             const prevIndex = prevState.index;
             const currentIndex = currentState.index;
             if (prevIndex === currentIndex) return;
             const currentTabRouteName = currentState.routes[currentIndex].routeName;
-            if (currentTabRouteName) { /* ToDo: Track event here */ }
+            if (currentTabRouteName) {
+              /* ToDo: Track event here */
+            }
           }}
           ref={nav => {
             NavigationService.setTopLevelNavigator(nav);
@@ -141,8 +142,8 @@ class MainNavigatorHOC extends React.Component<MainNavigatorHOCProps> {
 }
 
 const mapStateToProps = ({ user }) => ({
-  apps: ["user", "myapps", ...user.auth.apps],
-  appsInfo: [{name:"user"}, {name:"myapps"}, ...user.auth.appsInfo]
+  apps: ['user', 'myapps', ...user.auth.apps],
+  appsInfo: [{ name: 'user' }, { name: 'myapps' }, ...user.auth.appsInfo],
 });
 
 export const MainNavigator = connect(mapStateToProps, null)(withLinkingAppWrapper(MainNavigatorHOC));
