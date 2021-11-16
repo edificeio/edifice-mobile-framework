@@ -14,11 +14,9 @@
  * - `fixVoidTags` A boolean that indicated if void tags in the html input string must be fixed. Default `true`
  */
 
-import { AllHtmlEntities } from "html-entities";
-import Saxophone from "saxophone";
-import { parseAttrs } from "../../utils/attrs";
-
-const entitiesTransformer = new AllHtmlEntities();
+import { decode } from 'html-entities';
+import Saxophone from 'saxophone';
+import { parseAttrs } from '../../utils/attrs';
 
 export interface IHtmlParserAbstractOptions {
   selectable?: boolean;
@@ -76,10 +74,7 @@ export class HtmlParserAbstract<RenderType> {
    * Is now ignoring all the tag and its content, depending of `currentIgnoredDeepnessLevel` and `currentDeepnessLevel` ?
    */
   protected get isIgnoring() {
-    return (
-      this.currentIgnoredDeepnessLevel &&
-      this.currentDeepnessLevel >= this.currentIgnoredDeepnessLevel
-    );
+    return this.currentIgnoredDeepnessLevel && this.currentDeepnessLevel >= this.currentIgnoredDeepnessLevel;
   }
 
   // ----------------------------------------------------------------------------------------------
@@ -107,7 +102,7 @@ export class HtmlParserAbstract<RenderType> {
       return this.render;
     } catch (e) {
       // tslint:disable-next-line:no-console
-      console.warn("Critical html parsing error", e);
+      console.warn('Critical html parsing error', e);
       throw e;
     }
   }
@@ -127,17 +122,13 @@ export class HtmlParserAbstract<RenderType> {
 
     error: this.onErrorAbstract.bind(this),
 
-    finish: this.onFinishAbstract.bind(this)
+    finish: this.onFinishAbstract.bind(this),
   };
 
   // ----------------------------------------------------------------------------------------------
   // Abstract event handlers. @see https://www.npmjs.com/package/saxophone
 
-  protected onTagOpenAbstract(tag: {
-    name: string;
-    attrs: string;
-    isSelfClosing: boolean;
-  }) {
+  protected onTagOpenAbstract(tag: { name: string; attrs: string; isSelfClosing: boolean }) {
     // 0 - Curating input
     const tagName = tag.name.toLowerCase();
     const tagAttrs: { [attr: string]: string } = parseAttrs(tag.attrs);
@@ -148,8 +139,8 @@ export class HtmlParserAbstract<RenderType> {
     // 1 - Compute if the tag needs to be ignored
 
     let willBeIgnored = false;
-    if (this.opts.ignoreClass && tagAttrs["class"]) {
-      const classes = tagAttrs["class"].split(" ");
+    if (this.opts.ignoreClass && tagAttrs['class']) {
+      const classes = tagAttrs['class'].split(' ');
 
       classes.map(className => {
         if (this.opts.ignoreClass.includes(className)) willBeIgnored = true;
@@ -162,15 +153,14 @@ export class HtmlParserAbstract<RenderType> {
     }
 
     // 2 - On tag open, compute the new deepness level (even if tag is being ignored, we need to read all its children to know when tag is closed).
-    if (!tag.isSelfClosing || !htmlVoidElements.includes(tagName))
-      ++this.currentDeepnessLevel;
+    if (!tag.isSelfClosing || !htmlVoidElements.includes(tagName)) ++this.currentDeepnessLevel;
 
     // 3 - Call custom event handler if tag is not ignored
     if (!this.isIgnoring && !willBeIgnored && this.onTagOpen)
       this.onTagOpen({
         attrs: tagAttrs,
         isSelfClosing: tag.isSelfClosing,
-        name: tagName
+        name: tagName,
       });
   }
 
@@ -199,8 +189,7 @@ export class HtmlParserAbstract<RenderType> {
     if (!text.contents) return;
     // console.log(`encountered text : "${text.contents}" at deepness ${this.currentDeepnessLevel}`);
     if (!text.contents.match(/\S/)) return; // Filter whitespace-only text.
-    if (this.opts.parseEntities)
-      text.contents = entitiesTransformer.decode(text.contents);
+    if (this.opts.parseEntities) text.contents = decode(text.contents);
     if (this.onText) this.onText(text);
   }
 
@@ -216,7 +205,7 @@ export class HtmlParserAbstract<RenderType> {
 
   protected onErrorAbstract(error: string) {
     // tslint:disable-next-line:no-console
-    console.warn("HtmlParser Saxerror : ", error);
+    console.warn('HtmlParser Saxerror : ', error);
     if (this.onError) this.onError(error);
   }
 
@@ -229,10 +218,10 @@ export class HtmlParserAbstract<RenderType> {
    * Note : `this.html` and `this.render` are not available at this stage of parsing.
    */
   protected beforeParseAbstract(html: string): string {
-    if (this.opts.preventZWSP) html = html.replace(/\u200B/g, "");
+    if (this.opts.preventZWSP) html = html.replace(/\u200B/g, '');
     if (this.opts.fixVoidTags) html = autoCloseVoidTags(html);
-    if (this.opts.emptyDiv2Br) html = html.replace(/<div[^>]*><\/div>/g, "<br/>");
-    html = "<html>" + html + "</html>"; // html code MUST have a root element. // TODO : use a boolean to know of the <html> tag is already present.
+    if (this.opts.emptyDiv2Br) html = html.replace(/<div[^>]*><\/div>/g, '<br/>');
+    html = '<html>' + html + '</html>'; // html code MUST have a root element. // TODO : use a boolean to know of the <html> tag is already present.
     if (this.beforeParse) html = this.beforeParse(html);
     return html;
   }
@@ -254,9 +243,7 @@ export class HtmlParserAbstract<RenderType> {
 
   protected onTagClose?: (tag: ISaxTagClose) => void;
 
-  protected onProcessingInstruction?: (
-    instruction: { contents: string }
-  ) => void;
+  protected onProcessingInstruction?: (instruction: { contents: string }) => void;
 
   protected onText?: (text: { contents: string }) => void;
 
@@ -278,20 +265,20 @@ export class HtmlParserAbstract<RenderType> {
  * @see HTML specs {@link https://www.w3.org/TR/html5/syntax.html#writing-html-documents-elements}
  */
 export const htmlVoidElements = [
-  "area",
-  "base",
-  "br",
-  "col",
-  "embed",
-  "hr",
-  "img",
-  "input",
-  "link",
-  "meta",
-  "param",
-  "source",
-  "track",
-  "wbr"
+  'area',
+  'base',
+  'br',
+  'col',
+  'embed',
+  'hr',
+  'img',
+  'input',
+  'link',
+  'meta',
+  'param',
+  'source',
+  'track',
+  'wbr',
 ];
 
 export interface ISaxTagOpen {
@@ -310,13 +297,8 @@ export interface ISaxTagClose {
  * The reformated html code is returned, the original one is not altered.
  */
 export function autoCloseVoidTags(html: string): string {
-  const voidTagRegex = new RegExp(
-    `<(\s*(${htmlVoidElements.join("|")})( [^>]*)?)>`,
-    "g"
-  );
-  return html.replace(
-    voidTagRegex,
-    (match: string, p1: string, p2: string, offset: number, str: string) =>
-      p1.endsWith("/") ? `<${p1}>` : `<${p1}/>`
+  const voidTagRegex = new RegExp(`<(\s*(${htmlVoidElements.join('|')})( [^>]*)?)>`, 'g');
+  return html.replace(voidTagRegex, (match: string, p1: string, p2: string, offset: number, str: string) =>
+    p1.endsWith('/') ? `<${p1}>` : `<${p1}/>`,
   );
 }
