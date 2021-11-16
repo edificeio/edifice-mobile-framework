@@ -24,7 +24,7 @@ index ffbcfbd..0000000
 -  }
 -}
 diff --git a/node_modules/react-native-global-props/src/index.js b/node_modules/react-native-global-props/src/index.js
-index 20cf8c8..826bf9b 100644
+index 20cf8c8..801f4f2 100644
 --- a/node_modules/react-native-global-props/src/index.js
 +++ b/node_modules/react-native-global-props/src/index.js
 @@ -1,5 +1,4 @@
