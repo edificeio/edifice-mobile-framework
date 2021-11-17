@@ -4,6 +4,7 @@ import { Alert, FlatList, RefreshControl, TouchableOpacity, View } from "react-n
 import { NavigationInjectedProps, NavigationFocusInjectedProps, withNavigationFocus, NavigationEvents } from "react-navigation";
 import { connect } from "react-redux";
 import { ThunkDispatch } from "redux-thunk";
+import Snow from "react-native-snow-bg";
 
 import type { IGlobalState } from "../../../../AppStore";
 import PopupMenu from "../../../../framework/components/popupMenu";
@@ -97,6 +98,12 @@ export class TimelineScreen extends React.PureComponent<
             : this.renderList()
         }
       </PageView>
+      <Snow
+        pointerEvents="none"
+        fallSpeed="medium"
+        snowflakesCount={100}
+        fullScreen
+      />
     </>;
   }
 
