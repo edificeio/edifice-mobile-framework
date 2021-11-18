@@ -342,7 +342,7 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
 
 const MailContentContainerConnected = connect(mapStateToProps, mapDispatchToProps)(MailContentContainer)
 
-export default withViewTracking([moduleConfig.routeName, 'mail'])(MailContentContainerConnected);
+export default withViewTracking([moduleConfig.trackingName, 'mail'])(MailContentContainerConnected);
 
 const styles = StyleSheet.create({
   topBar: {
