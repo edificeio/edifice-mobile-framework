@@ -4,8 +4,14 @@
 // Automatic build number generation
 //
 // Args:
-//  - alpha|rc to prepare build number for alpha || rc
-//  - major|minor|rev to prepare build number for new major || minor || rev version
+//   - alpha|rc to prepare build number for alpha || rc
+//   - major|minor|rev to prepare build number for new major || minor || rev version
+//
+// Update:
+//   - package.json
+//   - version.json
+//   - android/app/build.gradle
+//   - ios/appe/Info.plist'
 //
 
 const execSync = require('child_process').execSync;
