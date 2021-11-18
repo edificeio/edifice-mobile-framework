@@ -55,6 +55,7 @@ export enum TimelineLoadingState {
 }
 export interface ITimelineScreenState {
   loadingState: TimelineLoadingState; // Holds the initial loading state. further page loading is handled by async.isFetching
+  isSnowing: boolean;
 };
 
 export enum ITimelineItemType {
@@ -75,7 +76,8 @@ export class TimelineScreen extends React.PureComponent<
   // DECLARATIONS =================================================================================
 
   state: ITimelineScreenState = {
-    loadingState: TimelineLoadingState.PRISTINE
+    loadingState: TimelineLoadingState.PRISTINE,
+    isSnowing: true
   }
 
   popupMenuRef = React.createRef<PopupMenu>();
@@ -86,6 +88,7 @@ export class TimelineScreen extends React.PureComponent<
 
   render() {
     const { navigation } = this.props;
+    const { isSnowing } = this.state;
     const routeName = navigation.state.routeName;
     return <>
       {this.renderHeader()}
@@ -98,12 +101,15 @@ export class TimelineScreen extends React.PureComponent<
             : this.renderList()
         }
       </PageView>
-      <Snow
-        pointerEvents="none"
-        fallSpeed="medium"
-        snowflakesCount={100}
-        fullScreen
-      />
+      {isSnowing
+        ? <Snow
+            pointerEvents="none"
+            fallSpeed="medium"
+            snowflakesCount={100}
+            fullScreen
+          />
+        : null
+      }
     </>;
   }
 
@@ -255,6 +261,7 @@ export class TimelineScreen extends React.PureComponent<
     }
     if (isFocused !== prevProps.isFocused) {
       this.popupMenuRef.current?.doReset();
+      this.setState({ isSnowing: false })
     }
   }
 
