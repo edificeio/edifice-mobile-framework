@@ -8,16 +8,16 @@ import Swiper from "react-native-swiper";
 import I18n from "i18n-js";
 
 import { TextSemiBold, H1 } from "../../framework/components/text";
-import theme from "../../framework/util/theme";
+import theme from "../../app/theme";
 import withViewTracking from "../../framework/util/tracker/withViewTracking";
 import { FlatButton } from "../../ui";
-import Conf from "../../../ode-framework-conf";
 import { selectPlatform } from "../actions/platform";
 
 import OnboardingOne from "ode-images/onboarding/onboarding_1.svg";
 import OnboardingTwo from "ode-images/onboarding/onboarding_2.svg";
 import OnboardingThree from "ode-images/onboarding/onboarding_3.svg";
 import OnboardingFour from "ode-images/onboarding/onboarding_4.svg";
+import appConf from "~/framework/util/appConf";
 
 // TYPES ==========================================================================================
 
@@ -110,9 +110,9 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
                 alignItems: "center",
               }}
               onPress={() => {
-                const hasMultiplePlatforms = Conf.platforms && Object.keys(Conf.platforms).length > 1;
+                const hasMultiplePlatforms = appConf.platforms.length > 1;
                 if (!hasMultiplePlatforms) {
-                  dispatch(selectPlatform(Object.keys(Conf.platforms)[0]));
+                  dispatch(selectPlatform(appConf.platforms[0].name));
                 }
                 navigation.navigate(hasMultiplePlatforms ? "PlatformSelect" : "LoginHome");
               }}

@@ -9,7 +9,7 @@ import { Platform, SafeAreaView, TouchableOpacity, View, ViewProps, ViewStyle } 
 import { hasNotch } from "react-native-device-info";
 
 import { UI_SIZES } from "./constants";
-import theme from "~/framework/util/theme";
+import theme from "~/app/theme";
 import { Icon } from "./icon";
 import { FontWeightIOS, rem, TextInverse } from "./text";
 

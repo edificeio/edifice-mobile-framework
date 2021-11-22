@@ -168,7 +168,7 @@ export default (props: HomeworkListProps) => {
 
 const EmptyComponent = ({ title }) => (
   <EmptyScreen
-    imageSrc={require("../../../../../assets/images/empty-screen/empty-homework.png")}
+    imageSrc={require("~assets/images/empty-screen/empty-homework.png")}
     imgWidth={265}
     imgHeight={280}
     title={title}

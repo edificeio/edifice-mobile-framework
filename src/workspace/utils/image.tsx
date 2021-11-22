@@ -3,13 +3,13 @@ import { Image, View } from "react-native";
 import FastImage from "react-native-fast-image";
 import { filters } from "../types/filters/helpers/filters";
 import { FilterId } from "../types/filters";
-import Conf from "../../../ode-framework-conf";
 import { Icon } from "../../ui";
 import { CommonStyles } from "../../styles/common/styles";
 import {DEVICE_HEIGHT, DEVICE_WIDTH, layoutSize} from "../../styles/common/layoutSize";
 import { DEPRECATED_signImageURISource } from "../../infra/oauth";
 import { IFile } from "../types";
 import ImageOptional from "../../ui/ImageOptional";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 
 export const renderSmallIcon = (
   id: string | null,
@@ -23,7 +23,7 @@ export const renderSmallIcon = (
     return <Icon color={CommonStyles.grey} size={layoutSize.LAYOUT_30} name={icon} />;
   } else {
     // @ts-ignore
-    const uri = `${Conf.currentPlatform.url}/workspace/document/${id}?thumbnail=120x120`;
+    const uri = `${DEPRECATED_getCurrentPlatform()!.url}/workspace/document/${id}?thumbnail=120x120`;
     const style = { width: layoutSize.LAYOUT_30, height: layoutSize.LAYOUT_30 };
     return (
       // resizeRatio === contain by default
@@ -44,7 +44,7 @@ export const renderIcon = (
     return <Icon color={CommonStyles.grey} size={layoutSize.LAYOUT_50} name={icon} />;
   } else {
     // @ts-ignore
-    const uri = `${Conf.currentPlatform.url}/workspace/document/${id}?thumbnail=120x120`;
+    const uri = `${DEPRECATED_getCurrentPlatform()!.url}/workspace/document/${id}?thumbnail=120x120`;
     const style = { width: layoutSize.LAYOUT_50, height: layoutSize.LAYOUT_50 };
     return (
       // resizeRatio === contain by default
@@ -60,7 +60,7 @@ export const renderIcon = (
 
 export const renderImage = (item: IFile, isFolder: boolean, name: string): any => {
   const icon = getIcon(item.id, isFolder, name, item.contentType);
-  const uri = `${Conf.currentPlatform.url}/workspace/document/${item.id}`;
+  const uri = `${DEPRECATED_getCurrentPlatform()!.url}/workspace/document/${item.id}`;
 
   if (icon) {
     return (

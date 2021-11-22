@@ -1,4 +1,3 @@
-import Conf from "../ode-framework-conf";
 import moduleDefinitions from "./AppModules";
 import { NotificationData, NotificationHandlerFactory } from "./infra/pushNotification";
 import timelineHandlerFactory from "./timeline/NotifHandler";
@@ -11,6 +10,7 @@ import { connect } from "react-redux";
 import messaging, { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 import { ThunkDispatch } from "redux-thunk";
 import SplashScreen from "react-native-splash-screen";
+import { DEPRECATED_getCurrentPlatform } from "./framework/util/_legacy_appConf";
 
 const normalizeUrl = (url:string)=>{
   try{
@@ -53,10 +53,10 @@ export const handleNotificationAction = (data: NotificationData, apps: string[],
     }
     //if no handler managed the notification => redirect to web
     if (!manageCount) {
-      if (!Conf.currentPlatform) {
+      if (!DEPRECATED_getCurrentPlatform()) {
         throw new Error("Must have a platform selected to redirect the user");
       }
-      const url = normalizeUrl(`${(Conf.currentPlatform as any).url}/${data.resourceUri}`)
+      const url = normalizeUrl(`${DEPRECATED_getCurrentPlatform()!.url}/${data.resourceUri}`)
       console.log("data", data.resourceUri.split('/'));
       const notifPathBegin = '/' + data.resourceUri.replace(/^\/+/g, '').split('/')[0];
       trackType && Trackers.trackEvent(trackType, "Browser", notifPathBegin);

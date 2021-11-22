@@ -17,7 +17,8 @@
     "prepare-major": "node prepare-build.js major",
     "prepare-minor": "node prepare-build.js minor",
     "prepare-rev": "node prepare-build.js rev",
-    "switch-config": "node ode-plugin.js override switch --to=$CONFIG_TO --dontrestore --acceptall --uri=$CONFIG_URI --branch=$CONFIG_BRANCH --username=$CONFIG_USER --password=$CONFIG_PWD"
+    "switch-config": "node ode-plugin.js override switch --to=$CONFIG_TO --dontrestore --acceptall --uri=$CONFIG_URI --branch=$CONFIG_BRANCH --username=$CONFIG_USER --password=$CONFIG_PWD",
+    "override": "node cli/override.js -l"
   },
   "dependencies": {
     "@emotion/native": "11.0.0",
@@ -38,6 +39,7 @@
     "appcenter": "4.3.0",
     "appcenter-analytics": "4.3.0",
     "appcenter-crashes": "4.3.0",
+    "babel-plugin-module-resolver": "^4.1.0",
     "base-64": "1.0.0",
     "buffer": "6.0.3",
     "deepmerge": "4.2.2",
@@ -158,34 +160,9 @@
     "cacheDirectory": ".jest/cache"
   },
   "ode": {
-    "appid": "com.ode.mobile",
-    "appname": "app-e-dev-default",
-    "properties": {
-      "ios": "ios/appe/Info.plist",
-      "pbxproj": "ios/appe.xcodeproj/project.pbxproj",
-      "android": "android/gradle.properties"
-    },
-    "overrides": [
-      "assets/*",
-      "android/app/src/main/res/*",
-      "ios/appe/Images.xcassets/*"
-    ],
-    "config": {
-      "id": "dev-default",
+    "override": {
       "url": "http://code.web-education.net/ODE/mobileapp-config.git",
-      "branch": "master",
-      "google-services.android.json": "android/app/google-services.json",
-      "google-services.ios.plist": "ios/appe/GoogleService-Info.plist",
-      "ode-framework-conf.ts": "ode-framework-conf.ts",
-      "AppCenter-Config.plist": "ios/appe/AppCenter-Config.plist",
-      "appcenter-config.json": "android/app/src/main/assets/appcenter-config.json",
-      "conf/CustomTheme.ts": "src/conf/CustomTheme.ts",
-      "conf/IncludedModuleConfigs.ts": "src/conf/IncludedModuleConfigs.ts",
-      "conf/IncludedModules.ts": "src/conf/IncludedModules.ts",
-      "conf/I18nOverride/fr.json": "src/conf/I18nOverride/fr.json",
-      "conf/I18nOverride/en.json": "src/conf/I18nOverride/en.json",
-      "conf/I18nOverride/es.json": "src/conf/I18nOverride/es.json"
-    },
-    "current": "dev-default"
+      "defaultBranch": "master"
+    }
   }
 }

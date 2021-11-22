@@ -18,7 +18,7 @@ import RNFS, {
 
 import { IAnyDistantFile, IDistantFile, LocalFile, SyncedFile } from '.';
 import { getAuthHeader } from '../../../infra/oauth';
-import { legacyAppConf } from '../appConf';
+import { DEPRECATED_getCurrentPlatform } from '../_legacy_appConf';
 import { assertPermissions } from '../permissions';
 import { IUserSession } from '../session';
 
@@ -55,7 +55,7 @@ const fileTransferService = {
     callbacks?: IUploadCallbaks,
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType
   ) => {
-    const url = legacyAppConf.currentPlatform!.url + params.url;
+    const url = DEPRECATED_getCurrentPlatform()!.url + params.url;
     const job = RNFS.uploadFiles({
       files: [{ ...file, name: 'file' }],
       toUrl: url,
@@ -137,7 +137,7 @@ const fileTransferService = {
     file.filename = file.filename || file.url.split('/').pop();
     const folderDest = `${RNFS.DocumentDirectoryPath}${file.url}`;
     const downloadDest = `${folderDest}/${file.filename}`;
-    const downloadUrl = `${legacyAppConf.currentPlatform?.url}${file.url}`;
+    const downloadUrl = `${DEPRECATED_getCurrentPlatform()?.url}${file.url}`;
     const headers = { ...getAuthHeader() };
     const localFile = new LocalFile(
       {

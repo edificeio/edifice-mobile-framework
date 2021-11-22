@@ -17,7 +17,7 @@ import { connect } from 'react-redux';
 
 import { PageView } from '../../../framework/components/page';
 import { IDistantFileWithId } from '../../../framework/util/fileHandler';
-import theme from '../../../framework/util/theme';
+import theme from '../../../app/theme';
 import HtmlToText from '../../../infra/htmlConverter/text';
 import { CommonStyles } from '../../../styles/common/styles';
 import { Icon, Loading } from '../../../ui';

@@ -12,7 +12,6 @@ import {
 } from "react-native";
 import { Picker } from '@react-native-picker/picker';
 
-import Conf from "../../../ode-framework-conf";
 import { navigate } from "../../navigation/helpers/navHelper";
 import { FlatButton, Icon } from "../../ui";
 import BottomSwitcher from "../../ui/BottomSwitcher";
@@ -22,6 +21,8 @@ import { ErrorMessage, InfoMessage, TextColor } from "../../ui/Typography";
 import { IForgotModel } from "../actions/forgot";
 import { CommonStyles } from "../../styles/common/styles";
 import { ValidatorBuilder } from '../../utils/form';
+import appConf from "~/framework/util/appConf";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 
 // TYPES ---------------------------------------------------------------------------
 
@@ -272,9 +273,9 @@ export class ForgotPage extends React.PureComponent<
                   </View>
                 </FormContainer>
               </FormWrapper>
-              {Conf.platforms && Object.keys(Conf.platforms).length > 1 ?
+              {appConf.platforms.length > 1 ?
                 <BottomSwitcher onPress={() => this.handleBackToPlatformSelector()}>
-                  {(Conf.currentPlatform as any).displayName}{" "}
+                  {DEPRECATED_getCurrentPlatform()!.displayName}{" "}
                 </BottomSwitcher> : null}
             </ScrollView>
           </KeyboardAvoidingView>

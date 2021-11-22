@@ -13,6 +13,7 @@ import workspaceService, { IWorkspaceUploadParams } from "../../../framework/mod
 import { ThunkDispatch } from "redux-thunk";
 import { LocalFile } from "../../../framework/util/fileHandler";
 import { getUserSession } from "../../../framework/util/session";
+import config from "../../config";
 
 export type IDocumentArray = any[];
 
@@ -126,7 +127,8 @@ export type IBackendFolder = {
 
 function formatFolderResult(item: IBackendFolder): IFolder {
   if (!item || !item._id) return {} as IFolder;
-
+  if (item.externalId && (config as any).blacklistFolders && (config as any).blacklistFolders.includes(item.externalId))
+    return {} as IFolder;
   return {
     date: moment(item.modified, "YYYY-MM-DD HH:mm.ss.SSS")
       .toDate()

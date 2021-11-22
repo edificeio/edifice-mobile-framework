@@ -6,7 +6,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { DialogButtonCancel, DialogButtonOk } from "../../../ui/ConfirmDialog";
 import { ModalBox, ModalContent } from "../../../ui/Modal";
 import { IFolder } from "../state/initMails";
-import theme from "../../../framework/util/theme";
+import theme from "../../../app/theme";
 import { TextBold, TextSemiBold } from "../../../framework/components/text";
 
 type MoveToFolderModalProps = {

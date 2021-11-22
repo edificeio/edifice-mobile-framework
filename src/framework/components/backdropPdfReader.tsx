@@ -3,7 +3,7 @@ import { ColorValue } from "react-native";
 import Pdf from "react-native-pdf";
 
 import { CommonStyles } from "../../styles/common/styles";
-import theme from "~/framework/util/theme";
+import theme from "~/app/theme";
 import { BackdropModal } from "./backdropModal";
 import { EmptyContentScreen } from "./emptyContentScreen";
 

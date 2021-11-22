@@ -10,7 +10,7 @@ import { NavigationNavigateActionPayload } from "react-navigation";
 import styled from '@emotion/native'
 import I18n from "i18n-js";
 
-import theme from "~/framework/util/theme";
+import theme from "~/app/theme";
 import { Icon } from "./icon";
 import { Text } from "./text";
 import { mainNavNavigate } from "../../navigation/helpers/navHelper";

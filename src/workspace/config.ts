@@ -18,4 +18,5 @@ export default new FunctionalModuleConfig({
       return val;
     }
   },
+  blacklistFolders: ["edumedia"]
 });

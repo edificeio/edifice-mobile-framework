@@ -6,8 +6,8 @@ import reducer from './reducer';
 import setUpNotifHandlers from './notifHandler';
 import { timelineSubModules } from "../../framework/modules/timelinev2/timelineModules";
 
-const module = new NavigableModule({ config, getRoot, reducer });
-export default module;
+module.exports = new NavigableModule({ config, getRoot, reducer });
+
 timelineSubModules.register(timelineRoutes);
 
 setUpNotifHandlers();

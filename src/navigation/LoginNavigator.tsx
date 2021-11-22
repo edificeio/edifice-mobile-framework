@@ -10,8 +10,8 @@ import LoginPage from "../user/containers/LoginPage";
 import OnboardingScreen from "../user/containers/OnboardingScreen";
 import PlatformSelectPage from "../user/containers/PlatformSelectPage";
 
-import Conf from "../../ode-framework-conf";
 import { NavigationActions, NavigationNavigateAction } from "react-navigation";
+import appConf from "~/framework/util/appConf";
 
 /**
  * # Login Navigator
@@ -25,7 +25,7 @@ export const getLoginStackToDisplay = (selectedPlatform: string | null, forceOnb
   const ret = [] as NavigationNavigateAction[];
   const onboardingTexts = I18n.t("user.onboardingScreen.onboarding");
   const hasOnboardingTexts = onboardingTexts && onboardingTexts.length;
-  const hasMultiplePlatforms = Conf.platforms && Object.keys(Conf.platforms).length > 1;
+  const hasMultiplePlatforms = appConf.platforms.length > 1;
   if (hasOnboardingTexts) ret.push(NavigationActions.navigate({ routeName: 'Onboarding' }))
   if (hasMultiplePlatforms && (selectedPlatform || !ret.length)) ret.push(NavigationActions.navigate({ routeName: 'PlatformSelect' }));
   if (!forceOnboarding && (selectedPlatform || !ret.length)) ret.push(NavigationActions.navigate({ routeName: 'LoginHome' }));

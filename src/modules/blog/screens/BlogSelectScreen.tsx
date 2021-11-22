@@ -6,7 +6,6 @@ import { connect } from "react-redux";
 import I18n from "i18n-js";
 
 import moduleConfig from "../moduleConfig";
-import withViewTracking from "../../../framework/util/tracker/withViewTracking";
 import { PageView } from "../../../framework/components/page";
 import { LoadingIndicator } from "../../../framework/components/loading";
 import {
@@ -21,14 +20,13 @@ import { TextLight, TextSemiBold } from "../../../framework/components/text";
 import { IGlobalState } from "../../../AppStore";
 import { getPublishableBlogListAction } from "../actions";
 import { IBlog, IBlogList } from "../reducer";
-import theme from "../../../framework/util/theme";
+import theme from "../../../app/theme";
 import { ListItem } from "../../../framework/components/listItem";
 import { GridAvatars } from "../../../ui/avatars/GridAvatars";
-import { legacyAppConf } from "../../../framework/util/appConf";
+import { DEPRECATED_getCurrentPlatform } from "../../../framework/util/_legacy_appConf";
 import { getAuthHeader } from "../../../infra/oauth";
 import { Icon } from "../../../framework/components/icon";
 import { EmptyScreen } from "../../../framework/components/emptyScreen";
-import Conf from "../../../../ode-framework-conf";
 
 // TYPES ==========================================================================================
 
@@ -139,7 +137,7 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
   renderEmpty() {
     return (
       <EmptyScreen
-        imageSrc={require("../../../../assets/images/empty-screen/blog.png")}
+        imageSrc={require("~assets/images/empty-screen/blog.png")}
         imgWidth={265.98}
         imgHeight={279.97}
         title={I18n.t("blog.blogSelectScreen.emptyScreenTitle")}
@@ -147,11 +145,11 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
         buttonText={I18n.t("blog.blogSelectScreen.emptyScreenButton")}
         buttonAction={() => {
           //TODO: create generic function inside oauth (use in myapps, etc.)
-          if (!Conf.currentPlatform) {
+          if (!DEPRECATED_getCurrentPlatform()) {
             console.warn("Must have a platform selected to redirect the user");
             return null;
           }
-          const url = `${(Conf.currentPlatform as any).url}/blog`;
+          const url = `${DEPRECATED_getCurrentPlatform()!.url}/blog`;
           Linking.canOpenURL(url).then(supported => {
             if (supported) {
               Linking.openURL(url);
@@ -175,10 +173,10 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
               <GridAvatars
                 users={[
                   blog.thumbnail
-                    ? { headers: getAuthHeader(), uri: legacyAppConf.currentPlatform!.url + blog.thumbnail }
-                    : require("../../../../assets/images/resource-avatar.png"),
+                    ? { headers: getAuthHeader(), uri: DEPRECATED_getCurrentPlatform()!.url + blog.thumbnail }
+                    : require("~assets/images/resource-avatar.png"),
                 ]}
-                fallback={require("../../../../assets/images/resource-avatar.png")}
+                fallback={require("~assets/images/resource-avatar.png")}
               />
               <View style={{ flex: 1, marginLeft: 10 }}>
                 <TextSemiBold numberOfLines={1}>{blog.title}</TextSemiBold>

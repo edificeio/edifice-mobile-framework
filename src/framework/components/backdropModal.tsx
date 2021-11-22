@@ -2,7 +2,7 @@ import * as React from "react";
 import { ColorValue, StyleProp, TouchableWithoutFeedback, View, ViewStyle } from "react-native";
 import Modal from "react-native-modal";
 
-import theme from "~/framework/util/theme";
+import theme from "~/app/theme";
 import { TextBold } from "./text";
 
 export interface IBackdropModalProps {

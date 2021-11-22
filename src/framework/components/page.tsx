@@ -7,7 +7,7 @@ import * as React from "react";
 import { KeyboardAvoidingView, KeyboardAvoidingViewProps, Platform, SafeAreaView, ScrollView, View, ViewProps } from "react-native";
 import styled from '@emotion/native'
 
-import theme from "~/framework/util/theme";
+import theme from "~/app/theme";
 import Notifier from "~/framework/util/notifier";
 import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
 import { hasNotch } from "react-native-device-info";

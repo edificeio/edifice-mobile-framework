@@ -65,11 +65,10 @@
     "skipLibCheck": true,
 
     /* Module Resolver*/
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "paths": {
-      "~/*": [
-        "./*"
-      ]
+      "~/*": [ "./src/*" ],
+      "~assets/*": ["./assets/*"],
     },
   }
 }

@@ -5,7 +5,8 @@
       "module-resolver",
       {
         "alias": {
-          "^~/(.+)": "./src/\\1"
+          "^~/(.+)": "./src/\\1",
+          "^~assets/(.+)": "./assets/\\1"
         }
       }
     ]

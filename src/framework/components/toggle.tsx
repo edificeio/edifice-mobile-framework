@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Switch } from "react-native";
-import theme from "~/framework/util/theme";
+import theme from "~/app/theme";
 
 export interface IToggleProps {
   checked: boolean;

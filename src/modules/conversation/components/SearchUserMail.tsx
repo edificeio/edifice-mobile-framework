@@ -6,7 +6,7 @@ import { CommonStyles, IOSShadowStyle } from '../../../styles/common/styles';
 import { SingleAvatar } from '../../../ui/avatars/SingleAvatar';
 import { Text } from '../../../framework/components/text';
 import { newMailService } from '../service/newMail';
-import theme from '../../../framework/util/theme';
+import theme from '../../../app/theme';
 import { Icon } from '../../../framework/components/icon';
 
 export const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, autoFocus }) => {

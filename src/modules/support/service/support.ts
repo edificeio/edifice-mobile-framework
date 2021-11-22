@@ -1,4 +1,4 @@
-import Conf from '../../../../ode-framework-conf';
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import workspaceService from '../../../framework/modules/workspace/service';
 import { LocalFile } from '../../../framework/util/fileHandler';
 import { IUserSession } from '../../../framework/util/session';
@@ -12,7 +12,7 @@ export const supportService = {
         return delete att['contentType'];
       });
     } else delete ticket.attachments;
-    const response = await fetchJSONWithCache(`${(Conf.currentPlatform as any).url}/support/ticket`, {
+    const response = await fetchJSONWithCache(`${DEPRECATED_getCurrentPlatform()!.url}/support/ticket`, {
       method: 'POST',
       body: JSON.stringify(ticket),
     });

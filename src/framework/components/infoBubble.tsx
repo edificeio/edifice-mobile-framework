@@ -4,7 +4,7 @@ import I18n from "i18n-js";
 
 import { IconButton } from "../../ui/IconButton";
 import { getItemJson, setItemJson, removeItemJson } from "~/framework/util/storage";
-import theme from "~/framework/util/theme";
+import theme from "~/app/theme";
 import { Card, InfoCard } from "./card";
 import { FlatButton } from "../../ui";
 import { Text, TextBold } from "./text";

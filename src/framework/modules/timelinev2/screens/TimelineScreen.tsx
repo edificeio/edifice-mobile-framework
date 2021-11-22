@@ -27,7 +27,7 @@ import { INotifications_State } from "../reducer/notifications";
 import { getTimelineWorkflows } from "../timelineModules";
 import SwipeableList, { SwipeableList as SwipeableListHandle } from "../../../components/swipeableList";
 import { Icon } from "../../../components/icon";
-import theme from "../../../util/theme";
+import theme from "../../../../app/theme";
 import { notificationsService } from "../service";
 import { getTimelineWorkflowInformation } from "../rights";
 import Toast from "react-native-tiny-toast";
@@ -216,7 +216,7 @@ export class TimelineScreen extends React.PureComponent<
   renderEmpty() {
     return (
       <EmptyScreen
-        imageSrc={require("../../../../../assets/images/empty-screen/timeline.png")}
+        imageSrc={require("~assets/images/empty-screen/timeline.png")}
         imgWidth={407}
         imgHeight={319}
         title={I18n.t("timeline.emptyScreenTitle")}

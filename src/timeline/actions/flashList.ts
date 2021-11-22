@@ -8,7 +8,7 @@ import { Dispatch } from "redux";
 import { IFlashMessageList, flashMessageListActionTypes, flashMessageMarkAsReadActionTypes, IFlashMessage } from "../state/flashMessageList";
 import { createAsyncActionCreators } from "../../infra/redux/async2";
 import { fetchJSONWithCache, signedFetch } from "../../infra/fetchWithCache";
-import Conf from "../../../ode-framework-conf";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 
 // ACTION LIST ------------------------------------------------------------------------------------
 
@@ -44,7 +44,7 @@ export function markFlashMessageAsReadAction(flashMessageId: string) {
     try {
       dispatch(markAsReadActions.request());
       const data = await signedFetch(
-        `${(Conf.currentPlatform as any).url}/timeline/flashmsg/${flashMessageId}/markasread`,
+        `${DEPRECATED_getCurrentPlatform()!.url}/timeline/flashmsg/${flashMessageId}/markasread`,
         { method: "PUT" }
       );
       dispatch(markAsReadActions.receipt(flashMessageId));

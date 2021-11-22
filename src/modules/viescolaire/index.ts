@@ -3,4 +3,4 @@ import config from "./moduleConfig";
 import getRoot from "./navigator";
 import reducer from "./reducer";
 
-export default new NavigableModule({ config, getRoot, reducer });
+module.exports = new NavigableModule({ config, getRoot, reducer });

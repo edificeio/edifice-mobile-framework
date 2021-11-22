@@ -7,11 +7,11 @@ import { publishableBlogsActionTypes as publishableBlogsActionTypes, IBlog, blog
 import { fetchTimeline } from "./list";
 import { storedFilters } from "./storedFilters";
 import { mainNavNavigate } from "../../navigation/helpers/navHelper";
-import Conf from "../../../ode-framework-conf";
 import { notifierShowAction } from "../../infra/notifier/actions";
 import { ThunkDispatch } from "redux-thunk";
 import I18n from "i18n-js";
-import { Trackers } from "../../framework/util/tracker";
+import { Trackers } from "~/framework/util/tracker";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 
 export const publishableBlogsActions = createAsyncActionCreators<IBlog[]>(publishableBlogsActionTypes);
 export const fetchPublishableBlogsAction = (optional: boolean = false) =>
@@ -40,7 +40,7 @@ export const fetchPublishableBlogsAction = (optional: boolean = false) =>
 export const blogPublishActions = createAsyncActionCreators<{}>(blogPublishActionTypes);
 export const publishBlogPostAction = (blog: IBlog, title: string, content: string, uploadedBlogPostDocuments?: any) =>
   async (dispatch: Dispatch & ThunkDispatch<any, void, AnyAction>, getState: () => any) => {
-    let api = `${Conf.currentPlatform.url}/blog/post/${blog._id}`;
+    let api = `${DEPRECATED_getCurrentPlatform()!.url}/blog/post/${blog._id}`;
     let apiOpts = { method: 'POST' }
 
     try {
@@ -71,9 +71,9 @@ export const publishBlogPostAction = (blog: IBlog, title: string, content: strin
       const hasPublishRight = resourceHasRight(blog, 'org-entcore-blog-controllers-PostController|publish', getState().user.info);
 
       const api2 = hasPublishRight
-        ? `${Conf.currentPlatform.url}/blog/post/publish/${blog._id}/${(result1 as { _id: string })._id}`
+        ? `${DEPRECATED_getCurrentPlatform()!.url}/blog/post/publish/${blog._id}/${(result1 as { _id: string })._id}`
         : hasSubmitRight
-          ? `${Conf.currentPlatform.url}/blog/post/submit/${blog._id}/${(result1 as { _id: string })._id}`
+          ? `${DEPRECATED_getCurrentPlatform()!.url}/blog/post/submit/${blog._id}/${(result1 as { _id: string })._id}`
           : undefined;
       apiOpts = { method: 'PUT' };
       const result2 = api2 && await signedFetchJson(api2, apiOpts);

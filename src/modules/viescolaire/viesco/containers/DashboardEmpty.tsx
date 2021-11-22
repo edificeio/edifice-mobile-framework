@@ -12,7 +12,7 @@ class Dashboard extends React.PureComponent<any> {
     return (
       <PageContainer>
         <EmptyScreen
-          imageSrc={require("../../../../../assets/images/empty-screen/empty-viesco.png")}
+          imageSrc={require("~assets/images/empty-screen/empty-viesco.png")}
           imgWidth={265.98}
           imgHeight={279.97}
           title={I18n.t("viesco-empty-screen")}

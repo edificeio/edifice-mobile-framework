@@ -8,11 +8,11 @@ import { IResourceUriNotification, ITimelineNotification } from "~/framework/uti
 import { PageView } from "~/framework/components/page";
 import { InfoBubble } from "~/framework/components/infoBubble";
 import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from "~/framework/components/header";
-import theme from "~/framework/util/theme";
+import theme from "~/app/theme";
 
-import Conf from "../../../../../ode-framework-conf";
 import NotificationTopInfo from "../components/NotificationTopInfo";
 import { FlatButton } from "../../../../ui";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 
 // TYPES ==========================================================================================
 
@@ -89,11 +89,11 @@ export class TimelineWebViewScreen extends React.PureComponent<
             customTextStyle={{ color: theme.color.secondary.regular }}
             onPress={() => {
               //TODO: create generic function inside oauth (use in myapps, etc.)
-              if (!Conf.currentPlatform) {
+              if (!DEPRECATED_getCurrentPlatform()) {
                 console.warn("Must have a platform selected to redirect the user");
                 return null;
               }
-              const url = `${(Conf.currentPlatform as any).url}${notification?.resource.uri}`;
+              const url = `${DEPRECATED_getCurrentPlatform()!.url}${notification?.resource.uri}`;
               Linking.canOpenURL(url).then(supported => {
                 if (supported) {
                   Linking.openURL(url);

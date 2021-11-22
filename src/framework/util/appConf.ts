@@ -1,125 +1,79 @@
 /**
- * Global configuration loader.
- * Use this module to load `ode-framework-conf` properly.
+ * AppConfTool
+ * AppConf Loader
  */
 
-export interface IPlatformConf {
-    url: string;
-    displayName: string;
-    logo: any;
-    oauth: {
-        clientId: string;
-        clientSecret: string;
-    },
-    activation: {
-        theme: string;
-        cgu: string;
-    },
-    options: Partial<{
-        showPlatformApp: boolean;
-        federated: boolean;
-    }>
+import { ImageStyle } from 'react-native';
+import AppConfValues from '~/app/appconf';
+
+// Platforms ======================================================================================
+
+export type IPlatformAccessDeclaration = {
+    name: string;                               // unique name of the access point
+    url: string;                                // Access url WITHOUT trailing slash and WITH protocol
+    displayName: string;                        // Display name
+    logo: any;                                  // require() logo asset
+    logoStyle?: ImageStyle;                     // Additionnal style option to display the logo in some places
+    oauth: [string, string];                    // oAuth2 configuration as [clientId, clientSecret]
+    webTheme: string;                           // web theme applied to the activated accounts
+    federation?: true | string                  // Show federation links onto the login page. Can be the url to redriect.
+    webviewIdentifier?: string;                 // safe-webview unique key. In not provided, fallback to the application's one.
+    hidden?: true,                              // Hidden platform access is not displayed on the main screen
+};
+
+export class Platform {
+    name!: IPlatformAccessDeclaration['name'];
+    url!: IPlatformAccessDeclaration['url'];
+    displayName!: IPlatformAccessDeclaration['displayName'];
+    logo: IPlatformAccessDeclaration['logo'];
+    logoStyle: IPlatformAccessDeclaration['logoStyle'];
+    _oauth!: IPlatformAccessDeclaration['oauth'];
+    webTheme!: IPlatformAccessDeclaration['webTheme'];
+    federation: IPlatformAccessDeclaration['federation'];
+    _webviewIdentifier: IPlatformAccessDeclaration['webviewIdentifier'];
+    hidden: IPlatformAccessDeclaration['hidden'];
+
+    constructor(pf: IPlatformAccessDeclaration) {
+        this.name = pf.name;
+        this.url = pf.url;
+        this.displayName = pf.displayName;
+        this.logo = pf.logo;
+        this.logoStyle = pf.logoStyle;
+        this._oauth = pf.oauth;
+        this.webTheme = pf.webTheme;
+        this.federation = pf.federation;
+        this._webviewIdentifier = pf.webviewIdentifier;
+        this.hidden = pf.hidden;
+    }
+
+    get webviewIdentifier() { return this._webviewIdentifier ?? appConf.webviewIdentifier }
+    get oauth() { return ({
+        client_id: this._oauth[0],
+        client_secret: this._oauth[1],
+    })}
 }
 
-export interface IAppConf {
-    confVersion: number;
+// App Conf =======================================================================================
+
+export interface IAppConfDeclaration {
     matomo: {
         url: string;
         siteId: number;
     },
-    workspace: {
-        blacklistFolders: string[]
-    },
-    platforms: Array<IPlatformConf>
+    webviewIdentifier: string,
+    platforms: IPlatformAccessDeclaration[]
 }
 
-export interface ILegacyPlatformConf {
-    displayName: string,
-    logo: any,
-    url: string,
-    appOAuthId: string,
-    appOAuthSecret: string,
-    authLoginStore: string,
-    theme: string,
-    cgu: string,
-
-    federation: boolean
-}
-
-export interface ILegacyAppConf {
-    matomo: {
-        url: string;
-        siteId: number;
-    },
-    mixpanel: {
-        token: string;
+export class AppConf {
+    matomo: { url: string, siteId: number };
+    webviewIdentifier: string;
+    platforms: Platform[];
+    constructor(opts: IAppConfDeclaration) {
+        this.matomo = opts.matomo;
+        this.webviewIdentifier = opts.webviewIdentifier;
+        this.platforms = opts.platforms.map(pfd => new Platform(pfd));
     }
-    blacklistFolders: string[],
-    currentPlatform: ILegacyPlatformConf | null;
-    platforms: { [key: string]: ILegacyPlatformConf }
 }
 
-const computeLegacyAppConf = (conf: IAppConf) => ({
-    ...conf,
-    matomo: { ...conf.matomo },
-    mixpanel: { token: '' }, // Mixpanel is no more supported.
-    blacklistFolders: [...(conf.workspace.blacklistFolders || [])],
-    currentPlatform: null,
-    platforms: Object.fromEntries(conf.platforms.map(pf => [
-        pf.url,
-        {
-            ...pf,
-            appOAuthId: pf.oauth.clientId,
-            appOAuthSecret: pf.oauth.clientSecret,
-            authLoginStore: 'authLogin-' + pf.url,
-            theme: pf.activation.theme,
-            cgu: pf.activation.cgu,
-            federation: pf.options.federated
-        } as ILegacyPlatformConf
-    ]))
-} as ILegacyAppConf);
-
-const computeAppConf = (conf: ILegacyAppConf) => ({
-    ...conf,
-    confVersion: 2,
-    matomo: { ...conf.matomo },
-    workspace: { blacklistFolders: [...(conf.blacklistFolders || [])] },
-    platforms: Object.values(conf.platforms).map(pf => ({
-        ...pf,
-        oauth: {
-            ...pf['oauth'],
-            clientId: pf.appOAuthId,
-            clientSecret: pf.appOAuthSecret
-        },
-        activation: {
-            ...pf['activation'],
-            theme: pf.theme,
-            cgu: pf.cgu
-        },
-        options: {
-            ...pf['options'],
-            federated: pf.federation,
-            // showPlatformApp is not supported in legacy conf.
-        }
-    } as IPlatformConf))
-} as IAppConf)
-
-const loadConf = () => {
-    const conf = require('../../../ode-framework-conf').default as IAppConf | ILegacyAppConf;
-    const ret = {};
-    if ((conf as IAppConf).confVersion && (conf as IAppConf).confVersion === 2) {
-        ret['appConf'] = conf;
-        ret['legacyAppConf'] = computeLegacyAppConf(conf as IAppConf);
-    } else if (!(conf as IAppConf).confVersion || (conf as IAppConf).confVersion === 1) {
-        ret['legacyAppConf'] = conf;
-        ret['appConf'] = computeAppConf(conf as ILegacyAppConf);
-    }
-    console.log("AppConfs", ret);
-    return ret as {
-        appConf: IAppConf,
-        legacyAppConf: ILegacyAppConf
-    };
-}
-export const confs = loadConf();
-export const appConf = confs.appConf;
-export const legacyAppConf = confs.legacyAppConf;
+const appConf = new AppConf(AppConfValues as IAppConfDeclaration);
+export default appConf;

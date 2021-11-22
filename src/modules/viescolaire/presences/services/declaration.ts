@@ -1,13 +1,9 @@
 import moment from 'moment';
-import { ThunkDispatch } from 'redux-thunk';
 
-import Conf from '../../../../../ode-framework-conf';
 import { LocalFile } from '../../../../framework/util/fileHandler';
 import fileTransferService from '../../../../framework/util/fileHandler/service';
 import { IUserSession } from '../../../../framework/util/session';
-import { fetchJSONWithCache, signedFetchJson, signedFetchJson2 } from '../../../../infra/fetchWithCache';
-import { getAuthHeader } from '../../../../infra/oauth';
-import RNFS from "react-native-fs";
+import { fetchJSONWithCache } from '../../../../infra/fetchWithCache';
 
 export const absenceDeclarationService = {
   post: async (startDate: moment.Moment, endDate: moment.Moment, studentId: string, structureId: string, description: string) => {

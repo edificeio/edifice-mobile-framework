@@ -3,7 +3,7 @@
  */
 
 import moment from "moment";
-import { legacyAppConf } from "../../../framework/util/appConf";
+import { DEPRECATED_getCurrentPlatform } from "../../../framework/util/_legacy_appConf";
 import { IResourceUriCaptureFunction } from "../../../framework/util/notifications";
 import { IUserSession } from "../../../framework/util/session";
 import { fetchJSONWithCache, signedFetchJson } from "../../../infra/fetchWithCache";
@@ -144,15 +144,15 @@ export const blogService = {
     create: async (session: IUserSession, blogId: string, postTitle: string, postContentHtml: string) => {
       const api = `/blog/post/${blogId}`;
       const body = JSON.stringify({ title: postTitle, content: postContentHtml});
-      return signedFetchJson(`${legacyAppConf.currentPlatform!.url}${api}`, { method: "POST", body}) as Promise<IEntcoreCreatedBlogPost>;
+      return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, { method: "POST", body}) as Promise<IEntcoreCreatedBlogPost>;
     },
     submit: async (session: IUserSession, blogId: string, postId: string) => {
       const api = `/blog/post/submit/${blogId}/${postId}`;
-      return signedFetchJson(`${legacyAppConf.currentPlatform!.url}${api}`, { method: "PUT" }) as Promise<{number: number}>;
+      return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, { method: "PUT" }) as Promise<{number: number}>;
     },
     publish: async (session: IUserSession, blogId: string, postId: string) => {
       const api = `/blog/post/publish/${blogId}/${postId}`;
-      return signedFetchJson(`${legacyAppConf.currentPlatform!.url}${api}`, { method: "PUT" }) as Promise<{number: number}>;
+      return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, { method: "PUT" }) as Promise<{number: number}>;
     }
   },
   comments: {

@@ -1,6 +1,5 @@
 import I18n from "i18n-js";
 
-import Conf from "../../../ode-framework-conf";
 import { Connection } from "../../infra/Connection";
 import { fetchJSONWithCache } from "../../infra/fetchWithCache";
 import { signURISource, signURISourceArray, transformedSrc } from "../../infra/oauth";

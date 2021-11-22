@@ -14,22 +14,22 @@ import { unflatten } from 'flat';
 
 // Built-in translations
 const builtInTranslations = {
-    fr: require("../../../assets/i18n/fr.json"),
-    en: require("../../../assets/i18n/en.json"),
-    es: require("../../../assets/i18n/es.json")
+    fr: require("~assets/i18n/fr.json"),
+    en: require("~assets/i18n/en.json"),
+    es: require("~assets/i18n/es.json")
 }
 // Overrides translations
 const overrideTranslations = {
-    fr: require("../../conf/I18nOverride/fr.json"),
-    en: require("../../conf/I18nOverride/en.json"),
-    es: require("../../conf/I18nOverride/es.json"),
+    fr: require("~assets/i18n/override/fr.json"),
+    en: require("~assets/i18n/override/en.json"),
+    es: require("~assets/i18n/override/es.json"),
 }
 // Finale translations
 const finaleTranslations = Object.fromEntries(Object.keys(builtInTranslations).map(
     k => [k, deepmerge<object>(builtInTranslations[k], overrideTranslations[k])]
 ));
 const unflattenedTranslations = unflatten(finaleTranslations);
-console.log(unflattenedTranslations);
+// console.log(unflattenedTranslations);
 
 // Moment.js translations
 import "moment/locale/fr";

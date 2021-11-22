@@ -14,7 +14,7 @@ import * as React from "react";
 const { View } = style;
 import { CommonStyles } from "../../styles/common/styles";
 import { Text } from "../../framework/components/text";
-import theme from "../../framework/util/theme";
+import theme from "../../app/theme";
 
 export interface IHomeworkCircleNumberProps {
   style?: any;

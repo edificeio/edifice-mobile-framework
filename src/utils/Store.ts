@@ -1,18 +1,18 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Conf from "../../ode-framework-conf";
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 
 export async function setLogin(value) {
-  if (!Conf.currentPlatform) throw new Error("must specify a platform");
+  if (!DEPRECATED_getCurrentPlatform()) throw new Error("must specify a platform");
   await AsyncStorage.setItem(
-    Conf.currentPlatform.url.authLoginStore,
+    'STORE-LOGIN-' + DEPRECATED_getCurrentPlatform()!.name,
     JSON.stringify(value)
   );
 }
 
 export async function getLogin() {
-  if (!Conf.currentPlatform) throw new Error("must specify a platform");
+  if (!DEPRECATED_getCurrentPlatform()) throw new Error("must specify a platform");
   const authString = await AsyncStorage.getItem(
-    Conf.currentPlatform.url.authLoginStore
+    'STORE-LOGIN-' + DEPRECATED_getCurrentPlatform()!.name
   );
 
   if (authString === null) {

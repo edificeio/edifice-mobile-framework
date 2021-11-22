@@ -20,7 +20,7 @@ import {
 import { TextBold, TextSemiBold, TextLight, TextAction } from '../../../framework/components/text';
 import { IGlobalState } from '../../../AppStore';
 import { IBlog } from '../reducer';
-import theme from '../../../framework/util/theme';
+import theme from '../../../app/theme';
 import { Icon } from '../../../framework/components/icon';
 import { getUserSession, IUserSession } from '../../../framework/util/session';
 import { Trackers } from '../../../framework/util/tracker';

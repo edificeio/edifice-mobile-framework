@@ -53,7 +53,7 @@ export default ({
     <Header>
       <LeftPanel>
         <BadgeAvatar
-          avatars={[sender || require("../../../assets/images/system-avatar.png")]}
+          avatars={[sender || require("~assets/images/system-avatar.png")]}
           badgeContent={getAppInfos[type] && getAppInfos[type].icon}
           badgeColor={getAppInfos[type] && getAppInfos[type].color}
           customStyle={{left: undefined, right: 0}}

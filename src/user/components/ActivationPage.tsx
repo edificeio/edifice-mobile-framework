@@ -2,8 +2,9 @@ import style from "glamorous-native";
 import I18n from "i18n-js";
 import * as React from "react";
 import { Alert, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, TouchableOpacity, View } from "react-native";
+import appConf from "~/framework/util/appConf";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 
-import Conf from "../../../ode-framework-conf";
 import { BackdropPdfReader } from "../../framework/components/backdropPdfReader";
 import { Checkbox } from "../../framework/components/checkbox";
 import { Text, TextAction } from "../../framework/components/text";
@@ -115,7 +116,7 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
     const errorText = errorKey ? I18n.t(errorKey) : externalError;
     const hasErrorKey = !!errorText;
     const isSubmitLoading = submitState == SubmitState.Loading;
-    const platform = Conf.currentPlatform.url;
+    const platform = DEPRECATED_getCurrentPlatform()!.url;
     const path = I18n.t("common.url.cgu");
     const cguUrl = `${platform}${path}`;
 
@@ -130,7 +131,7 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
                 <FormWrapper>
                   <FormContainer>
                     <LogoWrapper>
-                      <Logo source={Conf.currentPlatform.logo} />
+                      <Logo source={DEPRECATED_getCurrentPlatform()!.logo} />
                     </LogoWrapper>
                     <InputLogin login={login} form={formModel} onChange={this.onChange("login")} />
                     <InputPassword password={password} form={formModel} onChange={this.onChange("password")} />
@@ -167,9 +168,9 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
                 </FormWrapper>
               </FormTouchable>
             </ScrollView>
-            {Conf.platforms && Object.keys(Conf.platforms).length > 1 ? (
+            {appConf.platforms.length > 1 ? (
               <BottomSwitcher onPress={() => this.handleBackToPlatformSelector()}>
-                {Conf.currentPlatform.displayName}{" "}
+                {DEPRECATED_getCurrentPlatform()!.displayName}{" "}
               </BottomSwitcher>
             ) : null}
           </KeyboardAvoidingView>

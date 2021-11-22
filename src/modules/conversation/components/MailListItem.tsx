@@ -10,7 +10,7 @@ import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
 import { GridAvatars } from "../../../ui/avatars/GridAvatars";
 import { Text, TextBold, TextSemiBold, TextColorStyle, TextSizeStyle } from "../../../framework/components/text";
 import { displayPastDate } from "../../../framework/util/date";
-import theme from "../../../framework/util/theme";
+import theme from "../../../app/theme";
 import { ListItem } from "../../../framework/components/listItem";
 import { getMailPeople } from "../utils/mailInfos";
 import { IMail } from "../state/mailContent";

@@ -16,7 +16,7 @@ import {
   HeaderRow,
   HeaderTitle,
 } from "~/framework/components/header";
-import theme from "~/framework/util/theme";
+import theme from "~/app/theme";
 import { ListItem } from "~/framework/components/listItem";
 
 import { PageContainer } from "../../../../ui/ContainerContent";

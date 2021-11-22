@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
-import theme from "../../../framework/util/theme";
+import theme from "../../../app/theme";
 import { Icon } from "../../../ui";
 import { TextBold } from "../../../ui/Typography";
 

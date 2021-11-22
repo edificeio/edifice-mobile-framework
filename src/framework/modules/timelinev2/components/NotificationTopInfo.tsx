@@ -11,12 +11,13 @@ import { ITimelineNotification } from "~/framework/util/notifications";
 import { getUserSession, IUserSession } from "~/framework/util/session";
 import { displayPastDate } from "~/framework/util/date";
 import { IGlobalState } from "~/AppStore";
-import theme from "~/framework/util/theme";
+import theme from "~/app/theme";
 
 import { CenterPanel, Header, LeftPanel } from "../../../../ui/ContainerContent";
 import { BadgeAvatar } from "../../../../ui/BadgeAvatar";
 import { HtmlContentView } from "../../../../ui/HtmlContentView";
 import { APPBADGES } from "../appBadges";
+import { FontStyle } from "~/framework/components/text";
 
 const NotificationTopInfo = ({ notification, session }: { notification: ITimelineNotification, session: IUserSession}) => {
   const message = notification && notification.message;
@@ -37,7 +38,7 @@ const NotificationTopInfo = ({ notification, session }: { notification: ITimelin
     <Header>
       <LeftPanel>
         <BadgeAvatar
-          avatars={[sender || require("../../../../../assets/images/system-avatar.png")]}
+          avatars={[sender || require("~assets/images/system-avatar.png")]}
           badgeContent={APPBADGES[type] && APPBADGES[type].icon}
           badgeColor={APPBADGES[type] && APPBADGES[type].color} // ToDo fix type here
           customStyle={{left: undefined, right: 0}}

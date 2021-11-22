@@ -1,14 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import Conf from '../../ode-framework-conf';
-import { legacyAppConf } from '../framework/util/appConf';
+import { DEPRECATED_getCurrentPlatform } from '../framework/util/_legacy_appConf';
 import { navigate } from '../navigation/helpers/navHelper';
 import { Connection } from './Connection';
 import { OAuth2RessourceOwnerPasswordClient } from './oauth';
-
-// This log doesn't mean anything since Conf is dynamic
-// tslint:disable-next-line:no-console
-// console.log("Distant platform:", Conf.currentPlatform.url);
 
 /**
  * Perform a fetch operation with a oAuth Token. Use it like fetch().
@@ -59,7 +54,7 @@ export async function signedFetchJson(url: string | Request, init?: RequestInit)
 }
 
 export async function signedFetchJson2(url: string | Request, init?: any): Promise<unknown> {
-  return signedFetchJson(legacyAppConf.currentPlatform?.url! + url, init);
+  return signedFetchJson(DEPRECATED_getCurrentPlatform()!.url + url, init);
 }
 
 const CACHE_KEY_PREFIX = 'request-';
@@ -80,7 +75,7 @@ export async function fetchWithCache(
   path: string,
   init: any = {},
   forceSync: boolean = true,
-  platform: string = (Conf.currentPlatform as any).url,
+  platform: string = DEPRECATED_getCurrentPlatform()!.url,
   getBody = (r: Response) => r.text(),
   getCacheResult = (cr: any) => new Response(...cr),
 ) {
@@ -93,7 +88,7 @@ export async function fetchWithCache(
     // console.log("dataFromCache", dataFromCache);
     if (Connection.isOnline && (forceSync || !dataFromCache)) {
       let response =
-        path.indexOf((Conf.currentPlatform as any).url) === -1
+        path.indexOf(DEPRECATED_getCurrentPlatform()!.url) === -1
           ? await signedFetch(`${platform}${path}`, init)
           : await signedFetch(`${path}`, init);
       const r2 = response.clone();
@@ -148,7 +143,7 @@ export async function fetchJSONWithCache(
   path: string,
   init: any = {},
   forceSync: boolean = true,
-  platform: string = (Conf.currentPlatform as any).url,
+  platform: string = DEPRECATED_getCurrentPlatform()!.url,
 ) {
   return fetchWithCache(
     path,

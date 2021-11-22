@@ -1,11 +1,6 @@
-import Mime from 'mime';
-import { PermissionsAndroid, Platform } from 'react-native';
-import Permissions from 'react-native-permissions';
-
-import Conf from '../../../ode-framework-conf';
+import { Platform } from 'react-native';
 import { IFile } from '../../workspace/types';
-import { getAuthHeader } from '../oauth';
-import { Trackers } from '../../framework/util/tracker';
+import { Trackers } from '~/framework/util/tracker';
 
 export const downloadFiles = (downloadable: Array<IFile>, withManager = true) => {
   downloadable.map(document => downloadFile(document, withManager));

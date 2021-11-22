@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Text, View } from "react-native";
 
-import theme from "~/framework/util/theme";
+import theme from "~/app/theme";
 import { ITimelineNotification, IMedia } from "~/framework/util/notifications";
 import { TouchCard } from "~/framework/components/card";
 

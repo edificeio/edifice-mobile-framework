@@ -5,9 +5,10 @@
 
 import { TextProps } from "react-native";
 import { createIconSetFromIcoMoon } from "react-native-vector-icons";
-const icoMoonConfig = require("../../../assets/selection.json");
+const icoMoonConfig = require("~assets/selection.json");
 
-console.log("Loaded icon set:", icoMoonConfig);
+// console.log("Loaded icon set:", icoMoonConfig);
+console.log("[Icon] Loaded icon set");
 export const Icon = createIconSetFromIcoMoon(icoMoonConfig);
 
 export const checkHasIcon = (name: string) => Icon.hasIcon(name)

@@ -31,9 +31,9 @@ import { EmptyScreen } from "../../ui/EmptyScreen";
 import { Checkbox } from "../../ui/forms/Checkbox";
 import { TextBold } from "../../framework/components/text";
 import { Trackers } from "../../framework/util/tracker";
-import Conf from "../../../ode-framework-conf";
 import { getHomeworkWorkflowInformation } from "../rights";
 import { IUserSession } from "../../framework/util/session";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 
 // Main component ---------------------------------------------------------------------------------
 
@@ -149,7 +149,7 @@ export class HomeworkFilterPage extends React.PureComponent<
         }
         ListEmptyComponent={
           <EmptyScreen
-            imageSrc={require("../../../assets/images/empty-screen/homework.png")}
+            imageSrc={require("~assets/images/empty-screen/homework.png")}
             imgWidth={265.98}
             imgHeight={279.97}
             text={I18n.t("homework-diaries-emptyScreenText")}
@@ -157,11 +157,11 @@ export class HomeworkFilterPage extends React.PureComponent<
             buttonText={hasCreateHomeworkResourceRight ? I18n.t("homework-createDiary") : undefined}
             buttonAction={() => {
               //TODO: create generic function inside oauth (use in myapps, etc.)
-              if (!Conf.currentPlatform) {
+              if (!DEPRECATED_getCurrentPlatform()) {
                 console.warn("Must have a platform selected to redirect the user");
                 return null;
               }
-              const url = `${(Conf.currentPlatform as any).url}/homeworks`;
+              const url = `${DEPRECATED_getCurrentPlatform()!.url}/homeworks`;
               Linking.canOpenURL(url).then(supported => {
                 if (supported) {
                   Linking.openURL(url);

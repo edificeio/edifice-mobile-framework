@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Platform, View, TextInput, StyleProp, TextInputProps, ViewStyle } from 'react-native';
 import { TextField } from 'react-native-material-textfield';
 import PasswordInputText from 'react-native-hide-show-password-input';
-import theme from '../../framework/util/theme';
+import theme from '../../app/theme';
 
 export type TextInputLineProps = {
   hasError: boolean;

@@ -1,11 +1,11 @@
 import I18n from "i18n-js";
 import userConfig from "../config";
 import { Dispatch, AnyAction } from "redux";
-import Conf from "../../../ode-framework-conf";
 import { signedFetchJson } from "../../infra/fetchWithCache";
 import { notifierShowAction } from "../../infra/notifier/actions";
 import { ThunkDispatch } from "redux-thunk";
-import { Trackers } from "../../framework/util/tracker";
+import { Trackers } from "~/framework/util/tracker";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 
 // TYPES
 
@@ -54,7 +54,7 @@ export function profileUpdateAction(updatedProfileValues: IUpdatableProfileValue
       }
     }
 
-    if (!Conf.currentPlatform) throw new Error("must specify a platform");
+    if (!DEPRECATED_getCurrentPlatform()) throw new Error("must specify a platform");
     for (const index in updatedProfileValues) {
       if (updatedProfileValues.hasOwnProperty(index)) {
         if (index.match(/Valid/) ||
@@ -68,7 +68,7 @@ export function profileUpdateAction(updatedProfileValues: IUpdatableProfileValue
     try {
       const userId = getState().user.info.id;
       const reponse = await signedFetchJson(
-        `${Conf.currentPlatform.url}/directory/user${updateAvatar ? "book" : ""}/${userId}`,
+        `${DEPRECATED_getCurrentPlatform()!.url}/directory/user${updateAvatar ? "book" : ""}/${userId}`,
         {
           method: "PUT",
           body: JSON.stringify(updatedProfileValues)

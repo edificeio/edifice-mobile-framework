@@ -6,6 +6,6 @@ import reducer from './reducer';
 
 import setUpNotifHandlers from './notifHandler';
 
-export default new NavigableModule({ config, getRoot, reducer });
+module.exports = new NavigableModule({ config, getRoot, reducer });
 
 setUpNotifHandlers();

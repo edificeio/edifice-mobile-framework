@@ -1,6 +1,6 @@
 // TODO : THIS FILE IS FUCKED UP, IT HAS NO REASON TO BE HERE
 
-import Conf from "../../ode-framework-conf";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 import {
   signedFetch,
   signedFetchJson
@@ -9,9 +9,9 @@ import {
 const preferences = {} as any;
 
 export const savePreference = async (appName: string, newData) => {
-  if (!Conf.currentPlatform) throw new Error("must specify a platform");
+  if (!DEPRECATED_getCurrentPlatform()) throw new Error("must specify a platform");
   await signedFetch(
-    `${Conf.currentPlatform.url}/userbook/preference/${appName}`,
+    `${DEPRECATED_getCurrentPlatform()!.url}/userbook/preference/${appName}`,
     {
       body: JSON.stringify({ ...preferences[appName], ...newData }),
       method: "PUT"
@@ -19,9 +19,9 @@ export const savePreference = async (appName: string, newData) => {
   );
 };
 export const preference = async (appName: string) => {
-  if (!Conf.currentPlatform) throw new Error("must specify a platform");
+  if (!DEPRECATED_getCurrentPlatform()) throw new Error("must specify a platform");
   const appPrefs = (await signedFetchJson(
-    `${Conf.currentPlatform.url}/userbook/preference/${appName}`,
+    `${DEPRECATED_getCurrentPlatform()!.url}/userbook/preference/${appName}`,
     {}
   )) as { preference: any };
   // console.log("returned pref:", appName, appPrefs);

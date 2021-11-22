@@ -10,7 +10,6 @@ import type { IGlobalState } from "../../../AppStore";
 import type { INews, INewsComment } from "../reducer";
 
 import moduleConfig from "../moduleConfig";
-import withViewTracking from "../../../framework/util/tracker/withViewTracking";
 import { PageView } from "../../../framework/components/page";
 import { IResourceUriNotification, ITimelineNotification } from "../../../framework/util/notifications";
 import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderSubtitle, HeaderTitle } from "../../../framework/components/header";
@@ -19,16 +18,16 @@ import { getNewsDetailsAction } from "../actions";
 import { Trackers } from "../../../framework/util/tracker";
 import { TextPreview } from "../../../ui/TextPreview";
 import { CommonStyles } from "../../../styles/common/styles";
-import Conf from "../../../../ode-framework-conf";
 import { GridAvatars } from "../../../ui/avatars/GridAvatars";
 import { HtmlContentView } from "../../../ui/HtmlContentView";
 import { Icon } from "../../../framework/components/icon";
 import { LoadingIndicator } from "../../../framework/components/loading";
 import { ListItem } from "../../../framework/components/listItem";
 import { TextSemiBold, TextLight } from "../../../framework/components/text";
-import theme from "../../../framework/util/theme";
+import theme from "../../../app/theme";
 import { FlatButton } from "../../../ui";
 import { newsUriCaptureFunction } from "../service";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 
 
 // TYPES ==========================================================================================
@@ -169,11 +168,11 @@ export class NewsDetailsScreen extends React.PureComponent<
                   customTextStyle={{color: theme.color.secondary.regular}}
                   onPress={() => {
                     //TODO: create generic function inside oauth (use in myapps, etc.)
-                    if (!Conf.currentPlatform) {
+                    if (!DEPRECATED_getCurrentPlatform()) {
                       console.warn("Must have a platform selected to redirect the user");
                       return null;
                     }
-                    const url = `${(Conf.currentPlatform as any).url}${resourceUri}`;
+                    const url = `${DEPRECATED_getCurrentPlatform()!.url}${resourceUri}`;
                     Linking.canOpenURL(url).then(supported => {
                       if (supported) {
                         Linking.openURL(url);
@@ -227,8 +226,8 @@ export class NewsDetailsScreen extends React.PureComponent<
         style={{ justifyContent: "flex-start", backgroundColor: theme.color.secondary.extraLight }}
         leftElement={
           <GridAvatars
-            users={[newsComment.owner || require("../../../../assets/images/resource-avatar.png")]}
-            fallback={require("../../../../assets/images/resource-avatar.png")}
+            users={[newsComment.owner || require("~assets/images/resource-avatar.png")]}
+            fallback={require("~assets/images/resource-avatar.png")}
           />
         }
         rightElement={

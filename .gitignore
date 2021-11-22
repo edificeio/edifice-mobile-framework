@@ -61,24 +61,24 @@ buck-out/
 */fastlane/Preview.html
 */fastlane/screenshots
 
-# CREDENTIALS
-**/ode-framework-conf.ts
-**/google-services.json
-**/GoogleService-Info.plist
-**/appcenter-config.json
-**/AppCenter-Config.plist
-# Asset overrides
-android/app/src/main/res/drawable-hdpi
-android/app/src/main/res/drawable-ldpi
-android/app/src/main/res/drawable-mdpi
-android/app/src/main/res/drawable-xhdpi
-android/app/src/main/res/drawable-xxhdpi
-android/app/src/main/res/drawable-xxxhdpi
-ios/appe/Assets.xcassets/AppIcon.appiconset
-ios/appe/Assets.xcassets/LaunchImage.launchimage
-ios/appe/Assets.xcassets/LaunchScreen.AspectFill.imageset
-ios/appe/Assets.xcassets/LaunchScreen.Center.imageset
-assets/icons/*
+; # CREDENTIALS
+; **/ode-framework-conf.ts
+; **/google-services.json
+; **/GoogleService-Info.plist
+; **/appcenter-config.json
+; **/AppCenter-Config.plist
+; # Asset overrides
+; android/app/src/main/res/drawable-hdpi
+; android/app/src/main/res/drawable-ldpi
+; android/app/src/main/res/drawable-mdpi
+; android/app/src/main/res/drawable-xhdpi
+; android/app/src/main/res/drawable-xxhdpi
+; android/app/src/main/res/drawable-xxxhdpi
+; ios/appe/Assets.xcassets/AppIcon.appiconset
+; ios/appe/Assets.xcassets/LaunchImage.launchimage
+; ios/appe/Assets.xcassets/LaunchScreen.AspectFill.imageset
+; ios/appe/Assets.xcassets/LaunchScreen.Center.imageset
+; assets/icons/*
 
 # Asset bundles
 ios/assets
@@ -98,3 +98,7 @@ ios/Podfile.lock
 Gemfile.lock
 yarn.lock
 
+
+# Overrides
+__overrides__
+__stashSpec__

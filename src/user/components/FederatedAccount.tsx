@@ -6,7 +6,8 @@ import {
   SafeAreaView,
   ScrollView
 } from "react-native";
-import Conf from "../../../ode-framework-conf";
+import appConf from "~/framework/util/appConf";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 import { navigate } from "../../navigation/helpers/navHelper";
 import { FlatButton } from "../../ui";
 import BottomSwitcher from "../../ui/BottomSwitcher";
@@ -38,7 +39,7 @@ export class FederatedAccountPage extends React.PureComponent<
             <ScrollView alwaysBounceVertical={false} contentContainerStyle={{ flex: 1, justifyContent: "center" }}>
               <FormContainer>
                 <LogoWrapper>
-                  <Logo source={Conf.currentPlatform.logo} />
+                  <Logo source={DEPRECATED_getCurrentPlatform()!.logo} />
                 </LogoWrapper>
                 <View style={{ flexGrow: 4, justifyContent: "flex-start" }}>
                   <TextLightItalic>{I18n.t("federatedAccount-instructions")}</TextLightItalic>
@@ -69,9 +70,9 @@ export class FederatedAccountPage extends React.PureComponent<
               </FormContainer>
             </ScrollView>
           </FormWrapper>
-          {Conf.platforms && Object.keys(Conf.platforms).length > 1 ?
+          {appConf.platforms.length > 1 ?
             <BottomSwitcher onPress={() => this.handleBackToPlatformSelector()}>
-              {Conf.currentPlatform.displayName}{" "}
+              {DEPRECATED_getCurrentPlatform()!.displayName}{" "}
             </BottomSwitcher> : null}
         </FormPage>
       </SafeAreaView>

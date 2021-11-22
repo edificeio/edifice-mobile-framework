@@ -7,7 +7,7 @@ import deepmerge from "deepmerge";
 
 import { IUserSession } from "~/framework/util/session"
 import { IEntcoreTimelineNotification, ITimelineNotification, notificationAdapter } from "~/framework/util/notifications";
-import { legacyAppConf } from "~/framework/util/appConf";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 
 import { fetchJSONWithCache, signedFetchJson } from "../../../../infra/fetchWithCache";
 import { IEntcoreNotificationType } from "../reducer/notifDefinitions/notifTypes";
@@ -122,7 +122,7 @@ export const pushNotifsService = {
         // console.log('new notif prefs', prefsUpdated);
         const payload = { ...prefsOriginal, ...prefsUpdated };
         // console.log('payload', payload);
-        const responseJson = await signedFetchJson(`${legacyAppConf.currentPlatform!.url}${api}`, {
+        const responseJson = await signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
             method,
             body: JSON.stringify(payload)
         });

@@ -5,12 +5,12 @@ import { IActivationContext } from "../../utils/SubmitState";
 import userConfig from "../config";
 import { asyncActionTypes } from "../../infra/redux/async";
 
-import Conf from "../../../ode-framework-conf";
 import { getSessionInfo } from "../../App";
 import { mainNavNavigate } from "../../navigation/helpers/navHelper";
 import { notifierShowAction } from "../../infra/notifier/actions";
 import { ThunkDispatch } from "redux-thunk";
-import { Trackers } from "../../framework/util/tracker";
+import { Trackers } from "~/framework/util/tracker";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 
 // TYPES ------------------------------------------------------------------------------------------------
 
@@ -101,7 +101,7 @@ export function initChangePasswordAction(
     try {
       // === 1 - Fetch activation context
       dispatch(changePasswordContextRequestedAction(args));
-      const res = await fetch(`${Conf.currentPlatform.url}/auth/context`);
+      const res = await fetch(`${DEPRECATED_getCurrentPlatform()!.url}/auth/context`);
       // === 2 - send result to store
       if (!res.ok) {
         // console.log("[User][Change password] fetched context failed...", res.status)
@@ -135,7 +135,7 @@ export function changePasswordAction(model: IChangePasswordModel) {
       // === 2 - Send change password information
       // console.log("[User][Change password] submitting new password", formdata)
       dispatch(changePasswordSubmitRequestedAction(model));
-      const res = await fetch(`${Conf.currentPlatform.url}/auth/reset`, {
+      const res = await fetch(`${DEPRECATED_getCurrentPlatform()!.url}/auth/reset`, {
         body: formdata,
         headers: {
           Accept: "application/json",

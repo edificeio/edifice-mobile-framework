@@ -2,7 +2,7 @@ import * as React from "react";
 import { Text, TouchableOpacity } from "react-native";
 import I18n from "i18n-js";
 
-import theme from "~/framework/util/theme";
+import theme from "~/app/theme";
 
 import { TouchCard } from "../../../../ui/Card";
 import { ArticleContainer } from "../../../../ui/ContainerContent";

@@ -61,6 +61,7 @@ export interface IModuleConfig<Name extends string, State> extends IModuleConfig
 }
 
 export type IUnkownModuleConfig = IModuleConfig<string, unknown>;
+export type IAnyModuleConfig = IModuleConfig<string, any>;
 
 /**
  * An usable moduleConfig is build from its declaration with the `createModuleConfig` function.

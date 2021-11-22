@@ -3,7 +3,6 @@ import * as React from "react";
 import { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 
-import Conf from "../../../../ode-framework-conf";
 import connectorConfig from "../moduleConfig";
 import userConfig from "../../../user/config";
 import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
@@ -16,7 +15,8 @@ import { Back } from "../../../ui/headers/Back";
 import ConnectorView from "../components/ConnectorView";
 import { openConnector } from "../actions/connector";
 import { bindActionCreators } from "redux";
-import withViewTracking from "../../../framework/util/tracker/withViewTracking";
+import withViewTracking from "~/framework/util/tracker/withViewTracking";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 
 interface IApplicationBackend {
   name: string;
@@ -104,7 +104,7 @@ const getConnectorAddress: (appAddress: string, userType: string) => string = (a
     return service.charAt(service.length - 1) == '/' ? "" : '%2F'
   }
 
-  let link = `${Conf.currentPlatform.url}/cas/oauth/login?service=${encodeURIComponent(appAddress)}`;
+  let link = `${DEPRECATED_getCurrentPlatform()!.url}/cas/oauth/login?service=${encodeURIComponent(appAddress)}`;
   const role = profileMap[userType.toUpperCase()];
   link += `${getSlash(link)}mobile.${role}.html`;
   return link

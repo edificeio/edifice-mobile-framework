@@ -127,7 +127,7 @@ export default class Dashboard extends React.PureComponent<any> {
         <TextBold style={styles.title}>{I18n.t("viesco-homework")}</TextBold>
         {Object.values(homeworks).length === 0 && (
           <EmptyScreen
-            imageSrc={require("../../../../../assets/images/empty-screen/empty-homework.png")}
+            imageSrc={require("~assets/images/empty-screen/empty-homework.png")}
             imgWidth={64}
             imgHeight={64}
             title={I18n.t("viesco-homework-EmptyScreenText")}
@@ -193,7 +193,7 @@ export default class Dashboard extends React.PureComponent<any> {
           <DenseDevoirList devoirs={evaluationList} levels={levels} />
         ) : (
           <EmptyScreen
-            imageSrc={require("../../../../../assets/images/empty-screen/empty-evaluations.png")}
+            imageSrc={require("~assets/images/empty-screen/empty-evaluations.png")}
             imgWidth={64}
             imgHeight={64}
             title={I18n.t("viesco-eval-EmptyScreenText")}

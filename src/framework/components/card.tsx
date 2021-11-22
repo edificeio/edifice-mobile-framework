@@ -1,7 +1,7 @@
 import styled from '@emotion/native'
 import { ViewStyle } from "react-native";
 
-import theme from '~/framework/util/theme';
+import theme from '~/app/theme';
 
 const cardStyle: ViewStyle = {
   backgroundColor: theme.color.background.card,

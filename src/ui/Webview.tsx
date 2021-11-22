@@ -1,12 +1,13 @@
 
 import React from "react";
-import Conf from "../../ode-framework-conf";
 import WebView, { WebViewProps } from "react-native-webview";
-
-
+import appConf from "~/framework/util/appConf";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 
 export function SafeWebView<P>(props: WebViewProps & P) {
-    const id = Conf.currentPlatform? (Conf.currentPlatform.webviewIdentifier || Conf.webviewIdentifier): (Conf.webviewIdentifier || "ode-unknown");
+    const id = DEPRECATED_getCurrentPlatform()!.webviewIdentifier
+        || appConf.webviewIdentifier
+        || "ode-unknown";
     return <WebView {...props} androidLayerType="software" source={{...(props?props.source:{}), headers:{
         'X-Requested-With': id
     }}} injectedJavaScript={`window.WEBVIEW_BUNDLEID=${id}`} />;
