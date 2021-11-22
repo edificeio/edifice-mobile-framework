@@ -10,10 +10,10 @@ import { NavigationNavigateActionPayload } from "react-navigation";
 import styled from '@emotion/native'
 import I18n from "i18n-js";
 
-import { Icon } from "../../framework/components/icon";
-import theme from "../util/theme";
-import { mainNavNavigate } from "../../navigation/helpers/navHelper";
+import theme from "~/framework/util/theme";
+import { Icon } from "./icon";
 import { Text } from "./text";
+import { mainNavNavigate } from "../../navigation/helpers/navHelper";
 
 export interface IPopupMenuProps {
 	iconName: string;

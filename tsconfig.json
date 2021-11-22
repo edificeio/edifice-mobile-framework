@@ -63,5 +63,13 @@
     /* Custom options */
     "noErrorTruncation": true,
     "skipLibCheck": true,
+
+    /* Module Resolver*/
+    "baseUrl": "./src",
+    "paths": {
+      "~/*": [
+        "./*"
+      ]
+    },
   }
 }

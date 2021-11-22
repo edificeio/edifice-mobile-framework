@@ -6,16 +6,17 @@ import { connect } from "react-redux";
 import { ThunkDispatch } from "redux-thunk";
 import Snow from "react-native-snow-bg";
 
-import type { IGlobalState } from "../../../../AppStore";
-import PopupMenu from "../../../../framework/components/popupMenu";
-import { EmptyScreen } from "../../../components/emptyScreen";
-import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from "../../../components/header";
-import { LoadingIndicator } from "../../../components/loading";
-import { PageView } from "../../../components/page";
-import { Text } from "../../../components/text";
-import { ITimelineNotification, IResourceUriNotification, isResourceUriNotification, IAbstractNotification, getAsResourceUriNotification } from "../../../util/notifications";
-import { defaultNotificationActionStack, handleNotificationAction, NotifHandlerThunkAction } from "../../../util/notifications/routing";
-import { getUserSession, IUserSession } from "../../../util/session";
+import type { IGlobalState } from "~/AppStore";
+import PopupMenu from "~/framework/components/popupMenu";
+import { EmptyScreen } from "~/framework/components/emptyScreen";
+import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from "~/framework/components/header";
+import { LoadingIndicator } from "~/framework/components/loading";
+import { PageView } from "~/framework/components/page";
+import { Text } from "~/framework/components/text";
+import { ITimelineNotification, IResourceUriNotification, isResourceUriNotification, IAbstractNotification } from "~/framework/util/notifications";
+import { defaultNotificationActionStack, handleNotificationAction, NotifHandlerThunkAction } from "~/framework/util/notifications/routing";
+import { getUserSession, IUserSession } from "~/framework/util/session";
+
 import { dismissFlashMessageAction, loadNotificationsPageAction, startLoadNotificationsAction } from "../actions";
 import { TimelineFlashMessage } from "../components/TimelineFlashMessage";
 import { TimelineNotification } from "../components/TimelineNotification";

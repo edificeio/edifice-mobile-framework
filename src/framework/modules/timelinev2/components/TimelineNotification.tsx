@@ -1,18 +1,19 @@
 import * as React from "react";
 import { Text, View } from "react-native";
 
+import theme from "~/framework/util/theme";
+import { ITimelineNotification, IMedia } from "~/framework/util/notifications";
+import { TouchCard } from "~/framework/components/card";
+
 import { ArticleContainer } from "../../../../ui/ContainerContent";
 import Images from "../../../../ui/Images";
 import NotificationTopInfo from "./NotificationTopInfo";
 import Player from "../../../../ui/Player";
 import { IFrame } from "../../../../ui/IFrame";
-import { ITimelineNotification, IMedia } from "../../../util/notifications";
 import { AttachmentGroup } from "../../../../ui/AttachmentGroup";
 import { IRemoteAttachment } from "../../../../ui/Attachment";
 import { Icon } from "../../../../ui/icons/Icon";
 import { signURISource, transformedSrc } from "../../../../infra/oauth";
-import theme from "../../../util/theme";
-import { TouchCard } from "../../../components/card";
 
 interface ITimelineNotificationProps {
   notification: ITimelineNotification;

@@ -1,13 +1,14 @@
 import * as React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity } from "react-native";
 import I18n from "i18n-js";
+
+import theme from "~/framework/util/theme";
 
 import { TouchCard } from "../../../../ui/Card";
 import { ArticleContainer } from "../../../../ui/ContainerContent";
 import { Icon } from "../../../../ui/icons/Icon";
 import { IEntcoreFlashMessage } from "../reducer/flashMessages";
 import { HtmlContentView } from "../../../../ui/HtmlContentView";
-import theme from "../../../util/theme";
 
 interface ITimelineFlashMessageProps {
   flashMessage: IEntcoreFlashMessage;

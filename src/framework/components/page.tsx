@@ -7,9 +7,9 @@ import * as React from "react";
 import { KeyboardAvoidingView, KeyboardAvoidingViewProps, Platform, SafeAreaView, ScrollView, View, ViewProps } from "react-native";
 import styled from '@emotion/native'
 
-import theme from "../util/theme";
+import theme from "~/framework/util/theme";
+import Notifier from "~/framework/util/notifier";
 import DEPRECATED_ConnectionTrackingBar from "../../ui/ConnectionTrackingBar";
-import Notifier from "../util/notifier";
 import { hasNotch } from "react-native-device-info";
 
 const PageView_StyleComponent = styled.View({

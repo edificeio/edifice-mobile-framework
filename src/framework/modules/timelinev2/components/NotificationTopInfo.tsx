@@ -7,22 +7,22 @@ import I18n from "i18n-js";
 import moment from "moment";
 import { connect } from "react-redux";
 
+import { ITimelineNotification } from "~/framework/util/notifications";
+import { getUserSession, IUserSession } from "~/framework/util/session";
+import { displayPastDate } from "~/framework/util/date";
+import { IGlobalState } from "~/AppStore";
+import theme from "~/framework/util/theme";
+
 import { CenterPanel, Header, LeftPanel } from "../../../../ui/ContainerContent";
 import { BadgeAvatar } from "../../../../ui/BadgeAvatar";
 import { HtmlContentView } from "../../../../ui/HtmlContentView";
 import { APPBADGES } from "../appBadges";
-import { ITimelineNotification } from "../../../util/notifications";
-import theme from "../../../util/theme";
-import { FontStyle } from "../../../components/text";
-import { getUserSession, IUserSession } from "../../../util/session";
-import { IGlobalState } from "../../../../AppStore";
-import { displayPastDate } from "../../../util/date";
 
 const NotificationTopInfo = ({ notification, session }: { notification: ITimelineNotification, session: IUserSession}) => {
   const message = notification && notification.message;
   const type = notification && notification.type;
   const date = notification && notification.date;
-  const sender = notification && notification.sender;
+  const sender = notification && notification.sender; // ToDo fix types here
   const resource = notification && notification.resource;
 
   let formattedMessage = message;
@@ -31,7 +31,7 @@ const NotificationTopInfo = ({ notification, session }: { notification: ITimelin
     if (resource && resource.name) formattedMessage = formattedMessage.replace(resource.name, ` ${resource.name} `);
     if (sender && sender.displayName) formattedMessage = formattedMessage.replace(/<br.*?>/, "").replace(sender.displayName, `${sender.displayName} `);
     if (isSenderMe) formattedMessage = formattedMessage.replace(sender && sender.displayName, `${sender.displayName} ${I18n.t("me-indicator")} `);
-  } 
+  }
 
   return (
     <Header>
@@ -39,7 +39,7 @@ const NotificationTopInfo = ({ notification, session }: { notification: ITimelin
         <BadgeAvatar
           avatars={[sender || require("../../../../../assets/images/system-avatar.png")]}
           badgeContent={APPBADGES[type] && APPBADGES[type].icon}
-          badgeColor={APPBADGES[type] && APPBADGES[type].color}
+          badgeColor={APPBADGES[type] && APPBADGES[type].color} // ToDo fix type here
           customStyle={{left: undefined, right: 0}}
         />
       </LeftPanel>

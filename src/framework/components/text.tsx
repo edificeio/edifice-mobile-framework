@@ -7,7 +7,7 @@
 
 import { Platform, Text as RNText, TextStyle } from "react-native";
 import styled from "@emotion/native";
-import theme from "../util/theme";
+import theme from "~/framework/util/theme";
 
 console.log("test font begin")
 

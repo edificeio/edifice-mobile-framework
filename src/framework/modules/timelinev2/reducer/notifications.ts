@@ -1,5 +1,5 @@
-import { ITimelineNotification } from "../../../util/notifications";
-import { AsyncPagedState, createAsyncPagedActionCreators, createAsyncPagedActionTypes, createSessionAsyncPagedReducer } from "../../../util/redux/asyncPaged";
+import { ITimelineNotification } from "~/framework/util/notifications";
+import { AsyncPagedState, createAsyncPagedActionCreators, createAsyncPagedActionTypes, createSessionAsyncPagedReducer } from "~/framework/util/redux/asyncPaged";
 import moduleConfig from "../moduleConfig";
 
 // State

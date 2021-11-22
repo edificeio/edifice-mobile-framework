@@ -1,8 +1,10 @@
 import { CombinedState, combineReducers } from "redux";
+
+import { IEntcoreApp } from "~/framework/util/moduleTool";
+
 import { INotificationFilter } from "./notifFilters";
 import notifTypes, { IEntcoreNotificationType, INotifTypes_State } from "./notifTypes";
 import notifFilters, { INotifFilters_State } from "./notifFilters";
-import { IEntcoreApp } from "../../../../util/moduleTool";
 
 // State
 

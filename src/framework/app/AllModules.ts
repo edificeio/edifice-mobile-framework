@@ -2,8 +2,8 @@
  * Every module is imported here.
  */
 
-import { dynamiclyRegisterModules, loadModules, ModuleArray, AnyModule } from "../util/moduleTool"
-import IncludedModules from "../../conf/IncludedModules";
+import { dynamiclyRegisterModules, loadModules, ModuleArray, AnyModule } from "~/framework/util/moduleTool"
+import IncludedModules from "~/conf/IncludedModules";
 
 // We first imports all modules and their code hierarchy. Registrations are executed,
 // and then, we call initModules to instanciate RootComponents for each module.
@@ -15,7 +15,7 @@ export default () => {
     else {
         const moduleDeclarations = [
             // Built-il modules
-            require("../modules/timelinev2").default,
+            require("~/framework/modules/timelinev2").default,
 
             // Included modules from override
             ...IncludedModules || []

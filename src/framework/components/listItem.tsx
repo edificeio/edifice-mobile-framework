@@ -1,6 +1,6 @@
 import * as React from "react";
 import { View, ViewStyle } from "react-native";
-import theme from "../util/theme";
+import theme from "~/framework/util/theme";
 
 export const ListItem = ({
   leftElement,

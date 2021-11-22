@@ -1,6 +1,8 @@
-import { getUserSession } from "../../../util/session";
-import workspaceService from "../service";
 import { ThunkDispatch } from "redux-thunk";
+
+import { getUserSession } from "~/framework/util/session";
+
+import workspaceService from "../service";
 
 export const createFolderAction = (name: string, parentFolderId?: string) =>
     (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {

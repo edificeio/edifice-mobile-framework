@@ -4,7 +4,7 @@ import I18n from "i18n-js";
 
 import EmptyContent from "ode-images/empty-screen/empty-content.svg";
 import { Text, TextBold } from "./text";
-import theme from "../util/theme";
+import theme from "~/framework/util/theme";
 
 export const EmptyContentScreen = () => {
   return (

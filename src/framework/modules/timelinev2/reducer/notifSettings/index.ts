@@ -1,4 +1,5 @@
 import { CombinedState, combineReducers } from "redux";
+
 import { INotifFilterSettings_State } from "./notifFilterSettings";
 import notifFilterSettings from "./notifFilterSettings";
 import pushNotifsSettings, { IPushNotifsSettings_State } from "./pushNotifsSettings";

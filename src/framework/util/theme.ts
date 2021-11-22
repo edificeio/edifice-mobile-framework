@@ -5,7 +5,7 @@
 import deepmerge from "deepmerge";
 import { ColorValue } from "react-native";
 
-import customTheme from "../../conf/CustomTheme";
+import customTheme from "~/conf/CustomTheme";
 
 export interface ITheme {
     color: {

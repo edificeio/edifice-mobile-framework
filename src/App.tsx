@@ -19,7 +19,7 @@ import { Provider, connect } from 'react-redux';
 import Conf from '../ode-framework-conf';
 
 // ODE Mobile Framework Modules
-import { Trackers } from './framework/util/tracker';
+import { Trackers } from '~/framework/util/tracker';
 
 // ODE Mobile Framework Redux
 import { refreshToken } from './user/actions/login';

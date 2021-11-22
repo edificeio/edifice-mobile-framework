@@ -3,15 +3,16 @@
  */
 
 import queryString from "query-string";
+import deepmerge from "deepmerge";
 
-import { fetchJSONWithCache, signedFetch, signedFetchJson } from "../../../../infra/fetchWithCache";
-import { IUserSession } from "../../../util/session"
+import { IUserSession } from "~/framework/util/session"
+import { IEntcoreTimelineNotification, ITimelineNotification, notificationAdapter } from "~/framework/util/notifications";
+import { legacyAppConf } from "~/framework/util/appConf";
+
+import { fetchJSONWithCache, signedFetchJson } from "../../../../infra/fetchWithCache";
 import { IEntcoreNotificationType } from "../reducer/notifDefinitions/notifTypes";
-import { IEntcoreTimelineNotification, ITimelineNotification, notificationAdapter } from "../../../util/notifications";
 import { IEntcoreFlashMessage } from "../reducer/flashMessages";
 import { IPushNotifsSettings_State_Data } from "../reducer/notifSettings/pushNotifsSettings";
-import deepmerge from "deepmerge";
-import { legacyAppConf } from "../../../util/appConf";
 
 // Notifications
 

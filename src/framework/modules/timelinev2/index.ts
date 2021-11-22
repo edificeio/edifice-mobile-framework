@@ -1,4 +1,4 @@
-import { NavigableModule } from "../../util/moduleTool";
+import { NavigableModule } from "~/framework/util/moduleTool";
 
 import config from './moduleConfig';
 import getRoot from './navigator';

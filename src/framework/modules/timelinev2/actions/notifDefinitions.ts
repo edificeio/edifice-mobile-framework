@@ -1,10 +1,9 @@
 import { Dispatch } from "redux";
-import { getUserSession } from "../../../util/session";
+import { getUserSession } from "~/framework/util/session";
 import moduleConfig from "../moduleConfig";
 import { notifFiltersService, registeredNotificationsService } from "../service";
 import { actions as notifTypesAsyncActions } from "../reducer/notifDefinitions/notifTypes";
 import { actions as notifFiltersAsyncActions } from "../reducer/notifDefinitions/notifFilters";
-import type { ITimeline_State } from "../reducer";
 import { computeNotificationFilterList, getAuthorizedNotificationFilterList } from "../reducer/notifDefinitions";
 
 export const loadNotificationsDefinitionsAction = () => async (dispatch: Dispatch, getState: () => any) => {

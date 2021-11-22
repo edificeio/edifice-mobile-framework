@@ -4,9 +4,9 @@ import { FlatList, Platform, Text, TouchableOpacity } from "react-native";
 import { NavigationInjectedProps } from "react-navigation";
 import { connect } from "react-redux";
 import { ThunkDispatch } from "redux-thunk";
-import { IGlobalState } from "../../../../AppStore";
-import { PageContainer } from "../../../../ui/ContainerContent";
-import { Checkbox } from "../../../components/checkbox";
+
+import { IGlobalState } from "~/AppStore";
+import { Checkbox } from "~/framework/components/checkbox";
 import {
   FakeHeader,
   HeaderAction,
@@ -15,11 +15,12 @@ import {
   HeaderRight,
   HeaderRow,
   HeaderTitle,
-} from "../../../components/header";
-import { ListItem } from "../../../components/listItem";
-import theme from "../../../util/theme";
+} from "~/framework/components/header";
+import theme from "~/framework/util/theme";
+import { ListItem } from "~/framework/components/listItem";
 
-import withViewTracking from "../../../util/tracker/withViewTracking";
+import { PageContainer } from "../../../../ui/ContainerContent";
+
 import { setFiltersAction } from "../actions/notifSettings";
 import moduleConfig from "../moduleConfig";
 import { ITimeline_State } from "../reducer";

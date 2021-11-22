@@ -4,9 +4,10 @@
 
 import I18n from "i18n-js";
 import type { NavigationNavigateActionPayload } from "react-navigation";
-import { CustomRegister, RouteMap } from "../../util/moduleTool";
 
-import { IUserSession } from "../../util/session";
+import { CustomRegister, RouteMap } from "~/framework/util/moduleTool";
+import { IUserSession } from "~/framework/util/session";
+
 
 // Timeline module register =======================================================================
 
