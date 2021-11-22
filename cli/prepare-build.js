@@ -18,9 +18,9 @@ const execSync = require('child_process').execSync;
 const fs = require('fs');
 
 const gradleFile = 'android/app/build.gradle';
-const packageFile = './package.json';
+const packageFile = 'package.json';
 const plistFile = 'ios/appe/Info.plist';
-const versionFile = './version.json';
+const versionFile = 'cli/version.json';
 
 //
 // Check arguments
@@ -235,7 +235,7 @@ try {
 //
 // Commit && Push changes
 //
-try {
+/*try {
   execSync(`git add -A`);
   execSync(`git commit -m "release: ${fullVersion}"`);
   execSync('git push');
@@ -243,4 +243,4 @@ try {
   console.error('!!! Unable to commit && push changes !!!');
   console.log(error);
   process.exit(11);
-}
+}*/
