@@ -20,23 +20,16 @@ import { getPeriodsListState, IPeriodsList } from "../../viesco/state/periods";
 import { fetchLevelsAction } from "../actions/competencesLevels";
 import { fetchDevoirListAction } from "../actions/devoirs";
 import { fetchDevoirMoyennesListAction } from "../actions/moyennes";
-import { fetchServicesMatieresAction } from "../actions/servicesMatieres";
-import { fetchStructureMatieresAction } from "../actions/structureMatieres";
 import Competences from "../components/Evaluation";
 import { getLevelsListState, ILevelsList } from "../state/competencesLevels";
-import { getDevoirListState, IDevoirListState } from "../state/devoirs";
-import { IMatiereList } from "../state/matieres";
+import { getDevoirListState, IDevoirsMatieresState } from "../state/devoirs";
 import { getMoyenneListState, IMoyenneListState } from "../state/moyennes";
-import { getServiceListState, IServiceList } from "../state/servicesMatieres";
-import { getStructureMatiereListState } from "../state/structureMatieres";
 
 // eslint-disable-next-line flowtype/no-types-missing-file-annotation
 export type CompetencesProps = {
-  devoirsList: IDevoirListState;
+  devoirsList: IDevoirsMatieresState;
   devoirsMoyennesList: IMoyenneListState;
   levels: ILevelsList;
-  subjects: IMatiereList;
-  serviceList: IServiceList;
   userType: string;
   periods: IPeriodsList;
   groups: string[];
@@ -49,8 +42,6 @@ export type CompetencesProps = {
   getDevoirsMoyennes: (structureId: string, studentId: string, period?: string) => void;
   getPeriods: (structureId: string, groupId: string) => void;
   getLevels: (structureIs: string) => void;
-  getSubjects: (structureId: string) => void;
-  getServiceList: (structureId: string) => void;
 } & INavigationProps;
 
 export class Evaluation extends React.PureComponent<CompetencesProps, any> {
@@ -72,8 +63,6 @@ export class Evaluation extends React.PureComponent<CompetencesProps, any> {
     const { structureId, childId, childClasses } = this.props;
     this.props.getDevoirs(structureId, childId);
     this.props.getLevels(structureId);
-    this.props.getSubjects(structureId);
-    this.props.getServiceList(structureId);
     if (getSessionInfo().type === "Relative") await this.props.fetchChildInfos();
     this.props.getPeriods(structureId, childClasses);
     this.props.fetchChildGroups(childClasses, childId);
@@ -125,14 +114,12 @@ const mapStateToProps: (state: any) => any = state => {
     devoirsList: getDevoirListState(state),
     devoirsMoyennesList: getMoyenneListState(state),
     levels: getLevelsListState(state).data,
-    subjects: getStructureMatiereListState(state).data,
     userType,
     periods: getPeriodsListState(state).data,
     groups: getGroupsListState(state).data,
     structureId,
     childId,
     childClasses,
-    serviceList: getServiceListState(state).data,
   };
 };
 
@@ -145,8 +132,6 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
       getDevoirsMoyennes: fetchDevoirMoyennesListAction,
       getPeriods: fetchPeriodsListAction,
       getLevels: fetchLevelsAction,
-      getSubjects: fetchStructureMatieresAction,
-      getServiceList: fetchServicesMatieresAction,
     },
     dispatch
   );

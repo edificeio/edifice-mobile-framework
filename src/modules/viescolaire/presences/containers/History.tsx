@@ -200,7 +200,7 @@ const mapStateToProps = (state: any) => {
   const type = getSessionInfo().type;
   const childId = type === 'Student' ? getSessionInfo().id : getSelectedChild(state).id;
   const groupId =
-    type === 'Student'
+    (type === 'Student' || getSessionInfo().classes.length >= 1)
       ? getSessionInfo().classes[0]
       : getSessionInfo().classes[getSessionInfo().childrenIds.findIndex(i => i === childId)];
   const structureId =
@@ -209,6 +209,7 @@ const mapStateToProps = (state: any) => {
       : getSelectedChildStructure(state)?.id;
   const isFetchingData = events.isFetching || periods.isFetching || year.isFetching;
   const isPristineData = events.isPristine || periods.isPristine || year.isPristine;
+
   return {
     events,
     structureId,

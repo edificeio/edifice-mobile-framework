@@ -219,7 +219,7 @@ export const RenderPJs = ({ attachments, mailId, onDownload, dispatch }: { attac
           filename: item.filename,
           filesize: item.size,
           filetype: item.contentType,
-        }
+        };
         return (
           <TouchableOpacity
             onPress={() => {
@@ -227,37 +227,47 @@ export const RenderPJs = ({ attachments, mailId, onDownload, dispatch }: { attac
               // console.log(df);
               onDownload(df);
             }}>
-            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-              <Icon size={25} color="#2A9CC8" name={getFileIcon(item.contentType)} />
-              <Text style={styles.gridButtonTextPJnames} key={item.id} numberOfLines={1} ellipsizeMode="middle">
-                {item.filename}
-              </Text>
-              {index === 0 && (
-                <TouchableOpacity onPress={() => toggleVisible(!isVisible)} style={{ padding: 5 }}>
-                  {attachments.length > 1 && (
-                    <Text style={styles.gridButtonTextPJnb}>
-                      {isVisible ? "-" : "+"}
-                      {attachments.length - 1}
-                    </Text>
-                  )}
-                </TouchableOpacity>
-              )}
-              {Platform.OS !== "ios" ? <TouchableOpacity onPress={async () => {
-                try {
-                  const sf = (await dispatch(downloadFileAction<SyncedFileWithId>(df, {}))) as unknown as SyncedFileWithId;
-                  await sf.mirrorToDownloadFolder();
-                  Toast.showSuccess(I18n.t("download-success-name", { name: sf.filename }));
-                } catch (e) {
-                  console.log(e);
-                  Toast.show(I18n.t("download-error-generic"));
-                }
-              }}
-                style={{ paddingHorizontal: 12, flex: 0 }}>
-                <Icon name="download" size={18} color="#2A9CC8" />
-              </TouchableOpacity> : null}
+            <View style={[styles.gridViewStyle, { justifyContent: "space-between" }]}>
+              <View style={[styles.gridViewStyle, { justifyContent: "flex-start", flex: 1 }]}>
+                <Icon size={25} color="#2A9CC8" name={getFileIcon(item.contentType)} />
+                <Text style={styles.gridButtonTextPJnames} key={item.id} numberOfLines={1} ellipsizeMode="middle">
+                  {item.filename}
+                </Text>
+              </View>
+
+              <View style={[styles.gridViewStyle, { justifyContent: "flex-end" }]}>
+                {Platform.OS !== 'ios' ? (
+                  <TouchableOpacity
+                    onPress={async () => {
+                      try {
+                        const sf = ((await dispatch(downloadFileAction<SyncedFileWithId>(df, {}))) as unknown) as SyncedFileWithId;
+                        await sf.mirrorToDownloadFolder();
+                        Toast.showSuccess(I18n.t("download-success-name", { name: sf.filename }));
+                      } catch (e) {
+                        console.log(e);
+                        Toast.show(I18n.t("download-error-generic"));
+                      }
+                    }}
+                    style={{ paddingHorizontal: 12, flex: 0 }}>
+                    <Icon name="download" size={18} color="#2A9CC8" />
+                  </TouchableOpacity>
+                ) : null}
+                {index === 0 ? (
+                  <TouchableOpacity onPress={() => toggleVisible(!isVisible)} style={{ padding: 5 }}>
+                    {attachments.length > 1 && (
+                      <Text style={{ color: "#2A9CC8" }}>
+                        {isVisible ? "-" : "+"}
+                        {attachments.length - 1}
+                      </Text>
+                    )}
+                  </TouchableOpacity>
+                ) : (
+                  <View style={{ width: 25, height: 30 }} />
+                )}
+              </View>
             </View>
           </TouchableOpacity>
-        )
+        );
       })}
     </View>
   );
@@ -290,16 +300,14 @@ const styles = StyleSheet.create({
     color: "#2A9CC8",
     marginRight: 5,
   },
-  gridButtonTextPJnb: {
-    color: "#2A9CC8",
-    justifyContent: "flex-end",
-    alignItems: "flex-end",
-    textAlign: "right",
+  gridViewStyle: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   gridButtonTextPJnames: {
+    flex: 2,
     color: "#2A9CC8",
     marginLeft: 5,
-    paddingHorizontal: 24,
   },
   dotReceiverColor: {
     width: 8,

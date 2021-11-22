@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { StyleSheet, View, TextInput, FlatList, Text, TouchableOpacity } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import I18n from "i18n-js";
+
+import { Icon } from "../..";
 import { DEVICE_HEIGHT, layoutSize } from "../../../styles/common/layoutSize";
 import { IItem } from "../../../workspace/types";
 import { ITreeItem } from "../../../workspace/actions/helpers/formatListFolders";
@@ -298,8 +299,8 @@ export default function TreeSelect({
             height: layoutSize.LAYOUT_34,
             paddingLeft: layoutSize.LAYOUT_3,
           }}>
-          <Ionicons
-            name="ios-search"
+          <Icon
+            name="search2"
             style={{ color: "#999999", fontSize: layoutSize.LAYOUT_24, marginHorizontal: 8 }}
           />
         </TouchableOpacity>

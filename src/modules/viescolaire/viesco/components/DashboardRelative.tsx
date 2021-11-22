@@ -12,7 +12,7 @@ import { Text, TextBold } from "../../../../framework/components/text";
 import { HomeworkItem } from "../../cdt/components/Items";
 import { DenseDevoirList } from "../../competences/components/Item";
 import { ILevelsList } from "../../competences/state/competencesLevels";
-import { IDevoirListState } from "../../competences/state/devoirs";
+import { IDevoirsMatieresState } from "../../competences/state/devoirs";
 import { isHomeworkDone, homeworkDetailsAdapter } from "../../utils/cdt";
 import ChildPicker from "../containers/ChildPicker";
 
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
 
 type DashboardProps = {
   homeworks: any[];
-  evaluations: IDevoirListState;
+  evaluations: IDevoirsMatieresState;
   levels: ILevelsList;
   hasRightToCreateAbsence: boolean;
 } & INavigationProps;
@@ -185,8 +185,8 @@ export default class Dashboard extends React.PureComponent<DashboardProps> {
 
   // Get the 5 last added evaluations
   //Sort evaluations by dates, then by alphabetical order then by notes
-  getSortedEvaluationList = (evaluations: IDevoirListState) => {
-    return evaluations.data
+  getSortedEvaluationList = (evaluations: IDevoirsMatieresState) => {
+    return evaluations.data.devoirs
       .sort(
         (a, b) =>
           moment(b.date).diff(moment(a.date)) ||
@@ -196,12 +196,12 @@ export default class Dashboard extends React.PureComponent<DashboardProps> {
       .slice(0, 5);
   };
 
-  private renderLastEval(evaluations: IDevoirListState, levels: ILevelsList) {
-    const evaluationList = this.getSortedEvaluationList(evaluations);
+  private renderLastEval(evaluations: IDevoirsMatieresState, levels: ILevelsList) {
+    const evaluationList = evaluations ? this.getSortedEvaluationList(evaluations) : [];
     return (
       <View style={styles.dashboardPart}>
         <TextBold style={styles.title}>{I18n.t("viesco-lasteval")}</TextBold>
-        {evaluations && evaluations.data ? (
+        {evaluations && evaluations.data.devoirs ? (
           <DenseDevoirList devoirs={evaluationList} levels={levels} />
         ) : (
           <EmptyScreen
@@ -233,7 +233,7 @@ export default class Dashboard extends React.PureComponent<DashboardProps> {
         <ScrollView>
           {this.renderNavigationGrid()}
           {this.renderHomework(homeworks)}
-          {evaluations.isFetching ? <Loading /> : this.renderLastEval(evaluations, levels)}
+          {evaluations && evaluations.isFetching ? <Loading /> : this.renderLastEval(evaluations, levels)}
         </ScrollView>
       </View>
     );
