@@ -461,9 +461,9 @@ INewsContentPageProps,
             users={[
               (comment as INewsComment).owner ||
               (comment as IBlogComment).author && (comment as IBlogComment).author.userId ||
-              require("~assets/images/resource-avatar.png")
+              require("ASSETS/images/resource-avatar.png")
             ]}
-            fallback={require("~assets/images/resource-avatar.png")}
+            fallback={require("ASSETS/images/resource-avatar.png")}
           />
         </LeftPanel>
         <CenterPanel disabled>

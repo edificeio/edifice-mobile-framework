@@ -89,7 +89,7 @@ export class ContentSelectorPage_Unconnected extends React.PureComponent<IConten
           this.props.isPristine ?
             <Loading /> :
             <EmptyScreen
-              imageSrc={require("~assets/images/empty-screen/blog.png")}
+              imageSrc={require("ASSETS/images/empty-screen/blog.png")}
               imgWidth={265.98}
               imgHeight={279.97}
               text={I18n.t("blog-emptyScreenText")}
@@ -118,9 +118,9 @@ export class ContentSelectorPage_Unconnected extends React.PureComponent<IConten
         <GridAvatars 
           users={[item.thumbnail
             ? { headers: getAuthHeader(), uri: DEPRECATED_getCurrentPlatform()!.url + item.thumbnail}
-            : require("~assets/images/resource-avatar.png")
+            : require("ASSETS/images/resource-avatar.png")
           ]}
-          fallback={require("~assets/images/resource-avatar.png")}
+          fallback={require("ASSETS/images/resource-avatar.png")}
         />
       </LeftPanel>
       <CustomTouchableOpacity style={{ flexDirection: 'row', flex: 1 }} onPress={() => this.props.onContentSelected(item, postType)}>

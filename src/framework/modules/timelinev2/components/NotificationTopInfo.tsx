@@ -38,7 +38,7 @@ const NotificationTopInfo = ({ notification, session }: { notification: ITimelin
     <Header>
       <LeftPanel>
         <BadgeAvatar
-          avatars={[sender || require("~assets/images/system-avatar.png")]}
+          avatars={[sender || require("ASSETS/images/system-avatar.png")]}
           badgeContent={APPBADGES[type] && APPBADGES[type].icon}
           badgeColor={APPBADGES[type] && APPBADGES[type].color} // ToDo fix type here
           customStyle={{left: undefined, right: 0}}

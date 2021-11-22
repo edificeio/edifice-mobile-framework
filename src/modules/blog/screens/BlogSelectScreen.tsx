@@ -137,7 +137,7 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
   renderEmpty() {
     return (
       <EmptyScreen
-        imageSrc={require("~assets/images/empty-screen/blog.png")}
+        imageSrc={require("ASSETS/images/empty-screen/blog.png")}
         imgWidth={265.98}
         imgHeight={279.97}
         title={I18n.t("blog.blogSelectScreen.emptyScreenTitle")}
@@ -174,9 +174,9 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
                 users={[
                   blog.thumbnail
                     ? { headers: getAuthHeader(), uri: DEPRECATED_getCurrentPlatform()!.url + blog.thumbnail }
-                    : require("~assets/images/resource-avatar.png"),
+                    : require("ASSETS/images/resource-avatar.png"),
                 ]}
-                fallback={require("~assets/images/resource-avatar.png")}
+                fallback={require("ASSETS/images/resource-avatar.png")}
               />
               <View style={{ flex: 1, marginLeft: 10 }}>
                 <TextSemiBold numberOfLines={1}>{blog.title}</TextSemiBold>

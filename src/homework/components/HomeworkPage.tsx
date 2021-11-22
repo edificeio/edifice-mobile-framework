@@ -240,7 +240,7 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
           ListFooterComponent={noFutureHomeworkHiddenPast ? null : <View style={{height: 15}}/>}
           ListEmptyComponent={noFutureHomeworkHiddenPast
             ? <EmptyScreen
-                imageSrc={require("~assets/images/empty-screen/homework.png")}
+                imageSrc={require("ASSETS/images/empty-screen/homework.png")}
                 imgWidth={265.98}
                 imgHeight={279.97}
                 text={I18n.t(`homework-${hasNoDiaries ? "diaries" : "tasks"}-emptyScreenText`)}

@@ -5,7 +5,7 @@
 
 import { TextProps } from "react-native";
 import { createIconSetFromIcoMoon } from "react-native-vector-icons";
-const icoMoonConfig = require("~assets/selection.json");
+const icoMoonConfig = require("ASSETS/selection.json");
 
 // console.log("Loaded icon set:", icoMoonConfig);
 console.log("[Icon] Loaded icon set");

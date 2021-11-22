@@ -191,7 +191,7 @@ export class Avatar extends React.Component<
   }
 
   renderNoAvatar(width) {
-    const noAvatarImage = this.props.fallback || require("~assets/images/no-avatar.png");
+    const noAvatarImage = this.props.fallback || require("ASSETS/images/no-avatar.png");
     if (this.props.size === Size.large || this.count === 1) {
       return (
         <LargeContainer style={{ width: width, height: width }}>
@@ -236,7 +236,7 @@ export class Avatar extends React.Component<
         <LargeContainer style={{ width: width, height: width }}>
           <LargeImage
             style={{ width: width, height: width }}
-            source={require("~assets/images/group-avatar.png")}
+            source={require("ASSETS/images/group-avatar.png")}
           />
         </LargeContainer>
       );
@@ -244,7 +244,7 @@ export class Avatar extends React.Component<
       return (
         <AlignedContainer index={this.props.index}>
           <AlignedImage
-            source={require("~assets/images/group-avatar.png")}
+            source={require("ASSETS/images/group-avatar.png")}
           />
         </AlignedContainer>
       );
@@ -253,7 +253,7 @@ export class Avatar extends React.Component<
         <VLContainer>
           <VeryLargeImage
             decorate={this.decorate}
-            source={require("~assets/images/group-avatar.png")}
+            source={require("ASSETS/images/group-avatar.png")}
           />
         </VLContainer>
       );
@@ -262,7 +262,7 @@ export class Avatar extends React.Component<
         <SmallContainer count={this.props.count || 1} index={this.props.index}>
           <SmallImage
             count={this.props.count || 1}
-            source={require("~assets/images/group-avatar.png")}
+            source={require("ASSETS/images/group-avatar.png")}
           />
         </SmallContainer>
       );
@@ -292,7 +292,7 @@ export class Avatar extends React.Component<
     // but react native image should use header cache control like most of browsers so we may not need it
     // see more at: https://blog.rangle.io/image-caching-in-react-native/
     const sharedProps: Partial<ImageProps> = {
-      defaultSource: this.props.fallback || require("~assets/images/no-avatar.png"),
+      defaultSource: this.props.fallback || require("ASSETS/images/no-avatar.png"),
 
       onError: () => {
         this.setState({ status: "failed" });

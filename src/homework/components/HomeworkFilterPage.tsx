@@ -149,7 +149,7 @@ export class HomeworkFilterPage extends React.PureComponent<
         }
         ListEmptyComponent={
           <EmptyScreen
-            imageSrc={require("~assets/images/empty-screen/homework.png")}
+            imageSrc={require("ASSETS/images/empty-screen/homework.png")}
             imgWidth={265.98}
             imgHeight={279.97}
             text={I18n.t("homework-diaries-emptyScreenText")}

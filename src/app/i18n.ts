@@ -14,15 +14,15 @@ import { unflatten } from 'flat';
 
 // Built-in translations
 const builtInTranslations = {
-    fr: require("~assets/i18n/fr.json"),
-    en: require("~assets/i18n/en.json"),
-    es: require("~assets/i18n/es.json")
+    fr: require("ASSETS/i18n/fr.json"),
+    en: require("ASSETS/i18n/en.json"),
+    es: require("ASSETS/i18n/es.json")
 }
 // Overrides translations
 const overrideTranslations = {
-    fr: require("~assets/i18n/override/fr.json"),
-    en: require("~assets/i18n/override/en.json"),
-    es: require("~assets/i18n/override/es.json"),
+    fr: require("ASSETS/i18n/override/fr.json"),
+    en: require("ASSETS/i18n/override/en.json"),
+    es: require("ASSETS/i18n/override/es.json"),
 }
 // Finale translations
 const finaleTranslations = Object.fromEntries(Object.keys(builtInTranslations).map(

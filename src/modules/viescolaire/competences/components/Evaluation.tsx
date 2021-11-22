@@ -178,7 +178,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
           <GradesDevoirsMoyennes devoirs={devoirs} />
         ) : (
           <EmptyScreen
-            imageSrc={require("~assets/images/empty-screen/empty-evaluations.png")}
+            imageSrc={require("ASSETS/images/empty-screen/empty-evaluations.png")}
             imgWidth={265}
             imgHeight={280}
             title={I18n.t("viesco-eval-EmptyScreenText")}
@@ -230,7 +230,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
           <GradesDevoirs devoirs={devoirs} color={switchValue !== SwitchState.DEFAULT} levels={levels} />
         ) : (
           <EmptyScreen
-            imageSrc={require("~assets/images/empty-screen/empty-evaluations.png")}
+            imageSrc={require("ASSETS/images/empty-screen/empty-evaluations.png")}
             imgWidth={265}
             imgHeight={280}
             title={I18n.t("viesco-eval-EmptyScreenText")}

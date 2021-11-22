@@ -226,7 +226,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
             ) : (
               <View style={{ flex: 1 }}>
                 <EmptyScreen
-                  imageSrc={require("~assets/images/empty-screen/empty-mailBox.png")}
+                  imageSrc={require("ASSETS/images/empty-screen/empty-mailBox.png")}
                   imgWidth={265.98}
                   imgHeight={279.97}
                   title={I18n.t("zimbra-empty-mailbox")}

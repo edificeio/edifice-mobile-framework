@@ -225,8 +225,8 @@ export class BlogPostDetailsScreen extends React.PureComponent<
         style={{ justifyContent: "flex-start", backgroundColor: theme.color.secondary.extraLight }}
         leftElement={
           <GridAvatars
-            users={[blogPostComment.author.userId || require("~assets/images/resource-avatar.png")]}
-            fallback={require("~assets/images/resource-avatar.png")}
+            users={[blogPostComment.author.userId || require("ASSETS/images/resource-avatar.png")]}
+            fallback={require("ASSETS/images/resource-avatar.png")}
           />
         }
         rightElement={

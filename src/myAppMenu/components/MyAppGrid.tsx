@@ -74,7 +74,7 @@ class MyAppGrid extends React.PureComponent<{ navigation: NavigationScreenProp<N
             <InfoBubble
               infoText={I18n.t("myapp-infoBubbleText", {appName: DeviceInfo.getApplicationName()})}
               infoTitle={I18n.t("myapp-infoBubbleTitle")}
-              infoImage={require("~assets/images/my-apps-infobubble.png")}
+              infoImage={require("ASSETS/images/my-apps-infobubble.png")}
               infoBubbleType="floating"
               infoBubbleId="myAppsScreen.redirect"
             />
@@ -87,7 +87,7 @@ class MyAppGrid extends React.PureComponent<{ navigation: NavigationScreenProp<N
   private renderEmpty() {
     return (
       <EmptyScreen
-        imageSrc={require("~assets/images/empty-screen/homework.png")}
+        imageSrc={require("ASSETS/images/empty-screen/homework.png")}
         imgWidth={407}
         imgHeight={319}
         text={I18n.t("myapp-emptyScreenText")}

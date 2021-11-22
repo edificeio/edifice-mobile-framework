@@ -226,8 +226,8 @@ export class NewsDetailsScreen extends React.PureComponent<
         style={{ justifyContent: "flex-start", backgroundColor: theme.color.secondary.extraLight }}
         leftElement={
           <GridAvatars
-            users={[newsComment.owner || require("~assets/images/resource-avatar.png")]}
-            fallback={require("~assets/images/resource-avatar.png")}
+            users={[newsComment.owner || require("ASSETS/images/resource-avatar.png")]}
+            fallback={require("ASSETS/images/resource-avatar.png")}
           />
         }
         rightElement={

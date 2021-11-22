@@ -216,7 +216,7 @@ export class TimelineScreen extends React.PureComponent<
   renderEmpty() {
     return (
       <EmptyScreen
-        imageSrc={require("~assets/images/empty-screen/timeline.png")}
+        imageSrc={require("ASSETS/images/empty-screen/timeline.png")}
         imgWidth={407}
         imgHeight={319}
         title={I18n.t("timeline.emptyScreenTitle")}

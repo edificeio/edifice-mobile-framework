@@ -156,7 +156,7 @@ class Timeline extends React.Component<ITimelineProps, ITimelineState> {
         ListEmptyComponent={
           !isFetching && endReached ?
             <EmptyScreen
-              imageSrc={require("~assets/images/empty-screen/timeline.png")}
+              imageSrc={require("ASSETS/images/empty-screen/timeline.png")}
               imgWidth={407}
               imgHeight={319}
               text={I18n.t("timeline-emptyScreenText")}
