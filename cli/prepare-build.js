@@ -9,7 +9,7 @@
 //
 // Update:
 //   - package.json
-//   - version.json
+//   - prepare-build.json
 //   - android/app/build.gradle
 //   - ios/appe/Info.plist'
 //
@@ -20,7 +20,7 @@ const fs = require('fs');
 const gradleFile = 'android/app/build.gradle';
 const packageFile = 'package.json';
 const plistFile = 'ios/appe/Info.plist';
-const versionFile = 'cli/version.json';
+const versionFile = 'cli/prepare-build.json';
 
 //
 // Check arguments
@@ -35,7 +35,7 @@ if (!['alpha', 'rc', 'major', 'minor', 'rev'].includes(buildType)) {
 console.info(`==> Will prepare ${buildType} build`);
 
 //
-// Read version.json
+// Read prepare-build.json
 //
 
 let versionContent = null;
@@ -43,7 +43,7 @@ let versionContent = null;
 try {
   versionContent = JSON.parse(fs.readFileSync(versionFile, 'utf-8'));
 } catch (error) {
-  console.error('!!! Unable to read version.json !!!');
+  console.error('!!! Unable to read prepare-build.json !!!');
   console.log(error);
   process.exit(2);
 }
@@ -99,14 +99,14 @@ try {
 }
 
 //
-// Write new content to version.json
+// Write new content to prepare-build.json
 //
 
 try {
   fs.writeFileSync(versionFile, JSON.stringify(versionContent, null, 2), 'utf-8');
-  console.info('==> version.json file updated');
+  console.info('==> prepare-build.json file updated');
 } catch (error) {
-  console.error('!!! Unable to write version.json !!!');
+  console.error('!!! Unable to write prepare-build.json !!!');
   console.log(error);
   process.exit(4);
 }
@@ -220,7 +220,7 @@ try {
 }
 
 //
-// Write new content to version.json
+// Write new content to prepare-build.json
 //
 
 try {
