@@ -235,7 +235,7 @@ try {
 //
 // Commit && Push changes
 //
-/*try {
+try {
   execSync(`git add -A`);
   execSync(`git commit -m "release: ${fullVersion}"`);
   execSync('git push');
@@ -243,4 +243,4 @@ try {
   console.error('!!! Unable to commit && push changes !!!');
   console.log(error);
   process.exit(11);
-}*/
+}
