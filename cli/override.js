@@ -302,7 +302,9 @@ async function _git_lsLocalInfo() {
 
 async function _git_isLocalRepoUpToDateForBranch(uri, branch, username, password) {
     const remoteInfo = await _git_lsRemoteInfo(uri, username, password);
+    console.log("remoteInfo", remoteInfo);
     const localInfo = await _git_lsLocalInfo();
+    console.log("localInfo", localInfo);
     return localInfo && localInfo[branch] && (remoteInfo[branch] === localInfo[branch]);
 }
 
@@ -311,7 +313,8 @@ async function _git_getAvailableBranchName(uri, branch, username, password) {
     if (!remoteInfo[branch]) {
         const ode = await _ode_getPackageJsonOde();
         const defaultBranch = ode['override']['defaultBranch'] || 'master';
-        opts.verbose && console.log(`Branch "${branch}" does not exists. Using "${defaultBranch}" instead.`)
+        console.log(`  Branch "${branch}" does not exists. Using "${defaultBranch}" instead.`);
+        return defaultBranch;
     }
     return branch;
 }
@@ -326,7 +329,7 @@ async function _git_CloneRepository(uri, branch, username, password) {
         const fullUri = _git_getRepoUri(uri, username, password);
 
         await new Promise((resolve, reject) => {
-            const gitProcess = spawn('git', ['clone', '--progress', '--single-branch', '--branch', branch, fullUri, _overrides_localRepoPath]);
+            const gitProcess = spawn('git', ['clone', '--progress', '--branch', branch, fullUri, _overrides_localRepoPath]);
             gitProcess.on('exit', code => resolve(code));
             gitProcess.on('error', err => reject(err));
             !opts.quiet && gitProcess.stdout.on('data', data => process.stdout.write(data.toString().replace(/(.+)/g, '  $1')));
@@ -348,18 +351,17 @@ async function _git_pullRepository(uri, branch, username, password) {
             return _git_CloneRepository(uri, branch, username, password);
         }
 
-        // Case 2 : local overrides are up to date
+        // Case 2 : local overrides are present AND they are up to date
         if (await _git_isLocalRepoUpToDateForBranch(uri, branch, username, password)) {
             !opts.quiet && console.log(`  Overrides are up to date for branch ${branch}.`);
             return _overrides_localRepoPath;
         }
 
-        // Case 3 : local overrides needs pull
+        // Case 3 : local overrides are present and are NOT up to date.
         !opts.quiet && console.log(`  Overrides needs to be updated for branch ${branch}.`);
         const remote = await _git_getRemoteName();
-
         await new Promise((resolve, reject) => {
-            const gitProcess = spawn('git', ['fetch', '--progress', remote, branch], {cwd: _overrides_localRepoPath});
+            const gitProcess = spawn('git', ['fetch', '--progress', remote, branch], { cwd: _overrides_localRepoPath });
             gitProcess.on('exit', code => resolve(code));
             gitProcess.on('error', err => reject(err));
             !opts.quiet && gitProcess.stdout.on('data', data => process.stdout.write(data.toString().replace(/(.+)/g, '  $1')));
@@ -391,6 +393,9 @@ async function _override_computeStack(overridesPathAbsolute, overrideNames) {
     let ret = new Set();
     const recurse = async (current) => {
         let stack = new Set();
+        if (!fs.existsSync(path.join(overridesPathAbsolute, current, _override_entryPoint))) {
+            throw new Error(`Override "${current}" needed but doesn't exists in pulled overrides.`);
+        }
         stack.add(current);
         const content = await readFile(path.join(overridesPathAbsolute, current, _override_entryPoint));
         const overrideJson = JSON.parse(content);
@@ -731,7 +736,7 @@ async function _override_performUnlock() {
  * removes overrides cache
  */
 function _override_performClean() {
-    (fs.existsSync(_overrides_localRepoPath)) && fs.rmdirSync(_overrides_localRepoPath, { force: true, recursive: true });
+    (fs.existsSync(_overrides_localRepoPath)) && fs.rmSync(_overrides_localRepoPath, { force: true, recursive: true });
     opts['verbose'] && console.log("Overrides cache has been removed.")
 }
 
@@ -789,57 +794,63 @@ async function _override_performApply(overrideNames, given_uri, given_branch, gi
  * Parse command args & execute
  */
 const main = () => {
-    yargs.command(
-        ['$0 [overrides..]', 'apply [overrides..]'],
-        'fetch and applies an override to the current working copy',
-        yargs => {
-            yargs.positional('overrides', {
-                type: 'string',
-                describe: "name of the override to switch to. Can apply multiple overrides at once",
-            }).option('uri', {
-                type: 'string',
-                describe: 'uri of the git repo (uri could include password and username)',
-                alias: 'h',
-            }).option('branch', {
-                type: 'string',
-                describe: 'branch of the git repo',
-                alias: 'b',
-            }).option('username', {
-                type: 'string',
-                describe: 'username of the git repo',
-                alias: 'u',
-            }).option('password', {
-                type: 'string',
-                describe: 'password of the git repo',
-                alias: 'p',
-            }).option('verbose', {
-                type: 'boolean',
-                describe: 'print apply information into stdout',
-                alias: 'v',
-            }).option('quiet', {
-                type: 'boolean',
-                describe: 'do not print anything not needed.',
-                alias: 'q',
-            }).option('local', {
-                type: 'boolean',
-                describe: 'use this to assume previously cloned overrides are up to date.',
-            }).option('lock', {
-                type: 'boolean',
-                describe: 'lock override after apply so modified files won\'t show in git status.',
-                alias: 'l'
-            }).option('message', {
-                type: 'string',
-                describe: 'use as stash message (if used with stash subcommand)',
-                alias: 'm'
-            }).option('clean', {
-                type: 'boolean',
-                describe: 'Remove overrides cache to force clone again',
-                alias: 'c'
-            });
-        },
-        argv => {
-            opts = argv;
-            try {
+    yargs
+        .showHelpOnFail(false, 'Specify --help for available options')
+        .fail(function (msg, err, yargs) {
+            msg && console.error(msg);
+            console.error(err);
+            process.exit(1);
+        })
+        .command(
+            ['$0 [overrides..]', 'apply [overrides..]'],
+            'fetch and applies an override to the current working copy',
+            yargs => {
+                yargs.positional('overrides', {
+                    type: 'string',
+                    describe: "name of the override to switch to. Can apply multiple overrides at once",
+                }).option('uri', {
+                    type: 'string',
+                    describe: 'uri of the git repo (uri could include password and username)',
+                    alias: 'h',
+                }).option('branch', {
+                    type: 'string',
+                    describe: 'branch of the git repo',
+                    alias: 'b',
+                }).option('username', {
+                    type: 'string',
+                    describe: 'username of the git repo',
+                    alias: 'u',
+                }).option('password', {
+                    type: 'string',
+                    describe: 'password of the git repo',
+                    alias: 'p',
+                }).option('verbose', {
+                    type: 'boolean',
+                    describe: 'print apply information into stdout',
+                    alias: 'v',
+                }).option('quiet', {
+                    type: 'boolean',
+                    describe: 'do not print anything not needed.',
+                    alias: 'q',
+                }).option('local', {
+                    type: 'boolean',
+                    describe: 'use this to assume previously cloned overrides are up to date.',
+                }).option('lock', {
+                    type: 'boolean',
+                    describe: 'lock override after apply so modified files won\'t show in git status.',
+                    alias: 'l'
+                }).option('message', {
+                    type: 'string',
+                    describe: 'use as stash message (if used with stash subcommand)',
+                    alias: 'm'
+                }).option('clean', {
+                    type: 'boolean',
+                    describe: 'Remove overrides cache to force clone again',
+                    alias: 'c'
+                });
+            },
+            argv => {
+                opts = argv;
                 if (argv.overrides && argv.overrides.length === 1) {
                     if (argv.overrides[0] === 'restore') return _override_performRestoreCurrent();
                     else if (argv.overrides[0] === 'lock') return _override_performLock();
@@ -848,121 +859,92 @@ const main = () => {
                     else if (argv.overrides[0] === 'clean') return _override_performClean();
                 }
                 return _override_performApply(argv.overrides, argv.uri, argv.branch, argv.username, argv.password);
-            } catch (e) {
-                console.error('OH NO ! Override command failed !');
-                console.error(e); exit();
-            }
-        },
-    ).command(
-        'restore',
-        'remove modifications caused by the current override',
-        yargs => {
-            yargs.option('verbose', {
-                type: 'boolean',
-                describe: 'print restore information into stdout',
-                alias: 'v',
-            }).option('quiet', {
-                type: 'boolean',
-                describe: 'do not print anything not needed.',
-                alias: 'q',
-            });
-        },
-        argv => {
-            opts = argv;
-            try {
+            },
+        ).command(
+            'restore',
+            'remove modifications caused by the current override',
+            yargs => {
+                yargs.option('verbose', {
+                    type: 'boolean',
+                    describe: 'print restore information into stdout',
+                    alias: 'v',
+                }).option('quiet', {
+                    type: 'boolean',
+                    describe: 'do not print anything not needed.',
+                    alias: 'q',
+                });
+            },
+            argv => {
+                opts = argv;
                 _override_performRestoreCurrent();
-            } catch (e) {
-                console.error('OH NO ! Override command failed !');
-                console.error(e); exit();
-            }
-        },
-    ).command(
-        'stash',
-        'shash modifications caused by the current override',
-        yargs => {
-            yargs.option('verbose', {
-                type: 'boolean',
-                describe: 'print restore information into stdout',
-                alias: 'v',
-            }).option('quiet', {
-                type: 'boolean',
-                describe: 'do not print anything not needed.',
-                alias: 'q',
-            }).option('message', {
-                type: 'string',
-                describe: 'use as stash message',
-                alias: 'm'
-            });
-        },
-        argv => {
-            opts = argv;
-            try {
+            },
+        ).command(
+            'stash',
+            'shash modifications caused by the current override',
+            yargs => {
+                yargs.option('verbose', {
+                    type: 'boolean',
+                    describe: 'print restore information into stdout',
+                    alias: 'v',
+                }).option('quiet', {
+                    type: 'boolean',
+                    describe: 'do not print anything not needed.',
+                    alias: 'q',
+                }).option('message', {
+                    type: 'string',
+                    describe: 'use as stash message',
+                    alias: 'm'
+                });
+            },
+            argv => {
+                opts = argv;
                 _override_performStashCurrent(argv.message);
-            } catch (e) {
-                console.error('OH NO ! Override command failed !');
-                console.error(e); exit();
-            }
-        },
-    ).command(
-        'lock',
-        'Hides overrided files from git status',
-        yargs => {
-            yargs.option('verbose', {
-                type: 'boolean',
-                describe: 'print restore information into stdout',
-                alias: 'v',
-            }).option('quiet', {
-                type: 'boolean',
-                describe: 'do not print anything not needed.',
-                alias: 'q',
-            })
-        },
-        argv => {
-            opts = argv;
-            try {
+            },
+        ).command(
+            'lock',
+            'Hides overrided files from git status',
+            yargs => {
+                yargs.option('verbose', {
+                    type: 'boolean',
+                    describe: 'print restore information into stdout',
+                    alias: 'v',
+                }).option('quiet', {
+                    type: 'boolean',
+                    describe: 'do not print anything not needed.',
+                    alias: 'q',
+                })
+            },
+            argv => {
+                opts = argv;
                 _override_performLock();
-            } catch (e) {
-                console.error('OH NO ! Override command failed !');
-                console.error(e); exit();
-            }
-        },
-    ).command(
-        'unlock',
-        'Reveal hidden overrided files from git status',
-        yargs => {
-            yargs.option('verbose', {
-                type: 'boolean',
-                describe: 'print restore information into stdout',
-                alias: 'v',
-            }).option('quiet', {
-                type: 'boolean',
-                describe: 'do not print anything not needed.',
-                alias: 'q',
-            })
-        },
-        argv => {
-            opts = argv;
-            try {
+            },
+        ).command(
+            'unlock',
+            'Reveal hidden overrided files from git status',
+            yargs => {
+                yargs.option('verbose', {
+                    type: 'boolean',
+                    describe: 'print restore information into stdout',
+                    alias: 'v',
+                }).option('quiet', {
+                    type: 'boolean',
+                    describe: 'do not print anything not needed.',
+                    alias: 'q',
+                })
+            },
+            argv => {
+                opts = argv;
                 _override_performUnlock();
-            } catch (e) {
-                console.error('OH NO ! Override command failed !');
-                console.error(e); exit();
-            }
-        },
-    ).command(
-        'clean',
-        'Remove overrides cache',
-        yargs => {},
-        argv => {
-            opts = argv;
-            try {
+            },
+        ).command(
+            'clean',
+            'Remove overrides cache',
+            yargs => { },
+            argv => {
+                opts = argv;
                 _override_performClean();
-            } catch (e) {
-                console.error('OH NO ! Override command failed !');
-                console.error(e); exit();
-            }
-        },
-    ).argv;
+            },
+        ).argv;
 }
 
 // Init local repo values
