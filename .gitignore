@@ -80,6 +80,9 @@ buck-out/
 ; ios/appe/Assets.xcassets/LaunchScreen.Center.imageset
 ; assets/icons/*
 
+/assets/icons
+/ode-framework-conf.ts
+
 # Asset bundles
 ios/assets
 ios/appe/main.jsbundle
@@ -102,3 +105,4 @@ yarn.lock
 # Overrides
 __overrides__
 __stashSpec__
+
