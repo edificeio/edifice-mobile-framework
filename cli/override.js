@@ -217,11 +217,11 @@ async function askOverrideName(overridesPathAbsolute, overrideName) {
             message: 'What override to apply?',
             validate: value => value && value.trim().length > 0,
         });
-        overrideName = overrideName || res.overrideName;
+        overrideName = overrideName || [res.overrideName];
     }
-    const overridePathAbsolute = path.join(overridesPathAbsolute, overrideName);
-    if (!fs.statSync(overridePathAbsolute).isDirectory) {
-        throw new Error(`Override "${overrideName}" doest not exists in given repository`);
+    const overridePathAbsolute = overrideName.map(ov => path.join(overridesPathAbsolute, ov));
+    if (!overridePathAbsolute.every(ovpath => fs.existsSync(ovpath) && fs.statSync(ovpath).isDirectory())) {
+        throw new Error(`Overrides "${overrideName}" doest not exists in given repository`);
     }
     return overrideName;
 }
@@ -350,12 +350,12 @@ async function _git_pullRepository(uri, branch, username, password) {
 
         // Case 2 : local overrides are up to date
         if (await _git_isLocalRepoUpToDateForBranch(uri, branch, username, password)) {
-            !opts.quiet && console.log("  Overrides are up to date for branch.");
+            !opts.quiet && console.log(`  Overrides are up to date for branch ${branch}.`);
             return _overrides_localRepoPath;
         }
 
         // Case 3 : local overrides needs pull
-        !opts.quiet && console.log("  Overrides needs to be updated for branch.");
+        !opts.quiet && console.log(`  Overrides needs to be updated for branch ${branch}.`);
         const remote = await _git_getRemoteName();
 
         await new Promise((resolve, reject) => {
@@ -385,19 +385,24 @@ async function _git_pullRepository(uri, branch, username, password) {
  * Walk up all the parents of the given override and returns all the override names.
  * Beware not have circular dependencies !
  */
-async function _override_computeStack(overridesPathAbsolute, overrideName) {
-    overrideName = await askOverrideName(overridesPathAbsolute, overrideName);
-    let current = undefined;
-    let parent = overrideName;
-    let stack = new Set();
-    do {
-        current = parent;
+async function _override_computeStack(overridesPathAbsolute, overrideNames) {
+    overrideNames = await askOverrideName(overridesPathAbsolute, overrideNames);
+
+    let ret = new Set();
+    const recurse = async (current) => {
+        let stack = new Set();
         stack.add(current);
         const content = await readFile(path.join(overridesPathAbsolute, current, _override_entryPoint));
         const overrideJson = JSON.parse(content);
-        parent = overrideJson && overrideJson['parent'];
-    } while (parent);
-    return [...stack].reverse();
+        const parents = overrideJson && [
+            ...(overrideJson['parent'] ? [overrideJson['parent']] : []),
+            ...(overrideJson['parents'] || [])
+        ];
+        for (const p of parents) { await recurse(p) }
+        [...stack].reverse().forEach(v => ret.add(v));
+    };
+    for (const o of overrideNames) { await recurse(o) }
+    return ret;
 }
 
 /**
@@ -733,13 +738,17 @@ function _override_performClean() {
 /**
  * Apply the override of the given name.
  */
-async function _override_performApply(overrideName, given_uri, given_branch, given_username, given_password) {
+async function _override_performApply(overrideNames, given_uri, given_branch, given_username, given_password) {
+    const computedOverrideNames = overrideNames && overrideNames.map(ons => ons.split(/\s+/)).flat();
     if (opts['clean']) { _override_performClean(); }
     let { uri, branch, username, password } = !opts.local && await askRepository(given_uri, given_branch, given_username, given_password);
     branch = await _git_getAvailableBranchName(uri, branch, username, password);
     const overridesPath = await _git_pullRepository(uri, branch, username, password);
-    const overrideStack = await _override_computeStack(overridesPath, overrideName);
     const allFilesCopied = {};
+
+    // Compute stack
+
+    const overrideStack = await _override_computeStack(overridesPath, computedOverrideNames);
 
     // 0. Restore previous override if any
 
@@ -751,7 +760,11 @@ async function _override_performApply(overrideName, given_uri, given_branch, giv
     for (override of overrideStack) {
         opts.verbose && console.log("Applying override", override);
         const filesCopied = await _override_performCopyMerge(overridesPath, override);
-        Object.assign(allFilesCopied, Object.fromEntries(filesCopied.map(cp => cp.reverse())));
+
+        // Merge files information
+        Object.assign(allFilesCopied, Object.fromEntries(
+            filesCopied.map(([cpto, cpfrom]) => [cpfrom, [...(allFilesCopied[cpfrom] || []), cpto]])
+        ));
     }
 
     // 2. Update native project files
@@ -777,12 +790,12 @@ async function _override_performApply(overrideName, given_uri, given_branch, giv
  */
 const main = () => {
     yargs.command(
-        ['$0 [override]', 'apply [override]'],
+        ['$0 [overrides..]', 'apply [overrides..]'],
         'fetch and applies an override to the current working copy',
         yargs => {
-            yargs.positional('override', {
+            yargs.positional('overrides', {
                 type: 'string',
-                describe: "name of the override to switch to",
+                describe: "name of the override to switch to. Can apply multiple overrides at once",
             }).option('uri', {
                 type: 'string',
                 describe: 'uri of the git repo (uri could include password and username)',
@@ -827,12 +840,14 @@ const main = () => {
         argv => {
             opts = argv;
             try {
-                if (argv.override === 'restore') _override_performRestoreCurrent();
-                else if (argv.override === 'lock') _override_performLock();
-                else if (argv.override === 'unlock') _override_performUnlock();
-                else if (argv.override === 'stash') _override_performStashCurrent(argv.message);
-                else if (argv.override === 'clean') _override_performClean();
-                else _override_performApply(argv.override, argv.uri, argv.branch, argv.username, argv.password);
+                if (argv.overrides && argv.overrides.length === 1) {
+                    if (argv.overrides[0] === 'restore') return _override_performRestoreCurrent();
+                    else if (argv.overrides[0] === 'lock') return _override_performLock();
+                    else if (argv.overrides[0] === 'unlock') return _override_performUnlock();
+                    else if (argv.overrides[0] === 'stash') return _override_performStashCurrent(argv.message);
+                    else if (argv.overrides[0] === 'clean') return _override_performClean();
+                }
+                return _override_performApply(argv.overrides, argv.uri, argv.branch, argv.username, argv.password);
             } catch (e) {
                 console.error('OH NO ! Override command failed !');
                 console.error(e); exit();
