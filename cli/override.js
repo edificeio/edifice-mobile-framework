@@ -163,16 +163,19 @@ async function askRepository(uri, branch, username, password) {
     const ode = await _ode_getPackageJsonOde();
     const currentBranch = await _git_getCurrentBranchName();
 
+    const defaultUri = ode['override']['url'];
+    const defaultBranch = currentBranch || ode['override']['defaultBranch'];
+
     // 0. Asks for default parameters
-    if (uri === 'default') uri = ode['override']['url'];
-    if (branch === 'default') branch = currentBranch || ode['override']['defaultBranch'];
+    if (uri === 'default') uri = defaultUri;
+    if (branch === 'default') branch = defaultBranch;
 
     // 1. Format paramaters
     const asks = [{
         name: 'uri',
         type: 'text',
         required: true,
-        initial: ode['override']['url'] || '',
+        initial: defaultUri || '',
         message: 'What is the repository URL?',
         validate: value => value && value.trim().length > 0,
     },
@@ -180,7 +183,7 @@ async function askRepository(uri, branch, username, password) {
         name: 'branch',
         type: 'text',
         message: 'What branch to pull?       ',
-        initial: currentBranch || ode['override']['defaultBranch'] || '',
+        initial: defaultBranch || '',
     },
     {
         type: 'text',
@@ -192,38 +195,42 @@ async function askRepository(uri, branch, username, password) {
         type: 'password',
         message: "What is your password?     ",
     }];
-    const needToAsk = Object.entries({ uri, branch, username, password })
+    let needToAsk = Object.entries({ uri, branch, username, password })
         .filter(([k, v]) => !v)
         .map(([k, v]) => asks.find(a => a.name === k));
 
-    let response = await prompts(needToAsk);
-    uri = uri || response.uri;
-    branch = branch || response.branch;
-    username = username || response.username;
-    password = password || response.password;
-
+    if (opts.interactive) {
+        let response = await prompts(needToAsk);
+        uri = uri || response.uri;
+        branch = branch || response.branch;
+        username = username || response.username;
+        password = password || response.password;
+    } else {
+        uri = uri || defaultUri;
+        branch = branch || defaultBranch;
+    }
     return { uri, branch, username, password };
 }
 
 /**
  * Ask for override name to apply if the value is not provided as an argument.
  */
-async function askOverrideName(overridesPathAbsolute, overrideName) {
-    if (!overrideName) {
+async function askOverrideNames(overridesPathAbsolute, overrideNames) {
+    if (!overrideNames && opts.interactive) {
         const res = await prompts({
-            name: 'overrideName',
+            name: 'overrideNames',
             type: 'text',
             required: true,
             message: 'What override to apply?',
             validate: value => value && value.trim().length > 0,
         });
-        overrideName = overrideName || [res.overrideName];
+        overrideNames = overrideNames || res.overrideNames.split(/\s/);
     }
-    const overridePathAbsolute = overrideName.map(ov => path.join(overridesPathAbsolute, ov));
+    const overridePathAbsolute = overrideNames.map(ov => path.join(overridesPathAbsolute, ov));
     if (!overridePathAbsolute.every(ovpath => fs.existsSync(ovpath) && fs.statSync(ovpath).isDirectory())) {
-        throw new Error(`Overrides "${overrideName}" doest not exists in given repository`);
+        throw new Error(`Overrides "${overrideNames}" doest not exists in given repository`);
     }
-    return overrideName;
+    return overrideNames;
 }
 
 // ================================================================================================
@@ -302,9 +309,9 @@ async function _git_lsLocalInfo() {
 
 async function _git_isLocalRepoUpToDateForBranch(uri, branch, username, password) {
     const remoteInfo = await _git_lsRemoteInfo(uri, username, password);
-    console.log("remoteInfo", remoteInfo);
+    // console.log("remoteInfo", remoteInfo);
     const localInfo = await _git_lsLocalInfo();
-    console.log("localInfo", localInfo);
+    // console.log("localInfo", localInfo);
     return localInfo && localInfo[branch] && (remoteInfo[branch] === localInfo[branch]);
 }
 
@@ -388,8 +395,6 @@ async function _git_pullRepository(uri, branch, username, password) {
  * Beware not have circular dependencies !
  */
 async function _override_computeStack(overridesPathAbsolute, overrideNames) {
-    overrideNames = await askOverrideName(overridesPathAbsolute, overrideNames);
-
     let ret = new Set();
     const recurse = async (current) => {
         let stack = new Set();
@@ -744,7 +749,7 @@ function _override_performClean() {
  * Apply the override of the given name.
  */
 async function _override_performApply(overrideNames, given_uri, given_branch, given_username, given_password) {
-    const computedOverrideNames = overrideNames && overrideNames.map(ons => ons.split(/\s+/)).flat();
+    let computedOverrideNames = overrideNames && overrideNames.map(ons => ons.split(/\s+/)).flat();
     if (opts['clean']) { _override_performClean(); }
     let { uri, branch, username, password } = !opts.local && await askRepository(given_uri, given_branch, given_username, given_password);
     branch = await _git_getAvailableBranchName(uri, branch, username, password);
@@ -753,6 +758,7 @@ async function _override_performApply(overrideNames, given_uri, given_branch, gi
 
     // Compute stack
 
+    if (!computedOverrideNames) computedOverrideNames = await askOverrideNames(overridesPathAbsolute, overrideNames);
     const overrideStack = await _override_computeStack(overridesPath, computedOverrideNames);
 
     // 0. Restore previous override if any
@@ -847,6 +853,11 @@ const main = () => {
                     type: 'boolean',
                     describe: 'Remove overrides cache to force clone again',
                     alias: 'c'
+                }).option('interactive', {
+                    type: 'boolean',
+                    describe: 'Enables/disables user prompts. When "-no-prompt" is given, if required info is not provided, executions fails. (Default true)',
+                    alias: 'i',
+                    default: true
                 });
             },
             argv => {
