@@ -412,7 +412,7 @@ async function _override_computeStack(overridesPathAbsolute, overrideNames) {
         [...stack].reverse().forEach(v => ret.add(v));
     };
     for (const o of overrideNames) { await recurse(o) }
-    return ret;
+    return [...ret];
 }
 
 /**
@@ -784,12 +784,14 @@ async function _override_performApply(overrideNames, given_uri, given_branch, gi
     // 3. Writes down dump copy list
     const overrideMainFilePathAbsolute = path.join(_projectPathAbsolute, _override_entryPoint);
     const content = await readFile(overrideMainFilePathAbsolute);
+    // Populate override.json
     const overrideJson = JSON.parse(content);
     overrideJson['files'] = allFilesCopied;
     overrideJson['specialUpdates'] = specialUpdates;
     overrideJson['stack'] = overrideStack;
+    overrideJson['override'] = computedOverrideNames.join(' ');
+    delete overrideJson['parent'];
     await writeFile(overrideMainFilePathAbsolute, JSON.stringify(overrideJson, undefined, 4));
-
 
     // 4. Lock override if asked
     opts.lock && await _override_performLock();
