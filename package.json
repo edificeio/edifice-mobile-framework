@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android",
-    "clean": "rm -r -f ./android/build && rm -r -f ./android/app/build && rm -r -f ./ios/build && rm -r -f ./ios/pods && rm -f ./ios/Podfile.lock && rm -r -f node_modules && rm -f package-lock.json && rm -f yarn.lock && npm cache clean --force && yarn install && cd android && ./gradlew clean && cd ../ios && pod install --repo-update && cd .. && node cli/override.js clean",
+    "clean": "rm -r -f ./android/build && rm -r -f ./android/app/build && rm -r -f ./ios/build && rm -r -f ./ios/pods && rm -f ./ios/Podfile.lock && rm -r -f node_modules && rm -f package-lock.json && rm -f yarn.lock && npm cache clean --force && yarn install && cd android && ./gradlew clean && cd ../ios && pod install --repo-update && cd .. && node cli/override.js reset-cache",
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "postinstall": "npx react-native-jetifier; npx patch-package",
@@ -17,7 +17,7 @@
     "prepare-major": "node cli/prepare-build.js major",
     "prepare-minor": "node cli/prepare-build.js minor",
     "prepare-rev": "node cli/prepare-build.js rev",
-    "switch-config": "node cli/override.js -v --no-i $CONFIG_TO --uri=$CONFIG_URI --branch=$CONFIG_BRANCH --username=$CONFIG_USER --password=$CONFIG_PWD",
+    "ci-override": "node cli/override.js -v --no-i $CONFIG_TO --uri=$CONFIG_URI --branch=$CONFIG_BRANCH --username=$CONFIG_USER --password=$CONFIG_PWD",
     "override": "node cli/override.js -l"
   },
   "dependencies": {

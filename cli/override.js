@@ -7,6 +7,7 @@
  * node override.js restore
  * node override.js stash [message]
  * node override.js [un]lock
+ * node override.js reset-cache
  *
  * node override.js --help for all commands & options
  *
@@ -851,10 +852,10 @@ const main = () => {
                     type: 'string',
                     describe: 'use as stash message (if used with stash subcommand)',
                     alias: 'm'
-                }).option('clean', {
+                }).option('reset-cache', {
                     type: 'boolean',
                     describe: 'Remove overrides cache to force clone again',
-                    alias: 'c'
+                    alias: 'r'
                 }).option('interactive', {
                     type: 'boolean',
                     describe: 'Enables/disables user prompts. When "-no-prompt" is given, if required info is not provided, executions fails. (Default true)',
@@ -950,7 +951,7 @@ const main = () => {
                 _override_performUnlock();
             },
         ).command(
-            'clean',
+            'reset-cache',
             'Remove overrides cache',
             yargs => { },
             argv => {
