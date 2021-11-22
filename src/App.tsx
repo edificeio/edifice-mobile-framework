@@ -27,9 +27,6 @@ import { loadCurrentPlatform, selectPlatform } from './user/actions/platform';
 import { isInActivatingMode } from './user/selectors';
 import { checkVersionThenLogin } from './user/actions/version';
 
-// Main Screen
-import AppScreen from './AppScreen';
-
 // Style
 import { CommonStyles } from './styles/common/styles';
 import SplashScreen from 'react-native-splash-screen';
@@ -37,6 +34,7 @@ import SplashScreen from 'react-native-splash-screen';
 import messaging from '@react-native-firebase/messaging';
 
 // Functionnal modules // THIS IS UGLY. it is a workaround for include matomo tracking.
+require('./myAppMenu');
 // require("./timelinev2");
 // require('./mailbox');
 //require("./pronote");
@@ -44,9 +42,11 @@ import messaging from '@react-native-firebase/messaging';
 require('./homework');
 require('./workspace');
 //require("./viescolaire");
-require('./myAppMenu');
 //require("./support");
 require('./user');
+
+// Main Screen
+import AppScreen from './AppScreen';
 
 // Store
 import { createMainStore } from './AppStore';
@@ -57,7 +57,8 @@ import { IUserInfoState } from './user/state/info';
 import './infra/appConf';
 import { reset } from './navigation/helpers/navHelper';
 import { getLoginStackToDisplay } from './navigation/LoginNavigator';
-import { OAuth2RessourceOwnerPasswordClient } from './infra/oauth';
+import { OAuth2RessourceOwnerPasswordClient, AllModulesBackup } from './infra/oauth';
+import AllModules from './framework/app/AllModules';
 
 // Disable Yellow Box on release builds.
 if (__DEV__) {
@@ -197,3 +198,5 @@ export const getSessionInfo = () =>
   ({
     ...(getStore().getState() as any).user.info,
   } as IUserInfoState & IUserAuthState);
+
+AllModulesBackup.value = AllModules();

@@ -7,5 +7,7 @@ export default createNavigableModuleConfig<"timelinev2", ITimeline_State>({
     iconName: "nouveautes",
     matchEntcoreApp: entcoreApp => true, // The timeline is always displayed
     entcoreScope: ['timeline', 'userbook'],
-    routeName: 'timeline'
+    routeName: 'timeline',
+    registerAs: 'tabModule',
+    registerOrder: 0
 });

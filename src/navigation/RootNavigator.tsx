@@ -19,10 +19,10 @@ import withLinkingAppWrapper from '../infra/wrapper/withLinkingAppWrapper';
 import NavigationService from './NavigationService';
 
 // Components
-import Carousel from '../ui/Carousel';
-import { IFrame } from '../ui/IFrame';
-import { IEntcoreApp, tabModules, getModuleRoutes, getAvailableModules } from '../framework/util/moduleTool';
-import { AppPushNotificationHandlerComponent } from '../framework/util/notifications/cloudMessaging';
+import Carousel from "../ui/Carousel";
+import { IFrame } from "../ui/IFrame";
+import { AppPushNotificationHandlerComponent } from "../framework/util/notifications/cloudMessaging";
+import { IEntcoreApp, tabModules, NavigableModuleArray } from "../framework/util/moduleTool";
 
 /**
  * MAIN NAVIGATOR
@@ -36,7 +36,7 @@ import { AppPushNotificationHandlerComponent } from '../framework/util/notificat
  */
 function getMainRoutes(appsInfo: any[]) {
   const filter = (mod: IAppModule) => {
-    console.log('mod', mod);
+    // console.log("mod", mod);
     return !!mod.config.hasRight && mod.config.hasRight(appsInfo) && !mod.config.group;
   };
   return {
@@ -51,8 +51,7 @@ function getMainRoutes(appsInfo: any[]) {
 
 /** Returns every route that are to be displayed in tab navigation.*/
 function getTabRoutes(appsInfo: IEntcoreApp[]): NavigationRouteConfigMap<any, any> {
-  const modules = getAvailableModules(tabModules.get(), appsInfo);
-  return getModuleRoutes(modules);
+  return new NavigableModuleArray(...tabModules.get().filterAvailables(appsInfo)).getRoutes();
 }
 
 /**

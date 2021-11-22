@@ -2,8 +2,9 @@
  * A specific moduleMap that exists inside myAppMenu
  */
 
-import { AnyNavigableModule, createModuleOrderedSubscription } from "../framework/util/moduleTool";
+import {UnknownNavigableModule, ModuleRegister, setGlobalRegister } from "../framework/util/moduleTool";
 
-// myApps module subscription ===================================================================
+// myApps module register =========================================================================
 
-export const myAppsModules = createModuleOrderedSubscription<AnyNavigableModule>();
+export const myAppsModules = new ModuleRegister<UnknownNavigableModule>();
+setGlobalRegister('myAppsModule', myAppsModules);

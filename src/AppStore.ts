@@ -3,14 +3,12 @@ import thunkMiddleware from 'redux-thunk';
 
 import moduleDefinitions from './AppModules';
 import { getReducersFromModuleDefinitions } from './infra/moduleTool';
-import { getModuleReducers } from './framework/util/moduleTool';
 import AllModules from './framework/app/AllModules';
 
 import notifiers from './infra/notifier/reducer';
 import connectionTracker from './infra/reducers/connectionTracker';
 import ui from './infra/reducers/ui';
 import progress from './infra/reducers/progress';
-// import timeline from "./timeline/reducer";
 
 declare var window: any;
 
@@ -26,12 +24,11 @@ export function createMainStore() {
     ui,
     progress,
     ...getReducersFromModuleDefinitions(moduleDefinitions),
-    ...getModuleReducers(AllModules),
+    ...AllModules().getReducers(),
   };
 
   const rootReducer = combineReducers({
     ...reducers,
-    // timeline // TODO put this in module definitions
   });
 
   const middlewares = [thunkMiddleware];

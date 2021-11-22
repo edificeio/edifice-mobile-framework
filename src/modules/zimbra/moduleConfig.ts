@@ -8,4 +8,5 @@ export default createNavigableModuleConfig<"zimbra", IZimbra_State>({
   entcoreScope: ['zimbra'],
   iconName: "mail",
   apiName: "Zimbra",
+  registerAs: "tabModule"
 });
