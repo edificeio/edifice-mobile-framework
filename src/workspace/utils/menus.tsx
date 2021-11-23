@@ -20,15 +20,15 @@ export const addMenu = () => {
     id: "addDocument",
     // onEvent: ({ dispatch, parentId }: any) => pickFile({ dispatch, parentId }),
     wrapper: ({ children, dispatch, parentId }) => (
-      <FilePicker
-        callback={file => {
+      <FilePicker multiple
+        callback={async file => {
           const convertedFile: ContentUri = {
             mime: file.type,
             name: file.fileName,
             uri: file.uri,
             path: file.uri,
           };
-          dispatch(uploadAction(parentId, convertedFile));
+          await dispatch(uploadAction(parentId, convertedFile));
         }}>
         {children}
       </FilePicker>

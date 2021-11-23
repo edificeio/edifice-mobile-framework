@@ -230,10 +230,10 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
           borderWidth: 1,
           borderRadius: 5,
         }}>
-        <ImagePicker
+        <ImagePicker multiple
           callback={image => {
             console.log('image', image);
-            this.setState({ images: [...images, image] });
+            this.setState(prevState => ({ images: [...prevState.images, image] }));
           }}>
           <View
             style={{

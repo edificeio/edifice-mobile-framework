@@ -111,7 +111,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
             <View style={{ flexDirection: 'row' }}>
               {addGivenAttachment && (
                 // <HeaderAction style={{ width: 40, alignItems: 'center' }} onPress={askForAttachment} name="attachment" />
-                <FilePicker callback={addGivenAttachment}>
+                <FilePicker multiple callback={addGivenAttachment}>
                   <HeaderIcon name="attachment" />
                 </FilePicker>
               )}

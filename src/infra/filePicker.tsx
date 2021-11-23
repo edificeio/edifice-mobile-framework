@@ -1,6 +1,7 @@
 import * as React from 'react';
 import I18n from 'i18n-js';
 import {
+  Asset,
   CameraOptions,
   ImageLibraryOptions,
   ImagePickerResponse,
@@ -19,9 +20,10 @@ import DocumentPicker, {
 } from 'react-native-document-picker';
 import getPath from '@flyerhq/react-native-android-uri-path';
 import { assertPermissions } from '../framework/util/permissions';
+import { LocalFile } from '~/framework/util/fileHandler';
 
 export type ImagePicked = Required<
-  Pick<ImagePickerResponse, 'uri' | 'type' | 'fileName' | 'fileSize' | 'base64' | 'width' | 'height'>
+  Pick<Asset, 'uri' | 'type' | 'fileName' | 'fileSize' | 'base64' | 'width' | 'height'>
 >;
 export type DocumentPicked = Required<Pick<DocumentPickerResponse, 'uri' | 'type'>> & {
   fileName: string;
@@ -32,6 +34,7 @@ export class FilePicker extends React.PureComponent<
   {
     callback: (document: ImagePicked | DocumentPicked, sourceType?: string) => void;
     options?: Partial<ImageLibraryOptions & CameraOptions & DocumentPickerOptions<keyof PlatformTypes>>;
+    multiple?: boolean;
   } & TouchableOpacityProps,
   {
     showModal: boolean;
@@ -40,17 +43,16 @@ export class FilePicker extends React.PureComponent<
   state = { showModal: false };
 
   render() {
-    const { callback, options, ...props } = this.props;
+    const { callback, options, multiple, ...props } = this.props;
 
-    const imageCallback = (image: ImagePickerResponse, sourceType: string) => {
-      // console.log("image", image);
-      !image.didCancel &&
-        !image.errorCode &&
-        !image.errorMessage &&
-        image.assets &&
-        image.assets.length > 0 &&
-        image.assets[0].uri &&
-        callback(image.assets[0] as ImagePicked, sourceType);
+    const imageCallback = (images: LocalFile[], sourceType: string) => {
+      for (const img of images) {
+        const imgFormatted = {
+          ...img.nativeInfo,
+          ...img
+        };
+        callback(imgFormatted as ImagePicked);
+      }
       this.setState({ showModal: false });
     };
 
@@ -70,29 +72,14 @@ export class FilePicker extends React.PureComponent<
         id: 'camera',
         title: I18n.t('common-photoPicker-take'),
         action: async (sourceType: string) => {
-          // console.log("menu select camera");
-          await assertPermissions("camera");
-          launchCamera(
-            {
-              ...options,
-              mediaType: 'photo',
-            },
-            file => imageCallback(file, sourceType),
-          );
+          LocalFile.pick({ source: 'camera' }).then(lf => imageCallback(lf, sourceType));
         },
       },
       {
         id: 'gallery',
         title: I18n.t('common-photoPicker-pick'),
         action: async (sourceType: string) => {
-          await assertPermissions("galery.read");
-          launchImageLibrary(
-            {
-              ...this.props.options,
-              mediaType: 'photo',
-            },
-            file => imageCallback(file, sourceType),
-          );
+          LocalFile.pick({ source: 'galery', multiple }).then(lf => imageCallback(lf, sourceType));
         },
       },
       {
