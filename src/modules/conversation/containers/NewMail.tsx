@@ -646,4 +646,4 @@ const mapDispatchToProps = (dispatch: any) => {
 
 const NewMailContainerConnected = connect(mapStateToProps, mapDispatchToProps)(NewMailContainer);
 
-export default withViewTracking([moduleConfig.trackingName, 'editor'])(NewMailContainerConnected);
+export default withViewTracking([moduleConfig.trackingName.toLowerCase(), 'editor'])(NewMailContainerConnected);
