@@ -751,9 +751,9 @@ function _override_performClean() {
  */
 async function _override_performApply(overrideNames, given_uri, given_branch, given_username, given_password) {
     let computedOverrideNames = overrideNames && overrideNames.map(ons => ons.split(/\s+/)).flat();
-    if (opts['clean']) { _override_performClean(); }
+    if (opts['clean'] && !opts['local']) { _override_performClean(); }
     let { uri, branch, username, password } = !opts.local && await askRepository(given_uri, given_branch, given_username, given_password);
-    branch = await _git_getAvailableBranchName(uri, branch, username, password);
+    if (!opts.local) branch = await _git_getAvailableBranchName(uri, branch, username, password);
     const overridesPath = await _git_pullRepository(uri, branch, username, password);
     const allFilesCopied = {};
 
