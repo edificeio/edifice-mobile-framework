@@ -161,7 +161,7 @@ export default class Dashboard extends React.PureComponent<DashboardProps> {
                   <HomeworkItem
                     disabled
                     checked={isHomeworkDone(homework)}
-                    title={homework.subject.name}
+                    title={homework.subject_id !== "exceptional" ? homework.subject.name : homework.exceptional_label}
                     subtitle={homework.type}
                     onPress={() =>
                       this.props.navigation.navigate(
@@ -170,7 +170,7 @@ export default class Dashboard extends React.PureComponent<DashboardProps> {
                         NavigationActions.navigate({
                           routeName: "HomeworkPage",
                           params: homeworkDetailsAdapter(homework),
-                        })
+                        }),
                       )
                     }
                   />

@@ -29,8 +29,9 @@ export const supportService = {
           onProgress: progress => handleProgession((progress.totalBytesSent / progress.totalBytesExpectedToSend) * 100),
         },
       );
+
       return Promise.resolve({
-        id: distantFile.id,
+        id: distantFile.df.id,
         name: distantFile.filename,
         contentType: distantFile.filetype,
         size: distantFile.filesize,

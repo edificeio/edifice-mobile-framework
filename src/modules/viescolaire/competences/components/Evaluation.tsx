@@ -14,7 +14,7 @@ import { IPeriodsList } from "../../viesco/state/periods";
 import { ILevelsList } from "../state/competencesLevels";
 import { IDevoirsMatieresState } from "../state/devoirs";
 import { IMoyenneListState } from "../state/moyennes";
-import { GradesDevoirs, GradesDevoirsMoyennes } from "./Item";
+import { getSortedEvaluationList, GradesDevoirs, GradesDevoirsMoyennes } from "./Item";
 
 // eslint-disable-next-line flowtype/no-types-missing-file-annotation
 export type ICompetencesProps = {
@@ -63,7 +63,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
 
     const { devoirsList } = this.props;
     this.state = {
-      devoirs: devoirsList.data.devoirs.sort((a, b) => moment(b.date, "DD/MM/YYYY").diff(moment(a.date, "DD/MM/YYYY"))),
+      devoirs: getSortedEvaluationList(devoirsList.data.devoirs),
       disciplineList: devoirsList.data.matieres,
       screenDisplay: ScreenDisplay.DASHBOARD,
       switchValue: SwitchState.DEFAULT,
@@ -109,7 +109,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     }
     // Update devoirsList after new fetch
     if (prevProps.devoirsList !== devoirs && screenDisplay !== ScreenDisplay.PERIOD && devoirsList && !devoirsList.isFetching) {
-      const list = devoirsList.data.devoirs.sort((a, b) => moment(b.date, "DD/MM/YYYY").diff(moment(a.date, "DD/MM/YYYY")));
+      const list = getSortedEvaluationList(devoirsList.data.devoirs);
       this.setState({ devoirs: list });
     } else if (
       prevProps.devoirsMoyennesList !== devoirs &&
@@ -221,6 +221,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
   private renderDevoirsList() {
     const { devoirsList, levels } = this.props;
     const { devoirs, switchValue } = this.state;
+
     return (
       <View style={{ flex: 1 }}>
         {this.renderHeaderDevoirsList()}
@@ -262,7 +263,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     const { structureId, childId } = this.props;
     const { disciplineId, selectedDiscipline } = this.state;
 
-    if (disciplineId === "" || selectedDiscipline !== I18n.t("viesco-competences-disciplines")) {
+    if (disciplineId === "" || selectedDiscipline === I18n.t("viesco-competences-disciplines")) {
       this.props.getDevoirsMoyennes(structureId, childId, period.value!);
     } else {
       this.props.getDevoirs(structureId, childId, period.value!, disciplineId);

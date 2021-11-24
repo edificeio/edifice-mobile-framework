@@ -146,7 +146,7 @@ export default class Dashboard extends React.PureComponent<any> {
                   <HomeworkItem
                     hideCheckbox={false}
                     checked={isHomeworkDone(homework)}
-                    title={homework.subject.name}
+                    title={homework.subject_id !== "exceptional" ? homework.subject.name : homework.exceptional_label}
                     subtitle={homework.type}
                     onChange={() => {
                       this.props.updateHomeworkProgress(homework.id, !isHomeworkDone(homework));
@@ -158,7 +158,7 @@ export default class Dashboard extends React.PureComponent<any> {
                         NavigationActions.navigate({
                           routeName: "HomeworkPage",
                           params: homeworkDetailsAdapter(homework),
-                        })
+                        }),
                       )
                     }
                   />

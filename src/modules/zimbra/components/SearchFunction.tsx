@@ -8,7 +8,7 @@ export const Input = ({ value, onChange }: { value: string; onChange: (text: str
 
   React.useEffect(() => {
     window.clearTimeout(textUpdateTimeout.current);
-    textUpdateTimeout.current = window.setTimeout(() => onChange(currentValue), 100);
+    textUpdateTimeout.current = window.setTimeout(() => onChange(currentValue), 500);
 
     return () => {
       window.clearTimeout(textUpdateTimeout.current);

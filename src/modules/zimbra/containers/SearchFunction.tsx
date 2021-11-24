@@ -28,7 +28,7 @@ export class SearchContainer extends React.PureComponent<SearchProps, SearchStat
       {
         header: null,
       },
-      navigation
+      navigation,
     );
   };
 

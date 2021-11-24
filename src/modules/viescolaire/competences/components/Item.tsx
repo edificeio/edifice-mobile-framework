@@ -242,6 +242,15 @@ export const GradesDevoirs = ({ devoirs, levels, color }: { devoirs: IDevoirList
   </ScrollView>
 );
 
+export const getSortedEvaluationList = (evaluations: IDevoirList) => {
+  return evaluations.sort(
+    (a, b) =>
+      moment(b.date).diff(moment(a.date)) ||
+      String(a.matiere.toLocaleLowerCase() ?? "").localeCompare(b.matiere.toLocaleLowerCase() ?? "") ||
+      Number(a.note) - Number(b.note),
+  );
+};
+
 // STYLE
 
 const styleConstant = StyleSheet.create({
