@@ -32,6 +32,8 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
     const { flashMessage, flashMessageAction } = this.props;
     const { isExtended, longText, measuredText } = this.state;
     const contents = flashMessage && flashMessage.contents;
+    const color = flashMessage && flashMessage.color;
+    const customColor = flashMessage && flashMessage.customColor;
     const appLanguage = I18n.currentLocale();
     const contentsHasAppLanguage = contents && contents.hasOwnProperty(appLanguage);
     const contentsLanguages = contents && Object.keys(contents);
@@ -52,7 +54,7 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
               width: "100%",
               overflow: "hidden",
               position: measuredText ? "relative" : "absolute",
-              backgroundColor: theme.color.primary.regular,
+              backgroundColor: color || customColor || theme.color.primary.regular,
             }}
           >
             <HtmlContentView
