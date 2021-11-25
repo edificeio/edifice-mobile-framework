@@ -104,7 +104,9 @@ class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: b
       const onboardingTexts = I18n.t('user.onboardingScreen.onboarding');
       const hasOnboardingTexts = onboardingTexts && onboardingTexts.length;
       if (hasOnboardingTexts) {
-        platformId = await this.props.store.dispatch(loadCurrentPlatform());
+        try {
+          platformId = await this.props.store.dispatch(loadCurrentPlatform());
+        } catch (e) { console.warn(e) }
       } else {
         platformId = AppConf.platforms[0].name;
         this.props.store.dispatch(selectPlatform(platformId));
