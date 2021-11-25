@@ -254,7 +254,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
       } else this.props.getDevoirs(structureId, childId, selectedPeriod.value!, subjectId);
     } else this.props.getDevoirs(structureId, childId);
 
-    if (disciplineList.length > 1) {
+    if (disciplineList.length >= 1) {
       this.setState({ selectedDiscipline: discipline, disciplineId: subjectId }, this.screenRenderOpt);
     }
   }
