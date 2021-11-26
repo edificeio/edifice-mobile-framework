@@ -31,9 +31,11 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
   public render() {
     const { flashMessage, flashMessageAction } = this.props;
     const { isExtended, longText, measuredText } = this.state;
-    const contents = flashMessage && flashMessage.contents;
     const color = flashMessage && flashMessage.color;
     const customColor = flashMessage && flashMessage.customColor;
+    const signature = flashMessage && flashMessage.signature;
+    const signatureColor = flashMessage && flashMessage.signatureColor;
+    const contents = flashMessage && flashMessage.contents;
     const appLanguage = I18n.currentLocale();
     const contentsHasAppLanguage = contents && contents.hasOwnProperty(appLanguage);
     const contentsLanguages = contents && Object.keys(contents);
@@ -69,6 +71,10 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
                 video: false,
               }}
             />
+            {signature
+              ? <Text style={{ fontStyle: "italic", color: signatureColor }}>{signature}</Text>
+              : null
+            }
             <TouchableOpacity
               style={{position: "absolute", right: 10, top: 10}}
               onPress={flashMessageAction}

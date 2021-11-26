@@ -4,8 +4,7 @@ import moduleConfig from "../moduleConfig";
 // State
 
 export interface IEntcoreFlashMessage {
-    id: number;                 // Flash message unique ID
-    color: string | null;       // Selected background color (only visible on the web)
+    color: string | null;       // Background color
     contents: {                 // Message content (several languages)
         fr?: string;            // French version
         en?: string;            // English version
@@ -15,7 +14,10 @@ export interface IEntcoreFlashMessage {
         it?: string;            // Italian version
         null: string;           // Undefined-language version
     };
-    customColor: string | null; // Custom background color (only visible on the web)
+    customColor: string | null; // Custom background color
+    id: number;                 // Flash message unique ID
+    signature: string;          // Message signature
+    signatureColor: string;     // Signature color
 }
 
 export type IFlashMessages_State_Data = IEntcoreFlashMessage[];
