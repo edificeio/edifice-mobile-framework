@@ -4,15 +4,13 @@ import * as React from "react";
 import {
   View,
   SafeAreaView,
-  ScrollView
+  ScrollView,
+  Platform
 } from "react-native";
-import appConf from "~/framework/util/appConf";
 import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
-import { navigate } from "../../navigation/helpers/navHelper";
 import { FlatButton } from "../../ui";
-import BottomSwitcher from "../../ui/BottomSwitcher";
-import { Text, TextLightItalic } from "../../framework/components/text";
-import { TextColor } from "../../ui/Typography";
+import { TextLightItalic } from "../../framework/components/text";
+import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from "~/framework/components/header";
 
 // TYPES ---------------------------------------------------------------------------
 
@@ -30,57 +28,56 @@ export class FederatedAccountPage extends React.PureComponent<
 > {
 
   public render() {
-    const { onLink } = this.props;
+    const { onLink, navigation } = this.props;
 
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
-        <FormPage>
-          <FormWrapper>
-            <ScrollView alwaysBounceVertical={false} contentContainerStyle={{ flex: 1, justifyContent: "center" }}>
-              <FormContainer>
-                <LogoWrapper>
-                  <Logo source={DEPRECATED_getCurrentPlatform()!.logo} />
-                </LogoWrapper>
-                <View style={{ flexGrow: 4, justifyContent: "flex-start" }}>
-                  <TextLightItalic>{I18n.t("federatedAccount-instructions")}</TextLightItalic>
-                  <TextLightItalic style={{ marginLeft: 25, marginTop: 20 }}>{I18n.t("federatedAccount-instructions-details")}</TextLightItalic>
-                </View>
-                <View
-                  style={{
-                    alignItems: "center",
-                    flexGrow: 1,
-                    justifyContent: "center",
-                    marginTop: 40
-                  }}
-                >
-                  <FlatButton
-                    onPress={() => onLink()}
-                    title={I18n.t("federatedAccount-openLink")}
-                  />
-                  <Text
-                    color={TextColor.Light}
-                    style={{ textDecorationLine: "underline", marginTop: 20 }}
-                    onPress={() => {
-                      navigate("LoginHome");
+      <>
+        <FakeHeader>
+          <HeaderRow>
+            <HeaderLeft>
+              <HeaderAction
+                iconName={Platform.OS === "ios" ? "chevron-left1" : "back"}
+                iconSize={24}
+                onPress={() => navigation.goBack()}
+              />
+            </HeaderLeft>
+            <HeaderCenter>
+              <HeaderTitle>{I18n.t("federatedAccount-title")}</HeaderTitle>
+            </HeaderCenter>
+          </HeaderRow>
+        </FakeHeader>
+        <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
+          <FormPage>
+            <FormWrapper>
+              <ScrollView alwaysBounceVertical={false} contentContainerStyle={{ flex: 1, justifyContent: "center" }}>
+                <FormContainer>
+                  <LogoWrapper>
+                    <Logo source={DEPRECATED_getCurrentPlatform()!.logo} />
+                  </LogoWrapper>
+                  <View style={{ flexGrow: 4, justifyContent: "flex-start" }}>
+                    <TextLightItalic>{I18n.t("federatedAccount-instructions")}</TextLightItalic>
+                    <TextLightItalic style={{ marginLeft: 25, marginTop: 20 }}>{I18n.t("federatedAccount-instructions-details")}</TextLightItalic>
+                  </View>
+                  <View
+                    style={{
+                      alignItems: "center",
+                      flexGrow: 1,
+                      justifyContent: "center",
+                      marginTop: 40
                     }}
                   >
-                    {I18n.t("login-back")}
-                  </Text>
-                </View>
-              </FormContainer>
-            </ScrollView>
-          </FormWrapper>
-          {appConf.platforms.length > 1 ?
-            <BottomSwitcher onPress={() => this.handleBackToPlatformSelector()}>
-              {DEPRECATED_getCurrentPlatform()!.displayName}{" "}
-            </BottomSwitcher> : null}
-        </FormPage>
-      </SafeAreaView>
+                    <FlatButton
+                      onPress={() => onLink()}
+                      title={I18n.t("federatedAccount-openLink")}
+                    />
+                  </View>
+                </FormContainer>
+              </ScrollView>
+            </FormWrapper>
+          </FormPage>
+        </SafeAreaView>
+      </>
     );
-  }
-
-  protected handleBackToPlatformSelector() {
-    navigate("PlatformSelect");
   }
 }
 

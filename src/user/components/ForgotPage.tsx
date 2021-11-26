@@ -4,7 +4,6 @@ import * as React from "react";
 import {
   KeyboardAvoidingView,
   Platform,
-  TextInput,
   View,
   SafeAreaView,
   ScrollView,
@@ -12,17 +11,14 @@ import {
 } from "react-native";
 import { Picker } from '@react-native-picker/picker';
 
-import { navigate } from "../../navigation/helpers/navHelper";
 import { FlatButton, Icon } from "../../ui";
-import BottomSwitcher from "../../ui/BottomSwitcher";
 import { TextInputLine } from "../../ui/forms/TextInputLine";
 import { Text, H1, TextColorStyle } from "../../framework/components/text";
-import { ErrorMessage, InfoMessage, TextColor } from "../../ui/Typography";
+import { ErrorMessage, InfoMessage } from "../../ui/Typography";
 import { IForgotModel } from "../actions/forgot";
 import { CommonStyles } from "../../styles/common/styles";
 import { ValidatorBuilder } from '../../utils/form';
-import appConf from "~/framework/util/appConf";
-import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
+import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from "~/framework/components/header";
 
 // TYPES ---------------------------------------------------------------------------
 
@@ -72,7 +68,6 @@ export class ForgotPage extends React.PureComponent<
   };
 
   // Refs
-  private inputLogin: TextInput = null;
   private setInputLoginRef = el => (this.inputLogin = el);
 
   private didFocusSubscription;
@@ -125,167 +120,165 @@ export class ForgotPage extends React.PureComponent<
       : !login || (forgotId && !isValidEmail) || (isError && !editing);
 
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
-        <FormPage>
-          <KeyboardAvoidingView
-            style={{ flex: 1, backgroundColor: "#ffffff" }}
-            behavior={Platform.OS === "ios" ? "padding" : undefined}
-          >
-            <ScrollView alwaysBounceVertical={false} contentContainerStyle={{ flexGrow: 1 }}>
-              <FormWrapper>
-                <FormContainer>
-                  <LogoWrapper>
-                    <H1 style={{ ...TextColorStyle.Light }}>
-                      {I18n.t(`forgot-${forgotId ? "id" : "password"}`)}
-                    </H1>
-                    <Text style={{ ...TextColorStyle.Light }}>
-                      {I18n.t(`forgot-${forgotId ? "id" : "password"}-instructions`)}
-                    </Text>
-                  </LogoWrapper>
-                  {!isSuccess
-                    ? <TextInputLine
-                      inputRef={this.setInputLoginRef}
-                      placeholder={I18n.t(forgotId ? "Email" : "Login")}
-                      onChange={({ nativeEvent: { text } }) => {
-                        this.setState({
-                          login: text,
-                          editing: true
-                        });
-                      }}
-                      value={login}
-                      hasError={isError && !editing && !(hasStructures && errorMsg)}
-                      keyboardType={forgotId ? "email-address" : undefined}
-                      editable={!hasStructures}
-                      inputStyle={hasStructures && { color: CommonStyles.placeholderColor, fontWeight: "bold" }}
-                      returnKeyLabel={I18n.t("forgot-submit")}
-                      returnKeyType='done'
-                      onSubmitEditing={() => this.handleSubmit()}
-                    />
-                    : null
-                  }
-                  {(hasStructures && !isSuccess) || (isError && !editing) ? (
-                    <ErrorMessage>{errorText}</ErrorMessage>
-                  ) : null}
-                  {isSuccess ? (
-                    <InfoMessage
-                      style={{
-                        height: 38
-                      }}
-                    >
-                      {editing
-                        ? ""
-                        : isSuccess && I18n.t("forgot-success")}
-                    </InfoMessage>
-                  ) : null}
-                  {forgotId && hasStructures && !isSuccess
-                    ? <>
-                      <TextInputLine
+      <>
+        <FakeHeader>
+          <HeaderRow>
+            <HeaderLeft>
+              <HeaderAction
+                iconName={Platform.OS === "ios" ? "chevron-left1" : "back"}
+                iconSize={24}
+                onPress={() => navigation.goBack()}
+              />
+            </HeaderLeft>
+            <HeaderCenter>
+              <HeaderTitle>{I18n.t(`forgot-${forgotId ? "id" : "password"}`)}</HeaderTitle>
+            </HeaderCenter>
+          </HeaderRow>
+        </FakeHeader>
+        <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
+          <FormPage>
+            <KeyboardAvoidingView
+              style={{ flex: 1, backgroundColor: "#ffffff" }}
+              behavior={Platform.OS === "ios" ? "padding" : undefined}
+            >
+              <ScrollView alwaysBounceVertical={false} contentContainerStyle={{ flexGrow: 1 }}>
+                <FormWrapper>
+                  <FormContainer>
+                    <LogoWrapper>
+                      <H1 style={{ ...TextColorStyle.Light }}>
+                        {I18n.t(`forgot-${forgotId ? "id" : "password"}`)}
+                      </H1>
+                      <Text style={{ ...TextColorStyle.Light }}>
+                        {I18n.t(`forgot-${forgotId ? "id" : "password"}-instructions`)}
+                      </Text>
+                    </LogoWrapper>
+                    {!isSuccess
+                      ? <TextInputLine
                         inputRef={this.setInputLoginRef}
-                        placeholder={I18n.t("Firstname")}
-                        value={firstName}
-                        hasError={isError && !editing}
+                        placeholder={I18n.t(forgotId ? "Email" : "Login")}
                         onChange={({ nativeEvent: { text } }) => {
                           this.setState({
-                            firstName: text,
+                            login: text,
                             editing: true
                           });
                         }}
+                        value={login}
+                        hasError={isError && !editing && !(hasStructures && errorMsg)}
+                        keyboardType={forgotId ? "email-address" : undefined}
+                        editable={!hasStructures}
+                        inputStyle={hasStructures && { color: CommonStyles.placeholderColor, fontWeight: "bold" }}
+                        returnKeyLabel={I18n.t("forgot-submit")}
+                        returnKeyType='done'
+                        onSubmitEditing={() => this.handleSubmit()}
                       />
-                      <View
+                      : null
+                    }
+                    {(hasStructures && !isSuccess) || (isError && !editing) ? (
+                      <ErrorMessage>{errorText}</ErrorMessage>
+                    ) : null}
+                    {isSuccess ? (
+                      <InfoMessage
                         style={{
-                          alignSelf: "stretch",
-                          flex: 0,
-                          flexDirection: "row",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          paddingRight: 10,
-                          backgroundColor: structureName ? CommonStyles.primary : undefined,
-                          borderBottomWidth: (isError && !editing) || showStructurePicker ? 2 : 0.9,
-                          borderBottomColor: isError && !editing
-                            ? CommonStyles.errorColor
-                            : showStructurePicker
-                              ? CommonStyles.iconColorOn
-                              : CommonStyles.entryfieldBorder
+                          height: 38
                         }}
                       >
+                        {editing
+                          ? ""
+                          : isSuccess && I18n.t("forgot-success")}
+                      </InfoMessage>
+                    ) : null}
+                    {forgotId && hasStructures && !isSuccess
+                      ? <>
                         <TextInputLine
-                          editable={false}
-                          hasError={false}
                           inputRef={this.setInputLoginRef}
-                          placeholder={I18n.t("School")}
-                          value={structureName}
-                          style={{ borderBottomWidth: undefined, borderBottomColor: undefined }}
-                          inputStyle={{ color: "white" }}
+                          placeholder={I18n.t("Firstname")}
+                          value={firstName}
+                          hasError={isError && !editing}
+                          onChange={({ nativeEvent: { text } }) => {
+                            this.setState({
+                              firstName: text,
+                              editing: true
+                            });
+                          }}
                         />
-                        <Icon
-                          name="arrow_down"
-                          color={structureName ? "white" : "black"}
-                          style={[{ marginTop: 10 }, showStructurePicker && { transform: [{ rotate: "180deg" }] }]}
-                        />
-                        <TouchableOpacity
-                          style={{ height: "100%", width: "100%", position: "absolute" }}
-                          onPress={() => this.setState({ showStructurePicker: !showStructurePicker })}
-                        />
-                      </View>
-                      {showStructurePicker
-                        ? <Picker
-                          selectedValue={structureName}
-                          style={{ width: "100%", borderWidth: 1, borderColor: CommonStyles.entryfieldBorder, borderTopWidth: 0 }}
-                          onValueChange={itemValue => this.setState({ structureName: itemValue, editing: true })}
+                        <View
+                          style={{
+                            alignSelf: "stretch",
+                            flex: 0,
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            paddingRight: 10,
+                            backgroundColor: structureName ? CommonStyles.primary : undefined,
+                            borderBottomWidth: (isError && !editing) || showStructurePicker ? 2 : 0.9,
+                            borderBottomColor: isError && !editing
+                              ? CommonStyles.errorColor
+                              : showStructurePicker
+                                ? CommonStyles.iconColorOn
+                                : CommonStyles.entryfieldBorder
+                          }}
                         >
-                          <Picker.Item label="" value={null} />
-                          {structures && structures.map(structure => <Picker.Item label={structure.structureName} value={structure.structureName} />)}
-                        </Picker>
-                        : null
-                      }
-                    </>
-                    : null
-                  }
-                  <View
-                    style={{
-                      alignItems: "center",
-                      flexGrow: 2,
-                      justifyContent: "flex-start",
-                      marginTop: (isError || isSuccess) && !editing ? 10 : 30
-                    }}
-                  >
-                    {!isSuccess || editing ? (
-                      <FlatButton
-                        onPress={() => this.handleSubmit()}
-                        disabled={canSubmit}
-                        title={I18n.t("forgot-submit")}
-                        loading={fetching}
-                      />
-                    ) : null}
-                    {hasStructures && errorMsg ? (
-                      <ErrorMessage>{I18n.t("forgot-several-emails-no-match")}</ErrorMessage>
-                    ) : null}
-                    <Text
-                      color={TextColor.Light}
-                      style={{ textDecorationLine: "underline", marginTop: 48 }}
-                      onPress={() => {
-                        this.props.onReset();
-                        navigate("LoginHome");
+                          <TextInputLine
+                            editable={false}
+                            hasError={false}
+                            inputRef={this.setInputLoginRef}
+                            placeholder={I18n.t("School")}
+                            value={structureName}
+                            style={{ borderBottomWidth: undefined, borderBottomColor: undefined }}
+                            inputStyle={{ color: "white" }}
+                          />
+                          <Icon
+                            name="arrow_down"
+                            color={structureName ? "white" : "black"}
+                            style={[{ marginTop: 10 }, showStructurePicker && { transform: [{ rotate: "180deg" }] }]}
+                          />
+                          <TouchableOpacity
+                            style={{ height: "100%", width: "100%", position: "absolute" }}
+                            onPress={() => this.setState({ showStructurePicker: !showStructurePicker })}
+                          />
+                        </View>
+                        {showStructurePicker
+                          ? <Picker
+                            selectedValue={structureName}
+                            style={{ width: "100%", borderWidth: 1, borderColor: CommonStyles.entryfieldBorder, borderTopWidth: 0 }}
+                            onValueChange={itemValue => this.setState({ structureName: itemValue, editing: true })}
+                          >
+                            <Picker.Item label="" value={null} />
+                            {structures && structures.map(structure => <Picker.Item label={structure.structureName} value={structure.structureName} />)}
+                          </Picker>
+                          : null
+                        }
+                      </>
+                      : null
+                    }
+                    <View
+                      style={{
+                        alignItems: "center",
+                        flexGrow: 2,
+                        justifyContent: "flex-start",
+                        marginTop: (isError || isSuccess) && !editing ? 10 : 30
                       }}
                     >
-                      {I18n.t("login-back")}
-                    </Text>
-                  </View>
-                </FormContainer>
-              </FormWrapper>
-              {appConf.platforms.length > 1 ?
-                <BottomSwitcher onPress={() => this.handleBackToPlatformSelector()}>
-                  {DEPRECATED_getCurrentPlatform()!.displayName}{" "}
-                </BottomSwitcher> : null}
-            </ScrollView>
-          </KeyboardAvoidingView>
-        </FormPage>
-      </SafeAreaView>
+                      {!isSuccess || editing ? (
+                        <FlatButton
+                          onPress={() => this.handleSubmit()}
+                          disabled={canSubmit}
+                          title={I18n.t("forgot-submit")}
+                          loading={fetching}
+                        />
+                      ) : null}
+                      {hasStructures && errorMsg ? (
+                        <ErrorMessage>{I18n.t("forgot-several-emails-no-match")}</ErrorMessage>
+                      ) : null}
+                    </View>
+                  </FormContainer>
+                </FormWrapper>
+              </ScrollView>
+            </KeyboardAvoidingView>
+          </FormPage>
+        </SafeAreaView>
+      </>
     );
-  }
-
-  protected handleBackToPlatformSelector() {
-    navigate("PlatformSelect");
   }
 }
 

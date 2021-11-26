@@ -2,16 +2,14 @@ import style from "glamorous-native";
 import I18n from "i18n-js";
 import * as React from "react";
 import { Alert, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, TouchableOpacity, View } from "react-native";
-import appConf from "~/framework/util/appConf";
+import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from "~/framework/components/header";
 import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 
 import { BackdropPdfReader } from "../../framework/components/backdropPdfReader";
 import { Checkbox } from "../../framework/components/checkbox";
 import { Text, TextAction } from "../../framework/components/text";
 import { Trackers } from "../../framework/util/tracker";
-import { navigate } from "../../navigation/helpers/navHelper";
 import { FlatButton, Loading } from "../../ui";
-import BottomSwitcher from "../../ui/BottomSwitcher";
 import { ErrorMessage } from "../../ui/Typography";
 import { ContextState, SubmitState } from "../../utils/SubmitState";
 import { IActivationModel, IActivationUserInfo } from "../actions/activation";
@@ -41,6 +39,7 @@ export interface IActivationPageDataProps extends IActivationModel {
   externalError: string;
   contextState: ContextState;
   submitState: SubmitState;
+  navigation: any;
 }
 export interface IActivationPageEventProps {
   onSubmit(model: IActivationModel): Promise<void>;
@@ -102,8 +101,8 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
   }
 
   public render() {
+    const { externalError, contextState, submitState, navigation } = this.props;
     const { login, password, confirm, email, phone, isCGUAccepted, isModalVisible, typing } = this.state;
-    const { externalError, contextState, submitState } = this.props;
     if (contextState == ContextState.Loading || contextState == ContextState.Failed) {
       return <Loading />;
     }
@@ -121,73 +120,80 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
     const cguUrl = `${platform}${path}`;
 
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
-        <FormPage>
-          <KeyboardAvoidingView
-            style={{ flex: 1, backgroundColor: "#ffffff" }}
-            behavior={Platform.OS === "ios" ? "padding" : undefined}>
-            <ScrollView alwaysBounceVertical={false} contentContainerStyle={{ flexGrow: 1 }}>
-              <FormTouchable onPress={() => formModel.blur()}>
-                <FormWrapper>
-                  <FormContainer>
-                    <LogoWrapper>
-                      <Logo source={DEPRECATED_getCurrentPlatform()!.logo} />
-                    </LogoWrapper>
-                    <InputLogin login={login} form={formModel} onChange={this.onChange("login")} />
-                    <InputPassword password={password} form={formModel} onChange={this.onChange("password")} />
-                    <InputPasswordConfirm confirm={confirm} form={formModel} onChange={this.onChange("confirm")} />
-                    <InputEmail email={email} form={formModel} onChange={this.onChange("email")} />
-                    <InputPhone phone={phone} form={formModel} onChange={this.onChange("phone")} />
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        alignSelf: "stretch",
-                        marginTop: 30,
-                      }}>
-                      <Checkbox
-                        checked={isCGUAccepted}
-                        onPress={() => this.setState({ isCGUAccepted: !isCGUAccepted })}
-                        customContainerStyle={{ marginRight: 5 }}
-                      />
-                      <Text>{I18n.t("activation-cgu-accept")}</Text>
-                      <TouchableOpacity onPress={this.handleOpenCGU}>
-                        <TextAction>{I18n.t("activation-cgu")}</TextAction>
-                      </TouchableOpacity>
-                    </View>
-                    <ErrorMessage> {hasErrorKey && !typing ? errorText : ""} </ErrorMessage>
-                    <ButtonWrapper error={hasErrorKey} typing={typing}>
-                      <FlatButton
-                        onPress={() => this.handleActivation()}
-                        disabled={isNotValid}
-                        title={I18n.t("Activate")}
-                        loading={isSubmitLoading}
-                      />
-                    </ButtonWrapper>
-                  </FormContainer>
-                </FormWrapper>
-              </FormTouchable>
-            </ScrollView>
-            {appConf.platforms.length > 1 ? (
-              <BottomSwitcher onPress={() => this.handleBackToPlatformSelector()}>
-                {DEPRECATED_getCurrentPlatform()!.displayName}{" "}
-              </BottomSwitcher>
-            ) : null}
-          </KeyboardAvoidingView>
-        </FormPage>
-        <BackdropPdfReader
-          handleClose={() => this.setState({ isModalVisible: false })}
-          handleOpen={() => this.setState({ isModalVisible: true })}
-          title={I18n.t("activation-cgu")}
-          uri={cguUrl}
-          visible={isModalVisible}
-        />
-      </SafeAreaView>
+      <>
+        <FakeHeader>
+          <HeaderRow>
+            <HeaderLeft>
+              <HeaderAction
+                iconName={Platform.OS === "ios" ? "chevron-left1" : "back"}
+                iconSize={24}
+                onPress={() => navigation.goBack()}
+              />
+            </HeaderLeft>
+            <HeaderCenter>
+              <HeaderTitle>{I18n.t("activation-title")}</HeaderTitle>
+            </HeaderCenter>
+          </HeaderRow>
+        </FakeHeader>
+        <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
+          <FormPage>
+            <KeyboardAvoidingView
+              style={{ flex: 1, backgroundColor: "#ffffff" }}
+              behavior={Platform.OS === "ios" ? "padding" : undefined}>
+              <ScrollView alwaysBounceVertical={false} contentContainerStyle={{ flexGrow: 1 }}>
+                <FormTouchable onPress={() => formModel.blur()}>
+                  <FormWrapper>
+                    <FormContainer>
+                      <LogoWrapper>
+                        <Logo source={DEPRECATED_getCurrentPlatform()!.logo} />
+                      </LogoWrapper>
+                      <InputLogin login={login} form={formModel} onChange={this.onChange("login")} />
+                      <InputPassword password={password} form={formModel} onChange={this.onChange("password")} />
+                      <InputPasswordConfirm confirm={confirm} form={formModel} onChange={this.onChange("confirm")} />
+                      <InputEmail email={email} form={formModel} onChange={this.onChange("email")} />
+                      <InputPhone phone={phone} form={formModel} onChange={this.onChange("phone")} />
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          alignSelf: "stretch",
+                          marginTop: 30,
+                        }}>
+                        <Checkbox
+                          checked={isCGUAccepted}
+                          onPress={() => this.setState({ isCGUAccepted: !isCGUAccepted })}
+                          customContainerStyle={{ marginRight: 5 }}
+                        />
+                        <Text>{I18n.t("activation-cgu-accept")}</Text>
+                        <TouchableOpacity onPress={this.handleOpenCGU}>
+                          <TextAction>{I18n.t("activation-cgu")}</TextAction>
+                        </TouchableOpacity>
+                      </View>
+                      <ErrorMessage> {hasErrorKey && !typing ? errorText : ""} </ErrorMessage>
+                      <ButtonWrapper error={hasErrorKey} typing={typing}>
+                        <FlatButton
+                          onPress={() => this.handleActivation()}
+                          disabled={isNotValid}
+                          title={I18n.t("Activate")}
+                          loading={isSubmitLoading}
+                        />
+                      </ButtonWrapper>
+                    </FormContainer>
+                  </FormWrapper>
+                </FormTouchable>
+              </ScrollView>
+            </KeyboardAvoidingView>
+          </FormPage>
+          <BackdropPdfReader
+            handleClose={() => this.setState({ isModalVisible: false })}
+            handleOpen={() => this.setState({ isModalVisible: true })}
+            title={I18n.t("activation-cgu")}
+            uri={cguUrl}
+            visible={isModalVisible}
+          />
+        </SafeAreaView>
+      </>
     );
-  }
-
-  protected handleBackToPlatformSelector() {
-    navigate("PlatformSelect");
   }
 }
 

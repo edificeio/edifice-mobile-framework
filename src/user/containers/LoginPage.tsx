@@ -28,7 +28,6 @@ import { IUserAuthState } from "../reducers/auth";
 
 import { navigate } from "../../navigation/helpers/navHelper";
 import { CommonStyles } from "../../styles/common/styles";
-import BottomSwitcher from "../../ui/BottomSwitcher";
 import { Text, TextBold, TextColorStyle, TextSizeStyle } from "../../framework/components/text";
 import { PLATFORM_STORAGE_KEY } from "../actions/platform";
 import {
@@ -42,7 +41,7 @@ import withViewTracking from "../../framework/util/tracker/withViewTracking";
 import { Toggle } from "../../ui/forms/Toggle";
 import theme from "../../app/theme";
 import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
-import appConf from "~/framework/util/appConf";
+import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from "~/framework/components/header";
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -130,30 +129,49 @@ export class LoginPage extends React.Component<
       versionModal,
       version,
       onSkipVersion,
-      onUpdateVersion
+      onUpdateVersion,
+      navigation
     } = this.props;
+    const platformDisplayName = DEPRECATED_getCurrentPlatform()!.displayName;
+
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
-        <KeyboardAvoidingView
-          style={{ flex: 1, backgroundColor: "#ffffff" }}
-          behavior={Platform.OS === "ios" ? "padding" : undefined}
-        >
-          <DEPRECATED_ConnectionTrackingBar style={{ position: "absolute" }} />
-          <VersionModal
-            mandatory={versionMandatory}
-            version={version}
-            visibility={versionModal}
-            onCancel={() => versionContext && onSkipVersion(versionContext)}
-            onSubmit={() => versionContext && onUpdateVersion(versionContext)}
-          />
-          <TouchableWithoutFeedback
-            style={{ flex: 1 }}
-            onPress={() => this.unfocus()}
+      <>
+        <FakeHeader>
+          <HeaderRow>
+            <HeaderLeft>
+              <HeaderAction
+                iconName={Platform.OS === "ios" ? "chevron-left1" : "back"}
+                iconSize={24}
+                onPress={() => navigation.goBack()}
+              />
+            </HeaderLeft>
+            <HeaderCenter>
+              <HeaderTitle>{platformDisplayName}</HeaderTitle>
+            </HeaderCenter>
+          </HeaderRow>
+        </FakeHeader>
+        <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
+          <KeyboardAvoidingView
+            style={{ flex: 1, backgroundColor: "#ffffff" }}
+            behavior={Platform.OS === "ios" ? "padding" : undefined}
           >
-            {this.renderForm()}
-          </TouchableWithoutFeedback>
-        </KeyboardAvoidingView>
-      </SafeAreaView>
+            <DEPRECATED_ConnectionTrackingBar style={{ position: "absolute" }} />
+            <VersionModal
+              mandatory={versionMandatory}
+              version={version}
+              visibility={versionModal}
+              onCancel={() => versionContext && onSkipVersion(versionContext)}
+              onSubmit={() => versionContext && onUpdateVersion(versionContext)}
+            />
+            <TouchableWithoutFeedback
+              style={{ flex: 1 }}
+              onPress={() => this.unfocus()}
+            >
+              {this.renderForm()}
+            </TouchableWithoutFeedback>
+          </KeyboardAvoidingView>
+        </SafeAreaView>
+      </>
     );
   }
 
@@ -298,10 +316,6 @@ export class LoginPage extends React.Component<
             </View>
           </FormContainer>
         </ScrollView>
-        {appConf.platforms.length > 1 ?
-        <BottomSwitcher onPress={() => this.handleBackToPlatformSelector()}>
-            {DEPRECATED_getCurrentPlatform()!.displayName}{" "}
-        </BottomSwitcher> : null}
       </View>
     );
   }
@@ -328,10 +342,6 @@ export class LoginPage extends React.Component<
 
   protected handleGoToWeb() {
     Linking.openURL(DEPRECATED_getCurrentPlatform()!.url);
-  }
-
-  protected handleBackToPlatformSelector() {
-    navigate("PlatformSelect");
   }
 
   // Other public methods

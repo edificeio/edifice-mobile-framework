@@ -89,7 +89,7 @@ export class PlatformSelectPage extends React.PureComponent<
                   }}
                 >
                   <PlatformButton
-                    onPress={e => this.handleSelectPlatform(pf.name)}
+                    onPress={() => this.handleSelectPlatform(pf.name)}
                     style={{
                       alignItems: "center"
                     }}
