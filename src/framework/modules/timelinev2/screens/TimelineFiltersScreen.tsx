@@ -5,12 +5,6 @@ import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { setFiltersAction } from '../actions/notifSettings';
-import moduleConfig from '../moduleConfig';
-import { ITimeline_State } from '../reducer';
-import { INotificationFilter } from '../reducer/notifDefinitions/notifFilters';
-import { INotifFilterSettings } from '../reducer/notifSettings/notifFilterSettings';
-
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { Checkbox } from '~/framework/components/checkbox';
@@ -24,6 +18,11 @@ import {
   HeaderTitle,
 } from '~/framework/components/header';
 import { ListItem } from '~/framework/components/listItem';
+import { setFiltersAction } from '~/framework/modules/timelinev2/actions/notifSettings';
+import moduleConfig from '~/framework/modules/timelinev2/moduleConfig';
+import { ITimeline_State } from '~/framework/modules/timelinev2/reducer';
+import { INotificationFilter } from '~/framework/modules/timelinev2/reducer/notifDefinitions/notifFilters';
+import { INotifFilterSettings } from '~/framework/modules/timelinev2/reducer/notifSettings/notifFilterSettings';
 import { PageContainer } from '~/ui/ContainerContent';
 
 // TYPES ==========================================================================================
@@ -149,7 +148,7 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
     const { selectedFilters } = this.state;
     const someNotSet = Object.values(selectedFilters).some(value => !value);
     const selectedFiltersKeys = Object.keys(selectedFilters);
-    let updatedSelectedFilters = selectedFilters;
+    const updatedSelectedFilters = selectedFilters;
     selectedFiltersKeys.forEach(element => (updatedSelectedFilters[element] = someNotSet));
     this.setState({ selectedFilters: { ...updatedSelectedFilters } });
   }
@@ -166,7 +165,7 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
 // MAPPING ========================================================================================
 
 const mapStateToProps: (s: IGlobalState) => ITimelineFiltersScreenDataProps = s => {
-  let ts = moduleConfig.getState(s) as ITimeline_State;
+  const ts = moduleConfig.getState(s) as ITimeline_State;
   return {
     notifFilterSettings: ts.notifSettings.notifFilterSettings.data,
     notifFilters: ts.notifDefinitions.notifFilters.data.sort((a, b) => I18n.t(a.i18n).localeCompare(I18n.t(b.i18n), I18n.locale)),

@@ -7,17 +7,6 @@ import { NavigationInjectedProps, NavigationFocusInjectedProps, withNavigationFo
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { dismissFlashMessageAction, loadNotificationsPageAction, startLoadNotificationsAction } from '../actions';
-import { TimelineFlashMessage } from '../components/TimelineFlashMessage';
-import { TimelineNotification } from '../components/TimelineNotification';
-import moduleConfig from '../moduleConfig';
-import type { ITimeline_State } from '../reducer';
-import { IEntcoreFlashMessage, IFlashMessages_State } from '../reducer/flashMessages';
-import { INotifications_State } from '../reducer/notifications';
-import { getTimelineWorkflowInformation } from '../rights';
-import { notificationsService } from '../service';
-import { getTimelineWorkflows } from '../timelineModules';
-
 import type { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
@@ -28,6 +17,20 @@ import { PageView } from '~/framework/components/page';
 import PopupMenu from '~/framework/components/popupMenu';
 import SwipeableList, { SwipeableList as SwipeableListHandle } from '~/framework/components/swipeableList';
 import { Text } from '~/framework/components/text';
+import {
+  dismissFlashMessageAction,
+  loadNotificationsPageAction,
+  startLoadNotificationsAction,
+} from '~/framework/modules/timelinev2/actions';
+import { TimelineFlashMessage } from '~/framework/modules/timelinev2/components/TimelineFlashMessage';
+import { TimelineNotification } from '~/framework/modules/timelinev2/components/TimelineNotification';
+import moduleConfig from '~/framework/modules/timelinev2/moduleConfig';
+import type { ITimeline_State } from '~/framework/modules/timelinev2/reducer';
+import { IEntcoreFlashMessage, IFlashMessages_State } from '~/framework/modules/timelinev2/reducer/flashMessages';
+import { INotifications_State } from '~/framework/modules/timelinev2/reducer/notifications';
+import { getTimelineWorkflowInformation } from '~/framework/modules/timelinev2/rights';
+import { notificationsService } from '~/framework/modules/timelinev2/service';
+import { getTimelineWorkflows } from '~/framework/modules/timelinev2/timelineModules';
 import {
   ITimelineNotification,
   IResourceUriNotification,
@@ -365,7 +368,7 @@ const getTimelineItems = (flashMessages: IFlashMessages_State, notifications: IN
 // MAPPING ========================================================================================
 
 const mapStateToProps: (s: IGlobalState) => ITimelineScreenDataProps = s => {
-  let ts = moduleConfig.getState(s) as ITimeline_State;
+  const ts = moduleConfig.getState(s) as ITimeline_State;
   return {
     flashMessages: ts.flashMessages,
     notifications: ts.notifications,

@@ -7,11 +7,10 @@ import * as React from 'react';
 import { Text } from 'react-native';
 import { connect } from 'react-redux';
 
-import { APPBADGES } from '../appBadges';
-
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { FontStyle } from '~/framework/components/text';
+import { APPBADGES } from '~/framework/modules/timelinev2/appBadges';
 import { displayPastDate } from '~/framework/util/date';
 import { ITimelineNotification } from '~/framework/util/notifications';
 import { getUserSession, IUserSession } from '~/framework/util/session';

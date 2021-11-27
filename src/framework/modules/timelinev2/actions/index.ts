@@ -4,16 +4,16 @@
 
 import { ThunkDispatch } from 'redux-thunk';
 
-import moduleConfig from '../moduleConfig';
-import { ITimeline_State } from '../reducer';
-import { actions as flashMessagesActions } from '../reducer/flashMessages';
-import * as notifDefinitionsStateHandler from '../reducer/notifDefinitions';
-import * as notifSettingsStateHandler from '../reducer/notifSettings';
-import { actions as notificationsActions } from '../reducer/notifications';
-import { flashMessagesService, notificationsService } from '../service';
 import { loadNotificationsDefinitionsAction } from './notifDefinitions';
 import { loadNotificationFiltersSettingsAction } from './notifSettings';
 
+import moduleConfig from '~/framework/modules/timelinev2/moduleConfig';
+import { ITimeline_State } from '~/framework/modules/timelinev2/reducer';
+import { actions as flashMessagesActions } from '~/framework/modules/timelinev2/reducer/flashMessages';
+import * as notifDefinitionsStateHandler from '~/framework/modules/timelinev2/reducer/notifDefinitions';
+import * as notifSettingsStateHandler from '~/framework/modules/timelinev2/reducer/notifSettings';
+import { actions as notificationsActions } from '~/framework/modules/timelinev2/reducer/notifications';
+import { flashMessagesService, notificationsService } from '~/framework/modules/timelinev2/service';
 import { getUserSession } from '~/framework/util/session';
 
 const _prepareNotificationsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
