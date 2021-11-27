@@ -3,14 +3,16 @@
  * Everything for managing and declaring modules
  */
 
-import { toSnakeCase } from "./string";
-import * as React from "react";
-import { Reducer } from "redux";
-import { createMainTabNavOption } from "../../navigation/helpers/mainTabNavigator";
-import I18n from "i18n-js";
-import { NavigationRouteConfig } from "react-navigation";
-import type { NavigationParams, NavigationRoute, NavigationRouteConfigMap } from "react-navigation";
-import type { StackNavigationOptions, StackNavigationProp } from "react-navigation-stack/lib/typescript/src/vendor/types";
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { NavigationRouteConfig } from 'react-navigation';
+import type { NavigationParams, NavigationRoute, NavigationRouteConfigMap } from 'react-navigation';
+import type { StackNavigationOptions, StackNavigationProp } from 'react-navigation-stack/lib/typescript/src/vendor/types';
+import { Reducer } from 'redux';
+
+import { toSnakeCase } from './string';
+
+import { createMainTabNavOption } from '~/navigation/helpers/mainTabNavigator';
 
 // Module Config ==================================================================================
 
@@ -31,20 +33,20 @@ export interface IEntcoreApp {
 
 interface IModuleConfigBase<Name extends string> {
   // Module configured information
-  name: Name;                // Technical (and unique) name of the module. This module will be referenced by this name everywhere in the code.
-  displayName: string;       // I18n key of the module title displayed. Equals to `name` if not specified.
+  name: Name; // Technical (and unique) name of the module. This module will be referenced by this name everywhere in the code.
+  displayName: string; // I18n key of the module title displayed. Equals to `name` if not specified.
 
   // matchEntcoreApp: ((entcoreApp: IEntcoreApp) => boolean); // Function that tell if the module can be accessible by the user. If stirng is provided, compare to prefix.
-  entcoreScope: string[]     // oAuth scope required for this module
+  entcoreScope: string[]; // oAuth scope required for this module
 
   // Module computed information
   actionTypesPrefix: string; // Uppercase prefix used for action types. Computed from `name` if not specified.
-  reducerName: string;       // Name of the reducer. Computed from `name` if not specified.
-  trackingName: string;      // Name used for tracking category. Computed from `name` if not specified.
+  reducerName: string; // Name of the reducer. Computed from `name` if not specified.
+  trackingName: string; // Name used for tracking category. Computed from `name` if not specified.
 
   // Module registration
-  registerAs?: string;       // In which global register to puy this module
-  registerOrder?: number;    // In which order
+  registerAs?: string; // In which global register to puy this module
+  registerOrder?: number; // In which order
 
   // Additional keys
   [k: string]: any;
@@ -55,7 +57,7 @@ interface IModuleConfigBase<Name extends string> {
  * So use moduleConfig for module constants.
  */
 export interface IModuleConfig<Name extends string, State> extends IModuleConfigBase<Name> {
-  matchEntcoreApp: ((entcoreApp: IEntcoreApp) => boolean); // Function that tell if the module can be accessible by the user. If stirng is provided, compare to prefix.
+  matchEntcoreApp: (entcoreApp: IEntcoreApp) => boolean; // Function that tell if the module can be accessible by the user. If stirng is provided, compare to prefix.
   getState: (globalState: any) => State;
   namespaceActionType: (actionType: string) => string;
 }
@@ -70,54 +72,49 @@ export type IAnyModuleConfig = IModuleConfig<string, any>;
 export interface IModuleConfigDeclaration<Name extends string> extends Partial<IModuleConfigBase<Name>> {
   name: Name;
   matchEntcoreApp?: string | ((entcoreApp: IEntcoreApp) => boolean);
-};
+}
 
 /**
  * Creates an usable moduleConfig from its declaration.
  */
-export const createModuleConfig: <Name extends string, State>(opts: IModuleConfigDeclaration<Name>) => IModuleConfig<Name, State> = opts => {
-  const ret = {
-    name: opts.name,
-    displayName: opts.displayName || opts.name,
-    matchEntcoreApp: (typeof opts.matchEntcoreApp === 'string'
-      ? ((entcoreApp: IEntcoreApp) => entcoreApp.address === opts.matchEntcoreApp)
-      : opts.matchEntcoreApp) || (() => true),
-    entcoreScope: opts.entcoreScope || [],
-    actionTypesPrefix: opts.actionTypesPrefix || toSnakeCase(opts.name).toUpperCase() + "_",
-    reducerName: opts.reducerName || opts.name,
-    trackingName: opts.trackingName || (opts.name[0].toUpperCase() + opts.name.slice(1)),
-    registerAs: opts.registerAs,
-    registerOrder: opts.registerOrder
+export const createModuleConfig: <Name extends string, State>(opts: IModuleConfigDeclaration<Name>) => IModuleConfig<Name, State> =
+  opts => {
+    const ret = {
+      name: opts.name,
+      displayName: opts.displayName || opts.name,
+      matchEntcoreApp:
+        (typeof opts.matchEntcoreApp === 'string'
+          ? (entcoreApp: IEntcoreApp) => entcoreApp.address === opts.matchEntcoreApp
+          : opts.matchEntcoreApp) || (() => true),
+      entcoreScope: opts.entcoreScope || [],
+      actionTypesPrefix: opts.actionTypesPrefix || toSnakeCase(opts.name).toUpperCase() + '_',
+      reducerName: opts.reducerName || opts.name,
+      trackingName: opts.trackingName || opts.name[0].toUpperCase() + opts.name.slice(1),
+      registerAs: opts.registerAs,
+      registerOrder: opts.registerOrder,
+    };
+    const otherOpts = Object.fromEntries(Object.entries(opts).filter(([k, v]) => !ret.hasOwnProperty(k)));
+    return {
+      ...ret,
+      ...otherOpts,
+      getState: globalState => globalState[ret.reducerName],
+      namespaceActionType: actionType => ret.actionTypesPrefix + actionType,
+    };
   };
-  const otherOpts = Object.fromEntries(Object.entries(opts).filter(([k, v]) => !ret.hasOwnProperty(k)));
-  return {
-    ...ret, ...otherOpts,
-    getState: globalState => globalState[ret.reducerName],
-    namespaceActionType: actionType => ret.actionTypesPrefix + actionType
-  };
-}
 
 // Module =========================================================================================
 
-export interface IModuleBase<
-  Name extends string,
-  ConfigType extends IModuleConfig<Name, State>,
-  State
-  > {
-  config: ConfigType,
-  reducer: Reducer<State>
+export interface IModuleBase<Name extends string, ConfigType extends IModuleConfig<Name, State>, State> {
+  config: ConfigType;
+  reducer: Reducer<State>;
 }
 
 /**
  * all props passed to the Module constructor to create a Module.
  */
-export interface IModuleDeclaration<
-  Name extends string,
-  ConfigType extends IModuleConfig<Name, State>,
-  State,
-  Root
-  > extends IModuleBase<Name, ConfigType, State> {
-  getRoot: () => Root /*(React.ComponentClass | React.FunctionComponent)*/,
+export interface IModuleDeclaration<Name extends string, ConfigType extends IModuleConfig<Name, State>, State, Root>
+  extends IModuleBase<Name, ConfigType, State> {
+  getRoot: () => Root /*(React.ComponentClass | React.FunctionComponent)*/;
 }
 
 /**
@@ -125,18 +122,15 @@ export interface IModuleDeclaration<
  * Note: before being intantiated, EVERY dependant module MUST have registered their things in its module map.
  * ToDo: make a resolution algorithm to make things easier ?
  */
-export class Module<
-  Name extends string,
-  ConfigType extends IModuleConfig<Name, State>,
-  State,
-  Root
-  > implements IModuleBase<Name, ConfigType, State>{
+export class Module<Name extends string, ConfigType extends IModuleConfig<Name, State>, State, Root>
+  implements IModuleBase<Name, ConfigType, State>
+{
   // Gathered from declaration
   config: ConfigType;
   reducer: Reducer<State>;
   _getRoot: () => Root;
   // Computed during initialization
-  root?: Root; /* React.ComponentClass | React.FunctionComponent | undefined */;
+  root?: Root; /* React.ComponentClass | React.FunctionComponent | undefined */
 
   constructor(moduleDeclaration: IModuleDeclaration<Name, ConfigType, State, Root>) {
     this.config = moduleDeclaration.config;
@@ -147,7 +141,7 @@ export class Module<
 
   init() {
     if (!this.root) {
-      console.log("[ModuleTool] init module " + this.config.name);
+      console.log('[ModuleTool] init module ' + this.config.name);
       this.root = this._getRoot();
     }
   }
@@ -156,7 +150,6 @@ export class Module<
     if (!this.root) throw new Error(`Try to get non-initialized module '${this.config.name}'`);
     return this as Required<Module<Name, ConfigType, State, Root>>;
   }
-
 }
 
 export type UnknownModule = Module<string, IModuleConfig<string, unknown>, unknown, unknown>;
@@ -167,31 +160,33 @@ export type AnyModule = Module<string, IModuleConfig<string, any>, any, any>;
 // ToDo : move this into the future Navigation Manager ?
 
 interface INavigableModuleConfigBase {
-  iconName: string;          // Name of the icon in Icomoon font. Equals to `name` if not specified.
-  iconColor?: string;        // Color of the icon. Default color if not specified.
+  iconName: string; // Name of the icon in Icomoon font. Equals to `name` if not specified.
+  iconColor?: string; // Color of the icon. Default color if not specified.
   routeName: string;
 }
 export interface INavigableModuleConfig<Name extends string, State>
-  extends IModuleConfig<Name, State>, INavigableModuleConfigBase { };
+  extends IModuleConfig<Name, State>,
+    INavigableModuleConfigBase {}
 export interface INavigableModuleConfigDeclaration<Name extends string>
-  extends IModuleConfigDeclaration<Name>, Partial<INavigableModuleConfigBase> { };
+  extends IModuleConfigDeclaration<Name>,
+    Partial<INavigableModuleConfigBase> {}
 
-export const createNavigableModuleConfig =
-  <Name extends string, State>(opts: INavigableModuleConfigDeclaration<Name>) => ({
+export const createNavigableModuleConfig = <Name extends string, State>(opts: INavigableModuleConfigDeclaration<Name>) =>
+  ({
     ...createModuleConfig(opts),
     iconName: opts.iconName || opts.name,
     iconColor: opts.iconColor,
-    routeName: opts.routeName || opts.name
+    routeName: opts.routeName || opts.name,
   } as INavigableModuleConfig<Name, State>);
 
 export interface INavigableModuleDeclaration<
   Name extends string,
   ConfigType extends INavigableModuleConfig<Name, State>,
   State,
-  Root
-  > extends IModuleDeclaration<Name, ConfigType, State, Root> {
-  config: ConfigType
-};
+  Root,
+> extends IModuleDeclaration<Name, ConfigType, State, Root> {
+  config: ConfigType;
+}
 
 export type IAnyNavigableModuleConfig = INavigableModuleConfig<string, any>;
 
@@ -199,11 +194,11 @@ export class NavigableModule<
   Name extends string,
   ConfigType extends INavigableModuleConfig<Name, State>,
   State,
-  Root extends React.ComponentClass | React.FunctionComponent
-  > extends Module<Name, ConfigType, State, Root> {
+  Root extends React.ComponentClass | React.FunctionComponent,
+> extends Module<Name, ConfigType, State, Root> {
   config: ConfigType;
   // Computed during initialization
-  route?: NavigationRouteConfig<any, any>
+  route?: NavigationRouteConfig<any, any>;
 
   constructor(moduleDeclaration: INavigableModuleDeclaration<Name, ConfigType, State, Root>) {
     super(moduleDeclaration);
@@ -224,15 +219,29 @@ export class NavigableModule<
   createModuleRoute() {
     return {
       screen: this.root!,
-      navigationOptions: createMainTabNavOption(I18n.t(this.config.displayName), this.config.iconName)
-    }
+      navigationOptions: createMainTabNavOption(I18n.t(this.config.displayName), this.config.iconName),
+    };
   }
 }
 
-export type UnknownNavigableModule = NavigableModule<string, INavigableModuleConfig<string, unknown>, unknown, React.ComponentClass | React.FunctionComponent>;
-export type AnyNavigableModule = NavigableModule<string, INavigableModuleConfig<string, any>, any, React.ComponentClass | React.FunctionComponent>;
+export type UnknownNavigableModule = NavigableModule<
+  string,
+  INavigableModuleConfig<string, unknown>,
+  unknown,
+  React.ComponentClass | React.FunctionComponent
+>;
+export type AnyNavigableModule = NavigableModule<
+  string,
+  INavigableModuleConfig<string, any>,
+  any,
+  React.ComponentClass | React.FunctionComponent
+>;
 
-export type RouteMap = NavigationRouteConfigMap<StackNavigationOptions, StackNavigationProp<NavigationRoute<NavigationParams>, NavigationParams>, unknown>;
+export type RouteMap = NavigationRouteConfigMap<
+  StackNavigationOptions,
+  StackNavigationProp<NavigationRoute<NavigationParams>, NavigationParams>,
+  unknown
+>;
 
 // Module Array ===================================================================================
 
@@ -253,12 +262,19 @@ export class ModuleArray<ModuleType extends UnknownModule = UnknownModule> exten
     return new ModuleArray<ModuleType>(...this.filter(m => !!availableApps.find(app => m.config.matchEntcoreApp(app))));
   }
   getReducers() {
-    return Object.fromEntries(this.map(m => ([m.config.reducerName, m.reducer])));
+    return Object.fromEntries(this.map(m => [m.config.reducerName, m.reducer]));
   }
-  getScopes() { return this.map(m => m.config.entcoreScope).flat() }
-  initModules() { this.forEach(m => m.init()); return this; }
+  getScopes() {
+    return this.map(m => m.config.entcoreScope).flat();
+  }
+  initModules() {
+    this.forEach(m => m.init());
+    return this;
+  }
 }
-export class NavigableModuleArray<ModuleType extends UnknownNavigableModule = UnknownNavigableModule> extends ModuleArray<ModuleType> {
+export class NavigableModuleArray<
+  ModuleType extends UnknownNavigableModule = UnknownNavigableModule,
+> extends ModuleArray<ModuleType> {
   constructor(...items) {
     super(...items);
     Object.setPrototypeOf(this, NavigableModuleArray.prototype); // See https://github.com/Microsoft/TypeScript-wiki/blob/main/Breaking-Changes.md#extending-built-ins-like-error-array-and-map-may-no-longer-work
@@ -266,7 +282,9 @@ export class NavigableModuleArray<ModuleType extends UnknownNavigableModule = Un
   filterAvailables(availableApps: IEntcoreApp[]) {
     return new NavigableModuleArray<ModuleType>(...this.filter(m => !!availableApps.find(app => m.config.matchEntcoreApp(app))));
   }
-  getRoutes() { return Object.fromEntries(this.map(m => [m.config.routeName, m.get().route])); }
+  getRoutes() {
+    return Object.fromEntries(this.map(m => [m.config.routeName, m.get().route]));
+  }
 }
 
 /**
@@ -274,26 +292,23 @@ export class NavigableModuleArray<ModuleType extends UnknownNavigableModule = Un
  * @param moduleInclusions Array of module require()s and their optional custom config.
  * @returns
  */
-export const loadModules = <
-  ModuleType extends UnknownModule = UnknownModule
->(moduleInclusions: ModuleInclusion<ModuleType>[]) => {
+export const loadModules = <ModuleType extends UnknownModule = UnknownModule>(moduleInclusions: ModuleInclusion<ModuleType>[]) => {
   const moduleMap: { [key: string]: ModuleType } = {};
   moduleInclusions.forEach(moduleInc => {
     // 1. Load module in the map
-    const module = Array.isArray(moduleInc)
-      ? moduleInc[0] : moduleInc;
+    const module = Array.isArray(moduleInc) ? moduleInc[0] : moduleInc;
     if (moduleMap.hasOwnProperty(module.config.name)) {
       console.warn(`[ModuleTool] Duplicate module identifier "${module.config.name}".`);
     }
     moduleMap[module.config.name] = module;
     // 2. Load custom configuration if provided
     if (Array.isArray(moduleInc) && moduleInc[1]) {
-      console.log("[ModuleTool] Assign custom config for module", module.config.name, moduleInc[1]);
+      console.log('[ModuleTool] Assign custom config for module', module.config.name, moduleInc[1]);
       Object.assign(module.config, moduleInc[1]); // Also MUTATES the config imported from moduleConfig.ts
     }
   });
   return new ModuleArray(...Object.values(moduleMap));
-}
+};
 
 // Module registers ===============================================================================
 
@@ -301,7 +316,7 @@ export const loadModules = <
  * Create a register to store module dependencies and links.
  */
 export class CustomRegister<ItemType, FormattedRegisterType> {
-  items: Array<{ item: ItemType, order: number }>;
+  items: { item: ItemType; order: number }[];
   formater: (items: ItemType[]) => FormattedRegisterType;
   constructor(formater: (items: ItemType[]) => FormattedRegisterType) {
     this.items = [];
@@ -309,16 +324,17 @@ export class CustomRegister<ItemType, FormattedRegisterType> {
   }
   register(item: ItemType, order?: number) {
     // console.log("register", item);
-    this.items.push({ item, order: order ?? 0 })
+    this.items.push({ item, order: order ?? 0 });
     return item; // Allow chaining
   }
-  get() { return this.formater(this.items.sort((a, b) => a.order - b.order).map(i => i.item)) }
+  get() {
+    return this.formater(this.items.sort((a, b) => a.order - b.order).map(i => i.item));
+  }
 }
 
-export class ModuleRegister<ModuleType extends UnknownModule>
-  extends CustomRegister<ModuleType, ModuleArray<ModuleType>> {
+export class ModuleRegister<ModuleType extends UnknownModule> extends CustomRegister<ModuleType, ModuleArray<ModuleType>> {
   constructor() {
-    super(modules => new ModuleArray(...modules))
+    super(modules => new ModuleArray(...modules));
   }
 }
 
@@ -326,11 +342,11 @@ const globalRegisters: { [key: string]: CustomRegister<any, any> } = {};
 export const setGlobalRegister = (name: string, register: CustomRegister<any, any>) => {
   console.log(`[ModuleTool] Set global register "${name}"`);
   globalRegisters[name] = register;
-}
+};
 export const getGlobalRegister = <RegisterType extends CustomRegister<unknown, unknown>>(name?: string) => {
   // console.log("gs", Object.keys(globalRegisters));
-  return name ? globalRegisters[name] as RegisterType | undefined : undefined;
-}
+  return name ? (globalRegisters[name] as RegisterType | undefined) : undefined;
+};
 
 /**
  * Registers given modules in the right global register depending on its moduleConfig.
@@ -346,11 +362,11 @@ export const dynamiclyRegisterModules = <ModuleType extends AnyModule = AnyModul
     register && register.register(module, module.config.registerOrder);
   });
   return modules; // Allow chaining
-}
+};
 
 // Tab modules register ===========================================================================
 
 // ToDo : move this into the future Navigation Manager ?
 
-export const tabModules = new ModuleRegister<AnyNavigableModule>()
+export const tabModules = new ModuleRegister<AnyNavigableModule>();
 setGlobalRegister('tabModule', tabModules);

@@ -2,12 +2,12 @@
  * Homework diary list state reducer
  * Holds a list of available homework diary Ids in a simple Array
  */
-import { IArrayById } from "../../infra/collections";
-import asyncReducer from "../../infra/redux/async";
+import { AnyAction } from 'redux';
 
-import { actionTypes } from "../actions/diaryList";
-import { createEndSessionActionType } from "../../infra/redux/reducerFactory";
-import { AnyAction } from "redux";
+import { actionTypes } from '~/homework/actions/diaryList';
+import { IArrayById } from '~/infra/collections';
+import asyncReducer from '~/infra/redux/async';
+import { createEndSessionActionType } from '~/infra/redux/reducerFactory';
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -23,10 +23,7 @@ export type IHomeworkDiaryList = IArrayById<IHomeworkDiary>;
 
 const stateDefault: IHomeworkDiaryList = {};
 
-const homeworkDiaryListReducer = (
-  state: IHomeworkDiaryList = stateDefault,
-  action: AnyAction
-) => {
+const homeworkDiaryListReducer = (state: IHomeworkDiaryList = stateDefault, action: AnyAction) => {
   switch (action.type) {
     case actionTypes.received:
       return action.data;
@@ -38,7 +35,4 @@ const homeworkDiaryListReducer = (
   }
 };
 
-export default asyncReducer<IHomeworkDiaryList>(
-  homeworkDiaryListReducer,
-  actionTypes
-);
+export default asyncReducer<IHomeworkDiaryList>(homeworkDiaryListReducer, actionTypes);

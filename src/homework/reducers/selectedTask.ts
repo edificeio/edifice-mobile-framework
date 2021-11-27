@@ -2,16 +2,16 @@
  * List of reducers for single homework task.
  */
 
-import { Moment } from "moment";
+import { Moment } from 'moment';
+
+import { actionTypeTaskSelected } from '~/homework/actions/selectedTask';
+import { createEndSessionActionType } from '~/infra/redux/reducerFactory';
 
 export interface ISelectedHomeworkTaskState {
   diaryId: string;
   date: Moment;
   taskId: number;
 }
-
-import { actionTypeTaskSelected } from "../actions/selectedTask";
-import { createEndSessionActionType } from "../../infra/redux/reducerFactory";
 
 function selectedTask(state: ISelectedHomeworkTaskState = null, action) {
   switch (action.type) {
@@ -20,7 +20,7 @@ function selectedTask(state: ISelectedHomeworkTaskState = null, action) {
         ...state,
         date: action.date,
         diaryId: action.diaryId,
-        taskId: action.taskId
+        taskId: action.taskId,
       };
     // Session flush forward-compatibility.
     case createEndSessionActionType():

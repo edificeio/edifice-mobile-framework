@@ -1,24 +1,20 @@
-import * as React from "react";
-import { connect } from "react-redux";
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { NavigationScreenProp } from 'react-navigation';
+import { connect } from 'react-redux';
+
+import { getUserSession } from '~/framework/util/session';
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { fetchHomeworkDiaryList, fetchHomeworkDiaryListIfNeeded } from '~/homework/actions/diaryList';
+import { homeworkDiarySelected } from '~/homework/actions/selectedDiary';
 import {
   HomeworkFilterPage,
   IHomeworkFilterPageDataProps,
   IHomeworkFilterPageEventProps,
-  IHomeworkFilterPageProps
-} from "../components/HomeworkFilterPage";
-import I18n from "i18n-js";
-
-import {
-  fetchHomeworkDiaryList,
-  fetchHomeworkDiaryListIfNeeded
-} from "../actions/diaryList";
-import { homeworkDiarySelected } from "../actions/selectedDiary";
-
-import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
-import { NavigationScreenProp } from "react-navigation";
-import { HeaderBackAction } from "../../ui/headers/NewHeader";
-import withViewTracking from "../../framework/util/tracker/withViewTracking";
-import { getUserSession } from "../../framework/util/session";
+  IHomeworkFilterPageProps,
+} from '~/homework/components/HomeworkFilterPage';
+import { alternativeNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
+import { HeaderBackAction } from '~/ui/headers/NewHeader';
 
 const mapStateToProps: (state: any) => IHomeworkFilterPageDataProps = state => {
   // Extract data from state
@@ -30,14 +26,12 @@ const mapStateToProps: (state: any) => IHomeworkFilterPageDataProps = state => {
       diaryList: [],
       isFetching: homeworkDiaryList.isFetching,
       selectedDiaryId: localState.selected,
-      session
+      session,
     };
-  const flatHomeworkDiaryList = Object.getOwnPropertyNames(
-    homeworkDiaryList.data
-  ).map(diaryId => ({
+  const flatHomeworkDiaryList = Object.getOwnPropertyNames(homeworkDiaryList.data).map(diaryId => ({
     id: diaryId,
     name: homeworkDiaryList.data[diaryId].name,
-    title: homeworkDiaryList.data[diaryId].title
+    title: homeworkDiaryList.data[diaryId].title,
   }));
   const { didInvalidate, isFetching } = homeworkDiaryList;
 
@@ -47,33 +41,28 @@ const mapStateToProps: (state: any) => IHomeworkFilterPageDataProps = state => {
     didInvalidate,
     isFetching,
     selectedDiaryId: localState.selectedDiary,
-    session
+    session,
   };
 };
 
-const mapDispatchToProps: (
-  dispatch: any
-) => IHomeworkFilterPageEventProps = dispatch => {
+const mapDispatchToProps: (dispatch: any) => IHomeworkFilterPageEventProps = dispatch => {
   return {
     dispatch,
     onRefresh: () => dispatch(fetchHomeworkDiaryList()),
     onSelect: (diaryId, trackingKeyword) => {
       dispatch(homeworkDiarySelected(diaryId));
-    }
+    },
   };
 };
 
-class HomeworkFilterPageContainer extends React.PureComponent<
-  IHomeworkFilterPageProps & { dispatch: any },
-  {}
-> {
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
+class HomeworkFilterPageContainer extends React.PureComponent<IHomeworkFilterPageProps & { dispatch: any }, object> {
+  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
     return alternativeNavScreenOptions(
       {
-        title: I18n.t("homework-select"),
-        headerLeft: <HeaderBackAction navigation={navigation} />
+        title: I18n.t('homework-select'),
+        headerLeft: <HeaderBackAction navigation={navigation} />,
       },
-      navigation
+      navigation,
     );
   };
 
@@ -90,9 +79,6 @@ class HomeworkFilterPageContainer extends React.PureComponent<
   }
 }
 
-const HomeworkFilterPageContainerConnected = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(HomeworkFilterPageContainer);
+const HomeworkFilterPageContainerConnected = connect(mapStateToProps, mapDispatchToProps)(HomeworkFilterPageContainer);
 
-export default withViewTracking("homework/filter")(HomeworkFilterPageContainerConnected);
+export default withViewTracking('homework/filter')(HomeworkFilterPageContainerConnected);
