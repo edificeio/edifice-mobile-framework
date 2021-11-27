@@ -1,12 +1,17 @@
 // State definition
 
-import { AsyncState, createAsyncActionCreators, createAsyncActionTypes, createSessionAsyncReducer } from "~/framework/util/redux/async";
-import moduleConfig from "../../moduleConfig";
+import moduleConfig from '~/framework/modules/timelinev2/moduleConfig';
+import {
+  AsyncState,
+  createAsyncActionCreators,
+  createAsyncActionTypes,
+  createSessionAsyncReducer,
+} from '~/framework/util/redux/async';
 
 export interface INotificationFilter {
   type: string;
-  "app-name": string | null;
-  "app-address": string | null;
+  'app-name': string | null;
+  'app-address': string | null;
   i18n: string;
 }
 
@@ -17,7 +22,7 @@ export type INotifFilters_State = AsyncState<INotifFilters_State_Data>;
 
 const initialState: INotifFilters_State_Data = [];
 
-export const actionTypes = createAsyncActionTypes(moduleConfig.namespaceActionType("NOTIFICATION_FILTERS"));
+export const actionTypes = createAsyncActionTypes(moduleConfig.namespaceActionType('NOTIFICATION_FILTERS'));
 export const actions = createAsyncActionCreators<INotifFilters_State_Data>(actionTypes);
 
 export default createSessionAsyncReducer(initialState, actionTypes);

@@ -1,36 +1,45 @@
-import I18n from "i18n-js";
-import * as React from "react";
-import { Alert, FlatList, RefreshControl, TouchableOpacity, View } from "react-native";
-import { NavigationInjectedProps, NavigationFocusInjectedProps, withNavigationFocus, NavigationEvents } from "react-navigation";
-import { connect } from "react-redux";
-import { ThunkDispatch } from "redux-thunk";
-import Snow from "react-native-snow-bg";
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { Alert, RefreshControl, TouchableOpacity, View } from 'react-native';
+import Snow from 'react-native-snow-bg';
+import Toast from 'react-native-tiny-toast';
+import { NavigationInjectedProps, NavigationFocusInjectedProps, withNavigationFocus } from 'react-navigation';
+import { connect } from 'react-redux';
+import { ThunkDispatch } from 'redux-thunk';
 
-import type { IGlobalState } from "~/AppStore";
-import PopupMenu from "~/framework/components/popupMenu";
-import { EmptyScreen } from "~/framework/components/emptyScreen";
-import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from "~/framework/components/header";
-import { LoadingIndicator } from "~/framework/components/loading";
-import { PageView } from "~/framework/components/page";
-import { Text } from "~/framework/components/text";
-import { ITimelineNotification, IResourceUriNotification, isResourceUriNotification, IAbstractNotification } from "~/framework/util/notifications";
-import { defaultNotificationActionStack, handleNotificationAction, NotifHandlerThunkAction } from "~/framework/util/notifications/routing";
-import { getUserSession, IUserSession } from "~/framework/util/session";
+import { dismissFlashMessageAction, loadNotificationsPageAction, startLoadNotificationsAction } from '../actions';
+import { TimelineFlashMessage } from '../components/TimelineFlashMessage';
+import { TimelineNotification } from '../components/TimelineNotification';
+import moduleConfig from '../moduleConfig';
+import type { ITimeline_State } from '../reducer';
+import { IEntcoreFlashMessage, IFlashMessages_State } from '../reducer/flashMessages';
+import { INotifications_State } from '../reducer/notifications';
+import { getTimelineWorkflowInformation } from '../rights';
+import { notificationsService } from '../service';
+import { getTimelineWorkflows } from '../timelineModules';
 
-import { dismissFlashMessageAction, loadNotificationsPageAction, startLoadNotificationsAction } from "../actions";
-import { TimelineFlashMessage } from "../components/TimelineFlashMessage";
-import { TimelineNotification } from "../components/TimelineNotification";
-import moduleConfig from "../moduleConfig";
-import type { ITimeline_State } from "../reducer";
-import { IEntcoreFlashMessage, IFlashMessages_State } from "../reducer/flashMessages";
-import { INotifications_State } from "../reducer/notifications";
-import { getTimelineWorkflows } from "../timelineModules";
-import SwipeableList, { SwipeableList as SwipeableListHandle } from "../../../components/swipeableList";
-import { Icon } from "../../../components/icon";
-import theme from "../../../../app/theme";
-import { notificationsService } from "../service";
-import { getTimelineWorkflowInformation } from "../rights";
-import Toast from "react-native-tiny-toast";
+import type { IGlobalState } from '~/AppStore';
+import theme from '~/app/theme';
+import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '~/framework/components/header';
+import { Icon } from '~/framework/components/icon';
+import { LoadingIndicator } from '~/framework/components/loading';
+import { PageView } from '~/framework/components/page';
+import PopupMenu from '~/framework/components/popupMenu';
+import SwipeableList, { SwipeableList as SwipeableListHandle } from '~/framework/components/swipeableList';
+import { Text } from '~/framework/components/text';
+import {
+  ITimelineNotification,
+  IResourceUriNotification,
+  isResourceUriNotification,
+  IAbstractNotification,
+} from '~/framework/util/notifications';
+import {
+  defaultNotificationActionStack,
+  handleNotificationAction,
+  NotifHandlerThunkAction,
+} from '~/framework/util/notifications/routing';
+import { getUserSession, IUserSession } from '~/framework/util/session';
 
 // TYPES ==========================================================================================
 
@@ -38,48 +47,48 @@ export interface ITimelineScreenDataProps {
   flashMessages: IFlashMessages_State;
   notifications: INotifications_State;
   session: IUserSession;
-};
+}
 export interface ITimelineScreenEventProps {
-  dispatch: ThunkDispatch<any, any, any>
-  handleInitTimeline(): Promise<void>,
-  handleNextPage(): Promise<boolean>, // return true if page if there is more pages to load
-  handleDismissFlashMessage(flashMessageId: number): Promise<void>
-  handleOpenNotification(n: IAbstractNotification, fallback: NotifHandlerThunkAction): Promise<void>
-};
-export type ITimelineScreenProps = ITimelineScreenDataProps
-  & ITimelineScreenEventProps
-  & NavigationInjectedProps
-  & NavigationFocusInjectedProps;
+  dispatch: ThunkDispatch<any, any, any>;
+  handleInitTimeline(): Promise<void>;
+  handleNextPage(): Promise<boolean>; // return true if page if there is more pages to load
+  handleDismissFlashMessage(flashMessageId: number): Promise<void>;
+  handleOpenNotification(n: IAbstractNotification, fallback: NotifHandlerThunkAction): Promise<void>;
+}
+export type ITimelineScreenProps = ITimelineScreenDataProps &
+  ITimelineScreenEventProps &
+  NavigationInjectedProps &
+  NavigationFocusInjectedProps;
 
 export enum TimelineLoadingState {
-  PRISTINE, INIT, REFRESH, DONE
+  PRISTINE,
+  INIT,
+  REFRESH,
+  DONE,
 }
 export interface ITimelineScreenState {
   loadingState: TimelineLoadingState; // Holds the initial loading state. further page loading is handled by async.isFetching
   isSnowing: boolean;
-};
+}
 
 export enum ITimelineItemType {
-  NOTIFICATION, FLASHMSG
+  NOTIFICATION,
+  FLASHMSG,
 }
 export interface ITimelineItem {
-  type: ITimelineItemType,
-  data: ITimelineNotification | IEntcoreFlashMessage
+  type: ITimelineItemType;
+  data: ITimelineNotification | IEntcoreFlashMessage;
 }
 
 // COMPONENT ======================================================================================
 
-export class TimelineScreen extends React.PureComponent<
-  ITimelineScreenProps,
-  ITimelineScreenState
-> {
-
+export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, ITimelineScreenState> {
   // DECLARATIONS =================================================================================
 
   state: ITimelineScreenState = {
     loadingState: TimelineLoadingState.PRISTINE,
-    isSnowing: true
-  }
+    isSnowing: true,
+  };
 
   popupMenuRef = React.createRef<PopupMenu>();
   listRef = React.createRef<SwipeableListHandle<ITimelineItem>>();
@@ -91,27 +100,22 @@ export class TimelineScreen extends React.PureComponent<
     const { navigation } = this.props;
     const { isSnowing } = this.state;
     const routeName = navigation.state.routeName;
-    return <>
-      {this.renderHeader()}
-      {this.renderHeaderButton()}
-      <PageView path={routeName}>
-        {[TimelineLoadingState.PRISTINE, TimelineLoadingState.INIT].includes(this.state.loadingState)
-          ? <LoadingIndicator />
-          : this.props.notifications.error && !this.props.notifications.lastSuccess
-            ? this.renderError()
-            : this.renderList()
-        }
-      </PageView>
-      {isSnowing
-        ? <Snow
-            pointerEvents="none"
-            fallSpeed="medium"
-            snowflakesCount={100}
-            fullScreen
-          />
-        : null
-      }
-    </>;
+    return (
+      <>
+        {this.renderHeader()}
+        {this.renderHeaderButton()}
+        <PageView path={routeName}>
+          {[TimelineLoadingState.PRISTINE, TimelineLoadingState.INIT].includes(this.state.loadingState) ? (
+            <LoadingIndicator />
+          ) : this.props.notifications.error && !this.props.notifications.lastSuccess ? (
+            this.renderError()
+          ) : (
+            this.renderList()
+          )}
+        </PageView>
+        {isSnowing ? <Snow pointerEvents="none" fallSpeed="medium" snowflakesCount={100} fullScreen /> : null}
+      </>
+    );
   }
 
   renderHeader() {
@@ -119,30 +123,36 @@ export class TimelineScreen extends React.PureComponent<
       <FakeHeader>
         <HeaderRow>
           <HeaderLeft>
-            <HeaderAction
-              iconName="filter"
-              onPress={() => this.goToFilters()}
-            />
+            <HeaderAction iconName="filter" onPress={() => this.goToFilters()} />
           </HeaderLeft>
           <HeaderCenter>
-            <HeaderTitle>{I18n.t("timeline.appName")}</HeaderTitle>
+            <HeaderTitle>{I18n.t('timeline.appName')}</HeaderTitle>
           </HeaderCenter>
         </HeaderRow>
       </FakeHeader>
-    )
+    );
   }
 
   renderHeaderButton() {
     const workflows = getTimelineWorkflows(this.props.session);
     if (!workflows || !workflows.length) return null;
-    return <PopupMenu iconName="new_post" options={workflows} ref={this.popupMenuRef} onPress={() => {
-      this.listRef.current?.recenter();
-    }} />
+    return (
+      <PopupMenu
+        iconName="new_post"
+        options={workflows}
+        ref={this.popupMenuRef}
+        onPress={() => {
+          this.listRef.current?.recenter();
+        }}
+      />
+    );
   }
 
   renderError() {
-    return <Text>{`Error: ${this.props.notifications.error?.name}
-    ${this.props.notifications.error?.name}`}</Text> // ToDo: great error screen here
+    return (
+      <Text>{`Error: ${this.props.notifications.error?.name}
+    ${this.props.notifications.error?.name}`}</Text>
+    ); // ToDo: great error screen here
   }
 
   renderList() {
@@ -150,22 +160,21 @@ export class TimelineScreen extends React.PureComponent<
     const isEmpty = items && items.length === 0;
 
     const renderSwipeButton = (action, actionIcon, actionText) => [
-      <View style={{ height: "100%", justifyContent: 'center' }}>
-        <TouchableOpacity
-          onPress={action}
-        >
-          <View style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 12,
-            width: 140
-          }}>
+      <View style={{ height: '100%', justifyContent: 'center' }}>
+        <TouchableOpacity onPress={action}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 12,
+              width: 140,
+            }}>
             <Icon name={actionIcon} size={16} color={theme.color.warning} />
             <Text style={{ color: theme.color.warning, marginLeft: 10 }}>{actionText}</Text>
           </View>
         </TouchableOpacity>
-      </View>
+      </View>,
     ];
 
     return (
@@ -175,9 +184,11 @@ export class TimelineScreen extends React.PureComponent<
         data={items}
         keyExtractor={n => n?.data?.id?.toString()}
         contentContainerStyle={isEmpty ? { flex: 1 } : null}
-        renderItem={({ item }) => item.type === ITimelineItemType.NOTIFICATION
-          ? this.renderNotificationItem(item.data as ITimelineNotification)
-          : this.renderFlashMessageItem(item.data as IEntcoreFlashMessage)}
+        renderItem={({ item }) =>
+          item.type === ITimelineItemType.NOTIFICATION
+            ? this.renderNotificationItem(item.data as ITimelineNotification)
+            : this.renderFlashMessageItem(item.data as IEntcoreFlashMessage)
+        }
         // pagination
         ListEmptyComponent={this.renderEmpty}
         refreshControl={
@@ -187,27 +198,30 @@ export class TimelineScreen extends React.PureComponent<
           />
         }
         ListFooterComponent={
-          this.state.loadingState === TimelineLoadingState.DONE && this.props.notifications.isFetching
-            ? <LoadingIndicator /> : null
+          this.state.loadingState === TimelineLoadingState.DONE && this.props.notifications.isFetching ? <LoadingIndicator /> : null
         }
-        ListHeaderComponent={
-          getTimelineWorkflows(this.props.session).length ? <View style={{ height: 12 }} /> : null
-        }
+        ListHeaderComponent={getTimelineWorkflows(this.props.session).length ? <View style={{ height: 12 }} /> : null}
         onEndReached={() => this.doNextPage()}
         onEndReachedThreshold={0.5}
         // Swipeable props
         rightButtonWidth={140}
         itemSwipeableProps={({ item }) => {
-          return ({
-            rightButtons: this.rights.notification.report ? [renderSwipeButton(
-              async () => {
-                await this.doReportConfirm(item.data as ITimelineNotification);
-                this.listRef.current?.recenter();
-              }, 'warning', I18n.t('timeline.reportAction.button')
-            )] : undefined,
+          return {
+            rightButtons: this.rights.notification.report
+              ? [
+                  renderSwipeButton(
+                    async () => {
+                      await this.doReportConfirm(item.data as ITimelineNotification);
+                      this.listRef.current?.recenter();
+                    },
+                    'warning',
+                    I18n.t('timeline.reportAction.button'),
+                  ),
+                ]
+              : undefined,
             // onSwipeStart: () => { console.log("top onSwipeStart", item.data.id) },
             // onSwipeRelease: () => { console.log("top onSwipeRelease", item.data.id) }
-          });
+          };
         }}
       />
     );
@@ -216,11 +230,11 @@ export class TimelineScreen extends React.PureComponent<
   renderEmpty() {
     return (
       <EmptyScreen
-        imageSrc={require("ASSETS/images/empty-screen/timeline.png")}
+        imageSrc={require('ASSETS/images/empty-screen/timeline.png')}
         imgWidth={407}
         imgHeight={319}
-        title={I18n.t("timeline.emptyScreenTitle")}
-        text={I18n.t("timeline.emptyScreenText")}
+        title={I18n.t('timeline.emptyScreenTitle')}
+        text={I18n.t('timeline.emptyScreenText')}
       />
     );
   }
@@ -235,16 +249,13 @@ export class TimelineScreen extends React.PureComponent<
             : undefined
         }
       />
-    )
+    );
   }
 
   renderFlashMessageItem(flashMessage: IEntcoreFlashMessage) {
     return (
-      <TimelineFlashMessage
-        flashMessage={flashMessage}
-        flashMessageAction={() => this.doDismissFlashMessage(flashMessage.id)}
-      />
-    )
+      <TimelineFlashMessage flashMessage={flashMessage} flashMessageAction={() => this.doDismissFlashMessage(flashMessage.id)} />
+    );
   }
 
   // LIFECYCLE ====================================================================================
@@ -255,14 +266,14 @@ export class TimelineScreen extends React.PureComponent<
 
   componentDidUpdate(prevProps) {
     const { navigation, isFocused } = this.props;
-    const reloadWithNewSettings = navigation.getParam("reloadWithNewSettings");
+    const reloadWithNewSettings = navigation.getParam('reloadWithNewSettings');
     if (isFocused !== prevProps.isFocused && reloadWithNewSettings) {
       this.doInit();
       navigation.setParams({ reloadWithNewSettings: undefined });
     }
     if (isFocused !== prevProps.isFocused) {
       this.popupMenuRef.current?.doReset();
-      this.setState({ isSnowing: false })
+      this.setState({ isSnowing: false });
     }
   }
 
@@ -287,15 +298,15 @@ export class TimelineScreen extends React.PureComponent<
   }
 
   async doNextPage() {
-    if (!this.props.notifications.endReached)
-      await this.props.handleNextPage();
+    if (!this.props.notifications.endReached) await this.props.handleNextPage();
   }
 
   async doOpenNotification(n: IResourceUriNotification) {
     const fallbackHandleNotificationAction: NotifHandlerThunkAction = n => async (dispatch, getState) => {
-      isResourceUriNotification(n) && this.props.navigation.navigate('timeline/goto', {
-        notification: n as IResourceUriNotification
-      })
+      isResourceUriNotification(n) &&
+        this.props.navigation.navigate('timeline/goto', {
+          notification: n as IResourceUriNotification,
+        });
       return { managed: 1 };
     };
     this.props.handleOpenNotification && this.props.handleOpenNotification(n, fallbackHandleNotificationAction);
@@ -313,31 +324,29 @@ export class TimelineScreen extends React.PureComponent<
   doReportConfirm(notif: ITimelineNotification) {
     return new Promise<boolean>((resolve, reject) => {
       if (!this.rights.notification.report) reject(this.rights.notification.report);
-      Alert.alert(
-        I18n.t('timeline.reportAction.title'),
-        I18n.t('timeline.reportAction.description'),
-        [
-          {
-            text: I18n.t('timeline.reportAction.submit'),
-            onPress: async () => {
-              try {
-                await notificationsService.report(this.props.session, notif.id);
-                resolve(true);
-                Toast.showSuccess(I18n.t('timeline.reportAction.success'));
-              } catch (e) {
-                Alert.alert(I18n.t('common.error.text'));
-                reject(e);
-              }
-            },
-            style: "destructive",
+      Alert.alert(I18n.t('timeline.reportAction.title'), I18n.t('timeline.reportAction.description'), [
+        {
+          text: I18n.t('timeline.reportAction.submit'),
+          onPress: async () => {
+            try {
+              await notificationsService.report(this.props.session, notif.id);
+              resolve(true);
+              Toast.showSuccess(I18n.t('timeline.reportAction.success'));
+            } catch (e) {
+              Alert.alert(I18n.t('common.error.text'));
+              reject(e);
+            }
           },
-          {
-            text: I18n.t('common.cancel'),
-            onPress: () => { resolve(false) },
-            style: "cancel",
-          }
-        ]
-      );
+          style: 'destructive',
+        },
+        {
+          text: I18n.t('common.cancel'),
+          onPress: () => {
+            resolve(false);
+          },
+          style: 'cancel',
+        },
+      ]);
     });
   }
 }
@@ -345,36 +354,43 @@ export class TimelineScreen extends React.PureComponent<
 // UTILS ==========================================================================================
 
 const getTimelineItems = (flashMessages: IFlashMessages_State, notifications: INotifications_State) => {
-  const msgs = (flashMessages && flashMessages.data) ? flashMessages.data : [];
-  const notifs = (notifications && notifications.data) ? notifications.data : [];
-  return ([
+  const msgs = flashMessages && flashMessages.data ? flashMessages.data : [];
+  const notifs = notifications && notifications.data ? notifications.data : [];
+  return [
     ...msgs.map(fm => ({ type: ITimelineItemType.FLASHMSG, data: fm })),
     ...notifs.map(n => ({ type: ITimelineItemType.NOTIFICATION, data: n })),
-  ]);
-}
-
+  ];
+};
 
 // MAPPING ========================================================================================
 
-const mapStateToProps: (s: IGlobalState) => ITimelineScreenDataProps = (s) => {
+const mapStateToProps: (s: IGlobalState) => ITimelineScreenDataProps = s => {
   let ts = moduleConfig.getState(s) as ITimeline_State;
   return {
     flashMessages: ts.flashMessages,
     notifications: ts.notifications,
-    session: getUserSession(s)
+    session: getUserSession(s),
   };
 };
 
-const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => ITimelineScreenEventProps
-  = (dispatch, getState) => ({
-    dispatch,
-    handleInitTimeline: async () => { await dispatch(startLoadNotificationsAction()) },
-    handleNextPage: async () => { return await (dispatch(loadNotificationsPageAction()) as unknown as Promise<boolean>); }, // TS BUG: await is needed here and type is correct
-    handleDismissFlashMessage: async (flashMessageId: number) => { await dispatch(dismissFlashMessageAction(flashMessageId)); },
-    handleOpenNotification: async (n: IAbstractNotification) => {
-      dispatch(handleNotificationAction(n, defaultNotificationActionStack, "Timeline Notification"))
-    }
-  })
+const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => ITimelineScreenEventProps = (
+  dispatch,
+  getState,
+) => ({
+  dispatch,
+  handleInitTimeline: async () => {
+    await dispatch(startLoadNotificationsAction());
+  },
+  handleNextPage: async () => {
+    return await (dispatch(loadNotificationsPageAction()) as unknown as Promise<boolean>);
+  }, // TS BUG: await is needed here and type is correct
+  handleDismissFlashMessage: async (flashMessageId: number) => {
+    await dispatch(dismissFlashMessageAction(flashMessageId));
+  },
+  handleOpenNotification: async (n: IAbstractNotification) => {
+    dispatch(handleNotificationAction(n, defaultNotificationActionStack, 'Timeline Notification'));
+  },
+});
 
 const TimelineScreen_withNavigationFocus = withNavigationFocus(TimelineScreen);
 const TimelineScreen_Connected = connect(mapStateToProps, mapDispatchToProps)(TimelineScreen_withNavigationFocus);

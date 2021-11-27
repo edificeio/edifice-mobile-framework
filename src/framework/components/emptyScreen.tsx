@@ -5,13 +5,14 @@
  * Used to display a friendly empty screen when there is no data to show.
  */
 
-import * as React from "react";
-import { Dimensions, Image, ImageSourcePropType, ViewStyle, View, Text } from "react-native";
+import * as React from 'react';
+import { Dimensions, Image, ImageSourcePropType, ViewStyle, View, Text } from 'react-native';
 
-import { FlatButton } from "../../ui/FlatButton";
-import theme from "~/app/theme";
-import { PageView } from "./page";
-import { H1 } from "./text";
+import { PageView } from './page';
+import { H1 } from './text';
+
+import theme from '~/app/theme';
+import { FlatButton } from '~/ui/FlatButton';
 
 export const EmptyScreen = ({
   imageSrc,
@@ -22,7 +23,7 @@ export const EmptyScreen = ({
   scale,
   buttonText,
   buttonAction,
-  customStyle
+  customStyle,
 }: {
   imageSrc: ImageSourcePropType;
   imgWidth: number;
@@ -34,21 +35,20 @@ export const EmptyScreen = ({
   buttonAction?: () => void;
   customStyle?: ViewStyle;
 }) => {
-  const { width } = Dimensions.get("window");
+  const { width } = Dimensions.get('window');
   const ratio = imgWidth / imgHeight;
   scale = scale || 0.6;
 
   return (
     <PageView>
-      <View style={[{flex: 1, alignItems: "center", justifyContent: "center"}, customStyle]}>
+      <View style={[{ flex: 1, alignItems: 'center', justifyContent: 'center' }, customStyle]}>
         <H1
           style={{
-            textAlign: "center",
-            width: "80%",
+            textAlign: 'center',
+            width: '80%',
             marginTop: 20,
-            marginBottom: 20
-          }}
-        >
+            marginBottom: 20,
+          }}>
           {title}
         </H1>
         <Image
@@ -56,25 +56,21 @@ export const EmptyScreen = ({
           resizeMode="contain"
           style={{
             height: scale * (width / ratio),
-            width: scale * width
+            width: scale * width,
           }}
         />
         <Text
           style={{
             color: theme.color.text.light,
             fontSize: 12,
-            textAlign: "center",
-            width: "80%",
+            textAlign: 'center',
+            width: '80%',
             marginTop: 20,
-            marginBottom: 20
-          }}
-        >
+            marginBottom: 20,
+          }}>
           {text}
         </Text>
-        {buttonText && buttonAction
-          ? <FlatButton title={buttonText} onPress={buttonAction}/>
-          : null
-        }
+        {buttonText && buttonAction ? <FlatButton title={buttonText} onPress={buttonAction} /> : null}
       </View>
     </PageView>
   );

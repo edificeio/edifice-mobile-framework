@@ -1,11 +1,12 @@
-import * as React from "react";
-import { ColorValue } from "react-native";
-import Pdf from "react-native-pdf";
+import * as React from 'react';
+import { ColorValue } from 'react-native';
+import Pdf from 'react-native-pdf';
 
-import { CommonStyles } from "../../styles/common/styles";
-import theme from "~/app/theme";
-import { BackdropModal } from "./backdropModal";
-import { EmptyContentScreen } from "./emptyContentScreen";
+import { BackdropModal } from './backdropModal';
+import { EmptyContentScreen } from './emptyContentScreen';
+
+import theme from '~/app/theme';
+import { CommonStyles } from '~/styles/common/styles';
 
 export interface IBackdropPdfReaderProps {
   handleClose: () => void;
@@ -22,12 +23,11 @@ export interface IBackdropPdfReaderState {
 }
 
 export class BackdropPdfReader extends React.PureComponent<IBackdropPdfReaderProps, IBackdropPdfReaderState> {
-
   // DECLARATIONS =================================================================================
 
   state: IBackdropPdfReaderState = {
-    error: false
-  }
+    error: false,
+  };
 
   // RENDER =======================================================================================
 
@@ -36,9 +36,11 @@ export class BackdropPdfReader extends React.PureComponent<IBackdropPdfReaderPro
     const { error } = this.state;
     return (
       <BackdropModal
-        content={error
-          ? <EmptyContentScreen />
-          : <Pdf
+        content={
+          error ? (
+            <EmptyContentScreen />
+          ) : (
+            <Pdf
               activityIndicatorProps={{
                 color: theme.color.neutral.regular,
                 progressTintColor: CommonStyles.mainColorTheme,
@@ -48,12 +50,13 @@ export class BackdropPdfReader extends React.PureComponent<IBackdropPdfReaderPro
               onError={err => {
                 // Note: when the backdrop is dimissed, the "uri" prop becomes undefined and onError activates;
                 // therefore, we only use setState if the modal is displayed (the "visible" prop is true).
-                console.log("error (backdropPdfReader):", err);
+                console.log('error (backdropPdfReader):', err);
                 visible && this.setState({ error: true });
               }}
             />
+          )
         }
-        contentStyle={{ height: "90%" }}
+        contentStyle={{ height: '90%' }}
         handleClose={handleClose}
         handleOpen={handleOpen}
         headerColor={headerColor}

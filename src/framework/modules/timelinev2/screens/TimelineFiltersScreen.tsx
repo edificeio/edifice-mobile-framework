@@ -1,12 +1,19 @@
-import I18n from "i18n-js";
-import * as React from "react";
-import { FlatList, Platform, Text, TouchableOpacity } from "react-native";
-import { NavigationInjectedProps } from "react-navigation";
-import { connect } from "react-redux";
-import { ThunkDispatch } from "redux-thunk";
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { FlatList, Platform, Text, TouchableOpacity } from 'react-native';
+import { NavigationInjectedProps } from 'react-navigation';
+import { connect } from 'react-redux';
+import { ThunkDispatch } from 'redux-thunk';
 
-import { IGlobalState } from "~/AppStore";
-import { Checkbox } from "~/framework/components/checkbox";
+import { setFiltersAction } from '../actions/notifSettings';
+import moduleConfig from '../moduleConfig';
+import { ITimeline_State } from '../reducer';
+import { INotificationFilter } from '../reducer/notifDefinitions/notifFilters';
+import { INotifFilterSettings } from '../reducer/notifSettings/notifFilterSettings';
+
+import { IGlobalState } from '~/AppStore';
+import theme from '~/app/theme';
+import { Checkbox } from '~/framework/components/checkbox';
 import {
   FakeHeader,
   HeaderAction,
@@ -15,17 +22,9 @@ import {
   HeaderRight,
   HeaderRow,
   HeaderTitle,
-} from "~/framework/components/header";
-import theme from "~/app/theme";
-import { ListItem } from "~/framework/components/listItem";
-
-import { PageContainer } from "../../../../ui/ContainerContent";
-
-import { setFiltersAction } from "../actions/notifSettings";
-import moduleConfig from "../moduleConfig";
-import { ITimeline_State } from "../reducer";
-import { INotificationFilter } from "../reducer/notifDefinitions/notifFilters";
-import { INotifFilterSettings } from "../reducer/notifSettings/notifFilterSettings";
+} from '~/framework/components/header';
+import { ListItem } from '~/framework/components/listItem';
+import { PageContainer } from '~/ui/ContainerContent';
 
 // TYPES ==========================================================================================
 
@@ -46,10 +45,7 @@ export interface ITimelineFiltersScreenState {
 
 // COMPONENT ======================================================================================
 
-export class TimelineFiltersScreen extends React.PureComponent<
-  ITimelineFiltersScreenProps,
-  ITimelineFiltersScreenState
-> {
+export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersScreenProps, ITimelineFiltersScreenState> {
   // DECLARATIONS =================================================================================
 
   state: ITimelineFiltersScreenState = {
@@ -76,20 +72,16 @@ export class TimelineFiltersScreen extends React.PureComponent<
         <HeaderRow>
           <HeaderLeft>
             <HeaderAction
-              iconName={Platform.OS === "ios" ? "chevron-left1" : "back"}
+              iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
               iconSize={24}
               onPress={() => navigation.goBack()}
             />
           </HeaderLeft>
           <HeaderCenter>
-            <HeaderTitle>{I18n.t("timeline.filtersScreen.title")}</HeaderTitle>
+            <HeaderTitle>{I18n.t('timeline.filtersScreen.title')}</HeaderTitle>
           </HeaderCenter>
           <HeaderRight>
-            <HeaderAction
-              text={I18n.t("common.apply")}
-              disabled={noneSet}
-              onPress={() => this.doSetFilters(selectedFilters)}
-            />
+            <HeaderAction text={I18n.t('common.apply')} disabled={noneSet} onPress={() => this.doSetFilters(selectedFilters)} />
           </HeaderRight>
         </HeaderRow>
       </FakeHeader>
@@ -108,7 +100,7 @@ export class TimelineFiltersScreen extends React.PureComponent<
           notifFilters.length < 2 ? null : (
             <TouchableOpacity onPress={() => this.doToggleAllFilters()}>
               <ListItem
-                leftElement={<Text style={{ color: theme.color.text.heavy }}>{I18n.t("common.all")}</Text>}
+                leftElement={<Text style={{ color: theme.color.text.heavy }}>{I18n.t('common.all')}</Text>}
                 rightElement={
                   <Checkbox
                     customCheckboxColor={!someNotSet ? theme.color.text.light : undefined}
@@ -165,7 +157,7 @@ export class TimelineFiltersScreen extends React.PureComponent<
   async doSetFilters(selectedFilters: INotifFilterSettings) {
     const { handleSetFilters, navigation } = this.props;
     await handleSetFilters(selectedFilters);
-    navigation.navigate("timeline", { reloadWithNewSettings: true });
+    navigation.navigate('timeline', { reloadWithNewSettings: true });
   }
 }
 
@@ -177,15 +169,13 @@ const mapStateToProps: (s: IGlobalState) => ITimelineFiltersScreenDataProps = s 
   let ts = moduleConfig.getState(s) as ITimeline_State;
   return {
     notifFilterSettings: ts.notifSettings.notifFilterSettings.data,
-    notifFilters: ts.notifDefinitions.notifFilters.data.sort((a, b) =>
-      I18n.t(a.i18n).localeCompare(I18n.t(b.i18n), I18n.locale)
-    ),
+    notifFilters: ts.notifDefinitions.notifFilters.data.sort((a, b) => I18n.t(a.i18n).localeCompare(I18n.t(b.i18n), I18n.locale)),
   };
 };
 
 const mapDispatchToProps: (
   dispatch: ThunkDispatch<any, any, any>,
-  getState: () => IGlobalState
+  getState: () => IGlobalState,
 ) => ITimelineFiltersScreenEventProps = (dispatch, getState) => ({
   handleSetFilters: async (selectedFilters: INotifFilterSettings) => {
     await dispatch(setFiltersAction(selectedFilters));
