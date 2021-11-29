@@ -15,24 +15,16 @@ import { NavigationScreenProp, NavigationState } from "react-navigation";
 import { FlatButton } from "../../ui/FlatButton";
 import { CommonStyles } from "../../styles/common/styles";
 import { InfoBubble } from "../../framework/components/infoBubble";
-import { Module } from "../../framework/util/moduleTool";
+import { AnyModule, Module } from "../../framework/util/moduleTool";
 import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 
 class MyAppGrid extends React.PureComponent<{ navigation: NavigationScreenProp<NavigationState> }, {}> {
-  renderModulesList = (modules: IAppModule[], newModules?: Module[]) => {
+  renderModulesList = (modules: IAppModule[], newModules?: AnyModule[]) => {
+    const allModules = [...modules, ...newModules || []]
+      .sort((a, b) => I18n.t(a.config.displayName).localeCompare(I18n.t(b.config.displayName))) as (IAppModule|AnyModule)[];
     return (
       <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-        {modules.map(item => (
-          <MyAppItem
-            key={item.config.name}
-            displayName={I18n.t(item.config.displayName)}
-            iconColor={item.config.iconColor}
-            iconName={item.config.iconName}
-            onPress={() => this.props.navigation.navigate(item.config.name)}
-          />
-        ))}
-        {newModules &&
-          newModules.map(item => (
+        {allModules.map(item => (
             <MyAppItem
               key={item.config.name}
               displayName={I18n.t(item.config.displayName)}
@@ -45,7 +37,7 @@ class MyAppGrid extends React.PureComponent<{ navigation: NavigationScreenProp<N
     );
   };
 
-  private renderGrid(modules: IAppModule[], newModules?: Module[]) {
+  private renderGrid(modules: IAppModule[], newModules?: AnyModule[]) {
     return (
       <ScrollView contentContainerStyle={{justifyContent: "space-between", flexGrow: 1}} >
         {this.renderModulesList(modules, newModules)}
