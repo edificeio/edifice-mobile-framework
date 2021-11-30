@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Alert, RefreshControl, TouchableOpacity, View } from 'react-native';
 import Snow from 'react-native-snow-bg';
 import Toast from 'react-native-tiny-toast';
-import { NavigationInjectedProps, NavigationFocusInjectedProps, withNavigationFocus } from 'react-navigation';
+import { NavigationInjectedProps, NavigationFocusInjectedProps, withNavigationFocus, NavigationState } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -56,7 +56,7 @@ export interface ITimelineScreenEventProps {
   handleInitTimeline(): Promise<void>;
   handleNextPage(): Promise<boolean>; // return true if page if there is more pages to load
   handleDismissFlashMessage(flashMessageId: number): Promise<void>;
-  handleOpenNotification(n: IAbstractNotification, fallback: NotifHandlerThunkAction): Promise<void>;
+  handleOpenNotification(n: IAbstractNotification, fallback: NotifHandlerThunkAction, navState: NavigationState): Promise<void>;
 }
 export type ITimelineScreenProps = ITimelineScreenDataProps &
   ITimelineScreenEventProps &
@@ -312,7 +312,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
         });
       return { managed: 1 };
     };
-    this.props.handleOpenNotification && this.props.handleOpenNotification(n, fallbackHandleNotificationAction);
+    this.props.handleOpenNotification && this.props.handleOpenNotification(n, fallbackHandleNotificationAction, this.props.navigation.state);
   }
 
   async doDismissFlashMessage(flashMessageId: number) {
@@ -390,8 +390,8 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () 
   handleDismissFlashMessage: async (flashMessageId: number) => {
     await dispatch(dismissFlashMessageAction(flashMessageId));
   },
-  handleOpenNotification: async (n: IAbstractNotification) => {
-    dispatch(handleNotificationAction(n, defaultNotificationActionStack, 'Timeline Notification'));
+  handleOpenNotification: async (n: IAbstractNotification, fallback: NotifHandlerThunkAction, navState: NavigationState) => {
+    dispatch(handleNotificationAction(n, defaultNotificationActionStack, 'Timeline Notification', navState));
   },
 });
 

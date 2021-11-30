@@ -58,7 +58,7 @@ const _AppPushNotificationHandlerComponent: FunctionComponent<{ isLoggedIn: bool
 			const n = notificationAdapter(notificationData);
 
 			props.dispatch(startLoadNotificationsAction()); // Lasy-load, no need to await here.
-			props.dispatch(handleNotificationAction(n, defaultNotificationActionStack, "Push Notification"))
+			props.dispatch(handleNotificationAction(n, defaultNotificationActionStack, "Push Notification", undefined))
 			setNotification(undefined);
 		}
 		SplashScreen.hide();

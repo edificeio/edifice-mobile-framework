@@ -13,6 +13,7 @@ import { getAsResourceUriNotification, IAbstractNotification, ITimelineNotificat
 import legacyModuleDefinitions from '~/AppModules';
 import { Trackers } from '~/framework/util/tracker';
 import { mainNavNavigate } from '~/navigation/helpers/navHelper';
+import { NavigationState } from 'react-navigation';
 
 // Module Map
 
@@ -26,7 +27,7 @@ export interface INotifHandlerReturnType {
 }
 
 export type NotifHandlerThunk = ThunkAction<Promise<INotifHandlerReturnType>, any, void, AnyAction>;
-export type NotifHandlerThunkAction = (notification: IAbstractNotification, trackCategory: false | string) => NotifHandlerThunk;
+export type NotifHandlerThunkAction = (notification: IAbstractNotification, trackCategory: false | string, navState?: NavigationState) => NotifHandlerThunk;
 
 export interface INotifHandlerDefinition {
   type: string;
@@ -47,7 +48,7 @@ export const getRegisteredNotifHandlers = () => registeredNotifHandlers;
 // Notif Handler Action
 
 const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
-  moduleRedirection: (n, trackCategory) => async (dispatch, getState) => {
+  moduleRedirection: (n, trackCategory, navState) => async (dispatch, getState) => {
     const rets = await Promise.all(
       registeredNotifHandlers.map(async def => {
         if (n.type !== def.type) return false;
@@ -55,10 +56,11 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
         if (eventTypeArray !== undefined && !eventTypeArray.includes(n['event-type'])) return false;
         if (
           n.type === 'MESSAGERIE' ||
+          n.type === 'BLOG' ||
           ((n as ITimelineNotification).message && (n as ITimelineNotification).date && (n as ITimelineNotification).id)
         ) {
           /**/ // #44727 tmp fix. Copied from timelineRedirection.
-          const thunkAction = def.notifHandlerAction(n, trackCategory);
+          const thunkAction = def.notifHandlerAction(n, trackCategory, navState);
           const ret = await (dispatch(thunkAction) as unknown as Promise<INotifHandlerReturnType>); // TS BUG ThunkDispatch is treated like a regular Dispatch
           trackCategory &&
             ret.trackInfo &&
@@ -81,7 +83,7 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
     };
   },
 
-  legacyRedirection: (n, trackCategory) => async (dispatch, getState) => {
+  legacyRedirection: (n, trackCategory, navState) => async (dispatch, getState) => {
     const legacyThunkAction = legacyHandleNotificationAction(
       n.backupData.params as unknown as NotificationData,
       getState().user?.auth?.apps,
@@ -92,7 +94,7 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
     };
   },
 
-  webRedirection: (n, trackCategory) => async (dispatch, getState) => {
+  webRedirection: (n, trackCategory, navState) => async (dispatch, getState) => {
     const notifWithUri = getAsResourceUriNotification(n);
     if (!notifWithUri) {
       console.log(`[cloudMessaging] notification ${n.type}.${n['event-type']} has no resource uri.`);
@@ -117,7 +119,7 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
     }
   },
 
-  timelineRedirection: (n, trackCategory) => async (dispatch, getState) => {
+  timelineRedirection: (n, trackCategory, navState) => async (dispatch, getState) => {
     trackCategory && Trackers.trackEvent(trackCategory, 'Timeline', `${n.type}.${n['event-type']}`);
     mainNavNavigate('timeline', {
       notification: n,
@@ -134,13 +136,14 @@ export const defaultNotificationActionStack = [
 ];
 
 export const handleNotificationAction =
-  (notification: IAbstractNotification, actionStack: NotifHandlerThunkAction[], trackCategory: false | string = false) =>
+  (notification: IAbstractNotification, actionStack: NotifHandlerThunkAction[], trackCategory: false | string = false, navState?: NavigationState) =>
   async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     let manageCount = 0;
     // console.log("notification", notification);
+    // console.log("navState", navState);
     for (const action of actionStack) {
       if (manageCount) return;
-      const ret = (await dispatch(action(notification, trackCategory))) as unknown as INotifHandlerReturnType;
+      const ret = (await dispatch(action(notification, trackCategory, navState))) as unknown as INotifHandlerReturnType;
       manageCount += ret.managed;
       ret.trackInfo &&
         trackCategory &&
