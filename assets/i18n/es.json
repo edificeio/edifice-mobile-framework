@@ -100,7 +100,8 @@
       "sharedToNbPersons": "Compartido con {{nb}} personas",
       "title": "Seleccionar un blog"
     },
-    "resourceName": "Entrada de blog"
+    "resourceName": "Entrada de blog",
+    "tabName": "Blog"
   },
   "blog-emptyScreenButton": "Crear un blog",
   "blog-emptyScreenText": "No ha compartido ningún blog. Para publicar una entrada, primero debe crear un blog y compartirlo desde la versión web de su espacio digital.",
@@ -357,9 +358,9 @@
   "download-error-unsupportedFileType": "El formato del archivo no es reconocido por su dispositivo",
   "download-invalidUrl": "(vínculo no válido)",
   "download-open": "Abrir",
-  "download-untitled": "Documento adjunto sin título",
-  "download-success-name": "{{name}} guardado en Descargas",
   "download-success-all": "Archivos guardados en Descargas",
+  "download-success-name": "{{name}} guardado en Descargas",
+  "download-untitled": "Documento adjunto sin título",
   "federatedAccount-instructions": "Si su institución le ha comunicado que use su cuenta académica o una cuenta de servicio de matrícula (EduConnect, SAPIA, ARENA u otra), las informaciones de conexión para la aplicación móvil se pueden encontrar en la versión web de la plataforma.",
   "federatedAccount-instructions-details": "• Conéctese a su red educativa desde su navegador web haciendo clic en el botón de abajo\n\n• Accede a la página \"Mi cuenta\"\n\n• Recupere el nombre de usuario y generar una contraseña temporal\n\n• Regrese a la aplicación móvil y use sus credenciales en la pantalla de inicio de sesión",
   "federatedAccount-link": "Conexión para las cuentas académicas y cuentas de servicio de matrícula (EduConnect, SAPIA, ARENA,...)",
@@ -653,17 +654,17 @@
       "workspace.share-folder": "Carpeta compartida",
       "workspace.storage": "Espacio de almacenamiento casi lleno."
     },
+    "reportAction": {
+      "button": "Informar",
+      "description": "La hora y el origen de este informe se registrará junto con su identidad y se remitirá a la dirección de la escuela. ¿Seguro que quieres denunciar este contenido?",
+      "submit": "Informar de una notificación inapropiada",
+      "success": "Se ha informado de la notificación.",
+      "title": "Informará de una notificación"
+    },
     "tabName": "Noticias",
     "webViewScreen": {
       "infoBubbleText": "Para ver y modificar cierto contenido, será redirigido al navegador web de su teléfono inteligente.",
       "title": "Redireccionamiento web"
-    },
-    "reportAction": {
-      "button": "Informar",
-      "title": "Informará de una notificación",
-      "description": "La hora y el origen de este informe se registrará junto con su identidad y se remitirá a la dirección de la escuela. ¿Seguro que quieres denunciar este contenido?",
-      "submit": "Informar de una notificación inapropiada",
-      "success": "Se ha informado de la notificación."
     }
   },
   "timeline-allFilter": "Todo",
@@ -802,14 +803,14 @@
   "zimbra-inbox": "Bandeja de entrada",
   "zimbra-mark-unread": "Marcar como no leído",
   "zimbra-message-deleted": "Mensaje eliminado",
+  "zimbra-message-deleted-confirm": "Borrar el correo",
+  "zimbra-message-deleted-confirm-text": "¿Realmente quiere eliminar permanentemente los correos seleccionados?",
   "zimbra-message-moved": "Mensaje movido",
   "zimbra-message-restored": "Mensaje restaurado",
   "zimbra-messages": "Mensajes",
   "zimbra-messages-deleted": "Mensajes borrados",
   "zimbra-messages-moved": "Mensajes desplazados",
   "zimbra-messages-restored": "Mensajes restaurados",
-  "zimbra-message-deleted-confirm": "Borrar el correo",
-  "zimbra-message-deleted-confirm-text": "¿Realmente quiere eliminar permanentemente los correos seleccionados?",
   "zimbra-missing-receiver": "Este mensaje debe contener al menos un destinatario",
   "zimbra-move": "Mover",
   "zimbra-move-to": "Mover a",

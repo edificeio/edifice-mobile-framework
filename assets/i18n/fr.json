@@ -44,13 +44,13 @@
   "Save": "Enregistrer",
   "School": "Etablissement",
   "Search": "Rechercher ...",
-  "activation-title": "Activation",
   "activation-cancelLoad": "Annuler",
   "activation-cgu": "Conditions générales d'utilisation",
   "activation-cgu-accept": "J'accepte les ",
   "activation-errorLoading": "Nous n'avons pas pu charger les données nécessaires pour activer votre compte. Veuillez réessayer ultérieurement.",
   "activation-errorSubmit": "Nous n'avons pas pu activer votre compte. Veuillez réessayer ultérieurement.",
   "activation-retryLoad": "Réessayer",
+  "activation-title": "Activation",
   "add-file": "Ajouter un fichier",
   "agoHours": "il y a {{hours}} h",
   "agoMinutes": "il y a {{minutes}} min",
@@ -101,7 +101,8 @@
       "sharedToNbPersons": "Partagé à {{nb}} personnes",
       "title": "Choisir un blog"
     },
-    "resourceName": "Billet de blog"
+    "resourceName": "Billet de blog",
+    "tabName": "Blog"
   },
   "blog-emptyScreenButton": "Créer un Blog",
   "blog-emptyScreenText": "Vous n'avez aucun Blog partagé. Pour publier un billet, vous devez d'abord créer un Blog et le partager depuis la version web de votre espace numérique.",
@@ -232,8 +233,8 @@
     "typeMessage": "Écrire un message...",
     "unknown": "Inconnu",
     "warning.webDraft": {
-      "title": "Brouillon incompatible",
-      "text": "Le brouillon a été initié depuis un ordinateur. En continuant sur l'application mobile, l'expérience sera dégradée. Souhaitez-vous continuer ?"
+      "text": "Le brouillon a été initié depuis un ordinateur. En continuant sur l'application mobile, l'expérience sera dégradée. Souhaitez-vous continuer ?",
+      "title": "Brouillon incompatible"
     }
   },
   "conversation-chatPlaceholder": "Ecrivez un message...",
@@ -358,14 +359,14 @@
   "download-error-unsupportedFileType": "Le format du fichier n'est pas reconnu par votre appareil",
   "download-invalidUrl": "(lien invalide)",
   "download-open": "Ouvrir",
-  "download-untitled": "Pièce jointe sans titre",
-  "download-success-name": "{{name}} enregistré dans Téléchargements",
   "download-success-all": "Fichiers enregistrés dans Téléchargements",
-  "federatedAccount-title": "Authentification",
+  "download-success-name": "{{name}} enregistré dans Téléchargements",
+  "download-untitled": "Pièce jointe sans titre",
   "federatedAccount-instructions": "Si votre établissement vous a indiqué d'utiliser votre compte académique ou un compte de service de scolarité (EduConnect, SAPIA, ARENA ou autre), les identifiants de connexion de l'application mobile se trouvent sur la version web de votre réseau éducatif.",
   "federatedAccount-instructions-details": "• Connectez-vous sur votre réseau éducatif depuis votre navigateur web en cliquant sur le bouton ci-dessous\n\n• Accédez à la page \"Mon Compte\"\n\n• Récupérez l'identifiant et générez un mot de passe temporaire\n\n• Revenez sur l'application mobile et utilisez vos identifiants sur l'écran de connexion",
   "federatedAccount-link": "Connexion pour les comptes académiques et les comptes des services scolarité (EduConnect, SAPIA, ARENA, ...)",
   "federatedAccount-openLink": "Accéder à Mon Compte",
+  "federatedAccount-title": "Authentification",
   "files.too.large": "Espace insuffisant pour sauvegarder les fichiers",
   "forgot-id": "Identifiant oublié",
   "forgot-id-instructions": "Entrez votre adresse de courriel pour recevoir votre identifiant.",
@@ -655,17 +656,17 @@
       "workspace.share-folder": "Partage d'un dossier",
       "workspace.storage": "Espace de stockage bientôt plein"
     },
+    "reportAction": {
+      "button": "Signaler",
+      "description": "L’heure et l’origine de ce signalement seront enregistrées ainsi que votre identité et transmises à la direction de l'établissement. Etes vous sûr(e) de vouloir signaler ce contenu ?",
+      "submit": "Signaler la notification inappropriée",
+      "success": "La notification a bien été signalée.",
+      "title": "Vous allez signaler une notification"
+    },
     "tabName": "Nouveautés",
     "webViewScreen": {
       "infoBubbleText": "Pour consulter et modifier certains contenus, vous serez redirigé vers le navigateur web de votre smartphone.",
       "title": "Redirection web"
-    },
-    "reportAction": {
-      "button": "Signaler",
-      "title": "Vous allez signaler une notification",
-      "description": "L’heure et l’origine de ce signalement seront enregistrées ainsi que votre identité et transmises à la direction de l'établissement. Etes vous sûr(e) de vouloir signaler ce contenu ?",
-      "submit": "Signaler la notification inappropriée",
-      "success": "La notification a bien été signalée."
     }
   },
   "timeline-allFilter": "Tous",
@@ -804,14 +805,14 @@
   "zimbra-inbox": "Boîte de réception",
   "zimbra-mark-unread": "Marquer comme non lu",
   "zimbra-message-deleted": "Message supprimé",
+  "zimbra-message-deleted-confirm": "Suppression de mail",
+  "zimbra-message-deleted-confirm-text": "Voulez-vous vraiment supprimer définitivement le(s) mail(s) sélectionné(s) ?",
   "zimbra-message-moved": "Message déplacé",
   "zimbra-message-restored": "Message restauré",
   "zimbra-messages": "Messages",
   "zimbra-messages-deleted": "Messages supprimés",
   "zimbra-messages-moved": "Messages déplacés",
   "zimbra-messages-restored": "Messages restaurés",
-  "zimbra-message-deleted-confirm": "Suppression de mail",
-  "zimbra-message-deleted-confirm-text": "Voulez-vous vraiment supprimer définitivement le(s) mail(s) sélectionné(s) ?",
   "zimbra-missing-receiver": "Ce message doit contenir au moins un destinataire",
   "zimbra-move": "Déplacer",
   "zimbra-move-to": "Déplacer vers",

@@ -100,7 +100,8 @@
       "sharedToNbPersons": "Shared with {{nb}} people",
       "title": "Choose a blog"
     },
-    "resourceName": "Blog post"
+    "resourceName": "Blog post",
+    "tabName": "Blog"
   },
   "blog-emptyScreenButton": "Create a blog",
   "blog-emptyScreenText": "You don’t have any shared blogs. To publish a post, you’ll need to first create a blog and share it from the web version of your virtual learning environment.",
@@ -357,9 +358,9 @@
   "download-error-unsupportedFileType": "The format of your file is not recognized by your device",
   "download-invalidUrl": "(invalid link)",
   "download-open": "Open",
-  "download-untitled": "Untitled attachment",
-  "download-success-name": "{{name}} saved in Downloads",
   "download-success-all": "Files saved in Downloads",
+  "download-success-name": "{{name}} saved in Downloads",
+  "download-untitled": "Untitled attachment",
   "federatedAccount-instructions": "If your institution has instructed you to use your academic account or a schooling service account (EduConnect, SAPIA, ARENA or other), the login details for the mobile app can be found on the web version of your educational network",
   "federatedAccount-instructions-details": "• Login to your educational network from your web browser by clicking on the button below\n\n• Access the \"My Account\" page\n\n• Retrieve the username and generate a temporary password\n\n• Return to the mobile app and use your credentials on the login screen",
   "federatedAccount-link": "Login for academic accounts and educational services accounts (EduConnect, SAPIA, ARENA, ...)",
@@ -653,17 +654,17 @@
       "workspace.share-folder": "Folder shared",
       "workspace.storage": "Storage space almost full"
     },
+    "reportAction": {
+      "button": "Report",
+      "description": "The time and origin of this report will be recorded along with your identity and forwarded to the school management. Are you sure you want to report this content?",
+      "submit": "Report inappropriate notification",
+      "success": "The notification has been reported.",
+      "title": "You will report a notification"
+    },
     "tabName": "News",
     "webViewScreen": {
       "infoBubbleText": "To view and edit certain content, you will be redirected to your smartphone's browser.",
       "title": "Browser redirection"
-    },
-    "reportAction": {
-      "button": "Report",
-      "title": "You will report a notification",
-      "description": "The time and origin of this report will be recorded along with your identity and forwarded to the school management. Are you sure you want to report this content?",
-      "submit": "Report inappropriate notification",
-      "success": "The notification has been reported."
     }
   },
   "timeline-allFilter": "All",
@@ -802,14 +803,14 @@
   "zimbra-inbox": "Inbox",
   "zimbra-mark-unread": "Mark as unread",
   "zimbra-message-deleted": "Message deleted",
+  "zimbra-message-deleted-confirm": "Deleting mail",
+  "zimbra-message-deleted-confirm-text": "Do you really want to permanently delete the selected mail(s)?",
   "zimbra-message-moved": "Message moved",
   "zimbra-message-restored": "Message restored",
   "zimbra-messages": "Messages",
   "zimbra-messages-deleted": "Messages deleted",
   "zimbra-messages-moved": "Messages moved",
   "zimbra-messages-restored": "Messages restored",
-  "zimbra-message-deleted-confirm": "Deleting mail",
-  "zimbra-message-deleted-confirm-text": "Do you really want to permanently delete the selected mail(s)?",
   "zimbra-missing-receiver": "This message must contain at least one recipient",
   "zimbra-move": "Move",
   "zimbra-move-to": "Move to",
