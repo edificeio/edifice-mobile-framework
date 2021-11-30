@@ -8,10 +8,10 @@ import * as React from 'react';
 import { NavigationRouteConfig } from 'react-navigation';
 import type { NavigationParams, NavigationRoute, NavigationRouteConfigMap } from 'react-navigation';
 import type { StackNavigationOptions, StackNavigationProp } from 'react-navigation-stack/lib/typescript/src/vendor/types';
-import { Reducer } from 'redux';
+import type { ColorValue } from 'react-native';
+import type { Reducer } from 'redux';
 
 import { toSnakeCase } from './string';
-
 import { createMainTabNavOption } from '~/navigation/helpers/mainTabNavigator';
 
 // Module Config ==================================================================================
@@ -161,7 +161,7 @@ export type AnyModule = Module<string, IModuleConfig<string, any>, any, any>;
 
 interface INavigableModuleConfigBase {
   iconName: string; // Name of the icon in Icomoon font. Equals to `name` if not specified.
-  iconColor?: string; // Color of the icon. Default color if not specified.
+  iconColor?: ColorValue; // Color of the icon. Default color if not specified.
   routeName: string;
 }
 export interface INavigableModuleConfig<Name extends string, State>

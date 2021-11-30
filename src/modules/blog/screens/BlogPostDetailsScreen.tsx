@@ -1,31 +1,31 @@
 import * as React from "react";
 import { FlatList, Linking, Platform, RefreshControl, View } from "react-native";
-import { NavigationInjectedProps } from "react-navigation";
+import { NavigationActions, NavigationInjectedProps } from "react-navigation";
 import { ThunkDispatch } from "redux-thunk";
 import { connect } from "react-redux";
 import I18n from "i18n-js";
 import moment from "moment";
 
-import type { IGlobalState } from "../../../AppStore";
+import type { IGlobalState } from "~/AppStore";
 import type { IBlogPostComment, IBlogPostWithComments } from "../reducer";
 
 import moduleConfig from "../moduleConfig";
-import { PageView } from "../../../framework/components/page";
+import { PageView } from "~/framework/components/page";
 import { IResourceUriNotification, ITimelineNotification } from "../../../framework/util/notifications";
 import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderSubtitle, HeaderTitle } from "../../../framework/components/header";
-import NotificationTopInfo from "../../../framework/modules/timelinev2/components/NotificationTopInfo";
+import NotificationTopInfo from "~/framework/modules/timelinev2/components/NotificationTopInfo";
 import { getBlogPostDetailsAction } from "../actions";
-import { Trackers } from "../../../framework/util/tracker";
-import { TextPreview } from "../../../ui/TextPreview";
-import { CommonStyles } from "../../../styles/common/styles";
-import { GridAvatars } from "../../../ui/avatars/GridAvatars";
-import { HtmlContentView } from "../../../ui/HtmlContentView";
-import { Icon } from "../../../framework/components/icon";
-import { LoadingIndicator } from "../../../framework/components/loading";
-import { ListItem } from "../../../framework/components/listItem";
-import { TextSemiBold, TextLight } from "../../../framework/components/text";
-import theme from "../../../app/theme";
-import { FlatButton } from "../../../ui";
+import { Trackers } from "~/framework/util/tracker";
+import { TextPreview } from "~/ui/TextPreview";
+import { CommonStyles } from "~/styles/common/styles";
+import { GridAvatars } from "~/ui/avatars/GridAvatars";
+import { HtmlContentView } from "~/ui/HtmlContentView";
+import { Icon } from "~/framework/components/icon";
+import { LoadingIndicator } from "~/framework/components/loading";
+import { ListItem } from "~/framework/components/listItem";
+import { TextSemiBold, TextLight } from "~/framework/components/text";
+import theme from "~/app/theme";
+import { FlatButton } from "~/ui";
 import { blogUriCaptureFunction } from "../service";
 import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 
@@ -97,7 +97,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<
             <HeaderAction
               iconName={(Platform.OS === "ios") ? "chevron-left1" : "back"}
               iconSize={24}
-              onPress={() => navigation.navigate("timeline")}
+              onPress={() => navigation.dispatch(NavigationActions.back())}
             />
           </HeaderLeft>
           <HeaderCenter>

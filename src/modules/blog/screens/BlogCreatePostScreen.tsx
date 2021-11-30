@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { View, ScrollView, TouchableWithoutFeedback, Keyboard, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
-import { NavigationInjectedProps } from 'react-navigation';
+import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 import { ThunkDispatch } from 'redux-thunk';
 import { connect } from 'react-redux';
 import I18n from 'i18n-js';
 
 import moduleConfig from '../moduleConfig';
-import { PageView } from '../../../framework/components/page';
-import { LoadingIndicator } from '../../../framework/components/loading';
+import { PageView } from '~/framework/components/page';
+import { LoadingIndicator } from '~/framework/components/loading';
 import {
   FakeHeader,
   HeaderAction,
@@ -16,19 +16,19 @@ import {
   HeaderRight,
   HeaderRow,
   HeaderTitle,
-} from '../../../framework/components/header';
-import { TextBold, TextSemiBold, TextLight, TextAction } from '../../../framework/components/text';
-import { IGlobalState } from '../../../AppStore';
+} from '~/framework/components/header';
+import { TextBold, TextSemiBold, TextLight, TextAction } from '~/framework/components/text';
+import { IGlobalState } from '~/AppStore';
 import { IBlog } from '../reducer';
-import theme from '../../../app/theme';
-import { Icon } from '../../../framework/components/icon';
-import { getUserSession, IUserSession } from '../../../framework/util/session';
-import { Trackers } from '../../../framework/util/tracker';
-import { startLoadNotificationsAction } from '../../../framework/modules/timelinev2/actions';
-import { AttachmentPicker } from '../../../ui/AttachmentPicker';
-import { GridAvatars } from '../../../ui/avatars/GridAvatars';
+import theme from '~/app/theme';
+import { Icon } from '~/framework/components/icon';
+import { getUserSession, IUserSession } from '~/framework/util/session';
+import { Trackers } from '~/framework/util/tracker';
+import { startLoadNotificationsAction } from '~/framework/modules/timelinev2/actions';
+import { AttachmentPicker } from '~/ui/AttachmentPicker';
+import { GridAvatars } from '~/ui/avatars/GridAvatars';
 import { sendBlogPostAction, uploadBlogPostImagesAction } from '../actions';
-import { notifierShowAction } from '../../../framework/util/notifier/actions';
+import { notifierShowAction } from '~/framework/util/notifier/actions';
 import { hasNotch } from 'react-native-device-info';
 import {
   createBlogPostResourceRight,
@@ -36,10 +36,10 @@ import {
   publishBlogPostResourceRight,
   submitBlogPostResourceRight,
 } from '../rights';
-import { ImagePicked, imagePickedToLocalFile, ImagePicker } from '../../../infra/imagePicker';
-import Notifier from '../../../framework/util/notifier';
-import { SyncedFile } from '../../../framework/util/fileHandler';
-import { ILocalAttachment } from '../../../ui/Attachment';
+import { ImagePicked, imagePickedToLocalFile, ImagePicker } from '~/infra/imagePicker';
+import Notifier from '~/framework/util/notifier';
+import { SyncedFile } from '~/framework/util/fileHandler';
+import { ILocalAttachment } from '~/ui/Attachment';
 
 // TYPES ==========================================================================================
 
@@ -126,7 +126,7 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
             <HeaderAction
               iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
               iconSize={24}
-              onPress={() => navigation.goBack()}
+              onPress={() => navigation.dispatch(NavigationActions.back())}
             />
           </HeaderLeft>
           <HeaderCenter>

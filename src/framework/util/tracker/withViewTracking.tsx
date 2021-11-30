@@ -24,7 +24,7 @@ function getDisplayName(WrappedComponent: React.ComponentClass<any>) {
 export default function withViewTracking<
   ComponentProps extends { navigation: NavigationScreenProp<NavigationState> },
   ComponentState
->(path: string[] | string | ((props: ComponentProps) => string[] | string) , tracker = Trackers) {
+>(path: string[] | string | ((props: ComponentProps) => string[] | string), tracker = Trackers) {
 
   type PrivateProps = { forwardedRef: React.RefObject<React.Component<ComponentProps, ComponentState>> };
   type AllProps = PrivateProps & ComponentProps;
@@ -77,8 +77,10 @@ export const addViewTrackingToStackRoutes =
       screen: React.ComponentClass<
         { navigation: NavigationScreenProp<NavigationState> },
         unknown
-      >}} ) =>
-  Object.fromEntries(Object.entries(routeConfigMap).map(([routeName, route]) => [routeName, {
-    ...route,
-    screen: withViewTracking(routeName)(route.screen)
-  }]));
+      >
+    }
+  }) =>
+    Object.fromEntries(Object.entries(routeConfigMap).map(([routeName, route]) => [routeName, {
+      ...route,
+      screen: withViewTracking(routeName)(route.screen)
+    }]));

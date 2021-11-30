@@ -1,13 +1,13 @@
 import * as React from "react";
 import { View, FlatList, TouchableOpacity, RefreshControl, Linking, Platform } from "react-native";
-import { NavigationInjectedProps } from "react-navigation";
+import { NavigationActions, NavigationInjectedProps } from "react-navigation";
 import { ThunkDispatch } from "redux-thunk";
 import { connect } from "react-redux";
 import I18n from "i18n-js";
 
 import moduleConfig from "../moduleConfig";
-import { PageView } from "../../../framework/components/page";
-import { LoadingIndicator } from "../../../framework/components/loading";
+import { PageView } from "~/framework/components/page";
+import { LoadingIndicator } from "~/framework/components/loading";
 import {
   FakeHeader,
   HeaderAction,
@@ -15,18 +15,19 @@ import {
   HeaderLeft,
   HeaderRow,
   HeaderTitle,
-} from "../../../framework/components/header";
-import { TextLight, TextSemiBold } from "../../../framework/components/text";
-import { IGlobalState } from "../../../AppStore";
+} from "~/framework/components/header";
+import { TextLight, TextSemiBold } from "~/framework/components/text";
+import { IGlobalState } from "~/AppStore";
 import { getPublishableBlogListAction } from "../actions";
 import { IBlog, IBlogList } from "../reducer";
-import theme from "../../../app/theme";
-import { ListItem } from "../../../framework/components/listItem";
-import { GridAvatars } from "../../../ui/avatars/GridAvatars";
-import { DEPRECATED_getCurrentPlatform } from "../../../framework/util/_legacy_appConf";
-import { getAuthHeader } from "../../../infra/oauth";
-import { Icon } from "../../../framework/components/icon";
-import { EmptyScreen } from "../../../framework/components/emptyScreen";
+import theme from "~/app/theme";
+import { ListItem } from "~/framework/components/listItem";
+import { GridAvatars } from "~/ui/avatars/GridAvatars";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
+import { getAuthHeader } from "~/infra/oauth";
+import { Icon } from "~/framework/components/icon";
+import { EmptyScreen } from "~/framework/components/emptyScreen";
+import { computeRelativePath } from "~/framework/util/navigation";
 
 // TYPES ==========================================================================================
 
@@ -95,7 +96,7 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
             <HeaderAction
               iconName={Platform.OS === "ios" ? "chevron-left1" : "back"}
               iconSize={24}
-              onPress={() => navigation.navigate("timeline")}
+              onPress={() => navigation.dispatch(NavigationActions.back())}
             />
           </HeaderLeft>
           <HeaderCenter>
@@ -166,7 +167,8 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
     const { navigation } = this.props;
     const blogShareNumber = blog.shared?.length;
     return (
-      <TouchableOpacity onPress={() => navigation.navigate("timeline/blog/create", { blog })}>
+      <TouchableOpacity onPress={() => navigation.navigate(
+        computeRelativePath(navigation.state, `${moduleConfig.routeName}/create`), { blog })}>
         <ListItem
           leftElement={
             <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
