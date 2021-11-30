@@ -311,90 +311,88 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
             }}
           />
           <View style={{ flex: 1 }}>
-            <FlatList
-              ref={ref => (this.flatListRef = ref)}
-              style={{ marginTop: 45 }}
-              contentContainerStyle={{ flexGrow: 1 }}
-              data={uniqueMails.length > 0 ? uniqueMails : []}
-              onScrollBeginDrag={() => {
-                this.unswipeAllSwipeables();
-                this.setState({ nextPageCallable: true });
-              }}
-              renderItem={({ item }) => {
-                const isFolderOutbox = navigationKey === 'sendMessages';
-                const isFolderDrafts = navigationKey === 'drafts';
-                const isMailUnread = item.unread && !isFolderDrafts && !isFolderOutbox;
-                const mailId = item.id;
-                return (
-                  <MailListItem
-                    {...this.props}
-                    mailInfos={item}
-                    renderMailContent={() => {
-                      Object.keys(this.activeSwipeableRefs).length > 0 ? this.unswipeAllSwipeables() : this.renderMailContent(item);
-                    }}
-                    deleteMail={() => this.delete(mailId)}
-                    toggleRead={() => this.toggleRead(isMailUnread, mailId)}
-                    restoreMail={() => this.setState({ showModal: true, selectedMail: item })}
-                    onSwipeTriggerOpen={ref => {
-                      this.unswipeAllSwipeables();
-                      this.activeSwipeableRefs[mailId] = ref;
-                    }}
-                    onSwipeStart={(ref, id) => {
-                      this.flatListRef?.setNativeProps({
-                        scrollEnabled: false,
-                      });
-                      this.unswipeAllSwipeables(id2 => id !== id2);
-                    }}
-                    onSwipeRelease={() => {
-                      this.flatListRef?.setNativeProps({
-                        scrollEnabled: true,
-                      });
-                    }}
-                    onSwipeRecenter={id => delete this.activeSwipeableRefs[id]}
-                  />
-                );
-              }}
-              extraData={uniqueMails}
-              keyExtractor={(item: IMail) => item.id}
-              refreshControl={
-                <RefreshControl
-                  refreshing={isRefreshing}
-                  onRefresh={async () => {
-                    this.setState({ isRefreshing: true });
-                    await this.refreshMailList();
-                    this.setState({ isRefreshing: false });
+            {isFetching && !isRefreshing
+              ? <Loading />
+              : <FlatList
+                  ref={ref => (this.flatListRef = ref)}
+                  style={{ marginTop: 45 }}
+                  contentContainerStyle={{ flexGrow: 1 }}
+                  data={uniqueMails.length > 0 ? uniqueMails : []}
+                  onScrollBeginDrag={() => {
+                    this.unswipeAllSwipeables();
+                    this.setState({ nextPageCallable: true });
                   }}
-                />
-              }
-              onEndReachedThreshold={0.5}
-              onEndReached={() => {
-                if (nextPageCallable) {
-                  this.setState({ nextPageCallable: false, isChangingPage: true });
-                  this.onChangePage();
-                }
-              }}
-              ListFooterComponent={isChangingPage ? <LoadingIndicator /> : null}
-              ListEmptyComponent={
-                isFetching && firstFetch ? (
-                  <Loading />
-                ) : (
-                  <View style={{ flex: 1 }}>
-                    <EmptyScreen
-                      imageSrc={require('ASSETS/images/empty-screen/conversations.png')}
-                      imgWidth={571}
-                      imgHeight={261}
-                      text={I18n.t('conversation.emptyScreenText')}
-                      title={I18n.t('conversation.emptyScreenTitle')}
-                      scale={0.76}
+                  renderItem={({ item }) => {
+                    const isFolderOutbox = navigationKey === 'sendMessages';
+                    const isFolderDrafts = navigationKey === 'drafts';
+                    const isMailUnread = item.unread && !isFolderDrafts && !isFolderOutbox;
+                    const mailId = item.id;
+                    return (
+                      <MailListItem
+                        {...this.props}
+                        mailInfos={item}
+                        renderMailContent={() => {
+                          Object.keys(this.activeSwipeableRefs).length > 0 ? this.unswipeAllSwipeables() : this.renderMailContent(item);
+                        }}
+                        deleteMail={() => this.delete(mailId)}
+                        toggleRead={() => this.toggleRead(isMailUnread, mailId)}
+                        restoreMail={() => this.setState({ showModal: true, selectedMail: item })}
+                        onSwipeTriggerOpen={ref => {
+                          this.unswipeAllSwipeables();
+                          this.activeSwipeableRefs[mailId] = ref;
+                        }}
+                        onSwipeStart={(ref, id) => {
+                          this.flatListRef?.setNativeProps({
+                            scrollEnabled: false,
+                          });
+                          this.unswipeAllSwipeables(id2 => id !== id2);
+                        }}
+                        onSwipeRelease={() => {
+                          this.flatListRef?.setNativeProps({
+                            scrollEnabled: true,
+                          });
+                        }}
+                        onSwipeRecenter={id => delete this.activeSwipeableRefs[id]}
+                      />
+                    );
+                  }}
+                  extraData={uniqueMails}
+                  keyExtractor={(item: IMail) => item.id}
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={isRefreshing}
+                      onRefresh={async () => {
+                        this.setState({ isRefreshing: true });
+                        await this.refreshMailList();
+                        this.setState({ isRefreshing: false });
+                      }}
                     />
-                  </View>
-                )
-              }
-            />
+                  }
+                  onEndReachedThreshold={0.5}
+                  onEndReached={() => {
+                    if (nextPageCallable) {
+                      this.setState({ nextPageCallable: false, isChangingPage: true });
+                      this.onChangePage();
+                    }
+                  }}
+                  ListFooterComponent={isChangingPage ? <LoadingIndicator /> : null}
+                  ListEmptyComponent={
+                    <View style={{ flex: 1 }}>
+                      <EmptyScreen
+                        imageSrc={require('ASSETS/images/empty-screen/conversations.png')}
+                        imgWidth={571}
+                        imgHeight={261}
+                        text={I18n.t('conversation.emptyScreenText')}
+                        title={I18n.t('conversation.emptyScreenTitle')}
+                        scale={0.76}
+                      />
+                    </View>
+                  }
+                />
+            }
             <Drawer
               items={drawerItems}
               selectedItem={navigationKey}
-              isSelectingItem={!firstFetch && isFetching}
               selectItem={selectedItem => {
                 const isCreateDirectory = selectedItem === "createDirectory";
                 const isFolder = selectedItem.includes("folder-");

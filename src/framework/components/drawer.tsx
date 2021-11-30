@@ -6,7 +6,6 @@ import I18n from 'i18n-js';
 import theme from '~/app/theme';
 import { ANIMATION_CONFIGURATIONS_FADE, ANIMATION_CONFIGURATIONS_SIZE, UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
-import { LoadingIndicator } from '~/framework/components/loading';
 import { Weight } from '~/ui/Typography';
 
 export interface IDrawerProps {
@@ -21,7 +20,6 @@ export interface IDrawerProps {
   }[];
   selectItem: (id: string) => any;
   selectedItem: string;
-  isSelectingItem?: boolean;
 };
 
 export interface IDrawerState {
@@ -105,7 +103,7 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
   };
 
   render() {
-    const { items, selectItem, selectedItem, isSelectingItem } = this.props;
+    const { items, selectItem, selectedItem } = this.props;
     const { drawerOpen, animatedOpacity } = this.state;
     const itemHeight = 45;
     const dropdownMaxHeight = UI_SIZES.getViewHeight() - itemHeight;
@@ -157,7 +155,6 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
           ]}
           listItemContainerStyle={[styles.listItemContainer, { height: itemHeight }]}
           maxHeight={dropdownMaxHeight}
-          disabled={isSelectingItem}
           flatListProps={{
             showsVerticalScrollIndicator: false,
             alwaysBounceVertical: false
@@ -188,15 +185,10 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
               {
                 marginTop: itemHeight,
                 opacity: animatedOpacity,
-                height: isSelectingItem || drawerOpen ? dropdownMaxHeight : 0
+                height: drawerOpen ? dropdownMaxHeight : 0
               }
             ]}
-          >
-            {isSelectingItem
-              ? <LoadingIndicator customColor={theme.color.neutral.regular} />
-              : null
-            }
-          </Animated.View>
+          />
         </TouchableWithoutFeedback>
       </View>
     );
