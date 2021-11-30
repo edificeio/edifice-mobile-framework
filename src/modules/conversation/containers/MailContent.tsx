@@ -297,7 +297,7 @@ class MailContentContainer extends React.PureComponent<{
   private mailContent() {
     return (
       <View style={{ flexGrow: 1, padding: 12, backgroundColor: theme.color.background.card }}>
-        {this.props.mail.body !== undefined && <HtmlContentView html={this.props.mail.body} />}
+        {this.props.mail.body !== undefined && <HtmlContentView html={this.props.mail.body} opts={{ selectable: true }} />}
         <View style={{ marginTop: 20 }} />
         {this.props.mail.attachments && this.props.mail.attachments.length > 0 && (
           <RenderPJs attachments={this.props.mail.attachments} mailId={this.props.mail.id} dispatch={this.props.dispatch} />
