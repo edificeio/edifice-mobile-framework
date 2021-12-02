@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import { NavigationEventSubscription } from 'react-navigation';
 import { connect } from 'react-redux';
 
@@ -76,7 +76,6 @@ export class Items extends React.Component<IDispatchProps & IItemsProps & ISelec
 
     if (values.length === 0) {
       if (isFetching === null) return <View style={{ backgroundColor: 'transparent' }} />;
-      else if (!isFetching) return getEmptyScreen(parentId);
     }
 
     const itemsArray = parentId === FilterId.root ? values : values.sort(this.sortItems);
@@ -92,12 +91,12 @@ export class Items extends React.Component<IDispatchProps & IItemsProps & ISelec
           ItemSeparatorComponent={() => <View style={styles.separator} />}
           keyExtractor={(item: IItem) => item.id}
           refreshing={this.props.isFetching}
-          onRefresh={() => {
-            this.makeRequest();
-          }}
+          onRefresh={() => this.makeRequest()}
+          refreshControl={<RefreshControl refreshing={isFetching} onRefresh={() => this.makeRequest()} />}
           renderItem={({ item }) => (
             <Item item={item} onEvent={this.props.onEvent} selected={selectedItems[item.id]} multiSelect={multiSelect} />
           )}
+          ListEmptyComponent={getEmptyScreen(parentId)}
         />
       </PageContainer>
     );

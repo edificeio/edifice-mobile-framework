@@ -104,13 +104,17 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
     let key = this.props.navigation.getParam("key");
     let folderName = this.props.navigation.getParam("folderName");
 
-    if (isSearchValid) {
+    if (isSearch) {
+      // If in search function, find current folder with navigation
       const previousNavigation = this.props.navigation.dangerouslyGetParent()?.state.routes;
-      const index = previousNavigation[0].index;
+      const index = previousNavigation[0].index as number;
       if (previousNavigation[0].routes[index].params) {
         if (index >= 5) folderName = previousNavigation[0].routes[index].params.key;
         else key = previousNavigation[0].routes[index].params.key;
       }
+    }
+
+    if (isSearchValid) {
       if (!folderName) this.props.fetchMailList(page, key, searchString);
       else this.props.fetchMailFromFolder(folderName, page, searchString);
     } else {

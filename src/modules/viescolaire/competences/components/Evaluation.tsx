@@ -103,7 +103,9 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     if (periods !== prevProps.periods) this.setCurrentPeriod();
     if (
       groups !== prevProps.groups ||
-      (devoirsList.data.matieres !== prevProps.devoirsList.data.matieres && devoirsList.data.matieres.length > 0)
+      (devoirsList.data !== undefined &&
+        devoirsList.data.matieres !== prevProps.devoirsList.data.matieres &&
+        devoirsList.data.matieres.length > 0)
     ) {
       this.setState({ disciplineList: devoirsList.data.matieres });
     }
@@ -135,7 +137,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
     let current = { type: I18n.t("viesco-competences-period"), value: undefined } as ISelectedPeriod;
     if (this.state.currentPeriod.type === current.type) {
       this.props.periods.map(({ order, type, id_type, start_date, end_date }) => {
-        if (moment().isAfter(start_date) && moment().isBefore(end_date)) {
+        if (moment().isBetween(start_date, end_date, "day", "[]")) {
           current = {
             type: `${I18n.t("viesco-competences-period-" + type) + " " + order}`,
             value: id_type.toString(),
@@ -279,6 +281,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
 
     return (
       <Dropdown
+        keyId="competences.disciplines"
         data={Object.values(disciplines)}
         value={this.state.selectedDiscipline}
         onSelect={(discipline: string) => this.initDevoirsByDisciplines(discipline)}
@@ -300,6 +303,7 @@ export default class Competences extends React.PureComponent<ICompetencesProps, 
 
     return (
       <Dropdown
+        keyId="competences.periods"
         style={{ marginRight: 5 }}
         data={periodsList.map(x => x.type)}
         value={selectedPeriod.type}

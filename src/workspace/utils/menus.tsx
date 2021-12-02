@@ -9,9 +9,10 @@ import { restoreAction } from "../actions/restore";
 import { FilePicker } from "../../infra/filePicker";
 import * as React from "react";
 import { uploadAction } from "../actions/upload";
-import { ContentUri } from "../types";
+import { ContentUri, FilterId } from "../types";
 import { Trackers } from "../../framework/util/tracker";
 import { createFolderAction } from "../actions/create";
+import { listAction } from "../actions/list";
 
 export const addMenu = () => {
   return {
@@ -29,6 +30,7 @@ export const addMenu = () => {
             path: file.uri,
           };
           await dispatch(uploadAction(parentId, convertedFile));
+          await dispatch(listAction(parentId ? { parentId } : { filter: FilterId.owner, parentId: FilterId.owner }));
         }}>
         {children}
       </FilePicker>
