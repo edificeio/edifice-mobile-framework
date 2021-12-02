@@ -87,7 +87,7 @@ class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: b
 
   public async componentDidMount() {
     // Enable react-native-screens
-    enableScreens();
+    //enableScreens();
 
     // Event handlers
     RNLocalize.addEventListener('change', this.handleLocalizationChange);
@@ -106,7 +106,9 @@ class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: b
       if (hasOnboardingTexts) {
         try {
           platformId = await this.props.store.dispatch(loadCurrentPlatform());
-        } catch (e) { console.warn(e) }
+        } catch (e) {
+          console.warn(e);
+        }
       } else {
         platformId = AppConf.platforms[0].name;
         this.props.store.dispatch(selectPlatform(platformId));
@@ -114,7 +116,9 @@ class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: b
     } else {
       try {
         platformId = await this.props.store.dispatch(loadCurrentPlatform());
-      } catch (e) { console.warn(e) }
+      } catch (e) {
+        console.warn(e);
+      }
     }
     const connectionToken = await OAuth2RessourceOwnerPasswordClient.connection?.loadToken();
     if (platformId && connectionToken) {

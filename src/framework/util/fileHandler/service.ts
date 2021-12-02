@@ -78,7 +78,11 @@ const fileTransferService = {
               ...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]
             ) => SyncedFileType;
             return new sfclass(file, df) as SyncedFileType;
-          } else throw new Error('Upload failed: server error ' + JSON.stringify(res));
+          } else {
+            const err = new Error('Upload failed: server error ' + JSON.stringify(res));
+            err.response = res;
+            throw err;
+          }
         })
         .catch(e => {
           console.warn('Upload error', e);
