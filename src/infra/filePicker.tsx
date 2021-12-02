@@ -38,25 +38,35 @@ export class FilePicker extends React.PureComponent<
     const { callback, options, multiple, ...props } = this.props;
 
     const imageCallback = (images: LocalFile[], sourceType: string) => {
-      for (const img of images) {
-        const imgFormatted = {
-          ...img.nativeInfo,
-          ...img,
-        };
-        callback(imgFormatted as ImagePicked);
+      try {
+        for (const img of images) {
+          const imgFormatted = {
+            ...img.nativeInfo,
+            ...img,
+          };
+          callback(imgFormatted as ImagePicked);
+        }
+      } catch (error) {
+        throw error;
+      } finally {
+        this.setState({ showModal: false });
       }
-      this.setState({ showModal: false });
     };
 
     const documentCallback = async (files: DocumentPickerResponse[], sourceType: string) => {
-      for (const file of files) {
-        file.uri = Platform.select({
-          android: getPath(file.uri),
-          default: decodeURI(file.uri.indexOf('file://') > -1 ? file.uri.split('file://')[1] : file.uri),
-        });
-        callback({ fileName: file.name, fileSize: file.size!, uri: file.uri, type: file.type }, sourceType);
+      try {
+        for (const file of files) {
+          file.uri = Platform.select({
+            android: getPath(file.uri),
+            default: decodeURI(file.uri.indexOf('file://') > -1 ? file.uri.split('file://')[1] : file.uri),
+          });
+          callback({ fileName: file.name, fileSize: file.size!, uri: file.uri, type: file.type }, sourceType);
+        }
+      } catch (error) {
+        throw error;
+      } finally {
+        this.setState({ showModal: false });
       }
-      this.setState({ showModal: false });
     };
 
     const menuActions = [
