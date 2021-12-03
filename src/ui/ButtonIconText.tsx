@@ -70,7 +70,7 @@ export default FloatingAction;
 
 export function getButtonShadow() {
   return {
-    // elevation: 5,
+    elevation: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
@@ -80,7 +80,7 @@ export function getButtonShadow() {
 
 export function getMenuShadow() {
   return {
-    // elevation: 5,
+    elevation: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,

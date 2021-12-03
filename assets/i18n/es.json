@@ -292,39 +292,9 @@
   "createPost-submitAction": "Enviar",
   "createPost-submitSuccess": "Su entrada de blog se ha enviado correctamente y se publicará cuando el gestor del blog la valide.",
   "date": {
-    "abbr_day_names": [
-      "Dom",
-      "Lun",
-      "Mar",
-      "Mié",
-      "Jue",
-      "Vie",
-      "Sáb"
-    ],
-    "abbr_month_names": [
-      null,
-      "Ene",
-      "Feb",
-      "Mar",
-      "Abr",
-      "May",
-      "Jun",
-      "Jul",
-      "Ago",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dic"
-    ],
-    "day_names": [
-      "Domingo",
-      "Lunes",
-      "Martes",
-      "Miércoles",
-      "Jueves",
-      "Viernes",
-      "Sábado"
-    ],
+    "abbr_day_names": ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
+    "abbr_month_names": [null, "Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+    "day_names": ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
     "month_names": [
       null,
       "de enero",
@@ -548,6 +518,8 @@
       "TIMELINE": "Informes",
       "TIMELINEGENERATOR": "Barra cronológica",
       "USERBOOK": "Humores y lemas",
+      "USERBOOK_MOOD": "Humores",
+      "USERBOOK_MOTTO": "Lemas",
       "WIKI": "Wiki",
       "WORKSPACE": "Espacio documental"
     },
