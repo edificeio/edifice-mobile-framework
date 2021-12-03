@@ -1,7 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, RefreshControl, TouchableOpacity, View } from 'react-native';
-import Snow from 'react-native-snow-bg';
 import Toast from 'react-native-tiny-toast';
 import { NavigationInjectedProps, NavigationFocusInjectedProps, withNavigationFocus, NavigationState } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -71,7 +70,6 @@ export enum TimelineLoadingState {
 }
 export interface ITimelineScreenState {
   loadingState: TimelineLoadingState; // Holds the initial loading state. further page loading is handled by async.isFetching
-  isSnowing: boolean;
 }
 
 export enum ITimelineItemType {
@@ -90,7 +88,6 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
 
   state: ITimelineScreenState = {
     loadingState: TimelineLoadingState.PRISTINE,
-    isSnowing: true,
   };
 
   popupMenuRef = React.createRef<PopupMenu>();
@@ -101,7 +98,6 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
 
   render() {
     const { navigation } = this.props;
-    const { isSnowing } = this.state;
     const routeName = navigation.state.routeName;
     return (
       <>
@@ -116,7 +112,6 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
             this.renderList()
           )}
         </PageView>
-        {isSnowing ? <Snow pointerEvents="none" fallSpeed="medium" snowflakesCount={100} fullScreen /> : null}
       </>
     );
   }
@@ -276,7 +271,6 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
     }
     if (isFocused !== prevProps.isFocused) {
       this.popupMenuRef.current?.doReset();
-      this.setState({ isSnowing: false });
     }
   }
 
@@ -312,7 +306,8 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
         });
       return { managed: 1 };
     };
-    this.props.handleOpenNotification && this.props.handleOpenNotification(n, fallbackHandleNotificationAction, this.props.navigation.state);
+    this.props.handleOpenNotification &&
+      this.props.handleOpenNotification(n, fallbackHandleNotificationAction, this.props.navigation.state);
   }
 
   async doDismissFlashMessage(flashMessageId: number) {
