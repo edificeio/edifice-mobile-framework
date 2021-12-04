@@ -1,6 +1,6 @@
 /* eslint-disable flowtype/no-types-missing-file-annotation */
-import { createAsyncActionTypes, AsyncState } from "../../../infra/redux/async2";
-import mailConfig from "../moduleConfig";
+import { createAsyncActionTypes, AsyncState } from '~/infra/redux/async2';
+import mailConfig from '~/modules/conversation/moduleConfig';
 
 // THE MODEL --------------------------------------------------------------------------------------
 
@@ -26,24 +26,23 @@ export interface IInitMail {
 export const initialState: IInitMail = {
   folders: [
     {
-      id: "",
-      folderName: "",
+      id: '',
+      folderName: '',
       unread: 0,
       folders: [],
-      parent_id: "",
-      user_id: "",
+      parent_id: '',
+      user_id: '',
       depth: 0,
       trashed: false,
-      skip_uniq: false
+      skip_uniq: false,
     },
   ],
 };
 
 export type IInitMailState = AsyncState<IInitMail>;
 
-export const getInitMailListState = (globalState: any) =>
-  mailConfig.getState(globalState).init as IInitMailState;
+export const getInitMailListState = (globalState: any) => mailConfig.getState(globalState).init as IInitMailState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const actionTypes = createAsyncActionTypes(mailConfig.namespaceActionType("INIT_MAIL_LIST"));
+export const actionTypes = createAsyncActionTypes(mailConfig.namespaceActionType('INIT_MAIL_LIST'));

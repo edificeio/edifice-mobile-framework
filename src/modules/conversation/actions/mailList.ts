@@ -1,8 +1,8 @@
-import { Dispatch } from "redux";
+import { Dispatch } from 'redux';
 
-import { createAsyncActionCreators } from "../../../infra/redux/async2";
-import { mailListService } from "../service/mailList";
-import { actionTypes, IMailList } from "../state/mailList";
+import { createAsyncActionCreators } from '~/infra/redux/async2';
+import { mailListService } from '~/modules/conversation/service/mailList';
+import { actionTypes, IMailList } from '~/modules/conversation/state/mailList';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

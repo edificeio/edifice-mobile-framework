@@ -1,13 +1,13 @@
+import I18n from 'i18n-js';
 import * as React from 'react';
 import { View, ScrollView, TouchableWithoutFeedback, Keyboard, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import { hasNotch } from 'react-native-device-info';
 import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
-import { ThunkDispatch } from 'redux-thunk';
 import { connect } from 'react-redux';
-import I18n from 'i18n-js';
+import { ThunkDispatch } from 'redux-thunk';
 
-import moduleConfig from '../moduleConfig';
-import { PageView } from '~/framework/components/page';
-import { LoadingIndicator } from '~/framework/components/loading';
+import { IGlobalState } from '~/AppStore';
+import theme from '~/app/theme';
 import {
   FakeHeader,
   HeaderAction,
@@ -17,29 +17,29 @@ import {
   HeaderRow,
   HeaderTitle,
 } from '~/framework/components/header';
-import { TextBold, TextSemiBold, TextLight, TextAction } from '~/framework/components/text';
-import { IGlobalState } from '~/AppStore';
-import { IBlog } from '../reducer';
-import theme from '~/app/theme';
 import { Icon } from '~/framework/components/icon';
+import { LoadingIndicator } from '~/framework/components/loading';
+import { PageView } from '~/framework/components/page';
+import { TextBold, TextSemiBold, TextLight, TextAction } from '~/framework/components/text';
+import { startLoadNotificationsAction } from '~/framework/modules/timelinev2/actions';
+import { SyncedFile } from '~/framework/util/fileHandler';
+import Notifier from '~/framework/util/notifier';
+import { notifierShowAction } from '~/framework/util/notifier/actions';
 import { getUserSession, IUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
-import { startLoadNotificationsAction } from '~/framework/modules/timelinev2/actions';
-import { AttachmentPicker } from '~/ui/AttachmentPicker';
-import { GridAvatars } from '~/ui/avatars/GridAvatars';
-import { sendBlogPostAction, uploadBlogPostImagesAction } from '../actions';
-import { notifierShowAction } from '~/framework/util/notifier/actions';
-import { hasNotch } from 'react-native-device-info';
+import { ImagePicked, imagePickedToLocalFile, ImagePicker } from '~/infra/imagePicker';
+import { sendBlogPostAction, uploadBlogPostImagesAction } from '~/modules/blog/actions';
+import moduleConfig from '~/modules/blog/moduleConfig';
+import { IBlog } from '~/modules/blog/reducer';
 import {
   createBlogPostResourceRight,
   getBlogPostRight,
   publishBlogPostResourceRight,
   submitBlogPostResourceRight,
-} from '../rights';
-import { ImagePicked, imagePickedToLocalFile, ImagePicker } from '~/infra/imagePicker';
-import Notifier from '~/framework/util/notifier';
-import { SyncedFile } from '~/framework/util/fileHandler';
+} from '~/modules/blog/rights';
 import { ILocalAttachment } from '~/ui/Attachment';
+import { AttachmentPicker } from '~/ui/AttachmentPicker';
+import { GridAvatars } from '~/ui/avatars/GridAvatars';
 
 // TYPES ==========================================================================================
 
@@ -149,7 +149,7 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
   }
 
   renderError() {
-    return <TextSemiBold>{'Error'}</TextSemiBold>; // ToDo: great error screen here
+    return <TextSemiBold>Error</TextSemiBold>; // ToDo: great error screen here
   }
 
   renderContent() {
@@ -230,7 +230,8 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
           borderWidth: 1,
           borderRadius: 5,
         }}>
-        <ImagePicker multiple
+        <ImagePicker
+          multiple
           callback={image => {
             console.log('image', image);
             this.setState(prevState => ({ images: [...prevState.images, image] }));
@@ -365,10 +366,10 @@ const mapStateToProps: (s: IGlobalState) => IBlogCreatePostScreenDataProps = s =
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => IBlogCreatePostScreenEventProps = dispatch => ({
   handleUploadPostImages: async (images: ImagePicked[]) => {
     const localFiles = images.map(img => imagePickedToLocalFile(img));
-    return (dispatch(uploadBlogPostImagesAction(localFiles)) as unknown) as Promise<SyncedFile[]>;
+    return dispatch(uploadBlogPostImagesAction(localFiles)) as unknown as Promise<SyncedFile[]>;
   },
   handleSendBlogPost: async (blog: IBlog, title: string, content: string, uploadedPostImages?: SyncedFile[]) => {
-    return ((await dispatch(sendBlogPostAction(blog, title, content, uploadedPostImages))) as unknown) as string | undefined;
+    return (await dispatch(sendBlogPostAction(blog, title, content, uploadedPostImages))) as unknown as string | undefined;
   },
   handleInitTimeline: async () => {
     await dispatch(startLoadNotificationsAction());

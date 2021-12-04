@@ -2,12 +2,12 @@ import * as React from 'react';
 import { TextInput, View, ViewStyle, TouchableOpacity, FlatList } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { CommonStyles, IOSShadowStyle } from '../../../styles/common/styles';
-import { SingleAvatar } from '../../../ui/avatars/SingleAvatar';
-import { Text } from '../../../framework/components/text';
-import { newMailService } from '../service/newMail';
-import theme from '../../../app/theme';
-import { Icon } from '../../../framework/components/icon';
+import theme from '~/app/theme';
+import { Icon } from '~/framework/components/icon';
+import { Text } from '~/framework/components/text';
+import { newMailService } from '~/modules/conversation/service/newMail';
+import { CommonStyles, IOSShadowStyle } from '~/styles/common/styles';
+import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 export const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, autoFocus }) => {
   const [search, updateSearch] = React.useState('');
@@ -64,7 +64,11 @@ export const Input = ({ value, onChangeText, onSubmit, autoFocus, inputRef, key 
   return (
     <TextInput
       key={key}
-      ref={ref => { if (ref) { inputRef.current = ref; }}}
+      ref={ref => {
+        if (ref) {
+          inputRef.current = ref;
+        }
+      }}
       autoFocus={autoFocus}
       autoCorrect={false}
       autoCapitalize="none"
@@ -99,14 +103,20 @@ export const FoundList = ({ foundUserOrGroup, addUser }) => {
     <FlatList
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag"
-      removeClippedSubviews={true}
+      removeClippedSubviews
       contentContainerStyle={{
         paddingBottom: insets.bottom,
       }}
       style={absoluteListStyle}
       data={foundUserOrGroup}
       renderItem={({ item }) => (
-        <FoundUserOrGroup id={item.id} displayName={item.name || item.displayName} onPress={() => {addUser(item)}} />
+        <FoundUserOrGroup
+          id={item.id}
+          displayName={item.name || item.displayName}
+          onPress={() => {
+            addUser(item);
+          }}
+        />
       )}
     />
   ) : (
@@ -124,8 +134,8 @@ export const SelectedList = ({ selectedUsersOrGroups, onItemClick }) => {
       padding: 5,
       margin: 2,
       flex: 0,
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
     } as ViewStyle;
 
     const userLabel = { color: CommonStyles.primary, textAlignVertical: 'center' } as ViewStyle;
@@ -133,7 +143,7 @@ export const SelectedList = ({ selectedUsersOrGroups, onItemClick }) => {
     return (
       <TouchableOpacity onPress={onClick} style={itemStyle}>
         <Text style={userLabel}>{displayName}</Text>
-        <Icon name="close" size={12} color={CommonStyles.primary} style={{paddingTop: 1, marginLeft: 5}} />
+        <Icon name="close" size={12} color={CommonStyles.primary} style={{ paddingTop: 1, marginLeft: 5 }} />
       </TouchableOpacity>
     );
   };

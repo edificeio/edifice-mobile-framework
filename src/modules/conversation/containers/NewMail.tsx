@@ -7,24 +7,19 @@ import { Asset } from 'react-native-image-picker';
 import Toast from 'react-native-tiny-toast';
 import { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import { bindActionCreators, Dispatch } from 'redux';
+import { bindActionCreators } from 'redux';
 
-import { getSessionInfo } from '../../../App';
-import { HeaderIcon } from '../../../framework/components/header';
-import { IDistantFile, LocalFile, SyncedFileWithId } from '../../../framework/util/fileHandler';
-import { IUploadCallbaks } from '../../../framework/util/fileHandler/service';
-import { tryAction } from '../../../framework/util/redux/actions';
-import { Trackers } from '../../../framework/util/tracker';
-import withViewTracking from '../../../framework/util/tracker/withViewTracking';
-
-import pickFile, { pickFileError } from '../../../infra/actions/pickFile';
-import { DocumentPicked, FilePicker, ImagePicked } from '../../../infra/filePicker';
-import { standardNavScreenOptions } from '../../../navigation/helpers/navScreenOptions';
-import { CommonStyles } from '../../../styles/common/styles';
-import { INavigationProps } from '../../../types';
-import { HeaderAction } from '../../../ui/headers/NewHeader';
-import { deleteMailsAction, trashMailsAction } from '../actions/mail';
-import { fetchMailContentAction, clearMailContentAction } from '../actions/mailContent';
+import { getSessionInfo } from '~/App';
+import { HeaderIcon } from '~/framework/components/header';
+import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
+import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
+import { tryAction } from '~/framework/util/redux/actions';
+import { Trackers } from '~/framework/util/tracker';
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { pickFileError } from '~/infra/actions/pickFile';
+import { DocumentPicked, FilePicker } from '~/infra/filePicker';
+import { deleteMailsAction, trashMailsAction } from '~/modules/conversation/actions/mail';
+import { fetchMailContentAction, clearMailContentAction } from '~/modules/conversation/actions/mailContent';
 import {
   sendMailAction,
   makeDraftMailAction,
@@ -32,13 +27,16 @@ import {
   addAttachmentAction,
   deleteAttachmentAction,
   forwardMailAction,
-} from '../actions/newMail';
-import { fetchVisiblesAction } from '../actions/visibles';
-import NewMailComponent from '../components/NewMail';
-import moduleConfig from '../moduleConfig';
-import { ISearchUsers } from '../service/newMail';
-import { getMailContentState, IMail } from '../state/mailContent';
-import { IVisiblesState } from '../state/visibles';
+} from '~/modules/conversation/actions/newMail';
+import { fetchVisiblesAction } from '~/modules/conversation/actions/visibles';
+import NewMailComponent from '~/modules/conversation/components/NewMail';
+import moduleConfig from '~/modules/conversation/moduleConfig';
+import { ISearchUsers } from '~/modules/conversation/service/newMail';
+import { getMailContentState, IMail } from '~/modules/conversation/state/mailContent';
+import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
+import { CommonStyles } from '~/styles/common/styles';
+import { INavigationProps } from '~/types';
+import { HeaderAction } from '~/ui/headers/NewHeader';
 
 export enum DraftType {
   NEW,
@@ -316,7 +314,6 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           mask: false,
           containerStyle: { width: '95%', backgroundColor: 'black' },
         });
-        return;
       } else if (!isDraftEmpty && !isSavedDraft) {
         Alert.alert(I18n.t('conversation.saveDraftTitle'), I18n.t('conversation.saveDraftMessage'), [
           {
@@ -398,13 +395,13 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     const getPrevBody = () => {
       const getUserArrayToString = users => users.map(getDisplayName).join(', ');
 
-      var from = getDisplayName(this.props.mail.from);
-      var date = moment(this.props.mail.date).format('DD/MM/YYYY HH:mm');
-      var subject = this.props.mail.subject;
+      const from = getDisplayName(this.props.mail.from);
+      const date = moment(this.props.mail.date).format('DD/MM/YYYY HH:mm');
+      const subject = this.props.mail.subject;
 
       const to = getUserArrayToString(this.props.mail.to);
 
-      var header =
+      let header =
         '<br>' +
         '<br>' +
         '<p class="row ng-scope"></p>' +

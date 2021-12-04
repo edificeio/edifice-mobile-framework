@@ -1,9 +1,11 @@
-import I18n from "i18n-js";
-import { createMainTabNavOption } from "../../navigation/helpers/mainTabNavigator";
-import { NotificationHandlerFactory } from "../pushNotification";
-import { CommonStyles } from "../../styles/common/styles";
-import { backendUserApp } from "../../user/reducers/auth";
-import { IFunctionalConfig, IAppModule } from "./types";
+import I18n from 'i18n-js';
+
+import { IFunctionalConfig, IAppModule } from './types';
+
+import { NotificationHandlerFactory } from '~/infra/pushNotification';
+import { createMainTabNavOption } from '~/navigation/helpers/mainTabNavigator';
+import { CommonStyles } from '~/styles/common/styles';
+import { backendUserApp } from '~/user/reducers/auth';
 
 /**
  * All specs to define functional module
@@ -17,17 +19,15 @@ export function toSnakeCase(camelCase: string) {
 
   let str = camelCase;
   for (let i = 0, n = upperChars.length; i < n; i++) {
-    str = str.replace(new RegExp(upperChars[i]), "_" + upperChars[i].toLowerCase());
+    str = str.replace(new RegExp(upperChars[i]), '_' + upperChars[i].toLowerCase());
   }
 
-  if (str.slice(0, 1) === "_") {
+  if (str.slice(0, 1) === '_') {
     str = str.slice(1);
   }
 
   return str;
 }
-
-
 
 export default class FunctionalModuleConfig implements IFunctionalConfig {
   public name: string;
@@ -45,7 +45,7 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
   public constructor(opts: IFunctionalConfig) {
     this.name = opts.name;
     this.apiName = opts.apiName || this.name;
-    this.actionPrefix = opts.actionPrefix || toSnakeCase(this.name).toUpperCase() + "_";
+    this.actionPrefix = opts.actionPrefix || toSnakeCase(this.name).toUpperCase() + '_';
     this.reducerName = opts.reducerName || this.name;
     this.displayName = opts.displayName || this.name;
     this.iconName = opts.iconName || this.name;
@@ -68,8 +68,7 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
     return {
       screen: comp,
 
-      navigationOptions: () =>
-        this.group ? { header: null } : createMainTabNavOption(I18n.t(this.displayName), this.iconName),
+      navigationOptions: () => (this.group ? { header: null } : createMainTabNavOption(I18n.t(this.displayName), this.iconName)),
     };
   }
 

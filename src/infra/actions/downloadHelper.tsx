@@ -1,15 +1,16 @@
 import { Platform } from 'react-native';
-import { IFile } from '../../workspace/types';
-import { Trackers } from '~/framework/util/tracker';
 
-export const downloadFiles = (downloadable: Array<IFile>, withManager = true) => {
+import { Trackers } from '~/framework/util/tracker';
+import { IFile } from '~/workspace/types';
+
+export const downloadFiles = (downloadable: IFile[], withManager = true) => {
   downloadable.map(document => downloadFile(document, withManager));
 };
 
 export const downloadFile = (downloadable: IFile, withManager = true) => {
   if (downloadable?.url?.startsWith('/zimbra')) {
     Trackers.trackEvent('Zimbra', 'DOWNLOAD ATTACHMENT');
-    console.log("downloadable", downloadable);
+    console.log('downloadable', downloadable);
     if (Platform.OS === 'ios') {
       startDownload(downloadable, withManager, false).then(res => openDownloadedFile(res.path()));
     } else {

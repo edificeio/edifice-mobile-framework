@@ -1,5 +1,5 @@
-import { createAsyncActionTypes, AsyncState } from "../../../infra/redux/async2";
-import signatureConfig from "../moduleConfig";
+import { createAsyncActionTypes, AsyncState } from '~/infra/redux/async2';
+import signatureConfig from '~/modules/conversation/moduleConfig';
 
 // THE MODEL --------------------------------------------------------------------------------------
 
@@ -18,14 +18,13 @@ export type ISignatureState = AsyncState<ISignature>;
 export const initialState: ISignature = {
   preference: {
     useSignature: false,
-    signature: "",
+    signature: '',
   },
-  id: "",
+  id: '',
 };
 
-export const getSignatureState = (globalState: any) =>
-  signatureConfig.getState(globalState).signature as ISignatureState;
+export const getSignatureState = (globalState: any) => signatureConfig.getState(globalState).signature as ISignatureState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const actionTypes = createAsyncActionTypes(signatureConfig.namespaceActionType("SIGNATURE"));
+export const actionTypes = createAsyncActionTypes(signatureConfig.namespaceActionType('SIGNATURE'));

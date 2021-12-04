@@ -1,11 +1,10 @@
-import { Dispatch } from "redux";
+import { Dispatch } from 'redux';
 
-import { newMailService } from "../service/newMail";
-import { getUserSession } from "../../../framework/util/session";
-import { IGlobalState } from "../../../AppStore";
-import { LocalFile } from "../../../framework/util/fileHandler";
-import { IUploadCallbaks } from "../../../framework/util/fileHandler/service";
-
+import { IGlobalState } from '~/AppStore';
+import { LocalFile } from '~/framework/util/fileHandler';
+import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
+import { getUserSession } from '~/framework/util/session';
+import { newMailService } from '~/modules/conversation/service/newMail';
 
 export function sendMailAction(mailDatas, draftId: string | undefined, InReplyTo: string) {
   return async () => {
@@ -18,7 +17,7 @@ export function forwardMailAction(draftId: string, forwardFrom: string) {
     try {
       await newMailService.forwardMail(draftId, forwardFrom);
     } catch (errmsg) {
-      console.error("ERROR forward mail: ", errmsg);
+      console.error('ERROR forward mail: ', errmsg);
     }
   };
 }
@@ -35,7 +34,7 @@ export function updateDraftMailAction(mailId: string, mailDatas) {
   };
 }
 
-export function addAttachmentAction(mailId: string, attachment: LocalFile, callbacks?: IUploadCallbaks ) {
+export function addAttachmentAction(mailId: string, attachment: LocalFile, callbacks?: IUploadCallbaks) {
   return async (dispatch: Dispatch, getState: () => IGlobalState) => {
     try {
       const session = getUserSession(getState());
@@ -43,7 +42,7 @@ export function addAttachmentAction(mailId: string, attachment: LocalFile, callb
       // console.log("service returned", newAttachment);
       return newAttachment;
     } catch (errmsg) {
-      console.warn("ERROR uploading attachment", errmsg);
+      console.warn('ERROR uploading attachment', errmsg);
       throw errmsg;
     }
   };

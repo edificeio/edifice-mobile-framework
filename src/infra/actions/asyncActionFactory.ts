@@ -1,7 +1,8 @@
-import querystring from "querystring";
-import { IAsyncActionTypes } from "../redux/async";
-import { fetchJSONWithCache, signedFetch } from "../fetchWithCache";
-import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
+import querystring from 'querystring';
+
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
+import { IAsyncActionTypes } from '~/infra/redux/async';
 
 export type IAdapterType = (receivedData: any, parentId?: string) => any;
 
@@ -10,7 +11,7 @@ export function asyncActionFactory(
   payload,
   asyncActionTypes: IAsyncActionTypes,
   adapter: IAdapterType | null,
-  options
+  options,
 ) {
   return async (dispatch: any) => {
     const { parentId, ...body } = payload;
@@ -23,13 +24,13 @@ export function asyncActionFactory(
     }, 500);
 
     try {
-      if (options.method != "get") {
+      if (options.method != 'get') {
         const formatedBody = options.formData ? querystring.stringify(body) : JSON.stringify(body);
         const response = await signedFetch(`${DEPRECATED_getCurrentPlatform()!.url}${type}`, {
           body: formatedBody,
           headers: {
-            Accept: "application/json",
-            "Content-Type": options.formData ? "application/x-www-form-urlencoded; charset=UTF-8" : "application/json",
+            Accept: 'application/json',
+            'Content-Type': options.formData ? 'application/x-www-form-urlencoded; charset=UTF-8' : 'application/json',
           },
           method: options.method,
         });
@@ -37,8 +38,7 @@ export function asyncActionFactory(
       } else {
         json = await fetchJSONWithCache(type);
       }
-      if (json && json.error)
-        return dispatch({ type: asyncActionTypes.fetchError, errmsg: json.error, payload });
+      if (json && json.error) return dispatch({ type: asyncActionTypes.fetchError, errmsg: json.error, payload });
 
       const data = adapter ? adapter(json, parentId) : json;
 

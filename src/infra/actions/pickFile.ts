@@ -3,8 +3,8 @@ import { Platform, ActionSheetIOS } from 'react-native';
 import ActionSheet from 'react-native-action-sheet';
 import Permissions, { PERMISSIONS } from 'react-native-permissions';
 
-import { LocalFile } from '../../framework/util/fileHandler';
-import { notifierShowAction } from '../notifier/actions';
+import { LocalFile } from '~/framework/util/fileHandler';
+import { notifierShowAction } from '~/infra/notifier/actions';
 
 type Captions = {
   image: string;

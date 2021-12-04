@@ -1,25 +1,25 @@
-import * as React from 'react';
 import I18n from 'i18n-js';
+import * as React from 'react';
 import { View, RefreshControl, FlatList } from 'react-native';
-import { NavigationState, NavigationInjectedProps } from 'react-navigation';
-import Toast from 'react-native-tiny-toast';
-
-import { Loading } from '../../../ui';
-import { PageContainer } from '../../../ui/ContainerContent';
-import { EmptyScreen } from '../../../ui/EmptyScreen';
-import { DraftType } from '../containers/NewMail';
-import MoveModal from '../containers/MoveToFolderModal';
-import { IMail } from '../state/mailContent';
-import moduleConfig from '../moduleConfig';
-import MailListItem from './MailListItem';
-import DrawerMenu from './DrawerMenu';
-import { HeaderAction } from '../../../ui/headers/NewHeader';
-import TempFloatingAction from '../../../ui/FloatingButton/TempFloatingAction';
-import { Trackers } from '../../../framework/util/tracker';
-import { IInit } from '../containers/MailList';
-import { FakeHeader, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '../../../framework/components/header';
 import { Swipeable } from 'react-native-gesture-handler';
-import { LoadingIndicator } from '../../../framework/components/loading';
+import Toast from 'react-native-tiny-toast';
+import { NavigationState, NavigationInjectedProps } from 'react-navigation';
+
+import DrawerMenu from './DrawerMenu';
+import MailListItem from './MailListItem';
+
+import { FakeHeader, HeaderCenter, HeaderRow, HeaderTitle } from '~/framework/components/header';
+import { LoadingIndicator } from '~/framework/components/loading';
+import { Trackers } from '~/framework/util/tracker';
+import { IInit } from '~/modules/conversation/containers/MailList';
+import MoveModal from '~/modules/conversation/containers/MoveToFolderModal';
+import { DraftType } from '~/modules/conversation/containers/NewMail';
+import moduleConfig from '~/modules/conversation/moduleConfig';
+import { IMail } from '~/modules/conversation/state/mailContent';
+import { Loading } from '~/ui';
+import { PageContainer } from '~/ui/ContainerContent';
+import { EmptyScreen } from '~/ui/EmptyScreen';
+import TempFloatingAction from '~/ui/FloatingButton/TempFloatingAction';
 
 interface IMailListDataProps {
   notifications: any;
@@ -44,9 +44,7 @@ interface IMailListEventProps {
   restoreToInbox: (mailIds: string[]) => void;
 }
 
-type MailListProps = IMailListDataProps
-  & IMailListEventProps
-  & NavigationInjectedProps
+type MailListProps = IMailListDataProps & IMailListEventProps & NavigationInjectedProps;
 
 type MailListState = {
   indexPage: number;
@@ -75,7 +73,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
       showModal: false,
       selectedMail: undefined,
       isRefreshing: false,
-      isChangingPage: false
+      isChangingPage: false,
     };
   }
 
@@ -129,7 +127,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     mailInfos.isChecked = !mailInfos.isChecked;
 
     const { mails } = this.state;
-    let indexMail = mails.findIndex(item => item.id === mailInfos.id);
+    const indexMail = mails.findIndex(item => item.id === mailInfos.id);
     this.setState(prevState => ({ mails: { ...prevState.mails, [prevState.mails[indexMail]]: mailInfos } }));
   };
 
@@ -241,7 +239,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
   public render() {
     const { isFetching, firstFetch, navigation } = this.props;
     const { showModal, selectedMail, isRefreshing, nextPageCallable, isChangingPage } = this.state;
-    const navigationKey = navigation.getParam("key");
+    const navigationKey = navigation.getParam('key');
     const uniqueId = [];
     const uniqueMails =
       this.state.mails?.filter((mail: IMail) => {
@@ -262,7 +260,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
                 <HeaderAction name="search"/>
               </HeaderLeft> */}
               <HeaderCenter>
-                <HeaderTitle>{I18n.t("conversation.appName")}</HeaderTitle>
+                <HeaderTitle>{I18n.t('conversation.appName')}</HeaderTitle>
               </HeaderCenter>
             </HeaderRow>
           </FakeHeader>
@@ -270,7 +268,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
             buttonStyle={{ zIndex: 1 }}
             iconName="new_message"
             onEvent={() => {
-              Trackers.trackEventOfModule(moduleConfig, "Ecrire un mail", "Nouveau mail");
+              Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Nouveau mail');
               this.props.navigation.navigate(`${moduleConfig.routeName}/new`, {
                 type: DraftType.NEW,
                 mailId: undefined,
@@ -280,7 +278,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
           />
           <View style={{ flex: 1 }}>
             <FlatList
-              ref={ref => this.flatListRef = ref}
+              ref={ref => (this.flatListRef = ref)}
               style={{ marginTop: 45 }}
               contentContainerStyle={{ flexGrow: 1 }}
               data={uniqueMails.length > 0 ? uniqueMails : []}
@@ -298,9 +296,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
                     {...this.props}
                     mailInfos={item}
                     renderMailContent={() => {
-                      Object.keys(this.activeSwipeableRefs).length > 0
-                        ? this.unswipeAllSwipeables()
-                        : this.renderMailContent(item);
+                      Object.keys(this.activeSwipeableRefs).length > 0 ? this.unswipeAllSwipeables() : this.renderMailContent(item);
                     }}
                     deleteMail={() => this.delete(mailId)}
                     toggleRead={() => this.toggleRead(isMailUnread, mailId)}
@@ -311,19 +307,18 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
                     }}
                     onSwipeStart={(ref, id) => {
                       this.flatListRef?.setNativeProps({
-                        scrollEnabled: false
+                        scrollEnabled: false,
                       });
                       this.unswipeAllSwipeables(id2 => id !== id2);
-                    }
-                    }
+                    }}
                     onSwipeRelease={() => {
                       this.flatListRef?.setNativeProps({
-                        scrollEnabled: true
-                      })
+                        scrollEnabled: true,
+                      });
                     }}
                     onSwipeRecenter={id => delete this.activeSwipeableRefs[id]}
                   />
-                )
+                );
               }}
               extraData={uniqueMails}
               keyExtractor={(item: IMail) => item.id}
@@ -351,7 +346,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
                 ) : (
                   <View style={{ flex: 1 }}>
                     <EmptyScreen
-                      imageSrc={require('../../../../assets/images/empty-screen/conversations.png')}
+                      imageSrc={require('ASSETS/images/empty-screen/conversations.png')}
                       imgWidth={571}
                       imgHeight={261}
                       text={I18n.t('conversation.emptyScreenText')}

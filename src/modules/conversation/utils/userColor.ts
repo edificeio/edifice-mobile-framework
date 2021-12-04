@@ -1,17 +1,19 @@
-import { CommonStyles } from "../../../styles/common/styles";
-import { mailContentService } from "../service/mailContent";
+import { CommonStyles } from '~/styles/common/styles';
+import { mailContentService } from '~/modules/conversation/service/mailContent';
 
 enum UserRole {
-  STUDENT = "STUDENT",
-  RELATIVE = "RELATIVE",
-  TEACHER = "TEACHER",
-  PERSONNEL = "PERSONNEL",
-  GUEST = "GUEST",
+  STUDENT = 'STUDENT',
+  RELATIVE = 'RELATIVE',
+  TEACHER = 'TEACHER',
+  PERSONNEL = 'PERSONNEL',
+  GUEST = 'GUEST',
 }
 
 export const getUserColor = async (userId: string) => {
   try {
-    const { result } = userId ? await mailContentService.getUserInfos(userId) : { result: [{ id: '', displayNames: '', type: ['']}] };
+    const { result } = userId
+      ? await mailContentService.getUserInfos(userId)
+      : { result: [{ id: '', displayNames: '', type: [''] }] };
     return getProfileColor(result?.[0].type[0]);
   } catch (err) {
     return getProfileColor();
@@ -28,11 +30,11 @@ export const getProfileColor = (role?) => {
       return CommonStyles.profileTypes.Teacher;
     case UserRole.PERSONNEL:
       return CommonStyles.profileTypes.Personnel;
-    case "PrincTeacherGroup":
-      return "#8C939E";
+    case 'PrincTeacherGroup':
+      return '#8C939E';
     case UserRole.GUEST:
       return CommonStyles.profileTypes.Guest;
     default:
-      return "#BBBFC6";
+      return '#BBBFC6';
   }
 };

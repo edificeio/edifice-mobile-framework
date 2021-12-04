@@ -1,5 +1,5 @@
-import { createAsyncActionTypes, AsyncState } from "../../../infra/redux/async2";
-import folderConfig from "../moduleConfig";
+import { createAsyncActionTypes, AsyncState } from '~/infra/redux/async2';
+import folderConfig from '~/modules/conversation/moduleConfig';
 
 // THE MODEL --------------------------------------------------------------------------------------
 
@@ -19,9 +19,8 @@ export type IFolderListState = AsyncState<IFolderList>;
 
 export const initialState: IFolderList = [];
 
-export const getFolderListState = (globalState: any) =>
-  folderConfig.getState(globalState).folders as IFolderListState;
+export const getFolderListState = (globalState: any) => folderConfig.getState(globalState).folders as IFolderListState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const actionTypes = createAsyncActionTypes(folderConfig.namespaceActionType("FOLDERS_LIST"));
+export const actionTypes = createAsyncActionTypes(folderConfig.namespaceActionType('FOLDERS_LIST'));

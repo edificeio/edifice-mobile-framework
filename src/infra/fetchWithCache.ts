@@ -1,9 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { DEPRECATED_getCurrentPlatform } from '../framework/util/_legacy_appConf';
-import { navigate } from '../navigation/helpers/navHelper';
 import { Connection } from './Connection';
 import { OAuth2RessourceOwnerPasswordClient } from './oauth';
+
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { navigate } from '~/navigation/helpers/navHelper';
 
 /**
  * Perform a fetch operation with a oAuth Token. Use it like fetch().

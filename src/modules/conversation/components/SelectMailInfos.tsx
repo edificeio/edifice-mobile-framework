@@ -13,10 +13,10 @@ import {
 } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
 
-import { CommonStyles } from '../../../styles/common/styles';
-import TouchableOpacity from '../../../ui/CustomTouchableOpacity';
-import { removeAccents } from '../../../framework/util/string';
-import { IUser } from '../service/newMail';
+import { removeAccents } from '~/framework/util/string';
+import { IUser } from '~/modules/conversation/service/newMail';
+import { CommonStyles } from '~/styles/common/styles';
+import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 const styles = StyleSheet.create({
   userLabel: { color: CommonStyles.primary, textAlignVertical: 'center' },
