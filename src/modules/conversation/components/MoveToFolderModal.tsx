@@ -48,6 +48,7 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
     return (
       <ModalBox
         isVisible={show}
+        propagateSwipe
         style={{ alignItems: 'stretch' }}
         onBackdropPress={() => {
           selectFolder('');
@@ -55,15 +56,15 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
         }}>
         <ModalContent
           style={{
-            height: 300,
+            height: 250,
             padding: 20,
             paddingTop: undefined,
             width: undefined,
-            //justifyContent: 'space-between',
+            justifyContent: 'space-between',
           }}>
-          <TextBold style={{ marginBottom: 20 }}>{I18n.t(modalTitle)}</TextBold>
+          <TextBold>{I18n.t(modalTitle)}</TextBold>
           {isMoveImpossible ? (
-            <TextSemiBold style={{ marginBottom: 20 }}>{I18n.t('conversation.moveImpossible')}</TextSemiBold>
+            <TextSemiBold>{I18n.t('conversation.moveImpossible')}</TextSemiBold>
           ) : (
             <DropDownPicker
               open={openDropdown}
@@ -82,7 +83,7 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
               }}
             />
           )}
-          <View style={{ alignItems: 'flex-end', flex: 1, flexDirection: 'row' }}>
+          <View style={{ flexDirection: 'row' }}>
             <DialogButtonCancel
               onPress={() => {
                 selectFolder('');
