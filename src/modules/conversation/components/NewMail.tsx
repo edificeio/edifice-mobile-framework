@@ -83,7 +83,7 @@ export default (props: NewMailComponentProps) => {
 
   const keyboardAvoidingViewBehavior = Platform.select({
     ios: 'padding',
-    android: undefined,
+    android: 'height',
   }) as KeyboardAvoidingViewProps['behavior'];
   // const insets = useSafeAreaInsets();                            // Note : this commented code is the theory
   // const keyboardAvoidingViewVerticalOffset = insets.top + 56;    // But Practice >> Theory. Here, magic values ont the next ligne give better results.
@@ -184,7 +184,8 @@ const Fields = ({
         onSave={onDraftSave}
         key="attachments"
       />
-      <Body style={{ zIndex: 1 }} value={body} onChange={onBodyChange} autofocus={isReplyDraft} key="body" />
+      {/*<Body style={{ zIndex: 1 }} value={body} onChange={onBodyChange} autofocus={isReplyDraft} key="body" />*/}
+      <Body style={{ zIndex: 1 }} value={body} onChange={onBodyChange} autofocus={false} key="body" />
       {!!prevBody && <PrevBody prevBody={prevBody} key="prevBody" />}
     </SafeAreaView>
   );
