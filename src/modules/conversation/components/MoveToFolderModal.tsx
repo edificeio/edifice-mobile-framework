@@ -79,7 +79,7 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
               dropDownContainerStyle={{
                 borderColor: theme.color.secondary.regular,
                 borderWidth: 1,
-                maxHeight: 200,
+                maxHeight: 120,
               }}
             />
           )}
