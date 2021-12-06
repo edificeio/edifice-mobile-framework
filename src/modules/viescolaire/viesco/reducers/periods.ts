@@ -1,5 +1,10 @@
-import { createSessionAsyncReducer } from "../../../../infra/redux/async2";
-import { periodsInitialState, periodsActionTypes, yearActionTypes, yearInitialState } from "../state/periods";
+import { createSessionAsyncReducer } from '~/infra/redux/async2';
+import {
+  periodsInitialState,
+  periodsActionTypes,
+  yearActionTypes,
+  yearInitialState,
+} from '~/modules/viescolaire/viesco/state/periods';
 
 // THE REDUCER ------------------------------------------------------------------------------------
 

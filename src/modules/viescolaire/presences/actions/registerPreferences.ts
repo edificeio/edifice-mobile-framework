@@ -1,8 +1,8 @@
-import { Dispatch } from "redux";
+import { Dispatch } from 'redux';
 
-import { createAsyncActionCreators } from "../../../../infra/redux/async2";
-import { registerPreferencesService } from "../services/registerPreferences";
-import { IRegisterPreferences, actionTypes } from "../state/registerPreferences";
+import { createAsyncActionCreators } from '~/infra/redux/async2';
+import { registerPreferencesService } from '~/modules/viescolaire/presences/services/registerPreferences';
+import { IRegisterPreferences, actionTypes } from '~/modules/viescolaire/presences/state/registerPreferences';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

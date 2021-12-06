@@ -1,9 +1,9 @@
 import querystring from "querystring";
 import moment from "moment";
 
-import { fetchJSONWithCache } from "../../../../infra/fetchWithCache";
-import { ICoursesList } from "../state/teacherCourses";
-import {ICoursesRegister} from "../state/teacherCourseRegister";
+import { fetchJSONWithCache } from "~/infra/fetchWithCache";
+import { ICoursesList } from '~/modules/viescolaire/presences/state/teacherCourses';
+import { ICoursesRegister } from '~/modules/viescolaire/presences/state/teacherCourseRegister';
 
 export type ICoursesListBackend = Array <{
   id: string;

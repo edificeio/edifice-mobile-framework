@@ -1,8 +1,8 @@
-import { Dispatch } from "redux";
+import { Dispatch } from 'redux';
 
-import { createAsyncActionCreators } from "../../../../infra/redux/async2";
-import { LevelsService } from "../services/competencesLevels";
-import { actionTypes, ILevelsList } from "../state/competencesLevels";
+import { createAsyncActionCreators } from '~/infra/redux/async2';
+import { LevelsService } from '~/modules/viescolaire/competences/services/competencesLevels';
+import { actionTypes, ILevelsList } from '~/modules/viescolaire/competences/state/competencesLevels';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

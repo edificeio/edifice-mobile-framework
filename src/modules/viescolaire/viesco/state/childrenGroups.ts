@@ -1,5 +1,5 @@
-import { createAsyncActionTypes, AsyncState, AsyncActionTypes } from "../../../../infra/redux/async2";
-import viescoConfig from "../../moduleConfig";
+import { createAsyncActionTypes, AsyncState, AsyncActionTypes } from '~/infra/redux/async2';
+import viescoConfig from '~/modules/viescolaire/moduleConfig';
 
 // THE MODEL --------------------------------------------------------------------------------------
 
@@ -10,7 +10,7 @@ export interface IChildGroup {
   name: string;
   notEmptyClass: boolean;
   type_groupe: number;
-};
+}
 
 export type IChildrenGroups = IChildGroup[];
 
@@ -25,6 +25,4 @@ export const getChildrenGroupsState = (globalState: any) =>
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const actionTypes: AsyncActionTypes = createAsyncActionTypes(
-  viescoConfig.namespaceActionType("CHILDREN_GROUPS")
-);
+export const actionTypes: AsyncActionTypes = createAsyncActionTypes(viescoConfig.namespaceActionType('CHILDREN_GROUPS'));

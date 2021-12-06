@@ -1,9 +1,9 @@
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-import { selectChildAction } from "../actions/children";
-import ChildPicker from "../components/ChildPicker";
-import { getChildrenList, getSelectedChild } from "../state/children";
+import { selectChildAction } from '~/modules/viescolaire/viesco/actions/children';
+import ChildPicker from '~/modules/viescolaire/viesco/components/ChildPicker';
+import { getChildrenList, getSelectedChild } from '~/modules/viescolaire/viesco/state/children';
 
 const mapStateToProps: (state: any) => any = state => {
   return {

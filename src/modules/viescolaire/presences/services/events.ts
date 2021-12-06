@@ -1,6 +1,6 @@
-import moment from "moment";
+import moment from 'moment';
 
-import { fetchJSONWithCache, fetchWithCache } from "../../../../infra/fetchWithCache";
+import { fetchJSONWithCache, fetchWithCache } from '~/infra/fetchWithCache';
 import {
   ICallEvent,
   IHistoryEvent,
@@ -8,7 +8,7 @@ import {
   IForgottenNotebooksList,
   IIncidentsList,
   IPunishmentsList,
-} from "../state/events";
+} from '~/modules/viescolaire/presences/state/events';
 
 export type ICallEventBackend = {
   id?: number;
@@ -90,9 +90,7 @@ const historyEventAdapter: (event: IHistoryEventBackend) => IHistoryEvent = even
   };
 };
 
-const allEventsAdapter: (
-  data: IHistoryEventsListBackend
-) => {
+const allEventsAdapter: (data: IHistoryEventsListBackend) => {
   lateness: IHistoryEventsList;
   departure: IHistoryEventsList;
   regularized: IHistoryEventsList;
@@ -114,9 +112,7 @@ const forgottenNotebooksAdapter: (data: IForgottenNotebooksBackend) => IForgotte
   }));
 };
 
-const incidentsAdapter: (
-  data: IIncidentBackend
-) => { incidents: IIncidentsList; punishments: IPunishmentsList } = data => {
+const incidentsAdapter: (data: IIncidentBackend) => { incidents: IIncidentsList; punishments: IPunishmentsList } = data => {
   return {
     incidents: data.all.INCIDENT.map(i => ({ date: moment(i.date), label: i.type.label })),
     punishments: data.all.PUNISHMENT.map(p => ({
@@ -128,15 +124,9 @@ const incidentsAdapter: (
 };
 
 export const eventsService = {
-  postLate: async (
-    studentId: string,
-    date: moment.Moment,
-    comment: string,
-    registerId: number,
-    courseStart: moment.Moment
-  ) => {
-    const stringDate = date.format("YYYY-MM-DD HH:mm:ss");
-    const stringCourseStart = courseStart.format("YYYY-MM-DD HH:mm:ss");
+  postLate: async (studentId: string, date: moment.Moment, comment: string, registerId: number, courseStart: moment.Moment) => {
+    const stringDate = date.format('YYYY-MM-DD HH:mm:ss');
+    const stringCourseStart = courseStart.format('YYYY-MM-DD HH:mm:ss');
     const result: ICallEventBackend = await fetchJSONWithCache(`/presences/events`, {
       body: JSON.stringify({
         student_id: studentId,
@@ -146,7 +136,7 @@ export const eventsService = {
         start_date: stringCourseStart,
         comment,
       }),
-      method: "post",
+      method: 'post',
     });
     return callEventAdapter(result);
   },
@@ -156,10 +146,10 @@ export const eventsService = {
     comment: string,
     eventId: number,
     registerId: number,
-    courseStart: moment.Moment
+    courseStart: moment.Moment,
   ) => {
-    const stringDate = date.format("YYYY-MM-DD HH:mm:ss");
-    const stringCourseStart = courseStart.format("YYYY-MM-DD HH:mm:ss");
+    const stringDate = date.format('YYYY-MM-DD HH:mm:ss');
+    const stringCourseStart = courseStart.format('YYYY-MM-DD HH:mm:ss');
     const result = await fetchJSONWithCache(`/presences/events/${eventId}`, {
       body: JSON.stringify({
         student_id: studentId,
@@ -169,19 +159,13 @@ export const eventsService = {
         start_date: stringCourseStart,
         comment,
       }),
-      method: "put",
+      method: 'put',
     });
     return callEventAdapter(result);
   },
-  postLeaving: async (
-    studentId: string,
-    date: moment.Moment,
-    comment: string,
-    registerId: number,
-    courseEnd: moment.Moment
-  ) => {
-    const stringDate = date.format("YYYY-MM-DD HH:mm:ss");
-    const stringCourseEnd = courseEnd.format("YYYY-MM-DD HH:mm:ss");
+  postLeaving: async (studentId: string, date: moment.Moment, comment: string, registerId: number, courseEnd: moment.Moment) => {
+    const stringDate = date.format('YYYY-MM-DD HH:mm:ss');
+    const stringCourseEnd = courseEnd.format('YYYY-MM-DD HH:mm:ss');
     const result = await fetchJSONWithCache(`/presences/events`, {
       body: JSON.stringify({
         student_id: studentId,
@@ -191,7 +175,7 @@ export const eventsService = {
         end_date: stringCourseEnd,
         comment,
       }),
-      method: "post",
+      method: 'post',
     });
     return callEventAdapter(result);
   },
@@ -201,10 +185,10 @@ export const eventsService = {
     comment: string,
     eventId: number,
     registerId: number,
-    courseEnd: moment.Moment
+    courseEnd: moment.Moment,
   ) => {
-    const stringDate = date.format("YYYY-MM-DD HH:mm:ss");
-    const stringCourseEnd = courseEnd.format("YYYY-MM-DD HH:mm:ss");
+    const stringDate = date.format('YYYY-MM-DD HH:mm:ss');
+    const stringCourseEnd = courseEnd.format('YYYY-MM-DD HH:mm:ss');
     const result = await fetchJSONWithCache(`/presences/events/${eventId}`, {
       body: JSON.stringify({
         student_id: studentId,
@@ -214,13 +198,13 @@ export const eventsService = {
         end_date: stringCourseEnd,
         comment,
       }),
-      method: "put",
+      method: 'put',
     });
     return callEventAdapter(result);
   },
   postAbsent: async (studentId: string, registerId: number, courseStart: moment.Moment, courseEnd: moment.Moment) => {
-    const stringCourseEnd = courseEnd.format("YYYY-MM-DD HH:mm:ss");
-    const stringCourseStart = courseStart.format("YYYY-MM-DD HH:mm:ss");
+    const stringCourseEnd = courseEnd.format('YYYY-MM-DD HH:mm:ss');
+    const stringCourseStart = courseStart.format('YYYY-MM-DD HH:mm:ss');
     const result: ICallEventBackend = await fetchJSONWithCache(`/presences/events`, {
       body: JSON.stringify({
         student_id: studentId,
@@ -229,7 +213,7 @@ export const eventsService = {
         start_date: stringCourseStart,
         end_date: stringCourseEnd,
       }),
-      method: "post",
+      method: 'post',
     });
     return callEventAdapter(result);
   },
@@ -239,10 +223,10 @@ export const eventsService = {
     comment: string,
     eventId: number,
     registerId: number,
-    courseStart: moment.Moment
+    courseStart: moment.Moment,
   ) => {
-    const stringDate = date.format("YYYY-MM-DD HH:mm:ss");
-    const stringCourseStart = courseStart.format("YYYY-MM-DD HH:mm:ss");
+    const stringDate = date.format('YYYY-MM-DD HH:mm:ss');
+    const stringCourseStart = courseStart.format('YYYY-MM-DD HH:mm:ss');
     const result = await fetchJSONWithCache(`/presences/events/${eventId}`, {
       body: JSON.stringify({
         student_id: studentId,
@@ -252,13 +236,13 @@ export const eventsService = {
         start_date: stringCourseStart,
         comment,
       }),
-      method: "put",
+      method: 'put',
     });
     return callEventAdapter(result);
   },
   deleteEvent: async (eventId: number) => {
     await fetchJSONWithCache(`/presences/events/${eventId}`, {
-      method: "delete",
+      method: 'delete',
     });
   },
   updateRegisterStatus: async (registerId: number, status: number) => {
@@ -266,19 +250,14 @@ export const eventsService = {
       body: JSON.stringify({
         state_id: status,
       }),
-      method: "put",
+      method: 'put',
     });
   },
-  fetchStudentEvents: async (
-    studentId: string,
-    structureId: string,
-    startDate: moment.Moment,
-    endDate: moment.Moment
-  ) => {
-    const startDateString = startDate.format("YYYY-MM-DD");
-    const endDateString = endDate.format("YYYY-MM-DD");
+  fetchStudentEvents: async (studentId: string, structureId: string, startDate: moment.Moment, endDate: moment.Moment) => {
+    const startDateString = startDate.format('YYYY-MM-DD');
+    const endDateString = endDate.format('YYYY-MM-DD');
     const result = await fetchJSONWithCache(
-      `/presences/students/${studentId}/events?structure_id=${structureId}&start_at=${startDateString}&end_at=${endDateString}&type=NO_REASON&type=UNREGULARIZED&type=REGULARIZED&type=LATENESS&type=DEPARTURE`
+      `/presences/students/${studentId}/events?structure_id=${structureId}&start_at=${startDateString}&end_at=${endDateString}&type=NO_REASON&type=UNREGULARIZED&type=REGULARIZED&type=LATENESS&type=DEPARTURE`,
     );
     return allEventsAdapter(result);
   },
@@ -286,26 +265,21 @@ export const eventsService = {
     studentId: string,
     structureId: string,
     startDate: moment.Moment,
-    endDate: moment.Moment
+    endDate: moment.Moment,
   ) => {
-    const startDateString = startDate.format("YYYY-MM-DD");
-    const endDateString = endDate.format("YYYY-MM-DD");
+    const startDateString = startDate.format('YYYY-MM-DD');
+    const endDateString = endDate.format('YYYY-MM-DD');
     const result = await fetchJSONWithCache(
-      `/presences/forgotten/notebook/student/${studentId}?structure_id=${structureId}&start_at=${startDateString}&end_at=${endDateString}`
+      `/presences/forgotten/notebook/student/${studentId}?structure_id=${structureId}&start_at=${startDateString}&end_at=${endDateString}`,
     );
     return forgottenNotebooksAdapter(result);
   },
-  fetchStudentIncidents: async (
-    studentId: string,
-    structureId: string,
-    startDate: moment.Moment,
-    endDate: moment.Moment
-  ) => {
-    const startDateString = startDate.format("YYYY-MM-DD");
-    const endDateString = endDate.format("YYYY-MM-DD");
+  fetchStudentIncidents: async (studentId: string, structureId: string, startDate: moment.Moment, endDate: moment.Moment) => {
+    const startDateString = startDate.format('YYYY-MM-DD');
+    const endDateString = endDate.format('YYYY-MM-DD');
     try {
       const result = await fetchJSONWithCache(
-        `/incidents/students/${studentId}/events?structure_id=${structureId}&start_at=${startDateString}&end_at=${endDateString}&type=INCIDENT&type=PUNISHMENT`
+        `/incidents/students/${studentId}/events?structure_id=${structureId}&start_at=${startDateString}&end_at=${endDateString}&type=INCIDENT&type=PUNISHMENT`,
       );
       return incidentsAdapter(result);
     } catch (e) {

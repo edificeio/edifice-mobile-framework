@@ -1,9 +1,9 @@
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-import { selectStructureAction } from "../actions/structure";
-import StructurePicker from "../components/StructurePicker";
-import { getStructuresList, getSelectedStructure } from "../state/structure";
+import { selectStructureAction } from '~/modules/viescolaire/viesco/actions/structure';
+import StructurePicker from '~/modules/viescolaire/viesco/components/StructurePicker';
+import { getStructuresList, getSelectedStructure } from '~/modules/viescolaire/viesco/state/structure';
 
 const mapStateToProps: (state: any) => any = state => {
   return {

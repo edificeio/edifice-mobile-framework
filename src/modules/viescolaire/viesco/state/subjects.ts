@@ -1,5 +1,5 @@
-import { createAsyncActionTypes, AsyncState, AsyncActionTypes } from "../../../../infra/redux/async2";
-import viescoConfig from "../../moduleConfig";
+import { createAsyncActionTypes, AsyncState, AsyncActionTypes } from '~/infra/redux/async2';
+import viescoConfig from '~/modules/viescolaire/moduleConfig';
 
 // THE MODEL --------------------------------------------------------------------------------------
 
@@ -22,4 +22,4 @@ export const getSubjectsListState = (globalState: any) =>
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const actionTypes: AsyncActionTypes = createAsyncActionTypes(viescoConfig.namespaceActionType("SUBJECT_LIST"));
+export const actionTypes: AsyncActionTypes = createAsyncActionTypes(viescoConfig.namespaceActionType('SUBJECT_LIST'));

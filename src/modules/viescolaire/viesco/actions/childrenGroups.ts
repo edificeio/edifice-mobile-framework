@@ -1,8 +1,8 @@
-import { Dispatch } from "redux";
+import { Dispatch } from 'redux';
 
-import { createAsyncActionCreators } from "../../../../infra/redux/async2";
-import { childrenGroupsService } from "../services/childrenGroups";
-import { actionTypes, IChildrenGroups } from "../state/childrenGroups";
+import { createAsyncActionCreators } from '~/infra/redux/async2';
+import { childrenGroupsService } from '~/modules/viescolaire/viesco/services/childrenGroups';
+import { actionTypes, IChildrenGroups } from '~/modules/viescolaire/viesco/state/childrenGroups';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

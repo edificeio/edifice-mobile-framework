@@ -1,7 +1,7 @@
-import moment from "moment";
+import moment from 'moment';
 
-import { createAsyncActionTypes, AsyncState, AsyncActionTypes } from "../../../../infra/redux/async2";
-import viescoConfig from "../../moduleConfig";
+import { createAsyncActionTypes, AsyncState, AsyncActionTypes } from '~/infra/redux/async2';
+import viescoConfig from '~/modules/viescolaire/moduleConfig';
 
 // THE MODEL --------------------------------------------------------------------------------------
 
@@ -30,11 +30,8 @@ export type ISessionListState = AsyncState<ISessionList>;
 
 export const initialState: ISessionList = [];
 
-export const getSessionsListState = (globalState: any) =>
-  viescoConfig.getState(globalState).cdt.sessionsList as ISessionListState;
+export const getSessionsListState = (globalState: any) => viescoConfig.getState(globalState).cdt.sessionsList as ISessionListState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const actionTypes: AsyncActionTypes = createAsyncActionTypes(
-  viescoConfig.namespaceActionType("CDT_SESSION_LIST")
-);
+export const actionTypes: AsyncActionTypes = createAsyncActionTypes(viescoConfig.namespaceActionType('CDT_SESSION_LIST'));

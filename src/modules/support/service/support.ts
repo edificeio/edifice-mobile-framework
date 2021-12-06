@@ -1,9 +1,9 @@
+import workspaceService from '~/framework/modules/workspace/service';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import workspaceService from '../../../framework/modules/workspace/service';
-import { LocalFile } from '../../../framework/util/fileHandler';
-import { IUserSession } from '../../../framework/util/session';
-import { fetchJSONWithCache } from '../../../infra/fetchWithCache';
-import { ITicket } from '../containers/Support';
+import { LocalFile } from '~/framework/util/fileHandler';
+import { IUserSession } from '~/framework/util/session';
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { ITicket } from '~/modules/support/containers/Support';
 
 export const supportService = {
   createTicket: async (ticket: ITicket) => {
@@ -41,7 +41,7 @@ export const supportService = {
     }
   },
   deleteAttachment: async (attachmentId: string) => {
-    let attachmentArray = [] as string[];
+    const attachmentArray = [] as string[];
     return await fetchJSONWithCache(`/workspace/documents/trash`, {
       method: 'PUT',
       body: JSON.stringify({ ids: attachmentArray.concat(attachmentId) }),

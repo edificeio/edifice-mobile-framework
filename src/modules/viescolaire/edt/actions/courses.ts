@@ -1,9 +1,9 @@
-import moment from "moment";
-import { Dispatch } from "redux";
+import moment from 'moment';
+import { Dispatch } from 'redux';
 
-import { createAsyncActionCreators } from "../../../../infra/redux/async2";
-import { coursesService } from "../services/courses";
-import { ICourseList, actionTypes } from "../state/courses";
+import { createAsyncActionCreators } from '~/infra/redux/async2';
+import { coursesService } from '~/modules/viescolaire/edt/services/courses';
+import { ICourseList, actionTypes } from '~/modules/viescolaire/edt/state/courses';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 
@@ -11,12 +11,7 @@ export const dataActions = createAsyncActionCreators<ICourseList>(actionTypes);
 
 // THUNKS -----------------------------------------------------------------------------------------
 
-export function fetchCourseListAction(
-  structureId: string,
-  startDate: moment.Moment,
-  endDate: moment.Moment,
-  groups: string[]
-) {
+export function fetchCourseListAction(structureId: string, startDate: moment.Moment, endDate: moment.Moment, groups: string[]) {
   return async (dispatch: Dispatch) => {
     try {
       dispatch(dataActions.request());
@@ -32,7 +27,7 @@ export function fetchCourseListFromTeacherAction(
   structureId: string,
   startDate: moment.Moment,
   endDate: moment.Moment,
-  teacherId: string
+  teacherId: string,
 ) {
   return async (dispatch: Dispatch) => {
     try {

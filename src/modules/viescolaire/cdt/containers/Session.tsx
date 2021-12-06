@@ -1,27 +1,27 @@
-import I18n from "i18n-js";
-import * as React from "react";
-import { View } from "react-native";
-import { NavigationScreenProp } from "react-navigation";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { View } from 'react-native';
+import { NavigationScreenProp } from 'react-navigation';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-import { fetchJSONWithCache } from "../../../../infra/fetchWithCache";
-import { standardNavScreenOptions } from "../../../../navigation/helpers/navScreenOptions";
-import { HeaderBackAction } from "../../../../ui/headers/NewHeader";
-import DisplaySession from "../components/DisplaySession";
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import DisplaySession from '~/modules/viescolaire/cdt/components/DisplaySession';
+import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
+import { HeaderBackAction } from '~/ui/headers/NewHeader';
 
 class Session extends React.PureComponent<any> {
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
+  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
     return standardNavScreenOptions(
       {
-        title: I18n.t("Homework"),
+        title: I18n.t('Homework'),
         headerLeft: <HeaderBackAction navigation={navigation} />,
         headerRight: <View />,
         headerStyle: {
-          backgroundColor: "#2BAB6F",
+          backgroundColor: '#2BAB6F',
         },
       },
-      navigation
+      navigation,
     );
   };
 
@@ -32,7 +32,7 @@ class Session extends React.PureComponent<any> {
 
 const mapStateToProps: (state: any) => any = state => {
   return {
-    getfunction: fetchJSONWithCache(`/diary/session/38`)
+    getfunction: fetchJSONWithCache(`/diary/session/38`),
   };
 };
 

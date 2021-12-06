@@ -1,20 +1,20 @@
-import I18n from "i18n-js";
-import * as React from "react";
-import { View, StyleSheet, Image } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { View, StyleSheet, Image } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 
-import { CommonStyles } from "../../../../styles/common/styles";
-import ConnectionTrackingBar from "../../../../ui/ConnectionTrackingBar";
-import { PageContainer } from "../../../../ui/ContainerContent";
-import { Text } from "../../../../framework/components/text";
-import CallList from "../../presences/containers/TeacherCallList";
-import { BottomColoredItem } from "../components/Item";
-import StructurePicker from "../containers/StructurePicker";
+import { Text } from '~/framework/components/text';
+import CallList from '~/modules/viescolaire/presences/containers/TeacherCallList';
+import { BottomColoredItem } from '~/modules/viescolaire/viesco/components/Item';
+import StructurePicker from '~/modules/viescolaire/viesco/containers/StructurePicker';
+import { CommonStyles } from '~/styles/common/styles';
+import ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
+import { PageContainer } from '~/ui/ContainerContent';
 
 const style = StyleSheet.create({
   dashboardPart: { paddingVertical: 8, paddingHorizontal: 15 },
   coursesPart: {
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     elevation: CommonStyles.elevation,
@@ -26,11 +26,11 @@ const style = StyleSheet.create({
     height: 400,
   },
   grid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
   gridButtonContainer: {
-    width: "50%",
+    width: '50%',
     paddingVertical: 8,
     paddingHorizontal: 12,
     elevation: CommonStyles.elevation,
@@ -41,14 +41,14 @@ const style = StyleSheet.create({
   },
   gridButton: {
     borderRadius: 5,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: 8,
   },
   gridButtonText: {
-    color: "#FFFFFF",
+    color: '#FFFFFF',
     flex: 1,
-    textAlign: "center",
+    textAlign: 'center',
   },
 });
 
@@ -67,9 +67,9 @@ const ImageButton = ({ imageSrc, color, text, onPress, disabled }: ImageButtonPr
         shadow
         style={[
           {
-            alignItems: "center",
-            flexDirection: "column",
-            backgroundColor: "#FFF",
+            alignItems: 'center',
+            flexDirection: 'column',
+            backgroundColor: '#FFF',
           },
           { opacity: disabled ? 0.6 : 1 },
         ]}
@@ -94,16 +94,16 @@ export default props => (
       <View style={style.dashboardPart}>
         <View style={style.grid}>
           <ImageButton
-            onPress={() => props.navigation.navigate("Timetable")}
-            text={I18n.t("viesco-timetable")}
+            onPress={() => props.navigation.navigate('Timetable')}
+            text={I18n.t('viesco-timetable')}
             color="#162EAE"
-            imageSrc={require("ASSETS/viesco/edt.png")}
+            imageSrc={require('ASSETS/viesco/edt.png')}
           />
           <ImageButton
             onPress={() => true}
-            text={I18n.t("Homework")}
+            text={I18n.t('Homework')}
             color="#2BAB6F"
-            imageSrc={require("ASSETS/viesco/cdt.png")}
+            imageSrc={require('ASSETS/viesco/cdt.png')}
             disabled
           />
         </View>

@@ -1,7 +1,7 @@
-import querystring from "querystring";
+import querystring from 'querystring';
 
-import { fetchJSONWithCache } from "../../../../infra/fetchWithCache";
-import { IGroupList } from "../state/group";
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { IGroupList } from '~/modules/viescolaire/viesco/state/group';
 
 // Data type of what is given by the backend.
 export type IGroupListBackend = Array<{
@@ -26,7 +26,7 @@ const groupListAdapter: (data: IGroupListBackend) => IGroupList = data => {
 export const groupListService = {
   get: async (classes: string, student: string) => {
     return groupListAdapter(
-      await fetchJSONWithCache(`/viescolaire/group/from/class?${querystring.stringify({ classes, student })}`)
+      await fetchJSONWithCache(`/viescolaire/group/from/class?${querystring.stringify({ classes, student })}`),
     );
   },
 };

@@ -1,32 +1,33 @@
-import I18n from "i18n-js";
-import * as React from "react";
-import { NavigationScreenProp } from "react-navigation";
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { NavigationScreenProp } from 'react-navigation';
 
-import { getSessionInfo } from "../../../../App";
-import { standardNavScreenOptions } from "../../../../navigation/helpers/navScreenOptions";
-import ConnectionTrackingBar from "../../../../ui/ConnectionTrackingBar";
-import { PageContainer } from "../../../../ui/ContainerContent";
-import DashboardEmpty from "./DashboardEmpty";
-import DashboardRelative from "./DashboardRelative";
-import DashboardStudent from "./DashboardStudent";
-import DashboardTeacher from "./DashboardTeacher";
+import DashboardEmpty from './DashboardEmpty';
+import DashboardRelative from './DashboardRelative';
+import DashboardStudent from './DashboardStudent';
+import DashboardTeacher from './DashboardTeacher';
+
+import { getSessionInfo } from '~/App';
+import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
+import ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
+import { PageContainer } from '~/ui/ContainerContent';
 
 export default class Dashboard extends React.PureComponent<{ navigation: { navigate } }, any> {
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<any> }) =>
     standardNavScreenOptions(
       {
-        title: I18n.t("viesco"),
+        title: I18n.t('viesco'),
       },
-      navigation
+      navigation,
     );
 
   private getDashboardForType = userType => {
     switch (userType) {
-      case "Teacher":
+      case 'Teacher':
         return DashboardTeacher;
-      case "Student":
+      case 'Student':
         return DashboardStudent;
-      case "Relative":
+      case 'Relative':
         return DashboardRelative;
       default:
         return DashboardEmpty;

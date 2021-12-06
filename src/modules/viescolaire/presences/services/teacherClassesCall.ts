@@ -1,7 +1,7 @@
-import moment from "moment";
+import moment from 'moment';
 
-import { fetchJSONWithCache } from "../../../../infra/fetchWithCache";
-import { IClassesCall } from "../state/TeacherClassesCall";
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { IClassesCall } from '~/modules/viescolaire/presences/state/TeacherClassesCall';
 
 export type IClassesCallListBackend = {
   personnel_id: string;
@@ -17,7 +17,7 @@ export type IClassesCallListBackend = {
     displayName: string;
     functions: string;
   }>;
-  students: Array <{
+  students: Array<{
     id: string;
     name: string;
     group: string;
@@ -32,7 +32,7 @@ export type IClassesCallListBackend = {
       end_date: string;
       type_id: number;
       events: Array<{
-        id: number
+        id: number;
         comment: string;
         counsellor_input: boolean;
         end_date: string;
@@ -63,7 +63,7 @@ const classesCallAdapter: (data: IClassesCallListBackend) => IClassesCall = data
 };
 
 export const classesCallService = {
-  get: async (callId) => {
+  get: async callId => {
     const data = classesCallAdapter(await fetchJSONWithCache(`/presences/registers/${callId}`));
     return data;
   },

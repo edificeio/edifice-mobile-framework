@@ -1,7 +1,7 @@
-import moment from "moment";
+import moment from 'moment';
 
-import { createAsyncActionTypes, AsyncState } from "../../../../infra/redux/async2";
-import viescoConfig from "../../moduleConfig";
+import { createAsyncActionTypes, AsyncState } from '~/infra/redux/async2';
+import viescoConfig from '~/modules/viescolaire/moduleConfig';
 
 export interface IClassesCall {
   personnel_id: string;
@@ -17,7 +17,7 @@ export interface IClassesCall {
     displayName: string;
     functions: string;
   }>;
-  students: Array <{
+  students: Array<{
     id: string;
     name: string;
     group: string;
@@ -32,7 +32,7 @@ export interface IClassesCall {
       //end_date: moment.Moment;
       type_id: number;
       events: Array<{
-        id: number
+        id: number;
         comment: string;
         counsellor_input: boolean;
         //end_date: moment.Moment;
@@ -53,4 +53,4 @@ export const initialState: IClassesCallList = [];
 export const getClassesCallListState = (globalState: any) =>
   viescoConfig.getState(globalState).presences.callList as IClassesCallListState;
 
-export const actionTypes = createAsyncActionTypes(viescoConfig.namespaceActionType("CLASSES_CALL"));
+export const actionTypes = createAsyncActionTypes(viescoConfig.namespaceActionType('CLASSES_CALL'));

@@ -1,64 +1,80 @@
-import * as React from "react";
-import { Linking, Platform, RefreshControl, ScrollView, View } from "react-native";
-import { NavigationInjectedProps, NavigationActions, NavigationStateRoute, StackActions } from "react-navigation";
-import { ThunkDispatch } from "redux-thunk";
-import { connect } from "react-redux";
-import I18n from "i18n-js";
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { Linking, Platform, RefreshControl, ScrollView, View } from 'react-native';
+import { NavigationInjectedProps, NavigationActions, NavigationStateRoute, StackActions } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
+import { connect } from 'react-redux';
+import { ThunkDispatch } from 'redux-thunk';
 
-import type { IGlobalState } from "../../../AppStore";
-
-import moduleConfig from "../moduleConfig";
-import withViewTracking from "../../../framework/util/tracker/withViewTracking";
-import { PageView } from "../../../framework/components/page";
-import { IResourceUriNotification, ITimelineNotification } from "../../../framework/util/notifications";
-import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderSubtitle, HeaderTitle } from "../../../framework/components/header";
-import NotificationTopInfo from "../../../framework/modules/timelinev2/components/NotificationTopInfo";
-import { Trackers } from "../../../framework/util/tracker";
-import { HtmlContentView } from "../../../ui/HtmlContentView";
-import { LoadingIndicator } from "../../../framework/components/loading";
-import { TextItalic } from "../../../framework/components/text";
-import theme from "../../../app/theme";
-import { ButtonsOkCancel, FlatButton } from "../../../ui";
-import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from "../../../ui/Modal";
-import { Icon } from "../../../framework/components/icon";
-import { getSchoolbookWordDetailsAction, acknowledgeSchoolbookWordAction } from "../actions";
-import { schoolbookUriCaptureFunction } from "../service";
-import { getAcknowledgeNamesForChild, getAcknowledgeNumber, getIsWordAcknowledgedForParent, getUnacknowledgedChildrenIdsForParent, ISchoolbookWordReport } from "../reducer";
-import { getUserSession, IUserSession, UserType } from "../../../framework/util/session";
-import { createStackNavigator } from "react-navigation-stack";
-import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
+import type { IGlobalState } from '~/AppStore';
+import theme from '~/app/theme';
+import {
+  FakeHeader,
+  HeaderAction,
+  HeaderCenter,
+  HeaderLeft,
+  HeaderRow,
+  HeaderSubtitle,
+  HeaderTitle,
+} from '~/framework/components/header';
+import { Icon } from '~/framework/components/icon';
+import { LoadingIndicator } from '~/framework/components/loading';
+import { PageView } from '~/framework/components/page';
+import { TextItalic } from '~/framework/components/text';
+import NotificationTopInfo from '~/framework/modules/timelinev2/components/NotificationTopInfo';
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
+import { getUserSession, IUserSession, UserType } from '~/framework/util/session';
+import { Trackers } from '~/framework/util/tracker';
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { getSchoolbookWordDetailsAction, acknowledgeSchoolbookWordAction } from '~/modules/schoolbook/actions';
+import moduleConfig from '~/modules/schoolbook/moduleConfig';
+import {
+  getAcknowledgeNamesForChild,
+  getAcknowledgeNumber,
+  getIsWordAcknowledgedForParent,
+  getUnacknowledgedChildrenIdsForParent,
+  ISchoolbookWordReport,
+} from '~/modules/schoolbook/reducer';
+import { schoolbookUriCaptureFunction } from '~/modules/schoolbook/service';
+import { ButtonsOkCancel, FlatButton } from '~/ui';
+import { HtmlContentView } from '~/ui/HtmlContentView';
+import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from '~/ui/Modal';
 
 // TYPES ==========================================================================================
 
 export interface ISchoolbookWordDetailsScreenDataProps {
   session: IUserSession;
-};
+}
 export interface ISchoolbookWordDetailsScreenEventProps {
   handleGetSchoolbookWordDetails(schoolbookWordId: string): Promise<ISchoolbookWordReport | undefined>;
   handleAcknowledgeSchoolbookWord(schoolbookWordId: ISchoolbookWordReport): Promise<void>;
-};
+}
 export interface ISchoolbookWordDetailsScreenNavParams {
   notification: ITimelineNotification & IResourceUriNotification;
-};
+}
 export interface ISchoolbookWordDetailsScreenInternalNavParams {
   confirmBackSchoolbook: boolean;
   _forceBack: boolean;
   _isAck: boolean;
-};
-export type ISchoolbookWordDetailsScreenProps = ISchoolbookWordDetailsScreenDataProps
-  & ISchoolbookWordDetailsScreenEventProps
-  & NavigationInjectedProps<Partial<ISchoolbookWordDetailsScreenNavParams>>
-  & NavigationInjectedProps<Partial<ISchoolbookWordDetailsScreenInternalNavParams>>;
+}
+export type ISchoolbookWordDetailsScreenProps = ISchoolbookWordDetailsScreenDataProps &
+  ISchoolbookWordDetailsScreenEventProps &
+  NavigationInjectedProps<Partial<ISchoolbookWordDetailsScreenNavParams>> &
+  NavigationInjectedProps<Partial<ISchoolbookWordDetailsScreenInternalNavParams>>;
 
 export enum SchoolbookWordDetailsLoadingState {
-  PRISTINE, INIT, REFRESH, DONE
+  PRISTINE,
+  INIT,
+  REFRESH,
+  DONE,
 }
 export interface ISchoolbookWordDetailsScreenState {
   loadingState: SchoolbookWordDetailsLoadingState;
   ackLoadingState: boolean;
   schoolbookWordData: ISchoolbookWordReport | undefined;
   errorState: boolean;
-};
+}
 
 // COMPONENT ======================================================================================
 
@@ -66,15 +82,14 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
   ISchoolbookWordDetailsScreenProps,
   ISchoolbookWordDetailsScreenState
 > {
-
   // DECLARATIONS =================================================================================
 
   state: ISchoolbookWordDetailsScreenState = {
     loadingState: SchoolbookWordDetailsLoadingState.PRISTINE,
     ackLoadingState: false,
     schoolbookWordData: undefined,
-    errorState: false
-  }
+    errorState: false,
+  };
 
   // RENDER =======================================================================================
 
@@ -82,27 +97,24 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
     const { navigation, session } = this.props;
     const { type } = session.user;
     const { schoolbookWordData, loadingState, errorState } = this.state;
-    const confirmBackSchoolbook = navigation.getParam("confirmBackSchoolbook");
+    const confirmBackSchoolbook = navigation.getParam('confirmBackSchoolbook');
     const isRelative = type === UserType.RELATIVE;
     return (
       <>
         {this.renderHeader()}
         <PageView>
-          {schoolbookWordData && isRelative
-            ? <ModalBox
-              backdropOpacity={0.5}
-              isVisible={confirmBackSchoolbook || false}
-            >
+          {schoolbookWordData && isRelative ? (
+            <ModalBox backdropOpacity={0.5} isVisible={confirmBackSchoolbook || false}>
               {this.renderBackModal()}
             </ModalBox>
-            : null
-          }
-          {[SchoolbookWordDetailsLoadingState.PRISTINE, SchoolbookWordDetailsLoadingState.INIT].includes(loadingState)
-            ? <LoadingIndicator />
-            : errorState || !schoolbookWordData
-              ? this.renderError()
-              : this.renderContent(schoolbookWordData)
-          }
+          ) : null}
+          {[SchoolbookWordDetailsLoadingState.PRISTINE, SchoolbookWordDetailsLoadingState.INIT].includes(loadingState) ? (
+            <LoadingIndicator />
+          ) : errorState || !schoolbookWordData ? (
+            this.renderError()
+          ) : (
+            this.renderContent(schoolbookWordData)
+          )}
         </PageView>
       </>
     );
@@ -116,19 +128,20 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
         <HeaderRow>
           <HeaderLeft>
             <HeaderAction
-              iconName={(Platform.OS === "ios") ? "chevron-left1" : "back"}
+              iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
               iconSize={24}
-              onPress={() => navigation.navigate("timeline")}
+              onPress={() => navigation.navigate('timeline')}
             />
           </HeaderLeft>
           <HeaderCenter>
-            {schoolbookWordData?.word?.title
-              ? <>
+            {schoolbookWordData?.word?.title ? (
+              <>
                 <HeaderTitle>{schoolbookWordData?.word?.title}</HeaderTitle>
-                <HeaderSubtitle>{I18n.t("schoolbook.schoolbookWordDetailsScreen.title")}</HeaderSubtitle>
+                <HeaderSubtitle>{I18n.t('schoolbook.schoolbookWordDetailsScreen.title')}</HeaderSubtitle>
               </>
-              : <HeaderTitle>{I18n.t("schoolbook.schoolbookWordDetailsScreen.title")}</HeaderTitle>
-            }
+            ) : (
+              <HeaderTitle>{I18n.t('schoolbook.schoolbookWordDetailsScreen.title')}</HeaderTitle>
+            )}
           </HeaderCenter>
         </HeaderRow>
       </FakeHeader>
@@ -136,7 +149,7 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
   }
 
   renderError() {
-    return <TextItalic>{"Error"}</TextItalic> // ToDo: great error screen here
+    return <TextItalic>Error</TextItalic>; // ToDo: great error screen here
   }
 
   renderContent(schoolbookWordData: ISchoolbookWordReport) {
@@ -152,16 +165,17 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
             paddingVertical: 12,
             paddingHorizontal: 16,
             paddingBottom: isRelative ? 80 : undefined,
-            backgroundColor: theme.color.background.card
+            backgroundColor: theme.color.background.card,
           }}
           scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
           refreshControl={
             <RefreshControl
-              refreshing={[SchoolbookWordDetailsLoadingState.REFRESH, SchoolbookWordDetailsLoadingState.INIT].includes(loadingState)}
+              refreshing={[SchoolbookWordDetailsLoadingState.REFRESH, SchoolbookWordDetailsLoadingState.INIT].includes(
+                loadingState,
+              )}
               onRefresh={() => this.doRefresh()}
             />
-          }
-        >
+          }>
           {this.renderSchoolbookWordDetails(schoolbookWordData)}
         </ScrollView>
         {isRelative ? this.renderAckButton(schoolbookWordData) : null}
@@ -171,7 +185,7 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
 
   renderSchoolbookWordDetails(schoolbookWordData: ISchoolbookWordReport) {
     const { navigation } = this.props;
-    const notification = navigation.getParam("notification");
+    const notification = navigation.getParam('notification');
     const resourceUri = notification?.resource.uri;
     if (!notification || !resourceUri) return this.renderError();
 
@@ -181,21 +195,21 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
         {this.renderSchoolbookWordAckState(schoolbookWordData)}
         <HtmlContentView
           html={schoolbookWordData.word.text}
-          onDownload={() => Trackers.trackEvent("Schoolbook", "DOWNLOAD ATTACHMENT", "Read mode")}
-          onError={() => Trackers.trackEvent("Schoolbook", "DOWNLOAD ATTACHMENT ERROR", "Read mode")}
-          onDownloadAll={() => Trackers.trackEvent("Schoolbook", "DOWNLOAD ALL ATTACHMENTS", "Read mode")}
-          onOpen={() => Trackers.trackEvent("Schoolbook", "OPEN ATTACHMENT", "Read mode")}
+          onDownload={() => Trackers.trackEvent('Schoolbook', 'DOWNLOAD ATTACHMENT', 'Read mode')}
+          onError={() => Trackers.trackEvent('Schoolbook', 'DOWNLOAD ATTACHMENT ERROR', 'Read mode')}
+          onDownloadAll={() => Trackers.trackEvent('Schoolbook', 'DOWNLOAD ALL ATTACHMENTS', 'Read mode')}
+          onOpen={() => Trackers.trackEvent('Schoolbook', 'OPEN ATTACHMENT', 'Read mode')}
         />
-        {resourceUri
-          ? <View style={{ marginTop: 10 }}>
+        {resourceUri ? (
+          <View style={{ marginTop: 10 }}>
             <FlatButton
-              title={I18n.t("common.openInBrowser")}
+              title={I18n.t('common.openInBrowser')}
               customButtonStyle={{ backgroundColor: theme.color.neutral.extraLight }}
               customTextStyle={{ color: theme.color.secondary.regular }}
               onPress={() => {
                 //TODO: create generic function inside oauth (use in myapps, etc.)
                 if (!DEPRECATED_getCurrentPlatform()) {
-                  console.warn("Must have a platform selected to redirect the user");
+                  console.warn('Must have a platform selected to redirect the user');
                   return null;
                 }
                 const url = `${DEPRECATED_getCurrentPlatform()!.url}${resourceUri}`;
@@ -206,49 +220,47 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
                     console.warn("[schoolbook] Don't know how to open URI: ", url);
                   }
                 });
-                Trackers.trackEvent("Schoolbook", "GO TO", "View in Browser");
+                Trackers.trackEvent('Schoolbook', 'GO TO', 'View in Browser');
               }}
             />
           </View>
-          : null
-        }
+        ) : null}
       </>
     );
   }
 
   renderAckButton(schoolbookWordData: ISchoolbookWordReport) {
     const { session } = this.props;
-    const { id } = session.user
+    const { id } = session.user;
     const { ackLoadingState } = this.state;
     const isWordAcknowledged = getIsWordAcknowledgedForParent(id, schoolbookWordData);
     return (
       <View
         style={{
-          alignSelf: "center",
+          alignSelf: 'center',
           paddingVertical: 20,
-          position: "absolute",
-          bottom: 0
-        }}
-      >
-        {isWordAcknowledged
-          ? <View
+          position: 'absolute',
+          bottom: 0,
+        }}>
+        {isWordAcknowledged ? (
+          <View
             style={{
               width: 25,
               height: 25,
               borderRadius: 14,
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: theme.color.secondary.regular
-            }}
-          >
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: theme.color.secondary.regular,
+            }}>
             <Icon size={15} name="checked" color={theme.color.text.inverse} />
           </View>
-          : <FlatButton
+        ) : (
+          <FlatButton
             onPress={() => this.doAcknowledge()}
-            title={I18n.t("schoolbook.schoolbookWordDetailsScreen.acknowledge")}
+            title={I18n.t('schoolbook.schoolbookWordDetailsScreen.acknowledge')}
             loading={ackLoadingState}
           />
-        }
+        )}
       </View>
     );
   }
@@ -260,35 +272,32 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
     switch (type) {
       case UserType.STUDENT:
         const ackNames = getAcknowledgeNamesForChild(id, schoolbookWordData);
-        ackStateText = ackNames && ackNames.length
-          ? <>
-              {I18n.t("schoolbook.schoolbookWordDetailsScreen.readBy")}
-              {" "}
-              {ackNames?.join(I18n.t("schoolbook.schoolbookWordDetailsScreen.readBySeparator"))}
+        ackStateText =
+          ackNames && ackNames.length ? (
+            <>
+              {I18n.t('schoolbook.schoolbookWordDetailsScreen.readBy')}{' '}
+              {ackNames?.join(I18n.t('schoolbook.schoolbookWordDetailsScreen.readBySeparator'))}
             </>
-          : I18n.t("schoolbook.schoolbookWordDetailsScreen.mustRead");
+          ) : (
+            I18n.t('schoolbook.schoolbookWordDetailsScreen.mustRead')
+          );
         break;
       case UserType.RELATIVE:
         const unAckChildren = getUnacknowledgedChildrenIdsForParent(id, schoolbookWordData);
-        ackStateText = unAckChildren.length
-          ? undefined
-          : I18n.t("schoolbook.schoolbookWordDetailsScreen.alreadyConfirmed");
+        ackStateText = unAckChildren.length ? undefined : I18n.t('schoolbook.schoolbookWordDetailsScreen.alreadyConfirmed');
         break;
       case UserType.PERSONNEL:
       case UserType.TEACHER:
         const ackNumber = getAcknowledgeNumber(schoolbookWordData);
-        ackStateText = I18n.t(`schoolbook.schoolbookWordDetailsScreen.readByNumberRelative${ackNumber === 1 ? "" : "s"}`, { nb: ackNumber });
-    };
-    return ackStateText
-      ? <TextItalic style={{ color: theme.color.text.light }}>
-          <Icon
-            name="eye"
-            color={theme.color.text.light}
-            paddingHorizontal={12}
-          />{" "}
-          {ackStateText}
-        </TextItalic>
-      : null;
+        ackStateText = I18n.t(`schoolbook.schoolbookWordDetailsScreen.readByNumberRelative${ackNumber === 1 ? '' : 's'}`, {
+          nb: ackNumber,
+        });
+    }
+    return ackStateText ? (
+      <TextItalic style={{ color: theme.color.text.light }}>
+        <Icon name="eye" color={theme.color.text.light} paddingHorizontal={12} /> {ackStateText}
+      </TextItalic>
+    ) : null;
   }
 
   renderBackModal() {
@@ -296,16 +305,14 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
     return (
       <ModalContent>
         <ModalContentBlock>
-          <ModalContentText>
-            {I18n.t("schoolbook.schoolbookWordDetailsScreen.backWithoutAckConfirm")}
-          </ModalContentText>
+          <ModalContentText>{I18n.t('schoolbook.schoolbookWordDetailsScreen.backWithoutAckConfirm')}</ModalContentText>
         </ModalContentBlock>
         <ModalContentBlock>
           <ButtonsOkCancel
             onCancel={() => {
               navigation.setParams({
                 confirmBackSchoolbook: false,
-                _forceBack: true
+                _forceBack: true,
               });
               requestAnimationFrame(() => {
                 navigation.dispatch(NavigationActions.back({ immediate: true }));
@@ -314,15 +321,15 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
             onValid={async () => {
               navigation.setParams({
                 confirmBackSchoolbook: false,
-                _forceBack: true
+                _forceBack: true,
               });
               await this.doAcknowledge();
               requestAnimationFrame(() => {
                 navigation.dispatch(NavigationActions.back({ immediate: true }));
               });
             }}
-            title={I18n.t("schoolbook.schoolbookWordDetailsScreen.acknowledge")}
-            cancelText={I18n.t("schoolbook.schoolbookWordDetailsScreen.backWithoutAck")}
+            title={I18n.t('schoolbook.schoolbookWordDetailsScreen.acknowledge')}
+            cancelText={I18n.t('schoolbook.schoolbookWordDetailsScreen.backWithoutAck')}
           />
         </ModalContentBlock>
       </ModalContent>
@@ -368,10 +375,10 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
     try {
       const { session, navigation, handleGetSchoolbookWordDetails } = this.props;
       const { type, id } = session.user;
-      const notification = navigation.getParam("notification");
+      const notification = navigation.getParam('notification');
       const resourceUri = notification?.resource.uri;
       if (!resourceUri) {
-        throw new Error("[doGetSchoolbookWordDetails] failed to call api (resourceUri is undefined)");
+        throw new Error('[doGetSchoolbookWordDetails] failed to call api (resourceUri is undefined)');
       }
       const { wordId } = schoolbookUriCaptureFunction(resourceUri);
       if (!wordId) {
@@ -379,7 +386,7 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
       }
       const schoolbookWordData = await handleGetSchoolbookWordDetails(wordId);
       if (!schoolbookWordData) {
-        throw new Error("[doGetSchoolbookWordDetails] failed to retrieve the schoolbook word report");
+        throw new Error('[doGetSchoolbookWordDetails] failed to retrieve the schoolbook word report');
       }
       this.setState({ schoolbookWordData });
 
@@ -401,7 +408,7 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
       const { navigation, handleAcknowledgeSchoolbookWord } = this.props;
       const { schoolbookWordData } = this.state;
       if (!schoolbookWordData) {
-        throw new Error("[doAcknowledgeChildren] no schoolbookWordData");
+        throw new Error('[doAcknowledgeChildren] no schoolbookWordData');
       }
       await handleAcknowledgeSchoolbookWord(schoolbookWordData);
       Trackers.trackEvent('Schoolbook', 'CONFIRM');
@@ -420,19 +427,26 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
 
 // MAPPING ========================================================================================
 
-const mapStateToProps: (s: IGlobalState) => ISchoolbookWordDetailsScreenDataProps = (s) => {
+const mapStateToProps: (s: IGlobalState) => ISchoolbookWordDetailsScreenDataProps = s => {
   return {
-    session: getUserSession(s)
+    session: getUserSession(s),
   };
 };
 
-const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => ISchoolbookWordDetailsScreenEventProps = (dispatch, getState) => ({
-  handleGetSchoolbookWordDetails: async (schoolbookWordId: string) => { return await dispatch(getSchoolbookWordDetailsAction(schoolbookWordId)) as unknown as ISchoolbookWordReport | undefined; }, // TS BUG: dispatch mishandled
-  handleAcknowledgeSchoolbookWord: async (schoolbookWord: ISchoolbookWordReport) => { return await dispatch(acknowledgeSchoolbookWordAction(schoolbookWord)) as unknown as void; }
-})
+const mapDispatchToProps: (
+  dispatch: ThunkDispatch<any, any, any>,
+  getState: () => IGlobalState,
+) => ISchoolbookWordDetailsScreenEventProps = (dispatch, getState) => ({
+  handleGetSchoolbookWordDetails: async (schoolbookWordId: string) => {
+    return (await dispatch(getSchoolbookWordDetailsAction(schoolbookWordId))) as unknown as ISchoolbookWordReport | undefined;
+  }, // TS BUG: dispatch mishandled
+  handleAcknowledgeSchoolbookWord: async (schoolbookWord: ISchoolbookWordReport) => {
+    return (await dispatch(acknowledgeSchoolbookWordAction(schoolbookWord))) as unknown as void;
+  },
+});
 
 const SchoolbookWordDetailsScreen_Connected = connect(mapStateToProps, mapDispatchToProps)(SchoolbookWordDetailsScreen);
-const SchoolbookWordDetailsScreen_Managed = withViewTracking("schoolbook/details")(SchoolbookWordDetailsScreen_Connected); // ToDo: better manage THIS view tracking
+const SchoolbookWordDetailsScreen_Managed = withViewTracking('schoolbook/details')(SchoolbookWordDetailsScreen_Connected); // ToDo: better manage THIS view tracking
 
 // ROUTER =========================================================================================
 
@@ -440,30 +454,25 @@ export const SchoolbookWordDetailsScreenRouter = createStackNavigator(
   {
     SchoolbookWordDetailsScreenRouter: {
       screen: SchoolbookWordDetailsScreen_Managed,
-    }
+    },
   },
   {
-    initialRouteName: "SchoolbookWordDetailsScreenRouter",
-    headerMode: 'none'
-  }
+    initialRouteName: 'SchoolbookWordDetailsScreenRouter',
+    headerMode: 'none',
+  },
 );
 
 const defaultGetStateForAction = SchoolbookWordDetailsScreenRouter.router.getStateForAction;
 
 SchoolbookWordDetailsScreenRouter.router.getStateForAction = (action, state: NavigationStateRoute<any>) => {
   if (
-    state?.routeName === 'timeline/schoolbook/details'
-    && (
-      (
-        action.type === NavigationActions.NAVIGATE
-        && state?.routeName === 'timeline/schoolbook/details'
-        && action.routeName === 'timeline'
-      )
-      || action.type === NavigationActions.BACK
-      || action.type === StackActions.POP
-    )
+    state?.routeName === 'timeline/schoolbook/details' &&
+    ((action.type === NavigationActions.NAVIGATE &&
+      state?.routeName === 'timeline/schoolbook/details' &&
+      action.routeName === 'timeline') ||
+      action.type === NavigationActions.BACK ||
+      action.type === StackActions.POP)
   ) {
-
     if (state?.routes?.[0]?.params?._forceBack || state?.routes?.[0]?.params?._isAck) {
       return defaultGetStateForAction(action, state);
     }
@@ -471,11 +480,11 @@ SchoolbookWordDetailsScreenRouter.router.getStateForAction = (action, state: Nav
     return defaultGetStateForAction(
       NavigationActions.setParams({
         key: state.routes[0].key,
-        params: { confirmBackSchoolbook: true }
+        params: { confirmBackSchoolbook: true },
       }),
-      state
+      state,
     );
   }
 
   return defaultGetStateForAction(action, state);
-}
+};

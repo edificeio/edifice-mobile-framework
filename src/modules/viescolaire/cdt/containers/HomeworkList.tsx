@@ -1,22 +1,26 @@
-import I18n from "i18n-js";
-import * as React from "react";
-import { View } from "react-native";
-import { NavigationScreenProp } from "react-navigation";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { View } from 'react-native';
+import { NavigationScreenProp } from 'react-navigation';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-import { getSessionInfo } from "../../../../App";
-import withViewTracking from "../../../../framework/util/tracker/withViewTracking";
-import { standardNavScreenOptions } from "../../../../navigation/helpers/navScreenOptions";
-import { INavigationProps } from "../../../../types";
-import { HeaderBackAction } from "../../../../ui/headers/NewHeader";
-import { getSelectedChild, getSelectedChildStructure } from "../../viesco/state/children";
-import { getPersonnelListState } from "../../viesco/state/personnel";
-import { fetchChildHomeworkAction, fetchHomeworkListAction, updateHomeworkProgressAction } from "../actions/homeworks";
-import { fetchChildSessionAction, fetchSessionListAction } from "../actions/sessions";
-import HomeworkList from "../components/HomeworkList";
-import { getHomeworksListState } from "../state/homeworks";
-import { getSessionsListState } from "../state/sessions";
+import { getSessionInfo } from '~/App';
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import {
+  fetchChildHomeworkAction,
+  fetchHomeworkListAction,
+  updateHomeworkProgressAction,
+} from '~/modules/viescolaire/cdt/actions/homeworks';
+import { fetchChildSessionAction, fetchSessionListAction } from '~/modules/viescolaire/cdt/actions/sessions';
+import HomeworkList from '~/modules/viescolaire/cdt/components/HomeworkList';
+import { getHomeworksListState } from '~/modules/viescolaire/cdt/state/homeworks';
+import { getSessionsListState } from '~/modules/viescolaire/cdt/state/sessions';
+import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/viesco/state/children';
+import { getPersonnelListState } from '~/modules/viescolaire/viesco/state/personnel';
+import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
+import { INavigationProps } from '~/types';
+import { HeaderBackAction } from '~/ui/headers/NewHeader';
 
 type HomeworkListProps = {
   homeworks: any;
@@ -35,28 +39,28 @@ type HomeworkListProps = {
 
 class HomeworkListRelativeContainer extends React.PureComponent<HomeworkListProps> {
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
-    const diaryTitle = navigation.getParam("diaryTitle");
+    const diaryTitle = navigation.getParam('diaryTitle');
 
     return standardNavScreenOptions(
       {
-        title: diaryTitle || I18n.t("Homework"),
+        title: diaryTitle || I18n.t('Homework'),
         headerLeft: () => <HeaderBackAction navigation={navigation} />,
         headerRight: () => <View />,
         headerStyle: {
-          backgroundColor: "#2BAB6F",
+          backgroundColor: '#2BAB6F',
         },
       },
-      navigation
+      navigation,
     );
   };
 
   private fetchHomeworks = (startDate, endDate) =>
-    getSessionInfo().type === "Student"
+    getSessionInfo().type === 'Student'
       ? this.props.fetchHomeworks(this.props.structureId, startDate, endDate)
       : this.props.fetchChildHomeworks(this.props.childId, this.props.structureId, startDate, endDate);
 
   private fetchSessions = (startDate, endDate) =>
-    getSessionInfo().type === "Student"
+    getSessionInfo().type === 'Student'
       ? this.props.fetchSessions(this.props.structureId, startDate, endDate)
       : this.props.fetchChildSessions(this.props.childId, startDate, endDate);
 
@@ -91,7 +95,7 @@ const mapStateToProps: (state: any) => any = state => {
     isFetchingSession: sessionsState.isFetching || personnelState.isFetching,
     childId: getSelectedChild(state).id,
     structureId:
-      getSessionInfo().type === "Student"
+      getSessionInfo().type === 'Student'
         ? getSessionInfo().administrativeStructures[0].id || getSessionInfo().structures[0]
         : getSelectedChildStructure(state)?.id,
   };
@@ -106,10 +110,8 @@ const mapDispatchToProps = (dispatch: any, props: HomeworkListProps) => {
       fetchSessions: fetchSessionListAction,
       updateHomeworkProgress: updateHomeworkProgressAction,
     },
-    dispatch
+    dispatch,
   );
 };
 
-export default withViewTracking("viesco/cdt")(
-  connect(mapStateToProps, mapDispatchToProps)(HomeworkListRelativeContainer)
-);
+export default withViewTracking('viesco/cdt')(connect(mapStateToProps, mapDispatchToProps)(HomeworkListRelativeContainer));

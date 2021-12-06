@@ -1,6 +1,6 @@
-import { getSessionInfo } from "../../../../App";
-import userConfig from "../../../../user/config";
-import viescoConfig from "../../moduleConfig";
+import { getSessionInfo } from '~/App';
+import viescoConfig from '~/modules/viescolaire/moduleConfig';
+import userConfig from '~/user/config';
 
 // THE MODEL --------------------------------------------------------------------------------------
 
@@ -34,8 +34,8 @@ export const getChildrenList = (globalState: any): IChildArray => {
     ([childId, childValue]) =>
       ({
         id: childId,
-        ...(childValue as Object),
-      } as IChild)
+        ...(childValue as object),
+      } as IChild),
   );
 };
 
@@ -43,12 +43,11 @@ export const getSelectedChildStructure = (globalState: any) => {
   const infos = getSessionInfo();
   return infos.schools?.find(
     school =>
-      infos.childrenStructure?.find(school =>
-        school.children.some(child => child.id === getSelectedChild(globalState).id)
-      )?.structureName === school.name
+      infos.childrenStructure?.find(school => school.children.some(child => child.id === getSelectedChild(globalState).id))
+        ?.structureName === school.name,
   );
 };
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const selectChildActionType = viescoConfig.namespaceActionType("SELECTCHILD");
+export const selectChildActionType = viescoConfig.namespaceActionType('SELECTCHILD');

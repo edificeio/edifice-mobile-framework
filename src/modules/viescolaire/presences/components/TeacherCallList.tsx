@@ -4,10 +4,11 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import Swiper from 'react-native-swiper';
 
-import { Loading } from '../../../../ui';
-import { TextBold } from '../../../../ui/Typography';
-import { ICourses } from '../state/teacherCourses';
 import CourseComponent from './CourseComponent';
+
+import { ICourses } from '~/modules/viescolaire/presences/state/teacherCourses';
+import { Loading } from '~/ui';
+import { TextBold } from '~/ui/Typography';
 
 interface ICallListProps {
   courseList: ICourses[];
@@ -78,9 +79,7 @@ export default class CallList extends React.PureComponent<ICallListProps, ICallL
   private Carousel = () => {
     const getCourseCallItem = item => {
       const isCourseNow = moment().isBetween(moment(item.startDate).subtract(15, 'minutes'), moment(item.endDate));
-      const isCourseEditable = !moment(item.startDate)
-        .subtract(15, 'minutes')
-        .isAfter(moment());
+      const isCourseEditable = !moment(item.startDate).subtract(15, 'minutes').isAfter(moment());
 
       return (
         <CourseComponent

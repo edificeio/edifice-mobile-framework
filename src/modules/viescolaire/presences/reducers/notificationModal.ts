@@ -1,10 +1,5 @@
-/*import { createSessionAsyncReducer } from "../../../infra/redux/async2";
-import { initialStateNotification, actionTypes } from "../state/eventsNotification";
-
-export default createSessionAsyncReducer(initialStateNotification, actionTypes);*/
-
-import { createSessionReducer } from "../../../../infra/redux/reducerFactory";
-import { childrenEventsActionsTypes, initialStateNotification } from "../state/eventsNotification";
+import { createSessionReducer } from '~/infra/redux/reducerFactory';
+import { childrenEventsActionsTypes, initialStateNotification } from '~/modules/viescolaire/presencess/state/eventsNotification';
 
 export default createSessionReducer(initialStateNotification, {
   [childrenEventsActionsTypes.event]: (state = initialStateNotification, action) => {

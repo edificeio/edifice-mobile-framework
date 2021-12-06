@@ -1,7 +1,7 @@
-import moment from "moment";
+import moment from 'moment';
 
-import { fetchJSONWithCache } from "../../../../infra/fetchWithCache";
-import { IHomeworkList } from "../state/homeworks";
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { IHomeworkList } from '~/modules/viescolaire/cdt/state/homeworks';
 
 // Data type of what is given by the backend.
 export type IHomeworkListBackend = {
@@ -46,7 +46,7 @@ export type IHomeworkListBackend = {
 }[];
 
 const homeworkListAdapter: (data: IHomeworkListBackend) => IHomeworkList = data => {
-  let result = {} as IHomeworkList;
+  const result = {} as IHomeworkList;
   if (!data) return result;
   data.forEach(item => {
     result[item.id] = {
@@ -73,17 +73,15 @@ export const homeworksService = {
     return data;
   },
   getFromChildId: async (childId: string, structureId: string, startDate: string, endDate: string) => {
-    const results = await fetchJSONWithCache(
-      `/diary/homeworks/child/${startDate}/${endDate}/${childId}/${structureId}`
-    );
+    const results = await fetchJSONWithCache(`/diary/homeworks/child/${startDate}/${endDate}/${childId}/${structureId}`);
 
     const data: IHomeworkList = homeworkListAdapter(results);
 
     return data;
   },
   updateProgress: async (homeworkId: number, isDone: boolean) => {
-    const status = isDone ? "done" : "todo";
-    const result = await fetchJSONWithCache(`/diary/homework/progress/${homeworkId}/${status}`, { method: "post" });
+    const status = isDone ? 'done' : 'todo';
+    const result = await fetchJSONWithCache(`/diary/homework/progress/${homeworkId}/${status}`, { method: 'post' });
     return { homeworkId, status };
   },
 };

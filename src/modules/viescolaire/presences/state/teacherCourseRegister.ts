@@ -1,7 +1,7 @@
-import moment from "moment";
+import moment from 'moment';
 
-import { AsyncState, createAsyncActionTypes } from "../../../../infra/redux/async2";
-import viescoConfig from "../../moduleConfig";
+import { AsyncState, createAsyncActionTypes } from '~/infra/redux/async2';
+import viescoConfig from '~/modules/viescolaire/moduleConfig';
 
 // THE MODEL --------------------------------------------------------------------------------------
 
@@ -28,4 +28,4 @@ export const getCoursesRegisterState = (globalState: any) =>
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const actionTypes = createAsyncActionTypes(viescoConfig.namespaceActionType("COURSES_REGISTER"));
+export const actionTypes = createAsyncActionTypes(viescoConfig.namespaceActionType('COURSES_REGISTER'));

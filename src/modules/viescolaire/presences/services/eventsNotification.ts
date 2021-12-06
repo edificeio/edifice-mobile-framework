@@ -1,6 +1,6 @@
-import moment from "moment";
+import moment from 'moment';
 
-import { fetchJSONWithCache, fetchWithCache } from "../../../../infra/fetchWithCache";
+import { fetchJSONWithCache, fetchWithCache } from '~/infra/fetchWithCache';
 import {
   ICallEvent,
   IHistoryEvent,
@@ -8,7 +8,7 @@ import {
   IForgottenNotebooksList,
   IIncidentsList,
   IPunishmentsList,
-} from "../state/events";
+} from '~/modules/viescolaire/presences/state/events';
 
 export type ICallEventBackend = {
   id?: number;
@@ -90,9 +90,7 @@ const historyEventAdapter: (event: IHistoryEventBackend) => IHistoryEvent = even
   };
 };
 
-const allEventsAdapter: (
-  data: IHistoryEventsListBackend
-) => {
+const allEventsAdapter: (data: IHistoryEventsListBackend) => {
   lateness: IHistoryEventsList;
   departure: IHistoryEventsList;
   regularized: IHistoryEventsList;
@@ -114,9 +112,7 @@ const forgottenNotebooksAdapter: (data: IForgottenNotebooksBackend) => IForgotte
   }));
 };
 
-const incidentsAdapter: (
-  data: IIncidentBackend
-) => { incidents: IIncidentsList; punishments: IPunishmentsList } = data => {
+const incidentsAdapter: (data: IIncidentBackend) => { incidents: IIncidentsList; punishments: IPunishmentsList } = data => {
   return {
     incidents: data.all.INCIDENT.map(i => ({ date: moment(i.date), label: i.type.label })),
     punishments: data.all.PUNISHMENT.map(p => ({
@@ -128,43 +124,28 @@ const incidentsAdapter: (
 };
 
 export const eventsNotificationService = {
-  fetchChildEvents: async (
-    childId: string,
-    structureId: string,
-    startDate: moment.Moment,
-    endDate: moment.Moment
-  ) => {
-    const startDateString = startDate.format("YYYY-MM-DD");
-    const endDateString = endDate.format("YYYY-MM-DD");
+  fetchChildEvents: async (childId: string, structureId: string, startDate: moment.Moment, endDate: moment.Moment) => {
+    const startDateString = startDate.format('YYYY-MM-DD');
+    const endDateString = endDate.format('YYYY-MM-DD');
     const result = await fetchJSONWithCache(
-      `/presences/students/${childId}/events?structure_id=${structureId}&start_at=${startDateString}&end_at=${endDateString}&type=NO_REASON&type=UNREGULARIZED&type=REGULARIZED&type=LATENESS&type=DEPARTURE`
+      `/presences/students/${childId}/events?structure_id=${structureId}&start_at=${startDateString}&end_at=${endDateString}&type=NO_REASON&type=UNREGULARIZED&type=REGULARIZED&type=LATENESS&type=DEPARTURE`,
     );
     return allEventsAdapter(result);
   },
-  fetchChildForgottenNotebook: async (
-    childId: string,
-    structureId: string,
-    startDate: moment.Moment,
-    endDate: moment.Moment
-  ) => {
-    const startDateString = startDate.format("YYYY-MM-DD");
-    const endDateString = endDate.format("YYYY-MM-DD");
+  fetchChildForgottenNotebook: async (childId: string, structureId: string, startDate: moment.Moment, endDate: moment.Moment) => {
+    const startDateString = startDate.format('YYYY-MM-DD');
+    const endDateString = endDate.format('YYYY-MM-DD');
     const result = await fetchJSONWithCache(
-      `/presences/forgotten/notebook/student/${childId}?structure_id=${structureId}&start_at=${startDateString}&end_at=${endDateString}`
+      `/presences/forgotten/notebook/student/${childId}?structure_id=${structureId}&start_at=${startDateString}&end_at=${endDateString}`,
     );
     return forgottenNotebooksAdapter(result);
   },
-  fetchChildIncidents: async (
-    childId: string,
-    structureId: string,
-    startDate: moment.Moment,
-    endDate: moment.Moment
-  ) => {
-    const startDateString = startDate.format("YYYY-MM-DD");
-    const endDateString = endDate.format("YYYY-MM-DD");
+  fetchChildIncidents: async (childId: string, structureId: string, startDate: moment.Moment, endDate: moment.Moment) => {
+    const startDateString = startDate.format('YYYY-MM-DD');
+    const endDateString = endDate.format('YYYY-MM-DD');
     try {
       const result = await fetchJSONWithCache(
-        `/incidents/students/${childId}/events?structure_id=${structureId}&start_at=${startDateString}&end_at=${endDateString}&type=INCIDENT&type=PUNISHMENT`
+        `/incidents/students/${childId}/events?structure_id=${structureId}&start_at=${startDateString}&end_at=${endDateString}&type=INCIDENT&type=PUNISHMENT`,
       );
       return incidentsAdapter(result);
     } catch (e) {

@@ -1,7 +1,7 @@
-import moment from "moment";
+import moment from 'moment';
 
-import { createAsyncActionTypes, AsyncState } from "../../../../infra/redux/async2";
-import viescoConfig from "../../moduleConfig";
+import { createAsyncActionTypes, AsyncState } from '~/infra/redux/async2';
+import viescoConfig from '~/modules/viescolaire/moduleConfig';
 
 // THE MODEL --------------------------------------------------------------------------------------
 
@@ -53,4 +53,4 @@ export const getDevoirListState = (globalState: any) =>
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const actionTypes = createAsyncActionTypes(viescoConfig.namespaceActionType("COMPETENCES_DEVOIR_MATIERES"));
+export const actionTypes = createAsyncActionTypes(viescoConfig.namespaceActionType('COMPETENCES_DEVOIR_MATIERES'));

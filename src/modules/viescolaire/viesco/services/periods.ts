@@ -1,7 +1,7 @@
-import moment from "moment";
+import moment from 'moment';
 
-import { fetchJSONWithCache } from "../../../../infra/fetchWithCache";
-import { IPeriodsList, IYear } from "../state/periods";
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { IPeriodsList, IYear } from '~/modules/viescolaire/viesco/state/periods';
 
 export type IPeriodsBackend = {
   timestamp_dt: string;
@@ -35,9 +35,7 @@ const yearAdapter: (data: IYearBackend) => IYear = data => {
 
 export const periodsListService = {
   getPeriods: async (structureId: string, groupId: string) => {
-    const periods: any[] = await fetchJSONWithCache(
-      `/viescolaire/periodes?idGroupe=${groupId}&idEtablissement=${structureId}`
-    );
+    const periods: any[] = await fetchJSONWithCache(`/viescolaire/periodes?idGroupe=${groupId}&idEtablissement=${structureId}`);
     const data: IPeriodsList = periodsListAdapter(periods);
 
     return data;

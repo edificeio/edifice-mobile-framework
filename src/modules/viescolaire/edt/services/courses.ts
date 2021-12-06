@@ -1,7 +1,8 @@
-import querystring from "querystring";
-import { fetchJSONWithCache } from "../../../../infra/fetchWithCache";
-import { ICourseList } from "../state/courses";
-import moment from "moment";
+import moment from 'moment';
+import querystring from 'querystring';
+
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { ICourseList } from '~/modules/viescolaire/edt/state/courses';
 
 export type ICourseListBackend = {
   classes: string[];
@@ -38,14 +39,9 @@ const coursesListAdapter = (data: ICourseListBackend): ICourseList => {
 };
 
 export const coursesService = {
-  getCoursesFromClass: async (
-    structureId: string,
-    startDate: moment.Moment,
-    endDate: moment.Moment,
-    groups: string[]
-  ) => {
-    const startDateString = startDate.format("YYYY-MM-DD");
-    const endDateString = endDate.format("YYYY-MM-DD");
+  getCoursesFromClass: async (structureId: string, startDate: moment.Moment, endDate: moment.Moment, groups: string[]) => {
+    const startDateString = startDate.format('YYYY-MM-DD');
+    const endDateString = endDate.format('YYYY-MM-DD');
     const courses = await fetchJSONWithCache(
       `/viescolaire/common/courses/${structureId}/${startDateString}/${endDateString}?${querystring.stringify({
         group: groups,
@@ -54,14 +50,9 @@ export const coursesService = {
     );
     return coursesListAdapter(courses);
   },
-  getCoursesFromTeacher: async (
-    structureId: string,
-    startDate: moment.Moment,
-    endDate: moment.Moment,
-    teacherId: string
-  ) => {
-    const startDateString = startDate.format("YYYY-MM-DD");
-    const endDateString = endDate.format("YYYY-MM-DD");
+  getCoursesFromTeacher: async (structureId: string, startDate: moment.Moment, endDate: moment.Moment, teacherId: string) => {
+    const startDateString = startDate.format('YYYY-MM-DD');
+    const endDateString = endDate.format('YYYY-MM-DD');
     const courses = await fetchJSONWithCache(
       `/viescolaire/common/courses/${structureId}/${startDateString}/${endDateString}?${querystring.stringify({
         teacherId,

@@ -5,14 +5,14 @@ import { useState } from 'react';
 import { View, StyleSheet, FlexAlignType } from 'react-native';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 
-import { CommonStyles } from '../../../../styles/common/styles';
-import { ButtonsOkOnly } from '../../../../ui/ButtonsOkCancel';
-import { ModalContent, ModalContentBlock, ModalBox } from '../../../../ui/Modal';
-import { TextBold, Text } from '../../../../framework/components/text';
-import { LeftColoredItem } from '../../viesco/components/Item';
-import { ILevelsList } from '../state/competencesLevels';
-import { IDevoir, IDevoirList } from '../state/devoirs';
-import { IMoyenneList } from '../state/moyennes';
+import { CommonStyles } from '~/styles/common/styles';
+import { ButtonsOkOnly } from '~/ui/ButtonsOkCancel';
+import { ModalContent, ModalContentBlock, ModalBox } from '~/ui/Modal';
+import { TextBold, Text } from '~/framework/components/text';
+import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
+import { ILevelsList } from '~/modules/viescolaire/competences/state/competencesLevels';
+import { IDevoir, IDevoirList } from '~/modules/viescolaire/competences/state/devoirs';
+import { IMoyenneList } from '~/modules/viescolaire/competences/state/moyennes';
 
 const getColorfromCompetence = (evaluation: number, levels: ILevelsList) => {
   let cycleLevels = levels.filter(obj => {
@@ -221,9 +221,9 @@ export const GradesDevoirs = ({ devoirs, levels, color }: { devoirs: IDevoirList
                 backgroundColor={
                   color
                     ? getColorFromNote(
-                        parseFloat(devoir.note.replace(/\./g, ",").replace(",", ".")),
-                        parseFloat(devoir.moyenne.replace(/\./g, ",").replace(",", ".")),
-                        devoir.diviseur
+                        parseFloat(devoir.note.replace(/\./g, ',').replace(',', '.')),
+                        parseFloat(devoir.moyenne.replace(/\./g, ',').replace(',', '.')),
+                        devoir.diviseur,
                       )
                     : CommonStyles.primary
                 }
@@ -246,7 +246,7 @@ export const getSortedEvaluationList = (evaluations: IDevoirList) => {
   return evaluations.sort(
     (a, b) =>
       moment(b.date).diff(moment(a.date)) ||
-      String(a.matiere.toLocaleLowerCase() ?? "").localeCompare(b.matiere.toLocaleLowerCase() ?? "") ||
+      String(a.matiere.toLocaleLowerCase() ?? '').localeCompare(b.matiere.toLocaleLowerCase() ?? '') ||
       Number(a.note) - Number(b.note),
   );
 };

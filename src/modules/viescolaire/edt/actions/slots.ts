@@ -1,8 +1,8 @@
-import { Dispatch } from "redux";
+import { Dispatch } from 'redux';
 
-import { createAsyncActionCreators } from "../../../../infra/redux/async2";
-import { slotsService } from "../services/slots";
-import { ISlotList, actionTypes } from "../state/slots";
+import { createAsyncActionCreators } from '~/infra/redux/async2';
+import { slotsService } from '~/modules/viescolaire/edt/services/slots';
+import { ISlotList, actionTypes } from '~/modules/viescolaire/edt/state/slots';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

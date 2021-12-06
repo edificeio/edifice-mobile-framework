@@ -1,22 +1,20 @@
-import I18n from "i18n-js";
-import * as React from "react";
-import { NavigationScreenProp } from "react-navigation";
-import { connect } from "react-redux";
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { NavigationScreenProp } from 'react-navigation';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-import connectorConfig from "../moduleConfig";
-import userConfig from "../../../user/config";
-import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
-
-import { AppTitle, Header, HeaderIcon } from "../../../ui/headers/Header";
-import { PageContainer } from "../../../ui/ContainerContent";
-import DEPRECATED_ConnectionTrackingBar from "../../../ui/ConnectionTrackingBar";
-import { Back } from "../../../ui/headers/Back";
-
-import ConnectorView from "../components/ConnectorView";
-import { openConnector } from "../actions/connector";
-import { bindActionCreators } from "redux";
-import withViewTracking from "~/framework/util/tracker/withViewTracking";
-import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { openConnector } from '~/modules/pronote/actions/connector';
+import ConnectorView from '~/modules/pronote/components/ConnectorView';
+import connectorConfig from '~/modules/pronote/moduleConfig';
+import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
+import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
+import { PageContainer } from '~/ui/ContainerContent';
+import { Back } from '~/ui/headers/Back';
+import { AppTitle, Header, HeaderIcon } from '~/ui/headers/Header';
+import userConfig from '~/user/config';
 
 interface IApplicationBackend {
   name: string;
@@ -42,23 +40,21 @@ interface IConnectorContainerNavigationProps {
   navigation?: any;
 }
 
-type IConnectorContainerProps = IConnectorContainerDataProps &
-  IConnectorContainerEventProps &
-  IConnectorContainerNavigationProps;
+type IConnectorContainerProps = IConnectorContainerDataProps & IConnectorContainerEventProps & IConnectorContainerNavigationProps;
 
 class ConnectorContainer extends React.PureComponent<IConnectorContainerProps> {
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) => {
+  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<object> }) => {
     return standardNavScreenOptions(
       {
         header: (
           <Header>
             <Back navigation={navigation} />
-            <AppTitle>{I18n.t("Pronote")}</AppTitle>
-            <HeaderIcon name={null} hidden={true} />
+            <AppTitle>{I18n.t('Pronote')}</AppTitle>
+            <HeaderIcon name={null} hidden />
           </Header>
         ),
       },
-      navigation
+      navigation,
     );
   };
 
@@ -67,9 +63,7 @@ class ConnectorContainer extends React.PureComponent<IConnectorContainerProps> {
       <PageContainer>
         <DEPRECATED_ConnectionTrackingBar />
         <ConnectorView
-          openConnector={() =>
-            this.props.openConnector(this.props.connectorAddress, () => this.props.navigation.goBack(null))
-          }
+          openConnector={() => this.props.openConnector(this.props.connectorAddress, () => this.props.navigation.goBack(null))}
           isLoading={this.props.isLoading}
           error={this.props.error}
         />
@@ -78,12 +72,12 @@ class ConnectorContainer extends React.PureComponent<IConnectorContainerProps> {
   }
 }
 
-const findPronoteConnector: (apps: Array<IApplicationBackend>) => string = apps => {
+const findPronoteConnector: (apps: IApplicationBackend[]) => string = apps => {
   for (const app of apps) {
     if (
-      app.name.toUpperCase().includes("PRONOTE") ||
-      app.displayName.toUpperCase().includes("PRONOTE") ||
-      app.address.toUpperCase().includes("PRONOTE")
+      app.name.toUpperCase().includes('PRONOTE') ||
+      app.displayName.toUpperCase().includes('PRONOTE') ||
+      app.address.toUpperCase().includes('PRONOTE')
     ) {
       return app.address;
     }
@@ -91,24 +85,23 @@ const findPronoteConnector: (apps: Array<IApplicationBackend>) => string = apps 
 };
 
 const profileMap = {
-  TEACHER: "professeur",
-  STUDENT: "eleve",
-  RELATIVE: "parent",
-  PERSONNEL: "direction",
+  TEACHER: 'professeur',
+  STUDENT: 'eleve',
+  RELATIVE: 'parent',
+  PERSONNEL: 'direction',
 };
 
 const getConnectorAddress: (appAddress: string, userType: string) => string = (appAddress, userType) => {
-
   const getSlash = link => {
-    let service = decodeURIComponent(link)
-    return service.charAt(service.length - 1) == '/' ? "" : '%2F'
-  }
+    const service = decodeURIComponent(link);
+    return service.charAt(service.length - 1) == '/' ? '' : '%2F';
+  };
 
   let link = `${DEPRECATED_getCurrentPlatform()!.url}/cas/oauth/login?service=${encodeURIComponent(appAddress)}`;
   const role = profileMap[userType.toUpperCase()];
   link += `${getSlash(link)}mobile.${role}.html`;
-  return link
-}
+  return link;
+};
 
 const mapStateToProps: (state: any) => IConnectorContainerDataProps = state => {
   const connectorState = connectorConfig.getState(state);
@@ -125,7 +118,4 @@ const mapDispatchToProps: (dispatch: any) => IConnectorContainerEventProps = dis
   return bindActionCreators({ openConnector }, dispatch);
 };
 
-export default withViewTracking("pronote")(connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ConnectorContainer));
+export default withViewTracking('pronote')(connect(mapStateToProps, mapDispatchToProps)(ConnectorContainer));

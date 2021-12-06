@@ -1,15 +1,15 @@
-import * as React from "react";
-import { StyleSheet, Text, TouchableOpacity, View, ViewStyle } from "react-native";
-import { connect } from "react-redux";
+import * as React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { connect } from 'react-redux';
 
-import { CommonStyles } from "../../../styles/common/styles";
-import { Icon } from "../../../ui";
-import { getFileIcon } from "../utils/fileIcon";
+import { getFileIcon } from '~/modules/support/utils/fileIcon';
+import { CommonStyles } from '~/styles/common/styles';
+import { Icon } from '~/ui';
 
 const attachmentStyle = {
-  flexDirection: "row",
-  justifyContent: "space-between",
-  alignItems: "center",
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
 } as ViewStyle;
 
 const Attachment = ({ uploadSuccess, uploadProgress, fileType, fileName, onRemove }) => {
@@ -21,7 +21,7 @@ const Attachment = ({ uploadSuccess, uploadProgress, fileType, fileName, onRemov
           {
             backgroundColor: CommonStyles.primaryLight,
             right: undefined,
-            width: uploadSuccess ? "100%" : `${uploadProgress}%`,
+            width: uploadSuccess ? '100%' : `${uploadProgress}%`,
           },
         ]}
       />

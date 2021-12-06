@@ -1,5 +1,5 @@
-import { createSessionAsyncReducer } from "../../../../infra/redux/async2";
-import { initialState, actionTypes } from "../state/childrenGroups";
+import { createSessionAsyncReducer } from '~/infra/redux/async2';
+import { initialState, actionTypes } from '~/modules/viescolaire/viesco/state/childrenGroups';
 
 // THE REDUCER ------------------------------------------------------------------------------------
 

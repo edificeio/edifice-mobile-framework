@@ -3,7 +3,7 @@
  * Manage loading of connector linking
  */
 
-import { actionTypes } from "../actions/connector";
+import { actionTypes } from '~/modules/pronote/actions/connector';
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -14,14 +14,14 @@ export interface IConnectorState {
 
 const stateDefault: IConnectorState = {
   isConnecting: false,
-  errmsg: "",
+  errmsg: '',
 };
 
 // THE REDUCER ------------------------------------------------------------------------------------
 
 const reducer: (state: IConnectorState, action: { type: string; errmsg: string }) => IConnectorState = (
   state = stateDefault,
-  action
+  action,
 ) => {
   switch (action.type) {
     case actionTypes.error:
@@ -32,7 +32,7 @@ const reducer: (state: IConnectorState, action: { type: string; errmsg: string }
     case actionTypes.connecting:
       return {
         isConnecting: true,
-        errmsg: "",
+        errmsg: '',
       };
     case actionTypes.connected:
       return stateDefault;

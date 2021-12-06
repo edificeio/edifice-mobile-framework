@@ -1,7 +1,7 @@
-import moment from "moment";
+import moment from 'moment';
 
-import { AsyncState } from "../../../../infra/redux/async2";
-import viescoConfig from "../../moduleConfig";
+import { AsyncState } from '~/infra/redux/async2';
+import viescoConfig from '~/modules/viescolaire/moduleConfig';
 
 export type ICallEvent = {
   id?: number;
@@ -46,8 +46,8 @@ export type IPunishmentsList = IPunishment[];
 
 export type ICallEventsListState = AsyncState<ICallEventsList>;
 
-const callPrefix = viescoConfig.namespaceActionType("CALL_EVENT");
-const historyPrefix = viescoConfig.namespaceActionType("HISTORY");
+const callPrefix = viescoConfig.namespaceActionType('CALL_EVENT');
+const historyPrefix = viescoConfig.namespaceActionType('HISTORY');
 
 export const initialState = {
   lateness: [],
@@ -59,23 +59,22 @@ export const initialState = {
   punishments: [],
   incidents: [],
   isPristine: true,
-  error: "",
+  error: '',
 };
 
 export const teacherEventsActionsTypes = {
-  post: callPrefix + "_POST",
-  put: callPrefix + "_PUT",
-  delete: callPrefix + "_DELETE",
-  error: callPrefix + "_ERROR",
+  post: callPrefix + '_POST',
+  put: callPrefix + '_PUT',
+  delete: callPrefix + '_DELETE',
+  error: callPrefix + '_ERROR',
 };
 
 export const studentEventsActionsTypes = {
-  event: historyPrefix + "_GET_EVENTS",
-  notebook: historyPrefix + "_GET_NOTEBOOKS",
-  incident: historyPrefix + "_GET_INCIDENTS",
-  clear: historyPrefix + "_CLEAR",
-  error: historyPrefix + "_ERROR",
+  event: historyPrefix + '_GET_EVENTS',
+  notebook: historyPrefix + '_GET_NOTEBOOKS',
+  incident: historyPrefix + '_GET_INCIDENTS',
+  clear: historyPrefix + '_CLEAR',
+  error: historyPrefix + '_ERROR',
 };
 
-export const getHistoryEvents = (globalState: any) =>
-  viescoConfig.getState(globalState).presences.history as ICallEventsListState;
+export const getHistoryEvents = (globalState: any) => viescoConfig.getState(globalState).presences.history as ICallEventsListState;

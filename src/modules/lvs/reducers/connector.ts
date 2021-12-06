@@ -2,8 +2,7 @@
  * LVS state reducer
  * Manage loading of connector linking
  */
-import { actionTypes } from "../actions/connector";
-
+import { actionTypes } from '~/modules/lvs/actions/connector';
 
 // TYPE DEFINITIONS -------------------------------------------------------------------------------
 
@@ -14,25 +13,25 @@ export interface IConnectorState {
 
 const stateDefault: IConnectorState = {
   isConnecting: false,
-  errmsg: ""
+  errmsg: '',
 };
 
 // THE REDUCER ------------------------------------------------------------------------------------
 
-const reducer: (
-  state: IConnectorState,
-  action: { type: string; errmsg: string }
-) => IConnectorState = (state = stateDefault, action) => {
+const reducer: (state: IConnectorState, action: { type: string; errmsg: string }) => IConnectorState = (
+  state = stateDefault,
+  action,
+) => {
   switch (action.type) {
     case actionTypes.error:
       return {
         isConnecting: false,
-        errmsg: action.errmsg
+        errmsg: action.errmsg,
       };
     case actionTypes.connecting:
       return {
         isConnecting: true,
-        errmsg: ""
+        errmsg: '',
       };
     case actionTypes.connected:
       return stateDefault;

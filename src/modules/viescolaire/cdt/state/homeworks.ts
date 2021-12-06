@@ -1,7 +1,7 @@
-import moment from "moment";
+import moment from 'moment';
 
-import { createAsyncActionTypes, AsyncState, AsyncActionTypes } from "../../../../infra/redux/async2";
-import viescoConfig from "../../moduleConfig";
+import { createAsyncActionTypes, AsyncState, AsyncActionTypes } from '~/infra/redux/async2';
+import viescoConfig from '~/modules/viescolaire/moduleConfig';
 
 // THE MODEL --------------------------------------------------------------------------------------
 
@@ -44,9 +44,5 @@ export const getHomeworksListState = (globalState: any) =>
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const listActionTypes: AsyncActionTypes = createAsyncActionTypes(
-  viescoConfig.namespaceActionType("CDT_HOMEWORK_LIST")
-);
-export const updateActionTypes: AsyncActionTypes = createAsyncActionTypes(
-  viescoConfig.namespaceActionType("CDT_HOMEWORK_UPDATE")
-);
+export const listActionTypes: AsyncActionTypes = createAsyncActionTypes(viescoConfig.namespaceActionType('CDT_HOMEWORK_LIST'));
+export const updateActionTypes: AsyncActionTypes = createAsyncActionTypes(viescoConfig.namespaceActionType('CDT_HOMEWORK_UPDATE'));

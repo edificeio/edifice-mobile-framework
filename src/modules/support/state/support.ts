@@ -1,5 +1,5 @@
-import { createAsyncActionTypes, AsyncState } from "../../../infra/redux/async2";
-import supportConfig from "../moduleConfig";
+import { createAsyncActionTypes, AsyncState } from '~/infra/redux/async2';
+import supportConfig from '~/modules/support/moduleConfig';
 
 // THE MODEL --------------------------------------------------------------------------------------
 
@@ -16,4 +16,4 @@ export const initialState = {};
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const actionTypes = createAsyncActionTypes(supportConfig.namespaceActionType("SUPPORT"));
+export const actionTypes = createAsyncActionTypes(supportConfig.namespaceActionType('SUPPORT'));

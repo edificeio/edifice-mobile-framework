@@ -1,8 +1,9 @@
-import moment from "moment";
+import moment from 'moment';
 
-import { fetchJSONWithCache } from "../../../../infra/fetchWithCache";
-import { ISessionList } from "../state/sessions";
-import { IHomeworkListBackend } from "./homeworks";
+import { IHomeworkListBackend } from './homeworks';
+
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { ISessionList } from '~/modules/viescolaire/cdt/state/sessions';
 
 // Data type of what is given by the backend.
 export type ISessionListBackend = {

@@ -1,7 +1,7 @@
-import moment from "moment";
+import moment from 'moment';
 
-import { createAsyncActionTypes, AsyncState, AsyncActionTypes } from "../../../../infra/redux/async2";
-import viescoConfig from "../../moduleConfig";
+import { createAsyncActionTypes, AsyncState, AsyncActionTypes } from '~/infra/redux/async2';
+import viescoConfig from '~/modules/viescolaire/moduleConfig';
 
 // THE MODEL --------------------------------------------------------------------------------------
 
@@ -32,11 +32,8 @@ export type ICourseListState = AsyncState<ICourseList>;
 
 export const initialState: ICourseList = [];
 
-export const getCoursesListState = (globalState: any) =>
-  viescoConfig.getState(globalState).edt.coursesList as ICourseListState;
+export const getCoursesListState = (globalState: any) => viescoConfig.getState(globalState).edt.coursesList as ICourseListState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const actionTypes: AsyncActionTypes = createAsyncActionTypes(
-  viescoConfig.namespaceActionType("EDT_COURSES_LIST")
-);
+export const actionTypes: AsyncActionTypes = createAsyncActionTypes(viescoConfig.namespaceActionType('EDT_COURSES_LIST'));

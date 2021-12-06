@@ -1,4 +1,4 @@
-import viescoConfig from "../../moduleConfig";
+import viescoConfig from '~/modules/viescolaire/moduleConfig';
 
 export interface IDeclarationState {
   isPosting: boolean;
@@ -7,13 +7,13 @@ export interface IDeclarationState {
 
 export const stateDefault: IDeclarationState = {
   isPosting: false,
-  errmsg: "",
+  errmsg: '',
 };
 
-const declarationPrefix = viescoConfig.namespaceActionType("ABSENCE_DECLARATION");
+const declarationPrefix = viescoConfig.namespaceActionType('ABSENCE_DECLARATION');
 
 export const declarationActionsTypes = {
-  isPosting: declarationPrefix + "_IS_POSTING",
-  error: declarationPrefix + "_ERROR",
-  posted: declarationPrefix + "_DONE",
+  isPosting: declarationPrefix + '_IS_POSTING',
+  error: declarationPrefix + '_ERROR',
+  posted: declarationPrefix + '_DONE',
 };

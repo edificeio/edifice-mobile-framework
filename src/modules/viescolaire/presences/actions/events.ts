@@ -1,8 +1,8 @@
-import moment from "moment";
-import { Dispatch } from "redux";
+import moment from 'moment';
+import { Dispatch } from 'redux';
 
-import { eventsService } from "../services/events";
-import { teacherEventsActionsTypes, studentEventsActionsTypes } from "../state/events";
+import { eventsService } from '~/modules/viescolaire/presences/services/events';
+import { teacherEventsActionsTypes, studentEventsActionsTypes } from '~/modules/viescolaire/presences/state/events';
 
 export const callEventsActions = {
   post: data => ({ type: teacherEventsActionsTypes.post, data }),
@@ -24,7 +24,7 @@ export function postLateEvent(
   date: moment.Moment,
   comment: string,
   registerId: number,
-  courseStart: moment.Moment
+  courseStart: moment.Moment,
 ) {
   return async (dispatch: Dispatch) => {
     try {
@@ -43,7 +43,7 @@ export function updateLateEvent(
   comment: string,
   id: number,
   register_id: number,
-  course_start: moment.Moment
+  course_start: moment.Moment,
 ) {
   return async (dispatch: Dispatch) => {
     try {
@@ -73,7 +73,7 @@ export function postLeavingEvent(
   date: moment.Moment,
   comment: string,
   registerId: number,
-  courseEnd: moment.Moment
+  courseEnd: moment.Moment,
 ) {
   return async (dispatch: Dispatch) => {
     try {
@@ -92,7 +92,7 @@ export function updateLeavingEvent(
   comment: string,
   id: number,
   register_id: number,
-  course_end: moment.Moment
+  course_end: moment.Moment,
 ) {
   return async (dispatch: Dispatch) => {
     try {
@@ -105,12 +105,7 @@ export function updateLeavingEvent(
   };
 }
 
-export function postAbsentEvent(
-  studentId: string,
-  registerId: number,
-  courseStart: moment.Moment,
-  courseEnd: moment.Moment
-) {
+export function postAbsentEvent(studentId: string, registerId: number, courseStart: moment.Moment, courseEnd: moment.Moment) {
   return async (dispatch: Dispatch) => {
     try {
       const result = await eventsService.postAbsent(studentId, registerId, courseStart, courseEnd);
@@ -132,14 +127,9 @@ export function validateRegisterAction(registerId: number) {
   };
 }
 
-export function getStudentEvents(
-  studentId: string,
-  structureId: string,
-  startDate: moment.Moment,
-  endDate: moment.Moment
-) {
+export function getStudentEvents(studentId: string, structureId: string, startDate: moment.Moment, endDate: moment.Moment) {
   return async (dispatch: Dispatch) => {
-    const promises : Promise<any>[] = [
+    const promises: Promise<any>[] = [
       eventsService.fetchStudentEvents(studentId, structureId, startDate, endDate),
       eventsService.fetchStudentForgottenNotebook(studentId, structureId, startDate, endDate),
       eventsService.fetchStudentIncidents(studentId, structureId, startDate, endDate),

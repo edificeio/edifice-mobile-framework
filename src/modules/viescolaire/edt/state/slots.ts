@@ -1,7 +1,7 @@
-import moment from "moment";
+import moment from 'moment';
 
-import { createAsyncActionTypes, AsyncState, AsyncActionTypes } from "../../../../infra/redux/async2";
-import viescoConfig from "../../moduleConfig";
+import { createAsyncActionTypes, AsyncState, AsyncActionTypes } from '~/infra/redux/async2';
+import viescoConfig from '~/modules/viescolaire/moduleConfig';
 
 // THE MODEL --------------------------------------------------------------------------------------
 
@@ -19,9 +19,8 @@ export type ISlotListState = AsyncState<ISlotList>;
 
 export const initialState: ISlotList = [];
 
-export const getSlotsListState = (globalState: any) =>
-  viescoConfig.getState(globalState).edt.slotsList as ISlotListState;
+export const getSlotsListState = (globalState: any) => viescoConfig.getState(globalState).edt.slotsList as ISlotListState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const actionTypes: AsyncActionTypes = createAsyncActionTypes(viescoConfig.namespaceActionType("EDT_SLOTS_LIST"));
+export const actionTypes: AsyncActionTypes = createAsyncActionTypes(viescoConfig.namespaceActionType('EDT_SLOTS_LIST'));

@@ -1,8 +1,8 @@
-import * as React from "react";
-import { View, StyleSheet } from "react-native";
+import * as React from 'react';
+import { View, StyleSheet } from 'react-native';
 
-import Dropdown from "../../../../ui/Dropdown";
-import { IStructureArray, IStructure } from "../state/structure";
+import Dropdown from '~/ui/Dropdown';
+import { IStructureArray, IStructure } from '~/modules/viescolaire/viesco/state/structure';
 
 const styles = StyleSheet.create({
   container: {
@@ -10,9 +10,9 @@ const styles = StyleSheet.create({
     marginTop: 10,
     paddingBottom: 10,
     marginHorizontal: 20,
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
   },
 });
 

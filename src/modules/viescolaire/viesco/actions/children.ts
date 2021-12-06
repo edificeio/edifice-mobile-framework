@@ -1,18 +1,18 @@
-import { Dispatch } from "redux";
+import { Dispatch } from 'redux';
 
-import { dataActions as homeworkActions } from "../../cdt/actions/homeworks";
-import { dataActions as sessionActions } from "../../cdt/actions/sessions";
-import { dataActions as competencesDevoirsActions } from "../../competences/actions/devoirs";
-import { dataActions as competencesMoyennesActions } from "../../competences/actions/moyennes";
-import { dataActions as servicesMatieresAction } from "../../competences/actions/servicesMatieres";
-import { dataActions as structureMatieresAction } from "../../competences/actions/structureMatieres";
-import { dataActions as edtCoursesActions } from "../../edt/actions/courses";
-import { dataActions as slotsActions } from "../../edt/actions/slots";
-import { studentEventsActions as historyActions } from "../../presences/actions/events";
-import { periodsDataActions as periodActions, yearDataActions as yearActions } from "../../viesco/actions/periods";
-import { dataActions as teacherActions } from "../../viesco/actions/personnel";
-import { dataActions as subjectActions } from "../../viesco/actions/subjects";
-import { selectChildActionType } from "../state/children";
+import { dataActions as homeworkActions } from '~/modules/viescolaire/cdt/actions/homeworks';
+import { dataActions as sessionActions } from '~/modules/viescolaire/cdt/actions/sessions';
+import { dataActions as competencesDevoirsActions } from '~/modules/viescolaire/competences/actions/devoirs';
+import { dataActions as competencesMoyennesActions } from '~/modules/viescolaire/competences/actions/moyennes';
+import { dataActions as servicesMatieresAction } from '~/modules/viescolaire/competences/actions/servicesMatieres';
+import { dataActions as structureMatieresAction } from '~/modules/viescolaire/competences/actions/structureMatieres';
+import { dataActions as edtCoursesActions } from '~/modules/viescolaire/edt/actions/courses';
+import { dataActions as slotsActions } from '~/modules/viescolaire/edt/actions/slots';
+import { studentEventsActions as historyActions } from '~/modules/viescolaire/presences/actions/events';
+import { periodsDataActions as periodActions, yearDataActions as yearActions } from '~/modules/viescolaire/viesco/actions/periods';
+import { dataActions as teacherActions } from '~/modules/viescolaire/viesco/actions/personnel';
+import { dataActions as subjectActions } from '~/modules/viescolaire/viesco/actions/subjects';
+import { selectChildActionType } from '~/modules/viescolaire/viesco/state/children';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

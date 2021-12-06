@@ -1,6 +1,7 @@
-import { fetchJSONWithCache } from "../../../../infra/fetchWithCache";
-import { ISlotList } from "../state/slots";
-import moment from "moment";
+import moment from 'moment';
+
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { ISlotList } from '~/modules/viescolaire/edt/state/slots';
 
 export type ISlotListBackend = {
   startHour: string;
@@ -10,8 +11,8 @@ export type ISlotListBackend = {
 
 const slotsListAdapter = (data: ISlotListBackend): ISlotList => {
   return data.map(slot => ({
-    startHour: moment("2000-01-01 " + slot.startHour + ":00"),
-    endHour: moment("2000-01-01 " + slot.endHour + ":00"),
+    startHour: moment('2000-01-01 ' + slot.startHour + ':00'),
+    endHour: moment('2000-01-01 ' + slot.endHour + ':00'),
     name: slot.name,
   }));
 };
