@@ -92,7 +92,7 @@ class MyAppGrid extends React.PureComponent<{ navigation: NavigationScreenProp<N
     let pageContent = null;
     const { modules, newModules } = this.props;
 
-    if (modules.length == 0) {
+    if (modules.length === 0 && newModules.length === 0) {
       pageContent = this.renderEmpty();
     } else {
       pageContent = this.renderGrid(modules, newModules);
