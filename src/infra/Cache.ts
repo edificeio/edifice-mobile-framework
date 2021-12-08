@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Conf from "../../ode-framework-conf";
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Connection } from "./Connection";
 
 // DEPRECATED. Use fetchWithCache instead.
@@ -7,9 +7,9 @@ import { Connection } from "./Connection";
 export const read = async (
   path: string,
   forceSync: boolean = true,
-  platform: string = (Conf.currentPlatform as any).url
+  platform: string = DEPRECATED_getCurrentPlatform()!.url
 ) => {
-  if (!Conf.currentPlatform) throw new Error("must specify a platform");
+  if (!DEPRECATED_getCurrentPlatform()) throw new Error("must specify a platform");
   if (!Connection.isOnline) {
     // tslint:disable-next-line:no-console
     console.warn(

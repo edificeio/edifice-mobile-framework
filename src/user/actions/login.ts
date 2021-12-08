@@ -10,7 +10,6 @@ import { navigate, reset } from "../../navigation/helpers/navHelper";
 import messaging from '@react-native-firebase/messaging';
 
 // Legacy imports
-import Conf from "../../../ode-framework-conf";
 import { userService } from "../service";
 import { initActivationAccount as initActivationAccountAction } from "./activation";
 import { clearTimeline } from "../../timeline/actions/clearTimeline";
@@ -22,6 +21,7 @@ import { getLoginStackToDisplay } from "../../navigation/LoginNavigator";
 import { PLATFORM_STORAGE_KEY } from "./platform";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import SplashScreen from "react-native-splash-screen";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 
 // TYPES ------------------------------------------------------------------------------------------------
 
@@ -81,7 +81,7 @@ export function loginAction(
       // === 0: Init login
       console.log("0: Init login");
       try {
-        if (!Conf.currentPlatform) throw new Error("[login] Must specify a platform");
+        if (!DEPRECATED_getCurrentPlatform()) throw new Error("[login] Must specify a platform");
         if (!OAuth2RessourceOwnerPasswordClient.connection)
           throw new Error("[login] no active oauth connection");
 
@@ -218,7 +218,7 @@ export function loginAction(
               ? userinfo2.structures[0]
               : 'no structure'
         ),
-        Trackers.setCustomDimension(3, "Project", (Conf.currentPlatform as any).url.replace(/(^\w+:|^)\/\//, '')) // remove protocol
+        Trackers.setCustomDimension(3, "Project", DEPRECATED_getCurrentPlatform()!.url.replace(/(^\w+:|^)\/\//, '')) // remove protocol
       ]);
       if (credentials) await Trackers.trackEvent('Auth', 'LOGIN'); // Track manual login (with credentials)
       else await Trackers.trackEvent('Auth', 'RESTORE'); // track separately auto login (with stored token)
@@ -234,7 +234,7 @@ export function loginAction(
         try {
           if (credentials) {
             const res = await fetch(
-              `${(Conf.currentPlatform as any).url}/auth/activation/match`,
+              `${DEPRECATED_getCurrentPlatform()!.url}/auth/activation/match`,
               {
                 body: JSON.stringify({
                   login: credentials.username,
@@ -313,7 +313,7 @@ function endSessionAction() {
 export function logout() {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
-      if (!Conf.currentPlatform) throw new Error("must specify a platform");
+      if (!DEPRECATED_getCurrentPlatform()) throw new Error("must specify a platform");
 
       // === 0: Tracking reporting, only on manual logout
       // ToDo
@@ -340,7 +340,7 @@ export function logout() {
 export function refreshToken(newToken: string) {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
-      if (!Conf.currentPlatform) throw new Error("must specify a platform");
+      if (!DEPRECATED_getCurrentPlatform()) throw new Error("must specify a platform");
       const authState = getState().user.auth;
       if (!authState.loggingIn) return false;
       //

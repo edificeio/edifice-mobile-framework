@@ -2,8 +2,8 @@
  * Timeline notif handler
  */
 
+import { NotifHandlerThunkAction, registerNotifHandlers } from "~/framework/util/notifications/routing";
 import { mainNavNavigate } from "../../../navigation/helpers/navHelper";
-import { NotifHandlerThunkAction, registerNotifHandlers } from "../../util/notifications/routing";
 
 const handleFlashMsgNotificationAction: NotifHandlerThunkAction = notification => async (dispatch, getState) => {
 	mainNavNavigate('timeline', {

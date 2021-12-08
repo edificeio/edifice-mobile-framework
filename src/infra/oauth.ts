@@ -6,9 +6,15 @@ import { encode as btoa } from 'base-64';
 import querystring from 'querystring';
 import { ImageURISource } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Conf from '../../ode-framework-conf';
-import AllModulesConfigs from '../framework/app/AllModulesConfigs';
-import { getModulesScope } from '../framework/util/moduleTool';
+import { ModuleArray } from '../framework/util/moduleTool';
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+
+// This is a big hack to prevent circular dependencies. AllModules.tsx must not included from modules theirself.
+export const AllModulesBackup = {
+  value: undefined
+} as {
+  value?: ModuleArray
+};
 
 export interface IOAuthToken {
   access_token: string;
@@ -470,7 +476,7 @@ export const scopes = `infra
  edt
  support`.split('\n '); // Here the space after "\n" is important, they represent the indentation & the space between the words when "\n" is removed.
 // You can copy the string directly in the "scope" field in a browser. Keep this indentation intact.
-export const createAppScopes = () => getModulesScope(AllModulesConfigs);
+export const createAppScopes = () => AllModulesBackup.value!.getScopes();
 export const createAppScopesLegacy = () => [...new Set([...createAppScopes(), ...scopes])];
 
 /**
@@ -478,7 +484,7 @@ export const createAppScopesLegacy = () => [...new Set([...createAppScopes(), ..
  * @param src
  */
 export function transformedSrc(src: string) {
-  return src.startsWith('//') ? `https:${src}` : src.startsWith('/') ? `${(Conf.currentPlatform as any).url}${src}` : src;
+  return src.startsWith('//') ? `https:${src}` : src.startsWith('/') ? `${DEPRECATED_getCurrentPlatform()!.url}${src}` : src;
 }
 
 /**
@@ -488,7 +494,7 @@ export function transformedSrc(src: string) {
  * @param absoluteUrl
  */
 export function getIsUrlSignable(absoluteUrl: string): boolean {
-  return absoluteUrl.indexOf('://') === -1 || absoluteUrl.indexOf((Conf.currentPlatform as any).url) !== -1;
+  return absoluteUrl.indexOf('://') === -1 || absoluteUrl.indexOf(DEPRECATED_getCurrentPlatform()!.url) !== -1;
 }
 
 /**
@@ -576,7 +582,7 @@ export function DEPRECATED_signImageURISource(url: string): ImageURISource {
   if (!OAuth2RessourceOwnerPasswordClient.connection) throw new Error('[oAuth] signUrl: no token');
   // console.log(url);
   // If there is a protocol AND url doen't contain plateform url, doesn't sign it.
-  if (url.indexOf('://') !== -1 && url.indexOf((Conf.currentPlatform as any).url) === -1) {
+  if (url.indexOf('://') !== -1 && url.indexOf(DEPRECATED_getCurrentPlatform()!.url) === -1) {
     // console.log("external image, not sign");
     return { uri: url };
   }

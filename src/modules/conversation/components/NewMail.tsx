@@ -10,14 +10,14 @@ import {
   KeyboardAvoidingView,
   Platform,
   KeyboardAvoidingViewProps,
-  Keyboard
+  Keyboard,
 } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
 import { connect } from 'react-redux';
 
 import { PageView } from '../../../framework/components/page';
 import { IDistantFileWithId } from '../../../framework/util/fileHandler';
-import theme from '../../../framework/util/theme';
+import theme from '../../../app/theme';
 import HtmlToText from '../../../infra/htmlConverter/text';
 import { CommonStyles } from '../../../styles/common/styles';
 import { Icon, Loading } from '../../../ui';
@@ -71,11 +71,9 @@ export default (props: NewMailComponentProps) => {
   // console.log("render components", isSearchingUsers);
 
   React.useEffect(() => {
-    const showSubscription = Keyboard.addListener(
-      Platform.select({ ios: "keyboardWillHide", android: "keyboardDidHide" })!,
-      () => {
-        setKeyboardStatus(new Date().getTime());
-      });
+    const showSubscription = Keyboard.addListener(Platform.select({ ios: 'keyboardWillHide', android: 'keyboardDidHide' })!, () => {
+      setKeyboardStatus(new Date().getTime());
+    });
 
     return () => {
       showSubscription.remove();
@@ -84,7 +82,7 @@ export default (props: NewMailComponentProps) => {
 
   const keyboardAvoidingViewBehavior = Platform.select({
     ios: 'padding',
-    android: undefined,
+    android: 'height',
   }) as KeyboardAvoidingViewProps['behavior'];
   // const insets = useSafeAreaInsets();                            // Note : this commented code is the theory
   // const keyboardAvoidingViewVerticalOffset = insets.top + 56;    // But Practice >> Theory. Here, magic values ont the next ligne give better results.
@@ -99,25 +97,25 @@ export default (props: NewMailComponentProps) => {
           contentContainerStyle={
             isSearchingUsersFinal
               ? {
-                flexGrow: 0,
-                flexBasis: '100%',
-              }
+                  flexGrow: 0,
+                  flexBasis: '100%',
+                }
               : {
-                flexGrow: 1,
-              }
+                  flexGrow: 1,
+                }
           }
           alwaysBounceVertical={false}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="on-drag"
           {...(isSearchingUsers
             ? {
-              style: {
-                flexBasis: '100%',
-                flexGrow: 0,
-                flexShrink: 0,
-                maxHeight: '100%',
-              },
-            }
+                style: {
+                  flexBasis: '100%',
+                  flexGrow: 0,
+                  flexShrink: 0,
+                  maxHeight: '100%',
+                },
+              }
             : {})}>
           <View style={{ flexGrow: 1 }}>
             {props.isFetching ? (
@@ -185,7 +183,7 @@ const Fields = ({
         onSave={onDraftSave}
         key="attachments"
       />
-      <Body style={{ zIndex: 1 }} value={body} onChange={onBodyChange} autofocus={isReplyDraft} key="body" />
+      <Body style={{ zIndex: 1 }} value={body} onChange={onBodyChange} key="body" />
       {!!prevBody && <PrevBody prevBody={prevBody} key="prevBody" />}
     </SafeAreaView>
   );
@@ -195,11 +193,12 @@ const Fields = ({
       autoFocus={true}
       value={headers.to}
       onChange={to => onHeaderChange({ ...headers, to })}
-      rightComponent={isSearchingUsersFinal
-        ? undefined
-        : <TouchableOpacity style={{ paddingVertical: 6 }} onPress={() => toggleExtraFields(!showExtraFields)}>
+      rightComponent={
+        isSearchingUsersFinal ? undefined : (
+          <TouchableOpacity style={{ paddingVertical: 6 }} onPress={() => toggleExtraFields(!showExtraFields)}>
             <Icon name={showExtraFields ? 'keyboard_arrow_up' : 'keyboard_arrow_down'} size={28} />
           </TouchableOpacity>
+        )
       }
       title={I18n.t('conversation.to')}
       key="to"
@@ -228,139 +227,145 @@ const Fields = ({
 };
 
 const MailContactField = connect(state => ({
-  visibles: state[moduleConfig.reducerName].visibles as IVisiblesState
-}))(({
-  style,
-  title,
-  value,
-  onChange,
-  children,
-  autoFocus,
-  rightComponent,
-  onOpenSearch,
-  visibles,
-  key
-}: {
-  style?: ViewStyle;
-  title: string;
-  value?: IUser[];
-  onChange?: (value: IUser[]) => void;
-  children?: ReactChild;
-  autoFocus?: boolean;
-  rightComponent?: ReactElement;
-  onOpenSearch?: (searchIsOpen: boolean) => void;
-  visibles: IVisiblesState,
-  key: React.Key
-}) => {
-  const selectedUsersOrGroups = value || [];
-  const [search, updateSearch] = React.useState('');
-  const previousVisibles = React.useRef<IVisiblesState>();
-  const [foundUsersOrGroups, updateFoundUsersOrGroups] = React.useState<Array<IVisibleUser | IVisibleGroup>>([]);
-  const searchTimeout = React.useRef();
-  const inputRef: { current: TextInput | undefined } = { current: undefined };
+  visibles: state[moduleConfig.reducerName].visibles as IVisiblesState,
+}))(
+  ({
+    style,
+    title,
+    value,
+    onChange,
+    children,
+    autoFocus,
+    rightComponent,
+    onOpenSearch,
+    visibles,
+    key,
+  }: {
+    style?: ViewStyle;
+    title: string;
+    value?: IUser[];
+    onChange?: (value: IUser[]) => void;
+    children?: ReactChild;
+    autoFocus?: boolean;
+    rightComponent?: ReactElement;
+    onOpenSearch?: (searchIsOpen: boolean) => void;
+    visibles: IVisiblesState;
+    key: React.Key;
+  }) => {
+    const selectedUsersOrGroups = value || [];
+    const [search, updateSearch] = React.useState('');
+    const previousVisibles = React.useRef<IVisiblesState>();
+    const [foundUsersOrGroups, updateFoundUsersOrGroups] = React.useState<Array<IVisibleUser | IVisibleGroup>>([]);
+    const searchTimeout = React.useRef();
+    const inputRef: { current: TextInput | undefined } = { current: undefined };
 
-  // Update search results whenever visibles are loaded
-  React.useEffect(() => {
-    // console.log("useEffet", previousVisibles.current?.lastSuccess?.toString(), visibles.lastSuccess?.toString());
-    previousVisibles.current = visibles;
-    if (previousVisibles.current.lastSuccess && visibles.lastSuccess && !previousVisibles.current.lastSuccess.isSame(visibles.lastSuccess)) {
-      onUserType(search);
-    }
-  });
+    // Update search results whenever visibles are loaded
+    React.useEffect(() => {
+      // console.log("useEffet", previousVisibles.current?.lastSuccess?.toString(), visibles.lastSuccess?.toString());
+      previousVisibles.current = visibles;
+      if (
+        previousVisibles.current.lastSuccess &&
+        visibles.lastSuccess &&
+        !previousVisibles.current.lastSuccess.isSame(visibles.lastSuccess)
+      ) {
+        onUserType(search);
+      }
+    });
 
-  const filterUsersOrGroups = found => selectedUsersOrGroups.every(selected => selected.id !== found.id);
-  // React.useEffect(() => {
-  //   if (search.length >= 3) {
-  //     updateFoundUsersOrGroups([]);
-  //     console.log("openOpenSearch", true);
-  //     onOpenSearch?.(true);
-  //     window.clearTimeout(searchTimeout.current);
-  //     searchTimeout.current = window.setTimeout(() => {
-  //       newMailService.searchUsers(search).then(({ groups, users }) => {
-  //         const filteredUsers = users.filter(filterUsersOrGroups);
-  //         const filteredGroups = groups.filter(filterUsersOrGroups);
-  //         updateFoundUsersOrGroups([...filteredUsers, ...filteredGroups]);
-  //       });
-  //     }, 500);
-  //   }
+    const filterUsersOrGroups = found => selectedUsersOrGroups.every(selected => selected.id !== found.id);
+    // React.useEffect(() => {
+    //   if (search.length >= 3) {
+    //     updateFoundUsersOrGroups([]);
+    //     console.log("openOpenSearch", true);
+    //     onOpenSearch?.(true);
+    //     window.clearTimeout(searchTimeout.current);
+    //     searchTimeout.current = window.setTimeout(() => {
+    //       newMailService.searchUsers(search).then(({ groups, users }) => {
+    //         const filteredUsers = users.filter(filterUsersOrGroups);
+    //         const filteredGroups = groups.filter(filterUsersOrGroups);
+    //         updateFoundUsersOrGroups([...filteredUsers, ...filteredGroups]);
+    //       });
+    //     }, 500);
+    //   }
 
-  //   return () => {
-  //     updateFoundUsersOrGroups([]);
-  //     onOpenSearch?.(false);
-  //     console.log("openOpenSearch", false);
-  //     window.clearTimeout(searchTimeout.current);
-  //   };
-  // }, [search]);
+    //   return () => {
+    //     updateFoundUsersOrGroups([]);
+    //     onOpenSearch?.(false);
+    //     console.log("openOpenSearch", false);
+    //     window.clearTimeout(searchTimeout.current);
+    //   };
+    // }, [search]);
 
-  const removeUser = (id: string) => onChange?.(selectedUsersOrGroups.filter(user => user.id !== id));
-  const addUser = userOrGroup => {
-    onChange?.([
-      ...selectedUsersOrGroups,
-      { displayName: userOrGroup.name || userOrGroup.displayName, id: userOrGroup.id } as IUser,
-    ]);
-    onUserType('');
-    inputRef.current?.focus();
-  };
+    const removeUser = (id: string) => onChange?.(selectedUsersOrGroups.filter(user => user.id !== id));
+    const addUser = userOrGroup => {
+      onChange?.([
+        ...selectedUsersOrGroups,
+        { displayName: userOrGroup.name || userOrGroup.displayName, id: userOrGroup.id } as IUser,
+      ]);
+      onUserType('');
+      inputRef.current?.focus();
+    };
 
-  const onUserType = (s: string) => {
-    updateSearch(s);
-    if (s.length >= 3) {
-      updateFoundUsersOrGroups([]);
-      // console.log("openOpenSearch", true);
-      onOpenSearch?.(true);
-      searchTimeout.current && window.clearTimeout(searchTimeout.current);
-      searchTimeout.current = window.setTimeout(() => {
-        // This commented area is the old searching method that query the backend
-        // newMailService.searchUsers(search).then(({ groups, users }) => {
-        //   const filteredUsers = users.filter(filterUsersOrGroups);
-        //   const filteredGroups = groups.filter(filterUsersOrGroups);
-        //   updateFoundUsersOrGroups([...filteredUsers, ...filteredGroups]);
-        // });
-        const searchResults = visibles.lastSuccess ? searchVisibles(visibles.data, s, value) : [];
-        updateFoundUsersOrGroups(searchResults);
-      }, 500);
-    } else {
-      updateFoundUsersOrGroups([]);
-      onOpenSearch?.(false);
-      // console.log("openOpenSearch", false);
-      window.clearTimeout(searchTimeout.current);
-    }
-  };
+    const onUserType = (s: string) => {
+      updateSearch(s);
+      if (s.length >= 3) {
+        updateFoundUsersOrGroups([]);
+        // console.log("openOpenSearch", true);
+        onOpenSearch?.(true);
+        searchTimeout.current && window.clearTimeout(searchTimeout.current);
+        searchTimeout.current = window.setTimeout(() => {
+          // This commented area is the old searching method that query the backend
+          // newMailService.searchUsers(search).then(({ groups, users }) => {
+          //   const filteredUsers = users.filter(filterUsersOrGroups);
+          //   const filteredGroups = groups.filter(filterUsersOrGroups);
+          //   updateFoundUsersOrGroups([...filteredUsers, ...filteredGroups]);
+          // });
+          const searchResults = visibles.lastSuccess ? searchVisibles(visibles.data, s, value) : [];
+          updateFoundUsersOrGroups(searchResults);
+        }, 500);
+      } else {
+        updateFoundUsersOrGroups([]);
+        onOpenSearch?.(false);
+        // console.log("openOpenSearch", false);
+        window.clearTimeout(searchTimeout.current);
+      }
+    };
 
-  const inputStyle = {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    paddingHorizontal: 10,
-    borderBottomColor: '#EEEEEE',
-    borderBottomWidth: 2,
-    backgroundColor: theme.color.background.card,
-    flex: 0,
-  } as ViewStyle;
-  return (
-    <View style={{ flexGrow: 1 }}>
-      <View style={{ flex: 0, alignItems: 'stretch' }}>
-        <View style={[inputStyle, style]}>
-          <Text style={{ color: CommonStyles.lightTextColor, paddingVertical: 10 }}>{title} : </Text>
-          <View style={{ overflow: 'visible', marginHorizontal: 5, flex: 1 }}>
-            <SelectedList selectedUsersOrGroups={selectedUsersOrGroups} onItemClick={removeUser} />
-            <Input
-              inputRef={inputRef}
-              autoFocus={autoFocus}
-              value={search}
-              onChangeText={onUserType}
-              onSubmit={() => addUser({ displayName: search, id: search })}
-              key={key}
-            />
+    const inputStyle = {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      paddingHorizontal: 10,
+      borderBottomColor: '#EEEEEE',
+      borderBottomWidth: 2,
+      backgroundColor: theme.color.background.card,
+      flex: 0,
+    } as ViewStyle;
+    return (
+      <View style={{ flexGrow: 1 }}>
+        <View style={{ flex: 0, alignItems: 'stretch' }}>
+          <View style={[inputStyle, style]}>
+            <Text style={{ color: CommonStyles.lightTextColor, paddingVertical: 10 }}>{title} : </Text>
+            <View style={{ overflow: 'visible', marginHorizontal: 5, flex: 1 }}>
+              <SelectedList selectedUsersOrGroups={selectedUsersOrGroups} onItemClick={removeUser} />
+              <Input
+                inputRef={inputRef}
+                autoFocus={autoFocus}
+                value={search}
+                onChangeText={onUserType}
+                onSubmit={() => addUser({ displayName: search, id: search })}
+                key={key}
+              />
+            </View>
+            {rightComponent}
           </View>
-          {rightComponent}
+        </View>
+        <View style={{ flexGrow: 1 }}>
+          {foundUsersOrGroups.length ? <FoundList foundUserOrGroup={foundUsersOrGroups} addUser={addUser} /> : children}
         </View>
       </View>
-      <View style={{ flexGrow: 1 }}>
-        {foundUsersOrGroups.length ? <FoundList foundUserOrGroup={foundUsersOrGroups} addUser={addUser} /> : children}
-      </View>
-    </View>
-  );
-});
+    );
+  },
+);
 
 const HeaderUsers = ({
   style,
@@ -538,11 +543,9 @@ const Body = ({ style, value, onChange, autofocus }) => {
   }, [currentValue]);
 
   React.useEffect(() => {
-    const showSubscription = Keyboard.addListener(
-      Platform.select({ ios: "keyboardWillHide", android: "keyboardDidHide" })!,
-      () => {
-        setKeyboardStatus(new Date().getTime());
-      });
+    const showSubscription = Keyboard.addListener(Platform.select({ ios: 'keyboardWillHide', android: 'keyboardDidHide' })!, () => {
+      setKeyboardStatus(new Date().getTime());
+    });
 
     return () => {
       showSubscription.remove();

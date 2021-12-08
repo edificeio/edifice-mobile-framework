@@ -22,8 +22,8 @@
  * - `linkTextStyle` (TextStyle) additional style applied to text links.
  */
 
-import { Dimensions, TextStyle } from 'react-native';
-import Conf from '../../../ode-framework-conf';
+import { TextStyle } from 'react-native';
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { HtmlParserAbstract, IHtmlParserAbstractOptions, ISaxTagClose, ISaxTagOpen } from './abstract';
 import {
   HtmlParserJsxTextVariant,
@@ -443,8 +443,8 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
     let cleanUrl = tag.attrs.href;
     if (cleanUrl && cleanUrl.startsWith('/')) {
       // Absolute url. We must add the platform domain name manually.
-      if (!Conf.currentPlatform) throw new Error('must specify a platform');
-      cleanUrl = Conf.currentPlatform.url + cleanUrl;
+      if (!DEPRECATED_getCurrentPlatform()) throw new Error('must specify a platform');
+      cleanUrl = DEPRECATED_getCurrentPlatform()!.url + cleanUrl;
     }
 
     const nugget: ILinkTextNugget = {
@@ -522,7 +522,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
       // A - 1 - Build image object representation
       const emoji: IInlineImageNugget = {
         alt: tag.attrs.alt,
-        src: Conf.currentPlatform.url + tag.attrs.src,
+        src: DEPRECATED_getCurrentPlatform()!.url + tag.attrs.src,
         type: HtmlParserNuggetTypes.InlineImage,
       };
       this.insertInlineImageNugget(emoji);
@@ -532,8 +532,8 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
       if (src.indexOf('file://') === -1) {
         // TODO : Better parse image url and detect cases
         if (src.indexOf('://') === -1) {
-          if (!Conf.currentPlatform) throw new Error('must specify a platform');
-          src = Conf.currentPlatform.url + src;
+          if (!DEPRECATED_getCurrentPlatform()) throw new Error('must specify a platform');
+          src = DEPRECATED_getCurrentPlatform()!.url + src;
         }
         const split = src.split('?');
         src = split[0];
@@ -588,8 +588,8 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
     if (src.indexOf('file://') === -1) {
       // TODO : Better parse audio url and detect cases
       if (src.indexOf('://') === -1) {
-        if (!Conf.currentPlatform) throw new Error('must specify a platform');
-        src = Conf.currentPlatform.url + src;
+        if (!DEPRECATED_getCurrentPlatform()) throw new Error('must specify a platform');
+        src = DEPRECATED_getCurrentPlatform()!.url + src;
       }
     }
     const audioNugget: IAudioNugget = {
@@ -612,8 +612,8 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
     if (src.indexOf('file://') === -1) {
       // TODO : Better parse video url and detect cases
       if (src.indexOf('://') === -1) {
-        if (!Conf.currentPlatform) throw new Error('must specify a platform');
-        src = Conf.currentPlatform.url + src;
+        if (!DEPRECATED_getCurrentPlatform()) throw new Error('must specify a platform');
+        src = DEPRECATED_getCurrentPlatform()!.url + src;
       }
     }
     const videoNugget: IVideoNugget = {

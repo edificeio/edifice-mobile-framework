@@ -2,12 +2,12 @@ import {
     signedFetch
 } from "../infra/fetchWithCache";
 import { Connection } from "../infra/Connection";
-import Conf from "../../ode-framework-conf";
 import { Platform } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DeviceInfo from 'react-native-device-info';
 import AppLink from 'react-native-app-link';
 import messaging from '@react-native-firebase/messaging';
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 
 //https://stackoverflow.com/questions/6832596/how-to-compare-software-version-number-using-js-only-number
 function _compareVersion(version1: string, version2: string) {
@@ -104,7 +104,7 @@ class UserService {
             ////console.log("unregistering token : ", token);
             const deleteTokenResponse = await signedFetch(
                 `${
-                Conf.currentPlatform.url
+                DEPRECATED_getCurrentPlatform()!.url
                 }/timeline/pushNotif/fcmToken?fcmToken=${token}`,
                 { method: "delete" }
             );
@@ -132,7 +132,7 @@ class UserService {
             ////console.log("registering token : ", token);
             const putTokenResponse = await signedFetch(
                 `${
-                Conf.currentPlatform.url
+                DEPRECATED_getCurrentPlatform()!.url
                 }/timeline/pushNotif/fcmToken?fcmToken=${token}`,
                 {
                     method: "put"
@@ -157,8 +157,8 @@ class UserService {
 
     async checkVersion(): Promise<{ canContinue: boolean, hasNewVersion: boolean, newVersion: string }> {
         try {
-            if (!Conf.currentPlatform) throw new Error("must specify a platform");
-            const url = `${Conf.currentPlatform.url}/assets/mobileapp.json`;
+            if (!DEPRECATED_getCurrentPlatform()) throw new Error("must specify a platform");
+            const url = `${DEPRECATED_getCurrentPlatform()!.url}/assets/mobileapp.json`;
             const res = await fetch(url);
             if (res.ok) {
                 const json = await res.json();

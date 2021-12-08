@@ -3,11 +3,11 @@
  */
 
 import queryString from 'query-string';
-import { signedFetchJson2 } from '../../../../infra/fetchWithCache';
+import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
+import fileTransferService, { IUploadCallbaks, IUploadCommonParams } from '~/framework/util/fileHandler/service';
+import { IUserSession } from '~/framework/util/session';
 
-import { LocalFile, SyncedFileWithId } from '../../../util/fileHandler';
-import fileTransferService, { IUploadCallbaks, IUploadCommonParams } from '../../../util/fileHandler/service';
-import { IUserSession } from '../../../util/session';
+import { signedFetchJson2 } from '../../../../infra/fetchWithCache';
 
 const implicitWorkspaceUploadParams = {
   owner: {}, // Exists BackEnd side but not useed yet!

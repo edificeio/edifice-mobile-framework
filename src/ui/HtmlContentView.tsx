@@ -15,8 +15,8 @@ import { fetchJSONWithCache } from "../infra/fetchWithCache";
 import HtmlParserRN, { IHtmlParserRNOptions } from "../framework/util/htmlParser/rn";
 import { Italic } from "./Typography";
 import { IRemoteAttachment } from "./Attachment";
-import Conf from "../../ode-framework-conf";
 import { AttachmentGroup } from "./AttachmentGroup";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 
 export interface IHtmlContentViewProps extends ViewProps {
   navigation?: any;
@@ -79,7 +79,7 @@ export class HtmlContentView extends React.PureComponent<
       const attUrl = attHtml.match(/href="(.*?)"/g);
       const attDisplayName = attHtml.match(/<\/div>.*?<\/a>/g);
       return ({
-        url: attUrl && `${(Conf.currentPlatform as any).url}${attUrl[0].replace('href="', "").replace('"', "")}`,
+        url: attUrl && `${DEPRECATED_getCurrentPlatform()!.url}${attUrl[0].replace('href="', "").replace('"', "")}`,
         displayName: attDisplayName && attDisplayName[0].replace(/<\/div>/g, "").replace(/<\/a>/g, ""),
       } as IRemoteAttachment)
     });

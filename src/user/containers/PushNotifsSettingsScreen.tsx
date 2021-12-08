@@ -17,7 +17,7 @@ import { PageView } from "../../framework/components/page";
 import { Text, TextAction, TextSizeStyle } from "../../framework/components/text";
 import { getDefaultPushNotifsSettingsByType, getPushNotifsSettingsByType, IPushNotifsSettingsByType, ITimeline_State } from "../../framework/modules/timelinev2/reducer";
 import pushNotifsSettings, { IPushNotifsSettings } from "../../framework/modules/timelinev2/reducer/notifSettings/pushNotifsSettings";
-import theme from "../../framework/util/theme";
+import theme from "../../app/theme";
 import timelineModuleConfig from "../../framework/modules/timelinev2/moduleConfig";
 import { ThunkDispatch } from "redux-thunk";
 import { loadPushNotifsSettingsAction, updatePushNotifsSettingsAction } from "../../framework/modules/timelinev2/actions/notifSettings";

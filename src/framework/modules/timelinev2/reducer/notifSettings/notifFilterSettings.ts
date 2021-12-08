@@ -1,6 +1,8 @@
-import { Action, AnyAction } from "redux";
-import { AsyncState, createAsyncActionCreators, createAsyncActionTypes, createSessionAsyncReducer } from "../../../../util/redux/async";
-import { IReducerActionsHandlerMap } from "../../../../util/redux/reducerFactory";
+import { Action } from "redux";
+
+import { AsyncState, createAsyncActionCreators, createAsyncActionTypes, createSessionAsyncReducer } from "~/framework/util/redux/async";
+import { IReducerActionsHandlerMap } from "~/framework/util/redux/reducerFactory";
+
 import moduleConfig from "../../moduleConfig";
 
 // State

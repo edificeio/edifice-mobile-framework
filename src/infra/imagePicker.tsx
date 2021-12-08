@@ -2,18 +2,19 @@ import I18n from "i18n-js";
 import * as React from "react";
 import type { GestureResponderEvent, TouchableOpacityProps } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { CameraOptions, ImageLibraryOptions, ImagePickerResponse, launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import { Asset, CameraOptions, ImageLibraryOptions, ImagePickerResponse, launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
 import { LocalFile } from "../framework/util/fileHandler";
 import { assertPermissions } from "../framework/util/permissions"
 import { ButtonTextIcon } from "../ui";
 import { ModalBox, ModalContent, ModalContentBlock } from "../ui/Modal";
 
-export type ImagePicked = Required<Pick<ImagePickerResponse, 'uri' | 'type' | 'fileName' | 'fileSize' | 'base64' | 'width' | 'height'>>;
+export type ImagePicked = Required<Pick<Asset, 'uri' | 'type' | 'fileName' | 'fileSize' | 'base64' | 'width' | 'height'>>;
 
 export class ImagePicker extends React.PureComponent<{
     callback: (image: ImagePicked) => void;
-    options?: Partial<ImageLibraryOptions & CameraOptions>
+    options?: Partial<ImageLibraryOptions & CameraOptions>;
+    multiple?: boolean;
 } & TouchableOpacityProps, {
     showModal: boolean
 }> {
@@ -21,7 +22,7 @@ export class ImagePicker extends React.PureComponent<{
     state = { showModal: false };
 
     render() {
-        const { callback, options, ...props } = this.props;
+        const { callback, options, multiple, ...props } = this.props;
         const menuActions = [{
             id: 'camera',
             title: I18n.t('common-photoPicker-take'),
@@ -35,27 +36,31 @@ export class ImagePicker extends React.PureComponent<{
             title: I18n.t('Cancel'),
         }];
 
-        const realCallback = (image: ImagePickerResponse) => {
-            if (!image.didCancel && !image.errorCode && !image.errorMessage) {
-                const img = image.assets?.[0];
-                img?.uri && callback(img as ImagePicked);
-                this.setState({ showModal: false })
+        const realCallback = (images: LocalFile[]) => {
+            for (const img of images) {
+                const imgFormatted = {
+                    ...img.nativeInfo,
+                    ...img
+                };
+                callback(imgFormatted as ImagePicked);
             }
+            this.setState({ showModal: false });
         };
 
         const actions = {
             'camera': async () => {
                 try {
-                    await assertPermissions('camera');
-                    launchCamera({ ...options, mediaType: 'photo' }, realCallback);
+                    // await assertPermissions('camera');
+                    // launchCamera({ ...options, mediaType: 'photo' }, realCallback);
+                    LocalFile.pick({ source: 'camera' }).then(realCallback);
                 } catch (error) { console.error(error); }
             },
             'gallery': async () => {
                 try {
-                    await assertPermissions('galery.read');
-                    launchImageLibrary({ ...this.props.options, mediaType: 'photo' }, realCallback);
+                    // await assertPermissions('galery.read');
+                    // launchImageLibrary({ ...this.props.options, mediaType: 'photo' }, realCallback);
+                    LocalFile.pick({ source: 'galery', multiple }).then(realCallback);
                 } catch (error) { console.error(error); }
-                
             },
             'cancel': () => {
                 this.setState({ showModal: false });

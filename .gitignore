@@ -33,23 +33,24 @@ build/
 .gradle
 local.properties
 *.iml
+*.hprof
 android/app/release
 # Seems to be a bug with react-native. If bundle is in `generated` folder, it's not included in the apk.
 android/app/src/main/assets/index.android.bundle
 
-# node.js / npm
+# node.js / npm / yarn
 #
 node_modules/
 npm-debug.log
 yarn-error.log
 
-# BUCK
+# BUCK & apk signature
 buck-out/
 \.buckd/
 *.keystore
 !debug.keystore
 
-# fastlane
+# Fastlane
 #
 # It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
 # screenshots whenever they are needed.
@@ -60,35 +61,26 @@ buck-out/
 */fastlane/Preview.html
 */fastlane/screenshots
 
-# CREDENTIALS
-**/ode-framework-conf.ts
+fastlane
+Gemfile
+
+# CREDENTIALS for AppCenter & Google Firebase.
+# These files are also ignored with override mechanics. These lines are additinal protection to prevent committing hem.
 **/google-services.json
 **/GoogleService-Info.plist
 **/appcenter-config.json
 **/AppCenter-Config.plist
-# Asset overrides
-android/app/src/main/res/drawable-hdpi
-android/app/src/main/res/drawable-ldpi
-android/app/src/main/res/drawable-mdpi
-android/app/src/main/res/drawable-xhdpi
-android/app/src/main/res/drawable-xxhdpi
-android/app/src/main/res/drawable-xxxhdpi
-ios/appe/Assets.xcassets/AppIcon.appiconset
-ios/appe/Assets.xcassets/LaunchImage.launchimage
-ios/appe/Assets.xcassets/LaunchScreen.AspectFill.imageset
-ios/appe/Assets.xcassets/LaunchScreen.Center.imageset
-assets/icons/*
 
-# Asset bundles
+# Obsolete ode-plugin files.
+/assets/icons
+/ode-framework-conf.ts
+
+# Asset bundles automatically generated
 ios/assets
 ios/appe/main.jsbundle
 
 # Metals (scala)
 .metals
-
-# Fastlane
-fastlane
-Gemfile
 
 # Lockfiles
 package-lock.json
@@ -96,4 +88,8 @@ jetificableGroups.json
 ios/Podfile.lock
 Gemfile.lock
 yarn.lock
+
+# Overrides
+__overrides__
+__stashSpec__
 

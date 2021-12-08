@@ -153,6 +153,9 @@ class Carousel extends React.Component<
   public onZoomStateChange = event => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
       const { imageSizes, currentIndex } = this.state;
+      const currentImageSizes = imageSizes && imageSizes[currentIndex];
+      const currentImageWidth = currentImageSizes && currentImageSizes.width;
+      const currentImageHeight = currentImageSizes && currentImageSizes.height;
 
       this.lastScale *= event.nativeEvent.scale;
       this.baseScale.setValue(this.lastScale);
@@ -163,18 +166,18 @@ class Carousel extends React.Component<
 
       let displayedWidth;
       let displayedHeight;
-      const isWithinScreeen = imageSizes[currentIndex].width <= Dimensions.get("window").width && imageSizes[currentIndex].height <= Dimensions.get("window").height;
-      const isVerticalImage = imageSizes[currentIndex].width < imageSizes[currentIndex].height;
-      const isThinVerticalImage = isVerticalImage && imageSizes[currentIndex].width < Dimensions.get("window").width;
+      const isWithinScreeen = currentImageWidth <= Dimensions.get("window").width && currentImageHeight <= Dimensions.get("window").height;
+      const isVerticalImage = currentImageWidth < currentImageHeight;
+      const isThinVerticalImage = isVerticalImage && currentImageWidth < Dimensions.get("window").width;
       if (isWithinScreeen) {
-        displayedWidth = imageSizes[currentIndex].width;
-        displayedHeight = imageSizes[currentIndex].height;
+        displayedWidth = currentImageWidth;
+        displayedHeight = currentImageHeight;
       } else if (isThinVerticalImage) {
-        displayedWidth = imageSizes[currentIndex].width * (Dimensions.get("window").height/imageSizes[currentIndex].height);
+        displayedWidth = currentImageWidth * (Dimensions.get("window").height/currentImageHeight);
         displayedHeight = Dimensions.get("window").height;
       } else {
         displayedWidth = Dimensions.get("window").width;
-        displayedHeight = imageSizes[currentIndex].height * (Dimensions.get("window").width/imageSizes[currentIndex].width);
+        displayedHeight = currentImageHeight * (Dimensions.get("window").width/currentImageWidth);
       }
 
       const scaledImageWidth = this.lastScale < maxScale ? this.lastScale * displayedWidth : maxScale * displayedWidth;
@@ -255,8 +258,12 @@ class Carousel extends React.Component<
     const imagePinch = React.createRef<PinchGestureHandler>();
     const imagePan = React.createRef<PanGestureHandler>();
 
-    // console.log("canPanH", canPanHorizontal);
-    // console.log("canPanV", canPanVertical);
+    const currentImageSizes = imageSizes && imageSizes[currentIndex];
+    const currentImageWidth = currentImageSizes && currentImageSizes.width;
+    const currentImageHeight = currentImageSizes && currentImageSizes.height;
+
+    const imageWidth = currentImageWidth && Math.min(Dimensions.get("window").width, currentImageWidth);
+    const imageHeight = currentImageHeight && Math.min(Dimensions.get("window").height, currentImageHeight);
 
     return (
       <View
@@ -296,8 +303,8 @@ class Carousel extends React.Component<
                   errorComponent={<UnavailableImage />}
                   imageComponent={() => (
                     <Animated.View style={{
-                      height: Math.min(Dimensions.get("window").height, imageSizes[index].height),
-                      width: Math.min(Dimensions.get("window").width, imageSizes[index].width),
+                      height: imageHeight,
+                      width: imageWidth,
                       transform: [
                         { scale: currentIndex === index ? this.scale : 1 },
                         { translateX: currentIndex === index ? Animated.divide(this.offsetX, this.scale) : 0 },
@@ -321,8 +328,8 @@ class Carousel extends React.Component<
                           <AnimatedFastImage
                             source={item.src}
                             style={{
-                              height: Math.min(Dimensions.get("window").height, imageSizes[index].height),
-                              width: Math.min(Dimensions.get("window").width, imageSizes[index].width),
+                              height: imageHeight,
+                              width: imageWidth,
                             }}
                             resizeMode="contain"
                           />

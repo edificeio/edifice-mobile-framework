@@ -15,9 +15,7 @@ import * as React from "react";
 import hoistNonReactStatics from 'hoist-non-react-statics';
 
 import { Trackers } from ".";
-import { NavigationComponent, NavigationRouteConfigMap, NavigationScreenProp, NavigationState } from "react-navigation";
-import { StackNavigationOptions, StackNavigationProp } from "react-navigation-stack/lib/typescript/src/vendor/types";
-import { IAnyNavigableModuleConfig } from "../moduleTool";
+import { NavigationScreenProp, NavigationState } from "react-navigation";
 
 function getDisplayName(WrappedComponent: React.ComponentClass<any>) {
   return WrappedComponent.displayName || WrappedComponent.name || 'Component';

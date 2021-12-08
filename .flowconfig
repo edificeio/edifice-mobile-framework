@@ -29,6 +29,8 @@ node_modules/react-native/flow-github/
 [options]
 emoji=true
 
+format.bracket_spacing=false
+
 exact_by_default=true
 
 module.system=haste
@@ -49,4 +51,4 @@ suppress_type=$FlowFixMeProps
 suppress_type=$FlowFixMeState
 
 [version]
-^0.137.0
+^0.158.0

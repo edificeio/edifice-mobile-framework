@@ -240,7 +240,7 @@ const MailListContainerConnectedWithTracking = withViewTracking(props => {
       default: return 'folder';
     }
   };
-  return [moduleConfig.routeName, getValue()];
+  return [moduleConfig.trackingName.toLowerCase(), getValue()];
 
 })(MailListContainerConnected);
 

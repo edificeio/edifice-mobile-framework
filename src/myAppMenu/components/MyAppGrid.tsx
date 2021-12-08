@@ -14,9 +14,9 @@ import withViewTracking from "../../framework/util/tracker/withViewTracking";
 import { NavigationScreenProp, NavigationState } from "react-navigation";
 import { FlatButton } from "../../ui/FlatButton";
 import { CommonStyles } from "../../styles/common/styles";
-import Conf from "../../../ode-framework-conf";
 import { InfoBubble } from "../../framework/components/infoBubble";
 import { Module } from "../../framework/util/moduleTool";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 
 class MyAppGrid extends React.PureComponent<{ navigation: NavigationScreenProp<NavigationState> }, {}> {
   renderModulesList = (modules: IAppModule[], newModules?: Module[]) => {
@@ -57,11 +57,11 @@ class MyAppGrid extends React.PureComponent<{ navigation: NavigationScreenProp<N
               customButtonStyle={{backgroundColor: undefined, borderColor: CommonStyles.actionColor, borderWidth: 1.5}}
               customTextStyle={{color: CommonStyles.actionColor}}
               onPress={() => {
-                if (!Conf.currentPlatform) {
+                if (!DEPRECATED_getCurrentPlatform()) {
                   console.warn("Must have a platform selected to redirect the user");
                   return null;
                 }
-                const url = `${(Conf.currentPlatform as any).url}/welcome`
+                const url = `${DEPRECATED_getCurrentPlatform()!.url}/welcome`
                 Linking.canOpenURL(url).then(supported => {
                   if (supported) {
                     Linking.openURL(url);
@@ -74,7 +74,7 @@ class MyAppGrid extends React.PureComponent<{ navigation: NavigationScreenProp<N
             <InfoBubble
               infoText={I18n.t("myapp-infoBubbleText", {appName: DeviceInfo.getApplicationName()})}
               infoTitle={I18n.t("myapp-infoBubbleTitle")}
-              infoImage={require("../../../assets/images/my-apps-infobubble.png")}
+              infoImage={require("ASSETS/images/my-apps-infobubble.png")}
               infoBubbleType="floating"
               infoBubbleId="myAppsScreen.redirect"
             />
@@ -87,7 +87,7 @@ class MyAppGrid extends React.PureComponent<{ navigation: NavigationScreenProp<N
   private renderEmpty() {
     return (
       <EmptyScreen
-        imageSrc={require("../../../assets/images/empty-screen/homework.png")}
+        imageSrc={require("ASSETS/images/empty-screen/homework.png")}
         imgWidth={407}
         imgHeight={319}
         text={I18n.t("myapp-emptyScreenText")}

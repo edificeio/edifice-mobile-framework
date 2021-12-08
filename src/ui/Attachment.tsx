@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { ActivityIndicator, Text, View, ViewStyle, Platform, Pressable } from 'react-native';
 import Permissions, { PERMISSIONS } from 'react-native-permissions';
 import Filesize from 'filesize';
-import Mime from 'mime';
 
 import { CommonStyles } from '../styles/common/styles';
 import { getAuthHeader } from '../infra/oauth';
@@ -20,8 +19,8 @@ import fileTransferService from '../framework/util/fileHandler/service';
 import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '../AppStore';
 import { getUserSession } from '../framework/util/session';
-import { legacyAppConf } from '../framework/util/appConf';
 import Toast from 'react-native-tiny-toast';
+import { DEPRECATED_getCurrentPlatform } from '../framework/util/_legacy_appConf';
 
 export interface IRemoteAttachment {
   charset?: string;
@@ -292,7 +291,7 @@ class Attachment extends React.PureComponent<
       id: att.id!,
       filesize: att.size,
       filename: att.filename || att.displayName,
-      url: att.url.replace(legacyAppConf.currentPlatform?.url!, ''),
+      url: att.url.replace(DEPRECATED_getCurrentPlatform()!.url, ''),
     };
 
     this.setState({

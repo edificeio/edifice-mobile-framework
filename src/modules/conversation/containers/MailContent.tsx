@@ -18,7 +18,7 @@ import MailContentMenu from '../components/MailContentMenu';
 import MoveModal from '../containers/MoveToFolderModal';
 import { getMailContentState } from '../state/mailContent';
 import { ThunkDispatch } from 'redux-thunk';
-import theme from '../../../framework/util/theme';
+import theme from '../../../app/theme';
 
 import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
 import { Text, TextSemiBold, TextSizeStyle } from "../../../framework/components/text";
@@ -342,7 +342,7 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
 
 const MailContentContainerConnected = connect(mapStateToProps, mapDispatchToProps)(MailContentContainer)
 
-export default withViewTracking([moduleConfig.routeName, 'mail'])(MailContentContainerConnected);
+export default withViewTracking([moduleConfig.trackingName.toLowerCase(), 'mail'])(MailContentContainerConnected);
 
 const styles = StyleSheet.create({
   topBar: {

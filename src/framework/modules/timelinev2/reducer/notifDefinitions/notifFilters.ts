@@ -1,6 +1,6 @@
 // State definition
 
-import { AsyncState, createAsyncActionCreators, createAsyncActionTypes, createSessionAsyncReducer } from "../../../../util/redux/async";
+import { AsyncState, createAsyncActionCreators, createAsyncActionTypes, createSessionAsyncReducer } from "~/framework/util/redux/async";
 import moduleConfig from "../../moduleConfig";
 
 export interface INotificationFilter {

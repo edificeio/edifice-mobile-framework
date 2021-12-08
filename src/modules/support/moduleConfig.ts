@@ -10,4 +10,5 @@ export default createNavigableModuleConfig<"support", ISupport_State>({
   iconName: "help-circled",
   group: true,
   iconColor: CommonStyles.themeOpenEnt.green,
+  registerAs: 'myAppsModule'
 });

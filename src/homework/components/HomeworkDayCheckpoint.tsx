@@ -13,7 +13,7 @@ import style from "glamorous-native";
 import * as React from "react";
 const { View } = style;
 import { Text } from "../../framework/components/text";
-import theme from "../../framework/util/theme";
+import theme from "../../app/theme";
 import { CommonStyles } from "../../styles/common/styles";
 
 import HomeworkCircleNumber from "./HomeworkCircleNumber";

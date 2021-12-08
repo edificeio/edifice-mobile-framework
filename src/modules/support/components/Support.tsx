@@ -79,9 +79,7 @@ export default class Support extends React.PureComponent<SupportProps, any> {
     );
   };
 
-  sendTicket = () => {
-    this.props.sendTicket(this.reset)
-  }
+  sendTicket = () => this.props.sendTicket(this.reset);
 
   hasNoRight = () => {
     Toast.show(I18n.t("support-ticket-error-has-no-right"), {
@@ -89,7 +87,7 @@ export default class Support extends React.PureComponent<SupportProps, any> {
       mask: false,
       containerStyle: { width: "95%", backgroundColor: "black" },
     });
-  }
+  };
 
   renderFormSelect = (fieldTranslation, fieldName, list) => {
     const { onFieldChange, ticket } = this.props;
@@ -158,7 +156,8 @@ export default class Support extends React.PureComponent<SupportProps, any> {
           <IconButton
             icon="attachment"
             color={this.props.hasRightToCreateTicket ? "white" : CommonStyles.fadColor}
-            onPress={this.props.hasRightToCreateTicket ? () => this.props.uploadAttachment() : () => this.hasNoRight()} />
+            onPress={this.props.hasRightToCreateTicket ? () => this.props.uploadAttachment() : () => this.hasNoRight()}
+          />
         </View>
         <KeyboardAvoidingView
           enabled

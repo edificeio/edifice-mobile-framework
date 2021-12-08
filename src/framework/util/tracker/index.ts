@@ -7,19 +7,21 @@ import AppCenter from 'appcenter';
 import Analytics from 'appcenter-analytics';
 import Matomo from 'react-native-matomo';
 
-import Conf from '../../../../ode-framework-conf';
 import { signRequest } from '../../../infra/oauth';
-import { legacyAppConf } from '../appConf';
+
 import { IAnyNavigableModuleConfig, IAnyModuleConfig } from '../moduleTool';
 
 export type TrackEventArgs = [string, string, string?, number?];
 export type TrackEventOfModuleArgs = [IAnyModuleConfig, string, string?, number?];
 export type DoTrackArg = undefined | TrackEventOfModuleArgs;
+import appConf from '../appConf';
+import { DEPRECATED_getCurrentPlatform } from '../_legacy_appConf';
 
 export abstract class AbstractTracker<OptionsType> {
   debugName: string;
   opts: OptionsType;
   protected _isReady: boolean;
+
   constructor(debugName: string, opts: OptionsType){
     this.debugName = debugName;
     this.opts = opts;
@@ -213,7 +215,7 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
     let willLog = false;
     if (this.lastModulename !== moduleName && moduleAccessMap.hasOwnProperty(moduleName)) {
       this.reportQueue.push(
-        new Request(`${(Conf.currentPlatform as any).url}/infra/event/mobile/store`, {
+        new Request(`${DEPRECATED_getCurrentPlatform()!.url}/infra/event/mobile/store`, {
           method: 'POST',
           body: JSON.stringify({ module: moduleAccessMap[moduleName] }),
         }),
@@ -265,7 +267,7 @@ export class ConcreteTrackerSet {
 }
 
 export const Trackers = new ConcreteTrackerSet(
-  new ConcreteMatomoTracker('Matomo', legacyAppConf.matomo),
+  new ConcreteMatomoTracker('Matomo', appConf.matomo),
   new ConcreteAppCenterTracker('AppCenter', undefined),
   new ConcreteEntcoreTracker('Entcore', undefined)
 );

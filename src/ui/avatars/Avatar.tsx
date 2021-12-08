@@ -1,9 +1,9 @@
 import style from "glamorous-native";
 import * as React from "react";
 import { ImageProps, ImageURISource } from "react-native";
-import Conf from "../../../ode-framework-conf";
 import { Connection } from "../../infra/Connection";
 import { shallowEqual } from "react-redux";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 
 export enum Size {
   aligned,
@@ -191,7 +191,7 @@ export class Avatar extends React.Component<
   }
 
   renderNoAvatar(width) {
-    const noAvatarImage = this.props.fallback || require("../../../assets/images/no-avatar.png");
+    const noAvatarImage = this.props.fallback || require("ASSETS/images/no-avatar.png");
     if (this.props.size === Size.large || this.count === 1) {
       return (
         <LargeContainer style={{ width: width, height: width }}>
@@ -236,7 +236,7 @@ export class Avatar extends React.Component<
         <LargeContainer style={{ width: width, height: width }}>
           <LargeImage
             style={{ width: width, height: width }}
-            source={require("../../../assets/images/group-avatar.png")}
+            source={require("ASSETS/images/group-avatar.png")}
           />
         </LargeContainer>
       );
@@ -244,7 +244,7 @@ export class Avatar extends React.Component<
       return (
         <AlignedContainer index={this.props.index}>
           <AlignedImage
-            source={require("../../../assets/images/group-avatar.png")}
+            source={require("ASSETS/images/group-avatar.png")}
           />
         </AlignedContainer>
       );
@@ -253,7 +253,7 @@ export class Avatar extends React.Component<
         <VLContainer>
           <VeryLargeImage
             decorate={this.decorate}
-            source={require("../../../assets/images/group-avatar.png")}
+            source={require("ASSETS/images/group-avatar.png")}
           />
         </VLContainer>
       );
@@ -262,7 +262,7 @@ export class Avatar extends React.Component<
         <SmallContainer count={this.props.count || 1} index={this.props.index}>
           <SmallImage
             count={this.props.count || 1}
-            source={require("../../../assets/images/group-avatar.png")}
+            source={require("ASSETS/images/group-avatar.png")}
           />
         </SmallContainer>
       );
@@ -292,7 +292,7 @@ export class Avatar extends React.Component<
     // but react native image should use header cache control like most of browsers so we may not need it
     // see more at: https://blog.rangle.io/image-caching-in-react-native/
     const sharedProps: Partial<ImageProps> = {
-      defaultSource: this.props.fallback || require("../../../assets/images/no-avatar.png"),
+      defaultSource: this.props.fallback || require("ASSETS/images/no-avatar.png"),
 
       onError: () => {
         this.setState({ status: "failed" });
@@ -305,13 +305,13 @@ export class Avatar extends React.Component<
       }
     };
     const source = !this.userId && this.props.sourceOrId ? this.props.sourceOrId as ImageURISource : {
-      uri: `${Conf.currentPlatform.url}/userbook/avatar/${
+      uri: `${DEPRECATED_getCurrentPlatform()!.url}/userbook/avatar/${
         typeof this.userId === "string" ? this.userId : this.userId!.id
         }?thumbnail=${this.props.size === Size.verylarge ? "150x150" : "100x100"}`
     }
     //in case of success,initial,loading status...
     if (this.props.size === Size.large || this.count === 1) {
-      if (!Conf.currentPlatform) throw new Error("must specify a platform");
+      if (!DEPRECATED_getCurrentPlatform()) throw new Error("must specify a platform");
       return (
         <LargeContainer style={{ width, height: width }}>
           <LargeImage
@@ -322,7 +322,7 @@ export class Avatar extends React.Component<
         </LargeContainer>
       );
     } else if (this.props.size === Size.aligned) {
-      if (!Conf.currentPlatform) throw new Error("must specify a platform");
+      if (!DEPRECATED_getCurrentPlatform()) throw new Error("must specify a platform");
       return (
         <AlignedContainer index={this.props.index}>
           <AlignedImage
@@ -332,7 +332,7 @@ export class Avatar extends React.Component<
         </AlignedContainer>
       );
     } else if (this.props.size === Size.verylarge) {
-      if (!Conf.currentPlatform) throw new Error("must specify a platform");
+      if (!DEPRECATED_getCurrentPlatform()) throw new Error("must specify a platform");
       return (
         <VLContainer>
           <VeryLargeImage
@@ -343,7 +343,7 @@ export class Avatar extends React.Component<
         </VLContainer>
       );
     } else {
-      if (!Conf.currentPlatform) throw new Error("must specify a platform");
+      if (!DEPRECATED_getCurrentPlatform()) throw new Error("must specify a platform");
       return (
         <SmallContainer count={this.props.count || 1} index={this.props.index}>
           <SmallImage

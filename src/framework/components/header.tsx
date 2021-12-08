@@ -8,8 +8,8 @@ import * as React from "react";
 import { Platform, SafeAreaView, TouchableOpacity, View, ViewProps, ViewStyle } from "react-native";
 import { hasNotch } from "react-native-device-info";
 
-import theme from "../util/theme";
 import { UI_SIZES } from "./constants";
+import theme from "~/app/theme";
 import { Icon } from "./icon";
 import { FontWeightIOS, rem, TextInverse } from "./text";
 

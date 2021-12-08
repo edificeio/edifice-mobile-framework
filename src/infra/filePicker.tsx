@@ -1,15 +1,6 @@
-import * as React from 'react';
+import getPath from '@flyerhq/react-native-android-uri-path';
 import I18n from 'i18n-js';
-import {
-  CameraOptions,
-  ImageLibraryOptions,
-  ImagePickerResponse,
-  launchCamera,
-  launchImageLibrary,
-} from 'react-native-image-picker';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { ModalBox, ModalContent, ModalContentBlock } from '../ui/Modal';
-import { ButtonTextIcon } from '../ui';
+import * as React from 'react';
 import { GestureResponderEvent, Platform, TouchableOpacityProps } from 'react-native';
 import DocumentPicker, {
   DocumentPickerOptions,
@@ -17,12 +8,15 @@ import DocumentPicker, {
   DocumentType,
   PlatformTypes,
 } from 'react-native-document-picker';
-import getPath from '@flyerhq/react-native-android-uri-path';
-import { assertPermissions } from '../framework/util/permissions';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Asset, CameraOptions, ImageLibraryOptions } from 'react-native-image-picker';
 
-export type ImagePicked = Required<
-  Pick<ImagePickerResponse, 'uri' | 'type' | 'fileName' | 'fileSize' | 'base64' | 'width' | 'height'>
->;
+import { LocalFile } from '~/framework/util/fileHandler';
+import { assertPermissions } from '~/framework/util/permissions';
+import { ButtonTextIcon } from '~/ui';
+import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
+
+export type ImagePicked = Required<Pick<Asset, 'uri' | 'type' | 'fileName' | 'fileSize' | 'base64' | 'width' | 'height'>>;
 export type DocumentPicked = Required<Pick<DocumentPickerResponse, 'uri' | 'type'>> & {
   fileName: string;
   fileSize: number;
@@ -32,6 +26,7 @@ export class FilePicker extends React.PureComponent<
   {
     callback: (document: ImagePicked | DocumentPicked, sourceType?: string) => void;
     options?: Partial<ImageLibraryOptions & CameraOptions & DocumentPickerOptions<keyof PlatformTypes>>;
+    multiple?: boolean;
   } & TouchableOpacityProps,
   {
     showModal: boolean;
@@ -40,29 +35,38 @@ export class FilePicker extends React.PureComponent<
   state = { showModal: false };
 
   render() {
-    const { callback, options, ...props } = this.props;
+    const { callback, options, multiple, ...props } = this.props;
 
-    const imageCallback = (image: ImagePickerResponse, sourceType: string) => {
-      // console.log("image", image);
-      !image.didCancel &&
-        !image.errorCode &&
-        !image.errorMessage &&
-        image.assets &&
-        image.assets.length > 0 &&
-        image.assets[0].uri &&
-        callback(image.assets[0] as ImagePicked, sourceType);
-      this.setState({ showModal: false });
+    const imageCallback = (images: LocalFile[], sourceType: string) => {
+      try {
+        for (const img of images) {
+          const imgFormatted = {
+            ...img.nativeInfo,
+            ...img,
+          };
+          callback(imgFormatted as ImagePicked);
+        }
+      } catch (error) {
+        throw error;
+      } finally {
+        this.setState({ showModal: false });
+      }
     };
 
-    const documentCallback = async (file: DocumentPickerResponse, sourceType: string) => {
-      !file.copyError && file.uri;
-      file.uri = Platform.select({
-        android: getPath(file.uri),
-        default: decodeURI(file.uri.indexOf('file://') > -1 ? file.uri.split('file://')[1] : file.uri),
-      });
-      const { name, size, ...fileResolved } = file;
-      callback({ ...fileResolved, fileName: file.name, fileSize: file.size }, sourceType);
-      this.setState({ showModal: false });
+    const documentCallback = async (files: DocumentPickerResponse[], sourceType: string) => {
+      try {
+        for (const file of files) {
+          file.uri = Platform.select({
+            android: getPath(file.uri),
+            default: decodeURI(file.uri.indexOf('file://') > -1 ? file.uri.split('file://')[1] : file.uri),
+          });
+          callback({ fileName: file.name, fileSize: file.size!, uri: file.uri, type: file.type }, sourceType);
+        }
+      } catch (error) {
+        throw error;
+      } finally {
+        this.setState({ showModal: false });
+      }
     };
 
     const menuActions = [
@@ -70,39 +74,24 @@ export class FilePicker extends React.PureComponent<
         id: 'camera',
         title: I18n.t('common-photoPicker-take'),
         action: async (sourceType: string) => {
-          // console.log("menu select camera");
-          await assertPermissions("camera");
-          launchCamera(
-            {
-              ...options,
-              mediaType: 'photo',
-            },
-            file => imageCallback(file, sourceType),
-          );
+          LocalFile.pick({ source: 'camera' }).then(lf => imageCallback(lf, sourceType));
         },
       },
       {
         id: 'gallery',
         title: I18n.t('common-photoPicker-pick'),
         action: async (sourceType: string) => {
-          await assertPermissions("galery.read");
-          launchImageLibrary(
-            {
-              ...this.props.options,
-              mediaType: 'photo',
-            },
-            file => imageCallback(file, sourceType),
-          );
+          LocalFile.pick({ source: 'galery', multiple }).then(lf => imageCallback(lf, sourceType));
         },
       },
       {
         id: 'document',
         title: I18n.t('common-picker-document'),
         action: async (sourceType: string) => {
-          await assertPermissions("documents.read");
+          await assertPermissions('documents.read');
           DocumentPicker.pick({
             type: DocumentPicker.types.allFiles as
-              | Array<PlatformTypes[keyof PlatformTypes][keyof PlatformTypes[keyof PlatformTypes]]>
+              | PlatformTypes[keyof PlatformTypes][keyof PlatformTypes[keyof PlatformTypes]][]
               | DocumentType[keyof PlatformTypes],
             ...options,
           }).then(file => documentCallback(file, sourceType));
@@ -138,7 +127,7 @@ export class FilePicker extends React.PureComponent<
         </ModalBox>
         <TouchableOpacity
           {...props}
-          disallowInterruption={true}
+          disallowInterruption
           onPress={(event: GestureResponderEvent) => {
             this.setState({ showModal: true });
             props.onPress && props.onPress(event);

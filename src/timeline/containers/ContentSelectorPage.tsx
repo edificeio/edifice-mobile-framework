@@ -19,13 +19,13 @@ import { ThunkDispatch } from "redux-thunk";
 import { View, RefreshControl, Linking } from "react-native";
 import { mainNavNavigate } from "../../navigation/helpers/navHelper";
 
-import Conf from "../../../ode-framework-conf";
 import { getAuthHeader } from "../../infra/oauth";
 import { fetchPublishableBlogsAction } from "../actions/publish";
 import { Loading } from "../../ui/Loading";
 import { EmptyScreen } from "../../ui/EmptyScreen";
 import withViewTracking from "../../framework/util/tracker/withViewTracking";
 import { FontStyle } from "../../framework/components/text";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 
 export interface IContentSelectorPageDataProps {
   blogs: IBlogList;
@@ -89,14 +89,14 @@ export class ContentSelectorPage_Unconnected extends React.PureComponent<IConten
           this.props.isPristine ?
             <Loading /> :
             <EmptyScreen
-              imageSrc={require("../../../assets/images/empty-screen/blog.png")}
+              imageSrc={require("ASSETS/images/empty-screen/blog.png")}
               imgWidth={265.98}
               imgHeight={279.97}
               text={I18n.t("blog-emptyScreenText")}
               title={I18n.t("blog-emptyScreenTitle")}
               buttonText={I18n.t("blog-emptyScreenButton")}
               buttonAction={() => {
-                const url = `${(Conf.currentPlatform as any).url}/blog`;
+                const url = `${DEPRECATED_getCurrentPlatform()!.url}/blog`;
                 Linking.canOpenURL(url).then(supported => {
                   if (supported) {
                     Linking.openURL(url);
@@ -117,10 +117,10 @@ export class ContentSelectorPage_Unconnected extends React.PureComponent<IConten
       <LeftPanel onPress={() => this.props.onContentSelected(item, postType)}>
         <GridAvatars 
           users={[item.thumbnail
-            ? {headers: getAuthHeader(), uri: Conf.currentPlatform.url + item.thumbnail}
-            : require("../../../assets/images/resource-avatar.png")
+            ? { headers: getAuthHeader(), uri: DEPRECATED_getCurrentPlatform()!.url + item.thumbnail}
+            : require("ASSETS/images/resource-avatar.png")
           ]}
-          fallback={require("../../../assets/images/resource-avatar.png")}
+          fallback={require("ASSETS/images/resource-avatar.png")}
         />
       </LeftPanel>
       <CustomTouchableOpacity style={{ flexDirection: 'row', flex: 1 }} onPress={() => this.props.onContentSelected(item, postType)}>

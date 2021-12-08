@@ -63,5 +63,12 @@
     /* Custom options */
     "noErrorTruncation": true,
     "skipLibCheck": true,
+
+    /* Module Resolver*/
+    "baseUrl": ".",
+    "paths": {
+      "~/*": [ "./src/*" ],
+      "ASSETS/*": ["./assets/*"],
+    },
   }
 }

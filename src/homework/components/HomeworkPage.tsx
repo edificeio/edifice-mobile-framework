@@ -47,9 +47,9 @@ import { IUserSession } from "../../framework/util/session";
 import today from "../../utils/today";
 import { NavigationScreenProp } from "react-navigation";
 import { CommonStyles } from "../../styles/common/styles";
-import Conf from "../../../ode-framework-conf";
 import { Trackers } from "../../framework/util/tracker";
 import { getHomeworkWorkflowInformation } from "../rights";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -240,7 +240,7 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
           ListFooterComponent={noFutureHomeworkHiddenPast ? null : <View style={{height: 15}}/>}
           ListEmptyComponent={noFutureHomeworkHiddenPast
             ? <EmptyScreen
-                imageSrc={require("../../../assets/images/empty-screen/homework.png")}
+                imageSrc={require("ASSETS/images/empty-screen/homework.png")}
                 imgWidth={265.98}
                 imgHeight={279.97}
                 text={I18n.t(`homework-${hasNoDiaries ? "diaries" : "tasks"}-emptyScreenText`)}
@@ -248,11 +248,11 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, {}> {
                 buttonText={hasNoDiaries && hasCreateHomeworkResourceRight ? I18n.t("homework-createDiary") : undefined}
                 buttonAction={() => {
                   //TODO: create generic function inside oauth (use in myapps, etc.)
-                  if (!Conf.currentPlatform) {
+                  if (!DEPRECATED_getCurrentPlatform()) {
                     console.warn("Must have a platform selected to redirect the user");
                     return null;
                   }
-                  const url = `${(Conf.currentPlatform as any).url}/homeworks`;
+                  const url = `${DEPRECATED_getCurrentPlatform()!.url}/homeworks`;
                   Linking.canOpenURL(url).then(supported => {
                     if (supported) {
                       Linking.openURL(url);

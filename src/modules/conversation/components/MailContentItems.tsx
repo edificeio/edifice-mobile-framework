@@ -9,7 +9,7 @@ import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
 import { getFileIcon } from "../utils/fileIcon";
 import { getUserColor, getProfileColor } from "../utils/userColor";
 import { displayPastDate } from "../../../framework/util/date";
-import theme from "../../../framework/util/theme";
+import theme from "../../../app/theme";
 import { IDistantFileWithId, SyncedFileWithId } from "../../../framework/util/fileHandler";
 import { ThunkDispatch } from "redux-thunk";
 import { downloadFileAction } from "../../../framework/util/fileHandler/actions";

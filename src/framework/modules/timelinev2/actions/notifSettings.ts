@@ -1,15 +1,17 @@
 import { ThunkDispatch } from "redux-thunk";
-import { getUserSession } from "../../../util/session";
+import I18n from "i18n-js";
+
+import { getUserSession } from "~/framework/util/session";
+import { notifierShowAction } from "~/framework/util/notifier/actions";
+import { getItemJson, setItemJson, removeItemJson } from "~/framework/util/storage";
+
 import moduleConfig from "../moduleConfig";
 import { ITimeline_State } from "../reducer";
 import * as notifDefinitionsStateHandler from "../reducer/notifDefinitions";
 import { loadNotificationsDefinitionsAction } from "./notifDefinitions";
 import { actions as notifFilterSettingsActions, INotifFilterSettings } from "../reducer/notifSettings/notifFilterSettings"
 import { actions as pushNotifsSettingsActions, IPushNotifsSettings } from "../reducer/notifSettings/pushNotifsSettings"
-import { getItemJson, setItemJson, removeItemJson } from "../../../util/storage";
 import { pushNotifsService } from "../service";
-import { notifierShowAction } from "../../../util/notifier/actions";
-import I18n from "i18n-js";
 
 export const loadNotificationFiltersSettingsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {

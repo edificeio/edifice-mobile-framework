@@ -3,7 +3,6 @@ import * as React from "react";
 import { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
 
-import Conf from "../../../../ode-framework-conf";
 import connectorConfig from "../moduleConfig";
 import userConfig from "../../../user/config";
 import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
@@ -16,7 +15,8 @@ import { Back } from "../../../ui/headers/Back";
 import ConnectorView from "../components/ConnectorView";
 import { openConnector } from "../actions/connector";
 import { bindActionCreators } from "redux";
-import withViewTracking from "../../../framework/util/tracker/withViewTracking";
+import withViewTracking from "~/framework/util/tracker/withViewTracking";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 
 interface IApplicationBackend {
   name: string;
@@ -96,7 +96,7 @@ const findLvsConnector: (apps: Array<IApplicationBackend>) => string = apps => {
 };
 
 const getConnectorAddress: (appAddress: string) => string = (appAddress) =>
-  `${Conf.currentPlatform.url}${appAddress}&noRedirect=true`;
+  `${DEPRECATED_getCurrentPlatform()!.url}${appAddress}&noRedirect=true`;
 
 const mapStateToProps: (state: any) => IConnectorContainerDataProps = state => {
   const connectorState = connectorConfig.getState(state);

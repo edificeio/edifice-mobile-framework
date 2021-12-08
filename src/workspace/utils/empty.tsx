@@ -8,7 +8,7 @@ export const getEmptyScreen = (parentId: string): React.ReactElement => {
     case FilterId.owner: {
       return (
         <EmptyScreen
-          imageSrc={require("../../../assets/images/empty-screen/empty-workspace.png")}
+          imageSrc={require("ASSETS/images/empty-screen/empty-workspace.png")}
           imgWidth={400}
           imgHeight={316}
           text={I18n.t("owner-emptyScreenText")}
@@ -20,7 +20,7 @@ export const getEmptyScreen = (parentId: string): React.ReactElement => {
     case FilterId.protected: {
       return (
         <EmptyScreen
-          imageSrc={require("../../../assets/images/empty-screen/empty-workspace.png")}
+          imageSrc={require("ASSETS/images/empty-screen/empty-workspace.png")}
           imgWidth={400}
           imgHeight={316}
           text={I18n.t("protected-emptyScreenText")}
@@ -32,7 +32,7 @@ export const getEmptyScreen = (parentId: string): React.ReactElement => {
     case FilterId.shared: {
       return (
         <EmptyScreen
-          imageSrc={require("../../../assets/images/empty-screen/empty-workspace.png")}
+          imageSrc={require("ASSETS/images/empty-screen/empty-workspace.png")}
           imgWidth={400}
           imgHeight={316}
           text={I18n.t("share-emptyScreenText")}
@@ -44,7 +44,7 @@ export const getEmptyScreen = (parentId: string): React.ReactElement => {
     case FilterId.trash: {
       return (
         <EmptyScreen
-          imageSrc={require("../../../assets/images/empty-screen/empty-trash.png")}
+          imageSrc={require("ASSETS/images/empty-screen/empty-trash.png")}
           imgWidth={400}
           imgHeight={507}
           text={I18n.t("trash-emptyScreenText")}
@@ -56,7 +56,7 @@ export const getEmptyScreen = (parentId: string): React.ReactElement => {
     default: {
       return (
         <EmptyScreen
-          imageSrc={require("../../../assets/images/empty-screen/empty-search.png")}
+          imageSrc={require("ASSETS/images/empty-screen/empty-search.png")}
           imgWidth={400}
           imgHeight={393}
           text={I18n.t("subFolder-emptyScreenText")}

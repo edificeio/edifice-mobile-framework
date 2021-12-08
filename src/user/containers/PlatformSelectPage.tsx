@@ -10,11 +10,11 @@ import TouchableOpacity from "../../ui/CustomTouchableOpacity";
 import { H1, Light, LightP } from "../../ui/Typography";
 
 // Type definitions
-import Conf from "../../../ode-framework-conf";
 import { CommonStyles } from "../../styles/common/styles";
 import { selectPlatform } from "../actions/platform";
 import { IUserAuthState } from "../reducers/auth";
-import withViewTracking from "../../framework/util/tracker/withViewTracking";
+import withViewTracking from "~/framework/util/tracker/withViewTracking";
+import appConf from "~/framework/util/appConf";
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -79,17 +79,17 @@ export class PlatformSelectPage extends React.PureComponent<
             {I18n.t("select-platform")}
           </LightP>
           <View style={{ flexDirection: "row", flexWrap: "wrap", padding: 12 }}>
-            {Object.entries(Conf.platforms).map(
-              ([platformId, platformConf]) => (
+            {appConf.platforms.filter(pf => !pf.hidden).map(
+              (pf) => (
                 <View
-                  key={platformId}
+                  key={pf.name}
                   style={{
                     flexBasis: "50%",
                     padding: 12
                   }}
                 >
                   <PlatformButton
-                    onPress={e => this.handleSelectPlatform(platformId)}
+                    onPress={e => this.handleSelectPlatform(pf.name)}
                     style={{
                       alignItems: "center"
                     }}
@@ -97,9 +97,9 @@ export class PlatformSelectPage extends React.PureComponent<
                     <Image
                       resizeMode="contain"
                       style={{ height: 40, width: "100%", marginBottom: 20 }}
-                      source={platformConf.logo}
+                      source={pf.logo}
                     />
-                    <Light>{platformConf.displayName}</Light>
+                    <Light>{pf.displayName}</Light>
                   </PlatformButton>
                 </View>
               )

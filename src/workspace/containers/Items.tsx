@@ -1,23 +1,23 @@
-import * as React from "react";
-import { FlatList, StyleSheet, View } from "react-native";
-import { NavigationEventSubscription } from "react-navigation";
-import { connect } from "react-redux";
+import * as React from 'react';
+import { FlatList, StyleSheet, View } from 'react-native';
+import { NavigationEventSubscription } from 'react-navigation';
+import { connect } from 'react-redux';
 
-import { layoutSize } from "../../styles/common/layoutSize";
-import { CommonStyles } from "../../styles/common/styles";
-import { IDispatchProps } from "../../types";
-import { ISelectedProps } from "../../types/ievents";
-import { PageContainer } from "../../ui/ContainerContent";
-import { removeAccents } from "../../framework/util/string";
-import { listAction } from "../actions/list";
-import { Item } from "../components";
-import { FilterId, IItem, IItemsProps, IState } from "../types";
-import { getEmptyScreen } from "../utils/empty";
-import withMenuWrapper from "../utils/withMenuWrapper";
-import withNavigationWrapper from "../utils/withNavigationWrapper";
-import withUploadErrorWrapper from "../utils/withUploadErrorWrapper";
-import withUploadWrapper from "../utils/withUploadWrapper";
-import Notifier from "../../infra/notifier/container";
+import { layoutSize } from '../../styles/common/layoutSize';
+import { CommonStyles } from '../../styles/common/styles';
+import { IDispatchProps } from '../../types';
+import { ISelectedProps } from '../../types/ievents';
+import { PageContainer } from '../../ui/ContainerContent';
+import { removeAccents } from '../../framework/util/string';
+import { listAction } from '../actions/list';
+import { Item } from '../components';
+import { FilterId, IItem, IItemsProps, IState } from '../types';
+import { getEmptyScreen } from '../utils/empty';
+import withMenuWrapper from '../utils/withMenuWrapper';
+import withNavigationWrapper from '../utils/withNavigationWrapper';
+import withUploadErrorWrapper from '../utils/withUploadErrorWrapper';
+import withUploadWrapper from '../utils/withUploadWrapper';
+import Notifier from '../../infra/notifier/container';
 
 const styles = StyleSheet.create({
   separator: {
@@ -31,7 +31,7 @@ export class Items extends React.Component<IDispatchProps & IItemsProps & ISelec
   focusListener!: NavigationEventSubscription;
 
   public UNSAFE_componentWillMount() {
-    this.focusListener = this.props.navigation.addListener("willFocus", () => {
+    this.focusListener = this.props.navigation.addListener('willFocus', () => {
       this.makeRequest();
     });
   }
@@ -45,9 +45,9 @@ export class Items extends React.Component<IDispatchProps & IItemsProps & ISelec
 
     dispatch(
       listAction({
-        filter: this.props.navigation.getParam("filter"),
-        parentId: this.props.navigation.getParam("parentId"),
-      })
+        filter: this.props.navigation.getParam('filter'),
+        parentId: this.props.navigation.getParam('parentId'),
+      }),
     );
   }
 
@@ -71,19 +71,21 @@ export class Items extends React.Component<IDispatchProps & IItemsProps & ISelec
 
   public render(): React.ReactNode {
     const { items, isFetching, selectedItems } = this.props;
-    const parentId = this.props.navigation.getParam("parentId") || null;
+    const parentId = this.props.navigation.getParam('parentId') || null;
     const values = Object.values(items);
 
     if (values.length === 0) {
-      if (isFetching === null) return <View style={{ backgroundColor: "transparent" }} />;
+      if (isFetching === null) return <View style={{ backgroundColor: 'transparent' }} />;
       else if (!isFetching) return getEmptyScreen(parentId);
     }
 
     const itemsArray = parentId === FilterId.root ? values : values.sort(this.sortItems);
 
+    const multiSelect = Object.keys(selectedItems).length > 0;
+
     return (
       <PageContainer>
-        <Notifier id="workspace"/>
+        <Notifier id="workspace" />
         <FlatList
           contentContainerStyle={{ backgroundColor: CommonStyles.lightGrey, flexGrow: 1 }}
           data={itemsArray}
@@ -94,7 +96,7 @@ export class Items extends React.Component<IDispatchProps & IItemsProps & ISelec
             this.makeRequest();
           }}
           renderItem={({ item }) => (
-            <Item item={item} onEvent={this.props.onEvent} selected={selectedItems[item.id]} simple={false} />
+            <Item item={item} onEvent={this.props.onEvent} selected={selectedItems[item.id]} multiSelect={multiSelect} />
           )}
         />
       </PageContainer>
@@ -103,7 +105,7 @@ export class Items extends React.Component<IDispatchProps & IItemsProps & ISelec
 }
 
 const getProps = (stateItems: IState, props: any) => {
-  const parentId = props.navigation.getParam("parentId");
+  const parentId = props.navigation.getParam('parentId');
   const parentIdItems = stateItems.data[parentId] || {
     isFetching: null,
     data: {},
@@ -119,5 +121,5 @@ const mapStateToProps = (state: any, props: any) => {
 };
 
 export default withMenuWrapper(
-  withNavigationWrapper(withUploadWrapper(withUploadErrorWrapper(connect(mapStateToProps, {})(Items))))
+  withNavigationWrapper(withUploadWrapper(withUploadErrorWrapper(connect(mapStateToProps, {})(Items)))),
 );

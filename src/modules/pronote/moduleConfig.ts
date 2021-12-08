@@ -8,4 +8,5 @@ export default createNavigableModuleConfig<"pronote", IConnectorState>({
   entcoreScope: ['pronote'],
   iconName: "pronote",
   iconColor: "#763294",
+  registerAs: "myAppsModule"
 });

@@ -1,8 +1,7 @@
 import querystring from "querystring";
-import { ToastAndroid } from "react-native";
 import { IAsyncActionTypes } from "../redux/async";
 import { fetchJSONWithCache, signedFetch } from "../fetchWithCache";
-import Conf from "../../../ode-framework-conf";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 
 export type IAdapterType = (receivedData: any, parentId?: string) => any;
 
@@ -26,7 +25,7 @@ export function asyncActionFactory(
     try {
       if (options.method != "get") {
         const formatedBody = options.formData ? querystring.stringify(body) : JSON.stringify(body);
-        const response = await signedFetch(`${Conf.currentPlatform.url}${type}`, {
+        const response = await signedFetch(`${DEPRECATED_getCurrentPlatform()!.url}${type}`, {
           body: formatedBody,
           headers: {
             Accept: "application/json",

@@ -16,7 +16,7 @@ import {
   ANIMATION_CONFIGURATIONS_SIZE,
   UI_SIZES
 } from "../../../framework/components/constants";
-import theme from "../../../framework/util/theme";
+import theme from "../../../app/theme";
 import { Icon, Loading } from "../../../ui";
 import { TextSemiBold, TextBold } from "../../../ui/Typography";
 import CreateFolderModal from "../containers/CreateFolderModal";
@@ -107,7 +107,7 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
       // Note: setTimeout is used to smooth the animation
       this.setState({ showList: !showList });
       callback ? setTimeout(() => callback(), 0) : this.setState({ isTogglingDrawer: false });
-      showList && this.scrollViewRef && this.scrollViewRef.scrollTo({ y: 0, animated: false });
+      showList && this.scrollViewRef && this.scrollViewRef !== null && this.scrollViewRef.scrollTo({ y: 0, animated: false });
     });
   };
 

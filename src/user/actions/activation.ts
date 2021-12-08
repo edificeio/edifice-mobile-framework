@@ -4,14 +4,14 @@
  */
 import I18n from "i18n-js";
 import { Action } from "redux";
-import Conf from "../../../ode-framework-conf";
 import { asyncActionTypes } from "../../infra/redux/async";
 import { navigate } from "../../navigation/helpers/navHelper";
 import userConfig from "../config";
 import { actionTypeLoginCancel } from "./actionTypes/login";
 import { loginAction } from './login';
 import { IActivationContext } from "../../utils/SubmitState";
-import { Trackers } from "../../framework/util/tracker";
+import { Trackers } from "~/framework/util/tracker";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 
 // TYPES ------------------------------------------------------------------------------------------------
 
@@ -105,7 +105,7 @@ export function initActivationAccount(
     try {
       // === 1 - Fetch activation context
       dispatch(activationContextRequested(args));
-      const res = await fetch(`${Conf.currentPlatform.url}/auth/context`);
+      const res = await fetch(`${DEPRECATED_getCurrentPlatform()!.url}/auth/context`);
       // === 2 - Navigate if needed
       if (redirect) {
         console.log("[User][Activation] redirecting to Activation Page...")
@@ -132,11 +132,11 @@ export function activationAccount(model: IActivationModel) {
   return async (dispatch, getState) => {
     try {
       // === 0 auto select the default theme
-      const theme = Conf.currentPlatform.theme;
+      const theme = DEPRECATED_getCurrentPlatform()!.webTheme;
       if (!theme) {
         console.warn(
           "[User][Activation] activationAccount -> theme was not found:",
-          Conf.currentPlatform.themes
+          DEPRECATED_getCurrentPlatform()!.webTheme
         );
       }
       // console.log("[User][Activation] setting default theme to", theme)
@@ -159,7 +159,7 @@ export function activationAccount(model: IActivationModel) {
       // === 2 - Send activation information
       // console.log("[User][Activation] submitting activation", formdata)
       dispatch(activationSubmitRequested(model));
-      const res = await fetch(`${Conf.currentPlatform.url}/auth/activation`, {
+      const res = await fetch(`${DEPRECATED_getCurrentPlatform()!.url}/auth/activation`, {
         body: formdata,
         headers: {
           Accept: "application/json",

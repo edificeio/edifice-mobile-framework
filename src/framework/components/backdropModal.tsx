@@ -1,8 +1,8 @@
 import * as React from "react";
-import { TouchableWithoutFeedback, View } from "react-native";
+import { ColorValue, StyleProp, TouchableWithoutFeedback, View, ViewStyle } from "react-native";
 import Modal from "react-native-modal";
 
-import theme from "../util/theme";
+import theme from "~/app/theme";
 import { TextBold } from "./text";
 
 export interface IBackdropModalProps {
@@ -10,8 +10,8 @@ export interface IBackdropModalProps {
   contentStyle: StyleProp<ViewStyle>;
   handleClose: () => void;
   handleOpen: () => void;
-  headerColor?: colorValue;
-  indicatorColor?: colorValue;
+  headerColor?: ColorValue;
+  indicatorColor?: ColorValue;
   propagateSwipe: boolean;
   title?: string;
   visible: boolean;

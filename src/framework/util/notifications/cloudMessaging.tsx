@@ -11,7 +11,7 @@ import SplashScreen from "react-native-splash-screen";
 
 import { defaultNotificationActionStack, handleNotificationAction } from "./routing";
 import { IEntcoreTimelineNotification, notificationAdapter } from '.';
-import { startLoadNotificationsAction } from '../../modules/timelinev2/actions';
+import { startLoadNotificationsAction } from '~/framework/modules/timelinev2/actions';
 
 export async function requestUserPermission() {
 	const authorizationStatus = await messaging().requestPermission();

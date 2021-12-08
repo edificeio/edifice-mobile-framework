@@ -53,6 +53,7 @@ export default class FunctionalModuleConfig implements IFunctionalConfig {
     this.iconColor = opts.iconColor || CommonStyles.actionColor;
     this.notifHandlerFactory = opts.notifHandlerFactory;
     this.hasRight = opts.hasRight || (apps => apps.some(app => app.name === this.apiName));
+    this.blacklistFolders = opts.blacklistFolders; // Some hack here. This type of config will be gone soon
   }
 
   public getLocalState(globalState: any) {

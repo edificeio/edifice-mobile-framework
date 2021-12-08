@@ -1,8 +1,10 @@
 
 import { ThunkDispatch } from "redux-thunk";
-import type { LocalFile } from "../../../util/fileHandler";
-import { getUserSession } from "../../../util/session";
-import type { IUploadCallbaks } from "../../../util/fileHandler/service";
+
+import type { LocalFile } from "~/framework/util/fileHandler";
+import { getUserSession } from "~/framework/util/session";
+import type { IUploadCallbaks } from "~/framework/util/fileHandler/service";
+
 import workspaceService, { IWorkspaceUploadParams } from "../service";
 
 export default {

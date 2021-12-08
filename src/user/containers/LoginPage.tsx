@@ -26,7 +26,6 @@ import { ErrorMessage } from "../../ui/Typography";
 // Type definitions
 import { IUserAuthState } from "../reducers/auth";
 
-import Conf from "../../../ode-framework-conf";
 import { navigate } from "../../navigation/helpers/navHelper";
 import { CommonStyles } from "../../styles/common/styles";
 import BottomSwitcher from "../../ui/BottomSwitcher";
@@ -41,7 +40,9 @@ import VersionModal from "../components/VersionModal";
 import { getAuthState } from "../selectors";
 import withViewTracking from "../../framework/util/tracker/withViewTracking";
 import { Toggle } from "../../ui/forms/Toggle";
-import theme from "../../framework/util/theme";
+import theme from "../../app/theme";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
+import appConf from "~/framework/util/appConf";
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -158,8 +159,8 @@ export class LoginPage extends React.Component<
 
   protected renderLogo = () => {
     const logoStyle = { height: 50, width: 200 };
-    if ((Conf.currentPlatform as any).logoStyle) {
-      Object.assign(logoStyle, (Conf.currentPlatform as any).logoStyle!);
+    if (DEPRECATED_getCurrentPlatform()!.logoStyle) {
+      Object.assign(logoStyle, DEPRECATED_getCurrentPlatform()!.logoStyle!);
     }
     return <View
       style={{ flexGrow: 2, alignItems: "center", justifyContent: "center" }}
@@ -167,7 +168,7 @@ export class LoginPage extends React.Component<
       <Image
         resizeMode="contain"
         style={logoStyle}
-        source={(Conf.currentPlatform as any).logo}
+        source={DEPRECATED_getCurrentPlatform()!.logo}
       />
     </View>;
   };
@@ -176,7 +177,7 @@ export class LoginPage extends React.Component<
     const { loggingIn, loggedIn, error } = this.props.auth;
     const { login, password, typing, rememberMe } = this.state;
     const FederationTextComponent = error ? TextBold : Text;
-    const isSommeNumerique = (Conf.currentPlatform as any).displayName === "Somme numérique";
+    const isSommeNumerique = DEPRECATED_getCurrentPlatform()!.displayName === "Somme numérique"; // WTF ??!! 🤪🤪🤪
 
     return (
       <View style={{ flex: 1 }}>
@@ -234,7 +235,7 @@ export class LoginPage extends React.Component<
               />
             </View>
             <ErrorMessage>
-              {this.state.typing ? "" : error && I18n.t('auth-error-' + error, { version: DeviceInfo.getVersion(), errorcode: error, currentplatform: (Conf.currentPlatform as any).url })}
+              {this.state.typing ? "" : error && I18n.t('auth-error-' + error, { version: DeviceInfo.getVersion(), errorcode: error, currentplatform: DEPRECATED_getCurrentPlatform()!.url })}
             </ErrorMessage>
 
             <View
@@ -280,7 +281,7 @@ export class LoginPage extends React.Component<
                 >
                   {I18n.t("forgot-id")}
                 </Text>
-                {(Conf.currentPlatform as any).federation && <FederationTextComponent
+                {DEPRECATED_getCurrentPlatform()!.federation && <FederationTextComponent
                   style={{
                     textDecorationLine: "underline",
                     marginTop: 48,
@@ -297,9 +298,9 @@ export class LoginPage extends React.Component<
             </View>
           </FormContainer>
         </ScrollView>
-        {Conf.platforms && Object.keys(Conf.platforms).length > 1 ?
+        {appConf.platforms.length > 1 ?
         <BottomSwitcher onPress={() => this.handleBackToPlatformSelector()}>
-          {(Conf.currentPlatform as any).displayName}{" "}
+            {DEPRECATED_getCurrentPlatform()!.displayName}{" "}
         </BottomSwitcher> : null}
       </View>
     );
@@ -326,7 +327,7 @@ export class LoginPage extends React.Component<
   }
 
   protected handleGoToWeb() {
-    Linking.openURL((Conf.currentPlatform as any).url);
+    Linking.openURL(DEPRECATED_getCurrentPlatform()!.url);
   }
 
   protected handleBackToPlatformSelector() {

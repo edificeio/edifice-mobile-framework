@@ -1,5 +1,5 @@
 import { ColorValue } from "react-native";
-import theme from "../../util/theme";
+import theme from "~/app/theme";
 
 export const APPBADGES: {
   [key: string]: { icon: string; color: ColorValue; }

@@ -291,39 +291,9 @@
   "createPost-submitAction": "Envoyer",
   "createPost-submitSuccess": "Votre billet a bien été soumis. Il sera publié une fois validé par le gestionnaire du blog.",
   "date": {
-    "abbr_day_names": [
-      "Dim",
-      "Lun",
-      "Mar",
-      "Mer",
-      "Jeu",
-      "Ven",
-      "Sam"
-    ],
-    "abbr_month_names": [
-      null,
-      "Jan",
-      "Fév",
-      "Mar",
-      "Avr",
-      "Mai",
-      "Juin",
-      "Juil",
-      "Août",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Déc"
-    ],
-    "day_names": [
-      "Dimanche",
-      "Lundi",
-      "Mardi",
-      "Mercredi",
-      "Jeudi",
-      "Vendredi",
-      "Samedi"
-    ],
+    "abbr_day_names": ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"],
+    "abbr_month_names": [null, "Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"],
+    "day_names": ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
     "month_names": [
       null,
       "Janvier",
@@ -547,6 +517,8 @@
       "TIMELINE": "Signalements",
       "TIMELINEGENERATOR": "Frise chronologique",
       "USERBOOK": "Humeurs et devises",
+      "USERBOOK_MOOD": "Humeurs",
+      "USERBOOK_MOTTO": "Devises",
       "WIKI": "Wiki",
       "WORKSPACE": "Espace documentaire"
     },

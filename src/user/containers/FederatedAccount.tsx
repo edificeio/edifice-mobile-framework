@@ -5,16 +5,20 @@ import {
   IFederatedAccountPageEventProps
 } from "../components/FederatedAccount";
 import { Linking } from "react-native";
-import Conf from "../../../ode-framework-conf";
-import withViewTracking from "../../framework/util/tracker/withViewTracking";
-import { Trackers } from "../../framework/util/tracker";
+import withViewTracking from "~/framework/util/tracker/withViewTracking";
+import { Trackers } from "~/framework/util/tracker";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 
 const mapDispatchToProps: (dispatch) => IFederatedAccountPageEventProps = dispatch => {
+  const currentPf = DEPRECATED_getCurrentPlatform();
+  const fedeUrl = typeof currentPf!.federation === 'string'
+    ? currentPf!.federation
+    : currentPf?.url + "/userbook/mon-compte#/edit-me";
   return {
     dispatch,
     onLink() {
       Trackers.trackEvent('Auth', 'GO TO', 'OTP Generation');
-      Linking.openURL(Conf.currentPlatform.federationUrl || Conf.currentPlatform.url + "/userbook/mon-compte#/edit-me");
+      return Linking.openURL(fedeUrl);
     },
   };
 };

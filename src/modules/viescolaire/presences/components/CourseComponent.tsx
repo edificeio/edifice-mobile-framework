@@ -40,7 +40,7 @@ export default ({
     style={[styles.itemContainer, { opacity: isCourseNow ? 1 : 0.4 }]}
     color="#FFB600">
     <ImageBackground
-      source={require("../../../../../assets/viesco/presences.png")}
+      source={require("ASSETS/viesco/presences.png")}
       style={styles.imageBackgroundContainer}
       imageStyle={styles.imageBackground}
       resizeMode="contain">

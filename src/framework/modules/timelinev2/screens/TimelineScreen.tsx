@@ -4,17 +4,19 @@ import { Alert, FlatList, RefreshControl, TouchableOpacity, View } from "react-n
 import { NavigationInjectedProps, NavigationFocusInjectedProps, withNavigationFocus, NavigationEvents } from "react-navigation";
 import { connect } from "react-redux";
 import { ThunkDispatch } from "redux-thunk";
+import Snow from "react-native-snow-bg";
 
-import type { IGlobalState } from "../../../../AppStore";
-import PopupMenu from "../../../../framework/components/popupMenu";
-import { EmptyScreen } from "../../../components/emptyScreen";
-import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from "../../../components/header";
-import { LoadingIndicator } from "../../../components/loading";
-import { PageView } from "../../../components/page";
-import { Text } from "../../../components/text";
-import { ITimelineNotification, IResourceUriNotification, isResourceUriNotification, IAbstractNotification, getAsResourceUriNotification } from "../../../util/notifications";
-import { defaultNotificationActionStack, handleNotificationAction, NotifHandlerThunkAction } from "../../../util/notifications/routing";
-import { getUserSession, IUserSession } from "../../../util/session";
+import type { IGlobalState } from "~/AppStore";
+import PopupMenu from "~/framework/components/popupMenu";
+import { EmptyScreen } from "~/framework/components/emptyScreen";
+import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from "~/framework/components/header";
+import { LoadingIndicator } from "~/framework/components/loading";
+import { PageView } from "~/framework/components/page";
+import { Text } from "~/framework/components/text";
+import { ITimelineNotification, IResourceUriNotification, isResourceUriNotification, IAbstractNotification } from "~/framework/util/notifications";
+import { defaultNotificationActionStack, handleNotificationAction, NotifHandlerThunkAction } from "~/framework/util/notifications/routing";
+import { getUserSession, IUserSession } from "~/framework/util/session";
+
 import { dismissFlashMessageAction, loadNotificationsPageAction, startLoadNotificationsAction } from "../actions";
 import { TimelineFlashMessage } from "../components/TimelineFlashMessage";
 import { TimelineNotification } from "../components/TimelineNotification";
@@ -23,9 +25,9 @@ import type { ITimeline_State } from "../reducer";
 import { IEntcoreFlashMessage, IFlashMessages_State } from "../reducer/flashMessages";
 import { INotifications_State } from "../reducer/notifications";
 import { getTimelineWorkflows } from "../timelineModules";
-import SwipeableList, { SwipeableList as SwipeableListHandle } from "../components/swipeableList";
+import SwipeableList, { SwipeableList as SwipeableListHandle } from "../../../components/swipeableList";
 import { Icon } from "../../../components/icon";
-import theme from "../../../util/theme";
+import theme from "../../../../app/theme";
 import { notificationsService } from "../service";
 import { getTimelineWorkflowInformation } from "../rights";
 import Toast from "react-native-tiny-toast";
@@ -54,6 +56,7 @@ export enum TimelineLoadingState {
 }
 export interface ITimelineScreenState {
   loadingState: TimelineLoadingState; // Holds the initial loading state. further page loading is handled by async.isFetching
+  isSnowing: boolean;
 };
 
 export enum ITimelineItemType {
@@ -74,7 +77,8 @@ export class TimelineScreen extends React.PureComponent<
   // DECLARATIONS =================================================================================
 
   state: ITimelineScreenState = {
-    loadingState: TimelineLoadingState.PRISTINE
+    loadingState: TimelineLoadingState.PRISTINE,
+    isSnowing: true
   }
 
   popupMenuRef = React.createRef<PopupMenu>();
@@ -85,6 +89,7 @@ export class TimelineScreen extends React.PureComponent<
 
   render() {
     const { navigation } = this.props;
+    const { isSnowing } = this.state;
     const routeName = navigation.state.routeName;
     return <>
       {this.renderHeader()}
@@ -97,6 +102,15 @@ export class TimelineScreen extends React.PureComponent<
             : this.renderList()
         }
       </PageView>
+      {isSnowing
+        ? <Snow
+            pointerEvents="none"
+            fallSpeed="medium"
+            snowflakesCount={100}
+            fullScreen
+          />
+        : null
+      }
     </>;
   }
 
@@ -122,7 +136,7 @@ export class TimelineScreen extends React.PureComponent<
     const workflows = getTimelineWorkflows(this.props.session);
     if (!workflows || !workflows.length) return null;
     return <PopupMenu iconName="new_post" options={workflows} ref={this.popupMenuRef} onPress={() => {
-      this.listRef.current?.unswipeAll();
+      this.listRef.current?.recenter();
     }} />
   }
 
@@ -188,7 +202,7 @@ export class TimelineScreen extends React.PureComponent<
             rightButtons: this.rights.notification.report ? [renderSwipeButton(
               async () => {
                 await this.doReportConfirm(item.data as ITimelineNotification);
-                this.listRef.current?.unswipeAll();
+                this.listRef.current?.recenter();
               }, 'warning', I18n.t('timeline.reportAction.button')
             )] : undefined,
             // onSwipeStart: () => { console.log("top onSwipeStart", item.data.id) },
@@ -202,7 +216,7 @@ export class TimelineScreen extends React.PureComponent<
   renderEmpty() {
     return (
       <EmptyScreen
-        imageSrc={require("../../../../../assets/images/empty-screen/timeline.png")}
+        imageSrc={require("ASSETS/images/empty-screen/timeline.png")}
         imgWidth={407}
         imgHeight={319}
         title={I18n.t("timeline.emptyScreenTitle")}
@@ -248,6 +262,7 @@ export class TimelineScreen extends React.PureComponent<
     }
     if (isFocused !== prevProps.isFocused) {
       this.popupMenuRef.current?.doReset();
+      this.setState({ isSnowing: false })
     }
   }
 
@@ -291,7 +306,7 @@ export class TimelineScreen extends React.PureComponent<
   }
 
   goToFilters() {
-    this.listRef.current?.unswipeAll();
+    this.listRef.current?.recenter();
     this.props.navigation.navigate('timeline/filters');
   }
 

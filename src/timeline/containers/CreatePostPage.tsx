@@ -168,10 +168,10 @@ export class CreatePostPage_Unconnected extends React.PureComponent<ICreatePostP
                   borderRadius: 5,
                   justifyContent: 'center',
                 }}>
-                <ImagePicker
+                <ImagePicker multiple
                   callback={image => {
                     console.log('image', image);
-                    this.setState({ images: [...images, image] });
+                    this.setState(prevState => ({ images: [...prevState.images, image] }));
                   }}>
                   <View
                     style={{

@@ -3,7 +3,7 @@
  * Build actions to be dispatched to activate a new account
  */
 import { Action } from "redux";
-import Conf from "../../../ode-framework-conf";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 import { asyncActionTypes } from "../../infra/redux/async";
 import userConfig from "../config";
 
@@ -69,7 +69,7 @@ export function action_forgotSubmit(userInfo: IForgotModel, forgotId?: boolean) 
             service: "mail"
           };
       const res = await fetch(
-        `${(Conf.currentPlatform as any).url}/auth/forgot-${forgotId ? "id" : "password"}`,
+        `${DEPRECATED_getCurrentPlatform()!.url}/auth/forgot-${forgotId ? "id" : "password"}`,
         {
           body: JSON.stringify(payLoad),
           method: "POST"

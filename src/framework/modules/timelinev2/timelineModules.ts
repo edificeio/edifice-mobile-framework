@@ -4,17 +4,16 @@
 
 import I18n from "i18n-js";
 import type { NavigationNavigateActionPayload } from "react-navigation";
-import type { RouteMap } from "../../util/moduleTool";
 
-import { createCustomSubscription } from "../../util/moduleTool";
-import { IUserSession } from "../../util/session";
+import { CustomRegister, RouteMap } from "~/framework/util/moduleTool";
+import { IUserSession } from "~/framework/util/session";
 
-// Timeline module subscription ===================================================================
 
-// export const timelineModules = createModuleSubscription<AnyNavigableModule>();
-export const timelineSubModules = createCustomSubscription<
-    RouteMap, RouteMap
->(subs => subs.reduce((acc, s) => ({ ...acc, ...s }), {}));
+// Timeline module register =======================================================================
+
+export const timelineSubModules = new CustomRegister<RouteMap, RouteMap>(
+    items => items.reduce((acc, s) => ({ ...acc, ...s }), {})
+)
 
 // Timeline workflow ==============================================================================
 

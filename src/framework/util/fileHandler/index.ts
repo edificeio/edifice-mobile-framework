@@ -68,7 +68,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
                     mode: 'open'
                 });
             } else {
-                pickedFiles = [await DocumentPicker.pick({
+                pickedFiles = [await DocumentPicker.pickSingle({
                     type: LocalFile._getDocumentPickerTypeArg(opts.type),
                     mode: 'open'
                 })];
@@ -123,7 +123,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
     filepath: string;           // Absolute url to the file on the device, starting by '/'
     _filepathNative: string;    // Absolute url to the file on the device, including 'file://' protocol.
     filetype: string;           // Mime type of the file
-    nativeInfo?: DocumentPickerResponse | Asset;    // Backup of the full information given by react-native-fs
+    nativeInfo: DocumentPickerResponse | Asset;     // Backup of the full information given by react-native-fs
     _needIOSReleaseSecureAccess?: boolean;          // Recommended by react-native-fs. A LocalFile created with pick() must be free when it's no more used.
 
     constructor(file: DocumentPickerResponse | Asset | LocalFile.CustomUploadFileItem, opts: {
@@ -137,7 +137,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
         this._filepathNative = (file as LocalFile.CustomUploadFileItem).filepath || (file as DocumentPickerResponse | Asset).uri!
         this.filepath = LocalFile.formatUrlForUpload(this._filepathNative);
         this.filetype = (file as LocalFile.CustomUploadFileItem).filetype || (file as DocumentPickerResponse | Asset).type!;
-        if ((file as LocalFile.CustomUploadFileItem).filepath) { this.nativeInfo = file as DocumentPickerResponse | Asset; }
+        this.nativeInfo = file as DocumentPickerResponse | Asset;
     }
 
     setExtension(ext: string) {

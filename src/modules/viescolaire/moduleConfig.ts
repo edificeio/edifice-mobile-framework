@@ -15,4 +15,6 @@ export default createNavigableModuleConfig<"viescolaire", IViesco_State>({
   matchEntcoreApp: entcoreApp => hasViescoModule(entcoreApp),
   entcoreScope: ['viescolaire'],
   iconName: "school",
+  registerAs: 'tabModule',
+  registerOrder: 2
 });

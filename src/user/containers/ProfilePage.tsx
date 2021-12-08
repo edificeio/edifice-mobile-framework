@@ -31,7 +31,7 @@ import { getSessionInfo } from "../../App";
 import { ValidatorBuilder } from "../../utils/form";
 import withViewTracking from "../../framework/util/tracker/withViewTracking";
 import { signURISource } from "../../infra/oauth";
-import Conf from "../../../ode-framework-conf";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 
 export interface IProfilePageDataProps {
   userauth: IUserAuthState;
@@ -96,7 +96,7 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
               <UserCard
                 id={
                   this.props.userinfo.photo &&
-                  signURISource(`${(Conf.currentPlatform as any).url}${this.props.userinfo.photo}`)
+                  signURISource(`${DEPRECATED_getCurrentPlatform()!.url}${this.props.userinfo.photo}`)
                 }
                 displayName={this.props.userinfo.displayName!}
                 type={

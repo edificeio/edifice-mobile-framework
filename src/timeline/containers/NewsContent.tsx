@@ -7,7 +7,6 @@ import { connect } from "react-redux";
 import style from "glamorous-native";
 import moment from "moment";
 
-import Conf from "../../../ode-framework-conf";
 import { signedFetch, fetchJSONWithCache } from "../../infra/fetchWithCache";
 import { alternativeNavScreenOptions } from "../../navigation/helpers/navScreenOptions";
 import { CommonStyles } from "../../styles/common/styles";
@@ -33,8 +32,9 @@ import { schoolbooks } from "../actions/dataTypes";
 import { fetchBlogCommentListAction, dataActions } from "../actions/commentList";
 import { getBlogCommentListState, IBlogComment, IBlogCommentList } from "../state/commentList";
 import { TextPreview } from "../../ui/TextPreview";
-import withViewTracking from "../../framework/util/tracker/withViewTracking";
-import { Trackers } from "../../framework/util/tracker";
+import withViewTracking from "~/framework/util/tracker/withViewTracking";
+import { Trackers } from "~/framework/util/tracker";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 
 interface INewsContentPageState {
   isAck: boolean;
@@ -261,7 +261,7 @@ INewsContentPageProps,
                 ? <View style={{ marginTop: 12 }}>
                     <A
                       onPress={() => {
-                        Linking.openURL(Conf.currentPlatform.url + resourceUri);
+                        Linking.openURL(DEPRECATED_getCurrentPlatform()!.url + resourceUri);
                         Trackers.trackEvent("Timeline", "GO TO", "View in Browser");
                       }}
                     >
@@ -461,9 +461,9 @@ INewsContentPageProps,
             users={[
               (comment as INewsComment).owner ||
               (comment as IBlogComment).author && (comment as IBlogComment).author.userId ||
-              require("../../../assets/images/resource-avatar.png")
+              require("ASSETS/images/resource-avatar.png")
             ]}
-            fallback={require("../../../assets/images/resource-avatar.png")}
+            fallback={require("ASSETS/images/resource-avatar.png")}
           />
         </LeftPanel>
         <CenterPanel disabled>
@@ -555,7 +555,7 @@ INewsContentPageProps,
       const acknowledgements = unacknowledgedChildrenIds.map((id: string) => (
         signedFetch(
           `${
-            Conf.currentPlatform.url
+          DEPRECATED_getCurrentPlatform()!.url
           }/schoolbook/relation/acknowledge/${wordId}/${id}`,
           {
             method: "POST"

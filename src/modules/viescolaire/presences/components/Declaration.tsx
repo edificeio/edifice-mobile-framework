@@ -213,7 +213,7 @@ export default class AbsenceDeclaration extends React.PureComponent<DeclarationP
                 underlineColorAndroid="lightgrey"
                 onChangeText={updateComment}
               />
-              <FilePicker
+              <FilePicker multiple
                 callback={(att) => this.props.onPickAttachment(att)}
               >
                 <IconButton

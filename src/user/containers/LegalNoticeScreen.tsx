@@ -2,9 +2,9 @@ import I18n from "i18n-js";
 import * as React from "react";
 import { Platform, TouchableOpacity } from "react-native";
 import { NavigationInjectedProps } from "react-navigation";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 
-import Conf from "../../../ode-framework-conf";
-import { BackdropPdfReader } from "../../framework/components/backdropPdfReader";
+import { BackdropPdfReader } from "~/framework/components/backdropPdfReader";
 import {
   FakeHeader,
   HeaderAction,
@@ -12,15 +12,14 @@ import {
   HeaderLeft,
   HeaderRow,
   HeaderTitle,
-} from "../../framework/components/header";
-import { Icon } from "../../framework/components/icon";
-import { ListItem } from "../../framework/components/listItem";
-import { PageView } from "../../framework/components/page";
-import { Text } from "../../framework/components/text";
-import theme from "../../framework/util/theme";
-import withViewTracking from "../../framework/util/tracker/withViewTracking";
-import { Trackers } from "../../framework/util/tracker";
-import { CommonStyles } from "../../styles/common/styles";
+} from "~/framework/components/header";
+import { Icon } from "~/framework/components/icon";
+import { ListItem } from "~/framework/components/listItem";
+import { PageView } from "~/framework/components/page";
+import { Text } from "~/framework/components/text";
+import theme from "~/app/theme";
+import withViewTracking from "~/framework/util/tracker/withViewTracking";
+import { Trackers } from "~/framework/util/tracker";
 
 // TYPES ==========================================================================================
 
@@ -94,7 +93,7 @@ class LegalNoticeScreen extends React.PureComponent<NavigationInjectedProps<{}>,
   // METHODS ========================================================================================
 
   handleOpenLegalItem = (legalItem: string) => {
-    const platform = Conf.currentPlatform.url;
+    const platform = DEPRECATED_getCurrentPlatform()!.url;
     const path = I18n.t(`common.url.${legalItem}`);
     const legalUrl = `${platform}${path}`;
     const legalTitle = I18n.t(`user.legalNoticeScreen.${legalItem}`);

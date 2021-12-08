@@ -1,13 +1,14 @@
+import { NavigationScreenProp, NavigationState } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
+
+import { RouteMap } from "~/framework/util/moduleTool";
+import { addViewTrackingToStackRoutes } from "~/framework/util/tracker/withViewTracking";
 
 import TimelineScreen from "./screens/TimelineScreen";
 import WebViewScreen from "./screens/TimelineWebViewScreen";
 import FiltersScreen from "./screens/TimelineFiltersScreen";
 import { timelineSubModules } from "./timelineModules";
-import { RouteMap } from "../../util/moduleTool";
 import moduleConfig from "./moduleConfig";
-import { addViewTrackingToStackRoutes } from "../../util/tracker/withViewTracking";
-import { NavigationScreenProp, NavigationState } from "react-navigation";
 
 const namespaceTimelineSubModules = (rmap: RouteMap) => Object.fromEntries(Object.entries(rmap).map(
     ([k, v]) => [`${moduleConfig.routeName}/${k}`, v as {
@@ -19,7 +20,7 @@ const namespaceTimelineSubModules = (rmap: RouteMap) => Object.fromEntries(Objec
 ));
 
 export default () => {
-    console.log("timeline routes", namespaceTimelineSubModules(timelineSubModules.get()));
+    console.log("[Timeline] subModules routes", namespaceTimelineSubModules(timelineSubModules.get()));
     return createStackNavigator({
         ...addViewTrackingToStackRoutes({
             [`${moduleConfig.routeName}`]: {

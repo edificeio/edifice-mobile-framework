@@ -31,7 +31,7 @@ import { Label } from '../../ui/Typography';
 import { logout } from '../actions/login';
 import { profileUpdateAction } from '../actions/profile';
 import { UserCard } from '../components/UserCard';
-import { IUserInfoState } from '../state/info';
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 
 export const UserPageNavigationOptions = ({ navigation }: { navigation: NavigationScreenProp<{}> }) =>
   standardNavScreenOptions(
@@ -111,7 +111,7 @@ export class UserPage extends React.PureComponent<
     //avoid setstate on modalbox when unmounted
     const { onUploadAvatar, onUpdateAvatar, onPickFileError, onUploadAvatarError, userinfo } = this.props;
     const { showDisconnect, showVersionType, versionOverride, versionType, updatingAvatar } = this.state;
-    const signedURISource = userinfo.photo && signURISource(`${(Conf.currentPlatform as any).url}${userinfo.photo}`);
+    const signedURISource = userinfo.photo && signURISource(`${DEPRECATED_getCurrentPlatform()!.url}${userinfo.photo}`);
     // FIXME (Hack): we need to add a variable param to force the call on Android for each session
     // (otherwise, a previously-loaded image is retrieved from cache)
     const sourceWithParam = signedURISource && {

@@ -4,15 +4,15 @@ import { NavigationInjectedProps } from "react-navigation";
 import { connect } from "react-redux";
 import I18n from "i18n-js";
 
-import { IResourceUriNotification, ITimelineNotification } from "../../../util/notifications";
-import withViewTracking from "../../../util/tracker/withViewTracking";
+import { IResourceUriNotification, ITimelineNotification } from "~/framework/util/notifications";
+import { PageView } from "~/framework/components/page";
+import { InfoBubble } from "~/framework/components/infoBubble";
+import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from "~/framework/components/header";
+import theme from "~/app/theme";
+
 import NotificationTopInfo from "../components/NotificationTopInfo";
-import { PageView } from "../../../components/page";
-import { InfoBubble } from "../../../components/infoBubble";
 import { FlatButton } from "../../../../ui";
-import Conf from "../../../../../ode-framework-conf";
-import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from "../../../components/header";
-import theme from "../../../util/theme";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
 
 // TYPES ==========================================================================================
 
@@ -89,11 +89,11 @@ export class TimelineWebViewScreen extends React.PureComponent<
             customTextStyle={{ color: theme.color.secondary.regular }}
             onPress={() => {
               //TODO: create generic function inside oauth (use in myapps, etc.)
-              if (!Conf.currentPlatform) {
+              if (!DEPRECATED_getCurrentPlatform()) {
                 console.warn("Must have a platform selected to redirect the user");
                 return null;
               }
-              const url = `${(Conf.currentPlatform as any).url}${notification?.resource.uri}`;
+              const url = `${DEPRECATED_getCurrentPlatform()!.url}${notification?.resource.uri}`;
               Linking.canOpenURL(url).then(supported => {
                 if (supported) {
                   Linking.openURL(url);

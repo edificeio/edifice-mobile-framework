@@ -1,7 +1,7 @@
 // RN Imports
 import * as React from 'react';
 import I18n from 'i18n-js';
-import { initI18n } from './framework/util/i18n';
+import { initI18n } from './app/i18n';
 import { AppState, AppStateStatus, StatusBar, View } from 'react-native';
 import * as RNLocalize from 'react-native-localize';
 import 'react-native-gesture-handler';
@@ -15,20 +15,14 @@ import 'ts-polyfill/lib/es2019-object';
 // Redux
 import { Provider, connect } from 'react-redux';
 
-// JS
-import Conf from '../ode-framework-conf';
-
 // ODE Mobile Framework Modules
-import { Trackers } from './framework/util/tracker';
+import { Trackers } from '~/framework/util/tracker';
 
 // ODE Mobile Framework Redux
 import { refreshToken } from './user/actions/login';
 import { loadCurrentPlatform, selectPlatform } from './user/actions/platform';
 import { isInActivatingMode } from './user/selectors';
 import { checkVersionThenLogin } from './user/actions/version';
-
-// Main Screen
-import AppScreen from './AppScreen';
 
 // Style
 import { CommonStyles } from './styles/common/styles';
@@ -37,6 +31,7 @@ import SplashScreen from 'react-native-splash-screen';
 import messaging from '@react-native-firebase/messaging';
 
 // Functionnal modules // THIS IS UGLY. it is a workaround for include matomo tracking.
+require('./myAppMenu');
 // require("./timelinev2");
 // require('./mailbox');
 //require("./pronote");
@@ -44,9 +39,11 @@ import messaging from '@react-native-firebase/messaging';
 require('./homework');
 require('./workspace');
 //require("./viescolaire");
-require('./myAppMenu');
 //require("./support");
 require('./user');
+
+// Main Screen
+import AppScreen from './AppScreen';
 
 // Store
 import { createMainStore } from './AppStore';
@@ -54,10 +51,12 @@ import { IUserAuthState } from './user/reducers/auth';
 import { IUserInfoState } from './user/state/info';
 
 // App Conf
-import './infra/appConf';
+import AppConf from '~/framework/util/appConf';
+// import './infra/appConf';
 import { reset } from './navigation/helpers/navHelper';
 import { getLoginStackToDisplay } from './navigation/LoginNavigator';
-import { OAuth2RessourceOwnerPasswordClient } from './infra/oauth';
+import { OAuth2RessourceOwnerPasswordClient, AllModulesBackup } from './infra/oauth';
+import AppModules from './app/modules';
 
 // Disable Yellow Box on release builds.
 if (__DEV__) {
@@ -88,7 +87,7 @@ class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: b
 
   public async componentDidMount() {
     // Enable react-native-screens
-    enableScreens();
+    //enableScreens();
 
     // Event handlers
     RNLocalize.addEventListener('change', this.handleLocalizationChange);
@@ -100,18 +99,26 @@ class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: b
     Trackers.setCustomDimension(4, 'App Name', DeviceInfo.getApplicationName());
 
     // If only one platform in conf => auto-select it.
-    let platformId;
-    if (Conf.platforms && Object.keys(Conf.platforms).length === 1) {
+    let platformId: string;
+    if (AppConf.platforms && AppConf.platforms.length === 1) {
       const onboardingTexts = I18n.t('user.onboardingScreen.onboarding');
       const hasOnboardingTexts = onboardingTexts && onboardingTexts.length;
       if (hasOnboardingTexts) {
-        platformId = await this.props.store.dispatch(loadCurrentPlatform());
+        try {
+          platformId = await this.props.store.dispatch(loadCurrentPlatform());
+        } catch (e) {
+          console.warn(e);
+        }
       } else {
-        platformId = Object.keys(Conf.platforms)[0];
+        platformId = AppConf.platforms[0].name;
         this.props.store.dispatch(selectPlatform(platformId));
       }
     } else {
-      platformId = await this.props.store.dispatch(loadCurrentPlatform());
+      try {
+        platformId = await this.props.store.dispatch(loadCurrentPlatform());
+      } catch (e) {
+        console.warn(e);
+      }
     }
     const connectionToken = await OAuth2RessourceOwnerPasswordClient.connection?.loadToken();
     if (platformId && connectionToken) {
@@ -197,3 +204,5 @@ export const getSessionInfo = () =>
   ({
     ...(getStore().getState() as any).user.info,
   } as IUserInfoState & IUserAuthState);
+
+AllModulesBackup.value = AppModules();

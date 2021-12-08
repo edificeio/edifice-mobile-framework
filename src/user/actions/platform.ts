@@ -1,11 +1,12 @@
-import Conf from "../../../ode-framework-conf";
 import userConfig from "../config";
 
 import { createAppScopesLegacy, OAuth2RessourceOwnerPasswordClient } from "../../infra/oauth";
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { navigate } from "../../navigation/helpers/navHelper";
-import { Trackers } from "../../framework/util/tracker";
+import { Trackers } from "~/framework/util/tracker";
+import { DEPRECATED_setCurrentPlatform } from "~/framework/util/_legacy_appConf";
+import appConf from "~/framework/util/appConf";
 
 export const PLATFORM_STORAGE_KEY = "currentPlatform";
 
@@ -21,18 +22,19 @@ export const actionTypePlatformSelect = userConfig.createActionType(
 export function selectPlatform(platformId: string, redirect: boolean = false, doTrack: boolean = false) {
   return async (dispatch, getState) => {
     // === 1 - Verify that platformId exists
-    if (!Conf.platforms.hasOwnProperty(platformId)) {
+    const pf = appConf.platforms.find(pf => pf.name === platformId);
+    if (!pf) {
       throw new Error(`Error: platform "${platformId}" doesn't exists.`);
     }
 
     // === 2 - Sets the current selected platform in Conf
-    Conf.currentPlatform = Conf.platforms[platformId];
+    DEPRECATED_setCurrentPlatform(pf);
 
     // === 3 - Instantiate the oAuth client
     OAuth2RessourceOwnerPasswordClient.connection = new OAuth2RessourceOwnerPasswordClient(
-      `${Conf.currentPlatform.url}/auth/oauth2/token`,
-      Conf.currentPlatform.appOAuthId,
-      Conf.currentPlatform.appOAuthSecret,
+      `${pf.url}/auth/oauth2/token`,
+      pf.oauth.client_id,
+      pf.oauth.client_secret,
       createAppScopesLegacy()
     );
 
@@ -43,7 +45,7 @@ export function selectPlatform(platformId: string, redirect: boolean = false, do
     });
 
     // === 5 - Track event
-    doTrack && Trackers.trackEvent('Connection', 'SELECT PLATFORM', (Conf.currentPlatform as any).url.replace(/(^\w+:|^)\/\//, ''));
+    doTrack && Trackers.trackEvent('Connection', 'SELECT PLATFORM', pf.url.replace(/(^\w+:|^)\/\//, ''));
 
     // === End
     if (redirect) navigate("LoginHome", { platformId });
@@ -57,7 +59,8 @@ export function selectPlatform(platformId: string, redirect: boolean = false, do
     return async (dispatch, getState) => {
       const platformId = await AsyncStorage.getItem(PLATFORM_STORAGE_KEY);
       if (platformId) {
-        if (!Conf.platforms.hasOwnProperty(platformId))
+        const pf = appConf.platforms.find(pf => pf.name === platformId);
+        if (!pf)
           throw new Error(
             `Error: LOADED platform "${platformId}" doesn't exists.`
           );
