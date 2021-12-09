@@ -21,11 +21,11 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1060400</string>
+	<string>1060401</string>
 	<key>BundleVersionOverride</key>
 	<string>dev/default</string>
 	<key>BundleVersionType</key>
-	<string></string>
+	<string>rc.1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
