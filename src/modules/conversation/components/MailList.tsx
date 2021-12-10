@@ -5,29 +5,35 @@ import { Swipeable } from 'react-native-gesture-handler';
 import Toast from 'react-native-tiny-toast';
 import { NavigationState, NavigationInjectedProps } from 'react-navigation';
 
-import DrawerMenu from './DrawerMenu';
-import MailListItem from './MailListItem';
 
+import theme from '~/app/theme';
+import { Drawer } from '~/framework/components/drawer';
 import { FakeHeader, HeaderCenter, HeaderRow, HeaderTitle } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Trackers } from '~/framework/util/tracker';
+import MailListItem from '~/modules/conversation/components/MailListItem';
+import CreateFolderModal from '~/modules/conversation/containers/CreateFolderModal';
 import { IInit } from '~/modules/conversation/containers/MailList';
 import MoveModal from '~/modules/conversation/containers/MoveToFolderModal';
 import { DraftType } from '~/modules/conversation/containers/NewMail';
 import moduleConfig from '~/modules/conversation/moduleConfig';
+import { ICountMailboxes } from '~/modules/conversation/state/count';
+import { IFolder } from '~/modules/conversation/state/initMails';
 import { IMail } from '~/modules/conversation/state/mailContent';
 import { Loading } from '~/ui';
 import { PageContainer } from '~/ui/ContainerContent';
 import { EmptyScreen } from '~/ui/EmptyScreen';
 import TempFloatingAction from '~/ui/FloatingButton/TempFloatingAction';
+import { Weight } from '~/ui/Typography';
 
 interface IMailListDataProps {
   notifications: any;
   isFetching: boolean;
   firstFetch: boolean;
-  folders: any;
   isTrashed: boolean;
   fetchRequested: boolean;
+  folders: IFolder[];
+  mailboxesCount: ICountMailboxes;
 }
 
 interface IMailListEventProps {
@@ -54,6 +60,7 @@ type MailListState = {
   selectedMail: IMail | undefined;
   isRefreshing: boolean;
   isChangingPage: boolean;
+  showFolderCreationModal: boolean;
 };
 
 let lastFolderCache = '';
@@ -74,6 +81,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
       selectedMail: undefined,
       isRefreshing: false,
       isChangingPage: false,
+      showFolderCreationModal: false
     };
   }
 
@@ -237,8 +245,8 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
   };
 
   public render() {
-    const { isFetching, firstFetch, navigation } = this.props;
-    const { showModal, selectedMail, isRefreshing, nextPageCallable, isChangingPage } = this.state;
+    const { isFetching, firstFetch, navigation, folders, mailboxesCount } = this.props;
+    const { showModal, selectedMail, isRefreshing, nextPageCallable, isChangingPage, showFolderCreationModal } = this.state;
     const navigationKey = navigation.getParam('key');
     const uniqueId = [];
     const uniqueMails =
@@ -250,6 +258,32 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
           return true;
         }
       }) || [];
+    const drawerMailboxes = [
+      { name: I18n.t("conversation.inbox").toUpperCase(), value: "inbox", iconName: "messagerie-on", count: mailboxesCount.INBOX },
+      { name: I18n.t("conversation.sendMessages").toUpperCase(), value: "sendMessages", iconName: "send" },
+      { name: I18n.t("conversation.drafts").toUpperCase(), value: "drafts", iconName: "pencil", count: mailboxesCount.DRAFT },
+      { name: I18n.t("conversation.trash").toUpperCase(), value: "trash", iconName: "delete" },
+    ];
+    const createFolderItem = {
+      name: I18n.t("conversation.createDirectory"),
+      value: "createDirectory",
+      iconName: "create_new_folder",
+      labelStyle: {
+        fontSize: 12,
+        color: theme.color.text.light,
+        fontWeight: Weight.SemiBold
+      },
+      closeAfterSelecting: false
+    };
+    let drawerFolders = folders && folders.map(folder => ({
+      name: folder.folderName,
+      value: `folder-${folder.id}`,
+      iconName: "folder",
+      count: folder.unread,
+      depth: folder.depth - 1
+    }));
+    drawerFolders && drawerFolders.push(createFolderItem);
+    const drawerItems = drawerFolders ? drawerMailboxes.concat(drawerFolders) : drawerMailboxes;
 
     return (
       <>
@@ -357,7 +391,29 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
                 )
               }
             />
-            <DrawerMenu {...this.props} {...this.state} />
+            <Drawer
+              items={drawerItems}
+              selectedItem={navigationKey}
+              isSelectingItem={!firstFetch && isFetching}
+              selectItem={selectedItem => {
+                const isCreateDirectory = selectedItem === "createDirectory";
+                const isFolder = selectedItem.includes("folder-");
+                const folderId = selectedItem.replace("folder-", "");
+                if (isCreateDirectory) {
+                  this.setState({ showFolderCreationModal: true });
+                } else {
+                  navigation.setParams({
+                    key: selectedItem,
+                    folderName: isFolder ? selectedItem : undefined,
+                    folderId: isFolder ? folderId : undefined
+                  });
+                }
+              }}
+            />
+            <CreateFolderModal
+              show={showFolderCreationModal}
+              onClose={() => this.setState({ showFolderCreationModal: false })}
+            />
           </View>
         </PageContainer>
         <MoveModal
