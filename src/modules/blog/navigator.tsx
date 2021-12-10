@@ -25,5 +25,8 @@ export default () => createStackNavigator(
             screen: BlogExplorerScreen
         },
         ...timelineRoutes
+    },
+    {
+        headerMode: 'none'
     }
 );

@@ -101,6 +101,7 @@
       "sharedToNbPersons": "Partagé à {{nb}} personnes",
       "title": "Choisir un blog"
     },
+    "appName": "Blogs",
     "resourceName": "Billet de blog",
     "tabName": "Blog"
   },

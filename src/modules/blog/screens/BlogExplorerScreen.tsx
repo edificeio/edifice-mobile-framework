@@ -3,7 +3,7 @@
  */
 
 import React from "react";
-import { NavigationInjectedProps } from "react-navigation";
+import { NavigationActions, NavigationInjectedProps } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
@@ -18,10 +18,12 @@ import theme from "~/app/theme";
 import moduleConfig from "../moduleConfig";
 import { fetchBlogsAndFoldersAction } from "../actions";
 import { getFolderContent, IBlog, IBlogFolder } from "../reducer";
-import { RefreshControl } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Platform, RefreshControl, View } from "react-native";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { signURISource, transformedSrc } from "~/infra/oauth";
 import moment from "moment";
+import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRight, HeaderRow, HeaderTitle } from "~/framework/components/header";
+import I18n from "i18n-js";
 
 // TYPES ==========================================================================================
 
@@ -43,7 +45,8 @@ export type IBlogExplorerScreen_Props = IBlogExplorerScreen_DataProps & IBlogExp
 // COMPONENT ======================================================================================
 
 const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
-    // console.log("render", props);
+    const insets = useSafeAreaInsets();
+    const render = [] as React.ReactNode[];
 
     // LOADER =====================================================================================
 
@@ -64,6 +67,23 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
         props.doFetch().then(() => setLoadingState(AsyncLoadingState.IDLE));
     };
 
+    // HEADER =====================================================================================
+
+    render.push(<FakeHeader>
+        <HeaderRow>
+            <HeaderLeft>
+                <HeaderAction
+                    iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
+                    iconSize={24}
+                    onPress={() => props.navigation.dispatch(NavigationActions.back())}
+                />
+            </HeaderLeft>
+            <HeaderCenter>
+                <HeaderTitle>{I18n.t('blog.appName')}</HeaderTitle>
+            </HeaderCenter>
+        </HeaderRow>
+    </FakeHeader>);
+
     // RENDER =====================================================================================
 
     switch (loadingState) {
@@ -74,7 +94,7 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
             const { blogs, folders } = getFolderContent(props.blogs!, props.folders!, props.navigation.getParam('folderId'))
             // console.log("folders", folders);
             // console.log("blogs", blogs);
-            return <>
+            render.push(<>
                 <Text>folderId: {props.navigation.getParam('folderId')}</Text>
                 <Explorer
                     folders={folders.map(f => ({ ...f, color: theme.themeOpenEnt.indigo }))}
@@ -89,13 +109,15 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
                         thumbnail: b.thumbnail && signURISource(transformedSrc(b.thumbnail))
                     })).sort((a, b) => b.date.valueOf() - a.date.valueOf())}
                     onItemPress={item => { console.log("item pressed", item) }}
-                    ListFooterComponent={<SafeAreaView />}
+                    ListFooterComponent={<View style={{ marginBottom: insets.bottom }} />}
                     refreshControl={<RefreshControl refreshing={loadingState === AsyncLoadingState.REFRESH} onRefresh={() => doRefresh()} />}
                 />
-            </>;
+            </>);
+            break;
         default:
-            return <LoadingIndicator />;
+            render.push(<LoadingIndicator />);
     }
+    return render;
 }
 
 // MAPPING ========================================================================================
