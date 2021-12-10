@@ -23,7 +23,7 @@
 
 import * as React from 'react';
 import { Moment } from "moment";
-import { ColorValue, FlatList, FlatListProps, Image, ImageSourcePropType, TextStyle, View, ViewStyle } from "react-native";
+import { ColorValue, FlatList, FlatListProps, Image, ImageSourcePropType, TextProps, TextStyle, View, ViewStyle } from "react-native";
 import styled from '@emotion/native';
 
 import { Icon } from '~/framework/components/icon';
@@ -31,11 +31,11 @@ import { Text, TextBold, TextColorStyle, TextSizeStyle } from '~/framework/compo
 import { displayPastDate } from '~/framework/util/date';
 import theme from '~/app/theme';
 
-export interface IExplorerProps extends Omit<FlatListProps<IExplorerFolderItem | IExplorerResourceItemWithImage | IExplorerResourceItemWithIcon | IExplorerEmptyItem>, 'data' | 'renderItem'> {
-    onItemPress: (item: IExplorerFolderItem | IExplorerResourceItemWithImage | IExplorerResourceItemWithIcon) => void;
-    folders?: Omit<IExplorerFolderItem, 'type'>[];
-    resources?: Omit<IExplorerResourceItemWithImage | IExplorerResourceItemWithIcon, 'type'>[];
-    data?: FlatListProps<IExplorerFolderItem | IExplorerResourceItemWithImage | IExplorerResourceItemWithIcon | IExplorerEmptyItem>['data']
+export interface IExplorerProps<FolderType extends {}, ResourceType extends {}> extends Omit<FlatListProps<(IExplorerFolderItem & FolderType) | (IExplorerResourceItemWithImage & ResourceType) | (IExplorerResourceItemWithIcon & ResourceType) | IExplorerEmptyItem>, 'data' | 'renderItem'> {
+    onItemPress: (item: (IExplorerFolderItem & FolderType) | (IExplorerResourceItemWithImage & ResourceType) | (IExplorerResourceItemWithIcon & ResourceType)) => void;
+    folders?: (Omit<IExplorerFolderItem, 'type'> & FolderType)[];
+    resources?: (Omit<(IExplorerResourceItemWithImage | IExplorerResourceItemWithIcon), 'type'> & ResourceType)[];
+    data?: FlatListProps<(IExplorerFolderItem & FolderType) | (IExplorerResourceItemWithImage & ResourceType) | (IExplorerResourceItemWithIcon & ResourceType) | IExplorerEmptyItem>['data']
 }
 
 export interface IExplorerItem {
@@ -64,11 +64,11 @@ export interface IExplorerResourceItemWithIcon extends IExplorerResourceItemBase
     icon: string;
 }
 
-export default (props: IExplorerProps) => {
+export default <FolderType extends {}, ResourceType extends {}>(props: IExplorerProps<FolderType, ResourceType>) => {
     const { data, folders, resources, ...otherProps } = props;
-    const explorerData: (IExplorerFolderItem | IExplorerResourceItemWithImage | IExplorerResourceItemWithIcon | IExplorerEmptyItem)[] = [
-        ...(folders ?? []).map(f => ({ ...f, type: 'folder' } as IExplorerFolderItem)),
-        ...(resources ?? []).map(f => ({ ...f, type: 'resource' } as IExplorerResourceItemWithImage | IExplorerResourceItemWithIcon)),
+    const explorerData: ((IExplorerFolderItem & FolderType) | (IExplorerResourceItemWithImage & ResourceType) | (IExplorerResourceItemWithIcon & ResourceType) | IExplorerEmptyItem)[] = [
+        ...(folders ?? []).map(f => ({ ...f, type: 'folder' } as (IExplorerFolderItem & FolderType))),
+        ...(resources ?? []).map(f => ({ ...f, type: 'resource' } as (IExplorerResourceItemWithImage & ResourceType) | (IExplorerResourceItemWithIcon & ResourceType))),
         ...data ?? [],
     ];
     if (explorerData.length % 2 !== 0) {
@@ -90,9 +90,9 @@ export default (props: IExplorerProps) => {
     />
 };
 
-const renderItem = (
-    item: IExplorerFolderItem | IExplorerResourceItemWithImage | IExplorerResourceItemWithIcon | IExplorerEmptyItem,
-    onItemPress: IExplorerProps['onItemPress']
+const renderItem = <FolderType extends {}, ResourceType extends {}>(
+    item: (IExplorerFolderItem & FolderType) | (IExplorerResourceItemWithImage & ResourceType) | (IExplorerResourceItemWithIcon & ResourceType) | IExplorerEmptyItem,
+    onItemPress: IExplorerProps<FolderType, ResourceType>['onItemPress']
 ) => {
     if (item.type === 'empty') return <EmptyItemTouchable><View /></EmptyItemTouchable>
     const TheRightTouchable = item.type === 'folder' ? FolderItemTouchable : ResourceItemTouchable;
@@ -108,7 +108,8 @@ const renderItem = (
             overlay={<Icon color={item.color} size={item.type === 'folder' ? 88 : 48} name={
                 item.type === 'folder' ? 'folder1' : (item as IExplorerResourceItemWithIcon).icon}
             />}
-            textStyle={item.type === 'folder' ? {textAlign: 'center'} : {}}
+            textStyle={item.type === 'folder' ? { textAlign: 'center' } : {}}
+            textProps={item.type === 'folder' ? { numberOfLines: 2 } : {}}
             style={{}} // reset default card styles because that's the touchable that hold them
         />
     </TheRightTouchable>
@@ -146,6 +147,7 @@ const MetadataView = styled.View({
 export const ResourceCard = (props: {
     title: string; subtitle?: string;
     textStyle?: TextStyle;
+    textProps?: Omit<TextProps, 'style'>;
     color?: ColorValue;
     showBgColor?: boolean;
     image?: ImageSourcePropType;
@@ -158,7 +160,7 @@ export const ResourceCard = (props: {
                     backgroundColor: props.color, opacity: 0.1,
                     position: 'absolute', width: '100%', height: '100%'
                 });
-                return <CustomView/>
+                return <CustomView />
             })() : null}
             {props.image ? <Image source={props.image} style={{
                 position: 'absolute', width: '100%', height: '100%',
@@ -168,15 +170,26 @@ export const ResourceCard = (props: {
             {props.overlay ? props.overlay : null}
         </ThumbnailView>
         <MetadataView>
-            <TextBold numberOfLines={1} style={{
-                ...TextSizeStyle.Small,
-                ...TextColorStyle.Light,
-                ...props.textStyle
-            }}>{props.title}</TextBold>
-            <Text style={{
-                ...TextSizeStyle.Small,
-                ...TextColorStyle.Light,
-                ...props.textStyle
-            }}>{props.subtitle ?? null}</Text>
+            <View style={{}}>
+                {(() => {
+                    const nbLines = props.textProps?.numberOfLines ?? 1;
+                    return Array((props.subtitle ? 1 : 0) + nbLines).fill(<Text> </Text>)
+                })()}
+                <View style={{ position: 'absolute', width: '100%' }}>
+                    <TextBold numberOfLines={1} {...props.textProps} style={{
+                        ...TextSizeStyle.Small,
+                        ...TextColorStyle.Light,
+                        ...props.textStyle,
+                    }}>{props.title ?? null}</TextBold>
+                </View>
+                {props.subtitle ? <View style={{ position: 'absolute', width: '100%' }}>
+                    <Text> </Text>
+                    <Text style={{
+                        ...TextSizeStyle.Small,
+                        ...TextColorStyle.Light,
+                        ...props.textStyle,
+                    }}>{props.subtitle}</Text>
+                </View> : null}
+            </View>
         </MetadataView>
     </View>

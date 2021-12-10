@@ -8,22 +8,22 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
 import { IGlobalState } from "~/AppStore";
-import { Text } from "~/framework/components/text";
 import { tryAction } from "~/framework/util/redux/actions";
 import { AsyncLoadingState } from "~/framework/util/redux/async";
 import { LoadingIndicator } from "~/framework/components/loading";
-import Explorer from '~/framework/components/explorer';
+import Explorer, { IExplorerFolderItem, IExplorerResourceItemWithIcon, IExplorerResourceItemWithImage } from '~/framework/components/explorer';
 import theme from "~/app/theme";
 
 import moduleConfig from "../moduleConfig";
 import { fetchBlogsAndFoldersAction } from "../actions";
-import { getFolderContent, IBlog, IBlogFolder } from "../reducer";
+import { filterTrashed, getFolderContent, IBlog, IBlogFolder } from "../reducer";
 import { Platform, RefreshControl, View } from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { signURISource, transformedSrc } from "~/infra/oauth";
 import moment from "moment";
-import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRight, HeaderRow, HeaderTitle } from "~/framework/components/header";
+import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from "~/framework/components/header";
 import I18n from "i18n-js";
+import { PageView } from "~/framework/components/page";
 
 // TYPES ==========================================================================================
 
@@ -37,6 +37,7 @@ export interface IBlogExplorerScreen_EventProps {
 }
 export interface IBlogExplorerScreen_NavigationParams {
     folderId?: string;
+    filter?: 'trash' | 'public' | 'sharedWithMe'
 }
 export type IBlogExplorerScreen_Props = IBlogExplorerScreen_DataProps & IBlogExplorerScreen_EventProps
     & NavigationInjectedProps<IBlogExplorerScreen_NavigationParams>;
@@ -45,8 +46,8 @@ export type IBlogExplorerScreen_Props = IBlogExplorerScreen_DataProps & IBlogExp
 // COMPONENT ======================================================================================
 
 const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
-    const insets = useSafeAreaInsets();
     const render = [] as React.ReactNode[];
+    const insets = useSafeAreaInsets();
 
     // LOADER =====================================================================================
 
@@ -66,6 +67,20 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
         setLoadingState(AsyncLoadingState.REFRESH);
         props.doFetch().then(() => setLoadingState(AsyncLoadingState.IDLE));
     };
+
+    // EVENTS =====================================================================================
+
+    type IDisplayedBlog = Omit<IBlog, 'thumbnail'>
+    const onOpenItem = (item: (IExplorerFolderItem & IBlogFolder) | (IExplorerResourceItemWithImage & IDisplayedBlog) | (IExplorerResourceItemWithIcon & IDisplayedBlog)) => {
+        console.log("onOpenItem", item);
+        if (item.type === 'folder') {
+            props.navigation.setParams({ folderId: item.id })
+        } else if (item.type === 'resource') {
+
+        } else {
+            // No-op
+        }
+    }
 
     // HEADER =====================================================================================
 
@@ -91,24 +106,31 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
         case AsyncLoadingState.REFRESH:
             // console.log("props.folders", props.folders);
             // console.log("props.blogs", props.blogs);
-            const { blogs, folders } = getFolderContent(props.blogs!, props.folders!, props.navigation.getParam('folderId'))
+            let { blogs, folders } = getFolderContent(props.blogs!, props.folders!, props.navigation.getParam('folderId'))
+            blogs = filterTrashed(blogs, props.navigation.getParam('filter') === 'trash');
+            folders = filterTrashed(folders, props.navigation.getParam('filter') === 'trash');
             // console.log("folders", folders);
             // console.log("blogs", blogs);
+            const img = blogs[0].thumbnail ? signURISource(transformedSrc(blogs[0].thumbnail)) : undefined;
             render.push(<>
-                <Text>folderId: {props.navigation.getParam('folderId')}</Text>
                 <Explorer
                     folders={folders.map(f => ({ ...f, color: theme.themeOpenEnt.indigo }))}
-                    resources={blogs.map(b => ({
-                        ...b,
-                        color: theme.themeOpenEnt.indigo,
-                        date: moment.max(
-                            b.fetchPosts?.[0]?.firstPublishDate ?? b.fetchPosts?.[0]?.modified ?? b.fetchPosts?.[0]?.created ?? b.modified ?? b.created,
-                            b.modified ?? b.created
-                        ),
-                        icon: !b.thumbnail && 'bullhorn',
-                        thumbnail: b.thumbnail && signURISource(transformedSrc(b.thumbnail))
-                    })).sort((a, b) => b.date.valueOf() - a.date.valueOf())}
-                    onItemPress={item => { console.log("item pressed", item) }}
+                    resources={blogs.map(bb => {
+                        const { thumbnail, ...b } = bb;
+                        return ({
+                            ...b,
+                            color: theme.themeOpenEnt.indigo,
+                            date: moment.max(
+                                b.fetchPosts?.[0]?.firstPublishDate ?? b.fetchPosts?.[0]?.modified ?? b.fetchPosts?.[0]?.created ?? b.modified ?? b.created,
+                                b.modified ?? b.created
+                            ),
+                            ...(thumbnail
+                                ? { thumbnail: signURISource(transformedSrc(thumbnail)) }
+                                : { icon: 'bullhorn' }
+                            )
+                        })
+                    }).sort((a, b) => b.date.valueOf() - a.date.valueOf())}
+                    onItemPress={onOpenItem}
                     ListFooterComponent={<View style={{ marginBottom: insets.bottom }} />}
                     refreshControl={<RefreshControl refreshing={loadingState === AsyncLoadingState.REFRESH} onRefresh={() => doRefresh()} />}
                 />
@@ -117,7 +139,7 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
         default:
             render.push(<LoadingIndicator />);
     }
-    return render;
+    return <PageView path={props.navigation.state.routeName}>{render}</PageView>;
 }
 
 // MAPPING ========================================================================================

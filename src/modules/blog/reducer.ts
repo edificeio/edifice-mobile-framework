@@ -157,5 +157,5 @@ export const getFolderContent = (blogs: IBlog[], folders: IBlogFolder[], folderI
     }
 }
 
-export const filterTrashed = (items: { trashed?: boolean }[], trashed: boolean) =>
+export const filterTrashed = <T extends { trashed?: boolean }>(items: Array<T>, trashed: boolean) =>
     items.filter(i => (i.trashed || false) === trashed);
