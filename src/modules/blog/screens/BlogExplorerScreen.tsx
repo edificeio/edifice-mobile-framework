@@ -3,29 +3,33 @@
  */
 
 import React from "react";
+import { Linking, Platform, RefreshControl, View, ScrollView } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { NavigationActions, NavigationInjectedProps } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import moment from "moment";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Platform, RefreshControl, View, ScrollView } from "react-native";
 import I18n from "i18n-js";
 
 import { IGlobalState } from "~/AppStore";
-import { tryAction } from "~/framework/util/redux/actions";
-import { AsyncLoadingState } from "~/framework/util/redux/async";
-import { LoadingIndicator } from "~/framework/components/loading";
-import Explorer, { IExplorerFolderItem, IExplorerResourceItemWithIcon, IExplorerResourceItemWithImage } from '~/framework/components/explorer';
 import theme from "~/app/theme";
 import { signURISource, transformedSrc } from "~/infra/oauth";
-import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from "~/framework/components/header";
-import { PageView } from "~/framework/components/page";
 import { Drawer } from "~/framework/components/drawer";
 import { EmptyContentScreen } from "~/framework/components/emptyContentScreen";
+import { EmptyScreen } from "~/framework/components/emptyScreen";
+import Explorer, { IExplorerFolderItem, IExplorerResourceItemWithIcon, IExplorerResourceItemWithImage } from '~/framework/components/explorer';
+import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from "~/framework/components/header";
+import { LoadingIndicator } from "~/framework/components/loading";
+import { PageView } from "~/framework/components/page";
+import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
+import { tryAction } from "~/framework/util/redux/actions";
+import { AsyncLoadingState } from "~/framework/util/redux/async";
+import { getUserSession, IUserSession } from "~/framework/util/session";
 
-import moduleConfig from "../moduleConfig";
 import { fetchBlogsAndFoldersAction } from "../actions";
+import moduleConfig from "../moduleConfig";
 import { filterTrashed, getFolderContent, IBlog, IBlogFolder } from "../reducer";
+import { getBlogWorkflowInformation } from "../rights";
 
 // TYPES ==========================================================================================
 
@@ -34,6 +38,7 @@ export interface IBlogExplorerScreen_DataProps {
     folders?: IBlogFolder[],
     initialLoadingState: AsyncLoadingState,
     error?: Error;
+    session: IUserSession
 };
 export interface IBlogExplorerScreen_EventProps {
     doFetch: () => Promise<[IBlog[], IBlogFolder[]] | undefined>
@@ -51,6 +56,7 @@ export type IBlogExplorerScreen_Props = IBlogExplorerScreen_DataProps & IBlogExp
 const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
     const render = [] as React.ReactNode[];
     const insets = useSafeAreaInsets();
+    const hasBlogCreationRights = getBlogWorkflowInformation(props.session) && getBlogWorkflowInformation(props.session).blog.create;
 
     // LOADER =====================================================================================
 
@@ -169,6 +175,8 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
                     onItemPress={onOpenItem}
                     ListFooterComponent={<View style={{ marginBottom: insets.bottom }} />}
                     refreshControl={<RefreshControl refreshing={loadingState === AsyncLoadingState.REFRESH} onRefresh={() => refresh()} />}
+                    ListEmptyComponent={renderEmpty(hasBlogCreationRights)}
+                    contentContainerStyle={{ flexGrow: 1 }}
                 />
             </>);
             break;
@@ -192,12 +200,42 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
     return <PageView path={props.navigation.state.routeName}>{render}</PageView>;
 }
 
+const renderEmpty = (hasBlogCreationRights) => {
+    return (
+      <EmptyScreen
+        imageSrc={require('ASSETS/images/empty-screen/empty-search.png')}
+        imgWidth={265.98}
+        imgHeight={279.97}
+        customStyle={{ backgroundColor: theme.color.background.card }}
+        title={I18n.t('blog.blogExplorerScreen.emptyScreenTitle')}
+        text={I18n.t(`blog.blogExplorerScreen.emptyScreenText${hasBlogCreationRights ? "" : "NoCreationRights"}`)}
+        buttonText={hasBlogCreationRights ? I18n.t('blog.blogExplorerScreen.emptyScreenButton') : undefined}
+        buttonAction={() => {
+          //TODO: create generic function inside oauth (use in myapps, etc.)
+          if (!DEPRECATED_getCurrentPlatform()) {
+            console.warn('Must have a platform selected to redirect the user');
+            return null;
+          }
+          const url = `${DEPRECATED_getCurrentPlatform()!.url}/blog#/edit/new`;
+          Linking.canOpenURL(url).then(supported => {
+            if (supported) {
+              Linking.openURL(url);
+            } else {
+              console.warn("[blog] Don't know how to open URI: ", url);
+            }
+          });
+        }}
+      />
+    );
+  }
+
 // MAPPING ========================================================================================
 
 export default connect(
     (gs: IGlobalState) => {
         const bs = moduleConfig.getState(gs);
         return {
+            session: getUserSession(gs),
             blogs: bs.blogs.data,
             folders: bs.folders.data,
             initialLoadingState: bs.folders.isPristine || bs.blogs.isPristine

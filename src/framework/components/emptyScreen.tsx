@@ -9,7 +9,7 @@ import * as React from 'react';
 import { Dimensions, Image, ImageSourcePropType, ViewStyle, View, Text } from 'react-native';
 
 import { PageView } from './page';
-import { H1 } from './text';
+import { TextSemiBold } from './text';
 
 import theme from '~/app/theme';
 import { FlatButton } from '~/ui/FlatButton';
@@ -35,6 +35,7 @@ export const EmptyScreen = ({
   buttonAction?: () => void;
   customStyle?: ViewStyle;
 }) => {
+  const hasButton = buttonText && buttonAction;
   const { width } = Dimensions.get('window');
   const ratio = imgWidth / imgHeight;
   scale = scale || 0.6;
@@ -42,15 +43,6 @@ export const EmptyScreen = ({
   return (
     <PageView>
       <View style={[{ flex: 1, alignItems: 'center', justifyContent: 'center' }, customStyle]}>
-        <H1
-          style={{
-            textAlign: 'center',
-            width: '80%',
-            marginTop: 20,
-            marginBottom: 20,
-          }}>
-          {title}
-        </H1>
         <Image
           source={imageSrc}
           resizeMode="contain"
@@ -59,18 +51,25 @@ export const EmptyScreen = ({
             width: scale * width,
           }}
         />
+        <TextSemiBold
+          style={{
+            textAlign: 'center',
+            width: '80%',
+            marginVertical: 20
+          }}>
+          {title}
+        </TextSemiBold>
         <Text
           style={{
             color: theme.color.text.light,
             fontSize: 12,
             textAlign: 'center',
             width: '80%',
-            marginTop: 20,
-            marginBottom: 20,
+            marginBottom: hasButton ? 40 : undefined,
           }}>
           {text}
         </Text>
-        {buttonText && buttonAction ? <FlatButton title={buttonText} onPress={buttonAction} /> : null}
+        {hasButton ? <FlatButton title={buttonText} onPress={buttonAction} /> : null}
       </View>
     </PageView>
   );
