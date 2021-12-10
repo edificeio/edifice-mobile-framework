@@ -46,7 +46,15 @@ export interface AsyncState<DataType> {
   error?: Error;
 }
 
-export enum AsyncLoadingState { PRISTINE, INIT, REFRESH, IDLE };
+export enum AsyncLoadingState {
+  PRISTINE,           // When no data has been fetched yet
+  INIT,               // When data is fetching for the first time
+  INIT_FAILED,        // When the first-time fetch failed
+  RETRY,              // When we fetch again after a faling first-time fetch
+  REFRESH,            // When we refresh the list
+  REFRESH_FAILED,     // When the refresh has failed
+  DONE,               // When the last fetch has been successful
+};
 
 export function createInitialAsyncState<DataType>(initialState: DataType) {
   return ({

@@ -6,6 +6,10 @@ import React from "react";
 import { NavigationActions, NavigationInjectedProps } from "react-navigation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
+import moment from "moment";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Platform, RefreshControl, View, ScrollView } from "react-native";
+import I18n from "i18n-js";
 
 import { IGlobalState } from "~/AppStore";
 import { tryAction } from "~/framework/util/redux/actions";
@@ -13,24 +17,23 @@ import { AsyncLoadingState } from "~/framework/util/redux/async";
 import { LoadingIndicator } from "~/framework/components/loading";
 import Explorer, { IExplorerFolderItem, IExplorerResourceItemWithIcon, IExplorerResourceItemWithImage } from '~/framework/components/explorer';
 import theme from "~/app/theme";
+import { signURISource, transformedSrc } from "~/infra/oauth";
+import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from "~/framework/components/header";
+import { PageView } from "~/framework/components/page";
+import { Drawer } from "~/framework/components/drawer";
+import { EmptyContentScreen } from "~/framework/components/emptyContentScreen";
 
 import moduleConfig from "../moduleConfig";
 import { fetchBlogsAndFoldersAction } from "../actions";
 import { filterTrashed, getFolderContent, IBlog, IBlogFolder } from "../reducer";
-import { Platform, RefreshControl, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { signURISource, transformedSrc } from "~/infra/oauth";
-import moment from "moment";
-import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from "~/framework/components/header";
-import I18n from "i18n-js";
-import { PageView } from "~/framework/components/page";
 
 // TYPES ==========================================================================================
 
 export interface IBlogExplorerScreen_DataProps {
     blogs?: IBlog[],
     folders?: IBlogFolder[],
-    initialLoadingState: AsyncLoadingState
+    initialLoadingState: AsyncLoadingState,
+    error?: Error;
 };
 export interface IBlogExplorerScreen_EventProps {
     doFetch: () => Promise<[IBlog[], IBlogFolder[]] | undefined>
@@ -51,21 +54,32 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
 
     // LOADER =====================================================================================
 
+    // ToDo : Make this in a useLoadingState.
+
     const [loadingState, setLoadingState] = React.useState(props.initialLoadingState);
-    // console.log("loadingState", loadingState);
 
     React.useEffect(() => {
         // console.log("user effect ?", loadingState);
         if (loadingState === AsyncLoadingState.PRISTINE) {
             setLoadingState(AsyncLoadingState.INIT);
-            // console.log("call doFetch()");
-            props.doFetch().then(() => setLoadingState(AsyncLoadingState.IDLE));
+            props.doFetch()
+                .then(() => setLoadingState(AsyncLoadingState.DONE))
+                .catch(() => setLoadingState(AsyncLoadingState.INIT_FAILED));
         }
     }, []);
 
-    const doRefresh = () => {
+    const reload = () => {
+        setLoadingState(AsyncLoadingState.RETRY);
+        props.doFetch()
+            .then(() => setLoadingState(AsyncLoadingState.DONE))
+            .catch(() => setLoadingState(AsyncLoadingState.INIT_FAILED));
+    };
+
+    const refresh = () => {
         setLoadingState(AsyncLoadingState.REFRESH);
-        props.doFetch().then(() => setLoadingState(AsyncLoadingState.IDLE));
+        props.doFetch()
+            .then(() => setLoadingState(AsyncLoadingState.DONE))
+            .catch(() => setLoadingState(AsyncLoadingState.REFRESH_FAILED));
     };
 
     // EVENTS =====================================================================================
@@ -102,16 +116,38 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
     // RENDER =====================================================================================
 
     switch (loadingState) {
-        case AsyncLoadingState.IDLE:
+        case AsyncLoadingState.DONE:
         case AsyncLoadingState.REFRESH:
-            // console.log("props.folders", props.folders);
-            // console.log("props.blogs", props.blogs);
+        case AsyncLoadingState.REFRESH_FAILED:
             let { blogs, folders } = getFolderContent(props.blogs!, props.folders!, props.navigation.getParam('folderId'))
             blogs = filterTrashed(blogs, props.navigation.getParam('filter') === 'trash');
             folders = filterTrashed(folders, props.navigation.getParam('filter') === 'trash');
-            // console.log("folders", folders);
-            // console.log("blogs", blogs);
-            const img = blogs[0].thumbnail ? signURISource(transformedSrc(blogs[0].thumbnail)) : undefined;
+            const foldersHierarchy = [];
+
+            // Drawer
+
+            render.push(<View style={{ marginBottom: 45, zIndex: 1 }}>
+                <Drawer
+                    items={[
+                        {
+                            name: 'Root',
+                            value: 'root',
+                            iconName: 'folder1',
+                            depth: 0,
+                        },
+                        ...(props.folders || []).map(f => ({
+                            name: f.name,
+                            value: f.id,
+                            iconName: 'folder1',
+                            depth: 1,
+                        }))]}
+                    selectItem={item => console.log("selected", item)}
+                    selectedItem={props.navigation.getParam('folderId', 'root')}
+                />
+            </View>);
+
+            // Explorer
+
             render.push(<>
                 <Explorer
                     folders={folders.map(f => ({ ...f, color: theme.themeOpenEnt.indigo }))}
@@ -132,12 +168,26 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
                     }).sort((a, b) => b.date.valueOf() - a.date.valueOf())}
                     onItemPress={onOpenItem}
                     ListFooterComponent={<View style={{ marginBottom: insets.bottom }} />}
-                    refreshControl={<RefreshControl refreshing={loadingState === AsyncLoadingState.REFRESH} onRefresh={() => doRefresh()} />}
+                    refreshControl={<RefreshControl refreshing={loadingState === AsyncLoadingState.REFRESH} onRefresh={() => refresh()} />}
                 />
             </>);
             break;
-        default:
+
+        case AsyncLoadingState.PRISTINE:
+        case AsyncLoadingState.INIT:
             render.push(<LoadingIndicator />);
+            break;
+
+        case AsyncLoadingState.INIT_FAILED:
+        case AsyncLoadingState.RETRY:
+            render.push(
+                <ScrollView
+                    refreshControl={<RefreshControl refreshing={loadingState === AsyncLoadingState.RETRY} onRefresh={() => reload()} />}
+                >
+                    <EmptyContentScreen />
+                </ScrollView>
+            );
+            break;
     }
     return <PageView path={props.navigation.state.routeName}>{render}</PageView>;
 }
@@ -146,17 +196,16 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
 
 export default connect(
     (gs: IGlobalState) => {
-        // console.log("CONNECT", gs);
         const bs = moduleConfig.getState(gs);
-        // console.log("bs", bs);
         return {
             blogs: bs.blogs.data,
             folders: bs.folders.data,
-            initialLoadingState: bs.folders.isPristine && bs.blogs.isPristine
-                ? AsyncLoadingState.PRISTINE : AsyncLoadingState.IDLE
+            initialLoadingState: bs.folders.isPristine || bs.blogs.isPristine
+                ? AsyncLoadingState.PRISTINE : AsyncLoadingState.DONE,
+            error: bs.blogs.error ?? bs.folders.error,
         }
     },
     dispatch => bindActionCreators({
-        doFetch: tryAction(fetchBlogsAndFoldersAction) as any, // FUCK OFF REACT-REDUX YOUR TYPES DEFINITIONS SUCKS
+        doFetch: tryAction(fetchBlogsAndFoldersAction, undefined, true) as any, // FUCK OFF REACT-REDUX YOUR TYPES DEFINITIONS SUCKS
     }, dispatch)
 )(BlogExplorerScreen)

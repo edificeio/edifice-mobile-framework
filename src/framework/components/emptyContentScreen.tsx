@@ -8,7 +8,7 @@ import theme from "~/app/theme";
 
 export const EmptyContentScreen = () => {
   return (
-    <View style={{ flex: 1, backgroundColor: theme.color.neutral.extraLight, alignItems: "center" }}>
+    <View style={{ flex: 1, backgroundColor: theme.color.neutral.extraLight, alignItems: "center", justifyContent: 'center' }}>
       <EmptyContent style={{ aspectRatio: 1, maxHeight: "40%", maxWidth: "70%", marginBottom: 30, marginTop: "10%" }}/> 
       <TextBold style={{ fontSize: 18, marginBottom: 20 }}>{I18n.t("common.error.title")}</TextBold>
       <Text style={{ textAlign: "center" }}>{I18n.t("common.error.content.text")}</Text>
