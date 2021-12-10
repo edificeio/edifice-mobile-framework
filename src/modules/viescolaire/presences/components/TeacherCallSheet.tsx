@@ -82,6 +82,7 @@ export default class CallSheet extends React.PureComponent<any, MoveToFolderModa
             {studentsList.map(student => (
               <StudentRow
                 student={student}
+                mementoNavigation={() => this.props.navigation.navigate('Memento', { studentId: student.id })}
                 lateCallback={event =>
                   this.props.navigation.navigate('DeclareEvent', {
                     type: 'late',

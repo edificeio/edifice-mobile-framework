@@ -4,6 +4,7 @@ import Swipeable from 'react-native-swipeable';
 
 import { Text } from '~/framework/components/text';
 import { CommonStyles } from '~/styles/common/styles';
+import { INavigationProps } from '~/types';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { Icon } from '~/ui/icons/Icon';
 
@@ -29,11 +30,12 @@ type StudentRowState = {
 
 type StudentRowProps = {
   student: Student;
+  mementoNavigation: () => void;
   lateCallback: (event: any) => any;
   leavingCallback: (event: any) => any;
   checkAbsent: () => void;
   uncheckAbsent: (event: any) => any;
-};
+} & INavigationProps;
 
 export default class StudentRow extends React.PureComponent<StudentRowProps, StudentRowState> {
   swipeableRef = null;
@@ -111,7 +113,9 @@ export default class StudentRow extends React.PureComponent<StudentRowProps, Stu
           <TouchableOpacity onPress={this.handleCheck}>
             <View style={[style.tick, this.getCheckColor()]} />
           </TouchableOpacity>
-          <Text style={style.studentName}>{student.name}</Text>
+          <TouchableOpacity onPress={() => this.props.mementoNavigation()}>
+            <Text style={style.studentName}>{student.name}</Text>
+          </TouchableOpacity>
           <View style={style.iconsView}>
             {student.last_course_absent && (
               <Icon style={{ transform: [{ rotateY: '180deg' }] }} color="red" size={20} name="refresh" />

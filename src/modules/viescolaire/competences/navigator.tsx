@@ -1,6 +1,6 @@
-import { createStackNavigator } from "react-navigation-stack";
+import { createStackNavigator } from 'react-navigation-stack';
 
-import Evaluation from "./containers/Evaluation";
+import Evaluation from './containers/Evaluation';
 
 export default createStackNavigator(
   {
@@ -9,6 +9,6 @@ export default createStackNavigator(
     },
   },
   {
-    headerMode: "screen",
-  }
+    headerMode: 'screen',
+  },
 );
