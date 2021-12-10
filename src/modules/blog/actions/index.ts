@@ -2,20 +2,17 @@
  * Blog actions
  */
 
-import { ThunkDispatch } from 'redux-thunk';
+import { ThunkAction, ThunkDispatch } from "redux-thunk";
 
 import workspaceFileTransferActions from '~/framework/modules/workspace/actions/fileTransfer';
 import { IDistantFile, LocalFile } from '~/framework/util/fileHandler';
+import { createAsyncActionCreators } from "~/framework/util/redux/async";
 import { getUserSession } from '~/framework/util/session';
-import moduleConfig from '~/modules/blog/moduleConfig';
-import { getPublishableBlogs, IBlog } from '~/modules/blog/reducer';
-import {
-  createBlogPostResourceRight,
-  getBlogPostRight,
-  publishBlogPostResourceRight,
-  submitBlogPostResourceRight,
-} from '~/modules/blog/rights';
-import { blogService } from '~/modules/blog/service';
+
+import moduleConfig from "../moduleConfig";
+import { createBlogPostResourceRight, getBlogPostRight, publishBlogPostResourceRight, submitBlogPostResourceRight } from "../rights";
+import { blogService } from "../service";
+import { actionTypes, getPublishableBlogs, IBlog, IBlogFolder } from "../reducer";
 
 /**
  * Fetch the details of a given blog post.
@@ -59,14 +56,23 @@ export const getPublishableBlogListAction = () => async (dispatch: ThunkDispatch
   }
 };
 
-export const uploadBlogPostImagesAction =
-  (images: LocalFile[]) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    return dispatch(
-      workspaceFileTransferActions.uploadFilesAction(images, {
-        parent: 'protected',
-      }),
-    );
-  };
+export const getBlogsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  const session = getUserSession(getState());
+  const ret = await Promise.all([
+    blogService.list(session),
+    blogService.folders.list(session)
+  ]);
+  return { blogs: ret[0], folders: ret[1] };
+}
+
+export const uploadBlogPostImagesAction = (images: LocalFile[]) =>
+  async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+    return dispatch(workspaceFileTransferActions.uploadFilesAction(
+      images, {
+      parent: 'protected'
+    }
+    ));
+  }
 
 /**
  * Create and submit/publish a post for a given blog.
@@ -74,36 +80,36 @@ export const uploadBlogPostImagesAction =
  */
 export const sendBlogPostAction =
   (blog: IBlog, postTitle: string, postContent: string, uploadedPostImages?: IDistantFile[]) =>
-  async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    try {
-      const session = getUserSession(getState());
-      const blogId = blog.id;
-      const blogPostRight = getBlogPostRight(blog, session);
-      if (!blogPostRight) {
-        throw new Error('[sendBlogPostAction] user has no post rights for this blog');
-      }
+    async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+      try {
+        const session = getUserSession(getState());
+        const blogId = blog.id;
+        const blogPostRight = getBlogPostRight(blog, session);
+        if (!blogPostRight) {
+          throw new Error('[sendBlogPostAction] user has no post rights for this blog');
+        }
 
-      // Create post
-      const postId = (await dispatch(
-        createBlogPostAction(blogId, postTitle, postContent, uploadedPostImages),
-      )) as unknown as string;
+        // Create post
+        const postId = (await dispatch(
+          createBlogPostAction(blogId, postTitle, postContent, uploadedPostImages),
+        )) as unknown as string;
 
-      // Submit or publish post
-      if (!postId) {
-        throw new Error('[sendBlogPostAction] failed to access id of created post');
+        // Submit or publish post
+        if (!postId) {
+          throw new Error('[sendBlogPostAction] failed to access id of created post');
+        }
+        const blogPostActionRight = blogPostRight.actionRight;
+        const shareAction = {
+          [createBlogPostResourceRight]: undefined,
+          [submitBlogPostResourceRight]: () => dispatch(submitBlogPostAction(blogId, postId)) as unknown as Promise<string>,
+          [publishBlogPostResourceRight]: () => dispatch(publishBlogPostAction(blogId, postId)) as unknown as Promise<string>,
+        }[blogPostActionRight];
+        shareAction && (await shareAction());
+      } catch (e) {
+        // ToDo: Error handling
+        console.warn(`[${moduleConfig.name}] sendBlogPostAction failed`, e);
       }
-      const blogPostActionRight = blogPostRight.actionRight;
-      const shareAction = {
-        [createBlogPostResourceRight]: undefined,
-        [submitBlogPostResourceRight]: () => dispatch(submitBlogPostAction(blogId, postId)) as unknown as Promise<string>,
-        [publishBlogPostResourceRight]: () => dispatch(publishBlogPostAction(blogId, postId)) as unknown as Promise<string>,
-      }[blogPostActionRight];
-      shareAction && (await shareAction());
-    } catch (e) {
-      // ToDo: Error handling
-      console.warn(`[${moduleConfig.name}] sendBlogPostAction failed`, e);
-    }
-  };
+    };
 
 /**
  * Create a post for a given blog.
@@ -111,32 +117,32 @@ export const sendBlogPostAction =
  */
 export const createBlogPostAction =
   (blogId: string, postTitle: string, postContent: string, uploadedPostImages?: IDistantFile[]) =>
-  async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    try {
-      const session = getUserSession(getState());
+    async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+      try {
+        const session = getUserSession(getState());
 
-      let postContentHtml = `<p class="ng-scope" style="">${postContent}</p>`;
-      if (uploadedPostImages) {
-        const postImageUploads = Object.values(uploadedPostImages);
-        const images = postImageUploads
-          .map(postImageUpload => `<img src="${postImageUpload.url}?thumbnail=2600x0" class="">`)
-          .join('');
-        const imagesHtml = `<p class="ng-scope" style="">
+        let postContentHtml = `<p class="ng-scope" style="">${postContent}</p>`;
+        if (uploadedPostImages) {
+          const postImageUploads = Object.values(uploadedPostImages);
+          const images = postImageUploads
+            .map(postImageUpload => `<img src="${postImageUpload.url}?thumbnail=2600x0" class="">`)
+            .join('');
+          const imagesHtml = `<p class="ng-scope" style="">
         <span contenteditable="false" class="image-container ng-scope" style="">
           ${images}
         </span>
       </p>`;
-        postContentHtml = postContentHtml + imagesHtml;
-      }
+          postContentHtml = postContentHtml + imagesHtml;
+        }
 
-      const createdPost = await blogService.post.create(session, blogId, postTitle, postContentHtml);
-      const postId = createdPost._id;
-      return postId;
-    } catch (e) {
-      // ToDo: Error handling
-      console.warn(`[${moduleConfig.name}] createBlogPostAction failed`, e);
-    }
-  };
+        const createdPost = await blogService.post.create(session, blogId, postTitle, postContentHtml);
+        const postId = createdPost._id;
+        return postId;
+      } catch (e) {
+        // ToDo: Error handling
+        console.warn(`[${moduleConfig.name}] createBlogPostAction failed`, e);
+      }
+    };
 
 /**
  * Submit a created post for a given blog.
@@ -169,3 +175,51 @@ export const publishBlogPostAction =
       console.warn(`[${moduleConfig.name}] publishBlogPostAction failed`, e);
     }
   };
+
+/**
+ * These are actions to fetch and populate Blog main reducer.
+ */
+export const blogFoldersActionsCreators = createAsyncActionCreators(actionTypes.folders);
+export const fetchBlogFoldersAction =
+  (): ThunkAction<Promise<IBlogFolder[]>, any, any, any> => async (dispatch, getState) => {
+    try {
+      // console.log("start fetchBlogFoldersAction");
+      const session = getUserSession(getState());
+      // console.log("request fetchBlogFoldersAction");
+      dispatch(blogFoldersActionsCreators.request());
+      const res = await blogService.folders.list(session);
+      // console.log("recieve fetchBlogFoldersAction");
+      dispatch(blogFoldersActionsCreators.receipt(res));
+      return res;
+    } catch (e) {
+      // console.log("error fetchBlogFoldersAction");
+      dispatch(blogFoldersActionsCreators.error(e as Error));
+      throw e;
+    }
+  }
+export const blogActionsCreators = createAsyncActionCreators(actionTypes.blogs);
+export const fetchBlogsAction =
+  (): ThunkAction<Promise<IBlog[]>, any, any, any> => async (dispatch, getState) => {
+    try {
+      // console.log("start fetchBlogsAction");
+      const session = getUserSession(getState());
+      // console.log("request fetchBlogsAction");
+      dispatch(blogActionsCreators.request());
+      const res = await blogService.list(session);
+      // console.log("recieve fetchBlogsAction");
+      dispatch(blogActionsCreators.receipt(res));
+      return res;
+    } catch (e) {
+      // console.log("error fetchBlogsAction");
+      dispatch(blogActionsCreators.error(e as Error));
+      throw e;
+    }
+  }
+export const fetchBlogsAndFoldersAction =
+  (): ThunkAction<Promise<[IBlog[], IBlogFolder[]]>, any, any, any> => async (dispatch, getState) => {
+    // console.log("fetchBlogsAndFoldersAction");
+    return Promise.all([
+      dispatch(fetchBlogsAction()),
+      dispatch(fetchBlogFoldersAction())
+    ]);
+  }

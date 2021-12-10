@@ -46,6 +46,8 @@ export interface AsyncState<DataType> {
   error?: Error;
 }
 
+export enum AsyncLoadingState { PRISTINE, INIT, REFRESH, IDLE };
+
 export function createInitialAsyncState<DataType>(initialState: DataType) {
   return ({
     data: initialState,
