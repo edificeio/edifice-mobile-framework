@@ -1,7 +1,7 @@
-import { NavigationActions, NavigationNavigateAction, StackActions } from "react-navigation";
+import { NavigationActions, NavigationNavigateAction, StackActions } from 'react-navigation';
 
-import { rootNavigatorRef } from "../../AppScreen";
-import NavigationService from "../NavigationService";
+import { rootNavigatorRef } from '~/AppScreen';
+import NavigationService from '~/navigation/NavigationService';
 
 /**
  * Use the Root Navigator to go on another page.
@@ -19,7 +19,7 @@ export const navigate = (route, params = {}) => {
  * @param route route to go
  * @param params additional parameters to pass to navigation state
  */
- export const reset = (stack: NavigationNavigateAction[]) => {
+export const reset = (stack: NavigationNavigateAction[]) => {
   return rootNavigatorRef.dispatch(StackActions.reset({ index: stack.length - 1, actions: stack }));
 };
 

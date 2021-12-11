@@ -1,34 +1,35 @@
-import I18n from "i18n-js";
-import * as React from "react";
-import { NavigationScreenProp } from "react-navigation";
-import { createStackNavigator } from "react-navigation-stack";
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { NavigationScreenProp } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
 
-import { AnyModule, NavigableModuleArray } from "../framework/util/moduleTool";
-import { IAppModule } from "../infra/moduleTool/types";
-import { getRoutes, getModules } from "../navigation/helpers/navBuilder";
-import { standardNavScreenOptions } from "../navigation/helpers/navScreenOptions";
-import MyAppGrid from "./components/MyAppGrid";
-import { myAppsModules } from "./myAppsModules";
+import MyAppGrid from './components/MyAppGrid';
+import { myAppsModules } from './myAppsModules';
+
+import { AnyModule, NavigableModuleArray } from '~/framework/util/moduleTool';
+import { IAppModule } from '~/infra/moduleTool/types';
+import { getRoutes, getModules } from '~/navigation/helpers/navBuilder';
+import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
 
 const MyAppGridContainer = (modules: IAppModule[], newModules: AnyModule[]) =>
   createStackNavigator({
     myAppsGrid: {
       screen: (props: any) => <MyAppGrid {...props} modules={modules} newModules={newModules} />,
-      navigationOptions: ({ navigation }: { navigation: NavigationScreenProp<{}> }) =>
+      navigationOptions: ({ navigation }: { navigation: NavigationScreenProp<object> }) =>
         standardNavScreenOptions(
           {
-            title: I18n.t("MyApplications"),
+            title: I18n.t('MyApplications'),
             headerLeftContainerStyle: {
-              alignItems: "flex-start",
+              alignItems: 'flex-start',
             },
             headerRightContainerStyle: {
-              alignItems: "flex-start",
+              alignItems: 'flex-start',
             },
             headerTitleContainerStyle: {
-              alignItems: "flex-start",
+              alignItems: 'flex-start',
             },
           },
-          navigation
+          navigation,
         ),
     },
   });
@@ -44,7 +45,7 @@ export default (apps: any[]) => {
       ...newModules.getRoutes(),
     },
     {
-      headerMode: "none",
-    }
+      headerMode: 'none',
+    },
   );
 };

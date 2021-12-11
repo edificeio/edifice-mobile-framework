@@ -1,7 +1,8 @@
-import { CommonStyles } from "../../styles/common/styles";
-import { Platform } from "react-native";
-import deviceInfoModule from "react-native-device-info";
-import { UI_SIZES } from "../../framework/components/constants";
+import { Platform } from 'react-native';
+import deviceInfoModule from 'react-native-device-info';
+
+import { UI_SIZES } from '~/framework/components/constants';
+import { CommonStyles } from '~/styles/common/styles';
 
 /**
  * Options for a header with centered title
@@ -12,7 +13,7 @@ export const standardNavScreenOptions = (props, { state }) => {
 
   return {
     header,
-    headerTintColor: "white",
+    headerTintColor: 'white',
     tabBarVisible: header !== null,
     headerBackTitle: null,
     ...props,
@@ -23,12 +24,12 @@ export const standardNavScreenOptions = (props, { state }) => {
       ...(props.headerStyle || {}),
     },
     headerTitleStyle: {
-      alignSelf: "center",
-      color: "white",
+      alignSelf: 'center',
+      color: 'white',
       fontFamily: CommonStyles.primaryFontFamily,
       fontSize: 16,
-      fontWeight: "400",
-      textAlign: "center",
+      fontWeight: '400',
+      textAlign: 'center',
       ...(props.headerTitleStyle || {}),
     },
     headerTitleContainerStyle: {
@@ -45,15 +46,15 @@ export const alternativeNavScreenOptions = (props, navigation) =>
   standardNavScreenOptions(
     {
       headerTitleStyle: {
-        alignSelf: "center",
-        color: "white",
+        alignSelf: 'center',
+        color: 'white',
         fontFamily: CommonStyles.primaryFontFamily,
         fontSize: 16,
-        fontWeight: "400",
-        textAlign: "left",
+        fontWeight: '400',
+        textAlign: 'left',
         marginHorizontal: 0,
       },
       ...props,
     },
-    navigation
+    navigation,
   );

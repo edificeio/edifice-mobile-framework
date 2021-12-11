@@ -1,16 +1,13 @@
-import style from "glamorous-native";
-import * as React from "react";
-import { NavigationState, NavigationScreenProp } from "react-navigation";
-import { createBottomTabNavigator } from "react-navigation-tabs";
-import { UI_SIZES } from "../../framework/components/constants";
+import style from 'glamorous-native';
+import * as React from 'react';
+import { NavigationState, NavigationScreenProp } from 'react-navigation';
+import { createBottomTabNavigator } from 'react-navigation-tabs';
 
-import { CommonStyles } from "../../styles/common/styles";
-import { IconOnOff } from "../../ui";
+import { UI_SIZES } from '~/framework/components/constants';
+import { CommonStyles } from '~/styles/common/styles';
+import { IconOnOff } from '~/ui';
 
-export const createMainTabNavigator = (
-  routeConfigs,
-  initialRouteName: string = undefined
-) =>
+export const createMainTabNavigator = (routeConfigs, initialRouteName: string = undefined) =>
   createBottomTabNavigator(routeConfigs, {
     initialRouteName,
     defaultNavigationOptions: shouldTabBarBeVisible,
@@ -28,35 +25,31 @@ export const createMainTabNavigator = (
         borderTopColor: CommonStyles.borderColorLighter,
         borderTopWidth: 1,
         elevation: 1,
-        height: UI_SIZES.headerHeight
+        height: UI_SIZES.headerHeight,
       },
       tabStyle: {
-        flexDirection: "column",
-        height: "100%"
-      }
-    }
+        flexDirection: 'column',
+        height: '100%',
+      },
+    },
   });
 
 export const createMainTabNavOption = (title: string, iconName: string) => ({
-  tabBarIcon: ({ focused }) => (
-    <IconOnOff size={24} name={iconName} focused={focused} style={{ marginTop: -6 }} />
-  ),
-  tabBarLabel: ({ focused }) => (
-    <MainTabNavigationLabel focused={focused}>{title}</MainTabNavigationLabel>
-  )
+  tabBarIcon: ({ focused }) => <IconOnOff size={24} name={iconName} focused={focused} style={{ marginTop: -6 }} />,
+  tabBarLabel: ({ focused }) => <MainTabNavigationLabel focused={focused}>{title}</MainTabNavigationLabel>,
 });
 
 const MainTabNavigationLabel = style.text(
   {
-    alignSelf: "center",
+    alignSelf: 'center',
     fontFamily: CommonStyles.primaryFontFamily,
     fontSize: 10,
     marginBottom: 4,
-    marginTop: -12
+    marginTop: -12,
   },
   ({ focused }) => ({
-    color: focused ? CommonStyles.actionColor : CommonStyles.textTabBottomColor
-  })
+    color: focused ? CommonStyles.actionColor : CommonStyles.textTabBottomColor,
+  }),
 );
 
 export const shouldTabBarBeVisible = ({ navigation }: { navigation: NavigationScreenProp<NavigationState> }) => {
@@ -66,6 +59,6 @@ export const shouldTabBarBeVisible = ({ navigation }: { navigation: NavigationSc
   }
 
   return {
-    tabBarVisible
+    tabBarVisible,
   };
 };
