@@ -1,19 +1,19 @@
-import I18n from "i18n-js";
-import moment from "moment";
-import * as React from "react";
-import { View, StyleSheet, RefreshControl, Dimensions, FlatList } from "react-native";
-import { NavigationDrawerProp } from "react-navigation-drawer";
+import I18n from 'i18n-js';
+import moment from 'moment';
+import * as React from 'react';
+import { View, StyleSheet, RefreshControl, Dimensions, FlatList } from 'react-native';
+import { NavigationDrawerProp } from 'react-navigation-drawer';
 
-import { CommonStyles } from "../../../styles/common/styles";
-import { Icon, Loading } from "../../../ui";
-import { Header, LeftPanel, CenterPanel, PageContainer } from "../../../ui/ContainerContent";
-import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
-import { EmptyScreen } from "../../../ui/EmptyScreen";
-import { SingleAvatar } from "../../../ui/avatars/SingleAvatar";
-import { Text, TextBold } from "../../../framework/components/text";
-import { IInit } from "../containers/DrawerMenu";
-import { DraftType } from "../containers/NewMail";
-import { IMail } from "../state/mailContent";
+import { Text, TextBold } from '~/framework/components/text';
+import { IInit } from '~/modules/zimbra/containers/DrawerMenu';
+import { DraftType } from '~/modules/zimbra/containers/NewMail';
+import { IMail } from '~/modules/zimbra/state/mailContent';
+import { CommonStyles } from '~/styles/common/styles';
+import { Icon, Loading } from '~/ui';
+import { Header, LeftPanel, CenterPanel, PageContainer } from '~/ui/ContainerContent';
+import TouchableOpacity from '~/ui/CustomTouchableOpacity';
+import { EmptyScreen } from '~/ui/EmptyScreen';
+import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 type MailListProps = {
   notifications: any;
@@ -87,8 +87,8 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
   selectItem = mailInfos => {
     mailInfos.isChecked = !mailInfos.isChecked;
 
-    let indexMail = this.state.mails.findIndex(item => item.id === mailInfos.id);
-    let newList = Object.assign([], this.state.mails);
+    const indexMail = this.state.mails.findIndex(item => item.id === mailInfos.id);
+    const newList = Object.assign([], this.state.mails);
     newList[indexMail] = mailInfos;
 
     this.props.setMails(newList);
@@ -97,8 +97,8 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
   };
 
   renderMailContent = mailInfos => {
-    if (mailInfos.state === "DRAFT" && mailInfos.systemFolder === "DRAFT") {
-      this.props.navigation.navigate("newMail", {
+    if (mailInfos.state === 'DRAFT' && mailInfos.systemFolder === 'DRAFT') {
+      this.props.navigation.navigate('newMail', {
         type: DraftType.DRAFT,
         mailId: mailInfos.id,
         isTrashed: this.props.isTrashed,
@@ -108,7 +108,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
         },
       });
     } else {
-      this.props.navigation.navigate("mailDetail", {
+      this.props.navigation.navigate('mailDetail', {
         mailId: mailInfos.id,
         subject: mailInfos.subject,
         onGoBack: () => {
@@ -125,14 +125,14 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
     if (mailDate.year() < moment().year()) {
       return mailDate.calendar();
     }
-    return mailDate.format("D MMM");
+    return mailDate.format('D MMM');
   };
 
   private renderMailItemInfos(mailInfos) {
-    let contact = ["", ""];
-    if (mailInfos.systemFolder === "INBOX") contact = mailInfos.displayNames.find(item => item[0] === mailInfos.from);
+    let contact = ['', ''];
+    if (mailInfos.systemFolder === 'INBOX') contact = mailInfos.displayNames.find(item => item[0] === mailInfos.from);
     else contact = mailInfos.displayNames.find(item => item[0] === mailInfos.to[0]);
-    if (contact === undefined) contact = ["", I18n.t("zimbra-unknown")];
+    if (contact === undefined) contact = ['', I18n.t('zimbra-unknown')];
     return (
       <TouchableOpacity
         onPress={() => {
@@ -141,8 +141,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
           } else this.selectItem(mailInfos);
         }}
         onLongPress={() => this.selectItem(mailInfos)}>
-        <Header
-          style={[styles.containerMail, this.containerStyle(mailInfos.isChecked), this.hasShadow(mailInfos.unread)]}>
+        <Header style={[styles.containerMail, this.containerStyle(mailInfos.isChecked), this.hasShadow(mailInfos.unread)]}>
           <LeftPanel>
             {mailInfos.unread && <Icon name="mail" size={18} color="#FC8500" />}
             <SingleAvatar userId={mailInfos.from} />
@@ -162,12 +161,10 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
               <Text style={styles.greyColor}>{this.renderDateFormat(moment(mailInfos.date))}</Text>
             </View>
             <View style={styles.mailInfos}>
-              <Text style={{ flex: 1, color: "#AFAFAF" }} numberOfLines={1}>
+              <Text style={{ flex: 1, color: '#AFAFAF' }} numberOfLines={1}>
                 {mailInfos.subject}
               </Text>
-              {mailInfos.hasAttachment && (
-                <Icon style={{ alignSelf: "flex-end" }} name="attached" size={18} color="black" />
-              )}
+              {mailInfos.hasAttachment && <Icon style={{ alignSelf: 'flex-end' }} name="attached" size={18} color="black" />}
             </View>
           </CenterPanel>
         </Header>
@@ -209,9 +206,7 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
           renderItem={({ item }) => this.renderMailItemInfos(item)}
           extraData={uniqueMails}
           keyExtractor={(item: IMail) => item.id}
-          refreshControl={
-            <RefreshControl refreshing={isFetching && !firstFetch} onRefresh={() => this.refreshMailList(true)} />
-          }
+          refreshControl={<RefreshControl refreshing={isFetching && !firstFetch} onRefresh={() => this.refreshMailList(true)} />}
           onEndReachedThreshold={0.001}
           onScrollBeginDrag={() => this.setState({ nextPageCallable: true })}
           onEndReached={() => {
@@ -226,10 +221,10 @@ export default class MailList extends React.PureComponent<MailListProps, MailLis
             ) : (
               <View style={{ flex: 1 }}>
                 <EmptyScreen
-                  imageSrc={require("ASSETS/images/empty-screen/empty-mailBox.png")}
+                  imageSrc={require('ASSETS/images/empty-screen/empty-mailBox.png')}
                   imgWidth={265.98}
                   imgHeight={279.97}
-                  title={I18n.t("zimbra-empty-mailbox")}
+                  title={I18n.t('zimbra-empty-mailbox')}
                 />
               </View>
             )
@@ -244,20 +239,20 @@ const styles = StyleSheet.create({
   containerMail: {
     marginTop: 5,
     marginHorizontal: 8,
-    maxWidth: Dimensions.get("window").width - 16,
+    maxWidth: Dimensions.get('window').width - 16,
     padding: 10,
-    backgroundColor: "white",
+    backgroundColor: 'white',
   },
   containerMailSelected: {
-    backgroundColor: "#C5E6F2",
+    backgroundColor: '#C5E6F2',
   },
   mailInfos: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "flex-end",
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'flex-end',
   },
   mailInfoSender: { flex: 1 },
-  greyColor: { color: "#AFAFAF" },
+  greyColor: { color: '#AFAFAF' },
   shadow: {
     elevation: 4,
     shadowColor: CommonStyles.shadowColor,

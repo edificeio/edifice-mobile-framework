@@ -1,6 +1,6 @@
 /* eslint-disable flowtype/no-types-missing-file-annotation */
-import { createAsyncActionTypes, AsyncState } from "../../../infra/redux/async2";
-import mailConfig from "../moduleConfig";
+import { createAsyncActionTypes, AsyncState } from '~/infra/redux/async2';
+import mailConfig from '~/modules/zimbra/moduleConfig';
 
 // THE MODEL --------------------------------------------------------------------------------------
 
@@ -33,18 +33,18 @@ export interface IInitMail {
 export const initialState: IInitMail = {
   quota: {
     storage: 0,
-    quota: "",
+    quota: '',
   },
   signature: {
     prefered: false,
-    id: "",
-    content: "",
+    id: '',
+    content: '',
   },
   folders: [
     {
-      id: "",
-      folderName: "",
-      path: "",
+      id: '',
+      folderName: '',
+      path: '',
       unread: 0,
       count: 0,
       folders: [],
@@ -54,9 +54,8 @@ export const initialState: IInitMail = {
 
 export type IInitMailState = AsyncState<IInitMail>;
 
-export const getInitMailListState = (globalState: any) =>
-  mailConfig.getState(globalState).init as IInitMailState;
+export const getInitMailListState = (globalState: any) => mailConfig.getState(globalState).init as IInitMailState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const actionTypes = createAsyncActionTypes(mailConfig.namespaceActionType("INIT_MAIL_LIST"));
+export const actionTypes = createAsyncActionTypes(mailConfig.namespaceActionType('INIT_MAIL_LIST'));

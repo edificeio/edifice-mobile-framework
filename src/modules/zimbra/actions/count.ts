@@ -1,8 +1,8 @@
-import { Dispatch } from "redux";
+import { Dispatch } from 'redux';
 
-import { createAsyncActionCreators } from "../../../infra/redux/async2";
-import { foldersService } from "../service/folders";
-import { ICount, actionTypes } from "../state/count";
+import { createAsyncActionCreators } from '~/infra/redux/async2';
+import { foldersService } from '~/modules/zimbra/service/folders';
+import { ICount, actionTypes } from '~/modules/zimbra/state/count';
 
 export const dataActions = createAsyncActionCreators<ICount>(actionTypes);
 

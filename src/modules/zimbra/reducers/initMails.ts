@@ -1,5 +1,5 @@
-import { createSessionAsyncReducer } from "../../../infra/redux/async2";
-import { initialState, actionTypes } from "../state/initMails";
+import { createSessionAsyncReducer } from '~/infra/redux/async2';
+import { initialState, actionTypes } from '~/modules/zimbra/state/initMails';
 
 // THE REDUCER ------------------------------------------------------------------------------------
 

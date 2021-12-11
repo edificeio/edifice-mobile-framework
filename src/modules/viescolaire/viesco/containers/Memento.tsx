@@ -5,10 +5,9 @@ import { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { fetchMementoAction } from '../actions/memento';
-import { RelativesInfos, StudentInfos } from '../components/Memento';
-import { getMementoState, IMementoState } from '../state/memento';
-
+import { fetchMementoAction } from '~/modules/viescolaire/viesco/actions/memento';
+import { RelativesInfos, StudentInfos } from '~/modules/viescolaire/viesco/components/Memento';
+import { getMementoState, IMementoState } from '~/modules/viescolaire/viesco/state/memento';
 import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HeaderBackAction } from '~/ui/headers/NewHeader';

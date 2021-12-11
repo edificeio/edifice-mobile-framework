@@ -1,24 +1,25 @@
-import I18n from "i18n-js";
-import React from "react";
-import { View } from "react-native";
-import { NavigationState } from "react-navigation";
-import { createDrawerNavigator, NavigationDrawerProp } from "react-navigation-drawer";
-import { connect } from "react-redux";
+import I18n from 'i18n-js';
+import React from 'react';
+import { View } from 'react-native';
+import { NavigationState } from 'react-navigation';
+import { createDrawerNavigator, NavigationDrawerProp } from 'react-navigation-drawer';
+import { connect } from 'react-redux';
 
-import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
-import { CommonStyles } from "../../../styles/common/styles";
-import { Icon } from "../../../ui";
-import { PageContainer } from "../../../ui/ContainerContent";
-import TouchableOpacity from "../../../ui/CustomTouchableOpacity";
-import TempFloatingAction from "../../../ui/FloatingButton/TempFloatingAction";
-import { Text } from "../../../ui/Typography";
-import { Header as HeaderComponent } from "../../../ui/headers/Header";
-import { HeaderAction } from "../../../ui/headers/NewHeader";
-import { ModalStorageWarning } from "../components/Modals/QuotaModal";
-import { getQuotaState, IQuota } from "../state/quota";
-import DrawerMenuContainer from "./DrawerMenu";
-import MailList from "./MailList";
-import { DraftType } from "./NewMail";
+import DrawerMenuContainer from './DrawerMenu';
+import MailList from './MailList';
+import { DraftType } from './NewMail';
+
+import { ModalStorageWarning } from '~/modules/zimbra/components/Modals/QuotaModal';
+import { getQuotaState, IQuota } from '~/modules/zimbra/state/quota';
+import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
+import { CommonStyles } from '~/styles/common/styles';
+import { Icon } from '~/ui';
+import { PageContainer } from '~/ui/ContainerContent';
+import TouchableOpacity from '~/ui/CustomTouchableOpacity';
+import TempFloatingAction from '~/ui/FloatingButton/TempFloatingAction';
+import { Text } from '~/ui/Typography';
+import { Header as HeaderComponent } from '~/ui/headers/Header';
+import { HeaderAction } from '~/ui/headers/NewHeader';
 
 type DrawerNavigatorWrapperProps = {
   storage: IQuota;
@@ -40,7 +41,7 @@ const DrawerNavigatorComponent = createDrawerNavigator(
   {
     contentComponent: DrawerMenuContainer,
     edgeWidth: -1,
-  }
+  },
 );
 
 export const IconButton = ({ icon, color, onPress }) => {
@@ -58,7 +59,7 @@ export class DrawerNavigatorWrapper extends React.Component<DrawerNavigatorWrapp
       {
         header: null,
       },
-      navigation
+      navigation,
     );
   };
 
@@ -83,17 +84,17 @@ export class DrawerNavigatorWrapper extends React.Component<DrawerNavigatorWrapp
     const { key, params } = activeRoute;
     if (params !== undefined && params.folderName !== undefined) return params.folderName;
     switch (key) {
-      case "sendMessages":
-        return I18n.t("zimbra-outbox");
-      case "drafts":
-        return I18n.t("zimbra-drafts");
-      case "trash":
-        return I18n.t("zimbra-trash");
-      case "spams":
-        return I18n.t("zimbra-spams");
+      case 'sendMessages':
+        return I18n.t('zimbra-outbox');
+      case 'drafts':
+        return I18n.t('zimbra-drafts');
+      case 'trash':
+        return I18n.t('zimbra-trash');
+      case 'spams':
+        return I18n.t('zimbra-spams');
       default:
-      case "inbox":
-        return I18n.t("zimbra-inbox");
+      case 'inbox':
+        return I18n.t('zimbra-inbox');
     }
   };
 
@@ -122,22 +123,22 @@ export class DrawerNavigatorWrapper extends React.Component<DrawerNavigatorWrapp
                   navigation.toggleDrawer();
                 }}
               />
-              <View style={{ flex: 1, flexDirection: "row", justifyContent: "center" }}>
+              <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
                 <Text
                   numberOfLines={1}
                   style={{
-                    alignSelf: "center",
+                    alignSelf: 'center',
                     paddingRight: 10,
-                    color: "white",
+                    color: 'white',
                     fontFamily: CommonStyles.primaryFontFamily,
                     fontSize: 16,
-                    fontWeight: "400",
-                    textAlign: "center",
+                    fontWeight: '400',
+                    textAlign: 'center',
                   }}>
                   {title}
                 </Text>
                 <View style={{ marginRight: 50, marginTop: 3 }}>
-                  <IconButton onPress={() => navigation.navigate("search")} color="#FFF" icon="search2" />
+                  <IconButton onPress={() => navigation.navigate('search')} color="#FFF" icon="search2" />
                 </View>
               </View>
             </HeaderComponent>
@@ -148,7 +149,7 @@ export class DrawerNavigatorWrapper extends React.Component<DrawerNavigatorWrapp
               iconName="new_message"
               onEvent={() => {
                 if (!this.isStorageFull() || this.state.isShownStorageWarning) {
-                  this.props.navigation.navigate("newMail", {
+                  this.props.navigation.navigate('newMail', {
                     type: DraftType.NEW,
                     mailId: undefined,
                     currentFolder: this.getActiveRouteState(navigation.state).key,

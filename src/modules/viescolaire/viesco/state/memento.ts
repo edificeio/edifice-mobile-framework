@@ -1,6 +1,5 @@
-import viescoConfig from '../../moduleConfig';
-
 import { createAsyncActionTypes, AsyncState } from '~/infra/redux/async2';
+import viescoConfig from '~/modules/viescolaire/moduleConfig';
 
 // THE MODEL --------------------------------------------------------------------------------------
 
@@ -42,8 +41,7 @@ export const initialState: IMemento = {
   relatives: [],
 };
 
-export const getMementoState = (globalState: any) =>
-  viescoConfig.getState(globalState).viesco.memento as IMementoState;
+export const getMementoState = (globalState: any) => viescoConfig.getState(globalState).viesco.memento as IMementoState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 

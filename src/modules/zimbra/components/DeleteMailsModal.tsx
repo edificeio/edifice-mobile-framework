@@ -1,12 +1,12 @@
-import I18n from "i18n-js";
-import * as React from "react";
-import { useWindowDimensions, View } from "react-native";
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { useWindowDimensions, View } from 'react-native';
 
-import { CommonStyles } from "../../../styles/common/styles";
-import { Icon } from "../../../ui";
-import { DialogButtonCancel, DialogButtonOk } from "../../../ui/ConfirmDialog";
-import { ModalBox, ModalContent, ModalContentBlock } from "../../../ui/Modal";
-import { Text, TextBold } from "../../../ui/Typography";
+import { CommonStyles } from '~/styles/common/styles';
+import { Icon } from '~/ui';
+import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
+import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
+import { Text, TextBold } from '~/ui/Typography';
 
 export const ModalPermanentDelete = ({
   deleteModal,
@@ -19,23 +19,23 @@ export const ModalPermanentDelete = ({
 }) => (
   <ModalBox isVisible={deleteModal.isShown} backdropOpacity={0.5}>
     <ModalContent style={{ width: useWindowDimensions().width - 60 }}>
-      <View style={{ alignSelf: "flex-start" }}>
-        <ModalContentBlock style={{ flexDirection: "row" }}>
+      <View style={{ alignSelf: 'flex-start' }}>
+        <ModalContentBlock style={{ flexDirection: 'row' }}>
           <Icon size={18} name="warning" color={CommonStyles.secondary} />
-          <TextBold style={{ fontSize: 16 }}>&emsp;{I18n.t("zimbra-message-deleted-confirm")}</TextBold>
+          <TextBold style={{ fontSize: 16 }}>&emsp;{I18n.t('zimbra-message-deleted-confirm')}</TextBold>
         </ModalContentBlock>
       </View>
 
-      <View style={{ width: "100%", marginBottom: 35, paddingHorizontal: 20 }}>
-        <Text>{I18n.t("zimbra-message-deleted-confirm-text")}</Text>
+      <View style={{ width: '100%', marginBottom: 35, paddingHorizontal: 20 }}>
+        <Text>{I18n.t('zimbra-message-deleted-confirm-text')}</Text>
       </View>
 
-      <View style={{ alignSelf: "flex-end" }}>
-        <ModalContentBlock style={{ flexDirection: "row" }}>
+      <View style={{ alignSelf: 'flex-end' }}>
+        <ModalContentBlock style={{ flexDirection: 'row' }}>
           <DialogButtonCancel onPress={() => closeModal()} />
           <DialogButtonOk
             style={{ backgroundColor: CommonStyles.secondary }}
-            label={I18n.t("delete")}
+            label={I18n.t('delete')}
             onPress={() => actionsDeleteSuccess(deleteModal.mailsIds)}
           />
         </ModalContentBlock>

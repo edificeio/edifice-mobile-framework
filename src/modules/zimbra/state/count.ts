@@ -1,5 +1,5 @@
-import { createAsyncActionTypes, AsyncState } from "../../../infra/redux/async2";
-import folderConfig from "../moduleConfig";
+import { createAsyncActionTypes, AsyncState } from '~/infra/redux/async2';
+import folderConfig from '~/modules/zimbra/moduleConfig';
 
 // THE MODEL --------------------------------------------------------------------------------------
 
@@ -17,4 +17,4 @@ export const getCountListState = (globalState: any) => folderConfig.getState(glo
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const actionTypes = createAsyncActionTypes(folderConfig.namespaceActionType("COUNT_LIST"));
+export const actionTypes = createAsyncActionTypes(folderConfig.namespaceActionType('COUNT_LIST'));

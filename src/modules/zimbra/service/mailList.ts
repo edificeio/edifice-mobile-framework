@@ -1,7 +1,7 @@
-import moment from "moment";
+import moment from 'moment';
 
-import {fetchJSONWithCache} from "../../../infra/fetchWithCache";
-import {IMailList} from "../state/mailList";
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { IMailList } from '~/modules/zimbra/state/mailList';
 
 // Data type of what is given by the backend.
 export type IMailListBackend = {
@@ -48,25 +48,25 @@ const mailListAdapter: (data: IMailListBackend) => IMailList = data => {
 };
 
 export const mailListService = {
-  get: async (page: number, folder: string = "inbox", searchText: string) => {
-    let searchParam = searchText === "" ? "" : "&search=" + searchText as string;
+  get: async (page: number, folder: string = 'inbox', searchText: string) => {
+    let searchParam = searchText === '' ? '' : (('&search=' + searchText) as string);
     switch (folder) {
-      case "inbox":
+      case 'inbox':
         return mailListAdapter(await fetchJSONWithCache(`/zimbra/list?folder=/Inbox&page=${page}&unread=false${searchParam}`));
-      case "sendMessages":
+      case 'sendMessages':
         return mailListAdapter(await fetchJSONWithCache(`/zimbra/list?folder=/Sent&page=${page}&unread=false${searchParam}`));
-      case "drafts":
+      case 'drafts':
         return mailListAdapter(await fetchJSONWithCache(`/zimbra/list?folder=/Drafts&page=${page}&unread=false${searchParam}`));
-      case "trash":
+      case 'trash':
         return mailListAdapter(await fetchJSONWithCache(`/zimbra/list?folder=/Trash&page=${page}&unread=false${searchParam}`));
-      case "spams":
+      case 'spams':
         return mailListAdapter(await fetchJSONWithCache(`/zimbra/list?folder=/Junk&page=${page}&unread=false${searchParam}`));
       default:
         return [];
     }
   },
   getFromFolder: async (folderLocation: string, page: number = 1, searchText: string) => {
-    let searchParam = searchText === "" ? "" : "&search=" + searchText as string;
+    let searchParam = searchText === '' ? '' : (('&search=' + searchText) as string);
     return mailListAdapter(await fetchJSONWithCache(`/zimbra/list?folder=/Inbox/${folderLocation}&page=${page}${searchParam}`));
   },
 };

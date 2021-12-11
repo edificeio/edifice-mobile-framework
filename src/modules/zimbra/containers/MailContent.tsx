@@ -1,30 +1,30 @@
-import I18n from "i18n-js";
-import * as React from "react";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import Toast from "react-native-tiny-toast";
-import { NavigationScreenProp, NavigationActions } from "react-navigation";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import Toast from 'react-native-tiny-toast';
+import { NavigationScreenProp, NavigationActions } from 'react-navigation';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-import withViewTracking from "../../../framework/util/tracker/withViewTracking";
-import { standardNavScreenOptions } from "../../../navigation/helpers/navScreenOptions";
-import { CommonStyles } from "../../../styles/common/styles";
-import { Icon } from "../../../ui";
-import { PageContainer } from "../../../ui/ContainerContent";
-import { Text } from "../../../ui/Typography";
-import { Header as HeaderComponent } from "../../../ui/headers/Header";
-import { HeaderAction } from "../../../ui/headers/NewHeader";
-import { downloadAttachmentAction } from "../actions/download";
-import { toggleReadAction, trashMailsAction, deleteMailsAction, restoreMailsAction } from "../actions/mail";
-import { fetchMailContentAction } from "../actions/mailContent";
-import { fetchQuotaAction } from "../actions/quota";
-import MailContent from "../components/MailContent";
-import MailContentMenu from "../components/MailContentMenu";
-import { ModalPermanentDelete } from "../components/Modals/DeleteMailsModal";
-import { ModalStorageWarning } from "../components/Modals/QuotaModal";
-import MoveModal from "../containers/MoveToFolderModal";
-import { getMailContentState } from "../state/mailContent";
-import { getQuotaState, IQuota } from "../state/quota";
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { downloadAttachmentAction } from '~/modules/zimbra/actions/download';
+import { toggleReadAction, trashMailsAction, deleteMailsAction, restoreMailsAction } from '~/modules/zimbra/actions/mail';
+import { fetchMailContentAction } from '~/modules/zimbra/actions/mailContent';
+import { fetchQuotaAction } from '~/modules/zimbra/actions/quota';
+import MailContent from '~/modules/zimbra/components/MailContent';
+import MailContentMenu from '~/modules/zimbra/components/MailContentMenu';
+import { ModalPermanentDelete } from '~/modules/zimbra/components/Modals/DeleteMailsModal';
+import { ModalStorageWarning } from '~/modules/zimbra/components/Modals/QuotaModal';
+import MoveModal from '~/modules/zimbra/containers/MoveToFolderModal';
+import { getMailContentState } from '~/modules/zimbra/state/mailContent';
+import { getQuotaState, IQuota } from '~/modules/zimbra/state/quota';
+import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
+import { CommonStyles } from '~/styles/common/styles';
+import { Icon } from '~/ui';
+import { PageContainer } from '~/ui/ContainerContent';
+import { Text } from '~/ui/Typography';
+import { Header as HeaderComponent } from '~/ui/headers/Header';
+import { HeaderAction } from '~/ui/headers/NewHeader';
 
 type MailContentContainerProps = {
   navigation: any;
@@ -75,7 +75,7 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
       {
         header: null,
       },
-      navigation
+      navigation,
     );
   };
 
@@ -93,11 +93,11 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
   mailMoved = () => {
     const { navigation } = this.props;
     navigation.state.params.onGoBack?.();
-    navigation.navigate("inbox", { key: "inbox", folderName: undefined });
-    Toast.show(I18n.t("zimbra-message-moved"), {
+    navigation.navigate('inbox', { key: 'inbox', folderName: undefined });
+    Toast.show(I18n.t('zimbra-message-moved'), {
       position: Toast.position.BOTTOM,
       mask: false,
-      containerStyle: { width: "95%", backgroundColor: "black" },
+      containerStyle: { width: '95%', backgroundColor: 'black' },
     });
   };
 
@@ -110,7 +110,7 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
 
   actionsDeleteSuccess = async () => {
     const { navigation } = this.props;
-    if (navigation.getParam("isTrashed") || navigation.state.routeName === "trash") {
+    if (navigation.getParam('isTrashed') || navigation.state.routeName === 'trash') {
       await this.props.deleteMails([this.props.mail.id]);
     }
     if (this.state.deleteModal.isShown) {
@@ -118,10 +118,10 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
     }
 
     this.goBack();
-    Toast.show(I18n.t("zimbra-message-deleted"), {
+    Toast.show(I18n.t('zimbra-message-deleted'), {
       position: Toast.position.BOTTOM,
       mask: false,
-      containerStyle: { width: "95%", backgroundColor: "black" },
+      containerStyle: { width: '95%', backgroundColor: 'black' },
     });
   };
 
@@ -129,7 +129,7 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
 
   delete = async () => {
     const { navigation } = this.props;
-    const isTrashed = navigation.getParam("isTrashed");
+    const isTrashed = navigation.getParam('isTrashed');
     if (isTrashed) {
       await this.setState({ deleteModal: { isShown: true, mailsIds: [this.props.mail.id] } });
     } else {
@@ -141,20 +141,20 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
   restore = async () => {
     await this.props.restoreMails([this.props.mail.id]);
     this.goBack();
-    Toast.show(I18n.t("zimbra-message-restored"), {
+    Toast.show(I18n.t('zimbra-message-restored'), {
       position: Toast.position.BOTTOM,
       mask: false,
-      containerStyle: { width: "95%", backgroundColor: "black" },
+      containerStyle: { width: '95%', backgroundColor: 'black' },
     });
   };
 
   restore = async () => {
     await this.props.restoreMails([this.props.mail.id]);
     this.goBack();
-    Toast.show(I18n.t("zimbra-message-restored"), {
+    Toast.show(I18n.t('zimbra-message-restored'), {
       position: Toast.position.BOTTOM,
       mask: false,
-      containerStyle: { width: "95%", backgroundColor: "black" },
+      containerStyle: { width: '95%', backgroundColor: 'black' },
     });
   };
 
@@ -176,21 +176,21 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
   setMenuData = () => {
     const { navigation } = this.props;
     let menuData = [
-      { text: I18n.t("zimbra-mark-unread"), icon: "email", onPress: this.markAsRead },
-      { text: I18n.t("zimbra-move"), icon: "unarchive", onPress: this.showMoveModal },
+      { text: I18n.t('zimbra-mark-unread'), icon: 'email', onPress: this.markAsRead },
+      { text: I18n.t('zimbra-move'), icon: 'unarchive', onPress: this.showMoveModal },
       // { text: I18n.t("zimbra-download-all"), icon: "download", onPress: () => {} },
-      { text: I18n.t("zimbra-delete"), icon: "delete", onPress: this.delete },
+      { text: I18n.t('zimbra-delete'), icon: 'delete', onPress: this.delete },
     ];
-    if (navigation.getParam("isSended") || navigation.state.routeName === "sendMessages") {
+    if (navigation.getParam('isSended') || navigation.state.routeName === 'sendMessages') {
       menuData = [
-        { text: I18n.t("zimbra-mark-unread"), icon: "email", onPress: this.markAsRead },
-        { text: I18n.t("zimbra-delete"), icon: "delete", onPress: this.delete },
+        { text: I18n.t('zimbra-mark-unread'), icon: 'email', onPress: this.markAsRead },
+        { text: I18n.t('zimbra-delete'), icon: 'delete', onPress: this.delete },
       ];
     }
-    if (navigation.getParam("isTrashed") || navigation.state.routeName === "trash") {
+    if (navigation.getParam('isTrashed') || navigation.state.routeName === 'trash') {
       menuData = [
-        { text: I18n.t("zimbra-restore"), icon: "delete-restore", onPress: this.restore },
-        { text: I18n.t("zimbra-delete"), icon: "delete", onPress: this.delete },
+        { text: I18n.t('zimbra-restore'), icon: 'delete-restore', onPress: this.restore },
+        { text: I18n.t('zimbra-delete'), icon: 'delete', onPress: this.delete },
       ];
     }
     return menuData;
@@ -199,7 +199,7 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
   public render() {
     const { navigation, mail } = this.props;
     const { showMenu, showMoveModal } = this.state;
-    let menuData = this.setMenuData();
+    const menuData = this.setMenuData();
     return (
       <>
         <PageContainer>
@@ -207,12 +207,12 @@ class MailContentContainer extends React.PureComponent<MailContentContainerProps
             <HeaderAction onPress={this.goBack} name="back" />
             <Text
               style={{
-                alignSelf: "center",
-                color: "white",
+                alignSelf: 'center',
+                color: 'white',
                 fontFamily: CommonStyles.primaryFontFamily,
                 fontSize: 16,
-                fontWeight: "400",
-                textAlign: "center",
+                fontWeight: '400',
+                textAlign: 'center',
                 flex: 1,
               }}>
               {navigation.state.params.subject}
@@ -252,20 +252,21 @@ const mapStateToProps: (state: any) => any = state => {
 };
 
 const mapDispatchToProps: (dispatch: any) => any = dispatch => {
-  return {...bindActionCreators(
-    {
-      fetchMailContentAction,
-      fetchStorage: fetchQuotaAction,
-      toggleRead: toggleReadAction,
-      trashMails: trashMailsAction,
-      deleteMails: deleteMailsAction,
-      downloadAttachment: downloadAttachmentAction,
-      restoreMails: restoreMailsAction,
-    },
-    dispatch
-  ), dispatch};
+  return {
+    ...bindActionCreators(
+      {
+        fetchMailContentAction,
+        fetchStorage: fetchQuotaAction,
+        toggleRead: toggleReadAction,
+        trashMails: trashMailsAction,
+        deleteMails: deleteMailsAction,
+        downloadAttachment: downloadAttachmentAction,
+        restoreMails: restoreMailsAction,
+      },
+      dispatch,
+    ),
+    dispatch,
+  };
 };
 
-export default withViewTracking("zimbra/MailContent")(
-  connect(mapStateToProps, mapDispatchToProps)(MailContentContainer)
-);
+export default withViewTracking('zimbra/MailContent')(connect(mapStateToProps, mapDispatchToProps)(MailContentContainer));

@@ -1,8 +1,8 @@
 import { Dispatch } from 'redux';
 
-import { createAsyncActionCreators } from '../../../../infra/redux/async2';
-import { mementoService } from '../services/memento';
-import { IMemento, actionTypes } from '../state/memento';
+import { createAsyncActionCreators } from '~/infra/redux/async2';
+import { mementoService } from '~/modules/viescolaire/viesco/services/memento';
+import { IMemento, actionTypes } from '~/modules/viescolaire/viesco/state/memento';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

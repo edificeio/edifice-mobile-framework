@@ -1,6 +1,5 @@
-import { IMemento, IRelativesInfos } from '../state/memento';
-
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { IMemento, IRelativesInfos } from '~/modules/viescolaire/viesco/state/memento';
 
 export type IMementoBackend = {
   id: string;

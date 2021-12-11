@@ -1,7 +1,8 @@
-import I18n from "i18n-js";
-import Toast from "react-native-tiny-toast";
-import { fetchJSONWithCache } from "../../../infra/fetchWithCache";
-import { ISignature } from "../state/signature";
+import I18n from 'i18n-js';
+import Toast from 'react-native-tiny-toast';
+
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { ISignature } from '~/modules/zimbra/state/signature';
 
 export type ISignatureBackend = {
   preference: {
@@ -29,24 +30,24 @@ export const signatureService = {
     return data;
   },
   putSignature: async (signatureData: string, isGlobalSignature: boolean) => {
-    let bodyData = {
+    const bodyData = {
       useSignature: isGlobalSignature,
     };
-    if (signatureData !== "") {
+    if (signatureData !== '') {
       bodyData['signature'] = signatureData;
     }
     try {
       await fetchJSONWithCache(`/zimbra/signature`, {
-        method: "PUT",
+        method: 'PUT',
         body: JSON.stringify(bodyData),
       });
-      Toast.show(I18n.t("zimbra-signature-added"), {
+      Toast.show(I18n.t('zimbra-signature-added'), {
         position: Toast.position.BOTTOM,
         mask: false,
-        containerStyle: { width: "95%", backgroundColor: "black" },
+        containerStyle: { width: '95%', backgroundColor: 'black' },
       });
     } catch (e) {
-      Toast.show(I18n.t("zimbra-signature-error"), {
+      Toast.show(I18n.t('zimbra-signature-error'), {
         position: Toast.position.BOTTOM,
       });
     }

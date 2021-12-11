@@ -1,8 +1,8 @@
-import { Dispatch } from "redux";
+import { Dispatch } from 'redux';
 
-import { createAsyncActionCreators } from "../../../infra/redux/async2";
-import { quotaService } from "../service/quota";
-import { IQuota, actionTypes } from "../state/quota";
+import { createAsyncActionCreators } from '~/infra/redux/async2';
+import { quotaService } from '~/modules/zimbra/service/quota';
+import { IQuota, actionTypes } from '~/modules/zimbra/state/quota';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

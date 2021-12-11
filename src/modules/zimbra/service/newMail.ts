@@ -1,8 +1,7 @@
-import fileHandlerService from '../../../framework/util/fileHandler/service';
-
-import { LocalFile } from '../../../framework/util/fileHandler';
-import { IUserSession } from '../../../framework/util/session';
-import { fetchJSONWithCache } from '../../../infra/fetchWithCache';
+import { LocalFile } from '~/framework/util/fileHandler';
+import fileHandlerService from '~/framework/util/fileHandler/service';
+import { IUserSession } from '~/framework/util/session';
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 
 export type IUser = {
   id: string;
@@ -96,12 +95,12 @@ export const newMailService = {
         binaryStreamOnly: true,
       },
       data => {
-        dataJson = JSON.parse(data).attachments as Array<{
+        dataJson = JSON.parse(data).attachments as {
           contentType: string;
           filename: string;
           id: string;
           size: number;
-        }>;
+        }[];
         // console.log("upload returned", dataJson)
         return dataJson as any; // YES IT IZ A BAD PRAKTICE.
         // This API is fucked up : every attachment id changes when a new attachement is uplaoded.

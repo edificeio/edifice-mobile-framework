@@ -1,5 +1,5 @@
-import { fetchJSONWithCache } from "../../../infra/fetchWithCache";
-import { IInitMail } from "../state/initMails";
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { IInitMail } from '~/modules/zimbra/state/initMails';
 
 // Data type of what is given by the backend.
 // eslint-disable-next-line flowtype/no-types-missing-file-annotation
@@ -21,7 +21,7 @@ export type IInitMailListBackend = {
       unread: number;
       count: number;
       folders: [];
-    }
+    },
   ];
 };
 

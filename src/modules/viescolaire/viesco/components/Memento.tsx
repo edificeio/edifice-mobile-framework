@@ -3,8 +3,7 @@ import moment from 'moment';
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 
-import { IMemento, IRelativesInfos } from '../state/memento';
-
+import { IMemento, IRelativesInfos } from '~/modules/viescolaire/viesco/state/memento';
 import { CommonStyles } from '~/styles/common/styles';
 import { Icon } from '~/ui';
 import { Text, TextBold } from '~/ui/Typography';

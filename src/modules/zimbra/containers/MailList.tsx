@@ -1,37 +1,38 @@
-import I18n from "i18n-js";
-import * as React from "react";
-import { TouchableOpacity, View } from "react-native";
-import Toast from "react-native-tiny-toast";
-import { withNavigationFocus } from "react-navigation";
-import { NavigationDrawerProp } from "react-navigation-drawer";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { TouchableOpacity, View } from 'react-native';
+import Toast from 'react-native-tiny-toast';
+import { withNavigationFocus } from 'react-navigation';
+import { NavigationDrawerProp } from 'react-navigation-drawer';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-import withViewTracking from "../../../framework/util/tracker/withViewTracking";
-import { CommonStyles } from "../../../styles/common/styles";
-import { Icon } from "../../../ui";
-import { PageContainer } from "../../../ui/ContainerContent";
-import { Text } from "../../../ui/Typography";
-import { Header as HeaderComponent } from "../../../ui/headers/Header";
-import { HeaderAction } from "../../../ui/headers/NewHeader";
-import { fetchInitAction } from "../actions/initMails";
+import { IInit } from './DrawerMenu';
+
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { fetchInitAction } from '~/modules/zimbra/actions/initMails';
 import {
   deleteMailsAction,
   moveMailsToFolderAction,
   restoreMailsAction,
   toggleReadAction,
   trashMailsAction,
-} from "../actions/mail";
-import { fetchMailListAction, fetchMailListFromFolderAction } from "../actions/mailList";
-import { fetchQuotaAction } from "../actions/quota";
-import MailList from "../components/MailList";
-import { ModalPermanentDelete } from "../components/Modals/DeleteMailsModal";
-import MoveModal from "../containers/MoveToFolderModal";
-import { getInitMailListState, IFolder } from "../state/initMails";
-import { getMailListState, IMail } from "../state/mailList";
-import { getQuotaState, IQuota } from "../state/quota";
-import { IInit } from "./DrawerMenu";
-import { ModalStorageWarning } from "../components/Modals/QuotaModal";
+} from '~/modules/zimbra/actions/mail';
+import { fetchMailListAction, fetchMailListFromFolderAction } from '~/modules/zimbra/actions/mailList';
+import { fetchQuotaAction } from '~/modules/zimbra/actions/quota';
+import MailList from '~/modules/zimbra/components/MailList';
+import { ModalPermanentDelete } from '~/modules/zimbra/components/Modals/DeleteMailsModal';
+import { ModalStorageWarning } from '~/modules/zimbra/components/Modals/QuotaModal';
+import MoveModal from '~/modules/zimbra/containers/MoveToFolderModal';
+import { getInitMailListState, IFolder } from '~/modules/zimbra/state/initMails';
+import { getMailListState, IMail } from '~/modules/zimbra/state/mailList';
+import { getQuotaState, IQuota } from '~/modules/zimbra/state/quota';
+import { CommonStyles } from '~/styles/common/styles';
+import { Icon } from '~/ui';
+import { PageContainer } from '~/ui/ContainerContent';
+import { Text } from '~/ui/Typography';
+import { Header as HeaderComponent } from '~/ui/headers/Header';
+import { HeaderAction } from '~/ui/headers/NewHeader';
 
 // ------------------------------------------------------------------------------------------------
 
@@ -82,7 +83,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
 
     this.state = {
       mails: [],
-      unsubscribe: this.props.navigation.addListener("didFocus", () => {
+      unsubscribe: this.props.navigation.addListener('didFocus', () => {
         this.forceUpdate();
       }),
       fetchRequested: false,
@@ -98,11 +99,11 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
 
   private fetchMails = (page = 0, isRefreshStorage: boolean = false) => {
     const { isSearch, searchString } = this.props;
-    let isSearchValid = (isSearch && searchString !== "" && searchString.length >= 3) as boolean;
+    const isSearchValid = (isSearch && searchString !== '' && searchString.length >= 3) as boolean;
 
     this.setState({ fetchRequested: true });
-    let key = this.props.navigation.getParam("key");
-    let folderName = this.props.navigation.getParam("folderName");
+    let key = this.props.navigation.getParam('key');
+    let folderName = this.props.navigation.getParam('folderName');
 
     if (isSearch) {
       // If in search function, find current folder with navigation
@@ -129,29 +130,26 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
   };
 
   public componentDidMount() {
-    if (this.props.navigation.getParam("key") === undefined) this.setState({ firstFetch: true });
+    if (this.props.navigation.getParam('key') === undefined) this.setState({ firstFetch: true });
     this.fetchMails(0, true);
   }
 
   componentDidUpdate(prevProps) {
     if (!this.props.isFetching && this.state.firstFetch) this.setState({ firstFetch: false });
-    const folderName = this.props.navigation.getParam("folderName");
+    const folderName = this.props.navigation.getParam('folderName');
 
     if (
       this.props.isFocused &&
       (!prevProps.isFocused ||
         (!this.state.fetchRequested &&
-          (folderName !== prevProps.navigation.getParam("folderName") ||
-            this.props.searchString !== prevProps.searchString)))
+          (folderName !== prevProps.navigation.getParam('folderName') || this.props.searchString !== prevProps.searchString)))
     ) {
       this.fetchMails();
     }
 
     if (
       (this.props.isFocused && prevProps.isFocused !== this.props.isFocused) ||
-      (prevProps.storage.isFetching !== this.props.storage.isFetching &&
-        !this.props.storage.isFetching &&
-        this.props.storage.data)
+      (prevProps.storage.isFetching !== this.props.storage.isFetching && !this.props.storage.isFetching && this.props.storage.data)
     ) {
       this.setState({ isShownStorageWarning: true });
     }
@@ -171,11 +169,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
   isStorageFull = () => {
     const { storage } = this.props;
 
-    if (
-      this.state.isShownStorageWarning &&
-      Number(storage.data.quota) > 0 &&
-      storage.data.storage >= Number(storage.data.quota)
-    ) {
+    if (this.state.isShownStorageWarning && Number(storage.data.quota) > 0 && storage.data.storage >= Number(storage.data.quota)) {
       return true;
     }
     return false;
@@ -184,33 +178,33 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
   // -- LONG PRESS ACTIONS AND HEADER --------------------------------------------------------------
 
   restoreSelectedMails = async () => {
-    let listSelected = this.getListSelectedMails();
-    let mailsIds = [] as string[];
+    const listSelected = this.getListSelectedMails();
+    const mailsIds = [] as string[];
     listSelected.map(mail => mailsIds.push(mail.id));
 
     await this.props.restoreMails(mailsIds);
 
-    Toast.show(mailsIds.length > 1 ? I18n.t("zimbra-messages-restored") : I18n.t("zimbra-message-restored"), {
+    Toast.show(mailsIds.length > 1 ? I18n.t('zimbra-messages-restored') : I18n.t('zimbra-message-restored'), {
       position: Toast.position.BOTTOM,
       mask: false,
-      containerStyle: { width: "95%", backgroundColor: "black" },
+      containerStyle: { width: '95%', backgroundColor: 'black' },
     });
     this.onUnselectListMails();
   };
 
   actionsDeleteSuccess = async (mailsIds: string[]) => {
     const { navigation } = this.props;
-    if (navigation.getParam("isTrashed") || navigation.state.routeName === "trash") {
+    if (navigation.getParam('isTrashed') || navigation.state.routeName === 'trash') {
       await this.props.deleteMails(mailsIds);
     }
     if (this.state.deleteModal.isShown) {
       this.setState({ deleteModal: { isShown: false, mailsIds: [] } });
     }
 
-    Toast.show(mailsIds.length > 1 ? I18n.t("zimbra-messages-deleted") : I18n.t("zimbra-message-deleted"), {
+    Toast.show(mailsIds.length > 1 ? I18n.t('zimbra-messages-deleted') : I18n.t('zimbra-message-deleted'), {
       position: Toast.position.BOTTOM,
       mask: false,
-      containerStyle: { width: "95%", backgroundColor: "black" },
+      containerStyle: { width: '95%', backgroundColor: 'black' },
     });
     this.onUnselectListMails();
   };
@@ -218,14 +212,14 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
   public closeDeleteModal = () => this.onUnselectListMails();
 
   deleteSelectedMails = async () => {
-    let listSelected = this.getListSelectedMails();
-    let mailsIds = [] as string[];
+    const listSelected = this.getListSelectedMails();
+    const mailsIds = [] as string[];
     listSelected.map(mail => mailsIds.push(mail.id));
 
     const { navigation } = this.props;
-    const isTrashed = navigation.getParam("isTrashed");
-    if (isTrashed || navigation.state.routeName === "trash") {
-      await this.setState({ deleteModal: { isShown: true, mailsIds: mailsIds } });
+    const isTrashed = navigation.getParam('isTrashed');
+    if (isTrashed || navigation.state.routeName === 'trash') {
+      await this.setState({ deleteModal: { isShown: true, mailsIds } });
     } else {
       await this.props.trashMails(mailsIds);
       this.actionsDeleteSuccess(mailsIds);
@@ -233,12 +227,12 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
   };
 
   mailsMoved = () => {
-    let listSelected = this.getListSelectedMails();
+    const listSelected = this.getListSelectedMails();
     this.onUnselectListMails();
-    Toast.show(listSelected.length > 1 ? I18n.t("zimbra-messages-moved") : I18n.t("zimbra-message-moved"), {
+    Toast.show(listSelected.length > 1 ? I18n.t('zimbra-messages-moved') : I18n.t('zimbra-message-moved'), {
       position: Toast.position.BOTTOM,
       mask: false,
-      containerStyle: { width: "95%", backgroundColor: "black" },
+      containerStyle: { width: '95%', backgroundColor: 'black' },
     });
   };
 
@@ -247,23 +241,23 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
   public closeMoveModal = () => this.setState({ isShownMoveModal: false });
 
   markSelectedMailsAsUnread = async () => {
-    let listSelected = this.getListSelectedMails();
-    let mailsIds = [] as string[];
+    const listSelected = this.getListSelectedMails();
+    const mailsIds = [] as string[];
     listSelected.map(mail => mailsIds.push(mail.id));
-    let isRead = listSelected.findIndex(mail => mail.unread === true) >= 0 ? true : false;
+    const isRead = listSelected.findIndex(mail => mail.unread === true) >= 0;
     await this.props.toggleRead(mailsIds, isRead);
     this.onUnselectListMails();
   };
 
   checkMailReadState = () => {
-    let listSelected = this.getListSelectedMails();
-    let index = listSelected.findIndex(mail => mail.unread === true);
+    const listSelected = this.getListSelectedMails();
+    const index = listSelected.findIndex(mail => mail.unread === true);
     if (index === -1) return true;
     return false;
   };
 
   getListSelectedMails = () => {
-    let listSelected = [] as IMail[];
+    const listSelected = [] as IMail[];
     this.state.mails.map(mail => (mail.isChecked ? listSelected.push(mail) : null));
     return listSelected;
   };
@@ -296,8 +290,8 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
       <>
         <HeaderComponent color={CommonStyles.secondary}>
           <HeaderAction onPress={() => this.onUnselectListMails()} name="chevron-left1" />
-          <Text style={{ color: "white", fontSize: 16, fontWeight: "400" }}>{this.getListSelectedMails().length}</Text>
-          <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-end" }}>
+          <Text style={{ color: 'white', fontSize: 16, fontWeight: '400' }}>{this.getListSelectedMails().length}</Text>
+          <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
             <TouchableOpacity onPress={() => this.restoreSelectedMails()}>
               <Icon name="delete-restore" size={24} color="white" style={{ marginRight: 10 }} />
             </TouchableOpacity>
@@ -321,8 +315,8 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
       <>
         <HeaderComponent color={CommonStyles.secondary}>
           <HeaderAction onPress={() => this.onUnselectListMails()} name="chevron-left1" />
-          <Text style={{ color: "white", fontSize: 16, fontWeight: "400" }}>{this.getListSelectedMails().length}</Text>
-          <View style={{ flex: 1, flexDirection: "row", justifyContent: "flex-end" }}>
+          <Text style={{ color: 'white', fontSize: 16, fontWeight: '400' }}>{this.getListSelectedMails().length}</Text>
+          <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}>
             <TouchableOpacity onPress={() => this.markSelectedMailsAsUnread()}>
               {this.checkMailReadState() ? (
                 <Icon name="email" size={24} color="white" style={{ marginRight: 10 }} />
@@ -330,7 +324,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
                 <Icon name="email-open" size={24} color="white" style={{ marginRight: 10 }} />
               )}
             </TouchableOpacity>
-            {this.props.navigation.state.routeName !== "sendMessages" && (
+            {this.props.navigation.state.routeName !== 'sendMessages' && (
               <TouchableOpacity onPress={() => this.showMoveModal()}>
                 <Icon name="package-up" size={24} color="white" style={{ marginRight: 10 }} />
               </TouchableOpacity>
@@ -359,7 +353,7 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
       <>
         <PageContainer>
           {this.state.isHeaderSelectVisible &&
-            (navigation.getParam("isTrashed") || navigation.state.routeName === "trash"
+            (navigation.getParam('isTrashed') || navigation.state.routeName === 'trash'
               ? this.renderSelectedTrashMailsHeader()
               : this.renderSelectedMailsHeader())}
 
@@ -367,8 +361,8 @@ class MailListContainer extends React.PureComponent<MailListContainerProps, Mail
             {...this.props}
             setMails={this.setMails}
             fetchMails={this.fetchMails}
-            isTrashed={this.props.navigation.getParam("key") === "trash"}
-            isSended={this.props.navigation.getParam("key") === "sendMessages"}
+            isTrashed={this.props.navigation.getParam('key') === 'trash'}
+            isSended={this.props.navigation.getParam('key') === 'sendMessages'}
             firstFetch={this.state.firstFetch}
             fetchRequested={this.state.fetchRequested}
             fetchCompleted={this.fetchCompleted}
@@ -396,7 +390,7 @@ const mapStateToProps: (state: any) => any = state => {
 
   if (data !== undefined && data.length > 0) {
     for (let i = 0; i <= data.length - 1; i++) {
-      data[i]["isChecked"] = false;
+      data[i]['isChecked'] = false;
     }
   }
 
@@ -428,20 +422,20 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
       deleteMails: deleteMailsAction,
       fetchStorage: fetchQuotaAction,
     },
-    dispatch
+    dispatch,
   );
 };
 
 // ------------------------------------------------------------------------------------------------
 
-const viewsToTrack = ["inbox", "sendMessages", "drafts", "spams"];
+const viewsToTrack = ['inbox', 'sendMessages', 'drafts', 'spams'];
 
 const MailListContainerConnected = connect(mapStateToProps, mapDispatchToProps)(withNavigationFocus(MailListContainer));
 
 export default withViewTracking((props: MailListContainerProps) => {
-  const currentFolder = props.navigation.getParam("key");
+  const currentFolder = props.navigation.getParam('key');
   if (currentFolder === undefined) return `zimbra/inbox`;
-  let toTrack = "";
+  let toTrack = '';
   viewsToTrack.map(viewName => {
     if (viewName === currentFolder) toTrack = `zimbra/${currentFolder}`;
   });

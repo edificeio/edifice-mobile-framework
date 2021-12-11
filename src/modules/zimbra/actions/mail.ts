@@ -1,6 +1,6 @@
-import { Dispatch } from "redux";
+import { Dispatch } from 'redux';
 
-import { mailService } from "../service/mail";
+import { mailService } from '~/modules/zimbra/service/mail';
 
 export function toggleReadAction(mailIds: string[], read: boolean) {
   return async (dispatch: Dispatch) => {
