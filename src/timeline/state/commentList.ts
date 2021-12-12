@@ -1,18 +1,19 @@
-import moment from "moment";
-import { createAsyncActionTypes, AsyncState } from "../../infra/redux/async2";
+import moment from 'moment';
+
+import { createAsyncActionTypes, AsyncState } from '~/infra/redux/async2';
 
 // THE MODEL --------------------------------------------------------------------------------------
 
 export interface IBlogComment {
-  id: string,
-  comment: string,
-  state: string,
+  id: string;
+  comment: string;
+  state: string;
   author: {
-    userId: string
-    username: string
-    login: string
-  },
-  created: moment.Moment,
+    userId: string;
+    username: string;
+    login: string;
+  };
+  created: moment.Moment;
 }
 
 export type IBlogCommentList = IBlogComment[];
@@ -24,8 +25,7 @@ export type IBlogCommentListState = AsyncState<IBlogCommentList>;
 export const initialState: IBlogCommentList = [];
 
 /** Returns the sub local state (global state -> notification -> notificationList). Give the global state as parameter. */
-export const getBlogCommentListState = (globalState: any) =>
-    globalState.timeline.selectedBlogComments as IBlogCommentListState;
+export const getBlogCommentListState = (globalState: any) => globalState.timeline.selectedBlogComments as IBlogCommentListState;
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 

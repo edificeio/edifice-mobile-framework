@@ -3,18 +3,23 @@
  * Build actions to be dispatched to the flash message list reducer.
  */
 
-import { Dispatch } from "redux";
+import { Dispatch } from 'redux';
 
-import { IFlashMessageList, flashMessageListActionTypes, flashMessageMarkAsReadActionTypes, IFlashMessage } from "../state/flashMessageList";
-import { createAsyncActionCreators } from "../../infra/redux/async2";
-import { fetchJSONWithCache, signedFetch } from "../../infra/fetchWithCache";
-import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
+import { createAsyncActionCreators } from '~/infra/redux/async2';
+import {
+  IFlashMessageList,
+  flashMessageListActionTypes,
+  flashMessageMarkAsReadActionTypes,
+  IFlashMessage,
+} from '~/timeline/state/flashMessageList';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 
 export const dataActions = createAsyncActionCreators<IFlashMessageList>(flashMessageListActionTypes);
 export const markAsReadActions = createAsyncActionCreators<IFlashMessage>(flashMessageMarkAsReadActionTypes);
-export const allFlashMessageActions = {...dataActions, ...markAsReadActions}
+export const allFlashMessageActions = { ...dataActions, ...markAsReadActions };
 
 // THUNKS -----------------------------------------------------------------------------------------
 
@@ -26,7 +31,7 @@ export function fetchFlashMessagesAction(clear: boolean = false) {
   return async (dispatch: Dispatch) => {
     try {
       dispatch(dataActions.request());
-      const data = await fetchJSONWithCache("/timeline/flashmsg/listuser");
+      const data = await fetchJSONWithCache('/timeline/flashmsg/listuser');
       clear && dispatch(dataActions.clear());
       dispatch(dataActions.receipt(data));
     } catch (errmsg) {
@@ -43,10 +48,9 @@ export function markFlashMessageAsReadAction(flashMessageId: string) {
   return async (dispatch: Dispatch) => {
     try {
       dispatch(markAsReadActions.request());
-      const data = await signedFetch(
-        `${DEPRECATED_getCurrentPlatform()!.url}/timeline/flashmsg/${flashMessageId}/markasread`,
-        { method: "PUT" }
-      );
+      const data = await signedFetch(`${DEPRECATED_getCurrentPlatform()!.url}/timeline/flashmsg/${flashMessageId}/markasread`, {
+        method: 'PUT',
+      });
       dispatch(markAsReadActions.receipt(flashMessageId));
     } catch (errmsg) {
       dispatch(markAsReadActions.error(errmsg));

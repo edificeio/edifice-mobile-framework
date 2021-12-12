@@ -1,9 +1,10 @@
-import { mainNavNavigate } from '../navigation/helpers/navHelper';
+import { loadSchoolbooks, resetLoadingState } from './actions/dataTypes';
 import { listTimeline } from './actions/list';
 import { storedFilters } from './actions/storedFilters';
-import { loadSchoolbooks, resetLoadingState } from './actions/dataTypes';
-import { NotificationHandlerFactory } from '../infra/pushNotification';
-import { Trackers } from '../framework/util/tracker';
+
+import { Trackers } from '~/framework/util/tracker';
+import { NotificationHandlerFactory } from '~/infra/pushNotification';
+import { mainNavNavigate } from '~/navigation/helpers/navHelper';
 
 const openNotif = {
   '/schoolbook': async (data, latestNews) => {
@@ -39,37 +40,34 @@ const openNotif = {
   },
 };
 //TODO types args
-const timelineNotifHandlerFactory: NotificationHandlerFactory<any, any, any> = dispatch => async (
-  notificationData,
-  legalapps,
-  trackCategory,
-) => {
-  for (const path in openNotif) {
-    if (notificationData?.resourceUri?.startsWith(path)) {
-      // console.log("before await schoolbooks");
-      resetLoadingState();
-      if (legalapps.includes('Schoolbook')) await loadSchoolbooks();
-      dispatch({
-        news: [],
-        type: 'FETCH_NEW_TIMELINE',
-      });
-      const availableApps = await storedFilters(legalapps);
-      const latestNews = await listTimeline(dispatch)(0, availableApps, legalapps, true);
-      // console.log("before await open timeline notif");
-      const item = await openNotif[path](notificationData, latestNews);
-      // console.log("got item :", item);
-      if (item) {
-        mainNavNavigate('newsContent', { news: item, expend: true });
-      } else {
-        mainNavNavigate('notifications');
+const timelineNotifHandlerFactory: NotificationHandlerFactory<any, any, any> =
+  dispatch => async (notificationData, legalapps, trackCategory) => {
+    for (const path in openNotif) {
+      if (notificationData?.resourceUri?.startsWith(path)) {
+        // console.log("before await schoolbooks");
+        resetLoadingState();
+        if (legalapps.includes('Schoolbook')) await loadSchoolbooks();
+        dispatch({
+          news: [],
+          type: 'FETCH_NEW_TIMELINE',
+        });
+        const availableApps = await storedFilters(legalapps);
+        const latestNews = await listTimeline(dispatch)(0, availableApps, legalapps, true);
+        // console.log("before await open timeline notif");
+        const item = await openNotif[path](notificationData, latestNews);
+        // console.log("got item :", item);
+        if (item) {
+          mainNavNavigate('newsContent', { news: item, expend: true });
+        } else {
+          mainNavNavigate('notifications');
+        }
+
+        const notifPathBegin = '/' + notificationData.resourceUri.replace(/^\/+/g, '').split('/')[0];
+        trackCategory && Trackers.trackEvent(trackCategory, 'Timeline', notifPathBegin);
+
+        return true;
       }
-
-      const notifPathBegin = '/' + notificationData.resourceUri.replace(/^\/+/g, '').split('/')[0];
-      trackCategory && Trackers.trackEvent(trackCategory, 'Timeline', notifPathBegin);
-
-      return true;
     }
-  }
-  return false;
-};
+    return false;
+  };
 export default timelineNotifHandlerFactory;
