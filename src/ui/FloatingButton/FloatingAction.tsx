@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import { FlatList, Keyboard, Platform, StyleSheet, View } from "react-native";
 import FloatingActionItem from "./FloatingActionItem";
-import { layoutSize } from "../../styles/common/layoutSize";
-import { CommonStyles } from "../../styles/common/styles";
-import { IFloatingProps, IMenuItem } from "../types";
-import { ISelected } from "../Toolbar/Toolbar";
-import TouchableOpacity from "../CustomTouchableOpacity";
-import { iosStatusBarHeight } from "../headers/Header";
-import { ButtonIcon, getMenuShadow } from "../ButtonIconText";
+import { layoutSize } from "~/styles/common/layoutSize";
+import { CommonStyles } from "~/styles/common/styles";
+import { IFloatingProps, IMenuItem } from "~/ui/types";
+import { ISelected } from '~/ui/Toolbar/Toolbar';
+import TouchableOpacity from '~/ui/CustomTouchableOpacity';
+import { iosStatusBarHeight } from '~/ui/headers/Header';
+import { ButtonIcon, getMenuShadow } from '~/ui/ButtonIconText';
 import { hasNotch } from "react-native-device-info";
 
 class FloatingAction extends Component<IFloatingProps & ISelected, IState> {

@@ -1,7 +1,9 @@
-import React from "react";
-import TreeSelect from "./treeSelect";
-import { ITreeItem } from "../../workspace/actions/helpers/formatListFolders";
-import { IFile } from "../../workspace/types/states/items";
+import React from 'react';
+
+import TreeSelect from './treeSelect';
+
+import { ITreeItem } from '~/workspace/actions/helpers/formatListFolders';
+import { IFile } from '~/workspace/types/states/items';
 
 type IProps = {
   defaultSelectedId?: string[];
@@ -11,9 +13,9 @@ type IProps = {
 };
 
 export default class Select extends React.PureComponent<IProps> {
-  static displayName = "DialogSelect";
+  static displayName = 'DialogSelect';
   state = {
-    defaultSelectedId: this.props.defaultSelectedId ? this.props.defaultSelectedId : ["owner"],
+    defaultSelectedId: this.props.defaultSelectedId ? this.props.defaultSelectedId : ['owner'],
   };
 
   onPress(id, isParentOfSelection) {
@@ -31,7 +33,7 @@ export default class Select extends React.PureComponent<IProps> {
         data={data}
         defaultSelectedId={this.state.defaultSelectedId}
         excludeData={excludeData}
-        openIds={["owner"]}
+        openIds={['owner']}
         onClick={onPress}
       />
     );

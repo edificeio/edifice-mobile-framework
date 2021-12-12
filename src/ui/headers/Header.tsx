@@ -1,13 +1,13 @@
-import style from "glamorous-native";
-import * as React from "react";
-import { Platform, ViewStyle, SafeAreaView, StyleProp } from "react-native";
-import { connect } from "react-redux";
+import style from 'glamorous-native';
+import * as React from 'react';
+import { Platform, ViewStyle, SafeAreaView, StyleProp } from 'react-native';
+import { hasNotch } from 'react-native-device-info';
+import { connect } from 'react-redux';
 
-import { Icon } from "..";
-import { CommonStyles } from "../../styles/common/styles";
-import TouchableOpacity from "../../ui/CustomTouchableOpacity";
-import { hasNotch } from "react-native-device-info";
-import { UI_SIZES } from "../../framework/components/constants";
+import { UI_SIZES } from '~/framework/components/constants';
+import { CommonStyles } from '~/styles/common/styles';
+import { Icon } from '~/ui';
+import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 /**
  * DEPRECATED
@@ -18,20 +18,20 @@ const isIphoneX = () => false; // ToDo use React Navigation iPhoneX Compatibilit
 export const iosStatusBarHeight = isIphoneX() ? 40 : 20;
 
 const containerBar: ViewStyle = {
-  alignItems: "center",
+  alignItems: 'center',
   elevation: 5,
-  flexDirection: "row",
-  flexWrap: "wrap",
-  justifyContent: "flex-start",
-  paddingTop: Platform.OS === "ios" ? iosStatusBarHeight : 0,
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  justifyContent: 'flex-start',
+  paddingTop: Platform.OS === 'ios' ? iosStatusBarHeight : 0,
 };
 
 const HeaderStyle = style(SafeAreaView)({
-  flexDirection: "row",
-  justifyContent: "flex-start",
-  alignItems: "center",
+  flexDirection: 'row',
+  justifyContent: 'flex-start',
+  alignItems: 'center',
   backgroundColor: CommonStyles.mainColorTheme,
-  paddingTop: Platform.OS === "ios" ? iosStatusBarHeight : 0,
+  paddingTop: Platform.OS === 'ios' ? iosStatusBarHeight : 0,
   height: Platform.select({ ios: hasNotch() ? 100 : 76, default: UI_SIZES.headerHeight }),
 });
 
@@ -66,9 +66,9 @@ export const Header = connect((state: any) => ({
 }))(HeaderComponent);
 
 export const sensitiveStylePanel: ViewStyle = {
-  alignItems: "center",
+  alignItems: 'center',
   height: UI_SIZES.headerHeight,
-  justifyContent: "center",
+  justifyContent: 'center',
   paddingLeft: 18,
   paddingRight: 18,
   width: 60,
@@ -90,66 +90,66 @@ export const HeaderIcon = ({
   iconSize?: number;
 }) => (
   <TouchableOpacity style={sensitiveStylePanel} onPress={() => onPress && onPress()}>
-    <Icon size={iconSize || iconsDeltaSizes[name] || 20} name={name} color={hidden ? "transparent" : "#FFFFFF"} />
+    <Icon size={iconSize || iconsDeltaSizes[name] || 20} name={name} color={hidden ? 'transparent' : '#FFFFFF'} />
   </TouchableOpacity>
 );
 
 export const TouchableEndBarPanel = style(TouchableOpacity)({
   ...sensitiveStylePanel,
-  alignSelf: "flex-end",
+  alignSelf: 'flex-end',
 });
 
 export const CenterPanel = style(TouchableOpacity)({
-  alignItems: "center",
+  alignItems: 'center',
   flex: 1,
   height: UI_SIZES.headerHeight,
-  justifyContent: "center",
+  justifyContent: 'center',
 });
 
 export const AppTitle = style.text({
-  color: "white",
+  color: 'white',
   fontFamily: CommonStyles.primaryFontFamily,
-  fontWeight: "400",
+  fontWeight: '400',
   fontSize: 16,
   flex: 1,
-  textAlign: "center",
+  textAlign: 'center',
   height: UI_SIZES.headerHeight,
   lineHeight: UI_SIZES.headerHeight,
 });
 
 export const HeaderAction = style.text(
   {
-    color: "white",
+    color: 'white',
     fontFamily: CommonStyles.primaryFontFamily,
-    fontWeight: "400",
+    fontWeight: '400',
     flex: 1,
-    textAlign: "right",
+    textAlign: 'right',
     paddingRight: 20,
     height: UI_SIZES.headerHeight,
     lineHeight: UI_SIZES.headerHeight,
   },
   ({ disabled }: { disabled?: boolean }) => ({
     opacity: disabled ? 0.7 : 1,
-  })
+  }),
 );
 
 export const Title = style.text(
   {
-    color: "white",
+    color: 'white',
     fontFamily: CommonStyles.primaryFontFamily,
-    fontWeight: "400",
-    textAlign: "left",
-    textAlignVertical: "center",
+    fontWeight: '400',
+    textAlign: 'left',
+    textAlignVertical: 'center',
   },
   ({ smallSize = false }) => ({
     fontSize: smallSize ? 12 : 16,
-  })
+  }),
 );
 
 export const SubTitle = style.text({
-  color: "white",
+  color: 'white',
   fontFamily: CommonStyles.primaryFontFamily,
-  fontWeight: "400",
+  fontWeight: '400',
   fontSize: 12,
   opacity: 0.7,
 });

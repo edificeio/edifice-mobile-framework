@@ -1,14 +1,16 @@
-import React, { Component } from "react";
-import { FlatList, Keyboard, Platform, StyleSheet, View } from "react-native";
-import FloatingActionItem from "./FloatingActionItem";
-import { layoutSize } from "../../styles/common/layoutSize";
-import { CommonStyles } from "../../styles/common/styles";
-import { IFloatingProps, IMenuItem } from "../types";
-import { ISelected } from "../Toolbar/Toolbar";
-import TouchableOpacity from "../CustomTouchableOpacity";
-import { iosStatusBarHeight } from "../headers/Header";
-import { ButtonIcon, getMenuShadow } from "../ButtonIconText";
-import { hasNotch } from "react-native-device-info";
+import React, { Component } from 'react';
+import { FlatList, Keyboard, Platform, StyleSheet, View } from 'react-native';
+import { hasNotch } from 'react-native-device-info';
+
+import FloatingActionItem from './FloatingActionItem';
+
+import { layoutSize } from '~/styles/common/layoutSize';
+import { CommonStyles } from '~/styles/common/styles';
+import { ButtonIcon, getMenuShadow } from '~/ui/ButtonIconText';
+import TouchableOpacity from '~/ui/CustomTouchableOpacity';
+import { ISelected } from '~/ui/Toolbar/Toolbar';
+import { iosStatusBarHeight } from '~/ui/headers/Header';
+import { IFloatingProps, IMenuItem } from '~/ui/types';
 
 class TempFloatingAction extends Component<IFloatingProps & ISelected, IState> {
   state = {
@@ -49,7 +51,7 @@ class TempFloatingAction extends Component<IFloatingProps & ISelected, IState> {
   renderMainButton() {
     const { menuItems, iconName, iconSize, buttonStyle } = this.props;
     const noMenuItems = !menuItems || menuItems.length === 0;
-    const displayedIconName = this.state.active && !noMenuItems ? "close" : iconName;
+    const displayedIconName = this.state.active && !noMenuItems ? 'close' : iconName;
 
     return (
       <ButtonIcon
@@ -117,9 +119,9 @@ interface IState {
 const styles = StyleSheet.create({
   actions: {
     borderRadius: layoutSize.LAYOUT_4,
-    overflow: "visible",
-    backgroundColor: "#ffffff",
-    position: "absolute",
+    overflow: 'visible',
+    backgroundColor: '#ffffff',
+    position: 'absolute',
     right: 12,
     top: 81,
     width: layoutSize.LAYOUT_200,
@@ -127,7 +129,7 @@ const styles = StyleSheet.create({
     ...getMenuShadow(),
   },
   button: {
-    position: "absolute",
+    position: 'absolute',
     right: 20,
     // top: Platform.OS === "ios" ? (hasNotch() ? iosStatusBarHeight + 44 : 44) : 22,
     top: Platform.select({ android: 14, ios: hasNotch() ? 61 : 34 }),
@@ -135,14 +137,14 @@ const styles = StyleSheet.create({
   overlayActions: {
     bottom: 0,
     left: 0,
-    position: "absolute",
+    position: 'absolute',
     right: 0,
-    top: Platform.OS === "ios" ? (hasNotch() ? iosStatusBarHeight + 20 : iosStatusBarHeight) : -3,
+    top: Platform.OS === 'ios' ? (hasNotch() ? iosStatusBarHeight + 20 : iosStatusBarHeight) : -3,
   },
   separator: {
     borderBottomColor: CommonStyles.borderColorVeryLighter,
     borderBottomWidth: 1,
-    width: "100%",
+    width: '100%',
   },
 });
 

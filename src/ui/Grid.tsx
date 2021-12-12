@@ -1,9 +1,10 @@
 /* @flow */
 
-import style from "glamorous-native";
-import * as React from "react";
-import { FlexAlignType, View } from "react-native";
-import TouchableOpacity from "../ui/CustomTouchableOpacity";
+import style from 'glamorous-native';
+import * as React from 'react';
+import { FlexAlignType, View } from 'react-native';
+
+import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 export interface ColProperties {
   alignItems?: FlexAlignType;
@@ -28,24 +29,18 @@ export interface ColProperties {
 export interface NewProps {
   alignItems?: any;
   flex: number;
-  flexDirection?: "column" | "row" | "row-reverse" | "column-reverse";
-  flexWrap: "wrap" | "nowrap";
+  flexDirection?: 'column' | 'row' | 'row-reverse' | 'column-reverse';
+  flexWrap: 'wrap' | 'nowrap';
   paddingVertical?: number;
 }
 
 export const Col = (props: ColProperties) => {
-  const {
-    size = null,
-    width = null,
-    disabled = null,
-    paddingVertical = null,
-    pv = null
-  } = props;
+  const { size = null, width = null, disabled = null, paddingVertical = null, pv = null } = props;
   const newProps: NewProps = {
     flex: size ? size : width ? 0 : 1,
-    flexDirection: "column",
-    flexWrap: "wrap",
-    paddingVertical: pv ? 2 : paddingVertical ? paddingVertical : 0
+    flexDirection: 'column',
+    flexWrap: 'wrap',
+    paddingVertical: pv ? 2 : paddingVertical ? paddingVertical : 0,
   };
 
   if (props.onPress) {
@@ -85,13 +80,13 @@ export interface RowProperties {
 
 export interface NewProps {
   flex: number;
-  flexDirection?: "column" | "row" | "row-reverse" | "column-reverse";
-  flexWrap: "wrap" | "nowrap";
+  flexDirection?: 'column' | 'row' | 'row-reverse' | 'column-reverse';
+  flexWrap: 'wrap' | 'nowrap';
 }
 
 export const Line = style.view({
-  flexDirection: "row",
-  width: "100%"
+  flexDirection: 'row',
+  width: '100%',
 });
 
 // deprecated, too many props. Use Line and add new components for specific cases (touchable, grid, ...)
@@ -99,8 +94,8 @@ export const Row = (props: RowProperties) => {
   const { disabled = null, size = null, height = null } = props;
   const newProps: NewProps = {
     flex: size ? size : height ? 0 : 1,
-    flexDirection: "row",
-    flexWrap: "wrap"
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   };
 
   if (props.onPress) {

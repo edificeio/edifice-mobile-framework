@@ -6,9 +6,10 @@ import { View, ViewStyle, Platform } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 import { Icon, ButtonsOkCancel } from '.';
-import { CommonStyles } from '../styles/common/styles';
 import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from './Modal';
-import { TextBold } from '../framework/components/text';
+
+import { TextBold } from '~/framework/components/text';
+import { CommonStyles } from '~/styles/common/styles';
 
 interface IDropdownProps {
   keyId?: string;

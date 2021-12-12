@@ -1,11 +1,13 @@
-import React, { PureComponent } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
-import { DEVICE_WIDTH, layoutSize } from "../../styles/common/layoutSize";
-import { IFloatingProps, IMenuItem } from "../types";
-import { IItem, INavigationProps } from "../../workspace/types";
-import Item from "./Item";
-import { CommonStyles } from "../../styles/common/styles";
-import { UI_SIZES } from "../../framework/components/constants";
+import React, { PureComponent } from 'react';
+import { FlatList, StyleSheet, View } from 'react-native';
+
+import Item from './Item';
+
+import { UI_SIZES } from '~/framework/components/constants';
+import { DEVICE_WIDTH, layoutSize } from '~/styles/common/layoutSize';
+import { CommonStyles } from '~/styles/common/styles';
+import { IFloatingProps, IMenuItem } from '~/ui/types';
+import { IItem, INavigationProps } from '~/workspace/types';
 
 export type ISelected = {
   selected?: IItem[];
@@ -17,7 +19,7 @@ class Toolbar extends PureComponent<INavigationProps & IFloatingProps & ISelecte
     let foundSeparator: boolean | string = false;
     let titleItem: IMenuItem | null = null;
     const firstItems = menuItems.filter(item => {
-      if (!foundSeparator && item.id !== "separator" && item.id !== "title") {
+      if (!foundSeparator && item.id !== 'separator' && item.id !== 'title') {
         return true;
       }
       foundSeparator = true;
@@ -25,9 +27,9 @@ class Toolbar extends PureComponent<INavigationProps & IFloatingProps & ISelecte
     });
     foundSeparator = false;
     const lastItems = menuItems.filter(item => {
-      if (item.id === "separator" || item.id === "title") {
+      if (item.id === 'separator' || item.id === 'title') {
         foundSeparator = true;
-        if (item.id === "title") titleItem = item;
+        if (item.id === 'title') titleItem = item;
         return false;
       }
       return foundSeparator;
@@ -101,21 +103,21 @@ interface IState {}
 
 const styles = StyleSheet.create({
   firstActions: {
-    alignItems: "center",
+    alignItems: 'center',
     height: UI_SIZES.headerHeight,
-    justifyContent: "flex-start",
-    flexDirection: "row",
+    justifyContent: 'flex-start',
+    flexDirection: 'row',
   },
   middleActions: {
-    alignItems: "center",
+    alignItems: 'center',
     height: UI_SIZES.headerHeight,
-    justifyContent: "space-between",
+    justifyContent: 'space-between',
   },
   lastActions: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     height: UI_SIZES.headerHeight,
-    justifyContent: "flex-end",
+    justifyContent: 'flex-end',
     paddingRight: layoutSize.LAYOUT_16,
   },
 });

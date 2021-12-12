@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { Platform, View, TextInput, StyleProp, TextInputProps, ViewStyle } from 'react-native';
-import { TextField } from 'react-native-material-textfield';
+import { View, TextInput, StyleProp, TextInputProps, ViewStyle } from 'react-native';
 import PasswordInputText from 'react-native-hide-show-password-input';
-import theme from '../../app/theme';
+import { TextField } from 'react-native-material-textfield';
+
+import theme from '~/app/theme';
 
 export type TextInputLineProps = {
   hasError: boolean;
@@ -34,18 +35,8 @@ export class TextInputLine extends React.Component<
   } & TextInputProps
 > {
   public render() {
-    const {
-      hasError,
-      style,
-      inputStyle,
-      inputRef,
-      fontSize,
-      isPasswordField,
-      onBlur,
-      onFocus,
-      placeholderTextColor,
-      textColor,
-    } = this.props;
+    const { hasError, style, inputStyle, inputRef, fontSize, isPasswordField, onBlur, onFocus, placeholderTextColor, textColor } =
+      this.props;
 
     const inputProps = {
       ...this.props,

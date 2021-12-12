@@ -3,29 +3,24 @@
  * Accepts also an imageComponent to replace the <Image> rendered component by default.
  */
 
-import * as React from "react";
-import { Image, ImageProps, TouchableOpacityProps } from "react-native";
+import * as React from 'react';
+import { Image, ImageProps, TouchableOpacityProps } from 'react-native';
 
-import TouchableOpacity from "../ui/CustomTouchableOpacity";
+import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 export type ImageOptionalProps = ImageProps & {
   errorComponent: any;
   imageComponent?: any;
 };
 
-export default class ImageOptional extends React.PureComponent<
-  ImageOptionalProps,
-  { isError: boolean }
-> {
+export default class ImageOptional extends React.PureComponent<ImageOptionalProps, { isError: boolean }> {
   public constructor(props) {
     super(props);
     this.state = { isError: false };
   }
 
   public render() {
-    const ImageComponent = this.props.imageComponent
-      ? this.props.imageComponent
-      : Image;
+    const ImageComponent = this.props.imageComponent ? this.props.imageComponent : Image;
     return this.state.isError ? (
       this.props.errorComponent
     ) : (
@@ -33,7 +28,7 @@ export default class ImageOptional extends React.PureComponent<
         {...this.props}
         onError={e => {
           this.setState({
-            isError: true
+            isError: true,
           });
           if (this.props.onError) this.props.onError(e);
         }}
@@ -43,10 +38,7 @@ export default class ImageOptional extends React.PureComponent<
 }
 
 // tslint:disable-next-line:max-classes-per-file
-export class TouchableImageOptional extends React.PureComponent<
-  TouchableOpacityProps & ImageOptionalProps,
-  { isActive: boolean }
-> {
+export class TouchableImageOptional extends React.PureComponent<TouchableOpacityProps & ImageOptionalProps, { isActive: boolean }> {
   public constructor(props) {
     super(props);
     this.state = { isActive: true };
@@ -54,27 +46,10 @@ export class TouchableImageOptional extends React.PureComponent<
   public render() {
     return (
       <TouchableOpacity
-        onPress={event =>
-          this.state.isActive && this.props.onPress
-            ? this.props.onPress(event)
-            : false
-        }
-        onLongPress={event =>
-          this.state.isActive && this.props.onLongPress
-            ? this.props.onLongPress(event)
-            : false
-        }
-        onPressIn={event =>
-          this.state.isActive && this.props.onPressIn
-            ? this.props.onPressIn(event)
-            : false
-        }
-        onPressOut={event =>
-          this.state.isActive && this.props.onPressOut
-            ? this.props.onPressOut(event)
-            : false
-        }
-      >
+        onPress={event => (this.state.isActive && this.props.onPress ? this.props.onPress(event) : false)}
+        onLongPress={event => (this.state.isActive && this.props.onLongPress ? this.props.onLongPress(event) : false)}
+        onPressIn={event => (this.state.isActive && this.props.onPressIn ? this.props.onPressIn(event) : false)}
+        onPressOut={event => (this.state.isActive && this.props.onPressOut ? this.props.onPressOut(event) : false)}>
         <ImageOptional
           {...this.props}
           onError={() => {

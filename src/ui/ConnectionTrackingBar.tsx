@@ -1,35 +1,33 @@
-import style from "glamorous-native";
-import * as React from "react";
-import { Row } from ".";
-import { connect } from "react-redux";
-import { CommonStyles } from "../styles/common/styles";
-import { Icon } from "./icons/Icon";
-import { Animated, ActivityIndicator } from "react-native";
-import I18n from "i18n-js";
-import TouchableOpacity from "../ui/CustomTouchableOpacity";
-import {
-  watchConnection,
-  checkConnection
-} from "../infra/actions/connectionTracker";
+import style from 'glamorous-native';
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { Animated, ActivityIndicator } from 'react-native';
+import { connect } from 'react-redux';
+
+import { Icon } from './icons/Icon';
+
+import { watchConnection, checkConnection } from '~/infra/actions/connectionTracker';
+import { CommonStyles } from '~/styles/common/styles';
+import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 const { View } = style;
 
 const TrackerText = style.text({
-  color: "#FFFFFF",
+  color: '#FFFFFF',
   flex: 1,
-  textAlign: "center",
+  textAlign: 'center',
   lineHeight: 40,
-  marginLeft: 40
+  marginLeft: 40,
 });
 
 const TrackingContainer = style(TouchableOpacity)({
-  flexDirection: "row",
-  flex: 1
+  flexDirection: 'row',
+  flex: 1,
 });
 
 const container = {
-  width: "100%",
+  width: '100%',
   elevation: 4,
-  backgroundColor: "#FFFFFF"
+  backgroundColor: '#FFFFFF',
 };
 
 export class DEPRECATED_ConnectionTrackingBar extends React.Component<
@@ -47,7 +45,7 @@ export class DEPRECATED_ConnectionTrackingBar extends React.Component<
 
   state = {
     fadeAnim: new Animated.Value(0),
-    slideAnim: new Animated.Value(0)
+    slideAnim: new Animated.Value(0),
   };
 
   componentDidMount() {
@@ -61,12 +59,12 @@ export class DEPRECATED_ConnectionTrackingBar extends React.Component<
         this.previousVisible = true;
         Animated.timing(this.state.fadeAnim, {
           toValue: 1,
-          duration: 500
+          duration: 500,
         }).start();
 
         Animated.timing(this.state.slideAnim, {
           toValue: 40,
-          duration: 500
+          duration: 500,
         }).start();
       }
 
@@ -74,12 +72,12 @@ export class DEPRECATED_ConnectionTrackingBar extends React.Component<
         this.previousVisible = false;
         Animated.timing(this.state.fadeAnim, {
           toValue: 0,
-          duration: 500
+          duration: 500,
         }).start();
 
         Animated.timing(this.state.slideAnim, {
           toValue: 0,
-          duration: 500
+          duration: 500,
         }).start();
       }
     }, 200);
@@ -91,22 +89,22 @@ export class DEPRECATED_ConnectionTrackingBar extends React.Component<
 
   get iconName(): string {
     if (this.props.loading) {
-      return "loading";
+      return 'loading';
     }
     if (this.props.connected) {
-      return "checked";
+      return 'checked';
     }
-    return "retry";
+    return 'retry';
   }
 
   get text(): string {
     if (this.props.loading) {
-      return "common-connecting";
+      return 'common-connecting';
     }
     if (this.props.connected) {
-      return "common-connected";
+      return 'common-connected';
     }
-    return "common-disconnected";
+    return 'common-disconnected';
   }
 
   get barColor(): string {
@@ -127,28 +125,15 @@ export class DEPRECATED_ConnectionTrackingBar extends React.Component<
           ...container,
           ...this.props.style,
           opacity: fadeAnim,
-          height: slideAnim
-        }}
-      >
-        <TrackingContainer
-          style={{ backgroundColor: this.barColor }}
-          onPress={() => this.props.check()}
-        >
-          <View style={{ flexDirection: "row", flex: 1 }}>
+          height: slideAnim,
+        }}>
+        <TrackingContainer style={{ backgroundColor: this.barColor }} onPress={() => this.props.check()}>
+          <View style={{ flexDirection: 'row', flex: 1 }}>
             <TrackerText>{I18n.t(this.text)}</TrackerText>
             {this.props.loading ? (
-              <ActivityIndicator
-                size="small"
-                color={"#FFFFFF"}
-                style={{ marginRight: 80 }}
-              />
+              <ActivityIndicator size="small" color="#FFFFFF" style={{ marginRight: 80 }} />
             ) : (
-              <Icon
-                name={this.iconName}
-                size={18}
-                style={{ marginRight: 80, marginTop: 10 }}
-                color={"#FFFFFF"}
-              />
+              <Icon name={this.iconName} size={18} style={{ marginRight: 80, marginTop: 10 }} color="#FFFFFF" />
             )}
           </View>
         </TrackingContainer>
@@ -161,10 +146,10 @@ export default connect(
   (state: any) => ({
     connected: !!state.connectionTracker.connected,
     loading: !!state.connectionTracker.loading,
-    visible: !!state.connectionTracker.visible
+    visible: !!state.connectionTracker.visible,
   }),
   dispatch => ({
     watch: () => watchConnection(dispatch)(),
-    check: () => checkConnection(dispatch)()
-  })
+    check: () => checkConnection(dispatch)(),
+  }),
 )(DEPRECATED_ConnectionTrackingBar);

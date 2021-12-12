@@ -1,26 +1,23 @@
+import Filesize from 'filesize';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { ActivityIndicator, Text, View, ViewStyle, Platform, Pressable } from 'react-native';
+import { TouchableOpacity as RNGHTouchableOpacity } from 'react-native-gesture-handler';
 import Permissions, { PERMISSIONS } from 'react-native-permissions';
-import Filesize from 'filesize';
-
-import { CommonStyles } from '../styles/common/styles';
-import { getAuthHeader } from '../infra/oauth';
-import { ButtonsOkCancel, Icon } from '.';
-import { TouchableOpacity as RNGHTouchableOpacity, TouchableOpacity } from 'react-native-gesture-handler';
-import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from './Modal';
-import { notifierShowAction } from '../infra/notifier/actions';
-import Notifier from '../infra/notifier/container';
-import { IconButton } from './IconButton';
-import { mainNavNavigate } from '../navigation/helpers/navHelper';
-import { IDistantFile, IDistantFileWithId, LocalFile, SyncedFile } from '../framework/util/fileHandler';
-import fileTransferService from '../framework/util/fileHandler/service';
-import { ThunkDispatch } from 'redux-thunk';
-import { IGlobalState } from '../AppStore';
-import { getUserSession } from '../framework/util/session';
 import Toast from 'react-native-tiny-toast';
-import { DEPRECATED_getCurrentPlatform } from '../framework/util/_legacy_appConf';
+import { connect } from 'react-redux';
+import { ThunkDispatch } from 'redux-thunk';
+
+import { IconButton } from './IconButton';
+
+import { IGlobalState } from '~/AppStore';
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { IDistantFile, IDistantFileWithId, LocalFile, SyncedFile } from '~/framework/util/fileHandler';
+import fileTransferService from '~/framework/util/fileHandler/service';
+import { getUserSession } from '~/framework/util/session';
+import Notifier from '~/infra/notifier/container';
+import { mainNavNavigate } from '~/navigation/helpers/navHelper';
+import { CommonStyles } from '~/styles/common/styles';
 
 export interface IRemoteAttachment {
   charset?: string;
@@ -47,32 +44,32 @@ export enum DownloadState {
 }
 
 // const dirs = RNFetchBlob.fs.dirs;
-const attachmentIconsByFileExt: Array<{
+const attachmentIconsByFileExt: {
   exts: string[];
   icon: string;
-}> = [
-    {
-      exts: ['doc', 'docx'],
-      icon: 'file-word',
-    },
-    { exts: ['xls', 'xlsx'], icon: 'file-excel' },
-    {
-      exts: ['ppt', 'pptx'],
-      icon: 'file-powerpoint',
-    },
-    {
-      exts: ['pdf'],
-      icon: 'file-pdf',
-    },
-    {
-      exts: ['zip', 'rar', '7z'],
-      icon: 'file-archive',
-    },
-    {
-      exts: ['png', 'jpg', 'jpeg', 'gif', 'tif', 'tiff', 'bmp', 'heif', 'heic'],
-      icon: 'picture',
-    },
-  ];
+}[] = [
+  {
+    exts: ['doc', 'docx'],
+    icon: 'file-word',
+  },
+  { exts: ['xls', 'xlsx'], icon: 'file-excel' },
+  {
+    exts: ['ppt', 'pptx'],
+    icon: 'file-powerpoint',
+  },
+  {
+    exts: ['pdf'],
+    icon: 'file-pdf',
+  },
+  {
+    exts: ['zip', 'rar', '7z'],
+    icon: 'file-archive',
+  },
+  {
+    exts: ['png', 'jpg', 'jpeg', 'gif', 'tif', 'tiff', 'bmp', 'heif', 'heic'],
+    icon: 'picture',
+  },
+];
 const defaultAttachmentIcon = 'attached';
 const getAttachmentTypeByExt = (filename: string) => {
   // from https://stackoverflow.com/a/12900504/6111343
@@ -104,9 +101,9 @@ const downloadFile = (notifierId: string, file?: SyncedFile, toastMessage?: stri
         // console.log('DOWNLOAD FILE', file);
         file.mirrorToDownloadFolder();
         Toast.hide(lastToast);
-        lastToast = Toast.showSuccess(toastMessage ?? I18n.t("download-success-name", { name: file.filename }));
+        lastToast = Toast.showSuccess(toastMessage ?? I18n.t('download-success-name', { name: file.filename }));
       } catch (e) {
-        Toast.show(I18n.t("download-error-generic"));
+        Toast.show(I18n.t('download-error-generic'));
       }
     }
   };
@@ -153,12 +150,13 @@ class Attachment extends React.PureComponent<
     const canDownload = this.attId && downloadState !== DownloadState.Success && downloadState !== DownloadState.Downloading;
     const notifierId = `attachment/${this.attId}`;
     if (prevProps.starDownload !== starDownload) {
-      canDownload && await this.startDownload(this.props.attachment as IRemoteAttachment, (lf => {
-        requestAnimationFrame(() => {
-          // console.log("lf", lf);
-          this.props.onDownloadFile && this.props.onDownloadFile(notifierId, lf, I18n.t('download-success-all'))
-        });
-      })).catch(err => console.log(err));
+      canDownload &&
+        (await this.startDownload(this.props.attachment as IRemoteAttachment, lf => {
+          requestAnimationFrame(() => {
+            // console.log("lf", lf);
+            this.props.onDownloadFile && this.props.onDownloadFile(notifierId, lf, I18n.t('download-success-all'));
+          });
+        }).catch(err => console.log(err)));
       // canDownload && this.startDownload(attachment as IRemoteAttachment).catch(err => console.log(err));
     }
   }
@@ -171,27 +169,29 @@ class Attachment extends React.PureComponent<
     return (
       <View style={{ ...style }}>
         <Notifier id={notifierId} />
-        <View style={{
-          flexDirection: 'row', alignItems: "center", height: 30
-        }}>
-          <Pressable style={{ flexDirection: 'row', flex: 1 }}
-            onPress={() => this.onPressAttachment(notifierId)}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            height: 30,
+          }}>
+          <Pressable style={{ flexDirection: 'row', flex: 1 }} onPress={() => this.onPressAttachment(notifierId)}>
             <View>
               {downloadState === DownloadState.Downloading ? (
                 <ActivityIndicator size="small" color={CommonStyles.primary} style={{ marginRight: 4, height: 18 }} />
               ) : downloadState === DownloadState.Success ? (
-                <Icon color={CommonStyles.themeOpenEnt.green} size={16} name={'checked'} style={{ marginRight: 8 }} />
+                <Icon color={CommonStyles.themeOpenEnt.green} size={16} name="checked" style={{ marginRight: 8 }} />
               ) : !this.attId || downloadState === DownloadState.Error ? (
-                <Icon color={CommonStyles.errorColor} size={16} name={'close'} style={{ marginRight: 8 }} />
+                <Icon color={CommonStyles.errorColor} size={16} name="close" style={{ marginRight: 8 }} />
               ) : (
                 <Icon
                   color={CommonStyles.textColor}
                   size={16}
                   name={getAttachmentTypeByExt(
                     (editMode && (att as ILocalAttachment).name) ||
-                    (att as IRemoteAttachment).filename ||
-                    (att as IRemoteAttachment).displayName ||
-                    '',
+                      (att as IRemoteAttachment).filename ||
+                      (att as IRemoteAttachment).displayName ||
+                      '',
                   )}
                   style={{ marginRight: 8 }}
                 />
@@ -201,14 +201,15 @@ class Attachment extends React.PureComponent<
               {downloadState === DownloadState.Error ? (
                 <Text style={{ color: CommonStyles.errorColor }}>{I18n.t('download-error') + ' '}</Text>
               ) : null}
-              <Text style={{ flex: 1 }}
-                ellipsizeMode="middle" numberOfLines={1}>
-                <Text style={{
-                  textDecorationColor: downloadState === DownloadState.Success ? CommonStyles.textColor : CommonStyles.lightTextColor,
-                  color: downloadState === DownloadState.Success ? CommonStyles.textColor : CommonStyles.lightTextColor,
-                  textDecorationLine: 'underline',
-                  textDecorationStyle: 'solid'
-                }}>
+              <Text style={{ flex: 1 }} ellipsizeMode="middle" numberOfLines={1}>
+                <Text
+                  style={{
+                    textDecorationColor:
+                      downloadState === DownloadState.Success ? CommonStyles.textColor : CommonStyles.lightTextColor,
+                    color: downloadState === DownloadState.Success ? CommonStyles.textColor : CommonStyles.lightTextColor,
+                    textDecorationLine: 'underline',
+                    textDecorationStyle: 'solid',
+                  }}>
                   {(editMode && (att as ILocalAttachment).name) ||
                     (att as IRemoteAttachment).filename ||
                     (att as IRemoteAttachment).displayName ||
@@ -223,26 +224,32 @@ class Attachment extends React.PureComponent<
                   {downloadState === DownloadState.Success
                     ? ' ' + I18n.t('download-open')
                     : downloadState === DownloadState.Error
-                      ? ' ' + I18n.t('tryagain')
-                      : (this.props.attachment as IRemoteAttachment).size
-                        ? `${Filesize((this.props.attachment as IRemoteAttachment).size!, { round: 1 })}`
-                        : ''}
+                    ? ' ' + I18n.t('tryagain')
+                    : (this.props.attachment as IRemoteAttachment).size
+                    ? `${Filesize((this.props.attachment as IRemoteAttachment).size!, { round: 1 })}`
+                    : ''}
                 </Text>
               </Text>
             </View>
           </Pressable>
-          {Platform.OS !== "ios" ? <View>
-            {!editMode ? <RNGHTouchableOpacity onPress={async () => {
-              await this.startDownload(this.props.attachment as IRemoteAttachment, (lf => {
-                requestAnimationFrame(() => {
-                  // console.log("lf", lf);
-                  onDownloadFile && onDownloadFile(notifierId, lf)
-                });
-              })).catch(err => console.log(err));
-            }} style={{ paddingLeft: 12 }}>
-              <IconButton iconName="download" iconColor="#000000" buttonStyle={{ backgroundColor: CommonStyles.lightGrey }} />
-            </RNGHTouchableOpacity> : null}
-          </View> : null}
+          {Platform.OS !== 'ios' ? (
+            <View>
+              {!editMode ? (
+                <RNGHTouchableOpacity
+                  onPress={async () => {
+                    await this.startDownload(this.props.attachment as IRemoteAttachment, lf => {
+                      requestAnimationFrame(() => {
+                        // console.log("lf", lf);
+                        onDownloadFile && onDownloadFile(notifierId, lf);
+                      });
+                    }).catch(err => console.log(err));
+                  }}
+                  style={{ paddingLeft: 12 }}>
+                  <IconButton iconName="download" iconColor="#000000" buttonStyle={{ backgroundColor: CommonStyles.lightGrey }} />
+                </RNGHTouchableOpacity>
+              ) : null}
+            </View>
+          ) : null}
         </View>
       </View>
     );
@@ -336,6 +343,7 @@ class Attachment extends React.PureComponent<
 
 export default connect(null, dispatch => ({
   onOpenFile: (notifierId: string, file: LocalFile) => dispatch(openFile(notifierId, file)),
-  onDownloadFile: (notifierId: string, file: LocalFile, toastMessage?: string) => dispatch(downloadFile(notifierId, file, toastMessage)),
+  onDownloadFile: (notifierId: string, file: LocalFile, toastMessage?: string) =>
+    dispatch(downloadFile(notifierId, file, toastMessage)),
   dispatch,
 }))(Attachment);

@@ -1,13 +1,14 @@
-import DateTimePicker from "@react-native-community/datetimepicker";
-import I18n from "i18n-js";
-import moment from "moment";
-import React, { useState } from "react";
-import { View, Platform, ViewStyle } from "react-native";
+import DateTimePicker from '@react-native-community/datetimepicker';
+import I18n from 'i18n-js';
+import moment from 'moment';
+import React, { useState } from 'react';
+import { View, Platform, ViewStyle } from 'react-native';
 
-import { Icon, ButtonsOkCancel } from ".";
-import TouchableOpacity from "./CustomTouchableOpacity";
-import { ModalContent, ModalBox, ModalContentBlock, ModalContentText } from "./Modal";
-import { Text } from "../framework/components/text";
+import { Icon, ButtonsOkCancel } from '.';
+import TouchableOpacity from './CustomTouchableOpacity';
+import { ModalContent, ModalBox, ModalContentBlock, ModalContentText } from './Modal';
+
+import { Text } from '~/framework/components/text';
 
 const IconButton = ({
   icon,
@@ -24,10 +25,10 @@ const IconButton = ({
 }) => {
   const containerStyle = {
     borderRadius: 5,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "white",
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
     padding: 8,
   };
 
@@ -41,7 +42,7 @@ const IconButton = ({
 
 type DateTimePickerProps = {
   value: moment.Moment;
-  mode: "time" | "date";
+  mode: 'time' | 'date';
   minimumDate?: moment.Moment;
   maximumDate?: moment.Moment;
   renderDate?: (time: moment.Moment) => React.ReactElement;
@@ -58,14 +59,14 @@ const DateTimePickerIOS = ({
   maximumDate,
   style,
   onChange,
-  color = "#2BAB6F",
+  color = '#2BAB6F',
 }: DateTimePickerProps) => {
   const [visible, toggleModal] = useState(false);
   const [selectedTime, changeTime] = useState(value);
   const [temporaryTime, changeTempTime] = useState(value);
   return (
     <>
-      {mode == "time" && renderDate !== undefined ? (
+      {mode == 'time' && renderDate !== undefined ? (
         <TouchableOpacity onPress={() => toggleModal(true)} style={style}>
           {renderDate(selectedTime)}
         </TouchableOpacity>
@@ -73,7 +74,7 @@ const DateTimePickerIOS = ({
         <IconButton
           style={style}
           onPress={() => toggleModal(true)}
-          text={selectedTime.format("DD/MM/YY")}
+          text={selectedTime.format('DD/MM/YY')}
           color={color}
           icon="date_range"
         />
@@ -82,10 +83,10 @@ const DateTimePickerIOS = ({
       <ModalBox isVisible={visible} onDismiss={() => toggleModal(false)}>
         <ModalContent style={{ width: 350 }}>
           <ModalContentBlock>
-            <ModalContentText>{mode == "time" ? I18n.t("pick-hour") : I18n.t("pick-date")}</ModalContentText>
+            <ModalContentText>{mode == 'time' ? I18n.t('pick-hour') : I18n.t('pick-date')}</ModalContentText>
           </ModalContentBlock>
 
-          <View style={{ width: "100%", marginBottom: 35, paddingHorizontal: 20 }}>
+          <View style={{ width: '100%', marginBottom: 35, paddingHorizontal: 20 }}>
             <DateTimePicker
               mode={mode}
               locale="fr-FR"
@@ -93,7 +94,7 @@ const DateTimePickerIOS = ({
               minimumDate={minimumDate && minimumDate.toDate()}
               value={temporaryTime.toDate()}
               onChange={(event, newDate) => {
-                if (event.type === "dismissed") {
+                if (event.type === 'dismissed') {
                   toggleModal(false);
                 } else {
                   changeTempTime(moment(newDate));
@@ -111,7 +112,7 @@ const DateTimePickerIOS = ({
                 changeTime(temporaryTime);
                 onChange(temporaryTime);
               }}
-              title={I18n.t("common-ok")}
+              title={I18n.t('common-ok')}
             />
           </ModalContentBlock>
         </ModalContent>
@@ -128,13 +129,13 @@ const DateTimePickerAndroid = ({
   style,
   maximumDate,
   onChange,
-  color = "#2BAB6F",
+  color = '#2BAB6F',
 }: DateTimePickerProps) => {
   const [visible, toggleModal] = useState(false);
   const [selectedTime, changeTime] = useState(value);
   return (
     <>
-      {mode == "time" && renderDate !== undefined ? (
+      {mode == 'time' && renderDate !== undefined ? (
         <TouchableOpacity onPress={() => toggleModal(true)} style={style}>
           {renderDate(selectedTime)}
         </TouchableOpacity>
@@ -142,7 +143,7 @@ const DateTimePickerAndroid = ({
         <IconButton
           style={style}
           onPress={() => toggleModal(true)}
-          text={selectedTime.format("DD/MM/YY")}
+          text={selectedTime.format('DD/MM/YY')}
           color={color}
           icon="date_range"
         />
@@ -150,12 +151,12 @@ const DateTimePickerAndroid = ({
       {visible && (
         <DateTimePicker
           mode={mode}
-          is24Hour={true}
+          is24Hour
           maximumDate={maximumDate && maximumDate.toDate()}
           minimumDate={minimumDate && minimumDate.toDate()}
           value={selectedTime.toDate()}
           onChange={(event, newDate) => {
-            if (event.type === "dismissed") {
+            if (event.type === 'dismissed') {
               toggleModal(false);
             } else {
               toggleModal(false);
@@ -171,7 +172,7 @@ const DateTimePickerAndroid = ({
 
 export default (props: DateTimePickerProps) => {
   switch (Platform.OS) {
-    case "ios": {
+    case 'ios': {
       return <DateTimePickerIOS {...props} />;
     }
     default: {

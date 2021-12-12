@@ -1,8 +1,10 @@
-import style from "glamorous-native";
-import { CommonStyles } from "../styles/common/styles";
-import TouchableOpacity from "../ui/CustomTouchableOpacity";
-import { Weight } from "./Typography";
-import { layoutSize } from "../styles/common/layoutSize";
+import style from 'glamorous-native';
+
+import { Weight } from './Typography';
+
+import { layoutSize } from '~/styles/common/layoutSize';
+import { CommonStyles } from '~/styles/common/styles';
+import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 export const ArticleContainer = style.view({
   paddingTop: 5,
@@ -10,72 +12,72 @@ export const ArticleContainer = style.view({
   paddingLeft: 5,
   paddingRight: 5,
   flex: 1,
-  flexDirection: "column",
-  flexWrap: "wrap"
+  flexDirection: 'column',
+  flexWrap: 'wrap',
 });
 
 export const ListItem = style(TouchableOpacity)(
   {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: '#FFFFFF',
     paddingHorizontal: layoutSize.LAYOUT_10,
     paddingVertical: layoutSize.LAYOUT_12,
     borderBottomColor: CommonStyles.borderBottomItem,
-    flexDirection: "row"
+    flexDirection: 'row',
   },
   ({ borderBottomWidth = 1, full = false, nb = 0 }) => ({
     borderLeftWidth: full ? 4 : 0,
-    borderLeftColor: full ? CommonStyles.hightlightColor : "transparent",
-    backgroundColor: nb > 0 ? CommonStyles.nonLue : "#FFFFFF",
-    borderBottomWidth
-  })
+    borderLeftColor: full ? CommonStyles.hightlightColor : 'transparent',
+    backgroundColor: nb > 0 ? CommonStyles.nonLue : '#FFFFFF',
+    borderBottomWidth,
+  }),
 );
 
 export const Header = style.view({
-  alignItems: "stretch",
-  flexDirection: "row",
-  justifyContent: "flex-start",
+  alignItems: 'stretch',
+  flexDirection: 'row',
+  justifyContent: 'flex-start',
   marginBottom: 6,
   minHeight: layoutSize.LAYOUT_50,
-  width: "100%"
+  width: '100%',
 });
 
 export const LeftPanel = style.view({
-  justifyContent: "center",
+  justifyContent: 'center',
   minHeight: layoutSize.LAYOUT_50,
-  width: layoutSize.LAYOUT_50
+  width: layoutSize.LAYOUT_50,
 });
 
 export const LeftIconPanel = style.view({
-  justifyContent: "center",
+  justifyContent: 'center',
   alignItems: 'center',
   minHeight: layoutSize.LAYOUT_54,
   width: layoutSize.LAYOUT_50,
   margin: 0,
-  marginRight: layoutSize.LAYOUT_10
+  marginRight: layoutSize.LAYOUT_10,
 });
 
 export const LeftSmallIconPanel = style.view({
-  justifyContent: "center",
+  justifyContent: 'center',
   alignItems: 'center',
   minHeight: layoutSize.LAYOUT_34,
   width: layoutSize.LAYOUT_30,
   margin: 0,
-  marginRight: layoutSize.LAYOUT_5
+  marginRight: layoutSize.LAYOUT_5,
 });
 
 export const CenterPanel = style.view({
-  alignItems: "flex-start",
+  alignItems: 'flex-start',
   flex: 1,
-  justifyContent: "center",
+  justifyContent: 'center',
   marginHorizontal: 6,
-  padding: 2
+  padding: 2,
 });
 
 export const RightPanel = style.view({
-  alignItems: "center",
+  alignItems: 'center',
   height: layoutSize.LAYOUT_50,
-  justifyContent: "flex-end",
-  width: layoutSize.LAYOUT_50
+  justifyContent: 'flex-end',
+  width: layoutSize.LAYOUT_50,
 });
 
 export const Content = style.text(
@@ -84,15 +86,15 @@ export const Content = style.text(
     fontFamily: CommonStyles.primaryFontFamily,
     fontSize: layoutSize.LAYOUT_12,
     fontWeight: Weight.Light,
-    marginTop: 10
+    marginTop: 10,
   },
   ({ nb = 0 }) => ({
     color: nb > 0 ? CommonStyles.textColor : CommonStyles.iconColorOff,
-    fontWeight: nb > 0 ? Weight.Normal : Weight.Light
-  })
+    fontWeight: nb > 0 ? Weight.Normal : Weight.Light,
+  }),
 );
 
 export const PageContainer = style.view({
   backgroundColor: CommonStyles.lightGrey,
-  flex: 1
+  flex: 1,
 });

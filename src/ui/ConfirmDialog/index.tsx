@@ -1,17 +1,18 @@
-import * as React from "react";
-import { FlatList, View } from "react-native";
-import { IFile, IItem } from "../../workspace/types/states/items";
-import { Item } from "../../workspace/components";
-import { layoutSize } from "../../styles/common/layoutSize";
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { FlatList, View } from 'react-native';
 
-import DialogButtonOk from "./buttonOk";
-import DialogButtonCancel from "./buttonCancel";
-import DialogContainer from "./container";
-import DialogInput from "./input";
-import DialogSelect from "./select";
-import DialogTitle from "./title";
-import { ITreeItem } from "../../workspace/actions/helpers/formatListFolders";
-import I18n from "i18n-js";
+import DialogButtonCancel from './buttonCancel';
+import DialogButtonOk from './buttonOk';
+import DialogContainer from './container';
+import DialogInput from './input';
+import DialogSelect from './select';
+import DialogTitle from './title';
+
+import { layoutSize } from '~/styles/common/layoutSize';
+import { ITreeItem } from '~/workspace/actions/helpers/formatListFolders';
+import { Item } from '~/workspace/components';
+import { IFile, IItem } from '~/workspace/types/states/items';
 
 type IProps = {
   filterId: string;
@@ -42,7 +43,7 @@ export class ConfirmDialog extends React.Component<IProps, IState> {
   state = {
     disabled: !this.props.input && this.props.selectDestination,
     value: this.getInitialValue(),
-    valueSelect: this.props.filterId === "owner" ? this.props.parentId : "owner",
+    valueSelect: this.props.filterId === 'owner' ? this.props.parentId : 'owner',
   };
 
   onValid() {
@@ -52,9 +53,9 @@ export class ConfirmDialog extends React.Component<IProps, IState> {
   getInitialValue() {
     const { input, selected } = this.props;
 
-    const value = selected.length ? selected[0][input] || "" : "";
-    const index = value.lastIndexOf(".");
-    const suffix = index > 0 ? value.substring(index) : "";
+    const value = selected.length ? selected[0][input] || '' : '';
+    const index = value.lastIndexOf('.');
+    const suffix = index > 0 ? value.substring(index) : '';
     const prefix = index > 0 ? value.substring(0, index) : value;
 
     return {
@@ -95,7 +96,7 @@ export class ConfirmDialog extends React.Component<IProps, IState> {
         </>
       );
     } else if (selectDestination) {
-      if (this.state.disabled !== false && title === I18n.t("copy-documents")) {
+      if (this.state.disabled !== false && title === I18n.t('copy-documents')) {
         this.setState({ disabled: false });
       }
       return (
@@ -107,8 +108,8 @@ export class ConfirmDialog extends React.Component<IProps, IState> {
             excludeData={selected}
             onPress={(id, isParentOfSelection) =>
               this.setState({
-                valueSelect: id && id.length ? id : "owner",
-                disabled: title !== I18n.t("copy-documents") ? isParentOfSelection : false,
+                valueSelect: id && id.length ? id : 'owner',
+                disabled: title !== I18n.t('copy-documents') ? isParentOfSelection : false,
               })
             }
           />
@@ -126,13 +127,13 @@ export class ConfirmDialog extends React.Component<IProps, IState> {
                 marginTop: layoutSize.LAYOUT_10,
                 marginLeft: layoutSize.LAYOUT_16,
                 marginBottom: layoutSize.LAYOUT_10,
-                position: "relative",
-                display: "flex",
+                position: 'relative',
+                display: 'flex',
                 flex: 0,
               }}>
               <FlatList
                 ItemSeparatorComponent={() => (
-                  <View style={{ backgroundColor: "#ffffff", width: "100%", height: 0, margin: 0, padding: 0 }} />
+                  <View style={{ backgroundColor: '#ffffff', width: '100%', height: 0, margin: 0, padding: 0 }} />
                 )}
                 data={selected}
                 keyExtractor={(item: IItem) => item.id}
@@ -154,7 +155,7 @@ export class ConfirmDialog extends React.Component<IProps, IState> {
         <DialogContainer visible>
           {this.fill()}
           <DialogButtonCancel onPress={this.props.onCancel.bind(this)} />
-          <DialogButtonOk disabled={disabled} label={okLabel ? okLabel : "Valider"} onPress={this.onValid.bind(this)} />
+          <DialogButtonOk disabled={disabled} label={okLabel ? okLabel : 'Valider'} onPress={this.onValid.bind(this)} />
         </DialogContainer>
       </View>
     );
