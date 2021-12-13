@@ -99,6 +99,7 @@
       "title": "Choisir un blog"
     },
     "blogExplorerScreen": {
+      "rootItemName": "Blogs",
       "emptyScreenButton": "Créer un blog sur le web",
       "emptyScreenText": "Endossez la casquette du petit reporter en créant un Blog ! Publiez et partagez facilement vos informations, en y intégrant différents contenus multimédias.",
       "emptyScreenTextNoCreationRights": "Il n'y a pas encore de Blog. Le Blog permet de partager facilement des informations en y intégrant différents contenus multimédias. Proposez des idées à votre école (la vie de la classe, les voyages scolaires, des expos, ...).",

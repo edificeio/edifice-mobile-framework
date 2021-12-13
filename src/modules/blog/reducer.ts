@@ -159,3 +159,45 @@ export const getFolderContent = (blogs: IBlog[], folders: IBlogFolder[], folderI
 
 export const filterTrashed = <T extends { trashed?: boolean }>(items: Array<T>, trashed: boolean) =>
     items.filter(i => (i.trashed || false) === trashed);
+
+export interface IBlogFolderWithChildren extends IBlogFolder {
+    children?: IBlogFolderWithChildren[]
+}
+export const getFolderHierarchy = (folders: IBlogFolder[]) => {
+    // console.log('==== FOLDERS ', folders);
+    for (const f of folders) {
+        // console.log("=== iterate folder", f.name);
+        // If parent is defined but not found, consider it has no parent.
+        const parentFolder = f.parentId ? (folders.find(ff => ff.id === f.parentId) as IBlogFolderWithChildren) : undefined;
+        if (parentFolder) {
+            // console.log("  === parent is", parentFolder?.name);
+            parentFolder.children = [...parentFolder.children ?? [], f];
+        } else {
+            // console.log("  === no parent");
+        }
+    };
+    return folders.filter(f => (f as IBlogFolderWithChildren).parentId === undefined);
+}
+export const getFlatFolderHierarchy = (folders: IBlogFolder[]) => {
+    // Cleanup. Depth must be reset if there is already present.
+    let foldersHierarchy = getFolderHierarchy(folders.map(f => {
+        const { depth, ...ff } = f as { depth?: number } & IBlogFolderWithChildren; return ff
+    })) as Array<{ depth?: number } & IBlogFolderWithChildren>;
+    // Iterate over and flatten tree level after level.
+    let depth = 0, done = false;
+    do {
+        for (const f of foldersHierarchy) {
+            if (f.depth === undefined) {
+                f.depth = depth
+                // console.log("=== mark depth", depth, "to", f.name);
+            };
+        }
+        if (foldersHierarchy.length >= folders.length) break;
+        foldersHierarchy = foldersHierarchy.reduce((acc, f) =>
+            [...acc, f, ...(f.children as Array<{ depth?: number } & IBlogFolderWithChildren>)?.filter(f => f.depth === undefined) || []]
+            , [] as typeof foldersHierarchy);
+        // console.log("done", depth, foldersHierarchy.map(f => ({ name: f.name, depth: f.depth, children: f.children })), foldersHierarchy.length, folders.length);
+        ++depth;
+    } while (!done);
+    return foldersHierarchy as Array<{ depth: number } & IBlogFolderWithChildren>;
+}

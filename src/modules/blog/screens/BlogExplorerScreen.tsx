@@ -13,6 +13,7 @@ import { bindActionCreators } from 'redux';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
+import { signURISource, transformedSrc } from '~/infra/oauth';
 import { Drawer } from '~/framework/components/drawer';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
@@ -28,11 +29,11 @@ import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf'
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncLoadingState } from '~/framework/util/redux/async';
 import { getUserSession, IUserSession } from '~/framework/util/session';
-import { signURISource, transformedSrc } from '~/infra/oauth';
-import { fetchBlogsAndFoldersAction } from '~/modules/blog/actions';
-import moduleConfig from '~/modules/blog/moduleConfig';
-import { filterTrashed, getFolderContent, IBlog, IBlogFolder } from '~/modules/blog/reducer';
-import { getBlogWorkflowInformation } from '~/modules/blog/rights';
+
+import { fetchBlogsAndFoldersAction } from '../actions';
+import moduleConfig from '../moduleConfig';
+import { filterTrashed, getFlatFolderHierarchy, getFolderContent, IBlog, IBlogFolder } from '../reducer';
+import { getBlogWorkflowInformation } from '../rights';
 
 // TYPES ==========================================================================================
 
@@ -103,18 +104,26 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
       | (IExplorerResourceItemWithImage & IDisplayedBlog)
       | (IExplorerResourceItemWithIcon & IDisplayedBlog),
   ) => {
-    console.log('onOpenItem', item);
+    // console.log("onOpenItem", item);
     if (item.type === 'folder') {
-      props.navigation.setParams({ folderId: item.id });
+      onOpenFolder(item);
     } else if (item.type === 'resource') {
+      onOpenBlog(item);
     } else {
       // No-op
     }
   };
+  const onOpenFolder = (item: IBlogFolder | 'root') => {
+    props.navigation.setParams({ folderId: item === 'root' ? undefined : item.id });
+  };
+  const onOpenBlog = (item: IDisplayedBlog) => {
+    // ToDo
+    console.log('onOpenBlog', item);
+  };
 
   // HEADER =====================================================================================
 
-  render.push(
+  const header = (
     <FakeHeader>
       <HeaderRow>
         <HeaderLeft>
@@ -128,41 +137,73 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
           <HeaderTitle>{I18n.t('blog.appName')}</HeaderTitle>
         </HeaderCenter>
       </HeaderRow>
-    </FakeHeader>,
+    </FakeHeader>
   );
 
-  // RENDER =====================================================================================
+  // RENDER =======================================================================================
 
   switch (loadingState) {
     case AsyncLoadingState.DONE:
     case AsyncLoadingState.REFRESH:
     case AsyncLoadingState.REFRESH_FAILED:
       let { blogs, folders } = getFolderContent(props.blogs!, props.folders!, props.navigation.getParam('folderId'));
+
+      // Format data
+
       blogs = filterTrashed(blogs, props.navigation.getParam('filter') === 'trash');
+      const displayedblogs = blogs
+        .map(bb => {
+          const { thumbnail, ...b } = bb;
+          return {
+            ...b,
+            color: theme.themeOpenEnt.indigo,
+            date: moment.max(
+              b.fetchPosts?.[0]?.firstPublishDate ??
+                b.fetchPosts?.[0]?.modified ??
+                b.fetchPosts?.[0]?.created ??
+                b.modified ??
+                b.created,
+              b.modified ?? b.created,
+            ),
+            ...(thumbnail ? { thumbnail: signURISource(transformedSrc(thumbnail)) } : { icon: 'bullhorn' }),
+          };
+        })
+        .sort((a, b) => b.date.valueOf() - a.date.valueOf());
+
       folders = filterTrashed(folders, props.navigation.getParam('filter') === 'trash');
-      const foldersHierarchy = [];
+      const displayedFolders = folders.map(f => ({ ...f, color: theme.themeOpenEnt.indigo }));
 
       // Drawer
 
+      // CAUTION : We assume that all trashed folders does contain only trashed folders.
+      const foldersHierarchy = getFlatFolderHierarchy(
+        filterTrashed(props.folders!, props.navigation.getParam('filter') === 'trash'),
+      );
       render.push(
         <View style={{ marginBottom: 45, zIndex: 1 }}>
           <Drawer
             items={[
               {
-                name: 'Root',
+                name: I18n.t('blog.blogExplorerScreen.rootItemName'),
                 value: 'root',
                 iconName: 'folder1',
                 depth: 0,
               },
-              ...(props.folders || []).map(f => ({
+              ...(foldersHierarchy || []).map(f => ({
                 name: f.name,
                 value: f.id,
                 iconName: 'folder1',
-                depth: 1,
+                depth: f.depth + 1,
               })),
             ]}
-            selectItem={item => console.log('selected', item)}
-            selectedItem={props.navigation.getParam('folderId', 'root')}
+            selectItem={item => {
+              if (item === 'root') onOpenFolder(item);
+              else {
+                const folder = props.folders?.find(f => f.id === item);
+                folder && onOpenFolder(folder);
+              }
+            }}
+            selectedItem={props.navigation.getParam('folderId') ?? 'root'}
           />
         </View>,
       );
@@ -172,25 +213,8 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
       render.push(
         <>
           <Explorer
-            folders={folders.map(f => ({ ...f, color: theme.themeOpenEnt.indigo }))}
-            resources={blogs
-              .map(bb => {
-                const { thumbnail, ...b } = bb;
-                return {
-                  ...b,
-                  color: theme.themeOpenEnt.indigo,
-                  date: moment.max(
-                    b.fetchPosts?.[0]?.firstPublishDate ??
-                      b.fetchPosts?.[0]?.modified ??
-                      b.fetchPosts?.[0]?.created ??
-                      b.modified ??
-                      b.created,
-                    b.modified ?? b.created,
-                  ),
-                  ...(thumbnail ? { thumbnail: signURISource(transformedSrc(thumbnail)) } : { icon: 'bullhorn' }),
-                };
-              })
-              .sort((a, b) => b.date.valueOf() - a.date.valueOf())}
+            folders={displayedFolders}
+            resources={displayedblogs}
             onItemPress={onOpenItem}
             ListFooterComponent={<View style={{ marginBottom: insets.bottom }} />}
             refreshControl={<RefreshControl refreshing={loadingState === AsyncLoadingState.REFRESH} onRefresh={() => refresh()} />}
@@ -216,7 +240,13 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
       );
       break;
   }
-  return <PageView path={props.navigation.state.routeName}>{render}</PageView>;
+
+  return (
+    <>
+      {header}
+      <PageView path={props.navigation.state.routeName}>{render}</PageView>
+    </>
+  );
 };
 
 const renderEmpty = hasBlogCreationRights => {
