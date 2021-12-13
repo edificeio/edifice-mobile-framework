@@ -32,8 +32,16 @@ import { getUserSession, IUserSession } from '~/framework/util/session';
 
 import { fetchBlogsAndFoldersAction } from '../actions';
 import moduleConfig from '../moduleConfig';
-import { filterTrashed, getFlatFolderHierarchy, getFolderContent, IBlog, IBlogFolder } from '../reducer';
+import {
+  filterTrashed,
+  IBlog,
+  IBlogFolder,
+  computeAllBlogsFlatHierarchy,
+  IBlogFolderWithChildren,
+  IBlogFolderWithResources,
+} from '../reducer';
 import { getBlogWorkflowInformation } from '../rights';
+import { Text } from '~/framework/components/text';
 
 // TYPES ==========================================================================================
 
@@ -66,6 +74,7 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
   // ToDo : Make this in a useLoadingState.
 
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState);
+  console.log('loadingState', loadingState);
 
   React.useEffect(() => {
     // console.log("user effect ?", loadingState);
@@ -139,85 +148,6 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
     </FakeHeader>
   );
 
-  // DRAWER =======================================================================================
-
-  const renderDrawer = () => {
-    // CAUTION : We assume that all trashed folders does contain only trashed folders.
-    const foldersHierarchy = getFlatFolderHierarchy(filterTrashed(props.folders!, props.navigation.getParam('filter') === 'trash'));
-    return (
-      <View style={{ marginBottom: 45, zIndex: 1 }}>
-        <Drawer
-          items={[
-            {
-              name: I18n.t('blog.blogExplorerScreen.rootItemName'),
-              value: 'root',
-              iconName: 'folder1',
-              depth: 0,
-            },
-            ...(foldersHierarchy || []).map(f => ({
-              name: f.name,
-              value: f.id,
-              iconName: 'folder1',
-              depth: f.depth + 1,
-            })),
-          ]}
-          selectItem={item => {
-            if (item === 'root') onOpenFolder(item);
-            else {
-              const folder = props.folders?.find(f => f.id === item);
-              folder && onOpenFolder(folder);
-            }
-          }}
-          selectedItem={props.navigation.getParam('folderId') ?? 'root'}
-        />
-      </View>
-    );
-  };
-
-  // EXPLORER ====================================================================================
-
-  const renderExplorer = () => {
-    let { blogs, folders } = getFolderContent(props.blogs!, props.folders!, props.navigation.getParam('folderId'));
-
-    // Format data
-
-    blogs = filterTrashed(blogs, props.navigation.getParam('filter') === 'trash');
-    const displayedblogs = blogs
-      .map(bb => {
-        const { thumbnail, ...b } = bb;
-        return {
-          ...b,
-          color: theme.themeOpenEnt.indigo,
-          date: moment.max(
-            b.fetchPosts?.[0]?.firstPublishDate ??
-              b.fetchPosts?.[0]?.modified ??
-              b.fetchPosts?.[0]?.created ??
-              b.modified ??
-              b.created,
-            b.modified ?? b.created,
-          ),
-          ...(thumbnail ? { thumbnail: signURISource(transformedSrc(thumbnail)) } : { icon: 'bullhorn' }),
-        };
-      })
-      .sort((a, b) => b.date.valueOf() - a.date.valueOf());
-
-    folders = filterTrashed(folders, props.navigation.getParam('filter') === 'trash');
-    const displayedFolders = folders.map(f => ({ ...f, color: theme.themeOpenEnt.indigo }));
-
-    return (
-      <Explorer
-        folders={displayedFolders}
-        resources={displayedblogs}
-        onItemPress={onOpenItem}
-        ListFooterComponent={<View style={{ marginBottom: insets.bottom }} />}
-        refreshControl={<RefreshControl refreshing={loadingState === AsyncLoadingState.REFRESH} onRefresh={() => refresh()} />}
-        ListEmptyComponent={renderEmpty()}
-        contentContainerStyle={{ flexGrow: 1 }}
-        keyExtractor={item => item.id}
-      />
-    );
-  };
-
   // EMPTY SCREEN =================================================================================
 
   const renderEmpty = () => {
@@ -249,6 +179,100 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
     );
   };
 
+  // DRAWER =======================================================================================
+
+  const renderDrawer = (
+    flatHierarchy: ({
+      depth: number;
+    } & IBlogFolderWithChildren)[],
+  ) => {
+    return (
+      <View style={{ marginBottom: 45, zIndex: 1 }}>
+        <Drawer
+          items={[
+            {
+              name: I18n.t('blog.blogExplorerScreen.rootItemName'),
+              value: 'root',
+              iconName: 'folder1',
+              depth: 0,
+            },
+            ...(flatHierarchy || []).map(f => ({
+              name: f.name,
+              value: f.id,
+              iconName: 'folder1',
+              depth: f.depth + 1,
+            })),
+          ]}
+          selectItem={item => {
+            if (item === 'root') onOpenFolder(item);
+            else {
+              const folder = props.folders?.find(f => f.id === item);
+              folder && onOpenFolder(folder);
+            }
+          }}
+          selectedItem={props.navigation.getParam('folderId') ?? 'root'}
+        />
+      </View>
+    );
+  };
+
+  // EXPLORER ====================================================================================
+
+  const renderExplorer = ({
+    resources,
+    folders,
+  }: {
+    resources: IBlog[];
+    folders: (IBlogFolderWithChildren & IBlogFolderWithResources & { depth: number })[];
+  }) => {
+    const currentFolderId = props.navigation.getParam('folderId');
+    const currentFolder = folders.find(f => f.id === currentFolderId);
+    if (currentFolderId && !currentFolder) {
+      return <Text>Error</Text>;
+    }
+    const finalFolders = currentFolder ? currentFolder!.children || [] : folders.filter(f => f.depth === 0);
+    const finalBlogs = currentFolder ? currentFolder!.resources || [] : resources;
+
+    // Format data
+
+    const { displayedblogs, displayedFolders } = (() => {
+      const displayedblogs = finalBlogs
+        .map(bb => {
+          const { thumbnail, ...b } = bb;
+          return {
+            ...b,
+            color: theme.themeOpenEnt.indigo,
+            date: moment.max(
+              b.fetchPosts?.[0]?.firstPublishDate ??
+                b.fetchPosts?.[0]?.modified ??
+                b.fetchPosts?.[0]?.created ??
+                b.modified ??
+                b.created,
+              b.modified ?? b.created,
+            ),
+            ...(thumbnail ? { thumbnail: signURISource(transformedSrc(thumbnail)) } : { icon: 'bullhorn' }),
+          };
+        })
+        .sort((a, b) => b.date.valueOf() - a.date.valueOf());
+
+      const displayedFolders = finalFolders.map(f => ({ ...f, color: theme.themeOpenEnt.indigo }));
+      return { displayedblogs, displayedFolders };
+    })();
+
+    return (
+      <Explorer
+        folders={displayedFolders}
+        resources={displayedblogs}
+        onItemPress={onOpenItem}
+        ListFooterComponent={<View style={{ marginBottom: insets.bottom }} />}
+        refreshControl={<RefreshControl refreshing={loadingState === AsyncLoadingState.REFRESH} onRefresh={() => refresh()} />}
+        ListEmptyComponent={renderEmpty()}
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyExtractor={item => item.id}
+      />
+    );
+  };
+
   // RENDER =======================================================================================
 
   const renderPage = () => {
@@ -256,10 +280,14 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
       case AsyncLoadingState.DONE:
       case AsyncLoadingState.REFRESH:
       case AsyncLoadingState.REFRESH_FAILED:
+        const flatHierarchy = computeAllBlogsFlatHierarchy(
+          filterTrashed(props.folders!, props.navigation.getParam('filter') === 'trash'),
+          filterTrashed(props.blogs!, props.navigation.getParam('filter') === 'trash'),
+        );
         return (
           <>
-            {renderDrawer()}
-            {renderExplorer()}
+            {renderDrawer(flatHierarchy.folders)}
+            {renderExplorer(flatHierarchy)}
           </>
         );
 

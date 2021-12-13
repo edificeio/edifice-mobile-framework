@@ -217,5 +217,8 @@ export const fetchBlogsAction = (): ThunkAction<Promise<IBlog[]>, any, any, any>
 export const fetchBlogsAndFoldersAction =
   (): ThunkAction<Promise<[IBlog[], IBlogFolder[]]>, any, any, any> => async (dispatch, getState) => {
     // console.log("fetchBlogsAndFoldersAction");
-    return Promise.all([dispatch(fetchBlogsAction()), dispatch(fetchBlogFoldersAction())]);
+    const data = await Promise.all([dispatch(fetchBlogsAction()), dispatch(fetchBlogFoldersAction())]);
+    // ToDo : call line below when tha case of trashed blogs will be handled
+    // await dispatch({ type: actionTypes.tree.computed, blogs: data[0], folders: data[1] });
+    return data;
   };
