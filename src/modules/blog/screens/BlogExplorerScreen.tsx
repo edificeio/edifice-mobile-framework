@@ -58,7 +58,6 @@ export type IBlogExplorerScreen_Props = IBlogExplorerScreen_DataProps &
 // COMPONENT ======================================================================================
 
 const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
-  const render = [] as React.ReactNode[];
   const insets = useSafeAreaInsets();
   const hasBlogCreationRights = getBlogWorkflowInformation(props.session) && getBlogWorkflowInformation(props.session).blog.create;
 
@@ -140,141 +139,150 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
     </FakeHeader>
   );
 
+  // DRAWER =======================================================================================
+
+  const renderDrawer = () => {
+    // CAUTION : We assume that all trashed folders does contain only trashed folders.
+    const foldersHierarchy = getFlatFolderHierarchy(filterTrashed(props.folders!, props.navigation.getParam('filter') === 'trash'));
+    return (
+      <View style={{ marginBottom: 45, zIndex: 1 }}>
+        <Drawer
+          items={[
+            {
+              name: I18n.t('blog.blogExplorerScreen.rootItemName'),
+              value: 'root',
+              iconName: 'folder1',
+              depth: 0,
+            },
+            ...(foldersHierarchy || []).map(f => ({
+              name: f.name,
+              value: f.id,
+              iconName: 'folder1',
+              depth: f.depth + 1,
+            })),
+          ]}
+          selectItem={item => {
+            if (item === 'root') onOpenFolder(item);
+            else {
+              const folder = props.folders?.find(f => f.id === item);
+              folder && onOpenFolder(folder);
+            }
+          }}
+          selectedItem={props.navigation.getParam('folderId') ?? 'root'}
+        />
+      </View>
+    );
+  };
+
+  // EXPLORER ====================================================================================
+
+  const renderExplorer = () => {
+    let { blogs, folders } = getFolderContent(props.blogs!, props.folders!, props.navigation.getParam('folderId'));
+
+    // Format data
+
+    blogs = filterTrashed(blogs, props.navigation.getParam('filter') === 'trash');
+    const displayedblogs = blogs
+      .map(bb => {
+        const { thumbnail, ...b } = bb;
+        return {
+          ...b,
+          color: theme.themeOpenEnt.indigo,
+          date: moment.max(
+            b.fetchPosts?.[0]?.firstPublishDate ??
+              b.fetchPosts?.[0]?.modified ??
+              b.fetchPosts?.[0]?.created ??
+              b.modified ??
+              b.created,
+            b.modified ?? b.created,
+          ),
+          ...(thumbnail ? { thumbnail: signURISource(transformedSrc(thumbnail)) } : { icon: 'bullhorn' }),
+        };
+      })
+      .sort((a, b) => b.date.valueOf() - a.date.valueOf());
+
+    folders = filterTrashed(folders, props.navigation.getParam('filter') === 'trash');
+    const displayedFolders = folders.map(f => ({ ...f, color: theme.themeOpenEnt.indigo }));
+
+    return (
+      <Explorer
+        folders={displayedFolders}
+        resources={displayedblogs}
+        onItemPress={onOpenItem}
+        ListFooterComponent={<View style={{ marginBottom: insets.bottom }} />}
+        refreshControl={<RefreshControl refreshing={loadingState === AsyncLoadingState.REFRESH} onRefresh={() => refresh()} />}
+        ListEmptyComponent={renderEmpty()}
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyExtractor={item => item.id}
+      />
+    );
+  };
+
+  // EMPTY SCREEN =================================================================================
+
+  const renderEmpty = () => {
+    return (
+      <EmptyScreen
+        imageSrc={require('ASSETS/images/empty-screen/empty-search.png')}
+        imgWidth={265.98}
+        imgHeight={279.97}
+        customStyle={{ backgroundColor: theme.color.background.card }}
+        title={I18n.t('blog.blogExplorerScreen.emptyScreenTitle')}
+        text={I18n.t(`blog.blogExplorerScreen.emptyScreenText${hasBlogCreationRights ? '' : 'NoCreationRights'}`)}
+        buttonText={hasBlogCreationRights ? I18n.t('blog.blogExplorerScreen.emptyScreenButton') : undefined}
+        buttonAction={() => {
+          //TODO: create generic function inside oauth (use in myapps, etc.)
+          if (!DEPRECATED_getCurrentPlatform()) {
+            console.warn('Must have a platform selected to redirect the user');
+            return null;
+          }
+          const url = `${DEPRECATED_getCurrentPlatform()!.url}/blog#/edit/new`;
+          Linking.canOpenURL(url).then(supported => {
+            if (supported) {
+              Linking.openURL(url);
+            } else {
+              console.warn("[blog] Don't know how to open URI: ", url);
+            }
+          });
+        }}
+      />
+    );
+  };
+
   // RENDER =======================================================================================
 
-  switch (loadingState) {
-    case AsyncLoadingState.DONE:
-    case AsyncLoadingState.REFRESH:
-    case AsyncLoadingState.REFRESH_FAILED:
-      let { blogs, folders } = getFolderContent(props.blogs!, props.folders!, props.navigation.getParam('folderId'));
+  const renderPage = () => {
+    switch (loadingState) {
+      case AsyncLoadingState.DONE:
+      case AsyncLoadingState.REFRESH:
+      case AsyncLoadingState.REFRESH_FAILED:
+        return (
+          <>
+            {renderDrawer()}
+            {renderExplorer()}
+          </>
+        );
 
-      // Format data
+      case AsyncLoadingState.PRISTINE:
+      case AsyncLoadingState.INIT:
+        return <LoadingIndicator />;
 
-      blogs = filterTrashed(blogs, props.navigation.getParam('filter') === 'trash');
-      const displayedblogs = blogs
-        .map(bb => {
-          const { thumbnail, ...b } = bb;
-          return {
-            ...b,
-            color: theme.themeOpenEnt.indigo,
-            date: moment.max(
-              b.fetchPosts?.[0]?.firstPublishDate ??
-                b.fetchPosts?.[0]?.modified ??
-                b.fetchPosts?.[0]?.created ??
-                b.modified ??
-                b.created,
-              b.modified ?? b.created,
-            ),
-            ...(thumbnail ? { thumbnail: signURISource(transformedSrc(thumbnail)) } : { icon: 'bullhorn' }),
-          };
-        })
-        .sort((a, b) => b.date.valueOf() - a.date.valueOf());
-
-      folders = filterTrashed(folders, props.navigation.getParam('filter') === 'trash');
-      const displayedFolders = folders.map(f => ({ ...f, color: theme.themeOpenEnt.indigo }));
-
-      // Drawer
-
-      // CAUTION : We assume that all trashed folders does contain only trashed folders.
-      const foldersHierarchy = getFlatFolderHierarchy(
-        filterTrashed(props.folders!, props.navigation.getParam('filter') === 'trash'),
-      );
-      render.push(
-        <View style={{ marginBottom: 45, zIndex: 1 }}>
-          <Drawer
-            items={[
-              {
-                name: I18n.t('blog.blogExplorerScreen.rootItemName'),
-                value: 'root',
-                iconName: 'folder1',
-                depth: 0,
-              },
-              ...(foldersHierarchy || []).map(f => ({
-                name: f.name,
-                value: f.id,
-                iconName: 'folder1',
-                depth: f.depth + 1,
-              })),
-            ]}
-            selectItem={item => {
-              if (item === 'root') onOpenFolder(item);
-              else {
-                const folder = props.folders?.find(f => f.id === item);
-                folder && onOpenFolder(folder);
-              }
-            }}
-            selectedItem={props.navigation.getParam('folderId') ?? 'root'}
-          />
-        </View>,
-      );
-
-      // Explorer
-
-      render.push(
-        <>
-          <Explorer
-            folders={displayedFolders}
-            resources={displayedblogs}
-            onItemPress={onOpenItem}
-            ListFooterComponent={<View style={{ marginBottom: insets.bottom }} />}
-            refreshControl={<RefreshControl refreshing={loadingState === AsyncLoadingState.REFRESH} onRefresh={() => refresh()} />}
-            ListEmptyComponent={renderEmpty(hasBlogCreationRights)}
-            contentContainerStyle={{ flexGrow: 1 }}
-          />
-        </>,
-      );
-      break;
-
-    case AsyncLoadingState.PRISTINE:
-    case AsyncLoadingState.INIT:
-      render.push(<LoadingIndicator />);
-      break;
-
-    case AsyncLoadingState.INIT_FAILED:
-    case AsyncLoadingState.RETRY:
-      render.push(
-        <ScrollView
-          refreshControl={<RefreshControl refreshing={loadingState === AsyncLoadingState.RETRY} onRefresh={() => reload()} />}>
-          <EmptyContentScreen />
-        </ScrollView>,
-      );
-      break;
-  }
+      case AsyncLoadingState.INIT_FAILED:
+      case AsyncLoadingState.RETRY:
+        return (
+          <ScrollView
+            refreshControl={<RefreshControl refreshing={loadingState === AsyncLoadingState.RETRY} onRefresh={() => reload()} />}>
+            <EmptyContentScreen />
+          </ScrollView>
+        );
+    }
+  };
 
   return (
     <>
       {header}
-      <PageView path={props.navigation.state.routeName}>{render}</PageView>
+      <PageView path={props.navigation.state.routeName}>{renderPage()}</PageView>
     </>
-  );
-};
-
-const renderEmpty = hasBlogCreationRights => {
-  return (
-    <EmptyScreen
-      imageSrc={require('ASSETS/images/empty-screen/empty-search.png')}
-      imgWidth={265.98}
-      imgHeight={279.97}
-      customStyle={{ backgroundColor: theme.color.background.card }}
-      title={I18n.t('blog.blogExplorerScreen.emptyScreenTitle')}
-      text={I18n.t(`blog.blogExplorerScreen.emptyScreenText${hasBlogCreationRights ? '' : 'NoCreationRights'}`)}
-      buttonText={hasBlogCreationRights ? I18n.t('blog.blogExplorerScreen.emptyScreenButton') : undefined}
-      buttonAction={() => {
-        //TODO: create generic function inside oauth (use in myapps, etc.)
-        if (!DEPRECATED_getCurrentPlatform()) {
-          console.warn('Must have a platform selected to redirect the user');
-          return null;
-        }
-        const url = `${DEPRECATED_getCurrentPlatform()!.url}/blog#/edit/new`;
-        Linking.canOpenURL(url).then(supported => {
-          if (supported) {
-            Linking.openURL(url);
-          } else {
-            console.warn("[blog] Don't know how to open URI: ", url);
-          }
-        });
-      }}
-    />
   );
 };
 
