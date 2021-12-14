@@ -128,7 +128,7 @@ export class ConcreteMatomoTracker extends AbstractTracker<IMatomoTrackerOptions
     await Matomo.setUserId(id);
     return true;
   }
-  async _setCustomDimension(id: number, value: string) {
+  async _setCustomDimension(id: number, name: string, value: string) {
     await Matomo.setCustomDimension(id, value);
     return true;
   }
