@@ -135,7 +135,7 @@ export const blogPostAdapter = (blogPost: IEntcoreBlogPost) => {
     },
     content: blogPost.content,
     created: moment(blogPost.created.$date),
-    firstPublishDate: moment(blogPost.firstPublishDate.$date),
+    firstPublishDate: blogPost.firstPublishDate && moment(blogPost.firstPublishDate.$date),
     modified: moment(blogPost.modified.$date),
     state: blogPost.state,
     title: blogPost.title,
@@ -211,18 +211,19 @@ export const blogService = {
     },
   },
 
+  // This service automatically filters only non-trashed content.
   list: async (session: IUserSession) => {
     const api = `/blog/list/all`;
     const entcoreBlogList = (await fetchJSONWithCache(api)) as IEntcoreBlogList;
-    return entcoreBlogList.map(b => blogAdapter(b)) as IBlogList;
+    return (entcoreBlogList.map(b => blogAdapter(b)) as IBlogList).filter(b => !b.trashed);
   },
 
+  // This service automatically filters only non-trashed content.
   folders: {
     list: async (session: IUserSession) => {
       const api = `/blog/folder/list/all`;
       const entcoreBlogFolderList = (await fetchJSONWithCache(api)) as IEntcoreBlogFolder[];
-      // const entcoreBlogFolderList = /* catherine.bailly */ [{ "_id": "aa20217d-c91e-4274-8ce0-2c5465c0e26e", "name": "tutu", "ressourceIds": ["c1a58c45-199e-42e8-8ae9-63c6960fbce8"], "owner": { "userId": "8f437f63-1115-44c3-a3a3-33531ae80d90", "displayName": "Catherine Bailly" }, "created": { "$date": 1566916618789 }, "modified": { "$date": 1638972784967 }, "trashed": true }, { "_id": "5423ebd6-3c8e-42c8-b7ad-f12a8c9b4c51", "parentId": "77f71b77-18ef-4ae6-aeb6-d28918125126", "name": "test niveau 2", "ressourceIds": ["8a175c10-cfa2-4aa9-b441-8a197dd20c93", "921207a0-3205-41b5-a8f9-56d1fa787064"], "created": { "$date": 1638972550201 }, "modified": { "$date": 1638972553720 }, "owner": { "userId": "8f437f63-1115-44c3-a3a3-33531ae80d90", "displayName": "Catherine Bailly" } }, { "_id": "77f71b77-18ef-4ae6-aeb6-d28918125126", "name": "test avec ?", "ressourceIds": ["570c3751-7e6a-4ae7-a8dc-302cfc05199b", "9a3b6530-9fb0-46eb-b6da-ad2602de8583", "980d837f-19af-40a8-ad61-64b1bffb8160"], "owner": { "userId": "8f437f63-1115-44c3-a3a3-33531ae80d90", "displayName": "BAILLY Catherine" }, "created": { "$date": 1561650702560 }, "modified": { "$date": 1638972553659 }, "trashed": false }, { "_id": "b8973ddc-dbc3-4535-a040-617fe8d1fdae", "name": "test_partage", "ressourceIds": ["3a3fada4-7639-4446-a4ff-cdc8c6c8ea4d"], "owner": { "userId": "8f437f63-1115-44c3-a3a3-33531ae80d90", "displayName": "BAILLY Catherine" }, "created": { "$date": 1562173337918 }, "modified": { "$date": 1562173362410 } }]
-      return entcoreBlogFolderList.map(b => blogFolderAdapter(b as IEntcoreBlogFolder)) as IBlogFolder[];
+      return (entcoreBlogFolderList.map(b => blogFolderAdapter(b as IEntcoreBlogFolder)) as IBlogFolder[]).filter(f => !f.trashed);
     },
   },
 };

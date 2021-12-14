@@ -33,21 +33,18 @@ import { getUserSession, IUserSession } from '~/framework/util/session';
 import { fetchBlogsAndFoldersAction } from '../actions';
 import moduleConfig from '../moduleConfig';
 import {
-  filterTrashed,
   IBlog,
   IBlogFolder,
-  computeAllBlogsFlatHierarchy,
   IBlogFolderWithChildren,
   IBlogFolderWithResources,
+  IBlogFlatTree,
 } from '../reducer';
 import { getBlogWorkflowInformation } from '../rights';
-import { Text } from '~/framework/components/text';
 
 // TYPES ==========================================================================================
 
 export interface IBlogExplorerScreen_DataProps {
-  blogs?: IBlog[];
-  folders?: IBlogFolder[];
+  tree?: IBlogFlatTree;
   initialLoadingState: AsyncLoadingState;
   error?: Error;
   session: IUserSession;
@@ -74,7 +71,7 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
   // ToDo : Make this in a useLoadingState.
 
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState);
-  console.log('loadingState', loadingState);
+  //   console.log('loadingState', loadingState);
 
   React.useEffect(() => {
     // console.log("user effect ?", loadingState);
@@ -179,6 +176,17 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
     );
   };
 
+  // ERROR ========================================================================================
+
+  const renderError = () => {
+    return (
+      <ScrollView
+        refreshControl={<RefreshControl refreshing={loadingState === AsyncLoadingState.RETRY} onRefresh={() => reload()} />}>
+        <EmptyContentScreen />
+      </ScrollView>
+    );
+  };
+
   // DRAWER =======================================================================================
 
   const renderDrawer = (
@@ -206,7 +214,7 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
           selectItem={item => {
             if (item === 'root') onOpenFolder(item);
             else {
-              const folder = props.folders?.find(f => f.id === item);
+              const folder = props.tree?.folders.find(f => f.id === item);
               folder && onOpenFolder(folder);
             }
           }}
@@ -228,7 +236,7 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
     const currentFolderId = props.navigation.getParam('folderId');
     const currentFolder = folders.find(f => f.id === currentFolderId);
     if (currentFolderId && !currentFolder) {
-      return <Text>Error</Text>;
+      return <EmptyContentScreen />;
     }
     const finalFolders = currentFolder ? currentFolder!.children || [] : folders.filter(f => f.depth === 0);
     const finalBlogs = currentFolder ? currentFolder!.resources || [] : resources;
@@ -280,14 +288,10 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
       case AsyncLoadingState.DONE:
       case AsyncLoadingState.REFRESH:
       case AsyncLoadingState.REFRESH_FAILED:
-        const flatHierarchy = computeAllBlogsFlatHierarchy(
-          filterTrashed(props.folders!, props.navigation.getParam('filter') === 'trash'),
-          filterTrashed(props.blogs!, props.navigation.getParam('filter') === 'trash'),
-        );
         return (
           <>
-            {renderDrawer(flatHierarchy.folders)}
-            {renderExplorer(flatHierarchy)}
+            {renderDrawer(props.tree?.folders || [])}
+            {renderExplorer(props.tree || { resources: [], folders: [] })}
           </>
         );
 
@@ -297,12 +301,7 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
 
       case AsyncLoadingState.INIT_FAILED:
       case AsyncLoadingState.RETRY:
-        return (
-          <ScrollView
-            refreshControl={<RefreshControl refreshing={loadingState === AsyncLoadingState.RETRY} onRefresh={() => reload()} />}>
-            <EmptyContentScreen />
-          </ScrollView>
-        );
+        return renderError();
     }
   };
 
@@ -321,8 +320,7 @@ export default connect(
     const bs = moduleConfig.getState(gs);
     return {
       session: getUserSession(gs),
-      blogs: bs.blogs.data,
-      folders: bs.folders.data,
+      tree: bs.tree,
       initialLoadingState: bs.folders.isPristine || bs.blogs.isPristine ? AsyncLoadingState.PRISTINE : AsyncLoadingState.DONE,
       error: bs.blogs.error ?? bs.folders.error,
     };

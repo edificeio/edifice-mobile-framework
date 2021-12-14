@@ -83,16 +83,18 @@ export interface IBlogFolder {
 
 // State
 
+export type IBlogFlatTree = {
+  resources: IBlog[];
+  folders: ({
+    depth: number;
+  } & IBlogFolderWithResources &
+    IBlogFolderWithChildren)[];
+};
+
 interface IBlog_StateData {
   blogs: IBlog[];
   folders: IBlogFolder[];
-  tree: {
-    resources: IBlog[];
-    folders: ({
-      depth: number;
-    } & IBlogFolderWithResources &
-      IBlogFolderWithChildren)[];
-  };
+  tree: IBlogFlatTree;
 }
 export interface IBlog_State {
   blogs: AsyncState<IBlog[]>;
@@ -115,7 +117,7 @@ export const actionTypes = {
   blogs: createAsyncActionTypes(moduleConfig.namespaceActionType('BLOGS')),
   folders: createAsyncActionTypes(moduleConfig.namespaceActionType('FOLDERS')),
   tree: {
-    computed: moduleConfig.namespaceActionType('TREE_COMPUTED'),
+    compute: moduleConfig.namespaceActionType('TREE_COMPUTED'),
   },
 };
 
@@ -123,7 +125,7 @@ export default combineReducers({
   blogs: createSessionAsyncReducer(initialState.blogs, actionTypes.blogs),
   folders: createSessionAsyncReducer(initialState.folders, actionTypes.folders),
   tree: createSessionReducer(initialState.tree, {
-    [actionTypes.tree.computed]: (state = initialState.tree, action) => {
+    [actionTypes.tree.compute]: (state = initialState.tree, action) => {
       const a = action as unknown as { blogs: IBlog[]; folders: IBlogFolder[] };
       return computeAllBlogsFlatHierarchy(a.folders, a.blogs);
     },

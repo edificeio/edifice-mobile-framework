@@ -219,6 +219,6 @@ export const fetchBlogsAndFoldersAction =
     // console.log("fetchBlogsAndFoldersAction");
     const data = await Promise.all([dispatch(fetchBlogsAction()), dispatch(fetchBlogFoldersAction())]);
     // ToDo : call line below when tha case of trashed blogs will be handled
-    // await dispatch({ type: actionTypes.tree.computed, blogs: data[0], folders: data[1] });
+    await dispatch({ type: actionTypes.tree.compute, blogs: data[0], folders: data[1] });
     return data;
   };
