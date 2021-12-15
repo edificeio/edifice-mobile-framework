@@ -48,6 +48,7 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
   closeAfterSelecting = true;
   dropdownHeight = UI_SIZES.screenHeight;
   listMaxHeight = 0;
+  selectedValue = null;
 
   constructor(props) {
     super(props);
@@ -64,20 +65,23 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
   };
 
   toggle = (drawerOpen: boolean) => {
-    if (!this.closeAfterSelecting) {
-      this.closeAfterSelecting = true;
-      return;
+    const { selectItem } = this.props;
+    if (this.closeAfterSelecting) {
+      const willOpen = !drawerOpen;
+      if (willOpen) this.setState({ backdropHeight: this.dropdownHeight, drawerOpen: true });
+      else this.setState({ drawerOpen: false });
+      this.getBackDropOpacityAnimation(willOpen).start(() => {
+        if (!willOpen) this.setState({ backdropHeight: 0 });
+      });
     }
-    const willOpen = !drawerOpen;
-    if (willOpen) this.setState({ backdropHeight: this.dropdownHeight, drawerOpen: true });
-    else this.setState({ drawerOpen: false });
-    this.getBackDropOpacityAnimation(willOpen).start(() => {
-      if (!willOpen) this.setState({ backdropHeight: 0 });
-    });
+    if (this.selectedValue) {
+      selectItem(this.selectedValue);
+      this.selectedValue = null;
+    }
   };
 
   render() {
-    const { items, selectItem, selectedItem } = this.props;
+    const { items, selectedItem } = this.props;
     const { backdropHeight, backdropOpacity, drawerOpen } = this.state;
     const formattedItems =
       items &&
@@ -107,11 +111,10 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
           value={!drawerOpen && selectedItem}
           setOpen={() => this.toggle(drawerOpen)}
           setValue={callback => {
-            const value = callback(selectedItem);
-            const foundSelectedItem = items && items.find(item => item.value === value);
+            this.selectedValue = callback(selectedItem);
+            const foundSelectedItem = items && items.find(item => item.value === this.selectedValue);
             this.closeAfterSelecting = foundSelectedItem?.closeAfterSelecting ?? true;
             this.setState({ drawerOpen: !this.closeAfterSelecting });
-            setTimeout(() => selectItem(value), 0);
           }}
           placeholder={I18n.t('conversation.selectDirectory')}
           placeholderStyle={styles.placeholder}
