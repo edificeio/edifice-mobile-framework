@@ -6,14 +6,18 @@ import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
 import { Linking, Platform, RefreshControl, View, ScrollView } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { fetchBlogsAndFoldersAction } from '../actions';
+import moduleConfig from '../moduleConfig';
+import { IBlog, IBlogFolder, IBlogFolderWithChildren, IBlogFolderWithResources, IBlogFlatTree } from '../reducer';
+import { getBlogWorkflowInformation } from '../rights';
+
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
-import { signURISource, transformedSrc } from '~/infra/oauth';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Drawer } from '~/framework/components/drawer';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
@@ -29,17 +33,7 @@ import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf'
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncLoadingState } from '~/framework/util/redux/async';
 import { getUserSession, IUserSession } from '~/framework/util/session';
-
-import { fetchBlogsAndFoldersAction } from '../actions';
-import moduleConfig from '../moduleConfig';
-import {
-  IBlog,
-  IBlogFolder,
-  IBlogFolderWithChildren,
-  IBlogFolderWithResources,
-  IBlogFlatTree,
-} from '../reducer';
-import { getBlogWorkflowInformation } from '../rights';
+import { signURISource, transformedSrc } from '~/infra/oauth';
 
 // TYPES ==========================================================================================
 
@@ -63,7 +57,6 @@ export type IBlogExplorerScreen_Props = IBlogExplorerScreen_DataProps &
 // COMPONENT ======================================================================================
 
 const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
-  const insets = useSafeAreaInsets();
   const hasBlogCreationRights = getBlogWorkflowInformation(props.session) && getBlogWorkflowInformation(props.session).blog.create;
 
   // LOADER =====================================================================================
@@ -197,6 +190,8 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
     return (
       <View style={{ marginBottom: 45, zIndex: 1 }}>
         <Drawer
+          isNavbar
+          isTabbar={false}
           items={[
             {
               name: I18n.t('blog.blogExplorerScreen.rootItemName'),
@@ -272,7 +267,7 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
         folders={displayedFolders}
         resources={displayedblogs}
         onItemPress={onOpenItem}
-        ListFooterComponent={<View style={{ marginBottom: insets.bottom }} />}
+        ListFooterComponent={<View style={{ marginBottom: UI_SIZES.bottomInset }} />}
         refreshControl={<RefreshControl refreshing={loadingState === AsyncLoadingState.REFRESH} onRefresh={() => refresh()} />}
         ListEmptyComponent={renderEmpty()}
         contentContainerStyle={{ flexGrow: 1 }}

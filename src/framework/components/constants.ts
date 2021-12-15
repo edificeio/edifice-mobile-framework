@@ -21,13 +21,14 @@ export const UI_SIZES = {
   screenWidth: screenDimensions.width,
   topInset: initialWindowMetrics?.insets?.top,
   bottomInset: initialWindowMetrics?.insets?.bottom,
-  getViewHeight: () => {
+  getViewHeight: (parms: { isNavbar: boolean; isTabbar: boolean } = { isNavbar: true, isTabbar: true }) => {
+    const { isNavbar, isTabbar } = parms;
     return (
       UI_SIZES.screenHeight -
-      UI_SIZES.headerHeight -
-      UI_SIZES.tabsHeight -
       (UI_SIZES.topInset ?? 0) -
-      (UI_SIZES.bottomInset ?? 0) +
+      (UI_SIZES.bottomInset ?? 0) -
+      (isNavbar ? UI_SIZES.headerHeight : 0) -
+      (isTabbar ? UI_SIZES.tabsHeight : 0) +
       Platform.select({ ios: 4, default: 24 })
     );
   },

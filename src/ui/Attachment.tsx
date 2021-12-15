@@ -19,7 +19,6 @@ import { getUserSession } from '~/framework/util/session';
 import Notifier from '~/infra/notifier/container';
 import { mainNavNavigate } from '~/navigation/helpers/navHelper';
 import { CommonStyles } from '~/styles/common/styles';
-import { Icon } from '~/framework/components/icon';
 
 export interface IRemoteAttachment {
   charset?: string;

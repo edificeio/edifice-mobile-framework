@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { View, StyleSheet, Animated, TouchableWithoutFeedback, TextStyle } from 'react-native';
+import { Animated, StyleSheet, TextStyle, TouchableWithoutFeedback, View } from 'react-native';
 import DropDownPicker, { ItemType } from 'react-native-dropdown-picker';
 
 import theme from '~/app/theme';
@@ -10,9 +10,6 @@ import { Weight } from '~/ui/Typography';
 
 const ITEM_HEIGHT = 45;
 const LIST_RADIUS = 20;
-
-const DROPDOWN_HEIGHT = UI_SIZES.getViewHeight() - ITEM_HEIGHT;
-const LIST_MAX_HEIGHT = DROPDOWN_HEIGHT + LIST_RADIUS;
 
 export interface IDrawerProps {
   items: {
@@ -24,93 +21,64 @@ export interface IDrawerProps {
     labelStyle?: TextStyle;
     closeAfterSelecting?: boolean;
   }[];
+  isNavbar: boolean;
+  isTabbar: boolean;
   selectItem: (id: string) => any;
   selectedItem: string;
 }
 
 export interface IDrawerState {
+  backdropHeight: number;
+  backdropOpacity: Animated.Value;
   drawerOpen: boolean;
-  animatedOpacity: Animated.Value;
-  // drawerHeight: number;
-  // animatedHeight: Animated.Value;
 }
 
 export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
-  // DECLARATIONS =================================================================================
-
-  // scrollViewRef = null;
-
   state: IDrawerState = {
+    backdropHeight: 0,
+    backdropOpacity: new Animated.Value(0),
     drawerOpen: false,
-    animatedOpacity: new Animated.Value(0),
-    // drawerHeight: 45,
-    // animatedHeight: new Animated.Value(45),
   };
-  mustClose = true;
 
-  // RENDER =======================================================================================
+  static defaultProps = {
+    isNavbar: true,
+    isTabbar: true,
+  };
 
-  // getDrawerHeightAnimation = (wasFolderCreated?: boolean) => {
-  //   const { folders } = this.props;
-  //   const { animatedHeight, drawerOpen } = this.state;
-  //   const menuItemHeight = 45;
-  //   const mailboxesNumber = 4;
-  //   const mailboxesHeight = menuItemHeight * mailboxesNumber;
-  //   const foldersNumber = folders && folders.length;
-  //   const foldersHeight = foldersNumber ? menuItemHeight * foldersNumber : 0;
-  //   const createFolderContainerHeight = menuItemHeight;
-  //   const selectDirectoryContainerHeight = menuItemHeight;
-  //   const drawerMenuTotalHeight = selectDirectoryContainerHeight
-  //     + mailboxesHeight
-  //     + foldersHeight
-  //     + createFolderContainerHeight
-  //   const newHeightValue = drawerOpen && !wasFolderCreated ? menuItemHeight : drawerMenuTotalHeight;
+  closeAfterSelecting = true;
+  dropdownHeight = UI_SIZES.screenHeight;
+  listMaxHeight = 0;
 
-  //   this.setState({ drawerHeight: newHeightValue });
-  //   return Animated.timing(animatedHeight, {
-  //     toValue: newHeightValue,
-  //     ...ANIMATION_CONFIGURATIONS.size
-  //   });
-  // };
+  constructor(props) {
+    super(props);
+    const { isNavbar, isTabbar } = this.props;
+    this.listMaxHeight = UI_SIZES.getViewHeight({ isNavbar, isTabbar }) - ITEM_HEIGHT + LIST_RADIUS;
+  }
 
-  getDrawerOpacityAnimation = () => {
-    const { drawerOpen, animatedOpacity } = this.state;
-    return Animated.timing(animatedOpacity, {
-      toValue: drawerOpen ? 0 : 0.6,
+  getBackDropOpacityAnimation = (willOpen: boolean) => {
+    const { backdropOpacity } = this.state;
+    return Animated.timing(backdropOpacity, {
+      toValue: willOpen ? 0.6 : 0,
       ...ANIMATION_CONFIGURATIONS.fade,
     });
   };
 
-  // onDrawerToggle = (callback?: Function) => {
-  //   const { drawerOpen } = this.state;
-  //   const animations = [this.getDrawerHeightAnimation(), this.getDrawerOpacityAnimation()];
-  //   callback && animations.pop();
-
-  //   this.setState({ drawerOpen: true });
-  //   Animated.parallel(animations).start(() => {
-  //     // Note: setTimeout is used to smooth the animation
-  //     this.setState({ drawerOpen: !drawerOpen });
-  //     callback && setTimeout(() => callback(), 0);
-  //     drawerOpen && this.scrollViewRef?.scrollTo({ y: 0, animated: false });
-  //   });
-  // };
-
-  onDrawerToggle = () => {
-    const { drawerOpen } = this.state;
-    const animations = [this.getDrawerOpacityAnimation()];
-    if (!this.mustClose) {
-      this.mustClose = true;
+  toggle = (drawerOpen: boolean) => {
+    if (!this.closeAfterSelecting) {
+      this.closeAfterSelecting = true;
       return;
     }
-    this.setState({ drawerOpen: true });
-    Animated.parallel(animations).start(() => {
-      this.setState({ drawerOpen: !drawerOpen });
+    const willOpen = !drawerOpen;
+    if (willOpen) this.setState({ backdropHeight: this.dropdownHeight, drawerOpen: true });
+    else this.setState({ drawerOpen: false });
+    this.getBackDropOpacityAnimation(willOpen).start(() => {
+      if (!willOpen) this.setState({ backdropHeight: 0 });
     });
   };
 
   render() {
     const { items, selectItem, selectedItem } = this.props;
-    const { drawerOpen, animatedOpacity } = this.state;
+    const { backdropHeight, backdropOpacity, drawerOpen } = this.state;
     const formattedItems =
       items &&
       items.map(item => {
@@ -137,13 +105,13 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
           open={drawerOpen}
           items={formattedItems}
           value={!drawerOpen && selectedItem}
-          setOpen={() => this.onDrawerToggle()}
+          setOpen={() => this.toggle(drawerOpen)}
           setValue={callback => {
             const value = callback(selectedItem);
             const foundSelectedItem = items && items.find(item => item.value === value);
-            this.mustClose = foundSelectedItem?.closeAfterSelecting ?? true;
-            this.setState({ drawerOpen: !this.mustClose });
-            setTimeout(() => selectItem(callback(selectedItem)), 0);
+            this.closeAfterSelecting = foundSelectedItem?.closeAfterSelecting ?? true;
+            this.setState({ drawerOpen: !this.closeAfterSelecting });
+            setTimeout(() => selectItem(value), 0);
           }}
           placeholder={I18n.t('conversation.selectDirectory')}
           placeholderStyle={styles.placeholder}
@@ -154,7 +122,7 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
           style={styles.style}
           dropDownContainerStyle={styles.dropDownContainer}
           listItemContainerStyle={styles.listItemContainer}
-          maxHeight={LIST_MAX_HEIGHT}
+          maxHeight={this.listMaxHeight}
           flatListProps={{
             showsVerticalScrollIndicator: false,
             alwaysBounceVertical: false,
@@ -167,16 +135,8 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
           )}
           ArrowDownIconComponent={() => <Icon size={12} name="arrow_down" color={theme.color.primary.regular} />}
         />
-        <TouchableWithoutFeedback onPress={() => this.onDrawerToggle()}>
-          <Animated.View
-            style={[
-              styles.backdrop,
-              {
-                opacity: animatedOpacity,
-                height: drawerOpen ? DROPDOWN_HEIGHT : 0,
-              },
-            ]}
-          />
+        <TouchableWithoutFeedback onPress={() => this.toggle(drawerOpen)}>
+          <Animated.View style={[styles.backdrop, { height: backdropHeight, opacity: backdropOpacity }]} />
         </TouchableWithoutFeedback>
       </View>
     );
