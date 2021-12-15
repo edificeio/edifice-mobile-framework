@@ -11,6 +11,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IconButton } from './IconButton';
 
 import { IGlobalState } from '~/AppStore';
+import { Icon } from '~/framework/components/icon';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IDistantFile, IDistantFileWithId, LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';

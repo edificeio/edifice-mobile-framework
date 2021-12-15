@@ -1,12 +1,18 @@
+import I18n from 'i18n-js';
 import * as React from 'react';
 import { View, StyleSheet, Animated, TouchableWithoutFeedback, TextStyle } from 'react-native';
 import DropDownPicker, { ItemType } from 'react-native-dropdown-picker';
-import I18n from 'i18n-js';
 
 import theme from '~/app/theme';
-import { ANIMATION_CONFIGURATIONS_FADE, ANIMATION_CONFIGURATIONS_SIZE, UI_SIZES } from '~/framework/components/constants';
+import { ANIMATION_CONFIGURATIONS, UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
 import { Weight } from '~/ui/Typography';
+
+const ITEM_HEIGHT = 45;
+const LIST_RADIUS = 20;
+
+const DROPDOWN_HEIGHT = UI_SIZES.getViewHeight() - ITEM_HEIGHT;
+const LIST_MAX_HEIGHT = DROPDOWN_HEIGHT + LIST_RADIUS;
 
 export interface IDrawerProps {
   items: {
@@ -20,20 +26,20 @@ export interface IDrawerProps {
   }[];
   selectItem: (id: string) => any;
   selectedItem: string;
-};
+}
 
 export interface IDrawerState {
   drawerOpen: boolean;
   animatedOpacity: Animated.Value;
   // drawerHeight: number;
   // animatedHeight: Animated.Value;
-};
+}
 
 export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
   // DECLARATIONS =================================================================================
 
   // scrollViewRef = null;
-  
+
   state: IDrawerState = {
     drawerOpen: false,
     animatedOpacity: new Animated.Value(0),
@@ -63,7 +69,7 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
   //   this.setState({ drawerHeight: newHeightValue });
   //   return Animated.timing(animatedHeight, {
   //     toValue: newHeightValue,
-  //     ...ANIMATION_CONFIGURATIONS_SIZE
+  //     ...ANIMATION_CONFIGURATIONS.size
   //   });
   // };
 
@@ -71,7 +77,7 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
     const { drawerOpen, animatedOpacity } = this.state;
     return Animated.timing(animatedOpacity, {
       toValue: drawerOpen ? 0 : 0.6,
-      ...ANIMATION_CONFIGURATIONS_FADE
+      ...ANIMATION_CONFIGURATIONS.fade,
     });
   };
 
@@ -105,28 +111,25 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
   render() {
     const { items, selectItem, selectedItem } = this.props;
     const { drawerOpen, animatedOpacity } = this.state;
-    const itemHeight = 45;
-    const dropdownMaxHeight = UI_SIZES.getViewHeight() - itemHeight;
-    const isDrawerMaximallyExpanded = /*🟠this.state.drawerHeight*/ 400 >= dropdownMaxHeight;
-    const formattedItems = items && items.map(item => {
-      const isItemSelected = selectedItem === item.value;
-      const itemCount = item.count ? ` (${item.count})` : "";
-      const itemLabel= `${item.name}${itemCount}`;
-      const formattedItem: ItemType = {
-        label: itemLabel,
-        value: item.value,
-        labelStyle: item.labelStyle || {}
-      };
-      if (item.iconName) formattedItem.icon = () =>
-        <Icon
-          size={25}
-          name={item.iconName}
-          color={isItemSelected ? theme.color.primary.regular : theme.color.text.heavy}
-        />;
-      if (isItemSelected) formattedItem.labelStyle = { ...formattedItem.labelStyle, color: theme.color.primary.regular };
-      if (item.depth) formattedItem.containerStyle = { marginLeft: item.depth * 25 };
-      return formattedItem;
-    });
+    const formattedItems =
+      items &&
+      items.map(item => {
+        const isItemSelected = selectedItem === item.value;
+        const itemCount = item.count ? ` (${item.count})` : '';
+        const itemLabel = `${item.name}${itemCount}`;
+        const formattedItem: ItemType = {
+          label: itemLabel,
+          value: item.value,
+          labelStyle: item.labelStyle || {},
+        };
+        if (item.iconName)
+          formattedItem.icon = () => (
+            <Icon size={25} name={item.iconName} color={isItemSelected ? theme.color.primary.regular : theme.color.text.heavy} />
+          );
+        if (isItemSelected) formattedItem.labelStyle = { ...formattedItem.labelStyle, color: theme.color.primary.regular };
+        if (item.depth) formattedItem.containerStyle = { marginLeft: item.depth * 25 };
+        return formattedItem;
+      });
 
     return (
       <View style={styles.container}>
@@ -142,51 +145,36 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
             this.setState({ drawerOpen: !this.mustClose });
             setTimeout(() => selectItem(callback(selectedItem)), 0);
           }}
-          placeholder={I18n.t("conversation.selectDirectory")}
+          placeholder={I18n.t('conversation.selectDirectory')}
           placeholderStyle={styles.placeholder}
           labelProps={{ numberOfLines: 1 }}
           itemLabelProps={{ numberOfLines: 1 }}
           textStyle={styles.text}
           labelStyle={styles.label}
-          style={[styles.style, { height: itemHeight }]}
-          dropDownContainerStyle={[
-            styles.dropDownContainer,
-            { borderRadius: isDrawerMaximallyExpanded ? 0 : 20 }
-          ]}
-          listItemContainerStyle={[styles.listItemContainer, { height: itemHeight }]}
-          maxHeight={dropdownMaxHeight}
+          style={styles.style}
+          dropDownContainerStyle={styles.dropDownContainer}
+          listItemContainerStyle={styles.listItemContainer}
+          maxHeight={LIST_MAX_HEIGHT}
           flatListProps={{
             showsVerticalScrollIndicator: false,
-            alwaysBounceVertical: false
+            alwaysBounceVertical: false,
           }}
           showTickIcon={false}
           arrowIconPosition="LEFT"
           arrowIconContainerStyle={styles.arrowContainer}
-          ArrowUpIconComponent={() => 
-            <Icon
-              size={12}
-              name={"arrow_down"}
-              color={theme.color.primary.regular}
-              style={styles.arrowUp}
-            />
-          }
-          ArrowDownIconComponent={() => 
-            <Icon
-              size={12}
-              name={"arrow_down"}
-              color={theme.color.primary.regular}
-            />
-          }
+          ArrowUpIconComponent={() => (
+            <Icon size={12} name="arrow_down" color={theme.color.primary.regular} style={styles.arrowUp} />
+          )}
+          ArrowDownIconComponent={() => <Icon size={12} name="arrow_down" color={theme.color.primary.regular} />}
         />
         <TouchableWithoutFeedback onPress={() => this.onDrawerToggle()}>
           <Animated.View
             style={[
               styles.backdrop,
               {
-                marginTop: itemHeight,
                 opacity: animatedOpacity,
-                height: drawerOpen ? dropdownMaxHeight : 0
-              }
+                height: drawerOpen ? DROPDOWN_HEIGHT : 0,
+              },
             ]}
           />
         </TouchableWithoutFeedback>
@@ -196,41 +184,46 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    position: "absolute",
-  },
-  style: {
-    position: "absolute",
-    borderRadius: undefined,
-    borderWidth: undefined,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.color.listItemBorder,
-  },
-  dropDownContainer: {
-    borderWidth: undefined,
-  },
-  listItemContainer: {
-    paddingLeft: 40,
-  },
-  backdrop: {
-    backgroundColor: "#000000",
-  },
-  placeholder: {
-    color: theme.color.primary.regular,
-    fontStyle: "italic",
-  },
-  text: {
-    fontWeight: Weight.Bold,
-    overflow: "hidden",
-  },
-  label: {
-    color: theme.color.primary.regular,
-  },
   arrowContainer: {
     marginRight: 8,
   },
   arrowUp: {
-    transform: [{ rotate: "180deg" }],
-  }
+    transform: [{ rotate: '180deg' }],
+  },
+  backdrop: {
+    backgroundColor: '#000000',
+    marginTop: ITEM_HEIGHT,
+  },
+  container: {
+    position: 'absolute',
+    width: '100%',
+  },
+  dropDownContainer: {
+    borderRadius: LIST_RADIUS,
+    borderWidth: undefined,
+    paddingBottom: LIST_RADIUS,
+  },
+  label: {
+    color: theme.color.primary.regular,
+  },
+  listItemContainer: {
+    height: ITEM_HEIGHT,
+    paddingLeft: 40,
+  },
+  placeholder: {
+    color: theme.color.primary.regular,
+    fontStyle: 'italic',
+  },
+  style: {
+    borderBottomColor: theme.color.listItemBorder,
+    borderBottomWidth: 1,
+    borderRadius: undefined,
+    borderWidth: undefined,
+    height: ITEM_HEIGHT,
+    position: 'absolute',
+  },
+  text: {
+    fontWeight: Weight.Bold,
+    overflow: 'hidden',
+  },
 });
