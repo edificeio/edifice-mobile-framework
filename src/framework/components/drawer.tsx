@@ -46,14 +46,15 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
   };
 
   closeAfterSelecting = true;
-  dropdownHeight = UI_SIZES.screenHeight;
+  backdropMaxHeight = 0;
   listMaxHeight = 0;
   selectedValue = null;
 
   constructor(props) {
     super(props);
     const { isNavbar, isTabbar } = this.props;
-    this.listMaxHeight = UI_SIZES.getViewHeight({ isNavbar, isTabbar }) - ITEM_HEIGHT + LIST_RADIUS;
+    this.backdropMaxHeight = UI_SIZES.getViewHeight({ isNavbar, isTabbar });
+    this.listMaxHeight = this.backdropMaxHeight - ITEM_HEIGHT + LIST_RADIUS;
   }
 
   getBackDropOpacityAnimation = (willOpen: boolean) => {
@@ -68,7 +69,7 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
     const { selectItem } = this.props;
     if (this.closeAfterSelecting) {
       const willOpen = !drawerOpen;
-      if (willOpen) this.setState({ backdropHeight: this.dropdownHeight, drawerOpen: true });
+      if (willOpen) this.setState({ backdropHeight: this.backdropMaxHeight, drawerOpen: true });
       else this.setState({ drawerOpen: false });
       this.getBackDropOpacityAnimation(willOpen).start(() => {
         if (!willOpen) this.setState({ backdropHeight: 0 });
