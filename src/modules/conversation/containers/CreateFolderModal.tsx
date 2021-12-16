@@ -64,9 +64,9 @@ class CreateFolderModal extends React.PureComponent<any, any> {
           <ModalContentBlock>
             <TextBold>{I18n.t('conversation.createDirectory')}</TextBold>
           </ModalContentBlock>
-
           <View style={{ width: '100%', marginBottom: 35, paddingHorizontal: 20 }}>
             <TextInput
+              autoFocus
               value={name}
               onChangeText={this.onNameChange}
               placeholder={I18n.t('conversation.directoryName')}
