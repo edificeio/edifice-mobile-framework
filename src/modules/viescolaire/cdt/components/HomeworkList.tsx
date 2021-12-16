@@ -3,12 +3,18 @@ import moment from 'moment';
 import * as React from 'react';
 import { View, StyleSheet, Switch, ScrollView, RefreshControl, Platform } from 'react-native';
 
+import { IHomework, IHomeworkList } from '../state/homeworks';
 import { HomeworkItem, SessionItem } from './Items';
 
 import { getSessionInfo } from '~/App';
 import { Text, TextBold } from '~/framework/components/text';
 import { ISession } from '~/modules/viescolaire/cdt/state/sessions';
-import { isHomeworkDone, homeworkDetailsAdapter, sessionDetailsAdapter, getTeacherName } from '~/modules/viescolaire/utils/cdt';
+import {
+  isHomeworkDone,
+  homeworkListDetailsAdapter,
+  sessionListDetailsAdapter,
+  getTeacherName,
+} from '~/modules/viescolaire/utils/cdt';
 import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
 import { INavigationProps } from '~/types';
 import { PageContainer } from '~/ui/ContainerContent';
@@ -36,7 +42,7 @@ enum SwitchState {
 
 type HomeworkListProps = {
   updateHomeworkProgress?: any;
-  homeworks: any;
+  homeworks: IHomeworkList;
   sessions: ISession[];
   personnel: any;
   isFetchingHomework: boolean;
@@ -143,14 +149,18 @@ export default (props: HomeworkListProps) => {
             onRefreshHomeworks={onRefreshHomeworks}
             homeworkList={props.homeworks}
             onHomeworkStatusUpdate={homework => props.updateHomeworkProgress(homework.id, !isHomeworkDone(homework))}
-            onHomeworkTap={homework => props.navigation.navigate('HomeworkPage', homeworkDetailsAdapter(homework))}
+            onHomeworkTap={homework =>
+              props.navigation.navigate('HomeworkPage', homeworkListDetailsAdapter(homework, props.homeworks))
+            }
           />
         ) : (
           <SessionList
             isFetching={isFetchingSession}
             onRefreshSessions={onRefreshSessions}
             sessionList={props.sessions}
-            onSessionTap={session => props.navigation.navigate('SessionPage', sessionDetailsAdapter(session, props.personnel))}
+            onSessionTap={session =>
+              props.navigation.navigate('SessionPage', sessionListDetailsAdapter(session, props.personnel, props.sessions))
+            }
             personnelList={props.personnel}
           />
         )}
@@ -168,8 +178,8 @@ const HomeworkList = ({ isFetching, onRefreshHomeworks, homeworkList, onHomework
     if (Object.keys(homeworkList).length === 0) onRefreshHomeworks();
   }, []);
 
-  const homeworkDataList = homeworkList;
-  const homeworksArray = Object.values(homeworkDataList);
+  const homeworkDataList = homeworkList as IHomeworkList;
+  const homeworksArray = Object.values(homeworkDataList) as IHomework[];
   homeworksArray.sort((a, b) => a.due_date - b.due_date);
   return (
     <ScrollView style={{ flex: 1 }} refreshControl={<RefreshControl refreshing={isFetching} onRefresh={onRefreshHomeworks} />}>

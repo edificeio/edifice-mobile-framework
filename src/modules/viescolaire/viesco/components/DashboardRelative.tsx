@@ -201,7 +201,7 @@ export default class Dashboard extends React.PureComponent<DashboardProps> {
     return (
       <View style={styles.dashboardPart}>
         <TextBold style={styles.title}>{I18n.t('viesco-lasteval')}</TextBold>
-        {evaluations && evaluations.data.devoirs ? (
+        {evaluations && evaluations.data.devoirs.length > 0 ? (
           <DenseDevoirList devoirs={evaluationList} levels={levels} />
         ) : (
           <EmptyScreen

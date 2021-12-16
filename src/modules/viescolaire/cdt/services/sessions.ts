@@ -17,7 +17,7 @@ export type ISessionListBackend = {
   end_time: string;
   exceptional_label: string;
   homeworks: IHomeworkListBackend;
-  id: number;
+  id: string;
   is_empty: boolean;
   is_published: boolean;
   modified: string;

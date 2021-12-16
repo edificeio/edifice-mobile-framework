@@ -5,7 +5,6 @@ import { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 import DisplaySession from '~/modules/viescolaire/cdt/components/DisplaySession';
 import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
 import { HeaderBackAction } from '~/ui/headers/NewHeader';
@@ -26,14 +25,18 @@ class Session extends React.PureComponent<any> {
   };
 
   public render() {
-    return <DisplaySession {...this.props} />;
+    return (
+      <DisplaySession
+        {...this.props}
+        session={this.props.navigation.state.params.session}
+        sessionList={this.props.navigation.state.params.sessionList}
+      />
+    );
   }
 }
 
 const mapStateToProps: (state: any) => any = state => {
-  return {
-    getfunction: fetchJSONWithCache(`/diary/session/38`),
-  };
+  return {};
 };
 
 const mapDispatchToProps: (dispatch: any) => any = dispatch => {

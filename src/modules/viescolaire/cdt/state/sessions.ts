@@ -6,7 +6,7 @@ import viescoConfig from '~/modules/viescolaire/moduleConfig';
 // THE MODEL --------------------------------------------------------------------------------------
 
 export interface ISession {
-  id: number;
+  id: string;
   date: moment.Moment;
   subject_id: string;
   subject: {

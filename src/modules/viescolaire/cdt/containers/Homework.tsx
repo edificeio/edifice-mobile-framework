@@ -5,7 +5,6 @@ import { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 import DisplayHomework from '~/modules/viescolaire/cdt/components/DisplayHomework';
 import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
 import { HeaderBackAction } from '~/ui/headers/NewHeader';
@@ -25,14 +24,18 @@ class Homework extends React.PureComponent<any> {
   };
 
   public render() {
-    return <DisplayHomework {...this.props} />;
+    return (
+      <DisplayHomework
+        {...this.props}
+        homework={this.props.navigation.state.params.homework}
+        homeworkList={this.props.navigation.state.params.homeworkList}
+      />
+    );
   }
 }
 
 const mapStateToProps: (state: any) => any = state => {
-  return {
-    getfunction: fetchJSONWithCache(`/diary/homework/49`),
-  };
+  return {};
 };
 
 const mapDispatchToProps: (dispatch: any) => any = dispatch => {

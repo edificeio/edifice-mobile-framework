@@ -13,35 +13,38 @@ export const RelativesInfos = (props: { relatives: IRelativesInfos[] }) => {
     <View style={[styles.relativesInfos, styles.shadow]}>
       <Text style={{ marginBottom: 10 }}>{I18n.t('viesco-memento-relatives')}</Text>
 
-      {props.relatives.map(relative => {
-        return (
-          <View style={{ marginBottom: 20 }}>
-            <TextBold style={{ marginBottom: 5 }}>
-              {relative.title} {relative.name}
-            </TextBold>
+      {props.relatives &&
+        props.relatives.map(relative => {
+          return (
+            <View style={{ marginBottom: 20 }}>
+              {relative.name ? (
+                <TextBold style={{ marginBottom: 5 }}>
+                  {relative.title} {relative.name}
+                </TextBold>
+              ) : null}
 
-            <View style={styles.infoLine}>
-              <Icon style={{ marginRight: 10 }} size={20} name="email" />
-              {relative.email !== '' ? <Text>{relative.email}</Text> : <Text>-</Text>}
-            </View>
+              <View style={styles.infoLine}>
+                <Icon style={{ marginRight: 10 }} size={20} name="email" />
+                {relative.name && relative.email !== '' ? <Text>{relative.email}</Text> : <Text>-</Text>}
+              </View>
 
-            <View style={styles.infoLine}>
-              <Icon style={{ marginRight: 10 }} size={20} name="cellphone" />
-              {relative.mobile !== '' ? <Text>{relative.mobile}</Text> : <Text>-</Text>}
-            </View>
+              <View style={styles.infoLine}>
+                <Icon style={{ marginRight: 10 }} size={20} name="cellphone" />
+                {relative.mobile && relative.mobile !== '' ? <Text>{relative.mobile}</Text> : <Text>-</Text>}
+              </View>
 
-            <View style={styles.infoLine}>
-              <Icon style={{ marginRight: 10 }} size={20} name="phone" />
-              {relative.phone !== '' ? <Text>{relative.phone}</Text> : <Text>-</Text>}
-            </View>
+              <View style={styles.infoLine}>
+                <Icon style={{ marginRight: 10 }} size={20} name="phone" />
+                {relative.phone && relative.phone !== '' ? <Text>{relative.phone}</Text> : <Text>-</Text>}
+              </View>
 
-            <View style={styles.infoLine}>
-              <Icon style={{ marginRight: 10 }} size={20} name="home" />
-              {relative.address !== '' ? <Text>{relative.address}</Text> : <Text>-</Text>}
+              <View style={styles.infoLine}>
+                <Icon style={{ marginRight: 10 }} size={20} name="home" />
+                {relative.address && relative.address !== '' ? <Text>{relative.address}</Text> : <Text>-</Text>}
+              </View>
             </View>
-          </View>
-        );
-      })}
+          );
+        })}
     </View>
   );
 };
@@ -49,24 +52,32 @@ export const RelativesInfos = (props: { relatives: IRelativesInfos[] }) => {
 export const StudentInfos = (props: { memento: IMemento }) => {
   return (
     <View style={styles.studentInfos}>
-      <TextBold style={styles.studentName}>{props.memento.name}</TextBold>
+      {props.memento.name ? <TextBold style={styles.studentName}>{props.memento.name}</TextBold> : null}
 
       <View style={styles.infoLine}>
         <Icon style={{ marginRight: 10 }} size={20} name="cake-variant" />
-        <Text>
-          {I18n.t('viesco-memento-born-date')} {moment(props.memento.birth_date).format('L')}
-        </Text>
+        {props.memento.birth_date ? (
+          <Text>
+            {I18n.t('viesco-memento-born-date')} {moment(props.memento.birth_date).format('L')}
+          </Text>
+        ) : (
+          <Text>-</Text>
+        )}
       </View>
 
       <View style={styles.infoLine}>
         <Icon style={{ marginRight: 10 }} size={20} name="school" />
-        {props.memento.classes.length > 0 && <Text>{props.memento.classes.join(', ')}</Text>}
+        {props.memento.classes ? (
+          props.memento.classes.length > 0 && <Text>{props.memento.classes.join(', ')}</Text>
+        ) : (
+          <Text>-</Text>
+        )}
       </View>
       {props.memento.groups.length > 0 && <Text style={{ marginTop: -5, marginBottom: 5 }}>{props.memento.groups.join(', ')}</Text>}
 
       <View style={styles.infoLine}>
         <Icon style={{ marginRight: 10 }} size={20} name="silverware" />
-        <Text>{props.memento.accommodation.toLocaleLowerCase()}</Text>
+        {props.memento.accommodation ? <Text>{props.memento.accommodation.toLocaleLowerCase()}</Text> : <Text>-</Text>}
       </View>
     </View>
   );
