@@ -3,7 +3,7 @@ import { initialWindowMetrics } from 'react-native-safe-area-context';
 
 const screenDimensions = Dimensions.get('window');
 
-export const ANIMATION_CONFIGURATIONS = {
+export const UI_ANIMATIONS = {
   fade: {
     duration: 300,
     useNativeDriver: true,
@@ -15,12 +15,13 @@ export const ANIMATION_CONFIGURATIONS = {
 };
 
 export const UI_SIZES = {
+  bottomInset: initialWindowMetrics?.insets?.bottom,
   headerHeight: 56,
+  modalOpacity: 0.4,
   tabsHeight: 56,
   screenHeight: screenDimensions.height,
   screenWidth: screenDimensions.width,
   topInset: initialWindowMetrics?.insets?.top,
-  bottomInset: initialWindowMetrics?.insets?.bottom,
   getViewHeight: (parms: { isNavbar: boolean; isTabbar: boolean } = { isNavbar: true, isTabbar: true }) => {
     const { isNavbar, isTabbar } = parms;
     return (
@@ -32,4 +33,8 @@ export const UI_SIZES = {
       Platform.select({ ios: 4, default: 24 })
     );
   },
+};
+
+export const UI_VALUES = {
+  modalOpacity: 0.4,
 };

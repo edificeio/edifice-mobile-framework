@@ -4,7 +4,7 @@ import { Animated, StyleSheet, TextStyle, TouchableWithoutFeedback, View } from 
 import DropDownPicker, { ItemType } from 'react-native-dropdown-picker';
 
 import theme from '~/app/theme';
-import { ANIMATION_CONFIGURATIONS, UI_SIZES } from '~/framework/components/constants';
+import { UI_ANIMATIONS, UI_SIZES, UI_VALUES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
 import { Weight } from '~/ui/Typography';
 
@@ -54,14 +54,14 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
     super(props);
     const { isNavbar, isTabbar } = this.props;
     this.backdropMaxHeight = UI_SIZES.getViewHeight({ isNavbar, isTabbar });
-    this.listMaxHeight = this.backdropMaxHeight - ITEM_HEIGHT + LIST_RADIUS;
+    this.listMaxHeight = this.backdropMaxHeight - ITEM_HEIGHT + LIST_RADIUS - 2 * UI_SIZES.tabsHeight;
   }
 
   getBackDropOpacityAnimation = (willOpen: boolean) => {
     const { backdropOpacity } = this.state;
     return Animated.timing(backdropOpacity, {
-      toValue: willOpen ? 0.6 : 0,
-      ...ANIMATION_CONFIGURATIONS.fade,
+      toValue: willOpen ? UI_VALUES.modalOpacity : 0,
+      ...UI_ANIMATIONS.fade,
     });
   };
 
@@ -95,14 +95,15 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
           value: item.value,
           labelStyle: item.labelStyle || {},
         };
-        if (item.iconName)
-          formattedItem.icon = () => (
-            <Icon size={25} name={item.iconName} color={isItemSelected ? theme.color.primary.regular : theme.color.text.heavy} />
-          );
-        if (isItemSelected) formattedItem.labelStyle = { ...formattedItem.labelStyle, color: theme.color.primary.regular };
+        const color = isItemSelected ? theme.color.primary.regular : theme.color.text.regular;
+        formattedItem.labelStyle = { ...formattedItem.labelStyle, color };
+        if (item.iconName) formattedItem.icon = () => <Icon size={25} name={item.iconName} color={color} />;
         if (item.depth) formattedItem.containerStyle = { marginLeft: item.depth * 25 };
         return formattedItem;
       });
+
+    // Add bottom margin on last item
+    formattedItems.slice(-1)[0].containerStyle = { marginBottom: LIST_RADIUS / 2 };
 
     return (
       <View style={styles.container}>
@@ -165,7 +166,6 @@ const styles = StyleSheet.create({
   dropDownContainer: {
     borderRadius: LIST_RADIUS,
     borderWidth: undefined,
-    paddingBottom: LIST_RADIUS,
   },
   label: {
     color: theme.color.primary.regular,
