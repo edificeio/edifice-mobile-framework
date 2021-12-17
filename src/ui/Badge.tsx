@@ -5,10 +5,11 @@ import { Weight } from './Typography';
 import { Icon } from './icons/Icon';
 
 import { CommonStyles } from '~/styles/common/styles';
+import { ColorValue } from 'react-native';
 
 export interface BadgeProps {
   content: number | string;
-  color?: string;
+  color?: string | ColorValue;
 }
 
 const ViewBadge = style.view(
