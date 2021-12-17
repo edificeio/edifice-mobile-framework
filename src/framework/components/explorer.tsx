@@ -159,7 +159,7 @@ const renderItem = <FolderType extends {}, ResourceType extends {}>(
       onPress={e => {
         onItemPress && onItemPress(item);
       }}>
-      <ResourceCard
+      <ResourceItem
         title={(item as IExplorerFolderItem).name || (item as IExplorerResourceItemBase).title}
         subtitle={item.type === 'resource' ? displayPastDate(item.date) : undefined}
         color={item.type === 'folder' ? 'transparent' : item.color}
@@ -209,7 +209,7 @@ const MetadataView = styled.View({
   paddingHorizontal: 8,
 });
 
-export const ResourceCard = (props: {
+export const ResourceItem = (props: {
   title: string;
   subtitle?: string;
   textStyle?: TextStyle;
