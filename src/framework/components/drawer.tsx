@@ -34,29 +34,38 @@ export interface IDrawerState {
 }
 
 export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
+  // Initial state
   state: IDrawerState = {
     backdropHeight: 0,
     backdropOpacity: new Animated.Value(0),
     drawerOpen: false,
   };
 
+  // Default propss
   static defaultProps = {
     isNavbar: true,
     isTabbar: true,
   };
 
-  closeAfterSelecting = true;
-  backdropMaxHeight = 0;
-  listMaxHeight = 0;
-  selectedValue = null;
+  // Close dropdown list after item selection?
+  private closeAfterSelecting = true;
+  // Backdrop maximum heightt
+  private backdropMaxHeight = 0;
+  // Dropdown List maximum heigh
+  private listMaxHeight = 0;
+  // Selected value if any
+  private selectedValue = null;
 
   constructor(props) {
     super(props);
     const { isNavbar, isTabbar } = this.props;
+    // Calculate backdrop max height depending on UI elements
     this.backdropMaxHeight = UI_SIZES.getViewHeight({ isNavbar, isTabbar });
+    // Calculate dropdown list max height
     this.listMaxHeight = this.backdropMaxHeight - ITEM_HEIGHT + LIST_RADIUS - 2 * UI_SIZES.tabsHeight;
   }
 
+  // Return backdrop animation depending on future state (Open||Close)
   getBackDropOpacityAnimation = (willOpen: boolean) => {
     const { backdropOpacity } = this.state;
     return Animated.timing(backdropOpacity, {
@@ -65,17 +74,34 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
     });
   };
 
+  // Close dropdown list
+  close() {
+    // Close dropdown list first
+    this.setState({ drawerOpen: false });
+    // Then animate backdrop opacity (dropdown list animation is done by react-native-dropdown-picker)
+    this.getBackDropOpacityAnimation(false).start(() => {
+      // Finally strech backdrop
+      this.setState({ backdropHeight: 0 });
+    });
+  }
+
+  // Open dropdown list
+  open() {
+    // Expand dropdown list to its max height && open dropdoxwn list first
+    this.setState({ backdropHeight: this.backdropMaxHeight, drawerOpen: true });
+    // Then animate backdrop opacity (dropdown list animation is done by react-native-dropdown-picker)
+    this.getBackDropOpacityAnimation(true).start();
+  }
+
+  // Toggle dropdown list depending on acttual state (Open||Close)
   toggle = (drawerOpen: boolean) => {
-    const { selectItem } = this.props;
-    if (this.closeAfterSelecting) {
-      const willOpen = !drawerOpen;
-      if (willOpen) this.setState({ backdropHeight: this.backdropMaxHeight, drawerOpen: true });
-      else this.setState({ drawerOpen: false });
-      this.getBackDropOpacityAnimation(willOpen).start(() => {
-        if (!willOpen) this.setState({ backdropHeight: 0 });
-      });
-    }
+    // Close||Open dropdown list if needed
+    if (this.closeAfterSelecting) (drawerOpen && this.close()) || (!drawerOpen && this.open());
+    // Reset flag
+    this.closeAfterSelecting = true;
+    // Callback parent if an ittem has been selected
     if (this.selectedValue) {
+      const { selectItem } = this.props;
       selectItem(this.selectedValue);
       this.selectedValue = null;
     }
@@ -84,6 +110,8 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
   render() {
     const { items, selectedItem } = this.props;
     const { backdropHeight, backdropOpacity, drawerOpen } = this.state;
+
+    // Construct react-native-dropdown-picker compatible items list
     const formattedItems =
       items &&
       items.map(item => {
@@ -113,9 +141,12 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
           value={!drawerOpen && selectedItem}
           setOpen={() => this.toggle(drawerOpen)}
           setValue={callback => {
+            // Memoize selected value (will be used by toggle())
             this.selectedValue = callback(selectedItem);
+            // Determine if dropdown list must be closed after selecting this item (depends on item prop)
             const foundSelectedItem = items && items.find(item => item.value === this.selectedValue);
             this.closeAfterSelecting = foundSelectedItem?.closeAfterSelecting ?? true;
+            // Update state => toggle will be called
             this.setState({ drawerOpen: !this.closeAfterSelecting });
           }}
           placeholder={I18n.t('conversation.selectDirectory')}
