@@ -1,8 +1,8 @@
-import { Dispatch } from "redux";
+import { Dispatch } from 'redux';
 
-import { createAsyncActionCreators } from "../../../infra/redux/async2";
-import { userChildrenService } from "../services/userChildren";
-import { IUserChildren, actionTypes } from "../state/userChildren";
+import { createAsyncActionCreators } from '~/infra/redux/async2';
+import { userChildrenService } from '~/modules/viescolaire/edt/services/userChildren';
+import { IUserChildren, actionTypes } from '~/modules/viescolaire/edt/state/userChildren';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

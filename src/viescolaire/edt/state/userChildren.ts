@@ -1,6 +1,6 @@
 /* eslint-disable flowtype/no-types-missing-file-annotation */
-import { createAsyncActionTypes, AsyncState, AsyncActionTypes } from "../../../infra/redux/async2";
-import viescoConfig from "../../config";
+import { createAsyncActionTypes, AsyncState, AsyncActionTypes } from '~/infra/redux/async2';
+import viescoConfig from '~/modules/viescolaire/config';
 
 // THE MODEL --------------------------------------------------------------------------------------
 
@@ -26,4 +26,4 @@ export const getUserChildrenState = (globalState: any) =>
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const actionTypes: AsyncActionTypes = createAsyncActionTypes(viescoConfig.createActionType("EDT_USER_CHILDREN"));
+export const actionTypes: AsyncActionTypes = createAsyncActionTypes(viescoConfig.createActionType('EDT_USER_CHILDREN'));

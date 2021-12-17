@@ -1,8 +1,8 @@
-import { Dispatch } from "redux";
+import { Dispatch } from 'redux';
 
-import { createAsyncActionCreators } from "../../../infra/redux/async2";
-import { ServicesMatiereListService } from "../services/servicesMatieres";
-import { actionTypes, IServiceList } from "../state/servicesMatieres";
+import { createAsyncActionCreators } from '~/infra/redux/async2';
+import { ServicesMatiereListService } from '~/modules/viescolaire/competences/services/servicesMatieres';
+import { actionTypes, IServiceList } from '~/modules/viescolaire/competences/state/servicesMatieres';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

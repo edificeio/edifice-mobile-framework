@@ -1,6 +1,6 @@
 /* eslint-disable flowtype/no-types-missing-file-annotation */
-import { createAsyncActionTypes, AsyncState } from "../../../infra/redux/async2";
-import viescoConfig from "../../config";
+import { createAsyncActionTypes, AsyncState } from '~/infra/redux/async2';
+import viescoConfig from '~viescolaire/config';
 
 // THE MODEL --------------------------------------------------------------------------------------
 
@@ -31,4 +31,4 @@ export const getLevelsListState = (globalState: any) =>
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 
-export const actionTypes = createAsyncActionTypes(viescoConfig.createActionType("COMPETENCES_LEVELS"));
+export const actionTypes = createAsyncActionTypes(viescoConfig.createActionType('COMPETENCES_LEVELS'));
