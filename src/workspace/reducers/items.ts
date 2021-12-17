@@ -3,26 +3,26 @@
  * Workspace state reducer
  * Holds a list of simple element in a simple Array
  */
-import I18n from "i18n-js";
-import Toast from "react-native-tiny-toast";
+import I18n from 'i18n-js';
+import Toast from 'react-native-tiny-toast';
+import { Dispatch } from 'redux';
 
-import asyncReducer, { IAction } from "../../infra/redux/async";
-import { actionTypesCreateFolder } from "../actions/create";
-import { actionTypesDelete } from "../actions/delete";
-import { actionTypesList } from "../actions/list";
-import { actionTypesMove } from "../actions/move";
-import { actionTypesPast } from "../actions/past";
-import { actionTypesRename } from "../actions/rename";
-import { actionTypesRestore } from "../actions/restore";
-import { actionTypesUpload } from "../actions/upload";
-import { IItem, IItems, IState } from "../types";
-import { Dispatch } from "redux";
+import asyncReducer, { IAction } from '~/infra/redux/async';
+import { actionTypesCreateFolder } from '~/workspace/actions/create';
+import { actionTypesDelete } from '~/workspace/actions/delete';
+import { actionTypesList } from '~/workspace/actions/list';
+import { actionTypesMove } from '~/workspace/actions/move';
+import { actionTypesPast } from '~/workspace/actions/past';
+import { actionTypesRename } from '~/workspace/actions/rename';
+import { actionTypesRestore } from '~/workspace/actions/restore';
+import { actionTypesUpload } from '~/workspace/actions/upload';
+import { IItem, IItems, IState } from '~/workspace/types';
 
 const stateDefault: IState = {
   data: {},
 };
 
-const actionTypeResetError = "WORKSPACE_RESET_ERROR";
+const actionTypeResetError = 'WORKSPACE_RESET_ERROR';
 
 export const resetError = () => (dispatch: Dispatch) => {
   dispatch({ type: actionTypeResetError });
@@ -39,15 +39,15 @@ export default (state: IState = stateDefault, action: IAction<IItems<IItem | str
     case actionTypesCreateFolder.received:
       return pushData(state, action, actionTypesCreateFolder);
     case actionTypesPast.received:
-      Toast.showSuccess(I18n.t("copy-success"));
+      Toast.showSuccess(I18n.t('copy-success'));
     case actionTypesPast.requested:
       return pushData(state, action, actionTypesPast);
     case actionTypesMove.received:
-      Toast.showSuccess(I18n.t("move-success"));
+      Toast.showSuccess(I18n.t('move-success'));
     case actionTypesMove.requested:
       return pushData(state, action, actionTypesMove);
     case actionTypesRestore.received:
-      Toast.showSuccess(I18n.t("restore-successful"));
+      Toast.showSuccess(I18n.t('restore-successful'));
     case actionTypesRestore.requested:
       return pushData(state, action, actionTypesRestore);
     case actionTypesList.requested:
@@ -80,10 +80,7 @@ function pushData(state: IState, action: IAction<IItems<IItem | string>>, action
   return {
     data: {
       ...state.data,
-      [action.payload.parentId]: asyncReducer<IItems<IItem>>(node, actionTypes)(
-        state.data[action.payload.parentId],
-        action
-      ),
+      [action.payload.parentId]: asyncReducer<IItems<IItem>>(node, actionTypes)(state.data[action.payload.parentId], action),
     },
   };
 }

@@ -1,8 +1,8 @@
-import config from "./config";
+import config from './config';
+import mainComp from './navigator';
+import mainReducer from './reducers';
 
-import mainComp from "./navigator";
-import mainReducer from "./reducers";
-import { registerModule } from "../AppModules";
+import { registerModule } from '~/AppModules';
 
 // Main component
 export const root = mainComp;
@@ -20,10 +20,8 @@ const module = {
 };
 export default module;
 
-registerModule(
-  {
-    order: 6,
-    config: require("./config").default,
-    module
-  }
-)
+registerModule({
+  order: 6,
+  config: require('./config').default,
+  module,
+});

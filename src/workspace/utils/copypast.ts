@@ -1,5 +1,5 @@
-import { moveAction } from "../actions/move";
-import { pastAction } from "../actions/past";
+import { moveAction } from '~/workspace/actions/move';
+import { pastAction } from '~/workspace/actions/past';
 
 /**
  *

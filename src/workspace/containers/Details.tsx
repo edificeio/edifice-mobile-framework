@@ -1,10 +1,11 @@
-import * as React from "react";
-import { EVENT_TYPE, IDetailsProps, IFile } from "../types";
-import { ItemDetails } from "../components";
-import { shareAction } from "../../infra/actions/share";
-import withMenuWrapper from "../utils/withMenuWrapper";
-import { downloadAndSaveAction, newDownloadThenOpenAction } from "../actions/download";
-import { connect } from "react-redux";
+import * as React from 'react';
+import { connect } from 'react-redux';
+
+import { shareAction } from '~/infra/actions/share';
+import { downloadAndSaveAction, newDownloadThenOpenAction } from '~/workspace/actions/download';
+import { ItemDetails } from '~/workspace/components';
+import { EVENT_TYPE, IDetailsProps, IFile } from '~/workspace/types';
+import withMenuWrapper from '~/workspace/utils/withMenuWrapper';
 
 class Details extends React.PureComponent<IDetailsProps> {
   public handleEvent({ type, item }) {
@@ -16,7 +17,7 @@ class Details extends React.PureComponent<IDetailsProps> {
       }
       case EVENT_TYPE.PREVIEW: {
         console.log(this.props);
-        this.props.dispatch(newDownloadThenOpenAction('', { item: item as IFile }))
+        this.props.dispatch(newDownloadThenOpenAction('', { item: item as IFile }));
         return;
       }
       case EVENT_TYPE.SHARE: {
@@ -26,9 +27,14 @@ class Details extends React.PureComponent<IDetailsProps> {
   }
 
   public render() {
-    const item = this.props.navigation.getParam("item");
+    const item = this.props.navigation.getParam('item');
     return <ItemDetails item={item} onEvent={this.handleEvent.bind(this)} />;
   }
 }
 
-export default withMenuWrapper(connect(() => {}, (dispatch) => ({dispatch}))(Details));
+export default withMenuWrapper(
+  connect(
+    () => {},
+    dispatch => ({ dispatch }),
+  )(Details),
+);

@@ -2,7 +2,7 @@
  * Workspace selection state reducer
  * Holds a list of selected item in a simple Array
  */
-import { SET_CONTENT_URI_TYPE } from "../actions/contentUri";
+import { SET_CONTENT_URI_TYPE } from '~/workspace/actions/contentUri';
 
 const initialState = null;
 

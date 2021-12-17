@@ -1,16 +1,17 @@
 // ACTION LIST ------------------------------------------------------------------------------------
 
-import { asyncActionTypes } from "../../infra/redux/async";
-import config from "../config";
-import { asyncActionFactory } from "../../infra/actions/asyncActionFactory";
-import { formatResults } from "./helpers/documents";
-import { IItem } from "../types";
-import { IItems } from "../reducers/select";
-import { Trackers } from "../../framework/util/tracker";
-import { getExtension } from "../../infra/actions/downloadHelper";
+import { formatResults } from './helpers/documents';
 
-const WORKSPACE_RENAME = "/workspace/rename";
-const WORKSPACE_FOLDER_RENAME = "/workspace/folder/rename";
+import { Trackers } from '~/framework/util/tracker';
+import { asyncActionFactory } from '~/infra/actions/asyncActionFactory';
+import { getExtension } from '~/infra/actions/downloadHelper';
+import { asyncActionTypes } from '~/infra/redux/async';
+import config from '~/workspace/config';
+import { IItems } from '~/workspace/reducers/select';
+import { IItem } from '~/workspace/types';
+
+const WORKSPACE_RENAME = '/workspace/rename';
+const WORKSPACE_FOLDER_RENAME = '/workspace/folder/rename';
 
 export const actionTypesRename = asyncActionTypes(config.createActionType(`${WORKSPACE_RENAME}`));
 
@@ -22,7 +23,7 @@ export function renameAction(parentId: string, selected: IItems<IItem>, name: st
   const item = Object.values(selected)[0];
   const url = item.isFolder ? `${WORKSPACE_FOLDER_RENAME}/${item.id}` : `${WORKSPACE_RENAME}/${item.id}`;
 
-  Trackers.trackEvent("Workspace", "RENAME", (item as IItem).isFolder ? "Folder" : getExtension((item as IItem).name));
+  Trackers.trackEvent('Workspace', 'RENAME', (item as IItem).isFolder ? 'Folder' : getExtension((item as IItem).name));
 
-  return asyncActionFactory(url, { name, parentId }, actionTypesRename, formatResults, { method: "put" });
+  return asyncActionFactory(url, { name, parentId }, actionTypesRename, formatResults, { method: 'put' });
 }

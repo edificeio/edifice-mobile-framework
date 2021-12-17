@@ -3,17 +3,18 @@
  * Build actions to be dispatched to the hworkspace list reducer.
  */
 
-import { asyncActionTypes, asyncGetJson } from "../../infra/redux/async";
-import config from "../config";
-import { FilterId, IFiltersParameters, IFolder, IItems } from "../types";
-import { formatResults } from "./helpers/documents";
-import { asyncActionRawFactory } from "../../infra/actions/asyncActionFactory";
-import { IId } from "../../types";
-import { factoryRootFolder } from "./helpers/factoryRootFolder";
+import { formatResults } from './helpers/documents';
+import { factoryRootFolder } from './helpers/factoryRootFolder';
+
+import { asyncActionRawFactory } from '~/infra/actions/asyncActionFactory';
+import { asyncActionTypes, asyncGetJson } from '~/infra/redux/async';
+import { IId } from '~/types';
+import config from '~/workspace/config';
+import { FilterId, IFiltersParameters, IFolder, IItems } from '~/workspace/types';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 
-export const actionTypesList = asyncActionTypes(config.createActionType("/workspace/list"));
+export const actionTypesList = asyncActionTypes(config.createActionType('/workspace/list'));
 
 /**
  * Get workspace list from the backend.
@@ -34,7 +35,7 @@ export function listAction(payload: IFiltersParameters) {
       ...dataDocuments,
     };
     */
-   return await getDocuments(payload); // Now getDocuments returns folders too
+    return await getDocuments(payload); // Now getDocuments returns folders too
   });
 }
 
@@ -60,14 +61,14 @@ const getRootFolders: () => IItems<IFolder> = () => {
 };
 
 const formatParameters = (parameters = {}) => {
-  let result = "?";
+  let result = '?';
   (parameters as { includeall: string }).includeall = 'true';
-  for (let key in parameters) {
+  for (const key in parameters) {
     if (!(parameters as any)[key]) {
       // skip empty parameters
       continue;
     }
-    if (key === "parentId" && (parameters as any)[key] in FilterId) {
+    if (key === 'parentId' && (parameters as any)[key] in FilterId) {
       // its a root folder, no pass parentId
       continue;
     }

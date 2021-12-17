@@ -1,5 +1,6 @@
-import { IId } from "../../../types";
-import { IRight } from "./right";
+import { IRight } from './right';
+
+import { IId } from '~/types';
 
 export type IItem = IRight &
   IId & {

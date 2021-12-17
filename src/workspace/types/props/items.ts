@@ -1,7 +1,8 @@
-import { IItem } from "../states";
-import { IActionProps } from "./actions";
-import { IEventProps } from "../../../types";
-import { INavigationProps } from "../index";
+import { IActionProps } from './actions';
+
+import { IEventProps } from '~/types';
+import { INavigationProps } from '~/workspace/types/index';
+import { IItem } from '~/workspace/types/states';
 
 export interface IDataItemsProps {
   items: {

@@ -3,21 +3,21 @@ import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import { NavigationEventSubscription } from 'react-navigation';
 import { connect } from 'react-redux';
 
-import { layoutSize } from '../../styles/common/layoutSize';
-import { CommonStyles } from '../../styles/common/styles';
-import { IDispatchProps } from '../../types';
-import { ISelectedProps } from '../../types/ievents';
-import { PageContainer } from '../../ui/ContainerContent';
-import { removeAccents } from '../../framework/util/string';
-import { listAction } from '../actions/list';
-import { Item } from '../components';
-import { FilterId, IItem, IItemsProps, IState } from '../types';
-import { getEmptyScreen } from '../utils/empty';
-import withMenuWrapper from '../utils/withMenuWrapper';
-import withNavigationWrapper from '../utils/withNavigationWrapper';
-import withUploadErrorWrapper from '../utils/withUploadErrorWrapper';
-import withUploadWrapper from '../utils/withUploadWrapper';
-import Notifier from '../../infra/notifier/container';
+import { removeAccents } from '~/framework/util/string';
+import Notifier from '~/infra/notifier/container';
+import { layoutSize } from '~/styles/common/layoutSize';
+import { CommonStyles } from '~/styles/common/styles';
+import { IDispatchProps } from '~/types';
+import { ISelectedProps } from '~/types/ievents';
+import { PageContainer } from '~/ui/ContainerContent';
+import { listAction } from '~/workspace/actions/list';
+import { Item } from '~/workspace/components';
+import { FilterId, IItem, IItemsProps, IState } from '~/workspace/types';
+import { getEmptyScreen } from '~/workspace/utils/empty';
+import withMenuWrapper from '~/workspace/utils/withMenuWrapper';
+import withNavigationWrapper from '~/workspace/utils/withNavigationWrapper';
+import withUploadErrorWrapper from '~/workspace/utils/withUploadErrorWrapper';
+import withUploadWrapper from '~/workspace/utils/withUploadWrapper';
 
 const styles = StyleSheet.create({
   separator: {

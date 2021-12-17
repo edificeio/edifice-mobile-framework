@@ -3,17 +3,18 @@
  * Build actions to be dispatched to the hworkspace list reducer.
  */
 
-import moment from "moment";
-import I18n from "i18n-js";
-import { IFile, ContentUri, IFolder, IItems, IItem, FilterId } from "../../types";
-import { filters } from "../../types/filters/helpers/filters";
-import { progressAction, progressEndAction, progressInitAction } from "../../../infra/actions/progress";
-import Toast from "react-native-tiny-toast";
-import workspaceService, { IWorkspaceUploadParams } from "../../../framework/modules/workspace/service";
-import { ThunkDispatch } from "redux-thunk";
-import { LocalFile } from "../../../framework/util/fileHandler";
-import { getUserSession } from "../../../framework/util/session";
-import config from "../../config";
+import I18n from 'i18n-js';
+import moment from 'moment';
+import Toast from 'react-native-tiny-toast';
+import { ThunkDispatch } from 'redux-thunk';
+
+import workspaceService, { IWorkspaceUploadParams } from '~/framework/modules/workspace/service';
+import { LocalFile } from '~/framework/util/fileHandler';
+import { getUserSession } from '~/framework/util/session';
+import { progressAction, progressEndAction, progressInitAction } from '~/infra/actions/progress';
+import config from '~/workspace/config';
+import { IFile, ContentUri, IFolder, IItems, IItem } from '~/workspace/types';
+import { filters } from '~/workspace/types/filters/helpers/filters';
 
 export type IDocumentArray = any[];
 
@@ -22,12 +23,12 @@ export type IDocumentArray = any[];
 function checkAncestorsAndFormat(result, item, parentId) {
   const { eParent } = item;
 
-  if (typeof item === "string") {
+  if (typeof item === 'string') {
     result[item as string] = item;
     return result;
   }
 
-  if (!parentId || eParent === parentId || (!eParent && parentId === "owner")) {
+  if (!parentId || eParent === parentId || (!eParent && parentId === 'owner')) {
     result[item._id] = formatResult(item);
     return result;
   }
@@ -37,7 +38,7 @@ function checkAncestorsAndFormat(result, item, parentId) {
 
 export const formatResults: (
   data: IDocumentArray | IBackendDocument | IBackendFolder | string[],
-  parentId?: string
+  parentId?: string,
 ) => IItems<IItem | string> = (data, parentId) => {
   let result = {} as IItems<IFile | IFolder | string>;
 
@@ -62,16 +63,16 @@ export type IBackendDocument = {
   _id: string;
   name: string;
   metadata: {
-    name: "file";
+    name: 'file';
     filename: string;
-    "content-type": string;
-    "content-transfer-encoding": string;
-    charset: "UTF-8";
+    'content-type': string;
+    'content-transfer-encoding': string;
+    charset: 'UTF-8';
     size: number;
   };
   deleted: boolean;
   eParent: string | null;
-  eType: "file";
+  eType: 'file';
   file: string;
   shared: [];
   inheritedShares: [];
@@ -88,10 +89,8 @@ function formatFileResult(item: IBackendDocument): IFile {
   if (!item || !item._id) return {} as IFile;
 
   return {
-    contentType: item.metadata["content-type"],
-    date: moment(item.modified, "YYYY-MM-DD HH:mm.ss.SSS")
-      .toDate()
-      .getTime(),
+    contentType: item.metadata['content-type'],
+    date: moment(item.modified, 'YYYY-MM-DD HH:mm.ss.SSS').toDate().getTime(),
     filename: item.name,
     id: item._id,
     isFolder: false,
@@ -130,9 +129,7 @@ function formatFolderResult(item: IBackendFolder): IFolder {
   if (item.externalId && (config as any).blacklistFolders && (config as any).blacklistFolders.includes(item.externalId))
     return {} as IFolder;
   return {
-    date: moment(item.modified, "YYYY-MM-DD HH:mm.ss.SSS")
-      .toDate()
-      .getTime(),
+    date: moment(item.modified, 'YYYY-MM-DD HH:mm.ss.SSS').toDate().getTime(),
     id: item._id,
     isFolder: true,
     name: item.name,
@@ -144,22 +141,33 @@ function formatFolderResult(item: IBackendFolder): IFolder {
 
 // UPLOAD --------------------------------------------------------------------------------------
 
-export const uploadDocumentAction = (content: ContentUri[], parentId?: string) =>
-  async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+export const uploadDocumentAction =
+  (content: ContentUri[], parentId?: string) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
-      const lcs = content.map(c => new LocalFile({
-        filepath: c.uri,
-        filename: c.name,
-        filetype: c.mime,
-      }, { _needIOSReleaseSecureAccess: false }))
-      const jobs = workspaceService.startUploadFiles(getUserSession(getState()), lcs, { parent: parentId as IWorkspaceUploadParams['parent'] }, {
-        onBegin: (res => {
-          dispatch(progressInitAction());
-        }),
-        onProgress: (res => {
-          dispatch(progressAction((res.totalBytesSent / res.totalBytesExpectedToSend) * 100));
-        })
-      });
+      const lcs = content.map(
+        c =>
+          new LocalFile(
+            {
+              filepath: c.uri,
+              filename: c.name,
+              filetype: c.mime,
+            },
+            { _needIOSReleaseSecureAccess: false },
+          ),
+      );
+      const jobs = workspaceService.startUploadFiles(
+        getUserSession(getState()),
+        lcs,
+        { parent: parentId as IWorkspaceUploadParams['parent'] },
+        {
+          onBegin: res => {
+            dispatch(progressInitAction());
+          },
+          onProgress: res => {
+            dispatch(progressAction((res.totalBytesSent / res.totalBytesExpectedToSend) * 100));
+          },
+        },
+      );
       return await Promise.all(jobs.map(j => j.promise)).then(files => {
         dispatch(progressAction(100));
         dispatch(progressEndAction());
@@ -167,15 +175,14 @@ export const uploadDocumentAction = (content: ContentUri[], parentId?: string) =
       });
     } catch (e) {
       if (e && e?.response && e.response.body === `{"error":"file.too.large"}`) {
-        Toast.show(I18n.t("workspace-quota-overflowText"), {
+        Toast.show(I18n.t('workspace-quota-overflowText'), {
           position: Toast.position.BOTTOM,
           mask: false,
-          containerStyle: { width: "95%", backgroundColor: "black" },
+          containerStyle: { width: '95%', backgroundColor: 'black' },
         });
-      };
+      }
     }
-  }
-
+  };
 
 // export const uploadDocument = (dispatch: any, content: ContentUri[], parentId?: string) => {
 //   const signedHeaders = getAuthHeader();
