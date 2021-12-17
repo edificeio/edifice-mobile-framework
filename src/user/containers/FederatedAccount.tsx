@@ -1,19 +1,15 @@
-import * as React from "react";
-import { connect } from "react-redux";
-import {
-  FederatedAccountPage,
-  IFederatedAccountPageEventProps
-} from "../components/FederatedAccount";
-import { Linking } from "react-native";
-import withViewTracking from "~/framework/util/tracker/withViewTracking";
-import { Trackers } from "~/framework/util/tracker";
-import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
+import { Linking } from 'react-native';
+import { connect } from 'react-redux';
+
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { Trackers } from '~/framework/util/tracker';
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { FederatedAccountPage, IFederatedAccountPageEventProps } from '~/user/components/FederatedAccount';
 
 const mapDispatchToProps: (dispatch) => IFederatedAccountPageEventProps = dispatch => {
   const currentPf = DEPRECATED_getCurrentPlatform();
-  const fedeUrl = typeof currentPf!.federation === 'string'
-    ? currentPf!.federation
-    : currentPf?.url + "/userbook/mon-compte#/edit-me";
+  const fedeUrl =
+    typeof currentPf!.federation === 'string' ? currentPf!.federation : currentPf?.url + '/userbook/mon-compte#/edit-me';
   return {
     dispatch,
     onLink() {
@@ -23,9 +19,6 @@ const mapDispatchToProps: (dispatch) => IFederatedAccountPageEventProps = dispat
   };
 };
 
-const ConnectedFederatedAccountPage = connect(
-  () => ({}),
-  mapDispatchToProps
-)(FederatedAccountPage);
+const ConnectedFederatedAccountPage = connect(() => ({}), mapDispatchToProps)(FederatedAccountPage);
 
 export default withViewTracking('auth/federated')(ConnectedFederatedAccountPage);

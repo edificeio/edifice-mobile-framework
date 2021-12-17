@@ -10,11 +10,6 @@ import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { fetchBlogsAndFoldersAction } from '../actions';
-import moduleConfig from '../moduleConfig';
-import { IBlog, IBlogFolder, IBlogFolderWithChildren, IBlogFolderWithResources, IBlogFlatTree } from '../reducer';
-import { getBlogWorkflowInformation } from '../rights';
-
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -34,6 +29,10 @@ import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncLoadingState } from '~/framework/util/redux/async';
 import { getUserSession, IUserSession } from '~/framework/util/session';
 import { signURISource, transformedSrc } from '~/infra/oauth';
+import { fetchBlogsAndFoldersAction } from '~/modules/blog/actions';
+import moduleConfig from '~/modules/blog/moduleConfig';
+import { IBlog, IBlogFolder, IBlogFolderWithChildren, IBlogFolderWithResources, IBlogFlatTree } from '~/modules/blog/reducer';
+import { getBlogWorkflowInformation } from '~/modules/blog/rights';
 
 // TYPES ==========================================================================================
 

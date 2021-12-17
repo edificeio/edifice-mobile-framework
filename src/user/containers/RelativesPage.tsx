@@ -1,12 +1,10 @@
-import { connect } from "react-redux";
-import { RelativesPage } from "../components/RelativesPage";
-import withViewTracking from "../../framework/util/tracker/withViewTracking";
+import { connect } from 'react-redux';
 
-const RelativesPageConnected = connect(
-    (state: any) => ({
-        relatives: state.user.info.parents
-    })
-)(RelativesPage);
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { RelativesPage } from '~/user/components/RelativesPage';
 
-export default withViewTracking("user/relatives")(RelativesPageConnected);
+const RelativesPageConnected = connect((state: any) => ({
+  relatives: state.user.info.parents,
+}))(RelativesPage);
 
+export default withViewTracking('user/relatives')(RelativesPageConnected);

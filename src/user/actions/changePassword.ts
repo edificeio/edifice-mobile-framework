@@ -1,16 +1,15 @@
-import { Action, Dispatch, AnyAction } from "redux";
-import I18n from "i18n-js";
-import { IActivationContext } from "../../utils/SubmitState";
+import I18n from 'i18n-js';
+import { Action, Dispatch, AnyAction } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 
-import userConfig from "../config";
-import { asyncActionTypes } from "../../infra/redux/async";
-
-import { getSessionInfo } from "../../App";
-import { mainNavNavigate } from "../../navigation/helpers/navHelper";
-import { notifierShowAction } from "../../infra/notifier/actions";
-import { ThunkDispatch } from "redux-thunk";
-import { Trackers } from "~/framework/util/tracker";
-import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
+import { getSessionInfo } from '~/App';
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { Trackers } from '~/framework/util/tracker';
+import { notifierShowAction } from '~/infra/notifier/actions';
+import { asyncActionTypes } from '~/infra/redux/async';
+import { mainNavNavigate } from '~/navigation/helpers/navHelper';
+import userConfig from '~/user/config';
+import { IActivationContext } from '~/utils/SubmitState';
 
 // TYPES ------------------------------------------------------------------------------------------------
 
@@ -51,35 +50,25 @@ export interface IChangePasswordSubmitErrorAction extends Action {
 
 // ACTION TYPES --------------------------------------------------------------------------------------
 
-export const actionTypeActivationContext = asyncActionTypes(
-  userConfig.createActionType("CHANGE_PASSWORD_CONTEXT")
-);
+export const actionTypeActivationContext = asyncActionTypes(userConfig.createActionType('CHANGE_PASSWORD_CONTEXT'));
 
-export const actionTypeChangePasswordSubmit = asyncActionTypes(
-  userConfig.createActionType("CHANGE_PASSWORD_SUBMIT")
-);
+export const actionTypeChangePasswordSubmit = asyncActionTypes(userConfig.createActionType('CHANGE_PASSWORD_SUBMIT'));
 
-export const actionTypeChangePasswordReset = userConfig.createActionType("CHANGE_PASSWORD_RESET");
+export const actionTypeChangePasswordReset = userConfig.createActionType('CHANGE_PASSWORD_RESET');
 
 // ACTION CREATORS --------------------------------------------------------------------------------------
 
-function changePasswordContextRequestedAction(
-  args: IChangePasswordUserInfo
-): IChangePasswordContextRequestedAction {
+function changePasswordContextRequestedAction(args: IChangePasswordUserInfo): IChangePasswordContextRequestedAction {
   return { type: actionTypeActivationContext.requested, userinfo: args };
 }
-function changePasswordContextReceivedAction(
-  context: IActivationContext
-): IChangePasswordContextFetchedAction {
+function changePasswordContextReceivedAction(context: IActivationContext): IChangePasswordContextFetchedAction {
   return { type: actionTypeActivationContext.received, context };
 }
 function changePasswordContextErrorAction(): Action {
   return { type: actionTypeActivationContext.fetchError };
 }
 
-function changePasswordSubmitRequestedAction(
-  model: IChangePasswordModel
-): IChangePasswordSubmitRequestedAction {
+function changePasswordSubmitRequestedAction(model: IChangePasswordModel): IChangePasswordSubmitRequestedAction {
   return { type: actionTypeChangePasswordSubmit.requested, model };
 }
 function changePasswordSubmitReceivedAction(): Action {
@@ -94,9 +83,7 @@ export function changePasswordResetAction(): Action {
 
 // THUNKS -----------------------------------------------------------------------------------------
 
-export function initChangePasswordAction(
-  args: IChangePasswordUserInfo
-) {
+export function initChangePasswordAction(args: IChangePasswordUserInfo) {
   return async (dispatch: Dispatch) => {
     try {
       // === 1 - Fetch activation context
@@ -126,10 +113,10 @@ export function changePasswordAction(model: IChangePasswordModel) {
         password: model.newPassword,
         confirmPassword: model.confirm,
         login: getSessionInfo().login!,
-        callback: ""
+        callback: '',
       };
-      let formdata = new FormData();
-      for (let key in payload) {
+      const formdata = new FormData();
+      for (const key in payload) {
         formdata.append(key, payload[key as keyof IChangePasswordSubmitPayload]);
       }
       // === 2 - Send change password information
@@ -138,51 +125,52 @@ export function changePasswordAction(model: IChangePasswordModel) {
       const res = await fetch(`${DEPRECATED_getCurrentPlatform()!.url}/auth/reset`, {
         body: formdata,
         headers: {
-          Accept: "application/json",
-          "Content-Type": "multipart/form-data"
+          Accept: 'application/json',
+          'Content-Type': 'multipart/form-data',
         },
-        method: "post"
+        method: 'post',
       });
       // === 3 - Check whether the c-password change was successfull
       // console.log("[User][Change password] finished getting body....", res.status, res)
       if (!res.ok) {
         // console.log("[User][Change password] failed with error", res.status)
-        dispatch(changePasswordSubmitErrorAction(I18n.t("changePassword-errorSubmit")));
+        dispatch(changePasswordSubmitErrorAction(I18n.t('changePassword-errorSubmit')));
         return;
       }
       // a json response can contains an error field
-      if (res.headers.get("content-type") && res.headers.get("content-type")!.indexOf("application/json") !== -1) {
+      if (res.headers.get('content-type') && res.headers.get('content-type')!.indexOf('application/json') !== -1) {
         // checking response header
         const resBody = await res.json();
         if (resBody.error) {
           // console.log("[User][Change password] failed with error", res.status, resBody)
-          dispatch(changePasswordSubmitErrorAction(I18n.t("changePassword-errorFields")));
+          dispatch(changePasswordSubmitErrorAction(I18n.t('changePassword-errorFields')));
           return;
         }
       }
 
       // === 5 - change password finished successfully
       dispatch(changePasswordSubmitReceivedAction());
-      mainNavNavigate("MyProfile");
-      dispatch(notifierShowAction({
-        id: "profile",
-        text: I18n.t("PasswordChangeSuccess"),
-        icon: 'checked',
-        type: 'success'
-      }));
+      mainNavNavigate('MyProfile');
+      dispatch(
+        notifierShowAction({
+          id: 'profile',
+          text: I18n.t('PasswordChangeSuccess'),
+          icon: 'checked',
+          type: 'success',
+        }),
+      );
       // console.log("[User][Change password] finished!")
-      Trackers.trackEvent("Profile", "CHANGE PASSWORD");
+      Trackers.trackEvent('Profile', 'CHANGE PASSWORD');
     } catch (e) {
-      console.warn("[User][Change password] failed to submit", e);
-      dispatch(changePasswordSubmitErrorAction(I18n.t("changePassword-errorSubmit")));
-      Trackers.trackEvent("Profile", "CHANGE PASSWORD ERROR");
-
+      console.warn('[User][Change password] failed to submit', e);
+      dispatch(changePasswordSubmitErrorAction(I18n.t('changePassword-errorSubmit')));
+      Trackers.trackEvent('Profile', 'CHANGE PASSWORD ERROR');
     }
   };
 }
 
 export function cancelChangePasswordAction() {
   return () => {
-    mainNavNavigate("MyProfile");
+    mainNavNavigate('MyProfile');
   };
 }

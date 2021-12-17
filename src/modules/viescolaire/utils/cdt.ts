@@ -1,7 +1,7 @@
 import moment from 'moment';
 
-import { IHomework, IHomeworkList } from '../cdt/state/homeworks';
-import { ISession } from '../cdt/state/sessions';
+import { IHomework, IHomeworkList } from '~/modules/viescolaire/cdt/state/homeworks';
+import { ISession } from '~/modules/viescolaire/cdt/state/sessions';
 
 export type homework = {
   id: string;

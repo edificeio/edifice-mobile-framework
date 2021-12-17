@@ -1,18 +1,8 @@
-import style from "glamorous-native";
-import I18n from "i18n-js";
-import * as React from "react";
-import { Alert, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, TouchableOpacity, View } from "react-native";
-import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from "~/framework/components/header";
-import { DEPRECATED_getCurrentPlatform } from "~/framework/util/_legacy_appConf";
+import style from 'glamorous-native';
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { Alert, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, TouchableOpacity, View } from 'react-native';
 
-import { BackdropPdfReader } from "../../framework/components/backdropPdfReader";
-import { Checkbox } from "../../framework/components/checkbox";
-import { Text, TextAction } from "../../framework/components/text";
-import { Trackers } from "../../framework/util/tracker";
-import { FlatButton, Loading } from "../../ui";
-import { ErrorMessage } from "../../ui/Typography";
-import { ContextState, SubmitState } from "../../utils/SubmitState";
-import { IActivationModel, IActivationUserInfo } from "../actions/activation";
 import {
   ActivationFormModel,
   InputEmail,
@@ -21,11 +11,22 @@ import {
   InputPasswordConfirm,
   InputPhone,
   ValueChangeArgs,
-} from "./ActivationForm";
+} from './ActivationForm';
+
+import { BackdropPdfReader } from '~/framework/components/backdropPdfReader';
+import { Checkbox } from '~/framework/components/checkbox';
+import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '~/framework/components/header';
+import { Text, TextAction } from '~/framework/components/text';
+import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { Trackers } from '~/framework/util/tracker';
+import { FlatButton, Loading } from '~/ui';
+import { ErrorMessage } from '~/ui/Typography';
+import { IActivationModel, IActivationUserInfo } from '~/user/actions/activation';
+import { ContextState, SubmitState } from '~/utils/SubmitState';
 
 // TYPES ---------------------------------------------------------------------------
 
-type IFields = "login" | "password" | "confirm" | "phone" | "email";
+type IFields = 'login' | 'password' | 'confirm' | 'phone' | 'email';
 
 export interface IActivationPageState extends IActivationModel {
   typing: boolean;
@@ -72,29 +73,29 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
   };
   private handleOpenCGU = () => {
     this.setState({ isModalVisible: true });
-    Trackers.trackEvent("Auth", "READ NOTICE", "cgu");
+    Trackers.trackEvent('Auth', 'READ NOTICE', 'cgu');
   };
 
   public componentDidMount() {
     const props = this.props;
     if (this.props.contextState == ContextState.Failed) {
-      Alert.alert(I18n.t("ErrorNetwork"), I18n.t("activation-errorLoading"), [
+      Alert.alert(I18n.t('ErrorNetwork'), I18n.t('activation-errorLoading'), [
         {
-          text: I18n.t("activation-retryLoad"),
+          text: I18n.t('activation-retryLoad'),
           onPress() {
             props.onRetryLoad({
               activationCode: props.activationCode,
               login: props.login,
             });
           },
-          style: "default",
+          style: 'default',
         },
         {
-          text: I18n.t("activation-cancelLoad"),
+          text: I18n.t('activation-cancelLoad'),
           onPress() {
             props.onCancelLoad();
           },
-          style: "cancel",
+          style: 'cancel',
         },
       ]);
     }
@@ -116,7 +117,7 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
     const hasErrorKey = !!errorText;
     const isSubmitLoading = submitState == SubmitState.Loading;
     const platform = DEPRECATED_getCurrentPlatform()!.url;
-    const path = I18n.t("common.url.cgu");
+    const path = I18n.t('common.url.cgu');
     const cguUrl = `${platform}${path}`;
 
     return (
@@ -125,21 +126,21 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
           <HeaderRow>
             <HeaderLeft>
               <HeaderAction
-                iconName={Platform.OS === "ios" ? "chevron-left1" : "back"}
+                iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
                 iconSize={24}
                 onPress={() => navigation.goBack()}
               />
             </HeaderLeft>
             <HeaderCenter>
-              <HeaderTitle>{I18n.t("activation-title")}</HeaderTitle>
+              <HeaderTitle>{I18n.t('activation-title')}</HeaderTitle>
             </HeaderCenter>
           </HeaderRow>
         </FakeHeader>
-        <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
           <FormPage>
             <KeyboardAvoidingView
-              style={{ flex: 1, backgroundColor: "#ffffff" }}
-              behavior={Platform.OS === "ios" ? "padding" : undefined}>
+              style={{ flex: 1, backgroundColor: '#ffffff' }}
+              behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
               <ScrollView alwaysBounceVertical={false} contentContainerStyle={{ flexGrow: 1 }}>
                 <FormTouchable onPress={() => formModel.blur()}>
                   <FormWrapper>
@@ -147,16 +148,16 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
                       <LogoWrapper>
                         <Logo source={DEPRECATED_getCurrentPlatform()!.logo} />
                       </LogoWrapper>
-                      <InputLogin login={login} form={formModel} onChange={this.onChange("login")} />
-                      <InputPassword password={password} form={formModel} onChange={this.onChange("password")} />
-                      <InputPasswordConfirm confirm={confirm} form={formModel} onChange={this.onChange("confirm")} />
-                      <InputEmail email={email} form={formModel} onChange={this.onChange("email")} />
-                      <InputPhone phone={phone} form={formModel} onChange={this.onChange("phone")} />
+                      <InputLogin login={login} form={formModel} onChange={this.onChange('login')} />
+                      <InputPassword password={password} form={formModel} onChange={this.onChange('password')} />
+                      <InputPasswordConfirm confirm={confirm} form={formModel} onChange={this.onChange('confirm')} />
+                      <InputEmail email={email} form={formModel} onChange={this.onChange('email')} />
+                      <InputPhone phone={phone} form={formModel} onChange={this.onChange('phone')} />
                       <View
                         style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                          alignSelf: "stretch",
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          alignSelf: 'stretch',
                           marginTop: 30,
                         }}>
                         <Checkbox
@@ -164,17 +165,17 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
                           onPress={() => this.setState({ isCGUAccepted: !isCGUAccepted })}
                           customContainerStyle={{ marginRight: 5 }}
                         />
-                        <Text>{I18n.t("activation-cgu-accept")}</Text>
+                        <Text>{I18n.t('activation-cgu-accept')}</Text>
                         <TouchableOpacity onPress={this.handleOpenCGU}>
-                          <TextAction>{I18n.t("activation-cgu")}</TextAction>
+                          <TextAction>{I18n.t('activation-cgu')}</TextAction>
                         </TouchableOpacity>
                       </View>
-                      <ErrorMessage> {hasErrorKey && !typing ? errorText : ""} </ErrorMessage>
+                      <ErrorMessage> {hasErrorKey && !typing ? errorText : ''} </ErrorMessage>
                       <ButtonWrapper error={hasErrorKey} typing={typing}>
                         <FlatButton
                           onPress={() => this.handleActivation()}
                           disabled={isNotValid}
-                          title={I18n.t("Activate")}
+                          title={I18n.t('Activate')}
                           loading={isSubmitLoading}
                         />
                       </ButtonWrapper>
@@ -187,7 +188,7 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
           <BackdropPdfReader
             handleClose={() => this.setState({ isModalVisible: false })}
             handleOpen={() => this.setState({ isModalVisible: true })}
-            title={I18n.t("activation-cgu")}
+            title={I18n.t('activation-cgu')}
             uri={cguUrl}
             visible={isModalVisible}
           />
@@ -198,32 +199,32 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
 }
 
 const FormPage = style.view({
-  backgroundColor: "#ffffff",
+  backgroundColor: '#ffffff',
   flex: 1,
 });
 const FormTouchable = style.touchableWithoutFeedback({ flex: 1 });
 const FormWrapper = style.view({ flex: 1 });
 const FormContainer = style.view({
-  alignItems: "center",
+  alignItems: 'center',
   flex: 1,
-  flexDirection: "column",
-  justifyContent: "center",
+  flexDirection: 'column',
+  justifyContent: 'center',
   padding: 40,
   paddingTop: 60,
 });
 const LogoWrapper = style.view({
   flexGrow: 2,
-  alignItems: "center",
-  justifyContent: "center",
+  alignItems: 'center',
+  justifyContent: 'center',
 });
-const Logo = style.image({ height: 50, width: 200, resizeMode: "contain" });
+const Logo = style.image({ height: 50, width: 200, resizeMode: 'contain' });
 const ButtonWrapper = style.view(
   {
-    alignItems: "center",
+    alignItems: 'center',
     flexGrow: 2,
-    justifyContent: "flex-start",
+    justifyContent: 'flex-start',
   },
   ({ error, typing }) => ({
     marginTop: error && !typing ? 10 : 10,
-  })
+  }),
 );

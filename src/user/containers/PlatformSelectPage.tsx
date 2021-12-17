@@ -1,20 +1,17 @@
 // Libraries
-import style from "glamorous-native";
-import I18n from "i18n-js";
-import * as React from "react";
-import { Image, SafeAreaView, ScrollView, View } from "react-native";
-import { connect } from "react-redux";
+import style from 'glamorous-native';
+import I18n from 'i18n-js';
+import * as React from 'react';
+import { Image, SafeAreaView, ScrollView, View } from 'react-native';
+import { connect } from 'react-redux';
 
-// Components
-import TouchableOpacity from "../../ui/CustomTouchableOpacity";
-import { H1, Light, LightP } from "../../ui/Typography";
-
-// Type definitions
-import { CommonStyles } from "../../styles/common/styles";
-import { selectPlatform } from "../actions/platform";
-import { IUserAuthState } from "../reducers/auth";
-import withViewTracking from "~/framework/util/tracker/withViewTracking";
-import appConf from "~/framework/util/appConf";
+import appConf from '~/framework/util/appConf';
+import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { CommonStyles } from '~/styles/common/styles';
+import TouchableOpacity from '~/ui/CustomTouchableOpacity';
+import { H1, Light, LightP } from '~/ui/Typography';
+import { selectPlatform } from '~/user/actions/platform';
+import { IUserAuthState } from '~/user/reducers/auth';
 
 // Props definition -------------------------------------------------------------------------------
 
@@ -31,9 +28,7 @@ export interface IPlatformSelectPageOtherProps {
   navigation?: any;
 }
 
-export type IPlatformSelectPageProps = IPlatformSelectPageDataProps &
-  IPlatformSelectPageEventProps &
-  IPlatformSelectPageOtherProps;
+export type IPlatformSelectPageProps = IPlatformSelectPageDataProps & IPlatformSelectPageEventProps & IPlatformSelectPageOtherProps;
 
 // State definition -------------------------------------------------------------------------------
 
@@ -43,67 +38,54 @@ export type IPlatformSelectPageProps = IPlatformSelectPageDataProps &
 
 const PlatformButton = style(TouchableOpacity)({
   elevation: 3,
-  shadowColor: "#6B7C93",
+  shadowColor: '#6B7C93',
   shadowOffset: { width: 0, height: 2 },
   shadowOpacity: 0.3,
   shadowRadius: 2,
 
-  flexDirection: "column",
+  flexDirection: 'column',
   paddingHorizontal: 16,
   paddingVertical: 32,
 
-  backgroundColor: "#FFFFFF"
+  backgroundColor: '#FFFFFF',
 });
 
-export class PlatformSelectPage extends React.PureComponent<
-  IPlatformSelectPageProps,
-  {}
-> {
-
+export class PlatformSelectPage extends React.PureComponent<IPlatformSelectPageProps, object> {
   public render() {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
         <ScrollView alwaysBounceVertical={false}>
           <H1
             style={{
               color: CommonStyles.textColor,
               fontSize: 20,
-              fontWeight: "normal",
+              fontWeight: 'normal',
               marginTop: 55,
-              textAlign: "center"
-            }}
-          >
-            {I18n.t("welcome")}
+              textAlign: 'center',
+            }}>
+            {I18n.t('welcome')}
           </H1>
-          <LightP style={{ textAlign: "center", marginBottom: 12 }}>
-            {I18n.t("select-platform")}
-          </LightP>
-          <View style={{ flexDirection: "row", flexWrap: "wrap", padding: 12 }}>
-            {appConf.platforms.filter(pf => !pf.hidden).map(
-              (pf) => (
+          <LightP style={{ textAlign: 'center', marginBottom: 12 }}>{I18n.t('select-platform')}</LightP>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', padding: 12 }}>
+            {appConf.platforms
+              .filter(pf => !pf.hidden)
+              .map(pf => (
                 <View
                   key={pf.name}
                   style={{
-                    flexBasis: "50%",
-                    padding: 12
-                  }}
-                >
+                    flexBasis: '50%',
+                    padding: 12,
+                  }}>
                   <PlatformButton
                     onPress={() => this.handleSelectPlatform(pf.name)}
                     style={{
-                      alignItems: "center"
-                    }}
-                  >
-                    <Image
-                      resizeMode="contain"
-                      style={{ height: 40, width: "100%", marginBottom: 20 }}
-                      source={pf.logo}
-                    />
+                      alignItems: 'center',
+                    }}>
+                    <Image resizeMode="contain" style={{ height: 40, width: '100%', marginBottom: 20 }} source={pf.logo} />
                     <Light>{pf.displayName}</Light>
                   </PlatformButton>
                 </View>
-              )
-            )}
+              ))}
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -122,8 +104,8 @@ const ConnectedPlatformselectPage = connect(
   dispatch => ({
     onPlatformSelected: (platformId: string) => {
       dispatch(selectPlatform(platformId, true, true));
-    }
-  })
+    },
+  }),
 )(PlatformSelectPage);
 
 export default withViewTracking('auth/platforms')(ConnectedPlatformselectPage);

@@ -4,9 +4,8 @@ import * as React from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 
-import { homework } from '../../utils/cdt';
-
 import { Text, TextBold } from '~/framework/components/text';
+import { homework } from '~/modules/viescolaire/utils/cdt';
 import { LeftColoredItem } from '~/modules/viescolaire/viesco/components/Item';
 import { INavigationProps } from '~/types';
 import { Icon } from '~/ui';

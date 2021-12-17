@@ -1,18 +1,18 @@
-import moment from "moment";
+import moment from 'moment';
 
 // State Type
 
 export interface IUserInfoState {
   address?: string;
-  administrativeStructures?: Array<{ id: string }>;
+  administrativeStructures?: { id: string }[];
   birthDate?: moment.Moment;
   blocked?: boolean;
   checksum?: string;
   children?: { [id: string]: { displayName: string; externalId: string } };
-  childrenStructure?: Array<{
+  childrenStructure?: {
     structureName: string;
-    children: Array<{ classNames: string[]; displayName: string; externalId: string; id: string }>;
-  }>;
+    children: { classNames: string[]; displayName: string; externalId: string; id: string }[];
+  }[];
   classCategories?: string[];
   classes?: string[];
   displayName?: string;
@@ -21,12 +21,12 @@ export interface IUserInfoState {
   externalId?: string;
   federated?: boolean;
   firstName?: string;
-  functionalGroups?: Array<{ id: string; name: string }>;
+  functionalGroups?: { id: string; name: string }[];
   functions?: any[];
   groupsIds?: any[];
   homePhone?: string;
   health?: string;
-  hobbies?: Array<{ category: string; values: string; visibility: string }>;
+  hobbies?: { category: string; values: string; visibility: string }[];
   id?: string;
   joinKey?: string[];
   lastDomain?: string;
@@ -39,13 +39,13 @@ export interface IUserInfoState {
   modules?: string[];
   mood?: string;
   motto?: string;
-  parents?: Array<{ displayName: string; externalId: string; id: string }>;
+  parents?: { displayName: string; externalId: string; id: string }[];
   photo?: string;
   profiles?: string[];
   relatedId?: string;
   relatedName?: string;
   relatedType?: string;
-  schools?: Array<{ classes: string[]; name: string; id: string }>;
+  schools?: { classes: string[]; name: string; id: string }[];
   source?: string;
   structureNodes?: any[];
   structures?: string[];

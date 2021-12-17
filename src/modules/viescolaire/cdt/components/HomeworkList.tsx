@@ -3,11 +3,11 @@ import moment from 'moment';
 import * as React from 'react';
 import { View, StyleSheet, Switch, ScrollView, RefreshControl, Platform } from 'react-native';
 
-import { IHomework, IHomeworkList } from '../state/homeworks';
 import { HomeworkItem, SessionItem } from './Items';
 
 import { getSessionInfo } from '~/App';
 import { Text, TextBold } from '~/framework/components/text';
+import { IHomework, IHomeworkList } from '~/modules/viescolaire/cdt/state/homeworks';
 import { ISession } from '~/modules/viescolaire/cdt/state/sessions';
 import {
   isHomeworkDone,
