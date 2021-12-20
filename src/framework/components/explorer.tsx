@@ -123,6 +123,7 @@ export default <FolderType extends {}, ResourceType extends {}>(props: IExplorer
       data={explorerData}
       numColumns={2}
       renderItem={({ item }) => renderItem(item, props.onItemPress)}
+      scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
       columnWrapperStyle={{
         alignItems: 'stretch',
         justifyContent: 'space-around',
@@ -131,9 +132,11 @@ export default <FolderType extends {}, ResourceType extends {}>(props: IExplorer
         backgroundColor: theme.color.background.card,
         padding: 16,
       }}
-      {...(keyExtractor ? {
-          keyExtractor: (item, index) => item.type === 'empty' ? item.type : keyExtractor(item, index)
-      } : {})}
+      {...(keyExtractor
+        ? {
+            keyExtractor: (item, index) => (item.type === 'empty' ? item.type : keyExtractor(item, index)),
+          }
+        : {})}
       {...otherProps}
     />
   );
