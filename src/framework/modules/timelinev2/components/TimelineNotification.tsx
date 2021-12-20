@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { Text, View } from 'react-native';
+import { Text } from 'react-native';
 
 import NotificationTopInfo from './NotificationTopInfo';
 
 import theme from '~/app/theme';
-import { TouchCard } from '~/framework/components/card';
+import { ResourceCard, TouchableResourceCard, TouchCard } from '~/framework/components/card';
 import { ITimelineNotification, IMedia } from '~/framework/util/notifications';
 import { signURISource, transformedSrc } from '~/infra/oauth';
 import { IRemoteAttachment } from '~/ui/Attachment';
@@ -13,7 +13,6 @@ import { ArticleContainer } from '~/ui/ContainerContent';
 import { IFrame } from '~/ui/IFrame';
 import Images from '~/ui/Images';
 import Player from '~/ui/Player';
-import { Icon } from '~/ui/icons/Icon';
 
 interface ITimelineNotificationProps {
   notification: ITimelineNotification;
@@ -109,17 +108,12 @@ export class TimelineNotification extends React.PureComponent<ITimelineNotificat
 
   public render() {
     const { notification, notificationAction } = this.props;
+    const CC = notificationAction ? TouchableResourceCard : ResourceCard;
     return (
       <ArticleContainer>
-        <TouchCard activeOpacity={!notificationAction ? 1 : undefined} onPress={notificationAction} style={{ width: '100%' }}>
-          <View style={{ width: '100%', flexDirection: 'row' }}>
-            <NotificationTopInfo notification={notification} />
-            {notificationAction ? (
-              <Icon name="arrow_right" color={theme.color.secondary.regular} style={{ marginTop: 7, right: 7 }} />
-            ) : null}
-          </View>
+        <CC onPress={notificationAction} style={{ width: '100%' }} header={<NotificationTopInfo notification={notification} />}>
           {this.renderContent()}
-        </TouchCard>
+        </CC>
       </ArticleContainer>
     );
   }

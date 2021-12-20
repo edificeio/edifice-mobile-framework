@@ -91,7 +91,7 @@ export const TouchableContentCard = (props: ITouchableContentCardProps) => {
     <Icon
       name="arrow_right"
       color={theme.color.secondary.regular}
-      style={{ paddingVertical: 4, paddingLeft: 8, marginRight: -3 }}
+      style={{ paddingVertical: 6, paddingLeft: 8, marginRight: -3 }}
     />
   );
   return <ContentCard_base {...otherProps} headerIndicator={realHeaderIndicator} cardComponent={TouchCardWithoutPadding} />;
@@ -110,7 +110,7 @@ export interface IContentCardHeaderProps {
   date?: string | Moment;
 }
 export interface IContentCardIconProps {
-  userIds?: string | string[];
+  userIds?: string | ImageSourcePropType | (string | ImageSourcePropType)[];
   source?: ImageSourcePropType;
   badge?: { icon: string; color: ColorValue; style?: ViewStyle };
 }
@@ -208,41 +208,51 @@ export interface IResourceCardProps_base extends IResourceCardProps {
 }
 const ResourceCard_base = (props: IResourceCardProps_base) => {
   const { CC, children, icon, date, header, title, headerHtml, footer, ...otherProps } = props;
-  const metaDataComponent = <ContentCardHeader
-          icon={<ContentCardIcon {...icon} />}
-          date={date}
-          text={
-            header ??
-            (headerHtml ? (
-              <HtmlContentView
-                html={headerHtml}
-                opts={{
-                  hyperlinks: false,
-                  textFormatting: false,
-                  textColor: false,
-                  audio: false,
-                  video: false,
-                  iframes: false,
-                  images: false,
-                  ignoreLineBreaks: true,
-                  globalTextStyle: {
-                    color: theme.color.text.regular,
-                    fontSize: 12,
-                    fontWeight: '400',
-                  },
-                  linkTextStyle: {
-                    ...FontStyle.SemiBold,
-                    color: theme.color.text.heavy,
-                  },
-                }}
-              />
-            ) : undefined)
-          }
-        />;
+  const metaDataComponent =
+    typeof header === 'string' ? (
+      <ContentCardHeader
+        icon={<ContentCardIcon {...icon} />}
+        date={date}
+        text={
+          header ??
+          (headerHtml ? (
+            <HtmlContentView
+              html={headerHtml}
+              opts={{
+                hyperlinks: false,
+                textFormatting: false,
+                textColor: false,
+                audio: false,
+                video: false,
+                iframes: false,
+                images: false,
+                ignoreLineBreaks: true,
+                globalTextStyle: {
+                  color: theme.color.text.regular,
+                  fontSize: 12,
+                  fontWeight: '400',
+                },
+                linkTextStyle: {
+                  ...FontStyle.SemiBold,
+                  color: theme.color.text.heavy,
+                },
+              }}
+            />
+          ) : undefined)
+        }
+      />
+    ) : (
+      header
+    );
   const realHeader = title ? typeof title === 'string' ? <ContentCardTitle>{title}</ContentCardTitle> : title : metaDataComponent;
   return (
     <CC header={realHeader} footer={footer} {...otherProps}>
-      {title ? <>{metaDataComponent}<View style={{height: 12}}></View></> : null}
+      {title ? (
+        <>
+          {metaDataComponent}
+          <View style={{ height: 12 }}></View>
+        </>
+      ) : null}
       {children}
     </CC>
   );

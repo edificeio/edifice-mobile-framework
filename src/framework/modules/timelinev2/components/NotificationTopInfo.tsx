@@ -2,21 +2,17 @@
  * Information about a timeline notification. Displayed in the header.
  */
 import I18n from 'i18n-js';
-import moment from 'moment';
 import * as React from 'react';
-import { Text } from 'react-native';
 import { connect } from 'react-redux';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { FontStyle } from '~/framework/components/text';
 import { APPBADGES } from '~/framework/modules/timelinev2/appBadges';
-import { displayPastDate } from '~/framework/util/date';
 import { ITimelineNotification } from '~/framework/util/notifications';
 import { getUserSession, IUserSession } from '~/framework/util/session';
-import { BadgeAvatar } from '~/ui/BadgeAvatar';
-import { CenterPanel, Header, LeftPanel } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
+import { ContentCardHeader, ContentCardIcon } from '~/framework/components/card';
 
 const NotificationTopInfo = ({ notification, session }: { notification: ITimelineNotification; session: IUserSession }) => {
   const message = notification && notification.message;
@@ -35,17 +31,15 @@ const NotificationTopInfo = ({ notification, session }: { notification: ITimelin
       formattedMessage = formattedMessage.replace(sender && sender.displayName, `${sender.displayName} ${I18n.t('me-indicator')} `);
   }
 
+  const badgeInfo = {
+    icon: APPBADGES[type] && APPBADGES[type].icon,
+    color: APPBADGES[type] && APPBADGES[type].color,
+  };
   return (
-    <Header>
-      <LeftPanel>
-        <BadgeAvatar
-          avatars={[sender || require('ASSETS/images/system-avatar.png')]}
-          badgeContent={APPBADGES[type] && APPBADGES[type].icon}
-          badgeColor={APPBADGES[type] && APPBADGES[type].color} // ToDo fix type here
-          customStyle={{ left: undefined, right: 0 }}
-        />
-      </LeftPanel>
-      <CenterPanel>
+    <ContentCardHeader
+      icon={<ContentCardIcon userIds={[sender || require('ASSETS/images/system-avatar.png')]} badge={badgeInfo} />}
+      date={date}
+      text={
         <HtmlContentView
           html={formattedMessage}
           opts={{
@@ -68,9 +62,7 @@ const NotificationTopInfo = ({ notification, session }: { notification: ITimelin
             },
           }}
         />
-        <Text style={{ color: theme.color.text.light, fontSize: 12 }}>{displayPastDate(moment(date))}</Text>
-      </CenterPanel>
-    </Header>
+      }></ContentCardHeader>
   );
 };
 
