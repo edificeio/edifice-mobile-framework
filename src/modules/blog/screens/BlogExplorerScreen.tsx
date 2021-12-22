@@ -301,7 +301,7 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
         return (
           <>
             {renderDrawer(props.tree?.folders || [])}
-            {/* <TouchableResourceCard
+            {/* <ResourceView
               icon={{
                 userIds: '8f437f63-1115-44c3-a3a3-33531ae80d90',
                 badge: { color: 'red', icon: 'bullhorn' },
@@ -316,7 +316,7 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
                 j fegljkfbkqjsl d bvlkdsj blkdjsxb lksdj bvlkdj vldbj zeflkjglkdjsfdlkngflsqk d lkdslkvd vlk sdks lkjslkdf lkfj
                 lksdf ldkfj ldfk{' '}
               </Text>
-            </TouchableResourceCard> */}
+            </ResourceView> */}
             {renderExplorer(props.tree || { resources: [], folders: [] })}
           </>
         );

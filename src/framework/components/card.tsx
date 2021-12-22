@@ -44,6 +44,7 @@ export interface ITouchableContentCardProps extends IContentCardProps, Touchable
 }
 interface IContentCardProps_Base extends IContentCardProps, ITouchableContentCardProps {
   cardComponent?: React.ComponentType;
+  withoutPadding?: boolean;
 }
 
 const FooterSeparator = styled.View({
@@ -53,28 +54,31 @@ const FooterSeparator = styled.View({
 });
 const HeaderFlexView = styled.View({
   flexDirection: 'row',
-  ...cardPadding,
+  // ...cardPadding,
 });
 const ContentFlexView = styled.View({
-  ...cardPaddingMerging,
+  // ...cardPaddingMerging,
 });
 const FooterFlexView = styled.View({
-  ...cardPaddingSmall,
+  // ...cardPaddingSmall,
 });
 const ContentCard_base = (props: IContentCardProps_Base) => {
   const CC = props.cardComponent ?? CardWithoutPadding;
-  const { header, footer, children, headerIndicator, cardComponent, ...viewProps } = props;
+  const { header, footer, children, headerIndicator, cardComponent, withoutPadding, ...viewProps } = props;
+  const HeaderFlexViewWithPadding = styled(HeaderFlexView)(cardPadding, withoutPadding && { paddingHorizontal: 0 });
+  const ContentFlexViewWithPadding = styled(ContentFlexView)(cardPaddingMerging, withoutPadding && { paddingHorizontal: 0 });
+  const FooterFlexViewWithPadding = styled(FooterFlexView)(cardPaddingSmall, withoutPadding && { paddingHorizontal: 0 });
   return (
     <CC {...viewProps}>
-      <HeaderFlexView>
+      <HeaderFlexViewWithPadding>
         <View style={{ flex: 1 }}>{props.header ?? null}</View>
         <View style={{ flex: 0 }}>{props.headerIndicator ?? null}</View>
-      </HeaderFlexView>
-      <ContentFlexView>{props.children}</ContentFlexView>
+      </HeaderFlexViewWithPadding>
+      <ContentFlexViewWithPadding>{props.children}</ContentFlexViewWithPadding>
       {props.footer ? (
         <>
           <FooterSeparator />
-          <FooterFlexView>{props.footer}</FooterFlexView>
+          <FooterFlexViewWithPadding>{props.footer}</FooterFlexViewWithPadding>
         </>
       ) : null}
     </CC>
@@ -95,6 +99,9 @@ export const TouchableContentCard = (props: ITouchableContentCardProps) => {
     />
   );
   return <ContentCard_base {...otherProps} headerIndicator={realHeaderIndicator} cardComponent={TouchCardWithoutPadding} />;
+};
+export const ContentView = (props: IContentCardProps) => {
+  return <ContentCard_base {...props} cardComponent={View} />;
 };
 
 /** Pre-configured title for ContentCard */
@@ -194,7 +201,7 @@ export const Badge = ({ content, color }: IBadgeProps) => {
   );
 };
 
-export interface IResourceCardProps {
+export interface IResourceCardProps extends ViewProps {
   icon?: IContentCardIconProps;
   header?: string | React.ReactElement;
   headerHtml?: string;
@@ -204,7 +211,8 @@ export interface IResourceCardProps {
   children?: React.ReactNode;
 }
 export interface IResourceCardProps_base extends IResourceCardProps {
-  CC: typeof ContentCard | typeof TouchableContentCard;
+  CC: React.ComponentType<IContentCardProps>;
+  withoutPadding?: boolean;
 }
 const ResourceCard_base = (props: IResourceCardProps_base) => {
   const { CC, children, icon, date, header, title, headerHtml, footer, ...otherProps } = props;
@@ -262,4 +270,8 @@ export const ResourceCard = (props: IResourceCardProps) => {
 };
 export const TouchableResourceCard = (props: IResourceCardProps & TouchableOpacityProps) => {
   return <ResourceCard_base {...props} CC={TouchableContentCard} />;
+};
+
+export const ResourceView = (props: IResourceCardProps) => {
+  return <ResourceCard_base {...props} CC={ContentView} withoutPadding={true} />;
 };

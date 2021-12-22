@@ -35,6 +35,7 @@ import { FlatButton } from '~/ui';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { TextPreview } from '~/ui/TextPreview';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
+import { ResourceView } from '~/framework/components/card';
 
 // TYPES ==========================================================================================
 
@@ -159,14 +160,16 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     return (
       <View>
         <View style={{ paddingHorizontal: 16 }}>
-          <NotificationTopInfo notification={notification} />
-          <HtmlContentView
-            html={blogPostContent}
-            onDownload={() => Trackers.trackEvent('Blog', 'DOWNLOAD ATTACHMENT', 'Read mode')}
-            onError={() => Trackers.trackEvent('Blog', 'DOWNLOAD ATTACHMENT ERROR', 'Read mode')}
-            onDownloadAll={() => Trackers.trackEvent('Blog', 'DOWNLOAD ALL ATTACHMENTS', 'Read mode')}
-            onOpen={() => Trackers.trackEvent('Blog', 'OPEN ATTACHMENT', 'Read mode')}
-          />
+          <ResourceView header={<NotificationTopInfo notification={notification} />}>
+            <HtmlContentView
+              html={blogPostContent}
+              onDownload={() => Trackers.trackEvent('Blog', 'DOWNLOAD ATTACHMENT', 'Read mode')}
+              onError={() => Trackers.trackEvent('Blog', 'DOWNLOAD ATTACHMENT ERROR', 'Read mode')}
+              onDownloadAll={() => Trackers.trackEvent('Blog', 'DOWNLOAD ALL ATTACHMENTS', 'Read mode')}
+              onOpen={() => Trackers.trackEvent('Blog', 'OPEN ATTACHMENT', 'Read mode')}
+            />
+          </ResourceView>
+
           {resourceUri ? (
             <View style={{ marginTop: 10 }}>
               <FlatButton
