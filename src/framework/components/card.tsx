@@ -1,14 +1,15 @@
 import styled from '@emotion/native';
-import { ColorValue, Image, ImageSourcePropType, TextProps, TouchableOpacityProps, View, ViewProps, ViewStyle } from 'react-native';
+import { Moment } from 'moment';
 import * as React from 'react';
+import { ColorValue, Image, ImageSourcePropType, TextProps, TouchableOpacityProps, View, ViewProps, ViewStyle } from 'react-native';
+
+import { Icon } from './icon';
+import { FontStyle, Text, TextBold, TextColorStyle, TextSemiBold, TextSizeStyle } from './text';
 
 import theme from '~/app/theme';
-import { FontStyle, Text, TextBold, TextColorStyle, TextLight, TextSemiBold, TextSizeStyle } from './text';
-import { Icon } from './icon';
-import { Moment } from 'moment';
-import { displayPastDate } from '../util/date';
-import { GridAvatars } from '~/ui/avatars/GridAvatars';
+import { displayPastDate } from '~/framework/util/date';
 import { HtmlContentView } from '~/ui/HtmlContentView';
+import { GridAvatars } from '~/ui/avatars/GridAvatars';
 
 const cardPaddingV = 12;
 const cardPaddingH = 16;
@@ -258,7 +259,7 @@ const ResourceCard_base = (props: IResourceCardProps_base) => {
       {title ? (
         <>
           {metaDataComponent}
-          <View style={{ height: 12 }}></View>
+          <View style={{ height: 12 }} />
         </>
       ) : null}
       {children}
@@ -273,5 +274,5 @@ export const TouchableResourceCard = (props: IResourceCardProps & TouchableOpaci
 };
 
 export const ResourceView = (props: IResourceCardProps) => {
-  return <ResourceCard_base {...props} CC={ContentView} withoutPadding={true} />;
+  return <ResourceCard_base {...props} CC={ContentView} withoutPadding />;
 };
