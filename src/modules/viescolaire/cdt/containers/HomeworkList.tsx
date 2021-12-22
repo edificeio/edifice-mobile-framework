@@ -17,7 +17,7 @@ import HomeworkList from '~/modules/viescolaire/cdt/components/HomeworkList';
 import { getHomeworksListState } from '~/modules/viescolaire/cdt/state/homeworks';
 import { getSessionsListState } from '~/modules/viescolaire/cdt/state/sessions';
 import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolaire/viesco/state/children';
-import { getPersonnelListState } from '~/modules/viescolaire/viesco/state/personnel';
+import { getPersonnelListState, IPersonnelList } from '~/modules/viescolaire/viesco/state/personnel';
 import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
 import { INavigationProps } from '~/types';
 import { HeaderBackAction } from '~/ui/headers/NewHeader';
@@ -25,7 +25,7 @@ import { HeaderBackAction } from '~/ui/headers/NewHeader';
 type HomeworkListProps = {
   homeworks: any;
   sessions: any;
-  personnel: any;
+  personnel: IPersonnelList;
   childId: string;
   structureId: string;
   fetchHomeworks: any;

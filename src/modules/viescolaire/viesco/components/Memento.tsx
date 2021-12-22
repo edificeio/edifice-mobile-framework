@@ -24,22 +24,22 @@ export const RelativesInfos = (props: { relatives: IRelativesInfos[] }) => {
               ) : null}
 
               <View style={styles.infoLine}>
-                <Icon style={{ marginRight: 10 }} size={20} name="email" />
+                <Icon style={styles.iconDisplay} size={20} name="email" />
                 {relative.name && relative.email !== '' ? <Text>{relative.email}</Text> : <Text>-</Text>}
               </View>
 
               <View style={styles.infoLine}>
-                <Icon style={{ marginRight: 10 }} size={20} name="cellphone" />
+                <Icon style={styles.iconDisplay} size={20} name="cellphone" />
                 {relative.mobile && relative.mobile !== '' ? <Text>{relative.mobile}</Text> : <Text>-</Text>}
               </View>
 
               <View style={styles.infoLine}>
-                <Icon style={{ marginRight: 10 }} size={20} name="phone" />
+                <Icon style={styles.iconDisplay} size={20} name="phone" />
                 {relative.phone && relative.phone !== '' ? <Text>{relative.phone}</Text> : <Text>-</Text>}
               </View>
 
               <View style={styles.infoLine}>
-                <Icon style={{ marginRight: 10 }} size={20} name="home" />
+                <Icon style={styles.iconDisplay} size={20} name="home" />
                 {relative.address && relative.address !== '' ? <Text>{relative.address}</Text> : <Text>-</Text>}
               </View>
             </View>
@@ -55,7 +55,7 @@ export const StudentInfos = (props: { memento: IMemento }) => {
       {props.memento.name ? <TextBold style={styles.studentName}>{props.memento.name}</TextBold> : null}
 
       <View style={styles.infoLine}>
-        <Icon style={{ marginRight: 10 }} size={20} name="cake-variant" />
+        <Icon style={styles.iconDisplay} size={20} name="cake-variant" />
         {props.memento.birth_date ? (
           <Text>
             {I18n.t('viesco-memento-born-date')} {moment(props.memento.birth_date).format('L')}
@@ -66,7 +66,7 @@ export const StudentInfos = (props: { memento: IMemento }) => {
       </View>
 
       <View style={styles.infoLine}>
-        <Icon style={{ marginRight: 10 }} size={20} name="school" />
+        <Icon style={styles.iconDisplay} size={20} name="school" />
         {props.memento.classes ? (
           props.memento.classes.length > 0 && <Text>{props.memento.classes.join(', ')}</Text>
         ) : (
@@ -76,7 +76,7 @@ export const StudentInfos = (props: { memento: IMemento }) => {
       {props.memento.groups.length > 0 && <Text style={{ marginTop: -5, marginBottom: 5 }}>{props.memento.groups.join(', ')}</Text>}
 
       <View style={styles.infoLine}>
-        <Icon style={{ marginRight: 10 }} size={20} name="silverware" />
+        <Icon style={styles.iconDisplay} size={20} name="silverware" />
         {props.memento.accommodation ? <Text>{props.memento.accommodation.toLocaleLowerCase()}</Text> : <Text>-</Text>}
       </View>
     </View>
@@ -96,7 +96,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
-    marginBottom: 5,
+    marginBottom: 10,
+  },
+  iconDisplay: {
+    marginRight: 10,
+    marginTop: -3,
   },
   relativesInfos: {
     flex: 1,

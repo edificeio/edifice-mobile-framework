@@ -37,7 +37,7 @@ type IDisplayHomeworkProps = {
 
 type IDisplayHomeworkState = {
   indexSelectedHomework: number;
-  isRemovedDescription: boolean;
+  isRemovedDescription: boolean; // this variable is used to reset the description list in the <HtmlContentView /> component when the homeworkList is updated
 };
 
 export default class DisplayHomework extends React.PureComponent<IDisplayHomeworkProps, IDisplayHomeworkState> {
@@ -46,7 +46,7 @@ export default class DisplayHomework extends React.PureComponent<IDisplayHomewor
 
     this.state = {
       indexSelectedHomework: 0,
-      isRemovedDescription: false,
+      isRemovedDescription: true,
     };
   }
 
@@ -59,14 +59,14 @@ export default class DisplayHomework extends React.PureComponent<IDisplayHomewor
           ? item.id === homeworkList[this.state.indexSelectedHomework].id
           : item.id === this.props.homework.id,
       );
-      this.setState({ indexSelectedHomework: index });
+      this.setState({ indexSelectedHomework: index, isRemovedDescription: false });
     }
   }
 
-  componentDidUpdate(prevprops) {
+  componentDidUpdate(prevProps) {
     const { homeworkList } = this.props;
 
-    if (this.props.homeworkList && prevprops.homeworkList !== this.props.homeworkList) {
+    if (this.props.homeworkList && prevProps.homeworkList !== this.props.homeworkList) {
       const index = homeworkList.findIndex(item =>
         this.state.indexSelectedHomework
           ? item.id === homeworkList[this.state.indexSelectedHomework].id
@@ -84,19 +84,14 @@ export default class DisplayHomework extends React.PureComponent<IDisplayHomewor
 
   public handleStateChange = ({ nativeEvent }) => {
     const { homeworkList } = this.props;
+    const { indexSelectedHomework } = this.state;
 
     if (homeworkList !== undefined) {
       if (nativeEvent.state === State.END) {
-        const index = homeworkList.findIndex(item =>
-          this.state.indexSelectedHomework
-            ? item.id === homeworkList[this.state.indexSelectedHomework].id
-            : item.id === this.props.homework.id,
-        );
-
-        if (nativeEvent.translationX < 0 && index < homeworkList.length - 1) {
-          this.onHomeworkChange(index + 1);
-        } else if (nativeEvent.translationX > 0 && index > 0) {
-          this.onHomeworkChange(index - 1);
+        if (nativeEvent.translationX < 0 && indexSelectedHomework < homeworkList.length - 1) {
+          this.onHomeworkChange(indexSelectedHomework + 1);
+        } else if (nativeEvent.translationX > 0 && indexSelectedHomework > 0) {
+          this.onHomeworkChange(indexSelectedHomework - 1);
         }
       }
     }
@@ -115,12 +110,14 @@ export default class DisplayHomework extends React.PureComponent<IDisplayHomewor
           <View style={{ flex: 1 }}>
             <View style={{ justifyContent: 'flex-end', flexDirection: 'row' }}>
               <LeftColoredItem shadow style={{ alignItems: 'flex-end', flexDirection: 'row' }} color="#FA9700">
-                {homeworkList && homeworkList[indexSelectedHomework]?.description ? (
+                {homeworkList && homeworkList[indexSelectedHomework]?.created_date ? (
                   <>
                     <Icon size={20} color="#FA9700" name="date_range" />
                     <Text>&emsp;{moment(homeworkList[indexSelectedHomework].created_date).format('DD/MM/YY')}</Text>
-                    <Text style={style.course}>&emsp;{homeworkList[indexSelectedHomework].subject}</Text>
                   </>
+                ) : null}
+                {homeworkList && homeworkList[indexSelectedHomework]?.subject ? (
+                  <Text style={style.course}>&emsp;{homeworkList[indexSelectedHomework].subject}</Text>
                 ) : null}
               </LeftColoredItem>
             </View>

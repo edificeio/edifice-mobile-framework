@@ -3,6 +3,7 @@ import moment from 'moment';
 import * as React from 'react';
 import { View, StyleSheet, Switch, ScrollView, RefreshControl, Platform } from 'react-native';
 
+import { IPersonnelList } from '../../viesco/state/personnel';
 import { HomeworkItem, SessionItem } from './Items';
 
 import { getSessionInfo } from '~/App';
@@ -44,7 +45,7 @@ type HomeworkListProps = {
   updateHomeworkProgress?: any;
   homeworks: IHomeworkList;
   sessions: ISession[];
-  personnel: any;
+  personnel: IPersonnelList;
   isFetchingHomework: boolean;
   isFetchingSession: boolean;
   onRefreshHomeworks: any;

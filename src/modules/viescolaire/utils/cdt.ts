@@ -1,7 +1,8 @@
 import moment from 'moment';
 
-import { IHomework, IHomeworkList } from '~/modules/viescolaire/cdt/state/homeworks';
-import { ISession } from '~/modules/viescolaire/cdt/state/sessions';
+import { IHomework, IHomeworkList } from '../cdt/state/homeworks';
+import { ISession } from '../cdt/state/sessions';
+import { IPersonnelList } from '../viesco/state/personnel';
 
 export type homework = {
   id: string;
@@ -21,7 +22,7 @@ export type session = {
   title: string;
 };
 
-export const getTeacherName = (teacherId, teachersList) => {
+export const getTeacherName = (teacherId, teachersList: IPersonnelList) => {
   const result = teachersList.find(personnel => personnel.id === teacherId);
   if (typeof result === 'undefined') return '';
   return `${result.lastName} ${result.firstName}`;
@@ -52,7 +53,7 @@ export const homeworkListDetailsAdapter = (homework: IHomework, homeworkList?: I
   };
 };
 
-export const sessionDetailsAdapter = (session: ISession, teachersList) => {
+export const sessionDetailsAdapter = (session: ISession, teachersList: IPersonnelList) => {
   return {
     id: session.id,
     subject: session.subject_id !== 'exceptional' ? session.subject.name : session.exceptional_label,
@@ -63,7 +64,7 @@ export const sessionDetailsAdapter = (session: ISession, teachersList) => {
   } as session;
 };
 
-export const sessionListDetailsAdapter = (session: ISession, teachersList, sessionList: ISession[]) => {
+export const sessionListDetailsAdapter = (session: ISession, teachersList: IPersonnelList, sessionList?: ISession[]) => {
   const reformatedSessionArray = [] as session[];
   sessionList.map(item => reformatedSessionArray.push(sessionDetailsAdapter(item, teachersList)));
 

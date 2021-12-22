@@ -18,6 +18,9 @@ class Homework extends React.PureComponent<any> {
         title: diaryTitle || I18n.t('Homework'),
         headerLeft: <HeaderBackAction navigation={navigation} />,
         headerRight: <View />,
+        headerStyle: {
+          backgroundColor: '#2BAB6F',
+        },
       },
       navigation,
     );

@@ -36,10 +36,10 @@ export type TimetableProps = {
   group: string;
   teacherId: string;
   fetchChildInfos: () => void;
-  fetchChildGroups: (classes: string, student: string) => any;
-  fetchChildCourses: (structureId: string, startDate: moment.Moment, endDate: moment.Moment, group: string) => any;
-  fetchTeacherCourses: (structureId: string, startDate: moment.Moment, endDate: moment.Moment, teacherId: string) => any;
-  fetchSlots: (structureId: string) => any;
+  fetchChildGroups: (classes: string, student: string) => void;
+  fetchChildCourses: (structureId: string, startDate: moment.Moment, endDate: moment.Moment, group: string) => void;
+  fetchTeacherCourses: (structureId: string, startDate: moment.Moment, endDate: moment.Moment, teacherId: string) => void;
+  fetchSlots: (structureId: string) => void;
 } & INavigationProps;
 
 export type TimetableState = {
