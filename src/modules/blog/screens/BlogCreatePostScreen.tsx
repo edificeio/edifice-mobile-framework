@@ -324,12 +324,12 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
         [publishBlogPostResourceRight]: I18n.t('blog.blogCreatePostScreen.publishSuccess'),
       }[blogPostDisplayRight];
 
-      Trackers.trackEvent('Timeline', trackerEventText, 'BlogPost');
+      Trackers.trackEvent('Blog', trackerEventText, 'BlogPost');
       await handleInitTimeline();
       navigation.navigate(navigation.getParam('referrer', 'timeline'));
       dispatch(
         notifierShowAction({
-          id: 'timeline',
+          id: navigation.getParam('referrer', 'timeline'),
           text: notifierSuccessText,
           icon: 'checked',
           type: 'success',
