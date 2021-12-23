@@ -2,6 +2,7 @@ import { Action } from 'redux';
 
 import { loginAction } from './login';
 
+import { getLoginRouteName } from '~/navigation/LoginNavigator';
 import { navigate } from '~/navigation/helpers/navHelper';
 import userConfig from '~/user/config';
 import { getAuthState } from '~/user/selectors';
@@ -60,7 +61,7 @@ export function checkVersionThenLogin(
     }
     if (version.hasNewVersion) {
       // === 2 if we have not yet redirected to login...
-      if (redirectOnError) navigate('LoginHome');
+      if (redirectOnError) navigate(getLoginRouteName());
       // === 3 if any new version display to the user
       dispatch(checkNewVersionFounded(version, redirectOnError, credentials));
     } else {

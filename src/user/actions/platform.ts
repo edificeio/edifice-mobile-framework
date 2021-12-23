@@ -6,6 +6,8 @@ import { Trackers } from '~/framework/util/tracker';
 import { createAppScopesLegacy, OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 import { navigate } from '~/navigation/helpers/navHelper';
 import userConfig from '~/user/config';
+// eslint-disable-next-line import/order
+import { getLoginRouteName } from '~/navigation/LoginNavigator';
 
 export const PLATFORM_STORAGE_KEY = 'currentPlatform';
 
@@ -45,7 +47,7 @@ export function selectPlatform(platformId: string, redirect: boolean = false, do
     doTrack && Trackers.trackEvent('Connection', 'SELECT PLATFORM', pf.url.replace(/(^\w+:|^)\/\//, ''));
 
     // === End
-    if (redirect) navigate('LoginHome', { platformId });
+    if (redirect) navigate(getLoginRouteName(), { platformId });
   };
 }
 

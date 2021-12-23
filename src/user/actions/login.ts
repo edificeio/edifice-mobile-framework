@@ -11,11 +11,12 @@ import { Trackers } from '~/framework/util/tracker';
 import { clearRequestsCache, fetchJSONWithCache } from '~/infra/fetchWithCache';
 import { OAuth2RessourceOwnerPasswordClient, OAuthErrorType } from '~/infra/oauth';
 import { createEndSessionAction } from '~/infra/redux/reducerFactory';
-import { getLoginStackToDisplay } from '~/navigation/LoginNavigator';
+import { getLoginRouteName, getLoginStackToDisplay } from '~/navigation/LoginNavigator';
 import { navigate, reset } from '~/navigation/helpers/navHelper';
 import { clearTimeline } from '~/timeline/actions/clearTimeline';
 import { userService } from '~/user/service';
 
+// eslint-disable-next-line import/order
 import { initActivationAccount as initActivationAccountAction } from './activation';
 
 // TYPES ------------------------------------------------------------------------------------------------
@@ -281,7 +282,7 @@ export function loginAction(
       else await Trackers.trackEvent('Auth', 'RESTORE ERROR', err.type); // track separately auto login (with stored token)
 
       // === 4: Redirect if asked
-      if (redirectOnError) navigate('LoginHome');
+      if (redirectOnError) navigate(getLoginRouteName());
     } finally {
       SplashScreen.hide();
     }

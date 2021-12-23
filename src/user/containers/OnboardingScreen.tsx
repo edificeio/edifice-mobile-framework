@@ -15,6 +15,7 @@ import theme from '~/app/theme';
 import { TextSemiBold, H1 } from '~/framework/components/text';
 import appConf from '~/framework/util/appConf';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
+import { getLoginRouteName } from '~/navigation/LoginNavigator';
 import { FlatButton } from '~/ui';
 import { selectPlatform } from '~/user/actions/platform';
 
@@ -111,7 +112,7 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
                 if (!hasMultiplePlatforms) {
                   dispatch(selectPlatform(appConf.platforms[0].name));
                 }
-                navigation.navigate(hasMultiplePlatforms ? 'PlatformSelect' : 'LoginHome');
+                navigation.navigate(hasMultiplePlatforms ? 'PlatformSelect' : getLoginRouteName());
               }}
             />
             {/* Note: This button has to be hidden on iOs (only for ONE/NEO), since Apple doesn't approve

@@ -11,6 +11,7 @@ import { loginAction } from './login';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
 import { asyncActionTypes } from '~/infra/redux/async';
+import { getLoginRouteName } from '~/navigation/LoginNavigator';
 import { navigate } from '~/navigation/helpers/navHelper';
 import userConfig from '~/user/config';
 import { IActivationContext } from '~/utils/SubmitState';
@@ -195,6 +196,6 @@ export function activationAccount(model: IActivationModel) {
 
 export function cancelActivationAccount() {
   return () => {
-    navigate('LoginHome');
+    navigate(getLoginRouteName());
   };
 }

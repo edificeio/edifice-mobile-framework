@@ -220,6 +220,8 @@ const uploadAvatarAction = (avatar: LocalFile) => async (dispatch: Dispatch, get
   console.log('will upp');
   const upped = await workspaceService.uploadFile(session, avatar, {});
   console.log('upped', upped);
+  console.log('SESSION = ' + session);
+  console.dir(session);
   return upped;
 };
 
