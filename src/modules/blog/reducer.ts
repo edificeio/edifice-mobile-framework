@@ -70,6 +70,8 @@ export interface IBlogPost {
   _id: string;
 }
 
+export type IBlogPostList = IBlogPost[];
+
 export interface IBlogFolder {
   id: string;
   name: string;
@@ -114,6 +116,7 @@ const initialState: IBlog_StateData = {
 };
 
 export const actionTypes = {
+  blogPosts: createAsyncActionTypes(moduleConfig.namespaceActionType('BLOG_POSTS')),
   blogs: createAsyncActionTypes(moduleConfig.namespaceActionType('BLOGS')),
   folders: createAsyncActionTypes(moduleConfig.namespaceActionType('FOLDERS')),
   tree: {

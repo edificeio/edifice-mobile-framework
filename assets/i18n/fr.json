@@ -125,16 +125,17 @@
   "blog-publishAction": "Publier",
   "blog-selectPublishableBlog": "Choisir un blog",
   "blog-sharedToNbPersons": "Partagé à {{nb}} personnes",
-  "by": "par : ",
   "change-password-errorLoading": "Nous n'avons pas pu charger les données nécessaires pour modifier votre mot de passe. Veuillez réessayer ultérieurement.",
   "changePassword-errorFields": "Le formulaire contient des erreurs",
   "changePassword-errorSubmit": "Erreur durant la réinitialisation du mot de passe",
   "common": {
     "all": "Tous",
     "apply": "Appliquer",
+    "by": "Par :",
     "cancel": "Annuler",
     "comment": "Commentaire",
     "comments": "Commentaires",
+    "noComments": "Pas encore de commentaires",
     "continue": "Continuer",
     "date": {
       "invalid": "",

@@ -8,7 +8,7 @@ import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf'
 import { IResourceUriCaptureFunction } from '~/framework/util/notifications';
 import { IUserSession } from '~/framework/util/session';
 import { fetchJSONWithCache, signedFetchJson } from '~/infra/fetchWithCache';
-import { IBlog, IBlogFolder, IBlogList, IBlogPost, IBlogPostComments } from '~/modules/blog/reducer';
+import { IBlog, IBlogFolder, IBlogList, IBlogPost, IBlogPostComments, IBlogPostList } from '~/modules/blog/reducer';
 
 export interface IEntcoreBlog {
   _id: string;
@@ -49,6 +49,8 @@ interface _IEntcoreBlogPostBase {
 export interface IEntcoreBlogPost extends _IEntcoreBlogPostBase {
   firstPublishDate?: { $date: number };
 }
+
+export type IEntcoreBlogPostList = IEntcoreBlogPost[];
 
 export interface IEntcoreCreatedBlogPost extends _IEntcoreBlogPostBase {
   comments: any[];
@@ -175,10 +177,32 @@ export const blogUriCaptureFunction: IResourceUriCaptureFunction<{ blogId: strin
 };
 
 export const blogService = {
+  // This service automatically filters only non-trashed content.
+  list: async (session: IUserSession) => {
+    const api = `/blog/list/all`;
+    const entcoreBlogList = (await fetchJSONWithCache(api)) as IEntcoreBlogList;
+    return (entcoreBlogList.map(b => blogAdapter(b)) as IBlogList).filter(b => !b.trashed);
+  },
+  // This service automatically filters only non-trashed content.
+  folders: {
+    list: async (session: IUserSession) => {
+      const api = `/blog/folder/list/all`;
+      const entcoreBlogFolderList = (await fetchJSONWithCache(api)) as IEntcoreBlogFolder[];
+      return (entcoreBlogFolderList.map(b => blogFolderAdapter(b as IEntcoreBlogFolder)) as IBlogFolder[]).filter(f => !f.trashed);
+    },
+  },
+  posts: {
+    get: async (session: IUserSession, blogId: string) => {
+      const api = `/blog/post/list/all/${blogId}`;
+      const entcoreBlogPostList = (await fetchJSONWithCache(api)) as IEntcoreBlogPostList;
+      return (entcoreBlogPostList.map(bp => blogPostAdapter(bp)) as IBlogPostList);
+    },
+  },
   post: {
-    get: async (session: IUserSession, blogPostId: { blogId: string; postId: string }) => {
+    get: async (session: IUserSession, blogPostId: { blogId: string; postId: string }, state?: string) => {
       const { blogId, postId } = blogPostId;
-      const api = `/blog/post/${blogId}/${postId}`;
+      let api = `/blog/post/${blogId}/${postId}`;
+      if (state) {api += `?state=${state}`};
       const entcoreBlogPost = (await fetchJSONWithCache(api)) as IEntcoreBlogPost;
       // Run the adapter for the received blog post
       return blogPostAdapter(entcoreBlogPost) as IBlogPost;
@@ -200,7 +224,6 @@ export const blogService = {
       return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, { method: 'PUT' }) as Promise<{ number: number }>;
     },
   },
-
   comments: {
     get: async (session: IUserSession, blogPostId: { blogId: string; postId: string }) => {
       const { blogId, postId } = blogPostId;
@@ -208,22 +231,6 @@ export const blogService = {
       const entcoreBlogPostComments = (await fetchJSONWithCache(api)) as IEntcoreBlogPostComments;
       // Run the adapter for the received blog post comments
       return blogPostCommentsAdapter(entcoreBlogPostComments) as IBlogPostComments;
-    },
-  },
-
-  // This service automatically filters only non-trashed content.
-  list: async (session: IUserSession) => {
-    const api = `/blog/list/all`;
-    const entcoreBlogList = (await fetchJSONWithCache(api)) as IEntcoreBlogList;
-    return (entcoreBlogList.map(b => blogAdapter(b)) as IBlogList).filter(b => !b.trashed);
-  },
-
-  // This service automatically filters only non-trashed content.
-  folders: {
-    list: async (session: IUserSession) => {
-      const api = `/blog/folder/list/all`;
-      const entcoreBlogFolderList = (await fetchJSONWithCache(api)) as IEntcoreBlogFolder[];
-      return (entcoreBlogFolderList.map(b => blogFolderAdapter(b as IEntcoreBlogFolder)) as IBlogFolder[]).filter(f => !f.trashed);
     },
   },
 };

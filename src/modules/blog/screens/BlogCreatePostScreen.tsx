@@ -54,6 +54,7 @@ export interface IBlogCreatePostScreenEventProps {
 }
 export interface IBlogCreatePostScreenNavParams {
   blog: IBlog;
+  referrer?: string;
 }
 export type IBlogCreatePostScreenProps = IBlogCreatePostScreenDataProps &
   IBlogCreatePostScreenEventProps &
@@ -325,7 +326,7 @@ export class BlogCreatePostScreen extends React.PureComponent<IBlogCreatePostScr
 
       Trackers.trackEvent('Timeline', trackerEventText, 'BlogPost');
       await handleInitTimeline();
-      navigation.navigate('timeline');
+      navigation.navigate(navigation.getParam('referrer', 'timeline'));
       dispatch(
         notifierShowAction({
           id: 'timeline',

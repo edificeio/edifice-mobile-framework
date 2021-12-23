@@ -9,7 +9,7 @@ import { IDistantFile, LocalFile } from '~/framework/util/fileHandler';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
 import { getUserSession } from '~/framework/util/session';
 import moduleConfig from '~/modules/blog/moduleConfig';
-import { actionTypes, getPublishableBlogs, IBlog, IBlogFolder } from '~/modules/blog/reducer';
+import { actionTypes, getPublishableBlogs, IBlog, IBlogFolder, IBlogPost } from '~/modules/blog/reducer';
 import {
   createBlogPostResourceRight,
   getBlogPostRight,
@@ -42,6 +42,23 @@ export const getBlogPostDetailsAction =
       console.warn(`[${moduleConfig.name}] getBlogPostDetailsAction failed`, e);
     }
   };
+
+/**
+ * Fetch the posts of a given blog.
+ */
+ export const blogPostsActionsCreators = createAsyncActionCreators(actionTypes.blogPosts);
+ export const fetchBlogPostsAction = (blogId: string): ThunkAction<Promise<IBlogPost[]>, any, any, any> => async (dispatch, getState) => {
+   try {
+     const session = getUserSession(getState());
+     dispatch(blogPostsActionsCreators.request());
+     const res = await blogService.posts.get(session, blogId);
+     dispatch(blogPostsActionsCreators.receipt(res));
+     return res;
+   } catch (e) {
+     dispatch(blogPostsActionsCreators.error(e as Error));
+     throw e;
+   }
+ };
 
 /**
  * Fetch the user's publishable blog list.

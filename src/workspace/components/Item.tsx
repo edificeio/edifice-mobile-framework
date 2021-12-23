@@ -29,7 +29,7 @@ const style = StyleSheet.create({
 
 export const Item = ({ onEvent, item, selected, multiSelect }: IEventProps & any) => {
   const { id, isFolder, name, date, ownerName = '', contentType } = item;
-  const longOwnerName = `${I18n.t('by')}${ownerName}`;
+  const longOwnerName = `${I18n.t('common.by').toLowerCase()} ${ownerName}`;
 
   return (
     <ListItem

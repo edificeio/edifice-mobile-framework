@@ -7,13 +7,7 @@ import { CommonStyles } from '~/styles/common/styles';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 
 export const ArticleContainer = style.view({
-  paddingTop: 5,
-  paddingBottom: 5,
-  paddingLeft: 5,
-  paddingRight: 5,
-  flex: 1,
-  flexDirection: 'column',
-  flexWrap: 'wrap',
+  padding: 5
 });
 
 export const ListItem = style(TouchableOpacity)(
