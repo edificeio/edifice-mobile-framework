@@ -93,17 +93,26 @@
       "submitSuccess": "Votre billet a bien été envoyé. Il sera publié une fois validé par le gestionnaire du blog.",
       "title": "Nouveau billet"
     },
-    "blogSelectScreen": {
-      "sharedToNbPerson": "Partagé à {{nb}} personne",
-      "sharedToNbPersons": "Partagé à {{nb}} personnes",
-      "title": "Choisir un blog"
-    },
     "blogExplorerScreen": {
       "rootItemName": "Blogs",
       "emptyScreenButton": "Créer un blog sur le web",
       "emptyScreenText": "Endossez la casquette du petit reporter en créant un Blog ! Publiez et partagez facilement vos informations, en y intégrant différents contenus multimédias.",
       "emptyScreenTextNoCreationRights": "Il n'y a pas encore de Blog. Le Blog permet de partager facilement des informations en y intégrant différents contenus multimédias. Proposez des idées à votre école (la vie de la classe, les voyages scolaires, des expos, ...).",
       "emptyScreenTitle": "Aucun blog à l'hoziron..."
+    },
+    "blogPostListScreen": {
+      "emptyScreen": {
+        "button": "Créer un billet de blog",
+        "text": "Prenez la plume et lancez-vous !\nPensez à rajouter des images et vidéos pour que cela soit plus agréable à lire.",
+        "textNoCreationRights": "Pour le moment il n’y a pas encore de billets de blog. Un peu de patience...",
+        "title": "Votre premier billet de blog",
+        "titleNoCreationRights": "Pas encore de billet de blog"
+      }
+    },
+    "blogSelectScreen": {
+      "sharedToNbPerson": "Partagé à {{nb}} personne",
+      "sharedToNbPersons": "Partagé à {{nb}} personnes",
+      "title": "Choisir un blog"
     },
     "appName": "Blogs",
     "resourceName": "Billet de blog",

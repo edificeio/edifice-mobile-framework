@@ -62,6 +62,8 @@ export type IBlogExplorerScreen_Props = IBlogExplorerScreen_DataProps &
   IBlogExplorerScreen_EventProps &
   NavigationInjectedProps<IBlogExplorerScreen_NavigationParams>;
 
+export type IDisplayedBlog = Omit<IBlog, 'thumbnail'>;
+
 // COMPONENT ======================================================================================
 
 const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
@@ -103,7 +105,6 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
 
   // EVENTS =====================================================================================
 
-  type IDisplayedBlog = Omit<IBlog, 'thumbnail'>;
   const onOpenItem = (
     item:
       | (IExplorerFolderItem & IBlogFolder)
@@ -123,8 +124,7 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
     props.navigation.setParams({ folderId: item === 'root' ? undefined : item.id });
   };
   const onOpenBlog = (item: IDisplayedBlog) => {
-    // ToDo
-    console.log('onOpenBlog', item);
+    props.navigation.navigate(`${moduleConfig.routeName}/posts`, { selectedBlog: item });
   };
 
   // HEADER =====================================================================================
