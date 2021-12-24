@@ -46,7 +46,7 @@ export abstract class AbstractTracker<OptionsType> {
 
   // UserID procedure. Override _setUserId() function to create custom trackers.
   protected async _setUserId(id: string): Promise<boolean> {
-    throw 'not implemented';
+    throw new Error('not implemented');
   }
   async setUserId(id: string) {
     try {
@@ -62,7 +62,7 @@ export abstract class AbstractTracker<OptionsType> {
 
   // Custom dimension procedure. Override _setCustomDimension() function to create custom trackers.
   protected async _setCustomDimension(id: number, name: string, value: string): Promise<boolean> {
-    throw 'not implemented';
+    throw new Error('not implemented');
   }
   async setCustomDimension(id: number, name: string, value: string) {
     try {
@@ -78,7 +78,7 @@ export abstract class AbstractTracker<OptionsType> {
 
   // Track event procedure. Override _trackEvent() function to create custom trackers.
   protected async _trackEvent(category: string, action: string, name?: string, value?: number): Promise<boolean> {
-    throw 'not implemented';
+    throw new Error('not implemented');
   }
   async trackEvent(category: string, action: string, name?: string, value?: number) {
     try {
@@ -97,7 +97,7 @@ export abstract class AbstractTracker<OptionsType> {
 
   // Track view procedure. Override _trackView() function to create custom trackers.
   protected async _trackView(path: string[]): Promise<boolean> {
-    throw 'not implemented';
+    throw new Error('not implemented');
   }
   async trackView(path: string[]) {
     try {
