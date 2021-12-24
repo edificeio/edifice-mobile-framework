@@ -32,16 +32,7 @@ import { fetchBlogsAndFoldersAction } from '~/modules/blog/actions';
 import moduleConfig from '~/modules/blog/moduleConfig';
 import { IBlog, IBlogFolder, IBlogFolderWithChildren, IBlogFolderWithResources, IBlogFlatTree } from '~/modules/blog/reducer';
 import { getBlogWorkflowInformation } from '~/modules/blog/rights';
-import { signURISource, signURISourceArray, transformedSrc } from '~/infra/oauth';
-import { Text } from '~/framework/components/text';
-import {
-  ContentCardHeader,
-  ContentCardIcon,
-  ContentCardTitle,
-  TouchableContentCard,
-  TouchableResourceCard,
-} from '~/framework/components/card';
-import Images from '~/ui/Images';
+import { signURISource, transformedSrc } from '~/infra/oauth';
 import { openUrl } from '~/framework/util/linking';
 
 // TYPES ==========================================================================================
@@ -75,10 +66,8 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
   // ToDo : Make this in a useLoadingState.
 
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState);
-  //   console.log('loadingState', loadingState);
 
   React.useEffect(() => {
-    // console.log("user effect ?", loadingState);
     if (loadingState === AsyncLoadingState.PRISTINE) {
       setLoadingState(AsyncLoadingState.INIT);
       props
@@ -112,7 +101,6 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
       | (IExplorerResourceItemWithImage & IDisplayedBlog)
       | (IExplorerResourceItemWithIcon & IDisplayedBlog),
   ) => {
-    // console.log("onOpenItem", item);
     if (item.type === 'folder') {
       onOpenFolder(item);
     } else if (item.type === 'resource') {
@@ -286,32 +274,9 @@ const BlogExplorerScreen = (props: IBlogExplorerScreen_Props) => {
       case AsyncLoadingState.DONE:
       case AsyncLoadingState.REFRESH:
       case AsyncLoadingState.REFRESH_FAILED:
-        // const imageSrcs = signURISourceArray(
-        //   [
-        //     'https://recette.opendigitaleducation.com/workspace/document/68a38fec-87ef-46e5-9dbb-10a2fcf81aa0?v=7',
-        //     'https://recette.opendigitaleducation.com/workspace/document/b851a6bb-0a18-40dc-8509-75bc4239bef5?v=92',
-        //     'https://recette.opendigitaleducation.com/workspace/document/94384a97-ea78-426a-8198-892491d69afb?v=10',
-        //   ].map(img => ({ src: img, alt: img })),
-        // );
         return (
           <>
             {renderDrawer(props.tree?.folders || [])}
-            {/* <ResourceView
-              icon={{
-                userIds: '8f437f63-1115-44c3-a3a3-33531ae80d90',
-                badge: { color: 'red', icon: 'bullhorn' },
-              }}
-              title="hodfk j seokg oskdfjv ldqss ldk flskf glsdkj go"
-              header="Wesh whesh whesh !!! Avec du texte, du etxte, pleeein de text quj fdgkjdf kjsoifj eriueiourtiertiue iue er iuer oiurt oi er  otiueoiruoi  oiteoir uoieu oi oieru oiuer oiu oirue ioert i va"
-              footer={<Text>Voilà un beau footer nom de nom !</Text>}
-              date={moment()}
-              style={{ margin: 12 }}>
-              <Images images={imageSrcs}></Images>
-              <Text>
-                j fegljkfbkqjsl d bvlkdsj blkdjsxb lksdj bvlkdj vldbj zeflkjglkdjsfdlkngflsqk d lkdslkvd vlk sdks lkjslkdf lkfj
-                lksdf ldkfj ldfk{' '}
-              </Text>
-            </ResourceView> */}
             {renderExplorer(props.tree || { resources: [], folders: [] })}
           </>
         );
