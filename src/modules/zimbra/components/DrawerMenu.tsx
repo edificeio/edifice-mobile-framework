@@ -51,14 +51,14 @@ export default class DrawerMenu extends React.PureComponent<DrawerMenuProps, Dra
   };
 
   getCurrentFolder = state => {
-    if (this.props.activeItemKey !== 'folder') return undefined;
+    if (this.props.activeItemKey !== 'folder' || !state.routes) return undefined;
     const folderState = state.routes.find(r => r.key === 'folder');
     if (folderState.params === undefined) return undefined;
     return folderState.params.folderName;
   };
 
   findFolder = (folderName: string) => {
-    if (this.props.folders !== undefined && this.props.folders.length > 0) {
+    if (this.props.folders && this.props.folders.length > 0) {
       const folderInfos = this.props.folders.find(item => item.folderName === folderName);
       if (folderInfos !== undefined) return folderInfos;
     }

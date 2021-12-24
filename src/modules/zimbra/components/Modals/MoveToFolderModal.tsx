@@ -46,14 +46,14 @@ export default class MoveToFolderModal extends React.Component<MoveToFolderModal
   };
 
   public findMainFolderId = (name: string) => {
-    const folderInfos = this.props.folders.find(item => item.folderName === name);
+    const folderInfos = this.props?.folders?.find(item => item.folderName === name);
     if (folderInfos) return folderInfos.id;
-    else return;
+    else return '';
   };
 
   public render() {
     const { show, folders, closeModal, confirm } = this.props;
-    const inboxSubFolder = folders.find(item => item.folderName === 'Inbox');
+    const inboxSubFolder = folders?.find(item => item.folderName === 'Inbox');
     return (
       <ModalBox isVisible={show}>
         <ModalContent style={{ width: Dimensions.get('window').width - 80 }}>
