@@ -61,16 +61,15 @@ export class HomeworkTaskPage extends React.PureComponent<IHomeworkTaskPageProps
     );
   };
 
-  constructor(props: IHomeworkTaskPageProps) {
-    super(props);
-  }
-
   // render & lifecycle
 
   public render() {
     const { date, taskContent } = this.props;
-    let formattedDate = date!.format('dddd LL');
-    formattedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+    let formattedDate = '';
+    if (date) {
+      formattedDate = date!.format('dddd LL');
+      formattedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+    }
 
     return (
       <PageContainer>
