@@ -133,7 +133,7 @@ dependencies {
         exclude group:'com.squareup.okhttp3', module:'okhttp'
     }
     // Native
-    implementation "com.google.android.gms:play-services-base:17.6.0"
+    implementation "com.google.android.gms:play-services-base:18.0.1"
     implementation "com.fasterxml.jackson.core:jackson-core:2.11.1"
     implementation "com.fasterxml.jackson.core:jackson-databind:2.11.1"
     // Not auto-linked packages
