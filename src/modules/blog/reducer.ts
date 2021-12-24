@@ -15,10 +15,6 @@ import { createBlogPostResourceRight } from './rights';
 
 // Types
 
-export interface IBlogPostWithComments extends IBlogPost {
-  comments: IBlogPostComments;
-}
-
 export interface IBlog {
   id: string;
   visibility: string;
@@ -60,6 +56,7 @@ export interface IBlogPost {
     userId: string;
     username: string;
   };
+  comments?: IBlogPostComments;
   content: string;
   created: Moment;
   firstPublishDate?: Moment;

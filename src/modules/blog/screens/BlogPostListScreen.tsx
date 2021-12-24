@@ -7,6 +7,7 @@ import moment from 'moment';
 import React from 'react';
 import { Platform, RefreshControl, View, ScrollView, FlatList } from 'react-native';
 import { NavigationActions, NavigationEventSubscription, NavigationInjectedProps } from 'react-navigation';
+import { hasNotch } from 'react-native-device-info';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -14,6 +15,7 @@ import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { UI_SIZES } from '~/framework/components/constants';
 import {
   FakeHeader,
   HeaderAction,
@@ -25,28 +27,25 @@ import {
 } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
+import { ButtonIcon } from '~/framework/components/popupMenu';
 import { AsyncLoadingState } from '~/framework/util/redux/async';
 import { getUserSession, IUserSession } from '~/framework/util/session';
-
-import moduleConfig from '../moduleConfig';
-import { getBlogPostRight } from '../rights';
-import { IDisplayedBlog } from './BlogExplorerScreen';
-import { blogService } from '../service';
 import { BlogPostResourceCard } from '~/modules/blog/components/BlogPostResourceCard';
-import { ButtonIcon } from '~/framework/components/popupMenu';
-import { hasNotch } from 'react-native-device-info';
-import { UI_SIZES } from '~/framework/components/constants';
-import { IBlogPostWithComments } from '../reducer';
+
+import { IDisplayedBlog } from './BlogExplorerScreen';
+import moduleConfig from '../moduleConfig';
+import { IBlogPost, IBlogPostList } from '../reducer';
+import { getBlogPostRight } from '../rights';
+import { blogService } from '../service';
 
 // TYPES ==========================================================================================
 
 export interface IBlogPostListScreen_DataProps {
-  // tree?: IBlogFlatTree; //🟠TODO: use?
   initialLoadingState: AsyncLoadingState;
   session: IUserSession;
 }
 export interface IBlogPostListScreen_EventProps {
-  // doFetch: () => Promise<[IBlog[], IBlogFolder[]] | undefined>; //🟠TODO: use?
+  doFetch: (selectedBlogId: string) => Promise<IBlogPost[] | undefined>;
 }
 export interface IBlogPostListScreen_NavigationParams {
   selectedBlog: IDisplayedBlog;
@@ -86,9 +85,7 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
   const init = (selectedBlogId: string) => {
     if (selectedBlogId) {
       setLoadingState(AsyncLoadingState.INIT);
-      // props
-      //   .doFetch() // 🟠TODO: use doFetch()
-      fetchBlogPostsWithDetails(selectedBlogId)
+      fetchBlogPosts(selectedBlogId)
         .then(() => setLoadingState(AsyncLoadingState.DONE))
         .catch(() => setLoadingState(AsyncLoadingState.INIT_FAILED));
     }
@@ -97,9 +94,7 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
   const reload = (selectedBlogId: string) => {
     if (selectedBlogId) {
       setLoadingState(AsyncLoadingState.RETRY);
-      // props
-      //   .doFetch() // 🟠TODO: use doFetch()
-      fetchBlogPostsWithDetails(selectedBlogId)
+      fetchBlogPosts(selectedBlogId)
         .then(() => setLoadingState(AsyncLoadingState.DONE))
         .catch(() => setLoadingState(AsyncLoadingState.INIT_FAILED));
     }
@@ -108,9 +103,7 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
   const refresh = (selectedBlogId: string) => {
     if (selectedBlogId) {
       setLoadingState(AsyncLoadingState.REFRESH);
-      // props
-      //   .doFetch() // 🟠TODO: use doFetch()
-      fetchBlogPostsWithDetails(selectedBlogId)
+      fetchBlogPosts(selectedBlogId)
         .then(() => setLoadingState(AsyncLoadingState.DONE))
         .catch(() => setLoadingState(AsyncLoadingState.REFRESH_FAILED));
     }
@@ -118,9 +111,7 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
   const refreshSilent = (selectedBlogId: string) => {
     if (selectedBlogId) {
       setLoadingState(AsyncLoadingState.REFRESH_SILENT);
-      // props
-      //   .doFetch() // 🟠TODO: use doFetch()
-      fetchBlogPostsWithDetails(selectedBlogId)
+      fetchBlogPosts(selectedBlogId)
         .then(() => setLoadingState(AsyncLoadingState.DONE))
         .catch(() => setLoadingState(AsyncLoadingState.REFRESH_FAILED));
     }
@@ -128,27 +119,12 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
 
   // EVENTS =====================================================================================
 
-  // 🟠TODO: remove fetchBlogPostsWithDetails() (put in redux)
-  const [detailedBlogPostsState, setDetailedBlogPostsState] = React.useState([]);
-  const fetchBlogPostsWithDetails = async (blogId: string) => {
+  const [blogPosts, setBlogPosts] = React.useState([] as IBlogPostList);
+  const fetchBlogPosts = async (blogId: string) => {
     try {
       const session = props.session;
-      const simpleBlogPosts = await blogService.posts.get(session, blogId);
-      const detailedBlogPosts = await Promise.all(
-        simpleBlogPosts.map(async post => {
-          const blogPostId = { blogId, postId: post._id };
-          const [blogPost, blogPostComments] = await Promise.all([
-            blogService.post.get(session, blogPostId, post.state || undefined),
-            blogService.comments.get(session, blogPostId),
-          ]);
-          const blogPostWithComments = {
-            ...blogPost,
-            comments: blogPostComments,
-          };
-          return blogPostWithComments;
-        }),
-      );
-      setDetailedBlogPostsState(detailedBlogPosts); // 🟠TODO: type (once in redux)
+      const blogPosts = await blogService.posts.get(session, blogId);
+      setBlogPosts(blogPosts);
     } catch (e) {
       throw e;
     }
@@ -160,8 +136,8 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
       referrer: `${moduleConfig.routeName}/posts`,
     });
 
-  const onOpenBlogPost = (item: IBlogPostWithComments) => {
-    props.navigation.navigate(`${moduleConfig.routeName}/details`, { blogPostWithComments: item, blogId: selectedBlog.id });
+  const onOpenBlogPost = (item: IBlogPost) => {
+    props.navigation.navigate(`${moduleConfig.routeName}/details`, { blogPost: item, blogId: selectedBlog.id });
   };
 
   // HEADER =====================================================================================
@@ -246,14 +222,14 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
   const renderBlogPostList = () => {
     return (
       <FlatList
-        data={detailedBlogPostsState} // 🟠TODO: type (once in redux)
+        data={blogPosts}
         renderItem={({ item }) => {
           return (
             <BlogPostResourceCard
               action={() => onOpenBlogPost(item)}
               authorId={item.author.userId}
               authorName={item.author.username}
-              comments={item.comments.length}
+              comments={item.comments?.length as number}
               contentHtml={item.content}
               date={moment(item.created)}
               title={item.title}
@@ -307,17 +283,10 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
 
 export default connect(
   (gs: IGlobalState) => {
-    const bs = moduleConfig.getState(gs);
     return {
       session: getUserSession(gs),
-      // tree: bs.tree,  // 🟠TODO: use (blogposts state)
+      initialLoadingState: AsyncLoadingState.PRISTINE,
     };
   },
-  dispatch =>
-    bindActionCreators(
-      {
-        // doFetch: tryAction(fetchBlogPostsAction/*, undefined, true*/) as any, // 🟠TODO: use
-      },
-      dispatch,
-    ),
+  dispatch => bindActionCreators({}, dispatch),
 )(BlogPostListScreen);

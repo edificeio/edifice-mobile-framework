@@ -1,7 +1,7 @@
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { FlatList, Linking, Platform, RefreshControl, View } from 'react-native';
+import { FlatList, Platform, RefreshControl, View } from 'react-native';
 import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -28,8 +28,8 @@ import { IResourceUriNotification, ITimelineNotification } from '~/framework/uti
 import { Trackers } from '~/framework/util/tracker';
 import { getBlogPostDetailsAction } from '~/modules/blog/actions';
 import moduleConfig from '~/modules/blog/moduleConfig';
-import type { IBlogPostComment, IBlogPostWithComments } from '~/modules/blog/reducer';
-import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunction } from '~/modules/blog/service';
+import type { IBlogPostComment, IBlogPost } from '~/modules/blog/reducer';
+import { blogPostGenerateResourceUriFunction, blogUriCaptureFunction } from '~/modules/blog/service';
 import { CommonStyles } from '~/styles/common/styles';
 import { FlatButton } from '~/ui';
 import { HtmlContentView } from '~/ui/HtmlContentView';
@@ -47,11 +47,11 @@ export interface IBlogPostDetailsScreenEventProps {
   handleGetBlogPostDetails(
     blogPostId: { blogId: string; postId: string },
     blogPostState?: string,
-  ): Promise<IBlogPostWithComments | undefined>;
+  ): Promise<IBlogPost | undefined>;
 }
 export interface IBlogPostDetailsScreenNavParams {
   notification: ITimelineNotification & IResourceUriNotification;
-  blogPostWithComments?: IBlogPostWithComments;
+  blogPost?: IBlogPost;
   blogId?: string;
   useNotification?: boolean;
 }
@@ -67,7 +67,7 @@ export enum BlogPostDetailsLoadingState {
 }
 export interface IBlogPostDetailsScreenState {
   loadingState: BlogPostDetailsLoadingState;
-  blogPostData: IBlogPostWithComments | undefined;
+  blogPostData: IBlogPost | undefined;
   errorState: boolean;
 }
 
@@ -279,9 +279,9 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
   // LIFECYCLE ====================================================================================
 
   componentDidMount() {
-    if (this.props.navigation.getParam('blogPostWithComments')) {
+    if (this.props.navigation.getParam('blogPost')) {
       this.setState({
-        blogPostData: this.props.navigation.getParam('blogPostWithComments'),
+        blogPostData: this.props.navigation.getParam('blogPost'),
         loadingState: BlogPostDetailsLoadingState.DONE,
       });
     } else this.doInit();
@@ -325,8 +325,8 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
         if (notification['event-type'] === 'SUBMIT-POST') blogPostState = 'SUBMITTED';
       } else {
         const blogId = this.props.navigation.getParam('blogId');
-        const postId = this.props.navigation.getParam('blogPostWithComments')?._id;
-        blogPostState = this.props.navigation.getParam('blogPostWithComments')?.state;
+        const postId = this.props.navigation.getParam('blogPost')?._id;
+        blogPostState = this.props.navigation.getParam('blogPost')?.state;
         if (!blogId || !postId) {
           throw new Error(`[doGetBlogPostDetails] missing blogId or postId : ${{ blogId, postId }}`);
         }
@@ -355,7 +355,7 @@ const mapDispatchToProps: (
   getState: () => IGlobalState,
 ) => IBlogPostDetailsScreenEventProps = (dispatch, getState) => ({
   handleGetBlogPostDetails: async (blogPostId: { blogId: string; postId: string }, blogPostState?: string) => {
-    return (await dispatch(getBlogPostDetailsAction(blogPostId, blogPostState))) as unknown as IBlogPostWithComments | undefined;
+    return (await dispatch(getBlogPostDetailsAction(blogPostId, blogPostState))) as unknown as IBlogPost | undefined;
   }, // TS BUG: dispatch mishandled
 });
 

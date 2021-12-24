@@ -10,7 +10,7 @@ import { NotifHandlerThunkAction, registerNotifHandlers } from '~/framework/util
 import { mainNavNavigate } from '~/navigation/helpers/navHelper';
 import { blogService, blogUriCaptureFunction } from './service';
 import { getUserSession } from '~/framework/util/session';
-import { IBlogPostWithComments } from './reducer';
+import { IBlogPost } from './reducer';
 
 export interface IBlogNotification extends ITimelineNotification, IResourceUriNotification {}
 
@@ -28,7 +28,7 @@ const handleBlogPostNotificationAction: NotifHandlerThunkAction =
       const { blogId, postId } = blogIds;
       const blogPostInfo = await blogService.post.get(session, { blogId, postId });
       const blogPostComments = await blogService.comments.get(session, { blogId, postId });
-      const blogPostData: IBlogPostWithComments = { ...blogPostInfo, comments: blogPostComments };
+      const blogPostData: IBlogPost = { ...blogPostInfo, comments: blogPostComments };
       navParams['blogPostWithComments'] = blogPostData;
       navParams['blogId'] = blogId;
       console.log('navParams', navParams);

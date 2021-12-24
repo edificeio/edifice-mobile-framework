@@ -51,9 +51,9 @@ export const getBlogPostDetailsAction =
    try {
      const session = getUserSession(getState());
      dispatch(blogPostsActionsCreators.request());
-     const res = await blogService.posts.get(session, blogId);
-     dispatch(blogPostsActionsCreators.receipt(res));
-     return res;
+     const blogPosts = await blogService.posts.get(session, blogId);
+     dispatch(blogPostsActionsCreators.receipt(blogPosts));
+     return blogPosts;
    } catch (e) {
      dispatch(blogPostsActionsCreators.error(e as Error));
      throw e;

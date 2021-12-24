@@ -37,6 +37,7 @@ interface _IEntcoreBlogPostBase {
     userId: string;
     username: string;
   };
+  comments?: IEntcoreBlogPostComments;
   content: string;
   created: { $date: number };
   modified: { $date: number };
@@ -135,6 +136,7 @@ export const blogPostAdapter = (blogPost: IEntcoreBlogPost) => {
       userId: blogPost.author.userId,
       username: blogPost.author.username,
     },
+    comments: blogPost.comments && blogPostCommentsAdapter(blogPost.comments),
     content: blogPost.content,
     created: moment(blogPost.created.$date),
     firstPublishDate: blogPost.firstPublishDate && moment(blogPost.firstPublishDate.$date),
@@ -201,7 +203,7 @@ export const blogService = {
   },
   posts: {
     get: async (session: IUserSession, blogId: string) => {
-      const api = `/blog/post/list/all/${blogId}`;
+      const api = `/blog/post/list/all/${blogId}?content=`;
       const entcoreBlogPostList = (await fetchJSONWithCache(api)) as IEntcoreBlogPostList;
       return (entcoreBlogPostList.map(bp => blogPostAdapter(bp)) as IBlogPostList);
     },
