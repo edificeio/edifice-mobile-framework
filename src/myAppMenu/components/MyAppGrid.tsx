@@ -20,12 +20,12 @@ import { FlatButton } from '~/ui/FlatButton';
 
 class MyAppGrid extends React.PureComponent<{ navigation: NavigationScreenProp<NavigationState> }, object> {
   renderModulesList = (modules: IAppModule[], newModules?: AnyModule[]) => {
-    const allModules = [...modules, ...(newModules || [])].sort((a, b) =>
+    const allModules = [...modules, ...(newModules || [])]?.sort((a, b) =>
       I18n.t(a.config.displayName).localeCompare(I18n.t(b.config.displayName)),
     ) as (IAppModule | AnyModule)[];
     return (
       <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-        {allModules.map(item => (
+        {allModules?.map(item => (
           <MyAppItem
             key={item.config.name}
             displayName={I18n.t(item.config.displayName)}

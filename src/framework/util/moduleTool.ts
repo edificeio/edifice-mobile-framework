@@ -5,13 +5,14 @@
 
 import I18n from 'i18n-js';
 import * as React from 'react';
+import type { ColorValue } from 'react-native';
 import { NavigationRouteConfig } from 'react-navigation';
 import type { NavigationParams, NavigationRoute, NavigationRouteConfigMap } from 'react-navigation';
 import type { StackNavigationOptions, StackNavigationProp } from 'react-navigation-stack/lib/typescript/src/vendor/types';
-import type { ColorValue } from 'react-native';
 import type { Reducer } from 'redux';
 
 import { toSnakeCase } from './string';
+
 import { createMainTabNavOption } from '~/navigation/helpers/mainTabNavigator';
 
 // Module Config ==================================================================================

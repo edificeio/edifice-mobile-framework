@@ -224,8 +224,6 @@ const mapStateToProps: (state: any) => any = state => {
   const hasRightToCreateTicket =
     authorizedActions && authorizedActions.some(action => action.displayName === 'support.ticket.create');
 
-  const session = state.session;
-
   return {
     categoryList,
     establishmentList,

@@ -30,7 +30,7 @@ export const getTeacherName = (teacherId, teachersList: IPersonnelList) => {
 
 export const isHomeworkDone = homework => homework.progress !== null && homework.progress.state_label === 'done';
 
-const homeworkDetailsAdapter = (homework: IHomework) => {
+export const homeworkDetailsAdapter = (homework: IHomework) => {
   return {
     id: homework.id,
     subject: homework.subject_id !== 'exceptional' ? homework.subject.name : homework.exceptional_label,
