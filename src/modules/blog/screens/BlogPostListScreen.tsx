@@ -29,7 +29,7 @@ import { AsyncLoadingState } from '~/framework/util/redux/async';
 import { getUserSession, IUserSession } from '~/framework/util/session';
 
 import moduleConfig from '../moduleConfig';
-import { getBlogWorkflowInformation } from '../rights';
+import { getBlogPostRight } from '../rights';
 import { IDisplayedBlog } from './BlogExplorerScreen';
 import { blogService } from '../service';
 import { BlogPostResourceCard } from '~/modules/blog/components/BlogPostResourceCard';
@@ -57,10 +57,10 @@ export type IBlogPostListScreen_Props = IBlogPostListScreen_DataProps &
 // COMPONENT ======================================================================================
 
 const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
-  const hasBlogCreationRights = getBlogWorkflowInformation(props.session) && getBlogWorkflowInformation(props.session).blog.create;
   const selectedBlog = props.navigation.getParam('selectedBlog');
   const selectedBlogTitle = selectedBlog && selectedBlog.title;
   const selectedBlogId = selectedBlog && selectedBlog.id;
+  const hasBlogPostCreationRights = getBlogPostRight(selectedBlog, props.session)?.actionRight;
   let focusEventListener: NavigationEventSubscription;
 
   // LOADER =====================================================================================
@@ -193,7 +193,7 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
   // CREATE BUTTON ================================================================================
 
   const renderCreateButton = () => {
-    return hasBlogCreationRights ? (
+    return hasBlogPostCreationRights ? (
       <ButtonIcon
         name={'new_post'}
         onPress={() => {
@@ -218,10 +218,12 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
         imgWidth={265.98}
         imgHeight={279.97}
         customStyle={{ backgroundColor: theme.color.background.card }}
-        title={I18n.t(`blog.blogPostListScreen.emptyScreen.title${hasBlogCreationRights ? '' : 'NoCreationRights'}`)}
-        text={I18n.t(`blog.blogPostListScreen.emptyScreen.text${hasBlogCreationRights ? '' : 'NoCreationRights'}`)}
-        buttonText={hasBlogCreationRights ? I18n.t('blog.blogPostListScreen.emptyScreen.button') : undefined}
-        buttonAction={() => onGoToPostCreationScreen()}
+        title={I18n.t(`blog.blogPostListScreen.emptyScreen.title${hasBlogPostCreationRights ? '' : 'NoCreationRights'}`)}
+        text={I18n.t(`blog.blogPostListScreen.emptyScreen.text${hasBlogPostCreationRights ? '' : 'NoCreationRights'}`)}
+        {...(hasBlogPostCreationRights ? {
+          buttonText: I18n.t('blog.blogPostListScreen.emptyScreen.button'),
+          buttonAction: onGoToPostCreationScreen
+        } : {})}
       />
     );
   };
@@ -260,7 +262,7 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
         }}
         keyExtractor={item => item._id}
         ListEmptyComponent={renderEmpty()}
-        ListHeaderComponent={hasBlogCreationRights ? <View style={{ height: 12 }} /> : null}
+        ListHeaderComponent={hasBlogPostCreationRights ? <View style={{ height: 12 }} /> : null}
         ListFooterComponent={<View style={{ paddingBottom: UI_SIZES.bottomInset }} />}
         refreshControl={
           <RefreshControl refreshing={loadingState === AsyncLoadingState.REFRESH} onRefresh={() => refresh(selectedBlogId)} />
