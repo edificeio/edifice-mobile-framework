@@ -6,7 +6,7 @@ import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
 import { Platform, RefreshControl, View, ScrollView, FlatList } from 'react-native';
-import { NavigationActions, NavigationInjectedProps } from 'react-navigation';
+import { NavigationActions, NavigationEventSubscription, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -61,15 +61,29 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
   const selectedBlog = props.navigation.getParam('selectedBlog');
   const selectedBlogTitle = selectedBlog && selectedBlog.title;
   const selectedBlogId = selectedBlog && selectedBlog.id;
+  let focusEventListener: NavigationEventSubscription;
 
   // LOADER =====================================================================================
 
   // ToDo : Make this in a useLoadingState.
 
-  const [loadingState, setLoadingState] = React.useState(props.initialLoadingState);
+  const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncLoadingState.PRISTINE);
+  const loadingRef = React.useRef<AsyncLoadingState>();
+  loadingRef.current = loadingState;
+  // /!\ Need to use Ref of the state because of hooks Closure issue. @see https://stackoverflow.com/a/56554056/6111343
 
   React.useEffect(() => {
-    if (selectedBlogId && loadingState === AsyncLoadingState.PRISTINE) {
+    focusEventListener = props.navigation.addListener('didFocus', () => {
+      if (loadingRef.current === AsyncLoadingState.PRISTINE) init(selectedBlogId);
+      else refreshSilent(selectedBlogId);
+    });
+    return () => {
+      focusEventListener.remove();
+    };
+  }, []);
+
+  const init = (selectedBlogId: string) => {
+    if (selectedBlogId) {
       setLoadingState(AsyncLoadingState.INIT);
       // props
       //   .doFetch() // 🟠TODO: use doFetch()
@@ -77,9 +91,9 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
         .then(() => setLoadingState(AsyncLoadingState.DONE))
         .catch(() => setLoadingState(AsyncLoadingState.INIT_FAILED));
     }
-  }, []);
+  };
 
-  const reload = selectedBlogId => {
+  const reload = (selectedBlogId: string) => {
     if (selectedBlogId) {
       setLoadingState(AsyncLoadingState.RETRY);
       // props
@@ -90,9 +104,19 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
     }
   };
 
-  const refresh = selectedBlogId => {
+  const refresh = (selectedBlogId: string) => {
     if (selectedBlogId) {
       setLoadingState(AsyncLoadingState.REFRESH);
+      // props
+      //   .doFetch() // 🟠TODO: use doFetch()
+      fetchBlogPostsWithDetails(selectedBlogId)
+        .then(() => setLoadingState(AsyncLoadingState.DONE))
+        .catch(() => setLoadingState(AsyncLoadingState.REFRESH_FAILED));
+    }
+  };
+  const refreshSilent = (selectedBlogId: string) => {
+    if (selectedBlogId) {
+      setLoadingState(AsyncLoadingState.REFRESH_SILENT);
       // props
       //   .doFetch() // 🟠TODO: use doFetch()
       fetchBlogPostsWithDetails(selectedBlogId)
@@ -130,14 +154,14 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
   };
 
   const onGoToPostCreationScreen = () =>
-  props.navigation.navigate(`${moduleConfig.routeName}/create`, {
-    blog: selectedBlog,
-    referrer: `${moduleConfig.routeName}/posts`,
-  });
+    props.navigation.navigate(`${moduleConfig.routeName}/create`, {
+      blog: selectedBlog,
+      referrer: `${moduleConfig.routeName}/posts`,
+    });
 
   const onOpenBlogPost = (/*🟠TODO: insert type --> item: type*/) => {
     // 🟠TODO: insert navigation action (example: props.navigation.navigate(`${moduleConfig.routeName}/posts`, { selectedBlog: item }))
-    console.log("navigate to blog post.");
+    console.log('navigate to blog post.');
   };
 
   // HEADER =====================================================================================
@@ -207,7 +231,9 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
   const renderError = () => {
     return (
       <ScrollView
-        refreshControl={<RefreshControl refreshing={loadingState === AsyncLoadingState.RETRY} onRefresh={() => reload(selectedBlogId)} />}>
+        refreshControl={
+          <RefreshControl refreshing={loadingState === AsyncLoadingState.RETRY} onRefresh={() => reload(selectedBlogId)} />
+        }>
         <EmptyContentScreen />
       </ScrollView>
     );
@@ -236,8 +262,9 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
         ListEmptyComponent={renderEmpty()}
         ListHeaderComponent={hasBlogCreationRights ? <View style={{ height: 12 }} /> : null}
         ListFooterComponent={<View style={{ paddingBottom: UI_SIZES.bottomInset }} />}
-        refreshControl={<RefreshControl refreshing={loadingState === AsyncLoadingState.REFRESH} onRefresh={() => refresh(selectedBlogId)} />}
-        style={{ backgroundColor: theme.color.background.card }}
+        refreshControl={
+          <RefreshControl refreshing={loadingState === AsyncLoadingState.REFRESH} onRefresh={() => refresh(selectedBlogId)} />
+        }
         contentContainerStyle={{ flexGrow: 1 }}
         scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
       />
@@ -254,6 +281,7 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
       case AsyncLoadingState.DONE:
       case AsyncLoadingState.REFRESH:
       case AsyncLoadingState.REFRESH_FAILED:
+      case AsyncLoadingState.REFRESH_SILENT:
         return renderBlogPostList();
       case AsyncLoadingState.PRISTINE:
       case AsyncLoadingState.INIT:
@@ -281,7 +309,6 @@ export default connect(
     return {
       session: getUserSession(gs),
       // tree: bs.tree,  // 🟠TODO: use (blogposts state)
-      initialLoadingState: AsyncLoadingState.PRISTINE,
     };
   },
   dispatch =>
