@@ -45,6 +45,7 @@ import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 import { PageContainer } from '~/ui/ContainerContent';
 import { EmptyScreen } from '~/ui/EmptyScreen';
 import today from '~/utils/today';
+import { openUrl } from '~/framework/util/linking';
 
 const { View } = style;
 
@@ -242,13 +243,7 @@ export class HomeworkPage extends React.PureComponent<IHomeworkPageProps, object
                     return null;
                   }
                   const url = `${DEPRECATED_getCurrentPlatform()!.url}/homeworks`;
-                  Linking.canOpenURL(url).then(supported => {
-                    if (supported) {
-                      Linking.openURL(url);
-                    } else {
-                      console.warn("[homework] Don't know how to open URI: ", url);
-                    }
-                  });
+                  openUrl(url);
                   Trackers.trackEvent('Homework', 'GO TO', 'Create in Browser');
                 }}
                 customStyle={{ marginBottom: hasPastHomeWork ? 60 : 0 }}

@@ -21,6 +21,7 @@ import { getPublishableBlogListAction } from '~/modules/blog/actions';
 import moduleConfig from '~/modules/blog/moduleConfig';
 import { IBlog, IBlogList } from '~/modules/blog/reducer';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
+import { openUrl } from '~/framework/util/linking';
 
 // TYPES ==========================================================================================
 
@@ -144,13 +145,7 @@ export class BlogSelectScreen extends React.PureComponent<IBlogSelectScreenProps
             return null;
           }
           const url = `${DEPRECATED_getCurrentPlatform()!.url}/blog`;
-          Linking.canOpenURL(url).then(supported => {
-            if (supported) {
-              Linking.openURL(url);
-            } else {
-              console.warn("[timeline] Don't know how to open URI: ", url);
-            }
-          });
+          openUrl(url);
         }}
       />
     );

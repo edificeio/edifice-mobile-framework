@@ -40,6 +40,7 @@ import { schoolbookUriCaptureFunction } from '~/modules/schoolbook/service';
 import { ButtonsOkCancel, FlatButton } from '~/ui';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from '~/ui/Modal';
+import { openUrl } from '~/framework/util/linking';
 
 // TYPES ==========================================================================================
 
@@ -213,13 +214,7 @@ export class SchoolbookWordDetailsScreen extends React.PureComponent<
                   return null;
                 }
                 const url = `${DEPRECATED_getCurrentPlatform()!.url}${resourceUri}`;
-                Linking.canOpenURL(url).then(supported => {
-                  if (supported) {
-                    Linking.openURL(url);
-                  } else {
-                    console.warn("[schoolbook] Don't know how to open URI: ", url);
-                  }
-                });
+                openUrl(url);
                 Trackers.trackEvent('Schoolbook', 'GO TO', 'View in Browser');
               }}
             />

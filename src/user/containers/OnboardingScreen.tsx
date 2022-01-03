@@ -14,6 +14,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import theme from '~/app/theme';
 import { TextSemiBold, H1 } from '~/framework/components/text';
 import appConf from '~/framework/util/appConf';
+import { openUrl } from '~/framework/util/linking';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { getLoginRouteName } from '~/navigation/LoginNavigator';
 import { FlatButton } from '~/ui';
@@ -129,15 +130,8 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps> {
                   alignItems: 'center',
                 }}
                 onPress={() => {
-                  //TODO: create generic function inside oauth
                   const url = I18n.t('user.onboardingScreen.discoverLink');
-                  Linking.canOpenURL(url).then(supported => {
-                    if (supported) {
-                      Linking.openURL(url);
-                    } else {
-                      console.warn("[onboarding] Don't know how to open URI: ", url);
-                    }
-                  });
+                  openUrl(url);
                 }}
               />
             )}

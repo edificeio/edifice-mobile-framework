@@ -17,6 +17,7 @@ import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 import { PageContainer } from '~/ui/ContainerContent';
 import { EmptyScreen } from '~/ui/EmptyScreen';
 import { FlatButton } from '~/ui/FlatButton';
+import { openUrl } from '~/framework/util/linking';
 
 class MyAppGrid extends React.PureComponent<{ navigation: NavigationScreenProp<NavigationState> }, object> {
   renderModulesList = (modules: IAppModule[], newModules?: AnyModule[]) => {
@@ -55,13 +56,7 @@ class MyAppGrid extends React.PureComponent<{ navigation: NavigationScreenProp<N
                   return null;
                 }
                 const url = `${DEPRECATED_getCurrentPlatform()!.url}/welcome`;
-                Linking.canOpenURL(url).then(supported => {
-                  if (supported) {
-                    Linking.openURL(url);
-                  } else {
-                    console.warn("[my apps] Don't know how to open URI: ", url);
-                  }
-                });
+                openUrl(url);
               }}
             />
             <InfoBubble

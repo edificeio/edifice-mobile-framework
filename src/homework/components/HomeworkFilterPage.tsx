@@ -32,6 +32,7 @@ import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 import { ListItem, PageContainer } from '~/ui/ContainerContent';
 import { EmptyScreen } from '~/ui/EmptyScreen';
 import { Checkbox } from '~/ui/forms/Checkbox';
+import { openUrl } from '~/framework/util/linking';
 const { FlatList, View } = style;
 
 // Main component ---------------------------------------------------------------------------------
@@ -139,13 +140,7 @@ export class HomeworkFilterPage extends React.PureComponent<IHomeworkFilterPageP
                 return null;
               }
               const url = `${DEPRECATED_getCurrentPlatform()!.url}/homeworks`;
-              Linking.canOpenURL(url).then(supported => {
-                if (supported) {
-                  Linking.openURL(url);
-                } else {
-                  console.warn("[homework] Don't know how to open URI: ", url);
-                }
-              });
+              openUrl(url);
               Trackers.trackEvent('Homework', 'GO TO', 'Create in Browser');
             }}
           />

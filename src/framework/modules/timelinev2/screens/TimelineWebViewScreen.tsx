@@ -12,6 +12,7 @@ import NotificationTopInfo from '~/framework/modules/timelinev2/components/Notif
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
 import { FlatButton } from '~/ui';
+import { openUrl } from '~/framework/util/linking';
 
 // TYPES ==========================================================================================
 
@@ -89,13 +90,7 @@ export class TimelineWebViewScreen extends React.PureComponent<ITimelineWebViewS
                 return null;
               }
               const url = `${DEPRECATED_getCurrentPlatform()!.url}${notification?.resource.uri}`;
-              Linking.canOpenURL(url).then(supported => {
-                if (supported) {
-                  Linking.openURL(url);
-                } else {
-                  console.warn("[timeline] Don't know how to open URI: ", url);
-                }
-              });
+              openUrl(url);
             }}
           />
         </View>

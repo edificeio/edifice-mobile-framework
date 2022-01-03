@@ -36,6 +36,7 @@ import { HtmlContentView } from '~/ui/HtmlContentView';
 import { TextPreview } from '~/ui/TextPreview';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
 import { ResourceView } from '~/framework/components/card';
+import { openUrl } from '~/framework/util/linking';
 
 // TYPES ==========================================================================================
 
@@ -183,13 +184,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
                     return null;
                   }
                   const url = `${DEPRECATED_getCurrentPlatform()!.url}${resourceUri}`;
-                  Linking.canOpenURL(url).then(supported => {
-                    if (supported) {
-                      Linking.openURL(url);
-                    } else {
-                      console.warn("[blog] Don't know how to open URI: ", url);
-                    }
-                  });
+                  openUrl(url);
                   Trackers.trackEvent('Blog', 'GO TO', 'View in Browser');
                 }}
               />

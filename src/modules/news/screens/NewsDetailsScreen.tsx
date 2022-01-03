@@ -35,6 +35,7 @@ import { FlatButton } from '~/ui';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { TextPreview } from '~/ui/TextPreview';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
+import { openUrl } from '~/framework/util/linking';
 
 // TYPES ==========================================================================================
 
@@ -180,13 +181,7 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
                     return null;
                   }
                   const url = `${DEPRECATED_getCurrentPlatform()!.url}${resourceUri}`;
-                  Linking.canOpenURL(url).then(supported => {
-                    if (supported) {
-                      Linking.openURL(url);
-                    } else {
-                      console.warn("[news] Don't know how to open URI: ", url);
-                    }
-                  });
+                  openUrl(url);
                   Trackers.trackEvent('News', 'GO TO', 'View in Browser');
                 }}
               />
