@@ -95,7 +95,7 @@ class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: b
 
     // Tracking
     await Trackers.init();
-    Trackers.trackEvent('Application', 'STARTUP');
+    Trackers.trackDebugEvent('Application', 'STARTUP');
     Trackers.setCustomDimension(4, 'App Name', DeviceInfo.getApplicationName());
 
     // If only one platform in conf => auto-select it.
@@ -164,7 +164,7 @@ class AppStoreUnconnected extends React.Component<{ store: any }, { autoLogin: b
   private handleAppStateChange = (nextAppState: AppStateStatus) => {
     if (nextAppState === 'active') {
       console.log('[App State] now in active mode');
-      Trackers.trackEvent('Application', 'DISPLAY');
+      Trackers.trackDebugEvent('Application', 'DISPLAY');
     } else if (nextAppState === 'background') {
       console.log('[App State] now in background mode');
     }

@@ -44,6 +44,14 @@ export abstract class AbstractTracker<OptionsType> {
     }
   }
 
+  // Deug  procedure. Override _isDeug() function when needed
+  protected _isDebugTracker(): boolean {
+    return false;
+  }
+  isDebugTracker(): boolean {
+    return this._isDebugTracker();
+  }
+
   // UserID procedure. Override _setUserId() function to create custom trackers.
   protected async _setUserId(id: string): Promise<boolean> {
     throw new Error('not implemented');
@@ -147,6 +155,9 @@ export class ConcreteAppCenterTracker extends AbstractTracker<undefined> {
   protected _properties = {};
   async _init() {
     // Nothing to do, configuration comes from native appcenter config files
+  }
+  protected _isDebugTracker(): boolean {
+    return true;
   }
   async _setUserId(id: string) {
     await AppCenter.setUserId(id);
@@ -253,6 +264,10 @@ export class ConcreteTrackerSet {
   }
   async init() {
     await Promise.all(this._trackers.map(t => t.init()));
+  }
+  async trackDebugEvent(category: string, action: string, name?: string, value?: number) {
+    console.log(`[Trackers] Track debug event`, category, '|', action, '|', name, '|', value);
+    await Promise.all(this._trackers.filter(t => t.isDebugTracker()).map(t => t.trackEvent(category, action, name, value)));
   }
   async trackEvent(category: string, action: string, name?: string, value?: number) {
     console.log(`[Trackers] Track event`, category, '|', action, '|', name, '|', value);
