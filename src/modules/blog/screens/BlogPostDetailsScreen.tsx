@@ -35,7 +35,7 @@ import { FlatButton } from '~/ui';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { TextPreview } from '~/ui/TextPreview';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
-import { ResourceView } from '~/framework/components/card';
+import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/components/card';
 import { openUrl } from '~/framework/util/linking';
 
 // TYPES ==========================================================================================
@@ -44,10 +44,15 @@ export interface IBlogPostDetailsScreenDataProps {
   // Add data props here
 }
 export interface IBlogPostDetailsScreenEventProps {
-  handleGetBlogPostDetails(blogPostId: { blogId: string; postId: string }): Promise<IBlogPostWithComments | undefined>;
+  handleGetBlogPostDetails(
+    blogPostId: { blogId: string; postId: string },
+    blogPostState?: string,
+  ): Promise<IBlogPostWithComments | undefined>;
 }
 export interface IBlogPostDetailsScreenNavParams {
   notification: ITimelineNotification & IResourceUriNotification;
+  blogPostWithComments?: IBlogPostWithComments;
+  blogId?: string;
 }
 export type IBlogPostDetailsScreenProps = IBlogPostDetailsScreenDataProps &
   IBlogPostDetailsScreenEventProps &
@@ -157,11 +162,25 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
     const blogPostContent = blogPostData?.content;
     const blogPostComments = blogPostData?.comments;
     const hasComments = blogPostComments && blogPostComments.length > 0;
-    if (!notification) return this.renderError();
     return (
       <View>
         <View style={{ paddingHorizontal: 16 }}>
-          <ResourceView header={<NotificationTopInfo notification={notification} />}>
+          <ResourceView
+            header={
+              notification ? (
+                <NotificationTopInfo notification={notification} />
+              ) : (
+                <ContentCardHeader
+                  icon={<ContentCardIcon userIds={[blogPostData?.author.userId || require('ASSETS/images/system-avatar.png')]} />}
+                  text={
+                    blogPostData?.author.username ? (
+                      <TextSemiBold numberOfLines={1}>{`${I18n.t('common.by')} ${blogPostData?.author.username}`}</TextSemiBold>
+                    ) : undefined
+                  }
+                  date={blogPostData?.modified}
+                />
+              )
+            }>
             <HtmlContentView
               html={blogPostContent}
               onDownload={() => Trackers.trackEvent('Blog', 'DOWNLOAD ATTACHMENT', 'Read mode')}
@@ -255,7 +274,12 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
   // LIFECYCLE ====================================================================================
 
   componentDidMount() {
-    this.doInit();
+    if (this.props.navigation.getParam('blogPostWithComments')) {
+      this.setState({
+        blogPostData: this.props.navigation.getParam('blogPostWithComments'),
+        loadingState: BlogPostDetailsLoadingState.DONE,
+      });
+    } else this.doInit();
   }
 
   // METHODS ======================================================================================
@@ -281,17 +305,28 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
   async doGetBlogPostDetails() {
     try {
       const { navigation, handleGetBlogPostDetails } = this.props;
+      let ids: { blogId: string; postId: string };
+      let blogPostState: string | undefined = undefined;
       const notification = navigation.getParam('notification');
-      const resourceUri = notification?.resource.uri;
-      if (!resourceUri) {
-        throw new Error('[doGetBlogPostDetails] failed to call api (resourceUri is undefined)');
+      if (notification) {
+        const resourceUri = notification?.resource.uri;
+        if (!resourceUri) {
+          throw new Error('[doGetBlogPostDetails] failed to call api (resourceUri is undefined)');
+        }
+        ids = blogUriCaptureFunction(resourceUri) as Required<ReturnType<typeof blogUriCaptureFunction>>;
+        if (!ids.blogId || !ids.postId) {
+          throw new Error(`[doGetBlogPostDetails] failed to capture resourceUri "${resourceUri}": ${ids}`);
+        }
+      } else {
+        const blogId = this.props.navigation.getParam('blogId');
+        const postId = this.props.navigation.getParam('blogPostWithComments')?._id;
+        blogPostState = this.props.navigation.getParam('blogPostWithComments')?.state;
+        if (!blogId || !postId) {
+          throw new Error(`[doGetBlogPostDetails] missing blogId or postId : ${{ blogId, postId }}`);
+        }
+        ids = { blogId, postId };
       }
-      const blogPostId = blogUriCaptureFunction(resourceUri);
-      const { blogId, postId } = blogPostId;
-      if (!blogId || !postId) {
-        throw new Error(`[doGetBlogPostDetails] failed to capture resourceUri "${resourceUri}": ${{ blogId, postId }}`);
-      }
-      const blogPostData = await handleGetBlogPostDetails(blogPostId as Required<typeof blogPostId>);
+      const blogPostData = await handleGetBlogPostDetails(ids, blogPostState);
       this.setState({ blogPostData });
     } catch (e) {
       // ToDo: Error handling
@@ -313,8 +348,8 @@ const mapDispatchToProps: (
   dispatch: ThunkDispatch<any, any, any>,
   getState: () => IGlobalState,
 ) => IBlogPostDetailsScreenEventProps = (dispatch, getState) => ({
-  handleGetBlogPostDetails: async (blogPostId: { blogId: string; postId: string }) => {
-    return (await dispatch(getBlogPostDetailsAction(blogPostId))) as unknown as IBlogPostWithComments | undefined;
+  handleGetBlogPostDetails: async (blogPostId: { blogId: string; postId: string }, blogPostState?: string) => {
+    return (await dispatch(getBlogPostDetailsAction(blogPostId, blogPostState))) as unknown as IBlogPostWithComments | undefined;
   }, // TS BUG: dispatch mishandled
 });
 

@@ -36,6 +36,7 @@ import { BlogPostResourceCard } from '~/modules/blog/components/BlogPostResource
 import { ButtonIcon } from '~/framework/components/popupMenu';
 import { hasNotch } from 'react-native-device-info';
 import { UI_SIZES } from '~/framework/components/constants';
+import { IBlogPostWithComments } from '../reducer';
 
 // TYPES ==========================================================================================
 
@@ -159,9 +160,8 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
       referrer: `${moduleConfig.routeName}/posts`,
     });
 
-  const onOpenBlogPost = (/*🟠TODO: insert type --> item: type*/) => {
-    // 🟠TODO: insert navigation action (example: props.navigation.navigate(`${moduleConfig.routeName}/posts`, { selectedBlog: item }))
-    console.log('navigate to blog post.');
+  const onOpenBlogPost = (item: IBlogPostWithComments) => {
+    props.navigation.navigate(`${moduleConfig.routeName}/details`, { blogPostWithComments: item, blogId: selectedBlog.id });
   };
 
   // HEADER =====================================================================================
@@ -250,7 +250,7 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
         renderItem={({ item }) => {
           return (
             <BlogPostResourceCard
-              action={onOpenBlogPost}
+              action={() => onOpenBlogPost(item)}
               authorId={item.author.userId}
               authorName={item.author.username}
               comments={item.comments.length}

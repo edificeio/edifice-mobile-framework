@@ -23,13 +23,13 @@ import { blogService } from '~/modules/blog/service';
  * Info: no reducer is used in this action.
  */
 export const getBlogPostDetailsAction =
-  (blogPostId: { blogId: string; postId: string }) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  (blogPostId: { blogId: string; postId: string }, blogPostState?: string) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
       const session = getUserSession(getState());
 
       // Get blog post and comments
       const [blogPost, blogPostComments] = await Promise.all([
-        blogService.post.get(session, blogPostId),
+        blogService.post.get(session, blogPostId, blogPostState),
         blogService.comments.get(session, blogPostId),
       ]);
       const blogPostWithComments = {
