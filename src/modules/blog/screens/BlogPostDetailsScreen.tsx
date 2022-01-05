@@ -29,7 +29,7 @@ import { Trackers } from '~/framework/util/tracker';
 import { getBlogPostDetailsAction } from '~/modules/blog/actions';
 import moduleConfig from '~/modules/blog/moduleConfig';
 import type { IBlogPostComment, IBlogPostWithComments } from '~/modules/blog/reducer';
-import { blogUriCaptureFunction } from '~/modules/blog/service';
+import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunction } from '~/modules/blog/service';
 import { CommonStyles } from '~/styles/common/styles';
 import { FlatButton } from '~/ui';
 import { HtmlContentView } from '~/ui/HtmlContentView';
@@ -53,6 +53,7 @@ export interface IBlogPostDetailsScreenNavParams {
   notification: ITimelineNotification & IResourceUriNotification;
   blogPostWithComments?: IBlogPostWithComments;
   blogId?: string;
+  useNotification?: boolean;
 }
 export type IBlogPostDetailsScreenProps = IBlogPostDetailsScreenDataProps &
   IBlogPostDetailsScreenEventProps &
@@ -157,10 +158,14 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
   renderBlogPostDetails() {
     const { navigation } = this.props;
     const { blogPostData } = this.state;
-    const notification = navigation.getParam('notification');
-    const resourceUri = notification?.resource.uri;
+    const notification = navigation.getParam('useNotification', true) && navigation.getParam('notification');
+    let resourceUri = notification && notification?.resource.uri;
     const blogPostContent = blogPostData?.content;
     const blogPostComments = blogPostData?.comments;
+    const blogId = navigation.getParam('blogId');
+    if (!resourceUri && blogPostData && blogId) {
+      resourceUri = blogPostGenerateResourceUriFunction({ blogId, postId: blogPostData._id });
+    }
     const hasComments = blogPostComments && blogPostComments.length > 0;
     return (
       <View>
@@ -308,7 +313,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
       let ids: { blogId: string; postId: string };
       let blogPostState: string | undefined = undefined;
       const notification = navigation.getParam('notification');
-      if (notification) {
+      if (notification && navigation.getParam('useNotification', true)) {
         const resourceUri = notification?.resource.uri;
         if (!resourceUri) {
           throw new Error('[doGetBlogPostDetails] failed to call api (resourceUri is undefined)');
@@ -317,6 +322,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<IBlogPostDetailsS
         if (!ids.blogId || !ids.postId) {
           throw new Error(`[doGetBlogPostDetails] failed to capture resourceUri "${resourceUri}": ${ids}`);
         }
+        if (notification['event-type'] === 'SUBMIT-POST') blogPostState = 'SUBMITTED';
       } else {
         const blogId = this.props.navigation.getParam('blogId');
         const postId = this.props.navigation.getParam('blogPostWithComments')?._id;

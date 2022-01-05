@@ -18,6 +18,9 @@ export const timelineRoutes = addViewTrackingToStackRoutes({
   [`${moduleConfig.routeName}/details`]: {
     screen: BlogPostDetailsScreen,
   },
+  [`${moduleConfig.routeName}/posts`]: {
+    screen: BlogPostListScreen,
+  },
 });
 
 export default () =>
@@ -25,9 +28,6 @@ export default () =>
     {
       [`${moduleConfig.routeName}`]: {
         screen: BlogExplorerScreen,
-      },
-      [`${moduleConfig.routeName}/posts`]: {
-        screen: BlogPostListScreen,
       },
       ...timelineRoutes,
     },

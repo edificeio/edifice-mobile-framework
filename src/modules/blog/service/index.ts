@@ -175,6 +175,9 @@ export const blogUriCaptureFunction: IResourceUriCaptureFunction<{ blogId: strin
         postId: blogPostIdMatch?.[2],
       };
 };
+export const blogPostGenerateResourceUriFunction = ({ blogId, postId }: { blogId: string; postId: string }) => {
+  return `/blog#/detail/${blogId}/${postId}`;
+};
 
 export const blogService = {
   // This service automatically filters only non-trashed content.
@@ -182,6 +185,11 @@ export const blogService = {
     const api = `/blog/list/all`;
     const entcoreBlogList = (await fetchJSONWithCache(api)) as IEntcoreBlogList;
     return (entcoreBlogList.map(b => blogAdapter(b)) as IBlogList).filter(b => !b.trashed);
+  },
+  get: async (session: IUserSession, blogId: string) => {
+    const api = `/blog/${blogId}`;
+    const entcoreBlog = (await fetchJSONWithCache(api)) as IEntcoreBlog;
+    return blogAdapter(entcoreBlog);
   },
   // This service automatically filters only non-trashed content.
   folders: {

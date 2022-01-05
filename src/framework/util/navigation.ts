@@ -17,7 +17,6 @@ export const computeRelativePath = (path: string | string[], navState?: Navigati
     if (!Array.isArray(path)) path = path.split('/');
     if (!navState) return path.join('/');
     let stateAsArray = (navState?.routeName?.split('/') || []) as string[]; // TS fuck ? in practice, this property exists.
-
     // Check common part fo the path. Keep the left of the common part of NavState, then, add the path.
     const found = (() => {
         for (const i of path) {

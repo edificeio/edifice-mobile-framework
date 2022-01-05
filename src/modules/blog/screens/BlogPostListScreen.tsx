@@ -138,7 +138,7 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
         simpleBlogPosts.map(async post => {
           const blogPostId = { blogId, postId: post._id };
           const [blogPost, blogPostComments] = await Promise.all([
-            blogService.post.get(session, blogPostId, post.state === 'DRAFT' ? post.state : undefined),
+            blogService.post.get(session, blogPostId, post.state || undefined),
             blogService.comments.get(session, blogPostId),
           ]);
           const blogPostWithComments = {
