@@ -121,7 +121,7 @@ export class WAYFPage extends React.Component<IWAYFPageProps, IWAYFPageState> {
           <HeaderRow>
             <HeaderLeft>{backButton}</HeaderLeft>
             <HeaderCenter>
-              <HeaderTitle>{I18n.t('login-wayf-view-title')}</HeaderTitle>
+              <HeaderTitle>{I18n.t('login-wayf-title')}</HeaderTitle>
             </HeaderCenter>
           </HeaderRow>
         </FakeHeader>

@@ -11,7 +11,7 @@ import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { FlatButton } from '~/ui';
 
-const Logo = style.image({ height: 50, width: 200, resizeMode: 'contain' });
+const Logo = style.image({ height: 75, width: 300, resizeMode: 'contain' });
 
 export interface ILoginWAYFPageProps {
   navigation?: any;
@@ -46,9 +46,9 @@ export class LoginWAYFPage extends React.Component<ILoginWAYFPageProps, ILoginWA
           </HeaderRow>
         </FakeHeader>
         <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
-          <View style={{ alignItems: 'center', flex: 1, justifyContent: 'space-around', padding: 32 }}>
+          <View
+            style={{ alignItems: 'center', flex: 1, justifyContent: 'space-around', paddingHorizontal: 32, paddingVertical: 96 }}>
             <Logo source={this.pfConf.logo} />
-            <H1 style={{ textAlign: 'center' }}>{I18n.t('login-wayf-title')}</H1>
             <Text style={{ textAlign: 'center' }}>{I18n.t('login-wayf-text')}</Text>
             <FlatButton
               title={I18n.t('login-wayf-button')}

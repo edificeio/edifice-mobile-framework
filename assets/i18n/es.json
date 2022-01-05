@@ -363,10 +363,9 @@
   "loading": "Carga",
   "loadingFailedMessage": "Error de carga. Compruebe la conexión a Internet.",
   "login-back": "Regresar a la autenticación",
-  "login-wayf-button": "Ouvrir le portail",
-  "login-wayf-text": "En fonction de votre profil, la source d’authentification n’est pas la même. Vous devez passer par le portail de connexion afin déterminer lequel vous correspond.",
-  "login-wayf-title": "Bienvenue dans votre réseau éducatif !",
-  "login-wayf-view-title": "Portail de Connexion",
+  "login-wayf-button": "Identification",
+  "login-wayf-text": "Il est temps de sélectionner votre profil et de saisir vos identifiants !",
+  "login-wayf-title": "S'identifier",
   "mailbox": {
     "alert": {
       "deletedThread": {
