@@ -5,7 +5,7 @@ import { Platform, SafeAreaView, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '~/framework/components/header';
-import { TextBold } from '~/framework/components/text';
+import { H1, Text } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
@@ -48,7 +48,8 @@ export class LoginWAYFPage extends React.Component<ILoginWAYFPageProps, ILoginWA
         <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
           <View style={{ alignItems: 'center', flex: 1, justifyContent: 'space-around', padding: 32 }}>
             <Logo source={this.pfConf.logo} />
-            <TextBold style={{ textAlign: 'center' }}>{I18n.t('login-wayf-text')}</TextBold>
+            <H1 style={{ textAlign: 'center' }}>{I18n.t('login-wayf-title')}</H1>
+            <Text style={{ textAlign: 'center' }}>{I18n.t('login-wayf-text')}</Text>
             <FlatButton
               title={I18n.t('login-wayf-button')}
               onPress={() => {

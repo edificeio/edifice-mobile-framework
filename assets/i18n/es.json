@@ -364,7 +364,9 @@
   "loadingFailedMessage": "Error de carga. Compruebe la conexión a Internet.",
   "login-back": "Regresar a la autenticación",
   "login-wayf-button": "Ouvrir le portail",
-  "login-wayf-text": "Pour pouvoir se connecter à votre ENT sur votre application, vous devez passer par le portail de connexion de l'ENT.\r\nEn fonction de votre profil, vous n'aurez pas la même la source d'authentification.",
+  "login-wayf-text": "En fonction de votre profil, la source d’authentification n’est pas la même. Vous devez passer par le portail de connexion afin déterminer lequel vous correspond.",
+  "login-wayf-title": "Bienvenue dans votre réseau éducatif !",
+  "login-wayf-view-title": "Portail de Connexion",
   "mailbox": {
     "alert": {
       "deletedThread": {
