@@ -22,7 +22,7 @@ export default () =>
   registerNotifHandlers([
     {
       type: 'NEWS',
-      'event-type': 'INFO-SHARED',
+      'event-type': ['INFO-SHARED', 'NEWS-PUBLISHED'],
       notifHandlerAction: handleBlogNotificationAction,
     },
   ]);
