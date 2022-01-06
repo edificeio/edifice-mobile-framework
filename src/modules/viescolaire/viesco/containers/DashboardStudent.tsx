@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import { getSessionInfo } from '~/App';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { fetchHomeworkListAction, updateHomeworkProgressAction } from '~/modules/viescolaire/cdt/actions/homeworks';
-import { getHomeworksListState } from '~/modules/viescolaire/cdt/state/homeworks';
+import { getHomeworksListState, IHomeworkListState } from '~/modules/viescolaire/cdt/state/homeworks';
 import { fetchLevelsAction } from '~/modules/viescolaire/competences/actions/competencesLevels';
 import { fetchDevoirListAction } from '~/modules/viescolaire/competences/actions/devoirs';
 import { getLevelsListState, ILevelsList } from '~/modules/viescolaire/competences/state/competencesLevels';
@@ -18,13 +18,13 @@ import DashboardComponent from '~/modules/viescolaire/viesco/components/Dashboar
 import { getSubjectsListState } from '~/modules/viescolaire/viesco/state/subjects';
 
 class Dashboard extends React.PureComponent<{
-  homeworks: any[];
+  homeworks: IHomeworkListState;
   structureId: string;
   childId: string;
   levels: ILevelsList;
-  getSubjects: (structureId: string) => any;
-  getTeachers: (structureId: string) => any;
-  getHomeworks: (structureId: string, startDate: string, endDate: string) => any;
+  getSubjects: (structureId: string) => void;
+  getTeachers: (structureId: string) => void;
+  getHomeworks: (structureId: string, startDate: string, endDate: string) => void;
   getDevoirs: (structureId: string, childId: string) => void;
   getLevels: (structureId: string) => void;
   navigation: NavigationScreenProp<any>;

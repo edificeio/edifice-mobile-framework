@@ -3,6 +3,7 @@ import moment from 'moment';
 import * as React from 'react';
 import { View, StyleSheet, Switch, ScrollView, RefreshControl, Platform } from 'react-native';
 
+import { IPersonnelList } from '../../viesco/state/personnel';
 import { HomeworkItem, SessionItem } from './Items';
 
 import { getSessionInfo } from '~/App';
@@ -16,7 +17,6 @@ import {
   getTeacherName,
 } from '~/modules/viescolaire/utils/cdt';
 import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
-import { IPersonnelList } from '~/modules/viescolaire/viesco/state/personnel';
 import { INavigationProps } from '~/types';
 import { PageContainer } from '~/ui/ContainerContent';
 import DateTimePicker from '~/ui/DateTimePicker';

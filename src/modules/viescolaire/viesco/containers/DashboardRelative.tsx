@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux';
 
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
 import { fetchChildHomeworkAction } from '~/modules/viescolaire/cdt/actions/homeworks';
-import { getHomeworksListState } from '~/modules/viescolaire/cdt/state/homeworks';
+import { getHomeworksListState, IHomeworkListState } from '~/modules/viescolaire/cdt/state/homeworks';
 import { fetchLevelsAction } from '~/modules/viescolaire/competences/actions/competencesLevels';
 import { fetchDevoirListAction } from '~/modules/viescolaire/competences/actions/devoirs';
 import { getLevelsListState, ILevelsList } from '~/modules/viescolaire/competences/state/competencesLevels';
@@ -19,7 +19,7 @@ import { getSelectedChild, getSelectedChildStructure } from '~/modules/viescolai
 import { getSubjectsListState } from '~/modules/viescolaire/viesco/state/subjects';
 
 class Dashboard extends React.PureComponent<{
-  homeworks: any;
+  homeworks: IHomeworkListState;
   evaluations: IDevoirsMatieresState;
   hasRightToCreateAbsence: boolean;
   structureId: string;

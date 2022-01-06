@@ -4,12 +4,15 @@ import * as React from 'react';
 import { Text, View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 
+import { IHomeworkList } from '../../cdt/state/homeworks';
+import { IHomeworkByDateList } from './DashboardRelative';
+
 import { TextBold } from '~/framework/components/text';
 import { HomeworkItem } from '~/modules/viescolaire/cdt/components/Items';
 import { DenseDevoirList } from '~/modules/viescolaire/competences/components/Item';
 import { ILevelsList } from '~/modules/viescolaire/competences/state/competencesLevels';
 import { IDevoirsMatieresState } from '~/modules/viescolaire/competences/state/devoirs';
-import { isHomeworkDone, homeworkDetailsAdapter } from '~/modules/viescolaire/utils/cdt';
+import { isHomeworkDone, homeworkListDetailsAdapter } from '~/modules/viescolaire/utils/cdt';
 import { Icon, Loading } from '~/ui';
 import { EmptyScreen } from '~/ui/EmptyScreen';
 
@@ -104,15 +107,15 @@ export default class Dashboard extends React.PureComponent<any> {
     );
   }
 
-  private renderHomework(homeworks) {
-    let homeworksByDate = {};
+  private renderHomework(homeworks: IHomeworkList) {
+    let homeworksByDate = {} as IHomeworkByDateList;
     Object.values(homeworks).forEach(hm => {
       const key = moment(hm.due_date).format('YYYY-MM-DD');
       if (typeof homeworksByDate[key] === 'undefined') homeworksByDate[key] = [];
       homeworksByDate[key].push(hm);
     });
 
-    const tomorrowDate = moment().add(1, 'day');
+    const tomorrowDate = moment().add(1, 'day') as moment.Moment;
 
     homeworksByDate = Object.keys(homeworksByDate)
       .sort()
@@ -157,7 +160,7 @@ export default class Dashboard extends React.PureComponent<any> {
                         {},
                         NavigationActions.navigate({
                           routeName: 'HomeworkPage',
-                          params: homeworkDetailsAdapter(homework),
+                          params: homeworkListDetailsAdapter(homework, homeworks),
                         }),
                       )
                     }

@@ -4,12 +4,14 @@ import * as React from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 
+import { IHomework, IHomeworkList, IHomeworkListState } from '../../cdt/state/homeworks';
+
 import { Text, TextBold } from '~/framework/components/text';
 import { HomeworkItem } from '~/modules/viescolaire/cdt/components/Items';
 import { DenseDevoirList } from '~/modules/viescolaire/competences/components/Item';
 import { ILevelsList } from '~/modules/viescolaire/competences/state/competencesLevels';
 import { IDevoirsMatieresState } from '~/modules/viescolaire/competences/state/devoirs';
-import { isHomeworkDone, homeworkDetailsAdapter } from '~/modules/viescolaire/utils/cdt';
+import { isHomeworkDone, homeworkListDetailsAdapter } from '~/modules/viescolaire/utils/cdt';
 import ChildPicker from '~/modules/viescolaire/viesco/containers/ChildPicker';
 import { INavigationProps } from '~/types';
 import { Icon, Loading } from '~/ui';
@@ -49,8 +51,12 @@ const styles = StyleSheet.create({
   },
 });
 
+export type IHomeworkByDateList = {
+  [key: string]: IHomework[];
+};
+
 type DashboardProps = {
-  homeworks: any[];
+  homeworks: IHomeworkListState;
   evaluations: IDevoirsMatieresState;
   levels: ILevelsList;
   hasRightToCreateAbsence: boolean;
@@ -119,15 +125,17 @@ export default class Dashboard extends React.PureComponent<DashboardProps> {
     );
   }
 
-  private renderHomework(homeworks) {
-    let homeworksByDate = {};
+  private renderHomework(homeworks: IHomeworkListState) {
+    const homeworkDataList = homeworks.data as IHomeworkList;
+
+    let homeworksByDate = {} as IHomeworkByDateList;
     Object.values(homeworks.data).forEach(hm => {
       const key = moment(hm.due_date).format('YYYY-MM-DD');
       if (typeof homeworksByDate[key] === 'undefined') homeworksByDate[key] = [];
       homeworksByDate[key].push(hm);
     });
 
-    const tomorrowDate = moment().add(1, 'day');
+    const tomorrowDate = moment().add(1, 'day') as moment.Moment;
 
     homeworksByDate = Object.keys(homeworksByDate)
       .sort()
@@ -169,7 +177,7 @@ export default class Dashboard extends React.PureComponent<DashboardProps> {
                         {},
                         NavigationActions.navigate({
                           routeName: 'HomeworkPage',
-                          params: homeworkDetailsAdapter(homework),
+                          params: homeworkListDetailsAdapter(homework, homeworkDataList),
                         }),
                       )
                     }
