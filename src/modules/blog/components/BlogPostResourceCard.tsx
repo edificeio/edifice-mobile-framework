@@ -31,7 +31,7 @@ export const BlogPostResourceCard = ({
 }: IBlogPostResourceCardProps) => {
   const commentsString = comments
     ? comments === 1
-      ? I18n.t('common.comment').toLowerCase()
+      ? `1 ${I18n.t('common.comment').toLowerCase()}`
       : `${comments} ${I18n.t('common.comments').toLowerCase()}`
     : I18n.t('common.noComments').toLowerCase();
   const blogPostText = extractTextFromHtml(contentHtml);
