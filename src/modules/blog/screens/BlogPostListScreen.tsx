@@ -193,7 +193,6 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
         imageSrc={require('ASSETS/images/empty-screen/blog.png')}
         imgWidth={265.98}
         imgHeight={279.97}
-        customStyle={{ backgroundColor: theme.color.background.card }}
         title={I18n.t(`blog.blogPostListScreen.emptyScreen.title${hasBlogPostCreationRights ? '' : 'NoCreationRights'}`)}
         text={I18n.t(`blog.blogPostListScreen.emptyScreen.text${hasBlogPostCreationRights ? '' : 'NoCreationRights'}`)}
         {...(hasBlogPostCreationRights ? {
