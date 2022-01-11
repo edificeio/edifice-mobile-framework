@@ -380,9 +380,9 @@
   "loading": "Chargement",
   "loadingFailedMessage": "Le chargement a échoué. Veuillez vérifier votre connexion internet.",
   "login-back": "Retour à l'écran de connexion",
-  "login-wayf-button": "Identification",
+  "login-wayf-button": "S'identifier",
   "login-wayf-text": "Il est temps de sélectionner votre profil et de saisir vos identifiants !",
-  "login-wayf-title": "S'identifier",
+  "login-wayf-title": "Identification",
   "mailbox": {
     "alert": {
       "deletedThread": {

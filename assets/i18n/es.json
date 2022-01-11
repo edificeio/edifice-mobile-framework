@@ -363,9 +363,9 @@
   "loading": "Carga",
   "loadingFailedMessage": "Error de carga. Compruebe la conexión a Internet.",
   "login-back": "Regresar a la autenticación",
-  "login-wayf-button": "Identification",
+  "login-wayf-button": "S'identifier",
   "login-wayf-text": "Il est temps de sélectionner votre profil et de saisir vos identifiants !",
-  "login-wayf-title": "S'identifier",
+  "login-wayf-title": "Identification",
   "mailbox": {
     "alert": {
       "deletedThread": {
