@@ -29,6 +29,9 @@ export const BlogPostResourceCard = ({
   date,
   title,
 }: IBlogPostResourceCardProps) => {
+  const [isTextTruncatedWithBackspace, setIsTextTruncatedWithBackspace] = React.useState(false);
+  const authorTextMaxLines = 1;
+  const contentTextMaxLines = 5;
   const commentsString = comments
     ? comments === 1
       ? `1 ${I18n.t('common.comment').toLowerCase()}`
@@ -44,7 +47,10 @@ export const BlogPostResourceCard = ({
         header={
           <ContentCardHeader
             icon={<ContentCardIcon userIds={[authorId || require('ASSETS/images/system-avatar.png')]} />}
-            text={authorName ? <TextSemiBold numberOfLines={1}>{`${I18n.t('common.by')} ${authorName}`}</TextSemiBold> : undefined}
+            text={authorName
+              ? <TextSemiBold numberOfLines={authorTextMaxLines}>{`${I18n.t('common.by')} ${authorName}`}</TextSemiBold>
+              : undefined
+            }
             date={date}
           />
         }
@@ -61,12 +67,22 @@ export const BlogPostResourceCard = ({
         }
       >
         {blogPostText
-          ? <Text
-              style={{ color: theme.color.text.regular, marginBottom: blogPostMedia?.length ? 10 : undefined }}
-              numberOfLines={5}
-            >
-              {blogPostText}
-            </Text>
+          ? <View style={{ marginBottom: blogPostMedia?.length ? 10 : undefined }}>
+              <Text
+                style={{ color: theme.color.text.regular }}
+                numberOfLines={contentTextMaxLines}
+                onTextLayout={({ nativeEvent: { lines } }) => {
+                  const isTextTruncatedWithBackspace = lines.length === contentTextMaxLines && lines[contentTextMaxLines-1].text.endsWith("\n");
+                  setIsTextTruncatedWithBackspace(isTextTruncatedWithBackspace);
+                }}
+              >
+                {blogPostText}
+              </Text>
+              {isTextTruncatedWithBackspace
+                ? <Text style={{ color: theme.color.text.regular }}>...</Text>
+                : null
+              }
+            </View>
           : null
         }
         {blogPostMedia ? renderMediaPreview(blogPostMedia) : null}
