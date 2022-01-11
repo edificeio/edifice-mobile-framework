@@ -34,9 +34,9 @@ export const BlogPostResourceCard = ({
   const contentTextMaxLines = 5;
   const commentsString = comments
     ? comments === 1
-      ? `1 ${I18n.t('common.comment').toLowerCase()}`
-      : `${comments} ${I18n.t('common.comments').toLowerCase()}`
-    : I18n.t('common.noComments').toLowerCase();
+      ? `1 ${I18n.t('common.comment.comment').toLowerCase()}`
+      : `${comments} ${I18n.t('common.comment.comments').toLowerCase()}`
+    : I18n.t('common.comment.noComments').toLowerCase();
   const blogPostText = extractTextFromHtml(contentHtml);
   const blogPostMedia = extractMediaFromHtml(contentHtml);
 
@@ -47,9 +47,10 @@ export const BlogPostResourceCard = ({
         header={
           <ContentCardHeader
             icon={<ContentCardIcon userIds={[authorId || require('ASSETS/images/system-avatar.png')]} />}
-            text={authorName
-              ? <TextSemiBold numberOfLines={authorTextMaxLines}>{`${I18n.t('common.by')} ${authorName}`}</TextSemiBold>
-              : undefined
+            text={
+              authorName ? (
+                <TextSemiBold numberOfLines={authorTextMaxLines}>{`${I18n.t('common.by')} ${authorName}`}</TextSemiBold>
+              ) : undefined
             }
             date={date}
           />
@@ -64,27 +65,22 @@ export const BlogPostResourceCard = ({
             <Icon style={{ marginRight: 5 }} size={18} name="chat3" color={theme.color.text.regular} />
             <TextSemiBold style={{ color: theme.color.text.light, fontSize: 12 }}>{commentsString}</TextSemiBold>
           </View>
-        }
-      >
-        {blogPostText
-          ? <View style={{ marginBottom: blogPostMedia?.length ? 10 : undefined }}>
-              <Text
-                style={{ color: theme.color.text.regular }}
-                numberOfLines={contentTextMaxLines}
-                onTextLayout={({ nativeEvent: { lines } }) => {
-                  const isTextTruncatedWithBackspace = lines.length === contentTextMaxLines && lines[contentTextMaxLines-1].text.endsWith("\n");
-                  setIsTextTruncatedWithBackspace(isTextTruncatedWithBackspace);
-                }}
-              >
-                {blogPostText}
-              </Text>
-              {isTextTruncatedWithBackspace
-                ? <Text style={{ color: theme.color.text.regular }}>...</Text>
-                : null
-              }
-            </View>
-          : null
-        }
+        }>
+        {blogPostText ? (
+          <View style={{ marginBottom: blogPostMedia?.length ? 10 : undefined }}>
+            <Text
+              style={{ color: theme.color.text.regular }}
+              numberOfLines={contentTextMaxLines}
+              onTextLayout={({ nativeEvent: { lines } }) => {
+                const isTextTruncatedWithBackspace =
+                  lines.length === contentTextMaxLines && lines[contentTextMaxLines - 1].text.endsWith('\n');
+                setIsTextTruncatedWithBackspace(isTextTruncatedWithBackspace);
+              }}>
+              {blogPostText}
+            </Text>
+            {isTextTruncatedWithBackspace ? <Text style={{ color: theme.color.text.regular }}>...</Text> : null}
+          </View>
+        ) : null}
         {blogPostMedia ? renderMediaPreview(blogPostMedia) : null}
       </TouchableResourceCard>
     </ArticleContainer>

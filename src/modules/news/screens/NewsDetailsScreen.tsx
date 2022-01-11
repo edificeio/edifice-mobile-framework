@@ -204,7 +204,7 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
             leftElement={<Icon name="new_comment" color={theme.color.neutral.regular} size={16} style={{ marginRight: 5 }} />}
             rightElement={
               <TextLight>
-                {newsComments!.length} {I18n.t(`common.comment${newsComments!.length > 1 ? 's' : ''}`)}
+                {newsComments!.length} {I18n.t(`common.comment.comment${newsComments!.length > 1 ? 's' : ''}`)}
               </TextLight>
             }
           />

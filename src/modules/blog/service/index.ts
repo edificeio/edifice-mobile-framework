@@ -242,5 +242,14 @@ export const blogService = {
       // Run the adapter for the received blog post comments
       return blogPostCommentsAdapter(entcoreBlogPostComments) as IBlogPostComments;
     },
+    publish: async (session: IUserSession, blogPostId: { blogId: string; postId: string }, comment: string) => {
+      const { blogId, postId } = blogPostId;
+      const api = `/blog/comment/${blogId}/${postId}`;
+      const body = JSON.stringify({ comment });
+      return signedFetchJson(`${DEPRECATED_getCurrentPlatform()!.url}${api}`, {
+        method: 'POST',
+        body
+      }) as Promise<{ number: number }>;
+    }
   },
 };

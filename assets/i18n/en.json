@@ -118,8 +118,10 @@
     "apply": "Apply",
     "by": "By:",
     "cancel": "Cancel",
-    "comment": "Comment",
-    "comments": "Comments",
+    "comment": {
+      "comment": "Comment",
+      "comments": "Comments"
+    },
     "continue": "Continue",
     "date": {
       "invalid": "",
@@ -138,6 +140,7 @@
     "infoBubble-understood": "Understood",
     "ok": "OK",
     "openInBrowser": "Open in browser",
+    "publish": "Publish",
     "quit": "Exit",
     "readMore": "read more",
     "save": "Save",

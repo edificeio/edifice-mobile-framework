@@ -14,7 +14,6 @@ import { bindActionCreators } from 'redux';
 import { IDisplayedBlog } from './BlogExplorerScreen';
 
 import { IGlobalState } from '~/AppStore';
-import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
@@ -137,7 +136,7 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
     });
 
   const onOpenBlogPost = (item: IBlogPost) => {
-    props.navigation.navigate(`${moduleConfig.routeName}/details`, { blogPost: item, blogId: selectedBlog.id });
+    props.navigation.navigate(`${moduleConfig.routeName}/details`, { blogPost: item, blog: selectedBlog });
   };
 
   // HEADER =====================================================================================

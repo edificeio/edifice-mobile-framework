@@ -195,6 +195,21 @@ export const publishBlogPostAction =
   };
 
 /**
+ * Publish a comment for a given blog post.
+ * Info: no reducer is used in this action.
+ */
+ export const publishBlogPostCommentAction =
+ (blogPostId: { blogId: string; postId: string }, comment: string) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+   try {
+     const session = getUserSession(getState());
+     return blogService.comments.publish(session, blogPostId, comment);
+   } catch (e) {
+     // ToDo: Error handling
+     console.warn(`[${moduleConfig.name}] publishBlogPostCommentAction failed`, e);
+   }
+ }; 
+
+/**
  * These are actions to fetch and populate Blog main reducer.
  */
 export const blogFoldersActionsCreators = createAsyncActionCreators(actionTypes.folders);

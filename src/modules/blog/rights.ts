@@ -11,6 +11,8 @@ import { IUserSession } from '~/framework/util/session';
 export const createBlogPostResourceRight = 'org-entcore-blog-controllers-PostController|create';
 export const submitBlogPostResourceRight = 'org-entcore-blog-controllers-PostController|submit';
 export const publishBlogPostResourceRight = 'org-entcore-blog-controllers-PostController|publish';
+export const commentBlogPostResourceRight = 'org-entcore-blog-controllers-PostController|comment';
+export const updateCommentBlogPostResourceRight = 'org-entcore-blog-controllers-PostController|updateComment';
 
 export const listBlogsResourceRight = 'org.entcore.blog.controllers.BlogController|list';
 export const printBlogResourceRight = 'org.entcore.blog.controllers.BlogController|print';
