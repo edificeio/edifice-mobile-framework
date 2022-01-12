@@ -4,10 +4,9 @@ import * as React from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 
-import { IHomework, IHomeworkList, IHomeworkListState } from '../../cdt/state/homeworks';
-
 import { Text, TextBold } from '~/framework/components/text';
 import { HomeworkItem } from '~/modules/viescolaire/cdt/components/Items';
+import { IHomework, IHomeworkList, IHomeworkListState } from '~/modules/viescolaire/cdt/state/homeworks';
 import { DenseDevoirList } from '~/modules/viescolaire/competences/components/Item';
 import { ILevelsList } from '~/modules/viescolaire/competences/state/competencesLevels';
 import { IDevoirsMatieresState } from '~/modules/viescolaire/competences/state/devoirs';

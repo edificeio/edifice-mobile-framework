@@ -6,16 +6,18 @@ import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
 import { Platform, RefreshControl, View, ScrollView, FlatList } from 'react-native';
-import { NavigationActions, NavigationEventSubscription, NavigationInjectedProps } from 'react-navigation';
 import { hasNotch } from 'react-native-device-info';
+import { NavigationActions, NavigationEventSubscription, NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { IDisplayedBlog } from './BlogExplorerScreen';
+
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import { UI_SIZES } from '~/framework/components/constants';
 import {
   FakeHeader,
   HeaderAction,
@@ -31,12 +33,10 @@ import { ButtonIcon } from '~/framework/components/popupMenu';
 import { AsyncLoadingState } from '~/framework/util/redux/async';
 import { getUserSession, IUserSession } from '~/framework/util/session';
 import { BlogPostResourceCard } from '~/modules/blog/components/BlogPostResourceCard';
-
-import { IDisplayedBlog } from './BlogExplorerScreen';
-import moduleConfig from '../moduleConfig';
-import { IBlogPost, IBlogPostList } from '../reducer';
-import { getBlogPostRight } from '../rights';
-import { blogService } from '../service';
+import moduleConfig from '~/modules/blog/moduleConfig';
+import { IBlogPost, IBlogPostList } from '~/modules/blog/reducer';
+import { getBlogPostRight } from '~/modules/blog/rights';
+import { blogService } from '~/modules/blog/service';
 
 // TYPES ==========================================================================================
 
@@ -171,7 +171,7 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
   const renderCreateButton = () => {
     return hasBlogPostCreationRights ? (
       <ButtonIcon
-        name={'new_post'}
+        name="new_post"
         onPress={() => {
           onGoToPostCreationScreen();
         }}
@@ -195,10 +195,12 @@ const BlogPostListScreen = (props: IBlogPostListScreen_Props) => {
         imgHeight={279.97}
         title={I18n.t(`blog.blogPostListScreen.emptyScreen.title${hasBlogPostCreationRights ? '' : 'NoCreationRights'}`)}
         text={I18n.t(`blog.blogPostListScreen.emptyScreen.text${hasBlogPostCreationRights ? '' : 'NoCreationRights'}`)}
-        {...(hasBlogPostCreationRights ? {
-          buttonText: I18n.t('blog.blogPostListScreen.emptyScreen.button'),
-          buttonAction: onGoToPostCreationScreen
-        } : {})}
+        {...(hasBlogPostCreationRights
+          ? {
+              buttonText: I18n.t('blog.blogPostListScreen.emptyScreen.button'),
+              buttonAction: onGoToPostCreationScreen,
+            }
+          : {})}
       />
     );
   };

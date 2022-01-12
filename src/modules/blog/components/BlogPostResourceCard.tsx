@@ -6,8 +6,8 @@ import { Moment } from 'moment';
 import theme from '~/app/theme';
 import { ContentCardHeader, ContentCardIcon, TouchableResourceCard } from '~/framework/components/card';
 import { ArticleContainer } from '~/ui/ContainerContent';
-import { Icon } from '../../../framework/components/icon';
-import { Text, TextSemiBold } from '../../../framework/components/text';
+import { Icon } from '~/framework/components/icon';
+import { Text, TextSemiBold } from '~/framework/components/text';
 import { extractMediaFromHtml, extractTextFromHtml, renderMediaPreview } from '~/framework/util/htmlParser/content';
 
 export interface IBlogPostResourceCardProps {
