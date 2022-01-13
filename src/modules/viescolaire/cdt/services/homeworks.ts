@@ -6,6 +6,12 @@ import { IHomeworkList } from '~/modules/viescolaire/cdt/state/homeworks';
 // Data type of what is given by the backend.
 export type IHomeworkListBackend = {
   audience_id: string;
+  audience: {
+    externalId: string;
+    id: string;
+    labels: string[];
+    name: string;
+  };
   color: string;
   created: string;
   description: string;
@@ -52,13 +58,15 @@ const homeworkListAdapter: (data: IHomeworkListBackend) => IHomeworkList = data 
     result[item.id] = {
       id: item.id,
       due_date: moment(item.due_date),
-      type: item.type.label,
+      type: item.type,
       subject_id: item.subject_id,
       subject: item.subject,
       exceptional_label: item.exceptional_label,
       progress: item.progress,
       description: item.description,
       created_date: moment(item.created),
+      audience: item.audience,
+      session_id: item.session_id,
     };
   });
   return result;

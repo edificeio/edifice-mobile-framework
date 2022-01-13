@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import DisplayHomework from '~/modules/viescolaire/cdt/components/DisplayHomework';
+import DisplayListHomework from '~/modules/viescolaire/cdt/components/DisplayListHomework';
 import { standardNavScreenOptions } from '~/navigation/helpers/navScreenOptions';
 import { HeaderBackAction } from '~/ui/headers/NewHeader';
 
@@ -27,6 +28,15 @@ class Homework extends React.PureComponent<any> {
   };
 
   public render() {
+    if (this.props.navigation.state.params.homework === undefined) {
+      return (
+        <DisplayListHomework
+          {...this.props}
+          subject={this.props.navigation.state.params.subject}
+          homeworkList={this.props.navigation.state.params.homeworkList}
+        />
+      );
+    }
     return (
       <DisplayHomework
         {...this.props}

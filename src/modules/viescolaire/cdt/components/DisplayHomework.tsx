@@ -53,7 +53,9 @@ export default class DisplayHomework extends React.PureComponent<IDisplayHomewor
   componentDidMount() {
     const { homeworkList } = this.props;
 
-    if (this.props.homeworkList) {
+    if (homeworkList && homeworkList.length === 1) {
+      this.setState({ indexSelectedHomework: 0, isRemovedDescription: false });
+    } else if (homeworkList) {
       const index = homeworkList.findIndex(item =>
         this.state.indexSelectedHomework
           ? item.id === homeworkList[this.state.indexSelectedHomework].id
@@ -66,7 +68,9 @@ export default class DisplayHomework extends React.PureComponent<IDisplayHomewor
   componentDidUpdate(prevProps) {
     const { homeworkList } = this.props;
 
-    if (this.props.homeworkList && prevProps.homeworkList !== this.props.homeworkList) {
+    if (homeworkList && homeworkList.length === 1) {
+      this.setState({ indexSelectedHomework: 0, isRemovedDescription: false });
+    } else if (this.props.homeworkList && prevProps.homeworkList !== this.props.homeworkList) {
       const index = homeworkList.findIndex(item =>
         this.state.indexSelectedHomework
           ? item.id === homeworkList[this.state.indexSelectedHomework].id

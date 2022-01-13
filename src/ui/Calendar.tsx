@@ -4,6 +4,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { TouchableOpacity, ScrollView, State, PanGestureHandler } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { IHomework } from '~/modules/viescolaire/cdt/state/homeworks';
 import { CommonStyles } from '~/styles/common/styles';
 
 const minutes = (m: moment.Moment): number => {
@@ -22,6 +23,8 @@ type CalendarProps = {
   startDate: moment.Moment;
   data: (BasicElement & any)[];
   renderElement: (element: BasicElement) => JSX.Element;
+  daysHomeworks: IHomework[];
+  renderDaysHomeworks: (homeworks: IHomework[]) => JSX.Element;
   numberOfDays: 6 | 7;
   slots?: {
     startHour: moment.Moment;
@@ -341,8 +344,20 @@ export default class Calendar extends React.PureComponent<CalendarProps, Calenda
     );
   };
 
+  findSelectedDayHomeworks = () => {
+    const { day } = this.state;
+    const selectedDayHomeworks = [] as IHomework[];
+
+    this.props.daysHomeworks.map(hwk => {
+      if (hwk.due_date.isSame(day, 'd')) {
+        selectedDayHomeworks.push(hwk);
+      }
+    });
+    return selectedDayHomeworks;
+  };
+
   public handleStateChange = ({ nativeEvent }) => {
-    if (nativeEvent.state === State.END) {
+    if (nativeEvent.state === State.END && nativeEvent.oldState === State.ACTIVE) {
       const { week, day } = this.state;
       const nbSelectedDay = week.findIndex(weekDay => weekDay.isSame(day, 'd'));
       if (nativeEvent.translationX < 0 && nbSelectedDay < week.length - 1) {
@@ -354,7 +369,7 @@ export default class Calendar extends React.PureComponent<CalendarProps, Calenda
   };
 
   public render() {
-    const { mainColor, slots } = this.props;
+    const { mainColor, slots, daysHomeworks, renderDaysHomeworks } = this.props;
     const { selectedDate, week } = this.state;
     return (
       <View style={styles.container}>
@@ -364,7 +379,10 @@ export default class Calendar extends React.PureComponent<CalendarProps, Calenda
           ))}
         </View>
         <PanGestureHandler onHandlerStateChange={this.handleStateChange}>
-          {slots === undefined || slots.length === 0 ? this.renderScrollViewWithoutSlots() : this.renderScrollViewWithSlots()}
+          <View style={{ flex: 1 }}>
+            {daysHomeworks !== undefined && renderDaysHomeworks(this.findSelectedDayHomeworks())}
+            {slots === undefined || slots.length === 0 ? this.renderScrollViewWithoutSlots() : this.renderScrollViewWithSlots()}
+          </View>
         </PanGestureHandler>
       </View>
     );

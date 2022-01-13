@@ -6,6 +6,7 @@ import viescoConfig from '~/modules/viescolaire/moduleConfig';
 // THE MODEL --------------------------------------------------------------------------------------
 
 export interface ICourse {
+  id: string;
   startDate: moment.Moment;
   endDate: moment.Moment;
   subjectId: string;

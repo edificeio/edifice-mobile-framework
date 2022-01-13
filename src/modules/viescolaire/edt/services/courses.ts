@@ -5,6 +5,7 @@ import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 import { ICourseList } from '~/modules/viescolaire/edt/state/courses';
 
 export type ICourseListBackend = {
+  _id: string;
   classes: string[];
   groups: string[];
   teacherIds: string[];
@@ -25,6 +26,7 @@ export type ICourseListBackend = {
 
 const coursesListAdapter = (data: ICourseListBackend): ICourseList => {
   return data.map(course => ({
+    id: course._id,
     teacherIds: course.teacherIds,
     roomLabels: course.roomLabels,
     exceptionnal: course.exceptionnal,

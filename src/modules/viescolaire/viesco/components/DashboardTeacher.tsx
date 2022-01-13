@@ -2,6 +2,7 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
+import { NavigationActions } from 'react-navigation';
 
 import { Text } from '~/framework/components/text';
 import CallList from '~/modules/viescolaire/presences/containers/TeacherCallList';
@@ -100,11 +101,18 @@ export default props => (
             imageSrc={require('ASSETS/viesco/edt.png')}
           />
           <ImageButton
-            onPress={() => true}
+            onPress={() =>
+              props.navigation.navigate(
+                'cdt',
+                {},
+                NavigationActions.navigate({
+                  routeName: 'CdtTeachers',
+                }),
+              )
+            }
             text={I18n.t('Homework')}
             color="#2BAB6F"
             imageSrc={require('ASSETS/viesco/cdt.png')}
-            disabled
           />
         </View>
       </View>

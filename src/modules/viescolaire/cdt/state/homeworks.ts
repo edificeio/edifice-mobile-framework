@@ -24,9 +24,21 @@ export interface IHomework {
     name: string;
     rank?: number;
   };
-  type: string;
+  type: {
+    id: number;
+    label: string;
+    rank: number;
+    structure_id: string;
+  };
   description: string;
   created_date: moment.Moment;
+  audience: {
+    externalId: string;
+    id: string;
+    labels: string[];
+    name: string;
+  };
+  session_id: string;
 }
 
 export type IHomeworkList = {
