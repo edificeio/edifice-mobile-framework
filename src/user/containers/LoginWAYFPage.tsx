@@ -5,7 +5,7 @@ import { Platform, SafeAreaView, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { FakeHeader, HeaderAction, HeaderCenter, HeaderLeft, HeaderRow, HeaderTitle } from '~/framework/components/header';
-import { H1, Text } from '~/framework/components/text';
+import { Text } from '~/framework/components/text';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
 import withViewTracking from '~/framework/util/tracker/withViewTracking';
