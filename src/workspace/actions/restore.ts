@@ -15,7 +15,7 @@ export const actionTypesRestore = asyncActionTypes(config.createActionType(`${WO
 export function restoreAction(parentId: string, selected: IItems<IItem>) {
   const ids: string[] = Object.values(selected).reduce((acc: string[], item: IId) => [...acc, item.id], []);
 
-  Trackers.trackEvent('Workspace', 'RESTORE', undefined, Object.keys(selected).length);
+  Trackers.trackDebugEvent('Workspace', 'RESTORE', undefined, Object.keys(selected).length);
 
   return asyncActionFactory(`${WORKSPACE_RESTORE}`, { ids, parentId }, actionTypesRestore, formatResults, {
     method: 'put',

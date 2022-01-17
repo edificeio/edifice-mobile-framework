@@ -219,7 +219,7 @@ export function loginAction(
       ]);
       if (credentials) await Trackers.trackEvent('Auth', 'LOGIN');
       // Track manual login (with credentials)
-      else await Trackers.trackEvent('Auth', 'RESTORE'); // track separately auto login (with stored token)
+      else await Trackers.trackDebugEvent('Auth', 'RESTORE'); // track separately auto login (with stored token)
 
       // === 8: navigate back to the main screen
       console.log('8: navigate back to the main screen');
